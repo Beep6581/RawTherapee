@@ -1291,6 +1291,11 @@ void ParamsEdited::initFrom(const std::vector<rtengine::procparams::ProcParams>&
                 locallab.spots.at(j).complexshadhigh = locallab.spots.at(j).complexshadhigh && pSpot.complexshadhigh == otherSpot.complexshadhigh;
                 locallab.spots.at(j).shMethod = locallab.spots.at(j).shMethod && pSpot.shMethod == otherSpot.shMethod;
                 locallab.spots.at(j).ghsMethod = locallab.spots.at(j).ghsMethod && pSpot.ghsMethod == otherSpot.ghsMethod;
+                locallab.spots.at(j).ghs_D = locallab.spots.at(j).ghs_D && pSpot.ghs_D == otherSpot.ghs_D;
+                locallab.spots.at(j).ghs_B = locallab.spots.at(j).ghs_B && pSpot.ghs_B == otherSpot.ghs_B;
+                locallab.spots.at(j).ghs_SP = locallab.spots.at(j).ghs_SP && pSpot.ghs_SP == otherSpot.ghs_SP;
+                locallab.spots.at(j).ghs_LP = locallab.spots.at(j).ghs_LP && pSpot.ghs_LP == otherSpot.ghs_LP;
+                locallab.spots.at(j).ghs_HP = locallab.spots.at(j).ghs_HP && pSpot.ghs_HP == otherSpot.ghs_HP;
 
                 for (int k = 0; k < 6; k++) {
                     locallab.spots.at(j).multsh[k] = locallab.spots.at(j).multsh[k] && pSpot.multsh[k] == otherSpot.multsh[k];
@@ -4257,6 +4262,26 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
 
         if (locallab.spots.at(i).ghsMethod) {
             toEdit.locallab.spots.at(i).ghsMethod = mods.locallab.spots.at(i).ghsMethod;
+        }
+
+        if (locallab.spots.at(i).ghs_D) {
+            toEdit.locallab.spots.at(i).ghs_D = mods.locallab.spots.at(i).ghs_D;
+        }
+
+        if (locallab.spots.at(i).ghs_B) {
+            toEdit.locallab.spots.at(i).ghs_B = mods.locallab.spots.at(i).ghs_B;
+        }
+
+        if (locallab.spots.at(i).ghs_SP) {
+            toEdit.locallab.spots.at(i).ghs_SP = mods.locallab.spots.at(i).ghs_SP;
+        }
+
+        if (locallab.spots.at(i).ghs_LP) {
+            toEdit.locallab.spots.at(i).ghs_LP = mods.locallab.spots.at(i).ghs_LP;
+        }
+
+        if (locallab.spots.at(i).ghs_HP) {
+            toEdit.locallab.spots.at(i).ghs_HP = mods.locallab.spots.at(i).ghs_HP;
         }
 
         for (int j = 0; j < 6; j++) {
@@ -8099,6 +8124,11 @@ LocallabParamsEdited::LocallabSpotEdited::LocallabSpotEdited(bool v) :
     complexshadhigh(v),
     shMethod(v),
     ghsMethod(v),
+    ghs_D(v),
+    ghs_B(v),
+    ghs_SP(v),
+    ghs_LP(v),
+    ghs_HP(v),
     multsh{v, v, v, v, v, v, v},
     highlights(v),
     h_tonalwidth(v),
@@ -8860,6 +8890,11 @@ void LocallabParamsEdited::LocallabSpotEdited::set(bool v)
     complexshadhigh = v;
     shMethod = v;
     ghsMethod = v;
+    ghs_D = v;
+    ghs_B = v;
+    ghs_SP = v;
+    ghs_LP = v;
+    ghs_HP = v;
 
     for (int i = 0; i < 6; i++) {
         multsh[i] = v;

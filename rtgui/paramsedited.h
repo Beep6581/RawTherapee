@@ -580,6 +580,11 @@ public:
         bool complexshadhigh;
         bool shMethod;
         bool ghsMethod;
+        bool ghs_D;
+        bool ghs_B;
+        bool ghs_SP;
+        bool ghs_LP;
+        bool ghs_HP;
         bool multsh[7];
         bool highlights;
         bool h_tonalwidth;

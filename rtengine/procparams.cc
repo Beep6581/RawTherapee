@@ -3387,6 +3387,11 @@ LocallabParams::LocallabSpot::LocallabSpot() :
     complexshadhigh(0),
     shMethod("tone"),
     ghsMethod("rgb"),
+    ghs_D(0.),
+    ghs_B(0.),
+    ghs_SP(0.),
+    ghs_LP(0.),
+    ghs_HP(1.),
     multsh{0, 0, 0, 0, 0, 0},
     highlights(0),
     h_tonalwidth(70),
@@ -5031,6 +5036,11 @@ bool LocallabParams::LocallabSpot::operator ==(const LocallabSpot& other) const
         && complexshadhigh == other.complexshadhigh
         && shMethod == other.shMethod
         && ghsMethod == other.ghsMethod
+        && ghs_D == other.ghs_D
+        && ghs_B == other.ghs_B
+        && ghs_SP == other.ghs_SP
+        && ghs_LP == other.ghs_LP
+        && ghs_HP == other.ghs_HP
         && [this, &other]() -> bool
             {
                 for (int i = 0; i < 6; ++i) {
@@ -6991,6 +7001,11 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
                     saveToKeyfile(!pedited || spot_edited->complexshadhigh, "Locallab", "Complexshadhigh_" + index_str, spot.complexshadhigh, keyFile);
                     saveToKeyfile(!pedited || spot_edited->shMethod, "Locallab", "ShMethod_" + index_str, spot.shMethod, keyFile);
                     saveToKeyfile(!pedited || spot_edited->ghsMethod, "Locallab", "GhsMethod_" + index_str, spot.ghsMethod, keyFile);
+                    saveToKeyfile(!pedited || spot_edited->ghs_D, "Locallab", "Ghs_D_" + index_str, spot.ghs_D, keyFile);
+                    saveToKeyfile(!pedited || spot_edited->ghs_B, "Locallab", "Ghs_B_" + index_str, spot.ghs_B, keyFile);
+                    saveToKeyfile(!pedited || spot_edited->ghs_SP, "Locallab", "Ghs_SP_" + index_str, spot.ghs_SP, keyFile);
+                    saveToKeyfile(!pedited || spot_edited->ghs_LP, "Locallab", "Ghs_LP_" + index_str, spot.ghs_LP, keyFile);
+                    saveToKeyfile(!pedited || spot_edited->ghs_HP, "Locallab", "Ghs_HP_" + index_str, spot.ghs_HP, keyFile);
 
                     for (int j = 0; j < 6; j++) {
                         saveToKeyfile(!pedited || spot_edited->multsh[j], "Locallab", "Multsh" + std::to_string(j) + "_" + index_str, spot.multsh[j], keyFile);
@@ -9317,6 +9332,11 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
                 assignFromKeyfile(keyFile, "Locallab", "Complexshadhigh_" + index_str, spot.complexshadhigh, spotEdited.complexshadhigh);
                 assignFromKeyfile(keyFile, "Locallab", "ShMethod_" + index_str, spot.shMethod, spotEdited.shMethod);
                 assignFromKeyfile(keyFile, "Locallab", "GhsMethod_" + index_str, spot.ghsMethod, spotEdited.ghsMethod);
+                assignFromKeyfile(keyFile, "Locallab", "Ghs_D_" + index_str, spot.ghs_D, spotEdited.ghs_D);
+                assignFromKeyfile(keyFile, "Locallab", "Ghs_B_" + index_str, spot.ghs_B, spotEdited.ghs_B);
+                assignFromKeyfile(keyFile, "Locallab", "Ghs_SP_" + index_str, spot.ghs_SP, spotEdited.ghs_SP);
+                assignFromKeyfile(keyFile, "Locallab", "Ghs_LP_" + index_str, spot.ghs_LP, spotEdited.ghs_LP);
+                assignFromKeyfile(keyFile, "Locallab", "Ghs_HP_" + index_str, spot.ghs_HP, spotEdited.ghs_HP);
 
                 for (int j = 0; j < 6; j ++) {
                     assignFromKeyfile(keyFile, "Locallab", "Multsh" + std::to_string(j) + "_" + index_str, spot.multsh[j], spotEdited.multsh[j]);

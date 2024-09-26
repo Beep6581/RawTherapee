@@ -4792,6 +4792,13 @@ void LocallabShadow::read(const rtengine::procparams::ProcParams* pp, const Para
         higthress->setValue((double)spot.higthress);
         decays->setValue((double)spot.decays);
 
+        ghs_D->setValue((double)spot.ghs_D);
+        ghs_B->setValue((double)spot.ghs_B);
+        ghs_SP->setValue((double)spot.ghs_SP);
+        ghs_LP->setValue((double)spot.ghs_LP);
+        ghs_HP->setValue((double)spot.ghs_HP);
+        
+        
         detailSH->setValue((double)spot.detailSH);
         tePivot->setValue(spot.tePivot);
         reparsh->setValue(spot.reparsh);
@@ -4869,6 +4876,12 @@ void LocallabShadow::write(rtengine::procparams::ProcParams* pp, ParamsEdited* p
             spot.multsh[i] = multipliersh[i]->getIntValue();
         }
 
+        spot.ghs_D = ghs_D->getValue();
+        spot.ghs_B = ghs_B->getValue();
+        spot.ghs_SP = ghs_SP->getValue();
+        spot.ghs_LP = ghs_LP->getValue();
+        spot.ghs_HP = ghs_HP->getValue();
+
         spot.detailSH = detailSH->getIntValue();
         spot.tePivot = tePivot->getValue();
         spot.reparsh = reparsh->getValue();
@@ -4919,6 +4932,12 @@ void LocallabShadow::setDefaults(const rtengine::procparams::ProcParams* defPara
             multipliersh[i]->setDefault(defSpot.multsh[i]);
         }
 
+        ghs_D->setDefault(defSpot.ghs_D);
+        ghs_B->setDefault(defSpot.ghs_B);
+        ghs_SP->setDefault(defSpot.ghs_SP);
+        ghs_LP->setDefault(defSpot.ghs_LP);
+        ghs_HP->setDefault(defSpot.ghs_HP);
+
         detailSH->setDefault((double)defSpot.detailSH);
         tePivot->setDefault(defSpot.tePivot);
         reparsh->setDefault(defSpot.reparsh);
@@ -4964,6 +4983,41 @@ void LocallabShadow::adjusterChanged(Adjuster* a, double newval)
                                                Glib::ustring::format(std::fixed, std::setprecision(2), multipliersh[3]->getIntValue()),
                                                Glib::ustring::format(std::fixed, std::setprecision(2), multipliersh[4]->getIntValue()),
                                                Glib::ustring::format(std::fixed, std::setprecision(2), multipliersh[5]->getIntValue())) + " (" + escapeHtmlChars(getSpotName()) + ")");
+            }
+        }
+
+        if (a == ghs_D) {
+            if (listener) {
+                listener->panelChanged(Evlocallabghs_D,
+                                       ghs_D->getTextValue() + " (" + escapeHtmlChars(getSpotName()) + ")");
+            }
+        }
+
+        if (a == ghs_B) {
+            if (listener) {
+                listener->panelChanged(Evlocallabghs_B,
+                                       ghs_B->getTextValue() + " (" + escapeHtmlChars(getSpotName()) + ")");
+            }
+        }
+
+        if (a == ghs_SP) {
+            if (listener) {
+                listener->panelChanged(Evlocallabghs_SP,
+                                       ghs_SP->getTextValue() + " (" + escapeHtmlChars(getSpotName()) + ")");
+            }
+        }
+
+        if (a == ghs_LP) {
+            if (listener) {
+                listener->panelChanged(Evlocallabghs_LP,
+                                       ghs_LP->getTextValue() + " (" + escapeHtmlChars(getSpotName()) + ")");
+            }
+        }
+
+        if (a == ghs_HP) {
+            if (listener) {
+                listener->panelChanged(Evlocallabghs_HP,
+                                       ghs_HP->getTextValue() + " (" + escapeHtmlChars(getSpotName()) + ")");
             }
         }
 
