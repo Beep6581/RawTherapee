@@ -16979,11 +16979,48 @@ void ImProcFunctions::Lab_Local(
                 }
                 
                 if (lp.shmeth == 2) {
-                    double scal = (double)(sk);
+                    float D = params->locallab.spots.at(sp).ghs_D;
+                    float B = params->locallab.spots.at(sp).ghs_B;
+                    float LP = params->locallab.spots.at(sp).ghs_LP;
+                    float SP = params->locallab.spots.at(sp).ghs_SP;
+                    float HP = params->locallab.spots.at(sp).ghs_HP;
+                    int met = 0;
+                    if (params->locallab.spots.at(sp).ghsMethod == "rgb") {
+                        met = 0;
+                    } else if (params->locallab.spots.at(sp).ghsMethod == "lum") {
+                        met = 1;
+                    } else if (params->locallab.spots.at(sp).ghsMethod == "sat") {
+                        met = 2;
+                    }
+                    //double scal = (double)(sk);
+
+                    const ght_compute_params c = GHT_setup(B, D, LP, SP, HP);
+
                     Imagefloat *tmpImage = nullptr;
                     tmpImage = new Imagefloat(bfw, bfh);
                     lab2rgb(*bufexpfin, *tmpImage, params->icm.workingProfile);
                     Glib::ustring prof = params->icm.workingProfile;
+/*
+#ifdef _OPENMP
+        #   pragma omp parallel for schedule(dynamic,16) if (multiThread)
+#endif
+
+                        for (int i = 0; i < bfh; ++i)
+                            for (int j = 0; j < bfw; ++j) {
+                                float r = tmpImage->r(i, j) / 65535.f;
+                                float g = tmpImage->g(i, j) / 65535.f;
+                                float b = tmpImage->b(i, j) / 65535.f;
+                                float rout = 0.f;
+                                float gout = 0.f;
+                                float bout = 0.f;
+                                sigmoid_main(r, g, b, rout, gout, bout, middle_grey_contrast, contrast_skewness, MIDDLE_GREY, black_point, white_point_disp);
+                                tmpImage->r(i, j) = 65535.f * rout;
+                                tmpImage->g(i, j) = 65535.f * gout;
+                                tmpImage->b(i, j) = 65535.f * bout;
+                                
+                            }
+                    }
+*/
                     
                     
                     rgb2lab(*tmpImage, *bufexpfin, params->icm.workingProfile);
