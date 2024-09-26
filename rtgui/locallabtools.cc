@@ -5588,6 +5588,7 @@ void LocallabShadow::updateShadowGUI2()
         s_tonalwidth->show();
         sh_radius->show();
         ghsFrame->hide();
+        ghsMethod->hide();
     } else if (shMethod->get_active_row_number() == 1) {
         for (const auto multiplier : multipliersh) {
             multiplier->show();
@@ -5605,7 +5606,7 @@ void LocallabShadow::updateShadowGUI2()
         s_tonalwidth->hide();
         sh_radius->hide();
         ghsFrame->hide();
-
+        ghsMethod->hide();
     } else if (shMethod->get_active_row_number() == 2) {
         for (const auto multiplier : multipliersh) {
             multiplier->hide();
@@ -5620,7 +5621,7 @@ void LocallabShadow::updateShadowGUI2()
         s_tonalwidth->hide();
         sh_radius->hide();
         ghsFrame->show();
-
+        ghsMethod->show();
     }
 }
 
