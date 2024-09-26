@@ -127,6 +127,205 @@ float softlig(float a, float b, float minc, float maxc)
     }
 }
 
+// GHT filter ported from Siril.
+// 
+// see https://siril.org/tutorials/ghs/ for more info
+// 
+// Copyright of the original code follows
+/*
+ * Copyright (C) 2005-2011 Francois Meyer (dulle at free.fr)
+ * Copyright (C) 2012-2023 team free-astro (see more in AUTHORS file)
+ * Reference site is https://free-astro.org/index.php/Siril
+ *
+ * Siril is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * Siril is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with Siril. If not, see <http://www.gnu.org/licenses/>.
+ */
+/*
+ * Thanks to Alberto Grigio for the code CTL ght.ctl
+*/
+
+struct ght_compute_params {
+    float qlp;
+    float q0;
+    float qwp;
+    float q1;
+    float q;
+    float b1;
+    float a1;
+    float a2;
+    float b2;
+    float c2;
+    float d2;
+    float e2;
+    float a3;
+    float b3;
+    float c3;
+    float d3;
+    float e3;
+    float a4;
+    float b4;
+    float LPT;
+    float SPT;
+    float HPT;
+};
+
+ght_compute_params GHT_setup(float in_B, float D, float LP, float SP, float HP)
+{
+    ght_compute_params c;
+    float B = in_B;
+    if (B == -1.0f) {
+        //B = -B;
+        c.qlp = -1.0f*log(1.f + D*(SP - LP));
+        c.q0 = c.qlp - D * LP / (1.0f + D * (SP - LP));
+        c.qwp = log(1.f + D * (HP - SP));
+        c.q1 = c.qwp + D * (1.0f - HP) / (1.0f + D * (HP - SP));
+        c.q = 1.0f / (c.q1 - c.q0);
+        c.b1 = (1.0f + D * (SP - LP)) / (D * c.q);
+        c.a2 = (-c.q0) * c.q;
+        c.b2 = -c.q;
+        c.c2 = 1.0f + D * SP;
+        c.d2 = -D;
+        c.a3 = (-c.q0) * c.q;
+        c.b3 = c.q;
+        c.c3 = 1.0f - D * SP;
+        c.d3 = D;
+        c.a4 = (c.qwp - c.q0 - D * HP / (1.0f + D * (HP - SP))) * c.q;
+        c.b4 = c.q * D / (1.0f + D * (HP - SP));
+    } else if (B < 0.0f) {
+        B = -B;
+        c.qlp = (1.0f - pow((1.0f + D * B * (SP - LP)), (B - 1.0f) / B)) / (B - 1.0f);
+        c.q0 = c.qlp - D * LP * (pow((1.0f + D * B * (SP - LP)), -1.0f / B));
+        c.qwp = (pow((1.0f + D * B * (HP - SP)), (B - 1.0f) / B) - 1.0f) / (B - 1.0f);
+        c.q1 = c.qwp + D * (1.0f - HP) * (pow((1.0f + D * B * (HP - SP)), -1.0f / B));
+        c.q = 1.0f / (c.q1 - c.q0);
+        c.b1 = D * pow(1.0f + D * B * (SP - LP), -1.0f / B) *c.q;
+        c.a2 = (1.0f/(B-1.0f)-c.q0) * c.q;
+        c.b2 = -c.q/(B-1.0f);
+        c.c2 = 1.0f + D * B * SP;
+        c.d2 = -D * B;
+        c.e2 = (B - 1.0f)/B;
+        c.a3 = (-1.0f/(B-1.0f) - c.q0) *c.q;
+        c.b3 = c.q/(B-1.0f);
+        c.c3 = 1.0f - D * B * SP;
+        c.d3 = D * B;
+        c.e3 = (B - 1.0f) / B;
+        c.a4 = (c.qwp - c.q0 - D * HP * pow((1.0f + D * B * (HP - SP)), -1.0f / B)) * c.q;
+        c.b4 = D * pow((1.0f + D * B * (HP - SP)), -1.0f / B) * c.q;
+    } else if (B == 0.0f) {
+        c.qlp = exp(-D * (SP - LP));
+        c.q0 = c.qlp - D * LP * exp(-D*(SP - LP));
+        c.qwp = 2.0f - exp(-D * (HP -SP));
+        c.q1 = c.qwp + D * (1.0f - HP) * exp (-D * (HP - SP));
+        c.q = 1.0f / (c.q1 - c.q0);
+        c.a1 = 0.0f;
+        c.b1 = D * exp (-D * (SP - LP)) * c.q;
+        c.a2 = -c.q0 * c.q;
+        c.b2 = c.q;
+        c.c2 = -D * SP;
+        c.d2 = D;
+        c.a3 = (2.0f - c.q0) * c.q;
+        c.b3 = -c.q;
+        c.c3 = D * SP;
+        c.d3 = -D;
+        c.a4 = (c.qwp - c.q0 - D * HP * exp(-D * (HP - SP))) * c.q;
+        c.b4 = D * exp(-D * (HP - SP)) * c.q;
+    } else if (B > 0.0f) {
+        c.qlp = pow((1.0f + D * B * (SP - LP)), -1.0f/B);
+        c.q0 = c.qlp - D * LP * pow((1.f + D * B * (SP - LP)), -(1.0f + B) / B);
+        c.qwp = 2.0f - pow(1.0f + D * B * (HP - SP), -1.0f / B);
+        c.q1 = c.qwp + D * (1.0f - HP) * pow((1.0f + D * B * (HP - SP)), -(1.0f + B) / B);
+        c.q = 1.0f / (c.q1 - c.q0);
+        c.b1 = D * pow((1.0f + D * B * (SP - LP)), -(1.0f+B)/B) * c.q;
+        c.a2 = -c.q0 * c.q;
+        c.b2 = c.q;
+        c.c2 = 1.0f + D * B * SP;
+        c.d2 = -D * B;
+        c.e2 = -1.0f / B;
+        c.a3 = (2.0f - c.q0) * c.q;
+        c.b3 = -c.q;
+        c.c3 = 1.0f - D * B * SP;
+        c.d3 = D * B;
+        c.e3 = -1.0f / B;
+        c.a4 = (c.qwp - c.q0 - D * HP * pow((1.0f + D * B * (HP - SP)), -(B + 1.0f) / B)) * c.q;
+        c.b4 = (D * pow((1.0f + D * B * (HP - SP)), -(B + 1.0f) / B)) * c.q;
+    }
+
+    return c;
+}
+
+float clamp(float x, float lo, float hi)
+{
+    return fmax(fmin(x, hi), lo);
+}
+
+
+float GHT(float x, float B, float D, float LP, float SP, float HP, ght_compute_params c)
+{
+    //const float BP = 0.0f;
+    float out;
+    /* float in = x; */
+    /* in = fmax(0.0, (in - BP)/(1.0 - BP)); */
+    float in = clamp(x, 0.f, 1.f);
+    if (D == 0.0f) {
+        out = in;
+    } else {
+        if (B == -1.0f) {
+            if (in < LP) {
+                out = c.b1 * in;
+            } else if (in < SP) {
+                out = c.a2 + c.b2 * log(c.c2 + c.d2 * in);
+            } else if (in < HP) {
+                out = c.a3 + c.b3 * log(c.c3 + c.d3 * in);
+            } else {
+                out = c.a4 + c.b4 * in;
+            }
+        } else if (B < 0.0f) {
+            if (in < LP) {
+                out = c.b1 * in;
+            } else if (in < SP) {
+                out = c.a2 + c.b2 * pow((c.c2 + c.d2 * in), c.e2);
+            } else if (in < HP) {
+                out = c.a3 + c.b3 * pow((c.c3 + c.d3 * in), c.e3);
+            } else {
+                out = c.a4 + c.b4 * in;
+            }
+        } else if (B == 0.0f) {
+            if (in < LP) {
+                out = c.a1 + c.b1 * in;
+            } else if (in < SP) {
+                out = c.a2 + c.b2 * exp(c.c2 + c.d2 * in);
+            } else if (in < HP) {
+                out = c.a3 + c.b3 * exp(c.c3 + c.d3 * in);
+            } else {
+                out = c.a4 + c.b4 * in;
+            }
+        } else /*if (B > 0)*/ {
+            if (in < LP) {
+                out = c.b1 * in;
+            } else if (in < SP) {
+                out = c.a2 + c.b2 * pow((c.c2 + c.d2 * in), c.e2);
+            } else if (in < HP) {
+                out = c.a3 + c.b3 * pow((c.c3 + c.d3 * in), c.e3);
+            } else {
+                out = c.a4 + c.b4 * in;
+            }
+        }
+    }
+    return out;
+}
+// end GHT Siril 
+
+
 float softlig3(float a, float b)
 {
     // as w3C
