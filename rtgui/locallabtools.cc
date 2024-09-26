@@ -4273,6 +4273,13 @@ LocallabShadow::LocallabShadow():
     gamFrame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_GAMFRA")))),
     gamSH(Gtk::manage(new Adjuster(M("TP_LOCALLAB_GAMSH"), 0.25, 15.0, 0.01, 2.4))),
     sloSH(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SLOSH"), 0.0, 500.0, 0.01, 12.92))),
+    ghsMethod(Gtk::manage(new MyComboBoxText())),
+    ghsFrame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_GHSFRA")))),
+    ghs_D(Gtk::manage(new Adjuster(M("TP_LOCALLAB_GHS_D"), 0., 10.0, 0.001, 0.0))),
+    ghs_B(Gtk::manage(new Adjuster(M("TP_LOCALLAB_GHS_B"), -5.0, 15.0, 0.001, 0.0))),
+    ghs_SP(Gtk::manage(new Adjuster(M("TP_LOCALLAB_GHS_SP"), 0.0, 1.0, 0.00001, 0.0))),
+    ghs_LP(Gtk::manage(new Adjuster(M("TP_LOCALLAB_GHS_LP"), 0.0, 1.0, 0.00001, 0.0))),
+    ghs_HP(Gtk::manage(new Adjuster(M("TP_LOCALLAB_GHS_HP"), 0.0, 1.0, 0.00001, 1.0))),
     expgradsh(Gtk::manage(new MyExpander(false, M("TP_LOCALLAB_EXPGRAD")))),
     strSH(Gtk::manage(new Adjuster(M("TP_LOCALLAB_GRADSTR"), -4., 4., 0.05, 0.))),
     angSH(Gtk::manage(new Adjuster(M("TP_LOCALLAB_GRADANG"), -180, 180, 0.1, 0.))),
@@ -4303,7 +4310,7 @@ LocallabShadow::LocallabShadow():
     auto m = ProcEventMapper::getInstance();
     Evlocallabpreviewsh = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_PREVIEWSH");
     EvlocallabfeatherSH = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_FEATHERSH");
-    
+    EvlocallabghsMethod = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_GHSMETHOD");
     set_orientation(Gtk::ORIENTATION_VERTICAL);
 
     const LocallabParams::LocallabSpot defSpot;
@@ -4311,8 +4318,15 @@ LocallabShadow::LocallabShadow():
     // Parameter Shadow highlight specific widgets
     shMethod->append(M("TP_LOCALLAB_SH1"));
     shMethod->append(M("TP_LOCALLAB_SH2"));
+    shMethod->append(M("TP_LOCALLAB_SH3"));
     shMethod->set_active(0);
     shMethodConn = shMethod->signal_changed().connect(sigc::mem_fun(*this, &LocallabShadow::shMethodChanged));
+
+    ghsMethod->append(M("TP_LOCALLAB_GHSRGB"));
+    ghsMethod->append(M("TP_LOCALLAB_GHSLUM"));
+    ghsMethod->append(M("TP_LOCALLAB_GHSSAT"));
+    ghsMethod->set_active(0);
+    ghsMethodConn = ghsMethod->signal_changed().connect(sigc::mem_fun(*this, &LocallabShadow::ghsMethodChanged));
 
     for (const auto multiplier : multipliersh) {
         multiplier->setAdjusterListener(this);
@@ -4347,6 +4361,12 @@ LocallabShadow::LocallabShadow():
     sloSH->setLogScale(16, 0);
 
     sloSH->setAdjusterListener(this);
+
+    ghs_D->setAdjusterListener(this);
+    ghs_B->setAdjusterListener(this);
+    ghs_SP->setAdjusterListener(this);
+    ghs_LP->setAdjusterListener(this);
+    ghs_HP->setAdjusterListener(this);
 
     setExpandAlignProperties(expgradsh, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_START);
 
@@ -4433,6 +4453,16 @@ LocallabShadow::LocallabShadow():
     
     pack_start(*inverssh);
     pack_start(*shMethod);
+    pack_start(*ghsMethod);
+    ghsFrame->set_label_align(0.025, 0.5);
+    ToolParamBlock* const ghsBox = Gtk::manage(new ToolParamBlock());
+    ghsBox->pack_start(*ghs_D);
+    ghsBox->pack_start(*ghs_B);
+    ghsBox->pack_start(*ghs_SP);
+    ghsBox->pack_start(*ghs_LP);
+    ghsBox->pack_start(*ghs_HP);
+    ghsFrame->add(*ghsBox);
+    pack_start(*ghsFrame);
 
     for (const auto multiplier : multipliersh) {
         pack_start(*multiplier);
@@ -4463,6 +4493,7 @@ LocallabShadow::LocallabShadow():
     gammBox->pack_start(*sloSH);
     gamFrame->add(*gammBox);
     pack_start(*gamFrame);
+    
     ToolParamBlock* const gradSHBox = Gtk::manage(new ToolParamBlock());
     gradSHBox->pack_start(*strSH);
     gradSHBox->pack_start(*angSH);
@@ -4698,6 +4729,7 @@ void LocallabShadow::disableListener()
     LocallabTool::disableListener();
 
     shMethodConn.block(true);
+    ghsMethodConn.block(true);
     inversshConn.block(true);
     showmaskSHMethodConn.block(true);
     showmaskSHMethodConninv.block(true);
@@ -4709,6 +4741,7 @@ void LocallabShadow::enableListener()
     LocallabTool::enableListener();
 
     shMethodConn.block(false);
+    ghsMethodConn.block(false);
     inversshConn.block(false);
     showmaskSHMethodConn.block(false);
     showmaskSHMethodConninv.block(false);
@@ -4734,6 +4767,16 @@ void LocallabShadow::read(const rtengine::procparams::ProcParams* pp, const Para
             shMethod->set_active(0);
         } else if (spot.shMethod == "tone") {
             shMethod->set_active(1);
+        } else if (spot.shMethod == "ghs") {
+            shMethod->set_active(2);
+        }
+
+        if (spot.ghsMethod == "rgb") {
+            ghsMethod->set_active(0);
+        } else if (spot.ghsMethod == "lum") {
+            ghsMethod->set_active(1);
+        } else if (spot.ghsMethod == "sat") {
+            ghsMethod->set_active(2);
         }
 
         for (int i = 0; i < 6; i++) {
@@ -4784,7 +4827,7 @@ void LocallabShadow::read(const rtengine::procparams::ProcParams* pp, const Para
     // Update shadow highlight GUI according to inverssh button state
     updateShadowGUI1();
 
-    // Update shadow highlight GUI according to shMethod combobox state
+    // Update shadow highlight GUI according to shMethod and ghsmethod combobox state
     updateShadowGUI2();
 
     // Note: No need to manage pedited as batch mode is deactivated for Locallab
@@ -4805,6 +4848,16 @@ void LocallabShadow::write(rtengine::procparams::ProcParams* pp, ParamsEdited* p
             spot.shMethod = "std";
         } else if (shMethod->get_active_row_number() == 1) {
             spot.shMethod = "tone";
+        } else if (shMethod->get_active_row_number() == 2) {
+            spot.shMethod = "ghs";
+        }
+
+        if (ghsMethod->get_active_row_number() == 0) {
+            spot.ghsMethod = "rgb";
+        } else if (ghsMethod->get_active_row_number() == 1) {
+            spot.ghsMethod = "lum";
+        } else if (ghsMethod->get_active_row_number() == 2) {
+            spot.ghsMethod = "sat";
         }
 
         for (int i = 0; i < 6; i++) {
@@ -5230,8 +5283,12 @@ void LocallabShadow::updateGUIToMode(const modeType new_type)
             exprecovs->show();
 
             // Specific Simple mode widgets are shown in Normal mode
-            if (shMethod->get_active_row_number() != 0) { // Keep widget hidden when shMethod is equal to 0
+            if (shMethod->get_active_row_number() == 1) { // Keep widget hidden when shMethod is equal to 0
                 gamFrame->show();
+            }
+
+            if (shMethod->get_active_row_number() != 1 ) { // Keep widget hidden when shMethod is equal to 0
+                gamFrame->hide();
             }
 
             if (enaSHMask->get_active()) {
@@ -5257,8 +5314,12 @@ void LocallabShadow::updateGUIToMode(const modeType new_type)
             // Show widgets hidden in Normal and Simple mode
             blurSHde->show();
 
-            if (shMethod->get_active_row_number() != 0) { // Keep widget hidden when shMethod is equal to 0
+            if (shMethod->get_active_row_number() == 1) { // Keep widget hidden when shMethod is equal to 0
                 gamFrame->show();
+            }
+
+            if (shMethod->get_active_row_number() != 1 ) { // Keep widget hidden when shMethod is equal to 0
+                gamFrame->hide();
             }
 
             if (!inverssh->get_active()) { // Keep widget hidden when inverssh is toggled
@@ -5311,6 +5372,20 @@ void LocallabShadow::shMethodChanged()
         if (listener) {
             listener->panelChanged(EvlocallabshMethod,
                                    shMethod->get_active_text() + " (" + escapeHtmlChars(getSpotName()) + ")");
+        }
+    }
+}
+
+void LocallabShadow::ghsMethodChanged()
+{
+
+    // Update shadow highlight GUI according to ghsMethod combobox state
+    updateShadowGUI2();
+
+    if (isLocActivated && exp->getEnabled()) {
+        if (listener) {
+            listener->panelChanged(EvlocallabghsMethod,
+                                   ghsMethod->get_active_text() + " (" + escapeHtmlChars(getSpotName()) + ")");
         }
     }
 }
@@ -5453,6 +5528,7 @@ void LocallabShadow::updateShadowGUI2()
         shadows->show();
         s_tonalwidth->show();
         sh_radius->show();
+        ghsFrame->hide();
     } else if (shMethod->get_active_row_number() == 1) {
         for (const auto multiplier : multipliersh) {
             multiplier->show();
@@ -5469,6 +5545,23 @@ void LocallabShadow::updateShadowGUI2()
         shadows->hide();
         s_tonalwidth->hide();
         sh_radius->hide();
+        ghsFrame->hide();
+
+    } else if (shMethod->get_active_row_number() == 2) {
+        for (const auto multiplier : multipliersh) {
+            multiplier->hide();
+        }
+
+        gamFrame->hide();
+        detailSH->hide();
+        tePivot->hide();
+        highlights->hide();
+        h_tonalwidth->hide();
+        shadows->hide();
+        s_tonalwidth->hide();
+        sh_radius->hide();
+        ghsFrame->show();
+
     }
 }
 

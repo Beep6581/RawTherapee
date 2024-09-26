@@ -566,6 +566,15 @@ private:
     Gtk::Frame* const gamFrame;
     Adjuster* const gamSH;
     Adjuster* const sloSH;
+
+    MyComboBoxText* const ghsMethod;
+    Gtk::Frame* const ghsFrame;
+    Adjuster* const ghs_D;
+    Adjuster* const ghs_B;
+    Adjuster* const ghs_SP;
+    Adjuster* const ghs_LP;
+    Adjuster* const ghs_HP;
+
     MyExpander* const expgradsh;
     Adjuster* const strSH;
     Adjuster* const angSH;
@@ -592,8 +601,9 @@ private:
     Adjuster* const fatanchorSH;
 
     rtengine::ProcEvent EvlocallabTePivot;
+    rtengine::ProcEvent EvlocallabghsMethod;
 
-    sigc::connection shMethodConn, previewshConn, inversshConn, showmaskSHMethodConn, showmaskSHMethodConninv, enaSHMaskConn;
+    sigc::connection shMethodConn, ghsMethodConn, previewshConn, inversshConn, showmaskSHMethodConn, showmaskSHMethodConninv, enaSHMaskConn;
 
 public:
     LocallabShadow();
@@ -629,6 +639,7 @@ private:
     void updateMaskBackground(const double normChromar, const double normLumar, const double normHuer, const double normHuerjz) override;
 
     void shMethodChanged();
+    void ghsMethodChanged();
     void inversshChanged();
     void showmaskSHMethodChanged();
     void showmaskSHMethodChangedinv();

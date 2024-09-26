@@ -1520,6 +1520,7 @@ HISTORY_MSG_LOCAL_FEATHERSH;Local - SH Gradient feather
 HISTORY_MSG_LOCAL_FEATHERVIB;Local - Vib Gradient feather
 HISTORY_MSG_LOCAL_FEATHERWAV;Local - Wav Gradient feather
 HISTORY_MSG_LOCAL_GAMUTMUNSEL;Local - SC - Avoid Color Shift
+HISTORY_MSG_LOCAL_GHSMETHOD;Local - GHS - method
 HISTORY_MSG_LOCAL_LOG_BLACKS;Local - Log Blacks distribution
 HISTORY_MSG_LOCAL_LOG_COMPR;Local - Log Compress brightness
 HISTORY_MSG_LOCAL_LOG_SAT;Local - Log Saturation control
@@ -3127,6 +3128,9 @@ TP_LOCALLAB_GAMUTNON;None
 TP_LOCALLAB_GAMUTXYZABSO;XYZ Absolute
 TP_LOCALLAB_GAMUTXYZRELA;XYZ Relative
 TP_LOCALLAB_GAMW;Gamma (wavelet pyramids)
+TP_LOCALLAB_GHSRGB;RGB
+TP_LOCALLAB_GHSLUM;Luminance
+TP_LOCALLAB_GHSSAT;Saturation
 TP_LOCALLAB_GRADANG;Gradient angle
 TP_LOCALLAB_GRADANG_TOOLTIP;Rotation angle in degrees: -180 0 +180.
 TP_LOCALLAB_GRADFRA;Graduated Filter Mask
@@ -3497,9 +3501,10 @@ TP_LOCALLAB_SENSI_TOOLTIP;Adjusts the scope of the action:\nSmall values limit t
 TP_LOCALLAB_SETTINGS;Settings
 TP_LOCALLAB_SH1;Shadows Highlights
 TP_LOCALLAB_SH2;Equalizer
+TP_LOCALLAB_SH3;Generalized Hyperbolic Stretch
 TP_LOCALLAB_SHADEX;Shadows
 TP_LOCALLAB_SHADEXCOMP;Shadow compression
-TP_LOCALLAB_SHADHIGH;Shadows/Highlights & Tone Equalizer
+TP_LOCALLAB_SHADHIGH;Shadows/Highlights & Equalizer & GHS
 TP_LOCALLAB_SHADHMASK_TOOLTIP;Lowers the highlights of the mask in the same way as the shadows/highlights algorithm.
 TP_LOCALLAB_SHADMASK_TOOLTIP;Lifts the shadows of the mask in the same way as the shadows/highlights algorithm.
 TP_LOCALLAB_SHADOWHIGHLIGHT_TOOLTIP;Adjust shadows and highlights either with shadows &amp; highlights sliders or with a tone equalizer.\nCan be used instead of, or in conjunction with the Exposure module.\nCan also be used as a graduated filter.

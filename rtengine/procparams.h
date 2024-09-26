@@ -1227,6 +1227,7 @@ struct LocallabParams {
         bool expshadhigh;
         int complexshadhigh;
         Glib::ustring shMethod; // std, tone
+        Glib::ustring ghsMethod; // rgb, lum, sat
         int multsh[6];
         int highlights;
         int h_tonalwidth;

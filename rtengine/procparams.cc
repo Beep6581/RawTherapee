@@ -3386,6 +3386,7 @@ LocallabParams::LocallabSpot::LocallabSpot() :
     expshadhigh(false),
     complexshadhigh(0),
     shMethod("tone"),
+    ghsMethod("rgb"),
     multsh{0, 0, 0, 0, 0, 0},
     highlights(0),
     h_tonalwidth(70),
@@ -5029,6 +5030,7 @@ bool LocallabParams::LocallabSpot::operator ==(const LocallabSpot& other) const
         && expshadhigh == other.expshadhigh
         && complexshadhigh == other.complexshadhigh
         && shMethod == other.shMethod
+        && ghsMethod == other.ghsMethod
         && [this, &other]() -> bool
             {
                 for (int i = 0; i < 6; ++i) {
@@ -6988,6 +6990,7 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
                     saveToKeyfile(!pedited || spot_edited->expshadhigh, "Locallab", "Expshadhigh_" + index_str, spot.expshadhigh, keyFile);
                     saveToKeyfile(!pedited || spot_edited->complexshadhigh, "Locallab", "Complexshadhigh_" + index_str, spot.complexshadhigh, keyFile);
                     saveToKeyfile(!pedited || spot_edited->shMethod, "Locallab", "ShMethod_" + index_str, spot.shMethod, keyFile);
+                    saveToKeyfile(!pedited || spot_edited->ghsMethod, "Locallab", "GhsMethod_" + index_str, spot.ghsMethod, keyFile);
 
                     for (int j = 0; j < 6; j++) {
                         saveToKeyfile(!pedited || spot_edited->multsh[j], "Locallab", "Multsh" + std::to_string(j) + "_" + index_str, spot.multsh[j], keyFile);
@@ -9313,6 +9316,7 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
 
                 assignFromKeyfile(keyFile, "Locallab", "Complexshadhigh_" + index_str, spot.complexshadhigh, spotEdited.complexshadhigh);
                 assignFromKeyfile(keyFile, "Locallab", "ShMethod_" + index_str, spot.shMethod, spotEdited.shMethod);
+                assignFromKeyfile(keyFile, "Locallab", "GhsMethod_" + index_str, spot.ghsMethod, spotEdited.ghsMethod);
 
                 for (int j = 0; j < 6; j ++) {
                     assignFromKeyfile(keyFile, "Locallab", "Multsh" + std::to_string(j) + "_" + index_str, spot.multsh[j], spotEdited.multsh[j]);
