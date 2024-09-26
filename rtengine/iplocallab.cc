@@ -1256,6 +1256,8 @@ static void calcLocalParams(int sp, int oW, int oH, const LocallabParams& locall
         lp.shmeth = 0;
     } else if (locallab.spots.at(sp).shMethod == "tone") {
         lp.shmeth = 1;
+    } else if (locallab.spots.at(sp).shMethod == "ghs") {
+        lp.shmeth = 2;
     }
 
 
@@ -16975,6 +16977,21 @@ void ImProcFunctions::Lab_Local(
 
                     delete tmpImage;
                 }
+                
+                if (lp.shmeth == 2) {
+                    double scal = (double)(sk);
+                    Imagefloat *tmpImage = nullptr;
+                    tmpImage = new Imagefloat(bfw, bfh);
+                    lab2rgb(*bufexpfin, *tmpImage, params->icm.workingProfile);
+                    Glib::ustring prof = params->icm.workingProfile;
+                    
+                    
+                    rgb2lab(*tmpImage, *bufexpfin, params->icm.workingProfile);
+
+                    delete tmpImage;
+                    
+                }
+                
             }
 
             if (lp.enaSHMask && lp.recothrs != 1.f) {
