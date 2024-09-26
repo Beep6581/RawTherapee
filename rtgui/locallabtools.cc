@@ -4311,6 +4311,11 @@ LocallabShadow::LocallabShadow():
     Evlocallabpreviewsh = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_PREVIEWSH");
     EvlocallabfeatherSH = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_FEATHERSH");
     EvlocallabghsMethod = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_GHSMETHOD");
+    Evlocallabghs_D = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_GHS_D");
+    Evlocallabghs_B = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_GHS_B");
+    Evlocallabghs_SP = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_GHS_SP");
+    Evlocallabghs_LP = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_GHS_LP");
+    Evlocallabghs_HP = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_GHS_HP");
     set_orientation(Gtk::ORIENTATION_VERTICAL);
 
     const LocallabParams::LocallabSpot defSpot;

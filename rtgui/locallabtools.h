@@ -602,6 +602,11 @@ private:
 
     rtengine::ProcEvent EvlocallabTePivot;
     rtengine::ProcEvent EvlocallabghsMethod;
+    rtengine::ProcEvent Evlocallabghs_D;
+    rtengine::ProcEvent Evlocallabghs_B;
+    rtengine::ProcEvent Evlocallabghs_SP;
+    rtengine::ProcEvent Evlocallabghs_LP;
+    rtengine::ProcEvent Evlocallabghs_HP;
 
     sigc::connection shMethodConn, ghsMethodConn, previewshConn, inversshConn, showmaskSHMethodConn, showmaskSHMethodConninv, enaSHMaskConn;
 
