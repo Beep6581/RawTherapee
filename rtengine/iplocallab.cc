@@ -919,6 +919,7 @@ struct local_params {
     bool islogcie; 
     bool issmoothcie; 
     bool issmoothghs;
+    float ghshp;
     int noiselequal;
     float noisechrodetail;
     float bilat;
@@ -1198,6 +1199,7 @@ static void calcLocalParams(int sp, int oW, int oH, const LocallabParams& locall
     lp.islogcie = locallab.spots.at(sp).logcie && locallab.spots.at(sp).expprecam;
     lp.issmoothcie = locallab.spots.at(sp).smoothcie;
     lp.issmoothghs = locallab.spots.at(sp).ghs_smooth;
+    lp.ghshp =  locallab.spots.at(sp).ghs_HP;
     lp.enaColorMask = locallab.spots.at(sp).enaColorMask && llsoftMask == 0 && llColorMaskinv == 0 && llSHMaskinv == 0 && llColorMask == 0 && llExpMaskinv == 0 && lllcMask == 0 && llsharMask == 0 && llExpMask == 0 && llSHMask == 0 && llcbMask == 0 && llretiMask == 0 && lltmMask == 0 && llblMask == 0 && llvibMask == 0 && lllogMask == 0 && ll_Mask == 0 && llcieMask == 0;// Exposure mask is deactivated if Color & Light mask is visible
     lp.enaColorMaskinv = locallab.spots.at(sp).enaColorMask && llColorMaskinv == 0 && llSHMaskinv == 0 && llsoftMask == 0 && lllcMask == 0 && llsharMask == 0 && llExpMask == 0 && llSHMask == 0 && llcbMask == 0 && llretiMask == 0 && lltmMask == 0 && llblMask == 0 && llvibMask == 0 && lllogMask == 0 && ll_Mask == 0 && llcieMask == 0;// Exposure mask is deactivated if Color & Light mask is visible
     lp.enaExpMask = locallab.spots.at(sp).enaExpMask && llExpMask == 0 && llExpMaskinv == 0 && llSHMaskinv == 0 && llColorMask == 0 && llColorMaskinv == 0 && llsoftMask == 0 && lllcMask == 0 && llsharMask == 0 && llSHMask == 0 && llcbMask == 0 && llretiMask == 0 && lltmMask == 0 && llblMask == 0 && llvibMask == 0 && lllogMask == 0 && ll_Mask == 0 && llcieMask == 0;// Exposure mask is deactivated if Color & Light mask is visible
@@ -2756,9 +2758,14 @@ void tone_eqsmooth(ImProcFunctions *ipf, Imagefloat *rgb, const struct local_par
     if(lp.whiteevjz < 6) {//EV = 6 majority of images
         params.bands[4] = -15;
     }
-    if(lp.islogcie || lp.issmoothghs) {//with log encoding Cie
-        params.bands[4] = -15;
-        params.bands[5] = -50;
+    if(lp.islogcie || lp.issmoothghs) {//with log encoding Cie and GHS shadows Highlight
+        if(!lp.issmoothghs) {
+            params.bands[4] = -15;
+            params.bands[5] = -50;
+        } else {
+            params.bands[4] = -15 -(1.f-lp.ghshp) * 40.f;
+            params.bands[5] = -50 -(1.f-lp.ghshp) * 40.f;;
+        }
         if(lp.whiteevjz < 6) {
             params.bands[4] = -10;
         }

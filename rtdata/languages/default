@@ -3138,12 +3138,18 @@ TP_LOCALLAB_GHSRGB;RGB
 TP_LOCALLAB_GHSLUM;Luminance
 TP_LOCALLAB_GHSSAT;Saturation
 TP_LOCALLAB_GHSFRA;Stretch settings
-TP_LOCALLAB_GHS_D;Stretch factor
-TP_LOCALLAB_GHS_B;Local intensity
-TP_LOCALLAB_GHS_SP;Symmetry point
-TP_LOCALLAB_GHS_LP;Protect shadows
-TP_LOCALLAB_GHS_HP;Protect highlights
+TP_LOCALLAB_GHS_D;Stretch factor (D)
+TP_LOCALLAB_GHS_B;Local intensity (b)
+TP_LOCALLAB_GHS_SP;Symmetry point (SP)
+TP_LOCALLAB_GHS_LP;Protect shadows (LP)
+TP_LOCALLAB_GHS_HP;Protect highlights (HP)
 TP_LOCALLAB_GHS_METHOD_TOOLTIP;The GeneralizedHyperbolicStretch (GHS) process allows you to transform the values of pixels in your image to improve the representation of the underlying data for human visualisation. \nThe generalised hyperbolic equations used in the GHS process have five defining parameters. This allows significant flexibility in designing the "shape" of the transformation.\n\nTypical uses of pixel intensity transformations include:\n * Initial stretch of pixel data from linear state.\n * Addition of contrast to key areas of the image.\n * Overall brightening or darkening of the image.\n * Adjustment of the dynamic range of the image.\n * Adjustment of pixel data in one colour channel to balance better with other channels.
+TP_LOCALLAB_GHS_D_TOOLTIP;This parameter controls the amount of stretch. If the Stretch factor is set to zero there is no stretch, ie the transformation is the identity transformation.
+TP_LOCALLAB_GHS_B_TOOLTIP;This parameter controls how tightly focused the stretch is around the Symmetry point (SP) by changing the form of the transform itself. For concentrated stretches (such as initial stretches on linear images) a large +ve b factor should be employed to focus a stretch within a histogram peak while de-focusing the stretch away from the histogram peak (such as bright stars). For adjustment of non-linear images, lower or -ve b (and/or lower D) parameters should be employed to distribute contrast and brightness more evenly. Large positive values of 'b' can be thought of as a histogram widener, ie spreading the histogram wider about the focus point, SP. By contrast, lower and -ve values of b tend to shift the histogram to a brighter (or dimmer) position without affecting its width too greatly. As a general rule, the level of b employed will decrease as a stretch sequence nears completion, although larger +ve b values (with small D) can still be employed for precise placement of additional contrast.
+TP_LOCALLAB_GHS_SP_TOOLTIP;Sets the focus point around which the stretch is applied - contrast will be distributed symmetrically about SP. While 'b' provides the degree of focus of the stretch, SP determines where that focus is applied. SP should generally be placed within a histogram peak so that the stretch will widen and lower the peak by adding the most contrast in the stretch at that point. Pixel values will move away from the SP location.
+TP_LOCALLAB_GHS_LP_TOOLTIP;Sets a value below which the stretch is modified to preserve contrast in the shadows/lowlights. This is done by performing a linear stretch of the data below the 'LP' level by reserving contrast from the rest of the image. Moving the LP level towards the current setting of SP changes both the scope (range) and the amount of this contrast reservation, the net effect is to push the overal stretch to higher brightness levels while keeping the contrast and definition in the background. The amount of contrast reserved for the lowlights is such that the continuity of the stretch is preserved. This parameter must be greater than or equal to 0 and not greater than the Symmetry point.
+TP_LOCALLAB_GHS_HP_TOOLTIP;Sets a value above which the stretch is modified to preserve contrast in the highlights/stars. This is done by performing a linear stretch of the data above the 'HP' level by reserving contrast from the rest of the image. Moving the HP level towards the current setting of SP increases both the scope (range) and the amount of this contrast reservation, the net effect is to push the overal stretch to lower brightness levels while keeping the contrast and definition in the highlights. The amount of contrast reserved for the highlights is such that the continuity of the stretch is preserved. This parameter must be less than or equal to 1 and not less than the Symmetry point.
+TP_LOCALLAB_GHS_SMOOTH_TOOLTIP;Smooth luminance for highlights. Amplifies 'Protects Highlights (HP)' action.
 TP_LOCALLAB_GHS_SMOOTH;Smooth highlights
 TP_LOCALLAB_GRADANG;Gradient angle
 TP_LOCALLAB_GRADANG_TOOLTIP;Rotation angle in degrees: -180 0 +180.
