@@ -151,6 +151,10 @@ float softlig(float a, float b, float minc, float maxc)
  * along with Siril. If not, see <http://www.gnu.org/licenses/>.
  */
 /*
+//Copyright algorithm Pixlnsight David Payne 2021
+https://www.ghsastro.co.uk/doc/tools/GeneralizedHyperbolicStretch/GeneralizedHyperbolicStretch.html#__Description_:_About_GHS__
+*/
+/*
  * Thanks to Alberto Grigio for the code CTL ght.ctl
 */
 
@@ -16991,7 +16995,7 @@ void ImProcFunctions::Lab_Local(
                         float LP = params->locallab.spots.at(sp).ghs_LP;
                         float SP = params->locallab.spots.at(sp).ghs_SP;
                         float HP = params->locallab.spots.at(sp).ghs_HP;
-                        int met = 0;
+/*                        int met = 0;
                         if (params->locallab.spots.at(sp).ghsMethod == "rgb") {
                             met = 0;
                         } else if (params->locallab.spots.at(sp).ghsMethod == "lum") {
@@ -16999,7 +17003,7 @@ void ImProcFunctions::Lab_Local(
                         } else if (params->locallab.spots.at(sp).ghsMethod == "sat") {
                             met = 2;
                         }
-
+*/
                         const ght_compute_params c = GHT_setup(B, D, LP, SP, HP);
 
                         Imagefloat *tmpImage = nullptr;
@@ -17020,11 +17024,13 @@ void ImProcFunctions::Lab_Local(
                                 Ro = GHT(r, B, D, LP, SP, HP, c);
                                 Go = GHT(g, B, D, LP, SP, HP, c);
                                 Bo = GHT(b, B, D, LP, SP, HP, c);
-                                tmpImage->r(i, j) = clipR(Ro * 65535.f);
-                                tmpImage->g(i, j) = clipR(Go * 65535.f);
-                                tmpImage->b(i, j) = clipR(Bo * 65535.f);
+                               // tmpImage->r(i, j) = clipR(Ro * 65535.f);
+                               // tmpImage->g(i, j) = clipR(Go * 65535.f);
+                               // tmpImage->b(i, j) = clipR(Bo * 65535.f);
+                                tmpImage->r(i, j) = rtengine::max(0.f, Ro * 65535.f);
+                                tmpImage->g(i, j) = rtengine::max(0.f, Go * 65535.f);
+                                tmpImage->b(i, j) = rtengine::max(0.f, Bo * 65535.f);
                             }
-
                         rgb2lab(*tmpImage, *bufexpfin, params->icm.workingProfile);
 
                         delete tmpImage;
