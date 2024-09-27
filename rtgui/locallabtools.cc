@@ -4281,7 +4281,6 @@ LocallabShadow::LocallabShadow():
     ghs_LP(Gtk::manage(new Adjuster(M("TP_LOCALLAB_GHS_LP"), 0.0, 1.0, 0.00001, 0.0))),
     ghs_HP(Gtk::manage(new Adjuster(M("TP_LOCALLAB_GHS_HP"), 0.0, 1.0, 0.00001, 1.0))),
     ghs_smooth(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_GHS_SMOOTH")))),
-
     expgradsh(Gtk::manage(new MyExpander(false, M("TP_LOCALLAB_EXPGRAD")))),
     strSH(Gtk::manage(new Adjuster(M("TP_LOCALLAB_GRADSTR"), -4., 4., 0.05, 0.))),
     angSH(Gtk::manage(new Adjuster(M("TP_LOCALLAB_GRADANG"), -180, 180, 0.1, 0.))),
@@ -4376,6 +4375,7 @@ LocallabShadow::LocallabShadow():
     ghs_SP->setAdjusterListener(this);
     ghs_LP->setAdjusterListener(this);
     ghs_HP->setAdjusterListener(this);
+
     ghs_smoothConn = ghs_smooth->signal_toggled().connect(sigc::mem_fun(*this, &LocallabShadow::ghs_smoothChanged));
     ghs_D->set_tooltip_text(M("TP_LOCALLAB_GHS_D_TOOLTIP"));
     ghs_B->set_tooltip_text(M("TP_LOCALLAB_GHS_B_TOOLTIP"));
@@ -4478,9 +4478,9 @@ LocallabShadow::LocallabShadow():
     ghsBox->pack_start(*ghs_LP);
     ghsBox->pack_start(*ghs_HP);
     ghsBox->pack_start(*ghs_smooth);
-    pack_start(*inverssh);
     ghsFrame->add(*ghsBox);
     pack_start(*ghsFrame);
+
 
     for (const auto multiplier : multipliersh) {
         pack_start(*multiplier);
