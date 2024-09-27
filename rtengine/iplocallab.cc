@@ -16998,7 +16998,7 @@ void ImProcFunctions::Lab_Local(
                         float SP = params->locallab.spots.at(sp).ghs_SP;
                         float HP = params->locallab.spots.at(sp).ghs_HP;
                         bool smoth = params->locallab.spots.at(sp).ghs_smooth;
-/*                        int met = 0;
+                        int met = 0;
                         if (params->locallab.spots.at(sp).ghsMethod == "rgb") {
                             met = 0;
                         } else if (params->locallab.spots.at(sp).ghsMethod == "lum") {
@@ -17006,7 +17006,7 @@ void ImProcFunctions::Lab_Local(
                         } else if (params->locallab.spots.at(sp).ghsMethod == "sat") {
                             met = 2;
                         }
-*/
+
                         const ght_compute_params c = GHT_setup(B, D, LP, SP, HP);
 
                         Imagefloat *tmpImage = nullptr;
@@ -17014,23 +17014,47 @@ void ImProcFunctions::Lab_Local(
                         lab2rgb(*bufexpfin, *tmpImage, params->icm.workingProfile);
                         Glib::ustring prof = params->icm.workingProfile;
 
+                        if(met ==0) {//RGB mode
 #ifdef _OPENMP
         #   pragma omp parallel for schedule(dynamic,16) if (multiThread)
 #endif
-
-                        for (int i = 0; i < bfh; ++i)
-                            for (int j = 0; j < bfw; ++j) {
-                                float r = tmpImage->r(i, j)/65535.f;
-                                float g = tmpImage->g(i, j)/65535.f;
-                                float b = tmpImage->b(i, j)/65535.f;
-                                float Ro,Go, Bo;
-                                Ro = GHT(r, B, D, LP, SP, HP, c);
-                                Go = GHT(g, B, D, LP, SP, HP, c);
-                                Bo = GHT(b, B, D, LP, SP, HP, c);
-                                tmpImage->r(i, j) = rtengine::max(0.00001f, Ro * 65535.f);
-                                tmpImage->g(i, j) = rtengine::max(0.00001f, Go * 65535.f);
-                                tmpImage->b(i, j) = rtengine::max(0.00001f, Bo * 65535.f);
-                            }
+                            for (int i = 0; i < bfh; ++i)
+                                for (int j = 0; j < bfw; ++j) {
+                                    float r = tmpImage->r(i, j)/65535.f;
+                                    float g = tmpImage->g(i, j)/65535.f;
+                                    float b = tmpImage->b(i, j)/65535.f;
+                                    float Ro,Go, Bo;
+                                    Ro = GHT(r, B, D, LP, SP, HP, c);
+                                    Go = GHT(g, B, D, LP, SP, HP, c);
+                                    Bo = GHT(b, B, D, LP, SP, HP, c);
+                                    tmpImage->r(i, j) = rtengine::max(0.00001f, Ro * 65535.f);
+                                    tmpImage->g(i, j) = rtengine::max(0.00001f, Go * 65535.f);
+                                    tmpImage->b(i, j) = rtengine::max(0.00001f, Bo * 65535.f);
+                                }
+                        } else {//Luminance and Saturation
+#ifdef _OPENMP
+        #   pragma omp parallel for schedule(dynamic,16) if (multiThread)
+#endif
+                            for (int i = 0; i < bfh; ++i)
+                                for (int j = 0; j < bfw; ++j) {
+                                    float r = tmpImage->r(i, j);
+                                    float g = tmpImage->g(i, j);
+                                    float b = tmpImage->b(i, j);
+                                    float h, s, l;
+                                    Color::rgb2hsl(r, g, b, h, s, l);
+                                    if(met == 2) {//saturation
+                                        s = GHT(s, B, D, LP, SP, HP, c);
+                                    } else {//luminance
+                                        l = GHT(l, B, D, LP, SP, HP, c);
+                                    }
+                                    float R, G, B;
+                                    Color::hsl2rgb(h, s, l, R, G, B);
+                                    tmpImage->r(i, j) = rtengine::max(0.00001f, R);
+                                    tmpImage->g(i, j) = rtengine::max(0.00001f, G);
+                                    tmpImage->b(i, j) = rtengine::max(0.00001f, B);
+                                }
+                        }
+                            
                         if(smoth) {
                             tone_eqsmooth(this, tmpImage, lp, params->icm.workingProfile, sk, multiThread);//reduce Ev > 0 < 12
                         }
