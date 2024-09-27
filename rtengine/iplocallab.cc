@@ -179,7 +179,7 @@ struct ght_compute_params {
     float HPT;
 };
 
-ght_compute_params GHT_setup(float in_B, float D, float LP, float SP, float HP)
+ght_compute_params  GHT_setup(float in_B, float D, float LP, float SP, float HP)
 {
     ght_compute_params c;
     float B = in_B;
@@ -16813,7 +16813,13 @@ void ImProcFunctions::Lab_Local(
         tonecurv = true;
     }
 
-    if (! lp.invsh && (lp.highlihs > 0.f || lp.shadowhs > 0.f || tonequ || tonecurv || lp.strSH != 0.f || lp.showmaskSHmet == 2 || lp.enaSHMask || lp.showmaskSHmet == 3 || lp.showmaskSHmet == 4 || lp.prevdE) && call <= 3 && lp.hsena) {
+    bool ghsactiv = false;
+    float D = params->locallab.spots.at(sp).ghs_D;
+    if(D != 0.f) {
+        ghsactiv = true;
+    }
+
+    if (! lp.invsh && (lp.highlihs > 0.f || lp.shadowhs > 0.f || tonequ || tonecurv || ghsactiv || lp.strSH != 0.f || lp.showmaskSHmet == 2 || lp.enaSHMask || lp.showmaskSHmet == 3 || lp.showmaskSHmet == 4 || lp.prevdE) && call <= 3 && lp.hsena) {
         const int ystart = rtengine::max(static_cast<int>(lp.yc - lp.lyT) - cy, 0);
         const int yend = rtengine::min(static_cast<int>(lp.yc + lp.ly) - cy, original->H);
         const int xstart = rtengine::max(static_cast<int>(lp.xc - lp.lxL) - cx, 0);
@@ -16979,56 +16985,51 @@ void ImProcFunctions::Lab_Local(
                 }
                 
                 if (lp.shmeth == 2) {
-                    float D = params->locallab.spots.at(sp).ghs_D;
-                    float B = params->locallab.spots.at(sp).ghs_B;
-                    float LP = params->locallab.spots.at(sp).ghs_LP;
-                    float SP = params->locallab.spots.at(sp).ghs_SP;
-                    float HP = params->locallab.spots.at(sp).ghs_HP;
-                    int met = 0;
-                    if (params->locallab.spots.at(sp).ghsMethod == "rgb") {
-                        met = 0;
-                    } else if (params->locallab.spots.at(sp).ghsMethod == "lum") {
-                        met = 1;
-                    } else if (params->locallab.spots.at(sp).ghsMethod == "sat") {
-                        met = 2;
-                    }
-                    //double scal = (double)(sk);
+                    if(ghsactiv) {
+                        //float D = params->locallab.spots.at(sp).ghs_D;
+                        float B = params->locallab.spots.at(sp).ghs_B;
+                        float LP = params->locallab.spots.at(sp).ghs_LP;
+                        float SP = params->locallab.spots.at(sp).ghs_SP;
+                        float HP = params->locallab.spots.at(sp).ghs_HP;
+                        int met = 0;
+                        if (params->locallab.spots.at(sp).ghsMethod == "rgb") {
+                            met = 0;
+                        } else if (params->locallab.spots.at(sp).ghsMethod == "lum") {
+                            met = 1;
+                        } else if (params->locallab.spots.at(sp).ghsMethod == "sat") {
+                            met = 2;
+                        }
 
-                    const ght_compute_params c = GHT_setup(B, D, LP, SP, HP);
+                        const ght_compute_params c = GHT_setup(B, D, LP, SP, HP);
 
-                    Imagefloat *tmpImage = nullptr;
-                    tmpImage = new Imagefloat(bfw, bfh);
-                    lab2rgb(*bufexpfin, *tmpImage, params->icm.workingProfile);
-                    Glib::ustring prof = params->icm.workingProfile;
-/*
+                        Imagefloat *tmpImage = nullptr;
+                        tmpImage = new Imagefloat(bfw, bfh);
+                        lab2rgb(*bufexpfin, *tmpImage, params->icm.workingProfile);
+                        Glib::ustring prof = params->icm.workingProfile;
+
 #ifdef _OPENMP
         #   pragma omp parallel for schedule(dynamic,16) if (multiThread)
 #endif
 
                         for (int i = 0; i < bfh; ++i)
                             for (int j = 0; j < bfw; ++j) {
-                                float r = tmpImage->r(i, j) / 65535.f;
-                                float g = tmpImage->g(i, j) / 65535.f;
-                                float b = tmpImage->b(i, j) / 65535.f;
-                                float rout = 0.f;
-                                float gout = 0.f;
-                                float bout = 0.f;
-                                sigmoid_main(r, g, b, rout, gout, bout, middle_grey_contrast, contrast_skewness, MIDDLE_GREY, black_point, white_point_disp);
-                                tmpImage->r(i, j) = 65535.f * rout;
-                                tmpImage->g(i, j) = 65535.f * gout;
-                                tmpImage->b(i, j) = 65535.f * bout;
-                                
+                                float r = tmpImage->r(i, j)/65535.f;
+                                float g = tmpImage->g(i, j)/65535.f;
+                                float b = tmpImage->b(i, j)/65535.f;
+                                float Ro,Go, Bo;
+                                Ro = GHT(r, B, D, LP, SP, HP, c);
+                                Go = GHT(g, B, D, LP, SP, HP, c);
+                                Bo = GHT(b, B, D, LP, SP, HP, c);
+                                tmpImage->r(i, j) = clipR(Ro * 65535.f);
+                                tmpImage->g(i, j) = clipR(Go * 65535.f);
+                                tmpImage->b(i, j) = clipR(Bo * 65535.f);
                             }
-                    }
-*/
-                    
-                    
-                    rgb2lab(*tmpImage, *bufexpfin, params->icm.workingProfile);
 
-                    delete tmpImage;
-                    
+                        rgb2lab(*tmpImage, *bufexpfin, params->icm.workingProfile);
+
+                        delete tmpImage;
+                    }
                 }
-                
             }
 
             if (lp.enaSHMask && lp.recothrs != 1.f) {

@@ -4603,6 +4603,10 @@ void LocallabShadow::updateguishad(int spottype)
                 } else {
                     previewsh->hide();
                 }
+                if (shMethod->get_active_row_number() == 2) {
+                   inverssh->hide();
+                   inverssh->set_active(false);
+                }
                 
             }
             enableListener();
@@ -5622,6 +5626,8 @@ void LocallabShadow::updateShadowGUI2()
         sh_radius->hide();
         ghsFrame->show();
         ghsMethod->show();
+        inverssh->hide();
+        inverssh->set_active(false);
     }
 }
 
