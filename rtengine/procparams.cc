@@ -3392,6 +3392,7 @@ LocallabParams::LocallabSpot::LocallabSpot() :
     ghs_SP(0.),
     ghs_LP(0.),
     ghs_HP(1.),
+    ghs_smooth(true),
     multsh{0, 0, 0, 0, 0, 0},
     highlights(0),
     h_tonalwidth(70),
@@ -5041,6 +5042,7 @@ bool LocallabParams::LocallabSpot::operator ==(const LocallabSpot& other) const
         && ghs_SP == other.ghs_SP
         && ghs_LP == other.ghs_LP
         && ghs_HP == other.ghs_HP
+        && ghs_smooth == other.ghs_smooth
         && [this, &other]() -> bool
             {
                 for (int i = 0; i < 6; ++i) {
@@ -7006,6 +7008,7 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
                     saveToKeyfile(!pedited || spot_edited->ghs_SP, "Locallab", "Ghs_SP_" + index_str, spot.ghs_SP, keyFile);
                     saveToKeyfile(!pedited || spot_edited->ghs_LP, "Locallab", "Ghs_LP_" + index_str, spot.ghs_LP, keyFile);
                     saveToKeyfile(!pedited || spot_edited->ghs_HP, "Locallab", "Ghs_HP_" + index_str, spot.ghs_HP, keyFile);
+                    saveToKeyfile(!pedited || spot_edited->ghs_smooth, "Locallab", "Ghs_smooth_" + index_str, spot.ghs_smooth, keyFile);
 
                     for (int j = 0; j < 6; j++) {
                         saveToKeyfile(!pedited || spot_edited->multsh[j], "Locallab", "Multsh" + std::to_string(j) + "_" + index_str, spot.multsh[j], keyFile);
@@ -9337,6 +9340,7 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
                 assignFromKeyfile(keyFile, "Locallab", "Ghs_SP_" + index_str, spot.ghs_SP, spotEdited.ghs_SP);
                 assignFromKeyfile(keyFile, "Locallab", "Ghs_LP_" + index_str, spot.ghs_LP, spotEdited.ghs_LP);
                 assignFromKeyfile(keyFile, "Locallab", "Ghs_HP_" + index_str, spot.ghs_HP, spotEdited.ghs_HP);
+                assignFromKeyfile(keyFile, "Locallab", "Ghs_smooth_" + index_str, spot.ghs_smooth, spotEdited.ghs_smooth);
 
                 for (int j = 0; j < 6; j ++) {
                     assignFromKeyfile(keyFile, "Locallab", "Multsh" + std::to_string(j) + "_" + index_str, spot.multsh[j], spotEdited.multsh[j]);

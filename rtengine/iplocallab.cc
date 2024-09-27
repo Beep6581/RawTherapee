@@ -918,6 +918,7 @@ struct local_params {
     float contciemask;
     bool islogcie; 
     bool issmoothcie; 
+    bool issmoothghs;
     int noiselequal;
     float noisechrodetail;
     float bilat;
@@ -1196,6 +1197,7 @@ static void calcLocalParams(int sp, int oW, int oH, const LocallabParams& locall
     lp.fftcieMask = locallab.spots.at(sp).fftcieMask;
     lp.islogcie = locallab.spots.at(sp).logcie && locallab.spots.at(sp).expprecam;
     lp.issmoothcie = locallab.spots.at(sp).smoothcie;
+    lp.issmoothghs = locallab.spots.at(sp).ghs_smooth;
     lp.enaColorMask = locallab.spots.at(sp).enaColorMask && llsoftMask == 0 && llColorMaskinv == 0 && llSHMaskinv == 0 && llColorMask == 0 && llExpMaskinv == 0 && lllcMask == 0 && llsharMask == 0 && llExpMask == 0 && llSHMask == 0 && llcbMask == 0 && llretiMask == 0 && lltmMask == 0 && llblMask == 0 && llvibMask == 0 && lllogMask == 0 && ll_Mask == 0 && llcieMask == 0;// Exposure mask is deactivated if Color & Light mask is visible
     lp.enaColorMaskinv = locallab.spots.at(sp).enaColorMask && llColorMaskinv == 0 && llSHMaskinv == 0 && llsoftMask == 0 && lllcMask == 0 && llsharMask == 0 && llExpMask == 0 && llSHMask == 0 && llcbMask == 0 && llretiMask == 0 && lltmMask == 0 && llblMask == 0 && llvibMask == 0 && lllogMask == 0 && ll_Mask == 0 && llcieMask == 0;// Exposure mask is deactivated if Color & Light mask is visible
     lp.enaExpMask = locallab.spots.at(sp).enaExpMask && llExpMask == 0 && llExpMaskinv == 0 && llSHMaskinv == 0 && llColorMask == 0 && llColorMaskinv == 0 && llsoftMask == 0 && lllcMask == 0 && llsharMask == 0 && llSHMask == 0 && llcbMask == 0 && llretiMask == 0 && lltmMask == 0 && llblMask == 0 && llvibMask == 0 && lllogMask == 0 && ll_Mask == 0 && llcieMask == 0;// Exposure mask is deactivated if Color & Light mask is visible
@@ -2754,7 +2756,7 @@ void tone_eqsmooth(ImProcFunctions *ipf, Imagefloat *rgb, const struct local_par
     if(lp.whiteevjz < 6) {//EV = 6 majority of images
         params.bands[4] = -15;
     }
-    if(lp.islogcie) {//with log encoding Cie
+    if(lp.islogcie || lp.issmoothghs) {//with log encoding Cie
         params.bands[4] = -15;
         params.bands[5] = -50;
         if(lp.whiteevjz < 6) {
@@ -16995,6 +16997,7 @@ void ImProcFunctions::Lab_Local(
                         float LP = params->locallab.spots.at(sp).ghs_LP;
                         float SP = params->locallab.spots.at(sp).ghs_SP;
                         float HP = params->locallab.spots.at(sp).ghs_HP;
+                        bool smoth = params->locallab.spots.at(sp).ghs_smooth;
 /*                        int met = 0;
                         if (params->locallab.spots.at(sp).ghsMethod == "rgb") {
                             met = 0;
@@ -17024,13 +17027,14 @@ void ImProcFunctions::Lab_Local(
                                 Ro = GHT(r, B, D, LP, SP, HP, c);
                                 Go = GHT(g, B, D, LP, SP, HP, c);
                                 Bo = GHT(b, B, D, LP, SP, HP, c);
-                               // tmpImage->r(i, j) = clipR(Ro * 65535.f);
-                               // tmpImage->g(i, j) = clipR(Go * 65535.f);
-                               // tmpImage->b(i, j) = clipR(Bo * 65535.f);
-                                tmpImage->r(i, j) = rtengine::max(0.f, Ro * 65535.f);
-                                tmpImage->g(i, j) = rtengine::max(0.f, Go * 65535.f);
-                                tmpImage->b(i, j) = rtengine::max(0.f, Bo * 65535.f);
+                                tmpImage->r(i, j) = rtengine::max(0.00001f, Ro * 65535.f);
+                                tmpImage->g(i, j) = rtengine::max(0.00001f, Go * 65535.f);
+                                tmpImage->b(i, j) = rtengine::max(0.00001f, Bo * 65535.f);
                             }
+                        if(smoth) {
+                            tone_eqsmooth(this, tmpImage, lp, params->icm.workingProfile, sk, multiThread);//reduce Ev > 0 < 12
+                        }
+                            
                         rgb2lab(*tmpImage, *bufexpfin, params->icm.workingProfile);
 
                         delete tmpImage;

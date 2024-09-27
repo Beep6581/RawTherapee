@@ -1526,6 +1526,7 @@ HISTORY_MSG_LOCAL_GHS_B;Local - GHS - Local intensity
 HISTORY_MSG_LOCAL_GHS_SP;Local - GHS - Symmetry point
 HISTORY_MSG_LOCAL_GHS_LP;Local - GHS - Protect shadows
 HISTORY_MSG_LOCAL_GHS_HP;Local - GHS - Protect highlights
+HISTORY_MSG_LOCAL_GHS_SMOOTH;Local - GHS - Smooth highlights
 HISTORY_MSG_LOCAL_LOG_BLACKS;Local - Log Blacks distribution
 HISTORY_MSG_LOCAL_LOG_COMPR;Local - Log Compress brightness
 HISTORY_MSG_LOCAL_LOG_SAT;Local - Log Saturation control
@@ -3142,6 +3143,7 @@ TP_LOCALLAB_GHS_B;Local intensity
 TP_LOCALLAB_GHS_SP;Symmetry point
 TP_LOCALLAB_GHS_LP;Protect shadows
 TP_LOCALLAB_GHS_HP;Protect highlights
+TP_LOCALLAB_GHS_SMOOTH;Smooth highlights
 TP_LOCALLAB_GRADANG;Gradient angle
 TP_LOCALLAB_GRADANG_TOOLTIP;Rotation angle in degrees: -180 0 +180.
 TP_LOCALLAB_GRADFRA;Graduated Filter Mask
@@ -3563,7 +3565,7 @@ TP_LOCALLAB_SHOWT;Mask and modifications
 TP_LOCALLAB_SHOWVI;Mask and modifications
 TP_LOCALLAB_SHRESFRA;Shadows/Highlights & TRC
 TP_LOCALLAB_SHTRC_TOOLTIP;Based on 'working profile' (only those provided), modifies the tones of the image by acting on a TRC (Tone Response Curve).\nGamma acts mainly on light tones.\nSlope acts mainly on dark tones.\nIt is recommended that the TRC of both devices (monitor and output profile) be sRGB (default).
-TP_LOCALLAB_SH_TOOLNAME;Shadows/Highlights & Tone Equalizer
+TP_LOCALLAB_SH_TOOLNAME;Shadows/Highlights & Equalizer & GHS
 TP_LOCALLAB_SIGBLACKSSCIE;Blacks distribution
 TP_LOCALLAB_SIGCIE;Sigmoid
 TP_LOCALLAB_SIGFRA;Sigmoid Q
