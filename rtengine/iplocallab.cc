@@ -16999,7 +16999,7 @@ void ImProcFunctions::Lab_Local(
                 
                 if (lp.shmeth == 2) {
                     if(ghsactiv) {
-                        //float D = params->locallab.spots.at(sp).ghs_D;
+                        // GHT filter ported from Siril - help with ART CTL thanks to Alberto Griggio
                         float B = params->locallab.spots.at(sp).ghs_B;
                         float LP = params->locallab.spots.at(sp).ghs_LP;
                         float SP = params->locallab.spots.at(sp).ghs_SP;

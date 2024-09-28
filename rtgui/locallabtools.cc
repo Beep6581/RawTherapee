@@ -4329,6 +4329,16 @@ LocallabShadow::LocallabShadow():
     shMethod->set_active(0);
     shMethodConn = shMethod->signal_changed().connect(sigc::mem_fun(*this, &LocallabShadow::shMethodChanged));
 
+/*
+ * This file is part of Siril, an astronomy image processor.
+ * Copyright (C) 2005-2011 Francois Meyer (dulle at free.fr)
+ * Copyright (C) 2012-2023 team free-astro (see more in AUTHORS file)
+ * Reference site is https://free-astro.org/index.php/Siril
+*/
+/*
+//Copyright algorithm Pixlnsight David Payne 2021
+https://www.ghsastro.co.uk/doc/tools/GeneralizedHyperbolicStretch/GeneralizedHyperbolicStretch.html#__Description_:_About_GHS__
+*/
     ghsMethod->append(M("TP_LOCALLAB_GHSRGB"));
     ghsMethod->append(M("TP_LOCALLAB_GHSLUM"));
     ghsMethod->append(M("TP_LOCALLAB_GHSSAT"));
