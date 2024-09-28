@@ -800,7 +800,7 @@ void LibRaw::parseAdobeRAFMakernote()
             wb[2] = PrivateMknBuf.sget4(posWB) << 1;
             posWB += 4;
 
-            if (tWB && (iCCT < 255))
+            if (tWB && (iCCT < 64))
             {
               icWBCCTC[iCCT][0] = tWB;
               FORC4 icWBCCTC[iCCT][c + 1] = wb[c];
@@ -1089,9 +1089,9 @@ void LibRaw::parse_fuji_thumbnail(int offset)
               if ((fread(buf, 1, xmpsz, ifp) == xmpsz) && !memcmp(buf, xmpmarker, xmpsz)) // got it
               {
                   xmplen = len - xmpsz - 2;
-                  xmpdata = (char*) malloc(xmplen+1);
-                  fread(xmpdata, 1, xmplen, ifp);
-                  xmpdata[xmplen] = 0;
+                  xmpdata = (char*) calloc(xmplen+1,1);
+                  unsigned br = fread(xmpdata, 1, xmplen, ifp);
+                  xmpdata[br] = 0;
                   break;
               }
           }
@@ -1309,7 +1309,7 @@ void LibRaw::parse_fuji(int offset)
           wb[1] = get4();
           wb[3] = get4();
           wb[2] = get4() << 1;
-          if (tWB && (iCCT < 255))
+          if (tWB && (iCCT < 64))
           {
             icWBCCTC[iCCT][0] = tWB;
             FORC4 icWBCCTC[iCCT][c + 1] = wb[c];

@@ -647,7 +647,7 @@ char** LibRaw::malloc_omp_buffers(int buffer_count, size_t buffer_size)
 
     for (int i = 0; i < buffer_count; i++)
     {
-        buffers[i] = (char*)malloc(buffer_size);
+        buffers[i] = (char*)calloc(buffer_size,1);
     }
     return buffers;
 }

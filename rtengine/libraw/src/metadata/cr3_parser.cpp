@@ -537,9 +537,9 @@ int LibRaw::parseCR3(INT64 oAtomList,
 		fread(UIID, 1, lHdr, ifp);
 		if (!memcmp(UIID, UUID_XMP, 16) && szAtom > 24LL && szAtom < 1024000LL)
 		{
-			xmpdata = (char *)malloc(xmplen = unsigned(szAtom - 23));
-			fread(xmpdata, szAtom - 24, 1, ifp);
-			xmpdata[szAtom - 24] = 0;
+			xmpdata = (char *)calloc(xmplen = unsigned(szAtom - 23),1);
+			unsigned br = fread(xmpdata,1, szAtom - 24, ifp);
+			xmpdata[br] = 0;
 		}
 		else if (!memcmp(UIID, UIID_CanonPreview, 16) && szAtom > 48LL && szAtom < 100LL * 1024000LL)
 		{
@@ -775,7 +775,7 @@ int LibRaw::parseCR3(INT64 oAtomList,
           goto fin;
         }
 
-        current_track.stsc_data = (crx_sample_to_chunk_t*) malloc(entries * sizeof(crx_sample_to_chunk_t));
+        current_track.stsc_data = (crx_sample_to_chunk_t*) calloc(entries * sizeof(crx_sample_to_chunk_t),1);
         if(!current_track.stsc_data)
         {
           err =  -9;
@@ -812,7 +812,7 @@ int LibRaw::parseCR3(INT64 oAtomList,
             err = -10;
             goto fin;
           }
-          current_track.sample_sizes = (int32_t*)malloc(entries * sizeof(int32_t));
+          current_track.sample_sizes = (int32_t*)calloc(entries * sizeof(int32_t),1);
           if (!current_track.sample_sizes)
           {
             err = -10;
@@ -836,7 +836,7 @@ int LibRaw::parseCR3(INT64 oAtomList,
           err = -11;
           goto fin;
         }
-        current_track.chunk_offsets = (INT64*)malloc(entries * sizeof(int64_t));
+        current_track.chunk_offsets = (INT64*)calloc(entries * sizeof(int64_t),1);
         if(!current_track.chunk_offsets)
         {
           err = -11;

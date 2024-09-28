@@ -605,7 +605,7 @@ uchar *cj_block, *ck_block;
         imCommon.afdata[imCommon.afcount].AFInfoData_tag = tag;
         imCommon.afdata[imCommon.afcount].AFInfoData_order = order;
         imCommon.afdata[imCommon.afcount].AFInfoData_length = len;
-        imCommon.afdata[imCommon.afcount].AFInfoData = (uchar *)malloc(imCommon.afdata[imCommon.afcount].AFInfoData_length);
+        imCommon.afdata[imCommon.afcount].AFInfoData = (uchar *)calloc(imCommon.afdata[imCommon.afcount].AFInfoData_length,1);
         fread(imCommon.afdata[imCommon.afcount].AFInfoData, imCommon.afdata[imCommon.afcount].AFInfoData_length, 1, ifp);
         imCommon.afcount = 1;
       }
@@ -628,7 +628,7 @@ uchar *cj_block, *ck_block;
     else if ((tag == 0x0091) && (len > 4))
     {
       ShotInfo_len = len;
-      ShotInfo_buf = (uchar *)malloc(ShotInfo_len);
+      ShotInfo_buf = (uchar *)calloc(ShotInfo_len,1);
 
 /* for dump:
 cj_block = (uchar *)malloc(ShotInfo_len);
@@ -761,7 +761,7 @@ ck_block = (uchar *)malloc(ShotInfo_len);
       }
       if (LensData_len)
       {
-        LensData_buf = (uchar *)malloc(LensData_len);
+        LensData_buf = (uchar *)calloc(LensData_len,1);
         fread(LensData_buf, LensData_len, 1, ifp);
       }
     }
@@ -921,7 +921,7 @@ free(ck_block);
         FORC4  ver = ver * 10 + (fgetc(ifp) - '0');
         imCommon.afdata[imCommon.afcount].AFInfoData_version = ver;
         imCommon.afdata[imCommon.afcount].AFInfoData_length = len-4;
-        imCommon.afdata[imCommon.afcount].AFInfoData = (uchar *)malloc(imCommon.afdata[imCommon.afcount].AFInfoData_length);
+        imCommon.afdata[imCommon.afcount].AFInfoData = (uchar *)calloc(imCommon.afdata[imCommon.afcount].AFInfoData_length,1);
         fread(imCommon.afdata[imCommon.afcount].AFInfoData, imCommon.afdata[imCommon.afcount].AFInfoData_length, 1, ifp);
         imCommon.afcount = 1;
       }

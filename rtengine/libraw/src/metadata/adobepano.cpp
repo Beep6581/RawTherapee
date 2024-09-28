@@ -37,7 +37,7 @@ void LibRaw::parseAdobePanoMakernote()
   PrivateMknLength = get4();
 
   if ((PrivateMknLength > 4) && (PrivateMknLength < 10240000) &&
-      (PrivateMknBuf = (uchar *)malloc(PrivateMknLength + 1024)))
+      (PrivateMknBuf = (uchar *)calloc(PrivateMknLength + 1024,1)))
   { // 1024b for safety
     fread(PrivateMknBuf, PrivateMknLength, 1, ifp);
     PrivateOrder = sget2(PrivateMknBuf);
