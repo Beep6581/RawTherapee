@@ -22,7 +22,10 @@
 
 #include "rtimage.h"
 
+#include "eventmapper.h"
+
 #include "../rtengine/procparams.h"
+#include "../rtengine/refreshmap.h"
 
 using namespace rtengine;
 using namespace rtengine::procparams;
@@ -31,6 +34,14 @@ const Glib::ustring Distortion::TOOL_NAME = "distortion";
 
 Distortion::Distortion (): FoldableToolPanel(this, TOOL_NAME, M("TP_DISTORTION_LABEL"))
 {
+    auto mapper = ProcEventMapper::getInstance();
+    EvDistortionDefish = mapper->newEvent(TRANSFORM, "HISTORY_MSG_DISTORTION_DEFISH");
+    EvDistortionDefishVoid = mapper->newEvent(M_VOID, "HISTORY_MSG_DISTORTION_DEFISH");
+
+    EvDistortionDefishFocalLength = mapper->newEvent(TRANSFORM, "HISTORY_MSG_DISTORTION_DEFISH_FOCAL");
+    EvDistortionDefishFocalLengthVoid = mapper->newEvent(M_VOID, "HISTORY_MSG_DISTORTION_DEFISH_FOCAL");
+
+    setCamBasedEventsActive();
 
     rlistener = nullptr;
     autoDistor = Gtk::manage (new Gtk::Button (M("GENERAL_AUTO")));
@@ -47,11 +58,26 @@ Distortion::Distortion (): FoldableToolPanel(this, TOOL_NAME, M("TP_DISTORTION_L
 
     distor = Gtk::manage (new Adjuster (M("TP_DISTORTION_AMOUNT"), -0.5, 0.5, 0.001, 0, idistL, idistR));
     distor->setAdjusterListener (this);
-
     distor->setLogScale(2, 0);
-
     distor->show();
     pack_start (*distor);
+
+    Gtk::Frame* defish_frame = Gtk::manage (new Gtk::Frame());
+    defish_frame->set_label_align(0.025, 0.5);
+    Gtk::Box* defish_vbox = Gtk::manage (new Gtk::Box(Gtk::ORIENTATION_VERTICAL));
+    defish = Gtk::manage(new Gtk::CheckButton(M("TP_DISTORTION_DEFISH")));
+    defish->signal_toggled().connect(sigc::mem_fun(*this, &Distortion::defishChanged));
+    defish->show();
+    defish_frame->set_label_widget(*defish);
+
+    focal_length = Gtk::manage (new Adjuster (M("TP_DISTORTION_FOCAL_LENGTH"), 0.5, 25, 0.01, DistortionParams::DEFAULT_FOCAL_LENGTH));
+    focal_length->setAdjusterListener (this);
+    focal_length->show();
+    focal_length->setEnabled(defish->get_active());
+    defish_vbox->pack_start(*focal_length);
+
+    defish_frame->add(*defish_vbox);
+    pack_start (*defish_frame);
 }
 
 void Distortion::read (const ProcParams* pp, const ParamsEdited* pedited)
@@ -61,9 +87,13 @@ void Distortion::read (const ProcParams* pp, const ParamsEdited* pedited)
 
     if (pedited) {
         distor->setEditedState (pedited->distortion.amount ? Edited : UnEdited);
+        focal_length->setEditedState (pedited->distortion.focal_length != DistortionParams::DEFAULT_FOCAL_LENGTH ? Edited : UnEdited);
     }
 
     distor->setValue (pp->distortion.amount);
+    defish->set_active(pp->distortion.defish);
+    focal_length->setValue(pp->distortion.focal_length);
+    focal_length->setEnabled(defish->get_active());
 
     enableListener ();
 }
@@ -72,9 +102,13 @@ void Distortion::write (ProcParams* pp, ParamsEdited* pedited)
 {
 
     pp->distortion.amount = distor->getValue ();
+    pp->distortion.defish = defish->get_active ();
+    pp->distortion.focal_length = focal_length->getValue ();
 
     if (pedited) {
         pedited->distortion.amount = distor->getEditedState ();
+        pedited->distortion.focal_length = focal_length->getEditedState ();
+        pedited->distortion.defish = true;
     }
 }
 
@@ -82,6 +116,7 @@ void Distortion::setDefaults (const ProcParams* defParams, const ParamsEdited* p
 {
 
     distor->setDefault (defParams->distortion.amount);
+    focal_length->setDefault (defParams->distortion.focal_length);
 
     if (pedited) {
         distor->setDefaultEditedState (pedited->distortion.amount ? Edited : UnEdited);
@@ -93,7 +128,12 @@ void Distortion::setDefaults (const ProcParams* defParams, const ParamsEdited* p
 void Distortion::adjusterChanged(Adjuster* a, double newval)
 {
     if (listener) {
-        listener->panelChanged (EvDISTAmount, Glib::ustring::format (std::setw(4), std::fixed, std::setprecision(3), a->getValue()));
+        if (a == focal_length) {
+            listener->panelChanged (*event_distortion_defish_focal_length, Glib::ustring::format (std::setw(4), std::fixed, std::setprecision(2), a->getValue()));
+        }
+        else if (a == distor) {
+            listener->panelChanged (EvDISTAmount, Glib::ustring::format (std::setw(4), std::fixed, std::setprecision(3), a->getValue()));
+        }
     }
 }
 
@@ -120,14 +160,35 @@ void Distortion::idPressed ()
     }
 }
 
-void Distortion::setAdjusterBehavior (bool vadd)
+void Distortion::defishChanged()
 {
+    if (listener) {
+        listener->panelChanged(EvDistortionDefish, defish->get_active() ? M("GENERAL_ENABLED") : M("GENERAL_DISABLED"));
+        focal_length->setEnabled(defish->get_active());
+    }
+}
 
+void Distortion::setCamBasedEventsActive(bool active)
+{
+    if (active) {
+        event_distortion_defish = &EvDistortionDefish;
+        event_distortion_defish_focal_length = &EvDistortionDefishFocalLength;
+    }
+    else {
+      event_distortion_defish = &EvDistortionDefishVoid;
+      event_distortion_defish_focal_length = &EvDistortionDefishFocalLengthVoid;
+    }
+}
+
+void Distortion::setAdjusterBehavior (bool vadd, bool focal_length_add)
+{
     distor->setAddMode(vadd);
+    focal_length->setAddMode(focal_length_add);
 }
 
 void Distortion::trimValues (rtengine::procparams::ProcParams* pp)
 {
 
     distor->trimValue(pp->distortion.amount);
+    focal_length->trimValue(pp->distortion.focal_length);
 }

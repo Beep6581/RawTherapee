@@ -121,7 +121,13 @@ public:
     void linesEraseButtonPressed (void);
     void methodChanged (void);
     void requestApplyControlLines(void);
-    void setAdjusterBehavior (bool badd, bool camera_focal_length_add, bool camera_shift_add, bool camera_angle_add, bool projection_angle_add, bool projection_shift_add, bool projection_rotate_add);
+    void setAdjusterBehavior (bool badd,
+        bool camera_focal_length_add,
+        bool camera_shift_add,
+        bool camera_angle_add,
+        bool projection_angle_add,
+        bool projection_shift_add,
+        bool projection_rotate_add);
     void setControlLineEditMode(bool active);
     void setEditProvider (EditDataProvider* provider) override;
     void setLensGeomListener (LensGeomListener* listener)

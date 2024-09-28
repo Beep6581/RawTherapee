@@ -1412,6 +1412,8 @@ HISTORY_MSG_DEHAZE_SATURATION;Dehaze - Saturation
 HISTORY_MSG_DEHAZE_SHOW_DEPTH_MAP;Dehaze - Show depth map
 HISTORY_MSG_DEHAZE_STRENGTH;Dehaze - Strength
 HISTORY_MSG_DIRPYRDENOISE_GAIN;NR - Compensate for lightness
+HISTORY_MSG_DISTORTION_DEFISH;De-fish
+HISTORY_MSG_DISTORTION_DEFISH_FOCAL;De-fish - Focal length
 HISTORY_MSG_DUALDEMOSAIC_AUTO_CONTRAST;Dual demosaic - Auto threshold
 HISTORY_MSG_DUALDEMOSAIC_CONTRAST;Dual demosaic - Contrast threshold
 HISTORY_MSG_EDGEFFECT;Edge Attenuation response
@@ -1582,6 +1584,7 @@ HISTORY_MSG_TONE_EQUALIZER_ENABLED;Tone equalizer
 HISTORY_MSG_TONE_EQUALIZER_PIVOT;Tone equalizer - Pivot
 HISTORY_MSG_TONE_EQUALIZER_REGULARIZATION;Tone equalizer - Regularization
 HISTORY_MSG_TONE_EQUALIZER_SHOW_COLOR_MAP;Tone equalizer - Tonal map
+HISTORY_MSG_TRANS_SCALE;Geometry - Scale
 HISTORY_MSG_TRANS_METHOD;Geometry - Method
 HISTORY_MSG_WAVBALCHROM;Equalizer chrominance
 HISTORY_MSG_WAVBALLUM;Equalizer luminance
@@ -2610,6 +2613,8 @@ TP_DIRPYREQUALIZER_THRESHOLD;Threshold
 TP_DIRPYREQUALIZER_TOOLTIP;Attempts to reduce artifacts in the transitions between skin colors (hue, chroma, luma) and the rest of the image.
 TP_DISTORTION_AMOUNT;Amount
 TP_DISTORTION_AUTO_TOOLTIP;Automatically corrects lens distortion in raw files by matching it against the embedded JPEG image if one exists and has had its lens disortion auto-corrected by the camera.
+TP_DISTORTION_DEFISH;De-fish
+TP_DISTORTION_FOCAL_LENGTH;Focal length
 TP_DISTORTION_LABEL;Distortion Correction
 TP_EPD_EDGESTOPPING;Edge stopping
 TP_EPD_GAMMA;Gamma
@@ -2846,6 +2851,7 @@ TP_LABCURVE_LCREDSK_TOOLTIP;If enabled, the LC Curve affects only red and skin-t
 TP_LABCURVE_RSTPROTECTION;Red and skin-tones protection
 TP_LABCURVE_RSTPRO_TOOLTIP;Works on the Chromaticity slider and the CC curve.
 TP_LENSGEOM_AUTOCROP;Auto-Crop
+TP_LENSGEOM_SCALE;Scale
 TP_LENSGEOM_FILL;Auto-fill
 TP_LENSGEOM_LABEL;Lens / Geometry
 TP_LENSGEOM_LIN;Linear

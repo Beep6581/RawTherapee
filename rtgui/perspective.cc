@@ -619,7 +619,15 @@ void PerspCorrection::methodChanged (void)
 
 }
 
-void PerspCorrection::setAdjusterBehavior (bool badd, bool camera_focal_length_add, bool camera_shift_add, bool camera_angle_add, bool projection_angle_add, bool projection_shift_add, bool projection_rotate_add)
+void PerspCorrection::setAdjusterBehavior (
+    bool badd,
+    bool camera_focal_length_add,
+    bool camera_shift_add,
+    bool camera_angle_add,
+    bool projection_angle_add,
+    bool projection_shift_add,
+    bool projection_rotate_add
+)
 {
 
     horiz->setAddMode(badd);

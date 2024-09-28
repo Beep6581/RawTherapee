@@ -397,6 +397,7 @@ struct CoarseTransformParamsEdited {
 
 struct CommonTransformParamsEdited {
     bool method;
+    bool scale;
     bool autofill;
 };
 
@@ -406,6 +407,8 @@ struct RotateParamsEdited {
 
 struct DistortionParamsEdited {
     bool amount;
+    bool defish;
+    bool focal_length;
 };
 class LocallabParamsEdited
 {

@@ -345,8 +345,11 @@ void ParamsEdited::set(bool v)
     coarse.vflip = v;
     commonTrans.method = v;
     commonTrans.autofill = v;
+    commonTrans.scale = v;
     rotate.degree = v;
     distortion.amount = v;
+    distortion.defish = v;
+    distortion.focal_length = v;
     lensProf.lcMode = v;
     lensProf.lcpFile = v;
     lensProf.useDist = v;
@@ -1078,9 +1081,12 @@ void ParamsEdited::initFrom(const std::vector<rtengine::procparams::ProcParams>&
         coarse.hflip = coarse.hflip && p.coarse.hflip == other.coarse.hflip;
         coarse.vflip = coarse.vflip && p.coarse.vflip == other.coarse.vflip;
         commonTrans.method = commonTrans.method && p.commonTrans.method == other.commonTrans.method;
+        commonTrans.scale = commonTrans.scale && p.commonTrans.scale == other.commonTrans.scale;
         commonTrans.autofill = commonTrans.autofill && p.commonTrans.autofill == other.commonTrans.autofill;
         rotate.degree = rotate.degree && p.rotate.degree == other.rotate.degree;
         distortion.amount = distortion.amount && p.distortion.amount == other.distortion.amount;
+        distortion.defish = distortion.defish && p.distortion.defish == other.distortion.defish;
+        distortion.focal_length = distortion.focal_length && p.distortion.focal_length == other.distortion.focal_length;
         lensProf.lcMode = lensProf.lcMode && p.lensProf.lcMode == other.lensProf.lcMode;
         lensProf.lcpFile = lensProf.lcpFile && p.lensProf.lcpFile == other.lensProf.lcpFile;
         lensProf.useDist = lensProf.useDist && p.lensProf.useDist == other.lensProf.useDist;
@@ -3449,6 +3455,10 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
         toEdit.commonTrans.method = mods.commonTrans.method;
     }
 
+    if (commonTrans.scale) {
+        toEdit.commonTrans.scale = dontforceSet && options.baBehav[ADDSET_LENSGEOM_SCALE] ? toEdit.commonTrans.scale + mods.commonTrans.scale : mods.commonTrans.scale;
+    }
+
     if (commonTrans.autofill) {
         toEdit.commonTrans.autofill = mods.commonTrans.autofill;
     }
@@ -3459,6 +3469,14 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
 
     if (distortion.amount) {
         toEdit.distortion.amount = dontforceSet && options.baBehav[ADDSET_DIST_AMOUNT] ? toEdit.distortion.amount + mods.distortion.amount : mods.distortion.amount;
+    }
+
+    if (distortion.defish) {
+        toEdit.distortion.defish = mods.distortion.defish;
+    }
+
+    if (distortion.focal_length) {
+        toEdit.distortion.focal_length = dontforceSet && options.baBehav[ADDSET_DIST_FOCAL_LENGTH] ? toEdit.distortion.focal_length + mods.distortion.focal_length : mods.distortion.focal_length;
     }
 
     if (lensProf.lcMode) {

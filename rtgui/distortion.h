@@ -33,10 +33,20 @@ class Distortion final :
 protected:
     Gtk::Button*   autoDistor;
     Adjuster* distor;
+    Adjuster* focal_length;
     sigc::connection    idConn;
     LensGeomListener * rlistener;
+    Gtk::CheckButton* defish;
 
 public:
+    rtengine::ProcEvent EvDistortionDefish;
+    rtengine::ProcEvent EvDistortionDefishVoid;
+    rtengine::ProcEvent* event_distortion_defish;
+
+    rtengine::ProcEvent EvDistortionDefishFocalLength;
+    rtengine::ProcEvent EvDistortionDefishFocalLengthVoid;
+    rtengine::ProcEvent* event_distortion_defish_focal_length;
+
     static const Glib::ustring TOOL_NAME;
 
     Distortion ();
@@ -47,11 +57,14 @@ public:
     void setBatchMode   (bool batchMode) override;
 
     void adjusterChanged     (Adjuster* a, double newval) override;
-    void setAdjusterBehavior (bool vadd);
+    void setAdjusterBehavior (bool vadd, bool focal_length_add);
     void trimValues          (rtengine::procparams::ProcParams* pp) override;
     void idPressed           ();
     void setLensGeomListener (LensGeomListener* l)
     {
         rlistener = l;
     }
+    void defishChanged (void);
+
+    void setCamBasedEventsActive(bool active = true);
 };
