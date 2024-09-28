@@ -4377,13 +4377,14 @@ LocallabShadow::LocallabShadow():
     ghs_HP->setAdjusterListener(this);
 
     ghs_smoothConn = ghs_smooth->signal_toggled().connect(sigc::mem_fun(*this, &LocallabShadow::ghs_smoothChanged));
+/*
     ghs_D->set_tooltip_text(M("TP_LOCALLAB_GHS_D_TOOLTIP"));
     ghs_B->set_tooltip_text(M("TP_LOCALLAB_GHS_B_TOOLTIP"));
     ghs_SP->set_tooltip_text(M("TP_LOCALLAB_GHS_SP_TOOLTIP"));
     ghs_LP->set_tooltip_text(M("TP_LOCALLAB_GHS_LP_TOOLTIP"));
     ghs_HP->set_tooltip_text(M("TP_LOCALLAB_GHS_HP_TOOLTIP"));
     ghs_smooth->set_tooltip_text(M("TP_LOCALLAB_GHS_SMOOTH_TOOLTIP"));
-    
+ */   
     setExpandAlignProperties(expgradsh, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_START);
 
     strSH->setAdjusterListener(this);
@@ -4518,7 +4519,6 @@ LocallabShadow::LocallabShadow():
     gradSHBox->pack_start(*featherSH);
     expgradsh->add(*gradSHBox, false);
     pack_start(*expgradsh);
-//    pack_start(*inverssh);
     ToolParamBlock* const maskSHBox = Gtk::manage(new ToolParamBlock());
     maskSHBox->pack_start(*showmaskSHMethod, Gtk::PACK_SHRINK, 4);
     maskSHBox->pack_start(*showmaskSHMethodinv, Gtk::PACK_SHRINK, 4);
@@ -4700,6 +4700,13 @@ void LocallabShadow::updateAdviceTooltips(const bool showTooltips)
         decays->set_tooltip_text(M("TP_LOCALLAB_MASKDECAY_TOOLTIP"));
         lowthress->set_tooltip_text(M("TP_LOCALLAB_MASKLOWTHRESS_TOOLTIP"));
         higthress->set_tooltip_text(M("TP_LOCALLAB_MASKHIGTHRESS_TOOLTIP"));
+        ghs_D->set_tooltip_text(M("TP_LOCALLAB_GHS_D_TOOLTIP"));
+        ghs_B->set_tooltip_text(M("TP_LOCALLAB_GHS_B_TOOLTIP"));
+        ghs_SP->set_tooltip_text(M("TP_LOCALLAB_GHS_SP_TOOLTIP"));
+        ghs_LP->set_tooltip_text(M("TP_LOCALLAB_GHS_LP_TOOLTIP"));
+        ghs_HP->set_tooltip_text(M("TP_LOCALLAB_GHS_HP_TOOLTIP"));
+        ghs_smooth->set_tooltip_text(M("TP_LOCALLAB_GHS_SMOOTH_TOOLTIP"));
+        
 
     } else {
         exp->set_tooltip_text("");
@@ -4735,6 +4742,12 @@ void LocallabShadow::updateAdviceTooltips(const bool showTooltips)
         decays->set_tooltip_text("");
         lowthress->set_tooltip_text("");
         higthress->set_tooltip_text("");
+        ghs_D->set_tooltip_text("");
+        ghs_B->set_tooltip_text("");
+        ghs_SP->set_tooltip_text("");
+        ghs_LP->set_tooltip_text("");
+        ghs_HP->set_tooltip_text("");
+        ghs_smooth->set_tooltip_text("");
 
     }
 }
