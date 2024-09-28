@@ -4606,11 +4606,16 @@ void LocallabShadow::updateguishad(int spottype)
                 sensihs->hide();
                 showmaskSHMethod->set_active(0);
                 previewsh->hide();
+                exprecovs->hide();
+                expmasksh->hide();
+                enaSHMask->set_active(false);
                 previewsh->set_active(false);
                 resetMaskView();
             } else {
                 sensihs->show();
                 inverssh->show();
+                exprecovs->show();
+                expmasksh->show();
                 if(!inverssh->get_active()) {
                     previewsh->show();
                 } else {
@@ -4620,7 +4625,7 @@ void LocallabShadow::updateguishad(int spottype)
                    inverssh->hide();
                    inverssh->set_active(false);
                 }
-                
+                updateGUIToMode(static_cast<modeType>(complexity->get_active_row_number()));
             }
             enableListener();
 
