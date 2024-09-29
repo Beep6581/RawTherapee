@@ -17012,6 +17012,8 @@ void ImProcFunctions::Lab_Local(
                             met = 1;
                         } else if (params->locallab.spots.at(sp).ghsMethod == "sat") {
                             met = 2;
+                        } else if (params->locallab.spots.at(sp).ghsMethod == "hue") {
+                            met = 3;
                         }
 
                         const ght_compute_params c = GHT_setup(B, D, LP, SP, HP);
@@ -17051,8 +17053,10 @@ void ImProcFunctions::Lab_Local(
                                     Color::rgb2hsl(r, g, b, h, s, l);
                                     if(met == 2) {//saturation
                                         s = GHT(s, B, D, LP, SP, HP, c);
-                                    } else {//luminance
+                                    } else if (met == 1) {//luminance
                                         l = GHT(l, B, D, LP, SP, HP, c);
+                                    } else if (met == 3) {//hue
+                                        h = GHT(h, B, D, LP, SP, HP, c);
                                     }
                                     float R, G, B;
                                     Color::hsl2rgb(h, s, l, R, G, B);

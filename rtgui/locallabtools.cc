@@ -4342,6 +4342,7 @@ https://www.ghsastro.co.uk/doc/tools/GeneralizedHyperbolicStretch/GeneralizedHyp
     ghsMethod->append(M("TP_LOCALLAB_GHSRGB"));
     ghsMethod->append(M("TP_LOCALLAB_GHSLUM"));
     ghsMethod->append(M("TP_LOCALLAB_GHSSAT"));
+    ghsMethod->append(M("TP_LOCALLAB_GHSHUE"));
     ghsMethod->set_active(0);
     ghsMethodConn = ghsMethod->signal_changed().connect(sigc::mem_fun(*this, &LocallabShadow::ghsMethodChanged));
     ghsMethod->set_tooltip_text(M("TP_LOCALLAB_GHS_METHOD_TOOLTIP"));
@@ -4829,6 +4830,8 @@ void LocallabShadow::read(const rtengine::procparams::ProcParams* pp, const Para
             ghsMethod->set_active(1);
         } else if (spot.ghsMethod == "sat") {
             ghsMethod->set_active(2);
+        } else if (spot.ghsMethod == "hue") {
+            ghsMethod->set_active(3);
         }
 
         for (int i = 0; i < 6; i++) {
@@ -4918,6 +4921,8 @@ void LocallabShadow::write(rtengine::procparams::ProcParams* pp, ParamsEdited* p
             spot.ghsMethod = "lum";
         } else if (ghsMethod->get_active_row_number() == 2) {
             spot.ghsMethod = "sat";
+        } else if (ghsMethod->get_active_row_number() == 3) {
+            spot.ghsMethod = "hue";
         }
 
         for (int i = 0; i < 6; i++) {
