@@ -85,13 +85,25 @@ protected:
     rtengine::ProcEvent Evlocallabgamjcie;
     rtengine::ProcEvent Evlocallabslopjcie;
     rtengine::ProcEvent Evlocallabmidtcie;
+    rtengine::ProcEvent Evlocallabcontsig;
+    rtengine::ProcEvent Evlocallabskewsig;
+    rtengine::ProcEvent Evlocallabwhitsig;
     rtengine::ProcEvent Evlocallabslopesmo;
+    rtengine::ProcEvent Evlocallabslopesmoq;
     rtengine::ProcEvent Evlocallabslopesmor;
     rtengine::ProcEvent Evlocallabslopesmog;
     rtengine::ProcEvent Evlocallabslopesmob;
+    rtengine::ProcEvent Evlocallabkslopesmor;
+    rtengine::ProcEvent Evlocallabkslopesmog;
+    rtengine::ProcEvent Evlocallabkslopesmob;
     rtengine::ProcEvent Evlocallabsmoothcie;
+    rtengine::ProcEvent Evlocallabsmoothcielnk;
+    rtengine::ProcEvent Evlocallabsmoothcieth;
+    rtengine::ProcEvent Evlocallabsmoothcietrc;
+    rtengine::ProcEvent Evlocallabsmoothcietrcrel;
     rtengine::ProcEvent Evlocallabsmoothcieyb;
     rtengine::ProcEvent Evlocallabsmoothcielum;
+    rtengine::ProcEvent Evlocallabsmoothciehigh;
     rtengine::ProcEvent Evlocallabsmoothciemet;
     rtengine::ProcEvent Evlocallabsigcie;
     rtengine::ProcEvent Evlocallabillcie;
@@ -131,6 +143,7 @@ protected:
     rtengine::ProcEvent Evlocallabfeathercie;
     rtengine::ProcEvent EvlocallabfeatherSH;
     rtengine::ProcEvent Evlocallabfeather_mask;
+    rtengine::ProcEvent Evlocallaboffslc;
     // LocallabTool parameters
     bool needMode;
     bool isLocActivated;
@@ -1224,6 +1237,7 @@ private:
     Adjuster* const lclightness;
     Gtk::Frame* const contFrame;
     Adjuster* const sigmalc;
+    Adjuster* const offslc;
     CurveEditorGroup* const LocalcurveEditorwav;
     FlatCurveEditor* const wavshape;
     ThresholdAdjuster* const csThreshold;
@@ -1757,11 +1771,11 @@ private:
     Adjuster* const whiteEvjz;
     Adjuster* const targetjz;
     Gtk::Frame* const bevwevFrame;
-    Gtk::CheckButton* const forcebw;
+    Gtk::CheckButton* const sigybjz;
     ToolParamBlock* const sigBox;
     Gtk::Frame* const sigmoidFrame;
-    Gtk::Frame* const sigmoidnormFrame;
     Gtk::CheckButton* const sigq;
+    Adjuster* const slopesmoq;
     Adjuster* const sigmoidldacie;
     Adjuster* const sigmoidthcie;
     Adjuster* const sigmoidsenscie;
@@ -1785,8 +1799,13 @@ private:
     Adjuster* const slopjcie;
     Adjuster* const midtcie;
     Gtk::CheckButton* const smoothcie;
+    Gtk::CheckButton* const smoothcielnk;
+    Gtk::CheckButton* const smoothcietrc;
+    Gtk::CheckButton* const smoothcietrcrel;
     Gtk::CheckButton* const smoothcieyb;
     Gtk::CheckButton* const smoothcielum;
+    Gtk::CheckButton* const smoothciehigh;
+    Adjuster* const smoothcieth;
     ToolParamBlock* const ciesmoothBox;
     Gtk::Box* smoothBox;
     MyComboBoxText* const smoothciemet;
@@ -1794,6 +1813,12 @@ private:
     Adjuster* const slopesmor;
     Adjuster* const slopesmog;
     Adjuster* const slopesmob;
+    Adjuster* const kslopesmor;
+    Adjuster* const kslopesmog;
+    Adjuster* const kslopesmob;
+    Adjuster* const contsig;
+    Adjuster* const skewsig;
+    Adjuster* const whitsig;
 
     Adjuster* const whitescie;
     Adjuster* const blackscie;
@@ -1927,7 +1952,7 @@ private:
     ThresholdAdjuster* const csThresholdcie;
     int nextcomprciecount = 0;
    
-    sigc::connection AutograycieConn, primMethodconn, illMethodconn, smoothciemetconn, catMethodconn, forcejzConn, forcebwConn, qtojConn, showmaskcieMethodConn, enacieMaskConn, enacieMaskallConn, jabcieConn, sursourcieconn, surroundcieconn, modecieconn, modecamconn, comprcieautoconn, normcieconn, logcieconn, satcieconn, logcieqconn,smoothcieconn, smoothcieybconn,smoothcielumconn, logjzconn, sigjzconn, sigqconn, chjzcieconn, toneMethodcieConn, toneMethodcieConn2, toolcieConn, bwevMethodConn, fftcieMaskConn, gamutcieconn, bwcieconn, expprecamconn, sigcieconn;
+    sigc::connection AutograycieConn, primMethodconn, illMethodconn, smoothciemetconn, catMethodconn, forcejzConn, sigybjzConn, qtojConn, showmaskcieMethodConn, enacieMaskConn, enacieMaskallConn, jabcieConn, sursourcieconn, surroundcieconn, modecieconn, modecamconn, comprcieautoconn, normcieconn, logcieconn, satcieconn, logcieqconn, smoothcieconn, smoothcielnkconn, smoothciehighconn, smoothcietrcconn, smoothcietrcrelconn, smoothcieybconn,smoothcielumconn, logjzconn, sigjzconn, sigqconn, chjzcieconn, toneMethodcieConn, toneMethodcieConn2, toolcieConn, bwevMethodConn, fftcieMaskConn, gamutcieconn, bwcieconn, expprecamconn, sigcieconn;
     sigc::connection previewcieConn, sigmoidqjcieconn;
 public:
     Locallabcie();
@@ -1968,7 +1993,7 @@ public:
     void bwevMethodChanged();
     void updateAutocompute(const float blackev, const float whiteev, const float sourceg, const float sourceab, const float targetg, const float jz1);
     void updatePrimloc(const float redx, const float redy, const float grex, const float grey, const float blux, const float bluy);
-    void updateiPrimloc(const float r_x, const float r_y, const float g_x, const float g_y, const float b_x, const float b_y, const float w_x, const float w_y, const float m_x, const float m_y,  const float me_x, const float me_y, const int pri_);
+    void updateiPrimloc(const float r_x, const float r_y, const float g_x, const float g_y, const float b_x, const float b_y, const float w_x, const float w_y, const float m_x, const float m_y,  const float me_x, const float me_y, const int pri_, const float slg, const bool lkg);
     void updatesigloc(const float cont_sig, const float light_sig);
 
 private:
@@ -1979,7 +2004,7 @@ private:
     void complexityModeChanged();
     void AutograycieChanged();
     void forcejzChanged();
-    void forcebwChanged();
+    void sigybjzChanged();
     void qtojChanged();
     void jabcieChanged();
     void comprcieautoChanged();
@@ -1994,6 +2019,10 @@ private:
     void satcieChanged();
     void logcieqChanged();
     void smoothcieChanged();
+    void smoothcielnkChanged();
+    void smoothciehighChanged();
+    void smoothcietrcChanged();
+    void smoothcietrcrelChanged();
     void smoothcieybChanged();
     void smoothcielumChanged();
     void sigcieChanged();

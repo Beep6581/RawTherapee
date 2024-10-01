@@ -1529,6 +1529,18 @@ IImage8* Thumbnail::processImage (const procparams::ProcParams& params, eSensorT
         const int GW = labView->W;
         const int GH = labView->H;
         std::unique_ptr<LabImage> provis;
+        if(params.icm.trcExp) {//local contrast
+            int level_hr = 7;
+            int maxlevpo = 9;
+            bool wavcurvecont = false;
+            WaveletParams WaveParams = params.wavelet;
+            ColorManagementParams Colparams = params.icm;
+            IcmOpacityCurveWL icmOpacityCurveWL;
+            Colparams.getCurves(icmOpacityCurveWL);
+            ipf.localCont (labView, labView, WaveParams, Colparams, icmOpacityCurveWL, 1, level_hr, maxlevpo, wavcurvecont);
+        //    ipf.gamutCont (labView, labView, WaveParams, Colparams, 1);
+        }
+        
         const float pres = 0.01f * params.icm.preser;
         if (pres > 0.f && params.icm.wprim != ColorManagementParams::Primaries::DEFAULT) {
             provis.reset(new LabImage(GW, GH));
@@ -1539,8 +1551,8 @@ IImage8* Thumbnail::processImage (const procparams::ProcParams& params, eSensorT
 
         ipf.lab2rgb(*labView, *tmpImage1, params.icm.workingProfile);
 
-        const float gamtone = params.icm.workingTRCGamma;
-        const float slotone = params.icm.workingTRCSlope;
+        const float gamtone = params.icm.wGamma;
+        const float slotone = params.icm.wSlope;
 
         int illum = toUnderlying(params.icm.will);
         const int prim = toUnderlying(params.icm.wprim);
@@ -1608,7 +1620,6 @@ IImage8* Thumbnail::processImage (const procparams::ProcParams& params, eSensorT
                 labView->b[x][y] = 0.f;
             }
         }
-
     }
 
     if (params.colorappearance.enabled) {

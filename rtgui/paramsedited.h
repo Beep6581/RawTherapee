@@ -832,6 +832,7 @@ public:
         bool lcdarkness;
         bool lclightness;
         bool sigmalc;
+        bool offslc;
         bool levelwav;
         bool residcont;
         bool residsha;
@@ -1020,7 +1021,7 @@ public:
         bool sensicie;
         bool Autograycie;
         bool forcejz;
-        bool forcebw;
+        bool sigybjz;
         bool qtoj;
         bool jabcie;
         bool comprcieauto;
@@ -1032,8 +1033,12 @@ public:
         bool satcie;
         bool logcieq;
         bool smoothcie;
+        bool smoothcietrc;
+        bool smoothcietrcrel;
         bool smoothcieyb;
         bool smoothcielum;
+        bool smoothciehigh;
+        bool smoothcielnk;
         bool logjz;
         bool sigjz;
         bool sigq;
@@ -1092,11 +1097,19 @@ public:
         bool strcielog;
         bool comprcieth;
         bool gamjcie;
+        bool smoothcieth;
         bool slopjcie;
+        bool contsig;
+        bool skewsig;
+        bool whitsig;
         bool slopesmo;
+        bool slopesmoq;
         bool slopesmor;
         bool slopesmog;
         bool slopesmob;
+        bool kslopesmor;
+        bool kslopesmog;
+        bool kslopesmob;
         bool midtcie;
         bool redxl;
         bool redyl;
@@ -1311,9 +1324,15 @@ struct ColorManagementParamsEdited {
 
     bool workingProfile;
     bool workingTRC;
-    bool workingTRCGamma;
-    bool workingTRCSlope;
+    bool wGamma;
+    bool wSlope;
     bool wmidtcie;
+    bool sigmatrc;
+    bool offstrc;
+    bool residtrc;
+    bool pyrwavtrc;
+    bool opacityCurveWLI;
+
     bool wsmoothcie;
     bool will;
     bool wprim;
@@ -1330,6 +1349,7 @@ struct ColorManagementParamsEdited {
     bool preser;
     bool fbw;
     bool trcExp;
+    bool wavExp;
     bool gamut;
     bool labgridcieALow;
     bool labgridcieBLow;

@@ -48,6 +48,7 @@ class WavOpacityCurveSH;
 class WavOpacityCurveRG;
 class WavOpacityCurveW;
 class WavOpacityCurveWL;
+class IcmOpacityCurveWL;
 class LocretigainCurve;
 class LocretigainCurverab;
 class LocLHCurve;
@@ -1483,6 +1484,7 @@ struct LocallabParams {
         double lcdarkness;
         double lclightness;
         double sigmalc;
+        double offslc;
         int levelwav;
         double residcont;
         double residsha;
@@ -1672,7 +1674,7 @@ struct LocallabParams {
         int sensicie;
         bool Autograycie;
         bool forcejz;
-        bool forcebw;
+        bool sigybjz;
         bool qtoj;
         bool jabcie;
         bool comprcieauto;
@@ -1684,8 +1686,12 @@ struct LocallabParams {
         bool satcie;
         bool logcieq;
         bool smoothcie;
+        bool smoothcietrc;
+        bool smoothcietrcrel;
         bool smoothcieyb;
         bool smoothcielum;
+        bool smoothciehigh;
+        bool smoothcielnk;
         bool logjz;
         bool sigjz;
         bool sigq;
@@ -1750,11 +1756,19 @@ struct LocallabParams {
         double strcielog;
         double comprcieth;
         double gamjcie;
+        double smoothcieth;
         double slopjcie;
+        double contsig;
+        double skewsig;
+        double whitsig;
         double slopesmo;
+        double slopesmoq;
         double slopesmor;
         double slopesmog;
         double slopesmob;
+        double kslopesmor;
+        double kslopesmog;
+        double kslopesmob;
         int midtcie;
         double grexl;
         double greyl;
@@ -2064,9 +2078,15 @@ struct ColorManagementParams {
     Illuminant will;
     Primaries wprim;
     Cat wcat;
-    double workingTRCGamma;
-    double workingTRCSlope;
+    double wGamma;
+    double wSlope;
     double wmidtcie;
+    double sigmatrc;
+    double offstrc;
+    double residtrc;
+    int pyrwavtrc;
+    std::vector<double> opacityCurveWLI;
+    
     bool wsmoothcie;
     double redx;
     double redy;
@@ -2080,6 +2100,7 @@ struct ColorManagementParams {
     double preser;
     bool fbw;
     bool trcExp;
+    bool wavExp;
     bool gamut;
     double labgridcieALow;
     double labgridcieBLow;
@@ -2104,6 +2125,11 @@ struct ColorManagementParams {
 
     bool operator ==(const ColorManagementParams& other) const;
     bool operator !=(const ColorManagementParams& other) const;
+    
+    void getCurves(
+    IcmOpacityCurveWL& opacityCurveLUTWLI
+    ) const;
+
 };
 
 /**
@@ -2396,7 +2422,7 @@ struct WaveletParams {
         WavOpacityCurveSH& opacityCurveLUTSH,
         WavOpacityCurveBY& opacityCurveLUTBY,
         WavOpacityCurveW& opacityCurveLUTW,
-        WavOpacityCurveWL& opacityCurveLUTWL
+        WavOpacityCurveWL& opacityCurveLUTWL 
     ) const;
 };
 

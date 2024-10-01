@@ -73,6 +73,7 @@ class WavOpacityCurveSH;
 class WavOpacityCurveRG;
 class WavOpacityCurveW;
 class WavOpacityCurveWL;
+class IcmOpacityCurveWL;
 
 class CieImage;
 class Image8;
@@ -367,11 +368,19 @@ enum class BlurType {
                 bool prevDeltaE, int llColorMask, int llColorMaskinv, int llExpMask, int llExpMaskinv, int llSHMask, int llSHMaskinv, int llvibMask, int lllcMask, int llsharMask, int llcbMask, int llretiMask, int llsoftMask, int lltmMask, int llblMask, int lllogMask, int ll_Mask, int llcieMask,
                 float &minCD, float &maxCD, float &mini, float &maxi, float &Tmean, float &Tsigma, float &Tmin, float &Tmax,
                 float& meantm, float& stdtm, float& meanreti, float& stdreti, float &fab, float &maxicam, float &rdx, float &rdy, float &grx, float &gry, float &blx, float &bly, float &meanx, float &meany, float &meanxe, float &meanye, int &prim, int &ill, float &contsig, float &lightsig,
-                float &highresi, float &nresi, float &highresi46, float &nresi46, float &Lhighresi, float &Lnresi, float &Lhighresi46, float &Lnresi46);
+                float &highresi, float &nresi, float &highresi46, float &nresi46, float &Lhighresi, float &Lnresi, float &Lhighresi46, float &Lnresi46, float &slopeg, bool &linkrgb);
     
     void tone_eqcam2(ImProcFunctions *ipf, Imagefloat *rgb, int whits, int blacks, const Glib::ustring &workingProfile, double scale, bool multithread);
     void tone_eqdehaz(ImProcFunctions *ipf, Imagefloat *rgb, int whits, int blacks, const Glib::ustring &workingProfile, double scale, bool multithread);
     void tone_eqcam(ImProcFunctions *ipf, Imagefloat *rgb, int midtone, const Glib::ustring &workingProfile, double scale, bool multithread);
+    void tonemapFreeman(float target_slope, float target_sloper, float target_slopeg , float target_slopeb, float white_point, float black_point, float mid_gray_scene, float mid_gray_view, bool rolloff, float smooththreshold, bool limslope, LUTf& lut, LUTf& lutr, LUTf& lutg, LUTf& lutb, int mode, bool scale, bool takeyb);
+    void tonemapFreemanQ(float Q, float &Qout, float target_slope, float white_point, float black_point, float mid_gray_scene, float mid_gray_view, bool rolloff, bool takeyb);
+
+    float do_get(float x, bool rolloff_, float mid_gray_scene, float gamma, float slopelim, float dr, float b, float c, float kmid);
+    float rolloff_function(float x, float dr, float b, float c, float kmid);
+    float scene_contrast(float x, float mid_gray_scene, float gamma);
+    void sigmoid_main(float r, float g, float b, float &rout, float &gout, float &bout, float middle_grey_contrast, float contrast_skewness, /* float white_point,*/ float MIDDLE_GREY, float black_point, float white_point_disp);
+    void sigmoid_QJ(float Q, float &Qout, float middle_grey_contrast, float contrast_skewness, float MIDDLE_GREY, float black_point, float white_point_disp);
 
     void addGaNoise(LabImage *lab, LabImage *dst, const float mean, const float variance, const int sk);
     void BlurNoise_Localold(int call, const struct local_params& lp, LabImage* original, LabImage* transformed, const LabImage* const tmp1, int cx, int cy);
@@ -395,7 +404,7 @@ enum class BlurType {
                 const LocwavCurve & loccomprewavCurve, bool loccomprewavutili,
                 float radlevblur, int process, float chromablu, float thres, float sigmadc, float deltad);
 
-    void wavlc(wavelet_decomposition& wdspot, int level_bl, int level_hl, int maxlvl, int level_hr, int level_br, float ahigh, float bhigh, float alow, float blow, float sigmalc, float strength, const LocwavCurve & locwavCurve, int numThreads);
+    void wavlc(wavelet_decomposition& wdspot, int level_bl, int level_hl, int maxlvl, int level_hr, int level_br, float ahigh, float bhigh, float alow, float blow, float sigmalc, float offslc, float strength, const LocwavCurve & locwavCurve, int numThreads);
 
     void wavcbd(wavelet_decomposition &wdspot, int level_bl, int maxlvl,
                 const LocwavCurve& locconwavCurve, bool locconwavutili, float sigm, float offs, float chromalev, int sk);
@@ -441,6 +450,8 @@ enum class BlurType {
             int W_ab, int H_ab, const bool useChannelA, float *meanab, float *sigmaab);
     void Evaluate2(const wavelet_decomposition &WaveletCoeffs_L, float *mean, float *meanN, float *sigma, float *sigmaN, float *MaxP, float *MaxN, int numThreads);
     void Eval2(const float* const* WavCoeffs_L, int level, int W_L, int H_L, float *mean, float *meanN, float *sigma, float *sigmaN, float *MaxP, float *MaxN, int numThreads);
+    void localCont (LabImage * lab, LabImage * dst, const procparams::WaveletParams & waparams, const procparams::ColorManagementParams & cmparams, const IcmOpacityCurveWL & cmOpacityCurveWL, int skip, int &level_hr, int &maxlevpo, bool &wavcurvecont);
+    void gamutCont (LabImage * lab, LabImage * dst, const procparams::WaveletParams & waparams, const procparams::ColorManagementParams & cmparams, int skip);
 
     void calceffect(int level, float *mean, float *sigma, float *mea, float effect, float offs);
     std::unique_ptr<LUTf> buildMeaLut(const float inVals[11], const float mea[10], float& lutFactor);

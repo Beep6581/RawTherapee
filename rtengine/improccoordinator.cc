@@ -1398,7 +1398,8 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                 if(params->locallab.spots.at(sp).complexcie == 2) {
                     params->locallab.spots.at(sp).primMethod = prof;//in Basic mode set to Working profile
                 }
-                    
+                float slopeg = 1.f;
+                bool linkrgb = true;
                 ipf.Lab_Local(3, sp, (float**)shbuffer, nprevl, nprevl, reserv.get(), savenormtm.get(), savenormreti.get(), lastorigimp.get(), fw, fh, 0, 0, pW, pH, scale, locRETgainCurve, locRETtransCurve,
                               lllocalcurve, locallutili,
                               cllocalcurve, localclutili,
@@ -1454,7 +1455,7 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                               huerblu, chromarblu, lumarblu, huer, chromar, lumar, sobeler, lastsav, false, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
                               minCD, maxCD, mini, maxi, Tmean, Tsigma, Tmin, Tmax,
                               meantm, stdtm, meanreti, stdreti, fab, maxicam, rdx, rdy, grx, gry, blx, bly, meanx, meany, meanxe, meanye, prim, ill, contsig, lightsig,
-                              highresi, nresi, highresi46, nresi46, Lhighresi, Lnresi, Lhighresi46, Lnresi46);
+                              highresi, nresi, highresi46, nresi46, Lhighresi, Lnresi, Lhighresi46, Lnresi46, slopeg, linkrgb);
 
 
                 fabrefp[sp] = fab;
@@ -1557,6 +1558,8 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                 loccielc.meanylc = meany;
                 loccielc.meanxelc = meanxe;
                 loccielc.meanyelc = meanye;
+                loccielc.slopeglc = slopeg;
+                loccielc.linkrgblc = linkrgb;
                 locallcielc.push_back(loccielc);
 
                 LocallabListener::locallabcieSIG locciesig;
@@ -2076,6 +2079,16 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                 const int GH = nprevl->H;
                 std::unique_ptr<LabImage> provis;
                 const float pres = 0.01f * params->icm.preser;
+                if(params->icm.trcExp) {//local contrast
+                    int level_hr = 7;
+                    int maxlevpo = 9;
+                    bool wavcurvecont = false;
+                    WaveletParams WaveParams = params->wavelet;
+                    ColorManagementParams Colparams = params->icm;
+                    Colparams.getCurves(icmOpacityCurveWL);
+                    ipf.localCont (nprevl, nprevl, WaveParams,Colparams, icmOpacityCurveWL, scale, level_hr, maxlevpo, wavcurvecont);
+                //    ipf.gamutCont (nprevl,nprevl, WaveParams,Colparams, scale);
+                }
 
                 if (pres > 0.f && params->icm.wprim != ColorManagementParams::Primaries::DEFAULT) {
                     provis.reset(new LabImage(GW, GH));
@@ -2086,8 +2099,8 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
 
                 ipf.lab2rgb(*nprevl, *tmpImage1, params->icm.workingProfile);
 
-                const float gamtone = params->icm.workingTRCGamma;
-                const float slotone = params->icm.workingTRCSlope;
+                const float gamtone = params->icm.wGamma;
+                const float slotone = params->icm.wSlope;
                 int illum = toUnderlying(params->icm.will);
                 const int prim = toUnderlying(params->icm.wprim);
 

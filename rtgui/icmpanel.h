@@ -26,6 +26,8 @@
 #include "guiutils.h"
 #include "popupbutton.h"
 #include "toolpanel.h"
+#include "curvelistener.h"
+#include "thresholdadjuster.h"
 
 #include "../rtengine/imagedata.h"
 
@@ -38,8 +40,15 @@ public:
 
 class LabGrid;
 
+class CurveEditor;
+class CurveEditorGroup;
+class DiagonalCurveEditor;
+class EditDataProvider;
+class FlatCurveEditor;
+
 class ICMPanel final :
     public ToolParamBlock,
+    public CurveListener,
     public FoldableToolPanel,
     public rtengine::AutoprimListener,
     public AdjusterListener
@@ -51,11 +60,22 @@ protected:
     Gtk::Frame* redFrame;
     Gtk::Frame* colorFramecie;    
     MyExpander* trcExp;
+    MyExpander* wavExp;
+    MyExpander* wav2Exp;
+    MyExpander* primExp;
 
     Adjuster* wGamma;
     Adjuster* wSlope;
     Adjuster* wmidtcie;
     Gtk::CheckButton* wsmoothcie;
+    Adjuster* sigmatrc;
+    Adjuster* offstrc;
+    Adjuster* pyrwavtrc;
+    Adjuster* residtrc;
+
+    CurveEditorGroup* opacityCurveEditorWLI;
+    FlatCurveEditor* opacityShapeWLI;
+
     Adjuster* redx;
     Adjuster* redy;
     Adjuster* grex;
@@ -75,7 +95,7 @@ protected:
     //Gtk::Label* blb;
     Gtk::Button* neutral;
     sigc::connection trcExpconn;
-    bool lasttrcExp;
+    sigc::connection wavExpconn;
 
     sigc::connection neutralconn;
     bool lastToneCurve;
@@ -127,6 +147,13 @@ private:
     rtengine::ProcEvent EvICMshifty;
     rtengine::ProcEvent EvICMwmidtcie;
     rtengine::ProcEvent EvICMwsmoothcie;
+    rtengine::ProcEvent EvICMsigmatrc;
+    rtengine::ProcEvent EvICMoffstrc;
+    rtengine::ProcEvent EvICMopacityWLI;
+    rtengine::ProcEvent EvICMpyrwavtrc;
+    rtengine::ProcEvent EvICMresidtrc;
+    rtengine::ProcEvent EvICMwavExp;
+
     LabGrid *labgridcie;
     IdleRegister idle_register;
 
@@ -171,7 +198,7 @@ private:
     sigc::connection wprimconn;
     MyComboBoxText* wcat;
     sigc::connection wcatconn;
-    
+
     std::unique_ptr<PopUpButton> aRendIntent;
     sigc::connection arendintentconn;
 
@@ -186,7 +213,7 @@ private:
     sigc::connection ipc;
     Glib::ustring oldip;
     ICMPanelListener* icmplistener;
-    
+
     double dcpTemperatures[2];
     Glib::ustring lastRefFilename;
     Glib::ustring camName;
@@ -205,6 +232,7 @@ private:
     float nextwy;
     float nextmx;
     float nextmy;
+    Gtk::Label* wavlocLabels;
 
 public:
     static const Glib::ustring TOOL_NAME;
@@ -220,6 +248,8 @@ public:
     void primChanged (float rx, float ry, float bx, float by, float gx, float gy) override;
     void iprimChanged (float r_x, float r_y, float b_x, float b_y, float g_x, float g_y, float w_x, float w_y, float m_x, float m_y) override;
     void neutral_pressed();
+    void curveChanged(CurveEditor* ce) override;
+    void wavlocChanged(double nlevel, double nmax, bool curveloc) override;
 
     void wpChanged();
     void wtrcinChanged();
@@ -227,6 +257,7 @@ public:
     void wprimChanged();
     void wcatChanged();
     void trcExpChanged();
+    void wavExpChanged();
     void opChanged();
     void oiChanged(int n);
     void aiChanged(int n);

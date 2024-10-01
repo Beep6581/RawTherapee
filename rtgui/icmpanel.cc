@@ -26,6 +26,10 @@
 #include "options.h"
 #include "pathutils.h"
 #include "rtimage.h"
+#include "curveeditor.h"
+#include "curveeditorgroup.h"
+#include "editcallbacks.h"
+#include <unistd.h>
 
 #include "../rtengine/dcp.h"
 #include "../rtengine/iccstore.h"
@@ -38,7 +42,8 @@ using namespace rtengine::procparams;
 const Glib::ustring ICMPanel::TOOL_NAME = "icm";
 
 ICMPanel::ICMPanel() : FoldableToolPanel(this, TOOL_NAME, M("TP_ICM_LABEL")), iunchanged(nullptr), icmplistener(nullptr)
-{
+{    
+    CurveListener::setMulti(true);
     auto m = ProcEventMapper::getInstance();
     EvICMprimariMethod = m->newEvent(GAMMA, "HISTORY_MSG_ICM_OUTPUT_PRIMARIES");
     EvICMprofileMethod = m->newEvent(GAMMA, "HISTORY_MSG_ICM_OUTPUT_TYPE");
@@ -72,7 +77,13 @@ ICMPanel::ICMPanel() : FoldableToolPanel(this, TOOL_NAME, M("TP_ICM_LABEL")), iu
     EvICMshifty = m->newEvent(LUMINANCECURVE, "HISTORY_MSG_ICM_SHIFTY");
     EvICMwmidtcie = m->newEvent(LUMINANCECURVE, "HISTORY_MSG_ICM_MIDTCIE");
     EvICMwsmoothcie = m->newEvent(LUMINANCECURVE, "HISTORY_MSG_ICM_SMOOTHCIE");
-    
+    EvICMsigmatrc = m->newEvent(LUMINANCECURVE, "HISTORY_MSG_ICM_SIGMATRC");
+    EvICMoffstrc = m->newEvent(LUMINANCECURVE, "HISTORY_MSG_ICM_OFFSTRC");
+    EvICMopacityWLI  = m->newEvent(LUMINANCECURVE, "HISTORY_MSG_ICM_OPACITYW");
+    EvICMpyrwavtrc = m->newEvent(LUMINANCECURVE, "HISTORY_MSG_ICM_PYRWAVTRC");
+    EvICMresidtrc = m->newEvent(LUMINANCECURVE, "HISTORY_MSG_ICM_RESIDTRC");
+    EvICMwavExp = m->newEvent(LUMINANCECURVE, "HISTORY_MSG_ICM_WAVEXP");
+
     isBatchMode = lastToneCurve = lastApplyLookTable = lastApplyBaselineExposureOffset = lastApplyHueSatMap = false;
 
     ipDialog = Gtk::manage(new MyFileChooserButton(M("TP_ICM_INPUTDLGLABEL"), Gtk::FILE_CHOOSER_ACTION_OPEN));
@@ -187,7 +198,7 @@ ICMPanel::ICMPanel() : FoldableToolPanel(this, TOOL_NAME, M("TP_ICM_LABEL")), iu
     iVBox->pack_start(*saveRef, Gtk::PACK_SHRINK);
 
     iFrame->add(*iVBox);
-    pack_start(*iFrame, Gtk::PACK_EXPAND_WIDGET);
+//    pack_start(*iFrame, Gtk::PACK_EXPAND_WIDGET);
 
 
     // ---------------------------- Working profile
@@ -211,18 +222,21 @@ ICMPanel::ICMPanel() : FoldableToolPanel(this, TOOL_NAME, M("TP_ICM_LABEL")), iu
 
     wFrame->add(*wProfVBox);
 
-    //-----------------gamma TRC working
-//    Gtk::Frame *trcFrame = Gtk::manage(new Gtk::Frame(M("TP_ICM_TRCFRAME")));
-    trcExp = Gtk::manage(new MyExpander(true, M("TP_ICM_TRCFRAME")));
+    //-----------------gamma TRC working - Abstract Profile
+    trcExp = Gtk::manage(new MyExpander(true, M("TP_ICM_TRCFRAME")));//expander Abstract Profile
     setExpandAlignProperties(trcExp, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_START);
-//    trcFrame->set_label_align(0.025, 0.5);
     Gtk::Box *trcProfVBox = Gtk::manage(new Gtk::Box(Gtk::ORIENTATION_VERTICAL));
     trcExp->set_tooltip_text(M("TP_ICM_TRCFRAME_TOOLTIP"));
     trcExp->signal_button_release_event().connect_notify ( sigc::bind ( sigc::mem_fun (this, &ICMPanel::foldAllButMe), trcExp) );
     trcExpconn = trcExp->signal_enabled_toggled().connect(sigc::mem_fun(*this, &ICMPanel::trcExpChanged));
+    Gtk::Box *trcPrimVBox = Gtk::manage(new Gtk::Box(Gtk::ORIENTATION_VERTICAL));
+    Gtk::Box *trcWavVBox = Gtk::manage(new Gtk::Box(Gtk::ORIENTATION_VERTICAL));
+    Gtk::Box *trcWav2VBox = Gtk::manage(new Gtk::Box(Gtk::ORIENTATION_VERTICAL));
+    wavlocLabels = Gtk::manage(new Gtk::Label("---", Gtk::ALIGN_CENTER));
 
     wTRCBox = Gtk::manage(new Gtk::Box());
 
+    //TRC gamma and slope
     wTRC = Gtk::manage(new MyComboBoxText());
     wTRCBox->pack_start(*wTRC, Gtk::PACK_EXPAND_WIDGET);
     trcProfVBox->pack_start(*wTRCBox, Gtk::PACK_EXPAND_WIDGET);
@@ -240,12 +254,31 @@ ICMPanel::ICMPanel() : FoldableToolPanel(this, TOOL_NAME, M("TP_ICM_LABEL")), iu
     wFrame->set_tooltip_text(M("TP_ICM_WORKING_TRC_TOOLTIP"));
 
 
-    wGamma = Gtk::manage(new Adjuster(M("TP_ICM_WORKING_TRC_GAMMA"), 0.40, 15.0, 0.001, 2.222));
-    wSlope = Gtk::manage(new Adjuster(M("TP_ICM_WORKING_TRC_SLOPE"), 0., 300., 0.01, 4.5));
+
+    wGamma = Gtk::manage(new Adjuster(M("TP_ICM_WORKING_TRC_GAMMA"), 0.40, 20.0, 0.001, 2.4));//default sRGB
+    wSlope = Gtk::manage(new Adjuster(M("TP_ICM_WORKING_TRC_SLOPE"), 0., 300., 0.01, 12.92));//defautl sRGB
     wmidtcie = Gtk::manage(new Adjuster(M("TP_LOCALLAB_MIDTCIE"), -100., 100., 1., 0.));
-    wsmoothcie = Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_SMOOTHCIE")));
+    wsmoothcie = Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_SMOOTHCIE")));//highlights
     trcProfVBox->pack_start(*wGamma, Gtk::PACK_SHRINK);
     wGamma->show();
+
+    //wavelets variables
+    sigmatrc = Gtk::manage(new Adjuster(M("TP_WAVELET_SIGMAFIN"), 0.025, 2.5, 0.01, 1.));
+    offstrc = Gtk::manage(new Adjuster(M("TP_WAVELET_OFFSFIN"), 0.33, 1.66, 0.01, 1.));
+    pyrwavtrc = Gtk::manage(new Adjuster(M("TP_WAVELET_PYRWAVTRC"), 1, 6, 1, 2));
+    residtrc = Gtk::manage(new Adjuster(M("TP_WAVELET_RESIDTRC"), -100., 100., 1., 0.));
+    opacityCurveEditorWLI = new CurveEditorGroup(options.lastIcmCurvesDir, M("TP_ICM_OPACITYWLI"));
+    opacityCurveEditorWLI->setCurveListener(this);
+    const ColorManagementParams default_params;
+
+    opacityShapeWLI = static_cast<FlatCurveEditor*>(opacityCurveEditorWLI->addCurve(CT_Flat, "", nullptr, false, false));
+    opacityShapeWLI->setIdentityValue(0.);
+    opacityShapeWLI->setResetCurve(FlatCurveType(default_params.opacityCurveWLI.at(0)), default_params.opacityCurveWLI);
+    opacityShapeWLI->setTooltip(M("TP_LOCALLAB_WAT_LEVELLOCCONTRAST_TOOLTIP"));
+    opacityCurveEditorWLI->setTooltip(M("TP_WAVELET_PYRWAVTRC_CURVE_TOOLTIP"));
+    // This will add the reset button at the end of the curveType buttons
+    opacityCurveEditorWLI->curveListComplete();
+    opacityCurveEditorWLI->show();
 
     trcProfVBox->pack_start(*wSlope, Gtk::PACK_SHRINK);
     wSlope->show();
@@ -256,13 +289,38 @@ ICMPanel::ICMPanel() : FoldableToolPanel(this, TOOL_NAME, M("TP_ICM_LABEL")), iu
     wsmoothcieconn = wsmoothcie->signal_toggled().connect(sigc::mem_fun(*this, &ICMPanel::wsmoothcieChanged));
     wsmoothcie->set_active(false);
 
+    fbw = Gtk::manage(new Gtk::CheckButton((M("TP_ICM_FBW"))));
+    fbw->set_active(true);
+    trcProfVBox->pack_start(*fbw, Gtk::PACK_SHRINK);
+
+    wavExp = Gtk::manage(new MyExpander(true, M("TP_ICM_WAVFRAME")));//expander Contrast Enhancement
+    setExpandAlignProperties(wavExp, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_START);
+    wavExp->signal_button_release_event().connect_notify ( sigc::bind ( sigc::mem_fun (this, &ICMPanel::foldAllButMe), wavExp) );
+    wavExpconn = wavExp->signal_enabled_toggled().connect(sigc::mem_fun(*this, &ICMPanel::wavExpChanged));
+
+    wav2Exp = Gtk::manage(new MyExpander(false, M("TP_ICM_WAVREFI")));//expander Refinement wavelet
+    setExpandAlignProperties(wav2Exp, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_START);
+    trcWavVBox->pack_start(*pyrwavtrc, Gtk::PACK_SHRINK);
+    trcWavVBox->pack_start(*wavlocLabels,  Gtk::PACK_SHRINK);
+    pyrwavtrc->set_tooltip_text(M("TP_WAVELET_PYRWAVTRC_TOOLTIP"));
+    trcWavVBox->pack_start(*opacityCurveEditorWLI, Gtk::PACK_SHRINK, 2);
+    trcWav2VBox->pack_start(*sigmatrc, Gtk::PACK_SHRINK);
+    trcWav2VBox->pack_start(*offstrc, Gtk::PACK_SHRINK);
+    trcWav2VBox->pack_start(*residtrc, Gtk::PACK_SHRINK);
+    sigmatrc->set_tooltip_text(M("TP_WAVELET_PYRWAVTRC_SIGMA_TOOLTIP"));
+    residtrc->set_tooltip_text(M("TP_WAVELET_PYRWAVTRC_RESID_TOOLTIP"));
+    offstrc->set_tooltip_text(M("TP_WAVELET_OFFSET_TOOLTIP"));
+    primExp = Gtk::manage(new MyExpander(false, M("TP_ICM_PRIMFRAME")));
+    setExpandAlignProperties(primExp, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_START);
+
+    //Illuminants and Primaries
     willuBox = Gtk::manage(new Gtk::Box());
     willulab = Gtk::manage(new Gtk::Label(M("TP_ICM_WORKING_ILLU") + ":"));
 
     willuBox->pack_start(*willulab, Gtk::PACK_SHRINK);
     will = Gtk::manage(new MyComboBoxText());
     willuBox->pack_start(*will, Gtk::PACK_EXPAND_WIDGET);
-    trcProfVBox->pack_start(*willuBox, Gtk::PACK_EXPAND_WIDGET);
+    trcPrimVBox->pack_start(*willuBox, Gtk::PACK_EXPAND_WIDGET);
     will->append(M("TP_ICM_WORKING_ILLU_NONE"));
     will->append(M("TP_ICM_WORKING_ILLU_D41"));
     will->append(M("TP_ICM_WORKING_ILLU_D50"));
@@ -285,13 +343,13 @@ ICMPanel::ICMPanel() : FoldableToolPanel(this, TOOL_NAME, M("TP_ICM_LABEL")), iu
     wprimBox->pack_start(*wprimlab, Gtk::PACK_SHRINK);
     wprim = Gtk::manage(new MyComboBoxText());
     wprimBox->pack_start(*wprim, Gtk::PACK_EXPAND_WIDGET);
-    fbw = Gtk::manage(new Gtk::CheckButton((M("TP_ICM_FBW"))));
-    fbw->set_active(true);
+//    fbw = Gtk::manage(new Gtk::CheckButton((M("TP_ICM_FBW"))));
+//    fbw->set_active(true);
     gamut = Gtk::manage(new Gtk::CheckButton((M("TP_ICM_GAMUT"))));
     gamut->set_active(true);
 
-    trcProfVBox->pack_start(*wprimBox, Gtk::PACK_EXPAND_WIDGET);
-    trcProfVBox->pack_start(*fbw, Gtk::PACK_EXPAND_WIDGET);
+    trcPrimVBox->pack_start(*wprimBox, Gtk::PACK_EXPAND_WIDGET);
+//    trcPrimVBox->pack_start(*fbw, Gtk::PACK_EXPAND_WIDGET);
 //    trcProfVBox->pack_start(*gamut, Gtk::PACK_EXPAND_WIDGET);
 
     neutral = Gtk::manage (new Gtk::Button (M ("TP_ICM_NEUTRAL")));
@@ -302,7 +360,7 @@ ICMPanel::ICMPanel() : FoldableToolPanel(this, TOOL_NAME, M("TP_ICM_LABEL")), iu
     neutralconn = neutral->signal_pressed().connect ( sigc::mem_fun (*this, &ICMPanel::neutral_pressed) );
     neutral->show();
 
-    trcProfVBox->pack_start (*neutral);
+    trcPrimVBox->pack_start (*neutral);
 
 
     wprim->append(M("TP_ICM_WORKING_PRIM_NONE"));
@@ -324,7 +382,7 @@ ICMPanel::ICMPanel() : FoldableToolPanel(this, TOOL_NAME, M("TP_ICM_LABEL")), iu
 
     wprim->set_tooltip_text(M("TP_ICM_PRIMILLUM_TOOLTIP"));
 
-
+    //Primaries as sliders
     redx = Gtk::manage(new Adjuster(M("TC_PRIM_REDX"), 0.41, 1.0, 0.0001, 0.7347));
     setExpandAlignProperties(redx, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_CENTER);
     redy = Gtk::manage(new Adjuster(M("TC_PRIM_REDY"), 0.0, 0.70, 0.0001, 0.2653));
@@ -380,10 +438,12 @@ ICMPanel::ICMPanel() : FoldableToolPanel(this, TOOL_NAME, M("TP_ICM_LABEL")), iu
     redVBox->pack_start(*labgridcie, Gtk::PACK_EXPAND_WIDGET, 4);
     redVBox->pack_start(*gamut, Gtk::PACK_EXPAND_WIDGET);
 
+    //Shift and refine color in CIE xy
     refi = Gtk::manage(new Adjuster(M("TC_PRIM_REFI"), -0.5, 1., 0.0001, 0.));
     shiftx = Gtk::manage(new Adjuster(M("TC_LOCALLAB_PRIM_SHIFTX"), -0.2, 0.2, 0.0001, 0.));
     shifty = Gtk::manage(new Adjuster(M("TC_LOCALLAB_PRIM_SHIFTY"), -0.2, 0.2, 0.0001, 0.));
 
+    //Chromatic adaptation
     wcatBox = Gtk::manage(new Gtk::Box());
     wcatlab = Gtk::manage(new Gtk::Label(M("TP_ICM_WORKING_CAT") + ":"));
     wcatBox->pack_start(*wcatlab, Gtk::PACK_SHRINK);
@@ -420,11 +480,26 @@ ICMPanel::ICMPanel() : FoldableToolPanel(this, TOOL_NAME, M("TP_ICM_LABEL")), iu
     refi->setAdjusterListener(this);
     shiftx->setAdjusterListener(this);
     shifty->setAdjusterListener(this);
+    sigmatrc->setAdjusterListener(this);
+    offstrc->setAdjusterListener(this);
+    pyrwavtrc->setAdjusterListener(this);
+    residtrc->setAdjusterListener(this);
 
-    wGamma->setDelay(std::max(options.adjusterMinDelay, options.adjusterMaxDelay));
+    //wGamma->setDelay(std::max(options.adjusterMinDelay, options.adjusterMaxDelay));
 
-    wSlope->setDelay(std::max(options.adjusterMinDelay, options.adjusterMaxDelay));
+    // wSlope->setDelay(std::max(options.adjusterMinDelay, options.adjusterMaxDelay));
     wmidtcie->setDelay(std::max(options.adjusterMinDelay, options.adjusterMaxDelay));
+    wav2Exp->add(*trcWav2VBox, false);
+    wav2Exp->set_expanded(false);
+    wav2Exp->setLevel (2);
+    trcWavVBox->pack_start(*wav2Exp, false, false);
+    
+    wavExp->add(*trcWavVBox, false);
+    wavExp->set_expanded(false);
+    wavExp->setLevel (2);
+    trcProfVBox->pack_start(*wavExp, false, false);
+    
+    trcProfVBox->pack_start(*primExp, false, false);
 
     // Rendering intent
     riaHBox = Gtk::manage(new Gtk::Box());
@@ -438,15 +513,19 @@ ICMPanel::ICMPanel() : FoldableToolPanel(this, TOOL_NAME, M("TP_ICM_LABEL")), iu
     aRendIntent->setSelected(1);
     aRendIntent->show();
     riaHBox->pack_start(*aRendIntent->buttonGroup, Gtk::PACK_EXPAND_PADDING);
+    trcPrimVBox->pack_start(*redFrame, Gtk::PACK_EXPAND_WIDGET);
 
+    primExp->add(*trcPrimVBox, false);
+    primExp->set_expanded(false);
+    primExp->setLevel (2);
 
-    pack_start(*wFrame, Gtk::PACK_EXPAND_WIDGET);
-    trcProfVBox->pack_start(*redFrame, Gtk::PACK_EXPAND_WIDGET);
     trcExp->add(*trcProfVBox, false);
     trcExp->setLevel (2);
     pack_start(*trcExp, Gtk::PACK_EXPAND_WIDGET);
     trcExp->set_expanded(false);
 
+    pack_start(*wFrame, Gtk::PACK_EXPAND_WIDGET);
+    pack_start(*iFrame, Gtk::PACK_EXPAND_WIDGET);
 
     // ---------------------------- Output profile
 
@@ -558,9 +637,31 @@ void ICMPanel::foldAllButMe (GdkEventButton* event, MyExpander *expander)
 {
     if (event->button == 3) {
         trcExp->set_expanded (trcExp == expander);
+        wavExp->set_expanded (wavExp == expander);
     }
 }
 
+void ICMPanel::wavlocChanged(double nlevel, double nmax, bool curveloc)
+{
+    if (!batchMode) {
+        idle_register.add(
+        [this, nlevel, nmax, curveloc]() -> bool {
+            if(nlevel != nmax && curveloc) {
+                wavlocLabels->show();
+                wavlocLabels->set_text(
+                    Glib::ustring::compose(
+                        M("TP_WAVELET_LEVLOCLABEL"),
+                        Glib::ustring::format(std::fixed, std::setprecision(0), nlevel)//not use but keep in case of
+                    )
+                );
+            } else {
+                wavlocLabels->hide();
+            }
+            return false;
+        }
+        );
+    }
+}
 
 void ICMPanel::neutral_pressed ()
 {   //find working profile and set the same destination proile
@@ -590,9 +691,15 @@ void ICMPanel::neutral_pressed ()
         wprim->set_active(toUnderlying(ColorManagementParams::Primaries::BEST_RGB));
     }
     const ColorManagementParams defPar;
-    wGamma->setValue(defPar.workingTRCGamma);//2.4
-    wSlope->setValue(defPar.workingTRCSlope);//12.92
+  //  wGamma->setValue(defPar.workingTRCGamma);//2.4
+  //  wSlope->setValue(defPar.workingTRCSlope);//12.92
+    wGamma->setValue(defPar.wGamma);//2.4
+    wSlope->setValue(defPar.wSlope);//12.92
     wmidtcie->setValue(defPar.wmidtcie);
+    sigmatrc->setValue(defPar.sigmatrc);
+    offstrc->setValue(defPar.offstrc);
+    residtrc->setValue(defPar.residtrc);
+    pyrwavtrc->setValue(defPar.pyrwavtrc);
     preser->setValue(defPar.preser);
     fbw->set_active(defPar.fbw);
     gamut->set_active(defPar.gamut);	
@@ -645,6 +752,8 @@ void ICMPanel::updateRenderingIntent(const Glib::ustring &profile)
 ICMPanel::~ICMPanel()
 {
     idle_register.destroy();
+    delete opacityCurveEditorWLI;
+
 }
 
 void ICMPanel::primChanged (float rx, float ry, float bx, float by, float gx, float gy)
@@ -711,7 +820,8 @@ void ICMPanel::iprimChanged (float r_x, float r_y, float b_x, float b_y, float g
 
 void ICMPanel::setEditProvider(EditDataProvider *provider)
 {
-    //in case of
+    opacityShapeWLI->setEditProvider(provider);
+
 }
 
 void ICMPanel::setListener(ToolPanelListener *tpl)
@@ -872,8 +982,12 @@ void ICMPanel::read(const ProcParams* pp, const ParamsEdited* pedited)
     ConnectionBlocker wprimconn_(wprimconn);
     ConnectionBlocker wcatconn_(wcatconn);
     ConnectionBlocker trcExpconn_(trcExpconn);
+    ConnectionBlocker wavExpconn_(wavExpconn);
     
     trcExp->set_expanded(false);
+    primExp->set_expanded(false);
+    wavExp->set_expanded(false);
+    wav2Exp->set_expanded(false);
 
     if (pp->icm.inputProfile.substr(0, 5) != "file:" && !ipDialog->get_filename().empty()) {
         ipDialog->set_filename(pp->icm.inputProfile);
@@ -935,10 +1049,12 @@ void ICMPanel::read(const ProcParams* pp, const ParamsEdited* pedited)
 
     oRendIntent->setSelected(pp->icm.outputIntent);
     aRendIntent->setSelected(pp->icm.aRendIntent);
+    opacityShapeWLI->setCurve(pp->icm.opacityCurveWLI);
 
     obpc->set_active(pp->icm.outputBPC);
     fbw->set_active(pp->icm.fbw);
     trcExp->setEnabled(pp->icm.trcExp);
+    wavExp->setEnabled(pp->icm.wavExp);
     gamut->set_active(pp->icm.gamut);
     wsmoothcie->set_active(pp->icm.wsmoothcie);
     ckbToneCurve->set_active(pp->icm.toneCurve);
@@ -950,9 +1066,15 @@ void ICMPanel::read(const ProcParams* pp, const ParamsEdited* pedited)
     ckbApplyHueSatMap->set_active(pp->icm.applyHueSatMap);
     lastApplyHueSatMap = pp->icm.applyHueSatMap;
 
-    wGamma->setValue(pp->icm.workingTRCGamma);
-    wSlope->setValue(pp->icm.workingTRCSlope);
+  //  wGamma->setValue(pp->icm.workingTRCGamma);
+  //  wSlope->setValue(pp->icm.workingTRCSlope);
+    wGamma->setValue(pp->icm.wGamma);
+    wSlope->setValue(pp->icm.wSlope);
     wmidtcie->setValue(pp->icm.wmidtcie);
+    sigmatrc->setValue(pp->icm.sigmatrc);
+    offstrc->setValue(pp->icm.offstrc);
+    residtrc->setValue(pp->icm.residtrc);
+    pyrwavtrc->setValue(pp->icm.pyrwavtrc);
     redx->setValue(pp->icm.redx);
     redy->setValue(pp->icm.redy);
     grex->setValue(pp->icm.grex);
@@ -970,6 +1092,7 @@ void ICMPanel::read(const ProcParams* pp, const ParamsEdited* pedited)
         obpc->set_inconsistent(!pedited->icm.outputBPC);
         fbw->set_inconsistent(!pedited->icm.fbw);
         trcExp->set_inconsistent(!pedited->icm.trcExp);
+        wavExp->set_inconsistent(!pedited->icm.wavExp);
         gamut->set_inconsistent(!pedited->icm.gamut);
         wsmoothcie->set_inconsistent(!pedited->icm.wsmoothcie);
         ckbToneCurve->set_inconsistent(!pedited->icm.toneCurve);
@@ -1014,10 +1137,17 @@ void ICMPanel::read(const ProcParams* pp, const ParamsEdited* pedited)
         }
         
         labgridcie->setEdited(pedited->icm.labgridcieALow || pedited->icm.labgridcieBLow || pedited->icm.labgridcieAHigh || pedited->icm.labgridcieBHigh  || pedited->icm.labgridcieGx  || pedited->icm.labgridcieGy || pedited->icm.labgridcieWx  || pedited->icm.labgridcieWy || pedited->icm.labgridcieMx || pedited->icm.labgridcieMy);
+        opacityShapeWLI->setCurve(pp->icm.opacityCurveWLI);
 
-        wGamma->setEditedState(pedited->icm.workingTRCGamma ? Edited : UnEdited);
-        wSlope->setEditedState(pedited->icm.workingTRCSlope  ? Edited : UnEdited);
+     //   wGamma->setEditedState(pedited->icm.workingTRCGamma ? Edited : UnEdited);
+     //   wSlope->setEditedState(pedited->icm.workingTRCSlope  ? Edited : UnEdited);
+        wGamma->setEditedState(pedited->icm.wGamma ? Edited : UnEdited);
+        wSlope->setEditedState(pedited->icm.wSlope  ? Edited : UnEdited);
         wmidtcie->setEditedState(pedited->icm.wmidtcie  ? Edited : UnEdited);
+        sigmatrc->setEditedState(pedited->icm.sigmatrc  ? Edited : UnEdited);
+        offstrc->setEditedState(pedited->icm.offstrc  ? Edited : UnEdited);
+        residtrc->setEditedState(pedited->icm.residtrc  ? Edited : UnEdited);
+        pyrwavtrc->setEditedState(pedited->icm.pyrwavtrc  ? Edited : UnEdited);
         redx->setEditedState(pedited->icm.redx  ? Edited : UnEdited);
         redy->setEditedState(pedited->icm.redy  ? Edited : UnEdited);
         grex->setEditedState(pedited->icm.grex  ? Edited : UnEdited);
@@ -1036,6 +1166,10 @@ void ICMPanel::read(const ProcParams* pp, const ParamsEdited* pedited)
             wSlope->set_sensitive(false);
             wGamma->set_sensitive(false);
             wmidtcie->set_sensitive(false);
+            sigmatrc->set_sensitive(false);
+            offstrc->set_sensitive(false);
+            residtrc->set_sensitive(false);
+            pyrwavtrc->set_sensitive(false);
             will->set_sensitive(false);
             willulab->set_sensitive(false);
             wprim->set_sensitive(false);
@@ -1090,7 +1224,8 @@ void ICMPanel::read(const ProcParams* pp, const ParamsEdited* pedited)
             }
             riaHBox->set_sensitive(true);
 
-            if (pp->icm.workingTRCGamma <= 1.) {
+        //    if (pp->icm.workingTRCGamma <= 1.) {
+            if (pp->icm.wGamma <= 1.) {
                 wGamma->set_sensitive(true);
                 wSlope->set_sensitive(false);
                 wmidtcie->set_sensitive(true);
@@ -1123,6 +1258,10 @@ void ICMPanel::read(const ProcParams* pp, const ParamsEdited* pedited)
             wGamma->set_sensitive(false);
             wSlope->set_sensitive(false);
             wmidtcie->set_sensitive(true);
+            sigmatrc->set_sensitive(true);
+            offstrc->set_sensitive(true);
+            residtrc->set_sensitive(true);
+            pyrwavtrc->set_sensitive(true);
             if (ColorManagementParams::Primaries(wprim->get_active_row_number()) == ColorManagementParams::Primaries::DEFAULT) {
                 redFrame->hide();
             } else {
@@ -1150,6 +1289,10 @@ void ICMPanel::read(const ProcParams* pp, const ParamsEdited* pedited)
             wGamma->set_sensitive(false);
             wSlope->set_sensitive(false);
             wmidtcie->set_sensitive(true);
+            sigmatrc->set_sensitive(true);
+            offstrc->set_sensitive(true);
+            residtrc->set_sensitive(true);
+            pyrwavtrc->set_sensitive(true);
             riaHBox->set_sensitive(true);
             if (ColorManagementParams::Primaries(wprim->get_active_row_number()) == ColorManagementParams::Primaries::DEFAULT) {
                 redFrame->hide();
@@ -1178,6 +1321,10 @@ void ICMPanel::read(const ProcParams* pp, const ParamsEdited* pedited)
             wGamma->set_sensitive(false);
             wSlope->set_sensitive(false);
             wmidtcie->set_sensitive(true);
+            sigmatrc->set_sensitive(true);
+            offstrc->set_sensitive(true);
+            residtrc->set_sensitive(true);
+            pyrwavtrc->set_sensitive(true);
             riaHBox->set_sensitive(true);
             if (ColorManagementParams::Primaries(wprim->get_active_row_number()) == ColorManagementParams::Primaries::DEFAULT) {
                 redFrame->hide();
@@ -1211,6 +1358,10 @@ void ICMPanel::read(const ProcParams* pp, const ParamsEdited* pedited)
             wGamma->set_sensitive(false);
             wSlope->set_sensitive(false);
             wmidtcie->set_sensitive(true);
+            sigmatrc->set_sensitive(true);
+            offstrc->set_sensitive(true);
+            residtrc->set_sensitive(true);
+            pyrwavtrc->set_sensitive(true);
             break;
         case ColorManagementParams::WorkingTrc::LINEAR:
             wGamma->setValue(1.);
@@ -1232,6 +1383,10 @@ void ICMPanel::read(const ProcParams* pp, const ParamsEdited* pedited)
             wGamma->set_sensitive(false);
             wSlope->set_sensitive(false);
             wmidtcie->set_sensitive(true);
+            sigmatrc->set_sensitive(true);
+            offstrc->set_sensitive(true);
+            residtrc->set_sensitive(true);
+            pyrwavtrc->set_sensitive(true);
             riaHBox->set_sensitive(true);
             if (ColorManagementParams::Primaries(wprim->get_active_row_number()) == ColorManagementParams::Primaries::DEFAULT) {
                 redFrame->hide();
@@ -1334,11 +1489,18 @@ void ICMPanel::write(ProcParams* pp, ParamsEdited* pedited)
     pp->icm.outputBPC = obpc->get_active();
     pp->icm.fbw = fbw->get_active();
     pp->icm.trcExp = trcExp->getEnabled();
+    pp->icm.wavExp = wavExp->getEnabled();
     pp->icm.gamut = gamut->get_active();
     pp->icm.wsmoothcie = wsmoothcie->get_active();
-    pp->icm.workingTRCGamma =  wGamma->getValue();
-    pp->icm.workingTRCSlope =  wSlope->getValue();
+ //   pp->icm.workingTRCGamma =  wGamma->getValue();
+ //   pp->icm.workingTRCSlope =  wSlope->getValue();
+    pp->icm.wGamma =  wGamma->getValue();
+    pp->icm.wSlope =  wSlope->getValue();
     pp->icm.wmidtcie =  wmidtcie->getValue();
+    pp->icm.sigmatrc =  sigmatrc->getValue();
+    pp->icm.offstrc =  offstrc->getValue();
+    pp->icm.residtrc =  residtrc->getValue();
+    pp->icm.pyrwavtrc =  pyrwavtrc->getIntValue();
     pp->icm.redx =  redx->getValue();
     pp->icm.redy =  redy->getValue();
     pp->icm.grex =  grex->getValue();
@@ -1350,6 +1512,7 @@ void ICMPanel::write(ProcParams* pp, ParamsEdited* pedited)
     pp->icm.shifty =  shifty->getValue();
     pp->toneCurve.fromHistMatching = false;
     pp->icm.preser =  preser->getValue();
+    pp->icm.opacityCurveWLI = opacityShapeWLI->getCurve();
 
     if (pedited) {
         pedited->icm.inputProfile = !iunchanged->get_active();
@@ -1360,6 +1523,7 @@ void ICMPanel::write(ProcParams* pp, ParamsEdited* pedited)
         pedited->icm.outputBPC = !obpc->get_inconsistent();
         pedited->icm.fbw = !fbw->get_inconsistent();
         pedited->icm.trcExp = !trcExp->get_inconsistent();
+        pedited->icm.wavExp = !wavExp->get_inconsistent();
         pedited->icm.gamut = !gamut->get_inconsistent();
         pedited->icm.wsmoothcie = !wsmoothcie->get_inconsistent();
         pedited->icm.dcpIlluminant = dcpIll->get_active_text() != M("GENERAL_UNCHANGED");
@@ -1367,9 +1531,15 @@ void ICMPanel::write(ProcParams* pp, ParamsEdited* pedited)
         pedited->icm.applyLookTable = !ckbApplyLookTable->get_inconsistent();
         pedited->icm.applyBaselineExposureOffset = !ckbApplyBaselineExposureOffset->get_inconsistent();
         pedited->icm.applyHueSatMap = !ckbApplyHueSatMap->get_inconsistent();
-        pedited->icm.workingTRCGamma = wGamma->getEditedState();
-        pedited->icm.workingTRCSlope = wSlope->getEditedState();
+      //  pedited->icm.workingTRCGamma = wGamma->getEditedState();
+       // pedited->icm.workingTRCSlope = wSlope->getEditedState();
+        pedited->icm.wGamma = wGamma->getEditedState();
+        pedited->icm.wSlope = wSlope->getEditedState();
         pedited->icm.wmidtcie = wmidtcie->getEditedState();
+        pedited->icm.sigmatrc = sigmatrc->getEditedState();
+        pedited->icm.offstrc = offstrc->getEditedState();
+        pedited->icm.residtrc = residtrc->getEditedState();
+        pedited->icm.pyrwavtrc = pyrwavtrc->getEditedState();
         pedited->icm.workingTRC = wTRC->get_active_text() != M("GENERAL_UNCHANGED");
         pedited->icm.will = will->get_active_text() != M("GENERAL_UNCHANGED");
         pedited->icm.wprim = wprim->get_active_text() != M("GENERAL_UNCHANGED");
@@ -1377,14 +1547,31 @@ void ICMPanel::write(ProcParams* pp, ParamsEdited* pedited)
         pedited->icm.redx = redx->getEditedState();
         pedited->icm.redy = redy->getEditedState();
         pedited->icm.labgridcieALow = pedited->icm.labgridcieBLow = pedited->icm.labgridcieAHigh = pedited->icm.labgridcieBHigh = pedited->icm.labgridcieGx = pedited->icm.labgridcieGy = pedited->icm.labgridcieWx = pedited->icm.labgridcieWy = pedited->icm.labgridcieMx = pedited->icm.labgridcieMy = labgridcie->getEdited();
+        pedited->icm.opacityCurveWLI  = !opacityShapeWLI->isUnChanged();
+
    }
 }
 
+void ICMPanel::curveChanged(CurveEditor* ce)
+{
+
+    if (listener) {
+        if (ce == opacityShapeWLI) {
+            listener->panelChanged(EvICMopacityWLI, M("HISTORY_CUSTOMCURVE"));
+        } 
+    }
+}
 void ICMPanel::setDefaults(const ProcParams* defParams, const ParamsEdited* pedited)
 {
-    wGamma->setDefault(defParams->icm.workingTRCGamma);
-    wSlope->setDefault(defParams->icm.workingTRCSlope);
+   // wGamma->setDefault(defParams->icm.workingTRCGamma);
+   // wSlope->setDefault(defParams->icm.workingTRCSlope);
+    wGamma->setDefault(defParams->icm.wGamma);
+    wSlope->setDefault(defParams->icm.wSlope);
     wmidtcie->setDefault(defParams->icm.wmidtcie);
+    sigmatrc->setDefault(defParams->icm.sigmatrc);
+    offstrc->setDefault(defParams->icm.offstrc);
+    residtrc->setDefault(defParams->icm.residtrc);
+    pyrwavtrc->setDefault(defParams->icm.pyrwavtrc);
     redx->setDefault(defParams->icm.redx);
     redy->setDefault(defParams->icm.redy);
     grex->setDefault(defParams->icm.grex);
@@ -1398,9 +1585,15 @@ void ICMPanel::setDefaults(const ProcParams* defParams, const ParamsEdited* pedi
     labgridcie->setDefault(defParams->icm.labgridcieALow, defParams->icm.labgridcieBLow , defParams->icm.labgridcieAHigh, defParams->icm.labgridcieBHigh, defParams->icm.labgridcieGx, defParams->icm.labgridcieGy, defParams->icm.labgridcieWx, defParams->icm.labgridcieWy, defParams->icm.labgridcieMx, defParams->icm.labgridcieMy);
 
     if (pedited) {
-        wGamma->setDefaultEditedState(pedited->icm.workingTRCGamma ? Edited : UnEdited);
-        wSlope->setDefaultEditedState(pedited->icm.workingTRCSlope ? Edited : UnEdited);
+     //   wGamma->setDefaultEditedState(pedited->icm.workingTRCGamma ? Edited : UnEdited);
+     //   wSlope->setDefaultEditedState(pedited->icm.workingTRCSlope ? Edited : UnEdited);
+        wGamma->setDefaultEditedState(pedited->icm.wGamma ? Edited : UnEdited);
+        wSlope->setDefaultEditedState(pedited->icm.wSlope ? Edited : UnEdited);
         wmidtcie->setDefaultEditedState(pedited->icm.wmidtcie ? Edited : UnEdited);
+        sigmatrc->setDefaultEditedState(pedited->icm.sigmatrc ? Edited : UnEdited);
+        offstrc->setDefaultEditedState(pedited->icm.offstrc ? Edited : UnEdited);
+        residtrc->setDefaultEditedState(pedited->icm.residtrc ? Edited : UnEdited);
+        pyrwavtrc->setDefaultEditedState(pedited->icm.pyrwavtrc ? Edited : UnEdited);
         redx->setDefaultEditedState(pedited->icm.redx ? Edited : UnEdited);
         redy->setDefaultEditedState(pedited->icm.redy ? Edited : UnEdited);
         grex->setDefaultEditedState(pedited->icm.grex ? Edited : UnEdited);
@@ -1417,6 +1610,10 @@ void ICMPanel::setDefaults(const ProcParams* defParams, const ParamsEdited* pedi
         wGamma->setDefaultEditedState(Irrelevant);
         wSlope->setDefaultEditedState(Irrelevant);
         wmidtcie->setDefaultEditedState(Irrelevant);
+        sigmatrc->setDefaultEditedState(Irrelevant);
+        offstrc->setDefaultEditedState(Irrelevant);
+        residtrc->setDefaultEditedState(Irrelevant);
+        pyrwavtrc->setDefaultEditedState(Irrelevant);
         redx->setDefaultEditedState(Irrelevant);
         redy->setDefaultEditedState(Irrelevant);
         grex->setDefaultEditedState(Irrelevant);
@@ -1448,6 +1645,14 @@ void ICMPanel::adjusterChanged(Adjuster* a, double newval)
             listener->panelChanged(EvICMslop, costr2);
         } else if (a == wmidtcie) {
             listener->panelChanged(EvICMwmidtcie, costr2);
+        } else if (a == sigmatrc) {
+            listener->panelChanged(EvICMsigmatrc, costr2);
+        } else if (a == offstrc) {
+            listener->panelChanged(EvICMoffstrc, costr2);
+        } else if (a == residtrc) {
+            listener->panelChanged(EvICMresidtrc, costr2);
+        } else if (a == pyrwavtrc) {
+            listener->panelChanged(EvICMpyrwavtrc, costr2);
         } else if (a == redx) {
             listener->panelChanged(EvICMredx, costr2);
         } else if (a == redy) {
@@ -1487,6 +1692,10 @@ void ICMPanel::wtrcinChanged()
             wGamma->set_sensitive(false);
             wSlope->set_sensitive(false);
             wmidtcie->set_sensitive(false);
+            sigmatrc->set_sensitive(false);
+            offstrc->set_sensitive(false);
+            residtrc->set_sensitive(false);
+            pyrwavtrc->set_sensitive(false);
             will->set_sensitive(false);
             willulab->set_sensitive(false);
             wprim->set_sensitive(false);
@@ -1503,6 +1712,10 @@ void ICMPanel::wtrcinChanged()
             will->set_sensitive(false);
             wprim->set_sensitive(true);
             wmidtcie->set_sensitive(true);
+            sigmatrc->set_sensitive(true);
+            offstrc->set_sensitive(true);
+            residtrc->set_sensitive(true);
+            pyrwavtrc->set_sensitive(true);
             wcat->set_sensitive(true);
             wcatlab->set_sensitive(true);
             fbw->set_sensitive(true);
@@ -1538,6 +1751,10 @@ void ICMPanel::wtrcinChanged()
             wGamma->setValue(2.222);
             wSlope->setValue(4.5);
             wmidtcie->set_sensitive(true);
+            sigmatrc->set_sensitive(true);
+            offstrc->set_sensitive(true);
+            residtrc->set_sensitive(true);
+            pyrwavtrc->set_sensitive(true);
             will->set_sensitive(false);
             willulab->set_sensitive(true);
             wprim->set_sensitive(true);
@@ -1568,6 +1785,10 @@ void ICMPanel::wtrcinChanged()
             wGamma->setValue(2.4);
             wSlope->setValue(12.92);
             wmidtcie->set_sensitive(true);
+            sigmatrc->set_sensitive(true);
+            offstrc->set_sensitive(true);
+            residtrc->set_sensitive(true);
+            pyrwavtrc->set_sensitive(true);
             will->set_sensitive(false);
             willulab->set_sensitive(true);
             wprim->set_sensitive(true);
@@ -1599,6 +1820,10 @@ void ICMPanel::wtrcinChanged()
             wGamma->setValue(2.2);
             wSlope->setValue(0.);
             wmidtcie->set_sensitive(true);
+            sigmatrc->set_sensitive(true);
+            offstrc->set_sensitive(true);
+            residtrc->set_sensitive(true);
+            pyrwavtrc->set_sensitive(true);
             will->set_sensitive(false);
             willulab->set_sensitive(true);
             wprim->set_sensitive(true);
@@ -1631,6 +1856,10 @@ void ICMPanel::wtrcinChanged()
             wGamma->setValue(1.8);
             wSlope->setValue(0.);
             wmidtcie->set_sensitive(true);
+            sigmatrc->set_sensitive(true);
+            offstrc->set_sensitive(true);
+            residtrc->set_sensitive(true);
+            pyrwavtrc->set_sensitive(true);
             will->set_sensitive(false);
             willulab->set_sensitive(true);
             wprim->set_sensitive(true);
@@ -1663,6 +1892,10 @@ void ICMPanel::wtrcinChanged()
             wGamma->setValue(1.0);
             wSlope->setValue(1.);
             wmidtcie->set_sensitive(true);
+            sigmatrc->set_sensitive(true);
+            offstrc->set_sensitive(true);
+            residtrc->set_sensitive(true);
+            pyrwavtrc->set_sensitive(true);
             will->set_sensitive(false);
             willulab->set_sensitive(true);
             wprim->set_sensitive(true);
@@ -2317,6 +2550,17 @@ void ICMPanel::trcExpChanged()
     }
 }
 
+void ICMPanel::wavExpChanged()
+{
+
+    if (listener) {
+        if (wavExp->getEnabled()) {
+            listener->panelChanged(EvICMwavExp, M("GENERAL_ENABLED"));
+        } else {
+            listener->panelChanged(EvICMwavExp, M("GENERAL_DISABLED"));
+        }
+    }
+}
 
 
 void ICMPanel::fbwChanged()
@@ -2503,6 +2747,8 @@ void ICMPanel::setBatchMode(bool batchMode)
     iunchanged->set_group(opts);
     iVBox->pack_start(*iunchanged, Gtk::PACK_SHRINK, 4);
     iVBox->reorder_child(*iunchanged, 5);
+    opacityCurveEditorWLI->setBatchMode(batchMode);
+
     removeIfThere(this, saveRef);
     oProfNames->append(M("GENERAL_UNCHANGED"));
     oRendIntent->addEntry("template-24", M("GENERAL_UNCHANGED"));
@@ -2517,6 +2763,10 @@ void ICMPanel::setBatchMode(bool batchMode)
     wGamma->showEditedCB();
     wSlope->showEditedCB();
     wmidtcie->showEditedCB();
+    sigmatrc->showEditedCB();
+    offstrc->showEditedCB();
+    residtrc->showEditedCB();
+    pyrwavtrc->showEditedCB();
     redx->showEditedCB();
     redy->showEditedCB();
     grex->showEditedCB();

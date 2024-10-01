@@ -2400,9 +2400,28 @@ ColorManagementParams::ColorManagementParams() :
     will(Illuminant::DEFAULT),
     wprim(Primaries::DEFAULT),
     wcat(Cat::BRAD),
-    workingTRCGamma(2.4),//gamma sRGB
-    workingTRCSlope(12.92),
+    wGamma(2.4),//gamma sRGB
+    wSlope(12.92),
     wmidtcie(0.),
+    sigmatrc(1.),
+    offstrc(1.),
+    residtrc(0.),
+    pyrwavtrc(2),    
+    opacityCurveWLI{
+        static_cast<double>(FCT_MinMaxCPoints),
+        0.0,
+        0.50,
+        0.35,
+        0.35,
+        0.50,
+        0.70,
+        0.35,
+        0.35,
+        1.00,
+        0.50,
+        0.35,
+        0.35
+    },
     wsmoothcie(false),
     redx(0.7347),
     redy(0.2653),
@@ -2416,6 +2435,7 @@ ColorManagementParams::ColorManagementParams() :
     preser(0.),
     fbw(false),
     trcExp(false),
+    wavExp(false),
     gamut(true),
     labgridcieALow(0.51763),//Prophoto red = (0.7347+0.1) * 1.81818 - 1
     labgridcieBLow(-0.33582),
@@ -2448,9 +2468,13 @@ bool ColorManagementParams::operator ==(const ColorManagementParams& other) cons
         && will == other.will
         && wprim == other.wprim
         && wcat == other.wcat
-        && workingTRCGamma == other.workingTRCGamma
-        && workingTRCSlope == other.workingTRCSlope
+        && wGamma == other.wGamma
+        && wSlope == other.wSlope
         && wmidtcie == other.wmidtcie
+        && sigmatrc == other.sigmatrc
+        && offstrc == other.offstrc
+        && pyrwavtrc == other.pyrwavtrc
+        && opacityCurveWLI == other.opacityCurveWLI
         && wsmoothcie == other.wsmoothcie
         && redx == other.redx
         && redy == other.redy
@@ -2474,11 +2498,19 @@ bool ColorManagementParams::operator ==(const ColorManagementParams& other) cons
         && preser == other.preser
         && fbw == other.fbw
         && trcExp == other.trcExp
+        && wavExp == other.wavExp
         && gamut == other.gamut
         && aRendIntent == other.aRendIntent
         && outputProfile == other.outputProfile
         && outputIntent == other.outputIntent
         && outputBPC == other.outputBPC;
+}
+
+void ColorManagementParams::getCurves(
+    IcmOpacityCurveWL& opacityCurveLUTWLI
+) const
+{
+    opacityCurveLUTWLI.Set(this->opacityCurveWLI);
 }
 
 bool ColorManagementParams::operator !=(const ColorManagementParams& other) const
@@ -3959,6 +3991,7 @@ LocallabParams::LocallabSpot::LocallabSpot() :
     lcdarkness(1.0),
     lclightness(1.0),
     sigmalc(1.0),
+    offslc(1.0),
     levelwav(4),
     residcont(0.0),
     residsha(0.0),
@@ -4010,7 +4043,7 @@ LocallabParams::LocallabSpot::LocallabSpot() :
     wavgradl(false),
     wavcompre(false),
     origlc(false),
-    localcontMethod("loc"),
+    localcontMethod("wav"),
     localedgMethod("thr"),
     localneiMethod("low"),
     locwavcurve{
@@ -4024,7 +4057,7 @@ LocallabParams::LocallabSpot::LocallabSpot() :
         0.35,
         0.35
     },
-    csthreshold(0, 0, 6, 6, false),
+    csthreshold(0, 0, 7, 5, false),
     loclevwavcurve{
         static_cast<double>(FCT_MinMaxCPoints),
         0.0,
@@ -4445,11 +4478,11 @@ LocallabParams::LocallabSpot::LocallabSpot() :
     sensicie(60),
     Autograycie(true),
     forcejz(true),
-    forcebw(true),
+    sigybjz(true),
     qtoj(false),
     jabcie(true),
     comprcieauto(false),
-    normcie(true),
+    normcie(false),
     gamutcie(true),
     bwcie(false),
     sigcie(true),
@@ -4457,8 +4490,12 @@ LocallabParams::LocallabSpot::LocallabSpot() :
     satcie(true),
     logcieq(false),
     smoothcie(false),
+    smoothcietrc(true),
+    smoothcietrcrel(true),
     smoothcieyb(false),
     smoothcielum(false),
+    smoothciehigh(true),
+    smoothcielnk(true),
     logjz(false),
     sigjz(false),
     sigq(false),
@@ -4468,7 +4505,7 @@ LocallabParams::LocallabSpot::LocallabSpot() :
     sursourcie("Average"),
     modecie("com"),
     modecam("cam16"),
-    bwevMethod("sig"),
+    bwevMethod("slop"),
     saturlcie(0.),
     rstprotectcie(0.),
     chromlcie(0.),
@@ -4633,19 +4670,27 @@ LocallabParams::LocallabSpot::LocallabSpot() :
     blackEvjz(-5.00),
     whiteEvjz(10.00),
     targetjz(18.0),
-    sigmoidldacie(0.5),
-    sigmoidthcie(1.2),
+    sigmoidldacie(1.8),
+    sigmoidthcie(0.0),
     sigmoidsenscie(0.9),
-    sigmoidblcie(0.75),
+    sigmoidblcie(100.),
     comprcie(0.4),
     strcielog(80.),
     comprcieth(6.),
     gamjcie(2.4),
+    smoothcieth(1.),
     slopjcie(12.923),
+    contsig(1.15),
+    skewsig(0.),
+    whitsig(100.),
     slopesmo(1.),
+    slopesmoq(1.),
     slopesmor(1.),
     slopesmog(1.),
     slopesmob(1.),
+    kslopesmor(1.),
+    kslopesmog(1.),
+    kslopesmob(1.),
     midtcie(0),
     grexl(0.1596),
     greyl(0.8404),
@@ -4666,15 +4711,15 @@ LocallabParams::LocallabSpot::LocallabSpot() :
     labgridcieWy(-0.16636),//    
     labgridcieMx(0.),
     labgridcieMy(0.),//    
-    whitescie(0),
+    whitescie(20),
     blackscie(0),
     illMethod("d50"),
     smoothciemet("none"),
     primMethod("pro"),
     catMethod("brad"),
-    sigmoidldajzcie(0.5),
-    sigmoidthjzcie(1.),
-    sigmoidbljzcie(1.),
+    sigmoidldajzcie(1.3),
+    sigmoidthjzcie(0.),
+    sigmoidbljzcie(100.),
     contqcie(0.),
     contsigqcie(0.),
     colorflcie(0.),
@@ -5290,6 +5335,7 @@ bool LocallabParams::LocallabSpot::operator ==(const LocallabSpot& other) const
         && lcdarkness == other.lcdarkness
         && lclightness == other.lclightness
         && sigmalc == other.sigmalc
+        && offslc == other.offslc
         && levelwav == other.levelwav
         && residcont == other.residcont
         && residsha == other.residsha
@@ -5487,7 +5533,7 @@ bool LocallabParams::LocallabSpot::operator ==(const LocallabSpot& other) const
         && sensicie == other.sensicie
         && Autograycie == other.Autograycie
         && forcejz == other.forcejz
-        && forcebw == other.forcebw
+        && sigybjz == other.sigybjz
         && qtoj == other.qtoj
         && jabcie == other.jabcie
         && comprcieauto == other.comprcieauto
@@ -5499,8 +5545,12 @@ bool LocallabParams::LocallabSpot::operator ==(const LocallabSpot& other) const
         && satcie == other.satcie
         && logcieq == other.logcieq
         && smoothcie == other.smoothcie
+        && smoothcietrc == other.smoothcietrc
+        && smoothcietrcrel == other.smoothcietrcrel
         && smoothcieyb == other.smoothcieyb
         && smoothcielum == other.smoothcielum
+        && smoothciehigh == other.smoothciehigh
+        && smoothcielnk == other.smoothcielnk
         && logjz == other.logjz
         && sigjz == other.sigjz
         && sigq == other.sigq
@@ -5565,11 +5615,19 @@ bool LocallabParams::LocallabSpot::operator ==(const LocallabSpot& other) const
         && strcielog == other.strcielog
         && comprcieth == other.comprcieth
         && gamjcie == other.gamjcie
+        && smoothcieth == other.smoothcieth
         && slopjcie == other.slopjcie
+        && contsig == other.contsig
+        && skewsig == other.skewsig
+        && whitsig == other.whitsig
         && slopesmo == other.slopesmo
+        && slopesmoq == other.slopesmoq
         && slopesmor == other.slopesmor
         && slopesmog == other.slopesmog
         && slopesmob == other.slopesmob
+        && kslopesmor == other.kslopesmor
+        && kslopesmog == other.kslopesmog
+        && kslopesmob == other.kslopesmob
         && midtcie == other.midtcie
         && redxl == other.redxl
         && redyl == other.redyl
@@ -7254,6 +7312,7 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
                     saveToKeyfile(!pedited || spot_edited->lcdarkness, "Locallab", "Lcdarkness_" + index_str, spot.lcdarkness, keyFile);
                     saveToKeyfile(!pedited || spot_edited->lclightness, "Locallab", "Lclightness_" + index_str, spot.lclightness, keyFile);
                     saveToKeyfile(!pedited || spot_edited->sigmalc, "Locallab", "Sigmalc_" + index_str, spot.sigmalc, keyFile);
+                    saveToKeyfile(!pedited || spot_edited->offslc, "Locallab", "Offslc_" + index_str, spot.offslc, keyFile);
                     saveToKeyfile(!pedited || spot_edited->levelwav, "Locallab", "Levelwav_" + index_str, spot.levelwav, keyFile);
                     saveToKeyfile(!pedited || spot_edited->residcont, "Locallab", "Residcont_" + index_str, spot.residcont, keyFile);
                     saveToKeyfile(!pedited || spot_edited->residsha, "Locallab", "Residsha_" + index_str, spot.residsha, keyFile);
@@ -7451,7 +7510,7 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
                     saveToKeyfile(!pedited || spot_edited->sensicie, "Locallab", "Sensicie_" + index_str, spot.sensicie, keyFile);
                     saveToKeyfile(!pedited || spot_edited->Autograycie, "Locallab", "AutoGraycie_" + index_str, spot.Autograycie, keyFile);
                     saveToKeyfile(!pedited || spot_edited->forcejz, "Locallab", "Forcejz_" + index_str, spot.forcejz, keyFile);
-                    saveToKeyfile(!pedited || spot_edited->forcebw, "Locallab", "Forcebw_" + index_str, spot.forcebw, keyFile);
+                    saveToKeyfile(!pedited || spot_edited->sigybjz, "Locallab", "sigybjz_" + index_str, spot.sigybjz, keyFile);
                     saveToKeyfile(!pedited || spot_edited->qtoj, "Locallab", "Qtoj_" + index_str, spot.qtoj, keyFile);
                     saveToKeyfile(!pedited || spot_edited->jabcie, "Locallab", "jabcie_" + index_str, spot.jabcie, keyFile);
                     saveToKeyfile(!pedited || spot_edited->comprcieauto, "Locallab", "comprcieauto_" + index_str, spot.comprcieauto, keyFile);
@@ -7463,8 +7522,12 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
                     saveToKeyfile(!pedited || spot_edited->satcie, "Locallab", "satcie_" + index_str, spot.satcie, keyFile);
                     saveToKeyfile(!pedited || spot_edited->logcieq, "Locallab", "logcieq_" + index_str, spot.logcieq, keyFile);
                     saveToKeyfile(!pedited || spot_edited->smoothcie, "Locallab", "smoothcie_" + index_str, spot.smoothcie, keyFile);
+                    saveToKeyfile(!pedited || spot_edited->smoothcietrc, "Locallab", "smoothcietrc_" + index_str, spot.smoothcietrc, keyFile);
+                    saveToKeyfile(!pedited || spot_edited->smoothcietrcrel, "Locallab", "smoothcietrcrel_" + index_str, spot.smoothcietrcrel, keyFile);
                     saveToKeyfile(!pedited || spot_edited->smoothcieyb, "Locallab", "smoothcieyb_" + index_str, spot.smoothcieyb, keyFile);
                     saveToKeyfile(!pedited || spot_edited->smoothcielum, "Locallab", "smoothcielum_" + index_str, spot.smoothcielum, keyFile);
+                    saveToKeyfile(!pedited || spot_edited->smoothciehigh, "Locallab", "smoothciehigh_" + index_str, spot.smoothciehigh, keyFile);
+                    saveToKeyfile(!pedited || spot_edited->smoothcielnk, "Locallab", "smoothcielnk_" + index_str, spot.smoothcielnk, keyFile);
                     saveToKeyfile(!pedited || spot_edited->logjz, "Locallab", "Logjz_" + index_str, spot.logjz, keyFile);
                     saveToKeyfile(!pedited || spot_edited->sigjz, "Locallab", "Sigjz_" + index_str, spot.sigjz, keyFile);
                     saveToKeyfile(!pedited || spot_edited->sigq, "Locallab", "Sigq_" + index_str, spot.sigq, keyFile);
@@ -7529,11 +7592,20 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
                     saveToKeyfile(!pedited || spot_edited->strcielog, "Locallab", "strcielog_" + index_str, spot.strcielog, keyFile);
                     saveToKeyfile(!pedited || spot_edited->comprcieth, "Locallab", "comprcieth_" + index_str, spot.comprcieth, keyFile);
                     saveToKeyfile(!pedited || spot_edited->gamjcie, "Locallab", "gamjcie_" + index_str, spot.gamjcie, keyFile);
+                    saveToKeyfile(!pedited || spot_edited->smoothcieth, "Locallab", "smoothcieth_" + index_str, spot.smoothcieth, keyFile);
                     saveToKeyfile(!pedited || spot_edited->slopjcie, "Locallab", "slopjcie_" + index_str, spot.slopjcie, keyFile);
                     saveToKeyfile(!pedited || spot_edited->slopesmo, "Locallab", "slopesmo_" + index_str, spot.slopesmo, keyFile);
+                    saveToKeyfile(!pedited || spot_edited->slopesmoq, "Locallab", "slopesmoq_" + index_str, spot.slopesmoq, keyFile);
                     saveToKeyfile(!pedited || spot_edited->slopesmor, "Locallab", "slopesmor_" + index_str, spot.slopesmor, keyFile);
                     saveToKeyfile(!pedited || spot_edited->slopesmog, "Locallab", "slopesmog_" + index_str, spot.slopesmog, keyFile);
                     saveToKeyfile(!pedited || spot_edited->slopesmob, "Locallab", "slopesmob_" + index_str, spot.slopesmob, keyFile);
+                    saveToKeyfile(!pedited || spot_edited->contsig, "Locallab", "contsig_" + index_str, spot.contsig, keyFile);
+                    saveToKeyfile(!pedited || spot_edited->skewsig, "Locallab", "skewsig_" + index_str, spot.skewsig, keyFile);
+                    saveToKeyfile(!pedited || spot_edited->whitsig, "Locallab", "whitsig_" + index_str, spot.whitsig, keyFile);
+
+                    saveToKeyfile(!pedited || spot_edited->kslopesmor, "Locallab", "kslopesmor_" + index_str, spot.kslopesmor, keyFile);
+                    saveToKeyfile(!pedited || spot_edited->kslopesmog, "Locallab", "kslopesmog_" + index_str, spot.kslopesmog, keyFile);
+                    saveToKeyfile(!pedited || spot_edited->kslopesmob, "Locallab", "kslopesmob_" + index_str, spot.kslopesmob, keyFile);
                     saveToKeyfile(!pedited || spot_edited->midtcie, "Locallab", "midtcie_" + index_str, spot.midtcie, keyFile);
                     saveToKeyfile(!pedited || spot_edited->redxl, "Locallab", "redxl_" + index_str, spot.redxl, keyFile);
                     saveToKeyfile(!pedited || spot_edited->redyl, "Locallab", "redyl_" + index_str, spot.redyl, keyFile);
@@ -7749,9 +7821,15 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
             keyFile
         );
         
-        saveToKeyfile(!pedited || pedited->icm.workingTRCGamma, "Color Management", "WorkingTRCGamma", icm.workingTRCGamma, keyFile);
-        saveToKeyfile(!pedited || pedited->icm.workingTRCSlope, "Color Management", "WorkingTRCSlope", icm.workingTRCSlope, keyFile);
+        saveToKeyfile(!pedited || pedited->icm.opacityCurveWLI, "Color Management", "OpacityCurveWLI", icm.opacityCurveWLI, keyFile);
+        
+        saveToKeyfile(!pedited || pedited->icm.wGamma, "Color Management", "WorkingTRCGamma", icm.wGamma, keyFile);
+        saveToKeyfile(!pedited || pedited->icm.wSlope, "Color Management", "WorkingTRCSlope", icm.wSlope, keyFile);
         saveToKeyfile(!pedited || pedited->icm.wmidtcie, "Color Management", "Wmidtcie", icm.wmidtcie, keyFile);
+        saveToKeyfile(!pedited || pedited->icm.sigmatrc, "Color Management", "Sigmatrc", icm.sigmatrc, keyFile);
+        saveToKeyfile(!pedited || pedited->icm.offstrc, "Color Management", "Offstrc", icm.offstrc, keyFile);
+        saveToKeyfile(!pedited || pedited->icm.residtrc, "Color Management", "Residtrc", icm.residtrc, keyFile);
+        saveToKeyfile(!pedited || pedited->icm.pyrwavtrc, "Color Management", "Pyrwavtrc", icm.pyrwavtrc, keyFile);
         saveToKeyfile(!pedited || pedited->icm.wsmoothcie, "Color Management", "Wsmoothcie", icm.wsmoothcie, keyFile);
         saveToKeyfile(!pedited || pedited->icm.redx, "Color Management", "Redx", icm.redx, keyFile);
         saveToKeyfile(!pedited || pedited->icm.redy, "Color Management", "Redy", icm.redy, keyFile);
@@ -7775,6 +7853,7 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
         saveToKeyfile(!pedited || pedited->icm.preser, "Color Management", "Preser", icm.preser, keyFile);
         saveToKeyfile(!pedited || pedited->icm.fbw, "Color Management", "Fbw", icm.fbw, keyFile);
         saveToKeyfile(!pedited || pedited->icm.trcExp, "Color Management", "TrcExp", icm.trcExp, keyFile);
+        saveToKeyfile(!pedited || pedited->icm.wavExp, "Color Management", "WavExp", icm.wavExp, keyFile);
         saveToKeyfile(!pedited || pedited->icm.gamut, "Color Management", "Gamut", icm.gamut, keyFile);
         saveToKeyfile(!pedited || pedited->icm.outputProfile, "Color Management", "OutputProfile", icm.outputProfile, keyFile);
         saveToKeyfile(
@@ -9658,6 +9737,7 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
                 assignFromKeyfile(keyFile, "Locallab", "Lcdarkness_" + index_str, spot.lcdarkness, spotEdited.lcdarkness);
                 assignFromKeyfile(keyFile, "Locallab", "Lclightness_" + index_str, spot.lclightness, spotEdited.lclightness);
                 assignFromKeyfile(keyFile, "Locallab", "Sigmalc_" + index_str, spot.sigmalc, spotEdited.sigmalc);
+                assignFromKeyfile(keyFile, "Locallab", "Offslc_" + index_str, spot.offslc, spotEdited.offslc);
                 assignFromKeyfile(keyFile, "Locallab", "Levelwav_" + index_str, spot.levelwav, spotEdited.levelwav);
                 assignFromKeyfile(keyFile, "Locallab", "Residcont_" + index_str, spot.residcont, spotEdited.residcont);
                 assignFromKeyfile(keyFile, "Locallab", "Residsha_" + index_str, spot.residsha, spotEdited.residsha);
@@ -9917,7 +9997,7 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
                 assignFromKeyfile(keyFile, "Locallab", "Sensicie_" + index_str, spot.sensicie, spotEdited.sensicie);
                 assignFromKeyfile(keyFile, "Locallab", "AutoGraycie_" + index_str, spot.Autograycie, spotEdited.Autograycie);
                 assignFromKeyfile(keyFile, "Locallab", "Forcejz_" + index_str, spot.forcejz, spotEdited.forcejz);
-                assignFromKeyfile(keyFile, "Locallab", "Forcebw_" + index_str, spot.forcebw, spotEdited.forcebw);
+                assignFromKeyfile(keyFile, "Locallab", "sigybjz_" + index_str, spot.sigybjz, spotEdited.sigybjz);
                 assignFromKeyfile(keyFile, "Locallab", "Qtoj_" + index_str, spot.qtoj, spotEdited.qtoj);
                 assignFromKeyfile(keyFile, "Locallab", "jabcie_" + index_str, spot.jabcie, spotEdited.jabcie);
                 assignFromKeyfile(keyFile, "Locallab", "comprcieauto_" + index_str, spot.comprcieauto, spotEdited.comprcieauto);
@@ -9929,8 +10009,12 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
                 assignFromKeyfile(keyFile, "Locallab", "satcie_" + index_str, spot.satcie, spotEdited.satcie);
                 assignFromKeyfile(keyFile, "Locallab", "logcieq_" + index_str, spot.logcieq, spotEdited.logcieq);
                 assignFromKeyfile(keyFile, "Locallab", "smoothcie_" + index_str, spot.smoothcie, spotEdited.smoothcie);
+                assignFromKeyfile(keyFile, "Locallab", "smoothcietrc_" + index_str, spot.smoothcietrc, spotEdited.smoothcietrc);
+                assignFromKeyfile(keyFile, "Locallab", "smoothcietrcrel_" + index_str, spot.smoothcietrcrel, spotEdited.smoothcietrcrel);
                 assignFromKeyfile(keyFile, "Locallab", "smoothcieyb_" + index_str, spot.smoothcieyb, spotEdited.smoothcieyb);
                 assignFromKeyfile(keyFile, "Locallab", "smoothcielum_" + index_str, spot.smoothcielum, spotEdited.smoothcielum);
+                assignFromKeyfile(keyFile, "Locallab", "smoothciehigh_" + index_str, spot.smoothciehigh, spotEdited.smoothciehigh);
+                assignFromKeyfile(keyFile, "Locallab", "smoothcielnk_" + index_str, spot.smoothcielnk, spotEdited.smoothcielnk);
                 assignFromKeyfile(keyFile, "Locallab", "Logjz_" + index_str, spot.logjz, spotEdited.logjz);
                 assignFromKeyfile(keyFile, "Locallab", "Sigjz_" + index_str, spot.sigjz, spotEdited.sigjz);
                 assignFromKeyfile(keyFile, "Locallab", "Sigq_" + index_str, spot.sigq, spotEdited.sigq);
@@ -10004,12 +10088,21 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
                 assignFromKeyfile(keyFile, "Locallab", "strcielog_" + index_str, spot.strcielog, spotEdited.strcielog);
                 assignFromKeyfile(keyFile, "Locallab", "comprcieth_" + index_str, spot.comprcieth, spotEdited.comprcieth);
                 assignFromKeyfile(keyFile, "Locallab", "gamjcie_" + index_str, spot.gamjcie, spotEdited.gamjcie);
+                assignFromKeyfile(keyFile, "Locallab", "smoothcieth_" + index_str, spot.smoothcieth, spotEdited.smoothcieth);
                 assignFromKeyfile(keyFile, "Locallab", "slopjcie_" + index_str, spot.slopjcie, spotEdited.slopjcie);
+                assignFromKeyfile(keyFile, "Locallab", "contsig_" + index_str, spot.contsig, spotEdited.contsig);
+                assignFromKeyfile(keyFile, "Locallab", "skewsig_" + index_str, spot.skewsig, spotEdited.skewsig);
+                assignFromKeyfile(keyFile, "Locallab", "whitsig_" + index_str, spot.whitsig, spotEdited.whitsig);
                 assignFromKeyfile(keyFile, "Locallab", "slopesmo_" + index_str, spot.slopesmo, spotEdited.slopesmo);
+                assignFromKeyfile(keyFile, "Locallab", "slopesmoq_" + index_str, spot.slopesmoq, spotEdited.slopesmoq);
                 assignFromKeyfile(keyFile, "Locallab", "slopesmor_" + index_str, spot.slopesmor, spotEdited.slopesmor);
                 assignFromKeyfile(keyFile, "Locallab", "slopesmog_" + index_str, spot.slopesmog, spotEdited.slopesmog);
                 assignFromKeyfile(keyFile, "Locallab", "midtcie_" + index_str, spot.midtcie, spotEdited.midtcie);
                 assignFromKeyfile(keyFile, "Locallab", "slopesmob_" + index_str, spot.slopesmob, spotEdited.slopesmob);
+                assignFromKeyfile(keyFile, "Locallab", "kslopesmor_" + index_str, spot.kslopesmor, spotEdited.kslopesmor);
+                assignFromKeyfile(keyFile, "Locallab", "kslopesmog_" + index_str, spot.kslopesmog, spotEdited.kslopesmog);
+                assignFromKeyfile(keyFile, "Locallab", "kslopesmob_" + index_str, spot.kslopesmob, spotEdited.kslopesmob);
+                assignFromKeyfile(keyFile, "Locallab", "midtcie_" + index_str, spot.midtcie, spotEdited.midtcie);
                 assignFromKeyfile(keyFile, "Locallab", "grexl_" + index_str, spot.grexl, spotEdited.grexl);
                 assignFromKeyfile(keyFile, "Locallab", "greyl_" + index_str, spot.greyl, spotEdited.greyl);
                 assignFromKeyfile(keyFile, "Locallab", "bluxl_" + index_str, spot.bluxl, spotEdited.bluxl);
@@ -10234,6 +10327,8 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
             assignFromKeyfile(keyFile, "Color Management", "ApplyHueSatMap", icm.applyHueSatMap, pedited->icm.applyHueSatMap);
             assignFromKeyfile(keyFile, "Color Management", "DCPIlluminant", icm.dcpIlluminant, pedited->icm.dcpIlluminant);
             assignFromKeyfile(keyFile, "Color Management", "WorkingProfile", icm.workingProfile, pedited->icm.workingProfile);
+            assignFromKeyfile(keyFile, "Color Management", "OpacityCurveWLI", icm.opacityCurveWLI, pedited->icm.opacityCurveWLI);
+
             if (
                 !assignFromKeyfile(
                     keyFile,
@@ -10339,10 +10434,14 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
             }
             
             assignFromKeyfile(keyFile, "Color Management", "Gamut", icm.gamut, pedited->icm.gamut);
-            assignFromKeyfile(keyFile, "Color Management", "WorkingTRCSlope", icm.workingTRCSlope, pedited->icm.workingTRCSlope);
-            assignFromKeyfile(keyFile, "Color Management", "WorkingTRCGamma", icm.workingTRCGamma, pedited->icm.workingTRCGamma);
+            assignFromKeyfile(keyFile, "Color Management", "WorkingTRCSlope", icm.wSlope, pedited->icm.wSlope);
+            assignFromKeyfile(keyFile, "Color Management", "WorkingTRCGamma", icm.wGamma, pedited->icm.wGamma);
             assignFromKeyfile(keyFile, "Color Management", "Wmidtcie", icm.wmidtcie, pedited->icm.wmidtcie);
             assignFromKeyfile(keyFile, "Color Management", "Wsmoothcie", icm.wsmoothcie, pedited->icm.wsmoothcie);
+            assignFromKeyfile(keyFile, "Color Management", "Sigmatrc", icm.sigmatrc, pedited->icm.sigmatrc);
+            assignFromKeyfile(keyFile, "Color Management", "Offstrc", icm.offstrc, pedited->icm.offstrc);
+            assignFromKeyfile(keyFile, "Color Management", "Pyrwavtrc", icm.pyrwavtrc, pedited->icm.pyrwavtrc);
+            assignFromKeyfile(keyFile, "Color Management", "Residtrc", icm.residtrc, pedited->icm.residtrc);
 
             assignFromKeyfile(keyFile, "Color Management", "Redx", icm.redx, pedited->icm.redx);
             assignFromKeyfile(keyFile, "Color Management", "Redy", icm.redy, pedited->icm.redy);
@@ -10356,6 +10455,7 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
             assignFromKeyfile(keyFile, "Color Management", "Preser", icm.preser, pedited->icm.preser);
             assignFromKeyfile(keyFile, "Color Management", "Fbw", icm.fbw, pedited->icm.fbw);
             assignFromKeyfile(keyFile, "Color Management", "TrcExp", icm.trcExp, pedited->icm.trcExp);
+            assignFromKeyfile(keyFile, "Color Management", "WavExp", icm.wavExp, pedited->icm.wavExp);
             assignFromKeyfile(keyFile, "Color Management", "LabGridcieALow", icm.labgridcieALow, pedited->icm.labgridcieALow);
             assignFromKeyfile(keyFile, "Color Management", "LabGridcieBLow", icm.labgridcieBLow, pedited->icm.labgridcieBLow);
             assignFromKeyfile(keyFile, "Color Management", "LabGridcieAHigh", icm.labgridcieAHigh, pedited->icm.labgridcieAHigh);
