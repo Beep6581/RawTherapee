@@ -3160,7 +3160,7 @@ TP_LOCALLAB_GHS_HP_TOOLTIP;Sets a value above which the stretch is modified to p
 TP_LOCALLAB_GHS_SMOOTH_TOOLTIP;Smooth and soften highlights areas. Amplifies 'Protects Highlights (HP)' action.
 TP_LOCALLAB_GHS_SMOOTH;Highlight Attenuation
 TP_LOCALLAB_GHS_INV;Inverse GHS
-TP_LOCALLAB_GHS_INV_TOOLTIP;The inverse GHS is useful for working in negative space. Inverse add contrast on the right and left ends of the histogram, brighten the shadows, tone down the highlights, and compress the histogram in the middle.
+TP_LOCALLAB_GHS_INV_TOOLTIP;The inverse GHS is useful for working in negative space. Inverted transform add contrast on the far right and left histogram, brighten the dims, dim the brights and squeez the histogram to the middle.
 TP_LOCALLAB_GRADANG;Gradient angle
 TP_LOCALLAB_GRADANG_TOOLTIP;Rotation angle in degrees: -180 0 +180.
 TP_LOCALLAB_GRADFRA;Graduated Filter Mask
