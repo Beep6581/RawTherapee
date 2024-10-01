@@ -17142,8 +17142,14 @@ void ImProcFunctions::Lab_Local(
                         float SP = params->locallab.spots.at(sp).ghs_SP;
                         float HP = params->locallab.spots.at(sp).ghs_HP;
                         bool smoth = params->locallab.spots.at(sp).ghs_smooth;
+                        bool ghsinv = params->locallab.spots.at(sp).ghs_inv;
                         int met = 0;
-                        int strtype = 0;
+                        int strtype = 0;//to allow more choice than boolean
+                        if(ghsinv) {
+                            strtype = 1;
+                        } else {
+                            strtype = 0;
+                        }
                         if (params->locallab.spots.at(sp).ghsMethod == "rgb") {
                             met = 0;
                         } else if (params->locallab.spots.at(sp).ghsMethod == "lum") {

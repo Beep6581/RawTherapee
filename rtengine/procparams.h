@@ -1240,6 +1240,7 @@ struct LocallabParams {
         double ghs_LP;
         double ghs_HP;
         bool ghs_smooth;
+        bool ghs_inv;
         int multsh[6];
         int highlights;
         int h_tonalwidth;

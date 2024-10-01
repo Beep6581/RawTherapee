@@ -4296,6 +4296,7 @@ LocallabShadow::LocallabShadow():
     ghs_LP(Gtk::manage(new Adjuster(M("TP_LOCALLAB_GHS_LP"), 0.0, 1.0, 0.00001, 0.0))),
     ghs_HP(Gtk::manage(new Adjuster(M("TP_LOCALLAB_GHS_HP"), 0.0, 1.0, 0.00001, 1.0))),
     ghs_smooth(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_GHS_SMOOTH")))),
+    ghs_inv(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_GHS_INV")))),
     expgradsh(Gtk::manage(new MyExpander(false, M("TP_LOCALLAB_EXPGRAD")))),
     strSH(Gtk::manage(new Adjuster(M("TP_LOCALLAB_GRADSTR"), -4., 4., 0.05, 0.))),
     angSH(Gtk::manage(new Adjuster(M("TP_LOCALLAB_GRADANG"), -180, 180, 0.1, 0.))),
@@ -4333,6 +4334,7 @@ LocallabShadow::LocallabShadow():
     Evlocallabghs_LP = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_GHS_LP");
     Evlocallabghs_HP = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_GHS_HP");
     Evlocallabghs_smooth = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_GHS_SMOOTH");
+    Evlocallabghs_inv = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_GHS_INV");
     set_orientation(Gtk::ORIENTATION_VERTICAL);
 
     const LocallabParams::LocallabSpot defSpot;
@@ -4403,14 +4405,8 @@ https://www.ghsastro.co.uk/doc/tools/GeneralizedHyperbolicStretch/GeneralizedHyp
     ghs_HP->setAdjusterListener(this);
 
     ghs_smoothConn = ghs_smooth->signal_toggled().connect(sigc::mem_fun(*this, &LocallabShadow::ghs_smoothChanged));
-/*
-    ghs_D->set_tooltip_text(M("TP_LOCALLAB_GHS_D_TOOLTIP"));
-    ghs_B->set_tooltip_text(M("TP_LOCALLAB_GHS_B_TOOLTIP"));
-    ghs_SP->set_tooltip_text(M("TP_LOCALLAB_GHS_SP_TOOLTIP"));
-    ghs_LP->set_tooltip_text(M("TP_LOCALLAB_GHS_LP_TOOLTIP"));
-    ghs_HP->set_tooltip_text(M("TP_LOCALLAB_GHS_HP_TOOLTIP"));
-    ghs_smooth->set_tooltip_text(M("TP_LOCALLAB_GHS_SMOOTH_TOOLTIP"));
- */   
+    ghs_invConn = ghs_inv->signal_toggled().connect(sigc::mem_fun(*this, &LocallabShadow::ghs_invChanged));
+
     setExpandAlignProperties(expgradsh, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_START);
 
     strSH->setAdjusterListener(this);
@@ -4505,6 +4501,7 @@ https://www.ghsastro.co.uk/doc/tools/GeneralizedHyperbolicStretch/GeneralizedHyp
     ghsBox->pack_start(*ghs_LP);
     ghsBox->pack_start(*ghs_HP);
     ghsBox->pack_start(*ghs_smooth);
+    ghsBox->pack_start(*ghs_inv);
     ghsFrame->add(*ghsBox);
     pack_start(*ghsFrame);
 
@@ -4737,7 +4734,8 @@ void LocallabShadow::updateAdviceTooltips(const bool showTooltips)
         ghs_LP->set_tooltip_text(M("TP_LOCALLAB_GHS_LP_TOOLTIP"));
         ghs_HP->set_tooltip_text(M("TP_LOCALLAB_GHS_HP_TOOLTIP"));
         ghs_smooth->set_tooltip_text(M("TP_LOCALLAB_GHS_SMOOTH_TOOLTIP"));
-        
+        ghs_inv->set_tooltip_text(M("TP_LOCALLAB_GHS_INV_TOOLTIP"));
+
 
     } else {
         exp->set_tooltip_text("");
@@ -4779,6 +4777,7 @@ void LocallabShadow::updateAdviceTooltips(const bool showTooltips)
         ghs_LP->set_tooltip_text("");
         ghs_HP->set_tooltip_text("");
         ghs_smooth->set_tooltip_text("");
+        ghs_inv->set_tooltip_text("");
 
     }
 }
@@ -4798,6 +4797,7 @@ void LocallabShadow::disableListener()
     ghsMethodConn.block(true);
     inversshConn.block(true);
     ghs_smoothConn.block(true);
+    ghs_invConn.block(true);
     showmaskSHMethodConn.block(true);
     showmaskSHMethodConninv.block(true);
     enaSHMaskConn.block(true);
@@ -4810,6 +4810,7 @@ void LocallabShadow::enableListener()
     shMethodConn.block(false);
     ghsMethodConn.block(false);
     ghs_smoothConn.block(false);
+    ghs_invConn.block(false);
     inversshConn.block(false);
     showmaskSHMethodConn.block(false);
     showmaskSHMethodConninv.block(false);
@@ -4881,6 +4882,7 @@ void LocallabShadow::read(const rtengine::procparams::ProcParams* pp, const Para
         featherSH->setValue(spot.featherSH);
         inverssh->set_active(spot.inverssh);
         ghs_smooth->set_active(spot.ghs_smooth);
+        ghs_inv->set_active(spot.ghs_inv);
         enaSHMask->set_active(spot.enaSHMask);
         CCmaskSHshape->setCurve(spot.CCmaskSHcurve);
         LLmaskSHshape->setCurve(spot.LLmaskSHcurve);
@@ -4967,6 +4969,7 @@ void LocallabShadow::write(rtengine::procparams::ProcParams* pp, ParamsEdited* p
         spot.featherSH = featherSH->getValue();
         spot.inverssh = inverssh->get_active();
         spot.ghs_smooth = ghs_smooth->get_active();
+        spot.ghs_inv = ghs_inv->get_active();
         spot.enaSHMask = enaSHMask->get_active();
         spot.LLmaskSHcurve = LLmaskSHshape->getCurve();
         spot.CCmaskSHcurve = CCmaskSHshape->getCurve();
@@ -5566,6 +5569,33 @@ void LocallabShadow::ghs_smoothChanged()
                                        M("GENERAL_ENABLED") + " (" + escapeHtmlChars(getSpotName()) + ")");
             } else {
                 listener->panelChanged(Evlocallabghs_smooth,
+                                       M("GENERAL_DISABLED") + " (" + escapeHtmlChars(getSpotName()) + ")");
+            }
+        }
+    }
+}
+
+void LocallabShadow::ghs_invChanged()
+{
+    const bool maskPreviewActivated = isMaskViewActive();
+
+    // Update shadow highlight GUI according to inverssh button state
+    updateShadowGUI1();
+
+    if (maskPreviewActivated) {
+        // This event is called to transmit reset mask state
+        if (listener) {
+            listener->panelChanged(EvlocallabshowmaskMethod, "");
+        }
+    }
+
+    if (isLocActivated && exp->getEnabled()) {
+        if (listener) {
+            if (ghs_inv->get_active()) {
+                listener->panelChanged(Evlocallabghs_inv,
+                                       M("GENERAL_ENABLED") + " (" + escapeHtmlChars(getSpotName()) + ")");
+            } else {
+                listener->panelChanged(Evlocallabghs_inv,
                                        M("GENERAL_DISABLED") + " (" + escapeHtmlChars(getSpotName()) + ")");
             }
         }

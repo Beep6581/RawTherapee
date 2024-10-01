@@ -1529,6 +1529,7 @@ HISTORY_MSG_LOCAL_GHS_SP;Local - GHS - Symmetry point
 HISTORY_MSG_LOCAL_GHS_LP;Local - GHS - Protect shadows
 HISTORY_MSG_LOCAL_GHS_HP;Local - GHS - Protect highlights
 HISTORY_MSG_LOCAL_GHS_SMOOTH;Local - GHS - Smooth highlights
+HISTORY_MSG_LOCAL_GHS_INV;Local - GHS - Inverse
 HISTORY_MSG_LOCAL_LOG_BLACKS;Local - Log Blacks distribution
 HISTORY_MSG_LOCAL_LOG_COMPR;Local - Log Compress brightness
 HISTORY_MSG_LOCAL_LOG_SAT;Local - Log Saturation control
@@ -3158,6 +3159,7 @@ TP_LOCALLAB_GHS_LP_TOOLTIP;Sets a value below which the stretch is modified to p
 TP_LOCALLAB_GHS_HP_TOOLTIP;Sets a value above which the stretch is modified to preserve contrast in the highlights/stars. This is done by performing a linear stretch of the data above the 'HP' level by reserving contrast from the rest of the image. Moving the HP level towards the current setting of SP increases both the scope (range) and the amount of this contrast reservation, the net effect is to push the overal stretch to lower brightness levels while keeping the contrast and definition in the highlights. The amount of contrast reserved for the highlights is such that the continuity of the stretch is preserved. This parameter must be less than or equal to 1 and not less than the Symmetry point.
 TP_LOCALLAB_GHS_SMOOTH_TOOLTIP;Smooth and soften highlights areas. Amplifies 'Protects Highlights (HP)' action.
 TP_LOCALLAB_GHS_SMOOTH;Highlight Attenuation
+TP_LOCALLAB_GHS_INV;Inverse GHS
 TP_LOCALLAB_GRADANG;Gradient angle
 TP_LOCALLAB_GRADANG_TOOLTIP;Rotation angle in degrees: -180 0 +180.
 TP_LOCALLAB_GRADFRA;Graduated Filter Mask

@@ -589,6 +589,7 @@ public:
         bool ghs_LP;
         bool ghs_HP;
         bool ghs_smooth;
+        bool ghs_inv;
         bool multsh[7];
         bool highlights;
         bool h_tonalwidth;

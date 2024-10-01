@@ -575,6 +575,7 @@ private:
     Adjuster* const ghs_LP;
     Adjuster* const ghs_HP;
     Gtk::CheckButton* const ghs_smooth;
+    Gtk::CheckButton* const ghs_inv;
 
     MyExpander* const expgradsh;
     Adjuster* const strSH;
@@ -609,8 +610,9 @@ private:
     rtengine::ProcEvent Evlocallabghs_LP;
     rtengine::ProcEvent Evlocallabghs_HP;
     rtengine::ProcEvent Evlocallabghs_smooth;
+    rtengine::ProcEvent Evlocallabghs_inv;
 
-    sigc::connection shMethodConn, ghsMethodConn, previewshConn, inversshConn, ghs_smoothConn, showmaskSHMethodConn, showmaskSHMethodConninv, enaSHMaskConn;
+    sigc::connection shMethodConn, ghsMethodConn, previewshConn, inversshConn, ghs_smoothConn, ghs_invConn, showmaskSHMethodConn, showmaskSHMethodConninv, enaSHMaskConn;
 
 public:
     LocallabShadow();
@@ -649,6 +651,7 @@ private:
     void ghsMethodChanged();
     void inversshChanged();
     void ghs_smoothChanged();
+    void ghs_invChanged();
     void showmaskSHMethodChanged();
     void showmaskSHMethodChangedinv();
     void enaSHMaskChanged();
