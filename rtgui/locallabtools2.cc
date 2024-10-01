@@ -428,6 +428,11 @@ void LocallabTone::updateguitone(int spottype)
 
             if(spottype == 3) {
                 sensitm->hide();
+                exprecovt->hide();
+                expmasktm->hide();
+                enatmMask->set_active(false);
+                enatmMaskaft->set_active(false);
+                
              //   showmasktmMethodConn.block(true);
                 showmasktmMethod->set_active(0);
              //   showmasktmMethodConn.block(false);
@@ -439,6 +444,10 @@ void LocallabTone::updateguitone(int spottype)
             } else {
                 sensitm->show();
                 previewtm->show();
+                exprecovt->show();
+                expmasktm->show();
+                updateGUIToMode(static_cast<modeType>(complexity->get_active_row_number()));
+                
            }
             enableListener();
 
@@ -1188,8 +1197,15 @@ void LocallabRetinex::updateguireti(int spottype)
 
             if(spottype == 3) {
                 sensih->hide();
+                exprecovr->hide();
+                expmaskreti->hide();
+                enaretiMask->set_active(false);
+                enaretiMasktmap->set_active(false);
             } else {
                 sensih->show();
+                exprecovr->show();
+                expmaskreti->show();
+                updateGUIToMode(static_cast<modeType>(complexity->get_active_row_number()));
             }
             enableListener();
 
@@ -3123,10 +3139,15 @@ void LocallabContrast::updateguicont(int spottype)
                 previewlc->hide();
                 previewlc->set_active(false);
                 resetMaskView();
-                
+                enalcMask->set_active(false);
+                exprecovw->hide();
+                expmasklc->hide();
             } else {
                 sensilc->show();
                 previewlc->show();
+                exprecovw->show();
+                expmasklc->show();
+                updateGUIToMode(static_cast<modeType>(complexity->get_active_row_number()));
             }
             enableListener();
 
@@ -4881,8 +4902,14 @@ void LocallabCBDL::updateguicbdl(int spottype)
 
             if(spottype == 3) {
                 sensicb->hide();
+                exprecovcb->hide();
+                expmaskcb->hide();
+                enacbMask->set_active(false);
             } else {
+                exprecovcb->show();
+                expmaskcb->show();
                 sensicb->show();
+                updateGUIToMode(static_cast<modeType>(complexity->get_active_row_number()));
             }
             enableListener();
 
@@ -5843,11 +5870,16 @@ void LocallabLog::updateguilog(int spottype)
                 showmaskLMethod->set_active(0);               
                 previewlog->hide();
                 previewlog->set_active(false);
+                enaLMask->set_active(false);
                 resetMaskView();
-                
+                exprecovl->hide();
+                expmaskL->hide();
             } else {
                 sensilog->show();
                 previewlog->show();
+                exprecovl->show();
+                expmaskL->show();
+                updateGUIToMode(static_cast<modeType>(complexity->get_active_row_number()));
             }
             enableListener();
 
@@ -7248,14 +7280,36 @@ void LocallabMask::updateguimask(int spottype)
 
             if(spottype == 3) {
                 sensimask->hide();
-                showmask_Method->set_active(0);               
+                showmask_Method->set_active(0);
                 previewmas->hide();
                 previewmas->set_active(false);
                 resetMaskView();
+                blendmask->hide();
+                blendmaskab->hide();
+                softradiusmask->hide();
+                showmask_Method->hide();
+                enamask->hide();
+                enamask->set_active(false);
+                mask_CurveEditorG->hide();
+                struFrame->hide();
+                blurFrame->hide();
+                toolmaskFrame->hide();
                 
             } else {
                 sensimask->show();
                 previewmas->show();
+                blendmask->show();
+                blendmaskab->show();
+                softradiusmask->show();
+                showmask_Method->show();
+                enamask->show();
+                mask_CurveEditorG->show();
+                struFrame->show();
+                blurFrame->show();
+                toolmaskFrame->show();
+                
+                updateGUIToMode(static_cast<modeType>(complexity->get_active_row_number()));
+                
            }
             enableListener();
 
@@ -9158,11 +9212,18 @@ void Locallabcie::updateguicie(int spottype)
                 sensicie->hide();
                 showmaskcieMethod->set_active(0);
                 previewcie->hide();
+                exprecovcie->hide();
+                expmaskcie->hide();
+                enacieMask->set_active(false);
+                enacieMaskall->set_active(false);
                 previewcie->set_active(false);
                 resetMaskView();
             } else {
                 sensicie->show();
                 previewcie->show();
+                exprecovcie->show();
+                expmaskcie->show();
+                updateGUIToMode(static_cast<modeType>(complexity->get_active_row_number()));
            }
             enableListener();
 
