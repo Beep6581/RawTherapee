@@ -155,7 +155,11 @@ int LibRaw::unpack_thumb(void)
         THUMB_SIZE_CHECKTNZ(T.tlength);
         if (T.thumb)
           free(T.thumb);
+#ifdef LIBRAW_CALLOC_RAWSTORE
+        T.thumb = (char *)calloc(T.tlength,1);
+#else
         T.thumb = (char *)malloc(T.tlength);
+#endif
 		if(!T.thumb)
           return LIBRAW_NO_THUMBNAIL;
         ID.input->read(T.thumb, 1, T.tlength);
@@ -335,7 +339,11 @@ int LibRaw::unpack_thumb(void)
             THUMB_SIZE_CHECKTNZ(T.tlength);
             if (T.thumb)
               free(T.thumb);
+#ifdef LIBRAW_CALLOC_RAWSTORE
+            T.thumb = (char *)calloc(T.tlength,1);
+#else
             T.thumb = (char *)malloc(T.tlength);
+#endif
             if (!T.thumb)
               return LIBRAW_NO_THUMBNAIL;
 
@@ -370,8 +378,11 @@ int LibRaw::unpack_thumb(void)
           free(T.thumb);
 
         THUMB_SIZE_CHECKTNZ(T.tlength);
-
+#ifdef LIBRAW_CALLOC_RAWSTORE
+        T.thumb = (char *)calloc(T.tlength,1);
+#else
         T.thumb = (char *)malloc(T.tlength);
+#endif
         if (!T.thumb)
           return LIBRAW_NO_THUMBNAIL;
         if (!T.tcolors)
@@ -413,7 +424,13 @@ int LibRaw::unpack_thumb(void)
         }
         else
         {
+#ifdef LIBRAW_CALLOC_RAWSTORE
+          T.thumb = (char *)calloc(o_length,1);
+#else
           T.thumb = (char *)malloc(o_length);
+#endif
+          if (!T.thumb)
+            throw LIBRAW_EXCEPTION_ALLOC;
 		  if (!T.thumb)
 		  {
 			  free(t_thumb);

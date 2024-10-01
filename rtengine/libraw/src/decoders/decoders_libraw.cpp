@@ -54,11 +54,20 @@ void LibRaw::sony_arq_load_raw()
 
 void LibRaw::pentax_4shot_load_raw()
 {
-  ushort *plane = (ushort *)malloc(imgdata.sizes.raw_width *
-                                   imgdata.sizes.raw_height * sizeof(ushort));
+#ifdef LIBRAW_CALLOC_RAWSTORE
+  ushort *plane = (ushort *)calloc(size_t(imgdata.sizes.raw_width) *
+                                   size_t(imgdata.sizes.raw_height), sizeof(ushort));
+#else
+  ushort *plane = (ushort *)malloc(size_t(imgdata.sizes.raw_width) *
+                                   size_t(imgdata.sizes.raw_height) * sizeof(ushort));
+#endif
   int alloc_sz = imgdata.sizes.raw_width * (imgdata.sizes.raw_height + 16) * 4 *
                  sizeof(ushort);
+#ifdef LIBRAW_CALLOC_RAWSTORE
+  ushort(*result)[4] = (ushort(*)[4])calloc(alloc_sz,1);
+#else
   ushort(*result)[4] = (ushort(*)[4])malloc(alloc_sz);
+#endif
   struct movement_t
   {
     int row, col;
@@ -197,7 +206,7 @@ void LibRaw::nikon_14bit_load_raw()
       (unsigned)(ceilf((float)(S.raw_width * 7 / 4) / 16.0)) *
       16; // 14512; // S.raw_width * 7 / 4;
   const unsigned pitch = S.raw_pitch ? S.raw_pitch / 2 : S.raw_width;
-  unsigned char *buf = (unsigned char *)malloc(linelen);
+  unsigned char *buf = (unsigned char *)calloc(linelen,1);
   for (int row = 0; row < S.raw_height; row++)
   {
     unsigned bytesread =
@@ -216,7 +225,7 @@ void LibRaw::fuji_14bit_load_raw()
 {
   const unsigned linelen = S.raw_width * 7 / 4;
   const unsigned pitch = S.raw_pitch ? S.raw_pitch / 2 : S.raw_width;
-  unsigned char *buf = (unsigned char *)malloc(linelen);
+  unsigned char *buf = (unsigned char *)calloc(linelen,1);
 
   for (int row = 0; row < S.raw_height; row++)
   {
@@ -247,7 +256,7 @@ void LibRaw::nikon_load_padded_packed_raw() // 12 bit per pixel, padded to 16
       libraw_internal_data.unpacker_data.load_flags > 64000)
     return;
   unsigned char *buf =
-      (unsigned char *)malloc(libraw_internal_data.unpacker_data.load_flags);
+      (unsigned char *)calloc(libraw_internal_data.unpacker_data.load_flags,1);
   for (int row = 0; row < S.raw_height; row++)
   {
     checkCancel();
@@ -478,7 +487,7 @@ void LibRaw::panasonicC7_load_raw()
   const int rowstep = 16;
   int pixperblock = libraw_internal_data.unpacker_data.pana_bpp == 14 ? 9 : 10;
   int rowbytes = imgdata.sizes.raw_width / pixperblock * 16;
-  unsigned char *iobuf = (unsigned char *)malloc(rowbytes * rowstep);
+  unsigned char *iobuf = (unsigned char *)calloc(rowbytes * rowstep,1);
   for (int row = 0; row < imgdata.sizes.raw_height - rowstep + 1;
        row += rowstep)
   {
@@ -540,7 +549,7 @@ void LibRaw::unpacked_load_raw_fuji_f700s20()
     libraw_internal_data.internal_data.input->seek(-row_size, SEEK_CUR);
     base_offset = row_size; // in bytes
   }
-  unsigned char *buffer = (unsigned char *)malloc(row_size * 2);
+  unsigned char *buffer = (unsigned char *)calloc(row_size,2);
   for (int row = 0; row < imgdata.sizes.raw_height; row++)
   {
     read_shorts((ushort *)buffer, imgdata.sizes.raw_width * 2);
@@ -554,7 +563,7 @@ void LibRaw::nikon_load_sraw()
 {
   // We're already seeked to data!
   unsigned char *rd =
-      (unsigned char *)malloc(3 * (imgdata.sizes.raw_width + 2));
+      (unsigned char *)calloc(3 * (imgdata.sizes.raw_width + 2),1);
   if (!rd)
     throw LIBRAW_EXCEPTION_ALLOC;
   try

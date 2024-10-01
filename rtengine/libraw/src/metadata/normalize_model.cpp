@@ -1485,12 +1485,12 @@ printf("catchme\t%s\t%s\t%s\t9050%c\t%d\t%d\n",
 }
 
 void LibRaw::SetStandardIlluminants (unsigned makerIdx, const char* /*normModel*/) {
-  int i = -1;
+//  int i = -1;
   int c;
   if (!icWBC[LIBRAW_WBI_Ill_A][0] &&
       !icWBC[LIBRAW_WBI_D65][0]) {
     if (makerIdx == LIBRAW_CAMERAMAKER_Olympus ) {
-      while (++i, icWBCCTC[i][0]) {
+		for (int i = 0; i < 64 && icWBCCTC[i][0]; i++) {
         if (icWBCCTC[i][0] == 3000)
           FORC4 icWBC[LIBRAW_WBI_Ill_A][c] = icWBCCTC[i][c+1];
         else if (icWBCCTC[i][0] == 6600)

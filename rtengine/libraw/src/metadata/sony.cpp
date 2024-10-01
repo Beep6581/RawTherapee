@@ -1204,7 +1204,7 @@ void LibRaw::parseSonyMakernotes(
             (tag == 0x0003)) &&
            (len >= 196))
   {
-    table_buf = (uchar *)malloc(len);
+    table_buf = (uchar *)calloc(len,1);
     fread(table_buf, len, 1, ifp);
 
     lid = 0x01 << 2;
@@ -1237,7 +1237,7 @@ void LibRaw::parseSonyMakernotes(
   else if ((tag == 0x0004) && // Minolta CameraSettings7D, big endian
            (len >= 227))
   {
-    table_buf = (uchar *)malloc(len);
+    table_buf = (uchar *)calloc(len,1);
     fread(table_buf, len, 1, ifp);
 
     lid = 0x0;
@@ -1287,7 +1287,7 @@ void LibRaw::parseSonyMakernotes(
 
   )
   {
-    table_buf = (uchar *)malloc(len);
+    table_buf = (uchar *)calloc(len,1);
     fread(table_buf, len, 1, ifp);
 		if (imCommon.afcount < LIBRAW_AFDATA_MAXCOUNT)
 		{
@@ -1395,7 +1395,7 @@ void LibRaw::parseSonyMakernotes(
     else if ((len == 19154) || // a200 a230 a290 a300 a330 a350 a380 a390 : FocusInfo
              (len == 19148))   // a700 a850 a900                          : FocusInfo
     {
-      table_buf = (uchar *)malloc(0x0080);
+      table_buf = (uchar *)calloc(0x0080,1);
       fread(table_buf, 0x0080, 1, ifp);
       imgdata.shootinginfo.DriveMode = table_buf[14];
       imgdata.shootinginfo.ExposureProgram = table_buf[63];
@@ -1413,7 +1413,7 @@ void LibRaw::parseSonyMakernotes(
       if ((a) && (c == 1))
       {
         fseek(ifp, INT64(d) - 8LL, SEEK_CUR);
-        table_buf = (uchar *)malloc(256);
+        table_buf = (uchar *)calloc(256,1);
         fread(table_buf, 256, 1, ifp);
         imgdata.shootinginfo.DriveMode = table_buf[1];
         imgdata.shootinginfo.ExposureProgram = table_buf[2];
@@ -1495,7 +1495,7 @@ void LibRaw::parseSonyMakernotes(
             (tag == 0xb0280114)) &&
            (len < 256000))
   {
-    table_buf = (uchar *)malloc(len);
+    table_buf = (uchar *)calloc(len,1);
     fread(table_buf, len, 1, ifp);
     switch (len)
     {
@@ -1707,7 +1707,7 @@ void LibRaw::parseSonyMakernotes(
   }
   else if ((tag == 0x3000) && (len < 256000))
   {
-    table_buf = (uchar *)malloc(len);
+    table_buf = (uchar *)calloc(len,1);
     fread(table_buf, len, 1, ifp);
     if (len >= 0x19)
     {
@@ -1723,7 +1723,7 @@ void LibRaw::parseSonyMakernotes(
   }
   else if (tag == 0x0116 && len < 256000)
   {
-    table_buf_0x0116 = (uchar *)malloc(len);
+    table_buf_0x0116 = (uchar *)calloc(len,1);
     table_buf_0x0116_len = len;
     fread(table_buf_0x0116, len, 1, ifp);
     if (ilm.CamID)
@@ -1748,7 +1748,7 @@ void LibRaw::parseSonyMakernotes(
   }
   else if (tag == 0x2010 && len < 256000)
   {
-    table_buf_0x2010 = (uchar *)malloc(len);
+    table_buf_0x2010 = (uchar *)calloc(len,1);
     table_buf_0x2010_len = len;
     fread(table_buf_0x2010, len, 1, ifp);
     if (ilm.CamID)
@@ -1803,7 +1803,7 @@ void LibRaw::parseSonyMakernotes(
         imCommon.afdata[imCommon.afcount].AFInfoData_tag = tag;
         imCommon.afdata[imCommon.afcount].AFInfoData_order = order;
         imCommon.afdata[imCommon.afcount].AFInfoData_length = len;
-        imCommon.afdata[imCommon.afcount].AFInfoData = (uchar *)malloc(imCommon.afdata[imCommon.afcount].AFInfoData_length);
+        imCommon.afdata[imCommon.afcount].AFInfoData = (uchar *)calloc(imCommon.afdata[imCommon.afcount].AFInfoData_length,1);
         fread(imCommon.afdata[imCommon.afcount].AFInfoData, imCommon.afdata[imCommon.afcount].AFInfoData_length, 1, ifp);
         imSony.nAFPointsUsed =
             short(MIN(imCommon.afdata[imCommon.afcount].AFInfoData_length, sizeof imSony.AFPointsUsed));
@@ -1827,7 +1827,7 @@ void LibRaw::parseSonyMakernotes(
       imCommon.afdata[imCommon.afcount].AFInfoData_tag = tag;
       imCommon.afdata[imCommon.afcount].AFInfoData_order = order;
       imCommon.afdata[imCommon.afcount].AFInfoData_length = len;
-      imCommon.afdata[imCommon.afcount].AFInfoData = (uchar *)malloc(imCommon.afdata[imCommon.afcount].AFInfoData_length);
+      imCommon.afdata[imCommon.afcount].AFInfoData = (uchar *)calloc(imCommon.afdata[imCommon.afcount].AFInfoData_length,1);
       fread(imCommon.afdata[imCommon.afcount].AFInfoData, imCommon.afdata[imCommon.afcount].AFInfoData_length, 1, ifp);
       imCommon.afcount++;
     }
@@ -1859,7 +1859,7 @@ void LibRaw::parseSonyMakernotes(
       imCommon.afdata[imCommon.afcount].AFInfoData_tag = tag;
       imCommon.afdata[imCommon.afcount].AFInfoData_order = order;
       imCommon.afdata[imCommon.afcount].AFInfoData_length = len;
-      imCommon.afdata[imCommon.afcount].AFInfoData = (uchar *)malloc(imCommon.afdata[imCommon.afcount].AFInfoData_length);
+      imCommon.afdata[imCommon.afcount].AFInfoData = (uchar *)calloc(imCommon.afdata[imCommon.afcount].AFInfoData_length,1);
       fread(imCommon.afdata[imCommon.afcount].AFInfoData, imCommon.afdata[imCommon.afcount].AFInfoData_length, 1, ifp);
 		  imCommon.afcount++;
     }
@@ -1884,7 +1884,7 @@ void LibRaw::parseSonyMakernotes(
   }
   else if (tag == 0x9050 && len < 256000) // little endian
   {
-    table_buf_0x9050 = (uchar *)malloc(len);
+    table_buf_0x9050 = (uchar *)calloc(len,1);
     table_buf_0x9050_len = len;
     fread(table_buf_0x9050, len, 1, ifp);
 
@@ -1898,7 +1898,7 @@ void LibRaw::parseSonyMakernotes(
   }
   else if (tag == 0x9400 && len < 256000)
   {
-    table_buf_0x9400 = (uchar *)malloc(len);
+    table_buf_0x9400 = (uchar *)calloc(len,1);
     table_buf_0x9400_len = len;
     fread(table_buf_0x9400, len, 1, ifp);
     if (ilm.CamID)
@@ -1910,7 +1910,7 @@ void LibRaw::parseSonyMakernotes(
   }
   else if (tag == 0x9402 && len < 256000)
   {
-    table_buf_0x9402 = (uchar *)malloc(len);
+    table_buf_0x9402 = (uchar *)calloc(len,1);
     table_buf_0x9402_len = len;
     fread(table_buf_0x9402, len, 1, ifp);
     if (ilm.CamID)
@@ -1922,7 +1922,7 @@ void LibRaw::parseSonyMakernotes(
   }
   else if (tag == 0x9403 && len < 256000)
   {
-    table_buf_0x9403 = (uchar *)malloc(len);
+    table_buf_0x9403 = (uchar *)calloc(len,1);
     table_buf_0x9403_len = len;
     fread(table_buf_0x9403, len, 1, ifp);
     if (ilm.CamID)
@@ -1934,7 +1934,7 @@ void LibRaw::parseSonyMakernotes(
   }
   else if ((tag == 0x9405) && (len < 256000) && (len > 0x64))
   {
-    table_buf = (uchar *)malloc(len);
+    table_buf = (uchar *)calloc(len,1);
     fread(table_buf, len, 1, ifp);
     uc = table_buf[0x0];
     if (imCommon.real_ISO < 0.1f)
@@ -1952,7 +1952,7 @@ void LibRaw::parseSonyMakernotes(
   }
   else if ((tag == 0x9404) && (len < 256000) && (len > 0x21))
   {
-    table_buf = (uchar *)malloc(len);
+    table_buf = (uchar *)calloc(len,1);
     fread(table_buf, len, 1, ifp);
     uc = table_buf[0x00];
     if (((uc == 0x70) ||
@@ -1972,7 +1972,7 @@ void LibRaw::parseSonyMakernotes(
   }
   else if (tag == 0x9406 && len < 256000)
   {
-    table_buf_0x9406 = (uchar *)malloc(len);
+    table_buf_0x9406 = (uchar *)calloc(len,1);
     table_buf_0x9406_len = len;
     fread(table_buf_0x9406, len, 1, ifp);
     if (ilm.CamID)
@@ -1984,7 +1984,7 @@ void LibRaw::parseSonyMakernotes(
   }
   else if (tag == 0x940c && len < 256000)
   {
-    table_buf_0x940c = (uchar *)malloc(len);
+    table_buf_0x940c = (uchar *)calloc(len,1);
     table_buf_0x940c_len = len;
     fread(table_buf_0x940c, len, 1, ifp);
     if (ilm.CamID)
@@ -1996,7 +1996,7 @@ void LibRaw::parseSonyMakernotes(
   }
   else if (tag == 0x940e && len < 256000)
   {
-    table_buf_0x940e = (uchar *)malloc(len);
+    table_buf_0x940e = (uchar *)calloc(len,1);
     table_buf_0x940e_len = len;
     fread(table_buf_0x940e, len, 1, ifp);
     if (ilm.CamID)
@@ -2007,7 +2007,7 @@ void LibRaw::parseSonyMakernotes(
     }
   }
   else if ((tag == 0x9416) && (len < 256000) && (len > 0x0076)) {
-    table_buf = (uchar *)malloc(len);
+    table_buf = (uchar *)calloc(len,1);
     fread(table_buf, len, 1, ifp);
     if (imCommon.real_ISO < 0.1f) {
       s[0] = SonySubstitution[table_buf[0x04]];
@@ -2072,7 +2072,7 @@ void LibRaw::parseSonyMakernotes(
   }
   else if (tag == 0xb02a && len < 256000) // Sony LensSpec
   {
-    table_buf = (uchar *)malloc(len);
+    table_buf = (uchar *)calloc(len,1);
     fread(table_buf, len, 1, ifp);
     if ((!dng_writer) ||
         (saneSonyCameraInfo(table_buf[1], table_buf[2], table_buf[3],
@@ -2207,10 +2207,12 @@ void LibRaw::parseSonySR2(uchar *_cbuf_SR2, unsigned SR2SubIFDOffset,
                   if ((tag_id >= 0x7480) && (tag_id <= 0x7486)) {
                       i = tag_id - 0x7480;
                       if (Sony_SR2_wb_list[i] > 255) {
+		         if (WBCTC_count < 64) {
                           icWBCCTC[WBCTC_count][0] = Sony_SR2_wb_list[i];
                           FORC3 icWBCCTC[WBCTC_count][c + 1] = cbuf_SR2.sget2(tag_dataoffset + tag_dataunitlen * c);
                           icWBCCTC[WBCTC_count][4] = icWBCCTC[WBCTC_count][2];
-                          WBCTC_count++;
+			 }
+                         WBCTC_count++;
                       }
                       else {
                           FORC3 icWBC[Sony_SR2_wb_list[i]][c] = cbuf_SR2.sget2(tag_dataoffset + tag_dataunitlen * c);
@@ -2220,6 +2222,7 @@ void LibRaw::parseSonySR2(uchar *_cbuf_SR2, unsigned SR2SubIFDOffset,
                   else if ((tag_id >= 0x7820) && (tag_id <= 0x782d)) {
                       i = tag_id - 0x7820;
                       if (Sony_SR2_wb_list1[i] > 255) {
+		        if (WBCTC_count < 64) {
                           icWBCCTC[WBCTC_count][0] = Sony_SR2_wb_list1[i];
                           FORC3 icWBCCTC[WBCTC_count][c + 1] = cbuf_SR2.sget2(tag_dataoffset + tag_dataunitlen * c);
                           icWBCCTC[WBCTC_count][4] = icWBCCTC[WBCTC_count][2];
@@ -2227,7 +2230,8 @@ void LibRaw::parseSonySR2(uchar *_cbuf_SR2, unsigned SR2SubIFDOffset,
                               FORC3 icWBC[LIBRAW_WBI_StudioTungsten][c] = icWBCCTC[WBCTC_count][c + 1];
                               icWBC[LIBRAW_WBI_StudioTungsten][3] = icWBC[LIBRAW_WBI_StudioTungsten][1];
                           }
-                          WBCTC_count++;
+			 }
+                         WBCTC_count++;
                       }
                       else {
                           FORC3 icWBC[Sony_SR2_wb_list1[i]][c] = cbuf_SR2.sget2(tag_dataoffset + tag_dataunitlen * c);

@@ -87,11 +87,11 @@ void LibRaw::sony_ljpeg_load_raw()
       break;
     try
     {
-      for (row = jrow = 0; jrow < (unsigned)jh.high; jrow++, row += 2)
+      for (row = jrow = 0; jrow < (unsigned)jh.high && trow+row < raw_height-1; jrow++, row += 2)
       {
         checkCancel();
         ushort(*rowp)[4] = (ushort(*)[4])ljpeg_row(jrow, &jh);
-        for (col = jcol = 0; jcol < (unsigned)jh.wide; jcol++, col += 2)
+        for (col = jcol = 0; jcol < (unsigned)jh.wide && tcol+col < raw_width-1; jcol++, col += 2)
         {
           RAW(trow + row, tcol + col) = rowp[jcol][0];
           RAW(trow + row, tcol + col + 1) = rowp[jcol][1];
@@ -129,7 +129,7 @@ void LibRaw::nikon_coolscan_load_raw()
 
   int bypp = tiff_bps <= 8 ? 1 : 2;
   int bufsize = width * clrs * bypp;
-  unsigned char *buf = (unsigned char *)malloc(bufsize);
+  unsigned char *buf = (unsigned char *)calloc(bufsize,1);
   unsigned short *ubuf = (unsigned short *)buf;
 
   if (tiff_bps <= 8)
@@ -228,7 +228,7 @@ void LibRaw::android_tight_load_raw()
   int bwide, row, col, c;
 
   bwide = -(-5 * raw_width >> 5) << 3;
-  data = (uchar *)malloc(bwide);
+  data = (uchar *)calloc(bwide,1);
   for (row = 0; row < raw_height; row++)
   {
     if (fread(data, 1, bwide, ifp) < bwide)
@@ -246,7 +246,7 @@ void LibRaw::android_loose_load_raw()
   UINT64 bitbuf = 0;
 
   bwide = (raw_width + 5) / 6 << 3;
-  data = (uchar *)malloc(bwide);
+  data = (uchar *)calloc(bwide,1);
   for (row = 0; row < raw_height; row++)
   {
     if (fread(data, 1, bwide, ifp) < bwide)
@@ -289,7 +289,7 @@ void LibRaw::rpi_load_raw8()
 		dwide = raw_width;
 	else
 		dwide = raw_stride;
-	data = (uchar *)malloc(dwide * 2);
+    data = (uchar *)calloc(dwide, 2);
 	for (row = 0; row < raw_height; row++) {
 		if (fread(data + dwide, 1, dwide, ifp) < dwide) derror();
 		FORC(dwide) data[c] = data[dwide + (c ^ rev)];
@@ -320,7 +320,7 @@ void LibRaw::rpi_load_raw12()
 		dwide = (raw_width * 3 + 1) / 2;
 	else
 		dwide = raw_stride;
-	data = (uchar *)malloc(dwide * 2);
+    data = (uchar *)calloc(dwide, 2);
 	for (row = 0; row < raw_height; row++) {
 		if (fread(data + dwide, 1, dwide, ifp) < dwide) derror();
 		FORC(dwide) data[c] = data[dwide + (c ^ rev)];
@@ -351,7 +351,7 @@ void LibRaw::rpi_load_raw14()
 		dwide = ((raw_width * 7) + 3) >> 2;
 	else
 		dwide = raw_stride;
-	data = (uchar *)malloc(dwide * 2);
+    data = (uchar *)calloc(dwide, 2);
 	for (row = 0; row < raw_height; row++) {
 		if (fread(data + dwide, 1, dwide, ifp) < dwide) derror();
 		FORC(dwide) data[c] = data[dwide + (c ^ rev)];
@@ -386,7 +386,7 @@ void LibRaw::rpi_load_raw16()
 		dwide = (raw_width * 2);
 	else
 		dwide = raw_stride;
-	data = (uchar *)malloc(dwide * 2);
+    data = (uchar *)calloc(dwide, 2);
 	for (row = 0; row < raw_height; row++) {
 		if (fread(data + dwide, 1, dwide, ifp) < dwide) derror();
 		FORC(dwide) data[c] = data[dwide + (c ^ rev)];

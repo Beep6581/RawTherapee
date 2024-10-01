@@ -1,19 +1,36 @@
+2024-09-18  Alex Tutubalin <lexa@lexa.ru>
+
+ LibRaw 0.21.3-Release
+  * new compile-time define LIBRAW_CALLOC_RAWSTORE
+    If defined: calloc() will be used for all big buffer
+    allocations to prevent uninitialized heap data leak
+
+  * Small allocations: calloc() instead of malloc() to prevent
+    uninitialized heap data leak
+
+  * Support for 4-component JPEG-compressed DNG files
+
+  * CR3-Qstep table: avoid wrong 64-bit code generation
+
+  * Fixed several bugs related to specially-crafted files
+    processing (thanks to OSS-Fuzz project)
+
 2024-03-30  Alex Tutubalin <lexa@lexa.ru>
 
  LibRaw-snapshot-202403
 
- * Raw format support 
+ * Raw format support
     1) Panasonic encoding 8
 
-    2) Sony YCC (Medium/Small compression) pseudo-RAW support: 
+    2) Sony YCC (Medium/Small compression) pseudo-RAW support:
       -- normal processing (3-channel RGB output)
       -- or YCbCr output if LIBRAW_RAWSPECIAL_SRAW_NO_RGB bit is set
-         in imgdata.rawparams.specials (one may specify the 
+         in imgdata.rawparams.specials (one may specify the
          LIBRAW_RAWSPECIAL_SRAW_NO_INTERPOLATE flag too avoid Cb/Cr interpolation)
          Note: if YCbCr is selected, Cb/Cr neutral points are adjusted to 8192
          (to fit histogram/range area of the Y channel)
-      -- RAW (pseudo-RAW) data is already white balanced, so 
-         imgdata.color.as_shot_wb_applied is set to 
+      -- RAW (pseudo-RAW) data is already white balanced, so
+         imgdata.color.as_shot_wb_applied is set to
          LIBRAW_ASWB_APPLIED | LIBRAW_ASWB_SONY
 
     3) DNG 1.7 (including JPEG-XL compression) support via Adobe DNG SDK 1.7.x integration
@@ -30,7 +47,7 @@
      - OM Digital OM-5
      - Panasonic DC-G9 II, DC-ZS200D / ZS220D, DC-TZ200D / TZ202D / TZ220D, DC-S5-II, DC-GH6
      - Sony A7C-II, A7CR, ILCE-6700,  ZV-1M2, ZV-E1, ILCE-7RM5 (A7R-V), ILME-FX30,
-          A1: support for files damaged by exiftool 
+          A1: support for files damaged by exiftool
      - Multiple DJI and Skydio drones
      - tested with multiple smartphones with DNG format recorded.
 
@@ -39,19 +56,19 @@
    * Better support for cropped images from latest Fujifilm cameras
      (X-H2, X-H2S, X-T5)
 
-   * As planned in LibRaw snapshot 202101 release notes, OLD_VIDEOCAMS 
+   * As planned in LibRaw snapshot 202101 release notes, OLD_VIDEOCAMS
     support is dropped.
     These cameras are no longer supported:
      - old RED Cine cameras
      - Canon C500
-     - ARRI video/digital cinema cameras    
+     - ARRI video/digital cinema cameras
 
   * JPEG-XL previews (DNG 1.7) support:
     - new bit for imgdata.rawparams.options: LIBRAW_RAWOPTIONS_ALLOW_JPEGXL_PREVIEWS (not set by default)
     - if the bit is set, LibRaw will perceive such previews in the same way as JPEG ones
       (largest preview is selected by default, etc).
     - tformat field for such preview is set to LIBRAW_THUMBNAIL_JPEGXL
-    - image metadata (width/height/channels count) is not parsed for JPEG-XL previews 
+    - image metadata (width/height/channels count) is not parsed for JPEG-XL previews
 
   * New patch for RawSpeed3:  05.no-phase-one-correction.patch
     this patch disables RawSpeed's  PhaseOne flat field correction (not needed because
@@ -77,13 +94,13 @@
 
   * Canon CR2 16-bit bitmap previes: do not convert from Kodak colorspace
 
-  * New compile-defined limit LIBRAW_MAX_PROFILE_SIZE_MB: 
+  * New compile-defined limit LIBRAW_MAX_PROFILE_SIZE_MB:
        limits allocation/read size for embedded color profile (default: 256Mb)
 
   * Embedded color profile allocation/read size: limited by input file size.
 
   * Check against corrupted LJPEG header in Canon sRAW decoder
- 
+
   * Better support for Sony metadata
 
   * Better handling of memory allocation errors in unpack_thumb()
@@ -107,9 +124,40 @@
 
   * tiff parser: check for IFD offset before parsing it
 
+2023-12-19  Alex Tutubalin <lexa@lexa.ru>
+
+ LibRaw 0.21.2-Release
+
+  * New compile-defined limit LIBRAW_MAX_PROFILE_SIZE_MB: 
+       limits allocation/read size for embedded color profile (default: 256Mb)
+
+  * Embedded color profile allocation/read size: limited by input file size.
+
+  * Multiple fixes (mostly inspired by oss-fuzz) to improve library stability and/or input checks.
+
+  * raw-identify: use fallback if PATH_MAX not available   
+
+  * Disabled color conversion for Canon 16-bit thumbnails
+
+  * docs/changelog: explained the case when no thumbnail is found in specific file
+
+  * swapXX renamed to libraw_swapXX to avoid name conflict
+
+  * better striped thumbnails handling
+
+ 
+2023-01-05  Alex Tutubalin <lexa@lexa.ru>
+ LibRaw 0.21.1-Release
+ * fixed typo in panasonic metadata parser
+
+2022-12-18  Alex Tutubalin <lexa@lexa.ru>
+ LibRaw 0.21-Release
+
+ * Multiple fixes inspired by oss-fuzz project
+
 2022-07-01  Alex Tutubalin <lexa@lexa.ru>
 
- LibRaw 0.21
+ LibRaw 0.21-Beta1
 
  == Camera format support ==
  * Phase One/Leaf IIQ-S v2 support

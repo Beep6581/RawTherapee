@@ -218,7 +218,7 @@ int LibRaw::dcraw_process(void)
     if (!libraw_internal_data.output_data.histogram)
     {
       libraw_internal_data.output_data.histogram =
-          (int(*)[LIBRAW_HISTOGRAM_SIZE])malloc(
+          (int(*)[LIBRAW_HISTOGRAM_SIZE])calloc(1,
               sizeof(*libraw_internal_data.output_data.histogram) * 4);
     }
 #ifndef NO_LCMS

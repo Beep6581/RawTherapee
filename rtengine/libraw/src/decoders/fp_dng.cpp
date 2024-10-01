@@ -291,8 +291,8 @@ void tile_stripe_data_t::init(tiff_ifd_t *ifd, const libraw_image_sizes_t& sizes
     if (tileCnt < 1 || tileCnt > 1000000)
         throw LIBRAW_EXCEPTION_DECODE_RAW;
 
-    tOffsets = std::vector<size_t>(tileCnt);
-    tBytes = std::vector <size_t>(tileCnt);
+    tOffsets = std::vector<size_t>(tileCnt,0);
+    tBytes = std::vector <size_t>(tileCnt,0);
 
     if (tiled)
         for (int t = 0; t < tileCnt; ++t)
@@ -377,8 +377,8 @@ void LibRaw::deflate_dng_load_raw()
   if(INT64(tiles.maxBytesInTile) > INT64(imgdata.rawparams.max_raw_memory_mb) * INT64(1024 * 1024) )
     throw LIBRAW_EXCEPTION_TOOBIG;
 
-  std::vector<uchar> cBuffer(tiles.maxBytesInTile);
-  std::vector<uchar> uBuffer(tileBytes + tileRowBytes); // extra row for decoding
+  std::vector<uchar> cBuffer(tiles.maxBytesInTile,0);
+  std::vector<uchar> uBuffer(tileBytes + tileRowBytes,0); // extra row for decoding
 
   for (size_t y = 0, t = 0; y < imgdata.sizes.raw_height; y += tiles.tileHeight)
     {
@@ -623,7 +623,7 @@ void LibRaw::uncompressed_fp_dng_load_raw()
     bool difford = (libraw_internal_data.unpacker_data.order == 0x4949) == (ntohs(0x1234) == 0x1234);
     float max = 0.f;
 
-    std::vector<uchar> rowbuf(tiles.tileWidth *sizeof(float) * ifd->samples); // line buffer for last tile in tile row
+    std::vector<uchar> rowbuf(tiles.tileWidth *sizeof(float) * ifd->samples,0); // line buffer for last tile in tile row
 
     for (size_t y = 0, t = 0; y < imgdata.sizes.raw_height; y += tiles.tileHeight)
     {
