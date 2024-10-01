@@ -1884,6 +1884,46 @@ bool SHParams::operator !=(const SHParams& other) const
     return !(*this == other);
 }
 
+
+
+CGParams::CGParams() :
+    enabled(false),
+    th_c(0.815),
+    th_m(0.803),
+    th_y(0.880),
+    d_c(1.147),
+    d_m(1.264),
+    d_y(1.312),
+    pwr(1.2),
+    colorspace("srgb"),
+    rolloff(true)
+    
+{
+}
+
+bool CGParams::operator ==(const CGParams& other) const
+{
+    return
+        enabled == other.enabled
+        && th_c == other.th_c
+        && th_m == other.th_m
+        && th_y == other.th_y
+        && d_c == other.d_c
+        && d_m == other.d_m
+        && d_y == other.d_y
+        && pwr == other.pwr
+        && colorspace == other.colorspace
+        && rolloff == other.rolloff;
+}
+
+bool CGParams::operator !=(const CGParams& other) const
+{
+    return !(*this == other);
+}
+
+
+
+///
 ToneEqualizerParams::ToneEqualizerParams() :
     enabled(false),
     bands{0, 0, 0, 0, 0, 0},
@@ -6719,6 +6759,18 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
         saveToKeyfile(!pedited || pedited->sh.radius, "Shadows & Highlights", "Radius", sh.radius, keyFile);
         saveToKeyfile(!pedited || pedited->sh.lab, "Shadows & Highlights", "Lab", sh.lab, keyFile);
 
+//compression gamut
+        saveToKeyfile(!pedited || pedited->cg.enabled, "Compression gamut", "Enabled", cg.enabled, keyFile);
+        saveToKeyfile(!pedited || pedited->cg.th_c, "Compression gamut", "th_c", cg.th_c, keyFile);
+        saveToKeyfile(!pedited || pedited->cg.th_m, "Compression gamut", "th_m", cg.th_m, keyFile);
+        saveToKeyfile(!pedited || pedited->cg.th_y, "Compression gamut", "th_y", cg.th_y, keyFile);
+        saveToKeyfile(!pedited || pedited->cg.d_c, "Compression gamut", "d_c", cg.d_c, keyFile);
+        saveToKeyfile(!pedited || pedited->cg.d_m, "Compression gamut", "d_m", cg.d_m, keyFile);
+        saveToKeyfile(!pedited || pedited->cg.d_y, "Compression gamut", "d_y", cg.d_y, keyFile);
+        saveToKeyfile(!pedited || pedited->cg.pwr, "Compression gamut", "pwr", cg.pwr, keyFile);
+        saveToKeyfile(!pedited || pedited->cg.colorspace, "Compression gamut", "colorspace", cg.colorspace, keyFile);
+        saveToKeyfile(!pedited || pedited->cg.rolloff, "Compression gamut", "rolloff", cg.rolloff, keyFile);
+
 // Tone equalizer
         saveToKeyfile(!pedited || pedited->toneEqualizer.enabled, "ToneEqualizer", "Enabled", toneEqualizer.enabled, keyFile);
         for (size_t i = 0; i < toneEqualizer.bands.size(); ++i) {
@@ -8857,6 +8909,19 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
             assignFromKeyfile(keyFile, "FattalToneMapping", "Threshold", fattal.threshold, pedited->fattal.threshold);
             assignFromKeyfile(keyFile, "FattalToneMapping", "Amount", fattal.amount, pedited->fattal.amount);
             assignFromKeyfile(keyFile, "FattalToneMapping", "Anchor", fattal.anchor, pedited->fattal.anchor);
+        }
+
+        if (keyFile.has_group("Compression gamut")) {
+            assignFromKeyfile(keyFile, "Compression gamut", "Enabled", cg.enabled, pedited->cg.enabled);
+            assignFromKeyfile(keyFile, "Compression gamut", "th_c", cg.th_c, pedited->cg.th_c);
+            assignFromKeyfile(keyFile, "Compression gamut", "th_m", cg.th_m, pedited->cg.th_m);
+            assignFromKeyfile(keyFile, "Compression gamut", "th_y", cg.th_y, pedited->cg.th_y);
+            assignFromKeyfile(keyFile, "Compression gamut", "d_c", cg.d_c, pedited->cg.d_c);
+            assignFromKeyfile(keyFile, "Compression gamut", "d_m", cg.d_m, pedited->cg.d_m);
+            assignFromKeyfile(keyFile, "Compression gamut", "d_y", cg.d_y, pedited->cg.d_y);
+            assignFromKeyfile(keyFile, "Compression gamut", "pwr", cg.pwr, pedited->cg.pwr);
+            assignFromKeyfile(keyFile, "Compression gamut", "colorspace", cg.colorspace, pedited->cg.colorspace);
+            assignFromKeyfile(keyFile, "Compression gamut", "rolloff", cg.rolloff, pedited->cg.rolloff);
         }
 
         if (keyFile.has_group("Shadows & Highlights") && ppVersion >= 333) {

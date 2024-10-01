@@ -835,9 +835,13 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                 imgsrc->convertColorSpace(orig_prev, params->icm, currWB);
             }
 
+            if (params->cg.enabled) {//gamut compression
+                ipf.gamutcompr(orig_prev, orig_prev);
+            }
+
             ipf.firstAnalysis(orig_prev, *params, vhist16);
         }
-
+  
         oprevi = orig_prev;
 
         if ((todo & M_SPOT) && !spotsDone) {
