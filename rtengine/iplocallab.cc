@@ -183,87 +183,180 @@ struct ght_compute_params {
     float HPT;
 };
 
-ght_compute_params  GHT_setup(float in_B, float D, float LP, float SP, float HP)
+ght_compute_params  GHT_setup(float in_B, float D, float LP, float SP, float HP, int strtype)
 {
     ght_compute_params c;
     float B = in_B;
-    if (B == -1.0f) {
-        //B = -B;
-        c.qlp = -1.0f*log(1.f + D*(SP - LP));
-        c.q0 = c.qlp - D * LP / (1.0f + D * (SP - LP));
-        c.qwp = log(1.f + D * (HP - SP));
-        c.q1 = c.qwp + D * (1.0f - HP) / (1.0f + D * (HP - SP));
-        c.q = 1.0f / (c.q1 - c.q0);
-        c.b1 = (1.0f + D * (SP - LP)) / (D * c.q);
-        c.a2 = (-c.q0) * c.q;
-        c.b2 = -c.q;
-        c.c2 = 1.0f + D * SP;
-        c.d2 = -D;
-        c.a3 = (-c.q0) * c.q;
-        c.b3 = c.q;
-        c.c3 = 1.0f - D * SP;
-        c.d3 = D;
-        c.a4 = (c.qwp - c.q0 - D * HP / (1.0f + D * (HP - SP))) * c.q;
-        c.b4 = c.q * D / (1.0f + D * (HP - SP));
-    } else if (B < 0.0f) {
-        B = -B;
-        c.qlp = (1.0f - pow((1.0f + D * B * (SP - LP)), (B - 1.0f) / B)) / (B - 1.0f);
-        c.q0 = c.qlp - D * LP * (pow((1.0f + D * B * (SP - LP)), -1.0f / B));
-        c.qwp = (pow((1.0f + D * B * (HP - SP)), (B - 1.0f) / B) - 1.0f) / (B - 1.0f);
-        c.q1 = c.qwp + D * (1.0f - HP) * (pow((1.0f + D * B * (HP - SP)), -1.0f / B));
-        c.q = 1.0f / (c.q1 - c.q0);
-        c.b1 = D * pow(1.0f + D * B * (SP - LP), -1.0f / B) *c.q;
-        c.a2 = (1.0f/(B-1.0f)-c.q0) * c.q;
-        c.b2 = -c.q/(B-1.0f);
-        c.c2 = 1.0f + D * B * SP;
-        c.d2 = -D * B;
-        c.e2 = (B - 1.0f)/B;
-        c.a3 = (-1.0f/(B-1.0f) - c.q0) *c.q;
-        c.b3 = c.q/(B-1.0f);
-        c.c3 = 1.0f - D * B * SP;
-        c.d3 = D * B;
-        c.e3 = (B - 1.0f) / B;
-        c.a4 = (c.qwp - c.q0 - D * HP * pow((1.0f + D * B * (HP - SP)), -1.0f / B)) * c.q;
-        c.b4 = D * pow((1.0f + D * B * (HP - SP)), -1.0f / B) * c.q;
-    } else if (B == 0.0f) {
-        c.qlp = exp(-D * (SP - LP));
-        c.q0 = c.qlp - D * LP * exp(-D*(SP - LP));
-        c.qwp = 2.0f - exp(-D * (HP -SP));
-        c.q1 = c.qwp + D * (1.0f - HP) * exp (-D * (HP - SP));
-        c.q = 1.0f / (c.q1 - c.q0);
-        c.a1 = 0.0f;
-        c.b1 = D * exp (-D * (SP - LP)) * c.q;
-        c.a2 = -c.q0 * c.q;
-        c.b2 = c.q;
-        c.c2 = -D * SP;
-        c.d2 = D;
-        c.a3 = (2.0f - c.q0) * c.q;
-        c.b3 = -c.q;
-        c.c3 = D * SP;
-        c.d3 = -D;
-        c.a4 = (c.qwp - c.q0 - D * HP * exp(-D * (HP - SP))) * c.q;
-        c.b4 = D * exp(-D * (HP - SP)) * c.q;
-    } else if (B > 0.0f) {
-        c.qlp = pow((1.0f + D * B * (SP - LP)), -1.0f/B);
-        c.q0 = c.qlp - D * LP * pow((1.f + D * B * (SP - LP)), -(1.0f + B) / B);
-        c.qwp = 2.0f - pow(1.0f + D * B * (HP - SP), -1.0f / B);
-        c.q1 = c.qwp + D * (1.0f - HP) * pow((1.0f + D * B * (HP - SP)), -(1.0f + B) / B);
-        c.q = 1.0f / (c.q1 - c.q0);
-        c.b1 = D * pow((1.0f + D * B * (SP - LP)), -(1.0f+B)/B) * c.q;
-        c.a2 = -c.q0 * c.q;
-        c.b2 = c.q;
-        c.c2 = 1.0f + D * B * SP;
-        c.d2 = -D * B;
-        c.e2 = -1.0f / B;
-        c.a3 = (2.0f - c.q0) * c.q;
-        c.b3 = -c.q;
-        c.c3 = 1.0f - D * B * SP;
-        c.d3 = D * B;
-        c.e3 = -1.0f / B;
-        c.a4 = (c.qwp - c.q0 - D * HP * pow((1.0f + D * B * (HP - SP)), -(B + 1.0f) / B)) * c.q;
-        c.b4 = (D * pow((1.0f + D * B * (HP - SP)), -(B + 1.0f) / B)) * c.q;
-    }
+    if(strtype == 0) {//Normal Stretch
+        if (B == -1.0f) {
+            //B = -B;
+            c.qlp = -1.0f*log(1.f + D*(SP - LP));
+            c.q0 = c.qlp - D * LP / (1.0f + D * (SP - LP));
+            c.qwp = log(1.f + D * (HP - SP));
+            c.q1 = c.qwp + D * (1.0f - HP) / (1.0f + D * (HP - SP));
+            c.q = 1.0f / (c.q1 - c.q0);
+            c.b1 = (1.0f + D * (SP - LP)) / (D * c.q);
+            c.a2 = (-c.q0) * c.q;
+            c.b2 = -c.q;
+            c.c2 = 1.0f + D * SP;
+            c.d2 = -D;
+            c.a3 = (-c.q0) * c.q;
+            c.b3 = c.q;
+            c.c3 = 1.0f - D * SP;
+            c.d3 = D;
+            c.a4 = (c.qwp - c.q0 - D * HP / (1.0f + D * (HP - SP))) * c.q;
+            c.b4 = c.q * D / (1.0f + D * (HP - SP));
+        } else if (B < 0.0f) {
+            B = -B;
+            c.qlp = (1.0f - pow((1.0f + D * B * (SP - LP)), (B - 1.0f) / B)) / (B - 1.0f);
+            c.q0 = c.qlp - D * LP * (pow((1.0f + D * B * (SP - LP)), -1.0f / B));
+            c.qwp = (pow((1.0f + D * B * (HP - SP)), (B - 1.0f) / B) - 1.0f) / (B - 1.0f);
+            c.q1 = c.qwp + D * (1.0f - HP) * (pow((1.0f + D * B * (HP - SP)), -1.0f / B));
+            c.q = 1.0f / (c.q1 - c.q0);
+            c.b1 = D * pow(1.0f + D * B * (SP - LP), -1.0f / B) *c.q;
+            c.a2 = (1.0f/(B-1.0f)-c.q0) * c.q;
+            c.b2 = -c.q/(B-1.0f);
+            c.c2 = 1.0f + D * B * SP;
+            c.d2 = -D * B;
+            c.e2 = (B - 1.0f)/B;
+            c.a3 = (-1.0f/(B-1.0f) - c.q0) *c.q;
+            c.b3 = c.q/(B-1.0f);
+            c.c3 = 1.0f - D * B * SP;
+            c.d3 = D * B;
+            c.e3 = (B - 1.0f) / B;
+            c.a4 = (c.qwp - c.q0 - D * HP * pow((1.0f + D * B * (HP - SP)), -1.0f / B)) * c.q;
+            c.b4 = D * pow((1.0f + D * B * (HP - SP)), -1.0f / B) * c.q;
+        } else if (B == 0.0f) {
+            c.qlp = exp(-D * (SP - LP));
+            c.q0 = c.qlp - D * LP * exp(-D*(SP - LP));
+            c.qwp = 2.0f - exp(-D * (HP -SP));
+            c.q1 = c.qwp + D * (1.0f - HP) * exp (-D * (HP - SP));
+            c.q = 1.0f / (c.q1 - c.q0);
+            c.a1 = 0.0f;
+            c.b1 = D * exp (-D * (SP - LP)) * c.q;
+            c.a2 = -c.q0 * c.q;
+            c.b2 = c.q;
+            c.c2 = -D * SP;
+            c.d2 = D;
+            c.a3 = (2.0f - c.q0) * c.q;
+            c.b3 = -c.q;
+            c.c3 = D * SP;
+            c.d3 = -D;
+            c.a4 = (c.qwp - c.q0 - D * HP * exp(-D * (HP - SP))) * c.q;
+            c.b4 = D * exp(-D * (HP - SP)) * c.q;
+        } else if (B > 0.0f) {
+            c.qlp = pow((1.0f + D * B * (SP - LP)), -1.0f/B);
+            c.q0 = c.qlp - D * LP * pow((1.f + D * B * (SP - LP)), -(1.0f + B) / B);
+            c.qwp = 2.0f - pow(1.0f + D * B * (HP - SP), -1.0f / B);
+            c.q1 = c.qwp + D * (1.0f - HP) * pow((1.0f + D * B * (HP - SP)), -(1.0f + B) / B);
+            c.q = 1.0f / (c.q1 - c.q0);
+            c.b1 = D * pow((1.0f + D * B * (SP - LP)), -(1.0f+B)/B) * c.q;
+            c.a2 = -c.q0 * c.q;
+            c.b2 = c.q;
+            c.c2 = 1.0f + D * B * SP;
+            c.d2 = -D * B;
+            c.e2 = -1.0f / B;
+            c.a3 = (2.0f - c.q0) * c.q;
+            c.b3 = -c.q;
+            c.c3 = 1.0f - D * B * SP;
+            c.d3 = D * B;
+            c.e3 = -1.0f / B;
+            c.a4 = (c.qwp - c.q0 - D * HP * pow((1.0f + D * B * (HP - SP)), -(B + 1.0f) / B)) * c.q;
+            c.b4 = (D * pow((1.0f + D * B * (HP - SP)), -(B + 1.0f) / B)) * c.q;
+        }
+    } else if (strtype == 1) {//Inverse stretch
+        if (B == -1.0f) {
+            //B = -B;
+            c.qlp = -1.0f * log1pf(D * (SP - LP));
+            c.q0 = c.qlp - D * LP / (1.0f + D * (SP - LP));
+            c.qwp = log1pf(D * (HP - SP));
+            c.q1 = c.qwp + D * (1.0f - HP) / (1.0f + D * (HP - SP));
+            c.q = 1.0f / (c.q1 - c.q0);
+            c.LPT = (c.qlp-c.q0)*c.q;
+            c.SPT = c.q0*c.q;
+            c.HPT = (c.qwp-c.q0)*c.q;
+            c.b1 = (1.0f + D * (SP - LP)) / (D * c.q);
+            c.a2 = (1.0f + D * SP) / D;
+            c.b2 = -1.0f / D;
+            c.c2 = - c.q0;
+            c.d2 = - 1.0f/c.q;
+            c.a3 = - (1.0f - D * SP) / D;
+            c.b3 = 1.0f / D;
+            c.c3 = c.q0;
+            c.d3 = 1.0f / c.q;
+            c.a4 = HP + (c.q0-c.qwp) * (1+D*(HP-SP))/D;
+            c.b4 = (1.0f + D * (HP - SP) )/(c.q * D) ;
+        } else if (B < 0.0f) {
+           B = -B;
+            c.qlp = (1.0f - pow((1.0f + D * B * (SP - LP)), (B - 1.0f) / B)) / (B - 1.0f);
+            c.q0 = c.qlp - D * LP * (pow((1.0f + D * B * (SP - LP)), -1.0f / B));
+            c.qwp = (pow((1.0f + D * B * (HP - SP)), (B - 1.0f) / B) - 1.0f) / (B - 1.0f);
+            c.q1 = c.qwp + D * (1.0f - HP) * (pow((1.0f + D * B * (HP - SP)), -1.0f / B));
+            c.q = 1.0f / (c.q1 - c.q0);
+            c.LPT = (c.qlp-c.q0)*c.q;
+            c.SPT = -c.q0*c.q;
+            c.HPT = (c.qwp-c.q0)*c.q;
+            c.b1 = pow(1.0f + D * B * (SP - LP), 1.0f / B) / (c.q * D);
+            c.a2 = (1.0f + D * B * SP) / (D * B);
+            c.b2 = -1.0f / (D * B);
+            c.c2 = -c.q0*(B-1.0f) + 1.0f;
+            c.d2 = (1.0f - B) / c.q;
+            c.e2 = B / (B - 1.0f);
+            c.a3 = (D * B * SP - 1.0f) / (D * B);
+            c.b3 = 1.0f / (D * B);
+            c.c3 = 1.0f + c.q0 * (B - 1);
+            c.d3 = (B - 1.0f) / c.q;
+            c.e3 = B / (B - 1.0f);
+            c.a4 = (c.q0-c.qwp)/(D * pow((1.0f + D * B * (HP - SP)), -1.0f / B))+HP;
+            c.b4 = 1.0f / (D * pow((1.0f + D * B * (HP - SP)), -1.0f / B) * c.q) ;
 
+        } else if (B == 0.0f) {
+            c.qlp = exp(-D * (SP - LP));
+            c.q0 = c.qlp - D * LP * exp(-D*(SP - LP));
+            c.qwp = 2.0f - exp(-D * (HP -SP));
+            c.q1 = c.qwp + D * (1.0f - HP) * exp (-D * (HP - SP));
+            c.q = 1.0f / (c.q1 - c.q0);
+            c.LPT = (c.qlp-c.q0)*c.q;
+            c.SPT = (1.0f-c.q0)*c.q;
+            c.HPT = (c.qwp-c.q0)*c.q;
+            c.a1 = 0.0f;
+            c.b1 = 1.0f/(D * exp(-D * (SP - LP)) * c.q);
+            c.a2 = SP;
+            c.b2 = 1.0f / D;
+            c.c2 = c.q0;
+            c.d2 = 1.0f/c.q;
+            c.a3 = SP;
+            c.b3 = -1.0f / D;
+            c.c3 = (2.0f - c.q0);
+            c.d3 = -1.0f / c.q;
+            c.a4 = (c.q0 - c.qwp)/(D * exp(-D * (HP - SP))) + HP;
+            c.b4 = 1.0f/(D * exp(-D * (HP - SP)) * c.q);
+        } else if (B > 0.0f) {
+
+            c.qlp = pow(( 1.0f + D * B * (SP - LP)), -1.0f/B);
+            c.q0 = c.qlp - D * LP * pow((1.0f + D * B * (SP - LP)), -(1.0f + B) / B);
+            c.qwp = 2.0f - pow(1.0f + D * B * (HP - SP), -1.0f / B);
+            c.q1 = c.qwp + D * (1.0f - HP) * pow((1.0f + D * B * (HP - SP)), -(1.0f + B) / B);
+            c.q = 1.0f / (c.q1 - c.q0);
+            c.LPT = (c.qlp-c.q0)*c.q;
+            c.SPT = (1.0f-c.q0)*c.q;
+            c.HPT = (c.qwp-c.q0)*c.q;
+            c.b1 = 1/(D * pow((1.0f + D * B * (SP - LP)), -(1.0f + B) / B) * c.q);
+            c.a2 = 1.0f / (D * B) + SP;
+            c.b2 = -1.0f/(D * B);
+            c.c2 = c.q0;
+            c.d2 = 1.0f / c.q;
+            c.e2 = -B;
+            c.a3 = -1.0f / (D * B) + SP;
+            c.b3 = 1.0f / (D * B);
+            c.c3 = (2.0f - c.q0);
+            c.d3 = -1.0f / c.q;
+            c.e3 = -B;
+            c.a4 = (c.q0-c.qwp)/(D * pow((1.0f + D * B * (HP - SP)), -(B + 1.0f) / B))+HP;
+            c.b4 = 1.0f/((D * pow((1.0f + D * B * (HP - SP)), -(B + 1.0f) / B)) * c.q);
+        }
+    
+    }
     return c;
 }
 
@@ -272,8 +365,7 @@ float clamp(float x, float lo, float hi)
     return fmax(fmin(x, hi), lo);
 }
 
-
-float GHT(float x, float B, float D, float LP, float SP, float HP, ght_compute_params c)
+float GHT(float x, float B, float D, float LP, float SP, float HP, ght_compute_params c, int strtype)
 {
     //const float BP = 0.0f;
     float out;
@@ -283,50 +375,95 @@ float GHT(float x, float B, float D, float LP, float SP, float HP, ght_compute_p
     if (D == 0.0f) {
         out = in;
     } else {
-        if (B == -1.0f) {
-            if (in < LP) {
-                out = c.b1 * in;
-            } else if (in < SP) {
-                out = c.a2 + c.b2 * log(c.c2 + c.d2 * in);
-            } else if (in < HP) {
-                out = c.a3 + c.b3 * log(c.c3 + c.d3 * in);
-            } else {
-                out = c.a4 + c.b4 * in;
+        if(strtype == 0) {//Normal stretch
+            if (B == -1.0f) {
+                if (in < LP) {
+                    out = c.b1 * in;
+                } else if (in < SP) {
+                    out = c.a2 + c.b2 * log(c.c2 + c.d2 * in);
+                } else if (in < HP) {
+                    out = c.a3 + c.b3 * log(c.c3 + c.d3 * in);
+                } else {
+                    out = c.a4 + c.b4 * in;
+                }
+            } else if (B < 0.0f) {
+                if (in < LP) {
+                    out = c.b1 * in;
+                } else if (in < SP) {
+                    out = c.a2 + c.b2 * pow((c.c2 + c.d2 * in), c.e2);
+                } else if (in < HP) {
+                    out = c.a3 + c.b3 * pow((c.c3 + c.d3 * in), c.e3);
+                } else {
+                    out = c.a4 + c.b4 * in;
+                }
+            } else if (B == 0.0f) {
+                if (in < LP) {
+                    out = c.a1 + c.b1 * in;
+                } else if (in < SP) {
+                    out = c.a2 + c.b2 * exp(c.c2 + c.d2 * in);
+                } else if (in < HP) {
+                    out = c.a3 + c.b3 * exp(c.c3 + c.d3 * in);
+                } else {
+                    out = c.a4 + c.b4 * in;
+                }
+            } else /*if (B > 0)*/ {
+                if (in < LP) {
+                    out = c.b1 * in;
+                } else if (in < SP) {
+                    out = c.a2 + c.b2 * pow((c.c2 + c.d2 * in), c.e2);
+                } else if (in < HP) {
+                    out = c.a3 + c.b3 * pow((c.c3 + c.d3 * in), c.e3);
+                } else {
+                    out = c.a4 + c.b4 * in;
+                }
             }
-        } else if (B < 0.0f) {
-            if (in < LP) {
-                out = c.b1 * in;
-            } else if (in < SP) {
-                out = c.a2 + c.b2 * pow((c.c2 + c.d2 * in), c.e2);
-            } else if (in < HP) {
-                out = c.a3 + c.b3 * pow((c.c3 + c.d3 * in), c.e3);
-            } else {
-                out = c.a4 + c.b4 * in;
-            }
-        } else if (B == 0.0f) {
-            if (in < LP) {
-                out = c.a1 + c.b1 * in;
-            } else if (in < SP) {
-                out = c.a2 + c.b2 * exp(c.c2 + c.d2 * in);
-            } else if (in < HP) {
-                out = c.a3 + c.b3 * exp(c.c3 + c.d3 * in);
-            } else {
-                out = c.a4 + c.b4 * in;
-            }
-        } else /*if (B > 0)*/ {
-            if (in < LP) {
-                out = c.b1 * in;
-            } else if (in < SP) {
-                out = c.a2 + c.b2 * pow((c.c2 + c.d2 * in), c.e2);
-            } else if (in < HP) {
-                out = c.a3 + c.b3 * pow((c.c3 + c.d3 * in), c.e3);
-            } else {
-                out = c.a4 + c.b4 * in;
+        } if(strtype == 1) {//Inverse Stretch
+            if (B == -1.0f) {
+                if (in < c.LPT) {
+                    out = c.b1 * in;
+                } else if (in < c.SPT) {
+                    out = c.a2 + c.b2 * exp(c.c2 + c.d2 * in);
+                } else if (in < c.HPT) {
+                    out = c.a3 + c.b3 * exp(c.c3 + c.d3 * in);
+                } else {
+                    out = c.a4 + c.b4 * in;
+                }
+            } else if (B < 0.0f) {
+                if (in < c.LPT) {
+                    out = c.b1 * in;
+                } else if (in < c.SPT) {
+                    out = c.a2 + c.b2 * pow((c.c2 + c.d2 * in), c.e2);
+                } else if (in < c.HPT) {
+                    out = c.a3 + c.b3 * pow((c.c3 + c.d3 * in), c.e3);
+                } else {
+                    out = c.a4 + c.b4 * in;
+                }
+            } else if (B == 0.0f) {
+                if (in < c.LPT) {
+                    out = c.a1 + c.b1 * in;
+                } else if (in < c.SPT) {
+                    out = c.a2 + c.b2 * logf(c.c2 + c.d2 * in);
+                } else if (in < c.HPT) {
+                    out = c.a3 + c.b3 * logf(c.c3 + c.d3 * in);
+                } else {
+                    out = c.a4 + c.b4 * in;
+                }
+            } else /* if (B > 0) */{
+                if (in < c.LPT) {
+                    out = c.b1 * in;
+                } else if (in < c.SPT) {
+                    out = c.a2 + c.b2 * pow((c.c2 + c.d2 * in), c.e2);
+                } else if (in < c.HPT) {
+                    out = c.a3 + c.b3 * pow((c.c3 + c.d3 * in), c.e3);
+                } else {
+                    out = c.a4 + c.b4 * in;
+                }
             }
         }
     }
     return out;
 }
+
 // end GHT Siril 
 
 
@@ -17006,6 +17143,7 @@ void ImProcFunctions::Lab_Local(
                         float HP = params->locallab.spots.at(sp).ghs_HP;
                         bool smoth = params->locallab.spots.at(sp).ghs_smooth;
                         int met = 0;
+                        int strtype = 0;
                         if (params->locallab.spots.at(sp).ghsMethod == "rgb") {
                             met = 0;
                         } else if (params->locallab.spots.at(sp).ghsMethod == "lum") {
@@ -17016,7 +17154,7 @@ void ImProcFunctions::Lab_Local(
                             met = 3;
                         }
 
-                        const ght_compute_params c = GHT_setup(B, D, LP, SP, HP);
+                        const ght_compute_params c = GHT_setup(B, D, LP, SP, HP, strtype);
 
                         Imagefloat *tmpImage = nullptr;
                         tmpImage = new Imagefloat(bfw, bfh);
@@ -17033,9 +17171,9 @@ void ImProcFunctions::Lab_Local(
                                     float g = tmpImage->g(i, j)/65535.f;
                                     float b = tmpImage->b(i, j)/65535.f;
                                     float Ro,Go, Bo;
-                                    Ro = GHT(r, B, D, LP, SP, HP, c);
-                                    Go = GHT(g, B, D, LP, SP, HP, c);
-                                    Bo = GHT(b, B, D, LP, SP, HP, c);
+                                    Ro = GHT(r, B, D, LP, SP, HP, c, strtype);
+                                    Go = GHT(g, B, D, LP, SP, HP, c, strtype);
+                                    Bo = GHT(b, B, D, LP, SP, HP, c, strtype);
                                     tmpImage->r(i, j) = rtengine::max(0.00001f, Ro * 65535.f);
                                     tmpImage->g(i, j) = rtengine::max(0.00001f, Go * 65535.f);
                                     tmpImage->b(i, j) = rtengine::max(0.00001f, Bo * 65535.f);
@@ -17052,11 +17190,11 @@ void ImProcFunctions::Lab_Local(
                                     float h, s, l;
                                     Color::rgb2hsl(r, g, b, h, s, l);
                                     if(met == 2) {//saturation
-                                        s = GHT(s, B, D, LP, SP, HP, c);
+                                        s = GHT(s, B, D, LP, SP, HP, c, strtype);
                                     } else if (met == 1) {//luminance
-                                        l = GHT(l, B, D, LP, SP, HP, c);
+                                        l = GHT(l, B, D, LP, SP, HP, c, strtype);
                                     } else if (met == 3) {//hue
-                                        h = GHT(h, B, D, LP, SP, HP, c);
+                                        h = GHT(h, B, D, LP, SP, HP, c, strtype);
                                     }
                                     float R, G, B;
                                     Color::hsl2rgb(h, s, l, R, G, B);
