@@ -1531,6 +1531,7 @@ HISTORY_MSG_LOCAL_GHS_HP;Local - GHS - Protect highlights
 HISTORY_MSG_LOCAL_GHS_HP;Local - GHS - Protect highlights
 HISTORY_MSG_LOCAL_GHS_BLP;Local - GHS - Black point
 HISTORY_MSG_LOCAL_GHS_INV;Local - GHS - Inverse
+HISTORY_MSG_LOCAL_GHS_SMOOTH;Local - GHS - Highlight Attenuation
 HISTORY_MSG_LOCAL_LOG_BLACKS;Local - Log Blacks distribution
 HISTORY_MSG_LOCAL_LOG_COMPR;Local - Log Compress brightness
 HISTORY_MSG_LOCAL_LOG_SAT;Local - Log Saturation control
