@@ -17179,9 +17179,9 @@ void ImProcFunctions::Lab_Local(
                         tmpImage = new Imagefloat(bfw, bfh);
                         lab2rgb(*bufexpfin, *tmpImage, params->icm.workingProfile);
                         Glib::ustring prof = params->icm.workingProfile;
-                       // if(blackpoint > 0) {
+                        if(blackpoint > 0) {
                             tone_eqblack(this, tmpImage, blackpoint, params->icm.workingProfile, sk, multiThread);//Ev -16 to -8
-                       //}
+                        }
                         if(met ==0) {//RGB mode
 #ifdef _OPENMP
         #   pragma omp parallel for schedule(dynamic,16) if (multiThread)
