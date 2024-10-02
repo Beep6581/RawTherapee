@@ -1239,6 +1239,7 @@ struct LocallabParams {
         double ghs_SP;
         double ghs_LP;
         double ghs_HP;
+        double ghs_BLP;
         bool ghs_smooth;
         bool ghs_inv;
         int multsh[6];

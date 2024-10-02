@@ -2942,6 +2942,17 @@ void ImProcFunctions::tone_eqcam2(ImProcFunctions *ipf, Imagefloat *rgb, int whi
 }
 
 
+void tone_eqblack(ImProcFunctions *ipf, Imagefloat *rgb, int blacks, const Glib::ustring &workingProfile, double scale, bool multithread)
+{
+    ToneEqualizerParams params;
+    params.enabled = true;
+    params.regularization = 0.f;
+    params.pivot = 0.f;
+    params.bands[0] = blacks;
+    ipf->toneEqualizer(rgb, params, workingProfile, scale, multithread);
+}
+
+
 // tone mapping from
 //  https://github.com/thatcherfreeman/utility-dctls/
 // Copyright of the original code
@@ -17141,6 +17152,8 @@ void ImProcFunctions::Lab_Local(
                         float LP = params->locallab.spots.at(sp).ghs_LP;
                         float SP = params->locallab.spots.at(sp).ghs_SP;
                         float HP = params->locallab.spots.at(sp).ghs_HP;
+                        int blackpoint = 100. * params->locallab.spots.at(sp).ghs_BLP;
+                        
                         bool smoth = params->locallab.spots.at(sp).ghs_smooth;
                         bool ghsinv = params->locallab.spots.at(sp).ghs_inv;
                         int met = 0;
@@ -17166,7 +17179,9 @@ void ImProcFunctions::Lab_Local(
                         tmpImage = new Imagefloat(bfw, bfh);
                         lab2rgb(*bufexpfin, *tmpImage, params->icm.workingProfile);
                         Glib::ustring prof = params->icm.workingProfile;
-
+                       // if(blackpoint > 0) {
+                            tone_eqblack(this, tmpImage, blackpoint, params->icm.workingProfile, sk, multiThread);//Ev -16 to -8
+                       //}
                         if(met ==0) {//RGB mode
 #ifdef _OPENMP
         #   pragma omp parallel for schedule(dynamic,16) if (multiThread)

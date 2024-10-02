@@ -574,6 +574,8 @@ private:
     Adjuster* const ghs_SP;
     Adjuster* const ghs_LP;
     Adjuster* const ghs_HP;
+    Gtk::Frame* const BP_Frame;
+    Adjuster* const ghs_BLP;
     Gtk::CheckButton* const ghs_smooth;
     Gtk::CheckButton* const ghs_inv;
 
@@ -609,6 +611,7 @@ private:
     rtengine::ProcEvent Evlocallabghs_SP;
     rtengine::ProcEvent Evlocallabghs_LP;
     rtengine::ProcEvent Evlocallabghs_HP;
+    rtengine::ProcEvent Evlocallabghs_BLP;
     rtengine::ProcEvent Evlocallabghs_smooth;
     rtengine::ProcEvent Evlocallabghs_inv;
 

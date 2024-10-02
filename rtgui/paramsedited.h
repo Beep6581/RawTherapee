@@ -588,6 +588,7 @@ public:
         bool ghs_SP;
         bool ghs_LP;
         bool ghs_HP;
+        bool ghs_BLP;
         bool ghs_smooth;
         bool ghs_inv;
         bool multsh[7];
