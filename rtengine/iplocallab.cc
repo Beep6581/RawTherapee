@@ -309,7 +309,6 @@ ght_compute_params  GHT_setup(float in_B, float D, float LP, float SP, float HP,
             c.e3 = B / (B - 1.0f);
             c.a4 = (c.q0-c.qwp)/(D * pow((1.0f + D * B * (HP - SP)), -1.0f / B))+HP;
             c.b4 = 1.0f / (D * pow((1.0f + D * B * (HP - SP)), -1.0f / B) * c.q) ;
-
         } else if (B == 0.0f) {
             c.qlp = exp(-D * (SP - LP));
             c.q0 = c.qlp - D * LP * exp(-D*(SP - LP));
@@ -332,7 +331,6 @@ ght_compute_params  GHT_setup(float in_B, float D, float LP, float SP, float HP,
             c.a4 = (c.q0 - c.qwp)/(D * exp(-D * (HP - SP))) + HP;
             c.b4 = 1.0f/(D * exp(-D * (HP - SP)) * c.q);
         } else if (B > 0.0f) {
-
             c.qlp = pow(( 1.0f + D * B * (SP - LP)), -1.0f/B);
             c.q0 = c.qlp - D * LP * pow((1.0f + D * B * (SP - LP)), -(1.0f + B) / B);
             c.qwp = 2.0f - pow(1.0f + D * B * (HP - SP), -1.0f / B);
@@ -355,7 +353,6 @@ ght_compute_params  GHT_setup(float in_B, float D, float LP, float SP, float HP,
             c.a4 = (c.q0-c.qwp)/(D * pow((1.0f + D * B * (HP - SP)), -(B + 1.0f) / B))+HP;
             c.b4 = 1.0f/((D * pow((1.0f + D * B * (HP - SP)), -(B + 1.0f) / B)) * c.q);
         }
-    
     }
     return c;
 }
@@ -2850,7 +2847,6 @@ void ImProcFunctions::getAutoLogloc(int sp, ImageSource *imgsrc, float *sourceg,
 
 void tone_eq(ImProcFunctions *ipf, Imagefloat *rgb, const struct local_params &lp, const Glib::ustring &workingProfile, double scale, bool multithread)
 {
-    
     ToneEqualizerParams params;
     params.enabled = true;
     params.regularization = lp.detailsh;
@@ -2875,7 +2871,6 @@ void ImProcFunctions::tone_eqcam(ImProcFunctions *ipf, Imagefloat *rgb, int midt
         params.bands[1] = sign(midtone) * (mid - threshmid);
         params.bands[3] = sign(midtone) * (mid - threshmid);     
     }
-   
     ipf->toneEqualizer(rgb, params, workingProfile, scale, multithread);
 }
 
@@ -2900,14 +2895,13 @@ void tone_eqsmooth(ImProcFunctions *ipf, Imagefloat *rgb, const struct local_par
             params.bands[4] = -15;
             params.bands[5] = -50;
         } else {
-            params.bands[4] = -15 -(1.f-lp.ghshp) * 40.f;
+            params.bands[4] = -15 -(1.f-lp.ghshp) * 40.f;//in function of HP GHS highligt protection
             params.bands[5] = -50 -(1.f-lp.ghshp) * 40.f;;
         }
         if(lp.whiteevjz < 6) {
             params.bands[4] = -10;
         }
     }
-  
     ipf->toneEqualizer(rgb, params, workingProfile, scale, multithread);
 }
 
@@ -2928,7 +2922,7 @@ void ImProcFunctions::tone_eqcam2(ImProcFunctions *ipf, Imagefloat *rgb, int whi
     if(bla > threshblawhi2) {
         params.bands[2] = sign(blacks) * (bla - threshblawhi2);
     }
-    
+
     params.bands[4] = whits;
     int whi = abs(whits);
     if(whi > threshblawhi) {
@@ -2937,7 +2931,6 @@ void ImProcFunctions::tone_eqcam2(ImProcFunctions *ipf, Imagefloat *rgb, int whi
     if(whi > threshblawhi3) {
         params.bands[5] = sign(whits) * (whi - threshblawhi3);
     }
-    
     ipf->toneEqualizer(rgb, params, workingProfile, scale, multithread);
 }
 
@@ -3127,13 +3120,12 @@ void ImProcFunctions::tone_eqdehaz(ImProcFunctions *ipf, Imagefloat *rgb, int wh
     if(bla > threshblawhi2) {
         params.bands[2] = blred * sign(blacks) * (bla - threshblawhi2);
     }
-    
+
     params.bands[4] = whits;
     int whi = abs(whits);
     if(whi > threshblawhi) {
         params.bands[3] = sign(whits) * (whi - threshblawhi);
     }
-    
     ipf->toneEqualizer(rgb, params, workingProfile, scale, multithread);
 }
 
@@ -16975,7 +16967,7 @@ void ImProcFunctions::Lab_Local(
     }
 
     bool ghsactiv = false;
-    float D = params->locallab.spots.at(sp).ghs_D;
+    float D = params->locallab.spots.at(sp).ghs_D;//enable GHS and Stretch factor
     if(D != 0.f) {
         ghsactiv = true;
     }
@@ -17148,14 +17140,14 @@ void ImProcFunctions::Lab_Local(
                 if (lp.shmeth == 2) {
                     if(ghsactiv) {
                         // GHT filter ported from Siril - help with ART CTL thanks to Alberto Griggio
-                        float B = params->locallab.spots.at(sp).ghs_B;
-                        float LP = params->locallab.spots.at(sp).ghs_LP;
-                        float SP = params->locallab.spots.at(sp).ghs_SP;
-                        float HP = params->locallab.spots.at(sp).ghs_HP;
-                        int blackpoint = 100. * params->locallab.spots.at(sp).ghs_BLP;
-                        
-                        bool smoth = params->locallab.spots.at(sp).ghs_smooth;
-                        bool ghsinv = params->locallab.spots.at(sp).ghs_inv;
+                        float B = params->locallab.spots.at(sp).ghs_B;//Local intensity 
+                        float LP = params->locallab.spots.at(sp).ghs_LP;//Protect shadows
+                        float SP = params->locallab.spots.at(sp).ghs_SP;//Symmetry point
+                        float HP = params->locallab.spots.at(sp).ghs_HP;//Protect highlights
+                        int blackpoint = 100. * params->locallab.spots.at(sp).ghs_BLP;//Blac point
+
+                        bool smoth = params->locallab.spots.at(sp).ghs_smooth;//Highlight attenuation
+                        bool ghsinv = params->locallab.spots.at(sp).ghs_inv;//Inverse stretch
                         int met = 0;
                         int strtype = 0;//to allow more choice than boolean
                         if(ghsinv) {
@@ -17163,7 +17155,7 @@ void ImProcFunctions::Lab_Local(
                         } else {
                             strtype = 0;
                         }
-                        if (params->locallab.spots.at(sp).ghsMethod == "rgb") {
+                        if (params->locallab.spots.at(sp).ghsMethod == "rgb") {//mode RGB default
                             met = 0;
                         } else if (params->locallab.spots.at(sp).ghsMethod == "lum") {
                             met = 1;
@@ -17173,13 +17165,13 @@ void ImProcFunctions::Lab_Local(
                             met = 3;
                         }
 
-                        const ght_compute_params c = GHT_setup(B, D, LP, SP, HP, strtype);
+                        const ght_compute_params c = GHT_setup(B, D, LP, SP, HP, strtype);//setup system with entries
 
                         Imagefloat *tmpImage = nullptr;
                         tmpImage = new Imagefloat(bfw, bfh);
                         lab2rgb(*bufexpfin, *tmpImage, params->icm.workingProfile);
                         Glib::ustring prof = params->icm.workingProfile;
-                        if(blackpoint > 0) {
+                        if(blackpoint > 0) {//to use if need if histogram far to the left.
                             tone_eqblack(this, tmpImage, blackpoint, params->icm.workingProfile, sk, multiThread);//Ev -16 to -8
                         }
                         if(met ==0) {//RGB mode
@@ -17195,7 +17187,7 @@ void ImProcFunctions::Lab_Local(
                                     Ro = GHT(r, B, D, LP, SP, HP, c, strtype);
                                     Go = GHT(g, B, D, LP, SP, HP, c, strtype);
                                     Bo = GHT(b, B, D, LP, SP, HP, c, strtype);
-                                    tmpImage->r(i, j) = rtengine::max(0.00001f, Ro * 65535.f);
+                                    tmpImage->r(i, j) = rtengine::max(0.00001f, Ro * 65535.f);//0.00001f to avoid crash
                                     tmpImage->g(i, j) = rtengine::max(0.00001f, Go * 65535.f);
                                     tmpImage->b(i, j) = rtengine::max(0.00001f, Bo * 65535.f);
                                 }
@@ -17209,7 +17201,7 @@ void ImProcFunctions::Lab_Local(
                                     float g = tmpImage->g(i, j);
                                     float b = tmpImage->b(i, j);
                                     float h, s, l;
-                                    Color::rgb2hsl(r, g, b, h, s, l);
+                                    Color::rgb2hsl(r, g, b, h, s, l);//maybe we could use LCH..but C is unbound and H in -PI + PI
                                     if(met == 2) {//saturation
                                         s = GHT(s, B, D, LP, SP, HP, c, strtype);
                                     } else if (met == 1) {//luminance
@@ -17219,13 +17211,13 @@ void ImProcFunctions::Lab_Local(
                                     }
                                     float R, G, B;
                                     Color::hsl2rgb(h, s, l, R, G, B);
-                                    tmpImage->r(i, j) = rtengine::max(0.00001f, R);
+                                    tmpImage->r(i, j) = rtengine::max(0.00001f, R);//0.00001f to avoid crash
                                     tmpImage->g(i, j) = rtengine::max(0.00001f, G);
                                     tmpImage->b(i, j) = rtengine::max(0.00001f, B);
                                 }
                         }
                             
-                        if(smoth) {
+                        if(smoth) {//Highlight attenuaion in function of HP - protect highlight
                             tone_eqsmooth(this, tmpImage, lp, params->icm.workingProfile, sk, multiThread);//reduce Ev > 0 < 12
                         }
                             
