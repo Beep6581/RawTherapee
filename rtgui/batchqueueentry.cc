@@ -174,34 +174,38 @@ void BatchQueueEntry::getIconSize (int& w, int& h) const
 }
 
 
-std::tuple<Glib::ustring, bool> BatchQueueEntry::getToolTip (int x, int y) const
+std::tuple<Glib::ustring, bool> BatchQueueEntry::getToolTip(int x, int y) const
 {
     // get the parent class' tooltip first
     Glib::ustring tooltip;
     bool useMarkup;
-    std::tie(tooltip, useMarkup) =  ThumbBrowserEntryBase::getToolTip(x, y);
+    std::tie(tooltip, useMarkup) = ThumbBrowserEntryBase::getToolTip(x, y);
 
     // add the saving param options
     if (!outFileName.empty()) {
         tooltip += Glib::ustring::compose("\n\n%1: %2", M("BATCHQUEUE_DESTFILENAME"), outFileName);
 
         if (forceFormatOpts) {
-            tooltip += Glib::ustring::compose("\n\n%1: %2 (%3-bits%4)", M("SAVEDLG_FILEFORMAT"), saveFormat.format,
-                                              saveFormat.format == "png" ? saveFormat.pngBits :
-                                              saveFormat.format == "tif" ? saveFormat.tiffBits : 8,
-                                              saveFormat.format == "tif" && saveFormat.tiffFloat ? M("SAVEDLG_FILEFORMAT_FLOAT") : "");
+            tooltip += Glib::ustring::compose(
+                           "\n\n%1: %2 (%3-bits%4)", M("SAVEDLG_FILEFORMAT"), saveFormat.format,
+                           saveFormat.format == "png" ? saveFormat.pngBits :
+                           (saveFormat.format == "tif" || saveFormat.format == "jxl") ? saveFormat.tiffBits : 8,
+                           (saveFormat.format == "tif" || saveFormat.format == "jxl") && saveFormat.tiffFloat
+                           ? M("SAVEDLG_FILEFORMAT_FLOAT") : "");
 
             if (saveFormat.format == "jpg") {
-                tooltip += Glib::ustring::compose("\n%1: %2\n%3: %4",
-                                                  M("SAVEDLG_JPEGQUAL"), saveFormat.jpegQuality,
-                                                  M("SAVEDLG_SUBSAMP"),
-                                                  saveFormat.jpegSubSamp == 1 ? M("SAVEDLG_SUBSAMP_1") :
-                                                  saveFormat.jpegSubSamp == 2 ? M("SAVEDLG_SUBSAMP_2") :
-                                                  M("SAVEDLG_SUBSAMP_3"));
+                tooltip += Glib::ustring::compose(
+                               "\n%1: %2\n%3: %4", M("SAVEDLG_JPEGQUAL"), saveFormat.jpegQuality, M("SAVEDLG_SUBSAMP"),
+                               saveFormat.jpegSubSamp == 1 ? M("SAVEDLG_SUBSAMP_1") :
+                               saveFormat.jpegSubSamp == 2 ? M("SAVEDLG_SUBSAMP_2") :
+                               M("SAVEDLG_SUBSAMP_3"));
+            } else if (saveFormat.format == "jxl") {
+                tooltip += Glib::ustring::compose("\n%1: %2", M("SAVEDLG_JXLQUAL"), saveFormat.jxlQuality);
             } else if (saveFormat.format == "tif") {
                 if (saveFormat.tiffUncompressed) {
                     tooltip += Glib::ustring::compose("\n%1", M("SAVEDLG_TIFFUNCOMPRESSED"));
                 }
+
                 if (saveFormat.bigTiff) {
                     tooltip += Glib::ustring::compose("\n%1", M("SAVEDLG_BIGTIFF"));
                 }
@@ -210,7 +214,6 @@ std::tuple<Glib::ustring, bool> BatchQueueEntry::getToolTip (int x, int y) const
     }
 
     return std::make_tuple(std::move(tooltip), useMarkup);
-
 }
 
 struct BQUpdateParam {

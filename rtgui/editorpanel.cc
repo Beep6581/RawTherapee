@@ -2029,6 +2029,11 @@ bool EditorPanel::idle_saveImage (ProgressConnector<rtengine::IImagefloat*> *pc,
         else if (sf.format == "jpg")
             ld->startFunc (sigc::bind (sigc::mem_fun (img, &rtengine::IImagefloat::saveAsJPEG), fname, sf.jpegQuality, sf.jpegSubSamp),
                            sigc::bind (sigc::mem_fun (*this, &EditorPanel::idle_imageSaved), ld, img, fname, sf, pparams));
+#ifdef LIBJXL
+        else if (sf.format == "jxl")
+            ld->startFunc (sigc::bind (sigc::mem_fun (img, &rtengine::IImagefloat::saveAsJXL), fname, sf.jxlQuality),
+                           sigc::bind (sigc::mem_fun (*this, &EditorPanel::idle_imageSaved), ld, img, fname, sf, pparams));
+#endif
         else {
             delete ld;
         }
@@ -2286,6 +2291,10 @@ bool EditorPanel::saveImmediately (const Glib::ustring &filename, const SaveForm
         err = img->saveAsPNG (filename, sf.pngBits);
     } else if (sf.format == "jpg") {
         err = img->saveAsJPEG (filename, sf.jpegQuality, sf.jpegSubSamp);
+#ifdef LIBJXL
+    } else if (sf.format == "jxl") {
+        err = img->saveAsJXL (filename, sf.jxlQuality);
+#endif
     } else {
         err = 1;
     }

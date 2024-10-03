@@ -80,7 +80,12 @@ public:
     {
         return saveJPEG(fname, quality, subSamp);
     }
-
+#ifdef LIBJXL
+    int saveAsJXL(const Glib::ustring &fname, float quality = 99.f) const override
+    {
+        return saveJXL(fname, quality);
+    }
+#endif
     int saveAsTIFF(const Glib::ustring &fname, int bps = -1, bool isFloat = false, bool uncompressed = false, bool big = false) const override
     {
         return saveTIFF(fname, bps, isFloat, uncompressed);

@@ -599,6 +599,9 @@ int processLineParams ( int argc, char **argv )
                 options.saveFormat.format = outputType;
                 options.saveFormat.jpegQuality = compression;
                 options.saveFormat.jpegSubSamp = subsampling;
+            } else if (outputType == "jxl") {
+                options.saveFormat.format = outputType;
+                options.saveFormat.jxlQuality = compression;
             } else if (outputType == "tif") {
                 options.saveFormat.format = outputType;
             } else if (outputType == "png") {
@@ -612,6 +615,8 @@ int processLineParams ( int argc, char **argv )
     if (bits == -1) {
         if (outputType == "jpg") {
             bits = 8;
+        } else if (outputType == "jxl") {
+            bits = 32;
         } else if (outputType == "png") {
             bits = 8;
         } else if (outputType == "tif") {
@@ -707,7 +712,9 @@ int processLineParams ( int argc, char **argv )
         isRaw = true;
         Glib::ustring ext = getExtension (inputFile);
 
-        if (ext.lowercase() == "jpg" || ext.lowercase() == "jpeg" || ext.lowercase() == "tif" || ext.lowercase() == "tiff" || ext.lowercase() == "png") {
+        if (ext.lowercase() == "jpg" || ext.lowercase() == "jpeg" || ext.lowercase() == "jxl"
+            || ext.lowercase() == "tif" || ext.lowercase() == "tiff" || ext.lowercase() == "png"
+        ) {
             isRaw = false;
         }
 
@@ -796,6 +803,10 @@ int processLineParams ( int argc, char **argv )
         // save image to disk
         if ( outputType == "jpg" ) {
             errorCode = resultImage->saveAsJPEG ( outputFile, compression, subsampling );
+#ifdef LIBJXL
+        } else if ( outputType == "jxl" ) {
+            errorCode = resultImage->saveAsJXL ( outputFile, compression );
+#endif
         } else if ( outputType == "tif" ) {
             errorCode = resultImage->saveAsTIFF ( outputFile, bits, isFloat, compression == 0  );
         } else if ( outputType == "png" ) {
