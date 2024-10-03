@@ -160,6 +160,10 @@ https://www.ghsastro.co.uk/doc/tools/GeneralizedHyperbolicStretch/GeneralizedHyp
 
 /*
 https://www.ghsastro.co.uk/doc/tools/GeneralizedHyperbolicStretch/GeneralizedHyperbolicStretch.html#equationLabel
+
+Summary of calculations made during GHS
+
+
 5.2.1 Definition of variables
 D = e(Stretch factor) - 1
 b = Local intensity
@@ -284,6 +288,17 @@ where
 x' = T1(0) + x.(T4(1) - T1(0))
 */
 
+/*
+In a simplified way, an S-curve (or inverted S-curve) modifies the image.
+The inflection point is defined by SP (Symmetry Point), for example 0.5 will generate a symmetrical S-curve for RGB values ​​lower than SP or Higher.
+
+Stretch factor will make this curve more or less pronounced with very gradual asymptotes in the low and high lights.
+
+Linear factor will change the shape of the S, reducing or increasing the "length" of the asymptotic parts.
+
+All 3 allow you to modify the contrast of the image by filling the valleys and reducing the peaks
+
+*/
 struct ght_compute_params {
     float qlp;
     float q0;
