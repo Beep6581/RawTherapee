@@ -1263,7 +1263,7 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                 const bool localmaskutili = CurveFactory::diagonalCurve2Lut(params->locallab.spots.at(sp).Lmaskcurve, lmasklocalcurve, sca);
                 const bool localmaskexputili = CurveFactory::diagonalCurve2Lut(params->locallab.spots.at(sp).Lmaskexpcurve, lmaskexplocalcurve, sca);
                 const bool localmaskSHutili = CurveFactory::diagonalCurve2Lut(params->locallab.spots.at(sp).LmaskSHcurve, lmaskSHlocalcurve, sca);
-                const bool localghsutili = CurveFactory::diagonalCurve2Lut(params->locallab.spots.at(sp).ghscurve, ghslocalcurve, sca);
+              //  const bool localghsutili = CurveFactory::diagonalCurve2Lut(params->locallab.spots.at(sp).ghscurve, ghslocalcurve, sca);
                 const bool localmaskvibutili = CurveFactory::diagonalCurve2Lut(params->locallab.spots.at(sp).Lmaskvibcurve, lmaskviblocalcurve, sca);
                 const bool localmasktmutili = CurveFactory::diagonalCurve2Lut(params->locallab.spots.at(sp).Lmasktmcurve, lmasktmlocalcurve, sca);
                 const bool localmaskretiutili = CurveFactory::diagonalCurve2Lut(params->locallab.spots.at(sp).Lmaskreticurve, lmaskretilocalcurve, sca);
@@ -1397,6 +1397,10 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                 float Lnresi = 0.f;
                 float Lhighresi46 = 0.f;
                 float Lnresi46 = 0.f;
+                float ghs0 = 0.f;
+                float ghs5, ghs10, ghs15, ghs20, ghs25, ghs30, ghs35, ghs40, ghs45, ghs50, ghs55, ghs60, ghs65, ghs70, ghs75, ghs80, ghs85, ghs90, ghs95, ghs100;
+                float ghs0i, ghs5i, ghs10i, ghs15i, ghs20i, ghs25i, ghs30i, ghs35i, ghs40i, ghs45i, ghs50i, ghs55i, ghs60i, ghs65i, ghs70i, ghs75i, ghs80i, ghs85i, ghs90i, ghs95i, ghs100i;
+
                 Glib::ustring prof = params->icm.workingProfile;
                 if(params->locallab.spots.at(sp).complexcie == 2) {
                     params->locallab.spots.at(sp).primMethod = prof;//in Basic mode set to Working profile
@@ -1411,7 +1415,7 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                               lmasklocalcurve, localmaskutili,
                               lmaskexplocalcurve, localmaskexputili,
                               lmaskSHlocalcurve, localmaskSHutili,
-                              ghslocalcurve, localghsutili,
+                            //  ghslocalcurve, localghsutili,
                               lmaskviblocalcurve, localmaskvibutili,
                               lmasktmlocalcurve, localmasktmutili,
                               lmaskretilocalcurve, localmaskretiutili,
@@ -1458,7 +1462,10 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                               huerblu, chromarblu, lumarblu, huer, chromar, lumar, sobeler, lastsav, false, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
                               minCD, maxCD, mini, maxi, Tmean, Tsigma, Tmin, Tmax,
                               meantm, stdtm, meanreti, stdreti, fab, maxicam, rdx, rdy, grx, gry, blx, bly, meanx, meany, meanxe, meanye, prim, ill, contsig, lightsig,
-                              highresi, nresi, highresi46, nresi46, Lhighresi, Lnresi, Lhighresi46, Lnresi46);
+                              highresi, nresi, highresi46, nresi46, Lhighresi, Lnresi, Lhighresi46, Lnresi46, 
+                              ghs0, ghs5, ghs10, ghs15, ghs20, ghs25, ghs30, ghs35, ghs40, ghs45, ghs50, ghs55, ghs60, ghs65, ghs70, ghs75, ghs80, ghs85, ghs90, ghs95, ghs100,
+                              ghs0i, ghs5i, ghs10i, ghs15i, ghs20i, ghs25i, ghs30i, ghs35i, ghs40i, ghs45i, ghs50i, ghs55i, ghs60i, ghs65i, ghs70i, ghs75i, ghs80i, ghs85i, ghs90i, ghs95i, ghs100i
+);
 
 
                 fabrefp[sp] = fab;
@@ -1569,7 +1576,50 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                 locallciesig.push_back(locciesig);
 
                 LocallabListener::locallabshGHS locshghs;
+                locshghs.ghs_0i = ghs0i;
+                locshghs.ghs_0 = ghs0;
+                locshghs.ghs_05i = ghs5i;
+                locshghs.ghs_05 = ghs5;
+                locshghs.ghs_10i = ghs10i;
+                locshghs.ghs_10 = ghs10;
+                locshghs.ghs_15i = ghs15i;
+                locshghs.ghs_15 = ghs15;
+                locshghs.ghs_20i = ghs20i;
+                locshghs.ghs_20 = ghs20;
+                locshghs.ghs_25i = ghs25i;
+                locshghs.ghs_25 = ghs25;
+                locshghs.ghs_30i = ghs30i;
+                locshghs.ghs_30 = ghs30;
+                locshghs.ghs_35i = ghs35i;
+                locshghs.ghs_35 = ghs35;
+                locshghs.ghs_40i = ghs40i;
+                locshghs.ghs_40 = ghs40;
+                locshghs.ghs_45i = ghs45i;
+                locshghs.ghs_45 = ghs45;
+                locshghs.ghs_50i = ghs50i;
+                locshghs.ghs_50 = ghs50;
+                locshghs.ghs_55i = ghs55i;
+                locshghs.ghs_55 = ghs55;
+                locshghs.ghs_60i = ghs60i;
+                locshghs.ghs_60 = ghs60;
+                locshghs.ghs_65i = ghs65i;
+                locshghs.ghs_65 = ghs65;
+                locshghs.ghs_70i = ghs70i;
+                locshghs.ghs_70 = ghs70;
+                locshghs.ghs_75i = ghs75i;
+                locshghs.ghs_75 = ghs75;
+                locshghs.ghs_80i = ghs80i;
+                locshghs.ghs_80 = ghs80;
+                locshghs.ghs_85i = ghs85i;
+                locshghs.ghs_85 = ghs85;
+                locshghs.ghs_90i = ghs90i;
+                locshghs.ghs_90 = ghs90;
+                locshghs.ghs_95i = ghs95i;
+                locshghs.ghs_95 = ghs95;
+                locshghs.ghs_100i = ghs100i;
+                locshghs.ghs_100 = ghs100;
                 
+             //   locshghs.ghs_curve = ghs_curve2;
                 locallshgsh.push_back(locshghs);
 
                 // Recalculate references after
@@ -1640,6 +1690,7 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                         locallListener->cieChanged(locallcielc,params->locallab.selspot); 
                     }
                     locallListener->sigChanged(locallciesig,params->locallab.selspot);
+                    locallListener->ghsChanged(locallshgsh,params->locallab.selspot); 
                     /*
                     if(params->locallab.spots.at(sp).colorscope != 0) {//compatibility with old method in controlspotpanel
                             locallListener->scopeChangedcol(scopefp[sp], params->locallab.selspot, iscolor);

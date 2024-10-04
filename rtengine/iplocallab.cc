@@ -14332,7 +14332,7 @@ void ImProcFunctions::Lab_Local(
     const LUTf& lmasklocalcurve, bool localmaskutili,
     const LUTf& lmaskexplocalcurve, bool localmaskexputili,
     const LUTf& lmaskSHlocalcurve, bool localmaskSHutili,
-    const LUTf& ghslocalcurve, bool localghsutili,
+//    const LUTf& ghslocalcurve, bool localghsutili,
     const LUTf& lmaskviblocalcurve, bool localmaskvibutili,
     const LUTf& lmasktmlocalcurve, bool localmasktmutili,
     LUTf& lmaskretilocalcurve, bool localmaskretiutili,
@@ -14381,7 +14381,11 @@ void ImProcFunctions::Lab_Local(
     bool prevDeltaE, int llColorMask, int llColorMaskinv, int llExpMask, int llExpMaskinv, int llSHMask, int llSHMaskinv, int llvibMask, int lllcMask, int llsharMask, int llcbMask, int llretiMask, int llsoftMask, int lltmMask, int llblMask, int lllogMask, int ll_Mask, int llcieMask,
     float& minCD, float& maxCD, float& mini, float& maxi, float& Tmean, float& Tsigma, float& Tmin, float& Tmax,
     float& meantm, float& stdtm, float& meanreti, float& stdreti, float &fab,float &maxicam, float &rdx, float &rdy, float &grx, float &gry, float &blx, float &bly, float &meanx, float &meany, float &meanxe, float &meanye, int &prim, int &ill, float &contsig, float &lightsig,
-    float& highresi, float& nresi, float& highresi46, float& nresi46, float& Lhighresi, float& Lnresi, float& Lhighresi46, float& Lnresi46
+    float& highresi, float& nresi, float& highresi46, float& nresi46, float& Lhighresi, float& Lnresi, float& Lhighresi46, float& Lnresi46, float &ghs0,
+    float &ghs5, float &ghs10, float &ghs15, float &ghs20, float &ghs25, float &ghs30, float &ghs35, float &ghs40, float &ghs45, float &ghs50, float &ghs55, float &ghs60, float &ghs65, float &ghs70, float &ghs75, float &ghs80, float &ghs85, float &ghs90, float &ghs95, float &ghs100,
+    float &ghs0i, float &ghs5i, float &ghs10i, float &ghs15i, float &ghs20i, float &ghs25i, float &ghs30i, float &ghs35i, float &ghs40i, float &ghs45i, float &ghs50i, float &ghs55i, float &ghs60i, float &ghs65i, float &ghs70i, float &ghs75i, float &ghs80i, float &ghs85i, float &ghs90i, float &ghs95i, float &ghs100i
+
+
 
     )
 {
@@ -17287,7 +17291,7 @@ void ImProcFunctions::Lab_Local(
                         float SP = params->locallab.spots.at(sp).ghs_SP;//Symmetry point
                         float HP = params->locallab.spots.at(sp).ghs_HP;//Protect highlights
                         int blackpoint = 100. * params->locallab.spots.at(sp).ghs_BLP;//Blac point
-
+                        //ghshp2 = HP;
                         bool smoth = params->locallab.spots.at(sp).ghs_smooth;//Highlight attenuation
                         bool ghsinv = params->locallab.spots.at(sp).ghs_inv;//Inverse stretch
                         int met = 0;
@@ -17358,13 +17362,51 @@ void ImProcFunctions::Lab_Local(
                                     tmpImage->b(i, j) = rtengine::max(0.00001f, B);
                                 }
                         }
-                        if(ghslocalcurve & localghsutili) {
-                            for (int i = 0; i < 65535; ++i){
-                                float ghsind = i / 65535;
-                                ghslocalcurve[i] = GHT(ghsind, B, D, LP, SP, HP, c, strtype);
-                            }
-                        }
-                        if(smoth) {//Highlight attenuaion in function of HP - protect highlight
+                        //Draw diagonal curve - init 20 points for more precision
+                            ghs0i = 0.0f;
+                            ghs0 = GHT(0.f, B, D, LP, SP, HP, c, strtype);
+                            ghs5i = 0.05f;
+                            ghs5 = GHT(0.05f, B, D, LP, SP, HP, c, strtype);
+                            ghs10i = 0.1f;
+                            ghs10 = GHT(0.1f, B, D, LP, SP, HP, c, strtype);
+                            ghs15i= 0.15f;
+                            ghs15 = GHT(0.15f, B, D, LP, SP, HP, c, strtype);
+                            ghs20i = 0.2f;
+                            ghs20 = GHT(0.2f, B, D, LP, SP, HP, c, strtype);
+                            ghs25i = 0.25f;
+                            ghs25 = GHT(0.25f, B, D, LP, SP, HP, c, strtype);
+                            ghs30i = 0.3f;
+                            ghs30 = GHT(0.3f, B, D, LP, SP, HP, c, strtype);
+                            ghs35i = 0.35f;
+                            ghs35 = GHT(0.35f, B, D, LP, SP, HP, c, strtype);
+                            ghs40i = 0.4f;
+                            ghs40 = GHT(0.4f, B, D, LP, SP, HP, c, strtype);
+                            ghs45i = 0.45f;
+                            ghs45 = GHT(0.45f, B, D, LP, SP, HP, c, strtype);
+                            ghs50i = 0.5f;
+                            ghs50 = GHT(0.5f, B, D, LP, SP, HP, c, strtype);
+                            ghs55i = 0.55f;
+                            ghs55 = GHT(0.55f, B, D, LP, SP, HP, c, strtype);
+                            ghs60i = 0.6f;
+                            ghs60 = GHT(0.6f, B, D, LP, SP, HP, c, strtype);
+                            ghs65i = 0.65f;
+                            ghs65 = GHT(0.65f, B, D, LP, SP, HP, c, strtype);
+                            ghs70i = 0.7f;
+                            ghs70 = GHT(0.7f, B, D, LP, SP, HP, c, strtype);
+                            ghs75i = 0.75f;
+                            ghs75 = GHT(0.75f, B, D, LP, SP, HP, c, strtype);
+                            ghs80i = 0.8f;
+                            ghs80 = GHT(0.8f, B, D, LP, SP, HP, c, strtype);
+                            ghs85i = 0.85f;
+                            ghs85 = GHT(0.85f, B, D, LP, SP, HP, c, strtype);
+                            ghs90i = 0.9f;
+                            ghs90 = GHT(0.9f, B, D, LP, SP, HP, c, strtype);
+                            ghs95i = 0.95f;
+                            ghs95 = GHT(0.95f, B, D, LP, SP, HP, c, strtype);
+                            ghs100i = 1.f;
+                            ghs100 = GHT(1.f, B, D, LP, SP, HP, c, strtype);
+                        
+                        if(smoth) {//Highlight attenuation in function of HP - protect highlight
                             tone_eqsmooth(this, tmpImage, lp, params->icm.workingProfile, sk, multiThread);//reduce Ev > 0 < 12
                         }
                         

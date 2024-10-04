@@ -1379,11 +1379,56 @@ void Locallab::maiChanged(const std::vector<locallabsetLC> &setlc, int selspot)
     }
 }
 
+//Draw curce S for GHS - with 20 points
 void Locallab::ghsChanged(const std::vector<locallabshGHS> &shghs, int selspot)
 {
     sh_ghs = shghs;
     if (selspot < (int) sh_ghs.size()) {
-        
+        const double g0i = sh_ghs.at(selspot).ghs_0i;
+        const double g0 = sh_ghs.at(selspot).ghs_0;
+        const double g5i = sh_ghs.at(selspot).ghs_05i;
+        const double g5 = sh_ghs.at(selspot).ghs_05;
+        const double g10i = sh_ghs.at(selspot).ghs_10i;
+        const double g10 = sh_ghs.at(selspot).ghs_10;
+        const double g15i = sh_ghs.at(selspot).ghs_15i;
+        const double g15 = sh_ghs.at(selspot).ghs_15;
+        const double g20i = sh_ghs.at(selspot).ghs_20i;
+        const double g20 = sh_ghs.at(selspot).ghs_20;
+        const double g25i = sh_ghs.at(selspot).ghs_25i;
+        const double g25 = sh_ghs.at(selspot).ghs_25;
+        const double g30i = sh_ghs.at(selspot).ghs_30i;
+        const double g30 = sh_ghs.at(selspot).ghs_30;
+        const double g35i = sh_ghs.at(selspot).ghs_35i;
+        const double g35 = sh_ghs.at(selspot).ghs_35;
+        const double g40i = sh_ghs.at(selspot).ghs_40i;
+        const double g40 = sh_ghs.at(selspot).ghs_40;
+        const double g45i = sh_ghs.at(selspot).ghs_45i;
+        const double g45 = sh_ghs.at(selspot).ghs_45;
+        const double g50 = sh_ghs.at(selspot).ghs_50;
+        const double g50i = sh_ghs.at(selspot).ghs_50i;
+        const double g55i = sh_ghs.at(selspot).ghs_55i;
+        const double g55 = sh_ghs.at(selspot).ghs_55;
+        const double g60i = sh_ghs.at(selspot).ghs_60i;
+        const double g60 = sh_ghs.at(selspot).ghs_60;
+        const double g65i = sh_ghs.at(selspot).ghs_65i;
+        const double g65 = sh_ghs.at(selspot).ghs_65;
+        const double g70i = sh_ghs.at(selspot).ghs_70i;
+        const double g70 = sh_ghs.at(selspot).ghs_70;
+        const double g75i = sh_ghs.at(selspot).ghs_75i;
+        const double g75 = sh_ghs.at(selspot).ghs_75;
+        const double g80i = sh_ghs.at(selspot).ghs_80i;
+        const double g80 = sh_ghs.at(selspot).ghs_80;
+        const double g85i = sh_ghs.at(selspot).ghs_85i;
+        const double g85 = sh_ghs.at(selspot).ghs_85;
+        const double g90i = sh_ghs.at(selspot).ghs_90i;
+        const double g90 = sh_ghs.at(selspot).ghs_90;
+        const double g95i = sh_ghs.at(selspot).ghs_95i;
+        const double g95 = sh_ghs.at(selspot).ghs_95;
+        const double g100i = sh_ghs.at(selspot).ghs_100i;
+        const double g100 = sh_ghs.at(selspot).ghs_100;
+      
+        expshadhigh.updateghs(g0, g5, g10, g15, g20, g25, g30, g35, g40, g45, g50, g55, g60, g65, g70, g75, g80, g85, g90, g95, g100,
+            g0i, g5i, g10i, g15i, g20i, g25i, g30i, g35i, g40i, g45i, g50i, g55i, g60i, g65i, g70i, g75i, g80i, g85i, g90i, g95i, g100i);
     }
 
 

@@ -178,7 +178,7 @@ public:
     // Locallab CIE tool primaries function
     void cieChanged(const std::vector<locallabcieLC> &cielc, int selspot) override;
 
-    // Locallab SH GHS tool primaries function
+    // Locallab SH GHS tool Curve S GHS function
     void ghsChanged(const std::vector<locallabshGHS> &shghs, int selspot) override;
 
     // Locallab Log Encoding and Cam16 autocompute function

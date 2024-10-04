@@ -634,7 +634,12 @@ public:
     void updateAdviceTooltips(const bool showTooltips) override;
     void updateguishad(int spottype);
     void updateguiscopesahd(int scope);
-         
+
+    void updateghs(double g0, double g5, double g10, double g15, double g20, double g25, double g30, double g35,
+        double g40, double g45, double g50, double g55, double g60, double g65, double g70, double g75, double g80, double g85, double g90, double g95, double g100,
+        double g0i, double g5i, double g10i, double g15i, double g20i, double g25i, double g30i, double g35i,
+        double g40i, double g45i, double g50i, double g55i, double g60i, double g65i, double g70i, double g75i, double g80i, double g85i, double g90i, double g95i, double g100i
+    );
     void setDefaultExpanderVisibility() override;
     void disableListener() override;
     void enableListener() override;

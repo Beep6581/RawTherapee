@@ -4300,7 +4300,7 @@ LocallabShadow::LocallabShadow():
     ghs_smooth(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_GHS_SMOOTH")))),
     ghs_inv(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_GHS_INV")))),
     ghsCurveEditorG(new CurveEditorGroup(options.lastlocalCurvesDir, "", 1)),
-    ghsshape(static_cast<DiagonalCurveEditor*>(ghsCurveEditorG->addCurve(CT_Diagonal, "GHS"))),
+    ghsshape(static_cast<DiagonalCurveEditor*>(ghsCurveEditorG->addCurve(CT_Diagonal, "GHS"))),//curve init only for support GHS S curve - not used 
     expgradsh(Gtk::manage(new MyExpander(false, M("TP_LOCALLAB_EXPGRAD")))),
     strSH(Gtk::manage(new Adjuster(M("TP_LOCALLAB_GRADSTR"), -4., 4., 0.05, 0.))),
     angSH(Gtk::manage(new Adjuster(M("TP_LOCALLAB_GRADANG"), -180, 180, 0.1, 0.))),
@@ -4756,7 +4756,7 @@ void LocallabShadow::updateAdviceTooltips(const bool showTooltips)
         ghs_smooth->set_tooltip_text(M("TP_LOCALLAB_GHS_SMOOTH_TOOLTIP"));
         ghs_inv->set_tooltip_text(M("TP_LOCALLAB_GHS_INV_TOOLTIP"));
         BP_Frame->set_tooltip_text(M("TP_LOCALLAB_GHS_BPFRAME_TOOLTIP"));
-
+        ghsCurveEditorG->set_tooltip_text(M("TP_LOCALLAB_GHS_CURVE_TOOLTIP"));
 
     } else {
         exp->set_tooltip_text("");
@@ -4801,6 +4801,7 @@ void LocallabShadow::updateAdviceTooltips(const bool showTooltips)
         ghs_smooth->set_tooltip_text("");
         ghs_inv->set_tooltip_text("");
         BP_Frame->set_tooltip_text("");
+        ghsCurveEditorG->set_tooltip_text("");
 
     }
 }
@@ -5321,6 +5322,72 @@ void LocallabShadow::adjusterChanged(Adjuster* a, double newval)
     }
 }
 
+
+void LocallabShadow::updateghs(double g0, double g5, double g10, double g15, double g20, double g25, double g30, double g35,
+        double g40, double g45, double g50, double g55, double g60, double g65, double g70, double g75, double g80, double g85, double g90, double g95, double g100,
+        double g0i, double g5i, double g10i, double g15i, double g20i, double g25i, double g30i, double g35i,
+        double g40i, double g45i, double g50i, double g55i, double g60i, double g65i, double g70i, double g75i, double g80i, double g85i, double g90i, double g95i, double g100i)
+
+
+{
+    idle_register.add(
+    [this, g0, g5, g10, g15, g20, g25, g30, g35, g40, g45, g50, g55, g60, g65, g70, g75, g80, g85, g90, g95, g100,
+        g0i, g5i, g10i, g15i, g20i, g25i, g30i, g35i, g40i, g45i, g50i, g55i, g60i, g65i, g70i, g75i, g80i, g85i, g90i, g95i, g100i]() -> bool {
+
+        GThreadLock lock;
+        disableListener();
+        std::vector<double> curvghs (43);
+        curvghs[0] = double (DCT_NURBS);
+        curvghs[1] = g0i;
+        curvghs[2] = g0;
+        curvghs[3] = g5i;
+        curvghs[4] = g5;
+        curvghs[5] = g10i;
+        curvghs[6] = g10;
+        curvghs[7] = g15i;
+        curvghs[8] = g15;
+        curvghs[9] = g20i;
+        curvghs[10] = g20;
+        curvghs[11] = g25i;
+        curvghs[12] = g25;
+        curvghs[13] = g30i;
+        curvghs[14] = g30;
+        curvghs[15] = g35i;
+        curvghs[16] = g35;
+        curvghs[17] = g40i;
+        curvghs[18] = g40;
+        curvghs[19] = g45i;
+        curvghs[20] = g45;
+        curvghs[21] = g50i;
+        curvghs[22] = g50;
+        curvghs[23] = g55i;
+        curvghs[24] = g55;
+        curvghs[25] = g60i;
+        curvghs[26] = g60;
+        curvghs[27] = g65i;
+        curvghs[28] = g65;
+        curvghs[29] = g70i;
+        curvghs[30] = g70;
+        curvghs[31] = g75i;
+        curvghs[32] = g75;
+        curvghs[33] = g80i;
+        curvghs[34] = g80;
+        curvghs[35] = g85i;
+        curvghs[36] = g85;
+        curvghs[37] = g90i;
+        curvghs[38] = g90;
+        curvghs[39] = g95i;
+        curvghs[40] = g95;
+        curvghs[41] = g100i;
+        curvghs[42] = g100;
+
+        ghsshape->setCurve(curvghs);
+        enableListener();
+        return false;
+    }
+   );
+}
+
 void LocallabShadow::curveChanged(CurveEditor* ce)
 {
     if (isLocActivated && exp->getEnabled()) {
@@ -5352,7 +5419,7 @@ void LocallabShadow::curveChanged(CurveEditor* ce)
             }
         }
         /*
-        if (ce == ghsshape) {
+        if (ce == ghsshape) {//not actived.
             if (listener) {
                 listener->panelChanged(Evlocallabghsshape,
                                        M("HISTORY_CUSTOMCURVE") + " (" + escapeHtmlChars(getSpotName()) + ")");
