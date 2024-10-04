@@ -1379,10 +1379,22 @@ void Locallab::maiChanged(const std::vector<locallabsetLC> &setlc, int selspot)
     }
 }
 
+void Locallab::ghsChanged(const std::vector<locallabshGHS> &shghs, int selspot)
+{
+    sh_ghs = shghs;
+    if (selspot < (int) sh_ghs.size()) {
+        
+    }
+
+
+}
+
+
 void Locallab::cieChanged(const std::vector<locallabcieLC> &cielc, int selspot)
 {
     // Saving transmitted min/max data
     cie_lc = cielc;
+
     
     //Update Locallab Denoise tool lum chro
     if (selspot < (int) cie_lc.size()) {

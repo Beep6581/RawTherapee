@@ -1148,6 +1148,7 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
             //std::vector<LocallabListener::locallabRef> locallref;
             std::vector<LocallabListener::locallabRetiMinMax> locallretiminmax;
             std::vector<LocallabListener::locallabcieLC> locallcielc;
+            std::vector<LocallabListener::locallabshGHS> locallshgsh;
             std::vector<LocallabListener::locallabsetLC> locallsetlc;
             std::vector<LocallabListener::locallabcieSIG> locallciesig;
             huerefs.resize(params->locallab.spots.size());
@@ -1567,6 +1568,9 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                 locciesig.lightsigq = lightsig;
                 locallciesig.push_back(locciesig);
 
+                LocallabListener::locallabshGHS locshghs;
+                
+                locallshgsh.push_back(locshghs);
 
                 // Recalculate references after
                 if (params->locallab.spots.at(sp).spotMethod == "exc") {
