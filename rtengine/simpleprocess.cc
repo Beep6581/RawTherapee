@@ -1120,7 +1120,7 @@ private:
             LUTf lmasklocalcurve(65536, LUT_CLIP_OFF);
             LUTf lmaskexplocalcurve(65536, LUT_CLIP_OFF);
             LUTf lmaskSHlocalcurve(65536, LUT_CLIP_OFF);
-            LUTf ghslocalcurve(65536, LUT_CLIP_OFF);
+          //  LUTf ghslocalcurve(65536, LUT_CLIP_OFF);
             LUTf lmaskviblocalcurve(65536, LUT_CLIP_OFF);
             LUTf lmasktmlocalcurve(65536, LUT_CLIP_OFF);
             LUTf lmaskretilocalcurve(65536, LUT_CLIP_OFF);
@@ -1218,7 +1218,7 @@ private:
                 const bool localmaskutili = CurveFactory::diagonalCurve2Lut(params.locallab.spots.at(sp).Lmaskcurve, lmasklocalcurve, 1);
                 const bool localmaskexputili = CurveFactory::diagonalCurve2Lut(params.locallab.spots.at(sp).Lmaskexpcurve, lmaskexplocalcurve, 1);
                 const bool localmaskSHutili = CurveFactory::diagonalCurve2Lut(params.locallab.spots.at(sp).LmaskSHcurve, lmaskSHlocalcurve, 1);
-                const bool localghsutili = CurveFactory::diagonalCurve2Lut(params.locallab.spots.at(sp).ghscurve, ghslocalcurve, 1);
+             //   const bool localghsutili = CurveFactory::diagonalCurve2Lut(params.locallab.spots.at(sp).ghscurve, ghslocalcurve, 1);
                 const bool localmaskvibutili = CurveFactory::diagonalCurve2Lut(params.locallab.spots.at(sp).Lmaskvibcurve, lmaskviblocalcurve, 1);
                 const bool localmasktmutili = CurveFactory::diagonalCurve2Lut(params.locallab.spots.at(sp).Lmasktmcurve, lmasktmlocalcurve, 1);
                 const bool localmaskretiutili = CurveFactory::diagonalCurve2Lut(params.locallab.spots.at(sp).Lmaskreticurve, lmaskretilocalcurve, 1);
