@@ -4756,8 +4756,8 @@ void LocallabShadow::updateAdviceTooltips(const bool showTooltips)
         ghs_smooth->set_tooltip_text(M("TP_LOCALLAB_GHS_SMOOTH_TOOLTIP"));
         ghs_inv->set_tooltip_text(M("TP_LOCALLAB_GHS_INV_TOOLTIP"));
         BP_Frame->set_tooltip_text(M("TP_LOCALLAB_GHS_BPFRAME_TOOLTIP"));
-        ghsCurveEditorG->set_tooltip_text(M("TP_LOCALLAB_GHS_CURVE_TOOLTIP"));
-
+        ghsCurveEditorG->set_tooltip_markup(M("TP_LOCALLAB_GHS_CURVE_TOOLTIP"));
+        
     } else {
         exp->set_tooltip_text("");
 
@@ -4801,7 +4801,7 @@ void LocallabShadow::updateAdviceTooltips(const bool showTooltips)
         ghs_smooth->set_tooltip_text("");
         ghs_inv->set_tooltip_text("");
         BP_Frame->set_tooltip_text("");
-        ghsCurveEditorG->set_tooltip_text("");
+        ghsCurveEditorG->set_tooltip_markup("");
 
     }
 }
