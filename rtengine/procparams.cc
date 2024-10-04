@@ -3398,6 +3398,13 @@ LocallabParams::LocallabSpot::LocallabSpot() :
     ghs_BLP(0.),
     ghs_smooth(true),
     ghs_inv(false),
+    ghscurve{
+        static_cast<double>(DCT_NURBS),
+        0.0,
+        0.0,
+        1.0,
+        1.0
+    },
     multsh{0, 0, 0, 0, 0, 0},
     highlights(0),
     h_tonalwidth(70),
@@ -5050,6 +5057,7 @@ bool LocallabParams::LocallabSpot::operator ==(const LocallabSpot& other) const
         && ghs_BLP == other.ghs_BLP
         && ghs_smooth == other.ghs_smooth
         && ghs_inv == other.ghs_inv
+        && ghscurve == other.ghscurve
         && [this, &other]() -> bool
             {
                 for (int i = 0; i < 6; ++i) {
@@ -7021,6 +7029,7 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
                     saveToKeyfile(!pedited || spot_edited->ghs_BLP, "Locallab", "Ghs_BLP_" + index_str, spot.ghs_BLP, keyFile);
                     saveToKeyfile(!pedited || spot_edited->ghs_smooth, "Locallab", "Ghs_smooth_" + index_str, spot.ghs_smooth, keyFile);
                     saveToKeyfile(!pedited || spot_edited->ghs_inv, "Locallab", "Ghs_inv_" + index_str, spot.ghs_inv, keyFile);
+                    saveToKeyfile(!pedited || spot_edited->ghscurve, "Locallab", "GhsCurve_" + index_str, spot.ghscurve, keyFile);
 
                     for (int j = 0; j < 6; j++) {
                         saveToKeyfile(!pedited || spot_edited->multsh[j], "Locallab", "Multsh" + std::to_string(j) + "_" + index_str, spot.multsh[j], keyFile);
@@ -9362,6 +9371,7 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
                 assignFromKeyfile(keyFile, "Locallab", "Ghs_BLP_" + index_str, spot.ghs_BLP, spotEdited.ghs_BLP);
                 assignFromKeyfile(keyFile, "Locallab", "Ghs_smooth_" + index_str, spot.ghs_smooth, spotEdited.ghs_smooth);
                 assignFromKeyfile(keyFile, "Locallab", "Ghs_inv_" + index_str, spot.ghs_inv, spotEdited.ghs_inv);
+                assignFromKeyfile(keyFile, "Locallab", "GhsCurve_" + index_str, spot.ghscurve, spotEdited.ghscurve);
 
                 for (int j = 0; j < 6; j ++) {
                     assignFromKeyfile(keyFile, "Locallab", "Multsh" + std::to_string(j) + "_" + index_str, spot.multsh[j], spotEdited.multsh[j]);

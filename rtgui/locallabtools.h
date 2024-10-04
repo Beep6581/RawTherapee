@@ -578,6 +578,8 @@ private:
     Adjuster* const ghs_BLP;
     Gtk::CheckButton* const ghs_smooth;
     Gtk::CheckButton* const ghs_inv;
+    CurveEditorGroup* const ghsCurveEditorG;
+    DiagonalCurveEditor* const ghsshape;
 
     MyExpander* const expgradsh;
     Adjuster* const strSH;
@@ -614,6 +616,7 @@ private:
     rtengine::ProcEvent Evlocallabghs_BLP;
     rtengine::ProcEvent Evlocallabghs_smooth;
     rtengine::ProcEvent Evlocallabghs_inv;
+    rtengine::ProcEvent Evlocallabghsshape;
 
     sigc::connection shMethodConn, ghsMethodConn, previewshConn, inversshConn, ghs_smoothConn, ghs_invConn, showmaskSHMethodConn, showmaskSHMethodConninv, enaSHMaskConn;
 

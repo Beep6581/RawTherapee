@@ -211,6 +211,7 @@ ImProcCoordinator::ImProcCoordinator() :
     lmasklocalcurve(65536, LUT_CLIP_OFF),
     lmaskexplocalcurve(65536, LUT_CLIP_OFF),
     lmaskSHlocalcurve(65536, LUT_CLIP_OFF),
+    ghslocalcurve(65536, LUT_CLIP_OFF),
     lmaskviblocalcurve(65536, LUT_CLIP_OFF),
     lmasktmlocalcurve(65536, LUT_CLIP_OFF),
     lmaskretilocalcurve(65536, LUT_CLIP_OFF),
@@ -1261,6 +1262,7 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                 const bool localmaskutili = CurveFactory::diagonalCurve2Lut(params->locallab.spots.at(sp).Lmaskcurve, lmasklocalcurve, sca);
                 const bool localmaskexputili = CurveFactory::diagonalCurve2Lut(params->locallab.spots.at(sp).Lmaskexpcurve, lmaskexplocalcurve, sca);
                 const bool localmaskSHutili = CurveFactory::diagonalCurve2Lut(params->locallab.spots.at(sp).LmaskSHcurve, lmaskSHlocalcurve, sca);
+                const bool localghsutili = CurveFactory::diagonalCurve2Lut(params->locallab.spots.at(sp).ghscurve, ghslocalcurve, sca);
                 const bool localmaskvibutili = CurveFactory::diagonalCurve2Lut(params->locallab.spots.at(sp).Lmaskvibcurve, lmaskviblocalcurve, sca);
                 const bool localmasktmutili = CurveFactory::diagonalCurve2Lut(params->locallab.spots.at(sp).Lmasktmcurve, lmasktmlocalcurve, sca);
                 const bool localmaskretiutili = CurveFactory::diagonalCurve2Lut(params->locallab.spots.at(sp).Lmaskreticurve, lmaskretilocalcurve, sca);
@@ -1408,6 +1410,7 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                               lmasklocalcurve, localmaskutili,
                               lmaskexplocalcurve, localmaskexputili,
                               lmaskSHlocalcurve, localmaskSHutili,
+                              ghslocalcurve, localghsutili,
                               lmaskviblocalcurve, localmaskvibutili,
                               lmasktmlocalcurve, localmasktmutili,
                               lmaskretilocalcurve, localmaskretiutili,

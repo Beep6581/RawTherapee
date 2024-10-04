@@ -871,6 +871,7 @@ void Crop::update(int todo)
         auto& lmasklocalcurve2 = parent->lmasklocalcurve;
         auto& lmaskexplocalcurve2 = parent->lmaskexplocalcurve;
         auto& lmaskSHlocalcurve2 = parent->lmaskSHlocalcurve;
+        auto& ghslocalcurve2 = parent->ghslocalcurve;
         auto& lmaskviblocalcurve2 = parent->lmaskviblocalcurve;
         auto& lmasktmlocalcurve2 = parent->lmasktmlocalcurve;
         auto& lmaskretilocalcurve2 = parent->lmaskretilocalcurve;
@@ -1022,6 +1023,7 @@ void Crop::update(int todo)
             const bool localmaskutili = CurveFactory::diagonalCurve2Lut(params.locallab.spots.at(sp).Lmaskcurve, lmasklocalcurve2, skip);
             const bool localmaskexputili = CurveFactory::diagonalCurve2Lut(params.locallab.spots.at(sp).Lmaskexpcurve, lmaskexplocalcurve2, skip);
             const bool localmaskSHutili = CurveFactory::diagonalCurve2Lut(params.locallab.spots.at(sp).LmaskSHcurve, lmaskSHlocalcurve2, skip);
+            const bool localghsutili = CurveFactory::diagonalCurve2Lut(params.locallab.spots.at(sp).ghscurve, ghslocalcurve2, skip);
             const bool localmaskvibutili = CurveFactory::diagonalCurve2Lut(params.locallab.spots.at(sp).Lmaskvibcurve, lmaskviblocalcurve2, skip);
             const bool localmasktmutili = CurveFactory::diagonalCurve2Lut(params.locallab.spots.at(sp).Lmasktmcurve, lmasktmlocalcurve2, skip);
             const bool localmaskretiutili = CurveFactory::diagonalCurve2Lut(params.locallab.spots.at(sp).Lmaskreticurve, lmaskretilocalcurve2, skip);
@@ -1112,6 +1114,7 @@ void Crop::update(int todo)
                         lmasklocalcurve2, localmaskutili, 
                         lmaskexplocalcurve2, localmaskexputili, 
                         lmaskSHlocalcurve2, localmaskSHutili, 
+                        ghslocalcurve2, localghsutili, 
                         lmaskviblocalcurve2, localmaskvibutili, 
                         lmasktmlocalcurve2, localmasktmutili, 
                         lmaskretilocalcurve2, localmaskretiutili, 
@@ -1226,6 +1229,7 @@ void Crop::update(int todo)
                         lmasklocalcurve2, localmaskutili,
                         lmaskexplocalcurve2, localmaskexputili, 
                         lmaskSHlocalcurve2, localmaskSHutili, 
+                        ghslocalcurve2, localghsutili, 
                         lmaskviblocalcurve2, localmaskvibutili, 
                         lmasktmlocalcurve2, localmasktmutili, 
                         lmaskretilocalcurve2, localmaskretiutili, 

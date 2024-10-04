@@ -4299,6 +4299,8 @@ LocallabShadow::LocallabShadow():
     ghs_BLP(Gtk::manage(new Adjuster(M("TP_LOCALLAB_GHS_BLP"), 0.0, 1.0, 0.01, 0.0))),
     ghs_smooth(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_GHS_SMOOTH")))),
     ghs_inv(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_GHS_INV")))),
+    ghsCurveEditorG(new CurveEditorGroup(options.lastlocalCurvesDir, "", 1)),
+    ghsshape(static_cast<DiagonalCurveEditor*>(ghsCurveEditorG->addCurve(CT_Diagonal, "GHS"))),
     expgradsh(Gtk::manage(new MyExpander(false, M("TP_LOCALLAB_EXPGRAD")))),
     strSH(Gtk::manage(new Adjuster(M("TP_LOCALLAB_GRADSTR"), -4., 4., 0.05, 0.))),
     angSH(Gtk::manage(new Adjuster(M("TP_LOCALLAB_GRADANG"), -180, 180, 0.1, 0.))),
@@ -4338,6 +4340,7 @@ LocallabShadow::LocallabShadow():
     Evlocallabghs_BLP = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_GHS_BLP");
     Evlocallabghs_smooth = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_GHS_SMOOTH");
     Evlocallabghs_inv = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_GHS_INV");
+    Evlocallabghsshape = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_GHS_SHAPE");
     set_orientation(Gtk::ORIENTATION_VERTICAL);
 
     const LocallabParams::LocallabSpot defSpot;
@@ -4410,6 +4413,10 @@ https://www.ghsastro.co.uk/doc/tools/GeneralizedHyperbolicStretch/GeneralizedHyp
 
     ghs_smoothConn = ghs_smooth->signal_toggled().connect(sigc::mem_fun(*this, &LocallabShadow::ghs_smoothChanged));
     ghs_invConn = ghs_inv->signal_toggled().connect(sigc::mem_fun(*this, &LocallabShadow::ghs_invChanged));
+
+    ghsCurveEditorG->setCurveListener(this);
+    ghsshape->setResetCurve(DiagonalCurveType(defSpot.ghscurve.at(0)), defSpot.ghscurve);
+    ghsCurveEditorG->curveListComplete();
 
     setExpandAlignProperties(expgradsh, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_START);
 
@@ -4512,6 +4519,8 @@ https://www.ghsastro.co.uk/doc/tools/GeneralizedHyperbolicStretch/GeneralizedHyp
     ghsBox->pack_start(*BP_Frame);
     ghsBox->pack_start(*ghs_inv);
     ghsFrame->add(*ghsBox);
+    ghsBox->pack_start(*ghsCurveEditorG, Gtk::PACK_SHRINK, 4); // Padding is mandatory to correct behavior of curve editor
+
     pack_start(*ghsFrame);
 
 
@@ -4576,6 +4585,7 @@ LocallabShadow::~LocallabShadow()
 {
     delete maskSHCurveEditorG;
     delete mask2SHCurveEditorG;
+    delete ghsCurveEditorG;
 }
 
 bool LocallabShadow::isMaskViewActive()
@@ -4877,6 +4887,7 @@ void LocallabShadow::read(const rtengine::procparams::ProcParams* pp, const Para
         ghs_LP->setValue((double)spot.ghs_LP);
         ghs_HP->setValue((double)spot.ghs_HP);
         ghs_BLP->setValue((double)spot.ghs_BLP);
+        ghsshape->setCurve(spot.ghscurve);
 
         detailSH->setValue((double)spot.detailSH);
         tePivot->setValue(spot.tePivot);
@@ -4965,6 +4976,7 @@ void LocallabShadow::write(rtengine::procparams::ProcParams* pp, ParamsEdited* p
         spot.ghs_LP = ghs_LP->getValue();
         spot.ghs_HP = ghs_HP->getValue();
         spot.ghs_BLP = ghs_BLP->getValue();
+        spot.ghscurve = ghsshape->getCurve();
 
         spot.detailSH = detailSH->getIntValue();
         spot.tePivot = tePivot->getValue();
@@ -5339,6 +5351,14 @@ void LocallabShadow::curveChanged(CurveEditor* ce)
                                        M("HISTORY_CUSTOMCURVE") + " (" + escapeHtmlChars(getSpotName()) + ")");
             }
         }
+        /*
+        if (ce == ghsshape) {
+            if (listener) {
+                listener->panelChanged(Evlocallabghsshape,
+                                       M("HISTORY_CUSTOMCURVE") + " (" + escapeHtmlChars(getSpotName()) + ")");
+            }
+        }
+        */
     }
 }
 

@@ -14332,6 +14332,7 @@ void ImProcFunctions::Lab_Local(
     const LUTf& lmasklocalcurve, bool localmaskutili,
     const LUTf& lmaskexplocalcurve, bool localmaskexputili,
     const LUTf& lmaskSHlocalcurve, bool localmaskSHutili,
+    const LUTf& ghslocalcurve, bool localghsutili,
     const LUTf& lmaskviblocalcurve, bool localmaskvibutili,
     const LUTf& lmasktmlocalcurve, bool localmasktmutili,
     LUTf& lmaskretilocalcurve, bool localmaskretiutili,
@@ -17357,11 +17358,16 @@ void ImProcFunctions::Lab_Local(
                                     tmpImage->b(i, j) = rtengine::max(0.00001f, B);
                                 }
                         }
-                            
+                        if(ghslocalcurve & localghsutili) {
+                            for (int i = 0; i < 65535; ++i){
+                                float ghsind = i / 65535;
+                                ghslocalcurve[i] = GHT(ghsind, B, D, LP, SP, HP, c, strtype);
+                            }
+                        }
                         if(smoth) {//Highlight attenuaion in function of HP - protect highlight
                             tone_eqsmooth(this, tmpImage, lp, params->icm.workingProfile, sk, multiThread);//reduce Ev > 0 < 12
                         }
-                            
+                        
                         rgb2lab(*tmpImage, *bufexpfin, params->icm.workingProfile);
 
                         delete tmpImage;
