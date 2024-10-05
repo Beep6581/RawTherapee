@@ -14383,7 +14383,7 @@ void ImProcFunctions::Lab_Local(
     float& meantm, float& stdtm, float& meanreti, float& stdreti, float &fab,float &maxicam, float &rdx, float &rdy, float &grx, float &gry, float &blx, float &bly, float &meanx, float &meany, float &meanxe, float &meanye, int &prim, int &ill, float &contsig, float &lightsig,
     float& highresi, float& nresi, float& highresi46, float& nresi46, float& Lhighresi, float& Lnresi, float& Lhighresi46, float& Lnresi46, float &ghs0,
     float &ghs5, float &ghs10, float &ghs15, float &ghs20, float &ghs25, float &ghs30, float &ghs35, float &ghs40, float &ghs45, float &ghs50, float &ghs55, float &ghs60, float &ghs65, float &ghs70, float &ghs75, float &ghs80, float &ghs85, float &ghs90, float &ghs95, float &ghs100,
-    float &ghs0i, float &ghs5i, float &ghs10i, float &ghs15i, float &ghs20i, float &ghs25i, float &ghs30i, float &ghs35i, float &ghs40i, float &ghs45i, float &ghs50i, float &ghs55i, float &ghs60i, float &ghs65i, float &ghs70i, float &ghs75i, float &ghs80i, float &ghs85i, float &ghs90i, float &ghs95i, float &ghs100i
+    float &ghs0i, float &ghs5i, float &ghs10i, float &ghs15i, float &ghs20i, float &ghs25i, float &ghs30i, float &ghs35i, float &ghs40i, float &ghs45i, float &ghs50i, float &ghs55i, float &ghs60i, float &ghs65i, float &ghs70i, float &ghs75i, float &ghs80i, float &ghs85i, float &ghs90i, float &ghs95i, float &ghs100i, float *ghscur
 
 
 
@@ -17363,49 +17363,15 @@ void ImProcFunctions::Lab_Local(
                                 }
                         }
                         //Draw diagonal curve - init 20 points for more precision
-                            ghs0i = 0.0f;
-                            ghs0 = GHT(0.f, B, D, LP, SP, HP, c, strtype);
-                            ghs5i = 0.05f;
-                            ghs5 = GHT(0.05f, B, D, LP, SP, HP, c, strtype);
-                            ghs10i = 0.1f;
-                            ghs10 = GHT(0.1f, B, D, LP, SP, HP, c, strtype);
-                            ghs15i= 0.15f;
-                            ghs15 = GHT(0.15f, B, D, LP, SP, HP, c, strtype);
-                            ghs20i = 0.2f;
-                            ghs20 = GHT(0.2f, B, D, LP, SP, HP, c, strtype);
-                            ghs25i = 0.25f;
-                            ghs25 = GHT(0.25f, B, D, LP, SP, HP, c, strtype);
-                            ghs30i = 0.3f;
-                            ghs30 = GHT(0.3f, B, D, LP, SP, HP, c, strtype);
-                            ghs35i = 0.35f;
-                            ghs35 = GHT(0.35f, B, D, LP, SP, HP, c, strtype);
-                            ghs40i = 0.4f;
-                            ghs40 = GHT(0.4f, B, D, LP, SP, HP, c, strtype);
-                            ghs45i = 0.45f;
-                            ghs45 = GHT(0.45f, B, D, LP, SP, HP, c, strtype);
-                            ghs50i = 0.5f;
-                            ghs50 = GHT(0.5f, B, D, LP, SP, HP, c, strtype);
-                            ghs55i = 0.55f;
-                            ghs55 = GHT(0.55f, B, D, LP, SP, HP, c, strtype);
-                            ghs60i = 0.6f;
-                            ghs60 = GHT(0.6f, B, D, LP, SP, HP, c, strtype);
-                            ghs65i = 0.65f;
-                            ghs65 = GHT(0.65f, B, D, LP, SP, HP, c, strtype);
-                            ghs70i = 0.7f;
-                            ghs70 = GHT(0.7f, B, D, LP, SP, HP, c, strtype);
-                            ghs75i = 0.75f;
-                            ghs75 = GHT(0.75f, B, D, LP, SP, HP, c, strtype);
-                            ghs80i = 0.8f;
-                            ghs80 = GHT(0.8f, B, D, LP, SP, HP, c, strtype);
-                            ghs85i = 0.85f;
-                            ghs85 = GHT(0.85f, B, D, LP, SP, HP, c, strtype);
-                            ghs90i = 0.9f;
-                            ghs90 = GHT(0.9f, B, D, LP, SP, HP, c, strtype);
-                            ghs95i = 0.95f;
-                            ghs95 = GHT(0.95f, B, D, LP, SP, HP, c, strtype);
-                            ghs100i = 1.f;
-                            ghs100 = GHT(1.f, B, D, LP, SP, HP, c, strtype);
-                        
+                        for(int i = 0; i < 42; i += 2) {
+                            ghscur[i] = 0.025f * i;
+                            ghscur[i + 1] =  GHT(ghscur[i], B, D, LP, SP, HP, c, strtype);
+                        }
+                        /*
+                        printf("ghscuri=%f ghscuri1=%f\n", (double) ghscur[0], (double) ghscur[1]);
+                        printf("ghscuri5=%f ghscuri5=%f\n", (double) ghscur[20], (double) ghscur[21]);
+                        printf("ghscuri40=%f ghscuri41=%f\n", (double) ghscur[40], (double) ghscur[41]);
+                        */
                         if(smoth) {//Highlight attenuation in function of HP - protect highlight
                             tone_eqsmooth(this, tmpImage, lp, params->icm.workingProfile, sk, multiThread);//reduce Ev > 0 < 12
                         }

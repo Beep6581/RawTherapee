@@ -5323,16 +5323,14 @@ void LocallabShadow::adjusterChanged(Adjuster* a, double newval)
 }
 
 
-void LocallabShadow::updateghs(double g0, double g5, double g10, double g15, double g20, double g25, double g30, double g35,
-        double g40, double g45, double g50, double g55, double g60, double g65, double g70, double g75, double g80, double g85, double g90, double g95, double g100,
-        double g0i, double g5i, double g10i, double g15i, double g20i, double g25i, double g30i, double g35i,
-        double g40i, double g45i, double g50i, double g55i, double g60i, double g65i, double g70i, double g75i, double g80i, double g85i, double g90i, double g95i, double g100i)
-
+void LocallabShadow::updateghs(double g0i, double g0, double g5i, double g5, double g10i, double g10, double g15i, double g15, double g20i, double g20, double g25i, double g25, double g30i, double g30,
+        double g35i, double g35, double g40i, double g40, double g45i, double g45, double g50i, double g50, double g55i, double g55, double g60i, double g60, double g65i, double g65, double g70i,
+        double g70, double g75i, double g75, double g80i, double g80, double g85i, double g85, double g90i, double g90, double g95i, double g95, double g100i, double g100)
 
 {
     idle_register.add(
-    [this, g0, g5, g10, g15, g20, g25, g30, g35, g40, g45, g50, g55, g60, g65, g70, g75, g80, g85, g90, g95, g100,
-        g0i, g5i, g10i, g15i, g20i, g25i, g30i, g35i, g40i, g45i, g50i, g55i, g60i, g65i, g70i, g75i, g80i, g85i, g90i, g95i, g100i]() -> bool {
+    [this, g0i, g0, g5i, g5, g10i, g10, g15i, g15, g20i, g20, g25i, g25, g30i, g30, g35i, g35, g40i, g40, g45i, g45, g50i,
+        g50, g55i, g55, g60i, g60, g65i, g65, g70i, g70, g75i, g75, g80i, g80, g85i, g85, g90i, g90, g95i, g95, g100i, g100]() -> bool {
 
         GThreadLock lock;
         disableListener();

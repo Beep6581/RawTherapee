@@ -476,7 +476,8 @@ public:
     };
 
     struct locallabshGHS {//To draw GHS  S curve
-       double ghs_0i;
+       double ghsc[42];
+    /*   double ghs_0i;
        double ghs_0;
        double ghs_05i;
        double ghs_05;
@@ -518,6 +519,7 @@ public:
        double ghs_95;
        double ghs_100i;
        double ghs_100;
+       */
     };
 
 //select spot settings 
