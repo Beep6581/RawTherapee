@@ -1397,10 +1397,7 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                 float Lnresi = 0.f;
                 float Lhighresi46 = 0.f;
                 float Lnresi46 = 0.f;
-                float ghs0 = 0.f;
-                float ghs5, ghs10, ghs15, ghs20, ghs25, ghs30, ghs35, ghs40, ghs45, ghs50, ghs55, ghs60, ghs65, ghs70, ghs75, ghs80, ghs85, ghs90, ghs95, ghs100;
-                float ghs0i, ghs5i, ghs10i, ghs15i, ghs20i, ghs25i, ghs30i, ghs35i, ghs40i, ghs45i, ghs50i, ghs55i, ghs60i, ghs65i, ghs70i, ghs75i, ghs80i, ghs85i, ghs90i, ghs95i, ghs100i;
-                float ghscur[45];
+                float ghscur[42];
 
                 Glib::ustring prof = params->icm.workingProfile;
                 if(params->locallab.spots.at(sp).complexcie == 2) {
@@ -1464,8 +1461,7 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                               minCD, maxCD, mini, maxi, Tmean, Tsigma, Tmin, Tmax,
                               meantm, stdtm, meanreti, stdreti, fab, maxicam, rdx, rdy, grx, gry, blx, bly, meanx, meany, meanxe, meanye, prim, ill, contsig, lightsig,
                               highresi, nresi, highresi46, nresi46, Lhighresi, Lnresi, Lhighresi46, Lnresi46, 
-                              ghs0, ghs5, ghs10, ghs15, ghs20, ghs25, ghs30, ghs35, ghs40, ghs45, ghs50, ghs55, ghs60, ghs65, ghs70, ghs75, ghs80, ghs85, ghs90, ghs95, ghs100,
-                              ghs0i, ghs5i, ghs10i, ghs15i, ghs20i, ghs25i, ghs30i, ghs35i, ghs40i, ghs45i, ghs50i, ghs55i, ghs60i, ghs65i, ghs70i, ghs75i, ghs80i, ghs85i, ghs90i, ghs95i, ghs100i, ghscur
+                              ghscur
 );
 
 
@@ -1576,7 +1572,7 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                 locciesig.lightsigq = lightsig;
                 locallciesig.push_back(locciesig);
 
-                LocallabListener::locallabshGHS locshghs;
+                LocallabListener::locallabshGHS locshghs;//ghs S curve
                 for(int j = 0; j < 42; j++) {
                     locshghs.ghsc[j] = ghscur[j];
                 }
@@ -1656,7 +1652,9 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                         locallListener->cieChanged(locallcielc,params->locallab.selspot); 
                     }
                     locallListener->sigChanged(locallciesig,params->locallab.selspot);
-                    locallListener->ghsChanged(locallshgsh,params->locallab.selspot); 
+                    if (params->locallab.spots.at(sp).expshadhigh) {
+                        locallListener->ghsChanged(locallshgsh,params->locallab.selspot);
+                    }
 
                     /*
                     if(params->locallab.spots.at(sp).colorscope != 0) {//compatibility with old method in controlspotpanel

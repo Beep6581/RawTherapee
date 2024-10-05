@@ -14381,9 +14381,8 @@ void ImProcFunctions::Lab_Local(
     bool prevDeltaE, int llColorMask, int llColorMaskinv, int llExpMask, int llExpMaskinv, int llSHMask, int llSHMaskinv, int llvibMask, int lllcMask, int llsharMask, int llcbMask, int llretiMask, int llsoftMask, int lltmMask, int llblMask, int lllogMask, int ll_Mask, int llcieMask,
     float& minCD, float& maxCD, float& mini, float& maxi, float& Tmean, float& Tsigma, float& Tmin, float& Tmax,
     float& meantm, float& stdtm, float& meanreti, float& stdreti, float &fab,float &maxicam, float &rdx, float &rdy, float &grx, float &gry, float &blx, float &bly, float &meanx, float &meany, float &meanxe, float &meanye, int &prim, int &ill, float &contsig, float &lightsig,
-    float& highresi, float& nresi, float& highresi46, float& nresi46, float& Lhighresi, float& Lnresi, float& Lhighresi46, float& Lnresi46, float &ghs0,
-    float &ghs5, float &ghs10, float &ghs15, float &ghs20, float &ghs25, float &ghs30, float &ghs35, float &ghs40, float &ghs45, float &ghs50, float &ghs55, float &ghs60, float &ghs65, float &ghs70, float &ghs75, float &ghs80, float &ghs85, float &ghs90, float &ghs95, float &ghs100,
-    float &ghs0i, float &ghs5i, float &ghs10i, float &ghs15i, float &ghs20i, float &ghs25i, float &ghs30i, float &ghs35i, float &ghs40i, float &ghs45i, float &ghs50i, float &ghs55i, float &ghs60i, float &ghs65i, float &ghs70i, float &ghs75i, float &ghs80i, float &ghs85i, float &ghs90i, float &ghs95i, float &ghs100i, float *ghscur
+    float& highresi, float& nresi, float& highresi46, float& nresi46, float& Lhighresi, float& Lnresi, float& Lhighresi46, float& Lnresi46,
+    float *ghscur
 
 
 
@@ -17362,7 +17361,7 @@ void ImProcFunctions::Lab_Local(
                                     tmpImage->b(i, j) = rtengine::max(0.00001f, B);
                                 }
                         }
-                        //Draw diagonal curve - init 20 points for more precision
+                        //Draw diagonal GHS curve - init 20 points for more precision
                         for(int i = 0; i < 42; i += 2) {
                             ghscur[i] = 0.025f * i;
                             ghscur[i + 1] =  GHT(ghscur[i], B, D, LP, SP, HP, c, strtype);

@@ -1291,10 +1291,7 @@ private:
                 float Lnresi = 0.f;
                 float Lhighresi46 = 0.f;
                 float Lnresi46 = 0.f;
-                float ghs0 = 0.f;
-                float ghs5, ghs10, ghs15, ghs20, ghs25, ghs30, ghs35, ghs40, ghs45, ghs50, ghs55, ghs60, ghs65, ghs70, ghs75, ghs80, ghs85, ghs90, ghs95, ghs100;
-                float ghs0i, ghs5i, ghs10i, ghs15i, ghs20i, ghs25i, ghs30i, ghs35i, ghs40i, ghs45i, ghs50i, ghs55i, ghs60i, ghs65i, ghs70i, ghs75i, ghs80i, ghs85i, ghs90i, ghs95i, ghs100i;
-                float ghscur[45];
+                float ghscur[42];
                 // No Locallab mask is shown in exported picture
                 ipf.Lab_Local(2, sp, shbuffer, labView, labView, reservView.get(), savenormtmView.get(), savenormretiView.get(), lastorigView.get(), fw, fh, 0, 0, fw, fh,  1, locRETgainCurve, locRETtransCurve,
                               lllocalcurve, locallutili,
@@ -1352,8 +1349,7 @@ private:
                               minCD, maxCD, mini, maxi, Tmean, Tsigma, Tmin, Tmax,
                               meantme, stdtme, meanretie, stdretie, fab, maxicam, rdx, rdy, grx, gry, blx, bly, meanx, meany, meanxe, meanye, prim, ill, contsig, lightsig,
                               highresi, nresi, highresi46, nresi46, Lhighresi, Lnresi, Lhighresi46, Lnresi46, 
-                              ghs0, ghs5, ghs10, ghs15, ghs20, ghs25, ghs30, ghs35, ghs40, ghs45, ghs50, ghs55, ghs60, ghs65, ghs70, ghs75, ghs80, ghs85, ghs90, ghs95, ghs100,
-                              ghs0i, ghs5i, ghs10i, ghs15i, ghs20i, ghs25i, ghs30i, ghs35i, ghs40i, ghs45i, ghs50i, ghs55i, ghs60i, ghs65i, ghs70i, ghs75i, ghs80i, ghs85i, ghs90i, ghs95i, ghs100i, ghscur
+                              ghscur
                              );
 
                 if (sp + 1u < params.locallab.spots.size()) {

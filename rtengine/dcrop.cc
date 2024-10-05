@@ -1088,12 +1088,9 @@ void Crop::update(int todo)
             float Lnresi = 0.f;
             float Lhighresi46 = 0.f;
             float Lnresi46 = 0.f;
-            float ghs0 = 0.f;
-            float ghs5, ghs10, ghs15, ghs20, ghs25, ghs30, ghs35, ghs40, ghs45, ghs50, ghs55, ghs60, ghs65, ghs70, ghs75, ghs80, ghs85, ghs90, ghs95, ghs100;
-            float ghs0i, ghs5i, ghs10i, ghs15i, ghs20i, ghs25i, ghs30i, ghs35i, ghs40i, ghs45i, ghs50i, ghs55i, ghs60i, ghs65i, ghs70i, ghs75i, ghs80i, ghs85i, ghs90i, ghs95i, ghs100i;
             float contsig = params.locallab.spots.at(sp).contsigqcie;
             float lightsig = params.locallab.spots.at(sp).lightsigqcie;
-            float ghscur[45];
+            float ghscur[42];
 
 /*            huerefp[sp] = huere;
             chromarefp[sp] = chromare;
@@ -1166,8 +1163,8 @@ void Crop::update(int todo)
                         parent->previewDeltaE, parent->locallColorMask, parent->locallColorMaskinv, parent->locallExpMask, parent->locallExpMaskinv, parent->locallSHMask, parent->locallSHMaskinv, parent->locallvibMask,  parent->localllcMask, parent->locallsharMask, parent->locallcbMask, parent->locallretiMask, parent->locallsoftMask, parent->localltmMask, parent->locallblMask,
                         parent->localllogMask, parent->locall_Mask, parent->locallcieMask, minCD, maxCD, mini, maxi, Tmean, Tsigma, Tmin, Tmax,
                         meantme, stdtme, meanretie, stdretie, fab, maxicam,rdx, rdy, grx, gry, blx, bly, meanx, meany, meanxe, meanye, prim, ill, contsig, lightsig,
-                        highresi, nresi, highresi46, nresi46, Lhighresi, Lnresi, Lhighresi46, Lnresi46, ghs0, ghs5, ghs10, ghs15, ghs20, ghs25, ghs30, ghs35, ghs40, ghs45, ghs50, ghs55, ghs60, ghs65, ghs70, ghs75, ghs80, ghs85, ghs90, ghs95, ghs100,
-                        ghs0i, ghs5i, ghs10i, ghs15i, ghs20i, ghs25i, ghs30i, ghs35i, ghs40i, ghs45i, ghs50i, ghs55i, ghs60i, ghs65i, ghs70i, ghs75i, ghs80i, ghs85i, ghs90i, ghs95i, ghs100i, ghscur
+                        highresi, nresi, highresi46, nresi46, Lhighresi, Lnresi, Lhighresi46, Lnresi46,
+                        ghscur
 );
                         
                         LocallabListener::locallabDenoiseLC denoiselc;
@@ -1282,9 +1279,8 @@ void Crop::update(int todo)
                         huerefblu, chromarefblu, lumarefblu, huere, chromare, lumare, sobelre, lastsav, false, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
                         minCD, maxCD, mini, maxi, Tmean, Tsigma, Tmin, Tmax,
                         meantme, stdtme, meanretie, stdretie, fab, maxicam, rdx, rdy, grx, gry, blx, bly, meanx, meany, meanxe, meanye, prim, ill, contsig, lightsig,
-                        highresi, nresi, highresi46, nresi46, Lhighresi, Lnresi, Lhighresi46, Lnresi46, ghs0, ghs5, ghs10, ghs15, ghs20, ghs25, ghs30, ghs35, ghs40, ghs45, ghs50, ghs55, ghs60, ghs65, ghs70, ghs75, ghs80, ghs85, ghs90, ghs95, ghs100,
-                        ghs0i, ghs5i, ghs10i, ghs15i, ghs20i, ghs25i, ghs30i, ghs35i, ghs40i, ghs45i, ghs50i, ghs55i, ghs60i, ghs65i, ghs70i, ghs75i, ghs80i, ghs85i, ghs90i, ghs95i, ghs100i, ghscur
-
+                        highresi, nresi, highresi46, nresi46, Lhighresi, Lnresi, Lhighresi46, Lnresi46,
+                        ghscur
                         );
             }
             
