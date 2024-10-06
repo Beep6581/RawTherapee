@@ -17114,7 +17114,8 @@ void ImProcFunctions::Lab_Local(
     bool ghsactiv = false;
     float D = params->locallab.spots.at(sp).ghs_D;//enable GHS and Stretch factor
     float BLP = params->locallab.spots.at(sp).ghs_BLP;
-    if(D != 0.f  || BLP != 0.f) {
+    float HLP = params->locallab.spots.at(sp).ghs_HLP;
+    if(D != 0.f  || BLP != 0.f || HLP != 1.f) {
         ghsactiv = true;
     }
 
@@ -17292,6 +17293,7 @@ void ImProcFunctions::Lab_Local(
                         float HP = params->locallab.spots.at(sp).ghs_HP;//Protect highlights
                         int blackpoint = 100. * params->locallab.spots.at(sp).ghs_BLP;//Black point
                         float shiftblackpoint = - params->locallab.spots.at(sp).ghs_BLP;//Black point
+                        float shiftwhitepoint = params->locallab.spots.at(sp).ghs_HLP;//White point
 
                         //ghshp2 = HP;
                         bool smoth = params->locallab.spots.at(sp).ghs_smooth;//Highlight attenuation
@@ -17332,13 +17334,22 @@ void ImProcFunctions::Lab_Local(
                                     float b = tmpImage->b(i, j)/65535.f;
                                     float Ro,Go, Bo;
                                     if(strtype == 0) {
-                                        Ro = (r - shiftblackpoint)/(1.f - shiftblackpoint);
-                                        Go = (g - shiftblackpoint)/(1.f - shiftblackpoint);
-                                        Bo = (b - shiftblackpoint)/(1.f - shiftblackpoint);
+                                        Ro = (r - shiftblackpoint)/(shiftwhitepoint - shiftblackpoint);
+                                        Go = (g - shiftblackpoint)/(shiftwhitepoint - shiftblackpoint);
+                                        Bo = (b - shiftblackpoint)/(shiftwhitepoint - shiftblackpoint);
+                                        if(Ro > shiftwhitepoint) {
+                                            Ro = 1.f;
+                                        }
+                                        if(Go > shiftwhitepoint) {
+                                            Go = 1.f;
+                                        }
+                                        if(Bo > shiftwhitepoint) {
+                                            Bo = 1.f;
+                                        }
                                     } else {
-                                        Ro = (shiftblackpoint) + r * (1.f - shiftblackpoint);
-                                        Go = (shiftblackpoint) + g * (1.f - shiftblackpoint);
-                                        Bo = (shiftblackpoint) + b * (1.f - shiftblackpoint);
+                                        Ro = (shiftblackpoint) + r * (shiftwhitepoint - shiftblackpoint);
+                                        Go = (shiftblackpoint) + g * (shiftwhitepoint - shiftblackpoint);
+                                        Bo = (shiftblackpoint) + b * (shiftwhitepoint - shiftblackpoint);
                                     }
                                     tmpImage->r(i, j) = rtengine::max(0.00001f, Ro * 65535.f);//0.00001f to avoid crash
                                     tmpImage->g(i, j) = rtengine::max(0.00001f, Go * 65535.f);
