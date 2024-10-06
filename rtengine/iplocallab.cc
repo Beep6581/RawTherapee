@@ -17113,7 +17113,8 @@ void ImProcFunctions::Lab_Local(
 
     bool ghsactiv = false;
     float D = params->locallab.spots.at(sp).ghs_D;//enable GHS and Stretch factor
-    if(D != 0.f) {
+    float BLP = params->locallab.spots.at(sp).ghs_BLP;
+    if(D != 0.f  || BLP != 0.f) {
         ghsactiv = true;
     }
 
@@ -17289,7 +17290,9 @@ void ImProcFunctions::Lab_Local(
                         float LP = params->locallab.spots.at(sp).ghs_LP;//Protect shadows
                         float SP = params->locallab.spots.at(sp).ghs_SP;//Symmetry point
                         float HP = params->locallab.spots.at(sp).ghs_HP;//Protect highlights
-                        int blackpoint = 100. * params->locallab.spots.at(sp).ghs_BLP;//Blac point
+                        int blackpoint = 100. * params->locallab.spots.at(sp).ghs_BLP;//Black point
+                        float shiftblackpoint = - params->locallab.spots.at(sp).ghs_BLP;//Black point
+
                         //ghshp2 = HP;
                         bool smoth = params->locallab.spots.at(sp).ghs_smooth;//Highlight attenuation
                         bool ghsinv = params->locallab.spots.at(sp).ghs_inv;//Inverse stretch
@@ -17318,6 +17321,23 @@ void ImProcFunctions::Lab_Local(
                         Glib::ustring prof = params->icm.workingProfile;
                         if(blackpoint > 0) {//to use if need if histogram far to the left.
                             tone_eqblack(this, tmpImage, blackpoint, params->icm.workingProfile, sk, multiThread);//Ev -16 to -8
+                        } else {
+#ifdef _OPENMP
+        #   pragma omp parallel for schedule(dynamic,16) if (multiThread)
+#endif
+                            for (int i = 0; i < bfh; ++i)
+                                for (int j = 0; j < bfw; ++j) {
+                                    float r = tmpImage->r(i, j)/65535.f;
+                                    float g = tmpImage->g(i, j)/65535.f;
+                                    float b = tmpImage->b(i, j)/65535.f;
+                                    float Ro,Go, Bo;
+                                    Ro = (r - shiftblackpoint)/(1.f - shiftblackpoint);
+                                    Go = (g - shiftblackpoint)/(1.f - shiftblackpoint);
+                                    Bo = (b - shiftblackpoint)/(1.f - shiftblackpoint);
+                                    tmpImage->r(i, j) = rtengine::max(0.00001f, Ro * 65535.f);//0.00001f to avoid crash
+                                    tmpImage->g(i, j) = rtengine::max(0.00001f, Go * 65535.f);
+                                    tmpImage->b(i, j) = rtengine::max(0.00001f, Bo * 65535.f);
+                                }
                         }
                         if(met ==0) {//RGB mode
 #ifdef _OPENMP
