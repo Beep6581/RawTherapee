@@ -17331,9 +17331,15 @@ void ImProcFunctions::Lab_Local(
                                     float g = tmpImage->g(i, j)/65535.f;
                                     float b = tmpImage->b(i, j)/65535.f;
                                     float Ro,Go, Bo;
-                                    Ro = (r - shiftblackpoint)/(1.f - shiftblackpoint);
-                                    Go = (g - shiftblackpoint)/(1.f - shiftblackpoint);
-                                    Bo = (b - shiftblackpoint)/(1.f - shiftblackpoint);
+                                    if(strtype == 0) {
+                                        Ro = (r - shiftblackpoint)/(1.f - shiftblackpoint);
+                                        Go = (g - shiftblackpoint)/(1.f - shiftblackpoint);
+                                        Bo = (b - shiftblackpoint)/(1.f - shiftblackpoint);
+                                    } else {
+                                        Ro = (shiftblackpoint) + r * (1.f - shiftblackpoint);
+                                        Go = (shiftblackpoint) + g * (1.f - shiftblackpoint);
+                                        Bo = (shiftblackpoint) + b * (1.f - shiftblackpoint);
+                                    }
                                     tmpImage->r(i, j) = rtengine::max(0.00001f, Ro * 65535.f);//0.00001f to avoid crash
                                     tmpImage->g(i, j) = rtengine::max(0.00001f, Go * 65535.f);
                                     tmpImage->b(i, j) = rtengine::max(0.00001f, Bo * 65535.f);
