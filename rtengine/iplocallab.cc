@@ -17321,9 +17321,17 @@ void ImProcFunctions::Lab_Local(
                         tmpImage = new Imagefloat(bfw, bfh);
                         lab2rgb(*bufexpfin, *tmpImage, params->icm.workingProfile);
                         Glib::ustring prof = params->icm.workingProfile;
-                        if(blackpoint > 0) {//to use if need if histogram far to the left.
+                        if(shiftblackpoint < 0.f) {//change only Black point with positives values for in some cases out of gamut values
+                            //rgb value can be very weakly negatives (eg working space sRGB in some rare cases) - tone_eqblack prevents it
+                            //also change black value to help "ghs" and avoid noise
                             tone_eqblack(this, tmpImage, blackpoint, params->icm.workingProfile, sk, multiThread);//Ev -16 to -8
-                        } else {
+                        }
+                        {//change black point and white point for GHS
+                         // Sets the Blackpoint and Whitepoint for a linear stretch of the image
+                            float shiftblackpoint2 = shiftblackpoint;
+                            if(shiftblackpoint < 0.f) {
+                                shiftblackpoint2 = 0.f;
+                            }
 #ifdef _OPENMP
         #   pragma omp parallel for schedule(dynamic,16) if (multiThread)
 #endif
@@ -17334,9 +17342,9 @@ void ImProcFunctions::Lab_Local(
                                     float b = tmpImage->b(i, j)/65535.f;
                                     float Ro,Go, Bo;
                                     if(strtype == 0) {
-                                        Ro = (r - shiftblackpoint)/(shiftwhitepoint - shiftblackpoint);
-                                        Go = (g - shiftblackpoint)/(shiftwhitepoint - shiftblackpoint);
-                                        Bo = (b - shiftblackpoint)/(shiftwhitepoint - shiftblackpoint);
+                                        Ro = (r - shiftblackpoint2)/(shiftwhitepoint - shiftblackpoint2);
+                                        Go = (g - shiftblackpoint2)/(shiftwhitepoint - shiftblackpoint2);
+                                        Bo = (b - shiftblackpoint2)/(shiftwhitepoint - shiftblackpoint2);
                                         if(Ro > shiftwhitepoint) {
                                             Ro = 1.f;
                                         }
@@ -17347,9 +17355,19 @@ void ImProcFunctions::Lab_Local(
                                             Bo = 1.f;
                                         }
                                     } else {
-                                        Ro = (shiftblackpoint) + r * (shiftwhitepoint - shiftblackpoint);
-                                        Go = (shiftblackpoint) + g * (shiftwhitepoint - shiftblackpoint);
-                                        Bo = (shiftblackpoint) + b * (shiftwhitepoint - shiftblackpoint);
+                                        Ro = (shiftblackpoint2) + r * (shiftwhitepoint - shiftblackpoint2);
+                                        Go = (shiftblackpoint2) + g * (shiftwhitepoint - shiftblackpoint2);
+                                        Bo = (shiftblackpoint2) + b * (shiftwhitepoint - shiftblackpoint2);
+                                        if(Ro > shiftwhitepoint) {
+                                            Ro = 1.f;
+                                        }
+                                        if(Go > shiftwhitepoint) {
+                                            Go = 1.f;
+                                        }
+                                        if(Bo > shiftwhitepoint) {
+                                            Bo = 1.f;
+                                        }
+                                        
                                     }
                                     tmpImage->r(i, j) = rtengine::max(0.00001f, Ro * 65535.f);//0.00001f to avoid crash
                                     tmpImage->g(i, j) = rtengine::max(0.00001f, Go * 65535.f);
