@@ -2200,6 +2200,11 @@ public:
     {
         pairs.clear();
     }
+    
+    void insert(Glib::ustring key, Glib::ustring value)
+    {
+		pairs.insert({key, std::vector<Glib::ustring>(1, value)});
+	}
 
     std::vector<Glib::ustring>& operator[](const Glib::ustring& key)
     {
