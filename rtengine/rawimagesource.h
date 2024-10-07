@@ -21,6 +21,7 @@
 #include <array>
 #include <iostream>
 #include <memory>
+#include <vector>
 
 #include "array2D.h"
 #include "colortemp.h"
@@ -78,13 +79,13 @@ protected:
     bool rgbSourceModified;
 
     RawImage* ri;  // Copy of raw pixels, NOT corrected for initial gain, blackpoint etc.
-    RawImage* riFrames[6] = {nullptr};
+    std::vector<std::unique_ptr<RawImage>> riFrames;
     unsigned int currFrame = 0;
     unsigned int numFrames = 0;
     int flatFieldAutoClipValue = 0;
     array2D<float> rawData;  // holds preprocessed pixel values, rowData[i][j] corresponds to the ith row and jth column
-    array2D<float> *rawDataFrames[6] = {nullptr};
-    array2D<float> *rawDataBuffer[5] = {nullptr};
+    std::vector<array2D<float> *> rawDataFrames;
+    std::vector<std::unique_ptr<array2D<float>>> rawDataBuffer;
 
     // the interpolated green plane:
     array2D<float> green;
@@ -204,12 +205,12 @@ public:
     static void init ();
     static void cleanup ();
     void setCurrentFrame(unsigned int frameNum) override {
-        if (numFrames == 2 && frameNum == 2) { // special case for averaging of two frames
+        if (numFrames == 2 && frameNum == 2 && riFrames.size() >= 1) { // special case for averaging of two frames
             currFrame = frameNum;
-            ri = riFrames[0];
-        } else  {
+            ri = riFrames[0].get();
+        } else if (riFrames.size() > std::min(numFrames - 1, frameNum)) {
             currFrame = std::min(numFrames - 1, frameNum);
-            ri = riFrames[currFrame];
+            ri = riFrames[currFrame].get();
         }
     }
     int getFrameCount() override {return numFrames;}

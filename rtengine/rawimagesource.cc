@@ -505,14 +505,6 @@ RawImageSource::~RawImageSource()
     delete greenCache;
     delete blueCache;
 
-    for (size_t i = 0; i < numFrames; ++i) {
-        delete riFrames[i];
-    }
-
-    for (size_t i = 0; i + 1 < numFrames; ++i) {
-        delete rawDataBuffer[i];
-    }
-
     if (camProfile) {
         cmsCloseProfile(camProfile);
     }
@@ -1219,11 +1211,13 @@ int RawImageSource::load(const Glib::ustring &fname, bool firstFrameOnly)
         return errCode;
     }
 
-    numFrames = firstFrameOnly ? (numFrames < 7 ? 1 : ri->getFrameCount()) : ri->getFrameCount();
+    const bool isHasselblad = ri->get_maker() == "Hasselblad";
+
+    numFrames = firstFrameOnly && (numFrames < 7 || !isHasselblad) ? 1 : ri->getFrameCount();
 
     errCode = 0;
 
-    if (numFrames >= 7) {
+    if (numFrames >= 7 && isHasselblad) {
         // special case to avoid crash when loading Hasselblad H6D-100cMS pixelshift files
         // limit to 6 frames and skip first frame, as first frame is not bayer
         if (firstFrameOnly) {
@@ -1231,6 +1225,9 @@ int RawImageSource::load(const Glib::ustring &fname, bool firstFrameOnly)
         } else {
             numFrames = 6;
         }
+
+        riFrames.clear();
+        riFrames.resize(numFrames);
 
 #ifdef _OPENMP
         #pragma omp parallel
@@ -1243,10 +1240,10 @@ int RawImageSource::load(const Glib::ustring &fname, bool firstFrameOnly)
 
             for (unsigned int i = 0; i < numFrames; ++i) {
                 if (i == 0) {
-                    riFrames[i] = ri;
+                    riFrames[i].reset(ri);
                     errCodeThr = riFrames[i]->loadRaw(true, i + 1, true, plistener, 0.8);
                 } else {
-                    riFrames[i] = new RawImage(fname);
+                    riFrames[i].reset(new RawImage(fname));
                     errCodeThr = riFrames[i]->loadRaw(true, i + 1);
                 }
             }
@@ -1259,6 +1256,9 @@ int RawImageSource::load(const Glib::ustring &fname, bool firstFrameOnly)
             }
         }
     } else if (numFrames > 1) {
+        riFrames.clear();
+        riFrames.resize(numFrames);
+
 #ifdef _OPENMP
         #pragma omp parallel
 #endif
@@ -1271,10 +1271,10 @@ int RawImageSource::load(const Glib::ustring &fname, bool firstFrameOnly)
             for (unsigned int i = 0; i < numFrames; ++i)
             {
                 if (i == 0) {
-                    riFrames[i] = ri;
+                    riFrames[i].reset(ri);
                     errCodeThr = riFrames[i]->loadRaw(true, i, true, plistener, 0.8);
                 } else {
-                    riFrames[i] = new RawImage(fname);
+                    riFrames[i].reset(new RawImage(fname));
                     errCodeThr = riFrames[i]->loadRaw(true, i);
                 }
             }
@@ -1287,9 +1287,13 @@ int RawImageSource::load(const Glib::ustring &fname, bool firstFrameOnly)
             }
         }
     } else {
-        riFrames[0] = ri;
-        errCode = riFrames[0]->loadRaw(true, 0, true, plistener, 0.8);
+        riFrames.clear();
+        riFrames.emplace_back(ri);
+        errCode = riFrames.back()->loadRaw(true, 0, true, plistener, 0.8);
     }
+    rawDataFrames.resize(riFrames.size());
+    rawDataBuffer.clear();
+    rawDataBuffer.resize(riFrames.size() - 1);
 
     if (!errCode) {
         for (unsigned int i = 0; i < numFrames; ++i) {
@@ -1514,21 +1518,21 @@ void RawImageSource::preprocess(const RAWParams &raw, const LensProfParams &lens
                 rawDataFrames[i] = &rawData;
             } else {
                 if (!rawDataBuffer[bufferNumber]) {
-                    rawDataBuffer[bufferNumber] = new array2D<float>;
+                    rawDataBuffer[bufferNumber].reset(new array2D<float>);
                 }
 
-                rawDataFrames[i] = rawDataBuffer[bufferNumber];
+                rawDataFrames[i] = rawDataBuffer[bufferNumber].get();
                 ++bufferNumber;
-                copyOriginalPixels(raw, riFrames[i], rid, rif, *rawDataFrames[i], reddeha, greendeha, bluedeha);
+                copyOriginalPixels(raw, riFrames[i].get(), rid, rif, *rawDataFrames[i], reddeha, greendeha, bluedeha);
             }
         }
     } else if (numFrames == 2 && currFrame == 2) { // average the frames
         if (!rawDataBuffer[0]) {
-            rawDataBuffer[0] = new array2D<float>;
+            rawDataBuffer[0].reset(new array2D<float>);
         }
 
-        rawDataFrames[1] = rawDataBuffer[0];
-        copyOriginalPixels(raw, riFrames[1], rid, rif, *rawDataFrames[1], reddeha, greendeha, bluedeha);
+        rawDataFrames[1] = rawDataBuffer[0].get();
+        copyOriginalPixels(raw, riFrames[1].get(), rid, rif, *rawDataFrames[1], reddeha, greendeha, bluedeha);
         copyOriginalPixels(raw, ri, rid, rif, rawData, reddeha, greendeha, bluedeha);
 
         for (int i = 0; i < H; ++i) {
@@ -2581,9 +2585,8 @@ void RawImageSource::retinex(const ColorManagementParams& cmp, const RetinexPara
 
 void RawImageSource::flush()
 {
-    for (size_t i = 0; i + 1 < numFrames; ++i) {
-        delete rawDataBuffer[i];
-        rawDataBuffer[i] = nullptr;
+    for (auto &buffer : rawDataBuffer) {
+        buffer.reset();
     }
 
     if (rawData) {
