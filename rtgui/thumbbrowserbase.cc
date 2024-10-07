@@ -24,6 +24,7 @@
 #include "rtscalable.h"
 #include "thumbbrowserbase.h"
 #include "thumbbrowserentrybase.h"
+#include "procparamchangers.h"
 
 #include "../rtengine/rt_math.h"
 
@@ -173,8 +174,12 @@ inline void addToSelection (ThumbBrowserEntryBase* entry, ThumbVector& selected)
     if (entry->selected || entry->filtered)
         return;
 
-    entry->selected = true;
-    selected.push_back (entry);
+	entry->selected = true;
+	// load parameters (includes applying Dynamic Profile Rules)
+	entry->thumbnail->createProcParamsForUpdate(true, false); 
+	// update thumbnail
+	entry->thumbnail->notifylisterners_procParamsChanged(FILEBROWSER);
+	selected.push_back (entry);
 }
 
 inline void removeFromSelection (const ThumbIterator& iterator, ThumbVector& selected)
