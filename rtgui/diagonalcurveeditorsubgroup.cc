@@ -36,7 +36,7 @@
 
 #include "../rtengine/curves.h"
 
-DiagonalCurveEditorSubGroup::DiagonalCurveEditorSubGroup (CurveEditorGroup* prt, Glib::ustring& curveDir) : CurveEditorSubGroup(curveDir)
+DiagonalCurveEditorSubGroup::DiagonalCurveEditorSubGroup (CurveEditorGroup* prt, Glib::ustring& curveDir, int typ) : CurveEditorSubGroup(curveDir)
 {
 
     editedAdjuster = nullptr;
@@ -125,7 +125,6 @@ DiagonalCurveEditorSubGroup::DiagonalCurveEditorSubGroup (CurveEditorGroup* prt,
         customCurveGrid->attach_next_to(*custombbox, *customCurveBox, Gtk::POS_LEFT, 1, 1);
         customCurveGrid->attach_next_to(*customCoordAdjuster, *custombbox, Gtk::POS_BOTTOM, 2, 1);
     }
-
     customCurveGrid->show_all ();
     customCoordAdjuster->hide();
 
@@ -219,6 +218,14 @@ DiagonalCurveEditorSubGroup::DiagonalCurveEditorSubGroup (CurveEditorGroup* prt,
     }
 
     NURBSCurveGrid->show_all ();
+    if(typ == 1) {//for GHS curve... not a curve !
+        editPointNURBS->hide();
+        editNURBS->hide();
+        copyNURBS->hide();
+        pasteNURBS->hide();
+        loadNURBS->hide();
+        saveNURBS->hide();
+    }
     NURBSCoordAdjuster->hide();
 
     saveNURBS->signal_clicked().connect( sigc::mem_fun(*this, &DiagonalCurveEditorSubGroup::savePressed) );
