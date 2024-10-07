@@ -4292,7 +4292,7 @@ LocallabShadow::LocallabShadow():
     ghsFrame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_GHSFRA")))),
     ghs_D(Gtk::manage(new Adjuster(M("TP_LOCALLAB_GHS_D"), 0., 10.0, 0.001, 0.0))),
     ghs_B(Gtk::manage(new Adjuster(M("TP_LOCALLAB_GHS_B"), -5.0, 15.0, 0.001, 0.0))),
-    ghs_SP(Gtk::manage(new Adjuster(M("TP_LOCALLAB_GHS_SP"), 0.0, 1.0, 0.00001, 0.0))),
+    ghs_SP(Gtk::manage(new Adjuster(M("TP_LOCALLAB_GHS_SP"), 0.0, 1.0, 0.00001, 0.03))),
     ghs_LP(Gtk::manage(new Adjuster(M("TP_LOCALLAB_GHS_LP"), 0.0, 1.0, 0.00001, 0.0))),
     ghs_HP(Gtk::manage(new Adjuster(M("TP_LOCALLAB_GHS_HP"), 0.0, 1.0, 0.00001, 1.0))),
     BP_Frame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_GHS_BLACKPOINT_FRAME")))),
@@ -4941,6 +4941,7 @@ void LocallabShadow::read(const rtengine::procparams::ProcParams* pp, const Para
 
     // Update shadow highlight GUI according to shMethod and ghsmethod combobox state
     updateShadowGUI2();
+    updateShadowGUI3();
 
     // Note: No need to manage pedited as batch mode is deactivated for Locallab
 }
@@ -5081,6 +5082,8 @@ void LocallabShadow::setDefaults(const rtengine::procparams::ProcParams* defPara
 
 void LocallabShadow::adjusterChanged(Adjuster* a, double newval)
 {
+    updateShadowGUI3();
+
     if (isLocActivated && exp->getEnabled()) {
         if (a == multipliersh[0] || a == multipliersh[1] || a == multipliersh[2] || a == multipliersh[3] || a == multipliersh[4] || a == multipliersh[5]) {
             if (listener) {
@@ -5473,6 +5476,7 @@ void LocallabShadow::convertParamToNormal()
     fatamountSH->setValue(defSpot.fatamountSH);
     fatanchorSH->setValue(defSpot.fatanchorSH);
     decays->setValue(defSpot.decays);
+    updateShadowGUI3();
 
     // Enable all listeners
     enableListener();
@@ -5818,6 +5822,24 @@ void LocallabShadow::updateShadowGUI1()
         showmaskSHMethodConninv.block(false);
     }
 }
+
+void LocallabShadow::updateShadowGUI3()
+{
+    // Update adjuster range to avoid black screen according to Symmetry ghs_SP
+
+    
+    const double tempLP = ghs_LP->getValue();
+    const double tempSP = ghs_SP->getValue();
+    const double tempHP = ghs_HP->getValue();
+
+    ghs_LP->setLimits(0., tempSP, 0.00001, 0.0);
+    ghs_HP->setLimits(tempSP, 1.0, 0.00001, 0.0);
+
+    ghs_LP->setValue(tempLP);
+    ghs_HP->setValue(tempHP);
+
+}
+
 
 void LocallabShadow::updateShadowGUI2()
 {

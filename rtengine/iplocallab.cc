@@ -17294,7 +17294,12 @@ void ImProcFunctions::Lab_Local(
                         int blackpoint = 100. * params->locallab.spots.at(sp).ghs_BLP;//Black point
                         float shiftblackpoint = - params->locallab.spots.at(sp).ghs_BLP;//Black point
                         float shiftwhitepoint = params->locallab.spots.at(sp).ghs_HLP;//White point
-
+                        if(LP > SP) {
+                            LP = SP;
+                        }
+                        if(HP < SP) {
+                            HP = SP;
+                        }
                         //ghshp2 = HP;
                         bool smoth = params->locallab.spots.at(sp).ghs_smooth;//Highlight attenuation
                         bool ghsinv = params->locallab.spots.at(sp).ghs_inv;//Inverse stretch

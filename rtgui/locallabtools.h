@@ -669,6 +669,8 @@ private:
 
     void updateShadowGUI1();
     void updateShadowGUI2();
+    void updateShadowGUI3();
+
 };
 
 /* ==== LocallabVibrance ==== */

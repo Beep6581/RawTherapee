@@ -3392,7 +3392,7 @@ LocallabParams::LocallabSpot::LocallabSpot() :
     ghsMethod("rgb"),
     ghs_D(0.),
     ghs_B(0.),
-    ghs_SP(0.),
+    ghs_SP(0.03),//initialized with a low value to avoid zero
     ghs_LP(0.),
     ghs_HP(1.),
     ghs_BLP(0.),
