@@ -785,7 +785,7 @@ FramesData::FramesData(const Glib::ustring &fname, time_t ts) :
                     find_exif_tag("Exif.SubImage1.Compression") && to_long(pos) == 1) {
                     isPixelShift = true;
                 }
-            } else if (bps != exif.end() && to_long(bps) == 14 &&
+            } else if (bps != exif.end() && (to_long(bps) == 14 || to_long(bps) == 16) &&
                        spp != exif.end() && to_long(spp) == 4 &&
                        c != exif.end() && to_long(c) == 1 &&
                        find_exif_tag("Exif.Image.Software") &&
