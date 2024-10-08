@@ -4300,8 +4300,9 @@ LocallabShadow::LocallabShadow():
     ghs_HLP(Gtk::manage(new Adjuster(M("TP_LOCALLAB_GHS_HLP"), 0.3, 2.0, 0.0001, 1.0))),
     ghs_smooth(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_GHS_SMOOTH")))),
     ghs_inv(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_GHS_INV")))),
+    ghsMode(Gtk::manage(new MyComboBoxText())),
     ghsCurveEditorG(new CurveEditorGroup(options.lastlocalCurvesDir, "", 1)),
-    ghsshape(static_cast<DiagonalCurveEditor*>(ghsCurveEditorG->addCurve(CT_Diagonal, "GHS", nullptr, false, false, 1))),//curve init only for support GHS S curve - not used 
+    ghsshape(static_cast<DiagonalCurveEditor*>(ghsCurveEditorG->addCurve(CT_Diagonal, "GHS S Curve", ghsMode, false, false, 1))),//curve init only for support GHS S curve - not used 
     expgradsh(Gtk::manage(new MyExpander(false, M("TP_LOCALLAB_EXPGRAD")))),
     strSH(Gtk::manage(new Adjuster(M("TP_LOCALLAB_GRADSTR"), -4., 4., 0.05, 0.))),
     angSH(Gtk::manage(new Adjuster(M("TP_LOCALLAB_GRADANG"), -180, 180, 0.1, 0.))),
@@ -4343,6 +4344,7 @@ LocallabShadow::LocallabShadow():
     Evlocallabghs_smooth = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_GHS_SMOOTH");
     Evlocallabghs_inv = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_GHS_INV");
     Evlocallabghsshape = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_GHS_SHAPE");
+    EvlocallabghsMode = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_GHSMODE");
     set_orientation(Gtk::ORIENTATION_VERTICAL);
 
     const LocallabParams::LocallabSpot defSpot;
@@ -4416,6 +4418,10 @@ https://www.ghsastro.co.uk/doc/tools/GeneralizedHyperbolicStretch/GeneralizedHyp
 
     ghs_smoothConn = ghs_smooth->signal_toggled().connect(sigc::mem_fun(*this, &LocallabShadow::ghs_smoothChanged));
     ghs_invConn = ghs_inv->signal_toggled().connect(sigc::mem_fun(*this, &LocallabShadow::ghs_invChanged));
+
+    ghsMode->append(M("TP_LOCALLAB_GHS_MODELIN"));
+    ghsMode->append(M("TP_LOCALLAB_GHS_MODECUR"));
+    ghsModeConn = ghsMode->signal_changed().connect(sigc::mem_fun(*this, &LocallabShadow::ghsModeChanged), true);
 
     ghsCurveEditorG->setCurveListener(this);
     ghsshape->setResetCurve(DiagonalCurveType(defSpot.ghscurve.at(0)), defSpot.ghscurve);
@@ -4827,6 +4833,7 @@ void LocallabShadow::disableListener()
 
     shMethodConn.block(true);
     ghsMethodConn.block(true);
+    ghsModeConn.block(true);
     inversshConn.block(true);
     ghs_smoothConn.block(true);
     ghs_invConn.block(true);
@@ -4841,6 +4848,7 @@ void LocallabShadow::enableListener()
 
     shMethodConn.block(false);
     ghsMethodConn.block(false);
+    ghsModeConn.block(false);
     ghs_smoothConn.block(false);
     ghs_invConn.block(false);
     inversshConn.block(false);
@@ -4881,6 +4889,12 @@ void LocallabShadow::read(const rtengine::procparams::ProcParams* pp, const Para
         } else if (spot.ghsMethod == "hue") {
             ghsMethod->set_active(3);
         }
+
+        if (spot.ghsMode == "lin") {
+            ghsMode->set_active(0);
+        } else if (spot.ghsMode == "ghs") {
+            ghsMode->set_active(1);
+        } 
 
         for (int i = 0; i < 6; i++) {
             multipliersh[i]->setValue((double)spot.multsh[i]);
@@ -4975,6 +4989,12 @@ void LocallabShadow::write(rtengine::procparams::ProcParams* pp, ParamsEdited* p
             spot.ghsMethod = "sat";
         } else if (ghsMethod->get_active_row_number() == 3) {
             spot.ghsMethod = "hue";
+        }
+
+        if (ghsMode->get_active_row_number() == 0) {
+            spot.ghsMode = "lin";
+        } else if (ghsMode->get_active_row_number() == 1) {
+            spot.ghsMode = "ghs";
         }
 
         for (int i = 0; i < 6; i++) {
@@ -5625,7 +5645,7 @@ void LocallabShadow::updateMaskBackground(const double normChromar, const double
 void LocallabShadow::shMethodChanged()
 {
 
-    // Update shadow highlight GUI according to shMethod combobox state
+    // Update shadow highlight GUI according to shmethod combobox state
     updateShadowGUI2();
 
     if (isLocActivated && exp->getEnabled()) {
@@ -5703,6 +5723,22 @@ void LocallabShadow::ghs_smoothChanged()
         }
     }
 }
+
+void LocallabShadow::ghsModeChanged()
+{
+    // Update shadow highlight GUI according to ghsMode combobox state
+    updateShadowGUI2();
+
+    if (isLocActivated && exp->getEnabled()) {
+        if (listener) {
+            listener->panelChanged(EvlocallabghsMode,
+                                   ghsMode->get_active_text() + " (" + escapeHtmlChars(getSpotName()) + ")");
+        }
+    }
+    
+}
+
+
 
 void LocallabShadow::ghs_invChanged()
 {

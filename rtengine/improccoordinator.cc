@@ -1573,9 +1573,9 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                 locallciesig.push_back(locciesig);
 
                 LocallabListener::locallabshGHS locshghs;//ghs S curve
-                for(int j = 0; j < 42; j++) {
-                    locshghs.ghsc[j] = ghscur[j];
-                }
+                    for(int j = 0; j < 42; j++) {
+                        locshghs.ghsc[j] = ghscur[j];
+                    }
                 /*
                 printf("ghsc0=%f ghsc1=%f\n", (double) locshghs.ghsc[0], (double) locshghs.ghsc[1]);
                 printf("ghsc20=%f ghsc21=%f\n", (double) locshghs.ghsc[20], (double) locshghs.ghsc[21]);
@@ -1652,7 +1652,7 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                         locallListener->cieChanged(locallcielc,params->locallab.selspot); 
                     }
                     locallListener->sigChanged(locallciesig,params->locallab.selspot);
-                    if (params->locallab.spots.at(sp).expshadhigh && params->locallab.spots.at(sp).shMethod == "ghs" && params->locallab.spots.at(sp).ghs_D > 0.) {
+                    if (params->locallab.spots.at(sp).expshadhigh && params->locallab.spots.at(sp).shMethod == "ghs"  && params->locallab.spots.at(sp).ghs_D > 0.) {
                         locallListener->ghsChanged(locallshgsh,params->locallab.selspot);
                     }
 

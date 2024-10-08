@@ -579,6 +579,7 @@ private:
     Adjuster* const ghs_HLP;
     Gtk::CheckButton* const ghs_smooth;
     Gtk::CheckButton* const ghs_inv;
+    MyComboBoxText* ghsMode;
     CurveEditorGroup* const ghsCurveEditorG;
     DiagonalCurveEditor* const ghsshape;
 
@@ -619,8 +620,9 @@ private:
     rtengine::ProcEvent Evlocallabghs_smooth;
     rtengine::ProcEvent Evlocallabghs_inv;
     rtengine::ProcEvent Evlocallabghsshape;
+    rtengine::ProcEvent EvlocallabghsMode;
 
-    sigc::connection shMethodConn, ghsMethodConn, previewshConn, inversshConn, ghs_smoothConn, ghs_invConn, showmaskSHMethodConn, showmaskSHMethodConninv, enaSHMaskConn;
+    sigc::connection shMethodConn, ghsMethodConn, ghsModeConn, previewshConn, inversshConn, ghs_smoothConn, ghs_invConn, showmaskSHMethodConn, showmaskSHMethodConninv, enaSHMaskConn;
 
 public:
     LocallabShadow();
@@ -660,6 +662,7 @@ private:
 
     void shMethodChanged();
     void ghsMethodChanged();
+    void ghsModeChanged();
     void inversshChanged();
     void ghs_smoothChanged();
     void ghs_invChanged();

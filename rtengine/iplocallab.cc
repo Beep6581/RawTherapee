@@ -17425,9 +17425,16 @@ void ImProcFunctions::Lab_Local(
                                 }
                         }
                         //Draw diagonal GHS curve - init 20 points for more precision
-                        for(int i = 0; i < 42; i += 2) {
-                            ghscur[i] = 0.025f * i;
-                            ghscur[i + 1] =  GHT(ghscur[i], B, D, LP, SP, HP, c, strtype);
+                        if (params->locallab.spots.at(sp).ghsMode == "ghs") {//S Curve GHS
+                            for(int i = 0; i < 42; i += 2) {
+                                ghscur[i] = 0.025f * i;
+                                ghscur[i + 1] =  GHT(ghscur[i], B, D, LP, SP, HP, c, strtype);
+                            }
+                        } else if (params->locallab.spots.at(sp).ghsMode == "lin") {//Linear with 20 points
+                            for(int i = 0; i < 42; i += 2) {
+                                ghscur[i] = 0.025f * i;
+                                ghscur[i + 1] = ghscur[i];
+                            }
                         }
                         /*
                         printf("ghscuri=%f ghscuri1=%f\n", (double) ghscur[0], (double) ghscur[1]);
