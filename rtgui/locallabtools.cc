@@ -4809,6 +4809,7 @@ void LocallabShadow::updateAdviceTooltips(const bool showTooltips)
         ghs_inv->set_tooltip_text("");
         BP_Frame->set_tooltip_text("");
         ghsCurveEditorG->set_tooltip_markup("");
+        ghsFrame->set_tooltip_text("");
 
     }
 }
