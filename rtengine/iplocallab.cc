@@ -3036,10 +3036,10 @@ void tone_eqsmooth(ImProcFunctions *ipf, Imagefloat *rgb, const struct local_par
             params.bands[4] = -15;
             params.bands[5] = -50;
         } else {
-            params.bands[4] = -15 -(1.f-lp.ghshp) * 40.f;//in function of HP GHS highligt protection
-            params.bands[5] = -50 -(1.f-lp.ghshp) * 40.f;;
+            params.bands[4] = -15 -(1.f-lp.ghshp) * 60.f;//in function of HP GHS highligt protection
+            params.bands[5] = -30 -(1.f-lp.ghshp) * 50.f;;
         }
-        if(lp.whiteevjz < 6) {
+        if(lp.whiteevjz < 6 && !lp.issmoothghs) {
             params.bands[4] = -10;
         }
     }
@@ -17115,7 +17115,9 @@ void ImProcFunctions::Lab_Local(
     float D = params->locallab.spots.at(sp).ghs_D;//enable GHS and Stretch factor
     float BLP = params->locallab.spots.at(sp).ghs_BLP;
     float HLP = params->locallab.spots.at(sp).ghs_HLP;
-    if(D != 0.f  || BLP != 0.f || HLP != 1.f) {
+    bool smoth = params->locallab.spots.at(sp).ghs_smooth;//Highlight attenuation
+
+    if(D != 0.f  || BLP != 0.f || HLP != 1.f  || smoth) {
         ghsactiv = true;
     }
 
@@ -17301,7 +17303,6 @@ void ImProcFunctions::Lab_Local(
                             HP = SP;
                         }
                         //ghshp2 = HP;
-                        bool smoth = params->locallab.spots.at(sp).ghs_smooth;//Highlight attenuation
                         bool ghsinv = params->locallab.spots.at(sp).ghs_inv;//Inverse stretch
                         int met = 0;
                         int strtype = 0;//to allow more choice than boolean
@@ -17363,6 +17364,8 @@ void ImProcFunctions::Lab_Local(
                                         Ro = (shiftblackpoint2) + r * (shiftwhitepoint - shiftblackpoint2);
                                         Go = (shiftblackpoint2) + g * (shiftwhitepoint - shiftblackpoint2);
                                         Bo = (shiftblackpoint2) + b * (shiftwhitepoint - shiftblackpoint2);
+                                        //there is also clamp call by GHT
+                                        /*
                                         if(Ro > shiftwhitepoint) {
                                             Ro = 1.f;
                                         }
@@ -17372,7 +17375,7 @@ void ImProcFunctions::Lab_Local(
                                         if(Bo > shiftwhitepoint) {
                                             Bo = 1.f;
                                         }
-                                        
+                                        */
                                     }
                                     tmpImage->r(i, j) = rtengine::max(0.00001f, Ro * 65535.f);//0.00001f to avoid crash
                                     tmpImage->g(i, j) = rtengine::max(0.00001f, Go * 65535.f);

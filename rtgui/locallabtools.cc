@@ -4762,7 +4762,8 @@ void LocallabShadow::updateAdviceTooltips(const bool showTooltips)
         ghs_inv->set_tooltip_text(M("TP_LOCALLAB_GHS_INV_TOOLTIP"));
         BP_Frame->set_tooltip_text(M("TP_LOCALLAB_GHS_BPFRAME_TOOLTIP"));
         ghsCurveEditorG->set_tooltip_markup(M("TP_LOCALLAB_GHS_CURVE_TOOLTIP"));
-        
+        ghsFrame->set_tooltip_text(M("TP_LOCALLAB_GHS_METHOD_TOOLTIP"));
+
     } else {
         exp->set_tooltip_text("");
 
