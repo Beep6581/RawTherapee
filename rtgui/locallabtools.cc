@@ -5636,7 +5636,20 @@ void LocallabShadow::updateMaskBackground(const double normChromar, const double
         LLmaskSHshape->updateLocallabBackground(normLumar);
         HHmaskSHshape->updateLocallabBackground(normHuer);
         LmaskSHshape->updateLocallabBackground(normLumar);
+        //estimate Spot value in RGB mode for GHS curve
+        float r,g, b;
+        Color::hsv2rgb01 (normHuer, normChromar, normLumar, r, g, b);
+        double normrgb = r * 0.2126729 + g * 0.7151521 + b * 0.0721750;
 
+        if (ghsMethod->get_active_row_number() == 0) {
+            ghsshape->updateLocallabBackground(normrgb);
+        } else if (ghsMethod->get_active_row_number() == 1) {
+           ghsshape->updateLocallabBackground(normrgb);
+        } else if (ghsMethod->get_active_row_number() == 2) {
+           ghsshape->updateLocallabBackground(normChromar);
+        } else if (ghsMethod->get_active_row_number() == 3) {
+           ghsshape->updateLocallabBackground(normHuer);
+        }
         return false;
     }
     );
