@@ -3546,7 +3546,7 @@ TP_LOCALLAB_SH2;Equalizer
 TP_LOCALLAB_SH3;Generalized Hyperbolic Stretch
 TP_LOCALLAB_SHADEX;Shadows
 TP_LOCALLAB_SHADEXCOMP;Shadow compression
-TP_LOCALLAB_SHADHIGH;Shadows/Highlights & Equalizer & GHS
+TP_LOCALLAB_SHADHIGH;Shadows/Highlights, Equalizer & GHS
 TP_LOCALLAB_SHADHMASK_TOOLTIP;Lowers the highlights of the mask in the same way as the shadows/highlights algorithm.
 TP_LOCALLAB_SHADMASK_TOOLTIP;Lifts the shadows of the mask in the same way as the shadows/highlights algorithm.
 TP_LOCALLAB_SHADOWHIGHLIGHT_TOOLTIP;Adjust shadows and highlights either with shadows &amp; highlights sliders or with a tone equalizer.\nCan be used instead of, or in conjunction with the Exposure module.\nCan also be used as a graduated filter.
