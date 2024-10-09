@@ -3020,7 +3020,7 @@ LocallabParams::LocallabSpot::LocallabSpot() :
     hishow(options.complexity != 2),
     activ(true),
     blwh(false),
-    recurs(false),
+    recurs(true),
     laplac(true),
     deltae(true),
     shortc(false),
