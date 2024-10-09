@@ -171,9 +171,20 @@ void Circle::drawToMOChannel (Cairo::RefPtr<Cairo::Context> &cr, unsigned short 
 
         // setting the color to the objet's ID
         if (objectBuffer->getObjectMode() == OM_255) {
+            /* In OM_255 mode, FORMAT_A8 format is used:
+                - Alpha is represented with 8 bits (mask = 0xFF) from 0 to 255
+            */
             cr->set_source_rgba (0., 0., 0., ((id + 1) & 0xFF) / 255.);
         } else {
-            cr->set_source_rgba (0., 0., 0., (id + 1) / 65535.);
+            /* In OM_65535 mode, FORMAT_RGB16_565 format is used:
+                - Red is represented with 5 bits (mask = 0xF800, left shift = 11) from 0 to 31
+                - Green is represented with 6 bits (mask = 0x7E0, left shift = 5) from 0 to 63
+                - Blue is represented with 5 bits (mask = 0x1F) from 0 to 31
+            */
+            const double red = (((id + 1) & 0xF800) >> 11) / 31.;
+            const double green = (((id + 1) & 0x7E0) >> 5) / 63.;
+            const double blue = ((id + 1) & 0x1F) / 31.;
+            cr->set_source_rgb (red, green, blue);
         }
         cr->arc(center_.x + 0.5, center_.y + 0.5, radius_, 0, 2.*rtengine::RT_PI);
 
@@ -293,9 +304,20 @@ void Line::drawToMOChannel(Cairo::RefPtr<Cairo::Context> &cr, unsigned short id,
 
         // setting the color to the objet's ID
         if (objectBuffer->getObjectMode() == OM_255) {
+            /* In OM_255 mode, FORMAT_A8 format is used:
+                - Alpha is represented with 8 bits (mask = 0xFF) from 0 to 255
+            */
             cr->set_source_rgba (0., 0., 0., ((id + 1) & 0xFF) / 255.);
         } else {
-            cr->set_source_rgba (0., 0., 0., (id + 1) / 65535.);
+            /* In OM_65535 mode, FORMAT_RGB16_565 format is used:
+                - Red is represented with 5 bits (mask = 0xF800, left shift = 11) from 0 to 31
+                - Green is represented with 6 bits (mask = 0x7E0, left shift = 5) from 0 to 63
+                - Blue is represented with 5 bits (mask = 0x1F) from 0 to 31
+            */
+            const double red = (((id + 1) & 0xF800) >> 11) / 31.;
+            const double green = (((id + 1) & 0x7E0) >> 5) / 63.;
+            const double blue = ((id + 1) & 0x1F) / 31.;
+            cr->set_source_rgb (red, green, blue);
         }
         cr->move_to(begin_.x + 0.5, begin_.y + 0.5);
         cr->line_to(end_.x + 0.5, end_.y + 0.5);
@@ -435,9 +457,20 @@ void Polyline::drawToMOChannel (Cairo::RefPtr<Cairo::Context> &cr, unsigned shor
 
         // setting the color to the objet's ID
         if (objectBuffer->getObjectMode() == OM_255) {
+            /* In OM_255 mode, FORMAT_A8 format is used:
+                - Alpha is represented with 8 bits (mask = 0xFF) from 0 to 255
+            */
             cr->set_source_rgba (0., 0., 0., ((id + 1) & 0xFF) / 255.);
         } else {
-            cr->set_source_rgba (0., 0., 0., (id + 1) / 65535.);
+            /* In OM_65535 mode, FORMAT_RGB16_565 format is used:
+                - Red is represented with 5 bits (mask = 0xF800, left shift = 11) from 0 to 31
+                - Green is represented with 6 bits (mask = 0x7E0, left shift = 5) from 0 to 63
+                - Blue is represented with 5 bits (mask = 0x1F) from 0 to 31
+            */
+            const double red = (((id + 1) & 0xF800) >> 11) / 31.;
+            const double green = (((id + 1) & 0x7E0) >> 5) / 63.;
+            const double blue = ((id + 1) & 0x1F) / 31.;
+            cr->set_source_rgb (red, green, blue);
         }
 
         cr->set_line_width( getMouseOverLineWidth() );
@@ -630,9 +663,20 @@ void EditRectangle::drawToMOChannel(Cairo::RefPtr<Cairo::Context> &cr, unsigned 
 
         // setting the color to the objet's ID
         if (objectBuffer->getObjectMode() == OM_255) {
+            /* In OM_255 mode, FORMAT_A8 format is used:
+                - Alpha is represented with 8 bits (mask = 0xFF) from 0 to 255
+            */
             cr->set_source_rgba (0., 0., 0., ((id + 1) & 0xFF) / 255.);
         } else {
-            cr->set_source_rgba (0., 0., 0., (id + 1) / 65535.);
+            /* In OM_65535 mode, FORMAT_RGB16_565 format is used:
+                - Red is represented with 5 bits (mask = 0xF800, left shift = 11) from 0 to 31
+                - Green is represented with 6 bits (mask = 0x7E0, left shift = 5) from 0 to 63
+                - Blue is represented with 5 bits (mask = 0x1F) from 0 to 31
+            */
+            const double red = (((id + 1) & 0xF800) >> 11) / 31.;
+            const double green = (((id + 1) & 0x7E0) >> 5) / 63.;
+            const double blue = ((id + 1) & 0x1F) / 31.;
+            cr->set_source_rgb (red, green, blue);
         }
         cr->rectangle(tl.x + 0.5, tl.y + 0.5, br.x - tl.x, br.y - tl.y);
 
@@ -1112,9 +1156,20 @@ void OPIcon::drawMOImage(std::shared_ptr<RTSurface> &img, Cairo::RefPtr<Cairo::C
 
     // drawing the lower byte's value
     if (objectBuffer->getObjectMode() == OM_255) {
+        /* In OM_255 mode, FORMAT_A8 format is used:
+            - Alpha is represented with 8 bits (mask = 0xFF) from 0 to 255
+        */
         cr->set_source_rgba (0., 0., 0., ((id + 1) & 0xFF) / 255.);
     } else {
-        cr->set_source_rgba (0., 0., 0., (id + 1) / 65535.);
+        /* In OM_65535 mode, FORMAT_RGB16_565 format is used:
+            - Red is represented with 5 bits (mask = 0xF800, left shift = 11) from 0 to 31
+            - Green is represented with 6 bits (mask = 0x7E0, left shift = 5) from 0 to 63
+            - Blue is represented with 5 bits (mask = 0x1F) from 0 to 31
+        */
+        const double red = (((id + 1) & 0xF800) >> 11) / 31.;
+        const double green = (((id + 1) & 0x7E0) >> 5) / 63.;
+        const double blue = ((id + 1) & 0x1F) / 31.;
+        cr->set_source_rgb (red, green, blue);
     }
     cr->set_line_width(0.);
     cr->rectangle(tl.x, tl.y, imgW, imgH);
