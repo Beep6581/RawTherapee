@@ -17289,6 +17289,9 @@ void ImProcFunctions::Lab_Local(
                 if (lp.shmeth == 2) {
                     if(ghsactiv) {
                         // GHT filter ported from Siril - help with ART CTL thanks to Alberto Griggio
+                        TMatrix wprof = ICCStore::getInstance()->workingSpaceMatrix(params->icm.workingProfile);
+
+                       // D /= sk;
                         float B = params->locallab.spots.at(sp).ghs_B;//Local intensity 
                         float LP = params->locallab.spots.at(sp).ghs_LP;//Protect shadows
                         float SP = params->locallab.spots.at(sp).ghs_SP;//Symmetry point
@@ -17392,9 +17395,12 @@ void ImProcFunctions::Lab_Local(
                                     float g = tmpImage->g(i, j)/65535.f;
                                     float b = tmpImage->b(i, j)/65535.f;
                                     float Ro,Go, Bo;
-                                    Ro = GHT(r, B, D, LP, SP, HP, c, strtype);
-                                    Go = GHT(g, B, D, LP, SP, HP, c, strtype);
-                                    Bo = GHT(b, B, D, LP, SP, HP, c, strtype);
+                                    float gh = norm(r, g, b, wprof);//Calculate Luminance in function working profile Wprof
+                                    float Mgh = GHT(gh, B, D, LP, SP, HP, c, strtype);//ghs transform with "luminance"
+                                    float fgh = Mgh / gh;
+                                    Ro = r * fgh;//new values for r, g, b
+                                    Go = g * fgh;
+                                    Bo = b * fgh;
                                     tmpImage->r(i, j) = rtengine::max(0.00001f, Ro * 65535.f);//0.00001f to avoid crash
                                     tmpImage->g(i, j) = rtengine::max(0.00001f, Go * 65535.f);
                                     tmpImage->b(i, j) = rtengine::max(0.00001f, Bo * 65535.f);
