@@ -17314,16 +17314,18 @@ void ImProcFunctions::Lab_Local(
                         } else {
                             strtype = 0;
                         }
-                        if (params->locallab.spots.at(sp).ghsMethod == "rgb") {//mode RGB default
+                        if (params->locallab.spots.at(sp).ghsMethod == "rgb") {//mode RGB default in luminance mode
                             met = 0;
-                        } else if (params->locallab.spots.at(sp).ghsMethod == "lum") {
+                        } else if (params->locallab.spots.at(sp).ghsMethod == "rgbstd") {//mode RGB standard
                             met = 1;
-                        } else if (params->locallab.spots.at(sp).ghsMethod == "sat") {
+                        } else if (params->locallab.spots.at(sp).ghsMethod == "lum") {
                             met = 2;
-                        } else if (params->locallab.spots.at(sp).ghsMethod == "hue") {
+                        } else if (params->locallab.spots.at(sp).ghsMethod == "sat") {
                             met = 3;
+                        } else if (params->locallab.spots.at(sp).ghsMethod == "hue") {
+                            met = 4;
                         }
-
+                        
                         const ght_compute_params c = GHT_setup(B, D, LP, SP, HP, strtype);//setup system with entries
 
                         Imagefloat *tmpImage = nullptr;
@@ -17349,7 +17351,7 @@ void ImProcFunctions::Lab_Local(
                                     float r = tmpImage->r(i, j)/65535.f;
                                     float g = tmpImage->g(i, j)/65535.f;
                                     float b = tmpImage->b(i, j)/65535.f;
-                                    float Ro,Go, Bo;
+                                    float Ro, Go, Bo;
                                     if(strtype == 0) {
                                         Ro = (r - shiftblackpoint2)/(shiftwhitepoint - shiftblackpoint2);
                                         Go = (g - shiftblackpoint2)/(shiftwhitepoint - shiftblackpoint2);
@@ -17385,7 +17387,7 @@ void ImProcFunctions::Lab_Local(
                                     tmpImage->b(i, j) = rtengine::max(0.00001f, Bo * 65535.f);
                                 }
                         }
-                        if(met ==0) {//RGB mode
+                        if(met ==0  || met == 1) {//RGB mode
 #ifdef _OPENMP
         #   pragma omp parallel for schedule(dynamic,16) if (multiThread)
 #endif
@@ -17394,13 +17396,21 @@ void ImProcFunctions::Lab_Local(
                                     float r = tmpImage->r(i, j)/65535.f;
                                     float g = tmpImage->g(i, j)/65535.f;
                                     float b = tmpImage->b(i, j)/65535.f;
-                                    float Ro,Go, Bo;
-                                    float gh = norm(r, g, b, wprof);//Calculate Luminance in function working profile Wprof
-                                    float Mgh = GHT(gh, B, D, LP, SP, HP, c, strtype);//ghs transform with "luminance"
-                                    float fgh = Mgh / gh;
-                                    Ro = r * fgh;//new values for r, g, b
-                                    Go = g * fgh;
-                                    Bo = b * fgh;
+                                    float Ro = 0.f;
+                                    float Go = 0.f;
+                                    float Bo = 0.f;
+                                    if(met == 0) {
+                                        float gh = norm(r, g, b, wprof);//Calculate Luminance in function working profile Wprof
+                                        float Mgh = GHT(gh, B, D, LP, SP, HP, c, strtype);//ghs transform with "luminance"
+                                        float fgh = Mgh / gh;
+                                        Ro = r * fgh;//new values for r, g, b
+                                        Go = g * fgh;
+                                        Bo = b * fgh;
+                                    } else if (met == 1) {
+                                        Ro = GHT(r, B, D, LP, SP, HP, c, strtype);//ghs R RGB standard
+                                        Go = GHT(g, B, D, LP, SP, HP, c, strtype);//ghs G RGB standard
+                                        Bo = GHT(b, B, D, LP, SP, HP, c, strtype);//ghs B RGB standard
+                                    }
                                     tmpImage->r(i, j) = rtengine::max(0.00001f, Ro * 65535.f);//0.00001f to avoid crash
                                     tmpImage->g(i, j) = rtengine::max(0.00001f, Go * 65535.f);
                                     tmpImage->b(i, j) = rtengine::max(0.00001f, Bo * 65535.f);
@@ -17416,11 +17426,11 @@ void ImProcFunctions::Lab_Local(
                                     float b = tmpImage->b(i, j);
                                     float h, s, l;
                                     Color::rgb2hsl(r, g, b, h, s, l);//maybe we could use LCH..but C is unbound and H in -PI + PI
-                                    if(met == 2) {//saturation
+                                    if(met == 3) {//saturation
                                         s = GHT(s, B, D, LP, SP, HP, c, strtype);
-                                    } else if (met == 1) {//luminance
+                                    } else if (met == 2) {//luminance HSL
                                         l = GHT(l, B, D, LP, SP, HP, c, strtype);
-                                    } else if (met == 3) {//hue
+                                    } else if (met == 4) {//hue
                                         h = GHT(h, B, D, LP, SP, HP, c, strtype);
                                     }
                                     float R, G, B;

@@ -4366,7 +4366,8 @@ LocallabShadow::LocallabShadow():
 //Copyright algorithm Pixlnsight David Payne 2021
 https://www.ghsastro.co.uk/doc/tools/GeneralizedHyperbolicStretch/GeneralizedHyperbolicStretch.html#__Description_:_About_GHS__
 */
-    ghsMethod->append(M("TP_LOCALLAB_GHSRGB"));
+    ghsMethod->append(M("TP_LOCALLAB_GHSRGBLUM"));
+    ghsMethod->append(M("TP_LOCALLAB_GHSRGBSTD"));
     ghsMethod->append(M("TP_LOCALLAB_GHSLUM"));
     ghsMethod->append(M("TP_LOCALLAB_GHSSAT"));
     ghsMethod->append(M("TP_LOCALLAB_GHSHUE"));
@@ -4883,12 +4884,14 @@ void LocallabShadow::read(const rtengine::procparams::ProcParams* pp, const Para
 
         if (spot.ghsMethod == "rgb") {
             ghsMethod->set_active(0);
-        } else if (spot.ghsMethod == "lum") {
+        } else if (spot.ghsMethod == "rgbstd") {
             ghsMethod->set_active(1);
-        } else if (spot.ghsMethod == "sat") {
+        } else if (spot.ghsMethod == "lum") {
             ghsMethod->set_active(2);
-        } else if (spot.ghsMethod == "hue") {
+        } else if (spot.ghsMethod == "sat") {
             ghsMethod->set_active(3);
+        } else if (spot.ghsMethod == "hue") {
+            ghsMethod->set_active(4);
         }
 
         if (spot.ghsMode == "lin") {
@@ -4985,12 +4988,15 @@ void LocallabShadow::write(rtengine::procparams::ProcParams* pp, ParamsEdited* p
         if (ghsMethod->get_active_row_number() == 0) {
             spot.ghsMethod = "rgb";
         } else if (ghsMethod->get_active_row_number() == 1) {
-            spot.ghsMethod = "lum";
+            spot.ghsMethod = "rgbstd";
         } else if (ghsMethod->get_active_row_number() == 2) {
-            spot.ghsMethod = "sat";
+            spot.ghsMethod = "lum";
         } else if (ghsMethod->get_active_row_number() == 3) {
+            spot.ghsMethod = "sat";
+        } else if (ghsMethod->get_active_row_number() == 4) {
             spot.ghsMethod = "hue";
         }
+
 
         if (ghsMode->get_active_row_number() == 0) {
             spot.ghsMode = "lin";
