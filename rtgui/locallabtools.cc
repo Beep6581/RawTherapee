@@ -5490,6 +5490,12 @@ void LocallabShadow::convertParamToNormal()
 
     // Disable all listeners
     disableListener();
+    //I added this code in case off, but I don't see why ?
+    if (defSpot.ghsMode == "lin") {
+        ghsMode->set_active(0);
+    } else if (defSpot.ghsMode == "ghs") {
+        ghsMode->set_active(1);
+    }
 
     // Set hidden GUI widgets in Normal mode to default spot values
     blurSHde->setValue((double)defSpot.blurSHde);
