@@ -93,7 +93,7 @@ CurveEditor* CurveEditorGroup::addCurve(CurveType cType, Glib::ustring curveLabe
         }
 
         // We add it to the curve editor list
-        DiagonalCurveEditor* newCE = diagonalSubGroup->addCurve(curveLabel);
+        DiagonalCurveEditor* newCE = diagonalSubGroup->addCurve(curveLabel, typ);
         newCE->relatedWidget = relatedWidget;
         newCE->expandRelatedWidget = expandRelatedWidget;
         curveEditors.push_back(newCE);

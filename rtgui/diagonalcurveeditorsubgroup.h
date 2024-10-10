@@ -84,7 +84,7 @@ public:
     DiagonalCurveEditorSubGroup(CurveEditorGroup* prt, Glib::ustring& curveDir, int typ = 0);
     ~DiagonalCurveEditorSubGroup() override;
 
-    DiagonalCurveEditor* addCurve(Glib::ustring curveLabel = "");
+    DiagonalCurveEditor* addCurve(Glib::ustring curveLabel = "", int typ = 0);
     void updateBackgroundHistogram (CurveEditor* ce) override;
     void switchGUI() override;
     void refresh(CurveEditor *curveToRefresh) override;

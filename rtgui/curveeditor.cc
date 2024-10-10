@@ -72,15 +72,23 @@ bool CurveEditor::reset()
     return subGroup->curveReset(this);
 }
 
-DiagonalCurveEditor::DiagonalCurveEditor (Glib::ustring text, CurveEditorGroup* ceGroup, CurveEditorSubGroup* ceSubGroup) : CurveEditor::CurveEditor(text, static_cast<CurveEditorGroup*>(ceGroup), ceSubGroup)
+DiagonalCurveEditor::DiagonalCurveEditor (Glib::ustring text, CurveEditorGroup* ceGroup, CurveEditorSubGroup* ceSubGroup, int typ) : CurveEditor::CurveEditor(text, static_cast<CurveEditorGroup*>(ceGroup), ceSubGroup)
 {
 
-    curveType->addEntry("curve-linear-small", M("CURVEEDITOR_LINEAR")); // 0 Linear
-    curveType->addEntry("curve-spline-small", M("CURVEEDITOR_CUSTOM")); // 1 Spline
-    curveType->addEntry("curve-catmullrom-small", M("CURVEEDITOR_CATMULLROM")); // 4 CatmullRom
-    curveType->addEntry("curve-parametric-small", M("CURVEEDITOR_PARAMETRIC")); // 2 Parametric
-    curveType->addEntry("curve-nurbs-small", M("CURVEEDITOR_NURBS")); // 3 NURBS
-    static_cast<CurveTypePopUpButton *>(curveType)->setPosIndexMap({ 0, 1, 4, 2, 3 });
+    if(typ == 0) {
+        curveType->addEntry("curve-linear-small", M("CURVEEDITOR_LINEAR")); // 0 Linear
+        curveType->addEntry("curve-spline-small", M("CURVEEDITOR_CUSTOM")); // 1 Spline
+        curveType->addEntry("curve-catmullrom-small", M("CURVEEDITOR_CATMULLROM")); // 4 CatmullRom
+        curveType->addEntry("curve-parametric-small", M("CURVEEDITOR_PARAMETRIC")); // 2 Parametric
+        curveType->addEntry("curve-nurbs-small", M("CURVEEDITOR_NURBS")); // 3 NURBS
+    } else if(typ == 1) {
+        curveType->addEntry("curve-nurbs-small", M("CURVEEDITOR_NURBS")); // 3 NURBS
+    }
+    if(typ == 0) {
+        static_cast<CurveTypePopUpButton *>(curveType)->setPosIndexMap({ 0, 1, 4, 2, 3 });
+    } else if (typ == 1) {
+        static_cast<CurveTypePopUpButton *>(curveType)->setPosIndexMap({3});
+    }
     curveType->setSelected(DCT_Linear);
 
     curveType->show();
