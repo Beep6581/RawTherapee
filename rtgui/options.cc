@@ -185,6 +185,10 @@ void Options::updatePaths()
         lastlocalCurvesDir = preferredPath;
     }
 
+    if (lastlocalCurvesDirghs.empty() || !Glib::file_test(lastlocalCurvesDirghs, Glib::FILE_TEST_EXISTS) || !Glib::file_test(lastlocalCurvesDirghs, Glib::FILE_TEST_IS_DIR)) {
+        lastlocalCurvesDirghs = preferredPath;
+    }
+
     if (lastPFCurvesDir.empty() || !Glib::file_test(lastPFCurvesDir, Glib::FILE_TEST_EXISTS) || !Glib::file_test(lastPFCurvesDir, Glib::FILE_TEST_IS_DIR)) {
         lastPFCurvesDir = preferredPath;
     }
@@ -688,6 +692,7 @@ void Options::setDefaults()
     lastDenoiseCurvesDir = "";
     lastWaveletCurvesDir = "";
     lastlocalCurvesDir = "";
+    lastlocalCurvesDirghs = "";
     lastPFCurvesDir = "";
     lastHsvCurvesDir = "";
     lastToneCurvesDir = "";
@@ -2309,6 +2314,7 @@ void Options::readFromFile(Glib::ustring fname)
                 safeDirGet(keyFile, "Dialogs", "LastDenoiseCurvesDir", lastDenoiseCurvesDir);
                 safeDirGet(keyFile, "Dialogs", "LastWaveletCurvesDir", lastWaveletCurvesDir);
                 safeDirGet(keyFile, "Dialogs", "LastlocalCurvesDir", lastlocalCurvesDir);
+                safeDirGet(keyFile, "Dialogs", "LastlocalCurvesDirghs", lastlocalCurvesDirghs);
 
                 safeDirGet(keyFile, "Dialogs", "LastPFCurvesDir", lastPFCurvesDir);
                 safeDirGet(keyFile, "Dialogs", "LastHsvCurvesDir", lastHsvCurvesDir);
@@ -2807,6 +2813,7 @@ void Options::saveToFile(Glib::ustring fname)
         keyFile.set_string("Dialogs", "LastDenoiseCurvesDir", lastDenoiseCurvesDir);
         keyFile.set_string("Dialogs", "LastWaveletCurvesDir", lastWaveletCurvesDir);
         keyFile.set_string("Dialogs", "LastlocalCurvesDir", lastlocalCurvesDir);
+        keyFile.set_string("Dialogs", "LastlocalCurvesDirghs", lastlocalCurvesDirghs);
         keyFile.set_string("Dialogs", "LastPFCurvesDir", lastPFCurvesDir);
         keyFile.set_string("Dialogs", "LastHsvCurvesDir", lastHsvCurvesDir);
         keyFile.set_string("Dialogs", "LastBWCurvesDir", lastBWCurvesDir);

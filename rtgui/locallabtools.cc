@@ -4301,7 +4301,7 @@ LocallabShadow::LocallabShadow():
     ghs_smooth(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_GHS_SMOOTH")))),
     ghs_inv(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_GHS_INV")))),
     ghsMode(Gtk::manage(new MyComboBoxText())),
-    ghsCurveEditorG(new CurveEditorGroup(options.lastlocalCurvesDir, "", 1)),
+    ghsCurveEditorG(new CurveEditorGroup(options.lastlocalCurvesDirghs, "", 1)),
     ghsshape(static_cast<DiagonalCurveEditor*>(ghsCurveEditorG->addCurve(CT_Diagonal, "GHS S Curve", ghsMode, false, false, 1))),//curve init only for support GHS S curve - not used 
     expgradsh(Gtk::manage(new MyExpander(false, M("TP_LOCALLAB_EXPGRAD")))),
     strSH(Gtk::manage(new Adjuster(M("TP_LOCALLAB_GRADSTR"), -4., 4., 0.05, 0.))),
