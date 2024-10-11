@@ -1664,10 +1664,10 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                         locallListener->cieChanged(locallcielc,params->locallab.selspot); 
                     }
                     locallListener->sigChanged(locallciesig,params->locallab.selspot);
-                    if (params->locallab.spots.at(sp).expshadhigh && params->locallab.spots.at(sp).shMethod == "ghs"  && params->locallab.spots.at(sp).ghs_D > 0.) {
-                        locallListener->ghsChanged(locallshgsh,params->locallab.selspot);
+                    if (params->locallab.spots.at(sp).expshadhigh && params->locallab.spots.at(sp).shMethod == "ghs") {
+                        locallListener->ghsChanged(locallshgsh,params->locallab.selspot);//curve 
+                        locallListener->ghsbwChanged(locallshgshbw,params->locallab.selspot);//Black and White point
                     }
-                    locallListener->ghsbwChanged(locallshgshbw,params->locallab.selspot);
 
                     /*
                     if(params->locallab.spots.at(sp).colorscope != 0) {//compatibility with old method in controlspotpanel
