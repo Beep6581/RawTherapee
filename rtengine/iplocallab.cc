@@ -17400,8 +17400,9 @@ void ImProcFunctions::Lab_Local(
                                 }
                                 ghsbpwp[0] = bpnb;
                                 ghsbpwp[1] = wpnb;
-                                
-                               // printf("BPnb=%i WPnb=%i\n", ghsbpwp[0], ghsbpwp[1]);
+                                if (settings->verbose) {
+                                    printf("BPnb=%i WPnb=%i\n", ghsbpwp[0], ghsbpwp[1]);
+                                }
                                 
                         }
                         if(met ==0  || met == 1) {//RGB mode

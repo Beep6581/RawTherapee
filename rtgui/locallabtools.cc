@@ -4297,7 +4297,7 @@ LocallabShadow::LocallabShadow():
     ghs_HP(Gtk::manage(new Adjuster(M("TP_LOCALLAB_GHS_HP"), 0.0, 1.0, 0.00001, 1.0))),
     BP_Frame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_GHS_BLACKPOINT_FRAME")))),
     ghs_BLP(Gtk::manage(new Adjuster(M("TP_LOCALLAB_GHS_BLP"), -0.2, 1.0, 0.0001, 0.0))),
-    ghs_HLP(Gtk::manage(new Adjuster(M("TP_LOCALLAB_GHS_HLP"), 0.3, 3.0, 0.0001, 1.0))),
+    ghs_HLP(Gtk::manage(new Adjuster(M("TP_LOCALLAB_GHS_HLP"), 0.2002, 3.0, 0.0001, 1.0))),
     ghsbpwpLabels(Gtk::manage(new Gtk::Label("---"))),
     ghs_smooth(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_GHS_SMOOTH")))),
     ghs_inv(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_GHS_INV")))),
@@ -5970,7 +5970,7 @@ void LocallabShadow::updateShadowGUI2()
         for (const auto multiplier : multipliersh) {
             multiplier->hide();
         }
-
+       // ghsCurveEditorG->set_sensitive(false);
         gamFrame->hide();
         detailSH->hide();
         tePivot->hide();
