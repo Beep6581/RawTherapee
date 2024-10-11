@@ -1402,7 +1402,18 @@ void Locallab::ghsChanged(const std::vector<locallabshGHS> &shghs, int selspot)
 
 }
 
+void Locallab::ghsbwChanged(const std::vector<locallabshGHSbw> &shghsbw, int selspot)
+{
+    sh_ghsbw = shghsbw;
+    int bw[2];
+    if (selspot < (int) sh_ghsbw.size()) {
+        for(int i=0; i < 2; i++) {
+            bw[i] = sh_ghsbw.at(selspot).ghsbw[i];
+        }
+    }
+        expshadhigh.updateghsbw(bw[0], bw[1]);
 
+}
 void Locallab::cieChanged(const std::vector<locallabcieLC> &cielc, int selspot)
 {
     // Saving transmitted min/max data

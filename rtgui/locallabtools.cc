@@ -4297,7 +4297,8 @@ LocallabShadow::LocallabShadow():
     ghs_HP(Gtk::manage(new Adjuster(M("TP_LOCALLAB_GHS_HP"), 0.0, 1.0, 0.00001, 1.0))),
     BP_Frame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_GHS_BLACKPOINT_FRAME")))),
     ghs_BLP(Gtk::manage(new Adjuster(M("TP_LOCALLAB_GHS_BLP"), -0.2, 1.0, 0.0001, 0.0))),
-    ghs_HLP(Gtk::manage(new Adjuster(M("TP_LOCALLAB_GHS_HLP"), 0.3, 2.0, 0.0001, 1.0))),
+    ghs_HLP(Gtk::manage(new Adjuster(M("TP_LOCALLAB_GHS_HLP"), 0.3, 3.0, 0.0001, 1.0))),
+    ghsbpwpLabels(Gtk::manage(new Gtk::Label("---"))),
     ghs_smooth(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_GHS_SMOOTH")))),
     ghs_inv(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_GHS_INV")))),
     ghsMode(Gtk::manage(new MyComboBoxText())),
@@ -4416,6 +4417,8 @@ https://www.ghsastro.co.uk/doc/tools/GeneralizedHyperbolicStretch/GeneralizedHyp
     ghs_HP->setAdjusterListener(this);
     ghs_BLP->setAdjusterListener(this);
     ghs_HLP->setAdjusterListener(this);
+    setExpandAlignProperties(ghsbpwpLabels, true, false, Gtk::ALIGN_CENTER, Gtk::ALIGN_START);
+    
     ghs_SP->setLogScale(10, 0);
     ghs_BLP->setLogScale(10, -0.2);
     ghs_smoothConn = ghs_smooth->signal_toggled().connect(sigc::mem_fun(*this, &LocallabShadow::ghs_smoothChanged));
@@ -4526,6 +4529,7 @@ https://www.ghsastro.co.uk/doc/tools/GeneralizedHyperbolicStretch/GeneralizedHyp
     ToolParamBlock* const BPBox = Gtk::manage(new ToolParamBlock());
     BPBox->pack_start(*ghs_BLP);
     BPBox->pack_start(*ghs_HLP);
+    BPBox->pack_start(*ghsbpwpLabels);
     BPBox->pack_start(*ghs_smooth);
     BP_Frame->add(*BPBox);
     ghsBox->pack_start(*BP_Frame);
@@ -5432,6 +5436,25 @@ void LocallabShadow::updateghs(double g0i, double g0, double g5i, double g5, dou
         return false;
     }
    );
+}
+
+void LocallabShadow::updateghsbw(int bp, int wp)
+{
+    idle_register.add(
+    [this, bp, wp]() -> bool {
+        GThreadLock lock; // All GUI access from idle_add callbacks or separate thread HAVE to be protected
+
+        ghsbpwpLabels->set_text(
+            Glib::ustring::compose(M("TP_LOCALLAB_GHSBPWP"),
+                                   Glib::ustring::format(std::fixed, std::setprecision(0), bp),
+                                   Glib::ustring::format(std::fixed, std::setprecision(0), wp))
+        );
+
+        enableListener();
+        return false;
+    }
+   );
+    
 }
 
 void LocallabShadow::curveChanged(CurveEditor* ce)

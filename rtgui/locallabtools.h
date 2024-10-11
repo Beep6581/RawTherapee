@@ -577,6 +577,8 @@ private:
     Gtk::Frame* const BP_Frame;
     Adjuster* const ghs_BLP;
     Adjuster* const ghs_HLP;
+    Gtk::Label* const ghsbpwpLabels;
+
     Gtk::CheckButton* const ghs_smooth;
     Gtk::CheckButton* const ghs_inv;
     MyComboBoxText* ghsMode;
@@ -641,7 +643,7 @@ public:
     void updateghs(double g0i, double g0, double g5i, double g5, double g10i, double g10, double g15i, double g15, double g20i, double g20, double g25i, double g25, double g30i, double g30,
         double g35i, double g35, double g40i, double g40, double g45i, double g45, double g50i, double g50, double g55i, double g55, double g60i, double g60, double g65i, double g65, double g70i,
         double g70, double g75i, double g75, double g80i, double g80, double g85i, double g85, double g90i, double g90, double g95i, double g95, double g100i, double g100 /*double *gx*/);
-
+    void updateghsbw(int bp, int wp);
     void setDefaultExpanderVisibility() override;
     void disableListener() override;
     void enableListener() override;

@@ -136,6 +136,8 @@ private:
 
     std::vector<locallabshGHS> sh_ghs;
 
+    std::vector<locallabshGHSbw> sh_ghsbw;
+
     std::vector<locallabsetLC> set_lc;
 
     std::vector<locallabcieSIG> cie_sig;
@@ -180,6 +182,9 @@ public:
 
     // Locallab SH GHS tool Curve S GHS function
     void ghsChanged(const std::vector<locallabshGHS> &shghs, int selspot) override;
+
+    // Locallab SH GHS tool Black point & White point GHS function
+    void ghsbwChanged(const std::vector<locallabshGHSbw> &shghsbw, int selspot) override;
 
     // Locallab Log Encoding and Cam16 autocompute function
     void ciebefChanged(const std::vector<locallabcieBEF> &ciebef, int selspot) override;

@@ -1149,6 +1149,7 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
             std::vector<LocallabListener::locallabRetiMinMax> locallretiminmax;
             std::vector<LocallabListener::locallabcieLC> locallcielc;
             std::vector<LocallabListener::locallabshGHS> locallshgsh;
+            std::vector<LocallabListener::locallabshGHSbw> locallshgshbw;
             std::vector<LocallabListener::locallabsetLC> locallsetlc;
             std::vector<LocallabListener::locallabcieSIG> locallciesig;
             huerefs.resize(params->locallab.spots.size());
@@ -1398,6 +1399,10 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                 float Lhighresi46 = 0.f;
                 float Lnresi46 = 0.f;
                 float ghscur[42];
+                int ghsbpwp[2];
+                ghsbpwp[0] = 0;
+                ghsbpwp[1] = 0;
+                
 
                 Glib::ustring prof = params->icm.workingProfile;
                 if(params->locallab.spots.at(sp).complexcie == 2) {
@@ -1461,7 +1466,7 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                               minCD, maxCD, mini, maxi, Tmean, Tsigma, Tmin, Tmax,
                               meantm, stdtm, meanreti, stdreti, fab, maxicam, rdx, rdy, grx, gry, blx, bly, meanx, meany, meanxe, meanye, prim, ill, contsig, lightsig,
                               highresi, nresi, highresi46, nresi46, Lhighresi, Lnresi, Lhighresi46, Lnresi46, 
-                              ghscur
+                              ghscur, ghsbpwp 
 );
 
 
@@ -1584,6 +1589,13 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                 */
                 locallshgsh.push_back(locshghs);
 
+                LocallabListener::locallabshGHSbw locshghsbw;//ghs S curve
+                    for(int j = 0; j < 2; j++) {
+                        locshghsbw.ghsbw[j] = ghsbpwp[j];
+                    }
+                locallshgshbw.push_back(locshghsbw);
+
+
                 // Recalculate references after
                 if (params->locallab.spots.at(sp).spotMethod == "exc") {
                     ipf.calc_ref(sp, reserv.get(), reserv.get(), 0, 0, pW, pH, scale, huerefblu, chromarefblu, lumarefblu, huer, chromar, lumar, sobeler, avg, locwavCurveden, locwavdenutili);
@@ -1655,6 +1667,7 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                     if (params->locallab.spots.at(sp).expshadhigh && params->locallab.spots.at(sp).shMethod == "ghs"  && params->locallab.spots.at(sp).ghs_D > 0.) {
                         locallListener->ghsChanged(locallshgsh,params->locallab.selspot);
                     }
+                    locallListener->ghsbwChanged(locallshgshbw,params->locallab.selspot);
 
                     /*
                     if(params->locallab.spots.at(sp).colorscope != 0) {//compatibility with old method in controlspotpanel

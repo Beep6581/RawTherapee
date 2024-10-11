@@ -14382,7 +14382,7 @@ void ImProcFunctions::Lab_Local(
     float& minCD, float& maxCD, float& mini, float& maxi, float& Tmean, float& Tsigma, float& Tmin, float& Tmax,
     float& meantm, float& stdtm, float& meanreti, float& stdreti, float &fab,float &maxicam, float &rdx, float &rdy, float &grx, float &gry, float &blx, float &bly, float &meanx, float &meany, float &meanxe, float &meanye, int &prim, int &ill, float &contsig, float &lightsig,
     float& highresi, float& nresi, float& highresi46, float& nresi46, float& Lhighresi, float& Lnresi, float& Lhighresi46, float& Lnresi46,
-    float *ghscur
+    float *ghscur, int *ghsbpwp
 
 
 
@@ -17343,8 +17343,12 @@ void ImProcFunctions::Lab_Local(
                             if(shiftblackpoint < 0.f) {
                                 shiftblackpoint2 = 0.f;
                             }
+                            int bpnb = 0;
+                            int wpnb = 0;
+
+
 #ifdef _OPENMP
-        #   pragma omp parallel for schedule(dynamic,16) if (multiThread)
+        #   pragma omp parallel for reduction(+:bpnb, wpnb) if (multiThread)  //for schedule(dynamic,16)
 #endif
                             for (int i = 0; i < bfh; ++i)
                                 for (int j = 0; j < bfw; ++j) {
@@ -17356,7 +17360,7 @@ void ImProcFunctions::Lab_Local(
                                         Ro = (r - shiftblackpoint2)/(shiftwhitepoint - shiftblackpoint2);
                                         Go = (g - shiftblackpoint2)/(shiftwhitepoint - shiftblackpoint2);
                                         Bo = (b - shiftblackpoint2)/(shiftwhitepoint - shiftblackpoint2);
-                                        if(Ro > shiftwhitepoint) {
+                                        /*if(Ro > shiftwhitepoint) {
                                             Ro = 1.f;
                                         }
                                         if(Go > shiftwhitepoint) {
@@ -17365,6 +17369,7 @@ void ImProcFunctions::Lab_Local(
                                         if(Bo > shiftwhitepoint) {
                                             Bo = 1.f;
                                         }
+                                       */
                                     } else {
                                         Ro = (shiftblackpoint2) + r * (shiftwhitepoint - shiftblackpoint2);
                                         Go = (shiftblackpoint2) + g * (shiftwhitepoint - shiftblackpoint2);
@@ -17382,10 +17387,22 @@ void ImProcFunctions::Lab_Local(
                                         }
                                         */
                                     }
+                                    if(Ro < 0.f || Go < 0.f || Bo < 0.f) {
+                                        bpnb++;
+                                    }
+                                    if(Ro > 1.f || Go > 1.f || Bo > 1.f) {
+                                        wpnb++;
+                                    }
+                                    
                                     tmpImage->r(i, j) = rtengine::max(0.00001f, Ro * 65535.f);//0.00001f to avoid crash
                                     tmpImage->g(i, j) = rtengine::max(0.00001f, Go * 65535.f);
                                     tmpImage->b(i, j) = rtengine::max(0.00001f, Bo * 65535.f);
                                 }
+                                ghsbpwp[0] = bpnb;
+                                ghsbpwp[1] = wpnb;
+                                
+                               // printf("BPnb=%i WPnb=%i\n", ghsbpwp[0], ghsbpwp[1]);
+                                
                         }
                         if(met ==0  || met == 1) {//RGB mode
 #ifdef _OPENMP
