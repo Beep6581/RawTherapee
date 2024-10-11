@@ -4418,7 +4418,7 @@ https://www.ghsastro.co.uk/doc/tools/GeneralizedHyperbolicStretch/GeneralizedHyp
     ghs_BLP->setAdjusterListener(this);
     ghs_HLP->setAdjusterListener(this);
     setExpandAlignProperties(ghsbpwpLabels, true, false, Gtk::ALIGN_CENTER, Gtk::ALIGN_START);
-    
+    ghs_D->setLogScale(10, 0);
     ghs_SP->setLogScale(10, 0);
     ghs_BLP->setLogScale(10, -0.2);
     ghs_smoothConn = ghs_smooth->signal_toggled().connect(sigc::mem_fun(*this, &LocallabShadow::ghs_smoothChanged));
