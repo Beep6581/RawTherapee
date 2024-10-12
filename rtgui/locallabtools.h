@@ -571,7 +571,9 @@ private:
     
     Gtk::Frame* const ghsFrame;
     Adjuster* const ghs_D;
+    Gtk::Frame* const Lab_Frame;
     Adjuster* const ghs_slope;
+    Adjuster* const ghs_chro;
     Adjuster* const ghs_B;
     Adjuster* const ghs_SP;
     Adjuster* const ghs_LP;
@@ -616,6 +618,7 @@ private:
     rtengine::ProcEvent EvlocallabghsMethod;
     rtengine::ProcEvent Evlocallabghs_D;
     rtengine::ProcEvent Evlocallabghs_slope;
+    rtengine::ProcEvent Evlocallabghs_chro;
     rtengine::ProcEvent Evlocallabghs_B;
     rtengine::ProcEvent Evlocallabghs_SP;
     rtengine::ProcEvent Evlocallabghs_LP;

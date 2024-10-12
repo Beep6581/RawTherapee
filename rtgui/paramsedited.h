@@ -586,6 +586,7 @@ public:
         bool ghsMode;
         bool ghs_D;
         bool ghs_slope;
+        bool ghs_chro;
         bool ghs_B;
         bool ghs_SP;
         bool ghs_LP;

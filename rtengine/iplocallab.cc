@@ -17335,34 +17335,14 @@ void ImProcFunctions::Lab_Local(
                         lab2rgb(*bufexpfin, *tmpImage, params->icm.workingProfile);
                         Glib::ustring prof = params->icm.workingProfile;
                         float ghsslop = params->locallab.spots.at(sp).ghs_slope;
+                        float ghschro = params->locallab.spots.at(sp).ghs_chro;
+                       // printf("ghschro=%f \n", (double) ghschro);
                         rtengine::GammaValues g_a; //gamma parameters
                         float gamma1 = 3.0f; //params->locallab.spots.at(sp).shargam;
 
                         double pwr1 = 1.0 / (double) 3.0;//default 3.0 - gamma Lab
                         double ts1 = ghsslop;//always the same 'slope' in the extreme shadows - slope Lab
                         rtengine::Color::calcGamma(pwr1, ts1, g_a); // call to calcGamma with selected gamma and slope
-/*
-                    if (gamma1 != 1.f) {
-#ifdef _OPENMP
-                        #   pragma omp parallel for schedule(dynamic,16) if (multiThread)
-#endif
-
-                        for (int y = 0; y < bfh; ++y) {
-                            int x = 0;
-#ifdef __SSE2__
-
-                            for (; x < bfw - 3; x += 4) {
-                                STVFU(bufexpfin->L[y][x], F2V(32768.f) * igammalog(LVFU(bufexpfin->L[y][x]) / F2V(32768.f), F2V(gamma1), F2V(ts1), F2V(g_a[2]), F2V(g_a[4])));
-                            }
-
-#endif
-
-                            for (; x < bfw; ++x) {
-                                bufexpfin->L[y][x] = 32768.f * igammalog(bufexpfin->L[y][x] / 32768.f, gamma1, ts1, g_a[2], g_a[4]);
-                            }
-                        }
-                    }
-*/                        
                         
                         if(shiftblackpoint < 0.f) {//change only Black point with positives values for in some cases out of gamut values
                             //rgb value can be very weakly negatives (eg working space sRGB in some rare cases) - tone_eqblack prevents it
@@ -17392,32 +17372,10 @@ void ImProcFunctions::Lab_Local(
                                         Ro = (r - shiftblackpoint2)/(shiftwhitepoint - shiftblackpoint2);
                                         Go = (g - shiftblackpoint2)/(shiftwhitepoint - shiftblackpoint2);
                                         Bo = (b - shiftblackpoint2)/(shiftwhitepoint - shiftblackpoint2);
-                                        /*if(Ro > shiftwhitepoint) {
-                                            Ro = 1.f;
-                                        }
-                                        if(Go > shiftwhitepoint) {
-                                            Go = 1.f;
-                                        }
-                                        if(Bo > shiftwhitepoint) {
-                                            Bo = 1.f;
-                                        }
-                                       */
                                     } else {
                                         Ro = (shiftblackpoint2) + r * (shiftwhitepoint - shiftblackpoint2);
                                         Go = (shiftblackpoint2) + g * (shiftwhitepoint - shiftblackpoint2);
                                         Bo = (shiftblackpoint2) + b * (shiftwhitepoint - shiftblackpoint2);
-                                        //there is also clamp call by GHT
-                                        /*
-                                        if(Ro > shiftwhitepoint) {
-                                            Ro = 1.f;
-                                        }
-                                        if(Go > shiftwhitepoint) {
-                                            Go = 1.f;
-                                        }
-                                        if(Bo > shiftwhitepoint) {
-                                            Bo = 1.f;
-                                        }
-                                        */
                                     }
                                     if(Ro < 0.f || Go < 0.f || Bo < 0.f) {
                                         bpnb++;
@@ -17492,14 +17450,49 @@ void ImProcFunctions::Lab_Local(
                         } else if(met == 2) {// Luminance Lab mode
                             const std::unique_ptr<LabImage> labtemp(new LabImage(bfw, bfh));
                             rgb2lab(*tmpImage, *labtemp, params->icm.workingProfile);
+                            const float satreal = ghschro;
+                
+                            DiagonalCurve color_satur({
+                                DCT_NURBS,
+                                0, 0,
+                                0.2, 0.2f + satreal / 250.f,
+                                0.6, rtengine::min(1.f, 0.6f + satreal / 250.f),
+                                1, 1
+                            });
+
+                            DiagonalCurve color_saturmoins({
+                                DCT_NURBS,
+                                0, 0,
+                                0.1f - satreal / 150.f, 0.1f,
+                                rtengine::min(1.f, 0.7f - satreal / 300.f), 0.7,
+                                1, 1
+                            });
+
                             for (int i = 0; i < bfh; ++i)
                                 for (int j = 0; j < bfw; ++j) {
                                     float lLab = labtemp->L[i][j]/32768.f;
+                                    float alab = labtemp->a[i][j];
+                                    float blab = labtemp->b[i][j];
+                                    if(ghschro!= 0.f) { //Chromaticity
+                                        float Chprov = std::sqrtf(SQR(alab) + SQR(blab));
+                                        float2 sincosval;
+                                        sincosval.y = Chprov == 0.0f ? 1.f : alab / Chprov;
+                                        sincosval.x = Chprov == 0.0f ? 0.f : blab / Chprov;
+                                        if(ghschro > 0.f){
+                                            Chprov = static_cast<float>(color_satur.getVal(LIM01(Chprov / 35000.f))) * 35000.f;
+                                        } else {
+                                            Chprov = static_cast<float>(color_saturmoins.getVal(LIM01(Chprov / 35000.f))) * 35000.f;
+                                        }
+                                        alab = Chprov * sincosval.y;
+                                        blab = Chprov * sincosval.x;
+                                    }
                                     lLab = gammalog(lLab, gamma1, ts1, g_a[3], g_a[4]);
                                     lLab = GHT(lLab, B, D, LP, SP, HP, c, strtype);
                                     lLab = igammalog(lLab, gamma1, ts1, g_a[2], g_a[4]);
 
                                     labtemp->L[i][j] = lLab * 32768.f;
+                                    labtemp->a[i][j] = alab;
+                                    labtemp->b[i][j] = blab;
                                 }
                             lab2rgb(*labtemp, *tmpImage, params->icm.workingProfile);
                         }
