@@ -4369,6 +4369,7 @@ https://www.ghsastro.co.uk/doc/tools/GeneralizedHyperbolicStretch/GeneralizedHyp
 */
     ghsMethod->append(M("TP_LOCALLAB_GHSRGBLUM"));
     ghsMethod->append(M("TP_LOCALLAB_GHSRGBSTD"));
+    ghsMethod->append(M("TP_LOCALLAB_GHSLAB"));
     ghsMethod->append(M("TP_LOCALLAB_GHSLUM"));
     ghsMethod->append(M("TP_LOCALLAB_GHSSAT"));
     ghsMethod->append(M("TP_LOCALLAB_GHSHUE"));
@@ -4891,12 +4892,14 @@ void LocallabShadow::read(const rtengine::procparams::ProcParams* pp, const Para
             ghsMethod->set_active(0);
         } else if (spot.ghsMethod == "rgbstd") {
             ghsMethod->set_active(1);
-        } else if (spot.ghsMethod == "lum") {
+        } else if (spot.ghsMethod == "llab") {
             ghsMethod->set_active(2);
-        } else if (spot.ghsMethod == "sat") {
+        } else if (spot.ghsMethod == "lum") {
             ghsMethod->set_active(3);
-        } else if (spot.ghsMethod == "hue") {
+        } else if (spot.ghsMethod == "sat") {
             ghsMethod->set_active(4);
+        } else if (spot.ghsMethod == "hue") {
+            ghsMethod->set_active(5);
         }
 
         if (spot.ghsMode == "lin") {
@@ -4995,10 +4998,12 @@ void LocallabShadow::write(rtengine::procparams::ProcParams* pp, ParamsEdited* p
         } else if (ghsMethod->get_active_row_number() == 1) {
             spot.ghsMethod = "rgbstd";
         } else if (ghsMethod->get_active_row_number() == 2) {
-            spot.ghsMethod = "lum";
+            spot.ghsMethod = "llab";
         } else if (ghsMethod->get_active_row_number() == 3) {
-            spot.ghsMethod = "sat";
+            spot.ghsMethod = "lum";
         } else if (ghsMethod->get_active_row_number() == 4) {
+            spot.ghsMethod = "sat";
+        } else if (ghsMethod->get_active_row_number() == 5) {
             spot.ghsMethod = "hue";
         }
 
@@ -5714,8 +5719,12 @@ void LocallabShadow::updateMaskBackground(const double normChromar, const double
         } else if (ghsMethod->get_active_row_number() == 1) {
            ghsshape->updateLocallabBackground(normrgb);
         } else if (ghsMethod->get_active_row_number() == 2) {
-           ghsshape->updateLocallabBackground(normChromar);
+           ghsshape->updateLocallabBackground(normLumar);
         } else if (ghsMethod->get_active_row_number() == 3) {
+           ghsshape->updateLocallabBackground(normrgb);
+        } else if (ghsMethod->get_active_row_number() == 4) {
+           ghsshape->updateLocallabBackground(normChromar);
+        } else if (ghsMethod->get_active_row_number() == 5) {
            ghsshape->updateLocallabBackground(normHuer);
         }
         return false;

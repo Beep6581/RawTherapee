@@ -17318,12 +17318,14 @@ void ImProcFunctions::Lab_Local(
                             met = 0;
                         } else if (params->locallab.spots.at(sp).ghsMethod == "rgbstd") {//mode RGB standard
                             met = 1;
-                        } else if (params->locallab.spots.at(sp).ghsMethod == "lum") {
+                        } else if (params->locallab.spots.at(sp).ghsMethod == "llab") {//Mode Lab
                             met = 2;
-                        } else if (params->locallab.spots.at(sp).ghsMethod == "sat") {
+                        } else if (params->locallab.spots.at(sp).ghsMethod == "lum") {// L hsl
                             met = 3;
-                        } else if (params->locallab.spots.at(sp).ghsMethod == "hue") {
+                        } else if (params->locallab.spots.at(sp).ghsMethod == "sat") {// sat hsl
                             met = 4;
+                        } else if (params->locallab.spots.at(sp).ghsMethod == "hue") {// hue hsl
+                            met = 5;
                         }
                         
                         const ght_compute_params c = GHT_setup(B, D, LP, SP, HP, strtype);//setup system with entries
@@ -17433,7 +17435,7 @@ void ImProcFunctions::Lab_Local(
                                     tmpImage->g(i, j) = rtengine::max(0.00001f, Go * 65535.f);
                                     tmpImage->b(i, j) = rtengine::max(0.00001f, Bo * 65535.f);
                                 }
-                        } else {//Luminance and Saturation
+                        } else if(met ==3 || met == 4 || met == 5) {//Luminance Saturation Hue HSL
 #ifdef _OPENMP
         #   pragma omp parallel for schedule(dynamic,16) if (multiThread)
 #endif
@@ -17444,11 +17446,11 @@ void ImProcFunctions::Lab_Local(
                                     float b = tmpImage->b(i, j);
                                     float h, s, l;
                                     Color::rgb2hsl(r, g, b, h, s, l);//maybe we could use LCH..but C is unbound and H in -PI + PI
-                                    if(met == 3) {//saturation
+                                    if(met == 4) {//saturation
                                         s = GHT(s, B, D, LP, SP, HP, c, strtype);
-                                    } else if (met == 2) {//luminance HSL
+                                    } else if (met == 3) {//luminance HSL
                                         l = GHT(l, B, D, LP, SP, HP, c, strtype);
-                                    } else if (met == 4) {//hue
+                                    } else if (met == 5) {//hue
                                         h = GHT(h, B, D, LP, SP, HP, c, strtype);
                                     }
                                     float R, G, B;
@@ -17457,6 +17459,16 @@ void ImProcFunctions::Lab_Local(
                                     tmpImage->g(i, j) = rtengine::max(0.00001f, G);
                                     tmpImage->b(i, j) = rtengine::max(0.00001f, B);
                                 }
+                        } else if(met == 2) {// Luminance Lab mode
+                            const std::unique_ptr<LabImage> labtemp(new LabImage(bfw, bfh));
+                            rgb2lab(*tmpImage, *labtemp, params->icm.workingProfile);
+                            for (int i = 0; i < bfh; ++i)
+                                for (int j = 0; j < bfw; ++j) {
+                                    float lLab = labtemp->L[i][j]/32768.f;
+                                    lLab = GHT(lLab, B, D, LP, SP, HP, c, strtype);
+                                    labtemp->L[i][j] = lLab * 32768.f;
+                                }
+                            lab2rgb(*labtemp, *tmpImage, params->icm.workingProfile);
                         }
                         //Draw diagonal GHS curve - init 20 points for more precision
                         if (params->locallab.spots.at(sp).ghsMode == "ghs") {//S Curve GHS
