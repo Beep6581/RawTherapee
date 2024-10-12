@@ -17474,7 +17474,7 @@ void ImProcFunctions::Lab_Local(
                                     float alab = labtemp->a[i][j];
                                     float blab = labtemp->b[i][j];
                                     if(ghschro!= 0.f) { //Chromaticity
-                                        float Chprov = std::sqrtf(SQR(alab) + SQR(blab));
+                                        float Chprov = std::sqrt(SQR(alab) + SQR(blab));
                                         float2 sincosval;
                                         sincosval.y = Chprov == 0.0f ? 1.f : alab / Chprov;
                                         sincosval.x = Chprov == 0.0f ? 0.f : blab / Chprov;
