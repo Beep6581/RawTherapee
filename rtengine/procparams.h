@@ -1236,6 +1236,7 @@ struct LocallabParams {
         Glib::ustring ghsMethod; // rgb, lum, sat
         Glib::ustring ghsMode; // lin, ghs
         double ghs_D;
+        double ghs_slope;
         double ghs_B;
         double ghs_SP;
         double ghs_LP;

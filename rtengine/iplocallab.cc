@@ -17334,6 +17334,36 @@ void ImProcFunctions::Lab_Local(
                         tmpImage = new Imagefloat(bfw, bfh);
                         lab2rgb(*bufexpfin, *tmpImage, params->icm.workingProfile);
                         Glib::ustring prof = params->icm.workingProfile;
+                        float ghsslop = params->locallab.spots.at(sp).ghs_slope;
+                        rtengine::GammaValues g_a; //gamma parameters
+                        float gamma1 = 3.0f; //params->locallab.spots.at(sp).shargam;
+
+                        double pwr1 = 1.0 / (double) 3.0;//default 3.0 - gamma Lab
+                        double ts1 = ghsslop;//always the same 'slope' in the extreme shadows - slope Lab
+                        rtengine::Color::calcGamma(pwr1, ts1, g_a); // call to calcGamma with selected gamma and slope
+/*
+                    if (gamma1 != 1.f) {
+#ifdef _OPENMP
+                        #   pragma omp parallel for schedule(dynamic,16) if (multiThread)
+#endif
+
+                        for (int y = 0; y < bfh; ++y) {
+                            int x = 0;
+#ifdef __SSE2__
+
+                            for (; x < bfw - 3; x += 4) {
+                                STVFU(bufexpfin->L[y][x], F2V(32768.f) * igammalog(LVFU(bufexpfin->L[y][x]) / F2V(32768.f), F2V(gamma1), F2V(ts1), F2V(g_a[2]), F2V(g_a[4])));
+                            }
+
+#endif
+
+                            for (; x < bfw; ++x) {
+                                bufexpfin->L[y][x] = 32768.f * igammalog(bufexpfin->L[y][x] / 32768.f, gamma1, ts1, g_a[2], g_a[4]);
+                            }
+                        }
+                    }
+*/                        
+                        
                         if(shiftblackpoint < 0.f) {//change only Black point with positives values for in some cases out of gamut values
                             //rgb value can be very weakly negatives (eg working space sRGB in some rare cases) - tone_eqblack prevents it
                             //also change black value to help "ghs" and avoid noise
@@ -17465,7 +17495,10 @@ void ImProcFunctions::Lab_Local(
                             for (int i = 0; i < bfh; ++i)
                                 for (int j = 0; j < bfw; ++j) {
                                     float lLab = labtemp->L[i][j]/32768.f;
+                                    lLab = gammalog(lLab, gamma1, ts1, g_a[3], g_a[4]);
                                     lLab = GHT(lLab, B, D, LP, SP, HP, c, strtype);
+                                    lLab = igammalog(lLab, gamma1, ts1, g_a[2], g_a[4]);
+
                                     labtemp->L[i][j] = lLab * 32768.f;
                                 }
                             lab2rgb(*labtemp, *tmpImage, params->icm.workingProfile);

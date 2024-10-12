@@ -568,8 +568,10 @@ private:
     Adjuster* const sloSH;
 
     MyComboBoxText* const ghsMethod;
+    
     Gtk::Frame* const ghsFrame;
     Adjuster* const ghs_D;
+    Adjuster* const ghs_slope;
     Adjuster* const ghs_B;
     Adjuster* const ghs_SP;
     Adjuster* const ghs_LP;
@@ -613,6 +615,7 @@ private:
     rtengine::ProcEvent EvlocallabTePivot;
     rtengine::ProcEvent EvlocallabghsMethod;
     rtengine::ProcEvent Evlocallabghs_D;
+    rtengine::ProcEvent Evlocallabghs_slope;
     rtengine::ProcEvent Evlocallabghs_B;
     rtengine::ProcEvent Evlocallabghs_SP;
     rtengine::ProcEvent Evlocallabghs_LP;
