@@ -4682,6 +4682,7 @@ void LocallabShadow::updateguishad(int spottype)
                 if (shMethod->get_active_row_number() == 2) {
                    inverssh->hide();
                    inverssh->set_active(false);
+                   expgradsh->hide();
                 }
                 updateGUIToMode(static_cast<modeType>(complexity->get_active_row_number()));
             }
@@ -5516,6 +5517,7 @@ void LocallabShadow::enabledChanged()
 void LocallabShadow::convertParamToNormal()
 {
     const LocallabParams::LocallabSpot defSpot;
+ //   const int mode = complexity->get_active_row_number();
 
     // Disable all listeners
     disableListener();
@@ -5524,6 +5526,10 @@ void LocallabShadow::convertParamToNormal()
         ghsMode->set_active(0);
     } else if (defSpot.ghsMode == "ghs") {
         ghsMode->set_active(1);
+    }
+    if (shMethod->get_active_row_number() == 2) {
+        expgradsh->hide();
+        strSH->setValue(defSpot.strSH);
     }
 
     // Set hidden GUI widgets in Normal mode to default spot values
@@ -5546,6 +5552,10 @@ void LocallabShadow::convertParamToSimple()
 
     // Disable all listeners
     disableListener();
+    if (shMethod->get_active_row_number() == 2) {
+        expgradsh->hide();
+        strSH->setValue(defSpot.strSH);
+    }
 
     // Set hidden specific GUI widgets in Simple mode to default spot values
     gamSH->setValue(defSpot.gamSH);
@@ -5553,6 +5563,7 @@ void LocallabShadow::convertParamToSimple()
     strSH->setValue(defSpot.strSH);
     angSH->setValue(defSpot.angSH);
     featherSH->setValue(defSpot.featherSH);
+    strSH->setValue(defSpot.strSH);
     showmaskSHMethod->set_active(0);
     showmaskSHMethodinv->set_active(0);
     enaSHMask->set_active(defSpot.enaSHMask);
@@ -5575,6 +5586,8 @@ void LocallabShadow::convertParamToSimple()
 
 void LocallabShadow::updateGUIToMode(const modeType new_type)
 {
+    const LocallabParams::LocallabSpot defSpot;
+    
     switch (new_type) {
         case Simple:
             // Expert and Normal mode widgets are hidden in Simple mode
@@ -5586,6 +5599,10 @@ void LocallabShadow::updateGUIToMode(const modeType new_type)
             maskusables->hide();
             maskunusables->hide();
             decays->hide();
+            if (shMethod->get_active_row_number() == 2) {
+                expgradsh->hide();
+                strSH->setValue(defSpot.strSH);
+            }
 
             break;
 
@@ -5607,6 +5624,7 @@ void LocallabShadow::updateGUIToMode(const modeType new_type)
                 gamFrame->hide();
             }
 
+
             if (enaSHMask->get_active()) {
                 maskusables->show();
                 maskunusables->hide();
@@ -5619,6 +5637,11 @@ void LocallabShadow::updateGUIToMode(const modeType new_type)
             if (!inverssh->get_active()) { // Keep widget hidden when inverssh is toggled
                 expgradsh->show();
                 exprecovs->show();
+            }
+
+            if (shMethod->get_active_row_number() == 2) {
+                expgradsh->hide();
+                strSH->setValue(defSpot.strSH);
             }
 
             expmasksh->show();
@@ -5638,9 +5661,18 @@ void LocallabShadow::updateGUIToMode(const modeType new_type)
                 gamFrame->hide();
             }
 
+            if (shMethod->get_active_row_number() == 2) {
+                expgradsh->hide();
+                strSH->setValue(defSpot.strSH);
+            }
+
             if (!inverssh->get_active()) { // Keep widget hidden when inverssh is toggled
                 expgradsh->show();
                 exprecovs->show();
+            }
+            if (shMethod->get_active_row_number() == 2) {
+                expgradsh->hide();
+                strSH->setValue(defSpot.strSH);
             }
             if (enaSHMask->get_active()) {
                 maskusables->show();
@@ -5696,6 +5728,9 @@ void LocallabShadow::shMethodChanged()
 
     // Update shadow highlight GUI according to shmethod combobox state
     updateShadowGUI2();
+    if (shMethod->get_active_row_number() == 2) {
+        expgradsh->hide();
+    }
 
     if (isLocActivated && exp->getEnabled()) {
         if (listener) {
@@ -5882,6 +5917,7 @@ void LocallabShadow::enaSHMaskChanged()
 void LocallabShadow::updateShadowGUI1()
 {
     const int mode = complexity->get_active_row_number();
+    const LocallabParams::LocallabSpot defSpot;
 
     // Update shadow highlight GUI according to inverssh button state
     if (inverssh->get_active()) {
@@ -5900,6 +5936,10 @@ void LocallabShadow::updateShadowGUI1()
             exprecovs->show();
         }
         reparsh->show();
+        if (shMethod->get_active_row_number() == 2) {
+            expgradsh->hide();
+            strSH->setValue(defSpot.strSH);
+        }
 
         showmaskSHMethod->show();
         showmaskSHMethodinv->hide();
@@ -5966,6 +6006,7 @@ void LocallabShadow::updateShadowGUI2()
         sh_radius->hide();
         ghsFrame->hide();
         ghsMethod->hide();
+        expgradsh->show();
     } else if (shMethod->get_active_row_number() == 2) {
         for (const auto multiplier : multipliersh) {
             multiplier->hide();
@@ -5983,6 +6024,7 @@ void LocallabShadow::updateShadowGUI2()
         ghsMethod->show();
         inverssh->hide();
         inverssh->set_active(false);
+        expgradsh->hide();
     }
 }
 
