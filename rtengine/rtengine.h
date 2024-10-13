@@ -476,6 +476,7 @@ public:
     };
 
     struct locallabshGHS {//To draw GHS  S curve
+       int licur;
        double ghsc[42];
     /*   double ghs_0i;
        double ghs_0;

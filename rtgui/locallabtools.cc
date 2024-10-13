@@ -5163,6 +5163,9 @@ void LocallabShadow::adjusterChanged(Adjuster* a, double newval)
         }
 
         if (a == ghs_D) {
+            if(ghs_D->getValue() > 0.) {
+                ghsMode->set_active(1);
+            }
             if (listener) {
                 listener->panelChanged(Evlocallabghs_D,
                                        ghs_D->getTextValue() + " (" + escapeHtmlChars(getSpotName()) + ")");
@@ -5420,13 +5423,13 @@ void LocallabShadow::adjusterChanged(Adjuster* a, double newval)
 }
 
 
-void LocallabShadow::updateghs(double g0i, double g0, double g5i, double g5, double g10i, double g10, double g15i, double g15, double g20i, double g20, double g25i, double g25, double g30i, double g30,
+void LocallabShadow::updateghs(int lincur, double g0i, double g0, double g5i, double g5, double g10i, double g10, double g15i, double g15, double g20i, double g20, double g25i, double g25, double g30i, double g30,
         double g35i, double g35, double g40i, double g40, double g45i, double g45, double g50i, double g50, double g55i, double g55, double g60i, double g60, double g65i, double g65, double g70i,
         double g70, double g75i, double g75, double g80i, double g80, double g85i, double g85, double g90i, double g90, double g95i, double g95, double g100i, double g100 /* double *gx */)
 
 {
     idle_register.add(
-    [this, g0i, g0, g5i, g5, g10i, g10, g15i, g15, g20i, g20, g25i, g25, g30i, g30, g35i, g35, g40i, g40, g45i, g45, g50i,
+    [this, lincur, g0i, g0, g5i, g5, g10i, g10, g15i, g15, g20i, g20, g25i, g25, g30i, g30, g35i, g35, g40i, g40, g45i, g45, g50i,
         g50, g55i, g55, g60i, g60, g65i, g65, g70i, g70, g75i, g75, g80i, g80, g85i, g85, g90i, g90, g95i, g95, g100i, g100 /* gx */]() -> bool {
         /* I don't know how to do for *gx instead of list all g0i, etc. */
         GThreadLock lock;
@@ -5477,7 +5480,13 @@ void LocallabShadow::updateghs(double g0i, double g0, double g5i, double g5, dou
         curvghs[42] = g100;
 
         ghsshape->setCurve(curvghs);
+        if(lincur == 0) {
+            ghs_D->setValue(0.);
+        }
         enableListener();
+        if(lincur == 0) {
+            adjusterChanged(ghs_D, 0.);
+        }
         return false;
     }
    );
@@ -5571,11 +5580,12 @@ void LocallabShadow::convertParamToNormal()
     } else if (defSpot.ghsMode == "ghs") {
         ghsMode->set_active(1);
     }
+    
     if (shMethod->get_active_row_number() == 2) {
         expgradsh->hide();
         strSH->setValue(defSpot.strSH);
     }
-
+    
     // Set hidden GUI widgets in Normal mode to default spot values
     blurSHde->setValue((double)defSpot.blurSHde);
     lapmaskSH->setValue(defSpot.lapmaskSH);
@@ -5604,7 +5614,6 @@ void LocallabShadow::convertParamToSimple()
     // Set hidden specific GUI widgets in Simple mode to default spot values
     gamSH->setValue(defSpot.gamSH);
     sloSH->setValue(defSpot.sloSH);
-    strSH->setValue(defSpot.strSH);
     angSH->setValue(defSpot.angSH);
     featherSH->setValue(defSpot.featherSH);
     strSH->setValue(defSpot.strSH);
@@ -5705,10 +5714,6 @@ void LocallabShadow::updateGUIToMode(const modeType new_type)
                 gamFrame->hide();
             }
 
-            if (shMethod->get_active_row_number() == 2) {
-                expgradsh->hide();
-                strSH->setValue(defSpot.strSH);
-            }
 
             if (!inverssh->get_active()) { // Keep widget hidden when inverssh is toggled
                 expgradsh->show();
