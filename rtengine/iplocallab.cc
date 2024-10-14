@@ -17337,7 +17337,6 @@ void ImProcFunctions::Lab_Local(
                         Glib::ustring prof = params->icm.workingProfile;
                         float ghsslop = params->locallab.spots.at(sp).ghs_slope;
                         float ghschro = params->locallab.spots.at(sp).ghs_chro;
-                       // printf("ghschro=%f \n", (double) ghschro);
                         rtengine::GammaValues g_a; //gamma parameters
                         float gamma1 = 3.0f; //params->locallab.spots.at(sp).shargam;
 
@@ -17448,12 +17447,12 @@ void ImProcFunctions::Lab_Local(
                                     tmpImage->g(i, j) = rtengine::max(0.00001f, G);
                                     tmpImage->b(i, j) = rtengine::max(0.00001f, B);
                                 }
-                        } else if(met == 2) {// Luminance Lab mode
+                        } else if(met == 2) {// Luminance chromaticity Lab mode
                             const std::unique_ptr<LabImage> labtemp(new LabImage(bfw, bfh));
                             rgb2lab(*tmpImage, *labtemp, params->icm.workingProfile);
                             const float satreal = ghschro;
                 
-                            DiagonalCurve color_satur({//curve for smoothing chroma more
+                            DiagonalCurve color_satur({//curve for smoothing chroma ++
                                 DCT_NURBS,
                                 0, 0,
                                 0.2, 0.2f + satreal / 250.f,
@@ -17461,7 +17460,7 @@ void ImProcFunctions::Lab_Local(
                                 1, 1
                             });
 
-                            DiagonalCurve color_saturmoins({//curve for smoothing chroma less
+                            DiagonalCurve color_saturmoins({//curve for smoothing chroma --
                                 DCT_NURBS,
                                 0, 0,
                                 0.1f - satreal / 150.f, 0.1f,
@@ -17474,28 +17473,28 @@ void ImProcFunctions::Lab_Local(
                                     float lLab = labtemp->L[i][j]/32768.f;
                                     float alab = labtemp->a[i][j];
                                     float blab = labtemp->b[i][j];
-                                   // if(ghschro!= 0.f) { //Chromaticity
-                                        float Chprov = std::sqrt(SQR(alab) + SQR(blab));
-                                        float2 sincosval;
-                                        sincosval.y = Chprov == 0.0f ? 1.f : alab / Chprov;
-                                        sincosval.x = Chprov == 0.0f ? 0.f : blab / Chprov;
-                                        if(ghschro > 0.f){
-                                            Chprov = static_cast<float>(color_satur.getVal(LIM01(Chprov / 35000.f))) * 35000.f;
-                                        } else {
-                                            Chprov = static_cast<float>(color_saturmoins.getVal(LIM01(Chprov / 35000.f))) * 35000.f;
-                                        }
-                                        float chl = LIM01(Chprov / 35000.f);
-                                        chl = GHT(chl, B, D, LP, SP, HP, c, strtype);//Chromaticity GHS
-                                        Chprov = chl * 35000.f;
-                                        alab = Chprov * sincosval.y;
-                                        blab = Chprov * sincosval.x;
-                                   // }
+                                    //Chromaticity
+                                    float Chprov = std::sqrt(SQR(alab) + SQR(blab));
+                                    float2 sincosval;
+                                    sincosval.y = Chprov == 0.0f ? 1.f : alab / Chprov;
+                                    sincosval.x = Chprov == 0.0f ? 0.f : blab / Chprov;
+                                    if(ghschro > 0.f){
+                                        Chprov = static_cast<float>(color_satur.getVal(LIM01(Chprov / 35000.f))) * 35000.f;
+                                    } else {
+                                        Chprov = static_cast<float>(color_saturmoins.getVal(LIM01(Chprov / 35000.f))) * 35000.f;
+                                    }
+                                    float chl = LIM01(Chprov / 35000.f);//in case of very strong chromaticity
+                                    chl = GHT(chl, B, D, LP, SP, HP, c, strtype);//Chromaticity GHS
+                                    Chprov = chl * 35000.f;
+                                    alab = Chprov * sincosval.y;
+                                    blab = Chprov * sincosval.x;
+                                    //Luminance with new slope
                                     lLab = gammalog(lLab, gamma1, ts1, g_a[3], g_a[4]);//slope factor
-                                    lLab = GHT(lLab, B, D, LP, SP, HP, c, strtype);
-                                    lLab = igammalog(lLab, gamma1, ts1, g_a[2], g_a[4]);
+                                    lLab = GHT(lLab, B, D, LP, SP, HP, c, strtype);//luminance GHS
+                                    lLab = igammalog(lLab, gamma1, ts1, g_a[2], g_a[4]);//inverse slope factor
 
                                     labtemp->L[i][j] = lLab * 32768.f;
-                                    labtemp->a[i][j] = alab;
+                                    labtemp->a[i][j] = alab;//restore Lab values
                                     labtemp->b[i][j] = blab;
                                 }
                             lab2rgb(*labtemp, *tmpImage, params->icm.workingProfile);
