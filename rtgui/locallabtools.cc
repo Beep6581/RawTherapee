@@ -4293,7 +4293,7 @@ LocallabShadow::LocallabShadow():
     ghs_D(Gtk::manage(new Adjuster(M("TP_LOCALLAB_GHS_D"), 0., 10.0, 0.001, 0.0))),
     Lab_Frame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_GHSLABFRA")))),
     ghs_slope(Gtk::manage(new Adjuster(M("TP_LOCALLAB_GHS_SLOPE"), 1.0, 50.0, 0.01, 9.03296))),
-    ghs_chro(Gtk::manage(new Adjuster(M("TP_LOCALLAB_GHS_CHRO"), -20., 100.0, 0.1, 0.))),
+    ghs_chro(Gtk::manage(new Adjuster(M("TP_LOCALLAB_GHS_CHRO"), -20., 100.0, 0.001, 0.))),
     ghs_B(Gtk::manage(new Adjuster(M("TP_LOCALLAB_GHS_B"), -5.0, 15.0, 0.001, 0.0))),
     ghs_SP(Gtk::manage(new Adjuster(M("TP_LOCALLAB_GHS_SP"), 0.0, 1.0, 0.00001, 0.03))),
     ghs_LP(Gtk::manage(new Adjuster(M("TP_LOCALLAB_GHS_LP"), 0.0, 1.0, 0.00001, 0.0))),

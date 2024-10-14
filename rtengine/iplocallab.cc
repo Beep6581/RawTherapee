@@ -17474,7 +17474,7 @@ void ImProcFunctions::Lab_Local(
                                     float lLab = labtemp->L[i][j]/32768.f;
                                     float alab = labtemp->a[i][j];
                                     float blab = labtemp->b[i][j];
-                                    if(ghschro!= 0.f) { //Chromaticity
+                                   // if(ghschro!= 0.f) { //Chromaticity
                                         float Chprov = std::sqrt(SQR(alab) + SQR(blab));
                                         float2 sincosval;
                                         sincosval.y = Chprov == 0.0f ? 1.f : alab / Chprov;
@@ -17489,7 +17489,7 @@ void ImProcFunctions::Lab_Local(
                                         Chprov = chl * 35000.f;
                                         alab = Chprov * sincosval.y;
                                         blab = Chprov * sincosval.x;
-                                    }
+                                   // }
                                     lLab = gammalog(lLab, gamma1, ts1, g_a[3], g_a[4]);//slope factor
                                     lLab = GHT(lLab, B, D, LP, SP, HP, c, strtype);
                                     lLab = igammalog(lLab, gamma1, ts1, g_a[2], g_a[4]);
