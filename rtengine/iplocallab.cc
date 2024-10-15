@@ -17442,6 +17442,7 @@ void ImProcFunctions::Lab_Local(
                                         apply_sat(Ro, Go, Bo, fgh, gh);//always apply saturation
 
                                     } else if (met == 1) {
+                                        float gh = norm(r, g, b, wprof);//Calculate Luminance in function working profile Wprof
                                         r = rtengine::max(r, noise);
                                         g = rtengine::max(g, noise);
                                         b = rtengine::max(b, noise);
@@ -17449,6 +17450,8 @@ void ImProcFunctions::Lab_Local(
                                         Ro = GHT(r, B, D, LP, SP, HP, c, strtype);//ghs R RGB standard
                                         Go = GHT(g, B, D, LP, SP, HP, c, strtype);//ghs G RGB standard
                                         Bo = GHT(b, B, D, LP, SP, HP, c, strtype);//ghs B RGB standard
+                                        float fgh = 0.333f * ((Ro / r) + (Go / g) + (Bo /b));//linear average of the 3 channels
+                                        apply_sat(Ro, Go, Bo, fgh, gh);//always apply saturation
                                     }
                                     tmpImage->r(i, j) = rtengine::max(0.00001f, Ro * 65535.f);//0.00001f to avoid crash
                                     tmpImage->g(i, j) = rtengine::max(0.00001f, Go * 65535.f);
@@ -17464,7 +17467,7 @@ void ImProcFunctions::Lab_Local(
                                     float g = tmpImage->g(i, j);
                                     float b = tmpImage->b(i, j);
                                     float h, s, l;
-                                    Color::rgb2hsl(r, g, b, h, s, l);//maybe we could use LCH..but C is unbound and H in -PI + PI
+                                    Color::rgb2hsl(r, g, b, h, s, l);
                                     if(met == 4) {//saturation
                                         s = GHT(s, B, D, LP, SP, HP, c, strtype);
                                     } else if (met == 3) {//luminance HSL
@@ -17524,7 +17527,7 @@ void ImProcFunctions::Lab_Local(
                                     lLab = gammalog(lLab, gamma1, ts1, g_a[3], g_a[4]);//slope factor
                                     lLab = rtengine::max(lLab, noise);
 
-                                    lLab = GHT(lLab, B, D, LP, SP, HP, c, strtype);//luminance GHS
+                                    lLab = GHT(lLab, B, D, LP, SP, HP, c, strtype);//Luminance GHS
                                     lLab = igammalog(lLab, gamma1, ts1, g_a[2], g_a[4]);//inverse slope factor
 
                                     labtemp->L[i][j] = lLab * 32768.f;
