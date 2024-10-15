@@ -2692,6 +2692,7 @@ void ImProcFunctions::log_encode(Imagefloat *rgb, struct local_params & lp, bool
         [=](float s, float c) -> float
         {
             if (c > noise) {
+
                 return 1.f - min(std::abs(s) / c, 1.f);
             } else {
                 return 0.f;
@@ -17292,7 +17293,6 @@ void ImProcFunctions::Lab_Local(
                         // GHT filter ported from Siril - help with ART CTL thanks to Alberto Griggio
                         TMatrix wprof = ICCStore::getInstance()->workingSpaceMatrix(params->icm.workingProfile);
 
-                       // D /= sk;
                         float B = params->locallab.spots.at(sp).ghs_B;//Local intensity 
                         float LP = params->locallab.spots.at(sp).ghs_LP;//Protect shadows
                         float SP = params->locallab.spots.at(sp).ghs_SP;//Symmetry point
@@ -17343,7 +17343,8 @@ void ImProcFunctions::Lab_Local(
                         double pwr1 = 1.0 / (double) 3.0;//default 3.0 - gamma Lab
                         double ts1 = ghsslop;//always the same 'slope' in the extreme shadows - slope Lab
                         rtengine::Color::calcGamma(pwr1, ts1, g_a); // call to calcGamma with selected gamma and slope
-                        
+                        const float noise = pow_F(2.f, -16.f);//GHS - do not process very low values ​​which are probably noise.
+                       
                         if(shiftblackpoint < 0.f) {//change only Black point with positives values for in some cases out of gamut values
                             //rgb value can be very weakly negatives (eg working space sRGB in some rare cases) - tone_eqblack prevents it
                             //also change black value to help "ghs" and avoid noise
@@ -17396,6 +17397,29 @@ void ImProcFunctions::Lab_Local(
                                 
                         }
                         if(met ==0  || met == 1) {//RGB mode
+                            const auto sf =
+                                [=](float s, float c) -> float
+                                {
+                                    if (c > noise) {
+                                        return 1.f - min(std::abs(s) / c, 1.f);
+                                    } else {
+                                        return 0.f;
+                                    }
+                                };
+ 
+                            const auto apply_sat =
+                                [&](float &r, float &g, float &b, float f, float ll) -> void
+                                {
+                                    float rl = r - ll;
+                                    float gl = g - ll;
+                                    float bl = b - ll;
+                                    float s = intp(max(sf(rl, r), sf(gl, g), sf(bl, b)), pow_F(f, 0.3f) * 0.6f + 0.4f, 1.f);
+                                    r = ll + s * rl;
+                                    g = ll + s * gl;
+                                    b = ll + s * bl;
+                                };
+                       
+                        
 #ifdef _OPENMP
         #   pragma omp parallel for schedule(dynamic,16) if (multiThread)
 #endif
@@ -17409,12 +17433,19 @@ void ImProcFunctions::Lab_Local(
                                     float Bo = 0.f;
                                     if(met == 0) {
                                         float gh = norm(r, g, b, wprof);//Calculate Luminance in function working profile Wprof
+                                        gh = rtengine::max(gh, noise);
                                         float Mgh = GHT(gh, B, D, LP, SP, HP, c, strtype);//ghs transform with "luminance"
                                         float fgh = Mgh / gh;
                                         Ro = r * fgh;//new values for r, g, b
                                         Go = g * fgh;
                                         Bo = b * fgh;
+                                        apply_sat(Ro, Go, Bo, fgh, gh);//always apply saturation
+
                                     } else if (met == 1) {
+                                        r = rtengine::max(r, noise);
+                                        g = rtengine::max(g, noise);
+                                        b = rtengine::max(b, noise);
+
                                         Ro = GHT(r, B, D, LP, SP, HP, c, strtype);//ghs R RGB standard
                                         Go = GHT(g, B, D, LP, SP, HP, c, strtype);//ghs G RGB standard
                                         Bo = GHT(b, B, D, LP, SP, HP, c, strtype);//ghs B RGB standard
@@ -17437,6 +17468,7 @@ void ImProcFunctions::Lab_Local(
                                     if(met == 4) {//saturation
                                         s = GHT(s, B, D, LP, SP, HP, c, strtype);
                                     } else if (met == 3) {//luminance HSL
+                                        l = rtengine::max(l, noise);
                                         l = GHT(l, B, D, LP, SP, HP, c, strtype);
                                     } else if (met == 5) {//hue
                                         h = GHT(h, B, D, LP, SP, HP, c, strtype);
@@ -17479,17 +17511,19 @@ void ImProcFunctions::Lab_Local(
                                     sincosval.y = Chprov == 0.0f ? 1.f : alab / Chprov;
                                     sincosval.x = Chprov == 0.0f ? 0.f : blab / Chprov;
                                     if(ghschro > 0.f){
-                                        Chprov = static_cast<float>(color_satur.getVal(LIM01(Chprov / 35000.f))) * 35000.f;
+                                        Chprov = static_cast<float>(color_satur.getVal(LIM01(Chprov / 35000.f)));
                                     } else {
-                                        Chprov = static_cast<float>(color_saturmoins.getVal(LIM01(Chprov / 35000.f))) * 35000.f;
+                                        Chprov = static_cast<float>(color_saturmoins.getVal(LIM01(Chprov / 35000.f)));
                                     }
-                                    float chl = LIM01(Chprov / 35000.f);//in case of very strong chromaticity
+                                    float chl = LIM01(Chprov);//in case of very very strong chromaticity to be sure no clip
                                     chl = GHT(chl, B, D, LP, SP, HP, c, strtype);//Chromaticity GHS
                                     Chprov = chl * 35000.f;
                                     alab = Chprov * sincosval.y;
                                     blab = Chprov * sincosval.x;
                                     //Luminance with new slope
                                     lLab = gammalog(lLab, gamma1, ts1, g_a[3], g_a[4]);//slope factor
+                                    lLab = rtengine::max(lLab, noise);
+
                                     lLab = GHT(lLab, B, D, LP, SP, HP, c, strtype);//luminance GHS
                                     lLab = igammalog(lLab, gamma1, ts1, g_a[2], g_a[4]);//inverse slope factor
 
