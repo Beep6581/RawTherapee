@@ -296,7 +296,7 @@ FILEBROWSER_SHOWTRASHHINT;Inhalt des Papierkorbs anzeigen.\nTaste: <b>Strg</b> +
 FILEBROWSER_SHOWUNCOLORHINT;Nur unmarkierte Bilder anzeigen.\nTaste: <b>Alt</b> + <b>0</b>
 FILEBROWSER_SHOWUNRANKHINT;Nur unbewertete Bilder anzeigen.\nTaste: <b>Umschalt</b>-<b>0</b>
 FILEBROWSER_THUMBSIZE;Miniaturbildgröße
-FILEBROWSER_UNRANK_TOOLTIP;Bewertung entfernen.\nTaste: <b><b>0</b>
+FILEBROWSER_UNRANK_TOOLTIP;Bewertung entfernen.\nTaste: <b>0</b>
 FILEBROWSER_ZOOMINHINT;Miniaturbilder vergrößern.\n\nIm Multi-Reitermodus:\nTaste: <b>+</b>\nIm Ein-Reitermodus:\nTaste: <b>Alt</b> <b>+</b>
 FILEBROWSER_ZOOMOUTHINT;Miniaturbilder verkleinern.\n\nIm Multi-Reitermodus:\nTaste: <b>-</b>\nIm Ein-Reitermodus:\nTaste: <b>Alt</b> <b>-</b>
 FILECHOOSER_FILTER_ANY;Alle Dateien
