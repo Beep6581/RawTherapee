@@ -3020,7 +3020,7 @@ LocallabParams::LocallabSpot::LocallabSpot() :
     hishow(options.complexity != 2),
     activ(true),
     blwh(false),
-    recurs(false),
+    recurs(true),
     laplac(true),
     deltae(true),
     shortc(false),
@@ -3389,6 +3389,27 @@ LocallabParams::LocallabSpot::LocallabSpot() :
     expshadhigh(false),
     complexshadhigh(0),
     shMethod("tone"),
+    ghsMethod("rgb"),
+    ghsMode("ghs"),
+    ghs_D(0.),
+    ghs_slope(9.03296),
+    ghs_chro(0.0),
+    ghs_B(0.),
+    ghs_SP(0.03),//initialized with a low value to avoid zero
+    ghs_LP(0.),
+    ghs_HP(1.),
+    ghs_LC(30.),
+    ghs_BLP(0.),
+    ghs_HLP(1.),
+    ghs_smooth(false),
+    ghs_inv(false),
+    ghscurve{
+        static_cast<double>(DCT_NURBS),
+        0.0,
+        0.0,
+        1.0,
+        1.0
+    },
     multsh{0, 0, 0, 0, 0, 0},
     highlights(0),
     h_tonalwidth(70),
@@ -5032,6 +5053,21 @@ bool LocallabParams::LocallabSpot::operator ==(const LocallabSpot& other) const
         && expshadhigh == other.expshadhigh
         && complexshadhigh == other.complexshadhigh
         && shMethod == other.shMethod
+        && ghsMethod == other.ghsMethod
+        && ghsMode == other.ghsMode
+        && ghs_D == other.ghs_D
+        && ghs_slope == other.ghs_slope
+        && ghs_chro == other.ghs_chro
+        && ghs_B == other.ghs_B
+        && ghs_SP == other.ghs_SP
+        && ghs_LP == other.ghs_LP
+        && ghs_HP == other.ghs_HP
+        && ghs_LC == other.ghs_LC
+        && ghs_BLP == other.ghs_BLP
+        && ghs_HLP == other.ghs_HLP
+        && ghs_smooth == other.ghs_smooth
+        && ghs_inv == other.ghs_inv
+        && ghscurve == other.ghscurve
         && [this, &other]() -> bool
             {
                 for (int i = 0; i < 6; ++i) {
@@ -6994,6 +7030,21 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
                     saveToKeyfile(!pedited || spot_edited->expshadhigh, "Locallab", "Expshadhigh_" + index_str, spot.expshadhigh, keyFile);
                     saveToKeyfile(!pedited || spot_edited->complexshadhigh, "Locallab", "Complexshadhigh_" + index_str, spot.complexshadhigh, keyFile);
                     saveToKeyfile(!pedited || spot_edited->shMethod, "Locallab", "ShMethod_" + index_str, spot.shMethod, keyFile);
+                    saveToKeyfile(!pedited || spot_edited->ghsMethod, "Locallab", "GhsMethod_" + index_str, spot.ghsMethod, keyFile);
+                    saveToKeyfile(!pedited || spot_edited->ghsMode, "Locallab", "GhsMode_" + index_str, spot.ghsMode, keyFile);
+                    saveToKeyfile(!pedited || spot_edited->ghs_D, "Locallab", "Ghs_D_" + index_str, spot.ghs_D, keyFile);
+                    saveToKeyfile(!pedited || spot_edited->ghs_slope, "Locallab", "Ghs_slope_" + index_str, spot.ghs_slope, keyFile);
+                    saveToKeyfile(!pedited || spot_edited->ghs_chro, "Locallab", "Ghs_chro_" + index_str, spot.ghs_chro, keyFile);
+                    saveToKeyfile(!pedited || spot_edited->ghs_B, "Locallab", "Ghs_B_" + index_str, spot.ghs_B, keyFile);
+                    saveToKeyfile(!pedited || spot_edited->ghs_SP, "Locallab", "Ghs_SP_" + index_str, spot.ghs_SP, keyFile);
+                    saveToKeyfile(!pedited || spot_edited->ghs_LP, "Locallab", "Ghs_LP_" + index_str, spot.ghs_LP, keyFile);
+                    saveToKeyfile(!pedited || spot_edited->ghs_HP, "Locallab", "Ghs_HP_" + index_str, spot.ghs_HP, keyFile);
+                    saveToKeyfile(!pedited || spot_edited->ghs_LC, "Locallab", "Ghs_LC_" + index_str, spot.ghs_LC, keyFile);
+                    saveToKeyfile(!pedited || spot_edited->ghs_BLP, "Locallab", "Ghs_BLP_" + index_str, spot.ghs_BLP, keyFile);
+                    saveToKeyfile(!pedited || spot_edited->ghs_HLP, "Locallab", "Ghs_HLP_" + index_str, spot.ghs_HLP, keyFile);
+                    saveToKeyfile(!pedited || spot_edited->ghs_smooth, "Locallab", "Ghs_smooth_" + index_str, spot.ghs_smooth, keyFile);
+                    saveToKeyfile(!pedited || spot_edited->ghs_inv, "Locallab", "Ghs_inv_" + index_str, spot.ghs_inv, keyFile);
+                    saveToKeyfile(!pedited || spot_edited->ghscurve, "Locallab", "GhsCurve_" + index_str, spot.ghscurve, keyFile);
 
                     for (int j = 0; j < 6; j++) {
                         saveToKeyfile(!pedited || spot_edited->multsh[j], "Locallab", "Multsh" + std::to_string(j) + "_" + index_str, spot.multsh[j], keyFile);
@@ -9326,6 +9377,21 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
 
                 assignFromKeyfile(keyFile, "Locallab", "Complexshadhigh_" + index_str, spot.complexshadhigh, spotEdited.complexshadhigh);
                 assignFromKeyfile(keyFile, "Locallab", "ShMethod_" + index_str, spot.shMethod, spotEdited.shMethod);
+                assignFromKeyfile(keyFile, "Locallab", "GhsMethod_" + index_str, spot.ghsMethod, spotEdited.ghsMethod);
+                assignFromKeyfile(keyFile, "Locallab", "GhsMode_" + index_str, spot.ghsMode, spotEdited.ghsMode);
+                assignFromKeyfile(keyFile, "Locallab", "Ghs_D_" + index_str, spot.ghs_D, spotEdited.ghs_D);
+                assignFromKeyfile(keyFile, "Locallab", "Ghs_slope_" + index_str, spot.ghs_slope, spotEdited.ghs_slope);
+                assignFromKeyfile(keyFile, "Locallab", "Ghs_chro_" + index_str, spot.ghs_chro, spotEdited.ghs_chro);
+                assignFromKeyfile(keyFile, "Locallab", "Ghs_B_" + index_str, spot.ghs_B, spotEdited.ghs_B);
+                assignFromKeyfile(keyFile, "Locallab", "Ghs_SP_" + index_str, spot.ghs_SP, spotEdited.ghs_SP);
+                assignFromKeyfile(keyFile, "Locallab", "Ghs_LP_" + index_str, spot.ghs_LP, spotEdited.ghs_LP);
+                assignFromKeyfile(keyFile, "Locallab", "Ghs_HP_" + index_str, spot.ghs_HP, spotEdited.ghs_HP);
+                assignFromKeyfile(keyFile, "Locallab", "Ghs_LC_" + index_str, spot.ghs_LC, spotEdited.ghs_LC);
+                assignFromKeyfile(keyFile, "Locallab", "Ghs_BLP_" + index_str, spot.ghs_BLP, spotEdited.ghs_BLP);
+                assignFromKeyfile(keyFile, "Locallab", "Ghs_HLP_" + index_str, spot.ghs_HLP, spotEdited.ghs_HLP);
+                assignFromKeyfile(keyFile, "Locallab", "Ghs_smooth_" + index_str, spot.ghs_smooth, spotEdited.ghs_smooth);
+                assignFromKeyfile(keyFile, "Locallab", "Ghs_inv_" + index_str, spot.ghs_inv, spotEdited.ghs_inv);
+                assignFromKeyfile(keyFile, "Locallab", "GhsCurve_" + index_str, spot.ghscurve, spotEdited.ghscurve);
 
                 for (int j = 0; j < 6; j ++) {
                     assignFromKeyfile(keyFile, "Locallab", "Multsh" + std::to_string(j) + "_" + index_str, spot.multsh[j], spotEdited.multsh[j]);
