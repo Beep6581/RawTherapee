@@ -578,6 +578,7 @@ private:
     Adjuster* const ghs_SP;
     Adjuster* const ghs_LP;
     Adjuster* const ghs_HP;
+    Adjuster* const ghs_LC;
     Gtk::Frame* const BP_Frame;
     Adjuster* const ghs_BLP;
     Adjuster* const ghs_HLP;
@@ -623,6 +624,7 @@ private:
     rtengine::ProcEvent Evlocallabghs_SP;
     rtengine::ProcEvent Evlocallabghs_LP;
     rtengine::ProcEvent Evlocallabghs_HP;
+    rtengine::ProcEvent Evlocallabghs_LC;
     rtengine::ProcEvent Evlocallabghs_BLP;
     rtengine::ProcEvent Evlocallabghs_HLP;
     rtengine::ProcEvent Evlocallabghs_smooth;

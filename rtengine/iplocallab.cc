@@ -17560,6 +17560,9 @@ void ImProcFunctions::Lab_Local(
                         rgb2lab(*tmpImage, *bufexpfin, params->icm.workingProfile);
 
                         delete tmpImage;
+                        //local contrast minimum
+                        float rad = params->locallab.spots.at(sp).ghs_LC;
+                        loccont(bfw, bfh, bufexpfin.get(), rad, 15.f, sk);                        
                     }
                 }
                 
