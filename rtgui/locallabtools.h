@@ -578,6 +578,7 @@ private:
     Adjuster* const ghs_SP;
     Adjuster* const ghs_LP;
     Adjuster* const ghs_HP;
+    Gtk::Frame* const LC_Frame;
     Adjuster* const ghs_LC;
     Gtk::Frame* const BP_Frame;
     Adjuster* const ghs_BLP;

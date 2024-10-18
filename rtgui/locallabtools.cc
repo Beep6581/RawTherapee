@@ -4298,7 +4298,8 @@ LocallabShadow::LocallabShadow():
     ghs_SP(Gtk::manage(new Adjuster(M("TP_LOCALLAB_GHS_SP"), 0.0, 1.0, 0.00001, 0.03))),
     ghs_LP(Gtk::manage(new Adjuster(M("TP_LOCALLAB_GHS_LP"), 0.0, 1.0, 0.00001, 0.0))),
     ghs_HP(Gtk::manage(new Adjuster(M("TP_LOCALLAB_GHS_HP"), 0.0, 1.0, 0.00001, 1.0))),
-    ghs_LC(Gtk::manage(new Adjuster(M("TP_LOCALLAB_GHS_LC"), 0.0, 100.0, 0.1, 30.0))),
+    LC_Frame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_GHS_LC_FRAME")))),
+    ghs_LC(Gtk::manage(new Adjuster(M("TP_LOCALLAB_GHS_LC"), 0.0, 100.0, 0.1, 20.0))),
     BP_Frame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_GHS_BLACKPOINT_FRAME")))),
     ghs_BLP(Gtk::manage(new Adjuster(M("TP_LOCALLAB_GHS_BLP"), -0.2, 1.0, 0.0001, 0.0))),
     ghs_HLP(Gtk::manage(new Adjuster(M("TP_LOCALLAB_GHS_HLP"), 0.2002, 3.0, 0.0001, 1.0))),
@@ -4546,7 +4547,11 @@ https://www.ghsastro.co.uk/doc/tools/GeneralizedHyperbolicStretch/GeneralizedHyp
     ghsBox->pack_start(*ghs_SP);
     ghsBox->pack_start(*ghs_LP);
     ghsBox->pack_start(*ghs_HP);
-    ghsBox->pack_start(*ghs_LC);
+    LC_Frame->set_label_align(0.025, 0.5);
+    ToolParamBlock* const LCBox = Gtk::manage(new ToolParamBlock());
+    LCBox->pack_start(*ghs_LC);
+    LC_Frame->add(*LCBox);
+    ghsBox->pack_start(*LC_Frame);    
     BP_Frame->set_label_align(0.025, 0.5);
     ToolParamBlock* const BPBox = Gtk::manage(new ToolParamBlock());
     BPBox->pack_start(*ghs_BLP);
@@ -4793,6 +4798,7 @@ void LocallabShadow::updateAdviceTooltips(const bool showTooltips)
         ghs_SP->set_tooltip_text(M("TP_LOCALLAB_GHS_SP_TOOLTIP"));
         ghs_LP->set_tooltip_text(M("TP_LOCALLAB_GHS_LP_TOOLTIP"));
         ghs_HP->set_tooltip_text(M("TP_LOCALLAB_GHS_HP_TOOLTIP"));
+        ghs_LC->set_tooltip_text(M("TP_LOCALLAB_GHS_LC_TOOLTIP"));
         ghs_BLP->set_tooltip_text(M("TP_LOCALLAB_GHS_BLP_TOOLTIP"));
         ghs_HLP->set_tooltip_text(M("TP_LOCALLAB_GHS_HLP_TOOLTIP"));
         ghs_smooth->set_tooltip_text(M("TP_LOCALLAB_GHS_SMOOTH_TOOLTIP"));
@@ -4842,6 +4848,7 @@ void LocallabShadow::updateAdviceTooltips(const bool showTooltips)
         ghs_SP->set_tooltip_text("");
         ghs_LP->set_tooltip_text("");
         ghs_HP->set_tooltip_text("");
+        ghs_LC->set_tooltip_text("");
         ghs_BLP->set_tooltip_text("");
         ghs_HLP->set_tooltip_text("");
         ghs_smooth->set_tooltip_text("");

@@ -17561,8 +17561,9 @@ void ImProcFunctions::Lab_Local(
 
                         delete tmpImage;
                         //local contrast minimum
-                        float rad = params->locallab.spots.at(sp).ghs_LC;
-                        loccont(bfw, bfh, bufexpfin.get(), rad, 15.f, sk);                        
+                        float rad = 2. * params->locallab.spots.at(sp).ghs_LC;
+                        float stren = 15.f * (1.f + D);//take into account D stretch
+                        loccont(bfw, bfh, bufexpfin.get(), rad, stren , sk);                        
                     }
                 }
                 

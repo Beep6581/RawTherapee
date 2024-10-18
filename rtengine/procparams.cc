@@ -3398,7 +3398,7 @@ LocallabParams::LocallabSpot::LocallabSpot() :
     ghs_SP(0.03),//initialized with a low value to avoid zero
     ghs_LP(0.),
     ghs_HP(1.),
-    ghs_LC(30.),
+    ghs_LC(20.),
     ghs_BLP(0.),
     ghs_HLP(1.),
     ghs_smooth(false),
