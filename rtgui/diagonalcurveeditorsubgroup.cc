@@ -36,7 +36,7 @@
 
 #include "../rtengine/curves.h"
 
-DiagonalCurveEditorSubGroup::DiagonalCurveEditorSubGroup (CurveEditorGroup* prt, Glib::ustring& curveDir) : CurveEditorSubGroup(curveDir)
+DiagonalCurveEditorSubGroup::DiagonalCurveEditorSubGroup (CurveEditorGroup* prt, Glib::ustring& curveDir, int typ) : CurveEditorSubGroup(curveDir)
 {
 
     editedAdjuster = nullptr;
@@ -125,7 +125,6 @@ DiagonalCurveEditorSubGroup::DiagonalCurveEditorSubGroup (CurveEditorGroup* prt,
         customCurveGrid->attach_next_to(*custombbox, *customCurveBox, Gtk::POS_LEFT, 1, 1);
         customCurveGrid->attach_next_to(*customCoordAdjuster, *custombbox, Gtk::POS_BOTTOM, 2, 1);
     }
-
     customCurveGrid->show_all ();
     customCoordAdjuster->hide();
 
@@ -219,6 +218,21 @@ DiagonalCurveEditorSubGroup::DiagonalCurveEditorSubGroup (CurveEditorGroup* prt,
     }
 
     NURBSCurveGrid->show_all ();
+    if(typ == 1) {//for GHS curve... not a curve !
+        editPointNURBS->hide();
+        editNURBS->hide();
+        copyNURBS->hide();
+        pasteNURBS->hide();
+        loadNURBS->hide();
+        saveNURBS->hide();
+    } else if(typ ==0) {
+        editPointNURBS->show();
+        editNURBS->show();
+        copyNURBS->show();
+        pasteNURBS->show();
+        loadNURBS->show();
+        saveNURBS->show();
+    }
     NURBSCoordAdjuster->hide();
 
     saveNURBS->signal_clicked().connect( sigc::mem_fun(*this, &DiagonalCurveEditorSubGroup::savePressed) );
@@ -387,15 +401,17 @@ DiagonalCurveEditorSubGroup::~DiagonalCurveEditorSubGroup()
 /*
  * Add a new curve to the curves list
  */
-DiagonalCurveEditor* DiagonalCurveEditorSubGroup::addCurve(Glib::ustring curveLabel)
+DiagonalCurveEditor* DiagonalCurveEditorSubGroup::addCurve(Glib::ustring curveLabel, int typ)
 {
-    DiagonalCurveEditor* newCE = new DiagonalCurveEditor(curveLabel, parent, this);
-
+    DiagonalCurveEditor* newCE = new DiagonalCurveEditor(curveLabel, parent, this, typ);
+    
     // Initialization of the new curve
+
     storeCurveValues(newCE, getCurveFromGUI(DCT_Spline));
     storeCurveValues(newCE, getCurveFromGUI(DCT_Parametric));
     storeCurveValues(newCE, getCurveFromGUI(DCT_NURBS));
     storeCurveValues(newCE, getCurveFromGUI(DCT_CatumullRom));
+
     return newCE;
 }
 
