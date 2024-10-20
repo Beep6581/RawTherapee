@@ -3637,6 +3637,7 @@ LocallabParams::LocallabSpot::LocallabSpot() :
     nlpat(2),
     nlrad(5),
     nlgam(3.),
+    nliter(1),
     sensiden(60),
     reparden(100.),
     detailthr(50),
@@ -5205,6 +5206,7 @@ bool LocallabParams::LocallabSpot::operator ==(const LocallabSpot& other) const
         && nlpat == other.nlpat
         && nlrad == other.nlrad
         && nlgam == other.nlgam
+        && nliter == other.nliter
         && sensiden == other.sensiden
         && reparden == other.reparden
         && detailthr == other.detailthr
@@ -7180,6 +7182,7 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
                     saveToKeyfile(!pedited || spot_edited->nlpat, "Locallab", "Nlpat_" + index_str, spot.nlpat, keyFile);
                     saveToKeyfile(!pedited || spot_edited->nlrad, "Locallab", "Nlrad_" + index_str, spot.nlrad, keyFile);
                     saveToKeyfile(!pedited || spot_edited->nlgam, "Locallab", "Nlgam_" + index_str, spot.nlgam, keyFile);
+                    saveToKeyfile(!pedited || spot_edited->nliter, "Locallab", "Nliter_" + index_str, spot.nliter, keyFile);
                     saveToKeyfile(!pedited || spot_edited->sensiden, "Locallab", "Sensiden_" + index_str, spot.sensiden, keyFile);
                     saveToKeyfile(!pedited || spot_edited->reparden, "Locallab", "Reparden_" + index_str, spot.reparden, keyFile);
                     saveToKeyfile(!pedited || spot_edited->detailthr, "Locallab", "Detailthr_" + index_str, spot.detailthr, keyFile);
@@ -9578,6 +9581,7 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
                 assignFromKeyfile(keyFile, "Locallab", "Nlpat_" + index_str, spot.nlpat, spotEdited.nlpat);
                 assignFromKeyfile(keyFile, "Locallab", "Nlrad_" + index_str, spot.nlrad, spotEdited.nlrad);
                 assignFromKeyfile(keyFile, "Locallab", "Nlgam_" + index_str, spot.nlgam, spotEdited.nlgam);
+                assignFromKeyfile(keyFile, "Locallab", "Nliter_" + index_str, spot.nliter, spotEdited.nliter);
                 assignFromKeyfile(keyFile, "Locallab", "Sensiden_" + index_str, spot.sensiden, spotEdited.sensiden);
                 assignFromKeyfile(keyFile, "Locallab", "Reparden_" + index_str, spot.reparden, spotEdited.reparden);
                 assignFromKeyfile(keyFile, "Locallab", "Detailthr_" + index_str, spot.detailthr, spotEdited.detailthr);

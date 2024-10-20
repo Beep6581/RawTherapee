@@ -1377,6 +1377,7 @@ struct LocallabParams {
         int nlpat;
         int nlrad;
         double nlgam;
+        int nliter;
         int sensiden;
         double reparden;
         int detailthr;

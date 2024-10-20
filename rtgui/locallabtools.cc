@@ -7681,8 +7681,9 @@ LocallabBlur::LocallabBlur():
     nlstr(Gtk::manage(new Adjuster(M("TP_LOCALLAB_NLLUM"), 0, 100, 1, 0))),
     nldet(Gtk::manage(new Adjuster(M("TP_LOCALLAB_NLDET"), 0, 100, 1, 50))),
     nlpat(Gtk::manage(new Adjuster(M("TP_LOCALLAB_NLPAT"), 1, 5, 1, 2))),
-    nlrad(Gtk::manage(new Adjuster(M("TP_LOCALLAB_NLRAD"), 3, 10, 1, 5))),
+    nlrad(Gtk::manage(new Adjuster(M("TP_LOCALLAB_NLRAD"), 1, 10, 1, 3))),
     nlgam(Gtk::manage(new Adjuster(M("TP_LOCALLAB_NLGAM"), 2., 5., 0.1, 3.))),
+    nliter(Gtk::manage(new Adjuster(M("TP_LOCALLAB_NLITER"), 1., 5., 1., 1.))),
     bilateral(Gtk::manage(new Adjuster(M("TP_LOCALLAB_BILATERAL"), 0, 100, 1, 0))),
     sensiden(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SENSI"), 0, 100, 1, 60))),
     reparden(Gtk::manage(new Adjuster(M("TP_LOCALLAB_LOGREPART"), 1.0, 100.0, 1., 100.0))),
@@ -7715,6 +7716,9 @@ LocallabBlur::LocallabBlur():
     quaHBox(Gtk::manage(new Gtk::Box())),
     csThresholdblur(Gtk::manage(new ThresholdAdjuster(M("TP_LOCALLAB_CSTHRESHOLDBLUR"), 0, 9, 0, 0, 6, 5, 0, false)))
 {
+    auto m = ProcEventMapper::getInstance();
+    Evlocallabnliter = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_NLITER");
+    
     set_orientation(Gtk::ORIENTATION_VERTICAL);
 
     const LocallabParams::LocallabSpot defSpot;
@@ -7882,6 +7886,7 @@ LocallabBlur::LocallabBlur():
     nlpat->setAdjusterListener(this);
     nlrad->setAdjusterListener(this);
     nlgam->setAdjusterListener(this);
+    nliter->setAdjusterListener(this);
 
     sensiden->setAdjusterListener(this);
     reparden->setAdjusterListener(this);
@@ -8029,6 +8034,7 @@ LocallabBlur::LocallabBlur():
     nlbox->pack_start(*nlgam);
     nlbox->pack_start(*nlpat);
     nlbox->pack_start(*nlrad);
+    nlbox->pack_start(*nliter);
     expdenoisenl->add(*nlbox);
 
     wavBox->pack_start(*expdenoisenl);
@@ -8352,6 +8358,7 @@ void LocallabBlur::neutral_pressed ()
     nlpat->setValue(defSpot.nlpat);
     nlrad->setValue(defSpot.nlrad);
     nlgam->setValue(defSpot.nlgam);
+    nliter->setValue(defSpot.nliter);
     sensiden->setValue(defSpot.sensiden);
     quamethod->set_active (0);
     wavshapeden->setCurve(defSpot.locwavcurveden);
@@ -8567,6 +8574,7 @@ void LocallabBlur::read(const rtengine::procparams::ProcParams* pp, const Params
         nlpat->setValue((double)spot.nlpat);
         nlrad->setValue((double)spot.nlrad);
         nlgam->setValue((double)spot.nlgam);
+        nliter->setValue((double)spot.nliter);
         sensiden->setValue((double)spot.sensiden);
 
         if (spot.showmaskblMethodtyp == "blur") {
@@ -8715,6 +8723,7 @@ void LocallabBlur::write(rtengine::procparams::ProcParams* pp, ParamsEdited* ped
         spot.nldet = nldet->getIntValue();
         spot.nlpat = nlpat->getIntValue();
         spot.nlrad = nlrad->getIntValue();
+        spot.nliter = nliter->getIntValue();
         spot.nlgam = nlgam->getValue();
 
         if (showmaskblMethodtyp->get_active_row_number() == 0) {
@@ -8797,6 +8806,7 @@ void LocallabBlur::setDefaults(const rtengine::procparams::ProcParams* defParams
         nldet->setDefault((double)defSpot.nldet);
         nlpat->setDefault((double)defSpot.nlpat);
         nlrad->setDefault((double)defSpot.nlrad);
+        nliter->setDefault((double)defSpot.nliter);
         nlgam->setDefault(defSpot.nlgam);
         sensiden->setDefault((double)defSpot.sensiden);
         strumaskbl->setDefault(defSpot.strumaskbl);
@@ -9090,6 +9100,13 @@ void LocallabBlur::adjusterChanged(Adjuster* a, double newval)
             if (listener) {
                 listener->panelChanged(Evlocallabnlstr,
                                        nlstr->getTextValue() + " (" + escapeHtmlChars(getSpotName()) + ")");
+            }
+        }
+
+        if (a == nliter) {
+            if (listener) {
+                listener->panelChanged(Evlocallabnliter,
+                                       nliter->getTextValue() + " (" + escapeHtmlChars(getSpotName()) + ")");
             }
         }
 

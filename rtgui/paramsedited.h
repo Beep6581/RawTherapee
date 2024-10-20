@@ -726,6 +726,7 @@ public:
         bool nlpat;
         bool nlrad;
         bool nlgam;
+        bool nliter;
         bool sensiden;
         bool reparden;
         bool detailthr;

@@ -1444,6 +1444,7 @@ void ParamsEdited::initFrom(const std::vector<rtengine::procparams::ProcParams>&
                 locallab.spots.at(j).nlpat = locallab.spots.at(j).nlpat && pSpot.nlpat == otherSpot.nlpat;
                 locallab.spots.at(j).nlrad = locallab.spots.at(j).nlrad && pSpot.nlrad == otherSpot.nlrad;
                 locallab.spots.at(j).nlgam = locallab.spots.at(j).nlgam && pSpot.nlgam == otherSpot.nlgam;
+                locallab.spots.at(j).nliter = locallab.spots.at(j).nliter && pSpot.nliter == otherSpot.nliter;
                 locallab.spots.at(j).sensiden = locallab.spots.at(j).sensiden && pSpot.sensiden == otherSpot.sensiden;
                 locallab.spots.at(j).reparden = locallab.spots.at(j).reparden && pSpot.reparden == otherSpot.reparden;
                 locallab.spots.at(j).detailthr = locallab.spots.at(j).detailthr && pSpot.detailthr == otherSpot.detailthr;
@@ -4854,6 +4855,10 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
 
         if (locallab.spots.at(i).nlgam) {
             toEdit.locallab.spots.at(i).nlgam = mods.locallab.spots.at(i).nlgam;
+        }
+
+        if (locallab.spots.at(i).nliter) {
+            toEdit.locallab.spots.at(i).nliter = mods.locallab.spots.at(i).nliter;
         }
 
         if (locallab.spots.at(i).sensiden) {
@@ -8330,6 +8335,7 @@ LocallabParamsEdited::LocallabSpotEdited::LocallabSpotEdited(bool v) :
     nlpat(v),
     nlrad(v),
     nlgam(v),
+    nliter(v),
     sensiden(v),
     reparden(v),
     detailthr(v),
@@ -9109,6 +9115,7 @@ void LocallabParamsEdited::LocallabSpotEdited::set(bool v)
     nlpat = v;
     nlrad = v;
     nlgam = v;
+    nliter = v;
     sensiden = v;
     reparden = v;
     detailthr = v;

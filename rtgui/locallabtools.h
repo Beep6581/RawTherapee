@@ -928,9 +928,12 @@ private:
     Adjuster* const nlpat;
     Adjuster* const nlrad;
     Adjuster* const nlgam;
+    Adjuster* const nliter;
     Adjuster* const bilateral;
     Adjuster* const sensiden;
-    
+
+    rtengine::ProcEvent Evlocallabnliter;
+   
     Adjuster* const reparden;
     Gtk::Button* neutral;
     MyExpander* const expmaskbl;

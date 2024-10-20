@@ -1203,6 +1203,7 @@ struct local_params {
     int nldet;
     int nlpat;
     int nlrad;
+    int nliter;
     float nlgam;
     float noisegam;
     float noiselc;
@@ -2280,6 +2281,7 @@ static void calcLocalParams(int sp, int oW, int oH, const LocallabParams& locall
     lp.nlpat = locallab.spots.at(sp).nlpat;
     lp.nlrad = locallab.spots.at(sp).nlrad;
     lp.nlgam = locallab.spots.at(sp).nlgam;
+    lp.nliter = locallab.spots.at(sp).nliter;
     lp.noisegam = locallab.spots.at(sp).noisegam;
     lp.adjch = (float) locallab.spots.at(sp).adjblur;
     lp.strengt = streng;
@@ -11992,7 +11994,10 @@ void ImProcFunctions::DeNoise(int call, int aut,  bool noiscfactiv, const struct
                     tmp1.b[ir][jr] = original->b[ir][jr];
                 }
             if(lp.nlstr > 0) {
-                NLMeans(tmp1.L, lp.nlstr, lp.nldet, lp.nlpat, lp.nlrad, lp.nlgam, GW, GH, float (sk), multiThread);
+                int iter = lp.nliter;//iterations Nlmeans
+                for(int it = 0; it < iter; it++) {
+                    NLMeans(tmp1.L, lp.nlstr, lp.nldet, lp.nlpat, lp.nlrad, lp.nlgam, GW, GH, float (sk), multiThread);
+                }
             }
 
             float gamma = lp.noisegam;
@@ -13241,7 +13246,10 @@ void ImProcFunctions::DeNoise(int call, int aut,  bool noiscfactiv, const struct
                 }
 
                 if (lp.nlstr > 0) {
-                    NLMeans(bufwv.L, lp.nlstr, lp.nldet, lp.nlpat, lp.nlrad, lp.nlgam, bfw, bfh, 1.f, multiThread);
+                    int iter = lp.nliter;//iterations Nlmeans
+                    for(int it = 0; it < iter; it++) {
+                        NLMeans(bufwv.L, lp.nlstr, lp.nldet, lp.nlpat, lp.nlrad , lp.nlgam, bfw, bfh, 1.f, multiThread);
+                    }
                 }
 
 
