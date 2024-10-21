@@ -6154,9 +6154,12 @@ void calclocalGradientParams(const struct local_params& lp, struct grad_params& 
     float stops = 0.f;
     float angs = 0.f;
     double varfeath = 0.25; //0.01f * lp.feath;
-    double gradient_center_x = lp.xcent; //LIM01((lp.xc - xstart) / bfw);
-    double gradient_center_y = lp.ycent; //LIM01((lp.yc - ystart) / bfh);
-   
+    //double gradient_center_x = lp.xcent; //LIM01((lp.xc - xstart) / bfw);
+    //double gradient_center_y = lp.ycent; //LIM01((lp.yc - ystart) / bfh);
+ 
+    double gradient_center_x = LIM01((lp.xcent * bfw - xstart) / bfw);
+    double gradient_center_y = LIM01((lp.ycent * bfh - ystart) / bfh);
+ 
     if (settings->verbose) {
 //        printf("GCx=%f GCy=%f xcent=%f ycent=%f \n", (double)  (lp.xc - xstart), (double) (lp.yc - ystart), (double) lp.xcent, (double) lp.ycent);   
         printf("fw=%i fh=%i bfw=%i bfh=%i xstart=%f ystrat=%f xend=%f yend=%f xc=%f yc=%f yT=%f xL=%f sk=%i\n", fw, fh, bfw, bfh, (double) xstart, (double) ystart, (double) xend, (double) yend, (double) lp.xc, (double) lp.yc, (double) lp.lyT, (double)lp.lxL,  sk);

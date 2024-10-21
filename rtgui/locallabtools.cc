@@ -8232,6 +8232,7 @@ void LocallabBlur::updateAdviceTooltips(const bool showTooltips)
         nlpat->set_tooltip_text(M("TP_LOCALLAB_NLDENOISENLPAT_TOOLTIP"));
         nlrad->set_tooltip_text(M("TP_LOCALLAB_NLDENOISENLRAD_TOOLTIP"));
         nlgam->set_tooltip_text(M("TP_LOCALLAB_NLDENOISENLGAM_TOOLTIP"));
+        nliter->set_tooltip_text(M("TP_LOCALLAB_NLDENOISENLITER_TOOLTIP"));
         noiselumc->set_tooltip_text(M("TP_LOCALLAB_NOISECHROC_TOOLTIP"));
         expmaskbl->set_tooltip_markup(M("TP_LOCALLAB_MASK_TOOLTIP"));
         showmaskblMethodtyp->set_tooltip_markup(M("TP_LOCALLAB_SHOWMASKTYP_TOOLTIP"));
@@ -8300,6 +8301,7 @@ void LocallabBlur::updateAdviceTooltips(const bool showTooltips)
         nlpat->set_tooltip_text("");
         nlrad->set_tooltip_text("");
         nlgam->set_tooltip_text("");
+        nliter->set_tooltip_text("");
         blurMethod->set_tooltip_markup("");
         expdenoise->set_tooltip_markup("");
         wavshapeden->setTooltip("");

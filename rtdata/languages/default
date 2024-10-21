@@ -3448,6 +3448,7 @@ TP_LOCALLAB_MRONE;None
 TP_LOCALLAB_MRTHR;Original Image
 TP_LOCALLAB_MULTIPL_TOOLTIP;Wide-range tone adjustment: -18EV to +4EV. The first slider acts on very dark tones between -18EV and -6EV. The last slider acts on light tones up to 4EV.
 TP_LOCALLAB_NEIGH;Radius
+TP_LOCALLAB_NLDENOISENLITER_TOOLTIP;Run multiple iterations of Nlmeans. Results are often better with multiple iterations and low Strength.
 TP_LOCALLAB_NLDENOISENLGAM_TOOLTIP;Lower values preserve details and texture, higher values increase denoise.\nIf gamma = 3.0 Luminance 'linear' is used.
 TP_LOCALLAB_NLDENOISENLPAT_TOOLTIP;Use this slider to adapt the amount of denoise to the size of the objects to be processed.
 TP_LOCALLAB_NLDENOISENLRAD_TOOLTIP;Higher values increase denoise at the expense of processing time.
