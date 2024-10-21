@@ -251,7 +251,7 @@ enum class BlurType {
     void idirpyr(LabImage* data_coarse, LabImage* data_fine, int level, LUTf &rangefn_L, LUTf & nrwt_l, LUTf & nrwt_ab,
                  int pitch, int scale, const int luma, const int chroma/*, LUTf & Lcurve, LUTf & abcurve*/);
     //locallab Local adjustments
-    void maskcalccol(bool invmask, bool pde, int bfw, int bfh, int xstart, int ystart, int sk, int cx, int cy, LabImage* bufcolorig, LabImage* bufmaskblurcol, LabImage* originalmaskcol, LabImage* original, LabImage* reserved, int inv, struct local_params & lp,
+    void maskcalccol(bool invmask, bool pde, int bfw, int bfh, int xstart, int ystart, int xend, int yend, int sk, int cx, int cy, LabImage* bufcolorig, LabImage* bufmaskblurcol, LabImage* originalmaskcol, LabImage* original, LabImage* reserved, int inv, struct local_params & lp,
                  float strumask, bool astool,
                  const LocCCmaskCurve & locccmasCurve, bool lcmasutili, 
                  const LocLLmaskCurve & locllmasCurve, bool llmasutili, 
@@ -260,7 +260,7 @@ enum class BlurType {
                  const LUTf& lmasklocalcurve, bool localmaskutili,
                  const LocwavCurve & loclmasCurvecolwav, bool lmasutilicolwav, int level_bl, int level_hl, int level_br, int level_hr,
                  int shortcu, bool delt, const float hueref, const float chromaref, const float lumaref,
-                 float maxdE, float mindE, float maxdElim,  float mindElim, float iterat, float limscope, int scope, bool fftt, float blu_ma, float cont_ma, int indic, float &fab);
+                 float maxdE, float mindE, float maxdElim,  float mindElim, float iterat, float limscope, int scope, bool fftt, float blu_ma, float cont_ma, int indic, float &fab, int fw, int fh);
 
     void avoidcolshi(const struct local_params& lp, int sp, LabImage *transformed, LabImage *reserved, int cy, int cx, int sk);
 
@@ -319,6 +319,7 @@ enum class BlurType {
                 const LUTf& lmasklocalcurve, bool localmaskutili,
                 const LUTf& lmaskexplocalcurve, bool localmaskexputili,
                 const LUTf& lmaskSHlocalcurve, bool localmaskSHutili,
+               // const LUTf& ghslocalcurve, bool localghsutili,
                 const LUTf& lmaskviblocalcurve, bool localmaskvibutili,
                 const LUTf& lmasktmlocalcurve, bool localmasktmutili,
                 LUTf& lmaskretilocalcurve, bool localmaskretiutili,
@@ -367,7 +368,9 @@ enum class BlurType {
                 bool prevDeltaE, int llColorMask, int llColorMaskinv, int llExpMask, int llExpMaskinv, int llSHMask, int llSHMaskinv, int llvibMask, int lllcMask, int llsharMask, int llcbMask, int llretiMask, int llsoftMask, int lltmMask, int llblMask, int lllogMask, int ll_Mask, int llcieMask,
                 float &minCD, float &maxCD, float &mini, float &maxi, float &Tmean, float &Tsigma, float &Tmin, float &Tmax,
                 float& meantm, float& stdtm, float& meanreti, float& stdreti, float &fab, float &maxicam, float &rdx, float &rdy, float &grx, float &gry, float &blx, float &bly, float &meanx, float &meany, float &meanxe, float &meanye, int &prim, int &ill, float &contsig, float &lightsig,
-                float &highresi, float &nresi, float &highresi46, float &nresi46, float &Lhighresi, float &Lnresi, float &Lhighresi46, float &Lnresi46);
+                float &highresi, float &nresi, float &highresi46, float &nresi46, float &Lhighresi, float &Lnresi, float &Lhighresi46, float &Lnresi46,
+                float *ghscur, int *ghsbpwp
+);
     
     void tone_eqcam2(ImProcFunctions *ipf, Imagefloat *rgb, int whits, int blacks, const Glib::ustring &workingProfile, double scale, bool multithread);
     void tone_eqdehaz(ImProcFunctions *ipf, Imagefloat *rgb, int whits, int blacks, const Glib::ustring &workingProfile, double scale, bool multithread);
@@ -387,7 +390,7 @@ enum class BlurType {
         const LocwavCurve & loccompwavCurve, bool loccompwavutili, bool wavcurvecomp, 
         const LocwavCurve & loccomprewavCurve, bool loccomprewavutili, bool wavcurvecompre, 
         const LocwavCurve & locedgwavCurve, bool locedgwavutili,
-        float sigm, float offs,int & maxlvl, float sigmadc, float deltad, float chromalev, float chromablu, bool blurlc, bool blurena, bool levelena, bool comprena, bool compreena, float compress, float thres);
+        float sigm, float offs,int & maxlvl, float sigmadc, float deltad, float chromalev, float chromablu, bool blurlc, bool blurena, bool levelena, bool comprena, bool compreena, float compress, float thres, int fw, int fh);
         
     void wavcont(const struct local_params& lp, float ** tmp, wavelet_decomposition &wdspot, int level_bl, int maxlvl, 
                 const LocwavCurve & loclevwavCurve, bool loclevwavutili, 
