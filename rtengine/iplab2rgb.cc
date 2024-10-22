@@ -31,8 +31,6 @@
 #include "settings.h"
 #include "utils.h"
 
-using namespace std;
-
 namespace rtengine
 {
 
@@ -541,16 +539,18 @@ void ImProcFunctions::gamutcompr( Imagefloat *src, Imagefloat *dst) const
 
     if (params->cg.colorspace == "rec2020") {
         out = Rec2020;
-    } else if  (params->cg.colorspace == "prophoto") { 
+    } else if  (params->cg.colorspace == "prophoto") {
         out = prophoto;
-    } else if  (params->cg.colorspace == "adobe") { 
+    } else if  (params->cg.colorspace == "adobe") {
         out = adobe;
-    } else if  (params->cg.colorspace == "srgb") { 
+    } else if  (params->cg.colorspace == "srgb") {
         out = srgb;
-    } else if  (params->cg.colorspace == "dcip3") { 
+    } else if  (params->cg.colorspace == "dcip3") {
         out = dcip3;
-    } else if  (params->cg.colorspace == "acesp1") { 
+    } else if  (params->cg.colorspace == "acesp1") {
         out = acesp1;
+    } else {
+        out = acesp1; // Should never happen, but just in case.
     }
 
     Matrix inv_out = {};
@@ -571,20 +571,22 @@ void ImProcFunctions::gamutcompr( Imagefloat *src, Imagefloat *dst) const
     }
 
     //parameters from GUI
-    float thc = params->cg.th_c;
-    float thm = params->cg.th_m;
-    float thy = params->cg.th_y;
-    float dc = params->cg.d_c;
-    float dm = params->cg.d_m;
-    float dy = params->cg.d_y;
-    float pw = params->cg.pwr;
-    bool roll = params->cg.rolloff;
+    const auto thc = static_cast<float>(params->cg.th_c);
+    const auto thm = static_cast<float>(params->cg.th_m);
+    const auto thy = static_cast<float>(params->cg.th_y);
+    const auto dc = static_cast<float>(params->cg.d_c);
+    const auto dm = static_cast<float>(params->cg.d_m);
+    const auto dy = static_cast<float>(params->cg.d_y);
+    const auto pw = static_cast<float>(params->cg.pwr);
+    const bool roll = params->cg.rolloff;
 
-    float th[3] = {thc, thm, thy};//set parameter GUI in th
-    float dl[3] = {dc, dm, dy};//set parameter GUI in dl
+    const std::array<float, 3> th{thc, thm, thy};//set parameter GUI in th
+    const std::array<float, 3> dl{dc, dm, dy};//set parameter GUI in dl
 
     const int height = src->getHeight();
     const int width = src->getWidth();
+
+    constexpr float range = 65535.f;
 
 #ifdef _OPENMP
         #   pragma omp parallel for schedule(dynamic,16) if (multiThread)
@@ -592,17 +594,17 @@ void ImProcFunctions::gamutcompr( Imagefloat *src, Imagefloat *dst) const
 
     for (int i = 0; i < height; ++i)
         for (int j = 0; j < width; ++j) {
-            float r = src->r(i, j) / 65535.f;//in interval 0.. 1
-            float g = src->g(i, j) / 65535.f;
-            float b = src->b(i, j) / 65535.f;
-            float rgb_in[3] = {r, g, b};
+            const float r = src->r(i, j) / range;//in interval 0.. 1
+            const float g = src->g(i, j) / range;
+            const float b = src->b(i, j) / range;
+            std::array<float, 3> rgb_in{r, g, b};
             float rout = 0.f;
             float gout = 0.f;
             float bout = 0.f;
             Color::aces_reference_gamut_compression(rgb_in, th, dl, to_out, from_out, pw, roll, rout, gout, bout);
-            dst->r(i, j) = 65535.f * rout;//in interval 0..65535
-            dst->g(i, j) = 65535.f * gout;
-            dst->b(i, j) = 65535.f * bout;
+            dst->r(i, j) = range * rout;//in interval 0..65535
+            dst->g(i, j) = range * gout;
+            dst->b(i, j) = range * bout;
         }
 }
 

@@ -2113,7 +2113,7 @@ float Color::eval_ACEScct_curve(float x, bool forward)
 //functions needs to use ACES
 
 // transpose Matrix
-void Color::transpose(Matrix ma, Matrix &R)
+void Color::transpose(const Matrix &ma, Matrix &R)
 {
     if (&ma == &R) {
         std::swap(R[0][1], R[1][0]);
@@ -2136,7 +2136,7 @@ void Color::transpose(Matrix ma, Matrix &R)
 }
 
 // multiply Matrix x Matrix
-void Color::multip(Matrix ma, Matrix mb, Matrix &R)
+void Color::multip(const Matrix &ma, const Matrix &mb, Matrix &R)
 {
     const bool overwrite = &ma == &R || &mb == &R;
     if (overwrite) {
@@ -2163,16 +2163,16 @@ void Color::multip(Matrix ma, Matrix mb, Matrix &R)
 }
 
 //multiply Matrix
-void Color::mult3(float in[3], Matrix ma, float *out)
+void Color::mult3(std::array<float, 3> &in, const Matrix &ma, std::array<float, 3> &out)
 {
     // Use buffer for result in case in and out overlap.
     std::array<float, 3> buf{0.f, 0.f, 0.f};
     for (int i = 0; i < 3; ++i) {
         for( int j = 0; j < 3; ++j){
-            buf[i] += in[j] * ma[j][i];
+            buf[i] += static_cast<float>(in[j] * ma[j][i]);
         }
     }
-    std::copy(buf.cbegin(), buf.cend(), out);
+    std::copy(buf.cbegin(), buf.cend(), out.begin());
 }
 
 // ACES-style gamut compression
@@ -2200,66 +2200,82 @@ void Color::mult3(float in[3], Matrix ma, float *out)
 //const float PWR = 1.2;
 //https://www.gujinwei.org/research/camspec/
 
-void Color::aces_reference_gamut_compression(float rgb_in[3], float threshold[3], float distance_limit[3], Matrix to_out, Matrix from_out, float pwr, bool rolloff, float &R, float &G, float &B)
+void Color::aces_reference_gamut_compression(
+    const std::array<float, 3> &rgb_in,
+    const std::array<float, 3> &threshold,
+    const std::array<float, 3> &distance_limit,
+    const Matrix &to_out, const Matrix &from_out,
+    float pwr, bool rolloff,
+    float &R, float &G, float &B)
 {
-    R = rgb_in[0];
-    G = rgb_in[1];
-    B = rgb_in[2];
-
-    float rgb[3] = {R,G,B};
+    std::array<float, 3> rgb{rgb_in[0], rgb_in[1], rgb_in[2]};
 
     // Calculate scale so compression function passes through distance limit:
     // (x=distance_limit, y=1)
-    float s[3];
-    for (int i = 0; i < 3; i = i+1) {
+    std::array<float, 3> s;
+    for (unsigned i = 0; i < s.size(); ++i) {
+        // Scale factor: c = (1 - t) / sqrt(l - 1)
         s[i] = (1.0f  - threshold[i]) / sqrt(fmax(1.001f, distance_limit[i]) - 1.0f);
     }
     // target colorspace
-    Color::mult3(rgb, to_out, rgb); 
-    
+    Color::mult3(rgb, to_out, rgb);
+
     // Achromatic axis
-    float ac = fmax(rgb[0], fmax(rgb[1], rgb[2]));
+    const float ac = fmax(rgb[0], fmax(rgb[1], rgb[2]));
 
     // Inverse RGB Ratios: distance from achromatic axis
-    float d[3] = {0.f, 0.f, 0.f};
+    std::array<float, 3> d{0.f, 0.f, 0.f};
     if (ac != 0) {
-        for (int i = 0; i < 3; i = i+1) {
+        for (unsigned i = 0; i < d.size(); ++i) {
             d[i] = (ac - rgb[i]) / fabs(ac);
         }
     }
-    float cd[3] = { d[0], d[1], d[2] }; // Compressed distance
+    std::array<float, 3> cd{d[0], d[1], d[2]}; // Compressed distance
     if (!rolloff) {
         // Parabolic compression function:
         // https://www.desmos.com/calculator/nvhp63hmtj
-        for (int i = 0; i < 3; i = i+1) {
+        // y = { x < t:  x
+        //       x >= t: c sqrt(x - t + c^2 / 4) - c sqrt(c^2 / 4) + t }
+        // The second piece is equal to
+        // c (sqrt(x - t + c^2 / 4) - |c / 2|) + t
+        for (unsigned i = 0; i < cd.size(); ++i) {
             if (d[i] >= threshold[i]) {
-                cd[i] = s[i] * sqrt(d[i] - threshold[i] + s[i]*s[i]/4.0f) -
-                    s[i] * sqrt(s[i] * s[i] / 4.0f) + threshold[i];
+                const float c_2 = s[i] / 2.f;
+                const float c2_4 = c_2 * c_2;
+                cd[i] = s[i] * (sqrt(d[i] - threshold[i] + c2_4) - fabs(c_2)) +
+                        threshold[i];
             }
         }
     } else {
-        for (int i = 0; i < 3; i = i+1) {
-            if (d[i] < threshold[i]) {
-                cd[i] = d[i];// No compression below threshold
-            } else {
+        for (unsigned i = 0; i < cd.size(); ++i) {
+            if (d[i] >= threshold[i]) {
                  // Calculate scale factor for y = 1 intersect
-                float limit = distance_limit[i];
-                float thres = threshold[i];
-                float scale = (limit - thres) / pow(pow((1.0f - thres) / (limit - thres), - pwr) - 1.0f, 1.0f / pwr);
+                const float limit = distance_limit[i];
+                const float thres = threshold[i];
+                //                     l - t
+                // Scale s = --------------------------
+                //           ( ( 1 - t )-p     )(1 / p)
+                //           ( ( ----- )   - 1 )
+                //           ( ( l - t )       )
+                const float scale = (limit - thres) / pow(pow((1.0f - thres) / (limit - thres), - pwr) - 1.0f, 1.0f / pwr);
                 // Normalize distance outside threshold by scale factor
-                float nd = (d[i] - thres) / scale;
-                float po = pow(nd, pwr);
+                // x' = (x - t) / s
+                const float nd = (d[i] - thres) / scale;
+                //                  x'
+                // y = t + s ----------------
+                //           (1 + x'^p)^(1/p)
+                const float po = pow(nd, pwr);
                 cd[i] = thres + scale * nd / (pow(1.0f + po, 1.0f / pwr));
             }
         }
     }
     // Inverse RGB Ratios to RGB
 
-    for (int i = 0; i < 3; i = i+1) {
+    for (unsigned i = 0; i < rgb.size(); ++i) {
         rgb[i] = ac - cd[i] * fabs(ac);
     }
     //working colorspace from_out
-    Color::mult3(rgb, from_out, rgb); 
+    Color::mult3(rgb, from_out, rgb);
     R = rgb[0];
     G = rgb[1];
     B = rgb[2];

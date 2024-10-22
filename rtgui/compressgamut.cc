@@ -39,8 +39,6 @@ Compressgamut::Compressgamut () : FoldableToolPanel(this, TOOL_NAME, M("TP_COMPR
     Evcgthm = m->newEvent(COMPR, "HISTORY_MSG_CG_MAGENTATH");
     Evcgthy = m->newEvent(COMPR, "HISTORY_MSG_CG_YELLOWTH");
     Evcgdc = m->newEvent(COMPR, "HISTORY_MSG_CG_CYANLIM");
-    Evcgdc = m->newEvent(COMPR, "HISTORY_MSG_CG_CYANLIM");
-    Evcgdc = m->newEvent(COMPR, "HISTORY_MSG_CG_CYANLIM");
     Evcgdm = m->newEvent(COMPR, "HISTORY_MSG_CG_MAGENTALIM");
     Evcgdy = m->newEvent(COMPR, "HISTORY_MSG_CG_YELLOWLIM");
     Evcgroll = m->newEvent(COMPR, "HISTORY_MSG_CG_ROLLOFF");
@@ -51,7 +49,7 @@ Compressgamut::Compressgamut () : FoldableToolPanel(this, TOOL_NAME, M("TP_COMPR
 
     Gtk::Frame *iFrame = Gtk::manage(new Gtk::Frame(M("TP_COMPRESSGAMUT_MAIN_COLORSPACE")));
 
-    iFrame->set_label_align(0.025, 0.5);
+    iFrame->set_label_align(0.025f, 0.5);
     iFrame->set_tooltip_markup (M("TP_COMPRESSGAMUT_COLORSPACE_TOOLTIP"));
 
     Gtk::Box *iVBox = Gtk::manage(new Gtk::Box(Gtk::ORIENTATION_VERTICAL));
@@ -78,7 +76,7 @@ Compressgamut::Compressgamut () : FoldableToolPanel(this, TOOL_NAME, M("TP_COMPR
     th_y = Gtk::manage (new Adjuster (M("TP_COMPRESSGAMUT_YELLOWTH"), 0., 0.999, 0.001, 0.880));
 
     Gtk::Frame *thFrame = Gtk::manage(new Gtk::Frame(M("TP_COMPRESSGAMUT_THRESHOLD")));
-    thFrame->set_label_align(0.025, 0.5);
+    thFrame->set_label_align(0.025f, 0.5);
     Gtk::Box *thVBox = Gtk::manage(new Gtk::Box(Gtk::ORIENTATION_VERTICAL));
     thFrame->set_tooltip_markup (M("TP_COMPRESSGAMUT_THRESHOLD_TOOLTIP"));
 
@@ -96,7 +94,7 @@ Compressgamut::Compressgamut () : FoldableToolPanel(this, TOOL_NAME, M("TP_COMPR
     d_y = Gtk::manage (new Adjuster (M("TP_COMPRESSGAMUT_YELLOWLIM"), 1.001, 2.0, 0.001, 1.312));
 
     Gtk::Frame *limFrame = Gtk::manage(new Gtk::Frame(M("TP_COMPRESSGAMUT_LIMIT")));
-    limFrame->set_label_align(0.025, 0.5);
+    limFrame->set_label_align(0.025f, 0.5);
     limFrame->set_tooltip_markup (M("TP_COMPRESSGAMUT_LIMIT_TOOLTIP"));
 
     Gtk::Box *limVBox = Gtk::manage(new Gtk::Box(Gtk::ORIENTATION_VERTICAL));
@@ -112,7 +110,7 @@ Compressgamut::Compressgamut () : FoldableToolPanel(this, TOOL_NAME, M("TP_COMPR
     rolloffconn = rolloff->signal_toggled().connect (sigc::mem_fun (*this, &Compressgamut::rolloff_change));
 
     Gtk::Frame *rollFrame = Gtk::manage(new Gtk::Frame());
-    rollFrame->set_label_align(0.025, 0.5);
+    rollFrame->set_label_align(0.025f, 0.5);
     rollFrame->set_label_widget(*rolloff);
     rolloff->set_active(true); 
     Gtk::Box *rollVBox = Gtk::manage(new Gtk::Box(Gtk::ORIENTATION_VERTICAL));
