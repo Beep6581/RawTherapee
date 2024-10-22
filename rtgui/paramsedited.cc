@@ -3402,7 +3402,7 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
         toEdit.cg.d_m = mods.cg.d_m;
     }
 
-    if (cg.d_c) {
+    if (cg.d_y) {
         toEdit.cg.d_y = mods.cg.d_y;
     }
 
