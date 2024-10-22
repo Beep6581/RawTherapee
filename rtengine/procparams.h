@@ -859,6 +859,28 @@ struct SHParams {
 };
 
 /**
+  * Parameters of the compression gamut
+  */
+struct CGParams {
+    bool    enabled;
+    double  th_c;
+    double  th_m;
+    double  th_y;
+    double  d_c;
+    double  d_m;
+    double  d_y;
+    double  pwr;
+    Glib::ustring colorspace;
+    bool rolloff;
+    
+    CGParams();
+
+    bool operator ==(const CGParams& other) const;
+    bool operator !=(const CGParams& other) const;
+};
+
+
+/**
  * Tone equalizer parameters.
  */
 struct ToneEqualizerParams {
@@ -2725,6 +2747,7 @@ public:
     EPDParams               epd;             ///< Edge Preserving Decomposition parameters
     FattalToneMappingParams fattal;          ///< Fattal02 tone mapping
     SHParams                sh;              ///< Shadow/highlight enhancement parameters
+    CGParams                cg;              ///< Compression gamut
     ToneEqualizerParams     toneEqualizer;   ///< Tone equalizer parameters
     CropParams              crop;            ///< Crop parameters
     CoarseTransformParams   coarse;          ///< Coarse transformation (90, 180, 270 deg rotation, h/v flipping) parameters

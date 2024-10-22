@@ -423,6 +423,192 @@ void ImProcFunctions::preserv(LabImage *nprevl, LabImage *provis, int cw, int ch
         }
 }
 
+
+
+// ACES-style gamut compression
+//
+// tweaked from the original from https://github.com/jedypod/gamut-compress
+// tweaked from CTL in ART thanks to Alberto Griggio
+
+//from ACES https://docs.acescentral.com/specifications/rgc/#appendix-c-illustrations
+// https://docs.acescentral.com/specifications/rgc/#appendix-d-ctl-reference-implementation
+// https://docs.acescentral.com/specifications/rgc/
+// Distance from achromatic which will be compressed to the gamut boundary
+// Values calculated to encompass the encoding gamuts of common digital cinema cameras
+//const float LIM_CYAN =  1.147;
+//const float LIM_MAGENTA = 1.264;
+//const float LIM_YELLOW = 1.312;
+
+//Percentage of the core gamut to protect
+// Values calculated to protect all the colors of the ColorChecker Classic 24 as given by
+// ISO 17321-1 and Ohta (1997)
+//const float THR_CYAN = 0.815;
+//const float THR_MAGENTA = 0.803;
+//const float THR_YELLOW = 0.880;
+
+// Aggressiveness of the compression curve
+//const float PWR = 1.2;
+
+
+void ImProcFunctions::gamutcompr( Imagefloat *src, Imagefloat *dst) const
+{
+     if (settings->verbose) {
+        printf("Apply compression gamut \n");
+     }
+
+    using Triple = std::array<double, 3>;
+
+    using Matrix = std::array<Triple, 3>;
+
+    const TMatrix wprof = ICCStore::getInstance()->workingSpaceMatrix(params->icm.workingProfile);
+
+    Matrix wpro = {}; //working profile set in Matrix format
+    for (int r = 0; r < 3; ++r) {
+        for (int c = 0; c < 3; ++c) {
+            wpro[r][c] = wprof[r][c];
+        }
+    }
+    //dcip3 Rec2020, srgb, prophoto, acesp1 - Compression gamut matrix profile
+    Matrix dcip3 = {};
+        dcip3[0][0] = 0.4451;
+        dcip3[0][1] = 0.2771;
+        dcip3[0][2] = 0.1723;
+        dcip3[1][0] = 0.2095;
+        dcip3[1][1] = 0.7216;
+        dcip3[1][2] = 0.06891;
+        dcip3[2][0] = 0.0;
+        dcip3[2][1] = 0.047;
+        dcip3[2][2] = 0.9073;
+
+    Matrix Rec2020 = {};
+        Rec2020[0][0] = 0.6734241;
+        Rec2020[0][1] = 0.1656411;
+        Rec2020[0][2] = 0.1251286;
+        Rec2020[1][0] = 0.2790177;
+        Rec2020[1][1] = 0.6753402;
+        Rec2020[1][2] = 0.0456377;
+        Rec2020[2][0] = -0.0019300;
+        Rec2020[2][1] = 0.0299784;
+        Rec2020[2][2] = 0.7973330;
+
+    Matrix srgb = {};
+        srgb[0][0] = 0.4360747;
+        srgb[0][1] = 0.3850649;
+        srgb[0][2] = 0.1430804;
+        srgb[1][0] = 0.2225045;
+        srgb[1][1] = 0.7168786;
+        srgb[1][2] = 0.0606169;
+        srgb[2][0] = 0.0139322;
+        srgb[2][1] = 0.0971045;
+        srgb[2][2] = 0.7141733;
+
+    Matrix adobe = {};
+        adobe[0][0] = 0.6097559;
+        adobe[0][1] = 0.2052401;
+        adobe[0][2] = 0.1492240;
+        adobe[1][0] = 0.3111242;
+        adobe[1][1] = 0.6256560;
+        adobe[1][2] = 0.0632197;
+        adobe[2][0] = 0.0194811;
+        adobe[2][1] = 0.0608902;
+        adobe[2][2] = 0.7448387;
+
+    Matrix prophoto = {};//prophoto
+        prophoto[0][0] = 0.7976749;
+        prophoto[0][1] = 0.1351917;
+        prophoto[0][2] = 0.0313534;
+        prophoto[1][0] = 0.2880402;
+        prophoto[1][1] = 0.7118741;
+        prophoto[1][2] = 0.0000857;
+        prophoto[2][0] = 0.0;
+        prophoto[2][1] = 0.0;
+        prophoto[2][2] = 1.2118128;
+
+    Matrix acesp1 = {};//aces P1
+        acesp1[0][0] = 0.689697;
+        acesp1[0][1] = 0.149944;
+        acesp1[0][2] = 0.124559;
+        acesp1[1][0] = 0.284448;
+        acesp1[1][1] = 0.671758;
+        acesp1[1][2] = 0.043794;
+        acesp1[2][0] = -0.006043;
+        acesp1[2][1] = 0.009998;
+        acesp1[2][2] = 0.820945;
+
+    Matrix out = {};
+
+    if (params->cg.colorspace == "rec2020") {
+        out = Rec2020;
+    } else if  (params->cg.colorspace == "prophoto") {
+        out = prophoto;
+    } else if  (params->cg.colorspace == "adobe") {
+        out = adobe;
+    } else if  (params->cg.colorspace == "srgb") {
+        out = srgb;
+    } else if  (params->cg.colorspace == "dcip3") {
+        out = dcip3;
+    } else if  (params->cg.colorspace == "acesp1") {
+        out = acesp1;
+    } else {
+        out = acesp1; // Should never happen, but just in case.
+    }
+
+    Matrix inv_out = {};
+    if (!rtengine::invertMatrix(out, inv_out)) {//invert matrix
+        printf("Matrix is not invertible, skipping\n");
+    }
+
+    Matrix Rprov = {};
+    Color::multip(inv_out, wpro, Rprov);//multiply matrix
+    Matrix to_out = {};
+
+    Color::transpose(Rprov, to_out);//transpose Matrix for output
+
+    Matrix from_out = {};//inverse to output
+    if (!rtengine::invertMatrix(to_out, from_out)) {
+        printf("Matrix is not invertible, skipping\n");
+
+    }
+
+    //parameters from GUI
+    const auto thc = static_cast<float>(params->cg.th_c);
+    const auto thm = static_cast<float>(params->cg.th_m);
+    const auto thy = static_cast<float>(params->cg.th_y);
+    const auto dc = static_cast<float>(params->cg.d_c);
+    const auto dm = static_cast<float>(params->cg.d_m);
+    const auto dy = static_cast<float>(params->cg.d_y);
+    const auto pw = static_cast<float>(params->cg.pwr);
+    const bool roll = params->cg.rolloff;
+
+    const std::array<float, 3> th{thc, thm, thy};//set parameter GUI in th
+    const std::array<float, 3> dl{dc, dm, dy};//set parameter GUI in dl
+
+    const int height = src->getHeight();
+    const int width = src->getWidth();
+
+    constexpr float range = 65535.f;
+
+#ifdef _OPENMP
+        #   pragma omp parallel for schedule(dynamic,16) if (multiThread)
+#endif
+
+    for (int i = 0; i < height; ++i)
+        for (int j = 0; j < width; ++j) {
+            const float r = src->r(i, j) / range;//in interval 0.. 1
+            const float g = src->g(i, j) / range;
+            const float b = src->b(i, j) / range;
+            std::array<float, 3> rgb_in{r, g, b};
+            float rout = 0.f;
+            float gout = 0.f;
+            float bout = 0.f;
+            Color::aces_reference_gamut_compression(rgb_in, th, dl, to_out, from_out, pw, roll, rout, gout, bout);
+            dst->r(i, j) = range * rout;//in interval 0..65535
+            dst->g(i, j) = range * gout;
+            dst->b(i, j) = range * bout;
+        }
+}
+
+
 void ImProcFunctions::workingtrc(int sp, Imagefloat* src, Imagefloat* dst, int cw, int ch, int mul, Glib::ustring &profile, double gampos, double slpos, int cat, int &illum, int prim, int locprim,
                                  float &rdx, float &rdy, float &grx, float &gry, float &blx, float &bly, float &meanx, float &meany, float &meanxe, float &meanye,
                                  cmsHTRANSFORM &transform, bool normalizeIn, bool normalizeOut, bool keepTransForm, bool gamutcontrol) const

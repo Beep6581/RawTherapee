@@ -369,6 +369,19 @@ struct SHParamsEdited {
     bool lab;
 };
 
+struct CGParamsEdited {
+    bool enabled;
+    bool th_c;
+    bool th_m;
+    bool th_y;
+    bool d_c;
+    bool d_m;
+    bool d_y;
+    bool pwr;
+    bool colorspace;
+    bool rolloff;
+};
+
 struct ToneEqualizerParamsEdited {
     bool enabled;
     std::array<bool, 6> bands;
@@ -1651,6 +1664,8 @@ struct ParamsEdited {
     FattalToneMappingParamsEdited fattal;
     ImpulseDenoiseParamsEdited impulseDenoise;
     SHParamsEdited sh;
+    CGParamsEdited cg;
+    
     ToneEqualizerParamsEdited toneEqualizer;
     CropParamsEdited crop;
     CoarseTransformParamsEdited coarse;

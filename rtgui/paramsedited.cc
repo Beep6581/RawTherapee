@@ -326,6 +326,17 @@ void ParamsEdited::set(bool v)
     sh.stonalwidth   = v;
     sh.radius        = v;
     sh.lab           = v;
+    cg.enabled = v;
+    cg.th_c = v;
+    cg.th_m = v;
+    cg.th_y = v;
+    cg.d_c = v;
+    cg.d_m = v;
+    cg.d_y = v;
+    cg.pwr = v;
+    cg.colorspace = v;
+    cg.rolloff = v;
+
     toneEqualizer.enabled        = v;
     toneEqualizer.bands.fill(v);
     toneEqualizer.regularization = v;
@@ -1061,6 +1072,18 @@ void ParamsEdited::initFrom(const std::vector<rtengine::procparams::ProcParams>&
         sh.stonalwidth = sh.stonalwidth && p.sh.stonalwidth == other.sh.stonalwidth;
         sh.radius = sh.radius && p.sh.radius == other.sh.radius;
         sh.lab = sh.lab && p.sh.lab == other.sh.lab;
+
+        cg.enabled = cg.enabled && p.cg.enabled == other.cg.enabled;
+        cg.th_c = cg.th_c && p.cg.th_c == other.cg.th_c;
+        cg.th_m = cg.th_m && p.cg.th_m == other.cg.th_m;
+        cg.th_y = cg.th_y && p.cg.th_y == other.cg.th_y;
+        cg.d_c = cg.d_c && p.cg.d_c == other.cg.d_c;
+        cg.d_m = cg.d_m && p.cg.d_m == other.cg.d_m;
+        cg.d_y = cg.d_y && p.cg.d_y == other.cg.d_y;
+        cg.pwr = cg.pwr && p.cg.pwr == other.cg.pwr;
+        cg.colorspace = cg.colorspace && p.cg.colorspace == other.cg.colorspace;
+        cg.rolloff = cg.rolloff && p.cg.rolloff == other.cg.rolloff;
+
         crop.enabled = crop.enabled && p.crop.enabled == other.crop.enabled;
         crop.x = crop.x && p.crop.x == other.crop.x;
         crop.y = crop.y && p.crop.y == other.crop.y;
@@ -3363,6 +3386,46 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
 
     if (sh.lab) {
         toEdit.sh.lab = mods.sh.lab;
+    }
+
+    if (cg.th_c) {
+        toEdit.cg.th_c = mods.cg.th_c;
+    }
+
+    if (cg.th_m) {
+        toEdit.cg.th_m = mods.cg.th_m;
+    }
+
+    if (cg.th_y) {
+        toEdit.cg.th_y = mods.cg.th_y;
+    }
+
+    if (cg.d_c) {
+        toEdit.cg.d_c = mods.cg.d_c;
+    }
+
+    if (cg.d_m) {
+        toEdit.cg.d_m = mods.cg.d_m;
+    }
+
+    if (cg.d_y) {
+        toEdit.cg.d_y = mods.cg.d_y;
+    }
+
+    if (cg.colorspace) {
+        toEdit.cg.colorspace = mods.cg.colorspace;
+    }
+
+    if (cg.pwr) {
+        toEdit.cg.pwr = mods.cg.pwr;
+    }
+
+    if (cg.rolloff) {
+        toEdit.cg.rolloff = mods.cg.rolloff;
+    }
+
+    if (cg.enabled) {
+        toEdit.cg.enabled = mods.cg.enabled;
     }
 
     if (toneEqualizer.enabled) {

@@ -32,6 +32,7 @@
 #include "coarsepanel.h"
 #include "colorappearance.h"
 #include "colortoning.h"
+#include "compressgamut.h"
 #include "crop.h"
 #include "darkframe.h"
 #include "defringe.h"
@@ -139,6 +140,7 @@ protected:
     LocalContrast *localContrast;
     Spot* spot;
     Defringe* defringe;
+    Compressgamut* compressgamut;
     ImpulseDenoise* impulsedenoise;
     DirPyrDenoise* dirpyrdenoise;
     EdgePreservingDecompositionUI *epd;
@@ -251,6 +253,7 @@ public:
         TONE_EQUALIZER,
         IMPULSE_DENOISE,
         DEFRINGE_TOOL,
+        COMPRESSGAMUT_TOOL,
         SPOT,
         DIR_PYR_DENOISE,
         EPD,

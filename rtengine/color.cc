@@ -16,6 +16,10 @@
 *  You should have received a copy of the GNU General Public License
 *  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
 */
+#include <algorithm>
+#include <array>
+#include <utility>
+
 #include <glibmm/ustring.h>
 
 #include "rtengine.h"
@@ -26,6 +30,7 @@
 #include "iccstore.h"
 #include <iostream>
 #include "linalgebra.h"
+#include "procparams.h"
 
 using namespace std;
 
@@ -2104,6 +2109,177 @@ float Color::eval_ACEScct_curve(float x, bool forward)
 }
 
 // end code take in ART thanks to Alberto Griggio
+
+//functions needs to use ACES
+
+// transpose Matrix
+void Color::transpose(const Matrix &ma, Matrix &R)
+{
+    if (&ma == &R) {
+        std::swap(R[0][1], R[1][0]);
+        std::swap(R[0][2], R[2][0]);
+        std::swap(R[1][0], R[0][1]);
+        std::swap(R[1][2], R[2][1]);
+        std::swap(R[2][0], R[0][2]);
+        std::swap(R[2][1], R[1][2]);
+    } else {
+        R[0][0] = ma[0][0];
+        R[0][1] = ma[1][0];
+        R[0][2] = ma[2][0];
+        R[1][0] = ma[0][1];
+        R[1][1] = ma[1][1];
+        R[1][2] = ma[2][1];
+        R[2][0] = ma[0][2];
+        R[2][1] = ma[1][2];
+        R[2][2] = ma[2][2];
+    }
+}
+
+// multiply Matrix x Matrix
+void Color::multip(const Matrix &ma, const Matrix &mb, Matrix &R)
+{
+    const bool overwrite = &ma == &R || &mb == &R;
+    if (overwrite) {
+        // Use buffer to hold result so the input doesn't get overwritten while
+        // the multiplication is happening.
+        Matrix buf;
+        multip(ma, mb, buf);
+        for (int i = 0; i < 3; ++i) {
+            for (int j = 0; j < 3; ++j) {
+                R[i][j] = buf[i][j];
+            }
+        }
+    } else {
+        for (int i = 0; i < 3; ++i) {
+            for (int j = 0; j < 3; ++j) {
+                double sum = 0.0;
+                for (int k = 0; k < 3; ++k) {
+                    sum += ma[i][k] * mb[k][j];
+                }
+                R[i][j] = sum;
+            }
+        }
+    }
+}
+
+//multiply Matrix
+void Color::mult3(std::array<float, 3> &in, const Matrix &ma, std::array<float, 3> &out)
+{
+    // Use buffer for result in case in and out overlap.
+    std::array<float, 3> buf{0.f, 0.f, 0.f};
+    for (int i = 0; i < 3; ++i) {
+        for( int j = 0; j < 3; ++j){
+            buf[i] += static_cast<float>(in[j] * ma[j][i]);
+        }
+    }
+    std::copy(buf.cbegin(), buf.cend(), out.begin());
+}
+
+// ACES-style gamut compression
+//
+// tweaked from the original from https://github.com/jedypod/gamut-compress
+// tweaked from CTL in ART thanks to Alberto Griggio
+
+//from ACES https://docs.acescentral.com/specifications/rgc/#appendix-c-illustrations
+// https://docs.acescentral.com/specifications/rgc/#appendix-d-ctl-reference-implementation
+// https://docs.acescentral.com/specifications/rgc/
+// Distance from achromatic which will be compressed to the gamut boundary
+// Values calculated to encompass the encoding gamuts of common digital cinema cameras
+//const float LIM_CYAN =  1.147;
+//const float LIM_MAGENTA = 1.264;
+//const float LIM_YELLOW = 1.312;
+
+//Percentage of the core gamut to protect
+// Values calculated to protect all the colors of the ColorChecker Classic 24 as given by
+// ISO 17321-1 and Ohta (1997)
+//const float THR_CYAN = 0.815;
+//const float THR_MAGENTA = 0.803;
+//const float THR_YELLOW = 0.880;
+
+// Aggressiveness of the compression curve
+//const float PWR = 1.2;
+//https://www.gujinwei.org/research/camspec/
+
+void Color::aces_reference_gamut_compression(
+    const std::array<float, 3> &rgb_in,
+    const std::array<float, 3> &threshold,
+    const std::array<float, 3> &distance_limit,
+    const Matrix &to_out, const Matrix &from_out,
+    float pwr, bool rolloff,
+    float &R, float &G, float &B)
+{
+    std::array<float, 3> rgb{rgb_in[0], rgb_in[1], rgb_in[2]};
+
+    // Calculate scale so compression function passes through distance limit:
+    // (x=distance_limit, y=1)
+    std::array<float, 3> s;
+    for (unsigned i = 0; i < s.size(); ++i) {
+        // Scale factor: c = (1 - t) / sqrt(l - 1)
+        s[i] = (1.0f  - threshold[i]) / sqrt(fmax(1.001f, distance_limit[i]) - 1.0f);
+    }
+    // target colorspace
+    Color::mult3(rgb, to_out, rgb);
+
+    // Achromatic axis
+    const float ac = fmax(rgb[0], fmax(rgb[1], rgb[2]));
+
+    // Inverse RGB Ratios: distance from achromatic axis
+    std::array<float, 3> d{0.f, 0.f, 0.f};
+    if (ac != 0) {
+        for (unsigned i = 0; i < d.size(); ++i) {
+            d[i] = (ac - rgb[i]) / fabs(ac);
+        }
+    }
+    std::array<float, 3> cd{d[0], d[1], d[2]}; // Compressed distance
+    if (!rolloff) {
+        // Parabolic compression function:
+        // https://www.desmos.com/calculator/nvhp63hmtj
+        // y = { x < t:  x
+        //       x >= t: c sqrt(x - t + c^2 / 4) - c sqrt(c^2 / 4) + t }
+        // The second piece is equal to
+        // c (sqrt(x - t + c^2 / 4) - |c / 2|) + t
+        for (unsigned i = 0; i < cd.size(); ++i) {
+            if (d[i] >= threshold[i]) {
+                const float c_2 = s[i] / 2.f;
+                const float c2_4 = c_2 * c_2;
+                cd[i] = s[i] * (sqrt(d[i] - threshold[i] + c2_4) - fabs(c_2)) +
+                        threshold[i];
+            }
+        }
+    } else {
+        for (unsigned i = 0; i < cd.size(); ++i) {
+            if (d[i] >= threshold[i]) {
+                 // Calculate scale factor for y = 1 intersect
+                const float limit = distance_limit[i];
+                const float thres = threshold[i];
+                //                     l - t
+                // Scale s = --------------------------
+                //           ( ( 1 - t )-p     )(1 / p)
+                //           ( ( ----- )   - 1 )
+                //           ( ( l - t )       )
+                const float scale = (limit - thres) / pow(pow((1.0f - thres) / (limit - thres), - pwr) - 1.0f, 1.0f / pwr);
+                // Normalize distance outside threshold by scale factor
+                // x' = (x - t) / s
+                const float nd = (d[i] - thres) / scale;
+                //                  x'
+                // y = t + s ----------------
+                //           (1 + x'^p)^(1/p)
+                const float po = pow(nd, pwr);
+                cd[i] = thres + scale * nd / (pow(1.0f + po, 1.0f / pwr));
+            }
+        }
+    }
+    // Inverse RGB Ratios to RGB
+
+    for (unsigned i = 0; i < rgb.size(); ++i) {
+        rgb[i] = ac - cd[i] * fabs(ac);
+    }
+    //working colorspace from_out
+    Color::mult3(rgb, from_out, rgb);
+    R = rgb[0];
+    G = rgb[1];
+    B = rgb[2];
+}
 
 
 void Color::primaries_to_xyz(double p[6], double Wx, double Wz, double *pxyz, int cat)
