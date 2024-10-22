@@ -16,6 +16,10 @@
 *  You should have received a copy of the GNU General Public License
 *  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
 */
+#include <algorithm>
+#include <array>
+#include <utility>
+
 #include <glibmm/ustring.h>
 
 #include "rtengine.h"
@@ -2106,70 +2110,69 @@ float Color::eval_ACEScct_curve(float x, bool forward)
 
 // end code take in ART thanks to Alberto Griggio
 
-//functions needs to use ACES 
+//functions needs to use ACES
 
-//transpose Matrix
+// transpose Matrix
 void Color::transpose(Matrix ma, Matrix &R)
 {
-    float r[3][3];
-    double a[3][3] = {{ma[0][0],ma[0][1],ma[0][2]},{ma[1][0], ma[1][1], ma[1][2]},{ma[2][0], ma[2][1], ma[2][2]}};
-    for( int i = 0; i < 3; ++i){
-        for( int j = 0; j < 3; ++j){
-            r[i][j] = a[j][i];
-        }
+    if (&ma == &R) {
+        std::swap(R[0][1], R[1][0]);
+        std::swap(R[0][2], R[2][0]);
+        std::swap(R[1][0], R[0][1]);
+        std::swap(R[1][2], R[2][1]);
+        std::swap(R[2][0], R[0][2]);
+        std::swap(R[2][1], R[1][2]);
+    } else {
+        R[0][0] = ma[0][0];
+        R[0][1] = ma[1][0];
+        R[0][2] = ma[2][0];
+        R[1][0] = ma[0][1];
+        R[1][1] = ma[1][1];
+        R[1][2] = ma[2][1];
+        R[2][0] = ma[0][2];
+        R[2][1] = ma[1][2];
+        R[2][2] = ma[2][2];
     }
-
-    R[0][0] = r[0][0];
-    R[0][1] = r[0][1];
-    R[0][2] = r[0][2];
-    R[1][0] = r[1][0];
-    R[1][1] = r[1][1];
-    R[1][2] = r[1][2];
-    R[2][0] = r[2][0];
-    R[2][1] = r[2][1];
-    R[2][2] = r[2][2];
 }
 
-//multiply Matrix x Matrix
+// multiply Matrix x Matrix
 void Color::multip(Matrix ma, Matrix mb, Matrix &R)
 {
-    float r[3][3];
-    double a[3][3] = {{ma[0][0],ma[0][1],ma[0][2]},{ma[1][0], ma[1][1], ma[1][2]},{ma[2][0], ma[2][1], ma[2][2]}};
-    double b[3][3] = {{mb[0][0],mb[0][1],mb[0][2]},{mb[1][0], mb[1][1], mb[1][2]},{mb[2][0], mb[2][1], mb[2][2]}};
-    for( int i = 0; i < 3; ++i){
-        for( int j = 0; j < 3; ++j){
-            r[i][j] = 0.0f;
-            for( int k = 0; k < 3; ++k){
-                r[i][j] = r[i][j] + a[i][k] * b[k][j];
+    const bool overwrite = &ma == &R || &mb == &R;
+    if (overwrite) {
+        // Use buffer to hold result so the input doesn't get overwritten while
+        // the multiplication is happening.
+        Matrix buf;
+        multip(ma, mb, buf);
+        for (int i = 0; i < 3; ++i) {
+            for (int j = 0; j < 3; ++j) {
+                R[i][j] = buf[i][j];
+            }
+        }
+    } else {
+        for (int i = 0; i < 3; ++i) {
+            for (int j = 0; j < 3; ++j) {
+                double sum = 0.0;
+                for (int k = 0; k < 3; ++k) {
+                    sum += ma[i][k] * mb[k][j];
+                }
+                R[i][j] = sum;
             }
         }
     }
-    R[0][0] = r[0][0];
-    R[0][1] = r[0][1];
-    R[0][2] = r[0][2];
-    R[1][0] = r[1][0];
-    R[1][1] = r[1][1];
-    R[1][2] = r[1][2];
-    R[2][0] = r[2][0];
-    R[2][1] = r[2][1];
-    R[2][2] = r[2][2];
 }
 
 //multiply Matrix
-void  Color::mult3(float in[3], Matrix ma, float *out)
+void Color::mult3(float in[3], Matrix ma, float *out)
 {
-    float r[3];
-    float x[3] = {in[0], in[1], in[2]};
-    double a[3][3] = {{ma[0][0],ma[0][1],ma[0][2]},{ma[1][0], ma[1][1], ma[1][2]},{ma[2][0], ma[2][1], ma[2][2]}};
-    for( int i = 0; i < 3; ++i){
-        r[i] = 0.0f;
+    // Use buffer for result in case in and out overlap.
+    std::array<float, 3> buf{0.f, 0.f, 0.f};
+    for (int i = 0; i < 3; ++i) {
         for( int j = 0; j < 3; ++j){
-            r[i] = r[i] + x[j] * a[j][i];
+            buf[i] += in[j] * ma[j][i];
         }
     }
-    out[0] = r[0];
-    out[1] = r[1];
-    out[2] = r[2];
+    std::copy(buf.cbegin(), buf.cend(), out);
 }
 
 // ACES-style gamut compression
@@ -2197,7 +2200,7 @@ void  Color::mult3(float in[3], Matrix ma, float *out)
 //const float PWR = 1.2;
 //https://www.gujinwei.org/research/camspec/
 
-void Color::gamut_compress(float rgb_in[3], float threshold[3], float distance_limit[3], Matrix to_out, Matrix from_out, float pwr, bool rolloff, float &R, float &G, float &B)
+void Color::aces_reference_gamut_compression(float rgb_in[3], float threshold[3], float distance_limit[3], Matrix to_out, Matrix from_out, float pwr, bool rolloff, float &R, float &G, float &B)
 {
     R = rgb_in[0];
     G = rgb_in[1];

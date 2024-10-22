@@ -599,7 +599,7 @@ void ImProcFunctions::gamutcompr( Imagefloat *src, Imagefloat *dst) const
             float rout = 0.f;
             float gout = 0.f;
             float bout = 0.f;
-            Color::gamut_compress(rgb_in, th, dl, to_out, from_out, pw, roll, rout, gout, bout);
+            Color::aces_reference_gamut_compression(rgb_in, th, dl, to_out, from_out, pw, roll, rout, gout, bout);
             dst->r(i, j) = 65535.f * rout;//in interval 0..65535
             dst->g(i, j) = 65535.f * gout;
             dst->b(i, j) = 65535.f * bout;
