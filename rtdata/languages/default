@@ -1405,7 +1405,6 @@ HISTORY_MSG_COLORTONING_LABREGION_SLOPE;CT - region slope
 HISTORY_MSG_COMPLEX;Wavelet complexity
 HISTORY_MSG_COMPLEXRETI;Retinex complexity
 HISTORY_MSG_CG_COLORSPACE;Gamut Compression - Target
-HISTORY_MSG_DEHABLACK;Gamut Compression - Target Gamut
 HISTORY_MSG_CG_CYANTH;Gamut Compression - Threshold Cyan
 HISTORY_MSG_CG_MAGENTATH;Gamut Compression - Threshold Magenta
 HISTORY_MSG_CG_YELLOWTH;Gamut Compression - Threshold Yellow
@@ -1415,6 +1414,7 @@ HISTORY_MSG_CG_YELLOWLIM;Gamut Compression - Max Limits Yellow
 HISTORY_MSG_CG_ROLLOFF;Gamut Compression - Rolloff
 HISTORY_MSG_CG_VALUE;Gamut Compression - Power
 HISTORY_MSG_CG_ENABLED;Gamut Compression - Enabled
+HISTORY_MSG_DEHABLACK;Dehaze Bayer Black
 HISTORY_MSG_DEHABLACKX;Dehaze X-Trans Black
 HISTORY_MSG_DEHAZE_DEPTH;Dehaze - Depth
 HISTORY_MSG_DEHAZE_ENABLED;Haze Removal
