@@ -325,7 +325,7 @@ void Compressgamut::rolloff_change()
 void Compressgamut::colorspaceChanged()
 {
     if (listener && getEnabled()) {
-        listener->panelChanged(EvcgColorspace, M("GENERAL_ENABLED"));
+        listener->panelChanged(EvcgColorspace, colorspace->get_active_text());
     }
 }
 
