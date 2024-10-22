@@ -344,6 +344,7 @@ void Compressgamut::enabledChanged ()
 void Compressgamut::setBatchMode (bool batchMode)
 {
     ToolPanel::setBatchMode (batchMode);
+    colorspace->append (M("GENERAL_UNCHANGED"));
     th_c->showEditedCB ();
     th_m->showEditedCB ();
     th_y->showEditedCB ();
