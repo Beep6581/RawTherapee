@@ -6149,22 +6149,30 @@ struct grad_params {
 
 void calclocalGradientParams(int call, const struct local_params& lp, struct grad_params& gp, float ystart, float xstart, float yend, float xend, int bfw, int bfh, int oW, int oH, int tX, int tY, int tW, int tH, int indic, int sk, int fw, int fh)
 {
-    int w = bfw;
-    int h = bfh;
+    int w = bfw;//??? oW, tW..
+    int h = bfh;//??? oH, tH..
     float stops = 0.f;
     float angs = 0.f;
-    double varfeath = 0.25; //0.01f * lp.feath;
- 
-    double gradient_center_x = LIM01((lp.xcent * bfw - xstart) / bfw);
-    double gradient_center_y = LIM01((lp.ycent * bfh - ystart) / bfh);
+    double varfeath = 0.25;
+ // big problem with preview as soon as the preview no longer covers the entire image
+ // I have tried a lot of things adding parameters that may have an impact oW, oH, tX, tY, tW, tH, fW, fH, sk, call, etc.
+ // but nothing works really...
+ // Perhaps with PreviewProps, but I don't know how to do ? 
+ // It seems that you need to change the position of the center of the GF which varies depending on the preview, but how?
+ // parameters passe to calcGradientFactor may also be involved
+ //    ?? bufmaskblurcol->L[ir][jr] *= ImProcFunctions::calcGradientFactor(gp, jr, ir);// jr - xstart, ir - ystart ?? or others factors
 
+    double gradient_center_x = LIM01((lp.xcent * bfw - xstart) / bfw);//???
+    double gradient_center_y = LIM01((lp.ycent * bfh - ystart) / bfh);//???
+
+    PreviewProps pp(tX, tY, tW * sk, tH * sk, sk);//perhaps needs ?
 
     if (settings->verbose) {
         printf("call=%i xcent=%f ycent=%f \n", call, (double) lp.xcent, (double) lp.ycent);   
         printf("fw=%i fh=%i bfw=%i bfh=%i oW=%i oH=%i tW=%i tH=%i xstart=%f ystrat=%f xend=%f yend=%f xc=%f yc=%f yT=%f xL=%f sk=%i\n", fw, fh, bfw, bfh, oW, oH, tW, tH, (double) xstart, (double) ystart, (double) xend, (double) yend, (double) lp.xc, (double) lp.yc, (double) lp.lyT, (double)lp.lxL,  sk);
-    }
-    PreviewProps pp(tX, tY, tW * sk, tH * sk, sk);//perhaps needs ?
+        printf("PreviewProps: getx=%i gety=%i getW=%i getH=%i\n", pp.getX(), pp.getY(), pp.getWidth(), pp.getHeight()); 
 
+    }
 
     if (indic == 0) {
         stops = -lp.strmaexp;
@@ -6242,7 +6250,6 @@ void calclocalGradientParams(int call, const struct local_params& lp, struct gra
     sk2 = 1;
     double gradient_stops = stops / sk2;//to test with Skip but does not work well
     double gradient_angle = static_cast<double>(angs) / 180.0 * rtengine::RT_PI;
- //   double varfeath = 0.01f * lp.feath;
 
     //printf("xstart=%f ysta=%f lpxc=%f lpyc=%f stop=%f bb=%f cc=%f ang=%f ff=%d gg=%d\n", xstart, ystart, lp.xc, lp.yc, gradient_stops, gradient_center_x, gradient_center_y, gradient_angle, w, h);
 
