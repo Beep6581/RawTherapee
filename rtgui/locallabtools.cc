@@ -7026,7 +7026,7 @@ LocallabBlur::LocallabBlur():
     strbl(Gtk::manage(new Adjuster(M("TP_LOCALLAB_STRBL"), 0, 100, 1, 50))),
     epsbl(Gtk::manage(new Adjuster(M("TP_LOCALLAB_EPSBL"), -10, 10, 1, 0))),
     expdenoise2(Gtk::manage(new MyExpander(false, M("TP_LOCALLAB_DENOI2_EXP")))),
-    recothres(Gtk::manage(new Adjuster(M("TP_LOCALLAB_MASKRECOTHRES"), 1., 2., 0.01, 1.))),
+    recothres(Gtk::manage(new Adjuster(M("TP_LOCALLAB_MASKRECOTHRES"), 1., 2., 0.001, 1.))),
     lowthres(Gtk::manage(new Adjuster(M("TP_LOCALLAB_MASKLCTHRLOW2"), 1., 80., 0.5, 12.))),
     higthres(Gtk::manage(new Adjuster(M("TP_LOCALLAB_MASKLCTHR2"), 20., 99., 0.5, 85.))),
     sensibn(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SENSI"), 0, 100, 1, 40))),
@@ -7181,7 +7181,7 @@ LocallabBlur::LocallabBlur():
     recothres->setAdjusterListener(this);
     lowthres->setAdjusterListener(this);
     higthres->setAdjusterListener(this);
-
+    recothres->setLogScale(10, 1);
     sensibn->setAdjusterListener(this);
 
     blurMethod->append(M("TP_LOCALLAB_BLNORM"));
@@ -7563,12 +7563,15 @@ void LocallabBlur::updateguiblur(int spottype)
                 sensiden->hide();
                 invbl->hide();
                 expmaskbl->hide();
+                expdenoise2->hide();
+
                 enablMask->set_active(false);
             } else {
                 sensibn->show();
                 sensiden->show();
                 invbl->show();
                 expmaskbl->show();
+                expdenoise2->show();
                 updateGUIToMode(static_cast<modeType>(complexity->get_active_row_number()));
 
             }

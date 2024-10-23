@@ -8913,7 +8913,10 @@ void ImProcFunctions::BlurNoise_Local(LabImage *tmp1, LabImage * originalmask, c
                 const float chrodelta2 = SQR(std::sqrt(SQR(maskptr->a[y][x]) + SQR(maskptr->b[y][x])) - chromaref * 327.68f);
                 const float huedelta2 = abdelta2 - chrodelta2;
                 const float dE = std::sqrt(kab * (kch * chrodelta2 + kH * huedelta2) + kL * SQR(refL - maskptr->L[y][x]));
-                const float reducdE = calcreducdE(dE, maxdE, mindE, maxdElim, mindElim, lp.iterat, limscope, lp.sensbn);
+                float reducdE = calcreducdE(dE, maxdE, mindE, maxdElim, mindElim, lp.iterat, limscope, lp.sensbn);
+                if(lp.fullim == 3 ) {//disabled scope
+                    reducdE = 1.f;
+                }
 
                 float difL = (tmp1->L[y - ystart][x - xstart] - original->L[y][x]) * localFactor * reducdE;
                 transformed->L[y][x] = CLIP(original->L[y][x] + difL);
@@ -14388,14 +14391,14 @@ void ImProcFunctions::Lab_Local(
                 if (lp.blurmet == 0 && lp.blmet == 0 && static_cast<double>(radius) > (1.5 * GAUSS_SKIP) && lp.rad > 1.6) {
                     if (fft || lp.rad > 30.0) {
                         if (lp.chromet == 0) {
-                            ImProcFunctions::fftw_convol_blur2(tmp1->L, tmp1->L, bfwr, bfhr, radius, 0, 0);
+                            ImProcFunctions::fftw_convol_blur2(tmp1->L, tmp1->L, bfwr, bfhr, radius / sk, 0, 0);
                         } else if (lp.chromet == 1) {
-                            ImProcFunctions::fftw_convol_blur2(tmp1->a, tmp1->a, bfwr, bfhr, radius, 0, 0);
-                            ImProcFunctions::fftw_convol_blur2(tmp1->b, tmp1->b, bfwr, bfhr, radius, 0, 0);
+                            ImProcFunctions::fftw_convol_blur2(tmp1->a, tmp1->a, bfwr, bfhr, radius / sk, 0, 0);
+                            ImProcFunctions::fftw_convol_blur2(tmp1->b, tmp1->b, bfwr, bfhr, radius / sk, 0, 0);
                         } else if (lp.chromet == 2) {
-                            ImProcFunctions::fftw_convol_blur2(tmp1->L, tmp1->L, bfwr, bfhr, radius, 0, 0);
-                            ImProcFunctions::fftw_convol_blur2(tmp1->a, tmp1->a, bfwr, bfhr, radius, 0, 0);
-                            ImProcFunctions::fftw_convol_blur2(tmp1->b, tmp1->b, bfwr, bfhr, radius, 0, 0);
+                            ImProcFunctions::fftw_convol_blur2(tmp1->L, tmp1->L, bfwr, bfhr, radius / sk, 0, 0);
+                            ImProcFunctions::fftw_convol_blur2(tmp1->a, tmp1->a, bfwr, bfhr, radius / sk, 0, 0);
+                            ImProcFunctions::fftw_convol_blur2(tmp1->b, tmp1->b, bfwr, bfhr, radius / sk, 0, 0);
                         }
                     } else {
 #ifdef _OPENMP
@@ -14404,16 +14407,16 @@ void ImProcFunctions::Lab_Local(
                         {
                             if (lp.chromet == 0)
                             {
-                                gaussianBlur(tmp1->L, tmp1->L, bfw, bfh, radius);
+                                gaussianBlur(tmp1->L, tmp1->L, bfw, bfh, radius / sk);
                             } else if (lp.chromet == 1)
                             {
-                                gaussianBlur(tmp1->a, tmp1->a, bfw, bfh, radius);
-                                gaussianBlur(tmp1->b, tmp1->b, bfw, bfh, radius);
+                                gaussianBlur(tmp1->a, tmp1->a, bfw, bfh, radius / sk);
+                                gaussianBlur(tmp1->b, tmp1->b, bfw, bfh, radius / sk);
                             } else if (lp.chromet == 2)
                             {
-                                gaussianBlur(tmp1->L, tmp1->L, bfw, bfh, radius);
-                                gaussianBlur(tmp1->a, tmp1->a, bfw, bfh, radius);
-                                gaussianBlur(tmp1->b, tmp1->b, bfw, bfh, radius);
+                                gaussianBlur(tmp1->L, tmp1->L, bfw, bfh, radius / sk);
+                                gaussianBlur(tmp1->a, tmp1->a, bfw, bfh, radius / sk);
+                                gaussianBlur(tmp1->b, tmp1->b, bfw, bfh, radius / sk);
                             }
                         }
                     }
@@ -14421,14 +14424,14 @@ void ImProcFunctions::Lab_Local(
                 } else if (lp.blurmet == 1 && lp.blmet == 0 && static_cast<double>(radius) > (1.5 * GAUSS_SKIP) && lp.rad > 1.6) {
                     if (fft || lp.rad > 30.0) {
                         if (lp.chromet == 0) {
-                            ImProcFunctions::fftw_convol_blur2(original->L, tmp1->L, TW, TH, radius, 0, 0);
+                            ImProcFunctions::fftw_convol_blur2(original->L, tmp1->L, TW, TH, radius / sk, 0, 0);
                         } else if (lp.chromet == 1) {
-                            ImProcFunctions::fftw_convol_blur2(original->a, tmp1->a, TW, TH, radius, 0, 0);
-                            ImProcFunctions::fftw_convol_blur2(original->b, tmp1->b, TW, TH, radius, 0, 0);
+                            ImProcFunctions::fftw_convol_blur2(original->a, tmp1->a, TW, TH, radius / sk, 0, 0);
+                            ImProcFunctions::fftw_convol_blur2(original->b, tmp1->b, TW, TH, radius / sk, 0, 0);
                         } else if (lp.chromet == 2) {
-                            ImProcFunctions::fftw_convol_blur2(original->L, tmp1->L, TW, TH, radius, 0, 0);
-                            ImProcFunctions::fftw_convol_blur2(original->a, tmp1->a, TW, TH, radius, 0, 0);
-                            ImProcFunctions::fftw_convol_blur2(original->b, tmp1->b, TW, TH, radius, 0, 0);
+                            ImProcFunctions::fftw_convol_blur2(original->L, tmp1->L, TW, TH, radius / sk, 0, 0);
+                            ImProcFunctions::fftw_convol_blur2(original->a, tmp1->a, TW, TH, radius / sk, 0, 0);
+                            ImProcFunctions::fftw_convol_blur2(original->b, tmp1->b, TW, TH, radius / sk, 0, 0);
                         }
                     } else {
 #ifdef _OPENMP
@@ -14437,16 +14440,16 @@ void ImProcFunctions::Lab_Local(
                         {
                             if (lp.chromet == 0)
                             {
-                                gaussianBlur(original->L, tmp1->L, TW, TH, radius);
+                                gaussianBlur(original->L, tmp1->L, TW, TH, radius / sk);
                             } else if (lp.chromet == 1)
                             {
-                                gaussianBlur(original->a, tmp1->a, TW, TH, radius);
-                                gaussianBlur(original->b, tmp1->b, TW, TH, radius);
+                                gaussianBlur(original->a, tmp1->a, TW, TH, radius / sk);
+                                gaussianBlur(original->b, tmp1->b, TW, TH, radius / sk);
                             } else if (lp.chromet == 2)
                             {
-                                gaussianBlur(original->L, tmp1->L, TW, TH, radius);
-                                gaussianBlur(original->a, tmp1->a, TW, TH, radius);
-                                gaussianBlur(original->b, tmp1->b, TW, TH, radius);
+                                gaussianBlur(original->L, tmp1->L, TW, TH, radius / sk);
+                                gaussianBlur(original->a, tmp1->a, TW, TH, radius / sk);
+                                gaussianBlur(original->b, tmp1->b, TW, TH, radius / sk);
                             }
                         }
                     }
@@ -14647,7 +14650,7 @@ void ImProcFunctions::Lab_Local(
                         }
 
                         rgb2lab(*tmpImage, *tmp1, params->icm.workingProfile);
-
+                    
                         if (lp.chromet == 0) {
 #ifdef _OPENMP
                             #pragma omp parallel for schedule(dynamic,16) if (multiThread)
@@ -14660,7 +14663,7 @@ void ImProcFunctions::Lab_Local(
                                 }
                             }
                         }
-
+                    
                         if (lp.enablMask && lp.recothr != 1.f && lp.smasktyp != 1) {
                             array2D<float> masklum;
                             masklum(bfw, bfh);
@@ -14687,6 +14690,7 @@ void ImProcFunctions::Lab_Local(
 
                             float alow = th / lowc;
                             float blow = 1.f - th;
+                            //printf("alow=%f blow=%f ahigh=%f bhigh=%f \n", (double) alow, (double) blow, (double) ahigh, (double) bhigh);
 
 #ifdef _OPENMP
                             #pragma omp parallel for if (multiThread)
@@ -14709,6 +14713,10 @@ void ImProcFunctions::Lab_Local(
                                         float k = masklum[ir][jr];
                                         masklum[ir][jr] = 1 - k * k;
                                     }
+                                    masklum[ir][jr] = pow(masklum[ir][jr], 2.);//increase masklum
+                                    //if(lp.recothr == 2.f) {
+                                    //    masklum[ir][jr] = 0.f;
+                                    //}
                                 }
 
                             for (int i = 0; i < 3; ++i) {
@@ -14896,7 +14904,7 @@ void ImProcFunctions::Lab_Local(
                         delete tmpImage;
                     }
                 }
-
+                
                 if (tmp1.get()) {
                     if (lp.blurmet == 0) { //blur and noise (center)
 

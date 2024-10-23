@@ -2895,7 +2895,7 @@ TP_LOCALLAB_BLGUID;Guided Filter
 TP_LOCALLAB_BLINV;Inverse
 TP_LOCALLAB_BLLC;Luminance & Chrominance
 TP_LOCALLAB_BLLO;Luminance only
-TP_LOCALLAB_BLMED;Median
+TP_LOCALLAB_BLMED;Median 1:1
 TP_LOCALLAB_BLMETHOD_TOOLTIP;Normal: direct blur and noise with all settings.\nInverse: blur and noise with all settings. Warning, some settings may give curious results.
 TP_LOCALLAB_BLNOI_EXP;Blur & Noise
 TP_LOCALLAB_BLNORM;Normal
