@@ -14389,6 +14389,19 @@ void ImProcFunctions::Lab_Local(
 
 
                 if (lp.blurmet == 0 && lp.blmet == 0 && static_cast<double>(radius) > (1.5 * GAUSS_SKIP) && lp.rad > 1.6) {
+                    
+                        for (int y = ystart; y < yend ; y++) {
+                            for (int x = xstart; x < xend; x++) {
+                                tmp1->L[y - ystart][x - xstart] = original->L[y][x];
+                                tmp1->a[y - ystart][x - xstart] = original->a[y][x];
+                                tmp1->b[y - ystart][x - xstart] = original->b[y][x];
+                                tmp3->L[y - ystart][x - xstart] = original->L[y][x];
+                                tmp3->a[y - ystart][x - xstart] = original->a[y][x];
+                                tmp3->b[y - ystart][x - xstart] = original->b[y][x];
+                            }
+                        }
+                    
+                    
                     if (fft || lp.rad > 30.0) {
                         if (lp.chromet == 0) {
                             ImProcFunctions::fftw_convol_blur2(tmp1->L, tmp1->L, bfwr, bfhr, radius / sk, 0, 0);
@@ -14420,6 +14433,81 @@ void ImProcFunctions::Lab_Local(
                             }
                         }
                     }
+                        if (lp.enablMask && lp.recothr != 1.f && lp.smasktyp != 1) {
+                            array2D<float> masklum;
+                            masklum(bfw, bfh);
+
+                            for (int ir = 0; ir < bfh; ir++)
+                                for (int jr = 0; jr < bfw; jr++) {
+                                    masklum[ir][jr] = 1.f;
+                                }
+
+                            float hig = lp.higthr;
+                            float higc;
+                            calcdif(hig, higc);
+                            float low = lp.lowthr;
+                            float lowc;
+                            calcdif(low, lowc);
+
+                            if (higc < lowc) {
+                                higc = lowc + 0.01f;
+                            }
+
+                            float th = (lp.recothr - 1.f);
+                            float ahigh = th / (higc - 100.f);
+                            float bhigh = 1.f - higc * ahigh;
+
+                            float alow = th / lowc;
+                            float blow = 1.f - th;
+                            //printf("alow=%f blow=%f ahigh=%f bhigh=%f \n", (double) alow, (double) blow, (double) ahigh, (double) bhigh);
+
+#ifdef _OPENMP
+                            #pragma omp parallel for if (multiThread)
+#endif
+
+                            for (int ir = 0; ir < bfh; ir++)
+                                for (int jr = 0; jr < bfw; jr++) {
+                                    const float lM = bufmaskblurbl->L[ir + ystart][jr + xstart];
+                                    const float lmr = lM / 327.68f;
+
+                                    if (lM < 327.68f * lowc) {
+                                        masklum[ir][jr] = alow * lmr + blow;
+                                    } else if (lM < 327.68f * higc) {
+
+                                    } else {
+                                        masklum[ir][jr] = ahigh * lmr + bhigh;
+                                    }
+
+                                    if (lp.invmask == true) {
+                                        float k = masklum[ir][jr];
+                                        masklum[ir][jr] = 1 - k * k;
+                                    }
+                                    masklum[ir][jr] = pow(masklum[ir][jr], 2.);//increase masklum
+                                    //if(lp.recothr == 2.f) {
+                                    //    masklum[ir][jr] = 0.f;
+                                    //}
+                                }
+
+                            for (int i = 0; i < 3; ++i) {
+                                boxblur(static_cast<float**>(masklum), static_cast<float**>(masklum), 10 / sk, bfw, bfh, false);
+                            }
+
+#ifdef _OPENMP
+                            #pragma omp parallel for if (multiThread)
+#endif
+
+                            for (int i = 0; i < bfh; ++i) {
+                                for (int j = 0; j < bfw; ++j) {
+                                    tmp1->L[i][j] = (tmp3->L[i][j] - tmp1->L[i][j]) *  LIM01(masklum[i][j]) + tmp1->L[i][j];
+                                    tmp1->a[i][j] = (tmp3->a[i][j] - tmp1->a[i][j]) *  LIM01(masklum[i][j]) + tmp1->a[i][j];
+                                    tmp1->b[i][j] = (tmp3->b[i][j] - tmp1->b[i][j]) *  LIM01(masklum[i][j]) + tmp1->b[i][j];
+                                }
+                            }
+
+                            masklum.free();
+                        }
+                    
+                    
 
                 } else if (lp.blurmet == 1 && lp.blmet == 0 && static_cast<double>(radius) > (1.5 * GAUSS_SKIP) && lp.rad > 1.6) {
                     if (fft || lp.rad > 30.0) {
