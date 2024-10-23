@@ -8003,7 +8003,6 @@ void LocallabBlur::read(const rtengine::procparams::ProcParams* pp, const Params
         LLmaskblshapewav->setCurve(spot.LLmaskblcurvewav);
         csThresholdblur->setValue<int>(spot.csthresholdblur);
     }
-
     // Enable all listeners
     enableListener();
 
@@ -8967,6 +8966,11 @@ void LocallabBlur::blMethodChanged()
     // Update Blur & Noise GUI according to blMethod combobox state
     updateBlurGUI();
     const LocallabParams::LocallabSpot defSpot;
+    if(blMethod->get_active_row_number() == 2) {
+        epsbl->show();
+    } else {
+        epsbl->hide();      
+    }
 
     if (invbl->get_active()  &&  blMethod->get_active_row_number() == 2) {
         radius->setValue(defSpot.radius);
@@ -9257,7 +9261,7 @@ void LocallabBlur::updateBlurGUI()
             lowthres->show();
             higthres->show();
         }
-        epsbl->show();
+        epsbl->hide();
         activlum->show();
     } else if (blMethod->get_active_row_number() == 1) {
         fftwbl->hide();
@@ -9274,7 +9278,7 @@ void LocallabBlur::updateBlurGUI()
             lowthres->show();
             higthres->show();
         }
-        epsbl->show();
+        epsbl->hide();
         activlum->show();
     } else if (blMethod->get_active_row_number() == 2) {
         fftwbl->hide();

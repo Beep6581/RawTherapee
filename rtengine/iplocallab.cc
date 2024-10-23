@@ -14514,6 +14514,7 @@ void ImProcFunctions::Lab_Local(
                             }
                         }
                     }
+                    
                     if (lp.enablMask && lp.recothr != 1.f && lp.smasktyp != 1) {                      
                         recovm(lp, bfw, bfh, xstart, ystart, sk,  bufmaskblurbl.get(), tmp1.get(), tmp3.get());
                     }
@@ -14564,6 +14565,7 @@ void ImProcFunctions::Lab_Local(
                     float mean = 0.f;//0 best result
                     float variance = lp.stren ;
                     addGaNoise(tmp1.get(), tmp1.get(), mean, variance, sk) ;
+                   
                 }
 
                 //add grain
@@ -14598,11 +14600,10 @@ void ImProcFunctions::Lab_Local(
                                 tmp1->b[y][x] = tmpImage->b(y, x);
                             }
                         }
-
+                     
                         delete tmpImage;
                     }
                 }
-
                 Median medianTypeL = Median::TYPE_3X3_STRONG;
                 Median medianTypeAB = Median::TYPE_3X3_STRONG;
                 
