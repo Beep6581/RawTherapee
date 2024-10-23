@@ -8815,7 +8815,7 @@ void LocallabBlur::updateGUIToMode(const modeType new_type)
             // Specific Simple mode widgets are shown in Normal mode
             expmaskbl->show();
             expdenoise1->hide();
-            expdenoise2->hide();
+            expdenoise2->show();
             expdenoise3->show();
             adjblur->show();
             noisechrodetail->show();
@@ -8826,9 +8826,9 @@ void LocallabBlur::updateGUIToMode(const modeType new_type)
             scalegr->show();
             noisegam->hide();
 
-            if (blMethod->get_active_row_number() == 2) {
-                expdenoise2->show();
-            }
+         //   if (blMethod->get_active_row_number() == 2) {
+         //       expdenoise2->show();
+         //   }
 
             decayd->hide();
             invmask->hide();
@@ -8873,15 +8873,19 @@ void LocallabBlur::updateGUIToMode(const modeType new_type)
             // Show widgets hidden in Normal and Simple mode
             if (blMethod->get_active_row_number() == 0) { // Keep widget hidden when blMethod is > 0
                 fftwbl->show();
-                expdenoise2->hide();
+           //     expdenoise2->hide();
             }
+            /*
             if (blMethod->get_active_row_number() == 1) {
-                expdenoise2->hide();
+            //    expdenoise2->hide();
             }
             if (blMethod->get_active_row_number() == 2) {
-                expdenoise2->show();
+            //    expdenoise2->show();
             }
-
+            */
+            expdenoise2->show();
+            
+            
             expdenoise1->show();
             expdenoise3->show();
             decayd->show();
@@ -9240,7 +9244,6 @@ void LocallabBlur::updateBlurGUI()
         if (mode == Expert) { // Keep widget hidden in Normal and Simple mode
             fftwbl->show();
         }
-        expdenoise2->hide();
         radius->show();
         strength->show();
         grainFrame->show();
@@ -9248,10 +9251,13 @@ void LocallabBlur::updateBlurGUI()
         itera->hide();
         guidbl->hide();
         strbl->hide();
-        recothres->hide();
-        lowthres->hide();
-        higthres->hide();
-        epsbl->hide();
+        if (mode == Expert  || mode == Normal){
+            expdenoise2->show();
+            recothres->show();
+            lowthres->show();
+            higthres->show();
+        }
+        epsbl->show();
         activlum->show();
     } else if (blMethod->get_active_row_number() == 1) {
         fftwbl->hide();
@@ -9262,11 +9268,13 @@ void LocallabBlur::updateBlurGUI()
         itera->show();
         guidbl->hide();
         strbl->hide();
-        expdenoise2->hide();
-        recothres->hide();
-        lowthres->hide();
-        higthres->hide();
-        epsbl->hide();
+        if (mode == Expert  || mode == Normal){
+            expdenoise2->show();
+            recothres->show();
+            lowthres->show();
+            higthres->show();
+        }
+        epsbl->show();
         activlum->show();
     } else if (blMethod->get_active_row_number() == 2) {
         fftwbl->hide();
@@ -9277,7 +9285,6 @@ void LocallabBlur::updateBlurGUI()
         itera->hide();
         guidbl->show();
         strbl->show();
-        expdenoise2->hide();
         if (mode == Expert  || mode == Normal){
             expdenoise2->show();
             recothres->show();
