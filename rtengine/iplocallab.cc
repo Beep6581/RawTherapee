@@ -14429,17 +14429,19 @@ void ImProcFunctions::Lab_Local(
                         tmp1.reset(new LabImage(bfw, bfh));
                         tmp3.reset(new LabImage(bfw, bfh));
                         maskk.reset(new LabImage(bfw, bfh));
-#ifdef _OPENMP
+  #ifdef _OPENMP
                         #pragma omp parallel for schedule(dynamic,16) if (multiThread)
-#endif
-
+#endif                  
                         for (int y = ystart; y < yend ; y++) {
                             for (int x = xstart; x < xend; x++) {
                                 tmp1->L[y - ystart][x - xstart] = original->L[y][x];
                                 tmp1->a[y - ystart][x - xstart] = original->a[y][x];
                                 tmp1->b[y - ystart][x - xstart] = original->b[y][x];
+                                tmp3->L[y - ystart][x - xstart] = original->L[y][x];//tmp3 needs for recovery mask
+                                tmp3->a[y - ystart][x - xstart] = original->a[y][x];
+                                tmp3->b[y - ystart][x - xstart] = original->b[y][x];
                             }
-                        }
+                        }                                        
                     }
                 } else if (lp.blurmet == 1) {
                     tmp1.reset(new LabImage(transformed->W, transformed->H));
@@ -14462,27 +14464,10 @@ void ImProcFunctions::Lab_Local(
                             bufgbi->b[y][x] = original->b[y][x];
                         }
                     }
-
                 }
 
-
                 if (lp.blurmet == 0 && lp.blmet == 0 && static_cast<double>(radius) > (1.5 * GAUSS_SKIP) && lp.rad > 1.6) {
-                  
- #ifdef _OPENMP
-                        #pragma omp parallel for schedule(dynamic,16) if (multiThread)
-#endif                  
-                        for (int y = ystart; y < yend ; y++) {
-                            for (int x = xstart; x < xend; x++) {
-                                tmp1->L[y - ystart][x - xstart] = original->L[y][x];
-                                tmp1->a[y - ystart][x - xstart] = original->a[y][x];
-                                tmp1->b[y - ystart][x - xstart] = original->b[y][x];
-                                tmp3->L[y - ystart][x - xstart] = original->L[y][x];
-                                tmp3->a[y - ystart][x - xstart] = original->a[y][x];
-                                tmp3->b[y - ystart][x - xstart] = original->b[y][x];
-                            }
-                        }
-                 
-                    
+                    //blur with fftw
                     if (fft || lp.rad > 30.0) {
                         if (lp.chromet == 0) {
                             ImProcFunctions::fftw_convol_blur2(tmp1->L, tmp1->L, bfwr, bfhr, radius / sk, 0, 0);
@@ -14494,7 +14479,7 @@ void ImProcFunctions::Lab_Local(
                             ImProcFunctions::fftw_convol_blur2(tmp1->a, tmp1->a, bfwr, bfhr, radius / sk, 0, 0);
                             ImProcFunctions::fftw_convol_blur2(tmp1->b, tmp1->b, bfwr, bfhr, radius / sk, 0, 0);
                         }
-                    } else {
+                    } else {//standard blur
 #ifdef _OPENMP
                         #pragma omp parallel if (multiThread)
 #endif
@@ -14513,16 +14498,10 @@ void ImProcFunctions::Lab_Local(
                                 gaussianBlur(tmp1->b, tmp1->b, bfw, bfh, radius / sk);
                             }
                         }
-                    }
-                    
-                    if (lp.enablMask && lp.recothr != 1.f && lp.smasktyp != 1) {                      
-                        recovm(lp, bfw, bfh, xstart, ystart, sk,  bufmaskblurbl.get(), tmp1.get(), tmp3.get());
-                    }
-                    
-                    
+                    }                 
 
                 } else if (lp.blurmet == 1 && lp.blmet == 0 && static_cast<double>(radius) > (1.5 * GAUSS_SKIP) && lp.rad > 1.6) {
-                    if (fft || lp.rad > 30.0) {
+                    if (fft || lp.rad > 30.0) {//inverse blur fft
                         if (lp.chromet == 0) {
                             ImProcFunctions::fftw_convol_blur2(original->L, tmp1->L, TW, TH, radius / sk, 0, 0);
                         } else if (lp.chromet == 1) {
@@ -14533,7 +14512,7 @@ void ImProcFunctions::Lab_Local(
                             ImProcFunctions::fftw_convol_blur2(original->a, tmp1->a, TW, TH, radius / sk, 0, 0);
                             ImProcFunctions::fftw_convol_blur2(original->b, tmp1->b, TW, TH, radius / sk, 0, 0);
                         }
-                    } else {
+                    } else {//inverse blur standard
 #ifdef _OPENMP
                         #pragma omp parallel if (multiThread)
 #endif
@@ -14553,10 +14532,6 @@ void ImProcFunctions::Lab_Local(
                             }
                         }
                     }
-                    if (lp.enablMask && lp.recothr != 1.f && lp.smasktyp != 1) {                      
-                        recovm(lp, TW, TH, 0, 0, sk,  bufmaskblurbl.get(), tmp1.get(), tmp3.get());
-                    }
-                    
                     
                 }
 
@@ -14604,10 +14579,24 @@ void ImProcFunctions::Lab_Local(
                         delete tmpImage;
                     }
                 }
+                //recovery with mask luminance
+                if (lp.blurmet == 0) {
+                    if (lp.enablMask && lp.recothr != 1.f && lp.smasktyp != 1) {                      
+                        recovm(lp, bfw, bfh, xstart, ystart, sk,  bufmaskblurbl.get(), tmp1.get(), tmp3.get());
+                    }
+                }//inverse
+                if (lp.blurmet == 1) {                 
+                    if (lp.enablMask && lp.recothr != 1.f && lp.smasktyp != 1) {                      
+                        recovm(lp, TW, TH, 0, 0, sk,  bufmaskblurbl.get(), tmp1.get(), tmp3.get());
+                    }
+                }
+                
+
+                
                 Median medianTypeL = Median::TYPE_3X3_STRONG;
                 Median medianTypeAB = Median::TYPE_3X3_STRONG;
                 
-
+                //medians blur
                 if (lp.medmet == 0) {
                     medianTypeL = medianTypeAB = Median::TYPE_3X3_STRONG;
                 } else if (lp.medmet == 1) {
@@ -14619,19 +14608,6 @@ void ImProcFunctions::Lab_Local(
                 }
 
                 if (lp.blurmet == 0 && lp.blmet == 1 && lp.medmet != -1) {
- #ifdef _OPENMP
-                        #pragma omp parallel for schedule(dynamic,16) if (multiThread)
-#endif                  
-                    for (int y = ystart; y < yend ; y++) {
-                        for (int x = xstart; x < xend; x++) {
-                            tmp1->L[y - ystart][x - xstart] = original->L[y][x];
-                            tmp1->a[y - ystart][x - xstart] = original->a[y][x];
-                            tmp1->b[y - ystart][x - xstart] = original->b[y][x];
-                            tmp3->L[y - ystart][x - xstart] = original->L[y][x];
-                            tmp3->a[y - ystart][x - xstart] = original->a[y][x];
-                            tmp3->b[y - ystart][x - xstart] = original->b[y][x];
-                        }
-                    }
                     float** tmL;
                     int wid = bfw;
                     int hei = bfh;
@@ -14659,6 +14635,7 @@ void ImProcFunctions::Lab_Local(
                     }
 
                     delete[] tmL;
+                    //recovery with mask luminance
                     if (lp.enablMask && lp.recothr != 1.f && lp.smasktyp != 1) {
                         recovm(lp, bfw, bfh, xstart, ystart, sk,  bufmaskblurbl.get(), tmp1.get(), tmp3.get());
                     }
@@ -14697,23 +14674,8 @@ void ImProcFunctions::Lab_Local(
                 }
 
                 if (lp.blurmet == 0 && lp.blmet == 2) {
-
+                    //guided filter
                     if (lp.guidb > 0) {
-#ifdef _OPENMP
-                        #pragma omp parallel for schedule(dynamic,16) if (multiThread)
-#endif
-
-                        for (int y = ystart; y < yend ; y++) {
-                            for (int x = xstart; x < xend; x++) {
-                                tmp1->L[y - ystart][x - xstart] = original->L[y][x];
-                                tmp1->a[y - ystart][x - xstart] = original->a[y][x];
-                                tmp1->b[y - ystart][x - xstart] = original->b[y][x];
-                                tmp3->L[y - ystart][x - xstart] = original->L[y][x];
-                                tmp3->a[y - ystart][x - xstart] = original->a[y][x];
-                                tmp3->b[y - ystart][x - xstart] = original->b[y][x];
-                            }
-                        }
-
                         Imagefloat *tmpImage = nullptr;
                         tmpImage = new Imagefloat(bfw, bfh);
                         lab2rgb(*tmp1, *tmpImage, params->icm.workingProfile);
@@ -14790,7 +14752,7 @@ void ImProcFunctions::Lab_Local(
                                 }
                             }
                         }
-                    
+                        //recovery with mask luminance
                         if (lp.enablMask && lp.recothr != 1.f && lp.smasktyp != 1) {
                             recovm(lp, bfw, bfh, xstart, ystart, sk,  bufmaskblurbl.get(), tmp1.get(), tmp3.get());
                         }
@@ -14800,7 +14762,7 @@ void ImProcFunctions::Lab_Local(
 
                 } else if (lp.blurmet == 1 && lp.blmet == 2) {
 
-                    if (lp.guidb > 0) {
+                    if (lp.guidb > 0) {//guided filter inverse
 #ifdef _OPENMP
                         #pragma omp parallel for schedule(dynamic,16) if (multiThread)
 #endif
@@ -14892,7 +14854,7 @@ void ImProcFunctions::Lab_Local(
                                 }
                             }
                         }
-
+                        //recovery with mask luminance
                         if (lp.enablMask && lp.recothr != 1.f && lp.smasktyp != 1) {
                             recovm(lp, TW, TH, 0, 0, sk,  bufmaskblurbl.get(), tmp1.get(), tmp3.get());
                         }
