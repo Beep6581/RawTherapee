@@ -45,7 +45,7 @@ inline void copyAndClampLine(const float *src, unsigned char *dst, const int W)
 }
 
 
-inline void copyAndClamp(const LabImage *src, unsigned char *dst, const double rgb_xyz[3][3], bool multiThread)
+inline void copyAndClamp(const LabImage *src, unsigned char *dst, const double rgb_xyz[3][3], bool multiThread, int pro)//int pro to switch to Working Profile histogram mode without gamma
 {
     const int W = src->W;
     const int H = src->H;
@@ -89,9 +89,15 @@ inline void copyAndClamp(const LabImage *src, unsigned char *dst, const double r
             vfloat x_, y_, z_;
             Color::Lab2XYZ(LVFU(rL[j]), LVFU(ra[j]), LVFU(rb[j]), x_, y_, z_);
             Color::xyz2rgb(x_, y_, z_, R, G, B, rgb_xyzv);
-            STVF(rbuffer[j], Color::gamma2curve[R]);
-            STVF(gbuffer[j], Color::gamma2curve[G]);
-            STVF(bbuffer[j], Color::gamma2curve[B]);
+            if(pro == 0) {
+                STVF(rbuffer[j], Color::gamma2curve[R]);
+                STVF(gbuffer[j], Color::gamma2curve[G]);
+                STVF(bbuffer[j], Color::gamma2curve[B]);
+            } else {//Working profile and gamma=1
+                STVF(rbuffer[j], R);
+                STVF(gbuffer[j], G);
+                STVF(bbuffer[j], B);
+            }
         }
 
         for (; j < W; ++j) {
@@ -99,9 +105,15 @@ inline void copyAndClamp(const LabImage *src, unsigned char *dst, const double r
             float x_, y_, z_;
             Color::Lab2XYZ(rL[j], ra[j], rb[j], x_, y_, z_);
             Color::xyz2rgb(x_, y_, z_, R, G, B, rgb_xyzf);
-            rbuffer[j] = Color::gamma2curve[R];
-            gbuffer[j] = Color::gamma2curve[G];
-            bbuffer[j] = Color::gamma2curve[B];
+            if(pro == 0) {
+                rbuffer[j] = Color::gamma2curve[R];
+                gbuffer[j] = Color::gamma2curve[G];
+                bbuffer[j] = Color::gamma2curve[B];
+            } else {//Working profile and gamma=1
+                rbuffer[j] = R;
+                gbuffer[j] = G;
+                bbuffer[j] = B;              
+            }
         }
 
         for (j = 0; j < W; ++j) {
@@ -117,10 +129,15 @@ inline void copyAndClamp(const LabImage *src, unsigned char *dst, const double r
             float x_, y_, z_;
             Color::Lab2XYZ(rL[j], ra[j], rb[j], x_, y_, z_);
             Color::xyz2rgb(x_, y_, z_, R, G, B, rgb_xyzf);
-
-            dst[ix++] = uint16ToUint8Rounded(Color::gamma2curve[R]);
-            dst[ix++] = uint16ToUint8Rounded(Color::gamma2curve[G]);
-            dst[ix++] = uint16ToUint8Rounded(Color::gamma2curve[B]);
+            if(pro == 0) {
+                dst[ix++] = uint16ToUint8Rounded(Color::gamma2curve[R]);
+                dst[ix++] = uint16ToUint8Rounded(Color::gamma2curve[G]);
+                dst[ix++] = uint16ToUint8Rounded(Color::gamma2curve[B]);
+            } else {//Working profile and gamma=1
+                dst[ix++] = uint16ToUint8Rounded(R);
+                dst[ix++] = uint16ToUint8Rounded(G);
+                dst[ix++] = uint16ToUint8Rounded(B);               
+            }
         }
 
 #endif
@@ -204,7 +221,7 @@ void ImProcFunctions::lab2monitorRgb(LabImage* lab, Image8* image)
             }
         } // End of parallelization
     } else {
-        copyAndClamp(lab, image->data, sRGB_xyz, multiThread);
+        copyAndClamp(lab, image->data, sRGB_xyz, multiThread, 0);//int pro = 0 always sent 'normal' to monitor 
     }
 }
 
@@ -239,12 +256,13 @@ Image8* ImProcFunctions::lab2rgb(LabImage* lab, int cx, int cy, int cw, int ch, 
     Glib::ustring profile;
 
     cmsHPROFILE oprof = nullptr;
-
+    int pro = 0;//int pro to switch to Working Profile histogram mode without gamma
     if (settings->HistogramWorking && consider_histogram_settings) {
         profile = icm.workingProfile;
+        pro = 1;//no gamma for histogram and navigator panel and Lockable color picker
     } else {
         profile = icm.outputProfile;
-
+        //pro = 0 histogram and navigator panel and Lockable color picker with gamma
         if (icm.outputProfile.empty() || icm.outputProfile == ColorManagementParams::NoICMString) {
             profile = "sRGB";
         }
@@ -300,7 +318,7 @@ Image8* ImProcFunctions::lab2rgb(LabImage* lab, int cx, int cy, int cw, int ch, 
 
     } else {
         const auto xyz_rgb = ICCStore::getInstance()->workingSpaceInverseMatrix(profile);
-        copyAndClamp(lab, image->data, xyz_rgb, multiThread);
+        copyAndClamp(lab, image->data, xyz_rgb, multiThread, pro);//int pro = 1 to switch to Working Profile for histogram and navigator panel and Lockable color picker whitout gamma
     }
 
     return image;

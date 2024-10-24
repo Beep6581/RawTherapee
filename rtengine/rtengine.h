@@ -475,6 +475,59 @@ public:
         int primlc;
     };
 
+    struct locallabshGHS {//To draw GHS  S curve
+       int licur;
+       double ghsc[42];
+    /*   double ghs_0i;
+       double ghs_0;
+       double ghs_05i;
+       double ghs_05;
+       double ghs_10i;
+       double ghs_10;
+       double ghs_15i;
+       double ghs_15;
+       double ghs_20i;
+       double ghs_20;
+       double ghs_25i;
+       double ghs_25;
+       double ghs_30i;
+       double ghs_30;
+       double ghs_35i;
+       double ghs_35;
+       double ghs_40i;
+       double ghs_40;
+       double ghs_45i;
+       double ghs_45;
+       double ghs_50i;
+       double ghs_50;
+       double ghs_55i;
+       double ghs_55;
+       double ghs_60i;
+       double ghs_60;
+       double ghs_65i;
+       double ghs_65;
+       double ghs_70i;
+       double ghs_70;
+       double ghs_75i;
+       double ghs_75;
+       double ghs_80i;
+       double ghs_80;
+       double ghs_85i;
+       double ghs_85;
+       double ghs_90i;
+       double ghs_90;
+       double ghs_95i;
+       double ghs_95;
+       double ghs_100i;
+       double ghs_100;
+       */
+    };
+
+
+    struct locallabshGHSbw {//To draw GHS  S curve
+       double ghsbw[2];
+    };
+
 //select spot settings 
     struct locallabsetLC {
         int mainf;
@@ -504,6 +557,8 @@ public:
     virtual void minmaxChanged(const std::vector<locallabRetiMinMax> &minmax, int selspot) = 0;
     virtual void denChanged(const std::vector<locallabDenoiseLC> &denlc, int selspot) = 0;
     virtual void cieChanged(const std::vector<locallabcieLC> &cielc, int selspot) = 0;
+    virtual void ghsChanged(const std::vector<locallabshGHS> &shghs, int selspot) = 0;
+    virtual void ghsbwChanged(const std::vector<locallabshGHSbw> &shghsbw, int selspot) = 0;
     virtual void maiChanged(const std::vector<locallabsetLC> &csetlc, int selspot) = 0;
     virtual void sigChanged(const std::vector<locallabcieSIG> &ciesig, int selspot) = 0;
     virtual void ciebefChanged(const std::vector<locallabcieBEF> &ciebef, int selspot) = 0;

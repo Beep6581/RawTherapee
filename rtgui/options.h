@@ -487,6 +487,7 @@ public:
     Glib::ustring lastDenoiseCurvesDir;
     Glib::ustring lastWaveletCurvesDir;
     Glib::ustring lastlocalCurvesDir;
+    Glib::ustring lastlocalCurvesDirghs;
     Glib::ustring lastPFCurvesDir;
     Glib::ustring lastHsvCurvesDir;
     Glib::ustring lastToneCurvesDir;

@@ -84,16 +84,16 @@ void CurveEditorGroup::hideCurrentCurve()
  *     periodic:      for FlatCurve only, ask the curve to be periodic (default: True)
  *
  */
-CurveEditor* CurveEditorGroup::addCurve(CurveType cType, Glib::ustring curveLabel, Gtk::Widget *relatedWidget, bool expandRelatedWidget, bool periodic)
+CurveEditor* CurveEditorGroup::addCurve(CurveType cType, Glib::ustring curveLabel, Gtk::Widget *relatedWidget, bool expandRelatedWidget, bool periodic, int typ)
 {
     switch (cType) {
     case (CT_Diagonal): {
         if (!diagonalSubGroup) {
-            diagonalSubGroup = new DiagonalCurveEditorSubGroup(this, curveDir);
+            diagonalSubGroup = new DiagonalCurveEditorSubGroup(this, curveDir, typ);
         }
 
         // We add it to the curve editor list
-        DiagonalCurveEditor* newCE = diagonalSubGroup->addCurve(curveLabel);
+        DiagonalCurveEditor* newCE = diagonalSubGroup->addCurve(curveLabel, typ);
         newCE->relatedWidget = relatedWidget;
         newCE->expandRelatedWidget = expandRelatedWidget;
         curveEditors.push_back(newCE);
