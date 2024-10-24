@@ -414,7 +414,7 @@ enum class BlurType {
         int cx, int cy, int sk, const LocwavCurve& locwavCurvehue, bool locwavhueutili, float& highresi, float& nresi, float& highresi46, float& nresi46, float& Lhighresi, float& Lnresi, float& Lhighresi46, float& Lnresi46);
 
    // void recovm(const struct local_params & lp, int bfw, int bfh,  int xstart, int ystart, int sk, LabImage *bufmaskblurbl, LabImage *tmp1, LabImage *tmp3);
-    void recovm(float highrec, float lowrec, float thrrec, bool invrec, int bfw, int bfh, int xstart, int ystart, int sk,  LabImage *bufmaskblurbl, LabImage *tmp1, LabImage *tmp3, bool multiThread);
+    void recovm(float highrec, float lowrec, float thrrec, bool invrec, int bfw, int bfh, int xstart, int ystart, float decay, int sk,  LabImage *bufmaskblurbl, LabImage *tmp1, LabImage *tmp3, bool multiThread);
 
     void fftw_denoise(int sk, int GW, int GH, int max_numblox_W, int min_numblox_W, float **tmp1, array2D<float> *Lin,  int numThreads, const struct local_params & lp, int chrom);
 
