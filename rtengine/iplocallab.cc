@@ -11389,8 +11389,9 @@ void ImProcFunctions::fftw_denoise(int sk, int GW, int GH, int max_numblox_W, in
 
 
 }
-void ImProcFunctions::recovm(const struct local_params & lp, int bfw, int bfh, int xstart, int ystart, int sk,  LabImage *bufmaskblurbl, LabImage *tmp1, LabImage *tmp3)
+void ImProcFunctions::recovm(float highrec, float lowrec, float thrrec, bool invrec, int bfw, int bfh, int xstart, int ystart, int sk,  LabImage *bufmaskblurbl, LabImage *tmp1, LabImage *tmp3, bool multiThread)
 {
+    //differences with makrecov (tmp3, decay,...) and ImProcFunctions to allow used elsewhere 
     array2D<float> masklum;
     masklum(bfw, bfh);
 
@@ -11399,10 +11400,10 @@ void ImProcFunctions::recovm(const struct local_params & lp, int bfw, int bfh, i
             masklum[ir][jr] = 1.f;
         }
 
-    float hig = lp.higthr;
+    float hig = highrec;
     float higc;
     calcdif(hig, higc);
-    float low = lp.lowthr;
+    float low = lowrec;
     float lowc;
     calcdif(low, lowc);
 
@@ -11410,7 +11411,7 @@ void ImProcFunctions::recovm(const struct local_params & lp, int bfw, int bfh, i
         higc = lowc + 0.01f;
     }
 
-    float th = (lp.recothr - 1.f);
+    float th = (thrrec - 1.f);
     float ahigh = th / (higc - 100.f);
     float bhigh = 1.f - higc * ahigh;
 
@@ -11435,15 +11436,12 @@ void ImProcFunctions::recovm(const struct local_params & lp, int bfw, int bfh, i
                 masklum[ir][jr] = ahigh * lmr + bhigh;
             }
 
-            if (lp.invmask == true) {
+            if (invrec == true) {
                 float k = masklum[ir][jr];
                 masklum[ir][jr] = 1 - k * k;
             }
                 
             masklum[ir][jr] = pow(masklum[ir][jr], 2.);//increase masklum
-                                    //if(lp.recothr == 2.f) {
-                                    //    masklum[ir][jr] = 0.f;
-                                    //}
         }
 
         for (int i = 0; i < 3; ++i) {
@@ -14580,14 +14578,15 @@ void ImProcFunctions::Lab_Local(
                     }
                 }
                 //recovery with mask luminance
-                if (lp.blurmet == 0) {
+                if (lp.blurmet == 0  && lp.blmet == 0) {//for blur, grain, noise
                     if (lp.enablMask && lp.recothr != 1.f && lp.smasktyp != 1) {                      
-                        recovm(lp, bfw, bfh, xstart, ystart, sk,  bufmaskblurbl.get(), tmp1.get(), tmp3.get());
+                        recovm(lp.higthr, lp.lowthr, lp.recothr, lp.invmask, bfw, bfh, xstart, ystart, sk,  bufmaskblurbl.get(), tmp1.get(), tmp3.get(), multiThread);
+
                     }
                 }//inverse
-                if (lp.blurmet == 1) {                 
+                if (lp.blurmet == 1 && lp.blmet == 0) {                 
                     if (lp.enablMask && lp.recothr != 1.f && lp.smasktyp != 1) {                      
-                        recovm(lp, TW, TH, 0, 0, sk,  bufmaskblurbl.get(), tmp1.get(), tmp3.get());
+                        recovm(lp.higthr, lp.lowthr, lp.recothr, lp.invmask, TW, TH, 0, 0, sk,  bufmaskblurbl.get(), tmp1.get(), tmp3.get(), multiThread);
                     }
                 }
                 
@@ -14637,7 +14636,7 @@ void ImProcFunctions::Lab_Local(
                     delete[] tmL;
                     //recovery with mask luminance
                     if (lp.enablMask && lp.recothr != 1.f && lp.smasktyp != 1) {
-                        recovm(lp, bfw, bfh, xstart, ystart, sk,  bufmaskblurbl.get(), tmp1.get(), tmp3.get());
+                        recovm(lp.higthr, lp.lowthr, lp.recothr, lp.invmask, bfw, bfh, xstart, ystart, sk,  bufmaskblurbl.get(), tmp1.get(), tmp3.get(), multiThread);
                     }
                     
                     
@@ -14669,7 +14668,7 @@ void ImProcFunctions::Lab_Local(
 
                     delete[] tmL;
                     if (lp.enablMask && lp.recothr != 1.f && lp.smasktyp != 1) {
-                        recovm(lp, TW, TH, 0, 0, sk,  bufmaskblurbl.get(), tmp1.get(), tmp3.get());
+                        recovm(lp.higthr, lp.lowthr, lp.recothr, lp.invmask, TW, TH, 0, 0, sk,  bufmaskblurbl.get(), tmp1.get(), tmp3.get(), multiThread);
                     }
                 }
 
@@ -14754,7 +14753,7 @@ void ImProcFunctions::Lab_Local(
                         }
                         //recovery with mask luminance
                         if (lp.enablMask && lp.recothr != 1.f && lp.smasktyp != 1) {
-                            recovm(lp, bfw, bfh, xstart, ystart, sk,  bufmaskblurbl.get(), tmp1.get(), tmp3.get());
+                            recovm(lp.higthr, lp.lowthr, lp.recothr, lp.invmask, bfw, bfh, xstart, ystart, sk,  bufmaskblurbl.get(), tmp1.get(), tmp3.get(), multiThread);
                         }
 
                         delete tmpImage;
@@ -14856,7 +14855,7 @@ void ImProcFunctions::Lab_Local(
                         }
                         //recovery with mask luminance
                         if (lp.enablMask && lp.recothr != 1.f && lp.smasktyp != 1) {
-                            recovm(lp, TW, TH, 0, 0, sk,  bufmaskblurbl.get(), tmp1.get(), tmp3.get());
+                            recovm(lp.higthr, lp.lowthr, lp.recothr, lp.invmask, TW, TH, 0, 0, sk,  bufmaskblurbl.get(), tmp1.get(), tmp3.get(), multiThread);
                         }
                        
                         delete tmpImage;
