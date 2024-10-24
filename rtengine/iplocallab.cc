@@ -17422,7 +17422,8 @@ void ImProcFunctions::Lab_Local(
                                 }
                                 
                         }
-                        if(met ==0  || met == 1) {//RGB mode
+                        
+                        if(met == 0  || met == 1) {//RGB mode
                             const auto sf =
                                 [=](float s, float c) -> float
                                 {
@@ -17432,7 +17433,7 @@ void ImProcFunctions::Lab_Local(
                                         return 0.f;
                                     }
                                 };
- 
+                            //saturation
                             const auto apply_sat =
                                 [&](float &r, float &g, float &b, float f, float ll) -> void
                                 {
@@ -17444,8 +17445,34 @@ void ImProcFunctions::Lab_Local(
                                     g = ll + s * gl;
                                     b = ll + s * bl;
                                 };
+                            
+                                //local contrast with guidedfilter incorporated in RGB luminance met = 0
+                            array2D<float> Yc(bfw, bfh);
+                                {
+                                    constexpr float base_posterization = 20.f;
+                                    array2D<float> Y2(bfw, bfh);
+
+#ifdef _OPENMP
+            #pragma omp parallel for if (multiThread)
+#endif
+                                    for (int y = 0; y < bfh; ++y) {
+                                        for (int x = 0; x < bfw; ++x) {
+                                            Y2[y][x] = norm(tmpImage->r(y, x), tmpImage->g(y, x), tmpImage->b(y, x), wprof) / 65535.f;
+                                            float l = xlogf(rtengine::max(Y2[y][x], 1e-9f));
+                                            float ll = round(l * base_posterization) / base_posterization;
+                                            Yc[y][x] = xexpf(ll);
+                                            assert(std::isfinite(Yc[y][x]));
+                                        }
+                                    }
+
+                                    const float radius = rtengine::max(bfw, bfh) / 30.f;
+                                    const float epsilon = 0.005f;
+                                    rtengine::guidedFilter(Y2, Yc, Yc, radius, epsilon, multiThread);
+                                }
+                                float blend = 0.01 * params->locallab.spots.at(sp).ghs_LC;
+                                blend =  rtengine::max(0.0001f, blend);
+                                //end local contrast integrate to stretch
                        
-                        
 #ifdef _OPENMP
         #   pragma omp parallel for schedule(dynamic,16) if (multiThread)
 #endif
@@ -17458,10 +17485,16 @@ void ImProcFunctions::Lab_Local(
                                     float Go = 0.f;
                                     float Bo = 0.f;
                                     if(met == 0) {
+                                        float tlc = Yc[i][j];
+                                        tlc = rtengine::max(tlc, noise);                               
+                                        float ci = GHT(tlc, B, D, LP, SP, HP, c, strtype);
+                                        float flc = ci / tlc;
                                         float gh = norm(r, g, b, wprof);//Calculate Luminance in function working profile Wprof
                                         gh = rtengine::max(gh, noise);
                                         float Mgh = GHT(gh, B, D, LP, SP, HP, c, strtype);//ghs transform with "luminance"
                                         float fgh = Mgh / gh;
+                                        fgh = intp(blend, flc, fgh);
+                                        
                                         Ro = r * fgh;//new values for r, g, b
                                         Go = g * fgh;
                                         Bo = b * fgh;
@@ -17476,6 +17509,7 @@ void ImProcFunctions::Lab_Local(
                                         Ro = GHT(r, B, D, LP, SP, HP, c, strtype);//ghs R RGB standard
                                         Go = GHT(g, B, D, LP, SP, HP, c, strtype);//ghs G RGB standard
                                         Bo = GHT(b, B, D, LP, SP, HP, c, strtype);//ghs B RGB standard
+                                        
                                         float fgh = 0.333f * ((Ro / r) + (Go / g) + (Bo /b));//linear average of the 3 channels
                                         apply_sat(Ro, Go, Bo, fgh, gh);//always apply saturation
                                     }
@@ -17552,8 +17586,7 @@ void ImProcFunctions::Lab_Local(
                                     //Luminance with new slope
                                     lLab = gammalog(lLab, gamma1, ts1, g_a[3], g_a[4]);//slope factor
                                     lLab = rtengine::max(lLab, noise);
-
-                                    lLab = GHT(lLab, B, D, LP, SP, HP, c, strtype);//Luminance GHS
+                                    lLab = GHT(lLab, B, D, LP, SP, HP, c, strtype);//Luminance GHS                                   
                                     lLab = igammalog(lLab, gamma1, ts1, g_a[2], g_a[4]);//inverse slope factor
 
                                     labtemp->L[i][j] = lLab * 32768.f;
@@ -17587,7 +17620,11 @@ void ImProcFunctions::Lab_Local(
 
                         delete tmpImage;
                         //local contrast minimum
-                        float rad = 2. * params->locallab.spots.at(sp).ghs_LC;
+                        double kmod = 2.2;
+                        if(met == 0) {
+                            kmod = 1.6;
+                        }
+                        float rad = kmod * params->locallab.spots.at(sp).ghs_LC;
                         float stren = 15.f * (1.f + D);//take into account D stretch
                         loccont(bfw, bfh, bufexpfin.get(), rad, stren , sk);                        
                     }

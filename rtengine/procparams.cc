@@ -3395,10 +3395,10 @@ LocallabParams::LocallabSpot::LocallabSpot() :
     ghs_slope(9.03296),
     ghs_chro(0.0),
     ghs_B(0.),
-    ghs_SP(0.03),//initialized with a low value to avoid zero
+    ghs_SP(0.015),//initialized with a low value to avoid zero
     ghs_LP(0.),
     ghs_HP(1.),
-    ghs_LC(20.),
+    ghs_LC(30.),
     ghs_BLP(0.),
     ghs_HLP(1.),
     ghs_smooth(false),
