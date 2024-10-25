@@ -17457,7 +17457,7 @@ void ImProcFunctions::Lab_Local(
 #endif
                                     for (int y = 0; y < bfh; ++y) {
                                         for (int x = 0; x < bfw; ++x) {
-                                            Y2[y][x] = norm(tmpImage->r(y, x), tmpImage->g(y, x), tmpImage->b(y, x), wprof) / 65535.f;
+                                            Y2[y][x] = norm2(tmpImage->r(y, x), tmpImage->g(y, x), tmpImage->b(y, x), wprof) / 65535.f;//norm ?
                                             float l = xlogf(rtengine::max(Y2[y][x], 1e-9f));
                                             float ll = round(l * base_posterization) / base_posterization;
                                             Yc[y][x] = xexpf(ll);
@@ -17489,7 +17489,7 @@ void ImProcFunctions::Lab_Local(
                                         tlc = rtengine::max(tlc, noise);                               
                                         float ci = GHT(tlc, B, D, LP, SP, HP, c, strtype);
                                         float flc = ci / tlc;
-                                        float gh = norm(r, g, b, wprof);//Calculate Luminance in function working profile Wprof
+                                        float gh = norm2(r, g, b, wprof);//Calculate Luminance in function working profile Wprof  norm ?
                                         gh = rtengine::max(gh, noise);
                                         float Mgh = GHT(gh, B, D, LP, SP, HP, c, strtype);//ghs transform with "luminance"
                                         float fgh = Mgh / gh;
@@ -17563,6 +17563,9 @@ void ImProcFunctions::Lab_Local(
                                 1, 1
                             });
 
+#ifdef _OPENMP
+        #   pragma omp parallel for schedule(dynamic,16) if (multiThread)
+#endif
                             for (int i = 0; i < bfh; ++i)
                                 for (int j = 0; j < bfw; ++j) {
                                     float lLab = labtemp->L[i][j]/32768.f;
