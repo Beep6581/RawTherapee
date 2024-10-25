@@ -5610,6 +5610,7 @@ void LocallabShadow::convertParamToNormal()
     fatamountSH->setValue(defSpot.fatamountSH);
     fatanchorSH->setValue(defSpot.fatanchorSH);
     decays->setValue(defSpot.decays);
+    ghs_slope->setValue(defSpot.ghs_slope);
     updateShadowGUI3();
 
     // Enable all listeners
@@ -5623,6 +5624,8 @@ void LocallabShadow::convertParamToSimple()
     // Disable all listeners
     disableListener();
     // Set hidden specific GUI widgets in Simple mode to default spot values
+    ghsMethod->set_active(0);
+
     gamSH->setValue(defSpot.gamSH);
     sloSH->setValue(defSpot.sloSH);
     angSH->setValue(defSpot.angSH);
@@ -5663,6 +5666,9 @@ void LocallabShadow::updateGUIToMode(const modeType new_type)
             maskusables->hide();
             maskunusables->hide();
             decays->hide();
+            ghsMethod->hide();
+            ghs_slope->hide();
+            Lab_Frame->hide();
             break;
 
         case Normal:
@@ -5700,6 +5706,12 @@ void LocallabShadow::updateGUIToMode(const modeType new_type)
             }
             expmasksh->show();
             decays->hide();
+            ghsMethod->show();
+            Lab_Frame->hide();
+            if (ghsMethod->get_active_row_number() == 2  && shMethod->get_active_row_number() == 2) {
+                Lab_Frame->show();
+            }
+            ghs_slope->hide();
 
             break;
 
@@ -5737,6 +5749,14 @@ void LocallabShadow::updateGUIToMode(const modeType new_type)
             gammaskSH->show();
             slomaskSH->show();
             fatSHFrame->show();
+            ghsMethod->show();
+            Lab_Frame->hide();
+
+            if (ghsMethod->get_active_row_number() == 2  && shMethod->get_active_row_number() == 2) {
+                Lab_Frame->show();
+            }
+            ghs_slope->show();
+            
     }
 }
 
@@ -5793,17 +5813,23 @@ void LocallabShadow::shMethodChanged()
 
 void LocallabShadow::ghsMethodChanged()
 {
+    const int mode = complexity->get_active_row_number();
 
     // Update shadow highlight GUI according to ghsMethod combobox state
     updateShadowGUI2();
     if (ghsMethod->get_active_row_number() == 2) {
         Lab_Frame->show();
-        ghs_slope->show();
+        ghs_slope->hide();
+        if (mode == Expert) {
+            ghs_slope->show();
+        }
         ghs_chro->show();
     } else {
         Lab_Frame->hide();
         ghs_slope->hide();
         ghs_chro->hide();
+        Lab_Frame->hide();
+
     }
 
     if (isLocActivated && exp->getEnabled()) {
@@ -5992,9 +6018,21 @@ void LocallabShadow::updateShadowGUI1()
         reparsh->hide();
     } else {
         expgradsh->hide();
+        ghsMethod->hide();
+        ghs_slope->hide();
+        Lab_Frame->hide();
+        
         if (mode == Expert || mode == Normal) { // Keep widget hidden in Simple mode
             expgradsh->show();
             exprecovs->show();
+            ghsMethod->show();
+        }
+        if (ghsMethod->get_active_row_number() == 2 && shMethod->get_active_row_number() == 2) {
+            Lab_Frame->show();
+        }
+        
+        if (mode == Expert) {
+            ghs_slope->show();  
         }
         reparsh->show();
 
@@ -6078,13 +6116,23 @@ void LocallabShadow::updateShadowGUI2()
         s_tonalwidth->hide();
         sh_radius->hide();
         ghsFrame->show();
-        ghsMethod->show();
         inverssh->hide();
         inverssh->set_active(false);
         expgradsh->hide();
+        ghsMethod->hide();
+        ghs_slope->hide();
+        Lab_Frame->hide();
+
         if (mode == Expert || mode == Normal) { // Keep widget hidden in Simple mode
             expgradsh->show();
-        }    
+            ghsMethod->show();
+            if (ghsMethod->get_active_row_number() == 2) {
+                Lab_Frame->show();
+            }
+        }  
+        if (mode == Expert) {
+            ghs_slope->show();
+        }
     }
 }
 
