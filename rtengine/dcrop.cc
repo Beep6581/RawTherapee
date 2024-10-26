@@ -1093,8 +1093,7 @@ void Crop::update(int todo)
             float lightsig = params.locallab.spots.at(sp).lightsigqcie;
             float ghscur[42];
             int ghsbpwp[2];
-          //  ghsbpwp[0] = 0;
-          //  ghsbpwp[1] = 0;
+            float ghsbpwpvalue[2];
 
 /*            huerefp[sp] = huere;
             chromarefp[sp] = chromare;
@@ -1168,7 +1167,7 @@ void Crop::update(int todo)
                         parent->localllogMask, parent->locall_Mask, parent->locallcieMask, minCD, maxCD, mini, maxi, Tmean, Tsigma, Tmin, Tmax,
                         meantme, stdtme, meanretie, stdretie, fab, maxicam,rdx, rdy, grx, gry, blx, bly, meanx, meany, meanxe, meanye, prim, ill, contsig, lightsig,
                         highresi, nresi, highresi46, nresi46, Lhighresi, Lnresi, Lhighresi46, Lnresi46,
-                        ghscur, ghsbpwp 
+                        ghscur, ghsbpwp, ghsbpwpvalue
 );
                         
                         LocallabListener::locallabDenoiseLC denoiselc;
@@ -1284,7 +1283,7 @@ void Crop::update(int todo)
                         minCD, maxCD, mini, maxi, Tmean, Tsigma, Tmin, Tmax,
                         meantme, stdtme, meanretie, stdretie, fab, maxicam, rdx, rdy, grx, gry, blx, bly, meanx, meany, meanxe, meanye, prim, ill, contsig, lightsig,
                         highresi, nresi, highresi46, nresi46, Lhighresi, Lnresi, Lhighresi46, Lnresi46,
-                        ghscur, ghsbpwp
+                        ghscur, ghsbpwp, ghsbpwpvalue
                         );
             }
             

@@ -1402,6 +1402,9 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                 int ghsbpwp[2];
                 ghsbpwp[0] = 0;
                 ghsbpwp[1] = 0;
+                float ghsbpwpvalue[2];
+                ghsbpwpvalue[0] = 0.f;
+                ghsbpwpvalue[1] = 1.f;;
                 
 
                 Glib::ustring prof = params->icm.workingProfile;
@@ -1466,7 +1469,7 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                               minCD, maxCD, mini, maxi, Tmean, Tsigma, Tmin, Tmax,
                               meantm, stdtm, meanreti, stdreti, fab, maxicam, rdx, rdy, grx, gry, blx, bly, meanx, meany, meanxe, meanye, prim, ill, contsig, lightsig,
                               highresi, nresi, highresi46, nresi46, Lhighresi, Lnresi, Lhighresi46, Lnresi46, 
-                              ghscur, ghsbpwp 
+                              ghscur, ghsbpwp, ghsbpwpvalue
 );
 
 
@@ -1598,6 +1601,7 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                 LocallabListener::locallabshGHSbw locshghsbw;//ghs S curve
                     for(int j = 0; j < 2; j++) {
                         locshghsbw.ghsbw[j] = ghsbpwp[j];
+                        locshghsbw.ghsbwvalue[j] = ghsbpwpvalue[j];
                     }
                 locallshgshbw.push_back(locshghsbw);
 

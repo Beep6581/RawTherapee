@@ -525,7 +525,8 @@ public:
 
 
     struct locallabshGHSbw {//To draw GHS  S curve
-       double ghsbw[2];
+       int ghsbw[2];
+       double ghsbwvalue[2];
     };
 
 //select spot settings 

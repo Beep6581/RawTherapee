@@ -3148,6 +3148,8 @@ TP_LOCALLAB_GAMUTXYZABSO;XYZ Absolute
 TP_LOCALLAB_GAMUTXYZRELA;XYZ Relative
 TP_LOCALLAB_GAMW;Gamma (wavelet pyramids)
 TP_LOCALLAB_GHSBPWP;Clipped Black point=%1 White point=%2
+TP_LOCALLAB_GHSBPWPVALUE;Value Black point=%1 White point=%2
+
 TP_LOCALLAB_GHSRGBLUM;RGB Luminance
 TP_LOCALLAB_GHSRGBSTD;RGB Standard
 TP_LOCALLAB_GHSLAB;Luminance & chromaticity (Lab)

@@ -1410,12 +1410,17 @@ void Locallab::ghsbwChanged(const std::vector<locallabshGHSbw> &shghsbw, int sel
     int bw[2];
     bw[0] = 0;
     bw[1] = 1;
+    double bwvalue[2];
+    bwvalue[0] = 0.;
+    bwvalue[1] = 1.;
+
     if (selspot < (int) sh_ghsbw.size()) {
         for(int i=0; i < 2; i++) {
             bw[i] = sh_ghsbw.at(selspot).ghsbw[i];
+            bwvalue[i] = sh_ghsbw.at(selspot).ghsbwvalue[i];
         }
     
-        expshadhigh.updateghsbw(bw[0], bw[1]);
+        expshadhigh.updateghsbw(bw[0], bw[1], bwvalue[0], bwvalue[1]);
     }
 
 }

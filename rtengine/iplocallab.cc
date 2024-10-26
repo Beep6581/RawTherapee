@@ -14413,7 +14413,7 @@ void ImProcFunctions::Lab_Local(
     float& minCD, float& maxCD, float& mini, float& maxi, float& Tmean, float& Tsigma, float& Tmin, float& Tmax,
     float& meantm, float& stdtm, float& meanreti, float& stdreti, float &fab,float &maxicam, float &rdx, float &rdy, float &grx, float &gry, float &blx, float &bly, float &meanx, float &meany, float &meanxe, float &meanye, int &prim, int &ill, float &contsig, float &lightsig,
     float& highresi, float& nresi, float& highresi46, float& nresi46, float& Lhighresi, float& Lnresi, float& Lhighresi46, float& Lnresi46,
-    float *ghscur, int *ghsbpwp
+    float *ghscur, int *ghsbpwp, float *ghsbpwpvalue
 
 
 
@@ -17384,10 +17384,12 @@ void ImProcFunctions::Lab_Local(
                             }
                             int bpnb = 0;
                             int wpnb = 0;
-
+                            float minbp = 0.f;
+                            float maxwp = 1.f;
+                            
 
 #ifdef _OPENMP
-        #   pragma omp parallel for reduction(+:bpnb, wpnb) if (multiThread)  //for schedule(dynamic,16)
+        #   pragma omp parallel for reduction(+:bpnb, wpnb) reduction(min:minbp) reduction(max:maxwp) if (multiThread)  //for schedule(dynamic,16)
 #endif
                             for (int i = 0; i < bfh; ++i)
                                 for (int j = 0; j < bfw; ++j) {
@@ -17405,9 +17407,14 @@ void ImProcFunctions::Lab_Local(
                                         Bo = (shiftblackpoint2) + b * (shiftwhitepoint - shiftblackpoint2);
                                     }
                                     if(Ro < 0.f || Go < 0.f || Bo < 0.f) {
+                                        minbp = rtengine::min(Ro, Go);
+                                        minbp = rtengine::min(minbp, Bo);
                                         bpnb++;
+                                        
                                     }
                                     if(Ro > 1.f || Go > 1.f || Bo > 1.f) {
+                                        maxwp = rtengine::max(Ro, Go);
+                                        maxwp = rtengine::max(maxwp, Bo);                                   
                                         wpnb++;
                                     }
                                     
@@ -17417,8 +17424,10 @@ void ImProcFunctions::Lab_Local(
                                 }
                                 ghsbpwp[0] = bpnb;
                                 ghsbpwp[1] = wpnb;
+                                ghsbpwpvalue[0] = minbp;
+                                ghsbpwpvalue[1] = maxwp;
                                 if (settings->verbose) {
-                                    printf("BPnb=%i WPnb=%i\n", ghsbpwp[0], ghsbpwp[1]);
+                                    printf("BPnb=%i WPnb=%i  minBPval=%f maxWPval=%f \n", ghsbpwp[0], ghsbpwp[1], (double)ghsbpwpvalue[0] , (double) ghsbpwpvalue[1]);
                                 }
                                 
                         }

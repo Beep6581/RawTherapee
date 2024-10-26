@@ -4304,6 +4304,7 @@ LocallabShadow::LocallabShadow():
     ghs_BLP(Gtk::manage(new Adjuster(M("TP_LOCALLAB_GHS_BLP"), -0.2, 1.0, 0.0001, 0.0))),
     ghs_HLP(Gtk::manage(new Adjuster(M("TP_LOCALLAB_GHS_HLP"), 0.2002, 3.0, 0.0001, 1.0))),
     ghsbpwpLabels(Gtk::manage(new Gtk::Label("---"))),
+    ghsbpwpvalueLabels(Gtk::manage(new Gtk::Label("---"))),
     ghs_smooth(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_GHS_SMOOTH")))),
     ghs_inv(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_GHS_INV")))),
     ghsMode(Gtk::manage(new MyComboBoxText())),
@@ -4430,6 +4431,7 @@ https://www.ghsastro.co.uk/doc/tools/GeneralizedHyperbolicStretch/GeneralizedHyp
     ghs_BLP->setAdjusterListener(this);
     ghs_HLP->setAdjusterListener(this);
     setExpandAlignProperties(ghsbpwpLabels, true, false, Gtk::ALIGN_CENTER, Gtk::ALIGN_START);
+    setExpandAlignProperties(ghsbpwpvalueLabels, true, false, Gtk::ALIGN_CENTER, Gtk::ALIGN_START);
     ghs_D->setLogScale(10, 0);
     ghs_B->setLogScale(10, -5);
     ghs_slope->setLogScale(10, 1);
@@ -4557,6 +4559,7 @@ https://www.ghsastro.co.uk/doc/tools/GeneralizedHyperbolicStretch/GeneralizedHyp
     BPBox->pack_start(*ghs_BLP);
     BPBox->pack_start(*ghs_HLP);
     BPBox->pack_start(*ghsbpwpLabels);
+    BPBox->pack_start(*ghsbpwpvalueLabels);
     BPBox->pack_start(*ghs_smooth);
     BP_Frame->add(*BPBox);
     ghsBox->pack_start(*BP_Frame);
@@ -5514,16 +5517,22 @@ void LocallabShadow::updateghs(int lincur, double g0i, double g0, double g5i, do
    );
 }
 
-void LocallabShadow::updateghsbw(int bp, int wp)
+void LocallabShadow::updateghsbw(int bp, int wp, double minbp, double maxwp)
 {
     idle_register.add(
-    [this, bp, wp]() -> bool {
+    [this, bp, wp, minbp, maxwp]() -> bool {
         GThreadLock lock; // All GUI access from idle_add callbacks or separate thread HAVE to be protected
 
         ghsbpwpLabels->set_text(
             Glib::ustring::compose(M("TP_LOCALLAB_GHSBPWP"),
                                    Glib::ustring::format(std::fixed, std::setprecision(0), bp),
                                    Glib::ustring::format(std::fixed, std::setprecision(0), wp))
+        );
+
+        ghsbpwpvalueLabels->set_text(
+            Glib::ustring::compose(M("TP_LOCALLAB_GHSBPWPVALUE"),
+                                   Glib::ustring::format(std::fixed, std::setprecision(3), minbp),
+                                   Glib::ustring::format(std::fixed, std::setprecision(3), maxwp))
         );
 
         enableListener();
@@ -5669,6 +5678,7 @@ void LocallabShadow::updateGUIToMode(const modeType new_type)
             ghsMethod->hide();
             ghs_slope->hide();
             Lab_Frame->hide();
+            ghsbpwpvalueLabels->hide();
             break;
 
         case Normal:
@@ -5712,6 +5722,7 @@ void LocallabShadow::updateGUIToMode(const modeType new_type)
                 Lab_Frame->show();
             }
             ghs_slope->hide();
+            ghsbpwpvalueLabels->hide();
 
             break;
 
@@ -5751,9 +5762,11 @@ void LocallabShadow::updateGUIToMode(const modeType new_type)
             fatSHFrame->show();
             ghsMethod->show();
             Lab_Frame->hide();
+            ghsbpwpvalueLabels->show();
 
             if (ghsMethod->get_active_row_number() == 2  && shMethod->get_active_row_number() == 2) {
                 Lab_Frame->show();
+
             }
             ghs_slope->show();
             
@@ -5820,8 +5833,11 @@ void LocallabShadow::ghsMethodChanged()
     if (ghsMethod->get_active_row_number() == 2) {
         Lab_Frame->show();
         ghs_slope->hide();
+        ghsbpwpvalueLabels->hide();
+        
         if (mode == Expert) {
             ghs_slope->show();
+            ghsbpwpvalueLabels->show();
         }
         ghs_chro->show();
     } else {
@@ -5829,6 +5845,7 @@ void LocallabShadow::ghsMethodChanged()
         ghs_slope->hide();
         ghs_chro->hide();
         Lab_Frame->hide();
+        ghsbpwpvalueLabels->hide();
 
     }
 
@@ -6021,6 +6038,7 @@ void LocallabShadow::updateShadowGUI1()
         ghsMethod->hide();
         ghs_slope->hide();
         Lab_Frame->hide();
+        ghsbpwpvalueLabels->hide();
         
         if (mode == Expert || mode == Normal) { // Keep widget hidden in Simple mode
             expgradsh->show();
@@ -6033,6 +6051,7 @@ void LocallabShadow::updateShadowGUI1()
         
         if (mode == Expert) {
             ghs_slope->show();  
+            ghsbpwpvalueLabels->show();
         }
         reparsh->show();
 
@@ -6122,6 +6141,7 @@ void LocallabShadow::updateShadowGUI2()
         ghsMethod->hide();
         ghs_slope->hide();
         Lab_Frame->hide();
+        ghsbpwpvalueLabels->hide();
 
         if (mode == Expert || mode == Normal) { // Keep widget hidden in Simple mode
             expgradsh->show();
@@ -6132,6 +6152,8 @@ void LocallabShadow::updateShadowGUI2()
         }  
         if (mode == Expert) {
             ghs_slope->show();
+            ghsbpwpvalueLabels->show();
+            
         }
     }
 }
