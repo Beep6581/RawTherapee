@@ -28,7 +28,7 @@ fft *
 #include "../rtengine/color.h"
 
 #define MINRAD 1.5
-#define MAXRAD 10000
+#define MAXRAD 500 //issue 7225
 #define CENTERRAD 100
 #define MINCHRO 0.
 #define MAXCHRO 150.
@@ -42,7 +42,7 @@ using namespace procparams;
 extern Options options;
 static double blurSlider2radius(double sval)
 {
-    // Slider range: 0 - 1000
+    // Slider range: 0 - 500
     double radius;
 
     if (sval <= 100) {
@@ -112,8 +112,8 @@ static double blurRadius2Slider(double radius)
         sval = 0.;
     }
 
-    if (sval > 10000.) {
-        sval = 10000.;
+    if (sval > 500.) {//issue 7225
+        sval = 500.;
     }
 
     return sval;
