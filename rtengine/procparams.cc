@@ -1895,7 +1895,7 @@ CGParams::CGParams() :
     d_m(1.264),
     d_y(1.312),
     pwr(1.2),
-    colorspace("srgb"),
+    colorspace("acesp1"),
     rolloff(true)
     
 {
