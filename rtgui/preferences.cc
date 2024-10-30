@@ -1147,16 +1147,32 @@ Gtk::Widget* Preferences::getGeneralPanel()
     workflowGrid->attach_next_to(*spotlocalL, *complexityL, Gtk::POS_BOTTOM, 1, 1);
     workflowGrid->attach_next_to(*spotlocal, *complexitylocal, Gtk::POS_BOTTOM, 1, 1);
 
+    Gtk::Label* targetcompL = Gtk::manage(new Gtk::Label(M("PREFERENCES_TARGETCOMP") + ":"));
+    setExpandAlignProperties(targetcompL, false, false, Gtk::ALIGN_START, Gtk::ALIGN_BASELINE);
+    targetcomp = Gtk::manage(new Gtk::ComboBoxText());
+    setExpandAlignProperties(targetcomp, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_BASELINE);
+    targetcomp->append(M("TP_COMPRESSGAMUT_REC2020"));
+    targetcomp->append(M("TP_COMPRESSGAMUT_PROPHOTO"));
+    targetcomp->append(M("TP_COMPRESSGAMUT_ADOBE"));
+    targetcomp->append(M("TP_COMPRESSGAMUT_SRGB"));
+    targetcomp->append(M("TP_COMPRESSGAMUT_DCIP3"));
+    targetcomp->append(M("TP_COMPRESSGAMUT_ACESP1"));
+    targetcomp->set_active(5);
+    workflowGrid->attach_next_to(*targetcompL, *spotlocalL, Gtk::POS_BOTTOM, 1, 1);
+    workflowGrid->attach_next_to(*targetcomp, *spotlocal, Gtk::POS_BOTTOM, 1, 1);
+
 
     zoomOnScrollCB = Gtk::manage(new Gtk::CheckButton(M("PREFERENCES_ZOOMONSCROLL")));
     setExpandAlignProperties(zoomOnScrollCB, false, false, Gtk::ALIGN_START, Gtk::ALIGN_BASELINE);
     //workflowGrid->attach_next_to(*zoomOnScrollCB, *complexityL, Gtk::POS_BOTTOM, 1, 1);
-    workflowGrid->attach_next_to(*zoomOnScrollCB, *spotlocalL, Gtk::POS_BOTTOM, 1, 1);
+   // workflowGrid->attach_next_to(*zoomOnScrollCB, *spotlocalL, Gtk::POS_BOTTOM, 1, 1);
+    workflowGrid->attach_next_to(*zoomOnScrollCB, *targetcompL, Gtk::POS_BOTTOM, 1, 1);
 
     inspectorWindowCB = Gtk::manage(new Gtk::CheckButton(M("PREFERENCES_INSPECTORWINDOW")));
     setExpandAlignProperties(inspectorWindowCB, false, false, Gtk::ALIGN_START, Gtk::ALIGN_BASELINE);
    // workflowGrid->attach_next_to(*inspectorWindowCB, *complexitylocal, Gtk::POS_BOTTOM, 1, 1);
-    workflowGrid->attach_next_to(*inspectorWindowCB, *spotlocal, Gtk::POS_BOTTOM, 1, 1);
+   // workflowGrid->attach_next_to(*inspectorWindowCB, *spotlocal, Gtk::POS_BOTTOM, 1, 1);
+    workflowGrid->attach_next_to(*inspectorWindowCB, *targetcomp, Gtk::POS_BOTTOM, 1, 1);
     Gtk::Label* inspectorNextStartL = Gtk::manage(new Gtk::Label(Glib::ustring("(") + M("PREFERENCES_APPLNEXTSTARTUP") + ")"));
     setExpandAlignProperties(inspectorNextStartL, false, false, Gtk::ALIGN_START, Gtk::ALIGN_BASELINE);
     workflowGrid->attach_next_to(*inspectorNextStartL, *inspectorWindowCB, Gtk::POS_RIGHT, 1, 1);
@@ -2029,6 +2045,7 @@ void Preferences::storePreferences()
     moptions.curvebboxpos = curveBBoxPosC->get_active_row_number();
     moptions.complexity = complexitylocal->get_active_row_number();
     moptions.spotmet = spotlocal->get_active_row_number();
+    moptions.gamutmet = targetcomp->get_active_row_number();
 
     moptions.inspectorWindow = inspectorWindowCB->get_active();
     moptions.zoomOnScroll = zoomOnScrollCB->get_active();
@@ -2255,6 +2272,7 @@ void Preferences::fillPreferences()
     curveBBoxPosC->set_active(moptions.curvebboxpos);
     complexitylocal->set_active(moptions.complexity);
     spotlocal->set_active(moptions.spotmet);
+    targetcomp->set_active(moptions.gamutmet);
     inspectorWindowCB->set_active(moptions.inspectorWindow);
     zoomOnScrollCB->set_active(moptions.zoomOnScroll);
 

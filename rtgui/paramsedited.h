@@ -380,6 +380,7 @@ struct CGParamsEdited {
     bool pwr;
     bool colorspace;
     bool rolloff;
+    bool keepset;
 };
 
 struct ToneEqualizerParamsEdited {

@@ -39,6 +39,10 @@ protected:
     Adjuster* pwr;
     MyComboBoxText *colorspace;
     sigc::connection colorspaceconn;
+    Gtk::CheckButton* keepset;
+    sigc::connection keepsetconn;
+    bool lastkeepset;
+    
     Gtk::CheckButton* rolloff;
     sigc::connection rolloffconn;
     bool lastrolloff;
@@ -53,6 +57,7 @@ protected:
     rtengine::ProcEvent Evcgroll;
     rtengine::ProcEvent Evcgpwr;
     rtengine::ProcEvent Evcgenabled;
+    rtengine::ProcEvent Evcgkeepset;
 
 public:
     static const Glib::ustring TOOL_NAME;
@@ -67,8 +72,11 @@ public:
     void adjusterChanged (Adjuster* a, double newval) override;
     void enabledChanged  () override;
     void rolloff_change();
+    void keepset_change();
 
     void trimValues          (rtengine::procparams::ProcParams* pp) override;
 
     void colorspaceChanged();
+    void updategamutGUI();
+    
 };

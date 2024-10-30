@@ -44,6 +44,7 @@ Compressgamut::Compressgamut () : FoldableToolPanel(this, TOOL_NAME, M("TP_COMPR
     Evcgroll = m->newEvent(COMPR, "HISTORY_MSG_CG_ROLLOFF");
     Evcgpwr = m->newEvent(COMPR, "HISTORY_MSG_CG_VALUE");
     Evcgenabled = m->newEvent(COMPR, "HISTORY_MSG_CG_ENABLED");
+    Evcgkeepset = m->newEvent(COMPR, "HISTORY_MSG_CG_KEEPSET");
 
 
 
@@ -62,7 +63,14 @@ Compressgamut::Compressgamut () : FoldableToolPanel(this, TOOL_NAME, M("TP_COMPR
     colorspace->append(M("TP_COMPRESSGAMUT_DCIP3"));
     colorspace->append(M("TP_COMPRESSGAMUT_ACESP1"));
     colorspace->set_active(3);
+
+    //keep settings when changing target gamut workspace
+    keepset = Gtk::manage(new Gtk::CheckButton(M("TP_COMPRESSGAMUT_KEEPSET")));
+    keepsetconn = keepset->signal_toggled().connect (sigc::mem_fun (*this, &Compressgamut::keepset_change));
+    keepset->set_active(false); 
+
     iVBox->pack_start(*colorspace);
+    iVBox->pack_start(*keepset);
     iFrame->add(*iVBox);
     pack_start(*iFrame);
     colorspaceconn = colorspace->signal_changed().connect(sigc::mem_fun(*this, &Compressgamut::colorspaceChanged));
@@ -71,10 +79,12 @@ Compressgamut::Compressgamut () : FoldableToolPanel(this, TOOL_NAME, M("TP_COMPR
     // Values calculated to protect all the colors of the ColorChecker Classic 24 as given by
     // ISO 17321-1 and Ohta (1997)
 
+    //others values calculated (estimated) with my color chart Jacques Desmis (468 colors) a "super" Colorchecker and CIExy distance between white point and borders 
+
     th_c = Gtk::manage (new Adjuster (M("TP_COMPRESSGAMUT_CYANTH"), 0., 0.999, 0.001, 0.815));//0.25 sRGB 0.999 to avoid: 1 - th = 0
     th_m = Gtk::manage (new Adjuster (M("TP_COMPRESSGAMUT_MAGENTATH"), 0., 0.999, 0.001, 0.803));//0.925 sRGB
     th_y = Gtk::manage (new Adjuster (M("TP_COMPRESSGAMUT_YELLOWTH"), 0., 0.999, 0.001, 0.880));//0.934 sRGB
-
+    //see others values for Target workspace in Procparams.cc and in updategamutGUI
     Gtk::Frame *thFrame = Gtk::manage(new Gtk::Frame(M("TP_COMPRESSGAMUT_THRESHOLD")));
     thFrame->set_label_align(0.025f, 0.5);
     Gtk::Box *thVBox = Gtk::manage(new Gtk::Box(Gtk::ORIENTATION_VERTICAL));
@@ -92,6 +102,11 @@ Compressgamut::Compressgamut () : FoldableToolPanel(this, TOOL_NAME, M("TP_COMPR
     d_c = Gtk::manage (new Adjuster (M("TP_COMPRESSGAMUT_CYANLIM"), 1.001, 2.0, 0.001, 1.147));//1.05 sRGB
     d_m = Gtk::manage (new Adjuster (M("TP_COMPRESSGAMUT_MAGENTALIM"), 1.001, 2.0, 0.001, 1.264));//1.08 sRGB
     d_y = Gtk::manage (new Adjuster (M("TP_COMPRESSGAMUT_YELLOWLIM"), 1.001, 2.0, 0.001, 1.312));//1.10 sRGB
+
+    //see others values for Target workspace in Procparams.cc and in updategamutGUI
+    //made by estimation using my color chart (468 colors) a "super" Colorchecker
+    // and the CIExy diagram - position of the white point relative to the 3 edges of the triangle cyan, magenta, yellow
+    // of course to refine by testing 
 
     Gtk::Frame *limFrame = Gtk::manage(new Gtk::Frame(M("TP_COMPRESSGAMUT_LIMIT")));
     limFrame->set_label_align(0.025f, 0.5);
@@ -145,13 +160,20 @@ void Compressgamut::read (const ProcParams* pp, const ParamsEdited* pedited)
         pwr->setEditedState        (pedited->cg.pwr ? Edited : UnEdited);
         set_inconsistent           (multiImage && !pedited->cg.enabled);
         rolloff->set_inconsistent  (!pedited->cg.rolloff);
+        keepset->set_inconsistent  (!pedited->cg.keepset);
     }
 
     setEnabled (pp->cg.enabled);
 
+    keepsetconn.block (true);
+    keepset->set_active (pp->cg.keepset);
+    keepsetconn.block (false);
+
     rolloffconn.block (true);
     rolloff->set_active (pp->cg.rolloff);
     rolloffconn.block (false);
+    updategamutGUI();    
+    
     th_c->setValue(pp->cg.th_c);
     th_m->setValue(pp->cg.th_m);
     th_y->setValue(pp->cg.th_y);
@@ -177,18 +199,99 @@ void Compressgamut::read (const ProcParams* pp, const ParamsEdited* pedited)
     }
     colorspaceconn.block (false);
 
+    keepsetconn.block (true);
+    keepset->set_active (pp->cg.keepset);
+    keepsetconn.block (false);
+
+    lastkeepset = pp->cg.keepset;
+    keepset_change();
+
+
     rolloffconn.block (true);
     rolloff->set_active (pp->cg.rolloff);
     rolloffconn.block (false);
 
     lastrolloff = pp->cg.rolloff;
-
     rolloff_change();
     colorspaceChanged();
     enabledChanged ();
 
     enableListener ();
 }
+
+void Compressgamut::updategamutGUI()
+{
+    // Update default slider value GUI according to colorspace
+    //new last factor vDef1 vDef2 try to take into account the colorspace gamut 
+    // th_xx->setLimits(0., 0.99, 0.001, vDef1); I have modified (a little) adjuster.cc (I hope no border effects)
+    // d_xx->setLimits(1.001, 2.0, 0.001, vDef2);
+    //made by estimation using my color chart (468 colors) a "super" Colorchecker
+    // and the CIExy diagram - position of the white point relative to the 3 edges of the triangle cyan, magenta, yellow
+    // of course to refine by testing 
+    //save values in case of 
+    const double temp_tc = th_c->getValue();
+    const double temp_tm = th_m->getValue();
+    const double temp_ty = th_y->getValue();
+    const double temp_dc = d_c->getValue();
+    const double temp_dm = d_m->getValue();
+    const double temp_dy = d_y->getValue();
+    
+    
+     if (colorspace->get_active_row_number() == 0) {//rec2020
+        th_c->setLimits(0., 0.99, 0.001, 0.71);
+        th_m->setLimits(0., 0.99, 0.001, 0.803);
+        th_y->setLimits(0., 0.99, 0.001, 0.870);
+        d_c->setLimits(1.001, 2., 0.001, 1.12);
+        d_m->setLimits(1.001, 2., 0.001, 1.26);
+        d_y->setLimits(1.001, 2., 0.001, 1.31);       
+    } else if (colorspace->get_active_row_number() == 1){//prophoto
+        th_c->setLimits(0., 0.99, 0.001, 0.85);
+        th_m->setLimits(0., 0.99, 0.001, 0.89);
+        th_y->setLimits(0., 0.99, 0.001, 0.90);
+        d_c->setLimits(1.001, 2., 0.001, 1.17);
+        d_m->setLimits(1.001, 2., 0.001, 1.15);
+        d_y->setLimits(1.001, 2., 0.001, 1.35);
+    } else if (colorspace->get_active_row_number() == 2){//Adobe
+        th_c->setLimits(0., 0.99, 0.001, 0.45);
+        th_m->setLimits(0., 0.99, 0.001, 0.90);
+        th_y->setLimits(0., 0.99, 0.001, 0.92);
+        d_c->setLimits(1.001, 2., 0.001, 1.09);
+        d_m->setLimits(1.001, 2., 0.001, 1.17);
+        d_y->setLimits(1.001, 2., 0.001, 1.09);
+    } else if (colorspace->get_active_row_number() == 3){//srgb
+        th_c->setLimits(0., 0.99, 0.001, 0.25);
+        th_m->setLimits(0., 0.99, 0.001, 0.925);
+        th_y->setLimits(0., 0.99, 0.001, 0.934);
+        d_c->setLimits(1.001, 2., 0.001, 1.05);
+        d_m->setLimits(1.001, 2., 0.001, 1.08);
+        d_y->setLimits(1.001, 2., 0.001, 1.10);
+    } else if (colorspace->get_active_row_number() == 4){//dci-p3
+        th_c->setLimits(0., 0.99, 0.001, 0.40);
+        th_m->setLimits(0., 0.99, 0.001, 0.85);
+        th_y->setLimits(0., 0.99, 0.001, 0.88);
+        d_c->setLimits(1.001, 2., 0.001, 1.08);
+        d_m->setLimits(1.001, 2., 0.001, 1.13);
+        d_y->setLimits(1.001, 2., 0.001, 1.30);
+    } else if (colorspace->get_active_row_number() == 5){//acesp1
+        th_c->setLimits(0., 0.99, 0.001, 0.815);
+        th_m->setLimits(0., 0.99, 0.001, 0.803);
+        th_y->setLimits(0., 0.99, 0.001, 0.880);
+        d_c->setLimits(1.001, 2., 0.001, 1.147);
+        d_m->setLimits(1.001, 2., 0.001, 1.264);
+        d_y->setLimits(1.001, 2., 0.001, 1.312);
+    }
+    //restore values
+    if(keepset->get_active()){
+        th_c->setValue(temp_tc);
+        th_m->setValue(temp_tm);
+        th_y->setValue(temp_ty);
+        d_c->setValue(temp_dc);
+        d_m->setValue(temp_dm);
+        d_y->setValue(temp_dy);
+    }
+
+}
+
 
 void Compressgamut::write (ProcParams* pp, ParamsEdited* pedited)
 {
@@ -201,6 +304,7 @@ void Compressgamut::write (ProcParams* pp, ParamsEdited* pedited)
     pp->cg.d_y = d_y->getValue ();
     pp->cg.pwr = pwr->getValue ();
     pp->cg.rolloff = rolloff->get_active();
+    pp->cg.keepset = keepset->get_active();
     pp->cg.enabled = getEnabled();
 
     if (colorspace->get_active_row_number() == 0) {
@@ -229,6 +333,7 @@ void Compressgamut::write (ProcParams* pp, ParamsEdited* pedited)
         pedited->cg.enabled       = !get_inconsistent();
         pedited->cg.colorspace = colorspace->get_active_row_number() != 6;
         pedited->cg.rolloff       = !rolloff->get_inconsistent();
+        pedited->cg.keepset       = !keepset->get_inconsistent();
     }
 
 }
@@ -290,6 +395,32 @@ void Compressgamut::adjusterChanged (Adjuster* a, double newval)
    
 }
 
+void Compressgamut::keepset_change()
+{
+
+    if (batchMode) {
+        if (keepset->get_inconsistent()) {
+            keepset->set_inconsistent (false);
+            keepsetconn.block (true);
+            keepset->set_active (false);
+            keepsetconn.block (false);
+        } else if (lastkeepset) {
+            keepset->set_inconsistent (true);
+        }
+
+        lastkeepset = keepset->get_active ();
+    }
+
+    if (listener) {
+        if (keepset->get_active()) {
+            listener->panelChanged(Evcgkeepset, M("GENERAL_ENABLED"));
+        } else {
+            listener->panelChanged(Evcgkeepset, M("GENERAL_DISABLED"));
+        }
+    }
+}
+
+
 void Compressgamut::rolloff_change()
 {
     if (rolloff->get_active()) {
@@ -322,6 +453,7 @@ void Compressgamut::rolloff_change()
 
 void Compressgamut::colorspaceChanged()
 {
+    updategamutGUI();
     if (listener && getEnabled()) {
         listener->panelChanged(EvcgColorspace, colorspace->get_active_text());
     }

@@ -336,6 +336,7 @@ void ParamsEdited::set(bool v)
     cg.pwr = v;
     cg.colorspace = v;
     cg.rolloff = v;
+    cg.keepset = v;
 
     toneEqualizer.enabled        = v;
     toneEqualizer.bands.fill(v);
@@ -1080,6 +1081,7 @@ void ParamsEdited::initFrom(const std::vector<rtengine::procparams::ProcParams>&
         cg.pwr = cg.pwr && p.cg.pwr == other.cg.pwr;
         cg.colorspace = cg.colorspace && p.cg.colorspace == other.cg.colorspace;
         cg.rolloff = cg.rolloff && p.cg.rolloff == other.cg.rolloff;
+        cg.keepset = cg.keepset && p.cg.keepset == other.cg.keepset;
 
         crop.enabled = crop.enabled && p.crop.enabled == other.crop.enabled;
         crop.x = crop.x && p.crop.x == other.crop.x;
@@ -3416,6 +3418,10 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
 
     if (cg.rolloff) {
         toEdit.cg.rolloff = mods.cg.rolloff;
+    }
+
+    if (cg.keepset) {
+        toEdit.cg.keepset = mods.cg.keepset;
     }
 
     if (cg.enabled) {

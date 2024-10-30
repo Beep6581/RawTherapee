@@ -167,6 +167,8 @@ class Preferences final :
     Gtk::ComboBoxText* complexitylocal;
     Gtk::ComboBoxText* spotlocal;
 
+    Gtk::ComboBoxText* targetcomp;
+
     Gtk::CheckButton* inspectorWindowCB;
     Gtk::CheckButton* zoomOnScrollCB;
 

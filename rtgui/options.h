@@ -338,6 +338,7 @@ public:
     bool overwriteOutputFile;
     int complexity;
     int spotmet;
+    int gamutmet;
 
     bool inspectorWindow; // open inspector in separate window
     bool zoomOnScroll;    // translate scroll events to zoom

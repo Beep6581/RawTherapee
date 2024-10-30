@@ -285,7 +285,6 @@ void Adjuster::resetValue (bool toInitial)
     }
 
     afterReset = true;
-
     if (toInitial) {
         // resetting to the initial editing value, when the image has been loaded
         setSliderValue(addMode ? defaultVal : value2slider(defaultVal));
@@ -294,7 +293,8 @@ void Adjuster::resetValue (bool toInitial)
         if (addMode) {
             setSliderValue(0.);
         } else {
-            setSliderValue(value2slider(ctorDefaultVal));
+            setSliderValue(value2slider(vDef));
+           // setSliderValue(value2slider(ctorDefaultVal));
         }
     }
 }
@@ -324,7 +324,7 @@ void Adjuster::setLimits (double vmin, double vmax, double vstep, double vdefaul
 
     double pow10 = vstep;
     for (digits = 0; std::fabs(pow10 - floor(pow10)) > 0.000000000001; digits++, pow10 *= 10.0);
-
+    vDef = vdefault;
     const double shapeVal = shapeValue(vdefault);
     spin->set_digits(digits);
     spin->set_increments(vstep, 2.0 * vstep);

@@ -1896,9 +1896,65 @@ CGParams::CGParams() :
     d_y(1.312),
     pwr(1.2),
     colorspace("acesp1"),
-    rolloff(true)
+    rolloff(true),
+    keepset(false)
     
-{
+{  //set default value in function of Preferences "Define Workspace for Gamut Compression
+    //made by estimation using my color chart (468 colors) a "super" Colorchecker
+    // and the CIExy diagram - position of the white point relative to the 3 edges of the triangle cyan, magenta, yellow
+    // of course to refine by testing 
+
+   if(options.gamutmet == 0) {        
+        colorspace = "rec2020";
+        th_c = 0.71;
+        th_m = 0.803;
+        th_y = 0.870;
+        d_c = 1.12;
+        d_m = 1.26;
+        d_y = 1.31;
+   } else if(options.gamutmet == 1) {        
+        colorspace = "prophoto";
+        th_c = 0.85;
+        th_m = 0.89;
+        th_y = 0.90;
+        d_c = 1.17;
+        d_m = 1.15;
+        d_y = 1.35;
+   } else if(options.gamutmet == 2) {        
+        colorspace = "adobe";
+        th_c = 0.45;
+        th_m = 0.90;
+        th_y = 0.92;
+        d_c = 1.09;
+        d_m = 1.17;
+        d_y = 1.09;
+ 
+   } else if(options.gamutmet == 3) {        
+        colorspace = "srgb";
+        th_c = 0.25;
+        th_m = 0.925;
+        th_y = 0.934;
+        d_c = 1.05;
+        d_m = 1.08;
+        d_y = 1.10;
+   } else if(options.gamutmet == 4) {        
+        colorspace = "dcip3";
+        th_c = 0.40;
+        th_m = 0.85;
+        th_y = 0.88;
+        d_c = 1.08;
+        d_m = 1.13;
+        d_y = 1.30;
+   } else if(options.gamutmet == 5) {        
+        colorspace = "acesp1";
+        th_c = 0.815;
+        th_m = 0.803;
+        th_y = 0.880;
+        d_c = 1.147;
+        d_m = 1.264;
+        d_y = 1.312;
+   }
+   
 }
 
 bool CGParams::operator ==(const CGParams& other) const
@@ -1913,6 +1969,7 @@ bool CGParams::operator ==(const CGParams& other) const
         && d_y == other.d_y
         && pwr == other.pwr
         && colorspace == other.colorspace
+        && keepset == other.keepset
         && rolloff == other.rolloff;
 }
 
@@ -6767,6 +6824,7 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
         saveToKeyfile(!pedited || pedited->cg.pwr, "Compression gamut", "pwr", cg.pwr, keyFile);
         saveToKeyfile(!pedited || pedited->cg.colorspace, "Compression gamut", "colorspace", cg.colorspace, keyFile);
         saveToKeyfile(!pedited || pedited->cg.rolloff, "Compression gamut", "rolloff", cg.rolloff, keyFile);
+        saveToKeyfile(!pedited || pedited->cg.keepset, "Compression gamut", "keepset", cg.keepset, keyFile);
 
 // Tone equalizer
         saveToKeyfile(!pedited || pedited->toneEqualizer.enabled, "ToneEqualizer", "Enabled", toneEqualizer.enabled, keyFile);
@@ -8916,6 +8974,7 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
             assignFromKeyfile(keyFile, "Compression gamut", "pwr", cg.pwr, pedited->cg.pwr);
             assignFromKeyfile(keyFile, "Compression gamut", "colorspace", cg.colorspace, pedited->cg.colorspace);
             assignFromKeyfile(keyFile, "Compression gamut", "rolloff", cg.rolloff, pedited->cg.rolloff);
+            assignFromKeyfile(keyFile, "Compression gamut", "keepset", cg.keepset, pedited->cg.keepset);
         }
 
         if (keyFile.has_group("Shadows & Highlights") && ppVersion >= 333) {

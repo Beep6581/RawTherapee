@@ -65,6 +65,7 @@ protected:
     double vMin;
     double vMax;
     double vStep;
+    double vDef;
 
     double logBase;
     double logPivot;

@@ -2189,6 +2189,12 @@ void Color::mult3(std::array<float, 3> &in, const Matrix &ma, std::array<float, 
 //const float LIM_MAGENTA = 1.264;
 //const float LIM_YELLOW = 1.312;
 
+//Jacques Desmis October 2024
+// I set others values for THR and LIM for sRGB , Adobe, Rec2020, Prophoto, Adobe, Dci-p3 
+// made by estimation using my color chart (468 colors) a "super" Colorchecker
+// and the CIExy diagram - position of the white point relative to the 3 edges of the triangle cyan, magenta, yellow
+// of course to refine by testing 
+
 //Percentage of the core gamut to protect
 // Values calculated to protect all the colors of the ColorChecker Classic 24 as given by
 // ISO 17321-1 and Ohta (1997)

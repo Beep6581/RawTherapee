@@ -872,6 +872,7 @@ struct CGParams {
     double  pwr;
     Glib::ustring colorspace;
     bool rolloff;
+    bool keepset;
     
     CGParams();
 
