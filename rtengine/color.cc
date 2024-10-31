@@ -2193,6 +2193,7 @@ void Color::mult3(std::array<float, 3> &in, const Matrix &ma, std::array<float, 
 // I set others values for THR and LIM for sRGB , Adobe, Rec2020, Prophoto, Adobe, Dci-p3 
 // made by estimation using my color chart (468 colors) a "super" Colorchecker
 // and the CIExy diagram - position of the white point relative to the 3 edges of the triangle cyan, magenta, yellow
+//and others difficult images : flowers, submarine
 // of course to refine by testing 
 
 //Percentage of the core gamut to protect
@@ -2208,7 +2209,7 @@ void Color::mult3(std::array<float, 3> &in, const Matrix &ma, std::array<float, 
 
 void Color::aces_reference_gamut_compression(
     const std::array<float, 3> &rgb_in,
-    const std::array<float, 3> &threshold,
+    std::array<float, 3> &threshold,
     const std::array<float, 3> &distance_limit,
     const Matrix &to_out, const Matrix &from_out,
     float pwr, bool rolloff,
@@ -2221,6 +2222,7 @@ void Color::aces_reference_gamut_compression(
     std::array<float, 3> s;
     for (unsigned i = 0; i < s.size(); ++i) {
         // Scale factor: c = (1 - t) / sqrt(l - 1)
+        threshold[i] = rtengine::min(threshold[i], 0.999f);//limit threshold to 0.999 to avoid artifacts and segemntation fault
         s[i] = (1.0f  - threshold[i]) / sqrt(fmax(1.001f, distance_limit[i]) - 1.0f);
     }
     // target colorspace

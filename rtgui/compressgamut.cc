@@ -80,10 +80,12 @@ Compressgamut::Compressgamut () : FoldableToolPanel(this, TOOL_NAME, M("TP_COMPR
     // ISO 17321-1 and Ohta (1997)
 
     //others values calculated (estimated) with my color chart Jacques Desmis (468 colors) a "super" Colorchecker and CIExy distance between white point and borders 
+    //and others difficult images : flowers, submarine
 
-    th_c = Gtk::manage (new Adjuster (M("TP_COMPRESSGAMUT_CYANTH"), 0., 0.999, 0.001, 0.815));//0.25 sRGB 0.999 to avoid: 1 - th = 0
-    th_m = Gtk::manage (new Adjuster (M("TP_COMPRESSGAMUT_MAGENTATH"), 0., 0.999, 0.001, 0.803));//0.925 sRGB
-    th_y = Gtk::manage (new Adjuster (M("TP_COMPRESSGAMUT_YELLOWTH"), 0., 0.999, 0.001, 0.880));//0.934 sRGB
+    //max th is important to avoid artifacts and segmentation fault - with some images max th = 1 = segmentation fault or artifacts
+    th_c = Gtk::manage (new Adjuster (M("TP_COMPRESSGAMUT_CYANTH"), 0., 1., 0.001, 0.815));//0.25 sRGB 0.999 to avoid: 1 - th = 0
+    th_m = Gtk::manage (new Adjuster (M("TP_COMPRESSGAMUT_MAGENTATH"), 0., 1., 0.001, 0.803));//0.925 sRGB
+    th_y = Gtk::manage (new Adjuster (M("TP_COMPRESSGAMUT_YELLOWTH"), 0., 1., 0.001, 0.880));//0.934 sRGB
     //see others values for Target workspace in Procparams.cc and in updategamutGUI
     Gtk::Frame *thFrame = Gtk::manage(new Gtk::Frame(M("TP_COMPRESSGAMUT_THRESHOLD")));
     thFrame->set_label_align(0.025f, 0.5);
@@ -105,6 +107,7 @@ Compressgamut::Compressgamut () : FoldableToolPanel(this, TOOL_NAME, M("TP_COMPR
 
     //see others values for Target workspace in Procparams.cc and in updategamutGUI
     //made by estimation using my color chart (468 colors) a "super" Colorchecker
+    //and others difficult images : flowers, submarine
     // and the CIExy diagram - position of the white point relative to the 3 edges of the triangle cyan, magenta, yellow
     // of course to refine by testing 
 
@@ -223,9 +226,10 @@ void Compressgamut::updategamutGUI()
 {
     // Update default slider value GUI according to colorspace
     //new last factor vDef1 vDef2 try to take into account the colorspace gamut 
-    // th_xx->setLimits(0., 0.99, 0.001, vDef1); I have modified (a little) adjuster.cc (I hope no border effects)
+    // th_xx->setLimits(0., 0.999, 0.001, vDef1); I have modified (a little) adjuster.cc (I hope no border effects)
     // d_xx->setLimits(1.001, 2.0, 0.001, vDef2);
     //made by estimation using my color chart (468 colors) a "super" Colorchecker
+    //and others difficult images : flowers, submarine
     // and the CIExy diagram - position of the white point relative to the 3 edges of the triangle cyan, magenta, yellow
     // of course to refine by testing 
     //save values in case of 
@@ -235,47 +239,47 @@ void Compressgamut::updategamutGUI()
     const double temp_dc = d_c->getValue();
     const double temp_dm = d_m->getValue();
     const double temp_dy = d_y->getValue();
-    
+    double maxth = 1.;// 1.0 (or 0.9999) leeds in some cases to artifacts or segmentation fault - I change in color.cc aces_reference_gamut_compression by limiting theshold to 0.999
     
      if (colorspace->get_active_row_number() == 0) {//rec2020
-        th_c->setLimits(0., 0.99, 0.001, 0.71);
-        th_m->setLimits(0., 0.99, 0.001, 0.803);
-        th_y->setLimits(0., 0.99, 0.001, 0.870);
+        th_c->setLimits(0., maxth, 0.001, 0.71);
+        th_m->setLimits(0., maxth, 0.001, 0.803);
+        th_y->setLimits(0., maxth, 0.001, 0.870);
         d_c->setLimits(1.001, 2., 0.001, 1.12);
         d_m->setLimits(1.001, 2., 0.001, 1.26);
         d_y->setLimits(1.001, 2., 0.001, 1.31);       
     } else if (colorspace->get_active_row_number() == 1){//prophoto
-        th_c->setLimits(0., 0.99, 0.001, 0.85);
-        th_m->setLimits(0., 0.99, 0.001, 0.89);
-        th_y->setLimits(0., 0.99, 0.001, 0.90);
+        th_c->setLimits(0., maxth, 0.001, 0.85);
+        th_m->setLimits(0., maxth, 0.001, 0.89);
+        th_y->setLimits(0., maxth, 0.001, 0.90);
         d_c->setLimits(1.001, 2., 0.001, 1.17);
         d_m->setLimits(1.001, 2., 0.001, 1.15);
         d_y->setLimits(1.001, 2., 0.001, 1.35);
     } else if (colorspace->get_active_row_number() == 2){//Adobe
-        th_c->setLimits(0., 0.99, 0.001, 0.45);
-        th_m->setLimits(0., 0.99, 0.001, 0.90);
-        th_y->setLimits(0., 0.99, 0.001, 0.92);
+        th_c->setLimits(0., maxth, 0.001, 0.45);
+        th_m->setLimits(0., maxth, 0.001, 0.90);
+        th_y->setLimits(0., maxth, 0.001, 0.92);
         d_c->setLimits(1.001, 2., 0.001, 1.09);
         d_m->setLimits(1.001, 2., 0.001, 1.17);
         d_y->setLimits(1.001, 2., 0.001, 1.09);
     } else if (colorspace->get_active_row_number() == 3){//srgb
-        th_c->setLimits(0., 0.99, 0.001, 0.25);
-        th_m->setLimits(0., 0.99, 0.001, 0.925);
-        th_y->setLimits(0., 0.99, 0.001, 0.934);
+        th_c->setLimits(0., maxth, 0.001, 0.25);
+        th_m->setLimits(0., maxth, 0.001, 0.925);
+        th_y->setLimits(0., maxth, 0.001, 0.934);
         d_c->setLimits(1.001, 2., 0.001, 1.05);
         d_m->setLimits(1.001, 2., 0.001, 1.08);
         d_y->setLimits(1.001, 2., 0.001, 1.10);
     } else if (colorspace->get_active_row_number() == 4){//dci-p3
-        th_c->setLimits(0., 0.99, 0.001, 0.40);
-        th_m->setLimits(0., 0.99, 0.001, 0.85);
-        th_y->setLimits(0., 0.99, 0.001, 0.88);
+        th_c->setLimits(0., maxth, 0.001, 0.40);
+        th_m->setLimits(0., maxth, 0.001, 0.85);
+        th_y->setLimits(0., maxth, 0.001, 0.88);
         d_c->setLimits(1.001, 2., 0.001, 1.08);
         d_m->setLimits(1.001, 2., 0.001, 1.13);
         d_y->setLimits(1.001, 2., 0.001, 1.30);
     } else if (colorspace->get_active_row_number() == 5){//acesp1
-        th_c->setLimits(0., 0.99, 0.001, 0.815);
-        th_m->setLimits(0., 0.99, 0.001, 0.803);
-        th_y->setLimits(0., 0.99, 0.001, 0.880);
+        th_c->setLimits(0., maxth, 0.001, 0.815);
+        th_m->setLimits(0., maxth, 0.001, 0.803);
+        th_y->setLimits(0., maxth, 0.001, 0.880);
         d_c->setLimits(1.001, 2., 0.001, 1.147);
         d_m->setLimits(1.001, 2., 0.001, 1.264);
         d_y->setLimits(1.001, 2., 0.001, 1.312);

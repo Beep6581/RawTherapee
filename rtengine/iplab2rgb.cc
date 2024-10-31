@@ -580,7 +580,7 @@ void ImProcFunctions::gamutcompr( Imagefloat *src, Imagefloat *dst) const
     const auto pw = static_cast<float>(params->cg.pwr);
     const bool roll = params->cg.rolloff;
 
-    const std::array<float, 3> th{thc, thm, thy};//set parameter GUI in th
+    std::array<float, 3> th{thc, thm, thy};//set parameter GUI in th
     const std::array<float, 3> dl{dc, dm, dy};//set parameter GUI in dl
 
     const int height = src->getHeight();

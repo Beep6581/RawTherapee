@@ -1898,7 +1898,7 @@ static inline void Lab2XYZ(vfloat L, vfloat a, vfloat b, vfloat &x, vfloat &y, v
 
     static void aces_reference_gamut_compression(
         const std::array<float, 3> &rgb_in,
-        const std::array<float, 3> &threshold,
+        std::array<float, 3> &threshold,
         const std::array<float, 3> &distance_limit,
         const Matrix &to_out, const Matrix &from_out,
         float pwr, bool rolloff,

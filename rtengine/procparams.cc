@@ -1902,6 +1902,7 @@ CGParams::CGParams() :
 {  //set default value in function of Preferences "Define Workspace for Gamut Compression
     //made by estimation using my color chart (468 colors) a "super" Colorchecker
     // and the CIExy diagram - position of the white point relative to the 3 edges of the triangle cyan, magenta, yellow
+    //and others difficult images : flowers, submarine
     // of course to refine by testing 
 
    if(options.gamutmet == 0) {        
