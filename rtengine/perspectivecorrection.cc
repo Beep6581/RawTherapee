@@ -304,8 +304,13 @@ PerspectiveCorrection::Params PerspectiveCorrection::autocompute(ImageSource *sr
         // TODO: Ensure image borders of rotated image do not get detected as lines.
         neutral.rotate = pparams->rotate;
         neutral.distortion = pparams->distortion;
+        neutral.distortion.defish = pparams->distortion.defish;
+        neutral.distortion.focal_length = pparams->distortion.focal_length;
+        neutral.perspective.camera_focal_length = pparams->perspective.camera_focal_length;
+        neutral.perspective.camera_crop_factor = pparams->perspective.camera_crop_factor;
+        neutral.perspective.method = pparams->perspective.method;
         neutral.lensProf = pparams->lensProf;
-        ImProcFunctions ipf(&neutral, true);
+        ImProcFunctions ipf(&neutral, true);        
         if (ipf.needsTransform(w, h, src->getRotateDegree(), src->getMetaData())) {
             Imagefloat *tmp = new Imagefloat(w, h);
             ipf.transform(img.get(), tmp, 0, 0, 0, 0, w, h, w, h,

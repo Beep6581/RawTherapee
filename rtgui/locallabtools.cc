@@ -1016,19 +1016,27 @@ void LocallabColor::updateguicolor(int spottype)
             if(spottype == 3) {
                 invers->hide();
                 sensi->hide();
-                showmaskcolMethod->set_active(0);               
+                showmaskcolMethod->set_active(0);
+                expmaskcol1->hide();
+                expmaskcol->hide();
+                exprecov->hide();
+                enaColorMask->set_active(false);
                 previewcol->hide();
                 previewcol->set_active(false);
                 resetMaskView();
             } else {
                 invers->show();
                 sensi->show();
+                expmaskcol1->show();
+                expmaskcol->show();
+                exprecov->show();
                 if(!invers->get_active()) {
                     previewcol->show();
                 } else {
                     previewcol->hide();
                 }
-                
+                updateGUIToMode(static_cast<modeType>(complexity->get_active_row_number()));
+
             }
             enableListener();
 
@@ -3027,17 +3035,24 @@ void LocallabExposure::updateguiexpos(int spottype)
                 sensiex->hide();
                 previewexe->hide();
                 showmaskexpMethod->set_active(0);
+                enaExpMask->set_active(false);
+                enaExpMaskaft->set_active(false);
                 previewexe->set_active(false);
-                
+                expmaskexp->hide();
+                exprecove->hide();
                 resetMaskView();
            } else {
                 inversex->show();
                 sensiex->show();
+                expmaskexp->show();
+                exprecove->show();
+
                 if(!inversex->get_active()) {
                     previewexe->show();
                 } else {
                     previewexe->hide();
                 }
+                updateGUIToMode(static_cast<modeType>(complexity->get_active_row_number()));
             }
             enableListener();
 
@@ -4557,16 +4572,22 @@ void LocallabShadow::updateguishad(int spottype)
                 sensihs->hide();
                 showmaskSHMethod->set_active(0);
                 previewsh->hide();
+                exprecovs->hide();
+                expmasksh->hide();
+                enaSHMask->set_active(false);
                 previewsh->set_active(false);
                 resetMaskView();
             } else {
                 sensihs->show();
                 inverssh->show();
+                exprecovs->show();
+                expmasksh->show();
                 if(!inverssh->get_active()) {
                     previewsh->show();
                 } else {
                     previewsh->hide();
                 }
+                updateGUIToMode(static_cast<modeType>(complexity->get_active_row_number()));
                 
             }
             enableListener();
@@ -5735,11 +5756,18 @@ void LocallabVibrance::updateguivib(int spottype)
                 sensiv->hide();
                 showmaskvibMethod->set_active(0);
                 previewvib->hide();
+                enavibMask->set_active(false);
                 previewvib->set_active(false);
+                exprecovv->hide();
+                expmaskvib->hide();
                 resetMaskView();
             } else {
                 sensiv->show();
                 previewvib->show();
+                exprecovv->show();
+                expmaskvib->show();
+                updateGUIToMode(static_cast<modeType>(complexity->get_active_row_number()));
+
             }
             enableListener();
 
@@ -7534,11 +7562,14 @@ void LocallabBlur::updateguiblur(int spottype)
                 sensibn->hide();
                 sensiden->hide();
                 invbl->hide();
-
+                expmaskbl->hide();
+                enablMask->set_active(false);
             } else {
                 sensibn->show();
                 sensiden->show();
                 invbl->show();
+                expmaskbl->show();
+                updateGUIToMode(static_cast<modeType>(complexity->get_active_row_number()));
 
             }
             enableListener();

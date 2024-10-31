@@ -2072,13 +2072,19 @@ bool CoarseTransformParams::operator !=(const CoarseTransformParams& other) cons
 
 CommonTransformParams::CommonTransformParams() :
     method("log"),
-    autofill(true)
+    autofill(true),
+    scale(1.0)
 {
+}
+
+double CommonTransformParams::getScale() const
+{
+    return autofill ? 1.0 : scale;
 }
 
 bool CommonTransformParams::operator ==(const CommonTransformParams& other) const
 {
-    return method == other.method && autofill == other.autofill;
+    return method == other.method && autofill == other.autofill && std::abs(scale - other.scale) < 1e-6;
 }
 
 bool CommonTransformParams::operator !=(const CommonTransformParams& other) const
@@ -2101,14 +2107,11 @@ bool RotateParams::operator !=(const RotateParams& other) const
     return !(*this == other);
 }
 
-DistortionParams::DistortionParams() :
-    amount(0.0)
-{
-}
+DistortionParams::DistortionParams() {}
 
 bool DistortionParams::operator ==(const DistortionParams& other) const
 {
-    return amount == other.amount;
+    return amount == other.amount && defish == other.defish && focal_length == other.focal_length;
 }
 
 bool DistortionParams::operator !=(const DistortionParams& other) const
@@ -6871,6 +6874,7 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
 
 // Common properties for transformations
         saveToKeyfile(!pedited || pedited->commonTrans.method, "Common Properties for Transformations", "Method", commonTrans.method, keyFile);
+        saveToKeyfile(!pedited || pedited->commonTrans.scale, "Common Properties for Transformations", "Scale", commonTrans.scale, keyFile);
         saveToKeyfile(!pedited || pedited->commonTrans.autofill, "Common Properties for Transformations", "AutoFill", commonTrans.autofill, keyFile);
 
 // Rotation
@@ -6878,6 +6882,8 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
 
 // Distortion
         saveToKeyfile(!pedited || pedited->distortion.amount, "Distortion", "Amount", distortion.amount, keyFile);
+        saveToKeyfile(!pedited || pedited->distortion.focal_length, "Distortion", "FocalLength", distortion.focal_length, keyFile);
+        saveToKeyfile(!pedited || pedited->distortion.defish, "Distortion", "Defish", distortion.defish, keyFile);
 
 // Lens profile
         saveToKeyfile(!pedited || pedited->lensProf.lcMode, "LensProfile", "LcMode", lensProf.getMethodString(lensProf.lcMode), keyFile);
@@ -9098,11 +9104,18 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
             } else {
                 commonTrans.method = "lin";
             }
+            if (keyFile.has_key("Common Properties for Transformations", "Scale")) {
+                assignFromKeyfile(keyFile, "Common Properties for Transformations", "Scale", commonTrans.scale, pedited->commonTrans.scale);
+            } else {
+                commonTrans.scale = 1.0;
+            }
             assignFromKeyfile(keyFile, "Common Properties for Transformations", "AutoFill", commonTrans.autofill, pedited->commonTrans.autofill);
         }
 
         if (keyFile.has_group("Distortion")) {
             assignFromKeyfile(keyFile, "Distortion", "Amount", distortion.amount, pedited->distortion.amount);
+            assignFromKeyfile(keyFile, "Distortion", "Defish", distortion.defish, pedited->distortion.defish);
+            assignFromKeyfile(keyFile, "Distortion", "FocalLength", distortion.focal_length, pedited->distortion.focal_length);
         }
 
         if (keyFile.has_group("LensProfile")) {

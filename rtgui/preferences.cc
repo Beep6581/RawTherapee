@@ -364,10 +364,15 @@ Gtk::Widget* Preferences::getBatchProcPanel()
     mi->set_value(behavColumns.label, M("TP_RESIZE_LABEL"));
     appendBehavList(mi, M("TP_RESIZE_SCALE"), ADDSET_RESIZE_SCALE, true);
 
+    mi = behModel->append();
+    mi->set_value(behavColumns.label, M("TP_LENSGEOM_SCALE"));
+    appendBehavList(mi, M("TP_LENSGEOM_SCALE"), ADDSET_LENSGEOM_SCALE, true);
 
     mi = behModel->append();
     mi->set_value(behavColumns.label, M("TP_DISTORTION_LABEL"));
     appendBehavList(mi, M("TP_DISTORTION_AMOUNT"), ADDSET_DIST_AMOUNT, false);
+    appendBehavList(mi, M("TP_DISTORTION_DEFISH"), ADDSET_DIST_DEFISH, false);
+    appendBehavList(mi, M("TP_DISTORTION_FOCAL_LENGTH"), ADDSET_DIST_FOCAL_LENGTH, false);
 
     mi = behModel->append();
     mi->set_value(behavColumns.label, M("TP_PERSPECTIVE_LABEL"));

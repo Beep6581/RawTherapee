@@ -18,6 +18,8 @@
  */
 #include "lensgeom.h"
 
+#include <iostream>
+
 #include "eventmapper.h"
 #include "guiutils.h"
 #include "rtimage.h"
@@ -31,8 +33,8 @@ const Glib::ustring LensGeometry::TOOL_NAME = "lensgeom";
 
 LensGeometry::LensGeometry () : FoldableToolPanel(this, TOOL_NAME, M("TP_LENSGEOM_LABEL")), rlistener(nullptr), lastFill(false)
 {
-
     auto m = ProcEventMapper::getInstance();
+    EvTransScale  = m->newEvent(TRANSFORM, "HISTORY_MSG_TRANS_SCALE");
     EvTransMethod = m->newEvent(TRANSFORM, "HISTORY_MSG_TRANS_METHOD");
 
     Gtk::Box* hb1 = Gtk::manage (new Gtk::Box ());
@@ -43,6 +45,11 @@ LensGeometry::LensGeometry () : FoldableToolPanel(this, TOOL_NAME, M("TP_LENSGEO
     method->set_active(0);
     hb1->pack_end (*method, Gtk::PACK_EXPAND_WIDGET, 4);
     pack_start( *hb1, Gtk::PACK_SHRINK, 4);
+
+    scale= Gtk::manage (new Adjuster (M("TP_LENSGEOM_SCALE"), 0.1, 10, 0.01, 1));
+    scale->setAdjusterListener (this);
+    scale->setLogScale(300, 0.1);
+    pack_start (*scale);
 
     fill = Gtk::manage (new Gtk::CheckButton (M("TP_LENSGEOM_FILL")));
     pack_start (*fill);
@@ -57,6 +64,7 @@ LensGeometry::LensGeometry () : FoldableToolPanel(this, TOOL_NAME, M("TP_LENSGEO
     fillConn = fill->signal_toggled().connect(sigc::mem_fun(*this, &LensGeometry::fillPressed));
 
     fill->set_active (true);
+    scale->setEnabled(!fill->get_active());
     show_all ();
 }
 
@@ -78,6 +86,7 @@ void LensGeometry::read (const ProcParams* pp, const ParamsEdited* pedited)
         }
 
         fill->set_inconsistent (!pedited->commonTrans.autofill);
+        scale->setEditedState (pedited->commonTrans.scale ? Edited : UnEdited);
     }
 
     fillConn.block (true);
@@ -85,9 +94,12 @@ void LensGeometry::read (const ProcParams* pp, const ParamsEdited* pedited)
     fillConn.block (false);
     autoCrop->set_sensitive (!pp->commonTrans.autofill);
 
+    scale->setValue (pp->commonTrans.scale);
+
     lastFill = pp->commonTrans.autofill;
 
     method->block (false);
+    scale->setEnabled(!fill->get_active());
     enableListener ();
 }
 
@@ -97,11 +109,13 @@ void LensGeometry::write (ProcParams* pp, ParamsEdited* pedited)
     if( currentRow >= 0 && method->get_active_text() != M("GENERAL_UNCHANGED")) {
         pp->commonTrans.method = currentRow == 0 ? "log" : "lin";
     }
-    pp->commonTrans.autofill   = fill->get_active ();
+    pp->commonTrans.autofill = fill->get_active ();
+    pp->commonTrans.scale = scale->getValue ();
 
     if (pedited) {
         pedited->commonTrans.method = method->get_active_text() != M("GENERAL_UNCHANGED");
-        pedited->commonTrans.autofill   = !fill->get_inconsistent();
+        pedited->commonTrans.autofill = !fill->get_inconsistent();
+        pedited->commonTrans.scale = scale->getEditedState();
     }
 }
 
@@ -110,6 +124,21 @@ void LensGeometry::autoCropPressed ()
 
     if (rlistener) {
         rlistener->autoCropRequested ();
+    }
+}
+
+void LensGeometry::adjusterChanged(Adjuster *a, double newval)
+{
+    if (listener) {
+        if (a == scale) {
+            listener->panelChanged (EvTransScale,
+                    Glib::ustring::format(scale->getValue()));
+        }
+        else {
+            if (settings->verbose) {
+                std::cout << "Unknown adjuster given in LensGeometry::adjusterChanged, file " << __FILE__ << " line " << __LINE__ << std::endl;
+            }
+        }
     }
 }
 
@@ -138,6 +167,7 @@ void LensGeometry::fillPressed ()
             listener->panelChanged (EvTransAutoFill, M("GENERAL_DISABLED"));
         }
     }
+    scale->setEnabled(!fill->get_active());
 }
 
 void LensGeometry::methodChanged ()
@@ -153,5 +183,6 @@ void LensGeometry::setBatchMode (bool batchMode)
 
     ToolPanel::setBatchMode (batchMode);
     removeIfThere (this, autoCrop);
+    scale->showEditedCB ();
 }
 
