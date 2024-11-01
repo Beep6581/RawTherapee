@@ -471,7 +471,7 @@ void Options::setDefaults()
     curvebboxpos = 1;
     complexity = 2;
     spotmet = 0;
-    gamutmet = 4;
+    gamutmet = 5;
 
     inspectorWindow = false;
     zoomOnScroll = true;

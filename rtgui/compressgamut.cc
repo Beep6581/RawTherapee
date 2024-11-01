@@ -60,9 +60,9 @@ Compressgamut::Compressgamut () : FoldableToolPanel(this, TOOL_NAME, M("TP_COMPR
     colorspace->append(M("TP_COMPRESSGAMUT_PROPHOTO"));
     colorspace->append(M("TP_COMPRESSGAMUT_ADOBE"));
     colorspace->append(M("TP_COMPRESSGAMUT_SRGB"));
-  //  colorspace->append(M("TP_COMPRESSGAMUT_DCIP3"));
+    colorspace->append(M("TP_COMPRESSGAMUT_DCIP3"));
     colorspace->append(M("TP_COMPRESSGAMUT_ACESP1"));
-    colorspace->set_active(3);
+    colorspace->set_active(5);
 
     //keep settings when changing target gamut workspace
     keepset = Gtk::manage(new Gtk::CheckButton(M("TP_COMPRESSGAMUT_KEEPSET")));
@@ -195,10 +195,10 @@ void Compressgamut::read (const ProcParams* pp, const ParamsEdited* pedited)
         colorspace->set_active(2);
      } else if (pp->cg.colorspace == "srgb") {
         colorspace->set_active(3);
-//    } else if (pp->cg.colorspace == "dcip3") {
-//        colorspace->set_active(4);
-    } else if (pp->cg.colorspace == "acesp1") {
+    } else if (pp->cg.colorspace == "dcip3") {
         colorspace->set_active(4);
+    } else if (pp->cg.colorspace == "acesp1") {
+        colorspace->set_active(5);
     }
     colorspaceconn.block (false);
 
@@ -269,14 +269,14 @@ void Compressgamut::updategamutGUI()
         d_c->setLimits(1.001, 2., 0.001, 1.05);
         d_m->setLimits(1.001, 2., 0.001, 1.08);
         d_y->setLimits(1.001, 2., 0.001, 1.10);
-//    } else if (colorspace->get_active_row_number() == 4){//dci-p3
-//        th_c->setLimits(0., maxth, 0.001, 0.40);
-//        th_m->setLimits(0., maxth, 0.001, 0.91);
-//        th_y->setLimits(0., maxth, 0.001, 0.916);
-//        d_c->setLimits(1.001, 2., 0.001, 1.08);
-//        d_m->setLimits(1.001, 2., 0.001, 1.18);
-//        d_y->setLimits(1.001, 2., 0.001, 1.26);
-    } else if (colorspace->get_active_row_number() == 4){//acesp1
+    } else if (colorspace->get_active_row_number() == 4){//dci-p3
+        th_c->setLimits(0., maxth, 0.001, 0.40);
+        th_m->setLimits(0., maxth, 0.001, 0.87);
+        th_y->setLimits(0., maxth, 0.001, 0.916);
+        d_c->setLimits(1.001, 2., 0.001, 1.08);
+        d_m->setLimits(1.001, 2., 0.001, 1.20);
+        d_y->setLimits(1.001, 2., 0.001, 1.26);
+    } else if (colorspace->get_active_row_number() == 5){//acesp1
         th_c->setLimits(0., maxth, 0.001, 0.815);
         th_m->setLimits(0., maxth, 0.001, 0.803);
         th_y->setLimits(0., maxth, 0.001, 0.880);
@@ -319,9 +319,9 @@ void Compressgamut::write (ProcParams* pp, ParamsEdited* pedited)
         pp->cg.colorspace = "adobe";
     } else if (colorspace->get_active_row_number() == 3){
         pp->cg.colorspace = "srgb";
- //   } else if (colorspace->get_active_row_number() == 4){
- //       pp->cg.colorspace = "dcip3";
     } else if (colorspace->get_active_row_number() == 4){
+        pp->cg.colorspace = "dcip3";
+    } else if (colorspace->get_active_row_number() == 5){
         pp->cg.colorspace = "acesp1";
     }
 

@@ -474,16 +474,16 @@ void ImProcFunctions::gamutcompr( Imagefloat *src, Imagefloat *dst) const
     Matrix dcip3 = {};//(take in ART)
         //I don't know where these data come  from - after // Official values DCI-PR-DCI white point theater and D65. I have try anothers values DCI-P3 from International Color Consortium, and with ICC profile creator never these values
         // when calculation XYZ - TRC is not taken into account
-        dcip3[0][0] = 0.4451;//0.48616;//0.51512 - first with point 6300K - second with white point D65
-        dcip3[0][1] = 0.2771;//0.22668;//0.242120
-        dcip3[0][2] = 0.1723;//-0.00081;//-0.00105
-        dcip3[1][0] = 0.2095; //0.32385;//0.29198
-        dcip3[1][1] = 0.7216; //0.71033;//0.69225
-        dcip3[1][2] = 0.06891;//0.04323;//0.04189
+        //in fact the white point is "special" - 0.314 - 0.351 
+        dcip3[0][0] = 0.4451698;//0.48616;//0.51512 - first with point 6300K - second with white point D65
+        dcip3[0][1] = 0.2771344;//0.22668;//0.242120
+        dcip3[0][2] = 0.1722827;//-0.00081;//-0.00105
+        dcip3[1][0] = 0.2094917; //0.32385;//0.29198
+        dcip3[1][1] = 0.7215953; //0.71033;//0.69225
+        dcip3[1][2] = 0.0689131;//0.04323;//0.04189
         dcip3[2][0] = 0.0;//0.15419;//0.15710
-        dcip3[2][1] = 0.047; //0.06299 ;//0.06657
-        dcip3[2][2] = 0.9073;// 0.78247;//0.78407
-        //then I remove this choice DCIP3 waiting what ??
+        dcip3[2][1] = 0.0470606; //0.06299 ;//0.06657
+        dcip3[2][2] = 0.9073554;// 0.78247;//0.78407
     
     //All the matrix after Rec2020, srgb, Adobe, prophoto, Acesp1 are exactly the same as in RT iccmatrices.h 
     Matrix Rec2020 = {};
