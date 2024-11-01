@@ -1941,11 +1941,11 @@ CGParams::CGParams() :
    } else if(options.gamutmet == 4) {        
         colorspace = "dcip3";
         th_c = 0.40;
-        th_m = 0.85;
-        th_y = 0.88;
+        th_m = 0.910;
+        th_y = 0.916;
         d_c = 1.08;
-        d_m = 1.13;
-        d_y = 1.30;
+        d_m = 1.18;
+        d_y = 1.26;
    } else if(options.gamutmet == 5) {        
         colorspace = "acesp1";
         th_c = 0.815;

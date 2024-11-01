@@ -271,11 +271,11 @@ void Compressgamut::updategamutGUI()
         d_y->setLimits(1.001, 2., 0.001, 1.10);
     } else if (colorspace->get_active_row_number() == 4){//dci-p3
         th_c->setLimits(0., maxth, 0.001, 0.40);
-        th_m->setLimits(0., maxth, 0.001, 0.85);
-        th_y->setLimits(0., maxth, 0.001, 0.88);
+        th_m->setLimits(0., maxth, 0.001, 0.91);
+        th_y->setLimits(0., maxth, 0.001, 0.916);
         d_c->setLimits(1.001, 2., 0.001, 1.08);
-        d_m->setLimits(1.001, 2., 0.001, 1.13);
-        d_y->setLimits(1.001, 2., 0.001, 1.30);
+        d_m->setLimits(1.001, 2., 0.001, 1.18);
+        d_y->setLimits(1.001, 2., 0.001, 1.26);
     } else if (colorspace->get_active_row_number() == 5){//acesp1
         th_c->setLimits(0., maxth, 0.001, 0.815);
         th_m->setLimits(0., maxth, 0.001, 0.803);
