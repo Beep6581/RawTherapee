@@ -250,10 +250,10 @@ void Compressgamut::updategamutGUI()
         d_y->setLimits(1.001, 2., 0.001, 1.31);       
     } else if (colorspace->get_active_row_number() == 1){//prophoto
         th_c->setLimits(0., maxth, 0.001, 0.85);
-        th_m->setLimits(0., maxth, 0.001, 0.89);
+        th_m->setLimits(0., maxth, 0.001, 0.79);
         th_y->setLimits(0., maxth, 0.001, 0.90);
         d_c->setLimits(1.001, 2., 0.001, 1.17);
-        d_m->setLimits(1.001, 2., 0.001, 1.15);
+        d_m->setLimits(1.001, 2., 0.001, 1.27);
         d_y->setLimits(1.001, 2., 0.001, 1.35);
     } else if (colorspace->get_active_row_number() == 2){//Adobe
         th_c->setLimits(0., maxth, 0.001, 0.45);
@@ -264,7 +264,7 @@ void Compressgamut::updategamutGUI()
         d_y->setLimits(1.001, 2., 0.001, 1.09);
     } else if (colorspace->get_active_row_number() == 3){//srgb
         th_c->setLimits(0., maxth, 0.001, 0.25);
-        th_m->setLimits(0., maxth, 0.001, 0.925);
+        th_m->setLimits(0., maxth, 0.001, 0.90);
         th_y->setLimits(0., maxth, 0.001, 0.934);
         d_c->setLimits(1.001, 2., 0.001, 1.05);
         d_m->setLimits(1.001, 2., 0.001, 1.08);

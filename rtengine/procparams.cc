@@ -1916,10 +1916,10 @@ CGParams::CGParams() :
    } else if(options.gamutmet == 1) {        
         colorspace = "prophoto";
         th_c = 0.85;
-        th_m = 0.89;
+        th_m = 0.79;
         th_y = 0.90;
         d_c = 1.17;
-        d_m = 1.15;
+        d_m = 1.27;
         d_y = 1.35;
    } else if(options.gamutmet == 2) {        
         colorspace = "adobe";
@@ -1933,7 +1933,7 @@ CGParams::CGParams() :
    } else if(options.gamutmet == 3) {        
         colorspace = "srgb";
         th_c = 0.25;
-        th_m = 0.925;
+        th_m = 0.90;
         th_y = 0.934;
         d_c = 1.05;
         d_m = 1.08;
