@@ -1160,9 +1160,9 @@ Gtk::Widget* Preferences::getGeneralPanel()
     targetcomp->append(M("TP_COMPRESSGAMUT_PROPHOTO"));
     targetcomp->append(M("TP_COMPRESSGAMUT_ADOBE"));
     targetcomp->append(M("TP_COMPRESSGAMUT_SRGB"));
-    targetcomp->append(M("TP_COMPRESSGAMUT_DCIP3"));
+//    targetcomp->append(M("TP_COMPRESSGAMUT_DCIP3"));
     targetcomp->append(M("TP_COMPRESSGAMUT_ACESP1"));
-    targetcomp->set_active(5);
+    targetcomp->set_active(4);
     workflowGrid->attach_next_to(*targetcompL, *spotlocalL, Gtk::POS_BOTTOM, 1, 1);
     workflowGrid->attach_next_to(*targetcomp, *spotlocal, Gtk::POS_BOTTOM, 1, 1);
 

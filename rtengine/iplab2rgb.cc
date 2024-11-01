@@ -469,17 +469,20 @@ void ImProcFunctions::gamutcompr( Imagefloat *src, Imagefloat *dst) const
         }
     }
     //dcip3 Rec2020, srgb, prophoto, acesp1 - Compression gamut matrix profile
-    Matrix dcip3 = {};
-        dcip3[0][0] = 0.4451;
-        dcip3[0][1] = 0.2771;
-        dcip3[0][2] = 0.1723;
-        dcip3[1][0] = 0.2095;
-        dcip3[1][1] = 0.7216;
-        dcip3[1][2] = 0.06891;
-        dcip3[2][0] = 0.0;
-        dcip3[2][1] = 0.047;
-        dcip3[2][2] = 0.9073;
 
+    
+    Matrix dcip3 = {};
+        //I don't know where these data come from - after //Official values DCI-PR-DCI white point theater. I have try aothers values from DCI-P3 from International Color Consortium, and with ICC profile creator never these values
+        dcip3[0][0] = 0.4451;//0.48616;
+        dcip3[0][1] = 0.2771;//0.22668;
+        dcip3[0][2] = 0.1723;//-0.00081
+        dcip3[1][0] = 0.2095; //0.32385
+        dcip3[1][1] = 0.7216; //0.71033
+        dcip3[1][2] = 0.06891;//0.04323
+        dcip3[2][0] = 0.0;//0.15419
+        dcip3[2][1] = 0.047; //0.06299 
+        dcip3[2][2] = 0.9073;// 0.78247
+        //then I remove this choice DCIP3 waiting ??
     Matrix Rec2020 = {};
         Rec2020[0][0] = 0.6734241;
         Rec2020[0][1] = 0.1656411;
