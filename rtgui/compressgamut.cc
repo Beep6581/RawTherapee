@@ -319,9 +319,9 @@ void Compressgamut::write (ProcParams* pp, ParamsEdited* pedited)
         pp->cg.colorspace = "adobe";
     } else if (colorspace->get_active_row_number() == 3){
         pp->cg.colorspace = "srgb";
+ //   } else if (colorspace->get_active_row_number() == 4){
+ //       pp->cg.colorspace = "dcip3";
     } else if (colorspace->get_active_row_number() == 4){
-        pp->cg.colorspace = "dcip3";
-    } else if (colorspace->get_active_row_number() == 5){
         pp->cg.colorspace = "acesp1";
     }
 
