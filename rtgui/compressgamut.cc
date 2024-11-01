@@ -257,10 +257,10 @@ void Compressgamut::updategamutGUI()
         d_y->setLimits(1.001, 2., 0.001, 1.35);
     } else if (colorspace->get_active_row_number() == 2){//Adobe
         th_c->setLimits(0., maxth, 0.001, 0.45);
-        th_m->setLimits(0., maxth, 0.001, 0.90);
+        th_m->setLimits(0., maxth, 0.001, 0.86);
         th_y->setLimits(0., maxth, 0.001, 0.92);
         d_c->setLimits(1.001, 2., 0.001, 1.09);
-        d_m->setLimits(1.001, 2., 0.001, 1.17);
+        d_m->setLimits(1.001, 2., 0.001, 1.20);
         d_y->setLimits(1.001, 2., 0.001, 1.09);
     } else if (colorspace->get_active_row_number() == 3){//srgb
         th_c->setLimits(0., maxth, 0.001, 0.25);

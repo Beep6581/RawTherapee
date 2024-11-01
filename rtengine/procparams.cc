@@ -1924,10 +1924,10 @@ CGParams::CGParams() :
    } else if(options.gamutmet == 2) {        
         colorspace = "adobe";
         th_c = 0.45;
-        th_m = 0.90;
+        th_m = 0.86;
         th_y = 0.92;
         d_c = 1.09;
-        d_m = 1.17;
+        d_m = 1.20;
         d_y = 1.09;
  
    } else if(options.gamutmet == 3) {        
