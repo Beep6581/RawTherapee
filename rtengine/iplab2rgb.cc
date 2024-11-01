@@ -471,19 +471,17 @@ void ImProcFunctions::gamutcompr( Imagefloat *src, Imagefloat *dst) const
     //dcip3 Rec2020, srgb, prophoto, acesp1 - Compression gamut matrix profile
 
     
-    Matrix dcip3 = {};//(take in ART)
-        //I don't know where these data come  from - after // Official values DCI-PR-DCI white point theater and D65. I have try anothers values DCI-P3 from International Color Consortium, and with ICC profile creator never these values
-        // when calculation XYZ - TRC is not taken into account
+    Matrix dcip3 = {};
         //in fact the white point is "special" - 0.314 - 0.351 
-        dcip3[0][0] = 0.4451698;//0.48616;//0.51512 - first with point 6300K - second with white point D65
-        dcip3[0][1] = 0.2771344;//0.22668;//0.242120
-        dcip3[0][2] = 0.1722827;//-0.00081;//-0.00105
-        dcip3[1][0] = 0.2094917; //0.32385;//0.29198
-        dcip3[1][1] = 0.7215953; //0.71033;//0.69225
-        dcip3[1][2] = 0.0689131;//0.04323;//0.04189
-        dcip3[2][0] = 0.0;//0.15419;//0.15710
-        dcip3[2][1] = 0.0470606; //0.06299 ;//0.06657
-        dcip3[2][2] = 0.9073554;// 0.78247;//0.78407
+        dcip3[0][0] = 0.4861607;//0.4451698;(original) //0.4861607 with chromatic adaptation D63 => D50
+        dcip3[0][1] = 0.3238514;//0.2771344;(original)//0.3238514 with chromatic adaptation D63 => D50
+        dcip3[0][2] = 0.1541879;//0.1722827;(original//0.1541879 with chromatic adaptation D63 => D50
+        dcip3[1][0] = 0.2266839;//0.2094917;(original//0.2266839 with chromatic adaptation D63 => D50
+        dcip3[1][1] = 0.7103336;//0.7215953;(original//0.7103336 with chromatic adaptation D63 => D50
+        dcip3[1][2] = 0.0629826;//0.0689131;(original// 0.0629826 with chromatic adaptation D63 => D50
+        dcip3[2][0] = -0.0008016;//0.0;(original//-0.0008016 with chromatic adaptation D63 => D50
+        dcip3[2][1] =  0.0432353;//0.0470606;(original// 0.0432353 with chromatic adaptation D63 => D50
+        dcip3[2][2] =  0.7824663;//0.9073554;(original// 0.7824663 with chromatic adaptation D63 => D50
     
     //All the matrix after Rec2020, srgb, Adobe, prophoto, Acesp1 are exactly the same as in RT iccmatrices.h 
     Matrix Rec2020 = {};
