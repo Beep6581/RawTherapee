@@ -1917,7 +1917,7 @@ CGParams::CGParams() :
         colorspace = "prophoto";
         th_c = 0.86;
         th_m = 0.74;
-        th_y = 0.80;
+        th_y = 0.90;
         d_c = 1.17;
         d_m = 1.24;
         d_y = 1.30;

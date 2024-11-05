@@ -251,7 +251,7 @@ void Compressgamut::updategamutGUI()
     } else if (colorspace->get_active_row_number() == 1){//prophoto
         th_c->setLimits(0., maxth, 0.001, 0.86);
         th_m->setLimits(0., maxth, 0.001, 0.74);
-        th_y->setLimits(0., maxth, 0.001, 0.80);
+        th_y->setLimits(0., maxth, 0.001, 0.90);
         d_c->setLimits(1.001, 2., 0.001, 1.17);
         d_m->setLimits(1.001, 2., 0.001, 1.24);
         d_y->setLimits(1.001, 2., 0.001, 1.30);
