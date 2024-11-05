@@ -242,30 +242,30 @@ void Compressgamut::updategamutGUI()
     double maxth = 1.;// 1.0 (or 0.9999) leeds in some cases to artifacts or segmentation fault - I change in color.cc aces_reference_gamut_compression by limiting theshold to 0.999
     
      if (colorspace->get_active_row_number() == 0) {//rec2020
-        th_c->setLimits(0., maxth, 0.001, 0.71);
-        th_m->setLimits(0., maxth, 0.001, 0.803);
-        th_y->setLimits(0., maxth, 0.001, 0.870);
-        d_c->setLimits(1.001, 2., 0.001, 1.12);
-        d_m->setLimits(1.001, 2., 0.001, 1.26);
-        d_y->setLimits(1.001, 2., 0.001, 1.31);       
-    } else if (colorspace->get_active_row_number() == 1){//prophoto
-        th_c->setLimits(0., maxth, 0.001, 0.85);
+        th_c->setLimits(0., maxth, 0.001, 0.80);
         th_m->setLimits(0., maxth, 0.001, 0.79);
         th_y->setLimits(0., maxth, 0.001, 0.90);
+        d_c->setLimits(1.001, 2., 0.001, 1.12);
+        d_m->setLimits(1.001, 2., 0.001, 1.25);
+        d_y->setLimits(1.001, 2., 0.001, 1.32);       
+    } else if (colorspace->get_active_row_number() == 1){//prophoto
+        th_c->setLimits(0., maxth, 0.001, 0.86);
+        th_m->setLimits(0., maxth, 0.001, 0.74);
+        th_y->setLimits(0., maxth, 0.001, 0.80);
         d_c->setLimits(1.001, 2., 0.001, 1.17);
-        d_m->setLimits(1.001, 2., 0.001, 1.27);
-        d_y->setLimits(1.001, 2., 0.001, 1.35);
+        d_m->setLimits(1.001, 2., 0.001, 1.24);
+        d_y->setLimits(1.001, 2., 0.001, 1.30);
     } else if (colorspace->get_active_row_number() == 2){//Adobe
         th_c->setLimits(0., maxth, 0.001, 0.45);
         th_m->setLimits(0., maxth, 0.001, 0.86);
-        th_y->setLimits(0., maxth, 0.001, 0.92);
+        th_y->setLimits(0., maxth, 0.001, 0.91);
         d_c->setLimits(1.001, 2., 0.001, 1.09);
         d_m->setLimits(1.001, 2., 0.001, 1.20);
         d_y->setLimits(1.001, 2., 0.001, 1.09);
     } else if (colorspace->get_active_row_number() == 3){//srgb
         th_c->setLimits(0., maxth, 0.001, 0.25);
         th_m->setLimits(0., maxth, 0.001, 0.90);
-        th_y->setLimits(0., maxth, 0.001, 0.934);
+        th_y->setLimits(0., maxth, 0.001, 0.93);
         d_c->setLimits(1.001, 2., 0.001, 1.05);
         d_m->setLimits(1.001, 2., 0.001, 1.08);
         d_y->setLimits(1.001, 2., 0.001, 1.10);

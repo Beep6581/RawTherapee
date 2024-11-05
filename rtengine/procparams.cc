@@ -1907,25 +1907,25 @@ CGParams::CGParams() :
 
    if(options.gamutmet == 0) {        
         colorspace = "rec2020";
-        th_c = 0.71;
-        th_m = 0.803;
-        th_y = 0.870;
-        d_c = 1.12;
-        d_m = 1.26;
-        d_y = 1.31;
-   } else if(options.gamutmet == 1) {        
-        colorspace = "prophoto";
-        th_c = 0.85;
+        th_c = 0.80;
         th_m = 0.79;
         th_y = 0.90;
+        d_c = 1.12;
+        d_m = 1.25;
+        d_y = 1.32;
+   } else if(options.gamutmet == 1) {        
+        colorspace = "prophoto";
+        th_c = 0.86;
+        th_m = 0.74;
+        th_y = 0.80;
         d_c = 1.17;
-        d_m = 1.27;
-        d_y = 1.35;
+        d_m = 1.24;
+        d_y = 1.30;
    } else if(options.gamutmet == 2) {        
         colorspace = "adobe";
         th_c = 0.45;
         th_m = 0.86;
-        th_y = 0.92;
+        th_y = 0.91;
         d_c = 1.09;
         d_m = 1.20;
         d_y = 1.09;
@@ -1933,7 +1933,7 @@ CGParams::CGParams() :
         colorspace = "srgb";
         th_c = 0.25;
         th_m = 0.90;
-        th_y = 0.934;
+        th_y = 0.93;
         d_c = 1.05;
         d_m = 1.08;
         d_y = 1.10;

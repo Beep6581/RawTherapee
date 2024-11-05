@@ -2222,7 +2222,7 @@ void Color::aces_reference_gamut_compression(
     std::array<float, 3> s;
     for (unsigned i = 0; i < s.size(); ++i) {
         // Scale factor: c = (1 - t) / sqrt(l - 1)
-        threshold[i] = rtengine::min(threshold[i], 0.999f);//limit threshold to 0.999 to avoid artifacts and segemntation fault
+        //threshold[i] = rtengine::min(threshold[i], 0.999f);//limit threshold to 0.999 to avoid artifacts and segemntation fault (old setting to avoid crash)
         s[i] = (1.0f  - threshold[i]) / sqrt(fmax(1.001f, distance_limit[i]) - 1.0f);
     }
     // target colorspace
@@ -2257,23 +2257,27 @@ void Color::aces_reference_gamut_compression(
     } else {
         for (unsigned i = 0; i < cd.size(); ++i) {
             if (d[i] >= threshold[i]) {
-                 // Calculate scale factor for y = 1 intersect
-                const float limit = distance_limit[i];
-                const float thres = threshold[i];
-                //                     l - t
-                // Scale s = --------------------------
-                //           ( ( 1 - t )-p     )(1 / p)
-                //           ( ( ----- )   - 1 )
-                //           ( ( l - t )       )
-                const float scale = (limit - thres) / pow(pow((1.0f - thres) / (limit - thres), - pwr) - 1.0f, 1.0f / pwr);
-                // Normalize distance outside threshold by scale factor
-                // x' = (x - t) / s
-                const float nd = (d[i] - thres) / scale;
-                //                  x'
-                // y = t + s ----------------
-                //           (1 + x'^p)^(1/p)
-                const float po = pow(nd, pwr);
-                cd[i] = thres + scale * nd / (pow(1.0f + po, 1.0f / pwr));
+                if (threshold[i] == 1.f) {
+                    cd[i] = 1.f;
+                } else {
+                    // Calculate scale factor for y = 1 intersect
+                    const float limit = distance_limit[i];
+                    const float thres = threshold[i];
+                    //                     l - t
+                    // Scale s = --------------------------
+                    //           ( ( 1 - t )-p     )(1 / p)
+                    //           ( ( ----- )   - 1 )
+                    //           ( ( l - t )       )
+                    const float scale = (limit - thres) / pow(pow((1.0f - thres) / (limit - thres), - pwr) - 1.0f, 1.0f / pwr);
+                    // Normalize distance outside threshold by scale factor
+                    // x' = (x - t) / s
+                    const float nd = (d[i] - thres) / scale;
+                    //                  x'
+                    // y = t + s ----------------
+                    //           (1 + x'^p)^(1/p)
+                    const float po = pow(nd, pwr);
+                    cd[i] = thres + scale * nd / (pow(1.0f + po, 1.0f / pwr));
+                }
             }
         }
     }
