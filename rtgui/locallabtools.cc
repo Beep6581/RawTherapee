@@ -4289,8 +4289,8 @@ LocallabShadow::LocallabShadow():
     gamSH(Gtk::manage(new Adjuster(M("TP_LOCALLAB_GAMSH"), 0.25, 15.0, 0.01, 2.4))),
     sloSH(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SLOSH"), 0.0, 500.0, 0.01, 12.92))),
     ghsMethod(Gtk::manage(new MyComboBoxText())),
-    gridFrameghs(Gtk::manage(new Gtk::Frame(M("TP_ICM_WORKING_GHSDIAG")))),
-    labgridghs(Gtk::manage(new LabGrid(EvlocallabGridciexy, M("TP_ICM_LABGRID_GHS"), true, true, true, false))),
+    gridFrameghs(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_GHS_GHSDIAG")))),//
+    labgridghs(Gtk::manage(new LabGrid(EvlocallabGridciexy, M("TP_LOCALLAB_GHS_GHSDIAG"), true, false, true, false))),
     ghsFrame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_GHSFRA")))),
     ghs_D(Gtk::manage(new Adjuster(M("TP_LOCALLAB_GHS_D"), 0., 10.0, 0.001, 0.0))),
     Lab_Frame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_GHSLABFRA")))),
@@ -4572,7 +4572,8 @@ https://www.ghsastro.co.uk/doc/tools/GeneralizedHyperbolicStretch/GeneralizedHyp
     ghsBox->pack_start(*BP_Frame);
     ghsBox->pack_start(*ghs_inv);
     ghsFrame->add(*ghsBox);
-    ghsBox->pack_start(*ghsCurveEditorG, Gtk::PACK_SHRINK, 4); // Padding is mandatory to correct behavior of curve editor
+   // ghsBox->pack_start(*ghsCurveEditorG, Gtk::PACK_SHRINK, 4); // Padding is mandatory to correct behavior of curve editor
+   //I kept the possible settings for the diagonal type curve
     ghsBox->pack_start(*gridFrameghs);
     pack_start(*ghsFrame);
 
@@ -4815,7 +4816,7 @@ void LocallabShadow::updateAdviceTooltips(const bool showTooltips)
         BP_Frame->set_tooltip_text(M("TP_LOCALLAB_GHS_BPFRAME_TOOLTIP"));
         ghsCurveEditorG->set_tooltip_markup(M("TP_LOCALLAB_GHS_CURVE_TOOLTIP"));
         ghsFrame->set_tooltip_text(M("TP_LOCALLAB_GHS_METHOD_TOOLTIP"));
-
+        gridFrameghs->set_tooltip_text(M("TP_LOCALLAB_GHS_SIMUL_TOOLTIP"));
     } else {
         exp->set_tooltip_text("");
 
@@ -4865,6 +4866,7 @@ void LocallabShadow::updateAdviceTooltips(const bool showTooltips)
         BP_Frame->set_tooltip_text("");
         ghsCurveEditorG->set_tooltip_markup("");
         ghsFrame->set_tooltip_text("");
+        gridFrameghs->set_tooltip_text("");
 
     }
 }
@@ -5492,16 +5494,13 @@ void LocallabShadow::adjusterChanged(Adjuster* a, double newval)
 }
 
 
-void LocallabShadow::updateghs(int lincur, double g0i, double g0, double g5i, double g5, double g10i, double g10, double g15i, double g15, double g20i, double g20, double g25i, double g25, double g30i, double g30,
-        double g35i, double g35, double g40i, double g40, double g45i, double g45, double g50i, double g50, double g55i, double g55, double g60i, double g60, double g65i, double g65, double g70i,
-        double g70, double g75i, double g75, double g80i, double g80, double g85i, double g85, double g90i, double g90, double g95i, double g95, double g100i, double g100 /* double *gx */)
+void LocallabShadow::updateghs(int lincur, double g0i, double g0, double g5i, double g5, double g10i, double g10, double g15i, double g15, double g20i, double g20, double g25i, double g25)
 
-{
-    idle_register.add(
-    [this, lincur, g0i, g0, g5i, g5, g10i, g10, g15i, g15, g20i, g20, g25i, g25, g30i, g30, g35i, g35, g40i, g40, g45i, g45, g50i,
-        g50, g55i, g55, g60i, g60, g65i, g65, g70i, g70, g75i, g75, g80i, g80, g85i, g85, g90i, g90, g95i, g95, g100i, g100 /* gx */]() -> bool {
+{   //I kept the possible settings for the diagonal type curve
+   // idle_register.add(
+   // [this, lincur, g0i, g0, g5i, g5, g10i, g10, g15i, g15, g20i, g20, g25i, g25]() -> bool { // lincur not used with Labgrid
         /* I don't know how to do for *gx instead of list all g0i, etc. */
-        GThreadLock lock;
+   //     GThreadLock lock;
         disableListener();
         std::vector<double> curvghs (43);
         curvghs[0] = double (DCT_NURBS);
@@ -5517,8 +5516,11 @@ void LocallabShadow::updateghs(int lincur, double g0i, double g0, double g5i, do
         curvghs[10] = g20;
         curvghs[11] = g25i;
         curvghs[12] = g25;
+        /*
         curvghs[13] = g30i;
         curvghs[14] = g30;
+        
+        
         curvghs[15] = g35i;
         curvghs[16] = g35;
         curvghs[17] = g40i;
@@ -5547,7 +5549,13 @@ void LocallabShadow::updateghs(int lincur, double g0i, double g0, double g5i, do
         curvghs[40] = g95;
         curvghs[41] = g100i;
         curvghs[42] = g100;
+        */
+        labgridghs->setParams(curvghs[3], curvghs[4], curvghs[5], curvghs[6], curvghs[7], curvghs[8], curvghs[9], curvghs[10], curvghs[11], curvghs[12], false);
+        enableListener();
 
+ 
+/*
+        //diagonale curve
         ghsshape->setCurve(curvghs);
         if(lincur == 0) {
             ghs_D->setValue(0.);
@@ -5556,9 +5564,10 @@ void LocallabShadow::updateghs(int lincur, double g0i, double g0, double g5i, do
         if(lincur == 0) {
             adjusterChanged(ghs_D, 0.);
         }
-        return false;
-    }
-   );
+        */
+      //  return false;
+   // }
+  // );
 }
 
 void LocallabShadow::updateghsbw(int bp, int wp, double minbp, double maxwp)

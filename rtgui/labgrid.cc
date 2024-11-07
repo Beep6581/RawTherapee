@@ -225,7 +225,7 @@ bool LabGridArea::on_draw(const ::Cairo::RefPtr<Cairo::Context> &cr)
     cr->translate(0., static_cast<double>(height));
     cr->scale(1., -1.);
 
-    if (! ciexy_enabled && !ghs_enabled) {//draw cells for Labgrid
+    if (! ciexy_enabled && !ghs_enabled) {//draw cells for general Labgrid
         const int cells = 8;
         const float step = 12000.f / static_cast<float>(cells/2);
         const double cellW = static_cast<double>(width) / static_cast<double>(cells);
@@ -258,7 +258,7 @@ bool LabGridArea::on_draw(const ::Cairo::RefPtr<Cairo::Context> &cr)
             cellYMin = cellYMax;
             cellYMax = std::floor(cellH * static_cast<double>(j+2) + 0.01);
         }
-    } else if (ciexy_enabled) {//cells for CIE xy
+    } else if (ciexy_enabled) {//cells for CIE xy in SE and Abstract profile
         const int cells = 600;
         const float step = 1.f / static_cast<float>(cells);
         const double cellW = static_cast<double>(width) / static_cast<double>(cells);
@@ -327,36 +327,109 @@ bool LabGridArea::on_draw(const ::Cairo::RefPtr<Cairo::Context> &cr)
             cellYMin = cellYMax;
             cellYMax = std::floor(cellH * static_cast<double>(j+2) + 0.001);
         }
+    } else if (ghs_enabled) {//cells for GHS and simulation GHS
+        const int cells = 600;
+        const double cellW = static_cast<double>(width) / static_cast<double>(cells);
+        const double cellH = static_cast<double>(height) / static_cast<double>(cells);
+        double cellYMin = 0.;
+        double cellYMax = std::floor(cellH);
+        
+        for (int j = 0; j < cells; j++) {
+            double cellXMin = 0.;
+            double cellXMax = std::floor(cellW);
+            for (int i = 0; i < cells; i++) {
+                float R, G, B;
+                R = 0.7f; G = 0.7f; B = 0.7f;
+                cr->set_source_rgb(R , G , B);
+                cr->rectangle(
+                        cellXMin,
+                        cellYMin,
+                        cellXMax - cellXMin,
+                        cellYMax - cellYMin);
+                cellXMin = cellXMax;
+                cellXMax = std::floor(cellW * static_cast<double>(i+2) + 0.001);
+                cr->fill();
+            }
+            cellYMin = cellYMax;
+            cellYMax = std::floor(cellH * static_cast<double>(j+2) + 0.001);
+        }
+        
     }
 
     // Drawing the connection line
     cr->set_antialias(Cairo::ANTIALIAS_DEFAULT);
    //     float loa, hia, lob, hib, grx, gry, whx, why, mex, mey;
-    const double loa = .5 * (static_cast<double>(width) + static_cast<double>(width) * low_a);
-    const double hia = .5 * (static_cast<double>(width) + static_cast<double>(width) * high_a);
-    const double lob = .5 * (static_cast<double>(height) + static_cast<double>(height) * low_b);
-    const double hib = .5 * (static_cast<double>(height) + static_cast<double>(height) * high_b);
-    const double grx = .5 * (static_cast<double>(width) + static_cast<double>(width) * gre_x);
-    const double gry = .5 * (static_cast<double>(height) + static_cast<double>(height) * gre_y);
-    const double whx = .5 * (static_cast<double>(width) + static_cast<double>(width) * whi_x);
-    const double why = .5 * (static_cast<double>(height) + static_cast<double>(height) * whi_y);
+    double loa = .5 * (static_cast<double>(width) + static_cast<double>(width) * low_a);
+    double hia = .5 * (static_cast<double>(width) + static_cast<double>(width) * high_a);
+    double lob = .5 * (static_cast<double>(height) + static_cast<double>(height) * low_b);
+    double hib = .5 * (static_cast<double>(height) + static_cast<double>(height) * high_b);
+    double grx = .5 * (static_cast<double>(width) + static_cast<double>(width) * gre_x);
+    double gry = .5 * (static_cast<double>(height) + static_cast<double>(height) * gre_y);
+    double whx = .5 * (static_cast<double>(width) + static_cast<double>(width) * whi_x);
+    double why = .5 * (static_cast<double>(height) + static_cast<double>(height) * whi_y);
     double mex = .5 * (static_cast<double>(width) + static_cast<double>(width) * me_x);
     double mey = .5 * (static_cast<double>(height) + static_cast<double>(height) * me_y);
     cr->set_line_width(1.5);
+    if (ciexy_enabled) {       
         mex = .5 * (width + width * me_x);
         mey = .5 * (height + height * me_y);
+    }
     cr->set_source_rgb(0.6, 0.6, 0.6);
-    cr->move_to(loa, lob);
-    cr->line_to(hia, hib);
-    if (ciexy_enabled && !ghs_enabled) {
+    if (!ghs_enabled) {
+        cr->move_to(loa, lob);
+        cr->line_to(hia, hib);
+    }
+    if (ciexy_enabled) {
         cr->move_to(loa, lob);
         cr->line_to(grx, gry);
         cr->move_to(grx, gry);
         cr->line_to(hia, hib);
+    } else if (ghs_enabled) {
+        cr->set_line_width(3.);
+        cr->set_source_rgb(0.2, 0.2, 0.2);
+        loa = (static_cast<double>(width) * low_a);
+        hia = (static_cast<double>(width) * high_a);
+        lob = (static_cast<double>(height) * low_b);
+        hib = (static_cast<double>(height) * high_b);
+        grx = (static_cast<double>(width) * gre_x);
+        gry = (static_cast<double>(height) * gre_y);
+        whx = (static_cast<double>(width) * whi_x);
+        why = (static_cast<double>(height) * whi_y);
+        mex = (static_cast<double>(width) * me_x);
+        mey = (static_cast<double>(height) * me_y);
+        double onex =  (static_cast<double>(width) * 1);
+        double oney =  (static_cast<double>(height) * 1);
+        cr->move_to(0, 0);
+        cr->line_to(loa, lob);
+        cr->move_to(loa, lob);
+        cr->line_to(hia, hib);
+        cr->move_to(hia, hib);
+        cr->line_to(grx, gry);
+        cr->move_to(grx, gry);
+        cr->line_to(whx, why);
+        cr->move_to(whx, why);
+        cr->line_to(mex, mey);
+        cr->move_to(mex, mey);
+        cr->line_to(onex, oney);
+       
     }
     cr->stroke();
+    if(ghs_enabled) {//only 10 * 10 squares
+        cr->set_line_width(0.2);
+        cr->set_source_rgb(0.1, 0.1, 0.1);
+        //draw horiz and vertical lines
+        for(int i = 0; i < 10; i++) {
+            cr->move_to(0.1 * static_cast<double>(i * width), 0.);
+            cr->line_to(0.1 * static_cast<double>(i * width), static_cast<double>(height));
+        }
+        for(int i = 0; i < 10; i++) {
+            cr->move_to(0., 0.1 * static_cast<double>(i * height));
+            cr->line_to(static_cast<double>(width), 0.1 * static_cast<double>(i * height));
+        }
 
-    if (ciexy_enabled && !ghs_enabled) {
+        cr->stroke();
+        
+    } else if (ciexy_enabled) {//for CIExy
         cr->set_line_width(0.2);
         cr->set_source_rgb(0.1, 0.1, 0.1);
         //draw horiz and vertical lines
@@ -398,33 +471,33 @@ bool LabGridArea::on_draw(const ::Cairo::RefPtr<Cairo::Context> &cr)
 
         cr->stroke();
     }
-
+    if(!ghs_enabled) {
     // Drawing points
-    if (low_enabled) {
-        cr->set_source_rgb(0.1, 0.1, 0.1);//black for red in Ciexy
-        if (litPoint == LOW) {
-            cr->arc(loa, lob, 5., 0., 2. * rtengine::RT_PI);
-        } else {
-            cr->arc(loa, lob, 3., 0., 2. * rtengine::RT_PI);
+        if (low_enabled) {
+            cr->set_source_rgb(0.1, 0.1, 0.1);//black for red in Ciexy
+            if (litPoint == LOW) {
+                cr->arc(loa, lob, 5., 0., 2. * rtengine::RT_PI);
+            } else {
+                cr->arc(loa, lob, 3., 0., 2. * rtengine::RT_PI);
+            }
+            cr->fill();
         }
-        cr->fill();
-    }
 
-    if (ciexy_enabled && !ghs_enabled) {
-        cr->set_source_rgb(0.5, 0.5, 0.5);//gray for green
-        if (litPoint == GRE) {
-            cr->arc(grx, gry, 5., 0., 2. * rtengine::RT_PI);
-        } else {
-            cr->arc(grx, gry, 3., 0., 2. * rtengine::RT_PI);
+        if (ciexy_enabled && !ghs_enabled) {
+            cr->set_source_rgb(0.5, 0.5, 0.5);//gray for green
+            if (litPoint == GRE) {
+                cr->arc(grx, gry, 5., 0., 2. * rtengine::RT_PI);
+            } else {
+                cr->arc(grx, gry, 3., 0., 2. * rtengine::RT_PI);
+            }
+            cr->fill();
         }
-        cr->fill();
-    }
 
-    if (ciexy_enabled && !ghs_enabled) {//White Point
-        cr->set_source_rgb(1., 1., 1.);//White
-        cr->arc(whx, why, 3., 0., 2. * rtengine::RT_PI);
-        cr->fill();
-    }
+        if (ciexy_enabled && !ghs_enabled) {//White Point
+            cr->set_source_rgb(1., 1., 1.);//White
+            cr->arc(whx, why, 3., 0., 2. * rtengine::RT_PI);
+            cr->fill();
+        }
 
         if (ciexy_enabled && !ghs_enabled) {//Dominant
             cr->set_source_rgb(0.3, 0.4, 0.3);
@@ -432,13 +505,14 @@ bool LabGridArea::on_draw(const ::Cairo::RefPtr<Cairo::Context> &cr)
             cr->fill();
         }
 
-    cr->set_source_rgb(0.9, 0.9, 0.9);//white for blue en Ciexy
-    if (litPoint == HIGH) {
-        cr->arc(hia, hib, 5., 0., 2. * rtengine::RT_PI);
-    } else {
-        cr->arc(hia, hib, 3., 0., 2. * rtengine::RT_PI);
-    }
-    cr->fill();
+        cr->set_source_rgb(0.9, 0.9, 0.9);//white for blue en Ciexy
+        if (litPoint == HIGH) {
+            cr->arc(hia, hib, 5., 0., 2. * rtengine::RT_PI);
+        } else {
+            cr->arc(hia, hib, 3., 0., 2. * rtengine::RT_PI);
+        }
+        cr->fill();
+}
 
     return false;
 }
@@ -643,7 +717,7 @@ LabGrid::LabGrid(rtengine::ProcEvent evt, const Glib::ustring &msg, bool enable_
 {
     Gtk::Button *reset = Gtk::manage(new Gtk::Button());
     reset->set_tooltip_markup(M("ADJUSTER_RESET_TO_DEFAULT"));
-    if(!ciexy || !ghs) {//disabled for Cie xy
+    if(!ciexy || !ghs) {//disabled for Cie xy and GHS
         reset->add(*Gtk::manage(new RTImage("undo-small", Gtk::ICON_SIZE_BUTTON)));
     }
     reset->signal_button_release_event().connect(sigc::mem_fun(*this, &LabGrid::resetPressed));
@@ -655,7 +729,9 @@ LabGrid::LabGrid(rtengine::ProcEvent evt, const Glib::ustring &msg, bool enable_
     reset->set_size_request(-1, 20);
 
     pack_start(grid, true, true, true);
-    pack_start(*reset, false, false);
+    if(!ghs) {//disable reset when GHS
+        pack_start(*reset, false, false);
+    }
     show_all_children();
 }
 

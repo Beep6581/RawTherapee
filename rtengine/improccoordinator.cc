@@ -1585,8 +1585,8 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                 } else {
                     reset = 1;
                 }
-                LocallabListener::locallabshGHS locshghs;//ghs S curve
-                    for(int j = 0; j < 42; j++) {
+                LocallabListener::locallabshGHS locshghs;//ghs S curve 42 or labgrid 12
+                    for(int j = 0; j < 12; j++) {//42 for diagonal curve
                         locshghs.ghsc[j] = ghscur[j];
                     }
                     locshghs.licur = reset;

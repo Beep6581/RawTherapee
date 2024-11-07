@@ -17607,16 +17607,27 @@ void ImProcFunctions::Lab_Local(
                                 }
                             lab2rgb(*labtemp, *tmpImage, params->icm.workingProfile);
                         }
+                        /*
+                        // I kept the possible settings for the diagonal type curve
                         //Draw diagonal GHS curve - init 20 points for more precision
                         if (params->locallab.spots.at(sp).ghsMode == "ghs") {//S Curve GHS
                             for(int i = 0; i < 42; i += 2) {
-                                ghscur[i] = 0.025f * i;
-                                ghscur[i + 1] =  GHT(ghscur[i], B, D, LP, SP, HP, c, strtype);
+                               ghscur[i] = 0.025f * i;
+                               ghscur[i + 1] =  GHT(ghscur[i], B, D, LP, SP, HP, c, strtype);
                             }
-                        } else if (params->locallab.spots.at(sp).ghsMode == "lin") {//Linear with 20 points
+                            
+                        }  else if (params->locallab.spots.at(sp).ghsMode == "lin") {//Linear with 20 points
                             for(int i = 0; i < 42; i += 2) {
                                 ghscur[i] = 0.025f * i;
                                 ghscur[i + 1] = ghscur[i];
+                            }
+                           
+                        }
+                        */
+                        if (params->locallab.spots.at(sp).ghsMode == "ghs") {//Labgrid curve with 7 points 
+                            for(int i = 0; i < 14; i += 2) {
+                                ghscur[i] = 0.0833f * i;
+                                ghscur[i + 1] =  GHT(ghscur[i], B, D, LP, SP, HP, c, strtype);
                             }
                         }
                         /*
