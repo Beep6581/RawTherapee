@@ -79,13 +79,14 @@ private:
 
     bool low_enabled;
     bool ciexy_enabled;
+    bool ghs_enabled;
     bool mous_enabled;
 
     bool notifyListener();
     void getLitPoint();
 
 public:
-    LabGridArea(rtengine::ProcEvent evt, const Glib::ustring &msg, bool enable_low=true, bool ciexy=false, bool mous=false);
+    LabGridArea(rtengine::ProcEvent evt, const Glib::ustring &msg, bool enable_low=true, bool ciexy=false, bool ghs=false, bool mous=false);
 
     void getParams(double &la, double &lb, double &ha, double &hb, double &gx, double &gy, double &wx, double &wy, double &mx, double &my) const;
     void setParams(double la, double lb, double ha, double hb, double gx, double gy, double wx, double wy, double mx, double my,  bool notify);
@@ -99,6 +100,8 @@ public:
     void setLowEnabled(bool yes);
     bool ciexyEnabled() const;
     void setciexyEnabled(bool yes);
+    bool ghsEnabled() const;
+    void setghsEnabled(bool yes);
     bool mousEnabled() const;
     void setmousEnabled(bool yes);
 
@@ -120,7 +123,7 @@ private:
     bool resetPressed(GdkEventButton *event);
 
 public:
-    LabGrid(rtengine::ProcEvent evt, const Glib::ustring &msg, bool enable_low=true, bool ciexy=false, bool mous=true);
+    LabGrid(rtengine::ProcEvent evt, const Glib::ustring &msg, bool enable_low=true, bool ciexy=false, bool ghs=false, bool mous=true);
 
     void getParams(double &la, double &lb, double &ha, double &hb, double &gx, double &gy, double &wx, double &wy, double &mx, double &my) const { return grid.getParams(la, lb, ha, hb, gx, gy, wx, wy, mx, my); }
     void setParams(double la, double lb, double ha, double hb, double gx, double gy, double wx, double wy, double mx, double my, bool notify) { grid.setParams(la, lb, ha, hb, gx, gy, wx, wy, mx, my, notify); }
@@ -133,6 +136,8 @@ public:
     void setLowEnabled(bool yes) { grid.setLowEnabled(yes); }
     bool ciexyEnabled() const { return grid.ciexyEnabled(); }
     void setciexyEnabled(bool yes) { grid.setciexyEnabled(yes); }
+    bool ghsEnabled() const { return grid.ghsEnabled(); }
+    void setghsEnabled(bool yes) { grid.setghsEnabled(yes); }
     bool mousEnabled() const { return grid.mousEnabled(); }
     void setmousEnabled(bool yes) { grid.setmousEnabled(yes); }
 

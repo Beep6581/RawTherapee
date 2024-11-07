@@ -1248,6 +1248,17 @@ struct LocallabParams {
         bool ghs_smooth;
         bool ghs_inv;
         std::vector<double> ghscurve;
+        double ghsx1;
+        double ghsy1;
+        double ghsx2;
+        double ghsy2;
+        double ghsx3;
+        double ghsy3;
+        double ghsx4;
+        double ghsy4;
+        double ghsx5;
+        double ghsy5;
+       
         int multsh[6];
         int highlights;
         int h_tonalwidth;

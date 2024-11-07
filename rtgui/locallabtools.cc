@@ -4289,6 +4289,8 @@ LocallabShadow::LocallabShadow():
     gamSH(Gtk::manage(new Adjuster(M("TP_LOCALLAB_GAMSH"), 0.25, 15.0, 0.01, 2.4))),
     sloSH(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SLOSH"), 0.0, 500.0, 0.01, 12.92))),
     ghsMethod(Gtk::manage(new MyComboBoxText())),
+    gridFrameghs(Gtk::manage(new Gtk::Frame(M("TP_ICM_WORKING_GHSDIAG")))),
+    labgridghs(Gtk::manage(new LabGrid(EvlocallabGridciexy, M("TP_ICM_LABGRID_GHS"), true, true, true, false))),
     ghsFrame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_GHSFRA")))),
     ghs_D(Gtk::manage(new Adjuster(M("TP_LOCALLAB_GHS_D"), 0., 10.0, 0.001, 0.0))),
     Lab_Frame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_GHSLABFRA")))),
@@ -4355,6 +4357,7 @@ LocallabShadow::LocallabShadow():
     Evlocallabghs_inv = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_GHS_INV");
     Evlocallabghsshape = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_GHS_SHAPE");
     EvlocallabghsMode = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_GHSMODE");
+    EvlocallabGridghs = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_CIE_LABGRIDGHS");
     set_orientation(Gtk::ORIENTATION_VERTICAL);
 
     const LocallabParams::LocallabSpot defSpot;
@@ -4527,6 +4530,10 @@ https://www.ghsastro.co.uk/doc/tools/GeneralizedHyperbolicStretch/GeneralizedHyp
     fatamountSH->setAdjusterListener(this);
 
     fatanchorSH->setAdjusterListener(this);
+    gridFrameghs->set_label_align(0.025, 0.5);
+    ToolParamBlock* const gridBox = Gtk::manage(new ToolParamBlock());
+    gridBox->pack_start(*labgridghs);
+    gridFrameghs->add(*gridBox);
 
     // Add Shadow highlight specific widgets to GUI
     pack_start(*reparsh);
@@ -4566,7 +4573,7 @@ https://www.ghsastro.co.uk/doc/tools/GeneralizedHyperbolicStretch/GeneralizedHyp
     ghsBox->pack_start(*ghs_inv);
     ghsFrame->add(*ghsBox);
     ghsBox->pack_start(*ghsCurveEditorG, Gtk::PACK_SHRINK, 4); // Padding is mandatory to correct behavior of curve editor
-
+    ghsBox->pack_start(*gridFrameghs);
     pack_start(*ghsFrame);
 
 
@@ -4993,6 +5000,19 @@ void LocallabShadow::read(const rtengine::procparams::ProcParams* pp, const Para
         LmaskSHshape->setCurve(spot.LmaskSHcurve);
         fatamountSH->setValue(spot.fatamountSH);
         fatanchorSH->setValue(spot.fatanchorSH);
+        
+        labgridghs->setParams(spot.ghsx1,
+                              spot.ghsy1,
+                              spot.ghsx2,
+                              spot.ghsy2,
+                              spot.ghsx3,
+                              spot.ghsy3,
+                              spot.ghsx4,
+                              spot.ghsy4,
+                              spot.ghsx5,
+                              spot.ghsy5,
+                              false);
+        
     }
     ghsMethodChanged();
     // Enable all listeners
@@ -5102,6 +5122,18 @@ void LocallabShadow::write(rtengine::procparams::ProcParams* pp, ParamsEdited* p
         spot.lowthress = lowthress->getValue();
         spot.higthress = higthress->getValue();
         spot.decays = decays->getValue();
+        labgridghs->getParams(spot.ghsx1,
+                              spot.ghsy1,
+                              spot.ghsx2,
+                              spot.ghsy2,
+                              spot.ghsx3,
+                              spot.ghsy3,
+                              spot.ghsx4,
+                              spot.ghsy4,
+                              spot.ghsx5,
+                              spot.ghsy5);
+        
+        
     }
 
     // Note: No need to manage pedited as batch mode is deactivated for Locallab
@@ -5157,6 +5189,18 @@ void LocallabShadow::setDefaults(const rtengine::procparams::ProcParams* defPara
         lowthress->setDefault((double)defSpot.lowthress);
         higthress->setDefault((double)defSpot.higthress);
         decays->setDefault((double)defSpot.decays);
+        
+        labgridghs->setDefault(defSpot.ghsx1,
+                               defSpot.ghsy1,
+                               defSpot.ghsx2,
+                               defSpot.ghsy2,
+                               defSpot.ghsx3,
+                               defSpot.ghsy3,
+                               defSpot.ghsx4,
+                               defSpot.ghsy4,
+                               defSpot.ghsx5,
+                               defSpot.ghsy5);
+        
     }
 
     // Note: No need to manage pedited as batch mode is deactivated for Locallab

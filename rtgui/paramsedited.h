@@ -597,6 +597,17 @@ public:
         bool ghs_smooth;
         bool ghs_inv;
         bool ghscurve;
+        bool ghsx1;
+        bool ghsy1;
+        bool ghsx2;
+        bool ghsy2;
+        bool ghsx3;
+        bool ghsy3;
+        bool ghsx4;
+        bool ghsy4;
+        bool ghsx5;
+        bool ghsy5;
+        
         bool multsh[7];
         bool highlights;
         bool h_tonalwidth;

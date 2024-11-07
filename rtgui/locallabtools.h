@@ -111,6 +111,7 @@ protected:
     rtengine::ProcEvent Evlocallabbluxl;
     rtengine::ProcEvent Evlocallabbluyl;
     rtengine::ProcEvent EvlocallabGridciexy;
+    rtengine::ProcEvent EvlocallabGridghs;
     rtengine::ProcEvent Evlocallabgamutcie;
     rtengine::ProcEvent Evlocallabbwcie;
     rtengine::ProcEvent Evlocallabexpprecam;
@@ -568,7 +569,9 @@ private:
     Adjuster* const sloSH;
 
     MyComboBoxText* const ghsMethod;
-    
+    Gtk::Frame* const gridFrameghs;
+    LabGrid* const labgridghs;
+   
     Gtk::Frame* const ghsFrame;
     Adjuster* const ghs_D;
     Gtk::Frame* const Lab_Frame;

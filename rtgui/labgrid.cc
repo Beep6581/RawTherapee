@@ -60,9 +60,9 @@ bool LabGridArea::notifyListener()
             {
                 return int(v * 1000) / 1000.f;
             };
-        if (! ciexy_enabled){
+        if (! ciexy_enabled &&  !ghs_enabled){
             listener->panelChanged(evt, Glib::ustring::compose(evtMsg, round(high_a), round(high_b), round(low_a), round(low_b)));
-        } else {
+        } else if (ciexy_enabled) {
             float high_a1 = 0.55f * (high_a + 1.f) - 0.1f;
             float high_b1 = 0.55f * (high_b + 1.f) - 0.1f;
             float low_a1 = 0.55f * (low_a + 1.f) - 0.1f;
@@ -76,7 +76,7 @@ bool LabGridArea::notifyListener()
 }
 
 
-LabGridArea::LabGridArea(rtengine::ProcEvent evt, const Glib::ustring &msg, bool enable_low, bool ciexy, bool mous):
+LabGridArea::LabGridArea(rtengine::ProcEvent evt, const Glib::ustring &msg, bool enable_low, bool ciexy, bool ghs, bool mous):
     Gtk::DrawingArea(),
     evt(evt), evtMsg(msg),
     litPoint(NONE),
@@ -87,6 +87,7 @@ LabGridArea::LabGridArea(rtengine::ProcEvent evt, const Glib::ustring &msg, bool
     isDragged(false),
     low_enabled(enable_low),
     ciexy_enabled(ciexy),
+    ghs_enabled(ghs),
     mous_enabled(mous)
     
 
@@ -224,7 +225,7 @@ bool LabGridArea::on_draw(const ::Cairo::RefPtr<Cairo::Context> &cr)
     cr->translate(0., static_cast<double>(height));
     cr->scale(1., -1.);
 
-    if (! ciexy_enabled) {//draw cells for Labgrid
+    if (! ciexy_enabled && !ghs_enabled) {//draw cells for Labgrid
         const int cells = 8;
         const float step = 12000.f / static_cast<float>(cells/2);
         const double cellW = static_cast<double>(width) / static_cast<double>(cells);
@@ -257,7 +258,7 @@ bool LabGridArea::on_draw(const ::Cairo::RefPtr<Cairo::Context> &cr)
             cellYMin = cellYMax;
             cellYMax = std::floor(cellH * static_cast<double>(j+2) + 0.01);
         }
-    } else {//cells for CIE xy
+    } else if (ciexy_enabled) {//cells for CIE xy
         const int cells = 600;
         const float step = 1.f / static_cast<float>(cells);
         const double cellW = static_cast<double>(width) / static_cast<double>(cells);
@@ -347,7 +348,7 @@ bool LabGridArea::on_draw(const ::Cairo::RefPtr<Cairo::Context> &cr)
     cr->set_source_rgb(0.6, 0.6, 0.6);
     cr->move_to(loa, lob);
     cr->line_to(hia, hib);
-    if (ciexy_enabled) {
+    if (ciexy_enabled && !ghs_enabled) {
         cr->move_to(loa, lob);
         cr->line_to(grx, gry);
         cr->move_to(grx, gry);
@@ -355,7 +356,7 @@ bool LabGridArea::on_draw(const ::Cairo::RefPtr<Cairo::Context> &cr)
     }
     cr->stroke();
 
-    if (ciexy_enabled) {
+    if (ciexy_enabled && !ghs_enabled) {
         cr->set_line_width(0.2);
         cr->set_source_rgb(0.1, 0.1, 0.1);
         //draw horiz and vertical lines
@@ -409,7 +410,7 @@ bool LabGridArea::on_draw(const ::Cairo::RefPtr<Cairo::Context> &cr)
         cr->fill();
     }
 
-    if (ciexy_enabled) {
+    if (ciexy_enabled && !ghs_enabled) {
         cr->set_source_rgb(0.5, 0.5, 0.5);//gray for green
         if (litPoint == GRE) {
             cr->arc(grx, gry, 5., 0., 2. * rtengine::RT_PI);
@@ -419,13 +420,13 @@ bool LabGridArea::on_draw(const ::Cairo::RefPtr<Cairo::Context> &cr)
         cr->fill();
     }
 
-    if (ciexy_enabled) {//White Point
+    if (ciexy_enabled && !ghs_enabled) {//White Point
         cr->set_source_rgb(1., 1., 1.);//White
         cr->arc(whx, why, 3., 0., 2. * rtengine::RT_PI);
         cr->fill();
     }
 
-        if (ciexy_enabled) {//Dominant
+        if (ciexy_enabled && !ghs_enabled) {//Dominant
             cr->set_source_rgb(0.3, 0.4, 0.3);
             cr->arc(mex, mey, 3., 0, 2. * rtengine::RT_PI);
             cr->fill();
@@ -446,7 +447,7 @@ bool LabGridArea::on_draw(const ::Cairo::RefPtr<Cairo::Context> &cr)
 bool LabGridArea::on_button_press_event(GdkEventButton *event)
 {
     if (event->button == 1  && mous_enabled) {
-      if (!ciexy_enabled) {
+      if (!ciexy_enabled && !ghs_enabled) {
         if (event->type == GDK_2BUTTON_PRESS) {
             switch (litPoint) {
             case NONE:
@@ -547,7 +548,7 @@ bool LabGridArea::on_motion_notify_event(GdkEventMotion *event)
             litPoint = LOW;
         } else if (disthi < thrs * thrs && disthi <= distlo) {
             litPoint = HIGH;
-        } else if (ciexy_enabled && distgxy < thrs * thrs && distgxy <= distlo) {
+        } else if (ciexy_enabled && !ghs_enabled && distgxy < thrs * thrs && distgxy <= distlo) {
             litPoint = GRE;
         }
         if ((oldLitPoint == NONE && litPoint != NONE) || (oldLitPoint != NONE && litPoint == NONE)) {
@@ -595,6 +596,11 @@ bool LabGridArea::ciexyEnabled() const
     return ciexy_enabled;
 }
 
+bool LabGridArea::ghsEnabled() const
+{
+    return ghs_enabled;
+}
+
 void LabGridArea::setLowEnabled(bool yes)
 {
     if (low_enabled != yes) {
@@ -607,6 +613,14 @@ void LabGridArea::setciexyEnabled(bool yes)
 {
     if (ciexy_enabled != yes) {
         ciexy_enabled = yes;
+        queue_draw();
+    }
+}
+
+void LabGridArea::setghsEnabled(bool yes)
+{
+    if (ghs_enabled != yes) {
+        ghs_enabled = yes;
         queue_draw();
     }
 }
@@ -624,12 +638,12 @@ void LabGridArea::setmousEnabled(bool yes)
 // LabGrid
 //-----------------------------------------------------------------------------
 
-LabGrid::LabGrid(rtengine::ProcEvent evt, const Glib::ustring &msg, bool enable_low, bool ciexy, bool mous):
-    grid(evt, msg, enable_low, ciexy, mous)
+LabGrid::LabGrid(rtengine::ProcEvent evt, const Glib::ustring &msg, bool enable_low, bool ciexy, bool ghs, bool mous):
+    grid(evt, msg, enable_low, ciexy, ghs, mous)
 {
     Gtk::Button *reset = Gtk::manage(new Gtk::Button());
     reset->set_tooltip_markup(M("ADJUSTER_RESET_TO_DEFAULT"));
-    if(!ciexy) {//disabled for Cie xy
+    if(!ciexy || !ghs) {//disabled for Cie xy
         reset->add(*Gtk::manage(new RTImage("undo-small", Gtk::ICON_SIZE_BUTTON)));
     }
     reset->signal_button_release_event().connect(sigc::mem_fun(*this, &LabGrid::resetPressed));

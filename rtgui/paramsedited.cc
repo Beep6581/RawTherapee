@@ -1311,6 +1311,17 @@ void ParamsEdited::initFrom(const std::vector<rtengine::procparams::ProcParams>&
                 locallab.spots.at(j).ghs_smooth = locallab.spots.at(j).ghs_smooth && pSpot.ghs_smooth == otherSpot.ghs_smooth;
                 locallab.spots.at(j).ghs_inv = locallab.spots.at(j).ghs_inv && pSpot.ghs_inv == otherSpot.ghs_inv;
                 locallab.spots.at(j).ghscurve = locallab.spots.at(j).ghscurve && pSpot.ghscurve == otherSpot.ghscurve;
+                locallab.spots.at(j).ghsx1 = locallab.spots.at(j).ghsx1 && pSpot.ghsx1 == otherSpot.ghsx1;
+                locallab.spots.at(j).ghsy1 = locallab.spots.at(j).ghsy1 && pSpot.ghsy1 == otherSpot.ghsy1;
+                locallab.spots.at(j).ghsx2 = locallab.spots.at(j).ghsx2 && pSpot.ghsx2 == otherSpot.ghsx2;
+                locallab.spots.at(j).ghsy2 = locallab.spots.at(j).ghsy2 && pSpot.ghsy2 == otherSpot.ghsy2;
+
+                locallab.spots.at(j).ghsx3 = locallab.spots.at(j).ghsx3 && pSpot.ghsx3 == otherSpot.ghsx3;
+                locallab.spots.at(j).ghsy3 = locallab.spots.at(j).ghsy3 && pSpot.ghsy3 == otherSpot.ghsy3;
+                locallab.spots.at(j).ghsx4 = locallab.spots.at(j).ghsx4 && pSpot.ghsx4 == otherSpot.ghsx4;
+                locallab.spots.at(j).ghsy4 = locallab.spots.at(j).ghsy4 && pSpot.ghsy4 == otherSpot.ghsy4;
+                locallab.spots.at(j).ghsx5 = locallab.spots.at(j).ghsx5 && pSpot.ghsx5 == otherSpot.ghsx5;
+                locallab.spots.at(j).ghsy5 = locallab.spots.at(j).ghsy5 && pSpot.ghsy5 == otherSpot.ghsy5;
 
                 for (int k = 0; k < 6; k++) {
                     locallab.spots.at(j).multsh[k] = locallab.spots.at(j).multsh[k] && pSpot.multsh[k] == otherSpot.multsh[k];
@@ -4290,6 +4301,46 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
 
         if (locallab.spots.at(i).ghsMethod) {
             toEdit.locallab.spots.at(i).ghsMethod = mods.locallab.spots.at(i).ghsMethod;
+        }
+
+        if (locallab.spots.at(i).ghsx1) {
+            toEdit.locallab.spots.at(i).ghsx1 = mods.locallab.spots.at(i).ghsx1;
+        }
+
+        if (locallab.spots.at(i).ghsy1) {
+            toEdit.locallab.spots.at(i).ghsy1 = mods.locallab.spots.at(i).ghsy1;
+        }
+
+        if (locallab.spots.at(i).ghsx2) {
+            toEdit.locallab.spots.at(i).ghsx2 = mods.locallab.spots.at(i).ghsx2;
+        }
+
+        if (locallab.spots.at(i).ghsy2) {
+            toEdit.locallab.spots.at(i).ghsy2 = mods.locallab.spots.at(i).ghsy2;
+        }
+
+        if (locallab.spots.at(i).ghsx3) {
+            toEdit.locallab.spots.at(i).ghsx3 = mods.locallab.spots.at(i).ghsx3;
+        }
+
+        if (locallab.spots.at(i).ghsy3) {
+            toEdit.locallab.spots.at(i).ghsy3 = mods.locallab.spots.at(i).ghsy3;
+        }
+
+        if (locallab.spots.at(i).ghsx4) {
+            toEdit.locallab.spots.at(i).ghsx4 = mods.locallab.spots.at(i).ghsx4;
+        }
+
+        if (locallab.spots.at(i).ghsy4) {
+            toEdit.locallab.spots.at(i).ghsy4 = mods.locallab.spots.at(i).ghsy4;
+        }
+
+        if (locallab.spots.at(i).ghsx5) {
+            toEdit.locallab.spots.at(i).ghsx5 = mods.locallab.spots.at(i).ghsx5;
+        }
+
+        if (locallab.spots.at(i).ghsy5) {
+            toEdit.locallab.spots.at(i).ghsy5 = mods.locallab.spots.at(i).ghsy5;
         }
 
         if (locallab.spots.at(i).ghsMode) {
@@ -8206,6 +8257,17 @@ LocallabParamsEdited::LocallabSpotEdited::LocallabSpotEdited(bool v) :
     ghs_smooth(v),
     ghs_inv(v),
     ghscurve(v),
+    ghsx1(v),
+    ghsy1(v),
+    ghsx2(v),
+    ghsy2(v),
+    ghsx3(v),
+    ghsy3(v),
+    ghsx4(v),
+    ghsy4(v),
+    ghsx5(v),
+    ghsy5(v),
+    
     multsh{v, v, v, v, v, v, v},
     highlights(v),
     h_tonalwidth(v),
@@ -8982,6 +9044,17 @@ void LocallabParamsEdited::LocallabSpotEdited::set(bool v)
     ghs_smooth = v;
     ghs_inv = v;
     ghscurve = v;
+    ghsx1 = v;
+    ghsy1 = v;
+    ghsx2 = v;
+    ghsy2 = v;
+    ghsx3 = v;
+    ghsy3 = v;
+    ghsx4 = v;
+    ghsy4 = v;
+    ghsx5 = v;
+    ghsy5 = v;
+    
 
     for (int i = 0; i < 6; i++) {
         multsh[i] = v;
