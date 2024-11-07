@@ -60,6 +60,10 @@ private:
     double whi_y;
     double me_x;
     double me_y;
+    double ghs_x6;
+    double ghs_y6;
+    double ghs_x7;
+    double ghs_y7;
     double defaultLow_a;
     double defaultHigh_a;
     double defaultLow_b;
@@ -70,6 +74,10 @@ private:
     double defaultwhi_y;
     double defaultme_x;
     double defaultme_y;
+    double default_gsx6;
+    double default_gsy6;
+    double default_gsx7;
+    double default_gsy7;
 
     ToolPanelListener *listener;
     bool edited;
@@ -88,9 +96,9 @@ private:
 public:
     LabGridArea(rtengine::ProcEvent evt, const Glib::ustring &msg, bool enable_low=true, bool ciexy=false, bool ghs=false, bool mous=false);
 
-    void getParams(double &la, double &lb, double &ha, double &hb, double &gx, double &gy, double &wx, double &wy, double &mx, double &my) const;
-    void setParams(double la, double lb, double ha, double hb, double gx, double gy, double wx, double wy, double mx, double my,  bool notify);
-    void setDefault (double la, double lb, double ha, double hb, double gx, double gy, double wx, double wy, double mx, double my);
+    void getParams(double &la, double &lb, double &ha, double &hb, double &gx, double &gy, double &wx, double &wy, double &mx, double &my, double &gx6, double &gy6, double &gx7, double &gy7) const;
+    void setParams(double la, double lb, double ha, double hb, double gx, double gy, double wx, double wy, double mx, double my,  double gx6, double gy6, double gx7, double gy7, bool notify);
+    void setDefault (double la, double lb, double ha, double hb, double gx, double gy, double wx, double wy, double mx, double my, double gx6, double gy6, double gx7, double gy7);
     void setEdited(bool yes);
     bool getEdited() const;
     void reset(bool toInitial);
@@ -125,9 +133,9 @@ private:
 public:
     LabGrid(rtengine::ProcEvent evt, const Glib::ustring &msg, bool enable_low=true, bool ciexy=false, bool ghs=false, bool mous=true);
 
-    void getParams(double &la, double &lb, double &ha, double &hb, double &gx, double &gy, double &wx, double &wy, double &mx, double &my) const { return grid.getParams(la, lb, ha, hb, gx, gy, wx, wy, mx, my); }
-    void setParams(double la, double lb, double ha, double hb, double gx, double gy, double wx, double wy, double mx, double my, bool notify) { grid.setParams(la, lb, ha, hb, gx, gy, wx, wy, mx, my, notify); }
-    void setDefault (double la, double lb, double ha, double hb, double gx, double gy, double wx, double wy, double mx, double my) { grid.setDefault(la, lb, ha, hb, gx, gy, wx, wy, mx, my); }
+    void getParams(double &la, double &lb, double &ha, double &hb, double &gx, double &gy, double &wx, double &wy, double &mx, double &my, double &gx6, double &gy6, double &gx7, double &gy7) const { return grid.getParams(la, lb, ha, hb, gx, gy, wx, wy, mx, my, gx6, gy6, gx7, gy7); }
+    void setParams(double la, double lb, double ha, double hb, double gx, double gy, double wx, double wy, double mx, double my, double gx6, double gy6, double gx7, double gy7, bool notify) { grid.setParams(la, lb, ha, hb, gx, gy, wx, wy, mx, my, gx6, gy6, gx7, gy7, notify); }
+    void setDefault (double la, double lb, double ha, double hb, double gx, double gy, double wx, double wy, double mx, double my, double gx6, double gy6, double gx7, double gy7) { grid.setDefault(la, lb, ha, hb, gx, gy, wx, wy, mx, my, gx6, gy6, gx7, gy7); }
     void setEdited(bool yes) { grid.setEdited(yes); }
     bool getEdited() const { return grid.getEdited(); }
     void reset(bool toInitial) { grid.reset(toInitial); }

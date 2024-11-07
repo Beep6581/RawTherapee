@@ -17625,9 +17625,10 @@ void ImProcFunctions::Lab_Local(
                         }
                         */
                         if (params->locallab.spots.at(sp).ghsMode == "ghs") {//Labgrid curve with 7 points 
-                            for(int i = 0; i < 14; i += 2) {
-                                ghscur[i] = 0.0833f * i;
+                            for(int i = 0; i < 18; i += 2) {
+                                ghscur[i] = 0.0625f * i;
                                 ghscur[i + 1] =  GHT(ghscur[i], B, D, LP, SP, HP, c, strtype);
+                             //   printf("gi=%f ghs=%f \n", (double) ghscur[i], (double) ghscur[i + 1]);
                             }
                         }
                         /*

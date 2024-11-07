@@ -607,6 +607,10 @@ public:
         bool ghsy4;
         bool ghsx5;
         bool ghsy5;
+        bool ghsx6;
+        bool ghsy6;
+        bool ghsx7;
+        bool ghsy7;
         
         bool multsh[7];
         bool highlights;

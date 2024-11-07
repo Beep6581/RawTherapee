@@ -80,8 +80,8 @@ LabGridArea::LabGridArea(rtengine::ProcEvent evt, const Glib::ustring &msg, bool
     Gtk::DrawingArea(),
     evt(evt), evtMsg(msg),
     litPoint(NONE),
-    low_a(0.f), high_a(0.f), low_b(0.f), high_b(0.f), gre_x(0.f), gre_y(0.f), whi_x(0.f), whi_y(0.f), me_x(0.f), me_y(0.f),//these variables are used as xy in Ciexy - no change labels
-    defaultLow_a(0.f), defaultHigh_a(0.f), defaultLow_b(0.f), defaultHigh_b(0.f), defaultgre_x(0.f), defaultgre_y(0.f), defaultwhi_x(0.f), defaultwhi_y(0.f), defaultme_x(0.f), defaultme_y(0.f),
+    low_a(0.f), high_a(0.f), low_b(0.f), high_b(0.f), gre_x(0.f), gre_y(0.f), whi_x(0.f), whi_y(0.f), me_x(0.f), me_y(0.f),ghs_x6(0.f), ghs_y6(0.f), ghs_x7(0.f), ghs_y7(0.f), //these variables are used as xy in Ciexy - no change labels
+    defaultLow_a(0.f), defaultHigh_a(0.f), defaultLow_b(0.f), defaultHigh_b(0.f), defaultgre_x(0.f), defaultgre_y(0.f), defaultwhi_x(0.f), defaultwhi_y(0.f), defaultme_x(0.f), defaultme_y(0.f),default_gsx6(0.f), default_gsy6(0.f), default_gsx7(0.f), default_gsy7(0.f),
     listener(nullptr),
     edited(false),
     isDragged(false),
@@ -98,7 +98,7 @@ LabGridArea::LabGridArea(rtengine::ProcEvent evt, const Glib::ustring &msg, bool
     get_style_context()->add_class("drawingarea");
 }
 
-void LabGridArea::getParams(double &la, double &lb, double &ha, double &hb, double &gx, double &gy, double &wx, double &wy, double &mx, double &my) const
+void LabGridArea::getParams(double &la, double &lb, double &ha, double &hb, double &gx, double &gy, double &wx, double &wy, double &mx, double &my, double &gx6, double &gy6, double &gx7, double &gy7) const
 {
     la = low_a;
     ha = high_a;
@@ -110,11 +110,16 @@ void LabGridArea::getParams(double &la, double &lb, double &ha, double &hb, doub
     wy = whi_y;
     mx = me_x;
     my = me_y;
+    gx6 = ghs_x6;
+    gy6 = ghs_y6;
+    gx7 = ghs_x7;
+    gy7 = ghs_y7;
+    
  //  printf("la=%f ha=%f lb=%f hb=%f gx=%f gy=%f\n", la, ha, lb, hb, gx, gy);
 }
 
 
-void LabGridArea::setParams(double la, double lb, double ha, double hb, double gx, double gy, double wx, double wy, double mx, double my, bool notify)
+void LabGridArea::setParams(double la, double lb, double ha, double hb, double gx, double gy, double wx, double wy, double mx, double my, double gx6, double gy6, double gx7, double gy7, bool notify)
 {
     const double lo = -1.0;
     const double hi = 1.0;
@@ -128,14 +133,19 @@ void LabGridArea::setParams(double la, double lb, double ha, double hb, double g
     whi_y = rtengine::LIM(wy, lo, hi);
     me_x = rtengine::LIM(mx, lo, hi);
     me_y = rtengine::LIM(my, lo, hi);
-
+    ghs_x6 = rtengine::LIM(gx6, lo, hi);
+    ghs_y6 = rtengine::LIM(gy6, lo, hi);
+    ghs_x7 = rtengine::LIM(gx7, lo, hi);
+    ghs_y7 = rtengine::LIM(gy7, lo, hi);
+    
+    
     queue_draw();
     if (notify) {
         notifyListener();
     }
 }
 
-void LabGridArea::setDefault (double la, double lb, double ha, double hb, double gx, double gy, double wx, double wy, double mx, double my)
+void LabGridArea::setDefault (double la, double lb, double ha, double hb, double gx, double gy, double wx, double wy, double mx, double my, double gx6, double gy6, double gx7, double gy7)
 {
     defaultLow_a = la;
     defaultLow_b = lb;
@@ -147,16 +157,21 @@ void LabGridArea::setDefault (double la, double lb, double ha, double hb, double
     defaultwhi_y = wy;
     defaultme_x = mx;
     defaultme_y = my;
+    default_gsx6 = gx6;
+    default_gsy6= gy6;
+    default_gsx7 = gx7;
+    default_gsy7= gy7;
+    
 }
 
 
 void LabGridArea::reset(bool toInitial)
 {
     if (toInitial) {
-        setParams(defaultLow_a, defaultLow_b, defaultHigh_a, defaultHigh_b, defaultgre_x, defaultgre_y, defaultwhi_x, defaultwhi_y, defaultme_x, defaultme_y, true);
+        setParams(defaultLow_a, defaultLow_b, defaultHigh_a, defaultHigh_b, defaultgre_x, defaultgre_y, defaultwhi_x, defaultwhi_y, defaultme_x, defaultme_y, default_gsx6, default_gsy6, default_gsx7, default_gsy7, true);
     } else {
    //     printf("RESET \n");
-        setParams(0., 0., 0., 0., 0., 0., 0., 0., 0., 0., true);
+        setParams(0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., true);
     }
 }
 
@@ -397,6 +412,11 @@ bool LabGridArea::on_draw(const ::Cairo::RefPtr<Cairo::Context> &cr)
         why = (static_cast<double>(height) * whi_y);
         mex = (static_cast<double>(width) * me_x);
         mey = (static_cast<double>(height) * me_y);
+        double gx6 = (static_cast<double>(width) * ghs_x6);
+        double gy6 = (static_cast<double>(height) * ghs_y6);
+        double gx7 = (static_cast<double>(width) * ghs_x7);
+        double gy7 = (static_cast<double>(height) * ghs_y7);
+
         double onex =  (static_cast<double>(width) * 1);
         double oney =  (static_cast<double>(height) * 1);
         cr->move_to(0, 0);
@@ -410,6 +430,12 @@ bool LabGridArea::on_draw(const ::Cairo::RefPtr<Cairo::Context> &cr)
         cr->move_to(whx, why);
         cr->line_to(mex, mey);
         cr->move_to(mex, mey);
+        cr->line_to(gx6, gy6);
+        cr->move_to(gx6, gy6);
+        
+        cr->line_to(gx7, gy7);
+        cr->move_to(gx7, gy7);
+        
         cr->line_to(onex, oney);
        
     }

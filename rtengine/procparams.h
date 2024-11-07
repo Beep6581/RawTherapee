@@ -1258,6 +1258,10 @@ struct LocallabParams {
         double ghsy4;
         double ghsx5;
         double ghsy5;
+        double ghsx6;
+        double ghsy6;
+        double ghsx7;
+        double ghsy7;
        
         int multsh[6];
         int highlights;
