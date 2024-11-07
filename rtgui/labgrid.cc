@@ -402,6 +402,7 @@ bool LabGridArea::on_draw(const ::Cairo::RefPtr<Cairo::Context> &cr)
     } else if (ghs_enabled) {
         cr->set_line_width(3.);
         cr->set_source_rgb(0.2, 0.2, 0.2);
+        
         loa = (static_cast<double>(width) * low_a);
         hia = (static_cast<double>(width) * high_a);
         lob = (static_cast<double>(height) * low_b);
@@ -417,9 +418,9 @@ bool LabGridArea::on_draw(const ::Cairo::RefPtr<Cairo::Context> &cr)
         double gx7 = (static_cast<double>(width) * ghs_x7);
         double gy7 = (static_cast<double>(height) * ghs_y7);
 
-        double onex =  (static_cast<double>(width) * 1);
-        double oney =  (static_cast<double>(height) * 1);
-        cr->move_to(0, 0);
+        double onex =  (static_cast<double>(width) * 1.);
+        double oney =  (static_cast<double>(height) * 1.);
+        cr->move_to(0., 0.);
         cr->line_to(loa, lob);
         cr->move_to(loa, lob);
         cr->line_to(hia, hib);
@@ -431,13 +432,10 @@ bool LabGridArea::on_draw(const ::Cairo::RefPtr<Cairo::Context> &cr)
         cr->line_to(mex, mey);
         cr->move_to(mex, mey);
         cr->line_to(gx6, gy6);
-        cr->move_to(gx6, gy6);
-        
+        cr->move_to(gx6, gy6);     
         cr->line_to(gx7, gy7);
-        cr->move_to(gx7, gy7);
-        
-        cr->line_to(onex, oney);
-       
+        cr->move_to(gx7, gy7);     
+        cr->line_to(onex, oney);    
     }
     cr->stroke();
     if(ghs_enabled) {//only 10 * 10 squares
@@ -497,7 +495,7 @@ bool LabGridArea::on_draw(const ::Cairo::RefPtr<Cairo::Context> &cr)
 
         cr->stroke();
     }
-    if(!ghs_enabled) {
+    if(!ghs_enabled) {//no points with GHS
     // Drawing points
         if (low_enabled) {
             cr->set_source_rgb(0.1, 0.1, 0.1);//black for red in Ciexy
@@ -509,7 +507,7 @@ bool LabGridArea::on_draw(const ::Cairo::RefPtr<Cairo::Context> &cr)
             cr->fill();
         }
 
-        if (ciexy_enabled && !ghs_enabled) {
+        if (ciexy_enabled) {
             cr->set_source_rgb(0.5, 0.5, 0.5);//gray for green
             if (litPoint == GRE) {
                 cr->arc(grx, gry, 5., 0., 2. * rtengine::RT_PI);
@@ -519,13 +517,13 @@ bool LabGridArea::on_draw(const ::Cairo::RefPtr<Cairo::Context> &cr)
             cr->fill();
         }
 
-        if (ciexy_enabled && !ghs_enabled) {//White Point
+        if (ciexy_enabled) {//White Point
             cr->set_source_rgb(1., 1., 1.);//White
             cr->arc(whx, why, 3., 0., 2. * rtengine::RT_PI);
             cr->fill();
         }
 
-        if (ciexy_enabled && !ghs_enabled) {//Dominant
+        if (ciexy_enabled) {//Dominant
             cr->set_source_rgb(0.3, 0.4, 0.3);
             cr->arc(mex, mey, 3., 0, 2. * rtengine::RT_PI);
             cr->fill();

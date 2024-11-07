@@ -74,7 +74,7 @@ private:
     double defaultwhi_y;
     double defaultme_x;
     double defaultme_y;
-    double default_gsx6;
+    double default_gsx6;//added for GHS 
     double default_gsy6;
     double default_gsx7;
     double default_gsy7;

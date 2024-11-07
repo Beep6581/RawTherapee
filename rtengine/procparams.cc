@@ -3423,8 +3423,7 @@ LocallabParams::LocallabSpot::LocallabSpot() :
     ghsx6(0.75),
     ghsy6(0.75),
     ghsx7(0.875),
-    ghsy7(0.875),
-    
+    ghsy7(0.875),    
     multsh{0, 0, 0, 0, 0, 0},
     highlights(0),
     h_tonalwidth(70),
