@@ -1262,6 +1262,10 @@ struct LocallabParams {
         double ghsy6;
         double ghsx7;
         double ghsy7;       
+        double ghsx8;
+        double ghsy8;
+        double ghsx9;
+        double ghsy9;       
         int multsh[6];
         int highlights;
         int h_tonalwidth;

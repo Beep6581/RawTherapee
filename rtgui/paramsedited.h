@@ -611,6 +611,10 @@ public:
         bool ghsy6;
         bool ghsx7;
         bool ghsy7;        
+        bool ghsx8;
+        bool ghsy8;        
+        bool ghsx9;
+        bool ghsy9;        
         bool multsh[7];
         bool highlights;
         bool h_tonalwidth;

@@ -1285,7 +1285,7 @@ void LocallabColor::read(const rtengine::procparams::ProcParams* pp, const Param
                            spot.labgridBLow / LocallabParams::LABGRIDL_CORR_MAX,
                            spot.labgridAHigh / LocallabParams::LABGRIDL_CORR_MAX,
                            spot.labgridBHigh / LocallabParams::LABGRIDL_CORR_MAX,
-                           0, 0, 0, 0, 0, 0, 0, 0, 0, 0, false);
+                           0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, false);
        // printf("labgridlow=%f \n", spot.labgridALow);
         if (spot.gridMethod == "one") {
             gridMethod->set_active(0);
@@ -1399,7 +1399,7 @@ void LocallabColor::read(const rtengine::procparams::ProcParams* pp, const Param
         labgridmerg->setParams(0, 0,
                                spot.labgridAHighmerg / LocallabParams::LABGRIDL_CORR_MAX,
                                spot.labgridBHighmerg / LocallabParams::LABGRIDL_CORR_MAX,
-                               0, 0, 0, 0, 0, 0, 0, 0, 0, 0, false);
+                               0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, false);
         merlucol->setValue(spot.merlucol);
         enaColorMask->set_active(spot.enaColorMask);
         CCmaskshape->setCurve(spot.CCmaskcurve);
@@ -1463,7 +1463,7 @@ void LocallabColor::write(rtengine::procparams::ProcParams* pp, ParamsEdited* pe
         labgrid->getParams(spot.labgridALow,
                            spot.labgridBLow,
                            spot.labgridAHigh,
-                           spot.labgridBHigh, zerox, zeroy, zerox, zeroy, zerox, zeroy, zerox, zeroy, zerox, zeroy);
+                           spot.labgridBHigh, zerox, zeroy, zerox, zeroy, zerox, zeroy, zerox, zeroy, zerox, zeroy, zerox, zeroy, zerox, zeroy);
         spot.labgridALow *= LocallabParams::LABGRIDL_CORR_MAX;
         spot.labgridAHigh *= LocallabParams::LABGRIDL_CORR_MAX;
         spot.labgridBLow *= LocallabParams::LABGRIDL_CORR_MAX;
@@ -1583,7 +1583,7 @@ void LocallabColor::write(rtengine::procparams::ProcParams* pp, ParamsEdited* pe
         labgridmerg->getParams(spot.labgridALowmerg,
                                spot.labgridBLowmerg,
                                spot.labgridAHighmerg,
-                               spot.labgridBHighmerg, zerox1, zeroy1, zerox1, zeroy1, zerox1, zeroy1, zerox1, zeroy1, zerox1, zeroy1);
+                               spot.labgridBHighmerg, zerox1, zeroy1, zerox1, zeroy1, zerox1, zeroy1, zerox1, zeroy1, zerox1, zeroy1,zerox1, zeroy1, zerox1, zeroy1);
         spot.labgridALowmerg *= LocallabParams::LABGRIDL_CORR_MAX;
         spot.labgridAHighmerg *= LocallabParams::LABGRIDL_CORR_MAX;
         spot.labgridBLowmerg *= LocallabParams::LABGRIDL_CORR_MAX;
@@ -1630,7 +1630,7 @@ void LocallabColor::setDefaults(const rtengine::procparams::ProcParams* defParam
         labgrid->setDefault(defSpot.labgridALow / LocallabParams::LABGRIDL_CORR_MAX,
                             defSpot.labgridBLow / LocallabParams::LABGRIDL_CORR_MAX,
                             defSpot.labgridAHigh / LocallabParams::LABGRIDL_CORR_MAX,
-                            defSpot.labgridBHigh / LocallabParams::LABGRIDL_CORR_MAX, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
+                            defSpot.labgridBHigh / LocallabParams::LABGRIDL_CORR_MAX, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
         strengthgrid->setDefault((double) defSpot.strengthgrid);
         sensi->setDefault((double)defSpot.sensi);
         structcol->setDefault((double)defSpot.structcol);
@@ -1647,7 +1647,7 @@ void LocallabColor::setDefaults(const rtengine::procparams::ProcParams* defParam
         labgridmerg->setDefault(defSpot.labgridALowmerg / LocallabParams::LABGRIDL_CORR_MAX,
                                 defSpot.labgridBLowmerg / LocallabParams::LABGRIDL_CORR_MAX,
                                 defSpot.labgridAHighmerg / LocallabParams::LABGRIDL_CORR_MAX,
-                                defSpot.labgridBHighmerg / LocallabParams::LABGRIDL_CORR_MAX, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
+                                defSpot.labgridBHighmerg / LocallabParams::LABGRIDL_CORR_MAX, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
         merlucol->setDefault(defSpot.merlucol);
         strumaskcol->setDefault(defSpot.strumaskcol);
         contcol->setDefault(defSpot.contcol);
@@ -2132,7 +2132,7 @@ void LocallabColor::convertParamToNormal()
     labgridmerg->setParams(0, 0,
                            defSpot.labgridAHighmerg / LocallabParams::LABGRIDL_CORR_MAX,
                            defSpot.labgridBHighmerg / LocallabParams::LABGRIDL_CORR_MAX,
-                           0, 0, 0, 0, 0, 0, 0, 0, 0, 0, false);
+                           0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, false);
     merlucol->setValue(defSpot.merlucol);
     strumaskcol->setValue(defSpot.strumaskcol);
     toolcol->set_active(defSpot.toolcol);
@@ -5017,6 +5017,10 @@ void LocallabShadow::read(const rtengine::procparams::ProcParams* pp, const Para
                               spot.ghsy6,
                               spot.ghsx7,
                               spot.ghsy7,
+                              spot.ghsx8,
+                              spot.ghsy8,
+                              spot.ghsx9,
+                              spot.ghsy9,                              
                               false);
         
     }
@@ -5141,7 +5145,11 @@ void LocallabShadow::write(rtengine::procparams::ProcParams* pp, ParamsEdited* p
                               spot.ghsx6,
                               spot.ghsy6,
                               spot.ghsx7,
-                              spot.ghsy7
+                              spot.ghsy7,
+                              spot.ghsx8,
+                              spot.ghsy8,
+                              spot.ghsx9,
+                              spot.ghsy9                              
                               );
         
         
@@ -5214,7 +5222,11 @@ void LocallabShadow::setDefaults(const rtengine::procparams::ProcParams* defPara
                                defSpot.ghsx6,
                                defSpot.ghsy6,
                                defSpot.ghsx7,
-                               defSpot.ghsy7
+                               defSpot.ghsy7,
+                               defSpot.ghsx8,
+                               defSpot.ghsy8,
+                               defSpot.ghsx9,
+                               defSpot.ghsy9                              
                                );
         
     }
@@ -5508,7 +5520,8 @@ void LocallabShadow::adjusterChanged(Adjuster* a, double newval)
 }
 
 
-void LocallabShadow::updateghs(int lincur, double g0i, double g0, double g5i, double g5, double g10i, double g10, double g15i, double g15, double g20i, double g20, double g25i, double g25,  double g30i, double g30,  double g35i, double g35)
+void LocallabShadow::updateghs(int lincur, double g0i, double g0, double g5i, double g5, double g10i, double g10, double g15i, double g15, double g20i, double g20,
+    double g25i, double g25,  double g30i, double g30,  double g35i, double g35, double g40i, double g40, double g45i, double g45)
 
 {   //I kept the possible settings for the diagonal type curve
    // idle_register.add(
@@ -5516,7 +5529,7 @@ void LocallabShadow::updateghs(int lincur, double g0i, double g0, double g5i, do
         /* I don't know how to do for *gx instead of list all g0i, etc. */
    //     GThreadLock lock;
         disableListener();
-        std::vector<double> curvghs (43);
+        std::vector<double> curvghs (21);//43
         curvghs[0] = double (DCT_NURBS);
         curvghs[1] = g0i;
         curvghs[2] = g0;
@@ -5537,11 +5550,12 @@ void LocallabShadow::updateghs(int lincur, double g0i, double g0, double g5i, do
         
         curvghs[15] = g35i;
         curvghs[16] = g35;
-        /*
+        
         curvghs[17] = g40i;
         curvghs[18] = g40;
         curvghs[19] = g45i;
         curvghs[20] = g45;
+        /*
         curvghs[21] = g50i;
         curvghs[22] = g50;
         curvghs[23] = g55i;
@@ -5566,7 +5580,7 @@ void LocallabShadow::updateghs(int lincur, double g0i, double g0, double g5i, do
         curvghs[42] = g100;
         */
         labgridghs->setParams(curvghs[3], curvghs[4], curvghs[5], curvghs[6], curvghs[7], curvghs[8], curvghs[9], curvghs[10], curvghs[11], curvghs[12],
-        curvghs[13], curvghs[14], curvghs[15], curvghs[16], false);
+        curvghs[13], curvghs[14], curvghs[15], curvghs[16], curvghs[17], curvghs[18], curvghs[19], curvghs[20], false);
         enableListener();
 
  

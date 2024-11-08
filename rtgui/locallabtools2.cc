@@ -9982,6 +9982,7 @@ void Locallabcie::read(const rtengine::procparams::ProcParams* pp, const ParamsE
                               spot.labgridcieMx,
                               spot.labgridcieMy,
                               0, 0, 0, 0,
+                              0, 0, 0, 0,
                               false);
 
         strgradcie->setValue((double)spot.strgradcie);
@@ -10093,7 +10094,8 @@ void Locallabcie::write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedi
                               spot.labgridcieWy,
                               spot.labgridcieMx,
                               spot.labgridcieMy,
-                              zerox, zeroy, zerox, zeroy 
+                              zerox, zeroy, zerox, zeroy,
+                              zerox, zeroy, zerox, zeroy
                               );
 
         spot.Autograycie = Autograycie->get_active();
@@ -10450,7 +10452,7 @@ void Locallabcie::updateiPrimloc(const float r_x, const float r_y, const float g
         greyl->setValue(g_y);
         bluxl->setValue(b_x);
         bluyl->setValue(b_y);
-        labgridcie->setParams(nextrx, nextry, nextbx, nextby, nextgx, nextgy, nextwx, nextwy, nextmx, nextmy, 0, 0, 0, 0,  false);
+        labgridcie->setParams(nextrx, nextry, nextbx, nextby, nextgx, nextgy, nextwx, nextwy, nextmx, nextmy, 0, 0, 0, 0, 0, 0, 0, 0, false);
         enableListener();
         return false;
     }
@@ -12206,6 +12208,7 @@ void Locallabcie::setDefaults(const rtengine::procparams::ProcParams* defParams,
                                defSpot.labgridcieWy,
                                defSpot.labgridcieMx,
                                defSpot.labgridcieMy,
+                               zerox, zeroy, zerox, zeroy, 
                                zerox, zeroy, zerox, zeroy 
                                );
 

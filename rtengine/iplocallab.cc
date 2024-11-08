@@ -17409,18 +17409,22 @@ void ImProcFunctions::Lab_Local(
                                     if(Ro < 0.f || Go < 0.f || Bo < 0.f) {
                                         minbp = rtengine::min(Ro, Go);
                                         minbp = rtengine::min(minbp, Bo);
-                                        bpnb++;
-                                        
+                                        bpnb++;                                      
                                     }
                                     if(Ro > 1.f || Go > 1.f || Bo > 1.f) {
                                         maxwp = rtengine::max(Ro, Go);
                                         maxwp = rtengine::max(maxwp, Bo);                                   
                                         wpnb++;
                                     }
-                                    
-                                    tmpImage->r(i, j) = rtengine::max(0.00001f, Ro * 65535.f);//0.00001f to avoid crash
-                                    tmpImage->g(i, j) = rtengine::max(0.00001f, Go * 65535.f);
-                                    tmpImage->b(i, j) = rtengine::max(0.00001f, Bo * 65535.f);
+                                    if(strtype == 0) {
+                                        tmpImage->r(i, j) = rtengine::max(0.00001f, Ro * 65535.f);//0.00001f to avoid crash
+                                        tmpImage->g(i, j) = rtengine::max(0.00001f, Go * 65535.f);
+                                        tmpImage->b(i, j) = rtengine::max(0.00001f, Bo * 65535.f);
+                                    } else {
+                                        tmpImage->r(i, j) = clipR(rtengine::max(0.0001f, Ro * 65535.f));//0.0001f to avoid crash different from 'normal'
+                                        tmpImage->g(i, j) = clipR(rtengine::max(0.0001f, Go * 65535.f));//clipR to avoid crash in some cases
+                                        tmpImage->b(i, j) = clipR(rtengine::max(0.0001f, Bo * 65535.f));
+                                    }
                                 }
                                 ghsbpwp[0] = bpnb;
                                 ghsbpwp[1] = wpnb;
@@ -17625,10 +17629,10 @@ void ImProcFunctions::Lab_Local(
                         }
                         */
                         if (params->locallab.spots.at(sp).ghsMode == "ghs") {//Labgrid curve with 7 points 
-                            for(int i = 0; i < 18; i += 2) {
-                                ghscur[i] = 0.0625f * i;
+                            for(int i = 0; i < 22; i += 2) {
+                                ghscur[i] = 0.05f * i;
                                 ghscur[i + 1] =  GHT(ghscur[i], B, D, LP, SP, HP, c, strtype);
-                             //   printf("gi=%f ghs=%f \n", (double) ghscur[i], (double) ghscur[i + 1]);
+                                //printf("gi=%f ghs=%f \n", (double) ghscur[i], (double) ghscur[i + 1]);
                             }
                         }
                         /*

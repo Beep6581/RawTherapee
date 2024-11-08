@@ -701,7 +701,7 @@ void ICMPanel::iprimChanged (float r_x, float r_y, float b_x, float b_y, float g
         [this]() -> bool
         {
             disableListener();
-            labgridcie->setParams(nextrx, nextry, nextbx, nextby, nextgx, nextgy, nextwx, nextwy, nextmx, nextmy, 0, 0, 0, 0,  false);
+            labgridcie->setParams(nextrx, nextry, nextbx, nextby, nextgx, nextgy, nextwx, nextwy, nextmx, nextmy, 0, 0, 0, 0, 0, 0, 0, 0, false);
             enableListener();
             return false;
         }
@@ -964,7 +964,7 @@ void ICMPanel::read(const ProcParams* pp, const ParamsEdited* pedited)
     shifty->setValue(pp->icm.shifty);
     preser->setValue(pp->icm.preser);
     labgridcie->setParams(pp->icm.labgridcieALow, pp->icm.labgridcieBLow, pp->icm.labgridcieAHigh, pp->icm.labgridcieBHigh, pp->icm.labgridcieGx, pp->icm.labgridcieGy, pp->icm.labgridcieWx, pp->icm.labgridcieWy, pp->icm.labgridcieMx, 
-        pp->icm.labgridcieMy, 0, 0, 0, 0, false);
+        pp->icm.labgridcieMy, 0, 0, 0, 0, 0, 0, 0, 0, false);
 
     if (pedited) {
         iunchanged->set_active(!pedited->icm.inputProfile);
@@ -1302,7 +1302,7 @@ void ICMPanel::write(ProcParams* pp, ParamsEdited* pedited)
     double zerox = 0.;
     double zeroy = 0.;
 
-    labgridcie->getParams(pp->icm.labgridcieALow, pp->icm.labgridcieBLow, pp->icm.labgridcieAHigh, pp->icm.labgridcieBHigh, pp->icm.labgridcieGx, pp->icm.labgridcieGy, pp->icm.labgridcieWx, pp->icm.labgridcieWy, pp->icm.labgridcieMx, pp->icm.labgridcieMy, zerox, zeroy, zerox, zeroy);
+    labgridcie->getParams(pp->icm.labgridcieALow, pp->icm.labgridcieBLow, pp->icm.labgridcieAHigh, pp->icm.labgridcieBHigh, pp->icm.labgridcieGx, pp->icm.labgridcieGy, pp->icm.labgridcieWx, pp->icm.labgridcieWy, pp->icm.labgridcieMx, pp->icm.labgridcieMy, zerox, zeroy, zerox, zeroy, zerox, zeroy, zerox, zeroy);
 
     if (oProfNames->get_active_text() == M("TP_ICM_NOICM")) {
         pp->icm.outputProfile  = ColorManagementParams::NoICMString;
@@ -1402,7 +1402,7 @@ void ICMPanel::setDefaults(const ProcParams* defParams, const ParamsEdited* pedi
     double zerox = 0.;
     double zeroy = 0.;
 
-    labgridcie->setDefault(defParams->icm.labgridcieALow, defParams->icm.labgridcieBLow , defParams->icm.labgridcieAHigh, defParams->icm.labgridcieBHigh, defParams->icm.labgridcieGx, defParams->icm.labgridcieGy, defParams->icm.labgridcieWx, defParams->icm.labgridcieWy, defParams->icm.labgridcieMx, defParams->icm.labgridcieMy, zerox, zeroy, zerox, zeroy);
+    labgridcie->setDefault(defParams->icm.labgridcieALow, defParams->icm.labgridcieBLow , defParams->icm.labgridcieAHigh, defParams->icm.labgridcieBHigh, defParams->icm.labgridcieGx, defParams->icm.labgridcieGy, defParams->icm.labgridcieWx, defParams->icm.labgridcieWy, defParams->icm.labgridcieMx, defParams->icm.labgridcieMy, zerox, zeroy, zerox, zeroy, zerox, zeroy, zerox, zeroy);
 
     if (pedited) {
         wGamma->setDefaultEditedState(pedited->icm.workingTRCGamma ? Edited : UnEdited);
