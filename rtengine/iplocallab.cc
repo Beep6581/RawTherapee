@@ -17371,7 +17371,7 @@ void ImProcFunctions::Lab_Local(
                         rtengine::Color::calcGamma(pwr1, ts1, g_a); // call to calcGamma with selected gamma and slope
                         const float noise = pow_F(2.f, -16.f);//GHS - do not process very low values ​​which are probably noise.
                        
-                        if(shiftblackpoint < 0.f) {//change only Black point with positives values for in some cases out of gamut values
+                        if(shiftblackpoint < 0.f && strtype == 0) {//change only Black point with positives values for in some cases out of gamut values
                             //rgb value can be very weakly negatives (eg working space sRGB in some rare cases) - tone_eqblack prevents it
                             //also change black value to help "ghs" and avoid noise
                             tone_eqblack(this, tmpImage, blackpoint, params->icm.workingProfile, sk, multiThread);//Ev -16 to -8
@@ -17379,8 +17379,11 @@ void ImProcFunctions::Lab_Local(
                         {//change black point and white point for GHS
                          // Sets the Blackpoint and Whitepoint for a linear stretch of the image
                             float shiftblackpoint2 = shiftblackpoint;
-                            if(shiftblackpoint < 0.f) {
+                            if(shiftblackpoint < 0.f  && strtype == 0) {
                                 shiftblackpoint2 = 0.f;
+                            } 
+                            if(strtype == 1) {
+                                shiftblackpoint2 = -shiftblackpoint;
                             }
                             int bpnb = 0;
                             int wpnb = 0;
@@ -17421,9 +17424,9 @@ void ImProcFunctions::Lab_Local(
                                         tmpImage->g(i, j) = rtengine::max(0.00001f, Go * 65535.f);
                                         tmpImage->b(i, j) = rtengine::max(0.00001f, Bo * 65535.f);
                                     } else {
-                                        tmpImage->r(i, j) = clipR(rtengine::max(0.0001f, Ro * 65535.f));//0.0001f to avoid crash different from 'normal'
-                                        tmpImage->g(i, j) = clipR(rtengine::max(0.0001f, Go * 65535.f));//clipR to avoid crash in some cases
-                                        tmpImage->b(i, j) = clipR(rtengine::max(0.0001f, Bo * 65535.f));
+                                        tmpImage->r(i, j) = clipR(rtengine::max(0.00001f, Ro * 65535.f));//0.0001f to avoid crash different from 'normal'
+                                        tmpImage->g(i, j) = clipR(rtengine::max(0.00001f, Go * 65535.f));//clipR to avoid crash in some cases
+                                        tmpImage->b(i, j) = clipR(rtengine::max(0.00001f, Bo * 65535.f));
                                     }
                                 }
                                 ghsbpwp[0] = bpnb;
