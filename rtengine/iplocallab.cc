@@ -17145,6 +17145,10 @@ void ImProcFunctions::Lab_Local(
     float BLP = params->locallab.spots.at(sp).ghs_BLP;
     float HLP = params->locallab.spots.at(sp).ghs_HLP;
     bool smoth = params->locallab.spots.at(sp).ghs_smooth;//Highlight attenuation
+    for(int i = 0; i < 22; i += 2) {//reinit simulation GHS with diagonale
+        ghscur[i] = 0.05f * i;
+        ghscur[i + 1] = 0.05f * i;
+    }
 
     if(D != 0.f  || BLP != 0.f || HLP != 1.f  || smoth) {
         ghsactiv = true;
@@ -17631,13 +17635,13 @@ void ImProcFunctions::Lab_Local(
                            
                         }
                         */
-                        if (params->locallab.spots.at(sp).ghsMode == "ghs") {//Labgrid curve with 7 points 
-                            for(int i = 0; i < 22; i += 2) {
+                      //  if (params->locallab.spots.at(sp).ghsMode == "ghs") { 
+                            for(int i = 0; i < 22; i += 2) {//Labgrid curve with 9 points
                                 ghscur[i] = 0.05f * i;
                                 ghscur[i + 1] =  GHT(ghscur[i], B, D, LP, SP, HP, c, strtype);
                                 //printf("gi=%f ghs=%f \n", (double) ghscur[i], (double) ghscur[i + 1]);
                             }
-                        }
+                      //  }
                         /*
                         printf("ghscuri=%f ghscuri1=%f\n", (double) ghscur[0], (double) ghscur[1]);
                         printf("ghscuri5=%f ghscuri5=%f\n", (double) ghscur[20], (double) ghscur[21]);
