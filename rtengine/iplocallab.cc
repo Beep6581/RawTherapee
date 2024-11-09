@@ -6166,14 +6166,13 @@ void calclocalGradientParams(int call, const struct local_params& lp, struct gra
     double gradient_center_y = LIM01((lp.ycent * bfh - ystart) / bfh);//???
 
     PreviewProps pp(tX, tY, tW * sk, tH * sk, sk);//perhaps needs ?
-/*
+
     if (settings->verbose) {
         printf("call=%i xcent=%f ycent=%f \n", call, (double) lp.xcent, (double) lp.ycent);   
         printf("fw=%i fh=%i bfw=%i bfh=%i oW=%i oH=%i tW=%i tH=%i xstart=%f ystrat=%f xend=%f yend=%f xc=%f yc=%f yT=%f xL=%f sk=%i\n", fw, fh, bfw, bfh, oW, oH, tW, tH, (double) xstart, (double) ystart, (double) xend, (double) yend, (double) lp.xc, (double) lp.yc, (double) lp.lyT, (double)lp.lxL,  sk);
         printf("PreviewProps: getx=%i gety=%i getW=%i getH=%i\n", pp.getX(), pp.getY(), pp.getWidth(), pp.getHeight()); 
-
     }
-*/
+
     if (indic == 0) {
         stops = -lp.strmaexp;
         angs = lp.angmaexp;
@@ -17628,7 +17627,21 @@ void ImProcFunctions::Lab_Local(
                         if(smoth) {//Highlight attenuation in function of HP - protect highlight
                             tone_eqsmooth(this, tmpImage, lp, params->icm.workingProfile, sk, multiThread);//reduce Ev > 0 < 12
                         }
-                        
+ 
+                        if(strtype == 1) {//inverse GHS
+#ifdef _OPENMP
+            #pragma omp parallel for if (multiThread)
+#endif                       
+                            for (int i = 0; i < bfh; ++i)
+                                for (int j = 0; j < bfw; ++j) {                           
+                                    tmpImage->r(i, j) = clipR(rtengine::max(0.00001f, tmpImage->r(i, j)));//0.0001f to avoid crash
+                                    tmpImage->g(i, j) = clipR(rtengine::max(0.00001f, tmpImage->g(i, j)));//clipR to avoid crash in inverse GHS
+                                    tmpImage->b(i, j) = clipR(rtengine::max(0.00001f, tmpImage->b(i, j)));
+                                }
+                        }
+
+
+ 
                         rgb2lab(*tmpImage, *bufexpfin, params->icm.workingProfile);
 
                         delete tmpImage;
