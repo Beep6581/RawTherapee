@@ -3388,7 +3388,7 @@ LocallabParams::LocallabSpot::LocallabSpot() :
     visishadhigh(false),
     expshadhigh(false),
     complexshadhigh(0),
-    shMethod("tone"),
+    shMethod("ghs"),
     ghsMethod("rgb"),
     ghsMode("ghs"),
     ghs_D(0.),

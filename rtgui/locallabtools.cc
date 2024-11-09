@@ -4361,7 +4361,7 @@ LocallabShadow::LocallabShadow():
     shMethod->append(M("TP_LOCALLAB_SH1"));
     shMethod->append(M("TP_LOCALLAB_SH2"));
     shMethod->append(M("TP_LOCALLAB_SH3"));
-    shMethod->set_active(0);
+    shMethod->set_active(3);
     shMethodConn = shMethod->signal_changed().connect(sigc::mem_fun(*this, &LocallabShadow::shMethodChanged));
 
 /*
@@ -5756,27 +5756,6 @@ void LocallabShadow::updateMaskBackground(const double normChromar, const double
         LLmaskSHshape->updateLocallabBackground(normLumar);
         HHmaskSHshape->updateLocallabBackground(normHuer);
         LmaskSHshape->updateLocallabBackground(normLumar);
-        /*
-        
-        //estimate Spot value in RGB mode for GHS curve
-        float r,g, b;
-        Color::hsv2rgb01 (normHuer, normChromar, normLumar, r, g, b);
-        double normrgb = r * 0.2126729 + g * 0.7151521 + b * 0.0721750;
-
-        if (ghsMethod->get_active_row_number() == 0) {
-            ghsshape->updateLocallabBackground(normrgb);
-        } else if (ghsMethod->get_active_row_number() == 1) {
-           ghsshape->updateLocallabBackground(normrgb);
-        } else if (ghsMethod->get_active_row_number() == 2) {
-           ghsshape->updateLocallabBackground(normLumar);
-        } else if (ghsMethod->get_active_row_number() == 3) {
-           ghsshape->updateLocallabBackground(normrgb);
-        } else if (ghsMethod->get_active_row_number() == 4) {
-           ghsshape->updateLocallabBackground(normChromar);
-        } else if (ghsMethod->get_active_row_number() == 5) {
-           ghsshape->updateLocallabBackground(normHuer);
-        }
-        */
         return false;
     }
     );
@@ -6026,14 +6005,21 @@ void LocallabShadow::updateShadowGUI3()
     // Update adjuster range to avoid black screen according to Symmetry ghs_SP
 
     
-    const double tempLP = ghs_LP->getValue();//Low values Protect shadows
+    double tempLP = ghs_LP->getValue();//Low values Protect shadows
     const double tempSP = rtengine::LIM(ghs_SP->getValue(), 0.0001, 0.9999);//avoid 0 and 1 no real sens for symmetry must be enough for most cases
-    const double tempHP = ghs_HP->getValue();//high values Protect highlight
+    double tempHP = ghs_HP->getValue();//high values Protect highlight
     double secur = 0.001;//keep range security to avoid crash and wrong GUI - no or small incidence on usage
     double HPL = rtengine::LIM(tempSP - secur, 0.0001, 0.9999);
     double BPH = rtengine::LIM(tempSP + secur, 0.0001, 0.9999);
     ghs_LP->setLimits(0., HPL, 0.00001, 0.0);//
     ghs_HP->setLimits(BPH, 1.0, 0.00001, 0.0);
+    //avoid crash at limits
+    if(tempHP - tempSP <= 0.) {
+        tempHP = tempSP + 0.0001; 
+    }
+    if(tempSP - tempLP <= 0.) {
+        tempLP = tempSP - 0.0001; 
+    }
     ghs_LP->setValue(tempLP);
     ghs_HP->setValue(tempHP);
 
