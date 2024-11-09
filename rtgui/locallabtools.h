@@ -591,9 +591,6 @@ private:
 
     Gtk::CheckButton* const ghs_smooth;
     Gtk::CheckButton* const ghs_inv;
-    MyComboBoxText* ghsMode;
-    CurveEditorGroup* const ghsCurveEditorG;
-    DiagonalCurveEditor* const ghsshape;
 
     MyExpander* const expgradsh;
     Adjuster* const strSH;
@@ -634,10 +631,8 @@ private:
     rtengine::ProcEvent Evlocallabghs_HLP;
     rtengine::ProcEvent Evlocallabghs_smooth;
     rtengine::ProcEvent Evlocallabghs_inv;
-    rtengine::ProcEvent Evlocallabghsshape;
-    rtengine::ProcEvent EvlocallabghsMode;
 
-    sigc::connection shMethodConn, ghsMethodConn, ghsModeConn, previewshConn, inversshConn, ghs_smoothConn, ghs_invConn, showmaskSHMethodConn, showmaskSHMethodConninv, enaSHMaskConn;
+    sigc::connection shMethodConn, ghsMethodConn, previewshConn, inversshConn, ghs_smoothConn, ghs_invConn, showmaskSHMethodConn, showmaskSHMethodConninv, enaSHMaskConn;
 
 public:
     LocallabShadow();
@@ -653,12 +648,9 @@ public:
     void updateAdviceTooltips(const bool showTooltips) override;
     void updateguishad(int spottype);
     void updateguiscopesahd(int scope);
-//    void updateghs(int lincur, double g0i, double g0, double g5i, double g5, double g10i, double g10, double g15i, double g15, double g20i, double g20, double g25i, double g25, double g30i, double g30,
-//        double g35i, double g35, double g40i, double g40, double g45i, double g45, double g50i, double g50, double g55i, double g55, double g60i, double g60, double g65i, double g65, double g70i,
-//        double g70, double g75i, double g75, double g80i, double g80, double g85i, double g85, double g90i, double g90, double g95i, double g95, double g100i, double g100 /*double *gx*/);
-//I kept the possible settings for the diagonal type curve
-    void updateghs(int lincur, double g0i, double g0, double g5i, double g5, double g10i, double g10, double g15i, double g15, double g20i, double g20, 
-        double g25i, double g25, double g30i, double g30, double g35i, double g35, double g40i, double g40, double g45i, double g45);
+
+    void updateghs(double *gx);
+
     void updateghsbw(int bp, int wp, double minbp, double maxwp);
     void setDefaultExpanderVisibility() override;
     void disableListener() override;
@@ -680,7 +672,6 @@ private:
 
     void shMethodChanged();
     void ghsMethodChanged();
-    void ghsModeChanged();
     void inversshChanged();
     void ghs_smoothChanged();
     void ghs_invChanged();

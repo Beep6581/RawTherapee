@@ -1579,17 +1579,19 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                 locciesig.contsigq = contsig;
                 locciesig.lightsigq = lightsig;
                 locallciesig.push_back(locciesig);
+                /*
                 int reset = 0;
                 if(params->locallab.spots.at(sp).ghsMode == "lin") {
                     reset = 0;
                 } else {
                     reset = 1;
                 }
+                */
                 LocallabListener::locallabshGHS locshghs;//ghs S curve 42 or labgrid 12
                     for(int j = 0; j < 20; j++) {//42 for diagonal curve
                         locshghs.ghsc[j] = ghscur[j];
                     }
-                    locshghs.licur = reset;
+                //    locshghs.licur = reset;
                 /*
                 printf("ghsc0=%f ghsc1=%f\n", (double) locshghs.ghsc[0], (double) locshghs.ghsc[1]);
                 printf("ghsc20=%f ghsc21=%f\n", (double) locshghs.ghsc[20], (double) locshghs.ghsc[21]);

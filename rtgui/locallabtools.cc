@@ -4309,9 +4309,6 @@ LocallabShadow::LocallabShadow():
     ghsbpwpvalueLabels(Gtk::manage(new Gtk::Label("---"))),
     ghs_smooth(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_GHS_SMOOTH")))),
     ghs_inv(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_GHS_INV")))),
-    ghsMode(Gtk::manage(new MyComboBoxText())),
-    ghsCurveEditorG(new CurveEditorGroup(options.lastlocalCurvesDirghs, "", 1)),
-    ghsshape(static_cast<DiagonalCurveEditor*>(ghsCurveEditorG->addCurve(CT_Diagonal, "GHS S Curve", ghsMode, false, false, 1))),//curve init only for support GHS S curve - not used 
     expgradsh(Gtk::manage(new MyExpander(false, M("TP_LOCALLAB_EXPGRAD")))),
     strSH(Gtk::manage(new Adjuster(M("TP_LOCALLAB_GRADSTR"), -4., 4., 0.05, 0.))),
     angSH(Gtk::manage(new Adjuster(M("TP_LOCALLAB_GRADANG"), -180, 180, 0.1, 0.))),
@@ -4355,8 +4352,6 @@ LocallabShadow::LocallabShadow():
     Evlocallabghs_HLP = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_GHS_HLP");
     Evlocallabghs_smooth = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_GHS_SMOOTH");
     Evlocallabghs_inv = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_GHS_INV");
-    Evlocallabghsshape = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_GHS_SHAPE");
-    EvlocallabghsMode = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_GHSMODE");
     EvlocallabGridghs = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_CIE_LABGRIDGHS");
     set_orientation(Gtk::ORIENTATION_VERTICAL);
 
@@ -4445,13 +4440,6 @@ https://www.ghsastro.co.uk/doc/tools/GeneralizedHyperbolicStretch/GeneralizedHyp
     ghs_smoothConn = ghs_smooth->signal_toggled().connect(sigc::mem_fun(*this, &LocallabShadow::ghs_smoothChanged));
     ghs_invConn = ghs_inv->signal_toggled().connect(sigc::mem_fun(*this, &LocallabShadow::ghs_invChanged));
 
-    ghsMode->append(M("TP_LOCALLAB_GHS_MODELIN"));
-    ghsMode->append(M("TP_LOCALLAB_GHS_MODECUR"));
-    ghsModeConn = ghsMode->signal_changed().connect(sigc::mem_fun(*this, &LocallabShadow::ghsModeChanged), true);
-
-    ghsCurveEditorG->setCurveListener(this);
-    ghsshape->setResetCurve(DiagonalCurveType(defSpot.ghscurve.at(0)), defSpot.ghscurve);
-    ghsCurveEditorG->curveListComplete();
 
     setExpandAlignProperties(expgradsh, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_START);
 
@@ -4572,8 +4560,6 @@ https://www.ghsastro.co.uk/doc/tools/GeneralizedHyperbolicStretch/GeneralizedHyp
     ghsBox->pack_start(*BP_Frame);
     ghsBox->pack_start(*ghs_inv);
     ghsFrame->add(*ghsBox);
-   // ghsBox->pack_start(*ghsCurveEditorG, Gtk::PACK_SHRINK, 4); // Padding is mandatory to correct behavior of curve editor
-   //I kept the possible settings for the diagonal type curve
     ghsBox->pack_start(*gridFrameghs);
     pack_start(*ghsFrame);
 
@@ -4639,7 +4625,6 @@ LocallabShadow::~LocallabShadow()
 {
     delete maskSHCurveEditorG;
     delete mask2SHCurveEditorG;
-    delete ghsCurveEditorG;
 }
 
 bool LocallabShadow::isMaskViewActive()
@@ -4814,7 +4799,6 @@ void LocallabShadow::updateAdviceTooltips(const bool showTooltips)
         ghs_smooth->set_tooltip_text(M("TP_LOCALLAB_GHS_SMOOTH_TOOLTIP"));
         ghs_inv->set_tooltip_text(M("TP_LOCALLAB_GHS_INV_TOOLTIP"));
         BP_Frame->set_tooltip_text(M("TP_LOCALLAB_GHS_BPFRAME_TOOLTIP"));
-        ghsCurveEditorG->set_tooltip_markup(M("TP_LOCALLAB_GHS_CURVE_TOOLTIP"));
         ghsFrame->set_tooltip_text(M("TP_LOCALLAB_GHS_METHOD_TOOLTIP"));
         gridFrameghs->set_tooltip_text(M("TP_LOCALLAB_GHS_SIMUL_TOOLTIP"));
     } else {
@@ -4864,7 +4848,6 @@ void LocallabShadow::updateAdviceTooltips(const bool showTooltips)
         ghs_smooth->set_tooltip_text("");
         ghs_inv->set_tooltip_text("");
         BP_Frame->set_tooltip_text("");
-        ghsCurveEditorG->set_tooltip_markup("");
         ghsFrame->set_tooltip_text("");
         gridFrameghs->set_tooltip_text("");
 
@@ -4884,7 +4867,6 @@ void LocallabShadow::disableListener()
 
     shMethodConn.block(true);
     ghsMethodConn.block(true);
-    ghsModeConn.block(true);
     inversshConn.block(true);
     ghs_smoothConn.block(true);
     ghs_invConn.block(true);
@@ -4899,7 +4881,6 @@ void LocallabShadow::enableListener()
 
     shMethodConn.block(false);
     ghsMethodConn.block(false);
-    ghsModeConn.block(false);
     ghs_smoothConn.block(false);
     ghs_invConn.block(false);
     inversshConn.block(false);
@@ -4944,13 +4925,6 @@ void LocallabShadow::read(const rtengine::procparams::ProcParams* pp, const Para
         } else if (spot.ghsMethod == "hue") {
             ghsMethod->set_active(5);
         }
-
-        if (spot.ghsMode == "lin") {
-            ghsMode->set_active(0);
-        } else if (spot.ghsMode == "ghs") {
-            ghsMode->set_active(1);
-        } 
-
         for (int i = 0; i < 6; i++) {
             multipliersh[i]->setValue((double)spot.multsh[i]);
         }
@@ -4969,7 +4943,7 @@ void LocallabShadow::read(const rtengine::procparams::ProcParams* pp, const Para
         ghs_LC->setValue((double)spot.ghs_LC);
         ghs_BLP->setValue((double)spot.ghs_BLP);
         ghs_HLP->setValue((double)spot.ghs_HLP);
-        ghsshape->setCurve(spot.ghscurve);
+      //  ghsshape->setCurve(spot.ghscurve);
 
         detailSH->setValue((double)spot.detailSH);
         tePivot->setValue(spot.tePivot);
@@ -5074,13 +5048,6 @@ void LocallabShadow::write(rtengine::procparams::ProcParams* pp, ParamsEdited* p
             spot.ghsMethod = "hue";
         }
 
-
-        if (ghsMode->get_active_row_number() == 0) {
-            spot.ghsMode = "lin";
-        } else if (ghsMode->get_active_row_number() == 1) {
-            spot.ghsMode = "ghs";
-        }
-
         for (int i = 0; i < 6; i++) {
             spot.multsh[i] = multipliersh[i]->getIntValue();
         }
@@ -5095,7 +5062,7 @@ void LocallabShadow::write(rtengine::procparams::ProcParams* pp, ParamsEdited* p
         spot.ghs_LC = ghs_LC->getValue();
         spot.ghs_BLP = ghs_BLP->getValue();
         spot.ghs_HLP = ghs_HLP->getValue();
-        spot.ghscurve = ghsshape->getCurve();
+       // spot.ghscurve = ghsshape->getCurve();
 
         spot.detailSH = detailSH->getIntValue();
         spot.tePivot = tePivot->getValue();
@@ -5253,9 +5220,6 @@ void LocallabShadow::adjusterChanged(Adjuster* a, double newval)
         }
 
         if (a == ghs_D) {
-            if(ghs_D->getValue() > 0.) {
-                ghsMode->set_active(1);
-            }
             if (listener) {
                 listener->panelChanged(Evlocallabghs_D,
                                        ghs_D->getTextValue() + " (" + escapeHtmlChars(getSpotName()) + ")");
@@ -5520,84 +5484,15 @@ void LocallabShadow::adjusterChanged(Adjuster* a, double newval)
 }
 
 
-void LocallabShadow::updateghs(int lincur, double g0i, double g0, double g5i, double g5, double g10i, double g10, double g15i, double g15, double g20i, double g20,
-    double g25i, double g25,  double g30i, double g30,  double g35i, double g35, double g40i, double g40, double g45i, double g45)
+void LocallabShadow::updateghs(double *gx)
 
-{   //I kept the possible settings for the diagonal type curve
-   // idle_register.add(
-   // [this, lincur, g0i, g0, g5i, g5, g10i, g10, g15i, g15, g20i, g20, g25i, g25]() -> bool { // lincur not used with Labgrid
-        /* I don't know how to do for *gx instead of list all g0i, etc. */
-   //     GThreadLock lock;
-        disableListener();
-        std::vector<double> curvghs (21);//43
-        curvghs[0] = double (DCT_NURBS);
-        curvghs[1] = g0i;
-        curvghs[2] = g0;
-        curvghs[3] = g5i;
-        curvghs[4] = g5;
-        curvghs[5] = g10i;
-        curvghs[6] = g10;
-        curvghs[7] = g15i;
-        curvghs[8] = g15;
-        curvghs[9] = g20i;
-        curvghs[10] = g20;
-        curvghs[11] = g25i;
-        curvghs[12] = g25;
+{   
+    disableListener();
+    //I don't use the 2 first values which are 0, 0 and the 2 last 1, 1 - of course we can clean...
+    labgridghs->setParams(gx[2], gx[3], gx[4], gx[5], gx[6], gx[7], gx[8], gx[9], gx[10], gx[11],
+        gx[12], gx[13], gx[14], gx[15], gx[16], gx[17], gx[18], gx[19], false);
         
-        curvghs[13] = g30i;
-        curvghs[14] = g30;
-        
-        
-        curvghs[15] = g35i;
-        curvghs[16] = g35;
-        
-        curvghs[17] = g40i;
-        curvghs[18] = g40;
-        curvghs[19] = g45i;
-        curvghs[20] = g45;
-        /*
-        curvghs[21] = g50i;
-        curvghs[22] = g50;
-        curvghs[23] = g55i;
-        curvghs[24] = g55;
-        curvghs[25] = g60i;
-        curvghs[26] = g60;
-        curvghs[27] = g65i;
-        curvghs[28] = g65;
-        curvghs[29] = g70i;
-        curvghs[30] = g70;
-        curvghs[31] = g75i;
-        curvghs[32] = g75;
-        curvghs[33] = g80i;
-        curvghs[34] = g80;
-        curvghs[35] = g85i;
-        curvghs[36] = g85;
-        curvghs[37] = g90i;
-        curvghs[38] = g90;
-        curvghs[39] = g95i;
-        curvghs[40] = g95;
-        curvghs[41] = g100i;
-        curvghs[42] = g100;
-        */
-        labgridghs->setParams(curvghs[3], curvghs[4], curvghs[5], curvghs[6], curvghs[7], curvghs[8], curvghs[9], curvghs[10], curvghs[11], curvghs[12],
-        curvghs[13], curvghs[14], curvghs[15], curvghs[16], curvghs[17], curvghs[18], curvghs[19], curvghs[20], false);
-        enableListener();
-
- 
-/*
-        //diagonale curve
-        ghsshape->setCurve(curvghs);
-        if(lincur == 0) {
-            ghs_D->setValue(0.);
-        }
-        enableListener();
-        if(lincur == 0) {
-            adjusterChanged(ghs_D, 0.);
-        }
-        */
-      //  return false;
-   // }
-  // );
+    enableListener();
 }
 
 void LocallabShadow::updateghsbw(int bp, int wp, double minbp, double maxwp)
@@ -5688,12 +5583,6 @@ void LocallabShadow::convertParamToNormal()
 
     // Disable all listeners
     disableListener();
-    //I added this code in case off, but I don't see why ?
-    if (defSpot.ghsMode == "lin") {
-        ghsMode->set_active(0);
-    } else if (defSpot.ghsMode == "ghs") {
-        ghsMode->set_active(1);
-    }
     // Set hidden GUI widgets in Normal mode to default spot values
     blurSHde->setValue((double)defSpot.blurSHde);
     lapmaskSH->setValue(defSpot.lapmaskSH);
@@ -5994,21 +5883,6 @@ void LocallabShadow::ghs_smoothChanged()
     }
 }
 
-void LocallabShadow::ghsModeChanged()
-{
-    // Update shadow highlight GUI according to ghsMode combobox state
-    updateShadowGUI2();
-
-    if (isLocActivated && exp->getEnabled()) {
-        if (listener) {
-            listener->panelChanged(EvlocallabghsMode,
-                                   ghsMode->get_active_text() + " (" + escapeHtmlChars(getSpotName()) + ")");
-        }
-    }
-    
-}
-
-
 
 void LocallabShadow::ghs_invChanged()
 {
@@ -6152,13 +6026,14 @@ void LocallabShadow::updateShadowGUI3()
     // Update adjuster range to avoid black screen according to Symmetry ghs_SP
 
     
-    const double tempLP = ghs_LP->getValue();
-    const double tempSP = ghs_SP->getValue();
-    const double tempHP = ghs_HP->getValue();
-
-    ghs_LP->setLimits(0., tempSP, 0.00001, 0.0);
-    ghs_HP->setLimits(tempSP, 1.0, 0.00001, 0.0);
-
+    const double tempLP = ghs_LP->getValue();//Low values Protect shadows
+    const double tempSP = rtengine::LIM(ghs_SP->getValue(), 0.0001, 0.9999);//avoid 0 and 1 no real sens for symmetry must be enough for most cases
+    const double tempHP = ghs_HP->getValue();//high values Protect highlight
+    double secur = 0.001;//keep range security to avoid crash and wrong GUI - no or small incidence on usage
+    double HPL = rtengine::LIM(tempSP - secur, 0.0001, 0.9999);
+    double BPH = rtengine::LIM(tempSP + secur, 0.0001, 0.9999);
+    ghs_LP->setLimits(0., HPL, 0.00001, 0.0);//
+    ghs_HP->setLimits(BPH, 1.0, 0.00001, 0.0);
     ghs_LP->setValue(tempLP);
     ghs_HP->setValue(tempHP);
 
@@ -6208,7 +6083,6 @@ void LocallabShadow::updateShadowGUI2()
         for (const auto multiplier : multipliersh) {
             multiplier->hide();
         }
-       // ghsCurveEditorG->set_sensitive(false);
         gamFrame->hide();
         detailSH->hide();
         tePivot->hide();

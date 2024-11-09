@@ -1379,34 +1379,18 @@ void Locallab::maiChanged(const std::vector<locallabsetLC> &setlc, int selspot)
     }
 }
 
-//Draw curce S for GHS - with 20 points
+//Draw Simulation for GHS - with 9 points
 void Locallab::ghsChanged(const std::vector<locallabshGHS> &shghs, int selspot)
 {
     sh_ghs = shghs;
-     //I kept the possible settings for the diagonal type curve
-    double gx[20];//42
-    int lincur;
+    double gx[20];//not the 2 last values 1 1
     if (selspot < (int) sh_ghs.size()) {
-        for(int i=0; i < 20; i++) {//42
+        for(int i=0; i < 20; i++) {
             gx[i] = sh_ghs.at(selspot).ghsc[i];
            // printf("i=%i gx=%f\n", i, (double)  gx[i]);
         }
-        lincur = sh_ghs.at(selspot).licur;
-        /*
-        printf("gx0=%f gx1=%f\n", (double) gx[0], (double) gx[1]);
-        printf("gx20=%f gx21=%f\n", (double) gx[20], (double) gx[21]);
-        printf("gx40=%f gx41=%f\n", (double) gx[40], (double) gx[41]);
-       */
-     // I kept the possible settings for the diagonal type curve
-     //   expshadhigh.updateghs(lincur, gx[0], gx[1], gx[2], gx[3], gx[4], gx[5], gx[6], gx[7], gx[8], gx[9], gx[10], gx[11], gx[12], gx[13], gx[14], gx[15],
-     //       gx[16], gx[17], gx[18], gx[19], gx[20], gx[21], gx[22], gx[23], gx[24], gx[25], gx[26], gx[27], gx[28], gx[29], gx[30], gx[31],
-     //       gx[32], gx[33], gx[34], gx[35], gx[36], gx[37], gx[38], gx[39], gx[40], gx[41] /* *gx */);
-        expshadhigh.updateghs(lincur, gx[0], gx[1], gx[2], gx[3], gx[4], gx[5], gx[6], gx[7], gx[8], gx[9], gx[10], gx[11], 
-            gx[12], gx[13], gx[14], gx[15], gx[16], gx[17], gx[18], gx[19]);
-
+    expshadhigh.updateghs(gx);
     }
-
-
 }
 
 void Locallab::ghsbwChanged(const std::vector<locallabshGHSbw> &shghsbw, int selspot)

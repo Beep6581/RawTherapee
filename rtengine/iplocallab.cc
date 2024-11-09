@@ -6166,14 +6166,14 @@ void calclocalGradientParams(int call, const struct local_params& lp, struct gra
     double gradient_center_y = LIM01((lp.ycent * bfh - ystart) / bfh);//???
 
     PreviewProps pp(tX, tY, tW * sk, tH * sk, sk);//perhaps needs ?
-
+/*
     if (settings->verbose) {
         printf("call=%i xcent=%f ycent=%f \n", call, (double) lp.xcent, (double) lp.ycent);   
         printf("fw=%i fh=%i bfw=%i bfh=%i oW=%i oH=%i tW=%i tH=%i xstart=%f ystrat=%f xend=%f yend=%f xc=%f yc=%f yT=%f xL=%f sk=%i\n", fw, fh, bfw, bfh, oW, oH, tW, tH, (double) xstart, (double) ystart, (double) xend, (double) yend, (double) lp.xc, (double) lp.yc, (double) lp.lyT, (double)lp.lxL,  sk);
         printf("PreviewProps: getx=%i gety=%i getW=%i getH=%i\n", pp.getX(), pp.getY(), pp.getWidth(), pp.getHeight()); 
 
     }
-
+*/
     if (indic == 0) {
         stops = -lp.strmaexp;
         angs = lp.angmaexp;
@@ -14425,7 +14425,7 @@ void ImProcFunctions::Lab_Local(
     }
 
     //BENCHFUN
-    printf("OHWTHW ow=%i oh=%i tw=%i th=%i sk=%i\n", oW, oH, tW, tH, sk);
+    // printf("OHWTHW ow=%i oh=%i tw=%i th=%i sk=%i\n", oW, oH, tW, tH, sk);
     constexpr int del = 3; // to avoid crash with [loy - begy] and [lox - begx] and bfh bfw  // with gtk2 [loy - begy-1] [lox - begx -1 ] and del = 1
     struct local_params lp;
     calcLocalParams(sp, oW, oH, params->locallab, lp, prevDeltaE, llColorMask, llColorMaskinv, llExpMask, llExpMaskinv, llSHMask, llSHMaskinv, llvibMask, lllcMask, llsharMask, llcbMask, llretiMask, llsoftMask, lltmMask, llblMask, lllogMask, ll_Mask, llcieMask, locwavCurveden, locwavdenutili);
@@ -17618,35 +17618,13 @@ void ImProcFunctions::Lab_Local(
                                 }
                             lab2rgb(*labtemp, *tmpImage, params->icm.workingProfile);
                         }
-                        /*
-                        // I kept the possible settings for the diagonal type curve
-                        //Draw diagonal GHS curve - init 20 points for more precision
-                        if (params->locallab.spots.at(sp).ghsMode == "ghs") {//S Curve GHS
-                            for(int i = 0; i < 42; i += 2) {
-                               ghscur[i] = 0.025f * i;
-                               ghscur[i + 1] =  GHT(ghscur[i], B, D, LP, SP, HP, c, strtype);
-                            }
-                            
-                        }  else if (params->locallab.spots.at(sp).ghsMode == "lin") {//Linear with 20 points
-                            for(int i = 0; i < 42; i += 2) {
-                                ghscur[i] = 0.025f * i;
-                                ghscur[i + 1] = ghscur[i];
-                            }
-                           
+                        
+                        for(int i = 0; i < 22; i += 2) {//Labgrid curve simulation with 9 points
+                            ghscur[i] = 0.05f * i;
+                            ghscur[i + 1] =  GHT(ghscur[i], B, D, LP, SP, HP, c, strtype);
+                            //printf("gi=%f ghs=%f \n", (double) ghscur[i], (double) ghscur[i + 1]);
                         }
-                        */
-                      //  if (params->locallab.spots.at(sp).ghsMode == "ghs") { 
-                            for(int i = 0; i < 22; i += 2) {//Labgrid curve with 9 points
-                                ghscur[i] = 0.05f * i;
-                                ghscur[i + 1] =  GHT(ghscur[i], B, D, LP, SP, HP, c, strtype);
-                                //printf("gi=%f ghs=%f \n", (double) ghscur[i], (double) ghscur[i + 1]);
-                            }
-                      //  }
-                        /*
-                        printf("ghscuri=%f ghscuri1=%f\n", (double) ghscur[0], (double) ghscur[1]);
-                        printf("ghscuri5=%f ghscuri5=%f\n", (double) ghscur[20], (double) ghscur[21]);
-                        printf("ghscuri40=%f ghscuri41=%f\n", (double) ghscur[40], (double) ghscur[41]);
-                        */
+                        
                         if(smoth) {//Highlight attenuation in function of HP - protect highlight
                             tone_eqsmooth(this, tmpImage, lp, params->icm.workingProfile, sk, multiThread);//reduce Ev > 0 < 12
                         }
