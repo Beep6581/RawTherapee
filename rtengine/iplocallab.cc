@@ -17422,15 +17422,15 @@ void ImProcFunctions::Lab_Local(
                                         maxwp = rtengine::max(maxwp, Bo);                                   
                                         wpnb++;
                                     }
-                                    if(strtype == 0) {
+                                    if( strtype == 0 || strtype == 1) { //strtype == 0 only strtype == 0 if crash
                                         tmpImage->r(i, j) = rtengine::max(0.00001f, Ro * 65535.f);//0.00001f to avoid crash
                                         tmpImage->g(i, j) = rtengine::max(0.00001f, Go * 65535.f);
                                         tmpImage->b(i, j) = rtengine::max(0.00001f, Bo * 65535.f);
-                                    } else {
+                                   }  /*else if(strtypr == 1) {//to uncomment if crash
                                         tmpImage->r(i, j) = clipR(rtengine::max(0.00001f, Ro * 65535.f));//0.0001f to avoid crash different from 'normal'
                                         tmpImage->g(i, j) = clipR(rtengine::max(0.00001f, Go * 65535.f));//clipR to avoid crash in some cases
                                         tmpImage->b(i, j) = clipR(rtengine::max(0.00001f, Bo * 65535.f));
-                                    }
+                                    } */
                                 }
                                 ghsbpwp[0] = bpnb;
                                 ghsbpwp[1] = wpnb;
