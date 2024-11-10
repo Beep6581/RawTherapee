@@ -4943,7 +4943,6 @@ void LocallabShadow::read(const rtengine::procparams::ProcParams* pp, const Para
         ghs_LC->setValue((double)spot.ghs_LC);
         ghs_BLP->setValue((double)spot.ghs_BLP);
         ghs_HLP->setValue((double)spot.ghs_HLP);
-      //  ghsshape->setCurve(spot.ghscurve);
 
         detailSH->setValue((double)spot.detailSH);
         tePivot->setValue(spot.tePivot);
@@ -5062,7 +5061,6 @@ void LocallabShadow::write(rtengine::procparams::ProcParams* pp, ParamsEdited* p
         spot.ghs_LC = ghs_LC->getValue();
         spot.ghs_BLP = ghs_BLP->getValue();
         spot.ghs_HLP = ghs_HLP->getValue();
-       // spot.ghscurve = ghsshape->getCurve();
 
         spot.detailSH = detailSH->getIntValue();
         spot.tePivot = tePivot->getValue();
@@ -5550,14 +5548,6 @@ void LocallabShadow::curveChanged(CurveEditor* ce)
                                        M("HISTORY_CUSTOMCURVE") + " (" + escapeHtmlChars(getSpotName()) + ")");
             }
         }
-        /*
-        if (ce == ghsshape) {//not actived.
-            if (listener) {
-                listener->panelChanged(Evlocallabghsshape,
-                                       M("HISTORY_CUSTOMCURVE") + " (" + escapeHtmlChars(getSpotName()) + ")");
-            }
-        }
-        */
     }
 }
 

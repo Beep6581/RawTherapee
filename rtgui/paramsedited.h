@@ -596,7 +596,6 @@ public:
         bool ghs_HLP;
         bool ghs_smooth;
         bool ghs_inv;
-        bool ghscurve;
         bool ghsx1;
         bool ghsy1;
         bool ghsx2;

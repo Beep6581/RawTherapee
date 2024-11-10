@@ -1247,7 +1247,6 @@ struct LocallabParams {
         double ghs_HLP;
         bool ghs_smooth;
         bool ghs_inv;
-        std::vector<double> ghscurve;
         double ghsx1;
         double ghsy1;
         double ghsx2;
