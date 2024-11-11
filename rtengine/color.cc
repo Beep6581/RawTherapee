@@ -2249,24 +2249,28 @@ void Color::aces_reference_gamut_compression(
     } else {
         for (unsigned i = 0; i < cd.size(); ++i) {
             if (d[i] >= threshold[i]) {
-                 // Calculate scale factor for y = 1 intersect
-                const float limit = distance_limit[i];
-                const float thres = threshold[i];
-                //                     l - t
-                // Scale s = --------------------------
-                //           ( ( 1 - t )-p     )(1 / p)
-                //           ( ( ----- )   - 1 )
-                //           ( ( l - t )       )
-                const float scale = (limit - thres) / pow(pow((1.0f - thres) / (limit - thres), - pwr) - 1.0f, 1.0f / pwr);
-                // Normalize distance outside threshold by scale factor
-                // x' = (x - t) / s
-                const float nd = (d[i] - thres) / scale;
-                //                  x'
-                // y = t + s ----------------
-                //           (1 + x'^p)^(1/p)
-                const float po = pow(nd, pwr);
-                cd[i] = thres + scale * nd / (pow(1.0f + po, 1.0f / pwr));
-            }
+                if (threshold[i] == 1.f) {
+                    cd[i] = 1.f;
+                } else {
+                    // Calculate scale factor for y = 1 intersect
+                    const float limit = distance_limit[i];
+                    const float thres = threshold[i];
+                    //                     l - t
+                    // Scale s = --------------------------
+                    //           ( ( 1 - t )-p     )(1 / p)
+                    //           ( ( ----- )   - 1 )
+                    //           ( ( l - t )       )
+                    const float scale = (limit - thres) / pow(pow((1.0f - thres) / (limit - thres), - pwr) - 1.0f, 1.0f / pwr);
+                    // Normalize distance outside threshold by scale factor
+                    // x' = (x - t) / s
+                    const float nd = (d[i] - thres) / scale;
+                    //                  x'
+                    // y = t + s ----------------
+                    //           (1 + x'^p)^(1/p)
+                    const float po = pow(nd, pwr);
+                    cd[i] = thres + scale * nd / (pow(1.0f + po, 1.0f / pwr));
+                }
+            }    
         }
     }
     // Inverse RGB Ratios to RGB

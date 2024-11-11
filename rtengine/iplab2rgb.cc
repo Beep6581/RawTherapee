@@ -470,15 +470,16 @@ void ImProcFunctions::gamutcompr( Imagefloat *src, Imagefloat *dst) const
     }
     //dcip3 Rec2020, srgb, prophoto, acesp1 - Compression gamut matrix profile
     Matrix dcip3 = {};
-        dcip3[0][0] = 0.4451;
-        dcip3[0][1] = 0.2771;
-        dcip3[0][2] = 0.1723;
-        dcip3[1][0] = 0.2095;
-        dcip3[1][1] = 0.7216;
-        dcip3[1][2] = 0.06891;
-        dcip3[2][0] = 0.0;
-        dcip3[2][1] = 0.047;
-        dcip3[2][2] = 0.9073;
+        //in fact the white point is "special" - 0.314 - 0.351 Theater
+        dcip3[0][0] = 0.4861607;//0.4451698;(original) //0.4861607 with chromatic adaptation D63 => D50
+        dcip3[0][1] = 0.3238514;//0.2771344;(original)//0.3238514 with chromatic adaptation D63 => D50
+        dcip3[0][2] = 0.1541879;//0.1722827;(original//0.1541879 with chromatic adaptation D63 => D50
+        dcip3[1][0] = 0.2266839;//0.2094917;(original//0.2266839 with chromatic adaptation D63 => D50
+        dcip3[1][1] = 0.7103336;//0.7215953;(original//0.7103336 with chromatic adaptation D63 => D50
+        dcip3[1][2] = 0.0629826;//0.0689131;(original// 0.0629826 with chromatic adaptation D63 => D50
+        dcip3[2][0] = -0.0008016;//0.0;(original//-0.0008016 with chromatic adaptation D63 => D50
+        dcip3[2][1] =  0.0432353;//0.0470606;(original// 0.0432353 with chromatic adaptation D63 => D50
+        dcip3[2][2] =  0.7824663;//0.9073554;(original// 0.7824663 with chromatic adaptation D63 => D50
 
     Matrix Rec2020 = {};
         Rec2020[0][0] = 0.6734241;
