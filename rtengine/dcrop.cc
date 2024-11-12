@@ -1091,7 +1091,7 @@ void Crop::update(int todo)
             float Lnresi46 = 0.f;
             float contsig = params.locallab.spots.at(sp).contsigqcie;
             float lightsig = params.locallab.spots.at(sp).lightsigqcie;
-            float ghscur[20];//42
+            float ghscur[24];//20  +4 12 11
             int ghsbpwp[2];
             float ghsbpwpvalue[2];
 

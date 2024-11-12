@@ -1329,6 +1329,10 @@ void ParamsEdited::initFrom(const std::vector<rtengine::procparams::ProcParams>&
                 locallab.spots.at(j).ghsy8 = locallab.spots.at(j).ghsy8 && pSpot.ghsy8 == otherSpot.ghsy8;
                 locallab.spots.at(j).ghsx9 = locallab.spots.at(j).ghsx9 && pSpot.ghsx9 == otherSpot.ghsx9;
                 locallab.spots.at(j).ghsy9 = locallab.spots.at(j).ghsy9 && pSpot.ghsy9 == otherSpot.ghsy9;
+                locallab.spots.at(j).ghsx8 = locallab.spots.at(j).ghsx10 && pSpot.ghsx10 == otherSpot.ghsx10;
+                locallab.spots.at(j).ghsy8 = locallab.spots.at(j).ghsy10 && pSpot.ghsy10 == otherSpot.ghsy10;
+                locallab.spots.at(j).ghsx9 = locallab.spots.at(j).ghsx11 && pSpot.ghsx11 == otherSpot.ghsx11;
+                locallab.spots.at(j).ghsy9 = locallab.spots.at(j).ghsy11 && pSpot.ghsy11 == otherSpot.ghsy11;
 
                 for (int k = 0; k < 6; k++) {
                     locallab.spots.at(j).multsh[k] = locallab.spots.at(j).multsh[k] && pSpot.multsh[k] == otherSpot.multsh[k];
@@ -4380,6 +4384,22 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
 
         if (locallab.spots.at(i).ghsy9) {
             toEdit.locallab.spots.at(i).ghsy9 = mods.locallab.spots.at(i).ghsy9;
+        }
+
+        if (locallab.spots.at(i).ghsx10) {
+            toEdit.locallab.spots.at(i).ghsx10 = mods.locallab.spots.at(i).ghsx10;
+        }
+
+        if (locallab.spots.at(i).ghsy10) {
+            toEdit.locallab.spots.at(i).ghsy10 = mods.locallab.spots.at(i).ghsy10;
+        }
+
+        if (locallab.spots.at(i).ghsx11) {
+            toEdit.locallab.spots.at(i).ghsx11 = mods.locallab.spots.at(i).ghsx11;
+        }
+
+        if (locallab.spots.at(i).ghsy11) {
+            toEdit.locallab.spots.at(i).ghsy11 = mods.locallab.spots.at(i).ghsy11;
         }
 
         if (locallab.spots.at(i).ghsMode) {
@@ -8310,6 +8330,10 @@ LocallabParamsEdited::LocallabSpotEdited::LocallabSpotEdited(bool v) :
     ghsy8(v),
     ghsx9(v),
     ghsy9(v),
+    ghsx10(v),
+    ghsy10(v),
+    ghsx11(v),
+    ghsy11(v),
     
     multsh{v, v, v, v, v, v, v},
     highlights(v),
@@ -9104,6 +9128,10 @@ void LocallabParamsEdited::LocallabSpotEdited::set(bool v)
     ghsy8 = v;
     ghsx9 = v;
     ghsy9 = v;
+    ghsx10 = v;
+    ghsy10 = v;
+    ghsx11 = v;
+    ghsy11 = v;
     
 
     for (int i = 0; i < 6; i++) {

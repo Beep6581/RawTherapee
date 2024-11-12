@@ -1398,7 +1398,7 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                 float Lnresi = 0.f;
                 float Lhighresi46 = 0.f;
                 float Lnresi46 = 0.f;
-                float ghscur[20];//42
+                float ghscur[24];//42 +4 12 11
                 int ghsbpwp[2];
                 ghsbpwp[0] = 0;
                 ghsbpwp[1] = 0;
@@ -1588,7 +1588,7 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                 }
                 */
                 LocallabListener::locallabshGHS locshghs;//ghs S curve 42 or labgrid 12
-                    for(int j = 0; j < 20; j++) {//42 for diagonal curve
+                    for(int j = 0; j < 24; j++) {//+4 12 11
                         locshghs.ghsc[j] = ghscur[j];
                     }
                 //    locshghs.licur = reset;

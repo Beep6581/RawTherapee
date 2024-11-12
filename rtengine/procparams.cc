@@ -3403,24 +3403,28 @@ LocallabParams::LocallabSpot::LocallabSpot() :
     ghs_HLP(1.),
     ghs_smooth(false),
     ghs_inv(false),
-    ghsx1(0.1),
-    ghsy1(0.1),
-    ghsx2(0.2),
-    ghsy2(0.2),
-    ghsx3(0.3),
-    ghsy3(0.3),
-    ghsx4(0.4),
-    ghsy4(0.4),
-    ghsx5(0.5),
-    ghsy5(0.5),
-    ghsx6(0.6),
-    ghsy6(0.6),
-    ghsx7(0.7),
-    ghsy7(0.7),    
-    ghsx8(0.8),
-    ghsy8(0.8),    
-    ghsx9(0.9),
-    ghsy9(0.9),    
+    ghsx1(0.05),
+    ghsy1(0.05),
+    ghsx2(0.1),
+    ghsy2(0.1),
+    ghsx3(0.2),
+    ghsy3(0.2),
+    ghsx4(0.3),
+    ghsy4(0.3),
+    ghsx5(0.4),
+    ghsy5(0.4),
+    ghsx6(0.5),
+    ghsy6(0.5),
+    ghsx7(0.6),
+    ghsy7(0.6),    
+    ghsx8(0.7),
+    ghsy8(0.7),    
+    ghsx9(0.8),
+    ghsy9(0.8),    
+    ghsx10(0.9),
+    ghsy10(0.9),    
+    ghsx11(0.95),
+    ghsy11(0.95),    
     multsh{0, 0, 0, 0, 0, 0},
     highlights(0),
     h_tonalwidth(70),
@@ -5087,6 +5091,10 @@ bool LocallabParams::LocallabSpot::operator ==(const LocallabSpot& other) const
         && ghsy8 == other.ghsy8
         && ghsx9 == other.ghsx9
         && ghsy9 == other.ghsy9
+        && ghsx10 == other.ghsx10
+        && ghsy10 == other.ghsy10
+        && ghsx11 == other.ghsx11
+        && ghsy11 == other.ghsy11
        
         
         && [this, &other]() -> bool
@@ -7085,6 +7093,10 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
                     saveToKeyfile(!pedited || spot_edited->ghsy8, "Locallab", "Ghsy8_" + index_str, spot.ghsy8, keyFile);
                     saveToKeyfile(!pedited || spot_edited->ghsx9, "Locallab", "Ghsx9_" + index_str, spot.ghsx9, keyFile);
                     saveToKeyfile(!pedited || spot_edited->ghsy9, "Locallab", "Ghsy9_" + index_str, spot.ghsy9, keyFile);
+                    saveToKeyfile(!pedited || spot_edited->ghsx10, "Locallab", "Ghsx10_" + index_str, spot.ghsx10, keyFile);
+                    saveToKeyfile(!pedited || spot_edited->ghsy10, "Locallab", "Ghsy10_" + index_str, spot.ghsy10, keyFile);
+                    saveToKeyfile(!pedited || spot_edited->ghsx11, "Locallab", "Ghsx11_" + index_str, spot.ghsx11, keyFile);
+                    saveToKeyfile(!pedited || spot_edited->ghsy11, "Locallab", "Ghsy11_" + index_str, spot.ghsy11, keyFile);
 
                     for (int j = 0; j < 6; j++) {
                         saveToKeyfile(!pedited || spot_edited->multsh[j], "Locallab", "Multsh" + std::to_string(j) + "_" + index_str, spot.multsh[j], keyFile);
@@ -9452,6 +9464,10 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
                 assignFromKeyfile(keyFile, "Locallab", "Ghsy8_" + index_str, spot.ghsy8, spotEdited.ghsy8);
                 assignFromKeyfile(keyFile, "Locallab", "Ghsx9_" + index_str, spot.ghsx9, spotEdited.ghsx9);
                 assignFromKeyfile(keyFile, "Locallab", "Ghsy9_" + index_str, spot.ghsy9, spotEdited.ghsy9);
+                assignFromKeyfile(keyFile, "Locallab", "Ghsx10_" + index_str, spot.ghsx10, spotEdited.ghsx10);
+                assignFromKeyfile(keyFile, "Locallab", "Ghsy10_" + index_str, spot.ghsy10, spotEdited.ghsy10);
+                assignFromKeyfile(keyFile, "Locallab", "Ghsx11_" + index_str, spot.ghsx11, spotEdited.ghsx11);
+                assignFromKeyfile(keyFile, "Locallab", "Ghsy11_" + index_str, spot.ghsy11, spotEdited.ghsy11);
 
                 for (int j = 0; j < 6; j ++) {
                     assignFromKeyfile(keyFile, "Locallab", "Multsh" + std::to_string(j) + "_" + index_str, spot.multsh[j], spotEdited.multsh[j]);

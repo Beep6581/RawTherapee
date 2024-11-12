@@ -1383,9 +1383,9 @@ void Locallab::maiChanged(const std::vector<locallabsetLC> &setlc, int selspot)
 void Locallab::ghsChanged(const std::vector<locallabshGHS> &shghs, int selspot)
 {
     sh_ghs = shghs;
-    double gx[20];//not the 2 last values 1 1
+    double gx[24];//not the 2 last values 1 1
     if (selspot < (int) sh_ghs.size()) {
-        for(int i=0; i < 20; i++) {
+        for(int i=0; i < 24; i++) {
             gx[i] = sh_ghs.at(selspot).ghsc[i];
            // printf("i=%i gx=%f\n", i, (double)  gx[i]);
         }
