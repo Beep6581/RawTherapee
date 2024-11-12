@@ -3400,7 +3400,7 @@ LocallabParams::LocallabSpot::LocallabSpot() :
     ghs_HP(1.),
     ghs_LC(30.),
     ghs_BLP(0.),
-    ghs_HLP(1.),
+    ghs_HLP(1.0001),
     ghs_smooth(false),
     ghs_inv(false),
     ghsx1(0.05),

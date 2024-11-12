@@ -4304,7 +4304,7 @@ LocallabShadow::LocallabShadow():
     ghs_LC(Gtk::manage(new Adjuster(M("TP_LOCALLAB_GHS_LC"), 0.0, 100.0, 0.1, 30.0))),
     BP_Frame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_GHS_BLACKPOINT_FRAME")))),
     ghs_BLP(Gtk::manage(new Adjuster(M("TP_LOCALLAB_GHS_BLP"), -0.2, 1.0, 0.0001, 0.0))),
-    ghs_HLP(Gtk::manage(new Adjuster(M("TP_LOCALLAB_GHS_HLP"), 0.2002, 3.0, 0.0001, 1.0))),
+    ghs_HLP(Gtk::manage(new Adjuster(M("TP_LOCALLAB_GHS_HLP"), 0.2002, 3.0, 0.0001, 1.0001))),
     ghsbpwpLabels(Gtk::manage(new Gtk::Label("---"))),
     ghsbpwpvalueLabels(Gtk::manage(new Gtk::Label("---"))),
     ghs_smooth(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_GHS_SMOOTH")))),
@@ -5499,9 +5499,8 @@ void LocallabShadow::updateghs(double *gx)
 
 {   
     disableListener();
-    //I don't use the 2 first values which are 0, 0 and the 2 last 1, 1 - of course we can clean...
-    labgridghs->setParams(gx[2], gx[3], gx[4], gx[5], gx[6], gx[7], gx[8], gx[9], gx[10], gx[11],
-        gx[12], gx[13], gx[14], gx[15], gx[16], gx[17], gx[18], gx[19], gx[20], gx[21], gx[22], gx[23], false);//+4 12 11
+    labgridghs->setParams(gx[0], gx[1], gx[2], gx[3], gx[4], gx[5], gx[6], gx[7], gx[8], gx[9], gx[10], gx[11],
+        gx[12], gx[13], gx[14], gx[15], gx[16], gx[17], gx[18], gx[19], gx[20], gx[21], false);//+4 12 11
         
     enableListener();
 }

@@ -17140,8 +17140,8 @@ void ImProcFunctions::Lab_Local(
     float HLP = params->locallab.spots.at(sp).ghs_HLP;
     bool smoth = params->locallab.spots.at(sp).ghs_smooth;//Highlight attenuation
     for(int i = 0; i < 26; i += 2) {//reinit simulation GHS with diagonale +4 12 11
-        ghscur[i] = 0.0384615f * i;
-        ghscur[i + 1] = 0.00384615f * i;
+        ghscur[i] = 0.0416f * i;
+        ghscur[i + 1] = 0.0416f * i;
     }
 
     if(D != 0.f  || BLP != 0.f || HLP != 1.f  || smoth) {
@@ -17612,12 +17612,27 @@ void ImProcFunctions::Lab_Local(
                                 }
                             lab2rgb(*labtemp, *tmpImage, params->icm.workingProfile);
                         }
-                        
+     /* 
+        //11 points with equal interval
                         for(int i = 0; i < 26; i += 2) {//Labgrid curve simulation with 9 points +4 12 11
-                            ghscur[i] = 0.0384615f * i;
+                            ghscur[i] = 0.041666f * i;
                             ghscur[i + 1] =  GHT(ghscur[i], B, D, LP, SP, HP, c, strtype);
                             //printf("gi=%f ghs=%f \n", (double) ghscur[i], (double) ghscur[i + 1]);
                         }
+     */                  
+                        //first value with 0.05 range
+                        ghscur[0] = 0.05f;
+                        ghscur[1] =  GHT(ghscur[0], B, D, LP, SP, HP, c, strtype);                       
+     
+                        for(int i = 2; i < 20; i += 2) {//Labgrid curve simulation with 9 points interval 0.1 +4 12 11
+                            //others with 0.1 range
+                            ghscur[i] = 0.05f * i;
+                            ghscur[i + 1] =  GHT(ghscur[i], B, D, LP, SP, HP, c, strtype);
+                        }
+                        //last values with 0.05f
+                        ghscur[20] = 0.95f;
+                        ghscur[21] =  GHT(ghscur[20], B, D, LP, SP, HP, c, strtype);
+                      
                         
                         if(smoth) {//Highlight attenuation in function of HP - protect highlight
                             tone_eqsmooth(this, tmpImage, lp, params->icm.workingProfile, sk, multiThread);//reduce Ev > 0 < 12
