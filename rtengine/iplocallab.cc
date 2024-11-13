@@ -17385,8 +17385,8 @@ void ImProcFunctions::Lab_Local(
                             }
                             int bpnb = 0;
                             int wpnb = 0;
-                            float minbp = 0.f;
-                            float maxwp = 1.f;
+                            float minbp = 1.f;
+                            float maxwp = 0.f;
                             
 
 #ifdef _OPENMP
@@ -17407,14 +17407,20 @@ void ImProcFunctions::Lab_Local(
                                         Go = (shiftblackpoint2) + g * (shiftwhitepoint - shiftblackpoint2);
                                         Bo = (shiftblackpoint2) + b * (shiftwhitepoint - shiftblackpoint2);
                                     }
+                                    float minrgb = rtengine::min(Ro, Go, Bo);
+                                    if(minrgb < minbp){
+                                        minbp = minrgb;
+                                    }
+                                 
+                                    float maxrgb = rtengine::max(Ro, Go, Bo);
+                                    if(maxrgb > maxwp){
+                                        maxwp = maxrgb;
+                                    }
+                                    
                                     if(Ro < 0.f || Go < 0.f || Bo < 0.f) {
-                                        minbp = rtengine::min(Ro, Go);
-                                        minbp = rtengine::min(minbp, Bo);
                                         bpnb++;                                      
                                     }
                                     if(Ro > 1.f || Go > 1.f || Bo > 1.f) {
-                                        maxwp = rtengine::max(Ro, Go);
-                                        maxwp = rtengine::max(maxwp, Bo);                                   
                                         wpnb++;
                                     }
                                     if( strtype == 0 ) { //strtype == 0 only strtype == 0 if crash

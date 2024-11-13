@@ -5519,8 +5519,8 @@ void LocallabShadow::updateghsbw(int bp, int wp, double minbp, double maxwp)
 
         ghsbpwpvalueLabels->set_text(
             Glib::ustring::compose(M("TP_LOCALLAB_GHSBPWPVALUE"),
-                                   Glib::ustring::format(std::fixed, std::setprecision(3), minbp),
-                                   Glib::ustring::format(std::fixed, std::setprecision(3), maxwp))
+                                   Glib::ustring::format(std::fixed, std::setprecision(2), minbp),
+                                   Glib::ustring::format(std::fixed, std::setprecision(2), maxwp))
         );
 
         enableListener();
@@ -5652,7 +5652,6 @@ void LocallabShadow::updateGUIToMode(const modeType new_type)
             ghsMethod->hide();
             ghs_slope->hide();
             Lab_Frame->hide();
-            ghsbpwpvalueLabels->hide();
             break;
 
         case Normal:
@@ -5696,7 +5695,6 @@ void LocallabShadow::updateGUIToMode(const modeType new_type)
                 Lab_Frame->show();
             }
             ghs_slope->hide();
-            ghsbpwpvalueLabels->hide();
 
             break;
 
@@ -5736,7 +5734,6 @@ void LocallabShadow::updateGUIToMode(const modeType new_type)
             fatSHFrame->show();
             ghsMethod->show();
             Lab_Frame->hide();
-            ghsbpwpvalueLabels->show();
 
             if (ghsMethod->get_active_row_number() == 2  && shMethod->get_active_row_number() == 2) {
                 Lab_Frame->show();
@@ -5786,11 +5783,9 @@ void LocallabShadow::ghsMethodChanged()
     if (ghsMethod->get_active_row_number() == 2) {
         Lab_Frame->show();
         ghs_slope->hide();
-        ghsbpwpvalueLabels->hide();
         
         if (mode == Expert) {
             ghs_slope->show();
-            ghsbpwpvalueLabels->show();
         }
         ghs_chro->show();
     } else {
@@ -5798,7 +5793,6 @@ void LocallabShadow::ghsMethodChanged()
         ghs_slope->hide();
         ghs_chro->hide();
         Lab_Frame->hide();
-        ghsbpwpvalueLabels->hide();
 
     }
 
@@ -5976,7 +5970,6 @@ void LocallabShadow::updateShadowGUI1()
         ghsMethod->hide();
         ghs_slope->hide();
         Lab_Frame->hide();
-        ghsbpwpvalueLabels->hide();
         
         if (mode == Expert || mode == Normal) { // Keep widget hidden in Simple mode
             expgradsh->show();
@@ -5985,11 +5978,10 @@ void LocallabShadow::updateShadowGUI1()
         }
         if (ghsMethod->get_active_row_number() == 2 && shMethod->get_active_row_number() == 2) {
             Lab_Frame->show();
-        }
-        
+        }  
+
         if (mode == Expert) {
             ghs_slope->show();  
-            ghsbpwpvalueLabels->show();
         }
         reparsh->show();
 
@@ -6086,7 +6078,6 @@ void LocallabShadow::updateShadowGUI2()
         ghsMethod->hide();
         ghs_slope->hide();
         Lab_Frame->hide();
-        ghsbpwpvalueLabels->hide();
 
         if (mode == Expert || mode == Normal) { // Keep widget hidden in Simple mode
             expgradsh->show();
@@ -6097,7 +6088,6 @@ void LocallabShadow::updateShadowGUI2()
         }  
         if (mode == Expert) {
             ghs_slope->show();
-            ghsbpwpvalueLabels->show();
             
         }
     }
