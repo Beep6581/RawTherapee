@@ -37,6 +37,7 @@ set(NONCLISOURCEFILES
     controllines.cc
     controlspotpanel.cc
     coordinateadjuster.cc
+    compressgamut.cc
     crop.cc
     crophandler.cc
     cropwindow.cc
