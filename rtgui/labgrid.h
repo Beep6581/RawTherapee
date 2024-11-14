@@ -60,18 +60,6 @@ private:
     double whi_y;
     double me_x;
     double me_y;
-    double ghs_x6;
-    double ghs_y6;
-    double ghs_x7;
-    double ghs_y7;
-    double ghs_x8;
-    double ghs_y8;
-    double ghs_x9;
-    double ghs_y9;
-    double ghs_x10;
-    double ghs_y10;
-    double ghs_x11;
-    double ghs_y11;//+4 12 11
     double defaultLow_a;
     double defaultHigh_a;
     double defaultLow_b;
@@ -82,18 +70,6 @@ private:
     double defaultwhi_y;
     double defaultme_x;
     double defaultme_y;
-    double default_gsx6;//added for GHS 
-    double default_gsy6;
-    double default_gsx7;
-    double default_gsy7;
-    double default_gsx8;
-    double default_gsy8;
-    double default_gsx9;
-    double default_gsy9;
-    double default_gsx10;//+4 12 11
-    double default_gsy10;
-    double default_gsx11;
-    double default_gsy11;
 
     ToolPanelListener *listener;
     bool edited;
@@ -103,19 +79,17 @@ private:
 
     bool low_enabled;
     bool ciexy_enabled;
-    bool ghs_enabled;
     bool mous_enabled;
 
     bool notifyListener();
     void getLitPoint();
 
 public:
-    LabGridArea(rtengine::ProcEvent evt, const Glib::ustring &msg, bool enable_low=true, bool ciexy=false, bool ghs=false, bool mous=false);
+    LabGridArea(rtengine::ProcEvent evt, const Glib::ustring &msg, bool enable_low=true, bool ciexy=false, bool mous=false);
 
-    void getParams(double &la, double &lb, double &ha, double &hb, double &gx, double &gy, double &wx, double &wy, double &mx, double &my, 
-        double &gx6, double &gy6, double &gx7, double &gy7, double &gx8, double &gy8, double &gx9, double &gy9, double &gx10, double &gy10, double &gx11, double &gy11) const;//+4 12 11
-    void setParams(double la, double lb, double ha, double hb, double gx, double gy, double wx, double wy, double mx, double my,  double gx6, double gy6, double gx7, double gy7, double gx8, double gy8, double gx9, double gy9, double gx10, double gy10, double gx11, double gy11, bool notify);//+4 12 11
-    void setDefault (double la, double lb, double ha, double hb, double gx, double gy, double wx, double wy, double mx, double my, double gx6, double gy6, double gx7, double gy7, double gx8, double gy8, double gx9, double gy9, double gx10, double gy10, double gx11, double gy11);//+4 12 11
+    void getParams(double &la, double &lb, double &ha, double &hb, double &gx, double &gy, double &wx, double &wy, double &mx, double &my) const;
+    void setParams(double la, double lb, double ha, double hb, double gx, double gy, double wx, double wy, double mx, double my,  bool notify);
+    void setDefault (double la, double lb, double ha, double hb, double gx, double gy, double wx, double wy, double mx, double my);
     void setEdited(bool yes);
     bool getEdited() const;
     void reset(bool toInitial);
@@ -125,8 +99,6 @@ public:
     void setLowEnabled(bool yes);
     bool ciexyEnabled() const;
     void setciexyEnabled(bool yes);
-    bool ghsEnabled() const;
-    void setghsEnabled(bool yes);
     bool mousEnabled() const;
     void setmousEnabled(bool yes);
 
@@ -148,14 +120,11 @@ private:
     bool resetPressed(GdkEventButton *event);
 
 public:
-    LabGrid(rtengine::ProcEvent evt, const Glib::ustring &msg, bool enable_low=true, bool ciexy=false, bool ghs=false, bool mous=true);
+    LabGrid(rtengine::ProcEvent evt, const Glib::ustring &msg, bool enable_low=true, bool ciexy=false, bool mous=true);
 
-    void getParams(double &la, double &lb, double &ha, double &hb, double &gx, double &gy, double &wx, double &wy, double &mx, double &my, double &gx6, double &gy6, double &gx7, double &gy7, double &gx8, double &gy8, double &gx9, double &gy9, double &gx10, double &gy10, double &gx11, double &gy11) 
-                const { return grid.getParams(la, lb, ha, hb, gx, gy, wx, wy, mx, my, gx6, gy6, gx7, gy7, gx8, gy8, gx9, gy9, gx10, gy10, gx11, gy11); }//+4 12 11
-    void setParams(double la, double lb, double ha, double hb, double gx, double gy, double wx, double wy, double mx, double my, double gx6, double gy6, double gx7, double gy7, double gx8, double gy8, double gx9, double gy9, double gx10, double gy10, double gx11, double gy11, bool notify) 
-                { grid.setParams(la, lb, ha, hb, gx, gy, wx, wy, mx, my, gx6, gy6, gx7, gy7, gx8, gy8, gx9, gy9, gx10, gy10, gx11, gy11, notify); }//+4 12 11
-    void setDefault (double la, double lb, double ha, double hb, double gx, double gy, double wx, double wy, double mx, double my, double gx6, double gy6, double gx7, double gy7, double gx8, double gy8, double gx9, double gy9, double gx10, double gy10, double gx11, double gy11)
-                { grid.setDefault(la, lb, ha, hb, gx, gy, wx, wy, mx, my, gx6, gy6, gx7, gy7, gx8, gy8, gx9, gy9, gx10, gy10, gx11, gy11); }//+4 12 11
+    void getParams(double &la, double &lb, double &ha, double &hb, double &gx, double &gy, double &wx, double &wy, double &mx, double &my) const { return grid.getParams(la, lb, ha, hb, gx, gy, wx, wy, mx, my); }
+    void setParams(double la, double lb, double ha, double hb, double gx, double gy, double wx, double wy, double mx, double my, bool notify) { grid.setParams(la, lb, ha, hb, gx, gy, wx, wy, mx, my, notify); }
+    void setDefault (double la, double lb, double ha, double hb, double gx, double gy, double wx, double wy, double mx, double my) { grid.setDefault(la, lb, ha, hb, gx, gy, wx, wy, mx, my); }
     void setEdited(bool yes) { grid.setEdited(yes); }
     bool getEdited() const { return grid.getEdited(); }
     void reset(bool toInitial) { grid.reset(toInitial); }
@@ -164,8 +133,6 @@ public:
     void setLowEnabled(bool yes) { grid.setLowEnabled(yes); }
     bool ciexyEnabled() const { return grid.ciexyEnabled(); }
     void setciexyEnabled(bool yes) { grid.setciexyEnabled(yes); }
-    bool ghsEnabled() const { return grid.ghsEnabled(); }
-    void setghsEnabled(bool yes) { grid.setghsEnabled(yes); }
     bool mousEnabled() const { return grid.mousEnabled(); }
     void setmousEnabled(bool yes) { grid.setmousEnabled(yes); }
 

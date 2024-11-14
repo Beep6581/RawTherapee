@@ -1379,45 +1379,10 @@ void Locallab::maiChanged(const std::vector<locallabsetLC> &setlc, int selspot)
     }
 }
 
-//Draw Simulation for GHS - with 9 points
-void Locallab::ghsChanged(const std::vector<locallabshGHS> &shghs, int selspot)
-{
-    sh_ghs = shghs;
-    double gx[22];//not the 2 last values 1 1
-    if (selspot < (int) sh_ghs.size()) {
-        for(int i=0; i < 22; i++) {
-            gx[i] = sh_ghs.at(selspot).ghsc[i];
-          //  printf("i=%i gx=%f\n", i, (double)  gx[i]);
-        }
-    expshadhigh.updateghs(gx);
-    }
-}
-
-void Locallab::ghsbwChanged(const std::vector<locallabshGHSbw> &shghsbw, int selspot)
-{
-    sh_ghsbw = shghsbw;
-    int bw[2];
-    bw[0] = 0;
-    bw[1] = 1;
-    double bwvalue[2];
-    bwvalue[0] = 0.;
-    bwvalue[1] = 1.;
-
-    if (selspot < (int) sh_ghsbw.size()) {
-        for(int i=0; i < 2; i++) {
-            bw[i] = sh_ghsbw.at(selspot).ghsbw[i];
-            bwvalue[i] = sh_ghsbw.at(selspot).ghsbwvalue[i];
-        }
-    
-        expshadhigh.updateghsbw(bw[0], bw[1], bwvalue[0], bwvalue[1]);
-    }
-
-}
 void Locallab::cieChanged(const std::vector<locallabcieLC> &cielc, int selspot)
 {
     // Saving transmitted min/max data
     cie_lc = cielc;
-
     
     //Update Locallab Denoise tool lum chro
     if (selspot < (int) cie_lc.size()) {

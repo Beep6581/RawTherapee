@@ -8103,7 +8103,7 @@ Locallabcie::Locallabcie():
     refi(Gtk::manage(new Adjuster(M("TC_PRIM_REFI"), -0.5, 1., 0.0001, 0.))),
 
     gridFramecie(Gtk::manage(new Gtk::Frame(M("TP_ICM_WORKING_CIEDIAG")))),
-    labgridcie(Gtk::manage(new LabGrid(EvlocallabGridciexy, M("TP_ICM_LABGRID_CIEXY"), true, true, false, false))),
+    labgridcie(Gtk::manage(new LabGrid(EvlocallabGridciexy, M("TP_ICM_LABGRID_CIEXY"), true, true, false))),
     colorFramecie(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_COLORFRAME")))),
 
     catBox(Gtk::manage(new Gtk::Box())),
@@ -9981,9 +9981,6 @@ void Locallabcie::read(const rtengine::procparams::ProcParams* pp, const ParamsE
                               spot.labgridcieWy,
                               spot.labgridcieMx,
                               spot.labgridcieMy,
-                              0, 0, 0, 0,
-                              0, 0, 0, 0,
-                              0, 0, 0, 0, //+4 12 11
                               false);
 
         strgradcie->setValue((double)spot.strgradcie);
@@ -10083,8 +10080,6 @@ void Locallabcie::write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedi
         spot.refi =  refi->getValue();
         spot.shiftxl =  shiftxl->getValue();
         spot.shiftyl =  shiftyl->getValue();
-        double zerox = 0.;
-        double zeroy = 0.;
         labgridcie->getParams(spot.labgridcieALow,
                               spot.labgridcieBLow,
                               spot.labgridcieAHigh,
@@ -10094,11 +10089,7 @@ void Locallabcie::write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedi
                               spot.labgridcieWx,
                               spot.labgridcieWy,
                               spot.labgridcieMx,
-                              spot.labgridcieMy,
-                              zerox, zeroy, zerox, zeroy,
-                              zerox, zeroy, zerox, zeroy,
-                              zerox, zeroy, zerox, zeroy //+4 12 11
-                              );
+                              spot.labgridcieMy);
 
         spot.Autograycie = Autograycie->get_active();
         spot.forcejz = forcejz->get_active();
@@ -10454,7 +10445,7 @@ void Locallabcie::updateiPrimloc(const float r_x, const float r_y, const float g
         greyl->setValue(g_y);
         bluxl->setValue(b_x);
         bluyl->setValue(b_y);
-        labgridcie->setParams(nextrx, nextry, nextbx, nextby, nextgx, nextgy, nextwx, nextwy, nextmx, nextmy, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, false);//+4 12 11
+        labgridcie->setParams(nextrx, nextry, nextbx, nextby, nextgx, nextgy, nextwx, nextwy, nextmx, nextmy, false);
         enableListener();
         return false;
     }
@@ -12198,8 +12189,6 @@ void Locallabcie::setDefaults(const rtengine::procparams::ProcParams* defParams,
         shiftxl->setDefault(defSpot.shiftxl);
         shiftyl->setDefault(defSpot.shiftyl);
         refi->setDefault(defSpot.refi);
-        double zerox = 0.;
-        double zeroy = 0.;
         labgridcie->setDefault(defSpot.labgridcieALow,
                                defSpot.labgridcieBLow,
                                defSpot.labgridcieAHigh,
@@ -12209,11 +12198,7 @@ void Locallabcie::setDefaults(const rtengine::procparams::ProcParams* defParams,
                                defSpot.labgridcieWx,
                                defSpot.labgridcieWy,
                                defSpot.labgridcieMx,
-                               defSpot.labgridcieMy,
-                               zerox, zeroy, zerox, zeroy, 
-                               zerox, zeroy, zerox, zeroy, 
-                               zerox, zeroy, zerox, zeroy //+4 12 11
-                               );
+                               defSpot.labgridcieMy);
 
     }
 }

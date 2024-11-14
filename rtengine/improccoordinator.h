@@ -279,7 +279,6 @@ protected:
     LUTf lmasklocalcurve;
     LUTf lmaskexplocalcurve;
     LUTf lmaskSHlocalcurve;
-    LUTf ghslocalcurve;
     LUTf lmaskviblocalcurve;
     LUTf lmasktmlocalcurve;
     LUTf lmaskretilocalcurve;

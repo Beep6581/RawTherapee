@@ -1233,42 +1233,6 @@ struct LocallabParams {
         bool expshadhigh;
         int complexshadhigh;
         Glib::ustring shMethod; // std, tone
-        Glib::ustring ghsMethod; // rgb, lum, sat
-        Glib::ustring ghsMode; // lin, ghs
-        double ghs_D;
-        double ghs_slope;
-        double ghs_chro;
-        double ghs_B;
-        double ghs_SP;
-        double ghs_LP;
-        double ghs_HP;
-        double ghs_LC;
-        double ghs_BLP;
-        double ghs_HLP;
-        bool ghs_smooth;
-        bool ghs_inv;
-        double ghsx1;
-        double ghsy1;
-        double ghsx2;
-        double ghsy2;
-        double ghsx3;
-        double ghsy3;
-        double ghsx4;
-        double ghsy4;
-        double ghsx5;
-        double ghsy5;
-        double ghsx6;
-        double ghsy6;
-        double ghsx7;
-        double ghsy7;       
-        double ghsx8;
-        double ghsy8;
-        double ghsx9;
-        double ghsy9;       
-        double ghsx10;
-        double ghsy10;
-        double ghsx11;
-        double ghsy11;       
         int multsh[6];
         int highlights;
         int h_tonalwidth;
@@ -1398,7 +1362,6 @@ struct LocallabParams {
         int nlpat;
         int nlrad;
         double nlgam;
-        int nliter;
         int sensiden;
         double reparden;
         int detailthr;
