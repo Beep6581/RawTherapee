@@ -3140,7 +3140,10 @@ Camera constants:
     { // Quality B
         "make_model": [ "Sony ILCE-7CR", "Sony ILCE-7RM5" ], // 7RM5 is assumed to have the same sensor as the 7CR.
         "dcraw_matrix": [ 8200, -2976, -719, -4296, 12053, 2532, -429, 1282, 5774 ], // DNG v15.2 for ILCE-7CR and ILCE-7RM5.
-        "raw_crop": [ 0, 0, 9564, 6374 ], // From ART
+        "raw_crop": [
+            { "frame" : [19200, 12752], "crop" : [ 4, 3, 19128, 12749 ] },
+            { "frame" : [0, 0], "crop" : [ 0, 0, 9564, 6374 ] }
+        ], // Adapted from ART
         "pdaf_pattern": [ 0,12,18,36,42,60,66,72,78,96,108,120,126,138,156,168,180,186,192,198,210,222,228,240,246,252,270,276,282,288,306,312,318,330,336,348,360,366,372,378,390,396,408,420 ], // From issue #6938. Slightly different every repetition, maybe the real pattern is 3 or more multiples of 420 pixels. This is a composite.
         "pdaf_offset": 1
     },

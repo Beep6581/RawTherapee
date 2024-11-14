@@ -102,7 +102,7 @@ const std::vector<ToolTree> COLOR_PANEL_TOOLS = {
         .id = Tool::WHITE_BALANCE,
     },
     {
-        .id = Tool::ICM,
+        .id = Tool::COMPRESSGAMUT_TOOL,
     },
     {
         .id = Tool::VIBRANCE,
@@ -131,9 +131,9 @@ const std::vector<ToolTree> COLOR_PANEL_TOOLS = {
     {
         .id = Tool::COLOR_TONING,
     },
-//    {
-//        .id = Tool::ICM,
-//    },
+    {
+        .id = Tool::ICM,
+    },
 };
 
 const std::vector<ToolTree> ADVANCED_PANEL_TOOLS = {
@@ -312,6 +312,7 @@ ToolPanelCoordinator::ToolPanelCoordinator (bool batch) : ipc (nullptr), favorit
     vibrance            = Gtk::manage(new Vibrance());
     colorappearance     = Gtk::manage(new ColorAppearance());
     whitebalance        = Gtk::manage(new WhiteBalance());
+    compressgamut       = Gtk::manage (new Compressgamut ());
     vignetting          = Gtk::manage(new Vignetting());
     retinex             = Gtk::manage(new Retinex());
     gradient            = Gtk::manage(new Gradient());
@@ -579,6 +580,8 @@ std::string ToolPanelCoordinator::getToolName(Tool tool)
             return ImpulseDenoise::TOOL_NAME;
         case Tool::DEFRINGE_TOOL:
             return Defringe::TOOL_NAME;
+        case Tool::COMPRESSGAMUT_TOOL:
+            return Compressgamut::TOOL_NAME;
         case Tool::SPOT:
             return Spot::TOOL_NAME;
         case Tool::DIR_PYR_DENOISE:
@@ -1940,6 +1943,8 @@ FoldableToolPanel *ToolPanelCoordinator::getFoldableToolPanel(Tool tool) const
             return impulsedenoise;
         case Tool::DEFRINGE_TOOL:
             return defringe;
+        case Tool::COMPRESSGAMUT_TOOL:
+            return compressgamut;
         case Tool::SPOT:
             return spot;
         case Tool::DIR_PYR_DENOISE:

@@ -1,7 +1,7 @@
 /*
  *  This file is part of RawTherapee.
  *
- *  Copyright (c) 2004-2010 Gabor Horvath <hgabor@rawtherapee.com>
+ *  Copyright (c) 2024 RawTherapee team
  *
  *  RawTherapee is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -21,50 +21,54 @@
 #include <gtkmm.h>
 
 #include "adjuster.h"
-#include "lensgeomlistener.h"
 #include "toolpanel.h"
 
-class Distortion final :
+class Compressgamut final :
     public ToolParamBlock,
     public AdjusterListener,
     public FoldableToolPanel
 {
 
 protected:
-    Gtk::Button*   autoDistor;
-    Adjuster* distor;
-    Adjuster* focal_length;
-    sigc::connection    idConn;
-    LensGeomListener * rlistener;
-    Gtk::CheckButton* defish;
+    Adjuster* th_c;
+    Adjuster* th_m;
+    Adjuster* th_y;
+    Adjuster* d_c;
+    Adjuster* d_m;
+    Adjuster* d_y;
+    Adjuster* pwr;
+    MyComboBoxText *colorspace;
+    sigc::connection colorspaceconn;
+    Gtk::CheckButton* rolloff;
+    sigc::connection rolloffconn;
+    bool lastrolloff;
+
+    rtengine::ProcEvent EvcgColorspace;
+    rtengine::ProcEvent Evcgthc;
+    rtengine::ProcEvent Evcgthm;
+    rtengine::ProcEvent Evcgthy;
+    rtengine::ProcEvent Evcgdc;
+    rtengine::ProcEvent Evcgdm;
+    rtengine::ProcEvent Evcgdy;
+    rtengine::ProcEvent Evcgroll;
+    rtengine::ProcEvent Evcgpwr;
+    rtengine::ProcEvent Evcgenabled;
 
 public:
-    rtengine::ProcEvent EvDistortionDefish;
-    rtengine::ProcEvent EvDistortionDefishVoid;
-    rtengine::ProcEvent* event_distortion_defish;
-
-    rtengine::ProcEvent EvDistortionDefishFocalLength;
-    rtengine::ProcEvent EvDistortionDefishFocalLengthVoid;
-    rtengine::ProcEvent* event_distortion_defish_focal_length;
-
     static const Glib::ustring TOOL_NAME;
 
-    Distortion ();
+    Compressgamut ();
 
     void read           (const rtengine::procparams::ProcParams* pp, const ParamsEdited* pedited = nullptr) override;
     void write          (rtengine::procparams::ProcParams* pp, ParamsEdited* pedited = nullptr) override;
     void setDefaults    (const rtengine::procparams::ProcParams* defParams, const ParamsEdited* pedited = nullptr) override;
     void setBatchMode   (bool batchMode) override;
 
-    void adjusterChanged     (Adjuster* a, double newval) override;
-    void setAdjusterBehavior (bool vadd, bool focal_length_add);
-    void trimValues          (rtengine::procparams::ProcParams* pp) override;
-    void idPressed           ();
-    void setLensGeomListener (LensGeomListener* l)
-    {
-        rlistener = l;
-    }
-    void defishChanged (void);
+    void adjusterChanged (Adjuster* a, double newval) override;
+    void enabledChanged  () override;
+    void rolloff_change();
 
-    void setCamBasedEventsActive(bool active = true);
+    void trimValues          (rtengine::procparams::ProcParams* pp) override;
+
+    void colorspaceChanged();
 };

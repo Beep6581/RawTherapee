@@ -1131,9 +1131,13 @@ void CLASS lossless_dng_load_raw()
   struct jhead jh;
   ushort *rp;
 
+  size_t tilesWide = (raw_width + tile_width - 1) / tile_width;
+  size_t tilesHigh = (raw_height + tile_length - 1) / tile_length;
+  size_t tileCount = tilesWide * tilesHigh;
+
   while (trow < raw_height) {
     save = ftell(ifp);
-    if (tile_length < INT_MAX)
+    if (tileCount > 1)
       fseek (ifp, get4(), SEEK_SET);
     if (!ljpeg_start (&jh, 0)) break;
     jwide = jh.wide;
@@ -6687,8 +6691,6 @@ int CLASS parse_tiff_ifd (int base)
 	break;
       case 324:				/* TileOffsets */
 	tiff_ifd[ifd].offset = len > 1 ? ftell(ifp) : get4();
-	if (len == 1)
-	  tiff_ifd[ifd].tile_width = tiff_ifd[ifd].tile_length = 0;
 	if (len == 4) {
 	  load_raw = &CLASS sinar_4shot_load_raw;
 	  is_raw = 5;
@@ -6732,6 +6734,13 @@ int CLASS parse_tiff_ifd (int base)
 	break;
       case 29443:
 	FORC4 cam_mul[c ^ (c < 2)] = get2();
+	break;
+      case 29456: // Adapted from LibRaw: Sony SR2SubIFD BlackLevel
+	FORC4 cblack[c ^ (c >> 1) /*RGGB_2_RGBG(c)*/] = get2();
+	i = cblack[3];
+	FORC3 if (i > (int)cblack[c]) i = cblack[c];
+	FORC4 cblack[c] -= i;
+	black = i;
 	break;
       case 29459:
 	FORC4 cam_mul[c] = get2();
@@ -7227,7 +7236,10 @@ void CLASS apply_tiff()
 		     load_raw = &CLASS olympus_load_raw;
                    // ------- RT -------
                    if (!strncmp(make,"SONY",4) &&
-                       (!strncmp(model,"ILCE-7RM3",9) || !strncmp(model,"ILCE-7RM4",9)  || !strncmp(model,"ILCE-1",6)) &&
+                       (!strncmp(model,"ILCE-7RM3",9) ||
+                        !strncmp(model,"ILCE-7RM4",9) ||
+                        !strncmp(model,"ILCE-1",6) ||
+                        !strncmp(RT_software.c_str(), "make_arq", 8)) &&
                        tiff_samples == 4 &&
                        tiff_ifd[raw].bytes == raw_width*raw_height*tiff_samples*2) {
                        load_raw = &CLASS sony_arq_load_raw;
@@ -11542,8 +11554,12 @@ void CLASS deflate_dng_load_raw() {
     size_t tileCount = tilesWide * tilesHigh;
     //fprintf(stderr, "%dx%d tiles, %d total\n", tilesWide, tilesHigh, tileCount);
     size_t tileOffsets[tileCount];
-    for (size_t t = 0; t < tileCount; ++t) {
-      tileOffsets[t] = get4();
+    if (tileCount == 1) {
+      tileOffsets[0] = ifd->offset;
+    } else {
+      for (size_t t = 0; t < tileCount; ++t) {
+        tileOffsets[t] = get4();
+      }
     }
     size_t tileBytes[tileCount];
     uLongf maxCompressed = 0;

@@ -1884,6 +1884,46 @@ bool SHParams::operator !=(const SHParams& other) const
     return !(*this == other);
 }
 
+
+
+CGParams::CGParams() :
+    enabled(false),
+    th_c(0.815),
+    th_m(0.803),
+    th_y(0.880),
+    d_c(1.147),
+    d_m(1.264),
+    d_y(1.312),
+    pwr(1.2),
+    colorspace("acesp1"),
+    rolloff(true)
+    
+{
+}
+
+bool CGParams::operator ==(const CGParams& other) const
+{
+    return
+        enabled == other.enabled
+        && th_c == other.th_c
+        && th_m == other.th_m
+        && th_y == other.th_y
+        && d_c == other.d_c
+        && d_m == other.d_m
+        && d_y == other.d_y
+        && pwr == other.pwr
+        && colorspace == other.colorspace
+        && rolloff == other.rolloff;
+}
+
+bool CGParams::operator !=(const CGParams& other) const
+{
+    return !(*this == other);
+}
+
+
+
+///
 ToneEqualizerParams::ToneEqualizerParams() :
     enabled(false),
     bands{0, 0, 0, 0, 0, 0},
@@ -1974,13 +2014,19 @@ bool CoarseTransformParams::operator !=(const CoarseTransformParams& other) cons
 
 CommonTransformParams::CommonTransformParams() :
     method("log"),
-    autofill(true)
+    autofill(true),
+    scale(1.0)
 {
+}
+
+double CommonTransformParams::getScale() const
+{
+    return autofill ? 1.0 : scale;
 }
 
 bool CommonTransformParams::operator ==(const CommonTransformParams& other) const
 {
-    return method == other.method && autofill == other.autofill;
+    return method == other.method && autofill == other.autofill && std::abs(scale - other.scale) < 1e-6;
 }
 
 bool CommonTransformParams::operator !=(const CommonTransformParams& other) const
@@ -2003,14 +2049,11 @@ bool RotateParams::operator !=(const RotateParams& other) const
     return !(*this == other);
 }
 
-DistortionParams::DistortionParams() :
-    amount(0.0)
-{
-}
+DistortionParams::DistortionParams() {}
 
 bool DistortionParams::operator ==(const DistortionParams& other) const
 {
-    return amount == other.amount;
+    return amount == other.amount && defish == other.defish && focal_length == other.focal_length;
 }
 
 bool DistortionParams::operator !=(const DistortionParams& other) const
@@ -6774,6 +6817,18 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
         saveToKeyfile(!pedited || pedited->sh.radius, "Shadows & Highlights", "Radius", sh.radius, keyFile);
         saveToKeyfile(!pedited || pedited->sh.lab, "Shadows & Highlights", "Lab", sh.lab, keyFile);
 
+//compression gamut
+        saveToKeyfile(!pedited || pedited->cg.enabled, "Compression gamut", "Enabled", cg.enabled, keyFile);
+        saveToKeyfile(!pedited || pedited->cg.th_c, "Compression gamut", "th_c", cg.th_c, keyFile);
+        saveToKeyfile(!pedited || pedited->cg.th_m, "Compression gamut", "th_m", cg.th_m, keyFile);
+        saveToKeyfile(!pedited || pedited->cg.th_y, "Compression gamut", "th_y", cg.th_y, keyFile);
+        saveToKeyfile(!pedited || pedited->cg.d_c, "Compression gamut", "d_c", cg.d_c, keyFile);
+        saveToKeyfile(!pedited || pedited->cg.d_m, "Compression gamut", "d_m", cg.d_m, keyFile);
+        saveToKeyfile(!pedited || pedited->cg.d_y, "Compression gamut", "d_y", cg.d_y, keyFile);
+        saveToKeyfile(!pedited || pedited->cg.pwr, "Compression gamut", "pwr", cg.pwr, keyFile);
+        saveToKeyfile(!pedited || pedited->cg.colorspace, "Compression gamut", "colorspace", cg.colorspace, keyFile);
+        saveToKeyfile(!pedited || pedited->cg.rolloff, "Compression gamut", "rolloff", cg.rolloff, keyFile);
+
 // Tone equalizer
         saveToKeyfile(!pedited || pedited->toneEqualizer.enabled, "ToneEqualizer", "Enabled", toneEqualizer.enabled, keyFile);
         for (size_t i = 0; i < toneEqualizer.bands.size(); ++i) {
@@ -6818,6 +6873,7 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
 
 // Common properties for transformations
         saveToKeyfile(!pedited || pedited->commonTrans.method, "Common Properties for Transformations", "Method", commonTrans.method, keyFile);
+        saveToKeyfile(!pedited || pedited->commonTrans.scale, "Common Properties for Transformations", "Scale", commonTrans.scale, keyFile);
         saveToKeyfile(!pedited || pedited->commonTrans.autofill, "Common Properties for Transformations", "AutoFill", commonTrans.autofill, keyFile);
 
 // Rotation
@@ -6825,6 +6881,8 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
 
 // Distortion
         saveToKeyfile(!pedited || pedited->distortion.amount, "Distortion", "Amount", distortion.amount, keyFile);
+        saveToKeyfile(!pedited || pedited->distortion.focal_length, "Distortion", "FocalLength", distortion.focal_length, keyFile);
+        saveToKeyfile(!pedited || pedited->distortion.defish, "Distortion", "Defish", distortion.defish, keyFile);
 
 // Lens profile
         saveToKeyfile(!pedited || pedited->lensProf.lcMode, "LensProfile", "LcMode", lensProf.getMethodString(lensProf.lcMode), keyFile);
@@ -8932,6 +8990,19 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
             assignFromKeyfile(keyFile, "FattalToneMapping", "Anchor", fattal.anchor, pedited->fattal.anchor);
         }
 
+        if (keyFile.has_group("Compression gamut")) {
+            assignFromKeyfile(keyFile, "Compression gamut", "Enabled", cg.enabled, pedited->cg.enabled);
+            assignFromKeyfile(keyFile, "Compression gamut", "th_c", cg.th_c, pedited->cg.th_c);
+            assignFromKeyfile(keyFile, "Compression gamut", "th_m", cg.th_m, pedited->cg.th_m);
+            assignFromKeyfile(keyFile, "Compression gamut", "th_y", cg.th_y, pedited->cg.th_y);
+            assignFromKeyfile(keyFile, "Compression gamut", "d_c", cg.d_c, pedited->cg.d_c);
+            assignFromKeyfile(keyFile, "Compression gamut", "d_m", cg.d_m, pedited->cg.d_m);
+            assignFromKeyfile(keyFile, "Compression gamut", "d_y", cg.d_y, pedited->cg.d_y);
+            assignFromKeyfile(keyFile, "Compression gamut", "pwr", cg.pwr, pedited->cg.pwr);
+            assignFromKeyfile(keyFile, "Compression gamut", "colorspace", cg.colorspace, pedited->cg.colorspace);
+            assignFromKeyfile(keyFile, "Compression gamut", "rolloff", cg.rolloff, pedited->cg.rolloff);
+        }
+
         if (keyFile.has_group("Shadows & Highlights") && ppVersion >= 333) {
             assignFromKeyfile(keyFile, "Shadows & Highlights", "Enabled", sh.enabled, pedited->sh.enabled);
             assignFromKeyfile(keyFile, "Shadows & Highlights", "Highlights", sh.highlights, pedited->sh.highlights);
@@ -9052,11 +9123,18 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
             } else {
                 commonTrans.method = "lin";
             }
+            if (keyFile.has_key("Common Properties for Transformations", "Scale")) {
+                assignFromKeyfile(keyFile, "Common Properties for Transformations", "Scale", commonTrans.scale, pedited->commonTrans.scale);
+            } else {
+                commonTrans.scale = 1.0;
+            }
             assignFromKeyfile(keyFile, "Common Properties for Transformations", "AutoFill", commonTrans.autofill, pedited->commonTrans.autofill);
         }
 
         if (keyFile.has_group("Distortion")) {
             assignFromKeyfile(keyFile, "Distortion", "Amount", distortion.amount, pedited->distortion.amount);
+            assignFromKeyfile(keyFile, "Distortion", "Defish", distortion.defish, pedited->distortion.defish);
+            assignFromKeyfile(keyFile, "Distortion", "FocalLength", distortion.focal_length, pedited->distortion.focal_length);
         }
 
         if (keyFile.has_group("LensProfile")) {

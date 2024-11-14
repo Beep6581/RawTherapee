@@ -1404,6 +1404,16 @@ HISTORY_MSG_COLORTONING_LABREGION_SHOWMASK;CT - region show mask
 HISTORY_MSG_COLORTONING_LABREGION_SLOPE;CT - region slope
 HISTORY_MSG_COMPLEX;Wavelet complexity
 HISTORY_MSG_COMPLEXRETI;Retinex complexity
+HISTORY_MSG_CG_COLORSPACE;Gamut Compression - Target
+HISTORY_MSG_CG_CYANTH;Gamut Compression - Threshold Cyan
+HISTORY_MSG_CG_MAGENTATH;Gamut Compression - Threshold Magenta
+HISTORY_MSG_CG_YELLOWTH;Gamut Compression - Threshold Yellow
+HISTORY_MSG_CG_CYANLIM;Gamut Compression - Max Limits Cyan
+HISTORY_MSG_CG_MAGENTALIM;Gamut Compression - Max Limits Magenta
+HISTORY_MSG_CG_YELLOWLIM;Gamut Compression - Max Limits Yellow
+HISTORY_MSG_CG_ROLLOFF;Gamut Compression - Rolloff
+HISTORY_MSG_CG_VALUE;Gamut Compression - Power
+HISTORY_MSG_CG_ENABLED;Gamut Compression - Enabled
 HISTORY_MSG_DEHABLACK;Dehaze Bayer Black
 HISTORY_MSG_DEHABLACKX;Dehaze X-Trans Black
 HISTORY_MSG_DEHAZE_DEPTH;Dehaze - Depth
@@ -1412,6 +1422,8 @@ HISTORY_MSG_DEHAZE_SATURATION;Dehaze - Saturation
 HISTORY_MSG_DEHAZE_SHOW_DEPTH_MAP;Dehaze - Show depth map
 HISTORY_MSG_DEHAZE_STRENGTH;Dehaze - Strength
 HISTORY_MSG_DIRPYRDENOISE_GAIN;NR - Compensate for lightness
+HISTORY_MSG_DISTORTION_DEFISH;De-fish
+HISTORY_MSG_DISTORTION_DEFISH_FOCAL;De-fish - Focal length
 HISTORY_MSG_DUALDEMOSAIC_AUTO_CONTRAST;Dual demosaic - Auto threshold
 HISTORY_MSG_DUALDEMOSAIC_CONTRAST;Dual demosaic - Contrast threshold
 HISTORY_MSG_EDGEFFECT;Edge Attenuation response
@@ -1594,6 +1606,7 @@ HISTORY_MSG_TONE_EQUALIZER_ENABLED;Tone equalizer
 HISTORY_MSG_TONE_EQUALIZER_PIVOT;Tone equalizer - Pivot
 HISTORY_MSG_TONE_EQUALIZER_REGULARIZATION;Tone equalizer - Regularization
 HISTORY_MSG_TONE_EQUALIZER_SHOW_COLOR_MAP;Tone equalizer - Tonal map
+HISTORY_MSG_TRANS_SCALE;Geometry - Scale
 HISTORY_MSG_TRANS_METHOD;Geometry - Method
 HISTORY_MSG_WAVBALCHROM;Equalizer chrominance
 HISTORY_MSG_WAVBALLUM;Equalizer luminance
@@ -2520,6 +2533,28 @@ TP_COLORTONING_TWOALL;Special chroma
 TP_COLORTONING_TWOBY;Special a* and b*
 TP_COLORTONING_TWOCOLOR_TOOLTIP;Standard chroma:\nLinear response, a* = b*.\n\nSpecial chroma:\nLinear response, a* = b*, but unbound - try under the diagonal.\n\nSpecial a* and b*:\nLinear response unbound with separate curves for a* and b*. Intended for special effects.\n\nSpecial chroma 2 colors:\nMore predictable.
 TP_COLORTONING_TWOSTD;Standard chroma
+TP_COMPRESSGAMUT_LABEL;Gamut Compression
+TP_COMPRESSGAMUT_MAIN_COLORSPACE;Target Compression Gamut
+TP_COMPRESSGAMUT_COLORSPACE_TOOLTIP;Gamut-compress is a tool which allows you to compress highly chromatic camera source colorimetry into a smaller gamut.\n Out of gamut negative pixel values are problematic for working on images and should be avoided if possible.\n Blue LED are perceive as highly colorful and colors like beetles, flowers and hummingbirds often over saturated.\n\n This is not a gamut conversion : converting from one gamut to another does change the values of the pixels. However it does not actually change the colorimetric meaning of the pixel data. You could say that by converting between gamuts, you are changing frame of reference to the same colors. After compression the working profile is restored.\n\n Choose the workspace that will be used to set the gamut limits. Depending on the case you can choose:\n The display gamut (sRGB, DCI P3,...). \n The gamut of an output file for use by another software (Prophoto, Rec 2020...). 
+TP_COMPRESSGAMUT_THRESHOLD_TOOLTIP;Threshold: controls the percentage of the outer gamut to affect. A value of 0.8 will compress out of gamut values into the outer 20% of the gamut. The inner 80% of the gamut core will not be affected. You can adjust the colors separately: for example if you wanted to protect magenta and yellow a little more than cyan, you could set the threshold a bit higher for cyan.\n\nThe thresholds are relative to the Target Compression Gamut. They may need to be adjusted after changing the target gamut if you want the protected color range to remain unchanged.
+TP_COMPRESSGAMUT_DCIP3;DCI-P3
+TP_COMPRESSGAMUT_ACESP1;ACES AP1
+TP_COMPRESSGAMUT_POWER_TOOLTIP;Power: Control the aggressiveness of the compression curve.\n Higher power values result in more compressed values distributed closer to the gamut boundary. This will increase the "color purity" or "saturation" once the image has been rendered through a display transform.\n Higher values have a smoother transition.
+TP_COMPRESSGAMUT_LIMIT_TOOLTIP;Maximum Distance Limit: is the distance outside of the gamut boundary to compress to the gamut boundary. For example, a value of 1.2 will compress distance values of 1.2 to a value of 1.0. \nIndividual controls are given for each color component. They are named cyan magenta and yellow because they actually control the max distance from the edge of the triangle (primaries related to the CIExy diagram), not the corner. For example, boosting the value of the cyan distance limit will increase the distance from which values are mapped to the edge between the blue and green corners of the triangle.\nThe distance limits also control the RGB ratios of the compressed values, which affects the apparent hue.\n\nThe distances are relative to the Target Compression Gamut. They may need to be adjusted after changing the target gamut if you want the amount of compression to remain unchanged.
+TP_COMPRESSGAMUT_PROPHOTO;ProPhoto
+TP_COMPRESSGAMUT_REC2020;Rec. 2020
+TP_COMPRESSGAMUT_ADOBE;Adobe RGB
+TP_COMPRESSGAMUT_SRGB;sRGB
+TP_COMPRESSGAMUT_CYANTH;Cyan
+TP_COMPRESSGAMUT_MAGENTATH;Magenta
+TP_COMPRESSGAMUT_YELLOWTH;Yellow
+TP_COMPRESSGAMUT_THRESHOLD;Threshold
+TP_COMPRESSGAMUT_CYANLIM;Cyan
+TP_COMPRESSGAMUT_MAGENTALIM;Magenta
+TP_COMPRESSGAMUT_YELLOWLIM;Yellow
+TP_COMPRESSGAMUT_LIMIT;Maximum Distance Limits
+TP_COMPRESSGAMUT_ROLLOFF;Rolloff
+TP_COMPRESSGAMUT_PWR;Power
 TP_CROP_FIXRATIO;Lock ratio
 TP_CROP_GTCENTEREDSQUARE;Centered square
 TP_CROP_GTDIAGONALS;Rule of Diagonals
@@ -2622,6 +2657,8 @@ TP_DIRPYREQUALIZER_THRESHOLD;Threshold
 TP_DIRPYREQUALIZER_TOOLTIP;Attempts to reduce artifacts in the transitions between skin colors (hue, chroma, luma) and the rest of the image.
 TP_DISTORTION_AMOUNT;Amount
 TP_DISTORTION_AUTO_TOOLTIP;Automatically corrects lens distortion in raw files by matching it against the embedded JPEG image if one exists and has had its lens disortion auto-corrected by the camera.
+TP_DISTORTION_DEFISH;De-fish
+TP_DISTORTION_FOCAL_LENGTH;Focal length
 TP_DISTORTION_LABEL;Distortion Correction
 TP_EPD_EDGESTOPPING;Edge stopping
 TP_EPD_GAMMA;Gamma
@@ -2865,6 +2902,7 @@ TP_LABCURVE_LCREDSK_TOOLTIP;If enabled, the LC Curve affects only red and skin-t
 TP_LABCURVE_RSTPROTECTION;Red and skin-tones protection
 TP_LABCURVE_RSTPRO_TOOLTIP;Works on the Chromaticity slider and the CC curve.
 TP_LENSGEOM_AUTOCROP;Auto-Crop
+TP_LENSGEOM_SCALE;Scale
 TP_LENSGEOM_FILL;Auto-fill
 TP_LENSGEOM_LABEL;Lens / Geometry
 TP_LENSGEOM_LIN;Linear

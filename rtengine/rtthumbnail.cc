@@ -1327,6 +1327,8 @@ IImage8* Thumbnail::processImage (const procparams::ProcParams& params, eSensorT
         ipf.filmNegativeProcess(baseImg, baseImg, params.filmNegative);
     }
 
+
+
     LUTu hist16 (65536);
 
     ipf.firstAnalysis (baseImg, params, hist16);

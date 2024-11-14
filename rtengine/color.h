@@ -108,6 +108,10 @@ public:
         ID_DOWN      /// Interpolate color by decreasing the hue value, crossing the lower limit
     } eInterpolationDirection;
 
+    using Triple = std::array<double, 3>;
+
+    using Matrix = std::array<Triple, 3>;
+
     // Wikipedia sRGB: Unlike most other RGB color spaces, the sRGB gamma cannot be expressed as a single numerical value.
     // The overall gamma is approximately 2.2, consisting of a linear (gamma 1.0) section near black, and a non-linear section elsewhere involving a 2.4 exponent
     // and a gamma (slope of log output versus log input) changing from 1.0 through about 2.3.
@@ -1883,6 +1887,22 @@ static inline void Lab2XYZ(vfloat L, vfloat a, vfloat b, vfloat &x, vfloat &y, v
     * @param pxyz return matrix XYZ 
     */
     static void primaries_to_xyz (double p[6], double Wx, double Wz, double *pxyz, int cat);
+
+    /**
+    * @brief Gamut compress from ACES
+    */
+    // transpose, multip, mult3 used by ACES
+    static void  transpose(const Matrix &ma, Matrix &R);
+    static void  multip(const Matrix &ma, const Matrix &mb, Matrix &R);
+    static void  mult3(std::array<float, 3> &in, const Matrix &ma, std::array<float, 3> &out);
+
+    static void aces_reference_gamut_compression(
+        const std::array<float, 3> &rgb_in,
+        const std::array<float, 3> &threshold,
+        const std::array<float, 3> &distance_limit,
+        const Matrix &to_out, const Matrix &from_out,
+        float pwr, bool rolloff,
+        float &R, float &G, float &B);
 
     /**
     * @brief Get HSV's hue from the Lab's hue

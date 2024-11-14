@@ -860,6 +860,28 @@ struct SHParams {
 };
 
 /**
+  * Parameters of the compression gamut
+  */
+struct CGParams {
+    bool    enabled;
+    double  th_c;
+    double  th_m;
+    double  th_y;
+    double  d_c;
+    double  d_m;
+    double  d_y;
+    double  pwr;
+    Glib::ustring colorspace;
+    bool rolloff;
+    
+    CGParams();
+
+    bool operator ==(const CGParams& other) const;
+    bool operator !=(const CGParams& other) const;
+};
+
+
+/**
  * Tone equalizer parameters.
  */
 struct ToneEqualizerParams {
@@ -930,8 +952,11 @@ struct CoarseTransformParams {
 struct CommonTransformParams {
     Glib::ustring method;
     bool autofill;
+    double scale;
 
     CommonTransformParams();
+
+    double getScale() const;
 
     bool operator ==(const CommonTransformParams& other) const;
     bool operator !=(const CommonTransformParams& other) const;
@@ -953,7 +978,10 @@ struct RotateParams {
   * Parameters of the distortion correction
   */
 struct DistortionParams {
-    double  amount;
+    static constexpr double DEFAULT_FOCAL_LENGTH = 12;
+    double amount = 0.0;
+    bool defish = false;
+    double focal_length = DEFAULT_FOCAL_LENGTH;
 
     DistortionParams();
 
@@ -2745,6 +2773,7 @@ public:
     EPDParams               epd;             ///< Edge Preserving Decomposition parameters
     FattalToneMappingParams fattal;          ///< Fattal02 tone mapping
     SHParams                sh;              ///< Shadow/highlight enhancement parameters
+    CGParams                cg;              ///< Compression gamut
     ToneEqualizerParams     toneEqualizer;   ///< Tone equalizer parameters
     CropParams              crop;            ///< Crop parameters
     CoarseTransformParams   coarse;          ///< Coarse transformation (90, 180, 270 deg rotation, h/v flipping) parameters
