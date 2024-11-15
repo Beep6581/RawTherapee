@@ -605,6 +605,7 @@ public:
         bool ghs_LP;
         bool ghs_HP;
         bool ghs_LC;
+        bool ghs_MID;
         bool ghs_BLP;
         bool ghs_HLP;
         bool ghs_smooth;

@@ -4302,6 +4302,7 @@ LocallabShadow::LocallabShadow():
     ghs_HP(Gtk::manage(new Adjuster(M("TP_LOCALLAB_GHS_HP"), 0.0, 1.0, 0.00001, 1.0))),
     LC_Frame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_GHS_LC_FRAME")))),
     ghs_LC(Gtk::manage(new Adjuster(M("TP_LOCALLAB_GHS_LC"), 0.0, 100.0, 0.1, 30.0))),
+    ghs_MID(Gtk::manage(new Adjuster(M("TP_LOCALLAB_GHS_MID"), -100.0, 100.0, 0.1, 0.0))),
     BP_Frame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_GHS_BLACKPOINT_FRAME")))),
     ghs_BLP(Gtk::manage(new Adjuster(M("TP_LOCALLAB_GHS_BLP"), -0.2, 1.0, 0.0001, 0.0))),
     ghs_HLP(Gtk::manage(new Adjuster(M("TP_LOCALLAB_GHS_HLP"), 0.2002, 3.0, 0.0001, 1.0001))),
@@ -4348,7 +4349,7 @@ LocallabShadow::LocallabShadow():
     Evlocallabghs_LP = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_GHS_LP");
     Evlocallabghs_HP = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_GHS_HP");
     Evlocallabghs_LC = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_GHS_LC");
-    Evlocallabghs_BLP = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_GHS_BLP");
+    Evlocallabghs_MID = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_GHS_MID");
     Evlocallabghs_HLP = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_GHS_HLP");
     Evlocallabghs_smooth = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_GHS_SMOOTH");
     Evlocallabghs_inv = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_GHS_INV");
@@ -4426,6 +4427,7 @@ https://www.ghsastro.co.uk/doc/tools/GeneralizedHyperbolicStretch/GeneralizedHyp
     ghs_LP->setAdjusterListener(this);
     ghs_HP->setAdjusterListener(this);
     ghs_LC->setAdjusterListener(this);
+    ghs_MID->setAdjusterListener(this);
     ghs_BLP->setAdjusterListener(this);
     ghs_HLP->setAdjusterListener(this);
     setExpandAlignProperties(ghsbpwpLabels, true, false, Gtk::ALIGN_CENTER, Gtk::ALIGN_START);
@@ -4547,6 +4549,7 @@ https://www.ghsastro.co.uk/doc/tools/GeneralizedHyperbolicStretch/GeneralizedHyp
     LC_Frame->set_label_align(0.025, 0.5);
     ToolParamBlock* const LCBox = Gtk::manage(new ToolParamBlock());
     LCBox->pack_start(*ghs_LC);
+    LCBox->pack_start(*ghs_MID);
     LC_Frame->add(*LCBox);
     ghsBox->pack_start(*LC_Frame);    
     BP_Frame->set_label_align(0.025, 0.5);
@@ -4794,6 +4797,7 @@ void LocallabShadow::updateAdviceTooltips(const bool showTooltips)
         ghs_LP->set_tooltip_text(M("TP_LOCALLAB_GHS_LP_TOOLTIP"));
         ghs_HP->set_tooltip_text(M("TP_LOCALLAB_GHS_HP_TOOLTIP"));
         ghs_LC->set_tooltip_text(M("TP_LOCALLAB_GHS_LC_TOOLTIP"));
+        ghs_MID->set_tooltip_text(M("TP_LOCALLAB_GHS_MID_TOOLTIP"));
         ghs_BLP->set_tooltip_text(M("TP_LOCALLAB_GHS_BLP_TOOLTIP"));
         ghs_HLP->set_tooltip_text(M("TP_LOCALLAB_GHS_HLP_TOOLTIP"));
         ghs_smooth->set_tooltip_text(M("TP_LOCALLAB_GHS_SMOOTH_TOOLTIP"));
@@ -4843,6 +4847,7 @@ void LocallabShadow::updateAdviceTooltips(const bool showTooltips)
         ghs_LP->set_tooltip_text("");
         ghs_HP->set_tooltip_text("");
         ghs_LC->set_tooltip_text("");
+        ghs_MID->set_tooltip_text("");
         ghs_BLP->set_tooltip_text("");
         ghs_HLP->set_tooltip_text("");
         ghs_smooth->set_tooltip_text("");
@@ -4941,6 +4946,7 @@ void LocallabShadow::read(const rtengine::procparams::ProcParams* pp, const Para
         ghs_LP->setValue((double)spot.ghs_LP);
         ghs_HP->setValue((double)spot.ghs_HP);
         ghs_LC->setValue((double)spot.ghs_LC);
+        ghs_MID->setValue((double)spot.ghs_MID);
         ghs_BLP->setValue((double)spot.ghs_BLP);
         ghs_HLP->setValue((double)spot.ghs_HLP);
 
@@ -5063,6 +5069,7 @@ void LocallabShadow::write(rtengine::procparams::ProcParams* pp, ParamsEdited* p
         spot.ghs_LP = ghs_LP->getValue();
         spot.ghs_HP = ghs_HP->getValue();
         spot.ghs_LC = ghs_LC->getValue();
+        spot.ghs_MID = ghs_MID->getValue();
         spot.ghs_BLP = ghs_BLP->getValue();
         spot.ghs_HLP = ghs_HLP->getValue();
 
@@ -5151,6 +5158,7 @@ void LocallabShadow::setDefaults(const rtengine::procparams::ProcParams* defPara
         ghs_LP->setDefault(defSpot.ghs_LP);
         ghs_HP->setDefault(defSpot.ghs_HP);
         ghs_LC->setDefault(defSpot.ghs_LC);
+        ghs_MID->setDefault(defSpot.ghs_MID);
         ghs_BLP->setDefault(defSpot.ghs_BLP);
         ghs_HLP->setDefault(defSpot.ghs_HLP);
 
@@ -5283,6 +5291,13 @@ void LocallabShadow::adjusterChanged(Adjuster* a, double newval)
             if (listener) {
                 listener->panelChanged(Evlocallabghs_LC,
                                        ghs_LC->getTextValue() + " (" + escapeHtmlChars(getSpotName()) + ")");
+            }
+        }
+
+        if (a == ghs_MID) {
+            if (listener) {
+                listener->panelChanged(Evlocallabghs_MID,
+                                       ghs_MID->getTextValue() + " (" + escapeHtmlChars(getSpotName()) + ")");
             }
         }
 

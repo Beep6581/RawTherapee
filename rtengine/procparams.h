@@ -1265,6 +1265,7 @@ struct LocallabParams {
         double ghs_LP;
         double ghs_HP;
         double ghs_LC;
+        double ghs_MID;
         double ghs_BLP;
         double ghs_HLP;
         bool ghs_smooth;

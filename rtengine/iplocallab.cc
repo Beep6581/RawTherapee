@@ -170,7 +170,6 @@ b = Local intensity
 SP = Symmetry point
 LP = Protect shadows
 HP = Protect highlights
-m = 0.5 / (D + 1)
 
 5.2.2 Base transformation equations
 The base transformation for each transformation type is defined by T : x → T(x) in the following table. The table also shows the first derivative of T, denoted T', as this is needed to build the full transformation.
@@ -205,9 +204,6 @@ b > 0, b ≠ 1
 T-> 1 - ( 1 + b.D.x )(-1/b)
 T'->D.(1 + b.D.x)(-(1+b)/b)
 
-Midtone transfer
-(m - 1).x / ( (2m - 1).x - m )
-m.(1 - m).((2m - 1).x - m)-2
 
 Power law
 T(x) = 1 - (1 - x)1 + D
@@ -17139,6 +17135,7 @@ void ImProcFunctions::Lab_Local(
     float BLP = params->locallab.spots.at(sp).ghs_BLP;
     float HLP = params->locallab.spots.at(sp).ghs_HLP;
     bool smoth = params->locallab.spots.at(sp).ghs_smooth;//Highlight attenuation
+    float MID = params->locallab.spots.at(sp).ghs_MID;//midtones
     for(int i = 0; i < 26; i += 2) {//reinit simulation GHS with diagonale +4 12 11
         ghscur[i] = 0.0416f * i;
         ghscur[i + 1] = 0.0416f * i;
@@ -17642,6 +17639,9 @@ void ImProcFunctions::Lab_Local(
                         
                         if(smoth) {//Highlight attenuation in function of HP - protect highlight
                             tone_eqsmooth(this, tmpImage, lp, params->icm.workingProfile, sk, multiThread);//reduce Ev > 0 < 12
+                        }
+                        if(MID != 0.f) {
+                            ImProcFunctions::tone_eqcam(this, tmpImage, MID, params->icm.workingProfile, sk, multiThread);
                         }
  
                         if(strtype == 1) {//inverse GHS

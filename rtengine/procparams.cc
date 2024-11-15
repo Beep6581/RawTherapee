@@ -3439,6 +3439,7 @@ LocallabParams::LocallabSpot::LocallabSpot() :
     ghs_LP(0.),
     ghs_HP(1.),
     ghs_LC(30.),
+    ghs_MID(0.),
     ghs_BLP(0.),
     ghs_HLP(1.0001),
     ghs_smooth(false),
@@ -5109,6 +5110,7 @@ bool LocallabParams::LocallabSpot::operator ==(const LocallabSpot& other) const
         && ghs_LP == other.ghs_LP
         && ghs_HP == other.ghs_HP
         && ghs_LC == other.ghs_LC
+        && ghs_MID == other.ghs_MID
         && ghs_BLP == other.ghs_BLP
         && ghs_HLP == other.ghs_HLP
         && ghs_smooth == other.ghs_smooth
@@ -7122,6 +7124,7 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
                     saveToKeyfile(!pedited || spot_edited->ghs_LP, "Locallab", "Ghs_LP_" + index_str, spot.ghs_LP, keyFile);
                     saveToKeyfile(!pedited || spot_edited->ghs_HP, "Locallab", "Ghs_HP_" + index_str, spot.ghs_HP, keyFile);
                     saveToKeyfile(!pedited || spot_edited->ghs_LC, "Locallab", "Ghs_LC_" + index_str, spot.ghs_LC, keyFile);
+                    saveToKeyfile(!pedited || spot_edited->ghs_MID, "Locallab", "Ghs_MID_" + index_str, spot.ghs_MID, keyFile);
                     saveToKeyfile(!pedited || spot_edited->ghs_BLP, "Locallab", "Ghs_BLP_" + index_str, spot.ghs_BLP, keyFile);
                     saveToKeyfile(!pedited || spot_edited->ghs_HLP, "Locallab", "Ghs_HLP_" + index_str, spot.ghs_HLP, keyFile);
                     saveToKeyfile(!pedited || spot_edited->ghs_smooth, "Locallab", "Ghs_smooth_" + index_str, spot.ghs_smooth, keyFile);
@@ -9505,6 +9508,7 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
                 assignFromKeyfile(keyFile, "Locallab", "Ghs_LP_" + index_str, spot.ghs_LP, spotEdited.ghs_LP);
                 assignFromKeyfile(keyFile, "Locallab", "Ghs_HP_" + index_str, spot.ghs_HP, spotEdited.ghs_HP);
                 assignFromKeyfile(keyFile, "Locallab", "Ghs_LC_" + index_str, spot.ghs_LC, spotEdited.ghs_LC);
+                assignFromKeyfile(keyFile, "Locallab", "Ghs_MID_" + index_str, spot.ghs_MID, spotEdited.ghs_MID);
                 assignFromKeyfile(keyFile, "Locallab", "Ghs_BLP_" + index_str, spot.ghs_BLP, spotEdited.ghs_BLP);
                 assignFromKeyfile(keyFile, "Locallab", "Ghs_HLP_" + index_str, spot.ghs_HLP, spotEdited.ghs_HLP);
                 assignFromKeyfile(keyFile, "Locallab", "Ghs_smooth_" + index_str, spot.ghs_smooth, spotEdited.ghs_smooth);
