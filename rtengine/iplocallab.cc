@@ -17391,18 +17391,19 @@ void ImProcFunctions::Lab_Local(
 #endif
                             for (int i = 0; i < bfh; ++i)
                                 for (int j = 0; j < bfw; ++j) {
-                                    float r = tmpImage->r(i, j)/65535.f;
-                                    float g = tmpImage->g(i, j)/65535.f;
-                                    float b = tmpImage->b(i, j)/65535.f;
+                                    float r = tmpImage->r(i, j) / 65535.f;
+                                    float g = tmpImage->g(i, j) / 65535.f;
+                                    float b = tmpImage->b(i, j) / 65535.f;
                                     float Ro, Go, Bo;
+                                    float deltawp = rtengine::max(0.05f, shiftwhitepoint - shiftblackpoint2);//0.05 minimum acceptable
                                     if(strtype == 0) {
-                                        Ro = (r - shiftblackpoint2)/(shiftwhitepoint - shiftblackpoint2);
-                                        Go = (g - shiftblackpoint2)/(shiftwhitepoint - shiftblackpoint2);
-                                        Bo = (b - shiftblackpoint2)/(shiftwhitepoint - shiftblackpoint2);
+                                        Ro = (r - shiftblackpoint2) / deltawp;
+                                        Go = (g - shiftblackpoint2) / deltawp;
+                                        Bo = (b - shiftblackpoint2) / deltawp;
                                     } else {
-                                        Ro = (shiftblackpoint2) + r * (shiftwhitepoint - shiftblackpoint2);
-                                        Go = (shiftblackpoint2) + g * (shiftwhitepoint - shiftblackpoint2);
-                                        Bo = (shiftblackpoint2) + b * (shiftwhitepoint - shiftblackpoint2);
+                                        Ro = (shiftblackpoint2) + r * deltawp;
+                                        Go = (shiftblackpoint2) + g * deltawp;
+                                        Bo = (shiftblackpoint2) + b * deltawp;
                                     }
                                     float minrgb = rtengine::min(Ro, Go, Bo);
                                     if(minrgb < minbp){
