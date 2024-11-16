@@ -887,7 +887,7 @@ HISTORY_MSG_641;Local - Use SH mask
 HISTORY_MSG_642;Local - radius SH
 HISTORY_MSG_643;Local - Blur SH
 HISTORY_MSG_644;Local - inverse SH
-HISTORY_MSG_645;Local - SD - ab-L balance
+HISTORY_MSG_645;Local - SD - Luma-chroma balance
 HISTORY_MSG_646;Local - Exp mask chroma
 HISTORY_MSG_647;Local - Exp mask gamma
 HISTORY_MSG_648;Local - Exp mask slope
@@ -1101,7 +1101,7 @@ HISTORY_MSG_863;Local - Wavelet merge original image
 HISTORY_MSG_864;Local - Wavelet dir contrast attenuation
 HISTORY_MSG_865;Local - Wavelet dir contrast delta
 HISTORY_MSG_866;Local - Wavelet dir compression
-HISTORY_MSG_868;Local - SD - C-H balance
+HISTORY_MSG_868;Local - SD - Hue-Chroma balance
 HISTORY_MSG_869;Local - Denoise by level
 HISTORY_MSG_870;Local - Wavelet mask curve H
 HISTORY_MSG_871;Local - Wavelet mask curve C
@@ -2927,11 +2927,11 @@ TP_LOCALLAB_AVOIDMUN;Munsell correction only
 TP_LOCALLAB_AVOIDMUN_TOOLTIP;Munsell correction always disabled when Jz or CAM16 is used.
 TP_LOCALLAB_AVOIDRAD;Soft radius
 //TP_LOCALLAB_BALAN;ab-L balance (ΔE)
-TP_LOCALLAB_BALAN;Balance Luma Chroma
+TP_LOCALLAB_BALAN;Luma-Chroma balance
 
 TP_LOCALLAB_BALANEXP;Laplacian balance
 //TP_LOCALLAB_BALANH;C-H balance (ΔE)
-TP_LOCALLAB_BALANH;Balance Hue Chroma
+TP_LOCALLAB_BALANH;Hue-Chroma balance
 
 TP_LOCALLAB_BALAN_TOOLTIP;Changes the ΔE algorithm parameters.\nTakes into account more or less a*b* or L*, or more or less C or H.\nNot for Denoise.
 TP_LOCALLAB_BASELOG;Shadows range (logarithm base)
@@ -3135,7 +3135,7 @@ TP_LOCALLAB_EXPCHROMA_TOOLTIP;Use in association with 'Exposure compensation f' 
 TP_LOCALLAB_EXPCOLOR_TOOLTIP;Adjust color, lightness, contrast and correct small defects such as red-eye, sensor dust etc.
 TP_LOCALLAB_EXPCOMP;Exposure compensation ƒ
 TP_LOCALLAB_EXPCOMPINV;Exposure compensation
-TP_LOCALLAB_EXPCOMP_TOOLTIP;For portraits or images with a low color gradient. You can change 'Shape detection' in 'Settings':\n\nIncrease 'ΔE scope threshold'\nReduce 'ΔE decay'\nIncrease 'ab-L balance (ΔE)'
+TP_LOCALLAB_EXPCOMP_TOOLTIP;For portraits or images with a low color gradient. You can change 'Shape detection' in 'Settings':\n\nIncrease 'ΔE scope threshold'\nReduce 'ΔE decay'\nIncrease 'Luma-chroma balance (ΔE)'
 TP_LOCALLAB_EXPCONTRASTPYR_TOOLTIP;See the documentation for Wavelet Levels.\nThere are some differences in the Selective Editing version, which has more tools and more possibilities for working on individual detail levels.\nE.g. wavelet-level tone mapping.
 TP_LOCALLAB_EXPCONTRAST_TOOLTIP;Avoid spots that are too small ( < 32x32 pixels).\nUse low 'Transition value' and high 'Transition decay' and 'Scope' to simulate small spots and deal with defects.\nUse 'Clarity and Sharp mask and Blend and Soften Images' if necessary by adjusting 'Soft radius' to reduce artifacts.
 TP_LOCALLAB_EXPCURV;Curves
