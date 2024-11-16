@@ -247,6 +247,7 @@ void Locallab::read(const rtengine::procparams::ProcParams* pp, const ParamsEdit
 
     // Update Locallab activation state
     setEnabled(pp->locallab.enabled);
+    const int showsettings = options.complexity;
 
     // Transmit Locallab activation state to Locallab tools
     for (auto tool : locallabTools) {
@@ -266,6 +267,7 @@ void Locallab::read(const rtengine::procparams::ProcParams* pp, const ParamsEdit
     ControlSpotPanel::SpotRow r;
 
     for (int i = 0; i < (int)pp->locallab.spots.size(); i++) {
+       
         r.name = pp->locallab.spots.at(i).name;
         r.isvisible = pp->locallab.spots.at(i).isvisible;
 
@@ -331,15 +333,27 @@ void Locallab::read(const rtengine::procparams::ProcParams* pp, const ParamsEdit
         }
 
         r.transit = pp->locallab.spots.at(i).transit;
-        r.transitweak = pp->locallab.spots.at(i).transitweak;
-        r.transitgrad = pp->locallab.spots.at(i).transitgrad;
+        if(showsettings != 2) {
+            r.transitweak = pp->locallab.spots.at(i).transitweak;
+            r.transitgrad = pp->locallab.spots.at(i).transitgrad;
+        } else {
+            r.transitweak = 1.;
+            r.transitgrad = 0.;
+        }
         r.feather = pp->locallab.spots.at(i).feather;
         r.struc = pp->locallab.spots.at(i).struc;
         r.thresh = pp->locallab.spots.at(i).thresh;
-        r.iter = pp->locallab.spots.at(i).iter;
-        r.balan = pp->locallab.spots.at(i).balan;
-        r.balanh = pp->locallab.spots.at(i).balanh;
-        r.colorde = pp->locallab.spots.at(i).colorde;
+        if(showsettings != 2) {
+            r.iter = pp->locallab.spots.at(i).iter;
+            r.balan = pp->locallab.spots.at(i).balan;
+            r.balanh = pp->locallab.spots.at(i).balanh;
+            r.colorde = pp->locallab.spots.at(i).colorde;
+        } else {
+            r.balan = 1.;
+            r.balanh = 1.;
+            r.iter = 2.;
+            r.colorde = 5;
+        }
         r.colorscope = pp->locallab.spots.at(i).colorscope;
         r.avoidrad = pp->locallab.spots.at(i).avoidrad;
         r.hishow = pp->locallab.spots.at(i).hishow;

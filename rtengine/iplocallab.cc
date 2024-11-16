@@ -828,10 +828,10 @@ float calclightinv(float lum, float koef, const LUTf &lightCurveloc)
 
 float balancedeltaE(float kL)
 {
-    constexpr float mincurs = 0.3f; // minimum slider balan_
-    constexpr float maxcurs = 1.7f; // maximum slider balan_
-    constexpr float maxkab = 1.35; // 0.5 * (3 - 0.3)
-    constexpr float minkab = 0.65; // 0.5 * (3 - 1.7)
+    constexpr float mincurs = 0.05f; //0.3f; // minimum slider balan_
+    constexpr float maxcurs = 2.5f; //1.7f; // maximum slider balan_
+    constexpr float maxkab = 1.475f; //1.35; // 0.5 * (3 - 0.3)
+    constexpr float minkab = 0.25f; //0.65; // 0.5 * (3 - 1.7)
     constexpr float abal = (maxkab - minkab) / (mincurs - maxcurs);
     constexpr float bbal = maxkab - mincurs * abal;
     return abal * kL + bbal;
@@ -17641,7 +17641,7 @@ void ImProcFunctions::Lab_Local(
                         if(smoth) {//Highlight attenuation in function of HP - protect highlight
                             tone_eqsmooth(this, tmpImage, lp, params->icm.workingProfile, sk, multiThread);//reduce Ev > 0 < 12
                         }
-                        if(MID != 0.f) {
+                        if(MID != 0.f) {//midtones with tone_equ
                             ImProcFunctions::tone_eqcam(this, tmpImage, MID, params->icm.workingProfile, sk, multiThread);
                         }
  
@@ -17669,7 +17669,7 @@ void ImProcFunctions::Lab_Local(
                         }
                         float rad = kmod * params->locallab.spots.at(sp).ghs_LC;
                         float stren = 15.f * (1.f + D);//take into account D stretch
-                        loccont(bfw, bfh, bufexpfin.get(), rad, stren , sk);                        
+                        loccont(bfw, bfh, bufexpfin.get(), rad, stren , sk); //local contrast in L (Lab) mode.                     
                     }
                 }
                 

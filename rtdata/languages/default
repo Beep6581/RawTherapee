@@ -1971,7 +1971,7 @@ PREFERENCES_CLUTSCACHE;HaldCLUT Cache
 PREFERENCES_CLUTSCACHE_LABEL;Maximum number of cached CLUTs
 PREFERENCES_CLUTSDIR;HaldCLUT directory
 PREFERENCES_CMMBPC;Black point compensation
-PREFERENCES_COMPLEXITYLOC;Default complexity for Selective Editing
+PREFERENCES_COMPLEXITYLOC;Default complexity for Selective Editing & Settings
 PREFERENCES_COMPLEXITY_EXP;Advanced
 PREFERENCES_COMPLEXITY_NORM;Standard
 PREFERENCES_COMPLEXITY_SIMP;Basic
@@ -2916,7 +2916,8 @@ TP_LOCALLAB_ACTIV;Luminance only
 TP_LOCALLAB_ACTIVSPOT;Enable Spot
 TP_LOCALLAB_ADJ;Equalizer Color
 TP_LOCALLAB_AMOUNT;Amount
-TP_LOCALLAB_ARTIF;Shape detection
+//TP_LOCALLAB_ARTIF;Shape detection
+TP_LOCALLAB_ARTIF;ΔE Shape detection
 TP_LOCALLAB_ARTIF_TOOLTIP;ΔE scope threshold increases the range of ΔE scope. High values are for very wide gamut images.\nIncreasing ΔE decay can improve shape detection, but can also reduce the scope.
 TP_LOCALLAB_AUTOGRAY;Auto mean luminance (Yb%)
 TP_LOCALLAB_AUTOGRAYCIE;Automatic
@@ -2925,9 +2926,13 @@ TP_LOCALLAB_AVOIDCOLORSHIFT_TOOLTIP;Fit colors into gamut of the working color s
 TP_LOCALLAB_AVOIDMUN;Munsell correction only
 TP_LOCALLAB_AVOIDMUN_TOOLTIP;Munsell correction always disabled when Jz or CAM16 is used.
 TP_LOCALLAB_AVOIDRAD;Soft radius
-TP_LOCALLAB_BALAN;ab-L balance (ΔE)
+//TP_LOCALLAB_BALAN;ab-L balance (ΔE)
+TP_LOCALLAB_BALAN;Balance Luma Chroma
+
 TP_LOCALLAB_BALANEXP;Laplacian balance
-TP_LOCALLAB_BALANH;C-H balance (ΔE)
+//TP_LOCALLAB_BALANH;C-H balance (ΔE)
+TP_LOCALLAB_BALANH;Balance Hue Chroma
+
 TP_LOCALLAB_BALAN_TOOLTIP;Changes the ΔE algorithm parameters.\nTakes into account more or less a*b* or L*, or more or less C or H.\nNot for Denoise.
 TP_LOCALLAB_BASELOG;Shadows range (logarithm base)
 TP_LOCALLAB_BILATERAL;Bilateral filter
@@ -3533,7 +3538,8 @@ TP_LOCALLAB_PREVHIDE;Hide additional settings
 TP_LOCALLAB_PREVIEW;Preview ΔE
 TP_LOCALLAB_PREVSHOW;Show additional settings
 TP_LOCALLAB_PRIMILLFRAME;Primaries & Illuminant
-TP_LOCALLAB_PROXI;ΔE decay
+//TP_LOCALLAB_PROXI;ΔE decay
+TP_LOCALLAB_PROXI;Decay
 TP_LOCALLAB_QUAAGRES;Aggressive
 TP_LOCALLAB_QUACONSER;Conservative
 TP_LOCALLAB_QUALCURV_METHOD;Curve type
@@ -3721,7 +3727,8 @@ TP_LOCALLAB_SYMSL;Symmetrical (mouse + sliders)
 TP_LOCALLAB_TARGET_GRAY;Mean luminance (Yb%)
 TP_LOCALLAB_TE_PIVOT;Pivot (Ev)
 TP_LOCALLAB_THRES;Threshold structure
-TP_LOCALLAB_THRESDELTAE;ΔE scope threshold
+//TP_LOCALLAB_THRESDELTAE;ΔE scope threshold
+TP_LOCALLAB_THRESDELTAE;Range
 TP_LOCALLAB_THRESRETI;Threshold
 TP_LOCALLAB_THRESWAV;Balance threshold
 TP_LOCALLAB_TLABEL;TM Min=%1 Max=%2 Mean=%3 Sig=%4
@@ -3740,10 +3747,13 @@ TP_LOCALLAB_TOOLMASK;Mask Tools
 TP_LOCALLAB_TOOLMASK_2;Wavelets
 TP_LOCALLAB_TOOLMASK_TOOLTIP;Structure mask (slider) with the checkbox 'Structure mask as tool' checked: in this case a mask showing the structure will be generated after one or more of the 2 curves L(L) or LC(H) has been modified.\n Here, the 'Structure mask' behaves like the other Mask tools : Gamma, Slope, etc.\n It allows you to vary the action on the mask according to the structure of the image.
 TP_LOCALLAB_TRANSIT;Transition Gradient
-TP_LOCALLAB_TRANSITGRAD;Transition differentiation XY
+//TP_LOCALLAB_TRANSITGRAD;Transition differentiation XY
+TP_LOCALLAB_TRANSITGRAD;Symmetry X & Y
 TP_LOCALLAB_TRANSITGRAD_TOOLTIP;Allows you to vary the y-axis transition.
-TP_LOCALLAB_TRANSITVALUE;Transition value
-TP_LOCALLAB_TRANSITWEAK;Transition decay (linear-log)
+//TP_LOCALLAB_TRANSITVALUE;Transition value
+TP_LOCALLAB_TRANSITVALUE;Value
+//TP_LOCALLAB_TRANSITWEAK;Transition decay (linear-log)
+TP_LOCALLAB_TRANSITWEAK;Decay (linear-log)
 TP_LOCALLAB_TRANSITWEAK_TOOLTIP;Adjust transition decay function: 1 linear , 2 parabolic, 3 cubic up to ^25.\nCan be used in conjunction with very low transition values to reduce defects (CBDL, Wavelets, Color &amp; Light).
 TP_LOCALLAB_TRANSIT_TOOLTIP;Adjust smoothness of transition between affected and unaffected areas as a percentage of the 'radius'.
 TP_LOCALLAB_TRANSMISSIONGAIN;Transmission gain

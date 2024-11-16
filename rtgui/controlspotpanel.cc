@@ -119,6 +119,8 @@ ControlSpotPanel::ControlSpotPanel():
     auto m = ProcEventMapper::getInstance();
     EvLocallabavoidgamutMethod = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_GAMUTMUNSEL");
     const bool showtooltip = options.showtooltip;
+    const int showsettings = options.complexity;
+
 //    pack_start(*hishow_);
 
     Gtk::Box* const ctboxprevmethod = Gtk::manage(new Gtk::Box());
@@ -263,7 +265,9 @@ ControlSpotPanel::ControlSpotPanel():
     structexclu_->setLogScale(10, 0);
 
     excluBox->pack_start(*sensiexclu_);
-    excluBox->pack_start(*structexclu_);
+    if(showsettings == 0) {
+        excluBox->pack_start(*structexclu_);
+    }
     excluFrame->add(*excluBox);
     pack_start(*excluFrame);
 
@@ -349,8 +353,10 @@ ControlSpotPanel::ControlSpotPanel():
     scopemask_->setAdjusterListener(this);
     denoichmask_->setAdjusterListener(this);
     transitBox->pack_start(*transit_);
-    transitBox->pack_start(*transitweak_);
-    transitBox->pack_start(*transitgrad_);
+    if(showsettings != 2) {
+        transitBox->pack_start(*transitweak_);
+        transitBox->pack_start(*transitgrad_);
+    }
     //transitBox->pack_start(*feather_);
     expTransGrad_->add(*transitBox, false);
     pack_start(*expTransGrad_, false, false);
@@ -384,17 +390,21 @@ ControlSpotPanel::ControlSpotPanel():
 
 //    artifBox->pack_start(*struc_);
     artifBox->pack_start(*thresh_);
-    artifBox->pack_start(*iter_);
-    artifBox->pack_start(*balan_);
-    artifBox->pack_start(*balanh_);
-    artifBox->pack_start(*colorde_);
+    if(showsettings != 2) {
+        artifBox->pack_start(*iter_);
+        artifBox->pack_start(*balan_);
+        artifBox->pack_start(*balanh_);
+        artifBox->pack_start(*colorde_);
 //    artifBox->pack_start(*preview_);
 //    artifBox->pack_start(*colorscope_);
-    expShapeDetect_->add(*artifBox, false);
-    pack_start(*expShapeDetect_, false, false);
+    }
+        expShapeDetect_->add(*artifBox, false);
+        pack_start(*expShapeDetect_, false, false);
 //    ToolParamBlock* const artifBox2 = Gtk::manage(new ToolParamBlock());
 
-    artifBox2->pack_start(*preview_);
+    if(showsettings != 2) {
+        artifBox2->pack_start(*preview_);
+    }
     artifBox2->pack_start(*colorscope_);//unused with contrlspotpanel since 17 / 01 : 2024 but data used in color, vibrance, sh
     colorscope_->hide();
     pack_start(*artifBox2);
@@ -833,6 +843,7 @@ void ControlSpotPanel::load_ControlSpot_param()
 
     // Get selected control spot
     const auto s = treeview_->get_selection();
+    const int showsettings = options.complexity;
 
     if (!s->count_selected_rows()) {
         return;
@@ -859,13 +870,26 @@ void ControlSpotPanel::load_ControlSpot_param()
     transit_->setValue((double)row[spots_.transit]);
     transitweak_->setValue((double)row[spots_.transitweak]);
     transitgrad_->setValue((double)row[spots_.transitgrad]);
+    if(showsettings != 2) {
+        transitweak_->setValue(1.);
+        transitgrad_->setValue(0.);
+    }
     feather_->setValue((double)row[spots_.feather]);
     struc_->setValue((double)row[spots_.struc]);
     thresh_->setValue((double)row[spots_.thresh]);
-    iter_->setValue((double)row[spots_.iter]);
+
+    iter_->setValue((double)row[spots_.iter]);    
     balan_->setValue((double)row[spots_.balan]);
     balanh_->setValue((double)row[spots_.balanh]);
     colorde_->setValue((double)row[spots_.colorde]);
+
+    if(showsettings != 2) {
+        iter_->setValue(2.);
+        balan_->setValue(1.);
+        balanh_->setValue(1.);
+        colorde_->setValue(5.);
+    }
+    
     colorscope_->setValue((double)row[spots_.colorscope]);
     avoidrad_->setValue((double)row[spots_.avoidrad]);
     hishow_->set_active(row[spots_.hishow]);
