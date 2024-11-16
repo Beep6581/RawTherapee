@@ -3915,6 +3915,7 @@ void ImProcFunctions::ciecamloc_02float(struct local_params& lp, int sp, LabImag
 #endif
             // adap maximum level wavelet to size of RT-spot
             int wavelet_level = 1 + params->locallab.spots.at(sp).csthresholdjz.getBottomRight();//retrieve with +1 maximum wavelet_level
+            wavelet_level = rtengine::max(5, wavelet_level);
             int minwin = rtengine::min(width, height);
             int maxlevelspot = 9;//maximum possible
 
@@ -17469,6 +17470,7 @@ void ImProcFunctions::Lab_Local(
                     }
                 } else if (lp.locmet == 1) { //wavelet && sk ==1
                     int wavelet_level = 1 + params->locallab.spots.at(sp).csthreshold.getBottomRight();//retrieve with +1 maximum wavelet_level
+                    wavelet_level = rtengine::max(5, wavelet_level);
                     float mL = params->locallab.spots.at(sp).clarilres / 100.0;
                     float mC = params->locallab.spots.at(sp).claricres / 100.0;
                     float softr = params->locallab.spots.at(sp).clarisoft;
