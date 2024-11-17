@@ -640,6 +640,7 @@ struct local_params {
     int showmasklogmet;
     int showmask_met;
     int showmaskciemet;
+    bool processwa;
     bool fftbl;
     float laplacexp;
     float balanexp;
@@ -995,6 +996,7 @@ static void calcLocalParams(int sp, int oW, int oH, const LocallabParams& locall
     lp.showmasklogmet = lllogMask;
     lp.showmask_met = ll_Mask;
     lp.showmaskciemet = llcieMask;
+    lp.processwa = locallab.spots.at(sp).processwav;
     lp.fftcieMask = locallab.spots.at(sp).fftcieMask;
     lp.islogcie = locallab.spots.at(sp).logcie && locallab.spots.at(sp).expprecam;
     lp.issmoothcie = locallab.spots.at(sp).smoothcie;
@@ -9255,7 +9257,7 @@ void ImProcFunctions::transit_shapedetect2(int sp, float meantm, float stdtm, in
     const bool colshow = ((lp.showmaskcolmet == 1 || lp.showmaskcolmet == 2) &&  senstype == 0);
     const bool SHshow = ((lp.showmaskSHmet == 1 || lp.showmaskSHmet == 2) &&  senstype == 9);
     const bool tmshow = ((lp.showmasktmmet == 1 || lp.showmasktmmet == 2) &&  senstype == 8);
-    const bool lcshow = ((lp.showmasklcmet == 1 || lp.showmasklcmet == 2) &&  senstype == 10);
+    const bool lcshow = ((lp.showmasklcmet == 1 || lp.showmasklcmet == 2 || lp.processwa) &&  senstype == 10);
     const bool origshow = ((lp.showmasksoftmet == 5) &&  senstype == 3 && lp.softmet == 1);
     const bool logshow = ((lp.showmasklogmet == 1 || lp.showmasklogmet == 2) &&  senstype == 11);
     const bool cieshow = ((lp.showmaskciemet == 1 || lp.showmaskciemet == 2) &&  senstype == 31);

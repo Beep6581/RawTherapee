@@ -2530,6 +2530,7 @@ LocallabContrast::LocallabContrast():
     LocalcurveEditorwav(new CurveEditorGroup(options.lastlocalCurvesDir, M("TP_LOCALLAB_WAV"))),
     wavshape(static_cast<FlatCurveEditor*>(LocalcurveEditorwav->addCurve(CT_Flat, "", nullptr, false, false))),
     csThreshold(Gtk::manage(new ThresholdAdjuster(M("TP_LOCALLAB_CSTHRESHOLD"), 0, 9, 0, 0, 7, 5, 0, false))),
+    processwav(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_PROCESSWAV")))),
     levelwav(Gtk::manage(new Adjuster(M("TP_LOCALLAB_LEVELWAV"), 1, 9, 1, 4))),
     expresidpyr(Gtk::manage(new MyExpander(false, Gtk::manage(new Gtk::Box())))),
     residcont(Gtk::manage(new Adjuster(M("TP_LOCALLAB_RESIDCONT"), -100, 100, 1, 0))),
@@ -2625,6 +2626,8 @@ LocallabContrast::LocallabContrast():
     Evlocallabpreviewlc = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_PREVIEWLC");
     Evlocallabfeatherwav = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_FEATHERWAV");
     Evlocallaboffslc = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_OFFSETWAV");
+
+    Evlocallabprocesswav = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_PROCESSWAV");
     
     set_orientation(Gtk::ORIENTATION_VERTICAL);
 
@@ -2703,6 +2706,7 @@ LocallabContrast::LocallabContrast():
     clarisoft->setAdjusterListener(this);
 
     origlcConn = origlc->signal_toggled().connect(sigc::mem_fun(*this, &LocallabContrast::origlcChanged));
+    processwavConn = processwav->signal_toggled().connect(sigc::mem_fun(*this, &LocallabContrast::processwavChanged));
 
     Gtk::Box *TittleVBox;
     TittleVBox = Gtk::manage(new Gtk::Box(Gtk::ORIENTATION_VERTICAL));
@@ -2931,6 +2935,7 @@ LocallabContrast::LocallabContrast():
     pack_start(*lcdarkness);
     pack_start(*lclightness);
     pack_start(*csThreshold);
+    pack_start(*processwav);
     ToolParamBlock* const coBox = Gtk::manage(new ToolParamBlock());
     coBox->pack_start(*sigmalc);
     coBox->pack_start(*offslc);
@@ -3347,6 +3352,7 @@ void LocallabContrast::disableListener()
 
     localcontMethodConn.block(true);
     origlcConn.block(true);
+    processwavConn.block(true);
     wavgradlConn.block(true);
     wavedgConn.block(true);
     localedgMethodConn.block(true);
@@ -3368,6 +3374,7 @@ void LocallabContrast::enableListener()
 
     localcontMethodConn.block(false);
     origlcConn.block(false);
+    processwavConn.block(false);
     wavgradlConn.block(false);
     wavedgConn.block(false);
     localedgMethodConn.block(false);
@@ -3432,6 +3439,7 @@ void LocallabContrast::read(const rtengine::procparams::ProcParams* pp, const Pa
         claricres->setValue(spot.claricres);
         clarisoft->setValue(spot.clarisoft);
         origlc->set_active(spot.origlc);
+        processwav->set_active(spot.processwav);
         wavgradl->set_active(spot.wavgradl);
         sigmalc2->setValue(spot.sigmalc2);
         strwav->setValue(spot.strwav);
@@ -3559,6 +3567,7 @@ void LocallabContrast::write(rtengine::procparams::ProcParams* pp, ParamsEdited*
         spot.claricres = claricres->getValue();
         spot.clarisoft = clarisoft->getValue();
         spot.origlc = origlc->get_active();
+        spot.processwav = processwav->get_active();
         spot.wavgradl = wavgradl->get_active();
         spot.sigmalc2 = sigmalc2->getValue();
         spot.strwav = strwav->getValue();
@@ -4197,6 +4206,7 @@ void LocallabContrast::convertParamToNormal()
 
     // Set hidden GUI widgets in Normal mode to default spot values
     origlc->set_active(defSpot.origlc);
+    processwav->set_active(defSpot.processwav);
     wavgradl->set_active(defSpot.wavgradl);
     sigmalc2->setValue(defSpot.sigmalc2);
     strwav->setValue(defSpot.strwav);
@@ -4425,6 +4435,22 @@ void LocallabContrast::origlcChanged()
         }
     }
 }
+
+void LocallabContrast::processwavChanged()
+{
+    if (isLocActivated && exp->getEnabled()) {
+        if (listener) {
+            if (processwav->get_active()) {
+                listener->panelChanged(Evlocallabprocesswav,
+                                       M("GENERAL_ENABLED") + " (" + escapeHtmlChars(getSpotName()) + ")");
+            } else {
+                listener->panelChanged(Evlocallabprocesswav,
+                                       M("GENERAL_DISABLED") + " (" + escapeHtmlChars(getSpotName()) + ")");
+            }
+        }
+    }
+}
+
 
 void LocallabContrast::wavgradlChanged()
 {

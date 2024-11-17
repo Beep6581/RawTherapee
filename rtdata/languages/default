@@ -1555,6 +1555,7 @@ HISTORY_MSG_LOCAL_LOG_BLACKS;Local - Log Blacks distribution
 HISTORY_MSG_LOCAL_LOG_COMPR;Local - Log Compress brightness
 HISTORY_MSG_LOCAL_LOG_SAT;Local - Log Saturation control
 HISTORY_MSG_LOCAL_LOG_WHITES;Local - Log Whites distribution
+HISTORY_MSG_LOCAL_PROCESSWAV;Local - Wavelets - Show modifications
 HISTORY_MSG_LOCAL_TMO_SATUR;Local Exp Fattal Saturation
 HISTORY_MSG_METADATA_MODE;Metadata copy mode
 HISTORY_MSG_MICROCONTRAST_CONTRAST;Microcontrast - Contrast threshold
@@ -2282,6 +2283,7 @@ SORT_DESCENDING;Descending
 TC_LOCALLAB_PRIM_SHIFTX;Shift x
 TC_LOCALLAB_PRIM_SHIFTX_TOOLTIP;In combination with "Refine colors", allows you to:\n 1) for low values, adjust the image purity.\n 2) for higher values, carry out moderate color toning.\nBe careful not to go outside the CIE xy diagram.
 TC_LOCALLAB_PRIM_SHIFTY;Shift y
+TP_LOCALLAB_PROCESSWAV;Show modified areas with Wavelets
 TC_PRIM_BLUX;Bx
 TC_PRIM_BLUY;By
 TC_PRIM_GREX;Gx

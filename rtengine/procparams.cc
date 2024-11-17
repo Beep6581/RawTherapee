@@ -4083,6 +4083,7 @@ LocallabParams::LocallabSpot::LocallabSpot() :
     wavgradl(false),
     wavcompre(false),
     origlc(false),
+    processwav(false),
     localcontMethod("wav"),
     localedgMethod("thr"),
     localneiMethod("low"),
@@ -5427,6 +5428,7 @@ bool LocallabParams::LocallabSpot::operator ==(const LocallabSpot& other) const
         && wavgradl == other.wavgradl
         && wavcompre == other.wavcompre
         && origlc == other.origlc
+        && processwav == other.processwav
         && localcontMethod == other.localcontMethod
         && localedgMethod == other.localedgMethod
         && localneiMethod == other.localneiMethod
@@ -7416,6 +7418,7 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
                     saveToKeyfile(!pedited || spot_edited->wavgradl, "Locallab", "Wavgradl_" + index_str, spot.wavgradl, keyFile);
                     saveToKeyfile(!pedited || spot_edited->wavcompre, "Locallab", "Wavcompre_" + index_str, spot.wavcompre, keyFile);
                     saveToKeyfile(!pedited || spot_edited->origlc, "Locallab", "Origlc_" + index_str, spot.origlc, keyFile);
+                    saveToKeyfile(!pedited || spot_edited->processwav, "Locallab", "processwav_" + index_str, spot.processwav, keyFile);
                     saveToKeyfile(!pedited || spot_edited->localcontMethod, "Locallab", "localcontMethod_" + index_str, spot.localcontMethod, keyFile);
                     saveToKeyfile(!pedited || spot_edited->localedgMethod, "Locallab", "localedgMethod_" + index_str, spot.localedgMethod, keyFile);
                     saveToKeyfile(!pedited || spot_edited->localneiMethod, "Locallab", "localneiMethod_" + index_str, spot.localneiMethod, keyFile);
@@ -9862,6 +9865,7 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
                 assignFromKeyfile(keyFile, "Locallab", "Wavgradl_" + index_str, spot.wavgradl, spotEdited.wavgradl);
                 assignFromKeyfile(keyFile, "Locallab", "Wavcompre_" + index_str, spot.wavcompre, spotEdited.wavcompre);
                 assignFromKeyfile(keyFile, "Locallab", "Origlc_" + index_str, spot.origlc, spotEdited.origlc);
+                assignFromKeyfile(keyFile, "Locallab", "processwav_" + index_str, spot.processwav, spotEdited.processwav);
                 assignFromKeyfile(keyFile, "Locallab", "localcontMethod_" + index_str, spot.localcontMethod, spotEdited.localcontMethod);
                 assignFromKeyfile(keyFile, "Locallab", "localedgMethod_" + index_str, spot.localedgMethod, spotEdited.localedgMethod);
                 assignFromKeyfile(keyFile, "Locallab", "localneiMethod_" + index_str, spot.localneiMethod, spotEdited.localneiMethod);

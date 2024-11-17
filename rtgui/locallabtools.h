@@ -1241,6 +1241,8 @@ private:
     CurveEditorGroup* const LocalcurveEditorwav;
     FlatCurveEditor* const wavshape;
     ThresholdAdjuster* const csThreshold;
+    Gtk::CheckButton* const processwav;
+    
     Adjuster* const levelwav;
     MyExpander* const expresidpyr;
     Adjuster* const residcont;
@@ -1331,7 +1333,8 @@ private:
     CurveEditorGroup* const mask2lcCurveEditorG;
     DiagonalCurveEditor* const Lmasklcshape;
 
-    sigc::connection localcontMethodConn, previewlcConn, origlcConn, wavgradlConn, wavedgConn, localedgMethodConn, waveshowConn, localneiMethodConn, wavblurConn, blurlcConn, wavcontConn, wavcompreConn, wavcompConn, fftwlcConn, showmasklcMethodConn, enalcMaskConn;
+    sigc::connection localcontMethodConn, previewlcConn, origlcConn, processwavConn, wavgradlConn, wavedgConn, localedgMethodConn, waveshowConn, localneiMethodConn, wavblurConn, blurlcConn, wavcontConn, wavcompreConn, wavcompConn, fftwlcConn, showmasklcMethodConn, enalcMaskConn;
+    rtengine::ProcEvent Evlocallabprocesswav;
 
 public:
     LocallabContrast();
@@ -1372,6 +1375,7 @@ private:
 
     void localcontMethodChanged();
     void origlcChanged();
+    void processwavChanged();
     void wavgradlChanged();
     void wavedgChanged();
     void localedgMethodChanged();
