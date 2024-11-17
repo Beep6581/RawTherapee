@@ -3234,7 +3234,7 @@ void LocallabContrast::updateAdviceTooltips(const bool showTooltips)
         wavshapecomp->setTooltip(M("TP_LOCALLAB_WAT_WAVDELTABAL_TOOLTIP"));
         threswav->set_tooltip_text(M("TP_LOCALLAB_WAT_BALTHRES_TOOLTIP"));
         residcomp->set_tooltip_text(M("TP_LOCALLAB_WAT_RESIDCOMP_TOOLTIP"));
-
+        processwav->set_tooltip_text(M("TP_LOCALLAB_PROCESSWAV_TOOLTIP"));
 
         expresidpyr->set_tooltip_text(M("TP_LOCALLAB_WAT_EXPRESID_TOOLTIP"));
         expcontrastpyr->set_tooltip_text(M("TP_LOCALLAB_EXPCONTRASTPYR_TOOLTIP"));
@@ -3333,6 +3333,7 @@ void LocallabContrast::updateAdviceTooltips(const bool showTooltips)
         decayw->set_tooltip_text("");
         lowthresw->set_tooltip_text("");
         higthresw->set_tooltip_text("");
+        processwav->set_tooltip_text("");
 
     }
 }
