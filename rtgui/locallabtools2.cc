@@ -433,9 +433,6 @@ void LocallabTone::updateguitone(int spottype)
                 enatmMask->set_active(false);
                 enatmMaskaft->set_active(false);
                 
-             //   showmasktmMethodConn.block(true);
-                showmasktmMethod->set_active(0);
-             //   showmasktmMethodConn.block(false);
                 previewtm->hide();
              //   previewtmConn.block(true);
                 previewtm->set_active(false);
@@ -450,7 +447,10 @@ void LocallabTone::updateguitone(int spottype)
                 
            }
             enableListener();
-
+            
+            if(spottype == 3) {
+                showmasktmMethodChanged();
+            }
         return false;
         }
         );
@@ -1201,6 +1201,7 @@ void LocallabRetinex::updateguireti(int spottype)
                 expmaskreti->hide();
                 enaretiMask->set_active(false);
                 enaretiMasktmap->set_active(false);
+                resetMaskView();
             } else {
                 sensih->show();
                 exprecovr->show();
@@ -1208,7 +1209,9 @@ void LocallabRetinex::updateguireti(int spottype)
                 updateGUIToMode(static_cast<modeType>(complexity->get_active_row_number()));
             }
             enableListener();
-
+            if(spottype == 3) {
+                showmaskretiMethodChanged();                
+            }
         return false;
         }
         );
@@ -3135,11 +3138,11 @@ void LocallabContrast::updateguicont(int spottype)
             GThreadLock lock; // All GUI access from idle_add callbacks or separate thread HAVE to be protected
 
             // Update GUI fullimage or main
+
             disableListener();
 
             if(spottype == 3) {
                 sensilc->hide();
-                showmasklcMethod->set_active(0);
                 previewlc->hide();
                 previewlc->set_active(false);
                 resetMaskView();
@@ -3154,7 +3157,10 @@ void LocallabContrast::updateguicont(int spottype)
                 updateGUIToMode(static_cast<modeType>(complexity->get_active_row_number()));
             }
             enableListener();
-
+            if(spottype == 3) {
+                showmasklcMethodChanged();                
+            }
+            
         return false;
         }
         );
@@ -4925,6 +4931,7 @@ void LocallabCBDL::updateguicbdl(int spottype)
                 exprecovcb->hide();
                 expmaskcb->hide();
                 enacbMask->set_active(false);
+                resetMaskView();
             } else {
                 exprecovcb->show();
                 expmaskcb->show();
@@ -4932,7 +4939,10 @@ void LocallabCBDL::updateguicbdl(int spottype)
                 updateGUIToMode(static_cast<modeType>(complexity->get_active_row_number()));
             }
             enableListener();
-
+            if(spottype == 3) {           
+                showmaskcbMethodChanged();
+            }
+            
         return false;
         }
         );
@@ -5902,7 +5912,10 @@ void LocallabLog::updateguilog(int spottype)
                 updateGUIToMode(static_cast<modeType>(complexity->get_active_row_number()));
             }
             enableListener();
-
+            if(spottype == 3) {
+                showmaskLMethodChanged();
+            }
+            
         return false;
         }
         );
@@ -7332,6 +7345,10 @@ void LocallabMask::updateguimask(int spottype)
                 
            }
             enableListener();
+            if(spottype == 3) {
+                showmask_MethodChanged();
+            }
+            
 
         return false;
         }
@@ -9272,6 +9289,9 @@ void Locallabcie::updateguicie(int spottype)
                 updateGUIToMode(static_cast<modeType>(complexity->get_active_row_number()));
            }
             enableListener();
+            if(spottype == 3) {
+                showmaskcieMethodChanged();                
+            }
 
         return false;
         }

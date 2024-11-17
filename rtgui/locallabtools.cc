@@ -1039,7 +1039,10 @@ void LocallabColor::updateguicolor(int spottype)
 
             }
             enableListener();
-
+            if(spottype == 3) {        
+                showmaskcolMethodChanged();
+                showmaskcolMethodChangedinv();
+            }
         return false;
         }
         );
@@ -3055,6 +3058,10 @@ void LocallabExposure::updateguiexpos(int spottype)
                 updateGUIToMode(static_cast<modeType>(complexity->get_active_row_number()));
             }
             enableListener();
+            if(spottype == 3) {
+                showmaskexpMethodChanged();
+                showmaskexpMethodChangedinv();
+            }
 
         return false;
         }
@@ -4591,6 +4598,10 @@ void LocallabShadow::updateguishad(int spottype)
                 
             }
             enableListener();
+            if(spottype == 3) {
+                showmaskSHMethodChanged();
+                showmaskSHMethodChangedinv();                
+            }
 
         return false;
         }
@@ -5770,6 +5781,11 @@ void LocallabVibrance::updateguivib(int spottype)
 
             }
             enableListener();
+            if(spottype == 3) {
+                showmaskvibMethodChanged();               
+            }
+            
+            
 
         return false;
         }
@@ -7564,6 +7580,7 @@ void LocallabBlur::updateguiblur(int spottype)
                 invbl->hide();
                 expmaskbl->hide();
                 enablMask->set_active(false);
+                resetMaskView();
             } else {
                 sensibn->show();
                 sensiden->show();
@@ -7573,6 +7590,9 @@ void LocallabBlur::updateguiblur(int spottype)
 
             }
             enableListener();
+            if(spottype == 3) {
+                showmaskblMethodChanged();                                
+            }
 
         return false;
         }
