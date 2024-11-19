@@ -310,6 +310,7 @@ protected:
     void    vflip       (Imagefloat* im);
     void getRawValues(int x, int y, int rotate, int &R, int &G, int &B) override;
     void captureSharpening(const procparams::CaptureSharpeningParams &sharpeningParams, bool showMask, double &conrastThreshold, double &radius) override;
+    bool getDeconvAutoRadius(float *out=nullptr) override;
     void getMinValsXtrans();
     void getMinValsBayer(bool zeroIsBad);
     void applyDngGainMap(const float black[4], const std::vector<GainMap> &gainMaps);

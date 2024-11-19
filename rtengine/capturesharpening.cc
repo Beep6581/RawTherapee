@@ -1175,4 +1175,53 @@ BENCHFUN
     rgbSourceModified = false;
 }
 
+bool RawImageSource::getDeconvAutoRadius(float *out)
+{
+    const float clipVal = (ri->get_white(1) - ri->get_cblack(1)) * scale_mul[1];
+    if (ri->getSensorType() == ST_BAYER) {
+        if (!out) {
+            return true; // only check whether this is supported
+        }
+        const unsigned int fc[2] = {FC(0,0), FC(1,0)};
+        *out = calcRadiusBayer(rawData, W, H, 1000.f, clipVal, fc);
+        return true;
+    } else if (ri->getSensorType() == ST_FUJI_XTRANS) {
+        if (!out) {
+            return true; // only check whether this is supported
+        }
+        bool found = false;
+        int i, j;
+        for (i = 6; i < 12 && !found; ++i) {
+            for (j = 6; j < 12 && !found; ++j) {
+                if (ri->XTRANSFC(i, j) == 1) {
+                    if (ri->XTRANSFC(i, j - 1) != ri->XTRANSFC(i, j + 1)) {
+                        if (ri->XTRANSFC(i - 1, j) != 1) {
+                            if (ri->XTRANSFC(i, j - 1) != 1) {
+                                found = true;
+                                break;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        i-=7;
+        j-=6;
+        // std::cout << "found : " << found << std::endl;
+        // std::cout << "i : " << i << std::endl;
+        // std::cout << "j : " << j << std::endl;
+        
+        *out = calcRadiusXtrans(rawData, W, H, 1000.f, clipVal, i, j);
+        return true;
+    } else if (ri->get_colors() == 1) {
+        if (out) {
+            const unsigned int fc[2] = {0, 0};
+            *out = calcRadiusBayer(rawData, W, H, 1000.f, clipVal, fc);
+        }
+        return true;
+    }
+    return false;
+}
+
+
 } /* namespace */
