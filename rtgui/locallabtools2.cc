@@ -2118,6 +2118,8 @@ LocallabSharp::LocallabSharp():
     LocallabTool(this, M("TP_LOCALLAB_SHARP_TOOLNAME"), M("TP_LOCALLAB_SHARP"), true),
 
     // Sharpening specific widgets
+
+    methodcap(Gtk::manage(new MyComboBoxText())),
     sharcontrast(Gtk::manage(new Adjuster(M("TP_SHARPENING_CONTRAST"), 0, 200, 1, 20))),
     sharblur(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SHARBLUR"), 0.2, 2.0, 0.05, 0.2))),
     shargam(Gtk::manage(new Adjuster(M("TP_LOCALLAB_GAMC"), 0.5, 3.0, 0.05, 1.))),
@@ -2130,7 +2132,17 @@ LocallabSharp::LocallabSharp():
     sharFrame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_SHARFRAME")))),
     showmasksharMethod(Gtk::manage(new MyComboBoxText()))
 {
+    
+    auto m = ProcEventMapper::getInstance();
+    //rtengine::ProcEvent EvlocallabenacieMaskall;
+    Evlocallabmethodcap = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_METHODCAP");
+    
     set_orientation(Gtk::ORIENTATION_VERTICAL);
+
+    methodcap->append (M("TP_SHARPENING_RLN"));
+    methodcap->append (M("TP_SHARPENING_CAP"));
+    methodcap->show ();
+    methodcapConn = methodcap->signal_changed().connect(sigc::mem_fun(*this, &LocallabSharp::methodcapChanged));
 
     // Parameter Sharpening specific widgets
     sharcontrast->setAdjusterListener(this);
@@ -2161,6 +2173,7 @@ LocallabSharp::LocallabSharp():
     // Add Sharpening specific widgets to GUI
     pack_start(*sensisha);
     pack_start(*sharcontrast);
+    pack_start(*methodcap);
     pack_start(*sharblur);
     pack_start(*shargam);
     pack_start(*sharradius);
@@ -2186,6 +2199,7 @@ void LocallabSharp::resetMaskView()
     showmasksharMethodConn.block(true);
     showmasksharMethod->set_active(0);
     showmasksharMethodConn.block(false);
+   
 }
 
 void LocallabSharp::getMaskView(int &colorMask, int &colorMaskinv, int &expMask, int &expMaskinv, int &shMask, int &shMaskinv, int &vibMask, int &softMask, int &blMask, int &tmMask, int &retiMask, int &sharMask, int &lcMask, int &cbMask, int &logMask, int &maskMask, int &cieMask)
@@ -2213,6 +2227,7 @@ void LocallabSharp::disableListener()
 
     inversshaConn.block(true);
     showmasksharMethodConn.block(true);
+    methodcapConn.block(true);
 }
 
 void LocallabSharp::enableListener()
@@ -2221,6 +2236,8 @@ void LocallabSharp::enableListener()
 
     inversshaConn.block(false);
     showmasksharMethodConn.block(false);
+    methodcapConn.block(false);
+
 }
 
 //new function Global
@@ -2264,6 +2281,11 @@ void LocallabSharp::read(const rtengine::procparams::ProcParams* pp, const Param
         exp->set_visible(spot.visisharp);
         exp->setEnabled(spot.expsharp);
         complexity->set_active(spot.complexsharp);
+        if (spot.methodcap == "cap") {
+            methodcap->set_active(0);
+        } else if (spot.methodcap == "rl") {
+            methodcap->set_active(1);
+        }
 
         sharcontrast->setValue((double)spot.sharcontrast);
         sharradius->setValue(spot.sharradius);
@@ -2295,6 +2317,11 @@ void LocallabSharp::write(rtengine::procparams::ProcParams* pp, ParamsEdited* pe
         spot.expsharp = exp->getEnabled();
         spot.visisharp = exp->get_visible();
         spot.complexsharp = complexity->get_active_row_number();
+        if (methodcap->get_active_row_number() == 0) {
+            spot.methodcap = "cap";
+        } else if (methodcap->get_active_row_number() == 1) {
+            spot.methodcap = "rl";
+        }
 
         spot.sharcontrast = sharcontrast->getIntValue();
         spot.sharradius = sharradius->getValue();
@@ -2496,6 +2523,19 @@ void LocallabSharp::inversshaChanged()
         }
     }
 }
+
+void LocallabSharp::methodcapChanged()
+{
+    // If mask preview is activated, deactivate all other tool mask preview
+
+    if (exp->getEnabled()) {
+        if (listener) {
+            listener->panelChanged(Evlocallabmethodcap, "");
+        }
+    }
+}
+
+
 
 void LocallabSharp::showmasksharMethodChanged()
 {

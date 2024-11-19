@@ -1564,6 +1564,7 @@ void ParamsEdited::initFrom(const std::vector<rtengine::procparams::ProcParams>&
                 locallab.spots.at(j).shargam = locallab.spots.at(j).shargam && pSpot.shargam == otherSpot.shargam;
                 locallab.spots.at(j).sensisha = locallab.spots.at(j).sensisha && pSpot.sensisha == otherSpot.sensisha;
                 locallab.spots.at(j).inverssha = locallab.spots.at(j).inverssha && pSpot.inverssha == otherSpot.inverssha;
+                locallab.spots.at(j).methodcap = locallab.spots.at(j).methodcap && pSpot.methodcap == otherSpot.methodcap;
                 // Local Contrast
                 locallab.spots.at(j).visicontrast = locallab.spots.at(j).visicontrast && pSpot.visicontrast == otherSpot.visicontrast;
                 locallab.spots.at(j).expcontrast = locallab.spots.at(j).expcontrast && pSpot.expcontrast == otherSpot.expcontrast;
@@ -5284,6 +5285,11 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
             toEdit.locallab.spots.at(i).inverssha = mods.locallab.spots.at(i).inverssha;
         }
 
+        if (locallab.spots.at(i).methodcap) {
+            toEdit.locallab.spots.at(i).methodcap = mods.locallab.spots.at(i).methodcap;
+        }
+
+
         // Local Contrast
         if (locallab.spots.at(i).visicontrast) {
             toEdit.locallab.spots.at(i).visicontrast   = mods.locallab.spots.at(i).visicontrast;
@@ -8415,6 +8421,7 @@ LocallabParamsEdited::LocallabSpotEdited::LocallabSpotEdited(bool v) :
     shargam(v),
     sensisha(v),
     inverssha(v),
+    methodcap(v),
     // Local Contrast
     visicontrast(v),
     expcontrast(v),
@@ -9178,6 +9185,7 @@ void LocallabParamsEdited::LocallabSpotEdited::set(bool v)
     shargam = v;
     sensisha = v;
     inverssha = v;
+    methodcap = v;
     // Local Contrast
     visicontrast = v;
     expcontrast = v;

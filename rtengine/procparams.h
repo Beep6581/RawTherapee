@@ -1501,6 +1501,8 @@ struct LocallabParams {
         double shargam;
         int sensisha;
         bool inverssha;
+        Glib::ustring methodcap;
+
         // Local Contrast
         bool visicontrast;
         bool expcontrast;

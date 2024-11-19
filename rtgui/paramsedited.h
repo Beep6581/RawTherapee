@@ -836,6 +836,7 @@ public:
         bool shargam;
         bool sensisha;
         bool inverssha;
+        bool methodcap;
         // Local Contrast
         bool visicontrast;
         bool expcontrast;

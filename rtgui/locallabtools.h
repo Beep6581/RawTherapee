@@ -1168,6 +1168,10 @@ class LocallabSharp:
     public LocallabTool
 {
 private:
+    // Adjuster* blur;
+    MyComboBoxText* methodcap;
+
+
     Adjuster* const sharcontrast;
     Adjuster* const sharblur;
     Adjuster* const shargam;
@@ -1180,7 +1184,9 @@ private:
     Gtk::Frame* const sharFrame;
     MyComboBoxText* const showmasksharMethod;
 
-    sigc::connection inversshaConn, showmasksharMethodConn;
+    rtengine::ProcEvent Evlocallabmethodcap;
+
+    sigc::connection inversshaConn, showmasksharMethodConn, methodcapConn;
 
 public:
     LocallabSharp();
@@ -1206,6 +1212,7 @@ private:
     void updateGUIToMode(const modeType new_type) override;
 
     void inversshaChanged();
+    void methodcapChanged();
     void showmasksharMethodChanged();
 };
 

@@ -3990,6 +3990,8 @@ LocallabParams::LocallabSpot::LocallabSpot() :
     shargam(1.0),
     sensisha(40),
     inverssha(false),
+    methodcap("cap"),
+
     // Local Contrast
     visicontrast(false),
     expcontrast(false),
@@ -5321,6 +5323,7 @@ bool LocallabParams::LocallabSpot::operator ==(const LocallabSpot& other) const
         && shargam == other.shargam
         && sensisha == other.sensisha
         && inverssha == other.inverssha
+        && methodcap == other.methodcap
         // Local contrast
         && visicontrast == other.visicontrast
         && expcontrast == other.expcontrast
@@ -7296,6 +7299,7 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
                     saveToKeyfile(!pedited || spot_edited->shargam, "Locallab", "Shargam_" + index_str, spot.shargam, keyFile);
                     saveToKeyfile(!pedited || spot_edited->sensisha, "Locallab", "Sensisha_" + index_str, spot.sensisha, keyFile);
                     saveToKeyfile(!pedited || spot_edited->inverssha, "Locallab", "Inverssha_" + index_str, spot.inverssha, keyFile);
+                    saveToKeyfile(!pedited || spot_edited->methodcap, "Locallab", "methodcap_" + index_str, spot.methodcap, keyFile);
                 }
                 // Local Contrast
                 if ((!pedited || spot_edited->visicontrast) && spot.visicontrast) {
@@ -9710,6 +9714,7 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
                 assignFromKeyfile(keyFile, "Locallab", "Shargam_" + index_str, spot.shargam, spotEdited.shargam);
                 assignFromKeyfile(keyFile, "Locallab", "Sensisha_" + index_str, spot.sensisha, spotEdited.sensisha);
                 assignFromKeyfile(keyFile, "Locallab", "Inverssha_" + index_str, spot.inverssha, spotEdited.inverssha);
+                assignFromKeyfile(keyFile, "Locallab", "methodcap_" + index_str, spot.methodcap, spotEdited.methodcap);
                 // Local Contrast
                 spot.visicontrast = assignFromKeyfile(keyFile, "Locallab", "Expcontrast_" + index_str, spot.expcontrast, spotEdited.expcontrast);
 
