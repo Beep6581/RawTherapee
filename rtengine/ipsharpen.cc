@@ -348,6 +348,95 @@ void ImProcFunctions::deconvsharpeningloc (float** luminance, float** tmp, int W
 
 }
 
+bool ImProcFunctions::doSharpening(Imagefloat *rgb, const procparams::SharpeningParams &sharpenParam, bool showMask)
+{
+  //  class Imagefloat;
+    //const int W = rgb->getWidth();
+    //const int H = rgb->getHeight();
+
+ //   if ((!sharpenParam.enabled) || sharpenParam.amount < 1 || W < 8 || H < 8) {
+ //       return false;
+ //   }
+ /*
+    rgb->setMode(Imagefloat::Mode::RGB, multiThread);
+    array2D<float> Y(ARRAY2D_ALIGNED);
+    TMatrix ws = ICCStore::getInstance()->workingSpaceMatrix(rgb->colorSpace());
+    get_luminance(rgb, Y, ws, multiThread);
+    
+    float s_scale = std::sqrt(scale);
+    float contrast = pow_F(sharpenParam.contrast / 100.f, 1.2f) * s_scale;
+    JaggedArray<float> blend(W, H);
+    buildBlendMask(Y, blend, W, H, contrast, 1.f, false, 2.f / s_scale);
+    
+    if (showMask) {
+        float **r = rgb->r.ptrs;
+        float **g = rgb->g.ptrs;
+        float **b = rgb->b.ptrs;
+#ifdef _OPENMP
+#       pragma omp parallel for if (multiThread)
+#endif
+        for (int i = 0; i < H; ++i) {
+            for (int j = 0; j < W; ++j) {
+                r[i][j] = g[i][j] = b[i][j] = blend[i][j] * 65536.f;
+            }
+        }
+
+        return true;
+    }
+
+    std::unique_ptr<JaggedArray<char>> impulse;
+    if (sharpenParam.method == "rld") {
+        impulse.reset(new JaggedArray<char>(W, H));
+        markImpulse(W, H, Y, *impulse, 2.f);
+    }
+    
+    array2D<float> YY(W, H, Y, ARRAY2D_ALIGNED);
+    
+    if (sharpenParam.method == "rld") {
+        double sigma = sharpenParam.deconvradius / scale;
+        float amount = sharpenParam.deconvamount / 100.f;
+        float delta = sharpenParam.deconvCornerBoost / scale;
+        if (delta > 0.01f) {
+            array2D<float> YY2(W, H, Y, ARRAY2D_ALIGNED);
+            deconvsharpening(YY, blend, *impulse, W, H, sigma, amount, multiThread);
+            deconvsharpening(YY2, blend, *impulse, W, H, sigma + delta, amount, multiThread);
+            int fw = full_width > 0 ? full_width : W;
+            int fh = full_height > 0 ? full_height : H;
+            CornerBoostMask mask(offset_x, offset_y, fw, fh, sharpenParam.deconvCornerLatitude);
+#ifdef _OPENMP
+#           pragma omp parallel for if (multiThread)
+#endif
+            for (int y = 0; y < H; ++y) {
+                for (int x = 0; x < W; ++x) {
+                    float blend = mask(x, y);
+                    YY[y][x] = intp(blend, YY2[y][x], YY[y][x]);
+                }
+            }
+        } else {
+            deconvsharpening(YY, blend, *impulse, W, H, sigma, amount, multiThread);
+        }
+    } else if (sharpenParam.method == "psf") {
+        ImProcData data(params, scale, multiThread);
+        rl_deconvolution_psf(YY, blend, W, H, sharpenParam, data, plistener);
+    } else {
+        unsharp_mask(YY, blend, W, H, sharpenParam, scale, multiThread);
+    }
+    multiply(rgb, YY, Y, multiThread);
+
+*/
+   // return false;
+}
+
+
+
+bool ImProcFunctions::sharpeningrgb(Imagefloat *img)
+{
+   // return doSharpening(img, params->sharpening, show_sharpening_mask);
+}
+
+
+
+
 void ImProcFunctions::sharpening (LabImage* lab, const procparams::SharpeningParams &sharpenParam, bool showMask)
 {
 

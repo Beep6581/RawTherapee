@@ -152,6 +152,7 @@ enum class BlurType {
 };
 
     double lumimul[3];
+    bool show_sharpening_mask;
 
     explicit ImProcFunctions(const procparams::ProcParams* iparams, bool imultiThread = true)
         : monitorTransform(nullptr), params(iparams), scale(1), multiThread(imultiThread), lumimul{} {}
@@ -211,6 +212,10 @@ enum class BlurType {
     void softproc(const LabImage* bufcolorig, const LabImage* bufcolfin, float rad, int bfh, int bfw, float epsilmax, float epsilmin, float thres, int sk, bool multiThread, int flag);
 //    void colorCurve       (LabImage* lold, LabImage* lnew);
     void sharpening(LabImage* lab, const procparams::SharpeningParams &sharpenParam, bool showMask = false);
+
+    bool doSharpening(Imagefloat *rgb, const procparams::SharpeningParams &sharpenParam, bool showMask);
+    bool sharpeningrgb(Imagefloat *img);
+
     void sharpeningcam(CieImage* ncie, float** buffer, bool showMask = false);
     void transform(Imagefloat* original, Imagefloat* transformed, int cx, int cy, int sx, int sy, int oW, int oH, int fW, int fH, const FramesMetaData *metadata, int rawRotationDeg, bool fullImage, bool useOriginalBuffer = false);
     float resizeScale(const procparams::ProcParams* params, int fw, int fh, int &imw, int &imh);
