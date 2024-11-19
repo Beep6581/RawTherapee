@@ -537,6 +537,11 @@ struct SharpeningParams {
     double         deconvradius;
     int            deconviter;
     int            deconvdamping;
+    bool deconvAutoRadius;
+    double deconvCornerBoost;
+    int deconvCornerLatitude;
+    Glib::ustring psf_kernel;
+    double psf_iterations;
 
     SharpeningParams();
 
