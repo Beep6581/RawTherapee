@@ -431,7 +431,7 @@ bool ImProcFunctions::doSharpening(Imagefloat *rgb, const procparams::Sharpening
 
 bool ImProcFunctions::sharpeningrgb(Imagefloat *img)
 {
-   // return doSharpening(img, params->sharpening, show_sharpening_mask);
+    return doSharpening(img, params->sharpening, show_sharpening_mask);
 }
 
 
