@@ -837,6 +837,8 @@ public:
         bool sensisha;
         bool inverssha;
         bool methodcap;
+        bool capradius;
+        bool deconvAutoRadius;
         // Local Contrast
         bool visicontrast;
         bool expcontrast;

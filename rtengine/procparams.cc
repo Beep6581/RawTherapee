@@ -3991,7 +3991,9 @@ LocallabParams::LocallabSpot::LocallabSpot() :
     sensisha(40),
     inverssha(false),
     methodcap("cap"),
-
+    capradius(0.75),
+    deconvAutoRadius(true),
+    
     // Local Contrast
     visicontrast(false),
     expcontrast(false),
@@ -5324,6 +5326,9 @@ bool LocallabParams::LocallabSpot::operator ==(const LocallabSpot& other) const
         && sensisha == other.sensisha
         && inverssha == other.inverssha
         && methodcap == other.methodcap
+        && deconvAutoRadius == other.deconvAutoRadius       
+        && (deconvAutoRadius || (capradius == other.capradius))
+
         // Local contrast
         && visicontrast == other.visicontrast
         && expcontrast == other.expcontrast
@@ -7300,6 +7305,10 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
                     saveToKeyfile(!pedited || spot_edited->sensisha, "Locallab", "Sensisha_" + index_str, spot.sensisha, keyFile);
                     saveToKeyfile(!pedited || spot_edited->inverssha, "Locallab", "Inverssha_" + index_str, spot.inverssha, keyFile);
                     saveToKeyfile(!pedited || spot_edited->methodcap, "Locallab", "methodcap_" + index_str, spot.methodcap, keyFile);
+                    saveToKeyfile(!pedited || spot_edited->capradius, "Locallab", "capradius_" + index_str, spot.capradius, keyFile);
+                    saveToKeyfile(!pedited || spot_edited->deconvAutoRadius, "Locallab", "deconvAutoRadius_" + index_str, spot.deconvAutoRadius, keyFile);
+                    
+
                 }
                 // Local Contrast
                 if ((!pedited || spot_edited->visicontrast) && spot.visicontrast) {
@@ -9715,6 +9724,10 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
                 assignFromKeyfile(keyFile, "Locallab", "Sensisha_" + index_str, spot.sensisha, spotEdited.sensisha);
                 assignFromKeyfile(keyFile, "Locallab", "Inverssha_" + index_str, spot.inverssha, spotEdited.inverssha);
                 assignFromKeyfile(keyFile, "Locallab", "methodcap_" + index_str, spot.methodcap, spotEdited.methodcap);
+                assignFromKeyfile(keyFile, "Locallab", "capradius_" + index_str, spot.capradius, spotEdited.capradius);
+                assignFromKeyfile(keyFile, "Locallab", "deconvAutoRadius_" + index_str, spot.deconvAutoRadius, spotEdited.deconvAutoRadius);
+                
+                
                 // Local Contrast
                 spot.visicontrast = assignFromKeyfile(keyFile, "Locallab", "Expcontrast_" + index_str, spot.expcontrast, spotEdited.expcontrast);
 

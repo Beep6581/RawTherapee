@@ -262,7 +262,7 @@ void FlatField::adjusterChanged(Adjuster* a, double newval)
     }
 }
 
-void FlatField::adjusterAutoToggled (Adjuster* a)
+void FlatField::adjusterAutoToggled (Adjuster* a, bool newval)
 {
     if (multiImage) {
         if (flatFieldClipControl->getAutoInconsistent()) {

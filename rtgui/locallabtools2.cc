@@ -2121,6 +2121,8 @@ LocallabSharp::LocallabSharp():
 
     methodcap(Gtk::manage(new MyComboBoxText())),
     sharcontrast(Gtk::manage(new Adjuster(M("TP_SHARPENING_CONTRAST"), 0, 200, 1, 20))),
+    capradius(Gtk::manage (new Adjuster (M("TP_SHARPENING_EDRADIUS"), 0.4, 2.5, 0.01, 0.75))),
+   
     sharblur(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SHARBLUR"), 0.2, 2.0, 0.05, 0.2))),
     shargam(Gtk::manage(new Adjuster(M("TP_LOCALLAB_GAMC"), 0.5, 3.0, 0.05, 1.))),
     sharamount(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SHARAMOUNT"), 0, 100, 1, 100))),
@@ -2136,8 +2138,12 @@ LocallabSharp::LocallabSharp():
     auto m = ProcEventMapper::getInstance();
     //rtengine::ProcEvent EvlocallabenacieMaskall;
     Evlocallabmethodcap = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_METHODCAP");
+    Evlocallabcapradius = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_CAPRADIUS");
+    Evlocallabautoradiuson = m->newEvent(CAPTURESHARPEN, "HISTORY_MSG_LOCAL_AUTOCAPRADIUS");
+    Evlocallabautoradiusoff = m->newEvent(M_VOID, "HISTORY_MSG_LOCAL_AUTOCAPRADIUS");
     
     set_orientation(Gtk::ORIENTATION_VERTICAL);
+    capradius->addAutoButton(M("TP_SHARPENING_RLD_AUTORADIUS_TOOLTIP"));
 
     methodcap->append (M("TP_SHARPENING_RLN"));
     methodcap->append (M("TP_SHARPENING_CAP"));
@@ -2161,6 +2167,8 @@ LocallabSharp::LocallabSharp():
 
     sensisha->setAdjusterListener(this);
 
+    capradius->setAdjusterListener(this);
+
     inversshaConn = inverssha->signal_toggled().connect(sigc::mem_fun(*this, &LocallabSharp::inversshaChanged));
 
     showmasksharMethod->append(M("TP_LOCALLAB_SHOWMNONE"));
@@ -2174,6 +2182,7 @@ LocallabSharp::LocallabSharp():
     pack_start(*sensisha);
     pack_start(*sharcontrast);
     pack_start(*methodcap);
+    pack_start(*capradius);
     pack_start(*sharblur);
     pack_start(*shargam);
     pack_start(*sharradius);
@@ -2188,6 +2197,33 @@ LocallabSharp::LocallabSharp():
     sharFrame->add(*sharfBox);
     pack_start(*sharFrame);
 }
+
+void LocallabSharp::adjusterAutoToggled(Adjuster* a, bool newval)
+{
+    if (listener && a == capradius) {
+        auto e = (!newval) ? Evlocallabautoradiusoff : Evlocallabautoradiuson;
+        listener->panelChanged(e, newval ? M("GENERAL_ENABLED") : M("GENERAL_DISABLED"));
+    }
+}
+
+void LocallabSharp::autoDeconvRadiusChanged(float radius)
+{
+    idle_register.add(
+        [this, radius]() -> bool
+        {
+            disableListener();
+            if (radius < 0) {
+                capradius->delAutoButton();
+            } else {
+                capradius->addAutoButton(M("TP_SHARPENING_RLD_AUTORADIUS_TOOLTIP"));
+                capradius->setValue(radius);
+            }
+            enableListener();
+            return false;
+        }
+    );
+}
+
 
 bool LocallabSharp::isMaskViewActive()
 {
@@ -2296,6 +2332,9 @@ void LocallabSharp::read(const rtengine::procparams::ProcParams* pp, const Param
         shargam->setValue(spot.shargam);
         sensisha->setValue((double)spot.sensisha);
         inverssha->set_active(spot.inverssha);
+        capradius->setValue((double)spot.capradius);
+        capradius->setAutoValue(spot.deconvAutoRadius);
+
     }
 
     // Enable all listeners
@@ -2332,6 +2371,8 @@ void LocallabSharp::write(rtengine::procparams::ProcParams* pp, ParamsEdited* pe
         spot.shargam = shargam->getValue();
         spot.sensisha = sensisha->getIntValue();
         spot.inverssha = inverssha->get_active();
+        spot.capradius = capradius->getValue();
+        spot.deconvAutoRadius = capradius->getAutoValue();
     }
 
     // Note: No need to manage pedited as batch mode is deactivated for Locallab
@@ -2352,6 +2393,7 @@ void LocallabSharp::setDefaults(const rtengine::procparams::ProcParams* defParam
         shariter->setDefault((double)defSpot.shariter);
         sharblur->setDefault(defSpot.sharblur);
         shargam->setDefault(defSpot.shargam);
+        capradius->setDefault(defSpot.capradius);
         sensisha->setDefault((double)defSpot.sensisha);
     }
 
@@ -2372,6 +2414,13 @@ void LocallabSharp::adjusterChanged(Adjuster* a, double newval)
             if (listener) {
                 listener->panelChanged(Evlocallabsharradius,
                                        sharradius->getTextValue() + " (" + escapeHtmlChars(getSpotName()) + ")");
+            }
+        }
+
+        if (a == capradius) {
+            if (listener) {
+                listener->panelChanged(Evlocallabcapradius,
+                                       capradius->getTextValue() + " (" + escapeHtmlChars(getSpotName()) + ")");
             }
         }
 

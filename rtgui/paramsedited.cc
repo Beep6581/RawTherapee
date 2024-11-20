@@ -1565,6 +1565,9 @@ void ParamsEdited::initFrom(const std::vector<rtengine::procparams::ProcParams>&
                 locallab.spots.at(j).sensisha = locallab.spots.at(j).sensisha && pSpot.sensisha == otherSpot.sensisha;
                 locallab.spots.at(j).inverssha = locallab.spots.at(j).inverssha && pSpot.inverssha == otherSpot.inverssha;
                 locallab.spots.at(j).methodcap = locallab.spots.at(j).methodcap && pSpot.methodcap == otherSpot.methodcap;
+                locallab.spots.at(j).capradius = locallab.spots.at(j).capradius && pSpot.capradius == otherSpot.capradius;
+                locallab.spots.at(j).deconvAutoRadius = locallab.spots.at(j).deconvAutoRadius && pSpot.deconvAutoRadius == otherSpot.deconvAutoRadius;
+                
                 // Local Contrast
                 locallab.spots.at(j).visicontrast = locallab.spots.at(j).visicontrast && pSpot.visicontrast == otherSpot.visicontrast;
                 locallab.spots.at(j).expcontrast = locallab.spots.at(j).expcontrast && pSpot.expcontrast == otherSpot.expcontrast;
@@ -5289,6 +5292,14 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
             toEdit.locallab.spots.at(i).methodcap = mods.locallab.spots.at(i).methodcap;
         }
 
+        if (locallab.spots.at(i).capradius) {
+            toEdit.locallab.spots.at(i).capradius = mods.locallab.spots.at(i).capradius;
+        }
+
+        if (locallab.spots.at(i).deconvAutoRadius) {
+            toEdit.locallab.spots.at(i).deconvAutoRadius = mods.locallab.spots.at(i).deconvAutoRadius;
+        }
+          
 
         // Local Contrast
         if (locallab.spots.at(i).visicontrast) {
@@ -8422,6 +8433,8 @@ LocallabParamsEdited::LocallabSpotEdited::LocallabSpotEdited(bool v) :
     sensisha(v),
     inverssha(v),
     methodcap(v),
+    capradius(v),
+    deconvAutoRadius(v),
     // Local Contrast
     visicontrast(v),
     expcontrast(v),
@@ -9186,6 +9199,8 @@ void LocallabParamsEdited::LocallabSpotEdited::set(bool v)
     sensisha = v;
     inverssha = v;
     methodcap = v;
+    capradius = v;
+    deconvAutoRadius = v;
     // Local Contrast
     visicontrast = v;
     expcontrast = v;

@@ -226,6 +226,7 @@ public:
     void setDefaults(const rtengine::procparams::ProcParams* defParams, const ParamsEdited* pedited = nullptr) override {};
     void adjusterChanged(Adjuster* a, double newval) override {};
     void curveChanged(CurveEditor* ce) override {};
+    virtual void adjusterAutoToggled(Adjuster* a, bool newval){};
 
 protected:
     // To be implemented
@@ -246,6 +247,8 @@ private:
     virtual void convertParamToNormal() {}; // From Expert mode to Normal mode; Only necessary when using mode
     virtual void convertParamToSimple() {}; // From Normal mode to Simple mode; Only necessary when using mode
     virtual void updateGUIToMode(const modeType new_type) {}; // Only necessary when using mode
+ //   virtual void adjusterAutoToggled(Adjuster* a, bool newval) {};
+
 };
 
 /* ==== LocallabColor ==== */
@@ -1173,6 +1176,7 @@ private:
 
 
     Adjuster* const sharcontrast;
+    Adjuster* const capradius;
     Adjuster* const sharblur;
     Adjuster* const shargam;
     Adjuster* const sharamount;
@@ -1185,6 +1189,9 @@ private:
     MyComboBoxText* const showmasksharMethod;
 
     rtengine::ProcEvent Evlocallabmethodcap;
+    rtengine::ProcEvent Evlocallabcapradius;
+    rtengine::ProcEvent Evlocallabautoradiuson;
+    rtengine::ProcEvent Evlocallabautoradiusoff;
 
     sigc::connection inversshaConn, showmasksharMethodConn, methodcapConn;
 
@@ -1204,6 +1211,9 @@ public:
     void write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedited = nullptr) override;
     void setDefaults(const rtengine::procparams::ProcParams* defParams, const ParamsEdited* pedited = nullptr) override;
     void adjusterChanged(Adjuster* a, double newval) override;
+    void adjusterAutoToggled(Adjuster* a, bool newval);
+ //   void adjusterAutoToggled(Adjuster* a);
+    void autoDeconvRadiusChanged(float radius);
 
 private:
     void enabledChanged() override;

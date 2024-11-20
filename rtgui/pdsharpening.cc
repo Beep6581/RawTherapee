@@ -272,7 +272,7 @@ void PdSharpening::autoRadiusChanged(double autoRadius)
     );
 }
 
-void PdSharpening::adjusterAutoToggled(Adjuster* a)
+void PdSharpening::adjusterAutoToggled(Adjuster* a, bool newval)
 {
     if (multiImage) {
         if (a->getAutoInconsistent()) {

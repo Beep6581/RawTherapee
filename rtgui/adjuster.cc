@@ -206,6 +206,16 @@ void Adjuster::addAutoButton (const Glib::ustring &tooltip)
         } else {
             attach_next_to(*automatic, *reset, Gtk::POS_RIGHT, 1, 1);
         }
+        automatic->show();
+    }
+}
+
+void Adjuster::delAutoButton ()
+{
+    if (automatic) {
+        removeIfThere(grid, automatic);
+        delete automatic;
+        automatic = nullptr;
     }
 }
 
@@ -247,7 +257,7 @@ void Adjuster::autoToggled ()
 {
 
     if (adjusterListener && !blocked) {
-        adjusterListener->adjusterAutoToggled(this);
+        adjusterListener->adjusterAutoToggled(this, automatic->get_active());
     }
 }
 
@@ -447,7 +457,7 @@ bool Adjuster::notifyListenerAutoToggled ()
 {
 
     if (adjusterListener != nullptr && !blocked) {
-        adjusterListener->adjusterAutoToggled(this);
+        adjusterListener->adjusterAutoToggled(this, automatic->get_active());
     }
 
     return false;
