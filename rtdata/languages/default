@@ -1522,6 +1522,9 @@ HISTORY_MSG_LOCAL_CIE_STRGRAD;Local - CIECAM Gradient strength L
 HISTORY_MSG_LOCAL_CIE_STRLOG;Local - CIECAM Log encoding strength
 HISTORY_MSG_LOCAL_CIE_TRC;Local - CIECAM TRC
 HISTORY_MSG_LOCAL_CIE_WHITES;Local - CIECAM Whites distribution
+HISTORY_MSG_LOCAL_CAPRADIUS;Local - Sh Capture radius
+HISTORY_MSG_LOCAL_CONVBOOST;Local - Sh Corner radius
+HISTORY_MSG_LOCAL_CONVLAT;Local - Sh Corner iterations
 HISTORY_MSG_LOCAL_DEHAZE_BLACK;Local - Dehaze Black
 HISTORY_MSG_LOCAL_FEATHERCIE;Local - CIECAM Gradient feather
 HISTORY_MSG_LOCAL_FEATHERCOL;Local - Color Gradient feather
@@ -3548,12 +3551,15 @@ TP_LOCALLAB_SHAPETYPE;Spot shape
 TP_LOCALLAB_SHAPE_TOOLTIP;'Ellipse' is the normal mode.\n 'Rectangle' can be used in certain cases, for example to work in full-image mode by placing the delimiters outside the preview area. In this case, set transition = 100.\n\nFuture developments will include polygon shapes and Bezier curves.
 TP_LOCALLAB_SHARAMOUNT;Amount
 TP_LOCALLAB_SHARBLUR;Blur radius
+TP_LOCALLAB_SHARCAPFRAME;Corners
 TP_LOCALLAB_SHARDAMPING;Damping
 TP_LOCALLAB_SHARFRAME;Modifications
 TP_LOCALLAB_SHARITER;Iterations
 TP_LOCALLAB_SHARP;Sharpening
 TP_LOCALLAB_SHARP_TOOLNAME;Sharpening
 TP_LOCALLAB_SHARRADIUS;Radius
+TP_LOCALLAB_SHARRLFRAME;Deconvolution settings
+
 TP_LOCALLAB_SHORTC;Short Curves 'L' Mask
 TP_LOCALLAB_SHORTCMASK_TOOLTIP;Short circuit the 2 curves L(L) and L(H).\nAllows you to mix the current image with the original image modified by the mask job.\nUsable with masks 2, 3, 4, 6, 7.
 TP_LOCALLAB_SHOWC;Mask and modifications
@@ -4027,7 +4033,7 @@ TP_SHARPENEDGE_THREE;Luminance only
 TP_SHARPENING_AMOUNT;Amount
 TP_SHARPENING_BLUR;Blur radius
 TP_SHARPENING_CONTRAST;Contrast threshold
-TP_SHARPENING_EDRADIUS;Radius
+TP_SHARPENING_EDRADIUS;Capture Radius
 TP_SHARPENING_EDTOLERANCE;Edge tolerance
 TP_SHARPENING_HALOCONTROL;Halo control
 TP_SHARPENING_HCAMOUNT;Amount
@@ -4041,6 +4047,9 @@ TP_SHARPENING_RLD;RL Deconvolution
 TP_SHARPENING_RLD_AMOUNT;Amount
 TP_SHARPENING_RLD_DAMPING;Damping
 TP_SHARPENING_RLD_ITERATIONS;Iterations
+TP_SHARPENING_RLN;Deconvolution
+TP_SHARPENING_CAP;Capture Deconvolution
+TP_SHARPENING_CAPFRAME;Corner boost
 TP_SHARPENING_THRESHOLD;Threshold
 TP_SHARPENING_USM;Unsharp Mask
 TP_SHARPENMICRO_AMOUNT;Quantity

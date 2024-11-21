@@ -1506,6 +1506,8 @@ struct LocallabParams {
         Glib::ustring methodcap;
         double capradius;
         bool deconvAutoRadius;
+        double deconvCoBoost;                
+        double deconvCoLat;                
 
         // Local Contrast
         bool visicontrast;

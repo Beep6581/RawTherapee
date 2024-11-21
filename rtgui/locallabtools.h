@@ -1177,6 +1177,10 @@ private:
 
     Adjuster* const sharcontrast;
     Adjuster* const capradius;
+    Adjuster* const deconvCoBoost;
+    Adjuster* const deconvCoLat;
+    Gtk::Frame* const capFrame;
+    Gtk::Frame* const rlFrame;
     Adjuster* const sharblur;
     Adjuster* const shargam;
     Adjuster* const sharamount;
@@ -1192,6 +1196,9 @@ private:
     rtengine::ProcEvent Evlocallabcapradius;
     rtengine::ProcEvent Evlocallabautoradiuson;
     rtengine::ProcEvent Evlocallabautoradiusoff;
+
+    rtengine::ProcEvent Evlocallababdconvboost;
+    rtengine::ProcEvent Evlocallababdconvlat;
 
     sigc::connection inversshaConn, showmasksharMethodConn, methodcapConn;
 

@@ -2122,7 +2122,10 @@ LocallabSharp::LocallabSharp():
     methodcap(Gtk::manage(new MyComboBoxText())),
     sharcontrast(Gtk::manage(new Adjuster(M("TP_SHARPENING_CONTRAST"), 0, 200, 1, 20))),
     capradius(Gtk::manage (new Adjuster (M("TP_SHARPENING_EDRADIUS"), 0.4, 2.5, 0.01, 0.75))),
-   
+    deconvCoBoost(Gtk::manage(new Adjuster(M("TP_SHARPENING_RADIUS_BOOST"), 0.0, 1.0, 0.01, 0))),
+    deconvCoLat(Gtk::manage(new Adjuster(M("TP_SHARPENING_RLD_ITERATIONS"), 0, 100, 1, 25))),
+    capFrame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_SHARCAPFRAME")))),
+    rlFrame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_SHARRLFRAME")))),
     sharblur(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SHARBLUR"), 0.2, 2.0, 0.05, 0.2))),
     shargam(Gtk::manage(new Adjuster(M("TP_LOCALLAB_GAMC"), 0.5, 3.0, 0.05, 1.))),
     sharamount(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SHARAMOUNT"), 0, 100, 1, 100))),
@@ -2141,12 +2144,14 @@ LocallabSharp::LocallabSharp():
     Evlocallabcapradius = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_CAPRADIUS");
     Evlocallabautoradiuson = m->newEvent(CAPTURESHARPEN, "HISTORY_MSG_LOCAL_AUTOCAPRADIUS");
     Evlocallabautoradiusoff = m->newEvent(M_VOID, "HISTORY_MSG_LOCAL_AUTOCAPRADIUS");
+    Evlocallababdconvboost = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_CONVBOOST");
+    Evlocallababdconvlat = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_CONVLAT");
     
     set_orientation(Gtk::ORIENTATION_VERTICAL);
     capradius->addAutoButton(M("TP_SHARPENING_RLD_AUTORADIUS_TOOLTIP"));
 
-    methodcap->append (M("TP_SHARPENING_RLN"));
     methodcap->append (M("TP_SHARPENING_CAP"));
+    methodcap->append (M("TP_SHARPENING_RLN"));
     methodcap->show ();
     methodcapConn = methodcap->signal_changed().connect(sigc::mem_fun(*this, &LocallabSharp::methodcapChanged));
 
@@ -2155,6 +2160,10 @@ LocallabSharp::LocallabSharp():
 
     sharradius->setAdjusterListener(this);
 
+    deconvCoBoost->setAdjusterListener(this);
+
+    deconvCoLat->setAdjusterListener(this);    
+    
     sharamount->setAdjusterListener(this);
 
     shardamping->setAdjusterListener(this);
@@ -2180,15 +2189,29 @@ LocallabSharp::LocallabSharp():
 
     // Add Sharpening specific widgets to GUI
     pack_start(*sensisha);
+    rlFrame->set_label_align(0.025, 0.5);
+    Gtk::VBox *rlb = Gtk::manage(new Gtk::VBox());
+    
     pack_start(*sharcontrast);
     pack_start(*methodcap);
     pack_start(*capradius);
-    pack_start(*sharblur);
-    pack_start(*shargam);
-    pack_start(*sharradius);
+    rlb->pack_start(*sharradius);
+    rlb->pack_start(*sharblur);
+    rlb->pack_start(*shargam);
     pack_start(*sharamount);
-    pack_start(*shardamping);
-    pack_start(*shariter);
+    rlb->pack_start(*shardamping);
+    rlb->pack_start(*shariter);
+
+    rlFrame->add(*rlb);
+    pack_start(*rlFrame);
+
+    capFrame->set_label_align(0.025, 0.5);
+    Gtk::VBox *capb = Gtk::manage(new Gtk::VBox());
+
+    capb->pack_start(*deconvCoBoost);
+    capb->pack_start(*deconvCoLat);
+    capFrame->add(*capb);
+    pack_start(*capFrame);
 //    pack_start(*sensisha);
     pack_start(*inverssha);
     sharFrame->set_label_align(0.025, 0.5);
@@ -2292,7 +2315,11 @@ void LocallabSharp::updateguisharp(int spottype)
                 inverssha->hide();
             } else {
                 sensisha->show();
-                inverssha->show();
+                if (methodcap->get_active_row_number() == 1) {
+                    inverssha->show();
+                } else {
+                    inverssha->hide();            
+                }
             }
             enableListener();
 
@@ -2334,7 +2361,8 @@ void LocallabSharp::read(const rtengine::procparams::ProcParams* pp, const Param
         inverssha->set_active(spot.inverssha);
         capradius->setValue((double)spot.capradius);
         capradius->setAutoValue(spot.deconvAutoRadius);
-
+        deconvCoBoost->setValue((double)spot.deconvCoBoost);
+        deconvCoLat->setValue((double)spot.deconvCoLat);
     }
 
     // Enable all listeners
@@ -2373,6 +2401,8 @@ void LocallabSharp::write(rtengine::procparams::ProcParams* pp, ParamsEdited* pe
         spot.inverssha = inverssha->get_active();
         spot.capradius = capradius->getValue();
         spot.deconvAutoRadius = capradius->getAutoValue();
+        spot.deconvCoBoost = deconvCoBoost->getValue();
+        spot.deconvCoLat = deconvCoLat->getValue();
     }
 
     // Note: No need to manage pedited as batch mode is deactivated for Locallab
@@ -2395,6 +2425,9 @@ void LocallabSharp::setDefaults(const rtengine::procparams::ProcParams* defParam
         shargam->setDefault(defSpot.shargam);
         capradius->setDefault(defSpot.capradius);
         sensisha->setDefault((double)defSpot.sensisha);
+        deconvCoBoost->setDefault(defSpot.deconvCoBoost);
+        deconvCoLat->setDefault(defSpot.deconvCoLat);
+
     }
 
     // Note: No need to manage pedited as batch mode is deactivated for Locallab
@@ -2421,6 +2454,20 @@ void LocallabSharp::adjusterChanged(Adjuster* a, double newval)
             if (listener) {
                 listener->panelChanged(Evlocallabcapradius,
                                        capradius->getTextValue() + " (" + escapeHtmlChars(getSpotName()) + ")");
+            }
+        }
+        
+        if (a == deconvCoBoost) {
+            if (listener) {
+                listener->panelChanged(Evlocallababdconvboost,
+                                       deconvCoBoost->getTextValue() + " (" + escapeHtmlChars(getSpotName()) + ")");
+            }
+        }
+        
+        if (a == deconvCoLat) {
+            if (listener) {
+                listener->panelChanged(Evlocallababdconvlat,
+                                       deconvCoLat->getTextValue() + " (" + escapeHtmlChars(getSpotName()) + ")");
             }
         }
 
@@ -2523,19 +2570,24 @@ void LocallabSharp::updateGUIToMode(const modeType new_type)
     switch (new_type) {
         case Simple:
             // Expert and Normal mode widgets are hidden in Simple mode
-            sharcontrast->hide();
+            sharcontrast->show();
             sharblur->hide();
             sharamount->hide();
             shardamping->hide();
             shariter->hide();
             sharFrame->hide();
             shargam->hide();
+                if (methodcap->get_active_row_number() == 1) {
+                    inverssha->show();
+                } else {
+                    inverssha->hide();            
+                }
 
             break;
 
         case Normal:
             // Expert mode widgets are hidden in Normal mode
-            sharcontrast->hide();
+            sharcontrast->show();
             sharblur->hide();
             shargam->hide();
             sharamount->hide();
@@ -2543,6 +2595,11 @@ void LocallabSharp::updateGUIToMode(const modeType new_type)
             shariter->hide();
             // Specific Simple mode widgets are shown in Normal mode
             sharFrame->show();
+                if (methodcap->get_active_row_number() == 1) {
+                    inverssha->show();
+                } else {
+                    inverssha->hide();            
+                }
 
             break;
 
@@ -2555,6 +2612,12 @@ void LocallabSharp::updateGUIToMode(const modeType new_type)
             shardamping->show();
             shariter->show();
             sharFrame->show();
+                if (methodcap->get_active_row_number() == 1) {
+                    inverssha->show();
+                } else {
+                    inverssha->hide();            
+                }
+
     }
 }
 
@@ -2575,7 +2638,17 @@ void LocallabSharp::inversshaChanged()
 
 void LocallabSharp::methodcapChanged()
 {
-    // If mask preview is activated, deactivate all other tool mask preview
+    if (methodcap->get_active_row_number() == 0) {
+        capradius->show();
+        capFrame->show();
+        rlFrame->hide();
+        inverssha->hide();        
+    } else {
+        capradius->hide();
+        capFrame->hide();
+        rlFrame->show();
+        inverssha->show();        
+    }
 
     if (exp->getEnabled()) {
         if (listener) {

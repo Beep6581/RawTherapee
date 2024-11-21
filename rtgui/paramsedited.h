@@ -841,6 +841,8 @@ public:
         bool methodcap;
         bool capradius;
         bool deconvAutoRadius;
+        bool deconvCoBoost;
+        bool deconvCoLat;
         // Local Contrast
         bool visicontrast;
         bool expcontrast;
