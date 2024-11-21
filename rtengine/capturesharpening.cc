@@ -1029,8 +1029,11 @@ BENCHFUN
     greenVals = greenCache ? *greenCache : green;
     blueVals = blueCache ? *blueCache : blue;
 
-    //small median to denoise before capture sharpening 
-    if(sharpeningParams.deconvitercheck) {
+    //predoise : small median to denoise before capture sharpening : allow CS to work correctly and reduce a little the noise
+    if(sharpeningParams.noisecap > 0.f) {
+        //I have choose median due to its low aggressiveness and for a 3x3 its speed
+        float denstr = 0.01 * sharpeningParams.noisecap;
+
         float** tmL;
         float** mR;
         float** mG;
@@ -1058,17 +1061,28 @@ BENCHFUN
                 mB[i][j] = blueVals[i][j];
             }
         }
-        ImProcFunctions::Median_Denoise(mR, mR, W, H, ImProcFunctions::Median::TYPE_3X3_SOFT , 1, false, tmL);
-        ImProcFunctions::Median_Denoise(mG, mG, W, H, ImProcFunctions::Median::TYPE_3X3_SOFT , 1, false, tmL);
-        ImProcFunctions::Median_Denoise(mB, mB, W, H, ImProcFunctions::Median::TYPE_3X3_SOFT , 1, false, tmL);
+
+        int itera = 1;
+        if(denstr < 0.4f) {
+            itera = 1;
+        } else if (denstr < 0.6f) {
+            itera = 2;
+        } else if (denstr < 0.8f) {
+            itera = 3;
+        } else {
+            itera = 4;            
+        }
+        ImProcFunctions::Median_Denoise(mR, mR, W, H, ImProcFunctions::Median::TYPE_3X3_STRONG , itera, false, tmL);
+        ImProcFunctions::Median_Denoise(mG, mG, W, H, ImProcFunctions::Median::TYPE_3X3_STRONG , itera, false, tmL);
+        ImProcFunctions::Median_Denoise(mB, mB, W, H, ImProcFunctions::Median::TYPE_3X3_STRONG , itera, false, tmL);
 #ifdef _OPENMP
     #pragma omp parallel for schedule(dynamic, 16)
 #endif
         for (int i = 0; i < H; ++i) {
             for (int j = 0; j < W; ++j) {
-                redVals[i][j] = mR[i][j];
-                greenVals[i][j] =  mG[i][j];
-                blueVals[i][j]= mB[i][j];
+                redVals[i][j] = intp(denstr, mR[i][j], redVals[i][j]); 
+                greenVals[i][j] = intp(denstr, mG[i][j], greenVals[i][j]); 
+                blueVals[i][j] = intp(denstr, mB[i][j], blueVals[i][j]); 
            }
         }
 
@@ -1085,7 +1099,7 @@ BENCHFUN
         delete[] mG;
         delete[] mB;
     }
-
+//end predenoise sharpening
 
     array2D<float> clipMask(W, H);
     constexpr float clipLimit = 0.95f;
