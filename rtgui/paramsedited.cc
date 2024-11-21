@@ -176,6 +176,8 @@ void ParamsEdited::set(bool v)
     pdsharpening.deconvradiusOffset   = v;
     pdsharpening.deconviter     = v;
     pdsharpening.deconvitercheck     = v;
+    pdsharpening.showcap     = v;
+    pdsharpening.noisecap     = v;
     prsharpening.enabled            = v;
     prsharpening.contrast           = v;
     prsharpening.radius             = v;
@@ -921,12 +923,14 @@ void ParamsEdited::initFrom(const std::vector<rtengine::procparams::ProcParams>&
         sharpening.deconvdamping = sharpening.deconvdamping && p.sharpening.deconvdamping == other.sharpening.deconvdamping;
         pdsharpening.enabled = pdsharpening.enabled && p.pdsharpening.enabled == other.pdsharpening.enabled;
         pdsharpening.contrast = pdsharpening.contrast && p.pdsharpening.contrast == other.pdsharpening.contrast;
+        pdsharpening.noisecap = pdsharpening.noisecap && p.pdsharpening.noisecap == other.pdsharpening.noisecap;
         pdsharpening.autoContrast = pdsharpening.autoContrast && p.pdsharpening.autoContrast == other.pdsharpening.autoContrast;
         pdsharpening.autoRadius = pdsharpening.autoRadius && p.pdsharpening.autoRadius == other.pdsharpening.autoRadius;
         pdsharpening.deconvradius = pdsharpening.deconvradius && p.pdsharpening.deconvradius == other.pdsharpening.deconvradius;
         pdsharpening.deconvradiusOffset = pdsharpening.deconvradiusOffset && p.pdsharpening.deconvradiusOffset == other.pdsharpening.deconvradiusOffset;
         pdsharpening.deconviter = pdsharpening.deconviter && p.pdsharpening.deconviter == other.pdsharpening.deconviter;
         pdsharpening.deconvitercheck = pdsharpening.deconvitercheck && p.pdsharpening.deconvitercheck == other.pdsharpening.deconvitercheck;
+        pdsharpening.showcap = pdsharpening.showcap && p.pdsharpening.showcap == other.pdsharpening.showcap;
         prsharpening.enabled = prsharpening.enabled && p.prsharpening.enabled == other.prsharpening.enabled;
         prsharpening.contrast = prsharpening.contrast && p.prsharpening.contrast == other.prsharpening.contrast;
         prsharpening.radius = prsharpening.radius && p.prsharpening.radius == other.prsharpening.radius;
@@ -2852,6 +2856,10 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
         toEdit.pdsharpening.contrast = dontforceSet && options.baBehav[ADDSET_SHARP_CONTRAST] ? toEdit.pdsharpening.contrast + mods.pdsharpening.contrast : mods.pdsharpening.contrast;
     }
 
+    if (pdsharpening.noisecap) {
+        toEdit.pdsharpening.noisecap = mods.pdsharpening.noisecap;
+    }
+
     if (pdsharpening.autoContrast) {
         toEdit.pdsharpening.autoContrast = mods.pdsharpening.autoContrast;
     }
@@ -2874,6 +2882,10 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
 
     if (pdsharpening.deconvitercheck) {
         toEdit.pdsharpening.deconvitercheck =  mods.pdsharpening.deconvitercheck;
+    }
+
+    if (pdsharpening.showcap) {
+        toEdit.pdsharpening.showcap =  mods.pdsharpening.showcap;
     }
 
     if (prsharpening.enabled) {
@@ -9556,7 +9568,7 @@ void LocallabParamsEdited::LocallabSpotEdited::set(bool v)
 
 bool CaptureSharpeningParamsEdited::isUnchanged() const
 {
-    return enabled && contrast && autoContrast && autoRadius && deconvradius && deconvradiusOffset && deconviter && deconvitercheck;
+    return enabled && contrast && autoContrast && autoRadius && deconvradius && deconvradiusOffset && deconviter && deconvitercheck  && showcap;
 }
 
 bool RAWParamsEdited::PreprocessWBParamsEdited::isUnchanged() const
