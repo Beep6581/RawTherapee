@@ -30,6 +30,7 @@
 #include "StopWatch.h"
 #include "opthelper.h"
 #include "../rtgui/multilangmgr.h"
+#include "improcfun.h"
 
 namespace {
 
@@ -1006,7 +1007,7 @@ void RawImageSource::captureSharpening(const procparams::CaptureSharpeningParams
     }
 
     if (plistener) {
-        plistener->setProgressStr(M("TP_PDSHARPENING_LABEL"));
+        plistener->setProgressStr(M("TP_PDSHARPENING_LABEL88"));
         plistener->setProgress(0.0);
     }
 BENCHFUN
@@ -1020,10 +1021,71 @@ BENCHFUN
     float contrast = conrastThreshold / 100.0;
 
     const float clipVal = (ri->get_white(1) - ri->get_cblack(1)) * scale_mul[1];
+    array2D<float> redVals (W, H);
+    array2D<float> greenVals(W, H);
+    array2D<float> blueVals(W, H);
+     
+    redVals = redCache ? *redCache : red;
+    greenVals = greenCache ? *greenCache : green;
+    blueVals = blueCache ? *blueCache : blue;
 
-    const array2D<float>& redVals = redCache ? *redCache : red;
-    const array2D<float>& greenVals = greenCache ? *greenCache : green;
-    const array2D<float>& blueVals = blueCache ? *blueCache : blue;
+    //small median to denoise before capture sharpening 
+    if(sharpeningParams.deconvitercheck) {
+        float** tmL;
+        float** mR;
+        float** mG;
+        float** mB;
+        int wid = W;
+        int hei = H;
+        tmL = new float*[hei];
+        mR = new float*[hei];
+        mG = new float*[hei];
+        mB = new float*[hei];
+
+        for (int i = 0; i < hei; ++i) {
+            tmL[i] = new float[wid];
+            mR[i] = new float[wid];
+            mG[i] = new float[wid];
+            mB[i] = new float[wid];
+        }
+#ifdef _OPENMP
+    #pragma omp parallel for schedule(dynamic, 16)
+#endif                  
+        for (int i = 0; i < H; ++i) {
+            for (int j = 0; j < W; ++j) {
+                mR[i][j] = redVals[i][j];
+                mG[i][j] = greenVals[i][j];
+                mB[i][j] = blueVals[i][j];
+            }
+        }
+        ImProcFunctions::Median_Denoise(mR, mR, W, H, ImProcFunctions::Median::TYPE_3X3_SOFT , 1, false, tmL);
+        ImProcFunctions::Median_Denoise(mG, mG, W, H, ImProcFunctions::Median::TYPE_3X3_SOFT , 1, false, tmL);
+        ImProcFunctions::Median_Denoise(mB, mB, W, H, ImProcFunctions::Median::TYPE_3X3_SOFT , 1, false, tmL);
+#ifdef _OPENMP
+    #pragma omp parallel for schedule(dynamic, 16)
+#endif
+        for (int i = 0; i < H; ++i) {
+            for (int j = 0; j < W; ++j) {
+                redVals[i][j] = mR[i][j];
+                greenVals[i][j] =  mG[i][j];
+                blueVals[i][j]= mB[i][j];
+           }
+        }
+
+
+        for (int i = 0; i < hei; ++i) {
+            delete[] tmL[i];
+            delete[] mR[i];
+            delete[] mG[i];
+            delete[] mB[i];
+        }
+
+        delete[] tmL;
+        delete[] mR;
+        delete[] mG;
+        delete[] mB;
+    }
+
 
     array2D<float> clipMask(W, H);
     constexpr float clipLimit = 0.95f;
@@ -1079,7 +1141,7 @@ BENCHFUN
     if (std::isnan(radius)) {
         return;
     }
-
+//showMask = true;
     if (showMask) {
         array2D<float>& L = blue; // blue will be overridden anyway => we can use its buffer to store L
 #ifdef _OPENMP

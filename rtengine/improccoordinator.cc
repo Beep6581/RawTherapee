@@ -442,7 +442,6 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                 // || (!params->toneCurve.hrenabled && params->toneCurve.method == "Color" && imgsrc->isRGBSourceModified())) {
                 || (params->toneCurve.hrenabled && !iscolor && imgsrc->isRGBSourceModified())
                 || (!params->toneCurve.hrenabled && iscolor && imgsrc->isRGBSourceModified())) {
-
             if (settings->verbose) {
                 if (imgsrc->getSensorType() == ST_BAYER) {
                     printf("Demosaic Bayer image n.%d using method: %s\n", rp.bayersensor.imageNum + 1, rp.bayersensor.method.c_str());

@@ -33,6 +33,7 @@ class PdSharpening final :
 
 protected:
     Adjuster* contrast;
+    CheckBox* showcap;
     Adjuster* dradius;
     Adjuster* dradiusOffset;
     Adjuster* diter;
@@ -47,6 +48,7 @@ protected:
     rtengine::ProcEvent EvPdShrDIterations;
     rtengine::ProcEvent EvPdShrAutoContrast;
     rtengine::ProcEvent EvPdShrAutoRadius;
+    rtengine::ProcEvent EvPdShrshowcap;
     IdleRegister idle_register;
 
 public:

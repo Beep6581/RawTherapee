@@ -191,6 +191,7 @@ void Crop::update(int todo)
         if (!needsinitupdate) {
             setCropSizes(rqcropx, rqcropy, rqcropw, rqcroph, skip, true);
         }
+        
 
         //       printf("x=%d y=%d crow=%d croh=%d skip=%d\n",rqcropx, rqcropy, rqcropw, rqcroph, skip);
         //      printf("trafx=%d trafyy=%d trafwsk=%d trafHs=%d \n",trafx, trafy, trafw*skip, trafh*skip);
