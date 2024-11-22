@@ -132,6 +132,8 @@ private:
 
     std::vector<locallabcieBEF> cie_bef;
 
+    std::vector<locallabsharBEF> shar_bef;
+
     std::vector<locallabcieLC> cie_lc;
 
     std::vector<locallabsetLC> set_lc;
@@ -178,6 +180,10 @@ public:
 
     // Locallab Log Encoding and Cam16 autocompute function
     void ciebefChanged(const std::vector<locallabcieBEF> &ciebef, int selspot) override;
+
+    // Locallab Sharp
+    void sharbefChanged(const std::vector<locallabsharBEF> &sharbef, int selspot) override;
+
 
     void sigChanged(const std::vector<locallabcieSIG> &ciesig, int selspot) override;
 

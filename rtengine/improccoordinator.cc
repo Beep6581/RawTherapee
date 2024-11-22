@@ -958,6 +958,7 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                 const int sizespot = (int)params->locallab.spots.size();
                 const LocallabParams::LocallabSpot defSpot;
                 std::vector<LocallabListener::locallabcieBEF> locallciebef;
+                std::vector<LocallabListener::locallabsharBEF> locallsharbef;
 
                 float *sourceg = nullptr;
                 sourceg = new float[sizespot];
@@ -969,6 +970,8 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                 log = new bool[sizespot];
                 bool *cie = nullptr;
                 cie = new bool[sizespot];
+                bool *shar = nullptr;
+                shar = new bool[sizespot];
                 bool *autocomput = nullptr;
                 autocomput = new bool[sizespot];
                 float *blackev = nullptr;
@@ -988,6 +991,10 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                 int *blackslog = nullptr;
                 blackslog = new int[sizespot];
 
+                bool *autoradius = nullptr;
+                autoradius = new bool[sizespot];
+                float *caprad = nullptr;
+                caprad = new float[sizespot];
 
                 float *locx = nullptr;
                 locx = new float[sizespot];
@@ -1005,6 +1012,7 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                 for (int sp = 0; sp < sizespot; sp++) {
                     log[sp] = params->locallab.spots.at(sp).explog;
                     cie[sp] = params->locallab.spots.at(sp).expcie;
+                    shar[sp] = params->locallab.spots.at(sp).expsharp;
                     autocomput[sp] = params->locallab.spots.at(sp).autocompute;
                     autocie[sp] = params->locallab.spots.at(sp).Autograycie;
                     blackev[sp] = params->locallab.spots.at(sp).blackEv;
@@ -1027,6 +1035,32 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                     const bool fullimstd = params->locallab.spots.at(sp).fullimage;//for log encoding standard
                     const bool fullimjz = true;//always force fullimage in log encoding Jz - always possible to put a checkbox if need
 
+                    //to auto sharp Capture
+                    autoradius[sp] = params->locallab.spots.at(sp).deconvAutoRadius;
+                    caprad[sp] = params->locallab.spots.at(sp).capradius;
+
+                    if (shar[sp] && autoradius[sp]){
+                        float rad = -1.f;
+                        if (imgsrc->getDeconvAutoRadius(&rad)) {
+                            caprad[sp] = rad;
+                        } else {
+                            rad = -1.f;
+                        }
+                        params->locallab.spots.at(sp).capradius = caprad[sp];
+                        params->locallab.spots.at(sp).deconvAutoRadius = autoradius[sp];
+                        printf("capradius=%f \n", (double) rad);
+                        
+                        LocallabListener::locallabsharBEF locsharbef;
+                        locsharbef.capradiusbef = caprad[sp];
+                        locsharbef.autoradiusbef = autoradius[sp];
+                        locallsharbef.push_back(locsharbef);
+ 
+                        if (locallListener) {
+                            locallListener->sharbefChanged(locallsharbef,params->locallab.selspot); 
+                        }
+                        
+                    }
+                    //end sharp capture
                     if ((log[sp] && autocomput[sp]) || (cie[sp] && autocie[sp])) {
                         constexpr int SCALE = 10;
                         int fw, fh, tr = TR_NONE;
@@ -1103,7 +1137,10 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                 delete [] sourceg;
                 delete [] cie;
                 delete [] log;
+                delete [] shar;
                 delete [] autocomput;
+                delete [] autoradius;
+                delete [] caprad;
             }
         }
 

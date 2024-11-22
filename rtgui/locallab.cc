@@ -1299,6 +1299,26 @@ void Locallab::ciebefChanged(const std::vector<locallabcieBEF> &ciebef, int sels
 
 }
 
+
+void Locallab::sharbefChanged(const std::vector<locallabsharBEF> &sharbef, int selspot)
+{
+    shar_bef = sharbef;
+    if (selspot < (int) shar_bef.size()) {
+        const double caprad = shar_bef.at(selspot).capradiusbef;
+        const bool autorad = shar_bef.at(selspot).autoradiusbef;
+
+        if(autorad) {
+            expsharp.autoDeconvRadiusChanged(caprad);
+         //   explog.updateAutocompute(blackev, whiteev, sourceg, sourceab, targetg, jz1);
+        }
+
+    }
+
+}
+
+
+
+
 void Locallab::maiChanged(const std::vector<locallabsetLC> &setlc, int selspot)
 {
     set_lc = setlc;

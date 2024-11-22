@@ -459,6 +459,11 @@ public:
         double jz1bef;
     };
 
+    struct locallabsharBEF {
+        double capradiusbef;
+        bool autoradiusbef;
+    };
+
     struct locallabcieLC {
         double redxlc;
         double redylc;
@@ -507,6 +512,9 @@ public:
     virtual void maiChanged(const std::vector<locallabsetLC> &csetlc, int selspot) = 0;
     virtual void sigChanged(const std::vector<locallabcieSIG> &ciesig, int selspot) = 0;
     virtual void ciebefChanged(const std::vector<locallabcieBEF> &ciebef, int selspot) = 0;
+
+    virtual void sharbefChanged(const std::vector<locallabsharBEF> &sharbef, int selspot) = 0;
+
     virtual void refChanged2(float *huerefp, float *chromarefp, float *lumarefp, float *fabrefp, int selspot) = 0;
 //    virtual void mainChanged(int spottype, int selspot, bool iscolor, bool issh, bool isvib, bool isexpos, bool issoft, bool isblur, bool istom, bool isret, bool issharp, bool iscont, bool iscbdl, bool islog, bool ismas, bool iscie) = 0;
     virtual void scopeChangedcol(int scope, int selspot, bool enab) = 0;
