@@ -2145,12 +2145,15 @@ LocallabSharp::LocallabSharp():
     Evlocallabcapradius = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_CAPRADIUS");
     Evlocallabautoradiuson = m->newEvent(CAPTURESHARPEN, "HISTORY_MSG_LOCAL_AUTOCAPRADIUS");
     Evlocallabautoradiusoff = m->newEvent(M_VOID, "HISTORY_MSG_LOCAL_AUTOCAPRADIUS");
+    Evlocallabsharcontraston = m->newEvent(CAPTURESHARPEN, "HISTORY_MSG_LOCAL_AUTOSHAR");
+    Evlocallabsharcontrastoff = m->newEvent(M_VOID, "HISTORY_MSG_LOCAL_AUTOCSHAR");
     Evlocallababdconvboost = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_CONVBOOST");
     Evlocallababdconvlat = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_CONVLAT");
     Evlocallabsharrepar = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_SHARREPAR");
     
     set_orientation(Gtk::ORIENTATION_VERTICAL);
     capradius->addAutoButton(M("TP_SHARPENING_RLD_AUTORADIUS_TOOLTIP"));
+    sharcontrast->addAutoButton(M("TP_SHARPENING_RLD_AUTOCONTR_TOOLTIP"));
 
     methodcap->append (M("TP_SHARPENING_CAP"));
     methodcap->append (M("TP_SHARPENING_RLN"));
@@ -2232,6 +2235,12 @@ void LocallabSharp::adjusterAutoToggled(Adjuster* a, bool newval)
         auto e = (!newval) ? Evlocallabautoradiusoff : Evlocallabautoradiuson;
         listener->panelChanged(e, newval ? M("GENERAL_ENABLED") : M("GENERAL_DISABLED"));
     }
+
+    if (listener && a == sharcontrast) {
+        auto f = (!newval) ? Evlocallabsharcontrastoff : Evlocallabsharcontraston;
+        listener->panelChanged(f, newval ? M("GENERAL_ENABLED") : M("GENERAL_DISABLED"));
+    }
+
 }
 
 void LocallabSharp::autoDeconvRadiusChanged(float radius)
@@ -2252,6 +2261,18 @@ void LocallabSharp::autoDeconvRadiusChanged(float radius)
     );
 }
 
+void LocallabSharp::autoContrastChanged(float autoContrast)
+{
+    idle_register.add(
+        [this, autoContrast]() -> bool
+        {
+            disableListener();
+            sharcontrast->setValue(autoContrast);
+            enableListener();
+            return false;
+        }
+    );
+}
 
 bool LocallabSharp::isMaskViewActive()
 {
@@ -2357,6 +2378,7 @@ void LocallabSharp::read(const rtengine::procparams::ProcParams* pp, const Param
 
         reparsha->setValue((double)spot.reparsha);
         sharcontrast->setValue((double)spot.sharcontrast);
+        sharcontrast->setAutoValue(spot.deconvAutoshar);
         sharradius->setValue(spot.sharradius);
         sharamount->setValue((double)spot.sharamount);
         shardamping->setValue((double)spot.shardamping);
@@ -2398,6 +2420,7 @@ void LocallabSharp::write(rtengine::procparams::ProcParams* pp, ParamsEdited* pe
 
         spot.reparsha = reparsha->getValue();
         spot.sharcontrast = sharcontrast->getIntValue();
+        spot.deconvAutoshar = sharcontrast->getAutoValue();
         spot.sharradius = sharradius->getValue();
         spot.sharamount = sharamount->getIntValue();
         spot.shardamping = shardamping->getIntValue();

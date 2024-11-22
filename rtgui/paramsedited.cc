@@ -1560,6 +1560,7 @@ void ParamsEdited::initFrom(const std::vector<rtengine::procparams::ProcParams>&
                 locallab.spots.at(j).expsharp = locallab.spots.at(j).expsharp && pSpot.expsharp == otherSpot.expsharp;
                 locallab.spots.at(j).complexsharp = locallab.spots.at(j).complexsharp && pSpot.complexsharp == otherSpot.complexsharp;
                 locallab.spots.at(j).sharcontrast = locallab.spots.at(j).sharcontrast && pSpot.sharcontrast == otherSpot.sharcontrast;
+                locallab.spots.at(j).deconvAutoshar = locallab.spots.at(j).deconvAutoshar && pSpot.deconvAutoshar == otherSpot.deconvAutoshar;
                 locallab.spots.at(j).sharradius = locallab.spots.at(j).sharradius && pSpot.sharradius == otherSpot.sharradius;
                 locallab.spots.at(j).sharamount = locallab.spots.at(j).sharamount && pSpot.sharamount == otherSpot.sharamount;
                 locallab.spots.at(j).shardamping = locallab.spots.at(j).shardamping && pSpot.shardamping == otherSpot.shardamping;
@@ -5327,6 +5328,9 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
             toEdit.locallab.spots.at(i).deconvAutoRadius = mods.locallab.spots.at(i).deconvAutoRadius;
         }
           
+        if (locallab.spots.at(i).deconvAutoshar) {
+            toEdit.locallab.spots.at(i).deconvAutoshar = mods.locallab.spots.at(i).deconvAutoshar;
+        }
 
         // Local Contrast
         if (locallab.spots.at(i).visicontrast) {
@@ -8451,6 +8455,7 @@ LocallabParamsEdited::LocallabSpotEdited::LocallabSpotEdited(bool v) :
     expsharp(v),
     complexsharp(v),
     sharcontrast(v),
+    deconvAutoshar(v),
     sharradius(v),
     sharamount(v),
     shardamping(v),
@@ -9220,6 +9225,7 @@ void LocallabParamsEdited::LocallabSpotEdited::set(bool v)
     expsharp = v;
     complexsharp = v;
     sharcontrast = v;
+    deconvAutoshar = v;
     sharradius = v;
     sharamount = v;
     shardamping = v;

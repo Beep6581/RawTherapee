@@ -17638,8 +17638,14 @@ void ImProcFunctions::Lab_Local(
 
 
             //sharpen only square area instead of all image, but limited to image dimensions (full image)
-            ImProcFunctions::deconvsharpeningloc(bufsh, hbuffer, bfw, bfh, loctemp2, params->locallab.spots.at(sp).shardamping, (double)params->locallab.spots.at(sp).sharradius, params->locallab.spots.at(sp).shariter, params->locallab.spots.at(sp).sharamount, params->locallab.spots.at(sp).sharcontrast, (double)params->locallab.spots.at(sp).sharblur, 1);
-
+            if(params->locallab.spots.at(sp).methodcap == "rl") {
+                ImProcFunctions::deconvsharpeningloc(bufsh, hbuffer, bfw, bfh, loctemp2, params->locallab.spots.at(sp).shardamping, (double)params->locallab.spots.at(sp).sharradius, params->locallab.spots.at(sp).shariter, params->locallab.spots.at(sp).sharamount, params->locallab.spots.at(sp).sharcontrast, (double)params->locallab.spots.at(sp).sharblur, 1);
+            }
+            
+            if(params->locallab.spots.at(sp).methodcap == "cap") {
+                
+            }
+            
             /*
             float gamma =  params->locallab.spots.at(sp).shargam;
             double pwr = 1.0 / (double) gamma;//default 3.0 - gamma Lab

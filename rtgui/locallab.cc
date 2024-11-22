@@ -1307,9 +1307,14 @@ void Locallab::sharbefChanged(const std::vector<locallabsharBEF> &sharbef, int s
         const double caprad = shar_bef.at(selspot).capradiusbef;
         const bool autorad = shar_bef.at(selspot).autoradiusbef;
 
+        const double sharcon = shar_bef.at(selspot).sharcontrastbef;
+        const bool autocon = shar_bef.at(selspot).autocontrastbef;
+
         if(autorad) {
             expsharp.autoDeconvRadiusChanged(caprad);
-         //   explog.updateAutocompute(blackev, whiteev, sourceg, sourceab, targetg, jz1);
+        }
+        if(autocon) {
+            expsharp.autoContrastChanged(sharcon);
         }
 
     }

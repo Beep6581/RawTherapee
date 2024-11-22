@@ -3986,6 +3986,7 @@ LocallabParams::LocallabSpot::LocallabSpot() :
     expsharp(false),
     complexsharp(0),
     sharcontrast(20),
+    deconvAutoshar(true),
     sharradius(0.75),
     sharamount(100),
     shardamping(0),
@@ -5323,7 +5324,8 @@ bool LocallabParams::LocallabSpot::operator ==(const LocallabSpot& other) const
         && visisharp == other.visisharp
         && expsharp == other.expsharp
         && complexsharp == other.complexsharp
-        && sharcontrast == other.sharcontrast
+    //    && sharcontrast == other.sharcontrast
+        && (deconvAutoshar || (sharcontrast == other.sharcontrast))
         && sharradius == other.sharradius
         && sharamount == other.sharamount
         && shardamping == other.shardamping
@@ -7317,6 +7319,7 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
                     saveToKeyfile(!pedited || spot_edited->methodcap, "Locallab", "methodcap_" + index_str, spot.methodcap, keyFile);
                     saveToKeyfile(!pedited || spot_edited->capradius, "Locallab", "capradius_" + index_str, spot.capradius, keyFile);
                     saveToKeyfile(!pedited || spot_edited->deconvAutoRadius, "Locallab", "deconvAutoRadius_" + index_str, spot.deconvAutoRadius, keyFile);
+                    saveToKeyfile(!pedited || spot_edited->deconvAutoshar, "Locallab", "deconvAutoshar_" + index_str, spot.deconvAutoshar, keyFile);
                     saveToKeyfile(!pedited || spot_edited->deconvCoBoost, "Locallab", "deconvCoBoost_" + index_str, spot.deconvCoBoost, keyFile);
                     saveToKeyfile(!pedited || spot_edited->deconvCoLat, "Locallab", "deconvCoLat_" + index_str, spot.deconvCoLat, keyFile);
                     saveToKeyfile(!pedited || spot_edited->reparsha, "Locallab", "reparsha_" + index_str, spot.reparsha, keyFile);
@@ -9741,6 +9744,7 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
                 assignFromKeyfile(keyFile, "Locallab", "methodcap_" + index_str, spot.methodcap, spotEdited.methodcap);
                 assignFromKeyfile(keyFile, "Locallab", "capradius_" + index_str, spot.capradius, spotEdited.capradius);
                 assignFromKeyfile(keyFile, "Locallab", "deconvAutoRadius_" + index_str, spot.deconvAutoRadius, spotEdited.deconvAutoRadius);
+                assignFromKeyfile(keyFile, "Locallab", "deconvAutoshar_" + index_str, spot.deconvAutoshar, spotEdited.deconvAutoshar);
                 
                 assignFromKeyfile(keyFile, "Locallab", "deconvCoBoost_" + index_str, spot.deconvCoBoost, spotEdited.deconvCoBoost);
                 assignFromKeyfile(keyFile, "Locallab", "deconvCoLat_" + index_str, spot.deconvCoLat, spotEdited.deconvCoLat);

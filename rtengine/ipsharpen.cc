@@ -256,7 +256,7 @@ void ImProcFunctions::deconvsharpeningloc (float** luminance, float** tmp, int W
     }
     JaggedArray<float> blend(W, H);
     float contras = contrast / 100.f;
-    buildBlendMask(luminance, blend, W, H, contras, 1.f);
+    buildBlendMask(luminance, blend, W, H, contras);
 
 
     JaggedArray<float> tmpI(W, H);

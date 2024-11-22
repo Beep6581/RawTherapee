@@ -1495,6 +1495,7 @@ struct LocallabParams {
         bool expsharp;
         int complexsharp;
         int sharcontrast;
+        bool deconvAutoshar;
         double sharradius;
         int sharamount;
         int shardamping;

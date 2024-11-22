@@ -995,6 +995,10 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                 autoradius = new bool[sizespot];
                 float *caprad = nullptr;
                 caprad = new float[sizespot];
+                bool *autocontrast = nullptr;
+                autocontrast = new bool[sizespot];
+                float *sharcont = nullptr;
+                sharcont = new float[sizespot];
 
                 float *locx = nullptr;
                 locx = new float[sizespot];
@@ -1038,6 +1042,8 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                     //to auto sharp Capture
                     autoradius[sp] = params->locallab.spots.at(sp).deconvAutoRadius;
                     caprad[sp] = params->locallab.spots.at(sp).capradius;
+                    autocontrast[sp] = params->locallab.spots.at(sp).deconvAutoshar;
+                    sharcont[sp] = params->locallab.spots.at(sp).sharcontrast;
 
                     if (shar[sp] && autoradius[sp]){
                         float rad = -1.f;
@@ -1049,10 +1055,14 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                         params->locallab.spots.at(sp).capradius = caprad[sp];
                         params->locallab.spots.at(sp).deconvAutoRadius = autoradius[sp];
                         printf("capradius=%f \n", (double) rad);
+                        params->locallab.spots.at(sp).deconvAutoshar = autocontrast[sp];
+                        params->locallab.spots.at(sp).sharcontrast = sharcont[sp];
                         
                         LocallabListener::locallabsharBEF locsharbef;
                         locsharbef.capradiusbef = caprad[sp];
                         locsharbef.autoradiusbef = autoradius[sp];
+                        locsharbef.autocontrastbef = autocontrast[sp];
+                        locsharbef.sharcontrastbef = sharcont[sp];
                         locallsharbef.push_back(locsharbef);
  
                         if (locallListener) {
@@ -1141,6 +1151,8 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                 delete [] autocomput;
                 delete [] autoradius;
                 delete [] caprad;
+                delete [] autocontrast;
+                delete [] sharcont;
             }
         }
 

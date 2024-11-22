@@ -1198,6 +1198,8 @@ private:
     rtengine::ProcEvent Evlocallabautoradiuson;
     rtengine::ProcEvent Evlocallabautoradiusoff;
     rtengine::ProcEvent Evlocallabsharrepar;
+    rtengine::ProcEvent Evlocallabsharcontraston;
+    rtengine::ProcEvent Evlocallabsharcontrastoff;
 
     rtengine::ProcEvent Evlocallababdconvboost;
     rtengine::ProcEvent Evlocallababdconvlat;
@@ -1223,6 +1225,7 @@ public:
     void adjusterAutoToggled(Adjuster* a, bool newval);
  //   void adjusterAutoToggled(Adjuster* a);
     void autoDeconvRadiusChanged(float radius);
+    void autoContrastChanged(float autoContrast);
 
 private:
     void enabledChanged() override;

@@ -830,6 +830,7 @@ public:
         bool expsharp;
         bool complexsharp;
         bool sharcontrast;
+        bool deconvAutoshar;
         bool sharradius;
         bool sharamount;
         bool shardamping;

@@ -462,6 +462,8 @@ public:
     struct locallabsharBEF {
         double capradiusbef;
         bool autoradiusbef;
+        double sharcontrastbef;
+        bool autocontrastbef;
     };
 
     struct locallabcieLC {
