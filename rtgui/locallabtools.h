@@ -1175,6 +1175,7 @@ private:
     MyComboBoxText* methodcap;
 
 
+    Adjuster* const reparsha;
     Adjuster* const sharcontrast;
     Adjuster* const capradius;
     Adjuster* const deconvCoBoost;
@@ -1196,6 +1197,7 @@ private:
     rtengine::ProcEvent Evlocallabcapradius;
     rtengine::ProcEvent Evlocallabautoradiuson;
     rtengine::ProcEvent Evlocallabautoradiusoff;
+    rtengine::ProcEvent Evlocallabsharrepar;
 
     rtengine::ProcEvent Evlocallababdconvboost;
     rtengine::ProcEvent Evlocallababdconvlat;

@@ -1523,8 +1523,10 @@ HISTORY_MSG_LOCAL_CIE_STRLOG;Local - CIECAM Log encoding strength
 HISTORY_MSG_LOCAL_CIE_TRC;Local - CIECAM TRC
 HISTORY_MSG_LOCAL_CIE_WHITES;Local - CIECAM Whites distribution
 HISTORY_MSG_LOCAL_CAPRADIUS;Local - Sh Capture radius
+HISTORY_MSG_LOCAL_AUTOCAPRADIUS;Local - Sh Auto Capture radius
 HISTORY_MSG_LOCAL_CONVBOOST;Local - Sh Corner radius
 HISTORY_MSG_LOCAL_CONVLAT;Local - Sh Corner iterations
+HISTORY_MSG_LOCAL_SHARREPAR;Local - Sh Strength
 HISTORY_MSG_LOCAL_DEHAZE_BLACK;Local - Dehaze Black
 HISTORY_MSG_LOCAL_FEATHERCIE;Local - CIECAM Gradient feather
 HISTORY_MSG_LOCAL_FEATHERCOL;Local - Color Gradient feather
@@ -3558,7 +3560,7 @@ TP_LOCALLAB_SHARITER;Iterations
 TP_LOCALLAB_SHARP;Sharpening
 TP_LOCALLAB_SHARP_TOOLNAME;Sharpening
 TP_LOCALLAB_SHARRADIUS;Radius
-TP_LOCALLAB_SHARRLFRAME;Deconvolution settings
+TP_LOCALLAB_SHARRLFRAME;RL Deconvolution Settings
 
 TP_LOCALLAB_SHORTC;Short Curves 'L' Mask
 TP_LOCALLAB_SHORTCMASK_TOOLTIP;Short circuit the 2 curves L(L) and L(H).\nAllows you to mix the current image with the original image modified by the mask job.\nUsable with masks 2, 3, 4, 6, 7.
@@ -4047,7 +4049,7 @@ TP_SHARPENING_RLD;RL Deconvolution
 TP_SHARPENING_RLD_AMOUNT;Amount
 TP_SHARPENING_RLD_DAMPING;Damping
 TP_SHARPENING_RLD_ITERATIONS;Iterations
-TP_SHARPENING_RLN;Deconvolution
+TP_SHARPENING_RLN;RL Deconvolution
 TP_SHARPENING_CAP;Capture Deconvolution
 TP_SHARPENING_CAPFRAME;Corner boost
 TP_SHARPENING_THRESHOLD;Threshold

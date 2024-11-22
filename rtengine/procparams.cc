@@ -3999,6 +3999,7 @@ LocallabParams::LocallabSpot::LocallabSpot() :
     deconvAutoRadius(true),
     deconvCoBoost(0.),
     deconvCoLat(25.),
+    reparsha(100.),
     
     // Local Contrast
     visicontrast(false),
@@ -5334,8 +5335,9 @@ bool LocallabParams::LocallabSpot::operator ==(const LocallabSpot& other) const
         && methodcap == other.methodcap
         && deconvAutoRadius == other.deconvAutoRadius       
         && (deconvAutoRadius || (capradius == other.capradius))
-        && deconvCoBoost == other. deconvCoBoost     
-        && deconvCoLat == other. deconvCoLat     
+        && deconvCoBoost == other.deconvCoBoost     
+        && deconvCoLat == other.deconvCoLat     
+        && reparsha == other.reparsha     
 
         // Local contrast
         && visicontrast == other.visicontrast
@@ -7317,6 +7319,7 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
                     saveToKeyfile(!pedited || spot_edited->deconvAutoRadius, "Locallab", "deconvAutoRadius_" + index_str, spot.deconvAutoRadius, keyFile);
                     saveToKeyfile(!pedited || spot_edited->deconvCoBoost, "Locallab", "deconvCoBoost_" + index_str, spot.deconvCoBoost, keyFile);
                     saveToKeyfile(!pedited || spot_edited->deconvCoLat, "Locallab", "deconvCoLat_" + index_str, spot.deconvCoLat, keyFile);
+                    saveToKeyfile(!pedited || spot_edited->reparsha, "Locallab", "reparsha_" + index_str, spot.reparsha, keyFile);
                     
 
                 }
@@ -9741,6 +9744,7 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
                 
                 assignFromKeyfile(keyFile, "Locallab", "deconvCoBoost_" + index_str, spot.deconvCoBoost, spotEdited.deconvCoBoost);
                 assignFromKeyfile(keyFile, "Locallab", "deconvCoLat_" + index_str, spot.deconvCoLat, spotEdited.deconvCoLat);
+                assignFromKeyfile(keyFile, "Locallab", "reparsha_" + index_str, spot.reparsha, spotEdited.reparsha);
 
                 
                 // Local Contrast

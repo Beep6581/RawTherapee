@@ -1508,6 +1508,7 @@ struct LocallabParams {
         bool deconvAutoRadius;
         double deconvCoBoost;                
         double deconvCoLat;                
+        double reparsha;                
 
         // Local Contrast
         bool visicontrast;
