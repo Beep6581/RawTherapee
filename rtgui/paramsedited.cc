@@ -1569,6 +1569,7 @@ void ParamsEdited::initFrom(const std::vector<rtengine::procparams::ProcParams>&
                 locallab.spots.at(j).shargam = locallab.spots.at(j).shargam && pSpot.shargam == otherSpot.shargam;
                 locallab.spots.at(j).sensisha = locallab.spots.at(j).sensisha && pSpot.sensisha == otherSpot.sensisha;
                 locallab.spots.at(j).inverssha = locallab.spots.at(j).inverssha && pSpot.inverssha == otherSpot.inverssha;
+                locallab.spots.at(j).sharshow = locallab.spots.at(j).sharshow && pSpot.sharshow == otherSpot.sharshow;
                 locallab.spots.at(j).methodcap = locallab.spots.at(j).methodcap && pSpot.methodcap == otherSpot.methodcap;
                 locallab.spots.at(j).capradius = locallab.spots.at(j).capradius && pSpot.capradius == otherSpot.capradius;
                 locallab.spots.at(j).deconvAutoRadius = locallab.spots.at(j).deconvAutoRadius && pSpot.deconvAutoRadius == otherSpot.deconvAutoRadius;
@@ -5304,6 +5305,10 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
             toEdit.locallab.spots.at(i).inverssha = mods.locallab.spots.at(i).inverssha;
         }
 
+        if (locallab.spots.at(i).sharshow) {
+            toEdit.locallab.spots.at(i).sharshow = mods.locallab.spots.at(i).sharshow;
+        }
+
         if (locallab.spots.at(i).methodcap) {
             toEdit.locallab.spots.at(i).methodcap = mods.locallab.spots.at(i).methodcap;
         }
@@ -8464,6 +8469,7 @@ LocallabParamsEdited::LocallabSpotEdited::LocallabSpotEdited(bool v) :
     shargam(v),
     sensisha(v),
     inverssha(v),
+    sharshow(v),
     methodcap(v),
     capradius(v),
     deconvAutoRadius(v),
@@ -9234,6 +9240,7 @@ void LocallabParamsEdited::LocallabSpotEdited::set(bool v)
     shargam = v;
     sensisha = v;
     inverssha = v;
+    sharshow = v;
     methodcap = v;
     capradius = v;
     deconvAutoRadius = v;

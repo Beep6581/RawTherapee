@@ -17857,6 +17857,7 @@ void ImProcFunctions::Lab_Local(
             float deconvCo = params->locallab.spots.at(sp).deconvCoBoost;
             float deconvLat = params->locallab.spots.at(sp).deconvCoLat;
             bool autoshar = params->locallab.spots.at(sp).deconvAutoshar;
+            bool sharpshow = params->locallab.spots.at(sp).sharshow;
             const std::unique_ptr<Imagefloat> tmpImagesha(new Imagefloat(bfw, bfh));
             if(!autoshar){
                sharc = contra; 
@@ -17864,7 +17865,7 @@ void ImProcFunctions::Lab_Local(
 
 
             lab2rgb(*bufexpfin, *tmpImagesha, params->icm.workingProfile);
-            ImProcFunctions::doSharpening(tmpImagesha.get(), sk, sharc, autoshar, capradiu,  deconvCo, deconvLat, true);
+            ImProcFunctions::doSharpening(tmpImagesha.get(), sk, sharc, autoshar, capradiu,  deconvCo, deconvLat, sharpshow);
                  //   transformed->L[y + ystart][x + xstart] = (lum) + clipLoc(bufmaskorigSH->L[y][x]);
                  //   transformed->a[y + ystart][x + xstart] = bufexporig->a[y][x] * bufmaskorigSH->a[y][x];
                  //   transformed->b[y + ystart][x + xstart] = (colo) + bufexporig->b[y][x] * bufmaskorigSH->b[y][x];

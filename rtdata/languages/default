@@ -1528,6 +1528,7 @@ HISTORY_MSG_LOCAL_AUTOSHAR;Local - Sh Auto Contrast
 HISTORY_MSG_LOCAL_CONVBOOST;Local - Sh Corner radius
 HISTORY_MSG_LOCAL_CONVLAT;Local - Sh Corner iterations
 HISTORY_MSG_LOCAL_SHARREPAR;Local - Sh Strength
+HISTORY_MSG_LOCAL_SHARSHOW;Local - Sh Show contrast mask
 HISTORY_MSG_LOCAL_DEHAZE_BLACK;Local - Dehaze Black
 HISTORY_MSG_LOCAL_FEATHERCIE;Local - CIECAM Gradient feather
 HISTORY_MSG_LOCAL_FEATHERCOL;Local - Color Gradient feather

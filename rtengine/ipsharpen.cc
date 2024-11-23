@@ -492,7 +492,6 @@ void ImProcFunctions::doSharpening(Imagefloat *rgb, int sk, float &sharpc, bool 
     sharpc = 100.f * pow_F(contrast, 0.84f);
     printf("CONtrast08=%f \n", (double) sharpc / s_scale);
 
-    showMask = true;
     if (showMask) {
         float **r = rgb->r.ptrs;
         float **g = rgb->g.ptrs;
@@ -506,7 +505,7 @@ void ImProcFunctions::doSharpening(Imagefloat *rgb, int sk, float &sharpc, bool 
             }
         }
 
-      //  return;
+        return;
     }
 
 /*    

@@ -1177,7 +1177,9 @@ private:
 
     Adjuster* const reparsha;
     Adjuster* const sharcontrast;
+    Gtk::CheckButton* const sharshow;
     Adjuster* const capradius;
+
     Adjuster* const deconvCoBoost;
     Adjuster* const deconvCoLat;
     Gtk::Frame* const capFrame;
@@ -1203,8 +1205,9 @@ private:
 
     rtengine::ProcEvent Evlocallababdconvboost;
     rtengine::ProcEvent Evlocallababdconvlat;
+    rtengine::ProcEvent Evlocallababsharshow;
 
-    sigc::connection inversshaConn, showmasksharMethodConn, methodcapConn;
+    sigc::connection inversshaConn, showmasksharMethodConn, methodcapConn, sharshowConn;
 
 public:
     LocallabSharp();
@@ -1232,6 +1235,7 @@ private:
     void convertParamToNormal() override;
     void convertParamToSimple() override;
     void updateGUIToMode(const modeType new_type) override;
+    void sharshowChanged();
 
     void inversshaChanged();
     void methodcapChanged();
