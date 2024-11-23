@@ -482,7 +482,7 @@ void ImProcFunctions::doSharpening(Imagefloat *rgb, int sk, float &sharpc, bool 
 
     get_luminance(rgb, Y, multiThread);
  
-    float s_scale = std::sqrt(sk);
+    float s_scale = 1.f; //std::sqrt(sk);
     float contrast = pow_F(sharpc / 100.f, 1.2f) * s_scale;
     JaggedArray<float> blend(W, H);
    // buildBlendMask(Y, blend, W, H, contrast, autoshar);

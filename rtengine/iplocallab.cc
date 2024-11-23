@@ -17825,7 +17825,7 @@ void ImProcFunctions::Lab_Local(
 //Sharp methodcap Capture
     bool cap = params->locallab.spots.at(sp).methodcap == "cap";
 
-    if (!lp.invshar && cap && lp.sharpena) {
+    if (!lp.invshar && cap && lp.sharpena  && sk == 1) {
         int ystart = rtengine::max(static_cast<int>(lp.yc - lp.lyT) - cy, 0);
         int yend = rtengine::min(static_cast<int>(lp.yc + lp.ly) - cy, original->H);
         int xstart = rtengine::max(static_cast<int>(lp.xc - lp.lxL) - cx, 0);
