@@ -2143,10 +2143,10 @@ LocallabSharp::LocallabSharp():
     //rtengine::ProcEvent EvlocallabenacieMaskall;
     Evlocallabmethodcap = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_METHODCAP");
     Evlocallabcapradius = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_CAPRADIUS");
-    Evlocallabautoradiuson = m->newEvent(CAPTURESHARPEN, "HISTORY_MSG_LOCAL_AUTOCAPRADIUS");
-    Evlocallabautoradiusoff = m->newEvent(M_VOID, "HISTORY_MSG_LOCAL_AUTOCAPRADIUS");
-    Evlocallabsharcontraston = m->newEvent(CAPTURESHARPEN, "HISTORY_MSG_LOCAL_AUTOSHAR");
-    Evlocallabsharcontrastoff = m->newEvent(M_VOID, "HISTORY_MSG_LOCAL_AUTOCSHAR");
+    Evlocallabautoradiuson = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_AUTOCAPRADIUS");
+    Evlocallabautoradiusoff = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_AUTOCAPRADIUS");
+    Evlocallabsharcontraston = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_AUTOSHAR");
+    Evlocallabsharcontrastoff = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_AUTOCSHAR");
     Evlocallababdconvboost = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_CONVBOOST");
     Evlocallababdconvlat = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_CONVLAT");
     Evlocallabsharrepar = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_SHARREPAR");
@@ -2237,8 +2237,8 @@ void LocallabSharp::adjusterAutoToggled(Adjuster* a, bool newval)
     }
 
     if (listener && a == sharcontrast) {
-        auto f = (!newval) ? Evlocallabsharcontrastoff : Evlocallabsharcontraston;
-        listener->panelChanged(f, newval ? M("GENERAL_ENABLED") : M("GENERAL_DISABLED"));
+        auto e = (!newval) ? Evlocallabsharcontrastoff : Evlocallabsharcontraston;
+        listener->panelChanged(e, newval ? M("GENERAL_ENABLED") : M("GENERAL_DISABLED"));
     }
 
 }

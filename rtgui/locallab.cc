@@ -1307,12 +1307,27 @@ void Locallab::sharbefChanged(const std::vector<locallabsharBEF> &sharbef, int s
         const double caprad = shar_bef.at(selspot).capradiusbef;
         const bool autorad = shar_bef.at(selspot).autoradiusbef;
 
-        const double sharcon = shar_bef.at(selspot).sharcontrastbef;
-        const bool autocon = shar_bef.at(selspot).autocontrastbef;
+      //  const double sharcon = shar_bef.at(selspot).sharcontrastbef;
+      //  const bool autocon = shar_bef.at(selspot).autocontrastbef;
 
         if(autorad) {
             expsharp.autoDeconvRadiusChanged(caprad);
         }
+      //  if(autocon) {
+      //      expsharp.autoContrastChanged(sharcon);
+      //  }
+
+    }
+
+}
+
+void Locallab::sharaftChanged(const std::vector<locallabsharAFT> &sharaft, int selspot)
+{
+    shar_aft = sharaft;
+    if (selspot < (int) shar_aft.size()) {
+
+        const double sharcon = shar_aft.at(selspot).sharcontrastaft;
+        const bool autocon = shar_aft.at(selspot).autocontrastaft;
         if(autocon) {
             expsharp.autoContrastChanged(sharcon);
         }
@@ -1320,6 +1335,7 @@ void Locallab::sharbefChanged(const std::vector<locallabsharBEF> &sharbef, int s
     }
 
 }
+
 
 
 

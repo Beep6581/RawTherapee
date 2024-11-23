@@ -1,4 +1,5 @@
 /*
+
  *  This file is part of RawTherapee.
  *
  *  Copyright (c) 2004-2010 Gabor Horvath <hgabor@rawtherapee.com>
@@ -213,8 +214,8 @@ enum class BlurType {
 //    void colorCurve       (LabImage* lold, LabImage* lnew);
     void sharpening(LabImage* lab, const procparams::SharpeningParams &sharpenParam, bool showMask = false);
 
-    bool doSharpening(Imagefloat *rgb, int sk, const procparams::SharpeningParams &sharpenParam, bool showMask);
-    bool sharpeningrgb(Imagefloat *img, int sk);
+    void doSharpening(Imagefloat *rgb, int sk, float &sharpc, bool autoshar, float capradiu,  float deconvCo, float deconvLat, bool showMask);
+
 
     void sharpeningcam(CieImage* ncie, float** buffer, bool showMask = false);
     void transform(Imagefloat* original, Imagefloat* transformed, int cx, int cy, int sx, int sy, int oW, int oH, int fW, int fH, const FramesMetaData *metadata, int rawRotationDeg, bool fullImage, bool useOriginalBuffer = false);
@@ -373,7 +374,7 @@ enum class BlurType {
                 bool prevDeltaE, int llColorMask, int llColorMaskinv, int llExpMask, int llExpMaskinv, int llSHMask, int llSHMaskinv, int llvibMask, int lllcMask, int llsharMask, int llcbMask, int llretiMask, int llsoftMask, int lltmMask, int llblMask, int lllogMask, int ll_Mask, int llcieMask,
                 float &minCD, float &maxCD, float &mini, float &maxi, float &Tmean, float &Tsigma, float &Tmin, float &Tmax,
                 float& meantm, float& stdtm, float& meanreti, float& stdreti, float &fab, float &maxicam, float &rdx, float &rdy, float &grx, float &gry, float &blx, float &bly, float &meanx, float &meany, float &meanxe, float &meanye, int &prim, int &ill, float &contsig, float &lightsig,
-                float &highresi, float &nresi, float &highresi46, float &nresi46, float &Lhighresi, float &Lnresi, float &Lhighresi46, float &Lnresi46);
+                float &highresi, float &nresi, float &highresi46, float &nresi46, float &Lhighresi, float &Lnresi, float &Lhighresi46, float &Lnresi46, float &sharc);
     
     void tone_eqcam2(ImProcFunctions *ipf, Imagefloat *rgb, int whits, int blacks, const Glib::ustring &workingProfile, double scale, bool multithread);
     void tone_eqdehaz(ImProcFunctions *ipf, Imagefloat *rgb, int whits, int blacks, const Glib::ustring &workingProfile, double scale, bool multithread);

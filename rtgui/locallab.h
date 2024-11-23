@@ -133,6 +133,7 @@ private:
     std::vector<locallabcieBEF> cie_bef;
 
     std::vector<locallabsharBEF> shar_bef;
+    std::vector<locallabsharAFT> shar_aft;
 
     std::vector<locallabcieLC> cie_lc;
 
@@ -183,6 +184,7 @@ public:
 
     // Locallab Sharp
     void sharbefChanged(const std::vector<locallabsharBEF> &sharbef, int selspot) override;
+    void sharaftChanged(const std::vector<locallabsharAFT> &sharaft, int selspot) override;
 
 
     void sigChanged(const std::vector<locallabcieSIG> &ciesig, int selspot) override;

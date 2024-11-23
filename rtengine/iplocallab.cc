@@ -8994,6 +8994,8 @@ void ImProcFunctions::transit_shapedetect2(int sp, float meantm, float stdtm, in
         varsens = lp.sensimas;
     } else if (senstype == 31) { //ciecam
         varsens = lp.sensicie;
+    } else if (senstype == 99) { //Capture sharpening
+        varsens = lp.senssha;
     }
     int bfhr = bfh;
     int bfwr = bfw;
@@ -13885,7 +13887,7 @@ void ImProcFunctions::Lab_Local(
     bool prevDeltaE, int llColorMask, int llColorMaskinv, int llExpMask, int llExpMaskinv, int llSHMask, int llSHMaskinv, int llvibMask, int lllcMask, int llsharMask, int llcbMask, int llretiMask, int llsoftMask, int lltmMask, int llblMask, int lllogMask, int ll_Mask, int llcieMask,
     float& minCD, float& maxCD, float& mini, float& maxi, float& Tmean, float& Tsigma, float& Tmin, float& Tmax,
     float& meantm, float& stdtm, float& meanreti, float& stdreti, float &fab,float &maxicam, float &rdx, float &rdy, float &grx, float &gry, float &blx, float &bly, float &meanx, float &meany, float &meanxe, float &meanye, int &prim, int &ill, float &contsig, float &lightsig,
-    float& highresi, float& nresi, float& highresi46, float& nresi46, float& Lhighresi, float& Lnresi, float& Lhighresi46, float& Lnresi46
+    float& highresi, float& nresi, float& highresi46, float& nresi46, float& Lhighresi, float& Lnresi, float& Lhighresi46, float& Lnresi46, float &sharc
 
     )
 {
@@ -17559,8 +17561,10 @@ void ImProcFunctions::Lab_Local(
             }
         }
     }
+   // float capr = params->locallab.spots.at(sp).capradius;
 
-    if (!lp.invshar && lp.shrad > 0.42 && call < 3 && lp.sharpena && sk == 1) { //interior ellipse for sharpening, call = 1 and 2 only with Dcrop and simpleprocess
+    bool rl = (params->locallab.spots.at(sp).methodcap == "rl");
+    if (!lp.invshar && rl && lp.shrad > 0.42 && call < 3 && lp.sharpena && sk == 1) { //interior ellipse for sharpening, call = 1 and 2 only with Dcrop and simpleprocess
         int bfh = call == 2 ? int (lp.ly + lp.lyT) + del : original->H; //bfw bfh real size of square zone
         int bfw = call == 2 ? int (lp.lx + lp.lxL) + del : original->W;
 
@@ -17638,14 +17642,7 @@ void ImProcFunctions::Lab_Local(
 
 
             //sharpen only square area instead of all image, but limited to image dimensions (full image)
-            if(params->locallab.spots.at(sp).methodcap == "rl") {
                 ImProcFunctions::deconvsharpeningloc(bufsh, hbuffer, bfw, bfh, loctemp2, params->locallab.spots.at(sp).shardamping, (double)params->locallab.spots.at(sp).sharradius, params->locallab.spots.at(sp).shariter, params->locallab.spots.at(sp).sharamount, params->locallab.spots.at(sp).sharcontrast, (double)params->locallab.spots.at(sp).sharblur, 1);
-            }
-            
-            if(params->locallab.spots.at(sp).methodcap == "cap") {
-                
-            }
-            
             /*
             float gamma =  params->locallab.spots.at(sp).shargam;
             double pwr = 1.0 / (double) gamma;//default 3.0 - gamma Lab
@@ -17707,8 +17704,9 @@ void ImProcFunctions::Lab_Local(
                 }
             }
 
-
-            ImProcFunctions::deconvsharpeningloc(original->L, shbuffer, bfw, bfh, loctemp, params->locallab.spots.at(sp).shardamping, (double)params->locallab.spots.at(sp).sharradius, params->locallab.spots.at(sp).shariter, params->locallab.spots.at(sp).sharamount, params->locallab.spots.at(sp).sharcontrast, (double)params->locallab.spots.at(sp).sharblur, sk);
+            
+                ImProcFunctions::deconvsharpeningloc(original->L, shbuffer, bfw, bfh, loctemp, params->locallab.spots.at(sp).shardamping, (double)params->locallab.spots.at(sp).sharradius, params->locallab.spots.at(sp).shariter, params->locallab.spots.at(sp).sharamount, params->locallab.spots.at(sp).sharcontrast, (double)params->locallab.spots.at(sp).sharblur, sk);
+           
 
             /*
             float gamma =  params->locallab.spots.at(sp).shargam;
@@ -17750,7 +17748,7 @@ void ImProcFunctions::Lab_Local(
             calc_ref(sp, original, transformed, 0, 0, original->W, original->H, sk, huerefblur, chromarefblur, lumarefblur, hueref, chromaref, lumaref, sobelref, avge, locwavCurveden, locwavdenutili);
         }
 
-    } else if (lp.invshar && lp.shrad > 0.42 && call < 3 && lp.sharpena && sk == 1) {
+    } else if (lp.invshar && rl && lp.shrad > 0.42 && call < 3 && lp.sharpena && sk == 1) {
         int GW = original->W;
         int GH = original->H;
         JaggedArray<float> loctemp(GW, GH);
@@ -17824,6 +17822,69 @@ void ImProcFunctions::Lab_Local(
         }
     }
 
+//Sharp methodcap Capture
+    bool cap = params->locallab.spots.at(sp).methodcap == "cap";
+
+    if (!lp.invshar && cap && lp.sharpena) {
+        int ystart = rtengine::max(static_cast<int>(lp.yc - lp.lyT) - cy, 0);
+        int yend = rtengine::min(static_cast<int>(lp.yc + lp.ly) - cy, original->H);
+        int xstart = rtengine::max(static_cast<int>(lp.xc - lp.lxL) - cx, 0);
+        int xend = rtengine::min(static_cast<int>(lp.xc + lp.lx) - cx, original->W);
+        int bfh = yend - ystart;
+        int bfw = xend - xstart;
+
+        if (bfw >= mSPsharp  && bfh >= mSPsharp) {//for buildblendmask
+            const std::unique_ptr<LabImage> bufexporig(new LabImage(bfw, bfh));
+            const std::unique_ptr<LabImage> bufexpfin(new LabImage(bfw, bfh));
+
+#ifdef _OPENMP
+            #pragma omp parallel for schedule(dynamic,16) if (multiThread)
+#endif
+
+            for (int y = ystart; y < yend; y++) {
+                for (int x = xstart; x < xend; x++) {
+                    bufexporig->L[y - ystart][x - xstart] = original->L[y][x];
+                    bufexporig->a[y - ystart][x - xstart] = original->a[y][x];
+                    bufexporig->b[y - ystart][x - xstart] = original->b[y][x];
+                }
+            }
+
+            bufexpfin->CopyFrom(bufexporig.get(), multiThread);
+
+            float contra = params->locallab.spots.at(sp).sharcontrast;
+            float capradiu = params->locallab.spots.at(sp).capradius;
+           // printf("CAPRADIU=%f \n", (double) capradiu);
+            float deconvCo = params->locallab.spots.at(sp).deconvCoBoost;
+            float deconvLat = params->locallab.spots.at(sp).deconvCoLat;
+            bool autoshar = params->locallab.spots.at(sp).deconvAutoshar;
+            const std::unique_ptr<Imagefloat> tmpImagesha(new Imagefloat(bfw, bfh));
+            if(!autoshar){
+               sharc = contra; 
+            }
+
+
+            lab2rgb(*bufexpfin, *tmpImagesha, params->icm.workingProfile);
+            ImProcFunctions::doSharpening(tmpImagesha.get(), sk, sharc, autoshar, capradiu,  deconvCo, deconvLat, true);
+                 //   transformed->L[y + ystart][x + xstart] = (lum) + clipLoc(bufmaskorigSH->L[y][x]);
+                 //   transformed->a[y + ystart][x + xstart] = bufexporig->a[y][x] * bufmaskorigSH->a[y][x];
+                 //   transformed->b[y + ystart][x + xstart] = (colo) + bufexporig->b[y][x] * bufmaskorigSH->b[y][x];
+
+            
+            rgb2lab(*tmpImagesha, *bufexpfin, params->icm.workingProfile);
+            
+            
+            transit_shapedetect2(sp, 0.f, 0.f, call, 99, bufexporig.get(), bufexpfin.get(), nullptr, hueref, chromaref, lumaref, sobelref, 0.f, nullptr, lp, original, transformed, cx, cy, sk);
+
+            if (lp.recur) {
+                original->CopyFrom(transformed, multiThread);
+                float avge;
+                calc_ref(sp, original, transformed, 0, 0, original->W, original->H, sk, huerefblur, chromarefblur, lumarefblur, hueref, chromaref, lumaref, sobelref, avge, locwavCurveden, locwavdenutili);
+            }
+            
+        }
+    }
+    
+    
     bool enablefat = false;
 
     if (params->locallab.spots.at(sp).fatamount > 1.0) {
