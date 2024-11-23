@@ -1156,10 +1156,10 @@ BENCHFUN
         return;
     }
 
-    showMask = sharpeningParams.showcap;
+    bool showMaskperso = sharpeningParams.showcap;
 
 
-    if (showMask) {
+    if (showMask  ||  showMaskperso) {
         array2D<float>& L = blue; // blue will be overridden anyway => we can use its buffer to store L
 #ifdef _OPENMP
         #pragma omp parallel for

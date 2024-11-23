@@ -507,6 +507,35 @@ void ImProcFunctions::doSharpening(Imagefloat *rgb, int sk, float &sharpc, bool 
 
         return;
     }
+ 
+        std::unique_ptr<JaggedArray<char>> impulse;
+        impulse.reset(new JaggedArray<char>(W, H));
+        markImpulse(W, H, Y, *impulse, 2.f);
+   
+        array2D<float> YY(W, H);// Y, ARRAY2D_ALIGNED);
+
+        double sigma = capradiu;
+        float amount = 1.f; //d / 100.f;
+        float delta =  deconvCo;
+        if (delta > 0.01f) {
+            array2D<float> YY2(W, H);//, Y, ARRAY2D_ALIGNED);
+            deconvsharpeningrgbloc(YY, blend, *impulse, W, H, sigma, amount, multiThread);
+            deconvsharpeningrgbloc(YY2, blend, *impulse, W, H, sigma + delta, amount, multiThread);
+            int fw = W; //full_width > 0 ? full_width : W;
+            int fh = H; //full_height > 0 ? full_height : H;
+            //CornerBoostMask mask(offset_x, offset_y, fw, fh, sharpenParam.deconvCornerLatitude);
+            CornerBoostMask mask(0, 0, fw, fh, deconvLat);
+#ifdef _OPENMP
+#           pragma omp parallel for if (multiThread)
+#endif
+            for (int y = 0; y < H; ++y) {
+                for (int x = 0; x < W; ++x) {
+                    float blend = mask(x, y);
+                    YY[y][x] = intp(blend, YY2[y][x], YY[y][x]);
+                }
+            }
+        }
+    multiply(rgb, YY, Y, multiThread);
 
 /*    
     printf("W=%i H=%i\n", W, H);
