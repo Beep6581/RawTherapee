@@ -234,6 +234,9 @@ protected:
     RGBColor outerLineColor;
     short flags;
 
+    // Set MO Channel color according to Edit Widget id and MO Channel mode
+    static void setMOChannelColor (Cairo::RefPtr<Cairo::Context> &cr, ObjectMOBuffer *objectBuffer, unsigned short id);
+
 public:
     float innerLineWidth;  // ...outerLineWidth = innerLineWidth+2
     Datum datum;

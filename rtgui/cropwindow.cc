@@ -1961,8 +1961,8 @@ void CropWindow::expose (Cairo::RefPtr<Cairo::Context> cr)
                 // drawing to the "mouse over" channel
                 const auto mouseOverGeom = editSubscriber->getMouseOverGeometry();
                 if (mouseOverGeom.size()) {
-                    if (mouseOverGeom.size() > 65534) {
-                        // once it has been switched to OM_65535, it won't return back to OM_255
+                    if (mouseOverGeom.size() > 255) {
+                        // Once it has been switched to OM_65535, it won't return back to OM_255
                         // to avoid constant memory allocations in some particular situation.
                         // It will return to OM_255 on a new editing session
                         setObjectMode(OM_65535);
