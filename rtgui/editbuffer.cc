@@ -42,14 +42,14 @@ void ObjectMOBuffer::setObjectMode(ObjectMode newType)
         switch (newType) {
         case (OM_255):
             if (objectMode==OM_65535) {
-                objectMap->unreference();
+                objectMap.clear();
                 objectMap = Cairo::ImageSurface::create(Cairo::FORMAT_A8, w, h);
             }
             break;
 
         case (OM_65535):
             if (objectMode==OM_255) {
-                objectMap->unreference();
+                objectMap.clear();
                 objectMap = Cairo::ImageSurface::create(Cairo::FORMAT_RGB16_565, w, h);
             }
             break;
@@ -108,9 +108,11 @@ int ObjectMOBuffer::getObjectID(const rtengine::Coord& location)
     }
 
     if (objectMode == OM_255) {
-        id = (unsigned char)(*( objectMap->get_data() + location.y * objectMap->get_stride() + location.x ));
+        // In OM_255 mode, size of pixel is 1 Byte (i.e. size of uint8_t)
+        memcpy(&id, ( objectMap->get_data() + location.y * objectMap->get_stride() + sizeof(std::uint8_t) * location.x ), sizeof(std::uint8_t));
     } else {
-        id = (unsigned short)(*( objectMap->get_data() + location.y * objectMap->get_stride() + location.x ));
+        // In OM_65535 mode, size of pixel is 2 Bytes (i.e. size of uint16_t)
+        memcpy(&id, ( objectMap->get_data() + location.y * objectMap->get_stride() + sizeof(std::uint16_t) * location.x ), sizeof(std::uint16_t));
     }
 
     return id - 1;
