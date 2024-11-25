@@ -28,7 +28,7 @@ fft *
 #include "../rtengine/color.h"
 
 #define MINRAD 1.5
-#define MAXRAD 10000
+#define MAXRAD 1000
 #define CENTERRAD 100
 #define MINCHRO 0.
 #define MAXCHRO 150.
