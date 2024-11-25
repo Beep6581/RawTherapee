@@ -1205,73 +1205,69 @@ printf("fu=%i co=%f cod=%f df=%f\n", fullTileSize, cornerRadius, cornerDistance,
 
 
 
-void ImProcFunctions::doSharpening(Imagefloat *rgb, int sk, float &sharpc, bool autoshar, float capradiu,  float deconvCo, float deconvLat, bool showMask)
+void ImProcFunctions::doSharpening(Imagefloat *rgb, int bfw, int bfh, int sk, float &sharpc, bool autoshar, float capradiu,  float deconvCo, float deconvLat, bool showMask)
 
 {
-    //code from Capture sharpening RAW "convert" rgb and Lab
-    const int W = rgb->getWidth();
-    const int H = rgb->getHeight();
     
     
- 
-    //rgb->setMode(Imagefloat::Mode::RGB, multiThread);
-    array2D<float> Y (W, H); //(ARRAY2D_ALIGNED);
+
+    array2D<float> Y (bfw, bfh);
 
     get_luminance(rgb, Y, multiThread);
- 
-    float s_scale = 1.f; //std::sqrt(sk);
-    float contrast = pow_F(sharpc / 100.f, 1.2f) * s_scale;
-    JaggedArray<float> blend(W, H);
-   // buildBlendMask(Y, blend, W, H, contrast, autoshar);
 
-    buildBlendMask2(Y, blend, W, H, contrast, 1.f, autoshar, 2.f / s_scale);
+    float s_scale = std::sqrt(sk);
+    float contrast = pow_F(sharpc / 100.f, 1.2f) * s_scale;
+    JaggedArray<float> blend(bfw, bfh);
+    buildBlendMask(Y, blend, bfw, bfh, contrast, autoshar);
+
     
     sharpc = 100.f * pow_F(contrast, 0.84f);
-    printf("CONtrast08=%f \n", (double) sharpc / s_scale);
+    printf("CONtrastSHAR=%f \n", (double) sharpc / s_scale);
+    
+  
 
     if (showMask) {
-        float **r = rgb->r.ptrs;
-        float **g = rgb->g.ptrs;
-        float **b = rgb->b.ptrs;
 #ifdef _OPENMP
 #       pragma omp parallel for if (multiThread)
 #endif
-        for (int i = 0; i < H; ++i) {
-            for (int j = 0; j < W; ++j) {
-                r[i][j] = g[i][j] = b[i][j] = blend[i][j] * 65536.f;
+        for (int i = 0; i < bfh; ++i) {
+            for (int j = 0; j < bfw; ++j) {
+                rgb->r(i, j)= rgb->g(i, j)= rgb->b(i, j) =  blend[i][j] * 65536.f;
+                
+              //  r[i][j] = g[i][j] = b[i][j] = blend[i][j] * 65536.f;
             }
         }
 
         return;
     }
-    
+   
     constexpr float xyz_rgb[3][3] = {          // XYZ from RGB
                                     { 0.412453, 0.357580, 0.180423 },
                                     { 0.212671, 0.715160, 0.072169 },
                                     { 0.019334, 0.119193, 0.950227 }
                                 };
  
-    array2D<float> clipMask(W, H);
+    array2D<float> clipMask(bfw, bfh);
   //  constexpr float clipLimit = 0.95f;
   //  constexpr float maxSigma = 2.f;
     
  //   float contrast = contra / 100.0;
-    array2D<float> redVals (W, H);
-    array2D<float> greenVals(W, H);
-    array2D<float> blueVals(W, H);
-         for (int i = 0; i < H; ++i) {
-            for (int j = 0; j < W; ++j) {
+    array2D<float> redVals (bfw, bfh);
+    array2D<float> greenVals(bfw, bfh);
+    array2D<float> blueVals(bfw, bfh);
+         for (int i = 0; i < bfh; ++i) {
+            for (int j = 0; j < bfw; ++j) {
                 redVals[i][j] = rgb->r(i,j);
                 greenVals[i][j] = rgb->g(i,j);
                 blueVals[i][j] = rgb->b(i,j);
             }
         }
 
-    array2D<float> L (W, H);
-    array2D<float> YOld(W, H);
-    array2D<float> YNew(W, H);
-         for (int i = 0; i < H; ++i) {
-            for (int j = 0; j < W; ++j) {
+    array2D<float> L (bfw, bfh);
+    array2D<float> YOld(bfw, bfh);
+    array2D<float> YNew(bfw, bfh);
+         for (int i = 0; i < bfh; ++i) {
+            for (int j = 0; j < bfw; ++j) {
                 L[i][j] = rgb->r(i,j);
                 YOld[i][j] = rgb->g(i,j);
                 YNew[i][j] = rgb->b(i,j);
@@ -1281,205 +1277,26 @@ void ImProcFunctions::doSharpening(Imagefloat *rgb, int sk, float &sharpc, bool 
 #ifdef _OPENMP
     #pragma omp parallel for schedule(dynamic, 16)
 #endif
-    for (int i = 0; i < H; ++i) {
-        Color::RGB2L(redVals[i], greenVals[i], blueVals[i], L[i], xyz_rgb, W);
-        Color::RGB2Y(redVals[i], greenVals[i], blueVals[i], YOld[i], YNew[i], W);
+    for (int i = 0; i < bfh; ++i) {
+        Color::RGB2L(redVals[i], greenVals[i], blueVals[i], L[i], xyz_rgb, bfw);
+        Color::RGB2Y(redVals[i], greenVals[i], blueVals[i], YOld[i], YNew[i], bfw);
     }
-    buildBlendMask(L, clipMask, W, H, contrast, autoshar, clipMask);
+    buildBlendMask(L, clipMask, bfw, bfh, contrast, autoshar);//, clipMask);
 
     sharpc = contrast * 100.f;
     printf("SHAPC=%f \n", (double) sharpc);
-    CaptureDeconvSharpening2(YNew, YOld, clipMask, W, H, capradiu, deconvCo, deconvLat, true, 0.2, 0.9);
+    CaptureDeconvSharpening2(YNew, YOld, clipMask, bfw, bfh, capradiu, deconvCo, deconvLat, true, 0.2, 0.9);
  
-          for (int i = 0; i < H; ++i) {
-            for (int j = 0; j < W; ++j) {
+          for (int i = 0; i < bfh; ++i) {
+            for (int j = 0; j < bfw; ++j) {
                 const float factor = YNew[i][j] / std::max(YOld[i][j], 0.00001f);
-                if(factor != 1.f) {
-                printf("Fa=%f ", (double) factor);
-                }
                 rgb->r(i,j)= redVals[i][j] * factor;
                 rgb->g(i,j)= greenVals[i][j] * factor;
                 rgb->b(i,j)=  blueVals[i][j] * factor;
             }
         }
-   
-/* 
-        std::unique_ptr<JaggedArray<char>> impulse;
-        impulse.reset(new JaggedArray<char>(W, H));
-        markImpulse(W, H, Y, *impulse, 2.f);
-   
-        array2D<float> YY(W, H);// Y, ARRAY2D_ALIGNED);
-
-        double sigma = capradiu;
-        float amount = 1.f; //d / 100.f;
-        float delta =  deconvCo;
-        if (delta > 0.01f) {
-            array2D<float> YY2(W, H);//, Y, ARRAY2D_ALIGNED);
-            deconvsharpeningrgbloc(YY, blend, *impulse, W, H, sigma, amount, multiThread);
-            deconvsharpeningrgbloc(YY2, blend, *impulse, W, H, sigma + delta, amount, multiThread);
-            int fw = W; //full_width > 0 ? full_width : W;
-            int fh = H; //full_height > 0 ? full_height : H;
-            //CornerBoostMask mask(offset_x, offset_y, fw, fh, sharpenParam.deconvCornerLatitude);
-            CornerBoostMask mask(0, 0, fw, fh, deconvLat);
-#ifdef _OPENMP
-#           pragma omp parallel for if (multiThread)
-#endif
-            for (int y = 0; y < H; ++y) {
-                for (int x = 0; x < W; ++x) {
-                    float blend = mask(x, y);
-                    YY[y][x] = intp(blend, YY2[y][x], YY[y][x]);
-                }
-            }
-        }
-    multiply(rgb, YY, Y, multiThread);
-*/
-/*    
-    printf("W=%i H=%i\n", W, H);
-printf("OK 1 \n");
-    if ( W < 8 || H < 8) {
-       return;
-    }
-    
-    constexpr float xyz_rgb[3][3] = {          // XYZ from RGB
-                                    { 0.412453, 0.357580, 0.180423 },
-                                    { 0.212671, 0.715160, 0.072169 },
-                                    { 0.019334, 0.119193, 0.950227 }
-                                };
-
-    array2D<float> clipMask(W, H);
-    constexpr float clipLimit = 0.95f;
-    constexpr float maxSigma = 2.f;
-    
-    float contrast = contra / 100.0;
-    array2D<float> redVals (W, H);
-    array2D<float> greenVals(W, H);
-    array2D<float> blueVals(W, H);
-         for (int i = 0; i < H; ++i) {
-            for (int j = 0; j < W; ++j) {
-                redVals[i][j] = rgb->r(i,j);
-                greenVals[i][j] = rgb->g(i,j);
-                blueVals[i][j] = rgb->b(i,j);
-            }
-        }
-    showMask = true;
-    if (showMask) {
-        array2D<float> L (W, H);//= blue; // blue will be overridden anyway => we can use its buffer to store L
-         for (int i = 0; i < H; ++i) {
-            for (int j = 0; j < W; ++j) {
-                L[i][j] = rgb->b(i,j);
-            }
-         }
-
-#ifdef _OPENMP
-        #pragma omp parallel for
-#endif
-
-        for (int i = 0; i < H; ++i) {
-            Color::RGB2L(redVals[i], greenVals[i], blueVals[i], L[i], xyz_rgb, W);
-        }
-
-        buildBlendMask(L, clipMask, W, H, contrast, autoshar, clipMask);
-        contra = contrast * 100.f;
-        printf("contra=%f \n", (double) contra);
-#ifdef _OPENMP
-        #pragma omp parallel for
-#endif
-        for (int i = 0; i < H; ++i) {
-            for (int j = 0; j < W; ++j) {
-                rgb->r(i,j) = rgb->g(i,j) = rgb->b(i,j) = clipMask[i][j] * 16384.f;
-            }
-        }
-       // return;
-    }
-*/
-
+  
 }
-
-
-/*
-//bool ImProcFunctions::doSharpening(Imagefloat *rgb, int sk, const procparams::SharpeningParams &sharpenParam, bool showMask)
-bool ImProcFunctions::doSharpening(Imagefloat *rgb, int sk, float contra, bool autoshar, float capradiu,  float deconvCo, float deconvLat, bool showMask)
-
-{
-    const int W = rgb->getWidth();
-    const int H = rgb->getHeight();
-printf("OK 1 \n");
-    if ( W < 8 || H < 8) {
-       return false;
-    }
- 
-    //rgb->setMode(Imagefloat::Mode::RGB, multiThread);
-    array2D<float> Y (W, H); //(ARRAY2D_ALIGNED);
-
-    get_luminance(rgb, Y, multiThread);
- 
-    float s_scale = std::sqrt(sk);
-    float contrast = pow_F(contra / 100.f, 1.2f) * s_scale;
-    JaggedArray<float> blend(W, H);
-    buildBlendMask2(Y, blend, W, H, contrast, 1.f, false, 2.f / s_scale);
-    
-    showMask = true;
-    if (showMask) {
-        float **r = rgb->r.ptrs;
-        float **g = rgb->g.ptrs;
-        float **b = rgb->b.ptrs;
-#ifdef _OPENMP
-#       pragma omp parallel for if (multiThread)
-#endif
-        for (int i = 0; i < H; ++i) {
-            for (int j = 0; j < W; ++j) {
-                r[i][j] = g[i][j] = b[i][j] = blend[i][j] * 65536.f;
-            }
-        }
-
-        return true;
-    }
-
-    std::unique_ptr<JaggedArray<char>> impulse;
-  //  if (sharpenParam.method == "rld") {
-        impulse.reset(new JaggedArray<char>(W, H));
-        markImpulse(W, H, Y, *impulse, 2.f);
-  //  }
-    
-    array2D<float> YY(W, H);// Y, ARRAY2D_ALIGNED);
-    
-        double sigma = capradiu; //sharpenParam.deconvradius / scale;
-        float amount = 1.f; //sharpenParam.deconvamount / 100.f;
-        float delta = deconvCo; //sharpenParam.deconvCornerBoost / scale;
-        if (delta > 0.01f) {
-            array2D<float> YY2(W, H);// Y, ARRAY2D_ALIGNED);
-            deconvsharpeningrgbloc(YY, blend, *impulse, W, H, sigma, amount, multiThread);
-            deconvsharpeningrgbloc(YY2, blend, *impulse, W, H, sigma + delta, amount, multiThread);
-            int fw = W; //full_width > 0 ? full_width : W;
-            int fh = H;//full_height > 0 ? full_height : H;
-           // CornerBoostMask mask(offset_x, offset_y, fw, fh, sharpenParam.deconvCornerLatitude);
-            CornerBoostMask mask(0, 0, fw, fh, deconvLat);
-#ifdef _OPENMP
-#           pragma omp parallel for if (multiThread)
-#endif
-            for (int y = 0; y < H; ++y) {
-                for (int x = 0; x < W; ++x) {
-                    float blend = mask(x, y);
-                    YY[y][x] = intp(blend, YY2[y][x], YY[y][x]);
-                }
-            }
-        } else {
-            deconvsharpeningrgbloc(YY, blend, *impulse, W, H, sigma, amount, multiThread);
-        }
-    multiply(rgb, YY, Y, multiThread);
-
-   return false;
-}
-*/
-
-
-//bool ImProcFunctions::sharpeningrgb(Imagefloat *img, int sk)
-//{
-//    return doSharpening(img, sk, params->sharpening, show_sharpening_mask);
-//}
-
-
-
 
 void ImProcFunctions::sharpening (LabImage* lab, const procparams::SharpeningParams &sharpenParam, bool showMask)
 {

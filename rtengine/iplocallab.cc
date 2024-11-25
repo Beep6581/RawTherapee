@@ -17825,7 +17825,7 @@ void ImProcFunctions::Lab_Local(
 //Sharp methodcap Capture
     bool cap = params->locallab.spots.at(sp).methodcap == "cap";
 
-    if (!lp.invshar && cap && lp.sharpena  && sk == 1) {
+    if (!lp.invshar && cap && lp.sharpena ) {
         int ystart = rtengine::max(static_cast<int>(lp.yc - lp.lyT) - cy, 0);
         int yend = rtengine::min(static_cast<int>(lp.yc + lp.ly) - cy, original->H);
         int xstart = rtengine::max(static_cast<int>(lp.xc - lp.lxL) - cx, 0);
@@ -17859,16 +17859,36 @@ void ImProcFunctions::Lab_Local(
             bool autoshar = params->locallab.spots.at(sp).deconvAutoshar;
             bool sharpshow = params->locallab.spots.at(sp).sharshow;
             const std::unique_ptr<Imagefloat> tmpImagesha(new Imagefloat(bfw, bfh));
+            const std::unique_ptr<Imagefloat> tmpImagered(new Imagefloat(bfw, bfh));
             if(!autoshar){
                sharc = contra; 
             }
 
 
             lab2rgb(*bufexpfin, *tmpImagesha, params->icm.workingProfile);
-            ImProcFunctions::doSharpening(tmpImagesha.get(), sk, sharc, autoshar, capradiu,  deconvCo, deconvLat, sharpshow);
-                 //   transformed->L[y + ystart][x + xstart] = (lum) + clipLoc(bufmaskorigSH->L[y][x]);
-                 //   transformed->a[y + ystart][x + xstart] = bufexporig->a[y][x] * bufmaskorigSH->a[y][x];
-                 //   transformed->b[y + ystart][x + xstart] = (colo) + bufexporig->b[y][x] * bufmaskorigSH->b[y][x];
+            printf("OK 1\n");
+            for (int y = ystart; y < yend; y++) {
+                for (int x = xstart; x < xend; x++) {
+                    tmpImagered->r(y - ystart,x - xstart) = tmpImagesha->r(y,x);
+                    tmpImagered->g(y - ystart, x - xstart) = tmpImagesha->g(y,x);
+                    tmpImagered->b(y - ystart, x - xstart) = tmpImagesha->b(y,x);
+                }
+            }
+             printf("OK 2\n");
+  
+    
+            
+            ImProcFunctions::doSharpening(tmpImagered.get(), bfw, bfh, sk, sharc, autoshar, capradiu,  deconvCo, deconvLat, sharpshow);
+             printf("OK 7\n");
+            
+  //  }
+            for (int y = ystart; y < yend; y++) {
+                for (int x = xstart; x < xend; x++) {
+                    tmpImagesha->r(y,x) = tmpImagered->r(y - ystart,x - xstart);
+                    tmpImagesha->g(y,x)= tmpImagered->g(y - ystart, x - xstart);
+                    tmpImagesha->b(y,x) = tmpImagered->b(y - ystart, x - xstart);
+                }
+            }
 
             
             rgb2lab(*tmpImagesha, *bufexpfin, params->icm.workingProfile);
