@@ -485,7 +485,7 @@ void Thumbnail::clearProcParams (int whoClearedIt)
         pparams->setDefaults();
 
         // preserve rank, colorlabel and inTrash across clear
-        updateProcParamsProperties();
+        updateProcParamsProperties(true);
 
         // params could get validated by updateProcParamsProperties
         if (pparamsValid) {
@@ -594,7 +594,7 @@ void Thumbnail::setProcParams (const ProcParams& pp, ParamsEdited* pe, int whoCh
         pparamsValid = true;
 
         // do not update rank, colorlabel and inTrash
-        updateProcParamsProperties();
+        updateProcParamsProperties(true);
 
         if (updateCacheNow) {
             updateCache();
@@ -1295,25 +1295,25 @@ void Thumbnail::loadProperties()
     }
 }
 
-void Thumbnail::updateProcParamsProperties()
+void Thumbnail::updateProcParamsProperties(bool forceUpdate)
 {
-    if (!properties.edited()) {
+    if (!(properties.edited() || forceUpdate)) {
         return;
     }
 
-    if (properties.trashed.edited && properties.trashed != pparams->inTrash) {
+    if ((properties.trashed.edited || forceUpdate) && properties.trashed != pparams->inTrash) {
         pparams->inTrash = properties.trashed;
         pparamsValid = true;
     }
 
     // save procparams rank and color also when options.thumbnailRankColorMode == Options::ThumbnailPropertyMode::XMP
     // so they'll be kept in sync
-    if (properties.rank.edited && properties.rank != pparams->rank) {
+    if ((properties.rank.edited || forceUpdate) && properties.rank != pparams->rank) {
         pparams->rank = properties.rank;
         pparamsValid = true;
     }
 
-    if (properties.color.edited && properties.color != pparams->colorlabel) {
+    if ((properties.color.edited || forceUpdate) && properties.color != pparams->colorlabel) {
         pparams->colorlabel = properties.color;
         pparamsValid = true;
     }
