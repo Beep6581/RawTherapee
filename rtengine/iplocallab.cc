@@ -9038,6 +9038,9 @@ void ImProcFunctions::transit_shapedetect2(int sp, float meantm, float stdtm, in
     const bool origshow = ((lp.showmasksoftmet == 5) &&  senstype == 3 && lp.softmet == 1);
     const bool logshow = ((lp.showmasklogmet == 1 || lp.showmasklogmet == 2) &&  senstype == 11);
     const bool cieshow = ((lp.showmaskciemet == 1 || lp.showmaskciemet == 2) &&  senstype == 31);
+    const bool sharshow = ((lp.showmasksharmet == 1) &&  senstype == 99);
+
+
 
     const bool masshow = ((lp.showmask_met == 1) &&  senstype == 20);
 
@@ -9051,6 +9054,7 @@ void ImProcFunctions::transit_shapedetect2(int sp, float meantm, float stdtm, in
     const bool previewmas = ((lp.showmask_met == 3) &&  senstype == 20  && lp.fullim != 3);
     const bool previewlog = ((lp.showmasklogmet == 4) &&  senstype == 11  && lp.fullim != 3);
     const bool previewcie = ((lp.showmaskciemet == 4) &&  senstype == 31  && lp.fullim != 3);
+    const bool previewshar = ((lp.showmasksharmet == 2)&&  senstype == 99);
 
     float radius = 3.f / sk;
 
@@ -9354,13 +9358,13 @@ void ImProcFunctions::transit_shapedetect2(int sp, float meantm, float stdtm, in
                     const float difb = factorx * realstrbdE;
                     float maxdifab = rtengine::max(std::fabs(difa), std::fabs(difb));
 
-                    if ((expshow || vibshow || colshow || SHshow || tmshow || lcshow || logshow || cieshow || origshow || masshow) && lp.colorde < 0) { //show modifications with use "b"
+                    if ((expshow || vibshow || colshow || SHshow || tmshow || lcshow || logshow || cieshow || sharshow || origshow || masshow) && lp.colorde < 0) { //show modifications with use "b"
                         //  (origshow && lp.colorde < 0) { //original Retinex
                         transformed->a[y + ystart][x + xstart] = 0.f;
                         transformed->b[y + ystart][x + xstart] = ampli * 8.f * diflc * reducdE;
                         transformed->L[y + ystart][x + xstart] = CLIP(12000.f + 0.5f * ampli * diflc);
 
-                    } else if ((expshow || vibshow || colshow || SHshow || tmshow || lcshow || logshow || cieshow || origshow || masshow) && lp.colorde > 0) {//show modifications without use "b"
+                    } else if ((expshow || vibshow || colshow || SHshow || tmshow || lcshow || logshow || cieshow || sharshow || origshow || masshow) && lp.colorde > 0) {//show modifications without use "b"
                         if (diflc < 1000.f) {//if too low to be view use ab
                             diflc += 0.5f * maxdifab;
                         }
@@ -9368,7 +9372,7 @@ void ImProcFunctions::transit_shapedetect2(int sp, float meantm, float stdtm, in
                         transformed->L[y + ystart][x + xstart] = CLIP(12000.f + 0.5f * ampli * diflc);
                         transformed->a[y + ystart][x + xstart] = clipC(ampli * difa);
                         transformed->b[y + ystart][x + xstart] = clipC(ampli * difb);
-                    } else if (previewexp || previewvib || previewcol || previewSH || previewtm || previewlc || previewlog || previewcie || previeworig || previewmas || lp.prevdE) {//show deltaE
+                    } else if (previewexp || previewvib || previewcol || previewSH || previewtm || previewlc || previewlog || previewcie || previewshar || previeworig || previewmas || lp.prevdE) {//show deltaE
                         float difbdisp = reducdE * 10000.f * lp.colorde;
 
                         if (transformed->L[y + ystart][x + xstart] < darklim) { //enhance dark luminance as user can see!
