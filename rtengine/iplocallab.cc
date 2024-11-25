@@ -17860,39 +17860,56 @@ void ImProcFunctions::Lab_Local(
             bool sharpshow = params->locallab.spots.at(sp).sharshow;
             const std::unique_ptr<Imagefloat> tmpImagesha(new Imagefloat(bfw, bfh));
             const std::unique_ptr<Imagefloat> tmpImagered(new Imagefloat(bfw, bfh));
+            const std::unique_ptr<Imagefloat> tmpImage(new Imagefloat(original->W, original->H));
             if(!autoshar){
                sharc = contra; 
             }
 
+  printf("OK 0\n");
 
             lab2rgb(*bufexpfin, *tmpImagesha, params->icm.workingProfile);
-            printf("OK 1\n");
+         //   lab2rgb(*original, *tmpImagesha, params->icm.workingProfile);
+  printf("OK 00\n");
+            
+#ifdef _OPENMP
+            #pragma omp parallel for schedule(dynamic,16) if (multiThread)
+#endif
+
             for (int y = ystart; y < yend; y++) {
                 for (int x = xstart; x < xend; x++) {
-                    tmpImagered->r(y - ystart,x - xstart) = tmpImagesha->r(y,x);
+                    tmpImagered->r(y - ystart, x - xstart) = tmpImagesha->r(y,x);
                     tmpImagered->g(y - ystart, x - xstart) = tmpImagesha->g(y,x);
                     tmpImagered->b(y - ystart, x - xstart) = tmpImagesha->b(y,x);
+                //    tmpImagered->r(y - ystart, x - xstart) = tmpImage->r(y,x);
+                //    tmpImagered->g(y - ystart, x - xstart) = tmpImage->g(y,x);
+                //    tmpImagered->b(y - ystart, x - xstart) = tmpImage->b(y,x);
                 }
             }
-             printf("OK 2\n");
-  
+  printf("OK 1\n");
     
             
             ImProcFunctions::doSharpening(tmpImagered.get(), bfw, bfh, sk, sharc, autoshar, capradiu,  deconvCo, deconvLat, sharpshow);
-             printf("OK 7\n");
             
-  //  }
+#ifdef _OPENMP
+            #pragma omp parallel for schedule(dynamic,16) if (multiThread)
+#endif
             for (int y = ystart; y < yend; y++) {
                 for (int x = xstart; x < xend; x++) {
                     tmpImagesha->r(y,x) = tmpImagered->r(y - ystart,x - xstart);
                     tmpImagesha->g(y,x)= tmpImagered->g(y - ystart, x - xstart);
                     tmpImagesha->b(y,x) = tmpImagered->b(y - ystart, x - xstart);
+                 //   tmpImage->r(y,x) = tmpImagered->r(y - ystart,x - xstart);
+                 //   tmpImage->g(y,x)= tmpImagered->g(y - ystart, x - xstart);
+                 //   tmpImage->b(y,x) = tmpImagered->b(y - ystart, x - xstart);
                 }
             }
+  printf("OK 2\n");
 
             
+           // rgb2lab(*tmpImagesha, *bufexpfin, params->icm.workingProfile);
             rgb2lab(*tmpImagesha, *bufexpfin, params->icm.workingProfile);
-            
+    printf("OK 3\n");
+          
             
             transit_shapedetect2(sp, 0.f, 0.f, call, 99, bufexporig.get(), bufexpfin.get(), nullptr, hueref, chromaref, lumaref, sobelref, 0.f, nullptr, lp, original, transformed, cx, cy, sk);
 

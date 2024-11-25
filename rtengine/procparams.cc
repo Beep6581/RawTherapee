@@ -3998,7 +3998,7 @@ LocallabParams::LocallabSpot::LocallabSpot() :
     sharshow(false),
     methodcap("cap"),
     capradius(0.75),
-    deconvAutoRadius(true),
+    deconvAutoRadius(false),
     deconvCoBoost(0.),
     deconvCoLat(25.),
     reparsha(100.),
