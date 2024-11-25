@@ -1182,6 +1182,7 @@ private:
 
     Adjuster* const deconvCoBoost;
     Adjuster* const deconvCoLat;
+    Gtk::CheckButton* const itercheck;
     Gtk::Frame* const capFrame;
     Gtk::Frame* const rlFrame;
     Adjuster* const sharblur;
@@ -1206,8 +1207,9 @@ private:
     rtengine::ProcEvent Evlocallababdconvboost;
     rtengine::ProcEvent Evlocallababdconvlat;
     rtengine::ProcEvent Evlocallababsharshow;
+    rtengine::ProcEvent Evlocallababitercheck;
 
-    sigc::connection inversshaConn, showmasksharMethodConn, methodcapConn, sharshowConn;
+    sigc::connection inversshaConn, showmasksharMethodConn, methodcapConn, sharshowConn, itercheckConn;
 
 public:
     LocallabSharp();
@@ -1236,6 +1238,7 @@ private:
     void convertParamToSimple() override;
     void updateGUIToMode(const modeType new_type) override;
     void sharshowChanged();
+    void itercheckChanged();
 
     void inversshaChanged();
     void methodcapChanged();

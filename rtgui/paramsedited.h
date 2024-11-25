@@ -840,6 +840,7 @@ public:
         bool sensisha;
         bool inverssha;
         bool sharshow;
+        bool itercheck;
         bool methodcap;
         bool capradius;
         bool deconvAutoRadius;

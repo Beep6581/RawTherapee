@@ -1505,6 +1505,7 @@ struct LocallabParams {
         int sensisha;
         bool inverssha;
         bool sharshow;
+        bool itercheck;
         Glib::ustring methodcap;
         double capradius;
         bool deconvAutoRadius;

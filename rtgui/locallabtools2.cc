@@ -2126,6 +2126,7 @@ LocallabSharp::LocallabSharp():
     capradius(Gtk::manage (new Adjuster (M("TP_SHARPENING_EDRADIUS"), 0.4, 2.5, 0.01, 0.75))),
     deconvCoBoost(Gtk::manage(new Adjuster(M("TP_SHARPENING_RADIUS_BOOST"), -0.5, 0.5, 0.01, 0))),
     deconvCoLat(Gtk::manage(new Adjuster(M("TP_SHARPENING_RLD_ITERATIONS"), 0, 100, 1, 25))),
+    itercheck(Gtk::manage(new Gtk::CheckButton(M("TP_SHARPENING_ITERCHECK")))),
     capFrame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_SHARCAPFRAME")))),
     rlFrame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_SHARRLFRAME")))),
     sharblur(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SHARBLUR"), 0.2, 2.0, 0.05, 0.2))),
@@ -2152,6 +2153,7 @@ LocallabSharp::LocallabSharp():
     Evlocallababdconvlat = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_CONVLAT");
     Evlocallabsharrepar = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_SHARREPAR");
     Evlocallababsharshow = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_SHARSHOW");   
+    Evlocallababitercheck = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_SHARITERCHECK");   
     set_orientation(Gtk::ORIENTATION_VERTICAL);
     capradius->addAutoButton(M("TP_SHARPENING_RLD_AUTORADIUS_TOOLTIP"));
     sharcontrast->addAutoButton(M("TP_SHARPENING_RLD_AUTOCONTR_TOOLTIP"));
@@ -2188,6 +2190,7 @@ LocallabSharp::LocallabSharp():
 
     inversshaConn = inverssha->signal_toggled().connect(sigc::mem_fun(*this, &LocallabSharp::inversshaChanged));
     sharshowConn = sharshow->signal_toggled().connect(sigc::mem_fun(*this, &LocallabSharp::sharshowChanged));
+    itercheckConn = itercheck->signal_toggled().connect(sigc::mem_fun(*this, &LocallabSharp::itercheckChanged));
 
     showmasksharMethod->append(M("TP_LOCALLAB_SHOWMNONE"));
     showmasksharMethod->append(M("TP_LOCALLAB_SHOWMODIF2"));
@@ -2221,6 +2224,7 @@ LocallabSharp::LocallabSharp():
 
     capb->pack_start(*deconvCoBoost);
     capb->pack_start(*deconvCoLat);
+    capb->pack_start(*itercheck);
     capFrame->add(*capb);
     pack_start(*capFrame);
 //    pack_start(*sensisha);
@@ -2317,6 +2321,7 @@ void LocallabSharp::disableListener()
     showmasksharMethodConn.block(true);
     methodcapConn.block(true);
     sharshowConn.block(true);
+    itercheckConn.block(true);
     
 }
 
@@ -2328,6 +2333,7 @@ void LocallabSharp::enableListener()
     showmasksharMethodConn.block(false);
     methodcapConn.block(false);
     sharshowConn.block(false);
+    itercheckConn.block(false);
 
 }
 
@@ -2394,6 +2400,7 @@ void LocallabSharp::read(const rtengine::procparams::ProcParams* pp, const Param
         sensisha->setValue((double)spot.sensisha);
         inverssha->set_active(spot.inverssha);
         sharshow->set_active(spot.sharshow);
+        itercheck->set_active(spot.itercheck);
         capradius->setValue((double)spot.capradius);
         capradius->setAutoValue(spot.deconvAutoRadius);
         deconvCoBoost->setValue((double)spot.deconvCoBoost);
@@ -2437,6 +2444,7 @@ void LocallabSharp::write(rtengine::procparams::ProcParams* pp, ParamsEdited* pe
         spot.sensisha = sensisha->getIntValue();
         spot.inverssha = inverssha->get_active();
         spot.sharshow = sharshow->get_active();
+        spot.itercheck = itercheck->get_active();
         spot.capradius = capradius->getValue();
         spot.deconvAutoRadius = capradius->getAutoValue();
         spot.deconvCoBoost = deconvCoBoost->getValue();
@@ -2631,12 +2639,14 @@ void LocallabSharp::updateGUIToMode(const modeType new_type)
             }
             if (methodcap->get_active_row_number() == 0) {
                 sharshow->show();
+                itercheck->show();
                 capradius->show();
                 capFrame->show();
                 rlFrame->hide();
                 inverssha->hide();        
             } else {
                 sharshow->hide();
+                itercheck->hide();
                 capradius->hide();
                 capFrame->hide();
                 rlFrame->show();
@@ -2662,12 +2672,14 @@ void LocallabSharp::updateGUIToMode(const modeType new_type)
             }
             if (methodcap->get_active_row_number() == 0) {
                 sharshow->show();
+                itercheck->show();
                 capradius->show();
                 capFrame->show();
                 rlFrame->hide();
                 inverssha->hide();        
             } else {
                 sharshow->hide();
+                itercheck->hide();
                 capradius->hide();
                 capFrame->hide();
                 rlFrame->show();
@@ -2692,12 +2704,14 @@ void LocallabSharp::updateGUIToMode(const modeType new_type)
             }
             if (methodcap->get_active_row_number() == 0) {
                 sharshow->show();
+                itercheck->show();
                 capradius->show();
                 capFrame->show();
                 rlFrame->hide();
                 inverssha->hide();        
             } else {
                 sharshow->hide();
+                itercheck->hide();
                 capradius->hide();
                 capFrame->hide();
                 rlFrame->show();
@@ -2737,6 +2751,21 @@ void LocallabSharp::sharshowChanged()
     }
 }
 
+void LocallabSharp::itercheckChanged()
+{
+    if (isLocActivated && exp->getEnabled()) {
+        if (listener) {
+            if (itercheck->get_active()) {
+                listener->panelChanged(Evlocallababitercheck,
+                                       M("GENERAL_ENABLED") + " (" + escapeHtmlChars(getSpotName()) + ")");
+            } else {
+                listener->panelChanged(Evlocallababitercheck,
+                                       M("GENERAL_DISABLED") + " (" + escapeHtmlChars(getSpotName()) + ")");
+            }
+        }
+    }
+}
+
 
 void LocallabSharp::methodcapChanged()
 {
@@ -2746,12 +2775,14 @@ void LocallabSharp::methodcapChanged()
         rlFrame->hide();
         inverssha->hide();        
         sharshow->show();
+        itercheck->show();
     } else {
         capradius->hide();
         capFrame->hide();
         rlFrame->show();
         inverssha->show();        
         sharshow->hide();
+        itercheck->hide();
     }
 
     if (exp->getEnabled()) {

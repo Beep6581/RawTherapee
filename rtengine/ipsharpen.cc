@@ -1202,7 +1202,7 @@ printf("fu=%i co=%f cod=%f df=%f\n", fullTileSize, cornerRadius, cornerDistance,
 
 
 
-void ImProcFunctions::doSharpening(Imagefloat *rgb, int bfw, int bfh, int sk, float &sharpc, bool autoshar, float capradiu,  float deconvCo, float deconvLat, bool showMask)
+void ImProcFunctions::doSharpening(Imagefloat *rgb, int bfw, int bfh, int sk, float &sharpc, bool autoshar, float capradiu,  float deconvCo, float deconvLat, bool itcheck, bool showMask)
 
 {
     
@@ -1300,7 +1300,7 @@ void ImProcFunctions::doSharpening(Imagefloat *rgb, int bfw, int bfh, int sk, fl
     sharpc = 100.f * pow_F(contrast, 0.84f);
 
   //  printf("SHAPC=%f \n", (double) sharpc);
-    CaptureDeconvSharpening2(YNew, YOld, clipMask, bfw, bfh, capradiu, deconvCo, deconvLat, true, 0.2, 0.9);
+    CaptureDeconvSharpening2(YNew, YOld, clipMask, bfw, bfh, capradiu, deconvCo, deconvLat, itcheck, 0.2, 0.9);
  
 #ifdef _OPENMP
     #pragma omp parallel for schedule(dynamic, 16)

@@ -17825,7 +17825,7 @@ void ImProcFunctions::Lab_Local(
 //Sharp methodcap Capture
     bool cap = params->locallab.spots.at(sp).methodcap == "cap";
 
-    if (!lp.invshar && cap && lp.sharpena ) {
+    if (!lp.invshar && cap && lp.sharpena  &&  lp.fullim >= 2) {//provisory spot normal not possible (allocation memory ??)
         int ystart = rtengine::max(static_cast<int>(lp.yc - lp.lyT) - cy, 0);
         int yend = rtengine::min(static_cast<int>(lp.yc + lp.ly) - cy, original->H);
         int xstart = rtengine::max(static_cast<int>(lp.xc - lp.lxL) - cx, 0);
@@ -17858,6 +17858,7 @@ void ImProcFunctions::Lab_Local(
             float deconvLat = params->locallab.spots.at(sp).deconvCoLat;
             bool autoshar = params->locallab.spots.at(sp).deconvAutoshar;
             bool sharpshow = params->locallab.spots.at(sp).sharshow;
+            bool itcheck = params->locallab.spots.at(sp).itercheck;
             const std::unique_ptr<Imagefloat> tmpImagesha(new Imagefloat(bfw, bfh));
             const std::unique_ptr<Imagefloat> tmpImagered(new Imagefloat(bfw, bfh));
             const std::unique_ptr<Imagefloat> tmpImage(new Imagefloat(original->W, original->H));
@@ -17888,7 +17889,7 @@ void ImProcFunctions::Lab_Local(
   printf("OK 1\n");
     
             
-            ImProcFunctions::doSharpening(tmpImagered.get(), bfw, bfh, sk, sharc, autoshar, capradiu,  deconvCo, deconvLat, sharpshow);
+            ImProcFunctions::doSharpening(tmpImagered.get(), bfw, bfh, sk, sharc, autoshar, capradiu,  deconvCo, deconvLat, itcheck, sharpshow);
             
 #ifdef _OPENMP
             #pragma omp parallel for schedule(dynamic,16) if (multiThread)

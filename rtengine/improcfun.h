@@ -214,7 +214,7 @@ enum class BlurType {
 //    void colorCurve       (LabImage* lold, LabImage* lnew);
     void sharpening(LabImage* lab, const procparams::SharpeningParams &sharpenParam, bool showMask = false);
 
-    void doSharpening(Imagefloat *rgb, int bfw, int bfh, int sk, float &sharpc, bool autoshar, float capradiu,  float deconvCo, float deconvLat, bool showMask);
+    void doSharpening(Imagefloat *rgb, int bfw, int bfh, int sk, float &sharpc, bool autoshar, float capradiu,  float deconvCo, float deconvLat, bool itcheck, bool showMask);
 
 
     void sharpeningcam(CieImage* ncie, float** buffer, bool showMask = false);
