@@ -963,8 +963,9 @@ void gauss13x13mult(float** RESTRICT src, float** RESTRICT dst, const int tileSi
 
 void CaptureDeconvSharpening2 (float** luminance, const float* const * oldLuminance, const float * const * blend, int W, int H, float sigma, float sigmaCornerOffset, int iterations, bool checkIterStop, double startVal, double endVal)
 {
+ // Copyright (c) 2019 Ingo Weyrich (heckflosse67@gmx.de)    
 BENCHFUN
-    //printf("Sigma=%f \n", (double) sigma);
+   
     const bool is9x9 = (sigma <= 1.5f && sigmaCornerOffset == 0.f);
     const bool is7x7 = (sigma <= 1.15f && sigmaCornerOffset == 0.f);
     const bool is5x5 = (sigma <= 0.84f && sigmaCornerOffset == 0.f);
@@ -993,7 +994,9 @@ BENCHFUN
     const float cornerDistance = sqrt(rtengine::SQR(W * 0.5f) + rtengine::SQR(H * 0.5f));
     const float distanceFactor = (cornerRadius - sigma) / cornerDistance;
 
-printf("fu=%i co=%f cod=%f df=%f\n", fullTileSize, cornerRadius, cornerDistance, distanceFactor);
+    if (settings->verbose) {
+        printf("sigma=%f Tilesize=%i cornerrad=%f cornerDist=%f distanceFactor=%f\n", sigma, fullTileSize, cornerRadius, cornerDistance, distanceFactor);
+    }
 
     constexpr float minBlend = 0.01f;
 
@@ -1020,7 +1023,6 @@ printf("fu=%i co=%f cod=%f df=%f\n", fullTileSize, cornerRadius, cornerDistance,
                     if (checkIterStop) {
                         for (int k = 0, ii = endOfCol ? H - fullTileSize + border : i; k < tileSize; ++k, ++ii) {
                             for (int l = 0, jj = endOfRow ? W - fullTileSize + border : j; l < tileSize; ++l, ++jj) {
-                              //  if(blend[ii][jj] != 1.f) printf("z");
                                 iterCheck[k][l] = oldLuminance[ii][jj] * blend[ii][jj] * 0.5f;
                                 maxVal = std::max(maxVal, blend[ii][jj]);
                             }
@@ -1181,20 +1183,6 @@ printf("fu=%i co=%f cod=%f df=%f\n", fullTileSize, cornerRadius, cornerDistance,
                         }
                     }
                 }
-                /*
-                if (plistener) {
-                    if (++progresscounter % 32 == 0) {
-#ifdef _OPENMP
-                        #pragma omp critical(csprogress)
-#endif
-                        {
-                            progress += 32.0 * progressStep;
-                            progress = rtengine::min(progress, endVal);
-                            plistener->setProgress(progress);
-                        }
-                    }
-                }
-                */
             }
         }
     }
@@ -1206,18 +1194,19 @@ void ImProcFunctions::doSharpening(Imagefloat *rgb, int bfw, int bfh, int sk, fl
 
 {
     
-    
+    TMatrix wprof = ICCStore::getInstance()->workingSpaceMatrix(params->icm.workingProfile);
 
-    constexpr float xyz_rgb[3][3] = {          // XYZ from RGB
-                                    { 0.412453, 0.357580, 0.180423 },
-                                    { 0.212671, 0.715160, 0.072169 },
-                                    { 0.019334, 0.119193, 0.950227 }
-                                };
- 
+    const float wip[3][3] = {
+        {(float) wprof[0][0], (float) wprof[0][1], (float) wprof[0][2]},
+        {(float) wprof[1][0], (float) wprof[1][1], (float) wprof[1][2]},
+        {(float) wprof[2][0], (float) wprof[2][1], (float) wprof[2][2]}
+    };
+
     array2D<float> clipMask(bfw, bfh);
     array2D<float> redVals (bfw, bfh);
     array2D<float> greenVals(bfw, bfh);
     array2D<float> blueVals(bfw, bfh);
+
 #ifdef _OPENMP
             #pragma omp parallel for schedule(dynamic,16) if (multiThread)
 #endif
@@ -1233,21 +1222,16 @@ void ImProcFunctions::doSharpening(Imagefloat *rgb, int bfw, int bfh, int sk, fl
     float s_scale = std::sqrt(sk);
     float contrast = pow_F(sharpc / 100.f, 1.2f) * s_scale;
    
-//    sharpc = 100.f * pow_F(contrast, 0.84f);
-//    printf("CONtrastSHAR=%f \n", (double) sharpc / s_scale);
-    
-  
-
     if (showMask) {
         array2D<float> Y (bfw, bfh);
         
          for (int i = 0; i < bfh; ++i) {
-            Color::RGB2L(redVals[i], greenVals[i], blueVals[i], Y[i], xyz_rgb, bfw);
+            Color::RGB2L(redVals[i], greenVals[i], blueVals[i], Y[i], wip, bfw);
         }
 
-        buildBlendMask(Y, clipMask, bfw, bfh, contrast, autoshar);
-        //sharpc = contrast * 100.f;
-        sharpc = 100.f * pow_F(contrast, 0.84f);
+        buildBlendMask2(Y, clipMask, bfw, bfh, contrast, 1.f, autoshar, 2.f / s_scale);
+
+        sharpc = 100.f * pow_F(contrast, 0.84f)/ s_scale;
        
         
 #ifdef _OPENMP
@@ -1292,14 +1276,17 @@ void ImProcFunctions::doSharpening(Imagefloat *rgb, int bfw, int bfh, int sk, fl
     #pragma omp parallel for schedule(dynamic, 16)
 #endif
     for (int i = 0; i < bfh; ++i) {
-        Color::RGB2L(redVals[i], greenVals[i], blueVals[i], L[i], xyz_rgb, bfw);
+        Color::RGB2L(redVals[i], greenVals[i], blueVals[i], L[i], wip, bfw);
         Color::RGB2Y(redVals[i], greenVals[i], blueVals[i], YOld[i], YNew[i], bfw);
     }
 
-    buildBlendMask(L, clipMask, bfw, bfh, contrast, autoshar);//, clipMask);
-    sharpc = 100.f * pow_F(contrast, 0.84f);
+    buildBlendMask2(L, clipMask, bfw, bfh, contrast, 1.f, autoshar, 2.f / s_scale);
+    sharpc = 100.f * pow_F(contrast, 0.84f) / s_scale;
 
-  //  printf("SHAPC=%f \n", (double) sharpc);
+    if (settings->verbose) {
+        printf("Contrast threshold=%f \n", (double) sharpc);
+    }
+
     CaptureDeconvSharpening2(YNew, YOld, clipMask, bfw, bfh, capradiu, deconvCo, deconvLat, itcheck, 0.2, 0.9);
  
 #ifdef _OPENMP
