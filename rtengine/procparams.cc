@@ -6312,6 +6312,12 @@ std::vector<std::string> MetaDataParams::basicExifKeys = {
 };
 
 
+const std::vector<std::string> additional_default_exif_keys = {
+    "Exif.Photo.OffsetTimeDigitized",
+    "Exif.Photo.OffsetTimeOriginal",
+};
+
+
 MetaDataParams::MetaDataParams():
     mode(MetaDataParams::EDIT),
     exifKeys{},
@@ -6319,6 +6325,7 @@ MetaDataParams::MetaDataParams():
     iptc{}
 {
     exifKeys = basicExifKeys;
+    exifKeys.insert(exifKeys.end(), additional_default_exif_keys.begin(), additional_default_exif_keys.end());
 }
 
 
@@ -10295,6 +10302,40 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
                 assignFromKeyfile(keyFile, "Locallab", "highmaskcie_" + index_str, spot.highmaskcie, spotEdited.highmaskcie);
                 assignFromKeyfile(keyFile, "Locallab", "shadmaskcie_" + index_str, spot.shadmaskcie, spotEdited.shadmaskcie);
                 assignFromKeyfile(keyFile, "Locallab", "LLmaskcieCurvewav_" + index_str, spot.LLmaskciecurvewav, spotEdited.LLmaskciecurvewav);
+
+                if (ppVersion < 352) {
+                    // FFT Gaussian blur fixed in 5.12. Converts old radii to
+                    // the equivalent new radii if FFT mode is enabled. The
+                    // fixed blur radius has a factor of radius / 2 compared to
+                    // the original, so the base conversion is sqrt(2 * radius).
+                    // Derivation: old_radius = new_radius * new_radius / 2
+                    //             2 * old_radius = new_radius * new_radius
+                    //             sqrt(2 * old_radius) = new_radius
+                    if (spot.fftColorMask) {
+                        spot.blurcol = std::sqrt(2 * spot.blurcol);
+                        spotEdited.blurcol = true;
+                    }
+                    if (spot.fftwbl || spot.radius > 30.) {
+                        // Internally, the radius is divided by 1.4, so the
+                        // factor is actually radius / 1.4 / 2.
+                        spot.radius = std::sqrt(2.8 * spot.radius);
+                        spotEdited.radius = true;
+                    }
+                    if (spot.fftwlc) {
+                        // Internally, the radius was squared, so replace
+                        // old_radius with old_radius^2 before solving.
+                        spot.lcradius = std::sqrt(2.) * spot.lcradius;
+                        spotEdited.lcradius = true;
+                    }
+                    if (spot.fftmask) {
+                        spot.blurmask = std::sqrt(2 * spot.blurmask);
+                        spotEdited.blurmask = true;
+                    }
+                    if (spot.fftcieMask) {
+                        spot.blurcie = std::sqrt(2 * spot.blurcie);
+                        spotEdited.blurcie = true;
+                    }
+                }
 
                 if (keyFile.has_key("Locallab", "CSThresholdcie_" + index_str)) {
                     const std::vector<int> thresh = keyFile.get_integer_list("Locallab", "CSThresholdcie_" + index_str);

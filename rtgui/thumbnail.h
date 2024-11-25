@@ -115,7 +115,7 @@ class Thumbnail
 
     void saveMetadata();
     void loadProperties();
-    void updateProcParamsProperties();
+    void updateProcParamsProperties(bool forceUpdate = false);
     void saveXMPSidecarProperties();
 
 public:

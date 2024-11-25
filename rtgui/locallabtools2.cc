@@ -4660,7 +4660,7 @@ void LocallabContrast::updateContrastGUI3()
     const double temp = lcradius->getValue();
 
     if (fftwlc->get_active()) {
-        lcradius->setLimits(20, 1000, 1, 80);
+        lcradius->setLimits(20, 1500, 1, 80);
     } else {
         lcradius->setLimits(20, 100, 1, 80);
     }

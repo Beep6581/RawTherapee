@@ -75,6 +75,7 @@ Other contributors (profiles, ideas, mockups, testing, forum activity, translati
   Kostia (Kildor) Romanov
   Henning Sidow
   Kalle Söderman
+  strange-sparrow
   Wayne Sutton
   Johan Thor
   Vitalis Tiknius

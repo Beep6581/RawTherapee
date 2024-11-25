@@ -10033,8 +10033,8 @@ void ImProcFunctions::fftw_convol_blur(float * input, float * output, int bfw, i
 
     /*define the gaussian constants for the convolution kernel*/
     if (algo == 0) {
-        n_x = rtengine::RT_PI / (double) bfw; //ipol
-        n_y = rtengine::RT_PI / (double) bfh;
+        n_x = rtengine::RT_PI / (double) bfw / std::sqrt(2.); //ipol
+        n_y = rtengine::RT_PI / (double) bfh / std::sqrt(2.);
     } else if (algo == 1) {
         n_x = 1.f / bfw; //gauss
         n_y = 1.f / bfh;
@@ -10057,7 +10057,7 @@ void ImProcFunctions::fftw_convol_blur(float * input, float * output, int bfw, i
 
             for (int i = 0; i < bfw; i++)
                 if (algo == 0) {
-                    kern[ i + index] = exp((float)(-radius) * (n_x * i * i + n_y * j * j)); //calculate Gauss kernel Ipol formula
+                    kern[ i + index] = exp((float)(-radius * radius) * (n_x * i * i + n_y * j * j)); //calculate Gauss kernel Ipol formula
                 } else if (algo == 1) {
                     kern[ i + index] = radsig * exp((float)(-(n_x * i * i + n_y * j * j) / (2.f * radius * radius))); //calculate Gauss kernel  with Gauss formula
                 }
@@ -10095,7 +10095,7 @@ void ImProcFunctions::fftw_convol_blur(float * input, float * output, int bfw, i
                 int index = j * bfw;
 
                 for (int i = 0; i < bfw; i++) {
-                    out[i + index] *= exp((float)(-radius) * (n_x * i * i + n_y * j * j));    //apply Gauss kernel without FFT - some authors says radius*radius but differences with Gaussianblur
+                    out[i + index] *= exp((float)(-radius * radius) * (n_x * i * i + n_y * j * j));    //apply Gauss kernel without FFT - some authors says radius*radius but differences with Gaussianblur
                 }
             }
         } else if (algo == 1) {
@@ -21430,7 +21430,7 @@ void ImProcFunctions::Lab_Local(
     float epsi = 0.000001f;
 
 
-    if((lp.laplacexp > 1.f && lp.exposena) || (lp.strng > 2.f && lp.sfena)){//strong Laplacian
+    if((lp.laplacexp > 1.f && lp.exposena) || (lp.strng > 2.f && lp.sfena) || (lp.exposena && lp.expcomp != 0.f && params->dirpyrequalizer.enabled)){//strong Laplacian
         notlaplacian = true;
     }
 
