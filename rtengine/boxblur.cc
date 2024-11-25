@@ -29,6 +29,113 @@
 namespace rtengine
 {
 
+void compute13x13kernel2(float sigma, float kernel[13][13]) {
+
+    const double temp = -2.f * rtengine::SQR(sigma);
+    float sum = 0.f;
+    for (int i = -6; i <= 6; ++i) {
+        for (int j = -6; j <= 6; ++j) {
+            if((rtengine::SQR(i) + rtengine::SQR(j)) <= rtengine::SQR(3.0 * 2.0)) {
+                kernel[i + 6][j + 6] = std::exp((rtengine::SQR(i) + rtengine::SQR(j)) / temp);
+                sum += kernel[i + 6][j + 6];
+            } else {
+                kernel[i + 6][j + 6] = 0.f;
+            }
+        }
+    }
+
+    for (int i = 0; i < 13; ++i) {
+        for (int j = 0; j < 13; ++j) {
+            kernel[i][j] /= sum;
+        }
+    }
+}
+
+void compute9x9kernel2(float sigma, float kernel[9][9]) {
+
+    const double temp = -2.f * rtengine::SQR(sigma);
+    float sum = 0.f;
+    for (int i = -4; i <= 4; ++i) {
+        for (int j = -4; j <= 4; ++j) {
+            if((rtengine::SQR(i) + rtengine::SQR(j)) <= rtengine::SQR(3.0 * 1.5)) {
+                kernel[i + 4][j + 4] = std::exp((rtengine::SQR(i) + rtengine::SQR(j)) / temp);
+                sum += kernel[i + 4][j + 4];
+            } else {
+                kernel[i + 4][j + 4] = 0.f;
+            }
+        }
+    }
+
+    for (int i = 0; i < 9; ++i) {
+        for (int j = 0; j < 9; ++j) {
+            kernel[i][j] /= sum;
+        }
+    }
+}
+
+void compute7x7kernel2(float sigma, float kernel[7][7]) {
+
+    const double temp = -2.f * rtengine::SQR(sigma);
+    float sum = 0.f;
+    for (int i = -3; i <= 3; ++i) {
+        for (int j = -3; j <= 3; ++j) {
+            if((rtengine::SQR(i) + rtengine::SQR(j)) <= rtengine::SQR(3.0 * 1.15)) {
+                kernel[i + 3][j + 3] = std::exp((rtengine::SQR(i) + rtengine::SQR(j)) / temp);
+                sum += kernel[i + 3][j + 3];
+            } else {
+                kernel[i + 3][j + 3] = 0.f;
+            }
+        }
+    }
+
+    for (int i = 0; i < 7; ++i) {
+        for (int j = 0; j < 7; ++j) {
+            kernel[i][j] /= sum;
+        }
+    }
+}
+
+void compute5x5kernel2(float sigma, float kernel[5][5]) {
+
+    const double temp = -2.f * rtengine::SQR(sigma);
+    float sum = 0.f;
+    for (int i = -2; i <= 2; ++i) {
+        for (int j = -2; j <= 2; ++j) {
+            if((rtengine::SQR(i) + rtengine::SQR(j)) <= rtengine::SQR(3.0 * 0.84)) {
+                kernel[i + 2][j + 2] = std::exp((rtengine::SQR(i) + rtengine::SQR(j)) / temp);
+                sum += kernel[i + 2][j + 2];
+            } else {
+                kernel[i + 2][j + 2] = 0.f;
+            }
+        }
+    }
+
+    for (int i = 0; i < 5; ++i) {
+        for (int j = 0; j < 5; ++j) {
+            kernel[i][j] /= sum;
+        }
+    }
+}
+
+void compute3x3kernel2(float sigma, float kernel[3][3]) {
+
+    const double temp = -2.f * rtengine::SQR(sigma);
+    float sum = 0.f;
+    for (int i = -1; i <= 1; ++i) {
+        for (int j = -1; j <= 1; ++j) {
+            kernel[i + 1][j + 1] = std::exp((rtengine::SQR(i) + rtengine::SQR(j)) / temp);
+            sum += kernel[i + 1][j + 1];
+        }
+    }
+
+    for (int i = 0; i < 3; ++i) {
+        for (int j = 0; j < 3; ++j) {
+            kernel[i][j] /= sum;
+        }
+    }
+}
+
+
 void boxblur(float** src, float** dst, int radius, int W, int H, bool multiThread)
 {
     //box blur using rowbuffers and linebuffers instead of a full size buffer

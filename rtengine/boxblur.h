@@ -20,6 +20,11 @@
 
 namespace rtengine
 {
+void compute13x13kernel2(float sigma, float kernel[13][13]);
+void compute9x9kernel2(float sigma, float kernel[9][9]);
+void compute7x7kernel2(float sigma, float kernel[7][7]);
+void compute5x5kernel2(float sigma, float kernel[5][5]);
+void compute3x3kernel2(float sigma, float kernel[3][3]);
 
 void boxblur(float** src, float** dst, int radius, int W, int H, bool multiThread);
 void boxblur(float* src, float* dst, int radius, int W, int H, bool multiThread);

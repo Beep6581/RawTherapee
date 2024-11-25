@@ -31,6 +31,7 @@
 #include "sleef.h"
 #include "rtengine.h"
 #include "color.h"
+#include "boxblur.h"
 
 //#define BENCHMARK
 #include "StopWatch.h"
@@ -488,111 +489,6 @@ bool checkForStop(float** tmpIThr, float** iterCheck, int fullTileSize, int bord
     return false;
 }
 
-void compute13x13kernel(float sigma, float kernel[13][13]) {
-
-    const double temp = -2.f * rtengine::SQR(sigma);
-    float sum = 0.f;
-    for (int i = -6; i <= 6; ++i) {
-        for (int j = -6; j <= 6; ++j) {
-            if((rtengine::SQR(i) + rtengine::SQR(j)) <= rtengine::SQR(3.0 * 2.0)) {
-                kernel[i + 6][j + 6] = std::exp((rtengine::SQR(i) + rtengine::SQR(j)) / temp);
-                sum += kernel[i + 6][j + 6];
-            } else {
-                kernel[i + 6][j + 6] = 0.f;
-            }
-        }
-    }
-
-    for (int i = 0; i < 13; ++i) {
-        for (int j = 0; j < 13; ++j) {
-            kernel[i][j] /= sum;
-        }
-    }
-}
-
-void compute9x9kernel(float sigma, float kernel[9][9]) {
-
-    const double temp = -2.f * rtengine::SQR(sigma);
-    float sum = 0.f;
-    for (int i = -4; i <= 4; ++i) {
-        for (int j = -4; j <= 4; ++j) {
-            if((rtengine::SQR(i) + rtengine::SQR(j)) <= rtengine::SQR(3.0 * 1.5)) {
-                kernel[i + 4][j + 4] = std::exp((rtengine::SQR(i) + rtengine::SQR(j)) / temp);
-                sum += kernel[i + 4][j + 4];
-            } else {
-                kernel[i + 4][j + 4] = 0.f;
-            }
-        }
-    }
-
-    for (int i = 0; i < 9; ++i) {
-        for (int j = 0; j < 9; ++j) {
-            kernel[i][j] /= sum;
-        }
-    }
-}
-
-void compute7x7kernel(float sigma, float kernel[7][7]) {
-
-    const double temp = -2.f * rtengine::SQR(sigma);
-    float sum = 0.f;
-    for (int i = -3; i <= 3; ++i) {
-        for (int j = -3; j <= 3; ++j) {
-            if((rtengine::SQR(i) + rtengine::SQR(j)) <= rtengine::SQR(3.0 * 1.15)) {
-                kernel[i + 3][j + 3] = std::exp((rtengine::SQR(i) + rtengine::SQR(j)) / temp);
-                sum += kernel[i + 3][j + 3];
-            } else {
-                kernel[i + 3][j + 3] = 0.f;
-            }
-        }
-    }
-
-    for (int i = 0; i < 7; ++i) {
-        for (int j = 0; j < 7; ++j) {
-            kernel[i][j] /= sum;
-        }
-    }
-}
-
-void compute5x5kernel(float sigma, float kernel[5][5]) {
-
-    const double temp = -2.f * rtengine::SQR(sigma);
-    float sum = 0.f;
-    for (int i = -2; i <= 2; ++i) {
-        for (int j = -2; j <= 2; ++j) {
-            if((rtengine::SQR(i) + rtengine::SQR(j)) <= rtengine::SQR(3.0 * 0.84)) {
-                kernel[i + 2][j + 2] = std::exp((rtengine::SQR(i) + rtengine::SQR(j)) / temp);
-                sum += kernel[i + 2][j + 2];
-            } else {
-                kernel[i + 2][j + 2] = 0.f;
-            }
-        }
-    }
-
-    for (int i = 0; i < 5; ++i) {
-        for (int j = 0; j < 5; ++j) {
-            kernel[i][j] /= sum;
-        }
-    }
-}
-
-void compute3x3kernel(float sigma, float kernel[3][3]) {
-
-    const double temp = -2.f * rtengine::SQR(sigma);
-    float sum = 0.f;
-    for (int i = -1; i <= 1; ++i) {
-        for (int j = -1; j <= 1; ++j) {
-            kernel[i + 1][j + 1] = std::exp((rtengine::SQR(i) + rtengine::SQR(j)) / temp);
-            sum += kernel[i + 1][j + 1];
-        }
-    }
-
-    for (int i = 0; i < 3; ++i) {
-        for (int j = 0; j < 3; ++j) {
-            kernel[i][j] /= sum;
-        }
-    }
-}
 
 void gauss3x3div (float** RESTRICT src, float** RESTRICT dst, float** RESTRICT divBuffer, const int tileSize, const float kernel[3][3])
 {
@@ -976,15 +872,15 @@ BENCHFUN
     float kernel5[5][5];
     float kernel3[3][3];
     if (is3x3) {
-        compute3x3kernel(sigma, kernel3);
+        rtengine::compute3x3kernel2(sigma, kernel3);
     } else if (is5x5) {
-        compute5x5kernel(sigma, kernel5);
+        rtengine::compute5x5kernel2(sigma, kernel5);
     } else if (is7x7) {
-        compute7x7kernel(sigma, kernel7);
+        rtengine::compute7x7kernel2(sigma, kernel7);
     } else if (is9x9) {
-        compute9x9kernel(sigma, kernel9);
+        rtengine::compute9x9kernel2(sigma, kernel9);
     } else {
-        compute13x13kernel(sigma, kernel13);
+        rtengine::compute13x13kernel2(sigma, kernel13);
     }
 
     constexpr int tileSize = 32;
@@ -1114,7 +1010,7 @@ BENCHFUN
                         if (sigmaTile >= 0.4f) {
                             if (sigmaTile > 1.5f) { // have to use 13x13 kernel
                                 float lkernel13[13][13];
-                                compute13x13kernel(static_cast<float>(sigma) + distanceFactor * distance, lkernel13);
+                                rtengine::compute13x13kernel2(static_cast<float>(sigma) + distanceFactor * distance, lkernel13);
                                 for (int k = 0; k < iterations; ++k) {
                                     // apply 13x13 gaussian blur and divide luminance by result of gaussian blur
                                     gauss13x13div(tmpIThr, tmpThr, lumThr, fullTileSize, lkernel13);
@@ -1125,7 +1021,7 @@ BENCHFUN
                                 }
                             } else if (sigmaTile > 1.15f) { // have to use 9x9 kernel
                                 float lkernel9[9][9];
-                                compute9x9kernel(static_cast<float>(sigma) + distanceFactor * distance, lkernel9);
+                                rtengine::compute9x9kernel2(static_cast<float>(sigma) + distanceFactor * distance, lkernel9);
                                 for (int k = 0; k < iterations; ++k) {
                                     // apply 9x9 gaussian blur and divide luminance by result of gaussian blur
                                     gauss9x9div(tmpIThr, tmpThr, lumThr, fullTileSize, lkernel9);
@@ -1136,7 +1032,7 @@ BENCHFUN
                                 }
                             } else if (sigmaTile > 0.84f) { // have to use 7x7 kernel
                                 float lkernel7[7][7];
-                                compute7x7kernel(static_cast<float>(sigma) + distanceFactor * distance, lkernel7);
+                                rtengine::compute7x7kernel2(static_cast<float>(sigma) + distanceFactor * distance, lkernel7);
                                 for (int k = 0; k < iterations; ++k) {
                                     // apply 7x7 gaussian blur and divide luminance by result of gaussian blur
                                     gauss7x7div(tmpIThr, tmpThr, lumThr, fullTileSize, lkernel7);
@@ -1147,7 +1043,7 @@ BENCHFUN
                                 }
                             } else { // can use 5x5 kernel
                                 float lkernel5[5][5];
-                                compute5x5kernel(static_cast<float>(sigma) + distanceFactor * distance, lkernel5);
+                                rtengine::compute5x5kernel2(static_cast<float>(sigma) + distanceFactor * distance, lkernel5);
                                 for (int k = 0; k < iterations; ++k) {
                                     // apply 7x7 gaussian blur and divide luminance by result of gaussian blur
                                     gauss5x5div(tmpIThr, tmpThr, lumThr, fullTileSize, lkernel5);
