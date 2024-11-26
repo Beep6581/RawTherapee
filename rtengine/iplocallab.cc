@@ -17828,7 +17828,7 @@ void ImProcFunctions::Lab_Local(
 //Sharp methodcap Capture
     bool cap = params->locallab.spots.at(sp).methodcap == "cap";
 
-    if (!lp.invshar && cap && lp.sharpena  &&  lp.fullim >= 2) {//provisory spot normal not possible (allocation memory ??)
+    if (!lp.invshar && cap && lp.sharpena) {//  &&  lp.fullim >= 2) {//provisory spot normal not possible (allocation memory ??)
         int ystart = rtengine::max(static_cast<int>(lp.yc - lp.lyT) - cy, 0);
         int yend = rtengine::min(static_cast<int>(lp.yc + lp.ly) - cy, original->H);
         int xstart = rtengine::max(static_cast<int>(lp.xc - lp.lxL) - cx, 0);
@@ -17839,6 +17839,7 @@ void ImProcFunctions::Lab_Local(
         if (bfw >= mSPsharp  && bfh >= mSPsharp) {//for buildblendmask
             const std::unique_ptr<LabImage> bufexporig(new LabImage(bfw, bfh));
             const std::unique_ptr<LabImage> bufexpfin(new LabImage(bfw, bfh));
+            const std::unique_ptr<LabImage> copyorig(new LabImage(original->W, original->H));//copy original image to keep initial datas
 
 #ifdef _OPENMP
             #pragma omp parallel for schedule(dynamic,16) if (multiThread)
@@ -17856,65 +17857,58 @@ void ImProcFunctions::Lab_Local(
 
             float contra = params->locallab.spots.at(sp).sharcontrast;
             float capradiu = params->locallab.spots.at(sp).capradius;
-           // printf("CAPRADIU=%f \n", (double) capradiu);
             float deconvCo = params->locallab.spots.at(sp).deconvCoBoost;
             float deconvLat = params->locallab.spots.at(sp).deconvCoLat;
             bool autoshar = params->locallab.spots.at(sp).deconvAutoshar;
             bool sharpshow = params->locallab.spots.at(sp).sharshow;
             bool itcheck = params->locallab.spots.at(sp).itercheck;
-            const std::unique_ptr<Imagefloat> tmpImagesha(new Imagefloat(bfw, bfh));
-            const std::unique_ptr<Imagefloat> tmpImagered(new Imagefloat(bfw, bfh));
-            const std::unique_ptr<Imagefloat> tmpImage(new Imagefloat(original->W, original->H));
+
+            const std::unique_ptr<Imagefloat> tmpImagered(new Imagefloat(bfw, bfh));//part of image to be used with Spots
+            const std::unique_ptr<Imagefloat> tmpImage(new Imagefloat(original->W, original->H));//all image
+
             if(!autoshar){
                sharc = contra; 
             }
 
-  //printf("OK 0\n");
-
-            lab2rgb(*bufexpfin, *tmpImagesha, params->icm.workingProfile);
-         //   lab2rgb(*original, *tmpImagesha, params->icm.workingProfile);
-  //printf("OK 00\n");
+            lab2rgb(*original, *tmpImage, params->icm.workingProfile);//copy original  image lab to RGB
             
 #ifdef _OPENMP
             #pragma omp parallel for schedule(dynamic,16) if (multiThread)
 #endif
 
-            for (int y = ystart; y < yend; y++) {
+            for (int y = ystart; y < yend; y++) {//take only part with Spot
                 for (int x = xstart; x < xend; x++) {
-                    tmpImagered->r(y - ystart, x - xstart) = tmpImagesha->r(y,x);
-                    tmpImagered->g(y - ystart, x - xstart) = tmpImagesha->g(y,x);
-                    tmpImagered->b(y - ystart, x - xstart) = tmpImagesha->b(y,x);
-                //    tmpImagered->r(y - ystart, x - xstart) = tmpImage->r(y,x);
-                //    tmpImagered->g(y - ystart, x - xstart) = tmpImage->g(y,x);
-                //    tmpImagered->b(y - ystart, x - xstart) = tmpImage->b(y,x);
+                    tmpImagered->r(y - ystart, x - xstart) = tmpImage->r(y,x);
+                    tmpImagered->g(y - ystart, x - xstart) = tmpImage->g(y,x);
+                    tmpImagered->b(y - ystart, x - xstart) = tmpImage->b(y,x);
                 }
             }
- // printf("OK 1\n");
-    
-            
+              
             ImProcFunctions::doSharpening(tmpImagered.get(), bfw, bfh, sk, sharc, autoshar, capradiu,  deconvCo, deconvLat, itcheck, sharpshow);
             
 #ifdef _OPENMP
             #pragma omp parallel for schedule(dynamic,16) if (multiThread)
 #endif
-            for (int y = ystart; y < yend; y++) {
+            for (int y = ystart; y < yend; y++) {//retrieve all image
                 for (int x = xstart; x < xend; x++) {
-                    tmpImagesha->r(y,x) = tmpImagered->r(y - ystart,x - xstart);
-                    tmpImagesha->g(y,x)= tmpImagered->g(y - ystart, x - xstart);
-                    tmpImagesha->b(y,x) = tmpImagered->b(y - ystart, x - xstart);
-                 //   tmpImage->r(y,x) = tmpImagered->r(y - ystart,x - xstart);
-                 //   tmpImage->g(y,x)= tmpImagered->g(y - ystart, x - xstart);
-                 //   tmpImage->b(y,x) = tmpImagered->b(y - ystart, x - xstart);
+                    tmpImage->r(y,x) = tmpImagered->r(y - ystart,x - xstart);
+                    tmpImage->g(y,x) = tmpImagered->g(y - ystart, x - xstart);
+                    tmpImage->b(y,x) = tmpImagered->b(y - ystart, x - xstart);
                 }
             }
-  //printf("OK 2\n");
-
-            
-           // rgb2lab(*tmpImagesha, *bufexpfin, params->icm.workingProfile);
-            rgb2lab(*tmpImagesha, *bufexpfin, params->icm.workingProfile);
-   // printf("OK 3\n");
+       
+            rgb2lab(*tmpImage, *copyorig, params->icm.workingProfile);//conver all image lo Lab
+#ifdef _OPENMP
+            #pragma omp parallel for schedule(dynamic,16) if (multiThread)
+#endif
+            for (int y = ystart; y < yend; y++) {//retrieve Lab datas
+                for (int x = xstart; x < xend; x++) {
+                    bufexpfin->L[y - ystart][x - xstart] = copyorig->L[y][x];
+                    bufexpfin->a[y - ystart][x - xstart] = copyorig->a[y][x];
+                    bufexpfin->b[y - ystart][x - xstart] = copyorig->b[y][x];
+                }
+            }
           
-            
             transit_shapedetect2(sp, 0.f, 0.f, call, 99, bufexporig.get(), bufexpfin.get(), nullptr, hueref, chromaref, lumaref, sobelref, 0.f, nullptr, lp, original, transformed, cx, cy, sk);
 
             if (lp.recur) {
