@@ -34,189 +34,6 @@
 #include "boxblur.h"
 
 namespace {
-    
-void gauss3x3mult(float** RESTRICT src, float** RESTRICT dst, const int tileSize, const float kernel[3][3])
-{
-    const float c11 = kernel[0][0];
-    const float c10 = kernel[0][1];
-    const float c00 = kernel[1][1];
-
-    for (int i = 1; i < tileSize - 1; i++) {
-#if defined(__clang__)
-        #pragma clang loop vectorize(assume_safety)
-#elif defined(__GNUC__)
-        #pragma GCC ivdep
-#endif
-        for (int j = 1; j < tileSize - 1; j++) {
-            const float val = c11 * (src[i - 1][j - 1] + src[i - 1][j + 1] + src[i + 1][j - 1] + src[i + 1][j + 1]) + 
-                              c10 * (src[i - 1][j] + src[i][j - 1] + src[i][j + 1] + src[i + 1][j]) + 
-                              c00 * src[i][j];
-            dst[i][j] *= val;
-        }
-    }
-
-}
-
-void gauss5x5mult (float** RESTRICT src, float** RESTRICT dst, const int tileSize, const float kernel[5][5])
-{
-
-    const float c21 = kernel[0][1];
-    const float c20 = kernel[0][2];
-    const float c11 = kernel[1][1];
-    const float c10 = kernel[1][2];
-    const float c00 = kernel[2][2];
-
-    for (int i = 2; i < tileSize - 2; ++i) {
-        // I tried hand written SSE code but gcc vectorizes better
-#if defined(__clang__)
-        #pragma clang loop vectorize(assume_safety)
-#elif defined(__GNUC__)
-        #pragma GCC ivdep
-#endif
-        for (int j = 2; j < tileSize - 2; ++j) {
-            const float val = c21 * ((src[i - 2][j - 1] + src[i - 2][j + 1]) + (src[i - 1][j - 2] + src[i - 1][j + 2]) + (src[i + 1][j - 2] + src[i + 1][j + 2]) + (src[i + 2][j - 1] + src[i + 2][j + 1])) +
-                              c20 * (src[i - 2][j] + src[i][j - 2] + src[i][j + 2] + src[i + 2][j]) +
-                              c11 * (src[i - 1][j - 1] + src[i - 1][j + 1] + src[i + 1][j - 1] + src[i + 1][j + 1]) +
-                              c10 * (src[i - 1][j] + src[i][j - 1] + src[i][j + 1] + src[i + 1][j]) +
-                              c00 * src[i][j];
-
-            dst[i][j] *= val;
-        }
-    }
-}
-
-void gauss7x7mult(float** RESTRICT src, float** RESTRICT dst, const int tileSize, const float kernel[7][7])
-{
-
-    const float c31 = kernel[0][2];
-    const float c30 = kernel[0][3];
-    const float c22 = kernel[1][1];
-    const float c21 = kernel[1][2];
-    const float c20 = kernel[1][3];
-    const float c11 = kernel[2][2];
-    const float c10 = kernel[2][3];
-    const float c00 = kernel[3][3];
-
-    for (int i = 3; i < tileSize - 3; ++i) {
-        // I tried hand written SSE code but gcc vectorizes better
-#if defined(__clang__)
-        #pragma clang loop vectorize(assume_safety)
-#elif defined(__GNUC__)
-        #pragma GCC ivdep
-#endif
-        for (int j = 3; j < tileSize - 3; ++j) {
-            const float val = c31 * ((src[i - 3][j - 1] + src[i - 3][j + 1]) + (src[i - 1][j - 3] + src[i - 1][j + 3]) + (src[i + 1][j - 3] + src[i + 1][j + 3]) + (src[i + 3][j - 1] + src[i + 3][j + 1])) +
-                              c30 * (src[i - 3][j] + src[i][j - 3] + src[i][j + 3] + src[i + 3][j]) +
-                              c22 * (src[i - 2][j - 2] + src[i - 2][j + 2] + src[i + 2][j - 2] + src[i + 2][j + 2]) +
-                              c21 * ((src[i - 2][j - 1] + src[i - 2][j + 1]) + (src[i - 1][j - 2] + src[i - 1][j + 2]) + (src[i + 1][j - 2] + src[i + 1][j + 2]) + (src[i + 2][j - 1] + src[i + 2][j + 1])) +
-                              c20 * (src[i - 2][j] + src[i][j - 2] + src[i][j + 2] + src[i + 2][j]) +
-                              c11 * (src[i - 1][j - 1] + src[i - 1][j + 1] + src[i + 1][j - 1] + src[i + 1][j + 1]) +
-                              c10 * (src[i - 1][j] + src[i][j - 1] + src[i][j + 1] + src[i + 1][j]) +
-                              c00 * src[i][j];
-
-            dst[i][j] *= val;
-        }
-    }
-}
-
-void gauss9x9mult(float** RESTRICT src, float** RESTRICT dst, const int tileSize, const float kernel[9][9])
-{
-
-    const float c42 = kernel[0][2];
-    const float c41 = kernel[0][3];
-    const float c40 = kernel[0][4];
-    const float c33 = kernel[1][1];
-    const float c32 = kernel[1][2];
-    const float c31 = kernel[1][3];
-    const float c30 = kernel[1][4];
-    const float c22 = kernel[2][2];
-    const float c21 = kernel[2][3];
-    const float c20 = kernel[2][4];
-    const float c11 = kernel[3][3];
-    const float c10 = kernel[3][4];
-    const float c00 = kernel[4][4];
-
-    for (int i = 4; i < tileSize - 4; ++i) {
-        // I tried hand written SSE code but gcc vectorizes better
-#if defined(__clang__)
-        #pragma clang loop vectorize(assume_safety)
-#elif defined(__GNUC__)
-        #pragma GCC ivdep
-#endif
-        for (int j = 4; j < tileSize - 4; ++j) {
-            const float val = c42 * ((src[i - 4][j - 2] + src[i - 4][j + 2]) + (src[i - 2][j - 4] + src[i - 2][j + 4]) + (src[i + 2][j - 4] + src[i + 2][j + 4]) + (src[i + 4][j - 2] + src[i + 4][j + 2])) +
-                              c41 * ((src[i - 4][j - 1] + src[i - 4][j + 1]) + (src[i - 1][j - 4] + src[i - 1][j + 4]) + (src[i + 1][j - 4] + src[i + 1][j + 4]) + (src[i + 4][j - 1] + src[i + 4][j + 1])) +
-                              c40 * (src[i - 4][j] + src[i][j - 4] + src[i][j + 4] + src[i + 4][j]) +
-                              c33 * (src[i - 3][j - 3] + src[i - 3][j + 3] + src[i + 3][j - 3] + src[i + 3][j + 3]) +
-                              c32 * ((src[i - 3][j - 2] + src[i - 3][j + 2]) + (src[i - 2][j - 3] + src[i - 2][j + 3]) + (src[i + 2][j - 3] + src[i + 2][j + 3]) + (src[i + 3][j - 2] + src[i + 3][j + 2])) +
-                              c31 * ((src[i - 3][j - 1] + src[i - 3][j + 1]) + (src[i - 1][j - 3] + src[i - 1][j + 3]) + (src[i + 1][j - 3] + src[i + 1][j + 3]) + (src[i + 3][j - 1] + src[i + 3][j + 1])) +
-                              c30 * (src[i - 3][j] + src[i][j - 3] + src[i][j + 3] + src[i + 3][j]) +
-                              c22 * (src[i - 2][j - 2] + src[i - 2][j + 2] + src[i + 2][j - 2] + src[i + 2][j + 2]) +
-                              c21 * ((src[i - 2][j - 1] + src[i - 2][j + 1]) + (src[i - 1][j - 2] + src[i - 1][j + 2]) + (src[i + 1][j - 2] + src[i + 1][j + 2]) + (src[i + 2][j - 1] + src[i + 2][j + 1])) +
-                              c20 * (src[i - 2][j] + src[i][j - 2] + src[i][j + 2] + src[i + 2][j]) +
-                              c11 * (src[i - 1][j - 1] + src[i - 1][j + 1] + src[i + 1][j - 1] + src[i + 1][j + 1]) +
-                              c10 * (src[i - 1][j] + src[i][j - 1] + src[i][j + 1] + src[i + 1][j]) +
-                              c00 * src[i][j];
-            dst[i][j] *= val;
-        }
-    }
-}
-
-void gauss13x13mult(float** RESTRICT src, float** RESTRICT dst, const int tileSize, const float kernel[13][13])
-{
-
-    const float c60 = kernel[0][6];
-    const float c53 = kernel[1][3];
-    const float c52 = kernel[1][4];
-    const float c51 = kernel[1][5];
-    const float c50 = kernel[1][6];
-    const float c44 = kernel[2][2];
-    const float c42 = kernel[2][4];
-    const float c41 = kernel[2][5];
-    const float c40 = kernel[2][6];
-    const float c33 = kernel[3][3];
-    const float c32 = kernel[3][4];
-    const float c31 = kernel[3][5];
-    const float c30 = kernel[3][6];
-    const float c22 = kernel[4][4];
-    const float c21 = kernel[4][5];
-    const float c20 = kernel[4][6];
-    const float c11 = kernel[5][5];
-    const float c10 = kernel[5][6];
-    const float c00 = kernel[6][6];
-
-    for (int i = 6; i < tileSize - 6; ++i) {
-        // I tried hand written SSE code but gcc vectorizes better
-#if defined(__clang__)
-        #pragma clang loop vectorize(assume_safety)
-#elif defined(__GNUC__)
-        #pragma GCC ivdep
-#endif
-        for (int j = 6; j < tileSize - 6; ++j) {
-            const float val = c60 * (src[i - 6][j] + src[i][j - 6] + src[i][j + 6] + src[i + 6][j]) +
-                              c53 * ((src[i - 5][j - 3] + src[i - 5][j + 3]) + (src[i - 3][j - 5] + src[i - 3][j + 5]) + (src[i + 3][j - 5] + src[i + 3][j + 5]) + (src[i + 5][j - 3] + src[i + 5][j + 3])) +
-                              c52 * ((src[i - 5][j - 2] + src[i - 5][j + 2]) + (src[i - 2][j - 5] + src[i - 2][j + 5]) + (src[i + 2][j - 5] + src[i + 2][j + 5]) + (src[i + 5][j - 2] + src[i + 5][j + 2])) +
-                              c51 * ((src[i - 5][j - 1] + src[i - 5][j + 1]) + (src[i - 1][j - 5] + src[i - 1][j + 5]) + (src[i + 1][j - 5] + src[i + 1][j + 5]) + (src[i + 5][j - 1] + src[i + 5][j + 1])) +
-                              c50 * ((src[i - 5][j] + src[i][j - 5] + src[i][j + 5] + src[i + 5][j]) + ((src[i - 4][j - 3] + src[i - 4][j + 3]) + (src[i - 3][j - 4] + src[i - 3][j + 4]) + (src[i + 3][j - 4] + src[i + 3][j + 4]) + (src[i + 4][j - 3] + src[i + 4][j + 3]))) +
-                              c44 * (src[i - 4][j - 4] + src[i - 4][j + 4] + src[i + 4][j - 4] + src[i + 4][j + 4]) +
-                              c42 * ((src[i - 4][j - 2] + src[i - 4][j + 2]) + (src[i - 2][j - 4] + src[i - 2][j + 4]) + (src[i + 2][j - 4] + src[i + 2][j + 4]) + (src[i + 4][j - 2] + src[i + 4][j + 2])) +
-                              c41 * ((src[i - 4][j - 1] + src[i - 4][j + 1]) + (src[i - 1][j - 4] + src[i - 1][j + 4]) + (src[i + 1][j - 4] + src[i + 1][j + 4]) + (src[i + 4][j - 1] + src[i + 4][j + 1])) +
-                              c40 * (src[i - 4][j] + src[i][j - 4] + src[i][j + 4] + src[i + 4][j]) +
-                              c33 * (src[i - 3][j - 3] + src[i - 3][j + 3] + src[i + 3][j - 3] + src[i + 3][j + 3]) +
-                              c32 * ((src[i - 3][j - 2] + src[i - 3][j + 2]) + (src[i - 2][j - 3] + src[i - 2][j + 3]) + (src[i + 2][j - 3] + src[i + 2][j + 3]) + (src[i + 3][j - 2] + src[i + 3][j + 2])) +
-                              c31 * ((src[i - 3][j - 1] + src[i - 3][j + 1]) + (src[i - 1][j - 3] + src[i - 1][j + 3]) + (src[i + 1][j - 3] + src[i + 1][j + 3]) + (src[i + 3][j - 1] + src[i + 3][j + 1])) +
-                              c30 * (src[i - 3][j] + src[i][j - 3] + src[i][j + 3] + src[i + 3][j]) +
-                              c22 * (src[i - 2][j - 2] + src[i - 2][j + 2] + src[i + 2][j - 2] + src[i + 2][j + 2]) +
-                              c21 * ((src[i - 2][j - 1] + src[i - 2][j + 1]) + (src[i - 1][j - 2] + src[i - 1][j + 2]) + (src[i + 1][j - 2] + src[i + 1][j + 2]) + (src[i + 2][j - 1] + src[i + 2][j + 1])) +
-                              c20 * (src[i - 2][j] + src[i][j - 2] + src[i][j + 2] + src[i + 2][j]) +
-                              c11 * (src[i - 1][j - 1] + src[i - 1][j + 1] + src[i + 1][j - 1] + src[i + 1][j + 1]) +
-                              c10 * (src[i - 1][j] + src[i][j - 1] + src[i][j + 1] + src[i + 1][j]) +
-                              c00 * src[i][j];
-
-            dst[i][j] *= val;
-        }
-    }
-}
 
 void buildClipMaskBayer(const float * const *rawData, int W, int H, float** clipMask, const float whites[2][2])
 {
@@ -582,7 +399,7 @@ BENCHFUN
                     for (int k = 0; k < iterations; ++k) {
                         // apply 3x3 gaussian blur and divide luminance by result of gaussian blur
                         rtengine::gauss3x3div2(tmpIThr, tmpThr, lumThr, fullTileSize, kernel3);
-                        gauss3x3mult(tmpThr, tmpIThr, fullTileSize, kernel3);
+                        rtengine::gauss3x3mult2(tmpThr, tmpIThr, fullTileSize, kernel3);
                         if (checkIterStop && k < iterations - 1 && checkForStop(tmpIThr, iterCheck, fullTileSize, border)) {
                             break;
                         }
@@ -591,7 +408,7 @@ BENCHFUN
                     for (int k = 0; k < iterations; ++k) {
                         // apply 5x5 gaussian blur and divide luminance by result of gaussian blur
                         rtengine::gauss5x5div2(tmpIThr, tmpThr, lumThr, fullTileSize, kernel5);
-                        gauss5x5mult(tmpThr, tmpIThr, fullTileSize, kernel5);
+                        rtengine::gauss5x5mult2(tmpThr, tmpIThr, fullTileSize, kernel5);
                         if (checkIterStop && k < iterations - 1 && checkForStop(tmpIThr, iterCheck, fullTileSize, border)) {
                             break;
                         }
@@ -600,7 +417,7 @@ BENCHFUN
                     for (int k = 0; k < iterations; ++k) {
                         // apply 5x5 gaussian blur and divide luminance by result of gaussian blur
                         rtengine::gauss7x7div2(tmpIThr, tmpThr, lumThr, fullTileSize, kernel7);
-                        gauss7x7mult(tmpThr, tmpIThr, fullTileSize, kernel7);
+                        rtengine::gauss7x7mult2(tmpThr, tmpIThr, fullTileSize, kernel7);
                         if (checkIterStop && k < iterations - 1 && checkForStop(tmpIThr, iterCheck, fullTileSize, border)) {
                             break;
                         }
@@ -609,7 +426,7 @@ BENCHFUN
                     for (int k = 0; k < iterations; ++k) {
                         // apply 5x5 gaussian blur and divide luminance by result of gaussian blur
                         rtengine::gauss9x9div2(tmpIThr, tmpThr, lumThr, fullTileSize, kernel9);
-                        gauss9x9mult(tmpThr, tmpIThr, fullTileSize, kernel9);
+                        rtengine::gauss9x9mult2(tmpThr, tmpIThr, fullTileSize, kernel9);
                         if (checkIterStop && k < iterations - 1 && checkForStop(tmpIThr, iterCheck, fullTileSize, border)) {
                             break;
                         }
@@ -625,7 +442,7 @@ BENCHFUN
                                 for (int k = 0; k < iterations; ++k) {
                                     // apply 13x13 gaussian blur and divide luminance by result of gaussian blur
                                     rtengine::gauss13x13div2(tmpIThr, tmpThr, lumThr, fullTileSize, lkernel13);
-                                    gauss13x13mult(tmpThr, tmpIThr, fullTileSize, lkernel13);
+                                    rtengine::gauss13x13mult2(tmpThr, tmpIThr, fullTileSize, lkernel13);
                                     if (checkIterStop && k < iterations - 1 && checkForStop(tmpIThr, iterCheck, fullTileSize, border)) {
                                         break;
                                     }
@@ -636,7 +453,7 @@ BENCHFUN
                                 for (int k = 0; k < iterations; ++k) {
                                     // apply 9x9 gaussian blur and divide luminance by result of gaussian blur
                                     rtengine::gauss9x9div2(tmpIThr, tmpThr, lumThr, fullTileSize, lkernel9);
-                                    gauss9x9mult(tmpThr, tmpIThr, fullTileSize, lkernel9);
+                                    rtengine::gauss9x9mult2(tmpThr, tmpIThr, fullTileSize, lkernel9);
                                     if (checkIterStop && k < iterations - 1 && checkForStop(tmpIThr, iterCheck, fullTileSize, border)) {
                                         break;
                                     }
@@ -647,7 +464,7 @@ BENCHFUN
                                 for (int k = 0; k < iterations; ++k) {
                                     // apply 7x7 gaussian blur and divide luminance by result of gaussian blur
                                     rtengine::gauss7x7div2(tmpIThr, tmpThr, lumThr, fullTileSize, lkernel7);
-                                    gauss7x7mult(tmpThr, tmpIThr, fullTileSize, lkernel7);
+                                    rtengine::gauss7x7mult2(tmpThr, tmpIThr, fullTileSize, lkernel7);
                                     if (checkIterStop && k < iterations - 1 && checkForStop(tmpIThr, iterCheck, fullTileSize, border)) {
                                         break;
                                     }
@@ -658,7 +475,7 @@ BENCHFUN
                                 for (int k = 0; k < iterations; ++k) {
                                     // apply 7x7 gaussian blur and divide luminance by result of gaussian blur
                                     rtengine::gauss5x5div2(tmpIThr, tmpThr, lumThr, fullTileSize, lkernel5);
-                                    gauss5x5mult(tmpThr, tmpIThr, fullTileSize, lkernel5);
+                                    rtengine::gauss5x5mult2(tmpThr, tmpIThr, fullTileSize, lkernel5);
                                     if (checkIterStop && k < iterations - 1 && checkForStop(tmpIThr, iterCheck, fullTileSize, border)) {
                                         break;
                                     }
@@ -669,7 +486,7 @@ BENCHFUN
                         for (int k = 0; k < iterations; ++k) {
                             // apply 13x13 gaussian blur and divide luminance by result of gaussian blur
                             rtengine::gauss13x13div2(tmpIThr, tmpThr, lumThr, fullTileSize, kernel13);
-                            gauss13x13mult(tmpThr, tmpIThr, fullTileSize, kernel13);
+                            rtengine::gauss13x13mult2(tmpThr, tmpIThr, fullTileSize, kernel13);
                             if (checkIterStop && k < iterations - 1 && checkForStop(tmpIThr, iterCheck, fullTileSize, border)) {
                                 break;
                             }
