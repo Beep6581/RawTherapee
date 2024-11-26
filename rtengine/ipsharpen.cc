@@ -489,7 +489,7 @@ bool checkForStop(float** tmpIThr, float** iterCheck, int fullTileSize, int bord
     return false;
 }
 
-void CaptureDeconvSharpening2 (float** luminance, const float* const * oldLuminance, const float * const * blend, int W, int H, float sigma, float sigmaCornerOffset, int iterations, bool checkIterStop, double startVal, double endVal)
+void ImProcFunctions::CaptureDeconvSharpening2 (float** luminance, const float* const * oldLuminance, const float * const * blend, int bfw, int bfh, struct localpass &locp, float sigma, float sigmaCornerOffset, int iterations, bool checkIterStop, double startVal, double endVal)
 {
  // Copyright (c) 2019 Ingo Weyrich (heckflosse67@gmx.de)    
 BENCHFUN
@@ -519,7 +519,7 @@ BENCHFUN
     const int border = (is3x3 || is5x5 || is7x7) ? iterations <= 30 ? 5 : 7 : 8;
     const int fullTileSize = tileSize + 2 * border;
     const float cornerRadius = std::min<float>(2.f, sigma + sigmaCornerOffset);
-    const float cornerDistance = sqrt(rtengine::SQR(W * 0.5f) + rtengine::SQR(H * 0.5f));
+    const float cornerDistance = sqrt(rtengine::SQR(bfw * 0.5f) + rtengine::SQR(bfh * 0.5f));
     const float distanceFactor = (cornerRadius - sigma) / cornerDistance;
 
     if (settings->verbose) {
@@ -540,24 +540,24 @@ BENCHFUN
 #ifdef _OPENMP
         #pragma omp for schedule(dynamic,16) collapse(2)
 #endif
-        for (int i = border; i < H - border; i+= tileSize) {
-            for(int j = border; j < W - border; j+= tileSize) {
-                const bool endOfCol = (i + tileSize + border) >= H;
-                const bool endOfRow = (j + tileSize + border) >= W;
+        for (int i = border; i < bfh - border; i+= tileSize) {
+            for(int j = border; j < bfw - border; j+= tileSize) {
+                const bool endOfCol = (i + tileSize + border) >= bfh;
+                const bool endOfRow = (j + tileSize + border) >= bfw;
                 // fill tiles
                 if (endOfRow || endOfCol) {
                     // special handling for small tiles at end of row or column
                     float maxVal = 0.f;
                     if (checkIterStop) {
-                        for (int k = 0, ii = endOfCol ? H - fullTileSize + border : i; k < tileSize; ++k, ++ii) {
-                            for (int l = 0, jj = endOfRow ? W - fullTileSize + border : j; l < tileSize; ++l, ++jj) {
+                        for (int k = 0, ii = endOfCol ? bfh - fullTileSize + border : i; k < tileSize; ++k, ++ii) {
+                            for (int l = 0, jj = endOfRow ? bfw - fullTileSize + border : j; l < tileSize; ++l, ++jj) {
                                 iterCheck[k][l] = oldLuminance[ii][jj] * blend[ii][jj] * 0.5f;
                                 maxVal = std::max(maxVal, blend[ii][jj]);
                             }
                         }
                     } else {
-                        for (int k = 0, ii = endOfCol ? H - fullTileSize + border : i; k < tileSize; ++k, ++ii) {
-                            for (int l = 0, jj = endOfRow ? W - fullTileSize + border : j; l < tileSize; ++l, ++jj) {
+                        for (int k = 0, ii = endOfCol ? bfh - fullTileSize + border : i; k < tileSize; ++k, ++ii) {
+                            for (int l = 0, jj = endOfRow ? bfw - fullTileSize + border : j; l < tileSize; ++l, ++jj) {
                                 maxVal = std::max(maxVal, blend[ii][jj]);
                             }
                         }
@@ -566,8 +566,8 @@ BENCHFUN
                         // no pixel of the tile has a blend factor >= minBlend => skip the tile
                         continue;
                     }
-                    for (int k = 0, ii = endOfCol ? H - fullTileSize : i - border; k < fullTileSize; ++k, ++ii) {
-                        for (int l = 0, jj = endOfRow ? W - fullTileSize : j - border; l < fullTileSize; ++l, ++jj) {
+                    for (int k = 0, ii = endOfCol ? bfh - fullTileSize : i - border; k < fullTileSize; ++k, ++ii) {
+                        for (int l = 0, jj = endOfRow ? bfw - fullTileSize : j - border; l < fullTileSize; ++l, ++jj) {
                             tmpIThr[k][l] = oldLuminance[ii][jj];
                             lumThr[k][l] = oldLuminance[ii][jj];
                         }
@@ -637,7 +637,7 @@ BENCHFUN
                     }
                 } else {
                     if (sigmaCornerOffset != 0.f) {
-                        const float distance = sqrt(rtengine::SQR(i + tileSize / 2 - H / 2) + rtengine::SQR(j + tileSize / 2 - W / 2));
+                        const float distance = sqrt(rtengine::SQR(i + tileSize / 2 - bfh / 2) + rtengine::SQR(j + tileSize / 2 - bfw / 2));
                         const float sigmaTile = static_cast<float>(sigma) + distanceFactor * distance;
                         if (sigmaTile >= 0.4f) {
                             if (sigmaTile > 1.5f) { // have to use 13x13 kernel
@@ -699,8 +699,8 @@ BENCHFUN
                 }
                 if (endOfRow || endOfCol) {
                     // special handling for small tiles at end of row or column
-                    for (int k = border, ii = endOfCol ? H - fullTileSize : i - border; k < fullTileSize - border; ++k) {
-                        for (int l = border, jj = endOfRow ? W - fullTileSize : j - border; l < fullTileSize - border; ++l) {
+                    for (int k = border, ii = endOfCol ? bfh - fullTileSize : i - border; k < fullTileSize - border; ++k) {
+                        for (int l = border, jj = endOfRow ? bfw - fullTileSize : j - border; l < fullTileSize - border; ++l) {
                             luminance[ii + k][jj + l] = rtengine::intp(blend[ii + k][jj + l], tmpIThr[k][l], luminance[ii + k][jj + l]);
                         }
                     }
@@ -718,7 +718,7 @@ BENCHFUN
 
 
 
-void ImProcFunctions::doSharpening(Imagefloat *rgb, int bfw, int bfh, int sk, float &sharpc, bool autoshar, float capradiu,  float deconvCo, float deconvLat, bool itcheck, bool showMask)
+void ImProcFunctions::doSharpening(Imagefloat *rgb, int bfw, int bfh, struct localpass &locp, int sk, float &sharpc, bool autoshar, float capradiu,  float deconvCo, float deconvLat, bool itcheck, bool showMask)
 
 {
     
@@ -815,7 +815,7 @@ void ImProcFunctions::doSharpening(Imagefloat *rgb, int bfw, int bfh, int sk, fl
         printf("Contrast threshold=%f \n", (double) sharpc);
     }
 
-    CaptureDeconvSharpening2(YNew, YOld, clipMask, bfw, bfh, capradiu, deconvCo, deconvLat, itcheck, 0.2, 0.9);
+    CaptureDeconvSharpening2(YNew, YOld, clipMask, bfw, bfh, locp, capradiu, deconvCo, deconvLat, itcheck, 0.2, 0.9);
  
 #ifdef _OPENMP
     #pragma omp parallel for schedule(dynamic, 16)

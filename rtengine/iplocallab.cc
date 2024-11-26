@@ -17854,7 +17854,10 @@ void ImProcFunctions::Lab_Local(
             }
 
             bufexpfin->CopyFrom(bufexporig.get(), multiThread);
-
+            
+            struct localpass locp;//to pass parameters Spot to Capture Sharpening if nead
+            locp.centrx = 0.9f;
+            printf("centrx=%f \n", (double) locp.centrx);
             float contra = params->locallab.spots.at(sp).sharcontrast;
             float capradiu = params->locallab.spots.at(sp).capradius;
             float deconvCo = params->locallab.spots.at(sp).deconvCoBoost;
@@ -17884,7 +17887,7 @@ void ImProcFunctions::Lab_Local(
                 }
             }
               
-            ImProcFunctions::doSharpening(tmpImagered.get(), bfw, bfh, sk, sharc, autoshar, capradiu,  deconvCo, deconvLat, itcheck, sharpshow);
+            ImProcFunctions::doSharpening(tmpImagered.get(), bfw, bfh, locp, sk, sharc, autoshar, capradiu,  deconvCo, deconvLat, itcheck, sharpshow);
             
 #ifdef _OPENMP
             #pragma omp parallel for schedule(dynamic,16) if (multiThread)

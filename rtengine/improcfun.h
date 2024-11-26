@@ -155,6 +155,13 @@ enum class BlurType {
     double lumimul[3];
     bool show_sharpening_mask;
 
+    struct localpass {
+        float centrx;
+        float centry;
+        float lx, ly;
+        float lxL, lyT;
+    };
+    
     explicit ImProcFunctions(const procparams::ProcParams* iparams, bool imultiThread = true)
         : monitorTransform(nullptr), params(iparams), scale(1), multiThread(imultiThread), lumimul{} {}
     ~ImProcFunctions();
@@ -214,7 +221,8 @@ enum class BlurType {
 //    void colorCurve       (LabImage* lold, LabImage* lnew);
     void sharpening(LabImage* lab, const procparams::SharpeningParams &sharpenParam, bool showMask = false);
 
-    void doSharpening(Imagefloat *rgb, int bfw, int bfh, int sk, float &sharpc, bool autoshar, float capradiu,  float deconvCo, float deconvLat, bool itcheck, bool showMask);
+    void doSharpening(Imagefloat *rgb, int bfw, int bfh, struct localpass &locp, int sk, float &sharpc, bool autoshar, float capradiu,  float deconvCo, float deconvLat, bool itcheck, bool showMask);
+    void CaptureDeconvSharpening2 (float** luminance, const float* const * oldLuminance, const float * const * blend, int bfw, int bfh, struct localpass &locp, float sigma, float sigmaCornerOffset, int iterations, bool checkIterStop, double startVal, double endVal);
 
 
     void sharpeningcam(CieImage* ncie, float** buffer, bool showMask = false);
