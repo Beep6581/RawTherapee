@@ -2124,7 +2124,8 @@ LocallabSharp::LocallabSharp():
     sharcontrast(Gtk::manage(new Adjuster(M("TP_SHARPENING_CONTRAST"), 3, 200, 1, 20))),
     sharshow(Gtk::manage(new Gtk::CheckButton(M("TP_PDSHARPENING_SHOWCAP")))),
     capradius(Gtk::manage (new Adjuster (M("TP_SHARPENING_EDRADIUS"), 0.4, 2.5, 0.01, 0.75))),
-    deconvCoBoost(Gtk::manage(new Adjuster(M("TP_SHARPENING_RADIUS_BOOST"), -0.5, 0.5, 0.01, 0))),
+    deconvCoBoost(Gtk::manage(new Adjuster(M("TP_SHARPENING_RADIUS_BOOST"), -0.7, 0.7, 0.01, 0))),
+    deconvCoProt(Gtk::manage(new Adjuster(M("TP_SHARPENING_RADIUS_PROT"), 20., 80., 1., 50.))),
     deconvCoLat(Gtk::manage(new Adjuster(M("TP_SHARPENING_RLD_ITERATIONS"), 0, 100, 1, 25))),
     itercheck(Gtk::manage(new Gtk::CheckButton(M("TP_SHARPENING_ITERCHECK")))),
     capFrame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_SHARCAPFRAME")))),
@@ -2150,13 +2151,14 @@ LocallabSharp::LocallabSharp():
     Evlocallabsharcontraston = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_AUTOSHAR");
     Evlocallabsharcontrastoff = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_AUTOCSHAR");
     Evlocallababdconvboost = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_CONVBOOST");
+    Evlocallababdcoprot = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_CONVPROT");
     Evlocallababdconvlat = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_CONVLAT");
     Evlocallabsharrepar = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_SHARREPAR");
     Evlocallababsharshow = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_SHARSHOW");   
     Evlocallababitercheck = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_SHARITERCHECK");   
     set_orientation(Gtk::ORIENTATION_VERTICAL);
-    capradius->addAutoButton(M("TP_SHARPENING_RLD_AUTORADIUS_TOOLTIP"));
-    sharcontrast->addAutoButton(M("TP_SHARPENING_RLD_AUTOCONTR_TOOLTIP"));
+    capradius->addAutoButton(M("TP_SHARPENING_EDRADIUS_TOOLTIP"));
+    sharcontrast->addAutoButton(M("TP_SHARPENING_CONTRASTAUTO_TOOLTIP"));
 
     methodcap->append (M("TP_SHARPENING_CAP"));
     methodcap->append (M("TP_SHARPENING_RLN"));
@@ -2171,6 +2173,8 @@ LocallabSharp::LocallabSharp():
     sharradius->setAdjusterListener(this);
 
     deconvCoBoost->setAdjusterListener(this);
+
+    deconvCoProt->setAdjusterListener(this);
 
     deconvCoLat->setAdjusterListener(this);    
     
@@ -2223,6 +2227,7 @@ LocallabSharp::LocallabSharp():
     Gtk::VBox *capb = Gtk::manage(new Gtk::VBox());
 
     capb->pack_start(*deconvCoBoost);
+    capb->pack_start(*deconvCoProt);
     capb->pack_start(*deconvCoLat);
     capb->pack_start(*itercheck);
     capFrame->add(*capb);
@@ -2404,6 +2409,7 @@ void LocallabSharp::read(const rtengine::procparams::ProcParams* pp, const Param
         capradius->setValue((double)spot.capradius);
         capradius->setAutoValue(spot.deconvAutoRadius);
         deconvCoBoost->setValue((double)spot.deconvCoBoost);
+        deconvCoProt->setValue((double)spot.deconvCoProt);
         deconvCoLat->setValue((double)spot.deconvCoLat);
     }
 
@@ -2448,6 +2454,7 @@ void LocallabSharp::write(rtengine::procparams::ProcParams* pp, ParamsEdited* pe
         spot.capradius = capradius->getValue();
         spot.deconvAutoRadius = capradius->getAutoValue();
         spot.deconvCoBoost = deconvCoBoost->getValue();
+        spot.deconvCoProt = deconvCoProt->getValue();
         spot.deconvCoLat = deconvCoLat->getValue();
     }
 
@@ -2473,6 +2480,7 @@ void LocallabSharp::setDefaults(const rtengine::procparams::ProcParams* defParam
         capradius->setDefault(defSpot.capradius);
         sensisha->setDefault((double)defSpot.sensisha);
         deconvCoBoost->setDefault(defSpot.deconvCoBoost);
+        deconvCoProt->setDefault(defSpot.deconvCoProt);
         deconvCoLat->setDefault(defSpot.deconvCoLat);
 
     }
@@ -2515,6 +2523,13 @@ void LocallabSharp::adjusterChanged(Adjuster* a, double newval)
             if (listener) {
                 listener->panelChanged(Evlocallababdconvboost,
                                        deconvCoBoost->getTextValue() + " (" + escapeHtmlChars(getSpotName()) + ")");
+            }
+        }
+
+        if (a == deconvCoProt) {
+            if (listener) {
+                listener->panelChanged(Evlocallababdcoprot,
+                                       deconvCoProt->getTextValue() + " (" + escapeHtmlChars(getSpotName()) + ")");
             }
         }
         

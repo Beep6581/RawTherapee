@@ -17855,12 +17855,12 @@ void ImProcFunctions::Lab_Local(
 
             bufexpfin->CopyFrom(bufexporig.get(), multiThread);
             
-            struct localpass locp;//to pass parameters Spot to Capture Sharpening if nead
-            locp.centrx = 0.9f;
-            printf("centrx=%f \n", (double) locp.centrx);
+            
+            //printf("centrx=%f \n", (double) locp.centrx);
             float contra = params->locallab.spots.at(sp).sharcontrast;
             float capradiu = params->locallab.spots.at(sp).capradius;
             float deconvCo = params->locallab.spots.at(sp).deconvCoBoost;
+            float deconvCopro = 0.01 * params->locallab.spots.at(sp).deconvCoProt;
             float deconvLat = params->locallab.spots.at(sp).deconvCoLat;
             bool autoshar = params->locallab.spots.at(sp).deconvAutoshar;
             bool sharpshow = params->locallab.spots.at(sp).sharshow;
@@ -17872,6 +17872,18 @@ void ImProcFunctions::Lab_Local(
             if(!autoshar){
                sharc = contra; 
             }
+            struct localpass locp;//to pass parameters Spot to Capture Sharpening if nead
+                locp.centrx = lp.xc;
+                locp.centrx = lp.yc;
+                locp.lx = lp.lx;
+                locp.ly = lp.ly;
+                locp.lxL = lp.lxL;
+                locp.lyT = lp.lyT;
+                locp.xstart = xstart;
+                locp.ystart = ystart;
+                locp.xend = xend;
+                locp.yend = yend;
+                locp.sizenocoboot = deconvCopro;
 
             lab2rgb(*original, *tmpImage, params->icm.workingProfile);//copy original  image lab to RGB
             

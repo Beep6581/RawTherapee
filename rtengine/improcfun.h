@@ -162,6 +162,7 @@ enum class BlurType {
         float lxL, lyT;
         float xstart, xend;
         float ystart, yend;
+        float sizenocoboot;
     };
     
     explicit ImProcFunctions(const procparams::ProcParams* iparams, bool imultiThread = true)

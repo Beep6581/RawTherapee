@@ -1181,6 +1181,7 @@ private:
     Adjuster* const capradius;
 
     Adjuster* const deconvCoBoost;
+    Adjuster* const deconvCoProt;
     Adjuster* const deconvCoLat;
     Gtk::CheckButton* const itercheck;
     Gtk::Frame* const capFrame;
@@ -1205,6 +1206,7 @@ private:
     rtengine::ProcEvent Evlocallabsharcontrastoff;
 
     rtengine::ProcEvent Evlocallababdconvboost;
+    rtengine::ProcEvent Evlocallababdcoprot;
     rtengine::ProcEvent Evlocallababdconvlat;
     rtengine::ProcEvent Evlocallababsharshow;
     rtengine::ProcEvent Evlocallababitercheck;

@@ -845,6 +845,7 @@ public:
         bool capradius;
         bool deconvAutoRadius;
         bool deconvCoBoost;
+        bool deconvCoProt;
         bool deconvCoLat;
         bool reparsha;
         // Local Contrast

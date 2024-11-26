@@ -491,7 +491,8 @@ bool checkForStop(float** tmpIThr, float** iterCheck, int fullTileSize, int bord
 
 void ImProcFunctions::CaptureDeconvSharpening2 (float** luminance, const float* const * oldLuminance, const float * const * blend, int bfw, int bfh, struct localpass &locp, float sigma, float sigmaCornerOffset, int iterations, bool checkIterStop, double startVal, double endVal)
 {
- // Copyright (c) 2019 Ingo Weyrich (heckflosse67@gmx.de)    
+ // Copyright (c) 2019 Ingo Weyrich (heckflosse67@gmx.de)
+ // adaptation november 2024 - Jacques Desmis  
 BENCHFUN
    
     const bool is9x9 = (sigma <= 1.5f && sigmaCornerOffset == 0.f);
@@ -514,12 +515,13 @@ BENCHFUN
     } else {
         rtengine::compute13x13kernel2(sigma, kernel13);
     }
-
+    
+    const float nocoboot = locp.sizenocoboot;
     constexpr int tileSize = 32;
     const int border = (is3x3 || is5x5 || is7x7) ? iterations <= 30 ? 5 : 7 : 8;
     const int fullTileSize = tileSize + 2 * border;
     const float cornerRadius = std::min<float>(2.f, sigma + sigmaCornerOffset);
-    const float cornerDistance = sqrt(rtengine::SQR(bfw * 0.5f) + rtengine::SQR(bfh * 0.5f));
+    const float cornerDistance = sqrt(rtengine::SQR(bfw * nocoboot) + rtengine::SQR(bfh * nocoboot));
     const float distanceFactor = (cornerRadius - sigma) / cornerDistance;
 
     if (settings->verbose) {

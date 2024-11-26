@@ -1510,6 +1510,7 @@ struct LocallabParams {
         double capradius;
         bool deconvAutoRadius;
         double deconvCoBoost;                
+        double deconvCoProt;                
         double deconvCoLat;                
         double reparsha;                
 

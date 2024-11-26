@@ -1526,6 +1526,7 @@ HISTORY_MSG_LOCAL_CAPRADIUS;Local - Sh Capture radius
 HISTORY_MSG_LOCAL_AUTOCAPRADIUS;Local - Sh Auto Capture radius
 HISTORY_MSG_LOCAL_AUTOSHAR;Local - Sh Auto Contrast
 HISTORY_MSG_LOCAL_CONVBOOST;Local - Sh Corner radius
+HISTORY_MSG_LOCAL_CONVPROT;Local - Sh Central protected area
 HISTORY_MSG_LOCAL_CONVLAT;Local - Sh Corner iterations
 HISTORY_MSG_LOCAL_SHARREPAR;Local - Sh Strength
 HISTORY_MSG_LOCAL_SHARSHOW;Local - Sh Show contrast mask
@@ -4039,7 +4040,9 @@ TP_SHARPENEDGE_THREE;Luminance only
 TP_SHARPENING_AMOUNT;Amount
 TP_SHARPENING_BLUR;Blur radius
 TP_SHARPENING_CONTRAST;Contrast threshold
+TP_SHARPENING_CONTRASTAUTO_TOOLTIP;Auto contrast level estimation.\nValue subject to variation depending on position in preview.\nBe careful, disable auto after estimation.
 TP_SHARPENING_EDRADIUS;Capture Radius
+TP_SHARPENING_EDRADIUS_TOOLTIP;Auto-calculation based on raw data
 TP_SHARPENING_EDTOLERANCE;Edge tolerance
 TP_SHARPENING_HALOCONTROL;Halo control
 TP_SHARPENING_HCAMOUNT;Amount
@@ -4049,6 +4052,7 @@ TP_SHARPENING_METHOD;Method
 TP_SHARPENING_ONLYEDGES;Sharpen only edges
 TP_SHARPENING_RADIUS;Radius
 TP_SHARPENING_RADIUS_BOOST;Corner radius boost
+TP_SHARPENING_RADIUS_PROT;Central protected area %
 TP_SHARPENING_RLD;RL Deconvolution
 TP_SHARPENING_RLD_AMOUNT;Amount
 TP_SHARPENING_RLD_DAMPING;Damping
