@@ -155,11 +155,13 @@ enum class BlurType {
     double lumimul[3];
     bool show_sharpening_mask;
 
-    struct localpass {
+    struct localpass {//pass parameters to capture sharpening SE - to improve borders
         float centrx;
         float centry;
         float lx, ly;
         float lxL, lyT;
+        float xstart, xend;
+        float ystart, yend;
     };
     
     explicit ImProcFunctions(const procparams::ProcParams* iparams, bool imultiThread = true)
