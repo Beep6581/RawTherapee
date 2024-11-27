@@ -8913,8 +8913,10 @@ void ImProcFunctions::BlurNoise_Local(LabImage *tmp1, LabImage * originalmask, c
                 const float chrodelta2 = SQR(std::sqrt(SQR(maskptr->a[y][x]) + SQR(maskptr->b[y][x])) - chromaref * 327.68f);
                 const float huedelta2 = abdelta2 - chrodelta2;
                 const float dE = std::sqrt(kab * (kch * chrodelta2 + kH * huedelta2) + kL * SQR(refL - maskptr->L[y][x]));
-                const float reducdE = calcreducdE(dE, maxdE, mindE, maxdElim, mindElim, lp.iterat, limscope, lp.sensbn);
-
+                float reducdE = calcreducdE(dE, maxdE, mindE, maxdElim, mindElim, lp.iterat, limscope, lp.sensbn);
+                if(lp.fullim == 3 ) {//disabled scope
+                    reducdE = 1.f;
+                }
                 float difL = (tmp1->L[y - ystart][x - xstart] - original->L[y][x]) * localFactor * reducdE;
                 transformed->L[y][x] = CLIP(original->L[y][x] + difL);
                 const float difa = (tmp1->a[y - ystart][x - xstart] - original->a[y][x]) * localFactor * reducdE;
@@ -11392,6 +11394,85 @@ void ImProcFunctions::fftw_denoise(int sk, int GW, int GH, int max_numblox_W, in
 
 
 }
+
+void ImProcFunctions::recovm(float highrec, float lowrec, float thrrec, bool invrec, int bfw, int bfh, int xstart, int ystart, float decay, int sk,  LabImage *bufmaskblurbl, LabImage *tmp1, LabImage *tmp3, bool multiThread)
+{
+    // differences with makrecov (tmp3,...) and ImProcFunctions to allow used elsewhere
+    // possibility (to do) to change algorithm for Blur functions : transition blow, highlow, decay,...and use of masklum...
+    array2D<float> masklum;
+    masklum(bfw, bfh);
+
+    for (int ir = 0; ir < bfh; ir++)
+        for (int jr = 0; jr < bfw; jr++) {
+            masklum[ir][jr] = 1.f;
+        }
+
+    float hig = highrec;
+    float higc;
+    calcdif(hig, higc);
+    float low = lowrec;
+    float lowc;
+    calcdif(low, lowc);
+
+    if (higc < lowc) {
+        higc = lowc + 0.01f;
+    }
+
+    float th = (thrrec - 1.f);
+    float ahigh = th / (higc - 100.f);
+    float bhigh = 1.f - higc * ahigh;
+
+    float alow = th / lowc;
+    float blow = 1.f - th;
+    //printf("alow=%f blow=%f ahigh=%f bhigh=%f \n", (double) alow, (double) blow, (double) ahigh, (double) bhigh);
+
+#ifdef _OPENMP
+        #pragma omp parallel for if (multiThread)
+#endif
+
+    for (int ir = 0; ir < bfh; ir++)
+        for (int jr = 0; jr < bfw; jr++) {
+            const float lM = bufmaskblurbl->L[ir + ystart][jr + xstart];
+            const float lmr = lM / 327.68f;
+
+            if (lM < 327.68f * lowc) {
+                masklum[ir][jr] = alow * lmr + blow;
+            } else if (lM < 327.68f * higc) {
+                //possible changes here.
+            } else {
+                masklum[ir][jr] = ahigh * lmr + bhigh;
+            }
+            
+            float k = masklum[ir][jr];
+
+            if (invrec == true) {
+                masklum[ir][jr] = 1.f - pow(k, decay);
+            } else {
+                masklum[ir][jr] = pow(k, decay);
+            }
+                
+        }
+
+        for (int i = 0; i < 3; ++i) {
+            boxblur(static_cast<float**>(masklum), static_cast<float**>(masklum), 10 / sk, bfw, bfh, false);
+        }
+
+#ifdef _OPENMP
+        #pragma omp parallel for if (multiThread)
+#endif
+
+        for (int i = 0; i < bfh; ++i) {
+            for (int j = 0; j < bfw; ++j) {
+                tmp1->L[i][j] = (tmp3->L[i][j] - tmp1->L[i][j]) *  LIM01(masklum[i][j]) + tmp1->L[i][j];
+                tmp1->a[i][j] = (tmp3->a[i][j] - tmp1->a[i][j]) *  LIM01(masklum[i][j]) + tmp1->a[i][j];
+                tmp1->b[i][j] = (tmp3->b[i][j] - tmp1->b[i][j]) *  LIM01(masklum[i][j]) + tmp1->b[i][j];
+            }
+        }
+
+        masklum.free();
+    
+}
+
 
 void ImProcFunctions::DeNoise(int call, int aut,  bool noiscfactiv, const struct local_params & lp, LabImage * originalmaskbl, LabImage *  bufmaskblurbl, int levred, float huerefblur, float lumarefblur, float chromarefblur, LabImage * original, LabImage * transformed,
     int cx, int cy, int sk, const LocwavCurve& locwavCurvehue, bool locwavhueutili, float& highresi, float& nresi, float& highresi46, float& nresi46, float& Lhighresi, float& Lnresi, float& Lhighresi46, float& Lnresi46)
@@ -14363,6 +14444,9 @@ void ImProcFunctions::Lab_Local(
                                 tmp1->L[y - ystart][x - xstart] = original->L[y][x];
                                 tmp1->a[y - ystart][x - xstart] = original->a[y][x];
                                 tmp1->b[y - ystart][x - xstart] = original->b[y][x];
+                                tmp3->L[y - ystart][x - xstart] = original->L[y][x];//tmp3 needs for recovery mask
+                                tmp3->a[y - ystart][x - xstart] = original->a[y][x];
+                                tmp3->b[y - ystart][x - xstart] = original->b[y][x]; 
                             }
                         }
                     }
@@ -14501,10 +14585,22 @@ void ImProcFunctions::Lab_Local(
                         delete tmpImage;
                     }
                 }
+                //recovery with mask luminance
+                if (lp.blurmet == 0  && lp.blmet == 0) {//for blur, grain, noise
+                    if (lp.enablMask && lp.recothr != 1.f && lp.smasktyp != 1) {                      
+                        recovm(lp.higthr, lp.lowthr, lp.recothr, lp.invmask, bfw, bfh, xstart, ystart, 2.f, sk,  bufmaskblurbl.get(), tmp1.get(), tmp3.get(), multiThread);
 
+                    }
+                }//inverse
+                if (lp.blurmet == 1 && lp.blmet == 0) {                 
+                    if (lp.enablMask && lp.recothr != 1.f && lp.smasktyp != 1) {                      
+                        recovm(lp.higthr, lp.lowthr, lp.recothr, lp.invmask, TW, TH, 0, 0, 2.f, sk,  bufmaskblurbl.get(), tmp1.get(), tmp3.get(), multiThread);
+                    }
+                }
+                
                 Median medianTypeL = Median::TYPE_3X3_STRONG;
                 Median medianTypeAB = Median::TYPE_3X3_STRONG;
-
+                //median blur
                 if (lp.medmet == 0) {
                     medianTypeL = medianTypeAB = Median::TYPE_3X3_STRONG;
                 } else if (lp.medmet == 1) {
@@ -14543,7 +14639,11 @@ void ImProcFunctions::Lab_Local(
                     }
 
                     delete[] tmL;
-
+                    //recovery with mask luminance
+                    if (lp.enablMask && lp.recothr != 1.f && lp.smasktyp != 1) {
+                        recovm(lp.higthr, lp.lowthr, lp.recothr, lp.invmask, bfw, bfh, xstart, ystart, 2.f, sk,  bufmaskblurbl.get(), tmp1.get(), tmp3.get(), multiThread);
+                    }
+                    
                 } else if (lp.blurmet == 1 && lp.blmet == 1) {
                     float** tmL;
                     int wid = TW;
@@ -14570,6 +14670,9 @@ void ImProcFunctions::Lab_Local(
                     }
 
                     delete[] tmL;
+                    if (lp.enablMask && lp.recothr != 1.f && lp.smasktyp != 1) {
+                        recovm(lp.higthr, lp.lowthr, lp.recothr, lp.invmask, TW, TH, 0, 0, 2.f, sk,  bufmaskblurbl.get(), tmp1.get(), tmp3.get(), multiThread);
+                    }                    
                 }
 
                 if (lp.blurmet == 0 && lp.blmet == 2) {
@@ -14833,70 +14936,9 @@ void ImProcFunctions::Lab_Local(
                                 }
                             }
                         }
-
+                        //recovery with mask luminance
                         if (lp.enablMask && lp.recothr != 1.f && lp.smasktyp != 1) {
-                            array2D<float> masklum;
-                            masklum(TW, TH);
-
-                            for (int ir = 0; ir < TH; ir++)
-                                for (int jr = 0; jr < TW; jr++) {
-                                    masklum[ir][jr] = 1.f;
-                                }
-
-                            float hig = lp.higthr;
-                            float higc;
-                            calcdif(hig, higc);
-                            float low = lp.lowthr;
-                            float lowc;
-                            calcdif(low, lowc);
-
-                            if (higc < lowc) {
-                                higc = lowc + 0.01f;
-                            }
-
-                            float th = (lp.recothr - 1.f);
-                            float ahigh = th / (higc - 100.f);
-                            float bhigh = 1.f - higc * ahigh;
-
-                            float alow = th / lowc;
-                            float blow = 1.f - th;
-
-#ifdef _OPENMP
-                            #pragma omp parallel for if (multiThread)
-#endif
-
-                            for (int ir = 0; ir < TH; ir++)
-                                for (int jr = 0; jr < TW; jr++) {
-                                    const float lM = bufmaskblurbl->L[ir][jr];
-                                    const float lmr = lM / 327.68f;
-
-                                    if (lM < 327.68f * lowc) {
-                                        masklum[ir][jr] = alow * lmr + blow;
-                                    } else if (lM < 327.68f * higc) {
-
-                                    } else {
-                                        masklum[ir][jr] = (ahigh * lmr + bhigh);
-                                    }
-                                }
-
-                            for (int i = 0; i < 3; ++i) {
-                                boxblur(static_cast<float**>(masklum), static_cast<float**>(masklum), 10 / sk, TW, TH, false);
-                            }
-
-#ifdef _OPENMP
-                            #pragma omp parallel for if (multiThread)
-#endif
-
-                            for (int i = 0; i < TH; ++i) {
-                                for (int j = 0; j < TW; ++j) {
-                                    tmp1->L[i][j] = (tmp3->L[i][j] - tmp1->L[i][j]) *  LIM01(masklum[i][j]) + tmp1->L[i][j];
-                                    tmp1->a[i][j] = (tmp3->a[i][j] - tmp1->a[i][j]) *  LIM01(masklum[i][j]) + tmp1->a[i][j];
-                                    tmp1->b[i][j] = (tmp3->b[i][j] - tmp1->b[i][j]) *  LIM01(masklum[i][j]) + tmp1->b[i][j];
-                                }
-                            }
-
-                            masklum.free();
-
+                            recovm(lp.higthr, lp.lowthr, lp.recothr, lp.invmask, TW, TH, 0, 0, 2.f, sk,  bufmaskblurbl.get(), tmp1.get(), tmp3.get(), multiThread);
                         }
 
                         delete tmpImage;
