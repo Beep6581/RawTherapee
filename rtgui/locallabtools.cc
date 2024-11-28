@@ -7036,6 +7036,7 @@ LocallabBlur::LocallabBlur():
     activlum(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_ACTIV")))),
     expdenoise(Gtk::manage(new MyExpander(false, M("TP_LOCALLAB_DENOI_EXP")))),
     denocontrast(Gtk::manage(new Adjuster(M("TP_SHARPENING_CONTRAST"), 3, 200, 1, 20))),
+    contrshow(Gtk::manage(new Gtk::CheckButton(M("TP_PDSHARPENING_SHOWCAP")))),
     quamethod(Gtk::manage(new MyComboBoxText())),
     expdenoisenl(Gtk::manage(new MyExpander(false, M("TP_LOCALLAB_NLFRA")))),
     expdenoiselum(Gtk::manage(new MyExpander(false, M("TP_LOCALLAB_DENOIWAVLUM")))),
@@ -7123,8 +7124,9 @@ LocallabBlur::LocallabBlur():
 {
     auto m = ProcEventMapper::getInstance();
     Evlocallabdenocontrast = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_DENOCONTRAST");
-    Evlocallabautodenoon = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_DENOAUTOON");
-    Evlocallabautodenooff = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_DENOAUTOOFF");
+    Evlocallabautodenoon = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_DENOAUTO");
+    Evlocallabautodenooff = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_DENOAUTO");
+    Evlocallabcontrshow = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_DENOCONTRSHOW");
     
    
     set_orientation(Gtk::ORIENTATION_VERTICAL);
@@ -7153,6 +7155,7 @@ LocallabBlur::LocallabBlur():
     invblConn = invbl->signal_toggled().connect(sigc::mem_fun(*this, &LocallabBlur::invblChanged));
     invmaskdConn = invmaskd->signal_toggled().connect(sigc::mem_fun(*this, &LocallabBlur::invmaskdChanged));
     invmaskConn = invmask->signal_toggled().connect(sigc::mem_fun(*this, &LocallabBlur::invmaskChanged));
+    contrshowConn = contrshow->signal_toggled().connect(sigc::mem_fun(*this, &LocallabBlur::contrshowChanged));
     
     denocontrast->setAdjusterListener(this);
     
@@ -7426,6 +7429,7 @@ LocallabBlur::LocallabBlur():
     Gtk::Frame* const wavFrame = Gtk::manage(new Gtk::Frame());
     ToolParamBlock* const wavBox = Gtk::manage(new ToolParamBlock());
     wavBox->pack_start(*denocontrast);
+    wavBox->pack_start(*contrshow);
     wavBox->pack_start(*quaHBox);
     wavBox->pack_start(*sensiden);
     wavBox->pack_start(*reparden);
@@ -7873,6 +7877,7 @@ void LocallabBlur::disableListener()
     showmaskblMethodtypConn.block(true);
     enablMaskConn.block(true);
     toolblConn.block(true);
+    contrshowConn.block(true);
 }
 
 void LocallabBlur::enableListener()
@@ -7894,6 +7899,8 @@ void LocallabBlur::enableListener()
     showmaskblMethodtypConn.block(false);
     enablMaskConn.block(false);
     toolblConn.block(false);
+    contrshowConn.block(false);
+
 }
 
 void LocallabBlur::read(const rtengine::procparams::ProcParams* pp, const ParamsEdited* pedited)
@@ -8036,6 +8043,7 @@ void LocallabBlur::read(const rtengine::procparams::ProcParams* pp, const Params
         csThresholdblur->setValue<int>(spot.csthresholdblur);
         denocontrast->setValue((double)spot.denocontrast);
         denocontrast->setAutoValue(spot.denoAutocontrast);
+        contrshow->set_active(spot.contrshow);
 
     }
 
@@ -8187,6 +8195,7 @@ void LocallabBlur::write(rtengine::procparams::ProcParams* pp, ParamsEdited* ped
         spot.csthresholdblur = csThresholdblur->getValue<int>();
         spot.denocontrast = denocontrast->getValue();
         spot.denoAutocontrast = denocontrast->getAutoValue();
+        spot.contrshow = contrshow->get_active();
 
     }
 
@@ -8259,6 +8268,22 @@ void LocallabBlur::setDefaults(const rtengine::procparams::ProcParams* defParams
 
     // Note: No need to manage pedited as batch mode is deactivated for Locallab
 }
+
+void LocallabBlur::contrshowChanged()
+{
+    if (isLocActivated && exp->getEnabled()) {
+        if (listener) {
+            if (contrshow->get_active()) {
+                listener->panelChanged(Evlocallabcontrshow,
+                                       M("GENERAL_ENABLED") + " (" + escapeHtmlChars(getSpotName()) + ")");
+            } else {
+                listener->panelChanged(Evlocallabcontrshow,
+                                       M("GENERAL_DISABLED") + " (" + escapeHtmlChars(getSpotName()) + ")");
+            }
+        }
+    }
+}
+
 
 void LocallabBlur::adjusterChanged(Adjuster* a, double newval)
 {

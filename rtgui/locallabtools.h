@@ -828,6 +828,7 @@ private:
     Gtk::CheckButton* const activlum;
     MyExpander* const expdenoise;
     Adjuster* const denocontrast;
+    Gtk::CheckButton* const contrshow;
 
     MyComboBoxText* const quamethod;
     MyExpander* const expdenoisenl;
@@ -916,11 +917,12 @@ private:
     Gtk::Box* const quaHBox;
     ThresholdAdjuster* const csThresholdblur;
 
-    sigc::connection blMethodConn, fftwblConn, invblConn, medMethodConn, blurMethodConn, chroMethodConn, activlumConn, showmaskblMethodConn, showmaskblMethodtypConn, enablMaskConn, toolblConn;
+    sigc::connection blMethodConn, fftwblConn, invblConn, contrshowConn, medMethodConn, blurMethodConn, chroMethodConn, activlumConn, showmaskblMethodConn, showmaskblMethodtypConn, enablMaskConn, toolblConn;
     sigc::connection  quamethodconn, usemaskConn, invmaskdConn, invmaskConn, neutralconn;
     rtengine::ProcEvent Evlocallabdenocontrast;
     rtengine::ProcEvent Evlocallabautodenoon;
     rtengine::ProcEvent Evlocallabautodenooff;
+    rtengine::ProcEvent Evlocallabcontrshow;
 
 
 public:
@@ -960,6 +962,7 @@ private:
     void updateGUIToMode(const modeType new_type) override;
 
     void updateMaskBackground(const double normChromar, const double normLumar, const double normHuer, const double normHuerjz) override;
+    void contrshowChanged();
 
     void blMethodChanged();
     void fftwblChanged();

@@ -753,6 +753,7 @@ public:
         bool csthresholdblur;
         bool denocontrast;
         bool denoAutocontrast;
+        bool contrshow;
         
         // Tone Mapping
         bool visitonemap;

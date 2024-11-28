@@ -1483,6 +1483,7 @@ void ParamsEdited::initFrom(const std::vector<rtengine::procparams::ProcParams>&
                 locallab.spots.at(j).csthresholdblur = locallab.spots.at(j).csthresholdblur && pSpot.csthresholdblur == otherSpot.csthresholdblur;
                 locallab.spots.at(j).denocontrast = locallab.spots.at(j).denocontrast && pSpot.denocontrast == otherSpot.denocontrast;
                 locallab.spots.at(j).denoAutocontrast = locallab.spots.at(j).denoAutocontrast && pSpot.denoAutocontrast == otherSpot.denoAutocontrast;
+                locallab.spots.at(j).contrshow = locallab.spots.at(j).contrshow && pSpot.contrshow == otherSpot.contrshow;
                 // Tone Mapping
                 locallab.spots.at(j).visitonemap = locallab.spots.at(j).visitonemap && pSpot.visitonemap == otherSpot.visitonemap;
                 locallab.spots.at(j).exptonemap = locallab.spots.at(j).exptonemap && pSpot.exptonemap == otherSpot.exptonemap;
@@ -4975,6 +4976,10 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
             toEdit.locallab.spots.at(i).denoAutocontrast = mods.locallab.spots.at(i).denoAutocontrast;
         }
 
+        if (locallab.spots.at(i).contrshow) {
+            toEdit.locallab.spots.at(i).contrshow = mods.locallab.spots.at(i).contrshow;
+        }
+
         // Tone Mapping
         if (locallab.spots.at(i).visitonemap) {
             toEdit.locallab.spots.at(i).visitonemap = mods.locallab.spots.at(i).visitonemap;
@@ -8400,6 +8405,7 @@ LocallabParamsEdited::LocallabSpotEdited::LocallabSpotEdited(bool v) :
     csthresholdblur(v),
     denocontrast(v),
     denoAutocontrast(v),
+    contrshow(v),
     // Tone Mapping
     visitonemap(v),
     exptonemap(v),
@@ -9175,6 +9181,7 @@ void LocallabParamsEdited::LocallabSpotEdited::set(bool v)
     csthresholdblur = v;
     denocontrast = v;
     denoAutocontrast = v;
+    contrshow = v;
     // Tone Mapping
     visitonemap = v;
     exptonemap = v;

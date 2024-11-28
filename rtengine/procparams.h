@@ -1418,7 +1418,7 @@ struct LocallabParams {
         Threshold<int> csthresholdblur;
         double denocontrast;
         bool denoAutocontrast;
-
+        bool contrshow;
         // Tone Mapping
         bool visitonemap;
         bool exptonemap;
