@@ -1160,6 +1160,23 @@ void Locallab::denChanged(const std::vector<locallabDenoiseLC> &denlc, int selsp
     }
     
 }
+
+void Locallab::den2Changed(const std::vector<locallabDenoiseLC2> &denlc2, int selspot)
+{
+    // Saving transmitted min/max data
+    denoiselc2 = denlc2;
+    
+    //Update Locallab Denoise tool lum chro
+    if (selspot < (int) denoiselc2.size()) {
+        const double deno = denoiselc2.at(selspot).denocontrastaft;
+        expblur.autodenoContrastChanged(deno);
+      //  expblur.updatedenlc(highres, nres, highres46, nres46, Lhighres, Lnres, Lhighres46, Lnres46);
+    }
+    
+}
+
+
+
 // New fonctions to change Scope color 
 void Locallab::scopeChangedcol(int scope, int selspot, bool enab)
 {

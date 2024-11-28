@@ -471,6 +471,10 @@ public:
         bool autocontrastaft;
     };
 
+    struct locallabDenoiseLC2  {
+        double denocontrastaft;
+    };
+
     struct locallabcieLC {
         double redxlc;
         double redylc;
@@ -515,6 +519,7 @@ public:
 //    virtual void refChanged(const std::vector<locallabRef> &ref, int selspot) = 0;
     virtual void minmaxChanged(const std::vector<locallabRetiMinMax> &minmax, int selspot) = 0;
     virtual void denChanged(const std::vector<locallabDenoiseLC> &denlc, int selspot) = 0;
+    virtual void den2Changed(const std::vector<locallabDenoiseLC2> &den2lc, int selspot) = 0;
     virtual void cieChanged(const std::vector<locallabcieLC> &cielc, int selspot) = 0;
     virtual void maiChanged(const std::vector<locallabsetLC> &csetlc, int selspot) = 0;
     virtual void sigChanged(const std::vector<locallabcieSIG> &ciesig, int selspot) = 0;
