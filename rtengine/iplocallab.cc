@@ -863,6 +863,12 @@ struct local_params {
     int moka;
     int sursouci;
     int smoothciem;
+    
+    float denocontra;
+    float denorati;
+    bool contrsho;
+    bool denoAutocontr;
+    
 
 };
 
@@ -1432,6 +1438,18 @@ static void calcLocalParams(int sp, int oW, int oH, const LocallabParams& locall
     float radius = (float) locallab.spots.at(sp).radius;
     int itera = locallab.spots.at(sp).itera;
     int guidbl = locallab.spots.at(sp).guidbl;
+
+
+    float denocontrast = (float)locallab.spots.at(sp).denocontrast;
+    float denoratio = (float)locallab.spots.at(sp).denoratio;
+    bool contrshow =  locallab.spots.at(sp).contrshow;
+    bool denoAutocontrast =  locallab.spots.at(sp).denoAutocontrast;
+    
+    lp.denocontra = denocontrast;
+    lp.denorati = denoratio;
+    lp.contrsho = contrshow; 
+    lp.denoAutocontr = denoAutocontrast;
+    
     float epsbl = (float) locallab.spots.at(sp).epsbl;
     float sharradius = LIM(locallab.spots.at(sp).sharradius, 0.42, 3.5);
     float lcamount = ((float) locallab.spots.at(sp).lcamount);
@@ -11548,13 +11566,18 @@ void ImProcFunctions::DeNoise(int call, int aut,  bool noiscfactiv, const struct
                 isnois = true;
             }
         }
+        printf("GW=%i GH=%i\n", GW, GH);
+//code contrast mask begin
 
+        
         if (call == 1 && ((GW >= mDEN && GH >= mDEN  && isnois) || lp.quamet == 2)) {
 
 
             LabImage tmp1(transformed->W, transformed->H);
             LabImage tmp2(transformed->W, transformed->H);
             tmp2.clear();
+            LabImage tmp4(transformed->W, transformed->H);
+            tmp4.clear();
 
             array2D<float> *Lin = nullptr;
             array2D<float> *Ain = nullptr;
@@ -12248,7 +12271,106 @@ void ImProcFunctions::DeNoise(int call, int aut,  bool noiscfactiv, const struct
             Lhighresi46 /= 5.f;//arbitrary coefficient
             Lnresi46 /= 5.f;
            // printf("Lresi46=%f Lhighresi=%f levwavL=%i\n", (double) Lnresi46, (double) Lhighresi46, levwavL);
+/*
+                    for (int ir = 0; ir < GH; ir++) {
+                        for (int jr = 0; jr < GW; jr++) {
+                            tmp4.L[ir][jr] = original->L[ir][jr];
+                            tmp4.a[ir][jr] = original->a[ir][jr];
+                            tmp4.b[ir][jr] = original->b[ir][jr];
+                        }
+                    }
+*/
 
+   // lp.denorati = denoratio;
+
+            bool contshow = lp.contrsho; //params->locallab.spots.at(sp).contrshow;
+            float denocont = lp.denocontra; //params->locallab.spots.at(sp).denocontrast;
+            
+            TMatrix wprof = ICCStore::getInstance()->workingSpaceMatrix(params->icm.workingProfile);
+
+                const float wip[3][3] = {
+                    {(float) wprof[0][0], (float) wprof[0][1], (float) wprof[0][2]},
+                    {(float) wprof[1][0], (float) wprof[1][1], (float) wprof[1][2]},
+                    {(float) wprof[2][0], (float) wprof[2][1], (float) wprof[2][2]}
+                };
+            
+            if(contshow) {
+                //printf("CONTSHOW \n");
+                bool autoshar = lp.denoAutocontr;
+                const std::unique_ptr<Imagefloat> tmpImagered(new Imagefloat(GW, GH));//part of image to be used with Spots
+                const std::unique_ptr<Imagefloat> tmpImage(new Imagefloat(original->W, original->H));//all image
+                lab2rgb(*original, *tmpImage, params->icm.workingProfile);//copy original  image lab to RGB
+#ifdef _OPENMP
+            #pragma omp parallel for schedule(dynamic,16) if (multiThread)
+#endif
+ 
+                for (int y = 0; y < GH; y++) {//take only part with Spot
+                    for (int x = 0; x < GW; x++) {
+                        tmpImagered->r(y, x) = tmpImage->r(y,x);
+                        tmpImagered->g(y, x) = tmpImage->g(y,x);
+                        tmpImagered->b(y, x) = tmpImage->b(y,x);
+                    }
+                }
+                array2D<float> clipMask(GW, GH);       
+                array2D<float> redVals (GW, GH);
+                array2D<float> greenVals(GW, GH);
+                array2D<float> blueVals(GW, GH);
+
+#ifdef _OPENMP
+            #pragma omp parallel for schedule(dynamic,16) if (multiThread)
+#endif
+                for (int i = 0; i < GH; ++i) {
+                    for (int j = 0; j < GW; ++j) {
+                        redVals[i][j] = tmpImagered->r(i,j);
+                        greenVals[i][j] = tmpImagered->g(i,j);
+                        blueVals[i][j] = tmpImagered->b(i,j);
+                    }
+                }
+                                
+                float s_scale = std::sqrt(sk);
+                float contrast = pow_F(denocont / 100.f, 1.2f) * s_scale;
+                  
+                array2D<float> Y (GW, GH);
+        
+                for (int i = 0; i < GH; ++i) {
+                    Color::RGB2L(redVals[i], greenVals[i], blueVals[i], Y[i], wip, GW);
+                }
+
+                buildBlendMask2(Y, clipMask, GW, GH, contrast, 1.f, autoshar, 2.f / s_scale);
+                const std::unique_ptr<LabImage> copyorig(new LabImage(original->W, original->H));//copy original image to keep initial datas
+
+                denocont = 100.f * pow_F(contrast, 0.84f)/ s_scale;
+                for (int i = 0; i < GH; ++i) {
+                    for (int j = 0; j < GW; ++j) {
+                        tmpImagered ->r(i, j)= tmpImagered->g(i, j)= tmpImagered->b(i, j) =  clipMask[i][j] * 65536.f;              
+                    }
+                }
+
+#ifdef _OPENMP
+            #pragma omp parallel for schedule(dynamic,16) if (multiThread)
+#endif
+
+                for (int y = 0; y < GH; y++) {//take only part with Spot
+                    for (int x = 0; x < GW; x++) {
+                        tmpImage->r(y, x) = tmpImagered->r(y,x);
+                        tmpImage->g(y, x) = tmpImagered->g(y,x);
+                        tmpImage->b(y, x) = tmpImagered->b(y,x);
+                    }
+                }
+                rgb2lab(*tmpImage, *copyorig, params->icm.workingProfile);//conver all image lo Lab
+#ifdef _OPENMP
+            #pragma omp parallel for schedule(dynamic,16) if (multiThread)
+#endif
+
+                for (int ir = 0; ir < GH; ir++) {
+                    for (int jr = 0; jr < GW; jr++) {
+                        tmp1.L[ir][jr] = copyorig->L[ir][jr];
+                        tmp1.a[ir][jr] = copyorig->a[ir][jr];
+                        tmp1.b[ir][jr] = copyorig->b[ir][jr];
+                    }
+                }
+                    
+       }
 // end calculate
                 
             DeNoise_Local(call, lp,  originalmaskbl, levred, huerefblur, lumarefblur, chromarefblur, original, transformed, tmp1, cx, cy, sk);
@@ -13972,7 +14094,7 @@ void ImProcFunctions::Lab_Local(
     bool prevDeltaE, int llColorMask, int llColorMaskinv, int llExpMask, int llExpMaskinv, int llSHMask, int llSHMaskinv, int llvibMask, int lllcMask, int llsharMask, int llcbMask, int llretiMask, int llsoftMask, int lltmMask, int llblMask, int lllogMask, int ll_Mask, int llcieMask,
     float& minCD, float& maxCD, float& mini, float& maxi, float& Tmean, float& Tsigma, float& Tmin, float& Tmax,
     float& meantm, float& stdtm, float& meanreti, float& stdreti, float &fab,float &maxicam, float &rdx, float &rdy, float &grx, float &gry, float &blx, float &bly, float &meanx, float &meany, float &meanxe, float &meanye, int &prim, int &ill, float &contsig, float &lightsig,
-    float& highresi, float& nresi, float& highresi46, float& nresi46, float& Lhighresi, float& Lnresi, float& Lhighresi46, float& Lnresi46, float &sharc
+    float& highresi, float& nresi, float& highresi46, float& nresi46, float& Lhighresi, float& Lnresi, float& Lhighresi46, float& Lnresi46, float &sharc 
 
     )
 {
