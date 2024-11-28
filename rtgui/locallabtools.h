@@ -827,6 +827,8 @@ private:
     MyComboBoxText* const chroMethod;
     Gtk::CheckButton* const activlum;
     MyExpander* const expdenoise;
+    Gtk::Frame* const denoFrame;
+
     Adjuster* const denocontrast;
     Adjuster* const denoratio;
     Gtk::CheckButton* const contrshow;

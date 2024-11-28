@@ -7035,6 +7035,7 @@ LocallabBlur::LocallabBlur():
     chroMethod(Gtk::manage(new MyComboBoxText())),
     activlum(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_ACTIV")))),
     expdenoise(Gtk::manage(new MyExpander(false, M("TP_LOCALLAB_DENOI_EXP")))),
+    denoFrame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_DENOIFRA")))),
     denocontrast(Gtk::manage(new Adjuster(M("TP_SHARPENING_CONTRAST"), 3, 100, 1, 20))),
     denoratio(Gtk::manage(new Adjuster(M("TP_LOCALLAB_DENOIRATIO"), 0, 100, 1, 50))),
     contrshow(Gtk::manage(new Gtk::CheckButton(M("TP_PDSHARPENING_SHOWCAP")))),
@@ -7432,10 +7433,16 @@ LocallabBlur::LocallabBlur():
     ToolParamBlock* const denoisebox = Gtk::manage(new ToolParamBlock());
     Gtk::Frame* const wavFrame = Gtk::manage(new Gtk::Frame());
     ToolParamBlock* const wavBox = Gtk::manage(new ToolParamBlock());
-    wavBox->pack_start(*denocontrast);
-    wavBox->pack_start(*denoratio);
-    wavBox->pack_start(*contrshow);
-    wavBox->pack_start(*quaHBox);
+    denoFrame->set_label_align(0.025, 0.5);
+    ToolParamBlock* const denoBox = Gtk::manage(new ToolParamBlock());
+    
+    denoBox->pack_start(*denocontrast);
+    denoBox->pack_start(*denoratio);
+    denoBox->pack_start(*contrshow);
+    denoBox->pack_start(*quaHBox);
+    denoFrame->add(*denoBox);
+    wavBox->pack_start(*denoFrame);
+    
     wavBox->pack_start(*sensiden);
     wavBox->pack_start(*reparden);
     ToolParamBlock* const prevBox = Gtk::manage(new ToolParamBlock());

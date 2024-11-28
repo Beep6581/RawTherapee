@@ -3082,6 +3082,7 @@ TP_LOCALLAB_DENOICHRODET_TOOLTIP;Allows you to recover chrominance detail by pro
 TP_LOCALLAB_DENOICHROF_TOOLTIP;Allows you to adjust fine-detail chrominance noise.
 TP_LOCALLAB_DENOIEQUALCHRO_TOOLTIP;Allows you to direct the chroma noise reduction towards either the blue-yellow or red-green colors.
 TP_LOCALLAB_DENOIEQUAL_TOOLTIP;Allows you to carry out more or less noise reduction in either the shadows or the highlights.
+TP_LOCALLAB_DENOIFRA;Denoise settings
 TP_LOCALLAB_DENOILUMDETAIL_TOOLTIP;Allows you to recover luminance detail by progressively applying a Fourier transform (DCT).
 TP_LOCALLAB_DENOIRATIO;Ratio flat-structure areas
 TP_LOCALLAB_DENOIMASK;Denoise chroma mask
