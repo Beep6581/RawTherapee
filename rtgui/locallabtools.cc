@@ -7037,7 +7037,7 @@ LocallabBlur::LocallabBlur():
     expdenoise(Gtk::manage(new MyExpander(false, M("TP_LOCALLAB_DENOI_EXP")))),
     denoFrame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_DENOIFRA")))),
     denocontrast(Gtk::manage(new Adjuster(M("TP_SHARPENING_CONTRAST"), 3, 100, 1, 20))),
-    denoratio(Gtk::manage(new Adjuster(M("TP_LOCALLAB_DENOIRATIO"), 0, 100, 1, 50))),
+    denoratio(Gtk::manage(new Adjuster(M("TP_LOCALLAB_DENOIRATIO"), 0, 100, 1, 80))),
     contrshow(Gtk::manage(new Gtk::CheckButton(M("TP_PDSHARPENING_SHOWCAP")))),
     quamethod(Gtk::manage(new MyComboBoxText())),
     expdenoisenl(Gtk::manage(new MyExpander(false, M("TP_LOCALLAB_NLFRA")))),

@@ -3786,7 +3786,7 @@ LocallabParams::LocallabSpot::LocallabSpot() :
     denocontrast(20.),
     denoAutocontrast(true),
     contrshow(false),
-    denoratio(50.),
+    denoratio(80),
     // Tone Mapping
     visitonemap(false),
     exptonemap(false),

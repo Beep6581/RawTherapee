@@ -12271,21 +12271,12 @@ void ImProcFunctions::DeNoise(int call, int aut,  bool noiscfactiv, const struct
             Lhighresi46 /= 5.f;//arbitrary coefficient
             Lnresi46 /= 5.f;
            // printf("Lresi46=%f Lhighresi=%f levwavL=%i\n", (double) Lnresi46, (double) Lhighresi46, levwavL);
-/*
-                    for (int ir = 0; ir < GH; ir++) {
-                        for (int jr = 0; jr < GW; jr++) {
-                            tmp4.L[ir][jr] = original->L[ir][jr];
-                            tmp4.a[ir][jr] = original->a[ir][jr];
-                            tmp4.b[ir][jr] = original->b[ir][jr];
-                        }
-                    }
-*/
 
             // lp.denorati = denoratio;
 
             bool contshow = lp.contrsho; //params->locallab.spots.at(sp).contrshow;
             //denocont = lp.denocontra; //params->locallab.spots.at(sp).denocontrast;
-            
+            float denoco = denocont;
             TMatrix wprof = ICCStore::getInstance()->workingSpaceMatrix(params->icm.workingProfile);
 
                 const float wip[3][3] = {
@@ -12296,6 +12287,9 @@ void ImProcFunctions::DeNoise(int call, int aut,  bool noiscfactiv, const struct
             
             if(contshow) {
                 bool autode = lp.denoAutocontr;
+                if(!autode) {
+                    denoco = lp.denocontra;
+                }
                 const std::unique_ptr<Imagefloat> tmpImage(new Imagefloat(original->W, original->H));//all image
                 lab2rgb(*original, *tmpImage, params->icm.workingProfile);//copy original  image lab to RGB
 
@@ -12316,7 +12310,7 @@ void ImProcFunctions::DeNoise(int call, int aut,  bool noiscfactiv, const struct
                 }
                                 
                 float s_scale = std::sqrt(sk);
-                float contrast = pow_F(denocont / 100.f, 1.2f) * s_scale;
+                float contrast = pow_F(denoco / 100.f, 1.2f) * s_scale;
                   
                 array2D<float> Y (GW, GH);
         
