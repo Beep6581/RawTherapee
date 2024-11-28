@@ -7035,6 +7035,7 @@ LocallabBlur::LocallabBlur():
     chroMethod(Gtk::manage(new MyComboBoxText())),
     activlum(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_ACTIV")))),
     expdenoise(Gtk::manage(new MyExpander(false, M("TP_LOCALLAB_DENOI_EXP")))),
+    denocontrast(Gtk::manage(new Adjuster(M("TP_SHARPENING_CONTRAST"), 3, 200, 1, 20))),
     quamethod(Gtk::manage(new MyComboBoxText())),
     expdenoisenl(Gtk::manage(new MyExpander(false, M("TP_LOCALLAB_NLFRA")))),
     expdenoiselum(Gtk::manage(new MyExpander(false, M("TP_LOCALLAB_DENOIWAVLUM")))),
@@ -7120,8 +7121,14 @@ LocallabBlur::LocallabBlur():
     quaHBox(Gtk::manage(new Gtk::Box())),
     csThresholdblur(Gtk::manage(new ThresholdAdjuster(M("TP_LOCALLAB_CSTHRESHOLDBLUR"), 0, 9, 0, 0, 6, 5, 0, false)))
 {
+    auto m = ProcEventMapper::getInstance();
+    Evlocallabdenocontrast = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_DENOCONTRAST");
+    Evlocallabautodenoon = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_DENOAUTOON");
+    Evlocallabautodenooff = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_DENOAUTOOFF");
+    
+   
     set_orientation(Gtk::ORIENTATION_VERTICAL);
-
+    denocontrast->addAutoButton(M("TP_LOCALLAB_DENORADIUS_TOOLTIP"));
     const LocallabParams::LocallabSpot defSpot;
 
     // Parameter Blur, Noise & Denoise specific widgets
@@ -7146,7 +7153,9 @@ LocallabBlur::LocallabBlur():
     invblConn = invbl->signal_toggled().connect(sigc::mem_fun(*this, &LocallabBlur::invblChanged));
     invmaskdConn = invmaskd->signal_toggled().connect(sigc::mem_fun(*this, &LocallabBlur::invmaskdChanged));
     invmaskConn = invmask->signal_toggled().connect(sigc::mem_fun(*this, &LocallabBlur::invmaskChanged));
-
+    
+    denocontrast->setAdjusterListener(this);
+    
     radius->setAdjusterListener(this);
 
     strength->setAdjusterListener(this);
@@ -7416,6 +7425,7 @@ LocallabBlur::LocallabBlur():
     ToolParamBlock* const denoisebox = Gtk::manage(new ToolParamBlock());
     Gtk::Frame* const wavFrame = Gtk::manage(new Gtk::Frame());
     ToolParamBlock* const wavBox = Gtk::manage(new ToolParamBlock());
+    wavBox->pack_start(*denocontrast);
     wavBox->pack_start(*quaHBox);
     wavBox->pack_start(*sensiden);
     wavBox->pack_start(*reparden);
@@ -7534,6 +7544,29 @@ LocallabBlur::~LocallabBlur()
     delete mask2blCurveEditorG;
     delete mask2blCurveEditorGwav;
 }
+
+void LocallabBlur::adjusterAutoToggled(Adjuster* a, bool newval)
+{
+    if (listener && a == denocontrast) {
+        auto e = (!newval) ? Evlocallabautodenooff : Evlocallabautodenoon ;
+        listener->panelChanged(e, newval ? M("GENERAL_ENABLED") : M("GENERAL_DISABLED"));
+    }
+
+}
+
+void LocallabBlur::autodenoContrastChanged(float autodenoContrast)
+{
+    idle_register.add(
+        [this, autodenoContrast]() -> bool
+        {
+            disableListener();
+            denocontrast->setValue(autodenoContrast);
+            enableListener();
+            return false;
+        }
+    );
+}
+
 
 bool LocallabBlur::isMaskViewActive()
 {
@@ -8001,6 +8034,9 @@ void LocallabBlur::read(const rtengine::procparams::ProcParams* pp, const Params
         Lmaskblshape->setCurve(spot.Lmaskblcurve);
         LLmaskblshapewav->setCurve(spot.LLmaskblcurvewav);
         csThresholdblur->setValue<int>(spot.csthresholdblur);
+        denocontrast->setValue((double)spot.denocontrast);
+        denocontrast->setAutoValue(spot.denoAutocontrast);
+
     }
 
     // Enable all listeners
@@ -8149,6 +8185,8 @@ void LocallabBlur::write(rtengine::procparams::ProcParams* pp, ParamsEdited* ped
         spot.Lmaskblcurve = Lmaskblshape->getCurve();
         spot.LLmaskblcurvewav = LLmaskblshapewav->getCurve();
         spot.csthresholdblur = csThresholdblur->getValue<int>();
+        spot.denocontrast = denocontrast->getValue();
+        spot.denoAutocontrast = denocontrast->getAutoValue();
 
     }
 
@@ -8216,6 +8254,7 @@ void LocallabBlur::setDefaults(const rtengine::procparams::ProcParams* defParams
         shadmaskbl->setDefault(defSpot.shadmaskbl);
         shadmaskblsha->setDefault(defSpot.shadmaskblsha);
         csThresholdblur->setDefault<int>(defSpot.csthresholdblur);
+        denocontrast->setDefault(defSpot.denocontrast);
     }
 
     // Note: No need to manage pedited as batch mode is deactivated for Locallab
@@ -8228,6 +8267,13 @@ void LocallabBlur::adjusterChanged(Adjuster* a, double newval)
             if (listener) {
                 listener->panelChanged(Evlocallabradius,
                                        radius->getTextValue() + " (" + escapeHtmlChars(getSpotName()) + ")");
+            }
+        }
+
+        if (a == denocontrast) {
+            if (listener) {
+                listener->panelChanged(Evlocallabdenocontrast,
+                                       denocontrast->getTextValue() + " (" + escapeHtmlChars(getSpotName()) + ")");
             }
         }
 

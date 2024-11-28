@@ -827,6 +827,8 @@ private:
     MyComboBoxText* const chroMethod;
     Gtk::CheckButton* const activlum;
     MyExpander* const expdenoise;
+    Adjuster* const denocontrast;
+
     MyComboBoxText* const quamethod;
     MyExpander* const expdenoisenl;
     MyExpander* const expdenoiselum;
@@ -916,6 +918,11 @@ private:
 
     sigc::connection blMethodConn, fftwblConn, invblConn, medMethodConn, blurMethodConn, chroMethodConn, activlumConn, showmaskblMethodConn, showmaskblMethodtypConn, enablMaskConn, toolblConn;
     sigc::connection  quamethodconn, usemaskConn, invmaskdConn, invmaskConn, neutralconn;
+    rtengine::ProcEvent Evlocallabdenocontrast;
+    rtengine::ProcEvent Evlocallabautodenoon;
+    rtengine::ProcEvent Evlocallabautodenooff;
+
+
 public:
     LocallabBlur();
     ~LocallabBlur();
@@ -943,6 +950,8 @@ public:
     void adjusterChanged(ThresholdAdjuster* a, int newBottomLeft, int newTopLeft, int newBottomRight, int newTopRight) override {}; // Not used
     void adjusterChanged2(ThresholdAdjuster* a, int newBottomL, int newTopL, int newBottomR, int newTopR) override;
     void curveChanged(CurveEditor* ce) override;
+    void adjusterAutoToggled(Adjuster* a, bool newval);
+    void autodenoContrastChanged(float autodenoContrast);
 
 private:
     void enabledChanged() override;

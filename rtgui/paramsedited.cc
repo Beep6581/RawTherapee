@@ -1481,6 +1481,8 @@ void ParamsEdited::initFrom(const std::vector<rtengine::procparams::ProcParams>&
                 locallab.spots.at(j).Lmaskblcurve = locallab.spots.at(j).Lmaskblcurve && pSpot.Lmaskblcurve == otherSpot.Lmaskblcurve;
                 locallab.spots.at(j).LLmaskblcurvewav = locallab.spots.at(j).LLmaskblcurvewav && pSpot.LLmaskblcurvewav == otherSpot.LLmaskblcurvewav;
                 locallab.spots.at(j).csthresholdblur = locallab.spots.at(j).csthresholdblur && pSpot.csthresholdblur == otherSpot.csthresholdblur;
+                locallab.spots.at(j).denocontrast = locallab.spots.at(j).denocontrast && pSpot.denocontrast == otherSpot.denocontrast;
+                locallab.spots.at(j).denoAutocontrast = locallab.spots.at(j).denoAutocontrast && pSpot.denoAutocontrast == otherSpot.denoAutocontrast;
                 // Tone Mapping
                 locallab.spots.at(j).visitonemap = locallab.spots.at(j).visitonemap && pSpot.visitonemap == otherSpot.visitonemap;
                 locallab.spots.at(j).exptonemap = locallab.spots.at(j).exptonemap && pSpot.exptonemap == otherSpot.exptonemap;
@@ -4964,8 +4966,13 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
             toEdit.locallab.spots.at(i).LLmaskblcurvewav = mods.locallab.spots.at(i).LLmaskblcurvewav;
         }
 
-        if (locallab.spots.at(i).csthresholdblur) {
-            toEdit.locallab.spots.at(i).csthresholdblur = mods.locallab.spots.at(i).csthresholdblur;
+
+        if (locallab.spots.at(i).denocontrast) {
+            toEdit.locallab.spots.at(i).denocontrast = mods.locallab.spots.at(i).denocontrast;
+        }
+
+        if (locallab.spots.at(i).denoAutocontrast) {
+            toEdit.locallab.spots.at(i).denoAutocontrast = mods.locallab.spots.at(i).denoAutocontrast;
         }
 
         // Tone Mapping
@@ -8391,6 +8398,8 @@ LocallabParamsEdited::LocallabSpotEdited::LocallabSpotEdited(bool v) :
     Lmaskblcurve(v),
     LLmaskblcurvewav(v),
     csthresholdblur(v),
+    denocontrast(v),
+    denoAutocontrast(v),
     // Tone Mapping
     visitonemap(v),
     exptonemap(v),
@@ -9164,6 +9173,8 @@ void LocallabParamsEdited::LocallabSpotEdited::set(bool v)
     Lmaskblcurve = v;
     LLmaskblcurvewav = v;
     csthresholdblur = v;
+    denocontrast = v;
+    denoAutocontrast = v;
     // Tone Mapping
     visitonemap = v;
     exptonemap = v;

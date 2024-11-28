@@ -3783,6 +3783,8 @@ LocallabParams::LocallabSpot::LocallabSpot() :
         0.35
     },
     csthresholdblur(0, 0, 6, 5, false),
+    denocontrast(20.),
+    denoAutocontrast(true),
     // Tone Mapping
     visitonemap(false),
     exptonemap(false),
@@ -5249,6 +5251,8 @@ bool LocallabParams::LocallabSpot::operator ==(const LocallabSpot& other) const
         && Lmaskblcurve == other.Lmaskblcurve
         && LLmaskblcurvewav == other.LLmaskblcurvewav
         && csthresholdblur == other.csthresholdblur
+        && denocontrast == other.denocontrast
+        && denoAutocontrast == other.denoAutocontrast
         // Tone Mapping
         && visitonemap == other.visitonemap
         && exptonemap == other.exptonemap
@@ -7239,6 +7243,8 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
                     saveToKeyfile(!pedited || spot_edited->Lmaskblcurve, "Locallab", "LmaskblCurve_" + index_str, spot.Lmaskblcurve, keyFile);
                     saveToKeyfile(!pedited || spot_edited->LLmaskblcurvewav, "Locallab", "LLmaskblCurvewav_" + index_str, spot.LLmaskblcurvewav, keyFile);
                     saveToKeyfile(!pedited || spot_edited->csthresholdblur, "Locallab", "CSThresholdblur_" + index_str, spot.csthresholdblur.toVector(), keyFile);
+                    saveToKeyfile(!pedited || spot_edited->denocontrast, "Locallab", "denocontrast_" + index_str, spot.denocontrast, keyFile);
+                    saveToKeyfile(!pedited || spot_edited->denoAutocontrast, "Locallab", "denoAutocontrast_" + index_str, spot.denoAutocontrast, keyFile);
                 }
                 // Tone Mapping
                 if ((!pedited || spot_edited->visitonemap) && spot.visitonemap) {
@@ -9648,6 +9654,8 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
                 assignFromKeyfile(keyFile, "Locallab", "strumaskbl_" + index_str, spot.strumaskbl, spotEdited.strumaskbl);
                 assignFromKeyfile(keyFile, "Locallab", "LmaskblCurve_" + index_str, spot.Lmaskblcurve, spotEdited.Lmaskblcurve);
                 assignFromKeyfile(keyFile, "Locallab", "LLmaskblCurvewav_" + index_str, spot.LLmaskblcurvewav, spotEdited.LLmaskblcurvewav);
+                assignFromKeyfile(keyFile, "Locallab", "denocontrast_" + index_str, spot.denocontrast, spotEdited.denocontrast);
+                assignFromKeyfile(keyFile, "Locallab", "denoAutocontrast_" + index_str, spot.denoAutocontrast, spotEdited.denoAutocontrast);
 
                 if (keyFile.has_key("Locallab", "CSThresholdblur_" + index_str)) {
                     const std::vector<int> thresh = keyFile.get_integer_list("Locallab", "CSThresholdblur_" + index_str);
