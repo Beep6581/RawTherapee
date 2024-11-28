@@ -12281,7 +12281,7 @@ void ImProcFunctions::DeNoise(int call, int aut,  bool noiscfactiv, const struct
                     }
 */
 
-   // lp.denorati = denoratio;
+            // lp.denorati = denoratio;
 
             bool contshow = lp.contrsho; //params->locallab.spots.at(sp).contrshow;
             //denocont = lp.denocontra; //params->locallab.spots.at(sp).denocontrast;
@@ -12295,22 +12295,10 @@ void ImProcFunctions::DeNoise(int call, int aut,  bool noiscfactiv, const struct
                 };
             
             if(contshow) {
-                //printf("CONTSHOW \n");
-                bool autoshar = lp.denoAutocontr;
-                const std::unique_ptr<Imagefloat> tmpImagered(new Imagefloat(GW, GH));//part of image to be used with Spots
+                bool autode = lp.denoAutocontr;
                 const std::unique_ptr<Imagefloat> tmpImage(new Imagefloat(original->W, original->H));//all image
                 lab2rgb(*original, *tmpImage, params->icm.workingProfile);//copy original  image lab to RGB
-#ifdef _OPENMP
-            #pragma omp parallel for schedule(dynamic,16) if (multiThread)
-#endif
- 
-                for (int y = 0; y < GH; y++) {//take only part with Spot
-                    for (int x = 0; x < GW; x++) {
-                        tmpImagered->r(y, x) = tmpImage->r(y,x);
-                        tmpImagered->g(y, x) = tmpImage->g(y,x);
-                        tmpImagered->b(y, x) = tmpImage->b(y,x);
-                    }
-                }
+
                 array2D<float> clipMask(GW, GH);       
                 array2D<float> redVals (GW, GH);
                 array2D<float> greenVals(GW, GH);
@@ -12321,9 +12309,9 @@ void ImProcFunctions::DeNoise(int call, int aut,  bool noiscfactiv, const struct
 #endif
                 for (int i = 0; i < GH; ++i) {
                     for (int j = 0; j < GW; ++j) {
-                        redVals[i][j] = tmpImagered->r(i,j);
-                        greenVals[i][j] = tmpImagered->g(i,j);
-                        blueVals[i][j] = tmpImagered->b(i,j);
+                        redVals[i][j] = tmpImage->r(i,j);
+                        greenVals[i][j] = tmpImage->g(i,j);
+                        blueVals[i][j] = tmpImage->b(i,j);
                     }
                 }
                                 
@@ -12336,28 +12324,23 @@ void ImProcFunctions::DeNoise(int call, int aut,  bool noiscfactiv, const struct
                     Color::RGB2L(redVals[i], greenVals[i], blueVals[i], Y[i], wip, GW);
                 }
 
-                buildBlendMask2(Y, clipMask, GW, GH, contrast, 1.f, autoshar, 2.f / s_scale);
+                buildBlendMask2(Y, clipMask, GW, GH, contrast, 1.f, autode, 2.f / s_scale);
+                
                 const std::unique_ptr<LabImage> copyorig(new LabImage(original->W, original->H));//copy original image to keep initial datas
 
                 denocont = 100.f * pow_F(contrast, 0.84f)/ s_scale;
-                for (int i = 0; i < GH; ++i) {
-                    for (int j = 0; j < GW; ++j) {
-                        tmpImagered ->r(i, j)= tmpImagered->g(i, j)= tmpImagered->b(i, j) =  clipMask[i][j] * 65536.f;              
-                    }
-                }
-
+                
 #ifdef _OPENMP
             #pragma omp parallel for schedule(dynamic,16) if (multiThread)
 #endif
-
-                for (int y = 0; y < GH; y++) {//take only part with Spot
-                    for (int x = 0; x < GW; x++) {
-                        tmpImage->r(y, x) = tmpImagered->r(y,x);
-                        tmpImage->g(y, x) = tmpImagered->g(y,x);
-                        tmpImage->b(y, x) = tmpImagered->b(y,x);
+                for (int i = 0; i < GH; ++i) {
+                    for (int j = 0; j < GW; ++j) {
+                        tmpImage ->r(i, j)= tmpImage->g(i, j)= tmpImage->b(i, j) =  clipMask[i][j] * 65536.f;              
                     }
                 }
+                
                 rgb2lab(*tmpImage, *copyorig, params->icm.workingProfile);//conver all image lo Lab
+
 #ifdef _OPENMP
             #pragma omp parallel for schedule(dynamic,16) if (multiThread)
 #endif
@@ -12369,7 +12352,7 @@ void ImProcFunctions::DeNoise(int call, int aut,  bool noiscfactiv, const struct
                         tmp1.b[ir][jr] = copyorig->b[ir][jr];
                     }
                 }
-                printf("denocont=%f \n", (double) denocont);    
+                //printf("denocont=%f \n", (double) denocont);    
        }
 // end calculate
                 
