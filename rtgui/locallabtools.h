@@ -828,6 +828,7 @@ private:
     Gtk::CheckButton* const activlum;
     MyExpander* const expdenoise;
     Adjuster* const denocontrast;
+    Adjuster* const denoratio;
     Gtk::CheckButton* const contrshow;
 
     MyComboBoxText* const quamethod;
@@ -923,6 +924,7 @@ private:
     rtengine::ProcEvent Evlocallabautodenoon;
     rtengine::ProcEvent Evlocallabautodenooff;
     rtengine::ProcEvent Evlocallabcontrshow;
+    rtengine::ProcEvent Evlocallabdenoratio;
 
 
 public:

@@ -754,7 +754,8 @@ public:
         bool denocontrast;
         bool denoAutocontrast;
         bool contrshow;
-        
+        bool denoratio;
+       
         // Tone Mapping
         bool visitonemap;
         bool exptonemap;
