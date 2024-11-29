@@ -609,15 +609,15 @@ BENCHFUN
         } else if (denstr < 0.6f) {
             medianTypeL = Median::TYPE_3X3_STRONG;
             itera = 3;
-        } else if (denstr < 0.7f) {
-            medianTypeL = Median::TYPE_5X5_STRONG;
-            itera = 3;
+        } else if (denstr < 0.8f) {
+            medianTypeL = Median::TYPE_3X3_STRONG;
+            itera = 4;
         } else if (denstr < 0.9f) {
             medianTypeL = Median::TYPE_5X5_STRONG;
-            itera = 4;
+            itera = 2;
         } else {
-            medianTypeL = Median::TYPE_7X7;
-            itera = 4;            
+            medianTypeL = Median::TYPE_5X5_STRONG;//?? 7x7
+            itera = 3;            
         }
         ImProcFunctions::Median_Denoise(mR, mR, W, H, medianTypeL , itera, false, tmL);
         ImProcFunctions::Median_Denoise(mG, mG, W, H, medianTypeL , itera, false, tmL);
