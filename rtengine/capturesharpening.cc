@@ -32,8 +32,10 @@
 #include "../rtgui/multilangmgr.h"
 #include "improcfun.h"
 #include "boxblur.h"
+#include "median.h"
 
 namespace {
+
 
 void buildClipMaskBayer(const float * const *rawData, int W, int H, float** clipMask, const float whites[2][2])
 {
@@ -558,6 +560,8 @@ BENCHFUN
     greenVals = greenCache ? *greenCache : green;
     blueVals = blueCache ? *blueCache : blue;
 
+    typedef ImProcFunctions::Median Median;
+
     //predoise : small median to denoise before capture sharpening : allow CS to work correctly and reduce a little the noise
     if(sharpeningParams.noisecap > 0.f) {
         //I have choose median due to its low aggressiveness and for a 3x3 its speed
@@ -590,20 +594,34 @@ BENCHFUN
                 mB[i][j] = blueVals[i][j];
             }
         }
+        ImProcFunctions::Median medianTypeL = Median::TYPE_3X3_SOFT;
 
         int itera = 1;
-        if(denstr < 0.4f) {
+        if(denstr < 0.2f) {
+            medianTypeL = Median::TYPE_3X3_SOFT;
             itera = 1;
-        } else if (denstr < 0.6f) {
+        } else if (denstr < 0.3f) {
+            medianTypeL = Median::TYPE_3X3_SOFT;
             itera = 2;
-        } else if (denstr < 0.8f) {
+        } else if (denstr < 0.45f) {
+            medianTypeL = Median::TYPE_3X3_STRONG;
+            itera = 2;
+        } else if (denstr < 0.6f) {
+            medianTypeL = Median::TYPE_3X3_STRONG;
             itera = 3;
+        } else if (denstr < 0.7f) {
+            medianTypeL = Median::TYPE_5X5_STRONG;
+            itera = 3;
+        } else if (denstr < 0.9f) {
+            medianTypeL = Median::TYPE_5X5_STRONG;
+            itera = 4;
         } else {
+            medianTypeL = Median::TYPE_7X7;
             itera = 4;            
         }
-        ImProcFunctions::Median_Denoise(mR, mR, W, H, ImProcFunctions::Median::TYPE_3X3_STRONG , itera, false, tmL);
-        ImProcFunctions::Median_Denoise(mG, mG, W, H, ImProcFunctions::Median::TYPE_3X3_STRONG , itera, false, tmL);
-        ImProcFunctions::Median_Denoise(mB, mB, W, H, ImProcFunctions::Median::TYPE_3X3_STRONG , itera, false, tmL);
+        ImProcFunctions::Median_Denoise(mR, mR, W, H, medianTypeL , itera, false, tmL);
+        ImProcFunctions::Median_Denoise(mG, mG, W, H, medianTypeL , itera, false, tmL);
+        ImProcFunctions::Median_Denoise(mB, mB, W, H, medianTypeL , itera, false, tmL);
 #ifdef _OPENMP
     #pragma omp parallel for schedule(dynamic, 16)
 #endif
