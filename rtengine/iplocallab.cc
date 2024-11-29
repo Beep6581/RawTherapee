@@ -12278,7 +12278,8 @@ void ImProcFunctions::DeNoise(int call, int aut,  bool noiscfactiv, const struct
             Lnresi46 /= 5.f;
            // printf("Lresi46=%f Lhighresi=%f levwavL=%i\n", (double) Lnresi46, (double) Lhighresi46, levwavL);
 
-            if(lp.enacontr){
+           if(lp.enacontr){
+         
                 bool contshow = lp.contrsho;
                 float denoco = denocont;
                 TMatrix wprof = ICCStore::getInstance()->workingSpaceMatrix(params->icm.workingProfile);
@@ -12301,6 +12302,90 @@ void ImProcFunctions::DeNoise(int call, int aut,  bool noiscfactiv, const struct
                 array2D<float> redVals (GW, GH);
                 array2D<float> greenVals(GW, GH);
                 array2D<float> blueVals(GW, GH);
+                bool preden = true;
+                if(preden) {
+                    float denstr = 0.95f;
+
+                    float** tmL;
+                    float** mR;
+                    float** mG;
+                    float** mB;
+                    int wid = GW;
+                    int hei = GH;
+                    tmL = new float*[hei];
+                    mR = new float*[hei];
+                    mG = new float*[hei];
+                    mB = new float*[hei];
+
+                    for (int i = 0; i < hei; ++i) {
+                        tmL[i] = new float[wid];
+                        mR[i] = new float[wid];
+                        mG[i] = new float[wid];
+                        mB[i] = new float[wid];
+                    }
+#ifdef _OPENMP
+    #pragma omp parallel for schedule(dynamic, 16)
+#endif                  
+                    for (int i = 0; i < GH; ++i) {
+                        for (int j = 0; j < GW; ++j) {
+                            mR[i][j] = redVals[i][j];
+                            mG[i][j] = greenVals[i][j];
+                            mB[i][j] = blueVals[i][j];
+                        }
+                    }
+                    ImProcFunctions::Median medianTypeL = Median::TYPE_3X3_SOFT;
+
+                    int itera = 1;
+                    if(denstr < 0.2f) {
+                        medianTypeL = Median::TYPE_3X3_SOFT;
+                        itera = 1;
+                    } else if (denstr < 0.3f) {
+                        medianTypeL = Median::TYPE_3X3_SOFT;
+                        itera = 2;
+                    } else if (denstr < 0.45f) {
+                        medianTypeL = Median::TYPE_3X3_STRONG;
+                        itera = 2;
+                    } else if (denstr < 0.6f) {
+                        medianTypeL = Median::TYPE_3X3_STRONG;
+                        itera = 3;
+                    } else if (denstr < 0.8f) {
+                        medianTypeL = Median::TYPE_3X3_STRONG;
+                        itera = 4;
+                    } else if (denstr < 0.9f) {
+                        medianTypeL = Median::TYPE_5X5_STRONG;
+                        itera = 2;
+                    } else {
+                        medianTypeL = Median::TYPE_5X5_STRONG;//?? 7x7
+                        itera = 4;            
+                    }
+                    ImProcFunctions::Median_Denoise(mR, mR, GW, GH, medianTypeL , itera, false, tmL);
+                    ImProcFunctions::Median_Denoise(mG, mG, GW, GH, medianTypeL , itera, false, tmL);
+                    ImProcFunctions::Median_Denoise(mB, mB, GW, GH, medianTypeL , itera, false, tmL);
+#ifdef _OPENMP
+    #pragma omp parallel for schedule(dynamic, 16)
+#endif
+                    for (int i = 0; i < GH; ++i) {
+                        for (int j = 0; j < GW; ++j) {
+                            redVals[i][j] = intp(denstr, mR[i][j], redVals[i][j]); 
+                            greenVals[i][j] = intp(denstr, mG[i][j], greenVals[i][j]); 
+                            blueVals[i][j] = intp(denstr, mB[i][j], blueVals[i][j]); 
+                        }
+                    }
+
+
+                    for (int i = 0; i < hei; ++i) {
+                        delete[] tmL[i];
+                        delete[] mR[i];
+                        delete[] mG[i];
+                        delete[] mB[i];
+                    }
+
+                    delete[] tmL;
+                    delete[] mR;
+                    delete[] mG;
+                    delete[] mB;
+                }
+         
 
 #ifdef _OPENMP
             #pragma omp parallel for schedule(dynamic,16) if (multiThread)
@@ -12321,12 +12406,14 @@ void ImProcFunctions::DeNoise(int call, int aut,  bool noiscfactiv, const struct
                 for (int i = 0; i < GH; ++i) {
                     Color::RGB2L(redVals[i], greenVals[i], blueVals[i], Y[i], wip, GW);
                 }
-
-                buildBlendMask2(Y, clipMask, GW, GH, contrast, 1.f, autode, 2.f / s_scale);
+                float reducautocontrast = 1.f;//to take noise into account
+                buildBlendMask2(Y, clipMask, GW, GH, contrast, 1.f, autode, 2.f / s_scale, 1.f, reducautocontrast);
                 
                 const std::unique_ptr<LabImage> copyorig(new LabImage(original->W, original->H));//copy original image to keep initial datas
+                
 
                 denocont = 100.f * pow_F(contrast, 0.84f)/ s_scale;
+
                 if(contshow) {              
 #ifdef _OPENMP
             #pragma omp parallel for schedule(dynamic,16) if (multiThread)
@@ -12361,7 +12448,7 @@ void ImProcFunctions::DeNoise(int call, int aut,  bool noiscfactiv, const struct
                             tmp1.a[ir][jr] = intp(lp.denorati * clipMask[ir][jr], tmp1.a[ir][jr], tmp4.a[ir][jr]);
                             tmp1.b[ir][jr] = intp(lp.denorati * clipMask[ir][jr], tmp1.b[ir][jr], tmp4.b[ir][jr]);
                         }
-                    }                                      
+                    } 
                 }          
             }
 // end calculate

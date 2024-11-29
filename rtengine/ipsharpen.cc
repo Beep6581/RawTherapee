@@ -750,7 +750,8 @@ void ImProcFunctions::doSharpening(Imagefloat *rgb, int bfw, int bfh, struct loc
     }
 
     float s_scale = std::sqrt(sk);
-    float contrast = pow_F(sharpc / 100.f, 1.2f) * s_scale;
+    //float contrast = pow_F(sharpc / 100.f, 1.2f) * s_scale;
+    float contrast = pow_F(sharpc / 100.f, 1.f) * s_scale;
    
     if (showMask) {
         array2D<float> Y (bfw, bfh);
@@ -758,10 +759,12 @@ void ImProcFunctions::doSharpening(Imagefloat *rgb, int bfw, int bfh, struct loc
          for (int i = 0; i < bfh; ++i) {
             Color::RGB2L(redVals[i], greenVals[i], blueVals[i], Y[i], wip, bfw);
         }
+        float reducautocontrast = 1.f;//to take noise into account
 
-        buildBlendMask2(Y, clipMask, bfw, bfh, contrast, 1.f, autoshar, 2.f / s_scale);
+        buildBlendMask2(Y, clipMask, bfw, bfh, contrast, 1.f, autoshar, 2.f / s_scale, 1.f, reducautocontrast);
 
-        sharpc = 100.f * pow_F(contrast, 0.84f)/ s_scale;
+       // sharpc = 100.f * pow_F(contrast, 0.84f)/ s_scale;
+        sharpc = 100.f * pow_F(contrast, 1.f)/ s_scale;
        
         
 #ifdef _OPENMP
@@ -772,9 +775,14 @@ void ImProcFunctions::doSharpening(Imagefloat *rgb, int bfw, int bfh, struct loc
                 rgb->r(i, j)= rgb->g(i, j)= rgb->b(i, j) =  clipMask[i][j] * 65536.f;              
             }
         }
+        if (settings->verbose) {
+            int autos = 0;
+            if(autoshar) {autos = 1;}
+            printf("Contrast threshold SE Capture Show mask=%f auto=%i\n", (double) sharpc, autos);
+        }
 
-        return;
-    }
+     //   return;
+    } else {
 
 #ifdef _OPENMP
             #pragma omp parallel for schedule(dynamic,16) if (multiThread)
@@ -809,12 +817,15 @@ void ImProcFunctions::doSharpening(Imagefloat *rgb, int bfw, int bfh, struct loc
         Color::RGB2L(redVals[i], greenVals[i], blueVals[i], L[i], wip, bfw);
         Color::RGB2Y(redVals[i], greenVals[i], blueVals[i], YOld[i], YNew[i], bfw);
     }
+    float contrast = pow_F(sharpc / 100.f, 1.f) * s_scale;
+    float reducautocontrast = 1.f;//to take noise into account
 
-    buildBlendMask2(L, clipMask, bfw, bfh, contrast, 1.f, autoshar, 2.f / s_scale);
-    sharpc = 100.f * pow_F(contrast, 0.84f) / s_scale;
+    buildBlendMask2(L, clipMask, bfw, bfh, contrast, 1.f, autoshar, 2.f / s_scale, 1.f, reducautocontrast);
+    //sharpc = 100.f * pow_F(contrast, 0.84f) / s_scale;
+    sharpc = 100.f * pow_F(contrast, 1.f) / s_scale;
 
     if (settings->verbose) {
-        printf("Contrast threshold=%f \n", (double) sharpc);
+        printf("Contrast threshold SE Captur=%f \n", (double) sharpc);
     }
 
     CaptureDeconvSharpening2(YNew, YOld, clipMask, bfw, bfh, locp, capradiu, deconvCo, deconvLat, itcheck, 0.2, 0.9);
@@ -830,6 +841,7 @@ void ImProcFunctions::doSharpening(Imagefloat *rgb, int bfw, int bfh, struct loc
             rgb->b(i,j)=  blueVals[i][j] * factor;
         }
     }
+}
 }
 
 void ImProcFunctions::sharpening (LabImage* lab, const procparams::SharpeningParams &sharpenParam, bool showMask)

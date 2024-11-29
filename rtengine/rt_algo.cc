@@ -569,7 +569,7 @@ void buildBlendMask(const float* const * luminance, float **blend, int W, int H,
     }
 }
 
-void buildBlendMask2(float** luminance, float **blend, int W, int H, float &contrastThreshold, float amount, bool autoContrast, float blur_radius, float luminance_factor)
+void buildBlendMask2(float** luminance, float **blend, int W, int H, float &contrastThreshold, float amount, bool autoContrast, float blur_radius, float luminance_factor, float noise)
 {
     if (autoContrast) {
         const float minLuminance = 2000.f / luminance_factor;
@@ -665,6 +665,7 @@ void buildBlendMask2(float** luminance, float **blend, int W, int H, float &cont
                     }
 
                     contrastThreshold = minvar <= 8.f ? calcContrastThreshold2(luminance, topLeftYStart + minI, topLeftXStart + minJ, tilesize, luminance_factor) : 0.f;
+                    contrastThreshold *= noise;
                 }
             }
         }
