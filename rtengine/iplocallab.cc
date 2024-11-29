@@ -868,6 +868,7 @@ struct local_params {
     float denorati;
     bool contrsho;
     bool denoAutocontr;
+    bool enacontr;
     
 
 };
@@ -1444,11 +1445,13 @@ static void calcLocalParams(int sp, int oW, int oH, const LocallabParams& locall
     float denoratio = (float)locallab.spots.at(sp).denoratio;
     bool contrshow =  locallab.spots.at(sp).contrshow;
     bool denoAutocontrast =  locallab.spots.at(sp).denoAutocontrast;
+    bool enacontra =  locallab.spots.at(sp).enacontrast;
     
     lp.denocontra = denocontrast;
-    lp.denorati = denoratio;
+    lp.denorati = 0.01f * denoratio;
     lp.contrsho = contrshow; 
     lp.denoAutocontr = denoAutocontrast;
+    lp.enacontr = enacontra; 
     
     float epsbl = (float) locallab.spots.at(sp).epsbl;
     float sharradius = LIM(locallab.spots.at(sp).sharradius, 0.42, 3.5);
@@ -11576,7 +11579,7 @@ void ImProcFunctions::DeNoise(int call, int aut,  bool noiscfactiv, const struct
             LabImage tmp1(transformed->W, transformed->H);
             LabImage tmp2(transformed->W, transformed->H);
             tmp2.clear();
-            LabImage tmp4(transformed->W, transformed->H);
+            LabImage tmp4(transformed->W, transformed->H);//for contrast threshold keep old values
             tmp4.clear();
 
             array2D<float> *Lin = nullptr;
@@ -11592,6 +11595,9 @@ void ImProcFunctions::DeNoise(int call, int aut,  bool noiscfactiv, const struct
                     tmp1.L[ir][jr] = original->L[ir][jr];
                     tmp1.a[ir][jr] = original->a[ir][jr];
                     tmp1.b[ir][jr] = original->b[ir][jr];
+                    tmp4.L[ir][jr] = original->L[ir][jr];
+                    tmp4.a[ir][jr] = original->a[ir][jr];
+                    tmp4.b[ir][jr] = original->b[ir][jr];
                 }
             if(lp.nlstr > 0) {
                 NLMeans(tmp1.L, lp.nlstr, lp.nldet, lp.nlpat, lp.nlrad, lp.nlgam, GW, GH, float (sk), multiThread);
@@ -12272,12 +12278,10 @@ void ImProcFunctions::DeNoise(int call, int aut,  bool noiscfactiv, const struct
             Lnresi46 /= 5.f;
            // printf("Lresi46=%f Lhighresi=%f levwavL=%i\n", (double) Lnresi46, (double) Lhighresi46, levwavL);
 
-            // lp.denorati = denoratio;
-
-            bool contshow = lp.contrsho; //params->locallab.spots.at(sp).contrshow;
-            //denocont = lp.denocontra; //params->locallab.spots.at(sp).denocontrast;
-            float denoco = denocont;
-            TMatrix wprof = ICCStore::getInstance()->workingSpaceMatrix(params->icm.workingProfile);
+            if(lp.enacontr){
+                bool contshow = lp.contrsho;
+                float denoco = denocont;
+                TMatrix wprof = ICCStore::getInstance()->workingSpaceMatrix(params->icm.workingProfile);
 
                 const float wip[3][3] = {
                     {(float) wprof[0][0], (float) wprof[0][1], (float) wprof[0][2]},
@@ -12285,7 +12289,6 @@ void ImProcFunctions::DeNoise(int call, int aut,  bool noiscfactiv, const struct
                     {(float) wprof[2][0], (float) wprof[2][1], (float) wprof[2][2]}
                 };
             
-            if(contshow) {
                 bool autode = lp.denoAutocontr;
                 if(!autode) {
                     denoco = lp.denocontra;
@@ -12294,6 +12297,7 @@ void ImProcFunctions::DeNoise(int call, int aut,  bool noiscfactiv, const struct
                 lab2rgb(*original, *tmpImage, params->icm.workingProfile);//copy original  image lab to RGB
 
                 array2D<float> clipMask(GW, GH);       
+                array2D<float> clipMaskchro(GW, GH);       
                 array2D<float> redVals (GW, GH);
                 array2D<float> greenVals(GW, GH);
                 array2D<float> blueVals(GW, GH);
@@ -12323,31 +12327,43 @@ void ImProcFunctions::DeNoise(int call, int aut,  bool noiscfactiv, const struct
                 const std::unique_ptr<LabImage> copyorig(new LabImage(original->W, original->H));//copy original image to keep initial datas
 
                 denocont = 100.f * pow_F(contrast, 0.84f)/ s_scale;
-                
+                if(contshow) {              
 #ifdef _OPENMP
             #pragma omp parallel for schedule(dynamic,16) if (multiThread)
 #endif
-                for (int i = 0; i < GH; ++i) {
-                    for (int j = 0; j < GW; ++j) {
-                        tmpImage ->r(i, j)= tmpImage->g(i, j)= tmpImage->b(i, j) =  clipMask[i][j] * 65536.f;              
+                    for (int i = 0; i < GH; ++i) {
+                        for (int j = 0; j < GW; ++j) {
+                            tmpImage ->r(i, j)= tmpImage->g(i, j)= tmpImage->b(i, j) =  clipMask[i][j] * 65536.f;              
+                        }
                     }
-                }
                 
-                rgb2lab(*tmpImage, *copyorig, params->icm.workingProfile);//conver all image lo Lab
+                    rgb2lab(*tmpImage, *copyorig, params->icm.workingProfile);//conver all image lo Lab
 
 #ifdef _OPENMP
             #pragma omp parallel for schedule(dynamic,16) if (multiThread)
 #endif
 
-                for (int ir = 0; ir < GH; ir++) {
-                    for (int jr = 0; jr < GW; jr++) {
-                        tmp1.L[ir][jr] = copyorig->L[ir][jr];
-                        tmp1.a[ir][jr] = copyorig->a[ir][jr];
-                        tmp1.b[ir][jr] = copyorig->b[ir][jr];
+                    for (int ir = 0; ir < GH; ir++) {
+                        for (int jr = 0; jr < GW; jr++) {
+                            tmp1.L[ir][jr] = copyorig->L[ir][jr];
+                            tmp1.a[ir][jr] = copyorig->a[ir][jr];
+                            tmp1.b[ir][jr] = copyorig->b[ir][jr];
+                        }
                     }
-                }
-                //printf("denocont=%f \n", (double) denocont);    
-       }
+                //printf("denocont=%f \n", (double) denocont);
+                } else {
+#ifdef _OPENMP
+            #pragma omp parallel for schedule(dynamic,16) if (multiThread)
+#endif
+                    for (int ir = 0; ir < GH; ir++) {
+                        for (int jr = 0; jr < GW; jr++) {
+                            tmp1.L[ir][jr] = intp(clipMask[ir][jr], tmp1.L[ir][jr], tmp4.L[ir][jr]);
+                            tmp1.a[ir][jr] = intp(lp.denorati * clipMask[ir][jr], tmp1.a[ir][jr], tmp4.a[ir][jr]);
+                            tmp1.b[ir][jr] = intp(lp.denorati * clipMask[ir][jr], tmp1.b[ir][jr], tmp4.b[ir][jr]);
+                        }
+                    }                                      
+                }          
+            }
 // end calculate
                 
             DeNoise_Local(call, lp,  originalmaskbl, levred, huerefblur, lumarefblur, chromarefblur, original, transformed, tmp1, cx, cy, sk);

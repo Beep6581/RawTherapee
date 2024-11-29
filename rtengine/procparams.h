@@ -1419,6 +1419,7 @@ struct LocallabParams {
         double denocontrast;
         bool denoAutocontrast;
         bool contrshow;
+        bool enacontrast;
         double denoratio;
         // Tone Mapping
         bool visitonemap;

@@ -7036,8 +7036,9 @@ LocallabBlur::LocallabBlur():
     activlum(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_ACTIV")))),
     expdenoise(Gtk::manage(new MyExpander(false, M("TP_LOCALLAB_DENOI_EXP")))),
     denoFrame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_DENOIFRA")))),
+    enacontrast(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_DENOIENA")))),
     denocontrast(Gtk::manage(new Adjuster(M("TP_SHARPENING_CONTRAST"), 3, 100, 1, 20))),
-    denoratio(Gtk::manage(new Adjuster(M("TP_LOCALLAB_DENOIRATIO"), 0, 100, 1, 80))),
+    denoratio(Gtk::manage(new Adjuster(M("TP_LOCALLAB_DENOIRATIO"), 0, 100, 1, 95))),
     contrshow(Gtk::manage(new Gtk::CheckButton(M("TP_PDSHARPENING_SHOWCAP")))),
     quamethod(Gtk::manage(new MyComboBoxText())),
     expdenoisenl(Gtk::manage(new MyExpander(false, M("TP_LOCALLAB_NLFRA")))),
@@ -7130,6 +7131,7 @@ LocallabBlur::LocallabBlur():
     Evlocallabautodenooff = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_DENOAUTO");
     Evlocallabcontrshow = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_DENOCONTRSHOW");
     Evlocallabdenoratio = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_DENORATIO");
+    Evlocallabenacontrast = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_DENOENA");
     
    
     set_orientation(Gtk::ORIENTATION_VERTICAL);
@@ -7159,6 +7161,7 @@ LocallabBlur::LocallabBlur():
     invmaskdConn = invmaskd->signal_toggled().connect(sigc::mem_fun(*this, &LocallabBlur::invmaskdChanged));
     invmaskConn = invmask->signal_toggled().connect(sigc::mem_fun(*this, &LocallabBlur::invmaskChanged));
     contrshowConn = contrshow->signal_toggled().connect(sigc::mem_fun(*this, &LocallabBlur::contrshowChanged));
+    enacontrastConn = enacontrast->signal_toggled().connect(sigc::mem_fun(*this, &LocallabBlur::enacontrastChanged));
     
     denocontrast->setAdjusterListener(this);
     
@@ -7436,6 +7439,7 @@ LocallabBlur::LocallabBlur():
     denoFrame->set_label_align(0.025, 0.5);
     ToolParamBlock* const denoBox = Gtk::manage(new ToolParamBlock());
     
+    denoBox->pack_start(*enacontrast);
     denoBox->pack_start(*denocontrast);
     denoBox->pack_start(*denoratio);
     denoBox->pack_start(*contrshow);
@@ -7889,6 +7893,7 @@ void LocallabBlur::disableListener()
     showmaskblMethodtypConn.block(true);
     enablMaskConn.block(true);
     toolblConn.block(true);
+    enacontrastConn.block(true);
     contrshowConn.block(true);
 }
 
@@ -7911,6 +7916,7 @@ void LocallabBlur::enableListener()
     showmaskblMethodtypConn.block(false);
     enablMaskConn.block(false);
     toolblConn.block(false);
+    enacontrastConn.block(false);
     contrshowConn.block(false);
 
 }
@@ -8056,6 +8062,7 @@ void LocallabBlur::read(const rtengine::procparams::ProcParams* pp, const Params
         denocontrast->setValue((double)spot.denocontrast);
         denocontrast->setAutoValue(spot.denoAutocontrast);
         contrshow->set_active(spot.contrshow);
+        enacontrast->set_active(spot.enacontrast);
         denoratio->setValue((double)spot.denoratio);
 
     }
@@ -8209,6 +8216,7 @@ void LocallabBlur::write(rtengine::procparams::ProcParams* pp, ParamsEdited* ped
         spot.denocontrast = denocontrast->getValue();
         spot.denoAutocontrast = denocontrast->getAutoValue();
         spot.contrshow = contrshow->get_active();
+        spot.enacontrast = enacontrast->get_active();
         spot.denoratio = denoratio->getValue();
 
     }
@@ -8283,6 +8291,23 @@ void LocallabBlur::setDefaults(const rtengine::procparams::ProcParams* defParams
 
     // Note: No need to manage pedited as batch mode is deactivated for Locallab
 }
+
+void LocallabBlur::enacontrastChanged()
+{
+    if (isLocActivated && exp->getEnabled()) {
+        if (listener) {
+            if (enacontrast->get_active()) {
+                listener->panelChanged(Evlocallabenacontrast,
+                                       M("GENERAL_ENABLED") + " (" + escapeHtmlChars(getSpotName()) + ")");
+            } else {
+                listener->panelChanged(Evlocallabenacontrast,
+                                       M("GENERAL_DISABLED") + " (" + escapeHtmlChars(getSpotName()) + ")");
+            }
+        }
+    }
+}
+
+
 
 void LocallabBlur::contrshowChanged()
 {

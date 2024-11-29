@@ -829,6 +829,7 @@ private:
     MyExpander* const expdenoise;
     Gtk::Frame* const denoFrame;
 
+    Gtk::CheckButton* const enacontrast;
     Adjuster* const denocontrast;
     Adjuster* const denoratio;
     Gtk::CheckButton* const contrshow;
@@ -920,12 +921,13 @@ private:
     Gtk::Box* const quaHBox;
     ThresholdAdjuster* const csThresholdblur;
 
-    sigc::connection blMethodConn, fftwblConn, invblConn, contrshowConn, medMethodConn, blurMethodConn, chroMethodConn, activlumConn, showmaskblMethodConn, showmaskblMethodtypConn, enablMaskConn, toolblConn;
+    sigc::connection blMethodConn, fftwblConn, invblConn, contrshowConn, enacontrastConn, medMethodConn, blurMethodConn, chroMethodConn, activlumConn, showmaskblMethodConn, showmaskblMethodtypConn, enablMaskConn, toolblConn;
     sigc::connection  quamethodconn, usemaskConn, invmaskdConn, invmaskConn, neutralconn;
     rtengine::ProcEvent Evlocallabdenocontrast;
     rtengine::ProcEvent Evlocallabautodenoon;
     rtengine::ProcEvent Evlocallabautodenooff;
     rtengine::ProcEvent Evlocallabcontrshow;
+    rtengine::ProcEvent Evlocallabenacontrast;
     rtengine::ProcEvent Evlocallabdenoratio;
 
 
@@ -967,6 +969,7 @@ private:
 
     void updateMaskBackground(const double normChromar, const double normLumar, const double normHuer, const double normHuerjz) override;
     void contrshowChanged();
+    void enacontrastChanged();
 
     void blMethodChanged();
     void fftwblChanged();

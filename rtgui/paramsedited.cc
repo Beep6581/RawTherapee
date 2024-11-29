@@ -1484,6 +1484,7 @@ void ParamsEdited::initFrom(const std::vector<rtengine::procparams::ProcParams>&
                 locallab.spots.at(j).denocontrast = locallab.spots.at(j).denocontrast && pSpot.denocontrast == otherSpot.denocontrast;
                 locallab.spots.at(j).denoAutocontrast = locallab.spots.at(j).denoAutocontrast && pSpot.denoAutocontrast == otherSpot.denoAutocontrast;
                 locallab.spots.at(j).contrshow = locallab.spots.at(j).contrshow && pSpot.contrshow == otherSpot.contrshow;
+                locallab.spots.at(j).enacontrast = locallab.spots.at(j).enacontrast && pSpot.enacontrast == otherSpot.enacontrast;
                 locallab.spots.at(j).denoratio = locallab.spots.at(j).denoratio && pSpot.denoratio == otherSpot.denoratio;
                 // Tone Mapping
                 locallab.spots.at(j).visitonemap = locallab.spots.at(j).visitonemap && pSpot.visitonemap == otherSpot.visitonemap;
@@ -4981,6 +4982,10 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
             toEdit.locallab.spots.at(i).contrshow = mods.locallab.spots.at(i).contrshow;
         }
 
+        if (locallab.spots.at(i).enacontrast) {
+            toEdit.locallab.spots.at(i).enacontrast = mods.locallab.spots.at(i).enacontrast;
+        }
+
         if (locallab.spots.at(i).denoratio) {
             toEdit.locallab.spots.at(i).denoratio = mods.locallab.spots.at(i).denoratio;
         }
@@ -8411,6 +8416,7 @@ LocallabParamsEdited::LocallabSpotEdited::LocallabSpotEdited(bool v) :
     denocontrast(v),
     denoAutocontrast(v),
     contrshow(v),
+    enacontrast(v),
     denoratio(v),
     // Tone Mapping
     visitonemap(v),
@@ -9188,6 +9194,7 @@ void LocallabParamsEdited::LocallabSpotEdited::set(bool v)
     denocontrast = v;
     denoAutocontrast = v;
     contrshow = v;
+    enacontrast = v;
     denoratio = v;
     // Tone Mapping
     visitonemap = v;
