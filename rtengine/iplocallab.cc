@@ -5467,6 +5467,183 @@ void ImProcFunctions::addGaNoise(LabImage *lab, LabImage *dst, const float mean,
     }
 }
 
+void ImProcFunctions::Grad_Local(int call, const struct local_params& lp, LabImage* originalmask, int levred, float hueref, float lumaref, float chromaref, LabImage* original, LabImage* transformed, const LabImage *tmp1, int cx, int cy, int sk)
+{
+    lumaref *= 327.68f;
+    float ach = lp.trans / 100.f;
+    if(lp.fullim == 3 ) {//disabled transit
+        ach = 1.f;
+    }
+    
+    float varsens = lp.sensex;//exposure
+    int senstype = 9;
+    if (senstype == 0) { //Color and light
+        varsens =  lp.sens;
+    } else if (senstype == 2) { //vibrance
+        varsens =  lp.sensv;
+    } else if (senstype == 9) { //shadowshighlight
+        varsens =  lp.senshs;
+    } else if (senstype == 3) { //softlight
+        varsens =  lp.senssf;
+    } else if (senstype == 30) { //dehaze
+        varsens =  lp.sensh;
+    } else if (senstype == 8) { //TM
+        varsens =  lp.senstm;
+    } else if (senstype == 10) { //local contrast
+        varsens =  lp.senslc;
+    } else if (senstype == 11) { //encoding log
+        varsens = lp.sensilog;
+    } else if (senstype == 20) { //common mask
+        varsens = lp.sensimas;
+    } else if (senstype == 31) { //ciecam
+        varsens = lp.sensicie;
+    } else if (senstype == 99) { //Capture sharpening
+        varsens = lp.senssha;
+    }
+    const float factnoise = 1.f; 
+    const int GW = transformed->W;
+    const int GH = transformed->H;
+    const float colorde = lp.colorde == 0 ? -1.f : lp.colorde; // -1.f to avoid black
+    const float amplabL = 2.f * colorde;
+    constexpr float darklim = 5000.f;
+    const float refa = chromaref * std::cos(hueref) * 327.68f;
+    const float refb = chromaref * std::sin(hueref) * 327.68f;
+
+
+    const bool SHshow = ((lp.showmaskSHmet == 1 || lp.showmaskSHmet == 2) &&  senstype == 9);
+    const bool previewSH = ((lp.showmaskSHmet == 4) &&  senstype == 9 && lp.fullim != 3);   
+    const bool usemaskSH = (lp.showmaskSHmet == 2 || lp.enaSHMask || lp.showmaskSHmet == 4) && senstype == 9;
+
+    const std::unique_ptr<LabImage> origblur(new LabImage(GW, GH));
+    const float radius = 3.f / sk;
+
+    if (usemaskSH) {
+#ifdef _OPENMP
+        #pragma omp parallel if (multiThread)
+#endif
+        {
+            gaussianBlur(originalmask->L, origblur->L, GW, GH, radius);
+            gaussianBlur(originalmask->a, origblur->a, GW, GH, radius);
+            gaussianBlur(originalmask->b, origblur->b, GW, GH, radius);
+        }
+    } else {
+#ifdef _OPENMP
+        #pragma omp parallel if (multiThread)
+#endif
+        {
+            gaussianBlur(original->L, origblur->L, GW, GH, radius);
+            gaussianBlur(original->a, origblur->a, GW, GH, radius);
+            gaussianBlur(original->b, origblur->b, GW, GH, radius);
+        }
+    }
+    const int begx = lp.xc - lp.lxL;
+    const int begy = lp.yc - lp.lyT;
+    constexpr float r327d68 = 1.f / 327.68f;
+
+#ifdef _OPENMP
+    #pragma omp parallel if (multiThread)
+#endif
+    {
+        const LabImage* maskptr = origblur.get();
+        const float mindE = 2.f + MINSCOPE * varsens * lp.thr;
+        const float maxdE = 5.f + MAXSCOPE * varsens * (1 + 0.1f * lp.thr);
+        const float mindElim = 2.f + MINSCOPE * limscope * lp.thr;
+        const float maxdElim = 5.f + MAXSCOPE * limscope * (1 + 0.1f * lp.thr);
+
+#ifdef _OPENMP
+        #pragma omp for schedule(dynamic,16)
+#endif
+
+        for (int y = 0; y < transformed->H; y++) {
+            const int loy = cy + y;
+            const bool isZone0 = loy > lp.yc + lp.ly || loy < lp.yc - lp.lyT; // whole line is zone 0 => we can skip a lot of processing
+
+            if (isZone0) { // outside selection and outside transition zone => no effect, keep original values
+                continue;
+            }
+
+            for (int x = 0, lox = cx + x; x < transformed->W; x++, lox++) {
+                int zone;
+                float localFactor = 1.f;
+
+                if (lp.shapmet == 0) {
+                    calcTransition(lox, loy, ach, lp, zone, localFactor);
+                } else { /*if (lp.shapmet == 1)*/
+                    calcTransitionrect(lox, loy, ach, lp, zone, localFactor);
+                }
+                if(lp.fullim == 3 ) {//disabled scope
+                    localFactor = 1.f;
+                }
+
+                if (zone == 0) { // outside selection and outside transition zone => no effect, keep original values
+                    continue;
+                }
+
+                float reducdEL = 1.f;
+                float reducdEa = 1.f;
+                float reducdEb = 1.f;
+
+                if (levred == 7) {
+                    const float dEL = std::sqrt(0.9f * SQR(refa - maskptr->a[y][x]) + 0.9f * SQR(refb - maskptr->b[y][x]) + 1.2f * SQR(lumaref - maskptr->L[y][x])) * r327d68;
+                    const float dEa = std::sqrt(1.2f * SQR(refa - maskptr->a[y][x]) + 1.f * SQR(refb - maskptr->b[y][x]) + 0.8f * SQR(lumaref - maskptr->L[y][x])) * r327d68;
+                    const float dEb = std::sqrt(1.f * SQR(refa - maskptr->a[y][x]) + 1.2f * SQR(refb - maskptr->b[y][x]) + 0.8f * SQR(lumaref - maskptr->L[y][x])) * r327d68;
+                    reducdEL = SQR(calcreducdE(dEL, maxdE, mindE, maxdElim, mindElim, lp.iterat, limscope, varsens));
+                    reducdEa = SQR(calcreducdE(dEa, maxdE, mindE, maxdElim, mindElim, lp.iterat, limscope, varsens));
+                    reducdEb = SQR(calcreducdE(dEb, maxdE, mindE, maxdElim, mindElim, lp.iterat, limscope, varsens));
+                }
+
+                float difL, difa, difb;
+
+                if (call == 2  /*|| call == 1  || call == 3 */) { //simpleprocess
+                    difL = tmp1->L[loy - begy][lox - begx] - original->L[y][x];
+                    difa = tmp1->a[loy - begy][lox - begx] - original->a[y][x];
+                    difb = tmp1->b[loy - begy][lox - begx] - original->b[y][x];
+                } else  { //dcrop
+                    const float repart = 0.0f;//- 0.01f * lp.reparden;
+                    tmp1->L[y][x] = intp(repart, original->L[y][x], tmp1->L[y][x]);
+                    tmp1->a[y][x] = intp(repart, original->a[y][x], tmp1->a[y][x]);
+                    tmp1->b[y][x] = intp(repart, original->b[y][x], tmp1->b[y][x]);
+
+                    difL = tmp1->L[y][x] - original->L[y][x];
+                    difa = tmp1->a[y][x] - original->a[y][x];
+                    difb = tmp1->b[y][x] - original->b[y][x];
+                }
+                if(lp.fullim == 3 ) {//disable scope
+                    reducdEL = reducdEa = reducdEb = 1.f;
+                }
+
+                difL *= localFactor * reducdEL;
+                difa *= localFactor * reducdEa;
+                difb *= localFactor * reducdEb;
+                transformed->L[y][x] = CLIP(original->L[y][x] + difL);
+                transformed->a[y][x] = clipC((original->a[y][x] + difa) * factnoise);
+                transformed->b[y][x] = clipC((original->b[y][x] + difb) * factnoise) ;
+
+                if (SHshow) {
+                    transformed->L[y][x] = CLIP(12000.f + amplabL * difL);// * 10.f empirical to can visualize modifications
+                    transformed->a[y][x] = clipC(amplabL * difa);// * 10.f empirical to can visualize modifications
+                    transformed->b[y][x] = clipC(amplabL * difb);// * 10.f empirical to can visualize modifications
+                } else if (previewSH || lp.prevdE) {
+                    const float difbdisp = (reducdEL + reducdEa + reducdEb) * 10000.f * colorde;
+
+                    if (transformed->L[y][x] < darklim) { //enhance dark luminance as user can see!
+                        transformed->L[y][x] = darklim - transformed->L[y][x];
+                    }
+
+                    if (colorde <= 0) {
+                        transformed->a[y][x] = 0.f;
+                        transformed->b[y][x] = difbdisp;
+                    } else {
+                        transformed->a[y][x] = -difbdisp;
+                        transformed->b[y][x] = 0.f;
+                    }
+                }
+            }
+        }
+    }
+ 
+}
+
 void ImProcFunctions::DeNoise_Local(int call, const struct local_params& lp, LabImage* originalmask, int levred, float hueref, float lumaref, float chromaref, LabImage* original, LabImage* transformed, const LabImage &tmp1, int cx, int cy, int sk)
 {
     //warning, but I hope used it next
@@ -6152,11 +6329,13 @@ void calclocalGradientParams(int call, const struct local_params& lp, struct gra
  // It seems that you need to change the position of the center of the GF which varies depending on the preview, but how?
  // parameters passe to calcGradientFactor may also be involved
  //    ?? bufmaskblurcol->L[ir][jr] *= ImProcFunctions::calcGradientFactor(gp, jr, ir);// jr - xstart, ir - ystart ?? or others factors
-
-    double gradient_center_x = LIM01((lp.xcent * bfw - xstart) / bfw);//???
-    double gradient_center_y = LIM01((lp.ycent * bfh - ystart) / bfh);//???
-
     PreviewProps pp(tX, tY, tW * sk, tH * sk, sk);//perhaps needs ?
+    float kh = pp.getHeight() / fh;
+    float kw = pp.getWidth() / fw;
+
+    double gradient_center_x = LIM01((lp.xcent * bfw * kw - xstart) / bfw);//???
+    double gradient_center_y = LIM01((lp.ycent * bfh * kh - ystart) / bfh);//???
+
 
     if (settings->verbose) {
         printf("call=%i xcent=%f ycent=%f \n", call, (double) lp.xcent, (double) lp.ycent);   
@@ -6173,7 +6352,7 @@ void calclocalGradientParams(int call, const struct local_params& lp, struct gra
         angs = lp.angexp;
         varfeath = 0.01f * lp.featherexp;
     } else if (indic == 2) {
-        stops = lp.strSH;
+        stops = lp.strSH / sk;
         angs = lp.angSH;
         varfeath = 0.01f * lp.featherSH;
     } else if (indic == 3) {
@@ -6235,7 +6414,7 @@ void calclocalGradientParams(int call, const struct local_params& lp, struct gra
         angs = lp.anggradcie;
         varfeath = 0.01f * lp.feathercie;
     }
-
+printf("OK gra1\n");
     int sk2 = sk;
     sk2 = 1;
     double gradient_stops = stops / sk2;//to test with Skip but does not work well
@@ -6308,6 +6487,8 @@ void calclocalGradientParams(int call, const struct local_params& lp, struct gra
         gp.ys_inv = 0;
         gp.ys = 0;
     }
+ printf("OK gra2\n");
+   
 }
 
 void ImProcFunctions::blendstruc(int bfw, int bfh, LabImage* bufcolorig, float radius, float stru, array2D<float> & blend2, int sk, bool multiThread)
@@ -9469,8 +9650,10 @@ void ImProcFunctions::BlurNoise_Local(LabImage *tmp1, LabImage * originalmask, c
     }
 }
 
-void ImProcFunctions::transit_shapedetect2(int sp, float meantm, float stdtm, int call, int senstype, const LabImage * bufexporig, const LabImage * bufexpfin, LabImage * originalmask, const float hueref, const float chromaref, const float lumaref, float sobelref, float meansobel, float ** blend2, struct local_params & lp, LabImage * original, LabImage * transformed, int cx, int cy, int sk)
+void ImProcFunctions::transit_shapedetect2(int sp, float meantm, float stdtm, int call, int senstype, const LabImage * bufexporig, const LabImage * bufexpfin, LabImage * originalmask, const float hueref, const float chromaref, const float lumaref, float sobelref, float meansobel, float ** blend2, struct local_params & lp, LabImage * original, LabImage * transformed, const LabImage *tmp1, int grad, int cx, int cy, int sk)
 {
+    
+    
     //initialize coordinates
     int ystart = rtengine::max(static_cast<int>(lp.yc - lp.lyT) - cy, 0);
     int yend = rtengine::min(static_cast<int>(lp.yc + lp.ly) - cy, original->H);
@@ -9479,7 +9662,30 @@ void ImProcFunctions::transit_shapedetect2(int sp, float meantm, float stdtm, in
     int bfw = xend - xstart;
     int bfh = yend - ystart;
 //    printf("DETECT2 lp.xc=%f lp.yc=%f xend=%i\n", (double) lp.xc, (double) lp.yc, xend);
-
+        int GW = original->W;
+        int GH = original->H;
+    const std::unique_ptr<LabImage> buftmp1(new LabImage(bfw, bfh));
+        for (int ir = 0; ir < bfh; ir++)
+            for (int jr = 0; jr < bfw; jr++) {
+                buftmp1->L[ir][jr] = 1.f;
+            }
+printf("OK 1  grad=%i  call=%i\n", grad, call);
+    if(grad == 1  && call == 1 && lp.strSH != 0.f) {
+        printf("OK grad detect2\n");
+       for (int ir = 0; ir < GH; ir++)
+            for (int jr = 0; jr < GW; jr++) {
+               // printf("tm=%f ", (double) tmp1->L[ir][jr]);
+           //     buftmp1->L[ir][jr] = tmp1->L[ir][jr];
+            }
+        for (int y = ystart; y < yend; y++) {
+            for (int x = xstart; x < xend; x++) {
+                buftmp1->L[y - ystart][x - xstart] = tmp1->L[y][x];
+            }
+        }
+        
+        
+    }
+printf("OK 2\n");
 
     //initialize scope
     float varsens = lp.sensex;//exposure
@@ -9828,13 +10034,21 @@ void ImProcFunctions::transit_shapedetect2(int sp, float meantm, float stdtm, in
                 if(varsens == 100.f) {
                     reducdE = 1.f;
                 }
-                
-                float cli = (bufexpfin->L[y][x] - bufexporig->L[y][x]);
+                float factgrad = 1.f;
+                if(grad == 1  && call == 1 && lp.strSH != 0.f) {
+                    //buftmp1->L[y][x] = tmp1->L[y + ystart][x + xstart];
+                    //factgrad = tmp1->L[y + ystart][x + xstart];
+                    factgrad = buftmp1->L[y][x];
+
+                } 
+                 //   printf("f=%f", (double) factgrad);
+
+                float cli = (factgrad * bufexpfin->L[y][x] - bufexporig->L[y][x] );
                 float cla = (bufexpfin->a[y][x] - bufexporig->a[y][x]);
                 float clb = (bufexpfin->b[y][x] - bufexporig->b[y][x]);
 
                 if (delt) {
-                    cli = bufexpfin->L[y][x] - original->L[y + ystart][x + xstart];
+                    cli = (factgrad * bufexpfin->L[y][x] - original->L[y + ystart][x + xstart]);
                     cla = bufexpfin->a[y][x] - original->a[y + ystart][x + xstart];
                     clb = bufexpfin->b[y][x] - original->b[y + ystart][x + xstart];
                 }
@@ -9851,10 +10065,12 @@ void ImProcFunctions::transit_shapedetect2(int sp, float meantm, float stdtm, in
                 const float realstrbdE = reducdE * clb;
 
                 float factorx = localFactor;
-
+             //   printf("OK 4\n");
                 if (zone > 0) {
+                  //  float kgrad = buftmp1->L[y + ystart][x + xstart];
+                  //  printf("kg=%f ", (double) kgrad);
                     //simplified transformed with deltaE and transition
-                    transformed->L[y + ystart][x + xstart] = clipLoc(original->L[y + ystart][x + xstart] + factorx * realstrdE);//clipLoc now do nothing...just keep in ace off
+                    transformed->L[y + ystart][x + xstart] = clipLoc(original->L[y + ystart][x + xstart]  + factorx * realstrdE );//clipLoc now do nothing...just keep in ace off
                     float diflc = factorx * realstrdE;
                     transformed->a[y + ystart][x + xstart] = clipC(original->a[y + ystart][x + xstart] + factorx * realstradE);
                     const float difa = factorx * realstradE;
@@ -9896,6 +10112,16 @@ void ImProcFunctions::transit_shapedetect2(int sp, float meantm, float stdtm, in
             }
         }
     }
+    /*
+     if(grad == 1  && call == 1) {
+   
+    for (int ir = 0; ir < GH; ir++)
+            for (int jr = 0; jr < GW; jr++) {
+               //  printf("tm=%f ", (double) tmp1->L[ir][jr]);
+               transformed->L[ir][jr] *= tmp1->L[ir][jr];
+            }
+     } 
+*/     
 }
 
 
@@ -14706,9 +14932,9 @@ void ImProcFunctions::Lab_Local(
                 }
 
                 if (lp.recothrl >= 1.f) {
-                    transit_shapedetect2(sp, 0.f, 0.f, call, 11, bufexporig.get(), bufexpfin.get(), originalmasklog.get(), hueref, chromaref, lumaref, sobelref, 0.f, nullptr, lp, original, transformed, cx, cy, sk);
+                    transit_shapedetect2(sp, 0.f, 0.f, call, 11, bufexporig.get(), bufexpfin.get(), originalmasklog.get(), hueref, chromaref, lumaref, sobelref, 0.f, nullptr, lp, original, transformed, nullptr, 0,  cx, cy, sk);
                 } else {
-                    transit_shapedetect2(sp, 0.f, 0.f, call, 11, bufexporig.get(), bufexpfin.get(), nullptr, hueref, chromaref, lumaref, sobelref, 0.f, nullptr, lp, original, transformed, cx, cy, sk);
+                    transit_shapedetect2(sp, 0.f, 0.f, call, 11, bufexporig.get(), bufexpfin.get(), nullptr, hueref, chromaref, lumaref, sobelref, 0.f, nullptr, lp, original, transformed, nullptr, 0, cx, cy, sk);
                 }
             }
 
@@ -15787,9 +16013,9 @@ void ImProcFunctions::Lab_Local(
                     //   transit_shapedetect_retinex(call, 4, bufgb.get(),bufmaskorigtm.get(), originalmasktm.get(), buflight, bufchro, hueref, chromaref, lumaref, lp, original, transformed, cx, cy, sk);
 
                     if (lp.recothrt >= 1.f) {
-                        transit_shapedetect2(sp, meantm, stdtm, call, 8, bufgb.get(), tmp1.get(), originalmasktm.get(), hueref, chromaref, lumaref, sobelref, 0.f, nullptr, lp, original, transformed, cx, cy, sk);
+                        transit_shapedetect2(sp, meantm, stdtm, call, 8, bufgb.get(), tmp1.get(), originalmasktm.get(), hueref, chromaref, lumaref, sobelref, 0.f, nullptr, lp, original, transformed, nullptr, 0,  cx, cy, sk);
                     } else {
-                        transit_shapedetect2(sp, meantm, stdtm, call, 8, bufgb.get(), tmp1.get(), nullptr, hueref, chromaref, lumaref, sobelref, 0.f, nullptr, lp, original, transformed, cx, cy, sk);
+                        transit_shapedetect2(sp, meantm, stdtm, call, 8, bufgb.get(), tmp1.get(), nullptr, hueref, chromaref, lumaref, sobelref, 0.f, nullptr, lp, original, transformed, nullptr, 0, cx, cy, sk);
                     }
 
                     //  transit_shapedetect(8, tmp1.get(), originalmasktm.get(), bufchro, false, hueref, chromaref, lumaref, sobelref, 0.f, nullptr, lp, original, transformed, cx, cy, sk);
@@ -15846,7 +16072,7 @@ void ImProcFunctions::Lab_Local(
             dehazeloc(tmpImage.get(), dehazeParams, sk, sp);
             rgb2lab(*tmpImage.get(), *bufexpfin, params->icm.workingProfile);
 
-            transit_shapedetect2(sp, 0.f, 0.f, call, 30, bufexporig.get(), bufexpfin.get(), nullptr, hueref, chromaref, lumaref, sobelref, 0.f, nullptr, lp, original, transformed, cx, cy, sk);
+            transit_shapedetect2(sp, 0.f, 0.f, call, 30, bufexporig.get(), bufexpfin.get(), nullptr, hueref, chromaref, lumaref, sobelref, 0.f, nullptr, lp, original, transformed, nullptr, 0, cx, cy, sk);
 
             if (lp.recur) {
                 original->CopyFrom(transformed, multiThread);
@@ -17096,9 +17322,9 @@ void ImProcFunctions::Lab_Local(
                     }
 
                     if (lp.recothrv >= 1.f) {
-                        transit_shapedetect2(sp, 0.f, 0.f, call, 2, bufexporig.get(), bufexpfin.get(), originalmaskvib.get(), hueref, chromaref, lumaref, sobelref, 0.f, nullptr, lp, original, transformed, cx, cy, sk);
+                        transit_shapedetect2(sp, 0.f, 0.f, call, 2, bufexporig.get(), bufexpfin.get(), originalmaskvib.get(), hueref, chromaref, lumaref, sobelref, 0.f, nullptr, lp, original, transformed, nullptr, 0, cx, cy, sk);
                     } else {
-                        transit_shapedetect2(sp, 0.f, 0.f, call, 2, bufexporig.get(), bufexpfin.get(), nullptr, hueref, chromaref, lumaref, sobelref, 0.f, nullptr, lp, original, transformed, cx, cy, sk);
+                        transit_shapedetect2(sp, 0.f, 0.f, call, 2, bufexporig.get(), bufexpfin.get(), nullptr, hueref, chromaref, lumaref, sobelref, 0.f, nullptr, lp, original, transformed, nullptr, 0, cx, cy, sk);
 
                     }
 
@@ -17160,6 +17386,7 @@ void ImProcFunctions::Lab_Local(
             std::unique_ptr<LabImage> bufmaskorigSH;
             std::unique_ptr<LabImage> bufmaskblurSH;
             std::unique_ptr<LabImage> originalmaskSH;
+            const std::unique_ptr<LabImage> tmp1(new LabImage(transformed->W, transformed->H));
 
             if (lp.showmaskSHmet == 2  || lp.enaSHMask || lp.showmaskSHmet == 3 || lp.showmaskSHmet == 4) {
                 bufmaskorigSH.reset(new LabImage(bfw, bfh));
@@ -17266,9 +17493,13 @@ void ImProcFunctions::Lab_Local(
                 }
 
 //gradient
+
+                int GW = transformed->W;
+                int GH = transformed->H;
+
                 struct grad_params gp;
 
-                if (lp.strSH != 0.f) {
+                if (lp.strSH != 0.f && call == 2) {
                     calclocalGradientParams(call, lp, gp, ystart, xstart, yend, xend, bfw, bfh, oW, oH, tX, tY, tW, tH, 2, sk, fw, fh);
 #ifdef _OPENMP
                     #pragma omp parallel for schedule(dynamic,16) if (multiThread)
@@ -17279,6 +17510,28 @@ void ImProcFunctions::Lab_Local(
                             bufexpfin->L[ir][jr] *= ImProcFunctions::calcGradientFactor(gp, jr, ir);
                         }
                     }
+                } else if(lp.strSH != 0.f && call == 1 && ((GW >= mDEN && GH >= mDEN))){
+                    calclocalGradientParams(call, lp, gp, ystart, xstart, yend, xend, GW, GH, oW, oH, tX, tY, tW, tH, 2, sk, fw, fh);
+            //        LabImage tmp1(transformed->W, transformed->H);
+#ifdef _OPENMP
+            #pragma omp parallel for schedule(dynamic,16) if (multiThread)
+#endif
+                    for (int ir = 0; ir < GH; ir++)
+                        for (int jr = 0; jr < GW; jr++) {
+                            tmp1->L[ir][jr] = original->L[ir][jr];
+                            tmp1->a[ir][jr] = original->a[ir][jr];
+                            tmp1->b[ir][jr] = original->b[ir][jr];                    
+                    }
+                    for (int ir = 0; ir < GH; ir++) {
+                        for (int jr = 0; jr < GW; jr++) {
+                            //printf("gf=%f ", (double) ImProcFunctions::calcGradientFactor(gp, jr, ir));
+                            tmp1->L[ir][jr] = ImProcFunctions::calcGradientFactor(gp, jr, ir);
+                        }
+                    }
+                   // int levred = 7;
+                   // Grad_Local(call, lp,  originalmaskSH.get(), levred, hueref, lumaref, chromaref, original, transformed, tmp1.get(), cx, cy, sk);
+                   // transit_shapedetect2(sp, 0.f, 0.f, call, 9, bufexporig.get(), bufexpfin.get(), originalmaskSH.get(), hueref, chromaref, lumaref, sobelref, 0.f, nullptr, lp, original, transformed, cx, cy, sk);
+                   // return;
                 }
 
                 if (lp.shmeth == 1) {
@@ -17707,9 +17960,17 @@ void ImProcFunctions::Lab_Local(
             }
 
             if (lp.recothrs >= 1.f) {
-                transit_shapedetect2(sp, 0.f, 0.f, call, 9, bufexporig.get(), bufexpfin.get(), originalmaskSH.get(), hueref, chromaref, lumaref, sobelref, 0.f, nullptr, lp, original, transformed, cx, cy, sk);
+                if(call != 1) {
+                    transit_shapedetect2(sp, 0.f, 0.f, call, 9, bufexporig.get(), bufexpfin.get(), originalmaskSH.get(), hueref, chromaref, lumaref, sobelref, 0.f, nullptr, lp, original, transformed, nullptr, 0, cx, cy, sk);
+                } else {
+                    transit_shapedetect2(sp, 0.f, 0.f, call, 9, bufexporig.get(), bufexpfin.get(), originalmaskSH.get(), hueref, chromaref, lumaref, sobelref, 0.f, nullptr, lp, original, transformed, tmp1.get(), 1, cx, cy, sk);                   
+                } 
             } else {
-                transit_shapedetect2(sp, 0.f, 0.f, call, 9, bufexporig.get(), bufexpfin.get(), nullptr, hueref, chromaref, lumaref, sobelref, 0.f, nullptr, lp, original, transformed, cx, cy, sk);
+                if(call != 1) {
+                    transit_shapedetect2(sp, 0.f, 0.f, call, 9, bufexporig.get(), bufexpfin.get(), nullptr, hueref, chromaref, lumaref, sobelref, 0.f, nullptr, lp, original, transformed, nullptr, 0,  cx, cy, sk);
+                } else {
+                    transit_shapedetect2(sp, 0.f, 0.f, call, 9, bufexporig.get(), bufexpfin.get(), nullptr, hueref, chromaref, lumaref, sobelref, 0.f, nullptr, lp, original, transformed, tmp1.get(), 1, cx, cy, sk);
+                }
             }
 
             if (lp.recur) {
@@ -17875,7 +18136,7 @@ void ImProcFunctions::Lab_Local(
                 }
             }
 
-            transit_shapedetect2(sp, 0.f, 0.f, call, 3, bufexporig.get(), bufexpfin.get(), nullptr, hueref, chromaref, lumaref, sobelref, 0.f, nullptr, lp, original, transformed, cx, cy, sk);
+            transit_shapedetect2(sp, 0.f, 0.f, call, 3, bufexporig.get(), bufexpfin.get(), nullptr, hueref, chromaref, lumaref, sobelref, 0.f, nullptr, lp, original, transformed, nullptr, 0, cx, cy, sk);
 
             if (lp.recur) {
                 original->CopyFrom(transformed, multiThread);
@@ -18441,9 +18702,9 @@ void ImProcFunctions::Lab_Local(
                 }
 
                 if (lp.recothrw >= 1.f) {
-                    transit_shapedetect2(sp, 0.f, 0.f, call, 10, bufgb.get(), tmp1.get(), originalmasklc.get(), hueref, chromaref, lumaref, sobelref, 0.f, nullptr, lp, original, transformed, cx, cy, sk);
+                    transit_shapedetect2(sp, 0.f, 0.f, call, 10, bufgb.get(), tmp1.get(), originalmasklc.get(), hueref, chromaref, lumaref, sobelref, 0.f, nullptr, lp, original, transformed, nullptr, 0, cx, cy, sk);
                 } else {
-                    transit_shapedetect2(sp, 0.f, 0.f, call, 10, bufgb.get(), tmp1.get(), nullptr, hueref, chromaref, lumaref, sobelref, 0.f, nullptr, lp, original, transformed, cx, cy, sk);
+                    transit_shapedetect2(sp, 0.f, 0.f, call, 10, bufgb.get(), tmp1.get(), nullptr, hueref, chromaref, lumaref, sobelref, 0.f, nullptr, lp, original, transformed, nullptr, 0, cx, cy, sk);
                 }
 
                 tmp1.reset();
@@ -19175,9 +19436,9 @@ void ImProcFunctions::Lab_Local(
                     }
 
                     if (lp.recothre >= 1.f) {
-                        transit_shapedetect2(sp, 0.f, 0.f, call, 1, bufexporig.get(), bufexpfin.get(), originalmaskexp.get(), hueref, chromaref, lumaref, sobelref, meansob, blend2, lp, original, transformed, cx, cy, sk);
+                        transit_shapedetect2(sp, 0.f, 0.f, call, 1, bufexporig.get(), bufexpfin.get(), originalmaskexp.get(), hueref, chromaref, lumaref, sobelref, meansob, blend2, lp, original, transformed, nullptr, 0, cx, cy, sk);
                     } else {
-                        transit_shapedetect2(sp, 0.f, 0.f, call, 1, bufexporig.get(), bufexpfin.get(), nullptr, hueref, chromaref, lumaref, sobelref, meansob, blend2, lp, original, transformed, cx, cy, sk);
+                        transit_shapedetect2(sp, 0.f, 0.f, call, 1, bufexporig.get(), bufexpfin.get(), nullptr, hueref, chromaref, lumaref, sobelref, meansob, blend2, lp, original, transformed, nullptr, 0, cx, cy, sk);
                     }
                 }
 
@@ -20368,7 +20629,7 @@ void ImProcFunctions::Lab_Local(
                             }
                         }
 
-                        transit_shapedetect2(sp, 0.f, 0.f, call, 0, bufcolreserv.get(), bufcolfin.get(), originalmaskcol.get(), hueref, chromaref, lumaref, sobelref, meansob, blend2, lp, original, transformed, cx, cy, sk);
+                        transit_shapedetect2(sp, 0.f, 0.f, call, 0, bufcolreserv.get(), bufcolfin.get(), originalmaskcol.get(), hueref, chromaref, lumaref, sobelref, meansob, blend2, lp, original, transformed, nullptr, 0, cx, cy, sk);
                     }
 
                     if (!nottransit) {
@@ -20510,9 +20771,9 @@ void ImProcFunctions::Lab_Local(
                         float meansob = 0.f;
 
                         if (lp.recothrc >= 1.f) {
-                            transit_shapedetect2(sp, 0.f, 0.f, call, 0, bufcolorig.get(), bufcolfin.get(), originalmaskcol.get(), hueref, chromaref, lumaref, sobelref, meansob, blend2, lp, original, transformed, cx, cy, sk);
+                            transit_shapedetect2(sp, 0.f, 0.f, call, 0, bufcolorig.get(), bufcolfin.get(), originalmaskcol.get(), hueref, chromaref, lumaref, sobelref, meansob, blend2, lp, original, transformed, nullptr, 0, cx, cy, sk);
                         } else {
-                            transit_shapedetect2(sp, 0.f, 0.f, call, 0, bufcolorig.get(), bufcolfin.get(), nullptr, hueref, chromaref, lumaref, sobelref, meansob, blend2, lp, original, transformed, cx, cy, sk);
+                            transit_shapedetect2(sp, 0.f, 0.f, call, 0, bufcolorig.get(), bufcolfin.get(), nullptr, hueref, chromaref, lumaref, sobelref, meansob, blend2, lp, original, transformed, nullptr, 0, cx, cy, sk);
                         }
                     }
 
@@ -20792,7 +21053,7 @@ void ImProcFunctions::Lab_Local(
 
 
                 float meansob = 0.f;
-                transit_shapedetect2(sp, 0.f, 0.f, call, 20, bufcolorigsav.get(), bufcolfin.get(), originalmaskcol.get(), hueref, chromaref, lumaref, sobelref, meansob, nullptr, lp, origsav, transformed, cx, cy, sk);
+                transit_shapedetect2(sp, 0.f, 0.f, call, 20, bufcolorigsav.get(), bufcolfin.get(), originalmaskcol.get(), hueref, chromaref, lumaref, sobelref, meansob, nullptr, lp, origsav, transformed, nullptr, 0, cx, cy, sk);
                 delete origsav;
                 origsav    = NULL;
 
@@ -21410,9 +21671,9 @@ void ImProcFunctions::Lab_Local(
             }
 
             if (lp.recothrcie >= 1.f) {
-                transit_shapedetect2(sp, 0.f, 0.f, call, 31, bufexporig.get(), bufexpfin.get(), originalmaskcie.get(), hueref, chromaref, lumaref, sobelref, 0.f, nullptr, lp, original, transformed, cx, cy, sk);
+                transit_shapedetect2(sp, 0.f, 0.f, call, 31, bufexporig.get(), bufexpfin.get(), originalmaskcie.get(), hueref, chromaref, lumaref, sobelref, 0.f, nullptr, lp, original, transformed, nullptr, 0, cx, cy, sk);
             } else {
-                transit_shapedetect2(sp, 0.f, 0.f, call, 31, bufexporig.get(), bufexpfin.get(), nullptr, hueref, chromaref, lumaref, sobelref, 0.f, nullptr, lp, original, transformed, cx, cy, sk);
+                transit_shapedetect2(sp, 0.f, 0.f, call, 31, bufexporig.get(), bufexpfin.get(), nullptr, hueref, chromaref, lumaref, sobelref, 0.f, nullptr, lp, original, transformed, nullptr, 0, cx, cy, sk);
             }
 
             if (lp.recur) {

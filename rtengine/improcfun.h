@@ -404,7 +404,7 @@ enum class BlurType {
     void wavcbd(wavelet_decomposition &wdspot, int level_bl, int maxlvl,
                 const LocwavCurve& locconwavCurve, bool locconwavutili, float sigm, float offs, float chromalev, int sk);
 
-    void transit_shapedetect2(int sp, float meantm, float stdtm, int call, int senstype, const LabImage * bufexporig, const LabImage * bufexpfin, LabImage * originalmask, const float hueref, const float chromaref, const float lumaref, float sobelref, float meansobel, float ** blend2, struct local_params & lp, LabImage * original, LabImage * transformed, int cx, int cy, int sk);
+    void transit_shapedetect2(int sp, float meantm, float stdtm, int call, int senstype, const LabImage * bufexporig, const LabImage * bufexpfin, LabImage * originalmask, const float hueref, const float chromaref, const float lumaref, float sobelref, float meansobel, float ** blend2, struct local_params & lp, LabImage * original, LabImage * transformed, const LabImage *tmp1, int grad, int cx, int cy, int sk);
 
     void transit_shapedetect_retinex(int call, int senstype, LabImage * bufexporig, LabImage * bufexpfin, LabImage * bufmask, LabImage * buforigmas, float **buflight, float **bufchro, const float hueref, const float chromaref,  const float lumaref, struct local_params & lp, LabImage * original, LabImage * transformed, int cx, int cy, int sk);
     void transit_shapedetect(int senstype, const LabImage *bufexporig, LabImage * originalmask, float **bufchro, bool HHutili, const float hueref, const float chromaref, const float lumaref, float sobelref, float meansobel, float ** blend2, const struct local_params & lp, LabImage * original, LabImage * transformed, int cx, int cy, int sk);
@@ -413,6 +413,7 @@ enum class BlurType {
 
     void DeNoise_Local(int call, const struct local_params& lp, LabImage* originalmask, int levred, float hueref, float lumaref, float chromaref, LabImage* original, LabImage* transformed, const LabImage &tmp1, int cx, int cy, int sk);
     void DeNoise_Local2(const struct local_params& lp, LabImage* originalmask, int levred, float hueref, float lumaref, float chromaref, LabImage* original, LabImage* transformed, const LabImage &tmp1, int cx, int cy, int sk);
+    void Grad_Local(int call, const struct local_params& lp, LabImage* originalmask, int levred, float hueref, float lumaref, float chromaref, LabImage* original, LabImage* transformed, const LabImage *tmp1, int cx, int cy, int sk);
 
     void DeNoise(int call, int aut, bool noiscfactiv, const struct local_params& lp, LabImage* originalmaskbl, LabImage *  bufmaskblurbl, int levred, float huerefblur, float lumarefblur, float chromarefblur, LabImage* original, LabImage* transformed, 
         int cx, int cy, int sk, const LocwavCurve& locwavCurvehue, bool locwavhueutili, float& highresi, float& nresi, float& highresi46, float& nresi46, float& Lhighresi, float& Lnresi, float& Lhighresi46, float& Lnresi46);
