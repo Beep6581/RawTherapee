@@ -956,6 +956,8 @@ void Crop::update(int todo)
         auto& locwavCurveden = parent->locwavCurveden;
         auto& lmasklocal_curve2 = parent->lmasklocal_curve;
         auto& loclmasCurve_wav = parent->loclmasCurve_wav;
+        //big bug found 29//11/2024       
+        std::vector<LocallabListener::locallabDenoiseLC> localldenoiselc;
 
         for (int sp = 0; sp < (int)params.locallab.spots.size(); sp++) {
             locRETgainCurve.Set(params.locallab.spots.at(sp).localTgaincurve);
@@ -1053,7 +1055,6 @@ void Crop::update(int todo)
             if (black < 0. && params.locallab.spots.at(sp).expMethod == "pde" ) {
                 black *= 1.5;
             }
-            std::vector<LocallabListener::locallabDenoiseLC> localldenoiselc;
 
             double cont = params.locallab.spots.at(sp).contrast;
             double huere, chromare, lumare, huerefblu, chromarefblu, lumarefblu, sobelre;
@@ -1174,16 +1175,6 @@ void Crop::update(int todo)
                         ghscur, ghsbpwp, ghsbpwpvalue
 );
                         
-                        LocallabListener::locallabDenoiseLC denoiselc;
-                        denoiselc.highres = highresi;
-                        denoiselc.nres = nresi; 
-                        denoiselc.highres46 = highresi46;
-                        denoiselc.nres46 = nresi46;
-                        denoiselc.Lhighres =  Lhighresi;
-                        denoiselc.Lnres = Lnresi;
-                        denoiselc.Lhighres46 = Lhighresi46;
-                        denoiselc.Lnres46 = Lnresi46;
-                        localldenoiselc.push_back(denoiselc);
                         
                         if (parent->previewDeltaE || parent->locallColorMask == 5 || parent->locallvibMask == 4 || parent->locallExpMask == 5 || parent->locallSHMask == 4 || parent->localllcMask == 4 || parent->localltmMask == 4 || parent->localllogMask == 4 || parent->locallsoftMask == 6 || parent->localllcMask == 4 || parent->locallcieMask == 4) {
                             params.blackwhite.enabled = false;
@@ -1214,21 +1205,6 @@ void Crop::update(int todo)
 
                         }
                         */
-                        denoiselc.highres = highresi;
-                        denoiselc.nres = nresi; 
-                        denoiselc.highres46 = highresi46;
-                        denoiselc.nres46 = nresi46;
-                        denoiselc.Lhighres =  Lhighresi;
-                        denoiselc.Lnres = Lnresi;
-                        denoiselc.Lhighres46 = Lhighresi46;
-                        denoiselc.Lnres46 = Lnresi46;
-                        localldenoiselc.push_back(denoiselc);
-                        
-                       
-                        if (parent->locallListener) {
-                            parent->locallListener->denChanged(localldenoiselc, params.locallab.selspot);
-                        }
-
             } else {
                 parent->ipf.Lab_Local(1, sp, (float**)shbuffer, labnCrop, labnCrop, reservCrop.get(), savenormtmCrop.get(), savenormretiCrop.get(), lastorigCrop.get(), fw, fh, cropx / skip, cropy / skip, skips(parent->fw, skip), skips(parent->fh, skip), trafx, trafy, trafw , trafh, skip, locRETgainCurve, locRETtransCurve,
                         lllocalcurve2,locallutili, 
@@ -1290,6 +1266,22 @@ void Crop::update(int todo)
                         ghscur, ghsbpwp, ghsbpwpvalue
                         );
             }
+
+
+                        LocallabListener::locallabDenoiseLC denoiselc;
+                        denoiselc.highres = highresi;
+                        denoiselc.nres = nresi; 
+                        denoiselc.highres46 = highresi46;
+                        denoiselc.nres46 = nresi46;
+                        denoiselc.Lhighres =  Lhighresi;
+                        denoiselc.Lnres = Lnresi;
+                        denoiselc.Lhighres46 = Lhighresi46;
+                        denoiselc.Lnres46 = Lnresi46;
+                        localldenoiselc.push_back(denoiselc);
+
+                        if (parent->locallListener) {
+                            parent->locallListener->denChanged(localldenoiselc, params.locallab.selspot);
+                        }
             
             
             if (sp + 1u < params.locallab.spots.size()) {
