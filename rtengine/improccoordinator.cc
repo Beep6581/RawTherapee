@@ -954,7 +954,7 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                 }
             }
 
-            // Encoding log with locallab
+            // Encoding log with locallab and SE capture sharpening
             if (params->locallab.enabled && !params->locallab.spots.empty()) {
                 const int sizespot = (int)params->locallab.spots.size();
                 const LocallabParams::LocallabSpot defSpot;
@@ -1039,11 +1039,14 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                     //to auto sharp Capture
                     autoradius[sp] = params->locallab.spots.at(sp).deconvAutoRadius;
                     caprad[sp] = params->locallab.spots.at(sp).capradius;
-
+                    float kradreduc = 1.f;
+                    if(params->pdsharpening.enabled) {// reduce value if Capture Sharpening RAW used
+                        kradreduc = 0.9f;
+                    }
                     if (shar[sp] && autoradius[sp]){
                         float rad = -1.f;
-                        if (imgsrc->getDeconvAutoRadius(&rad)) {
-                            caprad[sp] = rad;
+                        if (imgsrc->getDeconvAutoRadius(&rad)) {//
+                            caprad[sp] = kradreduc * rad;
                         } else {
                             rad = -1.f;
                         }
