@@ -12288,7 +12288,7 @@ void ImProcFunctions::DeNoise(int call, int aut,  bool noiscfactiv, const struct
                 denoco = lp.denocontra;
             }
 
-           if(lp.enacontr){        
+            if(lp.enacontr){        
                 bool contshow = lp.contrsho;
                 TMatrix wprof = ICCStore::getInstance()->workingSpaceMatrix(params->icm.workingProfile);
 
@@ -12317,9 +12317,9 @@ void ImProcFunctions::DeNoise(int call, int aut,  bool noiscfactiv, const struct
                         blueVals[i][j] = tmpImage->b(i,j);
                     }
                 }
+                float denstr = lp.denomas;
                
                 if(lp.denomas > 0.f) {//denoise mask
-                    float denstr = lp.denomas;
 
                     float** tmL;
                     float** mR;
@@ -12446,7 +12446,6 @@ void ImProcFunctions::DeNoise(int call, int aut,  bool noiscfactiv, const struct
                     //printf("denocont=%f \n", (double) denocont);
                 } else {
                
-            //    if(!contshow) {            
 #ifdef _OPENMP
             #pragma omp parallel for schedule(dynamic,16) if (multiThread)
 #endif
