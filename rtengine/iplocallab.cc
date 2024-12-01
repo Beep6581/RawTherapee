@@ -6154,7 +6154,7 @@ void calclocalGradientParams(int call, const struct local_params& lp, struct gra
  // parameters passe to calcGradientFactor may also be involved
  //    ?? bufmaskblurcol->L[ir][jr] *= ImProcFunctions::calcGradientFactor(gp, jr, ir);// jr - xstart, ir - ystart ?? or others factors
    // sk = 1;
-    int sk3 = sqrt(sk);
+    int sk3 = sqrt(sk);//empirical value ??
     if(lp.strcol != 0.f) {
         sk3 = sk;
     }
@@ -6167,6 +6167,12 @@ void calclocalGradientParams(int call, const struct local_params& lp, struct gra
     } else {
         kh = fh / pp.getHeight();  
     }
+    if(pp.getX() > 0) {
+        kw = pp.getWidth() / fw;
+    } else {
+        kw = fw / pp.getWidth();  
+    }
+    
     if(call == 2 || call == 3) {
          kh = kw = 1.f;
     }
@@ -9501,13 +9507,20 @@ void ImProcFunctions::transit_shapedetect2(int sp, float meantm, float stdtm, in
     int xend = rtengine::min(static_cast<int>(lp.xc + lp.lx) - cx, original->W);
     int bfw = xend - xstart;
     int bfh = yend - ystart;
+
 // test to use in plain image
     const std::unique_ptr<LabImage> buftmp1(new LabImage(bfw, bfh));
+#ifdef _OPENMP
+        #pragma omp parallel for schedule(dynamic,16) if(multiThread)
+#endif
         for (int ir = 0; ir < bfh; ir++)
             for (int jr = 0; jr < bfw; jr++) {
                 buftmp1->L[ir][jr] = 1.f;
             }
     if(grad == 1  && call == 1 && lp.strSH != 0.f) {
+#ifdef _OPENMP
+        #pragma omp parallel for schedule(dynamic,16) if(multiThread)
+#endif
         for (int y = ystart; y < yend; y++) {
             for (int x = xstart; x < xend; x++) {
                 buftmp1->L[y - ystart][x - xstart] = tmp1->L[y][x];
@@ -17205,7 +17218,7 @@ void ImProcFunctions::Lab_Local(
     //    printf("LP.XC=%f LP.YC=%f\n", (double) lp.xc, (double) lp.yc);
 
         if (bfw >= mSP && bfh >= mSP) {
-printf("CALL=%i \n", call);
+            //printf("CALL=%i \n", call);
             const std::unique_ptr<LabImage> bufexporig(new LabImage(bfw, bfh));
             const std::unique_ptr<LabImage> bufexpfin(new LabImage(bfw, bfh));
             std::unique_ptr<LabImage> bufmaskorigSH;
@@ -17337,7 +17350,6 @@ printf("CALL=%i \n", call);
                     }
                 }  else if(lp.strSH != 0.f && call == 1 && ((GW >= mDEN && GH >= mDEN))){//test to run in plain image
                     calclocalGradientParams(call, lp, gp, ystart, xstart, yend, xend, GW, GH, oW, oH, tX, tY, tW, tH, 2, sk, fw, fh);
-            //        LabImage tmp1(transformed->W, transformed->H);
 #ifdef _OPENMP
             #pragma omp parallel for schedule(dynamic,16) if (multiThread)
 #endif
@@ -17347,9 +17359,11 @@ printf("CALL=%i \n", call);
                             tmp1->a[ir][jr] = original->a[ir][jr];
                             tmp1->b[ir][jr] = original->b[ir][jr];                    
                     }
+#ifdef _OPENMP
+            #pragma omp parallel for schedule(dynamic,16) if (multiThread)
+#endif
                     for (int ir = 0; ir < GH; ir++) {
                         for (int jr = 0; jr < GW; jr++) {
-                            //printf("gf=%f ", (double) ImProcFunctions::calcGradientFactor(gp, jr, ir));
                             tmp1->L[ir][jr] = ImProcFunctions::calcGradientFactor(gp, jr, ir);
                         }
                     }
