@@ -6173,7 +6173,7 @@ void calclocalGradientParams(int call, const struct local_params& lp, struct gra
         kw = fw / pp.getWidth();  
     }
     
-    if(call == 2 || call == 3) {
+    if(call == 2) {
          kh = kw = 1.f;
     }
 
