@@ -866,6 +866,7 @@ struct local_params {
     
     float denocontra;
     float denorati;
+    float denomas;
     bool contrsho;
     bool denoAutocontr;
     bool enacontr;
@@ -1443,12 +1444,14 @@ static void calcLocalParams(int sp, int oW, int oH, const LocallabParams& locall
 
     float denocontrast = (float)locallab.spots.at(sp).denocontrast;
     float denoratio = (float)locallab.spots.at(sp).denoratio;
+    float denomask = (float)locallab.spots.at(sp).denomask;
     bool contrshow =  locallab.spots.at(sp).contrshow;
     bool denoAutocontrast =  locallab.spots.at(sp).denoAutocontrast;
     bool enacontra =  locallab.spots.at(sp).enacontrast;
     
     lp.denocontra = denocontrast;
     lp.denorati = 0.01f * denoratio;
+    lp.denomas = 0.01f * denomask;
     lp.contrsho = contrshow; 
     lp.denoAutocontr = denoAutocontrast;
     lp.enacontr = enacontra; 
@@ -12285,8 +12288,7 @@ void ImProcFunctions::DeNoise(int call, int aut,  bool noiscfactiv, const struct
                 denoco = lp.denocontra;
             }
 
-           if(lp.enacontr){
-         
+           if(lp.enacontr){        
                 bool contshow = lp.contrsho;
                 TMatrix wprof = ICCStore::getInstance()->workingSpaceMatrix(params->icm.workingProfile);
 
@@ -12298,16 +12300,28 @@ void ImProcFunctions::DeNoise(int call, int aut,  bool noiscfactiv, const struct
 
                 const std::unique_ptr<Imagefloat> tmpImage(new Imagefloat(original->W, original->H));//all image
                 lab2rgb(*original, *tmpImage, params->icm.workingProfile);//copy original  image lab to RGB
+                const std::unique_ptr<Imagefloat> tmpImagemask(new Imagefloat(original->W, original->H));//all image
+                lab2rgb(*original, *tmpImagemask, params->icm.workingProfile);//copy original  image lab to RGB
 
                 array2D<float> clipMask(GW, GH);       
                 array2D<float> clipMaskchro(GW, GH);       
-                
-                bool preden = true;
-                if(preden) {
-                    float denstr = 0.95f;
-                    array2D<float> redVals (GW, GH);
-                    array2D<float> greenVals(GW, GH);
-                    array2D<float> blueVals(GW, GH);
+                     
+                array2D<float> redVals (GW, GH);
+                array2D<float> greenVals(GW, GH);
+                array2D<float> blueVals(GW, GH);
+#ifdef _OPENMP
+            #pragma omp parallel for schedule(dynamic,16) if (multiThread)
+#endif
+                for (int i = 0; i < GH; ++i) {
+                    for (int j = 0; j < GW; ++j) {
+                        redVals[i][j] = tmpImage->r(i,j);
+                        greenVals[i][j] = tmpImage->g(i,j);
+                        blueVals[i][j] = tmpImage->b(i,j);
+                    }
+                }
+               
+                if(lp.denomas > 0.f) {//denoise mask
+                    float denstr = lp.denomas;
 
                     float** tmL;
                     float** mR;
@@ -12342,24 +12356,27 @@ void ImProcFunctions::DeNoise(int call, int aut,  bool noiscfactiv, const struct
                     if(denstr < 0.2f) {
                         medianTypeL = Median::TYPE_3X3_SOFT;
                         itera = 1;
-                    } else if (denstr < 0.3f) {
-                        medianTypeL = Median::TYPE_3X3_SOFT;
+                    } else if (denstr < 0.35f) {
+                        medianTypeL = Median::TYPE_3X3_STRONG;
                         itera = 2;
                     } else if (denstr < 0.45f) {
                         medianTypeL = Median::TYPE_3X3_STRONG;
-                        itera = 2;
-                    } else if (denstr < 0.6f) {
-                        medianTypeL = Median::TYPE_3X3_STRONG;
-                        itera = 3;
-                    } else if (denstr < 0.8f) {
-                        medianTypeL = Median::TYPE_3X3_STRONG;
                         itera = 4;
-                    } else if (denstr < 0.9f) {
+                    } else if (denstr < 0.6f) {
                         medianTypeL = Median::TYPE_5X5_STRONG;
-                        itera = 2;
+                        itera = 4;
+                    } else if (denstr < 0.7f) {
+                        medianTypeL = Median::TYPE_5X5_STRONG;
+                        itera = 6;
+                    } else if (denstr < 0.8f) {
+                        medianTypeL = Median::TYPE_7X7;
+                        itera = 3;
+                    } else if (denstr < 0.9f) {
+                        medianTypeL = Median::TYPE_7X7;
+                        itera = 5;
                     } else {
-                        medianTypeL = Median::TYPE_5X5_STRONG;//?? 7x7
-                        itera = 4;            
+                        medianTypeL = Median::TYPE_7X7;
+                        itera = 6;            
                     }
                     ImProcFunctions::Median_Denoise(mR, mR, GW, GH, medianTypeL , itera, false, tmL);
                     ImProcFunctions::Median_Denoise(mG, mG, GW, GH, medianTypeL , itera, false, tmL);
@@ -12388,46 +12405,30 @@ void ImProcFunctions::DeNoise(int call, int aut,  bool noiscfactiv, const struct
                     delete[] mG;
                     delete[] mB;
                 }
-                
-                array2D<float> redVal (GW, GH);
-                array2D<float> greenVal(GW, GH);
-                array2D<float> blueVal(GW, GH);
-         
 
-#ifdef _OPENMP
-            #pragma omp parallel for schedule(dynamic,16) if (multiThread)
-#endif
-                for (int i = 0; i < GH; ++i) {
-                    for (int j = 0; j < GW; ++j) {
-                        redVal[i][j] = tmpImage->r(i,j);
-                        greenVal[i][j] = tmpImage->g(i,j);
-                        blueVal[i][j] = tmpImage->b(i,j);
-                    }
-                }
-                                
                 float s_scale = std::sqrt(sk);
                 float contrast = pow_F(denoco / 100.f, 1.f) * s_scale;
                   
                 array2D<float> Y (GW, GH);
         
                 for (int i = 0; i < GH; ++i) {
-                    Color::RGB2L(redVal[i], greenVal[i], blueVal[i], Y[i], wip, GW);
+                    Color::RGB2L(redVals[i], greenVals[i], blueVals[i], Y[i], wip, GW);
                 }
                 float reducautocontrast = 1.f;//to take noise into account
                 buildBlendMask2(Y, clipMask, GW, GH, contrast, 1.f, autode, 2.f / s_scale, 1.f, reducautocontrast);
-                
+               
                 const std::unique_ptr<LabImage> copyorig(new LabImage(original->W, original->H));//copy original image to keep initial datas
                 
 
                 denocont = 100.f * pow_F(contrast, 1.f)/ s_scale;
-
+                
                 if(contshow) {              
 #ifdef _OPENMP
             #pragma omp parallel for schedule(dynamic,16) if (multiThread)
 #endif
                     for (int i = 0; i < GH; ++i) {
                         for (int j = 0; j < GW; ++j) {
-                            tmpImage ->r(i, j)= tmpImage->g(i, j)= tmpImage->b(i, j) =  clipMask[i][j] * 65536.f;              
+                            tmpImage->r(i, j)= tmpImage->g(i, j)= tmpImage->b(i, j) =  clipMask[i][j] * 65536.f;              
                         }
                     }
                 
@@ -12446,6 +12447,8 @@ void ImProcFunctions::DeNoise(int call, int aut,  bool noiscfactiv, const struct
                     }
                     //printf("denocont=%f \n", (double) denocont);
                 } else {
+               
+            //    if(!contshow) {            
 #ifdef _OPENMP
             #pragma omp parallel for schedule(dynamic,16) if (multiThread)
 #endif

@@ -7040,6 +7040,7 @@ LocallabBlur::LocallabBlur():
     denocontrast(Gtk::manage(new Adjuster(M("TP_SHARPENING_CONTRAST"), 3, 100, 1, 20))),
     denoratio(Gtk::manage(new Adjuster(M("TP_LOCALLAB_DENOIRATIO"), 0, 100, 1, 95))),
     contrshow(Gtk::manage(new Gtk::CheckButton(M("TP_PDSHARPENING_SHOWCAP")))),
+    denomask(Gtk::manage(new Adjuster(M("TP_LOCALLAB_DENOI_MASK"), 0., 100., 1., 30.))),
     quamethod(Gtk::manage(new MyComboBoxText())),
     expdenoisenl(Gtk::manage(new MyExpander(false, M("TP_LOCALLAB_NLFRA")))),
     expdenoiselum(Gtk::manage(new MyExpander(false, M("TP_LOCALLAB_DENOIWAVLUM")))),
@@ -7132,6 +7133,7 @@ LocallabBlur::LocallabBlur():
     Evlocallabcontrshow = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_DENOCONTRSHOW");
     Evlocallabdenoratio = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_DENORATIO");
     Evlocallabenacontrast = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_DENOENA");
+    Evlocallabdenomask = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_DENOMASK");
     
    
     set_orientation(Gtk::ORIENTATION_VERTICAL);
@@ -7166,6 +7168,8 @@ LocallabBlur::LocallabBlur():
     denocontrast->setAdjusterListener(this);
     
     denoratio->setAdjusterListener(this);
+
+    denomask->setAdjusterListener(this);
     
     radius->setAdjusterListener(this);
 
@@ -7443,6 +7447,7 @@ LocallabBlur::LocallabBlur():
     denoBox->pack_start(*denocontrast);
     denoBox->pack_start(*denoratio);
     denoBox->pack_start(*contrshow);
+    denoBox->pack_start(*denomask);
     denoBox->pack_start(*quaHBox);
     denoFrame->add(*denoBox);
     wavBox->pack_start(*denoFrame);
@@ -8064,6 +8069,7 @@ void LocallabBlur::read(const rtengine::procparams::ProcParams* pp, const Params
         contrshow->set_active(spot.contrshow);
         enacontrast->set_active(spot.enacontrast);
         denoratio->setValue((double)spot.denoratio);
+        denomask->setValue((double)spot.denomask);
 
     }
 
@@ -8218,6 +8224,7 @@ void LocallabBlur::write(rtengine::procparams::ProcParams* pp, ParamsEdited* ped
         spot.contrshow = contrshow->get_active();
         spot.enacontrast = enacontrast->get_active();
         spot.denoratio = denoratio->getValue();
+        spot.denomask = denomask->getValue();
 
     }
 
@@ -8287,6 +8294,7 @@ void LocallabBlur::setDefaults(const rtengine::procparams::ProcParams* defParams
         csThresholdblur->setDefault<int>(defSpot.csthresholdblur);
         denocontrast->setDefault(defSpot.denocontrast);
         denoratio->setDefault(defSpot.denoratio);
+        denomask->setDefault(defSpot.denomask);
     }
 
     // Note: No need to manage pedited as batch mode is deactivated for Locallab
@@ -8346,6 +8354,13 @@ void LocallabBlur::adjusterChanged(Adjuster* a, double newval)
             if (listener) {
                 listener->panelChanged(Evlocallabdenoratio,
                                        denoratio->getTextValue() + " (" + escapeHtmlChars(getSpotName()) + ")");
+            }
+        }
+
+        if (a == denomask) {
+            if (listener) {
+                listener->panelChanged(Evlocallabdenomask,
+                                       denomask->getTextValue() + " (" + escapeHtmlChars(getSpotName()) + ")");
             }
         }
 

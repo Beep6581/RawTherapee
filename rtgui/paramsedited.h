@@ -756,6 +756,7 @@ public:
         bool contrshow;
         bool enacontrast;
         bool denoratio;
+        bool denomask;
        
         // Tone Mapping
         bool visitonemap;

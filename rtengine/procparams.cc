@@ -3788,6 +3788,7 @@ LocallabParams::LocallabSpot::LocallabSpot() :
     contrshow(false),
     enacontrast(true),
     denoratio(95),
+    denomask(30.),
     // Tone Mapping
     visitonemap(false),
     exptonemap(false),
@@ -5259,6 +5260,7 @@ bool LocallabParams::LocallabSpot::operator ==(const LocallabSpot& other) const
         && contrshow == other.contrshow
         && enacontrast == other.enacontrast
         && denoratio == other.denoratio
+        && denomask == other.denomask
         // Tone Mapping
         && visitonemap == other.visitonemap
         && exptonemap == other.exptonemap
@@ -7254,6 +7256,7 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
                     saveToKeyfile(!pedited || spot_edited->contrshow, "Locallab", "contrshow_" + index_str, spot.contrshow, keyFile);
                     saveToKeyfile(!pedited || spot_edited->enacontrast, "Locallab", "enacontrast_" + index_str, spot.enacontrast, keyFile);
                     saveToKeyfile(!pedited || spot_edited->denoratio, "Locallab", "denoratio_" + index_str, spot.denoratio, keyFile);
+                    saveToKeyfile(!pedited || spot_edited->denomask, "Locallab", "denomask_" + index_str, spot.denomask, keyFile);
                 }
                 // Tone Mapping
                 if ((!pedited || spot_edited->visitonemap) && spot.visitonemap) {
@@ -9668,6 +9671,7 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
                 assignFromKeyfile(keyFile, "Locallab", "contrshow_" + index_str, spot.contrshow, spotEdited.contrshow);
                 assignFromKeyfile(keyFile, "Locallab", "enacontrast_" + index_str, spot.enacontrast, spotEdited.enacontrast);
                 assignFromKeyfile(keyFile, "Locallab", "denoratio_" + index_str, spot.denoratio, spotEdited.denoratio);
+                assignFromKeyfile(keyFile, "Locallab", "denomask_" + index_str, spot.denomask, spotEdited.denomask);
 
                 if (keyFile.has_key("Locallab", "CSThresholdblur_" + index_str)) {
                     const std::vector<int> thresh = keyFile.get_integer_list("Locallab", "CSThresholdblur_" + index_str);

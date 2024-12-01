@@ -1527,6 +1527,7 @@ HISTORY_MSG_LOCAL_DENOCONTRAST;Local - Denoise Contrast threshold
 HISTORY_MSG_LOCAL_DENOCONTRSHOW;Local - Denoise Show mask contrast
 HISTORY_MSG_LOCAL_DENOAUTO;Local - Denoise Auto Contrast
 HISTORY_MSG_LOCAL_DENORATIO;Local - Denoise Ratio flat-structure
+HISTORY_MSG_LOCAL_DENOMASK;Local - Denoise Contrast mask
 HISTORY_MSG_LOCAL_DENOENA;Local - Contrast threshold
 HISTORY_MSG_LOCAL_AUTOCAPRADIUS;Local - Sh Auto Capture radius
 HISTORY_MSG_LOCAL_AUTOSHAR;Local - Sh Auto Contrast
@@ -3086,6 +3087,7 @@ TP_LOCALLAB_DENOIENA;Enable Contrast threshold
 TP_LOCALLAB_DENOIFRA;Denoise settings
 TP_LOCALLAB_DENOILUMDETAIL_TOOLTIP;Allows you to recover luminance detail by progressively applying a Fourier transform (DCT).
 TP_LOCALLAB_DENOIRATIO;Ratio Chroma flat-structure areas
+TP_LOCALLAB_DENOI_MASK;Denoise Contrast mask
 TP_LOCALLAB_DENOIMASK;Denoise chroma mask
 TP_LOCALLAB_DENOIMASK_TOOLTIP;For all tools, allows you to control the chromatic noise level of the mask.\nUseful for better control of chrominance and to avoid artifacts when using the LC(h) curve.
 TP_LOCALLAB_DENOIQUA_TOOLTIP;Conservative mode preserves low frequency detail. Aggressive mode removes low frequency detail.\nConservative and Aggressive modes use wavelets and DCT and can be used in conjunction with 'Non-local Means – Luminance'.
