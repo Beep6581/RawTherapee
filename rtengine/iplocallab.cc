@@ -12300,8 +12300,6 @@ void ImProcFunctions::DeNoise(int call, int aut,  bool noiscfactiv, const struct
 
                 const std::unique_ptr<Imagefloat> tmpImage(new Imagefloat(original->W, original->H));//all image
                 lab2rgb(*original, *tmpImage, params->icm.workingProfile);//copy original  image lab to RGB
-                const std::unique_ptr<Imagefloat> tmpImagemask(new Imagefloat(original->W, original->H));//all image
-                lab2rgb(*original, *tmpImagemask, params->icm.workingProfile);//copy original  image lab to RGB
 
                 array2D<float> clipMask(GW, GH);       
                 array2D<float> clipMaskchro(GW, GH);       
@@ -12368,15 +12366,15 @@ void ImProcFunctions::DeNoise(int call, int aut,  bool noiscfactiv, const struct
                     } else if (denstr < 0.7f) {
                         medianTypeL = Median::TYPE_5X5_STRONG;
                         itera = 6;
-                    } else if (denstr < 0.8f) {
+                    } else if (denstr < 0.8f) {//slow
                         medianTypeL = Median::TYPE_7X7;
                         itera = 3;
                     } else if (denstr < 0.9f) {
                         medianTypeL = Median::TYPE_7X7;
-                        itera = 5;
-                    } else {
-                        medianTypeL = Median::TYPE_7X7;
-                        itera = 6;            
+                        itera = 4;
+                    } else {//very slow
+                        medianTypeL = Median::TYPE_9X9;
+                        itera = 3;            
                     }
                     ImProcFunctions::Median_Denoise(mR, mR, GW, GH, medianTypeL , itera, false, tmL);
                     ImProcFunctions::Median_Denoise(mG, mG, GW, GH, medianTypeL , itera, false, tmL);
@@ -12461,6 +12459,7 @@ void ImProcFunctions::DeNoise(int call, int aut,  bool noiscfactiv, const struct
                     } 
                 }          
             }
+            //end denoise with contrast threshold mask
 // end calculate
                 
             DeNoise_Local(call, lp,  originalmaskbl, levred, huerefblur, lumarefblur, chromarefblur, original, transformed, tmp1, cx, cy, sk);
