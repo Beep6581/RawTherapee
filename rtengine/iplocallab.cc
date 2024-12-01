@@ -6153,7 +6153,9 @@ void calclocalGradientParams(int call, const struct local_params& lp, struct gra
  // It seems that you need to change the position of the center of the GF which varies depending on the preview, but how?
  // parameters passe to calcGradientFactor may also be involved
  //    ?? bufmaskblurcol->L[ir][jr] *= ImProcFunctions::calcGradientFactor(gp, jr, ir);// jr - xstart, ir - ystart ?? or others factors
-    PreviewProps pp(tX, tY, tW * sk, tH * sk, sk);//perhaps needs ?
+   // sk = 1;
+    int sk3 = sqrt(sk);
+    PreviewProps pp(tX, tY, tW * sk3, tH * sk3, sk3);
     float kh = 1.f;
     float kw = 1.f;
     if(pp.getY() > 0) {
@@ -6161,7 +6163,6 @@ void calclocalGradientParams(int call, const struct local_params& lp, struct gra
     } else {
         kh = fh / pp.getHeight();  
     }
-  //  sk = 1;
     if(call == 2 || call == 3) {
          kh = kw = 1.f;
     }
