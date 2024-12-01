@@ -6155,6 +6155,10 @@ void calclocalGradientParams(int call, const struct local_params& lp, struct gra
  //    ?? bufmaskblurcol->L[ir][jr] *= ImProcFunctions::calcGradientFactor(gp, jr, ir);// jr - xstart, ir - ystart ?? or others factors
    // sk = 1;
     int sk3 = sqrt(sk);
+    if(lp.strcol != 0.f) {
+        sk3 = sk;
+    }
+    
     PreviewProps pp(tX, tY, tW * sk3, tH * sk3, sk3);
     float kh = 1.f;
     float kw = 1.f;
@@ -6248,8 +6252,12 @@ void calclocalGradientParams(int call, const struct local_params& lp, struct gra
         angs = lp.anggradcie;
         varfeath = 0.01f * lp.feathercie;
     }
-    int sk2 = sqrt(sk);
-    sk2 = 1;
+
+    int sk2 = 1;
+    if(lp.strcol != 0.f) {
+        sk2 = sqrt(sk);
+    }
+    
     double gradient_stops = stops / sk2;//to test with Skip but does not work well
     double gradient_angle = static_cast<double>(angs) / 180.0 * rtengine::RT_PI;
 
@@ -9855,11 +9863,11 @@ void ImProcFunctions::transit_shapedetect2(int sp, float meantm, float stdtm, in
                     reducdE = 1.f;
                 }
                 float factgrad = 1.f;
-                /* test to use in plain image
+                // test to use in plain image
                 if(grad == 1  && call == 1 && lp.strSH != 0.f) {
                     factgrad = buftmp1->L[y][x];
                 } 
-                */
+                
                 float cli = (factgrad * bufexpfin->L[y][x] - bufexporig->L[y][x] );
                 float cla = (bufexpfin->a[y][x] - bufexporig->a[y][x]);
                 float clb = (bufexpfin->b[y][x] - bufexporig->b[y][x]);
@@ -17311,12 +17319,12 @@ printf("CALL=%i \n", call);
 
 //gradient
 
-              //  int GW = transformed->W;
-              //  int GH = transformed->H;
+                int GW = transformed->W;
+                int GH = transformed->H;
 
                 struct grad_params gp;
 
-                if (lp.strSH != 0.f) {// && call == 2) {//test to plain image
+                if (lp.strSH != 0.f  && call == 2) {//test to plain image
                     calclocalGradientParams(call, lp, gp, ystart, xstart, yend, xend, bfw, bfh, oW, oH, tX, tY, tW, tH, 2, sk, fw, fh);
 #ifdef _OPENMP
                     #pragma omp parallel for schedule(dynamic,16) if (multiThread)
@@ -17327,7 +17335,7 @@ printf("CALL=%i \n", call);
                             bufexpfin->L[ir][jr] *= ImProcFunctions::calcGradientFactor(gp, jr, ir);
                         }
                     }
-                }/* else if(lp.strSH != 0.f && call == 1 && ((GW >= mDEN && GH >= mDEN))){//test to run in plain image
+                }  else if(lp.strSH != 0.f && call == 1 && ((GW >= mDEN && GH >= mDEN))){//test to run in plain image
                     calclocalGradientParams(call, lp, gp, ystart, xstart, yend, xend, GW, GH, oW, oH, tX, tY, tW, tH, 2, sk, fw, fh);
             //        LabImage tmp1(transformed->W, transformed->H);
 #ifdef _OPENMP
@@ -17346,7 +17354,7 @@ printf("CALL=%i \n", call);
                         }
                     }
                 }
-*/
+
                 if (lp.shmeth == 1) {
                     double scal = (double)(sk);
                     Imagefloat *tmpImage = nullptr;
@@ -17772,7 +17780,7 @@ printf("CALL=%i \n", call);
                 }
             }
             
-            int grad = 0;// grad = 1 to plain image
+            int grad = 1;// grad = 1 to plain image
 
             if (lp.recothrs >= 1.f) {
                 if(call != 1) {
