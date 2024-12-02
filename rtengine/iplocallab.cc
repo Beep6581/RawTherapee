@@ -12477,7 +12477,10 @@ void ImProcFunctions::DeNoise(int call, int aut,  bool noiscfactiv, const struct
 
             if (bfh >= mDEN && bfw >= mDEN) {
                 LabImage bufwv(bfw, bfh);
+                LabImage bufwv4(bfw, bfh);
                 bufwv.clear(true);
+                bufwv4.clear(true);
+                
                 array2D<float> *Lin = nullptr;
                 array2D<float> *Ain = nullptr;
                 array2D<float> *Bin = nullptr;
@@ -12506,6 +12509,9 @@ void ImProcFunctions::DeNoise(int call, int aut,  bool noiscfactiv, const struct
                             bufwv.L[loy - begy][lox - begx] = original->L[y][x];
                             bufwv.a[loy - begy][lox - begx] = original->a[y][x];
                             bufwv.b[loy - begy][lox - begx] = original->b[y][x];
+                            bufwv4.L[loy - begy][lox - begx] = original->L[y][x];
+                            bufwv4.a[loy - begy][lox - begx] = original->a[y][x];
+                            bufwv4.b[loy - begy][lox - begx] = original->b[y][x];
                         }
 
                     }
@@ -13142,6 +13148,156 @@ void ImProcFunctions::DeNoise(int call, int aut,  bool noiscfactiv, const struct
                         masklum.free();
                         masklumch.free();
                     }
+//begin denoise with contrast threshold
+                    bool autode = lp.denoAutocontr;
+                    float denoco = denocont;
+                    if(!autode) {
+                        denoco = lp.denocontra;
+                    }
+
+                if(lp.enacontr){        
+                        TMatrix wprof = ICCStore::getInstance()->workingSpaceMatrix(params->icm.workingProfile);
+
+                        const float wip[3][3] = {
+                            {(float) wprof[0][0], (float) wprof[0][1], (float) wprof[0][2]},
+                            {(float) wprof[1][0], (float) wprof[1][1], (float) wprof[1][2]},
+                            {(float) wprof[2][0], (float) wprof[2][1], (float) wprof[2][2]}
+                        };
+
+                        const std::unique_ptr<Imagefloat> tmpImage(new Imagefloat(bfw, bfh));//all image
+                        lab2rgb(bufwv4, *tmpImage, params->icm.workingProfile);//copy original  image lab to RGB
+
+                        array2D<float> clipMask(bfw, bfh);       
+                        array2D<float> clipMaskchro(bfw, bfh);       
+                     
+                        array2D<float> redVals (bfw, bfh);
+                        array2D<float> greenVals(GW, GH);
+                        array2D<float> blueVals(bfw, bfh);
+#ifdef _OPENMP
+            #pragma omp parallel for schedule(dynamic,16) if (multiThread)
+#endif
+                        for (int i = 0; i < bfh; ++i) {
+                            for (int j = 0; j < bfw; ++j) {
+                                redVals[i][j] = tmpImage->r(i,j);
+                                greenVals[i][j] = tmpImage->g(i,j);
+                                blueVals[i][j] = tmpImage->b(i,j);
+                            }
+                        }
+                        
+                        float denstr = lp.denomas;
+               
+                    if(lp.denomas > 0.f) {//denoise mask
+
+                            float** tmL;
+                            float** mR;
+                            float** mG;
+                            float** mB;
+                            int wid = bfw;
+                            int hei = bfh;
+                            tmL = new float*[hei];
+                            mR = new float*[hei];
+                            mG = new float*[hei];
+                            mB = new float*[hei];
+
+                            for (int i = 0; i < hei; ++i) {
+                                tmL[i] = new float[wid];
+                                mR[i] = new float[wid];
+                                mG[i] = new float[wid];
+                                mB[i] = new float[wid];
+                            }
+#ifdef _OPENMP
+    #pragma omp parallel for schedule(dynamic, 16)
+#endif                  
+                            for (int i = 0; i < bfh; ++i) {
+                                for (int j = 0; j < bfw; ++j) {
+                                    mR[i][j] = redVals[i][j];
+                                    mG[i][j] = greenVals[i][j];
+                                    mB[i][j] = blueVals[i][j];
+                                }
+                            }
+                            
+                        ImProcFunctions::Median medianTypeL = Median::TYPE_3X3_SOFT;
+
+                        int itera = 1;
+                        if(denstr < 0.2f) {
+                            medianTypeL = Median::TYPE_3X3_SOFT;
+                            itera = 1;
+                        } else if (denstr < 0.35f) {
+                            medianTypeL = Median::TYPE_3X3_STRONG;
+                            itera = 2;
+                        } else if (denstr < 0.45f) {
+                            medianTypeL = Median::TYPE_3X3_STRONG;
+                            itera = 4;
+                        } else if (denstr < 0.6f) {
+                            medianTypeL = Median::TYPE_5X5_STRONG;
+                            itera = 4;
+                        } else if (denstr < 0.7f) {
+                            medianTypeL = Median::TYPE_5X5_STRONG;
+                            itera = 6;
+                        } else if (denstr < 0.8f) {//slow
+                            medianTypeL = Median::TYPE_7X7;
+                            itera = 3;
+                        } else if (denstr < 0.9f) {
+                            medianTypeL = Median::TYPE_7X7;
+                            itera = 4;
+                        } else {//very slow
+                            medianTypeL = Median::TYPE_9X9;
+                            itera = 3;            
+                        }
+                        ImProcFunctions::Median_Denoise(mR, mR, bfw, bfh, medianTypeL , itera, false, tmL);
+                        ImProcFunctions::Median_Denoise(mG, mG, bfw, bfh, medianTypeL , itera, false, tmL);
+                        ImProcFunctions::Median_Denoise(mB, mB, bfw, bfh, medianTypeL , itera, false, tmL);
+#ifdef _OPENMP
+    #pragma omp parallel for schedule(dynamic, 16)
+#endif
+                        for (int i = 0; i < bfh; ++i) {
+                            for (int j = 0; j < bfw; ++j) {
+                                redVals[i][j] = intp(denstr, mR[i][j], redVals[i][j]); 
+                                greenVals[i][j] = intp(denstr, mG[i][j], greenVals[i][j]); 
+                                blueVals[i][j] = intp(denstr, mB[i][j], blueVals[i][j]); 
+                            }
+                        }
+
+
+                        for (int i = 0; i < hei; ++i) {
+                            delete[] tmL[i];
+                            delete[] mR[i];
+                            delete[] mG[i];
+                            delete[] mB[i];
+                        }
+
+                        delete[] tmL;
+                        delete[] mR;
+                        delete[] mG;
+                        delete[] mB;
+                    }
+
+                    float s_scale = std::sqrt(sk);
+                    float contrast = pow_F(denoco / 100.f, 1.f) * s_scale;
+                  
+                    array2D<float> Y (bfw, bfh);
+            
+                    for (int i = 0; i < bfh; ++i) {
+                        Color::RGB2L(redVals[i], greenVals[i], blueVals[i], Y[i], wip, bfw);
+                    }
+                    float reducautocontrast = 1.f;//to take noise into account
+                    buildBlendMask2(Y, clipMask, bfw, bfh, contrast, 1.f, autode, 2.f / s_scale, 1.f, reducautocontrast);
+               
+                    denocont = 100.f * pow_F(contrast, 1.f)/ s_scale;
+                             
+#ifdef _OPENMP
+            #pragma omp parallel for schedule(dynamic,16) if (multiThread)
+#endif
+                        for (int ir = 0; ir < bfh; ir++) {
+                            for (int jr = 0; jr < bfw; jr++) {
+                                bufwv.L[ir][jr] = intp(clipMask[ir][jr], bufwv.L[ir][jr], bufwv4.L[ir][jr]);
+                                bufwv.a[ir][jr] = intp(lp.denorati * clipMask[ir][jr], bufwv.a[ir][jr], bufwv4.a[ir][jr]);
+                                bufwv.b[ir][jr] = intp(lp.denorati * clipMask[ir][jr], bufwv.b[ir][jr], bufwv4.b[ir][jr]);
+                            }
+                        } 
+                }       
+            //end denoise with contrast threshold mask
+
 
                     DeNoise_Local2(lp,  originalmaskbl, levred, huerefblur, lumarefblur, chromarefblur, original, transformed, bufwv, cx, cy, sk);
                 } else {
