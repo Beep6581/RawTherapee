@@ -11499,7 +11499,7 @@ void ImProcFunctions::recovm(float highrec, float lowrec, float thrrec, bool inv
 
 
 void ImProcFunctions::DeNoise(int call, int aut,  bool noiscfactiv, const struct local_params & lp, LabImage * originalmaskbl, LabImage *  bufmaskblurbl, int levred, float huerefblur, float lumarefblur, float chromarefblur, LabImage * original, LabImage * transformed,
-    int cx, int cy, int sk, const LocwavCurve& locwavCurvehue, bool locwavhueutili, float& highresi, float& nresi, float& highresi46, float& nresi46, float& Lhighresi, float& Lnresi, float& Lhighresi46, float& Lnresi46, float *resi, float &denocont)
+    int cx, int cy, int sk, const LocwavCurve& locwavCurvehue, bool locwavhueutili, float *resi, float &denocont)
 {
    // BENCHFUN
 //local denoise
@@ -12239,16 +12239,11 @@ void ImProcFunctions::DeNoise(int call, int aut,  bool noiscfactiv, const struct
             chmaxresid += chmaxresidtemp;
             int nbmaddir = 4;
             chresid = sqrt(chresid / ( 3 * nbmaddir * 2));
-         //   resi[0] = highresi = chresid + 0.5f * (sqrt(chmaxresid) - chresid); //evaluate sigma
             resi[0] = chresid + 0.5f * (sqrt(chmaxresid) - chresid); //evaluate sigma
-           // nresi = chresid;
             resi[1] = chresid;
-           // highresi /= 1.4f;//arbitrary coefficient
             resi[0] /= 1.4f;//arbitrary coefficient
-           // resi[1] = nresi /= 1.4f;
             resi[1] /= 1.4f;
 
-    //        printf("nresi03=%f highresi=%f \n", (double) nresi, (double) highresi);
 
 
             Noise_residualAB(adecompinf, chresid46, chmaxresid46, false, 4, 6);
@@ -12259,39 +12254,28 @@ void ImProcFunctions::DeNoise(int call, int aut,  bool noiscfactiv, const struct
             chresid46 += chresidtemp46;
             chmaxresid46 += chmaxresidtemp46;
             chresid46 = sqrt(chresid46 / ( 3 * nbmaddir * 2));
-            //highresi46 = chresid46 + 0.5f * (sqrt(chmaxresid46) - chresid46); //evaluate sigma
             resi[2] = chresid46 + 0.5f * (sqrt(chmaxresid46) - chresid46); //evaluate sigma
-          //  nresi46 = chresid46;
             resi[3] = chresid46;
-         //   resi[2] = highresi46 /= 2.f;//arbitrary coefficient
             resi[2] /= 2.f;//arbitrary coefficient
-          //  resi[3] = nresi46 /= 2.f;
             resi[3] /= 2.f;
             
-    //        printf("nresi46=%f highresi=%f \n", (double) nresi46, (double) highresi46);
 
 
             Noise_residualAB(Ldecompinf, Lresid, Lmaxresid, false, 0, 3);
             nbmaddir = 4;
             Lresid = sqrt(Lresid / (3 * nbmaddir));
-           // Lhighresi = Lresid + 0.5f * (sqrt(Lmaxresid) - Lresid); //evaluate sigma
             resi[5] = Lresid + 0.5f * (sqrt(Lmaxresid) - Lresid); //evaluate sigma
-           // Lnresi = Lresid;
             resi[4] = Lresid;
             resi[4] /= 2.f;//arbitrary coefficient
             resi[5] /= 2.f;
-           // printf("Lresi03=%f Lhighresi=%f levwavL=%i\n", (double) Lnresi, (double) Lhighresi, levwavL);
 
             Noise_residualAB(Ldecompinf, Lresid46, Lmaxresid46, false, 4, 6);
             nbmaddir = 3;
             Lresid46 = sqrt(Lresid46 / (3 * nbmaddir));
-         //   Lhighresi46 = Lresid46 + 0.5f * (sqrt(Lmaxresid46) - Lresid46); //evaluate sigma
             resi[6] = Lresid46 + 0.5f * (sqrt(Lmaxresid46) - Lresid46); //evaluate sigma
-            //Lnresi46 = Lresid46;
             resi[7] = Lresid46;
             resi[6] /= 5.f;//arbitrary coefficient
             resi[7] /= 5.f;
-           // printf("Lresi46=%f Lhighresi=%f levwavL=%i\n", (double) Lnresi46, (double) Lhighresi46, levwavL);
 
 //begin denoise with contrast threshold
             bool autode = lp.denoAutocontr;
@@ -14350,7 +14334,7 @@ void ImProcFunctions::Lab_Local(
     bool prevDeltaE, int llColorMask, int llColorMaskinv, int llExpMask, int llExpMaskinv, int llSHMask, int llSHMaskinv, int llvibMask, int lllcMask, int llsharMask, int llcbMask, int llretiMask, int llsoftMask, int lltmMask, int llblMask, int lllogMask, int ll_Mask, int llcieMask,
     float& minCD, float& maxCD, float& mini, float& maxi, float& Tmean, float& Tsigma, float& Tmin, float& Tmax,
     float& meantm, float& stdtm, float& meanreti, float& stdreti, float &fab,float &maxicam, float &rdx, float &rdy, float &grx, float &gry, float &blx, float &bly, float &meanx, float &meany, float &meanxe, float &meanye, int &prim, int &ill, float &contsig, float &lightsig,
-    float& highresi, float& nresi, float& highresi46, float& nresi46, float& Lhighresi, float& Lnresi, float& Lhighresi46, float& Lnresi46, float *resi, float &sharc, float &denocont 
+    float *resi, float &sharc, float &denocont 
 
     )
 {
@@ -15409,7 +15393,7 @@ void ImProcFunctions::Lab_Local(
     if (lp.activspot && lp.denoiena && (lp.noiself > 0.f || lp.noiself0 > 0.f || lp.noiself2 > 0.f || lp.wavcurvedenoi ||lp.nlstr > 0 || lp.noiselc > 0.f || lp.noisecf > 0.f || lp.noisecc > 0.f )) {//disable denoise if not used
         constexpr int aut = 0;
         DeNoise(call, aut, noiscfactiv, lp, originalmaskbl.get(), bufmaskblurbl.get(), levred, huerefblur, lumarefblur, chromarefblur, original, transformed, cx, cy, sk, locwavCurvehue, locwavhueutili,
-                highresi, nresi, highresi46, nresi46, Lhighresi, Lnresi, Lhighresi46, Lnresi46, resi, denocont);
+               resi, denocont);
         if (lp.recur) {
             original->CopyFrom(transformed, multiThread);
             float avge;
