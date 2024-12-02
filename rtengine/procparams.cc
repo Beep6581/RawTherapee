@@ -3783,7 +3783,7 @@ LocallabParams::LocallabSpot::LocallabSpot() :
         0.35
     },
     csthresholdblur(0, 0, 6, 5, false),
-    denocontrast(20.),
+    denocontrast(10.),
     denoAutocontrast(true),
     contrshow(false),
     enacontrast(true),
