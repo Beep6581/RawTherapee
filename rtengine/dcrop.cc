@@ -1094,6 +1094,8 @@ void Crop::update(int todo)
             float Lnresi = 0.f;
             float Lhighresi46 = 0.f;
             float Lnresi46 = 0.f;
+            float resi[8];
+            
             float contsig = params.locallab.spots.at(sp).contsigqcie;
             
             float lightsig = params.locallab.spots.at(sp).lightsigqcie;
@@ -1169,7 +1171,7 @@ void Crop::update(int todo)
                         parent->previewDeltaE, parent->locallColorMask, parent->locallColorMaskinv, parent->locallExpMask, parent->locallExpMaskinv, parent->locallSHMask, parent->locallSHMaskinv, parent->locallvibMask,  parent->localllcMask, parent->locallsharMask, parent->locallcbMask, parent->locallretiMask, parent->locallsoftMask, parent->localltmMask, parent->locallblMask,
                         parent->localllogMask, parent->locall_Mask, parent->locallcieMask, minCD, maxCD, mini, maxi, Tmean, Tsigma, Tmin, Tmax,
                         meantme, stdtme, meanretie, stdretie, fab, maxicam,rdx, rdy, grx, gry, blx, bly, meanx, meany, meanxe, meanye, prim, ill, contsig, lightsig,
-                        highresi, nresi, highresi46, nresi46, Lhighresi, Lnresi, Lhighresi46, Lnresi46, sharc, denocont);
+                        highresi, nresi, highresi46, nresi46, Lhighresi, Lnresi, Lhighresi46, Lnresi46, resi, sharc, denocont);
 
                         if (parent->previewDeltaE || parent->locallColorMask == 5 || parent->locallvibMask == 4 || parent->locallExpMask == 5 || parent->locallSHMask == 4 || parent->localllcMask == 4 || parent->localltmMask == 4 || parent->localllogMask == 4 || parent->locallsoftMask == 6 || parent->localllcMask == 4 || parent->locallcieMask == 4) {
                             params.blackwhite.enabled = false;
@@ -1256,7 +1258,7 @@ void Crop::update(int todo)
                         huerefblu, chromarefblu, lumarefblu, huere, chromare, lumare, sobelre, lastsav, false, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
                         minCD, maxCD, mini, maxi, Tmean, Tsigma, Tmin, Tmax,
                         meantme, stdtme, meanretie, stdretie, fab, maxicam, rdx, rdy, grx, gry, blx, bly, meanx, meany, meanxe, meanye, prim, ill, contsig, lightsig,
-                        highresi, nresi, highresi46, nresi46, Lhighresi, Lnresi, Lhighresi46, Lnresi46, sharc, denocont);
+                        highresi, nresi, highresi46, nresi46, Lhighresi, Lnresi, Lhighresi46, Lnresi46, resi, sharc, denocont);
             }
             
                         LocallabListener::locallabDenoiseLC2 denoiselc2;
@@ -1264,14 +1266,14 @@ void Crop::update(int todo)
                         localldenoiselc2.push_back(denoiselc2);
             
                         LocallabListener::locallabDenoiseLC denoiselc;
-                        denoiselc.highres = highresi;
-                        denoiselc.nres = nresi; 
-                        denoiselc.highres46 = highresi46;
-                        denoiselc.nres46 = nresi46;
-                        denoiselc.Lhighres =  Lhighresi;
-                        denoiselc.Lnres = Lnresi;
-                        denoiselc.Lhighres46 = Lhighresi46;
-                        denoiselc.Lnres46 = Lnresi46;
+                        denoiselc.highres = resi[0];//highresi;
+                        denoiselc.nres = resi[1]; //nresi; 
+                        denoiselc.highres46 = resi[2]; //highresi46;
+                        denoiselc.nres46 = resi[3]; //nresi46;
+                        denoiselc.Lhighres = resi[5];// Lhighresi;
+                        denoiselc.Lnres = resi[4]; //Lnresi;
+                        denoiselc.Lhighres46 = resi[6]; //Lhighresi46;
+                        denoiselc.Lnres46 = resi[7]; //Lnresi46;
                         localldenoiselc.push_back(denoiselc);
             
                         LocallabListener::locallabsharAFT locsharaft;
