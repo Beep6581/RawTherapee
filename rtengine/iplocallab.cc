@@ -12447,7 +12447,7 @@ void ImProcFunctions::DeNoise(int call, int aut,  bool noiscfactiv, const struct
 #endif
                     for (int ir = 0; ir < GH; ir++) {
                         for (int jr = 0; jr < GW; jr++) {
-                            tmp1.L[ir][jr] = intp(clipMask[ir][jr], tmp1.L[ir][jr], tmp4.L[ir][jr]);
+                            tmp1.L[ir][jr] = intp(lp.denorati * clipMask[ir][jr], tmp1.L[ir][jr], tmp4.L[ir][jr]);
                             tmp1.a[ir][jr] = intp(lp.denorati * clipMask[ir][jr], tmp1.a[ir][jr], tmp4.a[ir][jr]);
                             tmp1.b[ir][jr] = intp(lp.denorati * clipMask[ir][jr], tmp1.b[ir][jr], tmp4.b[ir][jr]);
                         }
@@ -13286,7 +13286,7 @@ void ImProcFunctions::DeNoise(int call, int aut,  bool noiscfactiv, const struct
 #endif
                         for (int ir = 0; ir < bfh; ir++) {
                             for (int jr = 0; jr < bfw; jr++) {
-                                bufwv.L[ir][jr] = intp(clipMask[ir][jr], bufwv.L[ir][jr], bufwv4.L[ir][jr]);
+                                bufwv.L[ir][jr] = intp(lp.denorati * clipMask[ir][jr], bufwv.L[ir][jr], bufwv4.L[ir][jr]);
                                 bufwv.a[ir][jr] = intp(lp.denorati * clipMask[ir][jr], bufwv.a[ir][jr], bufwv4.a[ir][jr]);
                                 bufwv.b[ir][jr] = intp(lp.denorati * clipMask[ir][jr], bufwv.b[ir][jr], bufwv4.b[ir][jr]);
                             }
