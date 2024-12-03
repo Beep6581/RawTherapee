@@ -17784,18 +17784,18 @@ void ImProcFunctions::Lab_Local(
                 }
             }
             
-            int grad = 1;// grad = 1 to plain image
+            int grad = 0;// grad = 1 to plain image
 
             if (lp.recothrs >= 1.f) {
-                if(call <= 3) {//call == 2
+                if(call <= 3) {//call == 2 to run in mode plain image
                     transit_shapedetect2(sp, 0.f, 0.f, call, 9, bufexporig.get(), bufexpfin.get(), originalmaskSH.get(), hueref, chromaref, lumaref, sobelref, 0.f, nullptr, lp, original, transformed, nullptr, 0, cx, cy, sk);
-                } else {
+                } else {// mode plain image
                   //  transit_shapedetect2(sp, 0.f, 0.f, call, 9, bufexporig.get(), bufexpfin.get(), originalmaskSH.get(), hueref, chromaref, lumaref, sobelref, 0.f, nullptr, lp, original, transformed, tmp1.get(), grad, cx, cy, sk);                   
                 } 
             } else {
-                if(call <= 3) {//call == 2
+                if(call <= 3) {//call == 2 to run in mode plain image
                     transit_shapedetect2(sp, 0.f, 0.f, call, 9, bufexporig.get(), bufexpfin.get(), nullptr, hueref, chromaref, lumaref, sobelref, 0.f, nullptr, lp, original, transformed, nullptr, 0,  cx, cy, sk);
-                } else {
+                } else {// mode plain image
                     transit_shapedetect2(sp, 0.f, 0.f, call, 9, bufexporig.get(), bufexpfin.get(), nullptr, hueref, chromaref, lumaref, sobelref, 0.f, nullptr, lp, original, transformed, tmp1.get(), grad, cx, cy, sk);
                 }
             }
