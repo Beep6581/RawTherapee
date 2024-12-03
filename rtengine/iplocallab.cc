@@ -6154,35 +6154,26 @@ void calclocalGradientParams(int call, const struct local_params& lp, struct gra
  // parameters passe to calcGradientFactor may also be involved
  //    ?? bufmaskblurcol->L[ir][jr] *= ImProcFunctions::calcGradientFactor(gp, jr, ir);// jr - xstart, ir - ystart ?? or others factors
    // sk = 1;
-    int sk3 = sqrt(sk);//empirical value ??
-    if(lp.strcol != 0.f) {
-        sk3 = sk;
+    int sk3 = sk; //sqrt(sk);//empirical value ??
+    if(lp.strcol != 0.f && lp.colorena) {//to test if different
+        sk3 = sqrt(sk);
     }
     
     PreviewProps pp(tX, tY, tW * sk3, tH * sk3, sk3);
-    float kh = 1.f;
-    float kw = 1.f;
-    if(pp.getY() > 0) {//getY = tY
-        kh = pp.getHeight() / fh;
-    } else {
-        kh = fh / pp.getHeight();  
-    }
-    if(pp.getX() > 0) {//getX = tX
-        kw = pp.getWidth() / fw;
-    } else {
-        kw = fw / pp.getWidth();  
-    }
-    
-    if(call == 2) {
+/*
+    if(call == 2 && call == 3) {
          kh = kw = 1.f;
     }
-
-    double gradient_center_x = LIM01((lp.xcent * bfw * kw - xstart) / bfw);//???
-    double gradient_center_y = LIM01((lp.ycent * bfh * kh - ystart) / bfh);//???
-
+*/
+    double gradient_center_x = LIM01((lp.xcent * (bfw - tX) - xstart) / bfw);
+    double gradient_center_y = LIM01((lp.ycent * (bfh - tY) - ystart) / bfh);
+    if(call == 2) {//simpleprocess
+        gradient_center_x = LIM01((lp.xcent * (bfw) - xstart) / bfw);
+        gradient_center_y = LIM01((lp.ycent * (bfh) - ystart) / bfh);
+    }
 
     if (settings->verbose) {
-        printf("call=%i xcent=%f ycent=%f \n", call, (double) lp.xcent, (double) lp.ycent);   
+        printf("call=%i xcent=%.2f ycent=%.2f Gcx=%.2f Gcy=%.2f indic=%i \n", call, (double) lp.xcent, (double) lp.ycent, gradient_center_x, gradient_center_y, indic);   
         printf("fw=%i fh=%i bfw=%i bfh=%i oW=%i oH=%i tW=%i tH=%i tX=%i tY=%i xstart=%.1f ystrat=%.1f xend=%.1f yend=%.1f xc=%.1f yc=%.1f yT=%.1f xL=%.1f sk=%i\n", fw, fh, bfw, bfh, oW, oH, tW, tH, tX, tY, (double) xstart, (double) ystart, (double) xend, (double) yend, (double) lp.xc, (double) lp.yc, (double) lp.lyT, (double)lp.lxL,  sk);
         printf("PreviewProps: getx=%i gety=%i getW=%i getH=%i\n", pp.getX(), pp.getY(), pp.getWidth(), pp.getHeight()); 
     }
@@ -6260,7 +6251,7 @@ void calclocalGradientParams(int call, const struct local_params& lp, struct gra
     }
 
     int sk2 = 1;
-    if(lp.strcol != 0.f) {
+    if(lp.strcol != 0.f  && lp.colorena) {
         sk2 = sqrt(sk);
     }
     
@@ -17348,7 +17339,7 @@ void ImProcFunctions::Lab_Local(
                             bufexpfin->L[ir][jr] *= ImProcFunctions::calcGradientFactor(gp, jr, ir);
                         }
                     }
-                }  else if(lp.strSH != 0.f && call == 1 && ((GW >= mDEN && GH >= mDEN))){//test to run in plain image
+                }  else if(lp.strSH != 0.f && call != 2 && ((GW >= mDEN && GH >= mDEN))){//test to run in plain image
                     calclocalGradientParams(call, lp, gp, ystart, xstart, yend, xend, GW, GH, oW, oH, tX, tY, tW, tH, 2, sk, fw, fh);
 #ifdef _OPENMP
             #pragma omp parallel for schedule(dynamic,16) if (multiThread)
