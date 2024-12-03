@@ -6162,12 +6162,12 @@ void calclocalGradientParams(int call, const struct local_params& lp, struct gra
     PreviewProps pp(tX, tY, tW * sk3, tH * sk3, sk3);
     float kh = 1.f;
     float kw = 1.f;
-    if(pp.getY() > 0) {
+    if(pp.getY() > 0) {//getY = tY
         kh = pp.getHeight() / fh;
     } else {
         kh = fh / pp.getHeight();  
     }
-    if(pp.getX() > 0) {
+    if(pp.getX() > 0) {//getX = tX
         kw = pp.getWidth() / fw;
     } else {
         kw = fw / pp.getWidth();  
@@ -6183,7 +6183,7 @@ void calclocalGradientParams(int call, const struct local_params& lp, struct gra
 
     if (settings->verbose) {
         printf("call=%i xcent=%f ycent=%f \n", call, (double) lp.xcent, (double) lp.ycent);   
-        printf("fw=%i fh=%i bfw=%i bfh=%i oW=%i oH=%i tW=%i tH=%i xstart=%f ystrat=%f xend=%f yend=%f xc=%f yc=%f yT=%f xL=%f sk=%i\n", fw, fh, bfw, bfh, oW, oH, tW, tH, (double) xstart, (double) ystart, (double) xend, (double) yend, (double) lp.xc, (double) lp.yc, (double) lp.lyT, (double)lp.lxL,  sk);
+        printf("fw=%i fh=%i bfw=%i bfh=%i oW=%i oH=%i tW=%i tH=%i tX=%i tY=%i xstart=%.1f ystrat=%.1f xend=%.1f yend=%.1f xc=%.1f yc=%.1f yT=%.1f xL=%.1f sk=%i\n", fw, fh, bfw, bfh, oW, oH, tW, tH, tX, tY, (double) xstart, (double) ystart, (double) xend, (double) yend, (double) lp.xc, (double) lp.yc, (double) lp.lyT, (double)lp.lxL,  sk);
         printf("PreviewProps: getx=%i gety=%i getW=%i getH=%i\n", pp.getX(), pp.getY(), pp.getWidth(), pp.getHeight()); 
     }
 
