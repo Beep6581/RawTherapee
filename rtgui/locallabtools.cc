@@ -1099,7 +1099,7 @@ sigc::connection *LocallabColor::getPreviewDeltaEButtonConnection()
 {
     return &previewcolConn;
 }
-
+ 
 void LocallabColor::updateAdviceTooltips(const bool showTooltips)
 {
     if (showTooltips) {
@@ -3136,6 +3136,7 @@ void LocallabExposure::updateAdviceTooltips(const bool showTooltips)
         structexp->set_tooltip_text(M("TP_LOCALLAB_STRUCT_TOOLTIP"));
         expchroma->set_tooltip_text(M("TP_LOCALLAB_EXPCHROMA_TOOLTIP"));
         shapeexpos->setTooltip(M("TP_LOCALLAB_CURVEEDITOR_TONES_TOOLTIP"));
+        expgradexp->set_tooltip_text(M("TP_LOCALLAB_EXPGRADCOL_TOOLTIP"));
         strexp->set_tooltip_text(M("TP_LOCALLAB_GRADGEN_TOOLTIP"));
         expmaskexp->set_tooltip_markup(M("TP_LOCALLAB_MASK_TOOLTIP"));
         CCmaskexpshape->setTooltip(M("TP_LOCALLAB_CURVEEDITOR_CC_TOOLTIP"));
@@ -3186,6 +3187,8 @@ void LocallabExposure::updateAdviceTooltips(const bool showTooltips)
         slomaskexp->set_tooltip_text("");
         lapmaskexp->set_tooltip_text("");
         gamex->set_tooltip_text("");
+        expgradexp->set_tooltip_text("");
+
     }
 }
 
@@ -4757,6 +4760,8 @@ void LocallabShadow::updateAdviceTooltips(const bool showTooltips)
         recothress->set_tooltip_text(M("TP_LOCALLAB_RECOTHRES02_TOOLTIP"));
         gamSH->set_tooltip_text(M("TP_LOCALLAB_SHTRC_TOOLTIP"));
         reparsh->set_tooltip_text(M("TP_LOCALLAB_REPARSH_TOOLTIP"));
+        expgradsh->set_tooltip_text(M("TP_LOCALLAB_EXPGRADCOL_TOOLTIP"));
+
         sloSH->set_tooltip_text(M("TP_LOCALLAB_SHTRC_TOOLTIP"));
         strSH->set_tooltip_text(M("TP_LOCALLAB_GRADGEN_TOOLTIP"));
         exprecovs->set_tooltip_markup(M("TP_LOCALLAB_MASKRESH_TOOLTIP"));
@@ -4855,6 +4860,7 @@ void LocallabShadow::updateAdviceTooltips(const bool showTooltips)
         BP_Frame->set_tooltip_text("");
         ghsFrame->set_tooltip_text("");
         gridFrameghs->set_tooltip_text("");
+        expgradsh->set_tooltip_text("");
 
     }
 }
@@ -6454,6 +6460,7 @@ void LocallabVibrance::updateAdviceTooltips(const bool showTooltips)
         slomaskvib->set_tooltip_text(M("TP_LOCALLAB_SLOMASK_TOOLTIP"));
         lapmaskvib->set_tooltip_text(M("TP_LOCALLAB_LAPRAD1_TOOLTIP"));
         vibgam->set_tooltip_text(M("TP_LOCALLAB_GAMCOL_TOOLTIP"));
+        expgradvib->set_tooltip_text(M("TP_LOCALLAB_EXPGRADCOL_TOOLTIP"));
 
 /*
         saturated->set_tooltip_text(M("TP_LOCALLAB_NUL_TOOLTIP"));
@@ -6508,6 +6515,7 @@ void LocallabVibrance::updateAdviceTooltips(const bool showTooltips)
         lowthresv->set_tooltip_text("");
         higthresv->set_tooltip_text("");
         vibgam->set_tooltip_text("");
+        expgradvib->set_tooltip_text("");
     }
 }
 
