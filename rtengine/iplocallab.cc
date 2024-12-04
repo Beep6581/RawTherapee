@@ -17326,9 +17326,19 @@ void ImProcFunctions::Lab_Local(
              //   int GH = transformed->H;
 
                 struct grad_params gp;
-
-                if (lp.strSH != 0.f) {//  && call == 2) {//test to plain image
+                int grad = 0;// grad = 1 to plain image
+                int ca1 = 1;
+                int ca2 = 2;
+                int ca3 = 3;
+                int ca4 = 4;
+                if(grad == 1) {
+                    ca1 = 2;
+                    ca2 = 2;
+                    ca3 = 2;
+                }
+                if (lp.strSH != 0.f && (call == ca1 || call == ca2 || call == ca3) {//  && call == 2) {//test to plain image
                     calclocalGradientParams(call, lp, gp, ystart, xstart, yend, xend, bfw, bfh, oW, oH, tX, tY, tW, tH, 2, sk, fw, fh);
+                    
 #ifdef _OPENMP
                     #pragma omp parallel for schedule(dynamic,16) if (multiThread)
 #endif
@@ -17784,8 +17794,7 @@ void ImProcFunctions::Lab_Local(
                 }
             }
             
-            int grad = 0;// grad = 1 to plain image
-
+            grad = 0;
             if (lp.recothrs >= 1.f) {
                 if(call <= 3) {//call == 2 to run in mode plain image
                     transit_shapedetect2(sp, 0.f, 0.f, call, 9, bufexporig.get(), bufexpfin.get(), originalmaskSH.get(), hueref, chromaref, lumaref, sobelref, 0.f, nullptr, lp, original, transformed, nullptr, 0, cx, cy, sk);
