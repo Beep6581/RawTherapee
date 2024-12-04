@@ -6160,6 +6160,11 @@ void calclocalGradientParams(int call, const struct local_params& lp, struct gra
 
     double gradient_center_x = LIM01((lp.xcent * (bfw - tX) - xstart) / bfw);
     double gradient_center_y = LIM01((lp.ycent * (bfh - tY) - ystart) / bfh);
+
+
+ //   double gradient_center_x = LIM01((lp.xcent * (bfw - tX)) / bfw);
+ //   double gradient_center_y = LIM01((lp.ycent * (bfh - tY)) / bfh);
+
     if(call == 2) {//simpleprocess
         gradient_center_x = LIM01((lp.xcent * (bfw) - xstart) / bfw);
         gradient_center_y = LIM01((lp.ycent * (bfh) - ystart) / bfh);
@@ -9501,7 +9506,7 @@ void ImProcFunctions::transit_shapedetect2(int sp, float meantm, float stdtm, in
             for (int jr = 0; jr < bfw; jr++) {
                 buftmp1->L[ir][jr] = 1.f;
             }
-    if(grad == 1  && call != 2 && lp.strSH != 0.f) {
+    if(grad == 1  && call != 2 && lp.strSH != 0.f) {//test mode GF plain image
 #ifdef _OPENMP
         #pragma omp parallel for schedule(dynamic,16) if(multiThread)
 #endif
@@ -9511,7 +9516,6 @@ void ImProcFunctions::transit_shapedetect2(int sp, float meantm, float stdtm, in
             }
         }    
     }
-//                bufexpfin->L[y - ystart][x - xstart] = intp(repart, original->L[y][x], bufexpfin->L[y - ystart][x - xstart]);
     
     //initialize scope
     float varsens = lp.sensex;//exposure
@@ -9871,7 +9875,7 @@ void ImProcFunctions::transit_shapedetect2(int sp, float meantm, float stdtm, in
                 float clb = (bufexpfin->b[y][x] - bufexporig->b[y][x]);
 
                 if (delt) {
-                    if(grad == 1  && call == 1 && lp.strSH != 0.f) {                 
+                    if(grad == 1  && call == 1 && lp.strSH != 0.f) { //test mode plain image                
                         cli = (buftmp1->L[y + ystart][x + xstart] * bufexpfin->L[y][x] - original->L[y + ystart][x + xstart]);
                     } else {
                         cli = (bufexpfin->L[y][x] - original->L[y + ystart][x + xstart]);
@@ -9895,8 +9899,6 @@ void ImProcFunctions::transit_shapedetect2(int sp, float meantm, float stdtm, in
                 float factorx = localFactor;
              //   printf("OK 4\n");
                 if (zone > 0) {
-                  //  float kgrad = buftmp1->L[y + ystart][x + xstart];
-                  //  printf("kg=%f ", (double) kgrad);
                     //simplified transformed with deltaE and transition
                     transformed->L[y + ystart][x + xstart] = clipLoc(original->L[y + ystart][x + xstart]  + factorx * realstrdE );//clipLoc now do nothing...just keep in ace off
                     float diflc = factorx * realstrdE;
@@ -17298,6 +17300,17 @@ void ImProcFunctions::Lab_Local(
 
                 return;
             }
+            int grad = 1;// grad = 1 to plain image GF
+            int ca1 = 1;//dcrop
+            int ca2 = 2;//simpleprocess
+            int ca3 = 3;//improccordinator
+            int ca4 = 10;//do nothing
+            if(grad == 1) {//plain image GF
+                ca1 = 2;
+                ca2 = 2;
+                ca3 = 3;
+                ca4 = 1;
+            }
 
             if (lp.showmaskSHmet == 0 || lp.showmaskSHmet == 1  || lp.showmaskSHmet == 2 || lp.showmaskSHmet == 4 || lp.enaSHMask) {
 
@@ -17322,21 +17335,12 @@ void ImProcFunctions::Lab_Local(
 
 //gradient
 
-             //   int GW = transformed->W;
-             //   int GH = transformed->H;
+                int GW = transformed->W;
+                int GH = transformed->H;
 
                 struct grad_params gp;
-                int grad = 0;// grad = 1 to plain image
-                int ca1 = 1;
-                int ca2 = 2;
-                int ca3 = 3;
-                int ca4 = 4;
-                if(grad == 1) {
-                    ca1 = 2;
-                    ca2 = 2;
-                    ca3 = 2;
-                }
-                if (lp.strSH != 0.f && (call == ca1 || call == ca2 || call == ca3) {//  && call == 2) {//test to plain image
+
+                if (lp.strSH != 0.f && (call == ca1 || call == ca2 || call == ca3)) {//test to plain image
                     calclocalGradientParams(call, lp, gp, ystart, xstart, yend, xend, bfw, bfh, oW, oH, tX, tY, tW, tH, 2, sk, fw, fh);
                     
 #ifdef _OPENMP
@@ -17348,7 +17352,7 @@ void ImProcFunctions::Lab_Local(
                             bufexpfin->L[ir][jr] *= ImProcFunctions::calcGradientFactor(gp, jr, ir);
                         }
                     }
-                } /* else if(lp.strSH != 0.f && call != 2 && ((GW >= mDEN && GH >= mDEN))){//test to run in plain image
+                } else if(lp.strSH != 0.f && (call ==  ca4) && ((GW >= mDEN && GH >= mDEN))){//test to run in plain image
                     calclocalGradientParams(call, lp, gp, ystart, xstart, yend, xend, GW, GH, oW, oH, tX, tY, tW, tH, 2, sk, fw, fh);
 #ifdef _OPENMP
             #pragma omp parallel for schedule(dynamic,16) if (multiThread)
@@ -17368,7 +17372,7 @@ void ImProcFunctions::Lab_Local(
                         }
                     }
                 }
-*/
+
                 if (lp.shmeth == 1) {
                     double scal = (double)(sk);
                     Imagefloat *tmpImage = nullptr;
@@ -17793,18 +17797,30 @@ void ImProcFunctions::Lab_Local(
                     bufexpfin->b[x][y] = intp(repart, bufexporig->b[x][y], bufexpfin->b[x][y]);
                 }
             }
+/*            
+                grad = 0;
+                int ca1 = 1;//dcrop
+                int ca2 = 2;//simpleprocess
+                int ca3 = 3;//improccordinator
+                int ca4 = 10;//nothing
+                if(grad == 1) {
+                    ca1 = 2;
+                    ca2 = 2;
+                    ca3 = 3;
+                    ca4 = 1;
+                }
+*/            
             
-            grad = 0;
             if (lp.recothrs >= 1.f) {
-                if(call <= 3) {//call == 2 to run in mode plain image
+                if(call == ca1 || call == ca2 || call == ca3) {//call == 2 to run in mode plain image
                     transit_shapedetect2(sp, 0.f, 0.f, call, 9, bufexporig.get(), bufexpfin.get(), originalmaskSH.get(), hueref, chromaref, lumaref, sobelref, 0.f, nullptr, lp, original, transformed, nullptr, 0, cx, cy, sk);
-                } else {// mode plain image
-                  //  transit_shapedetect2(sp, 0.f, 0.f, call, 9, bufexporig.get(), bufexpfin.get(), originalmaskSH.get(), hueref, chromaref, lumaref, sobelref, 0.f, nullptr, lp, original, transformed, tmp1.get(), grad, cx, cy, sk);                   
+                } else if (call == ca4) {// mode plain image call = 1
+                    transit_shapedetect2(sp, 0.f, 0.f, call, 9, bufexporig.get(), bufexpfin.get(), originalmaskSH.get(), hueref, chromaref, lumaref, sobelref, 0.f, nullptr, lp, original, transformed, tmp1.get(), grad, cx, cy, sk);                   
                 } 
             } else {
-                if(call <= 3) {//call == 2 to run in mode plain image
+                if(call == ca1 || call == ca2 || call == ca3) {//call == 2 to run in mode plain image
                     transit_shapedetect2(sp, 0.f, 0.f, call, 9, bufexporig.get(), bufexpfin.get(), nullptr, hueref, chromaref, lumaref, sobelref, 0.f, nullptr, lp, original, transformed, nullptr, 0,  cx, cy, sk);
-                } else {// mode plain image
+                } else if (call == ca4) {// mode plain image
                     transit_shapedetect2(sp, 0.f, 0.f, call, 9, bufexporig.get(), bufexpfin.get(), nullptr, hueref, chromaref, lumaref, sobelref, 0.f, nullptr, lp, original, transformed, tmp1.get(), grad, cx, cy, sk);
                 }
             }
