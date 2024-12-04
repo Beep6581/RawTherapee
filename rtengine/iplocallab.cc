@@ -9498,6 +9498,12 @@ void ImProcFunctions::transit_shapedetect2(int sp, float meantm, float stdtm, in
     int bfh = yend - ystart;
 
 // test to use in plain image
+    bool execgradsh = false;
+    if(lp.fullim == 3 || lp.fullim == 2) {
+        execgradsh = true;
+    }
+
+
     const std::unique_ptr<LabImage> buftmp1(new LabImage(bfw, bfh));
 #ifdef _OPENMP
         #pragma omp parallel for schedule(dynamic,16) if(multiThread)
@@ -9506,7 +9512,7 @@ void ImProcFunctions::transit_shapedetect2(int sp, float meantm, float stdtm, in
             for (int jr = 0; jr < bfw; jr++) {
                 buftmp1->L[ir][jr] = 1.f;
             }
-    if(grad == 1  && call != 2 && lp.strSH != 0.f) {//test mode GF plain image
+    if(grad == 1  && call != 2 && lp.strSH != 0.f && execgradsh) {//test mode GF plain image
 #ifdef _OPENMP
         #pragma omp parallel for schedule(dynamic,16) if(multiThread)
 #endif
@@ -9866,7 +9872,7 @@ void ImProcFunctions::transit_shapedetect2(int sp, float meantm, float stdtm, in
                 }
                 float factgrad = 1.f;
                 // test to use in plain image
-                if(grad == 1  && call == 1 && lp.strSH != 0.f) {
+                if(grad == 1  && call == 1 && lp.strSH != 0.f  && execgradsh) {
                     factgrad = buftmp1->L[y][x];
                 } 
                 
@@ -9875,7 +9881,7 @@ void ImProcFunctions::transit_shapedetect2(int sp, float meantm, float stdtm, in
                 float clb = (bufexpfin->b[y][x] - bufexporig->b[y][x]);
 
                 if (delt) {
-                    if(grad == 1  && call == 1 && lp.strSH != 0.f) { //test mode plain image                
+                    if(grad == 1  && call == 1 && lp.strSH != 0.f && execgradsh) { //test mode plain image                
                         cli = (buftmp1->L[y + ystart][x + xstart] * bufexpfin->L[y][x] - original->L[y + ystart][x + xstart]);
                     } else {
                         cli = (bufexpfin->L[y][x] - original->L[y + ystart][x + xstart]);
@@ -17311,6 +17317,10 @@ void ImProcFunctions::Lab_Local(
                 ca3 = 3;
                 ca4 = 1;
             }
+            bool execgradsh = false;
+            if(lp.fullim == 3 || lp.fullim == 2) {
+                execgradsh = true;
+            }
 
             if (lp.showmaskSHmet == 0 || lp.showmaskSHmet == 1  || lp.showmaskSHmet == 2 || lp.showmaskSHmet == 4 || lp.enaSHMask) {
 
@@ -17340,7 +17350,7 @@ void ImProcFunctions::Lab_Local(
 
                 struct grad_params gp;
 
-                if (lp.strSH != 0.f && (call == ca1 || call == ca2 || call == ca3)) {//test to plain image
+                if (lp.strSH != 0.f && (call == ca1 || call == ca2 || call == ca3)  && execgradsh) {//test to plain image
                     calclocalGradientParams(call, lp, gp, ystart, xstart, yend, xend, bfw, bfh, oW, oH, tX, tY, tW, tH, 2, sk, fw, fh);
                     
 #ifdef _OPENMP
@@ -17352,7 +17362,7 @@ void ImProcFunctions::Lab_Local(
                             bufexpfin->L[ir][jr] *= ImProcFunctions::calcGradientFactor(gp, jr, ir);
                         }
                     }
-                } else if(lp.strSH != 0.f && (call ==  ca4) && ((GW >= mDEN && GH >= mDEN))){//test to run in plain image
+                } else if(lp.strSH != 0.f && execgradsh && (call ==  ca4) && ((GW >= mDEN && GH >= mDEN))){//test to run in plain image
                     calclocalGradientParams(call, lp, gp, ystart, xstart, yend, xend, GW, GH, oW, oH, tX, tY, tW, tH, 2, sk, fw, fh);
 #ifdef _OPENMP
             #pragma omp parallel for schedule(dynamic,16) if (multiThread)
@@ -17371,6 +17381,7 @@ void ImProcFunctions::Lab_Local(
                             tmp1->L[ir][jr] = ImProcFunctions::calcGradientFactor(gp, cy + jr, cx + ir);
                         }
                     }
+                    printf("OK BON\n");
                 }
 
                 if (lp.shmeth == 1) {
@@ -17814,13 +17825,13 @@ void ImProcFunctions::Lab_Local(
             if (lp.recothrs >= 1.f) {
                 if(call == ca1 || call == ca2 || call == ca3) {//call == 2 to run in mode plain image
                     transit_shapedetect2(sp, 0.f, 0.f, call, 9, bufexporig.get(), bufexpfin.get(), originalmaskSH.get(), hueref, chromaref, lumaref, sobelref, 0.f, nullptr, lp, original, transformed, nullptr, 0, cx, cy, sk);
-                } else if (call == ca4) {// mode plain image call = 1
+                } else if (call == ca4  && execgradsh) {// mode plain image call = 1
                     transit_shapedetect2(sp, 0.f, 0.f, call, 9, bufexporig.get(), bufexpfin.get(), originalmaskSH.get(), hueref, chromaref, lumaref, sobelref, 0.f, nullptr, lp, original, transformed, tmp1.get(), grad, cx, cy, sk);                   
                 } 
             } else {
                 if(call == ca1 || call == ca2 || call == ca3) {//call == 2 to run in mode plain image
                     transit_shapedetect2(sp, 0.f, 0.f, call, 9, bufexporig.get(), bufexpfin.get(), nullptr, hueref, chromaref, lumaref, sobelref, 0.f, nullptr, lp, original, transformed, nullptr, 0,  cx, cy, sk);
-                } else if (call == ca4) {// mode plain image
+                } else if (call == ca4  && execgradsh) {// mode plain image
                     transit_shapedetect2(sp, 0.f, 0.f, call, 9, bufexporig.get(), bufexpfin.get(), nullptr, hueref, chromaref, lumaref, sobelref, 0.f, nullptr, lp, original, transformed, tmp1.get(), grad, cx, cy, sk);
                 }
             }
