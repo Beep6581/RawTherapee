@@ -1023,22 +1023,41 @@ void LocallabColor::updateguicolor(int spottype)
                 enaColorMask->set_active(false);
                 previewcol->hide();
                 previewcol->set_active(false);
+                expgradcol->show();
                 resetMaskView();
+            } else if (spottype == 2) {
+                expgradcol->show();
+
             } else {
                 invers->show();
                 sensi->show();
                 expmaskcol1->show();
                 expmaskcol->show();
                 exprecov->show();
+                strcol->setValue(0.f);
+                strcolab->setValue(0.f);
+                strcolh->setValue(0.f);
+                
                 if(!invers->get_active()) {
                     previewcol->show();
                 } else {
                     previewcol->hide();
                 }
+                expgradcol->hide();
+                
                 updateGUIToMode(static_cast<modeType>(complexity->get_active_row_number()));
 
             }
             enableListener();
+            if(spottype == 3) {        
+                showmaskcolMethodChanged();
+                showmaskcolMethodChangedinv();
+            }
+            if(spottype == 0 || spottype == 1) {         
+                adjusterChanged(strcol, 0.);
+                adjusterChanged(strcolab, 0.);
+                adjusterChanged(strcolh, 0.);
+            }
 
         return false;
         }
@@ -3040,12 +3059,17 @@ void LocallabExposure::updateguiexpos(int spottype)
                 previewexe->set_active(false);
                 expmaskexp->hide();
                 exprecove->hide();
+                expgradexp->show();
                 resetMaskView();
+            } else if (spottype == 2) {
+                 expgradexp->show();               
            } else {
                 inversex->show();
                 sensiex->show();
                 expmaskexp->show();
                 exprecove->show();
+                expgradexp->hide();
+                strexp->setValue(0.f);
 
                 if(!inversex->get_active()) {
                     previewexe->show();
@@ -3055,6 +3079,13 @@ void LocallabExposure::updateguiexpos(int spottype)
                 updateGUIToMode(static_cast<modeType>(complexity->get_active_row_number()));
             }
             enableListener();
+            if(spottype == 3) {
+                showmaskexpMethodChanged();
+                showmaskexpMethodChangedinv();
+            }
+            if(spottype == 0 || spottype == 1) {         
+                adjusterChanged(strexp, 0.);
+            }
 
         return false;
         }
@@ -4697,12 +4728,17 @@ void LocallabShadow::updateguishad(int spottype)
                 expmasksh->hide();
                 enaSHMask->set_active(false);
                 previewsh->set_active(false);
+                expgradsh->show();
                 resetMaskView();
+            } else if (spottype == 2) {
+                expgradsh->show();               
             } else {
                 sensihs->show();
                 inverssh->show();
                 exprecovs->show();
                 expmasksh->show();
+                expgradsh->hide();               
+                strSH->setValue(0.f);
                 if(!inverssh->get_active()) {
                     previewsh->show();
                 } else {
@@ -4715,6 +4751,13 @@ void LocallabShadow::updateguishad(int spottype)
                 updateGUIToMode(static_cast<modeType>(complexity->get_active_row_number()));
             }
             enableListener();
+            if(spottype == 3) {
+                showmaskSHMethodChanged();
+                showmaskSHMethodChangedinv();                
+            }
+            if(spottype == 0 || spottype == 1) {         
+                adjusterChanged(strSH, 0.);
+            }
 
         return false;
         }
@@ -6369,7 +6412,7 @@ void LocallabVibrance::updateguivib(int spottype)
         idle_register.add(
         [this, spottype]() -> bool {
             GThreadLock lock; // All GUI access from idle_add callbacks or separate thread HAVE to be protected
-
+            printf("SPOTTYPE=%i \n", spottype);
             // Update GUI fullimage or main
             disableListener();
 
@@ -6380,18 +6423,33 @@ void LocallabVibrance::updateguivib(int spottype)
                 enavibMask->set_active(false);
                 previewvib->set_active(false);
                 exprecovv->hide();
+                expgradvib->show();
                 expmaskvib->hide();
                 resetMaskView();
+            } else if (spottype == 2) {
+                 expgradvib->show();               
             } else {
                 sensiv->show();
+                
                 previewvib->show();
                 exprecovv->show();
+                expgradvib->hide();               
+                strvib->setValue(0.f);
+                strvibab->setValue(0.f);
+                strvibh->setValue(0.f);
                 expmaskvib->show();
                 updateGUIToMode(static_cast<modeType>(complexity->get_active_row_number()));
 
             }
             enableListener();
-
+            if(spottype == 3) {
+                showmaskvibMethodChanged();               
+            }
+            if(spottype == 0 || spottype == 1) {         
+                adjusterChanged(strvib, 0.);
+                adjusterChanged(strvibab, 0.);
+                adjusterChanged(strvibh, 0.);
+            }
         return false;
         }
         );
@@ -7024,7 +7082,7 @@ void LocallabVibrance::updateGUIToMode(const modeType new_type)
             avoidColorShift->hide();
             pastSatTog->hide();
             curveEditorGG->hide();
-            expgradvib->hide();
+            //expgradvib->hide();
             expmaskvib->hide();
             exprecovv->hide();
             decayv->hide();
@@ -7049,7 +7107,7 @@ void LocallabVibrance::updateGUIToMode(const modeType new_type)
             gammaskvib->hide();
             slomaskvib->hide();
             // Specific Simple mode widgets are shown in Normal mode
-            expgradvib->show();
+         //  expgradvib->show();
             expmaskvib->show();
             exprecovv->show();
             decayv->hide();
@@ -7074,7 +7132,7 @@ void LocallabVibrance::updateGUIToMode(const modeType new_type)
             avoidColorShift->show();
             pastSatTog->show();
             curveEditorGG->show();
-            expgradvib->show();
+           // expgradvib->show();
             strvibab->show();
             strvibh->show();
             expmaskvib->show();

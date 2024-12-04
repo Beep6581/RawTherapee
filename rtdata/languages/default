@@ -3245,7 +3245,7 @@ TP_LOCALLAB_GRADSTRLUM;Luma gradient strength
 TP_LOCALLAB_GRAINFRA;Film Grain 1:1
 TP_LOCALLAB_GRAINFRA2;Coarseness
 TP_LOCALLAB_GRAIN_TOOLTIP;Adds film-like grain to the image.
-TP_LOCALLAB_GRALWFRA;Graduated filter (local contrast)
+TP_LOCALLAB_GRALWFRA;Graduated filter (local contrast: Full image & Global)
 TP_LOCALLAB_GRIDFRAME_TOOLTIP;You can use this tool as a brush. Use a small spot and adapt the 'Transition value' and 'Transition decay'\nOnly 'Normal' mode and possibly Hue, Saturation, Color, Luminosity are concerned by Merge background (ΔE).
 TP_LOCALLAB_GRIDMETH_TOOLTIP;Color toning: the luminance is taken into account when varying chroma. Equivalent to H=f(H) if the 'white dot' on the grid remains at zero and you only vary the 'black dot'. Equivalent to 'Color toning' if you vary the 2 dots.\n\nDirect: acts directly on the chroma.
 TP_LOCALLAB_GRIDONE;Color Toning
