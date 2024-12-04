@@ -1331,7 +1331,7 @@ void Locallab::maiChanged(const std::vector<locallabsetLC> &setlc, int selspot)
         const bool iscbdl = set_lc.at(selspot).iscbd;
         const bool islog = set_lc.at(selspot).islo;
         const bool ismas = set_lc.at(selspot).isma;
-        const bool iscie = set_lc.at(selspot).isci;
+        const bool isci = set_lc.at(selspot).isci;
 
         if(iscolor) {
             expcolor.updateguicolor(spottype);
@@ -1385,11 +1385,11 @@ void Locallab::maiChanged(const std::vector<locallabsetLC> &setlc, int selspot)
             expmask.updateguimask(spottype);
         }
 
-        if(iscie) {
+        if(isci) {
             expcie.updateguicie(spottype);
         }
 
-        expsettings->updateguiset(spottype, iscolor, issh, isvib, isexpos, issoft, isblur, istom, isret, issharp, iscont, iscbdl, islog, ismas, iscie);
+        expsettings->updateguiset(spottype, iscolor, issh, isvib, isexpos, issoft, isblur, istom, isret, issharp, iscont, iscbdl, islog, ismas, isci);
     }
 }
 

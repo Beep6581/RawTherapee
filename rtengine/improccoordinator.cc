@@ -1651,7 +1651,7 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                 bool iscbdl = params->locallab.spots.at(sp).expcbdl;
                 bool islog = params->locallab.spots.at(sp).explog;
                 bool ismas = params->locallab.spots.at(sp).expmask;
-                bool iscie = params->locallab.spots.at(sp).expcie;
+                bool isci = params->locallab.spots.at(sp).expcie;
               // bool isset = iscolor || issh || isvib;
                 
                 //set select spot settings 
@@ -1670,7 +1670,7 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                 locsetlc.iscbd = iscbdl;
                 locsetlc.islo = islog;
                 locsetlc.isma = ismas;
-                locsetlc.isci = iscie;
+                locsetlc.isci = isci;
                 locallsetlc.push_back(locsetlc);
                 
                 if (locallListener) {

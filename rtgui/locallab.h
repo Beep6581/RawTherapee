@@ -165,7 +165,7 @@ public:
     void minmaxChanged(const std::vector<locallabRetiMinMax> &minmax, int selspot) override;
     
     // new functions for global - normal use
-//    void mainChanged(int spottype, int selspot, bool iscolor, bool issh, bool isvib, bool isexpos, bool issoft, bool isblur, bool istom, bool isret, bool issharp, bool iscont, bool iscbdl, bool islog, bool ismas, bool iscie)override;
+//    void mainChanged(int spottype, int selspot, bool iscolor, bool issh, bool isvib, bool isexpos, bool issoft, bool isblur, bool istom, bool isret, bool issharp, bool iscont, bool iscbdl, bool islog, bool ismas, bool isci)override;
     void scopeChangedcol(int scope, int selspot, bool enab)override;
     void scopeChangedsh(int scope, int selspot, bool enab)override;
     void scopeChangedvib(int scope, int selspot, bool enab)override;

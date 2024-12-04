@@ -17306,7 +17306,7 @@ void ImProcFunctions::Lab_Local(
 
                 return;
             }
-            int grad = 1;// grad = 1 to plain image GF
+            int grad = 0;// grad = 1 to plain image GF
             int ca1 = 1;//dcrop
             int ca2 = 2;//simpleprocess
             int ca3 = 3;//improccordinator

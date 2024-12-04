@@ -9217,16 +9217,35 @@ void Locallabcie::updateguicie(int spottype)
                 enacieMask->set_active(false);
                 enacieMaskall->set_active(false);
                 previewcie->set_active(false);
+                expgradcie->show();
                 resetMaskView();
+            } else if (spottype == 2) {
+                sensicie->show();
+                previewcie->show();
+                exprecovcie->show();
+                expmaskcie->show();
+                expgradcie->show();
+                updateGUIToMode(static_cast<modeType>(complexity->get_active_row_number()));
+                
             } else {
                 sensicie->show();
                 previewcie->show();
                 exprecovcie->show();
                 expmaskcie->show();
+                expgradcie->hide();
+                strgradcie->setValue(0.f);
                 updateGUIToMode(static_cast<modeType>(complexity->get_active_row_number()));
            }
             enableListener();
-
+            
+            if(spottype == 3) {        
+             //   showmaskcieMethodChanged();
+            }
+            
+            if(spottype == 0 || spottype == 1) {         
+                adjusterChanged(strgradcie, 0.);
+            }
+           
         return false;
         }
         );
@@ -10959,7 +10978,7 @@ void Locallabcie::modecamChanged()
 
     } else if (mode != Simple){
         exprecovcie->show();
-        expgradcie->show();
+        //expgradcie->show();
         expmaskcie->show();
     }
 
@@ -11008,7 +11027,7 @@ void Locallabcie::modecamChanged()
 
         } else if (mode != Simple){
             exprecovcie->show();
-            expgradcie->show();
+            //expgradcie->show();
             expmaskcie->show();     
         }
     } else {
@@ -11063,7 +11082,7 @@ void Locallabcie::modecamChanged()
         expcamviewing->show();
         if (mode != Simple){
             exprecovcie->show();
-            expgradcie->show();
+            //expgradcie->show();
             expmaskcie->show();
         }
 
@@ -11097,7 +11116,7 @@ void Locallabcie::modecieChanged()
         const int mode = complexity->get_active_row_number();
         exprecovcie->show();
         expmaskcie->show();
-        expgradcie->show();
+        //expgradcie->show();
 
         if (modecie->get_active_row_number() > 0  && mode == Expert) {
             sensicie->hide();
@@ -11113,7 +11132,7 @@ void Locallabcie::modecieChanged()
             if (mode == Expert) {
                 exprecovcie->show();
                 expmaskcie->show();
-                expgradcie->show();
+              //  expgradcie->show();
             }
         }
 
@@ -11375,7 +11394,7 @@ void Locallabcie::updateGUIToMode(const modeType new_type)
             sourceGraycie->show();
             expcamscene->show();
             exprecovcie->hide();
-            expgradcie->hide();
+           // expgradcie->hide();
             maskusablecie->hide();
             maskunusablecie->hide();
             decaycie->hide();
@@ -11506,7 +11525,7 @@ void Locallabcie::updateGUIToMode(const modeType new_type)
             sourceGraycie->show();
             expcamscene->show();
             exprecovcie->show();
-            expgradcie->show();
+           // expgradcie->show();
             expmaskcie->show();
             decaycie->hide();
             lapmaskcie->hide();
@@ -11572,7 +11591,7 @@ void Locallabcie::updateGUIToMode(const modeType new_type)
 
             } else {
                 exprecovcie->show();
-                expgradcie->show();
+              //  expgradcie->show();
                 expmaskcie->show();
             }
 
@@ -11638,7 +11657,7 @@ void Locallabcie::updateGUIToMode(const modeType new_type)
             sourceGraycie->show();
             expcamscene->show();
             exprecovcie->show();
-            expgradcie->show();
+          //  expgradcie->show();
             decaycie->show();
             lapmaskcie->show();
             gammaskcie->show();
@@ -11782,12 +11801,11 @@ void Locallabcie::updateGUIToMode(const modeType new_type)
                 catadcie->hide();
                 expcamviewing->hide();
                 exprecovcie->show();
-                expgradcie->show();
+               // expgradcie->show();
                 expmaskcie->show();
                 maskusablecie->show();
                 maskunusablecie->show();
                 expprecam->hide();
-                expgradcie->hide();
                 expcam16->hide();
                 lapmaskcie->hide();
                 lapmaskcie->setValue(defSpot.lapmaskcie);
@@ -11821,7 +11839,7 @@ void Locallabcie::updatecieGUI()
     const int mode = complexity->get_active_row_number();
     expmaskcie->show();
     exprecovcie->show();
-    expgradcie->show();
+ //   expgradcie->show();
 
     contsigqcie->hide();
     lightsigqcie->hide();
@@ -11837,7 +11855,7 @@ void Locallabcie::updatecieGUI()
         sensicie->show();
         reparcie->show();
         exprecovcie->show();
-        expgradcie->show();
+      //  expgradcie->show();
         expmaskcie->show();
     }
 
@@ -12878,7 +12896,7 @@ void Locallabcie::adjusterChanged(Adjuster* a, double newval)
             if (listener) {
                 listener->panelChanged(Evlocallabstrgradcie,
                                        strgradcie->getTextValue() + spName);
-            }
+           }
         }
 
         if (a == anggradcie) {

@@ -2898,12 +2898,12 @@ void ControlSpotPanel::deleteControlSpot(const int index)
 }
 
 //new function linked to Global and options 
-void ControlSpotPanel::updateguiset(int spottype, bool iscolor, bool issh, bool isvib, bool isexpos, bool issoft, bool isblur, bool istom, bool isret, bool issharp, bool iscont, bool iscbdl, bool islog, bool ismas, bool iscie)
+void ControlSpotPanel::updateguiset(int spottype, bool iscolor, bool issh, bool isvib, bool isexpos, bool issoft, bool isblur, bool istom, bool isret, bool issharp, bool iscont, bool iscbdl, bool islog, bool ismas, bool isci)
 {
     {  //with this function we can 1) activate Settings SpotMethod
         // also if need GUI for mask ,  todo...
         idle_register.add(
-        [this, spottype, iscolor, issh , isvib, isexpos, issoft, isblur, istom, isret, issharp, iscont, iscbdl, islog, ismas, iscie]() -> bool {
+        [this, spottype, iscolor, issh , isvib, isexpos, issoft, isblur, istom, isret, issharp, iscont, iscbdl, islog, ismas, isci]() -> bool {
             GThreadLock lock; // All GUI access from idle_add callbacks or separate thread HAVE to be protected
 
             // Update GUI fullimage or main
@@ -2912,7 +2912,7 @@ void ControlSpotPanel::updateguiset(int spottype, bool iscolor, bool issh, bool 
                 spotMethodChanged();
             }
             
-            if((iscolor || issh || isvib || isexpos || istom || iscont || islog || ismas || iscie)
+            if((iscolor || issh || isvib || isexpos || istom || iscont || islog || ismas || isci)
                 && !issharp && !issoft && !isret && !isblur  & !iscbdl) {
                 preview_->hide();               
             } else if (issoft || isblur || isret || issharp || iscbdl) {
