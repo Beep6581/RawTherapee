@@ -9218,6 +9218,8 @@ void Locallabcie::updateguicie(int spottype)
                 enacieMaskall->set_active(false);
                 previewcie->set_active(false);
                 expgradcie->show();
+             //   showmaskcieMethodChanged();
+                
                 resetMaskView();
             } else if (spottype == 2) {
                 sensicie->show();
@@ -9238,9 +9240,6 @@ void Locallabcie::updateguicie(int spottype)
            }
             enableListener();
             
-            if(spottype == 3) {        
-             //   showmaskcieMethodChanged();
-            }
             
             if(spottype == 0 || spottype == 1) {         
                 adjusterChanged(strgradcie, 0.);
@@ -9548,7 +9547,7 @@ void Locallabcie::showmaskcieMethodChanged()
 
     // If mask preview is activated, deactivate all other tool mask preview
     if (locToolListener) {
-        locToolListener->resetOtherMaskView(this);
+ //       locToolListener->resetOtherMaskView(this);
     }
 
     if (exp->getEnabled()) {

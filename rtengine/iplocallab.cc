@@ -9513,6 +9513,7 @@ void ImProcFunctions::transit_shapedetect2(int sp, float meantm, float stdtm, in
                 buftmp1->L[ir][jr] = 1.f;
             }
     if(grad == 1  && call != 2 && lp.strSH != 0.f && execgradsh) {//test mode GF plain image
+    printf("D2 pas1 GF plain\n"); 
 #ifdef _OPENMP
         #pragma omp parallel for schedule(dynamic,16) if(multiThread)
 #endif
@@ -9520,7 +9521,9 @@ void ImProcFunctions::transit_shapedetect2(int sp, float meantm, float stdtm, in
             for (int x = xstart; x < xend; x++) {
                 buftmp1->L[y - ystart][x - xstart] = tmp1->L[y][x];
             }
-        }    
+        }
+        printf("D2 FIN pas1 GF plain\n"); 
+    
     }
     
     //initialize scope
@@ -9873,7 +9876,11 @@ void ImProcFunctions::transit_shapedetect2(int sp, float meantm, float stdtm, in
                 float factgrad = 1.f;
                 // test to use in plain image
                 if(grad == 1  && call == 1 && lp.strSH != 0.f  && execgradsh) {
+                       // printf("D2 pas2 GF plain\n"); 
+
                     factgrad = buftmp1->L[y][x];
+                                         //   printf("D2 FIN pas2 GF plain\n"); 
+
                 } 
                 
                 float cli = (factgrad * bufexpfin->L[y][x] - bufexporig->L[y][x] );
@@ -9881,8 +9888,11 @@ void ImProcFunctions::transit_shapedetect2(int sp, float meantm, float stdtm, in
                 float clb = (bufexpfin->b[y][x] - bufexporig->b[y][x]);
 
                 if (delt) {
-                    if(grad == 1  && call == 1 && lp.strSH != 0.f && execgradsh) { //test mode plain image                
+                    if(grad == 1  && call == 1 && lp.strSH != 0.f && execgradsh) { //test mode plain image   
+                                           // printf("D2 pas3 GF plain\n"); 
+
                         cli = (buftmp1->L[y + ystart][x + xstart] * bufexpfin->L[y][x] - original->L[y + ystart][x + xstart]);
+                        
                     } else {
                         cli = (bufexpfin->L[y][x] - original->L[y + ystart][x + xstart]);
                         
@@ -17306,7 +17316,7 @@ void ImProcFunctions::Lab_Local(
 
                 return;
             }
-            int grad = 0;// grad = 1 to plain image GF
+            int grad = 1;// grad = 1 to plain image GF
             int ca1 = 1;//dcrop
             int ca2 = 2;//simpleprocess
             int ca3 = 3;//improccordinator
@@ -17381,7 +17391,7 @@ void ImProcFunctions::Lab_Local(
                             tmp1->L[ir][jr] = ImProcFunctions::calcGradientFactor(gp, cy + jr, cx + ir);
                         }
                     }
-                    printf("OK BON\n");
+                    printf("OK BON zoom\n");
                 }
 
                 if (lp.shmeth == 1) {
@@ -17830,8 +17840,11 @@ void ImProcFunctions::Lab_Local(
                 } 
             } else {
                 if(call == ca1 || call == ca2 || call == ca3) {//call == 2 to run in mode plain image
+                printf("Appel detect2 1 2 3  grad=0   ou detect2 2 3 grad=1\n");
                     transit_shapedetect2(sp, 0.f, 0.f, call, 9, bufexporig.get(), bufexpfin.get(), nullptr, hueref, chromaref, lumaref, sobelref, 0.f, nullptr, lp, original, transformed, nullptr, 0,  cx, cy, sk);
                 } else if (call == ca4  && execgradsh) {// mode plain image
+                 printf("APPEL detect2 ZOOM grad=1\n");
+               
                     transit_shapedetect2(sp, 0.f, 0.f, call, 9, bufexporig.get(), bufexpfin.get(), nullptr, hueref, chromaref, lumaref, sobelref, 0.f, nullptr, lp, original, transformed, tmp1.get(), grad, cx, cy, sk);
                 }
             }
