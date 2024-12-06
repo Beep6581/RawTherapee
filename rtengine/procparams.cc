@@ -3619,8 +3619,11 @@ LocallabParams::LocallabSpot::LocallabSpot() :
     strvib(0.0),
     strvibab(0.0),
     strvibh(0.0),
-    angvib(0.0),
-    feathervib(25.0),
+ //   angvib(0.0),
+    angvib(1.0),
+   // feathervib(25.0),
+    feathervib(1.0),
+    
     Lmaskvibcurve{
         static_cast<double>(DCT_NURBS),
         0.0,
