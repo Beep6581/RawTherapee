@@ -9217,11 +9217,9 @@ void Locallabcie::updateguicie(int spottype)
                 enacieMask->set_active(false);
                 enacieMaskall->set_active(false);
                 previewcie->set_active(false);
-                expgradcie->show();
-             //   showmaskcieMethodChanged();
-                
+                expgradcie->show();                
                 resetMaskView();
-            } else if (spottype == 2) {
+            } else if (spottype == 2) {//for GF
                 sensicie->show();
                 previewcie->show();
                 exprecovcie->show();
@@ -9242,7 +9240,7 @@ void Locallabcie::updateguicie(int spottype)
             
             
             if(spottype == 0 || spottype == 1) {         
-                adjusterChanged(strgradcie, 0.);
+                adjusterChanged(strgradcie, 0.);//reset GF 
             }
            
         return false;
@@ -10977,7 +10975,6 @@ void Locallabcie::modecamChanged()
 
     } else if (mode != Simple){
         exprecovcie->show();
-        //expgradcie->show();
         expmaskcie->show();
     }
 
@@ -11018,7 +11015,6 @@ void Locallabcie::modecamChanged()
             expcam16->hide();
             expcamviewing->hide();
             catadcie->hide();
-            expgradcie->hide();
             expcam16->hide();
             lapmaskcie->hide();
             lapmaskcie->setValue(defSpot.lapmaskcie);
@@ -11026,7 +11022,6 @@ void Locallabcie::modecamChanged()
 
         } else if (mode != Simple){
             exprecovcie->show();
-            //expgradcie->show();
             expmaskcie->show();     
         }
     } else {
@@ -11055,7 +11050,6 @@ void Locallabcie::modecamChanged()
             bevwevFrame->show();
             catadcie->hide();
             expcamviewing->hide();
-            expgradcie->hide();
             expcam16->hide();
             lapmaskcie->hide();
             lapmaskcie->setValue(defSpot.lapmaskcie);
@@ -11081,7 +11075,6 @@ void Locallabcie::modecamChanged()
         expcamviewing->show();
         if (mode != Simple){
             exprecovcie->show();
-            //expgradcie->show();
             expmaskcie->show();
         }
 
@@ -11115,14 +11108,12 @@ void Locallabcie::modecieChanged()
         const int mode = complexity->get_active_row_number();
         exprecovcie->show();
         expmaskcie->show();
-        //expgradcie->show();
 
         if (modecie->get_active_row_number() > 0  && mode == Expert) {
             sensicie->hide();
             reparcie->hide();
             exprecovcie->show();
             expmaskcie->show();
-            expgradcie->hide();
 
         } else {
             sensicie->show();
@@ -11131,7 +11122,6 @@ void Locallabcie::modecieChanged()
             if (mode == Expert) {
                 exprecovcie->show();
                 expmaskcie->show();
-              //  expgradcie->show();
             }
         }
 
@@ -11343,7 +11333,6 @@ void Locallabcie::guijzczhz()
     expmaskcie->hide();
     expprecam->hide();
     exprecovcie->hide();
-    expgradcie->hide();
     lapmaskcie->hide();
 }
 
@@ -11393,7 +11382,6 @@ void Locallabcie::updateGUIToMode(const modeType new_type)
             sourceGraycie->show();
             expcamscene->show();
             exprecovcie->hide();
-           // expgradcie->hide();
             maskusablecie->hide();
             maskunusablecie->hide();
             decaycie->hide();
@@ -11425,7 +11413,6 @@ void Locallabcie::updateGUIToMode(const modeType new_type)
                 primillFrame->hide();
                 expmaskcie->hide();
                 exprecovcie->hide();
-                expgradcie->hide();
                 if(smoothciemet->get_active_row_number() == 3) {
                     slopesmo->show();
                     slopesmor->hide();
@@ -11466,7 +11453,6 @@ void Locallabcie::updateGUIToMode(const modeType new_type)
             lightsigqcie->hide();
             expmaskcie->hide();
             exprecovcie->hide();
-            expgradcie->hide();
 
             break;
 
@@ -11524,7 +11510,6 @@ void Locallabcie::updateGUIToMode(const modeType new_type)
             sourceGraycie->show();
             expcamscene->show();
             exprecovcie->show();
-           // expgradcie->show();
             expmaskcie->show();
             decaycie->hide();
             lapmaskcie->hide();
@@ -11590,7 +11575,6 @@ void Locallabcie::updateGUIToMode(const modeType new_type)
 
             } else {
                 exprecovcie->show();
-              //  expgradcie->show();
                 expmaskcie->show();
             }
 
@@ -11598,7 +11582,6 @@ void Locallabcie::updateGUIToMode(const modeType new_type)
             if (modecie->get_active_row_number() > 0) {
                 exprecovcie->hide();
                 expmaskcie->hide();
-                expgradcie->hide();
             }
 
             contsigqcie->hide();
@@ -11656,7 +11639,6 @@ void Locallabcie::updateGUIToMode(const modeType new_type)
             sourceGraycie->show();
             expcamscene->show();
             exprecovcie->show();
-          //  expgradcie->show();
             decaycie->show();
             lapmaskcie->show();
             gammaskcie->show();
@@ -11727,7 +11709,6 @@ void Locallabcie::updateGUIToMode(const modeType new_type)
                 sigmoidFrame->hide();
                 forcejz->hide();
                 expprecam->hide();
-                expgradcie->hide();
                 expcam16->hide();
                 exprecovcie->show();
                 expmaskcie->show();
@@ -11800,7 +11781,6 @@ void Locallabcie::updateGUIToMode(const modeType new_type)
                 catadcie->hide();
                 expcamviewing->hide();
                 exprecovcie->show();
-               // expgradcie->show();
                 expmaskcie->show();
                 maskusablecie->show();
                 maskunusablecie->show();
@@ -11823,7 +11803,6 @@ void Locallabcie::updateGUIToMode(const modeType new_type)
             if (modecie->get_active_row_number() > 0) {
                 exprecovcie->hide();
                 expmaskcie->hide();
-                expgradcie->hide();
             }
 
             contsigqcie->hide();
@@ -11838,7 +11817,6 @@ void Locallabcie::updatecieGUI()
     const int mode = complexity->get_active_row_number();
     expmaskcie->show();
     exprecovcie->show();
- //   expgradcie->show();
 
     contsigqcie->hide();
     lightsigqcie->hide();
@@ -11848,13 +11826,11 @@ void Locallabcie::updatecieGUI()
         sensicie->hide();
         reparcie->hide();
         exprecovcie->hide();
-        expgradcie->hide();
         expmaskcie->hide();
     } else {
         sensicie->show();
         reparcie->show();
         exprecovcie->show();
-      //  expgradcie->show();
         expmaskcie->show();
     }
 
@@ -11871,7 +11847,6 @@ void Locallabcie::updatecieGUI()
             expmaskcie->hide();
             exprecovcie->hide();
             primillFrame->hide();
-            expgradcie->hide();
 
         } else if (mode == Normal) {
             primillFrame->hide();
@@ -11966,7 +11941,6 @@ void Locallabcie::updatecieGUI()
 
     if (modecie->get_active_row_number() > 0) {
         exprecovcie->hide();
-        expgradcie->hide();
         expmaskcie->hide();
     }
 
@@ -11986,7 +11960,6 @@ void Locallabcie::updatecieGUI()
         catadcie->hide();
         expprecam->hide();
         expcamviewing->hide();
-        expgradcie->hide();
         expcam16->hide();
         exprecovcie->show();
         expmaskcie->show();
@@ -12023,9 +11996,9 @@ void Locallabcie::convertParamToSimple()
     showmaskcieMethod->set_active(0);
     enacieMask->set_active(defSpot.enacieMask);
     enacieMaskall->set_active(defSpot.enacieMaskall);
-    strgradcie->setValue(defSpot.strgradcie);
-    anggradcie->setValue(defSpot.anggradcie);
-    feathercie->setValue(defSpot.feathercie);
+    //strgradcie->setValue(defSpot.strgradcie);
+    //anggradcie->setValue(defSpot.anggradcie);
+    //feathercie->setValue(defSpot.feathercie);
     refi->setValue(defSpot.refi);
     modecie->set_active(0);
     primMethod->set_active(0);//Prophoto

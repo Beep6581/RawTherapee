@@ -6152,35 +6152,24 @@ void calclocalGradientParams(int call, const struct local_params& lp, struct gra
  // Perhaps with PreviewProps, but I don't know how to do ? 
  // It seems that you need to change the position of the center of the GF which varies depending on the preview, but how?
  // parameters passe to calcGradientFactor may also be involved
- //    ?? bufmaskblurcol->L[ir][jr] *= ImProcFunctions::calcGradientFactor(gp, jr, ir);// jr - xstart, ir - ystart ?? or others factors
-   // sk = 1;
-    int sk3 = sk; //sqrt(sk);//empirical value ??
-    
-    PreviewProps pp(tX, tY, tW * sk3, tH * sk3, sk3);
-
-  //  double gradient_center_x = LIM01((lp.xcent * (bfw - tX*lp.feathervib) - xstart) / bfw);
-  //  double gradient_center_y = LIM01((lp.ycent * (bfh - tY*lp.feathervib) - ystart) / bfh);
 
     int kx = 0;
     int ky = 0;
-   // kx = tX;
-   // ky = tY;
+   // kx = tX; or cx
+   // ky = tY; or cy
    
-  //  kx = oW*lp.feathervib;
-  //  ky = oH*lp.feathervib;
-   
-    double gradient_center_x = LIM01((lp.xcent * (oW + kx)) / bfw);
+   // cannot be used for RT-Spot "normal" or "exclude" : only in fullimage or Global
+    double gradient_center_x = LIM01((lp.xcent * (oW + kx)) / bfw);//for dcrop and improccordinator
     double gradient_center_y = LIM01((lp.ycent * (oH + ky)) / bfh);
 
     if(call == 2) {//simpleprocess
-        gradient_center_x = LIM01((lp.xcent * (bfw) - xstart) / bfw);
-        gradient_center_y = LIM01((lp.ycent * (bfh) - ystart) / bfh);
+        gradient_center_x = LIM01((lp.xcent * (bfw)) / bfw);//I keep this formula because perhaps not bfw, for the first
+        gradient_center_y = LIM01((lp.ycent * (bfh)) / bfh);
     }
 
     if (settings->verbose) {
         printf("call=%i xcent=%.2f ycent=%.2f Gcx=%.2f Gcy=%.2f indic=%i cx=%i cy=%i\n", call, (double) lp.xcent, (double) lp.ycent, gradient_center_x, gradient_center_y, indic, cx, cy);   
         printf("fw=%i fh=%i bfw=%i bfh=%i oW=%i oH=%i tW=%i tH=%i tX=%i tY=%i xstart=%.1f ystrat=%.1f xend=%.1f yend=%.1f xc=%.1f yc=%.1f yT=%.1f xL=%.1f sk=%i\n", fw, fh, bfw, bfh, oW, oH, tW, tH, tX, tY, (double) xstart, (double) ystart, (double) xend, (double) yend, (double) lp.xc, (double) lp.yc, (double) lp.lyT, (double)lp.lxL,  sk);
-        printf("PreviewProps: getx=%i gety=%i getW=%i getH=%i\n", pp.getX(), pp.getY(), pp.getWidth(), pp.getHeight()); 
     }
 
     if (indic == 0) {
@@ -6207,7 +6196,6 @@ void calclocalGradientParams(int call, const struct local_params& lp, struct gra
         } else {
             redu = 0.15f;
         }
-
         stops = redu * lp.strcolab;
         angs = lp.angcol;
         varfeath = 0.01f * lp.feathcol;
@@ -6255,21 +6243,12 @@ void calclocalGradientParams(int call, const struct local_params& lp, struct gra
         varfeath = 0.01f * lp.feathercie;
             }
 
-      int sk2 = 1;
-    
- //   int sk2 = sk * lp.angvib;
- //   if(lp.angvib > 9.f){ 
-//    }
-//    if(lp.strcol != 0.f  && lp.colorena) {
-//        sk2 = sqrt(sk);
-//    }
-    
+    int sk2 = 1;
+      
     double gradient_stops = stops / sk2;//to test with Skip but does not work well
     double gradient_angle = static_cast<double>(angs) / 180.0 * rtengine::RT_PI;
 
-    //printf("xstart=%f ysta=%f lpxc=%f lpyc=%f stop=%f bb=%f cc=%f ang=%f ff=%d gg=%d\n", xstart, ystart, lp.xc, lp.yc, gradient_stops, gradient_center_x, gradient_center_y, gradient_angle, w, h);
 
-    // make 0.0 <= gradient_angle < 2 * rtengine::RT_PI
     gradient_angle = fmod(gradient_angle, 2 * rtengine::RT_PI);
 
     if (gradient_angle < 0.0) {
@@ -7715,7 +7694,7 @@ void ImProcFunctions::maskcalccol(int call, bool invmask, bool pde, int bfw, int
 
             for (int ir = 0; ir < bfh; ir++) {
                 for (int jr = 0; jr < bfw; jr++) {
-                    bufmaskblurcol->L[ir][jr] *= ImProcFunctions::calcGradientFactor(gp, cx+jr, cy+ir);
+                    bufmaskblurcol->L[ir][jr] *= ImProcFunctions::calcGradientFactor(gp, cx + jr, cy + ir);
                 }
             }
         }
@@ -9524,7 +9503,6 @@ void ImProcFunctions::transit_shapedetect2(int sp, float meantm, float stdtm, in
                 buftmp1->L[ir][jr] = 1.f;
             }
     if(grad == 1  && call != 2 && lp.strSH != 0.f && execgradsh) {//test mode GF plain image
-    printf("D2 pas1 GF plain\n"); 
 #ifdef _OPENMP
         #pragma omp parallel for schedule(dynamic,16) if(multiThread)
 #endif
@@ -9532,9 +9510,7 @@ void ImProcFunctions::transit_shapedetect2(int sp, float meantm, float stdtm, in
             for (int x = xstart; x < xend; x++) {
                 buftmp1->L[y - ystart][x - xstart] = tmp1->L[y][x];
             }
-        }
-        printf("D2 FIN pas1 GF plain\n"); 
-    
+        }    
     }
     
     //initialize scope
@@ -9887,10 +9863,7 @@ void ImProcFunctions::transit_shapedetect2(int sp, float meantm, float stdtm, in
                 float factgrad = 1.f;
                 // test to use in plain image
                 if(grad == 1  && call == 1 && lp.strSH != 0.f  && execgradsh) {
-                       // printf("D2 pas2 GF plain\n"); 
-
                     factgrad = buftmp1->L[y][x];
-                                         //   printf("D2 FIN pas2 GF plain\n"); 
 
                 } 
                 
@@ -9898,15 +9871,11 @@ void ImProcFunctions::transit_shapedetect2(int sp, float meantm, float stdtm, in
                 float cla = (bufexpfin->a[y][x] - bufexporig->a[y][x]);
                 float clb = (bufexpfin->b[y][x] - bufexporig->b[y][x]);
 
-                if (delt) {
+                if (delt) {//mask deltaE
                     if(grad == 1  && call == 1 && lp.strSH != 0.f && execgradsh) { //test mode plain image   
-                                           // printf("D2 pas3 GF plain\n"); 
-
-                        cli = (buftmp1->L[y + ystart][x + xstart] * bufexpfin->L[y][x] - original->L[y + ystart][x + xstart]);
-                        
+                        cli = (buftmp1->L[y + ystart][x + xstart] * bufexpfin->L[y][x] - original->L[y + ystart][x + xstart]);                        
                     } else {
-                        cli = (bufexpfin->L[y][x] - original->L[y + ystart][x + xstart]);
-                        
+                        cli = (bufexpfin->L[y][x] - original->L[y + ystart][x + xstart]);                        
                     }
                     cla = bufexpfin->a[y][x] - original->a[y + ystart][x + xstart];
                     clb = bufexpfin->b[y][x] - original->b[y + ystart][x + xstart];
@@ -9917,7 +9886,6 @@ void ImProcFunctions::transit_shapedetect2(int sp, float meantm, float stdtm, in
                     clb = 0.f;
                 }
 
-                // const float previewint = settings->previewselection;
 
                 const float realstrdE = reducdE * cli;
                 const float realstradE = reducdE * cla;
@@ -9969,16 +9937,6 @@ void ImProcFunctions::transit_shapedetect2(int sp, float meantm, float stdtm, in
             }
         }
     }
-    /*
-     if(grad == 1  && call == 1) {
-   
-    for (int ir = 0; ir < GH; ir++)
-            for (int jr = 0; jr < GW; jr++) {
-               //  printf("tm=%f ", (double) tmp1->L[ir][jr]);
-               transformed->L[ir][jr] *= tmp1->L[ir][jr];
-            }
-     } 
-*/     
 }
 
 
@@ -11017,7 +10975,7 @@ void ImProcFunctions::wavcontrast4(int call, struct local_params& lp, float ** t
 
         for (int y = 0; y < H_Lm; y++) {
             for (int x = 0; x < W_Lm; x++) {
-                factorwav[y][x] = mult * (1.f - ImProcFunctions::calcGradientFactor(gpwav, cx+x, cy+y));
+                factorwav[y][x] = mult * (1.f - ImProcFunctions::calcGradientFactor(gpwav, cx + x, cy + y));
             }
         }
 
@@ -14766,7 +14724,7 @@ void ImProcFunctions::Lab_Local(
 #endif
                     for (int ir = 0; ir < bfh; ir++) {
                         for (int jr = 0; jr < bfw; jr++) {
-                            bufexpfin->L[ir][jr] *= ImProcFunctions::calcGradientFactor(gplog, cx+jr, cy+ir);
+                            bufexpfin->L[ir][jr] *= ImProcFunctions::calcGradientFactor(gplog, cx + jr, cy + ir);
                         }
                     }
                 }
@@ -17039,7 +16997,7 @@ void ImProcFunctions::Lab_Local(
 
                         for (int ir = 0; ir < bfh; ir++)
                             for (int jr = 0; jr < bfw; jr++) {
-                                float factor = ImProcFunctions::calcGradientFactor(gph, cx+jr, cy+ir);
+                                float factor = ImProcFunctions::calcGradientFactor(gph, cx + jr, cy + ir);
                                 float aa = bufexpfin->a[ir][jr];
                                 float bb = bufexpfin->b[ir][jr];
                                 float chrm = std::sqrt(SQR(aa) + SQR(bb));
@@ -17078,7 +17036,7 @@ void ImProcFunctions::Lab_Local(
 
                         for (int ir = 0; ir < bfh; ir++) {
                             for (int jr = 0; jr < bfw; jr++) {
-                                bufexpfin->L[ir][jr] *= ImProcFunctions::calcGradientFactor(gp, cx+jr, cy+ir);
+                                bufexpfin->L[ir][jr] *= ImProcFunctions::calcGradientFactor(gp, cx + jr, cy + ir);
                             }
                         }
                     }
@@ -17093,7 +17051,7 @@ void ImProcFunctions::Lab_Local(
 
                         for (int ir = 0; ir < bfh; ir++)
                             for (int jr = 0; jr < bfw; jr++) {
-                                const float factor = ImProcFunctions::calcGradientFactor(gpab, cx+jr, cy+ir);
+                                const float factor = ImProcFunctions::calcGradientFactor(gpab, cx + jr, cy + ir);
                                 bufexpfin->a[ir][jr] *= factor;
                                 bufexpfin->b[ir][jr] *= factor;
                             }
@@ -17380,10 +17338,10 @@ void ImProcFunctions::Lab_Local(
 
                     for (int ir = 0; ir < bfh; ir++) {
                         for (int jr = 0; jr < bfw; jr++) {
-                            bufexpfin->L[ir][jr] *= ImProcFunctions::calcGradientFactor(gp, cx+jr, cy+ir);
+                            bufexpfin->L[ir][jr] *= ImProcFunctions::calcGradientFactor(gp, cx + jr, cy + ir);
                         }
                     }
-                } else if(lp.strSH != 0.f && execgradsh && (call ==  ca4) && ((GW >= mDEN && GH >= mDEN))){//test to run in plain image
+                } else if(lp.strSH != 0.f && execgradsh && (call ==  ca4) && ((GW >= mDEN && GH >= mDEN))){//test to run in plain image - not used
                     calclocalGradientParams(call, lp, gp, ystart, xstart, yend, xend, GW, GH, oW, oH, tX, tY, tW, tH, 2, sk, fw, fh, cx, cy);
 #ifdef _OPENMP
             #pragma omp parallel for schedule(dynamic,16) if (multiThread)
@@ -17402,7 +17360,6 @@ void ImProcFunctions::Lab_Local(
                             tmp1->L[ir][jr] = ImProcFunctions::calcGradientFactor(gp, cy + jr, cx + ir);
                         }
                     }
-                    printf("OK BON zoom\n");
                 }
 
                 if (lp.shmeth == 1) {
@@ -17829,19 +17786,6 @@ void ImProcFunctions::Lab_Local(
                     bufexpfin->b[x][y] = intp(repart, bufexporig->b[x][y], bufexpfin->b[x][y]);
                 }
             }
-/*            
-                grad = 0;
-                int ca1 = 1;//dcrop
-                int ca2 = 2;//simpleprocess
-                int ca3 = 3;//improccordinator
-                int ca4 = 10;//nothing
-                if(grad == 1) {
-                    ca1 = 2;
-                    ca2 = 2;
-                    ca3 = 3;
-                    ca4 = 1;
-                }
-*/            
             
             if (lp.recothrs >= 1.f) {
                 if(call == ca1 || call == ca2 || call == ca3) {//call == 2 to run in mode plain image
@@ -17851,11 +17795,8 @@ void ImProcFunctions::Lab_Local(
                 } 
             } else {
                 if(call == ca1 || call == ca2 || call == ca3) {//call == 2 to run in mode plain image
-                printf("Appel detect2 1 2 3  grad=0   ou detect2 2 3 grad=1\n");
                     transit_shapedetect2(sp, 0.f, 0.f, call, 9, bufexporig.get(), bufexpfin.get(), nullptr, hueref, chromaref, lumaref, sobelref, 0.f, nullptr, lp, original, transformed, nullptr, 0,  cx, cy, sk);
-                } else if (call == ca4  && execgradsh) {// mode plain image
-                 printf("APPEL detect2 ZOOM grad=1\n");
-               
+                } else if (call == ca4  && execgradsh) {// mode plain image              
                     transit_shapedetect2(sp, 0.f, 0.f, call, 9, bufexporig.get(), bufexpfin.get(), nullptr, hueref, chromaref, lumaref, sobelref, 0.f, nullptr, lp, original, transformed, tmp1.get(), grad, cx, cy, sk);
                 }
             }
@@ -19096,7 +19037,7 @@ void ImProcFunctions::Lab_Local(
 
                         for (int ir = 0; ir < bfh; ir++) {
                             for (int jr = 0; jr < bfw; jr++) {
-                                bufexpfin->L[ir][jr] *= ImProcFunctions::calcGradientFactor(gp, cx+jr, cy+ir);
+                                bufexpfin->L[ir][jr] *= ImProcFunctions::calcGradientFactor(gp, cx + jr, cy + ir);
                             }
                         }
                     }
@@ -20005,7 +19946,7 @@ void ImProcFunctions::Lab_Local(
 
                             for (int ir = 0; ir < bfh; ir++) {
                                 for (int jr = 0; jr < bfw; jr++) {
-                                    const float corrFactor = ImProcFunctions::calcGradientFactor(gp, cx+jr, cy+ir);
+                                    const float corrFactor = ImProcFunctions::calcGradientFactor(gp, cx + jr, cy + ir);
                                     bufcolfin->L[ir][jr] *= corrFactor;
                                 }
                             }
@@ -20020,7 +19961,7 @@ void ImProcFunctions::Lab_Local(
 
                             for (int ir = 0; ir < bfh; ir++) {
                                 for (int jr = 0; jr < bfw; jr++) {
-                                    const float corrFactor = ImProcFunctions::calcGradientFactor(gpab, cx+jr, cy+ir);
+                                    const float corrFactor = ImProcFunctions::calcGradientFactor(gpab, cx + jr, cy + ir);
                                     bufcolfin->a[ir][jr] *= corrFactor;
                                     bufcolfin->b[ir][jr] *= corrFactor;
                                 }
@@ -20036,7 +19977,7 @@ void ImProcFunctions::Lab_Local(
 
                             for (int ir = 0; ir < bfh; ir++) {
                                 for (int jr = 0; jr < bfw; jr++) {
-                                    const float corrFactor = ImProcFunctions::calcGradientFactor(gph, cx+jr, cy+ir);
+                                    const float corrFactor = ImProcFunctions::calcGradientFactor(gph, cx + jr, cy + ir);
                                     const float aa = bufcolfin->a[ir][jr];
                                     const float bb = bufcolfin->b[ir][jr];
                                     const float chrm = std::sqrt(SQR(aa) + SQR(bb));
@@ -20530,7 +20471,7 @@ void ImProcFunctions::Lab_Local(
 
                             for (int ir = 0; ir < bfh; ir++)
                                 for (int jr = 0; jr < bfw; jr++) {
-                                    const float corrFactor = ImProcFunctions::calcGradientFactor(gp, cx+jr, cy+ir);
+                                    const float corrFactor = ImProcFunctions::calcGradientFactor(gp, cx + jr, cy + ir);
                                     bufcolfin->L[ir][jr] *= corrFactor;
                                 }
                         }
@@ -20544,7 +20485,7 @@ void ImProcFunctions::Lab_Local(
 
                             for (int ir = 0; ir < bfh; ir++)
                                 for (int jr = 0; jr < bfw; jr++) {
-                                    const float corrFactor = ImProcFunctions::calcGradientFactor(gpab, cx+jr, cy+ir);
+                                    const float corrFactor = ImProcFunctions::calcGradientFactor(gpab, cx + jr, cy + ir);
                                     bufcolfin->a[ir][jr] *= corrFactor;
                                     bufcolfin->b[ir][jr] *= corrFactor;
                                 }
@@ -20559,7 +20500,7 @@ void ImProcFunctions::Lab_Local(
 
                             for (int ir = 0; ir < bfh; ir++)
                                 for (int jr = 0; jr < bfw; jr++) {
-                                    const float corrFactor = ImProcFunctions::calcGradientFactor(gph, cx+jr, cy+ir);
+                                    const float corrFactor = ImProcFunctions::calcGradientFactor(gph, cx + jr, cy + ir);
                                     const float aa = bufcolfin->a[ir][jr];
                                     const float bb = bufcolfin->b[ir][jr];
                                     const float chrm = std::sqrt(SQR(aa) + SQR(bb));
@@ -21459,7 +21400,7 @@ void ImProcFunctions::Lab_Local(
 
                     for (int ir = 0; ir < bfh; ir++) {
                         for (int jr = 0; jr < bfw; jr++) {
-                            bufexpfin->L[ir][jr] *= ImProcFunctions::calcGradientFactor(gp, cx+jr, cy+ir);
+                            bufexpfin->L[ir][jr] *= ImProcFunctions::calcGradientFactor(gp, cx + jr, cy + ir);
                         }
                     }
             }

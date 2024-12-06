@@ -1025,7 +1025,7 @@ void LocallabColor::updateguicolor(int spottype)
                 previewcol->set_active(false);
                 expgradcol->show();
                 resetMaskView();
-            } else if (spottype == 2) {
+            } else if (spottype == 2) {//Full image mode for Graduate filter
                 expgradcol->show();
                 invers->show();
                 sensi->show();
@@ -1057,14 +1057,13 @@ void LocallabColor::updateguicolor(int spottype)
                 expgradcol->hide();
                 
                 updateGUIToMode(static_cast<modeType>(complexity->get_active_row_number()));
-
             }
             enableListener();
             if(spottype == 3) {        
                 showmaskcolMethodChanged();
                 showmaskcolMethodChangedinv();
             }
-            if(spottype == 0 || spottype == 1) {         
+            if(spottype == 0 || spottype == 1) { //reset values for GF in normal mode       
                 adjusterChanged(strcol, 0.);
                 adjusterChanged(strcolab, 0.);
                 adjusterChanged(strcolh, 0.);
@@ -2197,9 +2196,9 @@ void LocallabColor::convertParamToSimple()
 
     // Set hidden specific GUI widgets in Simple mode to default spot values
     softradiuscol->setValue(defSpot.softradiuscol);
-    strcol->setValue(defSpot.strcol);
-    angcol->setValue(defSpot.angcol);
-    feathercol->setValue(defSpot.feathercol);
+  //  strcol->setValue(defSpot.strcol);
+  //  angcol->setValue(defSpot.angcol);
+  //  feathercol->setValue(defSpot.feathercol);
     gamc->setValue(defSpot.gamc);
 
     if (defSpot.qualitycurveMethod == "none") {
@@ -2237,7 +2236,6 @@ void LocallabColor::updateGUIToMode(const modeType new_type)
             structcol->hide();
             blurcolde->hide();
             softradiuscol->hide();
-            expgradcol->hide();
             expcurvcol->hide();
             expmaskcol1->hide();
             expmaskcol->hide();
@@ -2285,7 +2283,6 @@ void LocallabColor::updateGUIToMode(const modeType new_type)
             }
 
             if (!invers->get_active()) { // Keep widget hidden when invers is toggled
-               // expgradcol->show();
                 exprecov->show();
                 gamc->hide();
             }
@@ -2304,7 +2301,6 @@ void LocallabColor::updateGUIToMode(const modeType new_type)
 
             if (!invers->get_active()) { // Keep widget hidden when invers is toggled
                 softradiuscol->show();
-              //  expgradcol->show();
                 exprecov->show();
                 gamc->show();
             }
@@ -2614,7 +2610,6 @@ void LocallabColor::updateColorGUI1()
 
         if (mode == Expert || mode == Normal) { // Keep widget hidden in Simple mode
             softradiuscol->show();
-           // expgradcol->show();
             exprecov->show();
         }
 
@@ -3072,7 +3067,7 @@ void LocallabExposure::updateguiexpos(int spottype)
                 exprecove->hide();
                 expgradexp->show();
                 resetMaskView();
-            } else if (spottype == 2) {
+            } else if (spottype == 2) {//Full image mode for Graduate filter
                 inversex->show();
                 sensiex->show();
                 expmaskexp->show();
@@ -3083,6 +3078,7 @@ void LocallabExposure::updateguiexpos(int spottype)
                     previewexe->show();
                 } else {
                     previewexe->hide();
+                    expgradexp->hide();
                 }
                 updateGUIToMode(static_cast<modeType>(complexity->get_active_row_number()));
                  
@@ -3106,7 +3102,7 @@ void LocallabExposure::updateguiexpos(int spottype)
                 showmaskexpMethodChanged();
                 showmaskexpMethodChangedinv();
             }
-            if(spottype == 0 || spottype == 1) {         
+            if(spottype == 0 || spottype == 1) {//reset value for GF       
                 adjusterChanged(strexp, 0.);
             }
 
@@ -3896,9 +3892,9 @@ void LocallabExposure::convertParamToSimple()
     fatanchor->setValue(defSpot.fatanchor);
     norm->set_active(false);
     // Set hidden specific GUI widgets in Simple mode to default spot values
-    strexp->setValue(defSpot.strexp);
-    angexp->setValue(defSpot.angexp);
-    featherexp->setValue(defSpot.featherexp);
+    //strexp->setValue(defSpot.strexp);
+    //angexp->setValue(defSpot.angexp);
+    //featherexp->setValue(defSpot.featherexp);
     softradiusexp->setValue(defSpot.softradiusexp);
     enaExpMask->set_active(defSpot.enaExpMask);
     enaExpMaskaft->set_active(defSpot.enaExpMaskaft);
@@ -3933,7 +3929,6 @@ void LocallabExposure::updateGUIToMode(const modeType new_type)
             maskusablee->hide();
             maskunusablee->hide();
             decaye->hide();
-            expmaskexp->hide();
             norm->hide();
             fatlevel->hide();
             fatanchor->hide();
@@ -3976,7 +3971,6 @@ void LocallabExposure::updateGUIToMode(const modeType new_type)
                 blurexpde->show();
             }
 
-            expmaskexp->show();
             decaye->hide();
 
             break;
@@ -4013,7 +4007,6 @@ void LocallabExposure::updateGUIToMode(const modeType new_type)
             }
             exppde->show();
 
-            expmaskexp->show();
             lapmaskexp->show();
             gammaskexp->show();
             slomaskexp->show();
@@ -4243,7 +4236,8 @@ void LocallabExposure::updateExposureGUI3()
         exppde->hide();
         structexp->hide();
         blurexpde->hide();
-
+        expgradexp->hide();
+        
         // Manage specific case where expMethod is different from 0
         if (expMethod->get_active_row_number() > 0) {
             expMethodConn.block(true);
@@ -4753,7 +4747,7 @@ void LocallabShadow::updateguishad(int spottype)
                 previewsh->set_active(false);
                 expgradsh->show();
                 resetMaskView();
-            } else if (spottype == 2) {
+            } else if (spottype == 2) {//for GF
                 expgradsh->show();               
                 sensihs->show();
                 inverssh->show();
@@ -4763,6 +4757,8 @@ void LocallabShadow::updateguishad(int spottype)
                     previewsh->show();
                 } else {
                     previewsh->hide();
+                    expgradsh->hide();               
+
                 }
                 if (shMethod->get_active_row_number() == 2) {
                    inverssh->hide();
@@ -4793,7 +4789,7 @@ void LocallabShadow::updateguishad(int spottype)
                 showmaskSHMethodChanged();
                 showmaskSHMethodChangedinv();                
             }
-            if(spottype == 0 || spottype == 1) {         
+            if(spottype == 0 || spottype == 1) {  //reset GF       
                 adjusterChanged(strSH, 0.);
             }
 
@@ -5713,9 +5709,9 @@ void LocallabShadow::convertParamToSimple()
 
     gamSH->setValue(defSpot.gamSH);
     sloSH->setValue(defSpot.sloSH);
-    angSH->setValue(defSpot.angSH);
-    featherSH->setValue(defSpot.featherSH);
-    strSH->setValue(defSpot.strSH);
+   // angSH->setValue(defSpot.angSH);
+   // featherSH->setValue(defSpot.featherSH);
+   // strSH->setValue(defSpot.strSH);
     showmaskSHMethod->set_active(0);
     showmaskSHMethodinv->set_active(0);
     enaSHMask->set_active(defSpot.enaSHMask);
@@ -5745,7 +5741,6 @@ void LocallabShadow::updateGUIToMode(const modeType new_type)
             // Expert and Normal mode widgets are hidden in Simple mode
             blurSHde->hide();
             gamFrame->hide();
-            expgradsh->hide();
             expmasksh->hide();
             exprecovs->hide();
             maskusables->hide();
@@ -5764,7 +5759,6 @@ void LocallabShadow::updateGUIToMode(const modeType new_type)
             slomaskSH->hide();
             fatSHFrame->hide();
             exprecovs->show();
-          //  expgradsh->show();
 
             // Specific Simple mode widgets are shown in Normal mode
             if (shMethod->get_active_row_number() == 1) { // Keep widget hidden when shMethod is equal to 0
@@ -5786,7 +5780,6 @@ void LocallabShadow::updateGUIToMode(const modeType new_type)
             }
 
             if (!inverssh->get_active()) { // Keep widget hidden when inverssh is toggled
-              //  expgradsh->show();
                 exprecovs->show();
             }
             expmasksh->show();
@@ -5814,7 +5807,6 @@ void LocallabShadow::updateGUIToMode(const modeType new_type)
 
 
             if (!inverssh->get_active()) { // Keep widget hidden when inverssh is toggled
-              //  expgradsh->show();
                 exprecovs->show();
             }
             if (enaSHMask->get_active()) {
@@ -5826,7 +5818,6 @@ void LocallabShadow::updateGUIToMode(const modeType new_type)
                 maskunusables->show();
             }
             exprecovs->show();
-          //  expgradsh->show();
             decays->show();
 
             expmasksh->show();
@@ -6068,13 +6059,11 @@ void LocallabShadow::updateShadowGUI1()
         exprecovs->hide();
         reparsh->hide();
     } else {
-       // expgradsh->hide();
         ghsMethod->hide();
         ghs_slope->hide();
         Lab_Frame->hide();
         
         if (mode == Expert || mode == Normal) { // Keep widget hidden in Simple mode
-           // expgradsh->show();
             exprecovs->show();
             ghsMethod->show();
         }
@@ -6160,7 +6149,6 @@ void LocallabShadow::updateShadowGUI2()
         sh_radius->hide();
         ghsFrame->hide();
         ghsMethod->hide();
-        //expgradsh->show();
     } else if (shMethod->get_active_row_number() == 2) {
         for (const auto multiplier : multipliersh) {
             multiplier->hide();
@@ -6176,13 +6164,11 @@ void LocallabShadow::updateShadowGUI2()
         ghsFrame->show();
         inverssh->hide();
         inverssh->set_active(false);
-        //expgradsh->hide();
         ghsMethod->hide();
         ghs_slope->hide();
         Lab_Frame->hide();
 
         if (mode == Expert || mode == Normal) { // Keep widget hidden in Simple mode
-           // expgradsh->show();
             ghsMethod->show();
             if (ghsMethod->get_active_row_number() == 2) {
                 Lab_Frame->show();
@@ -6224,9 +6210,7 @@ LocallabVibrance::LocallabVibrance():
     strvibab(Gtk::manage(new Adjuster(M("TP_LOCALLAB_GRADSTRCHRO"), -4., 4., 0.05, 0.))),
     strvibh(Gtk::manage(new Adjuster(M("TP_LOCALLAB_GRADSTRHUE2"), -6., 6., 0.05, 0.))),
     angvib(Gtk::manage(new Adjuster(M("TP_LOCALLAB_GRADANG"), -180, 180, 0.1, 0.))),
- //   angvib(Gtk::manage(new Adjuster(M("TP_LOCALLAB_GRADANG"), 0.00, 10., 0.001, 1.))),
     feathervib(Gtk::manage(new Adjuster(M("TP_LOCALLAB_FEATVALUE"), 10., 100., 0.1, 25.))),
- //   feathervib(Gtk::manage(new Adjuster(M("TP_LOCALLAB_FEATVALUE"), 0.00, 10., 0.001, 1.))),
     expmaskvib(Gtk::manage(new MyExpander(false, M("TP_LOCALLAB_SHOWVI")))),
     showmaskvibMethod(Gtk::manage(new MyComboBoxText())),
     enavibMask(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_ENABLE_MASK")))),
@@ -6455,7 +6439,7 @@ void LocallabVibrance::updateguivib(int spottype)
             // Update GUI fullimage or main
             disableListener();
 
-            if(spottype == 3) {
+            if(spottype == 3) {//global mode
                 sensiv->hide();
                 showmaskvibMethod->set_active(0);
                 previewvib->hide();
@@ -6465,21 +6449,18 @@ void LocallabVibrance::updateguivib(int spottype)
                 expgradvib->show();
                 expmaskvib->hide();
                 resetMaskView();
-            } else if (spottype == 2) {
+            } else if (spottype == 2) {//Full image mode for Graduate filter
                 expgradvib->show();               
-                sensiv->show();
-                
+                sensiv->show();              
                 previewvib->show();
                 exprecovv->show();
-                strvib->setValue(0.f);
-                strvibab->setValue(0.f);
-                strvibh->setValue(0.f);
+                //strvib->setValue(0.f);
+                //strvibab->setValue(0.f);
+                //strvibh->setValue(0.f);
                 expmaskvib->show();
                 updateGUIToMode(static_cast<modeType>(complexity->get_active_row_number()));
- 
                 } else {
-                sensiv->show();
-                
+                sensiv->show();            
                 previewvib->show();
                 exprecovv->show();
                 expgradvib->hide();               
@@ -6494,7 +6475,7 @@ void LocallabVibrance::updateguivib(int spottype)
             if(spottype == 3) {
                 showmaskvibMethodChanged();               
             }
-            if(spottype == 0 || spottype == 1) {         
+            if(spottype == 0 || spottype == 1) {  //reset value for GF if not in global or full image       
                 adjusterChanged(strvib, 0.);
                 adjusterChanged(strvibab, 0.);
                 adjusterChanged(strvibh, 0.);
@@ -7097,9 +7078,12 @@ void LocallabVibrance::convertParamToSimple()
     disableListener();
 
     // Set hidden specific GUI widgets in Simple mode to default spot values
-    strvib->setValue(defSpot.strvib);
-    angvib->setValue(defSpot.angvib);
-    feathervib->setValue(defSpot.feathervib);
+   // strvib->setValue(defSpot.strvib);
+   // angvib->setValue(defSpot.angvib);
+   // feathervib->setValue(defSpot.feathervib);
+    strvibab->setValue(defSpot.strvibab);
+    strvibh->setValue(defSpot.strvibh);
+  
     showmaskvibMethod->set_active(0);
     enavibMask->set_active(defSpot.enavibMask);
   //  CCmaskvibshape->setCurve(defSpot.CCmaskvibcurve);
@@ -7131,12 +7115,13 @@ void LocallabVibrance::updateGUIToMode(const modeType new_type)
             avoidColorShift->hide();
             pastSatTog->hide();
             curveEditorGG->hide();
-            //expgradvib->hide();
             expmaskvib->hide();
             exprecovv->hide();
             decayv->hide();
             maskusablev->hide();
             maskunusablev->hide();
+            strvibab->hide();
+            strvibh->hide();
 
             break;
 
@@ -7156,7 +7141,6 @@ void LocallabVibrance::updateGUIToMode(const modeType new_type)
             gammaskvib->hide();
             slomaskvib->hide();
             // Specific Simple mode widgets are shown in Normal mode
-         //  expgradvib->show();
             expmaskvib->show();
             exprecovv->show();
             decayv->hide();
@@ -7181,7 +7165,6 @@ void LocallabVibrance::updateGUIToMode(const modeType new_type)
             avoidColorShift->show();
             pastSatTog->show();
             curveEditorGG->show();
-           // expgradvib->show();
             strvibab->show();
             strvibh->show();
             expmaskvib->show();
