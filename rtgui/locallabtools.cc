@@ -1036,6 +1036,7 @@ void LocallabColor::updateguicolor(int spottype)
                     previewcol->show();
                 } else {
                     previewcol->hide();
+                    expgradcol->hide();
                 }                
                 updateGUIToMode(static_cast<modeType>(complexity->get_active_row_number()));
 
@@ -4758,7 +4759,6 @@ void LocallabShadow::updateguishad(int spottype)
                 } else {
                     previewsh->hide();
                     expgradsh->hide();               
-
                 }
                 if (shMethod->get_active_row_number() == 2) {
                    inverssh->hide();
@@ -6454,9 +6454,6 @@ void LocallabVibrance::updateguivib(int spottype)
                 sensiv->show();              
                 previewvib->show();
                 exprecovv->show();
-                //strvib->setValue(0.f);
-                //strvibab->setValue(0.f);
-                //strvibh->setValue(0.f);
                 expmaskvib->show();
                 updateGUIToMode(static_cast<modeType>(complexity->get_active_row_number()));
                 } else {
