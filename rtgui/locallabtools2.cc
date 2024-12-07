@@ -2546,6 +2546,7 @@ LocallabContrast::LocallabContrast():
     clarisoft(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SOFTRADIUSCOL"), 0.0, 100.0, 0.5, 1.))),
     origlc(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_ORIGLC")))),
     expcontrastpyr(Gtk::manage(new MyExpander(false, Gtk::manage(new Gtk::Box())))),
+    gradwavFrame(Gtk::manage(new Gtk::Frame())),
     wavgradl(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_GRALWFRA")))),
     sigmalc2(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SIGMAWAV"), 0.2, 2.5, 0.01, 1.))),
     strwav(Gtk::manage(new Adjuster(M("TP_LOCALLAB_GRADSTR"), -4.0, 4.0, 0.05, 0.))),
@@ -2961,7 +2962,6 @@ LocallabContrast::LocallabContrast():
     clariFrame->add(*clariBox);
     pack_start(*clariFrame);
     ToolParamBlock* const blurcontBox = Gtk::manage(new ToolParamBlock());
-    Gtk::Frame* const gradwavFrame = Gtk::manage(new Gtk::Frame());
     gradwavFrame->set_label_align(0.025, 0.5);
     gradwavFrame->set_label_widget(*wavgradl);
     ToolParamBlock* const gradwavBox = Gtk::manage(new ToolParamBlock());
@@ -3142,14 +3142,31 @@ void LocallabContrast::updateguicont(int spottype)
                 enalcMask->set_active(false);
                 exprecovw->hide();
                 expmasklc->hide();
-            } else {
+                gradwavFrame->set_sensitive(true);
+            } else if (spottype == 2) {
                 sensilc->show();
                 previewlc->show();
                 exprecovw->show();
                 expmasklc->show();
                 updateGUIToMode(static_cast<modeType>(complexity->get_active_row_number()));
+                gradwavFrame->set_sensitive(true);
+            } else {
+                sensilc->show();
+                previewlc->show();
+                exprecovw->show();
+                expmasklc->show();
+                strwav->setValue(0.f);
+                gradwavFrame->set_sensitive(false);
+
+                updateGUIToMode(static_cast<modeType>(complexity->get_active_row_number()));
             }
             enableListener();
+            if(spottype == 3) {
+                showmasklcMethodChanged();                
+            }
+            if(spottype == 0 || spottype == 1) { //reset values for GF in normal mode       
+                adjusterChanged(strwav, 0.);
+            }
 
         return false;
         }

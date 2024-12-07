@@ -1301,6 +1301,7 @@ private:
     Adjuster* const clarisoft;
     Gtk::CheckButton* const origlc;
     MyExpander* const expcontrastpyr;
+    Gtk::Frame* const gradwavFrame;
     Gtk::CheckButton* const wavgradl;
     Adjuster* const sigmalc2;
     Adjuster* const strwav;
