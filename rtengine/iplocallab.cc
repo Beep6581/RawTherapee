@@ -6244,10 +6244,12 @@ void calclocalGradientParams(int call, const struct local_params& lp, struct gra
             }
 
     int sk2 = 1;
-      
+    double kstop = 0.5; // to simulate stops in GF main.
     double gradient_stops = stops / sk2;//to test with Skip but does not work well
-    double gradient_angle = static_cast<double>(angs) / 180.0 * rtengine::RT_PI;
+    gradient_stops *= kstop;
 
+    double gradient_angle = static_cast<double>(angs) / 180.0 * rtengine::RT_PI;
+   // printf("SE stops=%f \n", gradient_stops);
 
     gradient_angle = fmod(gradient_angle, 2 * rtengine::RT_PI);
 
