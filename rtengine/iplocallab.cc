@@ -6139,7 +6139,7 @@ struct grad_params {
     int h;
 };
 
-void calclocalGradientParams(int call, const struct local_params& lp, struct grad_params& gp, float ystart, float xstart, float yend, float xend, int bfw, int bfh, int oW, int oH, int tX, int tY, int tW, int tH, int indic, int sk, int fw, int fh, int cx, int cy, float &ksk)
+void calclocalGradientParams(int call, const struct local_params& lp, struct grad_params& gp, float ystart, float xstart, float yend, float xend, int bfw, int bfh, int oW, int oH, int tX, int tY, int tW, int tH, int indic, int sk, int fw, int fh, int cx, int cy, float &ksk, float &kskx)
 {
     int w = bfw;//??? oW, tW..
     int h = bfh;//??? oH, tH..
@@ -6239,14 +6239,16 @@ void calclocalGradientParams(int call, const struct local_params& lp, struct gra
         varfeath = 0.01f * lp.feathercie;
             }
     float ktyoh = 1.f; //Try to take into account position of window in preview with various factors...ex: -2.f * ((float)(oH - tY) / (float)oH);
+    float ktxoh = 1.f; //Try to take into account position of window in preview with various factors...ex: -2.f * ((float)(oH - tY) / (float)oH);
     //printf("KTYOH=%f \n", (double) ktyoh);
     ksk *= ktyoh;
+    kskx *= ktxoh;
     int sk2 = 1;
     double kstop = 0.5; // to simulate stops in GF main.
     double gradient_stops = stops / sk2;//to test with Skip but does not work well
     gradient_stops *= kstop;
     if (settings->verbose) {
-        printf("call=%i xcent=%.2f ycent=%.2f Gcx=%.2f Gcy=%.2f indic=%i cx=%i cy=%i strength(stops)=%f k_sk=%f\n", call, (double) lp.xcent, (double) lp.ycent, gradient_center_x, gradient_center_y, indic, cx, cy, gradient_stops, (double) ksk);   
+        printf("call=%i xcent=%.2f ycent=%.2f Gcx=%.2f Gcy=%.2f indic=%i cx=%i cy=%i strength(stops)=%f k_sk=%f k_skx=%f\n", call, (double) lp.xcent, (double) lp.ycent, gradient_center_x, gradient_center_y, indic, cx, cy, gradient_stops, (double) ksk, (double) kskx);   
         printf("fw=%i fh=%i bfw=%i bfh=%i oW=%i oH=%i tW=%i tH=%i tX=%i tY=%i xstart=%.1f ystrat=%.1f xend=%.1f yend=%.1f xc=%.1f yc=%.1f yT=%.1f xL=%.1f sk=%i\n", fw, fh, bfw, bfh, oW, oH, tW, tH, tX, tY, (double) xstart, (double) ystart, (double) xend, (double) yend, (double) lp.xc, (double) lp.yc, (double) lp.lyT, (double)lp.lxL,  sk);
     }
 
@@ -7002,7 +7004,7 @@ void ImProcFunctions::maskcalccol(int call, bool invmask, bool pde, int bfw, int
                                   const LocwavCurve & loclmasCurvecolwav, bool lmasutilicolwav, int level_bl, int level_hl, int level_br, int level_hr,
                                   int shortcu, bool delt, const float hueref, const float chromaref, const float lumaref,
                                   float maxdE, float mindE, float maxdElim,  float mindElim, float iterat, float limscope, int scope,
-                                  bool fftt, float blu_ma, float cont_ma, int indic, float &fab, int fw, int fh, float ksk
+                                  bool fftt, float blu_ma, float cont_ma, int indic, float &fab, int fw, int fh, float ksk, float kskx
                                  )
 
 
@@ -7690,14 +7692,14 @@ void ImProcFunctions::maskcalccol(int call, bool invmask, bool pde, int bfw, int
         struct grad_params gp;
 
         if ((indic == 0 && lp.strmaexp != 0.f) || (indic == 12 &&  lp.str_mas != 0.f)) {
-            calclocalGradientParams(call, lp, gp, ystart, xstart, yend, xend, bfw, bfh, oW, oH, tX, tY, tW, tH, indic, sk, fw, fh, cx, cy, ksk);
+            calclocalGradientParams(call, lp, gp, ystart, xstart, yend, xend, bfw, bfh, oW, oH, tX, tY, tW, tH, indic, sk, fw, fh, cx, cy, ksk, kskx);
 #ifdef _OPENMP
             #pragma omp parallel for schedule(dynamic,16) if (multiThread)
 #endif
 
             for (int ir = 0; ir < bfh; ir++) {
                 for (int jr = 0; jr < bfw; jr++) {
-                    bufmaskblurcol->L[ir][jr] *= ImProcFunctions::calcGradientFactor(gp, cx*ksk + jr, cy*ksk + ir);
+                    bufmaskblurcol->L[ir][jr] *= ImProcFunctions::calcGradientFactor(gp, cx*kskx + jr, cy*ksk + ir);
                 }
             }
         }
@@ -10950,7 +10952,7 @@ void ImProcFunctions::wavcontrast4(int call, struct local_params& lp, float ** t
                                    const LocwavCurve & loccompwavCurve, bool loccompwavutili, bool wavcurvecomp,
                                    const LocwavCurve & loccomprewavCurve, bool loccomprewavutili, bool wavcurvecompre,
                                    const LocwavCurve & locedgwavCurve, bool locedgwavutili,
-                                   float sigm, float offs, int & maxlvl, float sigmadc, float deltad, float chromalev, float chromablu, bool blurlc, bool blurena, bool levelena, bool comprena, bool compreena, float compress, float thres, int fw, int fh, int cx, int cy, float ksk)
+                                   float sigm, float offs, int & maxlvl, float sigmadc, float deltad, float chromalev, float chromablu, bool blurlc, bool blurena, bool levelena, bool comprena, bool compreena, float compress, float thres, int fw, int fh, int cx, int cy, float ksk, float kskx)
 {
 //BENCHFUN
     std::unique_ptr<wavelet_decomposition> wdspot(new wavelet_decomposition(tmp[0], bfw, bfh, maxlvl, 1, sk, numThreads, lp.daubLen));
@@ -10970,7 +10972,7 @@ void ImProcFunctions::wavcontrast4(int call, struct local_params& lp, float ** t
 
     if (lp.strwav != 0.f && lp.wavgradl) {
         array2D<float> factorwav(W_Lm, H_Lm);
-        calclocalGradientParams(call, lp, gpwav, 0, 0, W_Lm, H_Lm, W_Lm, H_Lm, oW, oH, tX, tY, tW, tH, 10, sk, fw, fh, cx, cy, ksk);
+        calclocalGradientParams(call, lp, gpwav, 0, 0, W_Lm, H_Lm, W_Lm, H_Lm, oW, oH, tX, tY, tW, tH, 10, sk, fw, fh, cx, cy, ksk, kskx);
         const float mult = lp.strwav < 0.f ? -1.f : 1.f;
 #ifdef _OPENMP
         #pragma omp parallel for if (multiThread)
@@ -10978,7 +10980,7 @@ void ImProcFunctions::wavcontrast4(int call, struct local_params& lp, float ** t
 
         for (int y = 0; y < H_Lm; y++) {
             for (int x = 0; x < W_Lm; x++) {
-                factorwav[y][x] = mult * (1.f - ImProcFunctions::calcGradientFactor(gpwav, cx*ksk + x, cy*ksk + y));
+                factorwav[y][x] = mult * (1.f - ImProcFunctions::calcGradientFactor(gpwav, cx*kskx + x, cy*ksk + y));
             }
         }
 
@@ -14473,10 +14475,13 @@ void ImProcFunctions::Lab_Local(
     calcLocalParams(sp, oW, oH, params->locallab, lp, prevDeltaE, llColorMask, llColorMaskinv, llExpMask, llExpMaskinv, llSHMask, llSHMaskinv, llvibMask, lllcMask, llsharMask, llcbMask, llretiMask, llsoftMask, lltmMask, llblMask, lllogMask, ll_Mask, llcieMask, locwavCurveden, locwavdenutili);
     
     float ksk = 1.f;
+    float kskx = 1.f;
     if(sk == 1) {
         ksk = 0.86f;
+        kskx = 0.86f;
     } else if (sk == 2) {
         ksk = 0.95f;
+        kskx = 0.95f;
     }
 
     //avoidcolshi(lp, sp, transformed, reserved,  cy, cx, sk);
@@ -14661,7 +14666,7 @@ void ImProcFunctions::Lab_Local(
                         locccmaslogCurve, lcmaslogutili, locllmaslogCurve, llmaslogutili, lochhmaslogCurve, lhmaslogutili, lochhhmasCurve, false, multiThread,
                         enaMask, showmaske, deltaE, modmask, zero, modif, chrom, rad, lap, gamma, slope, blendm, blendm, shado, highl, amountcd, anchorcd, lmaskloglocalcurve, localmasklogutili, dummy, false, 1, 1, 5, 5,
                         shortcu, delt, hueref, chromaref, lumaref,
-                        maxdE, mindE, maxdElim, mindElim, lp.iterat, limscope, sco, false, 0.f, 0.f, -1, fab, fw, fh, ksk
+                        maxdE, mindE, maxdElim, mindElim, lp.iterat, limscope, sco, false, 0.f, 0.f, -1, fab, fw, fh, ksk, kskx
                        );
 
             if (lp.showmasklogmet == 3) {
@@ -14735,14 +14740,14 @@ void ImProcFunctions::Lab_Local(
                 //first solution "easy" but we can do other with log_encode...to see the results
                 if (lp.strlog != 0.f) {
                     struct grad_params gplog;
-                    calclocalGradientParams(call, lp, gplog, ystart, xstart, yend, xend, bfw, bfh, oW, oH, tX, tY, tW, tH, 11, sk, fw, fh, cx, cy, ksk);
+                    calclocalGradientParams(call, lp, gplog, ystart, xstart, yend, xend, bfw, bfh, oW, oH, tX, tY, tW, tH, 11, sk, fw, fh, cx, cy, ksk, kskx);
 
 #ifdef _OPENMP
                     #pragma omp parallel for schedule(dynamic,16) if(multiThread)
 #endif
                     for (int ir = 0; ir < bfh; ir++) {
                         for (int jr = 0; jr < bfw; jr++) {
-                            bufexpfin->L[ir][jr] *= ImProcFunctions::calcGradientFactor(gplog, cx*ksk + jr, cy*ksk + ir);
+                            bufexpfin->L[ir][jr] *= ImProcFunctions::calcGradientFactor(gplog, cx*kskx + jr, cy*ksk + ir);
                         }
                     }
                 }
@@ -14878,7 +14883,7 @@ void ImProcFunctions::Lab_Local(
                     strumask, astool, locccmasblCurve, lcmasblutili, locllmasblCurve, llmasblutili, lochhmasblCurve, lhmasblutili, lochhhmasCurve, false, multiThread,
                     enaMask, showmaske, deltaE, modmask, zero, modif, chrom, rad, lap, gamma, slope, blendm, blendm, shado, highl, amountcd, anchorcd, lmaskbllocalcurve,
                     localmaskblutili, loclmasCurveblwav, lmasutiliblwav, 1, 1, 5, 5, shortcu, params->locallab.spots.at(sp).deltae, hueref, chromaref, lumaref,
-                    maxdE, mindE, maxdElim, mindElim, lp.iterat, limscope, sco, false, 0.f, 0.f, 0, fab, fw, fh, ksk
+                    maxdE, mindE, maxdElim, mindElim, lp.iterat, limscope, sco, false, 0.f, 0.f, 0, fab, fw, fh, ksk, kskx
                    );
 
         if (lp.showmaskblmet == 3) {
@@ -15697,7 +15702,7 @@ void ImProcFunctions::Lab_Local(
                                 locccmastmCurve, lcmastmutili, locllmastmCurve, llmastmutili, lochhmastmCurve, lhmastmutili, lochhhmasCurve, false, multiThread,
                                 enaMask, showmaske, deltaE, modmask, zero, modif, chrom, rad, lap, gamma, slope, blendm, blendm, shado, highl, amountcd, anchorcd, lmasktmlocalcurve, localmasktmutili, dummy, false, 1, 1, 5, 5,
                                 shortcu, params->locallab.spots.at(sp).deltae, hueref, chromaref, lumaref,
-                                maxdE, mindE, maxdElim, mindElim, lp.iterat, limscope, sco, false, 0.f, 0.f, -1, fab, fw, fh, ksk
+                                maxdE, mindE, maxdElim, mindElim, lp.iterat, limscope, sco, false, 0.f, 0.f, -1, fab, fw, fh, ksk, kskx
                                );
 
                     if (lp.showmasktmmet == 3) {
@@ -15769,7 +15774,7 @@ void ImProcFunctions::Lab_Local(
                                     locccmastmCurve, lcmastmutili, locllmastmCurve, llmastmutili, lochhmastmCurve, lhmastmutili, lochhhmasCurve, false, multiThread,
                                     enaMask, showmaske, deltaE, modmask, zero, modif, chrom, rad, lap, gamma, slope, blendm, blendm, shado, highl, amountcd, anchorcd, lmasktmlocalcurve, localmasktmutili, dummy, false, 1, 1, 5, 5,
                                     shortcu, params->locallab.spots.at(sp).deltae, hueref, chromaref, lumaref,
-                                    maxdE, mindE, maxdElim, mindElim, lp.iterat, limscope, sco, false, 0.f, 0.f, -1, fab, fw, fh, ksk
+                                    maxdE, mindE, maxdElim, mindElim, lp.iterat, limscope, sco, false, 0.f, 0.f, -1, fab, fw, fh, ksk, kskx
                                    );
 
                         if (lp.showmasktmmet == 3) {//display mask
@@ -16722,7 +16727,7 @@ void ImProcFunctions::Lab_Local(
                             locccmascbCurve, lcmascbutili, locllmascbCurve, llmascbutili, lochhmascbCurve, lhmascbutili, lochhhmasCurve, false, multiThread,
                             enaMask, showmaske, deltaE, modmask, zero, modif, chrom, rad, lap, gamma, slope, blendm, blendm, shado, highl, amountcd, anchorcd, lmaskcblocalcurve, localmaskcbutili, dummy, false, 1, 1, 5, 5,
                             shortcu, params->locallab.spots.at(sp).deltae, hueref, chromaref, lumaref,
-                            maxdE, mindE, maxdElim, mindElim, lp.iterat, limscope, sco, false, 0.0f, 0.f, -1, fab, fw, fh, ksk
+                            maxdE, mindE, maxdElim, mindElim, lp.iterat, limscope, sco, false, 0.0f, 0.f, -1, fab, fw, fh, ksk, kskx
                            );
 
                 if (lp.showmaskcbmet == 3) {
@@ -16954,7 +16959,7 @@ void ImProcFunctions::Lab_Local(
                             locccmasvibCurve, lcmasvibutili, locllmasvibCurve, llmasvibutili, lochhmasvibCurve, lhmasvibutili, lochhhmasCurve, false, multiThread,
                             enaMask, showmaske, deltaE, modmask, zero, modif, chrom, rad, lap, gamma, slope, blendm, blendm, shado, highl, amountcd, anchorcd, lmaskviblocalcurve, localmaskvibutili, dummy, false, 1, 1, 5, 5,
                             shortcu, params->locallab.spots.at(sp).deltae, hueref, chromaref, lumaref,
-                            maxdE, mindE, maxdElim, mindElim, lp.iterat, limscope, sco, false, 0.f, 0.f, -1, fab, fw, fh, ksk
+                            maxdE, mindE, maxdElim, mindElim, lp.iterat, limscope, sco, false, 0.f, 0.f, -1, fab, fw, fh, ksk, kskx
                            );
 
                 if (lp.showmaskvibmet == 3) {
@@ -17008,14 +17013,14 @@ void ImProcFunctions::Lab_Local(
 
                     if (lp.strvibh != 0.f) {
                         struct grad_params gph;
-                        calclocalGradientParams(call, lp, gph, ystart, xstart, yend, xend,  bfw, bfh, oW, oH, tX, tY, tW, tH, 9, sk, fw, fh, cx, cy, ksk);
+                        calclocalGradientParams(call, lp, gph, ystart, xstart, yend, xend,  bfw, bfh, oW, oH, tX, tY, tW, tH, 9, sk, fw, fh, cx, cy, ksk, kskx);
 #ifdef _OPENMP
                         #pragma omp parallel for schedule(dynamic,16) if (multiThread)
 #endif
 
                         for (int ir = 0; ir < bfh; ir++)
                             for (int jr = 0; jr < bfw; jr++) {
-                                float factor = ImProcFunctions::calcGradientFactor(gph, cx*ksk + jr, cy*ksk + ir);
+                                float factor = ImProcFunctions::calcGradientFactor(gph, cx*kskx + jr, cy*ksk + ir);
                                 float aa = bufexpfin->a[ir][jr];
                                 float bb = bufexpfin->b[ir][jr];
                                 float chrm = std::sqrt(SQR(aa) + SQR(bb));
@@ -17047,15 +17052,7 @@ void ImProcFunctions::Lab_Local(
                     if (lp.strvib != 0.f) {
 
                         struct grad_params gp;
-                        calclocalGradientParams(call, lp, gp, ystart, xstart, yend, xend, bfw, bfh, oW, oH, tX, tY, tW, tH, 7, sk, fw, fh, cx, cy, ksk);
-                        /*
-                        float ksk = 1.f;
-                        if(sk == 1) {
-                            ksk = 0.9f;
-                        } else if (sk == 2) {
-                            ksk = 0.97f;
-                        }
-                        */
+                        calclocalGradientParams(call, lp, gp, ystart, xstart, yend, xend, bfw, bfh, oW, oH, tX, tY, tW, tH, 7, sk, fw, fh, cx, cy, ksk, kskx);
 
 #ifdef _OPENMP
                         #pragma omp parallel for schedule(dynamic,16) if (multiThread)
@@ -17063,7 +17060,7 @@ void ImProcFunctions::Lab_Local(
 
                         for (int ir = 0; ir < bfh; ir++) {
                             for (int jr = 0; jr < bfw; jr++) {
-                                bufexpfin->L[ir][jr] *= ImProcFunctions::calcGradientFactor(gp, cx*ksk + jr, cy*ksk  + ir);
+                                bufexpfin->L[ir][jr] *= ImProcFunctions::calcGradientFactor(gp, cx*kskx + jr, cy*ksk  + ir);
                             }
                         }
                     }
@@ -17071,14 +17068,14 @@ void ImProcFunctions::Lab_Local(
                     if (lp.strvibab != 0.f) {
 
                         struct grad_params gpab;
-                        calclocalGradientParams(call, lp, gpab, ystart, xstart, yend, xend, bfw, bfh, oW, oH, tX, tY, tW, tH, 8, sk, fw, fh, cx, cy, ksk);
+                        calclocalGradientParams(call, lp, gpab, ystart, xstart, yend, xend, bfw, bfh, oW, oH, tX, tY, tW, tH, 8, sk, fw, fh, cx, cy, ksk, kskx);
 #ifdef _OPENMP
                         #pragma omp parallel for schedule(dynamic,16) if (multiThread)
 #endif
 
                         for (int ir = 0; ir < bfh; ir++)
                             for (int jr = 0; jr < bfw; jr++) {
-                                const float factor = ImProcFunctions::calcGradientFactor(gpab, cx*ksk + jr, cy*ksk + ir);
+                                const float factor = ImProcFunctions::calcGradientFactor(gpab, cx*kskx + jr, cy*ksk + ir);
                                 bufexpfin->a[ir][jr] *= factor;
                                 bufexpfin->b[ir][jr] *= factor;
                             }
@@ -17304,7 +17301,7 @@ void ImProcFunctions::Lab_Local(
                         locccmasSHCurve, lcmasSHutili, locllmasSHCurve, llmasSHutili, lochhmasSHCurve, lhmasSHutili, lochhhmasCurve, false, multiThread,
                         enaMask, showmaske, deltaE, modmask, zero, modif, chrom, rad, lap, gamma, slope, blendm, blendm, shado, highl, amountcd, anchorcd, lmaskSHlocalcurve, localmaskSHutili, dummy, false, 1, 1, 5, 5,
                         shortcu, params->locallab.spots.at(sp).deltae, hueref, chromaref, lumaref,
-                        maxdE, mindE, maxdElim, mindElim, lp.iterat, limscope, sco, false, 0.f, 0.f, -1, fab, fw, fh, ksk
+                        maxdE, mindE, maxdElim, mindElim, lp.iterat, limscope, sco, false, 0.f, 0.f, -1, fab, fw, fh, ksk, kskx
                        );
 
             if (lp.showmaskSHmet == 3) {
@@ -17357,19 +17354,19 @@ void ImProcFunctions::Lab_Local(
                 struct grad_params gp;
 
                 if (lp.strSH != 0.f && (call == ca1 || call == ca2 || call == ca3)  && execgradsh) {//test to plain image
-                    calclocalGradientParams(call, lp, gp, ystart, xstart, yend, xend, bfw, bfh, oW, oH, tX, tY, tW, tH, 2, sk, fw, fh, cx, cy, ksk);
-                    printf("KSK SH=%f\n", (double) ksk);
+                    calclocalGradientParams(call, lp, gp, ystart, xstart, yend, xend, bfw, bfh, oW, oH, tX, tY, tW, tH, 2, sk, fw, fh, cx, cy, ksk, kskx);
+                   // printf("KSK SH=%f\n", (double) ksk);
 #ifdef _OPENMP
                     #pragma omp parallel for schedule(dynamic,16) if (multiThread)
 #endif
 
                     for (int ir = 0; ir < bfh; ir++) {
                         for (int jr = 0; jr < bfw; jr++) {
-                            bufexpfin->L[ir][jr] *= ImProcFunctions::calcGradientFactor(gp, cx*ksk + jr, cy*ksk + ir);
+                            bufexpfin->L[ir][jr] *= ImProcFunctions::calcGradientFactor(gp, cx*kskx + jr, cy*ksk + ir);
                         }
                     }
                 } else if(lp.strSH != 0.f && execgradsh && (call ==  ca4) && ((GW >= mDEN && GH >= mDEN))){//test to run in plain image - not used
-                    calclocalGradientParams(call, lp, gp, ystart, xstart, yend, xend, GW, GH, oW, oH, tX, tY, tW, tH, 2, sk, fw, fh, cx, cy, ksk);
+                    calclocalGradientParams(call, lp, gp, ystart, xstart, yend, xend, GW, GH, oW, oH, tX, tY, tW, tH, 2, sk, fw, fh, cx, cy, ksk, kskx);
 #ifdef _OPENMP
             #pragma omp parallel for schedule(dynamic,16) if (multiThread)
 #endif
@@ -17900,7 +17897,7 @@ void ImProcFunctions::Lab_Local(
                     locccmasSHCurve, lcmasSHutili, locllmasSHCurve, llmasSHutili, lochhmasSHCurve, lhmasSHutili, lochhhmasCurve, false, multiThread,
                     enaMask, showmaske, deltaE, modmask, zero, modif, chrom, rad, lap, gamma, slope, blendm, blendm, shado, highl, amountcd, anchorcd, lmaskSHlocalcurve, localmaskSHutili, dummy, false, 1, 1, 5, 5,
                     shortcu, false, hueref, chromaref, lumaref,
-                    maxdE, mindE, maxdElim, mindElim, lp.iterat, limscope, sco, false, 0.f, 0.f, -1, fab, fw, fh, ksk
+                    maxdE, mindE, maxdElim, mindElim, lp.iterat, limscope, sco, false, 0.f, 0.f, -1, fab, fw, fh, ksk, kskx
                    );
 
 
@@ -18177,7 +18174,7 @@ void ImProcFunctions::Lab_Local(
                         locccmaslcCurve, lcmaslcutili, locllmaslcCurve, llmaslcutili, lochhmaslcCurve, lhmaslcutili, lochhhmasCurve, false, multiThread,
                         enaMask, showmaske, deltaE, modmask, zero, modif, chrom, rad, lap, gamma, slope, blendm, blendm, shado, highl, amountcd, anchorcd, lmasklclocalcurve, localmasklcutili, dummy, false, 1, 1, 5, 5,
                         shortcu, params->locallab.spots.at(sp).deltae, hueref, chromaref, lumaref,
-                        maxdE, mindE, maxdElim, mindElim, lp.iterat, limscope, sco, false, 0.f, 0.f, -1, fab, fw, fh, ksk
+                        maxdE, mindE, maxdElim, mindElim, lp.iterat, limscope, sco, false, 0.f, 0.f, -1, fab, fw, fh, ksk, kskx
                        );
 
             if (lp.showmasklcmet == 3) {
@@ -18312,7 +18309,7 @@ void ImProcFunctions::Lab_Local(
                         }
                     }
 
-                    wavcontrast4(call, lp, tmp1->L, tmp1->a, tmp1->b, contrast, radblur, radlevblur, tmp1->W, tmp1->H, oW, oH, tX, tY, tW, tH, level_bl, level_hl, level_br, level_hr, sk, numThreads, locwavCurve, locwavutili, wavcurve, loclevwavCurve, loclevwavutili, wavcurvelev, locconwavCurve, locconwavutili, wavcurvecon, loccompwavCurve, loccompwavutili, wavcurvecomp, loccomprewavCurve, loccomprewavutili, wavcurvecompre, locedgwavCurve, locedgwavutili, sigma, offs, maxlvl, sigmadc, deltad, chrol, chrobl, blurlc, blurena, levelena, comprena, compreena, compress, thres, fw, fh, cx, cy, ksk);
+                    wavcontrast4(call, lp, tmp1->L, tmp1->a, tmp1->b, contrast, radblur, radlevblur, tmp1->W, tmp1->H, oW, oH, tX, tY, tW, tH, level_bl, level_hl, level_br, level_hr, sk, numThreads, locwavCurve, locwavutili, wavcurve, loclevwavCurve, loclevwavutili, wavcurvelev, locconwavCurve, locconwavutili, wavcurvecon, loccompwavCurve, loccompwavutili, wavcurvecomp, loccomprewavCurve, loccomprewavutili, wavcurvecompre, locedgwavCurve, locedgwavutili, sigma, offs, maxlvl, sigmadc, deltad, chrol, chrobl, blurlc, blurena, levelena, comprena, compreena, compress, thres, fw, fh, cx, cy, ksk, kskx);
 
                     if (params->locallab.spots.at(sp).expcie && params->locallab.spots.at(sp).modecie == "wav") {
                         bool HHcurvejz = false, CHcurvejz = false, LHcurvejz = false;
@@ -18993,7 +18990,7 @@ void ImProcFunctions::Lab_Local(
                             locccmasexpCurve, lcmasexputili, locllmasexpCurve, llmasexputili, lochhmasexpCurve, lhmasexputili, lochhhmasCurve, false, multiThread,
                             enaMask, showmaske, deltaE, modmask, zero, modif, chrom, rad, lap, gamma, slope, blendm, blendm, shado, highl, amountcd, anchorcd, lmaskexplocalcurve, localmaskexputili, dummy, false, 1, 1, 5, 5,
                             shortcu, params->locallab.spots.at(sp).deltae, hueref, chromaref, lumaref,
-                            maxdE, mindE, maxdElim, mindElim, lp.iterat, limscope, sco, false, 0.f, 0.f, 0, fab, fw, fh, ksk
+                            maxdE, mindE, maxdElim, mindElim, lp.iterat, limscope, sco, false, 0.f, 0.f, 0, fab, fw, fh, ksk, kskx
                            );
 
                 if (lp.showmaskexpmet == 3) {
@@ -19057,14 +19054,14 @@ void ImProcFunctions::Lab_Local(
 
                     if (lp.strexp != 0.f) {
 
-                        calclocalGradientParams(call, lp, gp, ystart, xstart, yend, xend, bfw, bfh, oW, oH, tX, tY, tW, tH, 1, sk, fw, fh, cx, cy, ksk);
+                        calclocalGradientParams(call, lp, gp, ystart, xstart, yend, xend, bfw, bfh, oW, oH, tX, tY, tW, tH, 1, sk, fw, fh, cx, cy, ksk, kskx);
 #ifdef _OPENMP
                         #pragma omp parallel for schedule(dynamic,16) if (multiThread)
 #endif
 
                         for (int ir = 0; ir < bfh; ir++) {
                             for (int jr = 0; jr < bfw; jr++) {
-                                bufexpfin->L[ir][jr] *= ImProcFunctions::calcGradientFactor(gp, cx*ksk + jr, cy*ksk + ir);
+                                bufexpfin->L[ir][jr] *= ImProcFunctions::calcGradientFactor(gp, cx*kskx + jr, cy*ksk + ir);
                             }
                         }
                     }
@@ -19361,7 +19358,7 @@ void ImProcFunctions::Lab_Local(
                     locccmasexpCurve, lcmasexputili, locllmasexpCurve, llmasexputili, lochhmasexpCurve, lhmasexputili, lochhhmasCurve, false, multiThread,
                     enaMask, showmaske, deltaE, modmask, zero, modif, chrom, rad, lap, gamma, slope, blendm, blendm, shado, highl, amountcd, anchorcd, lmaskexplocalcurve, localmaskexputili, dummy, false, 1, 1, 5, 5,
                     shortcu, false, hueref, chromaref, lumaref,
-                    maxdE, mindE, maxdElim, mindElim, lp.iterat, limscope, sco, false, 0.f, 0.f, 0, fab, fw, fh, ksk
+                    maxdE, mindE, maxdElim, mindElim, lp.iterat, limscope, sco, false, 0.f, 0.f, 0, fab, fw, fh, ksk, kskx
                    );
 
         if (lp.showmaskexpmetinv == 1) {
@@ -19590,7 +19587,7 @@ void ImProcFunctions::Lab_Local(
                             enaMask, showmaske, deltaE, modmask, zero, modif, chrom, rad, lap, gamma, slope, blendm, blendm, shado, highl, amountcd, anchorcd, lmasklocalcurve, localmaskutili, loclmasCurvecolwav, lmasutilicolwav,
                             level_bl, level_hl, level_br, level_hr,
                             shortcu, delt, hueref, chromaref, lumaref,
-                            maxdE, mindE, maxdElim, mindElim, lp.iterat, limscope, sco, lp.fftColorMask, lp.blurcolmask, lp.contcolmask, -1, fab, fw, fh, ksk
+                            maxdE, mindE, maxdElim, mindElim, lp.iterat, limscope, sco, lp.fftColorMask, lp.blurcolmask, lp.contcolmask, -1, fab, fw, fh, ksk, kskx
                            );
 
                 if (lp.showmaskcolmet == 3) {
@@ -19966,14 +19963,14 @@ void ImProcFunctions::Lab_Local(
 
                         if (lp.strcol != 0.f) {
                             struct grad_params gp;
-                            calclocalGradientParams(call, lp, gp, ystart, xstart, yend, xend, bfw, bfh, oW, oH, tX, tY, tW, tH, 3, sk, fw, fh, cx, cy, ksk);
+                            calclocalGradientParams(call, lp, gp, ystart, xstart, yend, xend, bfw, bfh, oW, oH, tX, tY, tW, tH, 3, sk, fw, fh, cx, cy, ksk, kskx);
 #ifdef _OPENMP
                             #pragma omp parallel for schedule(dynamic,16) if (multiThread)
 #endif
 
                             for (int ir = 0; ir < bfh; ir++) {
                                 for (int jr = 0; jr < bfw; jr++) {
-                                    const float corrFactor = ImProcFunctions::calcGradientFactor(gp, cx*ksk + jr, cy*ksk + ir);
+                                    const float corrFactor = ImProcFunctions::calcGradientFactor(gp, cx*kskx + jr, cy*ksk + ir);
                                     bufcolfin->L[ir][jr] *= corrFactor;
                                 }
                             }
@@ -19981,14 +19978,14 @@ void ImProcFunctions::Lab_Local(
 
                         if (lp.strcolab != 0.f) {
                             struct grad_params gpab;
-                            calclocalGradientParams(call, lp, gpab, ystart, xstart, yend, xend, bfw, bfh, oW, oH, tX, tY, tW, tH, 4, sk, fw, fh, cx, cy, ksk);
+                            calclocalGradientParams(call, lp, gpab, ystart, xstart, yend, xend, bfw, bfh, oW, oH, tX, tY, tW, tH, 4, sk, fw, fh, cx, cy, ksk, kskx);
 #ifdef _OPENMP
                             #pragma omp parallel for schedule(dynamic,16) if (multiThread)
 #endif
 
                             for (int ir = 0; ir < bfh; ir++) {
                                 for (int jr = 0; jr < bfw; jr++) {
-                                    const float corrFactor = ImProcFunctions::calcGradientFactor(gpab, cx*ksk + jr, cy*ksk + ir);
+                                    const float corrFactor = ImProcFunctions::calcGradientFactor(gpab, cx*kskx + jr, cy*ksk + ir);
                                     bufcolfin->a[ir][jr] *= corrFactor;
                                     bufcolfin->b[ir][jr] *= corrFactor;
                                 }
@@ -19997,14 +19994,14 @@ void ImProcFunctions::Lab_Local(
 
                         if (lp.strcolh != 0.f) {
                             struct grad_params gph;
-                            calclocalGradientParams(call, lp, gph, ystart, xstart, yend, xend, bfw, bfh, oW, oH, tX, tY, tW, tH, 6, sk, fw, fh, cx, cy, ksk);
+                            calclocalGradientParams(call, lp, gph, ystart, xstart, yend, xend, bfw, bfh, oW, oH, tX, tY, tW, tH, 6, sk, fw, fh, cx, cy, ksk, kskx);
 #ifdef _OPENMP
                             #pragma omp parallel for schedule(dynamic,16) if (multiThread)
 #endif
 
                             for (int ir = 0; ir < bfh; ir++) {
                                 for (int jr = 0; jr < bfw; jr++) {
-                                    const float corrFactor = ImProcFunctions::calcGradientFactor(gph, cx*ksk + jr, cy*ksk + ir);
+                                    const float corrFactor = ImProcFunctions::calcGradientFactor(gph, cx*kskx + jr, cy*ksk + ir);
                                     const float aa = bufcolfin->a[ir][jr];
                                     const float bb = bufcolfin->b[ir][jr];
                                     const float chrm = std::sqrt(SQR(aa) + SQR(bb));
@@ -20491,28 +20488,28 @@ void ImProcFunctions::Lab_Local(
 //gradient
                         if (lp.strcol != 0.f) {
                             struct grad_params gp;
-                            calclocalGradientParams(call, lp, gp, ystart, xstart, yend, xend, bfw, bfh, oW, oH, tX, tY, tW, tH,  3, sk, fw, fh, cx, cy, ksk);
+                            calclocalGradientParams(call, lp, gp, ystart, xstart, yend, xend, bfw, bfh, oW, oH, tX, tY, tW, tH,  3, sk, fw, fh, cx, cy, ksk, kskx);
 #ifdef _OPENMP
                             #pragma omp parallel for schedule(dynamic,16) if (multiThread)
 #endif
 
                             for (int ir = 0; ir < bfh; ir++)
                                 for (int jr = 0; jr < bfw; jr++) {
-                                    const float corrFactor = ImProcFunctions::calcGradientFactor(gp, cx*ksk + jr, cy*ksk + ir);
+                                    const float corrFactor = ImProcFunctions::calcGradientFactor(gp, cx*kskx + jr, cy*ksk + ir);
                                     bufcolfin->L[ir][jr] *= corrFactor;
                                 }
                         }
 
                         if (lp.strcolab != 0.f) {
                             struct grad_params gpab;
-                            calclocalGradientParams(call, lp, gpab, ystart, xstart, yend, xend, bfw, bfh, oW, oH, tX, tY, tW, tH, 5, sk, fw, fh, cx, cy, ksk);
+                            calclocalGradientParams(call, lp, gpab, ystart, xstart, yend, xend, bfw, bfh, oW, oH, tX, tY, tW, tH, 5, sk, fw, fh, cx, cy, ksk, kskx);
 #ifdef _OPENMP
                             #pragma omp parallel for schedule(dynamic,16) if (multiThread)
 #endif
 
                             for (int ir = 0; ir < bfh; ir++)
                                 for (int jr = 0; jr < bfw; jr++) {
-                                    const float corrFactor = ImProcFunctions::calcGradientFactor(gpab, cx*ksk + jr, cy*ksk + ir);
+                                    const float corrFactor = ImProcFunctions::calcGradientFactor(gpab, cx*kskx + jr, cy*ksk + ir);
                                     bufcolfin->a[ir][jr] *= corrFactor;
                                     bufcolfin->b[ir][jr] *= corrFactor;
                                 }
@@ -20520,14 +20517,14 @@ void ImProcFunctions::Lab_Local(
 
                         if (lp.strcolh != 0.f) {
                             struct grad_params gph;
-                            calclocalGradientParams(call, lp, gph, ystart, xstart, yend, xend,  bfw, bfh, oW, oH, tX, tY, tW, tH, 6, sk, fw, fh, cx, cy, ksk);
+                            calclocalGradientParams(call, lp, gph, ystart, xstart, yend, xend,  bfw, bfh, oW, oH, tX, tY, tW, tH, 6, sk, fw, fh, cx, cy, ksk, kskx);
 #ifdef _OPENMP
                             #pragma omp parallel for schedule(dynamic,16) if (multiThread)
 #endif
 
                             for (int ir = 0; ir < bfh; ir++)
                                 for (int jr = 0; jr < bfw; jr++) {
-                                    const float corrFactor = ImProcFunctions::calcGradientFactor(gph, cx*ksk + jr, cy*ksk + ir);
+                                    const float corrFactor = ImProcFunctions::calcGradientFactor(gph, cx*kskx + jr, cy*ksk + ir);
                                     const float aa = bufcolfin->a[ir][jr];
                                     const float bb = bufcolfin->b[ir][jr];
                                     const float chrm = std::sqrt(SQR(aa) + SQR(bb));
@@ -20722,7 +20719,7 @@ void ImProcFunctions::Lab_Local(
                     enaMask, showmaske, deltaE, modmask, zero, modif, chrom, rad, lap, gamma, slope, blendm, blendm, shado, highl, amountcd, anchorcd, lmasklocalcurve, localmaskutili, loclmasCurvecolwav, lmasutilicolwav,
                     level_bl, level_hl, level_br, level_hr,
                     shortcu, false, hueref, chromaref, lumaref,
-                    maxdE, mindE, maxdElim, mindElim, lp.iterat, limscope, sco, lp.fftColorMask, lp.blurcolmask, lp.contcolmask, -1, fab, fw, fh, ksk
+                    maxdE, mindE, maxdElim, mindElim, lp.iterat, limscope, sco, lp.fftColorMask, lp.blurcolmask, lp.contcolmask, -1, fab, fw, fh, ksk, kskx
                    );
 
         if (lp.showmaskcolmetinv == 1) {
@@ -20850,7 +20847,7 @@ void ImProcFunctions::Lab_Local(
                             enaMask, showmaske, deltaE, modmask, zero, modif, chrom, rad, lap, gamma, slope, blendm, blendmab, shado, highl, amountcd, anchorcd, lmasklocal_curve, localmask_utili, loclmasCurve_wav, lmasutili_wav,
                             level_bl, level_hl, level_br, level_hr,
                             shortcu, delt, hueref, chromaref, lumaref,
-                            maxdE, mindE, maxdElim, mindElim, lp.iterat, limscope, sco, lp.fftma, lp.blurma, lp.contma, 12, fab, fw, fh, ksk
+                            maxdE, mindE, maxdElim, mindElim, lp.iterat, limscope, sco, lp.fftma, lp.blurma, lp.contma, 12, fab, fw, fh, ksk, kskx
                            );
 
 
@@ -21071,7 +21068,7 @@ void ImProcFunctions::Lab_Local(
                         enaMask, showmaske, deltaE, modmask, zero, modif, chrom, rad, lap, gamma, slope, blendm, blendm, shado, highl, amountcd, anchorcd, lmaskcielocalcurve, localmaskcieutili, loclmasCurveciewav, lmasutiliciewav,
                         level_bl, level_hl, level_br, level_hr,
                         shortcu, delt, hueref, chromaref, lumaref,
-                        maxdE, mindE, maxdElim, mindElim, lp.iterat, limscope, sco, lp.fftcieMask, lp.blurciemask, lp.contciemask, -1, fab, fw, fh, ksk
+                        maxdE, mindE, maxdElim, mindElim, lp.iterat, limscope, sco, lp.fftcieMask, lp.blurciemask, lp.contciemask, -1, fab, fw, fh, ksk, kskx
                        );
 
             if (lp.showmaskciemet == 3) {
@@ -21420,14 +21417,14 @@ void ImProcFunctions::Lab_Local(
             if (lp.strgradcie != 0.f) {
 
                     struct grad_params gp;
-                    calclocalGradientParams(call, lp, gp, ystart, xstart, yend, xend,  bfw, bfh, oW, oH, tX, tY, tW, tH, 15, sk, fw, fh, cx, cy, ksk);
+                    calclocalGradientParams(call, lp, gp, ystart, xstart, yend, xend,  bfw, bfh, oW, oH, tX, tY, tW, tH, 15, sk, fw, fh, cx, cy, ksk, kskx);
 #ifdef _OPENMP
                     #pragma omp parallel for schedule(dynamic,16) if (multiThread)
 #endif
 
                     for (int ir = 0; ir < bfh; ir++) {
                         for (int jr = 0; jr < bfw; jr++) {
-                            bufexpfin->L[ir][jr] *= ImProcFunctions::calcGradientFactor(gp, cx*ksk + jr, cy*ksk + ir);
+                            bufexpfin->L[ir][jr] *= ImProcFunctions::calcGradientFactor(gp, cx*kskx + jr, cy*ksk + ir);
                         }
                     }
             }

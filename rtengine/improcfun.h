@@ -261,7 +261,7 @@ enum class BlurType {
                  const LUTf& lmasklocalcurve, bool localmaskutili,
                  const LocwavCurve & loclmasCurvecolwav, bool lmasutilicolwav, int level_bl, int level_hl, int level_br, int level_hr,
                  int shortcu, bool delt, const float hueref, const float chromaref, const float lumaref,
-                 float maxdE, float mindE, float maxdElim,  float mindElim, float iterat, float limscope, int scope, bool fftt, float blu_ma, float cont_ma, int indic, float &fab, int fw, int fh, float ksk);
+                 float maxdE, float mindE, float maxdElim,  float mindElim, float iterat, float limscope, int scope, bool fftt, float blu_ma, float cont_ma, int indic, float &fab, int fw, int fh, float ksk, float kskx);
 
     void avoidcolshi(const struct local_params& lp, int sp, LabImage *transformed, LabImage *reserved, int cy, int cx, int sk);
 
@@ -391,7 +391,7 @@ enum class BlurType {
         const LocwavCurve & loccompwavCurve, bool loccompwavutili, bool wavcurvecomp, 
         const LocwavCurve & loccomprewavCurve, bool loccomprewavutili, bool wavcurvecompre, 
         const LocwavCurve & locedgwavCurve, bool locedgwavutili,
-        float sigm, float offs,int & maxlvl, float sigmadc, float deltad, float chromalev, float chromablu, bool blurlc, bool blurena, bool levelena, bool comprena, bool compreena, float compress, float thres, int fw, int fh, int cx, int cy, float ksk);
+        float sigm, float offs,int & maxlvl, float sigmadc, float deltad, float chromalev, float chromablu, bool blurlc, bool blurena, bool levelena, bool comprena, bool compreena, float compress, float thres, int fw, int fh, int cx, int cy, float ksk, float kskx);
         
     void wavcont(const struct local_params& lp, float ** tmp, wavelet_decomposition &wdspot, int level_bl, int maxlvl, 
                 const LocwavCurve & loclevwavCurve, bool loclevwavutili, 
