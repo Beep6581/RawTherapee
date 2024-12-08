@@ -6139,7 +6139,7 @@ struct grad_params {
     int h;
 };
 
-void calclocalGradientParams(int call, const struct local_params& lp, struct grad_params& gp, float ystart, float xstart, float yend, float xend, int bfw, int bfh, int oW, int oH, int tX, int tY, int tW, int tH, int indic, int sk, int fw, int fh, int cx, int cy, float ksk)
+void calclocalGradientParams(int call, const struct local_params& lp, struct grad_params& gp, float ystart, float xstart, float yend, float xend, int bfw, int bfh, int oW, int oH, int tX, int tY, int tW, int tH, int indic, int sk, int fw, int fh, int cx, int cy, float &ksk)
 {
     int w = bfw;//??? oW, tW..
     int h = bfh;//??? oH, tH..
@@ -6155,7 +6155,7 @@ void calclocalGradientParams(int call, const struct local_params& lp, struct gra
 
     int kx = 0;
     int ky = 0;
-   // kx = tX; or cx
+   // kx = tX; or cx //try to take account of position of window in preview
    // ky = tY; or cy
    
    // cannot be used for RT-Spot "normal" or "exclude" : only in fullimage or Global
@@ -6238,7 +6238,9 @@ void calclocalGradientParams(int call, const struct local_params& lp, struct gra
         angs = lp.anggradcie;
         varfeath = 0.01f * lp.feathercie;
             }
-
+    float ktyoh = 1.f; //Try to take into account position of window in preview with various factors...ex: -2.f * ((float)(oH - tY) / (float)oH);
+    //printf("KTYOH=%f \n", (double) ktyoh);
+    ksk *= ktyoh;
     int sk2 = 1;
     double kstop = 0.5; // to simulate stops in GF main.
     double gradient_stops = stops / sk2;//to test with Skip but does not work well
@@ -14455,19 +14457,27 @@ void ImProcFunctions::Lab_Local(
     if (!params->locallab.enabled) {
         return;
     }
+    /*
     //empirical correction to cx and cy in function of sk to apply to cx and cy
+    float ksk = 1.f;
+    if(sk == 1) {
+        ksk = 0.86f * (1.f + params->locallab.angSH);
+    } else if (sk == 2) {
+        ksk = 0.95f * (1.f + );
+    }
+*/
+    //BENCHFUN
+    // printf("OHWTHW ow=%i oh=%i tw=%i th=%i sk=%i\n", oW, oH, tW, tH, sk);
+    constexpr int del = 3; // to avoid crash with [loy - begy] and [lox - begx] and bfh bfw  // with gtk2 [loy - begy-1] [lox - begx -1 ] and del = 1
+    struct local_params lp;
+    calcLocalParams(sp, oW, oH, params->locallab, lp, prevDeltaE, llColorMask, llColorMaskinv, llExpMask, llExpMaskinv, llSHMask, llSHMaskinv, llvibMask, lllcMask, llsharMask, llcbMask, llretiMask, llsoftMask, lltmMask, llblMask, lllogMask, ll_Mask, llcieMask, locwavCurveden, locwavdenutili);
+    
     float ksk = 1.f;
     if(sk == 1) {
         ksk = 0.86f;
     } else if (sk == 2) {
         ksk = 0.95f;
     }
-
-    //BENCHFUN
-    // printf("OHWTHW ow=%i oh=%i tw=%i th=%i sk=%i\n", oW, oH, tW, tH, sk);
-    constexpr int del = 3; // to avoid crash with [loy - begy] and [lox - begx] and bfh bfw  // with gtk2 [loy - begy-1] [lox - begx -1 ] and del = 1
-    struct local_params lp;
-    calcLocalParams(sp, oW, oH, params->locallab, lp, prevDeltaE, llColorMask, llColorMaskinv, llExpMask, llExpMaskinv, llSHMask, llSHMaskinv, llvibMask, lllcMask, llsharMask, llcbMask, llretiMask, llsoftMask, lltmMask, llblMask, lllogMask, ll_Mask, llcieMask, locwavCurveden, locwavdenutili);
 
     //avoidcolshi(lp, sp, transformed, reserved,  cy, cx, sk);
 
@@ -17348,7 +17358,7 @@ void ImProcFunctions::Lab_Local(
 
                 if (lp.strSH != 0.f && (call == ca1 || call == ca2 || call == ca3)  && execgradsh) {//test to plain image
                     calclocalGradientParams(call, lp, gp, ystart, xstart, yend, xend, bfw, bfh, oW, oH, tX, tY, tW, tH, 2, sk, fw, fh, cx, cy, ksk);
-                    
+                    printf("KSK SH=%f\n", (double) ksk);
 #ifdef _OPENMP
                     #pragma omp parallel for schedule(dynamic,16) if (multiThread)
 #endif
