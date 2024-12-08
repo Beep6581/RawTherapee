@@ -4598,6 +4598,8 @@ https://www.ghsastro.co.uk/doc/tools/GeneralizedHyperbolicStretch/GeneralizedHyp
     ghsBox->pack_start(*ghs_SP);
     ghsBox->pack_start(*ghs_LP);
     ghsBox->pack_start(*ghs_HP);
+    ghsBox->pack_start(*gridFrameghs);
+    
     LC_Frame->set_label_align(0.025, 0.5);
     ToolParamBlock* const LCBox = Gtk::manage(new ToolParamBlock());
     LCBox->pack_start(*ghs_LC);
@@ -4615,7 +4617,6 @@ https://www.ghsastro.co.uk/doc/tools/GeneralizedHyperbolicStretch/GeneralizedHyp
     ghsBox->pack_start(*BP_Frame);
     ghsBox->pack_start(*ghs_inv);
     ghsFrame->add(*ghsBox);
-    ghsBox->pack_start(*gridFrameghs);
     pack_start(*ghsFrame);
 
 

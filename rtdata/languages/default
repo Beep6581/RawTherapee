@@ -3187,7 +3187,7 @@ TP_LOCALLAB_GAMUTXYZRELA;XYZ Relative
 TP_LOCALLAB_GAMW;Gamma (wavelet pyramids)
 TP_LOCALLAB_GHSBPWP;Clipped Black point=%1 White point=%2
 TP_LOCALLAB_GHSBPWPVALUE;Value Black point=%1 White point=%2
-TP_LOCALLAB_GHS_GHSDIAG;GHS Simulation
+TP_LOCALLAB_GHS_GHSDIAG;GHS Curve Visualization
 TP_LOCALLAB_GHS_SIMUL_TOOLTIP;Gives a simplified representation of the GHS function - it only uses 7 points for the sake of code simplification.
 TP_LOCALLAB_GHSRGBLUM;RGB Luminance
 TP_LOCALLAB_GHSRGBSTD;RGB Standard
