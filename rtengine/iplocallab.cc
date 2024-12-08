@@ -6139,7 +6139,7 @@ struct grad_params {
     int h;
 };
 
-void calclocalGradientParams(int call, const struct local_params& lp, struct grad_params& gp, float ystart, float xstart, float yend, float xend, int bfw, int bfh, int oW, int oH, int tX, int tY, int tW, int tH, int indic, int sk, int fw, int fh, int cx, int cy)
+void calclocalGradientParams(int call, const struct local_params& lp, struct grad_params& gp, float ystart, float xstart, float yend, float xend, int bfw, int bfh, int oW, int oH, int tX, int tY, int tW, int tH, int indic, int sk, int fw, int fh, int cx, int cy, float ksk)
 {
     int w = bfw;//??? oW, tW..
     int h = bfh;//??? oH, tH..
@@ -6167,10 +6167,6 @@ void calclocalGradientParams(int call, const struct local_params& lp, struct gra
         gradient_center_y = LIM01((lp.ycent * (bfh)) / bfh);
     }
 
-    if (settings->verbose) {
-        printf("call=%i xcent=%.2f ycent=%.2f Gcx=%.2f Gcy=%.2f indic=%i cx=%i cy=%i\n", call, (double) lp.xcent, (double) lp.ycent, gradient_center_x, gradient_center_y, indic, cx, cy);   
-        printf("fw=%i fh=%i bfw=%i bfh=%i oW=%i oH=%i tW=%i tH=%i tX=%i tY=%i xstart=%.1f ystrat=%.1f xend=%.1f yend=%.1f xc=%.1f yc=%.1f yT=%.1f xL=%.1f sk=%i\n", fw, fh, bfw, bfh, oW, oH, tW, tH, tX, tY, (double) xstart, (double) ystart, (double) xend, (double) yend, (double) lp.xc, (double) lp.yc, (double) lp.lyT, (double)lp.lxL,  sk);
-    }
 
     if (indic == 0) {
         stops = -lp.strmaexp;
@@ -6247,9 +6243,12 @@ void calclocalGradientParams(int call, const struct local_params& lp, struct gra
     double kstop = 0.5; // to simulate stops in GF main.
     double gradient_stops = stops / sk2;//to test with Skip but does not work well
     gradient_stops *= kstop;
+    if (settings->verbose) {
+        printf("call=%i xcent=%.2f ycent=%.2f Gcx=%.2f Gcy=%.2f indic=%i cx=%i cy=%i strength(stops)=%f k_sk=%f\n", call, (double) lp.xcent, (double) lp.ycent, gradient_center_x, gradient_center_y, indic, cx, cy, gradient_stops, (double) ksk);   
+        printf("fw=%i fh=%i bfw=%i bfh=%i oW=%i oH=%i tW=%i tH=%i tX=%i tY=%i xstart=%.1f ystrat=%.1f xend=%.1f yend=%.1f xc=%.1f yc=%.1f yT=%.1f xL=%.1f sk=%i\n", fw, fh, bfw, bfh, oW, oH, tW, tH, tX, tY, (double) xstart, (double) ystart, (double) xend, (double) yend, (double) lp.xc, (double) lp.yc, (double) lp.lyT, (double)lp.lxL,  sk);
+    }
 
     double gradient_angle = static_cast<double>(angs) / 180.0 * rtengine::RT_PI;
-   // printf("SE stops=%f \n", gradient_stops);
 
     gradient_angle = fmod(gradient_angle, 2 * rtengine::RT_PI);
 
@@ -7689,7 +7688,7 @@ void ImProcFunctions::maskcalccol(int call, bool invmask, bool pde, int bfw, int
         struct grad_params gp;
 
         if ((indic == 0 && lp.strmaexp != 0.f) || (indic == 12 &&  lp.str_mas != 0.f)) {
-            calclocalGradientParams(call, lp, gp, ystart, xstart, yend, xend, bfw, bfh, oW, oH, tX, tY, tW, tH, indic, sk, fw, fh, cx, cy);
+            calclocalGradientParams(call, lp, gp, ystart, xstart, yend, xend, bfw, bfh, oW, oH, tX, tY, tW, tH, indic, sk, fw, fh, cx, cy, ksk);
 #ifdef _OPENMP
             #pragma omp parallel for schedule(dynamic,16) if (multiThread)
 #endif
@@ -10969,7 +10968,7 @@ void ImProcFunctions::wavcontrast4(int call, struct local_params& lp, float ** t
 
     if (lp.strwav != 0.f && lp.wavgradl) {
         array2D<float> factorwav(W_Lm, H_Lm);
-        calclocalGradientParams(call, lp, gpwav, 0, 0, W_Lm, H_Lm, W_Lm, H_Lm, oW, oH, tX, tY, tW, tH, 10, sk, fw, fh, cx, cy);
+        calclocalGradientParams(call, lp, gpwav, 0, 0, W_Lm, H_Lm, W_Lm, H_Lm, oW, oH, tX, tY, tW, tH, 10, sk, fw, fh, cx, cy, ksk);
         const float mult = lp.strwav < 0.f ? -1.f : 1.f;
 #ifdef _OPENMP
         #pragma omp parallel for if (multiThread)
@@ -14726,7 +14725,7 @@ void ImProcFunctions::Lab_Local(
                 //first solution "easy" but we can do other with log_encode...to see the results
                 if (lp.strlog != 0.f) {
                     struct grad_params gplog;
-                    calclocalGradientParams(call, lp, gplog, ystart, xstart, yend, xend, bfw, bfh, oW, oH, tX, tY, tW, tH, 11, sk, fw, fh, cx, cy);
+                    calclocalGradientParams(call, lp, gplog, ystart, xstart, yend, xend, bfw, bfh, oW, oH, tX, tY, tW, tH, 11, sk, fw, fh, cx, cy, ksk);
 
 #ifdef _OPENMP
                     #pragma omp parallel for schedule(dynamic,16) if(multiThread)
@@ -16999,7 +16998,7 @@ void ImProcFunctions::Lab_Local(
 
                     if (lp.strvibh != 0.f) {
                         struct grad_params gph;
-                        calclocalGradientParams(call, lp, gph, ystart, xstart, yend, xend,  bfw, bfh, oW, oH, tX, tY, tW, tH, 9, sk, fw, fh, cx, cy);
+                        calclocalGradientParams(call, lp, gph, ystart, xstart, yend, xend,  bfw, bfh, oW, oH, tX, tY, tW, tH, 9, sk, fw, fh, cx, cy, ksk);
 #ifdef _OPENMP
                         #pragma omp parallel for schedule(dynamic,16) if (multiThread)
 #endif
@@ -17038,7 +17037,7 @@ void ImProcFunctions::Lab_Local(
                     if (lp.strvib != 0.f) {
 
                         struct grad_params gp;
-                        calclocalGradientParams(call, lp, gp, ystart, xstart, yend, xend, bfw, bfh, oW, oH, tX, tY, tW, tH, 7, sk, fw, fh, cx, cy);
+                        calclocalGradientParams(call, lp, gp, ystart, xstart, yend, xend, bfw, bfh, oW, oH, tX, tY, tW, tH, 7, sk, fw, fh, cx, cy, ksk);
                         /*
                         float ksk = 1.f;
                         if(sk == 1) {
@@ -17062,7 +17061,7 @@ void ImProcFunctions::Lab_Local(
                     if (lp.strvibab != 0.f) {
 
                         struct grad_params gpab;
-                        calclocalGradientParams(call, lp, gpab, ystart, xstart, yend, xend, bfw, bfh, oW, oH, tX, tY, tW, tH, 8, sk, fw, fh, cx, cy);
+                        calclocalGradientParams(call, lp, gpab, ystart, xstart, yend, xend, bfw, bfh, oW, oH, tX, tY, tW, tH, 8, sk, fw, fh, cx, cy, ksk);
 #ifdef _OPENMP
                         #pragma omp parallel for schedule(dynamic,16) if (multiThread)
 #endif
@@ -17348,7 +17347,7 @@ void ImProcFunctions::Lab_Local(
                 struct grad_params gp;
 
                 if (lp.strSH != 0.f && (call == ca1 || call == ca2 || call == ca3)  && execgradsh) {//test to plain image
-                    calclocalGradientParams(call, lp, gp, ystart, xstart, yend, xend, bfw, bfh, oW, oH, tX, tY, tW, tH, 2, sk, fw, fh, cx, cy);
+                    calclocalGradientParams(call, lp, gp, ystart, xstart, yend, xend, bfw, bfh, oW, oH, tX, tY, tW, tH, 2, sk, fw, fh, cx, cy, ksk);
                     
 #ifdef _OPENMP
                     #pragma omp parallel for schedule(dynamic,16) if (multiThread)
@@ -17360,7 +17359,7 @@ void ImProcFunctions::Lab_Local(
                         }
                     }
                 } else if(lp.strSH != 0.f && execgradsh && (call ==  ca4) && ((GW >= mDEN && GH >= mDEN))){//test to run in plain image - not used
-                    calclocalGradientParams(call, lp, gp, ystart, xstart, yend, xend, GW, GH, oW, oH, tX, tY, tW, tH, 2, sk, fw, fh, cx, cy);
+                    calclocalGradientParams(call, lp, gp, ystart, xstart, yend, xend, GW, GH, oW, oH, tX, tY, tW, tH, 2, sk, fw, fh, cx, cy, ksk);
 #ifdef _OPENMP
             #pragma omp parallel for schedule(dynamic,16) if (multiThread)
 #endif
@@ -19048,7 +19047,7 @@ void ImProcFunctions::Lab_Local(
 
                     if (lp.strexp != 0.f) {
 
-                        calclocalGradientParams(call, lp, gp, ystart, xstart, yend, xend, bfw, bfh, oW, oH, tX, tY, tW, tH, 1, sk, fw, fh, cx, cy);
+                        calclocalGradientParams(call, lp, gp, ystart, xstart, yend, xend, bfw, bfh, oW, oH, tX, tY, tW, tH, 1, sk, fw, fh, cx, cy, ksk);
 #ifdef _OPENMP
                         #pragma omp parallel for schedule(dynamic,16) if (multiThread)
 #endif
@@ -19957,7 +19956,7 @@ void ImProcFunctions::Lab_Local(
 
                         if (lp.strcol != 0.f) {
                             struct grad_params gp;
-                            calclocalGradientParams(call, lp, gp, ystart, xstart, yend, xend, bfw, bfh, oW, oH, tX, tY, tW, tH, 3, sk, fw, fh, cx, cy);
+                            calclocalGradientParams(call, lp, gp, ystart, xstart, yend, xend, bfw, bfh, oW, oH, tX, tY, tW, tH, 3, sk, fw, fh, cx, cy, ksk);
 #ifdef _OPENMP
                             #pragma omp parallel for schedule(dynamic,16) if (multiThread)
 #endif
@@ -19972,7 +19971,7 @@ void ImProcFunctions::Lab_Local(
 
                         if (lp.strcolab != 0.f) {
                             struct grad_params gpab;
-                            calclocalGradientParams(call, lp, gpab, ystart, xstart, yend, xend, bfw, bfh, oW, oH, tX, tY, tW, tH, 4, sk, fw, fh, cx, cy);
+                            calclocalGradientParams(call, lp, gpab, ystart, xstart, yend, xend, bfw, bfh, oW, oH, tX, tY, tW, tH, 4, sk, fw, fh, cx, cy, ksk);
 #ifdef _OPENMP
                             #pragma omp parallel for schedule(dynamic,16) if (multiThread)
 #endif
@@ -19988,7 +19987,7 @@ void ImProcFunctions::Lab_Local(
 
                         if (lp.strcolh != 0.f) {
                             struct grad_params gph;
-                            calclocalGradientParams(call, lp, gph, ystart, xstart, yend, xend, bfw, bfh, oW, oH, tX, tY, tW, tH, 6, sk, fw, fh, cx, cy);
+                            calclocalGradientParams(call, lp, gph, ystart, xstart, yend, xend, bfw, bfh, oW, oH, tX, tY, tW, tH, 6, sk, fw, fh, cx, cy, ksk);
 #ifdef _OPENMP
                             #pragma omp parallel for schedule(dynamic,16) if (multiThread)
 #endif
@@ -20482,7 +20481,7 @@ void ImProcFunctions::Lab_Local(
 //gradient
                         if (lp.strcol != 0.f) {
                             struct grad_params gp;
-                            calclocalGradientParams(call, lp, gp, ystart, xstart, yend, xend, bfw, bfh, oW, oH, tX, tY, tW, tH,  3, sk, fw, fh, cx, cy);
+                            calclocalGradientParams(call, lp, gp, ystart, xstart, yend, xend, bfw, bfh, oW, oH, tX, tY, tW, tH,  3, sk, fw, fh, cx, cy, ksk);
 #ifdef _OPENMP
                             #pragma omp parallel for schedule(dynamic,16) if (multiThread)
 #endif
@@ -20496,7 +20495,7 @@ void ImProcFunctions::Lab_Local(
 
                         if (lp.strcolab != 0.f) {
                             struct grad_params gpab;
-                            calclocalGradientParams(call, lp, gpab, ystart, xstart, yend, xend, bfw, bfh, oW, oH, tX, tY, tW, tH, 5, sk, fw, fh, cx, cy);
+                            calclocalGradientParams(call, lp, gpab, ystart, xstart, yend, xend, bfw, bfh, oW, oH, tX, tY, tW, tH, 5, sk, fw, fh, cx, cy, ksk);
 #ifdef _OPENMP
                             #pragma omp parallel for schedule(dynamic,16) if (multiThread)
 #endif
@@ -20511,7 +20510,7 @@ void ImProcFunctions::Lab_Local(
 
                         if (lp.strcolh != 0.f) {
                             struct grad_params gph;
-                            calclocalGradientParams(call, lp, gph, ystart, xstart, yend, xend,  bfw, bfh, oW, oH, tX, tY, tW, tH, 6, sk, fw, fh, cx, cy);
+                            calclocalGradientParams(call, lp, gph, ystart, xstart, yend, xend,  bfw, bfh, oW, oH, tX, tY, tW, tH, 6, sk, fw, fh, cx, cy, ksk);
 #ifdef _OPENMP
                             #pragma omp parallel for schedule(dynamic,16) if (multiThread)
 #endif
@@ -21411,7 +21410,7 @@ void ImProcFunctions::Lab_Local(
             if (lp.strgradcie != 0.f) {
 
                     struct grad_params gp;
-                    calclocalGradientParams(call, lp, gp, ystart, xstart, yend, xend,  bfw, bfh, oW, oH, tX, tY, tW, tH, 15, sk, fw, fh, cx, cy);
+                    calclocalGradientParams(call, lp, gp, ystart, xstart, yend, xend,  bfw, bfh, oW, oH, tX, tY, tW, tH, 15, sk, fw, fh, cx, cy, ksk);
 #ifdef _OPENMP
                     #pragma omp parallel for schedule(dynamic,16) if (multiThread)
 #endif
