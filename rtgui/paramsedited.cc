@@ -1353,10 +1353,28 @@ void ParamsEdited::initFrom(const std::vector<rtengine::procparams::ProcParams>&
                 locallab.spots.at(j).ghsy8 = locallab.spots.at(j).ghsy8 && pSpot.ghsy8 == otherSpot.ghsy8;
                 locallab.spots.at(j).ghsx9 = locallab.spots.at(j).ghsx9 && pSpot.ghsx9 == otherSpot.ghsx9;
                 locallab.spots.at(j).ghsy9 = locallab.spots.at(j).ghsy9 && pSpot.ghsy9 == otherSpot.ghsy9;
-                locallab.spots.at(j).ghsx8 = locallab.spots.at(j).ghsx10 && pSpot.ghsx10 == otherSpot.ghsx10;
-                locallab.spots.at(j).ghsy8 = locallab.spots.at(j).ghsy10 && pSpot.ghsy10 == otherSpot.ghsy10;
-                locallab.spots.at(j).ghsx9 = locallab.spots.at(j).ghsx11 && pSpot.ghsx11 == otherSpot.ghsx11;
-                locallab.spots.at(j).ghsy9 = locallab.spots.at(j).ghsy11 && pSpot.ghsy11 == otherSpot.ghsy11;
+                locallab.spots.at(j).ghsx10 = locallab.spots.at(j).ghsx10 && pSpot.ghsx10 == otherSpot.ghsx10;
+                locallab.spots.at(j).ghsy10 = locallab.spots.at(j).ghsy10 && pSpot.ghsy10 == otherSpot.ghsy10;
+                locallab.spots.at(j).ghsx11 = locallab.spots.at(j).ghsx11 && pSpot.ghsx11 == otherSpot.ghsx11;
+                locallab.spots.at(j).ghsy11 = locallab.spots.at(j).ghsy11 && pSpot.ghsy11 == otherSpot.ghsy11;
+
+                locallab.spots.at(j).ghsx12 = locallab.spots.at(j).ghsx12 && pSpot.ghsx12 == otherSpot.ghsx12;
+                locallab.spots.at(j).ghsy12 = locallab.spots.at(j).ghsy12 && pSpot.ghsy12 == otherSpot.ghsy12;
+                locallab.spots.at(j).ghsx13 = locallab.spots.at(j).ghsx13 && pSpot.ghsx13 == otherSpot.ghsx13;
+                locallab.spots.at(j).ghsy13 = locallab.spots.at(j).ghsy13 && pSpot.ghsy13 == otherSpot.ghsy13;
+                locallab.spots.at(j).ghsx14 = locallab.spots.at(j).ghsx14 && pSpot.ghsx14 == otherSpot.ghsx14;
+                locallab.spots.at(j).ghsy14 = locallab.spots.at(j).ghsy14 && pSpot.ghsy14 == otherSpot.ghsy14;
+                locallab.spots.at(j).ghsx15 = locallab.spots.at(j).ghsx15 && pSpot.ghsx15 == otherSpot.ghsx15;
+                locallab.spots.at(j).ghsy15 = locallab.spots.at(j).ghsy15 && pSpot.ghsy15 == otherSpot.ghsy15;
+
+                locallab.spots.at(j).ghsx16 = locallab.spots.at(j).ghsx16 && pSpot.ghsx16 == otherSpot.ghsx16;
+                locallab.spots.at(j).ghsy16 = locallab.spots.at(j).ghsy16 && pSpot.ghsy16 == otherSpot.ghsy16;
+                locallab.spots.at(j).ghsx17 = locallab.spots.at(j).ghsx17 && pSpot.ghsx17 == otherSpot.ghsx17;
+                locallab.spots.at(j).ghsy17 = locallab.spots.at(j).ghsy17 && pSpot.ghsy17 == otherSpot.ghsy17;
+                locallab.spots.at(j).ghsx18 = locallab.spots.at(j).ghsx18 && pSpot.ghsx18 == otherSpot.ghsx18;
+                locallab.spots.at(j).ghsy18 = locallab.spots.at(j).ghsy18 && pSpot.ghsy18 == otherSpot.ghsy18;
+                locallab.spots.at(j).ghsx19 = locallab.spots.at(j).ghsx19 && pSpot.ghsx19 == otherSpot.ghsx19;
+                locallab.spots.at(j).ghsy19 = locallab.spots.at(j).ghsy19 && pSpot.ghsy19 == otherSpot.ghsy19;
 
                 for (int k = 0; k < 6; k++) {
                     locallab.spots.at(j).multsh[k] = locallab.spots.at(j).multsh[k] && pSpot.multsh[k] == otherSpot.multsh[k];
@@ -4464,6 +4482,70 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
 
         if (locallab.spots.at(i).ghsy11) {
             toEdit.locallab.spots.at(i).ghsy11 = mods.locallab.spots.at(i).ghsy11;
+        }
+
+        if (locallab.spots.at(i).ghsx12) {
+            toEdit.locallab.spots.at(i).ghsx12 = mods.locallab.spots.at(i).ghsx12;
+        }
+
+        if (locallab.spots.at(i).ghsy12) {
+            toEdit.locallab.spots.at(i).ghsy12 = mods.locallab.spots.at(i).ghsy12;
+        }
+
+        if (locallab.spots.at(i).ghsx13) {
+            toEdit.locallab.spots.at(i).ghsx13 = mods.locallab.spots.at(i).ghsx13;
+        }
+
+        if (locallab.spots.at(i).ghsy13) {
+            toEdit.locallab.spots.at(i).ghsy13 = mods.locallab.spots.at(i).ghsy13;
+        }
+
+        if (locallab.spots.at(i).ghsx14) {
+            toEdit.locallab.spots.at(i).ghsx14 = mods.locallab.spots.at(i).ghsx14;
+        }
+
+        if (locallab.spots.at(i).ghsy14) {
+            toEdit.locallab.spots.at(i).ghsy14 = mods.locallab.spots.at(i).ghsy14;
+        }
+
+        if (locallab.spots.at(i).ghsx15) {
+            toEdit.locallab.spots.at(i).ghsx15 = mods.locallab.spots.at(i).ghsx15;
+        }
+
+        if (locallab.spots.at(i).ghsy15) {
+            toEdit.locallab.spots.at(i).ghsy15 = mods.locallab.spots.at(i).ghsy15;
+        }
+
+        if (locallab.spots.at(i).ghsx16) {
+            toEdit.locallab.spots.at(i).ghsx16 = mods.locallab.spots.at(i).ghsx16;
+        }
+
+        if (locallab.spots.at(i).ghsy16) {
+            toEdit.locallab.spots.at(i).ghsy16 = mods.locallab.spots.at(i).ghsy16;
+        }
+
+        if (locallab.spots.at(i).ghsx17) {
+            toEdit.locallab.spots.at(i).ghsx17 = mods.locallab.spots.at(i).ghsx17;
+        }
+
+        if (locallab.spots.at(i).ghsy17) {
+            toEdit.locallab.spots.at(i).ghsy17 = mods.locallab.spots.at(i).ghsy17;
+        }
+
+        if (locallab.spots.at(i).ghsx18) {
+            toEdit.locallab.spots.at(i).ghsx18 = mods.locallab.spots.at(i).ghsx18;
+        }
+
+        if (locallab.spots.at(i).ghsy18) {
+            toEdit.locallab.spots.at(i).ghsy18 = mods.locallab.spots.at(i).ghsy18;
+        }
+
+        if (locallab.spots.at(i).ghsx19) {
+            toEdit.locallab.spots.at(i).ghsx19 = mods.locallab.spots.at(i).ghsx19;
+        }
+
+        if (locallab.spots.at(i).ghsy19) {
+            toEdit.locallab.spots.at(i).ghsy19 = mods.locallab.spots.at(i).ghsy19;
         }
 
         if (locallab.spots.at(i).ghsMode) {
@@ -8403,6 +8485,22 @@ LocallabParamsEdited::LocallabSpotEdited::LocallabSpotEdited(bool v) :
     ghsy10(v),
     ghsx11(v),
     ghsy11(v),
+    ghsx12(v),
+    ghsy12(v),
+    ghsx13(v),
+    ghsy13(v),
+    ghsx14(v),
+    ghsy14(v),
+    ghsx15(v),
+    ghsy15(v),
+    ghsx16(v),
+    ghsy16(v),
+    ghsx17(v),
+    ghsy17(v),
+    ghsx18(v),
+    ghsy18(v),
+    ghsx19(v),
+    ghsy19(v),
     
     multsh{v, v, v, v, v, v, v},
     highlights(v),
@@ -9202,6 +9300,22 @@ void LocallabParamsEdited::LocallabSpotEdited::set(bool v)
     ghsy10 = v;
     ghsx11 = v;
     ghsy11 = v;
+    ghsx12 = v;
+    ghsy12 = v;
+    ghsx13 = v;
+    ghsy13 = v;
+    ghsx14 = v;
+    ghsy14 = v;
+    ghsx15 = v;
+    ghsy15 = v;
+    ghsx16 = v;
+    ghsy16 = v;
+    ghsx17 = v;
+    ghsy17 = v;
+    ghsx18 = v;
+    ghsy18 = v;
+    ghsx19 = v;
+    ghsy19 = v;
     
 
     for (int i = 0; i < 6; i++) {

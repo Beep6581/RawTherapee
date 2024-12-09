@@ -10017,7 +10017,8 @@ void Locallabcie::read(const rtengine::procparams::ProcParams* pp, const ParamsE
                               spot.labgridcieMy,
                               0, 0, 0, 0,
                               0, 0, 0, 0,
-                              0, 0, 0, 0, //+4 12 11
+                              0, 0, 0, 0,//+4 12 11
+                              0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,//+16 9 dec 2024
                               false);
 
         strgradcie->setValue((double)spot.strgradcie);
@@ -10131,7 +10132,8 @@ void Locallabcie::write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedi
                               spot.labgridcieMy,
                               zerox, zeroy, zerox, zeroy,
                               zerox, zeroy, zerox, zeroy,
-                              zerox, zeroy, zerox, zeroy //+4 12 11
+                              zerox, zeroy, zerox, zeroy, //+4 12 11
+                              zerox, zeroy, zerox, zeroy, zerox, zeroy, zerox, zeroy, zerox, zeroy, zerox, zeroy, zerox, zeroy, zerox, zeroy //+16 9 dec 2024
                               );
 
         spot.Autograycie = Autograycie->get_active();
@@ -10488,7 +10490,8 @@ void Locallabcie::updateiPrimloc(const float r_x, const float r_y, const float g
         greyl->setValue(g_y);
         bluxl->setValue(b_x);
         bluyl->setValue(b_y);
-        labgridcie->setParams(nextrx, nextry, nextbx, nextby, nextgx, nextgy, nextwx, nextwy, nextmx, nextmy, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, false);//+4 12 11
+        labgridcie->setParams(nextrx, nextry, nextbx, nextby, nextgx, nextgy, nextwx, nextwy, nextmx, nextmy, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, //+4 12 11
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, false);//+16 9 dec 2024
         enableListener();
         return false;
     }
@@ -12220,7 +12223,8 @@ void Locallabcie::setDefaults(const rtengine::procparams::ProcParams* defParams,
                                defSpot.labgridcieMy,
                                zerox, zeroy, zerox, zeroy, 
                                zerox, zeroy, zerox, zeroy, 
-                               zerox, zeroy, zerox, zeroy //+4 12 11
+                               zerox, zeroy, zerox, zeroy, //+4 12 11
+                               zerox, zeroy, zerox, zeroy,zerox, zeroy, zerox, zeroy,  zerox, zeroy, zerox, zeroy,zerox, zeroy, zerox, zeroy // +16 9 dec 2024
                                );
 
     }

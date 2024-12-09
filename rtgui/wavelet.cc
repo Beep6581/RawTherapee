@@ -1750,7 +1750,8 @@ void Wavelet::read(const ProcParams* pp, const ParamsEdited* pedited)
     detend->setValue(pp->wavelet.detend);
     thrend->setValue(pp->wavelet.thrend);
     labgrid->setParams(pp->wavelet.labgridALow / WaveletParams::LABGRID_CORR_MAX, pp->wavelet.labgridBLow / WaveletParams::LABGRID_CORR_MAX, pp->wavelet.labgridAHigh / WaveletParams::LABGRID_CORR_MAX, pp->wavelet.labgridBHigh / WaveletParams::LABGRID_CORR_MAX, 
-                        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, false);//+4 12 11
+                        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,//+4 12 11
+                        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, false);//+16 9 dec 2024
 
     sigm->setValue(pp->wavelet.sigm);
     levden->setValue(pp->wavelet.levden);
@@ -2214,7 +2215,8 @@ void Wavelet::write(ProcParams* pp, ParamsEdited* pedited)
     double zerox = 0.;
     double zeroy = 0.;
     labgrid->getParams(pp->wavelet.labgridALow, pp->wavelet.labgridBLow, pp->wavelet.labgridAHigh, pp->wavelet.labgridBHigh, 
-                    zerox, zeroy, zerox, zeroy, zerox, zeroy, zerox, zeroy, zerox, zeroy, zerox, zeroy, zerox, zeroy,  zerox, zeroy, zerox, zeroy);//4 12 11
+                    zerox, zeroy, zerox, zeroy, zerox, zeroy, zerox, zeroy, zerox, zeroy, zerox, zeroy, zerox, zeroy,  zerox, zeroy, zerox, zeroy,//4 12 11
+                    zerox, zeroy, zerox, zeroy,  zerox, zeroy, zerox, zeroy, zerox, zeroy, zerox, zeroy,  zerox, zeroy, zerox, zeroy);//16 9 dec 2024
     pp->wavelet.labgridALow *= WaveletParams::LABGRID_CORR_MAX;
     pp->wavelet.labgridAHigh *= WaveletParams::LABGRID_CORR_MAX;
     pp->wavelet.labgridBLow *= WaveletParams::LABGRID_CORR_MAX;
@@ -2675,7 +2677,8 @@ void Wavelet::setDefaults(const ProcParams* defParams, const ParamsEdited* pedit
     chromfi->setDefault(defParams->wavelet.chromfi);
     chromco->setDefault(defParams->wavelet.chromco);
     labgrid->setDefault(defParams->wavelet.labgridALow / WaveletParams::LABGRID_CORR_MAX, defParams->wavelet.labgridBLow / WaveletParams::LABGRID_CORR_MAX, defParams->wavelet.labgridAHigh / WaveletParams::LABGRID_CORR_MAX, defParams->wavelet.labgridBHigh / WaveletParams::LABGRID_CORR_MAX,
-            0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);//4 12 11
+            0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,//4 12 11
+            0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);//16 9 dec 2024
 
     greenlow->setDefault(defParams->wavelet.greenlow);
     bluelow->setDefault(defParams->wavelet.bluelow);

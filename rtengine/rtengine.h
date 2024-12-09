@@ -476,7 +476,7 @@ public:
     };
 
     struct locallabshGHS {//To draw GHS  S curve
-       double ghsc[24];//+4 12 11
+       double ghsc[40];//+16 dec 12 11
     };
 
 

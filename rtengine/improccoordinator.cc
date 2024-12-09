@@ -1402,7 +1402,7 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                 float Lnresi = 0.f;
                 float Lhighresi46 = 0.f;
                 float Lnresi46 = 0.f;
-                float ghscur[24];//42 +4 12 11
+                float ghscur[40];//42 +4 12 11 // +16 6 december 2024
                 int ghsbpwp[2];
                 ghsbpwp[0] = 0;
                 ghsbpwp[1] = 0;
@@ -1592,8 +1592,9 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                 }
                 */
                 LocallabListener::locallabshGHS locshghs;//ghs S curve 42 or labgrid 12
-                    for(int j = 0; j < 24; j++) {//+4 12 11
+                    for(int j = 0; j < 38; j++) {//+4 12 11 //+16 december 2024
                         locshghs.ghsc[j] = ghscur[j];
+                       // printf("imp j=%i ghs=%f\n", j, (double) ghscur[j]); 
                     }
                 //    locshghs.licur = reset;
                 /*

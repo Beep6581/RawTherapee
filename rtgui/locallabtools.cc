@@ -1315,7 +1315,8 @@ void LocallabColor::read(const rtengine::procparams::ProcParams* pp, const Param
                            spot.labgridBLow / LocallabParams::LABGRIDL_CORR_MAX,
                            spot.labgridAHigh / LocallabParams::LABGRIDL_CORR_MAX,
                            spot.labgridBHigh / LocallabParams::LABGRIDL_CORR_MAX,
-                           0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 , false);//+4 - 12-11
+                           0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 , //+4 - 12-11
+                           0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, false);//+16 - 9 dec 2024
        // printf("labgridlow=%f \n", spot.labgridALow);
         if (spot.gridMethod == "one") {
             gridMethod->set_active(0);
@@ -1429,7 +1430,8 @@ void LocallabColor::read(const rtengine::procparams::ProcParams* pp, const Param
         labgridmerg->setParams(0, 0,
                                spot.labgridAHighmerg / LocallabParams::LABGRIDL_CORR_MAX,
                                spot.labgridBHighmerg / LocallabParams::LABGRIDL_CORR_MAX,
-                               0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,  false);//+4 12 11
+                               0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,//+4 12 11
+                               0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, false);//+16 9 dec 2024
         merlucol->setValue(spot.merlucol);
         enaColorMask->set_active(spot.enaColorMask);
         CCmaskshape->setCurve(spot.CCmaskcurve);
@@ -1493,7 +1495,8 @@ void LocallabColor::write(rtengine::procparams::ProcParams* pp, ParamsEdited* pe
         labgrid->getParams(spot.labgridALow,
                            spot.labgridBLow,
                            spot.labgridAHigh,
-                           spot.labgridBHigh, zerox, zeroy, zerox, zeroy, zerox, zeroy, zerox, zeroy, zerox, zeroy, zerox, zeroy, zerox, zeroy, zerox, zeroy, zerox, zeroy);//+4 12 11
+                           spot.labgridBHigh, zerox, zeroy, zerox, zeroy, zerox, zeroy, zerox, zeroy, zerox, zeroy, zerox, zeroy, zerox, zeroy, zerox, zeroy, zerox, zeroy,//+4 12 11
+                           zerox, zeroy, zerox, zeroy, zerox, zeroy, zerox, zeroy, zerox, zeroy, zerox, zeroy, zerox, zeroy, zerox, zeroy);//+16 9 dec 2024
         spot.labgridALow *= LocallabParams::LABGRIDL_CORR_MAX;
         spot.labgridAHigh *= LocallabParams::LABGRIDL_CORR_MAX;
         spot.labgridBLow *= LocallabParams::LABGRIDL_CORR_MAX;
@@ -1613,7 +1616,8 @@ void LocallabColor::write(rtengine::procparams::ProcParams* pp, ParamsEdited* pe
         labgridmerg->getParams(spot.labgridALowmerg,
                                spot.labgridBLowmerg,
                                spot.labgridAHighmerg,
-                               spot.labgridBHighmerg, zerox1, zeroy1, zerox1, zeroy1, zerox1, zeroy1, zerox1, zeroy1, zerox1, zeroy1, zerox1, zeroy1, zerox1, zeroy1, zerox1, zeroy1, zerox1, zeroy1);//+4 12 11
+                               spot.labgridBHighmerg, zerox1, zeroy1, zerox1, zeroy1, zerox1, zeroy1, zerox1, zeroy1, zerox1, zeroy1, zerox1, zeroy1, zerox1, zeroy1, zerox1, zeroy1, zerox1, zeroy1,//+4 12 11
+                               zerox1, zeroy1, zerox1, zeroy1, zerox1, zeroy1, zerox1, zeroy1, zerox1, zeroy1, zerox1, zeroy1, zerox1, zeroy1, zerox1, zeroy1);//+16 9 dec 2024
         spot.labgridALowmerg *= LocallabParams::LABGRIDL_CORR_MAX;
         spot.labgridAHighmerg *= LocallabParams::LABGRIDL_CORR_MAX;
         spot.labgridBLowmerg *= LocallabParams::LABGRIDL_CORR_MAX;
@@ -1660,7 +1664,8 @@ void LocallabColor::setDefaults(const rtengine::procparams::ProcParams* defParam
         labgrid->setDefault(defSpot.labgridALow / LocallabParams::LABGRIDL_CORR_MAX,
                             defSpot.labgridBLow / LocallabParams::LABGRIDL_CORR_MAX,
                             defSpot.labgridAHigh / LocallabParams::LABGRIDL_CORR_MAX,
-                            defSpot.labgridBHigh / LocallabParams::LABGRIDL_CORR_MAX, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);//+4 12 11
+                            defSpot.labgridBHigh / LocallabParams::LABGRIDL_CORR_MAX, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,//+4 12 11
+                            0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);//+16 9 dec 2024
         strengthgrid->setDefault((double) defSpot.strengthgrid);
         sensi->setDefault((double)defSpot.sensi);
         structcol->setDefault((double)defSpot.structcol);
@@ -1677,7 +1682,8 @@ void LocallabColor::setDefaults(const rtengine::procparams::ProcParams* defParam
         labgridmerg->setDefault(defSpot.labgridALowmerg / LocallabParams::LABGRIDL_CORR_MAX,
                                 defSpot.labgridBLowmerg / LocallabParams::LABGRIDL_CORR_MAX,
                                 defSpot.labgridAHighmerg / LocallabParams::LABGRIDL_CORR_MAX,
-                                defSpot.labgridBHighmerg / LocallabParams::LABGRIDL_CORR_MAX, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);//+4 12 11
+                                defSpot.labgridBHighmerg / LocallabParams::LABGRIDL_CORR_MAX, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,//+4 12 11
+                                0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);//+16 9 dec 2024
         merlucol->setDefault(defSpot.merlucol);
         strumaskcol->setDefault(defSpot.strumaskcol);
         contcol->setDefault(defSpot.contcol);
@@ -2162,7 +2168,8 @@ void LocallabColor::convertParamToNormal()
     labgridmerg->setParams(0, 0,
                            defSpot.labgridAHighmerg / LocallabParams::LABGRIDL_CORR_MAX,
                            defSpot.labgridBHighmerg / LocallabParams::LABGRIDL_CORR_MAX,
-                           0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, false);//+4 12 11
+                           0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,//+4 12 11
+                           0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, false);//+16 9 dec 2024
     merlucol->setValue(defSpot.merlucol);
     strumaskcol->setValue(defSpot.strumaskcol);
     toolcol->set_active(defSpot.toolcol);
@@ -5089,6 +5096,22 @@ void LocallabShadow::read(const rtengine::procparams::ProcParams* pp, const Para
                               spot.ghsy10,
                               spot.ghsx11,
                               spot.ghsy11,  //+4 gsh10 11                             
+                              spot.ghsx12,
+                              spot.ghsy12,
+                              spot.ghsx13,
+                              spot.ghsy13,                              
+                              spot.ghsx14,
+                              spot.ghsy14,
+                              spot.ghsx15,
+                              spot.ghsy15,  //+16 9 dec 2024                             
+                              spot.ghsx16,
+                              spot.ghsy16,                              
+                              spot.ghsx17,
+                              spot.ghsy17,
+                              spot.ghsx18,
+                              spot.ghsy18,                              
+                              spot.ghsx19,
+                              spot.ghsy19,
                               false);
         
     }
@@ -5214,7 +5237,23 @@ void LocallabShadow::write(rtengine::procparams::ProcParams* pp, ParamsEdited* p
                               spot.ghsx10,
                               spot.ghsy10,
                               spot.ghsx11,//+4 12 11
-                              spot.ghsy11                              
+                              spot.ghsy11,                              
+                              spot.ghsx12,
+                              spot.ghsy12,
+                              spot.ghsx13,
+                              spot.ghsy13,                              
+                              spot.ghsx14,
+                              spot.ghsy14,
+                              spot.ghsx15,
+                              spot.ghsy15,                            
+                              spot.ghsx16,
+                              spot.ghsy16,                              
+                              spot.ghsx17,
+                              spot.ghsy17,
+                              spot.ghsx18,
+                              spot.ghsy18,                              
+                              spot.ghsx19,
+                              spot.ghsy19  // +16 9 dec 2024
                               );
         
         
@@ -5296,7 +5335,23 @@ void LocallabShadow::setDefaults(const rtengine::procparams::ProcParams* defPara
                                defSpot.ghsx10,
                                defSpot.ghsy10,
                                defSpot.ghsx11,
-                               defSpot.ghsy11                              
+                               defSpot.ghsy11,                              
+                               defSpot.ghsx12,
+                               defSpot.ghsy12,
+                               defSpot.ghsx13,
+                               defSpot.ghsy13,
+                               defSpot.ghsx14,
+                               defSpot.ghsy14,
+                               defSpot.ghsx15,
+                               defSpot.ghsy15,                              
+                               defSpot.ghsx16,
+                               defSpot.ghsy16,                              
+                               defSpot.ghsx17,
+                               defSpot.ghsy17,
+                               defSpot.ghsx18,
+                               defSpot.ghsy18,
+                               defSpot.ghsx19,
+                               defSpot.ghsy19
                                
                                );
         
@@ -5600,7 +5655,9 @@ void LocallabShadow::updateghs(double *gx)
 {   
     disableListener();
     labgridghs->setParams(gx[0], gx[1], gx[2], gx[3], gx[4], gx[5], gx[6], gx[7], gx[8], gx[9], gx[10], gx[11],
-        gx[12], gx[13], gx[14], gx[15], gx[16], gx[17], gx[18], gx[19], gx[20], gx[21], false);//+4 12 11
+        gx[12], gx[13], gx[14], gx[15], gx[16], gx[17], gx[18], gx[19], gx[20], gx[21], gx[22], gx[23], gx[24], gx[25], gx[26], gx[27], gx[28], gx[29], gx[30], gx[31],
+        gx[32], gx[33], gx[34], gx[35], gx[36], gx[37], 
+        false);//+4 12 11  //+ 16 9 dec 2024
         
     enableListener();
 }
