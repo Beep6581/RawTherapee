@@ -4357,7 +4357,7 @@ LocallabShadow::LocallabShadow():
     ghs_MID(Gtk::manage(new Adjuster(M("TP_LOCALLAB_GHS_MID"), -100.0, 100.0, 0.1, 0.0))),
     BP_Frame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_GHS_BLACKPOINT_FRAME")))),
     ghs_BLP(Gtk::manage(new Adjuster(M("TP_LOCALLAB_GHS_BLP"), -0.2, 1.0, 0.0001, 0.0))),
-    ghs_HLP(Gtk::manage(new Adjuster(M("TP_LOCALLAB_GHS_HLP"), 0.2002, 3.0, 0.0001, 1.0001))),
+    ghs_HLP(Gtk::manage(new Adjuster(M("TP_LOCALLAB_GHS_HLP"), 0.2002, 3.0, 0.0001, 1.))),
     ghsbpwpLabels(Gtk::manage(new Gtk::Label("---"))),
     ghsbpwpvalueLabels(Gtk::manage(new Gtk::Label("---"))),
     ghs_smooth(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_GHS_SMOOTH")))),
