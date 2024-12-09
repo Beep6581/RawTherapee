@@ -1402,7 +1402,7 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                 float Lnresi = 0.f;
                 float Lhighresi46 = 0.f;
                 float Lnresi46 = 0.f;
-                float ghscur[40];//42 +4 12 11 // +16 6 december 2024
+                float ghscur[40];//42 +4 12 11 // +16 9 december 2024
                 int ghsbpwp[2];
                 ghsbpwp[0] = 0;
                 ghsbpwp[1] = 0;
@@ -1583,26 +1583,12 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                 locciesig.contsigq = contsig;
                 locciesig.lightsigq = lightsig;
                 locallciesig.push_back(locciesig);
-                /*
-                int reset = 0;
-                if(params->locallab.spots.at(sp).ghsMode == "lin") {
-                    reset = 0;
-                } else {
-                    reset = 1;
-                }
-                */
-                LocallabListener::locallabshGHS locshghs;//ghs S curve 42 or labgrid 12
-                    for(int j = 0; j < 38; j++) {//+4 12 11 //+16 december 2024
+                LocallabListener::locallabshGHS locshghs;//ghs S curve with 20 points space 0.05
+                    for(int j = 0; j < 40; j++) {//+4 12 11 //+16 december 2024
                         locshghs.ghsc[j] = ghscur[j];
                        // printf("imp j=%i ghs=%f\n", j, (double) ghscur[j]); 
                     }
-                //    locshghs.licur = reset;
-                /*
-                printf("ghsc0=%f ghsc1=%f\n", (double) locshghs.ghsc[0], (double) locshghs.ghsc[1]);
-                printf("ghsc20=%f ghsc21=%f\n", (double) locshghs.ghsc[20], (double) locshghs.ghsc[21]);
-                printf("ghsc40=%f ghsc41=%f\n", (double) locshghs.ghsc[40], (double) locshghs.ghsc[41]);
-                         printf("OK 2 impro\n");
-                */
+                
                 locallshgsh.push_back(locshghs);
 
                 LocallabListener::locallabshGHSbw locshghsbw;//ghs S curve

@@ -17747,7 +17747,7 @@ void ImProcFunctions::Lab_Local(
                             //others with 0.1 range
                             ghscur[i] = 0.025f * i;
                             ghscur[i + 1] =  GHT(ghscur[i], B, D, LP, SP, HP, c, strtype);
-                            printf("II=%i gi=%f gi1=%f \n", i, (double)ghscur[i],  (double)ghscur[i+1]);
+                            //printf("II=%i gi=%f gi1=%f \n", i, (double)ghscur[i],  (double)ghscur[i+1]);
                         }
                        
                         if(smoth) {//Highlight attenuation in function of HP - protect highlight
