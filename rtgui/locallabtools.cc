@@ -4588,6 +4588,7 @@ https://www.ghsastro.co.uk/doc/tools/GeneralizedHyperbolicStretch/GeneralizedHyp
     pack_start(*ghsMethod);
     ghsFrame->set_label_align(0.025, 0.5);
     ToolParamBlock* const ghsBox = Gtk::manage(new ToolParamBlock());
+    ghsBox->pack_start(*gridFrameghs);
     ghsBox->pack_start(*ghs_D);
     Lab_Frame->set_label_align(0.025, 0.5);
     ToolParamBlock* const LabBox = Gtk::manage(new ToolParamBlock());
@@ -4599,7 +4600,6 @@ https://www.ghsastro.co.uk/doc/tools/GeneralizedHyperbolicStretch/GeneralizedHyp
     ghsBox->pack_start(*ghs_SP);
     ghsBox->pack_start(*ghs_LP);
     ghsBox->pack_start(*ghs_HP);
-    ghsBox->pack_start(*gridFrameghs);
     
     LC_Frame->set_label_align(0.025, 0.5);
     ToolParamBlock* const LCBox = Gtk::manage(new ToolParamBlock());
