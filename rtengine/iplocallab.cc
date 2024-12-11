@@ -17436,7 +17436,7 @@ void ImProcFunctions::Lab_Local(
                         float SP = params->locallab.spots.at(sp).ghs_SP;//Symmetry point
                         float HP = params->locallab.spots.at(sp).ghs_HP;//Protect highlights
                         int blackpoint = 100. * params->locallab.spots.at(sp).ghs_BLP;//Black point
-                        float shiftblackpoint = - params->locallab.spots.at(sp).ghs_BLP;//Black point
+                        float shiftblackpoint = params->locallab.spots.at(sp).ghs_BLP;//Black point
                         float shiftwhitepoint = params->locallab.spots.at(sp).ghs_HLP;//White point
                         if(LP > SP) {
                             LP = SP;
@@ -17483,7 +17483,7 @@ void ImProcFunctions::Lab_Local(
                         rtengine::Color::calcGamma(pwr1, ts1, g_a); // call to calcGamma with selected gamma and slope
                         const float noise = pow_F(2.f, -16.f);//GHS - do not process very low values ​​which are probably noise.
                        
-                        if(shiftblackpoint < 0.f && strtype == 0) {//change only Black point with positives values for in some cases out of gamut values
+                        if(shiftblackpoint > 0.f && strtype == 0) {//change only Black point with positives values for in some cases out of gamut values
                             //rgb value can be very weakly negatives (eg working space sRGB in some rare cases) - tone_eqblack prevents it
                             //also change black value to help "ghs" and avoid noise
                             tone_eqblack(this, tmpImage, blackpoint, params->icm.workingProfile, sk, multiThread);//Ev -16 to -8
@@ -17495,7 +17495,7 @@ void ImProcFunctions::Lab_Local(
                                 shiftblackpoint2 = 0.f;
                             } 
                             if(strtype == 1) {
-                                shiftblackpoint2 = -shiftblackpoint;
+                                shiftblackpoint2 = shiftblackpoint;
                             }
                             int bpnb = 0;
                             int wpnb = 0;
