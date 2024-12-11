@@ -3081,7 +3081,6 @@ void tone_eqblack(ImProcFunctions *ipf, Imagefloat *rgb, int blacks, const Glib:
     params.regularization = 0.f;
     params.pivot = 0.f;
     params.bands[0] = blacks;
-    printf("OK2 black=%i\n", blacks);
     ipf->toneEqualizer(rgb, params, workingProfile, scale, multithread);
 }
 
@@ -17554,10 +17553,11 @@ void ImProcFunctions::Lab_Local(
                                 ghsbpwp[1] = wpnb;
                                 ghsbpwpvalue[0] = minbp;
                                 ghsbpwpvalue[1] = maxwp;
-                            //    if (settings->verbose) {
-                            //        printf("Black Point-nb=%i White Point-nb=%i  min-BlackPoint val=%f max-WhitePointPval=%f \n", ghsbpwp[0], ghsbpwp[1], (double)ghsbpwpvalue[0] , (double) ghsbpwpvalue[1]);
-                            //    }
-                                
+                        /*
+                                if (settings->verbose) {
+                                    printf("Black Point-nb=%i White Point-nb=%i  min-BlackPoint val=%f max-WhitePointPval=%f \n", ghsbpwp[0], ghsbpwp[1], (double)ghsbpwpvalue[0] , (double) ghsbpwpvalue[1]);
+                                }
+                        */        
                         }
                         
                         if(met == 0  || met == 1) {//RGB mode
@@ -17780,6 +17780,16 @@ void ImProcFunctions::Lab_Local(
                                     tmpImage->r(i, j) = clipR(rtengine::max(0.00001f, tmpImage->r(i, j)));//0.0001f to avoid crash
                                     tmpImage->g(i, j) = clipR(rtengine::max(0.00001f, tmpImage->g(i, j)));//clipR to avoid crash in inverse GHS
                                     tmpImage->b(i, j) = clipR(rtengine::max(0.00001f, tmpImage->b(i, j)));
+                                }
+                        } else if (strtype == 0) {//GHS
+#ifdef _OPENMP
+            #pragma omp parallel for if (multiThread)
+#endif                       
+                            for (int i = 0; i < bfh; ++i)
+                                for (int j = 0; j < bfw; ++j) {                           
+                                    tmpImage->r(i, j) = rtengine::max(0.00001f, tmpImage->r(i, j));//0.00001f to avoid crash after SE with RGB functions
+                                    tmpImage->g(i, j) = rtengine::max(0.00001f, tmpImage->g(i, j));
+                                    tmpImage->b(i, j) = rtengine::max(0.00001f, tmpImage->b(i, j));
                                 }
                         }
 
