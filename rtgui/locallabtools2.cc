@@ -3162,7 +3162,7 @@ void LocallabContrast::updateguicont(int spottype)
             }
             enableListener();
             if(spottype == 3) {
-                showmasklcMethodChanged();                
+             //   showmasklcMethodChanged();                
             }
             if(spottype == 0 || spottype == 1) { //reset values for GF in normal mode       
                 adjusterChanged(strwav, 0.);

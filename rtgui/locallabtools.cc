@@ -1061,8 +1061,8 @@ void LocallabColor::updateguicolor(int spottype)
             }
             enableListener();
             if(spottype == 3) {        
-                showmaskcolMethodChanged();
-                showmaskcolMethodChangedinv();
+             //  showmaskcolMethodChanged();
+             //   showmaskcolMethodChangedinv();
             }
             if(spottype == 0 || spottype == 1) { //reset values for GF in normal mode       
                 adjusterChanged(strcol, 0.);
@@ -3107,8 +3107,8 @@ void LocallabExposure::updateguiexpos(int spottype)
             }
             enableListener();
             if(spottype == 3) {
-                showmaskexpMethodChanged();
-                showmaskexpMethodChangedinv();
+              //  showmaskexpMethodChanged();
+              //  showmaskexpMethodChangedinv();
             }
             if(spottype == 0 || spottype == 1) {//reset value for GF       
                 adjusterChanged(strexp, 0.);
@@ -4364,7 +4364,7 @@ LocallabShadow::LocallabShadow():
     ghs_MID(Gtk::manage(new Adjuster(M("TP_LOCALLAB_GHS_MID"), -100.0, 100.0, 0.1, 0.0))),
     BP_Frame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_GHS_BLACKPOINT_FRAME")))),
     ghs_BLP(Gtk::manage(new Adjuster(M("TP_LOCALLAB_GHS_BLP"), -0.2, 1.0, 0.0001, 0.0))),
-    ghs_HLP(Gtk::manage(new Adjuster(M("TP_LOCALLAB_GHS_HLP"), 0.2002, 3.0, 0.0001, 1.))),
+    ghs_HLP(Gtk::manage(new Adjuster(M("TP_LOCALLAB_GHS_HLP"), 0.2002, 5.0, 0.0001, 1.))),
     ghsbpwpLabels(Gtk::manage(new Gtk::Label("---"))),
     ghsbpwpvalueLabels(Gtk::manage(new Gtk::Label("---"))),
     ghs_smooth(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_GHS_SMOOTH")))),
@@ -4795,8 +4795,8 @@ void LocallabShadow::updateguishad(int spottype)
             }
             enableListener();
             if(spottype == 3) {
-                showmaskSHMethodChanged();
-                showmaskSHMethodChangedinv();                
+               // showmaskSHMethodChanged();
+               // showmaskSHMethodChangedinv();                
             }
             if(spottype == 0 || spottype == 1) {  //reset GF       
                 adjusterChanged(strSH, 0.);
@@ -6529,7 +6529,7 @@ void LocallabVibrance::updateguivib(int spottype)
             }
             enableListener();
             if(spottype == 3) {
-                showmaskvibMethodChanged();               
+            //    showmaskvibMethodChanged();               
             }
             if(spottype == 0 || spottype == 1) {  //reset value for GF if not in global or full image       
                 adjusterChanged(strvib, 0.);
