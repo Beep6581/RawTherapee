@@ -3081,6 +3081,7 @@ void tone_eqblack(ImProcFunctions *ipf, Imagefloat *rgb, int blacks, const Glib:
     params.regularization = 0.f;
     params.pivot = 0.f;
     params.bands[0] = blacks;
+    printf("OK2 black=%i\n", blacks);
     ipf->toneEqualizer(rgb, params, workingProfile, scale, multithread);
 }
 
@@ -17483,16 +17484,17 @@ void ImProcFunctions::Lab_Local(
                         rtengine::Color::calcGamma(pwr1, ts1, g_a); // call to calcGamma with selected gamma and slope
                         const float noise = pow_F(2.f, -16.f);//GHS - do not process very low values ​​which are probably noise.
                        
-                        if(shiftblackpoint > 0.f && strtype == 0) {//change only Black point with positives values for in some cases out of gamut values
+                        if(shiftblackpoint < 0.f && strtype == 0) {//change only Black point with negatives values for in some cases out of gamut values
                             //rgb value can be very weakly negatives (eg working space sRGB in some rare cases) - tone_eqblack prevents it
                             //also change black value to help "ghs" and avoid noise
-                            tone_eqblack(this, tmpImage, blackpoint, params->icm.workingProfile, sk, multiThread);//Ev -16 to -8
+                            tone_eqblack(this, tmpImage, -5 * blackpoint, params->icm.workingProfile, sk, multiThread);//Ev -16 to -8
+                                                        // -5 to be in range 0..100
                         }
                         {//change black point and white point for GHS
                          // Sets the Blackpoint and Whitepoint for a linear stretch of the image
                             float shiftblackpoint2 = shiftblackpoint;
                             if(shiftblackpoint < 0.f  && strtype == 0) {
-                                shiftblackpoint2 = 0.f;
+                                shiftblackpoint2 = 0.f;//set to zero if  balc point negatif, no change 
                             } 
                             if(strtype == 1) {
                                 shiftblackpoint2 = shiftblackpoint;

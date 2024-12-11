@@ -3431,7 +3431,7 @@ LocallabParams::LocallabSpot::LocallabSpot() :
     shMethod("ghs"),
     ghsMethod("rgb"),
     ghsMode("ghs"),
-    ghs_D(0.),
+    ghs_D(0.001),
     ghs_slope(9.03296),
     ghs_chro(0.0),
     ghs_B(0.),
