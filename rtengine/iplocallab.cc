@@ -17650,6 +17650,7 @@ void ImProcFunctions::Lab_Local(
                                         float fgh = 0.333f * ((Ro / r) + (Go / g) + (Bo /b));//linear average of the 3 channels
                                         apply_sat(Ro, Go, Bo, fgh, gh);//always apply saturation
                                     }
+                                   // rebuild tmpImage with limit 0.00001f to avoid crash after SE 
                                     tmpImage->r(i, j) = rtengine::max(0.00001f, Ro * 65535.f);//0.00001f to avoid crash
                                     tmpImage->g(i, j) = rtengine::max(0.00001f, Go * 65535.f);
                                     tmpImage->b(i, j) = rtengine::max(0.00001f, Bo * 65535.f);
@@ -17735,28 +17736,7 @@ void ImProcFunctions::Lab_Local(
                                 }
                             lab2rgb(*labtemp, *tmpImage, params->icm.workingProfile);
                         }
-     /* 
-        //11 points with equal interval
-                        for(int i = 0; i < 26; i += 2) {//Labgrid curve simulation with 9 points +4 12 11
-                            ghscur[i] = 0.041666f * i;
-                            ghscur[i + 1] =  GHT(ghscur[i], B, D, LP, SP, HP, c, strtype);
-                            //printf("gi=%f ghs=%f \n", (double) ghscur[i], (double) ghscur[i + 1]);
-                        }
-     */                  
-                        /*
-                        //first value with 0.05 range
-                        ghscur[0] = 0.05f;
-                        ghscur[1] =  GHT(ghscur[0], B, D, LP, SP, HP, c, strtype);                       
-     
-                        for(int i = 2; i < 20; i += 2) {//Labgrid curve simulation with 9 points interval 0.1 +4 12 11  // 20 ==> 36 december 2024
-                            //others with 0.1 range
-                            ghscur[i] = 0.05f * i;
-                            ghscur[i + 1] =  GHT(ghscur[i], B, D, LP, SP, HP, c, strtype);
-                        }
-                        //last values with 0.05f
-                        ghscur[20] = 0.95f;//20 = > 36
-                        ghscur[21] =  GHT(ghscur[20], B, D, LP, SP, HP, c, strtype);
-                      */
+
                         for(int i = 0; i < 40; i += 2) {//Labgrid curve simulation with 9 points interval 0.1 +4 12 11  // 20 ==> 36 december 2024
                             //others with 0.1 range
                             ghscur[i] = 0.025f * i;
