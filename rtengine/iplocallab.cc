@@ -9519,7 +9519,6 @@ void ImProcFunctions::transit_shapedetect2(int sp, float meantm, float stdtm, in
         execgradsh = true;
     }
 
-
     const std::unique_ptr<LabImage> buftmp1(new LabImage(bfw, bfh));
 #ifdef _OPENMP
         #pragma omp parallel for schedule(dynamic,16) if(multiThread)
@@ -9929,13 +9928,13 @@ void ImProcFunctions::transit_shapedetect2(int sp, float meantm, float stdtm, in
                     const float difb = factorx * realstrbdE;
                     float maxdifab = rtengine::max(std::fabs(difa), std::fabs(difb));
 
-                    if ((expshow || vibshow || colshow || SHshow || tmshow || lcshow || logshow || cieshow || origshow || masshow) && lp.colorde < 0) { //show modifications with use "b"
-                        //  (origshow && lp.colorde < 0) { //original Retinex
+                    if ((expshow || vibshow || colshow || SHshow || tmshow || lcshow || logshow || cieshow || origshow || masshow) && lp.colorde < 0 && (lp.fullim != 3)) { //show modifications with use "b"
+                        //  (origshow && lp.colorde < 0) { //original Retinex                                                                           //fullim = 3 disable mask                                                                                                                
                         transformed->a[y + ystart][x + xstart] = 0.f;
                         transformed->b[y + ystart][x + xstart] = ampli * 8.f * diflc * reducdE;
                         transformed->L[y + ystart][x + xstart] = CLIP(12000.f + 0.5f * ampli * diflc);
 
-                    } else if ((expshow || vibshow || colshow || SHshow || tmshow || lcshow || logshow || cieshow || origshow || masshow) && lp.colorde > 0) {//show modifications without use "b"
+                    } else if ((expshow || vibshow || colshow || SHshow || tmshow || lcshow || logshow || cieshow || origshow || masshow) && lp.colorde > 0 && (lp.fullim != 3)) {//show modifications without use "b"
                         if (diflc < 1000.f) {//if too low to be view use ab
                             diflc += 0.5f * maxdifab;
                         }
