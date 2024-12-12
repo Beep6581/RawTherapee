@@ -3162,7 +3162,10 @@ void LocallabContrast::updateguicont(int spottype)
             }
             enableListener();
             if(spottype == 3) {
-             //   showmasklcMethodChanged();                
+                nbmaskcont++;
+                if(nbmaskcont < 2) {           
+                    showmasklcMethodChanged();
+                }
             }
             if(spottype == 0 || spottype == 1) { //reset values for GF in normal mode       
                 adjusterChanged(strwav, 0.);
@@ -3394,7 +3397,7 @@ void LocallabContrast::read(const rtengine::procparams::ProcParams* pp, const Pa
 {
     // Disable all listeners
     disableListener();
-
+    nbmaskcont = 0;
     // Update GUI to selected spot value
     const int index = pp->locallab.selspot;
 
@@ -5899,6 +5902,12 @@ void LocallabLog::updateguilog(int spottype)
                 updateGUIToMode(static_cast<modeType>(complexity->get_active_row_number()));
             }
             enableListener();
+            if(spottype == 3) {
+                nbmasklog++;
+                if(nbmasklog < 2) {           
+                   showmaskLMethodChanged();
+                }
+            }
 
         return false;
         }
@@ -6095,7 +6104,7 @@ void LocallabLog::read(const rtengine::procparams::ProcParams* pp, const ParamsE
 {
     // Disable all listeners
     disableListener();
-
+    nbmasklog = 0;
     // Update GUI to selected spot value
     const int index = pp->locallab.selspot;
 
@@ -9254,8 +9263,13 @@ void Locallabcie::updateguicie(int spottype)
                 updateGUIToMode(static_cast<modeType>(complexity->get_active_row_number()));
            }
             enableListener();
-            
-            
+            if(spottype == 3) {
+                nbmaskcie++;
+                if(nbmaskcie < 2) {
+                    showmaskcieMethodChanged();              
+                }
+            }
+                        
             if(spottype == 0 || spottype == 1) {         
                 adjusterChanged(strgradcie, 0.);//reset GF 
             }
@@ -9705,7 +9719,7 @@ void Locallabcie::fftcieMaskChanged()
 void Locallabcie::read(const rtengine::procparams::ProcParams* pp, const ParamsEdited* pedited)
 {
     disableListener();
-
+    nbmaskcie = 0;
     // Update GUI to selected spot value
     const int index = pp->locallab.selspot;
     Glib::ustring prof = pp->icm.workingProfile;

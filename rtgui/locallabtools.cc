@@ -1060,9 +1060,12 @@ void LocallabColor::updateguicolor(int spottype)
                 updateGUIToMode(static_cast<modeType>(complexity->get_active_row_number()));
             }
             enableListener();
-            if(spottype == 3) {        
-             //  showmaskcolMethodChanged();
-             //   showmaskcolMethodChangedinv();
+            if(spottype == 3) {  
+                nbmaskcol++;
+                if(nbmaskcol < 2) {           
+                    showmaskcolMethodChanged();
+                    showmaskcolMethodChangedinv();
+                }
             }
             if(spottype == 0 || spottype == 1) { //reset values for GF in normal mode       
                 adjusterChanged(strcol, 0.);
@@ -1294,7 +1297,7 @@ void LocallabColor::read(const rtengine::procparams::ProcParams* pp, const Param
 {
     // Disable all listeners
     disableListener();
-
+    nbmaskcol = 0;
     // Update GUI to selected spot value
     const int index = pp->locallab.selspot;
 
@@ -3107,8 +3110,11 @@ void LocallabExposure::updateguiexpos(int spottype)
             }
             enableListener();
             if(spottype == 3) {
-              //  showmaskexpMethodChanged();
-              //  showmaskexpMethodChangedinv();
+                nbmaskexp++;
+                if(nbmaskexp < 2) {           
+                    showmaskexpMethodChanged();
+                    showmaskexpMethodChangedinv();
+                }
             }
             if(spottype == 0 || spottype == 1) {//reset value for GF       
                 adjusterChanged(strexp, 0.);
@@ -3294,7 +3300,7 @@ void LocallabExposure::read(const rtengine::procparams::ProcParams* pp, const Pa
 {
     // Disable all listeners
     disableListener();
-
+    nbmaskexp = 0;
     // Update GUI to selected spot value
     const int index = pp->locallab.selspot;
 
@@ -4795,8 +4801,11 @@ void LocallabShadow::updateguishad(int spottype)
             }
             enableListener();
             if(spottype == 3) {
-               // showmaskSHMethodChanged();
-               // showmaskSHMethodChangedinv();                
+                nbmasksh++;
+                if(nbmasksh < 2) {
+                    showmaskSHMethodChanged();
+                    showmaskSHMethodChangedinv();
+                }
             }
             if(spottype == 0 || spottype == 1) {  //reset GF       
                 adjusterChanged(strSH, 0.);
@@ -4990,7 +4999,7 @@ void LocallabShadow::read(const rtengine::procparams::ProcParams* pp, const Para
 {
     // Disable all listeners
     disableListener();
-
+    nbmasksh = 0;
     // Update GUI to selected spot value
     const int index = pp->locallab.selspot;
 
@@ -6529,7 +6538,10 @@ void LocallabVibrance::updateguivib(int spottype)
             }
             enableListener();
             if(spottype == 3) {
-            //    showmaskvibMethodChanged();               
+                nbmaskvib++;
+                if(nbmaskvib < 2) {
+                    showmaskvibMethodChanged();
+               }
             }
             if(spottype == 0 || spottype == 1) {  //reset value for GF if not in global or full image       
                 adjusterChanged(strvib, 0.);
@@ -6696,7 +6708,7 @@ void LocallabVibrance::read(const rtengine::procparams::ProcParams* pp, const Pa
 {
     // Disable all listeners
     disableListener();
-
+    nbmaskvib = 0;
     // Update GUI to selected spot value
     const int index = pp->locallab.selspot;
 
