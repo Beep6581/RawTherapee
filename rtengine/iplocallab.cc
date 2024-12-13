@@ -14480,6 +14480,8 @@ void ImProcFunctions::Lab_Local(
         return;
     }
     //BENCHFUN
+    MyTime t1, t2;
+    
     // printf("OHWTHW ow=%i oh=%i tw=%i th=%i sk=%i\n", oW, oH, tW, tH, sk);
     constexpr int del = 3; // to avoid crash with [loy - begy] and [lox - begx] and bfh bfw  // with gtk2 [loy - begy-1] [lox - begx -1 ] and del = 1
     struct local_params lp;
@@ -17502,6 +17504,8 @@ void ImProcFunctions::Lab_Local(
                             float minbp = 1.f;
                             float maxwp = 0.f;
                             
+                            t1.set();
+                           
 
 #ifdef _OPENMP
         #   pragma omp parallel for reduction(+:bpnb, wpnb) reduction(min:minbp) reduction(max:maxwp) if (multiThread)  //for schedule(dynamic,16)
@@ -17552,6 +17556,11 @@ void ImProcFunctions::Lab_Local(
                                 ghsbpwp[1] = wpnb;
                                 ghsbpwpvalue[0] = minbp;
                                 ghsbpwpvalue[1] = maxwp;
+                                t2.set();
+                                if (settings->verbose) {
+                                    printf("calculate BP and WP: %d nsec\n",  t2.etime(t1));
+                                }
+
                         /*
                                 if (settings->verbose) {
                                     printf("Black Point-nb=%i White Point-nb=%i  min-BlackPoint val=%f max-WhitePointPval=%f \n", ghsbpwp[0], ghsbpwp[1], (double)ghsbpwpvalue[0] , (double) ghsbpwpvalue[1]);
