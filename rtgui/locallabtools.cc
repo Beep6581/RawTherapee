@@ -5056,6 +5056,14 @@ void LocallabShadow::read(const rtengine::procparams::ProcParams* pp, const Para
         ghs_MID->setValue((double)spot.ghs_MID);
         ghs_BLP->setValue((double)spot.ghs_BLP);
         ghs_HLP->setValue((double)spot.ghs_HLP);
+            
+        if(ghs_D->getValue() > 0.002) {
+            ghs_BLP->set_sensitive(false);
+            ghs_HLP->set_sensitive(false);         
+        } else {
+            ghs_BLP->set_sensitive(true);
+            ghs_HLP->set_sensitive(true);        
+        }
 
         detailSH->setValue((double)spot.detailSH);
         tePivot->setValue(spot.tePivot);
@@ -5394,6 +5402,13 @@ void LocallabShadow::adjusterChanged(Adjuster* a, double newval)
         }
 
         if (a == ghs_D) {
+            if(ghs_D->getValue() > 0.002) {//blur sliders WP and HP si D too big
+                ghs_BLP->set_sensitive(false);
+                ghs_HLP->set_sensitive(false);              
+            } else {
+                ghs_BLP->set_sensitive(true);
+                ghs_HLP->set_sensitive(true);               
+            }
             if (listener) {
                 listener->panelChanged(Evlocallabghs_D,
                                        ghs_D->getTextValue() + " (" + escapeHtmlChars(getSpotName()) + ")");
@@ -6136,7 +6151,14 @@ void LocallabShadow::updateShadowGUI1()
         ghsMethod->hide();
         ghs_slope->hide();
         Lab_Frame->hide();
-        
+        if(ghs_D->getValue() > 0.002) {
+            ghs_BLP->set_sensitive(false);
+            ghs_HLP->set_sensitive(false);              
+        } else {
+            ghs_BLP->set_sensitive(true);
+            ghs_HLP->set_sensitive(true);       
+        }
+       
         if (mode == Expert || mode == Normal) { // Keep widget hidden in Simple mode
             exprecovs->show();
             ghsMethod->show();
@@ -6241,6 +6263,13 @@ void LocallabShadow::updateShadowGUI2()
         ghsMethod->hide();
         ghs_slope->hide();
         Lab_Frame->hide();
+        if(ghs_D->getValue() > 0.002) {
+            ghs_BLP->set_sensitive(false);
+            ghs_HLP->set_sensitive(false);    
+        } else {
+            ghs_BLP->set_sensitive(true);
+            ghs_HLP->set_sensitive(true);        
+        }
 
         if (mode == Expert || mode == Normal) { // Keep widget hidden in Simple mode
             ghsMethod->show();
