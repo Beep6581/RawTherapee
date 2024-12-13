@@ -152,7 +152,6 @@ Locallab::Locallab():
     // Tool list widget
     toollist(Gtk::manage(new LocallabToolList()))
 
-  //  expcie(Gtk::manage(new Locallabcie())),
     // Other widgets
     //resetshowButton(Gtk::manage(new Gtk::Button(M("TP_LOCALLAB_RESETSHOW"))))
 {
@@ -1145,7 +1144,7 @@ void Locallab::minmaxChanged(const std::vector<locallabRetiMinMax> &minmax, int 
         const double cdmin = retiMinMax.at(selspot).cdmin;
         const double mini = retiMinMax.at(selspot).mini;
         const double maxi = retiMinMax.at(selspot).maxi;
-        const  double Tmean = retiMinMax.at(selspot).Tmean;
+        const double Tmean = retiMinMax.at(selspot).Tmean;
         const double Tsigma = retiMinMax.at(selspot).Tsigma;
         const double Tmin = retiMinMax.at(selspot).Tmin;
         const double Tmax = retiMinMax.at(selspot).Tmax;
@@ -1165,7 +1164,7 @@ void Locallab::denChanged(const std::vector<locallabDenoiseLC> &denlc, int selsp
         const double nres = denoiselc.at(selspot).nres;
         const double highres46 = denoiselc.at(selspot).highres46;
         const double nres46 = denoiselc.at(selspot).nres46;
-        const  double Lhighres = denoiselc.at(selspot).Lhighres;
+        const double Lhighres = denoiselc.at(selspot).Lhighres;
         const double Lnres = denoiselc.at(selspot).Lnres;
         const double Lhighres46 = denoiselc.at(selspot).Lhighres46;
         const double Lnres46 = denoiselc.at(selspot).Lnres46;
@@ -1210,72 +1209,7 @@ void Locallab::scopeChangedset(int scope, int selspot, bool enab)
     }
    
 }
-/*
-//main new fonction global to hide show and activated or not some functions - inverse, scope...
-void Locallab::mainChanged(int spottype, int selspot, bool iscolor, bool issh, bool isvib, bool isexpos, bool issoft, bool isblur, bool istom, bool isret, bool issharp, bool iscont, bool iscbdl, bool islog, bool ismas, bool iscie )
-{
-    
 
-    if(iscolor) {
-        expcolor.updateguicolor(spottype);
-    }
-    
-    if(issh) {
-        expshadhigh.updateguishad(spottype);
-    }
-    
-    if(isvib) {   
-        expvibrance.updateguivib(spottype);
-    }
-    
-    if(isexpos) {     
-        expexpose.updateguiexpos(spottype);
-    }
-    
-    if(issoft) {         
-        expsoft.updateguisoft(spottype);
-    }
-    
-    if(isblur) {        
-        expblur.updateguiblur(spottype);
-    }
-    
-    if(istom) {         
-        exptonemap.updateguitone(spottype);
-    }
-    
-    if(isret) {        
-        expreti.updateguireti(spottype);
-    }
-    
-    if(issharp) {        
-        expsharp.updateguisharp(spottype);
-    }
-    
-    if(iscont) {         
-        expcontrast.updateguicont(spottype);
-    }
-    
-    if(iscbdl) {       
-        expcbdl.updateguicbdl(spottype);
-    }
-    
-    if(islog) {     
-        explog.updateguilog(spottype);
-    }
-    
-    if(ismas) {     
-        expmask.updateguimask(spottype);
-    }
-    
-    if(iscie) {        
-        expcie.updateguicie(spottype);
-    }
-
-    expsettings->updateguiset(spottype, iscolor, issh, isvib, isexpos, issoft, isblur, istom, isret, issharp, iscont, iscbdl, islog, ismas, iscie);
-
-}
-*/
 void Locallab::sigChanged(const std::vector<locallabcieSIG> &ciesig, int selspot)
 {
      cie_sig = ciesig;
@@ -1439,7 +1373,7 @@ void Locallab::cieChanged(const std::vector<locallabcieLC> &cielc, int selspot)
         const double r2 = cie_lc.at(selspot).redylc;
         const double g1 = cie_lc.at(selspot).grexlc;
         const double g2 = cie_lc.at(selspot).greylc;
-        const  double b1 = cie_lc.at(selspot).bluxlc;
+        const double b1 = cie_lc.at(selspot).bluxlc;
         const double b2 = cie_lc.at(selspot).bluylc;
         const double w1 = cie_lc.at(selspot).wxlc;
         const double w2 = cie_lc.at(selspot).wylc;

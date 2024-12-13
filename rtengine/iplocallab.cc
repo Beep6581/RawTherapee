@@ -6267,7 +6267,8 @@ void calclocalGradientParams(int call, const struct local_params& lp, struct gra
     double gradient_stops = stops / sk2;//I have test with Skip but does not work well, even bad
     
     gradient_stops *= kstop;
-    
+  
+//hide these informations to clean console, if need  
     if (settings->verbose) {
         printf("call=%i xcent=%.2f ycent=%.2f Gcx=%.2f Gcy=%.2f indic=%i cx=%i cy=%i strength(stops)=%f k_sk=%f k_skx=%f kbw=%f kbh=%f\n", call, (double) lp.xcent, (double) lp.ycent, gradient_center_x, gradient_center_y, indic, cx, cy, gradient_stops, (double) ksk, (double) kskx, (double) kbw, (double) kbh);   
         printf("fw=%i fh=%i bfw=%i bfh=%i oW=%i oH=%i tW=%i tH=%i tX=%i tY=%i xstart=%.1f ystrat=%.1f xend=%.1f yend=%.1f xc=%.1f yc=%.1f yT=%.1f xL=%.1f sk=%i\n", fw, fh, bfw, bfh, oW, oH, tW, tH, tX, tY, (double) xstart, (double) ystart, (double) xend, (double) yend, (double) lp.xc, (double) lp.yc, (double) lp.lyT, (double)lp.lxL,  sk);
@@ -17322,6 +17323,7 @@ void ImProcFunctions::Lab_Local(
 
                 return;
             }
+            //to test gradiant in mode plain image GW GH instead of bfw bfh
             int grad = 0;// grad = 1 to plain image GF
             int ca1 = 1;//dcrop
             int ca2 = 2;//simpleprocess
@@ -17333,6 +17335,7 @@ void ImProcFunctions::Lab_Local(
                 ca3 = 3;
                 ca4 = 1;
             }
+            
             bool execgradsh = false;
             if(lp.fullim == 3 || lp.fullim == 2) {
                 execgradsh = true;
@@ -17516,9 +17519,10 @@ void ImProcFunctions::Lab_Local(
                                 ghsbpwp[1] = wpnb;
                                 ghsbpwpvalue[0] = minbp;
                                 ghsbpwpvalue[1] = maxwp;
+                                
                                 t2.set();
                                 if (settings->verbose) {
-                                    printf("calculate BP and WP: %d nsec\n",  t2.etime(t1));
+                                    printf("calculate Black Point and White Point: %d nsec\n",  t2.etime(t1));
                                 }
 
                         /*
@@ -17761,10 +17765,9 @@ void ImProcFunctions::Lab_Local(
                 int GW = transformed->W;
 
                 struct grad_params gp;
-
+                //here with grad=0 - standard.
                 if (lp.strSH != 0.f && (call == ca1 || call == ca2 || call == ca3)  && execgradsh) {//test to plain image
                     calclocalGradientParams(call, lp, gp, ystart, xstart, yend, xend, bfw, bfh, oW, oH, tX, tY, tW, tH, 2, sk, fw, fh, cx, cy, ksk, kskx, kbh, kbw);
-                   // printf("KSK SH=%f\n", (double) ksk);
 #ifdef _OPENMP
                     #pragma omp parallel for schedule(dynamic,16) if (multiThread)
 #endif

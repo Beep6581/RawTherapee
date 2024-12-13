@@ -86,7 +86,8 @@ LabGridArea::LabGridArea(rtengine::ProcEvent evt, const Glib::ustring &msg, bool
         ghs_x16(0.f), ghs_y16(0.f), ghs_x17(0.f), ghs_y17(0.f), ghs_x18(0.f), ghs_y18(0.f), ghs_x19(0.f), ghs_y19(0.f),//  +16 9 dec 2024
       
     defaultLow_a(0.f), defaultHigh_a(0.f), defaultLow_b(0.f), defaultHigh_b(0.f), defaultgre_x(0.f), defaultgre_y(0.f), defaultwhi_x(0.f), defaultwhi_y(0.f), defaultme_x(0.f), defaultme_y(0.f),
-        default_gsx6(0.f), default_gsy6(0.f), default_gsx7(0.f), default_gsy7(0.f), default_gsx8(0.f), default_gsy8(0.f), default_gsx9(0.f), default_gsy9(0.f), default_gsx10(0.f), default_gsy10(0.f), default_gsx11(0.f), default_gsy11(0.f), //+4 12 11
+        default_gsx6(0.f), default_gsy6(0.f), default_gsx7(0.f), default_gsy7(0.f), default_gsx8(0.f), default_gsy8(0.f), default_gsx9(0.f), default_gsy9(0.f), default_gsx10(0.f), default_gsy10(0.f), 
+        default_gsx11(0.f), default_gsy11(0.f), //+4 12 11
         default_gsx12(0.f), default_gsy12(0.f), default_gsx13(0.f), default_gsy13(0.f), default_gsx14(0.f), default_gsy14(0.f), default_gsx15(0.f), default_gsy15(0.f), 
         default_gsx16(0.f), default_gsy16(0.f), default_gsx17(0.f), default_gsy17(0.f), default_gsx18(0.f), default_gsy18(0.f), default_gsx19(0.f), default_gsy19(0.f), //+16 9 dec 2024
     listener(nullptr),
@@ -150,7 +151,6 @@ void LabGridArea::getParams(double &la, double &lb, double &ha, double &hb, doub
     gx19 = ghs_x19;
     gy19 = ghs_y19;// +16 9  dec 2024
     
- //  printf("la=%f ha=%f lb=%f hb=%f gx=%f gy=%f\n", la, ha, lb, hb, gx, gy);
 }
 
 
@@ -224,33 +224,33 @@ void LabGridArea::setDefault (double la, double lb, double ha, double hb, double
     defaultme_x = mx;
     defaultme_y = my;
     default_gsx6 = gx6;
-    default_gsy6= gy6;
+    default_gsy6 = gy6;
     default_gsx7 = gx7;
     default_gsy7= gy7;
     default_gsx8 = gx8;
-    default_gsy8= gy8;
+    default_gsy8 = gy8;
     default_gsx9 = gx9;
-    default_gsy9= gy9;
+    default_gsy9 = gy9;
     default_gsx10 = gx10;
-    default_gsy10= gy10;
+    default_gsy10 = gy10;
     default_gsx11 = gx11;
-    default_gsy11= gy11;
+    default_gsy11 = gy11;
     default_gsx12 = gx12;
-    default_gsy12= gy12;
+    default_gsy12 = gy12;
     default_gsx13 = gx13;
-    default_gsy13= gy13;
+    default_gsy13 = gy13;
     default_gsx14 = gx14;
-    default_gsy14= gy14;
+    default_gsy14 = gy14;
     default_gsx15 = gx15;
-    default_gsy15= gy15;
+    default_gsy15 = gy15;
     default_gsx16 = gx16;
-    default_gsy16= gy16;
+    default_gsy16 = gy16;
     default_gsx17 = gx17;
-    default_gsy17= gy17;
+    default_gsy17 = gy17;
     default_gsx18 = gx18;
-    default_gsy18= gy18;
+    default_gsy18 = gy18;
     default_gsx19 = gx19;
-    default_gsy19= gy19;//+ 16 9 dec 2024
+    default_gsy19 = gy19;//+ 16 9 dec 2024
  
 }
 

@@ -80,7 +80,6 @@ private:
     double ghs_y14;
     double ghs_x15;
     double ghs_y15;
-
     double ghs_x16;
     double ghs_y16;
     double ghs_x17;
@@ -120,7 +119,6 @@ private:
     double default_gsy14;
     double default_gsx15;
     double default_gsy15;
-
     double default_gsx16;
     double default_gsy16;
     double default_gsx17;
@@ -151,11 +149,13 @@ public:
         double &gx6, double &gy6, double &gx7, double &gy7, double &gx8, double &gy8, double &gx9, double &gy9, double &gx10, double &gy10, double &gx11, double &gy11,
         double &gx12, double &gy12, double &gx13, double &gy13, double &gx14, double &gy14, double &gx15, double &gy15,
         double &gx16, double &gy16, double &gx17, double &gy17, double &gx18, double &gy18, double &gx19, double &gy19) const;//+16 9 dec 2024
-    void setParams(double la, double lb, double ha, double hb, double gx, double gy, double wx, double wy, double mx, double my,  double gx6, double gy6, double gx7, double gy7, double gx8, double gy8, double gx9, double gy9, double gx10, double gy10, double gx11, double gy11, //+4 12 11
+    void setParams(double la, double lb, double ha, double hb, double gx, double gy, double wx, double wy, double mx, double my,  double gx6, double gy6, double gx7, double gy7, 
+        double gx8, double gy8, double gx9, double gy9, double gx10, double gy10, double gx11, double gy11, //+4 12 11
         double gx12, double gy12, double gx13, double gy13, double gx14, double gy14, double gx15, double gy15, 
         double gx16, double gy16, double gx17, double gy17, double gx18, double gy18, double gx19, double gy19, //+16 9 dec 2024
         bool notify);
-    void setDefault (double la, double lb, double ha, double hb, double gx, double gy, double wx, double wy, double mx, double my, double gx6, double gy6, double gx7, double gy7, double gx8, double gy8, double gx9, double gy9, double gx10, double gy10, double gx11, double gy11, //+4 12 11
+    void setDefault (double la, double lb, double ha, double hb, double gx, double gy, double wx, double wy, double mx, double my, double gx6, double gy6, double gx7, double gy7, 
+        double gx8, double gy8, double gx9, double gy9, double gx10, double gy10, double gx11, double gy11, //+4 12 11
         double gx12, double gy12, double gx13, double gy13, double gx14, double gy14, double gx15, double gy15,
         double gx16, double gy16, double gx17, double gy17, double gx18, double gy18, double gx19, double gy19);//+16 9 dec 2024
     void setEdited(bool yes);
@@ -193,13 +193,16 @@ public:
     LabGrid(rtengine::ProcEvent evt, const Glib::ustring &msg, bool enable_low=true, bool ciexy=false, bool ghs=false, bool mous=true);
 
     void getParams(double &la, double &lb, double &ha, double &hb, double &gx, double &gy, double &wx, double &wy, double &mx, double &my, double &gx6, double &gy6, double &gx7, double &gy7, 
-        double &gx8, double &gy8, double &gx9, double &gy9, double &gx10, double &gy10, double &gx11, double &gy11, double &gx12, double &gy12, double &gx13, double &gy13, double &gx14, double &gy14, double &gx15, double &gy15, double &gx16, double &gy16, double &gx17, double &gy17, double &gx18, double &gy18, double &gx19, double &gy19) 
+        double &gx8, double &gy8, double &gx9, double &gy9, double &gx10, double &gy10, double &gx11, double &gy11, double &gx12, double &gy12, double &gx13, double &gy13, double &gx14, double &gy14, 
+        double &gx15, double &gy15, double &gx16, double &gy16, double &gx17, double &gy17, double &gx18, double &gy18, double &gx19, double &gy19) 
         const { return grid.getParams(la, lb, ha, hb, gx, gy, wx, wy, mx, my, gx6, gy6, gx7, gy7, gx8, gy8, gx9, gy9, gx10, gy10, gx11, gy11, gx12, gy12, gx13, gy13, gx14, gy14, gx15, gy15, gx16, gy16, gx17, gy17, gx18, gy18, gx19, gy19); }//+4 12 11  +16 9 dec 2024
-    void setParams(double la, double lb, double ha, double hb, double gx, double gy, double wx, double wy, double mx, double my, double gx6, double gy6, double gx7, double gy7, double gx8, double gy8, double gx9, double gy9, double gx10, double gy10, double gx11, double gy11, 
+    void setParams(double la, double lb, double ha, double hb, double gx, double gy, double wx, double wy, double mx, double my, double gx6, double gy6, double gx7, double gy7, double gx8, double gy8, 
+        double gx9, double gy9, double gx10, double gy10, double gx11, double gy11, 
         double gx12, double gy12, double gx13, double gy13, double gx14, double gy14, double gx15, double gy15,
         double gx16, double gy16, double gx17, double gy17, double gx18, double gy18, double gx19, double gy19, bool notify) // + 16 9 dec 2024
         { grid.setParams(la, lb, ha, hb, gx, gy, wx, wy, mx, my, gx6, gy6, gx7, gy7, gx8, gy8, gx9, gy9, gx10, gy10, gx11, gy11, gx12, gy12, gx13, gy13, gx14, gy14, gx15, gy15, gx16, gy16, gx17, gy17, gx18, gy18, gx19, gy19, notify); }//+4 12 11  +16 9 dec 2024
-    void setDefault (double la, double lb, double ha, double hb, double gx, double gy, double wx, double wy, double mx, double my, double gx6, double gy6, double gx7, double gy7, double gx8, double gy8, double gx9, double gy9, double gx10, double gy10, double gx11, double gy11,
+    void setDefault (double la, double lb, double ha, double hb, double gx, double gy, double wx, double wy, double mx, double my, double gx6, double gy6, double gx7, double gy7, double gx8, double gy8, 
+        double gx9, double gy9, double gx10, double gy10, double gx11, double gy11,
         double gx12, double gy12, double gx13, double gy13, double gx14, double gy14, double gx15, double gy15,
         double gx16, double gy16, double gx17, double gy17, double gx18, double gy18, double gx19, double gy19)//+16 9 dec 2024
         { grid.setDefault(la, lb, ha, hb, gx, gy, wx, wy, mx, my, gx6, gy6, gx7, gy7, gx8, gy8, gx9, gy9, gx10, gy10, gx11, gy11, gx12, gy12, gx13, gy13, gx14, gy14, gx15, gy15, gx16, gy16, gx17, gy17, gx18, gy18, gx19, gy19); }//+4 12 11  +16 9 dec 2024

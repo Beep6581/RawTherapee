@@ -129,12 +129,11 @@ private:
     // Locallab tools mask background management data
     std::vector<locallabDenoiseLC> denoiselc;
 
-
     std::vector<locallabcieBEF> cie_bef;
 
     std::vector<locallabcieLC> cie_lc;
 
-    std::vector<locallabshGHS> sh_ghs;
+    std::vector<locallabshGHS> sh_ghs;//for GHS
 
     std::vector<locallabshGHSbw> sh_ghsbw;
 

@@ -1702,7 +1702,7 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
             //*************************************************************
 
         }
-
+printf("OK improc bon\n");
         if ((todo & M_RGBCURVE) || (todo & M_CROP)) {
             //complexCurve also calculated pre-curves histogram depending on crop
             CurveFactory::complexCurve(params->toneCurve.expcomp, params->toneCurve.black / 65535.0,

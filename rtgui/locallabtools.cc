@@ -5402,7 +5402,7 @@ void LocallabShadow::adjusterChanged(Adjuster* a, double newval)
         }
 
         if (a == ghs_D) {
-            if(ghs_D->getValue() > 0.002) {//blur sliders WP and HP si D too big
+            if(ghs_D->getValue() > 0.002) {//hide sliders WP and HP si D too big
                 ghs_BLP->set_sensitive(false);
                 ghs_HLP->set_sensitive(false);              
             } else {
@@ -5680,7 +5680,7 @@ void LocallabShadow::adjusterChanged(Adjuster* a, double newval)
 }
 
 
-void LocallabShadow::updateghs(double *gx)
+void LocallabShadow::updateghs(double *gx)//update GHS curve in Labgrid
 
 {   
     disableListener();
@@ -5692,7 +5692,7 @@ void LocallabShadow::updateghs(double *gx)
     enableListener();
 }
 
-void LocallabShadow::updateghsbw(int bp, int wp, double minbp, double maxwp)
+void LocallabShadow::updateghsbw(int bp, int wp, double minbp, double maxwp) //update informations for Black point and White point
 {
     idle_register.add(
     [this, bp, wp, minbp, maxwp]() -> bool {

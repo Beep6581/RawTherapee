@@ -1296,7 +1296,7 @@ private:
                 float Lnresi = 0.f;
                 float Lhighresi46 = 0.f;
                 float Lnresi46 = 0.f;
-                float ghscur[40];//+4 12 11
+                float ghscur[40];//+4 12 11  +16 13 decem 2024
                 int ghsbpwp[2];
                 ghsbpwp[0] = 0;
                 ghsbpwp[1] = 0;
