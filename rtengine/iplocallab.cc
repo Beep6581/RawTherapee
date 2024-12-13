@@ -9261,7 +9261,7 @@ void ImProcFunctions::transit_shapedetect2(int sp, float meantm, float stdtm, in
     const bool origshow = ((lp.showmasksoftmet == 5) &&  senstype == 3 && lp.softmet == 1);
     const bool logshow = ((lp.showmasklogmet == 1 || lp.showmasklogmet == 2) &&  senstype == 11);
     const bool cieshow = ((lp.showmaskciemet == 1 || lp.showmaskciemet == 2) &&  senstype == 31);
-
+    
     const bool masshow = ((lp.showmask_met == 1) &&  senstype == 20);
 
     const bool previewvib = ((lp.showmaskvibmet == 4) &&  senstype == 2 && lp.fullim != 3);
@@ -9577,13 +9577,13 @@ void ImProcFunctions::transit_shapedetect2(int sp, float meantm, float stdtm, in
                     const float difb = factorx * realstrbdE;
                     float maxdifab = rtengine::max(std::fabs(difa), std::fabs(difb));
 
-                    if ((expshow || vibshow || colshow || SHshow || tmshow || lcshow || logshow || cieshow || origshow || masshow) && lp.colorde < 0) { //show modifications with use "b"
+                    if (((expshow || vibshow || colshow || SHshow || tmshow || logshow || cieshow || origshow || masshow) && lp.colorde < 0 && (lp.fullim != 3))  || lcshow ) { //show modifications with use "b"
                         //  (origshow && lp.colorde < 0) { //original Retinex
                         transformed->a[y + ystart][x + xstart] = 0.f;
                         transformed->b[y + ystart][x + xstart] = ampli * 8.f * diflc * reducdE;
                         transformed->L[y + ystart][x + xstart] = CLIP(12000.f + 0.5f * ampli * diflc);
 
-                    } else if ((expshow || vibshow || colshow || SHshow || tmshow || lcshow || logshow || cieshow || origshow || masshow) && lp.colorde > 0) {//show modifications without use "b"
+                    } else if (((expshow || vibshow || colshow || SHshow || tmshow  || logshow || cieshow || origshow || masshow) && lp.colorde > 0 && (lp.fullim != 3)) || lcshow) {//show modifications without use "b"
                         if (diflc < 1000.f) {//if too low to be view use ab
                             diflc += 0.5f * maxdifab;
                         }

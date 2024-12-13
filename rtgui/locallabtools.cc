@@ -1016,13 +1016,11 @@ void LocallabColor::updateguicolor(int spottype)
             if(spottype == 3) {
                 invers->hide();
                 sensi->hide();
-                showmaskcolMethod->set_active(0);
                 expmaskcol->hide();
                 exprecov->hide();
                 enaColorMask->set_active(false);
                 previewcol->hide();
                 previewcol->set_active(false);
-                resetMaskView();
             } else {
                 invers->show();
                 sensi->show();
@@ -1037,10 +1035,6 @@ void LocallabColor::updateguicolor(int spottype)
 
             }
             enableListener();
-            if(spottype == 3) {        
-                showmaskcolMethodChanged();
-                showmaskcolMethodChangedinv();
-            }
         return false;
         }
         );
@@ -3036,13 +3030,11 @@ void LocallabExposure::updateguiexpos(int spottype)
                 inversex->hide();
                 sensiex->hide();
                 previewexe->hide();
-                showmaskexpMethod->set_active(0);
                 enaExpMask->set_active(false);
                 enaExpMaskaft->set_active(false);
                 previewexe->set_active(false);
                 expmaskexp->hide();
                 exprecove->hide();
-                resetMaskView();
            } else {
                 inversex->show();
                 sensiex->show();
@@ -3057,10 +3049,6 @@ void LocallabExposure::updateguiexpos(int spottype)
                 updateGUIToMode(static_cast<modeType>(complexity->get_active_row_number()));
             }
             enableListener();
-            if(spottype == 3) {
-                showmaskexpMethodChanged();
-                showmaskexpMethodChangedinv();
-            }
 
         return false;
         }
@@ -4576,13 +4564,11 @@ void LocallabShadow::updateguishad(int spottype)
             if(spottype == 3) {
                 inverssh->hide();
                 sensihs->hide();
-                showmaskSHMethod->set_active(0);
                 previewsh->hide();
                 exprecovs->hide();
                 expmasksh->hide();
                 enaSHMask->set_active(false);
                 previewsh->set_active(false);
-                resetMaskView();
             } else {
                 sensihs->show();
                 inverssh->show();
@@ -4597,10 +4583,6 @@ void LocallabShadow::updateguishad(int spottype)
                 
             }
             enableListener();
-            if(spottype == 3) {
-                showmaskSHMethodChanged();
-                showmaskSHMethodChangedinv();                
-            }
 
         return false;
         }
@@ -5764,13 +5746,11 @@ void LocallabVibrance::updateguivib(int spottype)
 
             if(spottype == 3) {
                 sensiv->hide();
-                showmaskvibMethod->set_active(0);
                 previewvib->hide();
                 enavibMask->set_active(false);
                 previewvib->set_active(false);
                 exprecovv->hide();
                 expmaskvib->hide();
-                resetMaskView();
             } else {
                 sensiv->show();
                 previewvib->show();
@@ -5780,9 +5760,6 @@ void LocallabVibrance::updateguivib(int spottype)
 
             }
             enableListener();
-            if(spottype == 3) {
-                showmaskvibMethodChanged();               
-            }
             
             
 
@@ -7579,7 +7556,6 @@ void LocallabBlur::updateguiblur(int spottype)
                 invbl->hide();
                 expmaskbl->hide();
                 enablMask->set_active(false);
-                resetMaskView();
             } else {
                 sensibn->show();
                 sensiden->show();
@@ -7589,9 +7565,6 @@ void LocallabBlur::updateguiblur(int spottype)
 
             }
             enableListener();
-            if(spottype == 3) {
-                showmaskblMethodChanged();                                
-            }
 
         return false;
         }
