@@ -17359,46 +17359,6 @@ void ImProcFunctions::Lab_Local(
                     ImProcFunctions::shadowsHighlights(bufexpfin.get(), lp.hsena, 1, lp.highlihs, lp.shadowhs, lp.radiushs, sk, lp.hltonalhs, lp.shtonalhs);
                 }
 
-//gradient
-
-                int GW = transformed->W;
-                int GH = transformed->H;
-
-                struct grad_params gp;
-
-                if (lp.strSH != 0.f && (call == ca1 || call == ca2 || call == ca3)  && execgradsh) {//test to plain image
-                    calclocalGradientParams(call, lp, gp, ystart, xstart, yend, xend, bfw, bfh, oW, oH, tX, tY, tW, tH, 2, sk, fw, fh, cx, cy, ksk, kskx, kbh, kbw);
-                   // printf("KSK SH=%f\n", (double) ksk);
-#ifdef _OPENMP
-                    #pragma omp parallel for schedule(dynamic,16) if (multiThread)
-#endif
-
-                    for (int ir = 0; ir < bfh; ir++) {
-                        for (int jr = 0; jr < bfw; jr++) {
-                            bufexpfin->L[ir][jr] *= ImProcFunctions::calcGradientFactor(gp, cx*kskx + kbw*jr, cy*ksk + kbh*ir);
-                        }
-                    }
-                } else if(lp.strSH != 0.f && execgradsh && (call ==  ca4) && ((GW >= mDEN && GH >= mDEN))){//test to run in plain image - not used
-                    calclocalGradientParams(call, lp, gp, ystart, xstart, yend, xend, GW, GH, oW, oH, tX, tY, tW, tH, 2, sk, fw, fh, cx, cy, ksk, kskx, kbh, kbw);
-#ifdef _OPENMP
-            #pragma omp parallel for schedule(dynamic,16) if (multiThread)
-#endif
-                    for (int ir = 0; ir < GH; ir++)
-                        for (int jr = 0; jr < GW; jr++) {
-                            tmp1->L[ir][jr] = original->L[ir][jr];
-                            tmp1->a[ir][jr] = original->a[ir][jr];
-                            tmp1->b[ir][jr] = original->b[ir][jr];                    
-                    }
-#ifdef _OPENMP
-            #pragma omp parallel for schedule(dynamic,16) if (multiThread)
-#endif
-                    for (int ir = 0; ir < GH; ir++) {
-                        for (int jr = 0; jr < GW; jr++) {
-                            tmp1->L[ir][jr] = ImProcFunctions::calcGradientFactor(gp, cy + jr, cx + ir);
-                        }
-                    }
-                }
-
                 if (lp.shmeth == 1) {
                     double scal = (double)(sk);
                     Imagefloat *tmpImage = nullptr;
@@ -17796,6 +17756,46 @@ void ImProcFunctions::Lab_Local(
                         loccont(bfw, bfh, bufexpfin.get(), rad, stren , sk); //local contrast in L (Lab) mode.                     
                     }
                 }
+                //gradient
+                int GH = transformed->H;
+                int GW = transformed->W;
+
+                struct grad_params gp;
+
+                if (lp.strSH != 0.f && (call == ca1 || call == ca2 || call == ca3)  && execgradsh) {//test to plain image
+                    calclocalGradientParams(call, lp, gp, ystart, xstart, yend, xend, bfw, bfh, oW, oH, tX, tY, tW, tH, 2, sk, fw, fh, cx, cy, ksk, kskx, kbh, kbw);
+                   // printf("KSK SH=%f\n", (double) ksk);
+#ifdef _OPENMP
+                    #pragma omp parallel for schedule(dynamic,16) if (multiThread)
+#endif
+
+                    for (int ir = 0; ir < bfh; ir++) {
+                        for (int jr = 0; jr < bfw; jr++) {
+                            bufexpfin->L[ir][jr] *= ImProcFunctions::calcGradientFactor(gp, cx*kskx + kbw*jr, cy*ksk + kbh*ir);
+                        }
+                    }
+                } else if(lp.strSH != 0.f && execgradsh && (call ==  ca4) && ((GW >= mDEN && GH >= mDEN))){//test to run in plain image - not used
+                    calclocalGradientParams(call, lp, gp, ystart, xstart, yend, xend, GW, GH, oW, oH, tX, tY, tW, tH, 2, sk, fw, fh, cx, cy, ksk, kskx, kbh, kbw);
+#ifdef _OPENMP
+            #pragma omp parallel for schedule(dynamic,16) if (multiThread)
+#endif
+                    for (int ir = 0; ir < GH; ir++)
+                        for (int jr = 0; jr < GW; jr++) {
+                            tmp1->L[ir][jr] = original->L[ir][jr];
+                            tmp1->a[ir][jr] = original->a[ir][jr];
+                            tmp1->b[ir][jr] = original->b[ir][jr];                    
+                    }
+#ifdef _OPENMP
+            #pragma omp parallel for schedule(dynamic,16) if (multiThread)
+#endif
+                    for (int ir = 0; ir < GH; ir++) {
+                        for (int jr = 0; jr < GW; jr++) {
+                            tmp1->L[ir][jr] = ImProcFunctions::calcGradientFactor(gp, cy + jr, cx + ir);
+                        }
+                    }
+                }
+            //end gradient
+                
                 
             }
 
