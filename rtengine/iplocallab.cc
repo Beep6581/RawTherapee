@@ -5333,8 +5333,8 @@ void ImProcFunctions::DeNoise_Local(int call, const struct local_params& lp, Lab
                 transformed->L[y][x] = CLIP(original->L[y][x] + difL);
                 transformed->a[y][x] = clipC((original->a[y][x] + difa) * factnoise);
                 transformed->b[y][x] = clipC((original->b[y][x] + difb) * factnoise) ;
-
-                if (blshow) {
+  
+                if (blshow  && lp.fullim != 3) {
                     transformed->L[y][x] = CLIP(12000.f + amplabL * difL);// * 10.f empirical to can visualize modifications
                     transformed->a[y][x] = clipC(amplabL * difa);// * 10.f empirical to can visualize modifications
                     transformed->b[y][x] = clipC(amplabL * difb);// * 10.f empirical to can visualize modifications
@@ -5493,7 +5493,7 @@ void ImProcFunctions::DeNoise_Local2(const struct local_params& lp, LabImage* or
                 transformed->a[y][x] = clipC((original->a[y][x] + difa) * factnoise);
                 transformed->b[y][x] = clipC((original->b[y][x] + difb) * factnoise) ;
 
-                if (blshow) {
+                if (blshow && lp.fullim != 3) {
                     transformed->L[y][x] = CLIP(12000.f + amplabL * difL);// * 10.f empirical to can visualize modifications
                     transformed->a[y][x] = clipC(amplabL * difa);// * 10.f empirical to can visualize modifications
                     transformed->b[y][x] = clipC(amplabL * difb);// * 10.f empirical to can visualize modifications
@@ -5742,7 +5742,7 @@ void ImProcFunctions::InverseBlurNoise_Local(LabImage * originalmask, const stru
                         transformed->a[y][x] = clipC(original->a[y][x] + difa) ;
                         transformed->b[y][x] = clipC(original->b[y][x] + difb);
 
-                        if (blshow) {
+                        if (blshow && lp.fullim != 3) {
                             transformed->L[y][x] = CLIP(12000.f + diflc);
                             transformed->a[y][x] = clipC(difa);
                             transformed->b[y][x] = clipC(difb);
@@ -5764,7 +5764,7 @@ void ImProcFunctions::InverseBlurNoise_Local(LabImage * originalmask, const stru
                         transformed->a[y][x] = clipC(original->a[y][x] + difa) ;
                         transformed->b[y][x] = clipC(original->b[y][x] + difb);
 
-                        if (blshow) {
+                        if (blshow  && lp.fullim != 3) {
                             transformed->L[y][x] = CLIP(12000.f + diflc);
                             transformed->a[y][x] = clipC(difa);
                             transformed->b[y][x] = clipC(difb);
@@ -6229,6 +6229,9 @@ void ImProcFunctions::deltaEforMask(float **rdE, int bfw, int bfh, LabImage* buf
 
 static void showmask(int lumask, const local_params& lp, int xstart, int ystart, int cx, int cy, int bfw, int bfh, LabImage* bufexporig, LabImage* transformed, LabImage* bufmaskorigSH, int inv)
 {
+    if(lp.fullim == 3) {
+        return;
+    }
     float lum = fabs(lumask * 400.f);
     float colo = 0.f;
 
@@ -6714,6 +6717,9 @@ void ImProcFunctions::maskcalccol(bool invmask, bool pde, int bfw, int bfh, int 
 
 
 {
+    if(lp.fullim == 3) {
+        return;
+    }
     array2D<float> ble(bfw, bfh);
     array2D<float> blechro(bfw, bfh);
     array2D<float> hue(bfw, bfh);
@@ -7530,7 +7536,7 @@ void ImProcFunctions::InverseSharp_Local(float **loctemp, const float hueref, co
                         const float difL = loctemp[y][x] - original->L[y][x];
                         transformed->L[y][x] = CLIP(original->L[y][x] + difL * reducdE);
 
-                        if (sharshow) {
+                        if (sharshow && lp.fullim != 3) {
                             transformed->a[y][x] = 0.f;
                             transformed->b[y][x] = ampli * 5.f * difL * reducdE;
                         } else if (previewshar) {
@@ -7690,7 +7696,7 @@ void ImProcFunctions::Sharp_Local(int call, float **loctemp, int senstype, const
 
                 transformed->L[y][x] = CLIP(original->L[y][x] + difL * reducdE);
 
-                if (sharshow) {
+                if (sharshow && lp.fullim != 3) {
                     transformed->a[y][x] = 0.f;
                     transformed->b[y][x] = ampli * 5.f * difL * reducdE;
                 } else if (previewshar || lp.prevdE) {
@@ -8023,7 +8029,7 @@ void ImProcFunctions::transit_shapedetect_retinex(int call, int senstype, LabIma
                                 }
                             } ;
 
-                            if (retishow) {
+                            if (retishow && lp.fullim != 3) {
                                 transformed->L[y][x] = CLIP(12000.f + diflc);
                             }
                         }
@@ -8061,7 +8067,7 @@ void ImProcFunctions::transit_shapedetect_retinex(int call, int senstype, LabIma
                             }
                         }
 
-                        if (retishow) {
+                        if (retishow && lp.fullim != 3) {
                             transformed->a[y][x] = clipC(difa);
                             transformed->b[y][x] = clipC(difb);
                         }
@@ -8332,7 +8338,7 @@ void ImProcFunctions::transit_shapedetect(int senstype, const LabImage * bufexpo
                             transformed->b[y][x] = clipC(original->b[y][x] + difb);
 
 
-                            if (cbshow || tmshow) {
+                            if ((cbshow || tmshow)  && lp.fullim != 3) {
                                 transformed->L[y][x] = CLIP(12000.f + difL);
                                 transformed->a[y][x] = clipC(difa);
                                 transformed->b[y][x] = clipC(difb);
@@ -9150,13 +9156,13 @@ void ImProcFunctions::BlurNoise_Local(LabImage *tmp1, LabImage * originalmask, c
 
                 const float maxdifab = rtengine::max(std::fabs(difa), std::fabs(difb));
 
-                if (blshow && lp.colorde < 0) { //show modifications with use "b"
+                if ((blshow && lp.colorde < 0) && lp.fullim != 3 ) { //show modifications with use "b"
                     //  (origshow && lp.colorde < 0) { //original Retinex
                     transformed->a[y][x] = 0.f;
                     transformed->b[y][x] = ampli * 8.f * difL * reducdE;
                     transformed->L[y][x] = CLIP(12000.f + 0.5f * ampli * difL);
 
-                } else if (blshow && lp.colorde > 0) {//show modifications without use "b"
+                } else if ((blshow && lp.colorde > 0) && lp.fullim != 3) {//show modifications without use "b"
                     if (difL < 1000.f) {//if too low to be view use ab
                         difL += 0.5f * maxdifab;
                     }
@@ -9258,6 +9264,7 @@ void ImProcFunctions::transit_shapedetect2(int sp, float meantm, float stdtm, in
     const bool SHshow = ((lp.showmaskSHmet == 1 || lp.showmaskSHmet == 2) &&  senstype == 9);
     const bool tmshow = ((lp.showmasktmmet == 1 || lp.showmasktmmet == 2) &&  senstype == 8);
     const bool lcshow = ((lp.showmasklcmet == 1 || lp.showmasklcmet == 2 || lp.processwa) &&  senstype == 10);
+    const bool lcshow2 = ((lp.showmasklcmet == 1 || lp.processwa) &&  senstype == 10);
     const bool origshow = ((lp.showmasksoftmet == 5) &&  senstype == 3 && lp.softmet == 1);
     const bool logshow = ((lp.showmasklogmet == 1 || lp.showmasklogmet == 2) &&  senstype == 11);
     const bool cieshow = ((lp.showmaskciemet == 1 || lp.showmaskciemet == 2) &&  senstype == 31);
@@ -9577,13 +9584,13 @@ void ImProcFunctions::transit_shapedetect2(int sp, float meantm, float stdtm, in
                     const float difb = factorx * realstrbdE;
                     float maxdifab = rtengine::max(std::fabs(difa), std::fabs(difb));
 
-                    if (((expshow || vibshow || colshow || SHshow || tmshow || logshow || cieshow || origshow || masshow) && lp.colorde < 0 && (lp.fullim != 3))  || lcshow ) { //show modifications with use "b"
+                    if (((expshow || vibshow || colshow || SHshow || tmshow || lcshow || logshow || cieshow || origshow || masshow) && lp.colorde < 0 && (lp.fullim != 3))  || lcshow2 ) { //show modifications with use "b"
                         //  (origshow && lp.colorde < 0) { //original Retinex
                         transformed->a[y + ystart][x + xstart] = 0.f;
                         transformed->b[y + ystart][x + xstart] = ampli * 8.f * diflc * reducdE;
                         transformed->L[y + ystart][x + xstart] = CLIP(12000.f + 0.5f * ampli * diflc);
 
-                    } else if (((expshow || vibshow || colshow || SHshow || tmshow  || logshow || cieshow || origshow || masshow) && lp.colorde > 0 && (lp.fullim != 3)) || lcshow) {//show modifications without use "b"
+                    } else if (((expshow || vibshow || colshow || SHshow || tmshow || lcshow || logshow || cieshow || origshow || masshow) && lp.colorde > 0 && (lp.fullim != 3)) || lcshow2) {//show modifications without use "b"
                         if (diflc < 1000.f) {//if too low to be view use ab
                             diflc += 0.5f * maxdifab;
                         }
