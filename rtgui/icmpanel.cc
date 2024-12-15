@@ -522,7 +522,7 @@ ICMPanel::ICMPanel() : FoldableToolPanel(this, TOOL_NAME, M("TP_ICM_LABEL")), iu
     trcExp->add(*trcProfVBox, false);
     trcExp->setLevel (2);
     pack_start(*trcExp, Gtk::PACK_EXPAND_WIDGET);
-    trcExp->set_expanded(false);
+    trcExp->set_expanded(true);
 
     pack_start(*wFrame, Gtk::PACK_EXPAND_WIDGET);
     pack_start(*iFrame, Gtk::PACK_EXPAND_WIDGET);
@@ -984,7 +984,7 @@ void ICMPanel::read(const ProcParams* pp, const ParamsEdited* pedited)
     ConnectionBlocker trcExpconn_(trcExpconn);
     ConnectionBlocker wavExpconn_(wavExpconn);
     
-    trcExp->set_expanded(false);
+    trcExp->set_expanded(true);
     primExp->set_expanded(false);
     wavExp->set_expanded(false);
     wav2Exp->set_expanded(false);
