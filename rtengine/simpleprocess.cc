@@ -123,7 +123,6 @@ private:
         if (!stage_init()) {
             return nullptr;
         }
-
         stage_denoise();
         stage_transform();
         return stage_finish();
@@ -146,6 +145,7 @@ private:
         stage_denoise();
         return stage_finish();
     }
+
 
     bool stage_init()
     {
@@ -830,9 +830,18 @@ private:
 
             //end evaluate noise
         }
-
         baseImg = new Imagefloat(fw, fh);
         imgsrc->getImage(currWB, tr, baseImg, pp, params.toneCurve, params.raw);
+
+        // baseImg = new Imagefloat(8192, 5464);
+      // FILE* file = fopen("C:\\Users\\Hadar\\Desktop\\dev\\ImAgent\\build\\rt_render.bin", "rb");
+    //  FILE* file = fopen("C:\\Users\\Hadar\\Desktop\\dev\\ImAgent\\build\\rt-end.bin", "rb");
+         // baseImg->readData(file);
+        auto errorCodeTest = baseImg->saveAsJPEG ( "C:\\Users\\Hadar\\Downloads\\debug_test\\stage_init-start1.jpg", 92, 3 );
+        if (errorCodeTest) {
+        printf("error! stage_init: \"%d\"\n", errorCodeTest);
+        }
+
 
         if (pl) {
             pl->setProgress(0.50);
@@ -889,6 +898,17 @@ private:
 
     void stage_denoise()
     {
+        auto testImage = baseImg;
+        if (!testImage) {
+            printf("stage_denoise:: baseImg is NULL !");
+
+        }
+        else {
+            auto errorCodeTest = testImage->saveAsJPEG ( "C:\\Users\\Hadar\\Downloads\\debug_test\\stage_denoise-start.jpg", 92, 3 );
+            if (errorCodeTest) {
+                printf("error! stage_denoise: \"%d\"\n", errorCodeTest);
+            }
+        }
         const procparams::ProcParams& params = job->pparams;
 
         DirPyrDenoiseParams denoiseParams = params.dirpyrDenoise;   // make a copy because we cheat here
@@ -944,6 +964,11 @@ private:
 
     void stage_transform()
     {
+        auto testImage = baseImg;
+        auto errorCodeTest = testImage->saveAsJPEG ( "C:\\Users\\Hadar\\Downloads\\debug_test\\stage_transform-start.jpg", 92, 3 );
+        if (errorCodeTest) {
+            printf("error! stage_transform: \"%d\"\n", errorCodeTest);
+        }
         const procparams::ProcParams& params = job->pparams;
         //ImProcFunctions ipf (&params, true);
         ImProcFunctions &ipf = * (ipf_p.get());
@@ -995,8 +1020,23 @@ private:
     }
 
     Imagefloat *stage_finish()
-    {
+    {        std::cout << "    Imagefloat *stage_finish(): "  << std::endl;
+
+
         procparams::ProcParams& params = job->pparams;
+        // if (baseImg) delete baseImg;
+        // baseImg = new Imagefloat(fw, fh);
+        // FILE* file = fopen("C:\\Users\\Hadar\\Desktop\\dev\\ImAgent\\build\\rt1.bin", "rb");
+        // // imgsrc->getImage(currWB, tr, baseImg, pp, params.toneCurve, params.raw);
+        //
+        // baseImg->readData(file);
+        auto testImage = baseImg;
+        auto errorCodeTest = testImage->saveAsJPEG ( "C:\\Users\\Hadar\\Downloads\\debug_test\\stage-finish-start.jpg", 92, 3 );
+        if (errorCodeTest) {
+            printf("error! A: \"%d\"\n", errorCodeTest);
+        }
+
+
         //ImProcFunctions ipf (&params, true);
         ImProcFunctions &ipf = * (ipf_p.get());
 
@@ -1030,7 +1070,10 @@ private:
             ipf.dirpyrequalizer(&labcbdl, 1);
             ipf.lab2rgb(labcbdl, *baseImg, params.icm.workingProfile);
         }
-
+        errorCodeTest = baseImg->saveAsJPEG ( "C:\\Users\\Hadar\\Downloads\\debug_test\\stage-finish-2_before_RGB_processing.jpg", 92, 3 );
+        if (errorCodeTest) {
+            printf("error! B: \"%d\"\n", errorCodeTest);
+        }
         // RGB processing
 
         labView = new LabImage(fw, fh);
@@ -1271,7 +1314,6 @@ private:
                 } else {
                     ipf.calc_ref(sp, labView, labView, 0, 0, fw, fh, 1, huerefblu, chromarefblu, lumarefblu, huere, chromare, lumare, sobelre, avge, locwavCurveden, locwavdenutili);
                 }
-
                 CurveFactory::complexCurvelocal(ecomp, lblack / 65535., lhlcompr, lhlcomprthresh, shcompr, br, cont, lumare,
                                                 hltonecurveloc, shtonecurveloc, tonecurveloc, lightCurveloc, avge,
                                                 1);
@@ -1391,6 +1433,10 @@ private:
         wavclCurve(65536, 0);
 
         //if(params.blackwhite.enabled) params.toneCurve.hrenabled=false;
+        // perform first analysis
+        // hist16(65536); //me
+
+        //ipf.firstAnalysis(baseImg, params, hist16);//me
 
         CurveFactory::complexCurve(expcomp, black / 65535.0, hlcompr, hlcomprthresh, params.toneCurve.shcompr, bright, contr,
                                    params.toneCurve.curve, params.toneCurve.curve2,
@@ -1417,6 +1463,7 @@ private:
         }
 
 //        labView = new LabImage(fw, fh);
+
 
         if (params.blackwhite.enabled) {
             CurveFactory::curveBW(params.blackwhite.beforeCurve, params.blackwhite.afterCurve, hist16, dummy, customToneCurvebw1, customToneCurvebw2, 1);
@@ -1451,9 +1498,21 @@ private:
         DCPProfile *dcpProf = imgsrc->getDCP(params.icm, as);
 
         LUTu histToneCurve;
-
+        Imagefloat* readyImgTmp_0 = ipf.lab2rgbOut(labView, 0, 0, fw, fh, params.icm);
+        errorCodeTest = readyImgTmp_0->saveAsJPEG ( "C:\\Users\\Hadar\\Downloads\\debug_test\\stage_finish_3_image_0_labView_before_applying_basImg.jpg", 92, 3 );
+        if (errorCodeTest) {
+            printf("error! C2: \"%d\"\n", errorCodeTest);
+        }
+        errorCodeTest = baseImg->saveAsJPEG ( "C:\\Users\\Hadar\\Downloads\\debug_test\\stage_finish_4_baseImg_before_rgbProc.jpg", 92, 3 );
+        if (errorCodeTest) {
+            printf("error! image_baseImg_before_rgbProc: \"%d\"\n", errorCodeTest);
+        } //next line with SEG FAULT FOR SOME
         ipf.rgbProc(baseImg, labView, nullptr, curve1, curve2, curve, params.toneCurve.saturation, rCurve, gCurve, bCurve, satLimit, satLimitOpacity, ctColorCurve, ctOpacityCurve, opautili, clToningcurve, cl2Toningcurve, customToneCurve1, customToneCurve2, customToneCurvebw1, customToneCurvebw2, rrm, ggm, bbm, autor, autog, autob, expcomp, hlcompr, hlcomprthresh, dcpProf, as, histToneCurve, options.chunkSizeRGB, options.measure);
-
+    readyImgTmp_0 = ipf.lab2rgbOut(labView, 0, 0,fw, fh, params.icm);
+        errorCodeTest = readyImgTmp_0->saveAsJPEG ( "C:\\Users\\Hadar\\Downloads\\debug_test\\stage_finish_5_image_0.1_after_rgbProc.jpg", 92, 3 );
+        if (errorCodeTest) {
+            printf("error!:D \"%d\"\n", errorCodeTest);
+}
         if (settings->verbose) {
             printf("Output image / Auto B&W coefs:   R=%.2f   G=%.2f   B=%.2f\n", static_cast<double>(autor), static_cast<double>(autog), static_cast<double>(autob));
         }
@@ -1473,6 +1532,10 @@ private:
         customToneCurvebw1.Reset();
         customToneCurvebw2.Reset();
 
+        errorCodeTest = baseImg->saveAsJPEG ( "C:\\Users\\Hadar\\Downloads\\debug_test\\stage_finish_6_before_start_tile_processing.jpg", 92, 3 );
+        if (errorCodeTest) {
+            printf("error!: E \"%d\"\n", errorCodeTest);
+        }
         // Freeing baseImg because not used anymore
         delete baseImg;
         baseImg = nullptr;
@@ -1533,7 +1596,12 @@ private:
             // Alberto's local contrast
             ipf.localContrast(labView, labView->L, params.localContrast, false, 1);//scale);
         }
-
+        Imagefloat* readyImgTmp = ipf.lab2rgbOut(labView, 0, 0, fw, fh, params.icm);
+        // Imagefloat* readyImgTmp = ipf.lab2rgbOut(labView, 0, 0, 8652, 5776, params.icm);
+        errorCodeTest = readyImgTmp->saveAsJPEG ( "C:\\Users\\Hadar\\Downloads\\debug_test\\stage_finish_7.jpg", 92, 3 );
+        if (errorCodeTest) {
+            printf("error!: F\"%d\"\n", errorCodeTest);
+        }
         ipf.chromiLuminanceCurve(nullptr, 1, labView, labView, curve1, curve2, satcurve, lhskcurve, clcurve, lumacurve, utili, autili, butili, ccutili, cclutili, clcutili, dummy, dummy);
 
         const bool cam02 = params.colorappearance.modelmethod == "02" && params.colorappearance.enabled;
@@ -1630,7 +1698,12 @@ private:
             }
 
             ipf.ip_wavelet(labView, labView, 2, WaveParams, wavCLVCurve, wavdenoise, wavdenoiseh, wavblcurve, waOpacityCurveRG, waOpacityCurveSH, waOpacityCurveBY, waOpacityCurveW,  waOpacityCurveWL, wavclCurve, 1);
-
+            // Imagefloat* readyImgTmp2 = ipf.lab2rgbOut(labView, 0, 0, 8652, 5776, params.icm);
+            Imagefloat* readyImgTmp2 = ipf.lab2rgbOut(labView, 0, 0, fw, fh, params.icm);
+            errorCodeTest = readyImgTmp2->saveAsJPEG ( "C:\\Users\\Hadar\\Downloads\\debug_test\\stage_finish_8.jpg", 92, 3 );
+            if (errorCodeTest) {
+                printf("error!: \"%d\"\n", errorCodeTest);
+            }
             if ((WaveParams.ushamethod == "sharp" || WaveParams.ushamethod == "clari") && WaveParams.expclari && WaveParams.CLmethod != "all") {
                 WaveParams.expcontrast = procont;
                 WaveParams.expchroma = prochro;
@@ -1676,7 +1749,11 @@ private:
                     float blur = 10.f / 1 * (0.5f + 0.8f * WaveParams.softrad);
                     // rtengine::guidedFilter(guid, ble, ble, blur, 0.001, multiTh);
                     rtengine::guidedFilter(guid, ble, ble, blur, epsil, false);
-
+                   Imagefloat* readyImgTmp3 = ipf.lab2rgbOut(labView, 0, 0, fw, fh, params.icm);
+                   errorCodeTest = readyImgTmp3->saveAsJPEG ( "C:\\Users\\Hadar\\Downloads\\debug_test\\image_C.jpg", 92, 3 );
+                   if (errorCodeTest) {
+                       printf("error!: \"%d\"\n", errorCodeTest);
+                   }
 
 
 #ifdef _OPENMP
@@ -1697,7 +1774,12 @@ private:
                 }
 
             }
-
+      Imagefloat* readyImgTmp4 = ipf.lab2rgbOut(labView, 0, 0, fw, fh, params.icm);
+      // Imagefloat* readyImgTmp4 = ipf.lab2rgbOut(labView, 0, 0, 8652, 5776, params.icm);
+      errorCodeTest = readyImgTmp4->saveAsJPEG ( "C:\\Users\\Hadar\\Downloads\\debug_test\\stage_finish_9.jpg", 92, 3 );
+      if (errorCodeTest) {
+          printf("error!: \"%d\"\n", errorCodeTest);
+      }
             if ((WaveParams.ushamethod == "sharp" || WaveParams.ushamethod == "clari") && WaveParams.expclari && WaveParams.CLmethod != "all") {
                 float mL = (float)(WaveParams.mergeL / 100.f);
                 float mC = (float)(WaveParams.mergeC / 100.f);
@@ -1742,7 +1824,12 @@ private:
         params.wavelet.strength = savestr;
 
         ipf.softLight(labView, params.softlight);
-
+  Imagefloat* readyImgTmp5 = ipf.lab2rgbOut(labView, 0, 0, fw, fh, params.icm);
+  // Imagefloat* readyImgTmp5 = ipf.lab2rgbOut(labView, 0, 0, 8652, 5776, params.icm);
+  errorCodeTest = readyImgTmp5->saveAsJPEG ( "C:\\Users\\Hadar\\Downloads\\debug_test\\stage_finish_10.jpg", 92, 3 );
+  if (errorCodeTest) {
+      printf("error!: \"%d\"\n", errorCodeTest);
+  }
 
         if (params.icm.workingTRC != ColorManagementParams::WorkingTrc::NONE  && params.icm.trcExp) {
             const int GW = labView->W;
@@ -1815,7 +1902,13 @@ private:
                     ipf.toneEqualizer(tmpImage1.get(), params, prof, 1, false);
             }
 
-            ipf.rgb2lab(*tmpImage1, *labView, params.icm.workingProfile);
+        ipf.rgb2lab(*tmpImage1, *labView, params.icm.workingProfile);
+        Imagefloat* readyImgTmp6 = ipf.lab2rgbOut(labView, 0, 0, fw, fh, params.icm);
+        // Imagefloat* readyImgTmp6 = ipf.lab2rgbOut(labView, 0, 0, 8652, 5776, params.icm);
+        errorCodeTest = readyImgTmp6->saveAsJPEG ( "C:\\Users\\Hadar\\Downloads\\debug_test\\stage_finish_11.jpg", 92, 3 );
+        if (errorCodeTest) {
+            printf("error!: \"%d\"\n", errorCodeTest);
+        }
 
             // labView and provis
             if (provis) {
@@ -1835,6 +1928,12 @@ private:
             }
 
         }
+   // Imagefloat* readyImgTmp7 = ipf.lab2rgbOut(labView, 0, 0, 8652, 5776, params.icm);
+   Imagefloat* readyImgTmp7 = ipf.lab2rgbOut(labView, 0, 0, fw, fh, params.icm);
+   errorCodeTest = readyImgTmp7->saveAsJPEG ( "C:\\Users\\Hadar\\Downloads\\debug_test\\stage_finish_12.jpg", 92, 3 );
+   if (errorCodeTest) {
+       printf("error!: \"%d\"\n", errorCodeTest);
+   }
 
         //Colorappearance and tone-mapping associated
 
@@ -1930,6 +2029,11 @@ private:
                 cy = 0;
             }
         }
+        Imagefloat* readyImgTmp8 = ipf.lab2rgbOut(labView, cx, cy, cw, ch, params.icm);
+        errorCodeTest = readyImgTmp8->saveAsJPEG ( "C:\\Users\\Hadar\\Downloads\\debug_test\\stage_finish_13.jpg", 92, 3 );
+        if (errorCodeTest) {
+            printf("error!: \"%d\"\n", errorCodeTest);
+        }
 
         if (labResize) { // resize lab data
             if ((labView->W != imw || labView->H != imh) &&
@@ -1965,7 +2069,10 @@ private:
         // gamma come from the selected profile, otherwise it comes from "Free gamma" tool
 
         Imagefloat* readyImg = ipf.lab2rgbOut(labView, cx, cy, cw, ch, params.icm);
-
+        errorCodeTest = readyImg->saveAsJPEG ( "C:\\Users\\Hadar\\Downloads\\debug_test\\stage_finish_14.jpg", 92, 3 );
+        if (errorCodeTest) {
+            printf("error!: \"%d\"\n", errorCodeTest);
+        }
         if (settings->verbose) {
             printf("Output profile_: \"%s\"\n", params.icm.outputProfile.c_str());
         }
@@ -2021,7 +2128,10 @@ private:
                 break;
         }
 
-
+        errorCodeTest = readyImg->saveAsJPEG ( "C:\\Users\\Hadar\\Downloads\\debug_test\\stage_finish_15_last.jpg", 92, 3 );
+        if (errorCodeTest) {
+            printf("error!: \"%d\"\n", errorCodeTest);
+        }
         // Setting the output curve to readyImg
         // use the selected output profile if present, otherwise use LCMS2 profile generate by lab2rgb16 w/ gamma
 

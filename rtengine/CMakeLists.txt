@@ -264,8 +264,8 @@ if(OpenMP_FOUND)
 endif()
 
 # Configure LibRaw
-if(NOT WITH_SYSTEM_LIBRAW)
-    include(LibRaw.cmake)
-endif()
+#if(NOT WITH_SYSTEM_LIBRAW)
+#    include(LibRaw.cmake)
+#endif()
 
 install(FILES ${CAMCONSTSFILE} DESTINATION "${DATADIR}" PERMISSIONS OWNER_WRITE OWNER_READ GROUP_READ WORLD_READ)

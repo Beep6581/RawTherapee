@@ -1228,7 +1228,8 @@ public:
     void readData (FILE *f)
     {
         for (int i = 0; i < height; i++) {
-            if (fread(r(i), sizeof(T), width, f) < static_cast<size_t>(width)) {
+            size_t x = fread(r(i), sizeof(T), width, f);
+            if ( x < static_cast<size_t>(width)) {
                 break;
             }
         }
