@@ -2020,6 +2020,7 @@ void ImProcFunctions::rgbProc(Imagefloat* working, LabImage* lab, PipetteBuffer 
                               DCPProfile *dcpProf, const DCPProfileApplyState& asIn, LUTu& histToneCurve, size_t chunkSize, bool measure)
 {
 
+    bool saveJpegs  = true;
     std::unique_ptr<StopWatch> stop;
     multiThread = false;
     if (measure) {
@@ -2325,7 +2326,7 @@ void ImProcFunctions::rgbProc(Imagefloat* working, LabImage* lab, PipetteBuffer 
             chMixRR, chMixRG, chMixRB,
             chMixGR, chMixGG, chMixGB,
             chMixBR, chMixBG, chMixBB,
-            exp_scale, comp, hlrange, tone_curve_black](
+            exp_scale, comp, hlrange, tone_curve_black, saveJpegs](
             int istart, int jstart, int tH, int tW,
             float *rtemp, float *gtemp, float *btemp) {
 
@@ -2361,27 +2362,27 @@ void ImProcFunctions::rgbProc(Imagefloat* working, LabImage* lab, PipetteBuffer 
             if (tone_curve_black != 0) {
                 shadowToneCurve(shtonecurve, rtemp, gtemp, btemp, istart, tH, jstart, tW, TS);
             }
-            FILE* file = fopen("data.bin", "wb");
-            if (!file) {
-                printf(" fopen error! rgb-proc-tile" );
+            if (saveJpegs) {
+                FILE* file = fopen("data.bin", "wb");
+                if (!file) {
+                    printf(" fopen error! rgb-proc-tile" );
 
-            };
-                       auto baseImg = new Imagefloat(tH,tW);
+                };
+                auto baseImg = new Imagefloat(tH,tW);
 
-            for (int i = istart, ti = 0; i < tH; i++, ti++) {
-                for (int j = jstart, tj = 0; j < tW; j++, tj++) {
-                    working->r(i, j) = rtemp[ti * TS + tj] ;
-                    working->g(i, j) = gtemp[ti * TS + tj];
-                    working->b(i, j) = btemp[ti * TS + tj];
+                for (int i = istart, ti = 0; i < tH; i++, ti++) {
+                    for (int j = jstart, tj = 0; j < tW; j++, tj++) {
+                        working->r(i, j) = rtemp[ti * TS + tj] ;
+                        working->g(i, j) = gtemp[ti * TS + tj];
+                        working->b(i, j) = btemp[ti * TS + tj];
 
+                    }
                 }
-            }
 
-            //write(rtemp, gtemp, btemp, tH, tW);
-           // baseImg->readData(file);
-            auto errorCodeTest = working->saveAsJPEG ( "C:\\Users\\Hadar\\Downloads\\debug_test\\rgb-proc-tile.jpg", 92, 3 );
-            if (errorCodeTest) {
-                printf("error! rgb-proc-tile: \"%d\"\n", errorCodeTest);
+                auto errorCodeTest = working->saveAsJPEG ( "C:\\Users\\Hadar\\Downloads\\debug_test\\rgb-proc-tile.jpg", 92, 3 );
+                if (errorCodeTest) {
+                    printf("error! rgb-proc-tile: \"%d\"\n", errorCodeTest);
+                }
             }
 
         };
@@ -2493,10 +2494,11 @@ void ImProcFunctions::rgbProc(Imagefloat* working, LabImage* lab, PipetteBuffer 
                         }
                     }
                 } else {
-
-                    auto errorCodeTest = working->saveAsJPEG ( "C:\\Users\\Hadar\\Downloads\\debug_test\\rgb-proc-tile-0.jpg", 92, 3 );
-                    if (errorCodeTest) {
-                        printf("error! rgb-proc-tile: \"%d\"\n", errorCodeTest);
+                    if (saveJpegs) {
+                        auto errorCodeTest = working->saveAsJPEG ( "C:\\Users\\Hadar\\Downloads\\debug_test\\rgb-proc-tile-0.jpg", 92, 3 );
+                        if (errorCodeTest) {
+                            printf("error! rgb-proc-tile: \"%d\"\n", errorCodeTest);
+                        }
                     }
                     tiled_part_1(istart, jstart, tH, tW, rtemp, gtemp, btemp);
                 }
@@ -2513,12 +2515,12 @@ void ImProcFunctions::rgbProc(Imagefloat* working, LabImage* lab, PipetteBuffer 
                         }
                     }
 
-                    //write(rtemp, gtemp, btemp, tH, tW);
-                    // baseImg->readData(file);
+                if (saveJpegs) {
                     auto errorCodeTest = working->saveAsJPEG ( "C:\\Users\\Hadar\\Downloads\\debug_test\\rgb-proc-tile2.jpg", 92, 3 );
                     if (errorCodeTest) {
                         printf("error! rgb-proc-tile: \"%d\"\n", errorCodeTest);
                     }
+                }
                 }
 
                 if (params->toneCurve.clampOOG) {
@@ -2538,20 +2540,23 @@ void ImProcFunctions::rgbProc(Imagefloat* working, LabImage* lab, PipetteBuffer 
                             btemp[ti * TS + tj] = b;
                         }
                     }
-                    for (int i = istart, ti = 0; i < tH; i++, ti++) {
-                        for (int j = jstart, tj = 0; j < tW; j++, tj++) {
-                            working->r(i, j) = rtemp[ti * TS + tj] ;
-                            working->g(i, j) = gtemp[ti * TS + tj];
-                            working->b(i, j) = btemp[ti * TS + tj];
 
-                        }
-                    }
 
                     //write(rtemp, gtemp, btemp, tH, tW);
                     // baseImg->readData(file);
-                    auto errorCodeTest = working->saveAsJPEG ( "C:\\Users\\Hadar\\Downloads\\debug_test\\rgb-proc-tile3.jpg", 92, 3 );
-                    if (errorCodeTest) {
-                        printf("error! rgb-proc-tile: \"%d\"\n", errorCodeTest);
+                    if (saveJpegs) {
+                        for (int i = istart, ti = 0; i < tH; i++, ti++) {
+                            for (int j = jstart, tj = 0; j < tW; j++, tj++) {
+                                working->r(i, j) = rtemp[ti * TS + tj] ;
+                                working->g(i, j) = gtemp[ti * TS + tj];
+                                working->b(i, j) = btemp[ti * TS + tj];
+
+                            }
+                        }
+                        auto errorCodeTest = working->saveAsJPEG ( "C:\\Users\\Hadar\\Downloads\\debug_test\\rgb-proc-tile3.jpg", 92, 3 );
+                        if (errorCodeTest) {
+                            printf("error! rgb-proc-tile: \"%d\"\n", errorCodeTest);
+                        }
                     }
                 }
 
@@ -2570,20 +2575,22 @@ void ImProcFunctions::rgbProc(Imagefloat* working, LabImage* lab, PipetteBuffer 
                             setUnlessOOG(rtemp[ti * TS + tj], gtemp[ti * TS + tj], btemp[ti * TS + tj], r, g, b);
                         }
                     }
-                    for (int i = istart, ti = 0; i < tH; i++, ti++) {
-                        for (int j = jstart, tj = 0; j < tW; j++, tj++) {
-                            working->r(i, j) = rtemp[ti * TS + tj] ;
-                            working->g(i, j) = gtemp[ti * TS + tj];
-                            working->b(i, j) = btemp[ti * TS + tj];
+                    if (saveJpegs) {
+                        for (int i = istart, ti = 0; i < tH; i++, ti++) {
+                            for (int j = jstart, tj = 0; j < tW; j++, tj++) {
+                                working->r(i, j) = rtemp[ti * TS + tj] ;
+                                working->g(i, j) = gtemp[ti * TS + tj];
+                                working->b(i, j) = btemp[ti * TS + tj];
 
+                            }
                         }
-                    }
 
-                    //write(rtemp, gtemp, btemp, tH, tW);
-                    // baseImg->readData(file);
-                    auto errorCodeTest = working->saveAsJPEG ( "C:\\Users\\Hadar\\Downloads\\debug_test\\rgb-proc-tile4.jpg", 92, 3 );
-                    if (errorCodeTest) {
-                        printf("error! rgb-proc-tile: \"%d\"\n", errorCodeTest);
+                        //write(rtemp, gtemp, btemp, tH, tW);
+                        // baseImg->readData(file);
+                        auto errorCodeTest = working->saveAsJPEG ( "C:\\Users\\Hadar\\Downloads\\debug_test\\rgb-proc-tile4.jpg", 92, 3 );
+                        if (errorCodeTest) {
+                            printf("error! rgb-proc-tile: \"%d\"\n", errorCodeTest);
+                        }
                     }
                 } else {
                     for (int i = istart, ti = 0; i < tH; i++, ti++) {
@@ -2613,20 +2620,22 @@ void ImProcFunctions::rgbProc(Imagefloat* working, LabImage* lab, PipetteBuffer 
 
                     }
                 }
-                for (int i = istart, ti = 0; i < tH; i++, ti++) {
-                    for (int j = jstart, tj = 0; j < tW; j++, tj++) {
-                        working->r(i, j) = rtemp[ti * TS + tj] ;
-                        working->g(i, j) = gtemp[ti * TS + tj];
-                        working->b(i, j) = btemp[ti * TS + tj];
+                if (saveJpegs) {
+                    for (int i = istart, ti = 0; i < tH; i++, ti++) {
+                        for (int j = jstart, tj = 0; j < tW; j++, tj++) {
+                            working->r(i, j) = rtemp[ti * TS + tj] ;
+                            working->g(i, j) = gtemp[ti * TS + tj];
+                            working->b(i, j) = btemp[ti * TS + tj];
 
+                        }
                     }
-                }
 
-                //write(rtemp, gtemp, btemp, tH, tW);
-                // baseImg->readData(file);
-                auto errorCodeTest1 = working->saveAsJPEG ( "C:\\Users\\Hadar\\Downloads\\debug_test\\rgb-proc-tile5.jpg", 92, 3 );
-                if (errorCodeTest1) {
-                    printf("error! rgb-proc-tile: \"%d\"\n", errorCodeTest1);
+                    //write(rtemp, gtemp, btemp, tH, tW);
+                    // baseImg->readData(file);
+                    auto errorCodeTest1 = working->saveAsJPEG ( "C:\\Users\\Hadar\\Downloads\\debug_test\\rgb-proc-tile5.jpg", 92, 3 );
+                    if (errorCodeTest1) {
+                        printf("error! rgb-proc-tile: \"%d\"\n", errorCodeTest1);
+                    }
                 }
                 if (editID == EUID_ToneCurve1) {  // filling the pipette buffer
                     fillEditFloat(editIFloatTmpR, editIFloatTmpG, editIFloatTmpB, rtemp, gtemp, btemp, istart, tH, jstart, tW, TS);
@@ -2643,20 +2652,22 @@ void ImProcFunctions::rgbProc(Imagefloat* working, LabImage* lab, PipetteBuffer 
                 if (hasToneCurve2) {
                     customToneCurve(customToneCurve2, curveMode2, rtemp, gtemp, btemp, istart, tH, jstart, tW, TS, ptc2ApplyState);
                 }
-                for (int i = istart, ti = 0; i < tH; i++, ti++) {
-                    for (int j = jstart, tj = 0; j < tW; j++, tj++) {
-                        working->r(i, j) = rtemp[ti * TS + tj] ;
-                        working->g(i, j) = gtemp[ti * TS + tj];
-                        working->b(i, j) = btemp[ti * TS + tj];
+                if (saveJpegs) {
+                    for (int i = istart, ti = 0; i < tH; i++, ti++) {
+                        for (int j = jstart, tj = 0; j < tW; j++, tj++) {
+                            working->r(i, j) = rtemp[ti * TS + tj] ;
+                            working->g(i, j) = gtemp[ti * TS + tj];
+                            working->b(i, j) = btemp[ti * TS + tj];
 
+                        }
                     }
-                }
 
-                //write(rtemp, gtemp, btemp, tH, tW);
-                // baseImg->readData(file);
-                auto errorCodeTest = working->saveAsJPEG ( "C:\\Users\\Hadar\\Downloads\\debug_test\\rgb-proc-tile6.jpg", 92, 3 );
-                if (errorCodeTest) {
-                    printf("error! rgb-proc-tile: \"%d\"\n", errorCodeTest);
+                    //write(rtemp, gtemp, btemp, tH, tW);
+                    // baseImg->readData(file);
+                    auto errorCodeTest = working->saveAsJPEG ( "C:\\Users\\Hadar\\Downloads\\debug_test\\rgb-proc-tile6.jpg", 92, 3 );
+                    if (errorCodeTest) {
+                        printf("error! rgb-proc-tile: \"%d\"\n", errorCodeTest);
+                    }
                 }
                 if (editID == EUID_RGB_R) {
                     for (int i = istart, ti = 0; i < tH; i++, ti++) {
@@ -2699,20 +2710,22 @@ void ImProcFunctions::rgbProc(Imagefloat* working, LabImage* lab, PipetteBuffer 
                                 }
                             }
                         }
-                        for (int i = istart, ti = 0; i < tH; i++, ti++) {
-                            for (int j = jstart, tj = 0; j < tW; j++, tj++) {
-                                working->r(i, j) = rtemp[ti * TS + tj] ;
-                                working->g(i, j) = gtemp[ti * TS + tj];
-                                working->b(i, j) = btemp[ti * TS + tj];
+                        if (saveJpegs) {
+                            for (int i = istart, ti = 0; i < tH; i++, ti++) {
+                                for (int j = jstart, tj = 0; j < tW; j++, tj++) {
+                                    working->r(i, j) = rtemp[ti * TS + tj] ;
+                                    working->g(i, j) = gtemp[ti * TS + tj];
+                                    working->b(i, j) = btemp[ti * TS + tj];
 
+                                }
                             }
-                        }
 
-                        //write(rtemp, gtemp, btemp, tH, tW);
-                        // baseImg->readData(file);
-                        auto errorCodeTest = working->saveAsJPEG ( "C:\\Users\\Hadar\\Downloads\\debug_test\\rgb-proc-tile7.jpg", 92, 3 );
-                        if (errorCodeTest) {
-                            printf("error! rgb-proc-tile: \"%d\"\n", errorCodeTest);
+                            //write(rtemp, gtemp, btemp, tH, tW);
+                            // baseImg->readData(file);
+                            auto errorCodeTest = working->saveAsJPEG ( "C:\\Users\\Hadar\\Downloads\\debug_test\\rgb-proc-tile7.jpg", 92, 3 );
+                            if (errorCodeTest) {
+                                printf("error! rgb-proc-tile: \"%d\"\n", errorCodeTest);
+                            }
                         }
                     } else { //params->rgbCurves.lumamode==true (Luminosity mode)
                         // rCurve.dump("r_curve");//debug
@@ -2788,20 +2801,22 @@ void ImProcFunctions::rgbProc(Imagefloat* working, LabImage* lab, PipetteBuffer 
                         }
                     }
                 }
-                for (int i = istart, ti = 0; i < tH; i++, ti++) {
-                    for (int j = jstart, tj = 0; j < tW; j++, tj++) {
-                        working->r(i, j) = rtemp[ti * TS + tj] ;
-                        working->g(i, j) = gtemp[ti * TS + tj];
-                        working->b(i, j) = btemp[ti * TS + tj];
+                if (saveJpegs) {
+                    for (int i = istart, ti = 0; i < tH; i++, ti++) {
+                        for (int j = jstart, tj = 0; j < tW; j++, tj++) {
+                            working->r(i, j) = rtemp[ti * TS + tj] ;
+                            working->g(i, j) = gtemp[ti * TS + tj];
+                            working->b(i, j) = btemp[ti * TS + tj];
 
+                        }
                     }
-                }
 
-                //write(rtemp, gtemp, btemp, tH, tW);
-                // baseImg->readData(file);
-                errorCodeTest = working->saveAsJPEG ( "C:\\Users\\Hadar\\Downloads\\debug_test\\rgb-proc-tile8.jpg", 92, 3 );
-                if (errorCodeTest) {
-                    printf("error! rgb-proc-tile: \"%d\"\n", errorCodeTest);
+                    //write(rtemp, gtemp, btemp, tH, tW);
+                    // baseImg->readData(file);
+                    auto errorCodeTest = working->saveAsJPEG ( "C:\\Users\\Hadar\\Downloads\\debug_test\\rgb-proc-tile8.jpg", 92, 3 );
+                    if (errorCodeTest) {
+                        printf("error! rgb-proc-tile: \"%d\"\n", errorCodeTest);
+                    }
                 }
                 if (editID == EUID_HSV_H || editID == EUID_HSV_S || editID == EUID_HSV_V) {
                     for (int i = istart, ti = 0; i < tH; i++, ti++) {
@@ -2812,20 +2827,22 @@ void ImProcFunctions::rgbProc(Imagefloat* working, LabImage* lab, PipetteBuffer 
                         }
                     }
                 }
-                for (int i = istart, ti = 0; i < tH; i++, ti++) {
-                    for (int j = jstart, tj = 0; j < tW; j++, tj++) {
-                        working->r(i, j) = rtemp[ti * TS + tj] ;
-                        working->g(i, j) = gtemp[ti * TS + tj];
-                        working->b(i, j) = btemp[ti * TS + tj];
+                if (saveJpegs) {
+                    for (int i = istart, ti = 0; i < tH; i++, ti++) {
+                        for (int j = jstart, tj = 0; j < tW; j++, tj++) {
+                            working->r(i, j) = rtemp[ti * TS + tj] ;
+                            working->g(i, j) = gtemp[ti * TS + tj];
+                            working->b(i, j) = btemp[ti * TS + tj];
 
+                        }
                     }
-                }
 
-                //write(rtemp, gtemp, btemp, tH, tW);
-                // baseImg->readData(file);
-                errorCodeTest = working->saveAsJPEG ( "C:\\Users\\Hadar\\Downloads\\debug_test\\rgb-proc-tile9.jpg", 92, 3 );
-                if (errorCodeTest) {
-                    printf("error! rgb-proc-tile: \"%d\"\n", errorCodeTest);
+                    //write(rtemp, gtemp, btemp, tH, tW);
+                    // baseImg->readData(file);
+                    auto errorCodeTest = working->saveAsJPEG ( "C:\\Users\\Hadar\\Downloads\\debug_test\\rgb-proc-tile9.jpg", 92, 3 );
+                    if (errorCodeTest) {
+                        printf("error! rgb-proc-tile: \"%d\"\n", errorCodeTest);
+                    }
                 }
                 if (sat != 0 || hCurveEnabled || sCurveEnabled || vCurveEnabled) {
                     const float satby100 = sat / 100.f;
@@ -2896,38 +2913,41 @@ void ImProcFunctions::rgbProc(Imagefloat* working, LabImage* lab, PipetteBuffer 
                         }
                     }
                 }
-                for (int i = istart, ti = 0; i < tH; i++, ti++) {
-                    for (int j = jstart, tj = 0; j < tW; j++, tj++) {
-                        working->r(i, j) = rtemp[ti * TS + tj] ;
-                        working->g(i, j) = gtemp[ti * TS + tj];
-                        working->b(i, j) = btemp[ti * TS + tj];
+                if (saveJpegs) {
+                    for (int i = istart, ti = 0; i < tH; i++, ti++) {
+                        for (int j = jstart, tj = 0; j < tW; j++, tj++) {
+                            working->r(i, j) = rtemp[ti * TS + tj] ;
+                            working->g(i, j) = gtemp[ti * TS + tj];
+                            working->b(i, j) = btemp[ti * TS + tj];
 
+                        }
                     }
-                }
 
-                //write(rtemp, gtemp, btemp, tH, tW);
-                // baseImg->readData(file);
-                errorCodeTest = working->saveAsJPEG ( "C:\\Users\\Hadar\\Downloads\\debug_test\\rgb-proc-tile10.jpg", 92, 3 );
-                if (errorCodeTest) {
-                    printf("error! rgb-proc-tile: \"%d\"\n", errorCodeTest);
+
+                    auto errorCodeTest = working->saveAsJPEG ( "C:\\Users\\Hadar\\Downloads\\debug_test\\rgb-proc-tile10.jpg", 92, 3 );
+                    if (errorCodeTest) {
+                        printf("error! rgb-proc-tile: \"%d\"\n", errorCodeTest);
+                    }
                 }
                 if (isProPhoto) { // this is a hack to avoid the blue=>black bug (Issue 2141)
                     proPhotoBlue(rtemp, gtemp, btemp, istart, tH, jstart, tW, TS);
                 }
-                for (int i = istart, ti = 0; i < tH; i++, ti++) {
-                    for (int j = jstart, tj = 0; j < tW; j++, tj++) {
-                        working->r(i, j) = rtemp[ti * TS + tj] ;
-                        working->g(i, j) = gtemp[ti * TS + tj];
-                        working->b(i, j) = btemp[ti * TS + tj];
+                if (saveJpegs) {
+                    for (int i = istart, ti = 0; i < tH; i++, ti++) {
+                        for (int j = jstart, tj = 0; j < tW; j++, tj++) {
+                            working->r(i, j) = rtemp[ti * TS + tj] ;
+                            working->g(i, j) = gtemp[ti * TS + tj];
+                            working->b(i, j) = btemp[ti * TS + tj];
 
+                        }
                     }
-                }
 
-                //write(rtemp, gtemp, btemp, tH, tW);
-                // baseImg->readData(file);
-                errorCodeTest = working->saveAsJPEG ( "C:\\Users\\Hadar\\Downloads\\debug_test\\rgb-proc-tile11.jpg", 92, 3 );
-                if (errorCodeTest) {
-                    printf("error! rgb-proc-tile: \"%d\"\n", errorCodeTest);
+                    //write(rtemp, gtemp, btemp, tH, tW);
+                    // baseImg->readData(file);
+                    auto errorCodeTest = working->saveAsJPEG ( "C:\\Users\\Hadar\\Downloads\\debug_test\\rgb-proc-tile11.jpg", 92, 3 );
+                    if (errorCodeTest) {
+                        printf("error! rgb-proc-tile: \"%d\"\n", errorCodeTest);
+                    }
                 }
                 if (hasColorToning && !blackwhite) {
                     if (params->colorToning.method == "Splitlr") {
@@ -3087,20 +3107,22 @@ void ImProcFunctions::rgbProc(Imagefloat* working, LabImage* lab, PipetteBuffer 
                         }
                     }
                 }
-                for (int i = istart, ti = 0; i < tH; i++, ti++) {
-                    for (int j = jstart, tj = 0; j < tW; j++, tj++) {
-                        working->r(i, j) = rtemp[ti * TS + tj] ;
-                        working->g(i, j) = gtemp[ti * TS + tj];
-                        working->b(i, j) = btemp[ti * TS + tj];
+                if (saveJpegs) {
+                    for (int i = istart, ti = 0; i < tH; i++, ti++) {
+                        for (int j = jstart, tj = 0; j < tW; j++, tj++) {
+                            working->r(i, j) = rtemp[ti * TS + tj] ;
+                            working->g(i, j) = gtemp[ti * TS + tj];
+                            working->b(i, j) = btemp[ti * TS + tj];
 
+                        }
                     }
-                }
 
-                //write(rtemp, gtemp, btemp, tH, tW);
-                // baseImg->readData(file);
-                errorCodeTest = working->saveAsJPEG ( "C:\\Users\\Hadar\\Downloads\\debug_test\\rgb-proc-tile12.jpg", 92, 3 );
-                if (errorCodeTest) {
-                    printf("error! rgb-proc-tile: \"%d\"\n", errorCodeTest);
+                    //write(rtemp, gtemp, btemp, tH, tW);
+                    // baseImg->readData(file);
+                    auto errorCodeTest = working->saveAsJPEG ( "C:\\Users\\Hadar\\Downloads\\debug_test\\rgb-proc-tile12.jpg", 92, 3 );
+                    if (errorCodeTest) {
+                        printf("error! rgb-proc-tile: \"%d\"\n", errorCodeTest);
+                    }
                 }
                 // filling the pipette buffer
                 if (editID == EUID_BlackWhiteBeforeCurve) {
@@ -3276,22 +3298,21 @@ void ImProcFunctions::rgbProc(Imagefloat* working, LabImage* lab, PipetteBuffer 
                         }
                     }
                 }
+if (saveJpegs) {
+    for (int i = istart, ti = 0; i < tH; i++, ti++) {
+        for (int j = jstart, tj = 0; j < tW; j++, tj++) {
+            working->r(i, j) = rtemp[ti * TS + tj] ;
+            working->g(i, j) = gtemp[ti * TS + tj];
+            working->b(i, j) = btemp[ti * TS + tj];
 
-                for (int i = istart, ti = 0; i < tH; i++, ti++) {
-                    for (int j = jstart, tj = 0; j < tW; j++, tj++) {
-                        working->r(i, j) = rtemp[ti * TS + tj] ;
-                        working->g(i, j) = gtemp[ti * TS + tj];
-                        working->b(i, j) = btemp[ti * TS + tj];
+        }
+    }
 
-                    }
-                }
-
-                //write(rtemp, gtemp, btemp, tH, tW);
-                // baseImg->readData(file);
-                errorCodeTest = working->saveAsJPEG ( "C:\\Users\\Hadar\\Downloads\\debug_test\\rgb-proc-tile13.jpg", 92, 3 );
-                if (errorCodeTest) {
-                    printf("error! rgb-proc-tile: \"%d\"\n", errorCodeTest);
-                }
+    auto errorCodeTest = working->saveAsJPEG ( "C:\\Users\\Hadar\\Downloads\\debug_test\\rgb-proc-tile13.jpg", 92, 3 );
+    if (errorCodeTest) {
+        printf("error! rgb-proc-tile: \"%d\"\n", errorCodeTest);
+    }
+}
                 // Film Simulations
                 if (hald_clut) {
 
@@ -3408,20 +3429,22 @@ void ImProcFunctions::rgbProc(Imagefloat* working, LabImage* lab, PipetteBuffer 
                         }
                     }
                 }
-                for (int i = istart, ti = 0; i < tH; i++, ti++) {
-                    for (int j = jstart, tj = 0; j < tW; j++, tj++) {
-                        working->r(i, j) = rtemp[ti * TS + tj] ;
-                        working->g(i, j) = gtemp[ti * TS + tj];
-                        working->b(i, j) = btemp[ti * TS + tj];
+                if (saveJpegs) {
+                    for (int i = istart, ti = 0; i < tH; i++, ti++) {
+                        for (int j = jstart, tj = 0; j < tW; j++, tj++) {
+                            working->r(i, j) = rtemp[ti * TS + tj] ;
+                            working->g(i, j) = gtemp[ti * TS + tj];
+                            working->b(i, j) = btemp[ti * TS + tj];
 
+                        }
                     }
-                }
 
-                //write(rtemp, gtemp, btemp, tH, tW);
-                // baseImg->readData(file);
-                errorCodeTest = working->saveAsJPEG ( "C:\\Users\\Hadar\\Downloads\\debug_test\\rgb-proc-tile14.jpg", 92, 3 );
-                if (errorCodeTest) {
-                    printf("error! rgb-proc-tile: \"%d\"\n", errorCodeTest);
+                    //write(rtemp, gtemp, btemp, tH, tW);
+                    // baseImg->readData(file);
+                    auto errorCodeTest = working->saveAsJPEG ( "C:\\Users\\Hadar\\Downloads\\debug_test\\rgb-proc-tile14.jpg", 92, 3 );
+                    if (errorCodeTest) {
+                        printf("error! rgb-proc-tile: \"%d\"\n", errorCodeTest);
+                    }
                 }
                 //softLight(rtemp, gtemp, btemp, istart, jstart, tW, tH, TS);
 
@@ -3454,31 +3477,34 @@ void ImProcFunctions::rgbProc(Imagefloat* working, LabImage* lab, PipetteBuffer 
                             printf("error! rgb-proc-tile: \"%d\"\n", errorCodeTest);
                         }
                     }
-
+                    printf("matrix\n %f %f %f\n %f %f %f\n %f %f %f\n", toxyz[0][0], toxyz[0][1], toxyz[0][2],toxyz[1][0],toxyz[1][1],toxyz[1][2],toxyz[2][0],toxyz[2][1],toxyz[2][2]);
                     // ready, fill lab
                     for (int i = istart, ti = 0; i < tH; i++, ti++) {
                         Color::RGB2Lab(&rtemp[ti * TS], &gtemp[ti * TS], &btemp[ti * TS], &(lab->L[i][jstart]), &(lab->a[i][jstart]), &(lab->b[i][jstart]), toxyz, tW - jstart);
                     }
-                    auto baseImg = new Imagefloat(tW, tH);
+                    if (saveJpegs) {
+                        auto baseImg = new Imagefloat(tW, tH);
 
-                    for (int i = istart, ti = 0; i < tH; i++, ti++) {
-                        for (int j = jstart, tj = 0; j < tW; j++, tj++) {
-                            baseImg->r(i, j) = rtemp[ti * TS + tj] ;
-                            baseImg->g(i, j) = gtemp[ti * TS + tj];
-                            baseImg->b(i, j) = btemp[ti * TS + tj];
+                        for (int i = istart, ti = 0; i < tH; i++, ti++) {
+                            for (int j = jstart, tj = 0; j < tW; j++, tj++) {
+                                baseImg->r(i, j) = rtemp[ti * TS + tj] ;
+                                baseImg->g(i, j) = gtemp[ti * TS + tj];
+                                baseImg->b(i, j) = btemp[ti * TS + tj];
 
+                            }
+                        }
+
+                        auto errorCodeTest = baseImg->saveAsJPEG ( "C:\\Users\\Hadar\\Downloads\\debug_test\\rgb-proc-tile-15.jpg", 92, 3 );
+                        if (errorCodeTest) {
+                            printf("error! rgb-proc-tile: \"%d\"\n", errorCodeTest);
                         }
                     }
-
-                    auto errorCodeTest = baseImg->saveAsJPEG ( "C:\\Users\\Hadar\\Downloads\\debug_test\\rgb-proc-tile-15.jpg", 92, 3 );
-                    if (errorCodeTest) {
-                        printf("error! rgb-proc-tile: \"%d\"\n", errorCodeTest);
-                    }
-
-                    auto readyImgTmp_0 = lab2rgbOut(lab , 0, 0,tW, tH, params->icm);
-                    errorCodeTest = readyImgTmp_0->saveAsJPEG ( "C:\\Users\\Hadar\\Downloads\\debug_test\\rgb-proc-tile-15A.jpg", 92, 3 );
-                    if (errorCodeTest) {
-                        printf("error!:D \"%d\"\n", errorCodeTest);
+                    if (saveJpegs) {
+                        auto readyImgTmp_0 = lab2rgbOut(lab , 0, 0,tW, tH, params->icm);
+                        auto errorCodeTest = readyImgTmp_0->saveAsJPEG ( "C:\\Users\\Hadar\\Downloads\\debug_test\\rgb-proc-tile-15A.jpg", 92, 3 );
+                        if (errorCodeTest) {
+                            printf("error!:D \"%d\"\n", errorCodeTest);
+                        }
                     }
                     // if (hasColorToningLabGrid) {
                     //     colorToningLabGrid(lab, jstart, tW, istart, tH, false);
@@ -3501,7 +3527,7 @@ void ImProcFunctions::rgbProc(Imagefloat* working, LabImage* lab, PipetteBuffer 
                             tmpImage->b(i, j) = btemp[ti * TS + tj];
                         }
                     }
-                    if (tmpImage) {
+                    if (tmpImage && saveJpegs) {
                         auto errorCodeTest = tmpImage->saveAsJPEG ( "C:\\Users\\Hadar\\Downloads\\debug_test\\rgb-proc-tile-16.jpg", 92, 3 );
                         if (errorCodeTest) {
                             printf("error! rgb-proc-tile: \"%d\"\n", errorCodeTest);
@@ -3509,18 +3535,20 @@ void ImProcFunctions::rgbProc(Imagefloat* working, LabImage* lab, PipetteBuffer 
                     }
                 }
             }
-        for (int i = istart, ti = 0; i < tH; i++, ti++) {
-            for (int j = jstart, tj = 0; j < tW; j++, tj++) {
-                working->r(i, j) = rtemp[ti * TS + tj] ;
-                working->g(i, j) = gtemp[ti * TS + tj];
-                working->b(i, j) = btemp[ti * TS + tj];
+        if (saveJpegs) {
+            for (int i = istart, ti = 0; i < tH; i++, ti++) {
+                for (int j = jstart, tj = 0; j < tW; j++, tj++) {
+                    working->r(i, j) = rtemp[ti * TS + tj] ;
+                    working->g(i, j) = gtemp[ti * TS + tj];
+                    working->b(i, j) = btemp[ti * TS + tj];
 
+                }
             }
-        }
 
-        auto errorCodeTest = working->saveAsJPEG ( "C:\\Users\\Hadar\\Downloads\\debug_test\\rgb-proc-tile-17.jpg", 92, 3 );
-        if (errorCodeTest) {
-            printf("error! rgb-proc-tile: \"%d\"\n", errorCodeTest);
+            auto errorCodeTest = working->saveAsJPEG ( "C:\\Users\\Hadar\\Downloads\\debug_test\\rgb-proc-tile-17.jpg", 92, 3 );
+            if (errorCodeTest) {
+                printf("error! rgb-proc-tile: \"%d\"\n", errorCodeTest);
+            }
         }
 
         if (editIFloatBuffer) {
@@ -3624,7 +3652,7 @@ void ImProcFunctions::rgbProc(Imagefloat* working, LabImage* lab, PipetteBuffer 
 #endif
             }
 
-if (tmpImage) {
+if (tmpImage &&saveJpegs) {
     auto errorCodeTest = tmpImage->saveAsJPEG ( "C:\\Users\\Hadar\\Downloads\\debug_test\\rgb-proc-tile-18.jpg", 92, 3 );
     if (errorCodeTest) {
         printf("error! rgb-proc-tile: \"%d\"\n", errorCodeTest);
@@ -3676,9 +3704,11 @@ if (tmpImage) {
                 }
             }
         }
-        auto errorCodeTest = tmpImage->saveAsJPEG ( "C:\\Users\\Hadar\\Downloads\\debug_test\\rgb-proc-tile20.jpg", 92, 3 );
-        if (errorCodeTest) {
-            printf("error! rgb-proc-tile: \"%d\"\n", errorCodeTest);
+        if (saveJpegs) {
+            auto errorCodeTest = tmpImage->saveAsJPEG ( "C:\\Users\\Hadar\\Downloads\\debug_test\\rgb-proc-tile20.jpg", 92, 3 );
+            if (errorCodeTest) {
+                printf("error! rgb-proc-tile: \"%d\"\n", errorCodeTest);
+            }
         }
 
         //colour toning with black and white
@@ -3717,11 +3747,12 @@ if (tmpImage) {
                     }
                 }
 
-
-                auto errorCodeTest = tmpImage->saveAsJPEG ( "C:\\Users\\Hadar\\Downloads\\debug_test\\rgb-proc-tile-19.jpg", 92, 3 );
-                if (errorCodeTest) {
-                    printf("error! rgb-proc-tile: \"%d\"\n", errorCodeTest);
-                }
+if (saveJpegs) {
+    auto errorCodeTest = tmpImage->saveAsJPEG ( "C:\\Users\\Hadar\\Downloads\\debug_test\\rgb-proc-tile-19.jpg", 92, 3 );
+    if (errorCodeTest) {
+        printf("error! rgb-proc-tile: \"%d\"\n", errorCodeTest);
+    }
+}
 
             }
 
@@ -3769,9 +3800,11 @@ if (tmpImage) {
                         toning2col(tmpImage->r(i, j), tmpImage->g(i, j), tmpImage->b(i, j), tmpImage->r(i, j), tmpImage->g(i, j), tmpImage->b(i, j), iplow, iphigh, krl, kgl, kbl, krh, kgh, kbh, SatLow, SatHigh, balanS, balanH, reducac, mode, preser, strProtect);
                     }
                 }
-                auto errorCodeTest = tmpImage->saveAsJPEG ( "C:\\Users\\Hadar\\Downloads\\debug_test\\rgb-proc-tile-20.jpg", 92, 3 );
-                if (errorCodeTest) {
-                    printf("error! rgb-proc-tile: \"%d\"\n", errorCodeTest);
+                if (saveJpegs) {
+                    auto errorCodeTest = tmpImage->saveAsJPEG ( "C:\\Users\\Hadar\\Downloads\\debug_test\\rgb-proc-tile-20.jpg", 92, 3 );
+                    if (errorCodeTest) {
+                        printf("error! rgb-proc-tile: \"%d\"\n", errorCodeTest);
+                    }
                 }
             }
 
@@ -3831,9 +3864,11 @@ if (tmpImage) {
                             labtoning(r, g, b, ro, go, bo, algo, metchrom,  twoc, satLimit, satLimitOpacity, ctColorCurve,  ctOpacityCurve, clToningcurve, cl2Toningcurve,  iplow, iphigh,  wp,  wip);
                             setUnlessOOG(tmpImage->r(i, j), tmpImage->g(i, j), tmpImage->b(i, j), ro, go, bo);
                         }
-                        auto errorCodeTest = tmpImage->saveAsJPEG ( "C:\\Users\\Hadar\\Downloads\\debug_test\\rgb-proc-tile-21.jpg", 92, 3 );
-                        if (errorCodeTest) {
-                            printf("error! rgb-proc-tile: \"%d\"\n", errorCodeTest);
+                        if (saveJpegs) {
+                            auto errorCodeTest = tmpImage->saveAsJPEG ( "C:\\Users\\Hadar\\Downloads\\debug_test\\rgb-proc-tile-21.jpg", 92, 3 );
+                            if (errorCodeTest) {
+                                printf("error! rgb-proc-tile: \"%d\"\n", errorCodeTest);
+                            }
                         }
                     }
                 }
@@ -3874,9 +3909,11 @@ if (tmpImage) {
                         tmpImage->b(i, j) = intp(opacity, b2, b);
                     }
                 }
-                auto errorCodeTest = tmpImage->saveAsJPEG ( "C:\\Users\\Hadar\\Downloads\\debug_test\\rgb-proc-tile-22.jpg", 92, 3 );
-                if (errorCodeTest) {
-                    printf("error! rgb-proc-tile: \"%d\"\n", errorCodeTest);
+                if (saveJpegs) {
+                    auto errorCodeTest = tmpImage->saveAsJPEG ( "C:\\Users\\Hadar\\Downloads\\debug_test\\rgb-proc-tile-22.jpg", 92, 3 );
+                    if (errorCodeTest) {
+                        printf("error! rgb-proc-tile: \"%d\"\n", errorCodeTest);
+                    }
                 }
             }
         }
@@ -3915,9 +3952,11 @@ if (tmpImage) {
             // colorToningLabGrid(lab, 0, tW, i, i + 1, false);
             // }
         }
-        errorCodeTest = tmpImage->saveAsJPEG ( "C:\\Users\\Hadar\\Downloads\\debug_test\\rgb-proc-tile-23.jpg", 92, 3 );
-        if (errorCodeTest) {
-            printf("error! rgb-proc-tile: \"%d\"\n", errorCodeTest);
+        if (saveJpegs) {
+            auto errorCodeTest = tmpImage->saveAsJPEG ( "C:\\Users\\Hadar\\Downloads\\debug_test\\rgb-proc-tile-23.jpg", 92, 3 );
+            if (errorCodeTest) {
+                printf("error! rgb-proc-tile: \"%d\"\n", errorCodeTest);
+            }
         }
 
     }

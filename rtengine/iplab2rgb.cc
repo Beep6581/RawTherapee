@@ -342,7 +342,6 @@ Image8* ImProcFunctions::lab2rgb(LabImage* lab, int cx, int cy, int cw, int ch, 
  */
 Imagefloat* ImProcFunctions::lab2rgbOut(LabImage* lab, int cx, int cy, int cw, int ch, const procparams::ColorManagementParams &icm)
 {
-
     if (cx < 0) {
         cx = 0;
     }

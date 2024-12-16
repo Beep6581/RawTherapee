@@ -1758,8 +1758,8 @@ void Color::RGB2Lab(float *R, float *G, float *B, float *L, float *a, float *b, 
             const vfloat fz = cachef[zv];
 
             STVFU(L[i], cachefy[yv]);
-            STVFU(a[i], (fx - fy));//todoooooooooo
-            STVFU(b[i],  (fy - fz));//todoooooooooo
+            STVFU(a[i], c500v * (fx - fy));
+            STVFU(b[i], c200v * (fy - fz));
         }
     }
 #endif
