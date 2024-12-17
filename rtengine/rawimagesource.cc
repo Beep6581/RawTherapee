@@ -2690,9 +2690,9 @@ void RawImageSource::copyOriginalPixels(const RAWParams &raw, RawImage *src, con
 */
         
         if (ri->getSensorType() == ST_BAYER) {
-            getMinValsBayer(ri->zeroIsBad());
+            getMinValsBayer(rawData, ri->zeroIsBad());
         } else {
-            getMinValsXtrans();
+            getMinValsXtrans(rawData);
         }
         //
         reddeha = minVals[0];
@@ -8384,7 +8384,7 @@ void RawImageSource::getRawValues(int x, int y, int rotate, int &R, int &G, int 
 /*
     Copyright (c) Ingo Weyrich  2020 (heckflosse67@gmx.de)
 */
-void RawImageSource::getMinValsXtrans() {
+void RawImageSource::getMinValsXtrans(const array2D<float> &rawData) {
 #ifdef _OPENMP
     #pragma omp parallel for reduction (min:minVals)
 #endif
@@ -8530,7 +8530,7 @@ void RawImageSource::applyDngGainMap(const float black[4], const std::vector<Gai
 /*
     Copyright (c) Ingo Weyrich  2020 (heckflosse67@gmx.de)
 */
-void RawImageSource::getMinValsBayer(bool zeroIsBad) {
+void RawImageSource::getMinValsBayer(const array2D<float> &rawData, bool zeroIsBad) {
 BENCHFUN
     if (!zeroIsBad) {
 #ifdef _OPENMP

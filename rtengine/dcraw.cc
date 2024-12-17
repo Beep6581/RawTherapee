@@ -6741,6 +6741,7 @@ int CLASS parse_tiff_ifd (int base)
 	FORC3 if (i > (int)cblack[c]) i = cblack[c];
 	FORC4 cblack[c] -= i;
 	black = i;
+	sony_meta.sr2subifd_black2 = true;
 	break;
       case 29459:
 	FORC4 cam_mul[c] = get2();
@@ -9733,7 +9734,9 @@ void CLASS adobe_coeff (const char *make, const char *model)
       break;
     }
   if (load_raw == &CLASS sony_arw2_load_raw) { // RT: arw2 scale fix
-      black <<= 2;
+      if (!sony_meta.sr2subifd_black2) {
+        black <<= 2;
+      }
       tiff_bps += 2;
   } else if (load_raw == &CLASS panasonic_load_raw) {
       tiff_bps = RT_pana_info.bpp;
@@ -10468,7 +10471,8 @@ void CLASS identify()
     top_margin = filters = 0;
     strcpy (model,"C603");
   }
-  if (!strcmp(make,"Sony") && raw_width > 3888)
+  // From LibRaw: Do not set black if black or cblack is already set.
+  if (!strcmp(make,"Sony") && raw_width > 3888 && !black && !cblack[0])
     black = 128 << (tiff_bps - 12);
   if (is_foveon) {
     if (height*2 < width) pixel_aspect = 0.5;
