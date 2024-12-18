@@ -7073,6 +7073,8 @@ LocallabBlur::LocallabBlur():
     noisegam(Gtk::manage(new Adjuster(M("TP_LOCALLAB_NOISEGAM"), 1.0, 5., 0.1, 1.))),
     LocalcurveEditorwavhue(new CurveEditorGroup(options.lastlocalCurvesDir, M("TP_WAVELET_DENOISEHUE"))),
     wavhue(static_cast<FlatCurveEditor*>(LocalcurveEditorwavhue->addCurve(CT_Flat, "", nullptr, false, true))),
+    LocalcurveEditorwavhuecont(new CurveEditorGroup(options.lastlocalCurvesDir, M("TP_LOCALLAB_DENOIHUECONT"))),
+    wavhuecont(static_cast<FlatCurveEditor*>(LocalcurveEditorwavhuecont->addCurve(CT_Flat, "", nullptr, false, true))),
     noisechrof(Gtk::manage(new Adjuster(M("TP_LOCALLAB_NOISECHROFINE"), MINCHRO, MAXCHRO, 0.01, 0.))),
     noisechroc(Gtk::manage(new Adjuster(M("TP_LOCALLAB_NOISECHROCOARSE"), MINCHRO, MAXCHROCC, 0.01, 0.))),
     noisechrodetail(Gtk::manage(new Adjuster(M("TP_LOCALLAB_NOISECHRODETAIL"), 0., 100., 0.01, 50.))),
@@ -7134,7 +7136,7 @@ LocallabBlur::LocallabBlur():
     Evlocallabdenoratio = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_DENORATIO");
     Evlocallabenacontrast = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_DENOENA");
     Evlocallabdenomask = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_DENOMASK");
-    
+    EvlocallabwavCurvehuecont = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_DENOMASKCURV");   
    
     set_orientation(Gtk::ORIENTATION_VERTICAL);
     denocontrast->addAutoButton(M("TP_LOCALLAB_DENORADIUS_TOOLTIP"));
@@ -7279,10 +7281,21 @@ LocallabBlur::LocallabBlur():
     wavhue->setCurveColorProvider(this, 3);
     wavhue->setBottomBarBgGradient(six_shape);
 
+
+
 //    wavguid->setIdentityValue(0.);
 //    wavguid->setResetCurve(FlatCurveType(defSpot.locwavcurveguid.at(0)), defSpot.locwavcurveguid);
 
     LocalcurveEditorwavhue->curveListComplete();
+    
+    LocalcurveEditorwavhuecont->setCurveListener(this);
+    wavhuecont->setIdentityValue(0.);
+    wavhuecont->setResetCurve(FlatCurveType(defSpot.locwavcurvehuecont.at(0)), defSpot.locwavcurvehuecont);
+    wavhuecont->setTooltip(M("TP_LOCALLAB_CURVEEDITOR_LL_TOOLTIP"));
+    wavhuecont->setCurveColorProvider(this, 3);
+    wavhuecont->setBottomBarBgGradient(six_shape);
+       
+    LocalcurveEditorwavhuecont->curveListComplete();
 
     noisechrof->setAdjusterListener(this);
 
@@ -7448,6 +7461,7 @@ LocallabBlur::LocallabBlur():
     denoBox->pack_start(*denoratio);
     denoBox->pack_start(*contrshow);
     denoBox->pack_start(*denomask);
+    denoBox->pack_start(*LocalcurveEditorwavhuecont, Gtk::PACK_SHRINK, 4);
     denoBox->pack_start(*quaHBox);
     denoFrame->add(*denoBox);
     wavBox->pack_start(*denoFrame);
@@ -7565,6 +7579,7 @@ LocallabBlur::~LocallabBlur()
 {
     delete LocalcurveEditorwavden;
     delete LocalcurveEditorwavhue;
+    delete LocalcurveEditorwavhuecont;
     delete maskblCurveEditorG;
     delete mask2blCurveEditorG;
     delete mask2blCurveEditorGwav;
@@ -7821,6 +7836,7 @@ void LocallabBlur::neutral_pressed ()
     quamethod->set_active (0);
     wavshapeden->setCurve(defSpot.locwavcurveden);
     wavhue->setCurve(defSpot.locwavcurvehue);
+    wavhuecont->setCurve(defSpot.locwavcurvehuecont);
     usemask->set_active(defSpot.usemask);
     invmaskd->set_active(defSpot.invmaskd);
     invmask->set_active(defSpot.invmask);
@@ -8016,6 +8032,7 @@ void LocallabBlur::read(const rtengine::procparams::ProcParams* pp, const Params
         activlum->set_active(spot.activlum);
         wavshapeden->setCurve(spot.locwavcurveden);
         wavhue->setCurve(spot.locwavcurvehue);
+        wavhuecont->setCurve(spot.locwavcurvehuecont);
         noiselumf0->setValue(spot.noiselumf0);
         noiselumf->setValue(spot.noiselumf);
         noiselumf2->setValue(spot.noiselumf2);
@@ -8171,6 +8188,7 @@ void LocallabBlur::write(rtengine::procparams::ProcParams* pp, ParamsEdited* ped
         spot.activlum = activlum->get_active();
         spot.locwavcurveden = wavshapeden->getCurve();
         spot.locwavcurvehue = wavhue->getCurve();
+        spot.locwavcurvehuecont = wavhuecont->getCurve();
         spot.noiselumf0 = noiselumf0->getValue();
         spot.noiselumf = noiselumf->getValue();
         spot.noiselumf2 = noiselumf2->getValue();
@@ -8766,6 +8784,13 @@ void LocallabBlur::curveChanged(CurveEditor* ce)
         if (ce == wavhue) {
             if (listener) {
                 listener->panelChanged(EvlocallabwavCurvehue,
+                                       M("HISTORY_CUSTOMCURVE") + " (" + escapeHtmlChars(getSpotName()) + ")");
+            }
+        }
+
+        if (ce == wavhuecont) {
+            if (listener) {
+                listener->panelChanged(EvlocallabwavCurvehuecont,
                                        M("HISTORY_CUSTOMCURVE") + " (" + escapeHtmlChars(getSpotName()) + ")");
             }
         }

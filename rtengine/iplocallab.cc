@@ -11499,7 +11499,7 @@ void ImProcFunctions::recovm(float highrec, float lowrec, float thrrec, bool inv
 
 
 void ImProcFunctions::DeNoise(int call, int aut,  bool noiscfactiv, const struct local_params & lp, LabImage * originalmaskbl, LabImage *  bufmaskblurbl, int levred, float huerefblur, float lumarefblur, float chromarefblur, LabImage * original, LabImage * transformed,
-    int cx, int cy, int sk, const LocwavCurve& locwavCurvehue, bool locwavhueutili, float *resi, float &denocont)
+    int cx, int cy, int sk, const LocwavCurve& locwavCurvehue, bool locwavhueutili, const LocwavCurve& locwavCurvehuecont, bool locwavhueutilicont, float *resi, float &denocont)
 {
    // BENCHFUN
 //local denoise
@@ -11545,7 +11545,16 @@ void ImProcFunctions::DeNoise(int call, int aut,  bool noiscfactiv, const struct
                 }
             }
         }
+        bool HHhuecurvecont = false;
 
+        if (locwavCurvehuecont && locwavhueutilicont) {
+            for (int i = 0; i < 500; i++) {
+                if (locwavCurvehuecont[i] != 0.5f) {
+                    HHhuecurvecont = true;
+                    break;
+                }
+            }
+        }
 
 
 #ifdef _OPENMP
@@ -11592,6 +11601,9 @@ void ImProcFunctions::DeNoise(int call, int aut,  bool noiscfactiv, const struct
             // calculate min size of numblox_W.
             int min_numblox_W = ceil((static_cast<float>(GW)) / offset) + 2;
 
+#ifdef _OPENMP
+                    #pragma omp parallel for
+#endif
             for (int ir = 0; ir < GH; ir++)
                 for (int jr = 0; jr < GW; jr++) {
                     tmp1.L[ir][jr] = original->L[ir][jr];
@@ -11602,6 +11614,7 @@ void ImProcFunctions::DeNoise(int call, int aut,  bool noiscfactiv, const struct
                     tmp4.a[ir][jr] = original->a[ir][jr];
                     tmp4.b[ir][jr] = original->b[ir][jr];
                 }
+            
             if(lp.nlstr > 0) {
                 NLMeans(tmp1.L, lp.nlstr, lp.nldet, lp.nlpat, lp.nlrad, lp.nlgam, GW, GH, float (sk), multiThread);
             }
@@ -12116,14 +12129,6 @@ void ImProcFunctions::DeNoise(int call, int aut,  bool noiscfactiv, const struct
                 }
             }
 
-//<<<<<<< HEAD
-//            if (lp.nlstr > 0) {
-//                NLMeans(tmp1.L, lp.nlstr, lp.nldet, lp.nlpat, lp.nlrad, lp.nlgam, GW, GH, float (sk), multiThread);
-//            }
-
-//            if (lp.smasktyp != 0) {
-//                if (lp.enablMask && lp.recothrd != 1.f) {
-//=======
             if(lp.smasktyp != 0) {
                 if(lp.enablMask && lp.recothrd != 1.f) {
                     LabImage tmp3(GW, GH);
@@ -12295,7 +12300,34 @@ void ImProcFunctions::DeNoise(int call, int aut,  bool noiscfactiv, const struct
                 };
 
                 const std::unique_ptr<Imagefloat> tmpImage(new Imagefloat(original->W, original->H));//all image
-                lab2rgb(*original, *tmpImage, params->icm.workingProfile);//copy original  image lab to RGB
+                LabImage tmpori(transformed->W, transformed->H);
+                for (int ir = 0; ir < GH; ir++)
+                    for (int jr = 0; jr < GW; jr++) {
+                        tmpori.L[ir][jr] = original->L[ir][jr];
+                        tmpori.a[ir][jr] = original->a[ir][jr];
+                        tmpori.b[ir][jr] = original->b[ir][jr];
+                    }
+                        if (HHhuecurvecont) {
+#ifdef _OPENMP
+                        #pragma omp parallel for
+#endif
+
+                            for (int ir = 0; ir < GH; ir++)
+                                for (int jr = 0; jr < GW; jr++) {
+                                    float hueG = xatan2f(tmpori.b[ir][jr], tmpori.a[ir][jr]);
+                                    float chroG = std::sqrt(SQR(tmpori.b[ir][jr]) + SQR(tmpori.a[ir][jr]));
+                                    float valparam = 2.f * (locwavCurvehuecont[500.f * static_cast<float>(Color::huelab_to_huehsv2(hueG))] - 0.5f);  //get H=f(H)
+                                    float2 sincosval = xsincosf(valparam);
+                                    tmpori.L[ir][jr] *=  1.f +  valparam;  //increase L 
+                                    tmpori.a[ir][jr] = chroG * sincosval.y * (1.f -  abs(valparam)); // reduce impact noise chroma 
+                                    tmpori.b[ir][jr] = chroG * sincosval.x * (1.f -  abs(valparam)); // reduce impact noise chroma
+                               
+                                }
+                        }
+                
+                
+                
+                lab2rgb(tmpori, *tmpImage, params->icm.workingProfile);//copy original  image lab to RGB
 
                 array2D<float> clipMask(GW, GH);       
                 array2D<float> clipMaskchro(GW, GH);       
@@ -12447,9 +12479,9 @@ void ImProcFunctions::DeNoise(int call, int aut,  bool noiscfactiv, const struct
 #endif
                     for (int ir = 0; ir < GH; ir++) {
                         for (int jr = 0; jr < GW; jr++) {
-                            tmp1.L[ir][jr] = intp(lp.denorati * clipMask[ir][jr], tmp1.L[ir][jr], tmp4.L[ir][jr]);
-                            tmp1.a[ir][jr] = intp(lp.denorati * clipMask[ir][jr], tmp1.a[ir][jr], tmp4.a[ir][jr]);
-                            tmp1.b[ir][jr] = intp(lp.denorati * clipMask[ir][jr], tmp1.b[ir][jr], tmp4.b[ir][jr]);
+                            tmp1.L[ir][jr] = intp(lp.denorati * clipMask[ir][jr], tmp4.L[ir][jr], tmp1.L[ir][jr]);
+                            tmp1.a[ir][jr] = intp(lp.denorati * clipMask[ir][jr], tmp4.a[ir][jr], tmp1.a[ir][jr]);
+                            tmp1.b[ir][jr] = intp(lp.denorati * clipMask[ir][jr], tmp4.b[ir][jr], tmp1.b[ir][jr]);
                         }
                     } 
                 }          
@@ -14325,6 +14357,7 @@ void ImProcFunctions::Lab_Local(
     const LocwavCurve& loccompwavCurve, bool loccompwavutili,
     const LocwavCurve& loccomprewavCurve, bool loccomprewavutili,
     const LocwavCurve& locwavCurvehue, bool locwavhueutili,
+    const LocwavCurve& locwavCurvehuecont, bool locwavhueutilicont,
     const LocwavCurve& locwavCurveden, bool locwavdenutili,
     const LocwavCurve& locedgwavCurve, bool locedgwavutili,
     const LocwavCurve& loclmasCurve_wav, bool lmasutili_wav,
@@ -15392,7 +15425,7 @@ void ImProcFunctions::Lab_Local(
 //local denoise
     if (lp.activspot && lp.denoiena && (lp.noiself > 0.f || lp.noiself0 > 0.f || lp.noiself2 > 0.f || lp.wavcurvedenoi ||lp.nlstr > 0 || lp.noiselc > 0.f || lp.noisecf > 0.f || lp.noisecc > 0.f )) {//disable denoise if not used
         constexpr int aut = 0;
-        DeNoise(call, aut, noiscfactiv, lp, originalmaskbl.get(), bufmaskblurbl.get(), levred, huerefblur, lumarefblur, chromarefblur, original, transformed, cx, cy, sk, locwavCurvehue, locwavhueutili,
+        DeNoise(call, aut, noiscfactiv, lp, originalmaskbl.get(), bufmaskblurbl.get(), levred, huerefblur, lumarefblur, chromarefblur, original, transformed, cx, cy, sk, locwavCurvehue, locwavhueutili, locwavCurvehuecont, locwavhueutilicont,
                resi, denocont);
         if (lp.recur) {
             original->CopyFrom(transformed, multiThread);

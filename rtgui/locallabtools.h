@@ -868,6 +868,8 @@ private:
     Adjuster* const noisegam;
     CurveEditorGroup* const LocalcurveEditorwavhue;
     FlatCurveEditor* wavhue;
+    CurveEditorGroup* const LocalcurveEditorwavhuecont;
+    FlatCurveEditor* wavhuecont;
     Adjuster* const noisechrof;
     Adjuster* const noisechroc;
     Adjuster* const noisechrodetail;
@@ -931,6 +933,7 @@ private:
     rtengine::ProcEvent Evlocallabenacontrast;
     rtengine::ProcEvent Evlocallabdenoratio;
     rtengine::ProcEvent Evlocallabdenomask;
+    rtengine::ProcEvent EvlocallabwavCurvehuecont;
 
 
 public:

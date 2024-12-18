@@ -1111,6 +1111,7 @@ private:
             LocwavCurve loccomprewavCurve;
             LocwavCurve locedgwavCurve;
             LocwavCurve locwavCurvehue;
+            LocwavCurve locwavCurvehuecont;
             LocwavCurve locwavCurveden;
             LUTf lllocalcurve(65536, LUT_CLIP_OFF);
             LUTf lclocalcurve(65536, LUT_CLIP_OFF);
@@ -1207,6 +1208,7 @@ private:
                 const bool locwavutili = locwavCurve.Set(params.locallab.spots.at(sp).locwavcurve);
                 const bool locwavutilijz = locwavCurvejz.Set(params.locallab.spots.at(sp).locwavcurvejz);
                 const bool locwavhueutili = locwavCurvehue.Set(params.locallab.spots.at(sp).locwavcurvehue);
+                const bool locwavhueutilicont = locwavCurvehuecont.Set(params.locallab.spots.at(sp).locwavcurvehuecont);
                 const bool locwavdenutili = locwavCurveden.Set(params.locallab.spots.at(sp).locwavcurveden);
                 const bool loclevwavutili = loclevwavCurve.Set(params.locallab.spots.at(sp).loclevwavcurve);
                 const bool locconwavutili = locconwavCurve.Set(params.locallab.spots.at(sp).locconwavcurve);
@@ -1338,6 +1340,7 @@ private:
                               loccompwavCurve, loccompwavutili,
                               loccomprewavCurve, loccomprewavutili,
                               locwavCurvehue, locwavhueutili,
+                              locwavCurvehuecont, locwavhueutilicont,
                               locwavCurveden, locwavdenutili,
                               locedgwavCurve, locedgwavutili,
                               loclmasCurve_wav, lmasutili_wav,

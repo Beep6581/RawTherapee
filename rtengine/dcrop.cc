@@ -952,6 +952,7 @@ void Crop::update(int todo)
         auto& loccomprewavCurve = parent->loccomprewavCurve;
         auto& locedgwavCurve = parent->locedgwavCurve;
         auto& locwavCurvehue = parent->locwavCurvehue;
+        auto& locwavCurvehuecont = parent->locwavCurvehuecont;
         auto& locwavCurveden = parent->locwavCurveden;
         auto& lmasklocal_curve2 = parent->lmasklocal_curve;
         auto& loclmasCurve_wav = parent->loclmasCurve_wav;
@@ -1016,6 +1017,7 @@ void Crop::update(int todo)
             const bool locwavutili = locwavCurve.Set(params.locallab.spots.at(sp).locwavcurve);
             const bool locwavutilijz = locwavCurvejz.Set(params.locallab.spots.at(sp).locwavcurvejz);
             const bool locwavhueutili = locwavCurvehue.Set(params.locallab.spots.at(sp).locwavcurvehue);
+            const bool locwavhueutilicont = locwavCurvehuecont.Set(params.locallab.spots.at(sp).locwavcurvehuecont);
             const bool locwavdenutili = locwavCurveden.Set(params.locallab.spots.at(sp).locwavcurveden);
             const bool loclevwavutili = loclevwavCurve.Set(params.locallab.spots.at(sp).loclevwavcurve);
             const bool locconwavutili = locconwavCurve.Set(params.locallab.spots.at(sp).locconwavcurve);
@@ -1155,6 +1157,7 @@ void Crop::update(int todo)
                         loccompwavCurve, loccompwavutili,
                         loccomprewavCurve, loccomprewavutili,
                         locwavCurvehue, locwavhueutili,
+                        locwavCurvehuecont, locwavhueutilicont,
                         locwavCurveden, locwavdenutili,
                         locedgwavCurve, locedgwavutili,
                         loclmasCurve_wav,lmasutili_wav,
@@ -1243,6 +1246,7 @@ void Crop::update(int todo)
                         loccompwavCurve, loccompwavutili,
                         loccomprewavCurve, loccomprewavutili,
                         locwavCurvehue, locwavhueutili,
+                        locwavCurvehuecont, locwavhueutilicont,
                         locwavCurveden, locwavdenutili,
                         locedgwavCurve, locedgwavutili,
                         loclmasCurve_wav,lmasutili_wav,

@@ -731,6 +731,7 @@ public:
         bool detailthr;
         bool locwavcurveden;
         bool locwavcurvehue;
+        bool locwavcurvehuecont;
         bool showmaskblMethodtyp;
         bool CCmaskblcurve;
         bool LLmaskblcurve;
