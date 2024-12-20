@@ -13192,7 +13192,45 @@ void ImProcFunctions::DeNoise(int call, int aut,  bool noiscfactiv, const struct
                         };
 
                         const std::unique_ptr<Imagefloat> tmpImage(new Imagefloat(bfw, bfh));//all image
-                        lab2rgb(bufwv4, *tmpImage, params->icm.workingProfile);//copy original  image lab to RGB
+
+
+                        LabImage tmpori(bfw, bfh);//temp image to take into account equalizer color mask
+
+#ifdef _OPENMP
+                        #pragma omp parallel for schedule(dynamic,16) if (multiThread)
+#endif
+
+                        for (int y = 0; y < transformed->H ; y++) //{
+                            for (int x = 0; x < transformed->W; x++) {
+                                int lox = cx + x;
+                                int loy = cy + y;
+
+                                if (lox >= begx && lox < xEn && loy >= begy && loy < yEn) {
+                                    tmpori.L[loy - begy][lox - begx] = original->L[y][x];
+                                    tmpori.a[loy - begy][lox - begx] = original->a[y][x];
+                                    tmpori.b[loy - begy][lox - begx] = original->b[y][x];
+                                }
+        
+                            }
+                        if (HHhuecurvecont) {
+#ifdef _OPENMP
+                        #pragma omp parallel for
+#endif
+
+                            for (int ir = 0; ir < bfh; ir++)
+                                for (int jr = 0; jr < bfw; jr++) {
+                                    float hueG = xatan2f(tmpori.b[ir][jr], tmpori.a[ir][jr]);
+                                    float chroG = std::sqrt(SQR(tmpori.b[ir][jr]) + SQR(tmpori.a[ir][jr]));
+                                    float valparam = 2.f * (locwavCurvehuecont[500.f * static_cast<float>(Color::huelab_to_huehsv2(hueG))] - 0.5f);  //get H=f(H)
+                                    float2 sincosval = xsincosf(valparam);
+                                    tmpori.L[ir][jr] *=  1.f +  valparam;  //increase L 
+                                    tmpori.a[ir][jr] = chroG * sincosval.y * (1.f -  abs(valparam)); // reduce impact noise chroma 
+                                    tmpori.b[ir][jr] = chroG * sincosval.x * (1.f -  abs(valparam)); // reduce impact noise chroma
+                               
+                                }
+                        }
+
+                        lab2rgb(tmpori, *tmpImage, params->icm.workingProfile);//copy original  image lab to RGB
 
                         array2D<float> clipMask(bfw, bfh);       
                         array2D<float> clipMaskchro(bfw, bfh);       
@@ -13317,9 +13355,9 @@ void ImProcFunctions::DeNoise(int call, int aut,  bool noiscfactiv, const struct
 #endif
                         for (int ir = 0; ir < bfh; ir++) {
                             for (int jr = 0; jr < bfw; jr++) {
-                                bufwv.L[ir][jr] = intp(lp.denorati * clipMask[ir][jr], bufwv.L[ir][jr], bufwv4.L[ir][jr]);
-                                bufwv.a[ir][jr] = intp(lp.denorati * clipMask[ir][jr], bufwv.a[ir][jr], bufwv4.a[ir][jr]);
-                                bufwv.b[ir][jr] = intp(lp.denorati * clipMask[ir][jr], bufwv.b[ir][jr], bufwv4.b[ir][jr]);
+                                bufwv.L[ir][jr] = intp(lp.denorati * clipMask[ir][jr], bufwv4.L[ir][jr], bufwv.L[ir][jr]);
+                                bufwv.a[ir][jr] = intp(lp.denorati * clipMask[ir][jr], bufwv4.a[ir][jr], bufwv.a[ir][jr]);
+                                bufwv.b[ir][jr] = intp(lp.denorati * clipMask[ir][jr], bufwv4.b[ir][jr], bufwv.b[ir][jr]);
                             }
                         } 
                 }       
