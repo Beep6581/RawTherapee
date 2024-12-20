@@ -12471,7 +12471,6 @@ void ImProcFunctions::DeNoise(int call, int aut,  bool noiscfactiv, const struct
                             tmp1.b[ir][jr] = copyorig->b[ir][jr];
                         }
                     }
-                    //printf("denocont=%f \n", (double) denocont);
                 } else {
                
 #ifdef _OPENMP
