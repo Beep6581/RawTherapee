@@ -3508,41 +3508,41 @@ void ImProcFunctions::localCont (LabImage * lab, LabImage * dst, const procparam
             float inva10 = 0.1f;
 
             if(pyrwav == 1) {//low contrast
-                level_bl = 0;
-                level_hl = 1;
-                level_br = wavelet_lev - 3;//-2
-                level_hr = wavelet_lev - 2;
+                level_bl = 0;//0
+                level_hl = 1;//1
+                level_br = wavelet_lev - 3;//-3
+                level_hr = wavelet_lev - 2;//-2
             } else if(pyrwav == 2) {
-                level_bl = 0;
-                level_hl = 1;
-                level_br = wavelet_lev - 2;//-1
-                level_hr = wavelet_lev - 1;
+                level_bl = 0;//0
+                level_hl = 0;//1
+                level_br = wavelet_lev - 3;//-2
+                level_hr = wavelet_lev - 1;//-1
                 if(!cmparams.wsmoothcie) {
                     inva5 = 1.f;
-                    inva6 = 0.9f;
-                    inva7 = 0.7f;
-                    inva8 = 0.6f;
-                    inva9 = 0.4f;
+                    inva6 = 0.8f;
+                    inva7 = 0.65f;
+                    inva8 = 0.5f;
+                    inva9 = 0.3f;
                     inva10 = 0.2f;
                 }
             } else if( pyrwav == 3) {//default
                 level_bl = 0;
                 level_hl = 0;
-                level_br = wavelet_lev - 1;
-                level_hr = wavelet_lev;
+                level_br = wavelet_lev - 2;//-1
+                level_hr = wavelet_lev;//0
                 if(!cmparams.wsmoothcie) {
-                    inva5 = 1.f;
-                    inva6 = 0.9f;
-                    inva7 = 0.7f;
-                    inva8 = 0.6f;
-                    inva9 = 0.4f;
-                    inva10 = 0.2f;
+                    inva5 = 1.f; //1
+                    inva6 = 0.9f;//0.9
+                    inva7 = 0.7f;//0.7
+                    inva8 = 0.6f;//0.6
+                    inva9 = 0.4f;//0.4
+                    inva10 = 0.2f;//0.2
                 }
             } else if( pyrwav == 4) {
                 level_bl = 0;
                 level_hl = 0;
-                level_br = wavelet_lev;
-                level_hr = wavelet_lev;
+                level_br = wavelet_lev -1;//0
+                level_hr = wavelet_lev +1;//0
                 if(!cmparams.wsmoothcie) {
                     inva5 = 0.9f;
                     inva6 = 0.8f;
@@ -3554,20 +3554,21 @@ void ImProcFunctions::localCont (LabImage * lab, LabImage * dst, const procparam
             } else if( pyrwav == 5) {
                 level_bl = 0;
                 level_hl = 0;
-                level_br = wavelet_lev - 1;
-                level_hr = wavelet_lev + 1;
+                level_br = wavelet_lev - 1;//-1
+                level_hr = wavelet_lev + 2;//+1  //be careful the preview must be big enough to see the changes
                 if(!cmparams.wsmoothcie) {
-                    inva5 = 0.85f;
-                    inva6 = 0.75f;
-                    inva7 = 0.55f;
-                    inva8 = 0.45f;
-                    inva9 = 0.3f;
-                    inva10 = 0.1f;
+                    inva5 = 0.8f;//0.85
+                    inva6 = 0.6f;//0.75
+                    inva7 = 0.5f;//0.55
+                    inva8 = 0.3f;//0.45
+                    inva9 = 0.2f;//0.3
+                    inva10 = 0.05f;//0.1
+                    
                 }
-            } else if( pyrwav == 6) {//maximum - in this case LUT are minimal to avoid artifacts.
+            } else if( pyrwav == 6) {//agresive - maximum - in this case LUT are minimal to avoid artifacts -be careful the preview must be big enough to see the changes
                 level_bl = 0;
                 level_hl = 0;
-                level_br = wavelet_lev - 1;
+                level_br = wavelet_lev ;//-1
                 level_hr = wavelet_lev + 2;//here maximum
             }
 
