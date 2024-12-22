@@ -1100,6 +1100,7 @@ void ICMPanel::read(const ProcParams* pp, const ParamsEdited* pedited)
         ckbApplyLookTable->set_inconsistent(!pedited->icm.applyLookTable);
         ckbApplyBaselineExposureOffset->set_inconsistent(!pedited->icm.applyBaselineExposureOffset);
         ckbApplyHueSatMap->set_inconsistent(!pedited->icm.applyHueSatMap);
+        opacityShapeWLI->setUnChanged(!pedited->icm.opacityCurveWLI);
 
         if (!pedited->icm.workingProfile) {
             wProfNames->set_active_text(M("GENERAL_UNCHANGED"));
