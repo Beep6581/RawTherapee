@@ -230,10 +230,11 @@ ICMPanel::ICMPanel() : FoldableToolPanel(this, TOOL_NAME, M("TP_ICM_LABEL")), iu
     trcExp->signal_button_release_event().connect_notify ( sigc::bind ( sigc::mem_fun (this, &ICMPanel::foldAllButMe), trcExp) );
     trcExpconn = trcExp->signal_enabled_toggled().connect(sigc::mem_fun(*this, &ICMPanel::trcExpChanged));
     Gtk::Box *trcPrimVBox = Gtk::manage(new Gtk::Box(Gtk::ORIENTATION_VERTICAL));
-    Gtk::Box *trcWavVBox = Gtk::manage(new Gtk::Box(Gtk::ORIENTATION_VERTICAL));
+  //  Gtk::Box *trcWavVBox = Gtk::manage(new Gtk::Box(Gtk::ORIENTATION_VERTICAL));
+    ToolParamBlock* const trcWavFBox = Gtk::manage(new ToolParamBlock());
+
     Gtk::Box *trcWav2VBox = Gtk::manage(new Gtk::Box(Gtk::ORIENTATION_VERTICAL));
     wavlocLabels = Gtk::manage(new Gtk::Label("---", Gtk::ALIGN_CENTER));
-
     wTRCBox = Gtk::manage(new Gtk::Box());
 
     //TRC gamma and slope
@@ -300,10 +301,10 @@ ICMPanel::ICMPanel() : FoldableToolPanel(this, TOOL_NAME, M("TP_ICM_LABEL")), iu
 
     wav2Exp = Gtk::manage(new MyExpander(false, M("TP_ICM_WAVREFI")));//expander Refinement wavelet
     setExpandAlignProperties(wav2Exp, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_START);
-    trcWavVBox->pack_start(*pyrwavtrc, Gtk::PACK_SHRINK);
-    trcWavVBox->pack_start(*wavlocLabels,  Gtk::PACK_SHRINK);
+    trcWavFBox->pack_start(*pyrwavtrc, Gtk::PACK_SHRINK);
+    trcWavFBox->pack_start(*wavlocLabels,  Gtk::PACK_SHRINK);
     pyrwavtrc->set_tooltip_text(M("TP_WAVELET_PYRWAVTRC_TOOLTIP"));
-    trcWavVBox->pack_start(*opacityCurveEditorWLI, Gtk::PACK_SHRINK, 2);
+    trcWavFBox->pack_start(*opacityCurveEditorWLI, Gtk::PACK_SHRINK, 2);
     trcWav2VBox->pack_start(*sigmatrc, Gtk::PACK_SHRINK);
     trcWav2VBox->pack_start(*offstrc, Gtk::PACK_SHRINK);
     trcWav2VBox->pack_start(*residtrc, Gtk::PACK_SHRINK);
@@ -492,9 +493,9 @@ ICMPanel::ICMPanel() : FoldableToolPanel(this, TOOL_NAME, M("TP_ICM_LABEL")), iu
     wav2Exp->add(*trcWav2VBox, false);
     wav2Exp->set_expanded(false);
     wav2Exp->setLevel (2);
-    trcWavVBox->pack_start(*wav2Exp, false, false);
+    trcWavFBox->pack_start(*wav2Exp, false, false);
     
-    wavExp->add(*trcWavVBox, false);
+    wavExp->add(*trcWavFBox, false);
     wavExp->set_expanded(false);
     wavExp->setLevel (2);
     trcProfVBox->pack_start(*wavExp, false, false);
