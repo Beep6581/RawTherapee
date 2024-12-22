@@ -3648,7 +3648,7 @@ TP_LOCALLAB_SLOMASKCOL;Slope
 TP_LOCALLAB_SLOMASK_TOOLTIP;Adjusting Gamma and Slope can provide a soft and artifact-free transformation of the mask by progressively modifying 'L' to avoid any discontinuities.
 TP_LOCALLAB_SLOPESMOOTH;Gray balance (Slope)
 TP_LOCALLAB_SLOPESMOOTHR;Red Slope
-TP_LOCALLAB_SLOPESMOOTHG;Green Slope (lead)
+TP_LOCALLAB_SLOPESMOOTHG;Green Slope
 TP_LOCALLAB_SLOPESMOOTHB;Blue Slope
 TP_LOCALLAB_SLOPESMOOTRCR;Red balance (TRC)
 TP_LOCALLAB_SLOPESMOOTRCG;Green balance (TRC)

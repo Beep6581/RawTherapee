@@ -10104,6 +10104,8 @@ void Locallabcie::read(const rtengine::procparams::ProcParams* pp, const ParamsE
     updateGUIToMode(static_cast<modeType>(complexity->get_active_row_number()));
     // Update Ciecam GUI
     updatecieGUI();
+    
+    updatecielnkGUI();
 }
 
 void Locallabcie::write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedited)
@@ -10541,6 +10543,7 @@ void Locallabcie::updateiPrimloc(const float r_x, const float r_y, const float g
         bluxl->setValue(b_x);
         bluyl->setValue(b_y);
         labgridcie->setParams(nextrx, nextry, nextbx, nextby, nextgx, nextgy, nextwx, nextwy, nextmx, nextmy, false);
+        /*
         if(lkg) {
             slopesmor->setValue(slg);
             slopesmob->setValue(slg);
@@ -10548,6 +10551,7 @@ void Locallabcie::updateiPrimloc(const float r_x, const float r_y, const float g
             adjusterChanged(slopesmob, 0.);
 
         }
+        */
         enableListener();
         return false;
     }
@@ -10858,8 +10862,22 @@ void Locallabcie::smoothcieChanged()
     }
 }
 
-void Locallabcie::smoothcielnkChanged()
+void Locallabcie::updatecielnkGUI()
 {
+    
+    if(smoothcielnk->get_active()) {
+        slopesmob->setValue(slopesmog->getValue());
+        slopesmor->setValue(slopesmog->getValue());
+
+    } else {
+     //   
+    }
+    
+}
+
+void Locallabcie::smoothcielnkChanged()   
+{
+    updatecielnkGUI();
     if (isLocActivated && exp->getEnabled()) {
         if (listener) {
             if (smoothcielnk->get_active()) {
@@ -12616,6 +12634,7 @@ void Locallabcie::convertParamToNormal()
 
     // Enable all listeners
     enableListener();
+    updatecielnkGUI();
 
 }
 
@@ -13262,27 +13281,62 @@ void Locallabcie::adjusterChanged(Adjuster* a, double newval)
             }
         }
 
-        if (a == slopesmor) {
-            if (listener) {
-                listener->panelChanged(Evlocallabslopesmor,
-                                       slopesmor->getTextValue() + spName);
-            }
-        }
 
-
-        if (a == slopesmog) {
-            if (listener) {
-                listener->panelChanged(Evlocallabslopesmog,
+        if (a == slopesmog ) {
+            if(smoothcielnk->get_active()) {
+                if (listener) {
+                    listener->panelChanged(Evlocallabslopesmog,
                                        slopesmog->getTextValue() + spName);
+                
+                }
+                slopesmob->setValue(newval);
+                slopesmor->setValue(newval);
+            } else {
+                if (listener) {
+                    listener->panelChanged(Evlocallabslopesmog,
+                                       slopesmog->getTextValue() + spName);
+                
+                }
             }
         }
 
-        if (a == slopesmob) {
-            if (listener) {
-                listener->panelChanged(Evlocallabslopesmob,
-                                       slopesmob->getTextValue() + spName);
+
+        if (a == slopesmor ) {
+            if(smoothcielnk->get_active()) {
+                if (listener) {
+                    listener->panelChanged(Evlocallabslopesmor,
+                                       slopesmor->getTextValue() + spName);
+                
+                }
+                slopesmob->setValue(newval);
+                slopesmog->setValue(newval);
+            } else {
+                if (listener) {
+                    listener->panelChanged(Evlocallabslopesmor,
+                                       slopesmor->getTextValue() + spName);
+                
+                }
             }
         }
+
+        if (a == slopesmob ) {
+            if(smoothcielnk->get_active()) {
+                if (listener) {
+                    listener->panelChanged(Evlocallabslopesmob,
+                                       slopesmob->getTextValue() + spName);
+                
+                }
+                slopesmor->setValue(newval);
+                slopesmog->setValue(newval);
+            } else {
+                if (listener) {
+                    listener->panelChanged(Evlocallabslopesmob,
+                                       slopesmob->getTextValue() + spName);
+                
+                }
+            }
+        }
+
 
         if (a == kslopesmor) {
             if (listener) {

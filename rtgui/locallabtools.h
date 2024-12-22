@@ -2035,6 +2035,7 @@ private:
     void sigqChanged();
     void chjzcieChanged();
     void updatecieGUI();
+    void updatecielnkGUI();
     void updateMaskBackground(const double normChromar, const double normLumar, const double normHuer, const double normHuerjz) override;
     void showmaskcieMethodChanged();
     void enacieMaskChanged();
