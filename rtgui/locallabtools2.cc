@@ -3155,8 +3155,9 @@ void LocallabContrast::updateguicont(int spottype)
                 previewlc->show();
                 exprecovw->show();
                 expmasklc->show();
-                strwav->setValue(0.f);
-                gradwavFrame->set_sensitive(false);
+            //    strwav->setValue(0.f);
+            //    gradwavFrame->set_sensitive(false);
+                gradwavFrame->set_sensitive(true);
 
                 updateGUIToMode(static_cast<modeType>(complexity->get_active_row_number()));
             }
@@ -3169,9 +3170,11 @@ void LocallabContrast::updateguicont(int spottype)
                 }
             }
             */
+            /*
             if(spottype == 0 || spottype == 1) { //reset values for GF in normal mode       
                 adjusterChanged(strwav, 0.);
             }
+            */
 
         return false;
         }
@@ -9261,8 +9264,9 @@ void Locallabcie::updateguicie(int spottype)
                 previewcie->show();
                 exprecovcie->show();
                 expmaskcie->show();
-                expgradcie->hide();
-                strgradcie->setValue(0.f);
+               // expgradcie->hide();
+                expgradcie->show();
+              //  strgradcie->setValue(0.f);
                 updateGUIToMode(static_cast<modeType>(complexity->get_active_row_number()));
            }
             enableListener();
@@ -9273,10 +9277,12 @@ void Locallabcie::updateguicie(int spottype)
                     showmaskcieMethodChanged();              
                 }
             }
-            */          
+            */
+/*            
             if(spottype == 0 || spottype == 1) {         
                 adjusterChanged(strgradcie, 0.);//reset GF 
             }
+*/
            
         return false;
         }

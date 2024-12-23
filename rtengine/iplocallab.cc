@@ -6162,7 +6162,8 @@ void calclocalGradientParams(int call, const struct local_params& lp, struct gra
     //acts on center of GF we can easiy chnage - kx in a function of oW, bfw, etc.
     // it is only here in calclocalGradientParams
 
-    double kstop = 0.5; // to simulate stops in GF main - 0.5 arbitrary only here in calclocalGradientParams
+   // double kstop = 0.5; // to simulate stops in GF main - 0.5 arbitrary only here in calclocalGradientParams
+    double kstop = 1.0; // keep all agressive settings - to simulate stops in GF main - 0.5 arbitrary only here in calclocalGradientParams
     
     float ktyoh = 1.f; //acts on cy - Try to take into account position of window in preview with various factors...ex: -2.f * ((float)(oH - tY) / (float)oH);
     float ktxoh = 1.f; //acts on cx - Try to take into account position of window in preview with various factors...ex: -2.f * ((float)(oH - tY) / (float)oH);
@@ -6187,7 +6188,7 @@ void calclocalGradientParams(int call, const struct local_params& lp, struct gra
     double gradient_center_x = LIM01((lp.xcent * (oW + kx)) / bfw);//for dcrop and improccordinator
     double gradient_center_y = LIM01((lp.ycent * (oH + ky)) / bfh);
 
-    if(call == 2) {//simpleprocess
+    if(call == 2 || lp.fullim == 0 ) {//simpleprocess or compatibility 5.11 for normal
         gradient_center_x = LIM01((lp.xcent * (bfw)) / bfw);//I keep this formula because perhaps not bfw, for the first
         gradient_center_y = LIM01((lp.ycent * (bfh)) / bfh);
     }
@@ -9522,7 +9523,7 @@ void ImProcFunctions::transit_shapedetect2(int sp, float meantm, float stdtm, in
 
 // test to use in plain image
     bool execgradsh = false;
-    if(lp.fullim == 3 || lp.fullim == 2) {
+    if(lp.fullim == 3 || lp.fullim == 2 || lp.fullim == 0) {
         execgradsh = true;
     }
 
@@ -17343,7 +17344,7 @@ void ImProcFunctions::Lab_Local(
             }
             
             bool execgradsh = false;
-            if(lp.fullim == 3 || lp.fullim == 2) {
+            if(lp.fullim == 3 || lp.fullim == 2 || lp.fullim == 0) {
                 execgradsh = true;
             }
 

@@ -1046,17 +1046,17 @@ void LocallabColor::updateguicolor(int spottype)
                 expmaskcol1->show();
                 expmaskcol->show();
                 exprecov->show();
-                strcol->setValue(0.f);
-                strcolab->setValue(0.f);
-                strcolh->setValue(0.f);
+               // strcol->setValue(0.f);
+               // strcolab->setValue(0.f);
+               // strcolh->setValue(0.f);
                 
                 if(!invers->get_active()) {
                     previewcol->show();
                 } else {
                     previewcol->hide();
                 }
-                expgradcol->hide();
-                
+                //expgradcol->hide();
+                expgradcol->show();
                 updateGUIToMode(static_cast<modeType>(complexity->get_active_row_number()));
             }
             enableListener();
@@ -1069,12 +1069,13 @@ void LocallabColor::updateguicolor(int spottype)
                 }
             }
             */
+            /*
             if(spottype == 0 || spottype == 1) { //reset values for GF in normal mode       
                 adjusterChanged(strcol, 0.);
                 adjusterChanged(strcolab, 0.);
                 adjusterChanged(strcolh, 0.);
             }
-
+            */
         return false;
         }
         );
@@ -3100,8 +3101,9 @@ void LocallabExposure::updateguiexpos(int spottype)
                 sensiex->show();
                 expmaskexp->show();
                 exprecove->show();
-                expgradexp->hide();
-                strexp->setValue(0.f);
+              //  expgradexp->hide();
+                expgradexp->show();
+               // strexp->setValue(0.f);
 
                 if(!inversex->get_active()) {
                     previewexe->show();
@@ -3120,9 +3122,11 @@ void LocallabExposure::updateguiexpos(int spottype)
                 }
             }
             */
+            /*
             if(spottype == 0 || spottype == 1) {//reset value for GF       
                 adjusterChanged(strexp, 0.);
             }
+            */
 
         return false;
         }
@@ -4790,8 +4794,9 @@ void LocallabShadow::updateguishad(int spottype)
                 inverssh->show();
                 exprecovs->show();
                 expmasksh->show();
-                expgradsh->hide();               
-                strSH->setValue(0.f);
+                expgradsh->show();               
+               // expgradsh->hide();               
+               // strSH->setValue(0.f);
                 if(!inverssh->get_active()) {
                     previewsh->show();
                 } else {
@@ -4814,7 +4819,7 @@ void LocallabShadow::updateguishad(int spottype)
             }
             */
             if(spottype == 0 || spottype == 1) {  //reset GF       
-                adjusterChanged(strSH, 0.);
+              //  adjusterChanged(strSH, 0.);
             }
 
         return false;
@@ -6563,10 +6568,11 @@ void LocallabVibrance::updateguivib(int spottype)
                 sensiv->show();            
                 previewvib->show();
                 exprecovv->show();
-                expgradvib->hide();               
-                strvib->setValue(0.f);
-                strvibab->setValue(0.f);
-                strvibh->setValue(0.f);
+              //  expgradvib->hide();               
+                expgradvib->show();               
+              //  strvib->setValue(0.f);
+              //  strvibab->setValue(0.f);
+              //  strvibh->setValue(0.f);
                 expmaskvib->show();
                 updateGUIToMode(static_cast<modeType>(complexity->get_active_row_number()));
 
@@ -6580,11 +6586,13 @@ void LocallabVibrance::updateguivib(int spottype)
                }
             }
             */
+            /*
             if(spottype == 0 || spottype == 1) {  //reset value for GF if not in global or full image       
                 adjusterChanged(strvib, 0.);
                 adjusterChanged(strvibab, 0.);
                 adjusterChanged(strvibh, 0.);
             }
+            */
         return false;
         }
         );
