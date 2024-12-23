@@ -3564,7 +3564,7 @@ void ImProcFunctions::localCont (LabImage * lab, LabImage * dst, const procparam
                     inva9 = 0.2f;//0.3
                     inva10 = 0.05f;//0.1
                     
-                }
+                }//last choice not used for various reasons
             } else if( pyrwav == 6) {//agresive - maximum - in this case LUT are minimal to avoid artifacts -be careful the preview must be big enough to see the changes
                 level_bl = 0;
                 level_hl = 0;
