@@ -220,8 +220,8 @@ private:
     Glib::ustring filename;
     void updateDCP(int dcpIlluminant, Glib::ustring dcp_name);
     void updateRenderingIntent(const Glib::ustring &profile);
-    void foldAllButMe (GdkEventButton* event, MyExpander *expander);
-    
+    void foldAllButMe(GdkEventButton *event, MyExpander *expander, const MyExpander *parent);
+
     float nextrx;
     float nextry;
     float nextbx;

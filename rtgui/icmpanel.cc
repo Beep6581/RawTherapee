@@ -232,7 +232,7 @@ ICMPanel::ICMPanel() : FoldableToolPanel(this, TOOL_NAME, M("TP_ICM_LABEL")), iu
     trcExp = Gtk::manage(new MyExpander(true, trcLabelBox));//expander Abstract Profile
     setExpandAlignProperties(trcExp, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_START);
     Gtk::Box *trcProfVBox = Gtk::manage(new Gtk::Box(Gtk::ORIENTATION_VERTICAL));
-    trcExp->signal_button_release_event().connect_notify ( sigc::bind ( sigc::mem_fun (this, &ICMPanel::foldAllButMe), trcExp) );
+    trcExp->signal_button_release_event().connect_notify(sigc::bind(sigc::mem_fun(this, &ICMPanel::foldAllButMe), trcExp, getExpander()));
     trcExpconn = trcExp->signal_enabled_toggled().connect(sigc::mem_fun(*this, &ICMPanel::trcExpChanged));
     Gtk::Box *trcPrimVBox = Gtk::manage(new Gtk::Box(Gtk::ORIENTATION_VERTICAL));
   //  Gtk::Box *trcWavVBox = Gtk::manage(new Gtk::Box(Gtk::ORIENTATION_VERTICAL));
@@ -301,11 +301,12 @@ ICMPanel::ICMPanel() : FoldableToolPanel(this, TOOL_NAME, M("TP_ICM_LABEL")), iu
 
     wavExp = Gtk::manage(new MyExpander(true, M("TP_ICM_WAVFRAME")));//expander Contrast Enhancement
     setExpandAlignProperties(wavExp, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_START);
-    wavExp->signal_button_release_event().connect_notify ( sigc::bind ( sigc::mem_fun (this, &ICMPanel::foldAllButMe), wavExp) );
+    wavExp->signal_button_release_event().connect_notify(sigc::bind(sigc::mem_fun(this, &ICMPanel::foldAllButMe), wavExp, trcExp));
     wavExpconn = wavExp->signal_enabled_toggled().connect(sigc::mem_fun(*this, &ICMPanel::wavExpChanged));
 
     wav2Exp = Gtk::manage(new MyExpander(false, M("TP_ICM_WAVREFI")));//expander Refinement wavelet
     setExpandAlignProperties(wav2Exp, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_START);
+    wav2Exp->signal_button_release_event().connect_notify(sigc::bind(sigc::mem_fun(this, &ICMPanel::foldAllButMe), wav2Exp, wavExp));
     trcWavFBox->pack_start(*pyrwavtrc, Gtk::PACK_SHRINK);
     trcWavFBox->pack_start(*wavlocLabels,  Gtk::PACK_SHRINK);
     pyrwavtrc->set_tooltip_text(M("TP_WAVELET_PYRWAVTRC_TOOLTIP"));
@@ -318,6 +319,7 @@ ICMPanel::ICMPanel() : FoldableToolPanel(this, TOOL_NAME, M("TP_ICM_LABEL")), iu
     offstrc->set_tooltip_text(M("TP_WAVELET_OFFSET_TOOLTIP"));
     primExp = Gtk::manage(new MyExpander(false, M("TP_ICM_PRIMFRAME")));
     setExpandAlignProperties(primExp, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_START);
+    primExp->signal_button_release_event().connect_notify(sigc::bind(sigc::mem_fun(this, &ICMPanel::foldAllButMe), primExp, trcExp));
 
     //Illuminants and Primaries
     willuBox = Gtk::manage(new Gtk::Box());
@@ -496,12 +498,10 @@ ICMPanel::ICMPanel() : FoldableToolPanel(this, TOOL_NAME, M("TP_ICM_LABEL")), iu
     // wSlope->setDelay(std::max(options.adjusterMinDelay, options.adjusterMaxDelay));
     wmidtcie->setDelay(std::max(options.adjusterMinDelay, options.adjusterMaxDelay));
     wav2Exp->add(*trcWav2VBox, false);
-    wav2Exp->set_expanded(false);
     wav2Exp->setLevel (2);
     trcWavFBox->pack_start(*wav2Exp, false, false);
     
     wavExp->add(*trcWavFBox, false);
-    wavExp->set_expanded(false);
     wavExp->setLevel (2);
     trcProfVBox->pack_start(*wavExp, false, false);
     
@@ -522,13 +522,14 @@ ICMPanel::ICMPanel() : FoldableToolPanel(this, TOOL_NAME, M("TP_ICM_LABEL")), iu
     trcPrimVBox->pack_start(*redFrame, Gtk::PACK_EXPAND_WIDGET);
 
     primExp->add(*trcPrimVBox, false);
-    primExp->set_expanded(false);
     primExp->setLevel (2);
 
     trcExp->add(*trcProfVBox, false);
+    trcExp->show_all();
+    trcExp->set_expanded(false);
+    trcExp->set_no_show_all();
     trcExp->setLevel (2);
     pack_start(*trcExp, Gtk::PACK_EXPAND_WIDGET);
-    trcExp->set_expanded(true);
 
     pack_start(*wFrame, Gtk::PACK_EXPAND_WIDGET);
     pack_start(*iFrame, Gtk::PACK_EXPAND_WIDGET);
@@ -639,11 +640,23 @@ ICMPanel::ICMPanel() : FoldableToolPanel(this, TOOL_NAME, M("TP_ICM_LABEL")), iu
     show_all();
 }
 
-void ICMPanel::foldAllButMe (GdkEventButton* event, MyExpander *expander)
+void ICMPanel::foldAllButMe(GdkEventButton *event, MyExpander *expander, const MyExpander *parent)
 {
     if (event->button == 3) {
-        trcExp->set_expanded (trcExp == expander);
-        wavExp->set_expanded (wavExp == expander);
+        const auto set_expanded = [expander](MyExpander *expander_to_modify) {
+            expander_to_modify->set_expanded(expander_to_modify == expander);
+        };
+
+        if (parent == getExpander()) {
+            set_expanded(trcExp);
+        } else if (parent == trcExp) {
+            // Abstract Profile sub-expanders.
+            set_expanded(wavExp);
+            set_expanded(primExp);
+        } else if (parent == wavExp) {
+            // Contrast Enhancement sub-expanders.
+            set_expanded(wav2Exp);
+        }
     }
 }
 
@@ -989,11 +1002,6 @@ void ICMPanel::read(const ProcParams* pp, const ParamsEdited* pedited)
     ConnectionBlocker wcatconn_(wcatconn);
     ConnectionBlocker trcExpconn_(trcExpconn);
     ConnectionBlocker wavExpconn_(wavExpconn);
-    
-    trcExp->set_expanded(true);
-    primExp->set_expanded(false);
-    wavExp->set_expanded(false);
-    wav2Exp->set_expanded(false);
 
     if (pp->icm.inputProfile.substr(0, 5) != "file:" && !ipDialog->get_filename().empty()) {
         ipDialog->set_filename(pp->icm.inputProfile);
