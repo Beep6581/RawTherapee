@@ -10,6 +10,70 @@ set(CLISOURCEFILES
     threadutils.cc
 )
 
+set(RT_GUI_TOOL_PANEL_SOURCES
+    tools/bayerpreprocess.cc
+    tools/bayerprocess.cc
+    tools/bayerrawexposure.cc
+    tools/blackwhite.cc
+    tools/cacorrection.cc
+    tools/chmixer.cc
+    tools/colorappearance.cc
+    tools/colortoning.cc
+    tools/compressgamut.cc
+    tools/crop.cc
+    tools/darkframe.cc
+    tools/defringe.cc
+    tools/dehaze.cc
+    tools/dirpyrdenoise.cc
+    tools/dirpyrequalizer.cc
+    tools/distortion.cc
+    tools/epd.cc
+    tools/fattaltonemap.cc
+    tools/filmnegative.cc
+    tools/filmsimulation.cc
+    tools/flatfield.cc
+    tools/framing.cc
+    tools/gradient.cc
+    tools/hsvequalizer.cc
+    tools/icmpanel.cc
+    tools/impulsedenoise.cc
+    tools/labcurve.cc
+    tools/lensgeom.cc
+    tools/lensprofile.cc
+    tools/localcontrast.cc
+    tools/locallab.cc
+    tools/locallabtools.cc
+    tools/locallabtools2.cc
+    tools/pcvignette.cc
+    tools/pdsharpening.cc
+    tools/perspective.cc
+    tools/preprocess.cc
+    tools/preprocesswb.cc
+    tools/prsharpening.cc
+    tools/rawcacorrection.cc
+    tools/rawexposure.cc
+    tools/resize.cc
+    tools/retinex.cc
+    tools/rgbcurves.cc
+    tools/rotate.cc
+    tools/sensorbayer.cc
+    tools/sensorxtrans.cc
+    tools/shadowshighlights.cc
+    tools/sharpenedge.cc
+    tools/sharpening.cc
+    tools/sharpenmicro.cc
+    tools/softlight.cc
+    tools/spot.cc
+    tools/tonecurve.cc
+    tools/toneequalizer.cc
+    tools/vibrance.cc
+    tools/vignetting.cc
+    tools/wavelet.cc
+    tools/whitebalance.cc
+    tools/xtransprocess.cc
+    tools/xtransrawexposure.cc
+)
+
 set(NONCLISOURCEFILES
     adjuster.cc
     alignedmalloc.cc
@@ -19,87 +83,54 @@ set(NONCLISOURCEFILES
     batchqueueentry.cc
     batchqueuepanel.cc
     batchtoolpanelcoord.cc
-    bayerpreprocess.cc
-    bayerprocess.cc
-    bayerrawexposure.cc
-    blackwhite.cc
     bqentryupdater.cc
     browserfilter.cc
     cacheimagedata.cc
     cachemanager.cc
-    cacorrection.cc
     checkbox.cc
-    chmixer.cc
     clipboard.cc
     coarsepanel.cc
-    colorappearance.cc
     coloredbar.cc
-    colortoning.cc
     colorpreview.cc
     controllines.cc
     controlspotpanel.cc
     coordinateadjuster.cc
-    compressgamut.cc
-    crop.cc
     crophandler.cc
     cropwindow.cc
     cursormanager.cc
     curveeditor.cc
     curveeditorgroup.cc
-    darkframe.cc
-    defringe.cc
-    dehaze.cc
     diagonalcurveeditorsubgroup.cc
     dirbrowser.cc
-    dirpyrdenoise.cc
-    dirpyrequalizer.cc
-    distortion.cc
     dynamicprofilepanel.cc
     editbuffer.cc
     editcallbacks.cc
     editorpanel.cc
     editwidgets.cc
     editwindow.cc
-    epd.cc
     eventmapper.cc
     exiffiltersettings.cc
     exifpanel.cc
     exportpanel.cc
     externaleditorpreferences.cc
     extprog.cc
-    fattaltonemap.cc
     filebrowser.cc
     filebrowserentry.cc
     filecatalog.cc
     filepanel.cc
     filethumbnailbuttonset.cc
-    filmnegative.cc
-    filmsimulation.cc
     filterpanel.cc
     flatcurveeditorsubgroup.cc
-    flatfield.cc
-    framing.cc
-    gradient.cc
     guiutils.cc
     histogrampanel.cc
     history.cc
-    hsvequalizer.cc
     iccprofilecreator.cc
-    icmpanel.cc
     imagearea.cc
     imageareapanel.cc
-    impulsedenoise.cc
     indclippedpanel.cc
     inspector.cc
     iptcpanel.cc
-    labcurve.cc
     labgrid.cc
-    lensgeom.cc
-    lensprofile.cc
-    localcontrast.cc
-    locallab.cc
-    locallabtools.cc
-    locallabtools2.cc
     lockablecolorpicker.cc
     lwbutton.cc
     lwbuttonset.cc
@@ -114,31 +145,19 @@ set(NONCLISOURCEFILES
     paramsedited.cc
     partialpastedlg.cc
     pathutils.cc
-    pcvignette.cc
-    pdsharpening.cc
-    perspective.cc
     placesbrowser.cc
     popupbutton.cc
     popupcommon.cc
     popuptogglebutton.cc
     preferences.cc
-    preprocess.cc
-    preprocesswb.cc
     previewhandler.cc
     previewloader.cc
     previewmodepanel.cc
     previewwindow.cc
     profilepanel.cc
     profilestorecombobox.cc
-    prsharpening.cc
-    rawcacorrection.cc
-    rawexposure.cc
     recentbrowser.cc
     renamedlg.cc
-    resize.cc
-    retinex.cc
-    rgbcurves.cc
-    rotate.cc
     rtappchooserdialog.cc
     rtimage.cc
     rtscalable.cc
@@ -146,17 +165,9 @@ set(NONCLISOURCEFILES
     rtwindow.cc
     saveasdlg.cc
     saveformatpanel.cc
-    sensorbayer.cc
-    sensorxtrans.cc
-    shadowshighlights.cc
-    sharpenedge.cc
-    sharpening.cc
-    sharpenmicro.cc
     shcselector.cc
-    softlight.cc
     soundman.cc
     splash.cc
-    spot.cc
     threadutils.cc
     thresholdadjuster.cc
     thresholdselector.cc
@@ -164,19 +175,12 @@ set(NONCLISOURCEFILES
     thumbbrowserentrybase.cc
     thumbimageupdater.cc
     thumbnail.cc
-    tonecurve.cc
-    toneequalizer.cc
     toolbar.cc
     toollocationpref.cc
     toolpanel.cc
     toolpanelcoord.cc
-    vibrance.cc
-    vignetting.cc
-    wavelet.cc
-    whitebalance.cc
-    xtransprocess.cc
-    xtransrawexposure.cc
     zoompanel.cc
+    ${RT_GUI_TOOL_PANEL_SOURCES}
 )
 
 if(APPLE)
@@ -264,7 +268,9 @@ add_executable(rth-cli "${EXTRA_SRC_CLI}" "${CLISOURCEFILES}")
 
 # Subdirectories that are not libraries themselves should be included
 # like #include "your_subdirectory/header.h"
-target_include_directories(rth PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})
+target_include_directories(rth PRIVATE
+    ${CMAKE_CURRENT_SOURCE_DIR}
+    ${CMAKE_CURRENT_SOURCE_DIR}/tools)
 target_include_directories(rth-cli PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})
 
 # Add dependencies to executables targets
