@@ -223,10 +223,15 @@ ICMPanel::ICMPanel() : FoldableToolPanel(this, TOOL_NAME, M("TP_ICM_LABEL")), iu
     wFrame->add(*wProfVBox);
 
     //-----------------gamma TRC working - Abstract Profile
-    trcExp = Gtk::manage(new MyExpander(true, M("TP_ICM_TRCFRAME")));//expander Abstract Profile
+    Gtk::Label *trcLabel = Gtk::manage(new Gtk::Label());
+    setExpandAlignProperties(trcLabel, true, false, Gtk::ALIGN_START, Gtk::ALIGN_CENTER);
+    trcLabel->set_markup(escapeHtmlChars(M("TP_ICM_TRCFRAME")));
+    trcLabel->set_tooltip_text(M("TP_ICM_TRCFRAME_TOOLTIP"));
+    Gtk::Box *trcLabelBox = Gtk::manage(new Gtk::Box());
+    trcLabelBox->add(*trcLabel);
+    trcExp = Gtk::manage(new MyExpander(true, trcLabelBox));//expander Abstract Profile
     setExpandAlignProperties(trcExp, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_START);
     Gtk::Box *trcProfVBox = Gtk::manage(new Gtk::Box(Gtk::ORIENTATION_VERTICAL));
-    trcExp->set_tooltip_text(M("TP_ICM_TRCFRAME_TOOLTIP"));
     trcExp->signal_button_release_event().connect_notify ( sigc::bind ( sigc::mem_fun (this, &ICMPanel::foldAllButMe), trcExp) );
     trcExpconn = trcExp->signal_enabled_toggled().connect(sigc::mem_fun(*this, &ICMPanel::trcExpChanged));
     Gtk::Box *trcPrimVBox = Gtk::manage(new Gtk::Box(Gtk::ORIENTATION_VERTICAL));
