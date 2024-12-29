@@ -16,15 +16,17 @@
  *  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
  */
 #include <cairomm/cairomm.h>
-#include "../rtengine/rt_math.h"
+#include "rtengine/rt_math.h"
 
 #include "guiutils.h"
 #include "options.h"
-#include "../rtengine/utils.h"
-#include "../rtengine/procparams.h"
+#include "rtengine/utils.h"
+#include "rtengine/procparams.h"
 #include "rtimage.h"
 #include "rtscalable.h"
 #include "multilangmgr.h"
+#include "adjuster.h"
+#include "toolpanel.h"
 
 #include <assert.h>
 
@@ -75,6 +77,34 @@ void IdleRegister::destroy()
     }
     ids.clear();
     mutex.unlock();
+}
+
+BlockAdjusterEvents::BlockAdjusterEvents(Adjuster* adjuster) : adj(adjuster)
+{
+    if (adj) {
+        adj->block(true);
+    }
+}
+
+BlockAdjusterEvents::~BlockAdjusterEvents()
+{
+    if (adj) {
+        adj->block(false);
+    }
+}
+
+DisableListener::DisableListener(ToolPanel* panelToDisable) : panel(panelToDisable)
+{
+    if (panel) {
+        panel->disableListener();
+    }
+}
+
+DisableListener::~DisableListener()
+{
+    if (panel) {
+        panel->enableListener();
+    }
 }
 
 Glib::ustring escapeHtmlChars(const Glib::ustring &src)

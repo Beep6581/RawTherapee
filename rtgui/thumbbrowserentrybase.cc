@@ -20,7 +20,7 @@
 
 #include "options.h"
 #include "thumbbrowserbase.h"
-#include "../rtengine/rt_math.h"
+#include "rtengine/rt_math.h"
 #include "rtsurface.h"
 
 namespace

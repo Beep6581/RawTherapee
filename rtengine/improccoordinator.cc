@@ -42,7 +42,7 @@
 #include "utils.h"
 #include "rt_algo.h"
 
-#include "../rtgui/options.h"
+#include "rtgui/options.h"
 
 #ifdef _OPENMP
 #include <omp.h>

@@ -25,7 +25,7 @@
 #include "cursormanager.h"
 #include "curvelistener.h"
 #include "mycurve.h"
-#include "../rtengine/flatcurvetypes.h"
+#include "rtengine/flatcurvetypes.h"
 
 enum MouseOverAreas {
     FCT_Area_None       = 1 << 0,   // over a zone that don't have any

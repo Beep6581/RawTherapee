@@ -22,8 +22,8 @@
 #include "guiutils.h"
 #include "options.h"
 
-#include "../rtengine/procparams.h"
-#include "../rtengine/utils.h"
+#include "rtengine/procparams.h"
+#include "rtengine/utils.h"
 
 using namespace rtengine;
 using namespace rtengine::procparams;

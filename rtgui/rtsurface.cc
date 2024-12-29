@@ -57,7 +57,7 @@ RTSurface::RTSurface(const Glib::ustring &fname) :
     // Create surface based on file extension
     const auto pos = fname.find_last_of('.');
 
-    if (pos >= 0 && pos < fname.length()) {
+    if (pos < fname.length()) {
         const auto fext = fname.substr(pos + 1, fname.length()).lowercase();
 
         // Case where fname is a PNG file

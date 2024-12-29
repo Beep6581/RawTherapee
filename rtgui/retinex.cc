@@ -8,7 +8,7 @@
 #include "mycurve.h"
 #include "rtimage.h"
 #include "options.h"
-#include "../rtengine/color.h"
+#include "rtengine/color.h"
 #include "eventmapper.h"
 
 using namespace rtengine;

@@ -27,7 +27,7 @@
 #include "popupbutton.h"
 #include "toolpanel.h"
 
-#include "../rtengine/imagedata.h"
+#include "rtengine/imagedata.h"
 
 class ICMPanelListener
 {

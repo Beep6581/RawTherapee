@@ -22,7 +22,7 @@
 
 #include "curveeditorgroup.h"
 
-#include "../rtengine/noncopyable.h"
+#include "rtengine/noncopyable.h"
 
 class FlatCurveEditor;
 class MyFlatCurve;

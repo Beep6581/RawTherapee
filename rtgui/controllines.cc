@@ -24,7 +24,7 @@
 #include "editwidgets.h"
 #include "rtsurface.h"
 
-#include "../rtengine/perspectivecorrection.h"
+#include "rtengine/perspectivecorrection.h"
 
 using namespace rtengine;
 

@@ -22,7 +22,7 @@
 
 #include "profilestorecombobox.h"
 
-#include "../rtengine/dynamicprofile.h"
+#include "rtengine/dynamicprofile.h"
 
 class DynamicProfilePanel :
     public Gtk::Box

@@ -55,7 +55,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "../rtgui/threadutils.h"
+#include "rtgui/threadutils.h"
 #include "colortemp.h"
 #include "imagefloat.h"
 #include "settings.h"

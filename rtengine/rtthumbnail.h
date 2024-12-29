@@ -25,7 +25,7 @@
 #include "imagefloat.h"
 #include "LUT.h"
 
-#include "../rtgui/threadutils.h"
+#include "rtgui/threadutils.h"
 
 namespace Glib
 {

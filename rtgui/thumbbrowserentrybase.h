@@ -29,7 +29,7 @@
 #include "options.h"
 #include "thumbnail.h"
 
-#include "../rtengine/coord2d.h"
+#include "rtengine/coord2d.h"
 
 class Thumbnail;
 class ThumbBrowserBase;

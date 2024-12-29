@@ -17,7 +17,7 @@
  *  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
  */
 #include "mycurve.h"
-#include "../rtengine/curves.h"
+#include "rtengine/curves.h"
 #include <cstring>
 #include <gdkmm/types.h>
 #include "rtscalable.h"

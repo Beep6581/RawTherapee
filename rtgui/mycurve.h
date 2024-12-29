@@ -27,8 +27,8 @@
 #include "cursormanager.h"
 #include "curvelistener.h"
 
-#include "../rtengine/LUT.h"
-#include "../rtengine/noncopyable.h"
+#include "rtengine/LUT.h"
+#include "rtengine/noncopyable.h"
 
 #define RADIUS          3.5 /** radius of the control points ; must be x.5 to target the center of a pixel */
 #define CBAR_WIDTH      10  /** inner width of the colored bar (border excluded) */

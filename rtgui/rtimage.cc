@@ -56,6 +56,8 @@ void RTImageCache::updateCache()
 RTImage::RTImage () {}
 
 RTImage::RTImage (const Glib::ustring& iconName, const Gtk::IconSize iconSize) :
+    sigc::trackable(),
+    Glib::ObjectBase(),
     Gtk::Image(),
     size(iconSize),
     icon_name(iconName),

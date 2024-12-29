@@ -26,8 +26,8 @@
 #include "toolpanel.h"
 #include "wbprovider.h"
 
-#include "../rtengine/procparams.h"
-#include "../rtengine/utils.h"
+#include "rtengine/procparams.h"
+#include "rtengine/utils.h"
 
 class SpotWBListener
 {

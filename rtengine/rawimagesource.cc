@@ -45,7 +45,7 @@
 #include "rtengine.h"
 #include "rtlensfun.h"
 #include "lensmetadata.h"
-#include "../rtgui/options.h"
+#include "rtgui/options.h"
 
 #define BENCHMARK
 #include "StopWatch.h"

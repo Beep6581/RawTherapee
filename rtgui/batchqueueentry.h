@@ -26,7 +26,7 @@
 #include "options.h"
 #include "thumbbrowserentrybase.h"
 
-#include "../rtengine/noncopyable.h"
+#include "rtengine/noncopyable.h"
 
 class Thumbnail;
 class RTSurface;

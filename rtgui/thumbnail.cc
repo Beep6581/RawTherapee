@@ -26,17 +26,17 @@
 #include <iomanip>
 #include <cstdio>
 #include <cstdlib>
-#include "../rtengine/colortemp.h"
-#include "../rtengine/imagedata.h"
-#include "../rtengine/procparams.h"
-#include "../rtengine/rtthumbnail.h"
+#include "rtengine/colortemp.h"
+#include "rtengine/imagedata.h"
+#include "rtengine/procparams.h"
+#include "rtengine/rtthumbnail.h"
 #include <glib/gstdio.h>
 #include <glibmm/timezone.h>
 
-#include "../rtengine/dynamicprofile.h"
-#include "../rtengine/metadata.h"
-#include "../rtengine/profilestore.h"
-#include "../rtengine/settings.h"
+#include "rtengine/dynamicprofile.h"
+#include "rtengine/metadata.h"
+#include "rtengine/profilestore.h"
+#include "rtengine/settings.h"
 #include "guiutils.h"
 #include "batchqueue.h"
 #include "extprog.h"
@@ -66,7 +66,7 @@ bool CPBDump(
     }
 
     // open the file in write mode
-    const std::unique_ptr<FILE, decltype(&std::fclose)> f(g_fopen(commFName.c_str (), "wt"), &std::fclose);
+    const std::unique_ptr<FILE, int (*)(FILE *)> f(g_fopen(commFName.c_str(), "wt"), &std::fclose);
 
     if (!f) {
         printf ("CPBDump(\"%s\") >>> Error: unable to open file with write access!\n", commFName.c_str());

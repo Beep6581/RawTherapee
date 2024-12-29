@@ -29,7 +29,7 @@
 #include "LUT.h"
 #include "rt_math.h"
 #include "procparams.h"
-#include "../rtgui/threadutils.h"
+#include "rtgui/threadutils.h"
 
 #define TR_NONE     0
 #define TR_R90      1

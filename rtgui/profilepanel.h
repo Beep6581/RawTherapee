@@ -27,8 +27,8 @@
 #include "pparamschangelistener.h"
 #include "profilechangelistener.h"
 
-#include "../rtengine/profilestore.h"
-#include "../rtengine/noncopyable.h"
+#include "rtengine/profilestore.h"
+#include "rtengine/noncopyable.h"
 
 class ProfileStoreComboBox;
 

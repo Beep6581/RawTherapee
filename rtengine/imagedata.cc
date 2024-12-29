@@ -736,7 +736,7 @@ FramesData::FramesData(const Glib::ustring &fname, time_t ts) :
         // -----------------------
         // Special file type detection (HDR, PixelShift)
         // ------------------------
-        uint16 bitspersample = 0, samplesperpixel = 0, sampleformat = 0, photometric = 0, compression = 0;
+        std::uint16_t bitspersample = 0, samplesperpixel = 0, sampleformat = 0, photometric = 0, compression = 0;
         const auto bps = exif.findKey(Exiv2::ExifKey("Exif.Image.BitsPerSample"));
         const auto spp = exif.findKey(Exiv2::ExifKey("Exif.Image.SamplesPerPixel"));
         const auto sf = exif.findKey(Exiv2::ExifKey("Exif.Image.SampleFormat"));

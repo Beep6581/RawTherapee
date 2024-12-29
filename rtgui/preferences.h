@@ -24,7 +24,7 @@
 
 #include "dynamicprofilepanel.h"
 #include "options.h"
-#include "../rtengine/profilestore.h"
+#include "rtengine/profilestore.h"
 
 class ExternalEditorPreferences;
 class RTWindow;

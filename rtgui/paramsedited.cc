@@ -23,7 +23,135 @@
 #include "addsetids.h"
 #include "options.h"
 
-#include "../rtengine/procparams.h"
+#include "rtengine/procparams.h"
+
+namespace
+{
+
+using namespace rtengine::procparams;
+
+void setAll(FramingParamsEdited& framing, bool v)
+{
+    framing.enabled = v;
+    framing.framingMethod = v;
+    framing.aspectRatio = v;
+    framing.orientation = v;
+    framing.framedWidth = v;
+    framing.framedHeight = v;
+    framing.allowUpscaling = v;
+
+    framing.borderSizingMethod = v;
+    framing.basis = v;
+    framing.relativeBorderSize = v;
+    framing.minSizeEnabled = v;
+    framing.minWidth = v;
+    framing.minHeight = v;
+    framing.absWidth = v;
+    framing.absHeight = v;
+
+    framing.borderRed = v;
+    framing.borderGreen = v;
+    framing.borderBlue = v;
+}
+
+void initFrom(FramingParamsEdited& edits, const ProcParams& params, const ProcParams& otherParams)
+{
+    const FramingParams& curr = params.framing;
+    const FramingParams& other = otherParams.framing;
+
+    edits.enabled &= curr.enabled == other.enabled;
+    edits.framingMethod &= curr.framingMethod == other.framingMethod;
+    edits.aspectRatio &= curr.aspectRatio == other.aspectRatio;
+    edits.orientation &= curr.orientation == other.orientation;
+    edits.framedWidth &= curr.framedWidth == other.framedWidth;
+    edits.framedHeight &= curr.framedHeight == other.framedHeight;
+    edits.allowUpscaling &= curr.allowUpscaling == other.allowUpscaling;
+
+    edits.borderSizingMethod &= curr.borderSizingMethod == other.borderSizingMethod;
+    edits.basis &= curr.basis == other.basis;
+    edits.relativeBorderSize &= curr.relativeBorderSize == other.relativeBorderSize;
+    edits.minSizeEnabled &= curr.minSizeEnabled == other.minSizeEnabled;
+    edits.minWidth &= curr.minWidth == other.minWidth;
+    edits.minHeight &= curr.minHeight == other.minHeight;
+    edits.absWidth &= curr.absWidth == other.absWidth;
+    edits.absHeight &= curr.absHeight == other.absHeight;
+
+    edits.borderRed &= curr.borderRed == other.borderRed;
+    edits.borderGreen &= curr.borderGreen == other.borderGreen;
+    edits.borderBlue &= curr.borderBlue == other.borderBlue;
+}
+
+void combine(FramingParams& toEdit, const FramingParams& mod, const FramingParamsEdited& edits,
+             bool dontForceSet)
+{
+    if (edits.enabled) {
+        toEdit.enabled = mod.enabled;
+    }
+    if (edits.framingMethod) {
+        toEdit.framingMethod = mod.framingMethod;
+    }
+    if (edits.aspectRatio) {
+        toEdit.aspectRatio = mod.aspectRatio;
+    }
+    if (edits.orientation) {
+        toEdit.orientation = mod.orientation;
+    }
+    if (edits.framedWidth) {
+        toEdit.framedWidth = mod.framedWidth;
+    }
+    if (edits.framedHeight) {
+        toEdit.framedHeight = mod.framedHeight;
+    }
+    if (edits.allowUpscaling) {
+        toEdit.allowUpscaling = mod.allowUpscaling;
+    }
+
+    if (edits.borderSizingMethod) {
+        toEdit.borderSizingMethod = mod.borderSizingMethod;
+    }
+    if (edits.basis) {
+        toEdit.basis = mod.basis;
+    }
+    if (edits.relativeBorderSize) {
+        toEdit.relativeBorderSize =
+            dontForceSet && options.baBehav[ADDSET_FRAMING_RELATIVE_SCALE] ?
+                toEdit.relativeBorderSize + mod.relativeBorderSize :
+                mod.relativeBorderSize;
+    }
+    if (edits.minSizeEnabled) {
+        toEdit.minSizeEnabled = mod.minSizeEnabled;
+    }
+    if (edits.minWidth) {
+        toEdit.minWidth = mod.minWidth;
+    }
+    if (edits.minHeight) {
+        toEdit.minHeight = mod.minHeight;
+    }
+    if (edits.absWidth) {
+        toEdit.absWidth = mod.absWidth;
+    }
+    if (edits.absHeight) {
+        toEdit.absHeight = mod.absHeight;
+    }
+
+    if (edits.borderRed) {
+        toEdit.borderRed = dontForceSet && options.baBehav[ADDSET_FRAMING_BORDER_RED] ?
+            toEdit.borderRed + mod.borderRed :
+            mod.borderRed;
+    }
+    if (edits.borderGreen) {
+        toEdit.borderGreen = dontForceSet && options.baBehav[ADDSET_FRAMING_BORDER_GREEN] ?
+            toEdit.borderGreen + mod.borderGreen :
+            mod.borderGreen;
+    }
+    if (edits.borderBlue) {
+        toEdit.borderBlue = dontForceSet && options.baBehav[ADDSET_FRAMING_BORDER_BLUE] ?
+            toEdit.borderBlue + mod.borderBlue :
+            mod.borderBlue;
+    }
+}
+
+}  // namespace
 
 ParamsEdited::ParamsEdited(bool value)
 {
@@ -448,7 +576,6 @@ void ParamsEdited::set(bool v)
     blackwhite.autoc    = v;
     blackwhite.algo    = v;
 
-
     resize.scale     = v;
     resize.appliesTo = v;
     resize.method    = v;
@@ -458,11 +585,13 @@ void ParamsEdited::set(bool v)
     resize.longedge  = v;
     resize.shortedge = v;
     resize.enabled   = v;
+    resize.allowUpscaling = v;
+
+    ::setAll(framing, v);
 
     spot.enabled = v;
     spot.entries = v;
 
-    resize.allowUpscaling = v;
     icm.inputProfile = v;
     icm.toneCurve = v;
     icm.applyLookTable = v;
@@ -2006,9 +2135,12 @@ void ParamsEdited::initFrom(const std::vector<rtengine::procparams::ProcParams>&
         resize.longedge = resize.longedge && p.resize.longedge == other.resize.longedge;
         resize.shortedge = resize.shortedge && p.resize.shortedge == other.resize.shortedge;
         resize.enabled = resize.enabled && p.resize.enabled == other.resize.enabled;
+        resize.allowUpscaling = resize.allowUpscaling && p.resize.allowUpscaling == other.resize.allowUpscaling;
+
+        ::initFrom(framing, p, other);
+
         spot.enabled = spot.enabled && p.spot.enabled == other.spot.enabled;
         spot.entries = spot.entries && p.spot.entries == other.spot.entries;
-        resize.allowUpscaling = resize.allowUpscaling && p.resize.allowUpscaling == other.resize.allowUpscaling;
         icm.inputProfile = icm.inputProfile && p.icm.inputProfile == other.icm.inputProfile;
         icm.toneCurve = icm.toneCurve && p.icm.toneCurve == other.icm.toneCurve;
         icm.applyLookTable = icm.applyLookTable && p.icm.applyLookTable == other.icm.applyLookTable;
@@ -6949,6 +7081,8 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
     if (resize.allowUpscaling) {
         toEdit.resize.allowUpscaling = mods.resize.allowUpscaling;
     }
+
+    ::combine(toEdit.framing, mods.framing, framing, dontforceSet);
 
     if (icm.inputProfile) {
         toEdit.icm.inputProfile = mods.icm.inputProfile;

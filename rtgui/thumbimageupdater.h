@@ -21,7 +21,7 @@
 #include <glib.h>
 
 
-#include "../rtengine/noncopyable.h"
+#include "rtengine/noncopyable.h"
 
 namespace rtengine
 {

@@ -21,10 +21,10 @@
 #include "spot.h"
 #include "rtimage.h"
 #include <iomanip>
-#include "../rtengine/rt_math.h"
+#include "rtengine/rt_math.h"
 #include "guiutils.h"
 #include "eventmapper.h"
-#include "../rtengine/refreshmap.h"
+#include "rtengine/refreshmap.h"
 
 using namespace rtengine;
 using namespace rtengine::procparams;

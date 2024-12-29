@@ -24,7 +24,7 @@
 #include "controllines.h"
 #include "lensgeomlistener.h"
 #include "toolpanel.h"
-#include "../rtengine/tweakoperator.h"
+#include "rtengine/tweakoperator.h"
 
 class PerspCorrectionPanelListener
 {

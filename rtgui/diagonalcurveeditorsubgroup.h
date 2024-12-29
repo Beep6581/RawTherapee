@@ -22,7 +22,7 @@
 
 #include "curveeditorgroup.h"
 #include "adjuster.h"
-#include "../rtengine/noncopyable.h"
+#include "rtengine/noncopyable.h"
 
 class DiagonalCurveEditor;
 class MyDiagonalCurve;

@@ -23,7 +23,7 @@
 
 #include <memory>
 
-#include "../rtengine/coord.h"
+#include "rtengine/coord.h"
 #include "editcallbacks.h"
 #include "threadutils.h"
 #include "toolpanel.h"

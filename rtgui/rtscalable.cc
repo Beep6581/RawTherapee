@@ -23,7 +23,7 @@
 #include <iostream>
 #include <librsvg/rsvg.h>
 
-#include "../rtengine/settings.h"
+#include "rtengine/settings.h"
 #include "guiutils.h"
 
 extern Glib::ustring argv0;
@@ -87,7 +87,7 @@ Cairo::RefPtr<Cairo::ImageSurface> RTScalable::loadSurfaceFromIcon(const Glib::u
     // Create surface from corresponding icon
     const auto pos = iconPath.find_last_of('.');
 
-    if (pos >= 0 && pos < iconPath.length()) {
+    if (pos < iconPath.length()) {
         const auto fext = iconPath.substr(pos + 1, iconPath.length()).lowercase();
 
         // Case where iconPath is a PNG file
@@ -220,7 +220,7 @@ Cairo::RefPtr<Cairo::ImageSurface> RTScalable::loadSurfaceFromSVG(const Glib::us
             return surf;
         }
 
-        rsvg_handle_free(handle);
+        g_object_unref(handle);
 
         // Set device scale to avoid blur effect
         cairo_surface_set_device_scale(surf->cobj(),

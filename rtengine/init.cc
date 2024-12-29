@@ -32,7 +32,7 @@
 #include "ffmanager.h"
 #include "rtthumbnail.h"
 #include "profilestore.h"
-#include "../rtgui/threadutils.h"
+#include "rtgui/threadutils.h"
 #include "rtlensfun.h"
 #include "metadata.h"
 #include "procparams.h"

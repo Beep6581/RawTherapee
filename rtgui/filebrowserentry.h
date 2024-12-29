@@ -30,8 +30,8 @@
 #include "thumbimageupdater.h"
 #include "thumbnaillistener.h"
 
-#include "../rtengine/noncopyable.h"
-#include "../rtengine/rtengine.h"
+#include "rtengine/noncopyable.h"
+#include "rtengine/rtengine.h"
 
 class FileBrowserEntry;
 class Thumbnail;

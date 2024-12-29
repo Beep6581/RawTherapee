@@ -20,9 +20,9 @@
 #include <glib/gstdio.h>
 #include <cstring>
 #include <functional>
-#include "../rtengine/imagedata.h"
-#include "../rtengine/rt_math.h"
-#include "../rtengine/procparams.h"
+#include "rtengine/imagedata.h"
+#include "rtengine/rt_math.h"
+#include "rtengine/procparams.h"
 
 #include <fstream>
 #include <iomanip>

@@ -24,7 +24,7 @@
 
 #include "editcallbacks.h"
 
-#include "../rtengine/curves.h"
+#include "rtengine/curves.h"
 
 MyFlatCurve::MyFlatCurve () :
     MyCurve(),
@@ -1598,7 +1598,8 @@ void MyFlatCurve::movePoint(bool moveX, bool moveY, bool pipetteDrag)
 void MyFlatCurve::getCursorPosition(Gdk::EventType evType, bool isHint, int evX, int evY, Gdk::ModifierType modifierKey)
 {
     int tx, ty;
-    int prevCursorX, prevCursorY;
+    int prevCursorX = cursorX;
+    int prevCursorY = cursorY;
     double incrementX = 1. / double(graphW);
     double incrementY = 1. / double(graphH);
 
@@ -1625,11 +1626,6 @@ void MyFlatCurve::getCursorPosition(Gdk::EventType evType, bool isHint, int evX,
         // The cursor position is not available
         return;
         break;
-    }
-
-    if (editedHandle != FCT_EditedHandle_None) {
-        prevCursorX = cursorX;
-        prevCursorY = cursorY;
     }
 
     cursorX = tx - graphX;

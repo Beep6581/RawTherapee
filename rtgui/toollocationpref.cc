@@ -133,6 +133,8 @@ Glib::ustring getToolTitleKey(Tool tool)
             return "TP_RESIZE_LABEL";
         case Tool::PR_SHARPENING:
             return "TP_PRSHARPENING_LABEL";
+        case Tool::FRAMING:
+            return "TP_FRAMING_LABEL";
         case Tool::CROP_TOOL:
             return "TP_CROP_LABEL";
         case Tool::ICM:

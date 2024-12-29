@@ -26,7 +26,7 @@
 #include "curvelistener.h"
 #include "mycurve.h"
 
-#include "../rtengine/diagonalcurvetypes.h"
+#include "rtengine/diagonalcurvetypes.h"
 
 template<typename T>
 class LUT;

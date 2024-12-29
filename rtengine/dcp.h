@@ -26,7 +26,7 @@
 
 #include <glibmm/ustring.h>
 
-#include "../rtgui/threadutils.h"
+#include "rtgui/threadutils.h"
 
 #include "curves.h"
 #include "noncopyable.h"
