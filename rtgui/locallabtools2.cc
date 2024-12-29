@@ -13284,13 +13284,15 @@ void Locallabcie::adjusterChanged(Adjuster* a, double newval)
 
         if (a == slopesmog ) {
             if(smoothcielnk->get_active()) {
+                BlockAdjusterEvents block_slopesmob(slopesmob);
+                BlockAdjusterEvents block_slopesmor(slopesmor);
+                slopesmob->setValue(newval);
+                slopesmor->setValue(newval);
                 if (listener) {
                     listener->panelChanged(Evlocallabslopesmog,
                                        slopesmog->getTextValue() + spName);
                 
                 }
-                slopesmob->setValue(newval);
-                slopesmor->setValue(newval);
             } else {
                 if (listener) {
                     listener->panelChanged(Evlocallabslopesmog,
@@ -13303,13 +13305,15 @@ void Locallabcie::adjusterChanged(Adjuster* a, double newval)
 
         if (a == slopesmor ) {
             if(smoothcielnk->get_active()) {
+                BlockAdjusterEvents block_slopesmob(slopesmob);
+                BlockAdjusterEvents block_slopesmog(slopesmog);
+                slopesmob->setValue(newval);
+                slopesmog->setValue(newval);
                 if (listener) {
                     listener->panelChanged(Evlocallabslopesmor,
                                        slopesmor->getTextValue() + spName);
                 
                 }
-                slopesmob->setValue(newval);
-                slopesmog->setValue(newval);
             } else {
                 if (listener) {
                     listener->panelChanged(Evlocallabslopesmor,
@@ -13321,13 +13325,15 @@ void Locallabcie::adjusterChanged(Adjuster* a, double newval)
 
         if (a == slopesmob ) {
             if(smoothcielnk->get_active()) {
+                BlockAdjusterEvents block_slopesmor(slopesmor);
+                BlockAdjusterEvents block_slopesmog(slopesmog);
+                slopesmor->setValue(newval);
+                slopesmog->setValue(newval);
                 if (listener) {
                     listener->panelChanged(Evlocallabslopesmob,
                                        slopesmob->getTextValue() + spName);
                 
                 }
-                slopesmor->setValue(newval);
-                slopesmog->setValue(newval);
             } else {
                 if (listener) {
                     listener->panelChanged(Evlocallabslopesmob,
