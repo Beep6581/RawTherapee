@@ -27,7 +27,7 @@
 #include <glibmm/fileutils.h>
 
 #include "rtengine.h"
-#include "../rtgui/options.h"
+#include "rtgui/options.h"
 
 using namespace rtengine;
 using namespace rtengine::procparams;

@@ -31,10 +31,10 @@
 #include "editcallbacks.h"
 #include <unistd.h>
 
-#include "../rtengine/dcp.h"
-#include "../rtengine/iccstore.h"
-#include "../rtengine/procparams.h"
-#include "../rtengine/utils.h"
+#include "rtengine/dcp.h"
+#include "rtengine/iccstore.h"
+#include "rtengine/procparams.h"
+#include "rtengine/utils.h"
 
 using namespace rtengine;
 using namespace rtengine::procparams;

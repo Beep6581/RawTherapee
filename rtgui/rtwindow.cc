@@ -27,7 +27,7 @@
 #include "rtimage.h"
 #include "thumbnail.h"
 #include "whitebalance.h"
-#include "../rtengine/settings.h"
+#include "rtengine/settings.h"
 #include "batchqueuepanel.h"
 #include "batchqueueentry.h"
 #include "editorpanel.h"

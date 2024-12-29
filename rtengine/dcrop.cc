@@ -37,7 +37,7 @@
 #include "rt_math.h"
 #include "utils.h"
 
-#include "../rtgui/editcallbacks.h"
+#include "rtgui/editcallbacks.h"
 
 #pragma GCC diagnostic warning "-Wall"
 #pragma GCC diagnostic warning "-Wextra"

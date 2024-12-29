@@ -32,11 +32,11 @@
 #include "procparams.h"
 #include "utils.h"
 
-#include "../rtgui/multilangmgr.h"
-#include "../rtgui/options.h"
-#include "../rtgui/paramsedited.h"
-#include "../rtgui/ppversion.h"
-#include "../rtgui/version.h"
+#include "rtgui/multilangmgr.h"
+#include "rtgui/options.h"
+#include "rtgui/paramsedited.h"
+#include "rtgui/ppversion.h"
+#include "rtgui/version.h"
 
 using namespace std;
 
@@ -427,6 +427,181 @@ bool saveToKeyfile(
     return false;
 }
 
+namespace ProfileKeys {
+
+#define DEFINE_KEY(VAR, NAME) \
+    constexpr const char* VAR = NAME;
+
+DEFINE_KEY(TOOL_ENABLED, "Enabled");
+
+namespace Framing
+{
+    DEFINE_KEY(TOOL_NAME, "Framing");
+
+    // Fields
+    DEFINE_KEY(FRAMING_METHOD, "FramingMethod");
+    DEFINE_KEY(ASPECT_RATIO, "AspectRatio");
+    DEFINE_KEY(ORIENTATION, "Orientation");
+    DEFINE_KEY(FRAMED_WIDTH, "FramedWidth");
+    DEFINE_KEY(FRAMED_HEIGHT, "FramedHeight");
+    DEFINE_KEY(ALLOW_UPSCALING, "AllowUpscaling");
+
+    DEFINE_KEY(BORDER_SIZING_METHOD, "BorderSizingMethod");
+    DEFINE_KEY(BASIS, "Basis");
+    DEFINE_KEY(RELATIVE_BORDER_SIZE, "RelativeBorderSize");
+    DEFINE_KEY(MIN_SIZE_ENABLED, "MinSizeEnabled");
+    DEFINE_KEY(MIN_WIDTH, "MinWidth");
+    DEFINE_KEY(MIN_HEIGHT, "MinHeight");
+    DEFINE_KEY(ABS_WIDTH, "AbsWidth");
+    DEFINE_KEY(ABS_HEIGHT, "AbsHeight");
+
+    DEFINE_KEY(BORDER_RED, "BorderRed");
+    DEFINE_KEY(BORDER_GREEN, "BorderGreen");
+    DEFINE_KEY(BORDER_BLUE, "BorderBlue");
+
+    // Enum mappings
+    DEFINE_KEY(FRAMING_METHOD_STANDARD, "Standard");
+    DEFINE_KEY(FRAMING_METHOD_BBOX, "BoundingBox");
+    DEFINE_KEY(FRAMING_METHOD_FIXED_SIZE, "FixedSize");
+    DEFINE_KEY(ORIENT_AS_IMAGE, "AsImage");
+    DEFINE_KEY(ORIENT_LANDSCAPE, "Landscape");
+    DEFINE_KEY(ORIENT_PORTRAIT, "Portrait");
+    DEFINE_KEY(BORDER_SIZING_PERCENTAGE, "Percentage");
+    DEFINE_KEY(BORDER_SIZING_UNIFORM_PERCENTAGE, "UniformPercentage");
+    DEFINE_KEY(BORDER_SIZING_FIXED_SIZE, "FixedSize");
+    DEFINE_KEY(BASIS_AUTO, "Auto");
+    DEFINE_KEY(BASIS_WIDTH, "Width");
+    DEFINE_KEY(BASIS_HEIGHT, "Height");
+    DEFINE_KEY(BASIS_LONG, "Long");
+    DEFINE_KEY(BASIS_SHORT, "Short");
+}  // namespace Framing
+
+}  // namespace ProfileKeys
+
+void loadFramingParams(
+    const Glib::KeyFile& keyFile,
+    rtengine::procparams::FramingParams& params,
+    FramingParamsEdited& edited
+)
+{
+    using namespace ProfileKeys;
+    using namespace ProfileKeys::Framing;
+    using FramingParams = rtengine::procparams::FramingParams;
+
+    const Glib::ustring group{TOOL_NAME};
+    if (!keyFile.has_group(group)) return;
+
+    assignFromKeyfile(keyFile, group, TOOL_ENABLED, params.enabled, edited.enabled);
+
+    using FramingMethod = FramingParams::FramingMethod;
+    const std::map<std::string, FramingMethod> framingMethodMapping = {
+        {FRAMING_METHOD_STANDARD, FramingMethod::STANDARD},
+        {FRAMING_METHOD_BBOX, FramingMethod::BBOX},
+        {FRAMING_METHOD_FIXED_SIZE, FramingMethod::FIXED_SIZE}
+    };
+    assignFromKeyfile(keyFile, group, FRAMING_METHOD, framingMethodMapping, params.framingMethod, edited.framingMethod);
+    assignFromKeyfile(keyFile, group, ASPECT_RATIO, params.aspectRatio, edited.aspectRatio);
+    using Orientation = FramingParams::Orientation;
+    const std::map<std::string, Orientation> orientationMapping = {
+        {ORIENT_AS_IMAGE, Orientation::AS_IMAGE},
+        {ORIENT_LANDSCAPE, Orientation::LANDSCAPE},
+        {ORIENT_PORTRAIT, Orientation::PORTRAIT},
+    };
+    assignFromKeyfile(keyFile, group, ORIENTATION, orientationMapping, params.orientation, edited.orientation);
+    assignFromKeyfile(keyFile, group, FRAMED_WIDTH, params.framedWidth, edited.framedWidth);
+    assignFromKeyfile(keyFile, group, FRAMED_HEIGHT, params.framedHeight, edited.framedHeight);
+    assignFromKeyfile(keyFile, group, ALLOW_UPSCALING, params.allowUpscaling, edited.allowUpscaling);
+
+    using BorderSizing = FramingParams::BorderSizing;
+    const std::map<std::string, BorderSizing> borderSizingMapping = {
+        {BORDER_SIZING_PERCENTAGE, BorderSizing::PERCENTAGE},
+        {BORDER_SIZING_UNIFORM_PERCENTAGE, BorderSizing::UNIFORM_PERCENTAGE},
+        {BORDER_SIZING_FIXED_SIZE, BorderSizing::FIXED_SIZE}
+    };
+    assignFromKeyfile(keyFile, group, BORDER_SIZING_METHOD, borderSizingMapping, params.borderSizingMethod, edited.borderSizingMethod);
+    using Basis = FramingParams::Basis;
+    const std::map<std::string, Basis> basisMapping = {
+        {BASIS_AUTO, Basis::AUTO},
+        {BASIS_WIDTH, Basis::WIDTH},
+        {BASIS_HEIGHT, Basis::HEIGHT},
+        {BASIS_LONG, Basis::LONG},
+        {BASIS_SHORT, Basis::SHORT}
+    };
+    assignFromKeyfile(keyFile, group, BASIS, basisMapping, params.basis, edited.basis);
+    assignFromKeyfile(keyFile, group, RELATIVE_BORDER_SIZE, params.relativeBorderSize, edited.relativeBorderSize);
+    assignFromKeyfile(keyFile, group, MIN_SIZE_ENABLED, params.minSizeEnabled, edited.minSizeEnabled);
+    assignFromKeyfile(keyFile, group, MIN_WIDTH, params.minWidth, edited.minWidth);
+    assignFromKeyfile(keyFile, group, MIN_HEIGHT, params.minHeight, edited.minHeight);
+    assignFromKeyfile(keyFile, group, ABS_WIDTH, params.absWidth, edited.absWidth);
+    assignFromKeyfile(keyFile, group, ABS_HEIGHT, params.absHeight, edited.absHeight);
+
+    assignFromKeyfile(keyFile, group, BORDER_RED, params.borderRed, edited.borderRed);
+    assignFromKeyfile(keyFile, group, BORDER_GREEN, params.borderGreen, edited.borderGreen);
+    assignFromKeyfile(keyFile, group, BORDER_BLUE, params.borderBlue, edited.borderBlue);
+}
+
+void saveFramingParams(
+    Glib::KeyFile& keyFile,
+    const rtengine::procparams::FramingParams& params,
+    const ParamsEdited* pedited
+)
+{
+    using namespace ProfileKeys;
+    using namespace ProfileKeys::Framing;
+    using FramingParams = rtengine::procparams::FramingParams;
+
+    const Glib::ustring group{TOOL_NAME};
+
+    const FramingParamsEdited& edited = pedited->framing;
+
+    saveToKeyfile(!pedited || edited.enabled, group, TOOL_ENABLED, params.enabled, keyFile);
+
+    using FramingMethod = FramingParams::FramingMethod;
+    const std::map<FramingMethod, const char*> framingMethodMapping = {
+        {FramingMethod::STANDARD, FRAMING_METHOD_STANDARD},
+        {FramingMethod::BBOX, FRAMING_METHOD_BBOX},
+        {FramingMethod::FIXED_SIZE, FRAMING_METHOD_FIXED_SIZE}
+    };
+    saveToKeyfile(!pedited || edited.framingMethod, group, FRAMING_METHOD, framingMethodMapping, params.framingMethod, keyFile);
+    saveToKeyfile(!pedited || edited.aspectRatio, group, ASPECT_RATIO, params.aspectRatio, keyFile);
+    using Orientation = FramingParams::Orientation;
+    const std::map<Orientation, const char*> orientationMapping = {
+        {Orientation::AS_IMAGE, ORIENT_AS_IMAGE},
+        {Orientation::LANDSCAPE, ORIENT_LANDSCAPE},
+        {Orientation::PORTRAIT, ORIENT_PORTRAIT},
+    };
+    saveToKeyfile(!pedited || edited.orientation, group, ORIENTATION, orientationMapping, params.orientation, keyFile);
+    saveToKeyfile(!pedited || edited.framedWidth, group, FRAMED_WIDTH, params.framedWidth, keyFile);
+    saveToKeyfile(!pedited || edited.framedHeight, group, FRAMED_HEIGHT, params.framedHeight, keyFile);
+    saveToKeyfile(!pedited || edited.allowUpscaling, group, ALLOW_UPSCALING, params.allowUpscaling, keyFile);
+
+    using BorderSizing = FramingParams::BorderSizing;
+    const std::map<BorderSizing, const char*> borderSizingMapping = {
+        {BorderSizing::PERCENTAGE, BORDER_SIZING_PERCENTAGE},
+        {BorderSizing::UNIFORM_PERCENTAGE, BORDER_SIZING_UNIFORM_PERCENTAGE},
+        {BorderSizing::FIXED_SIZE, BORDER_SIZING_FIXED_SIZE}
+    };
+    saveToKeyfile(!pedited || edited.borderSizingMethod, group, BORDER_SIZING_METHOD, borderSizingMapping, params.borderSizingMethod, keyFile);
+    using Basis = FramingParams::Basis;
+    const std::map<Basis, const char*> basisMapping = {
+        {Basis::AUTO, BASIS_AUTO},
+        {Basis::WIDTH, BASIS_WIDTH},
+        {Basis::HEIGHT, BASIS_HEIGHT},
+        {Basis::LONG, BASIS_LONG},
+        {Basis::SHORT, BASIS_SHORT}
+    };
+    saveToKeyfile(!pedited || edited.basis, group, BASIS, basisMapping, params.basis, keyFile);
+    saveToKeyfile(!pedited || edited.relativeBorderSize, group, RELATIVE_BORDER_SIZE, params.relativeBorderSize, keyFile);
+    saveToKeyfile(!pedited || edited.minSizeEnabled, group, MIN_SIZE_ENABLED, params.minSizeEnabled, keyFile);
+    saveToKeyfile(!pedited || edited.minWidth, group, MIN_WIDTH, params.minWidth, keyFile);
+    saveToKeyfile(!pedited || edited.minHeight, group, MIN_HEIGHT, params.minHeight, keyFile);
+    saveToKeyfile(!pedited || edited.absWidth, group, ABS_WIDTH, params.absWidth, keyFile);
+    saveToKeyfile(!pedited || edited.absHeight, group, ABS_HEIGHT, params.absHeight, keyFile);
+
+    saveToKeyfile(!pedited || edited.borderRed, group, BORDER_RED, params.borderRed, keyFile);
+    saveToKeyfile(!pedited || edited.borderGreen, group, BORDER_GREEN, params.borderGreen, keyFile);
+    saveToKeyfile(!pedited || edited.borderBlue, group, BORDER_BLUE, params.borderBlue, keyFile);
+}
 
 } // namespace
 
@@ -2421,6 +2596,56 @@ bool ResizeParams::operator ==(const ResizeParams& other) const
 }
 
 bool ResizeParams::operator !=(const ResizeParams& other) const
+{
+    return !(*this == other);
+}
+
+FramingParams::FramingParams() :
+    enabled(false),
+    framingMethod(FramingMethod::STANDARD),
+    aspectRatio(0),
+    orientation(Orientation::AS_IMAGE),
+    framedWidth(800),
+    framedHeight(600),
+    allowUpscaling(false),
+    borderSizingMethod(BorderSizing::PERCENTAGE),
+    basis(Basis::AUTO),
+    relativeBorderSize(0.1),
+    minSizeEnabled(false),
+    minWidth(0),
+    minHeight(0),
+    absWidth(0),
+    absHeight(0),
+    borderRed(255),
+    borderGreen(255),
+    borderBlue(255)
+{
+}
+
+bool FramingParams::operator ==(const FramingParams& other) const
+{
+    return
+        enabled == other.enabled
+        && framingMethod == other.framingMethod
+        && aspectRatio == other.aspectRatio
+        && orientation == other.orientation
+        && framedWidth == other.framedWidth
+        && framedHeight == other.framedHeight
+        && allowUpscaling == other.allowUpscaling
+        && borderSizingMethod == other.borderSizingMethod
+        && basis == other.basis
+        && relativeBorderSize == other.relativeBorderSize
+        && minSizeEnabled == other.minSizeEnabled
+        && minWidth == other.minWidth
+        && minHeight == other.minHeight
+        && absWidth == other.absWidth
+        && absHeight == other.absHeight
+        && borderRed == other.borderRed
+        && borderGreen == other.borderGreen
+        && borderBlue == other.borderBlue;
+}
+
+bool FramingParams::operator !=(const FramingParams& other) const
 {
     return !(*this == other);
 }
@@ -6418,6 +6643,8 @@ void ProcParams::setDefaults()
 
     resize = {};
 
+    framing = {};
+
     icm = {};
 
     wavelet = {};
@@ -7771,6 +7998,8 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
         saveToKeyfile(!pedited || pedited->resize.longedge, "Resize", "LongEdge", resize.longedge, keyFile);
         saveToKeyfile(!pedited || pedited->resize.shortedge, "Resize", "ShortEdge", resize.shortedge, keyFile);
         saveToKeyfile(!pedited || pedited->resize.allowUpscaling, "Resize", "AllowUpscaling", resize.allowUpscaling, keyFile);
+
+        saveFramingParams(keyFile, framing, pedited);
 
 // Post demosaic sharpening
         saveToKeyfile(!pedited || pedited->pdsharpening.enabled, "PostDemosaicSharpening", "Enabled", pdsharpening.enabled, keyFile);
@@ -10349,6 +10578,8 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
             }
         }
 
+        loadFramingParams(keyFile, framing, pedited->framing);
+
         if (keyFile.has_group ("Spot removal")) {
             assignFromKeyfile(keyFile, "Spot removal", "Enabled", spot.enabled, pedited->spot.enabled);
             int i = 0;
@@ -11602,6 +11833,7 @@ bool ProcParams::operator ==(const ProcParams& other) const
         && chmixer == other.chmixer
         && blackwhite == other.blackwhite
         && resize == other.resize
+        && framing == other.framing
         && spot == other.spot
         && raw == other.raw
         && icm == other.icm

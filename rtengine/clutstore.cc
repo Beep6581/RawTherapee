@@ -13,7 +13,7 @@
 #include "rt_math.h"
 #include "stdimagesource.h"
 
-#include "../rtgui/options.h"
+#include "rtgui/options.h"
 
 namespace
 {

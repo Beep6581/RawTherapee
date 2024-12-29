@@ -26,7 +26,7 @@
 #include <glibmm/main.h>
 #include <glibmm/signalproxy.h>
 
-#include "../rtengine/noncopyable.h"
+#include "rtengine/noncopyable.h"
 
 namespace delayed_helper
 {

@@ -25,7 +25,7 @@
 
 #include "threadutils.h"
 
-#include "../rtengine/noncopyable.h"
+#include "rtengine/noncopyable.h"
 
 class CacheImageData;
 class Thumbnail;

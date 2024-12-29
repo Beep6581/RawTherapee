@@ -24,8 +24,8 @@
 #include "version.h"
 #include <locale.h>
 
-#include "../rtengine/procparams.h"
-#include "../rtengine/settings.h"
+#include "rtengine/procparams.h"
+#include "rtengine/settings.h"
 
 
 namespace

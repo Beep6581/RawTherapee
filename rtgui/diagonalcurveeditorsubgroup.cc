@@ -34,7 +34,7 @@
 #include "options.h"
 #include "popuptogglebutton.h"
 
-#include "../rtengine/curves.h"
+#include "rtengine/curves.h"
 
 DiagonalCurveEditorSubGroup::DiagonalCurveEditorSubGroup (CurveEditorGroup* prt, Glib::ustring& curveDir) : CurveEditorSubGroup(curveDir)
 {

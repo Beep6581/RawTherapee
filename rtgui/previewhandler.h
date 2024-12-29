@@ -26,8 +26,8 @@
 #include "guiutils.h"
 #include "threadutils.h"
 
-#include "../rtengine/noncopyable.h"
-#include "../rtengine/rtengine.h"
+#include "rtengine/noncopyable.h"
+#include "rtengine/rtengine.h"
 
 class PreviewListener
 {

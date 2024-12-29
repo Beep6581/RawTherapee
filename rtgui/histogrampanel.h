@@ -31,9 +31,9 @@
 #include "options.h"
 #include "pointermotionlistener.h"
 
-#include "../rtengine/array2D.h"
-#include "../rtengine/LUT.h"
-#include "../rtengine/noncopyable.h"
+#include "rtengine/array2D.h"
+#include "rtengine/LUT.h"
+#include "rtengine/noncopyable.h"
 
 
 class HistogramScaling

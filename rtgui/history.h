@@ -24,7 +24,7 @@
 #include "pparamschangelistener.h"
 #include "profilechangelistener.h"
 
-#include "../rtengine/rtengine.h"
+#include "rtengine/rtengine.h"
 
 class HistoryBeforeLineListener
 {

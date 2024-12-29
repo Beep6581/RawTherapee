@@ -49,7 +49,7 @@
 #include "StopWatch.h"
 #include "utils.h"
 
-#include "../rtgui/editcallbacks.h"
+#include "rtgui/editcallbacks.h"
 
 #pragma GCC diagnostic warning "-Wextra"
 #pragma GCC diagnostic warning "-Wdouble-promotion"

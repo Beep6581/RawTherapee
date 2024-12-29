@@ -19,10 +19,10 @@
 
 #include "dynamicprofilepanel.h"
 #include "multilangmgr.h"
-#include "../rtengine/profilestore.h"
-#include "../rtengine/rtengine.h"
-#include "../rtengine/dynamicprofile.h"
-#include "../rtengine/settings.h"
+#include "rtengine/profilestore.h"
+#include "rtengine/rtengine.h"
+#include "rtengine/dynamicprofile.h"
+#include "rtengine/settings.h"
 #include <sstream>
 #include <iomanip>
 

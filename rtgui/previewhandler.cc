@@ -18,8 +18,8 @@
  */
 #include "previewhandler.h"
 #include <gtkmm.h>
-#include "../rtengine/rtengine.h"
-#include "../rtengine/procparams.h"
+#include "rtengine/rtengine.h"
+#include "rtengine/procparams.h"
 
 using namespace rtengine;
 using namespace rtengine::procparams;

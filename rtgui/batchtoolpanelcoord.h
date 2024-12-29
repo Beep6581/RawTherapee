@@ -23,8 +23,8 @@
 #include "thumbnaillistener.h"
 #include "toolpanelcoord.h"
 
-#include "../rtengine/procevents.h"
-#include "../rtengine/procparams.h"
+#include "rtengine/procevents.h"
+#include "rtengine/procparams.h"
 
 class FilePanel;
 class Thumbnail;

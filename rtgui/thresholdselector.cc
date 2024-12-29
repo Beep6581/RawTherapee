@@ -26,7 +26,7 @@
 #include "mycurve.h"
 #include "rtscalable.h"
 
-#include "../rtengine/procparams.h"
+#include "rtengine/procparams.h"
 
 ThresholdSelector::ThresholdSelector(double minValueBottom, double maxValueBottom, double defBottom, Glib::ustring labelBottom, unsigned int precisionBottom,
                                      double minValueTop,    double maxValueTop,    double defTop,    Glib::ustring labelTop,    unsigned int precisionTop,

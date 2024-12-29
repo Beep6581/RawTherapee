@@ -29,7 +29,7 @@
 #include "progressconnector.h"
 #include "splash.h"
 
-#include "../rtengine/noncopyable.h"
+#include "rtengine/noncopyable.h"
 
 class BatchQueueEntry;
 class BatchQueuePanel;

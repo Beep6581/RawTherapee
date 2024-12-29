@@ -26,8 +26,8 @@
 #include "pathutils.h"
 #include "rtimage.h"
 
-#include "../rtengine/procparams.h"
-#include "../rtengine/procevents.h"
+#include "rtengine/procparams.h"
+#include "rtengine/procevents.h"
 
 using namespace rtengine;
 using namespace rtengine::procparams;

@@ -29,7 +29,7 @@
 #include "curvelistener.h"
 #include "thresholdadjuster.h"
 
-#include "../rtengine/imagedata.h"
+#include "rtengine/imagedata.h"
 
 class ICMPanelListener
 {

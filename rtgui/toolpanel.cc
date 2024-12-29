@@ -21,7 +21,7 @@
 #include "guiutils.h"
 #include "rtimage.h"
 
-#include "../rtengine/procparams.h"
+#include "rtengine/procparams.h"
 
 using namespace rtengine::procparams;
 

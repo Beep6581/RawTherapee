@@ -36,7 +36,7 @@
 #include "rawimage.h"
 #include "utils.h"
 
-#include "../rtgui/options.h"
+#include "rtgui/options.h"
 
 namespace
 {

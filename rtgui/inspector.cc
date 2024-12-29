@@ -25,8 +25,8 @@
 #include "options.h"
 #include "pathutils.h"
 #include "rtscalable.h"
-#include "../rtengine/previewimage.h"
-#include "../rtengine/rt_math.h"
+#include "rtengine/previewimage.h"
+#include "rtengine/rt_math.h"
 
 InspectorBuffer::InspectorBuffer(const Glib::ustring &imagePath) : currTransform(0), fromRaw(false)
 {

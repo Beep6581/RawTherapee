@@ -29,7 +29,7 @@
 #else
 #include <gtkmm/enums.h>
 #endif
-#include "../rtengine/settings.h"
+#include "rtengine/settings.h"
 #include <exception>
 
 #define STARTUPDIR_CURRENT 0

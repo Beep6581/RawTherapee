@@ -31,7 +31,7 @@
 #include "thumbnail.h"
 #include "toolbar.h"
 
-#include "../rtengine/procparams.h"
+#include "rtengine/procparams.h"
 
 #define CROPRESIZEBORDER 4
 

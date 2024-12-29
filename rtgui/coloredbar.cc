@@ -18,7 +18,7 @@
  */
 
 #include "coloredbar.h"
-#include "../rtengine/utils.h"
+#include "rtengine/utils.h"
 
 ColoredBar::ColoredBar (eRTOrientation orient)
 {

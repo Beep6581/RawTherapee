@@ -1999,6 +1999,68 @@ struct ResizeParams {
     bool operator !=(const ResizeParams& other) const;
 };
 
+struct FramingParams {
+    // How is framed size determined?
+    enum class FramingMethod {
+        STANDARD,   // Unconstrained framed size
+        BBOX,       // Framed size within bounding box
+        FIXED_SIZE  // Fixed framed size
+    };
+
+    // Orientation of framed image
+    enum class Orientation {
+        AS_IMAGE,
+        LANDSCAPE,
+        PORTRAIT
+    };
+
+    // How to size border?
+    enum class BorderSizing {
+        PERCENTAGE,          // Percentage of image size
+        UNIFORM_PERCENTAGE,  // Percentage of image size (ignore aspect ratio)
+        FIXED_SIZE           // Fixed pixel dimensions
+    };
+
+    // Which dimension to use for percentage based border sizing?
+    enum class Basis {
+        AUTO,    // Determine by aspect ratio of image and frame
+        WIDTH,
+        HEIGHT,
+        LONG,    // Use long side of image
+        SHORT    // Use short side of image
+    };
+
+    // Indicates to use the image aspect ratio for border
+    static constexpr double AS_IMAGE_ASPECT_RATIO = 0.0;
+
+    FramingParams();
+
+    bool enabled;
+
+    FramingMethod framingMethod;
+    double aspectRatio;
+    Orientation orientation;
+    int framedWidth;
+    int framedHeight;
+    bool allowUpscaling;
+
+    BorderSizing borderSizingMethod;
+    Basis basis;
+    double relativeBorderSize;
+    bool minSizeEnabled;
+    int minWidth;
+    int minHeight;
+    int absWidth;
+    int absHeight;
+
+    int borderRed;
+    int borderGreen;
+    int borderBlue;
+
+    bool operator ==(const FramingParams& other) const;
+    bool operator !=(const FramingParams& other) const;
+};
+
 /**
   * Parameters entry
   */
@@ -2791,6 +2853,7 @@ public:
     ChannelMixerParams      chmixer;         ///< Channel mixer parameters
     BlackWhiteParams        blackwhite;      ///< Black&  White parameters
     ResizeParams            resize;          ///< Resize parameters
+    FramingParams           framing;         ///< Framing parameters
     SpotParams              spot;            ///< Spot removal tool
     ColorManagementParams   icm;             ///< profiles/color spaces used during the image processing
     RAWParams               raw;             ///< RAW parameters before demosaicing

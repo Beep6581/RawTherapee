@@ -24,9 +24,9 @@
 #include "rtimage.h"
 #include "options.h"
 
-#include "../rtengine/imagedata.h"
-#include "../rtengine/metadata.h"
-#include "../rtengine/procparams.h"
+#include "rtengine/imagedata.h"
+#include "rtengine/metadata.h"
+#include "rtengine/procparams.h"
 
 #include <glibmm/regex.h>
 

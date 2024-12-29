@@ -37,9 +37,9 @@
 #include "threadutils.h"
 #include "thumbnail.h"
 
-#include "../rtengine/dfmanager.h"
-#include "../rtengine/ffmanager.h"
-#include "../rtengine/procparams.h"
+#include "rtengine/dfmanager.h"
+#include "rtengine/ffmanager.h"
+#include "rtengine/procparams.h"
 
 namespace
 {

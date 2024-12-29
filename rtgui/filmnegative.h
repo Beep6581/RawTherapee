@@ -27,7 +27,7 @@
 #include "guiutils.h"
 #include "toolpanel.h"
 
-#include "../rtengine/colortemp.h"
+#include "rtengine/colortemp.h"
 
 namespace
 {

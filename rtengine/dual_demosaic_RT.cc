@@ -31,7 +31,7 @@
 #include "rt_math.h"
 #include "rtengine.h"
 
-#include "../rtgui/options.h"
+#include "rtgui/options.h"
 
 using namespace std;
 

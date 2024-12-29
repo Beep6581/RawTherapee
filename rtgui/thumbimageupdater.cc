@@ -30,7 +30,7 @@
 #include "threadutils.h"
 #include "thumbnail.h"
 
-#include "../rtengine/procparams.h"
+#include "rtengine/procparams.h"
 
 #ifdef _OPENMP
 #include <omp.h>

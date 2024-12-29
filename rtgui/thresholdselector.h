@@ -22,7 +22,7 @@
 
 #include "coloredbar.h"
 
-#include "../rtengine/procparams.h"
+#include "rtengine/procparams.h"
 
 class ThresholdSelector;
 

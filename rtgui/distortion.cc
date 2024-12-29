@@ -24,8 +24,8 @@
 
 #include "eventmapper.h"
 
-#include "../rtengine/procparams.h"
-#include "../rtengine/refreshmap.h"
+#include "rtengine/procparams.h"
+#include "rtengine/refreshmap.h"
 
 using namespace rtengine;
 using namespace rtengine::procparams;

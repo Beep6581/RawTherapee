@@ -23,10 +23,10 @@
 
 #include <sigc++/slot.h>
 #include "iccprofilecreator.h"
-#include "../rtengine/iccstore.h"
+#include "rtengine/iccstore.h"
 #include "multilangmgr.h"
 #include "cachemanager.h"
-#include "../rtengine/color.h"
+#include "rtengine/color.h"
 #include "options.h"
 #include "pathutils.h"
 #include "rtimage.h"

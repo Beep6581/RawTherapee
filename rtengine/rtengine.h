@@ -34,7 +34,7 @@
 #include "procevents.h"
 #include "settings.h"
 
-#include "../rtgui/threadutils.h"
+#include "rtgui/threadutils.h"
 
 
 /**

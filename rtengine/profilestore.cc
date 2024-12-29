@@ -28,8 +28,8 @@
 #include "dynamicprofile.h"
 #include "procparams.h"
 
-#include "../rtgui/options.h"
-#include "../rtgui/multilangmgr.h"
+#include "rtgui/options.h"
+#include "rtgui/multilangmgr.h"
 
 using namespace rtengine;
 using namespace rtengine::procparams;

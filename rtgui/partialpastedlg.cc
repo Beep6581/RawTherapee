@@ -22,7 +22,7 @@
 #include "multilangmgr.h"
 #include "paramsedited.h"
 
-#include "../rtengine/procparams.h"
+#include "rtengine/procparams.h"
 
 using namespace rtengine::procparams;
 
@@ -266,6 +266,7 @@ PartialPasteDlg::PartialPasteDlg (const Glib::ustring &title, Gtk::Window* paren
     crop         = Gtk::manage (new Gtk::CheckButton (M("PARTIALPASTE_CROP")));
     resize       = Gtk::manage (new Gtk::CheckButton (M("PARTIALPASTE_RESIZE")));
     prsharpening = Gtk::manage (new Gtk::CheckButton (M("PARTIALPASTE_PRSHARPENING")));
+    framing      = Gtk::manage (new Gtk::CheckButton (M("PARTIALPASTE_FRAMING")));
     perspective  = Gtk::manage (new Gtk::CheckButton (M("PARTIALPASTE_PERSPECTIVE")));
     commonTrans  = Gtk::manage (new Gtk::CheckButton (M("PARTIALPASTE_COMMONTRANSFORMPARAMS")));
 
@@ -384,6 +385,7 @@ PartialPasteDlg::PartialPasteDlg (const Glib::ustring &title, Gtk::Window* paren
     vboxes[4]->pack_start (*crop, Gtk::PACK_SHRINK, 2);
     vboxes[4]->pack_start (*resize, Gtk::PACK_SHRINK, 2);
     vboxes[4]->pack_start (*prsharpening, Gtk::PACK_SHRINK, 2);
+    vboxes[4]->pack_start (*framing, Gtk::PACK_SHRINK, 2);
     vboxes[4]->pack_start (*perspective, Gtk::PACK_SHRINK, 2);
     vboxes[4]->pack_start (*commonTrans, Gtk::PACK_SHRINK, 2);
 
@@ -547,6 +549,7 @@ PartialPasteDlg::PartialPasteDlg (const Glib::ustring &title, Gtk::Window* paren
     cropConn        = crop->signal_toggled().connect (sigc::bind (sigc::mem_fun(*composition, &Gtk::CheckButton::set_inconsistent), true));
     resizeConn      = resize->signal_toggled().connect (sigc::bind (sigc::mem_fun(*composition, &Gtk::CheckButton::set_inconsistent), true));
     prsharpeningConn = prsharpening->signal_toggled().connect (sigc::bind (sigc::mem_fun(*composition, &Gtk::CheckButton::set_inconsistent), true));
+    framingConn     = framing->signal_toggled().connect (sigc::bind (sigc::mem_fun(*composition, &Gtk::CheckButton::set_inconsistent), true));
     perspectiveConn = perspective->signal_toggled().connect (sigc::bind (sigc::mem_fun(*composition, &Gtk::CheckButton::set_inconsistent), true));
     commonTransConn = commonTrans->signal_toggled().connect (sigc::bind (sigc::mem_fun(*composition, &Gtk::CheckButton::set_inconsistent), true));
 
@@ -823,6 +826,7 @@ void PartialPasteDlg::compositionToggled ()
     ConnectionBlocker cropBlocker(cropConn);
     ConnectionBlocker resizeBlocker(resizeConn);
     ConnectionBlocker prsharpeningBlocker(prsharpeningConn);
+    ConnectionBlocker framingBlocker(framingConn);
     ConnectionBlocker perspectiveBlocker(perspectiveConn);
     ConnectionBlocker commonTransBlocker(commonTransConn);
 
@@ -833,6 +837,7 @@ void PartialPasteDlg::compositionToggled ()
     crop->set_active (composition->get_active ());
     resize->set_active (composition->get_active ());
     prsharpening->set_active (composition->get_active ());
+    framing->set_active (composition->get_active ());
     perspective->set_active (composition->get_active ());
     commonTrans->set_active (composition->get_active ());
 }
@@ -1041,6 +1046,10 @@ void PartialPasteDlg::applyPaste (rtengine::procparams::ProcParams* dstPP, Param
 
     if (!prsharpening->get_active ()) {
         filterPE.prsharpening      = falsePE.prsharpening;
+    }
+
+    if (!framing->get_active ()) {
+        filterPE.framing = falsePE.framing;
     }
 
     if (!perspective->get_active ()) {

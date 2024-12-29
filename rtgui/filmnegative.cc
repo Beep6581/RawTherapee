@@ -25,8 +25,8 @@
 #include "options.h"
 #include "rtimage.h"
 
-#include "../rtengine/procparams.h"
-#include "../rtengine/color.h"
+#include "rtengine/procparams.h"
+#include "rtengine/color.h"
 
 const Glib::ustring FilmNegative::TOOL_NAME = "filmnegative";
 

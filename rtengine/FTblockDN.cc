@@ -43,8 +43,8 @@
 #include "procparams.h"
 #include "rt_math.h"
 #include "sleef.h"
-#include "../rtgui/threadutils.h"
-#include "../rtgui/options.h"
+#include "rtgui/threadutils.h"
+#include "rtgui/options.h"
 
 #ifdef _OPENMP
 #include <omp.h>
@@ -755,8 +755,8 @@ BENCHFUN
             int min_numblox_W = ceil((static_cast<float>((MIN(imwidth, ((numtiles_W - 1) * tileWskip) + tilewidth)) - ((numtiles_W - 1) * tileWskip))) / (offset)) + 2 * blkrad;
 
             // these are needed only for creation of the plans and will be freed before entering the parallel loop
-            fftwf_plan plan_forward_blox[2];
-            fftwf_plan plan_backward_blox[2];
+            fftwf_plan plan_forward_blox[2] = {};
+            fftwf_plan plan_backward_blox[2] = {};
 
             if (denoiseLuminance) {
                 float *Lbloxtmp  = reinterpret_cast<float*>(fftwf_malloc(max_numblox_W * TS * TS * sizeof(float)));

@@ -35,13 +35,13 @@
 #include "jaggedarray.h"
 #include "rt_algo.h"
 #include "settings.h"
-#include "../rtgui/options.h"
+#include "rtgui/options.h"
 #include "utils.h"
 #include "iccmatrices.h"
 #ifdef _OPENMP
 #include <omp.h>
 #endif
-#include "../rtgui/thresholdselector.h"
+#include "rtgui/thresholdselector.h"
 #include "imagesource.h"
 
 #include "cplx_wavelet_dec.h"
@@ -6959,7 +6959,8 @@ void ImProcFunctions::maskcalccol(bool invmask, bool pde, int bfw, int bfh, int 
                 bdecomp.reconstruct(tmpab.b[0]);
             }
 
-            float meanfab1, fab1, maxfab1;
+            float meanfab1, fab1;
+            float maxfab1 = 0.f;
             std::unique_ptr<LabImage> buforig;
             buforig.reset(new LabImage(bfw, bfh));
 #ifdef _OPENMP

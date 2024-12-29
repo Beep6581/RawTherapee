@@ -28,8 +28,8 @@
 
 #include "threadutils.h"
 
-#include "../rtengine/coord.h"
-#include "../rtengine/noncopyable.h"
+#include "rtengine/coord.h"
+#include "rtengine/noncopyable.h"
 
 namespace rtengine
 {
@@ -45,7 +45,9 @@ struct CropParams;
 
 }
 
+class Adjuster;
 class RTImage;
+class ToolPanel;
 
 Glib::ustring escapeHtmlChars(const Glib::ustring &src);
 bool removeIfThere (Gtk::Container* cont, Gtk::Widget* w, bool increference = true);
@@ -159,6 +161,26 @@ public:
 private:
     sigc::connection *connection;
     bool wasBlocked;
+};
+
+class BlockAdjusterEvents
+{
+public:
+    explicit BlockAdjusterEvents(Adjuster* adjuster);
+    ~BlockAdjusterEvents();
+
+private:
+    Adjuster* adj;
+};
+
+class DisableListener
+{
+public:
+    explicit DisableListener(ToolPanel* panelToDisable);
+    ~DisableListener();
+
+private:
+    ToolPanel* panel;
 };
 
 /**
