@@ -11615,13 +11615,7 @@ void Locallabcie::updateGUIToMode(const modeType new_type)
             comprcieth->hide();
             comprcieauto->hide();
             comprBox->show();
-            slopesmo->hide();
-            contsig->hide();
-            skewsig->hide();
             whitsig->hide();
-            slopesmor->hide();
-            slopesmog->hide();
-            slopesmob->hide();
             kslopesmor->hide();
             kslopesmog->hide();
             kslopesmob->hide();
@@ -11631,7 +11625,6 @@ void Locallabcie::updateGUIToMode(const modeType new_type)
             smoothcielum->hide();
             smoothcieyb->hide();
             smoothciehigh->hide();
-            smoothcieth->hide();
             smoothcielnk->hide();
             sigmoidblcie->hide();
             if (modecam->get_active_row_number() == 0) {
@@ -11724,6 +11717,14 @@ void Locallabcie::updateGUIToMode(const modeType new_type)
                     smoothcieyb->hide();
                     smoothcieth->hide();
                 }
+            } else {
+                slopesmo->hide();
+                contsig->hide();
+                skewsig->hide();
+                slopesmor->hide();
+                slopesmog->hide();
+                slopesmob->hide();
+                smoothcieth->hide();
             }
 
             if (modecam->get_active_row_number() == 1) {
