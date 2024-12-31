@@ -8567,6 +8567,7 @@ Locallabcie::Locallabcie():
     smoothciemet->append(M("TP_LOCALLAB_CIE_SMOOTH_GAMMA ROLLOFF"));
     smoothciemet->append(M("TP_LOCALLAB_CIE_SMOOTH_GAMMA"));
     smoothciemet->append(M("TP_LOCALLAB_CIE_SMOOTH_LEVELS"));
+	//if need I will add an other smoothciemet  with variable 
     smoothciemet->append(M("TP_LOCALLAB_CIE_SMOOTH_SIG"));
     smoothciemet->set_active(0);
     ciesmoothBox->pack_start(*smoothBox);

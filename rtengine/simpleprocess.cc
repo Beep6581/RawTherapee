@@ -1750,7 +1750,7 @@ private:
                 bool wavcurvecont = false;
                 WaveletParams WaveParams = params.wavelet;
                 ColorManagementParams Colparams = params.icm;
-                IcmOpacityCurveWL icmOpacityCurveWL;
+                WavOpacityCurveWL icmOpacityCurveWL;
                 Colparams.getCurves(icmOpacityCurveWL);
                 ipf.localCont (labView, labView, WaveParams, Colparams, icmOpacityCurveWL, 1, level_hr, maxlevpo, wavcurvecont);
               // ipf.gamutCont (labView, labView, WaveParams, Colparams, 1);

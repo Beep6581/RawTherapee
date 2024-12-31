@@ -48,7 +48,6 @@ class WavOpacityCurveSH;
 class WavOpacityCurveRG;
 class WavOpacityCurveW;
 class WavOpacityCurveWL;
-class IcmOpacityCurveWL;
 class LocretigainCurve;
 class LocretigainCurverab;
 class LocLHCurve;
@@ -2212,7 +2211,7 @@ struct ColorManagementParams {
     bool operator !=(const ColorManagementParams& other) const;
     
     void getCurves(
-    IcmOpacityCurveWL& opacityCurveLUTWLI
+    WavOpacityCurveWL& opacityCurveLUTWLI
     ) const;
 
 };

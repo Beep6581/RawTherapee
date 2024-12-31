@@ -1634,7 +1634,7 @@ void Crop::update(int todo)
                 bool wavcurvecont = false; 
                 WaveletParams WaveParams = params.wavelet;
                 ColorManagementParams Colparams = params.icm;
-                IcmOpacityCurveWL icmOpacityCurveWL;
+                WavOpacityCurveWL icmOpacityCurveWL;
                 Colparams.getCurves(icmOpacityCurveWL);
                 parent->ipf.localCont (labnCrop, labnCrop, WaveParams, Colparams, icmOpacityCurveWL, skip, level_hr, maxlevpo, wavcurvecont);
             //    parent->ipf.gamutCont (labnCrop, labnCrop, WaveParams, Colparams, skip);

@@ -959,8 +959,7 @@ static void calcLocalParams(int sp, int oW, int oH, const LocallabParams& locall
         lp.smoothciem = 3;
     } else if (locallab.spots.at(sp).smoothciemet == "level") {
         lp.smoothciem = 4;
-  //  } else if (locallab.spots.at(sp).smoothciemet == "leveltrc") {
-  //      lp.smoothciem = 5;
+	//if need I will add an other smoothciemet  with variable 		
     } else if (locallab.spots.at(sp).smoothciemet == "sigm") {
         lp.smoothciem = 6;
     }
@@ -20518,7 +20517,7 @@ void ImProcFunctions::Lab_Local(
                    float ksb = 1.f;
                    float ksg = 1.f;
                    //gamtone, slotone
-                   
+                   /* comment this code - will probably not used with new PR GHS
                    if(lp.smoothciem == 5) {
                         ksr = params->locallab.spots.at(sp).kslopesmor;
                         float gamr = 2.4f * ksr;
@@ -20642,6 +20641,8 @@ void ImProcFunctions::Lab_Local(
                         }
 
                     }
+					
+					*/
                     if(lp.smoothciem == 6) {//Sigmoid - from Darktable
                         float middle_grey_contrast = params->locallab.spots.at(sp).contsig;
                         float contrast_skewness = params->locallab.spots.at(sp).skewsig;
