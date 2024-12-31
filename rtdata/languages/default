@@ -1490,7 +1490,7 @@ HISTORY_MSG_ICM_WORKING_TRC_METHOD;TRC method
 HISTORY_MSG_ILLUM;CAL - SC - Illuminant
 HISTORY_MSG_LOCAL_CIE_CONTSIG;Local CIECAM - Sigmoid contrast
 HISTORY_MSG_LOCAL_CIE_SKEWSIG;Local CIECAM - Sigmoid skew
-HISTORY_MSG_LOCAL_CIE_SMOOTHTH;Local CIECAM - Attenation threshold
+HISTORY_MSG_LOCAL_CIE_SMOOTHTH;Local CIECAM - Attenuation threshold
 HISTORY_MSG_LOCAL_CIE_SMOOTHLNK;Local CIECAM - Link R G B
 HISTORY_MSG_LOCAL_CIE_WHITSIG;Local CIECAM - Sigmoid Display white point
 HISTORY_MSG_LOCAL_CIE_SMOOTH_HIGH;Local CIECAM - Highlight Attenuation only
@@ -1531,7 +1531,7 @@ HISTORY_MSG_LOCAL_CIE_GREYL;Local - CIECAM Green Y
 HISTORY_MSG_LOCAL_CIE_ILL;Local - CIECAM TRC Illuminant
 HISTORY_MSG_LOCAL_CIE_LOGCIEQ;Local - CIECAM Log Encoding Q
 HISTORY_MSG_LOCAL_CIE_MIDT;Local - CIECAM Mid Tones
-HISTORY_MSG_LOCAL_CIE_NORM;Local - CIECAM Scale Yb scene
+//HISTORY_MSG_LOCAL_CIE_NORM;Local - CIECAM Scale Yb scene
 HISTORY_MSG_LOCAL_CIE_PRIM;Local - CIECAM TRC primaries
 HISTORY_MSG_LOCAL_CIE_REDXL;Local - CIECAM Red X
 HISTORY_MSG_LOCAL_CIE_REDYL;Local - CIECAM Red Y
@@ -4340,7 +4340,6 @@ TP_WAVELET_LEVELS_TOOLTIP;Choose the number of wavelet decomposition levels for 
 TP_WAVELET_LEVF;Contrast
 TP_WAVELET_LEVFOUR;Level 5-6 denoise and guided threshold
 TP_WAVELET_LEVLABEL;Preview maximum possible levels = %1
-//TP_WAVELET_LEVLOCLABEL;Preview maximum levels=%1 - Preset=%2
 TP_WAVELET_LEVLOCLABEL;Increase the preview window size
 TP_WAVELET_LEVONE;Level 2
 TP_WAVELET_LEVTHRE;Level 4
@@ -4381,10 +4380,10 @@ TP_WAVELET_PASTEL;Pastel chroma
 TP_WAVELET_PROC;Process
 TP_WAVELET_PROTAB;Protection
 TP_WAVELET_PYRWAVTRC;Contrast profile
-TP_WAVELET_PYRWAVTRC_TOOLTIP;The 'Contrast profile' slider lets you select a series of presets that will significantly modify the effect of the “Variable contrast” curve. The presets range from least to most aggressive in ascending order.\n\nFor the upper preset levels, the visibility of the result in the preview window will depend on the image size and the system configuration. Increase the preview window size if this is the case.
-TP_WAVELET_PYRWAVTRC_CURVE_TOOLTIP;The Variable contrast curve takes into account the information provided by the presets. The mid-point of the x-axis corresponds to the predominant contrast value, irrespective of the detail level and the selected preset. The maximum point, to the right of the x-axis, corresponds to the maximum contrast value. It is recommended to reduce the variable contrast beyond the mid-point.
-TP_WAVELET_PYRWAVTRC_RESID_TOOLTIP;Residual contrast, adjusts the residual image after decomposition to compensate for excessive effects linked to the action of the curve and the presets (relief effect, contrast differences between structure and uniform areas).
-TP_WAVELET_PYRWAVTRC_SIGMA_TOOLTIP;Attenuation response, distributes the action between the low, medium and high values of the “Variable contrast” curve by widening or narrowing the width of the curve.
+TP_WAVELET_PYRWAVTRC_TOOLTIP;A series of presets defining the strength of the contrast adjustment at different detail levels. Lower presets only affect fine details while higher presets affect both fine and coarse details.\n\nNote: The effect on coarse details may not be visible in the preview if the preview is too small.
+TP_WAVELET_PYRWAVTRC_CURVE_TOOLTIP;The left end of the horizontal axis corresponds to close to zero contrast, while the right end corresponds to the strongest contrast in the image. The midpoint of the horizontal axis corresponds to the predominant contrast strength across all detail levels.\n\nThe effect of this curve is reduced for higher Contrast profile presets.\n\nTo avoid harsh contrast and halos, refrain from increasing the right half of the curve.
+TP_WAVELET_PYRWAVTRC_RESID_TOOLTIP;Adjusts the contrast for all detail levels larger than those covered by the selected Contrast profile.
+TP_WAVELET_PYRWAVTRC_SIGMA_TOOLTIP;Stretches the width of the "Variable contrast" curve. A value of 1 means no stretching.
 TP_WAVELET_QUAAGRES;Aggressive
 TP_WAVELET_QUACONSER;Conservative
 TP_WAVELET_RADIUS;Radius shadows - highlight
