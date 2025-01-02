@@ -2816,24 +2816,24 @@ SOFTWARE.
 //Copyright (c) 2023 Thatcher Freeman
 // Adapted to Rawtherapee Jacques Desmis mars / june 2024  jdesmis@gmail.com
 
-float ImProcFunctions::rolloff_function(float x, float dr, float b, float c, float kmid)
+float ImProcFunctions::rolloff_freeman_function(float x, float dr, float b, float c, float kmid)
 {
     return (dr * (x / (x + b)) + c) * kmid;//Simple sigmoid (rather a polynomial asymptotic power function) ponderate with kmid - take into account if need Mean Yb scene and Mean Yb viewing and slope value
 }
 //Copyright (c) 2023 Thatcher Freeman
 // Adapted to Rawtherapee Jacques Desmis mars 2024  jdesmis@gmail.com
-float ImProcFunctions::scene_contrast(float x, float mid_gray_scene, float gamma)
+float ImProcFunctions::scene_referred_contrast(float x, float mid_gray_scene, float gamma)
 {
     return mid_gray_scene * std::pow(x / mid_gray_scene, gamma);//apply gamma
 }
 //Copyright (c) 2023 Thatcher Freeman
 // Adapted to Rawtherapee Jacques Desmis mars 2024  jdesmis@gmail.com
-float ImProcFunctions::do_get(float x, bool rolloff_, float mid_gray_scene, float gamma, float slopelim, float dr, float b, float c, float kmid)
+float ImProcFunctions::get_freeman_parameters(float x, bool rolloff_, float mid_gray_scene, float gamma, float slopelim, float dr, float b, float c, float kmid)
 {
     if (rolloff_ && x <= mid_gray_scene / slopelim) {//general smooth - till Yb scene
         return x;
     } else {
-        return rolloff_function(scene_contrast(x, mid_gray_scene / slopelim, gamma), dr, b, c, kmid);//simulate polynomial power function with a slope to begin
+        return rolloff_freeman_function(scene_referred_contrast(x, mid_gray_scene / slopelim, gamma), dr, b, c, kmid);//simulate polynomial power function with a slope to begin
     }
 }
 
@@ -2859,7 +2859,7 @@ void ImProcFunctions::tonemapFreemanQ(float Q, float &Qout, float target_slope, 
     
     b = (dr / (mid_gray_scene_ - c)) * (1.f - ((mid_gray_scene_ - c) / dr)) * mid_gray_scene_;//b - ponderate mid_gray_scene taking into account the total DR, and the dark part below the mid_gray_scene
     gamma = target_slope * (float) std::pow((mid_gray_scene_ + b), 2.0) / (dr * b);//Calculate gamma with slope and mid_gray_scene 
-    Qout = do_get(Q, rolloff, mid_gray_scene_, gamma, 1.f, dr, b, c, kmid);//call main function
+    Qout = get_freeman_parameters(Q, rolloff, mid_gray_scene_, gamma, 1.f, dr, b, c, kmid);//call main function
 }
 
 
@@ -2925,14 +2925,14 @@ void ImProcFunctions::tonemapFreeman(float target_slope, float target_sloper, fl
             sloplimb *= smooththreshold;
         }
         for (int i = 0; i < 65536; ++i) {// i - value image RGB
-            lutr[i] = do_get(float(i) / 65535.f, rolloff, mid_gray_scene_, gammar, sloplimr, dr, b, c, kmid);//call main function
-            lutg[i] = do_get(float(i) / 65535.f, rolloff, mid_gray_scene_, gammag, sloplimg, dr, b, c, kmid);//call main function
-            lutb[i] = do_get(float(i) / 65535.f, rolloff, mid_gray_scene_, gammab, sloplimb, dr, b, c, kmid);//call main function
+            lutr[i] = get_freeman_parameters(float(i) / 65535.f, rolloff, mid_gray_scene_, gammar, sloplimr, dr, b, c, kmid);//call main function
+            lutg[i] = get_freeman_parameters(float(i) / 65535.f, rolloff, mid_gray_scene_, gammag, sloplimg, dr, b, c, kmid);//call main function
+            lutb[i] = get_freeman_parameters(float(i) / 65535.f, rolloff, mid_gray_scene_, gammab, sloplimb, dr, b, c, kmid);//call main function
         }
     } else {
         kmid = 1.f;
         for (int i = 0; i < 65536; ++i) {// i - value image RGB
-            lut[i] = do_get(float(i) / 65535.f, rolloff, mid_gray_scene_, gamma, 1.f, dr, b, c, kmid);//call main function
+            lut[i] = get_freeman_parameters(float(i) / 65535.f, rolloff, mid_gray_scene_, gamma, 1.f, dr, b, c, kmid);//call main function
         }
     }
 }

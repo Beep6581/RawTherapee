@@ -397,9 +397,9 @@ enum class BlurType {
     void tonemapFreeman(float target_slope, float target_sloper, float target_slopeg , float target_slopeb, float white_point, float black_point, float mid_gray_scene, float mid_gray_view, bool rolloff, float smooththreshold, bool limslope, LUTf& lut, LUTf& lutr, LUTf& lutg, LUTf& lutb, int mode, bool scale, bool takeyb);
     void tonemapFreemanQ(float Q, float &Qout, float target_slope, float white_point, float black_point, float mid_gray_scene, float mid_gray_view, bool rolloff, bool takeyb);
 
-    float do_get(float x, bool rolloff_, float mid_gray_scene, float gamma, float slopelim, float dr, float b, float c, float kmid);
-    float rolloff_function(float x, float dr, float b, float c, float kmid);
-    float scene_contrast(float x, float mid_gray_scene, float gamma);
+    float get_freeman_parameters(float x, bool rolloff_, float mid_gray_scene, float gamma, float slopelim, float dr, float b, float c, float kmid);
+    float rolloff_freeman_function(float x, float dr, float b, float c, float kmid);
+    float scene_referred_contrast(float x, float mid_gray_scene, float gamma);
     void sigmoid_main(float r, float g, float b, float &rout, float &gout, float &bout, float middle_grey_contrast, float contrast_skewness, /* float white_point,*/ float middle_grey, float black_point, float white_point_disp);
     void sigmoid_QJ(float Q, float &Qout, float middle_grey_contrast, float contrast_skewness, float middle_grey, float black_point, float white_point_disp);
 
