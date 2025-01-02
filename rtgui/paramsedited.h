@@ -1034,7 +1034,6 @@ public:
         bool reparcie;
         bool sensicie;
         bool Autograycie;
-        bool forcejz;
         bool sigybjz;
         bool qtoj;
         bool jabcie;
@@ -1045,7 +1044,6 @@ public:
         bool sigcie;
         bool logcie;
         bool satcie;
-        bool logcieq;
         bool smoothcie;
         bool smoothcietrc;
         bool smoothcietrcrel;
@@ -1105,7 +1103,6 @@ public:
         bool targetjz;
         bool sigmoidldacie;
         bool sigmoidthcie;
-        bool sigmoidsenscie;
         bool sigmoidblcie;
         bool comprcie;
         bool strcielog;
