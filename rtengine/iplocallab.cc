@@ -2026,7 +2026,7 @@ static void calcTransition(const float lox, const float loy, const float ach, co
     along with darktable.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-//const float MIDDLE_GREY = 0.01f * params->locallab.spots.at(sp).sourceGraycie; //0.1845f;
+//const float middle_grey = 0.01f * params->locallab.spots.at(sp).sourceGraycie; //0.1845f;
 
 const float display_black_target = 0.0152f;
 
@@ -2073,13 +2073,13 @@ void calculate_params(float middle_grey_contrast,
                       float &film_fog,
                       float &paper_exposure,
                       float &paper_power,
-                      float MIDDLE_GREY
+                      float middle_grey
                      // float display_white_target = 1.f
 )
 {
     /* Calculate actual skew log logistic parameters to fulfill the following:
      * f(scene_zero) = display_black_target
-     * f(scene_grey) = MIDDLE_GREY
+     * f(scene_grey) = middle_grey
      * f(scene_inf)  = display_white_target
      * Slope at scene_grey independent of skewness i.e. only changed by the contrast parameter.
      */
@@ -2089,11 +2089,11 @@ void calculate_params(float middle_grey_contrast,
     const float ref_paper_power = 1.0f;
     const float ref_magnitude = 1.0f;
     const float ref_film_fog = 0.0f;
-    const float ref_paper_exposure =  pow_F(ref_film_fog + MIDDLE_GREY, ref_film_power) * ((ref_magnitude / MIDDLE_GREY) - 1.0f);
+    const float ref_paper_exposure =  pow_F(ref_film_fog + middle_grey, ref_film_power) * ((ref_magnitude / middle_grey) - 1.0f);
     const float delta = 1e-6;
-    const float ref_slope  = (generalized_loglogistic_sigmoid(MIDDLE_GREY + delta, ref_magnitude, ref_paper_exposure, ref_film_fog,
+    const float ref_slope  = (generalized_loglogistic_sigmoid(middle_grey + delta, ref_magnitude, ref_paper_exposure, ref_film_fog,
                                            ref_film_power, ref_paper_power)
-           - generalized_loglogistic_sigmoid(MIDDLE_GREY - delta, ref_magnitude, ref_paper_exposure, ref_film_fog,
+           - generalized_loglogistic_sigmoid(middle_grey - delta, ref_magnitude, ref_paper_exposure, ref_film_fog,
                                              ref_film_power, ref_paper_power)) / 2.0f / delta;
 
     // Add skew
@@ -2102,11 +2102,11 @@ void calculate_params(float middle_grey_contrast,
     // Slope at low film power
     const float temp_film_power = 1.0f;
     const float temp_white_target = 0.01f * white_target; //display_white_target;
-    const float temp_white_grey_relation = pow_F(temp_white_target / MIDDLE_GREY, 1.0f / paper_power) - 1.0f;
-    const float temp_paper_exposure = pow_F(MIDDLE_GREY, temp_film_power) * temp_white_grey_relation;
-    const float temp_slope  = (generalized_loglogistic_sigmoid(MIDDLE_GREY + delta, temp_white_target, temp_paper_exposure,
+    const float temp_white_grey_relation = pow_F(temp_white_target / middle_grey, 1.0f / paper_power) - 1.0f;
+    const float temp_paper_exposure = pow_F(middle_grey, temp_film_power) * temp_white_grey_relation;
+    const float temp_slope  = (generalized_loglogistic_sigmoid(middle_grey + delta, temp_white_target, temp_paper_exposure,
                                            ref_film_fog, temp_film_power, paper_power)
-           - generalized_loglogistic_sigmoid(MIDDLE_GREY - delta, temp_white_target, temp_paper_exposure,
+           - generalized_loglogistic_sigmoid(middle_grey - delta, temp_white_target, temp_paper_exposure,
                                              ref_film_fog, temp_film_power, paper_power)) / 2.0f / delta;
 
     // Figure out what film power fulfills the target slope
@@ -2116,11 +2116,11 @@ void calculate_params(float middle_grey_contrast,
     // Calculate the other parameters now that both film and paper power is known
     white_target = 0.01f * white_target; //display_white_target;
     black_target = 0.01f * display_black_target;
-    const float white_grey_relation = pow_F(white_target / MIDDLE_GREY, 1.0f / paper_power) - 1.0f;
+    const float white_grey_relation = pow_F(white_target / middle_grey, 1.0f / paper_power) - 1.0f;
     const float white_black_relation = pow_F(black_target / white_target, -1.0f / paper_power) - 1.0f;
 
-    film_fog = MIDDLE_GREY * pow(white_grey_relation, 1.0f / film_power) / (pow_F(white_black_relation, 1.0f / film_power) - pow_F(white_grey_relation, 1.0f / film_power));
-    paper_exposure = pow_F(film_fog + MIDDLE_GREY, film_power) * white_grey_relation;
+    film_fog = middle_grey * pow(white_grey_relation, 1.0f / film_power) / (pow_F(white_black_relation, 1.0f / film_power) - pow_F(white_grey_relation, 1.0f / film_power));
+    paper_exposure = pow_F(film_fog + middle_grey, film_power) * white_grey_relation;
 }
 
 
@@ -2133,7 +2133,7 @@ void  ImProcFunctions::sigmoid_main(float r,
               float middle_grey_contrast,
               float contrast_skewness,
          //     float white_point,
-              float MIDDLE_GREY,
+              float middle_grey,
               float black_point,
               float white_point_disp)
 {
@@ -2150,7 +2150,7 @@ void  ImProcFunctions::sigmoid_main(float r,
     calculate_params(middle_grey_contrast, contrast_skewness,
                      display_black_target,  film_power,
                      white_target, black_target, film_fog,
-                     paper_exposure, paper_power, MIDDLE_GREY);
+                     paper_exposure, paper_power, middle_grey);
     float rgb[3] = {r, g, b};
     for (int i = 0; i < 3; i = i+1) {
         rgb[i] = max(rgb[i], 0);
@@ -2167,7 +2167,7 @@ void  ImProcFunctions::sigmoid_main(float r,
 
 
 //sigmoid Q (cam16) and J (Jz)
-void  ImProcFunctions::sigmoid_QJ(float Q, float &Qout, float middle_grey_contrast, float contrast_skewness, float MIDDLE_GREY, float black_point, float white_point_disp)
+void  ImProcFunctions::sigmoid_QJ(float Q, float &Qout, float middle_grey_contrast, float contrast_skewness, float middle_grey, float black_point, float white_point_disp)
 {
     float film_power = 1.f;
     float white_target = white_point_disp;
@@ -2178,7 +2178,7 @@ void  ImProcFunctions::sigmoid_QJ(float Q, float &Qout, float middle_grey_contra
     float display_black_target = black_point;
 
     // compute the sigmoid parameters from the UI controls
-    calculate_params(middle_grey_contrast, contrast_skewness, display_black_target,  film_power, white_target, black_target, film_fog, paper_exposure, paper_power, MIDDLE_GREY);
+    calculate_params(middle_grey_contrast, contrast_skewness, display_black_target,  film_power, white_target, black_target, film_fog, paper_exposure, paper_power, middle_grey);
     float value = Q;
     value = max(Q, 0.f);
     value = generalized_loglogistic_sigmoid(value, white_target, paper_exposure, film_fog, film_power, paper_power);
@@ -3096,16 +3096,16 @@ void ImProcFunctions::ciecamloc_02float(struct local_params& lp, int sp, LabImag
     float middle_grey_contrast = params->locallab.spots.at(sp).sigmoidldacie;
     float contrast_skewness = params->locallab.spots.at(sp).sigmoidthcie;
     float white_point_disp = params->locallab.spots.at(sp).sigmoidblcie;
-    float MIDDLE_GREY = 0.01 * params->locallab.spots.at(sp).sourceGraycie;
-    MIDDLE_GREY *= 2.f;//take into account Ciecam
-    MIDDLE_GREY = std::min(MIDDLE_GREY, 0.6f);
+    float middle_grey = 0.01 * params->locallab.spots.at(sp).sourceGraycie;
+    middle_grey *= 2.f;//take into account Ciecam
+    middle_grey = std::min(middle_grey, 0.6f);
 
-    float black_point =  xexpf(lp.blackevjz * std::log(2.f) + xlogf(MIDDLE_GREY));
-    float white_pointsig = xexpf(lp.whiteevjz * std::log(2.f) + xlogf(MIDDLE_GREY));//to adapt if need and remove slider whitsig
+    float black_point =  xexpf(lp.blackevjz * std::log(2.f) + xlogf(middle_grey));
+    float white_pointsig = xexpf(lp.whiteevjz * std::log(2.f) + xlogf(middle_grey));//to adapt if need and remove slider whitsig
    // float dr = white_pointsig - black_point;
     /*
     if(sigmoidnorm) {//for sigmoid Q and Slope based Q
-        MIDDLE_GREY = MIDDLE_GREY * dr + black_point;
+        middle_grey = middle_grey * dr + black_point;
     }
     */
     float slopsmootq =(float) params->locallab.spots.at(sp).slopesmoq;
@@ -3632,15 +3632,15 @@ void ImProcFunctions::ciecamloc_02float(struct local_params& lp, int sp, LabImag
     float middle_grey_contrastjz = params->locallab.spots.at(sp).sigmoidldajzcie;
     float contrast_skewnessjz = params->locallab.spots.at(sp).sigmoidthjzcie;
     float white_point_dispjz = params->locallab.spots.at(sp).sigmoidbljzcie;
-    float MIDDLE_GREYjz = 0.01 * params->locallab.spots.at(sp).sourceGraycie;
-    MIDDLE_GREYjz *= 2.f;
-    MIDDLE_GREYjz = std::min(MIDDLE_GREYjz, 0.6f);
+    float middle_greyjz = 0.01 * params->locallab.spots.at(sp).sourceGraycie;
+    middle_greyjz *= 2.f;
+    middle_greyjz = std::min(middle_greyjz, 0.6f);
 
-    float black_pointjz =  xexpf(lp.blackevjz * std::log(2.f) + xlogf(MIDDLE_GREYjz));
-    float white_pointsigjz = xexpf(lp.whiteevjz * std::log(2.f) + xlogf(MIDDLE_GREYjz));//to adapt if need and remove slider whitsig
+    float black_pointjz =  xexpf(lp.blackevjz * std::log(2.f) + xlogf(middle_greyjz));
+    float white_pointsigjz = xexpf(lp.whiteevjz * std::log(2.f) + xlogf(middle_greyjz));//to adapt if need and remove slider whitsig
     float drjz = white_pointsigjz - black_pointjz;
     if(params->locallab.spots.at(sp).sigybjz) {
-        MIDDLE_GREYjz = MIDDLE_GREYjz * drjz + black_pointjz;
+        middle_greyjz = middle_greyjz * drjz + black_pointjz;
     }
 
     if ((mocam == 2)  && call == 0) { //Jz az bz ==> Jz Cz Hz before Ciecam16
@@ -3931,7 +3931,7 @@ void ImProcFunctions::ciecamloc_02float(struct local_params& lp, int sp, LabImag
 
             //simple local contrast in function luminance
             if (locwavCurvejz && locwavutilijz && wavcurvejz) {
-                float strengthjz = 1.3f;
+                float strengthjz = 1.2f;
                 std::unique_ptr<wavelet_decomposition> wdspot(new wavelet_decomposition(temp->L[0], bfw, bfh, maxlvl, 1, sk, numThreads, lp.daubLen));//lp.daubLen
 
                 if (wdspot->memory_allocation_failed()) {
@@ -4163,7 +4163,7 @@ void ImProcFunctions::ciecamloc_02float(struct local_params& lp, int sp, LabImag
                 if (issigjz && iscie) { //sigmoid Jz
                     float val = Jz;
                     float Jout = 0.f;
-                    sigmoid_QJ(val, Jout, middle_grey_contrastjz, contrast_skewnessjz, MIDDLE_GREYjz, black_pointjz, white_point_dispjz);
+                    sigmoid_QJ(val, Jout, middle_grey_contrastjz, contrast_skewnessjz, middle_greyjz, black_pointjz, white_point_dispjz);
 
                     Jz = Jout;
                     Jz = LIM01(Jz);
@@ -4484,7 +4484,6 @@ void ImProcFunctions::ciecamloc_02float(struct local_params& lp, int sp, LabImag
             data = new float[width * height];
             datanorm = new float[width * height];
 #ifdef _OPENMP
-#ifdef _OPENMP
             #pragma omp parallel for schedule(dynamic, 16)
 #endif
 
@@ -4620,12 +4619,12 @@ void ImProcFunctions::ciecamloc_02float(struct local_params& lp, int sp, LabImag
                             float val = Qpro * coefq;
                             float Qout = 0.f;
                             if(mobwev == 0) {
-                                sigmoid_QJ(val, Qout, middle_grey_contrast, contrast_skewness, MIDDLE_GREY, black_point, white_point_disp);
+                                sigmoid_QJ(val, Qout, middle_grey_contrast, contrast_skewness, middle_grey, black_point, white_point_disp);
                             }
                             if(mobwev == 1) {
                                 bool rolloff = false;//all range
                                 bool kmid = false;//not take into account Yb viewing
-                                tonemapFreemanQ(val, Qout, slopsmootq , white_pointsig, black_point, MIDDLE_GREY, mid_gray_view, rolloff, kmid);
+                                tonemapFreemanQ(val, Qout, slopsmootq , white_pointsig, black_point, middle_grey, mid_gray_view, rolloff, kmid);
                             }
 
                             Qpro = std::max(Qout / coefq, 0.f);
@@ -4659,11 +4658,6 @@ void ImProcFunctions::ciecamloc_02float(struct local_params& lp, int sp, LabImag
                         Jpro = SQR((10.f * Qpro) / wh);
                         Qpro = (Qpro == 0.f ? epsil : Qpro); // avoid division by zero
                         spro = 100.0f * sqrtf(Mpro / Qpro);
-                        if(settings->autocielab) {//avoid artifacts
-                            if (Jpro > 99.9f) {
-                                Jpro = 99.9f;
-                            }
-                        }
                         Jpro = CAMBrightCurveJ[(float)(Jpro * 327.68f)];   //lightness CIECAM02 + contrast
                         float Sp = spro / 100.0f;
                         Ciecam02::curvecolorfloat(schr, Sp, sres, 1.5f);
@@ -11224,7 +11218,7 @@ void ImProcFunctions::wavcontrast4(struct local_params& lp, float ** tmp, float 
 //edge sharpness end
 
     if (locwavCurve && locwavutili && wavcurve) {//simple local contrast in function luminance
-        float strengthlc = 1.7f;
+        float strengthlc = 1.5f;
         wavlc(*wdspot, level_bl, level_hl, maxlvl, level_hr, level_br, ahigh, bhigh, alow, blow, lp.sigmalc, lp.offslc, strengthlc, locwavCurve, numThreads);
     }
 
@@ -20647,14 +20641,14 @@ void ImProcFunctions::Lab_Local(
                         float middle_grey_contrast = params->locallab.spots.at(sp).contsig;
                         float contrast_skewness = params->locallab.spots.at(sp).skewsig;
                         float white_point_disp = params->locallab.spots.at(sp).whitsig;
-                        float MIDDLE_GREY = 0.01 * params->locallab.spots.at(sp).sourceGraycie;
-                        float black_point =  xexpf(lp.blackevjz * std::log(2.f) + xlogf(MIDDLE_GREY));
-                      //  float white_pointsig = xexpf(lp.whiteevjz * std::log(2.f) + xlogf(MIDDLE_GREY));//to adapt if need and remove slider whitsig
+                        float middle_grey = 0.01 * params->locallab.spots.at(sp).sourceGraycie;
+                        float black_point =  xexpf(lp.blackevjz * std::log(2.f) + xlogf(middle_grey));
+                      //  float white_pointsig = xexpf(lp.whiteevjz * std::log(2.f) + xlogf(middle_grey));//to adapt if need and remove slider whitsig
                       //  float dr = white_pointsig - black_point;
                       //  bool scale = lp.issmoothcie;//scale Yb mid_gray - WhiteEv and BlavkEv
 
                       //  if(scale) {//scale Yb mean luminance scene with white : dr and black
-                      //      MIDDLE_GREY = MIDDLE_GREY * dr + black_point;
+                      //      middle_grey = middle_grey * dr + black_point;
                       //  }
 
 #ifdef _OPENMP
@@ -20669,7 +20663,7 @@ void ImProcFunctions::Lab_Local(
                                 float rout = 0.f;
                                 float gout = 0.f;
                                 float bout = 0.f;
-                                sigmoid_main(r, g, b, rout, gout, bout, middle_grey_contrast, contrast_skewness, /*white_pointsig,*/ MIDDLE_GREY, black_point, white_point_disp);
+                                sigmoid_main(r, g, b, rout, gout, bout, middle_grey_contrast, contrast_skewness, /*white_pointsig,*/ middle_grey, black_point, white_point_disp);
                                 tmpImage->r(i, j) = 65535.f * rout;
                                 tmpImage->g(i, j) = 65535.f * gout;
                                 tmpImage->b(i, j) = 65535.f * bout;
