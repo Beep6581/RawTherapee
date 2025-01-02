@@ -2739,6 +2739,7 @@ bool ColorManagementParams::operator ==(const ColorManagementParams& other) cons
         && sigmatrc == other.sigmatrc
         && offstrc == other.offstrc
         && pyrwavtrc == other.pyrwavtrc
+		&& residtrc == other.residtrc
         && opacityCurveWLI == other.opacityCurveWLI
         && wsmoothcie == other.wsmoothcie
         && redx == other.redx
@@ -10407,7 +10408,6 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
                 assignFromKeyfile(keyFile, "Locallab", "kslopesmor_" + index_str, spot.kslopesmor, spotEdited.kslopesmor);
                 assignFromKeyfile(keyFile, "Locallab", "kslopesmog_" + index_str, spot.kslopesmog, spotEdited.kslopesmog);
                 assignFromKeyfile(keyFile, "Locallab", "kslopesmob_" + index_str, spot.kslopesmob, spotEdited.kslopesmob);
-                assignFromKeyfile(keyFile, "Locallab", "midtcie_" + index_str, spot.midtcie, spotEdited.midtcie);
                 assignFromKeyfile(keyFile, "Locallab", "grexl_" + index_str, spot.grexl, spotEdited.grexl);
                 assignFromKeyfile(keyFile, "Locallab", "greyl_" + index_str, spot.greyl, spotEdited.greyl);
                 assignFromKeyfile(keyFile, "Locallab", "bluxl_" + index_str, spot.bluxl, spotEdited.bluxl);
