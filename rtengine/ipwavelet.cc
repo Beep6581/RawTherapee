@@ -3403,60 +3403,9 @@ void ImProcFunctions::calckoe (const float* WavCoeffs, float gradw, float tloww,
     }
 }
 
-void ImProcFunctions::gamutCont (LabImage * lab, LabImage * dst, const procparams::WaveletParams & waparams, const procparams::ColorManagementParams & cmparams, int skip)
-{// not used - leads to artifacts in some cases
-        TMatrix wprof = ICCStore::getInstance()->workingSpaceMatrix(params->icm.workingProfile);
-        const double wp[3][3] = {//improve precision with double
-            {wprof[0][0], wprof[0][1], wprof[0][2]},
-            {wprof[1][0], wprof[1][1], wprof[1][2]},
-            {wprof[2][0], wprof[2][1], wprof[2][2]}
-        };
-        float sigmafin = cmparams.sigmatrc;//attenuation response just to test gamutcont
-        if(sigmafin != 1.f) {//sigmafin to test. or other control to build - 
-            int bw = lab->W;
-            int bh = lab->H;
-#ifdef _OPENMP
-            #pragma omp parallel for
-#endif
-            
-            for (int y = 0; y < bh ; y++) {
-                for (int x = 0; x < bw; x++) {
-                        float xg, yg, zg;
-                        const float aag = lab->a[y][x];//anew
-                        const float bbg = lab->b[y][x];//bnew
-                        float Lag = lab->L[y][x];
-                        Color::Lab2XYZ(Lag, aag, bbg, xg, yg, zg);
-                        Color::gamutmap(xg, yg, zg, wp);
-                        float aag2, bbg2;
-                        Color::XYZ2Lab(xg, yg, zg, Lag, aag2, bbg2);
-                        float Lprov1 = Lag / 327.68f;
-                        float HH = xatan2f(bbg2, aag2);//rebuild HH in case of...absolute colorimetry
-                        float2 sincosval = xsincosf(HH);
-                        float Chprov1 = std::sqrt(SQR(aag2) + SQR(bbg2)) / 327.68f;
-
-                        if (Chprov1 == 0.0f) {
-                            sincosval.y = 1.f;
-                            sincosval.x = 0.0f;
-                        } else {
-                            sincosval.y = aag2 / (Chprov1 * 327.68f);
-                            sincosval.x = bbg2 / (Chprov1 * 327.68f);
-                        }
-
-                        float lnew = Lprov1 * 327.68f;
-                        float anew = 327.68f * Chprov1 * sincosval.y;
-                        float bnew = 327.68f * Chprov1 * sincosval.x;
-                        lab->a[y][x] = anew;
-                        lab->b[y][x] = bnew;
-                        lab->L[y][x] = lnew;
-                    }
-            }
-        }
-}
-
-
 
 // Copyright 6-2024 - Jacques Desmis <jdesmis@gmail.com>
-void ImProcFunctions::localCont (LabImage * lab, LabImage * dst, const procparams::WaveletParams & waparams, const procparams::ColorManagementParams & cmparams, const WavOpacityCurveWL & cmOpacityCurveWL, int skip, int &level_hr, int &maxlevpo, bool &wavcurvecont)
+void ImProcFunctions::complete_local_contrast (LabImage * lab, LabImage * dst, const procparams::WaveletParams & waparams, const procparams::ColorManagementParams & cmparams, const WavOpacityCurveWL & cmOpacityCurveWL, int skip, int &level_hr, int &maxlevpo, bool &wavcurvecont)
 {
     wavcurvecont = false;
     if (cmOpacityCurveWL) {//activate only if one value not equal to 0.5
@@ -3587,7 +3536,7 @@ void ImProcFunctions::localCont (LabImage * lab, LabImage * dst, const procparam
             int maxlvl = wavelet_level;
             maxlevpo = maxlvl;
             //decomposition wavelet , we can change Daublen (moment wavelet) in Tab - Wavelet Levels with subsampling = 1
-            wavelet_decomposition *wdspot = new wavelet_decomposition(lab->L[0], width, height, maxlvl, 1, skip, numThreads, DaubLen);
+            std::unique_ptr<wavelet_decomposition> wdspot = std::unique_ptr<wavelet_decomposition>(new wavelet_decomposition(lab->L[0], width, height, maxlvl, 1, skip, numThreads, DaubLen));
             if (wdspot->memory_allocation_failed()) {//probably if not enough memory.
                 return;
             }
@@ -3784,7 +3733,7 @@ void ImProcFunctions::localCont (LabImage * lab, LabImage * dst, const procparam
             }
             //reconstruct lab
             wdspot->reconstruct(lab->L[0], 1.f);
-            delete wdspot;
+
 
     }
 

@@ -1752,8 +1752,7 @@ private:
                 ColorManagementParams Colparams = params.icm;
                 WavOpacityCurveWL icmOpacityCurveWL;
                 Colparams.getCurves(icmOpacityCurveWL);
-                ipf.localCont (labView, labView, WaveParams, Colparams, icmOpacityCurveWL, 1, level_hr, maxlevpo, wavcurvecont);
-              // ipf.gamutCont (labView, labView, WaveParams, Colparams, 1);
+                ipf.complete_local_contrast(labView, labView, WaveParams, Colparams, icmOpacityCurveWL, 1, level_hr, maxlevpo, wavcurvecont);
 
             }
 

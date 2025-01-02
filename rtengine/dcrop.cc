@@ -1636,8 +1636,7 @@ void Crop::update(int todo)
                 ColorManagementParams Colparams = params.icm;
                 WavOpacityCurveWL icmOpacityCurveWL;
                 Colparams.getCurves(icmOpacityCurveWL);
-                parent->ipf.localCont (labnCrop, labnCrop, WaveParams, Colparams, icmOpacityCurveWL, skip, level_hr, maxlevpo, wavcurvecont);
-            //    parent->ipf.gamutCont (labnCrop, labnCrop, WaveParams, Colparams, skip);
+                parent->ipf.complete_local_contrast(labnCrop, labnCrop, WaveParams, Colparams, icmOpacityCurveWL, skip, level_hr, maxlevpo, wavcurvecont);
                 bool enall = false;
                 enall = wavcurvecont && Colparams.wavExp;//enable message only if curve enable and Expander on
                 if (parent->primListener) {
