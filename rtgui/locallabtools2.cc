@@ -8413,6 +8413,7 @@ Locallabcie::Locallabcie():
 
     sigmoidFrame->set_label_align(0.025, 0.5);
     sigmoidFrame->set_label_widget(*sigq);
+    sigmoidFrame->set_tooltip_text(M("TP_LOCALLAB_SIGMOID16_TOOLTIP"));
 
 
     Gtk::Box *TittleVBoxprecam;
@@ -8565,6 +8566,8 @@ Locallabcie::Locallabcie():
 	//if need I will add an other smoothciemet  with variable 
     smoothciemet->append(M("TP_LOCALLAB_CIE_SMOOTH_SIG"));
     smoothciemet->set_active(0);
+	smoothciemet->set_tooltip_text(M("TP_LOCALLAB_SMOOTHCIE_TOOLTIP"));
+
     ciesmoothBox->pack_start(*smoothBox);
     ciesmoothBox->pack_start(*slopesmo);
     ciesmoothBox->pack_start(*slopesmor);
@@ -8630,6 +8633,7 @@ Locallabcie::Locallabcie():
     sigjzBox->pack_start(*sigmoidbljzcie);
     sigjzBox->pack_start(*sigybjz);
     sigmoidjzFrame->add(*sigjzBox);
+	sigmoidjzFrame->set_tooltip_text(M("TP_LOCALLAB_SIGMOID_TOOLTIP"));
 
     cieFBox->pack_start(*sigmoidjzFrame);
 
@@ -9330,7 +9334,7 @@ void Locallabcie::updateAdviceTooltips(const bool showTooltips)
         logcie->set_tooltip_text(M("TP_LOCALLAB_LOGCIE_TOOLTIP"));
         smoothcie->set_tooltip_text(M("TP_LOCALLAB_SMOOTHCIE_TOOLTIP"));
         slopesmo->set_tooltip_text(M("TP_LOCALLAB_SMOOTHCIE_TOOLTIP"));
-        smoothciemet->set_tooltip_text(M("TP_LOCALLAB_SMOOTHCIE_TOOLTIP"));
+ //       smoothciemet->set_tooltip_text(M("TP_LOCALLAB_SMOOTHCIE_TOOLTIP"));
         modecam->set_tooltip_text(M("TP_LOCALLAB_JZMODECAM_TOOLTIP"));
         adapjzcie->set_tooltip_text(M("TP_LOCALLAB_JABADAP_TOOLTIP"));
         jz100->set_tooltip_text(M("TP_LOCALLAB_JZ100_TOOLTIP"));
@@ -9351,8 +9355,8 @@ void Locallabcie::updateAdviceTooltips(const bool showTooltips)
         sourceGraycie->set_tooltip_text(M("TP_LOCALLAB_JZLOGYBOUT_TOOLTIP"));
         sourceabscie->set_tooltip_text(M("TP_COLORAPP_ADAPSCEN_TOOLTIP"));
         cie1Frame->set_tooltip_text(M("TP_LOCALLAB_LOGIMAGE_TOOLTIP"));
-        sigmoidFrame->set_tooltip_text(M("TP_LOCALLAB_SIGMOID16_TOOLTIP"));
-        sigmoidjzFrame->set_tooltip_text(M("TP_LOCALLAB_SIGMOID_TOOLTIP"));
+//        sigmoidFrame->set_tooltip_text(M("TP_LOCALLAB_SIGMOID16_TOOLTIP"));
+//        sigmoidjzFrame->set_tooltip_text(M("TP_LOCALLAB_SIGMOID_TOOLTIP"));
         contlcie->set_tooltip_text(M("TP_LOCALLAB_LOGCONTL_TOOLTIP"));
         contqcie->set_tooltip_text(M("TP_LOCALLAB_LOGCONTQ_TOOLTIP"));
         contthrescie->set_tooltip_text(M("TP_LOCALLAB_LOGCONTTHRES_TOOLTIP"));
@@ -9421,8 +9425,8 @@ void Locallabcie::updateAdviceTooltips(const bool showTooltips)
         sourceGraycie->set_tooltip_text("");
         sourceabscie->set_tooltip_text("");
         cie1Frame->set_tooltip_text("");
-        sigmoidFrame->set_tooltip_text("");
-        sigmoidjzFrame->set_tooltip_text("");
+//        sigmoidFrame->set_tooltip_text("");
+//        sigmoidjzFrame->set_tooltip_text("");
         contlcie->set_tooltip_text("");
         contqcie->set_tooltip_text("");
         contthrescie->set_tooltip_text("");
@@ -9469,7 +9473,7 @@ void Locallabcie::updateAdviceTooltips(const bool showTooltips)
         midtcie->set_tooltip_text("");
         smoothcie->set_tooltip_text("");
         slopesmo->set_tooltip_text("");
-        smoothciemet->set_tooltip_text("");
+       // smoothciemet->set_tooltip_text("");
         whitescie->set_tooltip_text("");
         blackscie->set_tooltip_text("");
         normcie->set_tooltip_text("");

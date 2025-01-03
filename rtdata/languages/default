@@ -3055,7 +3055,7 @@ TP_LOCALLAB_CHROMASK_TOOLTIP;Changes the chroma of the mask if one exists (i.e. 
 TP_LOCALLAB_CHROML;Chroma (C)
 TP_LOCALLAB_CHRRT;Chroma
 TP_LOCALLAB_CIE;Color Appearance (Cam16 & JzCzHz)
-TP_LOCALLAB_CIE_SMOOTHFRAME;Tone mapping operators
+TP_LOCALLAB_CIE_SMOOTHFRAME;Tone mapping operators *
 TP_LOCALLAB_CIE_SMOOTH_LEVELS;RGB channel Slope
 TP_LOCALLAB_CIE_SMOOTH_LEVELSTRC;RGB channel TRC
 TP_LOCALLAB_CIE_SMOOTH_SIG;Sigmoid based
@@ -3667,11 +3667,11 @@ TP_LOCALLAB_SHTRC_TOOLTIP;Based on 'working profile' (only those provided), modi
 TP_LOCALLAB_SH_TOOLNAME;Shadows/Highlights & Tone Equalizer
 TP_LOCALLAB_SIGBLACKSSCIE;Blacks distribution
 TP_LOCALLAB_SIGCIE;Sigmoid
-TP_LOCALLAB_SIGFRA;Sigmoid Q & Slope based
+TP_LOCALLAB_SIGFRA;Sigmoid Q & Slope based *
 TP_LOCALLAB_SIGGAMJCIE;Gamma
-TP_LOCALLAB_SIGJZFRA;Sigmoid Jz
+TP_LOCALLAB_SIGJZFRA;Sigmoid Jz *
 TP_LOCALLAB_SIGMAWAV;Attenuation response
-TP_LOCALLAB_SIGMOID16_TOOLTIP;Allows you to simulate a tone mapping appearance using both 'Ciecam' and 'Sigmoid Q' or 'Slope based Q'. Sigmoid Q has three sliders:\na) Contrast acts on the shape of the sigmoid curve and consequently on the strength\nb) Skew (gray point) distributes the action according to the luminance.\nc) Display White point (cd/m2) - mode advanced. \n\nSlope based has only one slider Gray balance (slope).
+TP_LOCALLAB_SIGMOID16_TOOLTIP;Allows you to simulate a tone mapping appearance using both 'Ciecam' and 'Sigmoid Q' or 'Slope based Q'. Sigmoid Q has three sliders:\na) Contrast acts on the shape of the sigmoid curve and consequently on the strength\nb) Skew (gray point) distributes the action according to the luminance.\nc) Display White point (cd/m2) - mode advanced. \n\nSlope based has only one slider Gray balance (slope).\n\nThis new version of Sigmoid is incompatible with previous versions 5.11 and earlier. Log encoding inside Ciecam is removed.
 TP_LOCALLAB_SIGMOIDBL;Display White point (cd/m2)
 TP_LOCALLAB_SIGMOIDLAMBDA;Contrast
 TP_LOCALLAB_SIGMOIDLOGAUTO;Auto threshold
@@ -3685,7 +3685,7 @@ TP_LOCALLAB_SIGMOIDSENSI;Adaptability
 //TP_LOCALLAB_SIGMOIDTH;Threshold (Gray point)
 TP_LOCALLAB_SIGMOIDTH;Skew
 TP_LOCALLAB_SIGMOIDWHITESCIE_TOOLTIP;Allows you, in Automatic when the dynamic range of the image is high, to change the distribution of lights in whites and deep blacks.\nCan be used with Log Encoding or Sigmoid with Black Ev and White Ev enabled.\n\nThe algorithm does not change the basic data, but acts on the components necessary to calculate the Dynamic range, Black Ev, White Ev and the Gray point.
-TP_LOCALLAB_SIGMOID_TOOLTIP;Allows you to simulate a tone mapping appearance using both the 'Jz' and 'Sigmoid' function. Two sliders:\na) Contrast acts on the shape of the sigmoid curve and consequently on the strength\nb) Skew (Gray point) distributes the action according to the luminance.
+TP_LOCALLAB_SIGMOID_TOOLTIP;Allows you to simulate a tone mapping appearance using both the 'Jz' and 'Sigmoid' function. Two sliders:\na) Contrast acts on the shape of the sigmoid curve and consequently on the strength\nb) Skew (Gray point) distributes the action according to the luminance.\n\nThis new version of Sigmoid is incompatible with previous versions 5.11 and earlier.
 TP_LOCALLAB_SIGSLOPJCIE;Slope
 TP_LOCALLAB_SIGTRCCIE;Source Data Adjustments
 TP_LOCALLAB_SIGWHITESCIE;Whites distribution
@@ -3709,7 +3709,7 @@ TP_LOCALLAB_SMOOTHCIE_TRC;Increase gamma-based attenuation
 TP_LOCALLAB_SMOOTHCIE_TRCREL;Relative gamma mode
 TP_LOCALLAB_SMOOTHCIE_LUM;Luminosity mode
 TP_LOCALLAB_SMOOTHCIE_SCA;Scale Yb Scene
-TP_LOCALLAB_SMOOTHCIE_TOOLTIP;Completes the processing carried out by gamma, slope and midtones by causing a slight lowering of lights. Please note this does not replace Highlight reconstruction.\n\nGamma based and Slope based (Standard and Advanced) allow you to simulate a tone mapping using:\na) Scene conditions: Black-Ev, White-Ev, Mean luminance (Yb%)\nb) Viewing conditions: Mean luminance (Yb%).\n\nScale Yb Scene is function of White-Ev.\n\nSigmoid allow you to simulate a tone mapping with Contrast and Skew.
+TP_LOCALLAB_SMOOTHCIE_TOOLTIP;Completes the processing carried out by gamma, slope and midtones by causing a slight lowering of lights. Please note this does not replace Highlight reconstruction.\n\nGamma based and Slope based (Standard and Advanced) allow you to simulate a tone mapping using:\na) Scene conditions: Black-Ev, White-Ev, Mean luminance (Yb%)\nb) Viewing conditions: Mean luminance (Yb%).\n\nScale Yb Scene is function of White-Ev.\n\nSigmoid allow you to simulate a tone mapping with Contrast and Skew.\n\nThis new version of Sigmoid is incompatible with previous versions 5.11 and earlier.
 TP_LOCALLAB_SMOOTHCIE_YB;Scale Yb Viewing
 TP_LOCALLAB_SMOOTHCONTSIG;Contrast
 TP_LOCALLAB_SMOOTHSKEWSIG;Skew
