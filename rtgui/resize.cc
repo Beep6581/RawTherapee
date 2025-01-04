@@ -24,7 +24,7 @@
 #include "eventmapper.h"
 #include "guiutils.h"
 
-#include "../rtengine/procparams.h"
+#include "rtengine/procparams.h"
 
 using namespace rtengine;
 using namespace rtengine::procparams;
@@ -146,22 +146,22 @@ Resize::Resize () : FoldableToolPanel(this, TOOL_NAME, M("TP_RESIZE_LABEL"), fal
 
     w->set_digits (0);
     w->set_increments (1, 100);
-    w->set_range (32, MAX_SCALE * maxw);
+    w->set_range (MIN_SIZE, MAX_SCALE * maxw);
     w->set_value (800);           // Doesn't seem to have any effect (overwritten in Resize::read)
 
     h->set_digits (0);
     h->set_increments (1, 100);
-    h->set_range (32, MAX_SCALE * maxh);
+    h->set_range (MIN_SIZE, MAX_SCALE * maxh);
     h->set_value (600);           // Doesn't seem to have any effect (overwritten in Resize::read)
 
     le->set_digits (0);
     le->set_increments (1, 100);
-    le->set_range (32, MAX_SCALE * maxw);
+    le->set_range (MIN_SIZE, MAX_SCALE * maxw);
     le->set_value (900);
 
     se->set_digits (0);
     se->set_increments (1, 100);
-    se->set_range (32, MAX_SCALE * maxh);
+    se->set_range (MIN_SIZE, MAX_SCALE * maxh);
     se->set_value (900);
 
     wconn = w->signal_value_changed().connect ( sigc::mem_fun(*this, &Resize::entryWChanged), true);
@@ -173,7 +173,6 @@ Resize::Resize () : FoldableToolPanel(this, TOOL_NAME, M("TP_RESIZE_LABEL"), fal
     sconn = spec->signal_changed().connect ( sigc::mem_fun(*this, &Resize::specChanged) );
 
     getSubToolsContainer()->hide();
-    getSubToolsContainer()->set_tooltip_markup (M("TP_PRSHARPENING_TOOLTIP"));
 
     show_all();
 }

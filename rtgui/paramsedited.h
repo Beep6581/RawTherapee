@@ -1362,6 +1362,29 @@ struct ResizeParamsEdited {
     bool allowUpscaling;
 };
 
+struct FramingParamsEdited {
+    bool enabled;
+    bool framingMethod;
+    bool aspectRatio;
+    bool orientation;
+    bool framedWidth;
+    bool framedHeight;
+    bool allowUpscaling;
+
+    bool borderSizingMethod;
+    bool basis;
+    bool relativeBorderSize;
+    bool minSizeEnabled;
+    bool minWidth;
+    bool minHeight;
+    bool absWidth;
+    bool absHeight;
+
+    bool borderRed;
+    bool borderGreen;
+    bool borderBlue;
+};
+
 class SpotParamsEdited
 {
 public:
@@ -1737,6 +1760,7 @@ struct ParamsEdited {
     ChannelMixerParamsEdited chmixer;
     BlackWhiteParamsEdited blackwhite;
     ResizeParamsEdited resize;
+    FramingParamsEdited framing;
     SpotParamsEdited spot;
     ColorManagementParamsEdited icm;
     RAWParamsEdited raw;

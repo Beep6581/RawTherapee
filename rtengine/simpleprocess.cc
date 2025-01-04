@@ -40,8 +40,8 @@
 #include "rtengine.h"
 #include "utils.h"
 
-#include "../rtgui/multilangmgr.h"
-#include "../rtgui/options.h"
+#include "rtgui/multilangmgr.h"
+#include "rtgui/options.h"
 
 #undef THREAD_PRIORITY_NORMAL
 
@@ -1904,20 +1904,52 @@ private:
             pl->setProgress(0.60);
         }
 
-        int imw, imh;
-        double tmpScale = ipf.resizeScale(&params, fw, fh, imw, imh);
-        bool labResize = params.resize.enabled && params.resize.method != "Nearest" && (tmpScale != 1.0 || params.prsharpening.enabled);
-        LabImage *tmplab;
-
         // crop and convert to rgb16
         int cx = 0, cy = 0, cw = labView->W, ch = labView->H;
-
         if (params.crop.enabled) {
             cx = params.crop.x;
             cy = params.crop.y;
             cw = params.crop.w;
             ch = params.crop.h;
+        }
 
+        ImProcFunctions::FramingArgs framingArgs;
+        framingArgs.params = &params;
+        framingArgs.cropWidth = cw;
+        framingArgs.cropHeight = ch;
+        {
+            int imw, imh;
+            double tmpScale = ipf.resizeScale(&params, fw, fh, imw, imh);
+            framingArgs.resizeWidth = imw;
+            framingArgs.resizeHeight = imh;
+            framingArgs.resizeScale = tmpScale;
+
+            // If upscaling is not permitted, keep original sizing
+            if ((cw < imw || ch < imh) && !params.resize.allowUpscaling) {
+                framingArgs.resizeWidth = cw;
+                framingArgs.resizeHeight = ch;
+                framingArgs.resizeScale = 1.0;
+            }
+        }
+
+        // If framing is not enabled, resize values simply pass through to output
+        ImProcFunctions::FramingData framingData = ipf.framing(framingArgs);
+        if (settings->verbose) {
+            printf("Framing Parameters (enabled=%s)\n", framingData.enabled ? "yes" : "no");
+            printf("  Crop: w=%d h=%d\n", cw, ch);
+            printf("  Original resize: w=%d h=%d s=%f\n",
+                   framingArgs.resizeWidth, framingArgs.resizeHeight, framingArgs.resizeScale);
+            printf("  Framed image size: w=%d h=%d s=%f\n",
+                   framingData.imgWidth, framingData.imgHeight, framingData.scale);
+            printf("  Total size: w=%d h=%d\n",
+                   framingData.framedWidth, framingData.framedHeight);
+        }
+
+        bool labResize = params.resize.enabled && params.resize.method != "Nearest" &&
+            (framingData.scale != 1.0 || params.prsharpening.enabled || framingData.enabled);
+
+        LabImage *tmplab = nullptr;
+        if (params.crop.enabled) {
             if (labResize) { // crop lab data
                 tmplab = new LabImage(cw, ch);
 
@@ -1937,11 +1969,12 @@ private:
         }
 
         if (labResize) { // resize lab data
-            if ((labView->W != imw || labView->H != imh) &&
-                    (params.resize.allowUpscaling || (labView->W >= imw && labView->H >= imh))) {
+            int imw = framingData.imgWidth;
+            int imh = framingData.imgHeight;
+            if (labView->W != imw || labView->H != imh) {
                 // resize image
                 tmplab = new LabImage(imw, imh);
-                ipf.Lanczos(labView, tmplab, tmpScale);
+                ipf.Lanczos(labView, tmplab, framingData.scale);
                 delete labView;
                 labView = tmplab;
             }
@@ -1995,12 +2028,20 @@ private:
             pl->setProgress(0.70);
         }
 
-        if (tmpScale != 1.0 && params.resize.method == "Nearest" &&
-                (params.resize.allowUpscaling || (readyImg->getWidth() >= imw && readyImg->getHeight() >= imh))) { // resize rgb data (gamma applied)
-            Imagefloat* tempImage = new Imagefloat(imw, imh);
-            ipf.resize(readyImg, tempImage, tmpScale);
-            delete readyImg;
-            readyImg = tempImage;
+        if (framingData.scale != 1.0 && params.resize.method == "Nearest") {
+            int imw = framingData.imgWidth;
+            int imh = framingData.imgHeight;
+            if (readyImg->getWidth() != imw || readyImg->getHeight() != imh) {
+                // resize rgb data (gamma applied)
+                Imagefloat* tempImage = new Imagefloat(imw, imh);
+                ipf.resize(readyImg, tempImage, framingData.scale);
+                delete readyImg;
+                readyImg = tempImage;
+            }
+        }
+
+        if (framingData.enabled) {
+            readyImg = ipf.drawFrame(readyImg, params.framing, framingData);
         }
 
         Exiv2Metadata info(imgsrc->getFileName());

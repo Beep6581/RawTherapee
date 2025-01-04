@@ -29,10 +29,10 @@
 #include "rtimage.h"
 #include "options.h"
 
-#include "../rtengine/lcp.h"
-#include "../rtengine/procparams.h"
-#include "../rtengine/rtlensfun.h"
-#include "../rtengine/lensmetadata.h"
+#include "rtengine/lcp.h"
+#include "rtengine/procparams.h"
+#include "rtengine/rtlensfun.h"
+#include "rtengine/lensmetadata.h"
 
 using namespace rtengine;
 using namespace rtengine::procparams;

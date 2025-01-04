@@ -24,7 +24,7 @@
 
 #include "editcallbacks.h"
 
-#include "../rtengine/curves.h"
+#include "rtengine/curves.h"
 
 MyDiagonalCurve::MyDiagonalCurve () :
     MyCurve(),

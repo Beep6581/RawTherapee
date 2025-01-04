@@ -17,6 +17,7 @@
  *  You should have received a copy of the GNU General Public License
  *  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
  */
+#include <cstdint>
 #include <cstdio>
 #include <cstring>
 #include <iostream>
@@ -52,8 +53,8 @@
 #include "settings.h"
 #include "utils.h"
 
-#include "../rtgui/options.h"
-#include "../rtgui/version.h"
+#include "rtgui/options.h"
+#include "rtgui/version.h"
 
 
 using namespace std;
@@ -590,7 +591,7 @@ int ImageIO::getTIFFSampleFormat (const Glib::ustring &fname, IIOSampleFormat &s
         return IMIO_CANNOTREADFILE;
     }
 
-    uint16 bitspersample = 0, samplesperpixel = 0, sampleformat = 0;
+    std::uint16_t bitspersample = 0, samplesperpixel = 0, sampleformat = 0;
     int hasTag = TIFFGetField(in, TIFFTAG_BITSPERSAMPLE, &bitspersample);
     hasTag &= TIFFGetField(in, TIFFTAG_SAMPLESPERPIXEL, &samplesperpixel);
 
@@ -615,7 +616,7 @@ int ImageIO::getTIFFSampleFormat (const Glib::ustring &fname, IIOSampleFormat &s
         sampleformat = SAMPLEFORMAT_UINT;
     }
 
-    uint16 config;
+    std::uint16_t config;
     TIFFGetField(in, TIFFTAG_PLANARCONFIG, &config);
 
     if (config == PLANARCONFIG_CONTIG) {
@@ -627,14 +628,14 @@ int ImageIO::getTIFFSampleFormat (const Glib::ustring &fname, IIOSampleFormat &s
         return IMIO_VARIANTNOTSUPPORTED;
     }
 
-    uint16 photometric;
+    std::uint16_t photometric;
 
     if (!TIFFGetField(in, TIFFTAG_PHOTOMETRIC, &photometric)) {
         TIFFClose(in);
         return IMIO_VARIANTNOTSUPPORTED;
     }
 
-    uint16 compression;
+    std::uint16_t compression;
 
     if (photometric == PHOTOMETRIC_LOGLUV)
         if (!TIFFGetField(in, TIFFTAG_COMPRESSION, &compression)) {
@@ -712,7 +713,7 @@ int ImageIO::loadTIFF (const Glib::ustring &fname)
     TIFFGetField(in, TIFFTAG_IMAGEWIDTH, &width);
     TIFFGetField(in, TIFFTAG_IMAGELENGTH, &height);
 
-    uint16 bitspersample, samplesperpixel;
+    std::uint16_t bitspersample, samplesperpixel;
     int hasTag = TIFFGetField(in, TIFFTAG_BITSPERSAMPLE, &bitspersample);
     hasTag &= TIFFGetField(in, TIFFTAG_SAMPLESPERPIXEL, &samplesperpixel);
 
@@ -724,7 +725,7 @@ int ImageIO::loadTIFF (const Glib::ustring &fname)
         return IMIO_VARIANTNOTSUPPORTED;
     }
 
-    uint16 config;
+    std::uint16_t config;
     TIFFGetField(in, TIFFTAG_PLANARCONFIG, &config);
 
     if (config != PLANARCONFIG_CONTIG) {
@@ -745,7 +746,7 @@ int ImageIO::loadTIFF (const Glib::ustring &fname)
      */
     if (settings->verbose) {
         printf("Information of \"%s\":\n", fname.c_str());
-        uint16 tiffDefaultScale, tiffBaselineExposure, tiffLinearResponseLimit;
+        std::uint16_t tiffDefaultScale, tiffBaselineExposure, tiffLinearResponseLimit;
         if (TIFFGetField(in, TIFFTAG_DEFAULTSCALE, &tiffDefaultScale)) {
             printf("   DefaultScale: %d\n", tiffDefaultScale);
         }
@@ -762,7 +763,7 @@ int ImageIO::loadTIFF (const Glib::ustring &fname)
         else
             printf("   No LinearResponseLimit value!\n");
 
-        uint16 tiffMinValue, tiffMaxValue;
+        std::uint16_t tiffMinValue, tiffMaxValue;
         if (TIFFGetField(in, TIFFTAG_SMINSAMPLEVALUE, &tiffMinValue)) {
             printf("   MinValue: %d\n", tiffMinValue);
         }
@@ -1020,7 +1021,7 @@ int ImageIO::loadPPMFromMemory(const char* buffer, int width, int height, bool s
 }
 
 
-int ImageIO::savePNG  (const Glib::ustring &fname, int bps) const
+int ImageIO::savePNG  (const Glib::ustring &fname, volatile int bps) const
 {
     if (getWidth() < 1 || getHeight() < 1) {
         return IMIO_HEADERERROR;

@@ -1292,7 +1292,8 @@ Camera constants:
             {"frame": [3936, 2612], "crop": [156, 96, 3780, 2516]}
         ],
         "masked_areas": [
-            {"frame": [6188, 4120], "areas": [4, 4, 4116, 150, 4, 150, 92, 6184]},
+            // With electronic shutter, top masked area is not good (#7214).
+            {"frame": [6188, 4120], "areas": [40, 4, 4116, 150]},
             {"frame": [3936, 2612], "areas": [4, 4, 2608, 150, 4, 150, 92, 3932]}
         ]
     },
@@ -3091,7 +3092,6 @@ Camera constants:
         // "raw_crop": [ 8, 8, 6008, 4008 ], // full raw frame 6048x4024 Dcraw auto identify 6024x4024, jpeg 12,12,6000x4000
         // "ranges": { "black": 512, "white": 16300 }
         "ranges": {
-            "black": 512,
             "white": [
                 { "iso": [ 50, 64 ], "levels": 16100 }, // typical compressed 16372, non compressed 16383, LongEx iso50,16150 , 16275
                 { "iso": [ 80, 100, 125, 160 ], "levels": 16200 }, // typical compressed 16372, non compressed 16383, LongEx iso50,16150 , 16275

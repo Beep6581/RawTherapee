@@ -30,8 +30,8 @@
 #include "saveasdlg.h"
 #include "thumbnaillistener.h"
 
-#include "../rtengine/noncopyable.h"
-#include "../rtengine/rtengine.h"
+#include "rtengine/noncopyable.h"
+#include "rtengine/rtengine.h"
 
 namespace rtengine
 {

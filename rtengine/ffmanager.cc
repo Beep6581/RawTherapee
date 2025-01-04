@@ -21,7 +21,7 @@
 #include <glibmm/miscutils.h>
 
 #include "ffmanager.h"
-#include "../rtgui/options.h"
+#include "rtgui/options.h"
 #include "rawimage.h"
 #include "imagedata.h"
 #include "median.h"

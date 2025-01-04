@@ -22,8 +22,8 @@
 #include "options.h"
 #include "multilangmgr.h"
 #include "cropwindow.h"
-#include "../rtengine/refreshmap.h"
-#include "../rtengine/procparams.h"
+#include "rtengine/refreshmap.h"
+#include "rtengine/procparams.h"
 #include "options.h"
 #include "rtscalable.h"
 

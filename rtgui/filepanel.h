@@ -30,7 +30,7 @@
 #include "progressconnector.h"
 #include "recentbrowser.h"
 
-#include "../rtengine/noncopyable.h"
+#include "rtengine/noncopyable.h"
 
 class BatchToolPanelCoordinator;
 class RTWindow;

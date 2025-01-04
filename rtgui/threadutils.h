@@ -27,7 +27,7 @@
 #include <mutex>
 #include <thread>
 #include <condition_variable>
-#include "../rtengine/noncopyable.h"
+#include "rtengine/noncopyable.h"
 
 #if STRICT_MUTEX && NDEBUG
 using MyMutexBase = std::mutex;

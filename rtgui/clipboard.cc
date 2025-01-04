@@ -19,7 +19,7 @@
 #include "clipboard.h"
 
 #include "paramsedited.h"
-#include "../rtengine/procparams.h"
+#include "rtengine/procparams.h"
 
 Clipboard clipboard;
 

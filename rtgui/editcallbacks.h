@@ -22,7 +22,7 @@
 
 #include "editid.h"
 #include "cursormanager.h"
-#include "../rtengine/coord.h"
+#include "rtengine/coord.h"
 
 class Geometry;
 class EditDataProvider;

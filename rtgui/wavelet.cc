@@ -28,7 +28,7 @@
 #include "options.h"
 #include "eventmapper.h"
 #include "labgrid.h"
-#include "../rtengine/color.h"
+#include "rtengine/color.h"
 #include <unistd.h>
 
 using namespace rtengine;

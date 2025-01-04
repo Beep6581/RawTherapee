@@ -213,11 +213,32 @@ enum class BlurType {
     void sharpening(LabImage* lab, const procparams::SharpeningParams &sharpenParam, bool showMask = false);
     void sharpeningcam(CieImage* ncie, float** buffer, bool showMask = false);
     void transform(Imagefloat* original, Imagefloat* transformed, int cx, int cy, int sx, int sy, int oW, int oH, int fW, int fH, const FramesMetaData *metadata, int rawRotationDeg, bool fullImage, bool useOriginalBuffer = false);
-    float resizeScale(const procparams::ProcParams* params, int fw, int fh, int &imw, int &imh);
     void lab2monitorRgb(LabImage* lab, Image8* image);
+
+    double resizeScale(const procparams::ProcParams* params, int fw, int fh, int &imw, int &imh);
     void resize(Imagefloat* src, Imagefloat* dst, float dScale);
     void Lanczos(const LabImage* src, LabImage* dst, float scale);
     void Lanczos(const Imagefloat* src, Imagefloat* dst, float scale);
+
+    struct FramingArgs {
+        const procparams::ProcParams* params = nullptr;
+        int cropWidth = 0;
+        int cropHeight = 0;
+        int resizeWidth = 0;
+        int resizeHeight = 0;
+        double resizeScale = 1.0f;
+    };
+    struct FramingData {
+        bool enabled = false;
+        int imgWidth = 0;
+        int imgHeight = 0;
+        double scale = 1.0;
+        int framedWidth = 0;
+        int framedHeight = 0;
+    };
+    FramingData framing(const FramingArgs& args) const;
+    Imagefloat* drawFrame(Imagefloat* rgb, const procparams::FramingParams& params,
+                          const FramingData& dims) const;
 
     void deconvsharpening(float** luminance, float** buffer, const float* const * blend, int W, int H, const procparams::SharpeningParams &sharpenParam, double Scale);
     void deconvsharpeningloc(float** luminance, float** buffer, int W, int H, float** loctemp, int damp, double radi, int ite, int amo, int contrast, double blurrad, int sk);

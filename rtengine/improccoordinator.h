@@ -29,7 +29,7 @@
 #include "LUT.h"
 #include "rtengine.h"
 
-#include "../rtgui/threadutils.h"
+#include "rtgui/threadutils.h"
 
 namespace Glib
 {

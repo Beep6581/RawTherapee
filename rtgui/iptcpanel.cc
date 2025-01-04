@@ -23,9 +23,9 @@
 #include "clipboard.h"
 #include "rtimage.h"
 
-#include "../rtengine/imagedata.h"
-#include "../rtengine/metadata.h"
-#include "../rtengine/procparams.h"
+#include "rtengine/imagedata.h"
+#include "rtengine/metadata.h"
+#include "rtengine/procparams.h"
 
 using namespace rtengine;
 using namespace rtengine::procparams;

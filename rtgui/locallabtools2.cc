@@ -21,12 +21,12 @@
 #include "locallabtools.h"
 
 #include "options.h"
-#include "../rtengine/procparams.h"
+#include "rtengine/procparams.h"
 #include "locallab.h"
 #include "rtimage.h"
-#include "../rtengine/color.h"
+#include "rtengine/color.h"
 #include "eventmapper.h"
-#include "../rtengine/utils.h"
+#include "rtengine/utils.h"
 
 #define MINNEIGH 0.1
 #define MAXNEIGH 1500

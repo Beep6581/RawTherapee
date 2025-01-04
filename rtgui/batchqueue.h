@@ -26,8 +26,8 @@
 #include "threadutils.h"
 #include "thumbbrowserbase.h"
 
-#include "../rtengine/rtengine.h"
-#include "../rtengine/noncopyable.h"
+#include "rtengine/rtengine.h"
+#include "rtengine/noncopyable.h"
 
 class BatchQueueEntry;
 

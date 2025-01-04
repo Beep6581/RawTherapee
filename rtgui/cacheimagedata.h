@@ -22,9 +22,9 @@
 
 #include "options.h"
 
-#include "../rtengine/dnggainmap.h"
-#include "../rtengine/imageformat.h"
-#include "../rtengine/rtengine.h"
+#include "rtengine/dnggainmap.h"
+#include "rtengine/imageformat.h"
+#include "rtengine/rtengine.h"
 
 class CacheImageData :
     public rtengine::FramesMetaData

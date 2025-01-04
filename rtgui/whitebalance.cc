@@ -25,7 +25,7 @@
 #include "options.h"
 #include "eventmapper.h"
 
-#include "../rtengine/colortemp.h"
+#include "rtengine/colortemp.h"
 
 #define MINTEMP 1500   //1200
 #define MAXTEMP 60000  //12000

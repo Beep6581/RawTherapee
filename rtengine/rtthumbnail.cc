@@ -53,20 +53,6 @@
 namespace
 {
 
-bool checkRawImageThumb (const rtengine::RawImage& raw_image)
-{
-    if (!raw_image.is_supportedThumb()) {
-        return false;
-    }
-
-    const ssize_t length =
-        fdata (raw_image.get_thumbOffset(), raw_image.get_file())[1] != 0xD8 && raw_image.is_ppmThumb()
-        ? raw_image.get_thumbWidth() * raw_image.get_thumbHeight() * (raw_image.get_thumbBPS() / 8) * 3
-        : raw_image.get_thumbLength();
-
-    return raw_image.get_thumbOffset() + length <= raw_image.get_file()->size;
-}
-
 /**
  * Apply the black level adjustments in the processing parameters.
  *

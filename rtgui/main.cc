@@ -42,8 +42,8 @@
 #include "rtimage.h"
 #include "version.h"
 #include "extprog.h"
-#include "../rtengine/dynamicprofile.h"
-#include "../rtengine/procparams.h"
+#include "rtengine/dynamicprofile.h"
+#include "rtengine/procparams.h"
 #include "pathutils.h"
 
 #ifndef _WIN32
@@ -149,7 +149,7 @@ int processLineParams ( int argc, char **argv )
                         break;
                     }
 
-                // no break here on purpose
+                // fall through
 
                 case 'h':
                 case '?':

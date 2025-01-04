@@ -24,10 +24,10 @@
 #include <cmath>
 #include "rtimage.h"
 #include "rtscalable.h"
-#include "../rtengine/array2D.h"
-#include "../rtengine/color.h"
-#include "../rtengine/improcfun.h"
-#include "../rtengine/LUT.h"
+#include "rtengine/array2D.h"
+#include "rtengine/color.h"
+#include "rtengine/improcfun.h"
+#include "rtengine/LUT.h"
 
 using namespace rtengine;
 

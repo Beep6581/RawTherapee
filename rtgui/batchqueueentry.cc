@@ -28,8 +28,8 @@
 #include "thumbnail.h"
 #include "rtsurface.h"
 
-#include "../rtengine/procparams.h"
-#include "../rtengine/rtengine.h"
+#include "rtengine/procparams.h"
+#include "rtengine/rtengine.h"
 
 bool BatchQueueEntry::iconsLoaded(false);
 std::shared_ptr<RTSurface> BatchQueueEntry::savedAsIcon(std::shared_ptr<RTSurface>(nullptr));

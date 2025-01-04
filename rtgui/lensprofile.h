@@ -22,7 +22,7 @@
 
 #include "guiutils.h"
 #include "toolpanel.h"
-#include "../rtengine/lensmetadata.h"
+#include "rtengine/lensmetadata.h"
 
 class LensProfilePanel final :
     public ToolParamBlock,

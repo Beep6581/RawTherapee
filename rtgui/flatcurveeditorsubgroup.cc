@@ -35,7 +35,7 @@
 #include "options.h"
 #include "popuptogglebutton.h"
 
-#include "../rtengine/curves.h"
+#include "rtengine/curves.h"
 
 FlatCurveEditorSubGroup::FlatCurveEditorSubGroup (CurveEditorGroup* prt, Glib::ustring& curveDir) : CurveEditorSubGroup(curveDir)
 {

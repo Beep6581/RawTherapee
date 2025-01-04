@@ -29,8 +29,8 @@
 #include "procparams.h"
 #include "rawimagesource.h"
 #include "sleef.h"
-#include "../rtgui/multilangmgr.h"
-#include "../rtgui/options.h"
+#include "rtgui/multilangmgr.h"
+#include "rtgui/options.h"
 
 //#define BENCHMARK
 #include "StopWatch.h"

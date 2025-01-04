@@ -45,6 +45,7 @@
 #include "filmnegative.h"
 #include "filmsimulation.h"
 #include "flatfield.h"
+#include "framing.h"
 #include "gradient.h"
 #include "guiutils.h"
 #include "hsvequalizer.h"
@@ -90,8 +91,8 @@
 #include "xtransprocess.h"
 #include "xtransrawexposure.h"
 
-#include "../rtengine/noncopyable.h"
-#include "../rtengine/rtengine.h"
+#include "rtengine/noncopyable.h"
+#include "rtengine/rtengine.h"
 
 class ImageEditorCoordinator;
 class MetaDataPanel;
@@ -131,6 +132,7 @@ protected:
     ChMixer* chmixer;
     BlackWhite* blackwhite;
     Resize* resize;
+    Framing* framing;
     PrSharpening* prsharpening;
     ICMPanel* icm;
     Crop* crop;
@@ -282,6 +284,7 @@ public:
         BLACK_WHITE,
         RESIZE_TOOL,
         PR_SHARPENING,
+        FRAMING,
         CROP_TOOL,
         ICM,
         WAVELET,

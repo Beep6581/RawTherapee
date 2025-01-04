@@ -6,8 +6,8 @@
 #include "editwidgets.h"
 #include "rtimage.h"
 
-#include "../rtengine/procparams.h"
-#include "../rtengine/rt_math.h"
+#include "rtengine/procparams.h"
+#include "rtengine/rt_math.h"
 
 using namespace rtengine;
 using namespace rtengine::procparams;

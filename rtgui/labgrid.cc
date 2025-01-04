@@ -40,7 +40,7 @@
 
 #include "labgrid.h"
 
-#include "../rtengine/color.h"
+#include "rtengine/color.h"
 #include "options.h"
 #include "rtimage.h"
 #include "rtscalable.h"

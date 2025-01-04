@@ -21,8 +21,8 @@
 #include <memory>
 #include <vector>
 
-#include "../rtengine/diagonalcurvetypes.h"
-#include "../rtengine/flatcurvetypes.h"
+#include "rtengine/diagonalcurvetypes.h"
+#include "rtengine/flatcurvetypes.h"
 
 struct ParamsEdited;
 

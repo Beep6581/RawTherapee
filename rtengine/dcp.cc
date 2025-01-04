@@ -36,7 +36,7 @@
 #include "rawimagesource.h"
 #include "rt_math.h"
 #include "utils.h"
-#include "../rtgui/options.h"
+#include "rtgui/options.h"
 
 using namespace rtengine;
 

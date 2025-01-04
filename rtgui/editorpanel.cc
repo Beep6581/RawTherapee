@@ -21,9 +21,9 @@
 
 #include <iostream>
 
-#include "../rtengine/array2D.h"
-#include "../rtengine/imagesource.h"
-#include "../rtengine/iccstore.h"
+#include "rtengine/array2D.h"
+#include "rtengine/imagesource.h"
+#include "rtengine/iccstore.h"
 #include "batchqueue.h"
 #include "batchqueueentry.h"
 #include "soundman.h"
@@ -46,7 +46,7 @@
 #ifdef _WIN32
 #include "windows.h"
 
-#include "../rtengine/winutils.h"
+#include "rtengine/winutils.h"
 #endif
 
 using namespace rtengine::procparams;
@@ -299,6 +299,7 @@ void setUserOnlyPermission(const Glib::RefPtr<Gio::File> file, bool execute)
         .grfAccessPermissions = FILE_ALL_ACCESS,
         .grfAccessMode = GRANT_ACCESS,
         .grfInheritance = NO_INHERITANCE,
+        .Trustee = {},
     };
     BuildTrusteeWithSid(&(ea.Trustee), user_sid);
     PACL new_dacl_raw = nullptr;

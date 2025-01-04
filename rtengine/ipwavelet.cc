@@ -43,7 +43,7 @@
 #include "rt_math.h"
 #include "rtengine.h"
 #include "sleef.h"
-#include "../rtgui/options.h"
+#include "rtgui/options.h"
 #include "guidedfilter.h"
 #ifdef _OPENMP
 #include <omp.h>
@@ -224,7 +224,7 @@ void ImProcFunctions::ip_wavelet(LabImage * lab, LabImage * dst, int kall, const
         {wiprof[2][0], wiprof[2][1], wiprof[2][2]}
     };
     const int imheight = lab->H, imwidth = lab->W;
-   int levwavL;
+   int levwavL = 0;
                         //Flat curve for H=f(H) in final touchup for guidedfilter
     FlatCurve* wavguidCurve = new FlatCurve(params->wavelet.wavguidcurve); //curve H=f(H)
     bool wavguidutili = false;
@@ -258,6 +258,8 @@ void ImProcFunctions::ip_wavelet(LabImage * lab, LabImage * dst, int kall, const
         cp.complex = 0;
     } else if (params->wavelet.complexmethod == "expert") {
         cp.complex = 1;
+    } else {
+        cp.complex = 0;
     }
 
 

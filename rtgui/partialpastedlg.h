@@ -180,6 +180,7 @@ public:
     Gtk::CheckButton* crop;
     Gtk::CheckButton* resize;
     Gtk::CheckButton* prsharpening;
+    Gtk::CheckButton* framing;
     Gtk::CheckButton* perspective;
     Gtk::CheckButton* commonTrans;
 
@@ -231,7 +232,7 @@ public:
     sigc::connection spotConn, sharpenConn, gradsharpenConn, microcontrastConn, impdenConn, dirpyrdenConn, defringeConn, epdConn, fattalConn, dirpyreqConn, waveletConn, retinexConn, dehazeConn;
     sigc::connection vibranceConn, chmixerConn, hsveqConn, rgbcurvesConn, chmixerbwConn, colortoningConn, filmSimulationConn, softlightConn;
     sigc::connection distortionConn, cacorrConn, vignettingConn, lcpConn;
-    sigc::connection coarserotConn, finerotConn, cropConn, resizeConn, prsharpeningConn, perspectiveConn, commonTransConn;
+    sigc::connection coarserotConn, finerotConn, cropConn, resizeConn, prsharpeningConn, framingConn, perspectiveConn, commonTransConn;
     sigc::connection metadataConn, exifchConn, iptcConn, icmConn;
     sigc::connection df_fileConn, df_AutoSelectConn, ff_fileConn, ff_AutoSelectConn, ff_FromMetaDataConn, ff_BlurRadiusConn, ff_BlurTypeConn, ff_ClipControlConn;
     sigc::connection raw_caredblueConn, raw_ca_autocorrectConn, raw_ca_avoid_colourshiftconn, raw_hotpix_filtConn, raw_deadpix_filtConn, raw_pdaf_lines_filterConn, raw_linenoiseConn, raw_greenthreshConn, raw_ccStepsConn, raw_methodConn, raw_borderConn, raw_imagenumConn, raw_dcb_iterationsConn, raw_lmmse_iterationsConn, raw_pixelshiftConn, raw_dcb_enhanceConn, raw_exposConn, raw_blackConn;

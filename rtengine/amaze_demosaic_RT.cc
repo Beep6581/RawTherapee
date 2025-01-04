@@ -29,7 +29,7 @@
 #include "rtengine.h"
 #include "rawimagesource.h"
 #include "rt_math.h"
-#include "../rtgui/multilangmgr.h"
+#include "rtgui/multilangmgr.h"
 #include "sleef.h"
 #include "opthelper.h"
 #include "median.h"

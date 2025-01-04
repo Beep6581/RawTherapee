@@ -32,10 +32,10 @@
 #include "splash.h"
 #include "toollocationpref.h"
 
-#include "../rtengine/dfmanager.h"
-#include "../rtengine/ffmanager.h"
-#include "../rtengine/iccstore.h"
-#include "../rtengine/procparams.h"
+#include "rtengine/dfmanager.h"
+#include "rtengine/ffmanager.h"
+#include "rtengine/iccstore.h"
+#include "rtengine/procparams.h"
 
 #ifdef _OPENMP
 #include <omp.h>
@@ -363,6 +363,13 @@ Gtk::Widget* Preferences::getBatchProcPanel()
     mi = behModel->append();
     mi->set_value(behavColumns.label, M("TP_RESIZE_LABEL"));
     appendBehavList(mi, M("TP_RESIZE_SCALE"), ADDSET_RESIZE_SCALE, true);
+
+    mi = behModel->append();
+    mi->set_value(behavColumns.label, M("TP_FRAMING_LABEL"));
+    appendBehavList(mi, M("TP_FRAMING_BORDER_SIZE"), ADDSET_FRAMING_RELATIVE_SCALE, false);
+    appendBehavList(mi, M("TP_FRAMING_RED"), ADDSET_FRAMING_BORDER_RED, false);
+    appendBehavList(mi, M("TP_FRAMING_GREEN"), ADDSET_FRAMING_BORDER_GREEN, false);
+    appendBehavList(mi, M("TP_FRAMING_BLUE"), ADDSET_FRAMING_BORDER_BLUE, false);
 
     mi = behModel->append();
     mi->set_value(behavColumns.label, M("TP_LENSGEOM_SCALE"));

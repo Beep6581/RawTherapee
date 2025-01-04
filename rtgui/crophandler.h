@@ -27,7 +27,7 @@
 #include "lockablecolorpicker.h"
 #include "threadutils.h"
 
-#include "../rtengine/rtengine.h"
+#include "rtengine/rtengine.h"
 
 class EditSubscriber;
 

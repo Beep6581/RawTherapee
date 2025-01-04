@@ -29,10 +29,10 @@
 #include "lwbutton.h"
 #include "partialpastedlg.h"
 #include "pparamschangelistener.h"
-#include "../rtengine/profilestore.h"
+#include "rtengine/profilestore.h"
 #include "thumbbrowserbase.h"
 
-#include "../rtengine/noncopyable.h"
+#include "rtengine/noncopyable.h"
 
 class FileBrowser;
 class FileBrowserEntry;

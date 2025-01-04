@@ -44,7 +44,7 @@
 //#define BENCHMARK
 #include "StopWatch.h"
 
-#include "../rtgui/options.h"
+#include "rtgui/options.h"
 
 namespace rtengine
 {

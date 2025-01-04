@@ -31,7 +31,7 @@
 #include "previewloader.h"
 #include "threadutils.h"
 
-#include "../rtengine/noncopyable.h"
+#include "rtengine/noncopyable.h"
 
 class FilePanel;
 class CoarsePanel;

@@ -21,7 +21,7 @@
 #include <memory>
 
 #include "editcallbacks.h"
-#include "../rtengine/perspectivecorrection.h"
+#include "rtengine/perspectivecorrection.h"
 
 class Circle;
 class Line;

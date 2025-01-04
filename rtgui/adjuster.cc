@@ -25,7 +25,7 @@
 #include "options.h"
 #include "rtimage.h"
 #include "rtscalable.h"
-#include "../rtengine/rt_math.h"
+#include "rtengine/rt_math.h"
 
 namespace {
 

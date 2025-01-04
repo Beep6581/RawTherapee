@@ -26,8 +26,8 @@
 #include "multilangmgr.h"
 #include "paramsedited.h"
 
-#include "../rtengine/noncopyable.h"
-#include "../rtengine/rtengine.h"
+#include "rtengine/noncopyable.h"
+#include "rtengine/rtengine.h"
 
 namespace rtengine
 {

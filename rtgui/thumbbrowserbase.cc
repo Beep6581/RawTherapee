@@ -25,7 +25,7 @@
 #include "thumbbrowserbase.h"
 #include "thumbbrowserentrybase.h"
 
-#include "../rtengine/rt_math.h"
+#include "rtengine/rt_math.h"
 
 using namespace std;
 

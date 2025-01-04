@@ -24,7 +24,7 @@
 #include "guiutils.h"
 #include "options.h"
 
-#include "../rtengine/noncopyable.h"
+#include "rtengine/noncopyable.h"
 
 class FormatChangeListener
 {

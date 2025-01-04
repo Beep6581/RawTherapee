@@ -20,7 +20,7 @@
 
 #include "guiutils.h"
 
-#include "../rtengine/coord.h"
+#include "rtengine/coord.h"
 
 class CropWindow;
 

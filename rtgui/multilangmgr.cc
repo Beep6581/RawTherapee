@@ -30,7 +30,7 @@
 #include <CoreFoundation/CoreFoundation.h>
 #endif
 
-#include "../rtengine/settings.h"
+#include "rtengine/settings.h"
 
 namespace
 {

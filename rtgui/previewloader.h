@@ -20,7 +20,7 @@
 
 #include <set>
 
-#include "../rtengine/noncopyable.h"
+#include "rtengine/noncopyable.h"
 
 namespace Glib
 {

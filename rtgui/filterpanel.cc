@@ -18,7 +18,7 @@
  */
 #include "filterpanel.h"
 #include "multilangmgr.h"
-#include "../rtengine/rtengine.h"
+#include "rtengine/rtengine.h"
 #include "rtsurface.h"
 
 using namespace rtengine;

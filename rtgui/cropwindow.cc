@@ -36,10 +36,10 @@
 #include "pointermotionlistener.h"
 #include "rtsurface.h"
 
-#include "../rtengine/dcrop.h"
-#include "../rtengine/imagesource.h"
-#include "../rtengine/procparams.h"
-#include "../rtengine/rt_math.h"
+#include "rtengine/dcrop.h"
+#include "rtengine/imagesource.h"
+#include "rtengine/procparams.h"
+#include "rtengine/rt_math.h"
 
 using namespace rtengine;
 

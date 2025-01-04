@@ -224,8 +224,6 @@ if(NOT WITH_SYSTEM_KLT)
     set(KLT_LIBRARIES)
 endif()
 
-include_directories(BEFORE "${CMAKE_CURRENT_BINARY_DIR}")
-
 add_library(rtengine STATIC "${RTENGINESOURCEFILES}")
 
 add_dependencies(rtengine UpdateInfo)
@@ -236,6 +234,18 @@ if(BUILD_SHARED_LIBS)
 endif()
 
 set_target_properties(rtengine PROPERTIES COMPILE_FLAGS "${RTENGINE_CXX_FLAGS}")
+
+target_include_directories(rtengine
+    PUBLIC
+        # Other libraries should use #include "rtengine/header.h"
+        ${PROJECT_SOURCE_DIR}
+    PRIVATE
+        # Subdirectories that are not libraries themselves should be included
+        # like #include "your_subdirectory/header.h"
+        ${CMAKE_CURRENT_SOURCE_DIR}
+)
+# UpdateInfo creates "rtgui/version.h"
+target_include_directories(rtengine BEFORE PRIVATE ${CMAKE_BINARY_DIR})
 
 target_link_libraries(rtengine
     ${EXPAT_LIBRARIES}
