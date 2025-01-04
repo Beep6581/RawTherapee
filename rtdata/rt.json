@@ -1,0 +1,210 @@
+/*
+  custom RawTherapee matrices (copied from DCraw::dcraw_coeff_overrides
+  in rawimage.cc)
+ */
+{"camera_constants" : [
+        {
+            "make_model" : "Canon EOS 5D Mark III",
+            "dcraw_matrix" : [ 6722, -635, -963, -4287, 12460, 2028, -908, 2162, 5668 ]
+        },
+        {
+            "make_model" : "Canon EOS 5D",
+            "dcraw_matrix" : [ 6319, -793, -614, -5809, 13342, 2738, -1132, 1559, 7971 ]
+        },
+        {
+            "make_model" : "Canon EOS 6D",
+            "dcraw_matrix" : [ 7034, -804, -1014, -4420, 12564, 2058, -851, 1994, 5758 ]
+        },
+        {
+            "make_model" : "Canon EOS 7D",
+            "dcraw_matrix" : [ 5962, -171, -732, -4189, 12307, 2099, -911, 1981, 6304 ]
+        },
+        {
+            "make_model" : "Canon EOS 20D",
+            "dcraw_matrix" : [ 7590, -1646, -673, -4697, 12411, 2568, -627, 1118, 7295 ]
+        },
+        {
+            "make_model" : "Canon EOS 40D",
+            "dcraw_matrix" : [ 6070, -531, -883, -5763, 13647, 2315, -1533, 2582, 6801 ]
+        },
+        {
+            "make_model" : "Canon EOS 60D",
+            "dcraw_matrix" : [ 5678, -179, -718, -4389, 12381, 2243, -869, 1819, 6380 ]
+        },
+        {
+            "make_model" : "Canon EOS 450D",
+            "dcraw_matrix" : [ 6246, -1272, -523, -5075, 12357, 3075, -1035, 1825, 7333 ]
+        },
+        {
+            "make_model" : "Canon EOS 550D",
+            "dcraw_matrix" : [ 6519, -772, -703, -4994, 12737, 2519, -1387, 2492, 6175 ]
+        },
+        {
+            "make_model" : "Canon EOS-1D Mark III",
+            "dcraw_matrix" : [ 7406, -1592, -646, -4856, 12457, 2698, -432, 726, 7921 ]
+        },
+        {
+            "make_model" : "Canon PowerShot G10",
+            "dcraw_matrix" : [ 12535, -5030, -796, -2711, 10134, 3006, -413, 1605, 5264 ]
+        },
+        {
+            "make_model" : "Canon PowerShot G12",
+            "dcraw_matrix" : [ 12222, -4097, -1380, -2876, 11016, 2130, -888, 1630, 4434 ]
+        },
+        {
+            "make_model" : "Fujifilm X100",
+            "dcraw_matrix" : [ 10841, -3288, -807, -4652, 12552, 2344, -642, 1355, 7206 ]
+        },
+        {
+            "make_model" : "Nikon D200",
+            "dcraw_matrix" : [ 8498, -2633, -295, -5423, 12869, 2860, -777, 1077, 8124 ]
+        },
+        {
+            "make_model" : "Nikon D3000",
+            "dcraw_matrix" : [ 9211, -2521, -104, -6487, 14280, 2394, -754, 1122, 8033 ]
+        },
+        {
+            "make_model" : "Nikon D3100",
+            "dcraw_matrix" : [ 7729, -2212, -481, -5709, 13148, 2858, -1295, 1908, 8936 ]
+        },
+        {
+            "make_model" : "Nikon D3S",
+            "dcraw_matrix" : [ 8792, -2663, -344, -5221, 12764, 2752, -1491, 2165, 8121 ]
+        },
+        {
+            "make_model" : "Nikon D5200",
+            "dcraw_matrix" : [ 8322, -3112, -1047, -6367, 14342, 2179, -988, 1638, 6394 ]
+        },
+        {
+            "make_model" : "Nikon D7000",
+            "dcraw_matrix" : [ 7530, -1942, -255, -4318, 11390, 3362, -926, 1694, 7649 ]
+        },
+        {
+            "make_model" : "Nikon D7100",
+            "dcraw_matrix" : [ 8322, -3112, -1047, -6367, 14342, 2179, -988, 1638, 6394 ]
+        },
+        {
+            "make_model" : "Nikon D700",
+            "dcraw_matrix" : [ 8364, -2503, -352, -6307, 14026, 2492, -1134, 1512, 8156 ]
+        },
+        {
+            "make_model" : "Nikon COOLPIX A",
+            "dcraw_matrix" : [ 8198, -2239, -724, -4871, 12389, 2798, -1043, 205, 7181 ]
+        },
+        {
+            "make_model" : "Olympus E-30",
+            "dcraw_matrix" : [ 8510, -2355, -693, -4819, 12520, 2578, -1029, 2067, 7752 ]
+        },
+        {
+            "make_model" : "Olympus E-5",
+            "dcraw_matrix" : [ 9732, -2629, -999, -4899, 12931, 2173, -1243, 2353, 7457 ]
+        },
+        {
+            "make_model" : "Olympus E-P1",
+            "dcraw_matrix" : [ 8834, -2344, -804, -4691, 12503, 2448, -978, 1919, 7603 ]
+        },
+        {
+            "make_model" : "Olympus E-P2",
+            "dcraw_matrix" : [ 7758, -1619, -800, -5002, 12886, 2349, -985, 1964, 8305 ]
+        },
+        {
+            "make_model" : "Olympus E-P3",
+            "dcraw_matrix" : [ 7041, -1794, -336, -3790, 11192, 2984, -1364, 2625, 6217 ]
+        },
+        {
+            "make_model" : "Olympus E-PL1s",
+            "dcraw_matrix" : [ 9010, -2271, -838, -4792, 12753, 2263, -1059, 2058, 7589 ]
+        },
+        {
+            "make_model" : "Olympus E-PL1",
+            "dcraw_matrix" : [ 9010, -2271, -838, -4792, 12753, 2263, -1059, 2058, 7589 ]
+        },
+        {
+            "make_model" : "Olympus E-PL2",
+            "dcraw_matrix" : [ 11975, -3351, -1184, -4500, 12639, 2061, -1230, 2353, 7009 ]
+        },
+        {
+            "make_model" : "Olympus E-PL3",
+            "dcraw_matrix" : [ 7041, -1794, -336, -3790, 11192, 2984, -1364, 2625, 6217 ]
+        },
+        {
+            "make_model" : "Olympus XZ-1",
+            "dcraw_matrix" : [ 8665, -2247, -762, -2424, 10372, 2382, -1011, 2286, 5189 ]
+        },
+        {
+            "make_model" : "Panasonic DMC-FZ150",
+            "dcraw_matrix" : [ 10435, -3208, -72, -2293, 10506, 2067, -486, 1725, 4682 ]
+        },
+        {
+            "make_model" : "Panasonic DMC-G10",
+            "dcraw_matrix" : [ 8310, -1811, -960, -4941, 12990, 2151, -1378, 2468, 6860 ]
+        },
+        {
+            "make_model" : "Panasonic DMC-G1",
+            "dcraw_matrix" : [ 7477, -1615, -651, -5016, 12769, 2506, -1380, 2475, 7240 ]
+        },
+        {
+            "make_model" : "Panasonic DMC-G2",
+            "dcraw_matrix" : [ 8310, -1811, -960, -4941, 12990, 2151, -1378, 2468, 6860 ]
+        },
+        {
+            "make_model" : "Panasonic DMC-G3",
+            "dcraw_matrix" : [ 6051, -1406, -671, -4015, 11505, 2868, -1654, 2667, 6219 ]
+        },
+        {
+            "make_model" : "Panasonic DMC-G5",
+            "dcraw_matrix" : [ 7122, -2092, -419, -4643, 11769, 3283, -1363, 2413, 5944 ]
+        },
+        {
+            "make_model" : "Panasonic DMC-GF1",
+            "dcraw_matrix" : [ 7863, -2080, -668, -4623, 12331, 2578, -1020, 2066, 7266 ]
+        },
+        {
+            "make_model" : "Panasonic DMC-GF2",
+            "dcraw_matrix" : [ 7694, -1791, -745, -4917, 12818, 2332, -1221, 2322, 7197 ]
+        },
+        {
+            "make_model" : "Panasonic DMC-GF3",
+            "dcraw_matrix" : [ 8074, -1846, -861, -5026, 12999, 2239, -1320, 2375, 7422 ]
+        },
+        {
+            "make_model" : "Panasonic DMC-GH1",
+            "dcraw_matrix" : [ 6360, -1557, -375, -4201, 11504, 3086, -1378, 2518, 5843 ]
+        },
+        {
+            "make_model" : "Panasonic DMC-GH2", 
+            "dcraw_matrix" : [ 7780, -2410, -806, -3913, 11724, 2484, -1018, 2390, 5298 ]
+        }, 
+        {
+            "make_model" : "Pentax K200D",
+            "dcraw_matrix" : [ 10962, -4428, -542, -5486, 13023, 2748, -569, 842, 8390 ]
+        },
+        {
+            "make_model" : "Leica Camera AG M9 Digital Camera",
+            "dcraw_matrix" : [ 7181, -1706, -55, -3557, 11409, 2450, -621, 2072, 7533 ]
+        },
+        {
+            "make_model" : "SONY NEX-3",
+            "dcraw_matrix" : [ 5145, -741, -123, -4915, 12310, 2945, -794, 1489, 6906 ]
+        },
+        {
+            "make_model" : "SONY NEX-5",
+            "dcraw_matrix" : [ 5154, -716, -115, -5065, 12506, 2882, -988, 1715, 6800 ]
+        },
+        {
+            "make_model" : "Sony NEX-5N",
+            "dcraw_matrix" : [ 5130, -1055, -269, -4473, 11797, 3050, -701, 1310, 7121 ]
+        },
+        {
+            "make_model" : "Sony NEX-5R",
+            "dcraw_matrix" : [ 6129, -1545, -418, -4930, 12490, 2743, -977, 1693, 6615 ]
+        },
+        {
+            "make_model" : "SONY NEX-C3",
+            "dcraw_matrix" : [ 5130, -1055, -269, -4473, 11797, 3050, -701, 1310, 7121 ]
+        },
+        {
+            "make_model" : "Sony SLT-A77",
+            "dcraw_matrix" : [ 5126, -830, -261, -4788, 12196, 2934, -948, 1602, 7068 ]
+        }
+]}
