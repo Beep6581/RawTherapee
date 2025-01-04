@@ -1016,66 +1016,25 @@ void LocallabColor::updateguicolor(int spottype)
             if(spottype == 3) {
                 invers->hide();
                 sensi->hide();
-              //  showmaskcolMethod->set_active(0);
-                expmaskcol1->hide();
                 expmaskcol->hide();
                 exprecov->hide();
                 enaColorMask->set_active(false);
                 previewcol->hide();
                 previewcol->set_active(false);
-                expgradcol->show();
-              //  resetMaskView();
-            } else if (spottype == 2) {//Full image mode for Graduate filter
-                expgradcol->show();
-                invers->show();
-                sensi->show();
-                expmaskcol1->show();
-                expmaskcol->show();
-                exprecov->show();               
-                if(!invers->get_active()) {
-                    previewcol->show();
-                } else {
-                    previewcol->hide();
-                    expgradcol->hide();
-                }                
-                updateGUIToMode(static_cast<modeType>(complexity->get_active_row_number()));
-
             } else {
                 invers->show();
                 sensi->show();
-                expmaskcol1->show();
                 expmaskcol->show();
                 exprecov->show();
-               // strcol->setValue(0.f);
-               // strcolab->setValue(0.f);
-               // strcolh->setValue(0.f);
-                
                 if(!invers->get_active()) {
                     previewcol->show();
                 } else {
                     previewcol->hide();
                 }
-                //expgradcol->hide();
-                expgradcol->show();
                 updateGUIToMode(static_cast<modeType>(complexity->get_active_row_number()));
+
             }
             enableListener();
-            /*
-            if(spottype == 3) {  
-                nbmaskcol++;
-                if(nbmaskcol < 2) {           
-                    showmaskcolMethodChanged();
-                    showmaskcolMethodChangedinv();
-                }
-            }
-            */
-            /*
-            if(spottype == 0 || spottype == 1) { //reset values for GF in normal mode       
-                adjusterChanged(strcol, 0.);
-                adjusterChanged(strcolab, 0.);
-                adjusterChanged(strcolh, 0.);
-            }
-            */
         return false;
         }
         );
@@ -3073,37 +3032,16 @@ void LocallabExposure::updateguiexpos(int spottype)
                 inversex->hide();
                 sensiex->hide();
                 previewexe->hide();
-               // showmaskexpMethod->set_active(0);
                 enaExpMask->set_active(false);
                 enaExpMaskaft->set_active(false);
                 previewexe->set_active(false);
                 expmaskexp->hide();
                 exprecove->hide();
-                expgradexp->show();
-              //  resetMaskView();
-            } else if (spottype == 2) {//Full image mode for Graduate filter
-                inversex->show();
-                sensiex->show();
-                expmaskexp->show();
-                exprecove->show();
-                expgradexp->show();
-
-                if(!inversex->get_active()) {
-                    previewexe->show();
-                } else {
-                    previewexe->hide();
-                    expgradexp->hide();
-                }
-                updateGUIToMode(static_cast<modeType>(complexity->get_active_row_number()));
-                 
            } else {
                 inversex->show();
                 sensiex->show();
                 expmaskexp->show();
                 exprecove->show();
-              //  expgradexp->hide();
-                expgradexp->show();
-               // strexp->setValue(0.f);
 
                 if(!inversex->get_active()) {
                     previewexe->show();
@@ -3113,20 +3051,6 @@ void LocallabExposure::updateguiexpos(int spottype)
                 updateGUIToMode(static_cast<modeType>(complexity->get_active_row_number()));
             }
             enableListener();
-            /*
-            if(spottype == 3) {
-                nbmaskexp++;
-                if(nbmaskexp < 2) {           
-                    showmaskexpMethodChanged();
-                    showmaskexpMethodChangedinv();
-                }
-            }
-            */
-            /*
-            if(spottype == 0 || spottype == 1) {//reset value for GF       
-                adjusterChanged(strexp, 0.);
-            }
-            */
 
         return false;
         }
@@ -4763,64 +4687,25 @@ void LocallabShadow::updateguishad(int spottype)
             if(spottype == 3) {
                 inverssh->hide();
                 sensihs->hide();
-              //  showmaskSHMethod->set_active(0);
                 previewsh->hide();
                 exprecovs->hide();
                 expmasksh->hide();
                 enaSHMask->set_active(false);
                 previewsh->set_active(false);
-                expgradsh->show();
-              //  resetMaskView();
-            } else if (spottype == 2) {//for GF
-                expgradsh->show();               
-                sensihs->show();
-                inverssh->show();
-                exprecovs->show();
-                expmasksh->show();
-                if(!inverssh->get_active()) {
-                    previewsh->show();
-                } else {
-                    previewsh->hide();
-                    expgradsh->hide();               
-                }
-                if (shMethod->get_active_row_number() == 2) {
-                   inverssh->hide();
-                   inverssh->set_active(false);
-                }
-                updateGUIToMode(static_cast<modeType>(complexity->get_active_row_number()));
-
             } else {
                 sensihs->show();
                 inverssh->show();
                 exprecovs->show();
                 expmasksh->show();
-                expgradsh->show();               
-               // expgradsh->hide();               
-               // strSH->setValue(0.f);
                 if(!inverssh->get_active()) {
                     previewsh->show();
                 } else {
                     previewsh->hide();
                 }
-                if (shMethod->get_active_row_number() == 2) {
-                   inverssh->hide();
-                   inverssh->set_active(false);
-                }
                 updateGUIToMode(static_cast<modeType>(complexity->get_active_row_number()));
+                
             }
             enableListener();
-            /*
-            if(spottype == 3) {
-                nbmasksh++;
-                if(nbmasksh < 2) {
-                    showmaskSHMethodChanged();
-                    showmaskSHMethodChangedinv();
-                }
-            }
-            */
-            if(spottype == 0 || spottype == 1) {  //reset GF       
-              //  adjusterChanged(strSH, 0.);
-            }
 
         return false;
         }
@@ -6544,55 +6429,29 @@ void LocallabVibrance::updateguivib(int spottype)
         idle_register.add(
         [this, spottype]() -> bool {
             GThreadLock lock; // All GUI access from idle_add callbacks or separate thread HAVE to be protected
+
             // Update GUI fullimage or main
             disableListener();
 
-            if(spottype == 3) {//global mode
+            if(spottype == 3) {
                 sensiv->hide();
-               // showmaskvibMethod->set_active(0);
                 previewvib->hide();
                 enavibMask->set_active(false);
                 previewvib->set_active(false);
                 exprecovv->hide();
-                expgradvib->show();
                 expmaskvib->hide();
-               // resetMaskView();
-            } else if (spottype == 2) {//Full image mode for Graduate filter
-                expgradvib->show();               
-                sensiv->show();              
+            } else {
+                sensiv->show();
                 previewvib->show();
                 exprecovv->show();
-                expmaskvib->show();
-                updateGUIToMode(static_cast<modeType>(complexity->get_active_row_number()));
-                } else {
-                sensiv->show();            
-                previewvib->show();
-                exprecovv->show();
-              //  expgradvib->hide();               
-                expgradvib->show();               
-              //  strvib->setValue(0.f);
-              //  strvibab->setValue(0.f);
-              //  strvibh->setValue(0.f);
                 expmaskvib->show();
                 updateGUIToMode(static_cast<modeType>(complexity->get_active_row_number()));
 
             }
             enableListener();
-            /*
-            if(spottype == 3) {
-                nbmaskvib++;
-                if(nbmaskvib < 2) {
-                    showmaskvibMethodChanged();
-               }
-            }
-            */
-            /*
-            if(spottype == 0 || spottype == 1) {  //reset value for GF if not in global or full image       
-                adjusterChanged(strvib, 0.);
-                adjusterChanged(strvibab, 0.);
-                adjusterChanged(strvibh, 0.);
-            }
-            */
+            
+            
+
         return false;
         }
         );

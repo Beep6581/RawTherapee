@@ -433,14 +433,10 @@ void LocallabTone::updateguitone(int spottype)
                 enatmMask->set_active(false);
                 enatmMaskaft->set_active(false);
                 
-             //   showmasktmMethodConn.block(true);
-             //   showmasktmMethod->set_active(0);
-             //   showmasktmMethodConn.block(false);
                 previewtm->hide();
              //   previewtmConn.block(true);
                 previewtm->set_active(false);
              //   previewtmConn.block(false);
-             //   resetMaskView();
             } else {
                 sensitm->show();
                 previewtm->show();
@@ -450,7 +446,8 @@ void LocallabTone::updateguitone(int spottype)
                 
            }
             enableListener();
-
+            
+           
         return false;
         }
         );
@@ -3131,51 +3128,25 @@ void LocallabContrast::updateguicont(int spottype)
             GThreadLock lock; // All GUI access from idle_add callbacks or separate thread HAVE to be protected
 
             // Update GUI fullimage or main
+
             disableListener();
 
             if(spottype == 3) {
                 sensilc->hide();
-            //    showmasklcMethod->set_active(0);
                 previewlc->hide();
                 previewlc->set_active(false);
-            //    resetMaskView();
                 enalcMask->set_active(false);
                 exprecovw->hide();
                 expmasklc->hide();
-                gradwavFrame->set_sensitive(true);
-            } else if (spottype == 2) {
-                sensilc->show();
-                previewlc->show();
-                exprecovw->show();
-                expmasklc->show();
-                updateGUIToMode(static_cast<modeType>(complexity->get_active_row_number()));
-                gradwavFrame->set_sensitive(true);
             } else {
                 sensilc->show();
                 previewlc->show();
                 exprecovw->show();
                 expmasklc->show();
-            //    strwav->setValue(0.f);
-            //    gradwavFrame->set_sensitive(false);
-                gradwavFrame->set_sensitive(true);
-
                 updateGUIToMode(static_cast<modeType>(complexity->get_active_row_number()));
             }
             enableListener();
-            /*
-            if(spottype == 3) {
-                nbmaskcont++;
-                if(nbmaskcont < 2) {           
-                    showmasklcMethodChanged();
-                }
-            }
-            */
-            /*
-            if(spottype == 0 || spottype == 1) { //reset values for GF in normal mode       
-                adjusterChanged(strwav, 0.);
-            }
-            */
-
+            
         return false;
         }
         );
@@ -5892,11 +5863,9 @@ void LocallabLog::updateguilog(int spottype)
 
             if(spottype == 3) {
                 sensilog->hide();
-               // showmaskLMethod->set_active(0);               
                 previewlog->hide();
                 previewlog->set_active(false);
                 enaLMask->set_active(false);
-              //  resetMaskView();
                 exprecovl->hide();
                 expmaskL->hide();
             } else {
@@ -5907,14 +5876,7 @@ void LocallabLog::updateguilog(int spottype)
                 updateGUIToMode(static_cast<modeType>(complexity->get_active_row_number()));
             }
             enableListener();
-            /*
-            if(spottype == 3) {
-                nbmasklog++;
-                if(nbmasklog < 2) {           
-                   showmaskLMethodChanged();
-                }
-            }
-            */
+            
         return false;
         }
         );
@@ -7312,10 +7274,8 @@ void LocallabMask::updateguimask(int spottype)
 
             if(spottype == 3) {
                 sensimask->hide();
-               // showmask_Method->set_active(0);
                 previewmas->hide();
                 previewmas->set_active(false);
-                //resetMaskView();
                 blendmask->hide();
                 blendmaskab->hide();
                 softradiusmask->hide();
@@ -7344,6 +7304,7 @@ void LocallabMask::updateguimask(int spottype)
                 
            }
             enableListener();
+            
 
         return false;
         }
@@ -9242,54 +9203,28 @@ void Locallabcie::updateguicie(int spottype)
 
             if(spottype == 3) {
                 sensicie->hide();
-            //    showmaskcieMethod->set_active(0);
                 previewcie->hide();
                 exprecovcie->hide();
                 expmaskcie->hide();
                 enacieMask->set_active(false);
                 enacieMaskall->set_active(false);
                 previewcie->set_active(false);
-                expgradcie->show();                
-            //    resetMaskView();
-            } else if (spottype == 2) {//for GF
-                sensicie->show();
-                previewcie->show();
-                exprecovcie->show();
-                expmaskcie->show();
-                expgradcie->show();
-                updateGUIToMode(static_cast<modeType>(complexity->get_active_row_number()));
-                
             } else {
                 sensicie->show();
                 previewcie->show();
                 exprecovcie->show();
                 expmaskcie->show();
-               // expgradcie->hide();
-                expgradcie->show();
-              //  strgradcie->setValue(0.f);
                 updateGUIToMode(static_cast<modeType>(complexity->get_active_row_number()));
            }
             enableListener();
-            /*
-            if(spottype == 3) {
-                nbmaskcie++;
-                if(nbmaskcie < 2) {
-                    showmaskcieMethodChanged();              
-                }
-            }
-            */
-/*            
-            if(spottype == 0 || spottype == 1) {         
-                adjusterChanged(strgradcie, 0.);//reset GF 
-            }
-*/
-           
+
         return false;
         }
         );
     }
    
 }
+
 
 void Locallabcie::previewcieChanged()
 {
