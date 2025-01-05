@@ -6187,8 +6187,14 @@ void calclocalGradientParams(int call, const struct local_params& lp, struct gra
    // cannot be used for RT-Spot "normal" or "exclude" : only in fullimage or Global
     double gradient_center_x = LIM01((lp.xcent * (oW + kx)) / bfw);//for dcrop and improccordinator
     double gradient_center_y = LIM01((lp.ycent * (oH + ky)) / bfh);
+    //This solution works better than the old one, you can move the window, but is still - a little less - with a malfunction with Zoom
 
-    if(call == 2 || lp.fullim == 0 ) {//simpleprocess or compatibility 5.11 for normal
+/* old settings 5.11 - different from lp.xcent and take into account xstart and ystart
+  //  double gradient_center_x = LIM01((lp.xc - xstart) / bfw);
+  //  double gradient_center_y = LIM01((lp.yc - ystart) / bfh);
+*/
+
+    if(call == 2 || lp.fullim == 0 ) {//simpleprocess or compatibility 5.11 for Spot normal (I don't keep "exclude")
         gradient_center_x = LIM01((lp.xcent * (bfw)) / bfw);//I keep this formula because perhaps not bfw, for the first
         gradient_center_y = LIM01((lp.ycent * (bfh)) / bfh);
     }
@@ -6269,7 +6275,8 @@ void calclocalGradientParams(int call, const struct local_params& lp, struct gra
     
     gradient_stops *= kstop;
   
-//hide these informations to clean console, if need  
+//hide these informations to clean console, if need 
+//all parameters send by Dcrop are here... But it is not evident why it does not work correctly 
     if (settings->verbose) {
         printf("call=%i xcent=%.2f ycent=%.2f Gcx=%.2f Gcy=%.2f indic=%i cx=%i cy=%i strength(stops)=%f k_sk=%f k_skx=%f kbw=%f kbh=%f\n", call, (double) lp.xcent, (double) lp.ycent, gradient_center_x, gradient_center_y, indic, cx, cy, gradient_stops, (double) ksk, (double) kskx, (double) kbw, (double) kbh);   
         printf("fw=%i fh=%i bfw=%i bfh=%i oW=%i oH=%i tW=%i tH=%i tX=%i tY=%i xstart=%.1f ystrat=%.1f xend=%.1f yend=%.1f xc=%.1f yc=%.1f yT=%.1f xL=%.1f sk=%i\n", fw, fh, bfw, bfh, oW, oH, tW, tH, tX, tY, (double) xstart, (double) ystart, (double) xend, (double) yend, (double) lp.xc, (double) lp.yc, (double) lp.lyT, (double)lp.lxL,  sk);
