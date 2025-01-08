@@ -77,6 +77,7 @@ protected:
     rtengine::ProcEvent Evlocallabcomprcie;
     rtengine::ProcEvent Evlocallabstrcielog;
     rtengine::ProcEvent Evlocallabsatcie;
+    rtengine::ProcEvent Evlocallablogcieq;
     rtengine::ProcEvent Evlocallabcomprcieth;
     rtengine::ProcEvent EvlocallabHHhmaskcieshape;
     rtengine::ProcEvent EvlocallabbwevMethod;
@@ -1792,6 +1793,7 @@ private:
     
     Adjuster* const strcielog;
     Gtk::CheckButton* const satcie;
+    Gtk::CheckButton* const logcieq;
     Adjuster* const comprcieth;
     MyExpander* const expprecam;    
     Adjuster* const gamjcie;
@@ -1951,7 +1953,7 @@ private:
     ThresholdAdjuster* const csThresholdcie;
     int nextcomprciecount = 0;
    
-    sigc::connection AutograycieConn, primMethodconn, illMethodconn, smoothciemetconn, catMethodconn, sigybjzConn, qtojConn, showmaskcieMethodConn, enacieMaskConn, enacieMaskallConn, jabcieConn, sursourcieconn, surroundcieconn, modecieconn, modecamconn, comprcieautoconn, normcieconn, logcieconn, satcieconn, smoothcieconn, smoothcielnkconn, smoothciehighconn, smoothcietrcconn, smoothcietrcrelconn, smoothcieybconn,smoothcielumconn, logjzconn, sigjzconn, sigqconn, chjzcieconn, toneMethodcieConn, toneMethodcieConn2, toolcieConn, bwevMethodConn, fftcieMaskConn, gamutcieconn, bwcieconn, expprecamconn, sigcieconn;
+    sigc::connection AutograycieConn, primMethodconn, illMethodconn, smoothciemetconn, catMethodconn, sigybjzConn, qtojConn, showmaskcieMethodConn, enacieMaskConn, enacieMaskallConn, jabcieConn, sursourcieconn, surroundcieconn, modecieconn, modecamconn, comprcieautoconn, normcieconn, logcieconn, satcieconn, logcieqconn, smoothcieconn, smoothcielnkconn, smoothciehighconn, smoothcietrcconn, smoothcietrcrelconn, smoothcieybconn,smoothcielumconn, logjzconn, sigjzconn, sigqconn, chjzcieconn, toneMethodcieConn, toneMethodcieConn2, toolcieConn, bwevMethodConn, fftcieMaskConn, gamutcieconn, bwcieconn, expprecamconn, sigcieconn;
     sigc::connection previewcieConn, sigmoidqjcieconn;
 public:
     Locallabcie();
@@ -2015,6 +2017,7 @@ private:
     void catMethodChanged();
     void logcieChanged();
     void satcieChanged();
+    void logcieqChanged();
     void smoothcieChanged();
     void smoothcielnkChanged();
     void smoothciehighChanged();

@@ -3091,6 +3091,7 @@ void ImProcFunctions::ciecamloc_02float(struct local_params& lp, int sp, LabImag
         mobwev = 1;
     }
 
+    float senssig = 1.f; //(float) params->locallab.spots.at(sp).sigmoidsenscie;
 
     float middle_grey_contrast = params->locallab.spots.at(sp).sigmoidldacie;
     float contrast_skewness = params->locallab.spots.at(sp).sigmoidthcie;
@@ -3136,6 +3137,21 @@ void ImProcFunctions::ciecamloc_02float(struct local_params& lp, int sp, LabImag
         mecamcurve2 = 1;
     } else if (params->locallab.spots.at(sp).toneMethodcie2 == "thrc") {
         mecamcurve2 = 2;
+    }
+
+    float th = 1.f;
+//    const float at = 1.f - sigmoidth;
+//    const float bt = sigmoidth;
+
+   // const float ath = sigmoidth - 1.f;
+   // const float bth = 1;
+    float sila = pow_F(sigmoidlambda, senssig);
+    sila = LIM01(sila);
+    const float sigm = 3.3f + 7.1f * (1.f - sila); //e^10.4 = 32860 => sigm vary from 3.3 to 10.4
+    float bl = std::min(sigmoidbl, 1.f);//reused old slider
+    if(params->locallab.spots.at(sp).logcieq) {
+        bl = 0.01f * (float) params->locallab.spots.at(sp).strcielog;
+        bl = std::min(bl, 1.f);
     }
 
     //end sigmoid
@@ -4414,8 +4430,8 @@ void ImProcFunctions::ciecamloc_02float(struct local_params& lp, int sp, LabImag
         float newgray = 0.18f;
 
 
-        bool logqprov = false; 
-        if ((params->locallab.spots.at(sp).logcie && logqprov)) {//increase Dyn Range when log encoding
+     //   bool logqprov = false; 
+        if ((params->locallab.spots.at(sp).logcie && params->locallab.spots.at(sp).logcieq)) {//increase Dyn Range when log encoding
             dynamic_range += 0.2;//empirical value
             gray = 0.01f * (float) params->locallab.spots.at(sp).sourceGraycie;
             const float targetgraycie = params->locallab.spots.at(sp).targetGraycie;

@@ -1705,6 +1705,7 @@ struct LocallabParams {
         bool sigcie;
         bool logcie;
         bool satcie;
+        bool logcieq;
         bool smoothcie;
         bool smoothcietrc;
         bool smoothcietrcrel;
