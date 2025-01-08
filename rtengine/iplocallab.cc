@@ -3079,23 +3079,23 @@ void ImProcFunctions::ciecamloc_02float(struct local_params& lp, int sp, LabImag
     bool issig = true; //params->locallab.spots.at(sp).sigcie;
 
     //sigmoid J Q variables
-    const float sigmoidlambda = params->locallab.spots.at(sp).sigmoidldacie;
+    const float sigmoidlambda = params->locallab.spots.at(sp).sigmoidldacie12;
 //    const float sigmoidth = params->locallab.spots.at(sp).sigmoidthcie;
-    const float sigmoidbl = params->locallab.spots.at(sp).sigmoidblcie;
+    const float sigmoidbl = params->locallab.spots.at(sp).sigmoidblcie12;
   //  const bool sigmoidnorm = params->locallab.spots.at(sp).normcie;
 
     int mobwev = 0;
-    if (params->locallab.spots.at(sp).bwevMethod == "sigQ") {
+    if (params->locallab.spots.at(sp).bwevMethod12 == "sigQ") {
         mobwev = 0;
-    } else if (params->locallab.spots.at(sp).bwevMethod == "slop") {
+    } else if (params->locallab.spots.at(sp).bwevMethod12 == "slop") {
         mobwev = 1;
     }
 
     float senssig = 1.f; //(float) params->locallab.spots.at(sp).sigmoidsenscie;
 
-    float middle_grey_contrast = params->locallab.spots.at(sp).sigmoidldacie;
-    float contrast_skewness = params->locallab.spots.at(sp).sigmoidthcie;
-    float white_point_disp = params->locallab.spots.at(sp).sigmoidblcie;
+    float middle_grey_contrast = params->locallab.spots.at(sp).sigmoidldacie12;
+    float contrast_skewness = params->locallab.spots.at(sp).sigmoidthcie12;
+    float white_point_disp = params->locallab.spots.at(sp).sigmoidblcie12;
     float middle_grey = 0.01 * params->locallab.spots.at(sp).sourceGraycie;
     middle_grey *= 2.f;//take into account Ciecam
     middle_grey = std::min(middle_grey, 0.6f);
@@ -3301,7 +3301,7 @@ void ImProcFunctions::ciecamloc_02float(struct local_params& lp, int sp, LabImag
         double kal = -(podlight0 - podlight1) / 0.5;
         double kbl = podlight1 - kal;
         
-        double contbase = params->locallab.spots.at(sp).sigmoidldacie;
+        double contbase = params->locallab.spots.at(sp).sigmoidldacie12;
         
         if(contbase <= 0.5)  {
             podcont = podcont0;

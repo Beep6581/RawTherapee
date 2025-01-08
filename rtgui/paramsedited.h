@@ -1060,7 +1060,7 @@ public:
         bool sourceabscie;
         bool sursourcie;
         bool modecam;
-        bool bwevMethod;
+        bool bwevMethod12;
         bool modecie;
         bool saturlcie;
         bool rstprotectcie;
@@ -1102,9 +1102,9 @@ public:
         bool blackEvjz;
         bool whiteEvjz;
         bool targetjz;
-        bool sigmoidldacie;
-        bool sigmoidthcie;
-        bool sigmoidblcie;
+        bool sigmoidldacie12;
+        bool sigmoidthcie12;
+        bool sigmoidblcie12;
         bool comprcie;
         bool strcielog;
         bool comprcieth;

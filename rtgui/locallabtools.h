@@ -80,7 +80,7 @@ protected:
     rtengine::ProcEvent Evlocallablogcieq;
     rtengine::ProcEvent Evlocallabcomprcieth;
     rtengine::ProcEvent EvlocallabHHhmaskcieshape;
-    rtengine::ProcEvent EvlocallabbwevMethod;
+    rtengine::ProcEvent EvlocallabbwevMethod12;
     rtengine::ProcEvent Evlocallabgamjcie;
     rtengine::ProcEvent Evlocallabslopjcie;
     rtengine::ProcEvent Evlocallabmidtcie;
@@ -1778,14 +1778,14 @@ private:
     Gtk::Frame* const sigmoidFrame;
     Gtk::CheckButton* const sigq;
     Adjuster* const slopesmoq;
-    Adjuster* const sigmoidldacie;
-    Adjuster* const sigmoidthcie;
-    Adjuster* const sigmoidblcie;
+    Adjuster* const sigmoidldacie12;
+    Adjuster* const sigmoidthcie12;
+    Adjuster* const sigmoidblcie12;
     Gtk::Box* autocomprHBox;
     Gtk::ToggleButton* const comprcieauto;
     Gtk::CheckButton* const normcie;
     Gtk::Box* const modeHBoxbwev;
-    MyComboBoxText* const bwevMethod;
+    MyComboBoxText* const bwevMethod12;
     Gtk::Frame* const logcieFrame;
     Gtk::CheckButton* const logcie;
     ToolParamBlock* const comprBox;
@@ -1953,7 +1953,7 @@ private:
     ThresholdAdjuster* const csThresholdcie;
     int nextcomprciecount = 0;
    
-    sigc::connection AutograycieConn, primMethodconn, illMethodconn, smoothciemetconn, catMethodconn, sigybjzConn, qtojConn, showmaskcieMethodConn, enacieMaskConn, enacieMaskallConn, jabcieConn, sursourcieconn, surroundcieconn, modecieconn, modecamconn, comprcieautoconn, normcieconn, logcieconn, satcieconn, logcieqconn, smoothcieconn, smoothcielnkconn, smoothciehighconn, smoothcietrcconn, smoothcietrcrelconn, smoothcieybconn,smoothcielumconn, logjzconn, sigjzconn, sigqconn, chjzcieconn, toneMethodcieConn, toneMethodcieConn2, toolcieConn, bwevMethodConn, fftcieMaskConn, gamutcieconn, bwcieconn, expprecamconn, sigcieconn;
+    sigc::connection AutograycieConn, primMethodconn, illMethodconn, smoothciemetconn, catMethodconn, sigybjzConn, qtojConn, showmaskcieMethodConn, enacieMaskConn, enacieMaskallConn, jabcieConn, sursourcieconn, surroundcieconn, modecieconn, modecamconn, comprcieautoconn, normcieconn, logcieconn, satcieconn, logcieqconn, smoothcieconn, smoothcielnkconn, smoothciehighconn, smoothcietrcconn, smoothcietrcrelconn, smoothcieybconn,smoothcielumconn, logjzconn, sigjzconn, sigqconn, chjzcieconn, toneMethodcieConn, toneMethodcieConn2, toolcieConn, bwevMethod12Conn, fftcieMaskConn, gamutcieconn, bwcieconn, expprecamconn, sigcieconn;
     sigc::connection previewcieConn, sigmoidqjcieconn;
 public:
     Locallabcie();
@@ -1991,7 +1991,7 @@ public:
     void curveChanged(CurveEditor* ce) override;
     void toneMethodcieChanged();
     void toneMethodcie2Changed();
-    void bwevMethodChanged();
+    void bwevMethod12Changed();
     void updateAutocompute(const float blackev, const float whiteev, const float sourceg, const float sourceab, const float targetg, const float jz1);
     void updatePrimloc(const float redx, const float redy, const float grex, const float grey, const float blux, const float bluy);
     void updateiPrimloc(const float r_x, const float r_y, const float g_x, const float g_y, const float b_x, const float b_y, const float w_x, const float w_y, const float m_x, const float m_y,  const float me_x, const float me_y, const int pri_, const float slg, const bool lkg);

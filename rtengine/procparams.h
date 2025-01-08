@@ -1722,7 +1722,7 @@ struct LocallabParams {
         Glib::ustring sursourcie;
         Glib::ustring modecie;
         Glib::ustring modecam;
-        Glib::ustring bwevMethod;
+        Glib::ustring bwevMethod12;
         double saturlcie;
         double rstprotectcie;
         double chromlcie;
@@ -1769,9 +1769,9 @@ struct LocallabParams {
         double blackEvjz;
         double whiteEvjz;
         double targetjz;
-        double sigmoidldacie;
-        double sigmoidthcie;
-       double sigmoidblcie;
+        double sigmoidldacie12;
+        double sigmoidthcie12;
+        double sigmoidblcie12;
         double comprcie;
         double strcielog;
         double comprcieth;
