@@ -1061,6 +1061,7 @@ public:
         bool sursourcie;
         bool modecam;
         bool bwevMethod12;
+        bool bwevMethod;
         bool modecie;
         bool saturlcie;
         bool rstprotectcie;

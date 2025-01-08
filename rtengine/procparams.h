@@ -1723,6 +1723,7 @@ struct LocallabParams {
         Glib::ustring modecie;
         Glib::ustring modecam;
         Glib::ustring bwevMethod12;
+        Glib::ustring bwevMethod;
         double saturlcie;
         double rstprotectcie;
         double chromlcie;

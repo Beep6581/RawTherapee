@@ -3084,11 +3084,21 @@ void ImProcFunctions::ciecamloc_02float(struct local_params& lp, int sp, LabImag
     const float sigmoidbl = params->locallab.spots.at(sp).sigmoidblcie12;
   //  const bool sigmoidnorm = params->locallab.spots.at(sp).normcie;
 
-    int mobwev = 0;
+    int mobwev12 = 0;
     if (params->locallab.spots.at(sp).bwevMethod12 == "sigQ") {
-        mobwev = 0;
+        mobwev12 = 0;
     } else if (params->locallab.spots.at(sp).bwevMethod12 == "slop") {
+        mobwev12 = 1;
+    }
+
+    int mobwev = 0;
+
+    if (params->locallab.spots.at(sp).bwevMethod == "none") {
+        mobwev = 0;
+    } else if (params->locallab.spots.at(sp).bwevMethod == "sig") {
         mobwev = 1;
+    } else if (params->locallab.spots.at(sp).bwevMethod == "logsig") {
+        mobwev = 2;
     }
 
     float senssig = 1.f; //(float) params->locallab.spots.at(sp).sigmoidsenscie;
@@ -4431,7 +4441,7 @@ void ImProcFunctions::ciecamloc_02float(struct local_params& lp, int sp, LabImag
 
 
      //   bool logqprov = false; 
-        if ((params->locallab.spots.at(sp).logcie && params->locallab.spots.at(sp).logcieq)) {//increase Dyn Range when log encoding
+        if ((params->locallab.spots.at(sp).logcie && params->locallab.spots.at(sp).logcieq) || mobwev != 0) {//increase Dyn Range when log encoding
             dynamic_range += 0.2;//empirical value
             gray = 0.01f * (float) params->locallab.spots.at(sp).sourceGraycie;
             const float targetgraycie = params->locallab.spots.at(sp).targetGraycie;
@@ -4599,10 +4609,10 @@ void ImProcFunctions::ciecamloc_02float(struct local_params& lp, int sp, LabImag
                         if (issig && issigq && iscie) { //sigmoid Q and slope based Q
                             float val = Qpro * coefq;
                             float Qout = 0.f;
-                            if(mobwev == 0) {
+                            if(mobwev12 == 0) {
                                 sigmoid_QJ(val, Qout, middle_grey_contrast, contrast_skewness, middle_grey, black_point, white_point_disp);
                             }
-                            if(mobwev == 1) {
+                            if(mobwev12 == 1) {
                                 bool rolloff = false;//all range
                                 bool kmid = false;//not take into account Yb viewing
                                 tonemapFreemanQ(val, Qout, slopsmootq , white_pointsig, black_point, middle_grey, mid_gray_view, rolloff, kmid);
