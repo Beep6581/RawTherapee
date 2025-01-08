@@ -8081,8 +8081,8 @@ Locallabcie::Locallabcie():
     targetjz(Gtk::manage(new Adjuster(M("TP_LOCALLAB_JZTARGET_EV"), 4., 80.0, 0.1, 18.0))),
     bevwevFrame(Gtk::manage(new Gtk::Frame())),
     sigybjz(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_SIGMOIDNORMCIE")))),
-    sigBox(Gtk::manage(new ToolParamBlock())),
-    sigmoidFrame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_SIGFRA")))),
+    sigBox12(Gtk::manage(new ToolParamBlock())),
+    sigmoidFrame12(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_SIGFRA")))),
     sigq(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_SIGFRA")))),
     slopesmoq(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SLOPESMOOTH"), 0.6, 2.0, 0.01, 1.))),
     sigmoidldacie12(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SIGMOIDLAMBDA"), 0.5, 3.5, 0.01, 1.8))),
@@ -8091,7 +8091,7 @@ Locallabcie::Locallabcie():
     autocomprHBox(Gtk::manage(new Gtk::Box())),
     comprcieauto(Gtk::manage(new Gtk::ToggleButton(M("TP_LOCALLAB_SIGMOIDLOGAUTO")))),
     normcie(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_SIGMOIDNORMCIE")))),
-    modeHBoxbwev(Gtk::manage(new Gtk::Box())),
+    modeHBoxbwev12(Gtk::manage(new Gtk::Box())),
     bwevMethod12(Gtk::manage(new MyComboBoxText())),
     logcieFrame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_LOGCIE")))),
     logcie(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_LOGCIE")))),
@@ -8161,7 +8161,7 @@ Locallabcie::Locallabcie():
     bwcie(Gtk::manage(new Gtk::CheckButton(M("TP_ICM_BW")))),
 
     sigmoidjzFrame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_SIGJZFRA")))),
-    sigmoid2Frame(Gtk::manage(new Gtk::Frame(M("")))),
+    sigmoid2Frame12(Gtk::manage(new Gtk::Frame(M("")))),
     sigcie(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_SIGCIE")))),
     sigjz(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_SIGJZFRA")))),
     sigmoidldajzcie(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SIGMOIDLAMBDA"), 0.5, 3.5, 0.01, 1.3))),
@@ -8413,9 +8413,9 @@ Locallabcie::Locallabcie():
     bevwevFrame->add(*bevwevBox);
     cieFBox->pack_start(*bevwevFrame);
 
-    sigmoidFrame->set_label_align(0.025, 0.5);
-    sigmoidFrame->set_label_widget(*sigq);
-    sigmoidFrame->set_tooltip_text(M("TP_LOCALLAB_SIGMOID16_TOOLTIP"));
+    sigmoidFrame12->set_label_align(0.025, 0.5);
+    sigmoidFrame12->set_label_widget(*sigq);
+    sigmoidFrame12->set_tooltip_text(M("TP_LOCALLAB_SIGMOID16_TOOLTIP"));
 
 
     Gtk::Box *TittleVBoxprecam;
@@ -8430,7 +8430,7 @@ Locallabcie::Locallabcie():
 
     setExpandAlignProperties(expprecam, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_START);
 
-    sigmoid2Frame->set_label_align(0.025, 0.5);
+    sigmoid2Frame12->set_label_align(0.025, 0.5);
     logcieFrame->set_label_align(0.025, 0.5);
     logcieFrame->set_label_widget(*logcie);
     Gtk::Label* illLabel = Gtk::manage(new Gtk::Label(M("TP_ICM_WORKING_ILLU") + ":"));
@@ -8527,22 +8527,22 @@ Locallabcie::Locallabcie():
 
     gamutcieconn = gamutcie->signal_toggled().connect(sigc::mem_fun(*this, &Locallabcie::gamutcieChanged));
 
-    ToolParamBlock* const sigfraBox = Gtk::manage(new ToolParamBlock());
+    ToolParamBlock* const sigfraBox12 = Gtk::manage(new ToolParamBlock());
 
     bwcieBox->pack_start(*bwcie, Gtk::PACK_EXPAND_WIDGET);
 
     bwcieconn = bwcie->signal_toggled().connect(sigc::mem_fun(*this, &Locallabcie::bwcieChanged));
 
-    modeHBoxbwev->set_spacing(2);
+    modeHBoxbwev12->set_spacing(2);
     ToolParamBlock* const gamcieBox = Gtk::manage(new ToolParamBlock());
-    Gtk::Label* modeLabelbwev = Gtk::manage(new Gtk::Label(M("TP_LOCALLAB_SIGMOIDQJ") + ":"));
-    modeHBoxbwev->pack_start(*modeLabelbwev, Gtk::PACK_SHRINK);
+    Gtk::Label* modeLabelbwev12 = Gtk::manage(new Gtk::Label(M("TP_LOCALLAB_SIGMOIDQJ") + ":"));
+    modeHBoxbwev12->pack_start(*modeLabelbwev12, Gtk::PACK_SHRINK);
 
     bwevMethod12->append(M("TP_LOCALLAB_BWEVSIG"));
     bwevMethod12->append(M("TP_LOCALLAB_BWEVSLOP"));
     bwevMethod12->set_active(1);
     bwevMethod12Conn = bwevMethod12->signal_changed().connect(sigc::mem_fun(*this, &Locallabcie::bwevMethod12Changed));
-    modeHBoxbwev->pack_start(*bwevMethod12);
+    modeHBoxbwev12->pack_start(*bwevMethod12);
 
     comprBox->pack_start(*comprcie);
     comprBox->pack_start(*strcielog);
@@ -8618,14 +8618,14 @@ Locallabcie::Locallabcie():
 
     expprecam->add(*gamcieBox, false);
 
-    sigfraBox->pack_start(*modeHBoxbwev);
-    sigfraBox->pack_start(*slopesmoq);
-    sigfraBox->pack_start(*sigmoidldacie12);
-    sigfraBox->pack_start(*sigmoidthcie12);
-    sigfraBox->pack_start(*sigmoidblcie12);
-    sigmoid2Frame->add(*sigfraBox);
-    sigBox->pack_start(*sigmoid2Frame);
-    sigmoidFrame->add(*sigBox);
+    sigfraBox12->pack_start(*modeHBoxbwev12);
+    sigfraBox12->pack_start(*slopesmoq);
+    sigfraBox12->pack_start(*sigmoidldacie12);
+    sigfraBox12->pack_start(*sigmoidthcie12);
+    sigfraBox12->pack_start(*sigmoidblcie12);
+    sigmoid2Frame12->add(*sigfraBox12);
+    sigBox12->pack_start(*sigmoid2Frame12);
+    sigmoidFrame12->add(*sigBox12);
 
 
     sigmoidjzFrame->set_label_align(0.025, 0.5);
@@ -9037,7 +9037,7 @@ Locallabcie::Locallabcie():
     cieP1colorBox->pack_start(*rstprotectcie);
     cie1colorFrame->add(*cieP1colorBox);
     cieP1Box->pack_start(*cie1colorFrame);
-    cieP1Box->pack_start(*sigmoidFrame);
+    cieP1Box->pack_start(*sigmoidFrame12);
 
     expcam16->add(*cieP1Box, false);
 
@@ -11048,7 +11048,7 @@ void Locallabcie::modecamChanged()
         logjzFrame->show();
         bevwevFrame->show();
         sigmoidjzFrame->show();
-        sigmoidFrame->hide();
+        sigmoidFrame12->hide();
         expprecam->hide();
         expcam16->hide();
         expcamviewing->hide();
@@ -11077,7 +11077,7 @@ void Locallabcie::modecamChanged()
 
         if (modecam->get_active_row_number() == 0) {
             bevwevFrame->show();
-            sigmoidFrame->show();
+            sigmoidFrame12->show();
             expprecam->show();
 
         }
@@ -11125,12 +11125,12 @@ void Locallabcie::modecamChanged()
         PQFrame->hide();
         logjzFrame->hide();
         sigmoidjzFrame->hide();
-        sigmoidFrame->hide();
+        sigmoidFrame12->hide();
         bevwevFrame->hide();
 
         if (modecam->get_active_row_number() == 0) {
             bevwevFrame->show();
-            sigmoidFrame->show();
+            sigmoidFrame12->show();
         }
 
 
@@ -11182,7 +11182,7 @@ void Locallabcie::modecamChanged()
             PQFrame->show();
             logjzFrame->show();
             sigmoidjzFrame->show();
-            sigmoidFrame->hide();
+            sigmoidFrame12->hide();
             bevwevFrame->show();
             catadcie->hide();
             expcamviewing->hide();
@@ -11519,7 +11519,7 @@ void Locallabcie::guijzczhz()
     logjzFrame->hide();
     bevwevFrame->hide();
     sigmoidjzFrame->hide();
-    sigmoidFrame->hide();
+    sigmoidFrame12->hide();
     catadcie->hide();
     expcamviewing->hide();
     maskusablecie->hide();
@@ -11606,7 +11606,7 @@ void Locallabcie::updateGUIToMode(const modeType new_type)
             sigmoidblcie12->hide();
             if (modecam->get_active_row_number() == 0) {
                 bevwevFrame->show();
-                sigmoidFrame->hide(); 
+                sigmoidFrame12->hide(); 
                 expprecam->show();
                 primillFrame->hide();
                 expmaskcie->hide();
@@ -11812,7 +11812,7 @@ void Locallabcie::updateGUIToMode(const modeType new_type)
 
             if (modecam->get_active_row_number() == 0) {
                 bevwevFrame->show();
-                sigmoidFrame->show();
+                sigmoidFrame12->show();
                 expprecam->show();
                 primillFrame->hide();
                 enacieMaskall->hide();
@@ -12108,7 +12108,7 @@ void Locallabcie::updateGUIToMode(const modeType new_type)
                 logjzFrame->show();
                 bevwevFrame->show();
                 sigmoidjzFrame->show();
-                sigmoidFrame->hide();
+                sigmoidFrame12->hide();
                 expprecam->hide();
                 expgradcie->hide();
                 expcam16->hide();
@@ -12135,7 +12135,7 @@ void Locallabcie::updateGUIToMode(const modeType new_type)
                 bevwevFrame->hide();
 
                 bevwevFrame->show();
-                sigmoidFrame->show();
+                sigmoidFrame12->show();
                 expprecam->show();
                 primillFrame->show();
                 enacieMaskallChanged2();
@@ -12236,7 +12236,7 @@ void Locallabcie::updateGUIToMode(const modeType new_type)
                 PQFrame->show();
                 logjzFrame->show();
                 sigmoidjzFrame->show();
-                sigmoidFrame->hide();
+                sigmoidFrame12->hide();
                 bevwevFrame->show();
                 catadcie->hide();
                 expcamviewing->hide();
@@ -12490,7 +12490,7 @@ void Locallabcie::updatecieGUI()
         logjzFrame->show();
         sigmoidjzFrame->show();
         bevwevFrame->show();
-        sigmoidFrame->hide();
+        sigmoidFrame12->hide();
         catadcie->hide();
         expprecam->hide();
         expcamviewing->hide();

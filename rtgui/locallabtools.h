@@ -1774,8 +1774,8 @@ private:
     Adjuster* const targetjz;
     Gtk::Frame* const bevwevFrame;
     Gtk::CheckButton* const sigybjz;
-    ToolParamBlock* const sigBox;
-    Gtk::Frame* const sigmoidFrame;
+    ToolParamBlock* const sigBox12;
+    Gtk::Frame* const sigmoidFrame12;
     Gtk::CheckButton* const sigq;
     Adjuster* const slopesmoq;
     Adjuster* const sigmoidldacie12;
@@ -1784,7 +1784,7 @@ private:
     Gtk::Box* autocomprHBox;
     Gtk::ToggleButton* const comprcieauto;
     Gtk::CheckButton* const normcie;
-    Gtk::Box* const modeHBoxbwev;
+    Gtk::Box* const modeHBoxbwev12;
     MyComboBoxText* const bwevMethod12;
     Gtk::Frame* const logcieFrame;
     Gtk::CheckButton* const logcie;
@@ -1854,7 +1854,7 @@ private:
     Gtk::CheckButton* const bwcie;
 
     Gtk::Frame* const sigmoidjzFrame;
-    Gtk::Frame* const sigmoid2Frame;
+    Gtk::Frame* const sigmoid2Frame12;
     Gtk::CheckButton* const sigcie;
     Gtk::CheckButton* const sigjz;
     Adjuster* const sigmoidldajzcie;
