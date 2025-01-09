@@ -10948,10 +10948,10 @@ void Locallabcie::logcieqChanged()
 {
     if (logcieq->get_active()) {
         satcie->hide();
-     //   sigmoidnormFrame->hide();
+        sigmoidnormFrame->hide();
     } else {
         satcie->show();
-     //   sigmoidnormFrame->show();
+        sigmoidnormFrame->show();
     }
 
     if (isLocActivated && exp->getEnabled()) {
@@ -11186,6 +11186,26 @@ void Locallabcie::chjzcieChanged()
 
 void Locallabcie::modeQJChanged()
 {
+        if (modeQJ->get_active_row_number() == 0) {//5.11
+            if(sigq12->get_active()) {
+                sigq12->set_active(false);
+            }
+            sigmoidFrame12->hide();
+            sigmoidFrame->show();
+            logcieq->show();
+
+        } else if (modeQJ->get_active_row_number() == 1) {//5.12
+            if(sigq->get_active()) {
+                sigq->set_active(false);
+            }
+            sigmoidFrame12->show();
+            sigmoidFrame->hide();
+            logcieq->hide();
+            logcieq->set_active(false);
+           
+        }
+    
+    
     if (isLocActivated && exp->getEnabled()) {
 
         if (listener) {
@@ -11740,6 +11760,10 @@ void Locallabcie::guijzczhz()
 void Locallabcie::updateGUIToMode(const modeType new_type)
 {
     const LocallabParams::LocallabSpot defSpot;
+    
+    
+    
+    
 
     switch (new_type) {
         case Simple:
@@ -12012,7 +12036,7 @@ void Locallabcie::updateGUIToMode(const modeType new_type)
                 maskunusablecie->show();
             }
 
-            if (modecam->get_active_row_number() == 0) {
+            if (modecam->get_active_row_number() == 0 && modeQJ->get_active_row_number() == 1) {
                 bevwevFrame->show();
                 sigmoidFrame12->show();
                 expprecam->show();
@@ -12173,10 +12197,10 @@ void Locallabcie::updateGUIToMode(const modeType new_type)
             comprcieauto->show();
             if (logcieq->get_active()) {
                 satcie->hide();
-               // sigmoidnormFrame->hide();
+                sigmoidnormFrame->hide();
             } else {
                 satcie->show();
-               // sigmoidnormFrame->show();
+                sigmoidnormFrame->show();
             }
 
             targetGraycie->show();
@@ -12326,7 +12350,7 @@ void Locallabcie::updateGUIToMode(const modeType new_type)
             expcamscene->show();
             expcamviewing->show();
 
-            if (modecam->get_active_row_number() == 0) {
+            if (modecam->get_active_row_number() == 0 && modeQJ->get_active_row_number() == 1) {
                 targetGraycie->show();
                 targabscie->show();
                 surrHBoxcie->show();
@@ -12486,6 +12510,29 @@ void Locallabcie::updatecieGUI()
 
     contsigqcie->hide();
     lightsigqcie->hide();
+ /*   
+    if (modeQJ->get_active_row_number() == 0) {//5.11
+        if(sigq12->get_active()) {
+            sigq12->set_active(false);
+        }
+            sigmoidFrame12->hide();
+            sigmoidFrame->show();
+            logcieq->show();
+
+    } else if (modeQJ->get_active_row_number() == 1) {//5.12
+        if(sigq->get_active()) {
+                sigq->set_active(false);
+        }
+            sigmoidFrame12->show();
+            sigmoidFrame->hide();
+            logcieq->hide();
+            logcieq->set_active(false);
+           
+    }
+*/   
+    
+    
+    
 
     if (modecie->get_active_row_number() > 0) {
         sensicie->hide();
