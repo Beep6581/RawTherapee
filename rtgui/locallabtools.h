@@ -64,6 +64,7 @@ protected:
     rtengine::ProcEvent Evlocallabpreviewlog;
     rtengine::ProcEvent Evlocallabpreviewcie;
     rtengine::ProcEvent Evlocallabpreviewmas;
+    rtengine::ProcEvent Evlocallabnormcie12;
     rtengine::ProcEvent Evlocallabnormcie;
     rtengine::ProcEvent Evlocallabstrumaskcie;
     rtengine::ProcEvent EvLocallabtoolcie;
@@ -145,6 +146,11 @@ protected:
     rtengine::ProcEvent Evlocallabfeather_mask;
     rtengine::ProcEvent Evlocallaboffslc;
     rtengine::ProcEvent EvlocallabmodeQJ;
+    rtengine::ProcEvent Evlocallabsigmoidldacie;
+    rtengine::ProcEvent Evlocallabsigmoidthcie; 
+    rtengine::ProcEvent Evlocallabsigmoidblcie; 
+    rtengine::ProcEvent Evlocallabsigmoidsenscie;
+    rtengine::ProcEvent Evlocallabsigq;
     // LocallabTool parameters
     bool needMode;
     bool isLocActivated;
@@ -1787,12 +1793,22 @@ private:
     Adjuster* const sigmoidblcie12;
     Gtk::Box* autocomprHBox;
     Gtk::ToggleButton* const comprcieauto;
+    Gtk::CheckButton* const normcie12;
     Gtk::CheckButton* const normcie;
     Gtk::Box* const modeHBoxbwev12;
     MyComboBoxText* const bwevMethod12;
     Gtk::Box* const modeHBoxbwev;
     MyComboBoxText* const bwevMethod;
-    
+
+     ToolParamBlock* const sigBox;
+    Gtk::Frame* const sigmoidFrame;
+    Gtk::CheckButton* const sigq;
+    Gtk::Frame* const sigmoidnormFrame;
+    Adjuster* const sigmoidldacie;
+    Adjuster* const sigmoidthcie;
+    Adjuster* const sigmoidsenscie;
+    Adjuster* const sigmoidblcie;
+   
     Gtk::Frame* const logcieFrame;
     Gtk::CheckButton* const logcie;
     ToolParamBlock* const comprBox;
@@ -1862,6 +1878,7 @@ private:
 
     Gtk::Frame* const sigmoidjzFrame;
     Gtk::Frame* const sigmoid2Frame12;
+    Gtk::Frame* const sigmoid2Frame;
     Gtk::CheckButton* const sigcie;
     Gtk::CheckButton* const sigjz;
     Adjuster* const sigmoidldajzcie;
@@ -1960,7 +1977,7 @@ private:
     ThresholdAdjuster* const csThresholdcie;
     int nextcomprciecount = 0;
    
-    sigc::connection AutograycieConn, primMethodconn, illMethodconn, smoothciemetconn, catMethodconn, sigybjzConn, qtojConn, showmaskcieMethodConn, enacieMaskConn, enacieMaskallConn, jabcieConn, sursourcieconn, surroundcieconn, modecieconn, modecamconn, modeQJconn, comprcieautoconn, normcieconn, logcieconn, satcieconn, logcieqconn, smoothcieconn, smoothcielnkconn, smoothciehighconn, smoothcietrcconn, smoothcietrcrelconn, smoothcieybconn,smoothcielumconn, logjzconn, sigjzconn, sigq12conn, chjzcieconn, toneMethodcieConn, toneMethodcieConn2, toolcieConn, bwevMethod12Conn, bwevMethodConn,fftcieMaskConn, gamutcieconn, bwcieconn, expprecamconn, sigcieconn;
+    sigc::connection AutograycieConn, primMethodconn, illMethodconn, smoothciemetconn, catMethodconn, sigybjzConn, qtojConn, showmaskcieMethodConn, enacieMaskConn, enacieMaskallConn, jabcieConn, sursourcieconn, surroundcieconn, modecieconn, modecamconn, modeQJconn, comprcieautoconn, normcie12conn, normcieconn, logcieconn, satcieconn, logcieqconn, smoothcieconn, smoothcielnkconn, smoothciehighconn, smoothcietrcconn, smoothcietrcrelconn, smoothcieybconn,smoothcielumconn, logjzconn, sigjzconn, sigq12conn, sigqconn, chjzcieconn, toneMethodcieConn, toneMethodcieConn2, toolcieConn, bwevMethod12Conn, bwevMethodConn,fftcieMaskConn, gamutcieconn, bwcieconn, expprecamconn, sigcieconn;
     sigc::connection previewcieConn, sigmoidqjcieconn;
 public:
     Locallabcie();
@@ -2017,6 +2034,7 @@ private:
     void qtojChanged();
     void jabcieChanged();
     void comprcieautoChanged();
+    void normcie12Changed();
     void normcieChanged();
     void gamutcieChanged();
     void bwcieChanged();
@@ -2038,6 +2056,7 @@ private:
     void logjzChanged();
     void sigjzChanged();
     void sigq12Changed();
+    void sigqChanged();
     void chjzcieChanged();
     void updatecieGUI();
     void updatecielnkGUI();

@@ -1038,6 +1038,7 @@ public:
         bool qtoj;
         bool jabcie;
         bool comprcieauto;
+        bool normcie12;
         bool normcie;
         bool gamutcie;
         bool bwcie;
@@ -1055,6 +1056,7 @@ public:
         bool logjz;
         bool sigjz;
         bool sigq12;
+        bool sigq;
         bool chjzcie;
         bool sourceGraycie;
         bool sourceabscie;
@@ -1107,6 +1109,10 @@ public:
         bool sigmoidldacie12;
         bool sigmoidthcie12;
         bool sigmoidblcie12;
+        bool sigmoidldacie;
+        bool sigmoidthcie;
+        bool sigmoidsenscie;
+        bool sigmoidblcie;
         bool comprcie;
         bool strcielog;
         bool comprcieth;

@@ -1699,6 +1699,7 @@ struct LocallabParams {
         bool qtoj;
         bool jabcie;
         bool comprcieauto;
+        bool normcie12;
         bool normcie;
         bool gamutcie;
         bool bwcie;
@@ -1716,13 +1717,14 @@ struct LocallabParams {
         bool logjz;
         bool sigjz;
         bool sigq12;
+        bool sigq;
         bool chjzcie;
         double sourceGraycie;
         double sourceabscie;
         Glib::ustring sursourcie;
         Glib::ustring modecie;
-        Glib::ustring modeQJ;
         Glib::ustring modecam;
+        Glib::ustring modeQJ;
         Glib::ustring bwevMethod12;
         Glib::ustring bwevMethod;
         double saturlcie;
@@ -1774,6 +1776,10 @@ struct LocallabParams {
         double sigmoidldacie12;
         double sigmoidthcie12;
         double sigmoidblcie12;
+        double sigmoidldacie;
+        double sigmoidthcie;
+        double sigmoidsenscie;
+        double sigmoidblcie;
         double comprcie;
         double strcielog;
         double comprcieth;
