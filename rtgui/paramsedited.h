@@ -1034,7 +1034,7 @@ public:
         bool reparcie;
         bool sensicie;
         bool Autograycie;
-        bool sigybjz;
+        bool sigybjz12;
         bool qtoj;
         bool jabcie;
         bool comprcieauto;
@@ -1054,7 +1054,7 @@ public:
         bool smoothciehigh;
         bool smoothcielnk;
         bool logjz;
-        bool sigjz;
+        bool sigjz12;
         bool sigq12;
         bool sigq;
         bool chjzcie;
@@ -1156,9 +1156,9 @@ public:
         bool smoothciemet;
         bool primMethod;
         bool catMethod;
-        bool sigmoidldajzcie;
-        bool sigmoidthjzcie;
-        bool sigmoidbljzcie;
+        bool sigmoidldajzcie12;
+        bool sigmoidthjzcie12;
+        bool sigmoidbljzcie12;
         bool contqcie;
         bool contsigqcie;
         bool colorflcie;

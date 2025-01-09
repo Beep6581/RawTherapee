@@ -3364,7 +3364,7 @@ TP_LOCALLAB_LOGAUTO_TOOLTIP;Pressing this button will calculate the dynamic rang
 TP_LOCALLAB_LOGBASE_TOOLTIP;Default = 2.\nValues less than 2 reduce the action of the algorithm making the shadows darker and the highlights brighter.\nWith values greater than 2, the shadows are grayer and the highlights become more washed out.
 TP_LOCALLAB_LOGCATAD_TOOLTIP;Chromatic adaptation allows us to interpret a color according to its spatio-temporal environment.\nUseful when the white balance deviates significantly from the D50 reference.\nAdapts colors to the illuminant of the output device.
 TP_LOCALLAB_LOGCIE;Log Encoding
-TP_LOCALLAB_LOGCIEQ;Log Encoding Q - with Ciecam - Depreciated
+TP_LOCALLAB_LOGCIEQ;Log Encoding Q - with Ciecam - Deprecated
 TP_LOCALLAB_LOGCIEQ_TOOLTIP;Activating the checkbox allows you to switch between Log Encoding based on the 3 RGB channels, and Log Encoding based solely on Ciecam’s brightness (Q) channel.\nUsing the Q channel instead of the RGB channels helps avoid undesirable edge effects such as hue and saturation shifts.\nHowever, the settings are more difficult to optimise because Q is unbounded and Ciecam alters the data to take into account the surround conditions, simultaneous contrast, etc.\nYou may have to adjust the following:\n   Scene conditions: Mean luminance (Yb), Whites &amp; Blacks distribution, Black Ev, White Ev.\n   Source Data Adjustments : Brightness compression, Strength.\n\nNote: when using Log Encoding (Q), be careful not to activate the Disable Ciecam option in the Scene Conditions, Surround menu.
 TP_LOCALLAB_LOGCIE_TOOLTIP;Allows you to use Black Ev, White Ev, White and Black distribution, Scene Mean luminance(Yb%) and Viewing Mean luminance(Yb%) for tone-mapping using 'Log Encoding' with Brightness compression.
 TP_LOCALLAB_LOGCOLORFL;Colorfulness (M)
@@ -3552,7 +3552,7 @@ TP_LOCALLAB_PREVSHOW;Show additional settings
 TP_LOCALLAB_PRIMILLFRAME;Primaries & Illuminant
 TP_LOCALLAB_PROXI;ΔE decay
 TP_LOCALLAB_QJMODE;Tone mapping operators Q (Cam16) & J (Jz) 
-TP_LOCALLAB_QJMODE_511;5.11 depreciated
+TP_LOCALLAB_QJMODE_511;5.11 deprecated
 TP_LOCALLAB_QJMODE_512;5.12
 TP_LOCALLAB_QUAAGRES;Aggressive
 TP_LOCALLAB_QUACONSER;Conservative
@@ -3671,7 +3671,7 @@ TP_LOCALLAB_SH_TOOLNAME;Shadows/Highlights & Tone Equalizer
 TP_LOCALLAB_SIGBLACKSSCIE;Blacks distribution
 TP_LOCALLAB_SIGCIE;Sigmoid
 TP_LOCALLAB_SIGFRA;Sigmoid Q & Slope based *
-TP_LOCALLAB_SIGFRA11;Sigmoid Q - depreciated
+TP_LOCALLAB_SIGFRA11;Sigmoid Q - deprecated
 TP_LOCALLAB_SIGGAMJCIE;Gamma
 TP_LOCALLAB_SIGJZFRA;Sigmoid Jz *
 TP_LOCALLAB_SIGMAWAV;Attenuation response

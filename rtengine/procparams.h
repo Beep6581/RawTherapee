@@ -1695,7 +1695,7 @@ struct LocallabParams {
         double reparcie;
         int sensicie;
         bool Autograycie;
-        bool sigybjz;
+        bool sigybjz12;
         bool qtoj;
         bool jabcie;
         bool comprcieauto;
@@ -1715,7 +1715,7 @@ struct LocallabParams {
         bool smoothciehigh;
         bool smoothcielnk;
         bool logjz;
-        bool sigjz;
+        bool sigjz12;
         bool sigq12;
         bool sigq;
         bool chjzcie;
@@ -1824,9 +1824,9 @@ struct LocallabParams {
         Glib::ustring smoothciemet;
         Glib::ustring primMethod;
         Glib::ustring catMethod;
-        double sigmoidldajzcie;
-        double sigmoidthjzcie;
-        double sigmoidbljzcie;
+        double sigmoidldajzcie12;
+        double sigmoidthjzcie12;
+        double sigmoidbljzcie12;
         double contqcie;
         double contsigqcie;
         double colorflcie;

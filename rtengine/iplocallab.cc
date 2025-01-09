@@ -3074,7 +3074,7 @@ void ImProcFunctions::ciecamloc_02float(struct local_params& lp, int sp, LabImag
 
     bool z_cam = false; //params->locallab.spots.at(sp).jabcie; //alaways use normal algorithm, Zcam giev often bad results
     bool jabcie = false;//always disabled
-    bool issigjz = params->locallab.spots.at(sp).sigjz;
+    bool issigjz = params->locallab.spots.at(sp).sigjz12;
     bool issigq12 = params->locallab.spots.at(sp).sigq12;
     bool issig = true; //params->locallab.spots.at(sp).sigcie;
 
@@ -3642,9 +3642,9 @@ void ImProcFunctions::ciecamloc_02float(struct local_params& lp, int sp, LabImag
     const double log2 = xlog(2.);
     const float log2f = xlogf(2.f);
     
-    float middle_grey_contrastjz = params->locallab.spots.at(sp).sigmoidldajzcie;
-    float contrast_skewnessjz = params->locallab.spots.at(sp).sigmoidthjzcie;
-    float white_point_dispjz = params->locallab.spots.at(sp).sigmoidbljzcie;
+    float middle_grey_contrastjz = params->locallab.spots.at(sp).sigmoidldajzcie12;
+    float contrast_skewnessjz = params->locallab.spots.at(sp).sigmoidthjzcie12;
+    float white_point_dispjz = params->locallab.spots.at(sp).sigmoidbljzcie12;
     float middle_greyjz = 0.01 * params->locallab.spots.at(sp).sourceGraycie;
     middle_greyjz *= 2.f;
     middle_greyjz = std::min(middle_greyjz, 0.6f);
@@ -3652,7 +3652,7 @@ void ImProcFunctions::ciecamloc_02float(struct local_params& lp, int sp, LabImag
     float black_pointjz =  xexpf(lp.blackevjz * std::log(2.f) + xlogf(middle_greyjz));
     float white_pointsigjz = xexpf(lp.whiteevjz * std::log(2.f) + xlogf(middle_greyjz));//to adapt if need and remove slider whitsig
     float drjz = white_pointsigjz - black_pointjz;
-    if(params->locallab.spots.at(sp).sigybjz) {
+    if(params->locallab.spots.at(sp).sigybjz12) {
         middle_greyjz = middle_greyjz * drjz + black_pointjz;
     }
 

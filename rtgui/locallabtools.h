@@ -1783,7 +1783,7 @@ private:
     Adjuster* const whiteEvjz;
     Adjuster* const targetjz;
     Gtk::Frame* const bevwevFrame;
-    Gtk::CheckButton* const sigybjz;
+    Gtk::CheckButton* const sigybjz12;
     ToolParamBlock* const sigBox12;
     Gtk::Frame* const sigmoidFrame12;
     Gtk::CheckButton* const sigq12;
@@ -1876,14 +1876,14 @@ private:
     Gtk::Box* bwcieBox;
     Gtk::CheckButton* const bwcie;
 
-    Gtk::Frame* const sigmoidjzFrame;
+    Gtk::Frame* const sigmoidjzFrame12;
     Gtk::Frame* const sigmoid2Frame12;
     Gtk::Frame* const sigmoid2Frame;
     Gtk::CheckButton* const sigcie;
-    Gtk::CheckButton* const sigjz;
-    Adjuster* const sigmoidldajzcie;
-    Adjuster* const sigmoidthjzcie;
-    Adjuster* const sigmoidbljzcie;
+    Gtk::CheckButton* const sigjz12;
+    Adjuster* const sigmoidldajzcie12;
+    Adjuster* const sigmoidthjzcie12;
+    Adjuster* const sigmoidbljzcie12;
     
     Adjuster* const colorflcie;
     Adjuster* const saturlcie;
@@ -1977,7 +1977,7 @@ private:
     ThresholdAdjuster* const csThresholdcie;
     int nextcomprciecount = 0;
    
-    sigc::connection AutograycieConn, primMethodconn, illMethodconn, smoothciemetconn, catMethodconn, sigybjzConn, qtojConn, showmaskcieMethodConn, enacieMaskConn, enacieMaskallConn, jabcieConn, sursourcieconn, surroundcieconn, modecieconn, modecamconn, modeQJconn, comprcieautoconn, normcie12conn, normcieconn, logcieconn, satcieconn, logcieqconn, smoothcieconn, smoothcielnkconn, smoothciehighconn, smoothcietrcconn, smoothcietrcrelconn, smoothcieybconn,smoothcielumconn, logjzconn, sigjzconn, sigq12conn, sigqconn, chjzcieconn, toneMethodcieConn, toneMethodcieConn2, toolcieConn, bwevMethod12Conn, bwevMethodConn,fftcieMaskConn, gamutcieconn, bwcieconn, expprecamconn, sigcieconn;
+    sigc::connection AutograycieConn, primMethodconn, illMethodconn, smoothciemetconn, catMethodconn, sigybjz12Conn, qtojConn, showmaskcieMethodConn, enacieMaskConn, enacieMaskallConn, jabcieConn, sursourcieconn, surroundcieconn, modecieconn, modecamconn, modeQJconn, comprcieautoconn, normcie12conn, normcieconn, logcieconn, satcieconn, logcieqconn, smoothcieconn, smoothcielnkconn, smoothciehighconn, smoothcietrcconn, smoothcietrcrelconn, smoothcieybconn,smoothcielumconn, logjzconn, sigjz12conn, sigq12conn, sigqconn, chjzcieconn, toneMethodcieConn, toneMethodcieConn2, toolcieConn, bwevMethod12Conn, bwevMethodConn,fftcieMaskConn, gamutcieconn, bwcieconn, expprecamconn, sigcieconn;
     sigc::connection previewcieConn, sigmoidqjcieconn;
 public:
     Locallabcie();
@@ -2030,7 +2030,7 @@ private:
     void updateGUIToMode(const modeType new_type) override;
     void complexityModeChanged();
     void AutograycieChanged();
-    void sigybjzChanged();
+    void sigybjz12Changed();
     void qtojChanged();
     void jabcieChanged();
     void comprcieautoChanged();
@@ -2054,7 +2054,7 @@ private:
     void smoothcielumChanged();
     void sigcieChanged();
     void logjzChanged();
-    void sigjzChanged();
+    void sigjz12Changed();
     void sigq12Changed();
     void sigqChanged();
     void chjzcieChanged();
