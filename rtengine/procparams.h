@@ -1721,6 +1721,7 @@ struct LocallabParams {
         double sourceabscie;
         Glib::ustring sursourcie;
         Glib::ustring modecie;
+        Glib::ustring modeQJ;
         Glib::ustring modecam;
         Glib::ustring bwevMethod12;
         Glib::ustring bwevMethod;

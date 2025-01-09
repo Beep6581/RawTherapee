@@ -8022,9 +8022,11 @@ Locallabcie::Locallabcie():
     reparcie(Gtk::manage(new Adjuster(M("TP_LOCALLAB_LOGREPART"), 1.0, 100.0, 1., 100.0))),
     jabcie(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_JAB")))),
     modecam(Gtk::manage(new MyComboBoxText())),
+    modeQJ(Gtk::manage(new MyComboBoxText())),
     modecie(Gtk::manage(new MyComboBoxText())),
     jzFrame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_JZFRA")))),
     modeHBoxcam(Gtk::manage(new Gtk::Box())),
+    modeHBoxQJ(Gtk::manage(new Gtk::Box())),
     modeHBoxcie(Gtk::manage(new Gtk::Box())),
     cieFrame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_LOGFRA")))),
     expcamscene(Gtk::manage(new MyExpander(false, Gtk::manage(new Gtk::Box())))),
@@ -8326,7 +8328,8 @@ Locallabcie::Locallabcie():
     Evlocallabsmoothciemet = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_CIE_SMOOTHMET");
     Evlocallabfeathercie = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_FEATHERCIE");
     EvlocallabbwevMethod = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_BWEVMETHOD");
-    
+    EvlocallabmodeQJ = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_QJMETHOD");
+
     set_orientation(Gtk::ORIENTATION_VERTICAL);
 
     // Parameter Ciecam specific widgets
@@ -8347,6 +8350,16 @@ Locallabcie::Locallabcie():
     modeHBoxcam->pack_start(*modecam);
     modecamconn = modecam->signal_changed().connect(sigc::mem_fun(*this, &Locallabcie::modecamChanged));
     pack_start(*modeHBoxcam);
+
+    modeHBoxQJ->set_spacing(2);
+    Gtk::Label* modeLabelQJ = Gtk::manage(new Gtk::Label(M("TP_LOCALLAB_QJMODE") + ":"));
+    modeHBoxQJ->pack_start(*modeLabelQJ, Gtk::PACK_SHRINK);
+    modeQJ->append(M("TP_LOCALLAB_QJMODE_511"));
+    modeQJ->append(M("TP_LOCALLAB_QJMODE_512"));
+    modeQJ->set_active(1);
+    modeHBoxQJ->pack_start(*modeQJ);
+    modeQJconn = modeQJ->signal_changed().connect(sigc::mem_fun(*this, &Locallabcie::modeQJChanged));
+    pack_start(*modeHBoxQJ);
 
     modeHBoxcie->set_spacing(2);
     modeHBoxcie->set_tooltip_markup(M("TP_LOCALLAB_CIEMODE_TOOLTIP"));
@@ -9538,6 +9551,7 @@ void Locallabcie::disableListener()
     surroundcieconn.block(true);
     modecieconn.block(true);
     modecamconn.block(true);
+    modeQJconn.block(true);
     bwevMethod12Conn.block(true);
     bwevMethodConn.block(true);
     toneMethodcieConn.block(true);
@@ -9584,6 +9598,7 @@ void Locallabcie::enableListener()
     surroundcieconn.block(false);
     modecieconn.block(false);
     modecamconn.block(false);
+    modeQJconn.block(false);
     bwevMethod12Conn.block(false);
     bwevMethodConn.block(false);
     toneMethodcieConn.block(false);
@@ -9764,6 +9779,12 @@ void Locallabcie::read(const rtengine::procparams::ProcParams* pp, const ParamsE
             modecam->set_active(1);
         }
 
+        if (spot.modeQJ == "511") {
+            modeQJ->set_active(0);
+        } else if (spot.modeQJ == "512") {
+            modeQJ->set_active(1);
+        }
+
         if (spot.modecie == "com") {
             modecie->set_active(0);
         } else if (spot.modecie == "tm") {
@@ -9918,6 +9939,7 @@ void Locallabcie::read(const rtengine::procparams::ProcParams* pp, const ParamsE
         jabcie->set_active(spot.jabcie);
         jabcieChanged();
         modecamChanged();
+        modeQJChanged();
         sursourcieChanged();
         bwevMethod12Changed();
         bwevMethodChanged();
@@ -10138,6 +10160,12 @@ void Locallabcie::write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedi
             spot.modecam = "cam16";
         } else if (modecam->get_active_row_number() == 1) {
             spot.modecam = "jz";
+        }
+
+        if (modeQJ->get_active_row_number() == 0) {
+            spot.modeQJ = "511";
+        } else if (modeQJ->get_active_row_number() == 1) {
+            spot.modeQJ = "512";
         }
 
         if (modecie->get_active_row_number() == 0) {
@@ -11055,6 +11083,19 @@ void Locallabcie::chjzcieChanged()
         }
     }
 }
+
+void Locallabcie::modeQJChanged()
+{
+    if (isLocActivated && exp->getEnabled()) {
+
+        if (listener) {
+            listener->panelChanged(EvlocallabmodeQJ,
+                                   modeQJ->get_active_text() + " (" + escapeHtmlChars(getSpotName()) + ")");
+        }
+    }
+    
+}
+
 
 void Locallabcie::modecamChanged()
 {
