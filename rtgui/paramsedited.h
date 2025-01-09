@@ -1054,7 +1054,7 @@ public:
         bool smoothcielnk;
         bool logjz;
         bool sigjz;
-        bool sigq;
+        bool sigq12;
         bool chjzcie;
         bool sourceGraycie;
         bool sourceabscie;

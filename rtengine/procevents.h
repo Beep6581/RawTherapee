@@ -1175,7 +1175,7 @@ enum ProcEventCode {
     Evlocallabtargetjz = 1145,
     Evlocallabsigybjz = 1146,
     Evlocallabsigjz = 1147,
-    Evlocallabsigq = 1148,
+    Evlocallabsigq12 = 1148,
     Evlocallablogcie = 1149,
     NUMOFEVENTS
 };

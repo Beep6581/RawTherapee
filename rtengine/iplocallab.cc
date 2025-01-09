@@ -3075,7 +3075,7 @@ void ImProcFunctions::ciecamloc_02float(struct local_params& lp, int sp, LabImag
     bool z_cam = false; //params->locallab.spots.at(sp).jabcie; //alaways use normal algorithm, Zcam giev often bad results
     bool jabcie = false;//always disabled
     bool issigjz = params->locallab.spots.at(sp).sigjz;
-    bool issigq = params->locallab.spots.at(sp).sigq;
+    bool issigq12 = params->locallab.spots.at(sp).sigq12;
     bool issig = true; //params->locallab.spots.at(sp).sigcie;
 
     //sigmoid J Q variables
@@ -4606,7 +4606,7 @@ void ImProcFunctions::ciecamloc_02float(struct local_params& lp, int sp, LabImag
                                 Qpro *=  f;
                             }
                         }
-                        if (issig && issigq && iscie) { //sigmoid Q and slope based Q
+                        if (issig && issigq12 && iscie) { //sigmoid Q and slope based Q
                             float val = Qpro * coefq;
                             float Qout = 0.f;
                             if(mobwev12 == 0) {
