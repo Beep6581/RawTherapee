@@ -1925,6 +1925,8 @@ void ParamsEdited::initFrom(const std::vector<rtengine::procparams::ProcParams>&
                 locallab.spots.at(j).smoothcielnk = locallab.spots.at(j).smoothcielnk && pSpot.smoothcielnk == otherSpot.smoothcielnk;
                 locallab.spots.at(j).logjz = locallab.spots.at(j).logjz && pSpot.logjz == otherSpot.logjz;
                 locallab.spots.at(j).sigjz12 = locallab.spots.at(j).sigjz12 && pSpot.sigjz12 == otherSpot.sigjz12;
+                locallab.spots.at(j).sigjz = locallab.spots.at(j).sigjz && pSpot.sigjz == otherSpot.sigjz;
+                locallab.spots.at(j).forcebw = locallab.spots.at(j).forcebw && pSpot.forcebw == otherSpot.forcebw;
                 locallab.spots.at(j).sigq12 = locallab.spots.at(j).sigq12 && pSpot.sigq12 == otherSpot.sigq12;
                 locallab.spots.at(j).sigq = locallab.spots.at(j).sigq && pSpot.sigq == otherSpot.sigq;
                 locallab.spots.at(j).chjzcie = locallab.spots.at(j).chjzcie && pSpot.chjzcie == otherSpot.chjzcie;
@@ -6315,6 +6317,14 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
             toEdit.locallab.spots.at(i).sigjz12 = mods.locallab.spots.at(i).sigjz12;
         }
 
+        if (locallab.spots.at(i).sigjz) {
+            toEdit.locallab.spots.at(i).sigjz = mods.locallab.spots.at(i).sigjz;
+        }
+
+        if (locallab.spots.at(i).forcebw) {
+            toEdit.locallab.spots.at(i).forcebw = mods.locallab.spots.at(i).forcebw;
+        }
+
         if (locallab.spots.at(i).sigq12) {
             toEdit.locallab.spots.at(i).sigq12 = mods.locallab.spots.at(i).sigq12;
         }
@@ -8908,6 +8918,8 @@ LocallabParamsEdited::LocallabSpotEdited::LocallabSpotEdited(bool v) :
     smoothcielnk(v),
     logjz(v),
     sigjz12(v),
+    sigjz(v),
+    forcebw(v),
     sigq12(v),
     sigq(v),
     chjzcie(v),
@@ -9695,6 +9707,8 @@ void LocallabParamsEdited::LocallabSpotEdited::set(bool v)
     smoothcielnk = v;
     logjz = v;
     sigjz12 = v;
+    sigjz = v;
+    forcebw = v;
     sigq12 = v;
     sigq = v;
     chjzcie = v;

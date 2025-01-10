@@ -1716,6 +1716,8 @@ struct LocallabParams {
         bool smoothcielnk;
         bool logjz;
         bool sigjz12;
+        bool sigjz;
+        bool forcebw;
         bool sigq12;
         bool sigq;
         bool chjzcie;

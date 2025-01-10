@@ -151,6 +151,10 @@ protected:
     rtengine::ProcEvent Evlocallabsigmoidblcie; 
     rtengine::ProcEvent Evlocallabsigmoidsenscie;
     rtengine::ProcEvent Evlocallabsigq;
+    rtengine::ProcEvent Evlocallabsigjz;
+    rtengine::ProcEvent Evlocallabforcebw;
+
+
     // LocallabTool parameters
     bool needMode;
     bool isLocActivated;
@@ -1877,6 +1881,7 @@ private:
     Gtk::CheckButton* const bwcie;
 
     Gtk::Frame* const sigmoidjzFrame12;
+    Gtk::Frame* const sigmoidjzFrame;
     Gtk::Frame* const sigmoid2Frame12;
     Gtk::Frame* const sigmoid2Frame;
     Gtk::CheckButton* const sigcie;
@@ -1884,6 +1889,9 @@ private:
     Adjuster* const sigmoidldajzcie12;
     Adjuster* const sigmoidthjzcie12;
     Adjuster* const sigmoidbljzcie12;
+
+    Gtk::CheckButton* const sigjz;
+    Gtk::CheckButton* const forcebw;
     
     Adjuster* const colorflcie;
     Adjuster* const saturlcie;
@@ -1977,7 +1985,7 @@ private:
     ThresholdAdjuster* const csThresholdcie;
     int nextcomprciecount = 0;
    
-    sigc::connection AutograycieConn, primMethodconn, illMethodconn, smoothciemetconn, catMethodconn, sigybjz12Conn, qtojConn, showmaskcieMethodConn, enacieMaskConn, enacieMaskallConn, jabcieConn, sursourcieconn, surroundcieconn, modecieconn, modecamconn, modeQJconn, comprcieautoconn, normcie12conn, normcieconn, logcieconn, satcieconn, logcieqconn, smoothcieconn, smoothcielnkconn, smoothciehighconn, smoothcietrcconn, smoothcietrcrelconn, smoothcieybconn,smoothcielumconn, logjzconn, sigjz12conn, sigq12conn, sigqconn, chjzcieconn, toneMethodcieConn, toneMethodcieConn2, toolcieConn, bwevMethod12Conn, bwevMethodConn,fftcieMaskConn, gamutcieconn, bwcieconn, expprecamconn, sigcieconn;
+    sigc::connection AutograycieConn, primMethodconn, illMethodconn, smoothciemetconn, catMethodconn, sigybjz12Conn, qtojConn, showmaskcieMethodConn, enacieMaskConn, enacieMaskallConn, jabcieConn, sursourcieconn, surroundcieconn, modecieconn, modecamconn, modeQJconn, comprcieautoconn, normcie12conn, normcieconn, logcieconn, satcieconn, logcieqconn, smoothcieconn, smoothcielnkconn, smoothciehighconn, smoothcietrcconn, smoothcietrcrelconn, smoothcieybconn,smoothcielumconn, logjzconn, sigjz12conn, forcebwconn, sigjzconn, sigq12conn, sigqconn, chjzcieconn, toneMethodcieConn, toneMethodcieConn2, toolcieConn, bwevMethod12Conn, bwevMethodConn,fftcieMaskConn, gamutcieconn, bwcieconn, expprecamconn, sigcieconn;
     sigc::connection previewcieConn, sigmoidqjcieconn;
 public:
     Locallabcie();
@@ -2055,6 +2063,8 @@ private:
     void sigcieChanged();
     void logjzChanged();
     void sigjz12Changed();
+    void sigjzChanged();
+    void forcebwChanged();
     void sigq12Changed();
     void sigqChanged();
     void chjzcieChanged();
