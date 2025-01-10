@@ -1571,6 +1571,16 @@ HISTORY_MSG_LOCAL_LOG_SAT;Local - Log Saturation control
 HISTORY_MSG_LOCAL_LOG_WHITES;Local - Log Whites distribution
 HISTORY_MSG_LOCAL_PROCESSWAV;Local - Wavelets - Show modifications
 HISTORY_MSG_LOCAL_TMO_SATUR;Local Exp Fattal Saturation
+HISTORY_MSG_LOCAL_QJMETHOD;Local - CIECAM - Tone mapping operator Q and J
+HISTORY_MSG_LOCAL_SIGDACIE;Local - CIECAM - Contrast 5.11
+HISTORY_MSG_LOCAL_SIGTHCIE;Local - CIECAM - Threshold 5.11
+HISTORY_MSG_LOCAL_SIGBLCIE;Local - CIECAM - Blend 5.11
+HISTORY_MSG_LOCAL_SIGQ11;Local - CIECAM - Sigmoid 5.11
+HISTORY_MSG_LOCAL_SIGJZ11;Local - Jz - Sigmoid 5.11
+HISTORY_MSG_LOCAL_SIGFORCEBW;Local - Jz - White Ev and Black Ev 5.11
+HISTORY_MSG_LOCAL_SIGJZ11CONT;Local - Jz - Contrast 5.11
+HISTORY_MSG_LOCAL_SIGJZ11GRAY;Local - Jz - Threshold 5.11
+HISTORY_MSG_LOCAL_SIGJZ11BL;Local - Jz - Threshold 5.11
 HISTORY_MSG_METADATA_MODE;Metadata copy mode
 HISTORY_MSG_MICROCONTRAST_CONTRAST;Microcontrast - Contrast threshold
 HISTORY_MSG_PDSHARPEN_AUTO_CONTRAST;CS - Auto threshold
@@ -3674,6 +3684,7 @@ TP_LOCALLAB_SIGFRA;Sigmoid Q & Slope based *
 TP_LOCALLAB_SIGFRA11;Sigmoid Q - deprecated
 TP_LOCALLAB_SIGGAMJCIE;Gamma
 TP_LOCALLAB_SIGJZFRA;Sigmoid Jz *
+TP_LOCALLAB_SIGJZFRA11;Sigmoid Jz
 TP_LOCALLAB_SIGMAWAV;Attenuation response
 TP_LOCALLAB_SIGMOID16_TOOLTIP;Allows you to simulate a tone mapping appearance using both 'Ciecam' and 'Sigmoid Q' or 'Slope based Q'. Sigmoid Q has three sliders:\na) Contrast acts on the shape of the sigmoid curve and consequently on the strength\nb) Skew (gray point) distributes the action according to the luminance.\nc) Display White point (cd/m2) - mode advanced. \n\nSlope based has only one slider: Gray balance (slope).\n\nThis new version of Sigmoid is incompatible with previous versions 5.11 and earlier. Log encoding inside Ciecam is removed.
 TP_LOCALLAB_SIGMOIDBL;Display White point (cd/m2)
