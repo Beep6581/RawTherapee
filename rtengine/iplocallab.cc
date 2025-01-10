@@ -3064,6 +3064,14 @@ void ImProcFunctions::ciecamloc_02float(struct local_params& lp, int sp, LabImag
     bool ciec = false;
     bool iscie = false;
 
+
+    int modeqj = 1;
+    if (params->locallab.spots.at(sp).modeQJ == "511") {
+        modeqj = 0;
+    } else if (params->locallab.spots.at(sp).modeQJ == "512") {
+        modeqj = 1;
+    }
+
     if (params->locallab.spots.at(sp).ciecam && params->locallab.spots.at(sp).explog && call == 1) {
         ciec = true;
         iscie = false;
@@ -3074,15 +3082,20 @@ void ImProcFunctions::ciecamloc_02float(struct local_params& lp, int sp, LabImag
 
     bool z_cam = false; //params->locallab.spots.at(sp).jabcie; //alaways use normal algorithm, Zcam giev often bad results
     bool jabcie = false;//always disabled
-    bool issigjz = params->locallab.spots.at(sp).sigjz12;
+    bool issigjz12 = params->locallab.spots.at(sp).sigjz12;
     bool issigq12 = params->locallab.spots.at(sp).sigq12;
+    
+    bool islogjz = params->locallab.spots.at(sp).forcebw;
+    bool issigjz = params->locallab.spots.at(sp).sigjz;
+    bool issigq = params->locallab.spots.at(sp).sigq;
+   
     bool issig = true; //params->locallab.spots.at(sp).sigcie;
 
     //sigmoid J Q variables
     const float sigmoidlambda = params->locallab.spots.at(sp).sigmoidldacie12;
-//    const float sigmoidth = params->locallab.spots.at(sp).sigmoidthcie;
+    const float sigmoidth = params->locallab.spots.at(sp).sigmoidthcie;
     const float sigmoidbl = params->locallab.spots.at(sp).sigmoidblcie12;
-  //  const bool sigmoidnorm = params->locallab.spots.at(sp).normcie;
+    const bool sigmoidnorm = params->locallab.spots.at(sp).normcie;
 
     int mobwev12 = 0;
     if (params->locallab.spots.at(sp).bwevMethod12 == "sigQ") {
@@ -3101,7 +3114,7 @@ void ImProcFunctions::ciecamloc_02float(struct local_params& lp, int sp, LabImag
         mobwev = 2;
     }
 
-    float senssig = 1.f; //(float) params->locallab.spots.at(sp).sigmoidsenscie;
+    float senssig =(float) params->locallab.spots.at(sp).sigmoidsenscie;
 
     float middle_grey_contrast = params->locallab.spots.at(sp).sigmoidldacie12;
     float contrast_skewness = params->locallab.spots.at(sp).sigmoidthcie12;
@@ -3774,6 +3787,20 @@ void ImProcFunctions::ciecamloc_02float(struct local_params& lp, int sp, LabImag
         if (settings->verbose) {
             printf("La=%4.1f PU_adap=%2.1f maxi=%f mini=%f mean=%f, avgm=%f to_screen=%f Max_real=%f to_one=%f\n", (double) la, adapjz, maxi, mini, sum, avgm, to_screen, maxreal, to_one);
         }
+        const float sigmoidlambdajz = params->locallab.spots.at(sp).sigmoidldajzcie;
+        const float sigmoidthjz = params->locallab.spots.at(sp).sigmoidthjzcie;
+        const float sigmoidbljz = params->locallab.spots.at(sp).sigmoidbljzcie;
+
+        float thjz = 1.f;
+        const float atjz = 1.f - sigmoidthjz;
+        const float btjz = sigmoidthjz;
+
+        const float athjz = sigmoidthjz - 1.f;
+        const float bthjz = 1.f;
+        float powsig = pow_F(sigmoidlambdajz, 0.5f);
+        const float sigmjz = 3.3f + 7.1f * (1.f - powsig); // e^10.4 = 32860
+        const float bljz = sigmoidbljz;
+
 
 
         double contreal = 0.2 *  params->locallab.spots.at(sp).contjzcie;
@@ -4172,14 +4199,34 @@ void ImProcFunctions::ciecamloc_02float(struct local_params& lp, int sp, LabImag
                     }
                 }
 
-                //sigmoid
-                if (issigjz && iscie) { //sigmoid Jz
+                //sigmoid 5.12
+                if (issigjz12 && iscie && modeqj == 1) { //sigmoid Jz
                     float val = Jz;
                     float Jout = 0.f;
                     sigmoid_QJ(val, Jout, middle_grey_contrastjz, contrast_skewnessjz, middle_greyjz, black_pointjz, white_point_dispjz);
 
                     Jz = Jout;
                     Jz = LIM01(Jz);
+                }
+
+                //sigmoid 5.11
+                if (issigjz && iscie && modeqj == 0) { //sigmoid Jz
+                    float val = Jz;
+
+                    if (islogjz) {
+                        val = std::max((xlog(Jz) / log2 - shadows_range) / (dynamic_range + 1.5), noise);//in range EV
+                    }
+
+                    if (sigmoidthjz >= 1.f) {
+                        thjz = athjz * val + bthjz;//threshold
+                    } else {
+                        thjz = atjz * val + btjz;
+                    }
+
+                    sigmoidla(val, thjz, sigmjz); //sigmz "slope" of sigmoid
+
+
+                    Jz = LIM01((double) bljz * Jz + (double) val);
                 }
 
                 if (Qtoj == true) { //lightness instead of brightness

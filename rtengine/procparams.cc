@@ -4744,7 +4744,7 @@ LocallabParams::LocallabSpot::LocallabSpot() :
     reparcie(100.),
     sensicie(60),
     Autograycie(true),
-    sigybjz12(true),
+    sigybjz12(false),
     qtoj(false),
     jabcie(true),
     comprcieauto(false),
