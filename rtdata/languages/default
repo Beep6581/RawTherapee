@@ -1570,6 +1570,7 @@ HISTORY_MSG_LOCAL_LOG_BLACKS;Local - Log Blacks distribution
 HISTORY_MSG_LOCAL_LOG_COMPR;Local - Log Compress brightness
 HISTORY_MSG_LOCAL_LOG_SAT;Local - Log Saturation control
 HISTORY_MSG_LOCAL_LOG_WHITES;Local - Log Whites distribution
+HISTORY_MSG_LOCAL_LOGCIE12;Local - Ciecam - Log encoding
 HISTORY_MSG_LOCAL_PROCESSWAV;Local - Wavelets - Show modifications
 HISTORY_MSG_LOCAL_TMO_SATUR;Local Exp Fattal Saturation
 HISTORY_MSG_LOCAL_QJMETHOD;Local - CIECAM - Tone mapping operator Q and J

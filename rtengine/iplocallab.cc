@@ -20572,7 +20572,7 @@ void ImProcFunctions::Lab_Local(
                     tmpImage->copyData(tmpImagelog);
 
                     if(params->locallab.spots.at(sp).logcie & !params->locallab.spots.at(sp).logcieq ) {
-                        printf("Call log encode\n");
+                       // printf("Call log encode\n");
                        log_encode(tmpImagelog, lp, multiThread, bfw, bfh);
                         float strlog = 0.01f * (float) params->locallab.spots.at(sp).strcielog;
 

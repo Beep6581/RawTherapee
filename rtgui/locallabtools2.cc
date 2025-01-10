@@ -11372,7 +11372,23 @@ void Locallabcie::modecamChanged()
             bevwevFrame->show();
             sigmoidFrame12->show();
             expprecam->show();
+            if (modeQJ->get_active_row_number() == 1) {      
+                sigmoidFrame12->show();
+                sigmoidFrame->hide();
+                logcieq->hide();
 
+                if(sigq->get_active()) {
+                    sigq->set_active(false);
+                }        
+            } else {
+                sigmoidFrame12->hide();
+                sigmoidFrame->show();
+                if(sigq12->get_active()) {
+                    sigq12->set_active(false);
+                } 
+                logcieq->show();
+                
+            }
         }
 
         sigmoidjzFrame12->hide();
@@ -11422,6 +11438,25 @@ void Locallabcie::modecamChanged()
         exprecovcie->show();
         expgradcie->show();
         expmaskcie->show();
+        if (modeQJ->get_active_row_number() == 1) {      
+            sigmoidFrame12->show();
+            sigmoidFrame->hide();
+            if(sigq->get_active()) {
+                sigq->set_active(false);
+            } 
+            logcieq->hide();
+           
+        } else {
+            sigmoidFrame12->hide();
+            sigmoidFrame->show();
+            if(sigq12->get_active()) {
+                sigq12->set_active(false);
+            } 
+            logcieq->show();
+            
+        }
+        
+        
     }
 
 
@@ -11443,6 +11478,25 @@ void Locallabcie::modecamChanged()
             sigmoidFrame12->show();
             sigmoidjzFrame12->hide();
             sigmoidjzFrame->hide();
+            if (modeQJ->get_active_row_number() == 1) {      
+                sigmoidFrame12->show();
+                sigmoidFrame->hide();
+                if(sigq->get_active()) {
+                    sigq->set_active(false);
+                } 
+                logcieq->hide();
+                
+            } else {
+                sigmoidFrame12->hide();
+                sigmoidFrame->show();
+                if(sigq12->get_active()) {
+                    sigq12->set_active(false);
+                logcieq->show();
+                } 
+                
+            }
+           
+            
             
         }
 
@@ -11484,6 +11538,23 @@ void Locallabcie::modecamChanged()
             expprecam->show();
             lapmaskcie->show();
             sigmoidjzFrame->hide();
+            if (modeQJ->get_active_row_number() == 1) {      
+                sigmoidFrame12->show();
+                sigmoidFrame->hide();
+                if(sigq->get_active()) {
+                    sigq->set_active(false);
+                } 
+                logcieq->hide();
+               
+            } else {
+                sigmoidFrame12->hide();
+                sigmoidFrame->show();
+                if(sigq12->get_active()) {
+                    sigq12->set_active(false);
+                }
+                logcieq->show();
+               
+            }
 
 
         }
@@ -11555,6 +11626,23 @@ void Locallabcie::modecamChanged()
         
         sigmoidjzFrame12->hide();
         sigmoidjzFrame->hide();
+        if (modeQJ->get_active_row_number() == 1) {      
+            sigmoidFrame12->show();
+            sigmoidFrame->hide();
+            if(sigq->get_active()) {
+                sigq->set_active(false);
+            } 
+            logcieq->hide();
+           
+        } else {
+            sigmoidFrame12->hide();
+            sigmoidFrame->show();
+            if(sigq12->get_active()) {
+                sigq12->set_active(false);
+            } 
+            logcieq->show();
+           
+        }
         
     }
 
@@ -12682,26 +12770,8 @@ void Locallabcie::updatecieGUI()
 
     contsigqcie->hide();
     lightsigqcie->hide();
- /*   
-    if (modeQJ->get_active_row_number() == 0) {//5.11
-        if(sigq12->get_active()) {
-            sigq12->set_active(false);
-        }
-            sigmoidFrame12->hide();
-            sigmoidFrame->show();
-            logcieq->show();
-
-    } else if (modeQJ->get_active_row_number() == 1) {//5.12
-        if(sigq->get_active()) {
-                sigq->set_active(false);
-        }
-            sigmoidFrame12->show();
-            sigmoidFrame->hide();
-            logcieq->hide();
-            logcieq->set_active(false);
-           
-    }
-*/   
+    
+   
     
     
     
@@ -12892,6 +12962,32 @@ void Locallabcie::updatecieGUI()
         modecie->set_active(0);
         sensicie->show();
         reparcie->show();
+    }
+    if (modeQJ->get_active_row_number() == 0) {//5.11
+        if(sigq12->get_active()) {
+            sigq12->set_active(false);
+        }
+        sigmoidFrame12->hide();
+        sigmoidFrame->show();
+        logcieq->show();
+        sigmoidjzFrame12->hide();
+        sigmoidjzFrame->show();
+        if(sigjz12->get_active()) {
+            sigjz12->set_active(false);
+        }
+    } else if (modeQJ->get_active_row_number() == 1) {//5.12
+        if(sigq->get_active()) {
+            sigq->set_active(false);
+        }
+        sigmoidFrame12->show();
+        sigmoidFrame->hide();
+        logcieq->hide();
+        logcieq->set_active(false);
+        sigmoidjzFrame12->show();
+        sigmoidjzFrame->hide();
+        if(sigjz->get_active()) {
+            sigjz->set_active(false);
+        }          
     }
 
     if (sursourcie->get_active_row_number() == 4) {
