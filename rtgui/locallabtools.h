@@ -157,7 +157,7 @@ protected:
     rtengine::ProcEvent Evlocallabsigmoidldajzcie;
     rtengine::ProcEvent Evlocallabsigmoidthjzcie;
     rtengine::ProcEvent Evlocallabsigmoidbljzcie;
-
+    rtengine::ProcEvent Evlocallablogcie_12;
     // LocallabTool parameters
     bool needMode;
     bool isLocActivated;

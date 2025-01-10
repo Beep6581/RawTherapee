@@ -3105,6 +3105,7 @@ void ImProcFunctions::ciecamloc_02float(struct local_params& lp, int sp, LabImag
     }
 
     int mobwev = 0;
+    float sumcamq01 = 0.5f;
 
     if (params->locallab.spots.at(sp).bwevMethod == "none") {
         mobwev = 0;
@@ -4465,7 +4466,7 @@ void ImProcFunctions::ciecamloc_02float(struct local_params& lp, int sp, LabImag
             } else {
                 maxicam = 0.4f * sumcamq + 0.6f * maxicamq;               
             } 
-//            sumcamq01 = sumcamq * coefq;
+            sumcamq01 = sumcamq * coefq;
 
         }
 
@@ -4480,7 +4481,7 @@ void ImProcFunctions::ciecamloc_02float(struct local_params& lp, int sp, LabImag
 
         double drref = 8.5; //Dynamic Range standard
  
-      //  double drd = ((double) dynamic_range - drref) / drref;
+        double drd = ((double) dynamic_range - drref) / drref;
  
         double dratt = (double) dynamic_range / drref;
         comprfactor = 0.4f * comprfactor * (float) dratt;//adapt comprfactor to Dynamic Range
@@ -4531,6 +4532,26 @@ void ImProcFunctions::ciecamloc_02float(struct local_params& lp, int sp, LabImag
 
             return x;
         };
+
+        //prepare Normalize luminance
+        float *datain = nullptr;
+        float *data = nullptr;
+        float *datanorm = nullptr;
+
+        if (((sigmoidnorm  && issigq)  || params->locallab.spots.at(sp).logcieq) && modeqj == 0) {//5.11
+            datain = new float[width* height];
+            data = new float[width * height];
+            datanorm = new float[width * height];
+#ifdef _OPENMP
+            #pragma omp parallel for schedule(dynamic, 16)
+#endif
+
+            for (int y = 0; y < height; y++) {
+                for (int x = 0; x < width; x++) {
+                    datain[(y) * width + (x)] = lab->L[y][x];
+                }
+            }
+        }
 
 #ifdef __SSE2__
         int bufferLength = ((width + 3) / 4) * 4; // bufferLength has to be a multiple of 4
@@ -4644,7 +4665,9 @@ void ImProcFunctions::ciecamloc_02float(struct local_params& lp, int sp, LabImag
                     if (ciec  && mocam == 1) {//only Cam16
                         bool jp = false;
 
-                        if (params->locallab.spots.at(sp).logcie && iscie) {//log encoding Q
+                      //  if (params->locallab.spots.at(sp).logcie && iscie) {//log encoding Q
+                        if (params->locallab.spots.at(sp).logcie && params->locallab.spots.at(sp).logcieq && iscie  && modeqj == 0) {//log encoding Q 5.11
+             
                             float val =  Qpro *  coefq;
 
                             if (val > (float) noise) {
@@ -4653,7 +4676,7 @@ void ImProcFunctions::ciecamloc_02float(struct local_params& lp, int sp, LabImag
                                 Qpro *=  f;
                             }
                         }
-                        if (issig && issigq12 && iscie) { //sigmoid Q and slope based Q
+                        if (issig && issigq12 && iscie && modeqj == 1 ) { //sigmoid Q and slope based Q 5.12
                             float val = Qpro * coefq;
                             float Qout = 0.f;
                             if(mobwev12 == 0) {
@@ -4666,6 +4689,29 @@ void ImProcFunctions::ciecamloc_02float(struct local_params& lp, int sp, LabImag
                             }
 
                             Qpro = std::max(Qout / coefq, 0.f);
+                            Jpro = SQR((10.f * Qpro) / wh);
+
+                        }
+
+                        if (issig && issigq && iscie && mobwev != 2 && modeqj == 0) { //sigmoid Q only and black Ev & white Ev 5.11
+                            float val = Qpro * coefq;
+
+                            if (mobwev == 1) {
+                                val = std::max((xlog(val) / log2 - shadows_range) / (dynamic_range + 1.5), noise);//in range EV
+                            }
+
+                            float sigreal = sigmoidth * sumcamq01;//correction for sigmoid Q take into account mean Q
+
+                            if (sigreal >= 1.f) {
+                                th = (sigreal - 1.f) * val + 1.f;
+                            } else {
+                                th = (1.f - sigreal) * val + sigreal;
+                            }
+
+                            sigmoidla(val, th, sigm);
+                            Qpro = std::max(Qpro + val / coefq, 0.f);
+                            Qpro = CAMBrightCurveQsig[(float)(Qpro * coefQ)] / coefQ;   //brightness and contrast
+                            
                             Jpro = SQR((10.f * Qpro) / wh);
 
                         }
@@ -4841,6 +4887,51 @@ void ImProcFunctions::ciecamloc_02float(struct local_params& lp, int sp, LabImag
 #endif
             }
         }
+         if (((mocam == 1 && (sigmoidnorm && issigq)) || params->locallab.spots.at(sp).logcieq) && modeqj == 0) { //Normalize luminance 5.11
+
+#ifdef _OPENMP
+            #pragma omp parallel for schedule(dynamic, 16)
+#endif
+
+            for (int y = 0; y < height; y++) { //data after ciecam
+                for (int x = 0; x < width; x++) {
+                    data[(y) * width + (x)] = lab->L[y][x];
+                    datanorm[(y) * width + (x)] = lab->L[y][x];
+
+                }
+            }
+
+            double nbs = 1.;
+            drd = std::max(drd, 1.); 
+            if (bl > 0.5f) {
+                nbs = (1.7 * (double) bl * drd);//take into account DR to increase variance in image source
+            }
+            if(!params->locallab.spots.at(sp).logcieq) {// not with log encoding Q
+                normalize_mean_dt(datanorm, datain, height * width, 1.f, 1.f, 0.f, 0.f, 0.f, 0.f, nbs);//normalize luminance
+            }
+
+#ifdef _OPENMP
+            #pragma omp parallel for schedule(dynamic, 16)
+#endif
+
+            for (int ir = 0; ir < height; ir++) {
+                for (int jr = 0; jr < width; jr++) {
+                    if(!params->locallab.spots.at(sp).logcieq) {// if not Log encoding ciecam
+                        data[ir * width + jr] = intp(bl, data[ir * width + jr], datanorm[ir * width + jr]);//blend with original
+                    } else {
+                        data[ir * width + jr] = intp(bl, data[ir * width + jr], datain[ir * width + jr]);//blend with original
+                    }
+                    lab->L[ir][jr] = data[ir * width + jr];
+                }
+            }
+        }
+
+        delete [] datain;
+        delete [] data;
+        delete [] datanorm;
+       
+        
+        
     }
 
 
@@ -20480,8 +20571,9 @@ void ImProcFunctions::Lab_Local(
                     
                     tmpImage->copyData(tmpImagelog);
 
-                    if(params->locallab.spots.at(sp).logcie) {
-                        log_encode(tmpImagelog, lp, multiThread, bfw, bfh);
+                    if(params->locallab.spots.at(sp).logcie & !params->locallab.spots.at(sp).logcieq ) {
+                        printf("Call log encode\n");
+                       log_encode(tmpImagelog, lp, multiThread, bfw, bfh);
                         float strlog = 0.01f * (float) params->locallab.spots.at(sp).strcielog;
 
 
