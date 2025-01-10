@@ -154,6 +154,9 @@ protected:
     rtengine::ProcEvent Evlocallabsigjz;
     rtengine::ProcEvent Evlocallabforcebw;
 
+    rtengine::ProcEvent Evlocallabsigmoidldajzcie;
+    rtengine::ProcEvent Evlocallabsigmoidthjzcie;
+    rtengine::ProcEvent Evlocallabsigmoidbljzcie;
 
     // LocallabTool parameters
     bool needMode;
@@ -1892,6 +1895,9 @@ private:
 
     Gtk::CheckButton* const sigjz;
     Gtk::CheckButton* const forcebw;
+    Adjuster* const sigmoidldajzcie;
+    Adjuster* const sigmoidthjzcie;
+    Adjuster* const sigmoidbljzcie;
     
     Adjuster* const colorflcie;
     Adjuster* const saturlcie;

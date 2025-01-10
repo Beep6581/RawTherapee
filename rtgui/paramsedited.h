@@ -1161,6 +1161,11 @@ public:
         bool sigmoidldajzcie12;
         bool sigmoidthjzcie12;
         bool sigmoidbljzcie12;
+
+        bool sigmoidldajzcie;
+        bool sigmoidthjzcie;
+        bool sigmoidbljzcie;
+
         bool contqcie;
         bool contsigqcie;
         bool colorflcie;
