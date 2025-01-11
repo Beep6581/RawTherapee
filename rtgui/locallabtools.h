@@ -2027,6 +2027,9 @@ public:
     void modecieChanged();
     void modecamChanged();
     void modeQJChanged();
+    void qjmodall();
+    void qjmodjz();
+    void qjmodcam();
     void curveChanged(CurveEditor* ce) override;
     void toneMethodcieChanged();
     void toneMethodcie2Changed();

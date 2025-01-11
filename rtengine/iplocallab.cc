@@ -4676,7 +4676,7 @@ void ImProcFunctions::ciecamloc_02float(struct local_params& lp, int sp, LabImag
                                 Qpro *=  f;
                             }
                         }
-                        if (issig && issigq12 && iscie && modeqj == 1 ) { //sigmoid Q and slope based Q 5.12
+                        if (issig && issigq12 && iscie && modeqj == 1) { //sigmoid Q and slope based Q 5.12
                             float val = Qpro * coefq;
                             float Qout = 0.f;
                             if(mobwev12 == 0) {
@@ -4694,7 +4694,8 @@ void ImProcFunctions::ciecamloc_02float(struct local_params& lp, int sp, LabImag
                         }
 
                         if (issig && issigq && iscie && mobwev != 2 && modeqj == 0) { //sigmoid Q only and black Ev & white Ev 5.11
-                            float val = Qpro * coefq;
+
+                           float val = Qpro * coefq;
 
                             if (mobwev == 1) {
                                 val = std::max((xlog(val) / log2 - shadows_range) / (dynamic_range + 1.5), noise);//in range EV
