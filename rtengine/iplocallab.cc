@@ -3092,10 +3092,15 @@ void ImProcFunctions::ciecamloc_02float(struct local_params& lp, int sp, LabImag
     bool issig = true; //params->locallab.spots.at(sp).sigcie;
 
     //sigmoid J Q variables
-    const float sigmoidlambda = params->locallab.spots.at(sp).sigmoidldacie12;
-    const float sigmoidth = params->locallab.spots.at(sp).sigmoidthcie;
-    const float sigmoidbl = params->locallab.spots.at(sp).sigmoidblcie12;
+   // const float sigmoidlambda = params->locallab.spots.at(sp).sigmoidldacie12;
+   // const float sigmoidth = params->locallab.spots.at(sp).sigmoidthcie;
+   // const float sigmoidbl = params->locallab.spots.at(sp).sigmoidblcie12;
     const bool sigmoidnorm = params->locallab.spots.at(sp).normcie;
+
+    const float sigmoidlambda = params->locallab.spots.at(sp).sigmoidldacie;
+    const float sigmoidth = params->locallab.spots.at(sp).sigmoidthcie;
+    const float sigmoidbl = params->locallab.spots.at(sp).sigmoidblcie;
+
 
     int mobwev12 = 0;
     if (params->locallab.spots.at(sp).bwevMethod12 == "sigQ") {
@@ -3325,7 +3330,7 @@ void ImProcFunctions::ciecamloc_02float(struct local_params& lp, int sp, LabImag
         double kal = -(podlight0 - podlight1) / 0.5;
         double kbl = podlight1 - kal;
         
-        double contbase = params->locallab.spots.at(sp).sigmoidldacie12;
+        double contbase = params->locallab.spots.at(sp).sigmoidldacie;
         
         if(contbase <= 0.5)  {
             podcont = podcont0;
