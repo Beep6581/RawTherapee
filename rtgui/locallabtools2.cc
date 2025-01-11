@@ -8345,7 +8345,7 @@ Locallabcie::Locallabcie():
     EvlocallabenacieMaskall = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_CIE_ENAMASKALL");
     Evlocallabsmoothciemet = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_CIE_SMOOTHMET");
     Evlocallabfeathercie = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_FEATHERCIE");
-    EvlocallabbwevMethod = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_BWEVMETHOD");
+    EvlocallabbwevMethod = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_BWEVMETHOD11");
     EvlocallabmodeQJ = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_QJMETHOD");
     Evlocallabsigmoidldacie = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_SIGDACIE");
     Evlocallabsigmoidthcie = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_SIGTHCIE");
@@ -8592,7 +8592,8 @@ Locallabcie::Locallabcie():
     bwevMethod12->set_active(1);
     bwevMethod12Conn = bwevMethod12->signal_changed().connect(sigc::mem_fun(*this, &Locallabcie::bwevMethod12Changed));
     modeHBoxbwev12->pack_start(*bwevMethod12);
-
+    
+    modeHBoxbwev->set_spacing(2);
     Gtk::Label* modeLabelbwev = Gtk::manage(new Gtk::Label(M("TP_LOCALLAB_SIGMOIDQJ11") + ":"));
     modeHBoxbwev->pack_start(*modeLabelbwev, Gtk::PACK_SHRINK);
 
