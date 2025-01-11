@@ -8593,8 +8593,11 @@ Locallabcie::Locallabcie():
     bwevMethod12Conn = bwevMethod12->signal_changed().connect(sigc::mem_fun(*this, &Locallabcie::bwevMethod12Changed));
     modeHBoxbwev12->pack_start(*bwevMethod12);
 
-    bwevMethod->append(M("TP_LOCALLAB_BWEVNONE"));
-    bwevMethod->append(M("TP_LOCALLAB_BWEVSIG"));
+    Gtk::Label* modeLabelbwev = Gtk::manage(new Gtk::Label(M("TP_LOCALLAB_SIGMOIDQJ11") + ":"));
+    modeHBoxbwev->pack_start(*modeLabelbwev, Gtk::PACK_SHRINK);
+
+    bwevMethod->append(M("TP_LOCALLAB_BWEVNONE11"));
+    bwevMethod->append(M("TP_LOCALLAB_BWEVSIG11"));
     bwevMethod->set_active(1);
     bwevMethodConn = bwevMethod->signal_changed().connect(sigc::mem_fun(*this, &Locallabcie::bwevMethodChanged));
     modeHBoxbwev->pack_start(*bwevMethod);
