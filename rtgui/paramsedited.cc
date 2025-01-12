@@ -1371,7 +1371,7 @@ void ParamsEdited::initFrom(const std::vector<rtengine::procparams::ProcParams>&
                 locallab.spots.at(j).llcurve = locallab.spots.at(j).llcurve && pSpot.llcurve == otherSpot.llcurve;
                 locallab.spots.at(j).lccurve = locallab.spots.at(j).lccurve && pSpot.lccurve == otherSpot.lccurve;
                 locallab.spots.at(j).cccurve = locallab.spots.at(j).cccurve && pSpot.cccurve == otherSpot.cccurve;
-                locallab.spots.at(j).clcurve = locallab.spots.at(j).clcurve && pSpot.cccurve == otherSpot.clcurve;
+                locallab.spots.at(j).clcurve = locallab.spots.at(j).clcurve && pSpot.clcurve == otherSpot.clcurve;
                 locallab.spots.at(j).rgbcurve = locallab.spots.at(j).rgbcurve && pSpot.rgbcurve == otherSpot.rgbcurve;
                 locallab.spots.at(j).LHcurve = locallab.spots.at(j).LHcurve && pSpot.LHcurve == otherSpot.LHcurve;
                 locallab.spots.at(j).HHcurve = locallab.spots.at(j).HHcurve && pSpot.HHcurve == otherSpot.HHcurve;
