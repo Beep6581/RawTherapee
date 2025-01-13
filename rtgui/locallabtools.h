@@ -82,7 +82,6 @@ protected:
     rtengine::ProcEvent Evlocallabcomprcieth;
     rtengine::ProcEvent EvlocallabHHhmaskcieshape;
     rtengine::ProcEvent EvlocallabbwevMethod12;
-    rtengine::ProcEvent EvlocallabbwevMethod;
     rtengine::ProcEvent Evlocallabgamjcie;
     rtengine::ProcEvent Evlocallabslopjcie;
     rtengine::ProcEvent Evlocallabmidtcie;
@@ -146,11 +145,13 @@ protected:
     rtengine::ProcEvent Evlocallabfeather_mask;
     rtengine::ProcEvent Evlocallaboffslc;
     rtengine::ProcEvent EvlocallabmodeQJ;
+    rtengine::ProcEvent EvlocallabbwevMethod;   
     rtengine::ProcEvent Evlocallabsigmoidldacie;
     rtengine::ProcEvent Evlocallabsigmoidthcie; 
     rtengine::ProcEvent Evlocallabsigmoidblcie; 
     rtengine::ProcEvent Evlocallabsigmoidsenscie;
     rtengine::ProcEvent Evlocallabsigq;
+    rtengine::ProcEvent Evlocallabsigq_12;
     rtengine::ProcEvent Evlocallabsigjz;
     rtengine::ProcEvent Evlocallabforcebw;
 

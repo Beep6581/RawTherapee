@@ -8345,12 +8345,13 @@ Locallabcie::Locallabcie():
     EvlocallabenacieMaskall = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_CIE_ENAMASKALL");
     Evlocallabsmoothciemet = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_CIE_SMOOTHMET");
     Evlocallabfeathercie = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_FEATHERCIE");
-    EvlocallabbwevMethod = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_BWEVMETHOD11");
     EvlocallabmodeQJ = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_QJMETHOD");
+    EvlocallabbwevMethod = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_CIE_WEVMETHOD11");
     Evlocallabsigmoidldacie = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_SIGDACIE");
     Evlocallabsigmoidthcie = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_SIGTHCIE");
     Evlocallabsigmoidblcie = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_SIGBLCIE");
     Evlocallabsigq = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_SIGQ11");
+    Evlocallabsigq_12 = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_SIGQ12");
     Evlocallabsigjz = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_SIGJZ11");
     Evlocallabforcebw = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_SIGFORCEBW");
     Evlocallabsigmoidldajzcie = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_SIGJZ11CONT");
@@ -8462,10 +8463,6 @@ Locallabcie::Locallabcie():
     sigmoidFrame12->set_label_widget(*sigq12);
     sigmoidFrame12->set_tooltip_text(M("TP_LOCALLAB_SIGMOID16_TOOLTIP"));
 
-    sigmoidFrame->set_label_align(0.025, 0.5);
-    sigmoidFrame->set_label_widget(*sigq);
-    sigmoidnormFrame->set_label_align(0.025, 0.5);
-    sigmoidnormFrame->set_label_widget(*normcie);
 
     Gtk::Box *TittleVBoxprecam;
     TittleVBoxprecam = Gtk::manage(new Gtk::Box(Gtk::ORIENTATION_VERTICAL));
@@ -8674,8 +8671,6 @@ Locallabcie::Locallabcie():
     primillFrame->add(*primillBox);
     gamcieBox->pack_start(*primillFrame);
 
-
-
     expprecam->add(*gamcieBox, false);
     ToolParamBlock* const sigfraBox12 = Gtk::manage(new ToolParamBlock());
 
@@ -8688,15 +8683,20 @@ Locallabcie::Locallabcie():
     sigBox12->pack_start(*sigmoid2Frame12);
     sigmoidFrame12->add(*sigBox12);
 
-    ToolParamBlock* const signormBox = Gtk::manage(new ToolParamBlock());
+    sigmoidFrame->set_label_align(0.025, 0.5);
+    sigmoidFrame->set_label_widget(*sigq);
+    sigmoidnormFrame->set_label_align(0.025, 0.5);
+    sigmoidnormFrame->set_label_widget(*normcie);
+
     ToolParamBlock* const sigfraBox = Gtk::manage(new ToolParamBlock());
     sigfraBox->pack_start(*modeHBoxbwev);
     sigfraBox->pack_start(*sigmoidldacie);
     sigfraBox->pack_start(*sigmoidthcie);
-    sigfraBox->pack_start(*sigmoidsenscie);
+    sigfraBox->pack_start(*sigmoidsenscie);   
     sigmoid2Frame->add(*sigfraBox);
     sigBox->pack_start(*sigmoid2Frame);
 
+    ToolParamBlock* const signormBox = Gtk::manage(new ToolParamBlock());
     signormBox->pack_start(*sigmoidblcie);
     sigmoidnormFrame->add(*signormBox);
     sigBox->pack_start(*sigmoidnormFrame);
@@ -11222,10 +11222,10 @@ void Locallabcie::sigq12Changed()
     if (isLocActivated && exp->getEnabled()) {
         if (listener) {
             if (sigq12->get_active()) {
-                listener->panelChanged(Evlocallabsigq12,
+                listener->panelChanged(Evlocallabsigq_12,
                                        M("GENERAL_ENABLED") + " (" + escapeHtmlChars(getSpotName()) + ")");
             } else {
-                listener->panelChanged(Evlocallabsigq12,
+                listener->panelChanged(Evlocallabsigq_12,
                                        M("GENERAL_DISABLED") + " (" + escapeHtmlChars(getSpotName()) + ")");
             }
         }
@@ -11765,7 +11765,7 @@ void Locallabcie::bwevMethod12Changed()
     if (isLocActivated && exp->getEnabled()) {
         if (listener) {
             listener->panelChanged(EvlocallabbwevMethod12,
-                                   bwevMethod12->get_active_text() + " (" + escapeHtmlChars(getSpotName()) + ")");
+                                   bwevMethod12->get_active_text());
         }
     }
 }
@@ -11773,32 +11773,11 @@ void Locallabcie::bwevMethod12Changed()
 void Locallabcie::bwevMethodChanged()
 {
     const LocallabParams::LocallabSpot defSpot;
-    const int mode = complexity->get_active_row_number();
-
-    if (bwevMethod->get_active_row_number() == 2) {//  && sigcie->get_active()) {
-        comprcie->set_sensitive(true);
-        comprcieth->set_sensitive(true);
-        comprcieauto->set_sensitive(true);
-        comprcieauto->set_active(true);
-
-        if (mode == Simple) {
-            comprcieth->set_sensitive(false);
-            comprcieauto->set_sensitive(false);
-        }
-
-    } else {
-        comprcieth->set_sensitive(false);
-        comprcieauto->set_sensitive(false);
-    }
-
-    if (bwevMethod->get_active_row_number() == 2) {
-        comprcie->setValue(defSpot.comprcie);//to test
-    }
-
+    
     if (isLocActivated && exp->getEnabled()) {
         if (listener) {
             listener->panelChanged(EvlocallabbwevMethod,
-                                   bwevMethod->get_active_text() + " (" + escapeHtmlChars(getSpotName()) + ")");
+                                   bwevMethod->get_active_text());
         }
     }
 }
