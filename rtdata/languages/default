@@ -3570,7 +3570,7 @@ TP_LOCALLAB_PROXI;ΔE decay
 TP_LOCALLAB_QJMODE;Tone mapping operators Q(Cam16) & J(Jz) 
 TP_LOCALLAB_QJMODE_511;5.11 deprecated
 TP_LOCALLAB_QJMODE_512;5.12
-TP_LOCALLAB_QJMODE_TOOLTIP;(provisional). Allows you to choose, for tone-mapping operators using Brightness data: Q for Cam16 - and J for Jz, between the current (recommended) version 5.12 and previous versions 5.11. This choice is more guided to maintain historical traceability (Feedback), than to ensure software compatibility.
+TP_LOCALLAB_QJMODE_TOOLTIP;(provisional). Allows you to choose, for tone-mapping operators using Brightness data: Q for Cam16 - and J for Jz, between the current (recommended) version 5.12 and previous versions 5.11. This choice is more guided to maintain historical traceability (Feedback), than to ensure software compatibility.\n\nThe preferred mode in all cases is 5.12 whether it is a new user or an old one who has used 5.11.\nIf you want to try 5.11 out of curiosity, or to see the difference, it will be a voluntary act on your part - choosing 5.11 and activating the corresponding checkbox.
 TP_LOCALLAB_QUAAGRES;Aggressive
 TP_LOCALLAB_QUACONSER;Conservative
 TP_LOCALLAB_QUALCURV_METHOD;Curve type
