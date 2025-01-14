@@ -10363,15 +10363,45 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
                 assignFromKeyfile(keyFile, "Locallab", "Sigjz12_" + index_str, spot.sigjz12, spotEdited.sigjz12);
                 assignFromKeyfile(keyFile, "Locallab", "Sigjz_" + index_str, spot.sigjz, spotEdited.sigjz);
                 assignFromKeyfile(keyFile, "Locallab", "Forcebw_" + index_str, spot.forcebw, spotEdited.forcebw);
+                assignFromKeyfile(keyFile, "Locallab", "ModeQJ_" + index_str, spot.modeQJ, spotEdited.modeQJ);
+                assignFromKeyfile(keyFile, "Locallab", "Modecie_" + index_str, spot.modecie, spotEdited.modecie);
+                assignFromKeyfile(keyFile, "Locallab", "Modecam_" + index_str, spot.modecam, spotEdited.modecam);
+
                 assignFromKeyfile(keyFile, "Locallab", "Sigq12_" + index_str, spot.sigq12, spotEdited.sigq12);
                 assignFromKeyfile(keyFile, "Locallab", "Sigq_" + index_str, spot.sigq, spotEdited.sigq);
+
+                if (ppVersion < 352) {//change behavior Log encoding Q and Sigmoid Q and SigmoidJz when 'in the loop' Cam16
+                    if (keyFile.has_key("Locallab", "Sigq_" + index_str)) {
+                        if (spot.sigq == true) {
+                            spot.modeQJ = "511";
+                            spot.sigq12 = false;
+                            spotEdited.modeQJ = true;
+                            spotEdited.sigq12 = true;                             
+                        }
+                    }
+                    if (keyFile.has_key("Locallab", "logcieq_" + index_str)) {
+                        if (spot.logcieq == true) {
+                            spot.modeQJ = "511";
+                            spotEdited.modeQJ = true;
+                            spotEdited.logcieq = true;                             
+                        }
+                    }
+
+                    if (keyFile.has_key("Locallab", "Sigjz_" + index_str)) {
+                        if (spot.sigjz == true) {
+                            spot.modeQJ = "511";
+                            spot.sigjz12 = false;
+                            spotEdited.modeQJ = true;
+                            spotEdited.sigjz12 = true;                             
+                        }
+                    }
+
+                } 
+                  
                 assignFromKeyfile(keyFile, "Locallab", "chjzcie_" + index_str, spot.chjzcie, spotEdited.chjzcie);
                 assignFromKeyfile(keyFile, "Locallab", "SourceGraycie_" + index_str, spot.sourceGraycie, spotEdited.sourceGraycie);
                 assignFromKeyfile(keyFile, "Locallab", "Sourceabscie_" + index_str, spot.sourceabscie, spotEdited.sourceabscie);
                 assignFromKeyfile(keyFile, "Locallab", "Sursourcie_" + index_str, spot.sursourcie, spotEdited.sursourcie);
-                assignFromKeyfile(keyFile, "Locallab", "Modecie_" + index_str, spot.modecie, spotEdited.modecie);
-                assignFromKeyfile(keyFile, "Locallab", "Modecam_" + index_str, spot.modecam, spotEdited.modecam);
-                assignFromKeyfile(keyFile, "Locallab", "ModeQJ_" + index_str, spot.modeQJ, spotEdited.modeQJ);
                 assignFromKeyfile(keyFile, "Locallab", "bwevMethod12_" + index_str,  spot.bwevMethod12, spotEdited.bwevMethod12);
                 assignFromKeyfile(keyFile, "Locallab", "bwevMethod_" + index_str,  spot.bwevMethod, spotEdited.bwevMethod);
                 assignFromKeyfile(keyFile, "Locallab", "Saturlcie_" + index_str, spot.saturlcie, spotEdited.saturlcie);
