@@ -1541,9 +1541,9 @@ HISTORY_MSG_LOCAL_CIE_SATCIE;Local - CIECAM Saturation control
 HISTORY_MSG_LOCAL_CIE_SHIFTXL;Local - CIECAM Shift x
 HISTORY_MSG_LOCAL_CIE_SHIFTYL;Local - CIECAM Shift y
 HISTORY_MSG_LOCAL_CIE_SIG;Local - Sigmoid
-HISTORY_MSG_LOCAL_CIE_SIGADAP;Local - CIECAM  Sigmoid adaptability 5.11
-HISTORY_MSG_LOCAL_CIE_SIGMET;Local - CIECAM  Tone mapping Q 
-HISTORY_MSG_LOCAL_CIE_SLOP;Local - CIECAM  Slope
+HISTORY_MSG_LOCAL_CIE_SIGADAP;Local - CIECAM Sigmoid adaptability 5.11
+HISTORY_MSG_LOCAL_CIE_SIGMET;Local - CIECAM Tone mapping Q 
+HISTORY_MSG_LOCAL_CIE_SLOP;Local - CIECAM Slope
 HISTORY_MSG_LOCAL_CIE_SLOPESMO;Local - CIECAM Gray balance
 HISTORY_MSG_LOCAL_CIE_SLOPESMOQ;Local - CIECAM Gray balance
 HISTORY_MSG_LOCAL_CIE_SLOPESMOB;Local - CIECAM Blue balance
@@ -1628,7 +1628,7 @@ HISTORY_MSG_SOFTLIGHT_ENABLED;Soft light
 HISTORY_MSG_SOFTLIGHT_STRENGTH;Soft light - Strength
 HISTORY_MSG_SPOT;Spot removal
 HISTORY_MSG_SPOT_ENTRY;Spot removal - Point modif.
-HISTORY_MSG_TEMPOUT;CAM02 automatic temperature
+HISTORY_MSG_TEMPOUT;Cam02 automatic temperature
 HISTORY_MSG_THRESWAV;Balance threshold
 HISTORY_MSG_TM_FATTAL_ANCHOR;DRC - Anchor
 HISTORY_MSG_TONE_EQUALIZER_BANDS;Tone equalizer - Bands
@@ -2471,11 +2471,11 @@ TP_COLORAPP_LABEL_VIEWING;Viewing Conditions
 TP_COLORAPP_LIGHT;Lightness (J)
 TP_COLORAPP_LIGHT_TOOLTIP;Lightness in CIECAM is the clarity of a stimulus relative to the clarity of a stimulus that appears white under similar viewing conditions. It differs from L*a*b* and RGB lightness.
 TP_COLORAPP_MEANLUMINANCE;Mean luminance (Yb%)
-TP_COLORAPP_MOD02;CAM02
-TP_COLORAPP_MOD16;CAM16
+TP_COLORAPP_MOD02;Cam02
+TP_COLORAPP_MOD16;Cam16
 TP_COLORAPP_MODEL;WP model
 TP_COLORAPP_MODELCAT;CAM
-TP_COLORAPP_MODELCAT_TOOLTIP;Allows you to choose between CAM02 or CAM16.\nCAM02 will sometimes be more accurate.\nCAM16 should generate fewer artifacts.
+TP_COLORAPP_MODELCAT_TOOLTIP;Allows you to choose between Cam02 or Cam16.\nCam02 will sometimes be more accurate.\nCam16 should generate fewer artifacts.
 TP_COLORAPP_MODEL_TOOLTIP;White-Point Model.\n\n<b>WB [RT] + [output]</b>: RT's white balance is used for the scene, CIECAM is set to D50, and the output device's white balance is set in Viewing Conditions.\n\n<b>WB [RT+CAT02/16] + [output]</b>: RT's white balance settings are used by CAT02 and the output device's white balance is set in Viewing Conditions.\n\n<b>Free temp + tint + CAT02/16 + [output]:</b> temp and tint are selected by the user, the output device's white balance is set in Viewing Conditions.
 TP_COLORAPP_NEUTRAL;Reset
 TP_COLORAPP_NEUTRAL_TOOLTIP;Reset all sliders checkbox and curves to their default values.
@@ -2997,7 +2997,7 @@ TP_LOCALLAB_AUTOGRAYCIE;Automatic
 TP_LOCALLAB_AVOID;Avoid color shift
 TP_LOCALLAB_AVOIDCOLORSHIFT_TOOLTIP;Fit colors into gamut of the working color space and apply Munsell correction (Uniform Perceptual Lab). Default: Munsell only.\n\nMunsell only: Fixes Lab mode hue drifts due to non-linearity when chromaticity is changed (Uniform Perceptual Lab).\nLab: Applies a gamut control in relative colorimetric. Munsell is then applied.\nXYZ Absolute: Applies gamut control in absolute colorimetric. Munsell is then applied.\nXYZ Relative: Applies gamut control in relative colorimetric. Munsell is then applied. The result is not the same as Lab.
 TP_LOCALLAB_AVOIDMUN;Munsell correction only
-TP_LOCALLAB_AVOIDMUN_TOOLTIP;Munsell correction always disabled when Jz or CAM16 is used.
+TP_LOCALLAB_AVOIDMUN_TOOLTIP;Munsell correction always disabled when Jz or Cam16 is used.
 TP_LOCALLAB_AVOIDRAD;Soft radius
 TP_LOCALLAB_BALAN;ab-L balance (ΔE)
 TP_LOCALLAB_BALANEXP;Laplacian balance
@@ -3045,10 +3045,10 @@ TP_LOCALLAB_BWEVNONE11;None
 TP_LOCALLAB_BWEVSIG11;Activated
 TP_LOCALLAB_BWFORCE;Uses Black Ev & White Ev
 TP_LOCALLAB_CAM16PQREMAP;HDR PQ (Peak Luminance)
-TP_LOCALLAB_CAM16PQREMAP_TOOLTIP;PQ (Perceptual Quantizer) adapted to CAM16 (experimental). Allows you to change the internal PQ function (usually 10000 cd/m2 - default 100 cd/m2 - disabled for 100 cd/m2).\nCan be used to adapt to different devices and images, for example, to match CAM16 processing with the maximum monitor brightness of 400cd/m2.
+TP_LOCALLAB_CAM16PQREMAP_TOOLTIP;PQ (Perceptual Quantizer) adapted to Cam16 (experimental). Allows you to change the internal PQ function (usually 10000 cd/m2 - default 100 cd/m2 - disabled for 100 cd/m2).\nCan be used to adapt to different devices and images, for example, to match Cam16 processing with the maximum monitor brightness of 400cd/m2.
 TP_LOCALLAB_CAM16_FRA;Cam16 Image Adjustments
 TP_LOCALLAB_CAMMODE;CAM model
-TP_LOCALLAB_CAMMODE_CAM16;CAM 16
+TP_LOCALLAB_CAMMODE_CAM16;Cam16
 TP_LOCALLAB_CAMMODE_JZ;Jz Cz Hz
 TP_LOCALLAB_CATAD;Chromatic adaptation/Cat16
 TP_LOCALLAB_CBDL;Contrast by Detail Levels
@@ -3372,7 +3372,7 @@ TP_LOCALLAB_LOC_CONTRASTPYR2LAB; Contrast by level/TM/Directional contrast
 TP_LOCALLAB_LOC_CONTRASTPYRLAB; Graduated Filter/Edge Sharpness/Blur
 TP_LOCALLAB_LOC_RESIDPYR;Residual image (Main)
 TP_LOCALLAB_LOG;Log Encoding
-TP_LOCALLAB_LOG1FRA;CAM16 Image Adjustments
+TP_LOCALLAB_LOG1FRA;Cam16 Image Adjustments
 TP_LOCALLAB_LOG2FRA;Viewing Conditions
 TP_LOCALLAB_LOGAUTO;Automatic
 TP_LOCALLAB_LOGAUTOGRAYJZ_TOOLTIP;Automatically calculates the 'Mean luminance' for the scene conditions.
