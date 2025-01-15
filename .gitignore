@@ -17,6 +17,7 @@ cmake_install.cmake
 install_manifest.txt
 
 build*
+cmake-build*
 Build*
 Debug
 RelWithDebInfo

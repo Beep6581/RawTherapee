@@ -25,9 +25,9 @@
 
 bool BatchQueueButtonSet::iconsLoaded = false;
 
-Cairo::RefPtr<RTSurface> BatchQueueButtonSet::cancelIcon;
-Cairo::RefPtr<RTSurface> BatchQueueButtonSet::headIcon;
-Cairo::RefPtr<RTSurface> BatchQueueButtonSet::tailIcon;
+std::shared_ptr<RTSurface> BatchQueueButtonSet::cancelIcon;
+std::shared_ptr<RTSurface> BatchQueueButtonSet::headIcon;
+std::shared_ptr<RTSurface> BatchQueueButtonSet::tailIcon;
 
 Glib::ustring BatchQueueButtonSet::moveHeadToolTip;
 Glib::ustring BatchQueueButtonSet::moveEndToolTip;
@@ -37,9 +37,9 @@ BatchQueueButtonSet::BatchQueueButtonSet (BatchQueueEntry* myEntry)
 {
 
     if (!iconsLoaded) {
-        cancelIcon = Cairo::RefPtr<RTSurface>(new RTSurface("cancel-small.png"));
-        headIcon = Cairo::RefPtr<RTSurface>(new RTSurface("goto-start-small.png"));
-        tailIcon = Cairo::RefPtr<RTSurface>(new RTSurface("goto-end-small.png"));
+        cancelIcon = std::shared_ptr<RTSurface>(new RTSurface("cancel-small", Gtk::ICON_SIZE_BUTTON));
+        headIcon = std::shared_ptr<RTSurface>(new RTSurface("goto-start-small", Gtk::ICON_SIZE_BUTTON));
+        tailIcon = std::shared_ptr<RTSurface>(new RTSurface("goto-end-small", Gtk::ICON_SIZE_BUTTON));
         moveHeadToolTip = M("FILEBROWSER_POPUPMOVEHEAD");
         moveEndToolTip = M("FILEBROWSER_POPUPMOVEEND");
         cancelJobToolTip = M("FILEBROWSER_POPUPCANCELJOB");

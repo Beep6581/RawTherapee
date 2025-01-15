@@ -30,7 +30,7 @@
 #include <CoreFoundation/CoreFoundation.h>
 #endif
 
-#include "../rtengine/settings.h"
+#include "rtengine/settings.h"
 
 namespace
 {
@@ -76,6 +76,7 @@ struct LocaleToLang : private std::map<std::pair<Glib::ustring, Glib::ustring>, 
         emplace (key ("fi", ""  ), "Suomi");
         emplace (key ("sv", "SE"), "Swedish");
         emplace (key ("tr", ""  ), "Turkish");
+        emplace (key ("uk", ""  ), "Ukrainian");
         emplace (key ("zh", "CN"), "Chinese (Simplified)");
         emplace (key ("zh", "SG"), "Chinese (Traditional)");
     }

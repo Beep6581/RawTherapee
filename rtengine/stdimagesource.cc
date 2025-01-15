@@ -90,6 +90,12 @@ void StdImageSource::getSampleFormat (const Glib::ustring &fname, IIOSampleForma
         if (result == IMIO_SUCCESS) {
             return;
         }
+#ifdef LIBJXL
+    } else if (hasJxlExtension(fname)) {
+        sFormat = IIOSF_FLOAT32;
+        sArrangement = IIOSA_CHUNKY;
+        return;
+#endif
     } else if (hasTiffExtension(fname)) {
         int result = ImageIO::getTIFFSampleFormat (fname, sFormat, sArrangement);
 
@@ -312,6 +318,10 @@ void StdImageSource::getAutoExpHistogram (LUTu & histogram, int& histcompr)
 }
 
 void StdImageSource::WBauto(bool extra, double &tempref, double &greenref, array2D<float> &redloc, array2D<float> &greenloc, array2D<float> &blueloc, int bfw, int bfh, double &avg_rm, double &avg_gm, double &avg_bm, double &tempitc, double &greenitc, float &temp0, float &delta,  int &bia, int &dread, int &kcam, int &nocam, float &studgood, float &minchrom, int &kmin, float &minhist, float &maxhist, bool &twotimes, const WBParams & wbpar, int begx, int begy, int yEn, int xEn, int cx, int cy, const ColorManagementParams &cmp, const RAWParams &raw, const ToneCurveParams &hrp)
+{
+}
+
+void StdImageSource::getrgbloc(int begx, int begy, int yEn, int xEn, int cx, int cy, int bf_h, int bf_w, const procparams::WBParams & wbpar)
 {
 }
 

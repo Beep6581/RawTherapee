@@ -16,6 +16,10 @@
 *  You should have received a copy of the GNU General Public License
 *  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
 */
+#include <algorithm>
+#include <array>
+#include <utility>
+
 #include <glibmm/ustring.h>
 
 #include "rtengine.h"
@@ -25,11 +29,68 @@
 #include "opthelper.h"
 #include "iccstore.h"
 #include <iostream>
+#include "linalgebra.h"
+#include "procparams.h"
 
 using namespace std;
 
-namespace rtengine
+namespace rtengine {
+namespace {
+
+typedef Vec3f A3;
+
+// D50 <-> D65 adapted from darktable, thanks to Alberto Griggio
+
+void XYZ_D50_to_D65(float &X, float &Y, float &Z)
 {
+    // Bradford adaptation matrix from http://www.brucelindbloom.com/index.html?Eqn_ChromAdapt.html
+    constexpr float M[3][3] = {
+        {  0.9555766f, -0.0230393f,  0.0631636f },
+        { -0.0282895f,  1.0099416f,  0.0210077f },
+        {  0.0122982f, -0.0204830f,  1.3299098f }
+    };
+    A3 res = dot_product(M, A3(X, Y, Z));
+    X = res[0];
+    Y = res[1];
+    Z = res[2];
+}
+
+
+void XYZ_D65_to_D50(float &X, float &Y, float &Z)
+{
+    // Bradford adaptation matrix from http://www.brucelindbloom.com/index.html?Eqn_ChromAdapt.html
+    constexpr float M[3][3] = {
+        {  1.0478112f,  0.0228866f, -0.0501270f },
+        {  0.0295424f,  0.9904844f, -0.0170491f },
+        { -0.0092345f,  0.0150436f,  0.7521316f }
+    };
+    A3 res = dot_product(M, A3(X, Y, Z));
+    X = res[0];
+    Y = res[1];
+    Z = res[2];
+}
+
+/*
+float PQ(float X)
+{
+    X = std::max(X, 1e-10f);
+    const float XX = std::pow(X*1e-4f, 0.1593017578125f);
+    return std::pow(
+        (0.8359375f + 18.8515625f*XX) / (1 + 18.6875f*XX),
+        134.034375f);
+}
+
+
+float PQ_inv(float X)
+{
+    X = std::max(X, 1e-10f);
+    const auto XX = std::pow(X, 7.460772656268214e-03f);
+    return 1e4f * std::pow(
+        (0.8359375f - XX) / (18.6875f*XX - 18.8515625f),
+        6.277394636015326f);
+}
+*/
+} // namespace
 
 cmsToneCurve* Color::linearGammaTRC;
 LUTf Color::cachef;
@@ -1911,7 +1972,321 @@ void Color::Lch2Luv(float c, float h, float &u, float &v)
     v = c * sincosval.y;
 }
 
-void Color::primaries_to_xyz(double p[6], double Wx, double Wz, double *pxyz)
+// code take in ART thanks to Alberto Griggio
+//-----------------------------------------------------------------------------
+// oklab color space from https://bottosson.github.io/posts/oklab/
+//-----------------------------------------------------------------------------
+
+void Color::xyz2oklab(float X, float Y, float Z, float &L, float &a, float &b)
+{
+    XYZ_D50_to_D65(X, Y, Z);
+    
+    constexpr float M1[3][3] = {
+        {0.8189330101f, 0.3618667424f, -0.1288597137f},
+        {0.0329845436f, 0.9293118715f, 0.0361456387f},
+        {0.0482003018f, 0.2643662691f, 0.6338517070f}        
+    };
+    
+    A3 lms = dot_product(M1, A3(X, Y, Z));
+    for (int i = 0; i < 3; ++i) {
+        lms[i] = xcbrtf(lms[i]);
+    }
+    
+    constexpr float M2[3][3] = {
+        {0.2104542553f, 0.7936177850f, -0.0040720468f},
+        {1.9779984951f, -2.4285922050f, 0.4505937099f},
+        {0.0259040371f, 0.7827717662f, -0.8086757660f}
+    };
+
+    lms = dot_product(M2, lms);
+    
+    L = lms[0];
+    a = lms[1];
+    b = lms[2];
+}
+
+
+void Color::oklab2xyz(float L, float a, float b, float &X, float &Y, float &Z)
+{
+    constexpr float M2_inv[3][3] = {
+        {1.f, 0.39633779f, 0.21580376f},
+        {1.00000001f, -0.10556134f, -0.06385417f},
+        {1.00000005f, -0.08948418f, -1.29148554f}
+    };
+
+    A3 lms = dot_product(M2_inv, A3(L, a, b));
+    for (int i = 0; i < 3; ++i) {
+        lms[i] = SQR(lms[i])*lms[i];
+    }
+
+    constexpr float M1_inv[3][3] = {
+        {1.22701385f, -0.55779998f, 0.28125615f},
+        {-0.04058018f, 1.11225687f, -0.07167668f},
+        {-0.07638128f, -0.42148198f, 1.58616322}
+    };
+
+    lms = dot_product(M1_inv, lms);
+    X = lms[0];
+    Y = lms[1];
+    Z = lms[2];
+    
+    XYZ_D65_to_D50(X, Y, Z);
+}
+
+
+// https://www.itu.int/dms_pubrec/itu-r/rec/bt/R-REC-BT.2100-2-201807-I!!PDF-F.pdf
+// Perceptual Quantization / SMPTE standard ST.2084
+float Color::eval_PQ_curve(float x, bool oetf)
+{
+    constexpr float M1 = 2610.0 / 16384.0;
+    constexpr float M2 = (2523.0 / 4096.0) * 128.0;
+    constexpr float C1 = 3424.0 / 4096.0;
+    constexpr float C2 = (2413.0 / 4096.0) * 32.0;
+    constexpr float C3 = (2392.0 / 4096.0) * 32.0;
+
+    if (x == 0.f) {
+        return 0.f;
+    }
+
+    float res = 0.f;
+    if (oetf) {
+        // assume 1.0 is 100 nits, normalise so that 1.0 is 10000 nits
+        float p = std::pow(std::max(x, 0.f) / 100.f, M1);
+        float num = C1 + C2 * p;
+        float den = 1.f + C3 * p;
+        res = std::pow(num / den, M2);
+    } else {
+        float p = std::pow(x, 1.f / M2);
+        float num = std::max(p - C1, 0.f);
+        float den = C2 - C3 * p;
+        res = std::pow(num / den, 1.f / M1) * 100.f;
+    }
+    return res;
+}
+
+
+// https://www.itu.int/dms_pubrec/itu-r/rec/bt/R-REC-BT.2100-2-201807-I!!PDF-F.pdf
+// Hybrid Log-Gamma
+float Color::eval_HLG_curve(float x, bool oetf)
+{
+    constexpr float A = 0.17883277f;
+    constexpr float B = 0.28466892f; // 1.f - 4.f * A
+    constexpr float C = 0.55991072953f; // 0.5f - A * std::log(4.f * A)
+
+    if (x == 0.f) {
+        return 0.f;
+    }
+
+    float res = 0.f;
+    if (oetf) {
+        // assume 1.0 is 100 nits, normalise so that 1.0 is 1000 nits
+        float e = LIM01(x / 10.f);
+        res = (e <= 1.f/12.f) ? std::sqrt(3.f * e) : A * std::log(12.f * e - B) + C;
+    } else {
+        res = (x <= 0.5f) ? SQR(x) / 3.f : (std::exp((x - C) / A) + B) / 12.f;
+        res *= 10.f;
+    }
+
+    return res;
+}
+
+
+float Color::eval_ACEScct_curve(float x, bool forward)
+{
+    if (forward) {
+        if (x <= 0.078125f) {
+            return 10.5402377416545f * x + 0.0729055341958355f;
+        } else {
+            return (std::log2(x) + 9.72f) / 17.52f;
+        }
+    } else {
+        if (x <= 0.155251141552511f) {
+            return (x - 0.0729055341958355f) / 10.5402377416545f;
+        } else {
+            return std::exp2(x * 17.52f - 9.72f);
+        }
+    }
+}
+
+// end code take in ART thanks to Alberto Griggio
+
+//functions needs to use ACES
+
+// transpose Matrix
+void Color::transpose(const Matrix &ma, Matrix &R)
+{
+    if (&ma == &R) {
+        std::swap(R[0][1], R[1][0]);
+        std::swap(R[0][2], R[2][0]);
+        std::swap(R[1][0], R[0][1]);
+        std::swap(R[1][2], R[2][1]);
+        std::swap(R[2][0], R[0][2]);
+        std::swap(R[2][1], R[1][2]);
+    } else {
+        R[0][0] = ma[0][0];
+        R[0][1] = ma[1][0];
+        R[0][2] = ma[2][0];
+        R[1][0] = ma[0][1];
+        R[1][1] = ma[1][1];
+        R[1][2] = ma[2][1];
+        R[2][0] = ma[0][2];
+        R[2][1] = ma[1][2];
+        R[2][2] = ma[2][2];
+    }
+}
+
+// multiply Matrix x Matrix
+void Color::multip(const Matrix &ma, const Matrix &mb, Matrix &R)
+{
+    const bool overwrite = &ma == &R || &mb == &R;
+    if (overwrite) {
+        // Use buffer to hold result so the input doesn't get overwritten while
+        // the multiplication is happening.
+        Matrix buf;
+        multip(ma, mb, buf);
+        for (int i = 0; i < 3; ++i) {
+            for (int j = 0; j < 3; ++j) {
+                R[i][j] = buf[i][j];
+            }
+        }
+    } else {
+        for (int i = 0; i < 3; ++i) {
+            for (int j = 0; j < 3; ++j) {
+                double sum = 0.0;
+                for (int k = 0; k < 3; ++k) {
+                    sum += ma[i][k] * mb[k][j];
+                }
+                R[i][j] = sum;
+            }
+        }
+    }
+}
+
+//multiply Matrix
+void Color::mult3(std::array<float, 3> &in, const Matrix &ma, std::array<float, 3> &out)
+{
+    // Use buffer for result in case in and out overlap.
+    std::array<float, 3> buf{0.f, 0.f, 0.f};
+    for (int i = 0; i < 3; ++i) {
+        for( int j = 0; j < 3; ++j){
+            buf[i] += static_cast<float>(in[j] * ma[j][i]);
+        }
+    }
+    std::copy(buf.cbegin(), buf.cend(), out.begin());
+}
+
+// ACES-style gamut compression
+//
+// tweaked from the original from https://github.com/jedypod/gamut-compress
+// tweaked from CTL in ART thanks to Alberto Griggio
+
+//from ACES https://docs.acescentral.com/specifications/rgc/#appendix-c-illustrations
+// https://docs.acescentral.com/specifications/rgc/#appendix-d-ctl-reference-implementation
+// https://docs.acescentral.com/specifications/rgc/
+// Distance from achromatic which will be compressed to the gamut boundary
+// Values calculated to encompass the encoding gamuts of common digital cinema cameras
+//const float LIM_CYAN =  1.147;
+//const float LIM_MAGENTA = 1.264;
+//const float LIM_YELLOW = 1.312;
+
+//Percentage of the core gamut to protect
+// Values calculated to protect all the colors of the ColorChecker Classic 24 as given by
+// ISO 17321-1 and Ohta (1997)
+//const float THR_CYAN = 0.815;
+//const float THR_MAGENTA = 0.803;
+//const float THR_YELLOW = 0.880;
+
+// Aggressiveness of the compression curve
+//const float PWR = 1.2;
+//https://www.gujinwei.org/research/camspec/
+
+void Color::aces_reference_gamut_compression(
+    const std::array<float, 3> &rgb_in,
+    const std::array<float, 3> &threshold,
+    const std::array<float, 3> &distance_limit,
+    const Matrix &to_out, const Matrix &from_out,
+    float pwr, bool rolloff,
+    float &R, float &G, float &B)
+{
+    std::array<float, 3> rgb{rgb_in[0], rgb_in[1], rgb_in[2]};
+
+    // Calculate scale so compression function passes through distance limit:
+    // (x=distance_limit, y=1)
+    std::array<float, 3> s;
+    for (unsigned i = 0; i < s.size(); ++i) {
+        // Scale factor: c = (1 - t) / sqrt(l - 1)
+        s[i] = (1.0f  - threshold[i]) / sqrt(fmax(1.001f, distance_limit[i]) - 1.0f);
+    }
+    // target colorspace
+    Color::mult3(rgb, to_out, rgb);
+
+    // Achromatic axis
+    const float ac = fmax(rgb[0], fmax(rgb[1], rgb[2]));
+
+    // Inverse RGB Ratios: distance from achromatic axis
+    std::array<float, 3> d{0.f, 0.f, 0.f};
+    if (ac != 0) {
+        for (unsigned i = 0; i < d.size(); ++i) {
+            d[i] = (ac - rgb[i]) / fabs(ac);
+        }
+    }
+    std::array<float, 3> cd{d[0], d[1], d[2]}; // Compressed distance
+    if (!rolloff) {
+        // Parabolic compression function:
+        // https://www.desmos.com/calculator/nvhp63hmtj
+        // y = { x < t:  x
+        //       x >= t: c sqrt(x - t + c^2 / 4) - c sqrt(c^2 / 4) + t }
+        // The second piece is equal to
+        // c (sqrt(x - t + c^2 / 4) - |c / 2|) + t
+        for (unsigned i = 0; i < cd.size(); ++i) {
+            if (d[i] >= threshold[i]) {
+                const float c_2 = s[i] / 2.f;
+                const float c2_4 = c_2 * c_2;
+                cd[i] = s[i] * (sqrt(d[i] - threshold[i] + c2_4) - fabs(c_2)) +
+                        threshold[i];
+            }
+        }
+    } else {
+        for (unsigned i = 0; i < cd.size(); ++i) {
+            if (d[i] >= threshold[i]) {
+                if (threshold[i] == 1.f) {
+                    cd[i] = 1.f;
+                } else {
+                    // Calculate scale factor for y = 1 intersect
+                    const float limit = distance_limit[i];
+                    const float thres = threshold[i];
+                    //                     l - t
+                    // Scale s = --------------------------
+                    //           ( ( 1 - t )-p     )(1 / p)
+                    //           ( ( ----- )   - 1 )
+                    //           ( ( l - t )       )
+                    const float scale = (limit - thres) / pow(pow((1.0f - thres) / (limit - thres), - pwr) - 1.0f, 1.0f / pwr);
+                    // Normalize distance outside threshold by scale factor
+                    // x' = (x - t) / s
+                    const float nd = (d[i] - thres) / scale;
+                    //                  x'
+                    // y = t + s ----------------
+                    //           (1 + x'^p)^(1/p)
+                    const float po = pow(nd, pwr);
+                    cd[i] = thres + scale * nd / (pow(1.0f + po, 1.0f / pwr));
+                }
+            }    
+        }
+    }
+    // Inverse RGB Ratios to RGB
+
+    for (unsigned i = 0; i < rgb.size(); ++i) {
+        rgb[i] = ac - cd[i] * fabs(ac);
+    }
+    //working colorspace from_out
+    Color::mult3(rgb, from_out, rgb);
+    R = rgb[0];
+    G = rgb[1];
+    B = rgb[2];
+}
+
+
+void Color::primaries_to_xyz(double p[6], double Wx, double Wz, double *pxyz, int cat)
 {
     //calculate Xr, Xg, Xb, Yr, Yb, Tg, Zr,Zg Zb
     double Wy = 1.0;
@@ -1967,29 +2342,112 @@ void Color::primaries_to_xyz(double p[6], double Wx, double Wz, double *pxyz)
     mat_xyz[2][1] = Sb * Yb;
     mat_xyz[2][2] = Sb * Zb;
 
-    //chromatic adaptation Bradford
+    //chromatic adaptation
     Matrix MaBradford = {};
-    MaBradford[0][0] = 0.8951;
-    MaBradford[0][1] = -0.7502;
-    MaBradford[0][2] = 0.0389;
-    MaBradford[1][0] = 0.2664;
-    MaBradford[1][1] = 1.7135;
-    MaBradford[1][2] = -0.0685;
-    MaBradford[2][0] = -0.1614;
-    MaBradford[2][1] = 0.0367;
-    MaBradford[2][2] = 1.0296;
+    if( cat == 0 ) {//i bradford
+        MaBradford[0][0] = 0.8951;
+        MaBradford[0][1] = -0.7502;
+        MaBradford[0][2] = 0.0389;
+        MaBradford[1][0] = 0.2664;
+        MaBradford[1][1] = 1.7135;
+        MaBradford[1][2] = -0.0685;
+        MaBradford[2][0] = -0.1614;
+        MaBradford[2][1] = 0.0367;
+        MaBradford[2][2] = 1.0296;
+    } else if ( cat == 1 ) {// icat16
+        MaBradford[0][0] = 1.86206786;
+        MaBradford[0][1] = -1.01125463;
+        MaBradford[0][2] = 0.14918677;
+        MaBradford[1][0] = 0.38752654;
+        MaBradford[1][1] = 0.62144744;
+        MaBradford[1][2] = -0.00897398;
+        MaBradford[2][0] = -0.0158415;
+        MaBradford[2][1] = -0.03412294;
+        MaBradford[2][2] = 1.04996444;
+    } else if ( cat == 2 ) {// icat02
+        MaBradford[0][0] =  0.99015849;
+        MaBradford[0][1] = -0.00838772;
+        MaBradford[0][2] = 0.018229217;
+        MaBradford[1][0] = 0.239565979;
+        MaBradford[1][1] = 0.758664642;
+        MaBradford[1][2] = 0.001770137;
+        MaBradford[2][0] = 0.0;
+        MaBradford[2][1] = 0.0;
+        MaBradford[2][2] = 1.0;
+    } else if ( cat == 3 ) {//Von Kries
+        MaBradford[0][0] = 0.40024;
+        MaBradford[0][1] = -0.2263;
+        MaBradford[0][2] = 0.0;
+        MaBradford[1][0] = 0.7076;
+        MaBradford[1][1] = 1.16532;
+        MaBradford[1][2] = 0.0;
+        MaBradford[2][0] = -0.08081;
+        MaBradford[2][1] = 0.0457;
+        MaBradford[2][2] = 0.91822;
+    } else if ( cat == 4 ) {//None XYZ
+        MaBradford[0][0] = 1.0;
+        MaBradford[0][1] = 0.0;
+        MaBradford[0][2] = 0.0;
+        MaBradford[1][0] = 0.0;
+        MaBradford[1][1] = 1.0;
+        MaBradford[1][2] = 0.0;
+        MaBradford[2][0] = 0.0;
+        MaBradford[2][1] = 0.0;
+        MaBradford[2][2] = 1.0;
+    }
 
     Matrix Ma_oneBradford = {};
-    Ma_oneBradford[0][0] = 0.9869929;
-    Ma_oneBradford[0][1] = 0.4323053;
-    Ma_oneBradford[0][2] = -0.0085287;
-    Ma_oneBradford[1][0] = -0.1470543;
-    Ma_oneBradford[1][1] = 0.5183603;
-    Ma_oneBradford[1][2] = 0.0400428;
-    Ma_oneBradford[2][0] = 0.1599627;
-    Ma_oneBradford[2][1] = 0.0492912;
-    Ma_oneBradford[2][2] = 0.9684867;
-
+    if( cat == 0 ) {//Bradford
+        Ma_oneBradford[0][0] = 0.9869929;
+        Ma_oneBradford[0][1] = 0.4323053;
+        Ma_oneBradford[0][2] = -0.0085287;
+        Ma_oneBradford[1][0] = -0.1470543;
+        Ma_oneBradford[1][1] = 0.5183603;
+        Ma_oneBradford[1][2] = 0.0400428;
+        Ma_oneBradford[2][0] = 0.1599627;
+        Ma_oneBradford[2][1] = 0.0492912;
+        Ma_oneBradford[2][2] = 0.9684867;
+    } else if ( cat == 1 ) { //cat16
+        Ma_oneBradford[0][0] = 0.401288;
+        Ma_oneBradford[0][1] = 0.650173;
+        Ma_oneBradford[0][2] = -0.051461;
+        Ma_oneBradford[1][0] = -0.250268;
+        Ma_oneBradford[1][1] = 1.204414;
+        Ma_oneBradford[1][2] = 0.045854;
+        Ma_oneBradford[2][0] = -0.002079;
+        Ma_oneBradford[2][1] = 0.048952;
+        Ma_oneBradford[2][2] = 0.953127;
+    } else if ( cat == 2 ) { //cat02
+        Ma_oneBradford[0][0] = 1.007245;
+        Ma_oneBradford[0][1] = 0.011136;
+        Ma_oneBradford[0][2] = -0.018381;
+        Ma_oneBradford[1][0] = -0.318061;
+        Ma_oneBradford[1][1] = 1.314589;
+        Ma_oneBradford[1][2] = 0.003471;
+        Ma_oneBradford[2][0] = 0.0;
+        Ma_oneBradford[2][1] = 0.0;
+        Ma_oneBradford[2][2] = 1.0;
+    } else if ( cat == 3 ) { //Von Kries
+        Ma_oneBradford[0][0] = 1.8599364;
+        Ma_oneBradford[0][1] = 0.3611914;
+        Ma_oneBradford[0][2] = 0.0;
+        Ma_oneBradford[1][0] = -1.1293816;
+        Ma_oneBradford[1][1] = 0.6388125;
+        Ma_oneBradford[1][2] = 0.0;
+        Ma_oneBradford[2][0] = 0.2198974;
+        Ma_oneBradford[2][1] = -0.0000064;
+        Ma_oneBradford[2][2] = 1.0890636;
+    } else if ( cat == 4 ) { //none XYZ
+        Ma_oneBradford[0][0] = 1.0;
+        Ma_oneBradford[0][1] = 0.0;
+        Ma_oneBradford[0][2] = 0.0;
+        Ma_oneBradford[1][0] = 0.0;
+        Ma_oneBradford[1][1] = 1.0;
+        Ma_oneBradford[1][2] = 0.0;
+        Ma_oneBradford[2][0] = 0.0;
+        Ma_oneBradford[2][1] = 0.0;
+        Ma_oneBradford[2][2] = 1.0;
+    }
     //R G B source
     double Rs = Wx * MaBradford[0][0] + Wy * MaBradford[1][0] + Wz * MaBradford[2][0];
     double Gs = Wx * MaBradford[0][1] + Wy * MaBradford[1][1] + Wz * MaBradford[2][1];
@@ -2078,16 +2536,15 @@ void Color::primaries_to_xyz(double p[6], double Wx, double Wz, double *pxyz)
  * columns of the matrix p=xyz_rgb are RGB tristimulus primaries in XYZ
  * c is the color fixed on the boundary; and m=0 for c=0, m=1 for c=255
  */
- 
 void Color::gamutmap(float &X, float Y, float &Z, const double p[3][3])
 {
-	float epsil = 0.0001f;
-	float intermXYZ = X + 15 * Y + 3 * Z;
-	if(intermXYZ <= 0.f) {
-		intermXYZ = epsil;
-	}
-		
-	float u = 4 * X / (intermXYZ) - u0;
+    float epsil = 0.0001f;
+    float intermXYZ = X + 15 * Y + 3 * Z;
+    if(intermXYZ <= 0.f) {
+        intermXYZ = epsil;
+    }
+
+    float u = 4 * X / (intermXYZ) - u0;
     float v = 9 * Y / (intermXYZ) - v0;
     float lam[3][2];
     float lam_min = 1.0f;
@@ -2118,14 +2575,12 @@ void Color::gamutmap(float &X, float Y, float &Z, const double p[3][3])
     v = v * (double) lam_min + v0;
 
     X = (9 * u * Y) / (4 * v);
-	float intermuv = 12 - 3 * u - 20 * v;
-	if(intermuv < 0.f) {
-		intermuv = 0.f;
-	}
+    float intermuv = 12 - 3 * u - 20 * v;
+    if(intermuv < 0.f) {
+        intermuv = 0.f;
+    }
     Z = (intermuv) * Y / (4 * v);
 
-
-	
 }
 
 void Color::skinredfloat ( float J, float h, float sres, float Sp, float dred, float protect_red, int sk, float rstprotection, float ko, float &s)

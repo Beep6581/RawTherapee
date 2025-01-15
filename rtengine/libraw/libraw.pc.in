@@ -1,0 +1,12 @@
+prefix=@prefix@
+exec_prefix=@exec_prefix@
+libdir=@libdir@
+includedir=@includedir@
+
+Name: libraw
+Description: Raw image decoder library (non-thread-safe)
+Requires: @PACKAGE_REQUIRES@
+Version: @PACKAGE_VERSION@
+Libs: -L${libdir} -lraw -lstdc++@PC_OPENMP@
+Libs.private: @PACKAGE_LIBS_PRIVATE@
+Cflags: -I${includedir}/libraw -I${includedir}

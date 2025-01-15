@@ -97,4 +97,18 @@ private:
     static std::unique_ptr<ImageCache> cache_;
 };
 
+template <typename Iterator, typename Integer = std::size_t>
+auto to_long(const Iterator &iter, Integer n = Integer{0}) -> decltype(
+#if EXIV2_TEST_VERSION(0,28,0)
+    iter->toInt64()
+) {
+    return iter->toInt64(n);
+#else
+    iter->toLong()
+) {
+    return iter->toLong(n);
+#endif
+}
+
+
 } // namespace rtengine

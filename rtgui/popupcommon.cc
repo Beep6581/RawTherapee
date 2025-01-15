@@ -80,13 +80,13 @@ bool PopUpCommon::addEntry (const Glib::ustring& fileName, const Glib::ustring& 
     return insertEntry(getEntryCount(), fileName, label, radioGroup);
 }
 
-bool PopUpCommon::insertEntry(int position, const Glib::ustring& fileName, const Glib::ustring& label, Gtk::RadioButtonGroup *radioGroup)
+bool PopUpCommon::insertEntry(int position, const Glib::ustring& iconName, const Glib::ustring& label, Gtk::RadioButtonGroup *radioGroup)
 {
     RTImage* image = nullptr;
-    if (!fileName.empty()) {
-        image = Gtk::manage(new RTImage(fileName));
+    if (!iconName.empty()) {
+        image = Gtk::manage(new RTImage(iconName));
     }
-    bool success = insertEntryImpl(position, fileName, Glib::RefPtr<const Gio::Icon>(), image, label, radioGroup);
+    bool success = insertEntryImpl(position, iconName, Glib::RefPtr<const Gio::Icon>(), image, label, radioGroup);
     if (!success && image) {
         delete image;
     }
@@ -95,7 +95,7 @@ bool PopUpCommon::insertEntry(int position, const Glib::ustring& fileName, const
 
 bool PopUpCommon::insertEntry(int position, const Glib::RefPtr<const Gio::Icon>& gIcon, const Glib::ustring& label, Gtk::RadioButtonGroup *radioGroup)
 {
-    RTImage* image = Gtk::manage(new RTImage(gIcon, Gtk::ICON_SIZE_BUTTON));
+    auto image = Gtk::manage(new RTImage(gIcon, Gtk::ICON_SIZE_BUTTON));
     bool success = insertEntryImpl(position, "", gIcon, image, label, radioGroup);
     if (!success) {
         delete image;
@@ -103,7 +103,7 @@ bool PopUpCommon::insertEntry(int position, const Glib::RefPtr<const Gio::Icon>&
     return success;
 }
 
-bool PopUpCommon::insertEntryImpl(int position, const Glib::ustring& fileName, const Glib::RefPtr<const Gio::Icon>& gIcon, RTImage* image, const Glib::ustring& label, Gtk::RadioButtonGroup* radioGroup)
+bool PopUpCommon::insertEntryImpl(int position, const Glib::ustring& iconName, const Glib::RefPtr<const Gio::Icon>& gIcon, RTImage* image, const Glib::ustring& label, Gtk::RadioButtonGroup* radioGroup)
 {
     if (label.empty() || position < 0 || position > getEntryCount())
         return false;
@@ -117,12 +117,12 @@ bool PopUpCommon::insertEntryImpl(int position, const Glib::ustring& fileName, c
         newItem = Gtk::manage(new MyImageMenuItem(label, image));
     }
     imageIcons.insert(imageIcons.begin() + position, gIcon);
-    imageFilenames.insert(imageFilenames.begin() + position, fileName);
+    imageIconNames.insert(imageIconNames.begin() + position, iconName);
     images.insert(images.begin() + position, image);
 
     // When there is at least 1 choice, we add the arrow button
     if (images.size() == 1) {
-        changeImage(fileName, gIcon);
+        changeImage(iconName, gIcon);
         buttonImage->show();
         selected = 0;
         button->get_style_context()->add_class("Left");
@@ -185,21 +185,21 @@ void PopUpCommon::removeEntry(int position)
     std::unique_ptr<Gtk::Widget> menuItem(menu->get_children()[position]);
     menu->remove(*menuItem);
     imageIcons.erase(imageIcons.begin() + position);
-    imageFilenames.erase(imageFilenames.begin() + position);
+    imageIconNames.erase(imageIconNames.begin() + position);
     images.erase(images.begin() + position);
 }
 
 void PopUpCommon::changeImage(int position)
 {
-    changeImage(imageFilenames.at(position), imageIcons.at(position));
+    changeImage(imageIconNames.at(position), imageIcons.at(position));
 }
 
-void PopUpCommon::changeImage(const Glib::ustring& fileName, const Glib::RefPtr<const Gio::Icon>& gIcon)
+void PopUpCommon::changeImage(const Glib::ustring& iconName, const Glib::RefPtr<const Gio::Icon>& gIcon)
 {
-    if (!fileName.empty()) {
-        buttonImage->changeImage(fileName);
+    if (!iconName.empty()) {
+        buttonImage->set_from_icon_name(iconName, Gtk::ICON_SIZE_BUTTON);
     } else {
-        buttonImage->changeImage(gIcon, static_cast<Gtk::IconSize>(Gtk::ICON_SIZE_BUTTON));
+        buttonImage->set_from_gicon(gIcon, Gtk::ICON_SIZE_BUTTON);
     }
 }
 
@@ -250,7 +250,7 @@ void PopUpCommon::setItemSensitivity (int index, bool isSensitive) {
 bool PopUpCommon::setSelected (int entryNum)
 {
     entryNum = indexToPos(entryNum);
-    
+
     if (entryNum < 0 || entryNum > ((int)images.size() - 1) || (int)entryNum == selected) {
         return false;
     } else {

@@ -22,7 +22,6 @@
 
 #include "adjuster.h"
 #include "guiutils.h"
-#include "guiutils.h"
 #include "toolpanel.h"
 
 class Resize final :
@@ -33,6 +32,8 @@ class Resize final :
 {
 public:
     static const Glib::ustring TOOL_NAME;
+    static constexpr int MAX_SCALE = 16; // 16 to match the main preview max scale of 1600%
+    static constexpr int MIN_SIZE = 32;
 
     Resize ();
     ~Resize () override;
@@ -85,6 +86,4 @@ private:
     sigc::connection   sconn, aconn, wconn, hconn, leconn, seconn;
     bool               wDirty, hDirty, leDirty, seDirty;
     IdleRegister       idle_register;
-
-    static constexpr int MAX_SCALE = 16; // 16 to match the main preview max scale of 1600%
 };

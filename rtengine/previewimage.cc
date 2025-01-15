@@ -116,7 +116,10 @@ PreviewImage::PreviewImage (const Glib::ustring &fname, const Glib::ustring &ext
             params.raw.deadPixelFilter = false;
             params.raw.ca_autocorrect = false;
             params.raw.xtranssensor.method = RAWParams::XTransSensor::getMethodString(RAWParams::XTransSensor::Method::FAST);
-            rawImage.preprocess(params.raw, params.lensProf, params.coarse);
+            float reddeha = 0.f;
+            float greendeha = 0.f;
+            float bluedeha = 0.f;
+            rawImage.preprocess(params.raw, params.lensProf, params.coarse,  reddeha, greendeha, bluedeha, true);
             double contrastThresholdDummy = 0.0;
             rawImage.demosaic(params.raw, false, contrastThresholdDummy);
             Imagefloat image(fw, fh);

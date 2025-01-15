@@ -19,7 +19,7 @@
 
 #include "dirpyrequalizer.h"
 
-#include "../rtengine/color.h"
+#include "rtengine/color.h"
 
 using namespace rtengine;
 using namespace rtengine::procparams;

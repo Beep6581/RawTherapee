@@ -1,6 +1,7 @@
 {
     "Canon EOS 100D": ["Canon EOS Kiss X7", "Canon EOS REBEL SL1"],
     "Canon EOS 200D": ["Canon EOS Kiss X9", "Canon EOS Rebel SL2"],
+    "Canon EOS 250D": ["Canon EOS Kiss X10", "Canon EOS Rebel SL3"],
     "Canon EOS 300D": ["Canon EOS Kiss Digital", "Canon EOS Digital Rebel"],
     "Canon EOS 350D": ["Canon EOS 350D DIGITAL", "Canon EOS Kiss Digital N", "Canon EOS DIGITAL REBEL XT"],
     "Canon EOS 400D": ["Canon EOS 400D DIGITAL", "Canon EOS Kiss Digital X", "Canon EOS DIGITAL REBEL XTi"],
@@ -18,6 +19,8 @@
     "Canon EOS 1300D": ["Canon EOS Kiss X80", "Canon EOS Rebel T6"],
     "Canon EOS 2000D": ["Canon EOS 1500D", "Canon EOS Kiss X90", "Canon EOS Rebel T7"],
     "Canon EOS 4000D": ["Canon EOS 3000D", "Canon EOS Rebel T100"],
+
+    "FUJIFILM GFX 100": ["FUJIFILM GFX 100S", "FUJIFILM GFX100S"],
 
     "MINOLTA DYNAX 5D": ["Minolta Maxxum 5D", "Minolta Alpha 5D", "Minolta Alpha Sweet"],
     "MINOLTA DYNAX 7D": ["Minolta Maxxum 7D", "Minolta Alpha 7D"],

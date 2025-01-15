@@ -24,7 +24,7 @@
 #include "guiutils.h"
 
 class EditorPanel;
-class ExternalEditor;
+struct ExternalEditor;
 class RTWindow;
 
 class EditWindow :
@@ -32,7 +32,6 @@ class EditWindow :
 {
 
 private:
-    double resolution;
     RTWindow* parent;
     RTImage appIcon;
 
@@ -47,8 +46,6 @@ private:
     bool isMinimized;
     sigc::connection onConfEventConn;
     void toggleFullscreen ();
-    bool updateResolution();
-    void setAppIcon();
 
     IdleRegister idle_register;
 

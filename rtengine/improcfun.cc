@@ -49,7 +49,7 @@
 #include "StopWatch.h"
 #include "utils.h"
 
-#include "../rtgui/editcallbacks.h"
+#include "rtgui/editcallbacks.h"
 
 #pragma GCC diagnostic warning "-Wextra"
 #pragma GCC diagnostic warning "-Wdouble-promotion"
@@ -2039,9 +2039,9 @@ void ImProcFunctions::rgbProc(Imagefloat* working, LabImage* lab, PipetteBuffer 
     };
 
     bool mixchannels = params->chmixer.enabled &&
-                       (params->chmixer.red[0] != 100 || params->chmixer.red[1] != 0     || params->chmixer.red[2] != 0   ||
-                        params->chmixer.green[0] != 0 || params->chmixer.green[1] != 100 || params->chmixer.green[2] != 0 ||
-                        params->chmixer.blue[0] != 0  || params->chmixer.blue[1] != 0    || params->chmixer.blue[2] != 100);
+                       (params->chmixer.red[0] != 1000 || params->chmixer.red[1] != 0     || params->chmixer.red[2] != 0   ||
+                        params->chmixer.green[0] != 0 || params->chmixer.green[1] != 1000 || params->chmixer.green[2] != 0 ||
+                        params->chmixer.blue[0] != 0  || params->chmixer.blue[1] != 0    || params->chmixer.blue[2] != 1000);
 
     FlatCurve* hCurve = nullptr;
     FlatCurve* sCurve = nullptr;
@@ -4778,13 +4778,22 @@ void ImProcFunctions::chromiLuminanceCurve(PipetteBuffer *pipetteBuffer, int pW,
                     histLCurve[Lprov1 * histLFactor]++;
                 }
 
-                Chprov1 = sqrt(SQR(atmp) + SQR(btmp)) / 327.68f;
 
                 // labCurve.bwtoning option allows to decouple modulation of a & b curves by saturation
                 // with bwtoning enabled the net effect of a & b curves is visible
                 if (bwToning) {
                     atmp -= lold->a[i][j];
                     btmp -= lold->b[i][j];
+                    Chprov1 = sqrt(SQR(atmp) + SQR(btmp)) / 327.68f;
+                    if (Chprov1 == 0.f) {
+                        sincosval.x = 0.f;
+                        sincosval.y = 1.f;
+                    } else {
+                        sincosval.x = btmp / (327.68f * Chprov1);
+                        sincosval.y = atmp / (327.68f * Chprov1);
+                    }
+                } else {
+                    Chprov1 = sqrt(SQR(atmp) + SQR(btmp)) / 327.68f;
                 }
 
                 lnew->L[i][j] = Lprov1 * 327.68f;

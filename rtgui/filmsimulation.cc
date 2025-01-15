@@ -6,8 +6,8 @@
 
 #include "options.h"
 
-#include "../rtengine/clutstore.h"
-#include "../rtengine/procparams.h"
+#include "rtengine/clutstore.h"
+#include "rtengine/procparams.h"
 
 using namespace rtengine;
 using namespace rtengine::procparams;

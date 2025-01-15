@@ -1,0 +1,213 @@
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=windows-1252">
+  </head>
+  <body>
+    <p>LibRaw: Usage Examples<a href="index.html">[back to Index]</a></p>
+    <h1>LibRaw: Usage Examples</h1>
+    <h2>Overview of Examples in the Distribution Package (samples/*)</h2>
+    <p>The LibRaw package contains several examples illustrating the use of this
+      library. Their source codes are located in the samples/ folder, and after
+      library build they will be in the bin/ folder:</p>
+    <ul>
+      <li><strong>raw-identify</strong> The only LibRaw call it uses is <a href="API-CXX.html#open_file">open_file()</a>;
+        further code prints the values of the fields of the imgdata structure. <strong><br>
+        </strong><strong>raw-identify -v</strong> provides extensive dump of
+        metadata/<br>
+        Command line key <strong>-u</strong> shows unpacking function name,
+        while <strong>-u -f</strong> prints function name and masked are sizes.<br>
+        <strong>raw-identify -w </strong>will print white balance tables stored
+        in RAW file.</li>
+      <li><strong>simple_dcraw</strong> A simple "emulation" of dcraw
+        reproducing the behavior of <strong>dcraw [-e] [-v] [-T]</strong>.&nbsp;
+        A simplified version of this example is <a href="#code">considered
+          below</a>. <br>
+        <strong>-B</strong> command-line switch turns on use of <a href="API-CXX.html#open_buffer">open_buffer()
+          API call</a> used via mmap() of input file (Unix only).</li>
+      <li><strong>dcraw_half</strong> Demonstrates the use of <a href="API-C.html">C
+          API</a>. The example emulates the behavior of <strong>dcraw -h</strong>
+        (no other control parameters can be specified in this example). </li>
+      <li><strong>dcraw_emu</strong> Almost complete emulation of dcraw (except for
+        keys -D -d -E -i -v -e, which are considered in other usage examples).
+        Of most interest is processing of command line keys (copied from dcraw).
+        <br>
+        <p>This sample supports additional command-line parameters absent in
+          original dcraw:</p>
+        <dl>
+          <dt><strong>-mmap</strong></dt>
+          <dd>Use <a href="API-CXX.html#open_buffer">open_buffer()</a>
+            interface. Buffer prepared by mmap() call. This option not supported
+            under Win32.</dd>
+          <dt><strong>-meme</strong></dt>
+          <dd>Use <a href="API-CXX.html#open_buffer">open_buffer()</a>
+            interface. Buffer prepared by malloc()+read() calls.</dd>
+          <dt><strong>-c float-value</strong></dt>
+          <dd>This key sets <strong>params.adjust_maximum_thr</strong>
+            parameter.<br>
+            Use -c 0 to completely disable automatic maximum calculation. <br>
+            Default value: 0.75</dd>
+          <dt><strong>-timing</strong></dt>
+          <dd>Turns on detailed timing print.</dd>
+          <dt><strong>-G</strong></dt>
+          <dd>Turns on "green_matching" mode to suppress color mazes on cameras
+            with different green channels.</dd>
+          <dt><strong>-B x y w h</strong></dt>
+          <dd>Crops output to rectangle with width w, height h and x,y
+            coordinates of left upper corner. All coordinates applied before any
+            image rotation.</dd>
+          <dt><strong>-F</strong></dt>
+          <dd>Will use FILE I/O (bigfile_datastream) instead on standard
+            LibRaw_file_datastream.</dd>
+          <dt><strong>-dcbi N</strong></dt>
+          <dd>Sets number of additional DCB-demosaic iterations (option valid
+            only for -q 4, i.e. for DCB demosaic).</dd>
+          <dt><strong>-dcbe</strong></dt>
+          <dd>Turns on DCB color enhance mode (only for DCB demosaic, -q 4).</dd>
+          <dt><strong>-aexpo e p</strong></dt>
+          <dd>Turns on exposure correction. e is exposure shift in linear scale
+            from 0.25 (darken 2 stops) to 8.0 (lighten 3 stops). p is highlights
+            preservation amount from 0.0 (no preservation, full clipping) to 1.0
+            (full preservation, S-like curve in highlights).</dd>
+          <dt><strong>-apentax4shot</strong></dt>
+          <dd>Will merge 4 frames from Pentax 4-shot RAWs</dd>
+          <dt><strong>-apentax4shotorder abce</strong></dt>
+          <dd>Order of frames in pentax 4-shot files (default is 3102)</dd>
+          <dt><strong>-mmap</strong></dt>
+          <dd>Use mmap + memory IO instead of file IO (unix only)</dd>
+          <dt><strong>-disars</strong></dt>
+          <dd>Disable RawSpeed library (if compiled with this library)</dd>
+          <dt><strong>-doutputflags N</strong></dt>
+          <dd>set imgdata.params.output_flags to N</dd>
+          <dt><strong>-disinterp</strong></dt>
+          <dd>Do not run interpolation step</dd>
+          <dt><strong>-dsrawrgb1</strong></dt>
+          <dd>Disable YCbCr to RGB conversion for sRAW (Cb/Cr interpolation
+            enabled)</dd>
+          <dt><strong>-dsrawrgb2</strong></dt>
+          <dd>Disable YCbCr to RGB conversion for sRAW (Cb/Cr interpolation
+            disabled)</dd>
+        </dl>
+      </li>
+      <li><strong>half_mt</strong> Emulation of <strong>dcraw -h</strong>. It
+        "understands" the following keys: -a (automatic white balance over the
+        entire image), -w (white balance of the camera), -T (output in the tiff
+        format), and -J n (number of parallel threads launched for image
+        processing).<br>
+        On multiprocessor/multicore computers, the speed gain is notable in the
+        case of mass processing. On a Win32 machine, the example is assembled
+        from the initial file half_mt_win32.c, since work with threads under
+        Windows is fundamentally different and it it easier to copy simple
+        source codes than write one complex code.</li>
+      <li><strong>mem_image</strong> This sample uses <a href="API-CXX.html#dcraw_make_mem_image">dcraw_make_mem_image</a>
+        and <a href="API-CXX.html#dcraw_make_mem_thumb">dcraw_make_mem_thumb</a>
+        calls, than writes data in PPM format. </li>
+      <li><strong>unprocessed_raw</strong> This sample extracts (mostly)
+        unaltered RAW data including masked pixels data (on supported cameras).
+        If black frame exists and black frame extraction is supported for given
+        format, masked pixels data is added to resulting .TIFF file. Command
+        line options: <strong>-q</strong> - be quiet, <strong>-A</strong> -
+        autoscale data (integer multiplier), <strong>-g</strong>
+        gamma-correction (gamma 2.2) for data (instead of precise linear one), <strong>-B</strong>
+        turns on black level subtraction</li>
+      <li><strong>4channnels</strong> - splits RAW-file into four separate
+        16-bit grayscale TIFFs (per RAW channel).<br>
+        Command line switches:
+        <ul>
+          <li><strong>-s N</strong> selects N-th image from RAW with multiple
+            images</li>
+          <li><strong>-g</strong> gamma correction (gamma 2.2)</li>
+          <li><strong>-A</strong> values autoscale by auto-calculated integer
+            factor</li>
+          <li><strong>-B</strong> turn off black subtraction</li>
+          <li><strong>-N</strong> no RAW curve</li>
+        </ul>
+      </li>
+      <li><strong>multirender_test</strong> - very simple example of multiple
+        rendering on one file without reopen.</li>
+      <li><strong>postprocessing_benchmark</strong> - will print timings of RAW
+        processing steps</li>
+    </ul>
+    <h2>Example of docmode</h2>
+    <p>Below we consider the samples/simple_dcraw.cpp example, which emulates
+      the behavior of <strong>dcraw [-e][-v][-t]</strong>. To save space, let
+      us assume that keys -t -v are always specified (to avoid comments on
+      command line parsing) and there is always one parameter (name of file),
+      which is the only one and always passed to the program.</p>
+    <pre>int main(int ac, char *av[])
+{
+ int i, ret, verbose=0, output_thumbs=0;
+ char outfn[1024],thumbfn[1024];
+ // Creation of image processing object
+ LibRaw RawProcessor;
+ // The date in TIFF is written in the local format; let us specify the timezone for compatibility with dcraw
+ putenv ((char*)"TZ=UTC");
+// Let us define variables for convenient access to fields of RawProcessor
+#define P1 RawProcessor.imgdata.idata
+#define S RawProcessor.imgdata.sizes
+#define C RawProcessor.imgdata.color
+#define T RawProcessor.imgdata.thumbnail
+#define P2 RawProcessor.imgdata.other
+#define OUT RawProcessor.imgdata.params
+ OUT.output_tiff = 1; // Let us output TIFF
+ // Let us open the file
+ if( (ret = RawProcessor.open_file(av[1])) != LIBRAW_SUCCESS)
+ {
+ fprintf(stderr,"Cannot open %s: %s\n",av[i],libraw_strerror(ret));
+ // recycle() is needed only if we want to free the resources right now.
+ // If we process files in a cycle, the next open_file()
+ // will also call recycle(). If a fatal error has happened, it means that recycle()
+ // has already been called (repeated call will not cause any harm either).
+ RawProcessor.recycle();
+ goto end;
+ }
+ // Let us unpack the image
+ if( (ret = RawProcessor.unpack() ) != LIBRAW_SUCCESS)
+ {
+ fprintf(stderr,"Cannot unpack_thumb %s: %s\n",av[i],libraw_strerror(ret));
+ if(LIBRAW_FATAL_ERROR(ret))
+ goto end;
+ // if there has been a non-fatal error, we will try to continue
+ }
+ // Let us unpack the thumbnail
+ if( (ret = RawProcessor.unpack_thumb() ) != LIBRAW_SUCCESS)
+ {
+ // error processing is completely similar to the previous case
+ fprintf(stderr,"Cannot unpack_thumb %s: %s\n",av[i],libraw_strerror(ret));
+ if(LIBRAW_FATAL_ERROR(ret))
+ goto end;
+ }
+ else // We have successfully unpacked the thumbnail, now let us write it to a file
+ {
+ snprintf(thumbfn,sizeof(thumbfn),"%s.%s",av[i],T.tformat == LIBRAW_THUMBNAIL_JPEG ? "thumb.jpg" : "thumb.ppm");
+ if( LIBRAW_SUCCESS != (ret = RawProcessor.dcraw_thumb_writer(thumbfn)))
+ {
+ fprintf(stderr,"Cannot write %s: %s\n",thumbfn,libraw_strerror(ret));
+ // in the case of fatal error, we should terminate processing of the current file
+ if(LIBRAW_FATAL_ERROR(ret))
+ goto end;
+ }
+ }
+ // Data unpacking
+ ret = RawProcessor.dcraw_process();
+ if(LIBRAW_SUCCESS != ret ) // error at the previous step
+ {
+ fprintf(stderr,"Cannot do postprocessing on %s: %s\n",av[i],libraw_strerror(ret));
+ if(LIBRAW_FATAL_ERROR(ret))
+ goto end;
+ }
+ else // Successful document processing
+ {
+ snprintf(outfn,sizeof(outfn),"%s.%s", av[i], "tiff");
+ if( LIBRAW_SUCCESS != (ret = RawProcessor.dcraw_ppm_tiff_writer(outfn)))
+ fprintf(stderr,"Cannot write %s: error %d\n",outfn,ret);
+ }
+ // we don't evoke recycle() or call the destructor; C++ will do everything for us
+ return 0;
+end:
+ // got here after an error
+ return 1;
+}
+</pre>
+    <p><a href="index.html">[back to Index]</a></p>
+  </body>
+</html>

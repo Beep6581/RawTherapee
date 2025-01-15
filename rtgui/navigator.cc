@@ -20,9 +20,9 @@
 #include "navigator.h"
 #include "previewwindow.h"
 #include "toolpanel.h"
-#include "../rtengine/color.h"
-#include "../rtengine/improcfun.h"
-#include "../rtengine/rt_math.h"
+#include "rtengine/color.h"
+#include "rtengine/improcfun.h"
+#include "rtengine/rt_math.h"
 #include "options.h"
 
 using namespace rtengine;

@@ -21,7 +21,9 @@
 #ifndef _CONTROLSPOTPANEL_H_
 #define _CONTROLSPOTPANEL_H_
 
-#include "../rtengine/coord.h"
+#include <memory>
+
+#include "rtengine/coord.h"
 #include "editcallbacks.h"
 #include "threadutils.h"
 #include "toolpanel.h"
@@ -53,7 +55,7 @@ public:
         bool isvisible;
         int prevMethod; // 0 = Normal, 1 = Excluding
         int shape; // 0 = Ellipse, 1 = Rectangle
-        int spotMethod; // 0 = Normal, 1 = Excluding
+        int spotMethod; // 0 = Normal, 1 = Excluding  2 = fullimage 3 = main
         int sensiexclu;
         int structexclu;
         int shapeMethod; // 0 = Independent (mouse), 1 = Symmetrical (mouse), 2 = Independent (mouse + sliders), 3 = Symmetrical (mouse + sliders)
@@ -104,6 +106,7 @@ public:
         SpotDuplication = 4,
         SpotAllVisibilityChanged = 5
     };
+    IdleRegister idle_register;
 
     // Constructor and management functions
     /**
@@ -141,7 +144,7 @@ public:
      * @param index The spot index to get params
      * @return A SpotRow structure containing params of associated spot
      */
-    SpotRow* getSpot(const int index);
+    std::unique_ptr<SpotRow> getSpot(const int index);
     /**
      * Getter of spots number
      *
@@ -187,7 +190,7 @@ public:
      *
      * @param newSpot A SpotRow structure containing new spot params
      */
-    void addControlSpot(SpotRow* newSpot);
+    void addControlSpot(const SpotRow &newSpot);
 
     // Control spot delete function
     /**
@@ -218,6 +221,12 @@ public:
 
     // Batch mode management
     // Note: Batch mode is deactivated for Locallab
+    
+    /**
+     * upadte function to work with Preferences and spotMethod
+    */
+    void updateguiset(int spottype, bool iscolor,  bool issh, bool isvib, bool isexpos, bool issoft, bool isblur, bool istom, bool isret, bool issharp, bool iscont, bool iscbdl, bool islog, bool ismas, bool iscie);
+    void updateguiscopeset(int scope);
 
 private:
     // Cell renderer
@@ -433,8 +442,12 @@ private:
     sigc::connection previewConn_;
 
     Gtk::Box* const ctboxshape;
+    Gtk::Box* const ctboxactivmethod;
+    Gtk::Box* const ctboxspotmethod;
+    
     Gtk::Box* const ctboxshapemethod;
     Gtk::Box* const ctboxgamut;
+    ToolParamBlock* const artifBox2;
 
     // Internal variables
     ControlPanelListener* controlPanelListener;

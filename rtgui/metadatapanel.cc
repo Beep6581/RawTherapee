@@ -20,7 +20,7 @@
 
 #include "metadatapanel.h"
 #include "eventmapper.h"
-#include "../rtengine/procparams.h"
+#include "rtengine/procparams.h"
 
 using namespace rtengine;
 using namespace rtengine::procparams;
@@ -78,8 +78,10 @@ void MetaDataPanel::read(const rtengine::procparams::ProcParams* pp, const Param
         }
     }
 
-    exifpanel->read(pp, pedited);
-    iptcpanel->read(pp, pedited);
+    if (!batchMode) { // Not used in batch mode.
+        exifpanel->read(pp, pedited);
+        iptcpanel->read(pp, pedited);
+    }
     
     enableListener();
 }
@@ -93,8 +95,10 @@ void MetaDataPanel::write(rtengine::procparams::ProcParams* pp, ParamsEdited* pe
         pedited->metadata.mode = metadataMode->get_active_row_number() != 3;
     }
 
-    exifpanel->write(pp, pedited);
-    iptcpanel->write(pp, pedited);
+    if (!batchMode) { // Invalid in batch mode.
+        exifpanel->write(pp, pedited);
+        iptcpanel->write(pp, pedited);
+    }
 }
 
 

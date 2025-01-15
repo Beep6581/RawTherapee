@@ -22,7 +22,7 @@
 #include <string>
 #include <map>
 #include <unordered_map>
-#include "../rtengine/refreshmap.h"
+#include "rtengine/refreshmap.h"
 
 
 class ProcEventMapper {

@@ -34,14 +34,14 @@ class FileThumbnailButtonSet :
     static bool iconsLoaded;
 
 public:
-    static Cairo::RefPtr<RTSurface> rankIcon;
-    static Cairo::RefPtr<RTSurface> gRankIcon;
-    static Cairo::RefPtr<RTSurface> unRankIcon;
-    static Cairo::RefPtr<RTSurface> trashIcon;
-    static Cairo::RefPtr<RTSurface> unTrashIcon;
-    static Cairo::RefPtr<RTSurface> processIcon;
+    static std::shared_ptr<RTSurface> rankIcon;
+    static std::shared_ptr<RTSurface> gRankIcon;
+    static std::shared_ptr<RTSurface> unRankIcon;
+    static std::shared_ptr<RTSurface> trashIcon;
+    static std::shared_ptr<RTSurface> unTrashIcon;
+    static std::shared_ptr<RTSurface> processIcon;
 
-    static std::array<Cairo::RefPtr<RTSurface>, 6> colorLabelIcon;
+    static std::array<std::shared_ptr<RTSurface>, 6> colorLabelIcon;
 
     static Glib::ustring processToolTip;
     static Glib::ustring unrankToolTip;

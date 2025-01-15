@@ -985,9 +985,27 @@ rtengine::LCPMapper::LCPMapper(
     isFisheye = pProf->isFisheye;
 }
 
-bool rtengine::LCPMapper::isCACorrectionAvailable() const
+bool rtengine::LCPMapper::hasDistortionCorrection() const
+{
+    // assume lcp always provides distortion correction
+    return true;
+}
+
+bool rtengine::LCPMapper::hasCACorrection() const
 {
     return enableCA;
+}
+
+bool rtengine::LCPMapper::hasVignettingCorrection() const
+{
+    // assume lcp always provides vignetting correction
+    return true;
+}
+
+void rtengine::LCPMapper::correctDistortionAndCA(double &x, double &y, int cx, int cy, int channel) const
+{
+    correctDistortion(x, y, cx, cy);
+    correctCA(x, y, cx, cy, channel);
 }
 
 void rtengine::LCPMapper::correctDistortion(double &x, double &y, int cx, int cy) const

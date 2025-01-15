@@ -26,7 +26,7 @@
 #include <type_traits>
 #include <unordered_map>
 
-#include "../rtgui/threadutils.h"
+#include "rtgui/threadutils.h"
 
 namespace rtengine
 {

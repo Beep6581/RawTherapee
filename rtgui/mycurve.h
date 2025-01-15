@@ -27,8 +27,8 @@
 #include "cursormanager.h"
 #include "curvelistener.h"
 
-#include "../rtengine/LUT.h"
-#include "../rtengine/noncopyable.h"
+#include "rtengine/LUT.h"
+#include "rtengine/noncopyable.h"
 
 #define RADIUS          3.5 /** radius of the control points ; must be x.5 to target the center of a pixel */
 #define CBAR_WIDTH      10  /** inner width of the colored bar (border excluded) */
@@ -57,7 +57,7 @@ class MyCurveIdleHelper;
 class CurveEditor;
 class EditDataProvider;
 
-class MyCurve : public Gtk::DrawingArea, public BackBuffer, public ColorCaller, public CoordinateProvider, public rtengine::NonCopyable
+class MyCurve : public Gtk::DrawingArea, public ColorCaller, public CoordinateProvider, public rtengine::NonCopyable
 {
     friend class MyCurveIdleHelper;
 
@@ -150,6 +150,6 @@ public:
 
     void clearPixmap ()
     {
-        myCurve->setDirty(true);
+        myCurve->queue_draw();
     }
 };

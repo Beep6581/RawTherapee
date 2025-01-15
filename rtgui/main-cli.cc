@@ -31,9 +31,9 @@
 #include <cstring>
 #include <cstdlib>
 #include <locale.h>
-#include "../rtengine/procparams.h"
-#include "../rtengine/profilestore.h"
-#include "../rtengine/rtengine.h"
+#include "rtengine/procparams.h"
+#include "rtengine/profilestore.h"
+#include "rtengine/rtengine.h"
 #include "options.h"
 #include "soundman.h"
 #include "rtimage.h"
@@ -273,6 +273,7 @@ int processLineParams ( int argc, char **argv )
 
                 case 'O':
                     copyParamsFile = true;
+                    // fall through
 
                 case 'o': // outputfile or dir
                     if ( iArg + 1 < argc ) {
@@ -324,6 +325,7 @@ int processLineParams ( int argc, char **argv )
 
                 case 'S':
                     skipIfNoSidecar = true;
+                    // fall through
 
                 case 's': // Processing params next to file (file extension appended)
                     sideProcParams = true;

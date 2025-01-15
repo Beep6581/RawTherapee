@@ -166,8 +166,13 @@ private:
 class LensCorrection {
 public:
     virtual ~LensCorrection() {}
+
+    virtual bool hasDistortionCorrection() const = 0;
+    virtual bool hasCACorrection() const = 0;
+    virtual bool hasVignettingCorrection() const = 0;
+
+    virtual void correctDistortionAndCA(double &x, double &y, int cx, int cy, int channel) const = 0;
     virtual void correctDistortion(double &x, double &y, int cx, int cy) const = 0;
-    virtual bool isCACorrectionAvailable() const = 0;
     virtual void correctCA(double &x, double &y, int cx, int cy, int channel) const = 0;
     virtual void processVignette(int width, int height, float** rawData) const = 0;
     virtual void processVignette3Channels(int width, int height, float** rawData) const = 0;
@@ -194,8 +199,12 @@ public:
     );
 
 
+    bool hasDistortionCorrection() const override;
+    bool hasCACorrection() const override;
+    bool hasVignettingCorrection() const override;
+
+    void correctDistortionAndCA(double &x, double &y, int cx, int cy, int channel) const override;
     void correctDistortion(double &x, double &y, int cx, int cy) const override;
-    bool isCACorrectionAvailable() const override;
     void correctCA(double& x, double& y, int cx, int cy, int channel) const override;
     void processVignette(int width, int height, float** rawData) const override;
     void processVignette3Channels(int width, int height, float** rawData) const override;

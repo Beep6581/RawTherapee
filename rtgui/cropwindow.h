@@ -31,7 +31,7 @@
 #include "lwbutton.h"
 #include "lwbuttonset.h"
 
-#include "../rtengine/noncopyable.h"
+#include "rtengine/noncopyable.h"
 
 namespace rtengine
 {

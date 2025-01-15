@@ -16,6 +16,7 @@
  *  You should have received a copy of the GNU General Public License
  *  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
  */
+#include <cstdint>
 #include <functional>
 #include <iostream>
 #include <regex>
@@ -27,6 +28,7 @@
 #include <glib/gstdio.h>
 #include <glibmm/convert.h>
 
+#include "dnggainmap.h"
 #include "imagedata.h"
 #include "imagesource.h"
 #include "metadata.h"
@@ -63,6 +65,171 @@ auto to_long(const Iterator &iter, Integer n = Integer{0}) -> decltype(
 #endif
 }
 
+/**
+ * Convenience class for reading data from a metadata tag's bytes value.
+ *
+ * It maintains an offset. Data is read starting from the offset, then the
+ * offset is advanced to the byte after the last byte read.
+ */
+class TagValueReader
+{
+    using DataContainer = std::vector<Exiv2::byte>;
+    using DataOffset = DataContainer::difference_type;
+
+    DataContainer data;
+    DataOffset offset{0};
+    Exiv2::ByteOrder defaultByteOrder;
+
+    /**
+     * Reads a value at the current offset.
+     *
+     * @tparam T Value's type.
+     * @tparam getter Function that interprets the data using a given byte order
+     * and returns the value at a given location.
+     * @return The value.
+     */
+    template <typename T, T (&getter)(const Exiv2::byte *, Exiv2::ByteOrder)>
+    T readValue()
+    {
+        T value = getter(data.data() + offset, defaultByteOrder);
+        offset += sizeof(T);
+        return value;
+    }
+
+public:
+    /**
+     * Creates a reader for the given value with the given byte order.
+     *
+     * @param value The value.
+     * @param defaultByteOrder The byte order of the value's data.
+     */
+    TagValueReader(const Exiv2::Value &value, Exiv2::ByteOrder defaultByteOrder = Exiv2::bigEndian) :
+        data(value.size()),
+        defaultByteOrder(defaultByteOrder)
+    {
+        value.copy(data.data(), Exiv2::invalidByteOrder);
+    }
+
+    /**
+     * Returns the value's size in bytes.
+     */
+    std::size_t size() const
+    {
+        return data.size();
+    }
+
+    /**
+     * Checks if the current offset is at or beyond the end of the data.
+     */
+    bool isEnd() const
+    {
+        return offset > 0 && static_cast<std::size_t>(offset) >= data.size();
+    }
+
+    /**
+     * Reads a double from the current offset and advances the offset.
+     */
+    double readDouble()
+    {
+        return readValue<double, Exiv2::getDouble>();
+    }
+
+    /**
+     * Reads a float from the current offset and advances the offset.
+     */
+    float readFloat()
+    {
+        return readValue<float, Exiv2::getFloat>();
+    }
+
+    /**
+     * Reads an unsigned integer from the current offset and advances the
+     * offset.
+     */
+    std::uint32_t readUInt()
+    {
+        return readValue<std::uint32_t, Exiv2::getULong>();
+    }
+
+    /**
+     * Sets the offset.
+     */
+    void seekAbsolute(DataOffset newOffset)
+    {
+        offset = newOffset;
+    }
+
+    /**
+     * Advances the offset by the given amount.
+     */
+    void seekRelative(DataOffset offsetDifference)
+    {
+        offset += offsetDifference;
+    }
+};
+
+std::uint32_t readFixBadPixelsConstant(TagValueReader &reader)
+{
+    reader.seekRelative(12); // Skip DNG spec version, flags, and tag size.
+    return reader.readUInt();
+}
+
+GainMap readGainMap(TagValueReader &reader)
+{
+    reader.seekRelative(12); // Skip DNG spec version, flags, and tag size.
+    GainMap gainMap;
+    gainMap.Top = reader.readUInt();
+    gainMap.Left = reader.readUInt();
+    gainMap.Bottom = reader.readUInt();
+    gainMap.Right = reader.readUInt();
+    gainMap.Plane = reader.readUInt();
+    gainMap.Planes = reader.readUInt();
+    gainMap.RowPitch = reader.readUInt();
+    gainMap.ColPitch = reader.readUInt();
+    gainMap.MapPointsV = reader.readUInt();
+    gainMap.MapPointsH = reader.readUInt();
+    gainMap.MapSpacingV = reader.readDouble();
+    gainMap.MapSpacingH = reader.readDouble();
+    gainMap.MapOriginV = reader.readDouble();
+    gainMap.MapOriginH = reader.readDouble();
+    gainMap.MapPlanes = reader.readUInt();
+    const std::size_t n = static_cast<std::size_t>(gainMap.MapPointsV) * static_cast<std::size_t>(gainMap.MapPointsH) * static_cast<std::size_t>(gainMap.MapPlanes);
+    gainMap.MapGain.reserve(n);
+    for (std::size_t i = 0; i < n; ++i) {
+        gainMap.MapGain.push_back(reader.readFloat());
+    }
+    return gainMap;
+}
+
+void readOpcodesList(
+    const Exiv2::Value &value,
+    std::uint32_t *fixBadPixelsConstant,
+    bool *hasFixBadPixelsConstant,
+    std::vector<GainMap> *gainMaps)
+{
+    TagValueReader reader(value);
+    std::uint32_t ntags = reader.readUInt(); // read the number of opcodes
+    if (ntags >= reader.size() / 12) {       // rough check for wrong value (happens for example with DNG files from DJI FC6310)
+        return;
+    }
+    while (ntags-- && !reader.isEnd()) {
+        unsigned opcode = reader.readUInt();
+        if (opcode == 4 && (fixBadPixelsConstant || hasFixBadPixelsConstant)) {
+            const auto constant = readFixBadPixelsConstant(reader);
+            if (fixBadPixelsConstant) {
+                *fixBadPixelsConstant = constant;
+            }
+            if (hasFixBadPixelsConstant) {
+                *hasFixBadPixelsConstant = true;
+            }
+        } else if (opcode == 9 && gainMaps && gainMaps->size() < 4) {
+            gainMaps->push_back(readGainMap(reader));
+        } else {
+            reader.seekRelative(8); // skip 8 bytes as they don't interest us currently
+            reader.seekRelative(reader.readUInt());
+        }
+    }
+}
 }
 
 namespace rtengine {
@@ -107,6 +274,7 @@ FramesData::FramesData(const Glib::ustring &fname, time_t ts) :
     sampleFormat(IIOSF_UNKNOWN),
     isPixelShift(false),
     isHDR(false),
+    isDNG(false),
     w_(-1),
     h_(-1)
 {
@@ -309,8 +477,93 @@ FramesData::FramesData(const Glib::ustring &fname, time_t ts) :
             focal_len35mm = pos->toFloat();
         }
 
-        if (find_tag(Exiv2::subjectDistance)) {
-            focus_dist = (0.01 * std::pow(10, pos->toFloat() / 40));
+        // if (find_tag(Exiv2::subjectDistance)) {
+        //     focus_dist = pos->toFloat();
+        // }
+        /*
+         * Get the focus distance in meters.
+         */
+        if (Exiv2::testVersion(0, 27, 4) && find_exif_tag("Exif.NikonLd4.LensID") && to_long(pos) != 0) {
+            // Z lens, need to specifically look for the second instance of
+            // Exif.NikonLd4.FocusDistance unless using Exiv2 0.28.x and later
+            // (also expanded to 2 bytes of precision since 0.28.1).
+#if EXIV2_TEST_VERSION(0, 28, 0)
+            if (find_exif_tag("Exif.NikonLd4.FocusDistance2")) {
+                float value = pos->toFloat();
+                if (Exiv2::testVersion(0, 28, 1)) {
+                    value /= 256.f;
+                }
+#else
+            pos = exif.end();
+            for (auto it = exif.begin(); it != exif.end(); it++) {
+                if (it->key() == "Exif.NikonLd4.FocusDistance") {
+                    pos = it;
+                }
+            }
+            if (pos != exif.end() && pos->size()) {
+                float value = pos->toFloat();
+#endif
+                focus_dist = 0.01 * std::pow(10, value / 40);
+            }
+        } else if (find_exif_tag("Exif.NikonLd2.FocusDistance")
+            || find_exif_tag("Exif.NikonLd3.FocusDistance")
+            || (Exiv2::testVersion(0, 27, 4)
+                && find_exif_tag("Exif.NikonLd4.FocusDistance"))) {
+            float value = pos->toFloat();
+            focus_dist = (0.01 * std::pow(10, value / 40));
+        } else if (find_exif_tag("Exif.OlympusFi.FocusDistance")) {
+            /* the distance is stored as a rational (fraction). according to
+             * http://www.dpreview.com/forums/thread/1173960?page=4
+
+             * some Olympus cameras have a wrong denominator of 10 in there
+             * while the nominator is always in mm.  thus we ignore the
+             * denominator and divide with 1000.
+
+             * "I've checked a number of E-1 and E-300 images, and I agree
+             * that the FocusDistance looks like it is in mm for the
+             * E-1. However, it looks more like cm for the E-300.
+
+             * For both cameras, this value is stored as a rational. With
+             * the E-1, the denominator is always 1, while for the E-300 it
+             * is 10.
+
+             * Therefore, it looks like the numerator in both cases is in mm
+             * (which makes a bit of sense, in an odd sort of way). So I
+             * think what I will do in ExifTool is to take the numerator and
+             * divide by 1000 to display the focus distance in meters."  --
+             * Boardhead, dpreview forums in 2005
+             */
+            int nominator = pos->toRational(0).first;
+            focus_dist = std::max(0.0, (0.001 * nominator));
+        } else if (find_exif_tag("Exif.CanonFi.FocusDistanceUpper")) {
+            const float FocusDistanceUpper = pos->toFloat();
+            if (FocusDistanceUpper <= 0.0f
+                || (int)FocusDistanceUpper >= 0xffff) {
+                focus_dist = 0.0f;
+            } else {
+                focus_dist = FocusDistanceUpper / 100.0;
+                if (find_exif_tag("Exif.CanonFi.FocusDistanceLower")) {
+                    const float FocusDistanceLower = pos->toFloat();
+                    if (FocusDistanceLower > 0.0f && (int)FocusDistanceLower < 0xffff) {
+                        focus_dist += FocusDistanceLower / 100.0;
+                        focus_dist /= 2.0;
+                    }
+                }
+            }
+        } else if (find_exif_tag("Exif.CanonSi.SubjectDistance")) {
+            focus_dist = pos->toFloat() / 100.0;
+        } else if (find_tag(Exiv2::subjectDistance)) {
+            focus_dist = pos->toFloat();
+        } else if (Exiv2::testVersion(0,27,2) && find_exif_tag("Exif.Sony2Fp.FocusPosition2")) {
+            const float focus_position = pos->toFloat();
+
+            if (focus_position && find_exif_tag("Exif.Photo.FocalLengthIn35mmFilm")) {
+                const float focal_length_35mm = pos->toFloat();
+
+                /* http://u88.n24.queensu.ca/exiftool/forum/index.php/topic,3688.msg29653.html#msg29653 */
+                focus_dist =
+                    (std::pow(2, focus_position / 16 - 5) + 1) * focal_length_35mm / 1000;
+            }
         }
 
         if (find_tag(Exiv2::orientation)) {
@@ -483,7 +736,7 @@ FramesData::FramesData(const Glib::ustring &fname, time_t ts) :
         // -----------------------
         // Special file type detection (HDR, PixelShift)
         // ------------------------
-        uint16 bitspersample = 0, samplesperpixel = 0, sampleformat = 0, photometric = 0, compression = 0;
+        std::uint16_t bitspersample = 0, samplesperpixel = 0, sampleformat = 0, photometric = 0, compression = 0;
         const auto bps = exif.findKey(Exiv2::ExifKey("Exif.Image.BitsPerSample"));
         const auto spp = exif.findKey(Exiv2::ExifKey("Exif.Image.SamplesPerPixel"));
         const auto sf = exif.findKey(Exiv2::ExifKey("Exif.Image.SampleFormat"));
@@ -532,7 +785,7 @@ FramesData::FramesData(const Glib::ustring &fname, time_t ts) :
                     find_exif_tag("Exif.SubImage1.Compression") && to_long(pos) == 1) {
                     isPixelShift = true;
                 }
-            } else if (bps != exif.end() && to_long(bps) == 14 &&
+            } else if (bps != exif.end() && (to_long(bps) == 14 || to_long(bps) == 16) &&
                        spp != exif.end() && to_long(spp) == 4 &&
                        c != exif.end() && to_long(c) == 1 &&
                        find_exif_tag("Exif.Image.Software") &&
@@ -675,6 +928,24 @@ FramesData::FramesData(const Glib::ustring &fname, time_t ts) :
 #endif
             }
         }
+
+        std::uint32_t dngVersion = 0;
+        if (find_exif_tag("Exif.Image.DNGVersion") && pos->count() == 4) {
+            for (int i = 0; i < 4; i++) {
+                dngVersion = (dngVersion << 8) + static_cast<std::uint32_t>(to_long(pos, i));
+            }
+        }
+
+        isDNG = dngVersion;
+
+        // Read DNG OpcodeList1.
+        if (dngVersion && (find_exif_tag("Exif.SubImage1.OpcodeList1") || find_exif_tag("Exif.Image.OpcodeList1"))) {
+            readOpcodesList(pos->value(), &fixBadPixelsConstant, &hasFixBadPixelsConstant_, nullptr);
+        }
+        // Read DNG OpcodeList2.
+        if (dngVersion && (find_exif_tag("Exif.SubImage1.OpcodeList2") || find_exif_tag("Exif.Image.OpcodeList2"))) {
+            readOpcodesList(pos->value(), nullptr, nullptr, &gain_maps_);
+        }
     } catch (const std::exception& e) {
         if (settings->verbose) {
             std::cerr << "EXIV2 ERROR: " << e.what() << std::endl;
@@ -691,6 +962,11 @@ bool FramesData::getPixelShift() const
 bool FramesData::getHDR() const
 {
     return isHDR;
+}
+
+bool FramesData::getDNG() const
+{
+    return isDNG;
 }
 
 std::string FramesData::getImageType() const
@@ -916,6 +1192,20 @@ void FramesData::fillBasicTags(Exiv2::ExifData &exif) const
     set_exif(exif, "Exif.Photo.DateTimeOriginal", buf);
 }
 
+std::uint32_t FramesData::getFixBadPixelsConstant() const
+{
+    return fixBadPixelsConstant;
+}
+
+bool FramesData::hasFixBadPixelsConstant() const
+{
+    return hasFixBadPixelsConstant_;
+}
+
+std::vector<GainMap> FramesData::getGainMaps() const
+{
+    return gain_maps_;
+}
 
 void FramesData::getDimensions(int &w, int &h) const
 {

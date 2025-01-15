@@ -27,8 +27,8 @@
 #include "pparamschangelistener.h"
 #include "profilechangelistener.h"
 
-#include "../rtengine/profilestore.h"
-#include "../rtengine/noncopyable.h"
+#include "rtengine/profilestore.h"
+#include "rtengine/noncopyable.h"
 
 class ProfileStoreComboBox;
 
@@ -62,8 +62,8 @@ private:
     Glib::ustring storedValue;
     Glib::ustring lastFilename;
     Glib::ustring imagePath;
-    RTImage *profileFillModeOnImage;
-    RTImage *profileFillModeOffImage;
+    const Glib::ustring modeOn, modeOff;
+    RTImage* const profileFillImage;
     Gtk::ToggleButton* fillMode;
     Gtk::TreeIter currRow;
     ProfileStoreEntry *lastSavedPSE;

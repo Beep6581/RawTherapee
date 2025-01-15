@@ -1,0 +1,17 @@
+diff --git a/gpr_sdk/private/gpr_read_image.h b/gpr_sdk/private/gpr_read_image.h
+index 159310b..f7d3ce1 100644
+--- a/gpr_sdk/private/gpr_read_image.h
++++ b/gpr_sdk/private/gpr_read_image.h
+@@ -54,7 +54,12 @@ public:
+                    uint32 plane,
+                    uint32 planes,
+                    uint32 tileByteCount,
++// DNG 1.7 detection
++#ifdef qDNGSupportJXL
++                   std::shared_ptr<dng_memory_block> &compressedBuffer,
++#else
+                    AutoPtr<dng_memory_block> &compressedBuffer,
++#endif
+                    AutoPtr<dng_memory_block> &uncompressedBuffer,
+                    AutoPtr<dng_memory_block> &subTileBlockBuffer,
+ 				   bool usingMultipleThreads  );

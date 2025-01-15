@@ -1,0 +1,16 @@
+diff --git a/src/librawspeed/decoders/IiqDecoder.cpp b/src/librawspeed/decoders/IiqDecoder.cpp
+index 61b04e1a..b6113679 100644
+--- a/src/librawspeed/decoders/IiqDecoder.cpp
++++ b/src/librawspeed/decoders/IiqDecoder.cpp
+@@ -212,9 +212,10 @@ RawImage IiqDecoder::decodeRawInternal() {
+   PhaseOneDecompressor p(mRaw, std::move(strips));
+   mRaw->createData();
+   p.decompress();
+-
++#if 0
+   if (correction_meta_data.getSize() != 0 && iiq)
+     CorrectPhaseOneC(correction_meta_data, split_row, split_col);
++#endif
+ 
+   for (int i = 0; i < 3; i++)
+     mRaw->metadata.wbCoeffs[i] = wb.getFloat();

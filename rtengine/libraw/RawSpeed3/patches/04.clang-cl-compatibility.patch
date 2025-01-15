@@ -1,0 +1,37 @@
+diff --git a/src/librawspeed/common/DefaultInitAllocatorAdaptor.h b/src/librawspeed/common/DefaultInitAllocatorAdaptor.h
+index 2ff8969e..fa18c312 100644
+--- a/src/librawspeed/common/DefaultInitAllocatorAdaptor.h
++++ b/src/librawspeed/common/DefaultInitAllocatorAdaptor.h
+@@ -27,8 +27,12 @@
+ namespace rawspeed {
+ 
+ template <typename T, typename ActualAllocator = std::allocator<T>,
+-          typename = std::enable_if_t<std::is_pod<T>::value>>
+-class DefaultInitAllocatorAdaptor {
++#ifdef _MSC_VER
++    typename = std::enable_if_t<true>>
++#else
++    typename = std::enable_if_t<std::is_pod<T>::value >>
++#endif
++    class DefaultInitAllocatorAdaptor {
+ public:
+   using allocator_traits = std::allocator_traits<ActualAllocator>;
+ 
+diff --git a/src/librawspeed/decompressors/VC5Decompressor.cpp b/src/librawspeed/decompressors/VC5Decompressor.cpp
+index c498ac3a..de4ae412 100644
+--- a/src/librawspeed/decompressors/VC5Decompressor.cpp
++++ b/src/librawspeed/decompressors/VC5Decompressor.cpp
+@@ -398,7 +398,12 @@ VC5Decompressor::VC5Decompressor(ByteStream bs, const RawImage& img)
+       wavelet.height = waveletHeight;
+ 
+       wavelet.bands.resize(
+-          &wavelet == channel.wavelets.begin() ? 1 : Wavelet::maxBands);
++#ifdef _MSC_VER
++          Wavelet::maxBands
++#else
++          &wavelet == channel.wavelets.begin() ? 1 : Wavelet::maxBands
++#endif
++      );
+     }
+   }
+ 

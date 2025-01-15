@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   width="24px"
+   height="24px"
+   viewBox="0 0 24 24"
+   version="1.1"
+   id="SVGRoot"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:dc="http://purl.org/dc/elements/1.1/">
+  <defs
+     id="defs815" />
+  <metadata
+     id="metadata818">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title />
+        <dc:creator>
+          <cc:Agent>
+            <dc:title>Maciej Dworak</dc:title>
+          </cc:Agent>
+        </dc:creator>
+        <dc:rights>
+          <cc:Agent>
+            <dc:title />
+          </cc:Agent>
+        </dc:rights>
+        <dc:description>RawTherapee icon.</dc:description>
+        <cc:license
+           rdf:resource="http://creativecommons.org/licenses/by-sa/4.0/" />
+      </cc:Work>
+      <cc:License
+         rdf:about="http://creativecommons.org/licenses/by-sa/4.0/">
+        <cc:permits
+           rdf:resource="http://creativecommons.org/ns#Reproduction" />
+        <cc:permits
+           rdf:resource="http://creativecommons.org/ns#Distribution" />
+        <cc:requires
+           rdf:resource="http://creativecommons.org/ns#Notice" />
+        <cc:requires
+           rdf:resource="http://creativecommons.org/ns#Attribution" />
+        <cc:permits
+           rdf:resource="http://creativecommons.org/ns#DerivativeWorks" />
+        <cc:requires
+           rdf:resource="http://creativecommons.org/ns#ShareAlike" />
+      </cc:License>
+    </rdf:RDF>
+  </metadata>
+  <g
+     id="layer1">
+    <path
+       style="color:#000000;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:medium;line-height:normal;font-family:'Bitstream Vera Sans';-inkscape-font-specification:'Bitstream Vera Sans';text-indent:0;text-align:start;text-decoration:none;text-decoration-line:none;letter-spacing:normal;word-spacing:normal;text-transform:none;writing-mode:lr-tb;direction:ltr;text-anchor:start;display:inline;overflow:visible;visibility:visible;opacity:0.3;fill:#cccccc;fill-opacity:1.0;stroke:none;stroke-width:0.72779667;marker:none;enable-background:accumulate"
+       d="M 2.7324219 10.466797 C 2.8664433 11.324961 2.9046109 12.195226 2.7832031 13.068359 C 2.5578634 14.86295 1.8840469 16.566826 1.1601562 18.212891 C 1.1088982 18.503715 1.0932627 19.01928 1.3671875 19.214844 C 1.9987238 19.571255 2.7393686 19.160882 3.2890625 19.087891 C 5.8393725 18.435152 8.4631567 17.946848 11.099609 17.839844 A 1.414355 1.414355 0 0 0 10.792969 15.9375 C 10.282483 15.961257 9.7719917 15.994499 9.2636719 16.046875 C 9.2712719 15.657299 9.2759109 15.279015 9.2792969 14.908203 L 9.2832031 14.908203 L 6.4746094 13.003906 C 5.8871228 13.008733 5.3000311 13.020719 4.7128906 12.996094 C 4.7523674 12.61409 4.7704998 12.229735 4.7675781 11.845703 L 2.7324219 10.466797 z M 4.3671875 14.908203 L 7.3613281 14.908203 L 7.3613281 16.300781 C 6.1367495 16.49137 4.9201355 16.73163 3.7167969 17.023438 C 3.973593 16.331103 4.1940008 15.626652 4.3671875 14.908203 z "
+       id="path4473" />
+    <path
+       id="path986"
+       d="M 2.0253906,4.5 2.0039056,4.5078 C 1.7275596,4.55203 1.4823264,4.5174 1.330078,4.748037 1.1778296,4.97868 1.1491382,5.48189 1.2207033,5.773427 c 0.080002,0.370521 0.344078,0.665265 0.4374999,1.033203 0.4693901,1.174627 0.8781079,2.404424 1.0742186,3.660157 l 2.0351563,1.378906 c -0.00284,-0.373637 -0.025588,-0.747956 -0.068359,-1.119141 H 7.361328 v 2.28125 c -0.295641,-0.0028 -0.591022,-0.0063 -0.886719,-0.0039 l 2.808594,1.904297 h 5.230469 v 1.107422 c -1.236271,-0.113987 -2.48056,-0.135837 -3.720703,-0.07813 a 1.414355,1.414355 0 0 1 0.30664,1.902344 c 1.319527,-0.05355 2.641206,-0.01885 3.958985,0.152344 2.43534,0.273017 4.831276,0.830818 7.185547,1.507812 0.132596,-0.209473 0.117017,-0.134573 0.419921,-0.283203 0.302906,-0.14863 0.245189,-1.10836 0,-1.425781 C 22.141935,16.680108 21.735535,15.509575 21.435547,14.31835 21.07312,12.798067 21.022228,11.179759 21.412107,9.6621 21.71115,8.312612 22.225988,7.021944 22.808592,5.773428 22.885152,5.476736 22.817892,4.844005 22.63867,4.718741 22.042145,4.39249 21.386849,4.707731 20.82617,4.787101 17.0036,5.791632 13.01082,6.417292 9.056641,5.935538 6.67531,5.675839 4.3334793,5.134572 2.0253906,4.5 Z m 18.2324214,2.392578 -0.01172,0.03516 -0.002,0.0039 c -0.22587,0.62336 -0.433693,1.253101 -0.587891,1.898437 H 16.408203 V 7.640619 C 17.703306,7.456476 18.98653,7.194525 20.257812,6.892572 Z M 3.7421874,6.910158 3.9101563,6.951178 C 5.0503877,7.223078 6.201861,7.448206 7.361328,7.623053 V 8.830084 H 4.3398438 C 4.1824206,8.177852 3.9718529,7.54003 3.7421874,6.910156 Z M 9.259766,7.871096 c 0.02971,0.0031 0.06013,0.0067 0.08984,0.0098 1.715698,0.167029 3.44809,0.168489 5.164063,0.0039 V 8.8301 H 9.255856 c 9.7e-5,-0.316258 0.0011,-0.636128 0.0039,-0.958984 z m 0.0059,2.855468 h 5.248047 v 2.294922 c -0.603288,0.03044 -4.151509,-0.01531 -5.230469,0.06445 -0.0031,-0.805696 -0.01092,-1.585466 -0.01758,-2.359376 z m 7.142578,0 h 2.890625 c -0.09363,0.756787 -0.09178,1.524973 -0.01563,2.283204 h -2.875 z m 0,4.181641 h 3.21875 c 0.169088,0.712935 0.392889,1.410204 0.644531,2.097656 -1.275689,-0.305989 -2.563419,-0.566493 -3.863281,-0.748047 z"
+       style="color:#000000;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:medium;line-height:normal;font-family:'Bitstream Vera Sans';-inkscape-font-specification:'Bitstream Vera Sans';text-indent:0;text-align:start;text-decoration:none;text-decoration-line:none;letter-spacing:normal;word-spacing:normal;text-transform:none;writing-mode:lr-tb;direction:ltr;text-anchor:start;display:inline;overflow:visible;visibility:visible;opacity:0.7;fill:#cccccc;fill-opacity:1.0;stroke:none;stroke-width:0.72779661;marker:none;enable-background:accumulate" />
+    <path
+       id="Symbol-4-6-8"
+       d="M 1,14.357876 V 11 L 9.925089,17.051146 1,23 v -3.298368 z"
+       style="display:inline;opacity:1;fill:#008000;fill-opacity:1.0;stroke:none;stroke-width:0.04999533" />
+  </g>
+</svg>

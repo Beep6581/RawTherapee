@@ -26,7 +26,7 @@
 #include "curvelistener.h"
 #include "mycurve.h"
 
-#include "../rtengine/diagonalcurvetypes.h"
+#include "rtengine/diagonalcurvetypes.h"
 
 template<typename T>
 class LUT;
@@ -64,7 +64,7 @@ protected:
     bool bghistvalid;
     double locallabRef; // Locallab reference value to display in the background
 
-    void draw (int handle);
+    void updateDrawingArea (const int handle, const ::Cairo::RefPtr< Cairo::Context> &cr);
     void interpolate ();
     void findClosestPoint();
     CursorShape motionNotify(CursorShape type, double minDistanceX, double minDistanceY, int num);

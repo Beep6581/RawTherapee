@@ -12,7 +12,7 @@
 #include "thresholdadjuster.h"
 #include "toolpanel.h"
 
-#include "../rtengine/procparams.h"
+#include "rtengine/procparams.h"
 
 class CurveEditor;
 class CurveEditorGroup;

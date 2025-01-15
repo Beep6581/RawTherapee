@@ -13,6 +13,7 @@ set(CLISOURCEFILES
 set(NONCLISOURCEFILES
     adjuster.cc
     alignedmalloc.cc
+    aspectratios.cc
     batchqueue.cc
     batchqueuebuttonset.cc
     batchqueueentry.cc
@@ -34,9 +35,11 @@ set(NONCLISOURCEFILES
     colorappearance.cc
     coloredbar.cc
     colortoning.cc
+    colorpreview.cc
     controllines.cc
     controlspotpanel.cc
     coordinateadjuster.cc
+    compressgamut.cc
     crop.cc
     crophandler.cc
     cropwindow.cc
@@ -75,6 +78,7 @@ set(NONCLISOURCEFILES
     filterpanel.cc
     flatcurveeditorsubgroup.cc
     flatfield.cc
+    framing.cc
     gradient.cc
     guiutils.cc
     histogrampanel.cc
@@ -175,8 +179,6 @@ set(NONCLISOURCEFILES
     zoompanel.cc
 )
 
-include_directories(BEFORE ${CMAKE_CURRENT_BINARY_DIR})
-
 if(APPLE)
     find_package(MacIntegration REQUIRED)
     # At the time of writing CMake has no module finder for gtkmacintegration so here we have it hard-coded, if installed via macports it should be in /opt/local/...
@@ -256,16 +258,24 @@ endif()
 #     set(EXTRA_LIB_RTGUI "${EXTRA_LIB_RTGUI}" "atomic")
 # endif()
 
-# Create config.h which defines where data are stored
-configure_file("${CMAKE_CURRENT_SOURCE_DIR}/config.h.in" "${CMAKE_CURRENT_BINARY_DIR}/config.h")
-
 # Create new executables targets
 add_executable(rth "${EXTRA_SRC_NONCLI}" "${NONCLISOURCEFILES}")
 add_executable(rth-cli "${EXTRA_SRC_CLI}" "${CLISOURCEFILES}")
 
+# Subdirectories that are not libraries themselves should be included
+# like #include "your_subdirectory/header.h"
+target_include_directories(rth PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})
+target_include_directories(rth-cli PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})
+
 # Add dependencies to executables targets
 add_dependencies(rth UpdateInfo)
 add_dependencies(rth-cli UpdateInfo)
+
+# Create config.h which defines where data are stored
+configure_file("${CMAKE_CURRENT_SOURCE_DIR}/config.h.in" "${CMAKE_CURRENT_BINARY_DIR}/config.h")
+# UpdateInfo and above creates new headers in build directory
+target_include_directories(rth BEFORE PRIVATE ${CMAKE_BINARY_DIR}/rtgui)
+target_include_directories(rth-cli BEFORE PRIVATE ${CMAKE_BINARY_DIR}/rtgui)
 
 #Define a target specific definition to use in code
 target_compile_definitions(rth PUBLIC GUIVERSION)
