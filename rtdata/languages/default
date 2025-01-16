@@ -3571,7 +3571,7 @@ TP_LOCALLAB_PROXI;ΔE decay
 TP_LOCALLAB_QJMODE;Tone mapping operators Q(Cam16) & J(Jz) 
 TP_LOCALLAB_QJMODE_511;5.11 deprecated
 TP_LOCALLAB_QJMODE_512;5.12
-TP_LOCALLAB_QJMODE_TOOLTIP;(provisional). Allows you to choose, for tone-mapping operators using Brightness data: Q for Cam16 - and J for Jz, between the current (recommended) version 5.12 and previous versions 5.11.
+TP_LOCALLAB_QJMODE_TOOLTIP;The tone-mapping operators that use brightness data (Q for CAM 16 and J for Jz) have been modified in RawTherapee version 5.12. This allows you to select either the current or the deprecated version.
 TP_LOCALLAB_QUAAGRES;Aggressive
 TP_LOCALLAB_QUACONSER;Conservative
 TP_LOCALLAB_QUALCURV_METHOD;Curve type
@@ -3704,7 +3704,7 @@ TP_LOCALLAB_SIGMOIDNORMCIE;Scale Yb Scene
 TP_LOCALLAB_SIGMOIDNORMCIE11;Normalize Luminance
 TP_LOCALLAB_SIGMOIDNORMCIEBLEND_TOOLTIP;Blend acts on the final aspect of the image, contrast and luminance. Ratio between original and output image.
 TP_LOCALLAB_SIGMOIDNORMCIE_TOOLTIP;Reconstruct luminance so that the mean and variance of the output image take into account those of the original.\nAll the adjustments acting on J or Q are taken into account, including those which are not relative to Sigmoid Q.
-TP_LOCALLAB_SIGMOIDNORMCIEDISP_TOOLTIP;(provisional). Adapts the white point to the output device to make it compatible with its peak luminance. This feature is not at the desired location in the pipeline, because it is too far from the final output process. So use with caution.
+TP_LOCALLAB_SIGMOIDNORMCIEDISP_TOOLTIP;Allows you to adapt the white point to the peak luminance of the display device. Its position in the processing pipeline is not optimal so use with caution.
 TP_LOCALLAB_SIGMOIDQJ;Tone mapping Q
 TP_LOCALLAB_SIGMOIDQJ11;Black Ev & White Ev
 TP_LOCALLAB_SIGMOIDQJCOMPRCIE_TOOLTIP;When the combo box selection 'Uses Black Ev and White Ev' is 'Sigmoid and Log Encoding Q' or 'Log Encoding instead of Sigmoid' checked. This algorithm compress the data above the threshold slider value. The last value stands for brightness (Q) and should be close as possible to the value 'Compression threshold' (calculate when 'Auto threshold" checked, often > 1).
