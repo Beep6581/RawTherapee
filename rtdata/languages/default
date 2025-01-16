@@ -3072,7 +3072,7 @@ TP_LOCALLAB_CHROMASK_TOOLTIP;Changes the chroma of the mask if one exists (i.e. 
 TP_LOCALLAB_CHROML;Chroma (C)
 TP_LOCALLAB_CHRRT;Chroma
 TP_LOCALLAB_CIE;Color Appearance (Cam16 & JzCzHz)
-TP_LOCALLAB_CIE_SMOOTHFRAME;Tone mapping operators *
+TP_LOCALLAB_CIE_SMOOTHFRAME;Tone mapping operators
 TP_LOCALLAB_CIE_SMOOTH_LEVELS;RGB channel Slope
 TP_LOCALLAB_CIE_SMOOTH_LEVELSTRC;RGB channel TRC
 TP_LOCALLAB_CIE_SMOOTH_SIG;Sigmoid based
@@ -3313,7 +3313,7 @@ TP_LOCALLAB_JZFORCE_TOOLTIP;Allows you to force the maximum Jz value to 1 for be
 TP_LOCALLAB_JZFRA;Jz Cz Hz Image Adjustments
 TP_LOCALLAB_JZHFRA;Curves Hz
 TP_LOCALLAB_JZHJZFRA;Curve Jz(Hz)
-TP_LOCALLAB_JZHUECIE;Hue Rotation
+TP_LOCALLAB_JZHUECIE;Hue rotation
 TP_LOCALLAB_JZLIGHT;Brightness
 TP_LOCALLAB_JZLOG;Log Encoding Jz
 TP_LOCALLAB_JZLOGWBS_TOOLTIP;Black Ev and White Ev adjustments can be different depending on whether Log Encoding or Sigmoid is used.\nFor Sigmoid, a change (increase in most cases) of White Ev may be necessary to obtain a better rendering of highlights, contrast and saturation.
@@ -3332,7 +3332,7 @@ TP_LOCALLAB_JZSHFRA;Shadows/Highlights Jz
 TP_LOCALLAB_JZSOFTCIE;Soft radius (GuidedFilter)
 TP_LOCALLAB_JZSTRSOFTCIE;Strength GuidedFilter
 TP_LOCALLAB_JZTARGET_EV;Viewing Mean luminance (Yb%)
-TP_LOCALLAB_JZTHRHCIE;Threshold Chroma for Jz(Hz)
+TP_LOCALLAB_JZTHRHCIE;Threshold chroma for Jz(Hz)
 TP_LOCALLAB_JZWAVEXP;Wavelet Jz
 TP_LOCALLAB_LABBLURM;Blur Mask
 TP_LOCALLAB_LABEL;Selective Editing
@@ -3381,7 +3381,7 @@ TP_LOCALLAB_LOGAUTO_TOOLTIP;Pressing this button will calculate the dynamic rang
 TP_LOCALLAB_LOGBASE_TOOLTIP;Default = 2.\nValues less than 2 reduce the action of the algorithm making the shadows darker and the highlights brighter.\nWith values greater than 2, the shadows are grayer and the highlights become more washed out.
 TP_LOCALLAB_LOGCATAD_TOOLTIP;Chromatic adaptation allows us to interpret a color according to its spatio-temporal environment.\nUseful when the white balance deviates significantly from the D50 reference.\nAdapts colors to the illuminant of the output device.
 TP_LOCALLAB_LOGCIE;Log Encoding
-TP_LOCALLAB_LOGCIEQ;Log Encoding Q - with Ciecam - Deprecated
+TP_LOCALLAB_LOGCIEQ;Log Encoding Q with CIECAM (deprecated)
 TP_LOCALLAB_LOGCIEQ_TOOLTIP;Activating the checkbox allows you to switch between Log Encoding based on the 3 RGB channels, and Log Encoding based solely on Ciecam’s brightness (Q) channel.\nUsing the Q channel instead of the RGB channels helps avoid undesirable edge effects such as hue and saturation shifts.\nHowever, the settings are more difficult to optimise because Q is unbounded and Ciecam alters the data to take into account the surround conditions, simultaneous contrast, etc.\nYou may have to adjust the following:\n   Scene conditions: Mean luminance (Yb), Whites &amp; Blacks distribution, Black Ev, White Ev.\n   Source Data Adjustments : Brightness compression, Strength.\n\nNote: when using Log Encoding (Q), be careful not to activate the Disable Ciecam option in the Scene Conditions, Surround menu.
 TP_LOCALLAB_LOGCIE_TOOLTIP;Allows you to use Black Ev, White Ev, White and Black distribution, Scene Mean luminance(Yb%) and Viewing Mean luminance(Yb%) for tone-mapping using 'Log Encoding' with Brightness compression.
 TP_LOCALLAB_LOGCOLORFL;Colorfulness (M)
@@ -3691,7 +3691,7 @@ TP_LOCALLAB_SIGCIE;Sigmoid
 TP_LOCALLAB_SIGFRA;Sigmoid Q & Slope based *
 TP_LOCALLAB_SIGFRA11;Sigmoid Q - deprecated
 TP_LOCALLAB_SIGGAMJCIE;Gamma
-TP_LOCALLAB_SIGJZFRA;Sigmoid Jz *
+TP_LOCALLAB_SIGJZFRA;Sigmoid Jz
 TP_LOCALLAB_SIGJZFRA11;Sigmoid Jz
 TP_LOCALLAB_SIGMAWAV;Attenuation response
 TP_LOCALLAB_SIGMOID16_TOOLTIP;Allows you to simulate a tone mapping appearance using both 'Ciecam' and 'Sigmoid Q' or 'Slope based Q'. Sigmoid Q has three sliders:\na) Contrast acts on the shape of the sigmoid curve and consequently on the strength\nb) Skew (gray point) distributes the action according to the luminance.\nc) Display White point (cd/m2) - mode advanced. \n\nSlope based has only one slider: Gray balance (slope).\n\nThis new version of Sigmoid is incompatible with previous versions 5.11 and earlier. Log encoding inside Ciecam is removed.
