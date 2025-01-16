@@ -9503,6 +9503,7 @@ void Locallabcie::updateAdviceTooltips(const bool showTooltips)
         blackscie->set_tooltip_text(M("TP_LOCALLAB_SIGMOIDWHITESCIE_TOOLTIP"));
         normcie12->set_tooltip_text(M("TP_LOCALLAB_SIGMOIDNORMCIE_TOOLTIP"));
         sigmoidblcie12->set_tooltip_text(M("TP_LOCALLAB_SIGMOIDNORMCIEDISP_TOOLTIP"));
+        sigmoidbljzcie12->set_tooltip_text(M("TP_LOCALLAB_SIGMOIDNORMCIEDISP_TOOLTIP"));
         sigmoidblcie->set_tooltip_text(M("TP_LOCALLAB_SIGMOIDNORMCIEBLEND_TOOLTIP"));
         catBox->set_tooltip_text(M("TP_ICM_WORKING_CAT_TOOLTIP"));
         wprimBox->set_tooltip_text(M("TP_ICM_WORKING_PRIM_TOOLTIP"));
@@ -9586,6 +9587,7 @@ void Locallabcie::updateAdviceTooltips(const bool showTooltips)
         blackscie->set_tooltip_text("");
         normcie12->set_tooltip_text("");
         sigmoidblcie12->set_tooltip_text("");
+        sigmoidbljzcie12->set_tooltip_text("");
         catBox->set_tooltip_text("");
         expprecam->set_tooltip_text("");
         wprimBox->set_tooltip_text("");

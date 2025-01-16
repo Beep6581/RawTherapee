@@ -3688,11 +3688,11 @@ TP_LOCALLAB_SHTRC_TOOLTIP;Based on 'working profile' (only those provided), modi
 TP_LOCALLAB_SH_TOOLNAME;Shadows/Highlights & Tone Equalizer
 TP_LOCALLAB_SIGBLACKSSCIE;Blacks distribution
 TP_LOCALLAB_SIGCIE;Sigmoid
-TP_LOCALLAB_SIGFRA;Sigmoid Q & Slope based *
-TP_LOCALLAB_SIGFRA11;Sigmoid Q - deprecated
+TP_LOCALLAB_SIGFRA;Sigmoid Q & Slope based
+TP_LOCALLAB_SIGFRA11;Sigmoid Q (deprecated)
 TP_LOCALLAB_SIGGAMJCIE;Gamma
 TP_LOCALLAB_SIGJZFRA;Sigmoid Jz
-TP_LOCALLAB_SIGJZFRA11;Sigmoid Jz
+TP_LOCALLAB_SIGJZFRA11;Sigmoid Jz (deprecated)
 TP_LOCALLAB_SIGMAWAV;Attenuation response
 TP_LOCALLAB_SIGMOID16_TOOLTIP;Allows you to simulate a tone mapping appearance using both 'Ciecam' and 'Sigmoid Q' or 'Slope based Q'. Sigmoid Q has three sliders:\na) Contrast acts on the shape of the sigmoid curve and consequently on the strength\nb) Skew (gray point) distributes the action according to the luminance.\nc) Display White point (cd/m2) - mode advanced. \n\nSlope based has only one slider: Gray balance (slope).\n\nThis new version of Sigmoid is incompatible with previous versions 5.11 and earlier. Log encoding inside Ciecam is removed.
 TP_LOCALLAB_SIGMOIDBL;Display White point (cd/m2)
