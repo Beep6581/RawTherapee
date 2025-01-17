@@ -1628,7 +1628,7 @@ HISTORY_MSG_SOFTLIGHT_ENABLED;Soft light
 HISTORY_MSG_SOFTLIGHT_STRENGTH;Soft light - Strength
 HISTORY_MSG_SPOT;Spot removal
 HISTORY_MSG_SPOT_ENTRY;Spot removal - Point modif.
-HISTORY_MSG_TEMPOUT;Cam02 automatic temperature
+HISTORY_MSG_TEMPOUT;CAM02 automatic temperature
 HISTORY_MSG_THRESWAV;Balance threshold
 HISTORY_MSG_TM_FATTAL_ANCHOR;DRC - Anchor
 HISTORY_MSG_TONE_EQUALIZER_BANDS;Tone equalizer - Bands
@@ -2471,11 +2471,11 @@ TP_COLORAPP_LABEL_VIEWING;Viewing Conditions
 TP_COLORAPP_LIGHT;Lightness (J)
 TP_COLORAPP_LIGHT_TOOLTIP;Lightness in CIECAM is the clarity of a stimulus relative to the clarity of a stimulus that appears white under similar viewing conditions. It differs from L*a*b* and RGB lightness.
 TP_COLORAPP_MEANLUMINANCE;Mean luminance (Yb%)
-TP_COLORAPP_MOD02;Cam02
-TP_COLORAPP_MOD16;Cam16
+TP_COLORAPP_MOD02;CAM02
+TP_COLORAPP_MOD16;CAM16
 TP_COLORAPP_MODEL;WP model
 TP_COLORAPP_MODELCAT;CAM
-TP_COLORAPP_MODELCAT_TOOLTIP;Allows you to choose between Cam02 or Cam16.\nCam02 will sometimes be more accurate.\nCam16 should generate fewer artifacts.
+TP_COLORAPP_MODELCAT_TOOLTIP;Allows you to choose between CAM02 or CAM16.\nCAM02 will sometimes be more accurate.\nCAM16 should generate fewer artifacts.
 TP_COLORAPP_MODEL_TOOLTIP;White-Point Model.\n\n<b>WB [RT] + [output]</b>: RT's white balance is used for the scene, CIECAM is set to D50, and the output device's white balance is set in Viewing Conditions.\n\n<b>WB [RT+CAT02/16] + [output]</b>: RT's white balance settings are used by CAT02 and the output device's white balance is set in Viewing Conditions.\n\n<b>Free temp + tint + CAT02/16 + [output]:</b> temp and tint are selected by the user, the output device's white balance is set in Viewing Conditions.
 TP_COLORAPP_NEUTRAL;Reset
 TP_COLORAPP_NEUTRAL_TOOLTIP;Reset all sliders checkbox and curves to their default values.
@@ -2997,7 +2997,7 @@ TP_LOCALLAB_AUTOGRAYCIE;Automatic
 TP_LOCALLAB_AVOID;Avoid color shift
 TP_LOCALLAB_AVOIDCOLORSHIFT_TOOLTIP;Fit colors into gamut of the working color space and apply Munsell correction (Uniform Perceptual Lab). Default: Munsell only.\n\nMunsell only: Fixes Lab mode hue drifts due to non-linearity when chromaticity is changed (Uniform Perceptual Lab).\nLab: Applies a gamut control in relative colorimetric. Munsell is then applied.\nXYZ Absolute: Applies gamut control in absolute colorimetric. Munsell is then applied.\nXYZ Relative: Applies gamut control in relative colorimetric. Munsell is then applied. The result is not the same as Lab.
 TP_LOCALLAB_AVOIDMUN;Munsell correction only
-TP_LOCALLAB_AVOIDMUN_TOOLTIP;Munsell correction always disabled when Jz or Cam16 is used.
+TP_LOCALLAB_AVOIDMUN_TOOLTIP;Munsell correction always disabled when Jz or CAM16 is used.
 TP_LOCALLAB_AVOIDRAD;Soft radius
 TP_LOCALLAB_BALAN;ab-L balance (ΔE)
 TP_LOCALLAB_BALANEXP;Laplacian balance
@@ -3045,10 +3045,10 @@ TP_LOCALLAB_BWEVNONE11;None
 TP_LOCALLAB_BWEVSIG11;Activated
 TP_LOCALLAB_BWFORCE;Uses Black Ev & White Ev
 TP_LOCALLAB_CAM16PQREMAP;HDR PQ (Peak Luminance)
-TP_LOCALLAB_CAM16PQREMAP_TOOLTIP;PQ (Perceptual Quantizer) adapted to Cam16 (experimental). Allows you to change the internal PQ function (usually 10000 cd/m2 - default 100 cd/m2 - disabled for 100 cd/m2).\nCan be used to adapt to different devices and images, for example, to match Cam16 processing with the maximum monitor brightness of 400cd/m2.
-TP_LOCALLAB_CAM16_FRA;Cam16 Image Adjustments
+TP_LOCALLAB_CAM16PQREMAP_TOOLTIP;PQ (Perceptual Quantizer) adapted to CAM16 (experimental). Allows you to change the internal PQ function (usually 10000 cd/m2 - default 100 cd/m2 - disabled for 100 cd/m2).\nCan be used to adapt to different devices and images, for example, to match CAM16 processing with the maximum monitor brightness of 400cd/m2.
+TP_LOCALLAB_CAM16_FRA;CAM16 Image Adjustments
 TP_LOCALLAB_CAMMODE;CAM model
-TP_LOCALLAB_CAMMODE_CAM16;Cam16
+TP_LOCALLAB_CAMMODE_CAM16;CAM16
 TP_LOCALLAB_CAMMODE_JZ;Jz Cz Hz
 TP_LOCALLAB_CATAD;Chromatic adaptation/Cat16
 TP_LOCALLAB_CBDL;Contrast by Detail Levels
@@ -3071,7 +3071,7 @@ TP_LOCALLAB_CHROMASKCOL;Chroma
 TP_LOCALLAB_CHROMASK_TOOLTIP;Changes the chroma of the mask if one exists (i.e. C(C) or LC(H) is activated).
 TP_LOCALLAB_CHROML;Chroma (C)
 TP_LOCALLAB_CHRRT;Chroma
-TP_LOCALLAB_CIE;Color Appearance (Cam16 & JzCzHz)
+TP_LOCALLAB_CIE;Color Appearance (CAM16 & JzCzHz)
 TP_LOCALLAB_CIE_SMOOTHFRAME;Tone mapping operators
 TP_LOCALLAB_CIE_SMOOTH_LEVELS;RGB channel Slope
 TP_LOCALLAB_CIE_SMOOTH_LEVELSTRC;RGB channel TRC
@@ -3086,7 +3086,7 @@ TP_LOCALLAB_CIEMODE;Change tool position
 TP_LOCALLAB_CIEMODE_COM;Default
 TP_LOCALLAB_CIEMODE_DR;Dynamic Range
 TP_LOCALLAB_CIEMODE_TM;Tone-Mapping
-TP_LOCALLAB_CIEMODE_TOOLTIP;In Default mode, Ciecam is added at the end of the process. 'Mask And Modifications' and 'Recovery Based On Luminance Mask' are available for'Cam16 and JzCzHz' at your disposal .\nYou can also integrate Ciecam into other tools if you wish (TM, Wavelet, Dynamic Range, Log Encoding). The results for these tools will be different to those without Ciecam. In this mode, you can also use 'Mask And Modifications' and 'Recovery Based On Luminance Mask'.
+TP_LOCALLAB_CIEMODE_TOOLTIP;In Default mode, Ciecam is added at the end of the process. 'Mask And Modifications' and 'Recovery Based On Luminance Mask' are available for'CAM16 and JzCzHz' at your disposal .\nYou can also integrate Ciecam into other tools if you wish (TM, Wavelet, Dynamic Range, Log Encoding). The results for these tools will be different to those without Ciecam. In this mode, you can also use 'Mask And Modifications' and 'Recovery Based On Luminance Mask'.
 TP_LOCALLAB_CIEMODE_WAV;Wavelet
 TP_LOCALLAB_CIETOOLEXP;Curves
 TP_LOCALLAB_CIE_SMOOTHFRAME;Highlight Attenuation & Levels
@@ -3095,7 +3095,7 @@ TP_LOCALLAB_CIE_SMOOTH_GAMMA;Slope based
 TP_LOCALLAB_CIE_SMOOTH_GAMMA ROLLOFF;Gamma based
 TP_LOCALLAB_CIE_SMOOTH_LEVELS;Levels
 TP_LOCALLAB_CIE_SMOOTH_NONE;None
-TP_LOCALLAB_CIE_TOOLNAME;Color Appearance (Cam16 & JzCzHz)
+TP_LOCALLAB_CIE_TOOLNAME;Color Appearance (CAM16 & JzCzHz)
 TP_LOCALLAB_CIRCRADIUS;Spot size
 TP_LOCALLAB_CIRCRAD_TOOLTIP;Contains the references of the spot, useful for shape detection (hue, luma, chroma, Sobel).\nLow values may be useful for processing foliage.\nHigh values may be useful for processing skin.
 TP_LOCALLAB_CLARICRES;Merge chroma
@@ -3372,7 +3372,7 @@ TP_LOCALLAB_LOC_CONTRASTPYR2LAB; Contrast by level/TM/Directional contrast
 TP_LOCALLAB_LOC_CONTRASTPYRLAB; Graduated Filter/Edge Sharpness/Blur
 TP_LOCALLAB_LOC_RESIDPYR;Residual image (Main)
 TP_LOCALLAB_LOG;Log Encoding
-TP_LOCALLAB_LOG1FRA;Cam16 Image Adjustments
+TP_LOCALLAB_LOG1FRA;CAM16 Image Adjustments
 TP_LOCALLAB_LOG2FRA;Viewing Conditions
 TP_LOCALLAB_LOGAUTO;Automatic
 TP_LOCALLAB_LOGAUTOGRAYJZ_TOOLTIP;Automatically calculates the 'Mean luminance' for the scene conditions.
@@ -3568,10 +3568,10 @@ TP_LOCALLAB_PREVIEW;Preview ΔE
 TP_LOCALLAB_PREVSHOW;Show additional settings
 TP_LOCALLAB_PRIMILLFRAME;Primaries & Illuminant
 TP_LOCALLAB_PROXI;ΔE decay
-TP_LOCALLAB_QJMODE;Tone mapping operators Q(Cam16) & J(Jz) 
+TP_LOCALLAB_QJMODE;Tone mapping operators Q(CAM16) & J(Jz) 
 TP_LOCALLAB_QJMODE_511;5.11 deprecated
 TP_LOCALLAB_QJMODE_512;5.12
-TP_LOCALLAB_QJMODE_TOOLTIP;The tone-mapping operators that use brightness data (Q for Cam16 and J for Jz) have been modified in RawTherapee version 5.12. This allows you to select either the current or the deprecated version.
+TP_LOCALLAB_QJMODE_TOOLTIP;The tone-mapping operators that use brightness data (Q for CAM16 and J for Jz) have been modified in RawTherapee version 5.12. This allows you to select either the current or the deprecated version.
 TP_LOCALLAB_QUAAGRES;Aggressive
 TP_LOCALLAB_QUACONSER;Conservative
 TP_LOCALLAB_QUALCURV_METHOD;Curve type
@@ -3581,7 +3581,7 @@ TP_LOCALLAB_QUANONEWAV;Non-local means only
 TP_LOCALLAB_RADIUS;Radius
 TP_LOCALLAB_RADIUS_TOOLTIP;Uses a Fast Fourier Transform for radius > 30.
 TP_LOCALLAB_RADMASKCOL;Smooth radius
-TP_LOCALLAB_RECOTHRES02_TOOLTIP;If the 'Recovery threshold' value is greater than 1, the mask in Mask and Modifications takes into account any previous modifications made to the image but not those made with the current tool (e.g. Color and Light, Wavelet, Cam16, etc.)\nIf the value of the 'Recovery threshold' is less than 1, the mask in Mask and Modifications does not take into account any previous modifications to the image.\n\nIn both cases, the 'Recovery threshold' acts on the masked image as modified by the current tool (Color and Light, Wavelet, Cam16, etc.).
+TP_LOCALLAB_RECOTHRES02_TOOLTIP;If the 'Recovery threshold' value is greater than 1, the mask in Mask and Modifications takes into account any previous modifications made to the image but not those made with the current tool (e.g. Color and Light, Wavelet, CAM16, etc.)\nIf the value of the 'Recovery threshold' is less than 1, the mask in Mask and Modifications does not take into account any previous modifications to the image.\n\nIn both cases, the 'Recovery threshold' acts on the masked image as modified by the current tool (Color and Light, Wavelet, CAM16, etc.).
 TP_LOCALLAB_RECT;Rectangle
 TP_LOCALLAB_RECURS;Recursive references
 TP_LOCALLAB_RECURS_TOOLTIP;Forces the algorithm to recalculate the references after each tool is applied.\nAlso useful for working with masks.
