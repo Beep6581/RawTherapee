@@ -3571,7 +3571,7 @@ TP_LOCALLAB_PROXI;ΔE decay
 TP_LOCALLAB_QJMODE;Tone mapping operators Q(Cam16) & J(Jz) 
 TP_LOCALLAB_QJMODE_511;5.11 deprecated
 TP_LOCALLAB_QJMODE_512;5.12
-TP_LOCALLAB_QJMODE_TOOLTIP;The tone-mapping operators that use brightness data (Q for CAM 16 and J for Jz) have been modified in RawTherapee version 5.12. This allows you to select either the current or the deprecated version.
+TP_LOCALLAB_QJMODE_TOOLTIP;The tone-mapping operators that use brightness data (Q for Cam16 and J for Jz) have been modified in RawTherapee version 5.12. This allows you to select either the current or the deprecated version.
 TP_LOCALLAB_QUAAGRES;Aggressive
 TP_LOCALLAB_QUACONSER;Conservative
 TP_LOCALLAB_QUALCURV_METHOD;Curve type
