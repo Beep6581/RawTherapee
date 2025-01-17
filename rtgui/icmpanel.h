@@ -73,7 +73,7 @@ protected:
     Adjuster* pyrwavtrc;
     Adjuster* residtrc;
 
-    CurveEditorGroup* opacityCurveEditorWLI;
+    std::unique_ptr<CurveEditorGroup> opacityCurveEditorWLI;
     FlatCurveEditor* opacityShapeWLI;
 
     Adjuster* redx;
