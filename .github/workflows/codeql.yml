@@ -46,8 +46,8 @@ jobs:
       - name: Install libjxl
         run: |
           echo "Downloading and installing libjxl..."
-          VERSION_UBUNTU=22.04
-          VERSION_JXL=0.10.3
+          VERSION_UBUNTU=24.04
+          VERSION_JXL=0.11.1
           curl -Ss -qgb "" -fLC - --retry 3 --retry-delay 3 -o libjxl-debs.tar.gz \
             "https://github.com/libjxl/libjxl/releases/download/v${VERSION_JXL}/jxl-debs-amd64-ubuntu-${VERSION_UBUNTU}-v${VERSION_JXL}.tar.gz"
           tar xf libjxl-debs.tar.gz
