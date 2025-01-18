@@ -1191,7 +1191,7 @@ HISTORY_MSG_957;Local - Denoise mode
 HISTORY_MSG_958;Local - Show/hide settings
 HISTORY_MSG_959;Local - Inverse blur
 HISTORY_MSG_960;Local - Log encoding - cat16
-HISTORY_MSG_961;Local - Log encoding Ciecam
+HISTORY_MSG_961;Local - Log encoding CIECAM
 HISTORY_MSG_962;Local - Log encoding Absolute luminance source
 HISTORY_MSG_963;Local - Log encoding Absolute luminance target
 HISTORY_MSG_964;Local - Log encoding Surround
@@ -1571,7 +1571,7 @@ HISTORY_MSG_LOCAL_LOG_BLACKS;Local - Log Blacks distribution
 HISTORY_MSG_LOCAL_LOG_COMPR;Local - Log Compress brightness
 HISTORY_MSG_LOCAL_LOG_SAT;Local - Log Saturation control
 HISTORY_MSG_LOCAL_LOG_WHITES;Local - Log Whites distribution
-HISTORY_MSG_LOCAL_LOGCIE12;Local - Ciecam - Log encoding
+HISTORY_MSG_LOCAL_LOGCIE12;Local - CIECAM - Log encoding
 HISTORY_MSG_LOCAL_PROCESSWAV;Local - Wavelets - Show modifications
 HISTORY_MSG_LOCAL_TMO_SATUR;Local Exp Fattal Saturation
 HISTORY_MSG_LOCAL_QJMETHOD;Local - CIECAM Tone mapping operator Q and J
@@ -1999,7 +1999,7 @@ PREFERENCES_CHUNKSIZE_RAW_CA;Raw CA correction
 PREFERENCES_CHUNKSIZE_RAW_RCD;RCD demosaic
 PREFERENCES_CHUNKSIZE_RAW_XT;Xtrans demosaic
 PREFERENCES_CHUNKSIZE_RGB;RGB processing
-PREFERENCES_CIE;Ciecam
+PREFERENCES_CIE;CIECAM
 PREFERENCES_CIEARTIF;Avoid artifacts
 PREFERENCES_CLIPPINGIND;Clipping Indication
 PREFERENCES_CLUTSCACHE;HaldCLUT Cache
@@ -2863,8 +2863,7 @@ TP_ICM_SAVEREFERENCE;Save Reference Image
 TP_ICM_SAVEREFERENCE_APPLYWB;Apply white balance
 TP_ICM_SAVEREFERENCE_APPLYWB_TOOLTIP;Generally, apply the white balance when saving images to create ICC profiles, and do not apply the white balance to create DCP profiles.
 TP_ICM_SAVEREFERENCE_TOOLTIP;Save the linear TIFF image before the input profile is applied. The result can be used for calibration purposes and generation of a camera profile.
-TP_ICM_SMOOTHFRAME;Highlight Attenuation
-
+TP_ICM_SMOOTHFRAME;Highlight attenuation
 TP_ICM_TONECURVE;Tone curve
 TP_ICM_TONECURVE_TOOLTIP;Employ the embedded DCP tone curve. The setting is only available if the selected DCP has a tone curve.
 TP_ICM_TRCFRAME;Abstract Profile
@@ -2915,7 +2914,7 @@ TP_ICM_WORKING_PRIM_REC;Rec2020
 TP_ICM_WORKING_PRIM_SRGB;sRGB
 TP_ICM_WORKING_PRIM_TOOLTIP;Performs a gamut control. Destination primaries (Advanced) allows you to change the destination primaries to restore or change image color (saturation). The color balance is significantly preserved when the 'Working Profile' and the 'Destination primaries' are similar. 'Working Profile' is not modified.\nWhen 'Custom LA (sliders)' is selected, you can modify the values of the 3 primaries (Red, Green, and Blue) for x and y.
 TP_ICM_WORKING_PRIM_WID;WideGamut
-TP_ICM_WORKING_SMOOTH;Highlight Attenuation
+TP_ICM_WORKING_SMOOTH;Highlight attenuation
 TP_ICM_WORKING_TRC;Tone response curve:
 TP_ICM_WORKING_TRC_18;Prophoto g=1.8
 TP_ICM_WORKING_TRC_22;Adobe g=2.2
@@ -3076,8 +3075,8 @@ TP_LOCALLAB_CIE_SMOOTHFRAME12;Tone Mapping Operators
 TP_LOCALLAB_CIE_SMOOTH_LEVELS;RGB channel Slope
 TP_LOCALLAB_CIE_SMOOTH_LEVELSTRC;RGB channel TRC
 TP_LOCALLAB_CIE_SMOOTH_SIG;Sigmoid based
-TP_LOCALLAB_CIEC;Use Ciecam environment parameters
-TP_LOCALLAB_CIECAMLOG_TOOLTIP;This module is based on the CIECAM Color Appearance model which was designed to better simulate how human vision perceives colors under different lighting conditions.\nThe first Ciecam process 'Scene conditions' is carried out by Log encoding, it also uses 'Absolute luminance' at the time of shooting.\nThe second Ciecam process 'Image adjustments' is simplified and uses only 3 variables (local contrast, contrast J, saturation s).\nThe third Ciecam process 'Viewing conditions' adapts the output to the intended viewing conditions (monitor, TV, projector, printer, etc.) so that the chromatic and contrast appearance is preserved across the display environment.
+TP_LOCALLAB_CIEC;Use CIECAM environment parameters
+TP_LOCALLAB_CIECAMLOG_TOOLTIP;This module is based on the CIECAM Color Appearance model which was designed to better simulate how human vision perceives colors under different lighting conditions.\nThe first CIECAM process 'Scene conditions' is carried out by Log encoding, it also uses 'Absolute luminance' at the time of shooting.\nThe second CIECAM process 'Image adjustments' is simplified and uses only 3 variables (local contrast, contrast J, saturation s).\nThe third CIECAM process 'Viewing conditions' adapts the output to the intended viewing conditions (monitor, TV, projector, printer, etc.) so that the chromatic and contrast appearance is preserved across the display environment.
 TP_LOCALLAB_CIECOLORFRA;Color
 TP_LOCALLAB_CIECONTFRA;Contrast
 TP_LOCALLAB_CIELIGHTCONTFRA;Lighting & Contrast
@@ -3086,7 +3085,7 @@ TP_LOCALLAB_CIEMODE;Change tool position
 TP_LOCALLAB_CIEMODE_COM;Default
 TP_LOCALLAB_CIEMODE_DR;Dynamic Range
 TP_LOCALLAB_CIEMODE_TM;Tone-Mapping
-TP_LOCALLAB_CIEMODE_TOOLTIP;In Default mode, Ciecam is added at the end of the process. 'Mask And Modifications' and 'Recovery Based On Luminance Mask' are available for'CAM16 and JzCzHz' at your disposal .\nYou can also integrate Ciecam into other tools if you wish (TM, Wavelet, Dynamic Range, Log encoding). The results for these tools will be different to those without Ciecam. In this mode, you can also use 'Mask And Modifications' and 'Recovery Based On Luminance Mask'.
+TP_LOCALLAB_CIEMODE_TOOLTIP;In Default mode, CIECAM is added at the end of the process. 'Mask And Modifications' and 'Recovery Based On Luminance Mask' are available for'CAM16 and JzCzHz' at your disposal .\nYou can also integrate CIECAM into other tools if you wish (TM, Wavelet, Dynamic Range, Log encoding). The results for these tools will be different to those without CIECAM. In this mode, you can also use 'Mask And Modifications' and 'Recovery Based On Luminance Mask'.
 TP_LOCALLAB_CIEMODE_WAV;Wavelet
 TP_LOCALLAB_CIETOOLEXP;Curves
 TP_LOCALLAB_CIE_SMOOTHFRAME;Highlight Attenuation & Levels
@@ -3174,7 +3173,7 @@ TP_LOCALLAB_DETAIL;Local contrast
 TP_LOCALLAB_DETAILFRA;Edge detection - DCT
 TP_LOCALLAB_DETAILSH;Details
 TP_LOCALLAB_DETAILTHR;Lum/chrom detail threshold
-TP_LOCALLAB_DISAB_CIECAM;Disable Ciecam or Weak Jz surround
+TP_LOCALLAB_DISAB_CIECAM;Disable CIECAM or Weak Jz surround
 TP_LOCALLAB_DIVGR;Gamma
 TP_LOCALLAB_DUPLSPOTNAME;Copy
 TP_LOCALLAB_EDGFRA;Edge sharpness
@@ -3249,7 +3248,7 @@ TP_LOCALLAB_GAM;Gamma
 TP_LOCALLAB_GAMC;Gamma
 TP_LOCALLAB_GAMCOL_TOOLTIP;Apply a gamma on Luminance L*a*b* datas.\nIf gamma = 3.0 Luminance 'linear' is used.
 TP_LOCALLAB_GAMC_TOOLTIP;Apply a gamma on Luminance L*a*b* datas before and after treatment Pyramid 1 and Pyramid 2.\nIf gamma = 3.0 Luminance 'linear' is used.
-TP_LOCALLAB_GAMFRA;Tone response curve (TRC)
+TP_LOCALLAB_GAMFRA;Tone Response Curve (TRC)
 TP_LOCALLAB_GAMM;Gamma
 TP_LOCALLAB_GAMMASKCOL;Gamma
 TP_LOCALLAB_GAMMASK_TOOLTIP;Adjusting Gamma and Slope can provide a soft and artifact-free transformation of the mask by progressively modifying 'L' to avoid any discontinuities.
@@ -3383,7 +3382,7 @@ TP_LOCALLAB_LOGBASE_TOOLTIP;Default = 2.\nValues less than 2 reduce the action o
 TP_LOCALLAB_LOGCATAD_TOOLTIP;Chromatic adaptation allows us to interpret a color according to its spatio-temporal environment.\nUseful when the white balance deviates significantly from the D50 reference.\nAdapts colors to the illuminant of the output device.
 TP_LOCALLAB_LOGCIE;Log encoding
 TP_LOCALLAB_LOGCIEQ;Log encoding Q with CIECAM (deprecated)
-TP_LOCALLAB_LOGCIEQ_TOOLTIP;Activating the checkbox allows you to switch between Log encoding based on the 3 RGB channels, and Log encoding based solely on Ciecam’s brightness (Q) channel.\nUsing the Q channel instead of the RGB channels helps avoid undesirable edge effects such as hue and saturation shifts.\nHowever, the settings are more difficult to optimise because Q is unbounded and Ciecam alters the data to take into account the surround conditions, simultaneous contrast, etc.\nYou may have to adjust the following:\n   Scene conditions: Mean luminance (Yb), Whites &amp; Blacks distribution, Black Ev, White Ev.\n   Source Data Adjustments : Brightness compression, Strength.\n\nNote: when using Log encoding (Q), be careful not to activate the Disable Ciecam option in the Scene Conditions, Surround menu.
+TP_LOCALLAB_LOGCIEQ_TOOLTIP;Activating the checkbox allows you to switch between Log encoding based on the 3 RGB channels, and Log encoding based solely on CIECAM’s brightness (Q) channel.\nUsing the Q channel instead of the RGB channels helps avoid undesirable edge effects such as hue and saturation shifts.\nHowever, the settings are more difficult to optimise because Q is unbounded and CIECAM alters the data to take into account the surround conditions, simultaneous contrast, etc.\nYou may have to adjust the following:\n   Scene conditions: Mean luminance (Yb), Whites &amp; Blacks distribution, Black Ev, White Ev.\n   Source Data Adjustments : Brightness compression, Strength.\n\nNote: when using Log encoding (Q), be careful not to activate the Disable CIECAM option in the Scene Conditions, Surround menu.
 TP_LOCALLAB_LOGCIE_TOOLTIP;Allows you to use Black Ev, White Ev, White and Black distribution, Scene Mean luminance(Yb%) and Viewing Mean luminance(Yb%) for tone-mapping using 'Log encoding' with Brightness compression.
 TP_LOCALLAB_LOGCOLORFL;Colorfulness (M)
 TP_LOCALLAB_LOGCOLORF_TOOLTIP;Perceived amount of hue in relation to gray.\nIndicator that a stimulus appears more or less colored.
@@ -3398,7 +3397,7 @@ TP_LOCALLAB_LOGENCOD_TOOLTIP;Tone Mapping with Logarithmic encoding (ACES).\nUse
 TP_LOCALLAB_LOGEXP;All tools
 TP_LOCALLAB_LOGFRA;Scene Conditions
 TP_LOCALLAB_LOGFRAME_TOOLTIP;Allows you to calculate and adjust the Ev levels and the 'Mean luminance Yb%' (source gray point) for the spot area. The resulting values will be used by all Lab operations and most RGB operations in the pipeline.\nAlso calculates the absolute luminance at the time of shooting.
-TP_LOCALLAB_LOGIMAGE_TOOLTIP;Takes into account corresponding Ciecam variables: i.e. Contrast (J) and Saturation (s), as well as Contrast (Q), Brightness (Q), Lightness (J) and Colorfulness (M) (in Advanced mode).
+TP_LOCALLAB_LOGIMAGE_TOOLTIP;Takes into account corresponding CIECAM variables: i.e. Contrast (J) and Saturation (s), as well as Contrast (Q), Brightness (Q), Lightness (J) and Colorfulness (M) (in Advanced mode).
 TP_LOCALLAB_LOGLIGHTL;Lightness (J)
 TP_LOCALLAB_LOGLIGHTL_TOOLTIP;Close to lightness (L*a*b*). Takes into account the increase in perceived coloration.
 TP_LOCALLAB_LOGLIGHTQ;Brightness (Q)
@@ -3407,7 +3406,7 @@ TP_LOCALLAB_LOGLIN;Logarithm mode
 TP_LOCALLAB_LOGPFRA;Relative Exposure Levels
 TP_LOCALLAB_LOGPFRA2;Log Encoding Settings
 TP_LOCALLAB_LOGREPART;Overall strength
-TP_LOCALLAB_LOGREPART_TOOLTIP;Allows you to adjust the relative strength of the log-encoded image with respect to the original image.\nDoes not affect the Ciecam component.
+TP_LOCALLAB_LOGREPART_TOOLTIP;Allows you to adjust the relative strength of the log-encoded image with respect to the original image.\nDoes not affect the CIECAM component.
 TP_LOCALLAB_LOGSATURL_TOOLTIP;Saturation (s) in CIECAM16 corresponds to the color of a stimulus in relation to its own brightness.\nActs mainly on medium tones and on the highlights.
 TP_LOCALLAB_LOGSCENE_TOOLTIP;Corresponds to the shooting conditions.
 TP_LOCALLAB_LOGSURSOUR_TOOLTIP;Changes tones and colors to take into account the Scene conditions.\n\n<b>Average</b>: Average light conditions (standard). The image will not change.\n\n<b>Dim</b>: Dim conditions. The image will become slightly brighter.\n\n<b>Dark</b>: Dark conditions. The image will become more bright.
@@ -3563,7 +3562,7 @@ TP_LOCALLAB_PDEFRAME_TOOLTIP;PDE IPOL algorithm adapted for RawTherapee: gives d
 TP_LOCALLAB_PRECAMGAMUT_TOOLTIP;If checked, ensures a gamut control just after primary conversion to XYZ.
 TP_LOCALLAB_PRECAMREFIMAIN_TOOLTIP;Allows you to move the white-point in such a way that it approaches the dominant color. This action modifies the purity. In combination with "Shift x" and "Shift y", allows you to carry out moderate color toning.
 TP_LOCALLAB_PRECAMREFI_TOOLTIP;Allows you to move the white-point in such a way that it approaches the dominant color. This action modifies the purity.
-TP_LOCALLAB_PRECAM_TOOLTIP;'Source Data Adjustments' modifies the Dynamic Range using Log encoding, the tones of the image and primaries (simplified Abstract Profile), and midtones, just before the Ciecam process. These values are adjustable:\nGamma: Acts mainly on light tones\nSlope: Acts mainly on dark tones. You can choose any pair of gamma and slope (values >1) and the algorithm will ensure that there is continuity between the linear and parabolic parts of the curve.\nDestination primaries: Allows you to change the destination primaries to restore or change image color (saturation). The color balance is significantly preserved when the 'Working Profile' and the 'Destination primaries' are similar. 'Working Profile' is not modified. You can also finely adapt the primaries and the illuminant (white-point). Moving a primary away from the white point reduces saturation and vice versa. Pay attention to the gamut.
+TP_LOCALLAB_PRECAM_TOOLTIP;'Source Data Adjustments' modifies the Dynamic Range using Log encoding, the tones of the image and primaries (simplified Abstract Profile), and midtones, just before the CIECAM process. These values are adjustable:\nGamma: Acts mainly on light tones\nSlope: Acts mainly on dark tones. You can choose any pair of gamma and slope (values >1) and the algorithm will ensure that there is continuity between the linear and parabolic parts of the curve.\nDestination primaries: Allows you to change the destination primaries to restore or change image color (saturation). The color balance is significantly preserved when the 'Working Profile' and the 'Destination primaries' are similar. 'Working Profile' is not modified. You can also finely adapt the primaries and the illuminant (white-point). Moving a primary away from the white point reduces saturation and vice versa. Pay attention to the gamut.
 TP_LOCALLAB_PREVHIDE;Hide additional settings
 TP_LOCALLAB_PREVIEW;Preview ΔE
 TP_LOCALLAB_PREVSHOW;Show additional settings
@@ -3695,7 +3694,7 @@ TP_LOCALLAB_SIGGAMJCIE;Gamma
 TP_LOCALLAB_SIGJZFRA;Sigmoid Jz
 TP_LOCALLAB_SIGJZFRA11;Sigmoid Jz (deprecated)
 TP_LOCALLAB_SIGMAWAV;Attenuation response
-TP_LOCALLAB_SIGMOID16_TOOLTIP;Allows you to simulate a tone mapping appearance using both 'Ciecam' and 'Sigmoid Q' or 'Slope based Q'. Sigmoid Q has three sliders:\na) Contrast acts on the shape of the sigmoid curve and consequently on the strength\nb) Skew (gray point) distributes the action according to the luminance.\nc) Display White point (cd/m2) - mode advanced. \n\nSlope based has only one slider: Gray balance (slope).\n\nThis new version of Sigmoid is incompatible with previous versions 5.11 and earlier. Log encoding inside Ciecam is removed.
+TP_LOCALLAB_SIGMOID16_TOOLTIP;Allows you to simulate a tone mapping appearance using both 'CIECAM' and 'Sigmoid Q' or 'Slope based Q'. Sigmoid Q has three sliders:\na) Contrast acts on the shape of the sigmoid curve and consequently on the strength\nb) Skew (gray point) distributes the action according to the luminance.\nc) Display White point (cd/m2) - mode advanced. \n\nSlope based has only one slider: Gray balance (slope).\n\nThis new version of Sigmoid is incompatible with previous versions 5.11 and earlier. Log encoding inside CIECAM is removed.
 TP_LOCALLAB_SIGMOIDBL;Display White point (cd/m2)
 TP_LOCALLAB_SIGMOIDBL11;Blend
 TP_LOCALLAB_SIGMOIDLAMBDA;Contrast
@@ -3729,7 +3728,7 @@ TP_LOCALLAB_SLOPESMOOTHG;Green balance (Slope)
 TP_LOCALLAB_SLOPESMOOTHR;Red balance (Slope)
 TP_LOCALLAB_SLOPESMOOTRCB;Blue balance (TRC)
 TP_LOCALLAB_SLOSH;Slope
-TP_LOCALLAB_SMOOTHCIE;Highlight Attenuation
+TP_LOCALLAB_SMOOTHCIE;Highlight attenuation
 TP_LOCALLAB_SMOOTHCIE_LNK;Link R, G, & B
 TP_LOCALLAB_SMOOTHCIETH;Attenuation threshold
 TP_LOCALLAB_SMOOTHCIE_HIGH;Highlight attenuation only
