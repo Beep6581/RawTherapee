@@ -8150,7 +8150,7 @@ Locallabcie::Locallabcie():
     primMethod(Gtk::manage(new MyComboBoxText())),
     primCoordGridl(Gtk::manage(new Gtk::Grid())),
     trcFrame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_TRCFRAME")))),
-    smoothFrame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_CIE_SMOOTHFRAME")))),
+    smoothFrame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_CIE_SMOOTHFRAME12")))),
     primillFrame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_PRIMILLFRAME")))),
     redBox(Gtk::manage(new ToolParamBlock())),
     redxl(Gtk::manage(new Adjuster(M("TC_PRIM_REDX"), 0.41, 1.0, 0.0001, 0.7347))),
@@ -8651,6 +8651,7 @@ Locallabcie::Locallabcie():
 
     smoothcieBox->pack_start(*ciesmoothBox);
     smoothFrame->add(*smoothcieBox);
+    
     trccieBox->pack_start(*smoothFrame);
     trccieBox->pack_start(*bwcieBox);
     trcFrame->add(*trccieBox);
@@ -9462,6 +9463,8 @@ void Locallabcie::updateAdviceTooltips(const bool showTooltips)
         sourceGraycie->set_tooltip_text(M("TP_LOCALLAB_JZLOGYBOUT_TOOLTIP"));
         sourceabscie->set_tooltip_text(M("TP_COLORAPP_ADAPSCEN_TOOLTIP"));
         cie1Frame->set_tooltip_text(M("TP_LOCALLAB_LOGIMAGE_TOOLTIP"));
+        smoothFrame->set_tooltip_text(M("TP_LOCALLAB_SMOOTHCIE_TOOLTIP"));
+
 //        sigmoidFrame->set_tooltip_text(M("TP_LOCALLAB_SIGMOID16_TOOLTIP"));
 //        sigmoidjzFrame->set_tooltip_text(M("TP_LOCALLAB_SIGMOID_TOOLTIP"));
         contlcie->set_tooltip_text(M("TP_LOCALLAB_LOGCONTL_TOOLTIP"));
@@ -9582,6 +9585,8 @@ void Locallabcie::updateAdviceTooltips(const bool showTooltips)
         midtcie->set_tooltip_text("");
         smoothcie->set_tooltip_text("");
         slopesmo->set_tooltip_text("");
+        smoothFrame->set_tooltip_text("");
+
        // smoothciemet->set_tooltip_text("");
         whitescie->set_tooltip_text("");
         blackscie->set_tooltip_text("");
