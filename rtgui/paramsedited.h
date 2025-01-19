@@ -865,6 +865,7 @@ public:
         bool lcdarkness;
         bool lclightness;
         bool sigmalc;
+        bool offslc;
         bool levelwav;
         bool residcont;
         bool residsha;
@@ -916,6 +917,7 @@ public:
         bool wavgradl;
         bool wavcompre;
         bool origlc;
+        bool processwav;
         bool localcontMethod;
         bool localedgMethod;
         bool localneiMethod;
@@ -1052,11 +1054,11 @@ public:
         bool reparcie;
         bool sensicie;
         bool Autograycie;
-        bool forcejz;
-        bool forcebw;
+        bool sigybjz12;
         bool qtoj;
         bool jabcie;
         bool comprcieauto;
+        bool normcie12;
         bool normcie;
         bool gamutcie;
         bool bwcie;
@@ -1065,16 +1067,25 @@ public:
         bool satcie;
         bool logcieq;
         bool smoothcie;
+        bool smoothcietrc;
+        bool smoothcietrcrel;
         bool smoothcieyb;
         bool smoothcielum;
+        bool smoothciehigh;
+        bool smoothcielnk;
         bool logjz;
+        bool sigjz12;
         bool sigjz;
+        bool forcebw;
+        bool sigq12;
         bool sigq;
         bool chjzcie;
         bool sourceGraycie;
         bool sourceabscie;
         bool sursourcie;
         bool modecam;
+        bool modeQJ;
+        bool bwevMethod12;
         bool bwevMethod;
         bool modecie;
         bool saturlcie;
@@ -1117,6 +1128,9 @@ public:
         bool blackEvjz;
         bool whiteEvjz;
         bool targetjz;
+        bool sigmoidldacie12;
+        bool sigmoidthcie12;
+        bool sigmoidblcie12;
         bool sigmoidldacie;
         bool sigmoidthcie;
         bool sigmoidsenscie;
@@ -1125,11 +1139,19 @@ public:
         bool strcielog;
         bool comprcieth;
         bool gamjcie;
+        bool smoothcieth;
         bool slopjcie;
+        bool contsig;
+        bool skewsig;
+        bool whitsig;
         bool slopesmo;
+        bool slopesmoq;
         bool slopesmor;
         bool slopesmog;
         bool slopesmob;
+        bool kslopesmor;
+        bool kslopesmog;
+        bool kslopesmob;
         bool midtcie;
         bool redxl;
         bool redyl;
@@ -1156,9 +1178,14 @@ public:
         bool smoothciemet;
         bool primMethod;
         bool catMethod;
+        bool sigmoidldajzcie12;
+        bool sigmoidthjzcie12;
+        bool sigmoidbljzcie12;
+
         bool sigmoidldajzcie;
         bool sigmoidthjzcie;
         bool sigmoidbljzcie;
+
         bool contqcie;
         bool contsigqcie;
         bool colorflcie;
@@ -1367,9 +1394,15 @@ struct ColorManagementParamsEdited {
 
     bool workingProfile;
     bool workingTRC;
-    bool workingTRCGamma;
-    bool workingTRCSlope;
+    bool wGamma;
+    bool wSlope;
     bool wmidtcie;
+    bool sigmatrc;
+    bool offstrc;
+    bool residtrc;
+    bool pyrwavtrc;
+    bool opacityCurveWLI;
+
     bool wsmoothcie;
     bool will;
     bool wprim;
@@ -1386,6 +1419,7 @@ struct ColorManagementParamsEdited {
     bool preser;
     bool fbw;
     bool trcExp;
+    bool wavExp;
     bool gamut;
     bool labgridcieALow;
     bool labgridcieBLow;

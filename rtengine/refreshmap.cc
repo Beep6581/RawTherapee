@@ -1105,9 +1105,9 @@ int refreshmap[rtengine::NUMOFEVENTS] = {
     AUTOEXP,    //Evlocallabsensicie
     AUTOEXP,    //Evlocallabmodecie
     AUTOEXP,    //Evlocallabrstprotectcie
-    AUTOEXP,    //Evlocallabsigmoidldacie
-    AUTOEXP,    //Evlocallabsigmoidthcie
-    AUTOEXP,    //Evlocallabsigmoidblcie
+    AUTOEXP,    //Evlocallabsigmoidldacie12
+    AUTOEXP,    //Evlocallabsigmoidthcie12
+    AUTOEXP,    //Evlocallabsigmoidblcie12
     HDR,    //Evlocallabcomprcieauto
     AUTOEXP,    //Evlocallabhuecie
     AUTOEXP,    //Evlocallabjabcie
@@ -1115,9 +1115,9 @@ int refreshmap[rtengine::NUMOFEVENTS] = {
     AUTOEXP,    //Evlocallabcontjzcie
     AUTOEXP,    //Evlocallabchromjzcie
     AUTOEXP,    //Evlocallabhuejzcie
-    AUTOEXP,    //Evlocallabsigmoidldajzcie
-    AUTOEXP,    //Evlocallabsigmoidthjzcie
-    AUTOEXP,    //Evlocallabsigmoidbljzcie
+    AUTOEXP,    //Evlocallabsigmoidldajzcie12
+    AUTOEXP,    //Evlocallabsigmoidthjzcie12
+    AUTOEXP,    //Evlocallabsigmoidbljzcie12
     AUTOEXP,    //Evlocallabadapjzcie
     AUTOEXP,    //Evlocallabmodecam
     AUTOEXP,    //Evlocallabhljzcie
@@ -1139,7 +1139,7 @@ int refreshmap[rtengine::NUMOFEVENTS] = {
     AUTOEXP,    //Evlocallabshapejz
     AUTOEXP,    //Evlocallabshapecz
     AUTOEXP,    //Evlocallabshapeczjz
-    AUTOEXP,    //Evlocallabforcejz
+//    AUTOEXP,    //Evlocallabforcejz
 //    AUTOEXP,    //Evlocallablightlzcam
 //    AUTOEXP,    //Evlocallablightqzcam
 //    AUTOEXP,    //Evlocallabcontlzcam
@@ -1182,9 +1182,9 @@ int refreshmap[rtengine::NUMOFEVENTS] = {
     AUTOEXP,    //EvlocallabwhiteEvjz
     AUTOEXP,    //Evlocallablogjz
     AUTOEXP,    //Evlocallabtargetjz
-    AUTOEXP,    //Evlocallabforcebw
-    AUTOEXP,    //Evlocallabsigjz
-    AUTOEXP,    //Evlocallabsigq
+    AUTOEXP,    //Evlocallabsigybjz12
+    AUTOEXP,    //Evlocallabsigjz12
+    AUTOEXP,    //Evlocallabsigq12
     AUTOEXP     //Evlocallablogcie
 };
 

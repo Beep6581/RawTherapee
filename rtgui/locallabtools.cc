@@ -1016,18 +1016,14 @@ void LocallabColor::updateguicolor(int spottype)
             if(spottype == 3) {
                 invers->hide();
                 sensi->hide();
-                showmaskcolMethod->set_active(0);
-                expmaskcol1->hide();
                 expmaskcol->hide();
                 exprecov->hide();
                 enaColorMask->set_active(false);
                 previewcol->hide();
                 previewcol->set_active(false);
-                resetMaskView();
             } else {
                 invers->show();
                 sensi->show();
-                expmaskcol1->show();
                 expmaskcol->show();
                 exprecov->show();
                 if(!invers->get_active()) {
@@ -1039,7 +1035,6 @@ void LocallabColor::updateguicolor(int spottype)
 
             }
             enableListener();
-
         return false;
         }
         );
@@ -2070,18 +2065,6 @@ void LocallabColor::convertParamToNormal()
     rgbshape->setCurve(defSpot.rgbcurve);
     special->set_active(defSpot.special);
 
-    if (defSpot.merMethod == "mone") {
-        merMethod->set_active(0);
-        // } else if (defSpot.merMethod == "mtwo") {
-        //     merMethod->set_active(1);
-    } else if (defSpot.merMethod == "mthr") {
-        merMethod->set_active(1);
-    } else if (defSpot.merMethod == "mfou") {
-        merMethod->set_active(2);
-    } else if (defSpot.merMethod == "mfiv") {
-        merMethod->set_active(3);
-    }
-
     if (defSpot.mergecolMethod == "one") {
         mergecolMethod->set_active(0);
     } else if (defSpot.mergecolMethod == "two") {
@@ -2177,6 +2160,17 @@ void LocallabColor::convertParamToSimple()
     } else if (defSpot.qualitycurveMethod == "std") {
         qualitycurveMethod->set_active(1);
     }
+    if (defSpot.merMethod == "mone") {
+        merMethod->set_active(0);
+        // } else if (defSpot.merMethod == "mtwo") {
+        //     merMethod->set_active(1);
+    } else if (defSpot.merMethod == "mthr") {
+        merMethod->set_active(1);
+    } else if (defSpot.merMethod == "mfou") {
+        merMethod->set_active(2);
+    } else if (defSpot.merMethod == "mfiv") {
+        merMethod->set_active(3);
+    }
 
     llshape->setCurve(defSpot.llcurve);
     ccshape->setCurve(defSpot.cccurve);
@@ -2232,7 +2226,7 @@ void LocallabColor::updateGUIToMode(const modeType new_type)
             rgbCurveEditorG->hide();
             special->hide();
             exprecov->show();
-            expmaskcol1->hide();
+           // expmaskcol1->hide();
             struFrame->hide();
             blurFrame->hide();
             lapmaskcol->hide();
@@ -2256,6 +2250,7 @@ void LocallabColor::updateGUIToMode(const modeType new_type)
 
             if (!invers->get_active()) { // Keep widget hidden when invers is toggled
                 expgradcol->show();
+                expmaskcol1->show();
                 exprecov->show();
                 gamc->hide();
             }
@@ -2586,6 +2581,7 @@ void LocallabColor::updateColorGUI1()
             softradiuscol->show();
             expgradcol->show();
             exprecov->show();
+            expmaskcol1->show();
         }
 
         labqualcurv->show();
@@ -3034,13 +3030,11 @@ void LocallabExposure::updateguiexpos(int spottype)
                 inversex->hide();
                 sensiex->hide();
                 previewexe->hide();
-                showmaskexpMethod->set_active(0);
                 enaExpMask->set_active(false);
                 enaExpMaskaft->set_active(false);
                 previewexe->set_active(false);
                 expmaskexp->hide();
                 exprecove->hide();
-                resetMaskView();
            } else {
                 inversex->show();
                 sensiex->show();
@@ -4570,13 +4564,11 @@ void LocallabShadow::updateguishad(int spottype)
             if(spottype == 3) {
                 inverssh->hide();
                 sensihs->hide();
-                showmaskSHMethod->set_active(0);
                 previewsh->hide();
                 exprecovs->hide();
                 expmasksh->hide();
                 enaSHMask->set_active(false);
                 previewsh->set_active(false);
-                resetMaskView();
             } else {
                 sensihs->show();
                 inverssh->show();
@@ -5754,13 +5746,11 @@ void LocallabVibrance::updateguivib(int spottype)
 
             if(spottype == 3) {
                 sensiv->hide();
-                showmaskvibMethod->set_active(0);
                 previewvib->hide();
                 enavibMask->set_active(false);
                 previewvib->set_active(false);
                 exprecovv->hide();
                 expmaskvib->hide();
-                resetMaskView();
             } else {
                 sensiv->show();
                 previewvib->show();
@@ -5770,6 +5760,8 @@ void LocallabVibrance::updateguivib(int spottype)
 
             }
             enableListener();
+            
+            
 
         return false;
         }

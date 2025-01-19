@@ -343,6 +343,7 @@ Wavelet::Wavelet() :
     daubcoeffmethod->append(M("TP_WAVELET_DAUB6"));
     daubcoeffmethod->append(M("TP_WAVELET_DAUB10"));
     daubcoeffmethod->append(M("TP_WAVELET_DAUB14"));
+    daubcoeffmethod->append(M("TP_WAVELET_DAUB20"));
     daubcoeffmethodconn = daubcoeffmethod->signal_changed().connect(sigc::mem_fun(*this, &Wavelet::daubcoeffmethodChanged));
     daubcoeffmethod->set_tooltip_text(M("TP_WAVELET_DAUB_TOOLTIP"));
     Gtk::Label* const daubcoeffLabel = Gtk::manage(new Gtk::Label(M("TP_WAVELET_DAUB") + ":"));
@@ -1609,6 +1610,8 @@ void Wavelet::read(const ProcParams* pp, const ParamsEdited* pedited)
         daubcoeffmethod->set_active(3);
     } else if (pp->wavelet.daubcoeffmethod == "14_") {
         daubcoeffmethod->set_active(4);
+    } else if (pp->wavelet.daubcoeffmethod == "20_") {
+        daubcoeffmethod->set_active(5);
     }
 
     //Dirmethod->set_active (3);
@@ -2546,6 +2549,8 @@ void Wavelet::write(ProcParams* pp, ParamsEdited* pedited)
         pp->wavelet.daubcoeffmethod = "10_";
     } else if (daubcoeffmethod->get_active_row_number() == 4) {
         pp->wavelet.daubcoeffmethod = "14_";
+    } else if (daubcoeffmethod->get_active_row_number() == 5) {
+        pp->wavelet.daubcoeffmethod = "20_";
     }
 
     if (Dirmethod->get_active_row_number() == 0) {
