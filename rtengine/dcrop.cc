@@ -1095,6 +1095,8 @@ void Crop::update(int todo)
             float Lhighresi46 = 0.f;
             float Lnresi46 = 0.f;
             float contsig = params.locallab.spots.at(sp).contsigqcie;
+            float slopeg = 1.f;
+            bool linkrgb = true;
             float lightsig = params.locallab.spots.at(sp).lightsigqcie;
             float ghscur[40];//20  +4 12 11  //+16 9 december
             int ghsbpwp[2];
@@ -1171,9 +1173,8 @@ void Crop::update(int todo)
                         parent->previewDeltaE, parent->locallColorMask, parent->locallColorMaskinv, parent->locallExpMask, parent->locallExpMaskinv, parent->locallSHMask, parent->locallSHMaskinv, parent->locallvibMask,  parent->localllcMask, parent->locallsharMask, parent->locallcbMask, parent->locallretiMask, parent->locallsoftMask, parent->localltmMask, parent->locallblMask,
                         parent->localllogMask, parent->locall_Mask, parent->locallcieMask, minCD, maxCD, mini, maxi, Tmean, Tsigma, Tmin, Tmax,
                         meantme, stdtme, meanretie, stdretie, fab, maxicam,rdx, rdy, grx, gry, blx, bly, meanx, meany, meanxe, meanye, prim, ill, contsig, lightsig,
-                        highresi, nresi, highresi46, nresi46, Lhighresi, Lnresi, Lhighresi46, Lnresi46,
-                        ghscur, ghsbpwp, ghsbpwpvalue
-);
+                        highresi, nresi, highresi46, nresi46, Lhighresi, Lnresi, Lhighresi46, Lnresi46,slopeg, linkrgb,
+                        ghscur, ghsbpwp, ghsbpwpvalue);
                         
                         
                         if (parent->previewDeltaE || parent->locallColorMask == 5 || parent->locallvibMask == 4 || parent->locallExpMask == 5 || parent->locallSHMask == 4 || parent->localllcMask == 4 || parent->localltmMask == 4 || parent->localllogMask == 4 || parent->locallsoftMask == 6 || parent->localllcMask == 4 || parent->locallcieMask == 4) {
@@ -1262,9 +1263,8 @@ void Crop::update(int todo)
                         huerefblu, chromarefblu, lumarefblu, huere, chromare, lumare, sobelre, lastsav, false, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
                         minCD, maxCD, mini, maxi, Tmean, Tsigma, Tmin, Tmax,
                         meantme, stdtme, meanretie, stdretie, fab, maxicam, rdx, rdy, grx, gry, blx, bly, meanx, meany, meanxe, meanye, prim, ill, contsig, lightsig,
-                        highresi, nresi, highresi46, nresi46, Lhighresi, Lnresi, Lhighresi46, Lnresi46,
-                        ghscur, ghsbpwp, ghsbpwpvalue
-                        );
+                        highresi, nresi, highresi46, nresi46, Lhighresi, Lnresi, Lhighresi46, Lnresi46,slopeg, linkrgb,
+                        ghscur, ghsbpwp, ghsbpwpvalue);
             }
 
 
@@ -1453,7 +1453,6 @@ void Crop::update(int todo)
             WavOpacityCurveBY waOpacityCurveBY;
             WavOpacityCurveW waOpacityCurveW;
             WavOpacityCurveWL waOpacityCurveWL;
-
             LUTf wavclCurve;
 
             params.wavelet.getCurves(wavCLVCurve, wavdenoise, wavdenoiseh, wavblcurve, waOpacityCurveRG, waOpacityCurveSH, waOpacityCurveBY, waOpacityCurveW, waOpacityCurveWL);
@@ -1632,6 +1631,23 @@ void Crop::update(int todo)
         if (params.icm.workingTRC != ColorManagementParams::WorkingTrc::NONE && params.icm.trcExp) {
             const int GW = labnCrop->W;
             const int GH = labnCrop->H;
+            if(params.icm.trcExp) {//local contrast
+                int level_hr = 7;
+                int maxlevpo = 9;
+                bool wavcurvecont = false; 
+                WaveletParams WaveParams = params.wavelet;
+                ColorManagementParams Colparams = params.icm;
+                WavOpacityCurveWL icmOpacityCurveWL;
+                Colparams.getCurves(icmOpacityCurveWL);
+                parent->ipf.complete_local_contrast(labnCrop, labnCrop, WaveParams, Colparams, icmOpacityCurveWL, skip, level_hr, maxlevpo, wavcurvecont);
+                bool enall = false;
+                enall = wavcurvecont && Colparams.wavExp;//enable message only if curve enable and Expander on
+                if (parent->primListener) {
+                    parent->primListener->wavlocChanged(float (maxlevpo), float (level_hr), enall);
+                }
+
+            }
+            
             std::unique_ptr<LabImage> provis;
             const float pres = 0.01f * params.icm.preser;
             if (pres > 0.f && params.icm.wprim != ColorManagementParams::Primaries::DEFAULT) {
@@ -1643,8 +1659,8 @@ void Crop::update(int todo)
 
             parent->ipf.lab2rgb(*labnCrop, *tmpImage1, params.icm.workingProfile);
 
-            const float gamtone = parent->params->icm.workingTRCGamma;
-            const float slotone = parent->params->icm.workingTRCSlope;
+            const float gamtone = parent->params->icm.wGamma;
+            const float slotone = parent->params->icm.wSlope;
 
             int illum = rtengine::toUnderlying(params.icm.will);
             const int prim = rtengine::toUnderlying(params.icm.wprim);

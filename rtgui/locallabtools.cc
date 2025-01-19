@@ -2071,18 +2071,6 @@ void LocallabColor::convertParamToNormal()
     rgbshape->setCurve(defSpot.rgbcurve);
     special->set_active(defSpot.special);
 
-    if (defSpot.merMethod == "mone") {
-        merMethod->set_active(0);
-        // } else if (defSpot.merMethod == "mtwo") {
-        //     merMethod->set_active(1);
-    } else if (defSpot.merMethod == "mthr") {
-        merMethod->set_active(1);
-    } else if (defSpot.merMethod == "mfou") {
-        merMethod->set_active(2);
-    } else if (defSpot.merMethod == "mfiv") {
-        merMethod->set_active(3);
-    }
-
     if (defSpot.mergecolMethod == "one") {
         mergecolMethod->set_active(0);
     } else if (defSpot.mergecolMethod == "two") {
@@ -2179,6 +2167,17 @@ void LocallabColor::convertParamToSimple()
     } else if (defSpot.qualitycurveMethod == "std") {
         qualitycurveMethod->set_active(1);
     }
+    if (defSpot.merMethod == "mone") {
+        merMethod->set_active(0);
+        // } else if (defSpot.merMethod == "mtwo") {
+        //     merMethod->set_active(1);
+    } else if (defSpot.merMethod == "mthr") {
+        merMethod->set_active(1);
+    } else if (defSpot.merMethod == "mfou") {
+        merMethod->set_active(2);
+    } else if (defSpot.merMethod == "mfiv") {
+        merMethod->set_active(3);
+    }
 
     llshape->setCurve(defSpot.llcurve);
     ccshape->setCurve(defSpot.cccurve);
@@ -2233,7 +2232,7 @@ void LocallabColor::updateGUIToMode(const modeType new_type)
             rgbCurveEditorG->hide();
             special->hide();
             exprecov->show();
-            expmaskcol1->hide();
+           // expmaskcol1->hide();
             struFrame->hide();
             blurFrame->hide();
             lapmaskcol->hide();
@@ -2256,6 +2255,7 @@ void LocallabColor::updateGUIToMode(const modeType new_type)
             }
 
             if (!invers->get_active()) { // Keep widget hidden when invers is toggled
+                expmaskcol1->show();
                 exprecov->show();
                 gamc->hide();
             }
@@ -2584,6 +2584,7 @@ void LocallabColor::updateColorGUI1()
         if (mode == Expert || mode == Normal) { // Keep widget hidden in Simple mode
             softradiuscol->show();
             exprecov->show();
+            expmaskcol1->show();
         }
 
         labqualcurv->show();
@@ -6449,6 +6450,8 @@ void LocallabVibrance::updateguivib(int spottype)
 
             }
             enableListener();
+            
+            
             
             
 

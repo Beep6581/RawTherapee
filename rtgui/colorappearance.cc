@@ -1364,7 +1364,8 @@ void ColorAppearance::updateGUIToMode(int mode)
     if(mode ==0) {
         alHBox->hide();
         wbmHBox->hide();
-        curveEditorG->hide();
+        //curveEditorG->hide();
+        curveEditorG->show();
         curveEditorG2->hide();
         curveEditorG3->hide();
         //greenout->hide();
@@ -1391,10 +1392,10 @@ void ColorAppearance::convertParamToNormal()
     const ColorAppearanceParams def_params;
     disableListener();
     algo->set_active (0);
-    shape->setCurve(def_params.curve);
+    //shape->setCurve(def_params.curve);
     shape2->setCurve(def_params.curve2);
     shape3->setCurve(def_params.curve3);
-    shape->reset();
+    //shape->reset();
     shape2->reset();
     shape3->reset();
     wbmodel->set_active (0);
