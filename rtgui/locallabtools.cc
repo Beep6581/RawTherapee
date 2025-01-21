@@ -7448,13 +7448,14 @@ LocallabBlur::LocallabBlur():
     denoFrame->set_label_align(0.025, 0.5);
     ToolParamBlock* const denoBox = Gtk::manage(new ToolParamBlock());
     
+    denoBox->pack_start(*quaHBox);
     denoBox->pack_start(*enacontrast);
     denoBox->pack_start(*denocontrast);
     denoBox->pack_start(*denoratio);
     denoBox->pack_start(*contrshow);
     denoBox->pack_start(*denomask);
     denoBox->pack_start(*LocalcurveEditorwavhuecont, Gtk::PACK_SHRINK, 4);
-    denoBox->pack_start(*quaHBox);
+   // denoBox->pack_start(*quaHBox);
     denoFrame->add(*denoBox);
     wavBox->pack_start(*denoFrame);
     
@@ -7728,6 +7729,7 @@ void LocallabBlur::updateAdviceTooltips(const bool showTooltips)
         higthres->set_tooltip_text(M("TP_LOCALLAB_MASKHIGTHRES_TOOLTIP"));
         decayd->set_tooltip_text(M("TP_LOCALLAB_MASKDECAY_TOOLTIP"));
         lCLabels->set_tooltip_text(M("TP_LOCALLAB_LCLABELS_TOOLTIP"));
+        denoFrame->set_tooltip_text(M("TP_LOCALLAB_DENORADIUS_TOOLTIP"));
     } else {
 
         expblnoise->set_tooltip_markup("");
@@ -7798,6 +7800,7 @@ void LocallabBlur::updateAdviceTooltips(const bool showTooltips)
 //       midthresd->set_tooltip_text("");
         decayd->set_tooltip_text("");
         lCLabels->set_tooltip_text("");
+        denoFrame->set_tooltip_text("");
         expdenoisenl->set_tooltip_markup("");
 
     }
@@ -7849,26 +7852,40 @@ void LocallabBlur::updatedenlc(const double highres, const double nres, const do
     idle_register.add(
     [this, highres, nres, highres46, nres46, Lhighres, Lnres, Lhighres46, Lnres46]() -> bool {
         GThreadLock lock; // All GUI access from idle_add callbacks or separate thread HAVE to be protected
+        
+        double CLnres = Lnres;
+        double CLhighres = Lhighres;
+        double CLnres46 = Lnres46;
+        double CLhighres46 = Lhighres46;
+        double Cnres = nres;
+        double Chighres = highres;
+        double Cnres46 = nres46;
+        double Chighres46 = highres46;
+        
+        if (quamethod->get_active_row_number() == 0) {
+            CLnres = CLhighres = CLnres46 = CLhighres46 = Cnres = Chighres = Cnres46 = Chighres46 = 0.;
+        }
+            
 
         lumLabels->set_text(
             Glib::ustring::compose(M("TP_LOCALLAB_LUMLABEL"),
-                                   Glib::ustring::format(std::fixed, std::setprecision(0), Lnres),
-                                   Glib::ustring::format(std::fixed, std::setprecision(0), Lhighres))
+                                   Glib::ustring::format(std::fixed, std::setprecision(0), CLnres),
+                                   Glib::ustring::format(std::fixed, std::setprecision(0), CLhighres))
         );
         lum46Labels->set_text(
             Glib::ustring::compose(M("TP_LOCALLAB_LUM46LABEL"),
-                                   Glib::ustring::format(std::fixed, std::setprecision(0), Lnres46 ),
-                                   Glib::ustring::format(std::fixed, std::setprecision(0), Lhighres46))
+                                   Glib::ustring::format(std::fixed, std::setprecision(0), CLnres46 ),
+                                   Glib::ustring::format(std::fixed, std::setprecision(0), CLhighres46))
         );
         chroLabels->set_text(
             Glib::ustring::compose(M("TP_LOCALLAB_CHROLABEL"),
-                                   Glib::ustring::format(std::fixed, std::setprecision(0), nres),
-                                   Glib::ustring::format(std::fixed, std::setprecision(0), highres))
+                                   Glib::ustring::format(std::fixed, std::setprecision(0), Cnres),
+                                   Glib::ustring::format(std::fixed, std::setprecision(0), Chighres))
         );
         chro46Labels->set_text(
             Glib::ustring::compose(M("TP_LOCALLAB_CHRO46LABEL"),
-                                   Glib::ustring::format(std::fixed, std::setprecision(0), nres46),
-                                   Glib::ustring::format(std::fixed, std::setprecision(0), highres46))
+                                   Glib::ustring::format(std::fixed, std::setprecision(0), Cnres46),
+                                   Glib::ustring::format(std::fixed, std::setprecision(0), Chighres46))
         );
         return false;
     }

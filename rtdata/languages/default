@@ -3178,12 +3178,12 @@ TP_LOCALLAB_DENOICHRODET_TOOLTIP;Allows you to recover chrominance detail by pro
 TP_LOCALLAB_DENOICHROF_TOOLTIP;Allows you to adjust fine-detail chrominance noise.
 TP_LOCALLAB_DENOIEQUALCHRO_TOOLTIP;Allows you to direct the chroma noise reduction towards either the blue-yellow or red-green colors.
 TP_LOCALLAB_DENOIEQUAL_TOOLTIP;Allows you to carry out more or less noise reduction in either the shadows or the highlights.
-TP_LOCALLAB_DENOIENA;Enable Contrast threshold
+TP_LOCALLAB_DENOIENA;Enable contrast threshold
 TP_LOCALLAB_DENOIFRA;Denoise Settings
-TP_LOCALLAB_DENOIHUECONT;Equalizer Denoise mask
+TP_LOCALLAB_DENOIHUECONT;Equalizer denoise mask
 TP_LOCALLAB_DENOILUMDETAIL_TOOLTIP;Allows you to recover luminance detail by progressively applying a Fourier transform (DCT).
 TP_LOCALLAB_DENOIRATIO;Ratio flat-structure areas
-TP_LOCALLAB_DENOI_MASK;Denoise Contrast mask
+TP_LOCALLAB_DENOI_MASK;Denoise contrast mask
 TP_LOCALLAB_DENOIMASK;Denoise chroma mask
 TP_LOCALLAB_DENOIMASK_TOOLTIP;For all tools, allows you to control the chromatic noise level of the mask.\nUseful for better control of chrominance and to avoid artifacts when using the LC(h) curve.
 TP_LOCALLAB_DENOIQUA_TOOLTIP;Conservative mode preserves low frequency detail. Aggressive mode removes low frequency detail.\nConservative and Aggressive modes use wavelets and DCT and can be used in conjunction with 'Non-local Means – Luminance'.
@@ -3192,6 +3192,7 @@ TP_LOCALLAB_DENOIWAVCH;Wavelets: Chrominance
 TP_LOCALLAB_DENOIWAVLUM;Wavelets: Luminance
 TP_LOCALLAB_DENOI_EXP;Denoise
 TP_LOCALLAB_DENOI_TOOLTIP;This module can be used for noise reduction either on its own (at the end of the processing pipeline) or in addition to the Noise Reduction module in the Detail tab (which works at the beginning of the pipeline).\n Scope allows you to differentiate the action based on color (ΔE).\nMinimum spot size: 128x128.
+TP_LOCALLAB_DENORADIUS_TOOLTIP;Allows you to differentiate Denoise action based on image details and your wishes to process the background.\nThe resulting action is the combination of the Denoise of the image and that of the mask created by 'Contrast threshold'\nOn very noisy images you can reduce the mask noise.\nYou can also differentiate the action with the curve 'Equalizer Denoise Mask'.\nThe ratio flat-structure areas allows you to correct the action between the two.
 TP_LOCALLAB_DEPTH;Depth
 TP_LOCALLAB_DETAIL;Local contrast
 TP_LOCALLAB_DETAILFRA;Edge Detection - DCT
@@ -3372,7 +3373,7 @@ TP_LOCALLAB_LAPRAD1_TOOLTIP;Increases the contrast of the mask by increasing the
 TP_LOCALLAB_LAPRAD2_TOOLTIP;Smooth radius uses a guided filter to decrease artifacts and smooth out the transition.
 TP_LOCALLAB_LAPRAD_TOOLTIP;Smooth radius uses a guided filter to decrease artifacts and smooth out the transition.
 TP_LOCALLAB_LAP_MASK_TOOLTIP;Solves PDEs for all Laplacian masks.\nIf enabled the Laplacian threshold mask reduces artifacts and smooths the result.\nIf disabled the response is linear.
-TP_LOCALLAB_LCLABELS;Residual noise levels
+TP_LOCALLAB_LCLABELS;Residual Noise Levels
 TP_LOCALLAB_LCLABELS_TOOLTIP;Displays the mean and high-end noise values for the area shown in the Preview Panel (at 100% zoom). The noise values are grouped by wavelet levels 0,1,2,3 and 4,5,6.\nThe displayed values are indicative only and are designed to assist with denoise adjustments. They should not be interpreted as absolute noise levels.\n\n 300: Very noisy\n 100-300: Noisy\n 50-100: Moderatly noisy\n < 50: Low noise\n\nThey allow you to see:\n*The impact of Noise Reduction in the main-menu Detail tab.\n*The influence of Non-local Means, Wavelets and DCT on the luminance noise.\n*The influence of Wavelets and DCT on the chroma noise.\n*The influence of Capture Sharpening and Demosaicing.
 TP_LOCALLAB_LC_FFTW_TOOLTIP;FFT improves quality and allows the use of large radii, but increases processing time (depends on the area to be processed). Preferable to use only for large radii. The size of the area can be reduced by a few pixels to optimize the FFTW. This can reduce the processing time by a factor of 1.5 to 10.
 TP_LOCALLAB_LC_TOOLNAME;Local Contrast & Wavelets
