@@ -1563,7 +1563,7 @@ HISTORY_MSG_LOCAL_DENOMASKCURV;Local - Denoise - Equalizer Denoise mask
 HISTORY_MSG_LOCAL_DENOCONTRSHOW;Local - Denoise Show mask contrast
 HISTORY_MSG_LOCAL_DENOAUTO;Local - Denoise Auto Contrast
 HISTORY_MSG_LOCAL_DENORATIO;Local - Denoise Ratio flat-structure
-HISTORY_MSG_LOCAL_DENOMASK;Local - Denoise Contrast mask
+HISTORY_MSG_LOCAL_DENOMASK;Local - Denoise contrast mask
 HISTORY_MSG_LOCAL_DENOENA;Local - Contrast threshold
 HISTORY_MSG_LOCAL_AUTOCAPRADIUS;Local - Sh Auto Capture radius
 HISTORY_MSG_LOCAL_AUTOSHAR;Local - Sh Auto Contrast
@@ -3192,7 +3192,7 @@ TP_LOCALLAB_DENOIWAVCH;Wavelets: Chrominance
 TP_LOCALLAB_DENOIWAVLUM;Wavelets: Luminance
 TP_LOCALLAB_DENOI_EXP;Denoise
 TP_LOCALLAB_DENOI_TOOLTIP;This module can be used for noise reduction either on its own (at the end of the processing pipeline) or in addition to the Noise Reduction module in the Detail tab (which works at the beginning of the pipeline).\n Scope allows you to differentiate the action based on color (ΔE).\nMinimum spot size: 128x128.
-TP_LOCALLAB_DENORADIUS_TOOLTIP;Allows you to differentiate Denoise action based on image details and your wishes to process the background.\nThe resulting action is the combination of the Denoise of the image and that of the mask created by 'Contrast threshold'\nOn very noisy images you can reduce the mask noise.\nYou can also differentiate the action with the curve 'Equalizer Denoise Mask'.\nThe ratio flat-structure areas allows you to correct the action between the two.
+TP_LOCALLAB_DENORADIUS_TOOLTIP;Allows you to differentiate Denoise action based on image details and your wishes to process the background.\n The resulting action is the combination of the Denoise of the image and that of the mask created by 'Contrast threshold'\n On very noisy images you can reduce the mask noise.\n You can also differentiate the action with the curve 'Equalizer denoise mask'.\n The ratio flat-structure areas allows you to correct the action between the two.
 TP_LOCALLAB_DEPTH;Depth
 TP_LOCALLAB_DETAIL;Local contrast
 TP_LOCALLAB_DETAILFRA;Edge Detection - DCT
