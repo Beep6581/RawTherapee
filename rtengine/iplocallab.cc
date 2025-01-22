@@ -17796,7 +17796,7 @@ void ImProcFunctions::Lab_Local(
                         double pwr1 = 1.0 / (double) 3.0;//default 3.0 - gamma Lab
                         double ts1 = ghsslop;//always the same 'slope' in the extreme shadows - slope Lab
                         rtengine::Color::calcGamma(pwr1, ts1, g_a); // call to calcGamma with selected gamma and slope
-                        const float noise = pow_F(2.f, -16.f);//GHS - do not process very low values ​​which are probably noise.
+                        const float noise = pow_F(2.f, -16.f);//GHS - do not process very low values which are probably noise.
                        
                         if(shiftblackpoint < 0.f && strtype == 0) {//change only Black point with negatives values for in some cases out of gamut values
                             //rgb value can be very weakly negatives (eg working space sRGB in some rare cases) - tone_eqblack prevents it
@@ -17927,7 +17927,9 @@ void ImProcFunctions::Lab_Local(
 
                                     const float radius = rtengine::max(bfw, bfh) / 30.f;
                                     const float epsilon = 0.005f;
-                                    rtengine::guidedFilter(Y2, Yc, Yc, radius, epsilon, multiThread);
+                                    if(D > 0.002f) {//to preserve settings WP and BP
+                                        rtengine::guidedFilter(Y2, Yc, Yc, radius, epsilon, multiThread);
+                                    }
                                 }
                                 float blend = 0.01 * params->locallab.spots.at(sp).ghs_LC;
                                 blend =  rtengine::max(0.0001f, blend);
@@ -18067,10 +18069,12 @@ void ImProcFunctions::Lab_Local(
                             //printf("II=%i gi=%f gi1=%f \n", i, (double)ghscur[i],  (double)ghscur[i+1]);
                         }
                        
-                        if(smoth) {//Highlight attenuation in function of HP - protect highlight
+                        if(smoth && D > 0.002f) {//to preserve settings WP and BP
+                            //Highlight attenuation in function of HP - protect highlight
                             tone_eqsmooth(this, tmpImage, lp, params->icm.workingProfile, sk, multiThread);//reduce Ev > 0 < 12
                         }
-                        if(MID != 0.f) {//midtones with tone_equ
+                        if(MID != 0.f  && D > 0.002f) {//to preserve settings WP and BP
+                            //midtones with tone_equ
                             ImProcFunctions::tone_eqcam(this, tmpImage, MID, params->icm.workingProfile, sk, multiThread);
                         }
  
@@ -18108,7 +18112,9 @@ void ImProcFunctions::Lab_Local(
                         }
                         float rad = kmod * params->locallab.spots.at(sp).ghs_LC;
                         float stren = 15.f * (1.f + D);//take into account D stretch
-                        loccont(bfw, bfh, bufexpfin.get(), rad, stren , sk); //local contrast in L (Lab) mode.                     
+                        if(D > 0.002f) {//to preserve settings WP and BP
+                            loccont(bfw, bfh, bufexpfin.get(), rad, stren , sk); //local contrast in L (Lab) mode.
+                        }
                     }
                 }
                 //gradient
