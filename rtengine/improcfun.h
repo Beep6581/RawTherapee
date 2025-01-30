@@ -108,6 +108,7 @@ enum RenderingIntent : int;
 
 class ImProcFunctions
 {
+
     cmsHTRANSFORM monitorTransform;
     std::unique_ptr<GamutWarning> gamutWarning;
     Cairo::RefPtr<Cairo::ImageSurface> locImage;
@@ -528,6 +529,8 @@ enum class BlurType {
     double getTransformAutoFill(int oW, int oH, const LensCorrection *pLCPMap = nullptr) const;
     void rgb2lab(const Imagefloat &src, LabImage &dst, const Glib::ustring &workingSpace);
     void lab2rgb(const LabImage &src, Imagefloat &dst, const Glib::ustring &workingSpace);
+    void writeData (FILE *f, float *r, float *g, float *b,  size_t totalElements);
+
 };
 
 }

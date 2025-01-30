@@ -964,15 +964,17 @@ private:
 
     void stage_transform()
     {
-        auto testImage = baseImg;
-        auto errorCodeTest = testImage->saveAsJPEG ( "C:\\Users\\Hadar\\Downloads\\debug_test\\stage_transform-start.jpg", 92, 3 );
+        auto errorCodeTest = baseImg->saveAsJPEG ( "C:\\Users\\Hadar\\Downloads\\debug_test\\stage_transform-start.jpg", 92, 3 );
         if (errorCodeTest) {
             printf("error! stage_transform: \"%d\"\n", errorCodeTest);
         }
         const procparams::ProcParams& params = job->pparams;
         //ImProcFunctions ipf (&params, true);
         ImProcFunctions &ipf = * (ipf_p.get());
-
+        errorCodeTest = baseImg->saveAsJPEG ( "C:\\Users\\Hadar\\Downloads\\debug_test\\stage_transform-2.jpg", 92, 3 );
+        if (errorCodeTest) {
+            printf("error! stage_transform: \"%d\"\n", errorCodeTest);
+        }
         if (params.filmNegative.enabled) {
             // Process film negative AFTER colorspace conversion if camera space is NOT selected
             if (params.filmNegative.colorSpace != FilmNegativeParams::ColorSpace::INPUT) {
@@ -988,15 +990,28 @@ private:
             }
 
         } else {
-            imgsrc->convertColorSpace(baseImg, params.icm, currWB);
+            errorCodeTest = baseImg->saveAsJPEG ( "C:\\Users\\Hadar\\Downloads\\debug_test\\stage_transform-3.jpg", 92, 3 );
+            if (errorCodeTest) {
+                printf("error! stage_transform: \"%d\"\n", errorCodeTest);
+            }
+
+          imgsrc->convertColorSpace(baseImg, params.icm, currWB);
+            errorCodeTest = baseImg->saveAsJPEG ( "C:\\Users\\Hadar\\Downloads\\debug_test\\stage_transform-3.5.jpg", 92, 3 );
+            if (errorCodeTest) {
+                printf("error! stage_transform: \"%d\"\n", errorCodeTest);
+            }
         }
 
         // perform first analysis
         hist16(65536);
 
         ipf.firstAnalysis(baseImg, params, hist16);
-
+        errorCodeTest = baseImg->saveAsJPEG ( "C:\\Users\\Hadar\\Downloads\\debug_test\\stage_transform-4.jpg", 92, 3 );
+        if (errorCodeTest) {
+            printf("error! stage_transform: \"%d\"\n", errorCodeTest);
+        }
         ipf.dehaze(baseImg, params.dehaze);
+
         ipf.ToneMapFattal02(baseImg, params.fattal, 3, 0, nullptr, 0, 0, 0, false);
 
         // perform transform (excepted resizing)
@@ -1016,6 +1031,10 @@ private:
                 delete baseImg;
                 baseImg = trImg;
             }
+        }
+         errorCodeTest = baseImg->saveAsJPEG ( "C:\\Users\\Hadar\\Downloads\\debug_test\\stage_transform-end.jpg", 92, 3 );
+        if (errorCodeTest) {
+            printf("error! stage_transform: \"%d\"\n", errorCodeTest);
         }
     }
 
@@ -1575,7 +1594,8 @@ private:
                 }
             }
         }
-
+        Imagefloat* readyImgTmp1 = ipf.lab2rgbOut(labView, 0, 0, fw, fh, params.icm);
+        errorCodeTest = readyImgTmp1->saveAsJPEG ( "C:\\Users\\Hadar\\Downloads\\debug_test\\stage_finish_5.jpg", 92, 3 );
         bool utili;
         CurveFactory::complexLCurve(params.labCurve.brightness, params.labCurve.contrast, params.labCurve.lcurve, hist16, lumacurve, dummy, 1, utili);
 
@@ -1589,13 +1609,23 @@ private:
         if (params.colorToning.enabled && params.colorToning.method == "LabGrid") {
             ipf.colorToningLabGrid(labView, 0, labView->W, 0, labView->H, false);
         }
-
+        Imagefloat* test = new Imagefloat(fw, fh);
+         ipf.lab2rgb(*labView, *test, (params.icm.workingProfile));
+        errorCodeTest = test->saveAsJPEG ( "C:\\Users\\Hadar\\Downloads\\debug_test\\stage_finish_6.jpg", 92, 3 );
         ipf.shadowsHighlights(labView, params.sh.enabled, params.sh.lab, params.sh.highlights, params.sh.shadows, params.sh.radius, 1, params.sh.htonalwidth, params.sh.stonalwidth);
 
+        test = new Imagefloat(fw, fh);
+        ipf.lab2rgb(*labView, *test, (params.icm.workingProfile));
+        errorCodeTest = test->saveAsJPEG ( "C:\\Users\\Hadar\\Downloads\\debug_test\\stage_finish_6.5.jpg", 92, 3 );
         if (params.localContrast.enabled) {
             // Alberto's local contrast
             ipf.localContrast(labView, labView->L, params.localContrast, false, 1);//scale);
         }
+        // Imagefloat* readyImgTmp_12 = ipf.lab2rgbOut(labView , 0, 0,fw, fh, params.icm);
+
+        FILE* file1 = fopen("C:\\Users\\Hadar\\Desktop\\dev\\ImAgent\\build\\before_15a.bin", "wb");
+        for (int i=0;i<fh;i++)
+        ipf.writeData(file1,   test->r(i),  test->g(i), test->b(i), fw);
         Imagefloat* readyImgTmp = ipf.lab2rgbOut(labView, 0, 0, fw, fh, params.icm);
         // Imagefloat* readyImgTmp = ipf.lab2rgbOut(labView, 0, 0, 8652, 5776, params.icm);
         errorCodeTest = readyImgTmp->saveAsJPEG ( "C:\\Users\\Hadar\\Downloads\\debug_test\\stage_finish_7.jpg", 92, 3 );
