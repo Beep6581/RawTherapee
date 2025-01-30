@@ -1335,20 +1335,6 @@ void Locallab::maiChanged(const std::vector<locallabsetLC> &setlc, int selspot)
     }
 }
 
-//Draw Simulation for GHS - with 20 points
-void Locallab::ghsChanged(const std::vector<locallabshGHS> &shghs, int selspot)
-{
-    sh_ghs = shghs;
-    double gx[40];
-    if (selspot < (int) sh_ghs.size()) {
-        for(int i= 2; i < 42; i++) {
-            gx[i - 2] = sh_ghs.at(selspot).ghsc[i];
-           // printf("i=%i  gx=%f\n", i, (double)  gx[i - 2]);
-        }
-    expshadhigh.updateghs(gx);
-    }
-}
-
 void Locallab::ghsbwChanged(const std::vector<locallabshGHSbw> &shghsbw, int selspot)
 {
     sh_ghsbw = shghsbw;

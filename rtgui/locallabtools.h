@@ -681,7 +681,6 @@ public:
     void updateguishad(int spottype);
     void updateguiscopesahd(int scope);
     int nbmasksh;
-    void updateghs(double *gx);
 
     void updateghsbw(int bp, int wp, double minbp, double maxwp);
     void setDefaultExpanderVisibility() override;

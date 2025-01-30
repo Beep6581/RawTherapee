@@ -52,6 +52,11 @@ using rtengine::Color;
 // LabGridArea
 //-----------------------------------------------------------------------------
 
+bool LabGridArea::FunctionParams::is_valid() const
+{
+    return x_min < x_max && y_min < y_max;
+}
+
 bool LabGridArea::notifyListener()
 {
     if (listener) {
@@ -80,16 +85,9 @@ LabGridArea::LabGridArea(rtengine::ProcEvent evt, const Glib::ustring &msg, bool
     Gtk::DrawingArea(),
     evt(evt), evtMsg(msg),
     litPoint(NONE),
-    low_a(0.f), high_a(0.f), low_b(0.f), high_b(0.f), gre_x(0.f), gre_y(0.f), whi_x(0.f), whi_y(0.f), me_x(0.f), me_y(0.f),ghs_x6(0.f), ghs_y6(0.f), ghs_x7(0.f), ghs_y7(0.f),
-        ghs_x8(0.f), ghs_y8(0.f), ghs_x9(0.f), ghs_y9(0.f), ghs_x10(0.f), ghs_y10(0.f), ghs_x11(0.f), ghs_y11(0.f),//these variables are used as xy in Ciexy - no change labels   +4 12 11
-        ghs_x12(0.f), ghs_y12(0.f), ghs_x13(0.f), ghs_y13(0.f), ghs_x14(0.f), ghs_y14(0.f), ghs_x15(0.f), ghs_y15(0.f),//  +8 9 dec 2024
-        ghs_x16(0.f), ghs_y16(0.f), ghs_x17(0.f), ghs_y17(0.f), ghs_x18(0.f), ghs_y18(0.f), ghs_x19(0.f), ghs_y19(0.f),//  +16 9 dec 2024
+    low_a(0.f), high_a(0.f), low_b(0.f), high_b(0.f), gre_x(0.f), gre_y(0.f), whi_x(0.f), whi_y(0.f), me_x(0.f), me_y(0.f),
       
     defaultLow_a(0.f), defaultHigh_a(0.f), defaultLow_b(0.f), defaultHigh_b(0.f), defaultgre_x(0.f), defaultgre_y(0.f), defaultwhi_x(0.f), defaultwhi_y(0.f), defaultme_x(0.f), defaultme_y(0.f),
-        default_gsx6(0.f), default_gsy6(0.f), default_gsx7(0.f), default_gsy7(0.f), default_gsx8(0.f), default_gsy8(0.f), default_gsx9(0.f), default_gsy9(0.f), default_gsx10(0.f), default_gsy10(0.f), 
-        default_gsx11(0.f), default_gsy11(0.f), //+4 12 11
-        default_gsx12(0.f), default_gsy12(0.f), default_gsx13(0.f), default_gsy13(0.f), default_gsx14(0.f), default_gsy14(0.f), default_gsx15(0.f), default_gsy15(0.f), 
-        default_gsx16(0.f), default_gsy16(0.f), default_gsx17(0.f), default_gsy17(0.f), default_gsx18(0.f), default_gsy18(0.f), default_gsx19(0.f), default_gsy19(0.f), //+16 9 dec 2024
     listener(nullptr),
     edited(false),
     isDragged(false),
@@ -106,10 +104,7 @@ LabGridArea::LabGridArea(rtengine::ProcEvent evt, const Glib::ustring &msg, bool
     get_style_context()->add_class("drawingarea");
 }
 
-void LabGridArea::getParams(double &la, double &lb, double &ha, double &hb, double &gx, double &gy, double &wx, double &wy, double &mx, double &my, 
-    double &gx6, double &gy6, double &gx7, double &gy7, double &gx8, double &gy8, double &gx9, double &gy9, double &gx10, double &gy10, double &gx11, double &gy11,
-    double &gx12, double &gy12, double &gx13, double &gy13, double &gx14, double &gy14, double &gx15, double &gy15,
-    double &gx16, double &gy16, double &gx17, double &gy17, double &gx18, double &gy18, double &gx19, double &gy19) const //+16 9 dec 2024
+void LabGridArea::getParams(double &la, double &lb, double &ha, double &hb, double &gx, double &gy, double &wx, double &wy, double &mx, double &my) const
 
 {
     la = low_a;
@@ -122,42 +117,10 @@ void LabGridArea::getParams(double &la, double &lb, double &ha, double &hb, doub
     wy = whi_y;
     mx = me_x;
     my = me_y;
-    gx6 = ghs_x6;
-    gy6 = ghs_y6;
-    gx7 = ghs_x7;
-    gy7 = ghs_y7;
-    gx8 = ghs_x8;
-    gy8 = ghs_y8;
-    gx9 = ghs_x9;
-    gy9 = ghs_y9;
-    gx10 = ghs_x10;//+4 12 11
-    gy10 = ghs_y10;
-    gx11 = ghs_x11;
-    gy11 = ghs_y11;
-    gx12 = ghs_x12;
-    gy12 = ghs_y12;
-    gx13 = ghs_x13;
-    gy13 = ghs_y13;
-    gx14 = ghs_x14;
-    gy14 = ghs_y14;
-    gx15 = ghs_x15;
-    gy15 = ghs_y15;
-    gx16 = ghs_x16;
-    gy16 = ghs_y16;
-    gx17 = ghs_x17;
-    gy17 = ghs_y17;
-    gx18 = ghs_x18;
-    gy18 = ghs_y18;
-    gx19 = ghs_x19;
-    gy19 = ghs_y19;// +16 9  dec 2024
-    
 }
 
 
-void LabGridArea::setParams(double la, double lb, double ha, double hb, double gx, double gy, double wx, double wy, double mx, double my, 
-    double gx6, double gy6, double gx7, double gy7, double gx8, double gy8, double gx9, double gy9, double gx10, double gy10, double gx11, double gy11, 
-    double gx12, double gy12, double gx13, double gy13, double gx14, double gy14, double gx15, double gy15,
-    double gx16, double gy16, double gx17, double gy17, double gx18, double gy18, double gx19, double gy19, bool notify)//+16 9 dec 2024
+void LabGridArea::setParams(double la, double lb, double ha, double hb, double gx, double gy, double wx, double wy, double mx, double my, bool notify)
 
 {
     const double lo = -1.0;
@@ -172,34 +135,6 @@ void LabGridArea::setParams(double la, double lb, double ha, double hb, double g
     whi_y = rtengine::LIM(wy, lo, hi);
     me_x = rtengine::LIM(mx, lo, hi);
     me_y = rtengine::LIM(my, lo, hi);
-    ghs_x6 = rtengine::LIM(gx6, lo, hi);
-    ghs_y6 = rtengine::LIM(gy6, lo, hi);
-    ghs_x7 = rtengine::LIM(gx7, lo, hi);
-    ghs_y7 = rtengine::LIM(gy7, lo, hi);
-    ghs_x8 = rtengine::LIM(gx8, lo, hi);
-    ghs_y8 = rtengine::LIM(gy8, lo, hi);
-    ghs_x9 = rtengine::LIM(gx9, lo, hi);
-    ghs_y9 = rtengine::LIM(gy9, lo, hi);
-    ghs_x10 = rtengine::LIM(gx10, lo, hi);//+4 12 11
-    ghs_y10 = rtengine::LIM(gy10, lo, hi);
-    ghs_x11 = rtengine::LIM(gx11, lo, hi);
-    ghs_y11 = rtengine::LIM(gy11, lo, hi);
-    ghs_x12 = rtengine::LIM(gx12, lo, hi);
-    ghs_y12 = rtengine::LIM(gy12, lo, hi);
-    ghs_x13 = rtengine::LIM(gx13, lo, hi);
-    ghs_y13 = rtengine::LIM(gy13, lo, hi);
-    ghs_x14 = rtengine::LIM(gx14, lo, hi);
-    ghs_y14 = rtengine::LIM(gy14, lo, hi);
-    ghs_x15 = rtengine::LIM(gx15, lo, hi);
-    ghs_y15 = rtengine::LIM(gy15, lo, hi);
-    ghs_x16 = rtengine::LIM(gx16, lo, hi);
-    ghs_y16 = rtengine::LIM(gy16, lo, hi);
-    ghs_x17 = rtengine::LIM(gx17, lo, hi);
-    ghs_y17 = rtengine::LIM(gy17, lo, hi);
-    ghs_x18 = rtengine::LIM(gx18, lo, hi);
-    ghs_y18 = rtengine::LIM(gy18, lo, hi);
-    ghs_x19 = rtengine::LIM(gx19, lo, hi);
-    ghs_y19 = rtengine::LIM(gy19, lo, hi);// + 16 9 dec 2024
     
     queue_draw();
     if (notify) {
@@ -207,10 +142,13 @@ void LabGridArea::setParams(double la, double lb, double ha, double hb, double g
     }
 }
 
-void LabGridArea::setDefault (double la, double lb, double ha, double hb, double gx, double gy, double wx, double wy, double mx, double my, 
-    double gx6, double gy6, double gx7, double gy7, double gx8, double gy8, double gx9, double gy9, double gx10, double gy10, double gx11, double gy11,
-    double gx12, double gy12, double gx13, double gy13, double gx14, double gy14, double gx15, double gy15,
-    double gx16, double gy16, double gx17, double gy17, double gx18, double gy18, double gx19, double gy19)//+16 9 dec 2024
+void LabGridArea::setFunctionParams(const FunctionParams &params)
+{
+    function_params = params;
+    queue_draw();
+}
+
+void LabGridArea::setDefault (double la, double lb, double ha, double hb, double gx, double gy, double wx, double wy, double mx, double my)
 
 {
     defaultLow_a = la;
@@ -223,49 +161,15 @@ void LabGridArea::setDefault (double la, double lb, double ha, double hb, double
     defaultwhi_y = wy;
     defaultme_x = mx;
     defaultme_y = my;
-    default_gsx6 = gx6;
-    default_gsy6 = gy6;
-    default_gsx7 = gx7;
-    default_gsy7= gy7;
-    default_gsx8 = gx8;
-    default_gsy8 = gy8;
-    default_gsx9 = gx9;
-    default_gsy9 = gy9;
-    default_gsx10 = gx10;
-    default_gsy10 = gy10;
-    default_gsx11 = gx11;
-    default_gsy11 = gy11;
-    default_gsx12 = gx12;
-    default_gsy12 = gy12;
-    default_gsx13 = gx13;
-    default_gsy13 = gy13;
-    default_gsx14 = gx14;
-    default_gsy14 = gy14;
-    default_gsx15 = gx15;
-    default_gsy15 = gy15;
-    default_gsx16 = gx16;
-    default_gsy16 = gy16;
-    default_gsx17 = gx17;
-    default_gsy17 = gy17;
-    default_gsx18 = gx18;
-    default_gsy18 = gy18;
-    default_gsx19 = gx19;
-    default_gsy19 = gy19;//+ 16 9 dec 2024
- 
 }
 
 
 void LabGridArea::reset(bool toInitial)
 {
     if (toInitial) {
-        setParams(defaultLow_a, defaultLow_b, defaultHigh_a, defaultHigh_b, defaultgre_x, defaultgre_y, defaultwhi_x, defaultwhi_y, defaultme_x, defaultme_y, 
-            default_gsx6, default_gsy6, default_gsx7, default_gsy7, default_gsx8, default_gsy8, default_gsx9, default_gsy9, default_gsx10, default_gsy10, default_gsx11, default_gsy11,//+4 12 11
-            default_gsx12, default_gsy12, default_gsx13, default_gsy13, default_gsx14, default_gsy14, default_gsx15, default_gsy15,
-            default_gsx16, default_gsy16, default_gsx17, default_gsy17, default_gsx18, default_gsy18, default_gsx19, default_gsy19,// +16 9 dec 2024
-            true);
+        setParams(defaultLow_a, defaultLow_b, defaultHigh_a, defaultHigh_b, defaultgre_x, defaultgre_y, defaultwhi_x, defaultwhi_y, defaultme_x, defaultme_y, true);
     } else {
-        setParams(0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., //+4 12 11
-            0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., true);//+16 9 dec 2024
+        setParams(0., 0., 0., 0., 0., 0., 0., 0., 0., 0., true);
     }
 }
 
@@ -494,93 +398,35 @@ bool LabGridArea::on_draw(const ::Cairo::RefPtr<Cairo::Context> &cr)
         cr->move_to(grx, gry);
         cr->line_to(hia, hib);
     } else if (ghs_enabled) {
-        cr->set_line_width(3.);
-        cr->set_source_rgb(0.2, 0.2, 0.2);
-        
-        loa = (static_cast<double>(width) * low_a);//keep all this values to save varaibles for GHS curve
-        hia = (static_cast<double>(width) * high_a);
-        lob = (static_cast<double>(height) * low_b);
-        hib = (static_cast<double>(height) * high_b);
-        grx = (static_cast<double>(width) * gre_x);
-        gry = (static_cast<double>(height) * gre_y);
-        whx = (static_cast<double>(width) * whi_x);
-        why = (static_cast<double>(height) * whi_y);
-        mex = (static_cast<double>(width) * me_x);
-        mey = (static_cast<double>(height) * me_y);
-        //gx6 ....gy19 for GHS curve
-        double gx6 = (static_cast<double>(width) * ghs_x6);
-        double gy6 = (static_cast<double>(height) * ghs_y6);
-        double gx7 = (static_cast<double>(width) * ghs_x7);
-        double gy7 = (static_cast<double>(height) * ghs_y7);
-        double gx8 = (static_cast<double>(width) * ghs_x8);
-        double gy8 = (static_cast<double>(height) * ghs_y8);
-        double gx9 = (static_cast<double>(width) * ghs_x9);
-        double gy9 = (static_cast<double>(height) * ghs_y9);
-        double gx10 = (static_cast<double>(width) * ghs_x10);
-        double gy10 = (static_cast<double>(height) * ghs_y10);
-        double gx11 = (static_cast<double>(width) * ghs_x11);
-        double gy11 = (static_cast<double>(height) * ghs_y11);//+4
-        double gx12 = (static_cast<double>(width) * ghs_x12);
-        double gy12 = (static_cast<double>(height) * ghs_y12);
-        double gx13 = (static_cast<double>(width) * ghs_x13);
-        double gy13 = (static_cast<double>(height) * ghs_y13);
-        double gx14 = (static_cast<double>(width) * ghs_x14);
-        double gy14 = (static_cast<double>(height) * ghs_y14);
-        double gx15 = (static_cast<double>(width) * ghs_x15);
-        double gy15 = (static_cast<double>(height) * ghs_y15);
-        double gx16 = (static_cast<double>(width) * ghs_x16);
-        double gy16 = (static_cast<double>(height) * ghs_y16);
-        double gx17 = (static_cast<double>(width) * ghs_x17);
-        double gy17 = (static_cast<double>(height) * ghs_y17);
-        double gx18 = (static_cast<double>(width) * ghs_x18);
-        double gy18 = (static_cast<double>(height) * ghs_y18);
-        double gx19 = (static_cast<double>(width) * ghs_x19);
-        double gy19 = (static_cast<double>(height) * ghs_y19);//+16 9 dec 2024
+        if (function_params.is_valid()) {
+            constexpr double line_width = 3.;
+            cr->set_line_width(line_width);
+            cr->set_source_rgb(0.2, 0.2, 0.2);
 
-        double onex =  (static_cast<double>(width) * 1.);
-        double oney =  (static_cast<double>(height) * 1.);
-        //draw curve GHS
-        cr->move_to(0., 0.);
-        cr->line_to(loa, lob);//0.05
-        cr->move_to(loa, lob);
-        cr->line_to(hia, hib);
-        cr->move_to(hia, hib);
-        cr->line_to(grx, gry);
-        cr->move_to(grx, gry);
-        cr->line_to(whx, why);
-        cr->move_to(whx, why);
-        cr->line_to(mex, mey);
-        cr->move_to(mex, mey);
-        cr->line_to(gx6, gy6);
-        cr->move_to(gx6, gy6);     
-        cr->line_to(gx7, gy7);
-        cr->move_to(gx7, gy7);     
-        cr->line_to(gx8, gy8);
-        cr->move_to(gx8, gy8);     
-        cr->line_to(gx9, gy9);
-        cr->move_to(gx9, gy9);     
-        cr->line_to(gx10, gy10);
-        cr->move_to(gx10, gy10);     
-        cr->line_to(gx11, gy11);
-        cr->move_to(gx11, gy11);     
-        cr->line_to(gx12, gy12);
-        cr->move_to(gx12, gy12);     
-        cr->line_to(gx13, gy13);
-        cr->move_to(gx13, gy13);     
-        cr->line_to(gx14, gy14);
-        cr->move_to(gx14, gy14);     
-        cr->line_to(gx15, gy15);
-        cr->move_to(gx15, gy15);     
-        cr->line_to(gx16, gy16);
-        cr->move_to(gx16, gy16);     
-        cr->line_to(gx17, gy17);
-        cr->move_to(gx17, gy17);     
-        cr->line_to(gx18, gy18);
-        cr->move_to(gx18, gy18);     
-        cr->line_to(gx19, gy19);
-        cr->move_to(gx19, gy19);//.0.95     
+            const int curve_segment_count = std::max(1, function_params.resolution_function(width));
 
-        cr->line_to(onex, oney);    
+            std::vector<double> curve(curve_segment_count + 1);
+
+            // Calculate y-values.
+            const double x_range = function_params.x_max - function_params.x_min;
+            const double y_range = function_params.y_max - function_params.y_min;
+            const double y_scale = height / y_range;
+            for (int i = 0; i <= curve_segment_count; ++i) {
+                const double x = function_params.x_min + x_range / curve_segment_count * i;
+                curve[i] = rtengine::LIM<double>(y_scale * (function_params.function(x) - function_params.y_min), 0.0, height);
+            }
+
+            // Plot curve.
+            const double dx = static_cast<double>(width) / curve_segment_count;
+            for (int i = 0; i < curve_segment_count; ++i) {
+                const double x0 = dx * i;
+                const double x1 = x0 + dx;
+                const double y0 = curve[i];
+                const double y1 = curve[i + 1];
+                cr->move_to(x0, y0);
+                cr->line_to(x1, y1);
+            }
+        }
     }
     cr->stroke();
     if(ghs_enabled) {//only 10 * 10 squares

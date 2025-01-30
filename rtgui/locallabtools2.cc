@@ -10213,10 +10213,6 @@ void Locallabcie::read(const rtengine::procparams::ProcParams* pp, const ParamsE
                               spot.labgridcieWy,
                               spot.labgridcieMx,
                               spot.labgridcieMy,
-                              0, 0, 0, 0,
-                              0, 0, 0, 0,
-                              0, 0, 0, 0,//+4 12 11
-                              0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,//+16 9 dec 2024
                               false);
 
         strgradcie->setValue((double)spot.strgradcie);
@@ -10323,8 +10319,6 @@ void Locallabcie::write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedi
         spot.refi =  refi->getValue();
         spot.shiftxl =  shiftxl->getValue();
         spot.shiftyl =  shiftyl->getValue();
-        double zerox = 0.;
-        double zeroy = 0.;
         labgridcie->getParams(spot.labgridcieALow,
                               spot.labgridcieBLow,
                               spot.labgridcieAHigh,
@@ -10334,11 +10328,7 @@ void Locallabcie::write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedi
                               spot.labgridcieWx,
                               spot.labgridcieWy,
                               spot.labgridcieMx,
-                              spot.labgridcieMy,
-                              zerox, zeroy, zerox, zeroy,
-                              zerox, zeroy, zerox, zeroy,
-                              zerox, zeroy, zerox, zeroy, //+4 12 11
-                              zerox, zeroy, zerox, zeroy, zerox, zeroy, zerox, zeroy, zerox, zeroy, zerox, zeroy, zerox, zeroy, zerox, zeroy //+16 9 dec 2024
+                              spot.labgridcieMy
                               );
 
         spot.Autograycie = Autograycie->get_active();
@@ -10729,8 +10719,7 @@ void Locallabcie::updateiPrimloc(const float r_x, const float r_y, const float g
         greyl->setValue(g_y);
         bluxl->setValue(b_x);
         bluyl->setValue(b_y);
-        labgridcie->setParams(nextrx, nextry, nextbx, nextby, nextgx, nextgy, nextwx, nextwy, nextmx, nextmy, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, //+4 12 11
-        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, false);//+16 9 dec 2024
+        labgridcie->setParams(nextrx, nextry, nextbx, nextby, nextgx, nextgy, nextwx, nextwy, nextmx, nextmy, false);
 /*
         if(lkg) {
             slopesmor->setValue(slg);
@@ -13110,8 +13099,6 @@ void Locallabcie::setDefaults(const rtengine::procparams::ProcParams* defParams,
         shiftxl->setDefault(defSpot.shiftxl);
         shiftyl->setDefault(defSpot.shiftyl);
         refi->setDefault(defSpot.refi);
-        double zerox = 0.;
-        double zeroy = 0.;
         labgridcie->setDefault(defSpot.labgridcieALow,
                                defSpot.labgridcieBLow,
                                defSpot.labgridcieAHigh,
@@ -13121,11 +13108,7 @@ void Locallabcie::setDefaults(const rtengine::procparams::ProcParams* defParams,
                                defSpot.labgridcieWx,
                                defSpot.labgridcieWy,
                                defSpot.labgridcieMx,
-                               defSpot.labgridcieMy,
-                               zerox, zeroy, zerox, zeroy, 
-                               zerox, zeroy, zerox, zeroy, 
-                               zerox, zeroy, zerox, zeroy, //+4 12 11
-                               zerox, zeroy, zerox, zeroy,zerox, zeroy, zerox, zeroy,  zerox, zeroy, zerox, zeroy,zerox, zeroy, zerox, zeroy // +16 9 dec 2024
+                               defSpot.labgridcieMy
                                );
 
     }

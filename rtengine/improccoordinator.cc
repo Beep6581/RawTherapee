@@ -1152,7 +1152,6 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
             //std::vector<LocallabListener::locallabRef> locallref;
             std::vector<LocallabListener::locallabRetiMinMax> locallretiminmax;
             std::vector<LocallabListener::locallabcieLC> locallcielc;
-            std::vector<LocallabListener::locallabshGHS> locallshgsh;
             std::vector<LocallabListener::locallabshGHSbw> locallshgshbw;
             std::vector<LocallabListener::locallabsetLC> locallsetlc;
             std::vector<LocallabListener::locallabcieSIG> locallciesig;
@@ -1402,7 +1401,6 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                 float Lnresi = 0.f;
                 float Lhighresi46 = 0.f;
                 float Lnresi46 = 0.f;
-                float ghscur[40];//42 +4 12 11 // +16 9 december 2024
                 int ghsbpwp[2];
                 ghsbpwp[0] = 0;
                 ghsbpwp[1] = 0;
@@ -1476,7 +1474,7 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                               minCD, maxCD, mini, maxi, Tmean, Tsigma, Tmin, Tmax,
                               meantm, stdtm, meanreti, stdreti, fab, maxicam, rdx, rdy, grx, gry, blx, bly, meanx, meany, meanxe, meanye, prim, ill, contsig, lightsig,
                               highresi, nresi, highresi46, nresi46, Lhighresi, Lnresi, Lhighresi46, Lnresi46, slopeg, linkrgb,
-                              ghscur, ghsbpwp, ghsbpwpvalue);
+                              ghsbpwp, ghsbpwpvalue);
 
 
                 fabrefp[sp] = fab;
@@ -1587,13 +1585,6 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                 locciesig.contsigq = contsig;
                 locciesig.lightsigq = lightsig;
                 locallciesig.push_back(locciesig);
-                LocallabListener::locallabshGHS locshghs;//ghs S curve with 20 points space 0.05
-                    for(int j = 0; j < 40; j++) {//+4 12 11 //+16 december 2024
-                        locshghs.ghsc[j] = ghscur[j];
-                       // printf("imp j=%i ghs=%f\n", j, (double) ghscur[j]); 
-                    }
-                
-                locallshgsh.push_back(locshghs);
 
                 LocallabListener::locallabshGHSbw locshghsbw;//ghs S curve
                     for(int j = 0; j < 2; j++) {
@@ -1672,7 +1663,6 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                     }
                     locallListener->sigChanged(locallciesig,params->locallab.selspot);
                     if (params->locallab.spots.at(sp).expshadhigh && params->locallab.spots.at(sp).shMethod == "ghs") {
-                        locallListener->ghsChanged(locallshgsh,params->locallab.selspot);//curve 
                         locallListener->ghsbwChanged(locallshgshbw,params->locallab.selspot);//Black and White point
                     }
 

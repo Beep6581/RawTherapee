@@ -39,11 +39,55 @@
 #pragma once
 
 #include <gtkmm.h>
+
+#include "rtengine/improcfun.h"
+
 #include "eventmapper.h"
 #include "toolpanel.h"
 
 
 class LabGridArea final : public Gtk::DrawingArea {
+public:
+    struct FunctionParams {
+        using Function = std::function<double(double)>;
+        using ResolutionFunction = std::function<int(int)>;
+
+        /** x-value of the left side. */
+        double x_min;
+        /** x-value of the right side. */
+        double x_max;
+        /** y-value of the left side. */
+        double y_min;
+        /** y-value of the right side. */
+        double y_max;
+        /**
+         * The function itself, which takes an x-value and returns the y-value.
+         */
+        Function function;
+        /**
+         * A function returning the resolution of the plot.
+         *
+         * It takes the width of the plot, in pixels, and returns the number of
+         * line segments that should be used to plot the function.
+         */
+        ResolutionFunction resolution_function{[](int width) { return width; }};
+
+        FunctionParams() = default;
+        FunctionParams(double x_min, double x_max, double y_min, double y_max,
+            const Function &function,
+            const ResolutionFunction & resolution_function) :
+            x_min(x_min),
+            x_max(x_max),
+            y_min(y_min),
+            y_max(y_max),
+            function(function),
+            resolution_function(resolution_function)
+        {
+        }
+
+        bool is_valid() const;
+    };
+
 private:
     rtengine::ProcEvent evt;
     Glib::ustring evtMsg;
@@ -60,34 +104,7 @@ private:
     double whi_y;
     double me_x;
     double me_y;
-    double ghs_x6;
-    double ghs_y6;
-    double ghs_x7;
-    double ghs_y7;
-    double ghs_x8;
-    double ghs_y8;
-    double ghs_x9;
-    double ghs_y9;
-    double ghs_x10;
-    double ghs_y10;
-    double ghs_x11;
-    double ghs_y11;//+4 12 11
-    double ghs_x12;
-    double ghs_y12;
-    double ghs_x13;
-    double ghs_y13;
-    double ghs_x14;
-    double ghs_y14;
-    double ghs_x15;
-    double ghs_y15;
-    double ghs_x16;
-    double ghs_y16;
-    double ghs_x17;
-    double ghs_y17;
-    double ghs_x18;
-    double ghs_y18;
-    double ghs_x19;
-    double ghs_y19;//+16 9 dec 2024
+    FunctionParams function_params;
     
     double defaultLow_a;
     double defaultHigh_a;
@@ -99,34 +116,6 @@ private:
     double defaultwhi_y;
     double defaultme_x;
     double defaultme_y;
-    double default_gsx6;//added for GHS 
-    double default_gsy6;
-    double default_gsx7;
-    double default_gsy7;
-    double default_gsx8;
-    double default_gsy8;
-    double default_gsx9;
-    double default_gsy9;
-    double default_gsx10;//+4 12 11
-    double default_gsy10;
-    double default_gsx11;
-    double default_gsy11;
-    double default_gsx12;
-    double default_gsy12;
-    double default_gsx13;
-    double default_gsy13;
-    double default_gsx14;
-    double default_gsy14;
-    double default_gsx15;
-    double default_gsy15;
-    double default_gsx16;
-    double default_gsy16;
-    double default_gsx17;
-    double default_gsy17;
-    double default_gsx18;
-    double default_gsy18;
-    double default_gsx19;
-    double default_gsy19;//+16 9 dec 2024
 
     ToolPanelListener *listener;
     bool edited;
@@ -145,19 +134,10 @@ private:
 public:
     LabGridArea(rtengine::ProcEvent evt, const Glib::ustring &msg, bool enable_low=true, bool ciexy=false, bool ghs=false, bool mous=false);
 
-    void getParams(double &la, double &lb, double &ha, double &hb, double &gx, double &gy, double &wx, double &wy, double &mx, double &my, 
-        double &gx6, double &gy6, double &gx7, double &gy7, double &gx8, double &gy8, double &gx9, double &gy9, double &gx10, double &gy10, double &gx11, double &gy11,
-        double &gx12, double &gy12, double &gx13, double &gy13, double &gx14, double &gy14, double &gx15, double &gy15,
-        double &gx16, double &gy16, double &gx17, double &gy17, double &gx18, double &gy18, double &gx19, double &gy19) const;//+16 9 dec 2024
-    void setParams(double la, double lb, double ha, double hb, double gx, double gy, double wx, double wy, double mx, double my,  double gx6, double gy6, double gx7, double gy7, 
-        double gx8, double gy8, double gx9, double gy9, double gx10, double gy10, double gx11, double gy11, //+4 12 11
-        double gx12, double gy12, double gx13, double gy13, double gx14, double gy14, double gx15, double gy15, 
-        double gx16, double gy16, double gx17, double gy17, double gx18, double gy18, double gx19, double gy19, //+16 9 dec 2024
-        bool notify);
-    void setDefault (double la, double lb, double ha, double hb, double gx, double gy, double wx, double wy, double mx, double my, double gx6, double gy6, double gx7, double gy7, 
-        double gx8, double gy8, double gx9, double gy9, double gx10, double gy10, double gx11, double gy11, //+4 12 11
-        double gx12, double gy12, double gx13, double gy13, double gx14, double gy14, double gx15, double gy15,
-        double gx16, double gy16, double gx17, double gy17, double gx18, double gy18, double gx19, double gy19);//+16 9 dec 2024
+    void getParams(double &la, double &lb, double &ha, double &hb, double &gx, double &gy, double &wx, double &wy, double &mx, double &my) const;
+    void setParams(double la, double lb, double ha, double hb, double gx, double gy, double wx, double wy, double mx, double my, bool notify);
+    void setFunctionParams(const FunctionParams &params);
+    void setDefault (double la, double lb, double ha, double hb, double gx, double gy, double wx, double wy, double mx, double my);
     void setEdited(bool yes);
     bool getEdited() const;
     void reset(bool toInitial);
@@ -192,20 +172,16 @@ private:
 public:
     LabGrid(rtengine::ProcEvent evt, const Glib::ustring &msg, bool enable_low=true, bool ciexy=false, bool ghs=false, bool mous=true);
 
-    void getParams(double &la, double &lb, double &ha, double &hb, double &gx, double &gy, double &wx, double &wy, double &mx, double &my, double &gx6, double &gy6, double &gx7, double &gy7, 
-        double &gx8, double &gy8, double &gx9, double &gy9, double &gx10, double &gy10, double &gx11, double &gy11, double &gx12, double &gy12, double &gx13, double &gy13, double &gx14, double &gy14, 
-        double &gx15, double &gy15, double &gx16, double &gy16, double &gx17, double &gy17, double &gx18, double &gy18, double &gx19, double &gy19) 
-        const { return grid.getParams(la, lb, ha, hb, gx, gy, wx, wy, mx, my, gx6, gy6, gx7, gy7, gx8, gy8, gx9, gy9, gx10, gy10, gx11, gy11, gx12, gy12, gx13, gy13, gx14, gy14, gx15, gy15, gx16, gy16, gx17, gy17, gx18, gy18, gx19, gy19); }//+4 12 11  +16 9 dec 2024
-    void setParams(double la, double lb, double ha, double hb, double gx, double gy, double wx, double wy, double mx, double my, double gx6, double gy6, double gx7, double gy7, double gx8, double gy8, 
-        double gx9, double gy9, double gx10, double gy10, double gx11, double gy11, 
-        double gx12, double gy12, double gx13, double gy13, double gx14, double gy14, double gx15, double gy15,
-        double gx16, double gy16, double gx17, double gy17, double gx18, double gy18, double gx19, double gy19, bool notify) // + 16 9 dec 2024
-        { grid.setParams(la, lb, ha, hb, gx, gy, wx, wy, mx, my, gx6, gy6, gx7, gy7, gx8, gy8, gx9, gy9, gx10, gy10, gx11, gy11, gx12, gy12, gx13, gy13, gx14, gy14, gx15, gy15, gx16, gy16, gx17, gy17, gx18, gy18, gx19, gy19, notify); }//+4 12 11  +16 9 dec 2024
-    void setDefault (double la, double lb, double ha, double hb, double gx, double gy, double wx, double wy, double mx, double my, double gx6, double gy6, double gx7, double gy7, double gx8, double gy8, 
-        double gx9, double gy9, double gx10, double gy10, double gx11, double gy11,
-        double gx12, double gy12, double gx13, double gy13, double gx14, double gy14, double gx15, double gy15,
-        double gx16, double gy16, double gx17, double gy17, double gx18, double gy18, double gx19, double gy19)//+16 9 dec 2024
-        { grid.setDefault(la, lb, ha, hb, gx, gy, wx, wy, mx, my, gx6, gy6, gx7, gy7, gx8, gy8, gx9, gy9, gx10, gy10, gx11, gy11, gx12, gy12, gx13, gy13, gx14, gy14, gx15, gy15, gx16, gy16, gx17, gy17, gx18, gy18, gx19, gy19); }//+4 12 11  +16 9 dec 2024
+    void getParams(double &la, double &lb, double &ha, double &hb, double &gx, double &gy, double &wx, double &wy, double &mx, double &my)
+        const { return grid.getParams(la, lb, ha, hb, gx, gy, wx, wy, mx, my); }
+    void setParams(double la, double lb, double ha, double hb, double gx, double gy, double wx, double wy, double mx, double my, bool notify)
+        { grid.setParams(la, lb, ha, hb, gx, gy, wx, wy, mx, my, notify); }
+    void setFunctionParams(const LabGridArea::FunctionParams &params)
+    {
+        grid.setFunctionParams(params);
+    }
+    void setDefault (double la, double lb, double ha, double hb, double gx, double gy, double wx, double wy, double mx, double my)
+        { grid.setDefault(la, lb, ha, hb, gx, gy, wx, wy, mx, my); }
     void setEdited(bool yes) { grid.setEdited(yes); }
     bool getEdited() const { return grid.getEdited(); }
     void reset(bool toInitial) { grid.reset(toInitial); }

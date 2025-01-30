@@ -107,6 +107,32 @@ struct WaveletParams;
 
 enum RenderingIntent : int;
 
+// From Siril.
+struct ght_compute_params {
+    float qlp;//protect shadows
+    float q0;
+    float qwp;//protect highlights - white point
+    float q1;
+    float q;
+    float b1;
+    float a1;
+    float a2;
+    float b2;
+    float c2;
+    float d2;
+    float e2;
+    float a3;
+    float b3;
+    float c3;
+    float d3;
+    float e3;
+    float a4;
+    float b4;
+    float LPT;//inverse protect shadow
+    float SPT;//inverse symmetric point
+    float HPT;//inverse protect highlight
+};
+
 class ImProcFunctions
 {
     cmsHTRANSFORM monitorTransform;
@@ -391,7 +417,10 @@ enum class BlurType {
                 float &minCD, float &maxCD, float &mini, float &maxi, float &Tmean, float &Tsigma, float &Tmin, float &Tmax,
                 float& meantm, float& stdtm, float& meanreti, float& stdreti, float &fab, float &maxicam, float &rdx, float &rdy, float &grx, float &gry, float &blx, float &bly, float &meanx, float &meany, float &meanxe, float &meanye, int &prim, int &ill, float &contsig, float &lightsig,
                 float &highresi, float &nresi, float &highresi46, float &nresi46, float &Lhighresi, float &Lnresi, float &Lhighresi46, float &Lnresi46, float &slopeg, bool &linkrgb,
-                float *ghscur, int *ghsbpwp, float *ghsbpwpvalue);
+                int *ghsbpwp, float *ghsbpwpvalue);
+
+    static ght_compute_params GHT_setup(float in_B, float D, float LP, float SP, float HP, int strtype);
+    static float GHT(float x, float B, float D, float LP, float SP, float HP, ght_compute_params c, int strtype);
     
     void tone_eqcam2(ImProcFunctions *ipf, Imagefloat *rgb, int whits, int blacks, const Glib::ustring &workingProfile, double scale, bool multithread);
     void tone_eqdehaz(ImProcFunctions *ipf, Imagefloat *rgb, int whits, int blacks, const Glib::ustring &workingProfile, double scale, bool multithread);

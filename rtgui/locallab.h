@@ -133,8 +133,6 @@ private:
 
     std::vector<locallabcieLC> cie_lc;
 
-    std::vector<locallabshGHS> sh_ghs;//for GHS
-
     std::vector<locallabshGHSbw> sh_ghsbw;
 
     std::vector<locallabsetLC> set_lc;
@@ -178,9 +176,6 @@ public:
     
     // Locallab CIE tool primaries function
     void cieChanged(const std::vector<locallabcieLC> &cielc, int selspot) override;
-
-    // Locallab SH GHS tool Curve S GHS function
-    void ghsChanged(const std::vector<locallabshGHS> &shghs, int selspot) override;
 
     // Locallab SH GHS tool Black point & White point GHS function
     void ghsbwChanged(const std::vector<locallabshGHSbw> &shghsbw, int selspot) override;
