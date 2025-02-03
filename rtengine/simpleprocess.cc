@@ -837,7 +837,7 @@ private:
       // FILE* file = fopen("C:\\Users\\Hadar\\Desktop\\dev\\ImAgent\\build\\rt_render.bin", "rb");
     //  FILE* file = fopen("C:\\Users\\Hadar\\Desktop\\dev\\ImAgent\\build\\rt-end.bin", "rb");
          // baseImg->readData(file);
-        auto errorCodeTest = baseImg->saveAsJPEG ( "C:\\Users\\Hadar\\Downloads\\debug_test\\stage_init-start1.jpg", 92, 3 );
+        auto errorCodeTest = baseImg->saveAsJPEG ( "C:\\Users\\hadard\\Downloads\\debug_test\\stage_init-start1.jpg", 92, 3 );
         if (errorCodeTest) {
         printf("error! stage_init: \"%d\"\n", errorCodeTest);
         }
@@ -904,7 +904,7 @@ private:
 
         }
         else {
-            auto errorCodeTest = testImage->saveAsJPEG ( "C:\\Users\\Hadar\\Downloads\\debug_test\\stage_denoise-start.jpg", 92, 3 );
+            auto errorCodeTest = testImage->saveAsJPEG ( "C:\\Users\\hadard\\Downloads\\debug_test\\stage_denoise-start.jpg", 92, 3 );
             if (errorCodeTest) {
                 printf("error! stage_denoise: \"%d\"\n", errorCodeTest);
             }
@@ -964,14 +964,14 @@ private:
 
     void stage_transform()
     {
-        auto errorCodeTest = baseImg->saveAsJPEG ( "C:\\Users\\Hadar\\Downloads\\debug_test\\stage_transform-start.jpg", 92, 3 );
+        auto errorCodeTest = baseImg->saveAsJPEG ( "C:\\Users\\hadard\\Downloads\\debug_test\\stage_transform-start.jpg", 92, 3 );
         if (errorCodeTest) {
             printf("error! stage_transform: \"%d\"\n", errorCodeTest);
         }
         const procparams::ProcParams& params = job->pparams;
         //ImProcFunctions ipf (&params, true);
         ImProcFunctions &ipf = * (ipf_p.get());
-        errorCodeTest = baseImg->saveAsJPEG ( "C:\\Users\\Hadar\\Downloads\\debug_test\\stage_transform-2.jpg", 92, 3 );
+        errorCodeTest = baseImg->saveAsJPEG ( "C:\\Users\\hadard\\Downloads\\debug_test\\stage_transform-2.jpg", 92, 3 );
         if (errorCodeTest) {
             printf("error! stage_transform: \"%d\"\n", errorCodeTest);
         }
@@ -990,13 +990,13 @@ private:
             }
 
         } else {
-            errorCodeTest = baseImg->saveAsJPEG ( "C:\\Users\\Hadar\\Downloads\\debug_test\\stage_transform-3.jpg", 92, 3 );
+            errorCodeTest = baseImg->saveAsJPEG ( "C:\\Users\\hadard\\Downloads\\debug_test\\stage_transform-3.jpg", 92, 3 );
             if (errorCodeTest) {
                 printf("error! stage_transform: \"%d\"\n", errorCodeTest);
             }
 
           imgsrc->convertColorSpace(baseImg, params.icm, currWB);
-            errorCodeTest = baseImg->saveAsJPEG ( "C:\\Users\\Hadar\\Downloads\\debug_test\\stage_transform-3.5.jpg", 92, 3 );
+            errorCodeTest = baseImg->saveAsJPEG ( "C:\\Users\\hadard\\Downloads\\debug_test\\stage_transform-3.5.jpg", 92, 3 );
             if (errorCodeTest) {
                 printf("error! stage_transform: \"%d\"\n", errorCodeTest);
             }
@@ -1006,7 +1006,7 @@ private:
         hist16(65536);
 
         ipf.firstAnalysis(baseImg, params, hist16);
-        errorCodeTest = baseImg->saveAsJPEG ( "C:\\Users\\Hadar\\Downloads\\debug_test\\stage_transform-4.jpg", 92, 3 );
+        errorCodeTest = baseImg->saveAsJPEG ( "C:\\Users\\hadard\\Downloads\\debug_test\\stage_transform-4.jpg", 92, 3 );
         if (errorCodeTest) {
             printf("error! stage_transform: \"%d\"\n", errorCodeTest);
         }
@@ -1032,7 +1032,7 @@ private:
                 baseImg = trImg;
             }
         }
-         errorCodeTest = baseImg->saveAsJPEG ( "C:\\Users\\Hadar\\Downloads\\debug_test\\stage_transform-end.jpg", 92, 3 );
+         errorCodeTest = baseImg->saveAsJPEG ( "C:\\Users\\hadard\\Downloads\\debug_test\\stage_transform-end.jpg", 92, 3 );
         if (errorCodeTest) {
             printf("error! stage_transform: \"%d\"\n", errorCodeTest);
         }
@@ -1050,7 +1050,7 @@ private:
         //
         // baseImg->readData(file);
         auto testImage = baseImg;
-        auto errorCodeTest = testImage->saveAsJPEG ( "C:\\Users\\Hadar\\Downloads\\debug_test\\stage-finish-start.jpg", 92, 3 );
+        auto errorCodeTest = testImage->saveAsJPEG ( "C:\\Users\\hadard\\Downloads\\debug_test\\stage-finish-start.jpg", 92, 3 );
         if (errorCodeTest) {
             printf("error! A: \"%d\"\n", errorCodeTest);
         }
@@ -1089,7 +1089,7 @@ private:
             ipf.dirpyrequalizer(&labcbdl, 1);
             ipf.lab2rgb(labcbdl, *baseImg, params.icm.workingProfile);
         }
-        errorCodeTest = baseImg->saveAsJPEG ( "C:\\Users\\Hadar\\Downloads\\debug_test\\stage-finish-2_before_RGB_processing.jpg", 92, 3 );
+        errorCodeTest = baseImg->saveAsJPEG ( "C:\\Users\\hadard\\Downloads\\debug_test\\stage-finish-2_before_RGB_processing.jpg", 92, 3 );
         if (errorCodeTest) {
             printf("error! B: \"%d\"\n", errorCodeTest);
         }
@@ -1518,17 +1518,17 @@ private:
 
         LUTu histToneCurve;
         Imagefloat* readyImgTmp_0 = ipf.lab2rgbOut(labView, 0, 0, fw, fh, params.icm);
-        errorCodeTest = readyImgTmp_0->saveAsJPEG ( "C:\\Users\\Hadar\\Downloads\\debug_test\\stage_finish_3_image_0_labView_before_applying_basImg.jpg", 92, 3 );
+        errorCodeTest = readyImgTmp_0->saveAsJPEG ( "C:\\Users\\hadard\\Downloads\\debug_test\\stage_finish_3_image_0_labView_before_applying_basImg.jpg", 92, 3 );
         if (errorCodeTest) {
             printf("error! C2: \"%d\"\n", errorCodeTest);
         }
-        errorCodeTest = baseImg->saveAsJPEG ( "C:\\Users\\Hadar\\Downloads\\debug_test\\stage_finish_4_baseImg_before_rgbProc.jpg", 92, 3 );
+        errorCodeTest = baseImg->saveAsJPEG ( "C:\\Users\\hadard\\Downloads\\debug_test\\stage_finish_4_baseImg_before_rgbProc.jpg", 92, 3 );
         if (errorCodeTest) {
             printf("error! image_baseImg_before_rgbProc: \"%d\"\n", errorCodeTest);
         } //next line with SEG FAULT FOR SOME
         ipf.rgbProc(baseImg, labView, nullptr, curve1, curve2, curve, params.toneCurve.saturation, rCurve, gCurve, bCurve, satLimit, satLimitOpacity, ctColorCurve, ctOpacityCurve, opautili, clToningcurve, cl2Toningcurve, customToneCurve1, customToneCurve2, customToneCurvebw1, customToneCurvebw2, rrm, ggm, bbm, autor, autog, autob, expcomp, hlcompr, hlcomprthresh, dcpProf, as, histToneCurve, options.chunkSizeRGB, options.measure);
     readyImgTmp_0 = ipf.lab2rgbOut(labView, 0, 0,fw, fh, params.icm);
-        errorCodeTest = readyImgTmp_0->saveAsJPEG ( "C:\\Users\\Hadar\\Downloads\\debug_test\\stage_finish_5_image_0.1_after_rgbProc.jpg", 92, 3 );
+        errorCodeTest = readyImgTmp_0->saveAsJPEG ( "C:\\Users\\hadard\\Downloads\\debug_test\\stage_finish_5_image_0.1_after_rgbProc.jpg", 92, 3 );
         if (errorCodeTest) {
             printf("error!:D \"%d\"\n", errorCodeTest);
 }
@@ -1551,7 +1551,7 @@ private:
         customToneCurvebw1.Reset();
         customToneCurvebw2.Reset();
 
-        errorCodeTest = baseImg->saveAsJPEG ( "C:\\Users\\Hadar\\Downloads\\debug_test\\stage_finish_6_before_start_tile_processing.jpg", 92, 3 );
+        errorCodeTest = baseImg->saveAsJPEG ( "C:\\Users\\hadard\\Downloads\\debug_test\\stage_finish_6_before_start_tile_processing.jpg", 92, 3 );
         if (errorCodeTest) {
             printf("error!: E \"%d\"\n", errorCodeTest);
         }
@@ -1595,7 +1595,7 @@ private:
             }
         }
         Imagefloat* readyImgTmp1 = ipf.lab2rgbOut(labView, 0, 0, fw, fh, params.icm);
-        errorCodeTest = readyImgTmp1->saveAsJPEG ( "C:\\Users\\Hadar\\Downloads\\debug_test\\stage_finish_5.jpg", 92, 3 );
+        errorCodeTest = readyImgTmp1->saveAsJPEG ( "C:\\Users\\hadard\\Downloads\\debug_test\\stage_finish_5.jpg", 92, 3 );
         bool utili;
         CurveFactory::complexLCurve(params.labCurve.brightness, params.labCurve.contrast, params.labCurve.lcurve, hist16, lumacurve, dummy, 1, utili);
 
@@ -1611,24 +1611,24 @@ private:
         }
         Imagefloat* test = new Imagefloat(fw, fh);
          ipf.lab2rgb(*labView, *test, (params.icm.workingProfile));
-        errorCodeTest = test->saveAsJPEG ( "C:\\Users\\Hadar\\Downloads\\debug_test\\stage_finish_6.jpg", 92, 3 );
+        errorCodeTest = test->saveAsJPEG ( "C:\\Users\\hadard\\Downloads\\debug_test\\stage_finish_6.jpg", 92, 3 );
         ipf.shadowsHighlights(labView, params.sh.enabled, params.sh.lab, params.sh.highlights, params.sh.shadows, params.sh.radius, 1, params.sh.htonalwidth, params.sh.stonalwidth);
 
         test = new Imagefloat(fw, fh);
         ipf.lab2rgb(*labView, *test, (params.icm.workingProfile));
-        errorCodeTest = test->saveAsJPEG ( "C:\\Users\\Hadar\\Downloads\\debug_test\\stage_finish_6.5.jpg", 92, 3 );
+        errorCodeTest = test->saveAsJPEG ( "C:\\Users\\hadard\\Downloads\\debug_test\\stage_finish_6.5.jpg", 92, 3 );
         if (params.localContrast.enabled) {
             // Alberto's local contrast
             ipf.localContrast(labView, labView->L, params.localContrast, false, 1);//scale);
         }
         // Imagefloat* readyImgTmp_12 = ipf.lab2rgbOut(labView , 0, 0,fw, fh, params.icm);
 
-        FILE* file1 = fopen("C:\\Users\\Hadar\\Desktop\\dev\\ImAgent\\build\\before_15a.bin", "wb");
+        FILE* file1 = fopen("C:\\Users\\hadard\\Desktop\\dev\\ImAgent2\\build\\before_15a.bin", "wb");
         for (int i=0;i<fh;i++)
         ipf.writeData(file1,   test->r(i),  test->g(i), test->b(i), fw);
         Imagefloat* readyImgTmp = ipf.lab2rgbOut(labView, 0, 0, fw, fh, params.icm);
         // Imagefloat* readyImgTmp = ipf.lab2rgbOut(labView, 0, 0, 8652, 5776, params.icm);
-        errorCodeTest = readyImgTmp->saveAsJPEG ( "C:\\Users\\Hadar\\Downloads\\debug_test\\stage_finish_7.jpg", 92, 3 );
+        errorCodeTest = readyImgTmp->saveAsJPEG ( "C:\\Users\\hadard\\Downloads\\debug_test\\stage_finish_7.jpg", 92, 3 );
         if (errorCodeTest) {
             printf("error!: F\"%d\"\n", errorCodeTest);
         }
@@ -1730,7 +1730,7 @@ private:
             ipf.ip_wavelet(labView, labView, 2, WaveParams, wavCLVCurve, wavdenoise, wavdenoiseh, wavblcurve, waOpacityCurveRG, waOpacityCurveSH, waOpacityCurveBY, waOpacityCurveW,  waOpacityCurveWL, wavclCurve, 1);
             // Imagefloat* readyImgTmp2 = ipf.lab2rgbOut(labView, 0, 0, 8652, 5776, params.icm);
             Imagefloat* readyImgTmp2 = ipf.lab2rgbOut(labView, 0, 0, fw, fh, params.icm);
-            errorCodeTest = readyImgTmp2->saveAsJPEG ( "C:\\Users\\Hadar\\Downloads\\debug_test\\stage_finish_8.jpg", 92, 3 );
+            errorCodeTest = readyImgTmp2->saveAsJPEG ( "C:\\Users\\hadard\\Downloads\\debug_test\\stage_finish_8.jpg", 92, 3 );
             if (errorCodeTest) {
                 printf("error!: \"%d\"\n", errorCodeTest);
             }
@@ -1780,7 +1780,7 @@ private:
                     // rtengine::guidedFilter(guid, ble, ble, blur, 0.001, multiTh);
                     rtengine::guidedFilter(guid, ble, ble, blur, epsil, false);
                    Imagefloat* readyImgTmp3 = ipf.lab2rgbOut(labView, 0, 0, fw, fh, params.icm);
-                   errorCodeTest = readyImgTmp3->saveAsJPEG ( "C:\\Users\\Hadar\\Downloads\\debug_test\\image_C.jpg", 92, 3 );
+                   errorCodeTest = readyImgTmp3->saveAsJPEG ( "C:\\Users\\hadard\\Downloads\\debug_test\\image_C.jpg", 92, 3 );
                    if (errorCodeTest) {
                        printf("error!: \"%d\"\n", errorCodeTest);
                    }
@@ -1806,7 +1806,7 @@ private:
             }
       Imagefloat* readyImgTmp4 = ipf.lab2rgbOut(labView, 0, 0, fw, fh, params.icm);
       // Imagefloat* readyImgTmp4 = ipf.lab2rgbOut(labView, 0, 0, 8652, 5776, params.icm);
-      errorCodeTest = readyImgTmp4->saveAsJPEG ( "C:\\Users\\Hadar\\Downloads\\debug_test\\stage_finish_9.jpg", 92, 3 );
+      errorCodeTest = readyImgTmp4->saveAsJPEG ( "C:\\Users\\hadard\\Downloads\\debug_test\\stage_finish_9.jpg", 92, 3 );
       if (errorCodeTest) {
           printf("error!: \"%d\"\n", errorCodeTest);
       }
@@ -1856,7 +1856,7 @@ private:
         ipf.softLight(labView, params.softlight);
   Imagefloat* readyImgTmp5 = ipf.lab2rgbOut(labView, 0, 0, fw, fh, params.icm);
   // Imagefloat* readyImgTmp5 = ipf.lab2rgbOut(labView, 0, 0, 8652, 5776, params.icm);
-  errorCodeTest = readyImgTmp5->saveAsJPEG ( "C:\\Users\\Hadar\\Downloads\\debug_test\\stage_finish_10.jpg", 92, 3 );
+  errorCodeTest = readyImgTmp5->saveAsJPEG ( "C:\\Users\\hadard\\Downloads\\debug_test\\stage_finish_10.jpg", 92, 3 );
   if (errorCodeTest) {
       printf("error!: \"%d\"\n", errorCodeTest);
   }
@@ -1935,7 +1935,7 @@ private:
         ipf.rgb2lab(*tmpImage1, *labView, params.icm.workingProfile);
         Imagefloat* readyImgTmp6 = ipf.lab2rgbOut(labView, 0, 0, fw, fh, params.icm);
         // Imagefloat* readyImgTmp6 = ipf.lab2rgbOut(labView, 0, 0, 8652, 5776, params.icm);
-        errorCodeTest = readyImgTmp6->saveAsJPEG ( "C:\\Users\\Hadar\\Downloads\\debug_test\\stage_finish_11.jpg", 92, 3 );
+        errorCodeTest = readyImgTmp6->saveAsJPEG ( "C:\\Users\\hadard\\Downloads\\debug_test\\stage_finish_11.jpg", 92, 3 );
         if (errorCodeTest) {
             printf("error!: \"%d\"\n", errorCodeTest);
         }
@@ -1960,7 +1960,7 @@ private:
         }
    // Imagefloat* readyImgTmp7 = ipf.lab2rgbOut(labView, 0, 0, 8652, 5776, params.icm);
    Imagefloat* readyImgTmp7 = ipf.lab2rgbOut(labView, 0, 0, fw, fh, params.icm);
-   errorCodeTest = readyImgTmp7->saveAsJPEG ( "C:\\Users\\Hadar\\Downloads\\debug_test\\stage_finish_12.jpg", 92, 3 );
+   errorCodeTest = readyImgTmp7->saveAsJPEG ( "C:\\Users\\hadard\\Downloads\\debug_test\\stage_finish_12.jpg", 92, 3 );
    if (errorCodeTest) {
        printf("error!: \"%d\"\n", errorCodeTest);
    }
@@ -2060,7 +2060,7 @@ private:
             }
         }
         Imagefloat* readyImgTmp8 = ipf.lab2rgbOut(labView, cx, cy, cw, ch, params.icm);
-        errorCodeTest = readyImgTmp8->saveAsJPEG ( "C:\\Users\\Hadar\\Downloads\\debug_test\\stage_finish_13.jpg", 92, 3 );
+        errorCodeTest = readyImgTmp8->saveAsJPEG ( "C:\\Users\\hadard\\Downloads\\debug_test\\stage_finish_13.jpg", 92, 3 );
         if (errorCodeTest) {
             printf("error!: \"%d\"\n", errorCodeTest);
         }
@@ -2099,7 +2099,7 @@ private:
         // gamma come from the selected profile, otherwise it comes from "Free gamma" tool
 
         Imagefloat* readyImg = ipf.lab2rgbOut(labView, cx, cy, cw, ch, params.icm);
-        errorCodeTest = readyImg->saveAsJPEG ( "C:\\Users\\Hadar\\Downloads\\debug_test\\stage_finish_14.jpg", 92, 3 );
+        errorCodeTest = readyImg->saveAsJPEG ( "C:\\Users\\hadard\\Downloads\\debug_test\\stage_finish_14.jpg", 92, 3 );
         if (errorCodeTest) {
             printf("error!: \"%d\"\n", errorCodeTest);
         }
@@ -2158,7 +2158,7 @@ private:
                 break;
         }
 
-        errorCodeTest = readyImg->saveAsJPEG ( "C:\\Users\\Hadar\\Downloads\\debug_test\\stage_finish_15_last.jpg", 92, 3 );
+        errorCodeTest = readyImg->saveAsJPEG ( "C:\\Users\\hadard\\Downloads\\debug_test\\stage_finish_15_last.jpg", 92, 3 );
         if (errorCodeTest) {
             printf("error!: \"%d\"\n", errorCodeTest);
         }

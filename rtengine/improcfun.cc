@@ -1974,7 +1974,7 @@ void print_jpg(Imagefloat *working, bool saveJpegs, float *rtemp, float *gtemp, 
             }
         }
 
-        auto errorCodeTest = working->saveAsJPEG("C:\\Users\\Hadar\\Downloads\\debug_test\\rgb-proc-tile"+ std::string(index) +".jpg", 92, 3);
+        auto errorCodeTest = working->saveAsJPEG("C:\\Users\\hadard\\Downloads\\debug_test\\rgb-proc-tile"+ std::string(index) +".jpg", 92, 3);
         if (errorCodeTest) {
             printf("error! rgb-proc-tile: \"%d\"\n", errorCodeTest);
         }
@@ -2012,9 +2012,9 @@ void ImProcFunctions::rgbProc(Imagefloat* working, LabImage* lab, PipetteBuffer 
                               double &rrm, double &ggm, double &bbm, float &autor, float &autog, float &autob, double expcomp, int hlcompr, int hlcomprthresh,
                               DCPProfile *dcpProf, const DCPProfileApplyState& asIn, LUTu& histToneCurve, size_t chunkSize, bool measure)
 {
-    FILE* file_tiled_part_1 = fopen("C:\\Users\\Hadar\\Desktop\\dev\\ImAgent\\build\\after_tiled_part_1.bin", "wb");
+    FILE* file_tiled_part_1 = fopen("C:\\Users\\hadard\\Desktop\\dev\\ImAgent\\build\\after_tiled_part_1.bin", "wb");
 
-    bool saveJpegs  = true;
+    bool saveJpegs  = false;
     std::unique_ptr<StopWatch> stop;
     multiThread = false;
     if (measure) {
@@ -2378,11 +2378,11 @@ void ImProcFunctions::rgbProc(Imagefloat* working, LabImage* lab, PipetteBuffer 
 
                 }
 
-                auto errorCodeTest = working->saveAsJPEG ( "C:\\Users\\Hadar\\Downloads\\debug_test\\rgb-proc-tile.jpg", 92, 3 );
+                auto errorCodeTest = working->saveAsJPEG ( "C:\\Users\\hadard\\Downloads\\debug_test\\rgb-proc-tile.jpg", 92, 3 );
                 if (errorCodeTest) {
                     printf("error! rgb-proc-tile: \"%d\"\n", errorCodeTest);
                 }
-                FILE* file1 = fopen("C:\\Users\\Hadar\\Desktop\\dev\\ImAgent\\build\\after_exposure.bin", "wb");
+                FILE* file1 = fopen("C:\\Users\\hadard\\Desktop\\dev\\ImAgent\\build\\after_exposure.bin", "wb");
                 // for (int i=0;i<working->getHeight();i++)
                 //     writeData(file1,   working->r(i),  working->g(i), working->b(i), tW);
 
@@ -2472,7 +2472,7 @@ void ImProcFunctions::rgbProc(Imagefloat* working, LabImage* lab, PipetteBuffer 
         #pragma omp single
 #endif
         if (params->toneEqualizer.enabled) {
-            auto errorCodeTest = tmpImage->saveAsJPEG ( "C:\\Users\\Hadar\\Downloads\\debug_test\\rgb-proc-tile0.4.jpg", 92, 3 );
+            auto errorCodeTest = tmpImage->saveAsJPEG ( "C:\\Users\\hadard\\Downloads\\debug_test\\rgb-proc-tile0.4.jpg", 92, 3 );
             if (errorCodeTest) {
                 printf("error! rgb-proc-tile: \"%d\"\n", errorCodeTest);
             }
@@ -2530,7 +2530,7 @@ void ImProcFunctions::rgbProc(Imagefloat* working, LabImage* lab, PipetteBuffer 
 
                 } else {
                     if (saveJpegs) {
-                        auto errorCodeTest = working->saveAsJPEG ( "C:\\Users\\Hadar\\Downloads\\debug_test\\rgb-proc-tile0.jpg", 92, 3 );
+                        auto errorCodeTest = working->saveAsJPEG ( "C:\\Users\\hadard\\Downloads\\debug_test\\rgb-proc-tile0.jpg", 92, 3 );
                         if (errorCodeTest) {
                             printf("error! rgb-proc-tile: \"%d\"\n", errorCodeTest);
                         }
@@ -2578,7 +2578,7 @@ void ImProcFunctions::rgbProc(Imagefloat* working, LabImage* lab, PipetteBuffer 
 
                             }
                         }
-                        auto errorCodeTest = working->saveAsJPEG ( "C:\\Users\\Hadar\\Downloads\\debug_test\\rgb-proc-tile3.jpg", 92, 3 );
+                        auto errorCodeTest = working->saveAsJPEG ( "C:\\Users\\hadard\\Downloads\\debug_test\\rgb-proc-tile3.jpg", 92, 3 );
                         if (errorCodeTest) {
                             printf("error! rgb-proc-tile: \"%d\"\n", errorCodeTest);
                         }
@@ -2612,7 +2612,7 @@ void ImProcFunctions::rgbProc(Imagefloat* working, LabImage* lab, PipetteBuffer 
 
                         //write(rtemp, gtemp, btemp, tH, tW);
                         // baseImg->readData(file);
-                        auto errorCodeTest = working->saveAsJPEG ( "C:\\Users\\Hadar\\Downloads\\debug_test\\rgb-proc-tile4.jpg", 92, 3 );
+                        auto errorCodeTest = working->saveAsJPEG ( "C:\\Users\\hadard\\Downloads\\debug_test\\rgb-proc-tile4.jpg", 92, 3 );
                         if (errorCodeTest) {
                             printf("error! rgb-proc-tile: \"%d\"\n", errorCodeTest);
                         }
@@ -2646,7 +2646,7 @@ void ImProcFunctions::rgbProc(Imagefloat* working, LabImage* lab, PipetteBuffer 
                     }
                 }
                 if (saveJpegs) {
-                    FILE* file = fopen("C:\\Users\\Hadar\\Desktop\\dev\\ImAgent\\build\\after_contrast.bin", "wb");
+                    FILE* file = fopen("C:\\Users\\hadard\\Desktop\\dev\\ImAgent\\build\\after_contrast.bin", "wb");
 
                     for (int i = istart, ti = 0; i < tH; i++, ti++) {
                         for (int j = jstart, tj = 0; j < tW; j++, tj++) {
@@ -2662,7 +2662,7 @@ void ImProcFunctions::rgbProc(Imagefloat* working, LabImage* lab, PipetteBuffer 
                         // working->writeData(file);
                     // write(rtemp, gtemp, btemp, tH, tW);
                     // baseImg->readData(file);
-                    auto errorCodeTest1 = working->saveAsJPEG ( "C:\\Users\\Hadar\\Downloads\\debug_test\\rgb-proc-tile5.jpg", 92, 3 );
+                    auto errorCodeTest1 = working->saveAsJPEG ( "C:\\Users\\hadard\\Downloads\\debug_test\\rgb-proc-tile5.jpg", 92, 3 );
                     if (errorCodeTest1) {
                         printf("error! rgb-proc-tile: \"%d\"\n", errorCodeTest1);
                     }
@@ -2694,7 +2694,7 @@ void ImProcFunctions::rgbProc(Imagefloat* working, LabImage* lab, PipetteBuffer 
 
                     //write(rtemp, gtemp, btemp, tH, tW);
                     // baseImg->readData(file);
-                    auto errorCodeTest = working->saveAsJPEG ( "C:\\Users\\Hadar\\Downloads\\debug_test\\rgb-proc-tile6.jpg", 92, 3 );
+                    auto errorCodeTest = working->saveAsJPEG ( "C:\\Users\\hadard\\Downloads\\debug_test\\rgb-proc-tile6.jpg", 92, 3 );
                     if (errorCodeTest) {
                         printf("error! rgb-proc-tile: \"%d\"\n", errorCodeTest);
                     }
@@ -2752,7 +2752,7 @@ void ImProcFunctions::rgbProc(Imagefloat* working, LabImage* lab, PipetteBuffer 
 
                             //write(rtemp, gtemp, btemp, tH, tW);
                             // baseImg->readData(file);
-                            auto errorCodeTest = working->saveAsJPEG ( "C:\\Users\\Hadar\\Downloads\\debug_test\\rgb-proc-tile7.jpg", 92, 3 );
+                            auto errorCodeTest = working->saveAsJPEG ( "C:\\Users\\hadard\\Downloads\\debug_test\\rgb-proc-tile7.jpg", 92, 3 );
                             if (errorCodeTest) {
                                 printf("error! rgb-proc-tile: \"%d\"\n", errorCodeTest);
                             }
@@ -2843,7 +2843,7 @@ void ImProcFunctions::rgbProc(Imagefloat* working, LabImage* lab, PipetteBuffer 
 
                     //write(rtemp, gtemp, btemp, tH, tW);
                     // baseImg->readData(file);
-                    auto errorCodeTest = working->saveAsJPEG ( "C:\\Users\\Hadar\\Downloads\\debug_test\\rgb-proc-tile8.jpg", 92, 3 );
+                    auto errorCodeTest = working->saveAsJPEG ( "C:\\Users\\hadard\\Downloads\\debug_test\\rgb-proc-tile8.jpg", 92, 3 );
                     if (errorCodeTest) {
                         printf("error! rgb-proc-tile: \"%d\"\n", errorCodeTest);
                     }
@@ -2869,7 +2869,7 @@ void ImProcFunctions::rgbProc(Imagefloat* working, LabImage* lab, PipetteBuffer 
 
                     //write(rtemp, gtemp, btemp, tH, tW);
                     // baseImg->readData(file);
-                    auto errorCodeTest = working->saveAsJPEG ( "C:\\Users\\Hadar\\Downloads\\debug_test\\rgb-proc-tile9.jpg", 92, 3 );
+                    auto errorCodeTest = working->saveAsJPEG ( "C:\\Users\\hadard\\Downloads\\debug_test\\rgb-proc-tile9.jpg", 92, 3 );
                     if (errorCodeTest) {
                         printf("error! rgb-proc-tile: \"%d\"\n", errorCodeTest);
                     }
@@ -2954,7 +2954,7 @@ void ImProcFunctions::rgbProc(Imagefloat* working, LabImage* lab, PipetteBuffer 
                     }
 
 
-                    auto errorCodeTest = working->saveAsJPEG ( "C:\\Users\\Hadar\\Downloads\\debug_test\\rgb-proc-tile10.jpg", 92, 3 );
+                    auto errorCodeTest = working->saveAsJPEG ( "C:\\Users\\hadard\\Downloads\\debug_test\\rgb-proc-tile10.jpg", 92, 3 );
                     if (errorCodeTest) {
                         printf("error! rgb-proc-tile: \"%d\"\n", errorCodeTest);
                     }
@@ -2974,7 +2974,7 @@ void ImProcFunctions::rgbProc(Imagefloat* working, LabImage* lab, PipetteBuffer 
 
                     //write(rtemp, gtemp, btemp, tH, tW);
                     // baseImg->readData(file);
-                    auto errorCodeTest = working->saveAsJPEG ( "C:\\Users\\Hadar\\Downloads\\debug_test\\rgb-proc-tile11.jpg", 92, 3 );
+                    auto errorCodeTest = working->saveAsJPEG ( "C:\\Users\\hadard\\Downloads\\debug_test\\rgb-proc-tile11.jpg", 92, 3 );
                     if (errorCodeTest) {
                         printf("error! rgb-proc-tile: \"%d\"\n", errorCodeTest);
                     }
@@ -3149,7 +3149,7 @@ void ImProcFunctions::rgbProc(Imagefloat* working, LabImage* lab, PipetteBuffer 
 
                     //write(rtemp, gtemp, btemp, tH, tW);
                     // baseImg->readData(file);
-                    auto errorCodeTest = working->saveAsJPEG ( "C:\\Users\\Hadar\\Downloads\\debug_test\\rgb-proc-tile12.jpg", 92, 3 );
+                    auto errorCodeTest = working->saveAsJPEG ( "C:\\Users\\hadard\\Downloads\\debug_test\\rgb-proc-tile12.jpg", 92, 3 );
                     if (errorCodeTest) {
                         printf("error! rgb-proc-tile: \"%d\"\n", errorCodeTest);
                     }
@@ -3338,7 +3338,7 @@ if (saveJpegs) {
         }
     }
 
-    auto errorCodeTest = working->saveAsJPEG ( "C:\\Users\\Hadar\\Downloads\\debug_test\\rgb-proc-tile13.jpg", 92, 3 );
+    auto errorCodeTest = working->saveAsJPEG ( "C:\\Users\\hadard\\Downloads\\debug_test\\rgb-proc-tile13.jpg", 92, 3 );
     if (errorCodeTest) {
         printf("error! rgb-proc-tile: \"%d\"\n", errorCodeTest);
     }
@@ -3471,7 +3471,7 @@ if (saveJpegs) {
 
                     //write(rtemp, gtemp, btemp, tH, tW);
                     // baseImg->readData(file);
-                    auto errorCodeTest = working->saveAsJPEG ( "C:\\Users\\Hadar\\Downloads\\debug_test\\rgb-proc-tile14.jpg", 92, 3 );
+                    auto errorCodeTest = working->saveAsJPEG ( "C:\\Users\\hadard\\Downloads\\debug_test\\rgb-proc-tile14.jpg", 92, 3 );
                     if (errorCodeTest) {
                         printf("error! rgb-proc-tile: \"%d\"\n", errorCodeTest);
                     }
@@ -3495,14 +3495,14 @@ if (saveJpegs) {
                         }
                     }
                     if (editImgFloat) {
-                        auto errorCodeTest = editImgFloat->saveAsJPEG ( "C:\\Users\\Hadar\\Downloads\\debug_test\\rgb-proc-tile-editImgFloat.jpg", 92, 3 );
+                        auto errorCodeTest = editImgFloat->saveAsJPEG ( "C:\\Users\\hadard\\Downloads\\debug_test\\rgb-proc-tile-editImgFloat.jpg", 92, 3 );
                         if (errorCodeTest) {
                             printf("error! rgb-proc-tile: \"%d\"\n", errorCodeTest);
                         }
                     }
 
                     if (editWhatever) {
-                        auto errorCodeTest = editImgFloat->saveAsJPEG ( "C:\\Users\\Hadar\\Downloads\\debug_test\\rgb-proc-tile-editWhatever.jpg", 92, 3 );
+                        auto errorCodeTest = editImgFloat->saveAsJPEG ( "C:\\Users\\hadard\\Downloads\\debug_test\\rgb-proc-tile-editWhatever.jpg", 92, 3 );
                         if (errorCodeTest) {
                             printf("error! rgb-proc-tile: \"%d\"\n", errorCodeTest);
                         }
@@ -3523,11 +3523,11 @@ if (saveJpegs) {
                             }
                         }
 
-                        auto errorCodeTest = baseImg->saveAsJPEG ( "C:\\Users\\Hadar\\Downloads\\debug_test\\rgb-proc-tile-15.jpg", 92, 3 );
+                        auto errorCodeTest = baseImg->saveAsJPEG ( "C:\\Users\\hadard\\Downloads\\debug_test\\rgb-proc-tile-15.jpg", 92, 3 );
                         if (errorCodeTest) {
                             printf("error! rgb-proc-tile: \"%d\"\n", errorCodeTest);
                         }
-                        // FILE* file1 = fopen("C:\\Users\\Hadar\\Desktop\\dev\\ImAgent\\build\\before_15a.bin", "wb");
+                        // FILE* file1 = fopen("C:\\Users\\hadard\\Desktop\\dev\\ImAgent\\build\\before_15a.bin", "wb");
                         // for (int i=0;i<baseImg->getHeight();i++)
                             // writeData(file1,   working->r(i),  working->g(i), working->b(i), tW);
 
@@ -3535,7 +3535,7 @@ if (saveJpegs) {
 
                     if (saveJpegs) {
                         auto readyImgTmp_0 = lab2rgbOut(lab , 0, 0,tW, tH, params->icm);
-                        auto errorCodeTest = readyImgTmp_0->saveAsJPEG ( "C:\\Users\\Hadar\\Downloads\\debug_test\\rgb-proc-tile-15A.jpg", 92, 3 );
+                        auto errorCodeTest = readyImgTmp_0->saveAsJPEG ( "C:\\Users\\hadard\\Downloads\\debug_test\\rgb-proc-tile-15A.jpg", 92, 3 );
                         if (errorCodeTest) {
                             printf("error!:D \"%d\"\n", errorCodeTest);
                         }
@@ -3562,7 +3562,7 @@ if (saveJpegs) {
                         }
                     }
                     if (tmpImage && saveJpegs) {
-                        auto errorCodeTest = tmpImage->saveAsJPEG ( "C:\\Users\\Hadar\\Downloads\\debug_test\\rgb-proc-tile-16.jpg", 92, 3 );
+                        auto errorCodeTest = tmpImage->saveAsJPEG ( "C:\\Users\\hadard\\Downloads\\debug_test\\rgb-proc-tile-16.jpg", 92, 3 );
                         if (errorCodeTest) {
                             printf("error! rgb-proc-tile: \"%d\"\n", errorCodeTest);
                         }
@@ -3579,7 +3579,7 @@ if (saveJpegs) {
                 }
             }
 
-            auto errorCodeTest = working->saveAsJPEG ( "C:\\Users\\Hadar\\Downloads\\debug_test\\rgb-proc-tile-17.jpg", 92, 3 );
+            auto errorCodeTest = working->saveAsJPEG ( "C:\\Users\\hadard\\Downloads\\debug_test\\rgb-proc-tile-17.jpg", 92, 3 );
             if (errorCodeTest) {
                 printf("error! rgb-proc-tile: \"%d\"\n", errorCodeTest);
             }
@@ -3687,7 +3687,7 @@ if (saveJpegs) {
             }
 
 if (tmpImage &&saveJpegs) {
-    auto errorCodeTest = tmpImage->saveAsJPEG ( "C:\\Users\\Hadar\\Downloads\\debug_test\\rgb-proc-tile-18.jpg", 92, 3 );
+    auto errorCodeTest = tmpImage->saveAsJPEG ( "C:\\Users\\hadard\\Downloads\\debug_test\\rgb-proc-tile-18.jpg", 92, 3 );
     if (errorCodeTest) {
         printf("error! rgb-proc-tile: \"%d\"\n", errorCodeTest);
     }
@@ -3739,7 +3739,7 @@ if (tmpImage &&saveJpegs) {
             }
         }
         if (saveJpegs) {
-            auto errorCodeTest = tmpImage->saveAsJPEG ( "C:\\Users\\Hadar\\Downloads\\debug_test\\rgb-proc-tile20.jpg", 92, 3 );
+            auto errorCodeTest = tmpImage->saveAsJPEG ( "C:\\Users\\hadard\\Downloads\\debug_test\\rgb-proc-tile20.jpg", 92, 3 );
             if (errorCodeTest) {
                 printf("error! rgb-proc-tile: \"%d\"\n", errorCodeTest);
             }
@@ -3782,7 +3782,7 @@ if (tmpImage &&saveJpegs) {
                 }
 
 if (saveJpegs) {
-    auto errorCodeTest = tmpImage->saveAsJPEG ( "C:\\Users\\Hadar\\Downloads\\debug_test\\rgb-proc-tile-19.jpg", 92, 3 );
+    auto errorCodeTest = tmpImage->saveAsJPEG ( "C:\\Users\\hadard\\Downloads\\debug_test\\rgb-proc-tile-19.jpg", 92, 3 );
     if (errorCodeTest) {
         printf("error! rgb-proc-tile: \"%d\"\n", errorCodeTest);
     }
@@ -3835,7 +3835,7 @@ if (saveJpegs) {
                     }
                 }
                 if (saveJpegs) {
-                    auto errorCodeTest = tmpImage->saveAsJPEG ( "C:\\Users\\Hadar\\Downloads\\debug_test\\rgb-proc-tile-20.jpg", 92, 3 );
+                    auto errorCodeTest = tmpImage->saveAsJPEG ( "C:\\Users\\hadard\\Downloads\\debug_test\\rgb-proc-tile-20.jpg", 92, 3 );
                     if (errorCodeTest) {
                         printf("error! rgb-proc-tile: \"%d\"\n", errorCodeTest);
                     }
@@ -3899,7 +3899,7 @@ if (saveJpegs) {
                             setUnlessOOG(tmpImage->r(i, j), tmpImage->g(i, j), tmpImage->b(i, j), ro, go, bo);
                         }
                         if (saveJpegs) {
-                            auto errorCodeTest = tmpImage->saveAsJPEG ( "C:\\Users\\Hadar\\Downloads\\debug_test\\rgb-proc-tile\rgb-proc-tile-21.jpg", 92, 3 );
+                            auto errorCodeTest = tmpImage->saveAsJPEG ( "C:\\Users\\hadard\\Downloads\\debug_test\\rgb-proc-tile\rgb-proc-tile-21.jpg", 92, 3 );
                             if (errorCodeTest) {
                                 printf("error! rgb-proc-tile: \"%d\"\n", errorCodeTest);
                             }
@@ -3944,7 +3944,7 @@ if (saveJpegs) {
                     }
                 }
                 if (saveJpegs) {
-                    auto errorCodeTest = tmpImage->saveAsJPEG ( "C:\\Users\\Hadar\\Downloads\\debug_test\\rgb-proc-tile-22.jpg", 92, 3 );
+                    auto errorCodeTest = tmpImage->saveAsJPEG ( "C:\\Users\\hadard\\Downloads\\debug_test\\rgb-proc-tile-22.jpg", 92, 3 );
                     if (errorCodeTest) {
                         printf("error! rgb-proc-tile: \"%d\"\n", errorCodeTest);
                     }
@@ -3987,7 +3987,7 @@ if (saveJpegs) {
             // }
         }
         if (saveJpegs) {
-            auto errorCodeTest = tmpImage->saveAsJPEG ( "C:\\Users\\Hadar\\Downloads\\debug_test\\rgb-proc-tile-23.jpg", 92, 3 );
+            auto errorCodeTest = tmpImage->saveAsJPEG ( "C:\\Users\\hadard\\Downloads\\debug_test\\rgb-proc-tile-23.jpg", 92, 3 );
             if (errorCodeTest) {
                 printf("error! rgb-proc-tile: \"%d\"\n", errorCodeTest);
             }
