@@ -1525,7 +1525,9 @@ private:
         errorCodeTest = baseImg->saveAsJPEG ( "C:\\Users\\hadard\\Downloads\\debug_test\\stage_finish_4_baseImg_before_rgbProc.jpg", 92, 3 );
         if (errorCodeTest) {
             printf("error! image_baseImg_before_rgbProc: \"%d\"\n", errorCodeTest);
-        } //next line with SEG FAULT FOR SOME
+
+        }
+
         ipf.rgbProc(baseImg, labView, nullptr, curve1, curve2, curve, params.toneCurve.saturation, rCurve, gCurve, bCurve, satLimit, satLimitOpacity, ctColorCurve, ctOpacityCurve, opautili, clToningcurve, cl2Toningcurve, customToneCurve1, customToneCurve2, customToneCurvebw1, customToneCurvebw2, rrm, ggm, bbm, autor, autog, autob, expcomp, hlcompr, hlcomprthresh, dcpProf, as, histToneCurve, options.chunkSizeRGB, options.measure);
     readyImgTmp_0 = ipf.lab2rgbOut(labView, 0, 0,fw, fh, params.icm);
         errorCodeTest = readyImgTmp_0->saveAsJPEG ( "C:\\Users\\hadard\\Downloads\\debug_test\\stage_finish_5_image_0.1_after_rgbProc.jpg", 92, 3 );
@@ -1609,26 +1611,51 @@ private:
         if (params.colorToning.enabled && params.colorToning.method == "LabGrid") {
             ipf.colorToningLabGrid(labView, 0, labView->W, 0, labView->H, false);
         }
+
+
+        if (params.sh.highlights > 0) {
+            params.sh.shadows = 0;
+            printf("doing HIGHLIGHT!");
+            baseImg = new Imagefloat(fw, fh);
+            //for the new highlights flow we want to have
+            FILE* file3 = fopen("C:\\Users\\hadard\\Desktop\\dev\\ImAgent2\\build\\before_exposure.bin", "rb");
+            for (int i=0;i<fh;i++) {
+                ipf.readData(file3, baseImg->r(i), baseImg->g(i), baseImg->b(i), fw, i); //todo need this!!
+            }
+            fclose(file3);
+            ipf.rgb2lab(*baseImg, *labView, params.icm.workingProfile);
+            for (int i=0;i<20;i++) {
+                ipf.shadowsHighlights(labView, params.sh.enabled, params.sh.lab, params.sh.highlights, params.sh.shadows, params.sh.radius, 1, params.sh.htonalwidth, params.sh.stonalwidth);
+            }
+        }
         Imagefloat* test = new Imagefloat(fw, fh);
-         ipf.lab2rgb(*labView, *test, (params.icm.workingProfile));
+        ipf.lab2rgb(*labView, *test, (params.icm.workingProfile));
         errorCodeTest = test->saveAsJPEG ( "C:\\Users\\hadard\\Downloads\\debug_test\\stage_finish_6.jpg", 92, 3 );
         ipf.shadowsHighlights(labView, params.sh.enabled, params.sh.lab, params.sh.highlights, params.sh.shadows, params.sh.radius, 1, params.sh.htonalwidth, params.sh.stonalwidth);
-
         test = new Imagefloat(fw, fh);
         ipf.lab2rgb(*labView, *test, (params.icm.workingProfile));
+
         errorCodeTest = test->saveAsJPEG ( "C:\\Users\\hadard\\Downloads\\debug_test\\stage_finish_6.5.jpg", 92, 3 );
+
         if (params.localContrast.enabled) {
             // Alberto's local contrast
             ipf.localContrast(labView, labView->L, params.localContrast, false, 1);//scale);
         }
         // Imagefloat* readyImgTmp_12 = ipf.lab2rgbOut(labView , 0, 0,fw, fh, params.icm);
 
+        FILE* file_highlights = fopen("C:\\Users\\hadard\\Desktop\\dev\\ImAgent2\\build\\highlights.bin", "wb");
+        for (int i=0;i<fh;i++) {
+            ipf.writeData(file_highlights,   test->r(i),  test->g(i), test->b(i), fw);
+        }
+
         FILE* file1 = fopen("C:\\Users\\hadard\\Desktop\\dev\\ImAgent2\\build\\before_15a.bin", "wb");
-        for (int i=0;i<fh;i++)
-        ipf.writeData(file1,   test->r(i),  test->g(i), test->b(i), fw);
+        for (int i=0;i<fh;i++) {
+            ipf.writeData(file1,   test->r(i),  test->g(i), test->b(i), fw);
+        }
         Imagefloat* readyImgTmp = ipf.lab2rgbOut(labView, 0, 0, fw, fh, params.icm);
         // Imagefloat* readyImgTmp = ipf.lab2rgbOut(labView, 0, 0, 8652, 5776, params.icm);
         errorCodeTest = readyImgTmp->saveAsJPEG ( "C:\\Users\\hadard\\Downloads\\debug_test\\stage_finish_7.jpg", 92, 3 );
+        errorCodeTest = readyImgTmp->saveAsJPEG ( "C:\\Users\\hadard\\Downloads\\debug_test\\stage_finish_7_test.jpg", 92, 3 );
         if (errorCodeTest) {
             printf("error!: F\"%d\"\n", errorCodeTest);
         }
@@ -1934,7 +1961,6 @@ private:
 
         ipf.rgb2lab(*tmpImage1, *labView, params.icm.workingProfile);
         Imagefloat* readyImgTmp6 = ipf.lab2rgbOut(labView, 0, 0, fw, fh, params.icm);
-        // Imagefloat* readyImgTmp6 = ipf.lab2rgbOut(labView, 0, 0, 8652, 5776, params.icm);
         errorCodeTest = readyImgTmp6->saveAsJPEG ( "C:\\Users\\hadard\\Downloads\\debug_test\\stage_finish_11.jpg", 92, 3 );
         if (errorCodeTest) {
             printf("error!: \"%d\"\n", errorCodeTest);

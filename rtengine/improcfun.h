@@ -530,6 +530,7 @@ enum class BlurType {
     void rgb2lab(const Imagefloat &src, LabImage &dst, const Glib::ustring &workingSpace);
     void lab2rgb(const LabImage &src, Imagefloat &dst, const Glib::ustring &workingSpace);
     void writeData (FILE *f, float *r, float *g, float *b,  size_t totalElements);
+    void readData (FILE *f, float *r, float *g, float *b,  size_t totalElements, int i);
 
 };
 
