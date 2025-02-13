@@ -80,7 +80,7 @@ private:
 #endif
     void addDir (const Gtk::TreeModel::iterator& iter, const Glib::ustring& dirname);
     Gtk::TreePath expandToDir (const Glib::ustring& dirName);
-    void updateDir (const Gtk::TreeModel::iterator& iter);
+    void updateDir (const Gtk::TreeModel::iterator& iter, bool onlyDelete = false);
 
     IdleRegister idle_register;
 
