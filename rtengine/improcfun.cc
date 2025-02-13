@@ -2395,31 +2395,6 @@ void ImProcFunctions::rgbProc(Imagefloat* working, LabImage* lab, PipetteBuffer 
                 shadowToneCurve(shtonecurve, rtemp, gtemp, btemp, istart, tH, jstart, tW, TS);
             }
 
-#include <cfloat>  // For FLT_MIN
-
-
-            if (saveJpegs) {
-
-                auto errorCodeTest = working->saveAsJPEG ( "C:\\Users\\hadard\\Downloads\\debug_test\\rgb-proc-tile.jpg", 92, 3 );
-                if (errorCodeTest) {
-                    printf("error! rgb-proc-tile: \"%d\"\n", errorCodeTest);
-                }
-                // FILE* file1 = fopen("C:\\Users\\hadard\\Desktop\\dev\\ImAgent2\\build\\after_exposure.bin", "rb");
-                // for (int i=0;i<working->getHeight();i++) {
-                //     readData(file1, working->r(i), working->g(i), working->b(i), working->getWidth(), i); //todo need this!!
-                // }
-                // fclose(file1);
-                //
-                // for (int i = istart, ti = 0; i < tH; i++, ti++) {
-                //     for (int j = jstart, tj = 0; j < tW; j++, tj++) {
-                //         rtemp[ti * TS + tj]  = working->r(i, j)  ;
-                //         gtemp[ti * TS + tj]  = working->g(i, j);
-                //         btemp[ti * TS + tj] = working->b(i, j);
-                //
-                //     }
-                // }
-            }
-
         };
 
 #ifdef _OPENMP

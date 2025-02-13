@@ -1615,27 +1615,36 @@ private:
 
         if (params.sh.highlights > 0) {
             params.sh.shadows = 0;
-            printf("doing HIGHLIGHT!");
+            int times = 20;
+
             baseImg = new Imagefloat(fw, fh);
             //for the new highlights flow we want to have
             FILE* file3 = fopen("C:\\Users\\hadard\\Desktop\\dev\\ImAgent2\\build\\before_exposure.bin", "rb");
             for (int i=0;i<fh;i++) {
-                ipf.readData(file3, baseImg->r(i), baseImg->g(i), baseImg->b(i), fw, i); //todo need this!!
+                ipf.readData(file3, baseImg->r(i), baseImg->g(i), baseImg->b(i), fw, i);
+                for (int j=0;j<fw;j++) {
+
+                    if (baseImg->r(i,j) >=  63000.f || baseImg->g(i,j) >=  63000.f || baseImg->b(i,j) >=  63000.f) {
+                        times = 8;
+                    }
+                }
             }
             fclose(file3);
+            errorCodeTest = baseImg->saveAsJPEG ( "C:\\Users\\hadard\\Downloads\\debug_test\\after_reading_matrix_before_exposure.jpg", 92, 3 );
+
             ipf.rgb2lab(*baseImg, *labView, params.icm.workingProfile);
-            for (int i=0;i<20;i++) {
+            printf("HIGHLIGHTING %d TIMES!", times);
+            for (int i=0;i<times;i++) {
                 ipf.shadowsHighlights(labView, params.sh.enabled, params.sh.lab, params.sh.highlights, params.sh.shadows, params.sh.radius, 1, params.sh.htonalwidth, params.sh.stonalwidth);
             }
         }
         Imagefloat* test = new Imagefloat(fw, fh);
         ipf.lab2rgb(*labView, *test, (params.icm.workingProfile));
-        errorCodeTest = test->saveAsJPEG ( "C:\\Users\\hadard\\Downloads\\debug_test\\stage_finish_6.jpg", 92, 3 );
+        errorCodeTest = test->saveAsJPEG ( "C:\\Users\\hadard\\Downloads\\debug_test\\stage_finish_6_after_hl.jpg", 92, 3 );
         ipf.shadowsHighlights(labView, params.sh.enabled, params.sh.lab, params.sh.highlights, params.sh.shadows, params.sh.radius, 1, params.sh.htonalwidth, params.sh.stonalwidth);
         test = new Imagefloat(fw, fh);
         ipf.lab2rgb(*labView, *test, (params.icm.workingProfile));
 
-        errorCodeTest = test->saveAsJPEG ( "C:\\Users\\hadard\\Downloads\\debug_test\\stage_finish_6.5.jpg", 92, 3 );
 
         if (params.localContrast.enabled) {
             // Alberto's local contrast
