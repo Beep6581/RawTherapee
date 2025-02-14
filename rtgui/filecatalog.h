@@ -255,7 +255,7 @@ public:
     void runFilterDialog ();
 
     void on_realize() override;
-    void reparseDirectory ();
+    void reparseDirectory (bool onlyDelete = false);
     void _openImage (const std::vector<Thumbnail*>& tmb);
 
     void zoomIn ();

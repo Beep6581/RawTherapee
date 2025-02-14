@@ -1769,7 +1769,7 @@ void FileCatalog::filterChanged ()
     _refreshProgressBar();
 }
 
-void FileCatalog::reparseDirectory ()
+void FileCatalog::reparseDirectory (bool onlyDelete)
 {
 
     if (selectedDirectory.empty()) {
@@ -1808,6 +1808,12 @@ void FileCatalog::reparseDirectory ()
         _refreshProgressBar();
     }
 
+    // when handling FILE_MONITOR_EVENT_DELETED we can stop here, otherwise there can be significant performance penalty
+    // with network shares
+    if (onlyDelete) {
+        return;
+    }
+
     // check if a new file has been added
     // build a set of collate-keys for faster search
     std::set<std::string> oldNames;
@@ -1836,9 +1842,9 @@ void FileCatalog::on_dir_changed (const Glib::RefPtr<Gio::File>& file, const Gli
              || (event_type == Gio::FILE_MONITOR_EVENT_DELETED && std::find_if(dirMonitors.cbegin(), dirMonitors.cend(), [&file](const FileMonitorInfo &monitor) { return monitor.filePath == file->get_path(); }) != dirMonitors.cend())) {
         if (!internal) {
             GThreadLock lock;
-            reparseDirectory ();
+            reparseDirectory (event_type == Gio::FILE_MONITOR_EVENT_DELETED ? true : false);
         } else {
-            reparseDirectory ();
+            reparseDirectory (event_type == Gio::FILE_MONITOR_EVENT_DELETED ? true : false);
         }
     }
 }
