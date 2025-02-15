@@ -1131,13 +1131,13 @@ DCPProfile::DCPProfile(const Glib::ustring& filename) :
         });
 
     if (file == nullptr) {
-        printf ("Unable to load DCP profile '%s' !", filename.c_str());
+        std::cerr << "Unable to load DCP profile '" << filename.c_str() << "'!" << std::endl;
         return;
     }
 
     DCPMetadata md(file.get());
     if (!md.parse()) {
-        printf ("Unable to load DCP profile '%s'.", filename.c_str());
+        std::cerr << "Unable to load DCP profile '" << filename.c_str() << "'." << std::endl;
         return;
     }
 
@@ -2241,7 +2241,7 @@ DCPProfile* DCPStore::getProfile(const Glib::ustring& filename) const
         // Add profile
         profile_cache[key] = res;
         if (settings->verbose) {
-            printf("DCP profile '%s' loaded from disk\n", filename.c_str());
+            std::cout << "DCP profile '" << filename.c_str() << "' loaded from disk" << std::endl;
         }
         return res;
     }

@@ -26,8 +26,17 @@
 namespace
 {
 
-const std::array<std::pair<const char*, SaveFormat>, 7> sf_templates = {{
+#ifdef LIBJXL
+#define NUM_SAVE_FORMATS 8
+#else
+#define NUM_SAVE_FORMATS 7
+#endif
+
+const std::array<std::pair<const char*, SaveFormat>, NUM_SAVE_FORMATS> sf_templates = {{
      {"JPEG (8-bit)", SaveFormat("jpg", 8, 8, false)},
+#ifdef LIBJXL
+     {"JXL (32-bit float)", SaveFormat("jxl", 8, 32, true)},
+#endif
      {"TIFF (8-bit)", SaveFormat("tif", 8, 8, false)},
      {"TIFF (16-bit)", SaveFormat("tif", 8, 16, false)},
      {"TIFF (16-bit float)", SaveFormat("tif", 8, 16, true)},
@@ -36,14 +45,12 @@ const std::array<std::pair<const char*, SaveFormat>, 7> sf_templates = {{
      {"PNG (16-bit)", SaveFormat("png", 16, 8, false)}
 }};
 
+#undef NUM_SAVE_FORMATS
 }
 
 SaveFormatPanel::SaveFormatPanel () : listener (nullptr)
 {
-
-
     // ---------------------  FILE FORMAT SELECTOR
-
 
     Gtk::Grid* hb1 = Gtk::manage (new Gtk::Grid ());
     hb1->set_column_spacing(5);
@@ -64,7 +71,6 @@ SaveFormatPanel::SaveFormatPanel () : listener (nullptr)
     hb1->show_all();
 
     // ---------------------  JPEG OPTIONS
-
 
     jpegOpts = Gtk::manage (new Gtk::Grid ());
     jpegOpts->set_column_spacing(15);
@@ -92,8 +98,22 @@ SaveFormatPanel::SaveFormatPanel () : listener (nullptr)
     jpegOpts->attach(*jpegSubSamp, 1, 1, 1, 1);
     jpegOpts->show_all ();
 
-    // ---------------------  TIFF OPTIONS
 
+    // ---------------------  JXL OPTIONS
+
+    jxlOpts = Gtk::manage (new Gtk::Grid ());
+    jxlOpts->set_column_spacing(15);
+    jxlOpts->set_row_spacing(5);
+    setExpandAlignProperties(jxlOpts, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_CENTER);
+
+    jxlQual = Gtk::manage (new Adjuster (M("SAVEDLG_JXLQUAL"), 0, 100, 1, 100) );
+    setExpandAlignProperties(jxlQual, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_CENTER);
+    jxlQual->setAdjusterListener (this);
+
+    jxlOpts->attach(*jxlQual, 0, 0, 1, 2);
+    jxlOpts->show_all ();
+
+    // ---------------------  TIFF OPTIONS
 
     tiffUncompressed = Gtk::manage (new Gtk::CheckButton (M("SAVEDLG_TIFFUNCOMPRESSED")) );
     setExpandAlignProperties(tiffUncompressed, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_CENTER);
@@ -105,9 +125,7 @@ SaveFormatPanel::SaveFormatPanel () : listener (nullptr)
     bigTiff->signal_toggled().connect( sigc::mem_fun(*this, &SaveFormatPanel::formatChanged));
     bigTiff->show_all();
 
-
     // ---------------------  MAIN BOX
-
 
     savesPP = Gtk::manage (new Gtk::CheckButton (M("SAVEDLG_SAVESPP")));
     savesPP->signal_toggled().connect( sigc::mem_fun(*this, &SaveFormatPanel::formatChanged));
@@ -118,6 +136,7 @@ SaveFormatPanel::SaveFormatPanel () : listener (nullptr)
 
     attach (*hb1, 0, 0, 1, 1);
     attach (*jpegOpts, 0, 1, 1, 1);
+    attach (*jxlOpts, 0, 1, 1, 1);
     attach (*tiffUncompressed, 0, 2, 1, 1);
     attach (*bigTiff, 0, 3, 1, 1);
     attach (*savesPP, 0, 4, 1, 2);
@@ -159,6 +178,7 @@ void SaveFormatPanel::init (SaveFormat &sf)
 
     jpegSubSamp->set_active(sf.jpegSubSamp - 1);
     jpegQual->setValue(sf.jpegQuality);
+    jxlQual->setValue(sf.jxlQuality);
     savesPP->set_active(sf.saveParams);
     tiffUncompressed->set_active(sf.tiffUncompressed);
     bigTiff->set_active(sf.bigTiff);
@@ -178,6 +198,7 @@ SaveFormat SaveFormatPanel::getFormat ()
 
     sf.jpegQuality = jpegQual->getValue();
     sf.jpegSubSamp = jpegSubSamp->get_active_row_number() + 1;
+    sf.jxlQuality = jxlQual->getValue();
     sf.tiffUncompressed = tiffUncompressed->get_active();
     sf.bigTiff = bigTiff->get_active();
     sf.saveParams = savesPP->get_active();
@@ -197,16 +218,22 @@ void SaveFormatPanel::formatChanged ()
 
     if (fr == "jpg") {
         jpegOpts->show_all();
-        tiffUncompressed->hide();
-        bigTiff->hide();
-    } else if (fr == "png") {
+    } else {
         jpegOpts->hide();
-        tiffUncompressed->hide();
-        bigTiff->hide();
-    } else if (fr == "tif") {
-        jpegOpts->hide();
+    }
+
+    if (fr == "jxl") {
+        jxlOpts->show_all();
+    } else {
+        jxlOpts->hide();
+    }
+
+    if (fr == "tif") {
         tiffUncompressed->show_all();
         bigTiff->show_all();
+    } else {
+        tiffUncompressed->hide();
+        bigTiff->hide();
     }
 
     if (listener) {

@@ -329,6 +329,7 @@ bool BatchQueue::saveBatchQueue ()
             file << entry->filename << '|' << entry->savedParamsFile << '|' << entry->outFileName << '|' << saveFormat.format << '|'
 #endif
                  << saveFormat.jpegQuality << '|' << saveFormat.jpegSubSamp << '|'
+                 << (int) saveFormat.jxlQuality << '|'
                  << saveFormat.pngBits << '|'
                  << saveFormat.tiffBits << '|'  << (saveFormat.tiffFloat ? 1 : 0) << '|'  << saveFormat.tiffUncompressed << '|'
                  << saveFormat.saveParams << '|' << entry->forceFormatOpts << '|'
@@ -394,6 +395,7 @@ bool BatchQueue::loadBatchQueue ()
             const auto saveFmt = nextStringOr (options.saveFormat.format);
             const auto jpegQuality = nextIntOr (options.saveFormat.jpegQuality);
             const auto jpegSubSamp = nextIntOr (options.saveFormat.jpegSubSamp);
+            const auto jxlQuality = nextIntOr (options.saveFormat.jxlQuality);
             const auto pngBits = nextIntOr (options.saveFormat.pngBits);
             const auto tiffBits = nextIntOr (options.saveFormat.tiffBits);
             const auto tiffFloat = nextIntOr (options.saveFormat.tiffFloat);
@@ -437,6 +439,7 @@ bool BatchQueue::loadBatchQueue ()
                 saveFormat.format = saveFmt;
                 saveFormat.jpegQuality = jpegQuality;
                 saveFormat.jpegSubSamp = jpegSubSamp;
+                saveFormat.jxlQuality = jxlQuality;
                 saveFormat.pngBits = pngBits;
                 saveFormat.tiffBits = tiffBits;
                 saveFormat.tiffFloat = tiffFloat == 1;
@@ -792,6 +795,10 @@ rtengine::ProcessingJob* BatchQueue::imageReady(rtengine::IImagefloat* img)
             err = img->saveAsPNG (fname, saveFormat.pngBits);
         } else if (saveFormat.format == "jpg") {
             err = img->saveAsJPEG (fname, saveFormat.jpegQuality, saveFormat.jpegSubSamp);
+#ifdef LIBJXL
+        } else if (saveFormat.format == "jxl") {
+            err = img->saveAsJXL (fname, saveFormat.jxlQuality);
+#endif
         }
 
         delete img;

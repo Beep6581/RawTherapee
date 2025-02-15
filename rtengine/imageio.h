@@ -92,6 +92,7 @@ public:
 
 #ifdef LIBJXL
     int loadJXL (const Glib::ustring &fname);
+    int saveJXL (const Glib::ustring &fname, float quality = 99.f) const;
 #endif
 
     int loadPNG (const Glib::ustring &fname);
