@@ -3004,7 +3004,6 @@ TP_LOCALLAB_ACTIV;Luminance only
 TP_LOCALLAB_ACTIVSPOT;Enable Spot
 TP_LOCALLAB_ADJ;Equalizer Color
 TP_LOCALLAB_AMOUNT;Amount
-//TP_LOCALLAB_ARTIF;Shape detection
 TP_LOCALLAB_ARTIF;ΔE Shape detection
 TP_LOCALLAB_ARTIF_TOOLTIP;ΔE scope threshold increases the range of ΔE scope. High values are for very wide gamut images.\nIncreasing ΔE decay can improve shape detection, but can also reduce the scope.
 TP_LOCALLAB_AUTOGRAY;Auto mean luminance (Yb%)
