@@ -1568,7 +1568,7 @@ HISTORY_MSG_LOCAL_FEATHERVIB;Local - Vib Gradient feather
 HISTORY_MSG_LOCAL_FEATHERWAV;Local - Wav Gradient feather
 HISTORY_MSG_LOCAL_GAMUTMUNSEL;Local - SC - Avoid Color Shift
 HISTORY_MSG_LOCAL_GHSMETHOD;Local - GHS - Method
-HISTORY_MSG_LOCAL_GHS_D;Local - GHS - Strech factor
+HISTORY_MSG_LOCAL_GHS_D;Local - GHS - Stretch factor
 HISTORY_MSG_LOCAL_GHS_SLOPE;Local - GHS - Lab slope factor
 HISTORY_MSG_LOCAL_GHS_CHRO;Local - GHS - Lab chromaticity factor
 HISTORY_MSG_LOCAL_GHS_B;Local - GHS - Local intensity
