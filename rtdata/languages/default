@@ -3863,9 +3863,7 @@ TP_LOCALLAB_TOOLMASK_TOOLTIP;Structure mask (slider) with the checkbox 'Structur
 TP_LOCALLAB_TRANSIT;Transition Gradient
 TP_LOCALLAB_TRANSITGRAD;Symmetry X & Y
 TP_LOCALLAB_TRANSITGRAD_TOOLTIP;Allows you to vary the y-axis transition.
-//TP_LOCALLAB_TRANSITVALUE;Transition value
 TP_LOCALLAB_TRANSITVALUE;Value
-//TP_LOCALLAB_TRANSITWEAK;Transition decay (linear-log)
 TP_LOCALLAB_TRANSITWEAK;Decay (linear-log)
 TP_LOCALLAB_TRANSITWEAK_TOOLTIP;Adjust transition decay function: 1 linear , 2 parabolic, 3 cubic up to ^25.\nCan be used in conjunction with very low transition values to reduce defects (CBDL, Wavelets, Color &amp; Light).
 TP_LOCALLAB_TRANSIT_TOOLTIP;Adjust smoothness of transition between affected and unaffected areas as a percentage of the 'radius'.
