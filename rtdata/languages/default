@@ -3629,7 +3629,6 @@ TP_LOCALLAB_PREVHIDE;Hide additional settings
 TP_LOCALLAB_PREVIEW;Preview ΔE
 TP_LOCALLAB_PREVSHOW;Show additional settings
 TP_LOCALLAB_PRIMILLFRAME;Primaries & Illuminant
-//TP_LOCALLAB_PROXI;ΔE decay
 TP_LOCALLAB_PROXI;Decay
 TP_LOCALLAB_PROXI;ΔE decay
 TP_LOCALLAB_QJMODE;Tone Mapping Operators Q(CAM16) & J(Jz) 
