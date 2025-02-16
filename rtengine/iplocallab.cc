@@ -7618,7 +7618,7 @@ void ImProcFunctions::InverseSharp_Local(float **loctemp, const float hueref, co
                 const float dE = std::sqrt(kab * (kch * chrodelta2 + kH * huedelta2) + kL * SQR(refL - origblur->L[y][x]));
 
                 float reducdE = calcreducdE(dE, maxdE, mindE, maxdElim, mindElim, lp.iterat, limscope, lp.senssha);
-                if(lp.fullim == 3 ) {//disable transit
+                if(lp.fullim == 3 ) {//disable scope
                     reducdE = 1.f;
                 }
 
@@ -7970,7 +7970,11 @@ void ImProcFunctions::transit_shapedetect_retinex(int call, int senstype, LabIma
         const int xend = rtengine::min(static_cast<int>(lp.xc + lp.lx) - cx, original->W);
 
 
-        const float ach = lp.trans / 100.f;
+        float ach = lp.trans / 100.f;
+        if(lp.fullim == 3 ) {//disable transit
+            ach = 1.f;
+        }
+        
         const float varsens = lp.sensh;
 
         int GW = transformed->W;
@@ -8084,7 +8088,12 @@ void ImProcFunctions::transit_shapedetect_retinex(int call, int senstype, LabIma
                     }
 
                     float cli, clc;
-                    const float reducdE = calcreducdE(dE, maxdE, mindE, maxdElim, mindElim, lp.iterat, limscope, varsens) / 100.f;
+                    float reducdE = calcreducdE(dE, maxdE, mindE, maxdElim, mindElim, lp.iterat, limscope, varsens) / 100.f;
+                    
+                    if(lp.fullim == 3 ) {//disable scope
+                        reducdE = 1.f;
+                    }
+
                     previewint = reducdE * 10000.f * lp.colorde; //settings->previewselection;
 
                     if (call == 2) {
