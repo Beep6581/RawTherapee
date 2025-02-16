@@ -3014,9 +3014,7 @@ TP_LOCALLAB_AVOIDCOLORSHIFT_TOOLTIP;Fit colors into gamut of the working color s
 TP_LOCALLAB_AVOIDMUN;Munsell correction only
 TP_LOCALLAB_AVOIDMUN_TOOLTIP;Munsell correction always disabled when Jz or CAM16 is used.
 TP_LOCALLAB_AVOIDRAD;Soft radius
-//TP_LOCALLAB_BALAN;ab-L balance (ΔE)
 TP_LOCALLAB_BALAN;Luma-Chroma balance
-
 TP_LOCALLAB_BALANEXP;Laplacian balance
 //TP_LOCALLAB_BALANH;C-H balance (ΔE)
 TP_LOCALLAB_BALANH;Hue-Chroma balance
