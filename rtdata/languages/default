@@ -3865,7 +3865,6 @@ TP_LOCALLAB_TOOLMASK;Mask Tools
 TP_LOCALLAB_TOOLMASK_2;Wavelets
 TP_LOCALLAB_TOOLMASK_TOOLTIP;Structure mask (slider) with the checkbox 'Structure mask as tool' checked: in this case a mask showing the structure will be generated after one or more of the 2 curves L(L) or LC(H) has been modified.\n Here, the 'Structure mask' behaves like the other Mask tools : Gamma, Slope, etc.\n It allows you to vary the action on the mask according to the structure of the image.
 TP_LOCALLAB_TRANSIT;Transition Gradient
-//TP_LOCALLAB_TRANSITGRAD;Transition differentiation XY
 TP_LOCALLAB_TRANSITGRAD;Symmetry X & Y
 TP_LOCALLAB_TRANSITGRAD_TOOLTIP;Allows you to vary the y-axis transition.
 //TP_LOCALLAB_TRANSITVALUE;Transition value
