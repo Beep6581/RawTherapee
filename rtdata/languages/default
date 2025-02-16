@@ -3707,7 +3707,7 @@ TP_LOCALLAB_SHADEXCOMP;Shadow compression
 TP_LOCALLAB_SHADHIGH;Shadows/Highlights, Equalizer & GHS
 TP_LOCALLAB_SHADHMASK_TOOLTIP;Lowers the highlights of the mask in the same way as the shadows/highlights algorithm.
 TP_LOCALLAB_SHADMASK_TOOLTIP;Lifts the shadows of the mask in the same way as the shadows/highlights algorithm.
-TP_LOCALLAB_SHADOWHIGHLIGHT_TOOLTIP;Adjust shadows and highlights either with 'Shadows Highlights' sliders or with 'Tone Equalizer' or with 'Generalized Hyperbolic Stretch' (GHS).\nCan be used instead of, or in conjunction with the Exposure module, or for GHS as a tone mapper.
+TP_LOCALLAB_SHADOWHIGHLIGHT_TOOLTIP;Adjust shadows and highlights either with 'Shadows Highlights' sliders, 'Tone Equalizer', or 'Generalized Hyperbolic Stretch' (GHS).\nCan be used instead of, or in conjunction with the Exposure module, or for GHS as a tone mapper.
 TP_LOCALLAB_SHAMASKCOL;Shadows
 TP_LOCALLAB_SHAPETYPE;Spot shape
 TP_LOCALLAB_SHAPE_TOOLTIP;'Ellipse' is the normal mode.\n 'Rectangle' can be used in certain cases, for example to work in full-image mode by placing the delimiters outside the preview area. In this case, set transition = 100.\n\nFuture developments will include polygon shapes and Bezier curves.
