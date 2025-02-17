@@ -3294,7 +3294,7 @@ TP_LOCALLAB_GHS_LC;Value (LC)
 TP_LOCALLAB_GHS_LC_FRAME;Stretch Regularization & Midtones
 TP_LOCALLAB_GHS_LC_TOOLTIP;Slightly increases local contrast that was weakened by stretching.\nCan be completed by other tools specific to local contrast such as wavelets.
 TP_LOCALLAB_GHS_MID;Midtones
-TP_LOCALLAB_GHS_MID_TOOLTIP;Adjusts midtone balance after GHS transformation.\n Can be used to rebalance the midtones of the image - only if necessary - after one or more Stretches.
+TP_LOCALLAB_GHS_MID_TOOLTIP;Adjusts midtone balance after GHS transformation.\n Can be used to rebalance the midtones of the image after stretching.
 TP_LOCALLAB_GHS_BPFRAME_TOOLTIP;Sets the Black point (BP linear), White point (WP linear) and Highlight for a linear stretch of the image.\n\n * Black Point (BP linear) and White Point (WP linear) settings are only available if Stretch factor (D) is between 0.001 and 0.002 so as to not affect the histogram.\n\n * Black point (BP linear) and White point (WP linear) settings are sensitive to the general settings upstream of GHS: Highlight reconstruction, White balance and RAW processes.\n\n * To have relevant Black Point (BP linear) and White Point (WP linear) settings, the entire image must be analyzed. It is recommended to use 'Fit whole image to screen - Shortcut Alt-f'.
 TP_LOCALLAB_GHS_BLACKPOINT_FRAME;Black point/White point/Highlights
 TP_LOCALLAB_GHS_BLP;Black point (BP linear)
