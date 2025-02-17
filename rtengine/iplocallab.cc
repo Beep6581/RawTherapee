@@ -8408,11 +8408,10 @@ void ImProcFunctions::transit_shapedetect(int senstype, const LabImage * bufexpo
                 const float dE = rsob + std::sqrt(kab * (SQR(refa - maskptr->a[y - ystart][x - xstart]) + SQR(refb - maskptr->b[y - ystart][x - xstart])) + kL * SQR(refL - maskptr->L[y - ystart][x - xstart]));
                 const float clc = (previewcb) ? settings->previewselection * 100.f : bufchro[y - ystart][x - xstart];
                 float reducdE = calcreducdE(dE, maxdE, mindE, maxdElim, mindElim, lp.iterat, limscope, varsens);
-                float realstrchdE = reducdE * clc;
                 if(lp.fullim == 3 ) {//disable scope
-                    realstrchdE = 1.f;
                     reducdE = 1.f;
                 }
+                float realstrchdE = reducdE * clc;
 
                 if (rL > 0.1f) { //to avoid crash with very low gamut in rare cases ex : L=0.01 a=0.5 b=-0.9
                     if (zone > 0) {
