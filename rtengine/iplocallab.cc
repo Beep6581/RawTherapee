@@ -7569,7 +7569,11 @@ void ImProcFunctions::InverseSharp_Local(float **loctemp, const float hueref, co
 {
 //local sharp
     //  BENCHFUN
-    const float ach = lp.trans / 100.f;
+    float ach = lp.trans / 100.f;
+    if(lp.fullim == 3 ) {//disable transit
+        ach = 1.f;
+    }
+    
     const int GW = transformed->W;
     const int GH = transformed->H;
     const float refa = chromaref * cos(hueref) * 327.68f;
@@ -7637,7 +7641,10 @@ void ImProcFunctions::InverseSharp_Local(float **loctemp, const float hueref, co
                 const float huedelta2 = abdelta2 - chrodelta2;
                 const float dE = std::sqrt(kab * (kch * chrodelta2 + kH * huedelta2) + kL * SQR(refL - origblur->L[y][x]));
 
-                const float reducdE = calcreducdE(dE, maxdE, mindE, maxdElim, mindElim, lp.iterat, limscope, lp.senssha);
+                float reducdE = calcreducdE(dE, maxdE, mindE, maxdElim, mindElim, lp.iterat, limscope, lp.senssha);
+                if(lp.fullim == 3 ) {//disable scope
+                    reducdE = 1.f;
+                }
 
                 switch (zone) {
                     case 0: { // outside selection and outside transition zone => full effect, no transition
@@ -7707,7 +7714,11 @@ void ImProcFunctions::InverseSharp_Local(float **loctemp, const float hueref, co
 void ImProcFunctions::Sharp_Local(int call, float **loctemp, int senstype, const float hueref, const float chromaref, const float lumaref, local_params & lp, LabImage * original, LabImage * transformed, int cx, int cy, int sk)
 {
     //BENCHFUN
-    const float ach = lp.trans / 100.f;
+    float ach = lp.trans / 100.f;
+    if(lp.fullim == 3 ) {//disable transit
+        ach = 1.f;
+    }
+   
     const float varsens = senstype == 1 ? lp.senslc : lp.senssha;
     const bool sharshow = (lp.showmasksharmet == 1);
     const bool previewshar = (lp.showmasksharmet == 2);
@@ -7791,8 +7802,11 @@ void ImProcFunctions::Sharp_Local(int call, float **loctemp, int senstype, const
                 const float dE = std::sqrt(kab * (kch * chrodelta2 + kH * huedelta2) + kL * SQR(refL - origblur->L[y][x]));
 
                 float reducdE = calcreducdE(dE, maxdE, mindE, maxdElim, mindElim, lp.iterat, limscope, varsens);
-                const float reducview = reducdE;
+                float reducview = reducdE;
                 reducdE *= localFactor;
+                if(lp.fullim == 3 ) {//disable scope
+                    reducview = reducdE = 1.f;
+                }
 
                 float difL;
 
@@ -7980,7 +7994,11 @@ void ImProcFunctions::transit_shapedetect_retinex(int call, int senstype, LabIma
         const int xend = rtengine::min(static_cast<int>(lp.xc + lp.lx) - cx, original->W);
 
 
-        const float ach = lp.trans / 100.f;
+        float ach = lp.trans / 100.f;
+        if(lp.fullim == 3 ) {//disable transit
+            ach = 1.f;
+        }
+        
         const float varsens = lp.sensh;
 
         int GW = transformed->W;
@@ -8094,7 +8112,12 @@ void ImProcFunctions::transit_shapedetect_retinex(int call, int senstype, LabIma
                     }
 
                     float cli, clc;
-                    const float reducdE = calcreducdE(dE, maxdE, mindE, maxdElim, mindElim, lp.iterat, limscope, varsens) / 100.f;
+                    float reducdE = calcreducdE(dE, maxdE, mindE, maxdElim, mindElim, lp.iterat, limscope, varsens) / 100.f;
+                    
+                    if(lp.fullim == 3 ) {//disable scope
+                        reducdE = 1.f;
+                    }
+
                     previewint = reducdE * 10000.f * lp.colorde; //settings->previewselection;
 
                     if (call == 2) {
@@ -8210,7 +8233,11 @@ void ImProcFunctions::transit_shapedetect(int senstype, const LabImage * bufexpo
     const int bfh = yend - ystart;
 //    printf("h=%f l=%f c=%f s=%f\n", hueref, lumaref, chromaref, sobelref);
 //    printf("bfh=%i bfw=%i\n", bfh, bfw);
-    const float ach = lp.trans / 100.f;
+    float ach = lp.trans / 100.f;
+    if(lp.fullim == 3 ) {//disable transit
+        ach = 1.f;
+    }
+    
     float varsens = lp.sensex;
 
     if (senstype == 6 || senstype == 7) { //cbdl
@@ -8238,8 +8265,8 @@ void ImProcFunctions::transit_shapedetect(int senstype, const LabImage * bufexpo
 
     const bool cbshow = ((lp.showmaskcbmet == 1 || lp.showmaskcbmet == 2) &&  senstype == 6);
     const bool tmshow = ((lp.showmasktmmet == 1 || lp.showmasktmmet == 2) &&  senstype == 8);
-    const bool previewcb = ((lp.showmaskcbmet == 4) &&  senstype == 6);
-    const bool previewtm = ((lp.showmasktmmet == 4) &&  senstype == 8);
+    const bool previewcb = ((lp.showmaskcbmet == 4) &&  senstype == 6 && lp.fullim != 3);
+    const bool previewtm = ((lp.showmasktmmet == 4) &&  senstype == 8 && lp.fullim != 3);
 
     const std::unique_ptr<LabImage> origblur(new LabImage(bfw, bfh));
     std::unique_ptr<LabImage> origblurmask;
@@ -8404,8 +8431,11 @@ void ImProcFunctions::transit_shapedetect(int senstype, const LabImage * bufexpo
 
                 const float dE = rsob + std::sqrt(kab * (SQR(refa - maskptr->a[y - ystart][x - xstart]) + SQR(refb - maskptr->b[y - ystart][x - xstart])) + kL * SQR(refL - maskptr->L[y - ystart][x - xstart]));
                 const float clc = (previewcb) ? settings->previewselection * 100.f : bufchro[y - ystart][x - xstart];
-                const float reducdE = calcreducdE(dE, maxdE, mindE, maxdElim, mindElim, lp.iterat, limscope, varsens);
-                const float realstrchdE = reducdE * clc;
+                float reducdE = calcreducdE(dE, maxdE, mindE, maxdElim, mindElim, lp.iterat, limscope, varsens);
+                if(lp.fullim == 3 ) {//disable scope
+                    reducdE = 1.f;
+                }
+                float realstrchdE = reducdE * clc;
 
                 if (rL > 0.1f) { //to avoid crash with very low gamut in rare cases ex : L=0.01 a=0.5 b=-0.9
                     if (zone > 0) {
@@ -9164,7 +9194,11 @@ void ImProcFunctions::BlurNoise_Local(LabImage *tmp1, LabImage * originalmask, c
     const int xstart = rtengine::max(static_cast<int>(lp.xc - lp.lxL) - cx, 0);
     const int xend = rtengine::min(static_cast<int>(lp.xc + lp.lx) - cx, original->W);
 
-    const float ach = lp.trans / 100.f;
+    float ach = lp.trans / 100.f;
+    if(lp.fullim == 3 ) {//disable transit
+        ach = 1.f;
+    }
+    
     const int GW = transformed->W;
     const int GH = transformed->H;
     const float refa = chromaref * cos(hueref) * 327.68f;
