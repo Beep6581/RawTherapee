@@ -29,7 +29,7 @@
 #include "LUT.h"
 #include "rtengine.h"
 
-#include "../rtgui/threadutils.h"
+#include "rtgui/threadutils.h"
 
 namespace Glib
 {
@@ -78,7 +78,6 @@ protected:
     ColorTemp autoWB;
     ColorTemp currWBloc;
     ColorTemp autoWBloc;
-    ColorTemp currWBitc;
 
     double lastAwbEqual;
     StandardObserver lastAwbObserver{ColorTemp::DEFAULT_OBSERVER};
@@ -161,6 +160,7 @@ protected:
     WavOpacityCurveBY waOpacityCurveBY;
     WavOpacityCurveW waOpacityCurveW;
     WavOpacityCurveWL waOpacityCurveWL;
+    WavOpacityCurveWL icmOpacityCurveWL;
     RetinextransmissionCurve dehatransmissionCurve;
     RetinexgaintransmissionCurve dehagaintransmissionCurve;
 
@@ -183,6 +183,8 @@ protected:
     PreviewImageListener* imageListener;
     AutoExpListener* aeListener;
     AutoCamListener* acListener;
+    AutoBlackListener* ablListener;
+    AutoBlackxListener* ablxListener;
     AutoBWListener* abwListener;
     AutoWBListener* awbListener;
     FlatFieldAutoClipListener *flatFieldAutoClipListener;
@@ -306,6 +308,7 @@ protected:
     LocLLmaskCurve locllmasCurve;
     LocHHmaskCurve lochhmasCurve;
     LocHHmaskCurve lochhhmasCurve;
+    LocHHmaskCurve lochhhmascieCurve;
     LocCCmaskCurve locccmasexpCurve;
     LocLLmaskCurve locllmasexpCurve;
     LocHHmaskCurve lochhmasexpCurve;
@@ -344,6 +347,7 @@ protected:
     LocwavCurve locwavCurve;
     LocwavCurve loclmasCurveblwav;
     LocwavCurve loclmasCurvecolwav;
+    LocwavCurve loclmasCurveciewav;
     LocwavCurve loclevwavCurve;
     LocwavCurve locconwavCurve;
     LocwavCurve loccompwavCurve;
@@ -517,6 +521,15 @@ public:
     {
         acListener = acl;
     }
+    void setAutoBlackListener  (AutoBlackListener* abl) override
+    {
+        ablListener = abl;
+    }
+    void setAutoBlackxListener  (AutoBlackxListener* ablx) override
+    {
+        ablxListener = ablx;
+    }
+    
     void setAutoBWListener   (AutoBWListener* abw) override
     {
         abwListener = abw;

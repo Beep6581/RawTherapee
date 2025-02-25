@@ -23,7 +23,7 @@
 #include "options.h"
 #include "rtscalable.h"
 
-#include "../rtengine/procparams.h"
+#include "rtengine/procparams.h"
 
 PreviewWindow::PreviewWindow () : previewHandler(nullptr), mainCropWin(nullptr), imageArea(nullptr), imgX(0), imgY(0), imgW(0), imgH(0),
     zoom(0.0), press_x(0), press_y(0), isMoving(false), needsUpdate(false), cursor_type(CSUndefined)
@@ -156,7 +156,7 @@ bool PreviewWindow::on_draw(const ::Cairo::RefPtr< Cairo::Context> &cr)
         int x, y, w, h;
         getObservedFrameArea (x, y, w, h);
         if (x>imgX || y>imgY || w < imgW || h < imgH) {
-            double s = RTScalable::getScale();
+            const double s = RTScalable::scalePixelSize(1.);
             double rectX = x + 0.5;
             double rectY = y + 0.5;
             double rectW = std::min(w, (int)(imgW - (x - imgX) - 1));
@@ -307,14 +307,14 @@ Gtk::SizeRequestMode PreviewWindow::get_request_mode_vfunc () const
 
 void PreviewWindow::get_preferred_height_vfunc (int &minimum_height, int &natural_height) const
 {
-    minimum_height= 50 * RTScalable::getScale();
-    natural_height = 100 * RTScalable::getScale();
+    minimum_height= RTScalable::scalePixelSize(50);
+    natural_height = RTScalable::scalePixelSize(100);
 }
 
 void PreviewWindow::get_preferred_width_vfunc (int &minimum_width, int &natural_width) const
 {
-    minimum_width = 80 * RTScalable::getScale();
-    natural_width = 120 * RTScalable::getScale();
+    minimum_width = RTScalable::scalePixelSize(80);
+    natural_width = RTScalable::scalePixelSize(120);
 }
 
 void PreviewWindow::get_preferred_height_for_width_vfunc (int width, int &minimum_height, int &natural_height) const

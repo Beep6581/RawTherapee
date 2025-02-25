@@ -29,7 +29,7 @@ public:
     virtual void shcChanged() = 0;
 };
 
-class SHCSelector final : public Gtk::DrawingArea, BackBuffer
+class SHCSelector final : public Gtk::DrawingArea
 {
 
 protected:
@@ -61,7 +61,7 @@ protected:
     bool on_button_press_event (GdkEventButton* event) override;
     bool on_button_release_event (GdkEventButton* event) override;
     bool on_motion_notify_event (GdkEventMotion* event) override;
-    void updateBackBuffer();
+    void updateDrawingArea (const ::Cairo::RefPtr< Cairo::Context> &cr);
 
 public:
 

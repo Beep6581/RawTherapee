@@ -30,8 +30,8 @@
 #include "saveasdlg.h"
 #include "thumbnaillistener.h"
 
-#include "../rtengine/noncopyable.h"
-#include "../rtengine/rtengine.h"
+#include "rtengine/noncopyable.h"
+#include "rtengine/rtengine.h"
 
 namespace rtengine
 {
@@ -119,7 +119,7 @@ public:
     void clearParamChanges() override;
 
     // thumbnaillistener interface
-    void procParamsChanged (Thumbnail* thm, int whoChangedIt) override;
+    void procParamsChanged (Thumbnail* thm, int whoChangedIt, bool upgradeHint) override;
 
     // HistoryBeforeLineListener
     void historyBeforeLineChanged (const rtengine::procparams::ProcParams& params) override;

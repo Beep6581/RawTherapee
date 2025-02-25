@@ -18,11 +18,45 @@
  */
 #pragma once
 
+#include <functional>
+#include <vector>
+
 #include <type_traits>
 #include <glibmm/ustring.h>
 
 namespace rtengine
 {
+
+/**
+ * A function object that supplies a value and returns the same value for
+ * subsequent calls.
+ */
+template <typename T>
+struct MemoizingSupplier {
+    using Supplier = std::function<T()>;
+
+    /**
+     * @param supplier The delegate supplier.
+     */
+    explicit MemoizingSupplier(const Supplier &supplier) :
+        supplier(supplier)
+    {
+    }
+
+    T operator()() const
+    {
+        if (!is_cached) {
+            value = supplier();
+            is_cached = true;
+        }
+        return value;
+    }
+
+private:
+    const Supplier supplier;
+    mutable T value;
+    mutable bool is_cached{false};
+};
 
 // Update a point of a Cairo::Surface by accessing the raw data
 void poke255_uc(unsigned char*& dest, unsigned char r, unsigned char g, unsigned char b);
@@ -43,6 +77,8 @@ constexpr typename std::underlying_type<ENUM>::type toUnderlying(ENUM value)
     return static_cast<typename std::underlying_type<ENUM>::type>(value);
 }
 
+std::vector<std::uint8_t> getFileData(const Glib::ustring &filename);
+
 // Return lower case extension without the "." or "" if the given name contains no "."
 Glib::ustring getFileExtension(const Glib::ustring& filename);
 // Return true if file has .jpeg or .jpg extension (ignoring case)
@@ -51,6 +87,11 @@ bool hasJpegExtension(const Glib::ustring& filename);
 bool hasTiffExtension(const Glib::ustring& filename);
 // Return true if file has .png extension (ignoring case)
 bool hasPngExtension(const Glib::ustring& filename);
+
+#ifdef LIBJXL
+// Return true if file has .jxl extension (ignoring case)
+bool hasJxlExtension(const Glib::ustring& filename);
+#endif
 
 void swab(const void* from, void* to, ssize_t n);
 

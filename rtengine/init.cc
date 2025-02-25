@@ -32,8 +32,9 @@
 #include "ffmanager.h"
 #include "rtthumbnail.h"
 #include "profilestore.h"
-#include "../rtgui/threadutils.h"
+#include "rtgui/threadutils.h"
 #include "rtlensfun.h"
+#include "metadata.h"
 #include "procparams.h"
 
 namespace rtengine
@@ -43,6 +44,7 @@ const Settings* settings;
 
 MyMutex* lcmsMutex = nullptr;
 MyMutex *fftwMutex = nullptr;
+MyMutex *librawMutex = nullptr;
 
 int init (const Settings* s, const Glib::ustring& baseDir, const Glib::ustring& userSettingsDir, bool loadAll)
 {
@@ -114,14 +116,19 @@ int init (const Settings* s, const Glib::ustring& baseDir, const Glib::ustring& 
 }
 
     Color::init ();
+    Exiv2Metadata::init();
+
     delete lcmsMutex;
     lcmsMutex = new MyMutex;
     fftwMutex = new MyMutex;
+    delete librawMutex;
+    librawMutex = new MyMutex;
     return 0;
 }
 
 void cleanup ()
 {
+    Exiv2Metadata::cleanup();
     ProcParams::cleanup ();
     Color::cleanup ();
     RawImageSource::cleanup ();

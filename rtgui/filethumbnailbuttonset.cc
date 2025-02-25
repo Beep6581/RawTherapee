@@ -18,20 +18,20 @@
  */
 #include "filethumbnailbuttonset.h"
 
-#include "rtimage.h"
+#include "rtsurface.h"
 #include "multilangmgr.h"
 #include "lwbutton.h"
 #include "rtsurface.h"
 
 bool FileThumbnailButtonSet::iconsLoaded = false;
 
-Cairo::RefPtr<RTSurface> FileThumbnailButtonSet::rankIcon;
-Cairo::RefPtr<RTSurface> FileThumbnailButtonSet::gRankIcon;
-Cairo::RefPtr<RTSurface> FileThumbnailButtonSet::unRankIcon;
-Cairo::RefPtr<RTSurface> FileThumbnailButtonSet::trashIcon;
-Cairo::RefPtr<RTSurface> FileThumbnailButtonSet::unTrashIcon;
-Cairo::RefPtr<RTSurface> FileThumbnailButtonSet::processIcon;
-std::array<Cairo::RefPtr<RTSurface>, 6> FileThumbnailButtonSet::colorLabelIcon;
+std::shared_ptr<RTSurface> FileThumbnailButtonSet::rankIcon = std::shared_ptr<RTSurface>(nullptr);
+std::shared_ptr<RTSurface> FileThumbnailButtonSet::gRankIcon = std::shared_ptr<RTSurface>(nullptr);
+std::shared_ptr<RTSurface> FileThumbnailButtonSet::unRankIcon = std::shared_ptr<RTSurface>(nullptr);
+std::shared_ptr<RTSurface> FileThumbnailButtonSet::trashIcon = std::shared_ptr<RTSurface>(nullptr);
+std::shared_ptr<RTSurface> FileThumbnailButtonSet::unTrashIcon = std::shared_ptr<RTSurface>(nullptr);
+std::shared_ptr<RTSurface> FileThumbnailButtonSet::processIcon = std::shared_ptr<RTSurface>(nullptr);
+std::array<std::shared_ptr<RTSurface>, 6> FileThumbnailButtonSet::colorLabelIcon;
 
 Glib::ustring FileThumbnailButtonSet::processToolTip;
 Glib::ustring FileThumbnailButtonSet::unrankToolTip;
@@ -44,18 +44,18 @@ FileThumbnailButtonSet::FileThumbnailButtonSet (FileBrowserEntry* myEntry)
 {
 
     if (!iconsLoaded) {
-        unRankIcon  = Cairo::RefPtr<RTSurface>(new RTSurface("star-hollow-narrow.png"));
-        rankIcon    = Cairo::RefPtr<RTSurface>(new RTSurface("star-gold-narrow.png"));
-        gRankIcon   = Cairo::RefPtr<RTSurface>(new RTSurface("star-narrow.png"));
-        trashIcon   = Cairo::RefPtr<RTSurface>(new RTSurface("trash-small.png"));
-        unTrashIcon = Cairo::RefPtr<RTSurface>(new RTSurface("trash-remove-small.png"));
-        processIcon = Cairo::RefPtr<RTSurface>(new RTSurface("gears-small.png"));
-        colorLabelIcon[0] = Cairo::RefPtr<RTSurface>(new RTSurface("circle-empty-gray-small.png"));
-        colorLabelIcon[1] = Cairo::RefPtr<RTSurface>(new RTSurface("circle-red-small.png"));
-        colorLabelIcon[2] = Cairo::RefPtr<RTSurface>(new RTSurface("circle-yellow-small.png"));
-        colorLabelIcon[3] = Cairo::RefPtr<RTSurface>(new RTSurface("circle-green-small.png"));
-        colorLabelIcon[4] = Cairo::RefPtr<RTSurface>(new RTSurface("circle-blue-small.png"));
-        colorLabelIcon[5] = Cairo::RefPtr<RTSurface>(new RTSurface("circle-purple-small.png"));
+        unRankIcon  = std::shared_ptr<RTSurface>(new RTSurface("star-hollow-narrow", Gtk::ICON_SIZE_BUTTON));
+        rankIcon    = std::shared_ptr<RTSurface>(new RTSurface("star-gold-narrow", Gtk::ICON_SIZE_BUTTON));
+        gRankIcon   = std::shared_ptr<RTSurface>(new RTSurface("star-narrow", Gtk::ICON_SIZE_BUTTON));
+        trashIcon   = std::shared_ptr<RTSurface>(new RTSurface("trash-small", Gtk::ICON_SIZE_BUTTON));
+        unTrashIcon = std::shared_ptr<RTSurface>(new RTSurface("trash-remove-small", Gtk::ICON_SIZE_BUTTON));
+        processIcon = std::shared_ptr<RTSurface>(new RTSurface("gears-small", Gtk::ICON_SIZE_BUTTON));
+        colorLabelIcon[0] = std::shared_ptr<RTSurface>(new RTSurface("circle-empty-gray-small", Gtk::ICON_SIZE_BUTTON));
+        colorLabelIcon[1] = std::shared_ptr<RTSurface>(new RTSurface("circle-red-small", Gtk::ICON_SIZE_BUTTON));
+        colorLabelIcon[2] = std::shared_ptr<RTSurface>(new RTSurface("circle-yellow-small", Gtk::ICON_SIZE_BUTTON));
+        colorLabelIcon[3] = std::shared_ptr<RTSurface>(new RTSurface("circle-green-small", Gtk::ICON_SIZE_BUTTON));
+        colorLabelIcon[4] = std::shared_ptr<RTSurface>(new RTSurface("circle-blue-small", Gtk::ICON_SIZE_BUTTON));
+        colorLabelIcon[5] = std::shared_ptr<RTSurface>(new RTSurface("circle-purple-small", Gtk::ICON_SIZE_BUTTON));
 
         processToolTip = M("FILEBROWSER_POPUPPROCESS");
         unrankToolTip = M("FILEBROWSER_UNRANK_TOOLTIP");

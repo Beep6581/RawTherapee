@@ -35,7 +35,7 @@ PrSharpening::PrSharpening () : FoldableToolPanel(this, TOOL_NAME, M("TP_PRSHARP
     milestones.push_back( GradientMilestone(0.0, 0.0, 0.0, 0.0) );
     milestones.push_back( GradientMilestone(1.0, 1.0, 1.0, 1.0) );
 
-    //setEnabledTooltipMarkup(M("TP_PRSHARPENING_TOOLTIP"));
+    setEnabledTooltipMarkup(M("TP_PRSHARPENING_TOOLTIP"));
 
     Gtk::Box* hb = Gtk::manage (new Gtk::Box ());
     hb->show ();

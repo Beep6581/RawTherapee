@@ -2,6 +2,7 @@
  *  This file is part of RawTherapee.
  *
  *  Copyright (c) 2018 Jean-Christophe FRISCH <natureh.510@gmail.com>
+ *  Copyright (c) 2022 Pierre CABRERA <pierre.cab@gmail.com>
  *
  *  RawTherapee is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -18,37 +19,38 @@
  */
 #pragma once
 
-#include <gtkmm/image.h>
-
 #include "rtscalable.h"
 
 /**
- * @brief A derived class of Gtk::Image in order to handle theme-related icon sets.
+ * @brief A custom class in order to handle Hi-DPI surface.
  */
-class RTSurface :
-    public RTScalable
+class RTSurface final : public RTScalable
 {
 public:
-    RTSurface();
-    explicit RTSurface(const Glib::ustring& fileName, const Glib::ustring& rtlFileName = {});
-
-    void setImage(const Glib::ustring& fileName, const Glib::ustring& rtlFileName = {});
-
-    int getWidth() const;
-    int getHeight() const;
-    bool hasSurface() const;
-
-    Cairo::RefPtr<const Cairo::ImageSurface> get() const;
-    const Cairo::RefPtr<Cairo::ImageSurface>& get();
-
-    static void init();
-    static void updateImages();
-    static void setDPInScale(double newDPI, int newScale);
+    enum class RTSurfaceType {
+        InvalidType,
+        IconType,
+        PNGType,
+        SVGType
+    };
 
 private:
-    void changeImage(const Glib::ustring& imageName);
-
-    static double dpiBack; // used to keep track of master dpi change
-    static int scaleBack;  // used to keep track of master scale change
+    double dpiBack; // Used to identify dpi change
+    int scaleBack;  // Used to identify scale change
+    RTSurfaceType type;
+    Glib::ustring name;
+    Gtk::IconSize icon_size;
     Cairo::RefPtr<Cairo::ImageSurface> surface;
+
+public:
+    RTSurface();
+    explicit RTSurface(const Glib::ustring &icon_name, const Gtk::IconSize iconSize);
+    explicit RTSurface(const Glib::ustring &fname);
+
+    int getWidth();
+    int getHeight();
+    bool hasSurface();
+
+    Cairo::RefPtr<Cairo::ImageSurface> get();
+    void updateSurface();
 };

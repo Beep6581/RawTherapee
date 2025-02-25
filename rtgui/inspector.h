@@ -22,7 +22,7 @@
 
 #include "guiutils.h"
 
-#include "../rtengine/coord2d.h"
+#include "rtengine/coord2d.h"
 
 class InspectorBuffer
 {

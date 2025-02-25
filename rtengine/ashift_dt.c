@@ -103,6 +103,9 @@ using namespace std;
 
 //-----------------------------------------------------------------------------
 // RT: BEGIN COMMENT
+#ifdef near
+#  undef near
+#endif         
 #if 0
 DT_MODULE_INTROSPECTION(4, dt_iop_ashift_params_t)
 

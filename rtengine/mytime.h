@@ -18,7 +18,7 @@
  */
 #pragma once
 
-#ifdef WIN32
+#ifdef _WIN32
 #include <profileapi.h>
 #elif defined __APPLE__
 #include <sys/time.h>
@@ -30,7 +30,7 @@ class MyTime
 {
 
 public:
-#ifndef WIN32
+#ifndef _WIN32
     timespec t;
 #else
     LONGLONG t;
@@ -47,7 +47,7 @@ public:
 
     void set ()
     {
-#ifdef WIN32
+#ifdef _WIN32
         LARGE_INTEGER ulf;
         QueryPerformanceCounter(&ulf);
         t = ulf.QuadPart;
@@ -63,7 +63,7 @@ public:
 
     int etime (const MyTime &a) const
     {
-#ifndef WIN32
+#ifndef _WIN32
         return (t.tv_sec - a.t.tv_sec) * 1000000 + (t.tv_nsec - a.t.tv_nsec) / 1000;
 #else
         return (t - a.t) * 1000 / (baseFrequency / 1000);

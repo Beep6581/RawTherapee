@@ -1,4 +1,5 @@
-/*
+/* -*- C++ -*-
+ *  
  *  This file is part of RawTherapee.
  *
  *  Copyright (c) 2004-2010 Gabor Horvath <hgabor@rawtherapee.com>
@@ -19,6 +20,7 @@
 #pragma once
 
 #include <array>
+#include <cstdint>
 #include <ctime>
 #include <string>
 #include <memory>
@@ -30,10 +32,9 @@
 #include "iimage.h"
 #include "imageformat.h"
 #include "procevents.h"
-#include "rawmetadatalocation.h"
 #include "settings.h"
 
-#include "../rtgui/threadutils.h"
+#include "rtgui/threadutils.h"
 
 
 /**
@@ -51,12 +52,7 @@ class LUT;
 using LUTu = LUT<uint32_t>;
 
 class EditDataProvider;
-namespace rtexif
-{
-
-class TagDirectory;
-
-}
+class GainMap;
 
 namespace rtengine
 {
@@ -91,78 +87,58 @@ class FramesMetaData
 {
 
 public:
-    /** @return Returns the number of root Metadata */
-    virtual unsigned int getRootCount () const = 0;
     /** @return Returns the number of frame contained in the file based on Metadata */
-    virtual unsigned int getFrameCount () const = 0;
+    virtual unsigned int getFrameCount() const = 0;
 
     /** Checks the availability of exif metadata tags.
       * @return Returns true if image contains exif metadata tags */
-    virtual bool hasExif (unsigned int frame = 0) const = 0;
-    /** Returns the directory of exif metadata tags.
-      * @param root root number in the metadata tree
-      * @return The directory of exif metadata tags */
-    virtual rtexif::TagDirectory* getRootExifData (unsigned int root = 0) const = 0;
-    /** Returns the directory of exif metadata tags.
-      * @param frame frame number in the metadata tree
-      * @return The directory of exif metadata tags */
-    virtual rtexif::TagDirectory* getFrameExifData (unsigned int frame = 0) const = 0;
-    /** Returns the directory of exif metadata tags containing at least the 'Make' tag for the requested frame.
-      * If no usable metadata exist in the frame, send back the best TagDirectory describing the frame content.
-      * @param imgSource rawimage that we want the metadata from
-      * @param rawParams RawParams to select the frame number
-      * @return The directory of exif metadata tags containing at least the 'Make' tag */
-    virtual rtexif::TagDirectory* getBestExifData (ImageSource *imgSource, procparams::RAWParams *rawParams) const = 0;
-    /** Checks the availability of IPTC tags.
-      * @return Returns true if image contains IPTC tags */
-    virtual bool hasIPTC (unsigned int frame = 0) const = 0;
-    /** Returns the directory of IPTC tags.
-      * @return The directory of IPTC tags */
-    virtual procparams::IPTCPairs getIPTCData (unsigned int frame = 0) const = 0;
+    virtual bool hasExif() const = 0;
     /** @return a struct containing the date and time of the image */
-    virtual tm getDateTime (unsigned int frame = 0) const = 0;
+    virtual tm getDateTime() const = 0;
     /** @return a timestamp containing the date and time of the image */
-    virtual time_t getDateTimeAsTS(unsigned int frame = 0) const = 0;
+    virtual time_t getDateTimeAsTS() const = 0;
     /** @return the ISO of the image */
-    virtual int getISOSpeed (unsigned int frame = 0) const = 0;
+    virtual int getISOSpeed() const = 0;
     /** @return the F number of the image */
-    virtual double getFNumber  (unsigned int frame = 0) const = 0;
+    virtual double getFNumber() const = 0;
     /** @return the focal length used at the exposure */
-    virtual double getFocalLen (unsigned int frame = 0) const = 0;
+    virtual double getFocalLen() const = 0;
     /** @return the focal length in 35mm used at the exposure */
-    virtual double getFocalLen35mm (unsigned int frame = 0) const = 0;
+    virtual double getFocalLen35mm() const = 0;
     /** @return the focus distance in meters, 0=unknown, 10000=infinity */
-    virtual float getFocusDist (unsigned int frame = 0) const = 0;
+    virtual float getFocusDist() const = 0;
     /** @return the shutter speed */
-    virtual double getShutterSpeed (unsigned int frame = 0) const = 0;
+    virtual double getShutterSpeed() const = 0;
     /** @return the exposure compensation */
-    virtual double getExpComp (unsigned int frame = 0) const = 0;
+    virtual double getExpComp() const = 0;
     /** @return the maker of the camera */
-    virtual std::string getMake     (unsigned int frame = 0) const = 0;
+    virtual std::string getMake() const = 0;
     /** @return the model of the camera */
-    virtual std::string getModel    (unsigned int frame = 0) const = 0;
+    virtual std::string getModel() const = 0;
 
-    std::string getCamera   (unsigned int frame = 0) const
+    std::string getCamera() const
     {
-        return getMake(frame) + " " + getModel(frame);
+        return getMake() + " " + getModel();
     }
 
     /** @return the lens on the camera  */
-    virtual std::string getLens     (unsigned int frame = 0) const = 0;
+    virtual std::string getLens() const = 0;
     /** @return the orientation of the image */
-    virtual std::string getOrientation (unsigned int frame = 0) const = 0;
+    virtual std::string getOrientation() const = 0;
     /** @return the rating of the image */
-    virtual int getRating (unsigned int frame = 0) const = 0;
+    virtual int getRating() const = 0;
 
     /** @return true if the file is a PixelShift shot (Pentax and Sony bodies) */
     virtual bool getPixelShift () const = 0;
     /** @return false: not an HDR file ; true: single or multi-frame HDR file (e.g. Pentax HDR raw file or 32 bit float DNG file or Log compressed) */
-    virtual bool getHDR (unsigned int frame = 0) const = 0;
+    virtual bool getHDR() const = 0;
+    /** @return true if the file is a DNG file */
+    virtual bool getDNG() const = 0;
 
     /** @return false: not an HDR file ; true: single or multi-frame HDR file (e.g. Pentax HDR raw file or 32 bit float DNG file or Log compressed) */
-    virtual std::string getImageType (unsigned int frame) const = 0;
+    virtual std::string getImageType() const = 0;
     /** @return the sample format based on MetaData */
-    virtual IIOSampleFormat getSampleFormat (unsigned int frame = 0) const = 0;
+    virtual IIOSampleFormat getSampleFormat() const = 0;
 
     /** Functions to convert between floating point and string representation of shutter and aperture */
     static std::string apertureToString (double aperture);
@@ -183,7 +159,13 @@ public:
       * Use it only for raw files. In caseof jpgs and tiffs pass a NULL pointer.
       * @param firstFrameOnly must be true to get the MetaData of the first frame only, e.g. for a PixelShift file.
       * @return The metadata */
-    static FramesMetaData* fromFile (const Glib::ustring& fname, std::unique_ptr<RawMetaDataLocation> rml, bool firstFrameOnly = false);
+    static FramesMetaData* fromFile(const Glib::ustring& fname);
+
+    virtual Glib::ustring getFileName() const = 0;
+    virtual std::uint32_t getFixBadPixelsConstant() const = 0;
+    virtual bool hasFixBadPixelsConstant() const = 0;
+    virtual std::vector<GainMap> getGainMaps() const = 0;
+    virtual void getDimensions(int &w, int &h) const = 0;
 };
 
 /** This listener interface is used to indicate the progress of time consuming operations */
@@ -217,13 +199,13 @@ class InitialImage
 public:
     /** Returns the file name of the image.
       * @return The file name of the image */
-    virtual Glib::ustring getFileName () = 0;
+    virtual Glib::ustring getFileName() const = 0;
     /** Returns the embedded icc profile of the image.
       * @return The handle of the embedded profile */
-    virtual cmsHPROFILE getEmbeddedProfile () = 0;
+    virtual cmsHPROFILE getEmbeddedProfile() const = 0;
     /** Returns a class providing access to the exif and iptc metadata tags of all frames of the image.
       * @return An instance of the FramesMetaData class */
-    virtual const FramesMetaData* getMetaData () = 0;
+    virtual const FramesMetaData *getMetaData() const = 0;
     /** This is a function used for internal purposes only. */
     virtual ImageSource* getImageSource () = 0;
     /** This class has manual reference counting. You have to call this function each time to make a new reference to an instance. */
@@ -397,9 +379,26 @@ public :
     virtual void autoCamChanged(double ccam, double ccamout) = 0;
     virtual void adapCamChanged(double cadap) = 0;
     virtual void ybCamChanged(int yb) = 0;
-    virtual void wbCamChanged(double tem, double tin) = 0;
-    
+    virtual void wbCamChanged(double tem, double tin, bool autotemp) = 0;
+
 };
+
+class AutoBlackListener
+{
+public :
+    virtual ~AutoBlackListener() = default;
+    virtual void autoBlackChanged(double reddeha, double greendeha, double bluedeha) = 0;
+
+};
+
+class AutoBlackxListener
+{
+public :
+    virtual ~AutoBlackxListener() = default;
+    virtual void autoBlackxChanged(double reddeha, double greendeha, double bluedeha) = 0;
+
+};
+
 
 class AutoChromaListener
 {
@@ -449,12 +448,74 @@ public:
         double Lnres46;
     };
 
+    struct locallabcieBEF {
+        double blackevbef;
+        double whiteevbef;
+        double sourcegbef;
+        double sourceabbef;
+        double targetgbef;
+        bool autocomputbef;
+        bool autociebef;
+        double jz1bef;
+    };
+
+    struct locallabcieLC {
+        double redxlc;
+        double redylc;
+        double grexlc;
+        double greylc;
+        double bluxlc;
+        double bluylc; 
+        double wxlc;
+        double wylc;
+        double meanxlc;
+        double meanylc;
+        double meanxelc;
+        double meanyelc;
+        int primlc;
+        double slopeglc;
+        bool linkrgblc;
+    };
+
+//select spot settings 
+    struct locallabsetLC {
+        int mainf;
+        bool iscolo;
+        bool iss;
+        bool isvi;
+        bool isexpo;
+        bool issof;
+        bool isblu;
+        bool isto;
+        bool isre;
+        bool isshar;
+        bool iscon;
+        bool iscbd;
+        bool islo;
+        bool isma;
+        bool isci;
+    };
+
+    struct locallabcieSIG {
+        double contsigq;
+        double lightsigq;
+    };
+
     virtual ~LocallabListener() = default;
 //    virtual void refChanged(const std::vector<locallabRef> &ref, int selspot) = 0;
     virtual void minmaxChanged(const std::vector<locallabRetiMinMax> &minmax, int selspot) = 0;
     virtual void denChanged(const std::vector<locallabDenoiseLC> &denlc, int selspot) = 0;
-    virtual void logencodChanged(const float blackev, const float whiteev, const float sourceg, const float sourceab, const float targetg, const bool autocomput, const bool autocie, const float jz1) = 0;
+    virtual void cieChanged(const std::vector<locallabcieLC> &cielc, int selspot) = 0;
+    virtual void maiChanged(const std::vector<locallabsetLC> &csetlc, int selspot) = 0;
+    virtual void sigChanged(const std::vector<locallabcieSIG> &ciesig, int selspot) = 0;
+    virtual void ciebefChanged(const std::vector<locallabcieBEF> &ciebef, int selspot) = 0;
     virtual void refChanged2(float *huerefp, float *chromarefp, float *lumarefp, float *fabrefp, int selspot) = 0;
+//    virtual void mainChanged(int spottype, int selspot, bool iscolor, bool issh, bool isvib, bool isexpos, bool issoft, bool isblur, bool istom, bool isret, bool issharp, bool iscont, bool iscbdl, bool islog, bool ismas, bool iscie) = 0;
+    virtual void scopeChangedcol(int scope, int selspot, bool enab) = 0;
+    virtual void scopeChangedsh(int scope, int selspot, bool enab) = 0;
+    virtual void scopeChangedvib(int scope, int selspot, bool enab) = 0;
+    virtual void scopeChangedset(int scope, int selspot, bool enab) = 0;
+
 };
 
 class AutoColorTonListener
@@ -469,7 +530,8 @@ class AutoprimListener
 public:
     virtual ~AutoprimListener() = default;
     virtual void primChanged(float rx, float ry, float bx, float by, float gx, float gy) = 0;
-    virtual void iprimChanged(float r_x, float r_y, float b_x, float b_y, float g_x, float g_y, float w_x, float w_y) = 0;
+    virtual void iprimChanged(float r_x, float r_y, float b_x, float b_y, float g_x, float g_y, float w_x, float w_y, float m_x, float m_y) = 0;
+    virtual void wavlocChanged(double nlevel, double nmax, bool curveloc) = 0;
 };
 
 
@@ -483,8 +545,15 @@ public:
 class AutoWBListener
 {
 public:
+    enum class AWBMode {
+        NONE,
+        RGB_GREY,
+        TEMP_CORRELATION_NON_RAW,
+        TEMP_CORRELATION_RAW,
+    };
+
     virtual ~AutoWBListener() = default;
-    virtual void WBChanged(int met, double temp, double green, double rw, double gw, double bw, float temp0,  float delta, int bia, int dread, float studgood, float minchrom, int kmin, float histmin, float histmax) = 0;
+    virtual void WBChanged(int met, double temp, double green, double rw, double gw, double bw, float temp0,  float delta, int bia, int dread, float studgood, float minchrom, int kmin, float histmin, float histmax, AWBMode aWBMode) = 0;
 };
 
 class FrameCountListener
@@ -635,7 +704,7 @@ public:
     virtual void        getCamWB    (double& temp, double& green, StandardObserver observer) = 0;
     virtual void        getSpotWB  (int x, int y, int rectSize, double& temp, double& green) = 0;
     virtual bool        getFilmNegativeSpot(int x, int y, int spotSize, procparams::FilmNegativeParams::RGB &refInput, procparams::FilmNegativeParams::RGB &refOutput) = 0;
-    
+
     virtual void        getAutoCrop (double ratio, int &x, int &y, int &w, int &h) = 0;
 
     virtual void        saveInputICCReference (const Glib::ustring& fname, bool apply_wb) = 0;
@@ -647,6 +716,8 @@ public:
     virtual void        setHistogramListener    (HistogramListener *l) = 0;
     virtual void        setPreviewImageListener (PreviewImageListener* l) = 0;
     virtual void        setAutoCamListener      (AutoCamListener* l) = 0;
+    virtual void        setAutoBlackListener      (AutoBlackListener* l) = 0;
+    virtual void        setAutoBlackxListener      (AutoBlackxListener* l) = 0;
     virtual void        setFlatFieldAutoClipListener   (FlatFieldAutoClipListener* l) = 0;
     virtual void        setFrameCountListener   (FrameCountListener* l) = 0;
     virtual void        setBayerAutoContrastListener (AutoContrastListener* l) = 0;

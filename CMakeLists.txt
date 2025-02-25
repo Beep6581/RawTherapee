@@ -46,7 +46,7 @@ endif()
 
 # Warning for GCC vectorization issues, which causes problems #5749 and #6384:
 if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU" AND CMAKE_CXX_COMPILER_VERSION VERSION_GREATER "10.0" AND CMAKE_CXX_COMPILER_VERSION VERSION_LESS "10.2")
-    message(STATUS "WARNING: gcc ${CMAKE_CXX_COMPILER_VERSION} is known to miscompile RawTherapee when using -ftree-loop-vectorize, forcing the option to be off")    
+    message(STATUS "WARNING: gcc ${CMAKE_CXX_COMPILER_VERSION} is known to miscompile RawTherapee when using -ftree-loop-vectorize, forcing the option to be off")
     set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fno-tree-loop-vectorize")
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fno-tree-loop-vectorize")
 elseif(CMAKE_CXX_COMPILER_ID STREQUAL "GNU" AND CMAKE_CXX_COMPILER_VERSION VERSION_GREATER_EQUAL "11.0")
@@ -226,6 +226,7 @@ option(WITH_LTO "Build with link-time optimizations" OFF)
 option(WITH_SAN "Build with run-time sanitizer" OFF)
 option(WITH_PROF "Build with profiling instrumentation" OFF)
 option(WITH_SYSTEM_KLT "Build using system KLT library." OFF)
+option(WITH_SYSTEM_LIBRAW "Build using system LibRaw library." OFF)
 option(OPTION_OMP "Build with OpenMP support" ON)
 option(
     STRICT_MUTEX
@@ -246,6 +247,9 @@ option(ENABLE_TCMALLOC "Use the tcmalloc library if available" OFF)
 set(TCMALLOC_LIB_DIR
     ""
     CACHE PATH "Custom path for the tcmalloc library")
+
+set(WITH_JXL "AUTO" CACHE STRING "Build with JPEG XL support")
+set_property(CACHE WITH_JXL PROPERTY STRINGS AUTO ON OFF)
 
 # Set installation directories:
 if(WIN32 OR APPLE)
@@ -462,13 +466,9 @@ endif()
 # Check for libraries:
 find_package(PkgConfig)
 
-if(WIN32)
-    pkg_check_modules(GTK REQUIRED gtk+-3.0>=3.22.24)
-    pkg_check_modules(GTKMM REQUIRED gtkmm-3.0>=3.22)
-else()
-    pkg_check_modules(GTK REQUIRED gtk+-3.0>=3.16)
-    pkg_check_modules(GTKMM REQUIRED gtkmm-3.0>=3.16)
-endif()
+# Gtk version shall be greater than 3.24.3 for fixed Hi-DPI support
+pkg_check_modules(GTK REQUIRED gtk+-3.0>=3.24.3)
+pkg_check_modules(GTKMM REQUIRED gtkmm-3.0>=3.24)
 
 if(GTK_VERSION VERSION_GREATER "3.24.1" AND GTK_VERSION VERSION_LESS "3.24.7")
     if(GTK_VERSION VERSION_EQUAL "3.24.5")
@@ -495,7 +495,39 @@ pkg_check_modules(GTHREAD REQUIRED gthread-2.0>=2.48)
 pkg_check_modules(GOBJECT REQUIRED gobject-2.0>=2.48)
 pkg_check_modules(SIGC REQUIRED sigc++-2.0>=2.3.1)
 pkg_check_modules(LENSFUN REQUIRED lensfun>=0.2)
-pkg_check_modules(RSVG REQUIRED librsvg-2.0>=2.40)
+pkg_check_modules(RSVG REQUIRED librsvg-2.0>=2.52)
+
+# Require exiv2 >= 0.24 to make sure everything we need is available
+#find_package(Exiv2 0.24 REQUIRED)
+pkg_check_modules(EXIV2 REQUIRED exiv2>=0.24)
+#include_directories(SYSTEM ${Exiv2_INCLUDE_DIRS})
+#list(APPEND LIBS ${EXIV2_LIBRARIES})
+add_definitions(${EXIV2_DEFINITIONS})
+set(_exiv2_libs ${EXIV2_LIBRARIES})
+set(EXIV2_LIBRARIES "")
+foreach(l ${_exiv2_libs})
+    set(_el "_el-NOTFOUND")
+    if(EXIV2_LIBRARY_DIRS)
+        message(STATUS "searching for library ${l} in ${EXIV2_LIBRARY_DIRS}")
+        find_library(_el ${l} PATHS ${EXIV2_LIBRARY_DIRS} NO_DEFAULT_PATH)
+        if(NOT _el)
+            message(STATUS  "  NOT FOUND, searching again in default path")
+            find_library(_el ${l})
+        endif()
+    else()
+        message(STATUS "searching for library ${l}")
+        find_library(_el ${l})# PATHS ${EXIV2_LIBRARY_DIRS})
+    endif()
+    message(STATUS "  result: ${_el}")
+    set(EXIV2_LIBRARIES ${EXIV2_LIBRARIES} ${_el})
+endforeach()
+
+if(NOT WITH_SYSTEM_LIBRAW)
+    set(LIBRAW_LIBRARIES "${CMAKE_CURRENT_BINARY_DIR}/rtengine/libraw/lib/.libs/libraw_r.a")
+    if(WIN32)
+        set(LIBRAW_LIBRARIES ${LIBRAW_LIBRARIES} -lws2_32)
+    endif()
+endif()
 
 if(WIN32)
     add_definitions(-DWIN32)
@@ -513,6 +545,10 @@ pkg_check_modules(LCMS REQUIRED lcms2>=2.6)
 pkg_check_modules(EXPAT REQUIRED expat>=2.1)
 pkg_check_modules(FFTW3F REQUIRED fftw3f)
 
+# By default little-cms2 uses 'register' keyword which is deprecated and removed in c++17
+# This definition forces not to use it
+add_definitions("-DCMS_NO_REGISTER_KEYWORD")
+
 #Set the appropriate FFTW flags on macOS
 if(APPLE AND OPTION_OMP)
         set(EXTRA_LIB "-L${LOCAL_PREFIX}/lib -lfftw3f_omp -lfftw3f -lm")
@@ -526,6 +562,35 @@ find_package(ZLIB REQUIRED)
 if(WITH_SYSTEM_KLT)
     find_package(KLT REQUIRED)
 endif()
+if(WITH_SYSTEM_LIBRAW)
+    pkg_check_modules(LIBRAW REQUIRED libraw_r>=0.21)
+endif()
+
+if(WITH_JXL AND NOT WITH_JXL STREQUAL "AUTO")
+    set(JXL_REQUIRED "REQUIRED")
+else()
+    set(JXL_REQUIRED "")
+endif()
+pkg_check_modules(JXL ${JXL_REQUIRED} IMPORTED_TARGET libjxl)
+pkg_check_modules(JXLTHREADS ${JXL_REQUIRED} IMPORTED_TARGET libjxl_threads)
+if(JXL_FOUND)
+    if(WITH_JXL OR WITH_JXL STREQUAL "AUTO")
+        add_definitions(-DLIBJXL)
+        list(APPEND JXL_INCLUDE_DIRS ${JXLTHREADS_INCLUDE_DIRS})
+        list(APPEND JXL_LIBRARIES ${JXLTHREADS_LIBRARIES})
+    else()
+        message(STATUS "  JXL support disabled by WITH_JXL = ${WITH_JXL}")
+        string(APPEND JXL_VERSION " - Disabled")
+        set(JXL_INCLUDE_DIRS "")
+        set(JXL_LIBRARIES "")
+        set(JXLTHREADS_INCLUDE_DIRS "")
+        set(JXLTHREADS_LIBRARIES "")
+    endif()
+elseif(WITH_JXL STREQUAL "AUTO")
+    set(JXL_VERSION "Disabled, Auto")
+else()
+    set(JXL_VERSION "Disabled")
+endif()
 
 # Check for libcanberra-gtk3 (sound events on Linux):
 if(UNIX AND (NOT APPLE))
@@ -538,6 +603,13 @@ endif()
 
 if(WITH_MYFILE_MMAP)
     add_definitions(-DMYFILE_MMAP)
+endif()
+
+# Atomic is required in some builds: #6821
+find_package(ATOMIC)
+if(ATOMIC_FOUND)
+        target_link_libraries(rth ${ATOMIC_LIBRARIES})
+        target_link_libraries(rth-cli ${ATOMIC_LIBRARIES})
 endif()
 
 if(WITH_LTO)
@@ -606,6 +678,7 @@ if(OPENMP_FOUND)
     set(CMAKE_REQUIRED_INCLUDES ${FFTW3F_INCLUDE_DIRS})
     set(CMAKE_REQUIRED_LIBRARIES)
     foreach(l ${FFTW3F_LIBRARIES})
+        set(_f "_f-NOTFOUND")
         find_library(_f ${l} PATHS ${FFTW3F_LIBRARY_DIRS})
         set(CMAKE_REQUIRED_LIBRARIES ${CMAKE_REQUIRED_LIBRARIES} ${_f})
     endforeach()
@@ -699,6 +772,7 @@ if(NOT APPLE)
         -DGTKMM_VERSION:STRING=${GTKMM_VERSION}
         -DOPTION_OMP:STRING=${OPTION_OMP}
         -DWITH_MYFILE_MMAP:STRING=${WITH_MYFILE_MMAP}
+        -DJXL_VERSION:STRING=${JXL_VERSION}
         -DLENSFUN_VERSION:STRING=${LENSFUN_VERSION})
 endif()
 
@@ -728,6 +802,7 @@ elseif(APPLE)
              -DGTKMM_VERSION:STRING=${GTKMM_VERSION}
              -DOPTION_OMP:STRING=${OPTION_OMP}
              -DWITH_MYFILE_MMAP:STRING=${WITH_MYFILE_MMAP}
+             -DJXL_VERSION:STRING=${JXL_VERSION}
              -DLENSFUN_VERSION:STRING=${LENSFUN_VERSION}
              -P ${PROJECT_SOURCE_DIR}/UpdateInfo.cmake)
 else()
@@ -790,13 +865,18 @@ foreach(l ${LENSFUN_LIBRARIES})
         # the NO_DEFAULT_PATH is to make sure we find the lensfun version we
         # want, and not the system's one (e.g. if we have a custom version
         # installed in a non-standard location)
+        set(_l "_l-NOTFOUND")
+        message(STATUS "searching for library ${l} in ${LENSFUN_LIBRARY_DIRS}")
         find_library(_l ${l} PATHS ${LENSFUN_LIBRARY_DIRS} NO_DEFAULT_PATH)
     else()
         # LENSFUN_LIBRARY_DIRS can be empty if lensfun is installed in the
         # default path. In this case, adding NO_DEFAULT_PATH would make
         # find_library fail...
+        set(_l "_l-NOTFOUND")
+        message(STATUS "searching for library ${l}")
         find_library(_l ${l})
     endif()
+    message(STATUS "  result: ${_l}")
     set(CMAKE_REQUIRED_LIBRARIES ${CMAKE_REQUIRED_LIBRARIES} ${_l})
 endforeach()
 check_cxx_source_compiles(
@@ -838,7 +918,6 @@ else()
         CACHE INTERNAL "" FORCE)
 endif()
 
-add_subdirectory(rtexif)
 add_subdirectory(rtengine)
 add_subdirectory(rtgui)
 add_subdirectory(rtdata)

@@ -17,8 +17,7 @@
  *  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
  */
 #include "cursormanager.h"
-
-#include "rtimage.h"
+#include "rtsurface.h"
 
 CursorManager mainWindowCursorManager;
 CursorManager editWindowCursorManager;
@@ -35,72 +34,48 @@ void CursorManager::init (Glib::RefPtr<Gdk::Window> mainWindow)
 
 #endif
 
-    Glib::RefPtr<Gdk::Pixbuf> add           = RTImage::createPixbufFromFile("crosshair-small.png");
-    Glib::RefPtr<Gdk::Pixbuf> colPick       = RTImage::createPixbufFromFile("color-picker-hicontrast.png");
-    Glib::RefPtr<Gdk::Pixbuf> colPickAdd    = RTImage::createPixbufFromFile("color-picker-add-hicontrast.png");
-    Glib::RefPtr<Gdk::Pixbuf> cropDraw      = RTImage::createPixbufFromFile("crop-point-hicontrast.png");
-    Glib::RefPtr<Gdk::Pixbuf> crosshair     = RTImage::createPixbufFromFile("crosshair-hicontrast.png");
-    Glib::RefPtr<Gdk::Pixbuf> empty         = RTImage::createPixbufFromFile("empty.png");
-    Glib::RefPtr<Gdk::Pixbuf> handClosed    = RTImage::createPixbufFromFile("hand-closed-hicontrast.png");
-    Glib::RefPtr<Gdk::Pixbuf> handOpen      = RTImage::createPixbufFromFile("hand-open-hicontrast.png");
-    Glib::RefPtr<Gdk::Pixbuf> moveBL        = RTImage::createPixbufFromFile("node-move-sw-ne-hicontrast.png");
-    Glib::RefPtr<Gdk::Pixbuf> moveBR        = RTImage::createPixbufFromFile("node-move-nw-se-hicontrast.png");
-    Glib::RefPtr<Gdk::Pixbuf> moveL         = RTImage::createPixbufFromFile("node-move-x-hicontrast.png");
-    Glib::RefPtr<Gdk::Pixbuf> moveR         = RTImage::createPixbufFromFile("node-move-x-hicontrast.png");
-    Glib::RefPtr<Gdk::Pixbuf> moveTL        = RTImage::createPixbufFromFile("node-move-nw-se-hicontrast.png");
-    Glib::RefPtr<Gdk::Pixbuf> moveTR        = RTImage::createPixbufFromFile("node-move-sw-ne-hicontrast.png");
-    Glib::RefPtr<Gdk::Pixbuf> moveX         = RTImage::createPixbufFromFile("node-move-x-hicontrast.png");
-    Glib::RefPtr<Gdk::Pixbuf> moveXY        = RTImage::createPixbufFromFile("node-move-xy-hicontrast.png");
-    Glib::RefPtr<Gdk::Pixbuf> moveY         = RTImage::createPixbufFromFile("node-move-y-hicontrast.png");
-    Glib::RefPtr<Gdk::Pixbuf> rotate        = RTImage::createPixbufFromFile("rotate-aroundnode-hicontrast.png");
-    Glib::RefPtr<Gdk::Pixbuf> wait          = RTImage::createPixbufFromFile("gears.png"); // Currently unused, create *-hicontrast once used.
+    auto createCursor = [this] (const Glib::ustring &name, const Gdk::CursorType &fb_cursor,
+        const double offX = 0., const double offY = 0.) -> Glib::RefPtr<Gdk::Cursor>
+    {
+        // Notes:
+        // - Gdk Cursor Theme is not supported on some OS (ex : MacOS).
+        // Cursor is retrieved from theme thanks to an RTSurface
+        // - By default, cursor hotspot is located at middle of surface.
+        // Use (offX, offY) between -1 and 0.99 to move cursor hotspot
+        auto cursor_surf = RTSurface(name, Gtk::ICON_SIZE_MENU);
+        auto cursor = Gdk::Cursor::create(this->display,
+            cursor_surf.get(),
+            std::min(std::max(cursor_surf.getWidth() / 2 * (1. + offX), 0.), static_cast<double>(cursor_surf.getWidth())),
+            std::min(std::max(cursor_surf.getHeight() / 2 * (1. + offY), 0.), static_cast<double>(cursor_surf.getHeight())));
 
-    double s = RTScalable::getTweakedDPI() / RTScalable::baseDPI;  // RTScalable::getDPI() might be preferable, however it imply a lot of work to support this option
+        if (!cursor) {
+            cursor = Gdk::Cursor::create(this->display, fb_cursor);
+        }
 
-    cAdd = add                  ? Gdk::Cursor::create(display, add, (int)(8.*s), (int)(8.*s))           : Gdk::Cursor::create(display, Gdk::PLUS);
-    cAddPicker = colPickAdd     ? Gdk::Cursor::create(display, colPickAdd, (int)(4.*s), (int)(21.*s))   : Gdk::Cursor::create(display, Gdk::PLUS);
-    cCropDraw = cropDraw        ? Gdk::Cursor::create(display, cropDraw, (int)(3.*s), (int)(3.*s))      : Gdk::Cursor::create(display, Gdk::DIAMOND_CROSS);
-    cCrosshair = crosshair      ? Gdk::Cursor::create(display, crosshair, (int)(12.*s), (int)(12.*s))   : Gdk::Cursor::create(display, Gdk::CROSSHAIR);
-    cEmpty = empty              ? Gdk::Cursor::create(display, empty, 12, 12) /* PNG: do not scale */   : Gdk::Cursor::create(display, Gdk::BLANK_CURSOR);
-    cHandClosed = handClosed    ? Gdk::Cursor::create(display, handClosed, (int)(12.*s), (int)(12.*s))  : Gdk::Cursor::create(display, Gdk::HAND1);
-    cHandOpen = handOpen        ? Gdk::Cursor::create(display, handOpen, (int)(12.*s), (int)(12.*s))    : Gdk::Cursor::create(display, Gdk::HAND2);
-    cMoveBL = moveBL            ? Gdk::Cursor::create(display, moveBL, (int)(12.*s), (int)(12.*s))      : Gdk::Cursor::create(display, Gdk::BOTTOM_LEFT_CORNER);
-    cMoveBR = moveBR            ? Gdk::Cursor::create(display, moveBR, (int)(12.*s), (int)(12.*s))      : Gdk::Cursor::create(display, Gdk::BOTTOM_RIGHT_CORNER);
-    cMoveL = moveL              ? Gdk::Cursor::create(display, moveL, (int)(12.*s), (int)(12.*s))       : Gdk::Cursor::create(display, Gdk::SB_LEFT_ARROW);
-    cMoveR = moveR              ? Gdk::Cursor::create(display, moveR, (int)(12.*s), (int)(12.*s))       : Gdk::Cursor::create(display, Gdk::SB_RIGHT_ARROW);
-    cMoveTL = moveTL            ? Gdk::Cursor::create(display, moveTL, (int)(12.*s), (int)(12.*s))      : Gdk::Cursor::create(display, Gdk::TOP_LEFT_CORNER);
-    cMoveTR = moveTR            ? Gdk::Cursor::create(display, moveTR, (int)(12.*s), (int)(12.*s))      : Gdk::Cursor::create(display, Gdk::TOP_RIGHT_CORNER);
-    cMoveX = moveX              ? Gdk::Cursor::create(display, moveX, (int)(12.*s), (int)(12.*s))       : Gdk::Cursor::create(display, Gdk::SB_H_DOUBLE_ARROW);
-    cMoveXY = moveXY            ? Gdk::Cursor::create(display, moveXY, (int)(12.*s), (int)(12.*s))      : Gdk::Cursor::create(display, Gdk::FLEUR);
-    cMoveY = moveY              ? Gdk::Cursor::create(display, moveY, (int)(12.*s), (int)(12.*s))       : Gdk::Cursor::create(display, Gdk::SB_V_DOUBLE_ARROW);
-    cRotate = rotate            ? Gdk::Cursor::create(display, rotate, (int)(12.*s), (int)(12.*s))      : Gdk::Cursor::create(display, Gdk::EXCHANGE);
-    cWB = colPick               ? Gdk::Cursor::create(display, colPick, (int)(4.*s), (int)(21.*s))      : Gdk::Cursor::create(display, Gdk::TARGET);
-    cWait = wait                ? Gdk::Cursor::create(display, wait, (int)(12.*s), (int)(12.*s))        : Gdk::Cursor::create(display, Gdk::CLOCK);
+        return cursor;
+    };
+
+    cAdd        = createCursor("crosshair-hicontrast", Gdk::PLUS);
+    cAddPicker  = createCursor("color-picker-add-hicontrast", Gdk::PLUS, -0.666, 0.75);
+    cCropDraw   = createCursor("crop-point-hicontrast", Gdk::DIAMOND_CROSS, -0.75, 0.75);
+    cCrosshair  = createCursor("crosshair-hicontrast", Gdk::CROSSHAIR);
+    cEmpty      = createCursor("empty", Gdk::BLANK_CURSOR);
+    cHandClosed = createCursor("hand-closed-hicontrast", Gdk::HAND1);
+    cHandOpen   = createCursor("hand-open-hicontrast", Gdk::HAND2);
+    cMoveBL     = createCursor("node-move-sw-ne-hicontrast", Gdk::BOTTOM_LEFT_CORNER);
+    cMoveBR     = createCursor("node-move-nw-se-hicontrast", Gdk::BOTTOM_RIGHT_CORNER);
+    cMoveL      = createCursor("node-move-x-hicontrast", Gdk::SB_LEFT_ARROW);
+    cMoveR      = createCursor("node-move-x-hicontrast", Gdk::SB_RIGHT_ARROW);
+    cMoveTL     = createCursor("node-move-nw-se-hicontrast", Gdk::TOP_LEFT_CORNER);
+    cMoveTR     = createCursor("node-move-sw-ne-hicontrast", Gdk::TOP_RIGHT_CORNER);
+    cMoveX      = createCursor("node-move-x-hicontrast", Gdk::SB_H_DOUBLE_ARROW);
+    cMoveXY     = createCursor("node-move-xy-hicontrast", Gdk::FLEUR);
+    cMoveY      = createCursor("node-move-y-hicontrast", Gdk::SB_V_DOUBLE_ARROW);
+    cRotate     = createCursor("rotate-aroundnode-hicontrast", Gdk::EXCHANGE);
+    cWB         = createCursor("color-picker-hicontrast", Gdk::TARGET, -0.666, 0.75);
+    cWait       = createCursor("gears", Gdk::CLOCK);
 
     window = mainWindow;
-}
-
-void CursorManager::cleanup()
-{
-    cAdd.reset();
-    cAddPicker.reset();
-    cCropDraw.reset();
-    cCrosshair.reset();
-    cHandClosed.reset();
-    cHandOpen.reset();
-    cEmpty.reset();
-    cMoveBL.reset();
-    cMoveBR.reset();
-    cMoveL.reset();
-    cMoveR.reset();
-    cMoveTL.reset();
-    cMoveTR.reset();
-    cMoveX.reset();
-    cMoveY.reset();
-    cMoveXY.reset();
-    cRotate.reset();
-    cWB.reset();
-    cWait.reset();
 }
 
 /* Set the cursor of the given window */

@@ -53,8 +53,12 @@ public:
 
     explicit operator bool() const;
 
+    bool hasDistortionCorrection() const override;
+    bool hasCACorrection() const override;
+    bool hasVignettingCorrection() const override;
+
+    void correctDistortionAndCA(double &x, double &y, int cx, int cy, int channel) const override;
     void correctDistortion(double &x, double &y, int cx, int cy) const override;
-    bool isCACorrectionAvailable() const override;
     void correctCA(double &x, double &y, int cx, int cy, int channel) const override;
     void processVignette(int width, int height, float** rawData) const override;
     void processVignette3Channels(int width, int height, float** rawData) const override;
@@ -120,8 +124,8 @@ public:
 
     std::vector<LFCamera> getCameras() const;
     std::vector<LFLens> getLenses() const;
-    LFCamera findCamera(const Glib::ustring &make, const Glib::ustring &model) const;
-    LFLens findLens(const LFCamera &camera, const Glib::ustring &name) const;
+    LFCamera findCamera(const Glib::ustring &make, const Glib::ustring &model, bool autoMatch) const;
+    LFLens findLens(const LFCamera &camera, const Glib::ustring &name, bool autoMatch) const;
 
     std::unique_ptr<LFModifier> findModifier(
         const procparams::LensProfParams &lensProf,

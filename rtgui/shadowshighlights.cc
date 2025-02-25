@@ -20,7 +20,7 @@
 
 #include "eventmapper.h"
 
-#include "../rtengine/procparams.h"
+#include "rtengine/procparams.h"
 
 using namespace rtengine;
 using namespace rtengine::procparams;

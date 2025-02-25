@@ -17,7 +17,7 @@
  *  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
  */
 #include <iomanip>
-#ifdef WIN32
+#ifdef _WIN32
 #include <windows.h>
 #endif
 
@@ -36,12 +36,38 @@
 #include "pointermotionlistener.h"
 #include "rtsurface.h"
 
-#include "../rtengine/dcrop.h"
-#include "../rtengine/imagesource.h"
-#include "../rtengine/procparams.h"
-#include "../rtengine/rt_math.h"
+#include "rtengine/dcrop.h"
+#include "rtengine/imagesource.h"
+#include "rtengine/procparams.h"
+#include "rtengine/rt_math.h"
 
 using namespace rtengine;
+
+namespace {
+    inline double zoomLimitToFraction(Options::MaxZoom z) {
+        switch (z) {
+          case Options::MaxZoom::PERCENTS_100:
+            return 1.;
+          case Options::MaxZoom::PERCENTS_200:
+            return 2.;
+          case Options::MaxZoom::PERCENTS_300:
+            return 3.;
+          case Options::MaxZoom::PERCENTS_400:
+            return 4.;
+          case Options::MaxZoom::PERCENTS_500:
+            return 5.;
+          case Options::MaxZoom::PERCENTS_600:
+            return 6.;
+          case Options::MaxZoom::PERCENTS_700:
+            return 7.;
+          case Options::MaxZoom::PERCENTS_800:
+            return 8.;
+          case Options::MaxZoom::PERCENTS_1600:
+          default:
+            return 16.;
+        }
+    }
+}
 
 bool CropWindow::initialized = false;
 
@@ -62,9 +88,12 @@ CropWindow::CropWindow (ImageArea* parent, bool isLowUpdatePriority_, bool isDet
     initZoomSteps();
 
     Glib::RefPtr<Pango::Context> context = parent->get_pango_context () ;
-    Pango::FontDescription fontd = context->get_font_description ();
+    Pango::FontDescription fontd = parent->get_style_context()->get_font();
     fontd.set_weight (Pango::WEIGHT_BOLD);
-    fontd.set_size(8 * Pango::SCALE);
+    const int fontSize = 8; // pt
+    // Non-absolute size is defined in "Pango units" and shall be multiplied by
+    // Pango::SCALE from "pt":
+    fontd.set_size (fontSize * Pango::SCALE);
     context->set_font_description (fontd);
     Glib::RefPtr<Pango::Layout> cllayout = parent->create_pango_layout("1000%");
 
@@ -80,11 +109,11 @@ CropWindow::CropWindow (ImageArea* parent, bool isLowUpdatePriority_, bool isDet
         closett = "Close";
         initialized = true;
     }
-    bZoomOut = new LWButton(Cairo::RefPtr<RTSurface>(new RTSurface("magnifier-minus-small.png")), 0, nullptr, LWButton::Left, LWButton::Center, &zoomOuttt);
-    bZoomIn  = new LWButton(Cairo::RefPtr<RTSurface>(new RTSurface("magnifier-plus-small.png")), 1, nullptr, LWButton::Left, LWButton::Center, &zoomIntt);
-    bZoom100 = new LWButton(Cairo::RefPtr<RTSurface>(new RTSurface("magnifier-1to1-small.png")), 2, nullptr, LWButton::Left, LWButton::Center, &zoom100tt);
-     //bZoomFit = new LWButton (Cairo::RefPtr<RTSurface>(new RTSurface("magnifier-fit.png")), 3, NULL, LWButton::Left, LWButton::Center, "Zoom Fit");
-    bClose   = new LWButton(Cairo::RefPtr<RTSurface>(new RTSurface("cancel-small.png")), 4, nullptr, LWButton::Right, LWButton::Center, &closett);
+    bZoomOut = new LWButton(std::shared_ptr<RTSurface>(new RTSurface("magnifier-minus-small", Gtk::ICON_SIZE_BUTTON)), 0, nullptr, LWButton::Left, LWButton::Center, &zoomOuttt);
+    bZoomIn  = new LWButton(std::shared_ptr<RTSurface>(new RTSurface("magnifier-plus-small", Gtk::ICON_SIZE_BUTTON)), 1, nullptr, LWButton::Left, LWButton::Center, &zoomIntt);
+    bZoom100 = new LWButton(std::shared_ptr<RTSurface>(new RTSurface("magnifier-1to1-small", Gtk::ICON_SIZE_BUTTON)), 2, nullptr, LWButton::Left, LWButton::Center, &zoom100tt);
+     //bZoomFit = new LWButton (std::shared_ptr<RTSurface>(new RTSurface("magnifier-fit", Gtk::ICON_SIZE_BUTTON)), 3, NULL, LWButton::Left, LWButton::Center, "Zoom Fit");
+    bClose   = new LWButton(std::shared_ptr<RTSurface>(new RTSurface("cancel-small", Gtk::ICON_SIZE_BUTTON)), 4, nullptr, LWButton::Right, LWButton::Center, &closett);
 
     buttonSet.add (bZoomOut);
     buttonSet.add (bZoomIn);
@@ -1496,7 +1525,7 @@ void CropWindow::expose (Cairo::RefPtr<Cairo::Context> cr)
 
             // While the Right-side ALT is pressed, auto-enable highlight and shadow clipping indicators
             // TODO: Add linux/MacOS specific functions for alternative
-#ifdef WIN32
+#ifdef _WIN32
 
             if (GetKeyState(VK_RMENU) < 0) {
                 showcs = true;
@@ -1932,8 +1961,8 @@ void CropWindow::expose (Cairo::RefPtr<Cairo::Context> cr)
                 // drawing to the "mouse over" channel
                 const auto mouseOverGeom = editSubscriber->getMouseOverGeometry();
                 if (mouseOverGeom.size()) {
-                    if (mouseOverGeom.size() > 65534) {
-                        // once it has been switched to OM_65535, it won't return back to OM_255
+                    if (mouseOverGeom.size() > 255) {
+                        // Once it has been switched to OM_65535, it won't return back to OM_255
                         // to avoid constant memory allocations in some particular situation.
                         // It will return to OM_255 on a new editing session
                         setObjectMode(OM_65535);
@@ -2284,11 +2313,16 @@ void CropWindow::updateHoveredPicker (rtengine::Coord *imgPos)
 }
 void CropWindow::changeZoom (int zoom, bool notify, int centerx, int centery, bool needsRedraw)
 {
-
     if (zoom < 0) {
         zoom = 0;
     } else if (zoom > int(zoomSteps.size())-1) {
         zoom = int(zoomSteps.size())-1;
+    }
+
+    // Limit zoom according to user preferences
+    double zoomLimit = zoomLimitToFraction(options.maxZoomLimit);
+    while(zoomSteps[zoom].zoom > zoomLimit && zoom != 0) {
+        --zoom;
     }
 
     cropZoom = zoom;
@@ -2449,9 +2483,12 @@ void CropWindow::drawDecoration (Cairo::RefPtr<Cairo::Context> cr)
     int x = xpos, y = ypos;
     // prepare label
     Glib::RefPtr<Pango::Context> context = iarea->get_pango_context () ;
-    Pango::FontDescription fontd = context->get_font_description ();
+    Pango::FontDescription fontd = iarea->get_style_context()->get_font();
     fontd.set_weight (Pango::WEIGHT_BOLD);
-    fontd.set_size(8 * Pango::SCALE);
+    const int fontSize = 8; // pt
+    // Non-absolute size is defined in "Pango units" and shall be multiplied by
+    // Pango::SCALE from "pt":
+    fontd.set_size (fontSize * Pango::SCALE);
     context->set_font_description (fontd);
     Glib::RefPtr<Pango::Layout> cllayout = iarea->create_pango_layout(cropLabel);
     int iw, ih;
@@ -2513,9 +2550,12 @@ void CropWindow::drawStraightenGuide (Cairo::RefPtr<Cairo::Context> cr)
     }
 
     Glib::RefPtr<Pango::Context> context = iarea->get_pango_context () ;
-    Pango::FontDescription fontd = context->get_font_description ();
+    Pango::FontDescription fontd = iarea->get_style_context()->get_font();
     fontd.set_weight (Pango::WEIGHT_BOLD);
-    fontd.set_size (8 * Pango::SCALE);
+    const int fontSize = 8; // pt
+    // Non-absolute size is defined in "Pango units" and shall be multiplied by
+    // Pango::SCALE from "pt":
+    fontd.set_size (fontSize * Pango::SCALE);
     context->set_font_description (fontd);
     Glib::RefPtr<Pango::Layout> deglayout = iarea->create_pango_layout(Glib::ustring::compose ("%1 deg", Glib::ustring::format(std::setprecision(2), rot_deg)));
 

@@ -25,7 +25,7 @@
 #include "pathutils.h"
 #include "rtimage.h"
 
-#include "../rtengine/utils.h"
+#include "rtengine/utils.h"
 
 namespace
 {

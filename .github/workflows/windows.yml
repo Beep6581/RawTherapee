@@ -4,17 +4,25 @@ on:
     branches:
       - dev
       - releases
+      - 'release-[0-9]+.*'
     tags:
       - '[0-9]+.*'
   pull_request:
     branches:
       - dev
+      - releases
+      - 'release-[0-9]+.*'
   workflow_dispatch:
+
 env:
   publish_pre_dev_labels: '[]'
+
+
 jobs:
   build:
-    runs-on: windows-2022
+    runs-on: windows-latest
+    permissions:
+      contents: write
     defaults:
       run:
         shell: msys2 {0}
@@ -24,7 +32,7 @@ jobs:
         build_type: [release, debug]
     steps:
       - name: Checkout source
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
         with:
           fetch-depth: 0
 
@@ -33,25 +41,28 @@ jobs:
         with:
           location: C:\msys2
           update: true
+          msystem: MINGW64
           install: |
-            gzip
             git
             intltool
-            mingw-w64-x86_64-gcc
-            mingw-w64-x86_64-make
-            mingw-w64-x86_64-pkg-config
-            mingw-w64-x86_64-cmake
-            mingw-w64-x86_64-ninja
-            mingw-w64-x86_64-gtkmm3
-            mingw-w64-x86_64-lcms2
-            mingw-w64-x86_64-fftw
-            mingw-w64-x86_64-lensfun
-            mingw-w64-x86_64-libiptcdata
+          pacboy: |
+            cc:p
+            pkgconf:p
+            cmake:p
+            autotools:p
+            ninja:p
+            gtkmm3:p
+            lcms2:p
+            fftw:p
+            lensfun:p
+            libiptcdata:p
+            libjxl:p
+            exiv2:p
 
       - name: Configure build
         run: |
           export REF_NAME_FILTERED="$(echo '${{github.ref_name}}' | sed 's/[^A-z0-9_.-]//g')"
-          
+
           if [ '${{github.ref_type}}' == 'tag' ]; then
             export CACHE_SUFFIX=""
           else
@@ -60,11 +71,6 @@ jobs:
             echo "Cache suffix is '$CACHE_SUFFIX'."
           fi
 
-          echo "Making build directory."
-          mkdir build
-          echo "Changing working directory to the build directory."
-          cd build
-
           echo "Running CMake configure."
           cmake \
             -G "Ninja" \
@@ -72,21 +78,18 @@ jobs:
             -DCACHE_NAME_SUFFIX="$CACHE_SUFFIX" \
             -DPROC_TARGET_NUMBER="1" \
             -DLENSFUNDBDIR="share/lensfun" \
-            ..
+            -S . -B build
 
           echo "Recording filtered ref name."
           echo "REF_NAME_FILTERED=$REF_NAME_FILTERED" >> "$(cygpath -u $GITHUB_ENV)"
 
       - name: Build RawTherapee
-        working-directory: ./build
         run: |
           echo "Running CMake install."
-          cmake --build . --target install
+          cmake --build build --target install
 
       - name: Include Lensfun
         run: |
-          echo "Patching lensfun-update-data script."
-          sed -i 's/HTTPError\(, ValueError\)/URLError\1/' $(which lensfun-update-data)
           echo "Updating Lensfun database."
           lensfun-update-data
           echo "Creating Lensfun directory in the build directory."
@@ -131,14 +134,6 @@ jobs:
             "symbolic/ui" \
             "$BUILD_DIR/share/icons/Adwaita/symbolic"
           cp 'index.theme' "$BUILD_DIR/share/icons/Adwaita"
-          mkdir -p "$BUILD_DIR/share/icons/Adwaita/cursors"
-          cp -r \
-            "cursors/plus.cur" \
-            "cursors/sb_h_double_arrow.cur" \
-            "cursors/sb_left_arrow.cur" \
-            "cursors/sb_right_arrow.cur" \
-            "cursors/sb_v_double_arrow.cur" \
-            "$BUILD_DIR/share/icons/Adwaita/cursors"
           cd -
 
           echo "Copying GDK pixbuf."
@@ -198,14 +193,14 @@ jobs:
           7z a -tzip "%ARTIFACT_NAME%.zip" "./%ARTIFACT_NAME%"
 
       - name: Upload artifacts
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v4
         with:
           name: ${{env.ARTIFACT_NAME}}
           path: build\${{env.ARTIFACT_NAME}}
 
       - name: Upload installer
         if: ${{matrix.build_type == 'release' && (github.ref_type == 'tag' || github.ref_name == 'dev')}}
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v4
         with:
           name: ${{env.ARTIFACT_NAME}}.exe
           path: build\${{env.ARTIFACT_NAME}}.exe
@@ -231,7 +226,7 @@ jobs:
           echo "PUBLISH_NAME=$PUBLISH_NAME" >> "$(cygpath -u $GITHUB_ENV)"
 
       - name: Publish artifacts
-        uses: softprops/action-gh-release@v1
+        uses: softprops/action-gh-release@v2
         if: ${{github.ref_type == 'tag' || github.ref_name == 'dev'}}
         with:
           tag_name: nightly-github-actions
@@ -240,7 +235,7 @@ jobs:
             build/${{env.PUBLISH_NAME}}-AboutThisBuild.txt
 
       - name: Publish installer
-        uses: softprops/action-gh-release@v1
+        uses: softprops/action-gh-release@v2
         if: ${{matrix.build_type == 'release' && (github.ref_type == 'tag' || github.ref_name == 'dev')}}
         with:
           tag_name: nightly-github-actions
@@ -272,17 +267,19 @@ jobs:
           echo "PUBLISH_NAME=$PUBLISH_NAME" >> "$(cygpath -u $GITHUB_ENV)"
 
       - name: Publish pre-dev artifacts
-        uses: softprops/action-gh-release@v1
+        uses: softprops/action-gh-release@v2
         if: ${{steps.prepare-publish-pre-dev.outcome == 'success'}}
         with:
           tag_name: pre-dev-github-actions
+          repository: Beep6581/RawTherapee
           files: |
             build/${{env.PUBLISH_NAME}}.zip
             build/${{env.PUBLISH_NAME}}-AboutThisBuild.txt
 
       - name: Publish pre-dev installer
-        uses: softprops/action-gh-release@v1
+        uses: softprops/action-gh-release@v2
         if: ${{steps.prepare-publish-pre-dev.outcome == 'success' && matrix.build_type == 'release'}}
         with:
           tag_name: pre-dev-github-actions
+          repository: Beep6581/RawTherapee
           files: build/${{env.PUBLISH_NAME}}.exe

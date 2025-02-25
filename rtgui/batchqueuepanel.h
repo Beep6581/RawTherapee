@@ -42,6 +42,7 @@ class BatchQueuePanel : public Gtk::Box,
     Gtk::CheckButton* qAutoStart;
 
     Gtk::Entry* outdirTemplate;
+    Gtk::Label* destinationPreviewLabel;
     MyFileChooserButton* outdirFolder;
     Gtk::Button* outdirFolderButton;
     Gtk::RadioButton* useTemplate;
@@ -51,8 +52,12 @@ class BatchQueuePanel : public Gtk::Box,
 
     RTWindow* parent;
     BatchQueue* batchQueue;
+    Gtk::TextView* templateHelpTextView;
+    Gtk::ScrolledWindow* scrolledTemplateHelpWindow;
+    Gtk::ToggleButton* templateHelpButton;
     Gtk::Box* bottomBox;
     Gtk::Box* topBox;
+    Gtk::Paned* middleSplitPane;
 
     std::atomic<bool> queueShouldRun;
 
@@ -72,12 +77,15 @@ public:
     // batchqueuelistener interface
     void queueSizeChanged(int qsize, bool queueRunning, bool queueError, const Glib::ustring& queueErrorMessage) override;
     bool canStartNext() override;
+    void setDestinationPreviewText(const Glib::ustring& destinationPath) override;
 
 private:
     void startBatchProc ();
     void stopBatchProc ();
     void startOrStopBatchProc();
     void setGuiFromBatchState(bool queueRunning, int qsize);
+    void templateHelpButtonToggled();
+    void populateTemplateHelpBuffer(Glib::RefPtr<Gtk::TextBuffer> buffer);
 
     void pathFolderChanged ();
     void pathFolderButtonPressed ();

@@ -40,7 +40,7 @@ public:
 private:
     int xpos, ypos, w, h;
     Alignment halign, valign;
-    Cairo::RefPtr<RTSurface> icon;
+    std::shared_ptr<RTSurface> icon;
     double bgr, bgg, bgb;
     double fgr, fgg, fgb;
     State state;
@@ -50,7 +50,7 @@ private:
     Glib::ustring* toolTip;
 
 public:
-    LWButton (Cairo::RefPtr<RTSurface> i, int aCode, void* aData, Alignment ha = Left, Alignment va = Center, Glib::ustring* tooltip = nullptr);
+    LWButton (std::shared_ptr<RTSurface> i, int aCode, void* aData, Alignment ha = Left, Alignment va = Center, Glib::ustring* tooltip = nullptr);
 
     void    getSize             (int& minw, int& minh) const;
     void    getAlignment        (Alignment& ha, Alignment& va) const;
@@ -58,8 +58,8 @@ public:
     void    addPosition         (int x, int y);
     void    getPosition         (int& x, int& y) const;
     bool    inside              (int x, int y) const;
-    void    setIcon             (Cairo::RefPtr<RTSurface> i);
-    Cairo::RefPtr<RTSurface> getIcon () const;
+    void    setIcon             (std::shared_ptr<RTSurface> i);
+    std::shared_ptr<RTSurface>  getIcon () const;
     void    setColors           (const Gdk::RGBA& bg, const Gdk::RGBA& fg);
     void    setToolTip          (Glib::ustring* tooltip);
 

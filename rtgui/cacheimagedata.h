@@ -22,8 +22,9 @@
 
 #include "options.h"
 
-#include "../rtengine/imageformat.h"
-#include "../rtengine/rtengine.h"
+#include "rtengine/dnggainmap.h"
+#include "rtengine/imageformat.h"
+#include "rtengine/rtengine.h"
 
 class CacheImageData :
     public rtengine::FramesMetaData
@@ -38,6 +39,9 @@ public:
     char  rankOld; // old implementation of rank
     bool  inTrashOld; // old implementation of inTrash
     bool  recentlySaved;
+
+    // XMP sidecar info.
+    Glib::ustring xmpSidecarMd5;
 
     // time/date info
     bool  timeValid;
@@ -57,6 +61,7 @@ public:
     unsigned iso;
     int rating;
     bool isHDR;
+    bool isDNG;
     bool isPixelShift;
     int sensortype;
     rtengine::IIO_Sample_Format sampleFormat;
@@ -80,6 +85,9 @@ public:
         QUICK_THUMBNAIL = 1  // was the thumbnail generated from embedded jpeg
     };
 
+    int width;
+    int height;
+
     CacheImageData ();
 
     int load (const Glib::ustring& fname);
@@ -89,30 +97,34 @@ public:
     // FramesMetaData interface
     //-------------------------------------------------------------------------
 
-    unsigned int getRootCount () const override { return -1; }
     unsigned int getFrameCount () const override { return frameCount; }
-    bool hasExif (unsigned int frame = 0) const override  { return false; }
-    rtexif::TagDirectory* getRootExifData (unsigned int root = 0) const override { return nullptr; }
-    rtexif::TagDirectory* getFrameExifData (unsigned int frame = 0) const override { return nullptr; }
-    rtexif::TagDirectory* getBestExifData (rtengine::ImageSource *imgSource, rtengine::procparams::RAWParams *rawParams) const override { return nullptr; }
-    bool hasIPTC (unsigned int frame = 0) const override { return false; }
-    rtengine::procparams::IPTCPairs getIPTCData (unsigned int frame = 0) const override;
-    tm getDateTime (unsigned int frame = 0) const override { return tm{}; }
-    time_t getDateTimeAsTS(unsigned int frame = 0) const override { return time_t(-1); }
-    int getISOSpeed (unsigned int frame = 0) const override { return iso; }
-    double getFNumber  (unsigned int frame = 0) const override { return fnumber; }
-    double getFocalLen (unsigned int frame = 0) const override { return focalLen; }
-    double getFocalLen35mm (unsigned int frame = 0) const override { return focalLen35mm; }
-    float getFocusDist (unsigned int frame = 0) const override { return focusDist; }
-    double getShutterSpeed (unsigned int frame = 0) const override { return shutter; }
-    double getExpComp (unsigned int frame = 0) const override { return atof(expcomp.c_str()); }
-    std::string getMake     (unsigned int frame = 0) const override { return camMake; }
-    std::string getModel    (unsigned int frame = 0) const override { return camModel; }
-    std::string getLens     (unsigned int frame = 0) const override { return lens; }
-    std::string getOrientation (unsigned int frame = 0) const override { return ""; } // TODO
-    int getRating (unsigned int frame = 0) const override { return rating; } // FIXME-piotr : missing rating
+    bool hasExif() const override  { return false; }
+    tm getDateTime() const override { return tm{}; }
+    time_t getDateTimeAsTS() const override { return time_t(-1); }
+    int getISOSpeed() const override { return iso; }
+    double getFNumber() const override { return fnumber; }
+    double getFocalLen() const override { return focalLen; }
+    double getFocalLen35mm() const override { return focalLen35mm; }
+    float getFocusDist() const override { return focusDist; }
+    double getShutterSpeed() const override { return shutter; }
+    double getExpComp() const override { return atof(expcomp.c_str()); }
+    std::string getMake() const override { return camMake; }
+    std::string getModel() const override { return camModel; }
+    std::string getLens() const override { return lens; }
+    std::string getOrientation() const override { return ""; } // TODO
+    Glib::ustring getFileName() const override { return ""; }
+    int getRating () const override { return rating; } // FIXME-piotr : missing rating
     bool getPixelShift () const override { return isPixelShift; }
-    bool getHDR (unsigned int frame = 0) const override { return isHDR; }
-    std::string getImageType (unsigned int frame) const override { return isPixelShift ? "PS" : isHDR ? "HDR" : "STD"; }
-    rtengine::IIOSampleFormat getSampleFormat (unsigned int frame = 0) const override { return sampleFormat; }
+    bool getHDR() const override { return isHDR; }
+    bool getDNG() const override { return isDNG; }
+    std::string getImageType() const override { return isPixelShift ? "PS" : isHDR ? "HDR" : "STD"; }
+    rtengine::IIOSampleFormat getSampleFormat() const override { return sampleFormat; }
+    std::uint32_t getFixBadPixelsConstant() const override;
+    bool hasFixBadPixelsConstant() const override;
+    std::vector<GainMap> getGainMaps() const override;
+    void getDimensions(int &w, int &h) const override
+    {
+        w = width;
+        h = height;
+    }
 };

@@ -26,8 +26,10 @@
 #include "guiutils.h"
 #include "popupbutton.h"
 #include "toolpanel.h"
+#include "curvelistener.h"
+#include "thresholdadjuster.h"
 
-#include "../rtengine/imagedata.h"
+#include "rtengine/imagedata.h"
 
 class ICMPanelListener
 {
@@ -38,8 +40,15 @@ public:
 
 class LabGrid;
 
+class CurveEditor;
+class CurveEditorGroup;
+class DiagonalCurveEditor;
+class EditDataProvider;
+class FlatCurveEditor;
+
 class ICMPanel final :
     public ToolParamBlock,
+    public CurveListener,
     public FoldableToolPanel,
     public rtengine::AutoprimListener,
     public AdjusterListener
@@ -49,10 +58,24 @@ protected:
     Gtk::Frame* dcpFrame;
     Gtk::Frame* coipFrame;
     Gtk::Frame* redFrame;
+    Gtk::Frame* colorFramecie;    
     MyExpander* trcExp;
+    MyExpander* wavExp;
+    MyExpander* wav2Exp;
+    MyExpander* primExp;
 
     Adjuster* wGamma;
     Adjuster* wSlope;
+    Adjuster* wmidtcie;
+    Gtk::CheckButton* wsmoothcie;
+    Adjuster* sigmatrc;
+    Adjuster* offstrc;
+    Adjuster* pyrwavtrc;
+    Adjuster* residtrc;
+
+    std::unique_ptr<CurveEditorGroup> opacityCurveEditorWLI;
+    FlatCurveEditor* opacityShapeWLI;
+
     Adjuster* redx;
     Adjuster* redy;
     Adjuster* grex;
@@ -60,13 +83,19 @@ protected:
     Adjuster* blux;
     Adjuster* bluy;
     Adjuster* preser;
-
+    Adjuster* refi;
+    Adjuster* shiftx;
+    Adjuster* shifty;
+    sigc::connection wsmoothcieconn;
+    bool lastwsmoothcie;
     Gtk::Label* labmga;
     Gtk::Box* gabox;
     //Gtk::Label* blr;
     //Gtk::Label* blg;
     //Gtk::Label* blb;
     Gtk::Button* neutral;
+    sigc::connection trcExpconn;
+    sigc::connection wavExpconn;
 
     sigc::connection neutralconn;
     bool lastToneCurve;
@@ -111,6 +140,20 @@ private:
     rtengine::ProcEvent EvICMLabGridciexy;
     rtengine::ProcEvent EvICMfbw;
     rtengine::ProcEvent EvICMgamut;
+    rtengine::ProcEvent EvICMcat;
+    rtengine::ProcEvent EvICMrefi;
+    rtengine::ProcEvent EvICMtrcExp;
+    rtengine::ProcEvent EvICMshiftx;
+    rtengine::ProcEvent EvICMshifty;
+    rtengine::ProcEvent EvICMwmidtcie;
+    rtengine::ProcEvent EvICMwsmoothcie;
+    rtengine::ProcEvent EvICMsigmatrc;
+    rtengine::ProcEvent EvICMoffstrc;
+    rtengine::ProcEvent EvICMopacityWLI;
+    rtengine::ProcEvent EvICMpyrwavtrc;
+    rtengine::ProcEvent EvICMresidtrc;
+    rtengine::ProcEvent EvICMwavExp;
+
     LabGrid *labgridcie;
     IdleRegister idle_register;
 
@@ -126,6 +169,10 @@ private:
     Gtk::Box* wTRCBox;
     Gtk::CheckButton* fbw;
     Gtk::CheckButton* gamut;
+
+    Gtk::Box* wcatBox;
+    Gtk::Label* wcatlab;
+
 
     Gtk::CheckButton* obpc;
     Gtk::RadioButton* inone;
@@ -149,6 +196,9 @@ private:
     sigc::connection willconn;
     MyComboBoxText* wprim;
     sigc::connection wprimconn;
+    MyComboBoxText* wcat;
+    sigc::connection wcatconn;
+
     std::unique_ptr<PopUpButton> aRendIntent;
     sigc::connection arendintentconn;
 
@@ -163,14 +213,15 @@ private:
     sigc::connection ipc;
     Glib::ustring oldip;
     ICMPanelListener* icmplistener;
-    
+
     double dcpTemperatures[2];
     Glib::ustring lastRefFilename;
     Glib::ustring camName;
+    Glib::ustring filename;
     void updateDCP(int dcpIlluminant, Glib::ustring dcp_name);
     void updateRenderingIntent(const Glib::ustring &profile);
-    void foldAllButMe (GdkEventButton* event, MyExpander *expander);
-    
+    void foldAllButMe(GdkEventButton *event, MyExpander *expander, const MyExpander *parent);
+
     float nextrx;
     float nextry;
     float nextbx;
@@ -179,6 +230,9 @@ private:
     float nextgy;
     float nextwx;
     float nextwy;
+    float nextmx;
+    float nextmy;
+    Gtk::Label* wavlocLabels;
 
 public:
     static const Glib::ustring TOOL_NAME;
@@ -192,18 +246,25 @@ public:
     void setDefaults(const rtengine::procparams::ProcParams* defParams, const ParamsEdited* pedited = nullptr) override;
     void adjusterChanged(Adjuster* a, double newval) override;
     void primChanged (float rx, float ry, float bx, float by, float gx, float gy) override;
-    void iprimChanged (float r_x, float r_y, float b_x, float b_y, float g_x, float g_y, float w_x, float w_y) override;
+    void iprimChanged (float r_x, float r_y, float b_x, float b_y, float g_x, float g_y, float w_x, float w_y, float m_x, float m_y) override;
     void neutral_pressed();
+    void curveChanged(CurveEditor* ce) override;
+    void wavlocChanged(double nlevel, double nmax, bool curveloc) override;
 
     void wpChanged();
     void wtrcinChanged();
     void willChanged();
     void wprimChanged();
+    void wcatChanged();
+    void trcExpChanged();
+    void wavExpChanged();
     void opChanged();
     void oiChanged(int n);
     void aiChanged(int n);
     void oBPCChanged();
     void fbwChanged();
+    void wsmoothcieChanged();
+    
     void gamutChanged();
     void ipChanged();
     void ipSelectionChanged();

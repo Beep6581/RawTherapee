@@ -1,0 +1,21 @@
+diff --git a/source/dng_ifd.cpp b/source/dng_ifd.cpp
+index 174f18f..2974323 100644
+--- a/source/dng_ifd.cpp
++++ b/source/dng_ifd.cpp
+@@ -3168,6 +3168,7 @@ bool dng_ifd::IsValidDNG (dng_shared &shared,
+ 		case ccUncompressed:
+ 			break;
+ 			
++        case 9: /* VC5 compression support */
+ 		case ccJPEG:
+ 			{
+ 			
+@@ -3202,7 +3203,7 @@ bool dng_ifd::IsValidDNG (dng_shared &shared,
+ 			break;
+ 			
+ 			}
+-			
++
+ 		case ccLossyJPEG:
+ 			{
+ 			

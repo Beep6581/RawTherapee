@@ -1,4 +1,5 @@
-/*
+/* -*- C++ -*-
+ *  
  *  This file is part of RawTherapee.
  *
  *  Copyright (c) 2004-2010 Gabor Horvath <hgabor@rawtherapee.com>
@@ -50,6 +51,7 @@ public:
     Glib::ustring   flatFieldsPath;         ///< The default directory for flat fields
     Glib::ustring   cameraProfilesPath;     ///< The default directory for camera profiles
     Glib::ustring   lensProfilesPath;       ///< The default directory for lens profiles
+    bool            enableLibRaw;           ///< Use LibRaw to decode raw images.
 
     Glib::ustring   adobe;                  // filename of AdobeRGB1998 profile (default to the bundled one)
     Glib::ustring   prophoto;               // filename of Prophoto     profile (default to the bundled one)
@@ -98,7 +100,7 @@ public:
     bool            itcwb_enable;
     double          itcwb_deltaspec;
     double          itcwb_powponder;
-
+    double basecorlog;
 //wavelet levels
     double          edghi;
     double          edglo;
@@ -111,6 +113,19 @@ public:
         RAW_IF_NOT_JPEG_FULLSIZE
     };
     ThumbnailInspectorMode thumbnail_inspector_mode;
+
+    enum class XmpSidecarStyle {
+        STD, // FILENAME.xmp for FILENAME.ext
+        EXT  // FILENAME.ext.xmp for FILENAME.ext
+    };
+    XmpSidecarStyle xmp_sidecar_style;
+
+    enum class MetadataXmpSync {
+        NONE,
+        READ,
+        READ_WRITE
+    };
+    MetadataXmpSync metadata_xmp_sync;
 
     /** Creates a new instance of Settings.
       * @return a pointer to the new Settings instance. */

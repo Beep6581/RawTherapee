@@ -24,8 +24,8 @@
 #include "toolpanel.h"
 #include "editwidgets.h"
 #include "adjuster.h"
-#include "../rtengine/procparams.h"
-#include "../rtengine/tweakoperator.h"
+#include "rtengine/procparams.h"
+#include "rtengine/tweakoperator.h"
 
 /**
  * @brief Let the user create/edit/delete points for Spot Removal tool

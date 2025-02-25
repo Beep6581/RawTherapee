@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   width="24px"
+   height="24px"
+   viewBox="0 0 24 24"
+   version="1.1"
+   id="SVGRoot"
+   sodipodi:docname="rt-spot.svg"
+   inkscape:version="1.3.2 (091e20ef0f, 2023-11-25, custom)"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:dc="http://purl.org/dc/elements/1.1/">
+  <defs
+     id="defs815" />
+  <metadata
+     id="metadata818">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:creator>
+          <cc:Agent>
+            <dc:title>Lawrence37</dc:title>
+          </cc:Agent>
+        </dc:creator>
+        <dc:rights>
+          <cc:Agent>
+            <dc:title />
+          </cc:Agent>
+        </dc:rights>
+        <cc:license
+           rdf:resource="http://creativecommons.org/licenses/by-sa/4.0/" />
+        <dc:description>RawTherapee icon: RT spot.</dc:description>
+      </cc:Work>
+      <cc:License
+         rdf:about="http://creativecommons.org/licenses/by-sa/4.0/">
+        <cc:permits
+           rdf:resource="http://creativecommons.org/ns#Reproduction" />
+        <cc:permits
+           rdf:resource="http://creativecommons.org/ns#Distribution" />
+        <cc:requires
+           rdf:resource="http://creativecommons.org/ns#Notice" />
+        <cc:requires
+           rdf:resource="http://creativecommons.org/ns#Attribution" />
+        <cc:permits
+           rdf:resource="http://creativecommons.org/ns#DerivativeWorks" />
+        <cc:requires
+           rdf:resource="http://creativecommons.org/ns#ShareAlike" />
+      </cc:License>
+    </rdf:RDF>
+  </metadata>
+  <circle
+     style="opacity:0.7;fill:none;stroke:#cccccc;stroke-width:2"
+     id="spot"
+     cx="12"
+     cy="12"
+     r="2" />
+  <g
+     id="frame"
+     style="opacity:0.7">
+    <path
+       id="rect"
+       style="opacity:1;fill:none;stroke:#cccccc;stroke-width:2"
+       d="M 3,5 H 21 V 19 H 3 Z" />
+    <circle
+       style="opacity:1;fill:#cccccc;fill-opacity:1"
+       id="node-left"
+       cx="3"
+       cy="12"
+       r="2.5" />
+    <circle
+       style="fill:#cccccc;fill-opacity:1;stroke:none"
+       id="node-top"
+       cx="12"
+       cy="5"
+       r="2.5" />
+    <circle
+       style="fill:#cccccc;fill-opacity:1;stroke:none"
+       id="node-right"
+       cx="21"
+       cy="12"
+       r="2.5" />
+    <circle
+       style="fill:#cccccc;fill-opacity:1;stroke:none"
+       id="node-bottom"
+       cx="12"
+       cy="19"
+       r="2.5" />
+  </g>
+</svg>

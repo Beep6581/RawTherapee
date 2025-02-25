@@ -26,8 +26,8 @@
 #include "toolpanel.h"
 #include "wbprovider.h"
 
-#include "../rtengine/procparams.h"
-#include "../rtengine/utils.h"
+#include "rtengine/procparams.h"
+#include "rtengine/utils.h"
 
 class SpotWBListener
 {
@@ -54,7 +54,7 @@ protected:
     class MethodColumns : public Gtk::TreeModel::ColumnRecord
     {
     public:
-        Gtk::TreeModelColumn< Glib::RefPtr<Gdk::Pixbuf> > colIcon;
+        Gtk::TreeModelColumn<Glib::ustring> colIcon;
         Gtk::TreeModelColumn<Glib::ustring> colLabel;
         Gtk::TreeModelColumn<int> colId;
         MethodColumns()
@@ -70,7 +70,7 @@ protected:
     rtengine::ProcEvent EvWBitcwbalg;
     rtengine::ProcEvent EvWBitcwgreen;
 
-    static Glib::RefPtr<Gdk::Pixbuf> wbPixbufs[rtengine::toUnderlying(rtengine::procparams::WBEntry::Type::CUSTOM) + 1];
+    Glib::ustring wbIcons[rtengine::toUnderlying(rtengine::procparams::WBEntry::Type::CUSTOM) + 1];
     Glib::RefPtr<Gtk::TreeStore> refTreeModel;
     MethodColumns methodColumns;
     MyComboBox* method;
@@ -85,6 +85,7 @@ protected:
     Gtk::CheckButton* itcwb_alg;
     MyComboBoxText* itcwb_prim;
     Adjuster* itcwb_green;
+    std::unique_ptr<Adjuster> compatVersionAdjuster;
     
     bool lastitcwb_alg;
 
@@ -119,8 +120,6 @@ public:
     WhiteBalance ();
     ~WhiteBalance () override;
 
-    static void init    ();
-    static void cleanup ();
     void read           (const rtengine::procparams::ProcParams* pp, const ParamsEdited* pedited = nullptr) override;
     void write          (rtengine::procparams::ProcParams* pp, ParamsEdited* pedited = nullptr) override;
     void setDefaults    (const rtengine::procparams::ProcParams* defParams, const ParamsEdited* pedited = nullptr) override;
@@ -142,7 +141,7 @@ public:
     }
     void setWB (int temp, double green);
     void resetWB ();
-    void WBChanged           (int met, double temp, double green, double rw, double gw, double bw, float temp0, float delta, int bia, int dread, float studgood, float minchrom, int kmin, float histmin, float histmax) override;
+    void WBChanged           (int met, double temp, double green, double rw, double gw, double bw, float temp0, float delta, int bia, int dread, float studgood, float minchrom, int kmin, float histmin, float histmax, AWBMode aWBMode) override;
     void itcwb_alg_toggled ();
     void itcwb_prim_changed ();
     void setAdjusterBehavior (bool tempadd, bool greenadd, bool equaladd, bool tempbiasadd);

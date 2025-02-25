@@ -122,8 +122,6 @@ EXIFPANEL_RESET;Obnovit
 EXIFPANEL_RESETALL;Obnovit vše
 EXIFPANEL_RESETALLHINT;Obnoví původní hodnoty u všech štítků.
 EXIFPANEL_RESETHINT;Obnoví původní hodnoty u vybraných štítků.
-EXIFPANEL_SHOWALL;Zobrazit vše
-EXIFPANEL_SUBDIRECTORY;Podadresář
 EXPORT_BYPASS;Kroky zpracování pro přeskočení
 EXPORT_BYPASS_ALL;Vybrat / Zrušit výběr všeho
 EXPORT_BYPASS_DEFRINGE;Vynechat odstranění lemu
@@ -217,11 +215,11 @@ FILEBROWSER_POPUPUNTRASH;Vymazat z koše
 FILEBROWSER_QUERYBUTTONHINT;Smaže vyhledávací dotaz
 FILEBROWSER_QUERYHINT;Napište názvy hledaných souborů. Podporuje částečná jména souborů. Hledané termíny oddělte čárkami. Například:\n<i>1001,1004,1199</i>\n\nPro vyřazení výsledků z hledání použijte <i>!=</i> před hledaný výraz.\nNapříklad: \n<i>!=1001,1004,1199</i>\n\nZkratky:\n<b>Ctrl-F</b> pro přepnutí do pole hledání ,\n<b>Enter</b> pro zahájení hledání,\n<b>Esc</b> pro vyčištění,\n<b>Shift-Esc</b> pro zrušení přepnutí.
 FILEBROWSER_QUERYLABEL; Najít:
-FILEBROWSER_RANK1_TOOLTIP;Hodnocení 1 *\nZkratka: <b>Shift-1</b>
-FILEBROWSER_RANK2_TOOLTIP;Hodnocení 2 *\nZkratka: <b>Shift-2</b>
-FILEBROWSER_RANK3_TOOLTIP;Hodnocení 3 *\nZkratka: <b>Shift-3</b>
-FILEBROWSER_RANK4_TOOLTIP;Hodnocení 4 *\nZkratka: <b>Shift-4</b>
-FILEBROWSER_RANK5_TOOLTIP;Hodnocení 5 *\nZkratka: <b>Shift-5</b>
+FILEBROWSER_RANK1_TOOLTIP;Hodnocení 1 *\nZkratka: <b>1</b>
+FILEBROWSER_RANK2_TOOLTIP;Hodnocení 2 *\nZkratka: <b>2</b>
+FILEBROWSER_RANK3_TOOLTIP;Hodnocení 3 *\nZkratka: <b>3</b>
+FILEBROWSER_RANK4_TOOLTIP;Hodnocení 4 *\nZkratka: <b>4</b>
+FILEBROWSER_RANK5_TOOLTIP;Hodnocení 5 *\nZkratka: <b>5</b>
 FILEBROWSER_RENAMEDLGLABEL;Přejmenování souboru
 FILEBROWSER_RESETDEFAULTPROFILE;Vrátit se k původnímu
 FILEBROWSER_SELECTDARKFRAME;Výběr tmavého snímku...
@@ -232,23 +230,23 @@ FILEBROWSER_SHOWCOLORLABEL3HINT;Ukázat obrázky se zeleným štítkem.\nZkratka
 FILEBROWSER_SHOWCOLORLABEL4HINT;Ukázat obrázky s modrým štítkem.\nZkratka: <b>Alt-4</b>
 FILEBROWSER_SHOWCOLORLABEL5HINT;Ukázat obrázky s nachovým štítkem.\nZkratka: <b>Alt-5</b>
 FILEBROWSER_SHOWDIRHINT;Smazat všechny filtry.\nZkratka: <b>d</b>
-FILEBROWSER_SHOWEDITEDHINT;Ukázat upravené obrázky.\nZkratka: <b>7</b>
-FILEBROWSER_SHOWEDITEDNOTHINT;Ukázat neupravené obrázky.\nZkratka: <b>6</b>
+FILEBROWSER_SHOWEDITEDHINT;Ukázat upravené obrázky.\nZkratka: <b>Shift-7</b>
+FILEBROWSER_SHOWEDITEDNOTHINT;Ukázat neupravené obrázky.\nZkratka: <b>Shift-6</b>
 FILEBROWSER_SHOWEXIFINFO;Zobrazit Exif informace.\n\nZkratky:\n<b>i</b> - režim více karet editoru,\n<b>Alt-i</b> - režim jedné karty editoru.
 FILEBROWSER_SHOWNOTTRASHHINT;Zobrazit pouze snímky které nejsou v koši.
 FILEBROWSER_SHOWORIGINALHINT;Zobrazí pouze originální  obrázky.\n\nPokud existuje několik obrázků se stejným názvem, ale rozdílnými příponami, bude jako originál vybrán ten, jehož přípona je nejvýše v seznamu přípon veVolby > Prohlížeč souborů > Analyzované přípony.
-FILEBROWSER_SHOWRANK1HINT;Ukázat obrázky hodnocené jednou hvězdičkou.\nZkratka: <b>1</b>
-FILEBROWSER_SHOWRANK2HINT;Ukázat obrázky hodnocené dvěma hvězdičkami.\nZkratka: <b>2</b>
-FILEBROWSER_SHOWRANK3HINT;Ukázat obrázky hodnocené třemi hvězdičkami.\nZkratka: <b>3</b>
-FILEBROWSER_SHOWRANK4HINT;Ukázat obrázky hodnocené čtyřmi hvězdičkami.\nZkratka: <b>4</b>
-FILEBROWSER_SHOWRANK5HINT;Ukázat obrázky hodnocené pěti hvězdičkami.\nZkratka: <b>5</b>
+FILEBROWSER_SHOWRANK1HINT;Ukázat obrázky hodnocené jednou hvězdičkou.\nZkratka: <b>Shift-1</b>
+FILEBROWSER_SHOWRANK2HINT;Ukázat obrázky hodnocené dvěma hvězdičkami.\nZkratka: <b>Shift-2</b>
+FILEBROWSER_SHOWRANK3HINT;Ukázat obrázky hodnocené třemi hvězdičkami.\nZkratka: <b>Shift-3</b>
+FILEBROWSER_SHOWRANK4HINT;Ukázat obrázky hodnocené čtyřmi hvězdičkami.\nZkratka: <b>Shift-4</b>
+FILEBROWSER_SHOWRANK5HINT;Ukázat obrázky hodnocené pěti hvězdičkami.\nZkratka: <b>Shift-5</b>
 FILEBROWSER_SHOWRECENTLYSAVEDHINT;Ukázat uložené obrázky.\nZkratka: <b>Alt-7</b>
 FILEBROWSER_SHOWRECENTLYSAVEDNOTHINT;Ukázat neuložené obrázky.\nZkratka: <b>Alt-6</b>
 FILEBROWSER_SHOWTRASHHINT;Ukázat obsah koše.\nZkratka: <b>Ctrl-t</b>
 FILEBROWSER_SHOWUNCOLORHINT;Ukázat obrázky bez barevného štítku.\nZkratka: <b>Alt-0</b>
-FILEBROWSER_SHOWUNRANKHINT;Ukázat nehodnocené obrázky.\nZkratka: <b>0</b>
+FILEBROWSER_SHOWUNRANKHINT;Ukázat nehodnocené obrázky.\nZkratka: <b>Shift-0</b>
 FILEBROWSER_THUMBSIZE;Velikost náhledu
-FILEBROWSER_UNRANK_TOOLTIP;Zrušit hodnocení.\nZkratka: <b>Shift - 0</b>
+FILEBROWSER_UNRANK_TOOLTIP;Zrušit hodnocení.\nZkratka: <b>0</b>
 FILEBROWSER_ZOOMINHINT;Zvětšit velikosti náhledů.\n\nZkratky:\n<b>+</b> - režim více karet editoru,\n<b>Alt-+</b> - režim jedné karty editoru.
 FILEBROWSER_ZOOMOUTHINT;Zmenšit velikosti náhledů.\n\nZkratky:\n<b>-</b> - režim více karet editoru,\n<b>Alt--</b> - režim jedné karty editoru.
 FILECHOOSER_FILTER_ANY;Všechny soubory
@@ -1110,7 +1108,6 @@ PREFERENCES_APPEARANCE_COLORPICKERFONT;Písmo Průzkumníka barev
 PREFERENCES_APPEARANCE_CROPMASKCOLOR;Barva masky ořezu
 PREFERENCES_APPEARANCE_MAINFONT;Hlavní písmo
 PREFERENCES_APPEARANCE_NAVGUIDECOLOR;Barva vodítek navigátoru
-PREFERENCES_APPEARANCE_PSEUDOHIDPI;Pseudo-HiDPI režim
 PREFERENCES_APPEARANCE_THEME;Motiv
 PREFERENCES_APPLNEXTSTARTUP;vyžaduje restart aplikace
 PREFERENCES_AUTOMONPROFILE;Použít barevný profil hlavního monitoru z operačního systému
@@ -1306,6 +1303,7 @@ PROGRESSBAR_LINEDENOISE;Filtr linkového rušení…
 PROGRESSBAR_LOADING;Načítání obrázku...
 PROGRESSBAR_LOADINGTHUMBS;Načítání náhledů...
 PROGRESSBAR_LOADJPEG;Načítání JPEG...
+PROGRESSBAR_LOADJXL;Načítání JXL...
 PROGRESSBAR_LOADPNG;Načítání PNG...
 PROGRESSBAR_LOADTIFF;Načítání TIFF...
 PROGRESSBAR_NOIMAGES;Složka neobsahuje obrázky
@@ -1801,8 +1799,6 @@ TP_ICM_WORKING_TRC_SLOPE;Sklon
 TP_ICM_WORKING_TRC_TOOLTIP;Pouze pro vložené profily.
 TP_IMPULSEDENOISE_LABEL;Redukce impulzního šumu
 TP_IMPULSEDENOISE_THRESH;Práh
-TP_LABCURVE_AVOIDCOLORSHIFT;Zabránit posunu barev
-TP_LABCURVE_AVOIDCOLORSHIFT_TOOLTIP;Napasovat barvy do gamutu barevného pracovního prostoru a aplikovat Munsellovu korekci.
 TP_LABCURVE_BRIGHTNESS;Světlost
 TP_LABCURVE_CHROMATICITY;Barevnost
 TP_LABCURVE_CHROMA_TOOLTIP;Pro černobílé tónování nastavte barevnost na -100.
@@ -2426,9 +2422,19 @@ ZOOMPANEL_ZOOMOUT;Oddálit\nZkratka: <b>-</b>
 ! Untranslated keys follow; remove the ! prefix after an entry is translated.
 !!!!!!!!!!!!!!!!!!!!!!!!!
 
+!ERROR_MSG_METADATA_VALUE;Metadata: error setting %1 to %2
+!EXIFFILTER_PATH;File path
+!EXIFPANEL_ACTIVATE_ALL_HINT;Select all tags
+!EXIFPANEL_ACTIVATE_NONE_HINT;Unselect all tags
+!EXIFPANEL_BASIC_GROUP;Basic
+!EXIFPANEL_VALUE_NOT_SHOWN;Not shown
 !FILEBROWSER_POPUPINSPECT;Inspect
+!FILEBROWSER_POPUPSORTBY;Sort Files
+!FILEBROWSER_SHOWRECURSIVE;Show images in sub-folders recursively.
+!FILECHOOSER_FILTER_EXECUTABLE;Executable files
 !GENERAL_DELETE_ALL;Delete all
 !GENERAL_EDIT;Edit
+!GENERAL_OTHER;Other
 !HISTOGRAM_TOOLTIP_CROSSHAIR;Show/Hide indicator crosshair.
 !HISTOGRAM_TOOLTIP_SHOW_OPTIONS;Toggle visibility of the scope option buttons.
 !HISTOGRAM_TOOLTIP_TRACE_BRIGHTNESS;Adjust scope brightness.
@@ -2456,31 +2462,31 @@ ZOOMPANEL_ZOOMOUT;Oddálit\nZkratka: <b>-</b>
 !HISTORY_MSG_470;--unused--
 !HISTORY_MSG_496;Local Spot deleted
 !HISTORY_MSG_497;Local Spot selected
-!HISTORY_MSG_498;Local Spot name
-!HISTORY_MSG_499;Local Spot visibility
-!HISTORY_MSG_500;Local Spot shape
-!HISTORY_MSG_501;Local Spot method
-!HISTORY_MSG_502;Local Spot shape method
-!HISTORY_MSG_503;Local Spot locX
-!HISTORY_MSG_504;Local Spot locXL
-!HISTORY_MSG_505;Local Spot locY
-!HISTORY_MSG_506;Local Spot locYT
-!HISTORY_MSG_507;Local Spot center
-!HISTORY_MSG_508;Local Spot circrad
-!HISTORY_MSG_509;Local Spot quality method
-!HISTORY_MSG_510;Local Spot transition
-!HISTORY_MSG_511;Local Spot thresh
-!HISTORY_MSG_512;Local Spot ΔE decay
-!HISTORY_MSG_513;Local Spot scope
-!HISTORY_MSG_514;Local Spot structure
-!HISTORY_MSG_515;Local Adjustments
+!HISTORY_MSG_498;Local - Spot name
+!HISTORY_MSG_499;Local - Spot visibility
+!HISTORY_MSG_500;Local - Spot shape
+!HISTORY_MSG_501;Local - Spot method
+!HISTORY_MSG_502;Local - SC - Shape method
+!HISTORY_MSG_503;Local - Spot - Right
+!HISTORY_MSG_504;Local - Spot - Left
+!HISTORY_MSG_505;Local - Spot - Bottom
+!HISTORY_MSG_506;Local - Spot - Top
+!HISTORY_MSG_507;Local - Spot - Center
+!HISTORY_MSG_508;Local - Spot - Size
+!HISTORY_MSG_509;Local - Spot quality method
+!HISTORY_MSG_510;Local - TG - Transition value
+!HISTORY_MSG_511;Local - SD - ΔE scope threshold
+!HISTORY_MSG_512;Local - SD - ΔE decay
+!HISTORY_MSG_513;Local - Spot - Excluding - Scope
+!HISTORY_MSG_514;Local - Spot structure
+!HISTORY_MSG_515;Selective Editing
 !HISTORY_MSG_516;Local - Color and light
 !HISTORY_MSG_517;Local - Enable super
 !HISTORY_MSG_518;Local - Lightness
 !HISTORY_MSG_519;Local - Contrast
 !HISTORY_MSG_520;Local - Chrominance
 !HISTORY_MSG_521;Local - Scope
-!HISTORY_MSG_522;Local - curve method
+!HISTORY_MSG_522;Local - Curve method
 !HISTORY_MSG_523;Local - LL Curve
 !HISTORY_MSG_524;Local - CC curve
 !HISTORY_MSG_525;Local - LH Curve
@@ -2539,16 +2545,16 @@ ZOOMPANEL_ZOOMOUT;Oddálit\nZkratka: <b>-</b>
 !HISTORY_MSG_578;Local - cbdl threshold
 !HISTORY_MSG_579;Local - cbdl scope
 !HISTORY_MSG_580;--unused--
-!HISTORY_MSG_581;Local - deNoise lum f 1
-!HISTORY_MSG_582;Local - deNoise lum c
-!HISTORY_MSG_583;Local - deNoise lum detail
-!HISTORY_MSG_584;Local - deNoise equalizer White-Black
-!HISTORY_MSG_585;Local - deNoise chro f
-!HISTORY_MSG_586;Local - deNoise chro c
-!HISTORY_MSG_587;Local - deNoise chro detail
-!HISTORY_MSG_588;Local - deNoise equalizer Blue-Red
-!HISTORY_MSG_589;Local - deNoise bilateral
-!HISTORY_MSG_590;Local - deNoise Scope
+!HISTORY_MSG_581;Local - Denoise lum f 1
+!HISTORY_MSG_582;Local - Denoise lum c
+!HISTORY_MSG_583;Local - Denoise lum detail
+!HISTORY_MSG_584;Local - Denoise equalizer White-Black
+!HISTORY_MSG_585;Local - Denoise chro f
+!HISTORY_MSG_586;Local - Denoise chro c
+!HISTORY_MSG_587;Local - Denoise chro detail
+!HISTORY_MSG_588;Local - Denoise equalizer Blue-Red
+!HISTORY_MSG_589;Local - Denoise bilateral
+!HISTORY_MSG_590;Local - Denoise Scope
 !HISTORY_MSG_591;Local - Avoid color shift
 !HISTORY_MSG_592;Local - Sh Contrast
 !HISTORY_MSG_593;Local - Local contrast
@@ -2579,7 +2585,7 @@ ZOOMPANEL_ZOOMOUT;Oddálit\nZkratka: <b>-</b>
 !HISTORY_MSG_619;Local - Use Exp Mask
 !HISTORY_MSG_620;Local - Blur col
 !HISTORY_MSG_621;Local - Exp inverse
-!HISTORY_MSG_622;Local - Exclude structure
+!HISTORY_MSG_622;Local - Spot - Excluding - Spot structure
 !HISTORY_MSG_623;Local - Exp Chroma compensation
 !HISTORY_MSG_624;Local - Color correction grid
 !HISTORY_MSG_625;Local - Color correction strength
@@ -2602,7 +2608,7 @@ ZOOMPANEL_ZOOMOUT;Oddálit\nZkratka: <b>-</b>
 !HISTORY_MSG_642;Local - radius SH
 !HISTORY_MSG_643;Local - Blur SH
 !HISTORY_MSG_644;Local - inverse SH
-!HISTORY_MSG_645;Local - balance ΔE ab-L
+!HISTORY_MSG_645;Local - SD - ab-L balance
 !HISTORY_MSG_646;Local - Exp mask chroma
 !HISTORY_MSG_647;Local - Exp mask gamma
 !HISTORY_MSG_648;Local - Exp mask slope
@@ -2616,11 +2622,11 @@ ZOOMPANEL_ZOOMOUT;Oddálit\nZkratka: <b>-</b>
 !HISTORY_MSG_656;Local - Color soft radius
 !HISTORY_MSG_657;Local - Retinex Reduce artifacts
 !HISTORY_MSG_658;Local - CBDL soft radius
-!HISTORY_MSG_659;Local Spot transition-decay
+!HISTORY_MSG_659;Local - TG - Transition decay
 !HISTORY_MSG_660;Local - cbdl clarity
 !HISTORY_MSG_661;Local - cbdl contrast residual
-!HISTORY_MSG_662;Local - deNoise lum f 0
-!HISTORY_MSG_663;Local - deNoise lum f 2
+!HISTORY_MSG_662;Local - Denoise lum f 0
+!HISTORY_MSG_663;Local - Denoise lum f 2
 !HISTORY_MSG_664;--unused--
 !HISTORY_MSG_665;Local - cbdl mask Blend
 !HISTORY_MSG_666;Local - cbdl mask radius
@@ -2633,7 +2639,7 @@ ZOOMPANEL_ZOOMOUT;Oddálit\nZkratka: <b>-</b>
 !HISTORY_MSG_673;Local - Use cbdl mask
 !HISTORY_MSG_674;Local - Tool removed
 !HISTORY_MSG_675;Local - TM soft radius
-!HISTORY_MSG_676;Local Spot transition-differentiation
+!HISTORY_MSG_676;Local - TG - Transition differentiation
 !HISTORY_MSG_677;Local - TM amount
 !HISTORY_MSG_678;Local - TM saturation
 !HISTORY_MSG_679;Local - Retinex mask C
@@ -2716,7 +2722,7 @@ ZOOMPANEL_ZOOMOUT;Oddálit\nZkratka: <b>-</b>
 !HISTORY_MSG_762;Local - cbdl Laplacian mask
 !HISTORY_MSG_763;Local - Blur Laplacian mask
 !HISTORY_MSG_764;Local - Solve PDE Laplacian mask
-!HISTORY_MSG_765;Local - deNoise Detail threshold
+!HISTORY_MSG_765;Local - Denoise Detail threshold
 !HISTORY_MSG_766;Local - Blur Fast Fourier
 !HISTORY_MSG_767;Local - Grain Iso
 !HISTORY_MSG_768;Local - Grain Strength
@@ -2735,19 +2741,19 @@ ZOOMPANEL_ZOOMOUT;Oddálit\nZkratka: <b>-</b>
 !HISTORY_MSG_781;Local - Contrast Mask Wavelet level
 !HISTORY_MSG_782;Local - Blur Denoise Mask Wavelet levels
 !HISTORY_MSG_783;Local - Color Wavelet levels
-!HISTORY_MSG_784;Local - Mask ΔE
-!HISTORY_MSG_785;Local - Mask Scope ΔE
+!HISTORY_MSG_784;Local - Mask - ΔE Image Mask
+!HISTORY_MSG_785;Local - Mask - Scope
 !HISTORY_MSG_786;Local - SH method
 !HISTORY_MSG_787;Local - Equalizer multiplier
 !HISTORY_MSG_788;Local - Equalizer detail
 !HISTORY_MSG_789;Local - SH mask amount
 !HISTORY_MSG_790;Local - SH mask anchor
 !HISTORY_MSG_791;Local - Mask Short L curves
-!HISTORY_MSG_792;Local - Mask Luminance Background
+!HISTORY_MSG_792;Local - Mask - Background
 !HISTORY_MSG_793;Local - SH TRC gamma
 !HISTORY_MSG_794;Local - SH TRC slope
 !HISTORY_MSG_795;Local - Mask save restore image
-!HISTORY_MSG_796;Local - Recursive references
+!HISTORY_MSG_796;Local - SC - Recursive references
 !HISTORY_MSG_797;Local - Merge Original method
 !HISTORY_MSG_798;Local - Opacity
 !HISTORY_MSG_799;Local - Color RGB ToneCurve
@@ -2783,7 +2789,7 @@ ZOOMPANEL_ZOOMOUT;Oddálit\nZkratka: <b>-</b>
 !HISTORY_MSG_830;Local - Color gradient strength L
 !HISTORY_MSG_831;Local - Color gradient angle
 !HISTORY_MSG_832;Local - Color gradient strength C
-!HISTORY_MSG_833;Local - Gradient feather
+!HISTORY_MSG_833;Local - Mask gradient feather
 !HISTORY_MSG_834;Local - Color gradient strength H
 !HISTORY_MSG_835;Local - Vib gradient strength L
 !HISTORY_MSG_836;Local - Vib gradient angle
@@ -2816,7 +2822,7 @@ ZOOMPANEL_ZOOMOUT;Oddálit\nZkratka: <b>-</b>
 !HISTORY_MSG_864;Local - Wavelet dir contrast attenuation
 !HISTORY_MSG_865;Local - Wavelet dir contrast delta
 !HISTORY_MSG_866;Local - Wavelet dir compression
-!HISTORY_MSG_868;Local - Balance ΔE C-H
+!HISTORY_MSG_868;Local - SD - C-H balance
 !HISTORY_MSG_869;Local - Denoise by level
 !HISTORY_MSG_870;Local - Wavelet mask curve H
 !HISTORY_MSG_871;Local - Wavelet mask curve C
@@ -2841,7 +2847,7 @@ ZOOMPANEL_ZOOMOUT;Oddálit\nZkratka: <b>-</b>
 !HISTORY_MSG_891;Local - Contrast Wavelet Graduated
 !HISTORY_MSG_892;Local - Log Encoding Graduated Strength
 !HISTORY_MSG_893;Local - Log Encoding Graduated angle
-!HISTORY_MSG_894;Local - Color Preview dE
+!HISTORY_MSG_894;Local - SD - ΔE preview color intensity
 !HISTORY_MSG_897;Local - Contrast Wavelet ES strength
 !HISTORY_MSG_898;Local - Contrast Wavelet ES radius
 !HISTORY_MSG_899;Local - Contrast Wavelet ES detail
@@ -2855,7 +2861,7 @@ ZOOMPANEL_ZOOMOUT;Oddálit\nZkratka: <b>-</b>
 !HISTORY_MSG_907;Local - Contrast Wavelet ES amplification
 !HISTORY_MSG_908;Local - Contrast Wavelet ES neighboring
 !HISTORY_MSG_909;Local - Contrast Wavelet ES show
-!HISTORY_MSG_910;Local - Wavelet Edge performance
+!HISTORY_MSG_910;Local - SC - Wavelet Edge performance
 !HISTORY_MSG_911;Local - Blur Chroma Luma
 !HISTORY_MSG_912;Local - Blur Guide filter strength
 !HISTORY_MSG_913;Local - Contrast Wavelet Sigma DR
@@ -2867,10 +2873,10 @@ ZOOMPANEL_ZOOMOUT;Oddálit\nZkratka: <b>-</b>
 !HISTORY_MSG_919;Local - Residual wavelet highlights threshold
 !HISTORY_MSG_920;Local - Wavelet sigma LC
 !HISTORY_MSG_921;Local - Wavelet Graduated sigma LC2
-!HISTORY_MSG_922;Local - changes In Black and White
+!HISTORY_MSG_922;Local - SC - Changes in B/W
 !HISTORY_MSG_923;Local - Tool complexity mode
 !HISTORY_MSG_924;--unused--
-!HISTORY_MSG_925;Local - Scope color tools
+!HISTORY_MSG_925;Local - Scope (color tools)
 !HISTORY_MSG_926;Local - Show mask type
 !HISTORY_MSG_927;Local - Shadow
 !HISTORY_MSG_928;Local - Common color mask
@@ -2984,7 +2990,7 @@ ZOOMPANEL_ZOOMOUT;Oddálit\nZkratka: <b>-</b>
 !HISTORY_MSG_1037;Local - Nlmeans - radius
 !HISTORY_MSG_1038;Local - Nlmeans - gamma
 !HISTORY_MSG_1039;Local - Grain - gamma
-!HISTORY_MSG_1040;Local - Spot - soft radius
+!HISTORY_MSG_1040;Local - SC - Soft radius
 !HISTORY_MSG_1041;Local - Spot - Munsell
 !HISTORY_MSG_1042;Local - Log encoding - threshold
 !HISTORY_MSG_1043;Local - Exp - normalize
@@ -3026,7 +3032,7 @@ ZOOMPANEL_ZOOMOUT;Oddálit\nZkratka: <b>-</b>
 !HISTORY_MSG_1079;Local - CIECAM Sigmoid strength J
 !HISTORY_MSG_1080;Local - CIECAM Sigmoid threshold
 !HISTORY_MSG_1081;Local - CIECAM Sigmoid blend
-!HISTORY_MSG_1082;Local - CIECAM Sigmoid Q BlackEv WhiteEv
+!HISTORY_MSG_1082;Local - CIECAM Auto threshold
 !HISTORY_MSG_1083;Local - CIECAM Hue
 !HISTORY_MSG_1084;Local - Uses Black Ev - White Ev
 !HISTORY_MSG_1085;Local - Jz lightness
@@ -3075,7 +3081,7 @@ ZOOMPANEL_ZOOMOUT;Oddálit\nZkratka: <b>-</b>
 !HISTORY_MSG_1128;Local - Cie mask slope
 !HISTORY_MSG_1129;Local - Cie Relative luminance
 !HISTORY_MSG_1130;Local - Cie Saturation Jz
-!HISTORY_MSG_1131;Local - Mask denoise chroma
+!HISTORY_MSG_1131;Local - Mask - Denoise
 !HISTORY_MSG_1132;Local - Cie Wav sigma Jz
 !HISTORY_MSG_1133;Local - Cie Wav level Jz
 !HISTORY_MSG_1134;Local - Cie Wav local contrast Jz
@@ -3101,22 +3107,102 @@ ZOOMPANEL_ZOOMOUT;Oddálit\nZkratka: <b>-</b>
 !HISTORY_MSG_COMPLEX;Wavelet complexity
 !HISTORY_MSG_COMPLEXRETI;Retinex complexity
 !HISTORY_MSG_DEHAZE_SATURATION;Dehaze - Saturation
+!HISTORY_MSG_DIRPYRDENOISE_GAIN;NR - Compensate for lightness
+!HISTORY_MSG_FF_FROMMETADATA;Flat-Field - From Metadata
 !HISTORY_MSG_FILMNEGATIVE_BALANCE;FN - Reference output
 !HISTORY_MSG_FILMNEGATIVE_COLORSPACE;Film negative color space
 !HISTORY_MSG_FILMNEGATIVE_REF_SPOT;FN - Reference input
+!HISTORY_MSG_GAMUTMUNSEL;Gamut-Munsell
 !HISTORY_MSG_HLBL;Color propagation - blur
+!HISTORY_MSG_HLTH;Inpaint opposed - gain threshold
 !HISTORY_MSG_ICL_LABGRIDCIEXY;Cie xy
 !HISTORY_MSG_ICM_AINTENT;Abstract profile intent
 !HISTORY_MSG_ICM_BLUX;Primaries Blue X
 !HISTORY_MSG_ICM_BLUY;Primaries Blue Y
+!HISTORY_MSG_ICM_CAT;Matrix adaptation
 !HISTORY_MSG_ICM_FBW;Black and White
+!HISTORY_MSG_ICM_GAMUT;Gamut control
 !HISTORY_MSG_ICM_GREX;Primaries Green X
 !HISTORY_MSG_ICM_GREY;Primaries Green Y
+!HISTORY_MSG_ICM_MIDTCIE;Midtones
 !HISTORY_MSG_ICM_PRESER;Preserve neutral
 !HISTORY_MSG_ICM_REDX;Primaries Red X
 !HISTORY_MSG_ICM_REDY;Primaries Red Y
+!HISTORY_MSG_ICM_REFI;Refinement Colors
+!HISTORY_MSG_ICM_SHIFTX;Refinement Colors - Shift x
+!HISTORY_MSG_ICM_SHIFTY;Refinement Colors - Shift y
+!HISTORY_MSG_ICM_SMOOTHCIE;Smooth highlights
+!HISTORY_MSG_ICM_TRCEXP;Abstract Profile
 !HISTORY_MSG_ICM_WORKING_ILLUM_METHOD;Illuminant method
 !HISTORY_MSG_ICM_WORKING_PRIM_METHOD;Primaries method
+!HISTORY_MSG_LOCALLAB_TE_PIVOT;Local - Equalizer pivot
+!HISTORY_MSG_LOCAL_CIEMASK_BLURCONT;Local - CIECAM Mask blur contrast
+!HISTORY_MSG_LOCAL_CIEMASK_BLURFFT;Local - CIECAM Mask blur FFTW
+!HISTORY_MSG_LOCAL_CIEMASK_BLURRAD;Local - CIECAM Mask blur radius
+!HISTORY_MSG_LOCAL_CIEMASK_CHH;Local - CIECAM Mask curve h(h)
+!HISTORY_MSG_LOCAL_CIEMASK_HIGH;Local - CIECAM Mask highlights
+!HISTORY_MSG_LOCAL_CIEMASK_SHAD;Local - CIECAM Mask shadows
+!HISTORY_MSG_LOCAL_CIEMASK_STRU;Local - CIECAM Mask structure
+!HISTORY_MSG_LOCAL_CIEMASK_STRU_TOOL;Local - CIECAM Mask structure as tool
+!HISTORY_MSG_LOCAL_CIEMASK_WLC;Local - CIECAM Mask wavelet L(L)
+!HISTORY_MSG_LOCAL_CIEMASK_WLEV;Local - CIECAM Mask wavelet levels
+!HISTORY_MSG_LOCAL_CIE_ANGGRAD;Local - CIECAM Gradient angle
+!HISTORY_MSG_LOCAL_CIE_BLACKS;Local - CIECAM Blacks distribution
+!HISTORY_MSG_LOCAL_CIE_BLUXL;Local - CIECAM Blue X
+!HISTORY_MSG_LOCAL_CIE_BLUYL;Local - CIECAM Blue Y
+!HISTORY_MSG_LOCAL_CIE_BRICOMP;Local - CIECAM Brightness compression
+!HISTORY_MSG_LOCAL_CIE_BRICOMPTH;Local - CIECAM Brightness compression threshold
+!HISTORY_MSG_LOCAL_CIE_BWCIE;Local - CIECAM Black and white
+!HISTORY_MSG_LOCAL_CIE_CAT;Local - Matrix adaptation
+!HISTORY_MSG_LOCAL_CIE_DETAILJZ;Local - JzCzHz Local contrast
+!HISTORY_MSG_LOCAL_CIE_ENAMASKALL;Local - CIECAM All mask tools
+!HISTORY_MSG_LOCAL_CIE_EXPPRECAM;Local - CIECAM Pre-Cam
+!HISTORY_MSG_LOCAL_CIE_GAM;Local - CIECAM Gamma
+!HISTORY_MSG_LOCAL_CIE_GAMUTCIE;Local - CIECAM Gamut
+!HISTORY_MSG_LOCAL_CIE_GREXL;Local - CIECAM Green X
+!HISTORY_MSG_LOCAL_CIE_GREYL;Local - CIECAM Green Y
+!HISTORY_MSG_LOCAL_CIE_ILL;Local - CIECAM TRC Illuminant
+!HISTORY_MSG_LOCAL_CIE_LOGCIEQ;Local - CIECAM Log encoding Q
+!HISTORY_MSG_LOCAL_CIE_MIDT;Local - CIECAM Mid Tones
+!HISTORY_MSG_LOCAL_CIE_NORM;Local - CIECAM Normalize L
+!HISTORY_MSG_LOCAL_CIE_PRIM;Local - CIECAM TRC primaries
+!HISTORY_MSG_LOCAL_CIE_REDXL;Local - CIECAM Red X
+!HISTORY_MSG_LOCAL_CIE_REDYL;Local - CIECAM Red Y
+!HISTORY_MSG_LOCAL_CIE_REFI;Local - CIECAM Refinement colors
+!HISTORY_MSG_LOCAL_CIE_SATCIE;Local - CIECAM Saturation control
+!HISTORY_MSG_LOCAL_CIE_SHIFTXL;Local - CIECAM Shift x
+!HISTORY_MSG_LOCAL_CIE_SHIFTYL;Local - CIECAM Shift y
+!HISTORY_MSG_LOCAL_CIE_SIG;Local - Sigmoid
+!HISTORY_MSG_LOCAL_CIE_SIGADAP;Local - CIECAM Sigmoid adaptability
+!HISTORY_MSG_LOCAL_CIE_SIGMET;Local - CIECAM Sigmoid method
+!HISTORY_MSG_LOCAL_CIE_SLOP;Local - CIECAM Slope
+!HISTORY_MSG_LOCAL_CIE_SLOPESMO;Local - CIECAM Gray balance
+!HISTORY_MSG_LOCAL_CIE_SLOPESMOB;Local - CIECAM Blue balance
+!HISTORY_MSG_LOCAL_CIE_SLOPESMOG;Local - CIECAM Green balance
+!HISTORY_MSG_LOCAL_CIE_SLOPESMOR;Local - CIECAM Red balance
+!HISTORY_MSG_LOCAL_CIE_SMOOTH;Local - CIECAM Scale Yb scene
+!HISTORY_MSG_LOCAL_CIE_SMOOTHMET;Local - CIECAM Smooth lights method
+!HISTORY_MSG_LOCAL_CIE_SMOOTHYB;Local - CIECAM Scale Yb viewing
+!HISTORY_MSG_LOCAL_CIE_SMOOTH_LUM;Local - CIECAM Levels - Luminosity mode
+!HISTORY_MSG_LOCAL_CIE_STRGRAD;Local - CIECAM Gradient strength L
+!HISTORY_MSG_LOCAL_CIE_STRLOG;Local - CIECAM Log encoding strength
+!HISTORY_MSG_LOCAL_CIE_TRC;Local - CIECAM TRC
+!HISTORY_MSG_LOCAL_CIE_WHITES;Local - CIECAM Whites distribution
+!HISTORY_MSG_LOCAL_DEHAZE_BLACK;Local - Dehaze Black
+!HISTORY_MSG_LOCAL_FEATHERCIE;Local - CIECAM Gradient feather
+!HISTORY_MSG_LOCAL_FEATHERCOL;Local - Color Gradient feather
+!HISTORY_MSG_LOCAL_FEATHEREXE;Local - Exp Gradient feather
+!HISTORY_MSG_LOCAL_FEATHERLOG;Local - Log Gradient feather
+!HISTORY_MSG_LOCAL_FEATHERMAS;Local - Mask Common gradient feather
+!HISTORY_MSG_LOCAL_FEATHERSH;Local - SH Gradient feather
+!HISTORY_MSG_LOCAL_FEATHERVIB;Local - Vib Gradient feather
+!HISTORY_MSG_LOCAL_FEATHERWAV;Local - Wav Gradient feather
+!HISTORY_MSG_LOCAL_GAMUTMUNSEL;Local - SC - Avoid Color Shift
+!HISTORY_MSG_LOCAL_LOG_BLACKS;Local - Log Blacks distribution
+!HISTORY_MSG_LOCAL_LOG_COMPR;Local - Log Compress brightness
+!HISTORY_MSG_LOCAL_LOG_SAT;Local - Log Saturation control
+!HISTORY_MSG_LOCAL_LOG_WHITES;Local - Log Whites distribution
+!HISTORY_MSG_LOCAL_TMO_SATUR;Local Exp Fattal Saturation
 !HISTORY_MSG_PERSP_CAM_ANGLE;Perspective - Camera
 !HISTORY_MSG_PERSP_CAM_FL;Perspective - Camera
 !HISTORY_MSG_PERSP_CAM_SHIFT;Perspective - Camera
@@ -3130,6 +3216,11 @@ ZOOMPANEL_ZOOMOUT;Oddálit\nZkratka: <b>-</b>
 !HISTORY_MSG_RESIZE_SHORTEDGE;Resize - Short Edge
 !HISTORY_MSG_SPOT;Spot removal
 !HISTORY_MSG_SPOT_ENTRY;Spot removal - Point modif.
+!HISTORY_MSG_TONE_EQUALIZER_BANDS;Tone equalizer - Bands
+!HISTORY_MSG_TONE_EQUALIZER_ENABLED;Tone equalizer
+!HISTORY_MSG_TONE_EQUALIZER_PIVOT;Tone equalizer - Pivot
+!HISTORY_MSG_TONE_EQUALIZER_REGULARIZATION;Tone equalizer - Regularization
+!HISTORY_MSG_TONE_EQUALIZER_SHOW_COLOR_MAP;Tone equalizer - Tonal map
 !HISTORY_MSG_WAVCHR;Blur levels - blur chroma
 !HISTORY_MSG_WAVDENLH;Level 5
 !HISTORY_MSG_WAVDENOISE;Local contrast
@@ -3149,17 +3240,40 @@ ZOOMPANEL_ZOOMOUT;Oddálit\nZkratka: <b>-</b>
 !HISTORY_MSG_WAVSTREND;Strength soft
 !HISTORY_MSG_WAVTHRDEN;Threshold local contrast
 !HISTORY_MSG_WAVTHREND;Threshold local contrast
+!HISTORY_MSG_WBALANCE_OBSERVER10;Observer 10°
+!HISTORY_MSG_WBITC_CUSTOM;Itcwb Custom
+!HISTORY_MSG_WBITC_DELTA;Itcwb Delta green
+!HISTORY_MSG_WBITC_FGREEN;Itcwb Green - student
+!HISTORY_MSG_WBITC_FORCE;Itcwb Force
+!HISTORY_MSG_WBITC_GREEN;Green refinement
+!HISTORY_MSG_WBITC_MINSIZE;Patch min size
+!HISTORY_MSG_WBITC_NOPURPLE;Itcwb Nopurple
+!HISTORY_MSG_WBITC_OBS;Remove algo 2 passes
+!HISTORY_MSG_WBITC_PONDER;Itcwb ponderated
+!HISTORY_MSG_WBITC_PRECIS;Itcwb Precision
+!HISTORY_MSG_WBITC_PRIM;Primaries
+!HISTORY_MSG_WBITC_RGREEN;Itcwb Green range
+!HISTORY_MSG_WBITC_SAMPLING;Low sampling
+!HISTORY_MSG_WBITC_SIZE;Itcwb Size
+!HISTORY_MSG_WBITC_SORTED;Itcwb ponderated
+!HISTORY_MSG_WBITC_THRES;Itcwb Threshold
 !ICCPROFCREATOR_ILL_63;D63 : DCI-P3 Theater
 !ICCPROFCREATOR_PRIM_DCIP3;DCI-P3
 !INSPECTOR_WINDOW_TITLE;Inspector
-!MAIN_TAB_LOCALLAB;Local
+!MAIN_TAB_LOCALLAB;Selective Editing
 !MAIN_TAB_LOCALLAB_TOOLTIP;Shortcut: <b>Alt-o</b>
-!PARTIALPASTE_LOCALLAB;Local Adjustments
-!PARTIALPASTE_LOCALLABGROUP;Local Adjustments Settings
+!PARTIALPASTE_FLATFIELDFROMMETADATA;Flat-field from Metadata
+!PARTIALPASTE_LOCALLAB;Selective Editing
+!PARTIALPASTE_LOCALLABGROUP;Selective Editing Settings
 !PARTIALPASTE_SPOT;Spot removal
+!PARTIALPASTE_TONE_EQUALIZER;Tone equalizer
+!PREFERENCES_BROWSERECURSIVEDEPTH;Browse sub-folders depth
+!PREFERENCES_BROWSERECURSIVEFOLLOWLINKS;Follow symbolic links when browsing sub-folders
+!PREFERENCES_BROWSERECURSIVEMAXDIRS;Maximum sub-folders
+!PREFERENCES_CAMERAPROFILESDIR;Camera profiles directory
 !PREFERENCES_CIE;Ciecam
 !PREFERENCES_CIEARTIF;Avoid artifacts
-!PREFERENCES_COMPLEXITYLOC;Default complexity for Local Adjustments
+!PREFERENCES_COMPLEXITYLOC;Default complexity for Selective Editing
 !PREFERENCES_COMPLEXITY_EXP;Advanced
 !PREFERENCES_COMPLEXITY_NORM;Standard
 !PREFERENCES_COMPLEXITY_SIMP;Basic
@@ -3169,15 +3283,89 @@ ZOOMPANEL_ZOOMOUT;Oddálit\nZkratka: <b>-</b>
 !PREFERENCES_EXTEDITOR_DIR_CUSTOM;Custom
 !PREFERENCES_EXTEDITOR_DIR_TEMP;OS temp dir
 !PREFERENCES_EXTEDITOR_FLOAT32;32-bit float TIFF output
+!PREFERENCES_EXTERNALEDITOR_CHANGE;Change Application
+!PREFERENCES_EXTERNALEDITOR_CHANGE_FILE;Change Executable
+!PREFERENCES_EXTERNALEDITOR_COLUMN_COMMAND;Command
+!PREFERENCES_EXTERNALEDITOR_COLUMN_NAME;Name
+!PREFERENCES_EXTERNALEDITOR_COLUMN_NATIVE_COMMAND;Native command
 !PREFERENCES_INSPECTORWINDOW;Open inspector in own window or fullscreen
-!PREFERENCES_SHOWTOOLTIP;Show Local Adjustments advice tooltips
+!PREFERENCES_LENSFUNDBDIR;Lensfun database directory
+!PREFERENCES_LENSFUNDBDIR_TOOLTIP;Directory containing the Lensfun database.  Leave empty to use the default directories.
+!PREFERENCES_LENSPROFILESDIR;Lens profiles directory
+!PREFERENCES_LENSPROFILESDIR_TOOLTIP;Directory containing Adobe Lens Correction Profiles (LCPs)
+!PREFERENCES_MAX_ZOOM_TITLE;Maximum zoom
+!PREFERENCES_METADATA;Metadata
+!PREFERENCES_METADATA_SYNC;Metadata synchronization with XMP sidecars
+!PREFERENCES_METADATA_SYNC_NONE;Off
+!PREFERENCES_METADATA_SYNC_READ;Read only
+!PREFERENCES_METADATA_SYNC_READWRITE;Bidirectional
+!PREFERENCES_RAW_DECODER;Raw Decoder
+!PREFERENCES_RAW_DECODER_ENABLE_LIBRAW;Use LibRaw
+!PREFERENCES_SHOWTOOLTIP;Show Selective Editing advice tooltips
+!PREFERENCES_SPOTLOC;Define Spot method for Selective Editing
+!PREFERENCES_TAB_FAVORITES;Favorites
+!PREFERENCES_THUMBNAIL_RANK_COLOR_MODE;Load/Save thumbnail rank and color from/to XMP sidecars
+!PREFERENCES_TOOLPANEL_AVAILABLETOOLS;Available Tools
+!PREFERENCES_TOOLPANEL_CLONE_FAVORITES;Keep favorite tools in original locations
+!PREFERENCES_TOOLPANEL_CLONE_FAVORITES_TOOLTIP;If set, favorite tools will appear in both the favorites tab and their original tabs.\n\nNote: Enabling this option may result in a slight delay when switching tabs.
+!PREFERENCES_TOOLPANEL_FAVORITE;Favorite
+!PREFERENCES_TOOLPANEL_FAVORITESPANEL;Favorites Panel
+!PREFERENCES_TOOLPANEL_TOOL;Tool
+!PREFERENCES_WBA;White Balance
+!PREFERENCES_WBACORR;White Balance - Automatic temperature correlation
+!PREFERENCES_WBACORR_TOOLTIP;These settings allow, depending on the images (type of raw file, colorimetry, etc.), an adaptation of the " Temperature correlation " algorithm in order to obtain the best overall results. There is no absolute rule, linking these parameters to the results obtained.\n\nThe settings are of 3 types: \n* those accessible to the user from the GUI.\n* those accessible only in reading from each pp3 file : Itcwb_minsize=20, Itcwb_delta=4 Itcwb_rgreen=1 Itcwb_nopurple=false (See Rawpedia)\n* those accessible to the user in 'options' (see Rawpedia)\n You can use "Awb temperature bias" and "Green refinement" to adjust the results. Each movement of these commands brings a new calculation of temperature, tint and correlation.\n\nPlease note that the 3 indicators 'Correlation factor', 'Patch chroma' and ΔE are given for information only. It is not because one of these indicators is better that the result will necessarily be better.
+!PREFERENCES_WBAENA;Show White Balance Auto temperature correlation settings
+!PREFERENCES_WBAENACUSTOM;Use Custom temperature & tint
+!PREFERENCES_WBAFORC;Forces Extra algoritm
+!PREFERENCES_WBAGREENDELTA;Delta temperature in green iterate loop (if Force Extra enabled)
+!PREFERENCES_WBANOPURP;No purple color used
+!PREFERENCES_WBAPATCH;Number maximum of colors used in picture
+!PREFERENCES_WBAPRECIS;Precision algorithm - scale used
+!PREFERENCES_WBASIZEREF;Size of reference color compare to size of histogram color
+!PREFERENCES_WBASORT;Sort in chroma order instead of histogram
+!PREFERENCES_XMP_SIDECAR_MODE;XMP sidecar style
+!PREFERENCES_XMP_SIDECAR_MODE_EXT;darktable-like (FILENAME.ext.xmp for FILENAME.ext)
+!PREFERENCES_XMP_SIDECAR_MODE_STD;Standard (FILENAME.xmp for FILENAME.ext)
 !PREFERENCES_ZOOMONSCROLL;Zoom images by scrolling
+!QUEUE_DESTPREVIEW_TITLE;Select a thumbnail to preview its destination path here
+!QUEUE_DESTPREVIEW_TOOLTIP;Destination path for the first selected image appears here
+!QUEUE_LOCATION_TEMPLATE_HELP_BUTTON_TOOLTIP;Show or hide a help panel with instructions for creating location templates
+!QUEUE_LOCATION_TEMPLATE_HELP_EXAMPLES_BODY;If you want to save the output image alongside the source image, write:\n<b>%p1/%f</b>\n\nIf you want to save the output image in a folder named '<i>converted</i>' located in the source photo's folder, write:\n<b>%p1/converted/%f</b>\n\nIf you want to save the output image in\n'<i>/home/tom/photos/converted/2010-10-31</i>', write:\n<b>%p-3/converted/%P-4/%f</b>
+!QUEUE_LOCATION_TEMPLATE_HELP_EXAMPLES_TITLE;Common examples
+!QUEUE_LOCATION_TEMPLATE_HELP_INTRO;The output template field allows you to to dynamically customize the destination folder and filename. When you include certain specifiers, which begin with <b>%</b>, they are replaced by the program when each file is being saved.\n\nThe sections below describe each type of specifier.
+!QUEUE_LOCATION_TEMPLATE_HELP_PATHS_BODY_1;Using this pathname as an example:
+!QUEUE_LOCATION_TEMPLATE_HELP_PATHS_BODY_2;The meanings of the formatting strings are:
+!QUEUE_LOCATION_TEMPLATE_HELP_PATHS_EXAMPLE_LINUX;/home/tom/photos/2010-10-31/photo1.raw
+!QUEUE_LOCATION_TEMPLATE_HELP_PATHS_EXAMPLE_WINDOWS;D:\tom\photos\2010-10-31\photo1.raw
+!QUEUE_LOCATION_TEMPLATE_HELP_PATHS_INTRO;The <b>%dN</b>, <b>%d-N</b>, <b>%pN</b>, <b>%p-N</b>, <b>%PN</b> and <b>%P-N</b> (N = 1..9) specifiers will be replaced by elements of the image file's directory path.\nThe format specifiers operate as follows:\n  <b>%dN</b> = Nth directory from the end of the path\n  <b>%d-N</b> = Nth directory from the start of the path\n  <b>%pN</b>  = all directories up to the Nth from the end of the path\n  <b>%p-N</b> = the first N directories in the path\n  <b>%PN</b>  = the last N directories in the path\n  <b>%P-N</b> = all directories from the Nth to the end of the path\n  <b>%f</b> = base filename (no extension)
+!QUEUE_LOCATION_TEMPLATE_HELP_PATHS_INTRO_WINDOWS;For Windows paths, <b>%d-1</b> is the drive letter and colon, and <b>%d-2</b> is the base directory on that drive.
+!QUEUE_LOCATION_TEMPLATE_HELP_PATHS_TITLE;Directories and partial paths
+!QUEUE_LOCATION_TEMPLATE_HELP_RANK_BODY;<b>%r</b> will be replaced by the photo's rank. If the photo is unranked, '<i>0</i>' is used. If the photo is in the trash, '<i>x</i>' is used.
+!QUEUE_LOCATION_TEMPLATE_HELP_RANK_TITLE;Rank
+!QUEUE_LOCATION_TEMPLATE_HELP_RESULT_MISMATCH;ERROR: 2nd result is different:
+!QUEUE_LOCATION_TEMPLATE_HELP_SEQUENCE_BODY;<b>%s1</b>, ..., <b>%s9</b> will be replaced by the photo's initial position in the queue at the time the queue is started. The number specifies the padding, e.g. <b>%s3</b> results in '<i>001</i>'.
+!QUEUE_LOCATION_TEMPLATE_HELP_SEQUENCE_TITLE;Position/sequence in queue
+!QUEUE_LOCATION_TEMPLATE_HELP_TIMESTAMP_BODY;Three different date/time values may be used in templates:\n  <b>%tE"%Y-%m-%d"</b> = when export started\n  <b>%tF"%Y-%m-%d"</b> = when file was last saved\n  <b>%tP"%Y-%m-%d"</b> = when photo was taken\nThe quoted string defines the format of the resulting date and/or time. The format string <b>%tF"%Y-%m-%d"</b> is just one example. The string can use all conversion specifiers defined for the g_date_time_format function (see https://docs.gtk.org/glib/method.DateTime.format.html).\n\nExample format strings:
+!QUEUE_LOCATION_TEMPLATE_HELP_TIMESTAMP_TITLE;Date and time
+!QUEUE_LOCATION_TEMPLATE_HELP_TITLE;Creating an output template
+!SAVEDLG_BIGTIFF;BigTIFF (no metadata support)
+!SORT_ASCENDING;Ascending
+!SORT_BY_DATE;By Date
+!SORT_BY_EXIF;By EXIF
+!SORT_BY_LABEL;By Color Label
+!SORT_BY_NAME;By Name
+!SORT_BY_RANK;By Rank
+!SORT_DESCENDING;Descending
+!TC_LOCALLAB_PRIM_SHIFTX;Shift x
+!TC_LOCALLAB_PRIM_SHIFTX_TOOLTIP;In combination with "Refine colors", allows you to:\n 1) for low values, adjust the image purity.\n 2) for higher values, carry out moderate color toning.\nBe careful not to go outside the CIE xy diagram.
+!TC_LOCALLAB_PRIM_SHIFTY;Shift y
 !TC_PRIM_BLUX;Bx
 !TC_PRIM_BLUY;By
 !TC_PRIM_GREX;Gx
 !TC_PRIM_GREY;Gy
 !TC_PRIM_REDX;Rx
 !TC_PRIM_REDY;Ry
+!TC_PRIM_REFI;Refine colors (white-point)
 !TOOLBAR_TOOLTIP_PERSPECTIVE;<b>Perspective Correction</b>\n\nEdit control lines to correct perspective distortion. Click this button again to apply correction.
 !TP_COLORAPP_ADAPSCEN_TOOLTIP;Corresponds to the luminance in candelas per m2 at the time of shooting, calculated automatically from the exif data.
 !TP_COLORAPP_CATCLASSIC;Classic
@@ -3185,6 +3373,7 @@ ZOOMPANEL_ZOOMOUT;Oddálit\nZkratka: <b>-</b>
 !TP_COLORAPP_CATMOD;Mode
 !TP_COLORAPP_CATSYMGEN;Automatic Symmetric
 !TP_COLORAPP_CATSYMSPE;Mixed
+!TP_COLORAPP_CIECAT_DEGREEOUT;Chromatic Adaptation Viewing
 !TP_COLORAPP_DEGREE_TOOLTIP;CAT02/16 is a chromatic adaptation. It converts the values of an image whose white point is that of a given illuminant (for example D65) into new values whose white point is that of the new illuminant - see WP model (for example D50 or D55).
 !TP_COLORAPP_DEGREOUT_TOOLTIP;CAT02/16 is a chromatic adaptation. It converts the values of an image whose white point is that of a given illuminant (for example D50) into new values whose white point is that of the new illuminant - see WP model (for example D75).
 !TP_COLORAPP_GEN;Settings
@@ -3196,11 +3385,14 @@ ZOOMPANEL_ZOOMOUT;Oddálit\nZkratka: <b>-</b>
 !TP_COLORAPP_SOURCEF_TOOLTIP;Corresponds to the shooting conditions and how to bring the conditions and data back to a 'normal' area. Normal means average or standard conditions and data, i.e. without taking into account CIECAM corrections.
 !TP_COLORAPP_SURROUNDSRC;Surround
 !TP_COLORAPP_SURSOURCE_TOOLTIP;Changes tones and colors to take into account the surround conditions of the scene lighting. The darker the surround conditions, the brighter the image will become. Image brightness will not be changed when the surround is set to average.
+!TP_COLORAPP_TEMPOUT_TOOLTIP;Temperature and Tint.\nDepending on the choices made previously, the selected temperature is:\nWhite balance\nA temp=2856\nD41 temp=4100\nD50 temp=5003\nD55 temp=5503\nD60 temp=6000\nD65 temp=6504\nD75 temp=7504\nFree.
 !TP_COLORAPP_VIEWINGF_TOOLTIP;Takes into account the support on which the final image will be viewed (monitor, TV, projector, printer, etc.), as well as its environment. This process will take the data coming from process 'Image Adjustments' and 'bring' it to the support in such a way that the viewing conditions and its environment are taken into account.
 !TP_COLORAPP_YBOUT_TOOLTIP;Yb is the relative luminance of the background, expressed in % of gray. 18% gray corresponds to a background luminance of 50% expressed in CIE L.\nThe data is based on the mean luminance of the image.
 !TP_COLORAPP_YBSCEN_TOOLTIP;Yb is the relative luminance of the background, expressed in % of gray. 18% gray corresponds to a background luminance of 50% expressed in CIE L.\nThe data is based on the mean luminance of the image.
 !TP_CROP_GTCENTEREDSQUARE;Centered square
 !TP_DEHAZE_SATURATION;Saturation
+!TP_DIRPYRDENOISE_MAIN_AUTO_GAIN;Compensate for lightness
+!TP_DIRPYRDENOISE_MAIN_AUTO_GAIN_TOOLTIP;Alter the noise reduction strength based on the image lightness. Strength is reduced for dark images and increased for bright images.
 !TP_FILMNEGATIVE_BLUEBALANCE;Cool/Warm
 !TP_FILMNEGATIVE_COLORSPACE;Inversion color space:
 !TP_FILMNEGATIVE_COLORSPACE_INPUT;Input color space
@@ -3208,11 +3400,18 @@ ZOOMPANEL_ZOOMOUT;Oddálit\nZkratka: <b>-</b>
 !TP_FILMNEGATIVE_COLORSPACE_WORKING;Working color space
 !TP_FILMNEGATIVE_GREENBALANCE;Magenta/Green
 !TP_FILMNEGATIVE_OUT_LEVEL;Output level
+!TP_FILMNEGATIVE_PICK_SIZE;Size:
 !TP_FILMNEGATIVE_REF_LABEL;Input RGB: %1
 !TP_FILMNEGATIVE_REF_PICK;Pick white balance spot
+!TP_FILMNEGATIVE_REF_SIZE;Size:
 !TP_FILMNEGATIVE_REF_TOOLTIP;Pick a gray patch for white-balancing the output, positive image.
+!TP_FLATFIELD_FROMMETADATA;From Metadata
+!TP_HLREC_COLOROPP;Inpaint Opposed
 !TP_HLREC_HLBLUR;Blur
+!TP_HLREC_HLTH;Gain threshold
+!TP_ICM_BW;Black and White
 !TP_ICM_FBW;Black-and-White
+!TP_ICM_GAMUT;Gamut control
 !TP_ICM_ILLUMPRIM_TOOLTIP;Choose the illuminant closest to the shooting conditions.\nChanges can only be made when the 'Destination primaries' selection is set to 'Custom (sliders)'.
 !TP_ICM_LABGRID_CIEXY;R(x)=%1 R(y)=%2\nG(x)=%3 G(y)=%4\nB(x)=%5 B(y)=%6
 !TP_ICM_NEUTRAL;Reset
@@ -3223,8 +3422,15 @@ ZOOMPANEL_ZOOMOUT;Oddálit\nZkratka: <b>-</b>
 !TP_ICM_PRIMRED_TOOLTIP;Primaries Red:\nsRGB x=0.64 y=0.33\nAdobe x=0.64 y=0.33\nWidegamut x=0.735 y=0.265\nRec2020 x=0.708 y=0.292\nACES P1 x=0.713 y= 0.293\nACES P0 x=0.7347 y=0.2653\nProphoto x=0.7347 y=0.2653\nBruceRGB x=0.64 y=0.33\nBeta RGB x=0.688 y=0.3112\nBestRGB x=0.7347 y=0.2653
 !TP_ICM_REDFRAME;Custom Primaries
 !TP_ICM_TRCFRAME;Abstract Profile
-!TP_ICM_TRCFRAME_TOOLTIP;Also known as 'synthetic' or 'virtual' profiles, which are applied at the end of the processing pipeline (prior to ciecam) allowing you to create custom image effects.\nYou can make changes to the:\n 'Tone response curve', which modifies the tones of the image.\n 'Illuminant' : which allows you to change the profile primaries to adapt them to the shooting conditions.\n 'Destination primaries': which allows you to change the destination primaries with two main uses - channel mixer and calibration.\nNote: Abstract profiles take into account the built-in Working profiles without modifying them. They do not work with custom Working profiles.
+!TP_ICM_TRCFRAME_TOOLTIP;Also known as 'synthetic' or 'virtual' profiles, which are applied at the end of the processing pipeline (prior to CIECAM) allowing you to create custom image effects.\nYou can make changes to the:\n 'Tone response curve', which modifies the tones of the image.\n 'Illuminant', which allows you to change the profile primaries to adapt them to the shooting conditions.\n 'Destination primaries', which allows you to change the destination primaries with three main uses - channel mixer, restore image color (saturation), and calibration.\nNote: Abstract profiles take into account the built-in working profiles without modifying them. They do not work with custom working profiles.
 !TP_ICM_TRC_TOOLTIP;Allows you to change the default sRGB 'Tone response curve' in RT (g=2.4 s=12.92).\nThis TRC modifies the tones of the image. The RGB and Lab values, histogram and output (screen, TIF, JPG) are changed:\n-Gamma acts mainly on light tones -Slope acts mainly on dark tones.\nYou can choose any pair of 'gamma and slope' (values >1) and the algorithm will ensure that there is continuity between the linear and parabolic parts of the curve.\nA selection other than 'none' activates the 'Illuminant' and 'Destination primaries' menus.
+!TP_ICM_WORKING_CAT;Matrix adaptation
+!TP_ICM_WORKING_CAT_BRAD;Bradford
+!TP_ICM_WORKING_CAT_CAT02;Cat02
+!TP_ICM_WORKING_CAT_CAT16;Cat16
+!TP_ICM_WORKING_CAT_TOOLTIP;Performs the chromatic adaptation of the XYZ conversion matrix. Default: Bradford
+!TP_ICM_WORKING_CAT_VK;Von Kries
+!TP_ICM_WORKING_CAT_XYZ;XYZ scale
 !TP_ICM_WORKING_CIEDIAG;CIE xy diagram
 !TP_ICM_WORKING_ILLU;Illuminant
 !TP_ICM_WORKING_ILLU_1500;Tungsten 1500K
@@ -3236,11 +3442,13 @@ ZOOMPANEL_ZOOMOUT;Oddálit\nZkratka: <b>-</b>
 !TP_ICM_WORKING_ILLU_D65;D65
 !TP_ICM_WORKING_ILLU_D80;D80
 !TP_ICM_WORKING_ILLU_D120;D120
+!TP_ICM_WORKING_ILLU_E;E
 !TP_ICM_WORKING_ILLU_NONE;Default
 !TP_ICM_WORKING_ILLU_STDA;stdA 2875K
+!TP_ICM_WORKING_NON;None
 !TP_ICM_WORKING_PRESER;Preserves Pastel tones
 !TP_ICM_WORKING_PRIM;Destination primaries
-!TP_ICM_WORKING_PRIMFRAME_TOOLTIP;When 'Custom CIE xy diagram' is selected in 'Destination- primaries'' combobox, you can modify the values of the 3 primaries directly on the graph.\nNote that in this case, the white point position on the graph will not be updated.
+!TP_ICM_WORKING_PRIMFRAME_TOOLTIP;When 'Custom CIE xy diagram' is selected in 'Destination primaries' combo box, you can modify the values of the 3 primaries directly on the graph.\nNote that in this case, the white point position on the graph will not be updated.
 !TP_ICM_WORKING_PRIM_AC0;ACESp0
 !TP_ICM_WORKING_PRIM_ACE;ACESp1
 !TP_ICM_WORKING_PRIM_ADOB;Adobe RGB
@@ -3249,16 +3457,21 @@ ZOOMPANEL_ZOOMOUT;Oddálit\nZkratka: <b>-</b>
 !TP_ICM_WORKING_PRIM_BST;BestRGB
 !TP_ICM_WORKING_PRIM_CUS;Custom (sliders)
 !TP_ICM_WORKING_PRIM_CUSGR;Custom (CIE xy Diagram)
+!TP_ICM_WORKING_PRIM_FREE;Custom LA (sliders)
+!TP_ICM_WORKING_PRIM_JDCMAX;JDC Max
+!TP_ICM_WORKING_PRIM_JDCMAXSTDA;JDC Max stdA
 !TP_ICM_WORKING_PRIM_NONE;Default
 !TP_ICM_WORKING_PRIM_PROP;ProPhoto
 !TP_ICM_WORKING_PRIM_REC;Rec2020
 !TP_ICM_WORKING_PRIM_SRGB;sRGB
+!TP_ICM_WORKING_PRIM_TOOLTIP;Performs a gamut control. Destination primaries (Advanced) allows you to change the destination primaries to restore or change image color (saturation). The color balance is significantly preserved when the 'Working Profile' and the 'Destination primaries' are similar. 'Working Profile' is not modified.\nWhen 'Custom LA (sliders)' is selected, you can modify the values of the 3 primaries (Red, Green, and Blue) for x and y.
 !TP_ICM_WORKING_PRIM_WID;WideGamut
 !TP_ICM_WORKING_TRC_18;Prophoto g=1.8
 !TP_ICM_WORKING_TRC_22;Adobe g=2.2
 !TP_ICM_WORKING_TRC_BT709;BT709 g=2.22 s=4.5
 !TP_ICM_WORKING_TRC_LIN;Linear g=1
 !TP_ICM_WORKING_TRC_SRGB;sRGB g=2.4 s=12.92
+!TP_LENSPROFILE_CORRECTION_METADATA;From file metadata
 !TP_LOCALLAB_ACTIV;Luminance only
 !TP_LOCALLAB_ACTIVSPOT;Enable Spot
 !TP_LOCALLAB_ADJ;Equalizer Color
@@ -3266,9 +3479,9 @@ ZOOMPANEL_ZOOMOUT;Oddálit\nZkratka: <b>-</b>
 !TP_LOCALLAB_ARTIF;Shape detection
 !TP_LOCALLAB_ARTIF_TOOLTIP;ΔE scope threshold increases the range of ΔE scope. High values are for very wide gamut images.\nIncreasing ΔE decay can improve shape detection, but can also reduce the scope.
 !TP_LOCALLAB_AUTOGRAY;Auto mean luminance (Yb%)
-!TP_LOCALLAB_AUTOGRAYCIE;Auto
+!TP_LOCALLAB_AUTOGRAYCIE;Automatic
 !TP_LOCALLAB_AVOID;Avoid color shift
-!TP_LOCALLAB_AVOIDCOLORSHIFT_TOOLTIP;Fit colors into gamut of the working color space and apply Munsell correction (Uniform Perceptual Lab).\nMunsell correction always disabled when Jz or CAM16 is used.
+!TP_LOCALLAB_AVOIDCOLORSHIFT_TOOLTIP;Fit colors into gamut of the working color space and apply Munsell correction (Uniform Perceptual Lab). Default: Munsell only.\n\nMunsell only: Fixes Lab mode hue drifts due to non-linearity when chromaticity is changed (Uniform Perceptual Lab).\nLab: Applies a gamut control in relative colorimetric. Munsell is then applied.\nXYZ Absolute: Applies gamut control in absolute colorimetric. Munsell is then applied.\nXYZ Relative: Applies gamut control in relative colorimetric. Munsell is then applied. The result is not the same as Lab.
 !TP_LOCALLAB_AVOIDMUN;Munsell correction only
 !TP_LOCALLAB_AVOIDMUN_TOOLTIP;Munsell correction always disabled when Jz or CAM16 is used.
 !TP_LOCALLAB_AVOIDRAD;Soft radius
@@ -3294,7 +3507,7 @@ ZOOMPANEL_ZOOMOUT;Oddálit\nZkratka: <b>-</b>
 !TP_LOCALLAB_BLNOI_EXP;Blur & Noise
 !TP_LOCALLAB_BLNORM;Normal
 !TP_LOCALLAB_BLUFR;Blur/Grain & Denoise
-!TP_LOCALLAB_BLUMETHOD_TOOLTIP;To blur the background and isolate the foreground:\n-blur the background by completely covering the image with an an RT-spot (high values for scope and transition and 'Normal' or 'Inverse' in checkbox).\n-Isolate the foreground by using one or more 'Excluding' RT-spot(s) and increase the scope.\n\nThis module (including the 'median' and 'Guided filter') can be used in addition to the main-menu noise reduction.
+!TP_LOCALLAB_BLUMETHOD_TOOLTIP;To blur the background and isolate the foreground:\n-blur the background by completely covering the image with a spot (high values for scope and transition and 'Normal' or 'Inverse' in checkbox).\n-Isolate the foreground by using one or more 'Excluding' spots and increase the scope.\n\nThis module (including the 'median' and 'Guided filter') can be used in addition to the main-menu noise reduction.
 !TP_LOCALLAB_BLUR;Gaussian Blur - Noise - Grain
 !TP_LOCALLAB_BLURCOL;Radius
 !TP_LOCALLAB_BLURCOLDE_TOOLTIP;The image used to calculate dE is blurred slightly to avoid taking isolated pixels into account.
@@ -3311,9 +3524,12 @@ ZOOMPANEL_ZOOMOUT;Oddálit\nZkratka: <b>-</b>
 !TP_LOCALLAB_BUTTON_DUPL;Duplicate
 !TP_LOCALLAB_BUTTON_REN;Rename
 !TP_LOCALLAB_BUTTON_VIS;Show/Hide
+!TP_LOCALLAB_BWEVNONE;None
+!TP_LOCALLAB_BWEVSIG;Activated
+!TP_LOCALLAB_BWEVSIGLOG;Sigmoid & Log-Encoding
 !TP_LOCALLAB_BWFORCE;Uses Black Ev & White Ev
 !TP_LOCALLAB_CAM16PQREMAP;HDR PQ (Peak Luminance)
-!TP_LOCALLAB_CAM16PQREMAP_TOOLTIP;PQ (Perceptual Quantizer) adapted to CAM16. Allows you to change the internal PQ function (usually 10000 cd/m2 - default 100 cd/m2 - disabled for 100 cd/m2).\nCan be used to adapt to different devices and images.
+!TP_LOCALLAB_CAM16PQREMAP_TOOLTIP;PQ (Perceptual Quantizer) adapted to CAM16 (experimental). Allows you to change the internal PQ function (usually 10000 cd/m2 - default 100 cd/m2 - disabled for 100 cd/m2).\nCan be used to adapt to different devices and images, for example, to match CAM16 processing with the maximum monitor brightness of 400cd/m2.
 !TP_LOCALLAB_CAM16_FRA;Cam16 Image Adjustments
 !TP_LOCALLAB_CAMMODE;CAM model
 !TP_LOCALLAB_CAMMODE_CAM16;CAM 16
@@ -3327,6 +3543,8 @@ ZOOMPANEL_ZOOMOUT;Oddálit\nZkratka: <b>-</b>
 !TP_LOCALLAB_CENTER_X;Center X
 !TP_LOCALLAB_CENTER_Y;Center Y
 !TP_LOCALLAB_CH;CL - LC
+!TP_LOCALLAB_CHRO46LABEL;Chroma levels 456: Mean=%1 High=%2
+!TP_LOCALLAB_CHROLABEL;Chroma levels 0123: Mean=%1 High=%2
 !TP_LOCALLAB_CHROMA;Chrominance
 !TP_LOCALLAB_CHROMABLU;Chroma levels
 !TP_LOCALLAB_CHROMABLU_TOOLTIP;Increases or reduces the effect depending on the luma settings.\nValues under 1 reduce the effect. Values greater than 1 increase the effect.
@@ -3351,9 +3569,15 @@ ZOOMPANEL_ZOOMOUT;Oddálit\nZkratka: <b>-</b>
 !TP_LOCALLAB_CIEMODE_TOOLTIP;In Default mode, Ciecam is added at the end of the process. 'Mask and modifications' and 'Recovery based on luminance mask' are available for'Cam16 and JzCzHz' at your disposal .\nYou can also integrate Ciecam into other tools if you wish (TM, Wavelet, Dynamic Range, Log Encoding). The results for these tools will be different to those without Ciecam. In this mode, you can also use 'Mask and modifications' and 'Recovery based on luminance mask'.
 !TP_LOCALLAB_CIEMODE_WAV;Wavelet
 !TP_LOCALLAB_CIETOOLEXP;Curves
+!TP_LOCALLAB_CIE_SMOOTHFRAME;Highlight Attenuation & Levels
+!TP_LOCALLAB_CIE_SMOOTH_EV;Ev based
+!TP_LOCALLAB_CIE_SMOOTH_GAMMA;Slope based
+!TP_LOCALLAB_CIE_SMOOTH_GAMMA ROLLOFF;Gamma based
+!TP_LOCALLAB_CIE_SMOOTH_LEVELS;Levels
+!TP_LOCALLAB_CIE_SMOOTH_NONE;None
 !TP_LOCALLAB_CIE_TOOLNAME;Color appearance (Cam16 & JzCzHz)
 !TP_LOCALLAB_CIRCRADIUS;Spot size
-!TP_LOCALLAB_CIRCRAD_TOOLTIP;Contains the references of the RT-spot, useful for shape detection (hue, luma, chroma, Sobel).\nLow values may be useful for processing foliage.\nHigh values may be useful for processing skin.
+!TP_LOCALLAB_CIRCRAD_TOOLTIP;Contains the references of the spot, useful for shape detection (hue, luma, chroma, Sobel).\nLow values may be useful for processing foliage.\nHigh values may be useful for processing skin.
 !TP_LOCALLAB_CLARICRES;Merge chroma
 !TP_LOCALLAB_CLARIFRA;Clarity & Sharp mask/Blend & Soften Images
 !TP_LOCALLAB_CLARIJZ_TOOLTIP;Levels 0 to 4 (included): 'Sharp mask' is enabled\nLevels 5 and above: 'Clarity' is enabled.
@@ -3366,8 +3590,9 @@ ZOOMPANEL_ZOOMOUT;Oddálit\nZkratka: <b>-</b>
 !TP_LOCALLAB_CLIPTM;Clip restored data (gain)
 !TP_LOCALLAB_COFR;Color & Light
 !TP_LOCALLAB_COLORDE;ΔE preview color - intensity
-!TP_LOCALLAB_COLORDEPREV_TOOLTIP;Preview ΔE button will only work if you have activated one (and only one) of the tools in 'Add tool to current spot' menu.\nTo be able to preview ΔE with several tools enabled, use Mask and modifications - Preview ΔE.
+!TP_LOCALLAB_COLORDEPREV_TOOLTIP;Preview ΔE button in Settings will only work if you have activated 'Sharpening', 'Soft Light and Original Retinex', 'Blur/Grain and Denoise', 'Dehaze and Retinex', or 'Contrast by Detail Levels' in the 'Add tool to current spot' menu.\nFor others tools, the Preview ΔE button is in the tool, which allows previewing ΔE with several tools enabled. Prefer using Mask and modifications.
 !TP_LOCALLAB_COLORDE_TOOLTIP;Show a blue color preview for ΔE selection if negative and green if positive.\n\nMask and modifications (show modified areas without mask): show actual modifications if positive, show enhanced modifications (luminance only) with blue and yellow if negative.
+!TP_LOCALLAB_COLORFRAME;Dominant color
 !TP_LOCALLAB_COLORSCOPE;Scope (color tools)
 !TP_LOCALLAB_COLORSCOPE_TOOLTIP;Common Scope slider for Color and Light, Shadows/Highlights, Vibrance.\nOther tools have their own scope controls.
 !TP_LOCALLAB_COLOR_CIE;Color curve
@@ -3375,7 +3600,10 @@ ZOOMPANEL_ZOOMOUT;Oddálit\nZkratka: <b>-</b>
 !TP_LOCALLAB_COL_NAME;Name
 !TP_LOCALLAB_COL_VIS;Status
 !TP_LOCALLAB_COMPFRA;Directional contrast
+!TP_LOCALLAB_COMPRCIE;Brightness compression
+!TP_LOCALLAB_COMPRCIETH;Compression threshold
 !TP_LOCALLAB_COMPREFRA;Wavelet level tone mapping
+!TP_LOCALLAB_COMPRLOG_TOOLTIP;This algorithm compress the data before log conversion, above the threshold slider value. To use in conjunction with Whites distribution.
 !TP_LOCALLAB_CONTCOL;Contrast threshold
 !TP_LOCALLAB_CONTFRA;Contrast by level
 !TP_LOCALLAB_CONTRAST;Contrast
@@ -3388,9 +3616,9 @@ ZOOMPANEL_ZOOMOUT;Oddálit\nZkratka: <b>-</b>
 !TP_LOCALLAB_CSTHRESHOLDBLUR;Wavelet level selection
 !TP_LOCALLAB_CURV;Lightness - Contrast - Chrominance 'Super'
 !TP_LOCALLAB_CURVCURR;Normal
-!TP_LOCALLAB_CURVEEDITORM_CC_TOOLTIP;If the curves are at the top, the mask is completely black and no changes are made to the image.\nAs you lower the curve, the mask gradually becomes more colorful and bright, progressively changing the image.\n\nIt is recommended (but not mandatory) to position the top of the curves on the gray boundary line which represents the reference values of chroma, luma, hue for the RT-spot.
-!TP_LOCALLAB_CURVEEDITOR_CC_TOOLTIP;If curves are at the top, the mask is completely black and no changes are made to the image.\nAs you lower the curve, the mask gradually becomes more colorful and bright, progressively changing the image.\n\nIt is recommended (but not mandatory) to position the top of the curves on the gray boundary line which represents the reference values of chroma, luma, hue for the RT-spot.
-!TP_LOCALLAB_CURVEEDITOR_LL_TOOLTIP;To activate the curves, set the 'Curve type' combobox to 'Normal'.
+!TP_LOCALLAB_CURVEEDITORM_CC_TOOLTIP;If the curves are at the top, the mask is completely black and no changes are made to the image.\nAs you lower the curve, the mask gradually becomes more colorful and bright, progressively changing the image.\n\nIt is recommended (but not mandatory) to position the top of the curves on the gray boundary line which represents the reference values of chroma, luma, hue for the spot.
+!TP_LOCALLAB_CURVEEDITOR_CC_TOOLTIP;If curves are at the top, the mask is completely black and no changes are made to the image.\nAs you lower the curve, the mask gradually becomes more colorful and bright, progressively changing the image.\n\nIt is recommended (but not mandatory) to position the top of the curves on the gray boundary line which represents the reference values of chroma, luma, hue for the spot.
+!TP_LOCALLAB_CURVEEDITOR_LL_TOOLTIP;To activate the curves, set the 'Curve type' combo box to 'Normal'.
 !TP_LOCALLAB_CURVEEDITOR_TONES_LABEL;Tone curve
 !TP_LOCALLAB_CURVEEDITOR_TONES_TOOLTIP;L=f(L), can be used with L(H) in Color and Light.
 !TP_LOCALLAB_CURVEMETHOD_TOOLTIP;'Normal', the curve L=f(L) uses the same algorithm as the lightness slider.
@@ -3399,13 +3627,14 @@ ZOOMPANEL_ZOOMOUT;Oddálit\nZkratka: <b>-</b>
 !TP_LOCALLAB_DARKRETI;Darkness
 !TP_LOCALLAB_DEHAFRA;Dehaze
 !TP_LOCALLAB_DEHAZ;Strength
+!TP_LOCALLAB_DEHAZE_BLACK;Black
 !TP_LOCALLAB_DEHAZFRAME_TOOLTIP;Removes atmospheric haze. Increases overall saturation and detail.\nCan remove color casts, but may also introduce a blue cast which can be corrected with other tools.
 !TP_LOCALLAB_DEHAZ_TOOLTIP;Negative values add haze.
 !TP_LOCALLAB_DELTAD;Delta balance
 !TP_LOCALLAB_DELTAEC;ΔE Image mask
 !TP_LOCALLAB_DENOI1_EXP;Denoise based on luminance mask
 !TP_LOCALLAB_DENOI2_EXP;Recovery based on luminance mask
-!TP_LOCALLAB_DENOIBILAT_TOOLTIP;Allows you to reduce impulse or 'salt & pepper' noise.
+!TP_LOCALLAB_DENOIBILAT_TOOLTIP;Allows you to reduce impulse or 'salt &amp; pepper' noise.
 !TP_LOCALLAB_DENOICHROC_TOOLTIP;Allows you to deal with blotches and packets of noise.
 !TP_LOCALLAB_DENOICHRODET_TOOLTIP;Allows you to recover chrominance detail by progressively applying a Fourier transform (DCT).
 !TP_LOCALLAB_DENOICHROF_TOOLTIP;Allows you to adjust fine-detail chrominance noise.
@@ -3416,13 +3645,16 @@ ZOOMPANEL_ZOOMOUT;Oddálit\nZkratka: <b>-</b>
 !TP_LOCALLAB_DENOIMASK_TOOLTIP;For all tools, allows you to control the chromatic noise level of the mask.\nUseful for better control of chrominance and to avoid artifacts when using the LC(h) curve.
 !TP_LOCALLAB_DENOIQUA_TOOLTIP;Conservative mode preserves low frequency detail. Aggressive mode removes low frequency detail.\nConservative and Aggressive modes use wavelets and DCT and can be used in conjunction with 'Non-local Means – Luminance'.
 !TP_LOCALLAB_DENOITHR_TOOLTIP;Adjusts edge detection to help reduce noise in uniform, low-contrast areas.
+!TP_LOCALLAB_DENOIWAVCH;Wavelets: Chrominance
+!TP_LOCALLAB_DENOIWAVLUM;Wavelets: Luminance
 !TP_LOCALLAB_DENOI_EXP;Denoise
-!TP_LOCALLAB_DENOI_TOOLTIP;This module can be used for noise reduction either on its own (at the end of the processing pipeline) or in addition to the Noise Reduction module in the Detail tab (which works at the beginning of the pipeline).\n Scope allows you to differentiate the action based on color (ΔE).\nMinimum RT-spot size: 128x128.
+!TP_LOCALLAB_DENOI_TOOLTIP;This module can be used for noise reduction either on its own (at the end of the processing pipeline) or in addition to the Noise Reduction module in the Detail tab (which works at the beginning of the pipeline).\n Scope allows you to differentiate the action based on color (ΔE).\nMinimum spot size: 128x128.
 !TP_LOCALLAB_DEPTH;Depth
 !TP_LOCALLAB_DETAIL;Local contrast
 !TP_LOCALLAB_DETAILFRA;Edge detection - DCT
 !TP_LOCALLAB_DETAILSH;Details
-!TP_LOCALLAB_DETAILTHR;Luma-chro detail threshold
+!TP_LOCALLAB_DETAILTHR;Lum/chrom detail threshold
+!TP_LOCALLAB_DISAB_CIECAM;Disable Ciecam or Weak Jz surround
 !TP_LOCALLAB_DIVGR;Gamma
 !TP_LOCALLAB_DUPLSPOTNAME;Copy
 !TP_LOCALLAB_EDGFRA;Edge sharpness
@@ -3431,6 +3663,7 @@ ZOOMPANEL_ZOOMOUT;Oddálit\nZkratka: <b>-</b>
 !TP_LOCALLAB_ENABLE_AFTER_MASK;Use Tone Mapping
 !TP_LOCALLAB_ENABLE_MASK;Enable mask
 !TP_LOCALLAB_ENABLE_MASKAFT;Use all algorithms Exposure
+!TP_LOCALLAB_ENABLE_MASKALL;Enable all mask tools
 !TP_LOCALLAB_ENARETIMASKTMAP_TOOLTIP;If enabled the Mask uses Restored Data after Transmission Map instead of Original data.
 !TP_LOCALLAB_ENH;Enhanced
 !TP_LOCALLAB_ENHDEN;Enhanced + chroma denoise
@@ -3446,9 +3679,10 @@ ZOOMPANEL_ZOOMOUT;Oddálit\nZkratka: <b>-</b>
 !TP_LOCALLAB_EXCLUF;Excluding
 !TP_LOCALLAB_EXCLUF_TOOLTIP;'Excluding' mode prevents adjacent spots from influencing certain parts of the image. Adjusting 'Scope' will extend the range of colors.\n You can also add tools to an Excluding spot and use them in the same way as for a normal spot.
 !TP_LOCALLAB_EXCLUTYPE;Spot method
-!TP_LOCALLAB_EXCLUTYPE_TOOLTIP;Normal spot uses recursive data.\n\nExcluding spot reinitializes all local adjustment data.\nCan be used to totally or partially cancel a previous action or to carry out operations in Inverse mode.\n\n'Full image' allows you to use the local adjustment tools on the whole image.\n The RT Spot delimiters are set beyond the image preview boundaries.\n The transition is set to 100.\nNote, you may have to reposition the RT Spot slightly and adjust the Spot size to get the desired effect.\nPlease note: using Denoise or Wavelet or FFTW in full-image mode uses large amounts of memory and may cause the application to crash on lower capacity systems.
+!TP_LOCALLAB_EXCLUTYPE_TOOLTIP;Normal spot uses recursive data.\n\nExcluding spot reinitializes all selective editing data.\nCan be used to totally or partially cancel a previous action or to carry out operations in Inverse mode.\nUse 'Scope' (Excluding) to set the exclusion intensity.\n\n'Full image' allows you to use the selective editing tools on the whole image.\nThe RT Spot delimiters are set beyond the image preview boundaries.\nThe transition is set to 100.\nNote: You may have to reposition the RT Spot slightly and adjust the Spot size to get the desired effect.\nNote: Using Denoise or Wavelet or FFTW in full-image mode uses large amounts of memory and may cause the application to crash on lower capacity systems.\n\n'Global' allows you to use the selective editing tools on the whole image, without using Delta E or transitions.
 !TP_LOCALLAB_EXECLU;Excluding spot
 !TP_LOCALLAB_EXFULL;Full image
+!TP_LOCALLAB_EXMAIN;Global
 !TP_LOCALLAB_EXNORM;Normal spot
 !TP_LOCALLAB_EXPCBDL_TOOLTIP;Can be used to remove marks on the sensor or lens by reducing the contrast on the appropriate detail level(s).
 !TP_LOCALLAB_EXPCHROMA;Chroma compensation
@@ -3457,21 +3691,21 @@ ZOOMPANEL_ZOOMOUT;Oddálit\nZkratka: <b>-</b>
 !TP_LOCALLAB_EXPCOMP;Exposure compensation ƒ
 !TP_LOCALLAB_EXPCOMPINV;Exposure compensation
 !TP_LOCALLAB_EXPCOMP_TOOLTIP;For portraits or images with a low color gradient. You can change 'Shape detection' in 'Settings':\n\nIncrease 'ΔE scope threshold'\nReduce 'ΔE decay'\nIncrease 'ab-L balance (ΔE)'
-!TP_LOCALLAB_EXPCONTRASTPYR_TOOLTIP;See the documentation for Wavelet Levels.\nThere are some differences in the Local Adjustments version, which has more tools and more possibilities for working on individual detail levels.\nE.g. wavelet-level tone mapping.
-!TP_LOCALLAB_EXPCONTRAST_TOOLTIP;Avoid spots that are too small ( < 32x32 pixels).\nUse low 'Transition value' and high 'Transition decay' and 'Scope' to simulate small RT-spots and deal with defects.\nUse 'Clarity and Sharp mask and Blend and Soften Images' if necessary by adjusting 'Soft radius' to reduce artifacts.
+!TP_LOCALLAB_EXPCONTRASTPYR_TOOLTIP;See the documentation for Wavelet Levels.\nThere are some differences in the Selective Editing version, which has more tools and more possibilities for working on individual detail levels.\nE.g. wavelet-level tone mapping.
+!TP_LOCALLAB_EXPCONTRAST_TOOLTIP;Avoid spots that are too small ( < 32x32 pixels).\nUse low 'Transition value' and high 'Transition decay' and 'Scope' to simulate small spots and deal with defects.\nUse 'Clarity and Sharp mask and Blend and Soften Images' if necessary by adjusting 'Soft radius' to reduce artifacts.
 !TP_LOCALLAB_EXPCURV;Curves
 !TP_LOCALLAB_EXPGRAD;Graduated Filter
-!TP_LOCALLAB_EXPGRADCOL_TOOLTIP;A graduated filter is available in Color and Light (luminance, chrominance & hue gradients, and 'Merge file'), Exposure (luminance grad.), Exposure Mask (luminance grad.), Shadows/Highlights (luminance grad.), Vibrance (luminance, chrominance & hue gradients), Local contrast & wavelet pyramid (local contrast grad.).\nFeather is located in Settings.
+!TP_LOCALLAB_EXPGRADCOL_TOOLTIP;A graduated filter is available in Color and Light (luminance, chrominance &amp; hue gradients, and 'Merge file'), Exposure (luminance grad.), Exposure Mask (luminance grad.), Shadows/Highlights (luminance grad.), Vibrance (luminance, chrominance &amp; hue gradients), Local contrast &amp; wavelet pyramid (local contrast grad.).\nFeather is located in Settings.
 !TP_LOCALLAB_EXPLAPBAL_TOOLTIP;Changes the transformed/original image blend.
 !TP_LOCALLAB_EXPLAPGAMM_TOOLTIP;Changes the behaviour for images with too much or too little contrast by adding a gamma curve before and after the Laplace transform.
 !TP_LOCALLAB_EXPLAPLIN_TOOLTIP;Changes the behaviour for underexposed images by adding a linear component prior to applying the Laplace transform.
 !TP_LOCALLAB_EXPLAP_TOOLTIP;Moving the slider to the right progressively reduces the contrast.
-!TP_LOCALLAB_EXPMERGEFILE_TOOLTIP;Allows you to use GIMP or Photoshop (c) layer blend modes i.e. Difference, Multiply, Soft Light, Overlay etc., with opacity control.\nOriginal Image : merge current RT-Spot with Original.\nPrevious spot : merge current Rt-Spot with previous - if there is only one spot, previous = original.\nBackground : merge current RT-Spot with a color and luminance background (fewer possibilties).
+!TP_LOCALLAB_EXPMERGEFILE_TOOLTIP;Allows you to use GIMP or Photoshop layer blend modes (difference, multiply, soft light, overlay, etc.) with opacity control.\nOriginal image: merge current spot with original.\nPrevious spot: merge current spot with previous (if there is only one spot, previous = original).\nBackground: merge current spot with a color and luminance background (fewer possibilties).
 !TP_LOCALLAB_EXPNOISEMETHOD_TOOLTIP;Applies a median filter before the Laplace transform to prevent artifacts (noise).\nYou can also use the 'Denoise' tool.
 !TP_LOCALLAB_EXPOSE;Dynamic Range & Exposure
 !TP_LOCALLAB_EXPOSURE_TOOLTIP;Modify exposure in L*a*b space using Laplacian PDE algorithms to take into account dE and minimize artifacts.
 !TP_LOCALLAB_EXPRETITOOLS;Advanced Retinex Tools
-!TP_LOCALLAB_EXPSHARP_TOOLTIP;RT-Spot minimum 39*39.\nUse low transition values and high 'Transition decay' and 'Scope' values to simulate smaller RT-Spots.
+!TP_LOCALLAB_EXPSHARP_TOOLTIP;Spot minimum 39*39.\nUse low transition values and high 'Transition decay' and 'Scope' values to simulate smaller spots.
 !TP_LOCALLAB_EXPTOOL;Exposure Tools
 !TP_LOCALLAB_EXP_TOOLNAME;Dynamic Range & Exposure
 !TP_LOCALLAB_FATAMOUNT;Amount
@@ -3480,9 +3714,11 @@ ZOOMPANEL_ZOOMOUT;Oddálit\nZkratka: <b>-</b>
 !TP_LOCALLAB_FATFRA;Dynamic Range Compression ƒ
 !TP_LOCALLAB_FATFRAME_TOOLTIP;PDE Fattal – uses the Fattal Tone-mapping algorithm.
 !TP_LOCALLAB_FATLEVEL;Sigma
+!TP_LOCALLAB_FATSAT;Saturation control
 !TP_LOCALLAB_FATSHFRA;Dynamic Range Compression Mask ƒ
 !TP_LOCALLAB_FEATH_TOOLTIP;Gradient width as a percentage of the Spot diagonal\nUsed by all graduated filters in all tools.\nNo action if a graduated filter hasn't been activated.
-!TP_LOCALLAB_FEATVALUE;Feather gradient (Grad. Filters)
+!TP_LOCALLAB_FEATVALUE;Feather gradient
+!TP_LOCALLAB_FEATVALUE_MASK;Feather gradient (Grad. Filters Mask)
 !TP_LOCALLAB_FFTCOL_MASK;FFTW ƒ
 !TP_LOCALLAB_FFTMASK_TOOLTIP;Use a Fourier transform for better quality (increased processing time and memory requirements).
 !TP_LOCALLAB_FFTW;ƒ - Use Fast Fourier Transform
@@ -3498,6 +3734,11 @@ ZOOMPANEL_ZOOMOUT;Oddálit\nZkratka: <b>-</b>
 !TP_LOCALLAB_GAMMASKCOL;Gamma
 !TP_LOCALLAB_GAMMASK_TOOLTIP;Adjusting Gamma and Slope can provide a soft and artifact-free transformation of the mask by progressively modifying 'L' to avoid any discontinuities.
 !TP_LOCALLAB_GAMSH;Gamma
+!TP_LOCALLAB_GAMUTLABRELA;Lab
+!TP_LOCALLAB_GAMUTMUNSELL;Munsell only
+!TP_LOCALLAB_GAMUTNON;None
+!TP_LOCALLAB_GAMUTXYZABSO;XYZ Absolute
+!TP_LOCALLAB_GAMUTXYZRELA;XYZ Relative
 !TP_LOCALLAB_GAMW;Gamma (wavelet pyramids)
 !TP_LOCALLAB_GRADANG;Gradient angle
 !TP_LOCALLAB_GRADANG_TOOLTIP;Rotation angle in degrees: -180 0 +180.
@@ -3573,7 +3814,7 @@ ZOOMPANEL_ZOOMOUT;Oddálit\nZkratka: <b>-</b>
 !TP_LOCALLAB_JZTHRHCIE;Threshold Chroma for Jz(Hz)
 !TP_LOCALLAB_JZWAVEXP;Wavelet Jz
 !TP_LOCALLAB_LABBLURM;Blur Mask
-!TP_LOCALLAB_LABEL;Local Adjustments
+!TP_LOCALLAB_LABEL;Selective Editing
 !TP_LOCALLAB_LABGRID;Color correction grid
 !TP_LOCALLAB_LABGRIDMERG;Background
 !TP_LOCALLAB_LABGRID_VALUES;High(a)=%1 High(b)=%2\nLow(a)=%3 Low(b)=%4
@@ -3586,6 +3827,8 @@ ZOOMPANEL_ZOOMOUT;Oddálit\nZkratka: <b>-</b>
 !TP_LOCALLAB_LAPRAD2_TOOLTIP;Smooth radius uses a guided filter to decrease artifacts and smooth out the transition.
 !TP_LOCALLAB_LAPRAD_TOOLTIP;Smooth radius uses a guided filter to decrease artifacts and smooth out the transition.
 !TP_LOCALLAB_LAP_MASK_TOOLTIP;Solves PDEs for all Laplacian masks.\nIf enabled the Laplacian threshold mask reduces artifacts and smooths the result.\nIf disabled the response is linear.
+!TP_LOCALLAB_LCLABELS;Residual noise levels
+!TP_LOCALLAB_LCLABELS_TOOLTIP;Displays the mean and high-end noise values for the area shown in the Preview Panel (at 100% zoom). The noise values are grouped by wavelet levels 0,1,2,3 and 4,5,6.\nThe displayed values are indicative only and are designed to assist with denoise adjustments. They should not be interpreted as absolute noise levels.\n\n 300: Very noisy\n 100-300: Noisy\n 50-100: Moderatly noisy\n < 50: Low noise\n\nThey allow you to see:\n*The impact of Noise Reduction in the main-menu Detail tab.\n*The influence of Non-local Means, Wavelets and DCT on the luminance noise.\n*The influence of Wavelets and DCT on the chroma noise.\n*The influence of Capture Sharpening and Demosaicing.
 !TP_LOCALLAB_LC_FFTW_TOOLTIP;FFT improves quality and allows the use of large radii, but increases processing time (depends on the area to be processed). Preferable to use only for large radii. The size of the area can be reduced by a few pixels to optimize the FFTW. This can reduce the processing time by a factor of 1.5 to 10.
 !TP_LOCALLAB_LC_TOOLNAME;Local Contrast & Wavelets
 !TP_LOCALLAB_LEVELBLUR;Maximum blur levels
@@ -3616,8 +3859,10 @@ ZOOMPANEL_ZOOMOUT;Oddálit\nZkratka: <b>-</b>
 !TP_LOCALLAB_LOGAUTO_TOOLTIP;Pressing this button will calculate the dynamic range and 'Mean luminance' for the scene conditions if the 'Auto mean luminance (Yb%)' is checked).\nAlso calculates the absolute luminance at the time of shooting.\nPress the button again to adjust the automatically calculated values.
 !TP_LOCALLAB_LOGBASE_TOOLTIP;Default = 2.\nValues less than 2 reduce the action of the algorithm making the shadows darker and the highlights brighter.\nWith values greater than 2, the shadows are grayer and the highlights become more washed out.
 !TP_LOCALLAB_LOGCATAD_TOOLTIP;Chromatic adaptation allows us to interpret a color according to its spatio-temporal environment.\nUseful when the white balance deviates significantly from the D50 reference.\nAdapts colors to the illuminant of the output device.
-!TP_LOCALLAB_LOGCIE;Log encoding instead of Sigmoid
-!TP_LOCALLAB_LOGCIE_TOOLTIP;Allows you tu use Black Ev, White Ev, Scene Mean luminance(Yb%) and Viewing Mean luminance(Yb%) for tone-mapping using Log encoding Q.
+!TP_LOCALLAB_LOGCIE;Log encoding
+!TP_LOCALLAB_LOGCIEQ;Log Encoding Q (with Ciecam)
+!TP_LOCALLAB_LOGCIEQ_TOOLTIP;Activating the checkbox allows you to switch between log encoding based on the 3 RGB channels, and log encoding based solely on Ciecam’s brightness (Q) channel.\nUsing the Q channel instead of the RGB channels helps avoid undesirable edge effects such as hue and saturation shifts.\nHowever, the settings are more difficult to optimise because Q is unbounded and Ciecam alters the data to take into account the surround conditions, simultaneous contrast, etc.\nYou may have to adjust the following:\n   Scene conditions: Mean luminance (Yb), Whites &amp; Blacks distribution, Black Ev, White Ev.\n   Source Data Adjustments : Brightness compression, Strength.\n\nNote: when using Log Encoding (Q), be careful not to activate the Disable Ciecam option in the Scene Conditions, Surround menu.
+!TP_LOCALLAB_LOGCIE_TOOLTIP;Allows you to use Black Ev, White Ev, White and Black distribution, Scene Mean luminance(Yb%) and Viewing Mean luminance(Yb%) for tone-mapping using 'Log encoding' with Brightness compression.
 !TP_LOCALLAB_LOGCOLORFL;Colorfulness (M)
 !TP_LOCALLAB_LOGCOLORF_TOOLTIP;Perceived amount of hue in relation to gray.\nIndicator that a stimulus appears more or less colored.
 !TP_LOCALLAB_LOGCONQL;Contrast (Q)
@@ -3625,7 +3870,7 @@ ZOOMPANEL_ZOOMOUT;Oddálit\nZkratka: <b>-</b>
 !TP_LOCALLAB_LOGCONTL;Contrast (J)
 !TP_LOCALLAB_LOGCONTL_TOOLTIP;Contrast (J) in CIECAM16 takes into account the increase in perceived coloration with luminance.
 !TP_LOCALLAB_LOGCONTQ_TOOLTIP;Contrast (Q) in CIECAM16 takes into account the increase in perceived coloration with brightness.
-!TP_LOCALLAB_LOGCONTTHRES_TOOLTIP;Adjusts the mid-tone contrast range (J & Q).\nPositive values progressively reduce the effect of the Contrast sliders (J & Q). Negative values progressively increase the effect of the Contrast sliders.
+!TP_LOCALLAB_LOGCONTTHRES_TOOLTIP;Adjusts the mid-tone contrast range (J &amp; Q).\nPositive values progressively reduce the effect of the Contrast sliders (J &amp; Q). Negative values progressively increase the effect of the Contrast sliders.
 !TP_LOCALLAB_LOGDETAIL_TOOLTIP;Acts mainly on high frequencies.
 !TP_LOCALLAB_LOGENCOD_TOOLTIP;Tone Mapping with Logarithmic encoding (ACES).\nUseful for underexposed images or images with high dynamic range.\n\nTwo-step process: 1) Dynamic Range calculation 2) Manual adjustment.
 !TP_LOCALLAB_LOGEXP;All tools
@@ -3638,6 +3883,7 @@ ZOOMPANEL_ZOOMOUT;Oddálit\nZkratka: <b>-</b>
 !TP_LOCALLAB_LOGLIGHTQ_TOOLTIP;Perceived amount of light emanating from a stimulus.\nIndicator that a stimulus appears to be more or less bright, clear.
 !TP_LOCALLAB_LOGLIN;Logarithm mode
 !TP_LOCALLAB_LOGPFRA;Relative Exposure Levels
+!TP_LOCALLAB_LOGPFRA2;Log Encoding settings
 !TP_LOCALLAB_LOGREPART;Overall strength
 !TP_LOCALLAB_LOGREPART_TOOLTIP;Allows you to adjust the relative strength of the log-encoded image with respect to the original image.\nDoes not affect the Ciecam component.
 !TP_LOCALLAB_LOGSATURL_TOOLTIP;Saturation (s) in CIECAM16 corresponds to the color of a stimulus in relation to its own brightness.\nActs mainly on medium tones and on the highlights.
@@ -3646,11 +3892,13 @@ ZOOMPANEL_ZOOMOUT;Oddálit\nZkratka: <b>-</b>
 !TP_LOCALLAB_LOGVIEWING_TOOLTIP;Corresponds to the medium on which the final image will be viewed (monitor, TV, projector, printer, etc.), as well as the surrounding conditions.
 !TP_LOCALLAB_LOG_TOOLNAME;Log Encoding
 !TP_LOCALLAB_LUM;LL - CC
+!TP_LOCALLAB_LUM46LABEL;Luma levels 456: Mean=%1 High=%2
 !TP_LOCALLAB_LUMADARKEST;Darkest
 !TP_LOCALLAB_LUMASK;Background color/luma mask
 !TP_LOCALLAB_LUMASK_TOOLTIP;Adjusts the shade of gray or color of the mask background in Show Mask (Mask and modifications).
 !TP_LOCALLAB_LUMAWHITESEST;Lightest
 !TP_LOCALLAB_LUMFRA;L*a*b* standard
+!TP_LOCALLAB_LUMLABEL;Luma levels 0123: Mean=%1 High=%2
 !TP_LOCALLAB_MASFRAME;Mask and Merge
 !TP_LOCALLAB_MASFRAME_TOOLTIP;For all masks.\nTakes into account the ΔE image to avoid modifying the selection area when the following Mask Tools are used: Gamma, Slope, Chroma, Contrast curve, Local contrast (by wavelet level), Blur Mask and Structure Mask (if enabled ).\nDisabled when Inverse mode is used.
 !TP_LOCALLAB_MASK;Curves
@@ -3682,7 +3930,7 @@ ZOOMPANEL_ZOOMOUT;Oddálit\nZkratka: <b>-</b>
 !TP_LOCALLAB_MASKLCTHRLOW2;Dark area luma threshold
 !TP_LOCALLAB_MASKLCTHRMID;Gray area luma denoise
 !TP_LOCALLAB_MASKLCTHRMIDCH;Gray area chroma denoise
-!TP_LOCALLAB_MASKLC_TOOLTIP;This allows you to target the denoise based on the image luminance information contained in the L(L) or LC(H) mask (Mask and Modifications).\n The L(L) mask or the LC(H) mask must be enabled to use this function.\n 'Dark area luminance threshold'. If 'Reinforce denoise in dark and light areas' > 1 the denoise is progressively increased from 0% at the threshold setting to 100% at the maximum black value (determined by mask).\n 'Light area luminance threshold'. The denoise is progressively decreased from 100% at the threshold setting to 0% at the maximum white value (determined by mask).\n In the area between the two thresholds, the denoise settings are not affected by the mask.
+!TP_LOCALLAB_MASKLC_TOOLTIP;Used by wavelet luminance.\nThis allows you to target the denoise based on the image luminance information contained in the L(L) or LC(H) mask (Mask and Modifications).\n The L(L) mask or the LC(H) mask must be enabled to use this function.\n 'Dark area luminance threshold'. If 'Reinforce denoise in dark and light areas' > 1 the denoise is progressively increased from 0% at the threshold setting to 100% at the maximum black value (determined by mask).\n 'Light area luminance threshold'. The denoise is progressively decreased from 100% at the threshold setting to 0% at the maximum white value (determined by mask).\n In the area between the two thresholds, the denoise settings are not affected by the mask.
 !TP_LOCALLAB_MASKLNOISELOW;Reinforce dark/light areas
 !TP_LOCALLAB_MASKLOWTHRESCB_TOOLTIP;Dark-tone limit below which the CBDL parameters (Luminance only) will be restored progressively to their original values prior to being modified by the CBDL settings.\n You can use certain tools in 'Mask and modifications' to change the gray levels: 'Smooth radius', Gamma and Slope, 'Contrast curve'.\n Use a 'lockable color picker' on the mask to see which areas will be affected. Make sure you set 'Background color mask' = 0 in Settings.
 !TP_LOCALLAB_MASKLOWTHRESC_TOOLTIP;Dark-tone limit below which the parameters will be restored progressively to their original values prior to being modified by the Color and Light settings.\n You can use certain tools in 'Mask and modifications' to change the gray levels: 'Structure mask', 'blur mask', 'Smooth radius', Gamma and Slope, 'Contrast curve', 'Local contrast' (wavelets).\n Use a 'lockable color picker' on the mask to see which areas will be affected. Make sure you set 'Background color mask' = 0 in Settings.
@@ -3705,9 +3953,9 @@ ZOOMPANEL_ZOOMOUT;Oddálit\nZkratka: <b>-</b>
 !TP_LOCALLAB_MASKRESTM_TOOLTIP;Used to modulate the effect of the Tone Mapping settings based on the image luminance information contained in the L(L) or LC(H) masks (Mask and modifications).\n The L(L) mask or the LC(H) mask must be enabled to use this function.\n The 'dark' and 'light' areas below the dark threshold and above the light threshold will be restored progressively to their original values prior to being modified by the Tone Mapping settings \n In between these two areas, the full value of the Tone Mapping settings will be applied.
 !TP_LOCALLAB_MASKRESVIB_TOOLTIP;Used to modulate the effect of the Vibrance and Warm Cool settings based on the image luminance information contained in the L(L) or LC(H) masks (Mask and modifications).\n The L(L) mask or the LC(H) mask must be enabled to use this function.\n The 'dark' and 'light' areas below the dark threshold and above the light threshold will be restored progressively to their original values prior to being modified by the Vibrance and Warm Cool settings \n In between these two areas, the full value of the Vibrance and Warm Cool settings will be applied.
 !TP_LOCALLAB_MASKRESWAV_TOOLTIP;Used to modulate the effect of the Local contrast and Wavelet settings based on the image luminance information contained in the L(L) or LC(H) masks (Mask and modifications).\n The L(L) mask or the LC(H) mask must be enabled to use this function.\n The 'dark' and 'light' areas below the dark threshold and above the light threshold will be restored progressively to their original values prior to being modified by the Local contrast and Wavelet settings \n In between these two areas, the full value of the Local contrast and Wavelet settings will be applied.
-!TP_LOCALLAB_MASKUNUSABLE;Mask disabled (Mask & modifications)
+!TP_LOCALLAB_MASKUNUSABLE;Mask disabled (Enable in Mask & modifications)
 !TP_LOCALLAB_MASKUSABLE;Mask enabled (Mask & modifications)
-!TP_LOCALLAB_MASK_TOOLTIP;You can enable multiple masks for a tool by activating another tool and using only the mask (set the tool sliders to 0 ).\n\nYou can also duplicate the RT-spot and place it close to the first spot. The small variations in the spot references allow you to make fine adjustments.
+!TP_LOCALLAB_MASK_TOOLTIP;You can enable multiple masks for a tool by activating another tool and using only the mask (set the tool sliders to 0 ).\n\nYou can also duplicate the spot and place it close to the first spot. The small variations in the spot references allow you to make fine adjustments.
 !TP_LOCALLAB_MEDIAN;Median Low
 !TP_LOCALLAB_MEDIANITER_TOOLTIP;The number of successive iterations carried out by the median filter.
 !TP_LOCALLAB_MEDIAN_TOOLTIP;You can choose a median value in the range 3x3 to 9x9 pixels. Higher values increase noise reduction and blur.
@@ -3741,6 +3989,7 @@ ZOOMPANEL_ZOOMOUT;Oddálit\nZkratka: <b>-</b>
 !TP_LOCALLAB_MERTWE;Exclusion
 !TP_LOCALLAB_MERTWO;Subtract
 !TP_LOCALLAB_METHOD_TOOLTIP;'Enhanced + chroma denoise' significantly increases processing times.\nBut reduce artifacts.
+!TP_LOCALLAB_MIDTCIE;Midtones
 !TP_LOCALLAB_MLABEL;Restored data Min=%1 Max=%2
 !TP_LOCALLAB_MLABEL_TOOLTIP;The values should be close to Min=0 Max=32768 (log mode) but other values are possible.You can adjust 'Clip restored data (gain)' and 'Offset' to normalize.\nRecovers image data without blending.
 !TP_LOCALLAB_MODE_EXPERT;Advanced
@@ -3757,7 +4006,7 @@ ZOOMPANEL_ZOOMOUT;Oddálit\nZkratka: <b>-</b>
 !TP_LOCALLAB_NLDENOISENLRAD_TOOLTIP;Higher values increase denoise at the expense of processing time.
 !TP_LOCALLAB_NLDENOISE_TOOLTIP;'Detail recovery' acts on a Laplacian transform to target uniform areas rather than areas with detail.
 !TP_LOCALLAB_NLDET;Detail recovery
-!TP_LOCALLAB_NLFRA;Non-local Means - Luminance
+!TP_LOCALLAB_NLFRA;Non-local Means: Luminance
 !TP_LOCALLAB_NLFRAME_TOOLTIP;Non-local means denoising takes a mean of all pixels in the image, weighted by how similar they are to the target pixel.\nReduces loss of detail compared with local mean algorithms.\nOnly luminance noise is taken into account. Chrominance noise is best processed using wavelets and Fourier transforms (DCT).\nCan be used in conjunction with 'Luminance denoise by level' or on its own.
 !TP_LOCALLAB_NLGAM;Gamma
 !TP_LOCALLAB_NLLUM;Strength
@@ -3788,10 +4037,15 @@ ZOOMPANEL_ZOOMOUT;Oddálit\nZkratka: <b>-</b>
 !TP_LOCALLAB_PASTELS2;Vibrance
 !TP_LOCALLAB_PDE;Contrast Attenuator - Dynamic Range compression
 !TP_LOCALLAB_PDEFRA;Contrast Attenuator ƒ
-!TP_LOCALLAB_PDEFRAME_TOOLTIP;PDE IPOL algorithm adapted for Rawtherapee : gives different results and requires different settings compared to main-menu 'Exposure'.\nMay be useful for under-exposed or high dynamic range images.
+!TP_LOCALLAB_PDEFRAME_TOOLTIP;PDE IPOL algorithm adapted for RawTherapee: gives different results and requires different settings compared to main-menu 'Exposure'.\nMay be useful for under-exposed or high dynamic range images.
+!TP_LOCALLAB_PRECAMGAMUT_TOOLTIP;If checked, ensures a gamut control just after primary conversion to XYZ.
+!TP_LOCALLAB_PRECAMREFIMAIN_TOOLTIP;Allows you to move the white-point in such a way that it approaches the dominant color. This action modifies the purity. In combination with "Shift x" and "Shift y", allows you to carry out moderate color toning.
+!TP_LOCALLAB_PRECAMREFI_TOOLTIP;Allows you to move the white-point in such a way that it approaches the dominant color. This action modifies the purity.
+!TP_LOCALLAB_PRECAM_TOOLTIP;'Source Data Adjustments' modifies the Dynamic Range using Log encoding, the tones of the image and primaries (simplified Abstract Profile), and midtones, just before the Ciecam process. These values are adjustable:\nGamma: Acts mainly on light tones\nSlope: Acts mainly on dark tones. You can choose any pair of gamma and slope (values >1) and the algorithm will ensure that there is continuity between the linear and parabolic parts of the curve.\nDestination primaries: Allows you to change the destination primaries to restore or change image color (saturation). The color balance is significantly preserved when the 'Working Profile' and the 'Destination primaries' are similar. 'Working Profile' is not modified. You can also finely adapt the primaries and the illuminant (white-point). Moving a primary away from the white point reduces saturation and vice versa. Pay attention to the gamut.
 !TP_LOCALLAB_PREVHIDE;Hide additional settings
 !TP_LOCALLAB_PREVIEW;Preview ΔE
 !TP_LOCALLAB_PREVSHOW;Show additional settings
+!TP_LOCALLAB_PRIMILLFRAME;Primaries & Illuminant
 !TP_LOCALLAB_PROXI;ΔE decay
 !TP_LOCALLAB_QUAAGRES;Aggressive
 !TP_LOCALLAB_QUACONSER;Conservative
@@ -3836,10 +4090,11 @@ ZOOMPANEL_ZOOMOUT;Oddálit\nZkratka: <b>-</b>
 !TP_LOCALLAB_RET_TOOLNAME;Dehaze & Retinex
 !TP_LOCALLAB_REWEI;Reweighting iterates
 !TP_LOCALLAB_RGB;RGB Tone Curve
-!TP_LOCALLAB_RGBCURVE_TOOLTIP;In RGB mode you have 4 choices : Standard, Weighted standard, Luminance & Film-like.
+!TP_LOCALLAB_RGBCURVE_TOOLTIP;In RGB mode you have 4 choices : Standard, Weighted standard, Luminance &amp; Film-like.
 !TP_LOCALLAB_ROW_NVIS;Not visible
 !TP_LOCALLAB_ROW_VIS;Visible
 !TP_LOCALLAB_RSTPROTECT_TOOLTIP;Red and skin-tone protection affects the Saturation, Chroma and Colorfulness sliders.
+!TP_LOCALLAB_SATCIE;Saturation control
 !TP_LOCALLAB_SATUR;Saturation
 !TP_LOCALLAB_SATURV;Saturation (s)
 !TP_LOCALLAB_SCALEGR;Scale
@@ -3850,7 +4105,7 @@ ZOOMPANEL_ZOOMOUT;Oddálit\nZkratka: <b>-</b>
 !TP_LOCALLAB_SENSI;Scope
 !TP_LOCALLAB_SENSIEXCLU;Scope
 !TP_LOCALLAB_SENSIEXCLU_TOOLTIP;Adjust the colors to be excluded.
-!TP_LOCALLAB_SENSIMASK_TOOLTIP;Scope adjustment specific to common mask tool.\nActs on the difference between the original image and the mask.\nUses the luma, chroma and hue references from the center of the RT-spot\n\nYou can also adjust the ΔE of the mask itself by using 'Scope (ΔE image mask)' in 'Settings' > 'Mask and Merge'.
+!TP_LOCALLAB_SENSIMASK_TOOLTIP;Scope adjustment specific to common mask tool.\nActs on the difference between the original image and the mask.\nUses the luma, chroma and hue references from the center of the spot\n\nYou can also adjust the ΔE of the mask itself by using 'Scope (ΔE image mask)' in 'Settings' > 'Mask and Merge'.
 !TP_LOCALLAB_SENSI_TOOLTIP;Adjusts the scope of the action:\nSmall values limit the action to colors similar to those in the center of the spot.\nHigh values let the tool act on a wider range of colors.
 !TP_LOCALLAB_SETTINGS;Settings
 !TP_LOCALLAB_SH1;Shadows Highlights
@@ -3860,9 +4115,9 @@ ZOOMPANEL_ZOOMOUT;Oddálit\nZkratka: <b>-</b>
 !TP_LOCALLAB_SHADHIGH;Shadows/Highlights & Tone Equalizer
 !TP_LOCALLAB_SHADHMASK_TOOLTIP;Lowers the highlights of the mask in the same way as the shadows/highlights algorithm.
 !TP_LOCALLAB_SHADMASK_TOOLTIP;Lifts the shadows of the mask in the same way as the shadows/highlights algorithm.
-!TP_LOCALLAB_SHADOWHIGHLIGHT_TOOLTIP;Adjust shadows and highlights either with shadows & highlights sliders or with a tone equalizer.\nCan be used instead of, or in conjunction with the Exposure module.\nCan also be used as a graduated filter.
+!TP_LOCALLAB_SHADOWHIGHLIGHT_TOOLTIP;Adjust shadows and highlights either with shadows &amp; highlights sliders or with a tone equalizer.\nCan be used instead of, or in conjunction with the Exposure module.\nCan also be used as a graduated filter.
 !TP_LOCALLAB_SHAMASKCOL;Shadows
-!TP_LOCALLAB_SHAPETYPE;RT-spot shape
+!TP_LOCALLAB_SHAPETYPE;Spot shape
 !TP_LOCALLAB_SHAPE_TOOLTIP;'Ellipse' is the normal mode.\n 'Rectangle' can be used in certain cases, for example to work in full-image mode by placing the delimiters outside the preview area. In this case, set transition = 100.\n\nFuture developments will include polygon shapes and Bezier curves.
 !TP_LOCALLAB_SHARAMOUNT;Amount
 !TP_LOCALLAB_SHARBLUR;Blur radius
@@ -3906,17 +4161,41 @@ ZOOMPANEL_ZOOMOUT;Oddálit\nZkratka: <b>-</b>
 !TP_LOCALLAB_SHRESFRA;Shadows/Highlights & TRC
 !TP_LOCALLAB_SHTRC_TOOLTIP;Based on 'working profile' (only those provided), modifies the tones of the image by acting on a TRC (Tone Response Curve).\nGamma acts mainly on light tones.\nSlope acts mainly on dark tones.\nIt is recommended that the TRC of both devices (monitor and output profile) be sRGB (default).
 !TP_LOCALLAB_SH_TOOLNAME;Shadows/Highlights & Tone Equalizer
-!TP_LOCALLAB_SIGFRA;Sigmoid Q & Log encoding Q
+!TP_LOCALLAB_SIGBLACKSSCIE;Blacks distribution
+!TP_LOCALLAB_SIGCIE;Sigmoid
+!TP_LOCALLAB_SIGFRA;Sigmoid Q
+!TP_LOCALLAB_SIGGAMJCIE;Gamma
 !TP_LOCALLAB_SIGJZFRA;Sigmoid Jz
 !TP_LOCALLAB_SIGMAWAV;Attenuation response
+!TP_LOCALLAB_SIGMOID16_TOOLTIP;Allows you to simulate a tone mapping appearance using both 'Ciecam' and 'Sigmoid Q'. Sigmoid Q has three sliders:\na) Contrast acts on the shape of the sigmoid curve and consequently on the strength\nb) Threshold (Gray point) distributes the action according to the luminance\nc) Adaptability weights the action of the sigmoid by action on the internal exponential function.
 !TP_LOCALLAB_SIGMOIDBL;Blend
 !TP_LOCALLAB_SIGMOIDLAMBDA;Contrast
-!TP_LOCALLAB_SIGMOIDQJ;Uses Black Ev & White Ev
+!TP_LOCALLAB_SIGMOIDLOGAUTO;Auto threshold
+!TP_LOCALLAB_SIGMOIDLOGEV_TOOLTIP;If the combo box selection 'Black Ev and White Ev' is 'Sigmoid and Log encoding' instead of 'Sigmoid only', the two algorithms 'Log encoding' and 'Sigmoid' are used together.
+!TP_LOCALLAB_SIGMOIDNORMCIE;Normalize Luminance
+!TP_LOCALLAB_SIGMOIDNORMCIEBLEND_TOOLTIP;Blend acts on the final aspect of the image, contrast and luminance. Ratio between original and output image.
+!TP_LOCALLAB_SIGMOIDNORMCIE_TOOLTIP;Reconstruct luminance so that the mean and variance of the output image take into account those of the original.\nAll the adjustments acting on J or Q are taken into account, including those which are not relative to Sigmoid Q.
+!TP_LOCALLAB_SIGMOIDQJ;Black Ev & White Ev
+!TP_LOCALLAB_SIGMOIDQJCOMPRCIE_TOOLTIP;When the combo box selection 'Uses Black Ev and White Ev' is 'Sigmoid and Log encoding Q' or 'Log encoding instead of Sigmoid' checked. This algorithm compress the data above the threshold slider value. The last value stands for brightness (Q) and should be close as possible to the value 'Compression threshold' (calculate when 'Auto threshold" checked, often > 1).
+!TP_LOCALLAB_SIGMOIDSENSI;Adaptability
 !TP_LOCALLAB_SIGMOIDTH;Threshold (Gray point)
-!TP_LOCALLAB_SIGMOID_TOOLTIP;Allows you to simulate a Tone-mapping appearance using both the'Ciecam' (or 'Jz') and 'Sigmoid' function.\nThree sliders: a) Contrast acts on the shape of the sigmoid curve and consequently on the strength; b) Threshold (Gray point) distributes the action according to the luminance; c)Blend acts on the final aspect of the image, contrast and luminance.
+!TP_LOCALLAB_SIGMOIDWHITESCIE_TOOLTIP;Allows you, in Automatic when the dynamic range of the image is high, to change the distribution of lights in whites and deep blacks.\nCan be used with Log encoding or Sigmoid with Black Ev and White Ev enabled.\n\nThe algorithm does not change the basic data, but acts on the components necessary to calculate the Dynamic range, Black Ev, White Ev and the Gray point.
+!TP_LOCALLAB_SIGMOID_TOOLTIP;Allows you to simulate a tone mapping appearance using both the 'Jz' and 'Sigmoid' function. Three sliders:\na) Contrast acts on the shape of the sigmoid curve and consequently on the strength\nb) Threshold (Gray point) distributes the action according to the luminance\nc)Blend acts on the final aspect of the image, contrast and luminance.
+!TP_LOCALLAB_SIGSLOPJCIE;Slope
+!TP_LOCALLAB_SIGTRCCIE;Source Data Adjustments
+!TP_LOCALLAB_SIGWHITESCIE;Whites distribution
 !TP_LOCALLAB_SLOMASKCOL;Slope
 !TP_LOCALLAB_SLOMASK_TOOLTIP;Adjusting Gamma and Slope can provide a soft and artifact-free transformation of the mask by progressively modifying 'L' to avoid any discontinuities.
+!TP_LOCALLAB_SLOPESMOOTH;Gray balance (Slope)
+!TP_LOCALLAB_SLOPESMOOTHB;Blue balance (Slope)
+!TP_LOCALLAB_SLOPESMOOTHG;Green balance (Slope)
+!TP_LOCALLAB_SLOPESMOOTHR;Red balance (Slope)
 !TP_LOCALLAB_SLOSH;Slope
+!TP_LOCALLAB_SMOOTHCIE;Highlight Attenuation
+!TP_LOCALLAB_SMOOTHCIE_LUM;Luminosity mode
+!TP_LOCALLAB_SMOOTHCIE_SCA;Scale Yb Scene
+!TP_LOCALLAB_SMOOTHCIE_TOOLTIP;Completes the processing carried out by gamma, slope and midtones by causing a slight lowering of lights. Please note this does not replace Highlight reconstruction.\n\nGamma based and Slope based (Standard and Advanced) allow you to simulate a tone mapping using:\na) Scene conditions: Black-Ev, White-Ev, Mean luminance (Yb%)\nb) Viewing conditions: Mean luminance (Yb%).\n\nScale Yb Scene is function of White-Ev.
+!TP_LOCALLAB_SMOOTHCIE_YB;Scale Yb Viewing
 !TP_LOCALLAB_SOFT;Soft Light & Original Retinex
 !TP_LOCALLAB_SOFTM;Soft Light
 !TP_LOCALLAB_SOFTMETHOD_TOOLTIP;Apply a Soft-light blend (identical to the global adjustment). Carry out dodge and burn using the original Retinex algorithm.
@@ -3938,19 +4217,21 @@ ZOOMPANEL_ZOOMOUT;Oddálit\nZkratka: <b>-</b>
 !TP_LOCALLAB_STRENGR;Strength
 !TP_LOCALLAB_STRENGRID_TOOLTIP;You can adjust the desired effect with 'strength', but you can also use the 'scope' function which allows you to delimit the action (e.g. to isolate a particular color).
 !TP_LOCALLAB_STRENGTH;Noise
+!TP_LOCALLAB_STRENGTHCIELOG;Strength
 !TP_LOCALLAB_STRGRID;Strength
 !TP_LOCALLAB_STRUC;Structure
 !TP_LOCALLAB_STRUCCOL;Spot structure
 !TP_LOCALLAB_STRUCCOL1;Spot structure
 !TP_LOCALLAB_STRUCT_TOOLTIP;Uses the Sobel algorithm to take into account structure for shape detection.\nActivate 'Mask and modifications' > 'Show spot structure' (Advanced mode) to see a preview of the mask (without modifications).\n\nCan be used in conjunction with the Structure Mask, Blur Mask and 'Local contrast' (by wavelet level) to improve edge detection.\n\nEffects of adjustments using Lightness, Contrast, Chrominance, Exposure or other non-mask-related tools visible using either 'Show modified image' or 'Show modified areas with mask'.
 !TP_LOCALLAB_STRUMASKCOL;Structure mask strength
-!TP_LOCALLAB_STRUMASK_TOOLTIP;Structure mask (slider) with the checkbox 'Structure mask as tool' unchecked: In this case a mask showing the structure will be generated even if none of the 3 curves is activated. Structure masks are available for mask (Blur and denoise') and mask(Color & Light).
+!TP_LOCALLAB_STRUMASK_TOOLTIP;Structure mask (slider) with the checkbox 'Structure mask as tool' unchecked: In this case a mask showing the structure will be generated even if none of the 3 curves is activated. Structure masks are available for mask (Blur and denoise') and mask(Color &amp; Light).
 !TP_LOCALLAB_STRUSTRMASK_TOOLTIP;Moderate use of this slider is recommended!
 !TP_LOCALLAB_STYPE;Shape method
 !TP_LOCALLAB_STYPE_TOOLTIP;You can choose between:\nSymmetrical - left handle linked to right, top handle linked to bottom.\nIndependent - all handles are independent.
 !TP_LOCALLAB_SYM;Symmetrical (mouse)
 !TP_LOCALLAB_SYMSL;Symmetrical (mouse + sliders)
 !TP_LOCALLAB_TARGET_GRAY;Mean luminance (Yb%)
+!TP_LOCALLAB_TE_PIVOT;Pivot (Ev)
 !TP_LOCALLAB_THRES;Threshold structure
 !TP_LOCALLAB_THRESDELTAE;ΔE scope threshold
 !TP_LOCALLAB_THRESRETI;Threshold
@@ -3975,11 +4256,12 @@ ZOOMPANEL_ZOOMOUT;Oddálit\nZkratka: <b>-</b>
 !TP_LOCALLAB_TRANSITGRAD_TOOLTIP;Allows you to vary the y-axis transition.
 !TP_LOCALLAB_TRANSITVALUE;Transition value
 !TP_LOCALLAB_TRANSITWEAK;Transition decay (linear-log)
-!TP_LOCALLAB_TRANSITWEAK_TOOLTIP;Adjust transition decay function: 1 linear , 2 parabolic, 3 cubic up to ^25.\nCan be used in conjunction with very low transition values to reduce defects (CBDL, Wavelets, Color & Light).
+!TP_LOCALLAB_TRANSITWEAK_TOOLTIP;Adjust transition decay function: 1 linear , 2 parabolic, 3 cubic up to ^25.\nCan be used in conjunction with very low transition values to reduce defects (CBDL, Wavelets, Color &amp; Light).
 !TP_LOCALLAB_TRANSIT_TOOLTIP;Adjust smoothness of transition between affected and unaffected areas as a percentage of the 'radius'.
 !TP_LOCALLAB_TRANSMISSIONGAIN;Transmission gain
 !TP_LOCALLAB_TRANSMISSIONMAP;Transmission map
 !TP_LOCALLAB_TRANSMISSION_TOOLTIP;Transmission according to transmission.\nAbscissa: transmission from negative values (min), mean, and positive values (max).\nOrdinate: amplification or reduction.\nYou can adjust this curve to change the Transmission and reduce artifacts.
+!TP_LOCALLAB_TRCFRAME;Tone Response Curve & Midtones
 !TP_LOCALLAB_USEMASK;Laplacian
 !TP_LOCALLAB_VART;Variance (contrast)
 !TP_LOCALLAB_VIBRANCE;Vibrance & Warm/Cool
@@ -4076,6 +4358,16 @@ ZOOMPANEL_ZOOMOUT;Oddálit\nZkratka: <b>-</b>
 !TP_SPOT_ENTRYCHANGED;Point changed
 !TP_SPOT_HINT;Click on this button to be able to operate on the preview area.\n\nTo edit a spot, hover the white mark locating an edited area, making the editing geometry appear.\n\nTo add a spot, press Ctrl and left mouse button, drag the circle (Ctrl key can be released) to a source location, then release the mouse button.\n\nTo move the source or destination spot, hover its center then drag it.\n\nThe inner circle (maximum effect area) and the 'feather' circle can be resized by hovering them (the circle becomes orange) and dragging it (the circle becomes red).\n\nWhen the changes are done, right click outside any spot to end the Spot editing mode, or click on this button again.
 !TP_SPOT_LABEL;Spot Removal
+!TP_TONE_EQUALIZER_BANDS;Bands
+!TP_TONE_EQUALIZER_BAND_0;Blacks
+!TP_TONE_EQUALIZER_BAND_1;Shadows
+!TP_TONE_EQUALIZER_BAND_2;Midtones
+!TP_TONE_EQUALIZER_BAND_3;Highlights
+!TP_TONE_EQUALIZER_BAND_4;Whites
+!TP_TONE_EQUALIZER_DETAIL;Regularization
+!TP_TONE_EQUALIZER_LABEL;Tone Equalizer
+!TP_TONE_EQUALIZER_PIVOT;Pivot (Ev)
+!TP_TONE_EQUALIZER_SHOW_COLOR_MAP;Show tonal map
 !TP_WAVELET_COMPEXPERT;Advanced
 !TP_WAVELET_COMPLEXLAB;Complexity
 !TP_WAVELET_COMPLEX_TOOLTIP;Standard: shows a reduced set of tools suitable for most processing operations.\nAdvanced: shows the complete set of tools for advanced processing operations.
@@ -4118,3 +4410,54 @@ ZOOMPANEL_ZOOMOUT;Oddálit\nZkratka: <b>-</b>
 !TP_WAVELET_STREND;Strength
 !TP_WAVELET_THRDEN_TOOLTIP;Generates a stepped curve used to guide the noise reduction as a function of local contrast. The denoise will be applied to uniform low local-contrast areas. Areas with detail (higher local contrast) will be preserved.
 !TP_WAVELET_THREND;Local contrast threshold
+!TP_WBALANCE_ITCWALG_TOOLTIP;Allows you to switch to the other Alternative temperature (Alt_temp), when possible.\nInactive in the "single choice" case.
+!TP_WBALANCE_ITCWBDELTA_TOOLTIP;Fixed for each "green" iteration tried, the temperature difference to be taken into account.
+!TP_WBALANCE_ITCWBFGREEN_TOOLTIP;Find the best compromise between Student and green.
+!TP_WBALANCE_ITCWBMINSIZEPATCH_TOOLTIP;Allows you to set the minimum patch value. values that are too low can lead to a lack of correlation.
+!TP_WBALANCE_ITCWBNOPURPLE_TOOLTIP;Allows you to filter magenta/purple data from the image. If the box is checked a filter limiting the value of Y is applied. By default this value is 0.4. You can change it in 'options' Itcwb_Ypurple (Maximum 1)
+!TP_WBALANCE_ITCWBPRECIS_TOOLTIP;The lower the value, the more relevant the data, but increases the processing time. Since the processing time is low, this parameter should generally be able to remain at the default value
+!TP_WBALANCE_ITCWBRGREEN_TOOLTIP;Sets the green value review amplitude in iterations, from low amplitude 0.82 to 1.25 to maximum amplitude 0.4 to 4.
+!TP_WBALANCE_ITCWBSIZEPATCH_TOOLTIP;This setting sets the size of color datas used by algorithm.
+!TP_WBALANCE_ITCWBSIZE_TOOLTIP;This setting sets the number of iterations to find the best correspondence between the reference spectral colors and those in xyY value of the image. A value of 3 seams a good compromise.
+!TP_WBALANCE_ITCWBTHRES_TOOLTIP;Limits comparison sampling between spectral data and image data.
+!TP_WBALANCE_ITCWB_ALG;Remove 2 pass algorithm
+!TP_WBALANCE_ITCWB_CUSTOM;Use Custom temperature & tint
+!TP_WBALANCE_ITCWB_DELTA;Delta temperature in green loop
+!TP_WBALANCE_ITCWB_FGREEN;Find green student
+!TP_WBALANCE_ITCWB_FORCED;Close to full CIE diagram
+!TP_WBALANCE_ITCWB_FRA;Auto temperature correlation settings
+!TP_WBALANCE_ITCWB_FRA_TOOLTIP;These settings allow, depending on the images (type of raw, colorimetry, etc.), an adaptation of the 'Temperature correlation' algorithm. There is no absolute rule linking these parameters to the results obtained.
+!TP_WBALANCE_ITCWB_MINSIZEPATCH;Patch minimum size
+!TP_WBALANCE_ITCWB_NOPURPLE;Filter on purple color
+!TP_WBALANCE_ITCWB_PRECIS;Precision algorithm - scale used
+!TP_WBALANCE_ITCWB_PRIM_ACE;Forces use of the entire CIE diagram
+!TP_WBALANCE_ITCWB_PRIM_ADOB;Medium sampling
+!TP_WBALANCE_ITCWB_PRIM_BETA;Medium sampling - near Pointer's gamut
+!TP_WBALANCE_ITCWB_PRIM_JDCMAX;Close to full CIE diagram
+!TP_WBALANCE_ITCWB_PRIM_REC;High sampling
+!TP_WBALANCE_ITCWB_PRIM_SRGB;Low sampling & Ignore Camera settings
+!TP_WBALANCE_ITCWB_PRIM_XYZCAM;Camera XYZ matrix
+!TP_WBALANCE_ITCWB_PRIM_XYZCAM2;JDCmax after Camera XYZ matrix
+!TP_WBALANCE_ITCWB_RGREEN;Green range
+!TP_WBALANCE_ITCWB_SAMPLING;Low sampling 5.9
+!TP_WBALANCE_ITCWB_SIZE;Size of ref. color compare to histogram
+!TP_WBALANCE_ITCWB_SIZEPATCH;Size of color patch
+!TP_WBALANCE_ITCWB_THRES;Colors used in picture (preset)
+!TP_WBALANCE_ITCWCUSTOM_TOOLTIP;Allows you to use Custom settings Temperature and Green (tint).\n\nUsage tips:\n1) start Itcwb , enable 'Use Custom temperature and tint'.\n2) Set 'Temperature and tint' to your liking :free, Pick,...(Custom)\n3) go back to 'Temperature correlation'.\n\nYou cannot use : 2 passes, AWB temperature bias, Green refinement.
+!TP_WBALANCE_ITCWFORCED_TOOLTIP;By default (box not checked) the data scanned during sampling is brought back to the sRGB profile, which is the most widespread, both for calibrating DCP or ICC profiles with the Colorchecker24, or used on the web.\n If you have very high gamut images (some flowers, artificial colors), then it may be necessary to use the entire CIExy diagram, the profile used will be ACESP0. In this second case, the number of colors that can be used in internal to the algorithm will be more important.
+!TP_WBALANCE_ITCWGREEN;Green refinement
+!TP_WBALANCE_ITCWGREEN_TOOLTIP;Allows you to change the "tint" (green) which will serve as a reference when starting the algorithm. It has substantially the same role for greens as "AWB temperature bias" for temperature.\nThe whole algorithm is recalculated.
+!TP_WBALANCE_ITCWPRIM_TOOLTIP;Allows you to select the image sampling.\n'Close to full CIE diagram' almost uses the data present on the sensor, possibly including the imaginary colors.\n'Camera XYZ matrix' - uses the matrix directly derived from Color Matrix.\n'Medium sampling' (default) - near Pointer's gamut: corresponds substantially to the most common cases of human vision.\nThe other choice 'Low sampling and Ignore camera settings' allow you to isolate high gamut parts of the image and forces the algorithm in some cases (tint > 0.8,...) to ignore camera settings. This will obviously have an impact on the result.\n\nThis sampling only has an influence on the channel multipliers, it has nothing to do with the "working profile" and does not modify the gamut of the image.
+!TP_WBALANCE_ITCWSAMPLING_TOOLTIP;Allows you to use the old sampling algorithm to ensure better compatibility with 5.9. You must enable Observer 10° (default).
+!TP_WBALANCE_MULLABEL;Multipliers: r=%1 g=%2 b=%3
+!TP_WBALANCE_MULLABEL_TOOLTIP;Values given for information purposes. You cannot change them.
+!TP_WBALANCE_OBSERVER10;Observer 10° instead of Observer 2°
+!TP_WBALANCE_OBSERVER10_TOOLTIP;The color management in RawTherapee (White balance, channel multipliers, highlight recovery,...) uses the spectral data of the illuminants and colors. Observer is an important parameter of this management which takes into account the angle of perception of the eye. In 1931 it was fixed at 2° (privileges the use of the cones). In 1964 it was fixed at 10° (privileges the use of the cones, but partially takes into account the rods).\nIn the rare case of a color drift with "Observer 2°" (probably due to the conversion matrix) "Observer 10°" must be selected.
+!TP_WBALANCE_PATCHLABEL;Read colors:%1 Patch: Chroma:%2 Size=%3
+!TP_WBALANCE_PATCHLABEL_TOOLTIP;Display number of read colors (max=237).\nDisplay calculated Patch Chroma.\nAWB temperature bias, lets try to reduce this value, a minimum may seem to optimize the algorithm.\n\nPatch size matching chroma optimization.
+!TP_WBALANCE_PATCHLEVELLABEL;Patch: ΔE=%1 - datas x 9 Min:%2 Max=%3
+!TP_WBALANCE_PATCHLEVELLABEL_TOOLTIP;Display ΔE patch (this assumes there is enough spectral data), between image and spectral datas.\n Display read datas found. The 2 values correspond to the minimum and maximum data values taken into account. The coefficient x9 must be taken into account to obtain the number of pixels concerned in the image.
+!TP_WBALANCE_STUDLABEL0;Correlation factor: %1 Passes:%2 Alt=%3
+!TP_WBALANCE_STUDLABEL1;Correlation factor: %1 Passes:%2 Best_alt=%3
+!//TP_WBALANCE_ITCWBNOPURPLE_TOOLTIP;By default when "Inpaint opposed" is activated, purple colors are not taken into account. However, if the image does not need highlight reconstruction, or if this image naturally contains purple tints (flowers, etc.), it may be necessary to deactivate, to take into account all the colors.
+!//TP_WBALANCE_ITCWB_FORCED;Forces use of the entire CIE diagram

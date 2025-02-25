@@ -76,8 +76,6 @@ EXIFPANEL_RESET;Restablecer
 EXIFPANEL_RESETALL;Restablecer todo
 EXIFPANEL_RESETALLHINT;Restablece todos los atributos a los valores predeterminados.
 EXIFPANEL_RESETHINT;Restablece los atributos seleccionados a los valores predeterminados.
-EXIFPANEL_SHOWALL;Mostrar todo
-EXIFPANEL_SUBDIRECTORY;Subdirectorio
 EXPORT_BYPASS;Pasos del revelado que se ignorarán
 EXPORT_BYPASS_ALL;Seleccionar / Deseleccionar todo
 EXPORT_BYPASS_DEFRINGE;Ignorar «Quitar borde púrpura»
@@ -172,11 +170,11 @@ FILEBROWSER_POPUPUNTRASH;Sacar de la papelera
 FILEBROWSER_QUERYBUTTONHINT;Borrar la búsqueda
 FILEBROWSER_QUERYHINT;Aquí se escriben los nombres de archivo que se desea buscar. También se puede indicar sólo una parte del nombre del archivo. Los términos de la búsqueda se separan mediante comas (por ej.<i>1001,1004,1199</i>)\nLos términos de búsqueda no deseados se pueden excluir añadiendo el prefijo <i>!=</i>\npor ej. <i>!=1001,1004,1199</i>\n\nAtajos de teclado:\n<b>Ctrl-f</b> - lleva el foco al cuadro de texto <b>Buscar:</b>\n<b>Intro</b> - realiza la búsqueda,\n<b>Esc</b> - borra el cuadro de texto <b>Buscar:</b>\n<b>Mayús-Esc</b> - quita el foco del cuadro de texto <b>Buscar:</b>.
 FILEBROWSER_QUERYLABEL;Buscar:
-FILEBROWSER_RANK1_TOOLTIP;Rango 1 *\nAtajo de teclado: <b>Mayús-1</b>
-FILEBROWSER_RANK2_TOOLTIP;Rango 2 **\nAtajo de teclado: <b>Mayús-2</b>
-FILEBROWSER_RANK3_TOOLTIP;Rango 3 ***\nAtajo de teclado: <b>Mayús-3</b>
-FILEBROWSER_RANK4_TOOLTIP;Rango 4 ****\nAtajo de teclado: <b>Mayús-4</b>
-FILEBROWSER_RANK5_TOOLTIP;Rango 5 *****\nAtajo de teclado: <b>Mayús-5</b>
+FILEBROWSER_RANK1_TOOLTIP;Rango 1 *\nAtajo de teclado: <b>1</b>
+FILEBROWSER_RANK2_TOOLTIP;Rango 2 **\nAtajo de teclado: <b>2</b>
+FILEBROWSER_RANK3_TOOLTIP;Rango 3 ***\nAtajo de teclado: <b>3</b>
+FILEBROWSER_RANK4_TOOLTIP;Rango 4 ****\nAtajo de teclado: <b>4</b>
+FILEBROWSER_RANK5_TOOLTIP;Rango 5 *****\nAtajo de teclado: <b>5</b>
 FILEBROWSER_RENAMEDLGLABEL;Renombrar el archivo
 FILEBROWSER_RESETDEFAULTPROFILE;Restablecer el perfil a los valores predeterminados
 FILEBROWSER_SELECTDARKFRAME;Seleccionar Foto Negra...
@@ -187,23 +185,23 @@ FILEBROWSER_SHOWCOLORLABEL3HINT;Muestra imágenes etiquetadas con color verde.\n
 FILEBROWSER_SHOWCOLORLABEL4HINT;Muestra imágenes etiquetadas con color azul.\nAtajo de teclado: <b>Alt-4</b>
 FILEBROWSER_SHOWCOLORLABEL5HINT;Muestra imágenes etiquetadas con color morado.\nAtajo de teclado: <b>Alt-5</b>
 FILEBROWSER_SHOWDIRHINT;Quita todos los filtros.\nAtajo de teclado: <b>d</b>
-FILEBROWSER_SHOWEDITEDHINT;Muestra las imágenes editadas.\nAtajo de teclado: <b>7</b>
-FILEBROWSER_SHOWEDITEDNOTHINT;Muestra las imágenes no editadas.\nAtajo de teclado: <b>6</b>
+FILEBROWSER_SHOWEDITEDHINT;Muestra las imágenes editadas.\nAtajo de teclado: <b>Mayús-7</b>
+FILEBROWSER_SHOWEDITEDNOTHINT;Muestra las imágenes no editadas.\nAtajo de teclado: <b>Mayús-6</b>
 FILEBROWSER_SHOWEXIFINFO;Muestra los datos Exif.\n\nAtajos de teclado:\n<b>i</b> - Modo de Editor de pestañas múltiples,\n<b>Alt-i</b> - Modo de Editor de pestaña única.
 FILEBROWSER_SHOWNOTTRASHHINT;Muestra sólo las imágenes no borradas.
 FILEBROWSER_SHOWORIGINALHINT;Muestra sólo las imágenes originales.\n\nCuando existen varias imágenes con el mismo nombre de archivo pero con diferentes extensiones, la que se considera original es aquella cuya extensión está más cerca de la parte superior de la lista de extensiones analizadas en Preferencias > Navegador de archivos > Extensiones analizadas.
-FILEBROWSER_SHOWRANK1HINT;Muestra las imágenes con 1 estrella.\nAtajo de teclado: <b>1</b>
-FILEBROWSER_SHOWRANK2HINT;Muestra las imágenes con 2 estrellas.\nAtajo de teclado: <b>2</b>
-FILEBROWSER_SHOWRANK3HINT;Muestra las imágenes con 3 estrellas.\nAtajo de teclado: <b>3</b>
-FILEBROWSER_SHOWRANK4HINT;Muestra las imágenes con 4 estrellas.\nAtajo de teclado: <b>4</b>
-FILEBROWSER_SHOWRANK5HINT;Muestra las imágenes con 5 estrellas.\nAtajo de teclado: <b>5</b>
+FILEBROWSER_SHOWRANK1HINT;Muestra las imágenes con 1 estrella.\nAtajo de teclado: <b>Mayús-1</b>
+FILEBROWSER_SHOWRANK2HINT;Muestra las imágenes con 2 estrellas.\nAtajo de teclado: <b>Mayús-2</b>
+FILEBROWSER_SHOWRANK3HINT;Muestra las imágenes con 3 estrellas.\nAtajo de teclado: <b>Mayús-3</b>
+FILEBROWSER_SHOWRANK4HINT;Muestra las imágenes con 4 estrellas.\nAtajo de teclado: <b>Mayús-4</b>
+FILEBROWSER_SHOWRANK5HINT;Muestra las imágenes con 5 estrellas.\nAtajo de teclado: <b>Mayús-5</b>
 FILEBROWSER_SHOWRECENTLYSAVEDHINT;Muestra las imágenes guardadas recientemente.\nAtajo de teclado: <b>Alt-7</b>
 FILEBROWSER_SHOWRECENTLYSAVEDNOTHINT;Muestra las imágenes que no se han guardado recientemente.\nAtajo de teclado: <b>Alt-6</b>
 FILEBROWSER_SHOWTRASHHINT;Muestra el contenido de la papelera.\nAtajo de teclado: <b>Ctrl-t</b>
 FILEBROWSER_SHOWUNCOLORHINT;Muestra las imágenes sin etiqueta de color.\nAtajo de teclado: <b>Alt-0</b>
-FILEBROWSER_SHOWUNRANKHINT;Muestra las imágenes sin rango.\nAtajo de teclado: <b>0</b>
+FILEBROWSER_SHOWUNRANKHINT;Muestra las imágenes sin rango.\nAtajo de teclado: <b>Mayús-0</b>
 FILEBROWSER_THUMBSIZE;Tamaño de las miniaturas
-FILEBROWSER_UNRANK_TOOLTIP;Borra el rango.\nAtajo de teclado:<b>May - 0</b>
+FILEBROWSER_UNRANK_TOOLTIP;Borra el rango.\nAtajo de teclado:<b>0</b>
 FILEBROWSER_ZOOMINHINT;Aumenta las miniaturas.\nAtajos de teclado:\n<b>+</b> - Modo de Editor de pestañas múltiples,\n<b>Alt</b>-<b>+</b> - Modo de Editor de Pestaña Única
 FILEBROWSER_ZOOMOUTHINT;Reduce las miniaturas.\nAtajos de teclado:\n<b>-</b> - Modo de Editor de pestañas múltiples,\n<b>Alt</b>-<b>-</b> - Modo de Editor de pestaña única
 FILECHOOSER_FILTER_ANY;Todos los archivos
@@ -1795,7 +1793,6 @@ PREFERENCES_APPEARANCE_COLORPICKERFONT;Tipo de letra del muestreador de color
 PREFERENCES_APPEARANCE_CROPMASKCOLOR;Color de la máscara de recorte
 PREFERENCES_APPEARANCE_MAINFONT;Tipo de letra principal
 PREFERENCES_APPEARANCE_NAVGUIDECOLOR;Color de la guía del navegador
-PREFERENCES_APPEARANCE_PSEUDOHIDPI;Modo pseudo-HiDPI
 PREFERENCES_APPEARANCE_THEME;Tema
 PREFERENCES_APPLNEXTSTARTUP;Se necesita reiniciar
 PREFERENCES_AUTOMONPROFILE;Usar el perfil de color del monitor principal del sistema operativo
@@ -2006,6 +2003,7 @@ PROGRESSBAR_LINEDENOISE;Filtro de ruido de línea...
 PROGRESSBAR_LOADING;Cargando imagen...
 PROGRESSBAR_LOADINGTHUMBS;Cargando miniaturas...
 PROGRESSBAR_LOADJPEG;Cargando archivo JPEG...
+PROGRESSBAR_LOADJXL;Cargando archivo JXL...
 PROGRESSBAR_LOADPNG;Cargando archivo PNG...
 PROGRESSBAR_LOADTIFF;Cargando archivo TIFF...
 PROGRESSBAR_NOIMAGES;No se encuentran imágenes
@@ -2588,8 +2586,6 @@ TP_ICM_WORKING_TRC_SRGB;sRGB g=2.4 s=12.92
 TP_ICM_WORKING_TRC_TOOLTIP;Aquí se selecciona uno de los perfiles incorporados en RawTherapee, que será el que utilizará el motor del programa.
 TP_IMPULSEDENOISE_LABEL;Reducción de ruido impulsivo
 TP_IMPULSEDENOISE_THRESH;Umbral
-TP_LABCURVE_AVOIDCOLORSHIFT;Evitar la deriva de colores
-TP_LABCURVE_AVOIDCOLORSHIFT_TOOLTIP;Encaja los colores en el rango del espacio de color de trabajo y aplica la corrección de Munsell.
 TP_LABCURVE_BRIGHTNESS;Luminosidad
 TP_LABCURVE_CHROMATICITY;Cromaticidad
 TP_LABCURVE_CHROMA_TOOLTIP;Para aplicar virado de color en B/N, se ajusta la cromaticidad a -100.
@@ -4068,3 +4064,354 @@ ZOOMPANEL_ZOOMFITSCREEN;Encajar la imagen entera en la vista previa\nAtajo de te
 ZOOMPANEL_ZOOMIN;Acercar\nAtajo de teclado: <b>+</b>
 ZOOMPANEL_ZOOMOUT;Alejar\nAtajo de teclado: <b>-</b>
 
+!!!!!!!!!!!!!!!!!!!!!!!!!
+! Untranslated keys follow; remove the ! prefix after an entry is translated.
+!!!!!!!!!!!!!!!!!!!!!!!!!
+
+!ERROR_MSG_METADATA_VALUE;Metadata: error setting %1 to %2
+!EXIFFILTER_PATH;File path
+!EXIFPANEL_ACTIVATE_ALL_HINT;Select all tags
+!EXIFPANEL_ACTIVATE_NONE_HINT;Unselect all tags
+!EXIFPANEL_BASIC_GROUP;Basic
+!EXIFPANEL_VALUE_NOT_SHOWN;Not shown
+!FILEBROWSER_POPUPSORTBY;Sort Files
+!FILEBROWSER_SHOWRECURSIVE;Show images in sub-folders recursively.
+!FILECHOOSER_FILTER_EXECUTABLE;Executable files
+!GENERAL_OTHER;Other
+!HISTORY_MSG_DIRPYRDENOISE_GAIN;NR - Compensate for lightness
+!HISTORY_MSG_FF_FROMMETADATA;Flat-Field - From Metadata
+!HISTORY_MSG_GAMUTMUNSEL;Gamut-Munsell
+!HISTORY_MSG_HLTH;Inpaint opposed - gain threshold
+!HISTORY_MSG_ICM_CAT;Matrix adaptation
+!HISTORY_MSG_ICM_GAMUT;Gamut control
+!HISTORY_MSG_ICM_MIDTCIE;Midtones
+!HISTORY_MSG_ICM_REFI;Refinement Colors
+!HISTORY_MSG_ICM_SHIFTX;Refinement Colors - Shift x
+!HISTORY_MSG_ICM_SHIFTY;Refinement Colors - Shift y
+!HISTORY_MSG_ICM_SMOOTHCIE;Smooth highlights
+!HISTORY_MSG_ICM_TRCEXP;Abstract Profile
+!HISTORY_MSG_LOCALLAB_TE_PIVOT;Local - Equalizer pivot
+!HISTORY_MSG_LOCAL_CIEMASK_BLURCONT;Local - CIECAM Mask blur contrast
+!HISTORY_MSG_LOCAL_CIEMASK_BLURFFT;Local - CIECAM Mask blur FFTW
+!HISTORY_MSG_LOCAL_CIEMASK_BLURRAD;Local - CIECAM Mask blur radius
+!HISTORY_MSG_LOCAL_CIEMASK_CHH;Local - CIECAM Mask curve h(h)
+!HISTORY_MSG_LOCAL_CIEMASK_HIGH;Local - CIECAM Mask highlights
+!HISTORY_MSG_LOCAL_CIEMASK_SHAD;Local - CIECAM Mask shadows
+!HISTORY_MSG_LOCAL_CIEMASK_STRU;Local - CIECAM Mask structure
+!HISTORY_MSG_LOCAL_CIEMASK_STRU_TOOL;Local - CIECAM Mask structure as tool
+!HISTORY_MSG_LOCAL_CIEMASK_WLC;Local - CIECAM Mask wavelet L(L)
+!HISTORY_MSG_LOCAL_CIEMASK_WLEV;Local - CIECAM Mask wavelet levels
+!HISTORY_MSG_LOCAL_CIE_ANGGRAD;Local - CIECAM Gradient angle
+!HISTORY_MSG_LOCAL_CIE_BLACKS;Local - CIECAM Blacks distribution
+!HISTORY_MSG_LOCAL_CIE_BLUXL;Local - CIECAM Blue X
+!HISTORY_MSG_LOCAL_CIE_BLUYL;Local - CIECAM Blue Y
+!HISTORY_MSG_LOCAL_CIE_BRICOMP;Local - CIECAM Brightness compression
+!HISTORY_MSG_LOCAL_CIE_BRICOMPTH;Local - CIECAM Brightness compression threshold
+!HISTORY_MSG_LOCAL_CIE_BWCIE;Local - CIECAM Black and white
+!HISTORY_MSG_LOCAL_CIE_CAT;Local - Matrix adaptation
+!HISTORY_MSG_LOCAL_CIE_DETAILJZ;Local - JzCzHz Local contrast
+!HISTORY_MSG_LOCAL_CIE_ENAMASKALL;Local - CIECAM All mask tools
+!HISTORY_MSG_LOCAL_CIE_EXPPRECAM;Local - CIECAM Pre-Cam
+!HISTORY_MSG_LOCAL_CIE_GAM;Local - CIECAM Gamma
+!HISTORY_MSG_LOCAL_CIE_GAMUTCIE;Local - CIECAM Gamut
+!HISTORY_MSG_LOCAL_CIE_GREXL;Local - CIECAM Green X
+!HISTORY_MSG_LOCAL_CIE_GREYL;Local - CIECAM Green Y
+!HISTORY_MSG_LOCAL_CIE_ILL;Local - CIECAM TRC Illuminant
+!HISTORY_MSG_LOCAL_CIE_LOGCIEQ;Local - CIECAM Log encoding Q
+!HISTORY_MSG_LOCAL_CIE_MIDT;Local - CIECAM Mid Tones
+!HISTORY_MSG_LOCAL_CIE_NORM;Local - CIECAM Normalize L
+!HISTORY_MSG_LOCAL_CIE_PRIM;Local - CIECAM TRC primaries
+!HISTORY_MSG_LOCAL_CIE_REDXL;Local - CIECAM Red X
+!HISTORY_MSG_LOCAL_CIE_REDYL;Local - CIECAM Red Y
+!HISTORY_MSG_LOCAL_CIE_REFI;Local - CIECAM Refinement colors
+!HISTORY_MSG_LOCAL_CIE_SATCIE;Local - CIECAM Saturation control
+!HISTORY_MSG_LOCAL_CIE_SHIFTXL;Local - CIECAM Shift x
+!HISTORY_MSG_LOCAL_CIE_SHIFTYL;Local - CIECAM Shift y
+!HISTORY_MSG_LOCAL_CIE_SIG;Local - Sigmoid
+!HISTORY_MSG_LOCAL_CIE_SIGADAP;Local - CIECAM Sigmoid adaptability
+!HISTORY_MSG_LOCAL_CIE_SIGMET;Local - CIECAM Sigmoid method
+!HISTORY_MSG_LOCAL_CIE_SLOP;Local - CIECAM Slope
+!HISTORY_MSG_LOCAL_CIE_SLOPESMO;Local - CIECAM Gray balance
+!HISTORY_MSG_LOCAL_CIE_SLOPESMOB;Local - CIECAM Blue balance
+!HISTORY_MSG_LOCAL_CIE_SLOPESMOG;Local - CIECAM Green balance
+!HISTORY_MSG_LOCAL_CIE_SLOPESMOR;Local - CIECAM Red balance
+!HISTORY_MSG_LOCAL_CIE_SMOOTH;Local - CIECAM Scale Yb scene
+!HISTORY_MSG_LOCAL_CIE_SMOOTHMET;Local - CIECAM Smooth lights method
+!HISTORY_MSG_LOCAL_CIE_SMOOTHYB;Local - CIECAM Scale Yb viewing
+!HISTORY_MSG_LOCAL_CIE_SMOOTH_LUM;Local - CIECAM Levels - Luminosity mode
+!HISTORY_MSG_LOCAL_CIE_STRGRAD;Local - CIECAM Gradient strength L
+!HISTORY_MSG_LOCAL_CIE_STRLOG;Local - CIECAM Log encoding strength
+!HISTORY_MSG_LOCAL_CIE_TRC;Local - CIECAM TRC
+!HISTORY_MSG_LOCAL_CIE_WHITES;Local - CIECAM Whites distribution
+!HISTORY_MSG_LOCAL_DEHAZE_BLACK;Local - Dehaze Black
+!HISTORY_MSG_LOCAL_FEATHERCIE;Local - CIECAM Gradient feather
+!HISTORY_MSG_LOCAL_FEATHERCOL;Local - Color Gradient feather
+!HISTORY_MSG_LOCAL_FEATHEREXE;Local - Exp Gradient feather
+!HISTORY_MSG_LOCAL_FEATHERLOG;Local - Log Gradient feather
+!HISTORY_MSG_LOCAL_FEATHERMAS;Local - Mask Common gradient feather
+!HISTORY_MSG_LOCAL_FEATHERSH;Local - SH Gradient feather
+!HISTORY_MSG_LOCAL_FEATHERVIB;Local - Vib Gradient feather
+!HISTORY_MSG_LOCAL_FEATHERWAV;Local - Wav Gradient feather
+!HISTORY_MSG_LOCAL_GAMUTMUNSEL;Local - SC - Avoid Color Shift
+!HISTORY_MSG_LOCAL_LOG_BLACKS;Local - Log Blacks distribution
+!HISTORY_MSG_LOCAL_LOG_COMPR;Local - Log Compress brightness
+!HISTORY_MSG_LOCAL_LOG_SAT;Local - Log Saturation control
+!HISTORY_MSG_LOCAL_LOG_WHITES;Local - Log Whites distribution
+!HISTORY_MSG_LOCAL_TMO_SATUR;Local Exp Fattal Saturation
+!HISTORY_MSG_TONE_EQUALIZER_BANDS;Tone equalizer - Bands
+!HISTORY_MSG_TONE_EQUALIZER_ENABLED;Tone equalizer
+!HISTORY_MSG_TONE_EQUALIZER_PIVOT;Tone equalizer - Pivot
+!HISTORY_MSG_TONE_EQUALIZER_REGULARIZATION;Tone equalizer - Regularization
+!HISTORY_MSG_TONE_EQUALIZER_SHOW_COLOR_MAP;Tone equalizer - Tonal map
+!HISTORY_MSG_WBALANCE_OBSERVER10;Observer 10°
+!HISTORY_MSG_WBITC_CUSTOM;Itcwb Custom
+!HISTORY_MSG_WBITC_DELTA;Itcwb Delta green
+!HISTORY_MSG_WBITC_FGREEN;Itcwb Green - student
+!HISTORY_MSG_WBITC_FORCE;Itcwb Force
+!HISTORY_MSG_WBITC_GREEN;Green refinement
+!HISTORY_MSG_WBITC_MINSIZE;Patch min size
+!HISTORY_MSG_WBITC_NOPURPLE;Itcwb Nopurple
+!HISTORY_MSG_WBITC_OBS;Remove algo 2 passes
+!HISTORY_MSG_WBITC_PONDER;Itcwb ponderated
+!HISTORY_MSG_WBITC_PRECIS;Itcwb Precision
+!HISTORY_MSG_WBITC_PRIM;Primaries
+!HISTORY_MSG_WBITC_RGREEN;Itcwb Green range
+!HISTORY_MSG_WBITC_SAMPLING;Low sampling
+!HISTORY_MSG_WBITC_SIZE;Itcwb Size
+!HISTORY_MSG_WBITC_SORTED;Itcwb ponderated
+!HISTORY_MSG_WBITC_THRES;Itcwb Threshold
+!PARTIALPASTE_FLATFIELDFROMMETADATA;Flat-field from Metadata
+!PARTIALPASTE_TONE_EQUALIZER;Tone equalizer
+!PREFERENCES_BROWSERECURSIVEDEPTH;Browse sub-folders depth
+!PREFERENCES_BROWSERECURSIVEFOLLOWLINKS;Follow symbolic links when browsing sub-folders
+!PREFERENCES_BROWSERECURSIVEMAXDIRS;Maximum sub-folders
+!PREFERENCES_CAMERAPROFILESDIR;Camera profiles directory
+!PREFERENCES_EXTERNALEDITOR_CHANGE;Change Application
+!PREFERENCES_EXTERNALEDITOR_CHANGE_FILE;Change Executable
+!PREFERENCES_EXTERNALEDITOR_COLUMN_COMMAND;Command
+!PREFERENCES_EXTERNALEDITOR_COLUMN_NAME;Name
+!PREFERENCES_EXTERNALEDITOR_COLUMN_NATIVE_COMMAND;Native command
+!PREFERENCES_LENSFUNDBDIR;Lensfun database directory
+!PREFERENCES_LENSFUNDBDIR_TOOLTIP;Directory containing the Lensfun database.  Leave empty to use the default directories.
+!PREFERENCES_LENSPROFILESDIR;Lens profiles directory
+!PREFERENCES_LENSPROFILESDIR_TOOLTIP;Directory containing Adobe Lens Correction Profiles (LCPs)
+!PREFERENCES_MAX_ZOOM_TITLE;Maximum zoom
+!PREFERENCES_METADATA;Metadata
+!PREFERENCES_METADATA_SYNC;Metadata synchronization with XMP sidecars
+!PREFERENCES_METADATA_SYNC_NONE;Off
+!PREFERENCES_METADATA_SYNC_READ;Read only
+!PREFERENCES_METADATA_SYNC_READWRITE;Bidirectional
+!PREFERENCES_RAW_DECODER;Raw Decoder
+!PREFERENCES_RAW_DECODER_ENABLE_LIBRAW;Use LibRaw
+!PREFERENCES_SPOTLOC;Define Spot method for Selective Editing
+!PREFERENCES_TAB_FAVORITES;Favorites
+!PREFERENCES_THUMBNAIL_RANK_COLOR_MODE;Load/Save thumbnail rank and color from/to XMP sidecars
+!PREFERENCES_TOOLPANEL_AVAILABLETOOLS;Available Tools
+!PREFERENCES_TOOLPANEL_CLONE_FAVORITES;Keep favorite tools in original locations
+!PREFERENCES_TOOLPANEL_CLONE_FAVORITES_TOOLTIP;If set, favorite tools will appear in both the favorites tab and their original tabs.\n\nNote: Enabling this option may result in a slight delay when switching tabs.
+!PREFERENCES_TOOLPANEL_FAVORITE;Favorite
+!PREFERENCES_TOOLPANEL_FAVORITESPANEL;Favorites Panel
+!PREFERENCES_TOOLPANEL_TOOL;Tool
+!PREFERENCES_WBA;White Balance
+!PREFERENCES_WBACORR;White Balance - Automatic temperature correlation
+!PREFERENCES_WBACORR_TOOLTIP;These settings allow, depending on the images (type of raw file, colorimetry, etc.), an adaptation of the " Temperature correlation " algorithm in order to obtain the best overall results. There is no absolute rule, linking these parameters to the results obtained.\n\nThe settings are of 3 types: \n* those accessible to the user from the GUI.\n* those accessible only in reading from each pp3 file : Itcwb_minsize=20, Itcwb_delta=4 Itcwb_rgreen=1 Itcwb_nopurple=false (See Rawpedia)\n* those accessible to the user in 'options' (see Rawpedia)\n You can use "Awb temperature bias" and "Green refinement" to adjust the results. Each movement of these commands brings a new calculation of temperature, tint and correlation.\n\nPlease note that the 3 indicators 'Correlation factor', 'Patch chroma' and ΔE are given for information only. It is not because one of these indicators is better that the result will necessarily be better.
+!PREFERENCES_WBAENA;Show White Balance Auto temperature correlation settings
+!PREFERENCES_WBAENACUSTOM;Use Custom temperature & tint
+!PREFERENCES_WBAFORC;Forces Extra algoritm
+!PREFERENCES_WBAGREENDELTA;Delta temperature in green iterate loop (if Force Extra enabled)
+!PREFERENCES_WBANOPURP;No purple color used
+!PREFERENCES_WBAPATCH;Number maximum of colors used in picture
+!PREFERENCES_WBAPRECIS;Precision algorithm - scale used
+!PREFERENCES_WBASIZEREF;Size of reference color compare to size of histogram color
+!PREFERENCES_WBASORT;Sort in chroma order instead of histogram
+!PREFERENCES_XMP_SIDECAR_MODE;XMP sidecar style
+!PREFERENCES_XMP_SIDECAR_MODE_EXT;darktable-like (FILENAME.ext.xmp for FILENAME.ext)
+!PREFERENCES_XMP_SIDECAR_MODE_STD;Standard (FILENAME.xmp for FILENAME.ext)
+!QUEUE_DESTPREVIEW_TITLE;Select a thumbnail to preview its destination path here
+!QUEUE_DESTPREVIEW_TOOLTIP;Destination path for the first selected image appears here
+!QUEUE_LOCATION_TEMPLATE_HELP_BUTTON_TOOLTIP;Show or hide a help panel with instructions for creating location templates
+!QUEUE_LOCATION_TEMPLATE_HELP_EXAMPLES_BODY;If you want to save the output image alongside the source image, write:\n<b>%p1/%f</b>\n\nIf you want to save the output image in a folder named '<i>converted</i>' located in the source photo's folder, write:\n<b>%p1/converted/%f</b>\n\nIf you want to save the output image in\n'<i>/home/tom/photos/converted/2010-10-31</i>', write:\n<b>%p-3/converted/%P-4/%f</b>
+!QUEUE_LOCATION_TEMPLATE_HELP_EXAMPLES_TITLE;Common examples
+!QUEUE_LOCATION_TEMPLATE_HELP_INTRO;The output template field allows you to to dynamically customize the destination folder and filename. When you include certain specifiers, which begin with <b>%</b>, they are replaced by the program when each file is being saved.\n\nThe sections below describe each type of specifier.
+!QUEUE_LOCATION_TEMPLATE_HELP_PATHS_BODY_1;Using this pathname as an example:
+!QUEUE_LOCATION_TEMPLATE_HELP_PATHS_BODY_2;The meanings of the formatting strings are:
+!QUEUE_LOCATION_TEMPLATE_HELP_PATHS_EXAMPLE_LINUX;/home/tom/photos/2010-10-31/photo1.raw
+!QUEUE_LOCATION_TEMPLATE_HELP_PATHS_EXAMPLE_WINDOWS;D:\tom\photos\2010-10-31\photo1.raw
+!QUEUE_LOCATION_TEMPLATE_HELP_PATHS_INTRO;The <b>%dN</b>, <b>%d-N</b>, <b>%pN</b>, <b>%p-N</b>, <b>%PN</b> and <b>%P-N</b> (N = 1..9) specifiers will be replaced by elements of the image file's directory path.\nThe format specifiers operate as follows:\n  <b>%dN</b> = Nth directory from the end of the path\n  <b>%d-N</b> = Nth directory from the start of the path\n  <b>%pN</b>  = all directories up to the Nth from the end of the path\n  <b>%p-N</b> = the first N directories in the path\n  <b>%PN</b>  = the last N directories in the path\n  <b>%P-N</b> = all directories from the Nth to the end of the path\n  <b>%f</b> = base filename (no extension)
+!QUEUE_LOCATION_TEMPLATE_HELP_PATHS_INTRO_WINDOWS;For Windows paths, <b>%d-1</b> is the drive letter and colon, and <b>%d-2</b> is the base directory on that drive.
+!QUEUE_LOCATION_TEMPLATE_HELP_PATHS_TITLE;Directories and partial paths
+!QUEUE_LOCATION_TEMPLATE_HELP_RANK_BODY;<b>%r</b> will be replaced by the photo's rank. If the photo is unranked, '<i>0</i>' is used. If the photo is in the trash, '<i>x</i>' is used.
+!QUEUE_LOCATION_TEMPLATE_HELP_RANK_TITLE;Rank
+!QUEUE_LOCATION_TEMPLATE_HELP_RESULT_MISMATCH;ERROR: 2nd result is different:
+!QUEUE_LOCATION_TEMPLATE_HELP_SEQUENCE_BODY;<b>%s1</b>, ..., <b>%s9</b> will be replaced by the photo's initial position in the queue at the time the queue is started. The number specifies the padding, e.g. <b>%s3</b> results in '<i>001</i>'.
+!QUEUE_LOCATION_TEMPLATE_HELP_SEQUENCE_TITLE;Position/sequence in queue
+!QUEUE_LOCATION_TEMPLATE_HELP_TIMESTAMP_BODY;Three different date/time values may be used in templates:\n  <b>%tE"%Y-%m-%d"</b> = when export started\n  <b>%tF"%Y-%m-%d"</b> = when file was last saved\n  <b>%tP"%Y-%m-%d"</b> = when photo was taken\nThe quoted string defines the format of the resulting date and/or time. The format string <b>%tF"%Y-%m-%d"</b> is just one example. The string can use all conversion specifiers defined for the g_date_time_format function (see https://docs.gtk.org/glib/method.DateTime.format.html).\n\nExample format strings:
+!QUEUE_LOCATION_TEMPLATE_HELP_TIMESTAMP_TITLE;Date and time
+!QUEUE_LOCATION_TEMPLATE_HELP_TITLE;Creating an output template
+!SAVEDLG_BIGTIFF;BigTIFF (no metadata support)
+!SORT_ASCENDING;Ascending
+!SORT_BY_DATE;By Date
+!SORT_BY_EXIF;By EXIF
+!SORT_BY_LABEL;By Color Label
+!SORT_BY_NAME;By Name
+!SORT_BY_RANK;By Rank
+!SORT_DESCENDING;Descending
+!TC_LOCALLAB_PRIM_SHIFTX;Shift x
+!TC_LOCALLAB_PRIM_SHIFTX_TOOLTIP;In combination with "Refine colors", allows you to:\n 1) for low values, adjust the image purity.\n 2) for higher values, carry out moderate color toning.\nBe careful not to go outside the CIE xy diagram.
+!TC_LOCALLAB_PRIM_SHIFTY;Shift y
+!TC_PRIM_REFI;Refine colors (white-point)
+!TP_COLORAPP_CIECAT_DEGREEOUT;Chromatic Adaptation Viewing
+!TP_COLORAPP_TEMPOUT_TOOLTIP;Temperature and Tint.\nDepending on the choices made previously, the selected temperature is:\nWhite balance\nA temp=2856\nD41 temp=4100\nD50 temp=5003\nD55 temp=5503\nD60 temp=6000\nD65 temp=6504\nD75 temp=7504\nFree.
+!TP_DIRPYRDENOISE_MAIN_AUTO_GAIN;Compensate for lightness
+!TP_DIRPYRDENOISE_MAIN_AUTO_GAIN_TOOLTIP;Alter the noise reduction strength based on the image lightness. Strength is reduced for dark images and increased for bright images.
+!TP_FILMNEGATIVE_PICK_SIZE;Size:
+!TP_FILMNEGATIVE_REF_SIZE;Size:
+!TP_FLATFIELD_FROMMETADATA;From Metadata
+!TP_HLREC_COLOROPP;Inpaint Opposed
+!TP_HLREC_HLTH;Gain threshold
+!TP_ICM_BW;Black and White
+!TP_ICM_GAMUT;Gamut control
+!TP_ICM_WORKING_CAT;Matrix adaptation
+!TP_ICM_WORKING_CAT_BRAD;Bradford
+!TP_ICM_WORKING_CAT_CAT02;Cat02
+!TP_ICM_WORKING_CAT_CAT16;Cat16
+!TP_ICM_WORKING_CAT_TOOLTIP;Performs the chromatic adaptation of the XYZ conversion matrix. Default: Bradford
+!TP_ICM_WORKING_CAT_VK;Von Kries
+!TP_ICM_WORKING_CAT_XYZ;XYZ scale
+!TP_ICM_WORKING_ILLU_E;E
+!TP_ICM_WORKING_NON;None
+!TP_ICM_WORKING_PRIM_FREE;Custom LA (sliders)
+!TP_ICM_WORKING_PRIM_JDCMAX;JDC Max
+!TP_ICM_WORKING_PRIM_JDCMAXSTDA;JDC Max stdA
+!TP_ICM_WORKING_PRIM_TOOLTIP;Performs a gamut control. Destination primaries (Advanced) allows you to change the destination primaries to restore or change image color (saturation). The color balance is significantly preserved when the 'Working Profile' and the 'Destination primaries' are similar. 'Working Profile' is not modified.\nWhen 'Custom LA (sliders)' is selected, you can modify the values of the 3 primaries (Red, Green, and Blue) for x and y.
+!TP_LENSPROFILE_CORRECTION_METADATA;From file metadata
+!TP_LOCALLAB_BWEVNONE;None
+!TP_LOCALLAB_BWEVSIG;Activated
+!TP_LOCALLAB_BWEVSIGLOG;Sigmoid & Log-Encoding
+!TP_LOCALLAB_CHRO46LABEL;Chroma levels 456: Mean=%1 High=%2
+!TP_LOCALLAB_CHROLABEL;Chroma levels 0123: Mean=%1 High=%2
+!TP_LOCALLAB_CIE_SMOOTHFRAME;Highlight Attenuation & Levels
+!TP_LOCALLAB_CIE_SMOOTH_EV;Ev based
+!TP_LOCALLAB_CIE_SMOOTH_GAMMA;Slope based
+!TP_LOCALLAB_CIE_SMOOTH_GAMMA ROLLOFF;Gamma based
+!TP_LOCALLAB_CIE_SMOOTH_LEVELS;Levels
+!TP_LOCALLAB_CIE_SMOOTH_NONE;None
+!TP_LOCALLAB_COLORFRAME;Dominant color
+!TP_LOCALLAB_COMPRCIE;Brightness compression
+!TP_LOCALLAB_COMPRCIETH;Compression threshold
+!TP_LOCALLAB_COMPRLOG_TOOLTIP;This algorithm compress the data before log conversion, above the threshold slider value. To use in conjunction with Whites distribution.
+!TP_LOCALLAB_DEHAZE_BLACK;Black
+!TP_LOCALLAB_DENOIWAVCH;Wavelets: Chrominance
+!TP_LOCALLAB_DENOIWAVLUM;Wavelets: Luminance
+!TP_LOCALLAB_DISAB_CIECAM;Disable Ciecam or Weak Jz surround
+!TP_LOCALLAB_ENABLE_MASKALL;Enable all mask tools
+!TP_LOCALLAB_EXMAIN;Global
+!TP_LOCALLAB_FATSAT;Saturation control
+!TP_LOCALLAB_FEATVALUE_MASK;Feather gradient (Grad. Filters Mask)
+!TP_LOCALLAB_GAMUTLABRELA;Lab
+!TP_LOCALLAB_GAMUTMUNSELL;Munsell only
+!TP_LOCALLAB_GAMUTNON;None
+!TP_LOCALLAB_GAMUTXYZABSO;XYZ Absolute
+!TP_LOCALLAB_GAMUTXYZRELA;XYZ Relative
+!TP_LOCALLAB_LCLABELS;Residual noise levels
+!TP_LOCALLAB_LCLABELS_TOOLTIP;Displays the mean and high-end noise values for the area shown in the Preview Panel (at 100% zoom). The noise values are grouped by wavelet levels 0,1,2,3 and 4,5,6.\nThe displayed values are indicative only and are designed to assist with denoise adjustments. They should not be interpreted as absolute noise levels.\n\n 300: Very noisy\n 100-300: Noisy\n 50-100: Moderatly noisy\n < 50: Low noise\n\nThey allow you to see:\n*The impact of Noise Reduction in the main-menu Detail tab.\n*The influence of Non-local Means, Wavelets and DCT on the luminance noise.\n*The influence of Wavelets and DCT on the chroma noise.\n*The influence of Capture Sharpening and Demosaicing.
+!TP_LOCALLAB_LOGCIEQ;Log Encoding Q (with Ciecam)
+!TP_LOCALLAB_LOGCIEQ_TOOLTIP;Activating the checkbox allows you to switch between log encoding based on the 3 RGB channels, and log encoding based solely on Ciecam’s brightness (Q) channel.\nUsing the Q channel instead of the RGB channels helps avoid undesirable edge effects such as hue and saturation shifts.\nHowever, the settings are more difficult to optimise because Q is unbounded and Ciecam alters the data to take into account the surround conditions, simultaneous contrast, etc.\nYou may have to adjust the following:\n   Scene conditions: Mean luminance (Yb), Whites &amp; Blacks distribution, Black Ev, White Ev.\n   Source Data Adjustments : Brightness compression, Strength.\n\nNote: when using Log Encoding (Q), be careful not to activate the Disable Ciecam option in the Scene Conditions, Surround menu.
+!TP_LOCALLAB_LOGPFRA2;Log Encoding settings
+!TP_LOCALLAB_LUM46LABEL;Luma levels 456: Mean=%1 High=%2
+!TP_LOCALLAB_LUMLABEL;Luma levels 0123: Mean=%1 High=%2
+!TP_LOCALLAB_MIDTCIE;Midtones
+!TP_LOCALLAB_PRECAMGAMUT_TOOLTIP;If checked, ensures a gamut control just after primary conversion to XYZ.
+!TP_LOCALLAB_PRECAMREFIMAIN_TOOLTIP;Allows you to move the white-point in such a way that it approaches the dominant color. This action modifies the purity. In combination with "Shift x" and "Shift y", allows you to carry out moderate color toning.
+!TP_LOCALLAB_PRECAMREFI_TOOLTIP;Allows you to move the white-point in such a way that it approaches the dominant color. This action modifies the purity.
+!TP_LOCALLAB_PRECAM_TOOLTIP;'Source Data Adjustments' modifies the Dynamic Range using Log encoding, the tones of the image and primaries (simplified Abstract Profile), and midtones, just before the Ciecam process. These values are adjustable:\nGamma: Acts mainly on light tones\nSlope: Acts mainly on dark tones. You can choose any pair of gamma and slope (values >1) and the algorithm will ensure that there is continuity between the linear and parabolic parts of the curve.\nDestination primaries: Allows you to change the destination primaries to restore or change image color (saturation). The color balance is significantly preserved when the 'Working Profile' and the 'Destination primaries' are similar. 'Working Profile' is not modified. You can also finely adapt the primaries and the illuminant (white-point). Moving a primary away from the white point reduces saturation and vice versa. Pay attention to the gamut.
+!TP_LOCALLAB_PRIMILLFRAME;Primaries & Illuminant
+!TP_LOCALLAB_SATCIE;Saturation control
+!TP_LOCALLAB_SIGBLACKSSCIE;Blacks distribution
+!TP_LOCALLAB_SIGCIE;Sigmoid
+!TP_LOCALLAB_SIGGAMJCIE;Gamma
+!TP_LOCALLAB_SIGMOID16_TOOLTIP;Allows you to simulate a tone mapping appearance using both 'Ciecam' and 'Sigmoid Q'. Sigmoid Q has three sliders:\na) Contrast acts on the shape of the sigmoid curve and consequently on the strength\nb) Threshold (Gray point) distributes the action according to the luminance\nc) Adaptability weights the action of the sigmoid by action on the internal exponential function.
+!TP_LOCALLAB_SIGMOIDLOGAUTO;Auto threshold
+!TP_LOCALLAB_SIGMOIDLOGEV_TOOLTIP;If the combo box selection 'Black Ev and White Ev' is 'Sigmoid and Log encoding' instead of 'Sigmoid only', the two algorithms 'Log encoding' and 'Sigmoid' are used together.
+!TP_LOCALLAB_SIGMOIDNORMCIE;Normalize Luminance
+!TP_LOCALLAB_SIGMOIDNORMCIEBLEND_TOOLTIP;Blend acts on the final aspect of the image, contrast and luminance. Ratio between original and output image.
+!TP_LOCALLAB_SIGMOIDNORMCIE_TOOLTIP;Reconstruct luminance so that the mean and variance of the output image take into account those of the original.\nAll the adjustments acting on J or Q are taken into account, including those which are not relative to Sigmoid Q.
+!TP_LOCALLAB_SIGMOIDQJCOMPRCIE_TOOLTIP;When the combo box selection 'Uses Black Ev and White Ev' is 'Sigmoid and Log encoding Q' or 'Log encoding instead of Sigmoid' checked. This algorithm compress the data above the threshold slider value. The last value stands for brightness (Q) and should be close as possible to the value 'Compression threshold' (calculate when 'Auto threshold" checked, often > 1).
+!TP_LOCALLAB_SIGMOIDSENSI;Adaptability
+!TP_LOCALLAB_SIGMOIDWHITESCIE_TOOLTIP;Allows you, in Automatic when the dynamic range of the image is high, to change the distribution of lights in whites and deep blacks.\nCan be used with Log encoding or Sigmoid with Black Ev and White Ev enabled.\n\nThe algorithm does not change the basic data, but acts on the components necessary to calculate the Dynamic range, Black Ev, White Ev and the Gray point.
+!TP_LOCALLAB_SIGSLOPJCIE;Slope
+!TP_LOCALLAB_SIGTRCCIE;Source Data Adjustments
+!TP_LOCALLAB_SIGWHITESCIE;Whites distribution
+!TP_LOCALLAB_SLOPESMOOTH;Gray balance (Slope)
+!TP_LOCALLAB_SLOPESMOOTHB;Blue balance (Slope)
+!TP_LOCALLAB_SLOPESMOOTHG;Green balance (Slope)
+!TP_LOCALLAB_SLOPESMOOTHR;Red balance (Slope)
+!TP_LOCALLAB_SMOOTHCIE;Highlight Attenuation
+!TP_LOCALLAB_SMOOTHCIE_LUM;Luminosity mode
+!TP_LOCALLAB_SMOOTHCIE_SCA;Scale Yb Scene
+!TP_LOCALLAB_SMOOTHCIE_TOOLTIP;Completes the processing carried out by gamma, slope and midtones by causing a slight lowering of lights. Please note this does not replace Highlight reconstruction.\n\nGamma based and Slope based (Standard and Advanced) allow you to simulate a tone mapping using:\na) Scene conditions: Black-Ev, White-Ev, Mean luminance (Yb%)\nb) Viewing conditions: Mean luminance (Yb%).\n\nScale Yb Scene is function of White-Ev.
+!TP_LOCALLAB_SMOOTHCIE_YB;Scale Yb Viewing
+!TP_LOCALLAB_STRENGTHCIELOG;Strength
+!TP_LOCALLAB_TE_PIVOT;Pivot (Ev)
+!TP_LOCALLAB_TRCFRAME;Tone Response Curve & Midtones
+!TP_TONE_EQUALIZER_BANDS;Bands
+!TP_TONE_EQUALIZER_BAND_0;Blacks
+!TP_TONE_EQUALIZER_BAND_1;Shadows
+!TP_TONE_EQUALIZER_BAND_2;Midtones
+!TP_TONE_EQUALIZER_BAND_3;Highlights
+!TP_TONE_EQUALIZER_BAND_4;Whites
+!TP_TONE_EQUALIZER_DETAIL;Regularization
+!TP_TONE_EQUALIZER_LABEL;Tone Equalizer
+!TP_TONE_EQUALIZER_PIVOT;Pivot (Ev)
+!TP_TONE_EQUALIZER_SHOW_COLOR_MAP;Show tonal map
+!TP_WBALANCE_ITCWALG_TOOLTIP;Allows you to switch to the other Alternative temperature (Alt_temp), when possible.\nInactive in the "single choice" case.
+!TP_WBALANCE_ITCWBDELTA_TOOLTIP;Fixed for each "green" iteration tried, the temperature difference to be taken into account.
+!TP_WBALANCE_ITCWBFGREEN_TOOLTIP;Find the best compromise between Student and green.
+!TP_WBALANCE_ITCWBMINSIZEPATCH_TOOLTIP;Allows you to set the minimum patch value. values that are too low can lead to a lack of correlation.
+!TP_WBALANCE_ITCWBNOPURPLE_TOOLTIP;Allows you to filter magenta/purple data from the image. If the box is checked a filter limiting the value of Y is applied. By default this value is 0.4. You can change it in 'options' Itcwb_Ypurple (Maximum 1)
+!TP_WBALANCE_ITCWBPRECIS_TOOLTIP;The lower the value, the more relevant the data, but increases the processing time. Since the processing time is low, this parameter should generally be able to remain at the default value
+!TP_WBALANCE_ITCWBRGREEN_TOOLTIP;Sets the green value review amplitude in iterations, from low amplitude 0.82 to 1.25 to maximum amplitude 0.4 to 4.
+!TP_WBALANCE_ITCWBSIZEPATCH_TOOLTIP;This setting sets the size of color datas used by algorithm.
+!TP_WBALANCE_ITCWBSIZE_TOOLTIP;This setting sets the number of iterations to find the best correspondence between the reference spectral colors and those in xyY value of the image. A value of 3 seams a good compromise.
+!TP_WBALANCE_ITCWBTHRES_TOOLTIP;Limits comparison sampling between spectral data and image data.
+!TP_WBALANCE_ITCWB_ALG;Remove 2 pass algorithm
+!TP_WBALANCE_ITCWB_CUSTOM;Use Custom temperature & tint
+!TP_WBALANCE_ITCWB_DELTA;Delta temperature in green loop
+!TP_WBALANCE_ITCWB_FGREEN;Find green student
+!TP_WBALANCE_ITCWB_FORCED;Close to full CIE diagram
+!TP_WBALANCE_ITCWB_FRA;Auto temperature correlation settings
+!TP_WBALANCE_ITCWB_FRA_TOOLTIP;These settings allow, depending on the images (type of raw, colorimetry, etc.), an adaptation of the 'Temperature correlation' algorithm. There is no absolute rule linking these parameters to the results obtained.
+!TP_WBALANCE_ITCWB_MINSIZEPATCH;Patch minimum size
+!TP_WBALANCE_ITCWB_NOPURPLE;Filter on purple color
+!TP_WBALANCE_ITCWB_PRECIS;Precision algorithm - scale used
+!TP_WBALANCE_ITCWB_PRIM_ACE;Forces use of the entire CIE diagram
+!TP_WBALANCE_ITCWB_PRIM_ADOB;Medium sampling
+!TP_WBALANCE_ITCWB_PRIM_BETA;Medium sampling - near Pointer's gamut
+!TP_WBALANCE_ITCWB_PRIM_JDCMAX;Close to full CIE diagram
+!TP_WBALANCE_ITCWB_PRIM_REC;High sampling
+!TP_WBALANCE_ITCWB_PRIM_SRGB;Low sampling & Ignore Camera settings
+!TP_WBALANCE_ITCWB_PRIM_XYZCAM;Camera XYZ matrix
+!TP_WBALANCE_ITCWB_PRIM_XYZCAM2;JDCmax after Camera XYZ matrix
+!TP_WBALANCE_ITCWB_RGREEN;Green range
+!TP_WBALANCE_ITCWB_SAMPLING;Low sampling 5.9
+!TP_WBALANCE_ITCWB_SIZE;Size of ref. color compare to histogram
+!TP_WBALANCE_ITCWB_SIZEPATCH;Size of color patch
+!TP_WBALANCE_ITCWB_THRES;Colors used in picture (preset)
+!TP_WBALANCE_ITCWCUSTOM_TOOLTIP;Allows you to use Custom settings Temperature and Green (tint).\n\nUsage tips:\n1) start Itcwb , enable 'Use Custom temperature and tint'.\n2) Set 'Temperature and tint' to your liking :free, Pick,...(Custom)\n3) go back to 'Temperature correlation'.\n\nYou cannot use : 2 passes, AWB temperature bias, Green refinement.
+!TP_WBALANCE_ITCWFORCED_TOOLTIP;By default (box not checked) the data scanned during sampling is brought back to the sRGB profile, which is the most widespread, both for calibrating DCP or ICC profiles with the Colorchecker24, or used on the web.\n If you have very high gamut images (some flowers, artificial colors), then it may be necessary to use the entire CIExy diagram, the profile used will be ACESP0. In this second case, the number of colors that can be used in internal to the algorithm will be more important.
+!TP_WBALANCE_ITCWGREEN;Green refinement
+!TP_WBALANCE_ITCWGREEN_TOOLTIP;Allows you to change the "tint" (green) which will serve as a reference when starting the algorithm. It has substantially the same role for greens as "AWB temperature bias" for temperature.\nThe whole algorithm is recalculated.
+!TP_WBALANCE_ITCWPRIM_TOOLTIP;Allows you to select the image sampling.\n'Close to full CIE diagram' almost uses the data present on the sensor, possibly including the imaginary colors.\n'Camera XYZ matrix' - uses the matrix directly derived from Color Matrix.\n'Medium sampling' (default) - near Pointer's gamut: corresponds substantially to the most common cases of human vision.\nThe other choice 'Low sampling and Ignore camera settings' allow you to isolate high gamut parts of the image and forces the algorithm in some cases (tint > 0.8,...) to ignore camera settings. This will obviously have an impact on the result.\n\nThis sampling only has an influence on the channel multipliers, it has nothing to do with the "working profile" and does not modify the gamut of the image.
+!TP_WBALANCE_ITCWSAMPLING_TOOLTIP;Allows you to use the old sampling algorithm to ensure better compatibility with 5.9. You must enable Observer 10° (default).
+!TP_WBALANCE_MULLABEL;Multipliers: r=%1 g=%2 b=%3
+!TP_WBALANCE_MULLABEL_TOOLTIP;Values given for information purposes. You cannot change them.
+!TP_WBALANCE_OBSERVER10;Observer 10° instead of Observer 2°
+!TP_WBALANCE_OBSERVER10_TOOLTIP;The color management in RawTherapee (White balance, channel multipliers, highlight recovery,...) uses the spectral data of the illuminants and colors. Observer is an important parameter of this management which takes into account the angle of perception of the eye. In 1931 it was fixed at 2° (privileges the use of the cones). In 1964 it was fixed at 10° (privileges the use of the cones, but partially takes into account the rods).\nIn the rare case of a color drift with "Observer 2°" (probably due to the conversion matrix) "Observer 10°" must be selected.
+!TP_WBALANCE_PATCHLABEL;Read colors:%1 Patch: Chroma:%2 Size=%3
+!TP_WBALANCE_PATCHLABEL_TOOLTIP;Display number of read colors (max=237).\nDisplay calculated Patch Chroma.\nAWB temperature bias, lets try to reduce this value, a minimum may seem to optimize the algorithm.\n\nPatch size matching chroma optimization.
+!TP_WBALANCE_PATCHLEVELLABEL;Patch: ΔE=%1 - datas x 9 Min:%2 Max=%3
+!TP_WBALANCE_PATCHLEVELLABEL_TOOLTIP;Display ΔE patch (this assumes there is enough spectral data), between image and spectral datas.\n Display read datas found. The 2 values correspond to the minimum and maximum data values taken into account. The coefficient x9 must be taken into account to obtain the number of pixels concerned in the image.
+!TP_WBALANCE_STUDLABEL0;Correlation factor: %1 Passes:%2 Alt=%3
+!TP_WBALANCE_STUDLABEL1;Correlation factor: %1 Passes:%2 Best_alt=%3
+!//TP_WBALANCE_ITCWBNOPURPLE_TOOLTIP;By default when "Inpaint opposed" is activated, purple colors are not taken into account. However, if the image does not need highlight reconstruction, or if this image naturally contains purple tints (flowers, etc.), it may be necessary to deactivate, to take into account all the colors.
+!//TP_WBALANCE_ITCWB_FORCED;Forces use of the entire CIE diagram

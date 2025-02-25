@@ -1,11 +1,15 @@
 #pragma once
 
 // This number has to be incremented whenever the PP3 file format is modified or the behaviour of a tool changes
-#define PPVERSION 350
+#define PPVERSION 352
 #define PPVERSION_AEXP 301 //value of PPVERSION when auto exposure algorithm was modified
 
 /*
   Log of version changes
+   352  2024-10-27
+        FFT Gaussian blur radius fixed
+   351  2024-06-19
+        take into account Global in selective editing
    350  2023-03-05
         introduced white balance standard observer
    349  2020-10-29

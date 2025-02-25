@@ -19,13 +19,14 @@
 #pragma once
 
 #include <gtkmm.h>
+#include "rtsurface.h"
 
 class SplashImage final :
     public Gtk::DrawingArea
 {
 
 private:
-    Cairo::RefPtr<Cairo::ImageSurface> surface;
+    std::shared_ptr<RTSurface> surface;
     Glib::RefPtr<Pango::Layout> version;
 
 public:

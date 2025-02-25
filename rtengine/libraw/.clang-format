@@ -1,0 +1,4 @@
+BreakBeforeBraces: Allman
+ColumnLimit: 120
+SortIncludes: false
+TabWidth: 4

@@ -151,7 +151,8 @@ void BatchToolPanelCoordinator::initSession ()
             colorappearance->setAdjusterBehavior (false, false, false, false, false, false, false, false, false, false, false, false, false, false, false);
             rotate->setAdjusterBehavior (false);
             resize->setAdjusterBehavior (false);
-            distortion->setAdjusterBehavior (false);
+            framing->setAdjusterBehavior (false, false, false, false);
+            distortion->setAdjusterBehavior (false, false);
             perspective->setAdjusterBehavior (false, false, false, false, false, false, false);
             gradient->setAdjusterBehavior (false, false, false, false);
             pcvignette->setAdjusterBehavior (false, false, false);
@@ -196,8 +197,24 @@ void BatchToolPanelCoordinator::initSession ()
             colorappearance->setAdjusterBehavior (options.baBehav[ADDSET_CAT_DEGREE], options.baBehav[ADDSET_CAT_ADAPTSCENE], options.baBehav[ADDSET_CAT_ADAPTVIEWING], options.baBehav[ADDSET_CAT_BADPIX], options.baBehav[ADDSET_CAT_LIGHT], options.baBehav[ADDSET_CAT_CHROMA], options.baBehav[ADDSET_CAT_CONTRAST], options.baBehav[ADDSET_CAT_RSTPRO], options.baBehav[ADDSET_CAT_BRIGHT], options.baBehav[ADDSET_CAT_CONTRAST_Q], options.baBehav[ADDSET_CAT_CHROMA_S], options.baBehav[ADDSET_CAT_CHROMA_M], options.baBehav[ADDSET_CAT_HUE],options.baBehav[ADDSET_CAT_DEGREEOUT], options.baBehav[ADDSET_CAT_TEMPOUT] );
             rotate->setAdjusterBehavior (options.baBehav[ADDSET_ROTATE_DEGREE]);
             resize->setAdjusterBehavior (options.baBehav[ADDSET_RESIZE_SCALE]);
-            distortion->setAdjusterBehavior (options.baBehav[ADDSET_DIST_AMOUNT]);
-            perspective->setAdjusterBehavior (options.baBehav[ADDSET_PERSPECTIVE], options.baBehav[ADDSET_PERSP_CAM_FOCAL_LENGTH], options.baBehav[ADDSET_PERSP_CAM_SHIFT], options.baBehav[ADDSET_PERSP_CAM_ANGLE], options.baBehav[ADDSET_PERSP_PROJ_ANGLE], options.baBehav[ADDSET_PERSP_PROJ_SHIFT], options.baBehav[ADDSET_PERSP_PROJ_ROTATE]);
+            framing->setAdjusterBehavior (
+                options.baBehav[ADDSET_FRAMING_RELATIVE_SCALE],
+                options.baBehav[ADDSET_FRAMING_BORDER_RED],
+                options.baBehav[ADDSET_FRAMING_BORDER_GREEN],
+                options.baBehav[ADDSET_FRAMING_BORDER_BLUE]);
+            distortion->setAdjusterBehavior (
+                  options.baBehav[ADDSET_DIST_AMOUNT],
+                  options.baBehav[ADDSET_DIST_FOCAL_LENGTH]
+                  );
+            perspective->setAdjusterBehavior (
+                options.baBehav[ADDSET_PERSPECTIVE],
+                options.baBehav[ADDSET_PERSP_CAM_FOCAL_LENGTH],
+                options.baBehav[ADDSET_PERSP_CAM_SHIFT],
+                options.baBehav[ADDSET_PERSP_CAM_ANGLE],
+                options.baBehav[ADDSET_PERSP_PROJ_ANGLE],
+                options.baBehav[ADDSET_PERSP_PROJ_SHIFT],
+                options.baBehav[ADDSET_PERSP_PROJ_ROTATE]
+            );
             gradient->setAdjusterBehavior (options.baBehav[ADDSET_GRADIENT_DEGREE], options.baBehav[ADDSET_GRADIENT_FEATHER], options.baBehav[ADDSET_GRADIENT_STRENGTH], options.baBehav[ADDSET_GRADIENT_CENTER]);
             pcvignette->setAdjusterBehavior (options.baBehav[ADDSET_PCVIGNETTE_STRENGTH], options.baBehav[ADDSET_PCVIGNETTE_FEATHER], options.baBehav[ADDSET_PCVIGNETTE_ROUNDNESS]);
             cacorrection->setAdjusterBehavior (options.baBehav[ADDSET_CA]);
@@ -313,6 +330,10 @@ void BatchToolPanelCoordinator::initSession ()
             if (options.baBehav[ADDSET_DEHAZE_STRENGTH]) { pparams.dehaze.strength = 0; }
             if (options.baBehav[ADDSET_ROTATE_DEGREE]) { pparams.rotate.degree = 0; }
             if (options.baBehav[ADDSET_RESIZE_SCALE]) { pparams.resize.scale = 0; }
+            if (options.baBehav[ADDSET_FRAMING_RELATIVE_SCALE]) { pparams.framing.relativeBorderSize = 0; }
+            if (options.baBehav[ADDSET_FRAMING_BORDER_RED]) { pparams.framing.borderRed = 0; }
+            if (options.baBehav[ADDSET_FRAMING_BORDER_GREEN]) { pparams.framing.borderGreen = 0; }
+            if (options.baBehav[ADDSET_FRAMING_BORDER_BLUE]) { pparams.framing.borderBlue = 0; }
             if (options.baBehav[ADDSET_DIST_AMOUNT]) { pparams.distortion.amount = 0; }
             if (options.baBehav[ADDSET_PERSPECTIVE]) { pparams.perspective.horizontal = pparams.perspective.vertical = 0; }
             if (options.baBehav[ADDSET_PERSP_CAM_FOCAL_LENGTH]) { pparams.perspective.camera_focal_length = pparams.perspective.camera_crop_factor = 0; }
@@ -456,9 +477,13 @@ void BatchToolPanelCoordinator::panelChanged(const rtengine::ProcEvent& event, c
             crop->write (&pparams, &pparamsEdited);
             resize->update (pparams.crop.enabled, pparams.crop.w, pparams.crop.h, w, h);
             resize->write (&pparams, &pparamsEdited);
+            framing->update (w, h);
+            framing->write (&pparams, &pparamsEdited);
         } else if (event == rtengine::EvCrop) {
             resize->update (pparams.crop.enabled, pparams.crop.w, pparams.crop.h);
             resize->write (&pparams, &pparamsEdited);
+            framing->update (w, h);
+            framing->write (&pparams, &pparamsEdited);
         }
     } else {
         // Compensate rotation on flip
@@ -615,7 +640,7 @@ void BatchToolPanelCoordinator::optionsChanged ()
     initSession ();
 }
 
-void BatchToolPanelCoordinator::procParamsChanged (Thumbnail* thm, int whoChangedIt)
+void BatchToolPanelCoordinator::procParamsChanged (Thumbnail* thm, int whoChangedIt, bool upgradeHint)
 {
 
     if (whoChangedIt != BATCHEDITOR && !blockedUpdate) {

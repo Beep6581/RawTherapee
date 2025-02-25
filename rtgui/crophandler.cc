@@ -24,10 +24,10 @@
 #include "cropwindow.h"
 #include "imagearea.h"
 
-#include "../rtengine/dcrop.h"
-#include "../rtengine/procparams.h"
-#include "../rtengine/refreshmap.h"
-#include "../rtengine/rt_math.h"
+#include "rtengine/dcrop.h"
+#include "rtengine/procparams.h"
+#include "rtengine/refreshmap.h"
+#include "rtengine/rt_math.h"
 
 using namespace rtengine;
 

@@ -22,7 +22,7 @@
 #include <glib.h>
 #include <iostream>
 #include <utility>
-#ifdef WIN32
+#ifdef _WIN32
 #include <windows.h>
 #include <winnls.h>
 #endif
@@ -30,7 +30,7 @@
 #include <CoreFoundation/CoreFoundation.h>
 #endif
 
-#include "../rtengine/settings.h"
+#include "rtengine/settings.h"
 
 namespace
 {
@@ -76,6 +76,7 @@ struct LocaleToLang : private std::map<std::pair<Glib::ustring, Glib::ustring>, 
         emplace (key ("fi", ""  ), "Suomi");
         emplace (key ("sv", "SE"), "Swedish");
         emplace (key ("tr", ""  ), "Turkish");
+        emplace (key ("uk", ""  ), "Ukrainian");
         emplace (key ("zh", "CN"), "Chinese (Simplified)");
         emplace (key ("zh", "SG"), "Chinese (Traditional)");
     }
@@ -315,7 +316,7 @@ const TranslationMetadata *MultiLangMgr::getMetadata(const Glib::ustring &fname)
 
 bool MultiLangMgr::isOSLanguageDetectSupported ()
 {
-#if defined (WIN32) || defined (__linux__) || defined (__APPLE__)
+#if defined (_WIN32) || defined (__linux__) || defined (__APPLE__)
     return true;
 #else
     return false;
@@ -326,7 +327,7 @@ Glib::ustring MultiLangMgr::getOSUserLanguage ()
 {
     Glib::ustring langName ("default");
 
-#if defined (WIN32)
+#if defined (_WIN32)
 
     const LCID localeID = GetUserDefaultLCID ();
     TCHAR localeName[18];

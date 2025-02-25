@@ -24,7 +24,7 @@
 #include <giomm.h>
 #include <glib/gstdio.h>
 
-#ifdef WIN32
+#ifdef _WIN32
 #include <fileapi.h>
 #endif
 
@@ -97,6 +97,10 @@ Thumbnail* CacheManager::getEntry (const Glib::ustring& fname)
     }
 
     const auto cacheName = getCacheFileName ("data", fname, ".txt", md5);
+    const auto xmpSidecarMd5 =
+        rtengine::settings->metadata_xmp_sync != rtengine::Settings::MetadataXmpSync::NONE
+        ? getMD5(Thumbnail::xmpSidecarPath(fname))
+        : "";
 
     // let's see if we have it in the cache
     {
@@ -105,6 +109,11 @@ Thumbnail* CacheManager::getEntry (const Glib::ustring& fname)
         const auto error = imageData.load (cacheName);
 
         if (error == 0 && imageData.supported) {
+
+            if (xmpSidecarMd5 != imageData.xmpSidecarMd5) {
+                updateImageInfo(fname, imageData, xmpSidecarMd5);
+                imageData.save(cacheName);
+            }
 
             thumbnail.reset (new Thumbnail (this, fname, &imageData));
 
@@ -117,7 +126,7 @@ Thumbnail* CacheManager::getEntry (const Glib::ustring& fname)
     // if not, create a new one
     if (!thumbnail) {
 
-        thumbnail.reset (new Thumbnail (this, fname, md5));
+        thumbnail.reset (new Thumbnail (this, fname, md5, xmpSidecarMd5));
 
         if (!thumbnail->isSupported ()) {
             thumbnail.reset ();
@@ -301,7 +310,7 @@ void CacheManager::deleteFiles (const Glib::ustring& fname, const std::string& m
 std::string CacheManager::getMD5 (const Glib::ustring& fname)
 {
 
-#ifdef WIN32
+#ifdef _WIN32
 
     std::unique_ptr<wchar_t, GFreeFunc> wfname(reinterpret_cast<wchar_t*>(g_utf8_to_utf16 (fname.c_str (), -1, NULL, NULL, NULL)), g_free);
 
@@ -411,5 +420,11 @@ void CacheManager::applyCacheSizeLimitation () const
 
         deleteFiles(fname, md5, true, false);
     }
+}
+
+void CacheManager::updateImageInfo(const Glib::ustring &fname, CacheImageData &imageData, const Glib::ustring &xmpSidecarMd5) const
+{
+    Thumbnail::infoFromImage(fname, imageData);
+    imageData.xmpSidecarMd5 = xmpSidecarMd5;
 }
 

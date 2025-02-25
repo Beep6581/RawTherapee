@@ -67,6 +67,29 @@ RGBColor Geometry::getOuterLineColor ()
     return color;
 }
 
+void Geometry::setMOChannelColor(Cairo::RefPtr<Cairo::Context> &cr, ObjectMOBuffer *objectBuffer, unsigned short id)
+{
+    switch (objectBuffer->getObjectMode()) {
+        case OM_255:
+            /* In OM_255 mode, FORMAT_A8 format is used:
+                - Alpha is represented with 8 bits (mask = 0xFF) from 0 to 255
+            */
+            cr->set_source_rgba (0., 0., 0., ((id + 1) & 0xFF) / 255.);
+            break;
+        case OM_65535:
+        default:
+            /* In OM_65535 mode, FORMAT_RGB16_565 format is used:
+                - Red is represented with 5 bits (mask = 0xF800, left shift = 11) from 0 to 31
+                - Green is represented with 6 bits (mask = 0x7E0, left shift = 5) from 0 to 63
+                - Blue is represented with 5 bits (mask = 0x1F) from 0 to 31
+            */
+            const double red = (((id + 1) & 0xF800) >> 11) / 31.;
+            const double green = (((id + 1) & 0x7E0) >> 5) / 63.;
+            const double blue = ((id + 1) & 0x1F) / 31.;
+            cr->set_source_rgb (red, green, blue);
+    }
+}
+
 #ifdef GUIVERSION
 
 void Circle::drawOuterGeometry(Cairo::RefPtr<Cairo::Context> &cr, ObjectMOBuffer *objectBuffer, EditCoordSystem &coordSystem)
@@ -169,12 +192,9 @@ void Circle::drawToMOChannel (Cairo::RefPtr<Cairo::Context> &cr, unsigned short 
             center_ += objectBuffer->getDataProvider()->posScreen + objectBuffer->getDataProvider()->deltaScreen;
         }
 
-        // setting the color to the objet's ID
-        if (objectBuffer->getObjectMode() == OM_255) {
-            cr->set_source_rgba (0., 0., 0., ((id + 1) & 0xFF) / 255.);
-        } else {
-            cr->set_source_rgba (0., 0., 0., (id + 1) / 65535.);
-        }
+        // Setting MO Channel color according to the objet's ID
+        setMOChannelColor(cr, objectBuffer, id);
+
         cr->arc(center_.x + 0.5, center_.y + 0.5, radius_, 0, 2.*rtengine::RT_PI);
 
         if (filled) {
@@ -291,12 +311,9 @@ void Line::drawToMOChannel(Cairo::RefPtr<Cairo::Context> &cr, unsigned short id,
             end_ += objectBuffer->getDataProvider()->posScreen + objectBuffer->getDataProvider()->deltaScreen;
         }
 
-        // setting the color to the objet's ID
-        if (objectBuffer->getObjectMode() == OM_255) {
-            cr->set_source_rgba (0., 0., 0., ((id + 1) & 0xFF) / 255.);
-        } else {
-            cr->set_source_rgba (0., 0., 0., (id + 1) / 65535.);
-        }
+        // Setting MO Channel color according to the objet's ID
+        setMOChannelColor(cr, objectBuffer, id);
+
         cr->move_to(begin_.x + 0.5, begin_.y + 0.5);
         cr->line_to(end_.x + 0.5, end_.y + 0.5);
         cr->stroke();
@@ -433,12 +450,8 @@ void Polyline::drawToMOChannel (Cairo::RefPtr<Cairo::Context> &cr, unsigned shor
     if ((flags & F_HOVERABLE) && points.size() > 1) {
         rtengine::Coord currPos;
 
-        // setting the color to the objet's ID
-        if (objectBuffer->getObjectMode() == OM_255) {
-            cr->set_source_rgba (0., 0., 0., ((id + 1) & 0xFF) / 255.);
-        } else {
-            cr->set_source_rgba (0., 0., 0., (id + 1) / 65535.);
-        }
+        // Setting MO Channel color according to the objet's ID
+        setMOChannelColor(cr, objectBuffer, id);
 
         cr->set_line_width( getMouseOverLineWidth() );
         cr->set_line_cap(Cairo::LINE_CAP_ROUND);
@@ -475,31 +488,31 @@ void Polyline::drawToMOChannel (Cairo::RefPtr<Cairo::Context> &cr, unsigned shor
     }
 }
 
-void Rectangle::setXYWH(int left, int top, int width, int height)
+void EditRectangle::setXYWH(int left, int top, int width, int height)
 {
     topLeft.set(left, top);
     bottomRight.set(left + width, top + height);
 }
 
-void Rectangle::setXYXY(int left, int top, int right, int bottom)
+void EditRectangle::setXYXY(int left, int top, int right, int bottom)
 {
     topLeft.set(left, top);
     bottomRight.set(right, bottom);
 }
 
-void Rectangle::setXYWH(rtengine::Coord topLeft, rtengine::Coord widthHeight)
+void EditRectangle::setXYWH(rtengine::Coord topLeft, rtengine::Coord widthHeight)
 {
     this->topLeft = topLeft;
     this->bottomRight = topLeft + widthHeight;
 }
 
-void Rectangle::setXYXY(rtengine::Coord topLeft, rtengine::Coord bottomRight)
+void EditRectangle::setXYXY(rtengine::Coord topLeft, rtengine::Coord bottomRight)
 {
     this->topLeft = topLeft;
     this->bottomRight = bottomRight;
 }
 
-void Rectangle::drawOuterGeometry(Cairo::RefPtr<Cairo::Context> &cr, ObjectMOBuffer *objectBuffer, EditCoordSystem &coordSystem)
+void EditRectangle::drawOuterGeometry(Cairo::RefPtr<Cairo::Context> &cr, ObjectMOBuffer *objectBuffer, EditCoordSystem &coordSystem)
 {
     double lineWidth = getOuterLineWidth();
     if ((flags & F_VISIBLE) && state != INSENSITIVE && lineWidth > 0. && innerLineWidth > 0.) {
@@ -544,7 +557,7 @@ void Rectangle::drawOuterGeometry(Cairo::RefPtr<Cairo::Context> &cr, ObjectMOBuf
     }
 }
 
-void Rectangle::drawInnerGeometry(Cairo::RefPtr<Cairo::Context> &cr, ObjectMOBuffer *objectBuffer, EditCoordSystem &coordSystem)
+void EditRectangle::drawInnerGeometry(Cairo::RefPtr<Cairo::Context> &cr, ObjectMOBuffer *objectBuffer, EditCoordSystem &coordSystem)
 {
     if (flags & F_VISIBLE) {
         if (state != INSENSITIVE) {
@@ -604,7 +617,7 @@ void Rectangle::drawInnerGeometry(Cairo::RefPtr<Cairo::Context> &cr, ObjectMOBuf
     }
 }
 
-void Rectangle::drawToMOChannel(Cairo::RefPtr<Cairo::Context> &cr, unsigned short id, ObjectMOBuffer *objectBuffer, EditCoordSystem &coordSystem)
+void EditRectangle::drawToMOChannel(Cairo::RefPtr<Cairo::Context> &cr, unsigned short id, ObjectMOBuffer *objectBuffer, EditCoordSystem &coordSystem)
 {
     if (flags & F_HOVERABLE) {
         cr->set_line_width( getMouseOverLineWidth() );
@@ -628,12 +641,9 @@ void Rectangle::drawToMOChannel(Cairo::RefPtr<Cairo::Context> &cr, unsigned shor
             br = bottomRight + objectBuffer->getDataProvider()->posScreen + objectBuffer->getDataProvider()->deltaScreen;
         }
 
-        // setting the color to the objet's ID
-        if (objectBuffer->getObjectMode() == OM_255) {
-            cr->set_source_rgba (0., 0., 0., ((id + 1) & 0xFF) / 255.);
-        } else {
-            cr->set_source_rgba (0., 0., 0., (id + 1) / 65535.);
-        }
+        // Setting MO Channel color according to the objet's ID
+        setMOChannelColor(cr, objectBuffer, id);
+
         cr->rectangle(tl.x + 0.5, tl.y + 0.5, br.x - tl.x, br.y - tl.y);
 
         if (filled) {
@@ -880,6 +890,9 @@ void Ellipse::drawToMOChannel (Cairo::RefPtr<Cairo::Context> &cr, unsigned short
             center_ += objectBuffer->getDataProvider()->posScreen + objectBuffer->getDataProvider()->deltaScreen;
         }
 
+        // Setting MO Channel color according to the objet's ID
+        setMOChannelColor(cr, objectBuffer, id);
+
         if (radYT_ > 0 && radY_ > 0 && radXL_ > 0 && radX_ > 0) {
             // To have an ellipse with radius of (radX, radX), a circle of radius 1. shall be twisted with a scale
             // of radX for x-axis, radY for y-axis
@@ -989,11 +1002,11 @@ void OPIcon::drivenPointToRectangle(const rtengine::Coord &pos,
     bottomRight.y = topLeft.y + H - 1;
 }
 
-OPIcon::OPIcon(const Cairo::RefPtr<RTSurface> &normal,
-               const Cairo::RefPtr<RTSurface> &active,
-               const Cairo::RefPtr<RTSurface> &prelight,
-               const Cairo::RefPtr<RTSurface> &dragged,
-               const Cairo::RefPtr<RTSurface> &insensitive,
+OPIcon::OPIcon(const std::shared_ptr<RTSurface> &normal,
+               const std::shared_ptr<RTSurface> &active,
+               const std::shared_ptr<RTSurface> &prelight,
+               const std::shared_ptr<RTSurface> &dragged,
+               const std::shared_ptr<RTSurface>&insensitive,
                DrivenPoint drivenPoint) :
     drivenPoint(drivenPoint)
 {
@@ -1022,48 +1035,48 @@ OPIcon::OPIcon(Glib::ustring normalImage, Glib::ustring activeImage, Glib::ustri
                Glib::ustring  draggedImage, Glib::ustring insensitiveImage, DrivenPoint drivenPoint) : drivenPoint(drivenPoint)
 {
     if (!normalImage.empty()) {
-        normalImg = Cairo::RefPtr<RTSurface>(new RTSurface(normalImage));
+        normalImg = std::shared_ptr<RTSurface>(new RTSurface(normalImage, Gtk::ICON_SIZE_MENU));
     }
 
     if (!prelightImage.empty()) {
-        prelightImg = Cairo::RefPtr<RTSurface>(new RTSurface(prelightImage));
+        prelightImg = std::shared_ptr<RTSurface>(new RTSurface(prelightImage, Gtk::ICON_SIZE_MENU));
     }
 
     if (!activeImage.empty()) {
-        activeImg = Cairo::RefPtr<RTSurface>(new RTSurface(activeImage));
+        activeImg = std::shared_ptr<RTSurface>(new RTSurface(activeImage, Gtk::ICON_SIZE_MENU));
     }
 
     if (!draggedImage.empty()) {
-        draggedImg = Cairo::RefPtr<RTSurface>(new RTSurface(draggedImage));
+        draggedImg = std::shared_ptr<RTSurface>(new RTSurface(draggedImage, Gtk::ICON_SIZE_MENU));
     }
 
     if (!insensitiveImage.empty()) {
-        insensitiveImg = Cairo::RefPtr<RTSurface>(new RTSurface(insensitiveImage));
+        insensitiveImg = std::shared_ptr<RTSurface>(new RTSurface(insensitiveImage, Gtk::ICON_SIZE_MENU));
     }
 }
 
-const Cairo::RefPtr<RTSurface> OPIcon::getNormalImg()
+const std::shared_ptr<RTSurface> OPIcon::getNormalImg()
 {
     return normalImg;
 }
-const Cairo::RefPtr<RTSurface> OPIcon::getPrelightImg()
+const std::shared_ptr<RTSurface> OPIcon::getPrelightImg()
 {
     return prelightImg;
 }
-const Cairo::RefPtr<RTSurface> OPIcon::getActiveImg()
+const std::shared_ptr<RTSurface> OPIcon::getActiveImg()
 {
     return activeImg;
 }
-const Cairo::RefPtr<RTSurface> OPIcon::getDraggedImg()
+const std::shared_ptr<RTSurface> OPIcon::getDraggedImg()
 {
     return draggedImg;
 }
-const Cairo::RefPtr<RTSurface> OPIcon::getInsensitiveImg()
+const std::shared_ptr<RTSurface> OPIcon::getInsensitiveImg()
 {
     return insensitiveImg;
 }
 
-void OPIcon::drawImage(Cairo::RefPtr<RTSurface> &img,
+void OPIcon::drawImage(std::shared_ptr<RTSurface> &img,
                        Cairo::RefPtr<Cairo::Context> &cr, ObjectMOBuffer *objectBuffer,
                        EditCoordSystem &coordSystem)
 {
@@ -1089,7 +1102,7 @@ void OPIcon::drawImage(Cairo::RefPtr<RTSurface> &img,
     cr->fill();
 }
 
-void OPIcon::drawMOImage(Cairo::RefPtr<RTSurface> &img, Cairo::RefPtr<Cairo::Context> &cr,
+void OPIcon::drawMOImage(std::shared_ptr<RTSurface> &img, Cairo::RefPtr<Cairo::Context> &cr,
                          unsigned short id, ObjectMOBuffer *objectBuffer, EditCoordSystem &coordSystem)
 {
     // test of F_HOVERABLE has already been done
@@ -1110,12 +1123,9 @@ void OPIcon::drawMOImage(Cairo::RefPtr<RTSurface> &img, Cairo::RefPtr<Cairo::Con
     rtengine::Coord tl, br; // Coordinate of the rectangle in the CropBuffer coordinate system
     drivenPointToRectangle(pos, tl, br, imgW, imgH);
 
-    // drawing the lower byte's value
-    if (objectBuffer->getObjectMode() == OM_255) {
-        cr->set_source_rgba (0., 0., 0., ((id + 1) & 0xFF) / 255.);
-    } else {
-        cr->set_source_rgba (0., 0., 0., (id + 1) / 65535.);
-    }
+    // Setting MO Channel color according to the objet's ID
+    setMOChannelColor(cr, objectBuffer, id);
+
     cr->set_line_width(0.);
     cr->rectangle(tl.x, tl.y, imgW, imgH);
     cr->fill();

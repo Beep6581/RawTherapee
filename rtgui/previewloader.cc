@@ -17,6 +17,7 @@
  *  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
  */
 
+#include <memory>
 #include <set>
 #include "cachemanager.h"
 #include "filebrowserentry.h"
@@ -81,10 +82,10 @@ public:
         int threadCount = 2;
 #endif
 
-        threadPool_ = new Glib::ThreadPool(threadCount, 0);
+        threadPool_.reset(new Glib::ThreadPool(threadCount, 0));
     }
 
-    Glib::ThreadPool* threadPool_;
+    std::unique_ptr<Glib::ThreadPool> threadPool_;
     MyMutex mutex_;
     JobSet jobs_;
     gint nConcurrentThreads;

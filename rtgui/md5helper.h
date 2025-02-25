@@ -23,7 +23,7 @@
 #include <glib/gstdio.h>
 #include <giomm.h>
 
-#ifdef WIN32
+#ifdef _WIN32
 #include <windows.h>
 #endif
 
@@ -35,7 +35,7 @@ std::string getMD5 (const Glib::ustring& fname)
 
     if (file && file->query_exists ())   {
 
-#ifdef WIN32
+#ifdef _WIN32
 
         std::unique_ptr<wchar_t, GFreeFunc> wfname (reinterpret_cast<wchar_t*> (g_utf8_to_utf16 (fname.c_str (), -1, NULL, NULL, NULL)), g_free);
 

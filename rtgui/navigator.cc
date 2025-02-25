@@ -20,9 +20,9 @@
 #include "navigator.h"
 #include "previewwindow.h"
 #include "toolpanel.h"
-#include "../rtengine/color.h"
-#include "../rtengine/improcfun.h"
-#include "../rtengine/rt_math.h"
+#include "rtengine/color.h"
+#include "rtengine/improcfun.h"
+#include "rtengine/rt_math.h"
 #include "options.h"
 
 using namespace rtengine;
@@ -157,7 +157,7 @@ Navigator::Navigator() :
     /*
     Glib::ustring fontname;
 
-#ifdef WIN32
+#ifdef _WIN32
     fontname = "Droid Sans Mono Slashed"; // font file is provided in the source tree in rtdata/fonts to be installed by the windows installer
 #endif
 

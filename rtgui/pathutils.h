@@ -1,4 +1,5 @@
-/*
+/* -*- C++ -*-
+ *
  *  This file is part of RawTherapee.
  *
  *  Copyright (c) 2004-2010 Gabor Horvath <hgabor@rawtherapee.com>
@@ -18,7 +19,9 @@
  */
 #pragma once
 #include <glibmm/ustring.h>
+#include <string>
 
 // Removed from guiutils because used by rawtherapee-cli
 Glib::ustring removeExtension (const Glib::ustring& filename);
 Glib::ustring getExtension (const Glib::ustring& filename);
+Glib::ustring fname_to_utf8(const std::string& fname);

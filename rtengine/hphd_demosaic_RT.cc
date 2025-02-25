@@ -23,7 +23,7 @@
 #include "rawimagesource_i.h"
 #include "jaggedarray.h"
 #include "rt_math.h"
-#include "../rtgui/multilangmgr.h"
+#include "rtgui/multilangmgr.h"
 #include "opthelper.h"
 //#define BENCHMARK
 #include "StopWatch.h"

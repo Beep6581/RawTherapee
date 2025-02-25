@@ -64,9 +64,9 @@ int refreshmap[rtengine::NUMOFEVENTS] = {
     DARKFRAME,        // EvLCPUseVign,
     HDR,        // EvLCPUseCA,
     M_VOID,           // EvFixedExp
-    ALLNORAW,         // EvWBMethod,
-    ALLNORAW,         // EvWBTemp,
-    ALLNORAW,         // EvWBGreen,
+    WB,               // EvWBMethod,
+    WB,               // EvWBTemp,
+    WB,               // EvWBGreen,
     AUTOEXP,         // EvToneCurveMode1,
     AUTOEXP,         // EvToneCurve2,
     AUTOEXP,         // EvToneCurveMode2,
@@ -74,7 +74,7 @@ int refreshmap[rtengine::NUMOFEVENTS] = {
     0,                // EvLDNEdgeTolerance: obsolete,
     0,                // EvCDNEnabled:obsolete,
     0,                // free entry
-    RGBCURVE | M_AUTOEXP, // EvDCPToneCurve,    
+    ALLNORAW, //RGBCURVE | M_AUTOEXP, // EvDCPToneCurve, 21 july 2024
     ALLNORAW,         // EvDCPIlluminant,
     LUMINANCECURVE,          // EvSHEnabled,
     LUMINANCECURVE,         // EvSHHighlights,
@@ -234,7 +234,7 @@ int refreshmap[rtengine::NUMOFEVENTS] = {
     LUMINANCECURVE,   // EvCATbadpix
     LUMINANCECURVE,   // EvCATAutoadap
     DEFRINGE,         // EvPFCurve
-    ALLNORAW,         // EvWBequal
+    WB,               // EvWBequal
     0,         // EvWBequalbo : obsolete
     HDR,        // EvGradientDegree
     HDR,        // EvGradientEnabled
@@ -419,8 +419,8 @@ int refreshmap[rtengine::NUMOFEVENTS] = {
     DIRPYREQUALIZER,  // EvWavgreenlow
     DIRPYREQUALIZER,  // EvWavbluelow
     DIRPYREQUALIZER,  // EvWavNeutral
-    RGBCURVE | M_AUTOEXP, // EvDCPApplyLookTable,
-    RGBCURVE | M_AUTOEXP, // EvDCPApplyBaselineExposureOffset,
+    ALLNORAW, //RGBCURVE | M_AUTOEXP, // EvDCPApplyLookTable,  21 july 2024
+    ALLNORAW, //RGBCURVE | M_AUTOEXP, // EvDCPApplyBaselineExposureOffset, 21 july 2024
     ALLNORAW,         // EvDCPApplyHueSatMap
     DIRPYREQUALIZER,  // EvWavenacont
     DIRPYREQUALIZER,  // EvWavenachrom
@@ -470,7 +470,7 @@ int refreshmap[rtengine::NUMOFEVENTS] = {
     RETINEX,          // EvRetinexgaintransmission
     RETINEX,          // EvLskal
     OUTPUTPROFILE,    // EvOBPCompens
-    ALLNORAW,         // EvWBtempBias
+    WB,               // EvWBtempBias
     DARKFRAME,        // EvRawImageNum
     0,                // unused
     0,                // unused
@@ -517,7 +517,7 @@ int refreshmap[rtengine::NUMOFEVENTS] = {
     ALLNORAW,         // EvTMFattalEnabled
     HDR,              // EvTMFattalThreshold
     HDR,              // EvTMFattalAmount
-    ALLNORAW,         // EvWBEnabled
+    WB,               // EvWBEnabled
     AUTOEXP,         // EvRGBEnabled
     LUMINANCECURVE,   // EvLEnabled
     DEMOSAIC,         // EvPdShrEnabled
@@ -1105,19 +1105,19 @@ int refreshmap[rtengine::NUMOFEVENTS] = {
     AUTOEXP,    //Evlocallabsensicie
     AUTOEXP,    //Evlocallabmodecie
     AUTOEXP,    //Evlocallabrstprotectcie
-    AUTOEXP,    //Evlocallabsigmoidldacie
-    AUTOEXP,    //Evlocallabsigmoidthcie
-    AUTOEXP,    //Evlocallabsigmoidblcie
-    AUTOEXP,    //Evlocallabsigmoidqjcie
+    AUTOEXP,    //Evlocallabsigmoidldacie12
+    AUTOEXP,    //Evlocallabsigmoidthcie12
+    AUTOEXP,    //Evlocallabsigmoidblcie12
+    HDR,    //Evlocallabcomprcieauto
     AUTOEXP,    //Evlocallabhuecie
     AUTOEXP,    //Evlocallabjabcie
     AUTOEXP,    //Evlocallablightjzcie
     AUTOEXP,    //Evlocallabcontjzcie
     AUTOEXP,    //Evlocallabchromjzcie
     AUTOEXP,    //Evlocallabhuejzcie
-    AUTOEXP,    //Evlocallabsigmoidldajzcie
-    AUTOEXP,    //Evlocallabsigmoidthjzcie
-    AUTOEXP,    //Evlocallabsigmoidbljzcie
+    AUTOEXP,    //Evlocallabsigmoidldajzcie12
+    AUTOEXP,    //Evlocallabsigmoidthjzcie12
+    AUTOEXP,    //Evlocallabsigmoidbljzcie12
     AUTOEXP,    //Evlocallabadapjzcie
     AUTOEXP,    //Evlocallabmodecam
     AUTOEXP,    //Evlocallabhljzcie
@@ -1139,7 +1139,7 @@ int refreshmap[rtengine::NUMOFEVENTS] = {
     AUTOEXP,    //Evlocallabshapejz
     AUTOEXP,    //Evlocallabshapecz
     AUTOEXP,    //Evlocallabshapeczjz
-    AUTOEXP,    //Evlocallabforcejz
+//    AUTOEXP,    //Evlocallabforcejz
 //    AUTOEXP,    //Evlocallablightlzcam
 //    AUTOEXP,    //Evlocallablightqzcam
 //    AUTOEXP,    //Evlocallabcontlzcam
@@ -1182,10 +1182,10 @@ int refreshmap[rtengine::NUMOFEVENTS] = {
     AUTOEXP,    //EvlocallabwhiteEvjz
     AUTOEXP,    //Evlocallablogjz
     AUTOEXP,    //Evlocallabtargetjz
-    AUTOEXP,    //Evlocallabforcebw
-    AUTOEXP,    //Evlocallabsigjz
-    AUTOEXP,    //Evlocallabsigq
-    AUTOEXP    //Evlocallablogcie	
+    AUTOEXP,    //Evlocallabsigybjz12
+    AUTOEXP,    //Evlocallabsigjz12
+    AUTOEXP,    //Evlocallabsigq12
+    AUTOEXP     //Evlocallablogcie
 };
 
 

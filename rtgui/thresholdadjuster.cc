@@ -20,7 +20,7 @@
 #include <sigc++/slot.h>
 #include <cmath>
 #include "multilangmgr.h"
-#include "../rtengine/rtengine.h"
+#include "rtengine/rtengine.h"
 #include "options.h"
 #include "guiutils.h"
 #include "rtimage.h"
@@ -99,7 +99,7 @@ void ThresholdAdjuster::initObject (Glib::ustring label, bool editedcb)
     hbox->pack_start (*this->label);
 
     reset = Gtk::manage (new Gtk::Button ());
-    reset->add (*Gtk::manage (new RTImage ("undo-small.png", "redo-small.png")));
+    reset->add (*Gtk::manage (new RTImage ("undo-small", Gtk::ICON_SIZE_BUTTON)));
     reset->set_relief (Gtk::RELIEF_NONE);
     reset->set_tooltip_markup (M("ADJUSTER_RESET_TO_DEFAULT"));
 

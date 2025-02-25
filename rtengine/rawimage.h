@@ -21,13 +21,22 @@
 #include <ctime>
 #include <cmath>
 #include <iostream>
+#include <memory>
 #include <glibmm/ustring.h>
 
 #include "dcraw.h"
 #include "imageformat.h"
 
+
+class LibRaw;
+
+
 namespace rtengine
 {
+
+
+class Image8;
+
 
 class RawImage: public DCraw
 {
@@ -45,10 +54,7 @@ public:
             filters &= ~((filters & 0x55555555) << 1);
         }
     }
-    dcrawImage_t get_image()
-    {
-        return image;
-    }
+    dcrawImage_t get_image();
     float** compress_image(unsigned int frameNum, bool freeImage = true); // revert to compressed pixels format and release image data
     float** data;             // holds pixel values, data[i][j] corresponds to the ith row and jth column
     unsigned prefilters;               // original filters saved ( used for 4 color processing )
@@ -57,11 +63,19 @@ public:
     double getBaselineExposure() const { return RT_baseline_exposure; }
  
 protected:
+    enum class Decoder {
+        DCRAW,
+        LIBRAW,
+    };
+
     Glib::ustring filename; // complete filename
     int rotate_deg; // 0,90,180,270 degree of rotation: info taken by dcraw from exif
     char* profile_data; // Embedded ICC color profile
     float* allocation; // pointer to allocated memory
     int maximum_c4[4];
+    Decoder decoder{Decoder::DCRAW};
+    std::unique_ptr<LibRaw> libraw;
+    std::unique_ptr<std::remove_pointer<dcrawImage_t>::type[]> image_from_float;
     bool isFoveon() const
     {
         return is_foveon;
@@ -191,19 +205,6 @@ public:
         return rgb_cam[r][c];
     }
 
-    int get_exifBase()  const
-    {
-        return exif_base;
-    }
-    int get_ciffBase() const
-    {
-        return ciff_base;
-    }
-    int get_ciffLen()  const
-    {
-        return ciff_len;
-    }
-
     int get_profileLen() const
     {
         return profile_length;
@@ -261,10 +262,7 @@ public:
 
 public:
     // dcraw functions
-    void pre_interpolate()
-    {
-        DCraw::pre_interpolate();
-    }
+    void pre_interpolate();
 
 public:
     bool ISRED(unsigned row, unsigned col) const
@@ -304,6 +302,11 @@ public:
     {
         return dng_version;
     }
+
+public:
+    bool checkThumbOk() const;
+    Image8 *getThumbnail() const;
+
 };
 
 }

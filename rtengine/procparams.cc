@@ -17,7 +17,7 @@
  *  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#include <map>
+#include <memory>
 
 #include <locale.h>
 
@@ -32,11 +32,11 @@
 #include "procparams.h"
 #include "utils.h"
 
-#include "../rtgui/multilangmgr.h"
-#include "../rtgui/options.h"
-#include "../rtgui/paramsedited.h"
-#include "../rtgui/ppversion.h"
-#include "../rtgui/version.h"
+#include "rtgui/multilangmgr.h"
+#include "rtgui/options.h"
+#include "rtgui/paramsedited.h"
+#include "rtgui/ppversion.h"
+#include "rtgui/version.h"
 
 using namespace std;
 
@@ -67,7 +67,7 @@ Glib::ustring expandRelativePath(const Glib::ustring &procparams_fname, const Gl
 
 Glib::ustring expandRelativePath2(const Glib::ustring &procparams_fname, const Glib::ustring &procparams_fname2, const Glib::ustring &prefix, Glib::ustring embedded_fname)
 {
-	#if defined (WIN32)
+	#if defined (_WIN32)
 	// if this is Windows, replace any "/" in the filename with "\\"
 	size_t pos = embedded_fname.find("/");
 	while (pos != string::npos) {
@@ -75,7 +75,7 @@ Glib::ustring expandRelativePath2(const Glib::ustring &procparams_fname, const G
 		pos = embedded_fname.find("/", pos);
 	}
 	#endif
-	#if !defined (WIN32)
+	#if !defined (_WIN32)
 	// if this is not Windows, replace any "\\" in the filename with "/"
 	size_t pos = embedded_fname.find("\\");
 	while (pos != string::npos) {
@@ -232,12 +232,22 @@ void getFromKeyfile(
     }
 }
 
+void getFromKeyfile(
+    const Glib::KeyFile& keyfile,
+    const Glib::ustring& group_name,
+    const Glib::ustring& key,
+    std::vector<std::string>& value
+)
+{
+    auto tmpval = keyfile.get_string_list(group_name, key);
+    value.assign(tmpval.begin(), tmpval.end());
+}
+
 template<typename T>
 bool assignFromKeyfile(
     const Glib::KeyFile& keyfile,
     const Glib::ustring& group_name,
     const Glib::ustring& key,
-    bool has_params_edited,
     T& value,
     bool& params_edited_value
 )
@@ -245,9 +255,7 @@ bool assignFromKeyfile(
     if (keyfile.has_key(group_name, key)) {
         getFromKeyfile(keyfile, group_name, key, value);
 
-        if (has_params_edited) {
-            params_edited_value = true;
-        }
+        params_edited_value = true;
 
         return true;
     }
@@ -260,7 +268,6 @@ bool assignFromKeyfile(
     const Glib::KeyFile& keyfile,
     const Glib::ustring& group_name,
     const Glib::ustring& key,
-    bool has_params_edited,
     const std::map<std::string, T>& mapping,
     T& value,
     bool& params_edited_value
@@ -278,9 +285,7 @@ bool assignFromKeyfile(
             return false;
         }
 
-        if (has_params_edited) {
-            params_edited_value = true;
-        }
+        params_edited_value = true;
 
         return true;
     }
@@ -363,6 +368,17 @@ void putToKeyfile(
 void putToKeyfile(
     const Glib::ustring& group_name,
     const Glib::ustring& key,
+    const std::vector<std::string>& value,
+    Glib::KeyFile& keyfile
+)
+{
+    const Glib::ArrayHandle<Glib::ustring> list = value;
+    keyfile.set_string_list(group_name, key, list);
+}
+
+void putToKeyfile(
+    const Glib::ustring& group_name,
+    const Glib::ustring& key,
     const rtengine::procparams::FilmNegativeParams::RGB& value,
     Glib::KeyFile& keyfile
 )
@@ -411,7 +427,183 @@ bool saveToKeyfile(
     return false;
 }
 
+namespace ProfileKeys {
+
+#define DEFINE_KEY(VAR, NAME) \
+    constexpr const char* VAR = NAME;
+
+DEFINE_KEY(TOOL_ENABLED, "Enabled");
+
+namespace Framing
+{
+    DEFINE_KEY(TOOL_NAME, "Framing");
+
+    // Fields
+    DEFINE_KEY(FRAMING_METHOD, "FramingMethod");
+    DEFINE_KEY(ASPECT_RATIO, "AspectRatio");
+    DEFINE_KEY(ORIENTATION, "Orientation");
+    DEFINE_KEY(FRAMED_WIDTH, "FramedWidth");
+    DEFINE_KEY(FRAMED_HEIGHT, "FramedHeight");
+    DEFINE_KEY(ALLOW_UPSCALING, "AllowUpscaling");
+
+    DEFINE_KEY(BORDER_SIZING_METHOD, "BorderSizingMethod");
+    DEFINE_KEY(BASIS, "Basis");
+    DEFINE_KEY(RELATIVE_BORDER_SIZE, "RelativeBorderSize");
+    DEFINE_KEY(MIN_SIZE_ENABLED, "MinSizeEnabled");
+    DEFINE_KEY(MIN_WIDTH, "MinWidth");
+    DEFINE_KEY(MIN_HEIGHT, "MinHeight");
+    DEFINE_KEY(ABS_WIDTH, "AbsWidth");
+    DEFINE_KEY(ABS_HEIGHT, "AbsHeight");
+
+    DEFINE_KEY(BORDER_RED, "BorderRed");
+    DEFINE_KEY(BORDER_GREEN, "BorderGreen");
+    DEFINE_KEY(BORDER_BLUE, "BorderBlue");
+
+    // Enum mappings
+    DEFINE_KEY(FRAMING_METHOD_STANDARD, "Standard");
+    DEFINE_KEY(FRAMING_METHOD_BBOX, "BoundingBox");
+    DEFINE_KEY(FRAMING_METHOD_FIXED_SIZE, "FixedSize");
+    DEFINE_KEY(ORIENT_AS_IMAGE, "AsImage");
+    DEFINE_KEY(ORIENT_LANDSCAPE, "Landscape");
+    DEFINE_KEY(ORIENT_PORTRAIT, "Portrait");
+    DEFINE_KEY(BORDER_SIZING_PERCENTAGE, "Percentage");
+    DEFINE_KEY(BORDER_SIZING_UNIFORM_PERCENTAGE, "UniformPercentage");
+    DEFINE_KEY(BORDER_SIZING_FIXED_SIZE, "FixedSize");
+    DEFINE_KEY(BASIS_AUTO, "Auto");
+    DEFINE_KEY(BASIS_WIDTH, "Width");
+    DEFINE_KEY(BASIS_HEIGHT, "Height");
+    DEFINE_KEY(BASIS_LONG, "Long");
+    DEFINE_KEY(BASIS_SHORT, "Short");
+}  // namespace Framing
+
+}  // namespace ProfileKeys
+
+void loadFramingParams(
+    const Glib::KeyFile& keyFile,
+    rtengine::procparams::FramingParams& params,
+    FramingParamsEdited& edited
+)
+{
+    using namespace ProfileKeys;
+    using namespace ProfileKeys::Framing;
+    using FramingParams = rtengine::procparams::FramingParams;
+
+    const Glib::ustring group{TOOL_NAME};
+    if (!keyFile.has_group(group)) return;
+
+    assignFromKeyfile(keyFile, group, TOOL_ENABLED, params.enabled, edited.enabled);
+
+    using FramingMethod = FramingParams::FramingMethod;
+    const std::map<std::string, FramingMethod> framingMethodMapping = {
+        {FRAMING_METHOD_STANDARD, FramingMethod::STANDARD},
+        {FRAMING_METHOD_BBOX, FramingMethod::BBOX},
+        {FRAMING_METHOD_FIXED_SIZE, FramingMethod::FIXED_SIZE}
+    };
+    assignFromKeyfile(keyFile, group, FRAMING_METHOD, framingMethodMapping, params.framingMethod, edited.framingMethod);
+    assignFromKeyfile(keyFile, group, ASPECT_RATIO, params.aspectRatio, edited.aspectRatio);
+    using Orientation = FramingParams::Orientation;
+    const std::map<std::string, Orientation> orientationMapping = {
+        {ORIENT_AS_IMAGE, Orientation::AS_IMAGE},
+        {ORIENT_LANDSCAPE, Orientation::LANDSCAPE},
+        {ORIENT_PORTRAIT, Orientation::PORTRAIT},
+    };
+    assignFromKeyfile(keyFile, group, ORIENTATION, orientationMapping, params.orientation, edited.orientation);
+    assignFromKeyfile(keyFile, group, FRAMED_WIDTH, params.framedWidth, edited.framedWidth);
+    assignFromKeyfile(keyFile, group, FRAMED_HEIGHT, params.framedHeight, edited.framedHeight);
+    assignFromKeyfile(keyFile, group, ALLOW_UPSCALING, params.allowUpscaling, edited.allowUpscaling);
+
+    using BorderSizing = FramingParams::BorderSizing;
+    const std::map<std::string, BorderSizing> borderSizingMapping = {
+        {BORDER_SIZING_PERCENTAGE, BorderSizing::PERCENTAGE},
+        {BORDER_SIZING_UNIFORM_PERCENTAGE, BorderSizing::UNIFORM_PERCENTAGE},
+        {BORDER_SIZING_FIXED_SIZE, BorderSizing::FIXED_SIZE}
+    };
+    assignFromKeyfile(keyFile, group, BORDER_SIZING_METHOD, borderSizingMapping, params.borderSizingMethod, edited.borderSizingMethod);
+    using Basis = FramingParams::Basis;
+    const std::map<std::string, Basis> basisMapping = {
+        {BASIS_AUTO, Basis::AUTO},
+        {BASIS_WIDTH, Basis::WIDTH},
+        {BASIS_HEIGHT, Basis::HEIGHT},
+        {BASIS_LONG, Basis::LONG},
+        {BASIS_SHORT, Basis::SHORT}
+    };
+    assignFromKeyfile(keyFile, group, BASIS, basisMapping, params.basis, edited.basis);
+    assignFromKeyfile(keyFile, group, RELATIVE_BORDER_SIZE, params.relativeBorderSize, edited.relativeBorderSize);
+    assignFromKeyfile(keyFile, group, MIN_SIZE_ENABLED, params.minSizeEnabled, edited.minSizeEnabled);
+    assignFromKeyfile(keyFile, group, MIN_WIDTH, params.minWidth, edited.minWidth);
+    assignFromKeyfile(keyFile, group, MIN_HEIGHT, params.minHeight, edited.minHeight);
+    assignFromKeyfile(keyFile, group, ABS_WIDTH, params.absWidth, edited.absWidth);
+    assignFromKeyfile(keyFile, group, ABS_HEIGHT, params.absHeight, edited.absHeight);
+
+    assignFromKeyfile(keyFile, group, BORDER_RED, params.borderRed, edited.borderRed);
+    assignFromKeyfile(keyFile, group, BORDER_GREEN, params.borderGreen, edited.borderGreen);
+    assignFromKeyfile(keyFile, group, BORDER_BLUE, params.borderBlue, edited.borderBlue);
 }
+
+void saveFramingParams(
+    Glib::KeyFile& keyFile,
+    const rtengine::procparams::FramingParams& params,
+    const ParamsEdited* pedited
+)
+{
+    using namespace ProfileKeys;
+    using namespace ProfileKeys::Framing;
+    using FramingParams = rtengine::procparams::FramingParams;
+
+    const Glib::ustring group{TOOL_NAME};
+
+    const FramingParamsEdited& edited = pedited->framing;
+
+    saveToKeyfile(!pedited || edited.enabled, group, TOOL_ENABLED, params.enabled, keyFile);
+
+    using FramingMethod = FramingParams::FramingMethod;
+    const std::map<FramingMethod, const char*> framingMethodMapping = {
+        {FramingMethod::STANDARD, FRAMING_METHOD_STANDARD},
+        {FramingMethod::BBOX, FRAMING_METHOD_BBOX},
+        {FramingMethod::FIXED_SIZE, FRAMING_METHOD_FIXED_SIZE}
+    };
+    saveToKeyfile(!pedited || edited.framingMethod, group, FRAMING_METHOD, framingMethodMapping, params.framingMethod, keyFile);
+    saveToKeyfile(!pedited || edited.aspectRatio, group, ASPECT_RATIO, params.aspectRatio, keyFile);
+    using Orientation = FramingParams::Orientation;
+    const std::map<Orientation, const char*> orientationMapping = {
+        {Orientation::AS_IMAGE, ORIENT_AS_IMAGE},
+        {Orientation::LANDSCAPE, ORIENT_LANDSCAPE},
+        {Orientation::PORTRAIT, ORIENT_PORTRAIT},
+    };
+    saveToKeyfile(!pedited || edited.orientation, group, ORIENTATION, orientationMapping, params.orientation, keyFile);
+    saveToKeyfile(!pedited || edited.framedWidth, group, FRAMED_WIDTH, params.framedWidth, keyFile);
+    saveToKeyfile(!pedited || edited.framedHeight, group, FRAMED_HEIGHT, params.framedHeight, keyFile);
+    saveToKeyfile(!pedited || edited.allowUpscaling, group, ALLOW_UPSCALING, params.allowUpscaling, keyFile);
+
+    using BorderSizing = FramingParams::BorderSizing;
+    const std::map<BorderSizing, const char*> borderSizingMapping = {
+        {BorderSizing::PERCENTAGE, BORDER_SIZING_PERCENTAGE},
+        {BorderSizing::UNIFORM_PERCENTAGE, BORDER_SIZING_UNIFORM_PERCENTAGE},
+        {BorderSizing::FIXED_SIZE, BORDER_SIZING_FIXED_SIZE}
+    };
+    saveToKeyfile(!pedited || edited.borderSizingMethod, group, BORDER_SIZING_METHOD, borderSizingMapping, params.borderSizingMethod, keyFile);
+    using Basis = FramingParams::Basis;
+    const std::map<Basis, const char*> basisMapping = {
+        {Basis::AUTO, BASIS_AUTO},
+        {Basis::WIDTH, BASIS_WIDTH},
+        {Basis::HEIGHT, BASIS_HEIGHT},
+        {Basis::LONG, BASIS_LONG},
+        {Basis::SHORT, BASIS_SHORT}
+    };
+    saveToKeyfile(!pedited || edited.basis, group, BASIS, basisMapping, params.basis, keyFile);
+    saveToKeyfile(!pedited || edited.relativeBorderSize, group, RELATIVE_BORDER_SIZE, params.relativeBorderSize, keyFile);
+    saveToKeyfile(!pedited || edited.minSizeEnabled, group, MIN_SIZE_ENABLED, params.minSizeEnabled, keyFile);
+    saveToKeyfile(!pedited || edited.minWidth, group, MIN_WIDTH, params.minWidth, keyFile);
+    saveToKeyfile(!pedited || edited.minHeight, group, MIN_HEIGHT, params.minHeight, keyFile);
+    saveToKeyfile(!pedited || edited.absWidth, group, ABS_WIDTH, params.absWidth, keyFile);
+    saveToKeyfile(!pedited || edited.absHeight, group, ABS_HEIGHT, params.absHeight, keyFile);
+
+    saveToKeyfile(!pedited || edited.borderRed, group, BORDER_RED, params.borderRed, keyFile);
+    saveToKeyfile(!pedited || edited.borderGreen, group, BORDER_GREEN, params.borderGreen, keyFile);
+    saveToKeyfile(!pedited || edited.borderBlue, group, BORDER_BLUE, params.borderBlue, keyFile);
+}
+
+} // namespace
 
 namespace rtengine
 {
@@ -1388,11 +1580,12 @@ WBParams::WBParams() :
     tempBias(0.0),
     observer(ColorTemp::DEFAULT_OBSERVER),
     itcwb_green(0.),//slider
-    itcwb_rgreen(1),//keep for settings 
+    itcwb_rgreen(1),//keep for settings
     itcwb_nopurple(false),//keep for settings
     itcwb_alg(false),//checkbox
     itcwb_prim("beta"),//combobox
-    itcwb_sampling(false)//keep for 5.9 and for settings
+    itcwb_sampling(false),//keep for 5.9 and for settings
+    compat_version(WBParams::CURRENT_COMPAT_VERSION)
 
 {
 }
@@ -1404,7 +1597,7 @@ bool WBParams::isPanningRelatedChange(const WBParams& other) const
             enabled == other.enabled
             && (
                 (
-                    method == "Camera" 
+                    method == "Camera"
                     && other.method == "Camera"
                 )
             || (
@@ -1417,6 +1610,7 @@ bool WBParams::isPanningRelatedChange(const WBParams& other) const
                 && itcwb_green == other.itcwb_green
                 && itcwb_prim == other.itcwb_prim
                 && itcwb_alg == other.itcwb_alg
+                && compat_version == other.compat_version
 
             )
         )
@@ -1438,7 +1632,8 @@ bool WBParams::operator ==(const WBParams& other) const
         && itcwb_nopurple == other.itcwb_nopurple
         && itcwb_alg == other.itcwb_alg
         && itcwb_prim == other.itcwb_prim
-        && itcwb_sampling == other.itcwb_sampling;
+        && itcwb_sampling == other.itcwb_sampling
+        && compat_version == other.compat_version;
 
 }
 
@@ -1695,6 +1890,7 @@ DirPyrDenoiseParams::DirPyrDenoiseParams() :
     chroma(15),
     redchro(0),
     bluechro(0),
+    autoGain(true),
     gamma(1.7),
     dmethod("Lab"),
     Lmethod("SLI"),
@@ -1722,6 +1918,7 @@ bool DirPyrDenoiseParams::operator ==(const DirPyrDenoiseParams& other) const
         && chroma == other.chroma
         && redchro == other.redchro
         && bluechro == other.bluechro
+        && autoGain == other.autoGain
         && gamma == other.gamma
         && dmethod == other.dmethod
         && Lmethod == other.Lmethod
@@ -1862,9 +2059,49 @@ bool SHParams::operator !=(const SHParams& other) const
     return !(*this == other);
 }
 
+
+
+CGParams::CGParams() :
+    enabled(false),
+    th_c(0.815),
+    th_m(0.803),
+    th_y(0.880),
+    d_c(1.147),
+    d_m(1.264),
+    d_y(1.312),
+    pwr(1.2),
+    colorspace("acesp1"),
+    rolloff(true)
+    
+{
+}
+
+bool CGParams::operator ==(const CGParams& other) const
+{
+    return
+        enabled == other.enabled
+        && th_c == other.th_c
+        && th_m == other.th_m
+        && th_y == other.th_y
+        && d_c == other.d_c
+        && d_m == other.d_m
+        && d_y == other.d_y
+        && pwr == other.pwr
+        && colorspace == other.colorspace
+        && rolloff == other.rolloff;
+}
+
+bool CGParams::operator !=(const CGParams& other) const
+{
+    return !(*this == other);
+}
+
+
+
+///
 ToneEqualizerParams::ToneEqualizerParams() :
     enabled(false),
-    bands{0, 0, 0, 0, 0},
+    bands{0, 0, 0, 0, 0, 0},
     regularization(0),
     show_colormap(false),
     pivot(0)
@@ -1952,13 +2189,19 @@ bool CoarseTransformParams::operator !=(const CoarseTransformParams& other) cons
 
 CommonTransformParams::CommonTransformParams() :
     method("log"),
-    autofill(true)
+    autofill(true),
+    scale(1.0)
 {
+}
+
+double CommonTransformParams::getScale() const
+{
+    return autofill ? 1.0 : scale;
 }
 
 bool CommonTransformParams::operator ==(const CommonTransformParams& other) const
 {
-    return method == other.method && autofill == other.autofill;
+    return method == other.method && autofill == other.autofill && std::abs(scale - other.scale) < 1e-6;
 }
 
 bool CommonTransformParams::operator !=(const CommonTransformParams& other) const
@@ -1981,14 +2224,11 @@ bool RotateParams::operator !=(const RotateParams& other) const
     return !(*this == other);
 }
 
-DistortionParams::DistortionParams() :
-    amount(0.0)
-{
-}
+DistortionParams::DistortionParams() {}
 
 bool DistortionParams::operator ==(const DistortionParams& other) const
 {
-    return amount == other.amount;
+    return amount == other.amount && defish == other.defish && focal_length == other.focal_length;
 }
 
 bool DistortionParams::operator !=(const DistortionParams& other) const
@@ -2042,13 +2282,19 @@ bool LensProfParams::lfManual() const
     return lcMode == LcMode::LENSFUNMANUAL;
 }
 
+bool LensProfParams::useMetadata() const
+{
+    return lcMode == LcMode::METADATA;
+}
+
 const std::vector<const char*>& LensProfParams::getMethodStrings() const
 {
     static const std::vector<const char*> method_strings = {
         "none",
         "lfauto",
         "lfmanual",
-        "lcp"
+        "lcp",
+        "metadata"
     };
     return method_strings;
 }
@@ -2354,6 +2600,56 @@ bool ResizeParams::operator !=(const ResizeParams& other) const
     return !(*this == other);
 }
 
+FramingParams::FramingParams() :
+    enabled(false),
+    framingMethod(FramingMethod::STANDARD),
+    aspectRatio(0),
+    orientation(Orientation::AS_IMAGE),
+    framedWidth(800),
+    framedHeight(600),
+    allowUpscaling(false),
+    borderSizingMethod(BorderSizing::PERCENTAGE),
+    basis(Basis::AUTO),
+    relativeBorderSize(0.1),
+    minSizeEnabled(false),
+    minWidth(0),
+    minHeight(0),
+    absWidth(0),
+    absHeight(0),
+    borderRed(255),
+    borderGreen(255),
+    borderBlue(255)
+{
+}
+
+bool FramingParams::operator ==(const FramingParams& other) const
+{
+    return
+        enabled == other.enabled
+        && framingMethod == other.framingMethod
+        && aspectRatio == other.aspectRatio
+        && orientation == other.orientation
+        && framedWidth == other.framedWidth
+        && framedHeight == other.framedHeight
+        && allowUpscaling == other.allowUpscaling
+        && borderSizingMethod == other.borderSizingMethod
+        && basis == other.basis
+        && relativeBorderSize == other.relativeBorderSize
+        && minSizeEnabled == other.minSizeEnabled
+        && minWidth == other.minWidth
+        && minHeight == other.minHeight
+        && absWidth == other.absWidth
+        && absHeight == other.absHeight
+        && borderRed == other.borderRed
+        && borderGreen == other.borderGreen
+        && borderBlue == other.borderBlue;
+}
+
+bool FramingParams::operator !=(const FramingParams& other) const
+{
+    return !(*this == other);
+}
+
 const Glib::ustring ColorManagementParams::NoICMString = Glib::ustring("No ICM: sRGB output");
 const Glib::ustring ColorManagementParams::NoProfileString = Glib::ustring("(none)");
 
@@ -2368,17 +2664,44 @@ ColorManagementParams::ColorManagementParams() :
     workingTRC(WorkingTrc::NONE),
     will(Illuminant::DEFAULT),
     wprim(Primaries::DEFAULT),
-    workingTRCGamma(2.4),//gamma sRGB
-    workingTRCSlope(12.92),
+    wcat(Cat::BRAD),
+    wGamma(2.4),//gamma sRGB
+    wSlope(12.92),
+    wmidtcie(0.),
+    sigmatrc(1.),
+    offstrc(1.),
+    residtrc(0.),
+    pyrwavtrc(2),    
+    opacityCurveWLI{
+        static_cast<double>(FCT_MinMaxCPoints),
+        0.0,
+        0.50,
+        0.35,
+        0.35,
+        0.50,
+        0.70,
+        0.35,
+        0.35,
+        1.00,
+        0.50,
+        0.35,
+        0.35
+    },
+    wsmoothcie(false),
     redx(0.7347),
     redy(0.2653),
     grex(0.1596),
     grey(0.8404),
     blux(0.0366),
     bluy(0.0001),
+    refi(0.),
+    shiftx(0.),
+    shifty(0.),
     preser(0.),
     fbw(false),
-    gamut(false),
+    trcExp(false),
+    wavExp(false),
+    gamut(true),
     labgridcieALow(0.51763),//Prophoto red = (0.7347+0.1) * 1.81818 - 1
     labgridcieBLow(-0.33582),
     labgridcieAHigh(-0.75163),//Prophoto blue
@@ -2387,6 +2710,8 @@ ColorManagementParams::ColorManagementParams() :
     labgridcieGy(-0.70909),//0.84
     labgridcieWx(-0.18964),//D50 0.3457, 0.3585,
     labgridcieWy(-0.16636),//
+    labgridcieMx(0.),//
+    labgridcieMy(0.),//
     aRendIntent(RI_RELATIVE),
     outputProfile(options.rtSettings.srgb),
     outputIntent(RI_RELATIVE),
@@ -2407,14 +2732,25 @@ bool ColorManagementParams::operator ==(const ColorManagementParams& other) cons
         && workingTRC == other.workingTRC
         && will == other.will
         && wprim == other.wprim
-        && workingTRCGamma == other.workingTRCGamma
-        && workingTRCSlope == other.workingTRCSlope
+        && wcat == other.wcat
+        && wGamma == other.wGamma
+        && wSlope == other.wSlope
+        && wmidtcie == other.wmidtcie
+        && sigmatrc == other.sigmatrc
+        && offstrc == other.offstrc
+        && pyrwavtrc == other.pyrwavtrc
+		&& residtrc == other.residtrc
+        && opacityCurveWLI == other.opacityCurveWLI
+        && wsmoothcie == other.wsmoothcie
         && redx == other.redx
         && redy == other.redy
         && grex == other.grex
         && grey == other.grey
         && blux == other.blux
         && bluy == other.bluy
+        && refi == other.refi
+        && shiftx == other.shiftx
+        && shifty == other.shifty
         && labgridcieALow == other.labgridcieALow
         && labgridcieBLow == other.labgridcieBLow
         && labgridcieAHigh == other.labgridcieAHigh
@@ -2423,13 +2759,24 @@ bool ColorManagementParams::operator ==(const ColorManagementParams& other) cons
         && labgridcieGy == other.labgridcieGy
         && labgridcieWx == other.labgridcieWx
         && labgridcieWy == other.labgridcieWy
+        && labgridcieMx == other.labgridcieMx
+        && labgridcieMy == other.labgridcieMy
         && preser == other.preser
         && fbw == other.fbw
+        && trcExp == other.trcExp
+        && wavExp == other.wavExp
         && gamut == other.gamut
         && aRendIntent == other.aRendIntent
         && outputProfile == other.outputProfile
         && outputIntent == other.outputIntent
         && outputBPC == other.outputBPC;
+}
+
+void ColorManagementParams::getCurves(
+    WavOpacityCurveWL& opacityCurveLUTWLI
+) const
+{
+    opacityCurveLUTWLI.Set(this->opacityCurveWLI);
 }
 
 bool ColorManagementParams::operator !=(const ColorManagementParams& other) const
@@ -2489,25 +2836,25 @@ WaveletParams::WaveletParams() :
     },
     blcurve{
         static_cast<double>(FCT_MinMaxCPoints),
-        0.0, 
-        0.0, 
-        0.0, 
-        0.35, 
-        0.5, 
-        0., 
+        0.0,
+        0.0,
+        0.0,
+        0.35,
+        0.5,
+        0.,
         0.35,
         0.35,
         1.0,
         0.0,
         0.35,
         0.35
-/*      
+/*
         0.0,
-        0.35, 
-        0.35, 
-        1.0, 
-        0.0, 
-        0.35, 
+        0.35,
+        0.35,
+        1.0,
+        0.0,
+        0.35,
         0.35
 */
     },
@@ -2954,7 +3301,7 @@ LocallabParams::LocallabSpot::LocallabSpot() :
     loc{150, 150, 150, 150},
     centerX(0),
     centerY(0),
-    circrad(18),
+    circrad(18.),
     qualityMethod("enh"),
     complexMethod("mod"),
     transit(60.),
@@ -2968,7 +3315,7 @@ LocallabParams::LocallabSpot::LocallabSpot() :
     avoidrad(0.),
     transitweak(1.0),
     transitgrad(0.0),
-    hishow(false),
+    hishow(options.complexity != 2),
     activ(true),
     blwh(false),
     recurs(false),
@@ -2998,12 +3345,13 @@ LocallabParams::LocallabSpot::LocallabSpot() :
     labgridAHighmerg(-3500.0),
     labgridBHighmerg(-4600.0),
     strengthgrid(30),
-    sensi(15),
+    sensi(30),
     structcol(0),
     strcol(0.),
     strcolab(0.),
     strcolh(0.),
     angcol(0.),
+    feathercol(25.),
     blurcolde(5),
     blurcol(0.2),
     contcol(0.),
@@ -3246,6 +3594,7 @@ LocallabParams::LocallabSpot::LocallabSpot() :
     gamex(1.),
     strexp(0.),
     angexp(0.),
+    featherexp(25.),
     excurve{
         static_cast<double>(DCT_NURBS),
         0.0,
@@ -3326,6 +3675,7 @@ LocallabParams::LocallabSpot::LocallabSpot() :
     gamm(0.4),
     fatamount(1.0),
     fatdetail(40.0),
+    fatsatur(false),
     fatanchor(50.0),
     fatlevel(1.),
     recothrese(1.),
@@ -3337,13 +3687,13 @@ LocallabParams::LocallabSpot::LocallabSpot() :
     expshadhigh(false),
     complexshadhigh(0),
     shMethod("tone"),
-    multsh{0, 0, 0, 0, 0},
+    multsh{0, 0, 0, 0, 0, 0},
     highlights(0),
     h_tonalwidth(70),
     shadows(0),
     s_tonalwidth(30),
     sh_radius(40),
-    sensihs(15),
+    sensihs(30),
     enaSHMask(false),
     CCmaskSHcurve{
         static_cast<double>(FCT_MinMaxCPoints),
@@ -3395,6 +3745,7 @@ LocallabParams::LocallabSpot::LocallabSpot() :
     blurSHde(5),
     strSH(0.),
     angSH(0.),
+    featherSH(25.),
     inverssh(false),
     chromaskSH(0.0),
     gammaskSH(1.0),
@@ -3430,7 +3781,7 @@ LocallabParams::LocallabSpot::LocallabSpot() :
     protectskins(false),
     avoidcolorshift(true),
     pastsattog(true),
-    sensiv(15),
+    sensiv(30),
     skintonescurve{
         static_cast<double>(DCT_Linear)
     },
@@ -3490,6 +3841,7 @@ LocallabParams::LocallabSpot::LocallabSpot() :
     strvibab(0.0),
     strvibh(0.0),
     angvib(0.0),
+    feathervib(25.0),
     Lmaskvibcurve{
         static_cast<double>(DCT_NURBS),
         0.0,
@@ -3811,6 +4163,7 @@ LocallabParams::LocallabSpot::LocallabSpot() :
     equilret(false),
     loglin(true),
     dehazeSaturation(50.0),
+    dehazeblack(0.0),
     softradiusret(40.0),
     CCmaskreticurve{
         static_cast<double>(FCT_MinMaxCPoints),
@@ -3904,6 +4257,7 @@ LocallabParams::LocallabSpot::LocallabSpot() :
     lcdarkness(1.0),
     lclightness(1.0),
     sigmalc(1.0),
+    offslc(1.0),
     levelwav(4),
     residcont(0.0),
     residsha(0.0),
@@ -3933,6 +4287,7 @@ LocallabParams::LocallabSpot::LocallabSpot() :
     sigmalc2(1.0),
     strwav(0.0),
     angwav(0.0),
+    featherwav(25.0),
     strengthw(0.0),
     sigmaed(1.0),
     radiusw(15.0),
@@ -3954,7 +4309,8 @@ LocallabParams::LocallabSpot::LocallabSpot() :
     wavgradl(false),
     wavcompre(false),
     origlc(false),
-    localcontMethod("loc"),
+    processwav(false),
+    localcontMethod("wav"),
     localedgMethod("thr"),
     localneiMethod("low"),
     locwavcurve{
@@ -3968,7 +4324,7 @@ LocallabParams::LocallabSpot::LocallabSpot() :
         0.35,
         0.35
     },
-    csthreshold(0, 0, 6, 6, false),
+    csthreshold(0, 0, 7, 5, false),
     loclevwavcurve{
         static_cast<double>(FCT_MinMaxCPoints),
         0.0,
@@ -4203,8 +4559,13 @@ LocallabParams::LocallabSpot::LocallabSpot() :
     fullimage(true),
     repar(100.0),
     ciecam(false),
-    blackEv(-5.0),
-    whiteEv(10.0),
+    satlog(false),
+    blackEv(-5.00),
+    whiteEv(10.00),
+    whiteslog(0),
+    blackslog(0),
+    comprlog(0.4),
+    strelog(100.),
     detail(0.6),
     sensilog(60),
     sursour("Average"),
@@ -4212,6 +4573,7 @@ LocallabParams::LocallabSpot::LocallabSpot() :
     baselog(2.),
     strlog(0.0),
     anglog(0.0),
+    featherlog(25.0),
     CCmaskcurveL{
         static_cast<double>(FCT_MinMaxCPoints),
         0.0,
@@ -4339,6 +4701,7 @@ LocallabParams::LocallabSpot::LocallabSpot() :
     shadmask(0.0),
     str_mask(0),
     ang_mask(0),
+    feather_mask(25),
     HHhmask_curve{
         static_cast<double>(FCT_MinMaxCPoints),
         0.0,
@@ -4376,18 +4739,35 @@ LocallabParams::LocallabSpot::LocallabSpot() :
     // ciecam
     visicie(false),
     expcie(false),
+    expprecam(false),
     complexcie(0),
     reparcie(100.),
     sensicie(60),
     Autograycie(true),
-    forcejz(true),
-    forcebw(true),
+    sigybjz12(false),
     qtoj(false),
     jabcie(true),
-    sigmoidqjcie(false),
+    comprcieauto(false),
+    normcie12(false),
+    normcie(true),
+    gamutcie(true),
+    bwcie(false),
+    sigcie(true),
     logcie(false),
+    satcie(true),
+    logcieq(false),
+    smoothcie(false),
+    smoothcietrc(true),
+    smoothcietrcrel(true),
+    smoothcieyb(false),
+    smoothcielum(false),
+    smoothciehigh(true),
+    smoothcielnk(true),
     logjz(false),
+    sigjz12(false),
     sigjz(false),
+    forcebw(false),
+    sigq12(false),
     sigq(false),
     chjzcie(true),
     sourceGraycie(18.),
@@ -4395,6 +4775,9 @@ LocallabParams::LocallabSpot::LocallabSpot() :
     sursourcie("Average"),
     modecie("com"),
     modecam("cam16"),
+    modeQJ("512"),
+    bwevMethod12("slop"),
+    bwevMethod("sig"),
     saturlcie(0.),
     rstprotectcie(0.),
     chromlcie(0.),
@@ -4526,8 +4909,10 @@ LocallabParams::LocallabSpot::LocallabSpot() :
     lightlcie(0.),
     lightjzcie(0.),
     lightqcie(0.),
+    lightsigqcie(0.),
     contlcie(0.),
     contjzcie(0.),
+    detailciejz(30.),
     adapjzcie(4.0),
     jz100(0.25),
     pqremap(120.),
@@ -4554,33 +4939,79 @@ LocallabParams::LocallabSpot::LocallabSpot() :
     },
     csthresholdjz(0, 0, 7, 4, false),
     contthrescie(0.),
-    blackEvjz(-5.0),
-    whiteEvjz(10.0),
+    blackEvjz(-5.00),
+    whiteEvjz(10.00),
     targetjz(18.0),
+    sigmoidldacie12(1.8),
+    sigmoidthcie12(0.0),
+    sigmoidblcie12(100.),
     sigmoidldacie(0.5),
-    sigmoidthcie(1.),
-    sigmoidblcie(1.),
+    sigmoidthcie(1.2),
+    sigmoidsenscie(0.9),
+    sigmoidblcie(0.75),
+
+    comprcie(0.4),
+    strcielog(80.),
+    comprcieth(6.),
+    gamjcie(2.4),
+    smoothcieth(1.),
+    slopjcie(12.923),
+    contsig(1.15),
+    skewsig(0.),
+    whitsig(100.),
+    slopesmo(1.),
+    slopesmoq(1.),
+    slopesmor(1.),
+    slopesmog(1.),
+    slopesmob(1.),
+    kslopesmor(1.),
+    kslopesmog(1.),
+    kslopesmob(1.),
+    midtcie(0),
+    grexl(0.1596),
+    greyl(0.8404),
+    bluxl(0.0366),
+    bluyl(0.0001),   
+    redxl(0.7347),
+    redyl(0.2653),
+    refi(0.),
+    shiftxl(0.),
+    shiftyl(0.),
+    labgridcieALow(0.51763),//Prophoto red = (0.7347+0.1) * 1.81818 - 1
+    labgridcieBLow(-0.33582),
+    labgridcieAHigh(-0.75163),//Prophoto blue
+    labgridcieBHigh(-0.8180),
+    labgridcieGx(-0.528),//Prophoto green 0.1596
+    labgridcieGy(0.7096),//0.84
+    labgridcieWx(-0.18964),//D50 0.3457, 0.3585,
+    labgridcieWy(-0.16636),//    
+    labgridcieMx(0.),
+    labgridcieMy(0.),//    
+    whitescie(20),
+    blackscie(0),
+    illMethod("d50"),
+    smoothciemet("none"),
+    primMethod("pro"),
+    catMethod("brad"),
+    sigmoidldajzcie12(1.3),
+    sigmoidthjzcie12(0.),
+    sigmoidbljzcie12(100.),
     sigmoidldajzcie(0.5),
     sigmoidthjzcie(1.),
     sigmoidbljzcie(1.),
     contqcie(0.),
+    contsigqcie(0.),
     colorflcie(0.),
-/*
-    lightlzcam(0.),
-    lightqzcam(0.),
-    contlzcam(0.),
-    contqzcam(0.), 
-    contthreszcam(0.),
-    colorflzcam(0.),
-    saturzcam(0.),
-    chromzcam(0.),
-*/
     targabscie(16.),
     targetGraycie(18.),
     catadcie(0.),
-    detailcie(0.),
+    detailcie(30.),
     surroundcie("Average"),
+    strgradcie(0.),
+    anggradcie(0.),
+    feathercie(25.),
     enacieMask(false),
+    enacieMaskall(false),
     CCmaskciecurve{
         static_cast<double>(FCT_MinMaxCPoints),
         0.0,
@@ -4626,6 +5057,22 @@ LocallabParams::LocallabSpot::LocallabSpot() :
         0.35,
         0.35
     },
+    HHhmaskciecurve{
+        static_cast<double>(FCT_MinMaxCPoints),
+        0.0,
+        0.5,
+        0.35,
+        0.35,
+        0.50,
+        0.5,
+        0.35,
+        0.35,
+        1.00,
+        0.5,
+        0.35,
+        0.35
+    },
+
     blendmaskcie(0),
     radmaskcie(0.0),
     chromaskcie(0.0),
@@ -4642,10 +5089,100 @@ LocallabParams::LocallabSpot::LocallabSpot() :
     recothrescie(1.),
     lowthrescie(12.),
     higthrescie(85.),
-    decaycie(2.)
-    
+    decaycie(2.),
+    strumaskcie(0.),
+	toolcie(false),
+	fftcieMask(true),
+    contcie(0.),
+    blurcie(0.2),
+	highmaskcie(0.),
+	shadmaskcie(0.),
+     LLmaskciecurvewav{
+        static_cast<double>(FCT_MinMaxCPoints),
+        0.0,
+        0.5,
+        0.35,
+        0.35,
+        1.,
+        0.5,
+        0.35,
+        0.35
+    },
+    csthresholdcie(0, 0, 6, 5, false)
+   
 
 {
+  // init settings with Preferences / options : must be followed by call to spotMethodChanged in controlspotpanel.cc  (idle_register)
+  // new values default with different SpotMethod.
+
+    if(options.spotmet == 3) {//global
+        spotMethod = "main";
+        loc = {3000, 3000, 3000, 3000};
+        transit =100.;
+        shape = "RECT";
+
+    } else if(options.spotmet == 2) {//full image
+        spotMethod = "full";
+        loc = {3000, 3000, 3000, 3000};
+        transit =100.;
+        shape = "RECT";       
+        sensi = 30;
+        sensiex = 60;
+        sensihs = 30;
+        sensiv = 30;
+        sensisf = 30; 
+        sensibn = 40;
+        sensiden = 60;
+        sensitm = 60;
+        sensih = 60;
+        sensisha = 40;
+        sensilc = 60;
+        sensicb = 60; 
+        sensilog = 60;
+        sensimask = 60;
+        sensicie = 60;
+        
+    } else if(options.spotmet == 1) {//exclude
+        spotMethod = "exc";
+        shape = "ELI";
+        loc = {150, 150, 150, 150};
+        transit= 60.;
+        sensi = 30;
+        sensiex = 60;
+        sensihs = 30;
+        sensiv = 30;
+        sensibn = 40;
+        sensiden = 60;
+        sensitm = 60;
+        sensih = 60;
+        sensisha = 40;       
+        sensilc = 60;        
+        sensicb = 60; 
+        sensilog = 60;
+        sensimask = 60;
+        sensicie = 60;
+        
+    } else if(options.spotmet == 0) {//normal
+        spotMethod = "norm";
+        shape = "ELI";
+        loc = {150, 150, 150, 150};
+        transit= 60.;
+        sensi = 30;
+        sensiex = 60;
+        sensihs = 30;
+        sensiv = 30;
+        sensibn = 40;
+        sensiden = 60;
+        sensitm = 60;
+        sensih = 60;
+        sensisha = 40;       
+        sensilc = 60;        
+        sensicb = 60; 
+        sensilog = 60;
+        sensimask = 60;
+        sensicie = 60;  
+    }
+
 }
 
 bool LocallabParams::LocallabSpot::operator ==(const LocallabSpot& other) const
@@ -4716,6 +5253,7 @@ bool LocallabParams::LocallabSpot::operator ==(const LocallabSpot& other) const
         && strcolab == other.strcolab
         && strcolh == other.strcolh
         && angcol == other.angcol
+        && feathercol == other.feathercol
         && blurcolde == other.blurcolde
         && blurcol == other.blurcol
         && contcol == other.contcol
@@ -4778,6 +5316,7 @@ bool LocallabParams::LocallabSpot::operator ==(const LocallabSpot& other) const
         && gamex == other.gamex
         && strexp == other.strexp
         && angexp == other.angexp
+        && featherexp == other.featherexp
         && excurve == other.excurve
         && norm == other.norm
         && inversex == other.inversex
@@ -4805,6 +5344,7 @@ bool LocallabParams::LocallabSpot::operator ==(const LocallabSpot& other) const
         && gamm == other.gamm
         && fatamount == other.fatamount
         && fatdetail == other.fatdetail
+        && fatsatur == other.fatsatur
         && fatanchor == other.fatanchor
         && fatlevel == other.fatlevel
         && recothrese == other.recothrese
@@ -4818,7 +5358,7 @@ bool LocallabParams::LocallabSpot::operator ==(const LocallabSpot& other) const
         && shMethod == other.shMethod
         && [this, &other]() -> bool
             {
-                for (int i = 0; i < 5; ++i) {
+                for (int i = 0; i < 6; ++i) {
                     if (multsh[i] != other.multsh[i]) {
                         return false;
                     }
@@ -4840,6 +5380,7 @@ bool LocallabParams::LocallabSpot::operator ==(const LocallabSpot& other) const
         && blurSHde == other.blurSHde
         && strSH == other.strSH
         && angSH == other.angSH
+        && featherSH == other.featherSH
         && inverssh == other.inverssh
         && chromaskSH == other.chromaskSH
         && gammaskSH == other.gammaskSH
@@ -4885,6 +5426,7 @@ bool LocallabParams::LocallabSpot::operator ==(const LocallabSpot& other) const
         && strvibab == other.strvibab
         && strvibh == other.strvibh
         && angvib == other.angvib
+        && feathervib == other.feathervib
         && Lmaskvibcurve == other.Lmaskvibcurve
         && recothresv == other.recothresv
         && lowthresv == other.lowthresv
@@ -5026,6 +5568,7 @@ bool LocallabParams::LocallabSpot::operator ==(const LocallabSpot& other) const
         && equilret == other.equilret
         && loglin == other.loglin
         && dehazeSaturation == other.dehazeSaturation
+        && dehazeblack == other.dehazeblack
         && softradiusret == other.softradiusret
         && CCmaskreticurve == other.CCmaskreticurve
         && LLmaskreticurve == other.LLmaskreticurve
@@ -5071,6 +5614,7 @@ bool LocallabParams::LocallabSpot::operator ==(const LocallabSpot& other) const
         && lcdarkness == other.lcdarkness
         && lclightness == other.lclightness
         && sigmalc == other.sigmalc
+        && offslc == other.offslc
         && levelwav == other.levelwav
         && residcont == other.residcont
         && residsha == other.residsha
@@ -5100,6 +5644,7 @@ bool LocallabParams::LocallabSpot::operator ==(const LocallabSpot& other) const
         && sigmalc2 == other.sigmalc2
         && strwav == other.strwav
         && angwav == other.angwav
+        && featherwav == other.featherwav
         && strengthw == other.strengthw
         && sigmaed == other.sigmaed
         && radiusw == other.radiusw
@@ -5121,6 +5666,7 @@ bool LocallabParams::LocallabSpot::operator ==(const LocallabSpot& other) const
         && wavgradl == other.wavgradl
         && wavcompre == other.wavcompre
         && origlc == other.origlc
+        && processwav == other.processwav
         && localcontMethod == other.localcontMethod
         && localedgMethod == other.localedgMethod
         && localneiMethod == other.localneiMethod
@@ -5200,8 +5746,13 @@ bool LocallabParams::LocallabSpot::operator ==(const LocallabSpot& other) const
         && fullimage == other.fullimage
         && repar == other.repar
         && ciecam == other.ciecam
+        && satlog == other.satlog
         && blackEv == other.blackEv
         && whiteEv == other.whiteEv
+        && whiteslog == other.whiteslog
+        && blackslog == other.blackslog
+        && comprlog == other.comprlog
+        && strelog == other.strelog
         && detail == other.detail
         && sensilog == other.sensilog
         && baselog == other.baselog
@@ -5209,6 +5760,7 @@ bool LocallabParams::LocallabSpot::operator ==(const LocallabSpot& other) const
         && surround == other.surround
         && strlog == other.strlog
         && anglog == other.anglog
+        && featherlog == other.featherlog
         && CCmaskcurveL == other.CCmaskcurveL
         && LLmaskcurveL == other.LLmaskcurveL
         && HHmaskcurveL == other.HHmaskcurveL
@@ -5247,6 +5799,7 @@ bool LocallabParams::LocallabSpot::operator ==(const LocallabSpot& other) const
         && shadmask == other.shadmask
         && str_mask == other.str_mask
         && ang_mask == other.ang_mask
+        && feather_mask == other.feather_mask
         && HHhmask_curve == other.HHhmask_curve
         && Lmask_curve == other.Lmask_curve
         && LLmask_curvewav == other.LLmask_curvewav
@@ -5254,18 +5807,35 @@ bool LocallabParams::LocallabSpot::operator ==(const LocallabSpot& other) const
         //ciecam
         && visicie == other.visicie
         && expcie == other.expcie
+        && expprecam == other.expprecam
         && complexcie == other.complexcie
         && reparcie == other.reparcie
         && sensicie == other.sensicie
         && Autograycie == other.Autograycie
-        && forcejz == other.forcejz
-        && forcebw == other.forcebw
+        && sigybjz12 == other.sigybjz12
         && qtoj == other.qtoj
         && jabcie == other.jabcie
-        && sigmoidqjcie == other.sigmoidqjcie
+        && comprcieauto == other.comprcieauto
+        && normcie12 == other.normcie12
+        && normcie == other.normcie
+        && gamutcie == other.gamutcie
+        && bwcie == other.bwcie
+        && sigcie == other.sigcie
         && logcie == other.logcie
+        && satcie == other.satcie
+        && logcieq == other.logcieq
+        && smoothcie == other.smoothcie
+        && smoothcietrc == other.smoothcietrc
+        && smoothcietrcrel == other.smoothcietrcrel
+        && smoothcieyb == other.smoothcieyb
+        && smoothcielum == other.smoothcielum
+        && smoothciehigh == other.smoothciehigh
+        && smoothcielnk == other.smoothcielnk
         && logjz == other.logjz
+        && sigjz12 == other.sigjz12
         && sigjz == other.sigjz
+        && forcebw == other.forcebw
+        && sigq12 == other.sigq12
         && sigq == other.sigq
         && chjzcie == other.chjzcie
         && sourceGraycie == other.sourceGraycie
@@ -5273,6 +5843,9 @@ bool LocallabParams::LocallabSpot::operator ==(const LocallabSpot& other) const
         && sursourcie == other.sursourcie
         && modecie == other.modecie
         && modecam == other.modecam
+        && modeQJ == other.modeQJ
+        && bwevMethod12 == other.bwevMethod12
+        && bwevMethod == other.bwevMethod
         && saturlcie == other.saturlcie
         && rstprotectcie == other.rstprotectcie
         && chromlcie == other.chromlcie
@@ -5296,8 +5869,10 @@ bool LocallabParams::LocallabSpot::operator ==(const LocallabSpot& other) const
         && lightlcie == other.lightlcie
         && lightjzcie == other.lightjzcie
         && lightqcie == other.lightqcie
+        && lightsigqcie == other.lightsigqcie
         && contlcie == other.contlcie
         && contjzcie == other.contjzcie
+        && detailciejz == other.detailciejz
         && adapjzcie == other.adapjzcie
         && jz100 == other.jz100
         && pqremap == other.pqremap
@@ -5317,32 +5892,80 @@ bool LocallabParams::LocallabSpot::operator ==(const LocallabSpot& other) const
         && blackEvjz == other.blackEvjz
         && whiteEvjz == other.whiteEvjz
         && targetjz == other.targetjz
+        && sigmoidldacie12 == other.sigmoidldacie12
+        && sigmoidthcie12 == other.sigmoidthcie12
+        && sigmoidblcie12 == other.sigmoidblcie12
+
         && sigmoidldacie == other.sigmoidldacie
         && sigmoidthcie == other.sigmoidthcie
+        && sigmoidsenscie == other.sigmoidsenscie
         && sigmoidblcie == other.sigmoidblcie
+        && comprcie == other.comprcie
+        && strcielog == other.strcielog
+        && comprcieth == other.comprcieth
+        && gamjcie == other.gamjcie
+        && smoothcieth == other.smoothcieth
+        && slopjcie == other.slopjcie
+        && contsig == other.contsig
+        && skewsig == other.skewsig
+        && whitsig == other.whitsig
+        && slopesmo == other.slopesmo
+        && slopesmoq == other.slopesmoq
+        && slopesmor == other.slopesmor
+        && slopesmog == other.slopesmog
+        && slopesmob == other.slopesmob
+        && kslopesmor == other.kslopesmor
+        && kslopesmog == other.kslopesmog
+        && kslopesmob == other.kslopesmob
+        && midtcie == other.midtcie
+        && redxl == other.redxl
+        && redyl == other.redyl
+        && grexl == other.grexl
+        && greyl == other.greyl
+        && bluxl == other.bluxl
+        && bluyl == other.bluyl
+        && refi == other.refi
+        && shiftxl == other.shiftxl
+        && shiftyl == other.shiftyl
+        && labgridcieALow == other.labgridcieALow
+        && labgridcieBLow == other.labgridcieBLow
+        && labgridcieAHigh == other.labgridcieAHigh
+        && labgridcieBHigh == other.labgridcieBHigh
+        && labgridcieGx == other.labgridcieGx
+        && labgridcieGy == other.labgridcieGy
+        && labgridcieWx == other.labgridcieWx
+        && labgridcieWy == other.labgridcieWy        
+        && labgridcieMx == other.labgridcieMx
+        && labgridcieMy == other.labgridcieMy        
+        && whitescie == other.whitescie
+        && blackscie == other.blackscie
+        && illMethod == other.illMethod
+        && smoothciemet == other.smoothciemet
+        && primMethod == other.primMethod
+        && catMethod == other.catMethod
+        && sigmoidldajzcie12 == other.sigmoidldajzcie12
+        && sigmoidthjzcie12 == other.sigmoidthjzcie12
+        && sigmoidbljzcie12 == other.sigmoidbljzcie12
         && sigmoidldajzcie == other.sigmoidldajzcie
         && sigmoidthjzcie == other.sigmoidthjzcie
         && sigmoidbljzcie == other.sigmoidbljzcie
         && contqcie == other.contqcie
+        && contsigqcie == other.contsigqcie
         && colorflcie == other.colorflcie
-/*        && lightlzcam == other.lightlzcam
-        && lightqzcam == other.lightqzcam
-        && contlzcam == other.contlzcam
-        && contqzcam == other.contqzcam
-        && contthreszcam == other.contthreszcam
-        && colorflzcam == other.colorflzcam
-        && saturzcam == other.saturzcam
-        && chromzcam == other.chromzcam
-*/
         && targabscie == other.targabscie
         && targetGraycie == other.targetGraycie
         && catadcie == other.catadcie
         && detailcie == other.detailcie
+        && strgradcie == other.strgradcie
+        && anggradcie == other.anggradcie
+        && feathercie == other.feathercie
         && surroundcie == other.surroundcie
         && enacieMask == other.enacieMask
+        && enacieMaskall == other.enacieMaskall
         && CCmaskciecurve == other.CCmaskciecurve
         && LLmaskciecurve == other.LLmaskciecurve
         && HHmaskciecurve == other.HHmaskciecurve
+        && HHhmaskciecurve == other.HHhmaskcurve
         && blendmaskcie == other.blendmaskcie
         && radmaskcie == other.radmaskcie
         && chromaskcie == other.chromaskcie
@@ -5353,8 +5976,16 @@ bool LocallabParams::LocallabSpot::operator ==(const LocallabSpot& other) const
         && recothrescie == other.recothrescie
         && lowthrescie == other.lowthrescie
         && higthrescie == other.higthrescie
-        && decaycie == other.decaycie;
-       
+        && decaycie == other.decaycie
+        && strumaskcie == other.strumaskcie
+        && toolcie == other.toolcie       
+        && blurcie == other.blurcie
+        && contcie == other.contcie
+        && highmaskcie == other.highmaskcie
+        && shadmaskcie == other.shadmaskcie
+        && fftcieMask == other.fftcieMask
+        && LLmaskciecurvewav == other.LLmaskciecurvewav
+        && csthresholdcie == other.csthresholdcie;
 
 }
 
@@ -5532,6 +6163,7 @@ RAWParams::BayerSensor::BayerSensor() :
     black2(0.0),
     black3(0.0),
     twogreen(true),
+    Dehablack(false),
     linenoise(0),
     linenoiseDirection(LineNoiseDirection::BOTH),
     greenthresh(0),
@@ -5571,6 +6203,7 @@ bool RAWParams::BayerSensor::operator ==(const BayerSensor& other) const
         && black2 == other.black2
         && black3 == other.black3
         && twogreen == other.twogreen
+        && Dehablack == other.Dehablack
         && linenoise == other.linenoise
         && linenoiseDirection == other.linenoiseDirection
         && greenthresh == other.greenthresh
@@ -5674,7 +6307,9 @@ RAWParams::XTransSensor::XTransSensor() :
     ccSteps(0),
     blackred(0.0),
     blackgreen(0.0),
-    blackblue(0.0)
+    blackblue(0.0),
+    Dehablackx(false)
+
 {
 }
 
@@ -5688,7 +6323,8 @@ bool RAWParams::XTransSensor::operator ==(const XTransSensor& other) const
         && ccSteps == other.ccSteps
         && blackred == other.blackred
         && blackgreen == other.blackgreen
-        && blackblue == other.blackblue;
+        && blackblue == other.blackblue
+        && Dehablackx == other.Dehablackx;
 }
 
 bool RAWParams::XTransSensor::operator !=(const XTransSensor& other) const
@@ -5800,21 +6436,6 @@ Glib::ustring RAWParams::getFlatFieldBlurTypeString(FlatFieldBlurType type)
 }
 
 
-MetaDataParams::MetaDataParams():
-    mode(MetaDataParams::TUNNEL)
-{
-}
-
-bool MetaDataParams::operator==(const MetaDataParams &other) const
-{
-    return mode == other.mode;
-}
-
-bool MetaDataParams::operator!=(const MetaDataParams &other) const
-{
-    return !(*this == other);
-}
-
 FilmNegativeParams::FilmNegativeParams() :
     enabled(false),
     redRatio(1.36),
@@ -5866,6 +6487,103 @@ bool FilmNegativeParams::operator !=(const FilmNegativeParams& other) const
 {
     return !(*this == other);
 }
+
+
+namespace {
+
+const std::map<std::string, std::string> exif_keys = {
+    {"Copyright", "Exif.Image.Copyright"},
+    {"Artist", "Exif.Image.Artist"},
+    {"ImageDescription", "Exif.Image.ImageDescription"},
+    {"Exif.UserComment", "Exif.Photo.UserComment"},
+    {"ISOSpeed", "Exif.Photo.ISOSpeedRatings"},
+    {"FNumber", "Exif.Photo.FNumber"},
+    {"ShutterSpeed", "Exif.Photo.ExposureTime"},
+    {"FocalLength", "Exif.Photo.FocalLength"},
+    {"ExpComp", "Exif.Photo.ExposureBiasValue"},
+    {"Flash", "Exif.Photo.Flash"},
+    {"Make", "Exif.Image.Make"},
+    {"Model", "Exif.Image.Model"},
+    {"Lens", "Exif.Photo.LensModel"},
+    {"DateTime", "Exif.Photo.DateTimeOriginal"},
+    {"XResolution", "Exif.Image.XResolution"},
+    {"YResolution", "Exif.Image.YResolution"}
+};
+
+const std::map<std::string, std::string> iptc_keys = {
+    {"Title", "Iptc.Application2.ObjectName"},
+    {"Category", "Iptc.Application2.Category"},
+    {"SupplementalCategories", "Iptc.Application2.SuppCategory"},
+    {"Keywords", "Iptc.Application2.Keywords"},
+    {"Instructions", "Iptc.Application2.SpecialInstructions"},
+    {"DateCreated", "Iptc.Application2.DateCreated"},
+    {"Creator", "Iptc.Application2.Byline"},
+    {"CreatorJobTitle", "Iptc.Application2.BylineTitle"},
+    {"City", "Iptc.Application2.City"},
+    {"Province", "Iptc.Application2.ProvinceState"},
+    {"Country", "Iptc.Application2.CountryName"},
+    {"TransReference", "Iptc.Application2.TransmissionReference"},
+    {"Headline", "Iptc.Application2.Headline"},
+    {"Credit", "Iptc.Application2.Credit"},
+    {"Source", "Iptc.Application2.Source"},
+    {"Copyright", "Iptc.Application2.Copyright"},
+    {"Caption", "Iptc.Application2.Caption"},
+    {"CaptionWriter", "Iptc.Application2.Writer"}
+};
+
+} // namespace
+
+
+std::vector<std::string> MetaDataParams::basicExifKeys = {
+    "Exif.Image.Copyright",
+    "Exif.Image.Artist",
+    "Exif.Image.ImageDescription",
+    "Exif.Photo.UserComment",
+    "Exif.Image.Make",
+    "Exif.Image.Model",
+    "Exif.Photo.LensModel",
+    "Exif.Photo.FNumber",
+    "Exif.Photo.ExposureTime",
+    "Exif.Photo.FocalLength",
+    "Exif.Photo.ISOSpeedRatings",
+    "Exif.Photo.ExposureBiasValue",
+    "Exif.Photo.Flash",
+    "Exif.Photo.DateTimeOriginal",
+    "Exif.Image.XResolution",
+    "Exif.Image.YResolution"
+};
+
+
+const std::vector<std::string> additional_default_exif_keys = {
+    "Exif.Photo.OffsetTimeDigitized",
+    "Exif.Photo.OffsetTimeOriginal",
+};
+
+
+MetaDataParams::MetaDataParams():
+    mode(MetaDataParams::EDIT),
+    exifKeys{},
+    exif{},
+    iptc{}
+{
+    exifKeys = basicExifKeys;
+    exifKeys.insert(exifKeys.end(), additional_default_exif_keys.begin(), additional_default_exif_keys.end());
+}
+
+
+bool MetaDataParams::operator==(const MetaDataParams &other) const
+{
+    return mode == other.mode
+        && exifKeys == other.exifKeys
+        && exif == other.exif
+        && iptc == other.iptc;
+}
+
+bool MetaDataParams::operator!=(const MetaDataParams &other) const
+{
+    return !(*this == other);
+}
+
 
 ProcParams::ProcParams()
 {
@@ -5950,6 +6668,8 @@ void ProcParams::setDefaults()
 
     resize = {};
 
+    framing = {};
+
     icm = {};
 
     wavelet = {};
@@ -5967,8 +6687,8 @@ void ProcParams::setDefaults()
     raw = {};
 
     metadata = {};
-    exif.clear();
-    iptc.clear();
+    //exif.clear();
+    //iptc.clear();
 
     // -1 means that there's no pp3 data with rank yet. In this case, the
     // embedded Rating metadata should take precedence. -1 should never be
@@ -5995,7 +6715,9 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
         keyFile.set_string("Version", "AppVersion", RTVERSION);
         keyFile.set_integer("Version", "Version", PPVERSION);
 
-        saveToKeyfile(!pedited || pedited->general.rank, "General", "Rank", rank, keyFile);
+        if (rank >= 0) {
+            saveToKeyfile(!pedited || pedited->general.rank, "General", "Rank", rank, keyFile);
+        }
         saveToKeyfile(!pedited || pedited->general.colorlabel, "General", "ColorLabel", colorlabel, keyFile);
         saveToKeyfile(!pedited || pedited->general.intrash, "General", "InTrash", inTrash, keyFile);
 
@@ -6218,6 +6940,7 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
         saveToKeyfile(!pedited || pedited->wb.itcwb_alg, "White Balance", "Itcwb_alg", wb.itcwb_alg, keyFile);
         saveToKeyfile(!pedited || pedited->wb.itcwb_prim, "White Balance", "Itcwb_prim", wb.itcwb_prim, keyFile);
         saveToKeyfile(!pedited || pedited->wb.itcwb_sampling, "White Balance", "Itcwb_sampling", wb.itcwb_sampling, keyFile);
+        saveToKeyfile(!pedited || pedited->wb.compat_version, "White Balance", "CompatibilityVersion", wb.compat_version, keyFile);
 
 // Colorappearance
         saveToKeyfile(!pedited || pedited->colorappearance.enabled, "Color appearance", "Enabled", colorappearance.enabled, keyFile);
@@ -6294,9 +7017,9 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
 
 // Dehaze
         saveToKeyfile(!pedited || pedited->dehaze.enabled, "Dehaze", "Enabled", dehaze.enabled, keyFile);
-        saveToKeyfile(!pedited || pedited->dehaze.strength, "Dehaze", "Strength", dehaze.strength, keyFile);        
-        saveToKeyfile(!pedited || pedited->dehaze.showDepthMap, "Dehaze", "ShowDepthMap", dehaze.showDepthMap, keyFile);        
-        saveToKeyfile(!pedited || pedited->dehaze.depth, "Dehaze", "Depth", dehaze.depth, keyFile);        
+        saveToKeyfile(!pedited || pedited->dehaze.strength, "Dehaze", "Strength", dehaze.strength, keyFile);
+        saveToKeyfile(!pedited || pedited->dehaze.showDepthMap, "Dehaze", "ShowDepthMap", dehaze.showDepthMap, keyFile);
+        saveToKeyfile(!pedited || pedited->dehaze.depth, "Dehaze", "Depth", dehaze.depth, keyFile);
         saveToKeyfile(!pedited || pedited->dehaze.depth, "Dehaze", "Saturation", dehaze.saturation, keyFile);
 
 // Directional pyramid denoising
@@ -6326,6 +7049,7 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
         saveToKeyfile(!pedited || pedited->dirpyrDenoise.methodmed, "Directional Pyramid Denoising", "MethodMed", dirpyrDenoise.methodmed, keyFile);
         saveToKeyfile(!pedited || pedited->dirpyrDenoise.redchro, "Directional Pyramid Denoising", "Redchro", dirpyrDenoise.redchro, keyFile);
         saveToKeyfile(!pedited || pedited->dirpyrDenoise.bluechro, "Directional Pyramid Denoising", "Bluechro", dirpyrDenoise.bluechro, keyFile);
+        saveToKeyfile(!pedited || pedited->dirpyrDenoise.gain, "Directional Pyramid Denoising", "AutoGain", dirpyrDenoise.autoGain, keyFile);
         saveToKeyfile(!pedited || pedited->dirpyrDenoise.gamma, "Directional Pyramid Denoising", "Gamma", dirpyrDenoise.gamma, keyFile);
         saveToKeyfile(!pedited || pedited->dirpyrDenoise.passes, "Directional Pyramid Denoising", "Passes", dirpyrDenoise.passes, keyFile);
         saveToKeyfile(!pedited || pedited->dirpyrDenoise.lcurve, "Directional Pyramid Denoising", "LCurve", dirpyrDenoise.lcurve, keyFile);
@@ -6353,6 +7077,18 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
         saveToKeyfile(!pedited || pedited->sh.stonalwidth, "Shadows & Highlights", "ShadowTonalWidth", sh.stonalwidth, keyFile);
         saveToKeyfile(!pedited || pedited->sh.radius, "Shadows & Highlights", "Radius", sh.radius, keyFile);
         saveToKeyfile(!pedited || pedited->sh.lab, "Shadows & Highlights", "Lab", sh.lab, keyFile);
+
+//compression gamut
+        saveToKeyfile(!pedited || pedited->cg.enabled, "Compression gamut", "Enabled", cg.enabled, keyFile);
+        saveToKeyfile(!pedited || pedited->cg.th_c, "Compression gamut", "th_c", cg.th_c, keyFile);
+        saveToKeyfile(!pedited || pedited->cg.th_m, "Compression gamut", "th_m", cg.th_m, keyFile);
+        saveToKeyfile(!pedited || pedited->cg.th_y, "Compression gamut", "th_y", cg.th_y, keyFile);
+        saveToKeyfile(!pedited || pedited->cg.d_c, "Compression gamut", "d_c", cg.d_c, keyFile);
+        saveToKeyfile(!pedited || pedited->cg.d_m, "Compression gamut", "d_m", cg.d_m, keyFile);
+        saveToKeyfile(!pedited || pedited->cg.d_y, "Compression gamut", "d_y", cg.d_y, keyFile);
+        saveToKeyfile(!pedited || pedited->cg.pwr, "Compression gamut", "pwr", cg.pwr, keyFile);
+        saveToKeyfile(!pedited || pedited->cg.colorspace, "Compression gamut", "colorspace", cg.colorspace, keyFile);
+        saveToKeyfile(!pedited || pedited->cg.rolloff, "Compression gamut", "rolloff", cg.rolloff, keyFile);
 
 // Tone equalizer
         saveToKeyfile(!pedited || pedited->toneEqualizer.enabled, "ToneEqualizer", "Enabled", toneEqualizer.enabled, keyFile);
@@ -6398,6 +7134,7 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
 
 // Common properties for transformations
         saveToKeyfile(!pedited || pedited->commonTrans.method, "Common Properties for Transformations", "Method", commonTrans.method, keyFile);
+        saveToKeyfile(!pedited || pedited->commonTrans.scale, "Common Properties for Transformations", "Scale", commonTrans.scale, keyFile);
         saveToKeyfile(!pedited || pedited->commonTrans.autofill, "Common Properties for Transformations", "AutoFill", commonTrans.autofill, keyFile);
 
 // Rotation
@@ -6405,6 +7142,8 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
 
 // Distortion
         saveToKeyfile(!pedited || pedited->distortion.amount, "Distortion", "Amount", distortion.amount, keyFile);
+        saveToKeyfile(!pedited || pedited->distortion.focal_length, "Distortion", "FocalLength", distortion.focal_length, keyFile);
+        saveToKeyfile(!pedited || pedited->distortion.defish, "Distortion", "Defish", distortion.defish, keyFile);
 
 // Lens profile
         saveToKeyfile(!pedited || pedited->lensProf.lcMode, "LensProfile", "LcMode", lensProf.getMethodString(lensProf.lcMode), keyFile);
@@ -6521,6 +7260,7 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
                     saveToKeyfile(!pedited || spot_edited->strcolab, "Locallab", "Strcolab_" + index_str, spot.strcolab, keyFile);
                     saveToKeyfile(!pedited || spot_edited->strcolh, "Locallab", "Strcolh_" + index_str, spot.strcolh, keyFile);
                     saveToKeyfile(!pedited || spot_edited->angcol, "Locallab", "Angcol_" + index_str, spot.angcol, keyFile);
+                    saveToKeyfile(!pedited || spot_edited->feathercol, "Locallab", "Feathercol_" + index_str, spot.feathercol, keyFile);
                     saveToKeyfile(!pedited || spot_edited->blurcolde, "Locallab", "Blurcolde_" + index_str, spot.blurcolde, keyFile);
                     saveToKeyfile(!pedited || spot_edited->blurcol, "Locallab", "Blurcol_" + index_str, spot.blurcol, keyFile);
                     saveToKeyfile(!pedited || spot_edited->contcol, "Locallab", "Contcol_" + index_str, spot.contcol, keyFile);
@@ -6584,6 +7324,7 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
                     saveToKeyfile(!pedited || spot_edited->gamex, "Locallab", "Gamex_" + index_str, spot.gamex, keyFile);
                     saveToKeyfile(!pedited || spot_edited->strexp, "Locallab", "Strexp_" + index_str, spot.strexp, keyFile);
                     saveToKeyfile(!pedited || spot_edited->angexp, "Locallab", "Angexp_" + index_str, spot.angexp, keyFile);
+                    saveToKeyfile(!pedited || spot_edited->featherexp, "Locallab", "Featherexp_" + index_str, spot.featherexp, keyFile);
                     saveToKeyfile(!pedited || spot_edited->excurve, "Locallab", "ExCurve_" + index_str, spot.excurve, keyFile);
                     saveToKeyfile(!pedited || spot_edited->norm, "Locallab", "Norm_" + index_str, spot.norm, keyFile);
                     saveToKeyfile(!pedited || spot_edited->inversex, "Locallab", "Inversex_" + index_str, spot.inversex, keyFile);
@@ -6611,6 +7352,7 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
                     saveToKeyfile(!pedited || spot_edited->gamm, "Locallab", "Gamm_" + index_str, spot.gamm, keyFile);
                     saveToKeyfile(!pedited || spot_edited->fatamount, "Locallab", "Fatamount_" + index_str, spot.fatamount, keyFile);
                     saveToKeyfile(!pedited || spot_edited->fatdetail, "Locallab", "Fatdetail_" + index_str, spot.fatdetail, keyFile);
+                    saveToKeyfile(!pedited || spot_edited->fatsatur, "Locallab", "Fatsatur_" + index_str, spot.fatsatur, keyFile);
                     saveToKeyfile(!pedited || spot_edited->fatanchor, "Locallab", "Fatanchor_" + index_str, spot.fatanchor, keyFile);
                     saveToKeyfile(!pedited || spot_edited->fatlevel, "Locallab", "Fatlevel_" + index_str, spot.fatlevel, keyFile);
                     saveToKeyfile(!pedited || spot_edited->recothrese, "Locallab", "Recothrese_" + index_str, spot.recothrese, keyFile);
@@ -6624,7 +7366,7 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
                     saveToKeyfile(!pedited || spot_edited->complexshadhigh, "Locallab", "Complexshadhigh_" + index_str, spot.complexshadhigh, keyFile);
                     saveToKeyfile(!pedited || spot_edited->shMethod, "Locallab", "ShMethod_" + index_str, spot.shMethod, keyFile);
 
-                    for (int j = 0; j < 5; j++) {
+                    for (int j = 0; j < 6; j++) {
                         saveToKeyfile(!pedited || spot_edited->multsh[j], "Locallab", "Multsh" + std::to_string(j) + "_" + index_str, spot.multsh[j], keyFile);
                     }
 
@@ -6643,6 +7385,7 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
                     saveToKeyfile(!pedited || spot_edited->blurSHde, "Locallab", "BlurSHde_" + index_str, spot.blurSHde, keyFile);
                     saveToKeyfile(!pedited || spot_edited->strSH, "Locallab", "StrSH_" + index_str, spot.strSH, keyFile);
                     saveToKeyfile(!pedited || spot_edited->angSH, "Locallab", "AngSH_" + index_str, spot.angSH, keyFile);
+                    saveToKeyfile(!pedited || spot_edited->featherSH, "Locallab", "FeatherSH_" + index_str, spot.featherSH, keyFile);
                     saveToKeyfile(!pedited || spot_edited->inverssh, "Locallab", "Inverssh_" + index_str, spot.inverssh, keyFile);
                     saveToKeyfile(!pedited || spot_edited->chromaskSH, "Locallab", "ChromaskSH_" + index_str, spot.chromaskSH, keyFile);
                     saveToKeyfile(!pedited || spot_edited->gammaskSH, "Locallab", "GammaskSH_" + index_str, spot.gammaskSH, keyFile);
@@ -6688,6 +7431,7 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
                     saveToKeyfile(!pedited || spot_edited->strvibab, "Locallab", "Strvibab_" + index_str, spot.strvibab, keyFile);
                     saveToKeyfile(!pedited || spot_edited->strvibh, "Locallab", "Strvibh_" + index_str, spot.strvibh, keyFile);
                     saveToKeyfile(!pedited || spot_edited->angvib, "Locallab", "Angvib_" + index_str, spot.angvib, keyFile);
+                    saveToKeyfile(!pedited || spot_edited->angvib, "Locallab", "Feathervib_" + index_str, spot.feathervib, keyFile);
                     saveToKeyfile(!pedited || spot_edited->Lmaskvibcurve, "Locallab", "LmaskvibCurve_" + index_str, spot.Lmaskvibcurve, keyFile);
                     saveToKeyfile(!pedited || spot_edited->recothresv, "Locallab", "Recothresv_" + index_str, spot.recothresv, keyFile);
                     saveToKeyfile(!pedited || spot_edited->lowthresv, "Locallab", "Lowthresv_" + index_str, spot.lowthresv, keyFile);
@@ -6833,6 +7577,7 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
                     saveToKeyfile(!pedited || spot_edited->equilret, "Locallab", "Equilret_" + index_str, spot.equilret, keyFile);
                     saveToKeyfile(!pedited || spot_edited->loglin, "Locallab", "Loglin_" + index_str, spot.loglin, keyFile);
                     saveToKeyfile(!pedited || spot_edited->dehazeSaturation, "Locallab", "dehazeSaturation_" + index_str, spot.dehazeSaturation, keyFile);
+                    saveToKeyfile(!pedited || spot_edited->dehazeblack, "Locallab", "dehazeblack_" + index_str, spot.dehazeblack, keyFile);
                     saveToKeyfile(!pedited || spot_edited->softradiusret, "Locallab", "Softradiusret_" + index_str, spot.softradiusret, keyFile);
                     saveToKeyfile(!pedited || spot_edited->CCmaskreticurve, "Locallab", "CCmaskretiCurve_" + index_str, spot.CCmaskreticurve, keyFile);
                     saveToKeyfile(!pedited || spot_edited->LLmaskreticurve, "Locallab", "LLmaskretiCurve_" + index_str, spot.LLmaskreticurve, keyFile);
@@ -6880,6 +7625,7 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
                     saveToKeyfile(!pedited || spot_edited->lcdarkness, "Locallab", "Lcdarkness_" + index_str, spot.lcdarkness, keyFile);
                     saveToKeyfile(!pedited || spot_edited->lclightness, "Locallab", "Lclightness_" + index_str, spot.lclightness, keyFile);
                     saveToKeyfile(!pedited || spot_edited->sigmalc, "Locallab", "Sigmalc_" + index_str, spot.sigmalc, keyFile);
+                    saveToKeyfile(!pedited || spot_edited->offslc, "Locallab", "Offslc_" + index_str, spot.offslc, keyFile);
                     saveToKeyfile(!pedited || spot_edited->levelwav, "Locallab", "Levelwav_" + index_str, spot.levelwav, keyFile);
                     saveToKeyfile(!pedited || spot_edited->residcont, "Locallab", "Residcont_" + index_str, spot.residcont, keyFile);
                     saveToKeyfile(!pedited || spot_edited->residsha, "Locallab", "Residsha_" + index_str, spot.residsha, keyFile);
@@ -6909,6 +7655,7 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
                     saveToKeyfile(!pedited || spot_edited->sigmalc2, "Locallab", "Sigmalc2_" + index_str, spot.sigmalc2, keyFile);
                     saveToKeyfile(!pedited || spot_edited->strwav, "Locallab", "Strwav_" + index_str, spot.strwav, keyFile);
                     saveToKeyfile(!pedited || spot_edited->angwav, "Locallab", "Angwav_" + index_str, spot.angwav, keyFile);
+                    saveToKeyfile(!pedited || spot_edited->featherwav, "Locallab", "Featherwav_" + index_str, spot.featherwav, keyFile);
                     saveToKeyfile(!pedited || spot_edited->strengthw, "Locallab", "Strengthw_" + index_str, spot.strengthw, keyFile);
                     saveToKeyfile(!pedited || spot_edited->sigmaed, "Locallab", "Sigmaed_" + index_str, spot.sigmaed, keyFile);
                     saveToKeyfile(!pedited || spot_edited->radiusw, "Locallab", "Radiusw_" + index_str, spot.radiusw, keyFile);
@@ -6930,6 +7677,7 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
                     saveToKeyfile(!pedited || spot_edited->wavgradl, "Locallab", "Wavgradl_" + index_str, spot.wavgradl, keyFile);
                     saveToKeyfile(!pedited || spot_edited->wavcompre, "Locallab", "Wavcompre_" + index_str, spot.wavcompre, keyFile);
                     saveToKeyfile(!pedited || spot_edited->origlc, "Locallab", "Origlc_" + index_str, spot.origlc, keyFile);
+                    saveToKeyfile(!pedited || spot_edited->processwav, "Locallab", "processwav_" + index_str, spot.processwav, keyFile);
                     saveToKeyfile(!pedited || spot_edited->localcontMethod, "Locallab", "localcontMethod_" + index_str, spot.localcontMethod, keyFile);
                     saveToKeyfile(!pedited || spot_edited->localedgMethod, "Locallab", "localedgMethod_" + index_str, spot.localedgMethod, keyFile);
                     saveToKeyfile(!pedited || spot_edited->localneiMethod, "Locallab", "localneiMethod_" + index_str, spot.localneiMethod, keyFile);
@@ -7007,8 +7755,13 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
                     saveToKeyfile(!pedited || spot_edited->fullimage, "Locallab", "Fullimage_" + index_str, spot.fullimage, keyFile);
                     saveToKeyfile(!pedited || spot_edited->repar, "Locallab", "Repart_" + index_str, spot.repar, keyFile);
                     saveToKeyfile(!pedited || spot_edited->ciecam, "Locallab", "Ciecam_" + index_str, spot.ciecam, keyFile);
+                    saveToKeyfile(!pedited || spot_edited->satlog, "Locallab", "Satlog_" + index_str, spot.satlog, keyFile);
                     saveToKeyfile(!pedited || spot_edited->blackEv, "Locallab", "BlackEv_" + index_str, spot.blackEv, keyFile);
                     saveToKeyfile(!pedited || spot_edited->whiteEv, "Locallab", "WhiteEv_" + index_str, spot.whiteEv, keyFile);
+                    saveToKeyfile(!pedited || spot_edited->whiteslog, "Locallab", "Whiteslog_" + index_str, spot.whiteslog, keyFile);
+                    saveToKeyfile(!pedited || spot_edited->blackslog, "Locallab", "Blackslog_" + index_str, spot.blackslog, keyFile);
+                    saveToKeyfile(!pedited || spot_edited->comprlog, "Locallab", "Comprlog_" + index_str, spot.comprlog, keyFile);
+                    saveToKeyfile(!pedited || spot_edited->strelog, "Locallab", "Strelog_" + index_str, spot.strelog, keyFile);
                     saveToKeyfile(!pedited || spot_edited->detail, "Locallab", "Detail_" + index_str, spot.detail, keyFile);
                     saveToKeyfile(!pedited || spot_edited->sensilog, "Locallab", "Sensilog_" + index_str, spot.sensilog, keyFile);
                     saveToKeyfile(!pedited || spot_edited->baselog, "Locallab", "Baselog_" + index_str, spot.baselog, keyFile);
@@ -7016,6 +7769,7 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
                     saveToKeyfile(!pedited || spot_edited->surround, "Locallab", "Surround_" + index_str, spot.surround, keyFile);
                     saveToKeyfile(!pedited || spot_edited->strlog, "Locallab", "Strlog_" + index_str, spot.strlog, keyFile);
                     saveToKeyfile(!pedited || spot_edited->anglog, "Locallab", "Anglog_" + index_str, spot.anglog, keyFile);
+                    saveToKeyfile(!pedited || spot_edited->featherlog, "Locallab", "Featherlog_" + index_str, spot.featherlog, keyFile);
                     saveToKeyfile(!pedited || spot_edited->CCmaskcurveL, "Locallab", "CCmaskCurveL_" + index_str, spot.CCmaskcurveL, keyFile);
                     saveToKeyfile(!pedited || spot_edited->LLmaskcurveL, "Locallab", "LLmaskCurveL_" + index_str, spot.LLmaskcurveL, keyFile);
                     saveToKeyfile(!pedited || spot_edited->HHmaskcurveL, "Locallab", "HHmaskCurveL_" + index_str, spot.HHmaskcurveL, keyFile);
@@ -7055,6 +7809,7 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
                     saveToKeyfile(!pedited || spot_edited->shadmask, "Locallab", "Shadmask_" + index_str, spot.shadmask, keyFile);
                     saveToKeyfile(!pedited || spot_edited->str_mask, "Locallab", "Str_mask_" + index_str, spot.str_mask, keyFile);
                     saveToKeyfile(!pedited || spot_edited->ang_mask, "Locallab", "Ang_mask_" + index_str, spot.ang_mask, keyFile);
+                    saveToKeyfile(!pedited || spot_edited->feather_mask, "Locallab", "Feather_mask_" + index_str, spot.feather_mask, keyFile);
                     saveToKeyfile(!pedited || spot_edited->HHhmask_curve, "Locallab", "HHhmask_Curve_" + index_str, spot.HHhmask_curve, keyFile);
                     saveToKeyfile(!pedited || spot_edited->Lmask_curve, "Locallab", "Lmask_Curve_" + index_str, spot.Lmask_curve, keyFile);
                     saveToKeyfile(!pedited || spot_edited->LLmask_curvewav, "Locallab", "LLmask_Curvewav_" + index_str, spot.LLmask_curvewav, keyFile);
@@ -7063,18 +7818,35 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
                 //ciecam
                 if ((!pedited || spot_edited->visicie) && spot.visicie) {
                     saveToKeyfile(!pedited || spot_edited->expcie, "Locallab", "Expcie_" + index_str, spot.expcie, keyFile);
+                    saveToKeyfile(!pedited || spot_edited->expprecam, "Locallab", "Expprecam_" + index_str, spot.expprecam, keyFile);
                     saveToKeyfile(!pedited || spot_edited->complexcie, "Locallab", "Complexcie_" + index_str, spot.complexcie, keyFile);
                     saveToKeyfile(!pedited || spot_edited->reparcie, "Locallab", "Reparcie_" + index_str, spot.reparcie, keyFile);
                     saveToKeyfile(!pedited || spot_edited->sensicie, "Locallab", "Sensicie_" + index_str, spot.sensicie, keyFile);
                     saveToKeyfile(!pedited || spot_edited->Autograycie, "Locallab", "AutoGraycie_" + index_str, spot.Autograycie, keyFile);
-                    saveToKeyfile(!pedited || spot_edited->forcejz, "Locallab", "Forcejz_" + index_str, spot.forcejz, keyFile);
-                    saveToKeyfile(!pedited || spot_edited->forcebw, "Locallab", "Forcebw_" + index_str, spot.forcebw, keyFile);
+                    saveToKeyfile(!pedited || spot_edited->sigybjz12, "Locallab", "sigybjz12_" + index_str, spot.sigybjz12, keyFile);
                     saveToKeyfile(!pedited || spot_edited->qtoj, "Locallab", "Qtoj_" + index_str, spot.qtoj, keyFile);
                     saveToKeyfile(!pedited || spot_edited->jabcie, "Locallab", "jabcie_" + index_str, spot.jabcie, keyFile);
-                    saveToKeyfile(!pedited || spot_edited->sigmoidqjcie, "Locallab", "sigmoidqjcie_" + index_str, spot.sigmoidqjcie, keyFile);
+                    saveToKeyfile(!pedited || spot_edited->comprcieauto, "Locallab", "comprcieauto_" + index_str, spot.comprcieauto, keyFile);
+                    saveToKeyfile(!pedited || spot_edited->normcie12, "Locallab", "normcie12_" + index_str, spot.normcie12, keyFile);
+                    saveToKeyfile(!pedited || spot_edited->normcie, "Locallab", "normcie_" + index_str, spot.normcie, keyFile);
+                    saveToKeyfile(!pedited || spot_edited->gamutcie, "Locallab", "gamutcie_" + index_str, spot.gamutcie, keyFile);
+                    saveToKeyfile(!pedited || spot_edited->bwcie, "Locallab", "bwcie_" + index_str, spot.bwcie, keyFile);
+                    saveToKeyfile(!pedited || spot_edited->sigcie, "Locallab", "sigcie_" + index_str, spot.sigcie, keyFile);
                     saveToKeyfile(!pedited || spot_edited->logcie, "Locallab", "logcie_" + index_str, spot.logcie, keyFile);
+                    saveToKeyfile(!pedited || spot_edited->satcie, "Locallab", "satcie_" + index_str, spot.satcie, keyFile);
+                    saveToKeyfile(!pedited || spot_edited->logcieq, "Locallab", "logcieq_" + index_str, spot.logcieq, keyFile);
+					saveToKeyfile(!pedited || spot_edited->smoothcie, "Locallab", "smoothcie_" + index_str, spot.smoothcie, keyFile);
+                    saveToKeyfile(!pedited || spot_edited->smoothcietrc, "Locallab", "smoothcietrc_" + index_str, spot.smoothcietrc, keyFile);
+                    saveToKeyfile(!pedited || spot_edited->smoothcietrcrel, "Locallab", "smoothcietrcrel_" + index_str, spot.smoothcietrcrel, keyFile);
+                    saveToKeyfile(!pedited || spot_edited->smoothcieyb, "Locallab", "smoothcieyb_" + index_str, spot.smoothcieyb, keyFile);
+                    saveToKeyfile(!pedited || spot_edited->smoothcielum, "Locallab", "smoothcielum_" + index_str, spot.smoothcielum, keyFile);
+                    saveToKeyfile(!pedited || spot_edited->smoothciehigh, "Locallab", "smoothciehigh_" + index_str, spot.smoothciehigh, keyFile);
+                    saveToKeyfile(!pedited || spot_edited->smoothcielnk, "Locallab", "smoothcielnk_" + index_str, spot.smoothcielnk, keyFile);
                     saveToKeyfile(!pedited || spot_edited->logjz, "Locallab", "Logjz_" + index_str, spot.logjz, keyFile);
+                    saveToKeyfile(!pedited || spot_edited->sigjz12, "Locallab", "Sigjz12_" + index_str, spot.sigjz12, keyFile);
                     saveToKeyfile(!pedited || spot_edited->sigjz, "Locallab", "Sigjz_" + index_str, spot.sigjz, keyFile);
+                    saveToKeyfile(!pedited || spot_edited->forcebw, "Locallab", "Forcebw_" + index_str, spot.forcebw, keyFile);
+                    saveToKeyfile(!pedited || spot_edited->sigq12, "Locallab", "Sigq12_" + index_str, spot.sigq12, keyFile);
                     saveToKeyfile(!pedited || spot_edited->sigq, "Locallab", "Sigq_" + index_str, spot.sigq, keyFile);
                     saveToKeyfile(!pedited || spot_edited->chjzcie, "Locallab", "chjzcie_" + index_str, spot.chjzcie, keyFile);
                     saveToKeyfile(!pedited || spot_edited->sourceGraycie, "Locallab", "SourceGraycie_" + index_str, spot.sourceGraycie, keyFile);
@@ -7082,6 +7854,9 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
                     saveToKeyfile(!pedited || spot_edited->sursourcie, "Locallab", "Sursourcie_" + index_str, spot.sursourcie, keyFile);
                     saveToKeyfile(!pedited || spot_edited->modecie, "Locallab", "Modecie_" + index_str, spot.modecie, keyFile);
                     saveToKeyfile(!pedited || spot_edited->modecam, "Locallab", "Modecam_" + index_str, spot.modecam, keyFile);
+                    saveToKeyfile(!pedited || spot_edited->modeQJ, "Locallab", "ModeQJ_" + index_str, spot.modeQJ, keyFile);
+                    saveToKeyfile(!pedited || spot_edited->bwevMethod12, "Locallab", "bwevMethod12_" + index_str, spot.bwevMethod12, keyFile);
+                    saveToKeyfile(!pedited || spot_edited->bwevMethod, "Locallab", "bwevMethod_" + index_str, spot.bwevMethod, keyFile);
                     saveToKeyfile(!pedited || spot_edited->saturlcie, "Locallab", "Saturlcie_" + index_str, spot.saturlcie, keyFile);
                     saveToKeyfile(!pedited || spot_edited->rstprotectcie, "Locallab", "Rstprotectcie_" + index_str, spot.rstprotectcie, keyFile);
                     saveToKeyfile(!pedited || spot_edited->chromlcie, "Locallab", "Chromlcie_" + index_str, spot.chromlcie, keyFile);
@@ -7105,8 +7880,10 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
                     saveToKeyfile(!pedited || spot_edited->lightlcie, "Locallab", "Lightlcie_" + index_str, spot.lightlcie, keyFile);
                     saveToKeyfile(!pedited || spot_edited->lightjzcie, "Locallab", "Lightjzcie_" + index_str, spot.lightjzcie, keyFile);
                     saveToKeyfile(!pedited || spot_edited->lightqcie, "Locallab", "Brightqcie_" + index_str, spot.lightqcie, keyFile);
+                    saveToKeyfile(!pedited || spot_edited->lightsigqcie, "Locallab", "Brightsigqcie_" + index_str, spot.lightsigqcie, keyFile);
                     saveToKeyfile(!pedited || spot_edited->contlcie, "Locallab", "Contlcie_" + index_str, spot.contlcie, keyFile);
                     saveToKeyfile(!pedited || spot_edited->contjzcie, "Locallab", "Contjzcie_" + index_str, spot.contjzcie, keyFile);
+                    saveToKeyfile(!pedited || spot_edited->detailciejz, "Locallab", "Detailciejz_" + index_str, spot.detailciejz, keyFile);
                     saveToKeyfile(!pedited || spot_edited->adapjzcie, "Locallab", "Adapjzcie_" + index_str, spot.adapjzcie, keyFile);
                     saveToKeyfile(!pedited || spot_edited->jz100, "Locallab", "Jz100_" + index_str, spot.jz100, keyFile);
                     saveToKeyfile(!pedited || spot_edited->pqremap, "Locallab", "PQremap_" + index_str, spot.pqremap, keyFile);
@@ -7126,33 +7903,85 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
                     saveToKeyfile(!pedited || spot_edited->blackEvjz, "Locallab", "BlackEvjz_" + index_str, spot.blackEvjz, keyFile);
                     saveToKeyfile(!pedited || spot_edited->whiteEvjz, "Locallab", "WhiteEvjz_" + index_str, spot.whiteEvjz, keyFile);
                     saveToKeyfile(!pedited || spot_edited->targetjz, "Locallab", "Targetjz_" + index_str, spot.targetjz, keyFile);
+                    saveToKeyfile(!pedited || spot_edited->sigmoidldacie12, "Locallab", "Sigmoidldacie12_" + index_str, spot.sigmoidldacie12, keyFile);
+                    saveToKeyfile(!pedited || spot_edited->sigmoidthcie12, "Locallab", "Sigmoidthcie12_" + index_str, spot.sigmoidthcie12, keyFile);
+                    saveToKeyfile(!pedited || spot_edited->sigmoidblcie12, "Locallab", "Sigmoidblcie12_" + index_str, spot.sigmoidblcie12, keyFile);
+
                     saveToKeyfile(!pedited || spot_edited->sigmoidldacie, "Locallab", "Sigmoidldacie_" + index_str, spot.sigmoidldacie, keyFile);
                     saveToKeyfile(!pedited || spot_edited->sigmoidthcie, "Locallab", "Sigmoidthcie_" + index_str, spot.sigmoidthcie, keyFile);
                     saveToKeyfile(!pedited || spot_edited->sigmoidblcie, "Locallab", "Sigmoidblcie_" + index_str, spot.sigmoidblcie, keyFile);
+                    saveToKeyfile(!pedited || spot_edited->sigmoidsenscie, "Locallab", "Sigmoidsenscie_" + index_str, spot.sigmoidsenscie, keyFile);
+
+                    saveToKeyfile(!pedited || spot_edited->comprcie, "Locallab", "comprcie_" + index_str, spot.comprcie, keyFile);
+                    saveToKeyfile(!pedited || spot_edited->strcielog, "Locallab", "strcielog_" + index_str, spot.strcielog, keyFile);
+                    saveToKeyfile(!pedited || spot_edited->comprcieth, "Locallab", "comprcieth_" + index_str, spot.comprcieth, keyFile);
+                    saveToKeyfile(!pedited || spot_edited->gamjcie, "Locallab", "gamjcie_" + index_str, spot.gamjcie, keyFile);
+                    saveToKeyfile(!pedited || spot_edited->smoothcieth, "Locallab", "smoothcieth_" + index_str, spot.smoothcieth, keyFile);
+                    saveToKeyfile(!pedited || spot_edited->slopjcie, "Locallab", "slopjcie_" + index_str, spot.slopjcie, keyFile);
+                    saveToKeyfile(!pedited || spot_edited->slopesmo, "Locallab", "slopesmo_" + index_str, spot.slopesmo, keyFile);
+                    saveToKeyfile(!pedited || spot_edited->slopesmoq, "Locallab", "slopesmoq_" + index_str, spot.slopesmoq, keyFile);
+                    saveToKeyfile(!pedited || spot_edited->slopesmor, "Locallab", "slopesmor_" + index_str, spot.slopesmor, keyFile);
+                    saveToKeyfile(!pedited || spot_edited->slopesmog, "Locallab", "slopesmog_" + index_str, spot.slopesmog, keyFile);
+                    saveToKeyfile(!pedited || spot_edited->slopesmob, "Locallab", "slopesmob_" + index_str, spot.slopesmob, keyFile);
+                    saveToKeyfile(!pedited || spot_edited->contsig, "Locallab", "contsig_" + index_str, spot.contsig, keyFile);
+                    saveToKeyfile(!pedited || spot_edited->skewsig, "Locallab", "skewsig_" + index_str, spot.skewsig, keyFile);
+                    saveToKeyfile(!pedited || spot_edited->whitsig, "Locallab", "whitsig_" + index_str, spot.whitsig, keyFile);
+
+                    saveToKeyfile(!pedited || spot_edited->kslopesmor, "Locallab", "kslopesmor_" + index_str, spot.kslopesmor, keyFile);
+                    saveToKeyfile(!pedited || spot_edited->kslopesmog, "Locallab", "kslopesmog_" + index_str, spot.kslopesmog, keyFile);
+                    saveToKeyfile(!pedited || spot_edited->kslopesmob, "Locallab", "kslopesmob_" + index_str, spot.kslopesmob, keyFile);
+                    saveToKeyfile(!pedited || spot_edited->midtcie, "Locallab", "midtcie_" + index_str, spot.midtcie, keyFile);
+                    saveToKeyfile(!pedited || spot_edited->redxl, "Locallab", "redxl_" + index_str, spot.redxl, keyFile);
+                    saveToKeyfile(!pedited || spot_edited->redyl, "Locallab", "redyl_" + index_str, spot.redyl, keyFile);
+                    saveToKeyfile(!pedited || spot_edited->grexl, "Locallab", "grexl_" + index_str, spot.grexl, keyFile);
+                    saveToKeyfile(!pedited || spot_edited->greyl, "Locallab", "greyl_" + index_str, spot.greyl, keyFile);
+                    saveToKeyfile(!pedited || spot_edited->bluxl, "Locallab", "bluxl_" + index_str, spot.bluxl, keyFile);
+                    saveToKeyfile(!pedited || spot_edited->bluyl, "Locallab", "bluyl_" + index_str, spot.bluyl, keyFile);
+                    saveToKeyfile(!pedited || spot_edited->refi, "Locallab", "refi_" + index_str, spot.refi, keyFile);
+                    saveToKeyfile(!pedited || spot_edited->shiftxl, "Locallab", "shiftxl_" + index_str, spot.shiftxl, keyFile);
+                    saveToKeyfile(!pedited || spot_edited->shiftyl, "Locallab", "shiftyl_" + index_str, spot.shiftyl, keyFile);
+                    
+                    saveToKeyfile(!pedited || spot_edited->labgridcieALow, "Locallab", "labgridcieALow_" + index_str, spot.labgridcieALow, keyFile);
+                    saveToKeyfile(!pedited || spot_edited->labgridcieBLow, "Locallab", "labgridcieBLow_" + index_str, spot.labgridcieBLow, keyFile);
+                    saveToKeyfile(!pedited || spot_edited->labgridcieAHigh, "Locallab", "labgridcieAHigh_" + index_str, spot.labgridcieAHigh, keyFile);
+                    saveToKeyfile(!pedited || spot_edited->labgridcieBHigh, "Locallab", "labgridcieBHigh_" + index_str, spot.labgridcieBHigh, keyFile);
+                    saveToKeyfile(!pedited || spot_edited->labgridcieGx, "Locallab", "labgridcieGx_" + index_str, spot.labgridcieGx, keyFile);
+                    saveToKeyfile(!pedited || spot_edited->labgridcieGy, "Locallab", "labgridcieGy_" + index_str, spot.labgridcieGy, keyFile);
+                    saveToKeyfile(!pedited || spot_edited->labgridcieWx, "Locallab", "labgridcieWx_" + index_str, spot.labgridcieWx, keyFile);
+                    saveToKeyfile(!pedited || spot_edited->labgridcieWy, "Locallab", "labgridcieWy_" + index_str, spot.labgridcieWy, keyFile);
+                    saveToKeyfile(!pedited || spot_edited->labgridcieMx, "Locallab", "labgridcieMx_" + index_str, spot.labgridcieMx, keyFile);
+                    saveToKeyfile(!pedited || spot_edited->labgridcieMy, "Locallab", "labgridcieMy_" + index_str, spot.labgridcieMy, keyFile);
+
+                    saveToKeyfile(!pedited || spot_edited->whitescie, "Locallab", "whitescie_" + index_str, spot.whitescie, keyFile);
+                    saveToKeyfile(!pedited || spot_edited->blackscie, "Locallab", "blackscie_" + index_str, spot.blackscie, keyFile);
+                    saveToKeyfile(!pedited || spot_edited->illMethod, "Locallab", "illMethod_" + index_str, spot.illMethod, keyFile);
+                    saveToKeyfile(!pedited || spot_edited->smoothciemet, "Locallab", "smoothciemet_" + index_str, spot.smoothciemet, keyFile);
+                    saveToKeyfile(!pedited || spot_edited->primMethod, "Locallab", "primMethod_" + index_str, spot.primMethod, keyFile);
+                    saveToKeyfile(!pedited || spot_edited->catMethod, "Locallab", "catMethod_" + index_str, spot.catMethod, keyFile);
+                    saveToKeyfile(!pedited || spot_edited->sigmoidldajzcie12, "Locallab", "Sigmoidldajzcie12_" + index_str, spot.sigmoidldajzcie12, keyFile);
+                    saveToKeyfile(!pedited || spot_edited->sigmoidthjzcie12, "Locallab", "Sigmoidthjzcie12_" + index_str, spot.sigmoidthjzcie12, keyFile);
+                    saveToKeyfile(!pedited || spot_edited->sigmoidbljzcie12, "Locallab", "Sigmoidbljzcie12_" + index_str, spot.sigmoidbljzcie12, keyFile);
                     saveToKeyfile(!pedited || spot_edited->sigmoidldajzcie, "Locallab", "Sigmoidldajzcie_" + index_str, spot.sigmoidldajzcie, keyFile);
                     saveToKeyfile(!pedited || spot_edited->sigmoidthjzcie, "Locallab", "Sigmoidthjzcie_" + index_str, spot.sigmoidthjzcie, keyFile);
                     saveToKeyfile(!pedited || spot_edited->sigmoidbljzcie, "Locallab", "Sigmoidbljzcie_" + index_str, spot.sigmoidbljzcie, keyFile);
+     
                     saveToKeyfile(!pedited || spot_edited->contqcie, "Locallab", "Contqcie_" + index_str, spot.contqcie, keyFile);
+                    saveToKeyfile(!pedited || spot_edited->contsigqcie, "Locallab", "Contsigqcie_" + index_str, spot.contsigqcie, keyFile);
                     saveToKeyfile(!pedited || spot_edited->colorflcie, "Locallab", "Colorflcie_" + index_str, spot.colorflcie, keyFile);
-/*
-                    saveToKeyfile(!pedited || spot_edited->lightlzcam, "Locallab", "Lightlzcam_" + index_str, spot.lightlzcam, keyFile);
-                    saveToKeyfile(!pedited || spot_edited->lightqzcam, "Locallab", "Lightqzcam_" + index_str, spot.lightqzcam, keyFile);
-                    saveToKeyfile(!pedited || spot_edited->contlzcam, "Locallab", "Contlzcam_" + index_str, spot.contlzcam, keyFile);
-                    saveToKeyfile(!pedited || spot_edited->contqzcam, "Locallab", "Contqzcam_" + index_str, spot.contqzcam, keyFile);
-                    saveToKeyfile(!pedited || spot_edited->contthreszcam, "Locallab", "Contthreszcam_" + index_str, spot.contthreszcam, keyFile);
-                    saveToKeyfile(!pedited || spot_edited->colorflzcam, "Locallab", "Colorflzcam_" + index_str, spot.colorflzcam, keyFile);
-                    saveToKeyfile(!pedited || spot_edited->saturzcam, "Locallab", "Saturzcam_" + index_str, spot.saturzcam, keyFile);
-                    saveToKeyfile(!pedited || spot_edited->chromzcam, "Locallab", "Chromzcam_" + index_str, spot.chromzcam, keyFile);
-*/
                     saveToKeyfile(!pedited || spot_edited->targabscie, "Locallab", "Targabscie_" + index_str, spot.targabscie, keyFile);
                     saveToKeyfile(!pedited || spot_edited->targetGraycie, "Locallab", "TargetGraycie_" + index_str, spot.targetGraycie, keyFile);
                     saveToKeyfile(!pedited || spot_edited->catadcie, "Locallab", "Catadcie_" + index_str, spot.catadcie, keyFile);
                     saveToKeyfile(!pedited || spot_edited->detailcie, "Locallab", "Detailcie_" + index_str, spot.detailcie, keyFile);
+                    saveToKeyfile(!pedited || spot_edited->strgradcie, "Locallab", "Strgradcie_" + index_str, spot.strgradcie, keyFile);
+                    saveToKeyfile(!pedited || spot_edited->anggradcie, "Locallab", "Anggradcie_" + index_str, spot.anggradcie, keyFile);
+                    saveToKeyfile(!pedited || spot_edited->feathercie, "Locallab", "Feathercie_" + index_str, spot.feathercie, keyFile);
                     saveToKeyfile(!pedited || spot_edited->surroundcie, "Locallab", "Surroundcie_" + index_str, spot.surroundcie, keyFile);
                     saveToKeyfile(!pedited || spot_edited->enacieMask, "Locallab", "EnacieMask_" + index_str, spot.enacieMask, keyFile);
+                    saveToKeyfile(!pedited || spot_edited->enacieMaskall, "Locallab", "EnacieMaskall_" + index_str, spot.enacieMaskall, keyFile);
                     saveToKeyfile(!pedited || spot_edited->CCmaskciecurve, "Locallab", "CCmaskcieCurve_" + index_str, spot.CCmaskciecurve, keyFile);
                     saveToKeyfile(!pedited || spot_edited->LLmaskciecurve, "Locallab", "LLmaskcieCurve_" + index_str, spot.LLmaskciecurve, keyFile);
                     saveToKeyfile(!pedited || spot_edited->HHmaskciecurve, "Locallab", "HHmaskcieCurve_" + index_str, spot.HHmaskciecurve, keyFile);
+                    saveToKeyfile(!pedited || spot_edited->HHhmaskciecurve, "Locallab", "HHhmaskcieCurve_" + index_str, spot.HHhmaskciecurve, keyFile);
                     saveToKeyfile(!pedited || spot_edited->blendmaskcie, "Locallab", "Blendmaskcie_" + index_str, spot.blendmaskcie, keyFile);
                     saveToKeyfile(!pedited || spot_edited->radmaskcie, "Locallab", "Radmaskcie_" + index_str, spot.radmaskcie, keyFile);
                     saveToKeyfile(!pedited || spot_edited->chromaskcie, "Locallab", "Chromaskcie_" + index_str, spot.chromaskcie, keyFile);
@@ -7164,11 +7993,19 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
                     saveToKeyfile(!pedited || spot_edited->lowthrescie, "Locallab", "Lowthrescie_" + index_str, spot.lowthrescie, keyFile);
                     saveToKeyfile(!pedited || spot_edited->higthrescie, "Locallab", "Higthrescie_" + index_str, spot.higthrescie, keyFile);
                     saveToKeyfile(!pedited || spot_edited->decaycie, "Locallab", "Decaycie_" + index_str, spot.decaycie, keyFile);
+                    saveToKeyfile(!pedited || spot_edited->strumaskcie, "Locallab", "strumaskcie_" + index_str, spot.strumaskcie, keyFile);
+                    saveToKeyfile(!pedited || spot_edited->toolcie, "Locallab", "toolcie_" + index_str, spot.toolcie, keyFile);
+                    saveToKeyfile(!pedited || spot_edited->fftcieMask, "Locallab", "FftcieMask_" + index_str, spot.fftcieMask, keyFile);
+                    saveToKeyfile(!pedited || spot_edited->contcie, "Locallab", "contcie_" + index_str, spot.contcie, keyFile);
+                    saveToKeyfile(!pedited || spot_edited->blurcie, "Locallab", "blurcie_" + index_str, spot.blurcie, keyFile);
+                    saveToKeyfile(!pedited || spot_edited->blurcie, "Locallab", "highmaskcie_" + index_str, spot.highmaskcie, keyFile);
+                    saveToKeyfile(!pedited || spot_edited->blurcie, "Locallab", "shadmaskcie_" + index_str, spot.shadmaskcie, keyFile);
+                    saveToKeyfile(!pedited || spot_edited->LLmaskciecurvewav, "Locallab", "LLmaskcieCurvewav_" + index_str, spot.LLmaskciecurvewav, keyFile);
+                    saveToKeyfile(!pedited || spot_edited->csthresholdcie, "Locallab", "CSThresholdcie_" + index_str, spot.csthresholdcie.toVector(), keyFile);
 
 
 
                 }
-                
             }
         }
 
@@ -7200,6 +8037,8 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
         saveToKeyfile(!pedited || pedited->resize.longedge, "Resize", "LongEdge", resize.longedge, keyFile);
         saveToKeyfile(!pedited || pedited->resize.shortedge, "Resize", "ShortEdge", resize.shortedge, keyFile);
         saveToKeyfile(!pedited || pedited->resize.allowUpscaling, "Resize", "AllowUpscaling", resize.allowUpscaling, keyFile);
+
+        saveFramingParams(keyFile, framing, pedited);
 
 // Post demosaic sharpening
         saveToKeyfile(!pedited || pedited->pdsharpening.enabled, "PostDemosaicSharpening", "Enabled", pdsharpening.enabled, keyFile);
@@ -7267,7 +8106,8 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
                 {ColorManagementParams::Illuminant::D120, "D120"},
                 {ColorManagementParams::Illuminant::STDA, "stda"},
                 {ColorManagementParams::Illuminant::TUNGSTEN_2000K, "2000"},
-                {ColorManagementParams::Illuminant::TUNGSTEN_1500K, "1500"}
+                {ColorManagementParams::Illuminant::TUNGSTEN_1500K, "1500"},
+                {ColorManagementParams::Illuminant::E, "E"}
             },
             icm.will,
             keyFile
@@ -7286,6 +8126,7 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
                 {ColorManagementParams::Primaries::WIDE_GAMUT, "wid"},
                 {ColorManagementParams::Primaries::ACES_P0, "ac0"},
                 {ColorManagementParams::Primaries::JDC_MAX, "jdcmax"},
+                {ColorManagementParams::Primaries::JDC_MAXSTDA, "jdcmaxstdA"},
                 {ColorManagementParams::Primaries::BRUCE_RGB, "bru"},
                 {ColorManagementParams::Primaries::BETA_RGB, "bet"},
                 {ColorManagementParams::Primaries::BEST_RGB, "bst"},
@@ -7295,14 +8136,40 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
             icm.wprim,
             keyFile
         );
-        saveToKeyfile(!pedited || pedited->icm.workingTRCGamma, "Color Management", "WorkingTRCGamma", icm.workingTRCGamma, keyFile);
-        saveToKeyfile(!pedited || pedited->icm.workingTRCSlope, "Color Management", "WorkingTRCSlope", icm.workingTRCSlope, keyFile);
+        saveToKeyfile(
+            !pedited || pedited->icm.wcat,
+            "Color Management",
+            "Wcat",
+            {
+                {ColorManagementParams::Cat::BRAD, "brad"},
+                {ColorManagementParams::Cat::CAT16, "cat16"},
+                {ColorManagementParams::Cat::CAT02, "cat02"},
+                {ColorManagementParams::Cat::CAT_VK, "cat_vk"},
+                {ColorManagementParams::Cat::CAT_XYZ, "cat_xyz"}
+            },
+            icm.wcat,
+            keyFile
+        );
+        
+        saveToKeyfile(!pedited || pedited->icm.opacityCurveWLI, "Color Management", "OpacityCurveWLI", icm.opacityCurveWLI, keyFile);
+        
+        saveToKeyfile(!pedited || pedited->icm.wGamma, "Color Management", "WorkingTRCGamma", icm.wGamma, keyFile);
+        saveToKeyfile(!pedited || pedited->icm.wSlope, "Color Management", "WorkingTRCSlope", icm.wSlope, keyFile);
+        saveToKeyfile(!pedited || pedited->icm.wmidtcie, "Color Management", "Wmidtcie", icm.wmidtcie, keyFile);
+        saveToKeyfile(!pedited || pedited->icm.sigmatrc, "Color Management", "Sigmatrc", icm.sigmatrc, keyFile);
+        saveToKeyfile(!pedited || pedited->icm.offstrc, "Color Management", "Offstrc", icm.offstrc, keyFile);
+        saveToKeyfile(!pedited || pedited->icm.residtrc, "Color Management", "Residtrc", icm.residtrc, keyFile);
+        saveToKeyfile(!pedited || pedited->icm.pyrwavtrc, "Color Management", "Pyrwavtrc", icm.pyrwavtrc, keyFile);
+        saveToKeyfile(!pedited || pedited->icm.wsmoothcie, "Color Management", "Wsmoothcie", icm.wsmoothcie, keyFile);
         saveToKeyfile(!pedited || pedited->icm.redx, "Color Management", "Redx", icm.redx, keyFile);
         saveToKeyfile(!pedited || pedited->icm.redy, "Color Management", "Redy", icm.redy, keyFile);
         saveToKeyfile(!pedited || pedited->icm.grex, "Color Management", "Grex", icm.grex, keyFile);
         saveToKeyfile(!pedited || pedited->icm.grey, "Color Management", "Grey", icm.grey, keyFile);
         saveToKeyfile(!pedited || pedited->icm.blux, "Color Management", "Blux", icm.blux, keyFile);
         saveToKeyfile(!pedited || pedited->icm.bluy, "Color Management", "Bluy", icm.bluy, keyFile);
+        saveToKeyfile(!pedited || pedited->icm.refi, "Color Management", "Refi", icm.refi, keyFile);
+        saveToKeyfile(!pedited || pedited->icm.shiftx, "Color Management", "Shiftx", icm.shiftx, keyFile);
+        saveToKeyfile(!pedited || pedited->icm.shifty, "Color Management", "Shifty", icm.shifty, keyFile);
         saveToKeyfile(!pedited || pedited->icm.labgridcieALow, "Color Management", "LabGridcieALow", icm.labgridcieALow, keyFile);
         saveToKeyfile(!pedited || pedited->icm.labgridcieBLow, "Color Management", "LabGridcieBLow", icm.labgridcieBLow, keyFile);
         saveToKeyfile(!pedited || pedited->icm.labgridcieAHigh, "Color Management", "LabGridcieAHigh", icm.labgridcieAHigh, keyFile);
@@ -7311,8 +8178,12 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
         saveToKeyfile(!pedited || pedited->icm.labgridcieGy, "Color Management", "LabGridcieGy", icm.labgridcieGy, keyFile);
         saveToKeyfile(!pedited || pedited->icm.labgridcieWx, "Color Management", "LabGridcieWx", icm.labgridcieWx, keyFile);
         saveToKeyfile(!pedited || pedited->icm.labgridcieWy, "Color Management", "LabGridcieWy", icm.labgridcieWy, keyFile);
+        saveToKeyfile(!pedited || pedited->icm.labgridcieMx, "Color Management", "LabGridcieMx", icm.labgridcieMx, keyFile);
+        saveToKeyfile(!pedited || pedited->icm.labgridcieMy, "Color Management", "LabGridcieMy", icm.labgridcieMy, keyFile);
         saveToKeyfile(!pedited || pedited->icm.preser, "Color Management", "Preser", icm.preser, keyFile);
         saveToKeyfile(!pedited || pedited->icm.fbw, "Color Management", "Fbw", icm.fbw, keyFile);
+        saveToKeyfile(!pedited || pedited->icm.trcExp, "Color Management", "TrcExp", icm.trcExp, keyFile);
+        saveToKeyfile(!pedited || pedited->icm.wavExp, "Color Management", "WavExp", icm.wavExp, keyFile);
         saveToKeyfile(!pedited || pedited->icm.gamut, "Color Management", "Gamut", icm.gamut, keyFile);
         saveToKeyfile(!pedited || pedited->icm.outputProfile, "Color Management", "OutputProfile", icm.outputProfile, keyFile);
         saveToKeyfile(
@@ -7629,6 +8500,7 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
         saveToKeyfile(!pedited || pedited->raw.bayersensor.exBlack2, "RAW Bayer", "PreBlack2", raw.bayersensor.black2, keyFile);
         saveToKeyfile(!pedited || pedited->raw.bayersensor.exBlack3, "RAW Bayer", "PreBlack3", raw.bayersensor.black3, keyFile);
         saveToKeyfile(!pedited || pedited->raw.bayersensor.exTwoGreen, "RAW Bayer", "PreTwoGreen", raw.bayersensor.twogreen, keyFile);
+        saveToKeyfile(!pedited || pedited->raw.bayersensor.Dehablack, "RAW Bayer", "Dehablack", raw.bayersensor.Dehablack, keyFile);
         saveToKeyfile(!pedited || pedited->raw.bayersensor.linenoise, "RAW Bayer", "LineDenoise", raw.bayersensor.linenoise, keyFile);
         saveToKeyfile(!pedited || pedited->raw.bayersensor.linenoise, "RAW Bayer", "LineDenoiseDirection", toUnderlying(raw.bayersensor.linenoiseDirection), keyFile);
         saveToKeyfile(!pedited || pedited->raw.bayersensor.greenEq, "RAW Bayer", "GreenEqThreshold", raw.bayersensor.greenthresh, keyFile);
@@ -7661,12 +8533,14 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
         saveToKeyfile(!pedited || pedited->raw.xtranssensor.exBlackRed, "RAW X-Trans", "PreBlackRed", raw.xtranssensor.blackred, keyFile);
         saveToKeyfile(!pedited || pedited->raw.xtranssensor.exBlackGreen, "RAW X-Trans", "PreBlackGreen", raw.xtranssensor.blackgreen, keyFile);
         saveToKeyfile(!pedited || pedited->raw.xtranssensor.exBlackBlue, "RAW X-Trans", "PreBlackBlue", raw.xtranssensor.blackblue, keyFile);
+        saveToKeyfile(!pedited || pedited->raw.xtranssensor.Dehablackx, "RAW X-Trans", "Dehablackx", raw.xtranssensor.Dehablackx, keyFile);
 
 // Raw exposition
         saveToKeyfile(!pedited || pedited->raw.exPos, "RAW", "PreExposure", raw.expos, keyFile);
 
 // MetaData
         saveToKeyfile(!pedited || pedited->metadata.mode, "MetaData", "Mode", metadata.mode, keyFile);
+        saveToKeyfile(!pedited || pedited->metadata.exifKeys, "MetaData", "ExifKeys", metadata.exifKeys, keyFile);
 
 // Film negative
         saveToKeyfile(!pedited || pedited->filmNegative.enabled, "Film Negative", "Enabled", filmNegative.enabled, keyFile);
@@ -7680,7 +8554,7 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
             saveToKeyfile(!pedited || pedited->filmNegative.refInput, "Film Negative", "GreenBase", filmNegative.refInput.g, keyFile);
             saveToKeyfile(!pedited || pedited->filmNegative.refInput, "Film Negative", "BlueBase", filmNegative.refInput.b, keyFile);
         }
-        
+
         saveToKeyfile(!pedited || pedited->filmNegative.colorSpace, "Film Negative", "ColorSpace", toUnderlying(filmNegative.colorSpace), keyFile);
         saveToKeyfile(!pedited || pedited->filmNegative.refInput, "Film Negative", "RefInput", filmNegative.refInput, keyFile);
         saveToKeyfile(!pedited || pedited->filmNegative.refOutput, "Film Negative", "RefOutput", filmNegative.refOutput, keyFile);
@@ -7694,16 +8568,30 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
 
 // EXIF change list
         if (!pedited || pedited->exif) {
-            for (ExifPairs::const_iterator i = exif.begin(); i != exif.end(); ++i) {
-                keyFile.set_string("Exif", i->first, i->second);
+            std::map<Glib::ustring, Glib::ustring> m;
+            for (auto &p : exif_keys) {
+                m[p.second] = p.first;
+            }
+            for (auto &p : metadata.exif) {
+                auto it = m.find(p.first);
+                if (it != m.end()) {
+                    keyFile.set_string("Exif", it->second, p.second);
+                }
             }
         }
 
 // IPTC change list
         if (!pedited || pedited->iptc) {
-            for (IPTCPairs::const_iterator i = iptc.begin(); i != iptc.end(); ++i) {
-                Glib::ArrayHandle<Glib::ustring> values = i->second;
-                keyFile.set_string_list("IPTC", i->first, values);
+            std::map<std::string, std::string> m;
+            for (auto &p : iptc_keys) {
+                m[p.second] = p.first;
+            }
+            for (auto &p : metadata.iptc) {
+                auto it = m.find(p.first);
+                if (it != m.end()) {
+                    Glib::ArrayHandle<Glib::ustring> values = p.second;
+                    keyFile.set_string_list("IPTC", it->second, values);
+                }
             }
         }
 
@@ -7739,8 +8627,14 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
     Glib::KeyFile keyFile;
 
     try {
+        std::unique_ptr<ParamsEdited> dummy_pedited;
+
         if (pedited) {
             pedited->set(false);
+        } else {
+            dummy_pedited.reset(new ParamsEdited());
+
+            pedited = dummy_pedited.get();
         }
 
         if (!Glib::file_test(fname, Glib::FILE_TEST_EXISTS) ||
@@ -7762,27 +8656,27 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
         }
 
         if (keyFile.has_group("General")) {
-            assignFromKeyfile(keyFile, "General", "Rank", pedited, rank, pedited->general.rank);
-            assignFromKeyfile(keyFile, "General", "ColorLabel", pedited, colorlabel, pedited->general.colorlabel);
-            assignFromKeyfile(keyFile, "General", "InTrash", pedited, inTrash, pedited->general.intrash);
+            assignFromKeyfile(keyFile, "General", "Rank", rank, pedited->general.rank);
+            assignFromKeyfile(keyFile, "General", "ColorLabel", colorlabel, pedited->general.colorlabel);
+            assignFromKeyfile(keyFile, "General", "InTrash", inTrash, pedited->general.intrash);
         }
 
         if (keyFile.has_group("Exposure")) {
             if (ppVersion < PPVERSION_AEXP) {
                 toneCurve.autoexp = false; // prevent execution of autoexp when opening file created with earlier versions of autoexp algorithm
             } else {
-                assignFromKeyfile(keyFile, "Exposure", "Auto", pedited, toneCurve.autoexp, pedited->toneCurve.autoexp);
+                assignFromKeyfile(keyFile, "Exposure", "Auto", toneCurve.autoexp, pedited->toneCurve.autoexp);
             }
 
-            assignFromKeyfile(keyFile, "Exposure", "Clip", pedited, toneCurve.clip, pedited->toneCurve.clip);
-            assignFromKeyfile(keyFile, "Exposure", "Compensation", pedited, toneCurve.expcomp, pedited->toneCurve.expcomp);
-            assignFromKeyfile(keyFile, "Exposure", "Brightness", pedited, toneCurve.brightness, pedited->toneCurve.brightness);
-            assignFromKeyfile(keyFile, "Exposure", "Contrast", pedited, toneCurve.contrast, pedited->toneCurve.contrast);
-            assignFromKeyfile(keyFile, "Exposure", "Saturation", pedited, toneCurve.saturation, pedited->toneCurve.saturation);
-            assignFromKeyfile(keyFile, "Exposure", "Black", pedited, toneCurve.black, pedited->toneCurve.black);
-            assignFromKeyfile(keyFile, "Exposure", "HighlightCompr", pedited, toneCurve.hlcompr, pedited->toneCurve.hlcompr);
-            assignFromKeyfile(keyFile, "Exposure", "HighlightComprThreshold", pedited, toneCurve.hlcomprthresh, pedited->toneCurve.hlcomprthresh);
-            assignFromKeyfile(keyFile, "Exposure", "ShadowCompr", pedited, toneCurve.shcompr, pedited->toneCurve.shcompr);
+            assignFromKeyfile(keyFile, "Exposure", "Clip", toneCurve.clip, pedited->toneCurve.clip);
+            assignFromKeyfile(keyFile, "Exposure", "Compensation", toneCurve.expcomp, pedited->toneCurve.expcomp);
+            assignFromKeyfile(keyFile, "Exposure", "Brightness", toneCurve.brightness, pedited->toneCurve.brightness);
+            assignFromKeyfile(keyFile, "Exposure", "Contrast", toneCurve.contrast, pedited->toneCurve.contrast);
+            assignFromKeyfile(keyFile, "Exposure", "Saturation", toneCurve.saturation, pedited->toneCurve.saturation);
+            assignFromKeyfile(keyFile, "Exposure", "Black", toneCurve.black, pedited->toneCurve.black);
+            assignFromKeyfile(keyFile, "Exposure", "HighlightCompr", toneCurve.hlcompr, pedited->toneCurve.hlcompr);
+            assignFromKeyfile(keyFile, "Exposure", "HighlightComprThreshold", toneCurve.hlcomprthresh, pedited->toneCurve.hlcomprthresh);
+            assignFromKeyfile(keyFile, "Exposure", "ShadowCompr", toneCurve.shcompr, pedited->toneCurve.shcompr);
 
             if (toneCurve.shcompr > 100) {
                 toneCurve.shcompr = 100; // older pp3 files can have values above 100.
@@ -7797,36 +8691,36 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
                 {"Perceptual", ToneCurveMode::PERCEPTUAL}
             };
 
-            assignFromKeyfile(keyFile, "Exposure", "CurveMode", pedited, tc_mapping, toneCurve.curveMode, pedited->toneCurve.curveMode);
-            assignFromKeyfile(keyFile, "Exposure", "CurveMode2", pedited, tc_mapping, toneCurve.curveMode2, pedited->toneCurve.curveMode2);
+            assignFromKeyfile(keyFile, "Exposure", "CurveMode", tc_mapping, toneCurve.curveMode, pedited->toneCurve.curveMode);
+            assignFromKeyfile(keyFile, "Exposure", "CurveMode2", tc_mapping, toneCurve.curveMode2, pedited->toneCurve.curveMode2);
 
             if (ppVersion > 200) {
-                assignFromKeyfile(keyFile, "Exposure", "Curve", pedited, toneCurve.curve, pedited->toneCurve.curve);
-                assignFromKeyfile(keyFile, "Exposure", "Curve2", pedited, toneCurve.curve2, pedited->toneCurve.curve2);
+                assignFromKeyfile(keyFile, "Exposure", "Curve", toneCurve.curve, pedited->toneCurve.curve);
+                assignFromKeyfile(keyFile, "Exposure", "Curve2", toneCurve.curve2, pedited->toneCurve.curve2);
             }
 
-            assignFromKeyfile(keyFile, "Exposure", "HistogramMatching", pedited, toneCurve.histmatching, pedited->toneCurve.histmatching);
+            assignFromKeyfile(keyFile, "Exposure", "HistogramMatching", toneCurve.histmatching, pedited->toneCurve.histmatching);
             if (ppVersion < 340) {
                 toneCurve.fromHistMatching = false;
                 if (pedited) {
                     pedited->toneCurve.fromHistMatching = true;
                 }
             } else {
-                assignFromKeyfile(keyFile, "Exposure", "CurveFromHistogramMatching", pedited, toneCurve.fromHistMatching, pedited->toneCurve.fromHistMatching);
+                assignFromKeyfile(keyFile, "Exposure", "CurveFromHistogramMatching", toneCurve.fromHistMatching, pedited->toneCurve.fromHistMatching);
             }
-            assignFromKeyfile(keyFile, "Exposure", "ClampOOG", pedited, toneCurve.clampOOG, pedited->toneCurve.clampOOG);
+            assignFromKeyfile(keyFile, "Exposure", "ClampOOG", toneCurve.clampOOG, pedited->toneCurve.clampOOG);
         }
 
         if (keyFile.has_group("HLRecovery")) {
-            assignFromKeyfile(keyFile, "HLRecovery", "Enabled", pedited, toneCurve.hrenabled, pedited->toneCurve.hrenabled);
-            assignFromKeyfile(keyFile, "HLRecovery", "Method", pedited, toneCurve.method, pedited->toneCurve.method);
-            assignFromKeyfile(keyFile, "HLRecovery", "Hlbl", pedited, toneCurve.hlbl, pedited->toneCurve.hlbl);
-            assignFromKeyfile(keyFile, "HLRecovery", "Hlth", pedited, toneCurve.hlth, pedited->toneCurve.hlth);
+            assignFromKeyfile(keyFile, "HLRecovery", "Enabled", toneCurve.hrenabled, pedited->toneCurve.hrenabled);
+            assignFromKeyfile(keyFile, "HLRecovery", "Method", toneCurve.method, pedited->toneCurve.method);
+            assignFromKeyfile(keyFile, "HLRecovery", "Hlbl", toneCurve.hlbl, pedited->toneCurve.hlbl);
+            assignFromKeyfile(keyFile, "HLRecovery", "Hlth", toneCurve.hlth, pedited->toneCurve.hlth);
         }
 
         if (keyFile.has_group("Channel Mixer")) {
             if (ppVersion >= 329) {
-                assignFromKeyfile(keyFile, "Channel Mixer", "Enabled", pedited, chmixer.enabled, pedited->chmixer.enabled);
+                assignFromKeyfile(keyFile, "Channel Mixer", "Enabled", chmixer.enabled, pedited->chmixer.enabled);
             } else {
                 chmixer.enabled = true;
 
@@ -7862,33 +8756,32 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
         }
 
         if (keyFile.has_group("Black & White")) {
-            assignFromKeyfile(keyFile, "Black & White", "Enabled", pedited, blackwhite.enabled, pedited->blackwhite.enabled);
-            assignFromKeyfile(keyFile, "Black & White", "Method", pedited, blackwhite.method, pedited->blackwhite.method);
-            assignFromKeyfile(keyFile, "Black & White", "Auto", pedited, blackwhite.autoc, pedited->blackwhite.autoc);
-            assignFromKeyfile(keyFile, "Black & White", "ComplementaryColors", pedited, blackwhite.enabledcc, pedited->blackwhite.enabledcc);
-            assignFromKeyfile(keyFile, "Black & White", "MixerRed", pedited, blackwhite.mixerRed, pedited->blackwhite.mixerRed);
-            assignFromKeyfile(keyFile, "Black & White", "MixerOrange", pedited, blackwhite.mixerOrange, pedited->blackwhite.mixerOrange);
-            assignFromKeyfile(keyFile, "Black & White", "MixerYellow", pedited, blackwhite.mixerYellow, pedited->blackwhite.mixerYellow);
-            assignFromKeyfile(keyFile, "Black & White", "MixerGreen", pedited, blackwhite.mixerGreen, pedited->blackwhite.mixerGreen);
-            assignFromKeyfile(keyFile, "Black & White", "MixerCyan", pedited, blackwhite.mixerCyan, pedited->blackwhite.mixerCyan);
-            assignFromKeyfile(keyFile, "Black & White", "MixerBlue", pedited, blackwhite.mixerBlue, pedited->blackwhite.mixerBlue);
-            assignFromKeyfile(keyFile, "Black & White", "MixerMagenta", pedited, blackwhite.mixerMagenta, pedited->blackwhite.mixerMagenta);
-            assignFromKeyfile(keyFile, "Black & White", "MixerPurple", pedited, blackwhite.mixerPurple, pedited->blackwhite.mixerPurple);
-            assignFromKeyfile(keyFile, "Black & White", "GammaRed", pedited, blackwhite.gammaRed, pedited->blackwhite.gammaRed);
-            assignFromKeyfile(keyFile, "Black & White", "GammaGreen", pedited, blackwhite.gammaGreen, pedited->blackwhite.gammaGreen);
-            assignFromKeyfile(keyFile, "Black & White", "GammaBlue", pedited, blackwhite.gammaBlue, pedited->blackwhite.gammaBlue);
-            assignFromKeyfile(keyFile, "Black & White", "Filter", pedited, blackwhite.filter, pedited->blackwhite.filter);
-            assignFromKeyfile(keyFile, "Black & White", "Setting", pedited, blackwhite.setting, pedited->blackwhite.setting);
-            assignFromKeyfile(keyFile, "Black & White", "LuminanceCurve", pedited, blackwhite.luminanceCurve, pedited->blackwhite.luminanceCurve);
+            assignFromKeyfile(keyFile, "Black & White", "Enabled", blackwhite.enabled, pedited->blackwhite.enabled);
+            assignFromKeyfile(keyFile, "Black & White", "Method", blackwhite.method, pedited->blackwhite.method);
+            assignFromKeyfile(keyFile, "Black & White", "Auto", blackwhite.autoc, pedited->blackwhite.autoc);
+            assignFromKeyfile(keyFile, "Black & White", "ComplementaryColors", blackwhite.enabledcc, pedited->blackwhite.enabledcc);
+            assignFromKeyfile(keyFile, "Black & White", "MixerRed", blackwhite.mixerRed, pedited->blackwhite.mixerRed);
+            assignFromKeyfile(keyFile, "Black & White", "MixerOrange", blackwhite.mixerOrange, pedited->blackwhite.mixerOrange);
+            assignFromKeyfile(keyFile, "Black & White", "MixerYellow", blackwhite.mixerYellow, pedited->blackwhite.mixerYellow);
+            assignFromKeyfile(keyFile, "Black & White", "MixerGreen", blackwhite.mixerGreen, pedited->blackwhite.mixerGreen);
+            assignFromKeyfile(keyFile, "Black & White", "MixerCyan", blackwhite.mixerCyan, pedited->blackwhite.mixerCyan);
+            assignFromKeyfile(keyFile, "Black & White", "MixerBlue", blackwhite.mixerBlue, pedited->blackwhite.mixerBlue);
+            assignFromKeyfile(keyFile, "Black & White", "MixerMagenta", blackwhite.mixerMagenta, pedited->blackwhite.mixerMagenta);
+            assignFromKeyfile(keyFile, "Black & White", "MixerPurple", blackwhite.mixerPurple, pedited->blackwhite.mixerPurple);
+            assignFromKeyfile(keyFile, "Black & White", "GammaRed", blackwhite.gammaRed, pedited->blackwhite.gammaRed);
+            assignFromKeyfile(keyFile, "Black & White", "GammaGreen", blackwhite.gammaGreen, pedited->blackwhite.gammaGreen);
+            assignFromKeyfile(keyFile, "Black & White", "GammaBlue", blackwhite.gammaBlue, pedited->blackwhite.gammaBlue);
+            assignFromKeyfile(keyFile, "Black & White", "Filter", blackwhite.filter, pedited->blackwhite.filter);
+            assignFromKeyfile(keyFile, "Black & White", "Setting", blackwhite.setting, pedited->blackwhite.setting);
+            assignFromKeyfile(keyFile, "Black & White", "LuminanceCurve", blackwhite.luminanceCurve, pedited->blackwhite.luminanceCurve);
 
-            assignFromKeyfile(keyFile, "Black & White", "BeforeCurve", pedited, blackwhite.beforeCurve, pedited->blackwhite.beforeCurve);
+            assignFromKeyfile(keyFile, "Black & White", "BeforeCurve", blackwhite.beforeCurve, pedited->blackwhite.beforeCurve);
 
-            assignFromKeyfile(keyFile, "Black & White", "Algorithm", pedited, blackwhite.algo, pedited->blackwhite.algo);
+            assignFromKeyfile(keyFile, "Black & White", "Algorithm", blackwhite.algo, pedited->blackwhite.algo);
             assignFromKeyfile(
                 keyFile,
                 "Black & White",
                 "BeforeCurveMode",
-                pedited,
                 {
                     {"Standard", BlackWhiteParams::TcMode::STD_BW},
                     {"FilmLike", BlackWhiteParams::TcMode::FILMLIKE_BW},
@@ -7899,12 +8792,11 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
                 pedited->blackwhite.beforeCurveMode
             );
 
-            assignFromKeyfile(keyFile, "Black & White", "AfterCurve", pedited, blackwhite.afterCurve, pedited->blackwhite.afterCurve);
+            assignFromKeyfile(keyFile, "Black & White", "AfterCurve", blackwhite.afterCurve, pedited->blackwhite.afterCurve);
             assignFromKeyfile(
                 keyFile,
                 "Black & White",
                 "AfterCurveMode",
-                pedited,
                 {
                     {"Standard", BlackWhiteParams::TcMode::STD_BW},
                     {"WeightedStd", BlackWhiteParams::TcMode::WEIGHTEDSTD_BW}
@@ -7915,10 +8807,10 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
         }
 
         if (keyFile.has_group("Retinex")) {
-            assignFromKeyfile(keyFile, "Retinex", "Median", pedited, retinex.medianmap, pedited->retinex.medianmap);
+            assignFromKeyfile(keyFile, "Retinex", "Median", retinex.medianmap, pedited->retinex.medianmap);
 
             if (keyFile.has_key("Retinex", "complexMethod")) {
-                assignFromKeyfile(keyFile, "Retinex", "complexMethod", pedited, retinex.complexmethod, pedited->retinex.complexmethod);
+                assignFromKeyfile(keyFile, "Retinex", "complexMethod", retinex.complexmethod, pedited->retinex.complexmethod);
             } else if (retinex.enabled) {
                 retinex.complexmethod = "expert";
                 if (pedited) {
@@ -7926,57 +8818,57 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
                 }
             }
 
-            assignFromKeyfile(keyFile, "Retinex", "RetinexMethod", pedited, retinex.retinexMethod, pedited->retinex.retinexMethod);
-            assignFromKeyfile(keyFile, "Retinex", "mapMethod", pedited, retinex.mapMethod, pedited->retinex.mapMethod);
-            assignFromKeyfile(keyFile, "Retinex", "viewMethod", pedited, retinex.viewMethod, pedited->retinex.viewMethod);
+            assignFromKeyfile(keyFile, "Retinex", "RetinexMethod", retinex.retinexMethod, pedited->retinex.retinexMethod);
+            assignFromKeyfile(keyFile, "Retinex", "mapMethod", retinex.mapMethod, pedited->retinex.mapMethod);
+            assignFromKeyfile(keyFile, "Retinex", "viewMethod", retinex.viewMethod, pedited->retinex.viewMethod);
 
-            assignFromKeyfile(keyFile, "Retinex", "Retinexcolorspace", pedited, retinex.retinexcolorspace, pedited->retinex.retinexcolorspace);
-            assignFromKeyfile(keyFile, "Retinex", "Gammaretinex", pedited, retinex.gammaretinex, pedited->retinex.gammaretinex);
-            assignFromKeyfile(keyFile, "Retinex", "Enabled", pedited, retinex.enabled, pedited->retinex.enabled);
-            assignFromKeyfile(keyFile, "Retinex", "Neigh", pedited, retinex.neigh, pedited->retinex.neigh);
-            assignFromKeyfile(keyFile, "Retinex", "Str", pedited, retinex.str, pedited->retinex.str);
-            assignFromKeyfile(keyFile, "Retinex", "Scal", pedited, retinex.scal, pedited->retinex.scal);
-            assignFromKeyfile(keyFile, "Retinex", "Iter", pedited, retinex.iter, pedited->retinex.iter);
-            assignFromKeyfile(keyFile, "Retinex", "Grad", pedited, retinex.grad, pedited->retinex.grad);
-            assignFromKeyfile(keyFile, "Retinex", "Grads", pedited, retinex.grads, pedited->retinex.grads);
-            assignFromKeyfile(keyFile, "Retinex", "Gam", pedited, retinex.gam, pedited->retinex.gam);
-            assignFromKeyfile(keyFile, "Retinex", "Slope", pedited, retinex.slope, pedited->retinex.slope);
-            assignFromKeyfile(keyFile, "Retinex", "Offs", pedited, retinex.offs, pedited->retinex.offs);
-            assignFromKeyfile(keyFile, "Retinex", "Vart", pedited, retinex.vart, pedited->retinex.vart);
-            assignFromKeyfile(keyFile, "Retinex", "Limd", pedited, retinex.limd, pedited->retinex.limd);
-            assignFromKeyfile(keyFile, "Retinex", "highl", pedited, retinex.highl, pedited->retinex.highl);
-            assignFromKeyfile(keyFile, "Retinex", "skal", pedited, retinex.skal, pedited->retinex.skal);
-            assignFromKeyfile(keyFile, "Retinex", "CDCurve", pedited, retinex.cdcurve, pedited->retinex.cdcurve);
+            assignFromKeyfile(keyFile, "Retinex", "Retinexcolorspace", retinex.retinexcolorspace, pedited->retinex.retinexcolorspace);
+            assignFromKeyfile(keyFile, "Retinex", "Gammaretinex", retinex.gammaretinex, pedited->retinex.gammaretinex);
+            assignFromKeyfile(keyFile, "Retinex", "Enabled", retinex.enabled, pedited->retinex.enabled);
+            assignFromKeyfile(keyFile, "Retinex", "Neigh", retinex.neigh, pedited->retinex.neigh);
+            assignFromKeyfile(keyFile, "Retinex", "Str", retinex.str, pedited->retinex.str);
+            assignFromKeyfile(keyFile, "Retinex", "Scal", retinex.scal, pedited->retinex.scal);
+            assignFromKeyfile(keyFile, "Retinex", "Iter", retinex.iter, pedited->retinex.iter);
+            assignFromKeyfile(keyFile, "Retinex", "Grad", retinex.grad, pedited->retinex.grad);
+            assignFromKeyfile(keyFile, "Retinex", "Grads", retinex.grads, pedited->retinex.grads);
+            assignFromKeyfile(keyFile, "Retinex", "Gam", retinex.gam, pedited->retinex.gam);
+            assignFromKeyfile(keyFile, "Retinex", "Slope", retinex.slope, pedited->retinex.slope);
+            assignFromKeyfile(keyFile, "Retinex", "Offs", retinex.offs, pedited->retinex.offs);
+            assignFromKeyfile(keyFile, "Retinex", "Vart", retinex.vart, pedited->retinex.vart);
+            assignFromKeyfile(keyFile, "Retinex", "Limd", retinex.limd, pedited->retinex.limd);
+            assignFromKeyfile(keyFile, "Retinex", "highl", retinex.highl, pedited->retinex.highl);
+            assignFromKeyfile(keyFile, "Retinex", "skal", retinex.skal, pedited->retinex.skal);
+            assignFromKeyfile(keyFile, "Retinex", "CDCurve", retinex.cdcurve, pedited->retinex.cdcurve);
 
-            assignFromKeyfile(keyFile, "Retinex", "MAPCurve", pedited, retinex.mapcurve, pedited->retinex.mapcurve);
+            assignFromKeyfile(keyFile, "Retinex", "MAPCurve", retinex.mapcurve, pedited->retinex.mapcurve);
 
-            assignFromKeyfile(keyFile, "Retinex", "CDHCurve", pedited, retinex.cdHcurve, pedited->retinex.cdHcurve);
+            assignFromKeyfile(keyFile, "Retinex", "CDHCurve", retinex.cdHcurve, pedited->retinex.cdHcurve);
 
-            assignFromKeyfile(keyFile, "Retinex", "LHCurve", pedited, retinex.lhcurve, pedited->retinex.lhcurve);
+            assignFromKeyfile(keyFile, "Retinex", "LHCurve", retinex.lhcurve, pedited->retinex.lhcurve);
 
-            assignFromKeyfile(keyFile, "Retinex", "Highlights", pedited, retinex.highlights, pedited->retinex.highlights);
-            assignFromKeyfile(keyFile, "Retinex", "HighlightTonalWidth", pedited, retinex.htonalwidth, pedited->retinex.htonalwidth);
-            assignFromKeyfile(keyFile, "Retinex", "Shadows", pedited, retinex.shadows, pedited->retinex.shadows);
-            assignFromKeyfile(keyFile, "Retinex", "ShadowTonalWidth", pedited, retinex.stonalwidth, pedited->retinex.stonalwidth);
+            assignFromKeyfile(keyFile, "Retinex", "Highlights", retinex.highlights, pedited->retinex.highlights);
+            assignFromKeyfile(keyFile, "Retinex", "HighlightTonalWidth", retinex.htonalwidth, pedited->retinex.htonalwidth);
+            assignFromKeyfile(keyFile, "Retinex", "Shadows", retinex.shadows, pedited->retinex.shadows);
+            assignFromKeyfile(keyFile, "Retinex", "ShadowTonalWidth", retinex.stonalwidth, pedited->retinex.stonalwidth);
 
-            assignFromKeyfile(keyFile, "Retinex", "Radius", pedited, retinex.radius, pedited->retinex.radius);
+            assignFromKeyfile(keyFile, "Retinex", "Radius", retinex.radius, pedited->retinex.radius);
 
-            assignFromKeyfile(keyFile, "Retinex", "TransmissionCurve", pedited, retinex.transmissionCurve, pedited->retinex.transmissionCurve);
+            assignFromKeyfile(keyFile, "Retinex", "TransmissionCurve", retinex.transmissionCurve, pedited->retinex.transmissionCurve);
 
-            assignFromKeyfile(keyFile, "Retinex", "GainTransmissionCurve", pedited, retinex.gaintransmissionCurve, pedited->retinex.gaintransmissionCurve);
+            assignFromKeyfile(keyFile, "Retinex", "GainTransmissionCurve", retinex.gaintransmissionCurve, pedited->retinex.gaintransmissionCurve);
         }
 
         if (keyFile.has_group("Local Contrast")) {
-            assignFromKeyfile(keyFile, "Local Contrast", "Enabled", pedited, localContrast.enabled, pedited->localContrast.enabled);
-            assignFromKeyfile(keyFile, "Local Contrast", "Radius", pedited, localContrast.radius, pedited->localContrast.radius);
-            assignFromKeyfile(keyFile, "Local Contrast", "Amount", pedited, localContrast.amount, pedited->localContrast.amount);
-            assignFromKeyfile(keyFile, "Local Contrast", "Darkness", pedited, localContrast.darkness, pedited->localContrast.darkness);
-            assignFromKeyfile(keyFile, "Local Contrast", "Lightness", pedited, localContrast.lightness, pedited->localContrast.lightness);
+            assignFromKeyfile(keyFile, "Local Contrast", "Enabled", localContrast.enabled, pedited->localContrast.enabled);
+            assignFromKeyfile(keyFile, "Local Contrast", "Radius", localContrast.radius, pedited->localContrast.radius);
+            assignFromKeyfile(keyFile, "Local Contrast", "Amount", localContrast.amount, pedited->localContrast.amount);
+            assignFromKeyfile(keyFile, "Local Contrast", "Darkness", localContrast.darkness, pedited->localContrast.darkness);
+            assignFromKeyfile(keyFile, "Local Contrast", "Lightness", localContrast.lightness, pedited->localContrast.lightness);
         }
 
         if (keyFile.has_group("Luminance Curve")) {
             if (ppVersion >= 329) {
-                assignFromKeyfile(keyFile, "Luminance Curve", "Enabled", pedited, labCurve.enabled, pedited->labCurve.enabled);
+                assignFromKeyfile(keyFile, "Luminance Curve", "Enabled", labCurve.enabled, pedited->labCurve.enabled);
             } else {
                 labCurve.enabled = true;
 
@@ -7985,15 +8877,15 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
                 }
             }
 
-            assignFromKeyfile(keyFile, "Luminance Curve", "Brightness", pedited, labCurve.brightness, pedited->labCurve.brightness);
-            assignFromKeyfile(keyFile, "Luminance Curve", "Contrast", pedited, labCurve.contrast, pedited->labCurve.contrast);
+            assignFromKeyfile(keyFile, "Luminance Curve", "Brightness", labCurve.brightness, pedited->labCurve.brightness);
+            assignFromKeyfile(keyFile, "Luminance Curve", "Contrast", labCurve.contrast, pedited->labCurve.contrast);
 
             if (ppVersion < 303) {
                 // transform Saturation into Chromaticity
                 // if Saturation == 0, should we set BWToning on?
-                assignFromKeyfile(keyFile, "Luminance Curve", "Saturation", pedited, labCurve.chromaticity, pedited->labCurve.chromaticity);
+                assignFromKeyfile(keyFile, "Luminance Curve", "Saturation", labCurve.chromaticity, pedited->labCurve.chromaticity);
                 // transform AvoidColorClipping into AvoidColorShift
-//                assignFromKeyfile(keyFile, "Luminance Curve", "AvoidColorClipping", pedited, labCurve.avoidcolorshift, pedited->labCurve.avoidcolorshift);
+//                assignFromKeyfile(keyFile, "Luminance Curve", "AvoidColorClipping", labCurve.avoidcolorshift, pedited->labCurve.avoidcolorshift);
             } else {
                 if (keyFile.has_key("Luminance Curve", "Chromaticity")) {
                     labCurve.chromaticity = keyFile.get_integer("Luminance Curve", "Chromaticity");
@@ -8007,10 +8899,10 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
                     }
                 }
 
-                assignFromKeyfile(keyFile, "Luminance Curve", "RedAndSkinTonesProtection", pedited, labCurve.rstprotection, pedited->labCurve.rstprotection);
+                assignFromKeyfile(keyFile, "Luminance Curve", "RedAndSkinTonesProtection", labCurve.rstprotection, pedited->labCurve.rstprotection);
             }
 
-            assignFromKeyfile(keyFile, "Luminance Curve", "LCredsk", pedited, labCurve.lcredsk, pedited->labCurve.lcredsk);
+            assignFromKeyfile(keyFile, "Luminance Curve", "LCredsk", labCurve.lcredsk, pedited->labCurve.lcredsk);
 
             if (ppVersion < 314) {
                 // Backward compatibility: If BWtoning is true, Chromaticity has to be set to -100, which will produce the same effect
@@ -8026,17 +8918,17 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
                 }
             }
 
-            assignFromKeyfile(keyFile, "Luminance Curve", "LCurve", pedited, labCurve.lcurve, pedited->labCurve.lcurve);
-            assignFromKeyfile(keyFile, "Luminance Curve", "aCurve", pedited, labCurve.acurve, pedited->labCurve.acurve);
-            assignFromKeyfile(keyFile, "Luminance Curve", "bCurve", pedited, labCurve.bcurve, pedited->labCurve.bcurve);
-            assignFromKeyfile(keyFile, "Luminance Curve", "ccCurve", pedited, labCurve.cccurve, pedited->labCurve.cccurve);
-            assignFromKeyfile(keyFile, "Luminance Curve", "chCurve", pedited, labCurve.chcurve, pedited->labCurve.chcurve);
-            assignFromKeyfile(keyFile, "Luminance Curve", "lhCurve", pedited, labCurve.lhcurve, pedited->labCurve.lhcurve);
-            assignFromKeyfile(keyFile, "Luminance Curve", "hhCurve", pedited, labCurve.hhcurve, pedited->labCurve.hhcurve);
-            assignFromKeyfile(keyFile, "Luminance Curve", "LcCurve", pedited, labCurve.lccurve, pedited->labCurve.lccurve);
-            assignFromKeyfile(keyFile, "Luminance Curve", "ClCurve", pedited, labCurve.clcurve, pedited->labCurve.clcurve);
+            assignFromKeyfile(keyFile, "Luminance Curve", "LCurve", labCurve.lcurve, pedited->labCurve.lcurve);
+            assignFromKeyfile(keyFile, "Luminance Curve", "aCurve", labCurve.acurve, pedited->labCurve.acurve);
+            assignFromKeyfile(keyFile, "Luminance Curve", "bCurve", labCurve.bcurve, pedited->labCurve.bcurve);
+            assignFromKeyfile(keyFile, "Luminance Curve", "ccCurve", labCurve.cccurve, pedited->labCurve.cccurve);
+            assignFromKeyfile(keyFile, "Luminance Curve", "chCurve", labCurve.chcurve, pedited->labCurve.chcurve);
+            assignFromKeyfile(keyFile, "Luminance Curve", "lhCurve", labCurve.lhcurve, pedited->labCurve.lhcurve);
+            assignFromKeyfile(keyFile, "Luminance Curve", "hhCurve", labCurve.hhcurve, pedited->labCurve.hhcurve);
+            assignFromKeyfile(keyFile, "Luminance Curve", "LcCurve", labCurve.lccurve, pedited->labCurve.lccurve);
+            assignFromKeyfile(keyFile, "Luminance Curve", "ClCurve", labCurve.clcurve, pedited->labCurve.clcurve);
             if (keyFile.has_key("Luminance Curve", "Gamutmunse")) {
-                assignFromKeyfile(keyFile, "Luminance Curve", "Gamutmunse", pedited, labCurve.gamutmunselmethod, pedited->labCurve.gamutmunselmethod);
+                assignFromKeyfile(keyFile, "Luminance Curve", "Gamutmunse", labCurve.gamutmunselmethod, pedited->labCurve.gamutmunselmethod);
             } else {
                 if (ppVersion < 303) {
                     if (keyFile.has_key("Luminance Curve", "AvoidColorClipping")) {
@@ -8057,10 +8949,10 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
         }
 
         if (keyFile.has_group("Sharpening")) {
-            assignFromKeyfile(keyFile, "Sharpening", "Enabled", pedited, sharpening.enabled, pedited->sharpening.enabled);
+            assignFromKeyfile(keyFile, "Sharpening", "Enabled", sharpening.enabled, pedited->sharpening.enabled);
 
             if (ppVersion >= 334) {
-                assignFromKeyfile(keyFile, "Sharpening", "Contrast", pedited, sharpening.contrast, pedited->sharpening.contrast);
+                assignFromKeyfile(keyFile, "Sharpening", "Contrast", sharpening.contrast, pedited->sharpening.contrast);
             } else {
                 sharpening.contrast = 0;
 
@@ -8069,9 +8961,9 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
                 }
             }
 
-            assignFromKeyfile(keyFile, "Sharpening", "Radius", pedited, sharpening.radius, pedited->sharpening.radius);
-            assignFromKeyfile(keyFile, "Sharpening", "BlurRadius", pedited, sharpening.blurradius, pedited->sharpening.blurradius);
-            assignFromKeyfile(keyFile, "Sharpening", "Amount", pedited, sharpening.amount, pedited->sharpening.amount);
+            assignFromKeyfile(keyFile, "Sharpening", "Radius", sharpening.radius, pedited->sharpening.radius);
+            assignFromKeyfile(keyFile, "Sharpening", "BlurRadius", sharpening.blurradius, pedited->sharpening.blurradius);
+            assignFromKeyfile(keyFile, "Sharpening", "Amount", sharpening.amount, pedited->sharpening.amount);
 
             if (keyFile.has_key("Sharpening", "Threshold")) {
                 if (ppVersion < 302) {
@@ -8090,32 +8982,32 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
                 }
             }
 
-            assignFromKeyfile(keyFile, "Sharpening", "OnlyEdges", pedited, sharpening.edgesonly, pedited->sharpening.edgesonly);
-            assignFromKeyfile(keyFile, "Sharpening", "EdgedetectionRadius", pedited, sharpening.edges_radius, pedited->sharpening.edges_radius);
-            assignFromKeyfile(keyFile, "Sharpening", "EdgeTolerance", pedited, sharpening.edges_tolerance, pedited->sharpening.edges_tolerance);
-            assignFromKeyfile(keyFile, "Sharpening", "HalocontrolEnabled", pedited, sharpening.halocontrol, pedited->sharpening.halocontrol);
-            assignFromKeyfile(keyFile, "Sharpening", "HalocontrolAmount", pedited, sharpening.halocontrol_amount, pedited->sharpening.halocontrol_amount);
-            assignFromKeyfile(keyFile, "Sharpening", "Method", pedited, sharpening.method, pedited->sharpening.method);
-            assignFromKeyfile(keyFile, "Sharpening", "DeconvRadius", pedited, sharpening.deconvradius, pedited->sharpening.deconvradius);
-            assignFromKeyfile(keyFile, "Sharpening", "DeconvAmount", pedited, sharpening.deconvamount, pedited->sharpening.deconvamount);
-            assignFromKeyfile(keyFile, "Sharpening", "DeconvDamping", pedited, sharpening.deconvdamping, pedited->sharpening.deconvdamping);
-            assignFromKeyfile(keyFile, "Sharpening", "DeconvIterations", pedited, sharpening.deconviter, pedited->sharpening.deconviter);
+            assignFromKeyfile(keyFile, "Sharpening", "OnlyEdges", sharpening.edgesonly, pedited->sharpening.edgesonly);
+            assignFromKeyfile(keyFile, "Sharpening", "EdgedetectionRadius", sharpening.edges_radius, pedited->sharpening.edges_radius);
+            assignFromKeyfile(keyFile, "Sharpening", "EdgeTolerance", sharpening.edges_tolerance, pedited->sharpening.edges_tolerance);
+            assignFromKeyfile(keyFile, "Sharpening", "HalocontrolEnabled", sharpening.halocontrol, pedited->sharpening.halocontrol);
+            assignFromKeyfile(keyFile, "Sharpening", "HalocontrolAmount", sharpening.halocontrol_amount, pedited->sharpening.halocontrol_amount);
+            assignFromKeyfile(keyFile, "Sharpening", "Method", sharpening.method, pedited->sharpening.method);
+            assignFromKeyfile(keyFile, "Sharpening", "DeconvRadius", sharpening.deconvradius, pedited->sharpening.deconvradius);
+            assignFromKeyfile(keyFile, "Sharpening", "DeconvAmount", sharpening.deconvamount, pedited->sharpening.deconvamount);
+            assignFromKeyfile(keyFile, "Sharpening", "DeconvDamping", sharpening.deconvdamping, pedited->sharpening.deconvdamping);
+            assignFromKeyfile(keyFile, "Sharpening", "DeconvIterations", sharpening.deconviter, pedited->sharpening.deconviter);
         }
 
         if (keyFile.has_group("SharpenEdge")) {
-            assignFromKeyfile(keyFile, "SharpenEdge", "Enabled", pedited, sharpenEdge.enabled, pedited->sharpenEdge.enabled);
-            assignFromKeyfile(keyFile, "SharpenEdge", "Passes", pedited, sharpenEdge.passes, pedited->sharpenEdge.passes);
-            assignFromKeyfile(keyFile, "SharpenEdge", "Strength", pedited, sharpenEdge.amount, pedited->sharpenEdge.amount);
-            assignFromKeyfile(keyFile, "SharpenEdge", "ThreeChannels", pedited, sharpenEdge.threechannels, pedited->sharpenEdge.threechannels);
+            assignFromKeyfile(keyFile, "SharpenEdge", "Enabled", sharpenEdge.enabled, pedited->sharpenEdge.enabled);
+            assignFromKeyfile(keyFile, "SharpenEdge", "Passes", sharpenEdge.passes, pedited->sharpenEdge.passes);
+            assignFromKeyfile(keyFile, "SharpenEdge", "Strength", sharpenEdge.amount, pedited->sharpenEdge.amount);
+            assignFromKeyfile(keyFile, "SharpenEdge", "ThreeChannels", sharpenEdge.threechannels, pedited->sharpenEdge.threechannels);
         }
 
         if (keyFile.has_group("SharpenMicro")) {
-            assignFromKeyfile(keyFile, "SharpenMicro", "Enabled", pedited, sharpenMicro.enabled, pedited->sharpenMicro.enabled);
-            assignFromKeyfile(keyFile, "SharpenMicro", "Matrix", pedited, sharpenMicro.matrix, pedited->sharpenMicro.matrix);
-            assignFromKeyfile(keyFile, "SharpenMicro", "Strength", pedited, sharpenMicro.amount, pedited->sharpenMicro.amount);
+            assignFromKeyfile(keyFile, "SharpenMicro", "Enabled", sharpenMicro.enabled, pedited->sharpenMicro.enabled);
+            assignFromKeyfile(keyFile, "SharpenMicro", "Matrix", sharpenMicro.matrix, pedited->sharpenMicro.matrix);
+            assignFromKeyfile(keyFile, "SharpenMicro", "Strength", sharpenMicro.amount, pedited->sharpenMicro.amount);
 
             if (ppVersion >= 334) {
-                assignFromKeyfile(keyFile, "SharpenMicro", "Contrast", pedited, sharpenMicro.contrast, pedited->sharpenMicro.contrast);
+                assignFromKeyfile(keyFile, "SharpenMicro", "Contrast", sharpenMicro.contrast, pedited->sharpenMicro.contrast);
             } else {
                 sharpenMicro.contrast = 0;
 
@@ -8124,18 +9016,18 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
                 }
             }
             if (ppVersion >= 346) {
-                assignFromKeyfile(keyFile, "SharpenMicro", "Uniformity", pedited, sharpenMicro.uniformity, pedited->sharpenMicro.uniformity);
+                assignFromKeyfile(keyFile, "SharpenMicro", "Uniformity", sharpenMicro.uniformity, pedited->sharpenMicro.uniformity);
             } else {
                 double temp = 50.0;
-                assignFromKeyfile(keyFile, "SharpenMicro", "Uniformity", pedited, temp, pedited->sharpenMicro.uniformity);
+                assignFromKeyfile(keyFile, "SharpenMicro", "Uniformity", temp, pedited->sharpenMicro.uniformity);
                 sharpenMicro.uniformity = temp / 10;
             }
         }
 
         if (keyFile.has_group("Vibrance")) {
-            assignFromKeyfile(keyFile, "Vibrance", "Enabled", pedited, vibrance.enabled, pedited->vibrance.enabled);
-            assignFromKeyfile(keyFile, "Vibrance", "Pastels", pedited, vibrance.pastels, pedited->vibrance.pastels);
-            assignFromKeyfile(keyFile, "Vibrance", "Saturated", pedited, vibrance.saturated, pedited->vibrance.saturated);
+            assignFromKeyfile(keyFile, "Vibrance", "Enabled", vibrance.enabled, pedited->vibrance.enabled);
+            assignFromKeyfile(keyFile, "Vibrance", "Pastels", vibrance.pastels, pedited->vibrance.pastels);
+            assignFromKeyfile(keyFile, "Vibrance", "Saturated", vibrance.saturated, pedited->vibrance.saturated);
 
             if (keyFile.has_key("Vibrance", "PSThreshold")) {
                 if (ppVersion < 302) {
@@ -8154,10 +9046,10 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
                 }
             }
 
-            assignFromKeyfile(keyFile, "Vibrance", "ProtectSkins", pedited, vibrance.protectskins, pedited->vibrance.protectskins);
-            assignFromKeyfile(keyFile, "Vibrance", "AvoidColorShift", pedited, vibrance.avoidcolorshift, pedited->vibrance.avoidcolorshift);
-            assignFromKeyfile(keyFile, "Vibrance", "PastSatTog", pedited, vibrance.pastsattog, pedited->vibrance.pastsattog);
-            assignFromKeyfile(keyFile, "Vibrance", "SkinTonesCurve", pedited, vibrance.skintonescurve, pedited->vibrance.skintonescurve);
+            assignFromKeyfile(keyFile, "Vibrance", "ProtectSkins", vibrance.protectskins, pedited->vibrance.protectskins);
+            assignFromKeyfile(keyFile, "Vibrance", "AvoidColorShift", vibrance.avoidcolorshift, pedited->vibrance.avoidcolorshift);
+            assignFromKeyfile(keyFile, "Vibrance", "PastSatTog", vibrance.pastsattog, pedited->vibrance.pastsattog);
+            assignFromKeyfile(keyFile, "Vibrance", "SkinTonesCurve", vibrance.skintonescurve, pedited->vibrance.skintonescurve);
         }
         if (ppVersion <= 346) { // 5.8 and earlier.
             wb.observer = StandardObserver::TWO_DEGREES;
@@ -8171,39 +9063,52 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
             }
         }
         if (keyFile.has_group("White Balance")) {
-            assignFromKeyfile(keyFile, "White Balance", "Enabled", pedited, wb.enabled, pedited->wb.enabled);
-            assignFromKeyfile(keyFile, "White Balance", "Setting", pedited, wb.method, pedited->wb.method);
+            assignFromKeyfile(keyFile, "White Balance", "Enabled", wb.enabled, pedited->wb.enabled);
+            assignFromKeyfile(keyFile, "White Balance", "Setting", wb.method, pedited->wb.method);
             if (wb.method == "Auto") {
-                wb.method = "autold";
+                wb.method = "autitcgreen"; //"autold";
             }
-            assignFromKeyfile(keyFile, "White Balance", "Temperature", pedited, wb.temperature, pedited->wb.temperature);
-            assignFromKeyfile(keyFile, "White Balance", "Green", pedited, wb.green, pedited->wb.green);
-            assignFromKeyfile(keyFile, "White Balance", "Equal", pedited, wb.equal, pedited->wb.equal);
-            assignFromKeyfile(keyFile, "White Balance", "TemperatureBias", pedited, wb.tempBias, pedited->wb.tempBias);
+            assignFromKeyfile(keyFile, "White Balance", "Temperature", wb.temperature, pedited->wb.temperature);
+            assignFromKeyfile(keyFile, "White Balance", "Green", wb.green, pedited->wb.green);
+            assignFromKeyfile(keyFile, "White Balance", "Equal", wb.equal, pedited->wb.equal);
+            assignFromKeyfile(keyFile, "White Balance", "TemperatureBias", wb.tempBias, pedited->wb.tempBias);
             Glib::ustring standard_observer;
-            assignFromKeyfile(keyFile, "White Balance", "StandardObserver", pedited, standard_observer, pedited->wb.observer);
+            assignFromKeyfile(keyFile, "White Balance", "StandardObserver", standard_observer, pedited->wb.observer);
             if (standard_observer == "TEN_DEGREES") {
                 wb.observer = StandardObserver::TEN_DEGREES;
             } else if (standard_observer == "TWO_DEGREES") {
                 wb.observer = StandardObserver::TWO_DEGREES;
             }
-            assignFromKeyfile(keyFile, "White Balance", "Itcwb_green", pedited, wb.itcwb_green, pedited->wb.itcwb_green);
-            assignFromKeyfile(keyFile, "White Balance", "Itcwb_rangegreen", pedited, wb.itcwb_rgreen, pedited->wb.itcwb_rgreen);
-            assignFromKeyfile(keyFile, "White Balance", "Itcwb_nopurple", pedited, wb.itcwb_nopurple, pedited->wb.itcwb_nopurple);
-            assignFromKeyfile(keyFile, "White Balance", "Itcwb_alg", pedited, wb.itcwb_alg, pedited->wb.itcwb_alg);
-            assignFromKeyfile(keyFile, "White Balance", "Itcwb_prim", pedited, wb.itcwb_prim, pedited->wb.itcwb_prim);
+            assignFromKeyfile(keyFile, "White Balance", "Itcwb_green", wb.itcwb_green, pedited->wb.itcwb_green);
+            assignFromKeyfile(keyFile, "White Balance", "Itcwb_rangegreen", wb.itcwb_rgreen, pedited->wb.itcwb_rgreen);
+            assignFromKeyfile(keyFile, "White Balance", "Itcwb_nopurple", wb.itcwb_nopurple, pedited->wb.itcwb_nopurple);
+            assignFromKeyfile(keyFile, "White Balance", "Itcwb_alg", wb.itcwb_alg, pedited->wb.itcwb_alg);
+            assignFromKeyfile(keyFile, "White Balance", "Itcwb_prim", wb.itcwb_prim, pedited->wb.itcwb_prim);
             if (ppVersion <= 349) { // 5.9 and earlier.
                 wb.itcwb_sampling = true;
                 if (pedited) {
                     pedited->wb.itcwb_sampling = true;
                 }
             }
-            assignFromKeyfile(keyFile, "White Balance", "Itcwb_sampling", pedited, wb.itcwb_sampling, pedited->wb.itcwb_sampling);
+            assignFromKeyfile(keyFile, "White Balance", "Itcwb_sampling", wb.itcwb_sampling, pedited->wb.itcwb_sampling);
+            if (!assignFromKeyfile(keyFile, "White Balance", "CompatibilityVersion", wb.compat_version, pedited->wb.compat_version)) {
+                bool compat_version_edited = true;
+                if (ppVersion <= 346) { // 5.8 and earlier.
+                    wb.compat_version = 0;
+                } else if (ppVersion <= 349) { // 5.9.
+                    wb.compat_version = 1;
+                } else {
+                    compat_version_edited = false;
+                }
+                if (pedited) {
+                    pedited->wb.compat_version = pedited->wb.compat_version || compat_version_edited;
+                }
+            }
         }
 
         if (keyFile.has_group("Defringing")) {
-            assignFromKeyfile(keyFile, "Defringing", "Enabled", pedited, defringe.enabled, pedited->defringe.enabled);
-            assignFromKeyfile(keyFile, "Defringing", "Radius", pedited, defringe.radius, pedited->defringe.radius);
+            assignFromKeyfile(keyFile, "Defringing", "Enabled", defringe.enabled, pedited->defringe.enabled);
+            assignFromKeyfile(keyFile, "Defringing", "Radius", defringe.radius, pedited->defringe.radius);
 
             if (keyFile.has_key("Defringing", "Threshold")) {
                 defringe.threshold = (float)keyFile.get_integer("Defringing", "Threshold");
@@ -8217,79 +9122,78 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
                 defringe.threshold = sqrt(defringe.threshold * 33.f / 5.f);
             }
 
-            assignFromKeyfile(keyFile, "Defringing", "HueCurve", pedited, defringe.huecurve, pedited->defringe.huecurve);
+            assignFromKeyfile(keyFile, "Defringing", "HueCurve", defringe.huecurve, pedited->defringe.huecurve);
         }
 
         if (keyFile.has_group("Color appearance")) {
-            assignFromKeyfile(keyFile, "Color appearance", "Enabled", pedited, colorappearance.enabled, pedited->colorappearance.enabled);
-            assignFromKeyfile(keyFile, "Color appearance", "Degree", pedited, colorappearance.degree, pedited->colorappearance.degree);
-            assignFromKeyfile(keyFile, "Color appearance", "AutoDegree", pedited, colorappearance.autodegree, pedited->colorappearance.autodegree);
-            assignFromKeyfile(keyFile, "Color appearance", "Degreeout", pedited, colorappearance.degreeout, pedited->colorappearance.degreeout);
+            assignFromKeyfile(keyFile, "Color appearance", "Enabled", colorappearance.enabled, pedited->colorappearance.enabled);
+            assignFromKeyfile(keyFile, "Color appearance", "Degree", colorappearance.degree, pedited->colorappearance.degree);
+            assignFromKeyfile(keyFile, "Color appearance", "AutoDegree", colorappearance.autodegree, pedited->colorappearance.autodegree);
+            assignFromKeyfile(keyFile, "Color appearance", "Degreeout", colorappearance.degreeout, pedited->colorappearance.degreeout);
 
-            assignFromKeyfile(keyFile, "Color appearance", "AutoDegreeout", pedited, colorappearance.autodegreeout, pedited->colorappearance.autodegreeout);
+            assignFromKeyfile(keyFile, "Color appearance", "AutoDegreeout", colorappearance.autodegreeout, pedited->colorappearance.autodegreeout);
 
             if (keyFile.has_key("Color appearance", "complex")) {
-                assignFromKeyfile(keyFile, "Color appearance", "complex", pedited, colorappearance.complexmethod, pedited->colorappearance.complexmethod);
+                assignFromKeyfile(keyFile, "Color appearance", "complex", colorappearance.complexmethod, pedited->colorappearance.complexmethod);
             } else if (colorappearance.enabled) {
                 colorappearance.complexmethod = "expert";
                 if (pedited) {
                     pedited->colorappearance.complexmethod = true;
                 }
             }
-            
+
             if (keyFile.has_key("Color appearance", "ModelCat")) {
-                assignFromKeyfile(keyFile, "Color appearance", "ModelCat", pedited, colorappearance.modelmethod, pedited->colorappearance.modelmethod);
+                assignFromKeyfile(keyFile, "Color appearance", "ModelCat", colorappearance.modelmethod, pedited->colorappearance.modelmethod);
             } else if (colorappearance.enabled) {
                 colorappearance.modelmethod = "02";
                 if (pedited) {
                     pedited->colorappearance.modelmethod = true;
                 }
             }
-            assignFromKeyfile(keyFile, "Color appearance", "CatCat", pedited, colorappearance.catmethod, pedited->colorappearance.catmethod);
-            
-            assignFromKeyfile(keyFile, "Color appearance", "Surround", pedited, colorappearance.surround, pedited->colorappearance.surround);
-            assignFromKeyfile(keyFile, "Color appearance", "Surrsrc", pedited, colorappearance.surrsrc, pedited->colorappearance.surrsrc);
-            assignFromKeyfile(keyFile, "Color appearance", "AdaptLum", pedited, colorappearance.adaplum, pedited->colorappearance.adaplum);
-            assignFromKeyfile(keyFile, "Color appearance", "Badpixsl", pedited, colorappearance.badpixsl, pedited->colorappearance.badpixsl);
-            assignFromKeyfile(keyFile, "Color appearance", "Model", pedited, colorappearance.wbmodel, pedited->colorappearance.wbmodel);
-            assignFromKeyfile(keyFile, "Color appearance", "Illum", pedited, colorappearance.illum, pedited->colorappearance.illum);
-            assignFromKeyfile(keyFile, "Color appearance", "Algorithm", pedited, colorappearance.algo, pedited->colorappearance.algo);
-            assignFromKeyfile(keyFile, "Color appearance", "J-Light", pedited, colorappearance.jlight, pedited->colorappearance.jlight);
-            assignFromKeyfile(keyFile, "Color appearance", "Q-Bright", pedited, colorappearance.qbright, pedited->colorappearance.qbright);
-            assignFromKeyfile(keyFile, "Color appearance", "C-Chroma", pedited, colorappearance.chroma, pedited->colorappearance.chroma);
-            assignFromKeyfile(keyFile, "Color appearance", "S-Chroma", pedited, colorappearance.schroma, pedited->colorappearance.schroma);
-            assignFromKeyfile(keyFile, "Color appearance", "M-Chroma", pedited, colorappearance.mchroma, pedited->colorappearance.mchroma);
-            assignFromKeyfile(keyFile, "Color appearance", "RSTProtection", pedited, colorappearance.rstprotection, pedited->colorappearance.rstprotection);
-            assignFromKeyfile(keyFile, "Color appearance", "J-Contrast", pedited, colorappearance.contrast, pedited->colorappearance.contrast);
-            assignFromKeyfile(keyFile, "Color appearance", "Q-Contrast", pedited, colorappearance.qcontrast, pedited->colorappearance.qcontrast);
-            assignFromKeyfile(keyFile, "Color appearance", "H-Hue", pedited, colorappearance.colorh, pedited->colorappearance.colorh);
-            assignFromKeyfile(keyFile, "Color appearance", "AdaptScene", pedited, colorappearance.adapscen, pedited->colorappearance.adapscen);
-            assignFromKeyfile(keyFile, "Color appearance", "AutoAdapscen", pedited, colorappearance.autoadapscen, pedited->colorappearance.autoadapscen);
-            assignFromKeyfile(keyFile, "Color appearance", "YbScene", pedited, colorappearance.ybscen, pedited->colorappearance.ybscen);
-            assignFromKeyfile(keyFile, "Color appearance", "Autoybscen", pedited, colorappearance.autoybscen, pedited->colorappearance.autoybscen);
-            assignFromKeyfile(keyFile, "Color appearance", "SurrSource", pedited, colorappearance.surrsource, pedited->colorappearance.surrsource);
-            assignFromKeyfile(keyFile, "Color appearance", "Gamut", pedited, colorappearance.gamut, pedited->colorappearance.gamut);
-            assignFromKeyfile(keyFile, "Color appearance", "Tempout", pedited, colorappearance.tempout, pedited->colorappearance.tempout);
-            assignFromKeyfile(keyFile, "Color appearance", "Autotempout", pedited, colorappearance.autotempout, pedited->colorappearance.autotempout);
-            assignFromKeyfile(keyFile, "Color appearance", "Greenout", pedited, colorappearance.greenout, pedited->colorappearance.greenout);
-            assignFromKeyfile(keyFile, "Color appearance", "Tempsc", pedited, colorappearance.tempsc, pedited->colorappearance.tempsc);
-            assignFromKeyfile(keyFile, "Color appearance", "Greensc", pedited, colorappearance.greensc, pedited->colorappearance.greensc);
-            assignFromKeyfile(keyFile, "Color appearance", "Ybout", pedited, colorappearance.ybout, pedited->colorappearance.ybout);
-            assignFromKeyfile(keyFile, "Color appearance", "Datacie", pedited, colorappearance.datacie, pedited->colorappearance.datacie);
-            assignFromKeyfile(keyFile, "Color appearance", "Tonecie", pedited, colorappearance.tonecie, pedited->colorappearance.tonecie);
+            assignFromKeyfile(keyFile, "Color appearance", "CatCat", colorappearance.catmethod, pedited->colorappearance.catmethod);
+
+            assignFromKeyfile(keyFile, "Color appearance", "Surround", colorappearance.surround, pedited->colorappearance.surround);
+            assignFromKeyfile(keyFile, "Color appearance", "Surrsrc", colorappearance.surrsrc, pedited->colorappearance.surrsrc);
+            assignFromKeyfile(keyFile, "Color appearance", "AdaptLum", colorappearance.adaplum, pedited->colorappearance.adaplum);
+            assignFromKeyfile(keyFile, "Color appearance", "Badpixsl", colorappearance.badpixsl, pedited->colorappearance.badpixsl);
+            assignFromKeyfile(keyFile, "Color appearance", "Model", colorappearance.wbmodel, pedited->colorappearance.wbmodel);
+            assignFromKeyfile(keyFile, "Color appearance", "Illum", colorappearance.illum, pedited->colorappearance.illum);
+            assignFromKeyfile(keyFile, "Color appearance", "Algorithm", colorappearance.algo, pedited->colorappearance.algo);
+            assignFromKeyfile(keyFile, "Color appearance", "J-Light", colorappearance.jlight, pedited->colorappearance.jlight);
+            assignFromKeyfile(keyFile, "Color appearance", "Q-Bright", colorappearance.qbright, pedited->colorappearance.qbright);
+            assignFromKeyfile(keyFile, "Color appearance", "C-Chroma", colorappearance.chroma, pedited->colorappearance.chroma);
+            assignFromKeyfile(keyFile, "Color appearance", "S-Chroma", colorappearance.schroma, pedited->colorappearance.schroma);
+            assignFromKeyfile(keyFile, "Color appearance", "M-Chroma", colorappearance.mchroma, pedited->colorappearance.mchroma);
+            assignFromKeyfile(keyFile, "Color appearance", "RSTProtection", colorappearance.rstprotection, pedited->colorappearance.rstprotection);
+            assignFromKeyfile(keyFile, "Color appearance", "J-Contrast", colorappearance.contrast, pedited->colorappearance.contrast);
+            assignFromKeyfile(keyFile, "Color appearance", "Q-Contrast", colorappearance.qcontrast, pedited->colorappearance.qcontrast);
+            assignFromKeyfile(keyFile, "Color appearance", "H-Hue", colorappearance.colorh, pedited->colorappearance.colorh);
+            assignFromKeyfile(keyFile, "Color appearance", "AdaptScene", colorappearance.adapscen, pedited->colorappearance.adapscen);
+            assignFromKeyfile(keyFile, "Color appearance", "AutoAdapscen", colorappearance.autoadapscen, pedited->colorappearance.autoadapscen);
+            assignFromKeyfile(keyFile, "Color appearance", "YbScene", colorappearance.ybscen, pedited->colorappearance.ybscen);
+            assignFromKeyfile(keyFile, "Color appearance", "Autoybscen", colorappearance.autoybscen, pedited->colorappearance.autoybscen);
+            assignFromKeyfile(keyFile, "Color appearance", "SurrSource", colorappearance.surrsource, pedited->colorappearance.surrsource);
+            assignFromKeyfile(keyFile, "Color appearance", "Gamut", colorappearance.gamut, pedited->colorappearance.gamut);
+            assignFromKeyfile(keyFile, "Color appearance", "Tempout", colorappearance.tempout, pedited->colorappearance.tempout);
+            assignFromKeyfile(keyFile, "Color appearance", "Autotempout", colorappearance.autotempout, pedited->colorappearance.autotempout);
+            assignFromKeyfile(keyFile, "Color appearance", "Greenout", colorappearance.greenout, pedited->colorappearance.greenout);
+            assignFromKeyfile(keyFile, "Color appearance", "Tempsc", colorappearance.tempsc, pedited->colorappearance.tempsc);
+            assignFromKeyfile(keyFile, "Color appearance", "Greensc", colorappearance.greensc, pedited->colorappearance.greensc);
+            assignFromKeyfile(keyFile, "Color appearance", "Ybout", colorappearance.ybout, pedited->colorappearance.ybout);
+            assignFromKeyfile(keyFile, "Color appearance", "Datacie", colorappearance.datacie, pedited->colorappearance.datacie);
+            assignFromKeyfile(keyFile, "Color appearance", "Tonecie", colorappearance.tonecie, pedited->colorappearance.tonecie);
 
             const std::map<std::string, ColorAppearanceParams::TcMode> tc_mapping = {
                 {"Lightness", ColorAppearanceParams::TcMode::LIGHT},
                 {"Brightness", ColorAppearanceParams::TcMode::BRIGHT}
             };
-            assignFromKeyfile(keyFile, "Color appearance", "CurveMode", pedited, tc_mapping, colorappearance.curveMode, pedited->colorappearance.curveMode);
-            assignFromKeyfile(keyFile, "Color appearance", "CurveMode2", pedited, tc_mapping, colorappearance.curveMode2, pedited->colorappearance.curveMode2);
+            assignFromKeyfile(keyFile, "Color appearance", "CurveMode", tc_mapping, colorappearance.curveMode, pedited->colorappearance.curveMode);
+            assignFromKeyfile(keyFile, "Color appearance", "CurveMode2", tc_mapping, colorappearance.curveMode2, pedited->colorappearance.curveMode2);
 
             assignFromKeyfile(
                 keyFile,
                 "Color appearance",
                 "CurveMode3",
-                pedited,
                 {
                     {"Chroma", ColorAppearanceParams::CtcMode::CHROMA},
                     {"Saturation", ColorAppearanceParams::CtcMode::SATUR},
@@ -8300,78 +9204,92 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
             );
 
             if (ppVersion > 200) {
-                assignFromKeyfile(keyFile, "Color appearance", "Curve", pedited, colorappearance.curve, pedited->colorappearance.curve);
-                assignFromKeyfile(keyFile, "Color appearance", "Curve2", pedited, colorappearance.curve2, pedited->colorappearance.curve2);
-                assignFromKeyfile(keyFile, "Color appearance", "Curve3", pedited, colorappearance.curve3, pedited->colorappearance.curve3);
+                assignFromKeyfile(keyFile, "Color appearance", "Curve", colorappearance.curve, pedited->colorappearance.curve);
+                assignFromKeyfile(keyFile, "Color appearance", "Curve2", colorappearance.curve2, pedited->colorappearance.curve2);
+                assignFromKeyfile(keyFile, "Color appearance", "Curve3", colorappearance.curve3, pedited->colorappearance.curve3);
             }
 
         }
 
         if (keyFile.has_group("Impulse Denoising")) {
-            assignFromKeyfile(keyFile, "Impulse Denoising", "Enabled", pedited, impulseDenoise.enabled, pedited->impulseDenoise.enabled);
-            assignFromKeyfile(keyFile, "Impulse Denoising", "Threshold", pedited, impulseDenoise.thresh, pedited->impulseDenoise.thresh);
+            assignFromKeyfile(keyFile, "Impulse Denoising", "Enabled", impulseDenoise.enabled, pedited->impulseDenoise.enabled);
+            assignFromKeyfile(keyFile, "Impulse Denoising", "Threshold", impulseDenoise.thresh, pedited->impulseDenoise.thresh);
         }
 
         if (keyFile.has_group("Directional Pyramid Denoising")) { //TODO: No longer an accurate description for FT denoise
-            assignFromKeyfile(keyFile, "Directional Pyramid Denoising", "Enabled", pedited, dirpyrDenoise.enabled, pedited->dirpyrDenoise.enabled);
-            assignFromKeyfile(keyFile, "Directional Pyramid Denoising", "Enhance", pedited, dirpyrDenoise.enhance, pedited->dirpyrDenoise.enhance);
-            assignFromKeyfile(keyFile, "Directional Pyramid Denoising", "Median", pedited, dirpyrDenoise.median, pedited->dirpyrDenoise.median);
-            assignFromKeyfile(keyFile, "Directional Pyramid Denoising", "Luma", pedited, dirpyrDenoise.luma, pedited->dirpyrDenoise.luma);
-            assignFromKeyfile(keyFile, "Directional Pyramid Denoising", "Ldetail", pedited, dirpyrDenoise.Ldetail, pedited->dirpyrDenoise.Ldetail);
-            assignFromKeyfile(keyFile, "Directional Pyramid Denoising", "Chroma", pedited, dirpyrDenoise.chroma, pedited->dirpyrDenoise.chroma);
-            assignFromKeyfile(keyFile, "Directional Pyramid Denoising", "Method", pedited, dirpyrDenoise.dmethod, pedited->dirpyrDenoise.dmethod);
-            assignFromKeyfile(keyFile, "Directional Pyramid Denoising", "LMethod", pedited, dirpyrDenoise.Lmethod, pedited->dirpyrDenoise.Lmethod);
-            assignFromKeyfile(keyFile, "Directional Pyramid Denoising", "CMethod", pedited, dirpyrDenoise.Cmethod, pedited->dirpyrDenoise.Cmethod);
+            assignFromKeyfile(keyFile, "Directional Pyramid Denoising", "Enabled", dirpyrDenoise.enabled, pedited->dirpyrDenoise.enabled);
+            assignFromKeyfile(keyFile, "Directional Pyramid Denoising", "Enhance", dirpyrDenoise.enhance, pedited->dirpyrDenoise.enhance);
+            assignFromKeyfile(keyFile, "Directional Pyramid Denoising", "Median", dirpyrDenoise.median, pedited->dirpyrDenoise.median);
+            assignFromKeyfile(keyFile, "Directional Pyramid Denoising", "Luma", dirpyrDenoise.luma, pedited->dirpyrDenoise.luma);
+            assignFromKeyfile(keyFile, "Directional Pyramid Denoising", "Ldetail", dirpyrDenoise.Ldetail, pedited->dirpyrDenoise.Ldetail);
+            assignFromKeyfile(keyFile, "Directional Pyramid Denoising", "Chroma", dirpyrDenoise.chroma, pedited->dirpyrDenoise.chroma);
+            assignFromKeyfile(keyFile, "Directional Pyramid Denoising", "Method", dirpyrDenoise.dmethod, pedited->dirpyrDenoise.dmethod);
+            assignFromKeyfile(keyFile, "Directional Pyramid Denoising", "LMethod", dirpyrDenoise.Lmethod, pedited->dirpyrDenoise.Lmethod);
+            assignFromKeyfile(keyFile, "Directional Pyramid Denoising", "CMethod", dirpyrDenoise.Cmethod, pedited->dirpyrDenoise.Cmethod);
 
             if (dirpyrDenoise.Cmethod == "PRE") {
                 dirpyrDenoise.Cmethod = "MAN"; // Never load 'auto chroma preview mode' from pp3
             }
 
-            assignFromKeyfile(keyFile, "Directional Pyramid Denoising", "C2Method", pedited, dirpyrDenoise.C2method, pedited->dirpyrDenoise.C2method);
+            assignFromKeyfile(keyFile, "Directional Pyramid Denoising", "C2Method", dirpyrDenoise.C2method, pedited->dirpyrDenoise.C2method);
 
             if (dirpyrDenoise.C2method == "PREV") {
                 dirpyrDenoise.C2method = "MANU";
             }
 
-            assignFromKeyfile(keyFile, "Directional Pyramid Denoising", "SMethod", pedited, dirpyrDenoise.smethod, pedited->dirpyrDenoise.smethod);
-            assignFromKeyfile(keyFile, "Directional Pyramid Denoising", "MedMethod", pedited, dirpyrDenoise.medmethod, pedited->dirpyrDenoise.medmethod);
-            assignFromKeyfile(keyFile, "Directional Pyramid Denoising", "MethodMed", pedited, dirpyrDenoise.methodmed, pedited->dirpyrDenoise.methodmed);
-            assignFromKeyfile(keyFile, "Directional Pyramid Denoising", "RGBMethod", pedited, dirpyrDenoise.rgbmethod, pedited->dirpyrDenoise.rgbmethod);
-            assignFromKeyfile(keyFile, "Directional Pyramid Denoising", "LCurve", pedited, dirpyrDenoise.lcurve, pedited->dirpyrDenoise.lcurve);
+            assignFromKeyfile(keyFile, "Directional Pyramid Denoising", "SMethod", dirpyrDenoise.smethod, pedited->dirpyrDenoise.smethod);
+            assignFromKeyfile(keyFile, "Directional Pyramid Denoising", "MedMethod", dirpyrDenoise.medmethod, pedited->dirpyrDenoise.medmethod);
+            assignFromKeyfile(keyFile, "Directional Pyramid Denoising", "MethodMed", dirpyrDenoise.methodmed, pedited->dirpyrDenoise.methodmed);
+            assignFromKeyfile(keyFile, "Directional Pyramid Denoising", "RGBMethod", dirpyrDenoise.rgbmethod, pedited->dirpyrDenoise.rgbmethod);
+            assignFromKeyfile(keyFile, "Directional Pyramid Denoising", "LCurve", dirpyrDenoise.lcurve, pedited->dirpyrDenoise.lcurve);
 
-            assignFromKeyfile(keyFile, "Directional Pyramid Denoising", "CCCurve", pedited, dirpyrDenoise.cccurve, pedited->dirpyrDenoise.cccurve);
+            assignFromKeyfile(keyFile, "Directional Pyramid Denoising", "CCCurve", dirpyrDenoise.cccurve, pedited->dirpyrDenoise.cccurve);
 
-            assignFromKeyfile(keyFile, "Directional Pyramid Denoising", "Redchro", pedited, dirpyrDenoise.redchro, pedited->dirpyrDenoise.redchro);
-            assignFromKeyfile(keyFile, "Directional Pyramid Denoising", "Bluechro", pedited, dirpyrDenoise.bluechro, pedited->dirpyrDenoise.bluechro);
-            assignFromKeyfile(keyFile, "Directional Pyramid Denoising", "Gamma", pedited, dirpyrDenoise.gamma, pedited->dirpyrDenoise.gamma);
-            assignFromKeyfile(keyFile, "Directional Pyramid Denoising", "Passes", pedited, dirpyrDenoise.passes, pedited->dirpyrDenoise.passes);
+            assignFromKeyfile(keyFile, "Directional Pyramid Denoising", "Redchro", dirpyrDenoise.redchro, pedited->dirpyrDenoise.redchro);
+            assignFromKeyfile(keyFile, "Directional Pyramid Denoising", "Bluechro", dirpyrDenoise.bluechro, pedited->dirpyrDenoise.bluechro);
+            assignFromKeyfile(keyFile, "Directional Pyramid Denoising", "AutoGain", dirpyrDenoise.autoGain, pedited->dirpyrDenoise.gain);
+            assignFromKeyfile(keyFile, "Directional Pyramid Denoising", "Gamma", dirpyrDenoise.gamma, pedited->dirpyrDenoise.gamma);
+            assignFromKeyfile(keyFile, "Directional Pyramid Denoising", "Passes", dirpyrDenoise.passes, pedited->dirpyrDenoise.passes);
         }
 
         if (keyFile.has_group("EPD")) {
-            assignFromKeyfile(keyFile, "EPD", "Enabled", pedited, epd.enabled, pedited->epd.enabled);
-            assignFromKeyfile(keyFile, "EPD", "Strength", pedited, epd.strength, pedited->epd.strength);
-            assignFromKeyfile(keyFile, "EPD", "Gamma", pedited, epd.gamma, pedited->epd.gamma);
-            assignFromKeyfile(keyFile, "EPD", "EdgeStopping", pedited, epd.edgeStopping, pedited->epd.edgeStopping);
-            assignFromKeyfile(keyFile, "EPD", "Scale", pedited, epd.scale, pedited->epd.scale);
-            assignFromKeyfile(keyFile, "EPD", "ReweightingIterates", pedited, epd.reweightingIterates, pedited->epd.reweightingIterates);
+            assignFromKeyfile(keyFile, "EPD", "Enabled", epd.enabled, pedited->epd.enabled);
+            assignFromKeyfile(keyFile, "EPD", "Strength", epd.strength, pedited->epd.strength);
+            assignFromKeyfile(keyFile, "EPD", "Gamma", epd.gamma, pedited->epd.gamma);
+            assignFromKeyfile(keyFile, "EPD", "EdgeStopping", epd.edgeStopping, pedited->epd.edgeStopping);
+            assignFromKeyfile(keyFile, "EPD", "Scale", epd.scale, pedited->epd.scale);
+            assignFromKeyfile(keyFile, "EPD", "ReweightingIterates", epd.reweightingIterates, pedited->epd.reweightingIterates);
         }
 
         if (keyFile.has_group("FattalToneMapping")) {
-            assignFromKeyfile(keyFile, "FattalToneMapping", "Enabled", pedited, fattal.enabled, pedited->fattal.enabled);
-            assignFromKeyfile(keyFile, "FattalToneMapping", "Threshold", pedited, fattal.threshold, pedited->fattal.threshold);
-            assignFromKeyfile(keyFile, "FattalToneMapping", "Amount", pedited, fattal.amount, pedited->fattal.amount);
-            assignFromKeyfile(keyFile, "FattalToneMapping", "Anchor", pedited, fattal.anchor, pedited->fattal.anchor);
+            assignFromKeyfile(keyFile, "FattalToneMapping", "Enabled", fattal.enabled, pedited->fattal.enabled);
+            assignFromKeyfile(keyFile, "FattalToneMapping", "Threshold", fattal.threshold, pedited->fattal.threshold);
+            assignFromKeyfile(keyFile, "FattalToneMapping", "Amount", fattal.amount, pedited->fattal.amount);
+            assignFromKeyfile(keyFile, "FattalToneMapping", "Anchor", fattal.anchor, pedited->fattal.anchor);
+        }
+
+        if (keyFile.has_group("Compression gamut")) {
+            assignFromKeyfile(keyFile, "Compression gamut", "Enabled", cg.enabled, pedited->cg.enabled);
+            assignFromKeyfile(keyFile, "Compression gamut", "th_c", cg.th_c, pedited->cg.th_c);
+            assignFromKeyfile(keyFile, "Compression gamut", "th_m", cg.th_m, pedited->cg.th_m);
+            assignFromKeyfile(keyFile, "Compression gamut", "th_y", cg.th_y, pedited->cg.th_y);
+            assignFromKeyfile(keyFile, "Compression gamut", "d_c", cg.d_c, pedited->cg.d_c);
+            assignFromKeyfile(keyFile, "Compression gamut", "d_m", cg.d_m, pedited->cg.d_m);
+            assignFromKeyfile(keyFile, "Compression gamut", "d_y", cg.d_y, pedited->cg.d_y);
+            assignFromKeyfile(keyFile, "Compression gamut", "pwr", cg.pwr, pedited->cg.pwr);
+            assignFromKeyfile(keyFile, "Compression gamut", "colorspace", cg.colorspace, pedited->cg.colorspace);
+            assignFromKeyfile(keyFile, "Compression gamut", "rolloff", cg.rolloff, pedited->cg.rolloff);
         }
 
         if (keyFile.has_group("Shadows & Highlights") && ppVersion >= 333) {
-            assignFromKeyfile(keyFile, "Shadows & Highlights", "Enabled", pedited, sh.enabled, pedited->sh.enabled);
-            assignFromKeyfile(keyFile, "Shadows & Highlights", "Highlights", pedited, sh.highlights, pedited->sh.highlights);
-            assignFromKeyfile(keyFile, "Shadows & Highlights", "HighlightTonalWidth", pedited, sh.htonalwidth, pedited->sh.htonalwidth);
-            assignFromKeyfile(keyFile, "Shadows & Highlights", "Shadows", pedited, sh.shadows, pedited->sh.shadows);
-            assignFromKeyfile(keyFile, "Shadows & Highlights", "ShadowTonalWidth", pedited, sh.stonalwidth, pedited->sh.stonalwidth);
-            assignFromKeyfile(keyFile, "Shadows & Highlights", "Radius", pedited, sh.radius, pedited->sh.radius);
+            assignFromKeyfile(keyFile, "Shadows & Highlights", "Enabled", sh.enabled, pedited->sh.enabled);
+            assignFromKeyfile(keyFile, "Shadows & Highlights", "Highlights", sh.highlights, pedited->sh.highlights);
+            assignFromKeyfile(keyFile, "Shadows & Highlights", "HighlightTonalWidth", sh.htonalwidth, pedited->sh.htonalwidth);
+            assignFromKeyfile(keyFile, "Shadows & Highlights", "Shadows", sh.shadows, pedited->sh.shadows);
+            assignFromKeyfile(keyFile, "Shadows & Highlights", "ShadowTonalWidth", sh.stonalwidth, pedited->sh.stonalwidth);
+            assignFromKeyfile(keyFile, "Shadows & Highlights", "Radius", sh.radius, pedited->sh.radius);
             if (ppVersion >= 344) {
-                assignFromKeyfile(keyFile, "Shadows & Highlights", "Lab", pedited, sh.lab, pedited->sh.lab);
+                assignFromKeyfile(keyFile, "Shadows & Highlights", "Lab", sh.lab, pedited->sh.lab);
             } else {
                 sh.lab = true;
             }
@@ -8399,18 +9317,18 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
         }
 
         if (keyFile.has_group("ToneEqualizer")) {
-            assignFromKeyfile(keyFile, "ToneEqualizer", "Enabled", pedited, toneEqualizer.enabled, pedited->toneEqualizer.enabled);
+            assignFromKeyfile(keyFile, "ToneEqualizer", "Enabled", toneEqualizer.enabled, pedited->toneEqualizer.enabled);
             for (size_t i = 0; i < toneEqualizer.bands.size(); ++i) {
-                assignFromKeyfile(keyFile, "ToneEqualizer", "Band" + std::to_string(i), pedited, toneEqualizer.bands[i], pedited->toneEqualizer.bands[i]);
+                assignFromKeyfile(keyFile, "ToneEqualizer", "Band" + std::to_string(i), toneEqualizer.bands[i], pedited->toneEqualizer.bands[i]);
             }
-            assignFromKeyfile(keyFile, "ToneEqualizer", "Regularization", pedited, toneEqualizer.regularization, pedited->toneEqualizer.regularization);
-            assignFromKeyfile(keyFile, "ToneEqualizer", "Pivot", pedited, toneEqualizer.pivot, pedited->toneEqualizer.pivot);
+            assignFromKeyfile(keyFile, "ToneEqualizer", "Regularization", toneEqualizer.regularization, pedited->toneEqualizer.regularization);
+            assignFromKeyfile(keyFile, "ToneEqualizer", "Pivot", toneEqualizer.pivot, pedited->toneEqualizer.pivot);
         }
 
         if (keyFile.has_group("Crop")) {
-            assignFromKeyfile(keyFile, "Crop", "Enabled", pedited, crop.enabled, pedited->crop.enabled);
-            assignFromKeyfile(keyFile, "Crop", "X", pedited, crop.x, pedited->crop.x);
-            assignFromKeyfile(keyFile, "Crop", "Y", pedited, crop.y, pedited->crop.y);
+            assignFromKeyfile(keyFile, "Crop", "Enabled", crop.enabled, pedited->crop.enabled);
+            assignFromKeyfile(keyFile, "Crop", "X", crop.x, pedited->crop.x);
+            assignFromKeyfile(keyFile, "Crop", "Y", crop.y, pedited->crop.y);
 
             if (keyFile.has_key("Crop", "W")) {
                 crop.w = std::max(keyFile.get_integer("Crop", "W"), 1);
@@ -8428,9 +9346,9 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
                 }
             }
 
-            assignFromKeyfile(keyFile, "Crop", "FixedRatio", pedited, crop.fixratio, pedited->crop.fixratio);
+            assignFromKeyfile(keyFile, "Crop", "FixedRatio", crop.fixratio, pedited->crop.fixratio);
 
-            if (assignFromKeyfile(keyFile, "Crop", "Ratio", pedited, crop.ratio, pedited->crop.ratio)) {
+            if (assignFromKeyfile(keyFile, "Crop", "Ratio", crop.ratio, pedited->crop.ratio)) {
                 //backwards compatibility for crop.ratio
                 if (crop.ratio == "DIN") {
                     crop.ratio = "1.414 - DIN EN ISO 216";
@@ -8445,12 +9363,11 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
                 }
             }
 
-            assignFromKeyfile(keyFile, "Crop", "Orientation", pedited, crop.orientation, pedited->crop.orientation);
+            assignFromKeyfile(keyFile, "Crop", "Orientation", crop.orientation, pedited->crop.orientation);
             assignFromKeyfile(
                 keyFile,
                 "Crop",
                 "Guide",
-                pedited,
                 {
                     {"None", CropParams::Guide::NONE},
                     {"Frame", CropParams::Guide::FRAME},
@@ -8469,26 +9386,33 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
         }
 
         if (keyFile.has_group("Coarse Transformation")) {
-            assignFromKeyfile(keyFile, "Coarse Transformation", "Rotate", pedited, coarse.rotate, pedited->coarse.rotate);
-            assignFromKeyfile(keyFile, "Coarse Transformation", "HorizontalFlip", pedited, coarse.hflip, pedited->coarse.hflip);
-            assignFromKeyfile(keyFile, "Coarse Transformation", "VerticalFlip", pedited, coarse.vflip, pedited->coarse.vflip);
+            assignFromKeyfile(keyFile, "Coarse Transformation", "Rotate", coarse.rotate, pedited->coarse.rotate);
+            assignFromKeyfile(keyFile, "Coarse Transformation", "HorizontalFlip", coarse.hflip, pedited->coarse.hflip);
+            assignFromKeyfile(keyFile, "Coarse Transformation", "VerticalFlip", coarse.vflip, pedited->coarse.vflip);
         }
 
         if (keyFile.has_group("Rotation")) {
-            assignFromKeyfile(keyFile, "Rotation", "Degree", pedited, rotate.degree, pedited->rotate.degree);
+            assignFromKeyfile(keyFile, "Rotation", "Degree", rotate.degree, pedited->rotate.degree);
         }
 
         if (keyFile.has_group("Common Properties for Transformations")) {
             if (keyFile.has_key("Common Properties for Transformations", "Method")) {
-                assignFromKeyfile(keyFile, "Common Properties for Transformations", "Method", pedited, commonTrans.method, pedited->commonTrans.method);
+                assignFromKeyfile(keyFile, "Common Properties for Transformations", "Method", commonTrans.method, pedited->commonTrans.method);
             } else {
                 commonTrans.method = "lin";
             }
-            assignFromKeyfile(keyFile, "Common Properties for Transformations", "AutoFill", pedited, commonTrans.autofill, pedited->commonTrans.autofill);
+            if (keyFile.has_key("Common Properties for Transformations", "Scale")) {
+                assignFromKeyfile(keyFile, "Common Properties for Transformations", "Scale", commonTrans.scale, pedited->commonTrans.scale);
+            } else {
+                commonTrans.scale = 1.0;
+            }
+            assignFromKeyfile(keyFile, "Common Properties for Transformations", "AutoFill", commonTrans.autofill, pedited->commonTrans.autofill);
         }
 
         if (keyFile.has_group("Distortion")) {
-            assignFromKeyfile(keyFile, "Distortion", "Amount", pedited, distortion.amount, pedited->distortion.amount);
+            assignFromKeyfile(keyFile, "Distortion", "Amount", distortion.amount, pedited->distortion.amount);
+            assignFromKeyfile(keyFile, "Distortion", "Defish", distortion.defish, pedited->distortion.defish);
+            assignFromKeyfile(keyFile, "Distortion", "FocalLength", distortion.focal_length, pedited->distortion.focal_length);
         }
 
         if (keyFile.has_group("LensProfile")) {
@@ -8512,9 +9436,9 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
                 }
             }
 
-            assignFromKeyfile(keyFile, "LensProfile", "UseDistortion", pedited, lensProf.useDist, pedited->lensProf.useDist);
-            assignFromKeyfile(keyFile, "LensProfile", "UseVignette", pedited, lensProf.useVign, pedited->lensProf.useVign);
-            assignFromKeyfile(keyFile, "LensProfile", "UseCA", pedited, lensProf.useCA, pedited->lensProf.useCA);
+            assignFromKeyfile(keyFile, "LensProfile", "UseDistortion", lensProf.useDist, pedited->lensProf.useDist);
+            assignFromKeyfile(keyFile, "LensProfile", "UseVignette", lensProf.useVign, pedited->lensProf.useVign);
+            assignFromKeyfile(keyFile, "LensProfile", "UseCA", lensProf.useCA, pedited->lensProf.useCA);
 
             if (keyFile.has_key("LensProfile", "LFCameraMake")) {
                 lensProf.lfCameraMake = keyFile.get_string("LensProfile", "LFCameraMake");
@@ -8542,21 +9466,21 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
         }
 
         if (keyFile.has_group("Perspective")) {
-            assignFromKeyfile(keyFile, "Perspective", "Method", pedited, perspective.method, pedited->perspective.method);
-            assignFromKeyfile(keyFile, "Perspective", "Horizontal", pedited, perspective.horizontal, pedited->perspective.horizontal);
-            assignFromKeyfile(keyFile, "Perspective", "Vertical", pedited, perspective.vertical, pedited->perspective.vertical);
-            assignFromKeyfile(keyFile, "Perspective", "CameraShiftHorizontal", pedited, perspective.camera_shift_horiz, pedited->perspective.camera_shift_horiz);
-            assignFromKeyfile(keyFile, "Perspective", "CameraShiftVertical", pedited, perspective.camera_shift_vert, pedited->perspective.camera_shift_vert);
-            assignFromKeyfile(keyFile, "Perspective", "CameraPitch", pedited, perspective.camera_pitch, pedited->perspective.camera_pitch);
-            assignFromKeyfile(keyFile, "Perspective", "CameraRoll", pedited, perspective.camera_roll, pedited->perspective.camera_roll);
-            assignFromKeyfile(keyFile, "Perspective", "CameraCropFactor", pedited, perspective.camera_crop_factor, pedited->perspective.camera_crop_factor);
-            assignFromKeyfile(keyFile, "Perspective", "CameraFocalLength", pedited, perspective.camera_focal_length, pedited->perspective.camera_focal_length);
-            assignFromKeyfile(keyFile, "Perspective", "CameraYaw", pedited, perspective.camera_yaw, pedited->perspective.camera_yaw);
-            assignFromKeyfile(keyFile, "Perspective", "ProjectionPitch", pedited, perspective.projection_pitch, pedited->perspective.projection_pitch);
-            assignFromKeyfile(keyFile, "Perspective", "ProjectionRotate", pedited, perspective.projection_rotate, pedited->perspective.projection_rotate);
-            assignFromKeyfile(keyFile, "Perspective", "ProjectionShiftHorizontal", pedited, perspective.projection_shift_horiz, pedited->perspective.projection_shift_horiz);
-            assignFromKeyfile(keyFile, "Perspective", "ProjectionShiftVertical", pedited, perspective.projection_shift_vert, pedited->perspective.projection_shift_vert);
-            assignFromKeyfile(keyFile, "Perspective", "ProjectionYaw", pedited, perspective.projection_yaw, pedited->perspective.projection_yaw);
+            assignFromKeyfile(keyFile, "Perspective", "Method", perspective.method, pedited->perspective.method);
+            assignFromKeyfile(keyFile, "Perspective", "Horizontal", perspective.horizontal, pedited->perspective.horizontal);
+            assignFromKeyfile(keyFile, "Perspective", "Vertical", perspective.vertical, pedited->perspective.vertical);
+            assignFromKeyfile(keyFile, "Perspective", "CameraShiftHorizontal", perspective.camera_shift_horiz, pedited->perspective.camera_shift_horiz);
+            assignFromKeyfile(keyFile, "Perspective", "CameraShiftVertical", perspective.camera_shift_vert, pedited->perspective.camera_shift_vert);
+            assignFromKeyfile(keyFile, "Perspective", "CameraPitch", perspective.camera_pitch, pedited->perspective.camera_pitch);
+            assignFromKeyfile(keyFile, "Perspective", "CameraRoll", perspective.camera_roll, pedited->perspective.camera_roll);
+            assignFromKeyfile(keyFile, "Perspective", "CameraCropFactor", perspective.camera_crop_factor, pedited->perspective.camera_crop_factor);
+            assignFromKeyfile(keyFile, "Perspective", "CameraFocalLength", perspective.camera_focal_length, pedited->perspective.camera_focal_length);
+            assignFromKeyfile(keyFile, "Perspective", "CameraYaw", perspective.camera_yaw, pedited->perspective.camera_yaw);
+            assignFromKeyfile(keyFile, "Perspective", "ProjectionPitch", perspective.projection_pitch, pedited->perspective.projection_pitch);
+            assignFromKeyfile(keyFile, "Perspective", "ProjectionRotate", perspective.projection_rotate, pedited->perspective.projection_rotate);
+            assignFromKeyfile(keyFile, "Perspective", "ProjectionShiftHorizontal", perspective.projection_shift_horiz, pedited->perspective.projection_shift_horiz);
+            assignFromKeyfile(keyFile, "Perspective", "ProjectionShiftVertical", perspective.projection_shift_vert, pedited->perspective.projection_shift_vert);
+            assignFromKeyfile(keyFile, "Perspective", "ProjectionYaw", perspective.projection_yaw, pedited->perspective.projection_yaw);
             if (keyFile.has_key("Perspective", "ControlLineValues") && keyFile.has_key("Perspective", "ControlLineTypes")) {
                 perspective.control_line_values = keyFile.get_integer_list("Perspective", "ControlLineValues");
                 perspective.control_line_types = keyFile.get_integer_list("Perspective", "ControlLineTypes");
@@ -8567,23 +9491,23 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
         }
 
         if (keyFile.has_group("Gradient")) {
-            assignFromKeyfile(keyFile, "Gradient", "Enabled", pedited, gradient.enabled, pedited->gradient.enabled);
-            assignFromKeyfile(keyFile, "Gradient", "Degree", pedited, gradient.degree, pedited->gradient.degree);
-            assignFromKeyfile(keyFile, "Gradient", "Feather", pedited, gradient.feather, pedited->gradient.feather);
-            assignFromKeyfile(keyFile, "Gradient", "Strength", pedited, gradient.strength, pedited->gradient.strength);
-            assignFromKeyfile(keyFile, "Gradient", "CenterX", pedited, gradient.centerX, pedited->gradient.centerX);
-            assignFromKeyfile(keyFile, "Gradient", "CenterY", pedited, gradient.centerY, pedited->gradient.centerY);
+            assignFromKeyfile(keyFile, "Gradient", "Enabled", gradient.enabled, pedited->gradient.enabled);
+            assignFromKeyfile(keyFile, "Gradient", "Degree", gradient.degree, pedited->gradient.degree);
+            assignFromKeyfile(keyFile, "Gradient", "Feather", gradient.feather, pedited->gradient.feather);
+            assignFromKeyfile(keyFile, "Gradient", "Strength", gradient.strength, pedited->gradient.strength);
+            assignFromKeyfile(keyFile, "Gradient", "CenterX", gradient.centerX, pedited->gradient.centerX);
+            assignFromKeyfile(keyFile, "Gradient", "CenterY", gradient.centerY, pedited->gradient.centerY);
         }
 
         if (keyFile.has_group("Locallab")) {
-            assignFromKeyfile(keyFile, "Locallab", "Enabled", pedited, locallab.enabled, pedited->locallab.enabled);
-            assignFromKeyfile(keyFile, "Locallab", "Selspot", pedited, locallab.selspot, pedited->locallab.selspot);
+            assignFromKeyfile(keyFile, "Locallab", "Enabled", locallab.enabled, pedited->locallab.enabled);
+            assignFromKeyfile(keyFile, "Locallab", "Selspot", locallab.selspot, pedited->locallab.selspot);
 
             Glib::ustring ppName;
             bool peName;
             int i = 0;
 
-            while (assignFromKeyfile(keyFile, "Locallab", "Name_" + std::to_string(i), pedited, ppName, peName)) {
+            while (assignFromKeyfile(keyFile, "Locallab", "Name_" + std::to_string(i), ppName, peName)) {
                 const std::string index_str = std::to_string(i);
 
                 // Create new LocallabSpot and LocallabParamsEdited
@@ -8593,17 +9517,22 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
                 spotEdited.name = peName;
 
                 // Control spot settings
-                assignFromKeyfile(keyFile, "Locallab", "Isvisible_" + index_str, pedited, spot.isvisible, spotEdited.isvisible);
-                assignFromKeyfile(keyFile, "Locallab", "PrevMethod_" + index_str, pedited, spot.prevMethod, spotEdited.prevMethod);
-                assignFromKeyfile(keyFile, "Locallab", "Shape_" + index_str, pedited, spot.shape, spotEdited.shape);
-                assignFromKeyfile(keyFile, "Locallab", "SpotMethod_" + index_str, pedited, spot.spotMethod, spotEdited.spotMethod);
-                assignFromKeyfile(keyFile, "Locallab", "wavMethod_" + index_str, pedited, spot.wavMethod, spotEdited.wavMethod);
-                assignFromKeyfile(keyFile, "Locallab", "SensiExclu_" + index_str, pedited, spot.sensiexclu, spotEdited.sensiexclu);
-                assignFromKeyfile(keyFile, "Locallab", "StructExclu_" + index_str, pedited, spot.structexclu, spotEdited.structexclu);
-                assignFromKeyfile(keyFile, "Locallab", "Struc_" + index_str, pedited, spot.struc, spotEdited.struc);
-                assignFromKeyfile(keyFile, "Locallab", "ShapeMethod_" + index_str, pedited, spot.shapeMethod, spotEdited.shapeMethod);
+                assignFromKeyfile(keyFile, "Locallab", "Isvisible_" + index_str, spot.isvisible, spotEdited.isvisible);
+                assignFromKeyfile(keyFile, "Locallab", "PrevMethod_" + index_str, spot.prevMethod, spotEdited.prevMethod);
+                assignFromKeyfile(keyFile, "Locallab", "Shape_" + index_str, spot.shape, spotEdited.shape);
+                assignFromKeyfile(keyFile, "Locallab", "SpotMethod_" + index_str, spot.spotMethod, spotEdited.spotMethod);
+                assignFromKeyfile(keyFile, "Locallab", "wavMethod_" + index_str, spot.wavMethod, spotEdited.wavMethod);
+                assignFromKeyfile(keyFile, "Locallab", "SensiExclu_" + index_str, spot.sensiexclu, spotEdited.sensiexclu);
+                assignFromKeyfile(keyFile, "Locallab", "StructExclu_" + index_str, spot.structexclu, spotEdited.structexclu);
+                assignFromKeyfile(keyFile, "Locallab", "Struc_" + index_str, spot.struc, spotEdited.struc);
+                assignFromKeyfile(keyFile, "Locallab", "ShapeMethod_" + index_str, spot.shapeMethod, spotEdited.shapeMethod);
                 if (keyFile.has_key("Locallab", "AvoidgamutMethod_" + index_str)) {
-                    assignFromKeyfile(keyFile, "Locallab", "AvoidgamutMethod_" + index_str, pedited, spot.avoidgamutMethod, spotEdited.avoidgamutMethod);
+                    assignFromKeyfile(keyFile, "Locallab", "AvoidgamutMethod_" + index_str, spot.avoidgamutMethod, spotEdited.avoidgamutMethod);
+                  /*  if (ppVersion < 351) {
+                       if(spot.avoidgamutMethod == "XYZ") {//5.10 default value
+                           spot.avoidgamutMethod = "MUNS";//set to Munsell only
+                       }
+                    } */
                 } else if (keyFile.has_key("Locallab", "Avoid_" + index_str)) {
                     const bool avoid = keyFile.get_boolean("Locallab", "Avoid_" + index_str);
                     const bool munsell = keyFile.has_key("Locallab", "Avoidmun_" + index_str) && keyFile.get_boolean("Locallab", "Avoidmun_" + index_str);
@@ -8612,103 +9541,120 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
                         spotEdited.avoidgamutMethod = true;
                     }
                 }
-                assignFromKeyfile(keyFile, "Locallab", "Loc_" + index_str, pedited, spot.loc, spotEdited.loc);
-                assignFromKeyfile(keyFile, "Locallab", "CenterX_" + index_str, pedited, spot.centerX, spotEdited.centerX);
-                assignFromKeyfile(keyFile, "Locallab", "CenterY_" + index_str, pedited, spot.centerY, spotEdited.centerY);
-                assignFromKeyfile(keyFile, "Locallab", "Circrad_" + index_str, pedited, spot.circrad, spotEdited.circrad);
-                assignFromKeyfile(keyFile, "Locallab", "QualityMethod_" + index_str, pedited, spot.qualityMethod, spotEdited.qualityMethod);
-                assignFromKeyfile(keyFile, "Locallab", "ComplexMethod_" + index_str, pedited, spot.complexMethod, spotEdited.complexMethod);
-                assignFromKeyfile(keyFile, "Locallab", "Transit_" + index_str, pedited, spot.transit, spotEdited.transit);
-                assignFromKeyfile(keyFile, "Locallab", "Feather_" + index_str, pedited, spot.feather, spotEdited.feather);
-                assignFromKeyfile(keyFile, "Locallab", "Thresh_" + index_str, pedited, spot.thresh, spotEdited.thresh);
-                assignFromKeyfile(keyFile, "Locallab", "Iter_" + index_str, pedited, spot.iter, spotEdited.iter);
-                assignFromKeyfile(keyFile, "Locallab", "Balan_" + index_str, pedited, spot.balan, spotEdited.balan);
-                assignFromKeyfile(keyFile, "Locallab", "Balanh_" + index_str, pedited, spot.balanh, spotEdited.balanh);
-                assignFromKeyfile(keyFile, "Locallab", "Colorde_" + index_str, pedited, spot.colorde, spotEdited.colorde);
-                assignFromKeyfile(keyFile, "Locallab", "Colorscope_" + index_str, pedited, spot.colorscope, spotEdited.colorscope);
-                assignFromKeyfile(keyFile, "Locallab", "Avoidrad_" + index_str, pedited, spot.avoidrad, spotEdited.avoidrad);
-                assignFromKeyfile(keyFile, "Locallab", "Transitweak_" + index_str, pedited, spot.transitweak, spotEdited.transitweak);
-                assignFromKeyfile(keyFile, "Locallab", "Transitgrad_" + index_str, pedited, spot.transitgrad, spotEdited.transitgrad);
-                assignFromKeyfile(keyFile, "Locallab", "Hishow_" + index_str, pedited, spot.hishow, spotEdited.hishow);
-                assignFromKeyfile(keyFile, "Locallab", "Activ_" + index_str, pedited, spot.activ, spotEdited.activ);
-                assignFromKeyfile(keyFile, "Locallab", "Blwh_" + index_str, pedited, spot.blwh, spotEdited.blwh);
-                assignFromKeyfile(keyFile, "Locallab", "Recurs_" + index_str, pedited, spot.recurs, spotEdited.recurs);
-                assignFromKeyfile(keyFile, "Locallab", "Laplac_" + index_str, pedited, spot.laplac, spotEdited.laplac);
-                assignFromKeyfile(keyFile, "Locallab", "Deltae_" + index_str, pedited, spot.deltae, spotEdited.deltae);
-                assignFromKeyfile(keyFile, "Locallab", "Shortc_" + index_str, pedited, spot.shortc, spotEdited.shortc);
-                assignFromKeyfile(keyFile, "Locallab", "Savrest_" + index_str, pedited, spot.savrest, spotEdited.savrest);
-                assignFromKeyfile(keyFile, "Locallab", "Scopemask_" + index_str, pedited, spot.scopemask, spotEdited.scopemask);
-                assignFromKeyfile(keyFile, "Locallab", "Denoichmask_" + index_str, pedited, spot.denoichmask, spotEdited.denoichmask);
-                assignFromKeyfile(keyFile, "Locallab", "Lumask_" + index_str, pedited, spot.lumask, spotEdited.lumask);
+                assignFromKeyfile(keyFile, "Locallab", "Loc_" + index_str, spot.loc, spotEdited.loc);
+                assignFromKeyfile(keyFile, "Locallab", "CenterX_" + index_str, spot.centerX, spotEdited.centerX);
+                assignFromKeyfile(keyFile, "Locallab", "CenterY_" + index_str, spot.centerY, spotEdited.centerY);
+                assignFromKeyfile(keyFile, "Locallab", "Circrad_" + index_str, spot.circrad, spotEdited.circrad);
+                assignFromKeyfile(keyFile, "Locallab", "QualityMethod_" + index_str, spot.qualityMethod, spotEdited.qualityMethod);
+                assignFromKeyfile(keyFile, "Locallab", "ComplexMethod_" + index_str, spot.complexMethod, spotEdited.complexMethod);
+                assignFromKeyfile(keyFile, "Locallab", "Transit_" + index_str, spot.transit, spotEdited.transit);
+                assignFromKeyfile(keyFile, "Locallab", "Feather_" + index_str, spot.feather, spotEdited.feather);
+                assignFromKeyfile(keyFile, "Locallab", "Thresh_" + index_str, spot.thresh, spotEdited.thresh);
+                assignFromKeyfile(keyFile, "Locallab", "Iter_" + index_str, spot.iter, spotEdited.iter);
+                assignFromKeyfile(keyFile, "Locallab", "Balan_" + index_str, spot.balan, spotEdited.balan);
+                assignFromKeyfile(keyFile, "Locallab", "Balanh_" + index_str, spot.balanh, spotEdited.balanh);
+                assignFromKeyfile(keyFile, "Locallab", "Colorde_" + index_str, spot.colorde, spotEdited.colorde);
+                assignFromKeyfile(keyFile, "Locallab", "Colorscope_" + index_str, spot.colorscope, spotEdited.colorscope);
+                assignFromKeyfile(keyFile, "Locallab", "Avoidrad_" + index_str, spot.avoidrad, spotEdited.avoidrad);
+                assignFromKeyfile(keyFile, "Locallab", "Transitweak_" + index_str, spot.transitweak, spotEdited.transitweak);
+                assignFromKeyfile(keyFile, "Locallab", "Transitgrad_" + index_str, spot.transitgrad, spotEdited.transitgrad);
+                assignFromKeyfile(keyFile, "Locallab", "Hishow_" + index_str, spot.hishow, spotEdited.hishow);
+                assignFromKeyfile(keyFile, "Locallab", "Activ_" + index_str, spot.activ, spotEdited.activ);
+                assignFromKeyfile(keyFile, "Locallab", "Blwh_" + index_str, spot.blwh, spotEdited.blwh);
+                assignFromKeyfile(keyFile, "Locallab", "Recurs_" + index_str, spot.recurs, spotEdited.recurs);
+                assignFromKeyfile(keyFile, "Locallab", "Laplac_" + index_str, spot.laplac, spotEdited.laplac);
+                assignFromKeyfile(keyFile, "Locallab", "Deltae_" + index_str, spot.deltae, spotEdited.deltae);
+                assignFromKeyfile(keyFile, "Locallab", "Shortc_" + index_str, spot.shortc, spotEdited.shortc);
+                assignFromKeyfile(keyFile, "Locallab", "Savrest_" + index_str, spot.savrest, spotEdited.savrest);
+                assignFromKeyfile(keyFile, "Locallab", "Scopemask_" + index_str, spot.scopemask, spotEdited.scopemask);
+                assignFromKeyfile(keyFile, "Locallab", "Denoichmask_" + index_str, spot.denoichmask, spotEdited.denoichmask);
+                assignFromKeyfile(keyFile, "Locallab", "Lumask_" + index_str, spot.lumask, spotEdited.lumask);
                 // Color & Light
-                spot.visicolor = assignFromKeyfile(keyFile, "Locallab", "Expcolor_" + index_str, pedited, spot.expcolor, spotEdited.expcolor);
+                spot.visicolor = assignFromKeyfile(keyFile, "Locallab", "Expcolor_" + index_str, spot.expcolor, spotEdited.expcolor);
 
                 if (spot.visicolor) {
                     spotEdited.visicolor = true;
                 }
 
-                assignFromKeyfile(keyFile, "Locallab", "Complexcolor_" + index_str, pedited, spot.complexcolor, spotEdited.complexcolor);
-                assignFromKeyfile(keyFile, "Locallab", "Curvactiv_" + index_str, pedited, spot.curvactiv, spotEdited.curvactiv);
-                assignFromKeyfile(keyFile, "Locallab", "Lightness_" + index_str, pedited, spot.lightness, spotEdited.lightness);
-                assignFromKeyfile(keyFile, "Locallab", "Reparcol_" + index_str, pedited, spot.reparcol, spotEdited.reparcol);
-                assignFromKeyfile(keyFile, "Locallab", "Gamc_" + index_str, pedited, spot.gamc, spotEdited.gamc);
-                assignFromKeyfile(keyFile, "Locallab", "Contrast_" + index_str, pedited, spot.contrast, spotEdited.contrast);
-                assignFromKeyfile(keyFile, "Locallab", "Chroma_" + index_str, pedited, spot.chroma, spotEdited.chroma);
-                assignFromKeyfile(keyFile, "Locallab", "labgridALow_" + index_str, pedited, spot.labgridALow, spotEdited.labgridALow);
-                assignFromKeyfile(keyFile, "Locallab", "labgridBLow_" + index_str, pedited, spot.labgridBLow, spotEdited.labgridBLow);
-                assignFromKeyfile(keyFile, "Locallab", "labgridAHigh_" + index_str, pedited, spot.labgridAHigh, spotEdited.labgridAHigh);
-                assignFromKeyfile(keyFile, "Locallab", "labgridBHigh_" + index_str, pedited, spot.labgridBHigh, spotEdited.labgridBHigh);
-                assignFromKeyfile(keyFile, "Locallab", "labgridALowmerg_" + index_str, pedited, spot.labgridALowmerg, spotEdited.labgridALowmerg);
-                assignFromKeyfile(keyFile, "Locallab", "labgridBLowmerg_" + index_str, pedited, spot.labgridBLowmerg, spotEdited.labgridBLowmerg);
-                assignFromKeyfile(keyFile, "Locallab", "labgridAHighmerg_" + index_str, pedited, spot.labgridAHighmerg, spotEdited.labgridAHighmerg);
-                assignFromKeyfile(keyFile, "Locallab", "labgridBHighmerg_" + index_str, pedited, spot.labgridBHighmerg, spotEdited.labgridBHighmerg);
-                assignFromKeyfile(keyFile, "Locallab", "Strengthgrid_" + index_str, pedited, spot.strengthgrid, spotEdited.strengthgrid);
-                assignFromKeyfile(keyFile, "Locallab", "Sensi_" + index_str, pedited, spot.sensi, spotEdited.sensi);
-                assignFromKeyfile(keyFile, "Locallab", "Structcol_" + index_str, pedited, spot.structcol, spotEdited.structcol);
-                assignFromKeyfile(keyFile, "Locallab", "Strcol_" + index_str, pedited, spot.strcol, spotEdited.strcol);
-                assignFromKeyfile(keyFile, "Locallab", "Strcolab_" + index_str, pedited, spot.strcolab, spotEdited.strcolab);
-                assignFromKeyfile(keyFile, "Locallab", "Strcolh_" + index_str, pedited, spot.strcolh, spotEdited.strcolh);
-                assignFromKeyfile(keyFile, "Locallab", "Angcol_" + index_str, pedited, spot.angcol, spotEdited.angcol);
-                assignFromKeyfile(keyFile, "Locallab", "Blurcolde_" + index_str, pedited, spot.blurcolde, spotEdited.blurcolde);
-                assignFromKeyfile(keyFile, "Locallab", "Blurcol_" + index_str, pedited, spot.blurcol, spotEdited.blurcol);
-                assignFromKeyfile(keyFile, "Locallab", "Contcol_" + index_str, pedited, spot.contcol, spotEdited.contcol);
-                assignFromKeyfile(keyFile, "Locallab", "Blendmaskcol_" + index_str, pedited, spot.blendmaskcol, spotEdited.blendmaskcol);
-                assignFromKeyfile(keyFile, "Locallab", "Radmaskcol_" + index_str, pedited, spot.radmaskcol, spotEdited.radmaskcol);
-                assignFromKeyfile(keyFile, "Locallab", "Chromaskcol_" + index_str, pedited, spot.chromaskcol, spotEdited.chromaskcol);
-                assignFromKeyfile(keyFile, "Locallab", "Gammaskcol_" + index_str, pedited, spot.gammaskcol, spotEdited.gammaskcol);
-                assignFromKeyfile(keyFile, "Locallab", "Slomaskcol_" + index_str, pedited, spot.slomaskcol, spotEdited.slomaskcol);
-                assignFromKeyfile(keyFile, "Locallab", "shadmaskcol_" + index_str, pedited, spot.shadmaskcol, spotEdited.shadmaskcol);
-                assignFromKeyfile(keyFile, "Locallab", "strumaskcol_" + index_str, pedited, spot.strumaskcol, spotEdited.strumaskcol);
-                assignFromKeyfile(keyFile, "Locallab", "Lapmaskcol_" + index_str, pedited, spot.lapmaskcol, spotEdited.lapmaskcol);
-                assignFromKeyfile(keyFile, "Locallab", "QualityCurveMethod_" + index_str, pedited, spot.qualitycurveMethod, spotEdited.qualitycurveMethod);
-                assignFromKeyfile(keyFile, "Locallab", "gridMethod_" + index_str, pedited, spot.gridMethod, spotEdited.gridMethod);
-                assignFromKeyfile(keyFile, "Locallab", "Merg_Method_" + index_str, pedited, spot.merMethod, spotEdited.merMethod);
-                assignFromKeyfile(keyFile, "Locallab", "ToneMethod_" + index_str, pedited, spot.toneMethod, spotEdited.toneMethod);
-                assignFromKeyfile(keyFile, "Locallab", "mergecolMethod_" + index_str, pedited, spot.mergecolMethod, spotEdited.mergecolMethod);
-                assignFromKeyfile(keyFile, "Locallab", "LLCurve_" + index_str, pedited, spot.llcurve, spotEdited.llcurve);
-                assignFromKeyfile(keyFile, "Locallab", "LCCurve_" + index_str, pedited, spot.lccurve, spotEdited.lccurve);
-                assignFromKeyfile(keyFile, "Locallab", "CCCurve_" + index_str, pedited, spot.cccurve, spotEdited.cccurve);
-                assignFromKeyfile(keyFile, "Locallab", "CLCurve_" + index_str, pedited, spot.clcurve, spotEdited.clcurve);
-                assignFromKeyfile(keyFile, "Locallab", "RGBCurve_" + index_str, pedited, spot.rgbcurve, spotEdited.rgbcurve);
-                assignFromKeyfile(keyFile, "Locallab", "LHCurve_" + index_str, pedited, spot.LHcurve, spotEdited.LHcurve);
-                assignFromKeyfile(keyFile, "Locallab", "HHCurve_" + index_str, pedited, spot.HHcurve, spotEdited.HHcurve);
-                assignFromKeyfile(keyFile, "Locallab", "CHCurve_" + index_str, pedited, spot.CHcurve, spotEdited.CHcurve);
-                assignFromKeyfile(keyFile, "Locallab", "Invers_" + index_str, pedited, spot.invers, spotEdited.invers);
-                assignFromKeyfile(keyFile, "Locallab", "Special_" + index_str, pedited, spot.special, spotEdited.special);
-                assignFromKeyfile(keyFile, "Locallab", "Toolcol_" + index_str, pedited, spot.toolcol, spotEdited.toolcol);
-                assignFromKeyfile(keyFile, "Locallab", "EnaColorMask_" + index_str, pedited, spot.enaColorMask, spotEdited.enaColorMask);
-                assignFromKeyfile(keyFile, "Locallab", "FftColorMask_" + index_str, pedited, spot.fftColorMask, spotEdited.fftColorMask);
-                assignFromKeyfile(keyFile, "Locallab", "CCmaskCurve_" + index_str, pedited, spot.CCmaskcurve, spotEdited.CCmaskcurve);
-                assignFromKeyfile(keyFile, "Locallab", "LLmaskCurve_" + index_str, pedited, spot.LLmaskcurve, spotEdited.LLmaskcurve);
-                assignFromKeyfile(keyFile, "Locallab", "HHmaskCurve_" + index_str, pedited, spot.HHmaskcurve, spotEdited.HHmaskcurve);
-                assignFromKeyfile(keyFile, "Locallab", "HHhmaskCurve_" + index_str, pedited, spot.HHhmaskcurve, spotEdited.HHhmaskcurve);
-                assignFromKeyfile(keyFile, "Locallab", "Softradiuscol_" + index_str, pedited, spot.softradiuscol, spotEdited.softradiuscol);
-                assignFromKeyfile(keyFile, "Locallab", "Opacol_" + index_str, pedited, spot.opacol, spotEdited.opacol);
-                assignFromKeyfile(keyFile, "Locallab", "Mercol_" + index_str, pedited, spot.mercol, spotEdited.mercol);
-                assignFromKeyfile(keyFile, "Locallab", "Merlucol_" + index_str, pedited, spot.merlucol, spotEdited.merlucol);
-                assignFromKeyfile(keyFile, "Locallab", "Conthrcol_" + index_str, pedited, spot.conthrcol, spotEdited.conthrcol);
-                assignFromKeyfile(keyFile, "Locallab", "LmaskCurve_" + index_str, pedited, spot.Lmaskcurve, spotEdited.Lmaskcurve);
-                assignFromKeyfile(keyFile, "Locallab", "LLmaskcolCurvewav_" + index_str, pedited, spot.LLmaskcolcurvewav, spotEdited.LLmaskcolcurvewav);
+                assignFromKeyfile(keyFile, "Locallab", "Complexcolor_" + index_str, spot.complexcolor, spotEdited.complexcolor);
+                assignFromKeyfile(keyFile, "Locallab", "Curvactiv_" + index_str, spot.curvactiv, spotEdited.curvactiv);
+                assignFromKeyfile(keyFile, "Locallab", "Lightness_" + index_str, spot.lightness, spotEdited.lightness);
+                assignFromKeyfile(keyFile, "Locallab", "Reparcol_" + index_str, spot.reparcol, spotEdited.reparcol);
+                assignFromKeyfile(keyFile, "Locallab", "Gamc_" + index_str, spot.gamc, spotEdited.gamc);
+                assignFromKeyfile(keyFile, "Locallab", "Contrast_" + index_str, spot.contrast, spotEdited.contrast);
+                assignFromKeyfile(keyFile, "Locallab", "Chroma_" + index_str, spot.chroma, spotEdited.chroma);
+                assignFromKeyfile(keyFile, "Locallab", "labgridALow_" + index_str, spot.labgridALow, spotEdited.labgridALow);
+                assignFromKeyfile(keyFile, "Locallab", "labgridBLow_" + index_str, spot.labgridBLow, spotEdited.labgridBLow);
+                assignFromKeyfile(keyFile, "Locallab", "labgridAHigh_" + index_str, spot.labgridAHigh, spotEdited.labgridAHigh);
+                assignFromKeyfile(keyFile, "Locallab", "labgridBHigh_" + index_str, spot.labgridBHigh, spotEdited.labgridBHigh);
+                assignFromKeyfile(keyFile, "Locallab", "labgridALowmerg_" + index_str, spot.labgridALowmerg, spotEdited.labgridALowmerg);
+                assignFromKeyfile(keyFile, "Locallab", "labgridBLowmerg_" + index_str, spot.labgridBLowmerg, spotEdited.labgridBLowmerg);
+                assignFromKeyfile(keyFile, "Locallab", "labgridAHighmerg_" + index_str, spot.labgridAHighmerg, spotEdited.labgridAHighmerg);
+                assignFromKeyfile(keyFile, "Locallab", "labgridBHighmerg_" + index_str, spot.labgridBHighmerg, spotEdited.labgridBHighmerg);
+                assignFromKeyfile(keyFile, "Locallab", "Strengthgrid_" + index_str, spot.strengthgrid, spotEdited.strengthgrid);
+                assignFromKeyfile(keyFile, "Locallab", "Colorscope_" + index_str, spot.colorscope, spotEdited.colorscope);
+
+                if (ppVersion <= 350) {
+                    if (keyFile.has_key("Locallab", "Colorscope_" + index_str)) {
+                        spot.sensi = keyFile.get_integer("Locallab", "Colorscope_" + index_str);
+                        spotEdited.sensi = true;
+                    }
+                } else {
+                    assignFromKeyfile(keyFile, "Locallab", "Sensi_" + index_str, spot.sensi, spotEdited.sensi);
+                }
+                assignFromKeyfile(keyFile, "Locallab", "Structcol_" + index_str, spot.structcol, spotEdited.structcol);
+                assignFromKeyfile(keyFile, "Locallab", "Strcol_" + index_str, spot.strcol, spotEdited.strcol);
+                assignFromKeyfile(keyFile, "Locallab", "Strcolab_" + index_str, spot.strcolab, spotEdited.strcolab);
+                assignFromKeyfile(keyFile, "Locallab", "Strcolh_" + index_str, spot.strcolh, spotEdited.strcolh);
+                assignFromKeyfile(keyFile, "Locallab", "Angcol_" + index_str, spot.angcol, spotEdited.angcol);
+                if (ppVersion <= 350) {
+                    if (keyFile.has_key("Locallab", "Feather_" + index_str)) {
+                        spot.feathercol = keyFile.get_integer("Locallab", "Feather_" + index_str);
+                        spotEdited.feathercol = true;
+                    }
+                } else {
+                    assignFromKeyfile(keyFile, "Locallab", "Feathercol_" + index_str, spot.feathercol, spotEdited.feathercol);
+                }
+                assignFromKeyfile(keyFile, "Locallab", "Blurcolde_" + index_str, spot.blurcolde, spotEdited.blurcolde);
+                assignFromKeyfile(keyFile, "Locallab", "Blurcol_" + index_str, spot.blurcol, spotEdited.blurcol);
+                assignFromKeyfile(keyFile, "Locallab", "Contcol_" + index_str, spot.contcol, spotEdited.contcol);
+                assignFromKeyfile(keyFile, "Locallab", "Blendmaskcol_" + index_str, spot.blendmaskcol, spotEdited.blendmaskcol);
+                assignFromKeyfile(keyFile, "Locallab", "Radmaskcol_" + index_str, spot.radmaskcol, spotEdited.radmaskcol);
+                assignFromKeyfile(keyFile, "Locallab", "Chromaskcol_" + index_str, spot.chromaskcol, spotEdited.chromaskcol);
+                assignFromKeyfile(keyFile, "Locallab", "Gammaskcol_" + index_str, spot.gammaskcol, spotEdited.gammaskcol);
+                assignFromKeyfile(keyFile, "Locallab", "Slomaskcol_" + index_str, spot.slomaskcol, spotEdited.slomaskcol);
+                assignFromKeyfile(keyFile, "Locallab", "shadmaskcol_" + index_str, spot.shadmaskcol, spotEdited.shadmaskcol);
+                assignFromKeyfile(keyFile, "Locallab", "strumaskcol_" + index_str, spot.strumaskcol, spotEdited.strumaskcol);
+                assignFromKeyfile(keyFile, "Locallab", "Lapmaskcol_" + index_str, spot.lapmaskcol, spotEdited.lapmaskcol);
+                assignFromKeyfile(keyFile, "Locallab", "QualityCurveMethod_" + index_str, spot.qualitycurveMethod, spotEdited.qualitycurveMethod);
+                assignFromKeyfile(keyFile, "Locallab", "gridMethod_" + index_str, spot.gridMethod, spotEdited.gridMethod);
+                assignFromKeyfile(keyFile, "Locallab", "Merg_Method_" + index_str, spot.merMethod, spotEdited.merMethod);
+                assignFromKeyfile(keyFile, "Locallab", "ToneMethod_" + index_str, spot.toneMethod, spotEdited.toneMethod);
+                assignFromKeyfile(keyFile, "Locallab", "mergecolMethod_" + index_str, spot.mergecolMethod, spotEdited.mergecolMethod);
+                assignFromKeyfile(keyFile, "Locallab", "LLCurve_" + index_str, spot.llcurve, spotEdited.llcurve);
+                assignFromKeyfile(keyFile, "Locallab", "LCCurve_" + index_str, spot.lccurve, spotEdited.lccurve);
+                assignFromKeyfile(keyFile, "Locallab", "CCCurve_" + index_str, spot.cccurve, spotEdited.cccurve);
+                assignFromKeyfile(keyFile, "Locallab", "CLCurve_" + index_str, spot.clcurve, spotEdited.clcurve);
+                assignFromKeyfile(keyFile, "Locallab", "RGBCurve_" + index_str, spot.rgbcurve, spotEdited.rgbcurve);
+                assignFromKeyfile(keyFile, "Locallab", "LHCurve_" + index_str, spot.LHcurve, spotEdited.LHcurve);
+                assignFromKeyfile(keyFile, "Locallab", "HHCurve_" + index_str, spot.HHcurve, spotEdited.HHcurve);
+                assignFromKeyfile(keyFile, "Locallab", "CHCurve_" + index_str, spot.CHcurve, spotEdited.CHcurve);
+                assignFromKeyfile(keyFile, "Locallab", "Invers_" + index_str, spot.invers, spotEdited.invers);
+                assignFromKeyfile(keyFile, "Locallab", "Special_" + index_str, spot.special, spotEdited.special);
+                assignFromKeyfile(keyFile, "Locallab", "Toolcol_" + index_str, spot.toolcol, spotEdited.toolcol);
+                assignFromKeyfile(keyFile, "Locallab", "EnaColorMask_" + index_str, spot.enaColorMask, spotEdited.enaColorMask);
+                assignFromKeyfile(keyFile, "Locallab", "FftColorMask_" + index_str, spot.fftColorMask, spotEdited.fftColorMask);
+                assignFromKeyfile(keyFile, "Locallab", "CCmaskCurve_" + index_str, spot.CCmaskcurve, spotEdited.CCmaskcurve);
+                assignFromKeyfile(keyFile, "Locallab", "LLmaskCurve_" + index_str, spot.LLmaskcurve, spotEdited.LLmaskcurve);
+                assignFromKeyfile(keyFile, "Locallab", "HHmaskCurve_" + index_str, spot.HHmaskcurve, spotEdited.HHmaskcurve);
+                assignFromKeyfile(keyFile, "Locallab", "HHhmaskCurve_" + index_str, spot.HHhmaskcurve, spotEdited.HHhmaskcurve);
+                assignFromKeyfile(keyFile, "Locallab", "Softradiuscol_" + index_str, spot.softradiuscol, spotEdited.softradiuscol);
+                assignFromKeyfile(keyFile, "Locallab", "Opacol_" + index_str, spot.opacol, spotEdited.opacol);
+                assignFromKeyfile(keyFile, "Locallab", "Mercol_" + index_str, spot.mercol, spotEdited.mercol);
+                assignFromKeyfile(keyFile, "Locallab", "Merlucol_" + index_str, spot.merlucol, spotEdited.merlucol);
+                assignFromKeyfile(keyFile, "Locallab", "Conthrcol_" + index_str, spot.conthrcol, spotEdited.conthrcol);
+                assignFromKeyfile(keyFile, "Locallab", "LmaskCurve_" + index_str, spot.Lmaskcurve, spotEdited.Lmaskcurve);
+                assignFromKeyfile(keyFile, "Locallab", "LLmaskcolCurvewav_" + index_str, spot.LLmaskcolcurvewav, spotEdited.LLmaskcolcurvewav);
 
                 if (keyFile.has_key("Locallab", "CSThresholdcol_" + index_str)) {
                     const std::vector<int> thresh = keyFile.get_integer_list("Locallab", "CSThresholdcol_" + index_str);
@@ -8719,124 +9665,155 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
 
                     spotEdited.csthresholdcol = true;
                 }
-                assignFromKeyfile(keyFile, "Locallab", "Recothresc_" + index_str, pedited, spot.recothresc, spotEdited.recothresc);
-                assignFromKeyfile(keyFile, "Locallab", "Lowthresc_" + index_str, pedited, spot.lowthresc, spotEdited.lowthresc);
-                assignFromKeyfile(keyFile, "Locallab", "Higthresc_" + index_str, pedited, spot.higthresc, spotEdited.higthresc);
-                assignFromKeyfile(keyFile, "Locallab", "Decayc_" + index_str, pedited, spot.decayc, spotEdited.decayc);
+                assignFromKeyfile(keyFile, "Locallab", "Recothresc_" + index_str, spot.recothresc, spotEdited.recothresc);
+                assignFromKeyfile(keyFile, "Locallab", "Lowthresc_" + index_str, spot.lowthresc, spotEdited.lowthresc);
+                assignFromKeyfile(keyFile, "Locallab", "Higthresc_" + index_str, spot.higthresc, spotEdited.higthresc);
+                assignFromKeyfile(keyFile, "Locallab", "Decayc_" + index_str, spot.decayc, spotEdited.decayc);
 
                 // Exposure
-                spot.visiexpose = assignFromKeyfile(keyFile, "Locallab", "Expexpose_" + index_str, pedited, spot.expexpose, spotEdited.expexpose);
+                spot.visiexpose = assignFromKeyfile(keyFile, "Locallab", "Expexpose_" + index_str, spot.expexpose, spotEdited.expexpose);
 
                 if (spot.visiexpose) {
                     spotEdited.visiexpose = true;
                 }
 
-                assignFromKeyfile(keyFile, "Locallab", "Complexexpose_" + index_str, pedited, spot.complexexpose, spotEdited.complexexpose);
-                assignFromKeyfile(keyFile, "Locallab", "Expcomp_" + index_str, pedited, spot.expcomp, spotEdited.expcomp);
-                assignFromKeyfile(keyFile, "Locallab", "Hlcompr_" + index_str, pedited, spot.hlcompr, spotEdited.hlcompr);
-                assignFromKeyfile(keyFile, "Locallab", "Hlcomprthresh_" + index_str, pedited, spot.hlcomprthresh, spotEdited.hlcomprthresh);
-                assignFromKeyfile(keyFile, "Locallab", "Black_" + index_str, pedited, spot.black, spotEdited.black);
-                assignFromKeyfile(keyFile, "Locallab", "Shadex_" + index_str, pedited, spot.shadex, spotEdited.shadex);
-                assignFromKeyfile(keyFile, "Locallab", "Shcompr_" + index_str, pedited, spot.shcompr, spotEdited.shcompr);
-                assignFromKeyfile(keyFile, "Locallab", "Expchroma_" + index_str, pedited, spot.expchroma, spotEdited.expchroma);
-                assignFromKeyfile(keyFile, "Locallab", "Sensiex_" + index_str, pedited, spot.sensiex, spotEdited.sensiex);
-                assignFromKeyfile(keyFile, "Locallab", "Structexp_" + index_str, pedited, spot.structexp, spotEdited.structexp);
-                assignFromKeyfile(keyFile, "Locallab", "Blurexpde_" + index_str, pedited, spot.blurexpde, spotEdited.blurexpde);
-                assignFromKeyfile(keyFile, "Locallab", "Gamex_" + index_str, pedited, spot.gamex, spotEdited.gamex);
-                assignFromKeyfile(keyFile, "Locallab", "Strexp_" + index_str, pedited, spot.strexp, spotEdited.strexp);
-                assignFromKeyfile(keyFile, "Locallab", "Angexp_" + index_str, pedited, spot.angexp, spotEdited.angexp);
-                assignFromKeyfile(keyFile, "Locallab", "ExCurve_" + index_str, pedited, spot.excurve, spotEdited.excurve);
-                assignFromKeyfile(keyFile, "Locallab", "Norm_" + index_str, pedited, spot.norm, spotEdited.norm);
-                assignFromKeyfile(keyFile, "Locallab", "Inversex_" + index_str, pedited, spot.inversex, spotEdited.inversex);
-                assignFromKeyfile(keyFile, "Locallab", "EnaExpMask_" + index_str, pedited, spot.enaExpMask, spotEdited.enaExpMask);
-                assignFromKeyfile(keyFile, "Locallab", "EnaExpMaskaft_" + index_str, pedited, spot.enaExpMaskaft, spotEdited.enaExpMaskaft);
-                assignFromKeyfile(keyFile, "Locallab", "CCmaskexpCurve_" + index_str, pedited, spot.CCmaskexpcurve, spotEdited.CCmaskexpcurve);
-                assignFromKeyfile(keyFile, "Locallab", "LLmaskexpCurve_" + index_str, pedited, spot.LLmaskexpcurve, spotEdited.LLmaskexpcurve);
-                assignFromKeyfile(keyFile, "Locallab", "HHmaskexpCurve_" + index_str, pedited, spot.HHmaskexpcurve, spotEdited.HHmaskexpcurve);
-                assignFromKeyfile(keyFile, "Locallab", "Blendmaskexp_" + index_str, pedited, spot.blendmaskexp, spotEdited.blendmaskexp);
-                assignFromKeyfile(keyFile, "Locallab", "Radmaskexp_" + index_str, pedited, spot.radmaskexp, spotEdited.radmaskexp);
-                assignFromKeyfile(keyFile, "Locallab", "Chromaskexp_" + index_str, pedited, spot.chromaskexp, spotEdited.chromaskexp);
-                assignFromKeyfile(keyFile, "Locallab", "Gammaskexp_" + index_str, pedited, spot.gammaskexp, spotEdited.gammaskexp);
-                assignFromKeyfile(keyFile, "Locallab", "Slomaskexp_" + index_str, pedited, spot.slomaskexp, spotEdited.slomaskexp);
-                assignFromKeyfile(keyFile, "Locallab", "Lapmaskexp_" + index_str, pedited, spot.lapmaskexp, spotEdited.lapmaskexp);
-                assignFromKeyfile(keyFile, "Locallab", "Strmaskexp_" + index_str, pedited, spot.strmaskexp, spotEdited.strmaskexp);
-                assignFromKeyfile(keyFile, "Locallab", "Angmaskexp_" + index_str, pedited, spot.angmaskexp, spotEdited.angmaskexp);
-                assignFromKeyfile(keyFile, "Locallab", "Softradiusexp_" + index_str, pedited, spot.softradiusexp, spotEdited.softradiusexp);
-                assignFromKeyfile(keyFile, "Locallab", "LmaskexpCurve_" + index_str, pedited, spot.Lmaskexpcurve, spotEdited.Lmaskexpcurve);
-                assignFromKeyfile(keyFile, "Locallab", "ExpMethod_" + index_str, pedited, spot.expMethod, spotEdited.expMethod);
-                assignFromKeyfile(keyFile, "Locallab", "ExnoiseMethod_" + index_str, pedited, spot.exnoiseMethod, spotEdited.exnoiseMethod);
-                assignFromKeyfile(keyFile, "Locallab", "Laplacexp_" + index_str, pedited, spot.laplacexp, spotEdited.laplacexp);
-                assignFromKeyfile(keyFile, "Locallab", "Reparexp_" + index_str, pedited, spot.reparexp, spotEdited.reparexp);
-                assignFromKeyfile(keyFile, "Locallab", "Balanexp_" + index_str, pedited, spot.balanexp, spotEdited.balanexp);
-                assignFromKeyfile(keyFile, "Locallab", "Linearexp_" + index_str, pedited, spot.linear, spotEdited.linear);
-                assignFromKeyfile(keyFile, "Locallab", "Gamm_" + index_str, pedited, spot.gamm, spotEdited.gamm);
-                assignFromKeyfile(keyFile, "Locallab", "Fatamount_" + index_str, pedited, spot.fatamount, spotEdited.fatamount);
-                assignFromKeyfile(keyFile, "Locallab", "Fatdetail_" + index_str, pedited, spot.fatdetail, spotEdited.fatdetail);
-                assignFromKeyfile(keyFile, "Locallab", "Fatanchor_" + index_str, pedited, spot.fatanchor, spotEdited.fatanchor);
-                assignFromKeyfile(keyFile, "Locallab", "Fatlevel_" + index_str, pedited, spot.fatlevel, spotEdited.fatlevel);
-                assignFromKeyfile(keyFile, "Locallab", "Recothrese_" + index_str, pedited, spot.recothrese, spotEdited.recothrese);
-                assignFromKeyfile(keyFile, "Locallab", "Lowthrese_" + index_str, pedited, spot.lowthrese, spotEdited.lowthrese);
-                assignFromKeyfile(keyFile, "Locallab", "Higthrese_" + index_str, pedited, spot.higthrese, spotEdited.higthrese);
-                assignFromKeyfile(keyFile, "Locallab", "Decaye_" + index_str, pedited, spot.decaye, spotEdited.decaye);
+                assignFromKeyfile(keyFile, "Locallab", "Laplacexp_" + index_str, spot.laplacexp, spotEdited.laplacexp);
+                assignFromKeyfile(keyFile, "Locallab", "Complexexpose_" + index_str, spot.complexexpose, spotEdited.complexexpose);
+                if (ppVersion <= 350 && spot.laplacexp > 0.f) { // Contrast attenuator moved to "advanced" after 5.10. Set complexity to "advanced" if Contrast attenuator is in use.
+                    spot.complexexpose = 0;
+                    spotEdited.complexexpose = true;
+                }
+                
+                assignFromKeyfile(keyFile, "Locallab", "Expcomp_" + index_str, spot.expcomp, spotEdited.expcomp);
+                assignFromKeyfile(keyFile, "Locallab", "Hlcompr_" + index_str, spot.hlcompr, spotEdited.hlcompr);
+                assignFromKeyfile(keyFile, "Locallab", "Hlcomprthresh_" + index_str, spot.hlcomprthresh, spotEdited.hlcomprthresh);
+                assignFromKeyfile(keyFile, "Locallab", "Black_" + index_str, spot.black, spotEdited.black);
+                assignFromKeyfile(keyFile, "Locallab", "Shadex_" + index_str, spot.shadex, spotEdited.shadex);
+                assignFromKeyfile(keyFile, "Locallab", "Shcompr_" + index_str, spot.shcompr, spotEdited.shcompr);
+                assignFromKeyfile(keyFile, "Locallab", "Expchroma_" + index_str, spot.expchroma, spotEdited.expchroma);
+                assignFromKeyfile(keyFile, "Locallab", "Sensiex_" + index_str, spot.sensiex, spotEdited.sensiex);
+                assignFromKeyfile(keyFile, "Locallab", "Structexp_" + index_str, spot.structexp, spotEdited.structexp);
+                assignFromKeyfile(keyFile, "Locallab", "Blurexpde_" + index_str, spot.blurexpde, spotEdited.blurexpde);
+                assignFromKeyfile(keyFile, "Locallab", "Gamex_" + index_str, spot.gamex, spotEdited.gamex);
+                assignFromKeyfile(keyFile, "Locallab", "Strexp_" + index_str, spot.strexp, spotEdited.strexp);
+                assignFromKeyfile(keyFile, "Locallab", "Angexp_" + index_str, spot.angexp, spotEdited.angexp);
+                if (ppVersion <= 350) {
+                    if (keyFile.has_key("Locallab", "Feather_" + index_str)) {
+                        spot.featherexp = keyFile.get_integer("Locallab", "Feather_" + index_str);
+                        spotEdited.featherexp = true;
+                    }
+                } else {
+                    assignFromKeyfile(keyFile, "Locallab", "Featherexp_" + index_str, spot.featherexp, spotEdited.featherexp);
+                }
+                assignFromKeyfile(keyFile, "Locallab", "ExCurve_" + index_str, spot.excurve, spotEdited.excurve);
+                assignFromKeyfile(keyFile, "Locallab", "Norm_" + index_str, spot.norm, spotEdited.norm);
+                assignFromKeyfile(keyFile, "Locallab", "Inversex_" + index_str, spot.inversex, spotEdited.inversex);
+                assignFromKeyfile(keyFile, "Locallab", "EnaExpMask_" + index_str, spot.enaExpMask, spotEdited.enaExpMask);
+                assignFromKeyfile(keyFile, "Locallab", "EnaExpMaskaft_" + index_str, spot.enaExpMaskaft, spotEdited.enaExpMaskaft);
+                assignFromKeyfile(keyFile, "Locallab", "CCmaskexpCurve_" + index_str, spot.CCmaskexpcurve, spotEdited.CCmaskexpcurve);
+                assignFromKeyfile(keyFile, "Locallab", "LLmaskexpCurve_" + index_str, spot.LLmaskexpcurve, spotEdited.LLmaskexpcurve);
+                assignFromKeyfile(keyFile, "Locallab", "HHmaskexpCurve_" + index_str, spot.HHmaskexpcurve, spotEdited.HHmaskexpcurve);
+                assignFromKeyfile(keyFile, "Locallab", "Blendmaskexp_" + index_str, spot.blendmaskexp, spotEdited.blendmaskexp);
+                assignFromKeyfile(keyFile, "Locallab", "Radmaskexp_" + index_str, spot.radmaskexp, spotEdited.radmaskexp);
+                assignFromKeyfile(keyFile, "Locallab", "Chromaskexp_" + index_str, spot.chromaskexp, spotEdited.chromaskexp);
+                assignFromKeyfile(keyFile, "Locallab", "Gammaskexp_" + index_str, spot.gammaskexp, spotEdited.gammaskexp);
+                assignFromKeyfile(keyFile, "Locallab", "Slomaskexp_" + index_str, spot.slomaskexp, spotEdited.slomaskexp);
+                assignFromKeyfile(keyFile, "Locallab", "Lapmaskexp_" + index_str, spot.lapmaskexp, spotEdited.lapmaskexp);
+                assignFromKeyfile(keyFile, "Locallab", "Strmaskexp_" + index_str, spot.strmaskexp, spotEdited.strmaskexp);
+                assignFromKeyfile(keyFile, "Locallab", "Angmaskexp_" + index_str, spot.angmaskexp, spotEdited.angmaskexp);
+                assignFromKeyfile(keyFile, "Locallab", "Softradiusexp_" + index_str, spot.softradiusexp, spotEdited.softradiusexp);
+                assignFromKeyfile(keyFile, "Locallab", "LmaskexpCurve_" + index_str, spot.Lmaskexpcurve, spotEdited.Lmaskexpcurve);
+                assignFromKeyfile(keyFile, "Locallab", "ExpMethod_" + index_str, spot.expMethod, spotEdited.expMethod);
+                assignFromKeyfile(keyFile, "Locallab", "ExnoiseMethod_" + index_str, spot.exnoiseMethod, spotEdited.exnoiseMethod);
+            //    assignFromKeyfile(keyFile, "Locallab", "Laplacexp_" + index_str, spot.laplacexp, spotEdited.laplacexp);
+                assignFromKeyfile(keyFile, "Locallab", "Reparexp_" + index_str, spot.reparexp, spotEdited.reparexp);
+                assignFromKeyfile(keyFile, "Locallab", "Balanexp_" + index_str, spot.balanexp, spotEdited.balanexp);
+                assignFromKeyfile(keyFile, "Locallab", "Linearexp_" + index_str, spot.linear, spotEdited.linear);
+                assignFromKeyfile(keyFile, "Locallab", "Gamm_" + index_str, spot.gamm, spotEdited.gamm);
+                assignFromKeyfile(keyFile, "Locallab", "Fatamount_" + index_str, spot.fatamount, spotEdited.fatamount);
+                assignFromKeyfile(keyFile, "Locallab", "Fatdetail_" + index_str, spot.fatdetail, spotEdited.fatdetail);
+                assignFromKeyfile(keyFile, "Locallab", "Fatsatur_" + index_str, spot.fatsatur, spotEdited.fatsatur);
+                assignFromKeyfile(keyFile, "Locallab", "Fatanchor_" + index_str, spot.fatanchor, spotEdited.fatanchor);
+                assignFromKeyfile(keyFile, "Locallab", "Fatlevel_" + index_str, spot.fatlevel, spotEdited.fatlevel);
+                assignFromKeyfile(keyFile, "Locallab", "Recothrese_" + index_str, spot.recothrese, spotEdited.recothrese);
+                assignFromKeyfile(keyFile, "Locallab", "Lowthrese_" + index_str, spot.lowthrese, spotEdited.lowthrese);
+                assignFromKeyfile(keyFile, "Locallab", "Higthrese_" + index_str, spot.higthrese, spotEdited.higthrese);
+                assignFromKeyfile(keyFile, "Locallab", "Decaye_" + index_str, spot.decaye, spotEdited.decaye);
                 // Shadow highlight
-                spot.visishadhigh = assignFromKeyfile(keyFile, "Locallab", "Expshadhigh_" + index_str, pedited, spot.expshadhigh, spotEdited.expshadhigh);
+                spot.visishadhigh = assignFromKeyfile(keyFile, "Locallab", "Expshadhigh_" + index_str, spot.expshadhigh, spotEdited.expshadhigh);
 
                 if (spot.visishadhigh) {
                     spotEdited.visishadhigh = true;
                 }
 
-                assignFromKeyfile(keyFile, "Locallab", "Complexshadhigh_" + index_str, pedited, spot.complexshadhigh, spotEdited.complexshadhigh);
-                assignFromKeyfile(keyFile, "Locallab", "ShMethod_" + index_str, pedited, spot.shMethod, spotEdited.shMethod);
+                assignFromKeyfile(keyFile, "Locallab", "Complexshadhigh_" + index_str, spot.complexshadhigh, spotEdited.complexshadhigh);
+                assignFromKeyfile(keyFile, "Locallab", "ShMethod_" + index_str, spot.shMethod, spotEdited.shMethod);
 
-                for (int j = 0; j < 5; j ++) {
-                    assignFromKeyfile(keyFile, "Locallab", "Multsh" + std::to_string(j) + "_" + index_str, pedited, spot.multsh[j], spotEdited.multsh[j]);
+                for (int j = 0; j < 6; j ++) {
+                    assignFromKeyfile(keyFile, "Locallab", "Multsh" + std::to_string(j) + "_" + index_str, spot.multsh[j], spotEdited.multsh[j]);
                 }
 
-                assignFromKeyfile(keyFile, "Locallab", "Expshadhigh_" + index_str, pedited, spot.expshadhigh, spotEdited.expshadhigh);
-                assignFromKeyfile(keyFile, "Locallab", "highlights_" + index_str, pedited, spot.highlights, spotEdited.highlights);
-                assignFromKeyfile(keyFile, "Locallab", "h_tonalwidth_" + index_str, pedited, spot.h_tonalwidth, spotEdited.h_tonalwidth);
-                assignFromKeyfile(keyFile, "Locallab", "shadows_" + index_str, pedited, spot.shadows, spotEdited.shadows);
-                assignFromKeyfile(keyFile, "Locallab", "s_tonalwidth_" + index_str, pedited, spot.s_tonalwidth, spotEdited.s_tonalwidth);
-                assignFromKeyfile(keyFile, "Locallab", "sh_radius_" + index_str, pedited, spot.sh_radius, spotEdited.sh_radius);
-                assignFromKeyfile(keyFile, "Locallab", "sensihs_" + index_str, pedited, spot.sensihs, spotEdited.sensihs);
-                assignFromKeyfile(keyFile, "Locallab", "EnaSHMask_" + index_str, pedited, spot.enaSHMask, spotEdited.enaSHMask);
-                assignFromKeyfile(keyFile, "Locallab", "CCmaskSHCurve_" + index_str, pedited, spot.CCmaskSHcurve, spotEdited.CCmaskSHcurve);
-                assignFromKeyfile(keyFile, "Locallab", "LLmaskSHCurve_" + index_str, pedited, spot.LLmaskSHcurve, spotEdited.LLmaskSHcurve);
-                assignFromKeyfile(keyFile, "Locallab", "HHmaskSHCurve_" + index_str, pedited, spot.HHmaskSHcurve, spotEdited.HHmaskSHcurve);
-                assignFromKeyfile(keyFile, "Locallab", "BlendmaskSH_" + index_str, pedited, spot.blendmaskSH, spotEdited.blendmaskSH);
-                assignFromKeyfile(keyFile, "Locallab", "RadmaskSH_" + index_str, pedited, spot.radmaskSH, spotEdited.radmaskSH);
-                assignFromKeyfile(keyFile, "Locallab", "BlurSHde_" + index_str, pedited, spot.blurSHde, spotEdited.blurSHde);
-                assignFromKeyfile(keyFile, "Locallab", "StrSH_" + index_str, pedited, spot.strSH, spotEdited.strSH);
-                assignFromKeyfile(keyFile, "Locallab", "AngSH_" + index_str, pedited, spot.angSH, spotEdited.angSH);
-                assignFromKeyfile(keyFile, "Locallab", "Inverssh_" + index_str, pedited, spot.inverssh, spotEdited.inverssh);
-                assignFromKeyfile(keyFile, "Locallab", "ChromaskSH_" + index_str, pedited, spot.chromaskSH, spotEdited.chromaskSH);
-                assignFromKeyfile(keyFile, "Locallab", "GammaskSH_" + index_str, pedited, spot.gammaskSH, spotEdited.gammaskSH);
-                assignFromKeyfile(keyFile, "Locallab", "SlomaskSH_" + index_str, pedited, spot.slomaskSH, spotEdited.slomaskSH);
-                assignFromKeyfile(keyFile, "Locallab", "LapmaskSH_" + index_str, pedited, spot.lapmaskSH, spotEdited.lapmaskSH);
-                assignFromKeyfile(keyFile, "Locallab", "DetailSH_" + index_str, pedited, spot.detailSH, spotEdited.detailSH);
-                assignFromKeyfile(keyFile, "Locallab", "TePivot_" + index_str, pedited, spot.tePivot, spotEdited.tePivot);
-                assignFromKeyfile(keyFile, "Locallab", "Reparsh_" + index_str, pedited, spot.reparsh, spotEdited.reparsh);
-                assignFromKeyfile(keyFile, "Locallab", "LmaskSHCurve_" + index_str, pedited, spot.LmaskSHcurve, spotEdited.LmaskSHcurve);
-                assignFromKeyfile(keyFile, "Locallab", "FatamountSH_" + index_str, pedited, spot.fatamountSH, spotEdited.fatamountSH);
-                assignFromKeyfile(keyFile, "Locallab", "FatanchorSH_" + index_str, pedited, spot.fatanchorSH, spotEdited.fatanchorSH);
-                assignFromKeyfile(keyFile, "Locallab", "GamSH_" + index_str, pedited, spot.gamSH, spotEdited.gamSH);
-                assignFromKeyfile(keyFile, "Locallab", "SloSH_" + index_str, pedited, spot.sloSH, spotEdited.sloSH);
-                assignFromKeyfile(keyFile, "Locallab", "Recothress_" + index_str, pedited, spot.recothress, spotEdited.recothress);
-                assignFromKeyfile(keyFile, "Locallab", "Lowthress_" + index_str, pedited, spot.lowthress, spotEdited.lowthress);
-                assignFromKeyfile(keyFile, "Locallab", "Higthress_" + index_str, pedited, spot.higthress, spotEdited.higthress);
-                assignFromKeyfile(keyFile, "Locallab", "Decays_" + index_str, pedited, spot.decays, spotEdited.decays);
+                assignFromKeyfile(keyFile, "Locallab", "Expshadhigh_" + index_str, spot.expshadhigh, spotEdited.expshadhigh);
+                assignFromKeyfile(keyFile, "Locallab", "highlights_" + index_str, spot.highlights, spotEdited.highlights);
+                assignFromKeyfile(keyFile, "Locallab", "h_tonalwidth_" + index_str, spot.h_tonalwidth, spotEdited.h_tonalwidth);
+                assignFromKeyfile(keyFile, "Locallab", "shadows_" + index_str, spot.shadows, spotEdited.shadows);
+                assignFromKeyfile(keyFile, "Locallab", "s_tonalwidth_" + index_str, spot.s_tonalwidth, spotEdited.s_tonalwidth);
+                assignFromKeyfile(keyFile, "Locallab", "sh_radius_" + index_str, spot.sh_radius, spotEdited.sh_radius);
+                if (ppVersion <= 350) {
+                    if (keyFile.has_key("Locallab", "Colorscope_" + index_str)) {
+                        spot.sensihs = keyFile.get_integer("Locallab", "Colorscope_" + index_str);
+                        spotEdited.sensihs = true;
+                    }
+                } else {
+                    assignFromKeyfile(keyFile, "Locallab", "sensihs_" + index_str, spot.sensihs, spotEdited.sensihs);
+                }
+                assignFromKeyfile(keyFile, "Locallab", "EnaSHMask_" + index_str, spot.enaSHMask, spotEdited.enaSHMask);
+                assignFromKeyfile(keyFile, "Locallab", "CCmaskSHCurve_" + index_str, spot.CCmaskSHcurve, spotEdited.CCmaskSHcurve);
+                assignFromKeyfile(keyFile, "Locallab", "LLmaskSHCurve_" + index_str, spot.LLmaskSHcurve, spotEdited.LLmaskSHcurve);
+                assignFromKeyfile(keyFile, "Locallab", "HHmaskSHCurve_" + index_str, spot.HHmaskSHcurve, spotEdited.HHmaskSHcurve);
+                assignFromKeyfile(keyFile, "Locallab", "BlendmaskSH_" + index_str, spot.blendmaskSH, spotEdited.blendmaskSH);
+                assignFromKeyfile(keyFile, "Locallab", "RadmaskSH_" + index_str, spot.radmaskSH, spotEdited.radmaskSH);
+                assignFromKeyfile(keyFile, "Locallab", "BlurSHde_" + index_str, spot.blurSHde, spotEdited.blurSHde);
+                assignFromKeyfile(keyFile, "Locallab", "StrSH_" + index_str, spot.strSH, spotEdited.strSH);
+                assignFromKeyfile(keyFile, "Locallab", "AngSH_" + index_str, spot.angSH, spotEdited.angSH);
+                if (ppVersion <= 350) {
+                    if (keyFile.has_key("Locallab", "Feather_" + index_str)) {
+                        spot.featherSH = keyFile.get_integer("Locallab", "Feather_" + index_str);
+                        spotEdited.featherSH = true;
+                    }
+                } else {
+                    assignFromKeyfile(keyFile, "Locallab", "FeatherSH_" + index_str, spot.featherSH, spotEdited.featherSH);
+                }
+
+                assignFromKeyfile(keyFile, "Locallab", "Inverssh_" + index_str, spot.inverssh, spotEdited.inverssh);
+                assignFromKeyfile(keyFile, "Locallab", "ChromaskSH_" + index_str, spot.chromaskSH, spotEdited.chromaskSH);
+                assignFromKeyfile(keyFile, "Locallab", "GammaskSH_" + index_str, spot.gammaskSH, spotEdited.gammaskSH);
+                assignFromKeyfile(keyFile, "Locallab", "SlomaskSH_" + index_str, spot.slomaskSH, spotEdited.slomaskSH);
+                assignFromKeyfile(keyFile, "Locallab", "LapmaskSH_" + index_str, spot.lapmaskSH, spotEdited.lapmaskSH);
+                assignFromKeyfile(keyFile, "Locallab", "DetailSH_" + index_str, spot.detailSH, spotEdited.detailSH);
+                assignFromKeyfile(keyFile, "Locallab", "TePivot_" + index_str, spot.tePivot, spotEdited.tePivot);
+                assignFromKeyfile(keyFile, "Locallab", "Reparsh_" + index_str, spot.reparsh, spotEdited.reparsh);
+                assignFromKeyfile(keyFile, "Locallab", "LmaskSHCurve_" + index_str, spot.LmaskSHcurve, spotEdited.LmaskSHcurve);
+                assignFromKeyfile(keyFile, "Locallab", "FatamountSH_" + index_str, spot.fatamountSH, spotEdited.fatamountSH);
+                assignFromKeyfile(keyFile, "Locallab", "FatanchorSH_" + index_str, spot.fatanchorSH, spotEdited.fatanchorSH);
+                assignFromKeyfile(keyFile, "Locallab", "GamSH_" + index_str, spot.gamSH, spotEdited.gamSH);
+                assignFromKeyfile(keyFile, "Locallab", "SloSH_" + index_str, spot.sloSH, spotEdited.sloSH);
+                assignFromKeyfile(keyFile, "Locallab", "Recothress_" + index_str, spot.recothress, spotEdited.recothress);
+                assignFromKeyfile(keyFile, "Locallab", "Lowthress_" + index_str, spot.lowthress, spotEdited.lowthress);
+                assignFromKeyfile(keyFile, "Locallab", "Higthress_" + index_str, spot.higthress, spotEdited.higthress);
+                assignFromKeyfile(keyFile, "Locallab", "Decays_" + index_str, spot.decays, spotEdited.decays);
                 // Vibrance
-                spot.visivibrance = assignFromKeyfile(keyFile, "Locallab", "Expvibrance_" + index_str, pedited, spot.expvibrance, spotEdited.expvibrance);
+                spot.visivibrance = assignFromKeyfile(keyFile, "Locallab", "Expvibrance_" + index_str, spot.expvibrance, spotEdited.expvibrance);
 
                 if (spot.visivibrance) {
                     spotEdited.visivibrance = true;
                 }
 
-                assignFromKeyfile(keyFile, "Locallab", "Complexvibrance_" + index_str, pedited, spot.complexvibrance, spotEdited.complexvibrance);
-                assignFromKeyfile(keyFile, "Locallab", "Saturated_" + index_str, pedited, spot.saturated, spotEdited.saturated);
-                assignFromKeyfile(keyFile, "Locallab", "Pastels_" + index_str, pedited, spot.pastels, spotEdited.pastels);
-                assignFromKeyfile(keyFile, "Locallab", "Vibgam_" + index_str, pedited, spot.vibgam, spotEdited.vibgam);
-                assignFromKeyfile(keyFile, "Locallab", "Warm_" + index_str, pedited, spot.warm, spotEdited.warm);
+                assignFromKeyfile(keyFile, "Locallab", "Complexvibrance_" + index_str, spot.complexvibrance, spotEdited.complexvibrance);
+                assignFromKeyfile(keyFile, "Locallab", "Saturated_" + index_str, spot.saturated, spotEdited.saturated);
+                assignFromKeyfile(keyFile, "Locallab", "Pastels_" + index_str, spot.pastels, spotEdited.pastels);
+                assignFromKeyfile(keyFile, "Locallab", "Vibgam_" + index_str, spot.vibgam, spotEdited.vibgam);
+                assignFromKeyfile(keyFile, "Locallab", "Warm_" + index_str, spot.warm, spotEdited.warm);
 
                 if (keyFile.has_key("Locallab", "PSThreshold_" + index_str)) {
                     const std::vector<int> thresh = keyFile.get_integer_list("Locallab", "PSThreshold_" + index_str);
@@ -8848,123 +9825,139 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
                     spotEdited.psthreshold = true;
                 }
 
-                assignFromKeyfile(keyFile, "Locallab", "ProtectSkins_" + index_str, pedited, spot.protectskins, spotEdited.protectskins);
-                assignFromKeyfile(keyFile, "Locallab", "AvoidColorShift_" + index_str, pedited, spot.avoidcolorshift, spotEdited.avoidcolorshift);
-                assignFromKeyfile(keyFile, "Locallab", "PastSatTog_" + index_str, pedited, spot.pastsattog, spotEdited.pastsattog);
-                assignFromKeyfile(keyFile, "Locallab", "Sensiv_" + index_str, pedited, spot.sensiv, spotEdited.sensiv);
-                assignFromKeyfile(keyFile, "Locallab", "SkinTonesCurve_" + index_str, pedited, spot.skintonescurve, spotEdited.skintonescurve);
-                assignFromKeyfile(keyFile, "Locallab", "CCmaskvibCurve_" + index_str, pedited, spot.CCmaskvibcurve, spotEdited.CCmaskvibcurve);
-                assignFromKeyfile(keyFile, "Locallab", "LLmaskvibCurve_" + index_str, pedited, spot.LLmaskvibcurve, spotEdited.LLmaskvibcurve);
-                assignFromKeyfile(keyFile, "Locallab", "HHmaskvibCurve_" + index_str, pedited, spot.HHmaskvibcurve, spotEdited.HHmaskvibcurve);
-                assignFromKeyfile(keyFile, "Locallab", "EnavibMask_" + index_str, pedited, spot.enavibMask, spotEdited.enavibMask);
-                assignFromKeyfile(keyFile, "Locallab", "Blendmaskvib_" + index_str, pedited, spot.blendmaskvib, spotEdited.blendmaskvib);
-                assignFromKeyfile(keyFile, "Locallab", "Radmaskvib_" + index_str, pedited, spot.radmaskvib, spotEdited.radmaskvib);
-                assignFromKeyfile(keyFile, "Locallab", "Chromaskvib_" + index_str, pedited, spot.chromaskvib, spotEdited.chromaskvib);
-                assignFromKeyfile(keyFile, "Locallab", "Gammaskvib_" + index_str, pedited, spot.gammaskvib, spotEdited.gammaskvib);
-                assignFromKeyfile(keyFile, "Locallab", "Slomaskvib_" + index_str, pedited, spot.slomaskvib, spotEdited.slomaskvib);
-                assignFromKeyfile(keyFile, "Locallab", "Lapmaskvib_" + index_str, pedited, spot.lapmaskvib, spotEdited.lapmaskvib);
-                assignFromKeyfile(keyFile, "Locallab", "Strvib_" + index_str, pedited, spot.strvib, spotEdited.strvib);
-                assignFromKeyfile(keyFile, "Locallab", "Strvibab_" + index_str, pedited, spot.strvibab, spotEdited.strvibab);
-                assignFromKeyfile(keyFile, "Locallab", "Strvibh_" + index_str, pedited, spot.strvibh, spotEdited.strvibh);
-                assignFromKeyfile(keyFile, "Locallab", "Angvib_" + index_str, pedited, spot.angvib, spotEdited.angvib);
-                assignFromKeyfile(keyFile, "Locallab", "LmaskvibCurve_" + index_str, pedited, spot.Lmaskvibcurve, spotEdited.Lmaskvibcurve);
-                assignFromKeyfile(keyFile, "Locallab", "Recothresv_" + index_str, pedited, spot.recothresv, spotEdited.recothresv);
-                assignFromKeyfile(keyFile, "Locallab", "Lowthresv_" + index_str, pedited, spot.lowthresv, spotEdited.lowthresv);
-                assignFromKeyfile(keyFile, "Locallab", "Higthresv_" + index_str, pedited, spot.higthresv, spotEdited.higthresv);
-                assignFromKeyfile(keyFile, "Locallab", "Decayv_" + index_str, pedited, spot.decayv, spotEdited.decayv);
+                assignFromKeyfile(keyFile, "Locallab", "ProtectSkins_" + index_str, spot.protectskins, spotEdited.protectskins);
+                assignFromKeyfile(keyFile, "Locallab", "AvoidColorShift_" + index_str, spot.avoidcolorshift, spotEdited.avoidcolorshift);
+                assignFromKeyfile(keyFile, "Locallab", "PastSatTog_" + index_str, spot.pastsattog, spotEdited.pastsattog);
+                if (ppVersion <= 350) {
+                    if (keyFile.has_key("Locallab", "Colorscope_" + index_str)) {
+                        spot.sensiv = keyFile.get_integer("Locallab", "Colorscope_" + index_str);
+                        spotEdited.sensiv = true;
+                    }
+                } else {
+                    assignFromKeyfile(keyFile, "Locallab", "Sensiv_" + index_str, spot.sensiv, spotEdited.sensiv);
+                }
+                assignFromKeyfile(keyFile, "Locallab", "SkinTonesCurve_" + index_str, spot.skintonescurve, spotEdited.skintonescurve);
+                assignFromKeyfile(keyFile, "Locallab", "CCmaskvibCurve_" + index_str, spot.CCmaskvibcurve, spotEdited.CCmaskvibcurve);
+                assignFromKeyfile(keyFile, "Locallab", "LLmaskvibCurve_" + index_str, spot.LLmaskvibcurve, spotEdited.LLmaskvibcurve);
+                assignFromKeyfile(keyFile, "Locallab", "HHmaskvibCurve_" + index_str, spot.HHmaskvibcurve, spotEdited.HHmaskvibcurve);
+                assignFromKeyfile(keyFile, "Locallab", "EnavibMask_" + index_str, spot.enavibMask, spotEdited.enavibMask);
+                assignFromKeyfile(keyFile, "Locallab", "Blendmaskvib_" + index_str, spot.blendmaskvib, spotEdited.blendmaskvib);
+                assignFromKeyfile(keyFile, "Locallab", "Radmaskvib_" + index_str, spot.radmaskvib, spotEdited.radmaskvib);
+                assignFromKeyfile(keyFile, "Locallab", "Chromaskvib_" + index_str, spot.chromaskvib, spotEdited.chromaskvib);
+                assignFromKeyfile(keyFile, "Locallab", "Gammaskvib_" + index_str, spot.gammaskvib, spotEdited.gammaskvib);
+                assignFromKeyfile(keyFile, "Locallab", "Slomaskvib_" + index_str, spot.slomaskvib, spotEdited.slomaskvib);
+                assignFromKeyfile(keyFile, "Locallab", "Lapmaskvib_" + index_str, spot.lapmaskvib, spotEdited.lapmaskvib);
+                assignFromKeyfile(keyFile, "Locallab", "Strvib_" + index_str, spot.strvib, spotEdited.strvib);
+                assignFromKeyfile(keyFile, "Locallab", "Strvibab_" + index_str, spot.strvibab, spotEdited.strvibab);
+                assignFromKeyfile(keyFile, "Locallab", "Strvibh_" + index_str, spot.strvibh, spotEdited.strvibh);
+                assignFromKeyfile(keyFile, "Locallab", "Angvib_" + index_str, spot.angvib, spotEdited.angvib);
+                if (ppVersion <= 350) {
+                    if (keyFile.has_key("Locallab", "Feather_" + index_str)) {
+                        spot.feathervib = keyFile.get_integer("Locallab", "Feather_" + index_str);
+                        spotEdited.feathervib = true;
+                    }
+                } else {
+                    assignFromKeyfile(keyFile, "Locallab", "Feathervib_" + index_str, spot.feathervib, spotEdited.feathervib);
+                }
+
+                assignFromKeyfile(keyFile, "Locallab", "LmaskvibCurve_" + index_str, spot.Lmaskvibcurve, spotEdited.Lmaskvibcurve);
+                assignFromKeyfile(keyFile, "Locallab", "Recothresv_" + index_str, spot.recothresv, spotEdited.recothresv);
+                assignFromKeyfile(keyFile, "Locallab", "Lowthresv_" + index_str, spot.lowthresv, spotEdited.lowthresv);
+                assignFromKeyfile(keyFile, "Locallab", "Higthresv_" + index_str, spot.higthresv, spotEdited.higthresv);
+                assignFromKeyfile(keyFile, "Locallab", "Decayv_" + index_str, spot.decayv, spotEdited.decayv);
                 // Soft Light
-                spot.visisoft = assignFromKeyfile(keyFile, "Locallab", "Expsoft_" + index_str, pedited, spot.expsoft, spotEdited.expsoft);
+                spot.visisoft = assignFromKeyfile(keyFile, "Locallab", "Expsoft_" + index_str, spot.expsoft, spotEdited.expsoft);
 
                 if (spot.visisoft) {
                     spotEdited.visisoft = true;
                 }
 
-                assignFromKeyfile(keyFile, "Locallab", "Complexsoft_" + index_str, pedited, spot.complexsoft, spotEdited.complexsoft);
-                assignFromKeyfile(keyFile, "Locallab", "Streng_" + index_str, pedited, spot.streng, spotEdited.streng);
-                assignFromKeyfile(keyFile, "Locallab", "Sensisf_" + index_str, pedited, spot.sensisf, spotEdited.sensisf);
-                assignFromKeyfile(keyFile, "Locallab", "Laplace_" + index_str, pedited, spot.laplace, spotEdited.laplace);
-                assignFromKeyfile(keyFile, "Locallab", "SoftMethod_" + index_str, pedited, spot.softMethod, spotEdited.softMethod);
+                assignFromKeyfile(keyFile, "Locallab", "Complexsoft_" + index_str, spot.complexsoft, spotEdited.complexsoft);
+                assignFromKeyfile(keyFile, "Locallab", "Streng_" + index_str, spot.streng, spotEdited.streng);
+                assignFromKeyfile(keyFile, "Locallab", "Sensisf_" + index_str, spot.sensisf, spotEdited.sensisf);
+                assignFromKeyfile(keyFile, "Locallab", "Laplace_" + index_str, spot.laplace, spotEdited.laplace);
+                assignFromKeyfile(keyFile, "Locallab", "SoftMethod_" + index_str, spot.softMethod, spotEdited.softMethod);
                 // Blur & Noise
-                spot.visiblur = assignFromKeyfile(keyFile, "Locallab", "Expblur_" + index_str, pedited, spot.expblur, spotEdited.expblur);
+                spot.visiblur = assignFromKeyfile(keyFile, "Locallab", "Expblur_" + index_str, spot.expblur, spotEdited.expblur);
 
                 if (spot.visiblur) {
                     spotEdited.visiblur = true;
                 }
 
-                assignFromKeyfile(keyFile, "Locallab", "Complexblur_" + index_str, pedited, spot.complexblur, spotEdited.complexblur);
-                assignFromKeyfile(keyFile, "Locallab", "Radius_" + index_str, pedited, spot.radius, spotEdited.radius);
-                assignFromKeyfile(keyFile, "Locallab", "Strength_" + index_str, pedited, spot.strength, spotEdited.strength);
-                assignFromKeyfile(keyFile, "Locallab", "Sensibn_" + index_str, pedited, spot.sensibn, spotEdited.sensibn);
-                assignFromKeyfile(keyFile, "Locallab", "Iteramed_" + index_str, pedited, spot.itera, spotEdited.itera);
-                assignFromKeyfile(keyFile, "Locallab", "Guidbl_" + index_str, pedited, spot.guidbl, spotEdited.guidbl);
-                assignFromKeyfile(keyFile, "Locallab", "Strbl_" + index_str, pedited, spot.strbl, spotEdited.strbl);
-                assignFromKeyfile(keyFile, "Locallab", "Recothres_" + index_str, pedited, spot.recothres, spotEdited.recothres);
-                assignFromKeyfile(keyFile, "Locallab", "Lowthres_" + index_str, pedited, spot.lowthres, spotEdited.lowthres);
-                assignFromKeyfile(keyFile, "Locallab", "Higthres_" + index_str, pedited, spot.higthres, spotEdited.higthres);
-                assignFromKeyfile(keyFile, "Locallab", "Recothresd_" + index_str, pedited, spot.recothresd, spotEdited.recothresd);
-                assignFromKeyfile(keyFile, "Locallab", "Lowthresd_" + index_str, pedited, spot.lowthresd, spotEdited.lowthresd);
-                assignFromKeyfile(keyFile, "Locallab", "Midthresd_" + index_str, pedited, spot.midthresd, spotEdited.midthresd);
-                assignFromKeyfile(keyFile, "Locallab", "Midthresdch_" + index_str, pedited, spot.midthresdch, spotEdited.midthresdch);
-                assignFromKeyfile(keyFile, "Locallab", "Higthresd_" + index_str, pedited, spot.higthresd, spotEdited.higthresd);
-                assignFromKeyfile(keyFile, "Locallab", "Decayd_" + index_str, pedited, spot.decayd, spotEdited.decayd);
-                assignFromKeyfile(keyFile, "Locallab", "Isogr_" + index_str, pedited, spot.isogr, spotEdited.isogr);
-                assignFromKeyfile(keyFile, "Locallab", "Strengr_" + index_str, pedited, spot.strengr, spotEdited.strengr);
-                assignFromKeyfile(keyFile, "Locallab", "Scalegr_" + index_str, pedited, spot.scalegr, spotEdited.scalegr);
-                assignFromKeyfile(keyFile, "Locallab", "Divgr_" + index_str, pedited, spot.divgr, spotEdited.divgr);
-                assignFromKeyfile(keyFile, "Locallab", "Epsbl_" + index_str, pedited, spot.epsbl, spotEdited.epsbl);
-                assignFromKeyfile(keyFile, "Locallab", "BlMethod_" + index_str, pedited, spot.blMethod, spotEdited.blMethod);
-                assignFromKeyfile(keyFile, "Locallab", "ChroMethod_" + index_str, pedited, spot.chroMethod, spotEdited.chroMethod);
-                assignFromKeyfile(keyFile, "Locallab", "QuaMethod_" + index_str, pedited, spot.quamethod, spotEdited.quamethod);
-                assignFromKeyfile(keyFile, "Locallab", "BlurMethod_" + index_str, pedited, spot.blurMethod, spotEdited.blurMethod);
-                assignFromKeyfile(keyFile, "Locallab", "Usemaskb_" + index_str, pedited, spot.usemask, spotEdited.usemask);
-                assignFromKeyfile(keyFile, "Locallab", "Invmaskd_" + index_str, pedited, spot.invmaskd, spotEdited.invmaskd);
-                assignFromKeyfile(keyFile, "Locallab", "Invmask_" + index_str, pedited, spot.invmask, spotEdited.invmask);
-                assignFromKeyfile(keyFile, "Locallab", "Levelthr_" + index_str, pedited, spot.levelthr, spotEdited.levelthr);
-                assignFromKeyfile(keyFile, "Locallab", "Lnoiselow_" + index_str, pedited, spot.lnoiselow, spotEdited.lnoiselow);
-                assignFromKeyfile(keyFile, "Locallab", "Levelthrlow_" + index_str, pedited, spot.levelthrlow, spotEdited.levelthrlow);
-                assignFromKeyfile(keyFile, "Locallab", "MedMethod_" + index_str, pedited, spot.medMethod, spotEdited.medMethod);
-                assignFromKeyfile(keyFile, "Locallab", "activlum_" + index_str, pedited, spot.activlum, spotEdited.activlum);
-                assignFromKeyfile(keyFile, "Locallab", "noiselumf_" + index_str, pedited, spot.noiselumf, spotEdited.noiselumf);
-                assignFromKeyfile(keyFile, "Locallab", "noiselumf0_" + index_str, pedited, spot.noiselumf0, spotEdited.noiselumf0);
-                assignFromKeyfile(keyFile, "Locallab", "noiselumf2_" + index_str, pedited, spot.noiselumf2, spotEdited.noiselumf2);
-                assignFromKeyfile(keyFile, "Locallab", "noiselumc_" + index_str, pedited, spot.noiselumc, spotEdited.noiselumc);
-                assignFromKeyfile(keyFile, "Locallab", "noiselumdetail_" + index_str, pedited, spot.noiselumdetail, spotEdited.noiselumdetail);
-                assignFromKeyfile(keyFile, "Locallab", "noiselequal_" + index_str, pedited, spot.noiselequal, spotEdited.noiselequal);
-                assignFromKeyfile(keyFile, "Locallab", "noisegam_" + index_str, pedited, spot.noisegam, spotEdited.noisegam);
-                assignFromKeyfile(keyFile, "Locallab", "noisechrof_" + index_str, pedited, spot.noisechrof, spotEdited.noisechrof);
-                assignFromKeyfile(keyFile, "Locallab", "noisechroc_" + index_str, pedited, spot.noisechroc, spotEdited.noisechroc);
-                assignFromKeyfile(keyFile, "Locallab", "noisechrodetail_" + index_str, pedited, spot.noisechrodetail, spotEdited.noisechrodetail);
-                assignFromKeyfile(keyFile, "Locallab", "Adjblur_" + index_str, pedited, spot.adjblur, spotEdited.adjblur);
-                assignFromKeyfile(keyFile, "Locallab", "Bilateral_" + index_str, pedited, spot.bilateral, spotEdited.bilateral);
-                assignFromKeyfile(keyFile, "Locallab", "Nlstr_" + index_str, pedited, spot.nlstr, spotEdited.nlstr);
-                assignFromKeyfile(keyFile, "Locallab", "Nldet_" + index_str, pedited, spot.nldet, spotEdited.nldet);
-                assignFromKeyfile(keyFile, "Locallab", "Nlpat_" + index_str, pedited, spot.nlpat, spotEdited.nlpat);
-                assignFromKeyfile(keyFile, "Locallab", "Nlrad_" + index_str, pedited, spot.nlrad, spotEdited.nlrad);
-                assignFromKeyfile(keyFile, "Locallab", "Nlgam_" + index_str, pedited, spot.nlgam, spotEdited.nlgam);
-                assignFromKeyfile(keyFile, "Locallab", "Sensiden_" + index_str, pedited, spot.sensiden, spotEdited.sensiden);
-                assignFromKeyfile(keyFile, "Locallab", "Reparden_" + index_str, pedited, spot.reparden, spotEdited.reparden);
-                assignFromKeyfile(keyFile, "Locallab", "Detailthr_" + index_str, pedited, spot.detailthr, spotEdited.detailthr);
-                assignFromKeyfile(keyFile, "Locallab", "LocwavCurveden_" + index_str, pedited, spot.locwavcurveden, spotEdited.locwavcurveden);
-                assignFromKeyfile(keyFile, "Locallab", "LocwavCurvehue_" + index_str, pedited, spot.locwavcurvehue, spotEdited.locwavcurvehue);
-                assignFromKeyfile(keyFile, "Locallab", "Showmasktyp_" + index_str, pedited, spot.showmaskblMethodtyp, spotEdited.showmaskblMethodtyp);
-                assignFromKeyfile(keyFile, "Locallab", "CCmaskblCurve_" + index_str, pedited, spot.CCmaskblcurve, spotEdited.CCmaskblcurve);
-                assignFromKeyfile(keyFile, "Locallab", "LLmaskblCurve_" + index_str, pedited, spot.LLmaskblcurve, spotEdited.LLmaskblcurve);
-                assignFromKeyfile(keyFile, "Locallab", "HHmaskblCurve_" + index_str, pedited, spot.HHmaskblcurve, spotEdited.HHmaskblcurve);
-                assignFromKeyfile(keyFile, "Locallab", "EnablMask_" + index_str, pedited, spot.enablMask, spotEdited.enablMask);
-                assignFromKeyfile(keyFile, "Locallab", "Fftwbl_" + index_str, pedited, spot.fftwbl, spotEdited.fftwbl);
-                assignFromKeyfile(keyFile, "Locallab", "Invbl_" + index_str, pedited, spot.invbl, spotEdited.invbl);
-                assignFromKeyfile(keyFile, "Locallab", "Toolbl_" + index_str, pedited, spot.toolbl, spotEdited.toolbl);
-                assignFromKeyfile(keyFile, "Locallab", "Blendmaskbl_" + index_str, pedited, spot.blendmaskbl, spotEdited.blendmaskbl);
-                assignFromKeyfile(keyFile, "Locallab", "Radmaskbl_" + index_str, pedited, spot.radmaskbl, spotEdited.radmaskbl);
-                assignFromKeyfile(keyFile, "Locallab", "Chromaskbl_" + index_str, pedited, spot.chromaskbl, spotEdited.chromaskbl);
-                assignFromKeyfile(keyFile, "Locallab", "Gammaskbl_" + index_str, pedited, spot.gammaskbl, spotEdited.gammaskbl);
-                assignFromKeyfile(keyFile, "Locallab", "Slomaskbl_" + index_str, pedited, spot.slomaskbl, spotEdited.slomaskbl);
-                assignFromKeyfile(keyFile, "Locallab", "Lapmaskbl_" + index_str, pedited, spot.lapmaskbl, spotEdited.lapmaskbl);
-                assignFromKeyfile(keyFile, "Locallab", "shadmaskbl_" + index_str, pedited, spot.shadmaskbl, spotEdited.shadmaskbl);
-                assignFromKeyfile(keyFile, "Locallab", "shadmaskblsha_" + index_str, pedited, spot.shadmaskblsha, spotEdited.shadmaskblsha);
-                assignFromKeyfile(keyFile, "Locallab", "strumaskbl_" + index_str, pedited, spot.strumaskbl, spotEdited.strumaskbl);
-                assignFromKeyfile(keyFile, "Locallab", "LmaskblCurve_" + index_str, pedited, spot.Lmaskblcurve, spotEdited.Lmaskblcurve);
-                assignFromKeyfile(keyFile, "Locallab", "LLmaskblCurvewav_" + index_str, pedited, spot.LLmaskblcurvewav, spotEdited.LLmaskblcurvewav);
+                assignFromKeyfile(keyFile, "Locallab", "Complexblur_" + index_str, spot.complexblur, spotEdited.complexblur);
+                assignFromKeyfile(keyFile, "Locallab", "Radius_" + index_str, spot.radius, spotEdited.radius);
+                assignFromKeyfile(keyFile, "Locallab", "Strength_" + index_str, spot.strength, spotEdited.strength);
+                assignFromKeyfile(keyFile, "Locallab", "Sensibn_" + index_str, spot.sensibn, spotEdited.sensibn);
+                assignFromKeyfile(keyFile, "Locallab", "Iteramed_" + index_str, spot.itera, spotEdited.itera);
+                assignFromKeyfile(keyFile, "Locallab", "Guidbl_" + index_str, spot.guidbl, spotEdited.guidbl);
+                assignFromKeyfile(keyFile, "Locallab", "Strbl_" + index_str, spot.strbl, spotEdited.strbl);
+                assignFromKeyfile(keyFile, "Locallab", "Recothres_" + index_str, spot.recothres, spotEdited.recothres);
+                assignFromKeyfile(keyFile, "Locallab", "Lowthres_" + index_str, spot.lowthres, spotEdited.lowthres);
+                assignFromKeyfile(keyFile, "Locallab", "Higthres_" + index_str, spot.higthres, spotEdited.higthres);
+                assignFromKeyfile(keyFile, "Locallab", "Recothresd_" + index_str, spot.recothresd, spotEdited.recothresd);
+                assignFromKeyfile(keyFile, "Locallab", "Lowthresd_" + index_str, spot.lowthresd, spotEdited.lowthresd);
+                assignFromKeyfile(keyFile, "Locallab", "Midthresd_" + index_str, spot.midthresd, spotEdited.midthresd);
+                assignFromKeyfile(keyFile, "Locallab", "Midthresdch_" + index_str, spot.midthresdch, spotEdited.midthresdch);
+                assignFromKeyfile(keyFile, "Locallab", "Higthresd_" + index_str, spot.higthresd, spotEdited.higthresd);
+                assignFromKeyfile(keyFile, "Locallab", "Decayd_" + index_str, spot.decayd, spotEdited.decayd);
+                assignFromKeyfile(keyFile, "Locallab", "Isogr_" + index_str, spot.isogr, spotEdited.isogr);
+                assignFromKeyfile(keyFile, "Locallab", "Strengr_" + index_str, spot.strengr, spotEdited.strengr);
+                assignFromKeyfile(keyFile, "Locallab", "Scalegr_" + index_str, spot.scalegr, spotEdited.scalegr);
+                assignFromKeyfile(keyFile, "Locallab", "Divgr_" + index_str, spot.divgr, spotEdited.divgr);
+                assignFromKeyfile(keyFile, "Locallab", "Epsbl_" + index_str, spot.epsbl, spotEdited.epsbl);
+                assignFromKeyfile(keyFile, "Locallab", "BlMethod_" + index_str, spot.blMethod, spotEdited.blMethod);
+                assignFromKeyfile(keyFile, "Locallab", "ChroMethod_" + index_str, spot.chroMethod, spotEdited.chroMethod);
+                assignFromKeyfile(keyFile, "Locallab", "QuaMethod_" + index_str, spot.quamethod, spotEdited.quamethod);
+                assignFromKeyfile(keyFile, "Locallab", "BlurMethod_" + index_str, spot.blurMethod, spotEdited.blurMethod);
+                assignFromKeyfile(keyFile, "Locallab", "Usemaskb_" + index_str, spot.usemask, spotEdited.usemask);
+                assignFromKeyfile(keyFile, "Locallab", "Invmaskd_" + index_str, spot.invmaskd, spotEdited.invmaskd);
+                assignFromKeyfile(keyFile, "Locallab", "Invmask_" + index_str, spot.invmask, spotEdited.invmask);
+                assignFromKeyfile(keyFile, "Locallab", "Levelthr_" + index_str, spot.levelthr, spotEdited.levelthr);
+                assignFromKeyfile(keyFile, "Locallab", "Lnoiselow_" + index_str, spot.lnoiselow, spotEdited.lnoiselow);
+                assignFromKeyfile(keyFile, "Locallab", "Levelthrlow_" + index_str, spot.levelthrlow, spotEdited.levelthrlow);
+                assignFromKeyfile(keyFile, "Locallab", "MedMethod_" + index_str, spot.medMethod, spotEdited.medMethod);
+                assignFromKeyfile(keyFile, "Locallab", "activlum_" + index_str, spot.activlum, spotEdited.activlum);
+                assignFromKeyfile(keyFile, "Locallab", "noiselumf_" + index_str, spot.noiselumf, spotEdited.noiselumf);
+                assignFromKeyfile(keyFile, "Locallab", "noiselumf0_" + index_str, spot.noiselumf0, spotEdited.noiselumf0);
+                assignFromKeyfile(keyFile, "Locallab", "noiselumf2_" + index_str, spot.noiselumf2, spotEdited.noiselumf2);
+                assignFromKeyfile(keyFile, "Locallab", "noiselumc_" + index_str, spot.noiselumc, spotEdited.noiselumc);
+                assignFromKeyfile(keyFile, "Locallab", "noiselumdetail_" + index_str, spot.noiselumdetail, spotEdited.noiselumdetail);
+                assignFromKeyfile(keyFile, "Locallab", "noiselequal_" + index_str, spot.noiselequal, spotEdited.noiselequal);
+                assignFromKeyfile(keyFile, "Locallab", "noisegam_" + index_str, spot.noisegam, spotEdited.noisegam);
+                assignFromKeyfile(keyFile, "Locallab", "noisechrof_" + index_str, spot.noisechrof, spotEdited.noisechrof);
+                assignFromKeyfile(keyFile, "Locallab", "noisechroc_" + index_str, spot.noisechroc, spotEdited.noisechroc);
+                assignFromKeyfile(keyFile, "Locallab", "noisechrodetail_" + index_str, spot.noisechrodetail, spotEdited.noisechrodetail);
+                assignFromKeyfile(keyFile, "Locallab", "Adjblur_" + index_str, spot.adjblur, spotEdited.adjblur);
+                assignFromKeyfile(keyFile, "Locallab", "Bilateral_" + index_str, spot.bilateral, spotEdited.bilateral);
+                assignFromKeyfile(keyFile, "Locallab", "Nlstr_" + index_str, spot.nlstr, spotEdited.nlstr);
+                assignFromKeyfile(keyFile, "Locallab", "Nldet_" + index_str, spot.nldet, spotEdited.nldet);
+                assignFromKeyfile(keyFile, "Locallab", "Nlpat_" + index_str, spot.nlpat, spotEdited.nlpat);
+                assignFromKeyfile(keyFile, "Locallab", "Nlrad_" + index_str, spot.nlrad, spotEdited.nlrad);
+                assignFromKeyfile(keyFile, "Locallab", "Nlgam_" + index_str, spot.nlgam, spotEdited.nlgam);
+                assignFromKeyfile(keyFile, "Locallab", "Sensiden_" + index_str, spot.sensiden, spotEdited.sensiden);
+                assignFromKeyfile(keyFile, "Locallab", "Reparden_" + index_str, spot.reparden, spotEdited.reparden);
+                assignFromKeyfile(keyFile, "Locallab", "Detailthr_" + index_str, spot.detailthr, spotEdited.detailthr);
+                assignFromKeyfile(keyFile, "Locallab", "LocwavCurveden_" + index_str, spot.locwavcurveden, spotEdited.locwavcurveden);
+                assignFromKeyfile(keyFile, "Locallab", "LocwavCurvehue_" + index_str, spot.locwavcurvehue, spotEdited.locwavcurvehue);
+                assignFromKeyfile(keyFile, "Locallab", "Showmasktyp_" + index_str, spot.showmaskblMethodtyp, spotEdited.showmaskblMethodtyp);
+                assignFromKeyfile(keyFile, "Locallab", "CCmaskblCurve_" + index_str, spot.CCmaskblcurve, spotEdited.CCmaskblcurve);
+                assignFromKeyfile(keyFile, "Locallab", "LLmaskblCurve_" + index_str, spot.LLmaskblcurve, spotEdited.LLmaskblcurve);
+                assignFromKeyfile(keyFile, "Locallab", "HHmaskblCurve_" + index_str, spot.HHmaskblcurve, spotEdited.HHmaskblcurve);
+                assignFromKeyfile(keyFile, "Locallab", "EnablMask_" + index_str, spot.enablMask, spotEdited.enablMask);
+                assignFromKeyfile(keyFile, "Locallab", "Fftwbl_" + index_str, spot.fftwbl, spotEdited.fftwbl);
+                assignFromKeyfile(keyFile, "Locallab", "Invbl_" + index_str, spot.invbl, spotEdited.invbl);
+                assignFromKeyfile(keyFile, "Locallab", "Toolbl_" + index_str, spot.toolbl, spotEdited.toolbl);
+                assignFromKeyfile(keyFile, "Locallab", "Blendmaskbl_" + index_str, spot.blendmaskbl, spotEdited.blendmaskbl);
+                assignFromKeyfile(keyFile, "Locallab", "Radmaskbl_" + index_str, spot.radmaskbl, spotEdited.radmaskbl);
+                assignFromKeyfile(keyFile, "Locallab", "Chromaskbl_" + index_str, spot.chromaskbl, spotEdited.chromaskbl);
+                assignFromKeyfile(keyFile, "Locallab", "Gammaskbl_" + index_str, spot.gammaskbl, spotEdited.gammaskbl);
+                assignFromKeyfile(keyFile, "Locallab", "Slomaskbl_" + index_str, spot.slomaskbl, spotEdited.slomaskbl);
+                assignFromKeyfile(keyFile, "Locallab", "Lapmaskbl_" + index_str, spot.lapmaskbl, spotEdited.lapmaskbl);
+                assignFromKeyfile(keyFile, "Locallab", "shadmaskbl_" + index_str, spot.shadmaskbl, spotEdited.shadmaskbl);
+                assignFromKeyfile(keyFile, "Locallab", "shadmaskblsha_" + index_str, spot.shadmaskblsha, spotEdited.shadmaskblsha);
+                assignFromKeyfile(keyFile, "Locallab", "strumaskbl_" + index_str, spot.strumaskbl, spotEdited.strumaskbl);
+                assignFromKeyfile(keyFile, "Locallab", "LmaskblCurve_" + index_str, spot.Lmaskblcurve, spotEdited.Lmaskblcurve);
+                assignFromKeyfile(keyFile, "Locallab", "LLmaskblCurvewav_" + index_str, spot.LLmaskblcurvewav, spotEdited.LLmaskblcurvewav);
 
                 if (keyFile.has_key("Locallab", "CSThresholdblur_" + index_str)) {
                     const std::vector<int> thresh = keyFile.get_integer_list("Locallab", "CSThresholdblur_" + index_str);
@@ -8976,175 +9969,187 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
                     spotEdited.csthresholdblur = true;
                 }
                 // Tone Mapping
-                spot.visitonemap = assignFromKeyfile(keyFile, "Locallab", "Exptonemap_" + index_str, pedited, spot.exptonemap, spotEdited.exptonemap);
+                spot.visitonemap = assignFromKeyfile(keyFile, "Locallab", "Exptonemap_" + index_str, spot.exptonemap, spotEdited.exptonemap);
 
                 if (spot.visitonemap) {
                     spotEdited.visitonemap = true;
                 }
 
-                assignFromKeyfile(keyFile, "Locallab", "Complextonemap_" + index_str, pedited, spot.complextonemap, spotEdited.complextonemap);
-                assignFromKeyfile(keyFile, "Locallab", "Stren_" + index_str, pedited, spot.stren, spotEdited.stren);
-                assignFromKeyfile(keyFile, "Locallab", "Gamma_" + index_str, pedited, spot.gamma, spotEdited.gamma);
-                assignFromKeyfile(keyFile, "Locallab", "Estop_" + index_str, pedited, spot.estop, spotEdited.estop);
-                assignFromKeyfile(keyFile, "Locallab", "Scaltm_" + index_str, pedited, spot.scaltm, spotEdited.scaltm);
-                assignFromKeyfile(keyFile, "Locallab", "Repartm_" + index_str, pedited, spot.repartm, spotEdited.repartm);
-                assignFromKeyfile(keyFile, "Locallab", "Rewei_" + index_str, pedited, spot.rewei, spotEdited.rewei);
-                assignFromKeyfile(keyFile, "Locallab", "Satur_" + index_str, pedited, spot.satur, spotEdited.satur);
-                assignFromKeyfile(keyFile, "Locallab", "Sensitm_" + index_str, pedited, spot.sensitm, spotEdited.sensitm);
-                assignFromKeyfile(keyFile, "Locallab", "Softradiustm_" + index_str, pedited, spot.softradiustm, spotEdited.softradiustm);
-                assignFromKeyfile(keyFile, "Locallab", "Amount_" + index_str, pedited, spot.amount, spotEdited.amount);
-                assignFromKeyfile(keyFile, "Locallab", "Equiltm_" + index_str, pedited, spot.equiltm, spotEdited.equiltm);
-                assignFromKeyfile(keyFile, "Locallab", "CCmasktmCurve_" + index_str, pedited, spot.CCmasktmcurve, spotEdited.CCmasktmcurve);
-                assignFromKeyfile(keyFile, "Locallab", "LLmasktmCurve_" + index_str, pedited, spot.LLmasktmcurve, spotEdited.LLmasktmcurve);
-                assignFromKeyfile(keyFile, "Locallab", "HHmasktmCurve_" + index_str, pedited, spot.HHmasktmcurve, spotEdited.HHmasktmcurve);
-                assignFromKeyfile(keyFile, "Locallab", "EnatmMask_" + index_str, pedited, spot.enatmMask, spotEdited.enatmMask);
-                assignFromKeyfile(keyFile, "Locallab", "EnatmMaskaft_" + index_str, pedited, spot.enatmMaskaft, spotEdited.enatmMaskaft);
-                assignFromKeyfile(keyFile, "Locallab", "Blendmasktm_" + index_str, pedited, spot.blendmasktm, spotEdited.blendmasktm);
-                assignFromKeyfile(keyFile, "Locallab", "Radmasktm_" + index_str, pedited, spot.radmasktm, spotEdited.radmasktm);
-                assignFromKeyfile(keyFile, "Locallab", "Chromasktm_" + index_str, pedited, spot.chromasktm, spotEdited.chromasktm);
-                assignFromKeyfile(keyFile, "Locallab", "Gammasktm_" + index_str, pedited, spot.gammasktm, spotEdited.gammasktm);
-                assignFromKeyfile(keyFile, "Locallab", "Slomasktm_" + index_str, pedited, spot.slomasktm, spotEdited.slomasktm);
-                assignFromKeyfile(keyFile, "Locallab", "Lapmasktm_" + index_str, pedited, spot.lapmasktm, spotEdited.lapmasktm);
-                assignFromKeyfile(keyFile, "Locallab", "LmasktmCurve_" + index_str, pedited, spot.Lmasktmcurve, spotEdited.Lmasktmcurve);
-                assignFromKeyfile(keyFile, "Locallab", "Recothrest_" + index_str, pedited, spot.recothrest, spotEdited.recothrest);
-                assignFromKeyfile(keyFile, "Locallab", "Lowthrest_" + index_str, pedited, spot.lowthrest, spotEdited.lowthrest);
-                assignFromKeyfile(keyFile, "Locallab", "Higthrest_" + index_str, pedited, spot.higthrest, spotEdited.higthrest);
-                assignFromKeyfile(keyFile, "Locallab", "Decayt_" + index_str, pedited, spot.decayt, spotEdited.decayt);
+                assignFromKeyfile(keyFile, "Locallab", "Complextonemap_" + index_str, spot.complextonemap, spotEdited.complextonemap);
+                assignFromKeyfile(keyFile, "Locallab", "Stren_" + index_str, spot.stren, spotEdited.stren);
+                assignFromKeyfile(keyFile, "Locallab", "Gamma_" + index_str, spot.gamma, spotEdited.gamma);
+                assignFromKeyfile(keyFile, "Locallab", "Estop_" + index_str, spot.estop, spotEdited.estop);
+                assignFromKeyfile(keyFile, "Locallab", "Scaltm_" + index_str, spot.scaltm, spotEdited.scaltm);
+                assignFromKeyfile(keyFile, "Locallab", "Repartm_" + index_str, spot.repartm, spotEdited.repartm);
+                assignFromKeyfile(keyFile, "Locallab", "Rewei_" + index_str, spot.rewei, spotEdited.rewei);
+                assignFromKeyfile(keyFile, "Locallab", "Satur_" + index_str, spot.satur, spotEdited.satur);
+                assignFromKeyfile(keyFile, "Locallab", "Sensitm_" + index_str, spot.sensitm, spotEdited.sensitm);
+                assignFromKeyfile(keyFile, "Locallab", "Softradiustm_" + index_str, spot.softradiustm, spotEdited.softradiustm);
+                assignFromKeyfile(keyFile, "Locallab", "Amount_" + index_str, spot.amount, spotEdited.amount);
+                assignFromKeyfile(keyFile, "Locallab", "Equiltm_" + index_str, spot.equiltm, spotEdited.equiltm);
+                assignFromKeyfile(keyFile, "Locallab", "CCmasktmCurve_" + index_str, spot.CCmasktmcurve, spotEdited.CCmasktmcurve);
+                assignFromKeyfile(keyFile, "Locallab", "LLmasktmCurve_" + index_str, spot.LLmasktmcurve, spotEdited.LLmasktmcurve);
+                assignFromKeyfile(keyFile, "Locallab", "HHmasktmCurve_" + index_str, spot.HHmasktmcurve, spotEdited.HHmasktmcurve);
+                assignFromKeyfile(keyFile, "Locallab", "EnatmMask_" + index_str, spot.enatmMask, spotEdited.enatmMask);
+                assignFromKeyfile(keyFile, "Locallab", "EnatmMaskaft_" + index_str, spot.enatmMaskaft, spotEdited.enatmMaskaft);
+                assignFromKeyfile(keyFile, "Locallab", "Blendmasktm_" + index_str, spot.blendmasktm, spotEdited.blendmasktm);
+                assignFromKeyfile(keyFile, "Locallab", "Radmasktm_" + index_str, spot.radmasktm, spotEdited.radmasktm);
+                assignFromKeyfile(keyFile, "Locallab", "Chromasktm_" + index_str, spot.chromasktm, spotEdited.chromasktm);
+                assignFromKeyfile(keyFile, "Locallab", "Gammasktm_" + index_str, spot.gammasktm, spotEdited.gammasktm);
+                assignFromKeyfile(keyFile, "Locallab", "Slomasktm_" + index_str, spot.slomasktm, spotEdited.slomasktm);
+                assignFromKeyfile(keyFile, "Locallab", "Lapmasktm_" + index_str, spot.lapmasktm, spotEdited.lapmasktm);
+                assignFromKeyfile(keyFile, "Locallab", "LmasktmCurve_" + index_str, spot.Lmasktmcurve, spotEdited.Lmasktmcurve);
+                assignFromKeyfile(keyFile, "Locallab", "Recothrest_" + index_str, spot.recothrest, spotEdited.recothrest);
+                assignFromKeyfile(keyFile, "Locallab", "Lowthrest_" + index_str, spot.lowthrest, spotEdited.lowthrest);
+                assignFromKeyfile(keyFile, "Locallab", "Higthrest_" + index_str, spot.higthrest, spotEdited.higthrest);
+                assignFromKeyfile(keyFile, "Locallab", "Decayt_" + index_str, spot.decayt, spotEdited.decayt);
                 // Retinex
-                spot.visireti = assignFromKeyfile(keyFile, "Locallab", "Expreti_" + index_str, pedited, spot.expreti, spotEdited.expreti);
+                spot.visireti = assignFromKeyfile(keyFile, "Locallab", "Expreti_" + index_str, spot.expreti, spotEdited.expreti);
 
                 if (spot.visireti) {
                     spotEdited.visireti = true;
                 }
 
-                assignFromKeyfile(keyFile, "Locallab", "Complexreti_" + index_str, pedited, spot.complexreti, spotEdited.complexreti);
-                assignFromKeyfile(keyFile, "Locallab", "retinexMethod_" + index_str, pedited, spot.retinexMethod, spotEdited.retinexMethod);
-                assignFromKeyfile(keyFile, "Locallab", "Str_" + index_str, pedited, spot.str, spotEdited.str);
-                assignFromKeyfile(keyFile, "Locallab", "Chrrt_" + index_str, pedited, spot.chrrt, spotEdited.chrrt);
-                assignFromKeyfile(keyFile, "Locallab", "Neigh_" + index_str, pedited, spot.neigh, spotEdited.neigh);
-                assignFromKeyfile(keyFile, "Locallab", "Vart_" + index_str, pedited, spot.vart, spotEdited.vart);
-                assignFromKeyfile(keyFile, "Locallab", "Offs_" + index_str, pedited, spot.offs, spotEdited.offs);
-                assignFromKeyfile(keyFile, "Locallab", "Dehaz_" + index_str, pedited, spot.dehaz, spotEdited.dehaz);
-                assignFromKeyfile(keyFile, "Locallab", "Depth_" + index_str, pedited, spot.depth, spotEdited.depth);
-                assignFromKeyfile(keyFile, "Locallab", "Sensih_" + index_str, pedited, spot.sensih, spotEdited.sensih);
-                assignFromKeyfile(keyFile, "Locallab", "TgainCurve_" + index_str, pedited, spot.localTgaincurve, spotEdited.localTgaincurve);
-                assignFromKeyfile(keyFile, "Locallab", "TtransCurve_" + index_str, pedited, spot.localTtranscurve, spotEdited.localTtranscurve);
-                assignFromKeyfile(keyFile, "Locallab", "Inversret_" + index_str, pedited, spot.inversret, spotEdited.inversret);
-                assignFromKeyfile(keyFile, "Locallab", "Equilret_" + index_str, pedited, spot.equilret, spotEdited.equilret);
-                assignFromKeyfile(keyFile, "Locallab", "Loglin_" + index_str, pedited, spot.loglin, spotEdited.loglin);
-                assignFromKeyfile(keyFile, "Locallab", "dehazeSaturation" + index_str, pedited, spot.dehazeSaturation, spotEdited.dehazeSaturation);
-                assignFromKeyfile(keyFile, "Locallab", "Softradiusret_" + index_str, pedited, spot.softradiusret, spotEdited.softradiusret);
-                assignFromKeyfile(keyFile, "Locallab", "CCmaskretiCurve_" + index_str, pedited, spot.CCmaskreticurve, spotEdited.CCmaskreticurve);
-                assignFromKeyfile(keyFile, "Locallab", "LLmaskretiCurve_" + index_str, pedited, spot.LLmaskreticurve, spotEdited.LLmaskreticurve);
-                assignFromKeyfile(keyFile, "Locallab", "HHmaskretiCurve_" + index_str, pedited, spot.HHmaskreticurve, spotEdited.HHmaskreticurve);
-                assignFromKeyfile(keyFile, "Locallab", "EnaretiMask_" + index_str, pedited, spot.enaretiMask, spotEdited.enaretiMask);
-                assignFromKeyfile(keyFile, "Locallab", "EnaretiMasktmap_" + index_str, pedited, spot.enaretiMasktmap, spotEdited.enaretiMasktmap);
-                assignFromKeyfile(keyFile, "Locallab", "Blendmaskreti_" + index_str, pedited, spot.blendmaskreti, spotEdited.blendmaskreti);
-                assignFromKeyfile(keyFile, "Locallab", "Radmaskreti_" + index_str, pedited, spot.radmaskreti, spotEdited.radmaskreti);
-                assignFromKeyfile(keyFile, "Locallab", "Chromaskreti_" + index_str, pedited, spot.chromaskreti, spotEdited.chromaskreti);
-                assignFromKeyfile(keyFile, "Locallab", "Gammaskreti_" + index_str, pedited, spot.gammaskreti, spotEdited.gammaskreti);
-                assignFromKeyfile(keyFile, "Locallab", "Slomaskreti_" + index_str, pedited, spot.slomaskreti, spotEdited.slomaskreti);
-                assignFromKeyfile(keyFile, "Locallab", "Lapmaskreti_" + index_str, pedited, spot.lapmaskreti, spotEdited.lapmaskreti);
-                assignFromKeyfile(keyFile, "Locallab", "Scalereti_" + index_str, pedited, spot.scalereti, spotEdited.scalereti);
-                assignFromKeyfile(keyFile, "Locallab", "Darkness_" + index_str, pedited, spot.darkness, spotEdited.darkness);
-                assignFromKeyfile(keyFile, "Locallab", "Lightnessreti_" + index_str, pedited, spot.lightnessreti, spotEdited.lightnessreti);
-                assignFromKeyfile(keyFile, "Locallab", "Limd_" + index_str, pedited, spot.limd, spotEdited.limd);
-                assignFromKeyfile(keyFile, "Locallab", "Cliptm_" + index_str, pedited, spot.cliptm, spotEdited.cliptm);
-                assignFromKeyfile(keyFile, "Locallab", "Fftwreti_" + index_str, pedited, spot.fftwreti, spotEdited.fftwreti);
-                assignFromKeyfile(keyFile, "Locallab", "LmaskretiCurve_" + index_str, pedited, spot.Lmaskreticurve, spotEdited.Lmaskreticurve);
-                assignFromKeyfile(keyFile, "Locallab", "Recothresr_" + index_str, pedited, spot.recothresr, spotEdited.recothresr);
-                assignFromKeyfile(keyFile, "Locallab", "Lowthresr_" + index_str, pedited, spot.lowthresr, spotEdited.lowthresr);
-                assignFromKeyfile(keyFile, "Locallab", "Higthresr_" + index_str, pedited, spot.higthresr, spotEdited.higthresr);
-                assignFromKeyfile(keyFile, "Locallab", "Decayr_" + index_str, pedited, spot.decayr, spotEdited.decayr);
+                assignFromKeyfile(keyFile, "Locallab", "Complexreti_" + index_str, spot.complexreti, spotEdited.complexreti);
+                assignFromKeyfile(keyFile, "Locallab", "retinexMethod_" + index_str, spot.retinexMethod, spotEdited.retinexMethod);
+                assignFromKeyfile(keyFile, "Locallab", "Str_" + index_str, spot.str, spotEdited.str);
+                assignFromKeyfile(keyFile, "Locallab", "Chrrt_" + index_str, spot.chrrt, spotEdited.chrrt);
+                assignFromKeyfile(keyFile, "Locallab", "Neigh_" + index_str, spot.neigh, spotEdited.neigh);
+                assignFromKeyfile(keyFile, "Locallab", "Vart_" + index_str, spot.vart, spotEdited.vart);
+                assignFromKeyfile(keyFile, "Locallab", "Offs_" + index_str, spot.offs, spotEdited.offs);
+                assignFromKeyfile(keyFile, "Locallab", "Dehaz_" + index_str, spot.dehaz, spotEdited.dehaz);
+                assignFromKeyfile(keyFile, "Locallab", "Depth_" + index_str, spot.depth, spotEdited.depth);
+                assignFromKeyfile(keyFile, "Locallab", "Sensih_" + index_str, spot.sensih, spotEdited.sensih);
+                assignFromKeyfile(keyFile, "Locallab", "TgainCurve_" + index_str, spot.localTgaincurve, spotEdited.localTgaincurve);
+                assignFromKeyfile(keyFile, "Locallab", "TtransCurve_" + index_str, spot.localTtranscurve, spotEdited.localTtranscurve);
+                assignFromKeyfile(keyFile, "Locallab", "Inversret_" + index_str, spot.inversret, spotEdited.inversret);
+                assignFromKeyfile(keyFile, "Locallab", "Equilret_" + index_str, spot.equilret, spotEdited.equilret);
+                assignFromKeyfile(keyFile, "Locallab", "Loglin_" + index_str, spot.loglin, spotEdited.loglin);
+                assignFromKeyfile(keyFile, "Locallab", "dehazeSaturation_" + index_str, spot.dehazeSaturation, spotEdited.dehazeSaturation);
+                assignFromKeyfile(keyFile, "Locallab", "dehazeblack_" + index_str, spot.dehazeblack, spotEdited.dehazeblack);
+                assignFromKeyfile(keyFile, "Locallab", "Softradiusret_" + index_str, spot.softradiusret, spotEdited.softradiusret);
+                assignFromKeyfile(keyFile, "Locallab", "CCmaskretiCurve_" + index_str, spot.CCmaskreticurve, spotEdited.CCmaskreticurve);
+                assignFromKeyfile(keyFile, "Locallab", "LLmaskretiCurve_" + index_str, spot.LLmaskreticurve, spotEdited.LLmaskreticurve);
+                assignFromKeyfile(keyFile, "Locallab", "HHmaskretiCurve_" + index_str, spot.HHmaskreticurve, spotEdited.HHmaskreticurve);
+                assignFromKeyfile(keyFile, "Locallab", "EnaretiMask_" + index_str, spot.enaretiMask, spotEdited.enaretiMask);
+                assignFromKeyfile(keyFile, "Locallab", "EnaretiMasktmap_" + index_str, spot.enaretiMasktmap, spotEdited.enaretiMasktmap);
+                assignFromKeyfile(keyFile, "Locallab", "Blendmaskreti_" + index_str, spot.blendmaskreti, spotEdited.blendmaskreti);
+                assignFromKeyfile(keyFile, "Locallab", "Radmaskreti_" + index_str, spot.radmaskreti, spotEdited.radmaskreti);
+                assignFromKeyfile(keyFile, "Locallab", "Chromaskreti_" + index_str, spot.chromaskreti, spotEdited.chromaskreti);
+                assignFromKeyfile(keyFile, "Locallab", "Gammaskreti_" + index_str, spot.gammaskreti, spotEdited.gammaskreti);
+                assignFromKeyfile(keyFile, "Locallab", "Slomaskreti_" + index_str, spot.slomaskreti, spotEdited.slomaskreti);
+                assignFromKeyfile(keyFile, "Locallab", "Lapmaskreti_" + index_str, spot.lapmaskreti, spotEdited.lapmaskreti);
+                assignFromKeyfile(keyFile, "Locallab", "Scalereti_" + index_str, spot.scalereti, spotEdited.scalereti);
+                assignFromKeyfile(keyFile, "Locallab", "Darkness_" + index_str, spot.darkness, spotEdited.darkness);
+                assignFromKeyfile(keyFile, "Locallab", "Lightnessreti_" + index_str, spot.lightnessreti, spotEdited.lightnessreti);
+                assignFromKeyfile(keyFile, "Locallab", "Limd_" + index_str, spot.limd, spotEdited.limd);
+                assignFromKeyfile(keyFile, "Locallab", "Cliptm_" + index_str, spot.cliptm, spotEdited.cliptm);
+                assignFromKeyfile(keyFile, "Locallab", "Fftwreti_" + index_str, spot.fftwreti, spotEdited.fftwreti);
+                assignFromKeyfile(keyFile, "Locallab", "LmaskretiCurve_" + index_str, spot.Lmaskreticurve, spotEdited.Lmaskreticurve);
+                assignFromKeyfile(keyFile, "Locallab", "Recothresr_" + index_str, spot.recothresr, spotEdited.recothresr);
+                assignFromKeyfile(keyFile, "Locallab", "Lowthresr_" + index_str, spot.lowthresr, spotEdited.lowthresr);
+                assignFromKeyfile(keyFile, "Locallab", "Higthresr_" + index_str, spot.higthresr, spotEdited.higthresr);
+                assignFromKeyfile(keyFile, "Locallab", "Decayr_" + index_str, spot.decayr, spotEdited.decayr);
                 // Sharpening
-                spot.visisharp = assignFromKeyfile(keyFile, "Locallab", "Expsharp_" + index_str, pedited, spot.expsharp, spotEdited.expsharp);
+                spot.visisharp = assignFromKeyfile(keyFile, "Locallab", "Expsharp_" + index_str, spot.expsharp, spotEdited.expsharp);
 
                 if (spot.visisharp) {
                     spotEdited.visisharp = true;
                 }
 
-                assignFromKeyfile(keyFile, "Locallab", "Complexsharp_" + index_str, pedited, spot.complexsharp, spotEdited.complexsharp);
-                assignFromKeyfile(keyFile, "Locallab", "Sharcontrast_" + index_str, pedited, spot.sharcontrast, spotEdited.sharcontrast);
-                assignFromKeyfile(keyFile, "Locallab", "Sharradius_" + index_str, pedited, spot.sharradius, spotEdited.sharradius);
-                assignFromKeyfile(keyFile, "Locallab", "Sharamount_" + index_str, pedited, spot.sharamount, spotEdited.sharamount);
-                assignFromKeyfile(keyFile, "Locallab", "Shardamping_" + index_str, pedited, spot.shardamping, spotEdited.shardamping);
-                assignFromKeyfile(keyFile, "Locallab", "Shariter_" + index_str, pedited, spot.shariter, spotEdited.shariter);
-                assignFromKeyfile(keyFile, "Locallab", "Sharblur_" + index_str, pedited, spot.sharblur, spotEdited.sharblur);
-                assignFromKeyfile(keyFile, "Locallab", "Shargam_" + index_str, pedited, spot.shargam, spotEdited.shargam);
-                assignFromKeyfile(keyFile, "Locallab", "Sensisha_" + index_str, pedited, spot.sensisha, spotEdited.sensisha);
-                assignFromKeyfile(keyFile, "Locallab", "Inverssha_" + index_str, pedited, spot.inverssha, spotEdited.inverssha);
+                assignFromKeyfile(keyFile, "Locallab", "Complexsharp_" + index_str, spot.complexsharp, spotEdited.complexsharp);
+                assignFromKeyfile(keyFile, "Locallab", "Sharcontrast_" + index_str, spot.sharcontrast, spotEdited.sharcontrast);
+                assignFromKeyfile(keyFile, "Locallab", "Sharradius_" + index_str, spot.sharradius, spotEdited.sharradius);
+                assignFromKeyfile(keyFile, "Locallab", "Sharamount_" + index_str, spot.sharamount, spotEdited.sharamount);
+                assignFromKeyfile(keyFile, "Locallab", "Shardamping_" + index_str, spot.shardamping, spotEdited.shardamping);
+                assignFromKeyfile(keyFile, "Locallab", "Shariter_" + index_str, spot.shariter, spotEdited.shariter);
+                assignFromKeyfile(keyFile, "Locallab", "Sharblur_" + index_str, spot.sharblur, spotEdited.sharblur);
+                assignFromKeyfile(keyFile, "Locallab", "Shargam_" + index_str, spot.shargam, spotEdited.shargam);
+                assignFromKeyfile(keyFile, "Locallab", "Sensisha_" + index_str, spot.sensisha, spotEdited.sensisha);
+                assignFromKeyfile(keyFile, "Locallab", "Inverssha_" + index_str, spot.inverssha, spotEdited.inverssha);
                 // Local Contrast
-                spot.visicontrast = assignFromKeyfile(keyFile, "Locallab", "Expcontrast_" + index_str, pedited, spot.expcontrast, spotEdited.expcontrast);
+                spot.visicontrast = assignFromKeyfile(keyFile, "Locallab", "Expcontrast_" + index_str, spot.expcontrast, spotEdited.expcontrast);
 
                 if (spot.visicontrast) {
                     spotEdited.visicontrast = true;
                 }
 
-                assignFromKeyfile(keyFile, "Locallab", "Complexcontrast_" + index_str, pedited, spot.complexcontrast, spotEdited.complexcontrast);
-                assignFromKeyfile(keyFile, "Locallab", "Lcradius_" + index_str, pedited, spot.lcradius, spotEdited.lcradius);
-                assignFromKeyfile(keyFile, "Locallab", "Lcamount_" + index_str, pedited, spot.lcamount, spotEdited.lcamount);
-                assignFromKeyfile(keyFile, "Locallab", "Lcdarkness_" + index_str, pedited, spot.lcdarkness, spotEdited.lcdarkness);
-                assignFromKeyfile(keyFile, "Locallab", "Lclightness_" + index_str, pedited, spot.lclightness, spotEdited.lclightness);
-                assignFromKeyfile(keyFile, "Locallab", "Sigmalc_" + index_str, pedited, spot.sigmalc, spotEdited.sigmalc);
-                assignFromKeyfile(keyFile, "Locallab", "Levelwav_" + index_str, pedited, spot.levelwav, spotEdited.levelwav);
-                assignFromKeyfile(keyFile, "Locallab", "Residcont_" + index_str, pedited, spot.residcont, spotEdited.residcont);
-                assignFromKeyfile(keyFile, "Locallab", "Residsha_" + index_str, pedited, spot.residsha, spotEdited.residsha);
-                assignFromKeyfile(keyFile, "Locallab", "Residshathr_" + index_str, pedited, spot.residshathr, spotEdited.residshathr);
-                assignFromKeyfile(keyFile, "Locallab", "Residhi_" + index_str, pedited, spot.residhi, spotEdited.residhi);
-                assignFromKeyfile(keyFile, "Locallab", "Gamlc_" + index_str, pedited, spot.gamlc, spotEdited.gamlc);
-                assignFromKeyfile(keyFile, "Locallab", "Residhithr_" + index_str, pedited, spot.residhithr, spotEdited.residhithr);
-                assignFromKeyfile(keyFile, "Locallab", "Residgam_" + index_str, pedited, spot.residgam, spotEdited.residgam);
-                assignFromKeyfile(keyFile, "Locallab", "Residslop_" + index_str, pedited, spot.residslop, spotEdited.residslop);
-                assignFromKeyfile(keyFile, "Locallab", "Residblur_" + index_str, pedited, spot.residblur, spotEdited.residblur);
-                assignFromKeyfile(keyFile, "Locallab", "Levelblur_" + index_str, pedited, spot.levelblur, spotEdited.levelblur);
-                assignFromKeyfile(keyFile, "Locallab", "Sigmabl_" + index_str, pedited, spot.sigmabl, spotEdited.sigmabl);
-                assignFromKeyfile(keyFile, "Locallab", "Residchro_" + index_str, pedited, spot.residchro, spotEdited.residchro);
-                assignFromKeyfile(keyFile, "Locallab", "Residcomp_" + index_str, pedited, spot.residcomp, spotEdited.residcomp);
-                assignFromKeyfile(keyFile, "Locallab", "Sigma_" + index_str, pedited, spot.sigma, spotEdited.sigma);
-                assignFromKeyfile(keyFile, "Locallab", "Offset_" + index_str, pedited, spot.offset, spotEdited.offset);
-                assignFromKeyfile(keyFile, "Locallab", "Sigmadr_" + index_str, pedited, spot.sigmadr, spotEdited.sigmadr);
-                assignFromKeyfile(keyFile, "Locallab", "Threswav_" + index_str, pedited, spot.threswav, spotEdited.threswav);
-                assignFromKeyfile(keyFile, "Locallab", "Chromalev_" + index_str, pedited, spot.chromalev, spotEdited.chromalev);
-                assignFromKeyfile(keyFile, "Locallab", "Chromablu_" + index_str, pedited, spot.chromablu, spotEdited.chromablu);
-                assignFromKeyfile(keyFile, "Locallab", "sigmadc_" + index_str, pedited, spot.sigmadc, spotEdited.sigmadc);
-                assignFromKeyfile(keyFile, "Locallab", "deltad_" + index_str, pedited, spot.deltad, spotEdited.deltad);
-                assignFromKeyfile(keyFile, "Locallab", "Fatres_" + index_str, pedited, spot.fatres, spotEdited.fatres);
-                assignFromKeyfile(keyFile, "Locallab", "ClariLres_" + index_str, pedited, spot.clarilres, spotEdited.clarilres);
-                assignFromKeyfile(keyFile, "Locallab", "ClariCres_" + index_str, pedited, spot.claricres, spotEdited.claricres);
-                assignFromKeyfile(keyFile, "Locallab", "Clarisoft_" + index_str, pedited, spot.clarisoft, spotEdited.clarisoft);
-                assignFromKeyfile(keyFile, "Locallab", "Sigmalc2_" + index_str, pedited, spot.sigmalc2, spotEdited.sigmalc2);
-                assignFromKeyfile(keyFile, "Locallab", "Strwav_" + index_str, pedited, spot.strwav, spotEdited.strwav);
-                assignFromKeyfile(keyFile, "Locallab", "Angwav_" + index_str, pedited, spot.angwav, spotEdited.angwav);
-                assignFromKeyfile(keyFile, "Locallab", "Strengthw_" + index_str, pedited, spot.strengthw, spotEdited.strengthw);
-                assignFromKeyfile(keyFile, "Locallab", "Sigmaed_" + index_str, pedited, spot.sigmaed, spotEdited.sigmaed);
-                assignFromKeyfile(keyFile, "Locallab", "Radiusw_" + index_str, pedited, spot.radiusw, spotEdited.radiusw);
-                assignFromKeyfile(keyFile, "Locallab", "Detailw_" + index_str, pedited, spot.detailw, spotEdited.detailw);
-                assignFromKeyfile(keyFile, "Locallab", "Gradw_" + index_str, pedited, spot.gradw, spotEdited.gradw);
-                assignFromKeyfile(keyFile, "Locallab", "Tloww_" + index_str, pedited, spot.tloww, spotEdited.tloww);
-                assignFromKeyfile(keyFile, "Locallab", "Thigw_" + index_str, pedited, spot.thigw, spotEdited.thigw);
-                assignFromKeyfile(keyFile, "Locallab", "Edgw_" + index_str, pedited, spot.edgw, spotEdited.edgw);
-                assignFromKeyfile(keyFile, "Locallab", "Basew_" + index_str, pedited, spot.basew, spotEdited.basew);
-                assignFromKeyfile(keyFile, "Locallab", "Sensilc_" + index_str, pedited, spot.sensilc, spotEdited.sensilc);
-                assignFromKeyfile(keyFile, "Locallab", "Reparw_" + index_str, pedited, spot.reparw, spotEdited.reparw);
-                assignFromKeyfile(keyFile, "Locallab", "Fftwlc_" + index_str, pedited, spot.fftwlc, spotEdited.fftwlc);
-                assignFromKeyfile(keyFile, "Locallab", "Blurlc_" + index_str, pedited, spot.blurlc, spotEdited.blurlc);
-                assignFromKeyfile(keyFile, "Locallab", "Wavblur_" + index_str, pedited, spot.wavblur, spotEdited.wavblur);
-                assignFromKeyfile(keyFile, "Locallab", "Wavedg_" + index_str, pedited, spot.wavedg, spotEdited.wavedg);
-                assignFromKeyfile(keyFile, "Locallab", "Waveshow_" + index_str, pedited, spot.waveshow, spotEdited.waveshow);
-                assignFromKeyfile(keyFile, "Locallab", "Wavcont_" + index_str, pedited, spot.wavcont, spotEdited.wavcont);
-                assignFromKeyfile(keyFile, "Locallab", "Wavcomp_" + index_str, pedited, spot.wavcomp, spotEdited.wavcomp);
-                assignFromKeyfile(keyFile, "Locallab", "Wavgradl_" + index_str, pedited, spot.wavgradl, spotEdited.wavgradl);
-                assignFromKeyfile(keyFile, "Locallab", "Wavcompre_" + index_str, pedited, spot.wavcompre, spotEdited.wavcompre);
-                assignFromKeyfile(keyFile, "Locallab", "Origlc_" + index_str, pedited, spot.origlc, spotEdited.origlc);
-                assignFromKeyfile(keyFile, "Locallab", "localcontMethod_" + index_str, pedited, spot.localcontMethod, spotEdited.localcontMethod);
-                assignFromKeyfile(keyFile, "Locallab", "localedgMethod_" + index_str, pedited, spot.localedgMethod, spotEdited.localedgMethod);
-                assignFromKeyfile(keyFile, "Locallab", "localneiMethod_" + index_str, pedited, spot.localneiMethod, spotEdited.localneiMethod);
-                assignFromKeyfile(keyFile, "Locallab", "LocwavCurve_" + index_str, pedited, spot.locwavcurve, spotEdited.locwavcurve);
-                assignFromKeyfile(keyFile, "Locallab", "LoclevwavCurve_" + index_str, pedited, spot.loclevwavcurve, spotEdited.loclevwavcurve);
-                assignFromKeyfile(keyFile, "Locallab", "LocconwavCurve_" + index_str, pedited, spot.locconwavcurve, spotEdited.locconwavcurve);
-                assignFromKeyfile(keyFile, "Locallab", "LoccompwavCurve_" + index_str, pedited, spot.loccompwavcurve, spotEdited.loccompwavcurve);
-                assignFromKeyfile(keyFile, "Locallab", "LoccomprewavCurve_" + index_str, pedited, spot.loccomprewavcurve, spotEdited.loccomprewavcurve);
-                assignFromKeyfile(keyFile, "Locallab", "LocedgwavCurve_" + index_str, pedited, spot.locedgwavcurve, spotEdited.locedgwavcurve);
+                assignFromKeyfile(keyFile, "Locallab", "Complexcontrast_" + index_str, spot.complexcontrast, spotEdited.complexcontrast);
+                assignFromKeyfile(keyFile, "Locallab", "Lcradius_" + index_str, spot.lcradius, spotEdited.lcradius);
+                assignFromKeyfile(keyFile, "Locallab", "Lcamount_" + index_str, spot.lcamount, spotEdited.lcamount);
+                assignFromKeyfile(keyFile, "Locallab", "Lcdarkness_" + index_str, spot.lcdarkness, spotEdited.lcdarkness);
+                assignFromKeyfile(keyFile, "Locallab", "Lclightness_" + index_str, spot.lclightness, spotEdited.lclightness);
+                assignFromKeyfile(keyFile, "Locallab", "Sigmalc_" + index_str, spot.sigmalc, spotEdited.sigmalc);
+                assignFromKeyfile(keyFile, "Locallab", "Offslc_" + index_str, spot.offslc, spotEdited.offslc);
+                assignFromKeyfile(keyFile, "Locallab", "Levelwav_" + index_str, spot.levelwav, spotEdited.levelwav);
+                assignFromKeyfile(keyFile, "Locallab", "Residcont_" + index_str, spot.residcont, spotEdited.residcont);
+                assignFromKeyfile(keyFile, "Locallab", "Residsha_" + index_str, spot.residsha, spotEdited.residsha);
+                assignFromKeyfile(keyFile, "Locallab", "Residshathr_" + index_str, spot.residshathr, spotEdited.residshathr);
+                assignFromKeyfile(keyFile, "Locallab", "Residhi_" + index_str, spot.residhi, spotEdited.residhi);
+                assignFromKeyfile(keyFile, "Locallab", "Gamlc_" + index_str, spot.gamlc, spotEdited.gamlc);
+                assignFromKeyfile(keyFile, "Locallab", "Residhithr_" + index_str, spot.residhithr, spotEdited.residhithr);
+                assignFromKeyfile(keyFile, "Locallab", "Residgam_" + index_str, spot.residgam, spotEdited.residgam);
+                assignFromKeyfile(keyFile, "Locallab", "Residslop_" + index_str, spot.residslop, spotEdited.residslop);
+                assignFromKeyfile(keyFile, "Locallab", "Residblur_" + index_str, spot.residblur, spotEdited.residblur);
+                assignFromKeyfile(keyFile, "Locallab", "Levelblur_" + index_str, spot.levelblur, spotEdited.levelblur);
+                assignFromKeyfile(keyFile, "Locallab", "Sigmabl_" + index_str, spot.sigmabl, spotEdited.sigmabl);
+                assignFromKeyfile(keyFile, "Locallab", "Residchro_" + index_str, spot.residchro, spotEdited.residchro);
+                assignFromKeyfile(keyFile, "Locallab", "Residcomp_" + index_str, spot.residcomp, spotEdited.residcomp);
+                assignFromKeyfile(keyFile, "Locallab", "Sigma_" + index_str, spot.sigma, spotEdited.sigma);
+                assignFromKeyfile(keyFile, "Locallab", "Offset_" + index_str, spot.offset, spotEdited.offset);
+                assignFromKeyfile(keyFile, "Locallab", "Sigmadr_" + index_str, spot.sigmadr, spotEdited.sigmadr);
+                assignFromKeyfile(keyFile, "Locallab", "Threswav_" + index_str, spot.threswav, spotEdited.threswav);
+                assignFromKeyfile(keyFile, "Locallab", "Chromalev_" + index_str, spot.chromalev, spotEdited.chromalev);
+                assignFromKeyfile(keyFile, "Locallab", "Chromablu_" + index_str, spot.chromablu, spotEdited.chromablu);
+                assignFromKeyfile(keyFile, "Locallab", "sigmadc_" + index_str, spot.sigmadc, spotEdited.sigmadc);
+                assignFromKeyfile(keyFile, "Locallab", "deltad_" + index_str, spot.deltad, spotEdited.deltad);
+                assignFromKeyfile(keyFile, "Locallab", "Fatres_" + index_str, spot.fatres, spotEdited.fatres);
+                assignFromKeyfile(keyFile, "Locallab", "ClariLres_" + index_str, spot.clarilres, spotEdited.clarilres);
+                assignFromKeyfile(keyFile, "Locallab", "ClariCres_" + index_str, spot.claricres, spotEdited.claricres);
+                assignFromKeyfile(keyFile, "Locallab", "Clarisoft_" + index_str, spot.clarisoft, spotEdited.clarisoft);
+                assignFromKeyfile(keyFile, "Locallab", "Sigmalc2_" + index_str, spot.sigmalc2, spotEdited.sigmalc2);
+                assignFromKeyfile(keyFile, "Locallab", "Strwav_" + index_str, spot.strwav, spotEdited.strwav);
+                assignFromKeyfile(keyFile, "Locallab", "Angwav_" + index_str, spot.angwav, spotEdited.angwav);
+                if (ppVersion <= 350) {
+                    if (keyFile.has_key("Locallab", "Feather_" + index_str)) {
+                        spot.featherwav = keyFile.get_integer("Locallab", "Feather_" + index_str);
+                        spotEdited.featherwav = true;
+                    }
+                } else {
+                    assignFromKeyfile(keyFile, "Locallab", "Featherwav_" + index_str, spot.featherwav, spotEdited.featherwav);
+                }
+
+                assignFromKeyfile(keyFile, "Locallab", "Strengthw_" + index_str, spot.strengthw, spotEdited.strengthw);
+                assignFromKeyfile(keyFile, "Locallab", "Sigmaed_" + index_str, spot.sigmaed, spotEdited.sigmaed);
+                assignFromKeyfile(keyFile, "Locallab", "Radiusw_" + index_str, spot.radiusw, spotEdited.radiusw);
+                assignFromKeyfile(keyFile, "Locallab", "Detailw_" + index_str, spot.detailw, spotEdited.detailw);
+                assignFromKeyfile(keyFile, "Locallab", "Gradw_" + index_str, spot.gradw, spotEdited.gradw);
+                assignFromKeyfile(keyFile, "Locallab", "Tloww_" + index_str, spot.tloww, spotEdited.tloww);
+                assignFromKeyfile(keyFile, "Locallab", "Thigw_" + index_str, spot.thigw, spotEdited.thigw);
+                assignFromKeyfile(keyFile, "Locallab", "Edgw_" + index_str, spot.edgw, spotEdited.edgw);
+                assignFromKeyfile(keyFile, "Locallab", "Basew_" + index_str, spot.basew, spotEdited.basew);
+                assignFromKeyfile(keyFile, "Locallab", "Sensilc_" + index_str, spot.sensilc, spotEdited.sensilc);
+                assignFromKeyfile(keyFile, "Locallab", "Reparw_" + index_str, spot.reparw, spotEdited.reparw);
+                assignFromKeyfile(keyFile, "Locallab", "Fftwlc_" + index_str, spot.fftwlc, spotEdited.fftwlc);
+                assignFromKeyfile(keyFile, "Locallab", "Blurlc_" + index_str, spot.blurlc, spotEdited.blurlc);
+                assignFromKeyfile(keyFile, "Locallab", "Wavblur_" + index_str, spot.wavblur, spotEdited.wavblur);
+                assignFromKeyfile(keyFile, "Locallab", "Wavedg_" + index_str, spot.wavedg, spotEdited.wavedg);
+                assignFromKeyfile(keyFile, "Locallab", "Waveshow_" + index_str, spot.waveshow, spotEdited.waveshow);
+                assignFromKeyfile(keyFile, "Locallab", "Wavcont_" + index_str, spot.wavcont, spotEdited.wavcont);
+                assignFromKeyfile(keyFile, "Locallab", "Wavcomp_" + index_str, spot.wavcomp, spotEdited.wavcomp);
+                assignFromKeyfile(keyFile, "Locallab", "Wavgradl_" + index_str, spot.wavgradl, spotEdited.wavgradl);
+                assignFromKeyfile(keyFile, "Locallab", "Wavcompre_" + index_str, spot.wavcompre, spotEdited.wavcompre);
+                assignFromKeyfile(keyFile, "Locallab", "Origlc_" + index_str, spot.origlc, spotEdited.origlc);
+                assignFromKeyfile(keyFile, "Locallab", "processwav_" + index_str, spot.processwav, spotEdited.processwav);
+                assignFromKeyfile(keyFile, "Locallab", "localcontMethod_" + index_str, spot.localcontMethod, spotEdited.localcontMethod);
+                assignFromKeyfile(keyFile, "Locallab", "localedgMethod_" + index_str, spot.localedgMethod, spotEdited.localedgMethod);
+                assignFromKeyfile(keyFile, "Locallab", "localneiMethod_" + index_str, spot.localneiMethod, spotEdited.localneiMethod);
+                assignFromKeyfile(keyFile, "Locallab", "LocwavCurve_" + index_str, spot.locwavcurve, spotEdited.locwavcurve);
+                assignFromKeyfile(keyFile, "Locallab", "LoclevwavCurve_" + index_str, spot.loclevwavcurve, spotEdited.loclevwavcurve);
+                assignFromKeyfile(keyFile, "Locallab", "LocconwavCurve_" + index_str, spot.locconwavcurve, spotEdited.locconwavcurve);
+                assignFromKeyfile(keyFile, "Locallab", "LoccompwavCurve_" + index_str, spot.loccompwavcurve, spotEdited.loccompwavcurve);
+                assignFromKeyfile(keyFile, "Locallab", "LoccomprewavCurve_" + index_str, spot.loccomprewavcurve, spotEdited.loccomprewavcurve);
+                assignFromKeyfile(keyFile, "Locallab", "LocedgwavCurve_" + index_str, spot.locedgwavcurve, spotEdited.locedgwavcurve);
 
                 if (keyFile.has_key("Locallab", "CSThreshold_" + index_str)) {
 
@@ -9157,128 +10162,158 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
                     spotEdited.csthreshold = true;
                 }
 
-                assignFromKeyfile(keyFile, "Locallab", "CCmasklcCurve_" + index_str, pedited, spot.CCmasklccurve, spotEdited.CCmasklccurve);
-                assignFromKeyfile(keyFile, "Locallab", "LLmasklcCurve_" + index_str, pedited, spot.LLmasklccurve, spotEdited.LLmasklccurve);
-                assignFromKeyfile(keyFile, "Locallab", "HHmasklcCurve_" + index_str, pedited, spot.HHmasklccurve, spotEdited.HHmasklccurve);
-                assignFromKeyfile(keyFile, "Locallab", "EnalcMask_" + index_str, pedited, spot.enalcMask, spotEdited.enalcMask);
-                assignFromKeyfile(keyFile, "Locallab", "Blendmasklc_" + index_str, pedited, spot.blendmasklc, spotEdited.blendmasklc);
-                assignFromKeyfile(keyFile, "Locallab", "Radmasklc_" + index_str, pedited, spot.radmasklc, spotEdited.radmasklc);
-                assignFromKeyfile(keyFile, "Locallab", "Chromasklc_" + index_str, pedited, spot.chromasklc, spotEdited.chromasklc);
-                assignFromKeyfile(keyFile, "Locallab", "LmasklcCurve_" + index_str, pedited, spot.Lmasklccurve, spotEdited.Lmasklccurve);
-                assignFromKeyfile(keyFile, "Locallab", "Recothresw_" + index_str, pedited, spot.recothresw, spotEdited.recothresw);
-                assignFromKeyfile(keyFile, "Locallab", "Lowthresw_" + index_str, pedited, spot.lowthresw, spotEdited.lowthresw);
-                assignFromKeyfile(keyFile, "Locallab", "Higthresw_" + index_str, pedited, spot.higthresw, spotEdited.higthresw);
-                assignFromKeyfile(keyFile, "Locallab", "Decayw_" + index_str, pedited, spot.decayw, spotEdited.decayw);
+                assignFromKeyfile(keyFile, "Locallab", "CCmasklcCurve_" + index_str, spot.CCmasklccurve, spotEdited.CCmasklccurve);
+                assignFromKeyfile(keyFile, "Locallab", "LLmasklcCurve_" + index_str, spot.LLmasklccurve, spotEdited.LLmasklccurve);
+                assignFromKeyfile(keyFile, "Locallab", "HHmasklcCurve_" + index_str, spot.HHmasklccurve, spotEdited.HHmasklccurve);
+                assignFromKeyfile(keyFile, "Locallab", "EnalcMask_" + index_str, spot.enalcMask, spotEdited.enalcMask);
+                assignFromKeyfile(keyFile, "Locallab", "Blendmasklc_" + index_str, spot.blendmasklc, spotEdited.blendmasklc);
+                assignFromKeyfile(keyFile, "Locallab", "Radmasklc_" + index_str, spot.radmasklc, spotEdited.radmasklc);
+                assignFromKeyfile(keyFile, "Locallab", "Chromasklc_" + index_str, spot.chromasklc, spotEdited.chromasklc);
+                assignFromKeyfile(keyFile, "Locallab", "LmasklcCurve_" + index_str, spot.Lmasklccurve, spotEdited.Lmasklccurve);
+                assignFromKeyfile(keyFile, "Locallab", "Recothresw_" + index_str, spot.recothresw, spotEdited.recothresw);
+                assignFromKeyfile(keyFile, "Locallab", "Lowthresw_" + index_str, spot.lowthresw, spotEdited.lowthresw);
+                assignFromKeyfile(keyFile, "Locallab", "Higthresw_" + index_str, spot.higthresw, spotEdited.higthresw);
+                assignFromKeyfile(keyFile, "Locallab", "Decayw_" + index_str, spot.decayw, spotEdited.decayw);
                 // Contrast by detail levels
-                spot.visicbdl = assignFromKeyfile(keyFile, "Locallab", "Expcbdl_" + index_str, pedited, spot.expcbdl, spotEdited.expcbdl);
+                spot.visicbdl = assignFromKeyfile(keyFile, "Locallab", "Expcbdl_" + index_str, spot.expcbdl, spotEdited.expcbdl);
 
                 if (spot.visicbdl) {
                     spotEdited.visicbdl = true;
                 }
 
-                assignFromKeyfile(keyFile, "Locallab", "Complexcbdl_" + index_str, pedited, spot.complexcbdl, spotEdited.complexcbdl);
+                assignFromKeyfile(keyFile, "Locallab", "Complexcbdl_" + index_str, spot.complexcbdl, spotEdited.complexcbdl);
 
                 for (int j = 0; j < 6; j ++) {
-                    assignFromKeyfile(keyFile, "Locallab", "Mult" + std::to_string(j) + "_" + index_str, pedited, spot.mult[j], spotEdited.mult[j]);
+                    assignFromKeyfile(keyFile, "Locallab", "Mult" + std::to_string(j) + "_" + index_str, spot.mult[j], spotEdited.mult[j]);
                 }
 
-                assignFromKeyfile(keyFile, "Locallab", "Chromacbdl_" + index_str, pedited, spot.chromacbdl, spotEdited.chromacbdl);
-                assignFromKeyfile(keyFile, "Locallab", "Threshold_" + index_str, pedited, spot.threshold, spotEdited.threshold);
-                assignFromKeyfile(keyFile, "Locallab", "Sensicb_" + index_str, pedited, spot.sensicb, spotEdited.sensicb);
-                assignFromKeyfile(keyFile, "Locallab", "Clarityml_" + index_str, pedited, spot.clarityml, spotEdited.clarityml);
-                assignFromKeyfile(keyFile, "Locallab", "Contresid_" + index_str, pedited, spot.contresid, spotEdited.contresid);
-                assignFromKeyfile(keyFile, "Locallab", "Softradiuscb_" + index_str, pedited, spot.softradiuscb, spotEdited.softradiuscb);
-                assignFromKeyfile(keyFile, "Locallab", "EnacbMask_" + index_str, pedited, spot.enacbMask, spotEdited.enacbMask);
-                assignFromKeyfile(keyFile, "Locallab", "CCmaskcbCurve_" + index_str, pedited, spot.CCmaskcbcurve, spotEdited.CCmaskcbcurve);
-                assignFromKeyfile(keyFile, "Locallab", "LLmaskcbCurve_" + index_str, pedited, spot.LLmaskcbcurve, spotEdited.LLmaskcbcurve);
-                assignFromKeyfile(keyFile, "Locallab", "HHmaskcbCurve_" + index_str, pedited, spot.HHmaskcbcurve, spotEdited.HHmaskcbcurve);
-                assignFromKeyfile(keyFile, "Locallab", "Blendmaskcb_" + index_str, pedited, spot.blendmaskcb, spotEdited.blendmaskcb);
-                assignFromKeyfile(keyFile, "Locallab", "Radmaskcb_" + index_str, pedited, spot.radmaskcb, spotEdited.radmaskcb);
-                assignFromKeyfile(keyFile, "Locallab", "Chromaskcb_" + index_str, pedited, spot.chromaskcb, spotEdited.chromaskcb);
-                assignFromKeyfile(keyFile, "Locallab", "Gammaskcb_" + index_str, pedited, spot.gammaskcb, spotEdited.gammaskcb);
-                assignFromKeyfile(keyFile, "Locallab", "Slomaskcb_" + index_str, pedited, spot.slomaskcb, spotEdited.slomaskcb);
-                assignFromKeyfile(keyFile, "Locallab", "Lapmaskcb_" + index_str, pedited, spot.lapmaskcb, spotEdited.lapmaskcb);
-                assignFromKeyfile(keyFile, "Locallab", "LmaskcbCurve_" + index_str, pedited, spot.Lmaskcbcurve, spotEdited.Lmaskcbcurve);
-                assignFromKeyfile(keyFile, "Locallab", "Recothrescb_" + index_str, pedited, spot.recothrescb, spotEdited.recothrescb);
-                assignFromKeyfile(keyFile, "Locallab", "Lowthrescb_" + index_str, pedited, spot.lowthrescb, spotEdited.lowthrescb);
-                assignFromKeyfile(keyFile, "Locallab", "Higthrescb_" + index_str, pedited, spot.higthrescb, spotEdited.higthrescb);
-                assignFromKeyfile(keyFile, "Locallab", "Decaycb_" + index_str, pedited, spot.decaycb, spotEdited.decaycb);
+                assignFromKeyfile(keyFile, "Locallab", "Chromacbdl_" + index_str, spot.chromacbdl, spotEdited.chromacbdl);
+                assignFromKeyfile(keyFile, "Locallab", "Threshold_" + index_str, spot.threshold, spotEdited.threshold);
+                assignFromKeyfile(keyFile, "Locallab", "Sensicb_" + index_str, spot.sensicb, spotEdited.sensicb);
+                assignFromKeyfile(keyFile, "Locallab", "Clarityml_" + index_str, spot.clarityml, spotEdited.clarityml);
+                assignFromKeyfile(keyFile, "Locallab", "Contresid_" + index_str, spot.contresid, spotEdited.contresid);
+                assignFromKeyfile(keyFile, "Locallab", "Softradiuscb_" + index_str, spot.softradiuscb, spotEdited.softradiuscb);
+                assignFromKeyfile(keyFile, "Locallab", "EnacbMask_" + index_str, spot.enacbMask, spotEdited.enacbMask);
+                assignFromKeyfile(keyFile, "Locallab", "CCmaskcbCurve_" + index_str, spot.CCmaskcbcurve, spotEdited.CCmaskcbcurve);
+                assignFromKeyfile(keyFile, "Locallab", "LLmaskcbCurve_" + index_str, spot.LLmaskcbcurve, spotEdited.LLmaskcbcurve);
+                assignFromKeyfile(keyFile, "Locallab", "HHmaskcbCurve_" + index_str, spot.HHmaskcbcurve, spotEdited.HHmaskcbcurve);
+                assignFromKeyfile(keyFile, "Locallab", "Blendmaskcb_" + index_str, spot.blendmaskcb, spotEdited.blendmaskcb);
+                assignFromKeyfile(keyFile, "Locallab", "Radmaskcb_" + index_str, spot.radmaskcb, spotEdited.radmaskcb);
+                assignFromKeyfile(keyFile, "Locallab", "Chromaskcb_" + index_str, spot.chromaskcb, spotEdited.chromaskcb);
+                assignFromKeyfile(keyFile, "Locallab", "Gammaskcb_" + index_str, spot.gammaskcb, spotEdited.gammaskcb);
+                assignFromKeyfile(keyFile, "Locallab", "Slomaskcb_" + index_str, spot.slomaskcb, spotEdited.slomaskcb);
+                assignFromKeyfile(keyFile, "Locallab", "Lapmaskcb_" + index_str, spot.lapmaskcb, spotEdited.lapmaskcb);
+                assignFromKeyfile(keyFile, "Locallab", "LmaskcbCurve_" + index_str, spot.Lmaskcbcurve, spotEdited.Lmaskcbcurve);
+                assignFromKeyfile(keyFile, "Locallab", "Recothrescb_" + index_str, spot.recothrescb, spotEdited.recothrescb);
+                assignFromKeyfile(keyFile, "Locallab", "Lowthrescb_" + index_str, spot.lowthrescb, spotEdited.lowthrescb);
+                assignFromKeyfile(keyFile, "Locallab", "Higthrescb_" + index_str, spot.higthrescb, spotEdited.higthrescb);
+                assignFromKeyfile(keyFile, "Locallab", "Decaycb_" + index_str, spot.decaycb, spotEdited.decaycb);
                 // Log encoding
-                spot.visilog = assignFromKeyfile(keyFile, "Locallab", "Explog_" + index_str, pedited, spot.explog, spotEdited.explog);
+                spot.visilog = assignFromKeyfile(keyFile, "Locallab", "Explog_" + index_str, spot.explog, spotEdited.explog);
 
                 if (spot.visilog) {
                     spotEdited.visilog = true;
                 }
-                assignFromKeyfile(keyFile, "Locallab", "Complexlog_" + index_str, pedited, spot.complexlog, spotEdited.complexlog);
+                assignFromKeyfile(keyFile, "Locallab", "Complexlog_" + index_str, spot.complexlog, spotEdited.complexlog);
 
-                assignFromKeyfile(keyFile, "Locallab", "Autocompute_" + index_str, pedited, spot.autocompute, spotEdited.autocompute);
-                assignFromKeyfile(keyFile, "Locallab", "SourceGray_" + index_str, pedited, spot.sourceGray, spotEdited.sourceGray);
-                assignFromKeyfile(keyFile, "Locallab", "Sourceabs_" + index_str, pedited, spot.sourceabs, spotEdited.sourceabs);
-                assignFromKeyfile(keyFile, "Locallab", "Targabs_" + index_str, pedited, spot.targabs, spotEdited.targabs);
-                assignFromKeyfile(keyFile, "Locallab", "TargetGray_" + index_str, pedited, spot.targetGray, spotEdited.targetGray);
-                assignFromKeyfile(keyFile, "Locallab", "Catad_" + index_str, pedited, spot.catad, spotEdited.catad);
-                assignFromKeyfile(keyFile, "Locallab", "Saturl_" + index_str, pedited, spot.saturl, spotEdited.saturl);
-                assignFromKeyfile(keyFile, "Locallab", "Chroml_" + index_str, pedited, spot.chroml, spotEdited.chroml);
-                assignFromKeyfile(keyFile, "Locallab", "Lightl_" + index_str, pedited, spot.lightl, spotEdited.lightl);
-                assignFromKeyfile(keyFile, "Locallab", "Brightq_" + index_str, pedited, spot.lightq, spotEdited.lightq);
-                assignFromKeyfile(keyFile, "Locallab", "Contl_" + index_str, pedited, spot.contl, spotEdited.contl);
-                assignFromKeyfile(keyFile, "Locallab", "Contthres_" + index_str, pedited, spot.contthres, spotEdited.contthres);
-                assignFromKeyfile(keyFile, "Locallab", "Contq_" + index_str, pedited, spot.contq, spotEdited.contq);
-                assignFromKeyfile(keyFile, "Locallab", "Colorfl_" + index_str, pedited, spot.colorfl, spotEdited.colorfl);
-                assignFromKeyfile(keyFile, "Locallab", "LCurveL_" + index_str, pedited, spot.LcurveL, spotEdited.LcurveL);
-                assignFromKeyfile(keyFile, "Locallab", "AutoGray_" + index_str, pedited, spot.Autogray, spotEdited.Autogray);
-                assignFromKeyfile(keyFile, "Locallab", "Fullimage_" + index_str, pedited, spot.fullimage, spotEdited.fullimage);
-                assignFromKeyfile(keyFile, "Locallab", "Repart_" + index_str, pedited, spot.repar, spotEdited.repar);
-                assignFromKeyfile(keyFile, "Locallab", "Ciecam_" + index_str, pedited, spot.ciecam, spotEdited.ciecam);
-                assignFromKeyfile(keyFile, "Locallab", "BlackEv_" + index_str, pedited, spot.blackEv, spotEdited.blackEv);
-                assignFromKeyfile(keyFile, "Locallab", "WhiteEv_" + index_str, pedited, spot.whiteEv, spotEdited.whiteEv);
-                assignFromKeyfile(keyFile, "Locallab", "Detail_" + index_str, pedited, spot.detail, spotEdited.detail);
-                assignFromKeyfile(keyFile, "Locallab", "Sensilog_" + index_str, pedited, spot.sensilog, spotEdited.sensilog);
-                assignFromKeyfile(keyFile, "Locallab", "Baselog_" + index_str, pedited, spot.baselog, spotEdited.baselog);
-                assignFromKeyfile(keyFile, "Locallab", "Sursour_" + index_str, pedited, spot.sursour, spotEdited.sursour);
-                assignFromKeyfile(keyFile, "Locallab", "Surround_" + index_str, pedited, spot.surround, spotEdited.surround);
-                assignFromKeyfile(keyFile, "Locallab", "Strlog_" + index_str, pedited, spot.strlog, spotEdited.strlog);
-                assignFromKeyfile(keyFile, "Locallab", "Anglog_" + index_str, pedited, spot.anglog, spotEdited.anglog);
-                assignFromKeyfile(keyFile, "Locallab", "CCmaskCurveL_" + index_str, pedited, spot.CCmaskcurveL, spotEdited.CCmaskcurveL);
-                assignFromKeyfile(keyFile, "Locallab", "LLmaskCurveL_" + index_str, pedited, spot.LLmaskcurveL, spotEdited.LLmaskcurveL);
-                assignFromKeyfile(keyFile, "Locallab", "HHmaskCurveL_" + index_str, pedited, spot.HHmaskcurveL, spotEdited.HHmaskcurveL);
-                assignFromKeyfile(keyFile, "Locallab", "EnaLMask_" + index_str, pedited, spot.enaLMask, spotEdited.enaLMask);
-                assignFromKeyfile(keyFile, "Locallab", "blendmaskL_" + index_str, pedited, spot.blendmaskL, spotEdited.blendmaskL);
-                assignFromKeyfile(keyFile, "Locallab", "radmaskL_" + index_str, pedited, spot.radmaskL, spotEdited.radmaskL);
-                assignFromKeyfile(keyFile, "Locallab", "chromaskL_" + index_str, pedited, spot.chromaskL, spotEdited.chromaskL);
-                assignFromKeyfile(keyFile, "Locallab", "LmaskCurveL_" + index_str, pedited, spot.LmaskcurveL, spotEdited.LmaskcurveL);
-                assignFromKeyfile(keyFile, "Locallab", "Recothresl_" + index_str, pedited, spot.recothresl, spotEdited.recothresl);
-                assignFromKeyfile(keyFile, "Locallab", "Lowthresl_" + index_str, pedited, spot.lowthresl, spotEdited.lowthresl);
-                assignFromKeyfile(keyFile, "Locallab", "Higthresl_" + index_str, pedited, spot.higthresl, spotEdited.higthresl);
-                assignFromKeyfile(keyFile, "Locallab", "Decayl_" + index_str, pedited, spot.decayl, spotEdited.decayl);
+                assignFromKeyfile(keyFile, "Locallab", "Autocompute_" + index_str, spot.autocompute, spotEdited.autocompute);
+                assignFromKeyfile(keyFile, "Locallab", "SourceGray_" + index_str, spot.sourceGray, spotEdited.sourceGray);
+                assignFromKeyfile(keyFile, "Locallab", "Sourceabs_" + index_str, spot.sourceabs, spotEdited.sourceabs);
+                assignFromKeyfile(keyFile, "Locallab", "Targabs_" + index_str, spot.targabs, spotEdited.targabs);
+                assignFromKeyfile(keyFile, "Locallab", "TargetGray_" + index_str, spot.targetGray, spotEdited.targetGray);
+                assignFromKeyfile(keyFile, "Locallab", "Catad_" + index_str, spot.catad, spotEdited.catad);
+                assignFromKeyfile(keyFile, "Locallab", "Saturl_" + index_str, spot.saturl, spotEdited.saturl);
+                assignFromKeyfile(keyFile, "Locallab", "Chroml_" + index_str, spot.chroml, spotEdited.chroml);
+                assignFromKeyfile(keyFile, "Locallab", "Lightl_" + index_str, spot.lightl, spotEdited.lightl);
+                assignFromKeyfile(keyFile, "Locallab", "Brightq_" + index_str, spot.lightq, spotEdited.lightq);
+                assignFromKeyfile(keyFile, "Locallab", "Contl_" + index_str, spot.contl, spotEdited.contl);
+                assignFromKeyfile(keyFile, "Locallab", "Contthres_" + index_str, spot.contthres, spotEdited.contthres);
+                assignFromKeyfile(keyFile, "Locallab", "Contq_" + index_str, spot.contq, spotEdited.contq);
+                assignFromKeyfile(keyFile, "Locallab", "Colorfl_" + index_str, spot.colorfl, spotEdited.colorfl);
+                assignFromKeyfile(keyFile, "Locallab", "LCurveL_" + index_str, spot.LcurveL, spotEdited.LcurveL);
+                assignFromKeyfile(keyFile, "Locallab", "AutoGray_" + index_str, spot.Autogray, spotEdited.Autogray);
+                assignFromKeyfile(keyFile, "Locallab", "Fullimage_" + index_str, spot.fullimage, spotEdited.fullimage);
+                assignFromKeyfile(keyFile, "Locallab", "Repart_" + index_str, spot.repar, spotEdited.repar);
+                if (ppVersion <= 350) {//issue 7114
+                    if (keyFile.has_key("Locallab", "Ciecam_" + index_str)) {
+                        spot.ciecam = true;
+                        spotEdited.ciecam = true;
+                    }
+                } else {
+                    assignFromKeyfile(keyFile, "Locallab", "Ciecam_" + index_str, spot.ciecam, spotEdited.ciecam);
+                }
+
+                assignFromKeyfile(keyFile, "Locallab", "Satlog_" + index_str, spot.satlog, spotEdited.satlog);
+                assignFromKeyfile(keyFile, "Locallab", "BlackEv_" + index_str, spot.blackEv, spotEdited.blackEv);
+                assignFromKeyfile(keyFile, "Locallab", "WhiteEv_" + index_str, spot.whiteEv, spotEdited.whiteEv);
+                assignFromKeyfile(keyFile, "Locallab", "Whiteslog_" + index_str, spot.whiteslog, spotEdited.whiteslog);
+                assignFromKeyfile(keyFile, "Locallab", "Blackslog_" + index_str, spot.blackslog, spotEdited.blackslog);
+                assignFromKeyfile(keyFile, "Locallab", "Comprlog_" + index_str, spot.comprlog, spotEdited.comprlog);
+                assignFromKeyfile(keyFile, "Locallab", "Strelog_" + index_str, spot.strelog, spotEdited.strelog);
+                assignFromKeyfile(keyFile, "Locallab", "Detail_" + index_str, spot.detail, spotEdited.detail);
+                assignFromKeyfile(keyFile, "Locallab", "Sensilog_" + index_str, spot.sensilog, spotEdited.sensilog);
+                assignFromKeyfile(keyFile, "Locallab", "Baselog_" + index_str, spot.baselog, spotEdited.baselog);
+                assignFromKeyfile(keyFile, "Locallab", "Sursour_" + index_str, spot.sursour, spotEdited.sursour);
+                assignFromKeyfile(keyFile, "Locallab", "Surround_" + index_str, spot.surround, spotEdited.surround);
+                assignFromKeyfile(keyFile, "Locallab", "Strlog_" + index_str, spot.strlog, spotEdited.strlog);
+                assignFromKeyfile(keyFile, "Locallab", "Anglog_" + index_str, spot.anglog, spotEdited.anglog);
+                if (ppVersion <= 350) {
+                    if (keyFile.has_key("Locallab", "Feather_" + index_str)) {
+                        spot.featherlog = keyFile.get_integer("Locallab", "Feather_" + index_str);
+                        spotEdited.featherlog = true;
+                    }
+                } else {
+                    assignFromKeyfile(keyFile, "Locallab", "Featherlog_" + index_str, spot.featherlog, spotEdited.featherlog);
+                }
+                assignFromKeyfile(keyFile, "Locallab", "CCmaskCurveL_" + index_str, spot.CCmaskcurveL, spotEdited.CCmaskcurveL);
+                assignFromKeyfile(keyFile, "Locallab", "LLmaskCurveL_" + index_str, spot.LLmaskcurveL, spotEdited.LLmaskcurveL);
+                assignFromKeyfile(keyFile, "Locallab", "HHmaskCurveL_" + index_str, spot.HHmaskcurveL, spotEdited.HHmaskcurveL);
+                assignFromKeyfile(keyFile, "Locallab", "EnaLMask_" + index_str, spot.enaLMask, spotEdited.enaLMask);
+                assignFromKeyfile(keyFile, "Locallab", "blendmaskL_" + index_str, spot.blendmaskL, spotEdited.blendmaskL);
+                assignFromKeyfile(keyFile, "Locallab", "radmaskL_" + index_str, spot.radmaskL, spotEdited.radmaskL);
+                assignFromKeyfile(keyFile, "Locallab", "chromaskL_" + index_str, spot.chromaskL, spotEdited.chromaskL);
+                assignFromKeyfile(keyFile, "Locallab", "LmaskCurveL_" + index_str, spot.LmaskcurveL, spotEdited.LmaskcurveL);
+                assignFromKeyfile(keyFile, "Locallab", "Recothresl_" + index_str, spot.recothresl, spotEdited.recothresl);
+                assignFromKeyfile(keyFile, "Locallab", "Lowthresl_" + index_str, spot.lowthresl, spotEdited.lowthresl);
+                assignFromKeyfile(keyFile, "Locallab", "Higthresl_" + index_str, spot.higthresl, spotEdited.higthresl);
+                assignFromKeyfile(keyFile, "Locallab", "Decayl_" + index_str, spot.decayl, spotEdited.decayl);
 
                 // mask
-                spot.visimask = assignFromKeyfile(keyFile, "Locallab", "Expmask_" + index_str, pedited, spot.expmask, spotEdited.expmask);
-                assignFromKeyfile(keyFile, "Locallab", "Complexmask_" + index_str, pedited, spot.complexmask, spotEdited.complexmask);
-                assignFromKeyfile(keyFile, "Locallab", "Sensimask_" + index_str, pedited, spot.sensimask, spotEdited.sensimask);
-                assignFromKeyfile(keyFile, "Locallab", "Blendmaskmask_" + index_str, pedited, spot.blendmask, spotEdited.blendmask);
-                assignFromKeyfile(keyFile, "Locallab", "Blendmaskmaskab_" + index_str, pedited, spot.blendmaskab, spotEdited.blendmaskab);
-                assignFromKeyfile(keyFile, "Locallab", "Softradiusmask_" + index_str, pedited, spot.softradiusmask, spotEdited.softradiusmask);
-                assignFromKeyfile(keyFile, "Locallab", "Enamask_" + index_str, pedited, spot.enamask, spotEdited.enamask);
-                assignFromKeyfile(keyFile, "Locallab", "Fftmask_" + index_str, pedited, spot.fftmask, spotEdited.fftmask);
-                assignFromKeyfile(keyFile, "Locallab", "Blurmask_" + index_str, pedited, spot.blurmask, spotEdited.blurmask);
-                assignFromKeyfile(keyFile, "Locallab", "Contmask_" + index_str, pedited, spot.contmask, spotEdited.contmask);
-                assignFromKeyfile(keyFile, "Locallab", "CCmask_Curve_" + index_str, pedited, spot.CCmask_curve, spotEdited.CCmask_curve);
-                assignFromKeyfile(keyFile, "Locallab", "LLmask_Curve_" + index_str, pedited, spot.LLmask_curve, spotEdited.LLmask_curve);
-                assignFromKeyfile(keyFile, "Locallab", "HHmask_Curve_" + index_str, pedited, spot.HHmask_curve, spotEdited.HHmask_curve);
-                assignFromKeyfile(keyFile, "Locallab", "Strumaskmask_" + index_str, pedited, spot.strumaskmask, spotEdited.strumaskmask);
-                assignFromKeyfile(keyFile, "Locallab", "Toolmask_" + index_str, pedited, spot.toolmask, spotEdited.toolmask);
-                assignFromKeyfile(keyFile, "Locallab", "Radmask_" + index_str, pedited, spot.radmask, spotEdited.radmask);
-                assignFromKeyfile(keyFile, "Locallab", "Lapmask_" + index_str, pedited, spot.lapmask, spotEdited.lapmask);
-                assignFromKeyfile(keyFile, "Locallab", "Chromask_" + index_str, pedited, spot.chromask, spotEdited.chromask);
-                assignFromKeyfile(keyFile, "Locallab", "Gammask_" + index_str, pedited, spot.gammask, spotEdited.gammask);
-                assignFromKeyfile(keyFile, "Locallab", "Slopmask_" + index_str, pedited, spot.slopmask, spotEdited.slopmask);
-                assignFromKeyfile(keyFile, "Locallab", "Shadmask_" + index_str, pedited, spot.shadmask, spotEdited.shadmask);
-                assignFromKeyfile(keyFile, "Locallab", "Str_mask_" + index_str, pedited, spot.str_mask, spotEdited.str_mask);
-                assignFromKeyfile(keyFile, "Locallab", "Ang_mask_" + index_str, pedited, spot.ang_mask, spotEdited.ang_mask);
-                assignFromKeyfile(keyFile, "Locallab", "HHhmask_Curve_" + index_str, pedited, spot.HHhmask_curve, spotEdited.HHhmask_curve);
-                assignFromKeyfile(keyFile, "Locallab", "Lmask_Curve_" + index_str, pedited, spot.Lmask_curve, spotEdited.Lmask_curve);
-                assignFromKeyfile(keyFile, "Locallab", "LLmask_Curvewav_" + index_str, pedited, spot.LLmask_curvewav, spotEdited.LLmask_curvewav);
+                spot.visimask = assignFromKeyfile(keyFile, "Locallab", "Expmask_" + index_str, spot.expmask, spotEdited.expmask);
+                assignFromKeyfile(keyFile, "Locallab", "Complexmask_" + index_str, spot.complexmask, spotEdited.complexmask);
+                assignFromKeyfile(keyFile, "Locallab", "Sensimask_" + index_str, spot.sensimask, spotEdited.sensimask);
+                assignFromKeyfile(keyFile, "Locallab", "Blendmaskmask_" + index_str, spot.blendmask, spotEdited.blendmask);
+                assignFromKeyfile(keyFile, "Locallab", "Blendmaskmaskab_" + index_str, spot.blendmaskab, spotEdited.blendmaskab);
+                assignFromKeyfile(keyFile, "Locallab", "Softradiusmask_" + index_str, spot.softradiusmask, spotEdited.softradiusmask);
+                assignFromKeyfile(keyFile, "Locallab", "Enamask_" + index_str, spot.enamask, spotEdited.enamask);
+                assignFromKeyfile(keyFile, "Locallab", "Fftmask_" + index_str, spot.fftmask, spotEdited.fftmask);
+                assignFromKeyfile(keyFile, "Locallab", "Blurmask_" + index_str, spot.blurmask, spotEdited.blurmask);
+                assignFromKeyfile(keyFile, "Locallab", "Contmask_" + index_str, spot.contmask, spotEdited.contmask);
+                assignFromKeyfile(keyFile, "Locallab", "CCmask_Curve_" + index_str, spot.CCmask_curve, spotEdited.CCmask_curve);
+                assignFromKeyfile(keyFile, "Locallab", "LLmask_Curve_" + index_str, spot.LLmask_curve, spotEdited.LLmask_curve);
+                assignFromKeyfile(keyFile, "Locallab", "HHmask_Curve_" + index_str, spot.HHmask_curve, spotEdited.HHmask_curve);
+                assignFromKeyfile(keyFile, "Locallab", "Strumaskmask_" + index_str, spot.strumaskmask, spotEdited.strumaskmask);
+                assignFromKeyfile(keyFile, "Locallab", "Toolmask_" + index_str, spot.toolmask, spotEdited.toolmask);
+                assignFromKeyfile(keyFile, "Locallab", "Radmask_" + index_str, spot.radmask, spotEdited.radmask);
+                assignFromKeyfile(keyFile, "Locallab", "Lapmask_" + index_str, spot.lapmask, spotEdited.lapmask);
+                assignFromKeyfile(keyFile, "Locallab", "Chromask_" + index_str, spot.chromask, spotEdited.chromask);
+                assignFromKeyfile(keyFile, "Locallab", "Gammask_" + index_str, spot.gammask, spotEdited.gammask);
+                assignFromKeyfile(keyFile, "Locallab", "Slopmask_" + index_str, spot.slopmask, spotEdited.slopmask);
+                assignFromKeyfile(keyFile, "Locallab", "Shadmask_" + index_str, spot.shadmask, spotEdited.shadmask);
+                assignFromKeyfile(keyFile, "Locallab", "Str_mask_" + index_str, spot.str_mask, spotEdited.str_mask);
+                assignFromKeyfile(keyFile, "Locallab", "Ang_mask_" + index_str, spot.ang_mask, spotEdited.ang_mask);
+                if (ppVersion <= 350) {
+                    if (keyFile.has_key("Locallab", "Feather_" + index_str)) {
+                        spot.feather_mask = keyFile.get_integer("Locallab", "Feather_" + index_str);
+                        spotEdited.feather_mask = true;
+                    }
+                } else {
+                    assignFromKeyfile(keyFile, "Locallab", "Feather_mask_" + index_str, spot.feather_mask, spotEdited.feather_mask);
+                }
+
+                assignFromKeyfile(keyFile, "Locallab", "HHhmask_Curve_" + index_str, spot.HHhmask_curve, spotEdited.HHhmask_curve);
+                assignFromKeyfile(keyFile, "Locallab", "Lmask_Curve_" + index_str, spot.Lmask_curve, spotEdited.Lmask_curve);
+                assignFromKeyfile(keyFile, "Locallab", "LLmask_Curvewav_" + index_str, spot.LLmask_curvewav, spotEdited.LLmask_curvewav);
 
                 if (keyFile.has_key("Locallab", "CSThresholdmask_" + index_str)) {
                     const std::vector<int> thresh = keyFile.get_integer_list("Locallab", "CSThresholdmask_" + index_str);
@@ -9295,64 +10330,116 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
                 }
 
                 // ciecam
-                spot.visicie = assignFromKeyfile(keyFile, "Locallab", "Expcie_" + index_str, pedited, spot.expcie, spotEdited.expcie);
+                spot.visicie = assignFromKeyfile(keyFile, "Locallab", "Expcie_" + index_str, spot.expcie, spotEdited.expcie);
 
                 if (spot.visicie) {
                     spotEdited.visicie = true;
                 }
-                assignFromKeyfile(keyFile, "Locallab", "Complexcie_" + index_str, pedited, spot.complexcie, spotEdited.complexcie);
-                assignFromKeyfile(keyFile, "Locallab", "Reparcie_" + index_str, pedited, spot.reparcie, spotEdited.reparcie);
-                assignFromKeyfile(keyFile, "Locallab", "Sensicie_" + index_str, pedited, spot.sensicie, spotEdited.sensicie);
-                assignFromKeyfile(keyFile, "Locallab", "AutoGraycie_" + index_str, pedited, spot.Autograycie, spotEdited.Autograycie);
-                assignFromKeyfile(keyFile, "Locallab", "Forcejz_" + index_str, pedited, spot.forcejz, spotEdited.forcejz);
-                assignFromKeyfile(keyFile, "Locallab", "Forcebw_" + index_str, pedited, spot.forcebw, spotEdited.forcebw);
-                assignFromKeyfile(keyFile, "Locallab", "Qtoj_" + index_str, pedited, spot.qtoj, spotEdited.qtoj);
-                assignFromKeyfile(keyFile, "Locallab", "jabcie_" + index_str, pedited, spot.jabcie, spotEdited.jabcie);
-                assignFromKeyfile(keyFile, "Locallab", "sigmoidqjcie_" + index_str, pedited, spot.sigmoidqjcie, spotEdited.sigmoidqjcie);
-                assignFromKeyfile(keyFile, "Locallab", "logcie_" + index_str, pedited, spot.logcie, spotEdited.logcie);
-                assignFromKeyfile(keyFile, "Locallab", "Logjz_" + index_str, pedited, spot.logjz, spotEdited.logjz);
-                assignFromKeyfile(keyFile, "Locallab", "Sigjz_" + index_str, pedited, spot.sigjz, spotEdited.sigjz);
-                assignFromKeyfile(keyFile, "Locallab", "Sigq_" + index_str, pedited, spot.sigq, spotEdited.sigq);
-                assignFromKeyfile(keyFile, "Locallab", "chjzcie_" + index_str, pedited, spot.chjzcie, spotEdited.chjzcie);
-                assignFromKeyfile(keyFile, "Locallab", "SourceGraycie_" + index_str, pedited, spot.sourceGraycie, spotEdited.sourceGraycie);
-                assignFromKeyfile(keyFile, "Locallab", "Sourceabscie_" + index_str, pedited, spot.sourceabscie, spotEdited.sourceabscie);
-                assignFromKeyfile(keyFile, "Locallab", "Sursourcie_" + index_str, pedited, spot.sursourcie, spotEdited.sursourcie);
-                assignFromKeyfile(keyFile, "Locallab", "Modecie_" + index_str, pedited, spot.modecie, spotEdited.modecie);
-                assignFromKeyfile(keyFile, "Locallab", "Modecam_" + index_str, pedited, spot.modecam, spotEdited.modecam);
-                assignFromKeyfile(keyFile, "Locallab", "Saturlcie_" + index_str, pedited, spot.saturlcie, spotEdited.saturlcie);
-                assignFromKeyfile(keyFile, "Locallab", "Rstprotectcie_" + index_str, pedited, spot.rstprotectcie, spotEdited.rstprotectcie);
-                assignFromKeyfile(keyFile, "Locallab", "Chromlcie_" + index_str, pedited, spot.chromlcie, spotEdited.chromlcie);
-                assignFromKeyfile(keyFile, "Locallab", "Huecie_" + index_str, pedited, spot.huecie, spotEdited.huecie);
-                assignFromKeyfile(keyFile, "Locallab", "ToneMethodcie_" + index_str, pedited, spot.toneMethodcie, spotEdited.toneMethodcie);
-                assignFromKeyfile(keyFile, "Locallab", "Ciecurve_" + index_str, pedited, spot.ciecurve, spotEdited.ciecurve);
-                assignFromKeyfile(keyFile, "Locallab", "ToneMethodcie2_" + index_str, pedited, spot.toneMethodcie2, spotEdited.toneMethodcie2);
-                assignFromKeyfile(keyFile, "Locallab", "Ciecurve2_" + index_str, pedited, spot.ciecurve2, spotEdited.ciecurve2);
-                assignFromKeyfile(keyFile, "Locallab", "Chromjzcie_" + index_str, pedited, spot.chromjzcie, spotEdited.chromjzcie);
-                assignFromKeyfile(keyFile, "Locallab", "Saturjzcie_" + index_str, pedited, spot.saturjzcie, spotEdited.saturjzcie);
-                assignFromKeyfile(keyFile, "Locallab", "Huejzcie_" + index_str, pedited, spot.huejzcie, spotEdited.huejzcie);
-                assignFromKeyfile(keyFile, "Locallab", "Softjzcie_" + index_str, pedited, spot.softjzcie, spotEdited.softjzcie);
-                assignFromKeyfile(keyFile, "Locallab", "strSoftjzcie_" + index_str, pedited, spot.strsoftjzcie, spotEdited.strsoftjzcie);
-                assignFromKeyfile(keyFile, "Locallab", "Thrhjzcie_" + index_str, pedited, spot.thrhjzcie, spotEdited.thrhjzcie);
-                assignFromKeyfile(keyFile, "Locallab", "JzCurve_" + index_str, pedited, spot.jzcurve, spotEdited.jzcurve);
-                assignFromKeyfile(keyFile, "Locallab", "CzCurve_" + index_str, pedited, spot.czcurve, spotEdited.czcurve);
-                assignFromKeyfile(keyFile, "Locallab", "CzJzCurve_" + index_str, pedited, spot.czjzcurve, spotEdited.czjzcurve);
-                assignFromKeyfile(keyFile, "Locallab", "HHCurvejz_" + index_str, pedited, spot.HHcurvejz, spotEdited.HHcurvejz);
-                assignFromKeyfile(keyFile, "Locallab", "CHCurvejz_" + index_str, pedited, spot.CHcurvejz, spotEdited.CHcurvejz);
-                assignFromKeyfile(keyFile, "Locallab", "LHCurvejz_" + index_str, pedited, spot.LHcurvejz, spotEdited.LHcurvejz);
-                assignFromKeyfile(keyFile, "Locallab", "Lightlcie_" + index_str, pedited, spot.lightlcie, spotEdited.lightlcie);
-                assignFromKeyfile(keyFile, "Locallab", "Lightjzcie_" + index_str, pedited, spot.lightjzcie, spotEdited.lightjzcie);
-                assignFromKeyfile(keyFile, "Locallab", "Brightqcie_" + index_str, pedited, spot.lightqcie, spotEdited.lightqcie);
-                assignFromKeyfile(keyFile, "Locallab", "Contlcie_" + index_str, pedited, spot.contlcie, spotEdited.contlcie);
-                assignFromKeyfile(keyFile, "Locallab", "Contjzcie_" + index_str, pedited, spot.contjzcie, spotEdited.contjzcie);
-                assignFromKeyfile(keyFile, "Locallab", "Adapjzcie_" + index_str, pedited, spot.adapjzcie, spotEdited.adapjzcie);
-                assignFromKeyfile(keyFile, "Locallab", "Jz100_" + index_str, pedited, spot.jz100, spotEdited.jz100);
-                assignFromKeyfile(keyFile, "Locallab", "PQremap_" + index_str, pedited, spot.pqremap, spotEdited.pqremap);
-                assignFromKeyfile(keyFile, "Locallab", "PQremapcam16_" + index_str, pedited, spot.pqremapcam16, spotEdited.pqremapcam16);
-                assignFromKeyfile(keyFile, "Locallab", "Hljzcie_" + index_str, pedited, spot.hljzcie, spotEdited.hljzcie);
-                assignFromKeyfile(keyFile, "Locallab", "Hlthjzcie_" + index_str, pedited, spot.hlthjzcie, spotEdited.hlthjzcie);
-                assignFromKeyfile(keyFile, "Locallab", "Shjzcie_" + index_str, pedited, spot.shjzcie, spotEdited.shjzcie);
-                assignFromKeyfile(keyFile, "Locallab", "Shthjzcie_" + index_str, pedited, spot.shthjzcie, spotEdited.shthjzcie);
-                assignFromKeyfile(keyFile, "Locallab", "Radjzcie_" + index_str, pedited, spot.radjzcie, spotEdited.radjzcie);
+                assignFromKeyfile(keyFile, "Locallab", "Expprecam_" + index_str, spot.expprecam, spotEdited.expprecam);
+                assignFromKeyfile(keyFile, "Locallab", "Complexcie_" + index_str, spot.complexcie, spotEdited.complexcie);
+                assignFromKeyfile(keyFile, "Locallab", "Reparcie_" + index_str, spot.reparcie, spotEdited.reparcie);
+                assignFromKeyfile(keyFile, "Locallab", "Sensicie_" + index_str, spot.sensicie, spotEdited.sensicie);
+                assignFromKeyfile(keyFile, "Locallab", "AutoGraycie_" + index_str, spot.Autograycie, spotEdited.Autograycie);
+                assignFromKeyfile(keyFile, "Locallab", "sigybjz12_" + index_str, spot.sigybjz12, spotEdited.sigybjz12);
+                assignFromKeyfile(keyFile, "Locallab", "Qtoj_" + index_str, spot.qtoj, spotEdited.qtoj);
+                assignFromKeyfile(keyFile, "Locallab", "jabcie_" + index_str, spot.jabcie, spotEdited.jabcie);
+                assignFromKeyfile(keyFile, "Locallab", "comprcieauto_" + index_str, spot.comprcieauto, spotEdited.comprcieauto);
+                assignFromKeyfile(keyFile, "Locallab", "normcie12_" + index_str, spot.normcie12, spotEdited.normcie12);
+                assignFromKeyfile(keyFile, "Locallab", "normcie_" + index_str, spot.normcie, spotEdited.normcie);
+                assignFromKeyfile(keyFile, "Locallab", "gamutcie_" + index_str, spot.gamutcie, spotEdited.gamutcie);
+                assignFromKeyfile(keyFile, "Locallab", "bwcie_" + index_str, spot.bwcie, spotEdited.bwcie);
+                assignFromKeyfile(keyFile, "Locallab", "sigcie_" + index_str, spot.sigcie, spotEdited.sigcie);
+                assignFromKeyfile(keyFile, "Locallab", "logcie_" + index_str, spot.logcie, spotEdited.logcie);
+                assignFromKeyfile(keyFile, "Locallab", "satcie_" + index_str, spot.satcie, spotEdited.satcie);
+                assignFromKeyfile(keyFile, "Locallab", "logcieq_" + index_str, spot.logcieq, spotEdited.logcieq);
+                assignFromKeyfile(keyFile, "Locallab", "smoothcie_" + index_str, spot.smoothcie, spotEdited.smoothcie);
+                assignFromKeyfile(keyFile, "Locallab", "smoothcietrc_" + index_str, spot.smoothcietrc, spotEdited.smoothcietrc);
+                assignFromKeyfile(keyFile, "Locallab", "smoothcietrcrel_" + index_str, spot.smoothcietrcrel, spotEdited.smoothcietrcrel);
+                assignFromKeyfile(keyFile, "Locallab", "smoothcieyb_" + index_str, spot.smoothcieyb, spotEdited.smoothcieyb);
+                assignFromKeyfile(keyFile, "Locallab", "smoothcielum_" + index_str, spot.smoothcielum, spotEdited.smoothcielum);
+                assignFromKeyfile(keyFile, "Locallab", "smoothciehigh_" + index_str, spot.smoothciehigh, spotEdited.smoothciehigh);
+                assignFromKeyfile(keyFile, "Locallab", "smoothcielnk_" + index_str, spot.smoothcielnk, spotEdited.smoothcielnk);
+                assignFromKeyfile(keyFile, "Locallab", "Logjz_" + index_str, spot.logjz, spotEdited.logjz);
+                assignFromKeyfile(keyFile, "Locallab", "Sigjz12_" + index_str, spot.sigjz12, spotEdited.sigjz12);
+                assignFromKeyfile(keyFile, "Locallab", "Sigjz_" + index_str, spot.sigjz, spotEdited.sigjz);
+                assignFromKeyfile(keyFile, "Locallab", "Forcebw_" + index_str, spot.forcebw, spotEdited.forcebw);
+                assignFromKeyfile(keyFile, "Locallab", "ModeQJ_" + index_str, spot.modeQJ, spotEdited.modeQJ);
+                assignFromKeyfile(keyFile, "Locallab", "Modecie_" + index_str, spot.modecie, spotEdited.modecie);
+                assignFromKeyfile(keyFile, "Locallab", "Modecam_" + index_str, spot.modecam, spotEdited.modecam);
+
+                assignFromKeyfile(keyFile, "Locallab", "Sigq12_" + index_str, spot.sigq12, spotEdited.sigq12);
+                assignFromKeyfile(keyFile, "Locallab", "Sigq_" + index_str, spot.sigq, spotEdited.sigq);
+
+                if (ppVersion < 352) {//change behavior Log encoding Q and Sigmoid Q and SigmoidJz when 'in the loop' Cam16
+                    if (keyFile.has_key("Locallab", "Sigq_" + index_str)) {
+                        if (spot.sigq == true) {
+                            spot.modeQJ = "511";
+                            spot.sigq12 = false;
+                            spotEdited.modeQJ = true;
+                            spotEdited.sigq12 = true;                             
+                        }
+                    }
+                    if (keyFile.has_key("Locallab", "logcieq_" + index_str)) {
+                        if (spot.logcieq == true) {
+                            spot.modeQJ = "511";
+                            spotEdited.modeQJ = true;
+                            spotEdited.logcieq = true;                             
+                        }
+                    }
+
+                    if (keyFile.has_key("Locallab", "Sigjz_" + index_str)) {
+                        if (spot.sigjz == true) {
+                            spot.modeQJ = "511";
+                            spot.sigjz12 = false;
+                            spotEdited.modeQJ = true;
+                            spotEdited.sigjz12 = true;                             
+                        }
+                    }
+
+                } 
+                  
+                assignFromKeyfile(keyFile, "Locallab", "chjzcie_" + index_str, spot.chjzcie, spotEdited.chjzcie);
+                assignFromKeyfile(keyFile, "Locallab", "SourceGraycie_" + index_str, spot.sourceGraycie, spotEdited.sourceGraycie);
+                assignFromKeyfile(keyFile, "Locallab", "Sourceabscie_" + index_str, spot.sourceabscie, spotEdited.sourceabscie);
+                assignFromKeyfile(keyFile, "Locallab", "Sursourcie_" + index_str, spot.sursourcie, spotEdited.sursourcie);
+                assignFromKeyfile(keyFile, "Locallab", "bwevMethod12_" + index_str,  spot.bwevMethod12, spotEdited.bwevMethod12);
+                assignFromKeyfile(keyFile, "Locallab", "bwevMethod_" + index_str,  spot.bwevMethod, spotEdited.bwevMethod);
+                assignFromKeyfile(keyFile, "Locallab", "Saturlcie_" + index_str, spot.saturlcie, spotEdited.saturlcie);
+                assignFromKeyfile(keyFile, "Locallab", "Rstprotectcie_" + index_str,  spot.rstprotectcie, spotEdited.rstprotectcie);
+                assignFromKeyfile(keyFile, "Locallab", "Chromlcie_" + index_str, spot.chromlcie, spotEdited.chromlcie);
+                assignFromKeyfile(keyFile, "Locallab", "Huecie_" + index_str, spot.huecie, spotEdited.huecie);
+                assignFromKeyfile(keyFile, "Locallab", "ToneMethodcie_" + index_str, spot.toneMethodcie, spotEdited.toneMethodcie);
+                assignFromKeyfile(keyFile, "Locallab", "Ciecurve_" + index_str, spot.ciecurve, spotEdited.ciecurve);
+                assignFromKeyfile(keyFile, "Locallab", "ToneMethodcie2_" + index_str, spot.toneMethodcie2, spotEdited.toneMethodcie2);
+                assignFromKeyfile(keyFile, "Locallab", "Ciecurve2_" + index_str, spot.ciecurve2, spotEdited.ciecurve2);
+                assignFromKeyfile(keyFile, "Locallab", "Chromjzcie_" + index_str, spot.chromjzcie, spotEdited.chromjzcie);
+                assignFromKeyfile(keyFile, "Locallab", "Saturjzcie_" + index_str, spot.saturjzcie, spotEdited.saturjzcie);
+                assignFromKeyfile(keyFile, "Locallab", "Huejzcie_" + index_str, spot.huejzcie, spotEdited.huejzcie);
+                assignFromKeyfile(keyFile, "Locallab", "Softjzcie_" + index_str, spot.softjzcie, spotEdited.softjzcie);
+                assignFromKeyfile(keyFile, "Locallab", "strSoftjzcie_" + index_str,  spot.strsoftjzcie, spotEdited.strsoftjzcie);
+                assignFromKeyfile(keyFile, "Locallab", "Thrhjzcie_" + index_str, spot.thrhjzcie, spotEdited.thrhjzcie);
+                assignFromKeyfile(keyFile, "Locallab", "JzCurve_" + index_str, spot.jzcurve, spotEdited.jzcurve);
+                assignFromKeyfile(keyFile, "Locallab", "CzCurve_" + index_str, spot.czcurve, spotEdited.czcurve);
+                assignFromKeyfile(keyFile, "Locallab", "CzJzCurve_" + index_str, spot.czjzcurve, spotEdited.czjzcurve);
+                assignFromKeyfile(keyFile, "Locallab", "HHCurvejz_" + index_str, spot.HHcurvejz, spotEdited.HHcurvejz);
+                assignFromKeyfile(keyFile, "Locallab", "CHCurvejz_" + index_str, spot.CHcurvejz, spotEdited.CHcurvejz);
+                assignFromKeyfile(keyFile, "Locallab", "LHCurvejz_" + index_str, spot.LHcurvejz, spotEdited.LHcurvejz);
+                assignFromKeyfile(keyFile, "Locallab", "Lightlcie_" + index_str, spot.lightlcie, spotEdited.lightlcie);
+                assignFromKeyfile(keyFile, "Locallab", "Lightjzcie_" + index_str, spot.lightjzcie, spotEdited.lightjzcie);
+                assignFromKeyfile(keyFile, "Locallab", "Brightqcie_" + index_str, spot.lightqcie, spotEdited.lightqcie);
+                assignFromKeyfile(keyFile, "Locallab", "Brightsigqcie_" + index_str, spot.lightsigqcie, spotEdited.lightsigqcie);
+                assignFromKeyfile(keyFile, "Locallab", "Contlcie_" + index_str, spot.contlcie, spotEdited.contlcie);
+                assignFromKeyfile(keyFile, "Locallab", "Contjzcie_" + index_str, spot.contjzcie, spotEdited.contjzcie);
+                assignFromKeyfile(keyFile, "Locallab", "Detailciejz_" + index_str, spot.detailciejz, spotEdited.detailciejz);
+                assignFromKeyfile(keyFile, "Locallab", "Adapjzcie_" + index_str,  spot.adapjzcie, spotEdited.adapjzcie);
+                assignFromKeyfile(keyFile, "Locallab", "Jz100_" + index_str, spot.jz100, spotEdited.jz100);
+                assignFromKeyfile(keyFile, "Locallab", "PQremap_" + index_str, spot.pqremap, spotEdited.pqremap);
+                assignFromKeyfile(keyFile, "Locallab", "PQremapcam16_" + index_str,  spot.pqremapcam16, spotEdited.pqremapcam16);
+                assignFromKeyfile(keyFile, "Locallab", "Hljzcie_" + index_str, spot.hljzcie, spotEdited.hljzcie);
+                assignFromKeyfile(keyFile, "Locallab", "Hlthjzcie_" + index_str,  spot.hlthjzcie, spotEdited.hlthjzcie);
+                assignFromKeyfile(keyFile, "Locallab", "Shjzcie_" + index_str, spot.shjzcie, spotEdited.shjzcie);
+                assignFromKeyfile(keyFile, "Locallab", "Shthjzcie_" + index_str, spot.shthjzcie, spotEdited.shthjzcie);
+                assignFromKeyfile(keyFile, "Locallab", "Radjzcie_" + index_str, spot.radjzcie, spotEdited.radjzcie);
                 if (keyFile.has_key("Locallab", "CSThresholdjz_" + index_str)) {
 
                     const std::vector<int> thresh = keyFile.get_integer_list("Locallab", "CSThresholdjz_" + index_str);
@@ -9363,54 +10450,165 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
 
                     spotEdited.csthresholdjz = true;
                 }
-                assignFromKeyfile(keyFile, "Locallab", "Sigmalcjz_" + index_str, pedited, spot.sigmalcjz, spotEdited.sigmalcjz);
-                assignFromKeyfile(keyFile, "Locallab", "Clarilresjz_" + index_str, pedited, spot.clarilresjz, spotEdited.clarilresjz);
-                assignFromKeyfile(keyFile, "Locallab", "Claricresjz_" + index_str, pedited, spot.claricresjz, spotEdited.claricresjz);
-                assignFromKeyfile(keyFile, "Locallab", "Clarisoftjz_" + index_str, pedited, spot.clarisoftjz, spotEdited.clarisoftjz);
-                assignFromKeyfile(keyFile, "Locallab", "LocwavCurvejz_" + index_str, pedited, spot.locwavcurvejz, spotEdited.locwavcurvejz);
-                assignFromKeyfile(keyFile, "Locallab", "Contthrescie_" + index_str, pedited, spot.contthrescie, spotEdited.contthrescie);
-                assignFromKeyfile(keyFile, "Locallab", "Contthrescie_" + index_str, pedited, spot.contthrescie, spotEdited.contthrescie);
-                assignFromKeyfile(keyFile, "Locallab", "BlackEvjz_" + index_str, pedited, spot.blackEvjz, spotEdited.blackEvjz);
-                assignFromKeyfile(keyFile, "Locallab", "WhiteEvjz_" + index_str, pedited, spot.whiteEvjz, spotEdited.whiteEvjz);
-                assignFromKeyfile(keyFile, "Locallab", "Targetjz_" + index_str, pedited, spot.targetjz, spotEdited.targetjz);
-                assignFromKeyfile(keyFile, "Locallab", "Sigmoidthcie_" + index_str, pedited, spot.sigmoidthcie, spotEdited.sigmoidthcie);
-                assignFromKeyfile(keyFile, "Locallab", "Sigmoidblcie_" + index_str, pedited, spot.sigmoidblcie, spotEdited.sigmoidblcie);
-                assignFromKeyfile(keyFile, "Locallab", "Sigmoidldajzcie_" + index_str, pedited, spot.sigmoidldajzcie, spotEdited.sigmoidldajzcie);
-                assignFromKeyfile(keyFile, "Locallab", "Sigmoidthjzcie_" + index_str, pedited, spot.sigmoidthjzcie, spotEdited.sigmoidthjzcie);
-                assignFromKeyfile(keyFile, "Locallab", "Sigmoidbljzcie_" + index_str, pedited, spot.sigmoidbljzcie, spotEdited.sigmoidbljzcie);
-                assignFromKeyfile(keyFile, "Locallab", "Contqcie_" + index_str, pedited, spot.contqcie, spotEdited.contqcie);
-                assignFromKeyfile(keyFile, "Locallab", "Colorflcie_" + index_str, pedited, spot.colorflcie, spotEdited.colorflcie);
-/*
-                assignFromKeyfile(keyFile, "Locallab", "Lightlzcam_" + index_str, pedited, spot.lightlzcam, spotEdited.lightlzcam);
-                assignFromKeyfile(keyFile, "Locallab", "Lightqzcam_" + index_str, pedited, spot.lightqzcam, spotEdited.lightqzcam);
-                assignFromKeyfile(keyFile, "Locallab", "Contlzcam_" + index_str, pedited, spot.contlzcam, spotEdited.contlzcam);
-                assignFromKeyfile(keyFile, "Locallab", "Contqzcam_" + index_str, pedited, spot.contqzcam, spotEdited.contqzcam);
-                assignFromKeyfile(keyFile, "Locallab", "Contthreszcam_" + index_str, pedited, spot.contthreszcam, spotEdited.contthreszcam);
-*/
-                assignFromKeyfile(keyFile, "Locallab", "Targabscie_" + index_str, pedited, spot.targabscie, spotEdited.targabscie);
-                assignFromKeyfile(keyFile, "Locallab", "TargetGraycie_" + index_str, pedited, spot.targetGraycie, spotEdited.targetGraycie);
-                assignFromKeyfile(keyFile, "Locallab", "Catadcie_" + index_str, pedited, spot.catadcie, spotEdited.catadcie);
-                assignFromKeyfile(keyFile, "Locallab", "Detailcie_" + index_str, pedited, spot.detailcie, spotEdited.detailcie);
-/*
-                assignFromKeyfile(keyFile, "Locallab", "Colorflzcam_" + index_str, pedited, spot.colorflzcam, spotEdited.colorflzcam);
-                assignFromKeyfile(keyFile, "Locallab", "Saturzcam_" + index_str, pedited, spot.saturzcam, spotEdited.saturzcam);
-                assignFromKeyfile(keyFile, "Locallab", "Chromzcam_" + index_str, pedited, spot.chromzcam, spotEdited.chromzcam);
-*/
-                assignFromKeyfile(keyFile, "Locallab", "EnacieMask_" + index_str, pedited, spot.enacieMask, spotEdited.enacieMask);
-                assignFromKeyfile(keyFile, "Locallab", "CCmaskcieCurve_" + index_str, pedited, spot.CCmaskciecurve, spotEdited.CCmaskciecurve);
-                assignFromKeyfile(keyFile, "Locallab", "LLmaskcieCurve_" + index_str, pedited, spot.LLmaskciecurve, spotEdited.LLmaskciecurve);
-                assignFromKeyfile(keyFile, "Locallab", "HHmaskcieCurve_" + index_str, pedited, spot.HHmaskciecurve, spotEdited.HHmaskciecurve);
-                assignFromKeyfile(keyFile, "Locallab", "Blendmaskcie_" + index_str, pedited, spot.blendmaskcie, spotEdited.blendmaskcie);
-                assignFromKeyfile(keyFile, "Locallab", "Radmaskcie_" + index_str, pedited, spot.radmaskcie, spotEdited.radmaskcie);
-                assignFromKeyfile(keyFile, "Locallab", "Chromaskcie_" + index_str, pedited, spot.chromaskcie, spotEdited.chromaskcie);
-                assignFromKeyfile(keyFile, "Locallab", "Lapmaskcie_" + index_str, pedited, spot.lapmaskcie, spotEdited.lapmaskcie);
-                assignFromKeyfile(keyFile, "Locallab", "Gammaskcie_" + index_str, pedited, spot.gammaskcie, spotEdited.gammaskcie);
-                assignFromKeyfile(keyFile, "Locallab", "Slomaskcie_" + index_str, pedited, spot.slomaskcie, spotEdited.slomaskcie);
-                assignFromKeyfile(keyFile, "Locallab", "LmaskcieCurve_" + index_str, pedited, spot.Lmaskciecurve, spotEdited.Lmaskciecurve);
-                assignFromKeyfile(keyFile, "Locallab", "Recothrescie_" + index_str, pedited, spot.recothrescie, spotEdited.recothrescie);
-                assignFromKeyfile(keyFile, "Locallab", "Lowthrescie_" + index_str, pedited, spot.lowthrescie, spotEdited.lowthrescie);
-                assignFromKeyfile(keyFile, "Locallab", "Higthrescie_" + index_str, pedited, spot.higthrescie, spotEdited.higthrescie);
-                assignFromKeyfile(keyFile, "Locallab", "Decaycie_" + index_str, pedited, spot.decaycie, spotEdited.decaycie);
+                assignFromKeyfile(keyFile, "Locallab", "Sigmalcjz_" + index_str, spot.sigmalcjz, spotEdited.sigmalcjz);
+                assignFromKeyfile(keyFile, "Locallab", "Clarilresjz_" + index_str, spot.clarilresjz, spotEdited.clarilresjz);
+                assignFromKeyfile(keyFile, "Locallab", "Claricresjz_" + index_str, spot.claricresjz, spotEdited.claricresjz);
+                assignFromKeyfile(keyFile, "Locallab", "Clarisoftjz_" + index_str, spot.clarisoftjz, spotEdited.clarisoftjz);
+                assignFromKeyfile(keyFile, "Locallab", "LocwavCurvejz_" + index_str, spot.locwavcurvejz, spotEdited.locwavcurvejz);
+                assignFromKeyfile(keyFile, "Locallab", "Contthrescie_" + index_str, spot.contthrescie, spotEdited.contthrescie);
+                assignFromKeyfile(keyFile, "Locallab", "Contthrescie_" + index_str, spot.contthrescie, spotEdited.contthrescie);
+                assignFromKeyfile(keyFile, "Locallab", "BlackEvjz_" + index_str, spot.blackEvjz, spotEdited.blackEvjz);
+                assignFromKeyfile(keyFile, "Locallab", "WhiteEvjz_" + index_str, spot.whiteEvjz, spotEdited.whiteEvjz);
+                assignFromKeyfile(keyFile, "Locallab", "Targetjz_" + index_str, spot.targetjz, spotEdited.targetjz);
+                assignFromKeyfile(keyFile, "Locallab", "Sigmoidldacie12_" + index_str, spot.sigmoidldacie12, spotEdited.sigmoidldacie12);
+                assignFromKeyfile(keyFile, "Locallab", "Sigmoidthcie12_" + index_str, spot.sigmoidthcie12, spotEdited.sigmoidthcie12);
+                assignFromKeyfile(keyFile, "Locallab", "Sigmoidblcie12_" + index_str, spot.sigmoidblcie12, spotEdited.sigmoidblcie12);
+
+                assignFromKeyfile(keyFile, "Locallab", "Sigmoidldacie_" + index_str, spot.sigmoidldacie, spotEdited.sigmoidldacie);
+                assignFromKeyfile(keyFile, "Locallab", "Sigmoidthcie_" + index_str, spot.sigmoidthcie, spotEdited.sigmoidthcie);
+                assignFromKeyfile(keyFile, "Locallab", "Sigmoidblcie_" + index_str, spot.sigmoidblcie, spotEdited.sigmoidblcie);
+                assignFromKeyfile(keyFile, "Locallab", "Sigmoidsenscie_" + index_str, spot.sigmoidsenscie, spotEdited.sigmoidsenscie);
+
+
+                assignFromKeyfile(keyFile, "Locallab", "comprcie_" + index_str, spot.comprcie, spotEdited.comprcie);
+                assignFromKeyfile(keyFile, "Locallab", "strcielog_" + index_str, spot.strcielog, spotEdited.strcielog);
+                assignFromKeyfile(keyFile, "Locallab", "comprcieth_" + index_str, spot.comprcieth, spotEdited.comprcieth);
+                assignFromKeyfile(keyFile, "Locallab", "gamjcie_" + index_str, spot.gamjcie, spotEdited.gamjcie);
+                assignFromKeyfile(keyFile, "Locallab", "smoothcieth_" + index_str, spot.smoothcieth, spotEdited.smoothcieth);
+                assignFromKeyfile(keyFile, "Locallab", "slopjcie_" + index_str, spot.slopjcie, spotEdited.slopjcie);
+                assignFromKeyfile(keyFile, "Locallab", "contsig_" + index_str, spot.contsig, spotEdited.contsig);
+                assignFromKeyfile(keyFile, "Locallab", "skewsig_" + index_str, spot.skewsig, spotEdited.skewsig);
+                assignFromKeyfile(keyFile, "Locallab", "whitsig_" + index_str, spot.whitsig, spotEdited.whitsig);
+                assignFromKeyfile(keyFile, "Locallab", "slopesmo_" + index_str, spot.slopesmo, spotEdited.slopesmo);
+                assignFromKeyfile(keyFile, "Locallab", "slopesmoq_" + index_str, spot.slopesmoq, spotEdited.slopesmoq);
+                assignFromKeyfile(keyFile, "Locallab", "slopesmor_" + index_str, spot.slopesmor, spotEdited.slopesmor);
+                assignFromKeyfile(keyFile, "Locallab", "slopesmog_" + index_str, spot.slopesmog, spotEdited.slopesmog);
+                assignFromKeyfile(keyFile, "Locallab", "midtcie_" + index_str, spot.midtcie, spotEdited.midtcie);
+                assignFromKeyfile(keyFile, "Locallab", "slopesmob_" + index_str, spot.slopesmob, spotEdited.slopesmob);
+                assignFromKeyfile(keyFile, "Locallab", "kslopesmor_" + index_str, spot.kslopesmor, spotEdited.kslopesmor);
+                assignFromKeyfile(keyFile, "Locallab", "kslopesmog_" + index_str, spot.kslopesmog, spotEdited.kslopesmog);
+                assignFromKeyfile(keyFile, "Locallab", "kslopesmob_" + index_str, spot.kslopesmob, spotEdited.kslopesmob);
+                assignFromKeyfile(keyFile, "Locallab", "grexl_" + index_str, spot.grexl, spotEdited.grexl);
+                assignFromKeyfile(keyFile, "Locallab", "greyl_" + index_str, spot.greyl, spotEdited.greyl);
+                assignFromKeyfile(keyFile, "Locallab", "bluxl_" + index_str, spot.bluxl, spotEdited.bluxl);
+                assignFromKeyfile(keyFile, "Locallab", "bluyl_" + index_str, spot.bluyl, spotEdited.bluyl);
+                assignFromKeyfile(keyFile, "Locallab", "redxl_" + index_str, spot.redxl, spotEdited.redxl);
+                assignFromKeyfile(keyFile, "Locallab", "redyl_" + index_str, spot.redyl, spotEdited.redyl);
+                assignFromKeyfile(keyFile, "Locallab", "refi_" + index_str, spot.refi, spotEdited.refi);
+                assignFromKeyfile(keyFile, "Locallab", "shiftxl_" + index_str, spot.shiftxl, spotEdited.shiftxl);
+                assignFromKeyfile(keyFile, "Locallab", "shiftyl_" + index_str, spot.shiftyl, spotEdited.shiftyl);
+                assignFromKeyfile(keyFile, "Locallab", "labgridcieALow_" + index_str, spot.labgridcieALow, spotEdited.labgridcieALow);
+                assignFromKeyfile(keyFile, "Locallab", "labgridcieBLow_" + index_str, spot.labgridcieBLow, spotEdited.labgridcieBLow);
+                assignFromKeyfile(keyFile, "Locallab", "labgridcieAHigh_" + index_str, spot.labgridcieAHigh, spotEdited.labgridcieAHigh);
+                assignFromKeyfile(keyFile, "Locallab", "labgridcieBHigh_" + index_str, spot.labgridcieBHigh, spotEdited.labgridcieBHigh);
+                assignFromKeyfile(keyFile, "Locallab", "labgridcieGx_" + index_str, spot.labgridcieGx, spotEdited.labgridcieGx);
+                assignFromKeyfile(keyFile, "Locallab", "labgridcieGy_" + index_str, spot.labgridcieGy, spotEdited.labgridcieGy);
+                assignFromKeyfile(keyFile, "Locallab", "labgridcieWx_" + index_str, spot.labgridcieWx, spotEdited.labgridcieWx);
+                assignFromKeyfile(keyFile, "Locallab", "labgridcieWy_" + index_str, spot.labgridcieWy, spotEdited.labgridcieWy);
+                assignFromKeyfile(keyFile, "Locallab", "labgridcieMx_" + index_str, spot.labgridcieMx, spotEdited.labgridcieMx);
+                assignFromKeyfile(keyFile, "Locallab", "labgridcieMy_" + index_str, spot.labgridcieMy, spotEdited.labgridcieMy);
+                
+                assignFromKeyfile(keyFile, "Locallab", "whitescie_" + index_str, spot.whitescie, spotEdited.whitescie);
+                assignFromKeyfile(keyFile, "Locallab", "blackscie_" + index_str, spot.blackscie, spotEdited.blackscie);
+                assignFromKeyfile(keyFile, "Locallab", "illMethod_" + index_str, spot.illMethod, spotEdited.illMethod);
+                assignFromKeyfile(keyFile, "Locallab", "smoothciemet_" + index_str, spot.smoothciemet, spotEdited.smoothciemet);
+                assignFromKeyfile(keyFile, "Locallab", "primMethod_" + index_str, spot.primMethod, spotEdited.primMethod);
+                assignFromKeyfile(keyFile, "Locallab", "catMethod_" + index_str, spot.catMethod, spotEdited.catMethod);
+                assignFromKeyfile(keyFile, "Locallab", "Sigmoidldajzcie12_" + index_str, spot.sigmoidldajzcie12, spotEdited.sigmoidldajzcie12);
+                assignFromKeyfile(keyFile, "Locallab", "Sigmoidthjzcie12_" + index_str, spot.sigmoidthjzcie12, spotEdited.sigmoidthjzcie12);
+                assignFromKeyfile(keyFile, "Locallab", "Sigmoidbljzcie12_" + index_str, spot.sigmoidbljzcie12, spotEdited.sigmoidbljzcie12);
+                assignFromKeyfile(keyFile, "Locallab", "Sigmoidldajzcie_" + index_str, spot.sigmoidldajzcie, spotEdited.sigmoidldajzcie);
+                assignFromKeyfile(keyFile, "Locallab", "Sigmoidthjzcie_" + index_str, spot.sigmoidthjzcie, spotEdited.sigmoidthjzcie);
+                assignFromKeyfile(keyFile, "Locallab", "Sigmoidbljzcie_" + index_str, spot.sigmoidbljzcie, spotEdited.sigmoidbljzcie);
+
+                assignFromKeyfile(keyFile, "Locallab", "Contqcie_" + index_str, spot.contqcie, spotEdited.contqcie);
+                assignFromKeyfile(keyFile, "Locallab", "Contsigqcie_" + index_str, spot.contsigqcie, spotEdited.contsigqcie);
+                assignFromKeyfile(keyFile, "Locallab", "Colorflcie_" + index_str, spot.colorflcie, spotEdited.colorflcie);
+                assignFromKeyfile(keyFile, "Locallab", "Targabscie_" + index_str, spot.targabscie, spotEdited.targabscie);
+                assignFromKeyfile(keyFile, "Locallab", "TargetGraycie_" + index_str, spot.targetGraycie, spotEdited.targetGraycie);
+                assignFromKeyfile(keyFile, "Locallab", "Catadcie_" + index_str, spot.catadcie, spotEdited.catadcie);
+                assignFromKeyfile(keyFile, "Locallab", "Detailcie_" + index_str, spot.detailcie, spotEdited.detailcie);
+                assignFromKeyfile(keyFile, "Locallab", "Surroundcie_" + index_str, spot.surroundcie, spotEdited.surroundcie);
+                assignFromKeyfile(keyFile, "Locallab", "Strgradcie_" + index_str, spot.strgradcie, spotEdited.strgradcie);
+                assignFromKeyfile(keyFile, "Locallab", "Anggradcie_" + index_str, spot.anggradcie, spotEdited.anggradcie);
+                if (ppVersion <= 350) {
+                    if (keyFile.has_key("Locallab", "Feather_" + index_str)) {
+                        spot.feathercie = keyFile.get_integer("Locallab", "Feather_" + index_str);
+                        spotEdited.feathercie = true;
+                    }
+                } else {
+                    assignFromKeyfile(keyFile, "Locallab", "Feathercie_" + index_str, spot.feathercie, spotEdited.feathercie);
+                }
+
+                assignFromKeyfile(keyFile, "Locallab", "EnacieMask_" + index_str,  spot.enacieMask, spotEdited.enacieMask);
+                assignFromKeyfile(keyFile, "Locallab", "EnacieMaskall_" + index_str,  spot.enacieMaskall, spotEdited.enacieMaskall);
+                assignFromKeyfile(keyFile, "Locallab", "CCmaskcieCurve_" + index_str, spot.CCmaskciecurve, spotEdited.CCmaskciecurve);
+                assignFromKeyfile(keyFile, "Locallab", "LLmaskcieCurve_" + index_str, spot.LLmaskciecurve, spotEdited.LLmaskciecurve);
+                assignFromKeyfile(keyFile, "Locallab", "HHmaskcieCurve_" + index_str,  spot.HHmaskciecurve, spotEdited.HHmaskciecurve);
+                assignFromKeyfile(keyFile, "Locallab", "HHhmaskcieCurve_" + index_str, spot.HHhmaskciecurve, spotEdited.HHhmaskciecurve);
+                assignFromKeyfile(keyFile, "Locallab", "Blendmaskcie_" + index_str, spot.blendmaskcie, spotEdited.blendmaskcie);
+                assignFromKeyfile(keyFile, "Locallab", "Radmaskcie_" + index_str, spot.radmaskcie, spotEdited.radmaskcie);
+                assignFromKeyfile(keyFile, "Locallab", "Chromaskcie_" + index_str, spot.chromaskcie, spotEdited.chromaskcie);
+                assignFromKeyfile(keyFile, "Locallab", "Lapmaskcie_" + index_str, spot.lapmaskcie, spotEdited.lapmaskcie);
+                assignFromKeyfile(keyFile, "Locallab", "Gammaskcie_" + index_str, spot.gammaskcie, spotEdited.gammaskcie);
+                assignFromKeyfile(keyFile, "Locallab", "Slomaskcie_" + index_str, spot.slomaskcie, spotEdited.slomaskcie);
+                assignFromKeyfile(keyFile, "Locallab", "LmaskcieCurve_" + index_str, spot.Lmaskciecurve, spotEdited.Lmaskciecurve);
+                assignFromKeyfile(keyFile, "Locallab", "Recothrescie_" + index_str, spot.recothrescie, spotEdited.recothrescie);
+                assignFromKeyfile(keyFile, "Locallab", "Lowthrescie_" + index_str, spot.lowthrescie, spotEdited.lowthrescie);
+                assignFromKeyfile(keyFile, "Locallab", "Higthrescie_" + index_str, spot.higthrescie, spotEdited.higthrescie);
+                assignFromKeyfile(keyFile, "Locallab", "Decaycie_" + index_str, spot.decaycie, spotEdited.decaycie);
+                assignFromKeyfile(keyFile, "Locallab", "strumaskcie_" + index_str, spot.strumaskcie, spotEdited.strumaskcie);
+                assignFromKeyfile(keyFile, "Locallab", "toolcie_" + index_str, spot.toolcie, spotEdited.toolcie);
+                assignFromKeyfile(keyFile, "Locallab", "FftcieMask_" + index_str, spot.fftcieMask, spotEdited.fftcieMask);
+                assignFromKeyfile(keyFile, "Locallab", "contcie_" + index_str, spot.contcie, spotEdited.contcie);
+                assignFromKeyfile(keyFile, "Locallab", "blurcie_" + index_str, spot.blurcie, spotEdited.blurcie);
+                assignFromKeyfile(keyFile, "Locallab", "highmaskcie_" + index_str, spot.highmaskcie, spotEdited.highmaskcie);
+                assignFromKeyfile(keyFile, "Locallab", "shadmaskcie_" + index_str, spot.shadmaskcie, spotEdited.shadmaskcie);
+                assignFromKeyfile(keyFile, "Locallab", "LLmaskcieCurvewav_" + index_str, spot.LLmaskciecurvewav, spotEdited.LLmaskciecurvewav);
+
+                if (ppVersion < 352) {
+                    // FFT Gaussian blur fixed in 5.12. Converts old radii to
+                    // the equivalent new radii if FFT mode is enabled. The
+                    // fixed blur radius has a factor of radius / 2 compared to
+                    // the original, so the base conversion is sqrt(2 * radius).
+                    // Derivation: old_radius = new_radius * new_radius / 2
+                    //             2 * old_radius = new_radius * new_radius
+                    //             sqrt(2 * old_radius) = new_radius
+                    if (spot.fftColorMask) {
+                        spot.blurcol = std::sqrt(2 * spot.blurcol);
+                        spotEdited.blurcol = true;
+                    }
+                    if (spot.fftwbl || spot.radius > 30.) {
+                        // Internally, the radius is divided by 1.4, so the
+                        // factor is actually radius / 1.4 / 2.
+                        spot.radius = std::sqrt(2.8 * spot.radius);
+                        spotEdited.radius = true;
+                    }
+                    if (spot.fftwlc) {
+                        // Internally, the radius was squared, so replace
+                        // old_radius with old_radius^2 before solving.
+                        spot.lcradius = std::sqrt(2.) * spot.lcradius;
+                        spotEdited.lcradius = true;
+                    }
+                    if (spot.fftmask) {
+                        spot.blurmask = std::sqrt(2 * spot.blurmask);
+                        spotEdited.blurmask = true;
+                    }
+                    if (spot.fftcieMask) {
+                        spot.blurcie = std::sqrt(2 * spot.blurcie);
+                        spotEdited.blurcie = true;
+                    }
+                }
+
+                if (keyFile.has_key("Locallab", "CSThresholdcie_" + index_str)) {
+                    const std::vector<int> thresh = keyFile.get_integer_list("Locallab", "CSThresholdcie_" + index_str);
+
+                    if (thresh.size() >= 4) {
+                        spot.csthresholdcie.setValues(thresh[0], thresh[1], min(thresh[2], 10), min(thresh[3], 10));
+                    }
+
+                    spotEdited.csthresholdcie = true;
+                }
 
                 // Append LocallabSpot and LocallabParamsEdited
                 locallab.spots.push_back(spot);
@@ -9425,37 +10623,37 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
         }
 
         if (keyFile.has_group("PCVignette")) {
-            assignFromKeyfile(keyFile, "PCVignette", "Enabled", pedited, pcvignette.enabled, pedited->pcvignette.enabled);
-            assignFromKeyfile(keyFile, "PCVignette", "Strength", pedited, pcvignette.strength, pedited->pcvignette.strength);
-            assignFromKeyfile(keyFile, "PCVignette", "Feather", pedited, pcvignette.feather, pedited->pcvignette.feather);
-            assignFromKeyfile(keyFile, "PCVignette", "Roundness", pedited, pcvignette.roundness, pedited->pcvignette.roundness);
+            assignFromKeyfile(keyFile, "PCVignette", "Enabled", pcvignette.enabled, pedited->pcvignette.enabled);
+            assignFromKeyfile(keyFile, "PCVignette", "Strength", pcvignette.strength, pedited->pcvignette.strength);
+            assignFromKeyfile(keyFile, "PCVignette", "Feather", pcvignette.feather, pedited->pcvignette.feather);
+            assignFromKeyfile(keyFile, "PCVignette", "Roundness", pcvignette.roundness, pedited->pcvignette.roundness);
         }
 
         if (keyFile.has_group("CACorrection")) {
-            assignFromKeyfile(keyFile, "CACorrection", "Red", pedited, cacorrection.red, pedited->cacorrection.red);
-            assignFromKeyfile(keyFile, "CACorrection", "Blue", pedited, cacorrection.blue, pedited->cacorrection.blue);
+            assignFromKeyfile(keyFile, "CACorrection", "Red", cacorrection.red, pedited->cacorrection.red);
+            assignFromKeyfile(keyFile, "CACorrection", "Blue", cacorrection.blue, pedited->cacorrection.blue);
         }
 
         if (keyFile.has_group("Vignetting Correction")) {
-            assignFromKeyfile(keyFile, "Vignetting Correction", "Amount", pedited, vignetting.amount, pedited->vignetting.amount);
-            assignFromKeyfile(keyFile, "Vignetting Correction", "Radius", pedited, vignetting.radius, pedited->vignetting.radius);
-            assignFromKeyfile(keyFile, "Vignetting Correction", "Strength", pedited, vignetting.strength, pedited->vignetting.strength);
-            assignFromKeyfile(keyFile, "Vignetting Correction", "CenterX", pedited, vignetting.centerX, pedited->vignetting.centerX);
-            assignFromKeyfile(keyFile, "Vignetting Correction", "CenterY", pedited, vignetting.centerY, pedited->vignetting.centerY);
+            assignFromKeyfile(keyFile, "Vignetting Correction", "Amount", vignetting.amount, pedited->vignetting.amount);
+            assignFromKeyfile(keyFile, "Vignetting Correction", "Radius", vignetting.radius, pedited->vignetting.radius);
+            assignFromKeyfile(keyFile, "Vignetting Correction", "Strength", vignetting.strength, pedited->vignetting.strength);
+            assignFromKeyfile(keyFile, "Vignetting Correction", "CenterX", vignetting.centerX, pedited->vignetting.centerX);
+            assignFromKeyfile(keyFile, "Vignetting Correction", "CenterY", vignetting.centerY, pedited->vignetting.centerY);
         }
 
         if (keyFile.has_group("Resize")) {
-            assignFromKeyfile(keyFile, "Resize", "Enabled", pedited, resize.enabled, pedited->resize.enabled);
-            assignFromKeyfile(keyFile, "Resize", "Scale", pedited, resize.scale, pedited->resize.scale);
-            assignFromKeyfile(keyFile, "Resize", "AppliesTo", pedited, resize.appliesTo, pedited->resize.appliesTo);
-            assignFromKeyfile(keyFile, "Resize", "Method", pedited, resize.method, pedited->resize.method);
-            assignFromKeyfile(keyFile, "Resize", "DataSpecified", pedited, resize.dataspec, pedited->resize.dataspec);
-            assignFromKeyfile(keyFile, "Resize", "Width", pedited, resize.width, pedited->resize.width);
-            assignFromKeyfile(keyFile, "Resize", "Height", pedited, resize.height, pedited->resize.height);
-            assignFromKeyfile(keyFile, "Resize", "LongEdge", pedited, resize.longedge, pedited->resize.longedge);
-            assignFromKeyfile(keyFile, "Resize", "ShortEdge", pedited, resize.shortedge, pedited->resize.shortedge);
+            assignFromKeyfile(keyFile, "Resize", "Enabled", resize.enabled, pedited->resize.enabled);
+            assignFromKeyfile(keyFile, "Resize", "Scale", resize.scale, pedited->resize.scale);
+            assignFromKeyfile(keyFile, "Resize", "AppliesTo", resize.appliesTo, pedited->resize.appliesTo);
+            assignFromKeyfile(keyFile, "Resize", "Method", resize.method, pedited->resize.method);
+            assignFromKeyfile(keyFile, "Resize", "DataSpecified", resize.dataspec, pedited->resize.dataspec);
+            assignFromKeyfile(keyFile, "Resize", "Width", resize.width, pedited->resize.width);
+            assignFromKeyfile(keyFile, "Resize", "Height", resize.height, pedited->resize.height);
+            assignFromKeyfile(keyFile, "Resize", "LongEdge", resize.longedge, pedited->resize.longedge);
+            assignFromKeyfile(keyFile, "Resize", "ShortEdge", resize.shortedge, pedited->resize.shortedge);
             if (ppVersion >= 339) {
-                assignFromKeyfile(keyFile, "Resize", "AllowUpscaling", pedited, resize.allowUpscaling, pedited->resize.allowUpscaling);
+                assignFromKeyfile(keyFile, "Resize", "AllowUpscaling", resize.allowUpscaling, pedited->resize.allowUpscaling);
             } else {
                 resize.allowUpscaling = false;
                 if (pedited) {
@@ -9464,8 +10662,10 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
             }
         }
 
+        loadFramingParams(keyFile, framing, pedited->framing);
+
         if (keyFile.has_group ("Spot removal")) {
-            assignFromKeyfile(keyFile, "Spot removal", "Enabled", pedited, spot.enabled, pedited->spot.enabled);
+            assignFromKeyfile(keyFile, "Spot removal", "Enabled", spot.enabled, pedited->spot.enabled);
             int i = 0;
             do {
                 std::stringstream ss;
@@ -9493,21 +10693,21 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
         }
 
         if (keyFile.has_group("PostDemosaicSharpening")) {
-            assignFromKeyfile(keyFile, "PostDemosaicSharpening", "Enabled", pedited, pdsharpening.enabled, pedited->pdsharpening.enabled);
-            assignFromKeyfile(keyFile, "PostDemosaicSharpening", "Contrast", pedited, pdsharpening.contrast, pedited->pdsharpening.contrast);
-            assignFromKeyfile(keyFile, "PostDemosaicSharpening", "AutoContrast", pedited, pdsharpening.autoContrast, pedited->pdsharpening.autoContrast);
-            assignFromKeyfile(keyFile, "PostDemosaicSharpening", "AutoRadius", pedited, pdsharpening.autoRadius, pedited->pdsharpening.autoRadius);
-            assignFromKeyfile(keyFile, "PostDemosaicSharpening", "DeconvRadius", pedited, pdsharpening.deconvradius, pedited->pdsharpening.deconvradius);
-            assignFromKeyfile(keyFile, "PostDemosaicSharpening", "DeconvRadiusOffset", pedited, pdsharpening.deconvradiusOffset, pedited->pdsharpening.deconvradiusOffset);
-            assignFromKeyfile(keyFile, "PostDemosaicSharpening", "DeconvIterCheck", pedited, pdsharpening.deconvitercheck, pedited->pdsharpening.deconvitercheck);
-            assignFromKeyfile(keyFile, "PostDemosaicSharpening", "DeconvIterations", pedited, pdsharpening.deconviter, pedited->pdsharpening.deconviter);
+            assignFromKeyfile(keyFile, "PostDemosaicSharpening", "Enabled", pdsharpening.enabled, pedited->pdsharpening.enabled);
+            assignFromKeyfile(keyFile, "PostDemosaicSharpening", "Contrast", pdsharpening.contrast, pedited->pdsharpening.contrast);
+            assignFromKeyfile(keyFile, "PostDemosaicSharpening", "AutoContrast", pdsharpening.autoContrast, pedited->pdsharpening.autoContrast);
+            assignFromKeyfile(keyFile, "PostDemosaicSharpening", "AutoRadius", pdsharpening.autoRadius, pedited->pdsharpening.autoRadius);
+            assignFromKeyfile(keyFile, "PostDemosaicSharpening", "DeconvRadius", pdsharpening.deconvradius, pedited->pdsharpening.deconvradius);
+            assignFromKeyfile(keyFile, "PostDemosaicSharpening", "DeconvRadiusOffset", pdsharpening.deconvradiusOffset, pedited->pdsharpening.deconvradiusOffset);
+            assignFromKeyfile(keyFile, "PostDemosaicSharpening", "DeconvIterCheck", pdsharpening.deconvitercheck, pedited->pdsharpening.deconvitercheck);
+            assignFromKeyfile(keyFile, "PostDemosaicSharpening", "DeconvIterations", pdsharpening.deconviter, pedited->pdsharpening.deconviter);
         }
 
         if (keyFile.has_group("PostResizeSharpening")) {
-            assignFromKeyfile(keyFile, "PostResizeSharpening", "Enabled", pedited, prsharpening.enabled, pedited->prsharpening.enabled);
-            assignFromKeyfile(keyFile, "PostResizeSharpening", "Contrast", pedited, prsharpening.contrast, pedited->prsharpening.contrast);
-            assignFromKeyfile(keyFile, "PostResizeSharpening", "Radius", pedited, prsharpening.radius, pedited->prsharpening.radius);
-            assignFromKeyfile(keyFile, "PostResizeSharpening", "Amount", pedited, prsharpening.amount, pedited->prsharpening.amount);
+            assignFromKeyfile(keyFile, "PostResizeSharpening", "Enabled", prsharpening.enabled, pedited->prsharpening.enabled);
+            assignFromKeyfile(keyFile, "PostResizeSharpening", "Contrast", prsharpening.contrast, pedited->prsharpening.contrast);
+            assignFromKeyfile(keyFile, "PostResizeSharpening", "Radius", prsharpening.radius, pedited->prsharpening.radius);
+            assignFromKeyfile(keyFile, "PostResizeSharpening", "Amount", prsharpening.amount, pedited->prsharpening.amount);
 
             if (keyFile.has_key("PostResizeSharpening", "Threshold")) {
                 if (ppVersion < 302) {
@@ -9526,16 +10726,16 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
                 }
             }
 
-            assignFromKeyfile(keyFile, "PostResizeSharpening", "OnlyEdges", pedited, prsharpening.edgesonly, pedited->prsharpening.edgesonly);
-            assignFromKeyfile(keyFile, "PostResizeSharpening", "EdgedetectionRadius", pedited, prsharpening.edges_radius, pedited->prsharpening.edges_radius);
-            assignFromKeyfile(keyFile, "PostResizeSharpening", "EdgeTolerance", pedited, prsharpening.edges_tolerance, pedited->prsharpening.edges_tolerance);
-            assignFromKeyfile(keyFile, "PostResizeSharpening", "HalocontrolEnabled", pedited, prsharpening.halocontrol, pedited->prsharpening.halocontrol);
-            assignFromKeyfile(keyFile, "PostResizeSharpening", "HalocontrolAmount", pedited, prsharpening.halocontrol_amount, pedited->prsharpening.halocontrol_amount);
-            assignFromKeyfile(keyFile, "PostResizeSharpening", "Method", pedited, prsharpening.method, pedited->prsharpening.method);
-            assignFromKeyfile(keyFile, "PostResizeSharpening", "DeconvRadius", pedited, prsharpening.deconvradius, pedited->prsharpening.deconvradius);
-            assignFromKeyfile(keyFile, "PostResizeSharpening", "DeconvAmount", pedited, prsharpening.deconvamount, pedited->prsharpening.deconvamount);
-            assignFromKeyfile(keyFile, "PostResizeSharpening", "DeconvDamping", pedited, prsharpening.deconvdamping, pedited->prsharpening.deconvdamping);
-            assignFromKeyfile(keyFile, "PostResizeSharpening", "DeconvIterations", pedited, prsharpening.deconviter, pedited->prsharpening.deconviter);
+            assignFromKeyfile(keyFile, "PostResizeSharpening", "OnlyEdges", prsharpening.edgesonly, pedited->prsharpening.edgesonly);
+            assignFromKeyfile(keyFile, "PostResizeSharpening", "EdgedetectionRadius", prsharpening.edges_radius, pedited->prsharpening.edges_radius);
+            assignFromKeyfile(keyFile, "PostResizeSharpening", "EdgeTolerance", prsharpening.edges_tolerance, pedited->prsharpening.edges_tolerance);
+            assignFromKeyfile(keyFile, "PostResizeSharpening", "HalocontrolEnabled", prsharpening.halocontrol, pedited->prsharpening.halocontrol);
+            assignFromKeyfile(keyFile, "PostResizeSharpening", "HalocontrolAmount", prsharpening.halocontrol_amount, pedited->prsharpening.halocontrol_amount);
+            assignFromKeyfile(keyFile, "PostResizeSharpening", "Method", prsharpening.method, pedited->prsharpening.method);
+            assignFromKeyfile(keyFile, "PostResizeSharpening", "DeconvRadius", prsharpening.deconvradius, pedited->prsharpening.deconvradius);
+            assignFromKeyfile(keyFile, "PostResizeSharpening", "DeconvAmount", prsharpening.deconvamount, pedited->prsharpening.deconvamount);
+            assignFromKeyfile(keyFile, "PostResizeSharpening", "DeconvDamping", prsharpening.deconvdamping, pedited->prsharpening.deconvdamping);
+            assignFromKeyfile(keyFile, "PostResizeSharpening", "DeconvIterations", prsharpening.deconviter, pedited->prsharpening.deconviter);
         }
 
         if (keyFile.has_group("Color Management")) {
@@ -9546,18 +10746,19 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
                     pedited->icm.inputProfile = true;
                 }
 			}
-            assignFromKeyfile(keyFile, "Color Management", "ToneCurve", pedited, icm.toneCurve, pedited->icm.toneCurve);
-            assignFromKeyfile(keyFile, "Color Management", "ApplyLookTable", pedited, icm.applyLookTable, pedited->icm.applyLookTable);
-            assignFromKeyfile(keyFile, "Color Management", "ApplyBaselineExposureOffset", pedited, icm.applyBaselineExposureOffset, pedited->icm.applyBaselineExposureOffset);
-            assignFromKeyfile(keyFile, "Color Management", "ApplyHueSatMap", pedited, icm.applyHueSatMap, pedited->icm.applyHueSatMap);
-            assignFromKeyfile(keyFile, "Color Management", "DCPIlluminant", pedited, icm.dcpIlluminant, pedited->icm.dcpIlluminant);
-            assignFromKeyfile(keyFile, "Color Management", "WorkingProfile", pedited, icm.workingProfile, pedited->icm.workingProfile);
+            assignFromKeyfile(keyFile, "Color Management", "ToneCurve", icm.toneCurve, pedited->icm.toneCurve);
+            assignFromKeyfile(keyFile, "Color Management", "ApplyLookTable", icm.applyLookTable, pedited->icm.applyLookTable);
+            assignFromKeyfile(keyFile, "Color Management", "ApplyBaselineExposureOffset", icm.applyBaselineExposureOffset, pedited->icm.applyBaselineExposureOffset);
+            assignFromKeyfile(keyFile, "Color Management", "ApplyHueSatMap", icm.applyHueSatMap, pedited->icm.applyHueSatMap);
+            assignFromKeyfile(keyFile, "Color Management", "DCPIlluminant", icm.dcpIlluminant, pedited->icm.dcpIlluminant);
+            assignFromKeyfile(keyFile, "Color Management", "WorkingProfile", icm.workingProfile, pedited->icm.workingProfile);
+            assignFromKeyfile(keyFile, "Color Management", "OpacityCurveWLI", icm.opacityCurveWLI, pedited->icm.opacityCurveWLI);
+
             if (
                 !assignFromKeyfile(
                     keyFile,
                     "Color Management",
                     "WorkingTRC",
-                    pedited,
                     {
                         {"none", ColorManagementParams::WorkingTrc::NONE},
                         {"Custom", ColorManagementParams::WorkingTrc::CUSTOM},
@@ -9581,7 +10782,6 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
                     keyFile,
                     "Color Management",
                     "Will",
-                    pedited,
                     {
                         {"def", ColorManagementParams::Illuminant::DEFAULT},
                         {"D41", ColorManagementParams::Illuminant::D41},
@@ -9593,7 +10793,8 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
                         {"D120", ColorManagementParams::Illuminant::D120},
                         {"stda", ColorManagementParams::Illuminant::STDA},
                         {"2000", ColorManagementParams::Illuminant::TUNGSTEN_2000K},
-                        {"1500", ColorManagementParams::Illuminant::TUNGSTEN_1500K}
+                        {"1500", ColorManagementParams::Illuminant::TUNGSTEN_1500K},
+                        {"E", ColorManagementParams::Illuminant::E}
                     },
                     icm.will,
                     pedited->icm.will
@@ -9609,7 +10810,6 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
                     keyFile,
                     "Color Management",
                     "Wprim",
-                    pedited,
                     {
                         {"def", ColorManagementParams::Primaries::DEFAULT},
                         {"srgb", ColorManagementParams::Primaries::SRGB},
@@ -9620,6 +10820,7 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
                         {"wid", ColorManagementParams::Primaries::WIDE_GAMUT},
                         {"ac0", ColorManagementParams::Primaries::ACES_P0},
                         {"jdcmax", ColorManagementParams::Primaries::JDC_MAX},
+                        {"jdcmaxstdA", ColorManagementParams::Primaries::JDC_MAXSTDA},
                         {"bru", ColorManagementParams::Primaries::BRUCE_RGB},
                         {"bet", ColorManagementParams::Primaries::BETA_RGB},
                         {"bst", ColorManagementParams::Primaries::BEST_RGB},
@@ -9635,26 +10836,61 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
                     pedited->icm.wprim = true;
                 }
             }
-            assignFromKeyfile(keyFile, "Color Management", "WorkingTRCGamma", pedited, icm.workingTRCGamma, pedited->icm.workingTRCGamma);
-            assignFromKeyfile(keyFile, "Color Management", "WorkingTRCSlope", pedited, icm.workingTRCSlope, pedited->icm.workingTRCSlope);
+            if (
+                !assignFromKeyfile(
+                    keyFile,
+                    "Color Management",
+                    "Wcat",
+                    {
+                        {"brad", ColorManagementParams::Cat::BRAD},
+                        {"cat16", ColorManagementParams::Cat::CAT16},
+                        {"cat02", ColorManagementParams::Cat::CAT02},
+                        {"cat_vk", ColorManagementParams::Cat::CAT_VK},
+                        {"cat_xyz", ColorManagementParams::Cat::CAT_XYZ}
+                    },
+                    icm.wcat,
+                    pedited->icm.wcat
+                )
+            ){
+                icm.wcat = ColorManagementParams::Cat::BRAD;
+                if (pedited) {
+                    pedited->icm.wcat = true;
+                }
+            }
+            
+            assignFromKeyfile(keyFile, "Color Management", "Gamut", icm.gamut, pedited->icm.gamut);
+            assignFromKeyfile(keyFile, "Color Management", "WorkingTRCSlope", icm.wSlope, pedited->icm.wSlope);
+            assignFromKeyfile(keyFile, "Color Management", "WorkingTRCGamma", icm.wGamma, pedited->icm.wGamma);
+            assignFromKeyfile(keyFile, "Color Management", "Wmidtcie", icm.wmidtcie, pedited->icm.wmidtcie);
+            assignFromKeyfile(keyFile, "Color Management", "Wsmoothcie", icm.wsmoothcie, pedited->icm.wsmoothcie);
+            assignFromKeyfile(keyFile, "Color Management", "Sigmatrc", icm.sigmatrc, pedited->icm.sigmatrc);
+            assignFromKeyfile(keyFile, "Color Management", "Offstrc", icm.offstrc, pedited->icm.offstrc);
+            assignFromKeyfile(keyFile, "Color Management", "Pyrwavtrc", icm.pyrwavtrc, pedited->icm.pyrwavtrc);
+            assignFromKeyfile(keyFile, "Color Management", "Residtrc", icm.residtrc, pedited->icm.residtrc);
 
-            assignFromKeyfile(keyFile, "Color Management", "Redx", pedited, icm.redx, pedited->icm.redx);
-            assignFromKeyfile(keyFile, "Color Management", "Redy", pedited, icm.redy, pedited->icm.redy);
-            assignFromKeyfile(keyFile, "Color Management", "Grex", pedited, icm.grex, pedited->icm.grex);
-            assignFromKeyfile(keyFile, "Color Management", "Grey", pedited, icm.grey, pedited->icm.grey);
-            assignFromKeyfile(keyFile, "Color Management", "Blux", pedited, icm.blux, pedited->icm.blux);
-            assignFromKeyfile(keyFile, "Color Management", "Bluy", pedited, icm.bluy, pedited->icm.bluy);
-            assignFromKeyfile(keyFile, "Color Management", "Preser", pedited, icm.preser, pedited->icm.preser);
-            assignFromKeyfile(keyFile, "Color Management", "Fbw", pedited, icm.fbw, pedited->icm.fbw);
-            assignFromKeyfile(keyFile, "Color Management", "Gamut", pedited, icm.gamut, pedited->icm.gamut);
-            assignFromKeyfile(keyFile, "Color Management", "LabGridcieALow", pedited, icm.labgridcieALow, pedited->icm.labgridcieALow);
-            assignFromKeyfile(keyFile, "Color Management", "LabGridcieBLow", pedited, icm.labgridcieBLow, pedited->icm.labgridcieBLow);
-            assignFromKeyfile(keyFile, "Color Management", "LabGridcieAHigh", pedited, icm.labgridcieAHigh, pedited->icm.labgridcieAHigh);
-            assignFromKeyfile(keyFile, "Color Management", "LabGridcieBHigh", pedited, icm.labgridcieBHigh, pedited->icm.labgridcieBHigh);
-            assignFromKeyfile(keyFile, "Color Management", "LabGridcieGx", pedited, icm.labgridcieGx, pedited->icm.labgridcieGx);
-            assignFromKeyfile(keyFile, "Color Management", "LabGridcieGy", pedited, icm.labgridcieGy, pedited->icm.labgridcieGy);
-            assignFromKeyfile(keyFile, "Color Management", "LabGridcieWx", pedited, icm.labgridcieWx, pedited->icm.labgridcieWx);
-            assignFromKeyfile(keyFile, "Color Management", "LabGridcieWy", pedited, icm.labgridcieWy, pedited->icm.labgridcieWy);
+            assignFromKeyfile(keyFile, "Color Management", "Redx", icm.redx, pedited->icm.redx);
+            assignFromKeyfile(keyFile, "Color Management", "Redy", icm.redy, pedited->icm.redy);
+            assignFromKeyfile(keyFile, "Color Management", "Grex", icm.grex, pedited->icm.grex);
+            assignFromKeyfile(keyFile, "Color Management", "Grey", icm.grey, pedited->icm.grey);
+            assignFromKeyfile(keyFile, "Color Management", "Blux", icm.blux, pedited->icm.blux);
+            assignFromKeyfile(keyFile, "Color Management", "Bluy", icm.bluy, pedited->icm.bluy);
+            assignFromKeyfile(keyFile, "Color Management", "Refi", icm.refi, pedited->icm.refi);
+            assignFromKeyfile(keyFile, "Color Management", "Shiftx", icm.shiftx, pedited->icm.shiftx);
+            assignFromKeyfile(keyFile, "Color Management", "Shifty", icm.shifty, pedited->icm.shifty);
+            assignFromKeyfile(keyFile, "Color Management", "Preser", icm.preser, pedited->icm.preser);
+            assignFromKeyfile(keyFile, "Color Management", "Fbw", icm.fbw, pedited->icm.fbw);
+            assignFromKeyfile(keyFile, "Color Management", "TrcExp", icm.trcExp, pedited->icm.trcExp);
+            assignFromKeyfile(keyFile, "Color Management", "WavExp", icm.wavExp, pedited->icm.wavExp);
+            assignFromKeyfile(keyFile, "Color Management", "LabGridcieALow", icm.labgridcieALow, pedited->icm.labgridcieALow);
+            assignFromKeyfile(keyFile, "Color Management", "LabGridcieBLow", icm.labgridcieBLow, pedited->icm.labgridcieBLow);
+            assignFromKeyfile(keyFile, "Color Management", "LabGridcieAHigh", icm.labgridcieAHigh, pedited->icm.labgridcieAHigh);
+            assignFromKeyfile(keyFile, "Color Management", "LabGridcieBHigh", icm.labgridcieBHigh, pedited->icm.labgridcieBHigh);
+            assignFromKeyfile(keyFile, "Color Management", "LabGridcieGx", icm.labgridcieGx, pedited->icm.labgridcieGx);
+            assignFromKeyfile(keyFile, "Color Management", "LabGridcieGy", icm.labgridcieGy, pedited->icm.labgridcieGy);
+            assignFromKeyfile(keyFile, "Color Management", "LabGridcieWx", icm.labgridcieWx, pedited->icm.labgridcieWx);
+            assignFromKeyfile(keyFile, "Color Management", "LabGridcieWy", icm.labgridcieWy, pedited->icm.labgridcieWy);
+            assignFromKeyfile(keyFile, "Color Management", "LabGridcieMx", icm.labgridcieMx, pedited->icm.labgridcieMx);
+            assignFromKeyfile(keyFile, "Color Management", "LabGridcieMy", icm.labgridcieMy, pedited->icm.labgridcieMy);
             if (keyFile.has_key("Color Management", "aIntent")) {
                 Glib::ustring intent = keyFile.get_string("Color Management", "aIntent");
 
@@ -9673,7 +10909,7 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
                 }
             }
 
-            assignFromKeyfile(keyFile, "Color Management", "OutputProfile", pedited, icm.outputProfile, pedited->icm.outputProfile);
+            assignFromKeyfile(keyFile, "Color Management", "OutputProfile", icm.outputProfile, pedited->icm.outputProfile);
             if (ppVersion < 341) {
                 if (icm.outputProfile == "RT_Medium_gsRGB") {
                     icm.outputProfile = "RTv4_Medium";
@@ -9712,73 +10948,73 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
                     pedited->icm.outputIntent = true;
                 }
             }
-            assignFromKeyfile(keyFile, "Color Management", "OutputBPC", pedited, icm.outputBPC, pedited->icm.outputBPC);
+            assignFromKeyfile(keyFile, "Color Management", "OutputBPC", icm.outputBPC, pedited->icm.outputBPC);
         }
 
         if (keyFile.has_group("Wavelet")) {
-            assignFromKeyfile(keyFile, "Wavelet", "Enabled", pedited, wavelet.enabled, pedited->wavelet.enabled);
-            assignFromKeyfile(keyFile, "Wavelet", "Strength", pedited, wavelet.strength, pedited->wavelet.strength);
-            assignFromKeyfile(keyFile, "Wavelet", "Balance", pedited, wavelet.balance, pedited->wavelet.balance);
-            assignFromKeyfile(keyFile, "Wavelet", "Sigmafin", pedited, wavelet.sigmafin, pedited->wavelet.sigmafin);
-            assignFromKeyfile(keyFile, "Wavelet", "Sigmaton", pedited, wavelet.sigmaton, pedited->wavelet.sigmaton);
-            assignFromKeyfile(keyFile, "Wavelet", "Sigmacol", pedited, wavelet.sigmacol, pedited->wavelet.sigmacol);
-            assignFromKeyfile(keyFile, "Wavelet", "Sigmadir", pedited, wavelet.sigmadir, pedited->wavelet.sigmadir);
-            assignFromKeyfile(keyFile, "Wavelet", "Rangeab", pedited, wavelet.rangeab, pedited->wavelet.rangeab);
-            assignFromKeyfile(keyFile, "Wavelet", "Protab", pedited, wavelet.protab, pedited->wavelet.protab);
-            assignFromKeyfile(keyFile, "Wavelet", "Iter", pedited, wavelet.iter, pedited->wavelet.iter);
-            assignFromKeyfile(keyFile, "Wavelet", "Median", pedited, wavelet.median, pedited->wavelet.median);
-            assignFromKeyfile(keyFile, "Wavelet", "Medianlev", pedited, wavelet.medianlev, pedited->wavelet.medianlev);
-            assignFromKeyfile(keyFile, "Wavelet", "Linkedg", pedited, wavelet.linkedg, pedited->wavelet.linkedg);
-            assignFromKeyfile(keyFile, "Wavelet", "CBenab", pedited, wavelet.cbenab, pedited->wavelet.cbenab);
-            assignFromKeyfile(keyFile, "Wavelet", "CBgreenhigh", pedited, wavelet.greenhigh, pedited->wavelet.greenhigh);
-            assignFromKeyfile(keyFile, "Wavelet", "CBgreenmed", pedited, wavelet.greenmed, pedited->wavelet.greenmed);
-            assignFromKeyfile(keyFile, "Wavelet", "CBgreenlow", pedited, wavelet.greenlow, pedited->wavelet.greenlow);
-            assignFromKeyfile(keyFile, "Wavelet", "CBbluehigh", pedited, wavelet.bluehigh, pedited->wavelet.bluehigh);
-            assignFromKeyfile(keyFile, "Wavelet", "CBbluemed", pedited, wavelet.bluemed, pedited->wavelet.bluemed);
-            assignFromKeyfile(keyFile, "Wavelet", "CBbluelow", pedited, wavelet.bluelow, pedited->wavelet.bluelow);
-            assignFromKeyfile(keyFile, "Wavelet", "Ballum", pedited, wavelet.ballum, pedited->wavelet.ballum);
-            assignFromKeyfile(keyFile, "Wavelet", "Sigm", pedited, wavelet.sigm, pedited->wavelet.sigm);
-            assignFromKeyfile(keyFile, "Wavelet", "Levden", pedited, wavelet.levden, pedited->wavelet.levden);
-            assignFromKeyfile(keyFile, "Wavelet", "Thrden", pedited, wavelet.thrden, pedited->wavelet.thrden);
-            assignFromKeyfile(keyFile, "Wavelet", "Limden", pedited, wavelet.limden, pedited->wavelet.limden);
-            assignFromKeyfile(keyFile, "Wavelet", "Balchrom", pedited, wavelet.balchrom, pedited->wavelet.balchrom);
-            assignFromKeyfile(keyFile, "Wavelet", "Chromfine", pedited, wavelet.chromfi, pedited->wavelet.chromfi);
-            assignFromKeyfile(keyFile, "Wavelet", "Chromcoarse", pedited, wavelet.chromco, pedited->wavelet.chromco);
-            assignFromKeyfile(keyFile, "Wavelet", "MergeL", pedited, wavelet.mergeL, pedited->wavelet.mergeL);
-            assignFromKeyfile(keyFile, "Wavelet", "MergeC", pedited, wavelet.mergeC, pedited->wavelet.mergeC);
-            assignFromKeyfile(keyFile, "Wavelet", "Softrad", pedited, wavelet.softrad, pedited->wavelet.softrad);
-            assignFromKeyfile(keyFile, "Wavelet", "Softradend", pedited, wavelet.softradend, pedited->wavelet.softradend);
-            assignFromKeyfile(keyFile, "Wavelet", "Strend", pedited, wavelet.strend, pedited->wavelet.strend);
-            assignFromKeyfile(keyFile, "Wavelet", "Detend", pedited, wavelet.detend, pedited->wavelet.detend);
-            assignFromKeyfile(keyFile, "Wavelet", "Thrend", pedited, wavelet.thrend, pedited->wavelet.thrend);
-            assignFromKeyfile(keyFile, "Wavelet", "Lipst", pedited, wavelet.lipst, pedited->wavelet.lipst);
-            assignFromKeyfile(keyFile, "Wavelet", "AvoidColorShift", pedited, wavelet.avoid, pedited->wavelet.avoid);
-            assignFromKeyfile(keyFile, "Wavelet", "Showmask", pedited, wavelet.showmask, pedited->wavelet.showmask);
-            assignFromKeyfile(keyFile, "Wavelet", "Oldsh", pedited, wavelet.oldsh, pedited->wavelet.oldsh);
-            assignFromKeyfile(keyFile, "Wavelet", "TMr", pedited, wavelet.tmr, pedited->wavelet.tmr);
-            assignFromKeyfile(keyFile, "Wavelet", "LabGridALow", pedited, wavelet.labgridALow, pedited->wavelet.labgridALow);
-            assignFromKeyfile(keyFile, "Wavelet", "LabGridBLow", pedited, wavelet.labgridBLow, pedited->wavelet.labgridBLow);
-            assignFromKeyfile(keyFile, "Wavelet", "LabGridAHigh", pedited, wavelet.labgridAHigh, pedited->wavelet.labgridAHigh);
-            assignFromKeyfile(keyFile, "Wavelet", "LabGridBHigh", pedited, wavelet.labgridBHigh, pedited->wavelet.labgridBHigh);
+            assignFromKeyfile(keyFile, "Wavelet", "Enabled", wavelet.enabled, pedited->wavelet.enabled);
+            assignFromKeyfile(keyFile, "Wavelet", "Strength", wavelet.strength, pedited->wavelet.strength);
+            assignFromKeyfile(keyFile, "Wavelet", "Balance", wavelet.balance, pedited->wavelet.balance);
+            assignFromKeyfile(keyFile, "Wavelet", "Sigmafin", wavelet.sigmafin, pedited->wavelet.sigmafin);
+            assignFromKeyfile(keyFile, "Wavelet", "Sigmaton", wavelet.sigmaton, pedited->wavelet.sigmaton);
+            assignFromKeyfile(keyFile, "Wavelet", "Sigmacol", wavelet.sigmacol, pedited->wavelet.sigmacol);
+            assignFromKeyfile(keyFile, "Wavelet", "Sigmadir", wavelet.sigmadir, pedited->wavelet.sigmadir);
+            assignFromKeyfile(keyFile, "Wavelet", "Rangeab", wavelet.rangeab, pedited->wavelet.rangeab);
+            assignFromKeyfile(keyFile, "Wavelet", "Protab", wavelet.protab, pedited->wavelet.protab);
+            assignFromKeyfile(keyFile, "Wavelet", "Iter", wavelet.iter, pedited->wavelet.iter);
+            assignFromKeyfile(keyFile, "Wavelet", "Median", wavelet.median, pedited->wavelet.median);
+            assignFromKeyfile(keyFile, "Wavelet", "Medianlev", wavelet.medianlev, pedited->wavelet.medianlev);
+            assignFromKeyfile(keyFile, "Wavelet", "Linkedg", wavelet.linkedg, pedited->wavelet.linkedg);
+            assignFromKeyfile(keyFile, "Wavelet", "CBenab", wavelet.cbenab, pedited->wavelet.cbenab);
+            assignFromKeyfile(keyFile, "Wavelet", "CBgreenhigh", wavelet.greenhigh, pedited->wavelet.greenhigh);
+            assignFromKeyfile(keyFile, "Wavelet", "CBgreenmed", wavelet.greenmed, pedited->wavelet.greenmed);
+            assignFromKeyfile(keyFile, "Wavelet", "CBgreenlow", wavelet.greenlow, pedited->wavelet.greenlow);
+            assignFromKeyfile(keyFile, "Wavelet", "CBbluehigh", wavelet.bluehigh, pedited->wavelet.bluehigh);
+            assignFromKeyfile(keyFile, "Wavelet", "CBbluemed", wavelet.bluemed, pedited->wavelet.bluemed);
+            assignFromKeyfile(keyFile, "Wavelet", "CBbluelow", wavelet.bluelow, pedited->wavelet.bluelow);
+            assignFromKeyfile(keyFile, "Wavelet", "Ballum", wavelet.ballum, pedited->wavelet.ballum);
+            assignFromKeyfile(keyFile, "Wavelet", "Sigm", wavelet.sigm, pedited->wavelet.sigm);
+            assignFromKeyfile(keyFile, "Wavelet", "Levden", wavelet.levden, pedited->wavelet.levden);
+            assignFromKeyfile(keyFile, "Wavelet", "Thrden", wavelet.thrden, pedited->wavelet.thrden);
+            assignFromKeyfile(keyFile, "Wavelet", "Limden", wavelet.limden, pedited->wavelet.limden);
+            assignFromKeyfile(keyFile, "Wavelet", "Balchrom", wavelet.balchrom, pedited->wavelet.balchrom);
+            assignFromKeyfile(keyFile, "Wavelet", "Chromfine", wavelet.chromfi, pedited->wavelet.chromfi);
+            assignFromKeyfile(keyFile, "Wavelet", "Chromcoarse", wavelet.chromco, pedited->wavelet.chromco);
+            assignFromKeyfile(keyFile, "Wavelet", "MergeL", wavelet.mergeL, pedited->wavelet.mergeL);
+            assignFromKeyfile(keyFile, "Wavelet", "MergeC", wavelet.mergeC, pedited->wavelet.mergeC);
+            assignFromKeyfile(keyFile, "Wavelet", "Softrad", wavelet.softrad, pedited->wavelet.softrad);
+            assignFromKeyfile(keyFile, "Wavelet", "Softradend", wavelet.softradend, pedited->wavelet.softradend);
+            assignFromKeyfile(keyFile, "Wavelet", "Strend", wavelet.strend, pedited->wavelet.strend);
+            assignFromKeyfile(keyFile, "Wavelet", "Detend", wavelet.detend, pedited->wavelet.detend);
+            assignFromKeyfile(keyFile, "Wavelet", "Thrend", wavelet.thrend, pedited->wavelet.thrend);
+            assignFromKeyfile(keyFile, "Wavelet", "Lipst", wavelet.lipst, pedited->wavelet.lipst);
+            assignFromKeyfile(keyFile, "Wavelet", "AvoidColorShift", wavelet.avoid, pedited->wavelet.avoid);
+            assignFromKeyfile(keyFile, "Wavelet", "Showmask", wavelet.showmask, pedited->wavelet.showmask);
+            assignFromKeyfile(keyFile, "Wavelet", "Oldsh", wavelet.oldsh, pedited->wavelet.oldsh);
+            assignFromKeyfile(keyFile, "Wavelet", "TMr", wavelet.tmr, pedited->wavelet.tmr);
+            assignFromKeyfile(keyFile, "Wavelet", "LabGridALow", wavelet.labgridALow, pedited->wavelet.labgridALow);
+            assignFromKeyfile(keyFile, "Wavelet", "LabGridBLow", wavelet.labgridBLow, pedited->wavelet.labgridBLow);
+            assignFromKeyfile(keyFile, "Wavelet", "LabGridAHigh", wavelet.labgridAHigh, pedited->wavelet.labgridAHigh);
+            assignFromKeyfile(keyFile, "Wavelet", "LabGridBHigh", wavelet.labgridBHigh, pedited->wavelet.labgridBHigh);
 
             if (ppVersion < 331) { // wavelet.Lmethod was a string before version 331
                 Glib::ustring temp;
-                assignFromKeyfile(keyFile, "Wavelet", "LevMethod", pedited, temp, pedited->wavelet.Lmethod);
+                assignFromKeyfile(keyFile, "Wavelet", "LevMethod", temp, pedited->wavelet.Lmethod);
 
                 try {
                     wavelet.Lmethod = std::stoi(temp);
                 } catch (...) {
                 }
             } else {
-                assignFromKeyfile(keyFile, "Wavelet", "LevMethod", pedited, wavelet.Lmethod, pedited->wavelet.Lmethod);
+                assignFromKeyfile(keyFile, "Wavelet", "LevMethod", wavelet.Lmethod, pedited->wavelet.Lmethod);
             }
 
-            assignFromKeyfile(keyFile, "Wavelet", "ChoiceLevMethod", pedited, wavelet.CLmethod, pedited->wavelet.CLmethod);
-            assignFromKeyfile(keyFile, "Wavelet", "BackMethod", pedited, wavelet.Backmethod, pedited->wavelet.Backmethod);
-            assignFromKeyfile(keyFile, "Wavelet", "TilesMethod", pedited, wavelet.Tilesmethod, pedited->wavelet.Tilesmethod);
+            assignFromKeyfile(keyFile, "Wavelet", "ChoiceLevMethod", wavelet.CLmethod, pedited->wavelet.CLmethod);
+            assignFromKeyfile(keyFile, "Wavelet", "BackMethod", wavelet.Backmethod, pedited->wavelet.Backmethod);
+            assignFromKeyfile(keyFile, "Wavelet", "TilesMethod", wavelet.Tilesmethod, pedited->wavelet.Tilesmethod);
 
             if (keyFile.has_key("Wavelet", "complexMethod")) {
-                assignFromKeyfile(keyFile, "Wavelet", "complexMethod", pedited, wavelet.complexmethod, pedited->wavelet.complexmethod);
+                assignFromKeyfile(keyFile, "Wavelet", "complexMethod", wavelet.complexmethod, pedited->wavelet.complexmethod);
             } else if (wavelet.enabled) {
                 wavelet.complexmethod = "expert";
                 if (pedited) {
@@ -9786,67 +11022,67 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
                 }
             }
 
-            //assignFromKeyfile(keyFile, "Wavelet", "denMethod", pedited, wavelet.denmethod, pedited->wavelet.denmethod);
-            assignFromKeyfile(keyFile, "Wavelet", "mixMethod", pedited, wavelet.mixmethod, pedited->wavelet.mixmethod);
-            assignFromKeyfile(keyFile, "Wavelet", "sliMethod", pedited, wavelet.slimethod, pedited->wavelet.slimethod);
-            assignFromKeyfile(keyFile, "Wavelet", "quaMethod", pedited, wavelet.quamethod, pedited->wavelet.quamethod);
-            assignFromKeyfile(keyFile, "Wavelet", "DaubMethod", pedited, wavelet.daubcoeffmethod, pedited->wavelet.daubcoeffmethod);
-            assignFromKeyfile(keyFile, "Wavelet", "CHromaMethod", pedited, wavelet.CHmethod, pedited->wavelet.CHmethod);
-            assignFromKeyfile(keyFile, "Wavelet", "Medgreinf", pedited, wavelet.Medgreinf, pedited->wavelet.Medgreinf);
-            assignFromKeyfile(keyFile, "Wavelet", "Ushamethod", pedited, wavelet.ushamethod, pedited->wavelet.ushamethod);
-            assignFromKeyfile(keyFile, "Wavelet", "CHSLromaMethod", pedited, wavelet.CHSLmethod, pedited->wavelet.CHSLmethod);
-            assignFromKeyfile(keyFile, "Wavelet", "EDMethod", pedited, wavelet.EDmethod, pedited->wavelet.EDmethod);
-            assignFromKeyfile(keyFile, "Wavelet", "NPMethod", pedited, wavelet.NPmethod, pedited->wavelet.NPmethod);
-            assignFromKeyfile(keyFile, "Wavelet", "BAMethod", pedited, wavelet.BAmethod, pedited->wavelet.BAmethod);
-            assignFromKeyfile(keyFile, "Wavelet", "TMMethod", pedited, wavelet.TMmethod, pedited->wavelet.TMmethod);
-            assignFromKeyfile(keyFile, "Wavelet", "HSMethod", pedited, wavelet.HSmethod, pedited->wavelet.HSmethod);
-            assignFromKeyfile(keyFile, "Wavelet", "DirMethod", pedited, wavelet.Dirmethod, pedited->wavelet.Dirmethod);
-            assignFromKeyfile(keyFile, "Wavelet", "Sigma", pedited, wavelet.sigma, pedited->wavelet.sigma);
-            assignFromKeyfile(keyFile, "Wavelet", "Offset", pedited, wavelet.offset, pedited->wavelet.offset);
-            assignFromKeyfile(keyFile, "Wavelet", "Lowthr", pedited, wavelet.lowthr, pedited->wavelet.lowthr);
-            assignFromKeyfile(keyFile, "Wavelet", "ResidualcontShadow", pedited, wavelet.rescon, pedited->wavelet.rescon);
-            assignFromKeyfile(keyFile, "Wavelet", "ResidualcontHighlight", pedited, wavelet.resconH, pedited->wavelet.resconH);
-            assignFromKeyfile(keyFile, "Wavelet", "Residualchroma", pedited, wavelet.reschro, pedited->wavelet.reschro);
-            assignFromKeyfile(keyFile, "Wavelet", "Residualblur", pedited, wavelet.resblur, pedited->wavelet.resblur);
-            assignFromKeyfile(keyFile, "Wavelet", "Residualblurc", pedited, wavelet.resblurc, pedited->wavelet.resblurc);
-            assignFromKeyfile(keyFile, "Wavelet", "ResidualTM", pedited, wavelet.tmrs, pedited->wavelet.tmrs);
-            assignFromKeyfile(keyFile, "Wavelet", "ResidualEDGS", pedited, wavelet.edgs, pedited->wavelet.edgs);
-            assignFromKeyfile(keyFile, "Wavelet", "ResidualSCALE", pedited, wavelet.scale, pedited->wavelet.scale);
-            assignFromKeyfile(keyFile, "Wavelet", "Residualgamma", pedited, wavelet.gamma, pedited->wavelet.gamma);
-            assignFromKeyfile(keyFile, "Wavelet", "ContExtra", pedited, wavelet.sup, pedited->wavelet.sup);
-            assignFromKeyfile(keyFile, "Wavelet", "HueRangeResidual", pedited, wavelet.sky, pedited->wavelet.sky);
-            assignFromKeyfile(keyFile, "Wavelet", "MaxLev", pedited, wavelet.thres, pedited->wavelet.thres);
-            assignFromKeyfile(keyFile, "Wavelet", "ThresholdHighlight", pedited, wavelet.threshold, pedited->wavelet.threshold);
-            assignFromKeyfile(keyFile, "Wavelet", "ThresholdShadow", pedited, wavelet.threshold2, pedited->wavelet.threshold2);
-            assignFromKeyfile(keyFile, "Wavelet", "Edgedetect", pedited, wavelet.edgedetect, pedited->wavelet.edgedetect);
-            assignFromKeyfile(keyFile, "Wavelet", "Edgedetectthr", pedited, wavelet.edgedetectthr, pedited->wavelet.edgedetectthr);
-            assignFromKeyfile(keyFile, "Wavelet", "EdgedetectthrHi", pedited, wavelet.edgedetectthr2, pedited->wavelet.edgedetectthr2);
-            assignFromKeyfile(keyFile, "Wavelet", "Edgesensi", pedited, wavelet.edgesensi, pedited->wavelet.edgesensi);
-            assignFromKeyfile(keyFile, "Wavelet", "Edgeampli", pedited, wavelet.edgeampli, pedited->wavelet.edgeampli);
-            assignFromKeyfile(keyFile, "Wavelet", "ThresholdChroma", pedited, wavelet.chroma, pedited->wavelet.chroma);
-            assignFromKeyfile(keyFile, "Wavelet", "ChromaLink", pedited, wavelet.chro, pedited->wavelet.chro);
-            assignFromKeyfile(keyFile, "Wavelet", "Contrast", pedited, wavelet.contrast, pedited->wavelet.contrast);
-            assignFromKeyfile(keyFile, "Wavelet", "Edgrad", pedited, wavelet.edgrad, pedited->wavelet.edgrad);
-            assignFromKeyfile(keyFile, "Wavelet", "Edgeffect", pedited, wavelet.edgeffect, pedited->wavelet.edgeffect);
-            assignFromKeyfile(keyFile, "Wavelet", "Edgval", pedited, wavelet.edgval, pedited->wavelet.edgval);
-            assignFromKeyfile(keyFile, "Wavelet", "ThrEdg", pedited, wavelet.edgthresh, pedited->wavelet.edgthresh);
-            assignFromKeyfile(keyFile, "Wavelet", "ThresholdResidShadow", pedited, wavelet.thr, pedited->wavelet.thr);
-            assignFromKeyfile(keyFile, "Wavelet", "ThresholdResidHighLight", pedited, wavelet.thrH, pedited->wavelet.thrH);
-            assignFromKeyfile(keyFile, "Wavelet", "Residualradius", pedited, wavelet.radius, pedited->wavelet.radius);
-            assignFromKeyfile(keyFile, "Wavelet", "ContrastCurve", pedited, wavelet.ccwcurve, pedited->wavelet.ccwcurve);
-            assignFromKeyfile(keyFile, "Wavelet", "blcurve", pedited, wavelet.blcurve, pedited->wavelet.blcurve);
-            assignFromKeyfile(keyFile, "Wavelet", "OpacityCurveRG", pedited, wavelet.opacityCurveRG, pedited->wavelet.opacityCurveRG);
-            //assignFromKeyfile(keyFile, "Wavelet", "Levalshc", pedited, wavelet.opacityCurveSH, pedited->wavelet.opacityCurveSH);
-            assignFromKeyfile(keyFile, "Wavelet", "OpacityCurveBY", pedited, wavelet.opacityCurveBY, pedited->wavelet.opacityCurveBY);
-            assignFromKeyfile(keyFile, "Wavelet", "wavdenoise", pedited, wavelet.wavdenoise, pedited->wavelet.wavdenoise);
-            assignFromKeyfile(keyFile, "Wavelet", "wavdenoiseh", pedited, wavelet.wavdenoiseh, pedited->wavelet.wavdenoiseh);
-            assignFromKeyfile(keyFile, "Wavelet", "OpacityCurveW", pedited, wavelet.opacityCurveW, pedited->wavelet.opacityCurveW);
-            assignFromKeyfile(keyFile, "Wavelet", "OpacityCurveWL", pedited, wavelet.opacityCurveWL, pedited->wavelet.opacityCurveWL);
-            assignFromKeyfile(keyFile, "Wavelet", "HHcurve", pedited, wavelet.hhcurve, pedited->wavelet.hhcurve);
-            assignFromKeyfile(keyFile, "Wavelet", "Wavguidcurve", pedited, wavelet.wavguidcurve, pedited->wavelet.wavguidcurve);
-            assignFromKeyfile(keyFile, "Wavelet", "Wavhuecurve", pedited, wavelet.wavhuecurve, pedited->wavelet.wavhuecurve);
-            assignFromKeyfile(keyFile, "Wavelet", "CHcurve", pedited, wavelet.Chcurve, pedited->wavelet.Chcurve);
-            assignFromKeyfile(keyFile, "Wavelet", "WavclCurve", pedited, wavelet.wavclCurve, pedited->wavelet.wavclCurve);
+            //assignFromKeyfile(keyFile, "Wavelet", "denMethod", wavelet.denmethod, pedited->wavelet.denmethod);
+            assignFromKeyfile(keyFile, "Wavelet", "mixMethod", wavelet.mixmethod, pedited->wavelet.mixmethod);
+            assignFromKeyfile(keyFile, "Wavelet", "sliMethod", wavelet.slimethod, pedited->wavelet.slimethod);
+            assignFromKeyfile(keyFile, "Wavelet", "quaMethod", wavelet.quamethod, pedited->wavelet.quamethod);
+            assignFromKeyfile(keyFile, "Wavelet", "DaubMethod", wavelet.daubcoeffmethod, pedited->wavelet.daubcoeffmethod);
+            assignFromKeyfile(keyFile, "Wavelet", "CHromaMethod", wavelet.CHmethod, pedited->wavelet.CHmethod);
+            assignFromKeyfile(keyFile, "Wavelet", "Medgreinf", wavelet.Medgreinf, pedited->wavelet.Medgreinf);
+            assignFromKeyfile(keyFile, "Wavelet", "Ushamethod", wavelet.ushamethod, pedited->wavelet.ushamethod);
+            assignFromKeyfile(keyFile, "Wavelet", "CHSLromaMethod", wavelet.CHSLmethod, pedited->wavelet.CHSLmethod);
+            assignFromKeyfile(keyFile, "Wavelet", "EDMethod", wavelet.EDmethod, pedited->wavelet.EDmethod);
+            assignFromKeyfile(keyFile, "Wavelet", "NPMethod", wavelet.NPmethod, pedited->wavelet.NPmethod);
+            assignFromKeyfile(keyFile, "Wavelet", "BAMethod", wavelet.BAmethod, pedited->wavelet.BAmethod);
+            assignFromKeyfile(keyFile, "Wavelet", "TMMethod", wavelet.TMmethod, pedited->wavelet.TMmethod);
+            assignFromKeyfile(keyFile, "Wavelet", "HSMethod", wavelet.HSmethod, pedited->wavelet.HSmethod);
+            assignFromKeyfile(keyFile, "Wavelet", "DirMethod", wavelet.Dirmethod, pedited->wavelet.Dirmethod);
+            assignFromKeyfile(keyFile, "Wavelet", "Sigma", wavelet.sigma, pedited->wavelet.sigma);
+            assignFromKeyfile(keyFile, "Wavelet", "Offset", wavelet.offset, pedited->wavelet.offset);
+            assignFromKeyfile(keyFile, "Wavelet", "Lowthr", wavelet.lowthr, pedited->wavelet.lowthr);
+            assignFromKeyfile(keyFile, "Wavelet", "ResidualcontShadow", wavelet.rescon, pedited->wavelet.rescon);
+            assignFromKeyfile(keyFile, "Wavelet", "ResidualcontHighlight", wavelet.resconH, pedited->wavelet.resconH);
+            assignFromKeyfile(keyFile, "Wavelet", "Residualchroma", wavelet.reschro, pedited->wavelet.reschro);
+            assignFromKeyfile(keyFile, "Wavelet", "Residualblur", wavelet.resblur, pedited->wavelet.resblur);
+            assignFromKeyfile(keyFile, "Wavelet", "Residualblurc", wavelet.resblurc, pedited->wavelet.resblurc);
+            assignFromKeyfile(keyFile, "Wavelet", "ResidualTM", wavelet.tmrs, pedited->wavelet.tmrs);
+            assignFromKeyfile(keyFile, "Wavelet", "ResidualEDGS", wavelet.edgs, pedited->wavelet.edgs);
+            assignFromKeyfile(keyFile, "Wavelet", "ResidualSCALE", wavelet.scale, pedited->wavelet.scale);
+            assignFromKeyfile(keyFile, "Wavelet", "Residualgamma", wavelet.gamma, pedited->wavelet.gamma);
+            assignFromKeyfile(keyFile, "Wavelet", "ContExtra", wavelet.sup, pedited->wavelet.sup);
+            assignFromKeyfile(keyFile, "Wavelet", "HueRangeResidual", wavelet.sky, pedited->wavelet.sky);
+            assignFromKeyfile(keyFile, "Wavelet", "MaxLev", wavelet.thres, pedited->wavelet.thres);
+            assignFromKeyfile(keyFile, "Wavelet", "ThresholdHighlight", wavelet.threshold, pedited->wavelet.threshold);
+            assignFromKeyfile(keyFile, "Wavelet", "ThresholdShadow", wavelet.threshold2, pedited->wavelet.threshold2);
+            assignFromKeyfile(keyFile, "Wavelet", "Edgedetect", wavelet.edgedetect, pedited->wavelet.edgedetect);
+            assignFromKeyfile(keyFile, "Wavelet", "Edgedetectthr", wavelet.edgedetectthr, pedited->wavelet.edgedetectthr);
+            assignFromKeyfile(keyFile, "Wavelet", "EdgedetectthrHi", wavelet.edgedetectthr2, pedited->wavelet.edgedetectthr2);
+            assignFromKeyfile(keyFile, "Wavelet", "Edgesensi", wavelet.edgesensi, pedited->wavelet.edgesensi);
+            assignFromKeyfile(keyFile, "Wavelet", "Edgeampli", wavelet.edgeampli, pedited->wavelet.edgeampli);
+            assignFromKeyfile(keyFile, "Wavelet", "ThresholdChroma", wavelet.chroma, pedited->wavelet.chroma);
+            assignFromKeyfile(keyFile, "Wavelet", "ChromaLink", wavelet.chro, pedited->wavelet.chro);
+            assignFromKeyfile(keyFile, "Wavelet", "Contrast", wavelet.contrast, pedited->wavelet.contrast);
+            assignFromKeyfile(keyFile, "Wavelet", "Edgrad", wavelet.edgrad, pedited->wavelet.edgrad);
+            assignFromKeyfile(keyFile, "Wavelet", "Edgeffect", wavelet.edgeffect, pedited->wavelet.edgeffect);
+            assignFromKeyfile(keyFile, "Wavelet", "Edgval", wavelet.edgval, pedited->wavelet.edgval);
+            assignFromKeyfile(keyFile, "Wavelet", "ThrEdg", wavelet.edgthresh, pedited->wavelet.edgthresh);
+            assignFromKeyfile(keyFile, "Wavelet", "ThresholdResidShadow", wavelet.thr, pedited->wavelet.thr);
+            assignFromKeyfile(keyFile, "Wavelet", "ThresholdResidHighLight", wavelet.thrH, pedited->wavelet.thrH);
+            assignFromKeyfile(keyFile, "Wavelet", "Residualradius", wavelet.radius, pedited->wavelet.radius);
+            assignFromKeyfile(keyFile, "Wavelet", "ContrastCurve", wavelet.ccwcurve, pedited->wavelet.ccwcurve);
+            assignFromKeyfile(keyFile, "Wavelet", "blcurve", wavelet.blcurve, pedited->wavelet.blcurve);
+            assignFromKeyfile(keyFile, "Wavelet", "OpacityCurveRG", wavelet.opacityCurveRG, pedited->wavelet.opacityCurveRG);
+            //assignFromKeyfile(keyFile, "Wavelet", "Levalshc", wavelet.opacityCurveSH, pedited->wavelet.opacityCurveSH);
+            assignFromKeyfile(keyFile, "Wavelet", "OpacityCurveBY", wavelet.opacityCurveBY, pedited->wavelet.opacityCurveBY);
+            assignFromKeyfile(keyFile, "Wavelet", "wavdenoise", wavelet.wavdenoise, pedited->wavelet.wavdenoise);
+            assignFromKeyfile(keyFile, "Wavelet", "wavdenoiseh", wavelet.wavdenoiseh, pedited->wavelet.wavdenoiseh);
+            assignFromKeyfile(keyFile, "Wavelet", "OpacityCurveW", wavelet.opacityCurveW, pedited->wavelet.opacityCurveW);
+            assignFromKeyfile(keyFile, "Wavelet", "OpacityCurveWL", wavelet.opacityCurveWL, pedited->wavelet.opacityCurveWL);
+            assignFromKeyfile(keyFile, "Wavelet", "HHcurve", wavelet.hhcurve, pedited->wavelet.hhcurve);
+            assignFromKeyfile(keyFile, "Wavelet", "Wavguidcurve", wavelet.wavguidcurve, pedited->wavelet.wavguidcurve);
+            assignFromKeyfile(keyFile, "Wavelet", "Wavhuecurve", wavelet.wavhuecurve, pedited->wavelet.wavhuecurve);
+            assignFromKeyfile(keyFile, "Wavelet", "CHcurve", wavelet.Chcurve, pedited->wavelet.Chcurve);
+            assignFromKeyfile(keyFile, "Wavelet", "WavclCurve", wavelet.wavclCurve, pedited->wavelet.wavclCurve);
 
             if (keyFile.has_key("Wavelet", "Hueskin")) {
                 const std::vector<int> thresh = keyFile.get_integer_list("Wavelet", "Hueskin");
@@ -10004,11 +11240,11 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
                 }
             }
 
-            assignFromKeyfile(keyFile, "Wavelet", "Skinprotect", pedited, wavelet.skinprotect, pedited->wavelet.skinprotect);
-            assignFromKeyfile(keyFile, "Wavelet", "chrwav", pedited, wavelet.chrwav, pedited->wavelet.chrwav);
-            assignFromKeyfile(keyFile, "Wavelet", "bluwav", pedited, wavelet.bluwav, pedited->wavelet.bluwav);
-            assignFromKeyfile(keyFile, "Wavelet", "Expcontrast", pedited, wavelet.expcontrast, pedited->wavelet.expcontrast);
-            assignFromKeyfile(keyFile, "Wavelet", "Expchroma", pedited, wavelet.expchroma, pedited->wavelet.expchroma);
+            assignFromKeyfile(keyFile, "Wavelet", "Skinprotect", wavelet.skinprotect, pedited->wavelet.skinprotect);
+            assignFromKeyfile(keyFile, "Wavelet", "chrwav", wavelet.chrwav, pedited->wavelet.chrwav);
+            assignFromKeyfile(keyFile, "Wavelet", "bluwav", wavelet.bluwav, pedited->wavelet.bluwav);
+            assignFromKeyfile(keyFile, "Wavelet", "Expcontrast", wavelet.expcontrast, pedited->wavelet.expcontrast);
+            assignFromKeyfile(keyFile, "Wavelet", "Expchroma", wavelet.expchroma, pedited->wavelet.expchroma);
 
             for (int i = 0; i < 9; ++i) {
                 std::stringstream ss;
@@ -10036,19 +11272,19 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
                 }
             }
 
-            assignFromKeyfile(keyFile, "Wavelet", "Expedge", pedited, wavelet.expedge, pedited->wavelet.expedge);
-            assignFromKeyfile(keyFile, "Wavelet", "expbl", pedited, wavelet.expbl, pedited->wavelet.expbl);
-            assignFromKeyfile(keyFile, "Wavelet", "Expresid", pedited, wavelet.expresid, pedited->wavelet.expresid);
-            assignFromKeyfile(keyFile, "Wavelet", "Expfinal", pedited, wavelet.expfinal, pedited->wavelet.expfinal);
-            assignFromKeyfile(keyFile, "Wavelet", "Exptoning", pedited, wavelet.exptoning, pedited->wavelet.exptoning);
-            assignFromKeyfile(keyFile, "Wavelet", "Expnoise", pedited, wavelet.expnoise, pedited->wavelet.expnoise);
-            assignFromKeyfile(keyFile, "Wavelet", "Expclari", pedited, wavelet.expclari, pedited->wavelet.expclari);
+            assignFromKeyfile(keyFile, "Wavelet", "Expedge", wavelet.expedge, pedited->wavelet.expedge);
+            assignFromKeyfile(keyFile, "Wavelet", "expbl", wavelet.expbl, pedited->wavelet.expbl);
+            assignFromKeyfile(keyFile, "Wavelet", "Expresid", wavelet.expresid, pedited->wavelet.expresid);
+            assignFromKeyfile(keyFile, "Wavelet", "Expfinal", wavelet.expfinal, pedited->wavelet.expfinal);
+            assignFromKeyfile(keyFile, "Wavelet", "Exptoning", wavelet.exptoning, pedited->wavelet.exptoning);
+            assignFromKeyfile(keyFile, "Wavelet", "Expnoise", wavelet.expnoise, pedited->wavelet.expnoise);
+            assignFromKeyfile(keyFile, "Wavelet", "Expclari", wavelet.expclari, pedited->wavelet.expclari);
         }
 
         if (keyFile.has_group("Directional Pyramid Equalizer")) {
-            assignFromKeyfile(keyFile, "Directional Pyramid Equalizer", "Enabled", pedited, dirpyrequalizer.enabled, pedited->dirpyrequalizer.enabled);
-            assignFromKeyfile(keyFile, "Directional Pyramid Equalizer", "Gamutlab", pedited, dirpyrequalizer.gamutlab, pedited->dirpyrequalizer.gamutlab);
-            assignFromKeyfile(keyFile, "Directional Pyramid Equalizer", "cbdlMethod", pedited, dirpyrequalizer.cbdlMethod, pedited->dirpyrequalizer.cbdlMethod);
+            assignFromKeyfile(keyFile, "Directional Pyramid Equalizer", "Enabled", dirpyrequalizer.enabled, pedited->dirpyrequalizer.enabled);
+            assignFromKeyfile(keyFile, "Directional Pyramid Equalizer", "Gamutlab", dirpyrequalizer.gamutlab, pedited->dirpyrequalizer.gamutlab);
+            assignFromKeyfile(keyFile, "Directional Pyramid Equalizer", "cbdlMethod", dirpyrequalizer.cbdlMethod, pedited->dirpyrequalizer.cbdlMethod);
 
             if (keyFile.has_key("Directional Pyramid Equalizer", "Hueskin")) {
                 const std::vector<int> thresh = keyFile.get_integer_list("Directional Pyramid Equalizer", "Hueskin");
@@ -10100,21 +11336,21 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
                     }
                 }
 
-                assignFromKeyfile(keyFile, "Directional Pyramid Equalizer", "Threshold", pedited, dirpyrequalizer.threshold, pedited->dirpyrequalizer.threshold);
-                assignFromKeyfile(keyFile, "Directional Pyramid Equalizer", "Skinprotect", pedited, dirpyrequalizer.skinprotect, pedited->dirpyrequalizer.skinprotect);
+                assignFromKeyfile(keyFile, "Directional Pyramid Equalizer", "Threshold", dirpyrequalizer.threshold, pedited->dirpyrequalizer.threshold);
+                assignFromKeyfile(keyFile, "Directional Pyramid Equalizer", "Skinprotect", dirpyrequalizer.skinprotect, pedited->dirpyrequalizer.skinprotect);
             }
         }
 
         if (keyFile.has_group("SoftLight")) {
-            assignFromKeyfile(keyFile, "SoftLight", "Enabled", pedited, softlight.enabled, pedited->softlight.enabled);
-            assignFromKeyfile(keyFile, "SoftLight", "Strength", pedited, softlight.strength, pedited->softlight.strength);
+            assignFromKeyfile(keyFile, "SoftLight", "Enabled", softlight.enabled, pedited->softlight.enabled);
+            assignFromKeyfile(keyFile, "SoftLight", "Strength", softlight.strength, pedited->softlight.strength);
         }
 
         if (keyFile.has_group("Dehaze")) {
-            assignFromKeyfile(keyFile, "Dehaze", "Enabled", pedited, dehaze.enabled, pedited->dehaze.enabled);
-            assignFromKeyfile(keyFile, "Dehaze", "Strength", pedited, dehaze.strength, pedited->dehaze.strength);
-            assignFromKeyfile(keyFile, "Dehaze", "ShowDepthMap", pedited, dehaze.showDepthMap, pedited->dehaze.showDepthMap);
-            assignFromKeyfile(keyFile, "Dehaze", "Depth", pedited, dehaze.depth, pedited->dehaze.depth);
+            assignFromKeyfile(keyFile, "Dehaze", "Enabled", dehaze.enabled, pedited->dehaze.enabled);
+            assignFromKeyfile(keyFile, "Dehaze", "Strength", dehaze.strength, pedited->dehaze.strength);
+            assignFromKeyfile(keyFile, "Dehaze", "ShowDepthMap", dehaze.showDepthMap, pedited->dehaze.showDepthMap);
+            assignFromKeyfile(keyFile, "Dehaze", "Depth", dehaze.depth, pedited->dehaze.depth);
             if (ppVersion < 349 && dehaze.enabled && keyFile.has_key("Dehaze", "Luminance")) {
                 const bool luminance = keyFile.get_boolean("Dehaze", "Luminance");
                 dehaze.saturation = luminance ? 0 : 100;
@@ -10122,14 +11358,14 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
                     pedited->dehaze.saturation = true;
                 }
             } else {
-                assignFromKeyfile(keyFile, "Dehaze", "Saturation", pedited, dehaze.saturation, pedited->dehaze.saturation);
+                assignFromKeyfile(keyFile, "Dehaze", "Saturation", dehaze.saturation, pedited->dehaze.saturation);
             }
         }
-        
+
         if (keyFile.has_group("Film Simulation")) {
-            assignFromKeyfile(keyFile, "Film Simulation", "Enabled", pedited, filmSimulation.enabled, pedited->filmSimulation.enabled);
-			assignFromKeyfile(keyFile, "Film Simulation", "ClutFilename", pedited, filmSimulation.clutFilename, pedited->filmSimulation.clutFilename);
-			#if defined (WIN32)
+            assignFromKeyfile(keyFile, "Film Simulation", "Enabled", filmSimulation.enabled, pedited->filmSimulation.enabled);
+			assignFromKeyfile(keyFile, "Film Simulation", "ClutFilename", filmSimulation.clutFilename, pedited->filmSimulation.clutFilename);
+			#if defined (_WIN32)
 			// if this is Windows, replace any "/" in the filename with "\\"
 			size_t pos = filmSimulation.clutFilename.find("/");
 			while (pos != string::npos) {
@@ -10137,7 +11373,7 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
 				pos = filmSimulation.clutFilename.find("/", pos);
 			}
 			#endif
-			#if !defined (WIN32)
+			#if !defined (_WIN32)
 			// if this is not Windows, replace any "\\" in the filename with "/"
 			size_t pos = filmSimulation.clutFilename.find("\\");
 			while (pos != string::npos) {
@@ -10161,7 +11397,7 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
 
         if (keyFile.has_group("HSV Equalizer")) {
             if (ppVersion >= 329) {
-                assignFromKeyfile(keyFile, "HSV Equalizer", "Enabled", pedited, hsvequalizer.enabled, pedited->hsvequalizer.enabled);
+                assignFromKeyfile(keyFile, "HSV Equalizer", "Enabled", hsvequalizer.enabled, pedited->hsvequalizer.enabled);
             } else {
                 hsvequalizer.enabled = true;
 
@@ -10171,15 +11407,15 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
             }
 
             if (ppVersion >= 300) {
-                assignFromKeyfile(keyFile, "HSV Equalizer", "HCurve", pedited, hsvequalizer.hcurve, pedited->hsvequalizer.hcurve);
-                assignFromKeyfile(keyFile, "HSV Equalizer", "SCurve", pedited, hsvequalizer.scurve, pedited->hsvequalizer.scurve);
-                assignFromKeyfile(keyFile, "HSV Equalizer", "VCurve", pedited, hsvequalizer.vcurve, pedited->hsvequalizer.vcurve);
+                assignFromKeyfile(keyFile, "HSV Equalizer", "HCurve", hsvequalizer.hcurve, pedited->hsvequalizer.hcurve);
+                assignFromKeyfile(keyFile, "HSV Equalizer", "SCurve", hsvequalizer.scurve, pedited->hsvequalizer.scurve);
+                assignFromKeyfile(keyFile, "HSV Equalizer", "VCurve", hsvequalizer.vcurve, pedited->hsvequalizer.vcurve);
             }
         }
 
         if (keyFile.has_group("RGB Curves")) {
             if (ppVersion >= 329) {
-                assignFromKeyfile(keyFile, "RGB Curves", "Enabled", pedited, rgbCurves.enabled, pedited->rgbCurves.enabled);
+                assignFromKeyfile(keyFile, "RGB Curves", "Enabled", rgbCurves.enabled, pedited->rgbCurves.enabled);
             } else {
                 rgbCurves.enabled = true;
 
@@ -10188,23 +11424,23 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
                 }
             }
 
-            assignFromKeyfile(keyFile, "RGB Curves", "LumaMode", pedited, rgbCurves.lumamode, pedited->rgbCurves.lumamode);
-            assignFromKeyfile(keyFile, "RGB Curves", "rCurve", pedited, rgbCurves.rcurve, pedited->rgbCurves.rcurve);
-            assignFromKeyfile(keyFile, "RGB Curves", "gCurve", pedited, rgbCurves.gcurve, pedited->rgbCurves.gcurve);
-            assignFromKeyfile(keyFile, "RGB Curves", "bCurve", pedited, rgbCurves.bcurve, pedited->rgbCurves.bcurve);
+            assignFromKeyfile(keyFile, "RGB Curves", "LumaMode", rgbCurves.lumamode, pedited->rgbCurves.lumamode);
+            assignFromKeyfile(keyFile, "RGB Curves", "rCurve", rgbCurves.rcurve, pedited->rgbCurves.rcurve);
+            assignFromKeyfile(keyFile, "RGB Curves", "gCurve", rgbCurves.gcurve, pedited->rgbCurves.gcurve);
+            assignFromKeyfile(keyFile, "RGB Curves", "bCurve", rgbCurves.bcurve, pedited->rgbCurves.bcurve);
         }
 
         if (keyFile.has_group("ColorToning")) {
-            assignFromKeyfile(keyFile, "ColorToning", "Enabled", pedited, colorToning.enabled, pedited->colorToning.enabled);
-            assignFromKeyfile(keyFile, "ColorToning", "Method", pedited, colorToning.method, pedited->colorToning.method);
-            assignFromKeyfile(keyFile, "ColorToning", "Lumamode", pedited, colorToning.lumamode, pedited->colorToning.lumamode);
-            assignFromKeyfile(keyFile, "ColorToning", "Twocolor", pedited, colorToning.twocolor, pedited->colorToning.twocolor);
-            assignFromKeyfile(keyFile, "ColorToning", "OpacityCurve", pedited, colorToning.opacityCurve, pedited->colorToning.opacityCurve);
-            assignFromKeyfile(keyFile, "ColorToning", "ColorCurve", pedited, colorToning.colorCurve, pedited->colorToning.colorCurve);
-            assignFromKeyfile(keyFile, "ColorToning", "Autosat", pedited, colorToning.autosat, pedited->colorToning.autosat);
-            assignFromKeyfile(keyFile, "ColorToning", "SatProtectionThreshold", pedited, colorToning.satProtectionThreshold, pedited->colorToning.satprotectionthreshold);
-            assignFromKeyfile(keyFile, "ColorToning", "SaturatedOpacity", pedited, colorToning.saturatedOpacity, pedited->colorToning.saturatedopacity);
-            assignFromKeyfile(keyFile, "ColorToning", "Strength", pedited, colorToning.strength, pedited->colorToning.strength);
+            assignFromKeyfile(keyFile, "ColorToning", "Enabled", colorToning.enabled, pedited->colorToning.enabled);
+            assignFromKeyfile(keyFile, "ColorToning", "Method", colorToning.method, pedited->colorToning.method);
+            assignFromKeyfile(keyFile, "ColorToning", "Lumamode", colorToning.lumamode, pedited->colorToning.lumamode);
+            assignFromKeyfile(keyFile, "ColorToning", "Twocolor", colorToning.twocolor, pedited->colorToning.twocolor);
+            assignFromKeyfile(keyFile, "ColorToning", "OpacityCurve", colorToning.opacityCurve, pedited->colorToning.opacityCurve);
+            assignFromKeyfile(keyFile, "ColorToning", "ColorCurve", colorToning.colorCurve, pedited->colorToning.colorCurve);
+            assignFromKeyfile(keyFile, "ColorToning", "Autosat", colorToning.autosat, pedited->colorToning.autosat);
+            assignFromKeyfile(keyFile, "ColorToning", "SatProtectionThreshold", colorToning.satProtectionThreshold, pedited->colorToning.satprotectionthreshold);
+            assignFromKeyfile(keyFile, "ColorToning", "SaturatedOpacity", colorToning.saturatedOpacity, pedited->colorToning.saturatedopacity);
+            assignFromKeyfile(keyFile, "ColorToning", "Strength", colorToning.strength, pedited->colorToning.strength);
 
             if (keyFile.has_key("ColorToning", "HighlightsColorSaturation")) {
                 const std::vector<int> thresh = keyFile.get_integer_list("ColorToning", "HighlightsColorSaturation");
@@ -10230,25 +11466,25 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
                 }
             }
 
-            assignFromKeyfile(keyFile, "ColorToning", "ClCurve", pedited, colorToning.clcurve, pedited->colorToning.clcurve);
-            assignFromKeyfile(keyFile, "ColorToning", "Cl2Curve", pedited, colorToning.cl2curve, pedited->colorToning.cl2curve);
-            assignFromKeyfile(keyFile, "ColorToning", "Redlow", pedited, colorToning.redlow, pedited->colorToning.redlow);
-            assignFromKeyfile(keyFile, "ColorToning", "Greenlow", pedited, colorToning.greenlow, pedited->colorToning.greenlow);
-            assignFromKeyfile(keyFile, "ColorToning", "Bluelow", pedited, colorToning.bluelow, pedited->colorToning.bluelow);
-            assignFromKeyfile(keyFile, "ColorToning", "Satlow", pedited, colorToning.satlow, pedited->colorToning.satlow);
-            assignFromKeyfile(keyFile, "ColorToning", "Balance", pedited, colorToning.balance, pedited->colorToning.balance);
-            assignFromKeyfile(keyFile, "ColorToning", "Sathigh", pedited, colorToning.sathigh, pedited->colorToning.sathigh);
-            assignFromKeyfile(keyFile, "ColorToning", "Redmed", pedited, colorToning.redmed, pedited->colorToning.redmed);
-            assignFromKeyfile(keyFile, "ColorToning", "Greenmed", pedited, colorToning.greenmed, pedited->colorToning.greenmed);
-            assignFromKeyfile(keyFile, "ColorToning", "Bluemed", pedited, colorToning.bluemed, pedited->colorToning.bluemed);
-            assignFromKeyfile(keyFile, "ColorToning", "Redhigh", pedited, colorToning.redhigh, pedited->colorToning.redhigh);
-            assignFromKeyfile(keyFile, "ColorToning", "Greenhigh", pedited, colorToning.greenhigh, pedited->colorToning.greenhigh);
-            assignFromKeyfile(keyFile, "ColorToning", "Bluehigh", pedited, colorToning.bluehigh, pedited->colorToning.bluehigh);
+            assignFromKeyfile(keyFile, "ColorToning", "ClCurve", colorToning.clcurve, pedited->colorToning.clcurve);
+            assignFromKeyfile(keyFile, "ColorToning", "Cl2Curve", colorToning.cl2curve, pedited->colorToning.cl2curve);
+            assignFromKeyfile(keyFile, "ColorToning", "Redlow", colorToning.redlow, pedited->colorToning.redlow);
+            assignFromKeyfile(keyFile, "ColorToning", "Greenlow", colorToning.greenlow, pedited->colorToning.greenlow);
+            assignFromKeyfile(keyFile, "ColorToning", "Bluelow", colorToning.bluelow, pedited->colorToning.bluelow);
+            assignFromKeyfile(keyFile, "ColorToning", "Satlow", colorToning.satlow, pedited->colorToning.satlow);
+            assignFromKeyfile(keyFile, "ColorToning", "Balance", colorToning.balance, pedited->colorToning.balance);
+            assignFromKeyfile(keyFile, "ColorToning", "Sathigh", colorToning.sathigh, pedited->colorToning.sathigh);
+            assignFromKeyfile(keyFile, "ColorToning", "Redmed", colorToning.redmed, pedited->colorToning.redmed);
+            assignFromKeyfile(keyFile, "ColorToning", "Greenmed", colorToning.greenmed, pedited->colorToning.greenmed);
+            assignFromKeyfile(keyFile, "ColorToning", "Bluemed", colorToning.bluemed, pedited->colorToning.bluemed);
+            assignFromKeyfile(keyFile, "ColorToning", "Redhigh", colorToning.redhigh, pedited->colorToning.redhigh);
+            assignFromKeyfile(keyFile, "ColorToning", "Greenhigh", colorToning.greenhigh, pedited->colorToning.greenhigh);
+            assignFromKeyfile(keyFile, "ColorToning", "Bluehigh", colorToning.bluehigh, pedited->colorToning.bluehigh);
 
-            assignFromKeyfile(keyFile, "ColorToning", "LabGridALow", pedited, colorToning.labgridALow, pedited->colorToning.labgridALow);
-            assignFromKeyfile(keyFile, "ColorToning", "LabGridBLow", pedited, colorToning.labgridBLow, pedited->colorToning.labgridBLow);
-            assignFromKeyfile(keyFile, "ColorToning", "LabGridAHigh", pedited, colorToning.labgridAHigh, pedited->colorToning.labgridAHigh);
-            assignFromKeyfile(keyFile, "ColorToning", "LabGridBHigh", pedited, colorToning.labgridBHigh, pedited->colorToning.labgridBHigh);
+            assignFromKeyfile(keyFile, "ColorToning", "LabGridALow", colorToning.labgridALow, pedited->colorToning.labgridALow);
+            assignFromKeyfile(keyFile, "ColorToning", "LabGridBLow", colorToning.labgridBLow, pedited->colorToning.labgridBLow);
+            assignFromKeyfile(keyFile, "ColorToning", "LabGridAHigh", colorToning.labgridAHigh, pedited->colorToning.labgridAHigh);
+            assignFromKeyfile(keyFile, "ColorToning", "LabGridBHigh", colorToning.labgridBHigh, pedited->colorToning.labgridBHigh);
             if (ppVersion < 337) {
                 const double scale = ColorToningParams::LABGRID_CORR_SCALE;
                 colorToning.labgridALow *= scale;
@@ -10263,47 +11499,47 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
                 ColorToningParams::LabCorrectionRegion cur;
                 done = true;
                 std::string n = std::to_string(i);
-                if (assignFromKeyfile(keyFile, "ColorToning", Glib::ustring("LabRegionA_") + n, pedited, cur.a, pedited->colorToning.labregions)) {
+                if (assignFromKeyfile(keyFile, "ColorToning", Glib::ustring("LabRegionA_") + n, cur.a, pedited->colorToning.labregions)) {
                     found = true;
                     done = false;
                 }
-                if (assignFromKeyfile(keyFile, "ColorToning", Glib::ustring("LabRegionB_") + n, pedited, cur.b, pedited->colorToning.labregions)) {
+                if (assignFromKeyfile(keyFile, "ColorToning", Glib::ustring("LabRegionB_") + n, cur.b, pedited->colorToning.labregions)) {
                     found = true;
                     done = false;
                 }
-                if (assignFromKeyfile(keyFile, "ColorToning", Glib::ustring("LabRegionSaturation_") + n, pedited, cur.saturation, pedited->colorToning.labregions)) {
+                if (assignFromKeyfile(keyFile, "ColorToning", Glib::ustring("LabRegionSaturation_") + n, cur.saturation, pedited->colorToning.labregions)) {
                     found = true;
                     done = false;
                 }
-                if (assignFromKeyfile(keyFile, "ColorToning", Glib::ustring("LabRegionSlope_") + n, pedited, cur.slope, pedited->colorToning.labregions)) {
+                if (assignFromKeyfile(keyFile, "ColorToning", Glib::ustring("LabRegionSlope_") + n, cur.slope, pedited->colorToning.labregions)) {
                     found = true;
                     done = false;
                 }
-                if (assignFromKeyfile(keyFile, "ColorToning", Glib::ustring("LabRegionOffset_") + n, pedited, cur.offset, pedited->colorToning.labregions)) {
+                if (assignFromKeyfile(keyFile, "ColorToning", Glib::ustring("LabRegionOffset_") + n, cur.offset, pedited->colorToning.labregions)) {
                     found = true;
                     done = false;
                 }
-                if (assignFromKeyfile(keyFile, "ColorToning", Glib::ustring("LabRegionPower_") + n, pedited, cur.power, pedited->colorToning.labregions)) {
+                if (assignFromKeyfile(keyFile, "ColorToning", Glib::ustring("LabRegionPower_") + n, cur.power, pedited->colorToning.labregions)) {
                     found = true;
                     done = false;
                 }
-                if (assignFromKeyfile(keyFile, "ColorToning", Glib::ustring("LabRegionHueMask_") + n, pedited, cur.hueMask, pedited->colorToning.labregions)) {
+                if (assignFromKeyfile(keyFile, "ColorToning", Glib::ustring("LabRegionHueMask_") + n, cur.hueMask, pedited->colorToning.labregions)) {
                     found = true;
                     done = false;
                 }
-                if (assignFromKeyfile(keyFile, "ColorToning", Glib::ustring("LabRegionChromaticityMask_") + n, pedited, cur.chromaticityMask, pedited->colorToning.labregions)) {
+                if (assignFromKeyfile(keyFile, "ColorToning", Glib::ustring("LabRegionChromaticityMask_") + n, cur.chromaticityMask, pedited->colorToning.labregions)) {
                     found = true;
                     done = false;
                 }
-                if (assignFromKeyfile(keyFile, "ColorToning", Glib::ustring("LabRegionLightnessMask_") + n, pedited, cur.lightnessMask, pedited->colorToning.labregions)) {
+                if (assignFromKeyfile(keyFile, "ColorToning", Glib::ustring("LabRegionLightnessMask_") + n, cur.lightnessMask, pedited->colorToning.labregions)) {
                     found = true;
                     done = false;
                 }
-                if (assignFromKeyfile(keyFile, "ColorToning", Glib::ustring("LabRegionMaskBlur_") + n, pedited, cur.maskBlur, pedited->colorToning.labregions)) {
+                if (assignFromKeyfile(keyFile, "ColorToning", Glib::ustring("LabRegionMaskBlur_") + n, cur.maskBlur, pedited->colorToning.labregions)) {
                     found = true;
                     done = false;
                 }
-                if (assignFromKeyfile(keyFile, "ColorToning", Glib::ustring("LabRegionChannel_") + n, pedited, cur.channel, pedited->colorToning.labregions)) {
+                if (assignFromKeyfile(keyFile, "ColorToning", Glib::ustring("LabRegionChannel_") + n, cur.channel, pedited->colorToning.labregions)) {
                     found = true;
                     done = false;
                 }
@@ -10314,7 +11550,7 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
             if (found) {
                 colorToning.labregions = std::move(lg);
             }
-            assignFromKeyfile(keyFile, "ColorToning", "LabRegionsShowMask", pedited, colorToning.labregionsShowMask, pedited->colorToning.labregionsShowMask);
+            assignFromKeyfile(keyFile, "ColorToning", "LabRegionsShowMask", colorToning.labregionsShowMask, pedited->colorToning.labregionsShowMask);
         }
 
         if (keyFile.has_group("RAW")) {
@@ -10325,7 +11561,7 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
                     pedited->raw.darkFrame = true;
                 }
             }
-            assignFromKeyfile(keyFile, "RAW", "DarkFrameAuto", pedited, raw.df_autoselect, pedited->raw.df_autoselect);
+            assignFromKeyfile(keyFile, "RAW", "DarkFrameAuto", raw.df_autoselect, pedited->raw.df_autoselect);
             if (keyFile.has_key("RAW", "FlatFieldFile")) {
                 raw.ff_file = expandRelativePath2(fname, options.rtSettings.flatFieldsPath, "", keyFile.get_string("RAW", "FlatFieldFile"));
 
@@ -10333,66 +11569,66 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
                     pedited->raw.ff_file = true;
                 }
             }
-            assignFromKeyfile(keyFile, "RAW", "FlatFieldAutoSelect", pedited, raw.ff_AutoSelect, pedited->raw.ff_AutoSelect);
-            assignFromKeyfile(keyFile, "RAW", "FlatFieldFromMetaData", pedited, raw.ff_FromMetaData, pedited->raw.ff_FromMetaData);
-            assignFromKeyfile(keyFile, "RAW", "FlatFieldBlurRadius", pedited, raw.ff_BlurRadius, pedited->raw.ff_BlurRadius);
-            assignFromKeyfile(keyFile, "RAW", "FlatFieldBlurType", pedited, raw.ff_BlurType, pedited->raw.ff_BlurType);
-            assignFromKeyfile(keyFile, "RAW", "FlatFieldAutoClipControl", pedited, raw.ff_AutoClipControl, pedited->raw.ff_AutoClipControl);
+            assignFromKeyfile(keyFile, "RAW", "FlatFieldAutoSelect", raw.ff_AutoSelect, pedited->raw.ff_AutoSelect);
+            assignFromKeyfile(keyFile, "RAW", "FlatFieldFromMetaData", raw.ff_FromMetaData, pedited->raw.ff_FromMetaData);
+            assignFromKeyfile(keyFile, "RAW", "FlatFieldBlurRadius", raw.ff_BlurRadius, pedited->raw.ff_BlurRadius);
+            assignFromKeyfile(keyFile, "RAW", "FlatFieldBlurType", raw.ff_BlurType, pedited->raw.ff_BlurType);
+            assignFromKeyfile(keyFile, "RAW", "FlatFieldAutoClipControl", raw.ff_AutoClipControl, pedited->raw.ff_AutoClipControl);
 
             if (ppVersion < 328) {
                 // With ppversion < 328 this value was stored as a boolean, which is nonsense.
                 // To avoid annoying warnings we skip reading and assume 0.
                 raw.ff_clipControl = 0;
             } else {
-                assignFromKeyfile(keyFile, "RAW", "FlatFieldClipControl", pedited, raw.ff_clipControl, pedited->raw.ff_clipControl);
+                assignFromKeyfile(keyFile, "RAW", "FlatFieldClipControl", raw.ff_clipControl, pedited->raw.ff_clipControl);
             }
 
-            assignFromKeyfile(keyFile, "RAW", "CA", pedited, raw.ca_autocorrect, pedited->raw.ca_autocorrect);
+            assignFromKeyfile(keyFile, "RAW", "CA", raw.ca_autocorrect, pedited->raw.ca_autocorrect);
             if (ppVersion >= 342) {
-                assignFromKeyfile(keyFile, "RAW", "CAAutoIterations", pedited, raw.caautoiterations, pedited->raw.caautoiterations);
+                assignFromKeyfile(keyFile, "RAW", "CAAutoIterations", raw.caautoiterations, pedited->raw.caautoiterations);
             } else {
                 raw.caautoiterations = 1;
             }
 
             if (ppVersion >= 343) {
-                assignFromKeyfile(keyFile, "RAW", "CAAvoidColourshift", pedited, raw.ca_avoidcolourshift, pedited->raw.ca_avoidcolourshift);
+                assignFromKeyfile(keyFile, "RAW", "CAAvoidColourshift", raw.ca_avoidcolourshift, pedited->raw.ca_avoidcolourshift);
             } else {
                 raw.ca_avoidcolourshift = false;
             }
-            assignFromKeyfile(keyFile, "RAW", "CARed", pedited, raw.cared, pedited->raw.cared);
-            assignFromKeyfile(keyFile, "RAW", "CABlue", pedited, raw.cablue, pedited->raw.cablue);
+            assignFromKeyfile(keyFile, "RAW", "CARed", raw.cared, pedited->raw.cared);
+            assignFromKeyfile(keyFile, "RAW", "CABlue", raw.cablue, pedited->raw.cablue);
             // For compatibility to elder pp3 versions
-            assignFromKeyfile(keyFile, "RAW", "HotDeadPixels", pedited, raw.hotPixelFilter, pedited->raw.hotPixelFilter);
+            assignFromKeyfile(keyFile, "RAW", "HotDeadPixels", raw.hotPixelFilter, pedited->raw.hotPixelFilter);
             raw.deadPixelFilter = raw.hotPixelFilter;
 
             if (pedited) {
                 pedited->raw.deadPixelFilter = pedited->raw.hotPixelFilter;
             }
 
-            assignFromKeyfile(keyFile, "RAW", "HotPixelFilter", pedited, raw.hotPixelFilter, pedited->raw.hotPixelFilter);
-            assignFromKeyfile(keyFile, "RAW", "DeadPixelFilter", pedited, raw.deadPixelFilter, pedited->raw.deadPixelFilter);
-            assignFromKeyfile(keyFile, "RAW", "HotDeadPixelThresh", pedited, raw.hotdeadpix_thresh, pedited->raw.hotdeadpix_thresh);
-            assignFromKeyfile(keyFile, "RAW", "PreExposure", pedited, raw.expos, pedited->raw.exPos);
+            assignFromKeyfile(keyFile, "RAW", "HotPixelFilter", raw.hotPixelFilter, pedited->raw.hotPixelFilter);
+            assignFromKeyfile(keyFile, "RAW", "DeadPixelFilter", raw.deadPixelFilter, pedited->raw.deadPixelFilter);
+            assignFromKeyfile(keyFile, "RAW", "HotDeadPixelThresh", raw.hotdeadpix_thresh, pedited->raw.hotdeadpix_thresh);
+            assignFromKeyfile(keyFile, "RAW", "PreExposure", raw.expos, pedited->raw.exPos);
 
             if (ppVersion < 320) {
-                assignFromKeyfile(keyFile, "RAW", "Method", pedited, raw.bayersensor.method, pedited->raw.bayersensor.method);
-                assignFromKeyfile(keyFile, "RAW", "CcSteps", pedited, raw.bayersensor.ccSteps, pedited->raw.bayersensor.ccSteps);
-                assignFromKeyfile(keyFile, "RAW", "LineDenoise", pedited, raw.bayersensor.linenoise, pedited->raw.bayersensor.linenoise);
-                assignFromKeyfile(keyFile, "RAW", "GreenEqThreshold", pedited, raw.bayersensor.greenthresh, pedited->raw.bayersensor.greenEq);
-                assignFromKeyfile(keyFile, "RAW", "DCBIterations", pedited, raw.bayersensor.dcb_iterations, pedited->raw.bayersensor.dcbIterations);
-                assignFromKeyfile(keyFile, "RAW", "DCBEnhance", pedited, raw.bayersensor.dcb_enhance, pedited->raw.bayersensor.dcbEnhance);
-                assignFromKeyfile(keyFile, "RAW", "LMMSEIterations", pedited, raw.bayersensor.lmmse_iterations, pedited->raw.bayersensor.lmmseIterations);
-                assignFromKeyfile(keyFile, "RAW", "PreBlackzero", pedited, raw.bayersensor.black0, pedited->raw.bayersensor.exBlack0);
-                assignFromKeyfile(keyFile, "RAW", "PreBlackone", pedited, raw.bayersensor.black1, pedited->raw.bayersensor.exBlack1);
-                assignFromKeyfile(keyFile, "RAW", "PreBlacktwo", pedited, raw.bayersensor.black2, pedited->raw.bayersensor.exBlack2);
-                assignFromKeyfile(keyFile, "RAW", "PreBlackthree", pedited, raw.bayersensor.black3, pedited->raw.bayersensor.exBlack3);
-                assignFromKeyfile(keyFile, "RAW", "PreTwoGreen", pedited, raw.bayersensor.twogreen, pedited->raw.bayersensor.exTwoGreen);
+                assignFromKeyfile(keyFile, "RAW", "Method", raw.bayersensor.method, pedited->raw.bayersensor.method);
+                assignFromKeyfile(keyFile, "RAW", "CcSteps", raw.bayersensor.ccSteps, pedited->raw.bayersensor.ccSteps);
+                assignFromKeyfile(keyFile, "RAW", "LineDenoise", raw.bayersensor.linenoise, pedited->raw.bayersensor.linenoise);
+                assignFromKeyfile(keyFile, "RAW", "GreenEqThreshold", raw.bayersensor.greenthresh, pedited->raw.bayersensor.greenEq);
+                assignFromKeyfile(keyFile, "RAW", "DCBIterations", raw.bayersensor.dcb_iterations, pedited->raw.bayersensor.dcbIterations);
+                assignFromKeyfile(keyFile, "RAW", "DCBEnhance", raw.bayersensor.dcb_enhance, pedited->raw.bayersensor.dcbEnhance);
+                assignFromKeyfile(keyFile, "RAW", "LMMSEIterations", raw.bayersensor.lmmse_iterations, pedited->raw.bayersensor.lmmseIterations);
+                assignFromKeyfile(keyFile, "RAW", "PreBlackzero", raw.bayersensor.black0, pedited->raw.bayersensor.exBlack0);
+                assignFromKeyfile(keyFile, "RAW", "PreBlackone", raw.bayersensor.black1, pedited->raw.bayersensor.exBlack1);
+                assignFromKeyfile(keyFile, "RAW", "PreBlacktwo", raw.bayersensor.black2, pedited->raw.bayersensor.exBlack2);
+                assignFromKeyfile(keyFile, "RAW", "PreBlackthree", raw.bayersensor.black3, pedited->raw.bayersensor.exBlack3);
+                assignFromKeyfile(keyFile, "RAW", "PreTwoGreen", raw.bayersensor.twogreen, pedited->raw.bayersensor.exTwoGreen);
             }
         }
 
         if (keyFile.has_group("RAW Bayer")) {
-            assignFromKeyfile(keyFile, "RAW Bayer", "Method", pedited, raw.bayersensor.method, pedited->raw.bayersensor.method);
-            assignFromKeyfile(keyFile, "RAW Bayer", "Border", pedited, raw.bayersensor.border, pedited->raw.bayersensor.border);
+            assignFromKeyfile(keyFile, "RAW Bayer", "Method", raw.bayersensor.method, pedited->raw.bayersensor.method);
+            assignFromKeyfile(keyFile, "RAW Bayer", "Border", raw.bayersensor.border, pedited->raw.bayersensor.border);
 
             if (keyFile.has_key("RAW Bayer", "ImageNum")) {
                 raw.bayersensor.imageNum = keyFile.get_integer("RAW Bayer", "ImageNum") - 1;
@@ -10402,13 +11638,14 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
                 }
             }
 
-            assignFromKeyfile(keyFile, "RAW Bayer", "CcSteps", pedited, raw.bayersensor.ccSteps, pedited->raw.bayersensor.ccSteps);
-            assignFromKeyfile(keyFile, "RAW Bayer", "PreBlack0", pedited, raw.bayersensor.black0, pedited->raw.bayersensor.exBlack0);
-            assignFromKeyfile(keyFile, "RAW Bayer", "PreBlack1", pedited, raw.bayersensor.black1, pedited->raw.bayersensor.exBlack1);
-            assignFromKeyfile(keyFile, "RAW Bayer", "PreBlack2", pedited, raw.bayersensor.black2, pedited->raw.bayersensor.exBlack2);
-            assignFromKeyfile(keyFile, "RAW Bayer", "PreBlack3", pedited, raw.bayersensor.black3, pedited->raw.bayersensor.exBlack3);
-            assignFromKeyfile(keyFile, "RAW Bayer", "PreTwoGreen", pedited, raw.bayersensor.twogreen, pedited->raw.bayersensor.exTwoGreen);
-            assignFromKeyfile(keyFile, "RAW Bayer", "LineDenoise", pedited, raw.bayersensor.linenoise, pedited->raw.bayersensor.linenoise);
+            assignFromKeyfile(keyFile, "RAW Bayer", "CcSteps", raw.bayersensor.ccSteps, pedited->raw.bayersensor.ccSteps);
+            assignFromKeyfile(keyFile, "RAW Bayer", "PreBlack0", raw.bayersensor.black0, pedited->raw.bayersensor.exBlack0);
+            assignFromKeyfile(keyFile, "RAW Bayer", "PreBlack1", raw.bayersensor.black1, pedited->raw.bayersensor.exBlack1);
+            assignFromKeyfile(keyFile, "RAW Bayer", "PreBlack2", raw.bayersensor.black2, pedited->raw.bayersensor.exBlack2);
+            assignFromKeyfile(keyFile, "RAW Bayer", "PreBlack3", raw.bayersensor.black3, pedited->raw.bayersensor.exBlack3);
+            assignFromKeyfile(keyFile, "RAW Bayer", "PreTwoGreen", raw.bayersensor.twogreen, pedited->raw.bayersensor.exTwoGreen);
+            assignFromKeyfile(keyFile, "RAW Bayer", "Dehablack", raw.bayersensor.Dehablack, pedited->raw.bayersensor.Dehablack);
+            assignFromKeyfile(keyFile, "RAW Bayer", "LineDenoise", raw.bayersensor.linenoise, pedited->raw.bayersensor.linenoise);
 
             if (keyFile.has_key("RAW Bayer", "LineDenoiseDirection")) {
                 raw.bayersensor.linenoiseDirection = RAWParams::BayerSensor::LineNoiseDirection(keyFile.get_integer("RAW Bayer", "LineDenoiseDirection"));
@@ -10418,18 +11655,18 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
                 }
             }
 
-            assignFromKeyfile(keyFile, "RAW Bayer", "GreenEqThreshold", pedited, raw.bayersensor.greenthresh, pedited->raw.bayersensor.greenEq);
-            assignFromKeyfile(keyFile, "RAW Bayer", "DCBIterations", pedited, raw.bayersensor.dcb_iterations, pedited->raw.bayersensor.dcbIterations);
-            assignFromKeyfile(keyFile, "RAW Bayer", "DCBEnhance", pedited, raw.bayersensor.dcb_enhance, pedited->raw.bayersensor.dcbEnhance);
-            assignFromKeyfile(keyFile, "RAW Bayer", "LMMSEIterations", pedited, raw.bayersensor.lmmse_iterations, pedited->raw.bayersensor.lmmseIterations);
-            assignFromKeyfile(keyFile, "RAW Bayer", "DualDemosaicAutoContrast", pedited, raw.bayersensor.dualDemosaicAutoContrast, pedited->raw.bayersensor.dualDemosaicAutoContrast);
+            assignFromKeyfile(keyFile, "RAW Bayer", "GreenEqThreshold", raw.bayersensor.greenthresh, pedited->raw.bayersensor.greenEq);
+            assignFromKeyfile(keyFile, "RAW Bayer", "DCBIterations", raw.bayersensor.dcb_iterations, pedited->raw.bayersensor.dcbIterations);
+            assignFromKeyfile(keyFile, "RAW Bayer", "DCBEnhance", raw.bayersensor.dcb_enhance, pedited->raw.bayersensor.dcbEnhance);
+            assignFromKeyfile(keyFile, "RAW Bayer", "LMMSEIterations", raw.bayersensor.lmmse_iterations, pedited->raw.bayersensor.lmmseIterations);
+            assignFromKeyfile(keyFile, "RAW Bayer", "DualDemosaicAutoContrast", raw.bayersensor.dualDemosaicAutoContrast, pedited->raw.bayersensor.dualDemosaicAutoContrast);
             if (ppVersion < 345) {
                 raw.bayersensor.dualDemosaicAutoContrast = false;
                 if (pedited) {
                     pedited->raw.bayersensor.dualDemosaicAutoContrast = true;
                 }
             }
-            assignFromKeyfile(keyFile, "RAW Bayer", "DualDemosaicContrast", pedited, raw.bayersensor.dualDemosaicContrast, pedited->raw.bayersensor.dualDemosaicContrast);
+            assignFromKeyfile(keyFile, "RAW Bayer", "DualDemosaicContrast", raw.bayersensor.dualDemosaicContrast, pedited->raw.bayersensor.dualDemosaicContrast);
 
             if (keyFile.has_key("RAW Bayer", "PixelShiftMotionCorrectionMethod")) {
                 raw.bayersensor.pixelShiftMotionCorrectionMethod = (RAWParams::BayerSensor::PSMotionCorrectionMethod)keyFile.get_integer("RAW Bayer", "PixelShiftMotionCorrectionMethod");
@@ -10439,24 +11676,24 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
                 }
             }
 
-            assignFromKeyfile(keyFile, "RAW Bayer", "PixelShiftEperIso", pedited, raw.bayersensor.pixelShiftEperIso, pedited->raw.bayersensor.pixelShiftEperIso);
+            assignFromKeyfile(keyFile, "RAW Bayer", "PixelShiftEperIso", raw.bayersensor.pixelShiftEperIso, pedited->raw.bayersensor.pixelShiftEperIso);
 
             if (ppVersion < 332) {
                 raw.bayersensor.pixelShiftEperIso += 1.0;
             }
 
-            assignFromKeyfile(keyFile, "RAW Bayer", "PixelShiftSigma", pedited, raw.bayersensor.pixelShiftSigma, pedited->raw.bayersensor.pixelShiftSigma);
-            assignFromKeyfile(keyFile, "RAW Bayer", "PixelShiftShowMotion", pedited, raw.bayersensor.pixelShiftShowMotion, pedited->raw.bayersensor.pixelShiftShowMotion);
-            assignFromKeyfile(keyFile, "RAW Bayer", "PixelShiftShowMotionMaskOnly", pedited, raw.bayersensor.pixelShiftShowMotionMaskOnly, pedited->raw.bayersensor.pixelShiftShowMotionMaskOnly);
-            assignFromKeyfile(keyFile, "RAW Bayer", "pixelShiftHoleFill", pedited, raw.bayersensor.pixelShiftHoleFill, pedited->raw.bayersensor.pixelShiftHoleFill);
-            assignFromKeyfile(keyFile, "RAW Bayer", "pixelShiftMedian", pedited, raw.bayersensor.pixelShiftMedian, pedited->raw.bayersensor.pixelShiftMedian);
-            assignFromKeyfile(keyFile, "RAW Bayer", "pixelShiftAverage", pedited, raw.bayersensor.pixelShiftAverage, pedited->raw.bayersensor.pixelShiftAverage);
-            assignFromKeyfile(keyFile, "RAW Bayer", "pixelShiftGreen", pedited, raw.bayersensor.pixelShiftGreen, pedited->raw.bayersensor.pixelShiftGreen);
-            assignFromKeyfile(keyFile, "RAW Bayer", "pixelShiftBlur", pedited, raw.bayersensor.pixelShiftBlur, pedited->raw.bayersensor.pixelShiftBlur);
-            assignFromKeyfile(keyFile, "RAW Bayer", "pixelShiftSmoothFactor", pedited, raw.bayersensor.pixelShiftSmoothFactor, pedited->raw.bayersensor.pixelShiftSmooth);
-            assignFromKeyfile(keyFile, "RAW Bayer", "pixelShiftEqualBright", pedited, raw.bayersensor.pixelShiftEqualBright, pedited->raw.bayersensor.pixelShiftEqualBright);
-            assignFromKeyfile(keyFile, "RAW Bayer", "pixelShiftEqualBrightChannel", pedited, raw.bayersensor.pixelShiftEqualBrightChannel, pedited->raw.bayersensor.pixelShiftEqualBrightChannel);
-            assignFromKeyfile(keyFile, "RAW Bayer", "pixelShiftNonGreenCross", pedited, raw.bayersensor.pixelShiftNonGreenCross, pedited->raw.bayersensor.pixelShiftNonGreenCross);
+            assignFromKeyfile(keyFile, "RAW Bayer", "PixelShiftSigma", raw.bayersensor.pixelShiftSigma, pedited->raw.bayersensor.pixelShiftSigma);
+            assignFromKeyfile(keyFile, "RAW Bayer", "PixelShiftShowMotion", raw.bayersensor.pixelShiftShowMotion, pedited->raw.bayersensor.pixelShiftShowMotion);
+            assignFromKeyfile(keyFile, "RAW Bayer", "PixelShiftShowMotionMaskOnly", raw.bayersensor.pixelShiftShowMotionMaskOnly, pedited->raw.bayersensor.pixelShiftShowMotionMaskOnly);
+            assignFromKeyfile(keyFile, "RAW Bayer", "pixelShiftHoleFill", raw.bayersensor.pixelShiftHoleFill, pedited->raw.bayersensor.pixelShiftHoleFill);
+            assignFromKeyfile(keyFile, "RAW Bayer", "pixelShiftMedian", raw.bayersensor.pixelShiftMedian, pedited->raw.bayersensor.pixelShiftMedian);
+            assignFromKeyfile(keyFile, "RAW Bayer", "pixelShiftAverage", raw.bayersensor.pixelShiftAverage, pedited->raw.bayersensor.pixelShiftAverage);
+            assignFromKeyfile(keyFile, "RAW Bayer", "pixelShiftGreen", raw.bayersensor.pixelShiftGreen, pedited->raw.bayersensor.pixelShiftGreen);
+            assignFromKeyfile(keyFile, "RAW Bayer", "pixelShiftBlur", raw.bayersensor.pixelShiftBlur, pedited->raw.bayersensor.pixelShiftBlur);
+            assignFromKeyfile(keyFile, "RAW Bayer", "pixelShiftSmoothFactor", raw.bayersensor.pixelShiftSmoothFactor, pedited->raw.bayersensor.pixelShiftSmooth);
+            assignFromKeyfile(keyFile, "RAW Bayer", "pixelShiftEqualBright", raw.bayersensor.pixelShiftEqualBright, pedited->raw.bayersensor.pixelShiftEqualBright);
+            assignFromKeyfile(keyFile, "RAW Bayer", "pixelShiftEqualBrightChannel", raw.bayersensor.pixelShiftEqualBrightChannel, pedited->raw.bayersensor.pixelShiftEqualBrightChannel);
+            assignFromKeyfile(keyFile, "RAW Bayer", "pixelShiftNonGreenCross", raw.bayersensor.pixelShiftNonGreenCross, pedited->raw.bayersensor.pixelShiftNonGreenCross);
 
             if (ppVersion < 336) {
                 if (keyFile.has_key("RAW Bayer", "pixelShiftLmmse")) {
@@ -10473,34 +11710,35 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
                     }
                 }
             } else {
-                assignFromKeyfile(keyFile, "RAW Bayer", "pixelShiftDemosaicMethod", pedited, raw.bayersensor.pixelShiftDemosaicMethod, pedited->raw.bayersensor.pixelShiftDemosaicMethod);
+                assignFromKeyfile(keyFile, "RAW Bayer", "pixelShiftDemosaicMethod", raw.bayersensor.pixelShiftDemosaicMethod, pedited->raw.bayersensor.pixelShiftDemosaicMethod);
             }
 
-            assignFromKeyfile(keyFile, "RAW Bayer", "PDAFLinesFilter", pedited, raw.bayersensor.pdafLinesFilter, pedited->raw.bayersensor.pdafLinesFilter);
+            assignFromKeyfile(keyFile, "RAW Bayer", "PDAFLinesFilter", raw.bayersensor.pdafLinesFilter, pedited->raw.bayersensor.pdafLinesFilter);
         }
 
         if (keyFile.has_group("RAW X-Trans")) {
-            assignFromKeyfile(keyFile, "RAW X-Trans", "Method", pedited, raw.xtranssensor.method, pedited->raw.xtranssensor.method);
-            assignFromKeyfile(keyFile, "RAW X-Trans", "DualDemosaicAutoContrast", pedited, raw.xtranssensor.dualDemosaicAutoContrast, pedited->raw.xtranssensor.dualDemosaicAutoContrast);
+            assignFromKeyfile(keyFile, "RAW X-Trans", "Method", raw.xtranssensor.method, pedited->raw.xtranssensor.method);
+            assignFromKeyfile(keyFile, "RAW X-Trans", "DualDemosaicAutoContrast", raw.xtranssensor.dualDemosaicAutoContrast, pedited->raw.xtranssensor.dualDemosaicAutoContrast);
             if (ppVersion < 345) {
                 raw.xtranssensor.dualDemosaicAutoContrast = false;
                 if (pedited) {
                     pedited->raw.xtranssensor.dualDemosaicAutoContrast = true;
                 }
             }
-            assignFromKeyfile(keyFile, "RAW X-Trans", "DualDemosaicContrast", pedited, raw.xtranssensor.dualDemosaicContrast, pedited->raw.xtranssensor.dualDemosaicContrast);
-            assignFromKeyfile(keyFile, "RAW X-Trans", "Border", pedited, raw.xtranssensor.border, pedited->raw.xtranssensor.border);
-            assignFromKeyfile(keyFile, "RAW X-Trans", "CcSteps", pedited, raw.xtranssensor.ccSteps, pedited->raw.xtranssensor.ccSteps);
-            assignFromKeyfile(keyFile, "RAW X-Trans", "PreBlackRed", pedited, raw.xtranssensor.blackred, pedited->raw.xtranssensor.exBlackRed);
-            assignFromKeyfile(keyFile, "RAW X-Trans", "PreBlackGreen", pedited, raw.xtranssensor.blackgreen, pedited->raw.xtranssensor.exBlackGreen);
-            assignFromKeyfile(keyFile, "RAW X-Trans", "PreBlackBlue", pedited, raw.xtranssensor.blackblue, pedited->raw.xtranssensor.exBlackBlue);
+            assignFromKeyfile(keyFile, "RAW X-Trans", "DualDemosaicContrast", raw.xtranssensor.dualDemosaicContrast, pedited->raw.xtranssensor.dualDemosaicContrast);
+            assignFromKeyfile(keyFile, "RAW X-Trans", "Border", raw.xtranssensor.border, pedited->raw.xtranssensor.border);
+            assignFromKeyfile(keyFile, "RAW X-Trans", "CcSteps", raw.xtranssensor.ccSteps, pedited->raw.xtranssensor.ccSteps);
+            assignFromKeyfile(keyFile, "RAW X-Trans", "PreBlackRed", raw.xtranssensor.blackred, pedited->raw.xtranssensor.exBlackRed);
+            assignFromKeyfile(keyFile, "RAW X-Trans", "PreBlackGreen", raw.xtranssensor.blackgreen, pedited->raw.xtranssensor.exBlackGreen);
+            assignFromKeyfile(keyFile, "RAW X-Trans", "PreBlackBlue", raw.xtranssensor.blackblue, pedited->raw.xtranssensor.exBlackBlue);
+            assignFromKeyfile(keyFile, "RAW X-Trans", "Dehablackx", raw.xtranssensor.Dehablackx, pedited->raw.xtranssensor.Dehablackx);
         }
 
         if (keyFile.has_group("Film Negative")) {
-            assignFromKeyfile(keyFile, "Film Negative", "Enabled", pedited, filmNegative.enabled, pedited->filmNegative.enabled);
-            assignFromKeyfile(keyFile, "Film Negative", "RedRatio", pedited, filmNegative.redRatio, pedited->filmNegative.redRatio);
-            assignFromKeyfile(keyFile, "Film Negative", "GreenExponent", pedited, filmNegative.greenExp, pedited->filmNegative.greenExp);
-            assignFromKeyfile(keyFile, "Film Negative", "BlueRatio", pedited, filmNegative.blueRatio, pedited->filmNegative.blueRatio);
+            assignFromKeyfile(keyFile, "Film Negative", "Enabled", filmNegative.enabled, pedited->filmNegative.enabled);
+            assignFromKeyfile(keyFile, "Film Negative", "RedRatio", filmNegative.redRatio, pedited->filmNegative.redRatio);
+            assignFromKeyfile(keyFile, "Film Negative", "GreenExponent", filmNegative.greenExp, pedited->filmNegative.greenExp);
+            assignFromKeyfile(keyFile, "Film Negative", "BlueRatio", filmNegative.blueRatio, pedited->filmNegative.blueRatio);
 
             if (ppVersion < 347) {
                 // Backwards compatibility with RT v5.8
@@ -10515,9 +11753,9 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
             } else if (!keyFile.has_key("Film Negative", "RefInput")) {
                 // Backwards compatibility with intermediate dev version (after v5.8) using film base values
                 bool r, g, b;
-                assignFromKeyfile(keyFile, "Film Negative", "RedBase", pedited, filmNegative.refInput.r, r);
-                assignFromKeyfile(keyFile, "Film Negative", "GreenBase", pedited, filmNegative.refInput.g, g);
-                assignFromKeyfile(keyFile, "Film Negative", "BlueBase", pedited, filmNegative.refInput.b, b);
+                assignFromKeyfile(keyFile, "Film Negative", "RedBase", filmNegative.refInput.r, r);
+                assignFromKeyfile(keyFile, "Film Negative", "GreenBase", filmNegative.refInput.g, g);
+                assignFromKeyfile(keyFile, "Film Negative", "BlueBase", filmNegative.refInput.b, b);
                 if (pedited) {
                     pedited->filmNegative.refInput = r || g || b;
                     pedited->filmNegative.refOutput = r || g || b;
@@ -10532,11 +11770,11 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
 
             } else { // current version
 
-                assignFromKeyfile(keyFile, "Film Negative", "RefInput", pedited, filmNegative.refInput, pedited->filmNegative.refInput);
-                assignFromKeyfile(keyFile, "Film Negative", "RefOutput", pedited, filmNegative.refOutput, pedited->filmNegative.refOutput);
+                assignFromKeyfile(keyFile, "Film Negative", "RefInput", filmNegative.refInput, pedited->filmNegative.refInput);
+                assignFromKeyfile(keyFile, "Film Negative", "RefOutput", filmNegative.refOutput, pedited->filmNegative.refOutput);
 
                 int cs = toUnderlying(filmNegative.colorSpace);
-                assignFromKeyfile(keyFile, "Film Negative", "ColorSpace", pedited, cs, pedited->filmNegative.colorSpace);
+                assignFromKeyfile(keyFile, "Film Negative", "ColorSpace", cs, pedited->filmNegative.colorSpace);
                 filmNegative.colorSpace = static_cast<FilmNegativeParams::ColorSpace>(cs);
 
                 if (keyFile.has_key("Film Negative", "BackCompat")) {
@@ -10557,20 +11795,25 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
         }
 
         if (keyFile.has_group("MetaData")) {
-            int mode = int(MetaDataParams::TUNNEL);
-            assignFromKeyfile(keyFile, "MetaData", "Mode", pedited, mode, pedited->metadata.mode);
+            int mode = int(MetaDataParams::EDIT);
+            assignFromKeyfile(keyFile, "MetaData", "Mode", mode, pedited->metadata.mode);
 
             if (mode >= int(MetaDataParams::TUNNEL) && mode <= int(MetaDataParams::STRIP)) {
                 metadata.mode = static_cast<MetaDataParams::Mode>(mode);
             }
+
+            assignFromKeyfile(keyFile, "MetaData", "ExifKeys", metadata.exifKeys, pedited->metadata.exifKeys);
         }
 
         if (keyFile.has_group("Exif")) {
             for (const auto& key : keyFile.get_keys("Exif")) {
-                exif[key] = keyFile.get_string("Exif", key);
+                auto it = exif_keys.find(key);
+                if (it != exif_keys.end()) {
+                    metadata.exif[it->second] = keyFile.get_string("Exif", key);
 
-                if (pedited) {
-                    pedited->exif = true;
+                    if (pedited) {
+                        pedited->exif = true;
+                    }
                 }
             }
         }
@@ -10590,16 +11833,22 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
         if (keyFile.has_group("IPTC")) {
             for (const auto& key : keyFile.get_keys("IPTC")) {
                 // does this key already exist?
-                const IPTCPairs::iterator element = iptc.find(key);
+                auto it = iptc_keys.find(key);
+                if (it == iptc_keys.end()) {
+                    continue;
+                }
 
-                if (element != iptc.end()) {
+                auto kk = it->second;
+                const IPTCPairs::iterator element = metadata.iptc.find(kk);
+
+                if (element != metadata.iptc.end()) {
                     // it already exist so we cleanup the values
                     element->second.clear();
                 }
 
                 // TODO: look out if merging Keywords and SupplementalCategories from the procparams chain would be interesting
                 for (const auto& currLoadedTagValue : keyFile.get_string_list("IPTC", key)) {
-                    iptc[key].push_back(currLoadedTagValue);
+                    metadata.iptc[kk].push_back(currLoadedTagValue);
                 }
 
                 if (pedited) {
@@ -10668,6 +11917,7 @@ bool ProcParams::operator ==(const ProcParams& other) const
         && chmixer == other.chmixer
         && blackwhite == other.blackwhite
         && resize == other.resize
+        && framing == other.framing
         && spot == other.spot
         && raw == other.raw
         && icm == other.icm
@@ -10679,8 +11929,6 @@ bool ProcParams::operator ==(const ProcParams& other) const
         && rgbCurves == other.rgbCurves
         && colorToning == other.colorToning
         && metadata == other.metadata
-        && exif == other.exif
-        && iptc == other.iptc
         && dehaze == other.dehaze
         && filmNegative == other.filmNegative;
 }

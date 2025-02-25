@@ -16,6 +16,8 @@
  *  You should have received a copy of the GNU General Public License
  *  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
  */
+#include <algorithm>
+#include <array>
 #include <clocale>
 
 #include <lcms2.h>
@@ -51,18 +53,82 @@
 namespace
 {
 
-bool checkRawImageThumb (const rtengine::RawImage& raw_image)
+/**
+ * Apply the black level adjustments in the processing parameters.
+ *
+ * @param cblack The original black levels that will be modified.
+ * @param sensorType Sensor type.
+ * @param rawParams Subset of processing parameters for raw data.
+ */
+void adjustBlackLevels(float cblack[4], rtengine::eSensorType sensorType, const rtengine::RAWParams *rawParams)
 {
-    if (!raw_image.is_supportedThumb()) {
-        return false;
+    if (!rawParams) {
+        return;
     }
 
-    const ssize_t length =
-        fdata (raw_image.get_thumbOffset(), raw_image.get_file())[1] != 0xD8 && raw_image.is_ppmThumb()
-        ? raw_image.get_thumbWidth() * raw_image.get_thumbHeight() * (raw_image.get_thumbBPS() / 8) * 3
-        : raw_image.get_thumbLength();
+    std::array<float, 4> black_adjust{0.f, 0.f, 0.f, 0.f};
 
-    return raw_image.get_thumbOffset() + length <= raw_image.get_file()->size;
+    switch (sensorType) {
+        case rtengine::eSensorType::ST_BAYER:
+        case rtengine::eSensorType::ST_FOVEON:
+            black_adjust[0] = static_cast<float>(rawParams->bayersensor.black1); // R
+            black_adjust[1] = static_cast<float>(rawParams->bayersensor.black0); // G1
+            black_adjust[2] = static_cast<float>(rawParams->bayersensor.black2); // B
+            black_adjust[3] = static_cast<float>(rawParams->bayersensor.black3); // G2
+            break;
+        case rtengine::eSensorType::ST_FUJI_XTRANS:
+            black_adjust[0] = static_cast<float>(rawParams->xtranssensor.blackred);
+            black_adjust[1] = static_cast<float>(rawParams->xtranssensor.blackgreen);
+            black_adjust[2] = static_cast<float>(rawParams->xtranssensor.blackblue);
+            black_adjust[3] = static_cast<float>(rawParams->xtranssensor.blackgreen);
+            break;
+        case rtengine::eSensorType::ST_NONE:
+            break;
+    }
+
+    for (unsigned int i = 0; i < black_adjust.size(); i++) {
+        cblack[i] = std::max(0.f, cblack[i] + black_adjust[i]);
+    }
+}
+
+/**
+ * Calculate the new scale multipliers based on new black levels.
+ *
+ * @param scale_mul The original scale multipliers to be adjusted.
+ * @param pre_mul Pre-multipliers.
+ * @param c_black Updated black levels.
+ * @param isMono Is the image using mono demosaicing?
+ * @param ri Pointer to the raw image.
+ */
+void calculate_scale_mul(float scale_mul[4], const float pre_mul_[4], const float c_black[4], bool isMono, const rtengine::RawImage *ri)
+{
+    std::array<float, 4> c_white;
+
+    for (unsigned int i = 0; i < c_white.size(); ++i) {
+        c_white[i] = static_cast<float>(ri->get_white(i));
+    }
+
+    if (isMono || ri->get_colors() == 1) {
+        for (int c = 0; c < 4; c++) {
+            scale_mul[c] = 65535.f / (c_white[c] - c_black[c]);
+        }
+    } else {
+        std::array<float, 4> pre_mul;
+
+        for (int c = 0; c < 4; c++) {
+            pre_mul[c] = pre_mul_[c];
+        }
+
+        if (pre_mul[3] == 0) {
+            pre_mul[3] = pre_mul[1]; // G2 == G1
+        }
+
+        float maxpremul = std::max(std::max(std::max(pre_mul[0], pre_mul[1]), pre_mul[2]), pre_mul[3]);
+
+        for (int c = 0; c < 4; c++) {
+            scale_mul[c] = (pre_mul[c] / maxpremul) * 65535.f / (c_white[c] - c_black[c]);
+        }
+    }
 }
 
 
@@ -157,13 +223,14 @@ void scale_colors (rtengine::RawImage *ri, float scale_mul[4], float cblack[4], 
             }
         }
     } else if (isFloat) {
+        const auto colors = ri->get_colors();
 #ifdef _OPENMP
         #pragma omp parallel for if(multiThread)
 #endif
         for (int row = 0; row < height; ++row) {
             for (int col = 0; col < width; ++col) {
-                for (int i = 0; i < ri->get_colors(); ++i) {
-                    float val = float_raw_image[(row + top_margin) * raw_width + col + left_margin + i];
+                for (int i = 0; i < colors; ++i) {
+                    float val = float_raw_image[colors * ((row + top_margin) * raw_width + col + left_margin) + i];
                     val -= cblack[i];
                     val *= scale_mul[i];
                     image[row * width + col][i] = val;
@@ -324,10 +391,10 @@ Thumbnail* Thumbnail::loadFromImage (const Glib::ustring& fname, int &w, int &h,
 
 namespace {
 
-Image8 *load_inspector_mode(const Glib::ustring &fname, RawMetaDataLocation &rml, eSensorType &sensorType, int &w, int &h)
+Image8 *load_inspector_mode(const Glib::ustring &fname, eSensorType &sensorType, int &w, int &h)
 {
     BENCHFUN
-    
+
     RawImageSource src;
     int err = src.load(fname, true);
     if (err) {
@@ -336,21 +403,23 @@ Image8 *load_inspector_mode(const Glib::ustring &fname, RawMetaDataLocation &rml
 
     src.getFullSize(w, h);
     sensorType = src.getSensorType();
-    
+
     ProcParams neutral;
     neutral.raw.bayersensor.method = RAWParams::BayerSensor::getMethodString(RAWParams::BayerSensor::Method::FAST);
     neutral.raw.xtranssensor.method = RAWParams::XTransSensor::getMethodString(RAWParams::XTransSensor::Method::FAST);
     neutral.icm.inputProfile = "(camera)";
     neutral.icm.workingProfile = settings->srgb;
-
-    src.preprocess(neutral.raw, neutral.lensProf, neutral.coarse, false);
+    float reddeha = 0.f;
+    float greendeha = 0.f;
+    float bluedeha = 0.f;
+    src.preprocess(neutral.raw, neutral.lensProf, neutral.coarse, reddeha, greendeha, bluedeha, false);
     double thresholdDummy = 0.f;
     src.demosaic(neutral.raw, false, thresholdDummy);
 
     PreviewProps pp(0, 0, w, h, 1);
 
     Imagefloat tmp(w, h);
-    src.getImage(src.getWB(), TR_NONE, &tmp, pp, neutral.toneCurve, neutral.raw, 0);
+    src.getImage(src.getWB(), TR_NONE, &tmp, pp, neutral.toneCurve, neutral.raw);
     src.convertColorSpace(&tmp, neutral.icm, src.getWB());
 
     Image8 *img = new Image8(w, h);
@@ -380,7 +449,7 @@ Image8 *load_inspector_mode(const Glib::ustring &fname, RawMetaDataLocation &rml
 
 } // namespace
 
-Thumbnail* Thumbnail::loadQuickFromRaw (const Glib::ustring& fname, RawMetaDataLocation& rml, eSensorType &sensorType, int &w, int &h, int fixwh, bool rotate, bool inspectorMode, bool forHistogramMatching)
+Thumbnail* Thumbnail::loadQuickFromRaw (const Glib::ustring& fname, eSensorType &sensorType, int &w, int &h, int fixwh, bool rotate, bool inspectorMode, bool forHistogramMatching)
 {
     Thumbnail* tpp = new Thumbnail ();
     tpp->isRaw = 1;
@@ -390,7 +459,7 @@ Thumbnail* Thumbnail::loadQuickFromRaw (const Glib::ustring& fname, RawMetaDataL
     tpp->colorMatrix[2][2] = 1.0;
 
     if (inspectorMode && !forHistogramMatching && settings->thumbnail_inspector_mode == Settings::ThumbnailInspectorMode::RAW) {
-        Image8 *img = load_inspector_mode(fname, rml, sensorType, w, h);
+        Image8 *img = load_inspector_mode(fname, sensorType, w, h);
         if (!img) {
             delete tpp;
             return nullptr;
@@ -401,7 +470,7 @@ Thumbnail* Thumbnail::loadQuickFromRaw (const Glib::ustring& fname, RawMetaDataL
 
         return tpp;
     }
-    
+
     RawImage *ri = new RawImage (fname);
     unsigned int imageNum = 0;
     int r = ri->loadRaw (false, imageNum, false);
@@ -415,36 +484,14 @@ Thumbnail* Thumbnail::loadQuickFromRaw (const Glib::ustring& fname, RawMetaDataL
 
     sensorType = ri->getSensorType();
 
-    rml.exifBase = ri->get_exifBase();
-    rml.ciffBase = ri->get_ciffBase();
-    rml.ciffLength = ri->get_ciffLen();
-
-    Image8* img = new Image8 ();
-    // No sample format detection occurred earlier, so we set them here,
-    // as they are mandatory for the setScanline method
-    img->setSampleFormat (IIOSF_UNSIGNED_CHAR);
-    img->setSampleArrangement (IIOSA_CHUNKY);
-
-    int err = 1;
-
-    // See if it is something we support
-    if (checkRawImageThumb (*ri)) {
-        const char* data ((const char*)fdata (ri->get_thumbOffset(), ri->get_file()));
-
-        if ( (unsigned char)data[1] == 0xd8 ) {
-            err = img->loadJPEGFromMemory (data, ri->get_thumbLength());
-        } else if (ri->is_ppmThumb()) {
-            err = img->loadPPMFromMemory (data, ri->get_thumbWidth(), ri->get_thumbHeight(), ri->get_thumbSwap(), ri->get_thumbBPS());
-        }
-    }
+    Image8 *img = ri->getThumbnail();
 
     // did we succeed?
-    if ( err ) {
+    if (!img) {
         if (settings->verbose) {
             std::cout << "Could not extract thumb from " << fname.c_str() << std::endl;
         }
         delete tpp;
-        delete img;
         delete ri;
         return nullptr;
     }
@@ -458,8 +505,8 @@ Thumbnail* Thumbnail::loadQuickFromRaw (const Glib::ustring& fname, RawMetaDataL
         if (!forHistogramMatching && settings->thumbnail_inspector_mode == Settings::ThumbnailInspectorMode::RAW_IF_NOT_JPEG_FULLSIZE && float(std::max(w, h))/float(std::max(ri->get_width(), ri->get_height())) < 0.9f) {
             delete img;
             delete ri;
-            
-            img = load_inspector_mode(fname, rml, sensorType, w, h);
+
+            img = load_inspector_mode(fname, sensorType, w, h);
             if (!img) {
                 delete tpp;
                 return nullptr;
@@ -467,7 +514,7 @@ Thumbnail* Thumbnail::loadQuickFromRaw (const Glib::ustring& fname, RawMetaDataL
 
             tpp->scale = 1.;
             tpp->thumbImg = img;
-            
+
             return tpp;
         }
     } else {
@@ -523,28 +570,7 @@ Thumbnail* Thumbnail::loadQuickFromRaw (const Glib::ustring& fname, RawMetaDataL
 #define FISGREEN(filter,row,col) \
     ((filter >> ((((row) << 1 & 14) + ((col) & 1)) << 1) & 3)==1 || !filter)
 
-RawMetaDataLocation Thumbnail::loadMetaDataFromRaw (const Glib::ustring& fname)
-{
-    RawMetaDataLocation rml;
-    rml.exifBase = -1;
-    rml.ciffBase = -1;
-    rml.ciffLength = -1;
-
-    RawImage ri (fname);
-    unsigned int imageNum = 0;
-
-    int r = ri.loadRaw (false, imageNum);
-
-    if ( !r ) {
-        rml.exifBase = ri.get_exifBase();
-        rml.ciffBase = ri.get_ciffBase();
-        rml.ciffLength = ri.get_ciffLen();
-    }
-
-    return rml;
-}
-
-Thumbnail* Thumbnail::loadFromRaw (const Glib::ustring& fname, RawMetaDataLocation& rml, eSensorType &sensorType, int &w, int &h, int fixwh, double wbEq, StandardObserver wbObserver, bool rotate, bool forHistogramMatching)
+Thumbnail* Thumbnail::loadFromRaw (const Glib::ustring& fname, eSensorType &sensorType, int &w, int &h, int fixwh, double wbEq, StandardObserver wbObserver, bool rotate, const RAWParams *rawParams, bool forHistogramMatching)
 {
     RawImage *ri = new RawImage (fname);
     unsigned int tempImageNum = 0;
@@ -572,6 +598,11 @@ Thumbnail* Thumbnail::loadFromRaw (const Glib::ustring& fname, RawMetaDataLocati
 
     int width = ri->get_width();
     int height = ri->get_height();
+    int iwidth = ri->get_iwidth();
+    int iheight = ri->get_iheight();
+    int left_margin = ri->get_leftmargin();
+    int top_margin = ri->get_topmargin();
+
     rtengine::Thumbnail* tpp = new rtengine::Thumbnail;
 
     tpp->isRaw = true;
@@ -587,15 +618,19 @@ Thumbnail* Thumbnail::loadFromRaw (const Glib::ustring& fname, RawMetaDataLocati
     tpp->greenMultiplier = ri->get_pre_mul (1);
     tpp->blueMultiplier = ri->get_pre_mul (2);
 
+    bool isMono =
+        rawParams &&
+        ((ri->getSensorType() == ST_FUJI_XTRANS &&
+             rawParams->xtranssensor.method == RAWParams::XTransSensor::getMethodString(RAWParams::XTransSensor::Method::MONO)) ||
+            (ri->getSensorType() == ST_BAYER &&
+                rawParams->bayersensor.method == RAWParams::BayerSensor::getMethodString(RAWParams::BayerSensor::Method::MONO)));
     float pre_mul[4], scale_mul[4], cblack[4];
     ri->get_colorsCoeff (pre_mul, scale_mul, cblack, false);
+    adjustBlackLevels(cblack, sensorType, rawParams);
+    calculate_scale_mul(scale_mul, pre_mul, cblack, isMono, ri);
     scale_colors (ri, scale_mul, cblack, forHistogramMatching); // enable multithreading when forHistogramMatching is true
 
     ri->pre_interpolate();
-
-    rml.exifBase = ri->get_exifBase();
-    rml.ciffBase = ri->get_ciffBase();
-    rml.ciffLength = ri->get_ciffLen();
 
     tpp->camwbRed = tpp->redMultiplier / pre_mul[0]; //ri->get_pre_mul(0);
     tpp->camwbGreen = tpp->greenMultiplier / pre_mul[1]; //ri->get_pre_mul(1);
@@ -658,19 +693,19 @@ Thumbnail* Thumbnail::loadFromRaw (const Glib::ustring& fname, RawMetaDataLocati
     if (ri->getSensorType() == ST_BAYER) {
         // demosaicing! (sort of)
         for (int row = 1, y = 0; row < height - 1 && y < tmph; row += vskip, y++) {
-            rofs = row * width;
+            rofs = (row + top_margin) * iwidth;
 
             for (int col = firstgreen, x = 0; col < width - 1 && x < tmpw; col += hskip, x++) {
-                int ofs = rofs + col;
+                int ofs = rofs + col + left_margin;
                 int g = image[ofs][1];
                 int r, b;
 
                 if (FISRED (filter, row, col + 1)) {
                     r = (image[ofs + 1    ][0] + image[ofs - 1    ][0]) >> 1;
-                    b = (image[ofs + width][2] + image[ofs - width][2]) >> 1;
+                    b = (image[ofs + iwidth][2] + image[ofs - iwidth][2]) >> 1;
                 } else {
                     b = (image[ofs + 1    ][2] + image[ofs - 1    ][2]) >> 1;
-                    r = (image[ofs + width][0] + image[ofs - width][0]) >> 1;
+                    r = (image[ofs + iwidth][0] + image[ofs - iwidth][0]) >> 1;
                 }
 
                 tmpImg->r (y, x) = r;
@@ -680,28 +715,28 @@ Thumbnail* Thumbnail::loadFromRaw (const Glib::ustring& fname, RawMetaDataLocati
         }
     } else if (ri->get_colors() == 1) {
         for (int row = 1, y = 0; row < height - 1 && y < tmph; row += vskip, y++) {
-            rofs = row * width;
+            rofs = (row + top_margin) * iwidth;
 
             for (int col = firstgreen, x = 0; col < width - 1 && x < tmpw; col
                     += hskip, x++) {
-                int ofs = rofs + col;
+                int ofs = rofs + col + left_margin;
                 tmpImg->r (y, x) = tmpImg->g (y, x) = tmpImg->b (y, x) = image[ofs][0];
             }
         }
     } else {
         if (ri->getSensorType() == ST_FUJI_XTRANS) {
             for ( int row = 1, y = 0; row < height - 1 && y < tmph; row += vskip, y++) {
-                rofs = row * width;
+                rofs = (row + top_margin) * iwidth;
 
                 for ( int col = 1, x = 0; col < width - 1 && x < tmpw; col += hskip, x++ ) {
-                    int ofs = rofs + col;
+                    int ofs = rofs + col + left_margin;
                     float sum[3] = {};
                     int c;
 
                     for (int v = -1; v <= 1; v++) {
                         for (int h = -1; h <= 1; h++) {
                             c = ri->XTRANSFC (row + v, col + h);
-                            sum[c] += image[ofs + v * width + h][c];
+                            sum[c] += image[ofs + v * iwidth + h][c];
                         }
                     }
 
@@ -729,11 +764,11 @@ Thumbnail* Thumbnail::loadFromRaw (const Glib::ustring& fname, RawMetaDataLocati
                 }
             }
         } else {
-            int iwidth = ri->get_iwidth();
-            int iheight = ri->get_iheight();
-            int left_margin = ri->get_leftmargin();
+            // int iwidth = ri->get_iwidth();
+            // int iheight = ri->get_iheight();
+            // int left_margin = ri->get_leftmargin();
             firstgreen += left_margin;
-            int top_margin = ri->get_topmargin();
+            // int top_margin = ri->get_topmargin();
             int wmax = tmpw;
             int hmax = tmph;
 
@@ -999,6 +1034,9 @@ Thumbnail* Thumbnail::loadFromRaw (const Glib::ustring& fname, RawMetaDataLocati
         }
 
     tpp->init();
+
+    RawImageSource::computeFullSize(ri, TR_NONE, tpp->full_width, tpp->full_height);
+
     delete ri;
     return tpp;
 }
@@ -1056,7 +1094,9 @@ Thumbnail::Thumbnail () :
     gammaCorrected (false),
     colorMatrix{},
     scaleGain (1.0),
-    isRaw (true)
+    isRaw (true),
+    full_width(-1),
+    full_height(-1)
 {
 }
 
@@ -1109,20 +1149,12 @@ IImage8* Thumbnail::quickProcessImage (const procparams::ProcParams& params, int
 // Full thumbnail processing, second stage if complete profile exists
 IImage8* Thumbnail::processImage (const procparams::ProcParams& params, eSensorType sensorType, int rheight, TypeInterpolation interp, const FramesMetaData *metadata, double& myscale, bool forMonitor, bool forHistogramMatching)
 {
-    unsigned int imgNum = 0;
-    if (isRaw) {
-        if (sensorType == ST_BAYER) {
-            imgNum = rtengine::LIM<unsigned int>(params.raw.bayersensor.imageNum, 0, metadata->getFrameCount() - 1);
-        } else if (sensorType == ST_FUJI_XTRANS) {
-            //imgNum = rtengine::LIM<unsigned int>(params.raw.xtranssensor.imageNum, 0, metadata->getFrameCount() - 1)
-        }
-    }
-    std::string camName = metadata->getCamera(imgNum);
-    float shutter = metadata->getShutterSpeed(imgNum);
-    float fnumber = metadata->getFNumber(imgNum);
-    float iso = metadata->getISOSpeed(imgNum);
-    float fcomp = metadata->getExpComp(imgNum);
-    
+    const std::string camName = metadata->getCamera();
+    const float shutter = metadata->getShutterSpeed();
+    const float fnumber = metadata->getFNumber();
+    const float iso = metadata->getISOSpeed();
+    const float fcomp = metadata->getExpComp();
+
     // check if the WB's equalizer, temperature bias, or observer value has changed
     if (wbEqual < (params.wb.equal - 5e-4) || wbEqual > (params.wb.equal + 5e-4) || wbTempBias < (params.wb.tempBias - 5e-4) || wbTempBias > (params.wb.tempBias + 5e-4) || wbObserver != params.wb.observer) {
         wbEqual = params.wb.equal;
@@ -1146,7 +1178,19 @@ IImage8* Thumbnail::processImage (const procparams::ProcParams& params, eSensorT
         double cam_b = colorMatrix[2][0] * camwbRed + colorMatrix[2][1] * camwbGreen + colorMatrix[2][2] * camwbBlue;
         currWB = ColorTemp (cam_r, cam_g, cam_b, params.wb.equal, params.wb.observer);
     } else if (params.wb.method == "autold") {
-        currWB = ColorTemp (autoWBTemp, autoWBGreen, wbEqual, "Custom", wbObserver);
+        if (params.wb.compat_version == 1 && !isRaw) {
+            // RGB grey compatibility version 1 used the identity multipliers
+            // plus temperature bias for non-raw files.
+            currWB.update(1., 1., 1., params.wb.equal, params.wb.observer, params.wb.tempBias);
+        } else {
+            currWB = ColorTemp(autoWBTemp, autoWBGreen, wbEqual, "Custom", wbObserver);
+        }
+    } else if (params.wb.method == "autitcgreen") {
+        if (params.wb.compat_version == 1 && !isRaw) {
+            currWB = ColorTemp(5000., 1., 1., params.wb.method, StandardObserver::TEN_DEGREES);
+        } else {
+            // TODO: Temperature correlation AWB.
+        }
     }
 
     double rm, gm, bm;
@@ -1229,7 +1273,7 @@ IImage8* Thumbnail::processImage (const procparams::ProcParams& params, eSensorT
             float red = baseImg->r (i, j) * rmi;
             float green = baseImg->g (i, j) * gmi;
             float blue = baseImg->b (i, j) * bmi;
-            
+
             // avoid magenta highlights if highlight recovery is enabled
             if (params.toneCurve.hrenabled && red > MAXVALF && blue > MAXVALF) {
                 baseImg->r(i, j) = baseImg->g(i, j) = baseImg->b(i, j) = CLIP((red + green + blue) / 3.f);
@@ -1260,7 +1304,7 @@ IImage8* Thumbnail::processImage (const procparams::ProcParams& params, eSensorT
 
     if (isRaw) {
         double pre_mul[3] = { redMultiplier, greenMultiplier, blueMultiplier };
-        RawImageSource::colorSpaceConversion (baseImg, params.icm, currWB, pre_mul, embProfile, camProfile, cam2xyz, camName );
+        RawImageSource::colorSpaceConversion (baseImg, params.icm, currWB, pre_mul, embProfile, camProfile, cam2xyz, camName, metadata->getFileName());
     } else {
         StdImageSource::colorSpaceConversion (baseImg, params.icm, embProfile, thumbImg->getSampleFormat());
     }
@@ -1270,13 +1314,15 @@ IImage8* Thumbnail::processImage (const procparams::ProcParams& params, eSensorT
         ipf.filmNegativeProcess(baseImg, baseImg, params.filmNegative);
     }
 
+
+
     LUTu hist16 (65536);
 
     ipf.firstAnalysis (baseImg, params, hist16);
 
     ipf.dehaze(baseImg, params.dehaze);
-    ipf.ToneMapFattal02(baseImg, params.fattal, 3, 0, nullptr, 0, 0, 0);
-    
+    ipf.ToneMapFattal02(baseImg, params.fattal, 3, 0, nullptr, 0, 0, 0, false);
+
     // perform transform
     int origFW;
     int origFH;
@@ -1399,7 +1445,7 @@ IImage8* Thumbnail::processImage (const procparams::ProcParams& params, eSensorT
 
     if (isRaw) {
         cmsHPROFILE dummy;
-        RawImageSource::findInputProfile (params.icm.inputProfile, nullptr, camName, &dcpProf, dummy);
+        RawImageSource::findInputProfile (params.icm.inputProfile, nullptr, camName, metadata->getFileName(), &dcpProf, dummy);
 
         if (dcpProf) {
             dcpProf->setStep2ApplyState (params.icm.workingProfile, params.icm.toneCurve, params.icm.applyLookTable, params.icm.applyBaselineExposureOffset, as);
@@ -1427,7 +1473,7 @@ IImage8* Thumbnail::processImage (const procparams::ProcParams& params, eSensorT
             }
     }
 
-    
+
     // luminance processing
 //  ipf.EPDToneMap(labView,0,6);
 
@@ -1459,13 +1505,110 @@ IImage8* Thumbnail::processImage (const procparams::ProcParams& params, eSensorT
 
 
 
+    bool cam02 = params.colorappearance.modelmethod == "02" && params.colorappearance.enabled;
 
-    if ((params.colorappearance.enabled && !params.colorappearance.tonecie) || !params.colorappearance.enabled) {
+   // if ((params.colorappearance.enabled && !params.colorappearance.tonecie) || !params.colorappearance.enabled) {
+    if ((params.colorappearance.enabled && !params.colorappearance.tonecie) || !cam02) {
         ipf.EPDToneMap (labView, 5, 6);
     }
 
     ipf.softLight(labView, params.softlight);
 
+    if (params.icm.workingTRC != ColorManagementParams::WorkingTrc::NONE && params.icm.trcExp) {
+        const int GW = labView->W;
+        const int GH = labView->H;
+        std::unique_ptr<LabImage> provis;
+        if(params.icm.trcExp) {//local contrast
+            int level_hr = 7;
+            int maxlevpo = 9;
+            bool wavcurvecont = false;
+            WaveletParams WaveParams = params.wavelet;
+            ColorManagementParams Colparams = params.icm;
+            WavOpacityCurveWL icmOpacityCurveWL;
+            Colparams.getCurves(icmOpacityCurveWL);
+            ipf.complete_local_contrast(labView, labView, WaveParams, Colparams, icmOpacityCurveWL, 1, level_hr, maxlevpo, wavcurvecont);
+        }
+        
+        const float pres = 0.01f * params.icm.preser;
+        if (pres > 0.f && params.icm.wprim != ColorManagementParams::Primaries::DEFAULT) {
+            provis.reset(new LabImage(GW, GH));
+            provis->CopyFrom(labView);
+        }
+
+        const std::unique_ptr<Imagefloat> tmpImage1(new Imagefloat(GW, GH));
+
+        ipf.lab2rgb(*labView, *tmpImage1, params.icm.workingProfile);
+
+        const float gamtone = params.icm.wGamma;
+        const float slotone = params.icm.wSlope;
+
+        int illum = toUnderlying(params.icm.will);
+        const int prim = toUnderlying(params.icm.wprim);
+
+        Glib::ustring prof = params.icm.workingProfile;
+
+        cmsHTRANSFORM dummy = nullptr;
+        int ill = 0;
+        int locprim = 0;
+        float rdx, rdy, grx, gry, blx, bly = 0.f;
+        float meanx, meany, meanxe, meanye = 0.f;
+        ipf.workingtrc(0, tmpImage1.get(), tmpImage1.get(), GW, GH, -5, prof, 2.4, 12.92310, 0, ill, 0, 0, rdx, rdy, grx, gry, blx, bly, meanx, meany, meanxe, meanye, dummy, true, false, false);
+        ipf.workingtrc(0, tmpImage1.get(), tmpImage1.get(), GW, GH, 5, prof, gamtone, slotone,0, illum, prim, locprim, rdx, rdy, grx, gry, blx, bly,meanx, meany, meanxe, meanye, dummy, false, true, true);
+        const int midton = params.icm.wmidtcie;
+           if(midton != 0) {
+                ToneEqualizerParams params;
+                params.enabled = true;
+                params.regularization = 0.f;
+                params.pivot = 0.f;
+                params.bands[0] = 0;
+                params.bands[2] = midton;
+                params.bands[4] = 0;
+                params.bands[5] = 0;
+                int mid = abs(midton);
+                int threshmid = 50;
+                if(mid > threshmid) {
+                    params.bands[1] = sign(midton) * (mid - threshmid);
+                    params.bands[3] = sign(midton) * (mid - threshmid);     
+                }
+                ipf.toneEqualizer(tmpImage1.get(), params, prof, 1, false);
+                }
+
+        const bool smoothi = params.icm.wsmoothcie;
+            if(smoothi) {
+                ToneEqualizerParams params;
+                params.enabled = true;
+                params.regularization = 0.f;
+                params.pivot = 0.f;
+                params.bands[0] = 0;
+                params.bands[1] = 0;
+                params.bands[2] = 0;
+                params.bands[3] = 0;
+                params.bands[4] = -40;//arbitrary value to adapt with WhiteEvjz - here White Ev # 10
+                params.bands[5] = -80;//8 Ev and above
+                bool Evsix = true;
+                if(Evsix) {//EV = 6 majority of images
+                    params.bands[4] = -15;
+                }
+                
+                ipf.toneEqualizer(tmpImage1.get(), params, prof, 1, false);
+            }
+
+        ipf.rgb2lab(*tmpImage1, *labView, params.icm.workingProfile);
+        // labView and provis
+        if(provis) {
+            ipf.preserv(labView, provis.get(), GW, GH);
+        }
+        if(params.icm.fbw) {
+#ifdef _OPENMP
+        #pragma omp parallel for
+#endif
+        for (int x = 0; x < GH; x++)
+            for (int y = 0; y < GW; y++) {
+                labView->a[x][y] = 0.f;
+                labView->b[x][y] = 0.f;
+            }
+        }
+    }
 
     if (params.colorappearance.enabled) {
         CurveFactory::curveLightBrightColor (
@@ -2171,7 +2314,7 @@ bool Thumbnail::readData  (const Glib::ustring& fname)
                         colorMatrix[i][j] = cm[ix++];
                     }
             }
-            
+
             if (keyFile.has_key ("LiveThumbData", "ScaleGain")) {
                 scaleGain           = keyFile.get_double ("LiveThumbData", "ScaleGain");
             }

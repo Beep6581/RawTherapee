@@ -24,13 +24,13 @@
 #include "options.h"
 #include "rtimage.h"
 
-#include "../rtengine/imagesource.h"
-#include "../rtengine/dfmanager.h"
-#include "../rtengine/ffmanager.h"
-#include "../rtengine/improcfun.h"
-#include "../rtengine/perspectivecorrection.h"
-#include "../rtengine/procevents.h"
-#include "../rtengine/refreshmap.h"
+#include "rtengine/imagesource.h"
+#include "rtengine/dfmanager.h"
+#include "rtengine/ffmanager.h"
+#include "rtengine/improcfun.h"
+#include "rtengine/perspectivecorrection.h"
+#include "rtengine/procevents.h"
+#include "rtengine/refreshmap.h"
 
 using namespace rtengine::procparams;
 
@@ -40,126 +40,167 @@ using ToolTree = ToolPanelCoordinator::ToolTree;
 const std::vector<ToolTree> EXPOSURE_PANEL_TOOLS = {
     {
         .id = Tool::TONE_CURVE,
+        .children = {},
     },
     {
         .id = Tool::SHADOWS_HIGHLIGHTS,
+        .children = {},
     },
     {
         .id = Tool::TONE_EQUALIZER,
+        .children = {},
     },
     {
         .id = Tool::EPD,
+        .children = {},
     },
     {
         .id = Tool::FATTAL,
+        .children = {},
     },
     {
         .id = Tool::PC_VIGNETTE,
+        .children = {},
     },
     {
         .id = Tool::GRADIENT,
+        .children = {},
     },
     {
         .id = Tool::L_CURVE,
+        .children = {},
     },
 };
 
 const std::vector<ToolTree> DETAILS_PANEL_TOOLS = {
     {
         .id = Tool::SPOT,
+        .children = {},
     },
     {
         .id = Tool::SHARPENING_TOOL,
+        .children = {},
     },
     {
         .id = Tool::LOCAL_CONTRAST,
+        .children = {},
     },
     {
         .id = Tool::SHARPEN_EDGE,
+        .children = {},
     },
     {
         .id = Tool::SHARPEN_MICRO,
+        .children = {},
     },
     {
         .id = Tool::IMPULSE_DENOISE,
+        .children = {},
     },
     {
         .id = Tool::DIR_PYR_DENOISE,
+        .children = {},
     },
     {
         .id = Tool::DEFRINGE_TOOL,
+        .children = {},
     },
     {
         .id = Tool::DIR_PYR_EQUALIZER,
+        .children = {},
     },
     {
         .id = Tool::DEHAZE,
+        .children = {},
     },
 };
 
 const std::vector<ToolTree> COLOR_PANEL_TOOLS = {
     {
         .id = Tool::WHITE_BALANCE,
+        .children = {},
+    },
+    {
+        .id = Tool::COMPRESSGAMUT_TOOL,
     },
     {
         .id = Tool::VIBRANCE,
+        .children = {},
     },
     {
         .id = Tool::CH_MIXER,
+        .children = {},
     },
     {
         .id = Tool::BLACK_WHITE,
+        .children = {},
     },
     {
         .id = Tool::HSV_EQUALIZER,
+        .children = {},
     },
     {
         .id = Tool::FILM_SIMULATION,
+        .children = {},
     },
     {
         .id = Tool::FILM_NEGATIVE,
+        .children = {},
     },
     {
         .id = Tool::SOFT_LIGHT,
+        .children = {},
     },
     {
         .id = Tool::RGB_CURVES,
+        .children = {},
     },
     {
         .id = Tool::COLOR_TONING,
+        .children = {},
     },
     {
         .id = Tool::ICM,
+        .children = {},
     },
 };
 
 const std::vector<ToolTree> ADVANCED_PANEL_TOOLS = {
     {
         .id = Tool::RETINEX_TOOL,
+        .children = {},
     },
     {
         .id = Tool::COLOR_APPEARANCE,
+        .children = {},
     },
     {
         .id = Tool::WAVELET,
+        .children = {},
     },
 };
 
 const std::vector<ToolTree> LOCALLAB_PANEL_TOOLS = {
     {
         .id = Tool::LOCALLAB,
+        .children = {},
     },
 };
 
 const std::vector<ToolTree> TRANSFORM_PANEL_TOOLS = {
     {
         .id = Tool::CROP_TOOL,
+        .children = {},
     },
     {
         .id = Tool::RESIZE_TOOL,
         .children = {
             {
                 .id = Tool::PR_SHARPENING,
+                .children = {},
+            },
+            {
+                .id = Tool::FRAMING,
             },
         },
     },
@@ -168,21 +209,27 @@ const std::vector<ToolTree> TRANSFORM_PANEL_TOOLS = {
         .children = {
             {
                 .id = Tool::ROTATE,
+                .children = {},
             },
             {
                 .id = Tool::PERSPECTIVE,
+                .children = {},
             },
             {
                 .id = Tool::LENS_PROF,
+                .children = {},
             },
             {
                 .id = Tool::DISTORTION,
+                .children = {},
             },
             {
                 .id = Tool::CA_CORRECTION,
+                .children = {},
             },
             {
                 .id = Tool::VIGNETTING,
+                .children = {},
             },
         },
     },
@@ -195,15 +242,19 @@ const std::vector<ToolTree> RAW_PANEL_TOOLS = {
             {
                 {
                     .id = Tool::BAYER_PROCESS,
+                    .children = {},
                 },
                 {
                     .id = Tool::BAYER_RAW_EXPOSURE,
+                    .children = {},
                 },
                 {
                     .id = Tool::BAYER_PREPROCESS,
+                    .children = {},
                 },
                 {
                     .id = Tool::RAW_CA_CORRECTION,
+                    .children = {},
                 },
             },
         },
@@ -214,30 +265,38 @@ const std::vector<ToolTree> RAW_PANEL_TOOLS = {
             {
                 {
                     .id = Tool::XTRANS_PROCESS,
+                    .children = {},
                 },
                 {
                     .id = Tool::XTRANS_RAW_EXPOSURE,
+                    .children = {},
                 },
             },
         },
     },
     {
         .id = Tool::RAW_EXPOSURE,
+        .children = {},
     },
     {
         .id = Tool::PREPROCESS_WB,
+        .children = {},
     },
     {
         .id = Tool::PREPROCESS,
+        .children = {},
     },
     {
         .id = Tool::DARKFRAME_TOOL,
+        .children = {},
     },
     {
         .id = Tool::FLATFIELD_TOOL,
+        .children = {},
     },
     {
         .id = Tool::PD_SHARPENING,
+        .children = {},
     },
 };
 
@@ -274,7 +333,7 @@ const ToolPanelCoordinator::ToolLayout PANEL_TOOLS = {
 
 std::unordered_map<std::string, Tool> ToolPanelCoordinator::toolNamesReverseMap;
 
-ToolPanelCoordinator::ToolPanelCoordinator (bool batch) : ipc (nullptr), favoritePanelSW(nullptr), hasChanged (false), batch(batch), editDataProvider (nullptr), photoLoadedOnce(false)
+ToolPanelCoordinator::ToolPanelCoordinator (bool batch) : ipc (nullptr), favoritePanelSW(nullptr), hasChanged (false), batch(batch), editDataProvider (nullptr), photoLoadedOnce(false), ornamentSurface(new RTSurface("ornament1.svg"))
 {
 
     favoritePanel   = Gtk::manage (new ToolVBox ());
@@ -309,6 +368,7 @@ ToolPanelCoordinator::ToolPanelCoordinator (bool batch) : ipc (nullptr), favorit
     vibrance            = Gtk::manage(new Vibrance());
     colorappearance     = Gtk::manage(new ColorAppearance());
     whitebalance        = Gtk::manage(new WhiteBalance());
+    compressgamut       = Gtk::manage (new Compressgamut ());
     vignetting          = Gtk::manage(new Vignetting());
     retinex             = Gtk::manage(new Retinex());
     gradient            = Gtk::manage(new Gradient());
@@ -320,6 +380,7 @@ ToolPanelCoordinator::ToolPanelCoordinator (bool batch) : ipc (nullptr), favorit
     blackwhite          = Gtk::manage(new BlackWhite());
     resize              = Gtk::manage(new Resize());
     prsharpening        = Gtk::manage(new PrSharpening());
+    framing             = Gtk::manage(new Framing());
     crop                = Gtk::manage(new Crop());
     icm                 = Gtk::manage(new ICMPanel());
     metadata            = Gtk::manage(new MetaDataPanel());
@@ -402,7 +463,7 @@ ToolPanelCoordinator::ToolPanelCoordinator (bool batch) : ipc (nullptr), favorit
     // load panel endings
     for (int i = 0; i < 8; i++) {
         vbPanelEnd[i] = Gtk::manage (new Gtk::Box(Gtk::ORIENTATION_VERTICAL));
-        imgPanelEnd[i] = Gtk::manage (new RTImage ("ornament1.png"));
+        imgPanelEnd[i] = Gtk::manage (new Gtk::Image (ornamentSurface->get()));
         imgPanelEnd[i]->show();
         vbPanelEnd[i]->get_style_context()->add_class("PanelEnding");
         vbPanelEnd[i]->pack_start(*imgPanelEnd[i], Gtk::PACK_SHRINK);
@@ -460,21 +521,26 @@ ToolPanelCoordinator::ToolPanelCoordinator (bool batch) : ipc (nullptr), favorit
     rawPanelContainer->pack_start(*rawPanel, Gtk::PACK_SHRINK);
     rawPanelContainer->pack_start (*vbPanelEnd[5], Gtk::PACK_SHRINK);
 
-    toiF.reset(new TextOrIcon ("star.png", M ("MAIN_TAB_FAVORITES"), M ("MAIN_TAB_FAVORITES_TOOLTIP")));
-    toiE = Gtk::manage (new TextOrIcon ("exposure.png", M ("MAIN_TAB_EXPOSURE"), M ("MAIN_TAB_EXPOSURE_TOOLTIP")));
-    toiD = Gtk::manage (new TextOrIcon ("detail.png", M ("MAIN_TAB_DETAIL"), M ("MAIN_TAB_DETAIL_TOOLTIP")));
-    toiC = Gtk::manage (new TextOrIcon ("color-circles.png", M ("MAIN_TAB_COLOR"), M ("MAIN_TAB_COLOR_TOOLTIP")));
-    toiW = Gtk::manage (new TextOrIcon ("atom.png", M ("MAIN_TAB_ADVANCED"), M ("MAIN_TAB_ADVANCED_TOOLTIP")));
-    toiL = Gtk::manage(new TextOrIcon("hand-open.png", M("MAIN_TAB_LOCALLAB"), M("MAIN_TAB_LOCALLAB_TOOLTIP")));
+    toiF.reset(new TextOrIcon ("star", M ("MAIN_TAB_FAVORITES"), M ("MAIN_TAB_FAVORITES_TOOLTIP")));
+    toiE = Gtk::manage (new TextOrIcon ("exposure", M ("MAIN_TAB_EXPOSURE"), M ("MAIN_TAB_EXPOSURE_TOOLTIP")));
+    toiD = Gtk::manage (new TextOrIcon ("detail", M ("MAIN_TAB_DETAIL"), M ("MAIN_TAB_DETAIL_TOOLTIP")));
+    toiC = Gtk::manage (new TextOrIcon ("color-circles", M ("MAIN_TAB_COLOR"), M ("MAIN_TAB_COLOR_TOOLTIP")));
+    toiW = Gtk::manage (new TextOrIcon ("atom", M ("MAIN_TAB_ADVANCED"), M ("MAIN_TAB_ADVANCED_TOOLTIP")));
+    toiL = Gtk::manage(new TextOrIcon("rt-spot", M("MAIN_TAB_LOCALLAB"), M("MAIN_TAB_LOCALLAB_TOOLTIP")));
 
-    toiT = Gtk::manage (new TextOrIcon ("transform.png", M ("MAIN_TAB_TRANSFORM"), M ("MAIN_TAB_TRANSFORM_TOOLTIP")));
-    toiR = Gtk::manage (new TextOrIcon ("bayer.png", M ("MAIN_TAB_RAW"), M ("MAIN_TAB_RAW_TOOLTIP")));
-    toiM = Gtk::manage (new TextOrIcon ("metadata.png", M ("MAIN_TAB_METADATA"), M ("MAIN_TAB_METADATA_TOOLTIP")));
+    toiT = Gtk::manage (new TextOrIcon ("transform", M ("MAIN_TAB_TRANSFORM"), M ("MAIN_TAB_TRANSFORM_TOOLTIP")));
+    toiR = Gtk::manage (new TextOrIcon ("bayer", M ("MAIN_TAB_RAW"), M ("MAIN_TAB_RAW_TOOLTIP")));
+    toiM = Gtk::manage (new TextOrIcon ("metadata", M ("MAIN_TAB_METADATA"), M ("MAIN_TAB_METADATA_TOOLTIP")));
     toiF->show_all();
     if (options.favorites.size()) {
         toolPanelNotebook->append_page(*favoritePanelSW, *toiF);
     }
     toolPanelNotebook->append_page (*exposurePanelSW,  *toiE);
+/*
+    if (!batch) {
+        toolPanelNotebook->append_page(*locallabPanelSW,   *toiL);
+    }
+*/    
     toolPanelNotebook->append_page (*detailsPanelSW,   *toiD);
     toolPanelNotebook->append_page (*colorPanelSW,     *toiC);
     toolPanelNotebook->append_page (*advancedPanelSW,   *toiW);
@@ -571,6 +637,8 @@ std::string ToolPanelCoordinator::getToolName(Tool tool)
             return ImpulseDenoise::TOOL_NAME;
         case Tool::DEFRINGE_TOOL:
             return Defringe::TOOL_NAME;
+        case Tool::COMPRESSGAMUT_TOOL:
+            return Compressgamut::TOOL_NAME;
         case Tool::SPOT:
             return Spot::TOOL_NAME;
         case Tool::DIR_PYR_DENOISE:
@@ -627,6 +695,8 @@ std::string ToolPanelCoordinator::getToolName(Tool tool)
             return Resize::TOOL_NAME;
         case Tool::PR_SHARPENING:
             return PrSharpening::TOOL_NAME;
+        case Tool::FRAMING:
+            return Framing::TOOL_NAME;
         case Tool::CROP_TOOL:
             return Crop::TOOL_NAME;
         case Tool::ICM:
@@ -856,10 +926,15 @@ ToolPanelCoordinator::updateToolPanel(
         }
         FoldableToolPanel *tool_panel =
             getFoldableToolPanel(*new_tool_trees_iter);
-        if (tool_panel->getParent()) {
+        const bool reparent = tool_panel->getParent();
+        if (reparent) {
             tool_panel->getParent()->remove(*tool_panel->getExpander());
         }
         addPanel(panelBox, tool_panel, level);
+        if (!reparent) {
+            // If attaching for the first time, update the widget sizes.
+            tool_panel->getExpander()->check_resize();
+        }
     }
 
     // Update the child tools.
@@ -1101,9 +1176,13 @@ void ToolPanelCoordinator::panelChanged(const rtengine::ProcEvent& event, const 
         crop->write(params);
         resize->update(params->crop.enabled, params->crop.w, params->crop.h, ipc->getFullWidth(), ipc->getFullHeight());
         resize->write(params);
+        framing->update(ipc->getFullWidth(), ipc->getFullHeight());
+        framing->write(params);
     } else if (event == rtengine::EvCrop) {
         resize->update(params->crop.enabled, params->crop.w, params->crop.h);
         resize->write(params);
+        framing->update(ipc->getFullWidth(), ipc->getFullHeight());
+        framing->write(params);
     }
 
     /*
@@ -1181,8 +1260,8 @@ void ToolPanelCoordinator::profileChange(
 
     // Reset IPTC values when switching procparams from the History
     if (event == rtengine::EvHistoryBrowsed) {
-        mergedParams->iptc.clear();
-        mergedParams->exif.clear();
+        mergedParams->metadata.iptc.clear();
+        mergedParams->metadata.exif.clear();
     }
 
     // And apply the partial profile nparams to mergedParams
@@ -1301,6 +1380,8 @@ void ToolPanelCoordinator::initImage(rtengine::StagedImageProcessor* ipc_, bool 
 
         ipc->setAutoExpListener(toneCurve);
         ipc->setAutoCamListener(colorappearance);
+        ipc->setAutoBlackListener(bayerrawexposure);
+        ipc->setAutoBlackxListener(xtransrawexposure);
         ipc->setAutoBWListener(blackwhite);
         ipc->setFrameCountListener(bayerprocess);
         ipc->setFlatFieldAutoClipListener (flatfield);
@@ -1906,6 +1987,12 @@ bool ToolPanelCoordinator::getFilmNegativeSpot(rtengine::Coord spot, int spotSiz
     return ipc && ipc->getFilmNegativeSpot(spot.x, spot.y, spotSize, refInput, refOutput);
 }
 
+
+void ToolPanelCoordinator::setProgressListener(rtengine::ProgressListener *pl)
+{
+    metadata->setProgressListener(pl);
+}
+
 FoldableToolPanel *ToolPanelCoordinator::getFoldableToolPanel(Tool tool) const
 {
     switch (tool) {
@@ -1919,6 +2006,8 @@ FoldableToolPanel *ToolPanelCoordinator::getFoldableToolPanel(Tool tool) const
             return impulsedenoise;
         case Tool::DEFRINGE_TOOL:
             return defringe;
+        case Tool::COMPRESSGAMUT_TOOL:
+            return compressgamut;
         case Tool::SPOT:
             return spot;
         case Tool::DIR_PYR_DENOISE:
@@ -1975,6 +2064,8 @@ FoldableToolPanel *ToolPanelCoordinator::getFoldableToolPanel(Tool tool) const
             return resize;
         case Tool::PR_SHARPENING:
             return prsharpening;
+        case Tool::FRAMING:
+            return framing;
         case Tool::CROP_TOOL:
             return crop;
         case Tool::ICM:

@@ -863,7 +863,29 @@ CameraConstantsStore::~CameraConstantsStore()
 
 void CameraConstantsStore::init(const Glib::ustring& baseDir, const Glib::ustring& userSettingsDir)
 {
-    parse_camera_constants_file(Glib::build_filename(baseDir, "camconst.json"));
+    // list of built-in files with camera constants. Besides camconst.json, we
+    // now have 3 more locations where camera matrices are stored:
+    //
+    // - dcraw.json, with matrices copied from dcraw.cc
+    // - rt.json, with matrices copied from rawimage.cc
+    // - cammatrices.json, with matrices rebuilt from the Adobe DNG converter
+    //
+    // the first two are essentially for backwards compatibility only. We want
+    // to store all the new matrices in cammatrices.json
+    //
+    // note that the order is relevant, later files ones override earlier ones
+    static const char *builtin_files[] = {
+        "dcraw.json",
+        "rt.json",
+        "camconst.json",
+        "cammatrices.json"
+    };
+    for (size_t i = 0; i < sizeof(builtin_files)/sizeof(const char *); ++i) {
+        Glib::ustring f(Glib::build_filename(baseDir, builtin_files[i]));
+        if (Glib::file_test(f, Glib::FILE_TEST_EXISTS)) {
+            parse_camera_constants_file(f);
+        }
+    }
 
     const Glib::ustring userFile(Glib::build_filename(userSettingsDir, "camconst.json"));
 

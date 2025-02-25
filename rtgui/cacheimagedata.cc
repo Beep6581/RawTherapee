@@ -20,11 +20,21 @@
 #include <vector>
 #include <glib/gstdio.h>
 #include <glibmm/keyfile.h>
+#include <glibmm/fileutils.h>
 #include "version.h"
 #include <locale.h>
 
-#include "../rtengine/procparams.h"
-#include "../rtengine/settings.h"
+#include "rtengine/procparams.h"
+#include "rtengine/settings.h"
+
+
+namespace
+{
+
+const Glib::ustring INI_GROUP_XMP_SIDECAR = "XmpSidecar";
+const Glib::ustring INI_XMP_SIDECAR_MD5 = "MD5";
+
+}
 
 CacheImageData::CacheImageData() :
     supported(false),
@@ -49,6 +59,7 @@ CacheImageData::CacheImageData() :
     iso(0),
     rating(0),
     isHDR (false),
+    isDNG (false),
     isPixelShift (false),
     sensortype(rtengine::ST_NONE),
     sampleFormat(rtengine::IIOSF_UNKNOWN),
@@ -56,7 +67,9 @@ CacheImageData::CacheImageData() :
     greenAWBMul(-1.0),
     blueAWBMul(-1.0),
     rotate(0),
-    thumbImgType(0)
+    thumbImgType(0),
+    width(-1),
+    height(-1)
 {
 }
 
@@ -103,6 +116,12 @@ int CacheImageData::load (const Glib::ustring& fname)
 
                 if (keyFile.has_key ("General", "RecentlySaved")) {
                     recentlySaved = keyFile.get_boolean ("General", "RecentlySaved");
+                }
+            }
+
+            if (keyFile.has_group(INI_GROUP_XMP_SIDECAR)) {
+                if (keyFile.has_key(INI_GROUP_XMP_SIDECAR, INI_XMP_SIDECAR_MD5)) {
+                    xmpSidecarMd5 = keyFile.get_string(INI_GROUP_XMP_SIDECAR, INI_XMP_SIDECAR_MD5);
                 }
             }
 
@@ -176,6 +195,10 @@ int CacheImageData::load (const Glib::ustring& fname)
                         isHDR = keyFile.get_boolean ("ExifInfo", "IsHDR");
                     }
 
+                    if (keyFile.has_key ("ExifInfo", "IsDNG")) {
+                        isDNG = keyFile.get_boolean ("ExifInfo", "IsDNG");
+                    }
+
                     if (keyFile.has_key ("ExifInfo", "IsPixelShift")) {
                         isPixelShift = keyFile.get_boolean ("ExifInfo", "IsPixelShift");
                     }
@@ -207,6 +230,12 @@ int CacheImageData::load (const Glib::ustring& fname)
                 }
                 if (keyFile.has_key ("FileInfo", "SampleFormat")) {
                     sampleFormat = (rtengine::IIO_Sample_Format)keyFile.get_integer ("FileInfo", "SampleFormat");
+                }
+                if (keyFile.has_key("FileInfo", "Width")) {
+                    width = keyFile.get_integer("FileInfo", "Width");
+                }
+                if (keyFile.has_key("FileInfo", "Height")) {
+                    height = keyFile.get_integer("FileInfo", "Height");
                 }
             }
 
@@ -250,7 +279,9 @@ int CacheImageData::save (const Glib::ustring& fname)
     Glib::KeyFile keyFile;
 
     try {
-        keyFile.load_from_file (fname);
+        if (Glib::file_test(fname, Glib::FILE_TEST_EXISTS)) {
+            keyFile.load_from_file (fname);
+        }
     } catch (Glib::Error&) {}
 
     keyFile.set_string  ("General", "MD5", md5);
@@ -259,6 +290,8 @@ int CacheImageData::save (const Glib::ustring& fname)
     keyFile.set_integer ("General", "Format", format);
     keyFile.set_boolean ("General", "RecentlySaved", recentlySaved);
     keyFile.set_integer ("General", "Rating", rating);
+
+    keyFile.set_string(INI_GROUP_XMP_SIDECAR, INI_XMP_SIDECAR_MD5, xmpSidecarMd5);
 
     // remove the old implementation of Rank and InTrash from cache
     if (keyFile.has_key ("General", "Rank")) {
@@ -288,6 +321,7 @@ int CacheImageData::save (const Glib::ustring& fname)
         keyFile.set_double  ("ExifInfo", "FocusDist", focusDist);
         keyFile.set_integer ("ExifInfo", "ISO", iso);
         keyFile.set_boolean ("ExifInfo", "IsHDR", isHDR);
+        keyFile.set_boolean ("ExifInfo", "IsDNG", isDNG);
         keyFile.set_boolean ("ExifInfo", "IsPixelShift", isPixelShift);
         keyFile.set_string  ("ExifInfo", "ExpComp", expcomp);
     }
@@ -298,6 +332,8 @@ int CacheImageData::save (const Glib::ustring& fname)
     keyFile.set_string  ("FileInfo", "Filetype", filetype);
     keyFile.set_integer ("FileInfo", "FrameCount", frameCount);
     keyFile.set_integer ("FileInfo", "SampleFormat", sampleFormat);
+    keyFile.set_integer("FileInfo", "Width", width);
+    keyFile.set_integer("FileInfo", "Height", height);
 
     if (format == FT_Raw) {
         keyFile.set_integer ("ExtraRawInfo", "ThumbImageType", thumbImgType);
@@ -335,7 +371,17 @@ int CacheImageData::save (const Glib::ustring& fname)
     }
 }
 
-rtengine::procparams::IPTCPairs CacheImageData::getIPTCData(unsigned int frame) const
+std::uint32_t CacheImageData::getFixBadPixelsConstant() const
 {
-    return {};
+    return 0;
+}
+
+bool CacheImageData::hasFixBadPixelsConstant() const
+{
+    return false;
+}
+
+std::vector<GainMap> CacheImageData::getGainMaps() const
+{
+    return std::vector<GainMap>();
 }

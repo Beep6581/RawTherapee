@@ -27,8 +27,8 @@
 #include "mycurve.h"
 #include "shcselector.h"
 
-#include "../rtengine/diagonalcurvetypes.h"
-#include "../rtengine/flatcurvetypes.h"
+#include "rtengine/diagonalcurvetypes.h"
+#include "rtengine/flatcurvetypes.h"
 
 class CurveEditor;
 class DiagonalCurveEditorSubGroup;

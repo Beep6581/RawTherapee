@@ -25,7 +25,6 @@
 
 #include "externaleditorpreferences.h"
 #include "multilangmgr.h"
-#include "rtimage.h"
 
 
 ExternalEditorPreferences::ExternalEditorPreferences():
@@ -55,12 +54,10 @@ ExternalEditorPreferences::ExternalEditorPreferences():
     list_scroll_area.add(*list_view);
 
     // Toolbar buttons.
-    auto add_image = Gtk::manage(new RTImage("add-small.png"));
-    auto remove_image = Gtk::manage(new RTImage("remove-small.png"));
     button_add = Gtk::manage(new Gtk::Button());
     button_remove = Gtk::manage(new Gtk::Button());
-    button_add->set_image(*add_image);
-    button_remove->set_image(*remove_image);
+    button_add->set_image_from_icon_name("add-small");
+    button_remove->set_image_from_icon_name("remove-small");
     button_app_chooser =
 #ifdef __APPLE__
         nullptr;
@@ -107,8 +104,8 @@ ExternalEditorPreferences::getEditors() const
     auto children = list_model->children();
 
     for (auto rowIter = children.begin(); rowIter != children.end(); rowIter++) {
-        const Gio::Icon *const icon = rowIter->get_value(model_columns.icon).get();
-        const auto &icon_serialized = icon == nullptr ? "" : icon->serialize().print();
+        const auto icon = rowIter->get_value(model_columns.icon);
+        const auto &icon_serialized = !icon ? "" : icon->serialize().print();
         editors.emplace_back(
             rowIter->get_value(model_columns.name),
             rowIter->get_value(model_columns.command),
@@ -265,7 +262,7 @@ void ExternalEditorPreferences::onFileChooserDialogResponse(
                     false;
 #endif
                 row[model_columns.command] =
-#ifdef WIN32
+#ifdef _WIN32
                     '"' + dialog->get_filename() + '"';
 #else
                     Glib::shell_quote(dialog->get_filename());
@@ -314,7 +311,7 @@ void ExternalEditorPreferences::openFileChooserDialog()
     const auto exe_filter = Gtk::FileFilter::create();
     exe_filter->set_name(M("FILECHOOSER_FILTER_EXECUTABLE"));
     exe_filter->add_custom(Gtk::FILE_FILTER_MIME_TYPE, [](const Gtk::FileFilter::Info &info) {
-#ifdef WIN32
+#ifdef _WIN32
         return info.mime_type == "application/x-msdownload";
 #else
         return Gio::content_type_can_be_executable(info.mime_type);

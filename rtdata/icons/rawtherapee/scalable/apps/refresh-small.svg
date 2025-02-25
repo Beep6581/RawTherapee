@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   width="16"
+   height="16"
+   viewBox="0 0 16 16"
+   version="1.1"
+   id="SVGRoot"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:dc="http://purl.org/dc/elements/1.1/">
+  <defs
+     id="defs815" />
+  <metadata
+     id="metadata818">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title />
+        <dc:creator>
+          <cc:Agent>
+            <dc:title>Maciej Dworak</dc:title>
+          </cc:Agent>
+        </dc:creator>
+        <dc:rights>
+          <cc:Agent>
+            <dc:title />
+          </cc:Agent>
+        </dc:rights>
+        <dc:description>RawTherapee icon.</dc:description>
+        <cc:license
+           rdf:resource="http://creativecommons.org/licenses/by-sa/4.0/" />
+      </cc:Work>
+      <cc:License
+         rdf:about="http://creativecommons.org/licenses/by-sa/4.0/">
+        <cc:permits
+           rdf:resource="http://creativecommons.org/ns#Reproduction" />
+        <cc:permits
+           rdf:resource="http://creativecommons.org/ns#Distribution" />
+        <cc:requires
+           rdf:resource="http://creativecommons.org/ns#Notice" />
+        <cc:requires
+           rdf:resource="http://creativecommons.org/ns#Attribution" />
+        <cc:permits
+           rdf:resource="http://creativecommons.org/ns#DerivativeWorks" />
+        <cc:requires
+           rdf:resource="http://creativecommons.org/ns#ShareAlike" />
+      </cc:License>
+    </rdf:RDF>
+  </metadata>
+  <g
+     id="layer1"
+     transform="translate(0,-8)">
+    <g
+       id="g1780"
+       transform="matrix(0.79388974,0,0,0.81158906,1.6567007,3.0040201)"
+       style="stroke-width:1.24581015">
+      <path
+         style="opacity:0.7;fill:none;fill-opacity:1;fill-rule:nonzero;stroke:#cccccc;stroke-width:2.00000024;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1.0;paint-order:normal"
+         d="M 3.3537416 6.9582168 C 3.8197786 4.7633151 5.7218112 3.1199107 7.9973425 3.1199107 C 9.2576364 3.1199107 10.482613 3.6511274 11.373906 4.5668222 "
+         id="path1772"
+         transform="matrix(1.2596208,0,0,1.2321507,-2.0868146,6.1558)" />
+      <path
+         style="opacity:0.7;fill:none;fill-opacity:1;fill-rule:nonzero;stroke:#cccccc;stroke-width:2.00000024;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1.0;paint-order:normal"
+         d="M 12.637947 9.1276442 C 12.133704 11.268755 10.256705 12.858979 8.0182943 12.858979 C 6.7580006 12.858979 5.5173881 12.311466 4.626094 11.395771 "
+         id="path1769"
+         transform="matrix(1.2596208,0,0,1.2321507,-2.0868146,6.1558)" />
+      <path
+         id="path2876"
+         d="M 15.547876,15.0907 14.720906,9.3019016 9.7590817,14.263724 Z"
+         style="display:inline;opacity:0.7;fill:#cccccc;fill-opacity:1.0;stroke:none;stroke-width:0.04338683" />
+      <path
+         style="display:inline;opacity:0.7;fill:#cccccc;fill-opacity:1.0;stroke:none;stroke-width:0.04338683"
+         d="m 0.4324269,16.889219 0.82697,5.788799 4.961825,-4.961823 z"
+         id="path829" />
+    </g>
+  </g>
+</svg>

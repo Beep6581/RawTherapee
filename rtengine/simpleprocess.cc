@@ -32,6 +32,7 @@
 #include "imagesource.h"
 #include "improcfun.h"
 #include "labimage.h"
+#include "metadata.h"
 #include "mytime.h"
 #include "processingjob.h"
 #include "procparams.h"
@@ -39,8 +40,8 @@
 #include "rtengine.h"
 #include "utils.h"
 
-#include "../rtgui/multilangmgr.h"
-#include "../rtgui/options.h"
+#include "rtgui/multilangmgr.h"
+#include "rtgui/options.h"
 
 #undef THREAD_PRIORITY_NORMAL
 
@@ -221,7 +222,10 @@ private:
         ImProcFunctions &ipf = * (ipf_p.get());
 
         imgsrc->setCurrentFrame(params.raw.bayersensor.imageNum);
-        imgsrc->preprocess(params.raw, params.lensProf, params.coarse, params.dirpyrDenoise.enabled);
+        float reddeha = 0.f;
+        float greendeha = 0.f;
+        float bluedeha = 0.f;
+        imgsrc->preprocess(params.raw, params.lensProf, params.coarse, reddeha, greendeha, bluedeha, params.dirpyrDenoise.enabled);
 
         if (pl) {
             pl->setProgress(0.20);
@@ -230,7 +234,8 @@ private:
         bool autoContrast = imgsrc->getSensorType() == ST_BAYER ? params.raw.bayersensor.dualDemosaicAutoContrast : params.raw.xtranssensor.dualDemosaicAutoContrast;
         double contrastThreshold = imgsrc->getSensorType() == ST_BAYER ? params.raw.bayersensor.dualDemosaicContrast : params.raw.xtranssensor.dualDemosaicContrast;
 
-        imgsrc->demosaic (params.raw, autoContrast, contrastThreshold, params.pdsharpening.enabled && pl);
+        imgsrc->demosaic(params.raw, autoContrast, contrastThreshold, params.pdsharpening.enabled && pl);
+
         if (params.pdsharpening.enabled) {
             imgsrc->captureSharpening(params.pdsharpening, false, params.pdsharpening.contrast, params.pdsharpening.deconvradius);
         }
@@ -270,16 +275,87 @@ private:
 
         // set the color temperature
         currWB = ColorTemp(params.wb.temperature, params.wb.green, params.wb.equal, params.wb.method, params.wb.observer);
+        ColorTemp currWBitc;
+
+        if (params.wb.method == "autitcgreen"  && flush) {
+            imgsrc->getrgbloc(0, 0, fh, fw, 0, 0, fh, fw, params.wb);
+        }
+        const bool autowb = (params.wb.method == "autitcgreen" && imgsrc->isRAW() && flush);
+        ColorTemp autoWB;
+        int dread = 0;
+        int bia = 1;
+        float studgood = 1000.f;
+        int nocam = 0;
+        int kcam = 0;
+        float minchrom = 1000.f;
+        float delta = 0.f;
+        int kmin  = 20;
+        float minhist = 1000000000.f;
+        float maxhist = -1000.f;
+        double greenitc = 1.;
+        float temp0 = 5000.f;
+        bool extra = false;
+        bool forcewbgrey = false;
 
         if (!params.wb.enabled) {
             currWB = ColorTemp();
-        } else if (params.wb.method == "Camera") {
+        } else if (params.wb.method == "Camera" || (params.wb.method == "autitcgreen" && params.wb.compat_version >= 2 && !imgsrc->isRAW() && flush)) {//Use also Camera settings for Temperature correlation and TIF/Jpg
             currWB = imgsrc->getWB();
-        } else if (params.wb.method == "autold") {
+        } else if (params.wb.method == "autold") {//for Auto RGB
             double rm, gm, bm;
-            imgsrc->getAutoWBMultipliers(rm, gm, bm);
+            if (params.wb.compat_version == 1 && !imgsrc->isRAW()) {
+                // RGB grey compatibility version 1 used the identity
+                // multipliers plus temperature bias for non-raw files.
+                rm = gm = bm = 1.;
+            } else {
+                imgsrc->getAutoWBMultipliers(rm, gm, bm);
+            }
             currWB.update(rm, gm, bm, params.wb.equal, params.wb.observer, params.wb.tempBias);
+
+        } else if (autowb) {//for auto Itcwb - flush to enable only when batch only with Raw files
+        //code similar to that present in improccoordinator.cc
+                double rm;
+                double gm;
+                double bm;
+                imgsrc->getAutoWBMultipliersItcGreen(
+                    params,
+                    forcewbgrey,
+                    kcam,
+                    greenitc,
+                    extra,
+                    temp0,
+                    delta,
+                    bia,
+                    dread,
+                    nocam,
+                    studgood,
+                    minchrom,
+                    kmin,
+                    minhist,
+                    maxhist,
+                    fh,
+                    fw,
+                    currWB,
+                    0,
+                    0.,
+                    false,
+                    autoWB,
+                    rm,
+                    gm,
+                    bm);
+
+                currWB = autoWB;
+        } else if (params.wb.method == "autitcgreen" && params.wb.compat_version == 1 && !imgsrc->isRAW() && flush) {
+            // ITCWB compatibility version 1 used 5000 K and observer 10 degrees
+            // for non-raw files.
+            currWB = ColorTemp(5000., 1., 1., params.wb.method, StandardObserver::TEN_DEGREES);
+            currWB.convertObserver(params.wb.observer);
+            params.wb.temperature = currWB.getTemp();
+            params.wb.green = currWB.getGreen();
+            params.wb.equal = currWB.getEqual();
         }
+
+        //end WB auto
 
         calclum = nullptr ;
         params.dirpyrDenoise.getCurves(noiseLCurve, noiseCCurve);
@@ -372,7 +448,7 @@ private:
                             int beg_tileW = wcr * tileWskip + tileWskip / 2.f - crW / 2.f;
                             int beg_tileH = hcr * tileHskip + tileHskip / 2.f - crH / 2.f;
                             PreviewProps ppP(beg_tileW, beg_tileH, crW, crH, skipP);
-                            imgsrc->getImage(currWB, tr, origCropPart, ppP, params.toneCurve, params.raw, 0);
+                            imgsrc->getImage(currWB, tr, origCropPart, ppP, params.toneCurve, params.raw);
                             //baseImg->getStdImage(currWB, tr, origCropPart, ppP, true, params.toneCurve);
 
                             // we only need image reduced to 1/4 here
@@ -596,7 +672,7 @@ private:
                     for (int wcr = 0; wcr <= 2; wcr++) {
                         for (int hcr = 0; hcr <= 2; hcr++) {
                             PreviewProps ppP(coordW[wcr], coordH[hcr], crW, crH, 1);
-                            imgsrc->getImage(currWB, tr, origCropPart, ppP, params.toneCurve, params.raw, 0);
+                            imgsrc->getImage(currWB, tr, origCropPart, ppP, params.toneCurve, params.raw);
                             //baseImg->getStdImage(currWB, tr, origCropPart, ppP, true, params.toneCurve);
 
 
@@ -756,7 +832,7 @@ private:
         }
 
         baseImg = new Imagefloat(fw, fh);
-        imgsrc->getImage(currWB, tr, baseImg, pp, params.toneCurve, params.raw, 1);
+        imgsrc->getImage(currWB, tr, baseImg, pp, params.toneCurve, params.raw);
 
         if (pl) {
             pl->setProgress(0.50);
@@ -781,7 +857,7 @@ private:
 
         if (params.toneCurve.histmatching) {
             if (!params.toneCurve.fromHistMatching) {
-                imgsrc->getAutoMatchedToneCurve(params.icm, params.wb.observer, params.toneCurve.curve);
+                imgsrc->getAutoMatchedToneCurve(params.icm, params.raw, params.wb.observer, params.toneCurve.curve);
             }
 
             if (params.toneCurve.autoexp) {
@@ -797,8 +873,8 @@ private:
         }
 
         // Spot Removal
-        if (params.spot.enabled && !params.spot.entries.empty ()) {
-            ipf.removeSpots (baseImg, imgsrc, params.spot.entries, pp, currWB, nullptr, tr);
+        if (params.spot.enabled && !params.spot.entries.empty()) {
+            ipf.removeSpots(baseImg, imgsrc, params.spot.entries, pp, currWB, nullptr, tr);
         }
 
         // at this stage, we can flush the raw data to free up quite an important amount of memory
@@ -893,10 +969,15 @@ private:
         // perform first analysis
         hist16(65536);
 
+        if (params.cg.enabled) {//gamut compression
+            ipf.gamutcompr(baseImg, baseImg);
+        }
+
         ipf.firstAnalysis(baseImg, params, hist16);
 
+
         ipf.dehaze(baseImg, params.dehaze);
-        ipf.ToneMapFattal02(baseImg, params.fattal, 3, 0, nullptr, 0, 0, 0);
+        ipf.ToneMapFattal02(baseImg, params.fattal, 3, 0, nullptr, 0, 0, 0, false);
 
         // perform transform (excepted resizing)
         if (ipf.needsTransform(fw, fh, imgsrc->getRotateDegree(), imgsrc->getMetaData())) {
@@ -909,7 +990,7 @@ private:
             }
 
             ipf.transform(baseImg, trImg, 0, 0, 0, 0, fw, fh, fw, fh,
-                           imgsrc->getMetaData(), imgsrc->getRotateDegree(), true, true);
+                          imgsrc->getMetaData(), imgsrc->getRotateDegree(), true, true);
 
             if (trImg != baseImg) {
                 delete baseImg;
@@ -925,14 +1006,28 @@ private:
         ImProcFunctions &ipf = * (ipf_p.get());
 
         for (int sp = 0; sp < (int)params.locallab.spots.size(); sp++) {
-			if(params.locallab.spots.at(sp).expsharp  && params.dirpyrequalizer.cbdlMethod == "bef") {
-				if(params.locallab.spots.at(sp).shardamping < 1) {
-					params.locallab.spots.at(sp).shardamping = 1;
-				}				
-			}
-		}
+            if (params.locallab.spots.at(sp).expsharp  && params.dirpyrequalizer.cbdlMethod == "bef") {
+                if (params.locallab.spots.at(sp).shardamping < 1) {
+                    params.locallab.spots.at(sp).shardamping = 1;
+                }
+            }
+        }
+        bool execcam = false;
 
-        if (params.dirpyrequalizer.cbdlMethod == "bef" && params.dirpyrequalizer.enabled && !params.colorappearance.enabled) {
+        //execcam => work around for pre-ciecam in LA: about 0.1 second
+        for (int sp = 0; sp < (int)params.locallab.spots.size(); sp++) {
+            if (params.locallab.spots.at(sp).expprecam) {
+                execcam = true;
+            }
+        }
+        if ((params.dirpyrequalizer.cbdlMethod == "bef") && (params.dirpyrequalizer.enabled || execcam) && !params.colorappearance.enabled) {
+            if (execcam  && !params.dirpyrequalizer.enabled) {
+                params.dirpyrequalizer.enabled = true;
+
+                if (params.dirpyrequalizer.mult[0] == 1.) {
+                    params.dirpyrequalizer.mult[0] = 1.01;
+                }
+            }
             const int W = baseImg->getWidth();
             const int H = baseImg->getHeight();
             LabImage labcbdl(W, H);
@@ -947,10 +1042,10 @@ private:
 
         if (params.locallab.enabled && params.locallab.spots.size() > 0) {
             ipf.rgb2lab(*baseImg, *labView, params.icm.workingProfile);
-            
+
             MyTime t1, t2;
             t1.set();
-            
+
             const std::unique_ptr<LabImage> reservView(new LabImage(*labView, true));
             const std::unique_ptr<LabImage> lastorigView(new LabImage(*labView, true));
             std::unique_ptr<LabImage> savenormtmView;
@@ -967,6 +1062,7 @@ private:
             LocLLmaskCurve locllmasCurve;
             LocHHmaskCurve lochhmasCurve;
             LocHHmaskCurve lochhhmasCurve;
+            LocHHmaskCurve lochhhmascieCurve;
             LocCCmaskCurve locccmasexpCurve;
             LocLLmaskCurve locllmasexpCurve;
             LocHHmaskCurve lochhmasexpCurve;
@@ -1002,9 +1098,10 @@ private:
             LocLLmaskCurve locllmas_Curve;
             LocHHmaskCurve lochhmas_Curve;
             LocHHmaskCurve lochhhmas_Curve;
-            
+
             LocwavCurve loclmasCurveblwav;
             LocwavCurve loclmasCurvecolwav;
+            LocwavCurve loclmasCurveciewav;
             LocwavCurve loclmasCurve_wav;
             LocwavCurve locwavCurve;
             LocwavCurve locwavCurvejz;
@@ -1044,6 +1141,7 @@ private:
             LUTf czjzlocalcurve(65536, LUT_CLIP_OFF);
 
             array2D<float> shbuffer;
+
             for (size_t sp = 0; sp < params.locallab.spots.size(); sp++) {
                 if (params.locallab.spots.at(sp).inverssha) {
                     shbuffer(fw, fh);
@@ -1066,6 +1164,7 @@ private:
                 const bool llmasutili = locllmasCurve.Set(params.locallab.spots.at(sp).LLmaskcurve);
                 const bool lhmasutili = lochhmasCurve.Set(params.locallab.spots.at(sp).HHmaskcurve);
                 const bool lhhmasutili = lochhhmasCurve.Set(params.locallab.spots.at(sp).HHhmaskcurve);
+                const bool lhhmascieutili = lochhhmascieCurve.Set(params.locallab.spots.at(sp).HHhmaskciecurve);
                 const bool lcmasexputili = locccmasexpCurve.Set(params.locallab.spots.at(sp).CCmaskexpcurve);
                 const bool llmasexputili = locllmasexpCurve.Set(params.locallab.spots.at(sp).LLmaskexpcurve);
                 const bool lhmasexputili = lochhmasexpCurve.Set(params.locallab.spots.at(sp).HHmaskexpcurve);
@@ -1094,13 +1193,14 @@ private:
                 const bool lcmascieutili = locccmascieCurve.Set(params.locallab.spots.at(sp).CCmaskciecurve);
                 const bool llmascieutili = locllmascieCurve.Set(params.locallab.spots.at(sp).LLmaskciecurve);
                 const bool lhmascieutili = lochhmascieCurve.Set(params.locallab.spots.at(sp).HHmaskciecurve);
-                
+
                 const bool lcmas_utili = locccmas_Curve.Set(params.locallab.spots.at(sp).CCmask_curve);
                 const bool llmas_utili = locllmas_Curve.Set(params.locallab.spots.at(sp).LLmask_curve);
                 const bool lhmas_utili = lochhmas_Curve.Set(params.locallab.spots.at(sp).HHmask_curve);
                 const bool lhhmas_utili = lochhhmas_Curve.Set(params.locallab.spots.at(sp).HHhmask_curve);
                 const bool lmasutiliblwav = loclmasCurveblwav.Set(params.locallab.spots.at(sp).LLmaskblcurvewav);
                 const bool lmasutilicolwav = loclmasCurvecolwav.Set(params.locallab.spots.at(sp).LLmaskcolcurvewav);
+                const bool lmasutiliciewav = loclmasCurveciewav.Set(params.locallab.spots.at(sp).LLmaskciecurvewav);
                 const bool lcmaslcutili = locccmaslcCurve.Set(params.locallab.spots.at(sp).CCmasklccurve);
                 const bool llmaslcutili = locllmaslcCurve.Set(params.locallab.spots.at(sp).LLmasklccurve);
                 const bool lmasutili_wav = loclmasCurve_wav.Set(params.locallab.spots.at(sp).LLmask_curvewav);
@@ -1145,9 +1245,14 @@ private:
                 double shcompr = params.locallab.spots.at(sp).shcompr;
                 double br = params.locallab.spots.at(sp).lightness;
                 double cont = params.locallab.spots.at(sp).contrast;
-                if (lblack < 0. && params.locallab.spots.at(sp).expMethod == "pde" ) {
+
+                if (lblack < 0. && params.locallab.spots.at(sp).expMethod == "pde") {
                     lblack *= 1.5;
                 }
+
+                float contsig = params.locallab.spots.at(sp).contsigqcie;
+
+                float lightsig = params.locallab.spots.at(sp).lightsigqcie;
 
                 // Reference parameters computation
                 double huere, chromare, lumare, huerefblu, chromarefblu, lumarefblu, sobelre;
@@ -1158,12 +1263,18 @@ private:
                 float meanretie;
                 float stdretie;
                 float fab = 1.f;
-                
+                float maxicam = -1000.f;
+                float rdx, rdy, grx, gry, blx, bly = 0.f;
+                float meanx, meany, meanxe, meanye = 0.f;
+                int ill = 2;
+                int prim = 3;
+
                 if (params.locallab.spots.at(sp).spotMethod == "exc") {
                     ipf.calc_ref(sp, reservView.get(), reservView.get(), 0, 0, fw, fh, 1, huerefblu, chromarefblu, lumarefblu, huere, chromare, lumare, sobelre, avge, locwavCurveden, locwavdenutili);
                 } else {
                     ipf.calc_ref(sp, labView, labView, 0, 0, fw, fh, 1, huerefblu, chromarefblu, lumarefblu, huere, chromare, lumare, sobelre, avge, locwavCurveden, locwavdenutili);
                 }
+
                 CurveFactory::complexCurvelocal(ecomp, lblack / 65535., lhlcompr, lhlcomprthresh, shcompr, br, cont, lumare,
                                                 hltonecurveloc, shtonecurveloc, tonecurveloc, lightCurveloc, avge,
                                                 1);
@@ -1177,69 +1288,71 @@ private:
                 float Tmax;
                 float highresi = 0.f;
                 float nresi = 0.f;
-                float highresi46 =0.f;
+                float highresi46 = 0.f;
                 float nresi46 = 0.f;
                 float Lhighresi = 0.f;
                 float Lnresi = 0.f;
                 float Lhighresi46 = 0.f;
                 float Lnresi46 = 0.f;
-
+                float slopeg = 1.f;
+                bool linkrgb = true;
                 // No Locallab mask is shown in exported picture
-                ipf.Lab_Local(2, sp, shbuffer, labView, labView, reservView.get(), savenormtmView.get(), savenormretiView.get(), lastorigView.get(), fw, fh, 0, 0, fw, fh,  1, locRETgainCurve, locRETtransCurve, 
-                        lllocalcurve, locallutili, 
-                        cllocalcurve, localclutili,
-                        lclocalcurve, locallcutili,
-                        loclhCurve, lochhCurve, locchCurve,
-                        lochhCurvejz, locchCurvejz,loclhCurvejz,
-                        lmasklocalcurve, localmaskutili,
-                        lmaskexplocalcurve, localmaskexputili,
-                        lmaskSHlocalcurve, localmaskSHutili,
-                        lmaskviblocalcurve, localmaskvibutili,
-                        lmasktmlocalcurve, localmasktmutili,
-                        lmaskretilocalcurve, localmaskretiutili,
-                        lmaskcblocalcurve, localmaskcbutili,
-                        lmaskbllocalcurve, localmaskblutili,
-                        lmasklclocalcurve, localmasklcutili,
-                        lmaskloglocalcurve, localmasklogutili,
-                        lmasklocal_curve, localmask_utili,
-                        lmaskcielocalcurve, localmaskcieutili,
-                        cielocalcurve, localcieutili, 
-                        cielocalcurve2, localcieutili2, 
-                        jzlocalcurve, localjzutili, 
-                        czlocalcurve, localczutili, 
-                        czjzlocalcurve, localczjzutili, 
-                        
-                        locccmasCurve, lcmasutili, locllmasCurve, llmasutili, lochhmasCurve, lhmasutili, lochhhmasCurve, lhhmasutili, locccmasexpCurve, lcmasexputili, locllmasexpCurve, llmasexputili, lochhmasexpCurve, lhmasexputili,
-                        locccmasSHCurve, lcmasSHutili, locllmasSHCurve, llmasSHutili, lochhmasSHCurve, lhmasSHutili,
-                        locccmasvibCurve, lcmasvibutili, locllmasvibCurve, llmasvibutili, lochhmasvibCurve, lhmasvibutili,
-                        locccmascbCurve, lcmascbutili, locllmascbCurve, llmascbutili, lochhmascbCurve, lhmascbutili,
-                        locccmasretiCurve, lcmasretiutili, locllmasretiCurve, llmasretiutili, lochhmasretiCurve, lhmasretiutili,
-                        locccmastmCurve, lcmastmutili, locllmastmCurve, llmastmutili, lochhmastmCurve, lhmastmutili,
-                        locccmasblCurve, lcmasblutili, locllmasblCurve, llmasblutili, lochhmasblCurve, lhmasblutili,
-                        locccmaslcCurve, lcmaslcutili, locllmaslcCurve, llmaslcutili, lochhmaslcCurve, lhmaslcutili,
-                        locccmaslogCurve, lcmaslogutili, locllmaslogCurve, llmaslogutili, lochhmaslogCurve, lhmaslogutili,
+                ipf.Lab_Local(2, sp, shbuffer, labView, labView, reservView.get(), savenormtmView.get(), savenormretiView.get(), lastorigView.get(), fw, fh, 0, 0, fw, fh,  1, locRETgainCurve, locRETtransCurve,
+                              lllocalcurve, locallutili,
+                              cllocalcurve, localclutili,
+                              lclocalcurve, locallcutili,
+                              loclhCurve, lochhCurve, locchCurve,
+                              lochhCurvejz, locchCurvejz, loclhCurvejz,
+                              lmasklocalcurve, localmaskutili,
+                              lmaskexplocalcurve, localmaskexputili,
+                              lmaskSHlocalcurve, localmaskSHutili,
+                              lmaskviblocalcurve, localmaskvibutili,
+                              lmasktmlocalcurve, localmasktmutili,
+                              lmaskretilocalcurve, localmaskretiutili,
+                              lmaskcblocalcurve, localmaskcbutili,
+                              lmaskbllocalcurve, localmaskblutili,
+                              lmasklclocalcurve, localmasklcutili,
+                              lmaskloglocalcurve, localmasklogutili,
+                              lmasklocal_curve, localmask_utili,
+                              lmaskcielocalcurve, localmaskcieutili,
+                              cielocalcurve, localcieutili,
+                              cielocalcurve2, localcieutili2,
+                              jzlocalcurve, localjzutili,
+                              czlocalcurve, localczutili,
+                              czjzlocalcurve, localczjzutili,
 
-                        locccmas_Curve, lcmas_utili, locllmas_Curve, llmas_utili, lochhmas_Curve, lhmas_utili,
-                        locccmascieCurve, lcmascieutili, locllmascieCurve, llmascieutili, lochhmascieCurve, lhmascieutili,
-                        lochhhmas_Curve, lhhmas_utili,
-                        loclmasCurveblwav,lmasutiliblwav,
-                        loclmasCurvecolwav,lmasutilicolwav,
-                        locwavCurve, locwavutili,
-                        locwavCurvejz, locwavutilijz,
-                        loclevwavCurve, loclevwavutili,
-                        locconwavCurve, locconwavutili,
-                        loccompwavCurve, loccompwavutili,
-                        loccomprewavCurve, loccomprewavutili,
-                        locwavCurvehue, locwavhueutili,
-                        locwavCurveden, locwavdenutili,
-                        locedgwavCurve, locedgwavutili,
-                        loclmasCurve_wav,lmasutili_wav,
-                        LHutili, HHutili, CHutili, HHutilijz, CHutilijz, LHutilijz, cclocalcurve, localcutili, rgblocalcurve, localrgbutili, localexutili, exlocalcurve, hltonecurveloc, shtonecurveloc, tonecurveloc, lightCurveloc,
-                        huerefblu, chromarefblu, lumarefblu, huere, chromare, lumare, sobelre, lastsav, false, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-                        minCD, maxCD, mini, maxi, Tmean, Tsigma, Tmin, Tmax,
-                        meantme, stdtme, meanretie, stdretie, fab,
-                        highresi, nresi, highresi46, nresi46, Lhighresi, Lnresi, Lhighresi46, Lnresi46
-);
+                              locccmasCurve, lcmasutili, locllmasCurve, llmasutili, lochhmasCurve, lhmasutili, lochhhmasCurve, lhhmasutili, lochhhmascieCurve, lhhmascieutili, locccmasexpCurve, lcmasexputili, locllmasexpCurve, llmasexputili, lochhmasexpCurve, lhmasexputili,
+                              locccmasSHCurve, lcmasSHutili, locllmasSHCurve, llmasSHutili, lochhmasSHCurve, lhmasSHutili,
+                              locccmasvibCurve, lcmasvibutili, locllmasvibCurve, llmasvibutili, lochhmasvibCurve, lhmasvibutili,
+                              locccmascbCurve, lcmascbutili, locllmascbCurve, llmascbutili, lochhmascbCurve, lhmascbutili,
+                              locccmasretiCurve, lcmasretiutili, locllmasretiCurve, llmasretiutili, lochhmasretiCurve, lhmasretiutili,
+                              locccmastmCurve, lcmastmutili, locllmastmCurve, llmastmutili, lochhmastmCurve, lhmastmutili,
+                              locccmasblCurve, lcmasblutili, locllmasblCurve, llmasblutili, lochhmasblCurve, lhmasblutili,
+                              locccmaslcCurve, lcmaslcutili, locllmaslcCurve, llmaslcutili, lochhmaslcCurve, lhmaslcutili,
+                              locccmaslogCurve, lcmaslogutili, locllmaslogCurve, llmaslogutili, lochhmaslogCurve, lhmaslogutili,
+
+                              locccmas_Curve, lcmas_utili, locllmas_Curve, llmas_utili, lochhmas_Curve, lhmas_utili,
+                              locccmascieCurve, lcmascieutili, locllmascieCurve, llmascieutili, lochhmascieCurve, lhmascieutili,
+                              lochhhmas_Curve, lhhmas_utili,
+                              loclmasCurveblwav, lmasutiliblwav,
+                              loclmasCurvecolwav, lmasutilicolwav,
+                              loclmasCurveciewav, lmasutiliciewav,
+                              locwavCurve, locwavutili,
+                              locwavCurvejz, locwavutilijz,
+                              loclevwavCurve, loclevwavutili,
+                              locconwavCurve, locconwavutili,
+                              loccompwavCurve, loccompwavutili,
+                              loccomprewavCurve, loccomprewavutili,
+                              locwavCurvehue, locwavhueutili,
+                              locwavCurveden, locwavdenutili,
+                              locedgwavCurve, locedgwavutili,
+                              loclmasCurve_wav, lmasutili_wav,
+                              LHutili, HHutili, CHutili, HHutilijz, CHutilijz, LHutilijz, cclocalcurve, localcutili, rgblocalcurve, localrgbutili, localexutili, exlocalcurve, hltonecurveloc, shtonecurveloc, tonecurveloc, lightCurveloc,
+                              huerefblu, chromarefblu, lumarefblu, huere, chromare, lumare, sobelre, lastsav, false, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+                              minCD, maxCD, mini, maxi, Tmean, Tsigma, Tmin, Tmax,
+                              meantme, stdtme, meanretie, stdretie, fab, maxicam, rdx, rdy, grx, gry, blx, bly, meanx, meany, meanxe, meanye, prim, ill, contsig, lightsig,
+                              highresi, nresi, highresi46, nresi46, Lhighresi, Lnresi, Lhighresi46, Lnresi46, slopeg, linkrgb
+                             );
 
                 if (sp + 1u < params.locallab.spots.size()) {
                     // do not copy for last spot as it is not needed anymore
@@ -1337,7 +1450,7 @@ private:
         ipf.rgbProc(baseImg, labView, nullptr, curve1, curve2, curve, params.toneCurve.saturation, rCurve, gCurve, bCurve, satLimit, satLimitOpacity, ctColorCurve, ctOpacityCurve, opautili, clToningcurve, cl2Toningcurve, customToneCurve1, customToneCurve2, customToneCurvebw1, customToneCurvebw2, rrm, ggm, bbm, autor, autog, autob, expcomp, hlcompr, hlcomprthresh, dcpProf, as, histToneCurve, options.chunkSizeRGB, options.measure);
 
         if (settings->verbose) {
-            printf ("Output image / Auto B&W coefs:   R=%.2f   G=%.2f   B=%.2f\n", static_cast<double>(autor), static_cast<double>(autog), static_cast<double>(autob));
+            printf("Output image / Auto B&W coefs:   R=%.2f   G=%.2f   B=%.2f\n", static_cast<double>(autor), static_cast<double>(autog), static_cast<double>(autob));
         }
 
         // if clut was used and size of clut cache == 1 we free the memory used by the clutstore (default clut cache size = 1 for 32 bit OS)
@@ -1406,21 +1519,23 @@ private:
 
 
         if (params.colorToning.enabled && params.colorToning.method == "LabGrid") {
-            ipf.colorToningLabGrid(labView, 0,labView->W , 0, labView->H, false);
+            ipf.colorToningLabGrid(labView, 0, labView->W, 0, labView->H, false);
         }
 
-        ipf.shadowsHighlights(labView, params.sh.enabled, params.sh.lab,params.sh.highlights ,params.sh.shadows, params.sh.radius, 1, params.sh.htonalwidth, params.sh.stonalwidth);
+        ipf.shadowsHighlights(labView, params.sh.enabled, params.sh.lab, params.sh.highlights, params.sh.shadows, params.sh.radius, 1, params.sh.htonalwidth, params.sh.stonalwidth);
 
         if (params.localContrast.enabled) {
             // Alberto's local contrast
-                ipf.localContrast(labView, labView->L, params.localContrast, false, 1);//scale);
+            ipf.localContrast(labView, labView->L, params.localContrast, false, 1);//scale);
         }
 
         ipf.chromiLuminanceCurve(nullptr, 1, labView, labView, curve1, curve2, satcurve, lhskcurve, clcurve, lumacurve, utili, autili, butili, ccutili, cclutili, clcutili, dummy, dummy);
 
+        const bool cam02 = params.colorappearance.modelmethod == "02" && params.colorappearance.enabled;
 
-        if ((params.colorappearance.enabled && !params.colorappearance.tonecie) || (!params.colorappearance.enabled)) {
-            ipf.EPDToneMap (labView, 0, 1);
+    //    if ((params.colorappearance.enabled && !params.colorappearance.tonecie) || (!params.colorappearance.enabled)) {
+        if ((params.colorappearance.enabled && !params.colorappearance.tonecie) || (!cam02)) {
+            ipf.EPDToneMap(labView, 0, 1);
         }
 
 
@@ -1429,8 +1544,9 @@ private:
 
         // for all treatments Defringe, Sharpening, Contrast detail ,Microcontrast they are activated if "CIECAM" function are disabled
 
-        if ((params.colorappearance.enabled && !settings->autocielab) || (!params.colorappearance.enabled)) {
-            ipf.impulsedenoise (labView);
+      //  if ((params.colorappearance.enabled && !settings->autocielab) || (!params.colorappearance.enabled)) {
+        if ((params.colorappearance.enabled && !settings->autocielab) || (!cam02)) {
+            ipf.impulsedenoise(labView);
             ipf.defringe(labView);
         }
 
@@ -1439,12 +1555,14 @@ private:
         }
 
         if (params.sharpenMicro.enabled) {
-            if ((params.colorappearance.enabled && !settings->autocielab) || (!params.colorappearance.enabled)) {
+          //  if ((params.colorappearance.enabled && !settings->autocielab) || (!params.colorappearance.enabled)) {
+            if ((params.colorappearance.enabled && !settings->autocielab) || (!cam02)) {
                 ipf.MLmicrocontrast(labView);     //!params.colorappearance.sharpcie
             }
         }
 
-        if (((params.colorappearance.enabled && !settings->autocielab) || (!params.colorappearance.enabled)) && params.sharpening.enabled) {
+      //  if (((params.colorappearance.enabled && !settings->autocielab) || (!params.colorappearance.enabled)) && params.sharpening.enabled) {
+        if (((params.colorappearance.enabled && !settings->autocielab) || (!cam02)) && params.sharpening.enabled) {
             ipf.sharpening(labView, params.sharpening);
 
         }
@@ -1453,12 +1571,14 @@ private:
 
         // directional pyramid wavelet
         if (params.dirpyrequalizer.cbdlMethod == "aft") {
-            if ((params.colorappearance.enabled && !settings->autocielab)  || !params.colorappearance.enabled) {
+         //   if ((params.colorappearance.enabled && !settings->autocielab)  || !params.colorappearance.enabled) {
+            if ((params.colorappearance.enabled && !settings->autocielab)  || !cam02) {
                 ipf.dirpyrequalizer(labView, 1);     //TODO: this is the luminance tonecurve, not the RGB one
             }
         }
 
-        if ((params.wavelet.enabled)) {
+        int savestr = params.wavelet.strength;//work around for abstract profile: time about = 0.1 second
+        if ((params.wavelet.enabled)  || (params.icm.workingTRC != ColorManagementParams::WorkingTrc::NONE  && params.icm.trcExp)) {
             LabImage *unshar = nullptr;
             WaveletParams WaveParams = params.wavelet;
             WavCurve wavCLVCurve;
@@ -1476,14 +1596,11 @@ private:
             bool proedge = WaveParams.expedge;
             bool profin = WaveParams.expfinal;
             bool proton = WaveParams.exptoning;
-            bool pronois = WaveParams.expnoise; 
-            
-/*
-            if(WaveParams.showmask) {
-                WaveParams.showmask = false;
-                WaveParams.expclari = true;
+            bool pronois = WaveParams.expnoise;
+
+            if(params.icm.workingTRC != ColorManagementParams::WorkingTrc::NONE  && params.icm.trcExp) {
+                params.wavelet.strength = 0;
             }
-*/
             if (WaveParams.softrad > 0.f) {
                 provradius = new LabImage(*labView, true);
             }
@@ -1504,7 +1621,7 @@ private:
                 WaveParams.expedge = false;
                 WaveParams.expfinal = false;
                 WaveParams.exptoning = false;
-                WaveParams.expnoise = false; 
+                WaveParams.expnoise = false;
             }
 
             ipf.ip_wavelet(labView, labView, 2, WaveParams, wavCLVCurve, wavdenoise, wavdenoiseh, wavblcurve, waOpacityCurveRG, waOpacityCurveSH, waOpacityCurveBY, waOpacityCurveW,  waOpacityCurveWL, wavclCurve, 1);
@@ -1516,7 +1633,7 @@ private:
                 WaveParams.expfinal = profin;
                 WaveParams.exptoning = proton;
                 WaveParams.expnoise = pronois;
-                
+
                 if (WaveParams.softrad > 0.f) {
                     array2D<float> ble(fw, fh);
                     array2D<float> guid(fw, fh);
@@ -1544,6 +1661,7 @@ private:
                             tmpImage->b(ir, jr) = Z;
                             ble[ir][jr] = Y / 32768.f;
                         }
+
                     double epsilmax = 0.0001;
                     double epsilmin = 0.00001;
                     double aepsil = (epsilmax - epsilmin) / 100.f;
@@ -1569,9 +1687,10 @@ private:
                             Color::XYZ2Lab(X, Y, Z, L, a, b);
                             labView->L[ir][jr] = L;
                         }
-                delete tmpImage;
+
+                    delete tmpImage;
                 }
-                
+
             }
 
             if ((WaveParams.ushamethod == "sharp" || WaveParams.ushamethod == "clari") && WaveParams.expclari && WaveParams.CLmethod != "all") {
@@ -1615,15 +1734,28 @@ private:
 
             wavCLVCurve.Reset();
         }
+        params.wavelet.strength = savestr;
 
         ipf.softLight(labView, params.softlight);
 
 
-        if (params.icm.workingTRC != ColorManagementParams::WorkingTrc::NONE) {
+        if (params.icm.workingTRC != ColorManagementParams::WorkingTrc::NONE  && params.icm.trcExp) {
             const int GW = labView->W;
             const int GH = labView->H;
             std::unique_ptr<LabImage> provis;
             const float pres = 0.01f * params.icm.preser;
+            if(params.icm.trcExp) {//local contrast
+                int level_hr = 7;
+                int maxlevpo = 9;
+                bool wavcurvecont = false;
+                WaveletParams WaveParams = params.wavelet;
+                ColorManagementParams Colparams = params.icm;
+                WavOpacityCurveWL icmOpacityCurveWL;
+                Colparams.getCurves(icmOpacityCurveWL);
+                ipf.complete_local_contrast(labView, labView, WaveParams, Colparams, icmOpacityCurveWL, 1, level_hr, maxlevpo, wavcurvecont);
+
+            }
+
             if (pres > 0.f && params.icm.wprim != ColorManagementParams::Primaries::DEFAULT) {
                 provis.reset(new LabImage(GW, GH));
                 provis->CopyFrom(labView);
@@ -1633,8 +1765,8 @@ private:
 
             ipf.lab2rgb(*labView, *tmpImage1, params.icm.workingProfile);
 
-            const float gamtone = params.icm.workingTRCGamma;
-            const float slotone = params.icm.workingTRCSlope;
+            const float gamtone = params.icm.wGamma;
+            const float slotone = params.icm.wSlope;
 
             int illum = toUnderlying(params.icm.will);
             const int prim = toUnderlying(params.icm.wprim);
@@ -1643,25 +1775,70 @@ private:
 
             cmsHTRANSFORM dummy = nullptr;
             int ill = 0;
-            ipf.workingtrc(tmpImage1.get(), tmpImage1.get(), GW, GH, -5, prof, 2.4, 12.92310, ill, 0, dummy, true, false, false);
-            ipf.workingtrc(tmpImage1.get(), tmpImage1.get(), GW, GH, 5, prof, gamtone, slotone, illum, prim, dummy, false, true, true);
+            bool gamutcontrol = params.icm.gamut;
+            int catc = toUnderlying(params.icm.wcat);
+            int locprim = 0;
+            float rdx, rdy, grx, gry, blx, bly = 0.f;
+            float meanx, meany, meanxe, meanye = 0.f;
+            ipf.workingtrc(0, tmpImage1.get(), tmpImage1.get(), GW, GH, -5, prof, 2.4, 12.92310, 0, ill, 0, 0, rdx, rdy, grx, gry, blx, bly, meanx, meany, meanxe, meanye, dummy, true, false, false, false);
+            ipf.workingtrc(0, tmpImage1.get(), tmpImage1.get(), GW, GH, 5, prof, gamtone, slotone, catc, illum, prim, locprim, rdx, rdy, grx, gry, blx, bly, meanx, meany, meanxe, meanye, dummy, false, true, true, gamutcontrol);
+            const int midton = params.icm.wmidtcie;
+            if(midton != 0) {
+                ToneEqualizerParams params;
+                params.enabled = true;
+                params.regularization = 0.f;
+                params.pivot = 0.f;
+                params.bands[0] = 0;
+                params.bands[2] = midton;
+                params.bands[4] = 0;
+                params.bands[5] = 0;
+                int mid = abs(midton);
+                int threshmid = 50;
+                if(mid > threshmid) {
+                    params.bands[1] = sign(midton) * (mid - threshmid);
+                    params.bands[3] = sign(midton) * (mid - threshmid);     
+                }
+                ipf.toneEqualizer(tmpImage1.get(), params, prof, 1, false);
+            }
+
+            const bool smoothi = params.icm.wsmoothcie;
+                if(smoothi) {
+                    ToneEqualizerParams params;
+                    params.enabled = true;
+                    params.regularization = 0.f;
+                    params.pivot = 0.f;
+                    params.bands[0] = 0;
+                    params.bands[1] = 0;
+                    params.bands[2] = 0;
+                    params.bands[3] = 0;
+                    params.bands[4] = -40;//arbitrary value to adapt with WhiteEvjz - here White Ev # 10
+                    params.bands[5] = -80;//8 Ev and above
+                    bool Evsix = true;
+                    if(Evsix) {//EV = 6 majority of images
+                        params.bands[4] = -15;
+                    }
+                
+                    ipf.toneEqualizer(tmpImage1.get(), params, prof, 1, false);
+            }
 
             ipf.rgb2lab(*tmpImage1, *labView, params.icm.workingProfile);
+
             // labView and provis
-            if(provis) {
+            if (provis) {
                 ipf.preserv(labView, provis.get(), GW, GH);
             }
-            if(params.icm.fbw) {
+
+            if (params.icm.fbw) {
 #ifdef _OPENMP
-            #pragma omp parallel for
+                #pragma omp parallel for
 #endif
-            for (int x = 0; x < GH; x++)
-                for (int y = 0; y < GW; y++) {
-                    labView->a[x][y] = 0.f;
-                    labView->b[x][y] = 0.f;
-                }
+
+                for (int x = 0; x < GH; x++)
+                    for (int y = 0; y < GW; y++) {
+                        labView->a[x][y] = 0.f;
+                        labView->b[x][y] = 0.f;
+                    }
             }
-           
         }
 
         //Colorappearance and tone-mapping associated
@@ -1688,24 +1865,17 @@ private:
 
         if (params.colorappearance.enabled) {
             double adap;
-            int imgNum = 0;
 
-            if (imgsrc->getSensorType() == ST_BAYER) {
-                imgNum = params.raw.bayersensor.imageNum;
-            } else if (imgsrc->getSensorType() == ST_FUJI_XTRANS) {
-                //imgNum = params.raw.xtranssensor.imageNum;
-            }
-
-            float fnum = imgsrc->getMetaData()->getFNumber(imgNum);          // F number
-            float fiso = imgsrc->getMetaData()->getISOSpeed(imgNum) ;        // ISO
-            float fspeed = imgsrc->getMetaData()->getShutterSpeed(imgNum) ;  //speed
-            float fcomp = imgsrc->getMetaData()->getExpComp(imgNum);         //compensation + -
+            const float fnum = imgsrc->getMetaData()->getFNumber();         // F number
+            const float fiso = imgsrc->getMetaData()->getISOSpeed() ;       // ISO
+            const float fspeed = imgsrc->getMetaData()->getShutterSpeed() ; // Speed
+            const float fcomp = imgsrc->getMetaData()->getExpComp();        // Compensation + -
 
             if (fnum < 0.3f || fiso < 5.f || fspeed < 0.00001f) {
                 adap = 2000.;
             }//if no exif data or wrong
             else {
-                double E_V = fcomp + log2 ((fnum * fnum) / fspeed / (fiso / 100.f));
+                double E_V = fcomp + log2((fnum * fnum) / fspeed / (fiso / 100.f));
                 double kexp = 0.;
                 E_V += kexp * params.toneCurve.expcomp;// exposure compensation in tonecurve ==> direct EV
                 E_V += 0.5 * log2(params.raw.expos); // exposure raw white point ; log2 ==> linear to EV
@@ -1717,7 +1887,7 @@ private:
             float CAMMean = NAN;
 
             float d, dj, yb;
-            ipf.ciecam_02float (cieView, float (adap), 1, 2, labView, &params, customColCurve1, customColCurve2, customColCurve3, dummy, dummy, CAMBrightCurveJ, CAMBrightCurveQ, CAMMean, 0, 1, true, d, dj, yb, 1);
+            ipf.ciecam_02float(cieView, float (adap), 1, 2, labView, &params, customColCurve1, customColCurve2, customColCurve3, dummy, dummy, CAMBrightCurveJ, CAMBrightCurveQ, CAMMean, 0, 1, true, d, dj, yb, 1);
         }
 
         delete cieView;
@@ -1734,20 +1904,52 @@ private:
             pl->setProgress(0.60);
         }
 
-        int imw, imh;
-        double tmpScale = ipf.resizeScale(&params, fw, fh, imw, imh);
-        bool labResize = params.resize.enabled && params.resize.method != "Nearest" && (tmpScale != 1.0 || params.prsharpening.enabled);
-        LabImage *tmplab;
-
         // crop and convert to rgb16
         int cx = 0, cy = 0, cw = labView->W, ch = labView->H;
-
         if (params.crop.enabled) {
             cx = params.crop.x;
             cy = params.crop.y;
             cw = params.crop.w;
             ch = params.crop.h;
+        }
 
+        ImProcFunctions::FramingArgs framingArgs;
+        framingArgs.params = &params;
+        framingArgs.cropWidth = cw;
+        framingArgs.cropHeight = ch;
+        {
+            int imw, imh;
+            double tmpScale = ipf.resizeScale(&params, fw, fh, imw, imh);
+            framingArgs.resizeWidth = imw;
+            framingArgs.resizeHeight = imh;
+            framingArgs.resizeScale = tmpScale;
+
+            // If upscaling is not permitted, keep original sizing
+            if ((cw < imw || ch < imh) && !params.resize.allowUpscaling) {
+                framingArgs.resizeWidth = cw;
+                framingArgs.resizeHeight = ch;
+                framingArgs.resizeScale = 1.0;
+            }
+        }
+
+        // If framing is not enabled, resize values simply pass through to output
+        ImProcFunctions::FramingData framingData = ipf.framing(framingArgs);
+        if (settings->verbose) {
+            printf("Framing Parameters (enabled=%s)\n", framingData.enabled ? "yes" : "no");
+            printf("  Crop: w=%d h=%d\n", cw, ch);
+            printf("  Original resize: w=%d h=%d s=%f\n",
+                   framingArgs.resizeWidth, framingArgs.resizeHeight, framingArgs.resizeScale);
+            printf("  Framed image size: w=%d h=%d s=%f\n",
+                   framingData.imgWidth, framingData.imgHeight, framingData.scale);
+            printf("  Total size: w=%d h=%d\n",
+                   framingData.framedWidth, framingData.framedHeight);
+        }
+
+        bool labResize = params.resize.enabled && params.resize.method != "Nearest" &&
+            (framingData.scale != 1.0 || params.prsharpening.enabled || framingData.enabled);
+
+        LabImage *tmplab = nullptr;
+        if (params.crop.enabled) {
             if (labResize) { // crop lab data
                 tmplab = new LabImage(cw, ch);
 
@@ -1767,11 +1969,12 @@ private:
         }
 
         if (labResize) { // resize lab data
-            if ((labView->W != imw || labView->H != imh) &&
-                    (params.resize.allowUpscaling || (labView->W >= imw && labView->H >= imh))) {
+            int imw = framingData.imgWidth;
+            int imh = framingData.imgHeight;
+            if (labView->W != imw || labView->H != imh) {
                 // resize image
                 tmplab = new LabImage(imw, imh);
-                ipf.Lanczos(labView, tmplab, tmpScale);
+                ipf.Lanczos(labView, tmplab, framingData.scale);
                 delete labView;
                 labView = tmplab;
             }
@@ -1790,7 +1993,8 @@ private:
             }
         }
 
-        bool bwonly = params.blackwhite.enabled && !params.colorToning.enabled && !autili && !butili && !params.colorappearance.enabled;
+      //  bool bwonly = params.blackwhite.enabled && !params.colorToning.enabled && !autili && !butili && !params.colorappearance.enabled;
+        bool bwonly = params.blackwhite.enabled && !params.colorToning.enabled && !autili && !butili && !cam02;
 
         ///////////// Custom output gamma has been removed, the user now has to create
         ///////////// a new output profile with the ICCProfileCreator
@@ -1824,24 +2028,38 @@ private:
             pl->setProgress(0.70);
         }
 
-        if (tmpScale != 1.0 && params.resize.method == "Nearest" &&
-                (params.resize.allowUpscaling || (readyImg->getWidth() >= imw && readyImg->getHeight() >= imh))) { // resize rgb data (gamma applied)
-            Imagefloat* tempImage = new Imagefloat(imw, imh);
-            ipf.resize(readyImg, tempImage, tmpScale);
-            delete readyImg;
-            readyImg = tempImage;
+        if (framingData.scale != 1.0 && params.resize.method == "Nearest") {
+            int imw = framingData.imgWidth;
+            int imh = framingData.imgHeight;
+            if (readyImg->getWidth() != imw || readyImg->getHeight() != imh) {
+                // resize rgb data (gamma applied)
+                Imagefloat* tempImage = new Imagefloat(imw, imh);
+                ipf.resize(readyImg, tempImage, framingData.scale);
+                delete readyImg;
+                readyImg = tempImage;
+            }
         }
+
+        if (framingData.enabled) {
+            readyImg = ipf.drawFrame(readyImg, params.framing, framingData);
+        }
+
+        Exiv2Metadata info(imgsrc->getFileName());
 
         switch (params.metadata.mode) {
             case MetaDataParams::TUNNEL:
-                // Sending back the whole first root, which won't necessarily be the selected frame number
-                // and may contain subframe depending on initial raw's hierarchy
-                readyImg->setMetadata(initialImage->getMetaData()->getRootExifData());
+                readyImg->setMetadata(std::move(info));
                 break;
 
             case MetaDataParams::EDIT:
-                // ask for the correct frame number, but may contain subframe depending on initial raw's hierarchy
-                readyImg->setMetadata(initialImage->getMetaData()->getBestExifData(imgsrc, &params.raw), params.exif, params.iptc);
+                info.setExif(params.metadata.exif);
+                info.setIptc(params.metadata.iptc);
+
+                if (!(params.metadata.exifKeys.size() == 1 && params.metadata.exifKeys[0] == "*")) {
+                    info.setExifKeys(&(params.metadata.exifKeys));
+                }
+
+                readyImg->setMetadata(std::move(info));
                 break;
 
             default: // case MetaDataParams::STRIP
@@ -1868,11 +2086,11 @@ private:
                 }
 
                 ProfileContent pc = ICCStore::getInstance()->getContent(params.icm.outputProfile);
-                readyImg->setOutputProfile(pc.getData().c_str(), pc.getData().size());
+                readyImg->setOutputProfile(pc.getData());
             }
         } else {
             // No ICM
-            readyImg->setOutputProfile(nullptr, 0);
+            readyImg->setOutputProfile({});
         }
 
 //    t2.set();
@@ -2121,7 +2339,6 @@ IImagefloat* processImage(ProcessingJob* pjob, int& errorCode, ProgressListener*
 
 void batchProcessingThread(ProcessingJob* job, BatchProcessingListener* bpl)
 {
-
     ProcessingJob* currentJob = job;
 
     while (currentJob) {

@@ -1,4 +1,5 @@
-/*
+/* -*- C++ -*-
+ *  
  *  This file is part of RawTherapee.
  *
  *  Copyright (c) 2004-2010 Gabor Horvath <hgabor@rawtherapee.com>
@@ -16,9 +17,9 @@
  *  You should have received a copy of the GNU General Public License
  *  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
  */
-#define UNKNOWN    -1
-#define FILEBROWSER 1
-#define EDITOR      2
-#define BATCHEDITOR 3
-#define CACHEMGR    4
-#define SAFETYUPDATE 5
+constexpr int UNKNOWN = -1;
+constexpr int FILEBROWSER = 1;
+constexpr int EDITOR = 2;
+constexpr int BATCHEDITOR = 3;
+constexpr int CACHEMGR = 4;
+constexpr int SAFETYUPDATE = 5;

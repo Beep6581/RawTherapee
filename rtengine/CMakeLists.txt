@@ -42,8 +42,19 @@ if(NOT WITH_SYSTEM_KLT)
 else()
     include_directories("${KLT_INCLUDE_DIRS}")
 endif()
+if(EXIV2_INCLUDE_DIRS)
+    include_directories("${EXIV2_INCLUDE_DIRS}")
+endif()
+if(JXL_INCLUDE_DIRS)
+    include_directories("${JXL_INCLUDE_DIRS}")
+endif()
+if(NOT WITH_SYSTEM_LIBRAW)
+    include_directories("${CMAKE_SOURCE_DIR}/rtengine/libraw")
+else()
+    include_directories("${LIBRAW_INCLUDE_DIRS}")
+endif()
 
-link_directories("${PROJECT_SOURCE_DIR}/rtexif"
+link_directories(
     "${EXPAT_LIBRARY_DIRS}"
     "${EXTRA_LIBDIR}"
     "${FFTW3F_LIBRARY_DIRS}"
@@ -117,6 +128,7 @@ set(RTENGINESOURCEFILES
     imagedimensions.cc
     imagefloat.cc
     imageio.cc
+    imagesource.cc
     improccoordinator.cc
     improcfun.cc
     impulse_denoise.cc
@@ -141,8 +153,10 @@ set(RTENGINESOURCEFILES
     jpeg_ijg/jpeg_memsrc.cc
     labimage.cc
     lcp.cc
+    lensmetadata.cc
     lmmse_demosaic.cc
     loadinitial.cc
+    metadata.cc
     munselllch.cc
     myfile.cc
     panasonic_decoders.cc
@@ -210,8 +224,6 @@ if(NOT WITH_SYSTEM_KLT)
     set(KLT_LIBRARIES)
 endif()
 
-include_directories(BEFORE "${CMAKE_CURRENT_BINARY_DIR}")
-
 add_library(rtengine STATIC "${RTENGINESOURCEFILES}")
 
 add_dependencies(rtengine UpdateInfo)
@@ -223,7 +235,19 @@ endif()
 
 set_target_properties(rtengine PROPERTIES COMPILE_FLAGS "${RTENGINE_CXX_FLAGS}")
 
-target_link_libraries(rtengine rtexif
+target_include_directories(rtengine
+    PUBLIC
+        # Other libraries should use #include "rtengine/header.h"
+        ${PROJECT_SOURCE_DIR}
+    PRIVATE
+        # Subdirectories that are not libraries themselves should be included
+        # like #include "your_subdirectory/header.h"
+        ${CMAKE_CURRENT_SOURCE_DIR}
+)
+# UpdateInfo creates "rtgui/version.h"
+target_include_directories(rtengine BEFORE PRIVATE ${CMAKE_BINARY_DIR})
+
+target_link_libraries(rtengine
     ${EXPAT_LIBRARIES}
     ${EXTRA_LIB}
     ${FFTW3F_LIBRARIES}
@@ -240,10 +264,18 @@ target_link_libraries(rtengine rtexif
     ${LENSFUN_LIBRARIES}
     ${RSVG_LIBRARIES}
     ${KLT_LIBRARIES}
-)
+    ${EXIV2_LIBRARIES}
+    ${JXL_LIBRARIES}
+    ${LIBRAW_LIBRARIES}
+    )
 
 if(OpenMP_FOUND)
     target_link_libraries(rtengine ${OpenMP_CXX_LIBRARIES})
+endif()
+
+# Configure LibRaw
+if(NOT WITH_SYSTEM_LIBRAW)
+    include(LibRaw.cmake)
 endif()
 
 install(FILES ${CAMCONSTSFILE} DESTINATION "${DATADIR}" PERMISSIONS OWNER_WRITE OWNER_READ GROUP_READ WORLD_READ)
