@@ -1294,7 +1294,8 @@ private:
                 float Lnresi = 0.f;
                 float Lhighresi46 = 0.f;
                 float Lnresi46 = 0.f;
-
+                float slopeg = 1.f;
+                bool linkrgb = true;
                 // No Locallab mask is shown in exported picture
                 ipf.Lab_Local(2, sp, shbuffer, labView, labView, reservView.get(), savenormtmView.get(), savenormretiView.get(), lastorigView.get(), fw, fh, 0, 0, fw, fh,  1, locRETgainCurve, locRETtransCurve,
                               lllocalcurve, locallutili,
@@ -1350,7 +1351,7 @@ private:
                               huerefblu, chromarefblu, lumarefblu, huere, chromare, lumare, sobelre, lastsav, false, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
                               minCD, maxCD, mini, maxi, Tmean, Tsigma, Tmin, Tmax,
                               meantme, stdtme, meanretie, stdretie, fab, maxicam, rdx, rdy, grx, gry, blx, bly, meanx, meany, meanxe, meanye, prim, ill, contsig, lightsig,
-                              highresi, nresi, highresi46, nresi46, Lhighresi, Lnresi, Lhighresi46, Lnresi46
+                              highresi, nresi, highresi46, nresi46, Lhighresi, Lnresi, Lhighresi46, Lnresi46, slopeg, linkrgb
                              );
 
                 if (sp + 1u < params.locallab.spots.size()) {
@@ -1743,6 +1744,17 @@ private:
             const int GH = labView->H;
             std::unique_ptr<LabImage> provis;
             const float pres = 0.01f * params.icm.preser;
+            if(params.icm.trcExp) {//local contrast
+                int level_hr = 7;
+                int maxlevpo = 9;
+                bool wavcurvecont = false;
+                WaveletParams WaveParams = params.wavelet;
+                ColorManagementParams Colparams = params.icm;
+                WavOpacityCurveWL icmOpacityCurveWL;
+                Colparams.getCurves(icmOpacityCurveWL);
+                ipf.complete_local_contrast(labView, labView, WaveParams, Colparams, icmOpacityCurveWL, 1, level_hr, maxlevpo, wavcurvecont);
+
+            }
 
             if (pres > 0.f && params.icm.wprim != ColorManagementParams::Primaries::DEFAULT) {
                 provis.reset(new LabImage(GW, GH));
@@ -1753,8 +1765,8 @@ private:
 
             ipf.lab2rgb(*labView, *tmpImage1, params.icm.workingProfile);
 
-            const float gamtone = params.icm.workingTRCGamma;
-            const float slotone = params.icm.workingTRCSlope;
+            const float gamtone = params.icm.wGamma;
+            const float slotone = params.icm.wSlope;
 
             int illum = toUnderlying(params.icm.will);
             const int prim = toUnderlying(params.icm.wprim);
@@ -1827,7 +1839,6 @@ private:
                         labView->b[x][y] = 0.f;
                     }
             }
-
         }
 
         //Colorappearance and tone-mapping associated

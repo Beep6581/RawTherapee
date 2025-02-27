@@ -372,6 +372,8 @@ void Locallab::read(const rtengine::procparams::ProcParams* pp, const ParamsEdit
             r.wavMethod = 3;
         } else  if (pp->locallab.spots.at(i).wavMethod == "D14") {
             r.wavMethod = 4;
+        } else  if (pp->locallab.spots.at(i).wavMethod == "D20") {
+            r.wavMethod = 5;
         }
 
         expsettings->addControlSpot(r);
@@ -565,6 +567,8 @@ void Locallab::write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedited
                 r.wavMethod = 3;
             } else if (newSpot->wavMethod == "D14") {
                 r.wavMethod = 4;
+            } else if (newSpot->wavMethod == "D20") {
+                r.wavMethod = 5;
             }
 
             expsettings->addControlSpot(r);
@@ -903,6 +907,8 @@ void Locallab::write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedited
                 r.wavMethod = 3;
             } else if (newSpot->wavMethod == "D14") {
                 r.wavMethod = 4;
+            } else if (newSpot->wavMethod == "D20") {
+                r.wavMethod = 5;
             }
 
             expsettings->addControlSpot(r);
@@ -1073,6 +1079,8 @@ void Locallab::write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedited
                         pp->locallab.spots.at(pp->locallab.selspot).wavMethod = "D10";
                     } else if (r->wavMethod == 4) {
                         pp->locallab.spots.at(pp->locallab.selspot).wavMethod = "D14";
+                    } else if (r->wavMethod == 5) {
+                        pp->locallab.spots.at(pp->locallab.selspot).wavMethod = "D20";
                     }
                 }
 
@@ -1399,8 +1407,10 @@ void Locallab::cieChanged(const std::vector<locallabcieLC> &cielc, int selspot)
         const double me1 = cie_lc.at(selspot).meanxelc;
         const double me2 = cie_lc.at(selspot).meanyelc;
         const int pri = cie_lc.at(selspot).primlc;
+        const double slg = cie_lc.at(selspot).slopeglc;
+        const bool lkg = cie_lc.at(selspot).linkrgblc;
 
-        expcie.updateiPrimloc(r1, r2, g1, g2, b1, b2, w1, w2, m1, m2, me1, me2, pri);
+        expcie.updateiPrimloc(r1, r2, g1, g2, b1, b2, w1, w2, m1, m2, me1, me2, pri, slg, lkg);
     }
     
 }

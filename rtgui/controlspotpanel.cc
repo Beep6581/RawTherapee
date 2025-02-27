@@ -463,6 +463,7 @@ ControlSpotPanel::ControlSpotPanel():
     wavMethod_->append(M("TP_WAVELET_DAUB6"));
     wavMethod_->append(M("TP_WAVELET_DAUB10"));
     wavMethod_->append(M("TP_WAVELET_DAUB14"));
+    wavMethod_->append(M("TP_WAVELET_DAUB20"));
     wavMethod_->set_active(1);
     wavMethodconn_ = wavMethod_->signal_changed().connect(
                          sigc::mem_fun(

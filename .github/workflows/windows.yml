@@ -21,6 +21,8 @@ env:
 jobs:
   build:
     runs-on: windows-latest
+    permissions:
+      contents: write
     defaults:
       run:
         shell: msys2 {0}

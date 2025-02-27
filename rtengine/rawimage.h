@@ -54,10 +54,7 @@ public:
             filters &= ~((filters & 0x55555555) << 1);
         }
     }
-    dcrawImage_t get_image()
-    {
-        return image;
-    }
+    dcrawImage_t get_image();
     float** compress_image(unsigned int frameNum, bool freeImage = true); // revert to compressed pixels format and release image data
     float** data;             // holds pixel values, data[i][j] corresponds to the ith row and jth column
     unsigned prefilters;               // original filters saved ( used for 4 color processing )
@@ -78,6 +75,7 @@ protected:
     int maximum_c4[4];
     Decoder decoder{Decoder::DCRAW};
     std::unique_ptr<LibRaw> libraw;
+    std::unique_ptr<std::remove_pointer<dcrawImage_t>::type[]> image_from_float;
     bool isFoveon() const
     {
         return is_foveon;

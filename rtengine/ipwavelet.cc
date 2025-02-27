@@ -17,7 +17,7 @@
 //
 //  You should have received a copy of the GNU General Public License
 //  along with this program.  If not, see <https://www.gnu.org/licenses/>.
-// *  2014 - 2019  2020 - Jacques Desmis <jdesmis@gmail.com>
+// *  2014 - 2019  2020 2024 - Jacques Desmis <jdesmis@gmail.com>
 // *  2014 Ingo Weyrich <heckflosse@i-weyrich.de>
 
 //
@@ -396,7 +396,7 @@ void ImProcFunctions::ip_wavelet(LabImage * lab, LabImage * dst, int kall, const
     constexpr float atten123 = 0.90f;
 
     //int DaubLen = settings->daubech ? 8 : 6;
-    int DaubLen;
+    int DaubLen = 6;
 
     if (params->wavelet.daubcoeffmethod == "2_") {
         DaubLen = 4;
@@ -406,8 +406,10 @@ void ImProcFunctions::ip_wavelet(LabImage * lab, LabImage * dst, int kall, const
         DaubLen = 8;
     } else if (params->wavelet.daubcoeffmethod == "10_") {
         DaubLen = 12;
-    } else { /* if (params->wavelet.daubcoeffmethod == "14_") */
+    } else if (params->wavelet.daubcoeffmethod == "14_") {
         DaubLen = 16;
+    } else if (params->wavelet.daubcoeffmethod == "20_"){
+        DaubLen = 22;
     }
 
     cp.CHSLmet = 1;
@@ -2951,6 +2953,7 @@ void ImProcFunctions::WaveletcontAllL(LabImage * labco, float ** varhue, float *
                         calceffect(lvl, mean, sigma, mea, effect, offs);
                         float lutFactor;
                         const float inVals[] = {0.05f, 0.2f, 0.7f, 1.f, 1.f, 0.8f, 0.6f, 0.4f, 0.2f, 0.1f, 0.01f};
+
                         const auto meaLut = buildMeaLut(inVals, mea, lutFactor);
                         if (!aft.get()) {
                             aft.reset(new float[Wlvl_L * Hlvl_L]);
@@ -3399,6 +3402,343 @@ void ImProcFunctions::calckoe (const float* WavCoeffs, float gradw, float tloww,
         }
     }
 }
+
+
+// Copyright 6-2024 - Jacques Desmis <jdesmis@gmail.com>
+void ImProcFunctions::complete_local_contrast (LabImage * lab, LabImage * dst, const procparams::WaveletParams & waparams, const procparams::ColorManagementParams & cmparams, const WavOpacityCurveWL & cmOpacityCurveWL, int skip, int &level_hr, int &maxlevpo, bool &wavcurvecont)
+{
+    wavcurvecont = false;
+    if (cmOpacityCurveWL) {//activate only if one value not equal to 0.5
+        for (int i = 0; i < 500; i++) {
+            if (cmOpacityCurveWL[i] != 0.5f) {
+               wavcurvecont = true;
+               break;
+            }
+        }
+    }
+
+    if(wavcurvecont && cmparams.wavExp) {//enable curve and expander
+#ifdef _OPENMP
+        const int numThreads = omp_get_max_threads();
+#else
+        const int numThreads = 1;
+
+#endif
+            int width = lab->W;
+            int height = lab->H;
+            int wavelet_lev = 7;//default
+            int DaubLen = 4;//type of wave
+            if (waparams.daubcoeffmethod == "2_") {
+                DaubLen = 4;
+            } else if (waparams.daubcoeffmethod == "4_") {
+                DaubLen = 6;//default
+            } else if (waparams.daubcoeffmethod == "6_") {
+                DaubLen = 8;
+            } else if (waparams.daubcoeffmethod == "10_") {
+                DaubLen = 12;
+            } else if (params->wavelet.daubcoeffmethod == "14_") {
+                DaubLen = 16;
+            } else if (params->wavelet.daubcoeffmethod == "20_") {
+                DaubLen = 22;
+            }
+            float sigmafin = cmparams.sigmatrc;//attenuation response signal
+            int pyrwav = cmparams.pyrwavtrc;//levels contrast profiles
+            float offset = cmparams.offstrc;//offset signal
+            int level_bl = 0;//adapted to each levels profile 
+            int level_hl = 1;//adapted to each levels profile 
+            int level_br = wavelet_lev;
+            level_hr = wavelet_lev;//to adapt if necessary
+
+            //6 contrast profiles to change range levels and rolloff for high contrast positive and negative - of course we can add anothers
+            //I change only values for LUT for high contrast values and not for low levels, but we can...
+            float inva5 = 0.8f;
+            float inva6 = 0.7f;
+            float inva7 = 0.5f;
+            float inva8 = 0.4f;
+            float inva9 = 0.3f;
+            float inva10 = 0.1f;
+
+            if(pyrwav == 1) {//low contrast
+                level_bl = 0;//0
+                level_hl = 1;//1
+                level_br = wavelet_lev - 3;//-3
+                level_hr = wavelet_lev - 2;//-2
+            } else if(pyrwav == 2) {
+                level_bl = 0;//0
+                level_hl = 0;//1
+                level_br = wavelet_lev - 3;//-2
+                level_hr = wavelet_lev - 1;//-1
+                if(!cmparams.wsmoothcie) {
+                    inva5 = 1.f;
+                    inva6 = 0.8f;
+                    inva7 = 0.65f;
+                    inva8 = 0.5f;
+                    inva9 = 0.3f;
+                    inva10 = 0.2f;
+                }
+            } else if( pyrwav == 3) {//default
+                level_bl = 0;
+                level_hl = 0;
+                level_br = wavelet_lev - 2;//-1
+                level_hr = wavelet_lev;//0
+                if(!cmparams.wsmoothcie) {
+                    inva5 = 1.f; //1
+                    inva6 = 0.9f;//0.9
+                    inva7 = 0.7f;//0.7
+                    inva8 = 0.6f;//0.6
+                    inva9 = 0.4f;//0.4
+                    inva10 = 0.2f;//0.2
+                }
+            } else if( pyrwav == 4) {
+                level_bl = 0;
+                level_hl = 0;
+                level_br = wavelet_lev -1;//0
+                level_hr = wavelet_lev +1;//0
+                if(!cmparams.wsmoothcie) {
+                    inva5 = 0.9f;
+                    inva6 = 0.8f;
+                    inva7 = 0.6f;
+                    inva8 = 0.5f;
+                    inva9 = 0.3f;
+                    inva10 = 0.1f;
+                }
+            } else if( pyrwav == 5) {
+                level_bl = 0;
+                level_hl = 0;
+                level_br = wavelet_lev - 1;//-1
+                level_hr = wavelet_lev + 2;//+1  //be careful the preview must be big enough to see the changes
+                if(!cmparams.wsmoothcie) {
+                    inva5 = 0.8f;//0.85
+                    inva6 = 0.6f;//0.75
+                    inva7 = 0.5f;//0.55
+                    inva8 = 0.3f;//0.45
+                    inva9 = 0.2f;//0.3
+                    inva10 = 0.05f;//0.1
+                    
+                }//last choice not used for various reasons
+            } else if( pyrwav == 6) {//agresive - maximum - in this case LUT are minimal to avoid artifacts -be careful the preview must be big enough to see the changes
+                level_bl = 0;
+                level_hl = 0;
+                level_br = wavelet_lev ;//-1
+                level_hr = wavelet_lev + 2;//here maximum
+            }
+
+            //find possible max levels in function of windows preview size.
+            int minwin = rtengine::min(width, height);
+            int maxlevelspot = 9;//maximum possible
+
+            // adapt maximum level wavelet to size of crop
+            while ((1 << maxlevelspot) >= minwin && maxlevelspot  > 1) {
+                --maxlevelspot ;
+            }
+
+            int wavelet_level = rtengine::min(level_hr, maxlevelspot);
+            int maxlvl = wavelet_level;
+            maxlevpo = maxlvl;
+            //decomposition wavelet , we can change Daublen (moment wavelet) in Tab - Wavelet Levels with subsampling = 1
+            std::unique_ptr<wavelet_decomposition> wdspot = std::unique_ptr<wavelet_decomposition>(new wavelet_decomposition(lab->L[0], width, height, maxlvl, 1, skip, numThreads, DaubLen));
+            if (wdspot->memory_allocation_failed()) {//probably if not enough memory.
+                return;
+            }
+
+            //residual contrast
+            const float contresid = cmparams.residtrc;
+
+            if (contresid != 0) {
+                int W_L = wdspot->level_W(0);
+                int H_L = wdspot->level_H(0);
+                float *wav_L0 = wdspot->get_coeff0();//residual image
+
+
+                float maxh = 1.25f; //amplification contrast above mean, we can change 1.25f
+                float maxl = 1.25f; //reduction contrast under mean
+                float multL = contresid * (maxl - 1.f) / 100.f + 1.f;
+                float multH = contresid * (maxh - 1.f) / 100.f + 1.f;
+                double avedbl = 0.0; // use double precision for large summations
+                float max0 = 0.f;
+                float min0 = FLT_MAX;
+
+#ifdef _OPENMP
+#       pragma omp parallel for reduction(+:avedbl) if (multiThread)
+#endif
+                for (int i = 0; i < W_L * H_L; i++) {
+                    avedbl += wav_L0[i];
+                }
+
+#ifdef _OPENMP
+#       pragma omp parallel if (multiThread)
+#endif
+        {
+                float lminL = FLT_MAX;
+                float lmaxL = 0.f;
+
+#ifdef _OPENMP
+#           pragma omp for
+#endif
+                for (int i = 0; i < W_L * H_L; i++) {
+                    lminL = min(lminL, wav_L0[i]);
+                    lmaxL = max(lmaxL, wav_L0[i]);
+                }
+
+#ifdef _OPENMP
+#           pragma omp critical
+#endif
+            {
+                    min0 = min(min0, lminL);
+                    max0 = max(max0, lmaxL);
+            }
+        }
+
+                max0 /= 327.68f;
+                min0 /= 327.68f;
+                float ave = avedbl / double(W_L * H_L);
+                //transitions
+                float av = ave / 327.68f;
+                float ah = (multH - 1.f) / (av - max0);
+                float bh = 1.f - max0 * ah;
+                float al = (multL - 1.f) / (av - min0);
+                float bl = 1.f - min0 * al;
+
+                if (max0 > 0.0) { 
+#ifdef _OPENMP
+#           pragma omp parallel for if (multiThread)
+#endif
+                    for (int i = 0; i < W_L * H_L; i++) {
+                        if (wav_L0[i] < 32768.f) {
+                            float prov;
+
+                            if (wav_L0[i] > ave) {
+                                float kh = ah * (wav_L0[i] / 327.68f) + bh;
+                                prov = wav_L0[i];
+                                wav_L0[i] = ave + kh * (wav_L0[i] - ave);
+                            } else {
+                                float kl = al * (wav_L0[i] / 327.68f) + bl;
+                                prov = wav_L0[i];
+                                wav_L0[i] = ave - kl * (ave - wav_L0[i]);
+                            }
+
+                            float diflc = wav_L0[i] - prov;
+                            wav_L0[i] =  prov + diflc;
+                        }
+                    }
+                }
+            }
+            //end residual contrast
+
+            //begin variable contrast
+            // declaration with 10 levels to calculate mean , mean negative, sigma, sigma negative, Max et Max negative for each level 
+            float mean[10];
+            float meanN[10];
+            float sigma[10];
+            float sigmaN[10];
+            float MaxP[10];
+            float MaxN[10];
+            Evaluate2(*wdspot, mean, meanN, sigma, sigmaN, MaxP, MaxN, numThreads);//calculate mean sigma Max for each levels
+            float alow = 1.f;
+            float blow = 0.f;
+
+            if (level_hl != level_bl) {//transitions low levels
+                alow = 1.f / (level_hl - level_bl);
+                blow = -alow * level_bl;
+            }
+
+            float ahigh = 1.f;
+            float bhigh = 0.f;
+
+            if (level_hr != level_br) {//transitions high levels
+                ahigh = 1.f / (level_hr - level_br);
+                bhigh =  -ahigh * level_br;
+            }
+            
+            for (int dir = 1; dir < 4; dir++) {//for each direction
+                for (int level = level_bl; level < maxlvl; ++level) {//for each levels
+                    int W_L = wdspot->level_W(level);
+                    int H_L = wdspot->level_H(level);
+                    float* const* wav_L = wdspot->level_coeffs(level);
+                    //sigmafin = attenuation response to change signal shape
+                    // I use only positives values to simplify calculations... possible improvment.
+                    if (MaxP[level] > 0.f && mean[level] != 0.f && sigma[level] != 0.f) {
+                        float insigma = 0.666f; //SD standard deviation (modelisation)
+                        float logmax = log(MaxP[level]); //log Max
+                        float rapX = (offset * mean[level] + sigmafin * sigma[level]) / MaxP[level]; //rapport between SD / max
+                        //offset move mean location in signal
+                        float inx = log(insigma);
+                        float iny = log(rapX);
+                        float rap = inx / iny; //koef
+                        //transitions
+                        float asig = 0.166f / (sigma[level] * sigmafin);
+                        float bsig = 0.5f - asig * (mean[level] * offset);
+                        float amean = 0.5f / (mean[level] * offset);
+                        const float effect = sigmafin;
+                        float mea[10];//simulation using mean and sigma, to evaluate signal 
+                        calceffect(level, mean, sigma, mea, effect, offset);
+                        float klev = 1.f;
+                        if (level >= level_hl && level <= level_hr) {
+                           klev = 1.f;
+                        }
+                        //change klev with real change in levels - see contrast profiles
+                        //transition in beginning low levels
+                        if (level_hl != level_bl) {
+                            if (level >= level_bl && level < level_hl) {
+                                klev = alow * level + blow;
+                            }
+                        }
+                        //transition in max levels
+                        if (level_hr != level_br) {
+                            if (level > level_hr && level <= level_br) {
+                               klev = ahigh * level + bhigh;
+                            }
+                        }
+                        const float threshold = offset * mean[level] + sigmafin * sigma[level];//base signal calculation.
+                        float lutFactor;//inva5, inva6, inva7, inva8, inva9, inva10 are define in Contrast profiles.
+                        float inVals[] = {0.05f, 0.2f, 0.7f, 1.f, 1.f, inva5, inva6, inva7, inva8, inva9, inva10};//values to give for calculate LUT along signal : minimal near 0 or MaxP
+                        const auto meaLut = buildMeaLut(inVals, mea, lutFactor);//build LUT
+                        
+
+#ifdef _OPENMP
+                        #pragma omp parallel for if (multiThread)
+#endif
+
+                        for (int y = 0; y < H_L; y++) {
+                            for (int x = 0; x < W_L; x++) {//for each pixel
+                                if(cmOpacityCurveWL) {//if curve enable
+                                    float absciss;//position in curve and signal
+                                    float &val = wav_L[dir][y * W_L + x];
+                                    const float WavCL = std::fabs(wav_L[dir][y * W_L + x]);
+
+                                    if (WavCL >= threshold) { //for max take into account attenuation response and offset
+                                        float valcour = xlogf(fabsf(val));
+                                        float valc = valcour - logmax;
+                                        float vald = valc * rap;
+                                        absciss = xexpf(vald);
+                                    } else if (WavCL >= offset * mean[level]) {//offset only
+                                        absciss = asig * WavCL + bsig;
+                                    } else {
+                                        absciss = amean * WavCL;
+                                    }
+/*
+*/
+                                    float kc = klev * (cmOpacityCurveWL[absciss * 500.f] - 0.5f);
+                                    float amplieffect = kc <= 0.f ? 1.f : 1.7f;//we can change 1.5 - to 1.7 or more or less
+
+                                    float kinterm = 1.f + amplieffect * kc;
+                                    kinterm = kinterm <= 0.f ? 0.01f : kinterm;
+                                    val *= (1.f + (kinterm - 1.f) * (*meaLut)[WavCL * lutFactor]);//change signal (contrast) for each level, direction, with LUT.
+
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            //reconstruct lab
+            wdspot->reconstruct(lab->L[0], 1.f);
+
+
+    }
+
+}
+
 
 void ImProcFunctions::finalContAllL(float* const* WavCoeffs_L, float * WavCoeffs_L0, int level, int dir, const cont_params &cp,
                                     int W_L, int H_L, float *mean, float *sigma, float *MaxP, const WavOpacityCurveWL & waOpacityCurveWL)

@@ -37,6 +37,7 @@
 #include "rtengine/metadata.h"
 #include "rtengine/profilestore.h"
 #include "rtengine/settings.h"
+#include "rtengine/utils.h"
 #include "guiutils.h"
 #include "batchqueue.h"
 #include "extprog.h"
@@ -144,6 +145,133 @@ const std::map<int, std::string> defaultColors = {
 };
 
 auto defaultColorMapper = ColorMapper(defaultColors);
+
+/**
+ * Gets the rank from the image metadata, if it exists.
+ *
+ * @param cfs The cached image data.
+ * @param fname The image's file name.
+ * @param rank Where the rank will be stored. If there is no rank in the
+ * metadata, the value will not be changed.
+ * @returns If the rank is in the metadata.
+ */
+bool getRankFromMetadata(
+    const CacheImageData &cfs, const Glib::ustring &fname, int &rank)
+{
+    if (cfs.exifValid) {
+        rank = rtengine::LIM(cfs.getRating(), 0, 5);
+        return true;
+    }
+    const std::unique_ptr<const rtengine::FramesMetaData> md(rtengine::FramesMetaData::fromFile(fname));
+    if (md && md->hasExif()) {
+        rank = rtengine::LIM(md->getRating(), 0, 5);
+        return true;
+    }
+    return false;
+}
+
+/**
+ * Gets the rank from the XMP.
+ *
+ * @param xmp The XMP data.
+ * @param rank Where the rank will be stored. If there is no rank in the XMP,
+ * the value will not be changed.
+ * @returns If the rank is in the XMP.
+ */
+bool getRankFromXmp(const Exiv2::XmpData &xmp, int &rank)
+{
+    auto pos = xmp.findKey(Exiv2::XmpKey("Xmp.xmp.Rating"));
+    if (pos != xmp.end()) {
+        int r = rtengine::to_long(pos);
+        rank = rtengine::LIM(r, 0, 5);
+        return true;
+    }
+    return false;
+}
+
+/**
+ * Gets the rank from the XMP or image metadata.
+ *
+ * The priority is to load from the XMP. The XMP will only be used if the
+ * option's thumbnail rank/color mode is set to XMP. If no rank is retrieved
+ * from the XMP, an attempt to get the rank from the metadata will be made.
+ *
+ * @param options Options.
+ * @param xmp The XMP data.
+ * @param cfs The cached image data.
+ * @param fname The image's file name.
+ * @param rank Where the rank will be stored. If there is no rank retrieved from
+ * the XMP and there is no rank in the metadata, the value will not be changed.
+ * @returns If a rank was retrieved.
+ */
+bool getRankFromXmpOrMetadata(
+    const Options &options,
+    const Exiv2::XmpData &xmp,
+    const CacheImageData &cfs,
+    const Glib::ustring &fname,
+    int &rank)
+{
+    bool got_rank_from_xmp = false;
+    if (options.thumbnailRankColorMode == Options::ThumbnailPropertyMode::XMP) {
+        try {
+            got_rank_from_xmp = getRankFromXmp(xmp, rank);
+        } catch (std::exception &exc) {
+            std::cerr << "ERROR loading rank from "
+                      << rtengine::Exiv2Metadata::xmpSidecarPath(fname)
+                      << ": " << exc.what() << std::endl;
+        }
+    }
+    return got_rank_from_xmp || getRankFromMetadata(cfs, fname, rank);
+}
+
+/**
+ * Gets the color label from the XMP.
+ *
+ * @param xmp The XMP data.
+ * @param color Where the color will be stored. If there is no color in the XMP,
+ * the value will not be changed.
+ * @returns If the color is in the XMP.
+ */
+bool getColorFromXmp(const Exiv2::XmpData &xmp, int &color)
+{
+    auto pos = xmp.findKey(Exiv2::XmpKey("Xmp.xmp.Label"));
+    if (pos != xmp.end()) {
+        color = defaultColorMapper.index(pos->toString());
+        return true;
+    }
+    return false;
+}
+
+/**
+ * Gets the color label from the XMP.
+ *
+ * The XMP will only be used if the option's thumbnail rank/color mode is set to
+ * XMP.
+ *
+ * @param options Options.
+ * @param xmp The XMP data.
+ * @param fname The image's file name.
+ * @param color Where the color will be stored. If there is no color in the XMP,
+ * the value will not be changed.
+ * @returns If the color is in the XMP.
+ */
+bool getColorFromXmpOrNone(
+    const Options &options,
+    const Exiv2::XmpData &xmp,
+    const Glib::ustring &fname,
+    int &color)
+{
+    if (options.thumbnailRankColorMode == Options::ThumbnailPropertyMode::XMP) {
+        try {
+            return getColorFromXmp(xmp, color);
+        } catch (std::exception &exc) {
+            std::cerr << "ERROR loading color label from "
+                      << rtengine::Exiv2Metadata::xmpSidecarPath(fname)
+                      << ": " << exc.what() << std::endl;
+        }
+    }
+    return false;
+}
 
 } // namespace
 
@@ -1252,14 +1380,7 @@ void Thumbnail::loadProperties()
     properties = Properties();
 
     // get initial rank from cache or image metadata
-    if (cfs.exifValid) {
-        properties.rank.value = rtengine::LIM(cfs.getRating(), 0, 5);
-    } else {
-        const std::unique_ptr<const rtengine::FramesMetaData> md(rtengine::FramesMetaData::fromFile(fname));
-        if (md && md->hasExif()) {
-            properties.rank.value = rtengine::LIM(md->getRating(), 0, 5);
-        }
-    }
+    getRankFromMetadata(cfs, fname, properties.rank.value);
 
     // update rank and color from procparams or xmp sidecar
     // load trash from procparams
@@ -1277,16 +1398,8 @@ void Thumbnail::loadProperties()
     if (options.thumbnailRankColorMode == Options::ThumbnailPropertyMode::XMP) {
         try {
             auto xmp = rtengine::Exiv2Metadata::getXmpSidecar(fname);
-            auto pos = xmp.findKey(Exiv2::XmpKey("Xmp.xmp.Rating"));
-            if (pos != xmp.end()) {
-                int r = rtengine::to_long(pos);
-                properties.rank.value = rtengine::LIM(r, 0, 5);
-            }
-
-            pos = xmp.findKey(Exiv2::XmpKey("Xmp.xmp.Label"));
-            if (pos != xmp.end()) {
-                properties.color.value = defaultColorMapper.index(pos->toString());
-            }
+            getRankFromXmp(xmp, properties.rank.value);
+            getColorFromXmp(xmp, properties.color.value);
         } catch (std::exception &exc) {
             std::cerr << "ERROR loading thumbnail properties data from "
                       << rtengine::Exiv2Metadata::xmpSidecarPath(fname)
@@ -1306,16 +1419,43 @@ void Thumbnail::updateProcParamsProperties(bool forceUpdate)
         pparamsValid = true;
     }
 
+    const rtengine::MemoizingSupplier<Exiv2::XmpData> getXmpSidecar([this]() {
+        return rtengine::Exiv2Metadata::getXmpSidecar(fname);
+    });
+
     // save procparams rank and color also when options.thumbnailRankColorMode == Options::ThumbnailPropertyMode::XMP
     // so they'll be kept in sync
-    if ((properties.rank.edited || forceUpdate) && properties.rank != pparams->rank) {
+    // Rank can be -1 to prioritize the rank in the metadata. If the metadata
+    // rank doesn't exist, it is interpreted as 0.
+    if ((properties.rank.edited || forceUpdate) &&
+        rtengine::LIM(properties.rank.value, 0, 5) != rtengine::LIM(pparams->rank, 0, 5)) {
         pparams->rank = properties.rank;
-        pparamsValid = true;
+        if (!forceUpdate) {
+            pparamsValid |= properties.rank.edited;
+        }
+        else if (!pparamsValid && forceUpdate) {
+            // When force-updating, the processing parameters' rank needs not be
+            // used if the embedded rank is the same.
+            int initial_rank = 0;
+            bool has_initial_rank = getRankFromXmpOrMetadata(
+                options, getXmpSidecar(), cfs, fname, initial_rank);
+            pparamsValid |= !(has_initial_rank && properties.rank == initial_rank);
+        }
     }
 
     if ((properties.color.edited || forceUpdate) && properties.color != pparams->colorlabel) {
         pparams->colorlabel = properties.color;
-        pparamsValid = true;
+        if (!forceUpdate) {
+            pparamsValid |= properties.color.edited;
+        }
+        else if (!pparamsValid && forceUpdate) {
+            // When force-updating, the processing parameters' color label needs
+            // not be used if the embedded color label is the same.
+            int initial_color = 0;
+            bool has_initial_color = getColorFromXmpOrNone(
+                options, getXmpSidecar(), fname, initial_color);
+            pparamsValid |= !(has_initial_color && properties.color == initial_color);
+        }
     }
 }
 
