@@ -153,7 +153,7 @@ std::string trimDashWhitespace(const std::string &input)
         trimmed += input.substr(whitespace_index);
     }
     // If seeking a whitespace-dash unit, all the characters have been added.
-    // If seeding the end of a whitespace-dash unit, the dash has been added.
+    // If seeking the end of a whitespace-dash unit, the dash has been added.
 
     return trimmed;
 }
