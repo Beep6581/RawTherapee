@@ -399,22 +399,6 @@ Dimensions Framing::computeRelativeImageBBoxInFrame(const Dimensions& imgSize,
     }
 
     double imgAspectRatio = imgSize.aspectRatio();
-    // Compute the width:height ratio of the border size for the requested
-    // image size and framed size.
-    //
-    // We do this by creating a dummy image. Then, scale the framed size to be
-    // larger than the dummy image such that there is a non-zero difference for
-    // widths and heights.
-    double borderAspectRatio = [&]()
-    {
-        Dimensions fakeImage = fromAspectRatio(framedSize, imgAspectRatio);
-        Dimensions bigFrame = clampToBBox(framedSize, fakeImage, OUTSIDE_BBOX);
-        bigFrame.width *= 2.0;
-        bigFrame.height *= 2.0;
-
-        Dimensions diff(bigFrame.width - fakeImage.width, bigFrame.height - fakeImage.height);
-        return diff.aspectRatio();
-    }();
 
     Side side = pickReferenceSide(framing, imgSize);
     double scale = framing.relativeBorderSize;
@@ -425,13 +409,10 @@ Dimensions Framing::computeRelativeImageBBoxInFrame(const Dimensions& imgSize,
 
     auto computedSizes = computeImgAndBorderSize(frameBasis, scale);
     double imgBasis = computedSizes.first;
-    double borderBasis = computedSizes.second;
 
     // Compute image and border lengths for the non-basis side
     double imgBasisToOther = side == Side::WIDTH ? 1.0 / imgAspectRatio : imgAspectRatio;
-    double borderBasisToOther = side == Side::WIDTH ? 1.0 / borderAspectRatio : borderAspectRatio;
     double imgOther = imgBasis * imgBasisToOther;
-    double borderOther = borderBasis * borderBasisToOther;
 
     // Find the maximum allowed image size considering min size limits
     double maxImageBasis = frameBasis;
