@@ -201,6 +201,7 @@ const std::vector<ToolTree> TRANSFORM_PANEL_TOOLS = {
             },
             {
                 .id = Tool::FRAMING,
+                .children = {},
             },
         },
     },

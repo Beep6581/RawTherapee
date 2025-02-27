@@ -491,13 +491,20 @@ void DirBrowser::open (const Glib::ustring& dirname, const Glib::ustring& fileNa
 
 void DirBrowser::file_changed (const Glib::RefPtr<Gio::File>& file, const Glib::RefPtr<Gio::File>& other_file, Gio::FileMonitorEvent event_type, const Gtk::TreeModel::iterator& iter, const Glib::ustring& dirName)
 {
-
+    // file is the file that is/was in the monitored directory. other_file is
+    // null if only one file is involved (create/delete events), the file that
+    // is/was in another directory, or the new name for a renamed file. We want
+    // to inspect the file type of the changed file, so we decide which file to
+    // use based on the event type.
     const Glib::RefPtr<Gio::File> current_file =
         (event_type == Gio::FILE_MONITOR_EVENT_MOVED ||
             event_type == Gio::FILE_MONITOR_EVENT_RENAMED ||
             event_type == Gio::FILE_MONITOR_EVENT_MOVED_OUT)
             ? other_file
             : file;
+
+    // No need to update the directory if the even type is not rename, move,
+    // create, or delete, or if the file is not a directory.
     if (!current_file ||
         event_type == Gio::FILE_MONITOR_EVENT_CHANGED ||
         event_type == Gio::FILE_MONITOR_EVENT_CHANGES_DONE_HINT ||

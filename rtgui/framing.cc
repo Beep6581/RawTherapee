@@ -27,8 +27,8 @@
 #include "paramsedited.h"
 #include "resize.h"
 
-#include "../rtengine/color.h"
-#include "../rtengine/procparams.h"
+#include "rtengine/color.h"
+#include "rtengine/procparams.h"
 
 #include <array>
 #include <iomanip>
