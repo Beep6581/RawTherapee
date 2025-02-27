@@ -14301,12 +14301,8 @@ void ImProcFunctions::Lab_Local(
     if(params->dirpyrequalizer.cbdlMethod == "bef") {//If user choose "after black and white" this function which removes negative values is not used, hence CBDL is best performed, after Selective Editing in Lab mode
         cbdl = true;
     }
-    bool dirpyrdeha = (params->dirpyrequalizer.enabled && cbdl)  ||  params->dehaze.enabled  || lp.avoidneg;//lp.avoidneg in setting 
+    nocrash = (params->dirpyrequalizer.enabled && cbdl)  ||  params->dehaze.enabled  || lp.avoidneg;//lp.avoidneg in setting 
     
-    if(dirpyrdeha) {
-        nocrash = true;
-    }
-
     
     if(nocrash) {//allows memory and conversion labrgb only in these cases and prevent negative RGB values
         const std::unique_ptr<Imagefloat> prov0(new Imagefloat(bw0, bh0));
