@@ -80,11 +80,7 @@ void MetaDataPanel::read(const rtengine::procparams::ProcParams* pp, const Param
 
     if (!batchMode) { // Not used in batch mode.
         exifpanel->read(pp, pedited);
-<<<<<<< Updated upstream
-	}
-=======
     }
->>>>>>> Stashed changes
     iptcpanel->read(pp, pedited);
     
     enableListener();
@@ -99,11 +95,7 @@ void MetaDataPanel::write(rtengine::procparams::ProcParams* pp, ParamsEdited* pe
         pedited->metadata.mode = metadataMode->get_active_row_number() != 3;
     }
 
-<<<<<<< Updated upstream
     if (!batchMode) { // Invalid in batch mode.
-=======
-    if (!batchMode) { // Not used in batch mode.
->>>>>>> Stashed changes
 		exifpanel->write(pp, pedited);
 	}
     iptcpanel->write(pp, pedited);
