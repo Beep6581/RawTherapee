@@ -64,7 +64,7 @@ void MetaDataPanel::setBatchMode(bool batchMode)
 {
     ToolPanel::setBatchMode(batchMode);
     metadataMode->append(M("GENERAL_UNCHANGED"));
-    tagsNotebook->remove_page(0);	// remove EXIF page
+    tagsNotebook->remove_page(0);   // remove EXIF page
 }
 
 
@@ -80,8 +80,12 @@ void MetaDataPanel::read(const rtengine::procparams::ProcParams* pp, const Param
 
     if (!batchMode) { // Not used in batch mode.
         exifpanel->read(pp, pedited);
-        iptcpanel->read(pp, pedited);
+<<<<<<< Updated upstream
+	}
+=======
     }
+>>>>>>> Stashed changes
+    iptcpanel->read(pp, pedited);
     
     enableListener();
 }
@@ -95,10 +99,14 @@ void MetaDataPanel::write(rtengine::procparams::ProcParams* pp, ParamsEdited* pe
         pedited->metadata.mode = metadataMode->get_active_row_number() != 3;
     }
 
+<<<<<<< Updated upstream
     if (!batchMode) { // Invalid in batch mode.
-        exifpanel->write(pp, pedited);
-        iptcpanel->write(pp, pedited);
-    }
+=======
+    if (!batchMode) { // Not used in batch mode.
+>>>>>>> Stashed changes
+		exifpanel->write(pp, pedited);
+	}
+    iptcpanel->write(pp, pedited);
 }
 
 

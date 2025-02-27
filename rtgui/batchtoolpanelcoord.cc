@@ -75,7 +75,7 @@ void BatchToolPanelCoordinator::closeSession (bool save)
         // read new values from the gui
         for (size_t i = 0; i < toolPanels.size(); i++) {
             toolPanels[i]->write (&pparams, &pparamsEdited);
-		}
+        }
 
         // combine with initial parameters and set
         ProcParams newParams;
@@ -588,250 +588,115 @@ void BatchToolPanelCoordinator::panelChanged(const rtengine::ProcEvent& event, c
         }
     }
 
-    ProcParams newParams, originalParams;
-    Glib::ustring captionChanged, captionWriterChanged, headlineChanged, instructionsChanged,
-				  keywordAdded, keywordDeleted,
-				  categoryChanged, suppCategoryAdded, suppCategoryDeleted,
-				  creatorChanged, creatorJobTitleChanged, creditChanged, sourceChanged, copyrightChanged,
-				  cityChanged, provinceChanged, countryChanged,
-				  titleChanged, dateCreatedChanged, transReferenceChanged;
-	// flags are needed because just checking for an empty string would prevent replacing a tag with an empty string, i.e. clearing it
-	bool captionChangedFlag = false, captionWriterChangedFlag = false, headlineChangedFlag = false, instructionsChangedFlag = false,
-		 keywordAddedFlag = false, keywordDeletedFlag = false,
-		 categoryChangedFlag = false, suppCategoryAddedFlag = false, suppCategoryDeletedFlag = false,
-		 creatorChangedFlag = false, creatorJobTitleChangedFlag = false,
-		 creditChangedFlag = false, sourceChangedFlag = false, copyrightChangedFlag = false,
-		 cityChangedFlag = false, provinceChangedFlag = false, countryChangedFlag = false,
-		 titleChangedFlag = false, dateCreatedChangedFlag = false, transReferenceChangedFlag = false,
-		 tagFound;
-	 
-	if (event == rtengine::EvIPTC) {
-		// The following is necessary because it is not assured that initialPP[i].metadata.iptc is always initialized.
-		// There may be a better way to do this (existing functionality?) but I haven't found out how.
-		// Also, it might be considered to do this initialization in a more "general" place, e.g. procparams::PartialProfile constructor?
-		for (size_t i = 0; i < selected.size(); i++) {
-			if (initialPP[i].metadata.iptc.empty()) {
-				initialPP[i].metadata.iptc.insert(CAPTION, "");
-				initialPP[i].metadata.iptc.insert(CAPTION_WRITER, "");
-				initialPP[i].metadata.iptc.insert(CATEGORY, "");
-				initialPP[i].metadata.iptc.insert(CITY, "");
-				initialPP[i].metadata.iptc.insert(COPYRIGHT, "");
-				initialPP[i].metadata.iptc.insert(COUNTRY, "");
-				initialPP[i].metadata.iptc.insert(CREATOR, "");
-				initialPP[i].metadata.iptc.insert(CREATOR_JOB_TITLE, "");
-				initialPP[i].metadata.iptc.insert(CREDIT, "");
-				initialPP[i].metadata.iptc.insert(DATE_CREATED, "");
-				initialPP[i].metadata.iptc.insert(HEADLINE, "");
-				initialPP[i].metadata.iptc.insert(INSTRUCTIONS, "");
-				initialPP[i].metadata.iptc.insert(KEYWORDS, "");
-				initialPP[i].metadata.iptc[KEYWORDS].clear();
-				initialPP[i].metadata.iptc.insert(PROVINCE, "");
-				initialPP[i].metadata.iptc.insert(SOURCE, "");
-				initialPP[i].metadata.iptc.insert(SUPPLEMENTAL_CATEGORIES, "");
-				initialPP[i].metadata.iptc[SUPPLEMENTAL_CATEGORIES].clear();
-				initialPP[i].metadata.iptc.insert(TITLE, "");
-				initialPP[i].metadata.iptc.insert(TRANS_REFERENCE, "");
-			}
-		}
-		
-		// determine changes to IPTC tags of first selected picture
-		originalParams = initialPP[0];
+    ProcParams selectedParams, originalParams;
+     
+    if (event == rtengine::EvIPTC) {
+        // The following is necessary because it is not assured that initialPP[i].metadata.iptc is always initialized.
+        // There may be a better way to do this (existing functionality?) but I haven't found out how.
+        // Also, it might be considered to do this initialization in a more "general" place, e.g. procparams::PartialProfile constructor?
 
-		if (pparams.metadata.iptc[CAPTION].at(0).compare(originalParams.metadata.iptc[CAPTION].at(0)) != 0) {
-			captionChanged = pparams.metadata.iptc[CAPTION].at(0);
-			captionChangedFlag = true; }
-		else if (pparams.metadata.iptc[CAPTION_WRITER].at(0).compare(originalParams.metadata.iptc[CAPTION_WRITER].at(0)) != 0) {
-			captionWriterChanged = pparams.metadata.iptc[CAPTION_WRITER].at(0);
-			captionWriterChangedFlag = true; }
-		else if (pparams.metadata.iptc[HEADLINE].at(0).compare(originalParams.metadata.iptc[HEADLINE].at(0)) != 0) {
-			headlineChanged = pparams.metadata.iptc[HEADLINE].at(0);
-			headlineChangedFlag = true; }
-		else if (pparams.metadata.iptc[INSTRUCTIONS].at(0).compare(originalParams.metadata.iptc[INSTRUCTIONS].at(0)) != 0) {
-			instructionsChanged = pparams.metadata.iptc[INSTRUCTIONS].at(0);
-			instructionsChangedFlag = true; }
-		else if (originalParams.metadata.iptc[KEYWORDS].size() < pparams.metadata.iptc[KEYWORDS].size()) {
-			// get added keyword
-			// apparently, I can't rely on a specific order of keywords, so have to check them all
-			for (unsigned int j = 0; j < pparams.metadata.iptc[KEYWORDS].size(); j++) {
-				tagFound = false;
-				for (unsigned int k = 0; k < originalParams.metadata.iptc[KEYWORDS].size(); k++) {
-					if (pparams.metadata.iptc[KEYWORDS].at(j).compare(originalParams.metadata.iptc[KEYWORDS].at(k)) == 0) {
-						tagFound = true;
-						break;
-					}
-				}
-				if (!tagFound) {
-					keywordAdded = pparams.metadata.iptc[KEYWORDS].at(j);
-					keywordAddedFlag = true;
-					break;
-				}
-			}
-		}
-		else if (originalParams.metadata.iptc[KEYWORDS].size() > pparams.metadata.iptc[KEYWORDS].size()) {
-			// get deleted keyword
-			// apparently, I can't rely on a specific order of keywords, so have to check them all
-			for (unsigned int k = 0; k < originalParams.metadata.iptc[KEYWORDS].size(); k++) {
-				tagFound = false;
-				for (unsigned int j = 0; j < pparams.metadata.iptc[KEYWORDS].size(); j++) {
-					if (pparams.metadata.iptc[KEYWORDS].at(j).compare(originalParams.metadata.iptc[KEYWORDS].at(k)) == 0) {
-						tagFound = true;
-						break;
-					}
-				}
-				if (!tagFound) {
-					keywordDeleted = originalParams.metadata.iptc[KEYWORDS].at(k);
-					keywordDeletedFlag = true;
-					break;
-				}
-			}
-		}
-		else if (pparams.metadata.iptc[CATEGORY].at(0).compare(originalParams.metadata.iptc[CATEGORY].at(0)) != 0) {
-			categoryChanged = pparams.metadata.iptc[CATEGORY].at(0);
-			categoryChangedFlag = true; }
-		else if (originalParams.metadata.iptc[SUPPLEMENTAL_CATEGORIES].size() < pparams.metadata.iptc[SUPPLEMENTAL_CATEGORIES].size()) {
-			// get added supplemental category
-			// apparently, I can't rely on a specific order, so have to check them all
-			for (unsigned int j = 0; j < pparams.metadata.iptc[SUPPLEMENTAL_CATEGORIES].size(); j++) {
-				tagFound = false;
-				for (unsigned int k = 0; k < originalParams.metadata.iptc[SUPPLEMENTAL_CATEGORIES].size(); k++) {
-					if (pparams.metadata.iptc[SUPPLEMENTAL_CATEGORIES].at(j).compare(originalParams.metadata.iptc[SUPPLEMENTAL_CATEGORIES].at(k)) == 0) {
-						tagFound = true;
-						break;
-					}
-				}
-				if (!tagFound) {
-					suppCategoryAdded = pparams.metadata.iptc[SUPPLEMENTAL_CATEGORIES].at(j);
-					suppCategoryAddedFlag = true;
-					break;
-				}
-			}
-		}
-		else if (originalParams.metadata.iptc[SUPPLEMENTAL_CATEGORIES].size() > pparams.metadata.iptc[SUPPLEMENTAL_CATEGORIES].size()) {
-			// get deleted supplemental category
-			// apparently, I can't rely on a specific order, so have to check them all
-			for (unsigned int k = 0; k < originalParams.metadata.iptc[SUPPLEMENTAL_CATEGORIES].size(); k++) {
-				tagFound = false;
-				for (unsigned int j = 0; j < pparams.metadata.iptc[SUPPLEMENTAL_CATEGORIES].size(); j++) {
-					if (pparams.metadata.iptc[SUPPLEMENTAL_CATEGORIES].at(j).compare(originalParams.metadata.iptc[SUPPLEMENTAL_CATEGORIES].at(k)) == 0) {
-						tagFound = true;
-						break;
-					}
-				}
-				if (!tagFound) {
-					suppCategoryDeleted = originalParams.metadata.iptc[SUPPLEMENTAL_CATEGORIES].at(k);
-					suppCategoryDeletedFlag = true;
-					break;
-				}
-			}
-		}
-		else if (pparams.metadata.iptc[CREATOR].at(0).compare(originalParams.metadata.iptc[CREATOR].at(0)) != 0) {
-			creatorChanged = pparams.metadata.iptc[CREATOR].at(0);
-			creatorChangedFlag = true; }
-		else if (pparams.metadata.iptc[CREATOR_JOB_TITLE].at(0).compare(originalParams.metadata.iptc[CREATOR_JOB_TITLE].at(0)) != 0) {
-			creatorJobTitleChanged = pparams.metadata.iptc[CREATOR_JOB_TITLE].at(0);
-			creatorJobTitleChangedFlag = true; }
-		else if (pparams.metadata.iptc[CREDIT].at(0).compare(originalParams.metadata.iptc[CREDIT].at(0)) != 0) {
-			creditChanged = pparams.metadata.iptc[CREDIT].at(0);
-			creditChangedFlag = true; }
-		else if (pparams.metadata.iptc[SOURCE].at(0).compare(originalParams.metadata.iptc[SOURCE].at(0)) != 0) {
-			sourceChanged = pparams.metadata.iptc[SOURCE].at(0);
-			sourceChangedFlag = true; }
-		else if (pparams.metadata.iptc[COPYRIGHT].at(0).compare(originalParams.metadata.iptc[COPYRIGHT].at(0)) != 0) {
-			copyrightChanged = pparams.metadata.iptc[COPYRIGHT].at(0);
-			copyrightChangedFlag = true; }
-		else if (pparams.metadata.iptc[CITY].at(0).compare(originalParams.metadata.iptc[CITY].at(0)) != 0) {
-			cityChanged = pparams.metadata.iptc[CITY].at(0);
-			cityChangedFlag = true; }
-		else if (pparams.metadata.iptc[PROVINCE].at(0).compare(originalParams.metadata.iptc[PROVINCE].at(0)) != 0) {
-			provinceChanged = pparams.metadata.iptc[PROVINCE].at(0);
-			provinceChangedFlag = true; }
-		else if (pparams.metadata.iptc[COUNTRY].at(0).compare(originalParams.metadata.iptc[COUNTRY].at(0)) != 0) {
-			countryChanged = pparams.metadata.iptc[COUNTRY].at(0);
-			countryChangedFlag = true; }
-		else if (pparams.metadata.iptc[TITLE].at(0).compare(originalParams.metadata.iptc[TITLE].at(0)) != 0) {
-			titleChanged = pparams.metadata.iptc[TITLE].at(0);
-			titleChangedFlag = true; }
-		else if (pparams.metadata.iptc[DATE_CREATED].at(0).compare(originalParams.metadata.iptc[DATE_CREATED].at(0)) != 0) {
-			dateCreatedChanged = pparams.metadata.iptc[DATE_CREATED].at(0);
-			dateCreatedChangedFlag = true; }
-		else if (pparams.metadata.iptc[TRANS_REFERENCE].at(0).compare(originalParams.metadata.iptc[TRANS_REFERENCE].at(0)) != 0) {
-			transReferenceChanged = pparams.metadata.iptc[TRANS_REFERENCE].at(0);
-			transReferenceChangedFlag = true; }
-	}
+        for (size_t i = 0; i < selected.size(); i++) {
+            if (initialPP[i].metadata.iptc.empty()) {
+                initialPP[i].metadata.iptc.insert(CAPTION, "");
+                initialPP[i].metadata.iptc.insert(CAPTION_WRITER, "");
+                initialPP[i].metadata.iptc.insert(CATEGORY, "");
+                initialPP[i].metadata.iptc.insert(CITY, "");
+                initialPP[i].metadata.iptc.insert(COPYRIGHT, "");
+                initialPP[i].metadata.iptc.insert(COUNTRY, "");
+                initialPP[i].metadata.iptc.insert(CREATOR, "");
+                initialPP[i].metadata.iptc.insert(CREATOR_JOB_TITLE, "");
+                initialPP[i].metadata.iptc.insert(CREDIT, "");
+                initialPP[i].metadata.iptc.insert(DATE_CREATED, "");
+                initialPP[i].metadata.iptc.insert(HEADLINE, "");
+                initialPP[i].metadata.iptc.insert(INSTRUCTIONS, "");
+                initialPP[i].metadata.iptc.insert(KEYWORDS, "");
+                initialPP[i].metadata.iptc[KEYWORDS].clear();
+                initialPP[i].metadata.iptc.insert(PROVINCE, "");
+                initialPP[i].metadata.iptc.insert(SOURCE, "");
+                initialPP[i].metadata.iptc.insert(SUPPLEMENTAL_CATEGORIES, "");
+                initialPP[i].metadata.iptc[SUPPLEMENTAL_CATEGORIES].clear();
+                initialPP[i].metadata.iptc.insert(TITLE, "");
+                initialPP[i].metadata.iptc.insert(TRANS_REFERENCE, "");
+            }
+        }
+    }
+
+    if (event == rtengine::EvIPTC) {
+        for (size_t i = 0; i < selected.size(); i++) {
+            selectedParams=initialPP[i];
+            if (pparamsEdited.iptcFlags.captionChanged)
+                initialPP[i].metadata.iptc[CAPTION].at(0) = pparams.metadata.iptc[CAPTION].at(0);
+            if (pparamsEdited.iptcFlags.captionWriterChanged)
+                initialPP[i].metadata.iptc[CAPTION_WRITER].at(0) = pparams.metadata.iptc[CAPTION_WRITER].at(0);
+            if (pparamsEdited.iptcFlags.headlineChanged)
+                initialPP[i].metadata.iptc[HEADLINE].at(0) = pparams.metadata.iptc[HEADLINE].at(0);
+            if (pparamsEdited.iptcFlags.instructionsChanged)
+                initialPP[i].metadata.iptc[INSTRUCTIONS].at(0) = pparams.metadata.iptc[INSTRUCTIONS].at(0);
+            if (pparamsEdited.iptcFlags.keywordAdded) {
+                unsigned int j;
+                for (j = 0; j < selectedParams.metadata.iptc[KEYWORDS].size(); j++) {
+                    if (selectedParams.metadata.iptc[KEYWORDS].at(j).compare(pparams.metadata.keywordAdded) == 0)
+                        break;
+                }
+                if (j == selectedParams.metadata.iptc[KEYWORDS].size())
+                    initialPP[i].metadata.iptc[KEYWORDS].push_back(pparams.metadata.keywordAdded);
+            }
+            if (pparamsEdited.iptcFlags.keywordDeleted) {
+                initialPP[i].metadata.iptc[KEYWORDS].clear();
+                for (unsigned int j = 0; j < selectedParams.metadata.iptc[KEYWORDS].size(); j++) {
+                    if (selectedParams.metadata.iptc[KEYWORDS].at(j).compare(pparams.metadata.keywordDeleted) != 0)
+                        initialPP[i].metadata.iptc[KEYWORDS].push_back(selectedParams.metadata.iptc[KEYWORDS].at(j));
+                }
+            }
+            if (pparamsEdited.iptcFlags.categoryChanged)
+                initialPP[i].metadata.iptc[CATEGORY].at(0) = pparams.metadata.iptc[CATEGORY].at(0);
+            if (pparamsEdited.iptcFlags.suppCategoryAdded) {
+                unsigned int j;
+                for (j = 0; j < selectedParams.metadata.iptc[SUPPLEMENTAL_CATEGORIES].size(); j++) {
+                    if (selectedParams.metadata.iptc[SUPPLEMENTAL_CATEGORIES].at(j).compare(pparams.metadata.suppCategoryAdded) == 0)
+                        break;
+                }
+                if (j == selectedParams.metadata.iptc[SUPPLEMENTAL_CATEGORIES].size())
+                    initialPP[i].metadata.iptc[SUPPLEMENTAL_CATEGORIES].push_back(pparams.metadata.suppCategoryAdded);
+            }
+            if (pparamsEdited.iptcFlags.suppCategoryDeleted) {
+                initialPP[i].metadata.iptc[SUPPLEMENTAL_CATEGORIES].clear();
+                for (unsigned int j = 0; j < selectedParams.metadata.iptc[SUPPLEMENTAL_CATEGORIES].size(); j++) {
+                    if (selectedParams.metadata.iptc[SUPPLEMENTAL_CATEGORIES].at(j).compare(pparams.metadata.suppCategoryDeleted) != 0)
+                        initialPP[i].metadata.iptc[SUPPLEMENTAL_CATEGORIES].push_back(selectedParams.metadata.iptc[SUPPLEMENTAL_CATEGORIES].at(j));
+                }
+            }
+            if (pparamsEdited.iptcFlags.creatorChanged)
+                initialPP[i].metadata.iptc[CREATOR].at(0) = pparams.metadata.iptc[CREATOR].at(0);
+            if (pparamsEdited.iptcFlags.creatorJobTitleChanged)
+                initialPP[i].metadata.iptc[CREATOR_JOB_TITLE].at(0) = pparams.metadata.iptc[CREATOR_JOB_TITLE].at(0);
+            if (pparamsEdited.iptcFlags.creditChanged)
+                initialPP[i].metadata.iptc[CREDIT].at(0) = pparams.metadata.iptc[CREDIT].at(0);
+            if (pparamsEdited.iptcFlags.sourceChanged)
+                initialPP[i].metadata.iptc[SOURCE].at(0) = pparams.metadata.iptc[SOURCE].at(0);
+            if (pparamsEdited.iptcFlags.copyrightChanged)
+                initialPP[i].metadata.iptc[COPYRIGHT].at(0) = pparams.metadata.iptc[COPYRIGHT].at(0);
+            if (pparamsEdited.iptcFlags.cityChanged)
+                initialPP[i].metadata.iptc[CITY].at(0) = pparams.metadata.iptc[CITY].at(0);
+            if (pparamsEdited.iptcFlags.provinceChanged)
+                initialPP[i].metadata.iptc[PROVINCE].at(0) = pparams.metadata.iptc[PROVINCE].at(0);
+            if (pparamsEdited.iptcFlags.countryChanged)
+                initialPP[i].metadata.iptc[COUNTRY].at(0) = pparams.metadata.iptc[COUNTRY].at(0);
+            if (pparamsEdited.iptcFlags.titleChanged)
+                initialPP[i].metadata.iptc[TITLE].at(0) = pparams.metadata.iptc[TITLE].at(0);
+            if (pparamsEdited.iptcFlags.dateCreatedChanged)
+                initialPP[i].metadata.iptc[DATE_CREATED].at(0) = pparams.metadata.iptc[DATE_CREATED].at(0);
+            if (pparamsEdited.iptcFlags.transReferenceChanged)
+                initialPP[i].metadata.iptc[TRANS_REFERENCE].at(0) = pparams.metadata.iptc[TRANS_REFERENCE].at(0);
+            pparamsEdited.iptc = false;
+        }
+    }
 
     // combine with initial parameters and set
+    ProcParams newParams;
 
     for (size_t i = 0; i < selected.size(); i++) {
-		newParams = initialPP[i];
-
-		if (event == rtengine::EvIPTC) {
-			if (captionChangedFlag)
-				initialPP[i].metadata.iptc[CAPTION].at(0) = captionChanged;
-			else if (captionWriterChangedFlag)
-				initialPP[i].metadata.iptc[CAPTION_WRITER].at(0) = captionWriterChanged;
-			else if (headlineChangedFlag)
-				initialPP[i].metadata.iptc[HEADLINE].at(0) = headlineChanged;
-			else if (instructionsChangedFlag)
-				initialPP[i].metadata.iptc[INSTRUCTIONS].at(0) = instructionsChanged;
-			else if (keywordAddedFlag) {
-				unsigned int j;
-				for (j = 0; j < newParams.metadata.iptc[KEYWORDS].size(); j++) {
-					if (newParams.metadata.iptc[KEYWORDS].at(j).compare(keywordAdded) == 0)
-						break;
-				}
-				if (j == newParams.metadata.iptc[KEYWORDS].size())
-					initialPP[i].metadata.iptc[KEYWORDS].push_back(keywordAdded);
-			}
-			else if (keywordDeletedFlag) {
-				initialPP[i].metadata.iptc[KEYWORDS].clear();
-				for (unsigned int j = 0; j < newParams.metadata.iptc[KEYWORDS].size(); j++) {
-					if (newParams.metadata.iptc[KEYWORDS].at(j).compare(keywordDeleted) != 0)
-						initialPP[i].metadata.iptc[KEYWORDS].push_back(newParams.metadata.iptc[KEYWORDS].at(j));
-				}
-			}
-			else if (categoryChangedFlag)
-				initialPP[i].metadata.iptc[CATEGORY].at(0) = categoryChanged;
-			else if (suppCategoryAddedFlag) {
-				unsigned int j;
-				for (j = 0; j < newParams.metadata.iptc[SUPPLEMENTAL_CATEGORIES].size(); j++) {
-					if (newParams.metadata.iptc[SUPPLEMENTAL_CATEGORIES].at(j).compare(suppCategoryAdded) == 0)
-						break;
-				}
-				if (j == newParams.metadata.iptc[SUPPLEMENTAL_CATEGORIES].size())
-					initialPP[i].metadata.iptc[SUPPLEMENTAL_CATEGORIES].push_back(suppCategoryAdded);
-			}
-			else if (suppCategoryDeletedFlag) {
-				initialPP[i].metadata.iptc[SUPPLEMENTAL_CATEGORIES].clear();
-				for (unsigned int j = 0; j < newParams.metadata.iptc[SUPPLEMENTAL_CATEGORIES].size(); j++) {
-					if (newParams.metadata.iptc[SUPPLEMENTAL_CATEGORIES].at(j).compare(suppCategoryDeleted) != 0)
-						initialPP[i].metadata.iptc[SUPPLEMENTAL_CATEGORIES].push_back(newParams.metadata.iptc[SUPPLEMENTAL_CATEGORIES].at(j));
-				}
-			}
-			else if (creatorChangedFlag)
-				initialPP[i].metadata.iptc[CREATOR].at(0) = creatorChanged;
-			else if (creatorJobTitleChangedFlag)
-				initialPP[i].metadata.iptc[CREATOR_JOB_TITLE].at(0) = creatorJobTitleChanged;
-			else if (creditChangedFlag)
-				initialPP[i].metadata.iptc[CREDIT].at(0) = creditChanged;
-			else if (sourceChangedFlag)
-				initialPP[i].metadata.iptc[SOURCE].at(0) = sourceChanged;
-			else if (copyrightChangedFlag)
-				initialPP[i].metadata.iptc[COPYRIGHT].at(0) = copyrightChanged;
-			else if (cityChangedFlag)
-				initialPP[i].metadata.iptc[CITY].at(0) = cityChanged;
-			else if (provinceChangedFlag)
-				initialPP[i].metadata.iptc[PROVINCE].at(0) = provinceChanged;
-			else if (countryChangedFlag)
-				initialPP[i].metadata.iptc[COUNTRY].at(0) = countryChanged;
-			else if (titleChangedFlag)
-				initialPP[i].metadata.iptc[TITLE].at(0) = titleChanged;
-			else if (dateCreatedChangedFlag)
-				initialPP[i].metadata.iptc[DATE_CREATED].at(0) = dateCreatedChanged;
-			else if (transReferenceChangedFlag)
-				initialPP[i].metadata.iptc[TRANS_REFERENCE].at(0) = transReferenceChanged;
-			newParams.metadata.iptc = initialPP[i].metadata.iptc;
-			pparamsEdited.iptc = false;
-		}	
+        newParams = initialPP[i];
         // If only one file is selected, slider's addMode has been set to false, and hence the behave
         // like in SET mode like in an editor ; that's why we force the combination to the SET mode too
         pparamsEdited.combine (newParams, pparams, selected.size() == 1);
@@ -842,8 +707,8 @@ void BatchToolPanelCoordinator::panelChanged(const rtengine::ProcEvent& event, c
         }
 
         selected[i]->setProcParams (newParams, nullptr, BATCHEDITOR, false);
-	}
-	
+    }
+    
     for (size_t i = 0; i < paramcListeners.size(); i++) {
         paramcListeners[i]->procParamsChanged (&pparams, event, descr, &pparamsEdited);
     }

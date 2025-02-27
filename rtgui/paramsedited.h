@@ -1699,6 +1699,30 @@ struct FilmNegativeParamsEdited {
     bool isUnchanged() const;
 };
 
+struct IPTCFlagsParamsEdited {
+    bool captionChanged;
+    bool captionWriterChanged;
+    bool headlineChanged;
+    bool instructionsChanged;
+    bool keywordAdded;
+    bool keywordDeleted;
+    bool categoryChanged;
+    bool suppCategoryAdded;
+    bool suppCategoryDeleted;
+    bool creatorChanged;
+    bool creatorJobTitleChanged;
+    bool creditChanged;
+    bool sourceChanged;
+    bool copyrightChanged;
+    bool cityChanged;
+    bool provinceChanged;
+    bool countryChanged;
+    bool titleChanged;
+    bool dateCreatedChanged;
+    bool transReferenceChanged;
+};
+
+
 struct ParamsEdited {
     GeneralParamsEdited general;
     ToneCurveParamsEdited toneCurve;
@@ -1751,6 +1775,7 @@ struct ParamsEdited {
     DehazeParamsEdited dehaze;
     MetaDataParamsEdited metadata;
     FilmNegativeParamsEdited filmNegative;
+    IPTCFlagsParamsEdited iptcFlags;
     bool exif;
     bool iptc;
 

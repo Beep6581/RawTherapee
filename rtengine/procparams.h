@@ -1098,7 +1098,7 @@ struct LocallabParams {
         double struc;
         Glib::ustring shapeMethod; // IND, SYM, INDSL, SYMSL
         Glib::ustring avoidgamutMethod; // NONE, LAB, XYZ
-		
+        
         std::vector<int> loc; // For ellipse/rectangle: {locX, locXL, locY, locYT}
         int centerX;
         int centerY;
@@ -2324,8 +2324,8 @@ public:
     
     void insert(Glib::ustring key, Glib::ustring value)
     {
-		pairs.insert({key, std::vector<Glib::ustring>(1, value)});
-	}
+        pairs.insert({key, std::vector<Glib::ustring>(1, value)});
+    }
 
     std::vector<Glib::ustring>& operator[](const Glib::ustring& key)
     {
@@ -2354,6 +2354,11 @@ struct MetaDataParams {
     std::vector<std::string> exifKeys;
     ExifPairs exif;
     IPTCPairs iptc;
+    Glib::ustring keywordAdded;
+    Glib::ustring keywordDeleted;
+    Glib::ustring suppCategoryAdded;
+    Glib::ustring suppCategoryDeleted;
+
 
     MetaDataParams();
 
