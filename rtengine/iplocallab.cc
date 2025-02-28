@@ -14290,7 +14290,7 @@ void ImProcFunctions::Lab_Local(
 
 
 
-    //avoid negative values RGB then Lab when using before SE CBDL or Dehaze, or processor type...
+    //Pre-filter zero and negative values RGB then Lab when using before SE CBDL or Dehaze, or processor type...
 
     int bw0 = transformed->W;
     int bh0 = transformed->H;
