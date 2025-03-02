@@ -25,7 +25,7 @@
 #include "guiutils.h"
 #include "toolpanel.h"
 
-#include "../rtengine/procevents.h"
+#include "rtengine/procevents.h"
 
 #include <memory>
 

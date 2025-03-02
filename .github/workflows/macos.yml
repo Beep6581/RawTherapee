@@ -17,6 +17,8 @@ on:
 jobs:
   build:
     runs-on: macos-13
+    permissions:
+      contents: write
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v4
@@ -138,6 +140,8 @@ jobs:
 
   armbuild:
     runs-on: macos-14
+    permissions:
+      contents: write
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4

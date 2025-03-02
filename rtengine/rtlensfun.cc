@@ -18,8 +18,8 @@
  *  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
  */
 
+#include <cctype>
 #include <iostream>
-#include <regex>
 
 #include "imagedata.h"
 #include "procparams.h"
@@ -77,6 +77,85 @@ bool isNextLensBetter(const lfCamera *camera, const lfLens *current_lens, const 
     return isNextLensCropFactorBetter(current_lens, camera, next_lens.CropFactor) &&
            lens_name == next_lens_name &&
            (!camera || isCStringIn(camera->Mount, next_lens.Mounts));
+}
+
+/**
+ * Trims whitespace from around dashes.
+ */
+std::string trimDashWhitespace(const std::string &input)
+{
+    enum class SeekStatus {
+        /// Start of whitespace-dash unit.
+        WHITESPACE_DASH,
+        /// Dash after whitespace.
+        DASH,
+        /// End of whitespace-dash unit.
+        OTHER,
+    };
+
+    std::string trimmed;
+    trimmed.reserve(input.size());
+    unsigned whitespace_index = 0;
+
+    SeekStatus seek_status = SeekStatus::WHITESPACE_DASH;
+    for (unsigned i = 0; i < input.size(); i++) {
+        const auto cur_char = input[i];
+        switch (seek_status) {
+            case SeekStatus::WHITESPACE_DASH:
+                if (std::isspace(cur_char)) {
+                    // Possible beginning of whitespace-dash unit. Start seeking
+                    // dash, but record current index in case there is no dash.
+                    seek_status = SeekStatus::DASH;
+                    whitespace_index = i;
+                } else if (cur_char == '-') {
+                    // Start of a whitespace-dash unit. Add the dash and skip
+                    // all whitespace.
+                    seek_status = SeekStatus::OTHER;
+                    trimmed += cur_char;
+                } else {
+                    // Not a whitespace-dash unit, so just copy the character.
+                    trimmed += cur_char;
+                }
+                break;
+            case SeekStatus::DASH:
+                if (cur_char == '-') {
+                    // Found the dash. Now add the dash and skip all whitespace.
+                    seek_status = SeekStatus::OTHER;
+                    trimmed += cur_char;
+                } else if (!std::isspace(cur_char)) {
+                    // No dash found after whitespace. Copy the whitespace and
+                    // character over and start looking for a whitespace-dash
+                    // unit again.
+                    seek_status = SeekStatus::WHITESPACE_DASH;
+                    trimmed += input.substr(
+                        whitespace_index, i - whitespace_index + 1);
+                }
+                // For whitespace, just continue looking for the dash.
+                break;
+            case SeekStatus::OTHER:
+                if (cur_char == '-') {
+                    // Found a dash. Now add the dash and skip all whitespace.
+                    trimmed += cur_char;
+                } else if (!std::isspace(cur_char)) {
+                    // End of whitespace-dash unit, so add the character and
+                    // start looking for another unit.
+                    seek_status = SeekStatus::WHITESPACE_DASH;
+                    trimmed += cur_char;
+                }
+                // For whitespace, just continue looking for the end of the
+                // unit.
+                break;
+        }
+    }
+
+    if (seek_status == SeekStatus::DASH) {
+        // Whitespace found, but no dash. Add the whitespace.
+        trimmed += input.substr(whitespace_index);
+    }
+    // If seeking a whitespace-dash unit, all the characters have been added.
+    // If seeking the end of a whitespace-dash unit, the dash has been added.
+
+    return trimmed;
 }
 
 } // namespace
@@ -596,8 +675,7 @@ LFLens LFDatabase::findLens(const LFCamera &camera, const Glib::ustring &name, b
         if (!found) {
             // Some names have white-space around the dash(s) while Lensfun does
             // not have any.
-            const std::regex pattern("\\s*-\\s*");
-            const auto formatted_name = std::regex_replace(name.raw(), pattern, "-");
+            const auto formatted_name = trimDashWhitespace(name.raw());
             if (name != formatted_name) {
                 found = find_lens_from_name(data_, camera.data_, formatted_name);
             }

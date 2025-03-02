@@ -18,6 +18,7 @@
  */
 #pragma once
 
+#include <functional>
 #include <vector>
 
 #include <type_traits>
@@ -25,6 +26,37 @@
 
 namespace rtengine
 {
+
+/**
+ * A function object that supplies a value and returns the same value for
+ * subsequent calls.
+ */
+template <typename T>
+struct MemoizingSupplier {
+    using Supplier = std::function<T()>;
+
+    /**
+     * @param supplier The delegate supplier.
+     */
+    explicit MemoizingSupplier(const Supplier &supplier) :
+        supplier(supplier)
+    {
+    }
+
+    T operator()() const
+    {
+        if (!is_cached) {
+            value = supplier();
+            is_cached = true;
+        }
+        return value;
+    }
+
+private:
+    const Supplier supplier;
+    mutable T value;
+    mutable bool is_cached{false};
+};
 
 // Update a point of a Cairo::Surface by accessing the raw data
 void poke255_uc(unsigned char*& dest, unsigned char r, unsigned char g, unsigned char b);

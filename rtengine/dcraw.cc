@@ -10723,6 +10723,27 @@ canon_a5:
         load_flags = 0;
         flip = 6;
     }
+    if (raw_width == 6384) { // From LibRaw: X-T3, X-T4, X100V, X-S10, X-T30, X-Pro3
+        top_margin = 0;
+        switch (read_crop.crop_mode) {
+            case CropMode::NA:
+                // RT: Use full raw dimensions.
+                width = raw_width;
+                height = raw_height;
+                break;
+            case CropMode::SportsFinderMode:
+                left_margin = 624;
+                width = 5004;
+                height = raw_height;
+                break;
+            case CropMode::ElectronicShutter1_25xCrop:
+                left_margin = 624;
+                width = 5004;
+                break;
+            case CropMode::FullFrameOnGfx:
+                break;
+        }
+    }
     if (!strcmp(model,"HS50EXR") ||
 	!strcmp(model,"F900EXR")) {
       width += 2;

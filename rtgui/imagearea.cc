@@ -155,7 +155,7 @@ void ImageArea::setInfoText (Glib::ustring text)
 
     // update font
     fontd.set_weight (Pango::WEIGHT_BOLD);
-    const int fontSize = 10; // pt
+    const int fontSize = options.fontSize;
     // Non-absolute size is defined in "Pango units" and shall be multiplied by
     // Pango::SCALE from "pt":
     fontd.set_size (fontSize * Pango::SCALE);

@@ -319,7 +319,7 @@ void DirBrowser::row_expanded (const Gtk::TreeModel::iterator& iter, const Gtk::
         iter->set_value(dtColumns.icon_name, openfolder);
     }
 
-    Glib::RefPtr<Gio::FileMonitor> monitor = dir->monitor_directory ();
+    Glib::RefPtr<Gio::FileMonitor> monitor = dir->monitor_directory(Gio::FileMonitorFlags::FILE_MONITOR_WATCH_MOVES);
     iter->set_value (dtColumns.monitor, monitor);
     monitor->signal_changed().connect (sigc::bind(sigc::mem_fun(*this, &DirBrowser::file_changed), iter, dir->get_parse_name()));
 }
@@ -487,8 +487,28 @@ void DirBrowser::open (const Glib::ustring& dirname, const Glib::ustring& fileNa
 
 void DirBrowser::file_changed (const Glib::RefPtr<Gio::File>& file, const Glib::RefPtr<Gio::File>& other_file, Gio::FileMonitorEvent event_type, const Gtk::TreeModel::iterator& iter, const Glib::ustring& dirName)
 {
+    // file is the file that is/was in the monitored directory. other_file is
+    // null if only one file is involved (create/delete events), the file that
+    // is/was in another directory, or the new name for a renamed file. We want
+    // to inspect the file type of the changed file, so we decide which file to
+    // use based on the event type.
+    const Glib::RefPtr<Gio::File> current_file =
+        (event_type == Gio::FILE_MONITOR_EVENT_MOVED ||
+            event_type == Gio::FILE_MONITOR_EVENT_RENAMED ||
+            event_type == Gio::FILE_MONITOR_EVENT_MOVED_OUT)
+            ? other_file
+            : file;
 
-    if (!file || !Glib::file_test (dirName, Glib::FILE_TEST_IS_DIR) || event_type == Gio::FILE_MONITOR_EVENT_ATTRIBUTE_CHANGED) {
+    // No need to update the directory if the even type is not rename, move,
+    // create, or delete, or if the file is not a directory.
+    if (!current_file ||
+        event_type == Gio::FILE_MONITOR_EVENT_CHANGED ||
+        event_type == Gio::FILE_MONITOR_EVENT_CHANGES_DONE_HINT ||
+        event_type == Gio::FILE_MONITOR_EVENT_ATTRIBUTE_CHANGED ||
+        event_type == Gio::FILE_MONITOR_EVENT_PRE_UNMOUNT ||
+        (event_type != Gio::FILE_MONITOR_EVENT_DELETED &&
+            event_type != Gio::FILE_MONITOR_EVENT_UNMOUNTED &&
+            !Glib::file_test(current_file->get_path(), Glib::FILE_TEST_IS_DIR))) {
         return;
     }
 
