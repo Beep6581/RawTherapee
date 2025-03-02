@@ -460,6 +460,7 @@ public:
         bool transitgrad;
         bool hishow;
         bool activ;
+        bool avoidneg;
         bool blwh;
         bool recurs;
         bool laplac;
