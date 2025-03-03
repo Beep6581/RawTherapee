@@ -3317,6 +3317,7 @@ LocallabParams::LocallabSpot::LocallabSpot() :
     transitgrad(0.0),
     hishow(options.complexity != 2),
     activ(true),
+    avoidneg(true),
     blwh(false),
     recurs(false),
     laplac(true),
@@ -5219,6 +5220,7 @@ bool LocallabParams::LocallabSpot::operator ==(const LocallabSpot& other) const
         && transitgrad == other.transitgrad
         && hishow == other.hishow
         && activ == other.activ
+        && avoidneg == other.avoidneg
         && blwh == other.blwh
         && recurs == other.recurs
         && laplac == other.laplac
@@ -7226,6 +7228,7 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
                 saveToKeyfile(!pedited || spot_edited->transitgrad, "Locallab", "Transitgrad_" + index_str, spot.transitgrad, keyFile);
                 saveToKeyfile(!pedited || spot_edited->hishow, "Locallab", "Hishow_" + index_str, spot.hishow, keyFile);
                 saveToKeyfile(!pedited || spot_edited->activ, "Locallab", "Activ_" + index_str, spot.activ, keyFile);
+                saveToKeyfile(!pedited || spot_edited->avoidneg, "Locallab", "Avoidneg_" + index_str, spot.avoidneg, keyFile);
                 saveToKeyfile(!pedited || spot_edited->blwh, "Locallab", "Blwh_" + index_str, spot.blwh, keyFile);
                 saveToKeyfile(!pedited || spot_edited->recurs, "Locallab", "Recurs_" + index_str, spot.recurs, keyFile);
                 saveToKeyfile(!pedited || spot_edited->laplac, "Locallab", "Laplac_" + index_str, spot.laplac, keyFile);
@@ -9560,6 +9563,7 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
                 assignFromKeyfile(keyFile, "Locallab", "Transitgrad_" + index_str, spot.transitgrad, spotEdited.transitgrad);
                 assignFromKeyfile(keyFile, "Locallab", "Hishow_" + index_str, spot.hishow, spotEdited.hishow);
                 assignFromKeyfile(keyFile, "Locallab", "Activ_" + index_str, spot.activ, spotEdited.activ);
+                assignFromKeyfile(keyFile, "Locallab", "Avoidneg_" + index_str, spot.avoidneg, spotEdited.avoidneg);
                 assignFromKeyfile(keyFile, "Locallab", "Blwh_" + index_str, spot.blwh, spotEdited.blwh);
                 assignFromKeyfile(keyFile, "Locallab", "Recurs_" + index_str, spot.recurs, spotEdited.recurs);
                 assignFromKeyfile(keyFile, "Locallab", "Laplac_" + index_str, spot.laplac, spotEdited.laplac);

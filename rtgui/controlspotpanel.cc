@@ -86,6 +86,7 @@ ControlSpotPanel::ControlSpotPanel():
 
     hishow_(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_PREVSHOW")))),
     activ_(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_ACTIVSPOT")))),
+    avoidneg_(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_AVOIDNEG")))),
     blwh_(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_BLWH")))),
     recurs_(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_RECURS")))),
     laplac_(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_LAPLACC")))),
@@ -118,6 +119,7 @@ ControlSpotPanel::ControlSpotPanel():
 {
     auto m = ProcEventMapper::getInstance();
     EvLocallabavoidgamutMethod = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_GAMUTMUNSEL");
+    EvLocallabavoidnegative =  m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_AVOIDNEGATIVE");
     const bool showtooltip = options.showtooltip;
 //    pack_start(*hishow_);
 
@@ -430,6 +432,8 @@ ControlSpotPanel::ControlSpotPanel():
     avFrame->add(*avbox);
     specCaseBox->pack_start(*avFrame);
 
+    avoidnegConn_  = avoidneg_->signal_toggled().connect(
+                     sigc::mem_fun(*this, &ControlSpotPanel::avoidnegChanged));
 
     blwhConn_  = blwh_->signal_toggled().connect(
                      sigc::mem_fun(*this, &ControlSpotPanel::blwhChanged));
@@ -439,6 +443,7 @@ ControlSpotPanel::ControlSpotPanel():
     }
 
     specCaseBox->pack_start(*blwh_);
+    specCaseBox->pack_start(*avoidneg_);
 
     recursConn_  = recurs_->signal_toggled().connect(
                        sigc::mem_fun(*this, &ControlSpotPanel::recursChanged));
@@ -871,6 +876,7 @@ void ControlSpotPanel::load_ControlSpot_param()
     avoidrad_->setValue((double)row[spots_.avoidrad]);
     hishow_->set_active(row[spots_.hishow]);
     activ_->set_active(row[spots_.activ]);
+    avoidneg_->set_active(row[spots_.avoidneg]);
     blwh_->set_active(row[spots_.blwh]);
     recurs_->set_active(row[spots_.recurs]);
    // laplac_->set_active(row[spots_.laplac]);
@@ -1768,6 +1774,31 @@ void ControlSpotPanel::activChanged()
     }
 }
 
+void ControlSpotPanel::avoidnegChanged()
+{
+
+    // Get selected control spot
+    const auto s = treeview_->get_selection();
+
+    if (!s->count_selected_rows()) {
+        return;
+    }
+
+    const auto iter = s->get_selected();
+    Gtk::TreeModel::Row row = *iter;
+    row[spots_.avoidneg] = avoidneg_->get_active();
+
+    // Raise event
+    if (listener) {
+        if (avoidneg_->get_active()) {
+            listener->panelChanged(EvLocallabavoidnegative, M("GENERAL_ENABLED"));
+        } else {
+            listener->panelChanged(EvLocallabavoidnegative, M("GENERAL_DISABLED"));
+        }
+    }
+}
+
+
 
 void ControlSpotPanel::blwhChanged()
 {
@@ -1963,6 +1994,7 @@ void ControlSpotPanel::disableParamlistener(bool cond)
     avoidrad_->block(cond);
     hishowconn_.block(cond);
     activConn_.block(cond);
+    avoidnegConn_.block(cond);
     blwhConn_.block(cond);
     recursConn_.block(cond);
     laplacConn_.block(cond);
@@ -2010,6 +2042,7 @@ void ControlSpotPanel::setParamEditable(bool cond)
     avoidrad_->set_sensitive(cond);
     hishow_->set_sensitive(cond);
     activ_->set_sensitive(cond);
+    avoidneg_->set_sensitive(cond);
     blwh_->set_sensitive(cond);
     recurs_->set_sensitive(cond);
     laplac_->set_sensitive(cond);
@@ -2698,6 +2731,7 @@ std::unique_ptr<ControlSpotPanel::SpotRow> ControlSpotPanel::getSpot(const int i
             r->lumask = row[spots_.lumask];
             r->hishow = row[spots_.hishow];
             r->activ = row[spots_.activ];
+            r->avoidneg = row[spots_.avoidneg];
             r->blwh = row[spots_.blwh];
             r->recurs = row[spots_.recurs];
             r->laplac = row[spots_.laplac];
@@ -2830,6 +2864,7 @@ void ControlSpotPanel::addControlSpot(const SpotRow &newSpot)
     row[spots_.avoidrad] = newSpot.avoidrad;
     row[spots_.hishow] = newSpot.hishow;
     row[spots_.activ] = newSpot.activ;
+    row[spots_.avoidneg] = newSpot.avoidneg;
     row[spots_.blwh] = newSpot.blwh;
     row[spots_.recurs] = newSpot.recurs;
     row[spots_.laplac] = newSpot.laplac;
@@ -2999,6 +3034,7 @@ ControlSpotPanel::ControlSpots::ControlSpots()
     add(avoidrad);
     add(hishow);
     add(activ);
+    add(avoidneg);
     add(blwh);
     add(recurs);
     add(laplac);

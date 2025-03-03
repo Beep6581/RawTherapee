@@ -843,6 +843,7 @@ struct local_params {
     float residhithr;
     float residgam;
     float residslop;
+    bool avoidneg;
     bool blwh;
     bool fftma;
     float blurma;
@@ -1892,6 +1893,7 @@ static void calcLocalParams(int sp, int oW, int oH, const LocallabParams& locall
     lp.residhithr = locallab.spots.at(sp).residhithr;
     lp.residgam = locallab.spots.at(sp).residgam;
     lp.residslop = locallab.spots.at(sp).residslop;
+    lp.avoidneg = locallab.spots.at(sp).avoidneg;
     lp.blwh = locallab.spots.at(sp).blwh;
     lp.senscolor = (int) locallab.spots.at(sp).colorscope;
     //replace scope color vibrance shadows
@@ -14276,13 +14278,46 @@ void ImProcFunctions::Lab_Local(
         return;
     }
 
-    //BENCHFUN
+
 
     constexpr int del = 3; // to avoid crash with [loy - begy] and [lox - begx] and bfh bfw  // with gtk2 [loy - begy-1] [lox - begx -1 ] and del = 1
     struct local_params lp;
     calcLocalParams(sp, oW, oH, params->locallab, lp, prevDeltaE, llColorMask, llColorMaskinv, llExpMask, llExpMaskinv, llSHMask, llSHMaskinv, llvibMask, lllcMask, llsharMask, llcbMask, llretiMask, llsoftMask, lltmMask, llblMask, lllogMask, ll_Mask, llcieMask, locwavCurveden, locwavdenutili);
 
     //avoidcolshi(lp, sp, transformed, reserved,  cy, cx, sk);
+    //BENCHFUN
+
+
+
+
+    //Pre-filter zero and negative values RGB then Lab when using before SE CBDL or Dehaze, or processor type...
+
+    int bw0 = transformed->W;
+    int bh0 = transformed->H;
+
+    float epsi0 = 0.000001f;
+    bool nocrash = false;
+    bool cbdl = false;
+    if(params->dirpyrequalizer.cbdlMethod == "bef") {//If user choose "after black and white" this function which removes negative values is not used, hence CBDL is best performed, after Selective Editing in Lab mode
+        cbdl = true;
+    }
+    nocrash = (params->dirpyrequalizer.enabled && cbdl)  ||  params->dehaze.enabled  || lp.avoidneg;//lp.avoidneg in setting 
+    
+    
+    if(nocrash) {//allows memory and conversion labrgb only in these cases and prevent negative RGB values
+        const std::unique_ptr<Imagefloat> prov0(new Imagefloat(bw0, bh0));
+        lab2rgb(*transformed, *prov0, params->icm.workingProfile);
+#ifdef _OPENMP
+        #pragma omp parallel for
+#endif
+            for (int i = 0; i < bh0; ++i)
+                for (int j = 0; j < bw0; ++j) {
+                    prov0->r(i, j) = (rtengine::max(prov0->r(i, j), epsi0));
+                    prov0->g(i, j) = (rtengine::max(prov0->g(i, j), epsi0));
+                    prov0->b(i, j) = (rtengine::max(prov0->b(i, j), epsi0)); 
+                }
+        rgb2lab(*prov0, *transformed, params->icm.workingProfile);
+    }
 
     const float radius = lp.rad / (sk * 1.4); //0 to 70 ==> see skip
     int levred;
@@ -21082,7 +21117,6 @@ void ImProcFunctions::Lab_Local(
     bool notlaplacian = false;//no use of strong Laplacian
 
     float epsi = 0.000001f;
-
 
     if((lp.laplacexp > 1.f && lp.exposena) || (lp.strng > 2.f && lp.sfena) || (lp.exposena && lp.expcomp != 0.f && params->dirpyrequalizer.enabled)){//strong Laplacian
         notlaplacian = true;

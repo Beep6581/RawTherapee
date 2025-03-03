@@ -1317,6 +1317,7 @@ void ParamsEdited::initFrom(const std::vector<rtengine::procparams::ProcParams>&
                 locallab.spots.at(j).transitgrad = locallab.spots.at(j).transitgrad && pSpot.transitgrad == otherSpot.transitgrad;
                 locallab.spots.at(j).hishow = locallab.spots.at(j).hishow && pSpot.hishow == otherSpot.hishow;
                 locallab.spots.at(j).activ = locallab.spots.at(j).activ && pSpot.activ == otherSpot.activ;
+                locallab.spots.at(j).avoidneg = locallab.spots.at(j).avoidneg && pSpot.avoidneg == otherSpot.avoidneg;
                 locallab.spots.at(j).blwh = locallab.spots.at(j).blwh && pSpot.blwh == otherSpot.blwh;
                 locallab.spots.at(j).recurs = locallab.spots.at(j).recurs && pSpot.recurs == otherSpot.recurs;
                 locallab.spots.at(j).laplac = locallab.spots.at(j).laplac && pSpot.laplac == otherSpot.laplac;
@@ -3964,6 +3965,10 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
 
         if (locallab.spots.at(i).activ) {
             toEdit.locallab.spots.at(i).activ = mods.locallab.spots.at(i).activ;
+        }
+
+        if (locallab.spots.at(i).avoidneg) {
+            toEdit.locallab.spots.at(i).avoidneg = mods.locallab.spots.at(i).avoidneg;
         }
 
         if (locallab.spots.at(i).blwh) {
@@ -8338,6 +8343,7 @@ LocallabParamsEdited::LocallabSpotEdited::LocallabSpotEdited(bool v) :
     transitgrad(v),
     hishow(v),
     activ(v),
+    avoidneg(v),
     blwh(v),
     recurs(v),
     laplac(v),
@@ -9123,6 +9129,7 @@ void LocallabParamsEdited::LocallabSpotEdited::set(bool v)
     transitgrad = v;
     hishow = v;
     activ = v;
+    avoidneg = v;
     blwh = v;
     recurs = v;
     laplac = v;

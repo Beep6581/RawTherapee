@@ -1488,6 +1488,7 @@ HISTORY_MSG_ICM_WORKING_PRIM_METHOD;Primaries method
 HISTORY_MSG_ICM_WORKING_SLOPE;TRC - Slope
 HISTORY_MSG_ICM_WORKING_TRC_METHOD;TRC method
 HISTORY_MSG_ILLUM;CAL - SC - Illuminant
+HISTORY_MSG_LOCAL_AVOIDNEGATIVE;Local - SC - Pre-filter zero and negative values
 HISTORY_MSG_LOCAL_CIE_CONTSIG;Local CIECAM - Sigmoid contrast
 HISTORY_MSG_LOCAL_CIE_SKEWSIG;Local CIECAM - Sigmoid skew
 HISTORY_MSG_LOCAL_CIE_SMOOTHTH;Local CIECAM - Attenuation threshold
@@ -2997,6 +2998,7 @@ TP_LOCALLAB_AVOID;Avoid color shift
 TP_LOCALLAB_AVOIDCOLORSHIFT_TOOLTIP;Fit colors into gamut of the working color space and apply Munsell correction (Uniform Perceptual Lab). Default: Munsell only.\n\nMunsell only: Fixes Lab mode hue drifts due to non-linearity when chromaticity is changed (Uniform Perceptual Lab).\nLab: Applies a gamut control in relative colorimetric. Munsell is then applied.\nXYZ Absolute: Applies gamut control in absolute colorimetric. Munsell is then applied.\nXYZ Relative: Applies gamut control in relative colorimetric. Munsell is then applied. The result is not the same as Lab.
 TP_LOCALLAB_AVOIDMUN;Munsell correction only
 TP_LOCALLAB_AVOIDMUN_TOOLTIP;Munsell correction always disabled when Jz or CAM16 is used.
+TP_LOCALLAB_AVOIDNEG;Pre-filter zero and negative values
 TP_LOCALLAB_AVOIDRAD;Soft radius
 TP_LOCALLAB_BALAN;ab-L balance (ΔE)
 TP_LOCALLAB_BALANEXP;Laplacian balance
