@@ -17719,7 +17719,7 @@ void ImProcFunctions::Lab_Local(
 
                 return;
             }
-            //to test gradiant in mode plain image GW GH instead of bfw bfh
+            //to test gradiant in mode plain image GW GH instead of bfw bfh - I prefer to keep this code, even if it is not used, because it is another way to approach the graduated Filter in SE
             int grad = 0;// grad = 1 to plain image GF
             int ca1 = 1;//dcrop
             int ca2 = 2;//simpleprocess

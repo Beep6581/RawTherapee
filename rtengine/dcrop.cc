@@ -859,7 +859,6 @@ void Crop::update(int todo)
         //I made a little change here. Rather than have luminanceCurve (and others) use in/out lab images, we can do more if we copy right here.
         parent->ipf.rgb2lab(*baseCrop, *laboCrop, params.icm.workingProfile);
  
-        PreviewProps pp(trafx, trafy, trafw * skip, trafh * skip, skip);
 
         labnCrop->CopyFrom(laboCrop);
 

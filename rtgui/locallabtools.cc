@@ -4389,16 +4389,7 @@ LocallabShadow::LocallabShadow():
     shMethod->set_active(3);
     shMethodConn = shMethod->signal_changed().connect(sigc::mem_fun(*this, &LocallabShadow::shMethodChanged));
 
-/*
- * This file is part of Siril, an astronomy image processor.
- * Copyright (C) 2005-2011 Francois Meyer (dulle at free.fr)
- * Copyright (C) 2012-2023 team free-astro (see more in AUTHORS file)
- * Reference site is https://free-astro.org/index.php/Siril
-*/
-/*
-//Copyright algorithm Pixlnsight David Payne 2021
-https://www.ghsastro.co.uk/doc/tools/GeneralizedHyperbolicStretch/GeneralizedHyperbolicStretch.html#__Description_:_About_GHS__
-*/
+
     ghsMethod->append(M("TP_LOCALLAB_GHSRGBLUM"));
     ghsMethod->append(M("TP_LOCALLAB_GHSRGBSTD"));
     ghsMethod->append(M("TP_LOCALLAB_GHSLAB"));
@@ -5042,11 +5033,11 @@ void LocallabShadow::read(const rtengine::procparams::ProcParams* pp, const Para
     updateGUIToMode(static_cast<modeType>(complexity->get_active_row_number()));
 
     // Update shadow highlight GUI according to inverssh button state
-    updateShadowGUI1();
+    updateShadowGUImask();
 
     // Update shadow highlight GUI according to shMethod and ghsmethod combobox state
-    updateShadowGUI2();
-    updateShadowGUI3();
+    updateShadowGUIshmet();
+    updateShadowGUIsym();
 
     // Note: No need to manage pedited as batch mode is deactivated for Locallab
 }
@@ -5224,7 +5215,7 @@ void LocallabShadow::setDefaults(const rtengine::procparams::ProcParams* defPara
 
 void LocallabShadow::adjusterChanged(Adjuster* a, double newval)
 {
-    updateShadowGUI3();
+    updateShadowGUIsym();
 
     if (isLocActivated && exp->getEnabled()) {
         if (a == multipliersh[0] || a == multipliersh[1] || a == multipliersh[2] || a == multipliersh[3] || a == multipliersh[4] || a == multipliersh[5]) {
@@ -5623,7 +5614,7 @@ void LocallabShadow::convertParamToNormal()
     fatanchorSH->setValue(defSpot.fatanchorSH);
     decays->setValue(defSpot.decays);
     ghs_slope->setValue(defSpot.ghs_slope);
-    updateShadowGUI3();
+    updateShadowGUIsym();
 
     // Enable all listeners
     enableListener();
@@ -5788,7 +5779,7 @@ void LocallabShadow::shMethodChanged()
 {
 
     // Update shadow highlight GUI according to shmethod combobox state
-    updateShadowGUI2();
+    updateShadowGUIshmet();
 
     if (isLocActivated && exp->getEnabled()) {
         if (listener) {
@@ -5803,7 +5794,7 @@ void LocallabShadow::ghsMethodChanged()
     const int mode = complexity->get_active_row_number();
 
     // Update shadow highlight GUI according to ghsMethod combobox state
-    updateShadowGUI2();
+    updateShadowGUIshmet();
     if (ghsMethod->get_active_row_number() == 2) {
         Lab_Frame->show();
         ghs_slope->hide();
@@ -5833,7 +5824,7 @@ void LocallabShadow::inversshChanged()
     const bool maskPreviewActivated = isMaskViewActive();
 
     // Update shadow highlight GUI according to inverssh button state
-    updateShadowGUI1();
+    updateShadowGUImask();
 
     if (maskPreviewActivated) {
         // This event is called to transmit reset mask state
@@ -5860,7 +5851,7 @@ void LocallabShadow::ghs_smoothChanged()
     const bool maskPreviewActivated = isMaskViewActive();
 
     // Update shadow highlight GUI according to inverssh button state
-    updateShadowGUI1();
+    updateShadowGUImask();
 
     if (maskPreviewActivated) {
         // This event is called to transmit reset mask state
@@ -5888,7 +5879,7 @@ void LocallabShadow::ghs_invChanged()
     const bool maskPreviewActivated = isMaskViewActive();
 
     // Update shadow highlight GUI according to inverssh button state
-    updateShadowGUI1();
+    updateShadowGUImask();
 
     if (maskPreviewActivated) {
         // This event is called to transmit reset mask state
@@ -5982,7 +5973,7 @@ void LocallabShadow::enaSHMaskChanged()
     }
 }
 
-void LocallabShadow::updateShadowGUI1()
+void LocallabShadow::updateShadowGUImask()
 {
     const int mode = complexity->get_active_row_number();
     const LocallabParams::LocallabSpot defSpot;
@@ -6032,7 +6023,7 @@ void LocallabShadow::updateShadowGUI1()
     }
 }
 
-void LocallabShadow::updateShadowGUI3()
+void LocallabShadow::updateShadowGUIsym()
 {
     // Update adjuster range to avoid black screen according to Symmetry ghs_SP
 
@@ -6058,7 +6049,7 @@ void LocallabShadow::updateShadowGUI3()
 }
 
 
-void LocallabShadow::updateShadowGUI2()
+void LocallabShadow::updateShadowGUIshmet()
 {
     const int mode = complexity->get_active_row_number();
 

@@ -710,9 +710,9 @@ private:
     void showmaskSHMethodChangedinv();
     void enaSHMaskChanged();
 
-    void updateShadowGUI1();
-    void updateShadowGUI2();
-    void updateShadowGUI3();
+    void updateShadowGUImask();
+    void updateShadowGUIshmet();
+    void updateShadowGUIsym();
 
 };
 

@@ -332,27 +332,15 @@ void Locallab::read(const rtengine::procparams::ProcParams* pp, const ParamsEdit
         }
 
         r.transit = pp->locallab.spots.at(i).transit;
-   //     if(showsettings != 2) {
-            r.transitweak = pp->locallab.spots.at(i).transitweak;
-            r.transitgrad = pp->locallab.spots.at(i).transitgrad;
-    //    } else {
-    //        r.transitweak = 1.;
-    //        r.transitgrad = 0.;
-    //    }
+        r.transitweak = pp->locallab.spots.at(i).transitweak;
+        r.transitgrad = pp->locallab.spots.at(i).transitgrad;
         r.feather = pp->locallab.spots.at(i).feather;
         r.struc = pp->locallab.spots.at(i).struc;
         r.thresh = pp->locallab.spots.at(i).thresh;
-    //    if(showsettings != 2) {
-            r.iter = pp->locallab.spots.at(i).iter;
-            r.balan = pp->locallab.spots.at(i).balan;
-            r.balanh = pp->locallab.spots.at(i).balanh;
-            r.colorde = pp->locallab.spots.at(i).colorde;
-    //    } else {
-    //        r.balan = 1.;
-    //        r.balanh = 1.;
-    //        r.iter = 2.;
-    //        r.colorde = 5;
-    //    }
+        r.iter = pp->locallab.spots.at(i).iter;
+        r.balan = pp->locallab.spots.at(i).balan;
+        r.balanh = pp->locallab.spots.at(i).balanh;
+        r.colorde = pp->locallab.spots.at(i).colorde;
         r.colorscope = pp->locallab.spots.at(i).colorscope;
         r.avoidrad = pp->locallab.spots.at(i).avoidrad;
         r.hishow = pp->locallab.spots.at(i).hishow;
@@ -1342,13 +1330,9 @@ void Locallab::maiChanged(const std::vector<locallabsetLC> &setlc, int selspot)
 void Locallab::ghsbwChanged(const std::vector<locallabshGHSbw> &shghsbw, int selspot)
 {
     sh_ghsbw = shghsbw;
-    int bw[2];
-    bw[0] = 0;
-    bw[1] = 1;
-    double bwvalue[2];
-    bwvalue[0] = 0.;
-    bwvalue[1] = 1.;
-
+    int bw[2] = {0, 1};
+    double bwvalue[2] = {0., 1.};
+    
     if (selspot < (int) sh_ghsbw.size()) {
         for(int i=0; i < 2; i++) {
             bw[i] = sh_ghsbw.at(selspot).ghsbw[i];

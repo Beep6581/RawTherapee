@@ -1401,13 +1401,8 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                 float Lnresi = 0.f;
                 float Lhighresi46 = 0.f;
                 float Lnresi46 = 0.f;
-                int ghsbpwp[2];
-                ghsbpwp[0] = 0;
-                ghsbpwp[1] = 0;
-                float ghsbpwpvalue[2];
-                ghsbpwpvalue[0] = 0.f;
-                ghsbpwpvalue[1] = 1.f;;
-                
+                int ghsbpwp[2] = {0, 0};
+                float ghsbpwpvalue[2] = {0.f, 1.f};                
 
                 Glib::ustring prof = params->icm.workingProfile;
                 if(params->locallab.spots.at(sp).complexcie == 2) {
