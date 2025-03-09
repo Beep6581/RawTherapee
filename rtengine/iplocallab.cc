@@ -17611,12 +17611,12 @@ void ImProcFunctions::Lab_Local(
 
     bool ghsactiv = false;
     float D = params->locallab.spots.at(sp).ghs_D;//enable GHS and Stretch factor
-    float BLP = params->locallab.spots.at(sp).ghs_BLP;
+    //float BLP = params->locallab.spots.at(sp).ghs_BLP;
     //float HLP = params->locallab.spots.at(sp).ghs_HLP;
     bool smoth = params->locallab.spots.at(sp).ghs_smooth;//Highlight attenuation
     float MID = params->locallab.spots.at(sp).ghs_MID;//midtones
 
-    if(D != 0.f  || BLP != 0.f /*|| HLP != 1.f*/  || smoth) {
+    if(D != 0.f /* || BLP != 0.f || HLP != 1.f*/  || smoth) {
         ghsactiv = true;
     }
     if (! lp.invsh && (lp.highlihs > 0.f || lp.shadowhs > 0.f || tonequ || tonecurv || ghsactiv || lp.strSH != 0.f || lp.showmaskSHmet == 2 || lp.enaSHMask || lp.showmaskSHmet == 3 || lp.showmaskSHmet == 4 || lp.prevdE) && call <= 3 && lp.hsena) {

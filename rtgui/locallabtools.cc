@@ -4712,6 +4712,11 @@ void LocallabShadow::updateguishad(int spottype)
             } else {
                 sensihs->show();
                 inverssh->show();
+                if (shMethod->get_active_row_number() == 2) {
+                    inverssh->hide();
+                    inverssh->set_active(false);
+                }
+               
                 exprecovs->show();
                 expmasksh->show();
                 if(!inverssh->get_active()) {
@@ -5822,6 +5827,10 @@ void LocallabShadow::ghsMethodChanged()
 void LocallabShadow::inversshChanged()
 {
     const bool maskPreviewActivated = isMaskViewActive();
+    if (shMethod->get_active_row_number() == 2) {//GHS
+        inverssh->hide();
+        inverssh->set_active(false);
+    }
 
     // Update shadow highlight GUI according to inverssh button state
     updateShadowGUImask();
@@ -5977,6 +5986,10 @@ void LocallabShadow::updateShadowGUImask()
 {
     const int mode = complexity->get_active_row_number();
     const LocallabParams::LocallabSpot defSpot;
+    if (shMethod->get_active_row_number() == 2) {
+        inverssh->hide();
+        inverssh->set_active(false);
+    }
 
     // Update shadow highlight GUI according to inverssh button state
     if (inverssh->get_active()) {
