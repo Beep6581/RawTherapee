@@ -4971,10 +4971,14 @@ void LocallabShadow::read(const rtengine::procparams::ProcParams* pp, const Para
             
         if(ghs_D->getValue() > 0.002) {
             ghs_BLP->set_sensitive(false);
-            ghs_HLP->set_sensitive(false);         
+            ghs_HLP->set_sensitive(false); 
+            ghs_LC->set_sensitive(true); 
+            ghs_MID->set_sensitive(true);        
         } else {
             ghs_BLP->set_sensitive(true);
             ghs_HLP->set_sensitive(true);        
+            ghs_LC->set_sensitive(false); 
+            ghs_MID->set_sensitive(false); 
         }
 
         detailSH->setValue((double)spot.detailSH);
@@ -5239,10 +5243,14 @@ void LocallabShadow::adjusterChanged(Adjuster* a, double newval)
         if (a == ghs_D) {
             if(ghs_D->getValue() > 0.002) {//hide sliders WP and HP si D too big
                 ghs_BLP->set_sensitive(false);
-                ghs_HLP->set_sensitive(false);              
+                ghs_HLP->set_sensitive(false);
+                ghs_LC->set_sensitive(true); 
+                ghs_MID->set_sensitive(true);               
             } else {
                 ghs_BLP->set_sensitive(true);
                 ghs_HLP->set_sensitive(true);               
+                ghs_LC->set_sensitive(false); 
+                ghs_MID->set_sensitive(false); 
             }
             if (listener) {
                 listener->panelChanged(Evlocallabghs_D,
@@ -6009,9 +6017,13 @@ void LocallabShadow::updateShadowGUImask()
         if(ghs_D->getValue() > 0.002) {
             ghs_BLP->set_sensitive(false);
             ghs_HLP->set_sensitive(false);              
+            ghs_LC->set_sensitive(true); 
+            ghs_MID->set_sensitive(true); 
         } else {
             ghs_BLP->set_sensitive(true);
             ghs_HLP->set_sensitive(true);       
+            ghs_LC->set_sensitive(false); 
+            ghs_MID->set_sensitive(false); 
         }
        
         if (mode == Expert || mode == Normal) { // Keep widget hidden in Simple mode
@@ -6121,9 +6133,13 @@ void LocallabShadow::updateShadowGUIshmet()
         if(ghs_D->getValue() > 0.002) {
             ghs_BLP->set_sensitive(false);
             ghs_HLP->set_sensitive(false);    
-        } else {
+            ghs_LC->set_sensitive(true); 
+            ghs_MID->set_sensitive(true); 
+       } else {
             ghs_BLP->set_sensitive(true);
             ghs_HLP->set_sensitive(true);        
+            ghs_LC->set_sensitive(false); 
+            ghs_MID->set_sensitive(false); 
         }
 
         if (mode == Expert || mode == Normal) { // Keep widget hidden in Simple mode
