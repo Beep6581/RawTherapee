@@ -779,7 +779,7 @@ void ImProcFunctions::doSharpening(Imagefloat *rgb, int bfw, int bfh, struct loc
         if (settings->verbose) {
             int autos = 0;
             if(autoshar) {autos = 1;}
-            printf("Contrast threshold SE Capture Show mask=%f auto=%i\n", (double) sharpc, autos);
+            printf("Contrast threshold Selective Editing Capture Show mask=%f auto=%i\n", (double) sharpc, autos);
         }
 
     } else {//general case
