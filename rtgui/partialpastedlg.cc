@@ -244,6 +244,7 @@ PartialPasteDlg::PartialPasteDlg (const Glib::ustring &title, Gtk::Window* paren
     wavelet     = Gtk::manage (new Gtk::CheckButton (M("PARTIALPASTE_EQUALIZER")));
 
     // Color-Related Settings
+    compressGamut = Gtk::manage(new Gtk::CheckButton(M("PARTIALPASTE_COMPRESSGAMUT")));
     icm         = Gtk::manage (new Gtk::CheckButton (M("PARTIALPASTE_ICMSETTINGS")));
     vibrance    = Gtk::manage (new Gtk::CheckButton (M("PARTIALPASTE_VIBRANCE")));
     chmixer     = Gtk::manage (new Gtk::CheckButton (M("PARTIALPASTE_CHANNELMIXER")));
@@ -358,6 +359,7 @@ PartialPasteDlg::PartialPasteDlg (const Glib::ustring &title, Gtk::Window* paren
     //COLOR
     vboxes[2]->pack_start (*color, Gtk::PACK_SHRINK, 2);
     vboxes[2]->pack_start (*hseps[2], Gtk::PACK_SHRINK, 2);
+    vboxes[2]->pack_start (*compressGamut, Gtk::PACK_SHRINK, 2);
     vboxes[2]->pack_start (*icm, Gtk::PACK_SHRINK, 2);
     vboxes[2]->pack_start (*vibrance, Gtk::PACK_SHRINK, 2);
     vboxes[2]->pack_start (*chmixer, Gtk::PACK_SHRINK, 2);
@@ -527,6 +529,7 @@ PartialPasteDlg::PartialPasteDlg (const Glib::ustring &title, Gtk::Window* paren
     waveletConn = wavelet->signal_toggled().connect (sigc::bind (sigc::mem_fun(*advanced, &Gtk::CheckButton::set_inconsistent), true));
 
     // Color-related Settings:
+    compressGamutConn = compressGamut->signal_toggled().connect(sigc::bind(sigc::mem_fun(*color, &Gtk::CheckButton::set_inconsistent), true));
     icmConn         = icm->signal_toggled().connect (sigc::bind (sigc::mem_fun(*color, &Gtk::CheckButton::set_inconsistent), true));
     vibranceConn    = vibrance->signal_toggled().connect (sigc::bind (sigc::mem_fun(*color, &Gtk::CheckButton::set_inconsistent), true));
     chmixerConn     = chmixer->signal_toggled().connect (sigc::bind (sigc::mem_fun(*color, &Gtk::CheckButton::set_inconsistent), true));
@@ -777,6 +780,7 @@ void PartialPasteDlg::advancedToggled ()
 void PartialPasteDlg::colorToggled ()
 {
 
+    ConnectionBlocker compressGamutBlocker(compressGamutConn);
     ConnectionBlocker icmBlocker(icmConn);
     ConnectionBlocker vibranceBlocker(vibranceConn);
     ConnectionBlocker chmixerBlocker(chmixerConn);
@@ -790,6 +794,7 @@ void PartialPasteDlg::colorToggled ()
 
     color->set_inconsistent (false);
 
+    compressGamut->set_active(color->get_active());
     icm->set_active (color->get_active ());
     vibrance->set_active (color->get_active ());
     chmixer->set_active (color->get_active ());
@@ -972,6 +977,10 @@ void PartialPasteDlg::applyPaste (rtengine::procparams::ProcParams* dstPP, Param
         filterPE.wavelet = falsePE.wavelet;
     }
 
+    if (!compressGamut->get_active()) {
+        filterPE.cg = falsePE.cg;
+    }
+
     if (!icm->get_active ()) {
         filterPE.icm          = falsePE.icm;
     }
@@ -1114,9 +1123,11 @@ void PartialPasteDlg::applyPaste (rtengine::procparams::ProcParams* dstPP, Param
         filterPE.raw.bayersensor.exBlack2        = falsePE.raw.bayersensor.exBlack2;
         filterPE.raw.bayersensor.exBlack3        = falsePE.raw.bayersensor.exBlack3;
         filterPE.raw.bayersensor.exTwoGreen      = falsePE.raw.bayersensor.exTwoGreen;
+        filterPE.raw.bayersensor.Dehablack       = falsePE.raw.bayersensor.Dehablack;
         filterPE.raw.xtranssensor.exBlackRed     = falsePE.raw.xtranssensor.exBlackRed;
         filterPE.raw.xtranssensor.exBlackGreen   = falsePE.raw.xtranssensor.exBlackGreen;
         filterPE.raw.xtranssensor.exBlackBlue    = falsePE.raw.xtranssensor.exBlackBlue;
+        filterPE.raw.xtranssensor.Dehablackx     = falsePE.raw.xtranssensor.Dehablackx;
     }
 
     if (!raw_pixelshift->get_active ()) {
