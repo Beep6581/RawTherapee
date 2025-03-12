@@ -4792,6 +4792,7 @@ void LocallabShadow::updateAdviceTooltips(const bool showTooltips)
         chromaskSH->set_tooltip_text(M("TP_LOCALLAB_CHROMASK_TOOLTIP"));
         slomaskSH->set_tooltip_text(M("TP_LOCALLAB_SLOMASK_TOOLTIP"));
         lapmaskSH->set_tooltip_text(M("TP_LOCALLAB_LAPRAD1_TOOLTIP"));
+        
         /*
         highlights->set_tooltip_text(M("TP_LOCALLAB_NUL_TOOLTIP"));
         h_tonalwidth->set_tooltip_text(M("TP_LOCALLAB_NUL_TOOLTIP"));
@@ -4822,6 +4823,7 @@ void LocallabShadow::updateAdviceTooltips(const bool showTooltips)
         ghs_inv->set_tooltip_text(M("TP_LOCALLAB_GHS_INV_TOOLTIP"));
         BP_Frame->set_tooltip_text(M("TP_LOCALLAB_GHS_BPFRAME_TOOLTIP"));
         ghsFrame->set_tooltip_text(M("TP_LOCALLAB_GHS_METHOD_TOOLTIP"));
+        LC_Frame->set_tooltip_text(M("TP_LOCALLAB_GHS_LC_FRAME_TOOLTIP"));
         gridFrameghs->set_tooltip_text(M("TP_LOCALLAB_GHS_SIMUL_TOOLTIP"));
     } else {
         exp->set_tooltip_text("");
@@ -4874,7 +4876,7 @@ void LocallabShadow::updateAdviceTooltips(const bool showTooltips)
         ghsFrame->set_tooltip_text("");
         gridFrameghs->set_tooltip_text("");
         expgradsh->set_tooltip_text("");
-
+        LC_Frame->set_tooltip_text("");
     }
 }
 
