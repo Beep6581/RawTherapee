@@ -3294,7 +3294,6 @@ TP_LOCALLAB_GHS_LP;Protect shadows (LP)
 TP_LOCALLAB_GHS_HP;Protect highlights (HP)
 TP_LOCALLAB_GHS_LC;Value (LC)
 TP_LOCALLAB_GHS_LC_FRAME;Stretch Regularization & Midtones
-TP_LOCALLAB_GHS_LC_FRAME_TOOLTIP;When Stretch factor is 0.002 or less, Stretch Regularization & Midtones is disabled
 TP_LOCALLAB_GHS_LC_TOOLTIP;Slightly increases local contrast that was weakened by stretching.\nCan be completed by other tools specific to local contrast such as wavelets.\n\nWhen Stretch factor is 0.002 or less, Stretch Regularization & Midtones is disabled.
 TP_LOCALLAB_GHS_MID;Midtones
 TP_LOCALLAB_GHS_MID_TOOLTIP;Adjusts midtone balance after GHS transformation.\n Can be used to rebalance the midtones of the image after stretching.\n\nWhen Stretch factor is 0.002 or less, Stretch Regularization & Midtones is disabled
