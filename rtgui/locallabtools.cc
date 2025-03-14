@@ -4969,7 +4969,7 @@ void LocallabShadow::read(const rtengine::procparams::ProcParams* pp, const Para
         ghs_BLP->setValue((double)spot.ghs_BLP);
         ghs_HLP->setValue((double)spot.ghs_HLP);
             
-        if(ghs_D->getValue() > 0.002) {
+        if(ghs_D->getValue() > 0.002 || ghs_D->getValue() == 0.f) {
             ghs_BLP->set_sensitive(false);
             ghs_HLP->set_sensitive(false); 
             ghs_LC->set_sensitive(true); 
@@ -5241,7 +5241,7 @@ void LocallabShadow::adjusterChanged(Adjuster* a, double newval)
         }
 
         if (a == ghs_D) {
-            if(ghs_D->getValue() > 0.002) {//hide sliders WP and HP si D too big
+            if(ghs_D->getValue() > 0.002  || ghs_D->getValue() == 0.f) {//hide sliders WP and HP si D too big
                 ghs_BLP->set_sensitive(false);
                 ghs_HLP->set_sensitive(false);
                 ghs_LC->set_sensitive(true); 
@@ -6014,7 +6014,7 @@ void LocallabShadow::updateShadowGUImask()
         ghsMethod->hide();
         ghs_slope->hide();
         Lab_Frame->hide();
-        if(ghs_D->getValue() > 0.002) {
+        if(ghs_D->getValue() > 0.002 || ghs_D->getValue() == 0.f) {
             ghs_BLP->set_sensitive(false);
             ghs_HLP->set_sensitive(false);              
             ghs_LC->set_sensitive(true); 
@@ -6130,7 +6130,7 @@ void LocallabShadow::updateShadowGUIshmet()
         ghsMethod->hide();
         ghs_slope->hide();
         Lab_Frame->hide();
-        if(ghs_D->getValue() > 0.002) {
+        if(ghs_D->getValue() > 0.002  || ghs_D->getValue() == 0.f) {
             ghs_BLP->set_sensitive(false);
             ghs_HLP->set_sensitive(false);    
             ghs_LC->set_sensitive(true); 
