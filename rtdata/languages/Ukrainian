@@ -1484,7 +1484,6 @@ HISTORY_MSG_LOCAL_CIE_GREYL;Локальний - Зелений CIECAM Y
 HISTORY_MSG_LOCAL_CIE_ILL;Локальний - Освітлення TRC CIECAM
 HISTORY_MSG_LOCAL_CIE_LOGCIEQ;Локальний - Логарифмічне кодування Q CIECAM
 HISTORY_MSG_LOCAL_CIE_MIDT;Локальний - Середні тони CIECAM
-HISTORY_MSG_LOCAL_CIE_NORM;Локальний - Нормалізація L CIECAM
 HISTORY_MSG_LOCAL_CIE_PRIM;Локальний - Основні кольори TRC CIECAM
 HISTORY_MSG_LOCAL_CIE_REDXL;Локальний - Червоний CIECAM X
 HISTORY_MSG_LOCAL_CIE_REDYL;Локальний - Червоний CIECAM Y
@@ -2862,7 +2861,6 @@ TP_LOCALLAB_BUTTON_REN;Перейменувати
 TP_LOCALLAB_BUTTON_VIS;Показати/Сховати
 TP_LOCALLAB_BWEVNONE;Немає
 TP_LOCALLAB_BWEVSIG;Активовано
-TP_LOCALLAB_BWEVSIGLOG;Сигмоїдальне та логарифмічне кодування
 TP_LOCALLAB_BWFORCE;Використовує чорний Ev та білий Ev
 TP_LOCALLAB_CAM16PQREMAP;HDR PQ (пікова яскравість)
 TP_LOCALLAB_CAM16PQREMAP_TOOLTIP;PQ (перцептивний квантизатор), адаптований до CAM16 (експериментально). Дозволяє змінювати внутрішню функцію PQ (зазвичай 10000 cd/m2 - за замовчуванням 100 cd/m2 - вимкнено для 100 cd/m2).\nМоже бути використано для адаптації до різних пристроїв та зображень, наприклад, для узгодження обробки CAM16 з максимальною яскравістю монітора 400 cd/m2.
@@ -4350,10 +4348,73 @@ ZOOMPANEL_ZOOMOUT;Зменшити масштаб\nШвидка клавіша: 
 !!!!!!!!!!!!!!!!!!!!!!!!!
 
 !HISTORY_MSG_112;--unused--
+!HISTORY_MSG_CG_COLORSPACE;Gamut Compression - Target
+!HISTORY_MSG_CG_CYANLIM;Gamut Compression - Max Limits Cyan
+!HISTORY_MSG_CG_CYANTH;Gamut Compression - Threshold Cyan
+!HISTORY_MSG_CG_ENABLED;Gamut Compression - Enabled
+!HISTORY_MSG_CG_MAGENTALIM;Gamut Compression - Max Limits Magenta
+!HISTORY_MSG_CG_MAGENTATH;Gamut Compression - Threshold Magenta
+!HISTORY_MSG_CG_ROLLOFF;Gamut Compression - Rolloff
+!HISTORY_MSG_CG_VALUE;Gamut Compression - Power
+!HISTORY_MSG_CG_YELLOWLIM;Gamut Compression - Max Limits Yellow
+!HISTORY_MSG_CG_YELLOWTH;Gamut Compression - Threshold Yellow
 !HISTORY_MSG_DEHABLACK;Dehaze Bayer Black
 !HISTORY_MSG_DEHABLACKX;Dehaze X-Trans Black
 !HISTORY_MSG_DISTORTION_DEFISH_FOCAL;De-fish - Focal length
+!HISTORY_MSG_FRAMING_ABSOLUTE_HEIGHT;Framing - Border Height
+!HISTORY_MSG_FRAMING_ABSOLUTE_WIDTH;Framing - Border Width
+!HISTORY_MSG_FRAMING_ALLOW_UPSCALING;Framing - Upscaling
+!HISTORY_MSG_FRAMING_ASPECT_RATIO;Framing - Aspect Ratio
+!HISTORY_MSG_FRAMING_BASIS;Framing - Basis
+!HISTORY_MSG_FRAMING_BORDER_BLUE;Framing - Border (B)
+!HISTORY_MSG_FRAMING_BORDER_GREEN;Framing - Border (G)
+!HISTORY_MSG_FRAMING_BORDER_RED;Framing - Border (R)
+!HISTORY_MSG_FRAMING_BORDER_SIZE;Framing - Relative Size
+!HISTORY_MSG_FRAMING_BORDER_SIZE_METHOD;Framing - Border Sizing Method
+!HISTORY_MSG_FRAMING_ENABLED;Framing
+!HISTORY_MSG_FRAMING_FRAMED_HEIGHT;Framing - Framed Height
+!HISTORY_MSG_FRAMING_FRAMED_WIDTH;Framing - Framed Width
+!HISTORY_MSG_FRAMING_METHOD;Framing - Method
+!HISTORY_MSG_FRAMING_MIN_HEIGHT;Framing - Min Height
+!HISTORY_MSG_FRAMING_MIN_SIZE_ENABLED;Framing - Min Size
+!HISTORY_MSG_FRAMING_MIN_WIDTH;Framing - Min Width
+!HISTORY_MSG_FRAMING_ORIENTATION;Framing - Orientation
+!HISTORY_MSG_ICM_OFFSTRC;Offset
+!HISTORY_MSG_ICM_OPACITYW;Offset
+!HISTORY_MSG_ICM_PYRWAVTRC;Contrast profile
+!HISTORY_MSG_ICM_RESIDTRC;Residual contrast
+!HISTORY_MSG_ICM_SIGMATRC;Local contrast Attenation response
+!HISTORY_MSG_ICM_WAVEXP;Contrast Enhancement
+!HISTORY_MSG_LOCAL_AVOIDNEGATIVE;Local - SC - Pre-filter zero and negative values
+!HISTORY_MSG_LOCAL_CIE_CONTSIG;Local CIECAM - Sigmoid contrast
+!HISTORY_MSG_LOCAL_CIE_NORM11;Local - CIECAM Normalize luminance 5.11
+!HISTORY_MSG_LOCAL_CIE_SKEWSIG;Local CIECAM - Sigmoid skew
+!HISTORY_MSG_LOCAL_CIE_SLOPESMOQ;Local - CIECAM Gray balance
+!HISTORY_MSG_LOCAL_CIE_SMOOTHLNK;Local CIECAM - Link R G B
+!HISTORY_MSG_LOCAL_CIE_SMOOTHTH;Local CIECAM - Attenuation threshold
+!HISTORY_MSG_LOCAL_CIE_SMOOTHTRC;Local CIECAM - Gamma based Highlight attenuation
+!HISTORY_MSG_LOCAL_CIE_SMOOTHTRCREL;Local CIECAM - Relative gamma mode
+!HISTORY_MSG_LOCAL_CIE_SMOOTH_HIGH;Local CIECAM - Highlight Attenuation only
+!HISTORY_MSG_LOCAL_CIE_WEVMETHOD11;Local CIECAM - Black Ev White Ev
+!HISTORY_MSG_LOCAL_CIE_WHITSIG;Local CIECAM - Sigmoid Display white point
+!HISTORY_MSG_LOCAL_LOGCIE12;Local - CIECAM - Log encoding
+!HISTORY_MSG_LOCAL_OFFSETWAV;Local Wav offset
+!HISTORY_MSG_LOCAL_PROCESSWAV;Local - Wavelets - Show modifications
+!HISTORY_MSG_LOCAL_QJMETHOD;Local - CIECAM Tone mapping operator Q and J
+!HISTORY_MSG_LOCAL_SIGBLCIE;Local - CIECAM Blend 5.11
+!HISTORY_MSG_LOCAL_SIGDACIE;Local - CIECAM Contrast 5.11
+!HISTORY_MSG_LOCAL_SIGFORCEBW;Local - Jz White Ev and Black Ev 5.11
+!HISTORY_MSG_LOCAL_SIGJZ11;Local - Jz Sigmoid J 5.11
+!HISTORY_MSG_LOCAL_SIGJZ11BL;Local - Jz Blend 5.11
+!HISTORY_MSG_LOCAL_SIGJZ11CONT;Local - Jz Contrast 5.11
+!HISTORY_MSG_LOCAL_SIGJZ11GRAY;Local - Jz Threshold 5.11
+!HISTORY_MSG_LOCAL_SIGQ11;Local - CIECAM Sigmoid Q - deprecated
+!HISTORY_MSG_LOCAL_SIGQ12;Local - CIECAM Sigmoid Q and Slope based
+!HISTORY_MSG_LOCAL_SIGSENSICIE;Local - CIECAM Adaptability 5.11
+!HISTORY_MSG_LOCAL_SIGTHCIE;Local - CIECAM Threshold 5.11
 !HISTORY_MSG_TRANS_SCALE;Geometry - Scale
+!PARTIALPASTE_COMPRESSGAMUT;Gamut Compression
+!PARTIALPASTE_FRAMING;Framing
 !TP_COARSETRAF_TOOLTIP_ROTRIGHT;Rotate right.\n\nShortcuts:\n<b>]</b> - Multiple Editor Tabs Mode,\n<b>Alt-]</b> - Single Editor Tab Mode.
 !TP_COLORAPP_SURROUND_DARK;Dark
 !TP_COLORAPP_SURROUND_DIM;Dim
@@ -4405,21 +4466,119 @@ ZOOMPANEL_ZOOMOUT;Зменшити масштаб\nШвидка клавіша: 
 !TP_COLORTONING_LABREGION_LIGHTNESSMASK;L
 !TP_COLORTONING_LABREGION_LIST_TITLE;Correction
 !TP_COLORTONING_LABREGION_MASK;Mask
+!TP_COMPRESSGAMUT_ACESP1;ACES AP1
+!TP_COMPRESSGAMUT_ADOBE;Adobe RGB
+!TP_COMPRESSGAMUT_COLORSPACE_TOOLTIP;Gamut-compress is a tool which allows you to compress highly chromatic camera source colorimetry into a smaller gamut.\n Out of gamut negative pixel values are problematic for working on images and should be avoided if possible.\n Blue LED are perceive as highly colorful and colors like beetles, flowers and hummingbirds often over saturated.\n\n This is not a gamut conversion : converting from one gamut to another does change the values of the pixels. However it does not actually change the colorimetric meaning of the pixel data. You could say that by converting between gamuts, you are changing frame of reference to the same colors. After compression the working profile is restored.\n\n Choose the workspace that will be used to set the gamut limits. Depending on the case you can choose:\n The display gamut (sRGB, DCI P3,...). \n The gamut of an output file for use by another software (Prophoto, Rec 2020...). 
+!TP_COMPRESSGAMUT_CYANLIM;Cyan
+!TP_COMPRESSGAMUT_CYANTH;Cyan
+!TP_COMPRESSGAMUT_DCIP3;DCI-P3
+!TP_COMPRESSGAMUT_LABEL;Gamut Compression
+!TP_COMPRESSGAMUT_LIMIT;Maximum Distance Limits
+!TP_COMPRESSGAMUT_LIMIT_TOOLTIP;Maximum Distance Limit: is the distance outside of the gamut boundary to compress to the gamut boundary. For example, a value of 1.2 will compress distance values of 1.2 to a value of 1.0. \nIndividual controls are given for each color component. They are named cyan magenta and yellow because they actually control the max distance from the edge of the triangle (primaries related to the CIExy diagram), not the corner. For example, boosting the value of the cyan distance limit will increase the distance from which values are mapped to the edge between the blue and green corners of the triangle.\nThe distance limits also control the RGB ratios of the compressed values, which affects the apparent hue.\n\nThe distances are relative to the Target Compression Gamut. They may need to be adjusted after changing the target gamut if you want the amount of compression to remain unchanged.
+!TP_COMPRESSGAMUT_MAGENTALIM;Magenta
+!TP_COMPRESSGAMUT_MAGENTATH;Magenta
+!TP_COMPRESSGAMUT_MAIN_COLORSPACE;Target Compression Gamut
+!TP_COMPRESSGAMUT_POWER_TOOLTIP;Power: Control the aggressiveness of the compression curve.\n Higher power values result in more compressed values distributed closer to the gamut boundary. This will increase the "color purity" or "saturation" once the image has been rendered through a display transform.\n Higher values have a smoother transition.
+!TP_COMPRESSGAMUT_PROPHOTO;ProPhoto
+!TP_COMPRESSGAMUT_PWR;Power
+!TP_COMPRESSGAMUT_REC2020;Rec. 2020
+!TP_COMPRESSGAMUT_ROLLOFF;Rolloff
+!TP_COMPRESSGAMUT_SRGB;sRGB
+!TP_COMPRESSGAMUT_THRESHOLD;Threshold
+!TP_COMPRESSGAMUT_THRESHOLD_TOOLTIP;Threshold: controls the percentage of the outer gamut to affect. A value of 0.8 will compress out of gamut values into the outer 20% of the gamut. The inner 80% of the gamut core will not be affected. You can adjust the colors separately: for example if you wanted to protect magenta and yellow a little more than cyan, you could set the threshold a bit higher for cyan.\n\nThe thresholds are relative to the Target Compression Gamut. They may need to be adjusted after changing the target gamut if you want the protected color range to remain unchanged.
+!TP_COMPRESSGAMUT_YELLOWLIM;Yellow
+!TP_COMPRESSGAMUT_YELLOWTH;Yellow
 !TP_DISTORTION_FOCAL_LENGTH;Focal length
-!TP_LOCALLAB_MASKLOWTHRES_TOOLTIP;The Guided Filter is progressively increased from 0% at the threshold setting to 100% at the maximum black value (as determined by the mask).\n You can use certain tools in 'Mask and modifications' to change the gray levels: 'Structure mask', 'Smooth radius', Gamma and Slope, 'Contrast curve', 'Local contrast' (wavelets).\n Use a 'lockable color picker' on the mask to see which areas will be affected. Make sure you set 'Background color mask' = 0 in Settings.
-!TP_LOCALLAB_MASKRECOL_TOOLTIP;Used to modulate the effect of the Color and Light settings based on the image luminance information contained in the L(L) or LC(H) masks (Mask and modifications).\n The L(L) mask or the LC(H) mask must be enabled to use this function.\n The 'dark' and 'light' areas below the dark threshold and above the light threshold will be restored progressively to their original values prior to being modified by the Color and Light settings \n In between these two areas, the full value of the Color and Light settings will be applied.
+!TP_FRAMING_ABSOLUTE_HEIGHT;Border Height
+!TP_FRAMING_ABSOLUTE_WIDTH;Border Width
+!TP_FRAMING_ALLOW_UPSCALING;Allow upscaling to frame
+!TP_FRAMING_ASPECT_RATIO;Aspect Ratio:
+!TP_FRAMING_BASIS;Basis
+!TP_FRAMING_BASIS_AUTO;Auto
+!TP_FRAMING_BASIS_HEIGHT;Height
+!TP_FRAMING_BASIS_LONG_SIDE;Long Edge
+!TP_FRAMING_BASIS_SHORT_SIDE;Short Edge
+!TP_FRAMING_BASIS_WIDTH;Width
+!TP_FRAMING_BLUE;Blue
+!TP_FRAMING_BORDER_COLOR;Border Color
+!TP_FRAMING_BORDER_SIZE;Size
+!TP_FRAMING_BORDER_SIZE_ABSOLUTE;Absolute
+!TP_FRAMING_BORDER_SIZE_METHOD;Sizing:
+!TP_FRAMING_BORDER_SIZE_RELATIVE;Relative
+!TP_FRAMING_BORDER_SIZE_UNIFORM_RELATIVE;Uniform Relative
+!TP_FRAMING_FRAMED_HEIGHT;Framed Height
+!TP_FRAMING_FRAMED_WIDTH;Framed Width
+!TP_FRAMING_GREEN;Green
+!TP_FRAMING_LABEL;Framing
+!TP_FRAMING_LIMIT_MINIMUM;Limit minimum size
+!TP_FRAMING_METHOD;Method:
+!TP_FRAMING_METHOD_BBOX;Bounding Box
+!TP_FRAMING_METHOD_FIXED;Fixed Frame
+!TP_FRAMING_METHOD_STANDARD;Standard
+!TP_FRAMING_MIN_HEIGHT;Minimum Height
+!TP_FRAMING_MIN_WIDTH;Minimum Width
+!TP_FRAMING_ORIENTATION;Orientation:
+!TP_FRAMING_RED;Red
+!TP_ICM_OPACITYWLI;Variable contrast
+!TP_ICM_PRIMFRAME;Primaries & Illuminant
+!TP_ICM_SMOOTHFRAME;Highlight attenuation
+!TP_ICM_WAVFRAME;Contrast Enhancement
+!TP_ICM_WAVREFI;Refinement
+!TP_ICM_WORKING_SMOOTH;Highlight attenuation
+!TP_LOCALLAB_AVOIDNEG;Pre-filter zero and negative values
+!TP_LOCALLAB_BWEVNONE11;None
+!TP_LOCALLAB_BWEVSIG11;Activated
+!TP_LOCALLAB_BWEVSLOP;Slope based
+!TP_LOCALLAB_CIE_SMOOTHFRAME12;Tone Mapping Operators
+!TP_LOCALLAB_CIE_SMOOTH_LEVELSTRC;RGB channel TRC
+!TP_LOCALLAB_CIE_SMOOTH_SIG;Sigmoid based
+!TP_LOCALLAB_MASKLOWTHRES_TOOLTIP;The Guided Filter is progressively increased from 0% at the threshold setting to 100% at the maximum black value (as determined by the mask).\n You can use certain tools in 'Mask and Modifications' to change the gray levels: 'Structure mask', 'Smooth radius', Gamma and Slope, 'Contrast curve', 'Local contrast' (wavelets).\n Use a 'lockable color picker' on the mask to see which areas will be affected. Make sure you set 'Background color mask' = 0 in Settings.
+!TP_LOCALLAB_MASKRECOL_TOOLTIP;Used to modulate the effect of the Color and Light settings based on the image luminance information contained in the L(L) or LC(H) masks (Mask and Modifications).\n The L(L) mask or the LC(H) mask must be enabled to use this function.\n The 'dark' and 'light' areas below the dark threshold and above the light threshold will be restored progressively to their original values prior to being modified by the Color and Light settings \n In between these two areas, the full value of the Color and Light settings will be applied.
 !TP_LOCALLAB_MASKRECOTHRES;Recovery threshold
-!TP_LOCALLAB_MASKREEXP_TOOLTIP;Used to modulate the effect of the 'Dynamic range and Exposure' settings based on the image luminance information contained in the L(L) or LC(H) masks (Mask and modifications).\n The L(L) mask or the LC(H) mask must be enabled to use this function.\n The 'dark' and 'light' areas below the dark threshold and above the light threshold will be restored progressively to their original values prior to being modified by the 'Dynamic range and Exposure' settings \n In between these two areas, the full value of the 'Dynamic range and Exposure' settings will be applied.
-!TP_LOCALLAB_MASKRELOG_TOOLTIP;Used to modulate the effect of the Log encoding settings based on the image luminance information contained in the L(L) or LC(H) masks (Mask and modifications).\n The L(L) mask or the LC(H) mask must be enabled to use this function.\n The 'dark' and 'light' areas below the dark threshold and above the light threshold will be restored progressively to their original values prior to being modified by the Log encoding settings - can be used to restore highlights reconstructed by Color propagation \n In between these two areas, the full value of the Log encoding settings will be applied.
-!TP_LOCALLAB_MASKRESCB_TOOLTIP;Used to modulate the effect of the CBDL (Luminance only) settings based on the image luminance information contained in the L(L) or LC(H) masks (Mask and modifications).\n The L(L) mask or the LC(H) mask must be enabled to use this function.\n The 'dark' and 'light' areas below the dark threshold and above the light threshold will be restored progressively to their original values prior to being modified by the CBDL settings \n In between these two areas, the full value of the CBDL settings will be applied.
-!TP_LOCALLAB_MASKRESH_TOOLTIP;Used to modulate the effect of the Shadows Highlights settings based on the image luminance information contained in the L(L) or LC(H) masks (Mask and modifications).\n The L(L) mask or the LC(H) mask must be enabled to use this function.\n The 'dark' and 'light' areas below the dark threshold and above the light threshold will be restored progressively to their original values prior to being modified by the Shadows Highlights settings \n In between these two areas, the full value of the Shadows Highlights settings will be applied.
-!TP_LOCALLAB_MASKRESRETI_TOOLTIP;Used to modulate the effect of the Retinex (Luminance only) settings based on the image luminance information contained in the L(L) or LC(H) masks (Mask and modifications).\n The L(L) mask or the LC(H) mask must be enabled to use this function.\n The 'dark' and 'light' areas below the dark threshold and above the light threshold will be restored progressively to their original values prior to being modified by the Retinex settings \n In between these two areas, the full value of the Retinex settings will be applied.
-!TP_LOCALLAB_MASKRESTM_TOOLTIP;Used to modulate the effect of the Tone Mapping settings based on the image luminance information contained in the L(L) or LC(H) masks (Mask and modifications).\n The L(L) mask or the LC(H) mask must be enabled to use this function.\n The 'dark' and 'light' areas below the dark threshold and above the light threshold will be restored progressively to their original values prior to being modified by the Tone Mapping settings \n In between these two areas, the full value of the Tone Mapping settings will be applied.
-!TP_LOCALLAB_MASKRESVIB_TOOLTIP;Used to modulate the effect of the Vibrance and Warm Cool settings based on the image luminance information contained in the L(L) or LC(H) masks (Mask and modifications).\n The L(L) mask or the LC(H) mask must be enabled to use this function.\n The 'dark' and 'light' areas below the dark threshold and above the light threshold will be restored progressively to their original values prior to being modified by the Vibrance and Warm Cool settings \n In between these two areas, the full value of the Vibrance and Warm Cool settings will be applied.
-!TP_LOCALLAB_MASKRESWAV_TOOLTIP;Used to modulate the effect of the Local contrast and Wavelet settings based on the image luminance information contained in the L(L) or LC(H) masks (Mask and modifications).\n The L(L) mask or the LC(H) mask must be enabled to use this function.\n The 'dark' and 'light' areas below the dark threshold and above the light threshold will be restored progressively to their original values prior to being modified by the Local contrast and Wavelet settings \n In between these two areas, the full value of the Local contrast and Wavelet settings will be applied.
-!TP_LOCALLAB_MASKUNUSABLE;Mask disabled (Enable in Mask & modifications)
-!TP_LOCALLAB_MASKUSABLE;Mask enabled (Mask & modifications)
+!TP_LOCALLAB_MASKREEXP_TOOLTIP;Used to modulate the effect of the 'Dynamic range and Exposure' settings based on the image luminance information contained in the L(L) or LC(H) masks (Mask and Modifications).\n The L(L) mask or the LC(H) mask must be enabled to use this function.\n The 'dark' and 'light' areas below the dark threshold and above the light threshold will be restored progressively to their original values prior to being modified by the 'Dynamic range and Exposure' settings \n In between these two areas, the full value of the 'Dynamic range and Exposure' settings will be applied.
+!TP_LOCALLAB_MASKRELOG_TOOLTIP;Used to modulate the effect of the Log encoding settings based on the image luminance information contained in the L(L) or LC(H) masks (Mask and Modifications).\n The L(L) mask or the LC(H) mask must be enabled to use this function.\n The 'dark' and 'light' areas below the dark threshold and above the light threshold will be restored progressively to their original values prior to being modified by the Log encoding settings - can be used to restore highlights reconstructed by Color propagation \n In between these two areas, the full value of the Log encoding settings will be applied.
+!TP_LOCALLAB_MASKRESCB_TOOLTIP;Used to modulate the effect of the CBDL (Luminance only) settings based on the image luminance information contained in the L(L) or LC(H) masks (Mask and Modifications).\n The L(L) mask or the LC(H) mask must be enabled to use this function.\n The 'dark' and 'light' areas below the dark threshold and above the light threshold will be restored progressively to their original values prior to being modified by the CBDL settings \n In between these two areas, the full value of the CBDL settings will be applied.
+!TP_LOCALLAB_MASKRESH_TOOLTIP;Used to modulate the effect of the Shadows Highlights settings based on the image luminance information contained in the L(L) or LC(H) masks (Mask and Modifications).\n The L(L) mask or the LC(H) mask must be enabled to use this function.\n The 'dark' and 'light' areas below the dark threshold and above the light threshold will be restored progressively to their original values prior to being modified by the Shadows Highlights settings \n In between these two areas, the full value of the Shadows Highlights settings will be applied.
+!TP_LOCALLAB_MASKRESRETI_TOOLTIP;Used to modulate the effect of the Retinex (Luminance only) settings based on the image luminance information contained in the L(L) or LC(H) masks (Mask and Modifications).\n The L(L) mask or the LC(H) mask must be enabled to use this function.\n The 'dark' and 'light' areas below the dark threshold and above the light threshold will be restored progressively to their original values prior to being modified by the Retinex settings \n In between these two areas, the full value of the Retinex settings will be applied.
+!TP_LOCALLAB_MASKRESTM_TOOLTIP;Used to modulate the effect of the Tone Mapping settings based on the image luminance information contained in the L(L) or LC(H) masks (Mask and Modifications).\n The L(L) mask or the LC(H) mask must be enabled to use this function.\n The 'dark' and 'light' areas below the dark threshold and above the light threshold will be restored progressively to their original values prior to being modified by the Tone Mapping settings \n In between these two areas, the full value of the Tone Mapping settings will be applied.
+!TP_LOCALLAB_MASKRESVIB_TOOLTIP;Used to modulate the effect of the Vibrance and Warm Cool settings based on the image luminance information contained in the L(L) or LC(H) masks (Mask and Modifications).\n The L(L) mask or the LC(H) mask must be enabled to use this function.\n The 'dark' and 'light' areas below the dark threshold and above the light threshold will be restored progressively to their original values prior to being modified by the Vibrance and Warm Cool settings \n In between these two areas, the full value of the Vibrance and Warm Cool settings will be applied.
+!TP_LOCALLAB_MASKRESWAV_TOOLTIP;Used to modulate the effect of the Local contrast and Wavelet settings based on the image luminance information contained in the L(L) or LC(H) masks (Mask and Modifications).\n The L(L) mask or the LC(H) mask must be enabled to use this function.\n The 'dark' and 'light' areas below the dark threshold and above the light threshold will be restored progressively to their original values prior to being modified by the Local contrast and Wavelet settings \n In between these two areas, the full value of the Local contrast and Wavelet settings will be applied.
+!TP_LOCALLAB_MASKUNUSABLE;Mask disabled (Enable in Mask & Modifications)
+!TP_LOCALLAB_MASKUSABLE;Mask enabled (Mask & Modifications)
 !TP_LOCALLAB_MASK_TOOLTIP;You can enable multiple masks for a tool by activating another tool and using only the mask (set the tool sliders to 0 ).\n\nYou can also duplicate the spot and place it close to the first spot. The small variations in the spot references allow you to make fine adjustments.
+!TP_LOCALLAB_PROCESSWAV;Show modified areas with Wavelets
+!TP_LOCALLAB_PROCESSWAV_TOOLTIP;Wavelet decomposition:\nShows the changes made by the wavelet settings.\n\nYou see the changes made to the decomposed image, factoring in the deltaE and transitions, when you modify the wavelet settings. Note that this is different from Wavelet levels in the Advanced tab in which you always see the results of the decomposition.
+!TP_LOCALLAB_QJMODE;Tone Mapping Operators Q(CAM16) & J(Jz) 
+!TP_LOCALLAB_QJMODE_511;5.11 deprecated
+!TP_LOCALLAB_QJMODE_512;5.12
+!TP_LOCALLAB_QJMODE_TOOLTIP;The tone-mapping operators that use brightness data (Q for CAM16 and J for Jz) have been modified in RawTherapee version 5.12. This allows you to select either the current or the deprecated version.
+!TP_LOCALLAB_SIGFRA11;Sigmoid Q (deprecated)
+!TP_LOCALLAB_SIGJZFRA11;Sigmoid Jz (deprecated)
+!TP_LOCALLAB_SIGMOIDBL11;Blend
+!TP_LOCALLAB_SIGMOIDNORMCIE11;Normalize Luminance
+!TP_LOCALLAB_SIGMOIDNORMCIEDISP_TOOLTIP;Allows you to adapt the white point to the peak luminance of the display device. Its position in the processing pipeline is not optimal so use with caution.
+!TP_LOCALLAB_SIGMOIDQJ11;Black Ev & White Ev
+!TP_LOCALLAB_SIGMOIDTH11;Threshold (Gray point)
+!TP_LOCALLAB_SLOPESMOOTRCB;Blue balance (TRC)
+!TP_LOCALLAB_SLOPESMOOTRCG;Green balance (TRC)
+!TP_LOCALLAB_SLOPESMOOTRCR;Red balance (TRC)
+!TP_LOCALLAB_SMOOTHCIETH;Attenuation threshold
+!TP_LOCALLAB_SMOOTHCIE_HIGH;Highlight attenuation only
+!TP_LOCALLAB_SMOOTHCIE_LNK;Link R, G, & B
+!TP_LOCALLAB_SMOOTHCIE_TRC;Increase gamma-based attenuation
+!TP_LOCALLAB_SMOOTHCIE_TRCREL;Relative gamma mode
+!TP_LOCALLAB_SMOOTHCONTSIG;Contrast
+!TP_LOCALLAB_SMOOTHSKEWSIG;Skew
+!TP_LOCALLAB_SMOOTHWHITSIG;Display White point (cd/m2)
 !TP_RAWEXPOS_DEHA;Dehaze
+!TP_WAVELET_DAUB20;D20 - high plus
+!TP_WAVELET_LEVLOCLABEL;Increase the preview window size
+!TP_WAVELET_OFFSFIN;Offset
+!TP_WAVELET_PYRWAVTRC;Contrast profile
+!TP_WAVELET_PYRWAVTRC_CURVE_TOOLTIP;The left end of the horizontal axis corresponds to close to zero contrast, while the right end corresponds to the strongest contrast in the image. The midpoint of the horizontal axis corresponds to the predominant contrast strength across all detail levels.\n\nThe effect of this curve is reduced for higher Contrast profile presets.\n\nTo avoid harsh contrast and halos, refrain from increasing the right half of the curve.
+!TP_WAVELET_PYRWAVTRC_RESID_TOOLTIP;Adjusts the contrast for all detail levels larger than those covered by the selected Contrast profile.
+!TP_WAVELET_PYRWAVTRC_SIGMA_TOOLTIP;Stretches the width of the "Variable contrast" curve. A value of 1 means no stretching.
+!TP_WAVELET_PYRWAVTRC_TOOLTIP;A series of presets defining the strength of the contrast adjustment at different detail levels. Lower presets only affect fine details while higher presets affect both fine and coarse details.\n\nNote: The effect on coarse details may not be visible in the preview if the preview is too small.
+!TP_WAVELET_RESIDTRC;Residual contrast
 !//TP_WBALANCE_ITCWBNOPURPLE_TOOLTIP;By default when "Inpaint opposed" is activated, purple colors are not taken into account. However, if the image does not need highlight reconstruction, or if this image naturally contains purple tints (flowers, etc.), it may be necessary to deactivate, to take into account all the colors.
 !//TP_WBALANCE_ITCWB_FORCED;Forces use of the entire CIE diagram
