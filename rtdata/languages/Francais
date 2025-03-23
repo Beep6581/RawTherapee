@@ -3460,8 +3460,8 @@ ZOOMPANEL_ZOOMOUT;Zoom Arrière\nRaccourci: <b>-</b>
 !HISTORY_MSG_889;Local - Contrast Wavelet Graduated Strength
 !HISTORY_MSG_890;Local - Contrast Wavelet Graduated angle
 !HISTORY_MSG_891;Local - Contrast Wavelet Graduated
-!HISTORY_MSG_892;Local - Log Encoding Graduated Strength
-!HISTORY_MSG_893;Local - Log Encoding Graduated angle
+!HISTORY_MSG_892;Local - Log encoding Graduated Strength
+!HISTORY_MSG_893;Local - Log encoding Graduated angle
 !HISTORY_MSG_894;Local - SD - ΔE preview color intensity
 !HISTORY_MSG_897;Local - Contrast Wavelet ES strength
 !HISTORY_MSG_898;Local - Contrast Wavelet ES radius
@@ -3527,7 +3527,7 @@ ZOOMPANEL_ZOOMOUT;Zoom Arrière\nRaccourci: <b>-</b>
 !HISTORY_MSG_958;Local - Show/hide settings
 !HISTORY_MSG_959;Local - Inverse blur
 !HISTORY_MSG_960;Local - Log encoding - cat16
-!HISTORY_MSG_961;Local - Log encoding Ciecam
+!HISTORY_MSG_961;Local - Log encoding CIECAM
 !HISTORY_MSG_962;Local - Log encoding Absolute luminance source
 !HISTORY_MSG_963;Local - Log encoding Absolute luminance target
 !HISTORY_MSG_964;Local - Log encoding Surround
@@ -3644,9 +3644,9 @@ ZOOMPANEL_ZOOMOUT;Zoom Arrière\nRaccourci: <b>-</b>
 !HISTORY_MSG_1076;Local - CIECAM Scope
 !HISTORY_MSG_1077;Local - CIECAM Mode
 !HISTORY_MSG_1078;Local - Red and skin protection
-!HISTORY_MSG_1079;Local - CIECAM Sigmoid strength J
-!HISTORY_MSG_1080;Local - CIECAM Sigmoid threshold
-!HISTORY_MSG_1081;Local - CIECAM Sigmoid blend
+!HISTORY_MSG_1079;Local - CIECAM Sigmoid Q Contrast
+!HISTORY_MSG_1080;Local - CIECAM Sigmoid Q Skew
+!HISTORY_MSG_1081;Local - CIECAM Sigmoid Q Display white point
 !HISTORY_MSG_1082;Local - CIECAM Auto threshold
 !HISTORY_MSG_1083;Local - CIECAM Hue
 !HISTORY_MSG_1084;Local - Uses Black Ev - White Ev
@@ -3654,9 +3654,9 @@ ZOOMPANEL_ZOOMOUT;Zoom Arrière\nRaccourci: <b>-</b>
 !HISTORY_MSG_1086;Local - Jz contrast
 !HISTORY_MSG_1087;Local - Jz chroma
 !HISTORY_MSG_1088;Local - Jz hue
-!HISTORY_MSG_1089;Local - Jz Sigmoid strength
-!HISTORY_MSG_1090;Local - Jz Sigmoid threshold
-!HISTORY_MSG_1091;Local - Jz Sigmoid blend
+!HISTORY_MSG_1089;Local - Jz Sigmoid contrast
+!HISTORY_MSG_1090;Local - Jz Sigmoid skew
+!HISTORY_MSG_1091;Local - Jz Sigmoid Display White point
 !HISTORY_MSG_1092;Local - Jz adaptation
 !HISTORY_MSG_1093;Local - CAM model
 !HISTORY_MSG_1094;Local - Jz highligths
@@ -3712,9 +3712,9 @@ ZOOMPANEL_ZOOMOUT;Zoom Arrière\nRaccourci: <b>-</b>
 !HISTORY_MSG_1144;Local - Jz whiteev
 !HISTORY_MSG_1145;Local - Jz Log encoding
 !HISTORY_MSG_1146;Local - Jz Log encoding target gray
-!HISTORY_MSG_1147;Local - Jz BlackEv WhiteEv
+!HISTORY_MSG_1147;Local - Jz Scale Yb scene
 !HISTORY_MSG_1148;Local - Jz Sigmoid
-!HISTORY_MSG_1149;Local - Q Sigmoid
+!HISTORY_MSG_1149;Local - Q Sigmoid & Slope based
 !HISTORY_MSG_1150;Local - Log encoding Q instead Sigmoid Q
 !HISTORY_MSG_BLSHAPE;Blur by level
 !HISTORY_MSG_BLURCWAV;Blur chroma
@@ -3723,12 +3723,44 @@ ZOOMPANEL_ZOOMOUT;Zoom Arrière\nRaccourci: <b>-</b>
 !HISTORY_MSG_CATCAT;CAL - Settings - Mode
 !HISTORY_MSG_CATCOMPLEX;CAL - Settings - Complexity
 !HISTORY_MSG_CATMODEL;CAL - Settings - CAM
+!HISTORY_MSG_CG_COLORSPACE;Gamut Compression - Target
+!HISTORY_MSG_CG_CYANLIM;Gamut Compression - Max Limits Cyan
+!HISTORY_MSG_CG_CYANTH;Gamut Compression - Threshold Cyan
+!HISTORY_MSG_CG_ENABLED;Gamut Compression - Enabled
+!HISTORY_MSG_CG_MAGENTALIM;Gamut Compression - Max Limits Magenta
+!HISTORY_MSG_CG_MAGENTATH;Gamut Compression - Threshold Magenta
+!HISTORY_MSG_CG_ROLLOFF;Gamut Compression - Rolloff
+!HISTORY_MSG_CG_VALUE;Gamut Compression - Power
+!HISTORY_MSG_CG_YELLOWLIM;Gamut Compression - Max Limits Yellow
+!HISTORY_MSG_CG_YELLOWTH;Gamut Compression - Threshold Yellow
 !HISTORY_MSG_COMPLEX;Wavelet complexity
 !HISTORY_MSG_COMPLEXRETI;Retinex complexity
+!HISTORY_MSG_DEHABLACK;Dehaze Bayer Black
+!HISTORY_MSG_DEHABLACKX;Dehaze X-Trans Black
 !HISTORY_MSG_DEHAZE_SATURATION;Dehaze - Saturation
 !HISTORY_MSG_DIRPYRDENOISE_GAIN;NR - Compensate for lightness
+!HISTORY_MSG_DISTORTION_DEFISH;De-fish
+!HISTORY_MSG_DISTORTION_DEFISH_FOCAL;De-fish - Focal length
 !HISTORY_MSG_EDGEFFECT;Edge Attenuation response
 !HISTORY_MSG_FF_FROMMETADATA;Flat-Field - From Metadata
+!HISTORY_MSG_FRAMING_ABSOLUTE_HEIGHT;Framing - Border Height
+!HISTORY_MSG_FRAMING_ABSOLUTE_WIDTH;Framing - Border Width
+!HISTORY_MSG_FRAMING_ALLOW_UPSCALING;Framing - Upscaling
+!HISTORY_MSG_FRAMING_ASPECT_RATIO;Framing - Aspect Ratio
+!HISTORY_MSG_FRAMING_BASIS;Framing - Basis
+!HISTORY_MSG_FRAMING_BORDER_BLUE;Framing - Border (B)
+!HISTORY_MSG_FRAMING_BORDER_GREEN;Framing - Border (G)
+!HISTORY_MSG_FRAMING_BORDER_RED;Framing - Border (R)
+!HISTORY_MSG_FRAMING_BORDER_SIZE;Framing - Relative Size
+!HISTORY_MSG_FRAMING_BORDER_SIZE_METHOD;Framing - Border Sizing Method
+!HISTORY_MSG_FRAMING_ENABLED;Framing
+!HISTORY_MSG_FRAMING_FRAMED_HEIGHT;Framing - Framed Height
+!HISTORY_MSG_FRAMING_FRAMED_WIDTH;Framing - Framed Width
+!HISTORY_MSG_FRAMING_METHOD;Framing - Method
+!HISTORY_MSG_FRAMING_MIN_HEIGHT;Framing - Min Height
+!HISTORY_MSG_FRAMING_MIN_SIZE_ENABLED;Framing - Min Size
+!HISTORY_MSG_FRAMING_MIN_WIDTH;Framing - Min Width
+!HISTORY_MSG_FRAMING_ORIENTATION;Framing - Orientation
 !HISTORY_MSG_GAMUTMUNSEL;Gamut-Munsell
 !HISTORY_MSG_HLBL;Color propagation - blur
 !HISTORY_MSG_HLTH;Inpaint opposed - gain threshold
@@ -3742,18 +3774,25 @@ ZOOMPANEL_ZOOMOUT;Zoom Arrière\nRaccourci: <b>-</b>
 !HISTORY_MSG_ICM_GREX;Primaries Green X
 !HISTORY_MSG_ICM_GREY;Primaries Green Y
 !HISTORY_MSG_ICM_MIDTCIE;Midtones
+!HISTORY_MSG_ICM_OFFSTRC;Offset
+!HISTORY_MSG_ICM_OPACITYW;Offset
 !HISTORY_MSG_ICM_PRESER;Preserve neutral
+!HISTORY_MSG_ICM_PYRWAVTRC;Contrast profile
 !HISTORY_MSG_ICM_REDX;Primaries Red X
 !HISTORY_MSG_ICM_REDY;Primaries Red Y
 !HISTORY_MSG_ICM_REFI;Refinement Colors
+!HISTORY_MSG_ICM_RESIDTRC;Residual contrast
 !HISTORY_MSG_ICM_SHIFTX;Refinement Colors - Shift x
 !HISTORY_MSG_ICM_SHIFTY;Refinement Colors - Shift y
+!HISTORY_MSG_ICM_SIGMATRC;Local contrast Attenation response
 !HISTORY_MSG_ICM_SMOOTHCIE;Smooth highlights
 !HISTORY_MSG_ICM_TRCEXP;Abstract Profile
+!HISTORY_MSG_ICM_WAVEXP;Contrast Enhancement
 !HISTORY_MSG_ICM_WORKING_ILLUM_METHOD;Illuminant method
 !HISTORY_MSG_ICM_WORKING_PRIM_METHOD;Primaries method
 !HISTORY_MSG_ILLUM;CAL - SC - Illuminant
 !HISTORY_MSG_LOCALLAB_TE_PIVOT;Local - Equalizer pivot
+!HISTORY_MSG_LOCAL_AVOIDNEGATIVE;Local - SC - Pre-filter zero and negative values
 !HISTORY_MSG_LOCAL_CIEMASK_BLURCONT;Local - CIECAM Mask blur contrast
 !HISTORY_MSG_LOCAL_CIEMASK_BLURFFT;Local - CIECAM Mask blur FFTW
 !HISTORY_MSG_LOCAL_CIEMASK_BLURRAD;Local - CIECAM Mask blur radius
@@ -3772,6 +3811,7 @@ ZOOMPANEL_ZOOMOUT;Zoom Arrière\nRaccourci: <b>-</b>
 !HISTORY_MSG_LOCAL_CIE_BRICOMPTH;Local - CIECAM Brightness compression threshold
 !HISTORY_MSG_LOCAL_CIE_BWCIE;Local - CIECAM Black and white
 !HISTORY_MSG_LOCAL_CIE_CAT;Local - Matrix adaptation
+!HISTORY_MSG_LOCAL_CIE_CONTSIG;Local CIECAM - Sigmoid contrast
 !HISTORY_MSG_LOCAL_CIE_DETAILJZ;Local - JzCzHz Local contrast
 !HISTORY_MSG_LOCAL_CIE_ENAMASKALL;Local - CIECAM All mask tools
 !HISTORY_MSG_LOCAL_CIE_EXPPRECAM;Local - CIECAM Pre-Cam
@@ -3782,7 +3822,7 @@ ZOOMPANEL_ZOOMOUT;Zoom Arrière\nRaccourci: <b>-</b>
 !HISTORY_MSG_LOCAL_CIE_ILL;Local - CIECAM TRC Illuminant
 !HISTORY_MSG_LOCAL_CIE_LOGCIEQ;Local - CIECAM Log encoding Q
 !HISTORY_MSG_LOCAL_CIE_MIDT;Local - CIECAM Mid Tones
-!HISTORY_MSG_LOCAL_CIE_NORM;Local - CIECAM Normalize L
+!HISTORY_MSG_LOCAL_CIE_NORM11;Local - CIECAM Normalize luminance 5.11
 !HISTORY_MSG_LOCAL_CIE_PRIM;Local - CIECAM TRC primaries
 !HISTORY_MSG_LOCAL_CIE_REDXL;Local - CIECAM Red X
 !HISTORY_MSG_LOCAL_CIE_REDYL;Local - CIECAM Red Y
@@ -3791,21 +3831,30 @@ ZOOMPANEL_ZOOMOUT;Zoom Arrière\nRaccourci: <b>-</b>
 !HISTORY_MSG_LOCAL_CIE_SHIFTXL;Local - CIECAM Shift x
 !HISTORY_MSG_LOCAL_CIE_SHIFTYL;Local - CIECAM Shift y
 !HISTORY_MSG_LOCAL_CIE_SIG;Local - Sigmoid
-!HISTORY_MSG_LOCAL_CIE_SIGADAP;Local - CIECAM Sigmoid adaptability
-!HISTORY_MSG_LOCAL_CIE_SIGMET;Local - CIECAM Sigmoid method
+!HISTORY_MSG_LOCAL_CIE_SIGADAP;Local - CIECAM Sigmoid adaptability 5.11
+!HISTORY_MSG_LOCAL_CIE_SIGMET;Local - CIECAM Tone mapping Q 
+!HISTORY_MSG_LOCAL_CIE_SKEWSIG;Local CIECAM - Sigmoid skew
 !HISTORY_MSG_LOCAL_CIE_SLOP;Local - CIECAM Slope
 !HISTORY_MSG_LOCAL_CIE_SLOPESMO;Local - CIECAM Gray balance
 !HISTORY_MSG_LOCAL_CIE_SLOPESMOB;Local - CIECAM Blue balance
 !HISTORY_MSG_LOCAL_CIE_SLOPESMOG;Local - CIECAM Green balance
+!HISTORY_MSG_LOCAL_CIE_SLOPESMOQ;Local - CIECAM Gray balance
 !HISTORY_MSG_LOCAL_CIE_SLOPESMOR;Local - CIECAM Red balance
 !HISTORY_MSG_LOCAL_CIE_SMOOTH;Local - CIECAM Scale Yb scene
+!HISTORY_MSG_LOCAL_CIE_SMOOTHLNK;Local CIECAM - Link R G B
 !HISTORY_MSG_LOCAL_CIE_SMOOTHMET;Local - CIECAM Smooth lights method
+!HISTORY_MSG_LOCAL_CIE_SMOOTHTH;Local CIECAM - Attenuation threshold
+!HISTORY_MSG_LOCAL_CIE_SMOOTHTRC;Local CIECAM - Gamma based Highlight attenuation
+!HISTORY_MSG_LOCAL_CIE_SMOOTHTRCREL;Local CIECAM - Relative gamma mode
 !HISTORY_MSG_LOCAL_CIE_SMOOTHYB;Local - CIECAM Scale Yb viewing
+!HISTORY_MSG_LOCAL_CIE_SMOOTH_HIGH;Local CIECAM - Highlight Attenuation only
 !HISTORY_MSG_LOCAL_CIE_SMOOTH_LUM;Local - CIECAM Levels - Luminosity mode
 !HISTORY_MSG_LOCAL_CIE_STRGRAD;Local - CIECAM Gradient strength L
 !HISTORY_MSG_LOCAL_CIE_STRLOG;Local - CIECAM Log encoding strength
 !HISTORY_MSG_LOCAL_CIE_TRC;Local - CIECAM TRC
+!HISTORY_MSG_LOCAL_CIE_WEVMETHOD11;Local CIECAM - Black Ev White Ev
 !HISTORY_MSG_LOCAL_CIE_WHITES;Local - CIECAM Whites distribution
+!HISTORY_MSG_LOCAL_CIE_WHITSIG;Local CIECAM - Sigmoid Display white point
 !HISTORY_MSG_LOCAL_DEHAZE_BLACK;Local - Dehaze Black
 !HISTORY_MSG_LOCAL_FEATHERCIE;Local - CIECAM Gradient feather
 !HISTORY_MSG_LOCAL_FEATHERCOL;Local - Color Gradient feather
@@ -3816,10 +3865,25 @@ ZOOMPANEL_ZOOMOUT;Zoom Arrière\nRaccourci: <b>-</b>
 !HISTORY_MSG_LOCAL_FEATHERVIB;Local - Vib Gradient feather
 !HISTORY_MSG_LOCAL_FEATHERWAV;Local - Wav Gradient feather
 !HISTORY_MSG_LOCAL_GAMUTMUNSEL;Local - SC - Avoid Color Shift
+!HISTORY_MSG_LOCAL_LOGCIE12;Local - CIECAM - Log encoding
 !HISTORY_MSG_LOCAL_LOG_BLACKS;Local - Log Blacks distribution
 !HISTORY_MSG_LOCAL_LOG_COMPR;Local - Log Compress brightness
 !HISTORY_MSG_LOCAL_LOG_SAT;Local - Log Saturation control
 !HISTORY_MSG_LOCAL_LOG_WHITES;Local - Log Whites distribution
+!HISTORY_MSG_LOCAL_OFFSETWAV;Local Wav offset
+!HISTORY_MSG_LOCAL_PROCESSWAV;Local - Wavelets - Show modifications
+!HISTORY_MSG_LOCAL_QJMETHOD;Local - CIECAM Tone mapping operator Q and J
+!HISTORY_MSG_LOCAL_SIGBLCIE;Local - CIECAM Blend 5.11
+!HISTORY_MSG_LOCAL_SIGDACIE;Local - CIECAM Contrast 5.11
+!HISTORY_MSG_LOCAL_SIGFORCEBW;Local - Jz White Ev and Black Ev 5.11
+!HISTORY_MSG_LOCAL_SIGJZ11;Local - Jz Sigmoid J 5.11
+!HISTORY_MSG_LOCAL_SIGJZ11BL;Local - Jz Blend 5.11
+!HISTORY_MSG_LOCAL_SIGJZ11CONT;Local - Jz Contrast 5.11
+!HISTORY_MSG_LOCAL_SIGJZ11GRAY;Local - Jz Threshold 5.11
+!HISTORY_MSG_LOCAL_SIGQ11;Local - CIECAM Sigmoid Q - deprecated
+!HISTORY_MSG_LOCAL_SIGQ12;Local - CIECAM Sigmoid Q and Slope based
+!HISTORY_MSG_LOCAL_SIGSENSICIE;Local - CIECAM Adaptability 5.11
+!HISTORY_MSG_LOCAL_SIGTHCIE;Local - CIECAM Threshold 5.11
 !HISTORY_MSG_LOCAL_TMO_SATUR;Local Exp Fattal Saturation
 !HISTORY_MSG_PDSHARPEN_AUTO_CONTRAST;CS - Auto threshold
 !HISTORY_MSG_PDSHARPEN_AUTO_RADIUS;CS - Auto radius
@@ -3854,6 +3918,7 @@ ZOOMPANEL_ZOOMOUT;Zoom Arrière\nRaccourci: <b>-</b>
 !HISTORY_MSG_TONE_EQUALIZER_REGULARIZATION;Tone equalizer - Regularization
 !HISTORY_MSG_TONE_EQUALIZER_SHOW_COLOR_MAP;Tone equalizer - Tonal map
 !HISTORY_MSG_TRANS_METHOD;Geometry - Method
+!HISTORY_MSG_TRANS_SCALE;Geometry - Scale
 !HISTORY_MSG_WAVBALCHROM;Equalizer chrominance
 !HISTORY_MSG_WAVBALLUM;Equalizer luminance
 !HISTORY_MSG_WAVBL;Blur levels
@@ -3913,15 +3978,17 @@ ZOOMPANEL_ZOOMOUT;Zoom Arrière\nRaccourci: <b>-</b>
 !ICCPROFCREATOR_PRIM_DCIP3;DCI-P3
 !INSPECTOR_WINDOW_TITLE;Inspector
 !MAIN_FRAME_PLACES_DEL;Remove
+!PARTIALPASTE_COMPRESSGAMUT;Gamut Compression
 !PARTIALPASTE_FILMNEGATIVE;Film negative
 !PARTIALPASTE_FLATFIELDFROMMETADATA;Flat-field from Metadata
+!PARTIALPASTE_FRAMING;Framing
 !PARTIALPASTE_PREPROCWB;Preprocess White Balance
 !PARTIALPASTE_TONE_EQUALIZER;Tone equalizer
 !PREFERENCES_BROWSERECURSIVEDEPTH;Browse sub-folders depth
 !PREFERENCES_BROWSERECURSIVEFOLLOWLINKS;Follow symbolic links when browsing sub-folders
 !PREFERENCES_BROWSERECURSIVEMAXDIRS;Maximum sub-folders
 !PREFERENCES_CAMERAPROFILESDIR;Camera profiles directory
-!PREFERENCES_CIE;Ciecam
+!PREFERENCES_CIE;CIECAM
 !PREFERENCES_CIEARTIF;Avoid artifacts
 !PREFERENCES_COMPLEXITYLOC;Default complexity for Selective Editing
 !PREFERENCES_COMPLEXITY_EXP;Advanced
@@ -4033,7 +4100,7 @@ ZOOMPANEL_ZOOMOUT;Zoom Arrière\nRaccourci: <b>-</b>
 !TP_COLORAPP_DEGREE_TOOLTIP;CAT02/16 is a chromatic adaptation. It converts the values of an image whose white point is that of a given illuminant (for example D65) into new values whose white point is that of the new illuminant - see WP model (for example D50 or D55).
 !TP_COLORAPP_DEGREOUT_TOOLTIP;CAT02/16 is a chromatic adaptation. It converts the values of an image whose white point is that of a given illuminant (for example D50) into new values whose white point is that of the new illuminant - see WP model (for example D75).
 !TP_COLORAPP_GEN;Settings
-!TP_COLORAPP_GEN_TOOLTIP;This module is based on the CIECAM color appearance models, which were designed to better simulate how human vision perceives colors under different lighting conditions, e.g. against different backgrounds. It takes into account the environment of each color and modifies its appearance to get as close as possible to human perception. It also adapts the output to the intended viewing conditions (monitor, TV, projector, printer, etc.) so that the chromatic appearance is preserved across the scene and display environments.
+!TP_COLORAPP_GEN_TOOLTIP;This module is based on the CIECAM Color Appearance models, which were designed to better simulate how human vision perceives colors under different lighting conditions, e.g. against different backgrounds. It takes into account the environment of each color and modifies its appearance to get as close as possible to human perception. It also adapts the output to the intended viewing conditions (monitor, TV, projector, printer, etc.) so that the chromatic appearance is preserved across the scene and display environments.
 !TP_COLORAPP_IL41;D41
 !TP_COLORAPP_IL50;D50
 !TP_COLORAPP_IL55;D55
@@ -4054,14 +4121,68 @@ ZOOMPANEL_ZOOMOUT;Zoom Arrière\nRaccourci: <b>-</b>
 !TP_COLORAPP_TEMP2_TOOLTIP;Either symmetrical mode temp = White balance.\nEither select illuminant always set Tint=1.\n\nA temp=2856\nD41 temp=4100\nD50 temp=5003\nD55 temp=5503\nD60 temp=6000\nD65 temp=6504\nD75 temp=7504
 !TP_COLORAPP_TEMPOUT_TOOLTIP;Temperature and Tint.\nDepending on the choices made previously, the selected temperature is:\nWhite balance\nA temp=2856\nD41 temp=4100\nD50 temp=5003\nD55 temp=5503\nD60 temp=6000\nD65 temp=6504\nD75 temp=7504\nFree.
 !TP_COLORAPP_VIEWINGF_TOOLTIP;Takes into account the support on which the final image will be viewed (monitor, TV, projector, printer, etc.), as well as its environment. This process will take the data coming from process 'Image Adjustments' and 'bring' it to the support in such a way that the viewing conditions and its environment are taken into account.
+!TP_COMPRESSGAMUT_ACESP1;ACES AP1
+!TP_COMPRESSGAMUT_ADOBE;Adobe RGB
+!TP_COMPRESSGAMUT_COLORSPACE_TOOLTIP;Gamut-compress is a tool which allows you to compress highly chromatic camera source colorimetry into a smaller gamut.\n Out of gamut negative pixel values are problematic for working on images and should be avoided if possible.\n Blue LED are perceive as highly colorful and colors like beetles, flowers and hummingbirds often over saturated.\n\n This is not a gamut conversion : converting from one gamut to another does change the values of the pixels. However it does not actually change the colorimetric meaning of the pixel data. You could say that by converting between gamuts, you are changing frame of reference to the same colors. After compression the working profile is restored.\n\n Choose the workspace that will be used to set the gamut limits. Depending on the case you can choose:\n The display gamut (sRGB, DCI P3,...). \n The gamut of an output file for use by another software (Prophoto, Rec 2020...). 
+!TP_COMPRESSGAMUT_CYANLIM;Cyan
+!TP_COMPRESSGAMUT_CYANTH;Cyan
+!TP_COMPRESSGAMUT_DCIP3;DCI-P3
+!TP_COMPRESSGAMUT_LABEL;Gamut Compression
+!TP_COMPRESSGAMUT_LIMIT;Maximum Distance Limits
+!TP_COMPRESSGAMUT_LIMIT_TOOLTIP;Maximum Distance Limit: is the distance outside of the gamut boundary to compress to the gamut boundary. For example, a value of 1.2 will compress distance values of 1.2 to a value of 1.0. \nIndividual controls are given for each color component. They are named cyan magenta and yellow because they actually control the max distance from the edge of the triangle (primaries related to the CIExy diagram), not the corner. For example, boosting the value of the cyan distance limit will increase the distance from which values are mapped to the edge between the blue and green corners of the triangle.\nThe distance limits also control the RGB ratios of the compressed values, which affects the apparent hue.\n\nThe distances are relative to the Target Compression Gamut. They may need to be adjusted after changing the target gamut if you want the amount of compression to remain unchanged.
+!TP_COMPRESSGAMUT_MAGENTALIM;Magenta
+!TP_COMPRESSGAMUT_MAGENTATH;Magenta
+!TP_COMPRESSGAMUT_MAIN_COLORSPACE;Target Compression Gamut
+!TP_COMPRESSGAMUT_POWER_TOOLTIP;Power: Control the aggressiveness of the compression curve.\n Higher power values result in more compressed values distributed closer to the gamut boundary. This will increase the "color purity" or "saturation" once the image has been rendered through a display transform.\n Higher values have a smoother transition.
+!TP_COMPRESSGAMUT_PROPHOTO;ProPhoto
+!TP_COMPRESSGAMUT_PWR;Power
+!TP_COMPRESSGAMUT_REC2020;Rec. 2020
+!TP_COMPRESSGAMUT_ROLLOFF;Rolloff
+!TP_COMPRESSGAMUT_SRGB;sRGB
+!TP_COMPRESSGAMUT_THRESHOLD;Threshold
+!TP_COMPRESSGAMUT_THRESHOLD_TOOLTIP;Threshold: controls the percentage of the outer gamut to affect. A value of 0.8 will compress out of gamut values into the outer 20% of the gamut. The inner 80% of the gamut core will not be affected. You can adjust the colors separately: for example if you wanted to protect magenta and yellow a little more than cyan, you could set the threshold a bit higher for cyan.\n\nThe thresholds are relative to the Target Compression Gamut. They may need to be adjusted after changing the target gamut if you want the protected color range to remain unchanged.
+!TP_COMPRESSGAMUT_YELLOWLIM;Yellow
+!TP_COMPRESSGAMUT_YELLOWTH;Yellow
 !TP_CROP_GTCENTEREDSQUARE;Centered square
 !TP_CROP_PPI;PPI
 !TP_DEHAZE_SATURATION;Saturation
 !TP_DIRPYRDENOISE_MAIN_AUTO_GAIN;Compensate for lightness
 !TP_DIRPYRDENOISE_MAIN_AUTO_GAIN_TOOLTIP;Alter the noise reduction strength based on the image lightness. Strength is reduced for dark images and increased for bright images.
+!TP_DISTORTION_DEFISH;De-fish
+!TP_DISTORTION_FOCAL_LENGTH;Focal length
 !TP_FILMNEGATIVE_PICK_SIZE;Size:
 !TP_FILMNEGATIVE_REF_SIZE;Size:
 !TP_FLATFIELD_FROMMETADATA;From Metadata
+!TP_FRAMING_ABSOLUTE_HEIGHT;Border Height
+!TP_FRAMING_ABSOLUTE_WIDTH;Border Width
+!TP_FRAMING_ALLOW_UPSCALING;Allow upscaling to frame
+!TP_FRAMING_ASPECT_RATIO;Aspect Ratio:
+!TP_FRAMING_BASIS;Basis
+!TP_FRAMING_BASIS_AUTO;Auto
+!TP_FRAMING_BASIS_HEIGHT;Height
+!TP_FRAMING_BASIS_LONG_SIDE;Long Edge
+!TP_FRAMING_BASIS_SHORT_SIDE;Short Edge
+!TP_FRAMING_BASIS_WIDTH;Width
+!TP_FRAMING_BLUE;Blue
+!TP_FRAMING_BORDER_COLOR;Border Color
+!TP_FRAMING_BORDER_SIZE;Size
+!TP_FRAMING_BORDER_SIZE_ABSOLUTE;Absolute
+!TP_FRAMING_BORDER_SIZE_METHOD;Sizing:
+!TP_FRAMING_BORDER_SIZE_RELATIVE;Relative
+!TP_FRAMING_BORDER_SIZE_UNIFORM_RELATIVE;Uniform Relative
+!TP_FRAMING_FRAMED_HEIGHT;Framed Height
+!TP_FRAMING_FRAMED_WIDTH;Framed Width
+!TP_FRAMING_GREEN;Green
+!TP_FRAMING_LABEL;Framing
+!TP_FRAMING_LIMIT_MINIMUM;Limit minimum size
+!TP_FRAMING_METHOD;Method:
+!TP_FRAMING_METHOD_BBOX;Bounding Box
+!TP_FRAMING_METHOD_FIXED;Fixed Frame
+!TP_FRAMING_METHOD_STANDARD;Standard
+!TP_FRAMING_MIN_HEIGHT;Minimum Height
+!TP_FRAMING_MIN_WIDTH;Minimum Width
+!TP_FRAMING_ORIENTATION;Orientation:
+!TP_FRAMING_RED;Red
 !TP_HLREC_COLOROPP;Inpaint Opposed
 !TP_HLREC_HLBLUR;Blur
 !TP_HLREC_HLTH;Gain threshold
@@ -4071,15 +4192,20 @@ ZOOMPANEL_ZOOMOUT;Zoom Arrière\nRaccourci: <b>-</b>
 !TP_ICM_ILLUMPRIM_TOOLTIP;Choose the illuminant closest to the shooting conditions.\nChanges can only be made when the 'Destination primaries' selection is set to 'Custom (sliders)'.
 !TP_ICM_LABGRID_CIEXY;R(x)=%1 R(y)=%2\nG(x)=%3 G(y)=%4\nB(x)=%5 B(y)=%6
 !TP_ICM_NEUTRAL;Reset
+!TP_ICM_OPACITYWLI;Variable contrast
 !TP_ICM_OUTPUTPROFILE_TOOLTIP;By default all RTv4 or RTv2 profiles are with TRC - sRGB: g=2.4 s=12.92\n\nWith 'ICC Profile Creator' you can generate v4 or v2 profiles with the following choices;\n-Primaries: Aces AP0, Aces AP1, AdobeRGB, Prophoto, Rec2020, sRGB, Widegamut, BestRGB, BetaRGB, BruceRGB, Custom\n-TRC: BT709, sRGB, linear, standard g=2.2, standard g=1.8, Custom\n-Illuminant: D41, D50, D55, D60, D65, D80, stdA 2856K
 !TP_ICM_PRIMBLU_TOOLTIP;Primaries Blue:\nsRGB x=0.15 y=0.06\nAdobe x=0.15 y=0.06\nWidegamut x=0.157 y=0.018\nRec2020 x=0.131 y=0.046\nACES P1 x=0.128 y= 0.044\nACES P0 x=0.0001 y=-0.077\nProphoto x=0.0366 y=0.0001\nBruceRGB x=0.15 y=0.06\nBeta RGB x=0.1265 y=0.0352\nBestRGB x=0.131 y=0.046
+!TP_ICM_PRIMFRAME;Primaries & Illuminant
 !TP_ICM_PRIMGRE_TOOLTIP;Primaries Green:\nsRGB x=0.3 y=0.6\nAdobe x=0.21 y=0.71\nWidegamut x=0.115 y=0.826\nRec2020 x=0.17 y=0.797\nACES P1 x=0.165 y= 0.83\nACES P0 x=0.0 y=1.0\nProphoto x=0.1596 y=0.8404\nBruceRGB x=0.28 y=0.65\nBeta RGB x=0.1986 y=0.7551\nBest RGB x=0.2150 0.7750
 !TP_ICM_PRIMILLUM_TOOLTIP;You can change an image from its original mode ('working profile') to a different mode ('destination primaries'). When you choose a different color mode for an image, you permanently change the color values in the image.\n\nChanging the 'primaries' is quite complex and difficult to use. It requires a lot of experimenting.\n It is capable of making exotic color adjustments as Channel Mixer primaries.\n Allows you to modify the camera calibration with Custom (sliders).
 !TP_ICM_PRIMRED_TOOLTIP;Primaries Red:\nsRGB x=0.64 y=0.33\nAdobe x=0.64 y=0.33\nWidegamut x=0.735 y=0.265\nRec2020 x=0.708 y=0.292\nACES P1 x=0.713 y= 0.293\nACES P0 x=0.7347 y=0.2653\nProphoto x=0.7347 y=0.2653\nBruceRGB x=0.64 y=0.33\nBeta RGB x=0.688 y=0.3112\nBestRGB x=0.7347 y=0.2653
 !TP_ICM_REDFRAME;Custom Primaries
+!TP_ICM_SMOOTHFRAME;Highlight attenuation
 !TP_ICM_TRCFRAME;Abstract Profile
 !TP_ICM_TRCFRAME_TOOLTIP;Also known as 'synthetic' or 'virtual' profiles, which are applied at the end of the processing pipeline (prior to CIECAM) allowing you to create custom image effects.\nYou can make changes to the:\n 'Tone response curve', which modifies the tones of the image.\n 'Illuminant', which allows you to change the profile primaries to adapt them to the shooting conditions.\n 'Destination primaries', which allows you to change the destination primaries with three main uses - channel mixer, restore image color (saturation), and calibration.\nNote: Abstract profiles take into account the built-in working profiles without modifying them. They do not work with custom working profiles.
 !TP_ICM_TRC_TOOLTIP;Allows you to change the default sRGB 'Tone response curve' in RT (g=2.4 s=12.92).\nThis TRC modifies the tones of the image. The RGB and Lab values, histogram and output (screen, TIF, JPG) are changed:\n-Gamma acts mainly on light tones -Slope acts mainly on dark tones.\nYou can choose any pair of 'gamma and slope' (values >1) and the algorithm will ensure that there is continuity between the linear and parabolic parts of the curve.\nA selection other than 'none' activates the 'Illuminant' and 'Destination primaries' menus.
+!TP_ICM_WAVFRAME;Contrast Enhancement
+!TP_ICM_WAVREFI;Refinement
 !TP_ICM_WORKING_CAT;Matrix adaptation
 !TP_ICM_WORKING_CAT_BRAD;Bradford
 !TP_ICM_WORKING_CAT_CAT02;Cat02
@@ -4122,6 +4248,7 @@ ZOOMPANEL_ZOOMOUT;Zoom Arrière\nRaccourci: <b>-</b>
 !TP_ICM_WORKING_PRIM_SRGB;sRGB
 !TP_ICM_WORKING_PRIM_TOOLTIP;Performs a gamut control. Destination primaries (Advanced) allows you to change the destination primaries to restore or change image color (saturation). The color balance is significantly preserved when the 'Working Profile' and the 'Destination primaries' are similar. 'Working Profile' is not modified.\nWhen 'Custom LA (sliders)' is selected, you can modify the values of the 3 primaries (Red, Green, and Blue) for x and y.
 !TP_ICM_WORKING_PRIM_WID;WideGamut
+!TP_ICM_WORKING_SMOOTH;Highlight attenuation
 !TP_ICM_WORKING_TRC_18;Prophoto g=1.8
 !TP_ICM_WORKING_TRC_22;Adobe g=2.2
 !TP_ICM_WORKING_TRC_BT709;BT709 g=2.22 s=4.5
@@ -4129,6 +4256,7 @@ ZOOMPANEL_ZOOMOUT;Zoom Arrière\nRaccourci: <b>-</b>
 !TP_ICM_WORKING_TRC_SRGB;sRGB g=2.4 s=12.92
 !TP_LENSGEOM_LIN;Linear
 !TP_LENSGEOM_LOG;Logarithmic
+!TP_LENSGEOM_SCALE;Scale
 !TP_LENSPROFILE_CORRECTION_AUTOMATCH;Automatically selected
 !TP_LENSPROFILE_CORRECTION_MANUAL;Manually selected
 !TP_LENSPROFILE_CORRECTION_METADATA;From file metadata
@@ -4139,21 +4267,27 @@ ZOOMPANEL_ZOOMOUT;Zoom Arrière\nRaccourci: <b>-</b>
 !TP_LOCALLAB_AVOIDCOLORSHIFT_TOOLTIP;Fit colors into gamut of the working color space and apply Munsell correction (Uniform Perceptual Lab). Default: Munsell only.\n\nMunsell only: Fixes Lab mode hue drifts due to non-linearity when chromaticity is changed (Uniform Perceptual Lab).\nLab: Applies a gamut control in relative colorimetric. Munsell is then applied.\nXYZ Absolute: Applies gamut control in absolute colorimetric. Munsell is then applied.\nXYZ Relative: Applies gamut control in relative colorimetric. Munsell is then applied. The result is not the same as Lab.
 !TP_LOCALLAB_AVOIDMUN;Munsell correction only
 !TP_LOCALLAB_AVOIDMUN_TOOLTIP;Munsell correction always disabled when Jz or CAM16 is used.
+!TP_LOCALLAB_AVOIDNEG;Pre-filter zero and negative values
 !TP_LOCALLAB_AVOIDRAD;Soft radius
 !TP_LOCALLAB_BWEVNONE;None
-!TP_LOCALLAB_BWEVSIG;Activated
-!TP_LOCALLAB_BWEVSIGLOG;Sigmoid & Log-Encoding
+!TP_LOCALLAB_BWEVNONE11;None
+!TP_LOCALLAB_BWEVSIG;Sigmoid
+!TP_LOCALLAB_BWEVSIG11;Activated
+!TP_LOCALLAB_BWEVSLOP;Slope based
 !TP_LOCALLAB_CATAD;Chromatic adaptation/Cat16
 !TP_LOCALLAB_CHRO46LABEL;Chroma levels 456: Mean=%1 High=%2
 !TP_LOCALLAB_CHROLABEL;Chroma levels 0123: Mean=%1 High=%2
 !TP_LOCALLAB_CHROML;Chroma (C)
 !TP_LOCALLAB_CIE_SMOOTHFRAME;Highlight Attenuation & Levels
+!TP_LOCALLAB_CIE_SMOOTHFRAME12;Tone Mapping Operators
 !TP_LOCALLAB_CIE_SMOOTH_EV;Ev based
 !TP_LOCALLAB_CIE_SMOOTH_GAMMA;Slope based
 !TP_LOCALLAB_CIE_SMOOTH_GAMMA ROLLOFF;Gamma based
-!TP_LOCALLAB_CIE_SMOOTH_LEVELS;Levels
+!TP_LOCALLAB_CIE_SMOOTH_LEVELS;RGB channel Slope
+!TP_LOCALLAB_CIE_SMOOTH_LEVELSTRC;RGB channel TRC
 !TP_LOCALLAB_CIE_SMOOTH_NONE;None
-!TP_LOCALLAB_COLORFRAME;Dominant color
+!TP_LOCALLAB_CIE_SMOOTH_SIG;Sigmoid based
+!TP_LOCALLAB_COLORFRAME;Dominant Color
 !TP_LOCALLAB_COLOR_CIE;Color curve
 !TP_LOCALLAB_COMPRCIE;Brightness compression
 !TP_LOCALLAB_COMPRCIETH;Compression threshold
@@ -4164,7 +4298,7 @@ ZOOMPANEL_ZOOMOUT;Zoom Arrière\nRaccourci: <b>-</b>
 !TP_LOCALLAB_DENOIMASK_TOOLTIP;For all tools, allows you to control the chromatic noise level of the mask.\nUseful for better control of chrominance and to avoid artifacts when using the LC(h) curve.
 !TP_LOCALLAB_DENOIWAVCH;Wavelets: Chrominance
 !TP_LOCALLAB_DENOIWAVLUM;Wavelets: Luminance
-!TP_LOCALLAB_DISAB_CIECAM;Disable Ciecam or Weak Jz surround
+!TP_LOCALLAB_DISAB_CIECAM;Disable CIECAM or Weak Jz surround
 !TP_LOCALLAB_DIVGR;Gamma
 !TP_LOCALLAB_ENABLE_MASKALL;Enable all mask tools
 !TP_LOCALLAB_EXMAIN;Global
@@ -4185,9 +4319,9 @@ ZOOMPANEL_ZOOMOUT;Zoom Arrière\nRaccourci: <b>-</b>
 !TP_LOCALLAB_LAPRAD2_TOOLTIP;Smooth radius uses a guided filter to decrease artifacts and smooth out the transition.
 !TP_LOCALLAB_LCLABELS;Residual noise levels
 !TP_LOCALLAB_LCLABELS_TOOLTIP;Displays the mean and high-end noise values for the area shown in the Preview Panel (at 100% zoom). The noise values are grouped by wavelet levels 0,1,2,3 and 4,5,6.\nThe displayed values are indicative only and are designed to assist with denoise adjustments. They should not be interpreted as absolute noise levels.\n\n 300: Very noisy\n 100-300: Noisy\n 50-100: Moderatly noisy\n < 50: Low noise\n\nThey allow you to see:\n*The impact of Noise Reduction in the main-menu Detail tab.\n*The influence of Non-local Means, Wavelets and DCT on the luminance noise.\n*The influence of Wavelets and DCT on the chroma noise.\n*The influence of Capture Sharpening and Demosaicing.
-!TP_LOCALLAB_LOGCIEQ;Log Encoding Q (with Ciecam)
-!TP_LOCALLAB_LOGCIEQ_TOOLTIP;Activating the checkbox allows you to switch between log encoding based on the 3 RGB channels, and log encoding based solely on Ciecam’s brightness (Q) channel.\nUsing the Q channel instead of the RGB channels helps avoid undesirable edge effects such as hue and saturation shifts.\nHowever, the settings are more difficult to optimise because Q is unbounded and Ciecam alters the data to take into account the surround conditions, simultaneous contrast, etc.\nYou may have to adjust the following:\n   Scene conditions: Mean luminance (Yb), Whites &amp; Blacks distribution, Black Ev, White Ev.\n   Source Data Adjustments : Brightness compression, Strength.\n\nNote: when using Log Encoding (Q), be careful not to activate the Disable Ciecam option in the Scene Conditions, Surround menu.
-!TP_LOCALLAB_LOGPFRA2;Log Encoding settings
+!TP_LOCALLAB_LOGCIEQ;Log encoding Q with CIECAM (deprecated)
+!TP_LOCALLAB_LOGCIEQ_TOOLTIP;Activating the checkbox allows you to switch between Log encoding based on the 3 RGB channels, and Log encoding based solely on CIECAM’s brightness (Q) channel.\nUsing the Q channel instead of the RGB channels helps avoid undesirable edge effects such as hue and saturation shifts.\nHowever, the settings are more difficult to optimise because Q is unbounded and CIECAM alters the data to take into account the surround conditions, simultaneous contrast, etc.\nYou may have to adjust the following:\n   Scene conditions: Mean luminance (Yb), Whites &amp; Blacks distribution, Black Ev, White Ev.\n   Source Data Adjustments : Brightness compression, Strength.\n\nNote: when using Log encoding (Q), be careful not to activate the Disable CIECAM option in the Scene Conditions, Surround menu.
+!TP_LOCALLAB_LOGPFRA2;Log Encoding Settings
 !TP_LOCALLAB_LUM46LABEL;Luma levels 456: Mean=%1 High=%2
 !TP_LOCALLAB_LUMFRA;L*a*b* standard
 !TP_LOCALLAB_LUMLABEL;Luma levels 0123: Mean=%1 High=%2
@@ -4204,36 +4338,60 @@ ZOOMPANEL_ZOOMOUT;Zoom Arrière\nRaccourci: <b>-</b>
 !TP_LOCALLAB_PRECAMGAMUT_TOOLTIP;If checked, ensures a gamut control just after primary conversion to XYZ.
 !TP_LOCALLAB_PRECAMREFIMAIN_TOOLTIP;Allows you to move the white-point in such a way that it approaches the dominant color. This action modifies the purity. In combination with "Shift x" and "Shift y", allows you to carry out moderate color toning.
 !TP_LOCALLAB_PRECAMREFI_TOOLTIP;Allows you to move the white-point in such a way that it approaches the dominant color. This action modifies the purity.
-!TP_LOCALLAB_PRECAM_TOOLTIP;'Source Data Adjustments' modifies the Dynamic Range using Log encoding, the tones of the image and primaries (simplified Abstract Profile), and midtones, just before the Ciecam process. These values are adjustable:\nGamma: Acts mainly on light tones\nSlope: Acts mainly on dark tones. You can choose any pair of gamma and slope (values >1) and the algorithm will ensure that there is continuity between the linear and parabolic parts of the curve.\nDestination primaries: Allows you to change the destination primaries to restore or change image color (saturation). The color balance is significantly preserved when the 'Working Profile' and the 'Destination primaries' are similar. 'Working Profile' is not modified. You can also finely adapt the primaries and the illuminant (white-point). Moving a primary away from the white point reduces saturation and vice versa. Pay attention to the gamut.
+!TP_LOCALLAB_PRECAM_TOOLTIP;'Source Data Adjustments' modifies the Dynamic Range using Log encoding, the tones of the image and primaries (simplified Abstract Profile), and midtones, just before the CIECAM process. These values are adjustable:\nGamma: Acts mainly on light tones\nSlope: Acts mainly on dark tones. You can choose any pair of gamma and slope (values >1) and the algorithm will ensure that there is continuity between the linear and parabolic parts of the curve.\nDestination primaries: Allows you to change the destination primaries to restore or change image color (saturation). The color balance is significantly preserved when the 'Working Profile' and the 'Destination primaries' are similar. 'Working Profile' is not modified. You can also finely adapt the primaries and the illuminant (white-point). Moving a primary away from the white point reduces saturation and vice versa. Pay attention to the gamut.
 !TP_LOCALLAB_PRIMILLFRAME;Primaries & Illuminant
-!TP_LOCALLAB_RECOTHRES02_TOOLTIP;If the 'Recovery threshold' value is greater than 1, the mask in Mask and Modifications takes into account any previous modifications made to the image but not those made with the current tool (e.g. Color and Light, Wavelet, Cam16, etc.)\nIf the value of the 'Recovery threshold' is less than 1, the mask in Mask and Modifications does not take into account any previous modifications to the image.\n\nIn both cases, the 'Recovery threshold' acts on the masked image as modified by the current tool (Color and Light, Wavelet, Cam16, etc.).
+!TP_LOCALLAB_PROCESSWAV;Show modified areas with Wavelets
+!TP_LOCALLAB_PROCESSWAV_TOOLTIP;Wavelet decomposition:\nShows the changes made by the wavelet settings.\n\nYou see the changes made to the decomposed image, factoring in the deltaE and transitions, when you modify the wavelet settings. Note that this is different from Wavelet levels in the Advanced tab in which you always see the results of the decomposition.
+!TP_LOCALLAB_QJMODE;Tone Mapping Operators Q(CAM16) & J(Jz) 
+!TP_LOCALLAB_QJMODE_511;5.11 deprecated
+!TP_LOCALLAB_QJMODE_512;5.12
+!TP_LOCALLAB_QJMODE_TOOLTIP;The tone-mapping operators that use brightness data (Q for CAM16 and J for Jz) have been modified in RawTherapee version 5.12. This allows you to select either the current or the deprecated version.
+!TP_LOCALLAB_RECOTHRES02_TOOLTIP;If the 'Recovery threshold' value is greater than 1, the mask in Mask and Modifications takes into account any previous modifications made to the image but not those made with the current tool (e.g. Color and Light, Wavelet, CAM16, etc.)\nIf the value of the 'Recovery threshold' is less than 1, the mask in Mask and Modifications does not take into account any previous modifications to the image.\n\nIn both cases, the 'Recovery threshold' acts on the masked image as modified by the current tool (Color and Light, Wavelet, CAM16, etc.).
 !TP_LOCALLAB_RGBCURVE_TOOLTIP;In RGB mode you have 4 choices : Standard, Weighted standard, Luminance &amp; Film-like.
 !TP_LOCALLAB_SATCIE;Saturation control
 !TP_LOCALLAB_SATURV;Saturation (s)
 !TP_LOCALLAB_SIGBLACKSSCIE;Blacks distribution
 !TP_LOCALLAB_SIGCIE;Sigmoid
+!TP_LOCALLAB_SIGFRA11;Sigmoid Q (deprecated)
 !TP_LOCALLAB_SIGGAMJCIE;Gamma
-!TP_LOCALLAB_SIGMOID16_TOOLTIP;Allows you to simulate a tone mapping appearance using both 'Ciecam' and 'Sigmoid Q'. Sigmoid Q has three sliders:\na) Contrast acts on the shape of the sigmoid curve and consequently on the strength\nb) Threshold (Gray point) distributes the action according to the luminance\nc) Adaptability weights the action of the sigmoid by action on the internal exponential function.
+!TP_LOCALLAB_SIGJZFRA11;Sigmoid Jz (deprecated)
+!TP_LOCALLAB_SIGMOID16_TOOLTIP;Allows you to simulate a tone mapping appearance using both 'CIECAM' and 'Sigmoid Q' or 'Slope based Q'. Sigmoid Q has three sliders:\na) Contrast acts on the shape of the sigmoid curve and consequently on the strength\nb) Skew (gray point) distributes the action according to the luminance.\nc) Display White point (cd/m2) - mode advanced. \n\nSlope based has only one slider: Gray balance (slope).\n\nThis new version of Sigmoid is incompatible with previous versions 5.11 and earlier. Log encoding inside CIECAM is removed.
+!TP_LOCALLAB_SIGMOIDBL11;Blend
 !TP_LOCALLAB_SIGMOIDLOGAUTO;Auto threshold
 !TP_LOCALLAB_SIGMOIDLOGEV_TOOLTIP;If the combo box selection 'Black Ev and White Ev' is 'Sigmoid and Log encoding' instead of 'Sigmoid only', the two algorithms 'Log encoding' and 'Sigmoid' are used together.
-!TP_LOCALLAB_SIGMOIDNORMCIE;Normalize Luminance
+!TP_LOCALLAB_SIGMOIDNORMCIE;Scale Yb Scene
+!TP_LOCALLAB_SIGMOIDNORMCIE11;Normalize Luminance
 !TP_LOCALLAB_SIGMOIDNORMCIEBLEND_TOOLTIP;Blend acts on the final aspect of the image, contrast and luminance. Ratio between original and output image.
+!TP_LOCALLAB_SIGMOIDNORMCIEDISP_TOOLTIP;Allows you to adapt the white point to the peak luminance of the display device. Its position in the processing pipeline is not optimal so use with caution.
 !TP_LOCALLAB_SIGMOIDNORMCIE_TOOLTIP;Reconstruct luminance so that the mean and variance of the output image take into account those of the original.\nAll the adjustments acting on J or Q are taken into account, including those which are not relative to Sigmoid Q.
+!TP_LOCALLAB_SIGMOIDQJ11;Black Ev & White Ev
 !TP_LOCALLAB_SIGMOIDQJCOMPRCIE_TOOLTIP;When the combo box selection 'Uses Black Ev and White Ev' is 'Sigmoid and Log encoding Q' or 'Log encoding instead of Sigmoid' checked. This algorithm compress the data above the threshold slider value. The last value stands for brightness (Q) and should be close as possible to the value 'Compression threshold' (calculate when 'Auto threshold" checked, often > 1).
 !TP_LOCALLAB_SIGMOIDSENSI;Adaptability
+!TP_LOCALLAB_SIGMOIDTH11;Threshold (Gray point)
 !TP_LOCALLAB_SIGMOIDWHITESCIE_TOOLTIP;Allows you, in Automatic when the dynamic range of the image is high, to change the distribution of lights in whites and deep blacks.\nCan be used with Log encoding or Sigmoid with Black Ev and White Ev enabled.\n\nThe algorithm does not change the basic data, but acts on the components necessary to calculate the Dynamic range, Black Ev, White Ev and the Gray point.
 !TP_LOCALLAB_SIGSLOPJCIE;Slope
 !TP_LOCALLAB_SIGTRCCIE;Source Data Adjustments
 !TP_LOCALLAB_SIGWHITESCIE;Whites distribution
 !TP_LOCALLAB_SLOPESMOOTH;Gray balance (Slope)
-!TP_LOCALLAB_SLOPESMOOTHB;Blue balance (Slope)
+!TP_LOCALLAB_SLOPESMOOTHB;Blue Slope
 !TP_LOCALLAB_SLOPESMOOTHG;Green balance (Slope)
-!TP_LOCALLAB_SLOPESMOOTHR;Red balance (Slope)
-!TP_LOCALLAB_SMOOTHCIE;Highlight Attenuation
+!TP_LOCALLAB_SLOPESMOOTHR;Red Slope
+!TP_LOCALLAB_SLOPESMOOTRCB;Blue balance (TRC)
+!TP_LOCALLAB_SLOPESMOOTRCG;Green balance (TRC)
+!TP_LOCALLAB_SLOPESMOOTRCR;Red balance (TRC)
+!TP_LOCALLAB_SMOOTHCIE;Highlight attenuation
+!TP_LOCALLAB_SMOOTHCIETH;Attenuation threshold
+!TP_LOCALLAB_SMOOTHCIE_HIGH;Highlight attenuation only
+!TP_LOCALLAB_SMOOTHCIE_LNK;Link R, G, & B
 !TP_LOCALLAB_SMOOTHCIE_LUM;Luminosity mode
 !TP_LOCALLAB_SMOOTHCIE_SCA;Scale Yb Scene
-!TP_LOCALLAB_SMOOTHCIE_TOOLTIP;Completes the processing carried out by gamma, slope and midtones by causing a slight lowering of lights. Please note this does not replace Highlight reconstruction.\n\nGamma based and Slope based (Standard and Advanced) allow you to simulate a tone mapping using:\na) Scene conditions: Black-Ev, White-Ev, Mean luminance (Yb%)\nb) Viewing conditions: Mean luminance (Yb%).\n\nScale Yb Scene is function of White-Ev.
+!TP_LOCALLAB_SMOOTHCIE_TOOLTIP;Completes the processing carried out by gamma, slope and midtones by causing a slight lowering of lights. Please note this does not replace Highlight reconstruction.\n\nGamma based and Slope based (Standard and Advanced) allow you to simulate a tone mapping using:\na) Scene conditions: Black-Ev, White-Ev, Mean luminance (Yb%)\nb) Viewing conditions: Mean luminance (Yb%).\n\nScale Yb Scene is function of White-Ev.\n\nSigmoid applies tone mapping with Contrast and Skew and Display White point allows you to adapt the white point to the peak luminance of the display device. Its position in the processing pipeline is not optimal so use with caution.\n\nThis new version of Sigmoid is incompatible with previous versions 5.11 and earlier.
+!TP_LOCALLAB_SMOOTHCIE_TRC;Increase gamma-based attenuation
+!TP_LOCALLAB_SMOOTHCIE_TRCREL;Relative gamma mode
 !TP_LOCALLAB_SMOOTHCIE_YB;Scale Yb Viewing
+!TP_LOCALLAB_SMOOTHCONTSIG;Contrast
+!TP_LOCALLAB_SMOOTHSKEWSIG;Skew
+!TP_LOCALLAB_SMOOTHWHITSIG;Display White point (cd/m2)
 !TP_LOCALLAB_STRENGTHCIELOG;Strength
 !TP_LOCALLAB_TE_PIVOT;Pivot (Ev)
 !TP_LOCALLAB_TOOLMASK_2;Wavelets
@@ -4251,6 +4409,7 @@ ZOOMPANEL_ZOOMOUT;Zoom Arrière\nRaccourci: <b>-</b>
 !TP_PREPROCWB_MODE;Mode
 !TP_PREPROCWB_MODE_AUTO;Auto
 !TP_PREPROCWB_MODE_CAMERA;Camera
+!TP_RAWEXPOS_DEHA;Dehaze
 !TP_RAW_AMAZEBILINEAR;AMaZE+Bilinear
 !TP_RAW_DCBBILINEAR;DCB+Bilinear
 !TP_RAW_PIXELSHIFTAVERAGE;Use average for moving parts
@@ -4291,6 +4450,7 @@ ZOOMPANEL_ZOOMOUT;Zoom Arrière\nRaccourci: <b>-</b>
 !TP_WAVELET_COMPNORMAL;Standard
 !TP_WAVELET_CONTFRAME;Contrast - Compression
 !TP_WAVELET_CURVEEDITOR_BL_TOOLTIP;Disabled if zoom > about 300%.
+!TP_WAVELET_DAUB20;D20 - high plus
 !TP_WAVELET_DAUBLOCAL;Wavelet Edge performance
 !TP_WAVELET_DEN5THR;Guided threshold
 !TP_WAVELET_DENCURV;Curve
@@ -4320,6 +4480,7 @@ ZOOMPANEL_ZOOMOUT;Zoom Arrière\nRaccourci: <b>-</b>
 !TP_WAVELET_LEVELLOW;Radius 1-4
 !TP_WAVELET_LEVELSIGM;Radius
 !TP_WAVELET_LEVFOUR;Level 5-6 denoise and guided threshold
+!TP_WAVELET_LEVLOCLABEL;Increase the preview window size
 !TP_WAVELET_LIMDEN;Interaction levels 5-6 on levels 1-4
 !TP_WAVELET_LOWTHR_TOOLTIP;Prevents amplification of fine textures and noise.
 !TP_WAVELET_MERGEC;Merge chroma
@@ -4330,8 +4491,14 @@ ZOOMPANEL_ZOOMOUT;Zoom Arrière\nRaccourci: <b>-</b>
 !TP_WAVELET_MIXMIX70;Mixed 30% noise - 70% denoise
 !TP_WAVELET_MIXNOISE;Noise
 !TP_WAVELET_OFFSET_TOOLTIP;Offset modifies the balance between low contrast and high contrast details.\nHigh values will amplify contrast changes to the higher contrast details, whereas low values will amplify contrast changes to low contrast details.\nBy using a low Attenuation response value you can select which contrast values will be enhanced.
+!TP_WAVELET_OFFSFIN;Offset
 !TP_WAVELET_OLDSH;Algorithm using negatives values
 !TP_WAVELET_PROTAB;Protection
+!TP_WAVELET_PYRWAVTRC;Contrast profile
+!TP_WAVELET_PYRWAVTRC_CURVE_TOOLTIP;The left end of the horizontal axis corresponds to close to zero contrast, while the right end corresponds to the strongest contrast in the image. The midpoint of the horizontal axis corresponds to the predominant contrast strength across all detail levels.\n\nThe effect of this curve is reduced for higher Contrast profile presets.\n\nTo avoid harsh contrast and halos, refrain from increasing the right half of the curve.
+!TP_WAVELET_PYRWAVTRC_RESID_TOOLTIP;Adjusts the contrast for all detail levels larger than those covered by the selected Contrast profile.
+!TP_WAVELET_PYRWAVTRC_SIGMA_TOOLTIP;Stretches the width of the "Variable contrast" curve. A value of 1 means no stretching.
+!TP_WAVELET_PYRWAVTRC_TOOLTIP;A series of presets defining the strength of the contrast adjustment at different detail levels. Lower presets only affect fine details while higher presets affect both fine and coarse details.\n\nNote: The effect on coarse details may not be visible in the preview if the preview is too small.
 !TP_WAVELET_QUAAGRES;Aggressive
 !TP_WAVELET_QUACONSER;Conservative
 !TP_WAVELET_RADIUS;Radius shadows - highlight
@@ -4339,6 +4506,7 @@ ZOOMPANEL_ZOOMOUT;Zoom Arrière\nRaccourci: <b>-</b>
 !TP_WAVELET_RESBLUR;Blur luminance
 !TP_WAVELET_RESBLURC;Blur chroma
 !TP_WAVELET_RESBLUR_TOOLTIP;Disabled if zoom > about 500%.
+!TP_WAVELET_RESIDTRC;Residual contrast
 !TP_WAVELET_SHA;Sharp mask
 !TP_WAVELET_SHFRAME;Shadows/Highlights
 !TP_WAVELET_SHOWMASK;Show wavelet 'mask'
