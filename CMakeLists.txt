@@ -9,7 +9,7 @@ endif()
 # Must stay before the project() command:
 if(${CMAKE_EXTRA_GENERATOR} MATCHES "Eclipse CDT4")
     set(CMAKE_CXX_COMPILER_ARG1
-        "-std=c++11"
+        "-std=c++20"
         CACHE STRING "C++ version for eclipse" FORCE)
     # Users building with Eclipse should set CMAKE_ECLIPSE_VERSION through the
     # command line to their current version of Eclipse:
@@ -30,10 +30,10 @@ string(TOUPPER ${CMAKE_BUILD_TYPE} UPPER_CMAKE_BUILD_TYPE)
 
 # Set required C and C++ standards and check GCC version:
 set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -std=c11")
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++20")
 
 if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU" AND CMAKE_CXX_COMPILER_VERSION
-                                            VERSION_LESS "4.9")
+                                            VERSION_LESS "13.0")
     message(
         FATAL_ERROR
             "Building RawTherapee requires using GCC version 4.9 or higher!")
@@ -213,7 +213,6 @@ if(APPLE) # TODO make -mtune generic conditional and/or specifiable.
     )
 endif()
 
-option(USE_EXPERIMENTAL_LANG_VERSIONS "Build with -std=c++0x" OFF)
 option(BUILD_SHARED "Build with shared libraries" OFF)
 option(WITH_BENCHMARK "Build with benchmark code" OFF)
 option(WITH_MYFILE_MMAP "Build using memory mapped file" ON)
