@@ -36,7 +36,7 @@ if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU" AND CMAKE_CXX_COMPILER_VERSION
                                             VERSION_LESS "13.0")
     message(
         FATAL_ERROR
-            "Building RawTherapee requires using GCC version 4.9 or higher!")
+            "Building RawTherapee requires using GCC version 13.0 or higher!")
 endif()
 
 # Warning for GCC vectorization issues, which causes problems #5749 and #6384:
