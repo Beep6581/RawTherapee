@@ -268,9 +268,7 @@ add_executable(rth-cli "${EXTRA_SRC_CLI}" "${CLISOURCEFILES}")
 
 # Subdirectories that are not libraries themselves should be included
 # like #include "your_subdirectory/header.h"
-target_include_directories(rth PRIVATE
-    ${CMAKE_CURRENT_SOURCE_DIR}
-    ${CMAKE_CURRENT_SOURCE_DIR}/tools)
+target_include_directories(rth PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})
 target_include_directories(rth-cli PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})
 
 # Add dependencies to executables targets
