@@ -75,14 +75,14 @@ bool sanitizeCurve(std::vector<double>& curve)
     if (curve.empty()) {
         curve.push_back(DCT_Linear);
         return true;
-    } else if (curve.size() == 1 && curve[0] != DCT_Linear) {
+    } else if (curve.size() == 1 && !isCurveType(curve, DCT_Linear)) {
         curve[0] = DCT_Linear;
         return true;
-    } else if ((curve.size() % 2 == 0 || curve.size() < 5) && curve[0] != DCT_Parametric) {
+    } else if ((curve.size() % 2 == 0 || curve.size() < 5) && !isCurveType(curve, DCT_Parametric)) {
         curve.clear();
         curve.push_back(DCT_Linear);
         return true;
-    } else if (curve[0] == DCT_Parametric) {
+    } else if (isCurveType(curve, DCT_Parametric)) {
         if (curve.size() < 8) {
             curve.clear();
             curve.push_back(DCT_Linear);
@@ -238,7 +238,7 @@ void CurveFactory::curveLightBrightColor(const std::vector<double>& curvePoints1
     bool histNeeded = false;
     customColCurve3.Reset();
 
-    if (!curvePoints3.empty() && curvePoints3[0] > DCT_Linear && curvePoints3[0] < DCT_Unchanged) {
+    if (isNonLinearDiagonalCurve(curvePoints3)) {
         DiagonalCurve tcurve(curvePoints3, CURVES_MIN_POLY_POINTS / skip);
 
         if (outBeforeCCurveHistogramC) {
@@ -253,7 +253,7 @@ void CurveFactory::curveLightBrightColor(const std::vector<double>& curvePoints1
 
     customColCurve2.Reset();
 
-    if (!curvePoints2.empty() && curvePoints2[0] > DCT_Linear && curvePoints2[0] < DCT_Unchanged) {
+    if (isNonLinearDiagonalCurve(curvePoints2)) {
         DiagonalCurve tcurve(curvePoints2, CURVES_MIN_POLY_POINTS / skip);
 
         if (outBeforeCCurveHistogram) {
@@ -269,7 +269,7 @@ void CurveFactory::curveLightBrightColor(const std::vector<double>& curvePoints1
     // create first curve if needed
     customColCurve1.Reset();
 
-    if (!curvePoints1.empty() && curvePoints1[0] > DCT_Linear && curvePoints1[0] < DCT_Unchanged) {
+    if (isNonLinearDiagonalCurve(curvePoints1)) {
         DiagonalCurve tcurve(curvePoints1, CURVES_MIN_POLY_POINTS / skip);
 
         if (outBeforeCCurveHistogram) {
@@ -298,7 +298,7 @@ void CurveFactory::curveBW(const std::vector<double>& curvePointsbw, const std::
 
     customToneCurvebw2.Reset();
 
-    if (!curvePointsbw2.empty() && curvePointsbw2[0] > DCT_Linear && curvePointsbw2[0] < DCT_Unchanged) {
+    if (isNonLinearDiagonalCurve(curvePointsbw2)) {
         DiagonalCurve tcurve(curvePointsbw2, CURVES_MIN_POLY_POINTS / skip);
 
         if (outBeforeCCurveHistogrambw) {
@@ -313,7 +313,7 @@ void CurveFactory::curveBW(const std::vector<double>& curvePointsbw, const std::
 
     customToneCurvebw1.Reset();
 
-    if (!curvePointsbw.empty() && curvePointsbw[0] > DCT_Linear && curvePointsbw[0] < DCT_Unchanged) {
+    if (isNonLinearDiagonalCurve(curvePointsbw)) {
         DiagonalCurve tcurve(curvePointsbw, CURVES_MIN_POLY_POINTS / skip);
 
         if (outBeforeCCurveHistogrambw) {
@@ -641,7 +641,7 @@ void CurveFactory::complexCurve (double ecomp, double black, double hlcompr, dou
     bool histNeeded = false;
     customToneCurve2.Reset();
 
-    if (!curvePoints2.empty() && curvePoints2[0] > DCT_Linear && curvePoints2[0] < DCT_Unchanged) {
+    if (isNonLinearDiagonalCurve(curvePoints2)) {
         const DiagonalCurve tcurve(curvePoints2, CURVES_MIN_POLY_POINTS / skip);
 
         if (!tcurve.isIdentity()) {
@@ -656,7 +656,7 @@ void CurveFactory::complexCurve (double ecomp, double black, double hlcompr, dou
     // create first curve if needed
     customToneCurve1.Reset();
 
-    if (!curvePoints.empty() && curvePoints[0] > DCT_Linear && curvePoints[0] < DCT_Unchanged) {
+    if (isNonLinearDiagonalCurve(curvePoints)) {
         const DiagonalCurve tcurve(curvePoints, CURVES_MIN_POLY_POINTS / skip);
 
         if (!tcurve.isIdentity()) {
@@ -1197,8 +1197,7 @@ void LocretigainCurverab::Set(const Curve &pCurve)
 
 void LocretigainCurverab::Set(const std::vector<double> &curvePoints)
 {
-
-    if (!curvePoints.empty() && curvePoints[0] > FCT_Linear && curvePoints[0] < FCT_Unchanged) {
+    if (isNonLinearFlatCurve(curvePoints)) {
         FlatCurve tcurve(curvePoints, false, CURVES_MIN_POLY_POINTS / 2);
         tcurve.setIdentityValue(0.);
         Set(tcurve);
@@ -1240,8 +1239,7 @@ void LocHHmaskblCurve::Set(const Curve &pCurve)
 
 void LocHHmaskblCurve::Set(const std::vector<double> &curvePoints, bool & lhmasblutili)
 {
-    //  if (HHutili && !curvePoints.empty() && curvePoints[0] > FCT_Linear && curvePoints[0] < FCT_Unchanged) {
-    if (!curvePoints.empty() && curvePoints[0] > FCT_Linear && curvePoints[0] < FCT_Unchanged) {
+    if (isNonLinearFlatCurve(curvePoints)) {
         FlatCurve ttcurve(curvePoints, false, CURVES_MIN_POLY_POINTS / 2);
         ttcurve.setIdentityValue(0.);
         lhmasblutili = true;
@@ -1286,8 +1284,7 @@ void LocLLmaskblCurve::Set(const Curve &pCurve)
 
 void LocLLmaskblCurve::Set(const std::vector<double> &curvePoints,  bool & llmasblutili)
 {
-    //  if (HHutili && !curvePoints.empty() && curvePoints[0] > FCT_Linear && curvePoints[0] < FCT_Unchanged) {
-    if (!curvePoints.empty() && curvePoints[0] > FCT_Linear && curvePoints[0] < FCT_Unchanged) {
+    if (isNonLinearFlatCurve(curvePoints)) {
         FlatCurve ttcurve(curvePoints, false, CURVES_MIN_POLY_POINTS / 2);
         ttcurve.setIdentityValue(0.);
         llmasblutili = true;
@@ -1332,8 +1329,7 @@ void LocCCmaskblCurve::Set(const Curve &pCurve)
 
 void LocCCmaskblCurve::Set(const std::vector<double> &curvePoints,  bool & lcmasblutili)
 {
-    //  if (HHutili && !curvePoints.empty() && curvePoints[0] > FCT_Linear && curvePoints[0] < FCT_Unchanged) {
-    if (!curvePoints.empty() && curvePoints[0] > FCT_Linear && curvePoints[0] < FCT_Unchanged) {
+    if (isNonLinearFlatCurve(curvePoints)) {
         FlatCurve ttcurve(curvePoints, false, CURVES_MIN_POLY_POINTS / 2);
         ttcurve.setIdentityValue(0.);
         lcmasblutili = true;
@@ -1379,8 +1375,7 @@ void LocHHmasktmCurve::Set(const Curve &pCurve)
 
 void LocHHmasktmCurve::Set(const std::vector<double> &curvePoints, bool & lhmastmutili)
 {
-    //  if (HHutili && !curvePoints.empty() && curvePoints[0] > FCT_Linear && curvePoints[0] < FCT_Unchanged) {
-    if (!curvePoints.empty() && curvePoints[0] > FCT_Linear && curvePoints[0] < FCT_Unchanged) {
+    if (isNonLinearFlatCurve(curvePoints)) {
         FlatCurve ttcurve(curvePoints, false, CURVES_MIN_POLY_POINTS / 2);
         ttcurve.setIdentityValue(0.);
         lhmastmutili = true;
@@ -1425,8 +1420,7 @@ void LocLLmasktmCurve::Set(const Curve &pCurve)
 
 void LocLLmasktmCurve::Set(const std::vector<double> &curvePoints,  bool & llmastmutili)
 {
-    //  if (HHutili && !curvePoints.empty() && curvePoints[0] > FCT_Linear && curvePoints[0] < FCT_Unchanged) {
-    if (!curvePoints.empty() && curvePoints[0] > FCT_Linear && curvePoints[0] < FCT_Unchanged) {
+    if (isNonLinearFlatCurve(curvePoints)) {
         FlatCurve ttcurve(curvePoints, false, CURVES_MIN_POLY_POINTS / 2);
         ttcurve.setIdentityValue(0.);
         llmastmutili = true;
@@ -1471,8 +1465,7 @@ void LocCCmasktmCurve::Set(const Curve &pCurve)
 
 void LocCCmasktmCurve::Set(const std::vector<double> &curvePoints,  bool & lcmastmutili)
 {
-    //  if (HHutili && !curvePoints.empty() && curvePoints[0] > FCT_Linear && curvePoints[0] < FCT_Unchanged) {
-    if (!curvePoints.empty() && curvePoints[0] > FCT_Linear && curvePoints[0] < FCT_Unchanged) {
+    if (isNonLinearFlatCurve(curvePoints)) {
         FlatCurve ttcurve(curvePoints, false, CURVES_MIN_POLY_POINTS / 2);
         ttcurve.setIdentityValue(0.);
         lcmastmutili = true;
@@ -1519,8 +1512,7 @@ void LocHHmaskretiCurve::Set(const Curve &pCurve)
 
 void LocHHmaskretiCurve::Set(const std::vector<double> &curvePoints, bool & lhmasretiutili)
 {
-    //  if (HHutili && !curvePoints.empty() && curvePoints[0] > FCT_Linear && curvePoints[0] < FCT_Unchanged) {
-    if (!curvePoints.empty() && curvePoints[0] > FCT_Linear && curvePoints[0] < FCT_Unchanged) {
+    if (isNonLinearFlatCurve(curvePoints)) {
         FlatCurve ttcurve(curvePoints, false, CURVES_MIN_POLY_POINTS / 2);
         ttcurve.setIdentityValue(0.);
         lhmasretiutili = true;
@@ -1565,8 +1557,7 @@ void LocLLmaskretiCurve::Set(const Curve &pCurve)
 
 void LocLLmaskretiCurve::Set(const std::vector<double> &curvePoints,  bool & llmasretiutili)
 {
-    //  if (HHutili && !curvePoints.empty() && curvePoints[0] > FCT_Linear && curvePoints[0] < FCT_Unchanged) {
-    if (!curvePoints.empty() && curvePoints[0] > FCT_Linear && curvePoints[0] < FCT_Unchanged) {
+    if (isNonLinearFlatCurve(curvePoints)) {
         FlatCurve ttcurve(curvePoints, false, CURVES_MIN_POLY_POINTS / 2);
         ttcurve.setIdentityValue(0.);
         llmasretiutili = true;
@@ -1611,8 +1602,7 @@ void LocCCmaskretiCurve::Set(const Curve &pCurve)
 
 void LocCCmaskretiCurve::Set(const std::vector<double> &curvePoints,  bool & lcmasretiutili)
 {
-    //  if (HHutili && !curvePoints.empty() && curvePoints[0] > FCT_Linear && curvePoints[0] < FCT_Unchanged) {
-    if (!curvePoints.empty() && curvePoints[0] > FCT_Linear && curvePoints[0] < FCT_Unchanged) {
+    if (isNonLinearFlatCurve(curvePoints)) {
         FlatCurve ttcurve(curvePoints, false, CURVES_MIN_POLY_POINTS / 2);
         ttcurve.setIdentityValue(0.);
         lcmasretiutili = true;
@@ -1663,8 +1653,7 @@ void LocHHmaskcbCurve::Set(const Curve &pCurve)
 
 void LocHHmaskcbCurve::Set(const std::vector<double> &curvePoints, bool & lhmascbutili)
 {
-    //  if (HHutili && !curvePoints.empty() && curvePoints[0] > FCT_Linear && curvePoints[0] < FCT_Unchanged) {
-    if (!curvePoints.empty() && curvePoints[0] > FCT_Linear && curvePoints[0] < FCT_Unchanged) {
+    if (isNonLinearFlatCurve(curvePoints)) {
         FlatCurve ttcurve(curvePoints, false, CURVES_MIN_POLY_POINTS / 2);
         ttcurve.setIdentityValue(0.);
         lhmascbutili = true;
@@ -1709,8 +1698,7 @@ void LocLLmaskcbCurve::Set(const Curve &pCurve)
 
 void LocLLmaskcbCurve::Set(const std::vector<double> &curvePoints,  bool & llmascbutili)
 {
-    //  if (HHutili && !curvePoints.empty() && curvePoints[0] > FCT_Linear && curvePoints[0] < FCT_Unchanged) {
-    if (!curvePoints.empty() && curvePoints[0] > FCT_Linear && curvePoints[0] < FCT_Unchanged) {
+    if (isNonLinearFlatCurve(curvePoints)) {
         FlatCurve ttcurve(curvePoints, false, CURVES_MIN_POLY_POINTS / 2);
         ttcurve.setIdentityValue(0.);
         llmascbutili = true;
@@ -1755,8 +1743,7 @@ void LocCCmaskcbCurve::Set(const Curve &pCurve)
 
 void LocCCmaskcbCurve::Set(const std::vector<double> &curvePoints,  bool & lcmascbutili)
 {
-    //  if (HHutili && !curvePoints.empty() && curvePoints[0] > FCT_Linear && curvePoints[0] < FCT_Unchanged) {
-    if (!curvePoints.empty() && curvePoints[0] > FCT_Linear && curvePoints[0] < FCT_Unchanged) {
+    if (isNonLinearFlatCurve(curvePoints)) {
         FlatCurve ttcurve(curvePoints, false, CURVES_MIN_POLY_POINTS / 2);
         ttcurve.setIdentityValue(0.);
         lcmascbutili = true;
@@ -1805,8 +1792,7 @@ void LocHHmaskSHCurve::Set(const Curve &pCurve)
 
 void LocHHmaskSHCurve::Set(const std::vector<double> &curvePoints, bool & lhmasSHutili)
 {
-    //  if (HHutili && !curvePoints.empty() && curvePoints[0] > FCT_Linear && curvePoints[0] < FCT_Unchanged) {
-    if (!curvePoints.empty() && curvePoints[0] > FCT_Linear && curvePoints[0] < FCT_Unchanged) {
+    if (isNonLinearFlatCurve(curvePoints)) {
         FlatCurve ttcurve(curvePoints, false, CURVES_MIN_POLY_POINTS / 2);
         ttcurve.setIdentityValue(0.);
         lhmasSHutili = true;
@@ -1853,8 +1839,7 @@ void LocLLmaskSHCurve::Set(const Curve &pCurve)
 
 void LocLLmaskSHCurve::Set(const std::vector<double> &curvePoints,  bool & llmasSHutili)
 {
-    //  if (HHutili && !curvePoints.empty() && curvePoints[0] > FCT_Linear && curvePoints[0] < FCT_Unchanged) {
-    if (!curvePoints.empty() && curvePoints[0] > FCT_Linear && curvePoints[0] < FCT_Unchanged) {
+    if (isNonLinearFlatCurve(curvePoints)) {
         FlatCurve ttcurve(curvePoints, false, CURVES_MIN_POLY_POINTS / 2);
         ttcurve.setIdentityValue(0.);
         llmasSHutili = true;
@@ -1902,8 +1887,7 @@ void LocCCmaskSHCurve::Set(const Curve &pCurve)
 
 void LocCCmaskSHCurve::Set(const std::vector<double> &curvePoints,  bool & lcmasSHutili)
 {
-    //  if (HHutili && !curvePoints.empty() && curvePoints[0] > FCT_Linear && curvePoints[0] < FCT_Unchanged) {
-    if (!curvePoints.empty() && curvePoints[0] > FCT_Linear && curvePoints[0] < FCT_Unchanged) {
+    if (isNonLinearFlatCurve(curvePoints)) {
         FlatCurve ttcurve(curvePoints, false, CURVES_MIN_POLY_POINTS / 2);
         ttcurve.setIdentityValue(0.);
         lcmasSHutili = true;
@@ -1953,8 +1937,7 @@ void LocHHmaskexpCurve::Set(const Curve &pCurve)
 
 void LocHHmaskexpCurve::Set(const std::vector<double> &curvePoints, bool & lhmasexputili)
 {
-    //  if (HHutili && !curvePoints.empty() && curvePoints[0] > FCT_Linear && curvePoints[0] < FCT_Unchanged) {
-    if (!curvePoints.empty() && curvePoints[0] > FCT_Linear && curvePoints[0] < FCT_Unchanged) {
+    if (isNonLinearFlatCurve(curvePoints)) {
         FlatCurve ttcurve(curvePoints, false, CURVES_MIN_POLY_POINTS / 2);
         ttcurve.setIdentityValue(0.);
         lhmasexputili = true;
@@ -2001,8 +1984,7 @@ void LocLLmaskexpCurve::Set(const Curve &pCurve)
 
 void LocLLmaskexpCurve::Set(const std::vector<double> &curvePoints,  bool & llmasexputili)
 {
-    //  if (HHutili && !curvePoints.empty() && curvePoints[0] > FCT_Linear && curvePoints[0] < FCT_Unchanged) {
-    if (!curvePoints.empty() && curvePoints[0] > FCT_Linear && curvePoints[0] < FCT_Unchanged) {
+    if (isNonLinearFlatCurve(curvePoints)) {
         FlatCurve ttcurve(curvePoints, false, CURVES_MIN_POLY_POINTS / 2);
         ttcurve.setIdentityValue(0.);
         llmasexputili = true;
@@ -2050,8 +2032,7 @@ void LocCCmaskexpCurve::Set(const Curve &pCurve)
 
 void LocCCmaskexpCurve::Set(const std::vector<double> &curvePoints,  bool & lcmasexputili)
 {
-    //  if (HHutili && !curvePoints.empty() && curvePoints[0] > FCT_Linear && curvePoints[0] < FCT_Unchanged) {
-    if (!curvePoints.empty() && curvePoints[0] > FCT_Linear && curvePoints[0] < FCT_Unchanged) {
+    if (isNonLinearFlatCurve(curvePoints)) {
         FlatCurve ttcurve(curvePoints, false, CURVES_MIN_POLY_POINTS / 2);
         ttcurve.setIdentityValue(0.);
         lcmasexputili = true;
@@ -2097,8 +2078,7 @@ void LocHHmaskCurve::Set(const Curve &pCurve)
 
 bool LocHHmaskCurve::Set(const std::vector<double> &curvePoints)
 {
-    //  if (HHutili && !curvePoints.empty() && curvePoints[0] > FCT_Linear && curvePoints[0] < FCT_Unchanged) {
-    if (!curvePoints.empty() && curvePoints[0] > FCT_Linear && curvePoints[0] < FCT_Unchanged) {
+    if (isNonLinearFlatCurve(curvePoints)) {
         FlatCurve ttcurve(curvePoints, false, CURVES_MIN_POLY_POINTS / 2);
         ttcurve.setIdentityValue(0.);
         Set(ttcurve);
@@ -2148,8 +2128,7 @@ void LocCCmaskCurve::Set(const Curve &pCurve)
 
 bool LocCCmaskCurve::Set(const std::vector<double> &curvePoints)
 {
-    //  if (HHutili && !curvePoints.empty() && curvePoints[0] > FCT_Linear && curvePoints[0] < FCT_Unchanged) {
-    if (!curvePoints.empty() && curvePoints[0] > FCT_Linear && curvePoints[0] < FCT_Unchanged) {
+    if (isNonLinearFlatCurve(curvePoints)) {
         FlatCurve ttcurve(curvePoints, false, CURVES_MIN_POLY_POINTS / 2);
         ttcurve.setIdentityValue(0.);
         Set(ttcurve);
@@ -2195,8 +2174,7 @@ void LocLLmaskCurve::Set(const Curve &pCurve)
 
 bool LocLLmaskCurve::Set(const std::vector<double> &curvePoints)
 {
-    //  if (HHutili && !curvePoints.empty() && curvePoints[0] > FCT_Linear && curvePoints[0] < FCT_Unchanged) {
-    if (!curvePoints.empty() && curvePoints[0] > FCT_Linear && curvePoints[0] < FCT_Unchanged) {
+    if (isNonLinearFlatCurve(curvePoints)) {
         FlatCurve ttcurve(curvePoints, false, CURVES_MIN_POLY_POINTS / 2);
         ttcurve.setIdentityValue(0.);
         Set(ttcurve);
@@ -2244,8 +2222,7 @@ void LocHHCurve::Set(const Curve &pCurve)
 
 bool LocHHCurve::Set(const std::vector<double> &curvePoints)
 {
-    //  if (HHutili && !curvePoints.empty() && curvePoints[0] > FCT_Linear && curvePoints[0] < FCT_Unchanged) {
-    if (!curvePoints.empty() && curvePoints[0] > FCT_Linear && curvePoints[0] < FCT_Unchanged) {
+    if (isNonLinearFlatCurve(curvePoints)) {
         FlatCurve ttcurve(curvePoints, false, CURVES_MIN_POLY_POINTS / 2);
         ttcurve.setIdentityValue(0.);
         Set(ttcurve);
@@ -2293,9 +2270,7 @@ void LocLHCurve::Set(const Curve &pCurve)
 
 bool LocLHCurve::Set(const std::vector<double> &curvePoints)
 {
-
-    if (!curvePoints.empty() && curvePoints[0] > FCT_Linear && curvePoints[0] < FCT_Unchanged) {
-//    if (LHutili && !curvePoints.empty() && curvePoints[0] > FCT_Linear && curvePoints[0] < FCT_Unchanged) {
+    if (isNonLinearFlatCurve(curvePoints)) {
         FlatCurve tcurve(curvePoints, false, CURVES_MIN_POLY_POINTS / 2);
         tcurve.setIdentityValue(0.);
         Set(tcurve);
@@ -2340,8 +2315,7 @@ void LocCHCurve::Set(const Curve &pCurve)
 
 bool LocCHCurve::Set(const std::vector<double> &curvePoints)
 {
-    //  if (HHutili && !curvePoints.empty() && curvePoints[0] > FCT_Linear && curvePoints[0] < FCT_Unchanged) {
-    if (!curvePoints.empty() && curvePoints[0] > FCT_Linear && curvePoints[0] < FCT_Unchanged) {
+    if (isNonLinearFlatCurve(curvePoints)) {
         FlatCurve ttcurve(curvePoints, false, CURVES_MIN_POLY_POINTS / 2);
         ttcurve.setIdentityValue(0.);
         Set(ttcurve);
@@ -2388,8 +2362,7 @@ void LocwavCurve::Set(const Curve &pCurve)
 }
 bool LocwavCurve::Set(const std::vector<double> &curvePoints)
 {
-
-    if (!curvePoints.empty() && curvePoints[0] > FCT_Linear && curvePoints[0] < FCT_Unchanged) {
+    if (isNonLinearFlatCurve(curvePoints)) {
         FlatCurve tcurve(curvePoints, false, CURVES_MIN_POLY_POINTS / 2);
         tcurve.setIdentityValue(0.);
         Set(tcurve);
@@ -2432,8 +2405,7 @@ void LocretitransCurve::Set(const Curve &pCurve)
 }
 void LocretitransCurve::Set(const std::vector<double> &curvePoints)
 {
-
-    if (!curvePoints.empty() && curvePoints[0] > FCT_Linear && curvePoints[0] < FCT_Unchanged) {
+    if (isNonLinearFlatCurve(curvePoints)) {
         FlatCurve tcurve(curvePoints, false, CURVES_MIN_POLY_POINTS / 2);
         tcurve.setIdentityValue(0.);
         Set(tcurve);
@@ -2475,8 +2447,7 @@ void LocretigainCurve::Set(const Curve &pCurve)
 }
 void LocretigainCurve::Set(const std::vector<double> &curvePoints)
 {
-
-    if (!curvePoints.empty() && curvePoints[0] > FCT_Linear && curvePoints[0] < FCT_Unchanged) {
+    if (isNonLinearFlatCurve(curvePoints)) {
         FlatCurve tcurve(curvePoints, false, CURVES_MIN_POLY_POINTS / 2);
         tcurve.setIdentityValue(0.);
         Set(tcurve);
@@ -2526,7 +2497,7 @@ void RetinextransmissionCurve::Set(const Curve &pCurve)
 
 void RetinextransmissionCurve::Set(const std::vector<double> &curvePoints)
 {
-    if (!curvePoints.empty() && curvePoints[0] > FCT_Linear && curvePoints[0] < FCT_Unchanged) {
+    if (isNonLinearFlatCurve(curvePoints)) {
         FlatCurve tcurve(curvePoints, false, CURVES_MIN_POLY_POINTS / 2);
         tcurve.setIdentityValue(0.);
         Set(tcurve);
@@ -2559,7 +2530,7 @@ void RetinexgaintransmissionCurve::Set(const Curve &pCurve)
 
 void RetinexgaintransmissionCurve::Set(const std::vector<double> &curvePoints)
 {
-    if (!curvePoints.empty() && curvePoints[0] > FCT_Linear && curvePoints[0] < FCT_Unchanged) {
+    if (isNonLinearFlatCurve(curvePoints)) {
         FlatCurve tcurve(curvePoints, false, CURVES_MIN_POLY_POINTS / 2);
         tcurve.setIdentityValue(0.);
         Set(tcurve);
@@ -2633,7 +2604,7 @@ void OpacityCurve::Set(const std::vector<double> &curvePoints, bool &opautili)
 {
     std::unique_ptr<FlatCurve> tcurve;
 
-    if (!curvePoints.empty() && curvePoints[0] > FCT_Linear && curvePoints[0] < FCT_Unchanged) {
+    if (isNonLinearFlatCurve(curvePoints)) {
         tcurve.reset(new FlatCurve(curvePoints, false, CURVES_MIN_POLY_POINTS / 2));
         tcurve->setIdentityValue(0.);
         Set(tcurve.get());
@@ -2673,8 +2644,7 @@ void WavCurve::Set(const Curve &pCurve)
 }
 void WavCurve::Set(const std::vector<double> &curvePoints)
 {
-
-    if (!curvePoints.empty() && curvePoints[0] > FCT_Linear && curvePoints[0] < FCT_Unchanged) {
+    if (isNonLinearFlatCurve(curvePoints)) {
         FlatCurve tcurve(curvePoints, false, CURVES_MIN_POLY_POINTS / 2);
         tcurve.setIdentityValue(0.);
         Set(tcurve);
@@ -2706,7 +2676,7 @@ void Wavblcurve::Set(const Curve &pCurve)
 
 void Wavblcurve::Set(const std::vector<double> &curvePoints)
 {
-    if (!curvePoints.empty() && curvePoints[0] > FCT_Linear && curvePoints[0] < FCT_Unchanged) {
+    if (isNonLinearFlatCurve(curvePoints)) {
         FlatCurve tcurve(curvePoints, false, CURVES_MIN_POLY_POINTS / 2);
         tcurve.setIdentityValue(0.);
         Set(tcurve);
@@ -2742,7 +2712,7 @@ void WavOpacityCurveRG::Set(const Curve &pCurve)
 
 void WavOpacityCurveRG::Set(const std::vector<double> &curvePoints)
 {
-    if (!curvePoints.empty() && curvePoints[0] > FCT_Linear && curvePoints[0] < FCT_Unchanged) {
+    if (isNonLinearFlatCurve(curvePoints)) {
         FlatCurve tcurve(curvePoints, false, CURVES_MIN_POLY_POINTS / 2);
         tcurve.setIdentityValue(0.);
         Set(tcurve);
@@ -2775,7 +2745,7 @@ void WavOpacityCurveSH::Set(const Curve &pCurve)
 
 void WavOpacityCurveSH::Set(const std::vector<double> &curvePoints)
 {
-    if (!curvePoints.empty() && curvePoints[0] > FCT_Linear && curvePoints[0] < FCT_Unchanged) {
+    if (isNonLinearFlatCurve(curvePoints)) {
         FlatCurve tcurve(curvePoints, false, CURVES_MIN_POLY_POINTS / 2);
         tcurve.setIdentityValue(0.);
         Set(tcurve);
@@ -2812,7 +2782,7 @@ void WavOpacityCurveBY::Set(const Curve &pCurve)
 
 void WavOpacityCurveBY::Set(const std::vector<double> &curvePoints)
 {
-    if (!curvePoints.empty() && curvePoints[0] > FCT_Linear && curvePoints[0] < FCT_Unchanged) {
+    if (isNonLinearFlatCurve(curvePoints)) {
         FlatCurve tcurve(curvePoints, false, CURVES_MIN_POLY_POINTS / 2);
         tcurve.setIdentityValue(0.);
         Set(tcurve);
@@ -2844,7 +2814,7 @@ void WavOpacityCurveW::Set(const Curve &pCurve)
 
 void WavOpacityCurveW::Set(const std::vector<double> &curvePoints)
 {
-    if (!curvePoints.empty() && curvePoints[0] > FCT_Linear && curvePoints[0] < FCT_Unchanged) {
+    if (isNonLinearFlatCurve(curvePoints)) {
         FlatCurve tcurve(curvePoints, false, CURVES_MIN_POLY_POINTS / 2);
         tcurve.setIdentityValue(0.);
         Set(tcurve);
@@ -2876,7 +2846,7 @@ void WavOpacityCurveWL::Set(const Curve &pCurve)
 
 void WavOpacityCurveWL::Set(const std::vector<double> &curvePoints)
 {
-    if (!curvePoints.empty() && curvePoints[0] > FCT_Linear && curvePoints[0] < FCT_Unchanged) {
+    if (isNonLinearFlatCurve(curvePoints)) {
         FlatCurve tcurve(curvePoints, false, CURVES_MIN_POLY_POINTS / 2);
         tcurve.setIdentityValue(0.);
         Set(tcurve);
@@ -2919,8 +2889,7 @@ void NoiseCurve::Set(const Curve &pCurve)
 
 void NoiseCurve::Set(const std::vector<double> &curvePoints)
 {
-
-    if (!curvePoints.empty() && curvePoints[0] > FCT_Linear && curvePoints[0] < FCT_Unchanged) {
+    if (isNonLinearFlatCurve(curvePoints)) {
         FlatCurve tcurve(curvePoints, false, CURVES_MIN_POLY_POINTS / 2);
         tcurve.setIdentityValue(0.);
         Set(tcurve);
@@ -3066,7 +3035,7 @@ void ColorGradientCurve::SetXYZ(const std::vector<double> &curvePoints, const do
 {
     std::unique_ptr<FlatCurve> tcurve;
 
-    if (!curvePoints.empty() && curvePoints[0] > FCT_Linear && curvePoints[0] < FCT_Unchanged) {
+    if (isNonLinearFlatCurve(curvePoints)) {
         tcurve.reset(new FlatCurve(curvePoints, false, CURVES_MIN_POLY_POINTS / 2));
         SetXYZ(tcurve.get(), xyz_rgb, satur, lumin);
     }
@@ -3154,7 +3123,7 @@ void ColorGradientCurve::SetRGB(const std::vector<double> &curvePoints)
 {
     std::unique_ptr<FlatCurve> tcurve;
 
-    if (!curvePoints.empty() && curvePoints[0] > FCT_Linear && curvePoints[0] < FCT_Unchanged) {
+    if (isNonLinearFlatCurve(curvePoints)) {
         tcurve.reset(new FlatCurve(curvePoints, false, CURVES_MIN_POLY_POINTS / 2));
         SetRGB(tcurve.get());
     }

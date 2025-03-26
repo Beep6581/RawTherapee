@@ -38,15 +38,23 @@ enum GeometryIndex {
     VISIBLE_OBJECT_COUNT = 0
 };
 
+constexpr int computeOffsetEnum(int object) {
+    constexpr int mo_count = static_cast<int>(MO_OBJECT_COUNT);
+    constexpr int control_count = static_cast<int>(::ControlLine::OBJECT_COUNT);
+    return (mo_count + object) % control_count;
+}
+
 /**
  * Offsets for mouse-over geometry that can be compared to the mouse-over object
  * ID modded with the control line object count.
  */
-enum GeometryOffset {
-    OFFSET_LINE = (MO_OBJECT_COUNT + ::ControlLine::LINE) % ::ControlLine::OBJECT_COUNT,
-    OFFSET_ICON = (MO_OBJECT_COUNT + ::ControlLine::ICON) % ::ControlLine::OBJECT_COUNT,
-    OFFSET_BEGIN = (MO_OBJECT_COUNT + ::ControlLine::BEGIN) % ::ControlLine::OBJECT_COUNT,
-    OFFSET_END = (MO_OBJECT_COUNT + ::ControlLine::END) % ::ControlLine::OBJECT_COUNT,
+enum GeometryOffset : int {
+    // clang-format off
+    OFFSET_LINE  = computeOffsetEnum(::ControlLine::LINE),
+    OFFSET_ICON  = computeOffsetEnum(::ControlLine::ICON),
+    OFFSET_BEGIN = computeOffsetEnum(::ControlLine::BEGIN),
+    OFFSET_END   = computeOffsetEnum(::ControlLine::END)
+    // clang-format on
 };
 
 /**

@@ -586,7 +586,7 @@ bool MyDiagonalCurve::handleEvents (GdkEvent* event)
                     new_type = CSMove2D; // Shown when dragging a node.
 
                     if (distanceX > minDistanceX) {
-                        if (mod_type & GDK_CONTROL_MASK) {
+                        if (mod_type & Gdk::ModifierType::CONTROL_MASK) {
                             clampedY = point.getVal01(clampedX);
                         }
 
@@ -1345,8 +1345,8 @@ void MyDiagonalCurve::getCursorPosition(Gdk::EventType evType, bool isHint, int 
     // update deltaX/Y if the user drags a point
     if (grab_point != -1) {
         // set the dragging factor
-        int control_key = mod_type & GDK_CONTROL_MASK;
-        int shift_key = mod_type & GDK_SHIFT_MASK;
+        bool control_key = mod_type & Gdk::ModifierType::CONTROL_MASK;
+        bool shift_key = mod_type & Gdk::ModifierType::SHIFT_MASK;
 
         // the increment get smaller if modifier key are used, and "snap to" may be enabled
         if (control_key) {

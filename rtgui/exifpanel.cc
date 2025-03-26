@@ -16,6 +16,8 @@
  *  You should have received a copy of the GNU General Public License
  *  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
  */
+
+#include <string_view>
 #include <unordered_set>
 
 #include "exifpanel.h"
@@ -352,29 +354,40 @@ void ExifPanel::refreshTags()
                     {"Exif.Image", 2}
                 }
             {}
-            bool operator()(const std::string &a, const std::string &b) const
+
+            bool operator()(std::string_view sva, std::string_view svb) const
             {
-                auto p1 = a.find_last_of('.');
-                auto p2 = b.find_last_of('.');
-                const char *sa = a.c_str();
-                const char *sb = b.c_str();
-                if (p1 != std::string::npos && p2 != std::string::npos) {
-                    bool hex_a = strncmp(sa+p1+1, "0x", 2) == 0;
-                    bool hex_b = strncmp(sb+p2+1, "0x", 2) == 0;
+                auto pos_a = sva.find_last_of('.');
+                auto pos_b = svb.find_last_of('.');
+
+                if (pos_a != std::string_view::npos && pos_b != std::string_view::npos) {
+                    bool hex_a = sva.substr(pos_a + 1).starts_with("0x");
+                    bool hex_b = svb.substr(pos_b + 1).starts_with("0x");
                     if (hex_a != hex_b) {
                         return !hex_a;
                     }
                 }
-                if (p1 != p2 || strncmp(sa, sb, p1) != 0) {
-                    std::string ga(sa, sa+p1);
-                    std::string gb(sb, sb+p2);
+
+                bool check_order = [&]() {
+                    if (pos_a != pos_b) return true;
+                    // Both are npos
+                    if (pos_a == std::string_view::npos) return false;
+
+                    return strncmp(sva.data(), svb.data(), pos_a) != 0;
+                }();
+
+                if (check_order) {
+                    // pos_a/pos_b may be npos
+                    std::string ga(sva.substr(0, std::min(pos_a, sva.size())));
+                    std::string gb(svb.substr(0, std::min(pos_b, svb.size())));
                     int ia = getorder(ga);
                     int ib = getorder(gb);
                     if (ia != ib) {
                         return ia < ib;
                     }
                 }
-                return strcmp(sa, sb) < 0;
+
+                return sva.compare(svb);
             }
 
             int getorder(const std::string &key) const

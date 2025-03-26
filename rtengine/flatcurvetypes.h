@@ -18,8 +18,10 @@
 */
 #pragma once
 
+#include <vector>
+
 // For compatibility and simplicity reason, order shouldn't change, and must be identical to the order specified in the curveType widget
-enum FlatCurveType {
+enum FlatCurveType : int {
     FCT_Empty = -1,     // Also used for identity curves
     FCT_Linear,         // 0
     FCT_MinMaxCPoints,  // 1
@@ -27,3 +29,12 @@ enum FlatCurveType {
     // Insert new curve type above this line
     FCT_Unchanged       // Must remain the last of the enum
 };
+
+inline bool isCurveType(const std::vector<double>& curve, FlatCurveType type) {
+    return !curve.empty() && curve[0] == static_cast<double>(type);
+}
+
+inline bool isNonLinearFlatCurve(const std::vector<double>& curve) {
+    return !curve.empty() && (curve[0] > static_cast<double>(FCT_Linear))
+        && (curve[0] < static_cast<double>(FCT_Unchanged));
+}

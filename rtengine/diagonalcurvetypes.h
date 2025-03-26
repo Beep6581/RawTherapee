@@ -18,8 +18,10 @@
 */
 #pragma once
 
+#include <vector>
+
 // For compatibility and simplicity reason, order shouldn't change, and must be identical to the order specified in the curveType widget
-enum DiagonalCurveType {
+enum DiagonalCurveType : int {
     DCT_Empty = -1,     // Also used for identity curves
     DCT_Linear,         // 0
     DCT_Spline,         // 1
@@ -29,3 +31,12 @@ enum DiagonalCurveType {
     // Insert new curve type above this line
     DCT_Unchanged       // Must remain the last of the enum
 };
+
+inline bool isCurveType(const std::vector<double>& curve, DiagonalCurveType type) {
+    return curve.at(0) == static_cast<double>(type);
+}
+
+inline bool isNonLinearDiagonalCurve(const std::vector<double>& curve) {
+    return !curve.empty() && (curve[0] > static_cast<double>(DCT_Linear))
+        && (curve[0] < static_cast<double>(DCT_Unchanged));
+}

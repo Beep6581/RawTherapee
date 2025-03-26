@@ -1021,7 +1021,7 @@ int ImageIO::loadPPMFromMemory(const char* buffer, int width, int height, bool s
 }
 
 
-int ImageIO::savePNG  (const Glib::ustring &fname, volatile int bps) const
+int ImageIO::savePNG  (const Glib::ustring &fname, int bps) const
 {
     if (getWidth() < 1 || getHeight() < 1) {
         return IMIO_HEADERERROR;

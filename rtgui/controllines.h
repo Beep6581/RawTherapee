@@ -31,7 +31,7 @@ class RTSurface;
 
 
 struct ControlLine {
-    enum ObjectIndex {
+    enum ObjectIndex : int {
         LINE,
         ICON,
         BEGIN,

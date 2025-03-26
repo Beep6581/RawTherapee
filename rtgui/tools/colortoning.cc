@@ -22,7 +22,7 @@ constexpr int ID_LABREGION_HUE = 5;
 
 inline bool hasMask(const std::vector<double> &dflt, const std::vector<double> &mask)
 {
-    return !(mask.empty() || mask[0] == FCT_Linear || mask == dflt);
+    return !(mask.empty() || isCurveType(mask, FCT_Linear) || mask == dflt);
 }
 
 

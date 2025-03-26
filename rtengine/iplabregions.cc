@@ -76,13 +76,13 @@ BENCHFUN
 
     for (int i = begin_idx; i < end_idx; ++i) {
         auto &r = params->colorToning.labregions[i];
-        if (!r.hueMask.empty() && r.hueMask[0] != FCT_Linear) {
+        if (!isCurveType(r.hueMask, FCT_Linear)) {
             hmask[i].reset(new FlatCurve(r.hueMask, true));
         }
-        if (!r.chromaticityMask.empty() && r.chromaticityMask[0] != FCT_Linear) {
+        if (!isCurveType(r.chromaticityMask, FCT_Linear)) {
             cmask[i].reset(new FlatCurve(r.chromaticityMask, false));
         }
-        if (!r.lightnessMask.empty() && r.lightnessMask[0] != FCT_Linear) {
+        if (!isCurveType(r.lightnessMask, FCT_Linear)) {
             lmask[i].reset(new FlatCurve(r.lightnessMask, false));
         }
     }
