@@ -1,9 +1,4 @@
-# Use of SOURCE_DIR target property begins at cmake 3.7
-if(APPLE)
-    cmake_minimum_required(VERSION 3.7)
-else()
-    cmake_minimum_required(VERSION 3.5)
-endif()
+cmake_minimum_required(VERSION 3.25)
 
 # Compiler id for Apple Clang
 if(APPLE)
