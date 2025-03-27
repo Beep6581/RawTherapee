@@ -247,6 +247,11 @@ target_link_libraries(rth-cli rtengine
     ${TCMALLOC_LIBRARIES}
 )
 
+if(ATOMIC_FOUND)
+    target_link_libraries(rth ${ATOMIC_LIBRARIES})
+    target_link_libraries(rth-cli ${ATOMIC_LIBRARIES})
+endif()
+
 # Install executables
 install(TARGETS rth DESTINATION "${BINDIR}")
 install(TARGETS rth-cli DESTINATION "${BINDIR}")

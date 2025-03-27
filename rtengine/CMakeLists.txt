@@ -195,6 +195,7 @@ target_include_directories(rtengine
 target_include_directories(rtengine BEFORE PRIVATE ${CMAKE_BINARY_DIR})
 
 target_link_libraries(rtengine
+    fmt::fmt
     JPEG::JPEG
     PNG::PNG
     TIFF::TIFF
