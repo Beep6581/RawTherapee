@@ -419,8 +419,13 @@ enum class BlurType {
                 float &highresi, float &nresi, float &highresi46, float &nresi46, float &Lhighresi, float &Lnresi, float &Lhighresi46, float &Lnresi46, float &slopeg, bool &linkrgb,
                 int *ghsbpwp, float *ghsbpwpvalue);
 
-    static ght_compute_params GHT_setup(float in_B, float D, float LP, float SP, float HP, int strtype);
-    static float GHT(float x, float B, float D, float LP, float SP, float HP, ght_compute_params c, int strtype);
+    enum class GHTStrType {
+        NORMAL,
+        INVERSE,
+    };
+
+    static ght_compute_params GHT_setup(float in_B, float D, float LP, float SP, float HP, GHTStrType strtype);
+    static float GHT(float x, float B, float D, float LP, float SP, float HP, ght_compute_params c, GHTStrType strtype);
     
     void tone_eqcam2(ImProcFunctions *ipf, Imagefloat *rgb, int whits, int blacks, const Glib::ustring &workingProfile, double scale, bool multithread);
     void tone_eqdehaz(ImProcFunctions *ipf, Imagefloat *rgb, int whits, int blacks, const Glib::ustring &workingProfile, double scale, bool multithread);
@@ -461,7 +466,12 @@ enum class BlurType {
     void wavcbd(wavelet_decomposition &wdspot, int level_bl, int maxlvl,
                 const LocwavCurve& locconwavCurve, bool locconwavutili, float sigm, float offs, float chromalev, int sk);
 
-    void transit_shapedetect2(int sp, float meantm, float stdtm, int call, int senstype, const LabImage * bufexporig, const LabImage * bufexpfin, LabImage * originalmask, const float hueref, const float chromaref, const float lumaref, float sobelref, float meansobel, float ** blend2, struct local_params & lp, LabImage * original, LabImage * transformed, const LabImage *tmp1, int grad, int cx, int cy, int sk);
+    enum class LocalLabGradientMode {
+        STANDARD,
+        PLAIN_IMAGE,
+    };
+
+    void transit_shapedetect2(int sp, float meantm, float stdtm, int call, int senstype, const LabImage * bufexporig, const LabImage * bufexpfin, LabImage * originalmask, const float hueref, const float chromaref, const float lumaref, float sobelref, float meansobel, float ** blend2, struct local_params & lp, LabImage * original, LabImage * transformed, const LabImage *tmp1, LocalLabGradientMode grad, int cx, int cy, int sk);
 
     void transit_shapedetect_retinex(int call, int senstype, LabImage * bufexporig, LabImage * bufexpfin, LabImage * bufmask, LabImage * buforigmas, float **buflight, float **bufchro, const float hueref, const float chromaref,  const float lumaref, struct local_params & lp, LabImage * original, LabImage * transformed, int cx, int cy, int sk);
     void transit_shapedetect(int senstype, const LabImage *bufexporig, LabImage * originalmask, float **bufchro, bool HHutili, const float hueref, const float chromaref, const float lumaref, float sobelref, float meansobel, float ** blend2, const struct local_params & lp, LabImage * original, LabImage * transformed, int cx, int cy, int sk);

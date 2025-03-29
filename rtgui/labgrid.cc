@@ -341,45 +341,23 @@ bool LabGridArea::on_draw(const ::Cairo::RefPtr<Cairo::Context> &cr)
             cellYMax = std::floor(cellH * static_cast<double>(j+2) + 0.001);
         }
     } else if (ghs_enabled) {//cells for GHS and simulation GHS
-        const int cells = 600;
-        const double cellW = static_cast<double>(width) / static_cast<double>(cells);
-        const double cellH = static_cast<double>(height) / static_cast<double>(cells);
-        double cellYMin = 0.;
-        double cellYMax = std::floor(cellH);
-        
-        for (int j = 0; j < cells; j++) {
-            double cellXMin = 0.;
-            double cellXMax = std::floor(cellW);
-            for (int i = 0; i < cells; i++) {
-                float R, G, B;
-                R = 0.7f; G = 0.7f; B = 0.7f;
-                cr->set_source_rgb(R , G , B);
-                cr->rectangle(
-                        cellXMin,
-                        cellYMin,
-                        cellXMax - cellXMin,
-                        cellYMax - cellYMin);
-                cellXMin = cellXMax;
-                cellXMax = std::floor(cellW * static_cast<double>(i+2) + 0.001);
-                cr->fill();
-            }
-            cellYMin = cellYMax;
-            cellYMax = std::floor(cellH * static_cast<double>(j+2) + 0.001);
-        }
-        
+        constexpr double value = 0.7;
+        cr->set_source_rgb(value, value, value);
+        cr->rectangle( 0., 0., width, height);
+        cr->fill();
     }
 
     // Drawing the connection line
     cr->set_antialias(Cairo::ANTIALIAS_DEFAULT);
    //     float loa, hia, lob, hib, grx, gry, whx, why, mex, mey;
-    double loa = .5 * (static_cast<double>(width) + static_cast<double>(width) * low_a);
-    double hia = .5 * (static_cast<double>(width) + static_cast<double>(width) * high_a);
-    double lob = .5 * (static_cast<double>(height) + static_cast<double>(height) * low_b);
-    double hib = .5 * (static_cast<double>(height) + static_cast<double>(height) * high_b);
-    double grx = .5 * (static_cast<double>(width) + static_cast<double>(width) * gre_x);
-    double gry = .5 * (static_cast<double>(height) + static_cast<double>(height) * gre_y);
-    double whx = .5 * (static_cast<double>(width) + static_cast<double>(width) * whi_x);
-    double why = .5 * (static_cast<double>(height) + static_cast<double>(height) * whi_y);
+    const double loa = .5 * (static_cast<double>(width) + static_cast<double>(width) * low_a);
+    const double hia = .5 * (static_cast<double>(width) + static_cast<double>(width) * high_a);
+    const double lob = .5 * (static_cast<double>(height) + static_cast<double>(height) * low_b);
+    const double hib = .5 * (static_cast<double>(height) + static_cast<double>(height) * high_b);
+    const double grx = .5 * (static_cast<double>(width) + static_cast<double>(width) * gre_x);
+    const double gry = .5 * (static_cast<double>(height) + static_cast<double>(height) * gre_y);
+    const double whx = .5 * (static_cast<double>(width) + static_cast<double>(width) * whi_x);
+    const double why = .5 * (static_cast<double>(height) + static_cast<double>(height) * whi_y);
     double mex = .5 * (static_cast<double>(width) + static_cast<double>(width) * me_x);
     double mey = .5 * (static_cast<double>(height) + static_cast<double>(height) * me_y);
     cr->set_line_width(1.5);

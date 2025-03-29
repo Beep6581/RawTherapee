@@ -9570,7 +9570,7 @@ void ImProcFunctions::BlurNoise_Local(LabImage *tmp1, LabImage * originalmask, c
     }
 }
 
-void ImProcFunctions::transit_shapedetect2(int sp, float meantm, float stdtm, int call, int senstype, const LabImage * bufexporig, const LabImage * bufexpfin, LabImage * originalmask, const float hueref, const float chromaref, const float lumaref, float sobelref, float meansobel, float ** blend2, struct local_params & lp, LabImage * original, LabImage * transformed, const LabImage *tmp1, int grad, int cx, int cy, int sk)
+void ImProcFunctions::transit_shapedetect2(int sp, float meantm, float stdtm, int call, int senstype, const LabImage * bufexporig, const LabImage * bufexpfin, LabImage * originalmask, const float hueref, const float chromaref, const float lumaref, float sobelref, float meansobel, float ** blend2, struct local_params & lp, LabImage * original, LabImage * transformed, const LabImage *tmp1, LocalLabGradientMode grad, int cx, int cy, int sk)
 {
     
     
@@ -9596,7 +9596,7 @@ void ImProcFunctions::transit_shapedetect2(int sp, float meantm, float stdtm, in
             for (int jr = 0; jr < bfw; jr++) {
                 buftmp1->L[ir][jr] = 1.f;
             }
-    if(grad == 1  && call != 2 && lp.strSH != 0.f && execgradsh) {//test mode GF plain image
+    if(grad == LocalLabGradientMode::PLAIN_IMAGE  && call != 2 && lp.strSH != 0.f && execgradsh) {//test mode GF plain image
 #ifdef _OPENMP
         #pragma omp parallel for schedule(dynamic,16) if(multiThread)
 #endif
@@ -9957,7 +9957,7 @@ void ImProcFunctions::transit_shapedetect2(int sp, float meantm, float stdtm, in
                 }
                 float factgrad = 1.f;
                 // test to use in plain image
-                if(grad == 1  && call == 1 && lp.strSH != 0.f  && execgradsh) {
+                if(grad == LocalLabGradientMode::PLAIN_IMAGE  && call == 1 && lp.strSH != 0.f  && execgradsh) {
                     factgrad = buftmp1->L[y][x];
 
                 } 
@@ -9967,7 +9967,7 @@ void ImProcFunctions::transit_shapedetect2(int sp, float meantm, float stdtm, in
                 float clb = (bufexpfin->b[y][x] - bufexporig->b[y][x]);
 
                 if (delt) {//mask deltaE
-                    if(grad == 1  && call == 1 && lp.strSH != 0.f && execgradsh) { //test mode plain image   
+                    if(grad == LocalLabGradientMode::PLAIN_IMAGE  && call == 1 && lp.strSH != 0.f && execgradsh) { //test mode plain image   
                         cli = (buftmp1->L[y + ystart][x + xstart] * bufexpfin->L[y][x] - original->L[y + ystart][x + xstart]);                        
                     } else {
                         cli = (bufexpfin->L[y][x] - original->L[y + ystart][x + xstart]);                        
@@ -14508,11 +14508,11 @@ void ImProcFunctions::NLMeans(float **img, int strength, int detail_thresh, int 
 }
 
 // From Siril.
-ght_compute_params ImProcFunctions::GHT_setup(float in_B, float D, float LP, float SP, float HP, int strtype)
+ght_compute_params ImProcFunctions::GHT_setup(float in_B, float D, float LP, float SP, float HP, GHTStrType strtype)
 {
     rtengine::ght_compute_params c;
     float B = in_B;
-    if(strtype == 0) {//Normal Stretch
+    if(strtype == GHTStrType::NORMAL) {//Normal Stretch
         if (B == -1.0f) {
             c.qlp = -1.0f * log(1.f + D * (SP - LP));
             c.q0 = c.qlp - D * LP / (1.0f + D * (SP - LP));
@@ -14588,7 +14588,7 @@ ght_compute_params ImProcFunctions::GHT_setup(float in_B, float D, float LP, flo
             c.a4 = (c.qwp - c.q0 - D * HP * pow((1.0f + D * B * (HP - SP)), -(B + 1.0f) / B)) * c.q;
             c.b4 = (D * pow((1.0f + D * B * (HP - SP)), -(B + 1.0f) / B)) * c.q;
         }
-    } else if (strtype == 1) {//Inverse stretch
+    } else if (strtype == GHTStrType::INVERSE) {//Inverse stretch
         if (B == -1.0f) {
             c.qlp = -1.0f * log(1.f + D * (SP - LP));
             c.q0 = c.qlp - D * LP / (1.0f + D * (SP - LP));
@@ -14681,14 +14681,14 @@ ght_compute_params ImProcFunctions::GHT_setup(float in_B, float D, float LP, flo
 }
 
 // From Siril.
-float ImProcFunctions::GHT(float x, float B, float D, float LP, float SP, float HP, rtengine::ght_compute_params c, int strtype)
+float ImProcFunctions::GHT(float x, float B, float D, float LP, float SP, float HP, rtengine::ght_compute_params c, GHTStrType strtype)
 {
     float out;
     float in = clamp(x, 0.f, 1.f);//never negatives values or > 1. hence the need to control the Black point and White point
     if (D == 0.0f) {//no stretch
         out = in;
     } else {
-        if(strtype == 0) {//Normal stretch
+        if(strtype == GHTStrType::NORMAL) {//Normal stretch
             if (B == -1.0f) {
                 if (in < LP) {
                     out = c.b1 * in;
@@ -14730,7 +14730,7 @@ float ImProcFunctions::GHT(float x, float B, float D, float LP, float SP, float 
                     out = c.a4 + c.b4 * in;
                 }
             }
-        } if(strtype == 1) {//Inverse Stretch
+        } if(strtype == GHTStrType::INVERSE) {//Inverse Stretch
             if (B == -1.0f) {
                 if (in < c.LPT) {
                     out = c.b1 * in;
@@ -15184,9 +15184,9 @@ void ImProcFunctions::Lab_Local(
                 }
 
                 if (lp.recothrl >= 1.f) {
-                    transit_shapedetect2(sp, 0.f, 0.f, call, 11, bufexporig.get(), bufexpfin.get(), originalmasklog.get(), hueref, chromaref, lumaref, sobelref, 0.f, nullptr, lp, original, transformed, nullptr, 0,  cx, cy, sk);
+                    transit_shapedetect2(sp, 0.f, 0.f, call, 11, bufexporig.get(), bufexpfin.get(), originalmasklog.get(), hueref, chromaref, lumaref, sobelref, 0.f, nullptr, lp, original, transformed, nullptr, LocalLabGradientMode::STANDARD,  cx, cy, sk);
                 } else {
-                    transit_shapedetect2(sp, 0.f, 0.f, call, 11, bufexporig.get(), bufexpfin.get(), nullptr, hueref, chromaref, lumaref, sobelref, 0.f, nullptr, lp, original, transformed, nullptr, 0, cx, cy, sk);
+                    transit_shapedetect2(sp, 0.f, 0.f, call, 11, bufexporig.get(), bufexpfin.get(), nullptr, hueref, chromaref, lumaref, sobelref, 0.f, nullptr, lp, original, transformed, nullptr, LocalLabGradientMode::STANDARD, cx, cy, sk);
                 }
             }
 
@@ -16265,9 +16265,9 @@ void ImProcFunctions::Lab_Local(
                     //   transit_shapedetect_retinex(call, 4, bufgb.get(),bufmaskorigtm.get(), originalmasktm.get(), buflight, bufchro, hueref, chromaref, lumaref, lp, original, transformed, cx, cy, sk);
 
                     if (lp.recothrt >= 1.f) {
-                        transit_shapedetect2(sp, meantm, stdtm, call, 8, bufgb.get(), tmp1.get(), originalmasktm.get(), hueref, chromaref, lumaref, sobelref, 0.f, nullptr, lp, original, transformed, nullptr, 0,  cx, cy, sk);
+                        transit_shapedetect2(sp, meantm, stdtm, call, 8, bufgb.get(), tmp1.get(), originalmasktm.get(), hueref, chromaref, lumaref, sobelref, 0.f, nullptr, lp, original, transformed, nullptr, LocalLabGradientMode::STANDARD,  cx, cy, sk);
                     } else {
-                        transit_shapedetect2(sp, meantm, stdtm, call, 8, bufgb.get(), tmp1.get(), nullptr, hueref, chromaref, lumaref, sobelref, 0.f, nullptr, lp, original, transformed, nullptr, 0, cx, cy, sk);
+                        transit_shapedetect2(sp, meantm, stdtm, call, 8, bufgb.get(), tmp1.get(), nullptr, hueref, chromaref, lumaref, sobelref, 0.f, nullptr, lp, original, transformed, nullptr, LocalLabGradientMode::STANDARD, cx, cy, sk);
                     }
 
                     //  transit_shapedetect(8, tmp1.get(), originalmasktm.get(), bufchro, false, hueref, chromaref, lumaref, sobelref, 0.f, nullptr, lp, original, transformed, cx, cy, sk);
@@ -16324,7 +16324,7 @@ void ImProcFunctions::Lab_Local(
             dehazeloc(tmpImage.get(), dehazeParams, sk, sp);
             rgb2lab(*tmpImage.get(), *bufexpfin, params->icm.workingProfile);
 
-            transit_shapedetect2(sp, 0.f, 0.f, call, 30, bufexporig.get(), bufexpfin.get(), nullptr, hueref, chromaref, lumaref, sobelref, 0.f, nullptr, lp, original, transformed, nullptr, 0, cx, cy, sk);
+            transit_shapedetect2(sp, 0.f, 0.f, call, 30, bufexporig.get(), bufexpfin.get(), nullptr, hueref, chromaref, lumaref, sobelref, 0.f, nullptr, lp, original, transformed, nullptr, LocalLabGradientMode::STANDARD, cx, cy, sk);
 
             if (lp.recur) {
                 original->CopyFrom(transformed, multiThread);
@@ -17575,9 +17575,9 @@ void ImProcFunctions::Lab_Local(
                     }
 
                     if (lp.recothrv >= 1.f) {
-                        transit_shapedetect2(sp, 0.f, 0.f, call, 2, bufexporig.get(), bufexpfin.get(), originalmaskvib.get(), hueref, chromaref, lumaref, sobelref, 0.f, nullptr, lp, original, transformed, nullptr, 0, cx, cy, sk);
+                        transit_shapedetect2(sp, 0.f, 0.f, call, 2, bufexporig.get(), bufexpfin.get(), originalmaskvib.get(), hueref, chromaref, lumaref, sobelref, 0.f, nullptr, lp, original, transformed, nullptr, LocalLabGradientMode::STANDARD, cx, cy, sk);
                     } else {
-                        transit_shapedetect2(sp, 0.f, 0.f, call, 2, bufexporig.get(), bufexpfin.get(), nullptr, hueref, chromaref, lumaref, sobelref, 0.f, nullptr, lp, original, transformed, nullptr, 0, cx, cy, sk);
+                        transit_shapedetect2(sp, 0.f, 0.f, call, 2, bufexporig.get(), bufexpfin.get(), nullptr, hueref, chromaref, lumaref, sobelref, 0.f, nullptr, lp, original, transformed, nullptr, LocalLabGradientMode::STANDARD, cx, cy, sk);
 
                     }
 
@@ -17720,12 +17720,12 @@ void ImProcFunctions::Lab_Local(
                 return;
             }
             //to test gradiant in mode plain image GW GH instead of bfw bfh - I prefer to keep this code, even if it is not used, because it is another way to approach the graduated Filter in SE
-            int grad = 0;// grad = 1 to plain image GF
+            LocalLabGradientMode grad = LocalLabGradientMode::STANDARD;// grad = 1 to plain image GF
             int ca1 = 1;//dcrop
             int ca2 = 2;//simpleprocess
             int ca3 = 3;//improccordinator
             int ca4 = 10;//do nothing
-            if(grad == 1) {//plain image GF
+            if(grad == LocalLabGradientMode::PLAIN_IMAGE) {//plain image GF
                 ca1 = 2;
                 ca2 = 2;
                 ca3 = 3;
@@ -17807,11 +17807,11 @@ void ImProcFunctions::Lab_Local(
                         //ghshp2 = HP;
                         bool ghsinv = params->locallab.spots.at(sp).ghs_inv;//Inverse stretch
                         int met = 0;
-                        int strtype = 0;//to allow more choice than boolean
+                        GHTStrType strtype = GHTStrType::NORMAL;
                         if(ghsinv) {
-                            strtype = 1;
+                            strtype = GHTStrType::INVERSE;
                         } else {
-                            strtype = 0;
+                            strtype = GHTStrType::NORMAL;
                         }
                         if (params->locallab.spots.at(sp).ghsMethod == "rgb") {//mode RGB default in luminance mode
                             met = 0;
@@ -17829,8 +17829,7 @@ void ImProcFunctions::Lab_Local(
                         
                         const ght_compute_params c = GHT_setup(B, D, LP, SP, HP, strtype);//setup system with entries
 
-                        Imagefloat *tmpImage = nullptr;
-                        tmpImage = new Imagefloat(bfw, bfh);
+                        std::unique_ptr<Imagefloat> tmpImage(new Imagefloat(bfw, bfh));
                         lab2rgb(*bufexpfin, *tmpImage, params->icm.workingProfile);
                         Glib::ustring prof = params->icm.workingProfile;
                         float ghsslop = params->locallab.spots.at(sp).ghs_slope;
@@ -17843,19 +17842,19 @@ void ImProcFunctions::Lab_Local(
                         rtengine::Color::calcGamma(pwr1, ts1, g_a); // call to calcGamma with selected gamma and slope
                         const float noise = pow_F(2.f, -16.f);//GHS - do not process very low values which are probably noise.
                        
-                        if(shiftblackpoint < 0.f && strtype == 0) {//change only Black point with negatives values for in some cases out of gamut values
+                        if(shiftblackpoint < 0.f && strtype == GHTStrType::NORMAL) {//change only Black point with negatives values for in some cases out of gamut values
                             //rgb value can be very weakly negatives (eg working space sRGB in some rare cases) - tone_eqblack prevents it
                             //also change black value to help "ghs" and avoid noise
-                            tone_eqblack(this, tmpImage, -5 * blackpoint, params->icm.workingProfile, sk, multiThread);//Ev -16 to -8
+                            tone_eqblack(this, tmpImage.get(), -5 * blackpoint, params->icm.workingProfile, sk, multiThread);//Ev -16 to -8
                                                         // -5 to be in range 0..100
                         }
                         {//change black point and white point for GHS
                          // Sets the Blackpoint and Whitepoint for a linear stretch of the image
                             float shiftblackpoint2 = shiftblackpoint;
-                            if(shiftblackpoint < 0.f  && strtype == 0) {
+                            if(shiftblackpoint < 0.f  && strtype == GHTStrType::NORMAL) {
                                 shiftblackpoint2 = 0.f;//set to zero if  balc point negatif, no change 
                             } 
-                            if(strtype == 1) {
+                            if(strtype == GHTStrType::INVERSE) {
                                 shiftblackpoint2 = shiftblackpoint;
                             }
                             int bpnb = 0;
@@ -17876,7 +17875,7 @@ void ImProcFunctions::Lab_Local(
                                     float b = tmpImage->b(i, j) / 65535.f;
                                     float Ro, Go, Bo;
                                     float deltawp = rtengine::max(0.05f, shiftwhitepoint - shiftblackpoint2);//0.05 minimum acceptable
-                                    if(strtype == 0) {
+                                    if(strtype == GHTStrType::NORMAL) {
                                         Ro = (r - shiftblackpoint2) / deltawp;
                                         Go = (g - shiftblackpoint2) / deltawp;
                                         Bo = (b - shiftblackpoint2) / deltawp;
@@ -17901,11 +17900,11 @@ void ImProcFunctions::Lab_Local(
                                     if(Ro > 1.f || Go > 1.f || Bo > 1.f) {
                                         wpnb++;
                                     }
-                                    if( strtype == 0 ) { //strtype == 0 only strtype == 0 if crash
+                                    if( strtype == GHTStrType::NORMAL ) { //strtype == GHTStrType::NORMAL only strtype == GHTStrType::NORMAL if crash
                                         tmpImage->r(i, j) = rtengine::max(0.00001f, Ro * 65535.f);//0.00001f to avoid crash
                                         tmpImage->g(i, j) = rtengine::max(0.00001f, Go * 65535.f);
                                         tmpImage->b(i, j) = rtengine::max(0.00001f, Bo * 65535.f);
-                                    }  else if( strtype == 1) {//to uncomment if crash
+                                    }  else if( strtype == GHTStrType::INVERSE) {//to uncomment if crash
                                         tmpImage->r(i, j) = clipR(rtengine::max(0.00001f, Ro * 65535.f));//0.0001f to avoid crash different from 'normal'
                                         tmpImage->g(i, j) = clipR(rtengine::max(0.00001f, Go * 65535.f));//clipR to avoid crash in some cases
                                         tmpImage->b(i, j) = clipR(rtengine::max(0.00001f, Bo * 65535.f));
@@ -18109,14 +18108,14 @@ void ImProcFunctions::Lab_Local(
 
                         if(smoth && D > 0.002f) {//to preserve settings WP and BP
                             //Highlight attenuation in function of HP - protect highlight
-                            tone_eqsmooth(this, tmpImage, lp, params->icm.workingProfile, sk, multiThread);//reduce Ev > 0 < 12
+                            tone_eqsmooth(this, tmpImage.get(), lp, params->icm.workingProfile, sk, multiThread);//reduce Ev > 0 < 12
                         }
                         if(MID != 0.f  && D > 0.002f) {//to preserve settings WP and BP
                             //midtones with tone_equ
-                            ImProcFunctions::tone_eqcam(this, tmpImage, MID, params->icm.workingProfile, sk, multiThread);
+                            ImProcFunctions::tone_eqcam(this, tmpImage.get(), MID, params->icm.workingProfile, sk, multiThread);
                         }
  
-                        if(strtype == 1) {//inverse GHS
+                        if(strtype == GHTStrType::INVERSE) {//inverse GHS
 #ifdef _OPENMP
             #pragma omp parallel for if (multiThread)
 #endif                       
@@ -18126,7 +18125,7 @@ void ImProcFunctions::Lab_Local(
                                     tmpImage->g(i, j) = clipR(rtengine::max(0.00001f, tmpImage->g(i, j)));//clipR to avoid crash in inverse GHS
                                     tmpImage->b(i, j) = clipR(rtengine::max(0.00001f, tmpImage->b(i, j)));
                                 }
-                        } else if (strtype == 0) {//GHS
+                        } else if (strtype == GHTStrType::NORMAL) {//GHS
 #ifdef _OPENMP
             #pragma omp parallel for if (multiThread)
 #endif                       
@@ -18142,7 +18141,7 @@ void ImProcFunctions::Lab_Local(
  
                         rgb2lab(*tmpImage, *bufexpfin, params->icm.workingProfile);
 
-                        delete tmpImage;
+                        tmpImage.reset();
                         //local contrast minimum
                         double kmod = 2.2;
                         if(met == 0) {
@@ -18230,13 +18229,13 @@ void ImProcFunctions::Lab_Local(
             
             if (lp.recothrs >= 1.f) {
                 if(call == ca1 || call == ca2 || call == ca3) {//call == 2 to run in mode plain image
-                    transit_shapedetect2(sp, 0.f, 0.f, call, 9, bufexporig.get(), bufexpfin.get(), originalmaskSH.get(), hueref, chromaref, lumaref, sobelref, 0.f, nullptr, lp, original, transformed, nullptr, 0, cx, cy, sk);
+                    transit_shapedetect2(sp, 0.f, 0.f, call, 9, bufexporig.get(), bufexpfin.get(), originalmaskSH.get(), hueref, chromaref, lumaref, sobelref, 0.f, nullptr, lp, original, transformed, nullptr, LocalLabGradientMode::STANDARD, cx, cy, sk);
                 } else if (call == ca4  && execgradsh) {// mode plain image call = 1
                     transit_shapedetect2(sp, 0.f, 0.f, call, 9, bufexporig.get(), bufexpfin.get(), originalmaskSH.get(), hueref, chromaref, lumaref, sobelref, 0.f, nullptr, lp, original, transformed, tmp1.get(), grad, cx, cy, sk);                   
                 } 
             } else {
                 if(call == ca1 || call == ca2 || call == ca3) {//call == 2 to run in mode plain image
-                    transit_shapedetect2(sp, 0.f, 0.f, call, 9, bufexporig.get(), bufexpfin.get(), nullptr, hueref, chromaref, lumaref, sobelref, 0.f, nullptr, lp, original, transformed, nullptr, 0,  cx, cy, sk);
+                    transit_shapedetect2(sp, 0.f, 0.f, call, 9, bufexporig.get(), bufexpfin.get(), nullptr, hueref, chromaref, lumaref, sobelref, 0.f, nullptr, lp, original, transformed, nullptr, LocalLabGradientMode::STANDARD,  cx, cy, sk);
                 } else if (call == ca4  && execgradsh) {// mode plain image              
                     transit_shapedetect2(sp, 0.f, 0.f, call, 9, bufexporig.get(), bufexpfin.get(), nullptr, hueref, chromaref, lumaref, sobelref, 0.f, nullptr, lp, original, transformed, tmp1.get(), grad, cx, cy, sk);
                 }
@@ -18405,7 +18404,7 @@ void ImProcFunctions::Lab_Local(
                 }
             }
 
-            transit_shapedetect2(sp, 0.f, 0.f, call, 3, bufexporig.get(), bufexpfin.get(), nullptr, hueref, chromaref, lumaref, sobelref, 0.f, nullptr, lp, original, transformed, nullptr, 0, cx, cy, sk);
+            transit_shapedetect2(sp, 0.f, 0.f, call, 3, bufexporig.get(), bufexpfin.get(), nullptr, hueref, chromaref, lumaref, sobelref, 0.f, nullptr, lp, original, transformed, nullptr, LocalLabGradientMode::STANDARD, cx, cy, sk);
 
             if (lp.recur) {
                 original->CopyFrom(transformed, multiThread);
@@ -18972,9 +18971,9 @@ void ImProcFunctions::Lab_Local(
                 }
 
                 if (lp.recothrw >= 1.f) {
-                    transit_shapedetect2(sp, 0.f, 0.f, call, 10, bufgb.get(), tmp1.get(), originalmasklc.get(), hueref, chromaref, lumaref, sobelref, 0.f, nullptr, lp, original, transformed, nullptr, 0, cx, cy, sk);
+                    transit_shapedetect2(sp, 0.f, 0.f, call, 10, bufgb.get(), tmp1.get(), originalmasklc.get(), hueref, chromaref, lumaref, sobelref, 0.f, nullptr, lp, original, transformed, nullptr, LocalLabGradientMode::STANDARD, cx, cy, sk);
                 } else {
-                    transit_shapedetect2(sp, 0.f, 0.f, call, 10, bufgb.get(), tmp1.get(), nullptr, hueref, chromaref, lumaref, sobelref, 0.f, nullptr, lp, original, transformed, nullptr, 0, cx, cy, sk);
+                    transit_shapedetect2(sp, 0.f, 0.f, call, 10, bufgb.get(), tmp1.get(), nullptr, hueref, chromaref, lumaref, sobelref, 0.f, nullptr, lp, original, transformed, nullptr, LocalLabGradientMode::STANDARD, cx, cy, sk);
                 }
 
                 tmp1.reset();
@@ -19706,9 +19705,9 @@ void ImProcFunctions::Lab_Local(
                     }
 
                     if (lp.recothre >= 1.f) {
-                        transit_shapedetect2(sp, 0.f, 0.f, call, 1, bufexporig.get(), bufexpfin.get(), originalmaskexp.get(), hueref, chromaref, lumaref, sobelref, meansob, blend2, lp, original, transformed, nullptr, 0, cx, cy, sk);
+                        transit_shapedetect2(sp, 0.f, 0.f, call, 1, bufexporig.get(), bufexpfin.get(), originalmaskexp.get(), hueref, chromaref, lumaref, sobelref, meansob, blend2, lp, original, transformed, nullptr, LocalLabGradientMode::STANDARD, cx, cy, sk);
                     } else {
-                        transit_shapedetect2(sp, 0.f, 0.f, call, 1, bufexporig.get(), bufexpfin.get(), nullptr, hueref, chromaref, lumaref, sobelref, meansob, blend2, lp, original, transformed, nullptr, 0, cx, cy, sk);
+                        transit_shapedetect2(sp, 0.f, 0.f, call, 1, bufexporig.get(), bufexpfin.get(), nullptr, hueref, chromaref, lumaref, sobelref, meansob, blend2, lp, original, transformed, nullptr, LocalLabGradientMode::STANDARD, cx, cy, sk);
                     }
                 }
 
@@ -20899,7 +20898,7 @@ void ImProcFunctions::Lab_Local(
                             }
                         }
 
-                        transit_shapedetect2(sp, 0.f, 0.f, call, 0, bufcolreserv.get(), bufcolfin.get(), originalmaskcol.get(), hueref, chromaref, lumaref, sobelref, meansob, blend2, lp, original, transformed, nullptr, 0, cx, cy, sk);
+                        transit_shapedetect2(sp, 0.f, 0.f, call, 0, bufcolreserv.get(), bufcolfin.get(), originalmaskcol.get(), hueref, chromaref, lumaref, sobelref, meansob, blend2, lp, original, transformed, nullptr, LocalLabGradientMode::STANDARD, cx, cy, sk);
                     }
 
                     if (!nottransit) {
@@ -21041,9 +21040,9 @@ void ImProcFunctions::Lab_Local(
                         float meansob = 0.f;
 
                         if (lp.recothrc >= 1.f) {
-                            transit_shapedetect2(sp, 0.f, 0.f, call, 0, bufcolorig.get(), bufcolfin.get(), originalmaskcol.get(), hueref, chromaref, lumaref, sobelref, meansob, blend2, lp, original, transformed, nullptr, 0, cx, cy, sk);
+                            transit_shapedetect2(sp, 0.f, 0.f, call, 0, bufcolorig.get(), bufcolfin.get(), originalmaskcol.get(), hueref, chromaref, lumaref, sobelref, meansob, blend2, lp, original, transformed, nullptr, LocalLabGradientMode::STANDARD, cx, cy, sk);
                         } else {
-                            transit_shapedetect2(sp, 0.f, 0.f, call, 0, bufcolorig.get(), bufcolfin.get(), nullptr, hueref, chromaref, lumaref, sobelref, meansob, blend2, lp, original, transformed, nullptr, 0, cx, cy, sk);
+                            transit_shapedetect2(sp, 0.f, 0.f, call, 0, bufcolorig.get(), bufcolfin.get(), nullptr, hueref, chromaref, lumaref, sobelref, meansob, blend2, lp, original, transformed, nullptr, LocalLabGradientMode::STANDARD, cx, cy, sk);
                         }
                     }
 
@@ -21323,7 +21322,7 @@ void ImProcFunctions::Lab_Local(
 
 
                 float meansob = 0.f;
-                transit_shapedetect2(sp, 0.f, 0.f, call, 20, bufcolorigsav.get(), bufcolfin.get(), originalmaskcol.get(), hueref, chromaref, lumaref, sobelref, meansob, nullptr, lp, origsav, transformed, nullptr, 0, cx, cy, sk);
+                transit_shapedetect2(sp, 0.f, 0.f, call, 20, bufcolorigsav.get(), bufcolfin.get(), originalmaskcol.get(), hueref, chromaref, lumaref, sobelref, meansob, nullptr, lp, origsav, transformed, nullptr, LocalLabGradientMode::STANDARD, cx, cy, sk);
                 delete origsav;
                 origsav    = NULL;
 
@@ -22109,9 +22108,9 @@ void ImProcFunctions::Lab_Local(
             }
 
             if (lp.recothrcie >= 1.f) {
-                transit_shapedetect2(sp, 0.f, 0.f, call, 31, bufexporig.get(), bufexpfin.get(), originalmaskcie.get(), hueref, chromaref, lumaref, sobelref, 0.f, nullptr, lp, original, transformed, nullptr, 0, cx, cy, sk);
+                transit_shapedetect2(sp, 0.f, 0.f, call, 31, bufexporig.get(), bufexpfin.get(), originalmaskcie.get(), hueref, chromaref, lumaref, sobelref, 0.f, nullptr, lp, original, transformed, nullptr, LocalLabGradientMode::STANDARD, cx, cy, sk);
             } else {
-                transit_shapedetect2(sp, 0.f, 0.f, call, 31, bufexporig.get(), bufexpfin.get(), nullptr, hueref, chromaref, lumaref, sobelref, 0.f, nullptr, lp, original, transformed, nullptr, 0, cx, cy, sk);
+                transit_shapedetect2(sp, 0.f, 0.f, call, 31, bufexporig.get(), bufexpfin.get(), nullptr, hueref, chromaref, lumaref, sobelref, 0.f, nullptr, lp, original, transformed, nullptr, LocalLabGradientMode::STANDARD, cx, cy, sk);
             }
 
             if (lp.recur) {

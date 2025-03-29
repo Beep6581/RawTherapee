@@ -49,7 +49,10 @@ void update_ghs_curve(
     bool inverse,
     LabGrid &lab_grid)
 {
-    const int str_type = inverse ? 1 : 0;
+    const rtengine::ImProcFunctions::GHTStrType str_type =
+        inverse
+            ? rtengine::ImProcFunctions::GHTStrType::INVERSE
+            : rtengine::ImProcFunctions::GHTStrType::NORMAL;
     const rtengine::ght_compute_params c = rtengine::ImProcFunctions::GHT_setup(
         b,
         d,
@@ -5017,18 +5020,6 @@ void LocallabShadow::read(const rtengine::procparams::ProcParams* pp, const Para
         fatamountSH->setValue(spot.fatamountSH);
         fatanchorSH->setValue(spot.fatanchorSH);
         
-        labgridghs->setParams(spot.ghsx1,
-                              spot.ghsy1,
-                              spot.ghsx2,
-                              spot.ghsy2,
-                              spot.ghsx3,
-                              spot.ghsy3,
-                              spot.ghsx4,
-                              spot.ghsy4,
-                              spot.ghsx5,
-                              spot.ghsy5,
-                              false);
-        
     }
     ghsMethodChanged();
     update_ghs_curve(
@@ -5139,19 +5130,6 @@ void LocallabShadow::write(rtengine::procparams::ProcParams* pp, ParamsEdited* p
         spot.lowthress = lowthress->getValue();
         spot.higthress = higthress->getValue();
         spot.decays = decays->getValue();
-        labgridghs->getParams(spot.ghsx1,
-                              spot.ghsy1,
-                              spot.ghsx2,
-                              spot.ghsy2,
-                              spot.ghsx3,
-                              spot.ghsy3,
-                              spot.ghsx4,
-                              spot.ghsy4,
-                              spot.ghsx5,
-                              spot.ghsy5
-                              );
-        
-        
     }
 
     // Note: No need to manage pedited as batch mode is deactivated for Locallab
@@ -5208,18 +5186,6 @@ void LocallabShadow::setDefaults(const rtengine::procparams::ProcParams* defPara
         lowthress->setDefault((double)defSpot.lowthress);
         higthress->setDefault((double)defSpot.higthress);
         decays->setDefault((double)defSpot.decays);
-        
-        labgridghs->setDefault(defSpot.ghsx1,
-                               defSpot.ghsy1,
-                               defSpot.ghsx2,
-                               defSpot.ghsy2,
-                               defSpot.ghsx3,
-                               defSpot.ghsy3,
-                               defSpot.ghsx4,
-                               defSpot.ghsy4,
-                               defSpot.ghsx5,
-                               defSpot.ghsy5
-                               );
         
     }
 
