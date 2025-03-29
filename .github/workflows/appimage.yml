@@ -19,7 +19,7 @@ env:
 
 jobs:
   build:
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-22.04
     permissions:
       contents: write
     strategy:
@@ -54,37 +54,17 @@ jobs:
 
       - name: Install Exiv2
         run: |
-          EXIV2_VERSION='v0.28.3'
+          EXIV2_VERSION='v0.28.5'
           echo "Cloning Exiv2 $EXIV2_VERSION."
           git clone --depth 1 --branch "$EXIV2_VERSION" https://github.com/Exiv2/exiv2.git ext/exiv2
 
           echo "Configuring build."
           mkdir ext/exiv2/build
           cd ext/exiv2/build
-          cmake -DCMAKE_BUILD_TYPE=Release -DEXIV2_ENABLE_BMFF=ON ..
+          cmake -DCMAKE_BUILD_TYPE=Release ..
 
           echo "Building and installing."
           sudo make -j$(nproc) install
-
-      - name: Install Librsvg required min. version
-      # Required min. version is not available for Ubuntu 20.04 LTS (but is for 22.04 LTS) so needs to be built manually
-        run: |
-          LIBRSVG2_VERSION='2.52.2'
-          echo "Cloning Librsvg2 $LIBRSVG2_VERSION."
-          git clone --depth 1 --branch "$LIBRSVG2_VERSION" https://gitlab.gnome.org/GNOME/librsvg.git ext/librsvg2
-
-          echo "Installing required dependencies with apt."
-          DEBIAN_FRONTEND=noninteractive sudo apt install -y rustc cargo gtk-doc-tools libgirepository1.0-dev
-
-          echo "Updating PATH."
-          export PATH="$PATH:/usr/lib/x86_64-linux-gnu/gdk-pixbuf-2.0"
-
-          echo "Configuring build."
-          cd ext/librsvg2
-          sh autogen.sh
-
-          echo "Building and installing."
-          sudo make install
 
       - name: Configure build
         run: |

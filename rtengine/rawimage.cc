@@ -796,11 +796,21 @@ int RawImage::loadRaw(bool loadData, unsigned int imageNum, bool closeFile, Prog
 #ifdef LIBRAW_USE_OPENMP
                 MyMutex::MyLock lock(*librawMutex);
 #endif
+
+                // For some cameras like Minolta RD175, the real white level is
+                // read with LibRaw::unpack(). Here, we initialize LibRaw's
+                // maximum with the value read earlier. Later, we read the value
+                // back in case it has changed.
+                libraw->imgdata.color.maximum = maximum;
+
                 err = libraw->unpack();
             }
             if (err) {
                 return err;
             }
+
+            // Update white level in case LibRaw::unpack() read a new value.
+            maximum = libraw->imgdata.color.maximum;
 
             auto &rd = libraw->imgdata.rawdata;
             raw_image = rd.raw_image;
