@@ -563,6 +563,7 @@ BENCHFUN
     typedef ImProcFunctions::Median Median;
 
     //predoise : small median to denoise before capture sharpening : allow CS to work correctly and reduce a little the noise
+    //J.Desmis October 2024
     if(sharpeningParams.noisecap > 0.f) {
         //I have choose median due to its low aggressiveness and for a 3x3 its speed
         float denstr = 0.01 * sharpeningParams.noisecap;
@@ -616,7 +617,7 @@ BENCHFUN
             medianTypeL = Median::TYPE_5X5_STRONG;
             itera = 2;
         } else {
-            medianTypeL = Median::TYPE_5X5_STRONG;//?? 7x7
+            medianTypeL = Median::TYPE_5X5_STRONG;
             itera = 3;            
         }
         ImProcFunctions::Median_Denoise(mR, mR, W, H, medianTypeL , itera, false, tmL);
@@ -801,17 +802,18 @@ BENCHFUN
     rgbSourceModified = false;
 }
 
+//To call Capture Sharpening from Improcoordinator for Selective Editing
 bool RawImageSource::getDeconvAutoRadius(float *out)
 {
     const float clipVal = (ri->get_white(1) - ri->get_cblack(1)) * scale_mul[1];
-    if (ri->getSensorType() == ST_BAYER) {
+    if (ri->getSensorType() == ST_BAYER) {//Bayer
         if (!out) {
             return true; // only check whether this is supported
         }
         const unsigned int fc[2] = {FC(0,0), FC(1,0)};
         *out = calcRadiusBayer(rawData, W, H, 1000.f, clipVal, fc);
         return true;
-    } else if (ri->getSensorType() == ST_FUJI_XTRANS) {
+    } else if (ri->getSensorType() == ST_FUJI_XTRANS) {//X trans
         if (!out) {
             return true; // only check whether this is supported
         }

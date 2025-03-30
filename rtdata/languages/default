@@ -1559,12 +1559,12 @@ HISTORY_MSG_LOCAL_CIE_WHITES;Local - CIECAM Whites distribution
 HISTORY_MSG_LOCAL_CIE_WHITSIG;Local CIECAM - Sigmoid Display white point
 HISTORY_MSG_LOCAL_CAPRADIUS;Local - Sh Capture radius
 HISTORY_MSG_LOCAL_DENOCONTRAST;Local - Denoise Contrast threshold
-HISTORY_MSG_LOCAL_DENOMASKCURV;Local - Denoise - Equalizer Denoise mask
+HISTORY_MSG_LOCAL_DENOMASKCURV;Local - Denoise Equalizer Denoise mask
 HISTORY_MSG_LOCAL_DENOCONTRSHOW;Local - Denoise Show mask contrast
 HISTORY_MSG_LOCAL_DENOAUTO;Local - Denoise Auto Contrast
 HISTORY_MSG_LOCAL_DENORATIO;Local - Denoise Ratio flat-structure
-HISTORY_MSG_LOCAL_DENOMASK;Local - Denoise contrast mask
-HISTORY_MSG_LOCAL_DENOENA;Local - Contrast threshold
+HISTORY_MSG_LOCAL_DENOMASK;Local - Denoise Contrast mask
+HISTORY_MSG_LOCAL_DENOENA;Local - Denoise Enable Contrast threshold
 HISTORY_MSG_LOCAL_AUTOCAPRADIUS;Local - Sh Auto Capture radius
 HISTORY_MSG_LOCAL_AUTOSHAR;Local - Sh Auto Contrast
 HISTORY_MSG_LOCAL_CONVBOOST;Local - Sh Corner radius

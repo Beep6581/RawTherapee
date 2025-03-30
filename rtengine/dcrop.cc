@@ -1101,7 +1101,8 @@ void Crop::update(int todo)
             int ghsbpwp[2];
             float ghsbpwpvalue[2];
 
-/*            huerefp[sp] = huere;
+/*          
+            huerefp[sp] = huere;
             chromarefp[sp] = chromare;
             lumarefp[sp] = lumare;
 */            
@@ -1124,7 +1125,6 @@ void Crop::update(int todo)
                         lmasklocalcurve2, localmaskutili, 
                         lmaskexplocalcurve2, localmaskexputili, 
                         lmaskSHlocalcurve2, localmaskSHutili, 
-                       // ghslocalcurve2, localghsutili, 
                         lmaskviblocalcurve2, localmaskvibutili, 
                         lmasktmlocalcurve2, localmasktmutili, 
                         lmaskretilocalcurve2, localmaskretiutili, 
@@ -1214,7 +1214,6 @@ void Crop::update(int todo)
                         lmasklocalcurve2, localmaskutili,
                         lmaskexplocalcurve2, localmaskexputili, 
                         lmaskSHlocalcurve2, localmaskSHutili, 
-                       // ghslocalcurve2, localghsutili, 
                         lmaskviblocalcurve2, localmaskvibutili, 
                         lmasktmlocalcurve2, localmasktmutili, 
                         lmaskretilocalcurve2, localmaskretiutili, 
@@ -1265,20 +1264,19 @@ void Crop::update(int todo)
                         resi, sharc, denocont, ghsbpwp, ghsbpwpvalue);
             }
 
-
                         LocallabListener::locallabDenoiseLC2 denoiselc2;
                         denoiselc2.denocontrastaft = denocont;
                         localldenoiselc2.push_back(denoiselc2);
             
                         LocallabListener::locallabDenoiseLC denoiselc;
-                        denoiselc.highres = resi[0];//highresi;
-                        denoiselc.nres = resi[1]; //nresi; 
-                        denoiselc.highres46 = resi[2]; //highresi46;
-                        denoiselc.nres46 = resi[3]; //nresi46;
-                        denoiselc.Lhighres = resi[5];// Lhighresi;
-                        denoiselc.Lnres = resi[4]; //Lnresi;
-                        denoiselc.Lhighres46 = resi[6]; //Lhighresi46;
-                        denoiselc.Lnres46 = resi[7]; //Lnresi46;
+                        denoiselc.highres = resi[0];
+                        denoiselc.nres = resi[1];
+                        denoiselc.highres46 = resi[2];
+                        denoiselc.nres46 = resi[3];
+                        denoiselc.Lhighres = resi[5];
+                        denoiselc.Lnres = resi[4];
+                        denoiselc.Lhighres46 = resi[6];
+                        denoiselc.Lnres46 = resi[7];
                         localldenoiselc.push_back(denoiselc);
             
                         LocallabListener::locallabsharAFT locsharaft;

@@ -1046,7 +1046,7 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                     }
                     if (shar[sp] && autoradius[sp]){
                         float rad = -1.f;
-                        if (imgsrc->getDeconvAutoRadius(&rad)) {//
+                        if (imgsrc->getDeconvAutoRadius(&rad)) {//To call Capture Sharpening from Selective Editing
                             caprad[sp] = kradreduc * rad;
                         } else {
                             rad = -1.f;
@@ -1475,7 +1475,6 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                               lmasklocalcurve, localmaskutili,
                               lmaskexplocalcurve, localmaskexputili,
                               lmaskSHlocalcurve, localmaskSHutili,
-                            //  ghslocalcurve, localghsutili,
                               lmaskviblocalcurve, localmaskvibutili,
                               lmasktmlocalcurve, localmasktmutili,
                               lmaskretilocalcurve, localmaskretiutili,

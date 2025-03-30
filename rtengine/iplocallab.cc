@@ -19689,7 +19689,6 @@ void ImProcFunctions::Lab_Local(
             bufexpfin->CopyFrom(bufexporig.get(), multiThread);
             
             
-            //printf("centrx=%f \n", (double) locp.centrx);
             float contra = params->locallab.spots.at(sp).sharcontrast;
             float capradiu = params->locallab.spots.at(sp).capradius;
             float deconvCo = params->locallab.spots.at(sp).deconvCoBoost;
