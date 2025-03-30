@@ -130,13 +130,14 @@ private:
     std::vector<locallabDenoiseLC> denoiselc;
 
     std::vector<locallabDenoiseLC2> denoiselc2;
-
     std::vector<locallabcieBEF> cie_bef;
 
     std::vector<locallabsharBEF> shar_bef;
     std::vector<locallabsharAFT> shar_aft;
 
     std::vector<locallabcieLC> cie_lc;
+
+    std::vector<locallabshGHSbw> sh_ghsbw;
 
     std::vector<locallabsetLC> set_lc;
 
@@ -165,7 +166,7 @@ public:
     void minmaxChanged(const std::vector<locallabRetiMinMax> &minmax, int selspot) override;
     
     // new functions for global - normal use
-//    void mainChanged(int spottype, int selspot, bool iscolor, bool issh, bool isvib, bool isexpos, bool issoft, bool isblur, bool istom, bool isret, bool issharp, bool iscont, bool iscbdl, bool islog, bool ismas, bool iscie)override;
+//    void mainChanged(int spottype, int selspot, bool iscolor, bool issh, bool isvib, bool isexpos, bool issoft, bool isblur, bool istom, bool isret, bool issharp, bool iscont, bool iscbdl, bool islog, bool ismas, bool isci)override;
     void scopeChangedcol(int scope, int selspot, bool enab)override;
     void scopeChangedsh(int scope, int selspot, bool enab)override;
     void scopeChangedvib(int scope, int selspot, bool enab)override;
@@ -180,6 +181,9 @@ public:
    
     // Locallab CIE tool primaries function
     void cieChanged(const std::vector<locallabcieLC> &cielc, int selspot) override;
+
+    // Locallab SH GHS tool Black point & White point GHS function
+    void ghsbwChanged(const std::vector<locallabshGHSbw> &shghsbw, int selspot) override;
 
     // Locallab Log Encoding and Cam16 autocompute function
     void ciebefChanged(const std::vector<locallabcieBEF> &ciebef, int selspot) override;

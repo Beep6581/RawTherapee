@@ -123,6 +123,7 @@ protected:
     rtengine::ProcEvent Evlocallabbluxl;
     rtengine::ProcEvent Evlocallabbluyl;
     rtengine::ProcEvent EvlocallabGridciexy;
+    rtengine::ProcEvent EvlocallabGridghs;
     rtengine::ProcEvent Evlocallabgamutcie;
     rtengine::ProcEvent Evlocallabbwcie;
     rtengine::ProcEvent Evlocallabexpprecam;
@@ -390,7 +391,7 @@ public:
     bool isMaskViewActive() override;
     void resetMaskView() override;
     void getMaskView(int &colorMask, int &colorMaskinv, int &expMask, int &expMaskinv, int &shMask, int &shMaskinv, int &vibMask, int &softMask, int &blMask, int &tmMask, int &retiMask, int &sharMask, int &lcMask, int &cbMask, int &logMask, int &maskMask, int &cieMask) override;
-
+    int nbmaskcol;
     Gtk::ToggleButton *getPreviewDeltaEButton() const override;
     sigc::connection *getPreviewDeltaEButtonConnection() override;
 
@@ -525,6 +526,7 @@ public:
     bool isMaskViewActive() override;
     void resetMaskView() override;
     void getMaskView(int &colorMask, int &colorMaskinv, int &expMask, int &expMaskinv, int &shMask, int &shMaskinv, int &vibMask, int &softMask, int &blMask, int &tmMask, int &retiMask, int &sharMask, int &lcMask, int &cbMask, int &logMask, int &maskMask, int &cieMask) override;
+    int nbmaskexp;
 
     Gtk::ToggleButton *getPreviewDeltaEButton() const override;
     sigc::connection *getPreviewDeltaEButtonConnection() override;
@@ -597,6 +599,33 @@ private:
     Gtk::Frame* const gamFrame;
     Adjuster* const gamSH;
     Adjuster* const sloSH;
+
+    MyComboBoxText* const ghsMethod;
+    Gtk::Frame* const gridFrameghs;
+    LabGrid* const labgridghs;
+   
+    Gtk::Frame* const ghsFrame;
+    Adjuster* const ghs_D;
+    Gtk::Frame* const Lab_Frame;
+    Adjuster* const ghs_slope;
+    Adjuster* const ghs_chro;
+    Adjuster* const ghs_B;
+    Adjuster* const ghs_SP;
+    Adjuster* const ghs_LP;
+    Adjuster* const ghs_HP;
+    Gtk::Frame* const LC_Frame;
+    Adjuster* const ghs_LC;
+    Adjuster* const ghs_MID;
+    
+    Gtk::Frame* const BP_Frame;
+    Adjuster* const ghs_BLP;
+    Adjuster* const ghs_HLP;
+    Gtk::Label* const ghsbpwpLabels;
+    Gtk::Label* const ghsbpwpvalueLabels;
+
+    Gtk::CheckButton* const ghs_smooth;
+    Gtk::CheckButton* const ghs_inv;
+
     MyExpander* const expgradsh;
     Adjuster* const strSH;
     Adjuster* const angSH;
@@ -623,8 +652,22 @@ private:
     Adjuster* const fatanchorSH;
 
     rtengine::ProcEvent EvlocallabTePivot;
+    rtengine::ProcEvent EvlocallabghsMethod;
+    rtengine::ProcEvent Evlocallabghs_D;
+    rtengine::ProcEvent Evlocallabghs_slope;
+    rtengine::ProcEvent Evlocallabghs_chro;
+    rtengine::ProcEvent Evlocallabghs_B;
+    rtengine::ProcEvent Evlocallabghs_SP;
+    rtengine::ProcEvent Evlocallabghs_LP;
+    rtengine::ProcEvent Evlocallabghs_HP;
+    rtengine::ProcEvent Evlocallabghs_LC;
+    rtengine::ProcEvent Evlocallabghs_MID;
+    rtengine::ProcEvent Evlocallabghs_BLP;
+    rtengine::ProcEvent Evlocallabghs_HLP;
+    rtengine::ProcEvent Evlocallabghs_smooth;
+    rtengine::ProcEvent Evlocallabghs_inv;
 
-    sigc::connection shMethodConn, previewshConn, inversshConn, showmaskSHMethodConn, showmaskSHMethodConninv, enaSHMaskConn;
+    sigc::connection shMethodConn, ghsMethodConn, previewshConn, inversshConn, ghs_smoothConn, ghs_invConn, showmaskSHMethodConn, showmaskSHMethodConninv, enaSHMaskConn;
 
 public:
     LocallabShadow();
@@ -640,7 +683,9 @@ public:
     void updateAdviceTooltips(const bool showTooltips) override;
     void updateguishad(int spottype);
     void updateguiscopesahd(int scope);
-         
+    int nbmasksh;
+
+    void updateghsbw(int bp, int wp, double minbp, double maxwp);
     void setDefaultExpanderVisibility() override;
     void disableListener() override;
     void enableListener() override;
@@ -660,13 +705,18 @@ private:
     void updateMaskBackground(const double normChromar, const double normLumar, const double normHuer, const double normHuerjz) override;
 
     void shMethodChanged();
+    void ghsMethodChanged();
     void inversshChanged();
+    void ghs_smoothChanged();
+    void ghs_invChanged();
     void showmaskSHMethodChanged();
     void showmaskSHMethodChangedinv();
     void enaSHMaskChanged();
 
-    void updateShadowGUI1();
-    void updateShadowGUI2();
+    void updateShadowGUImask();
+    void updateShadowGUIshmet();
+    void updateShadowGUIsym();
+
 };
 
 /* ==== LocallabVibrance ==== */
@@ -729,6 +779,7 @@ public:
     bool isMaskViewActive() override;
     void resetMaskView() override;
     void getMaskView(int &colorMask, int &colorMaskinv, int &expMask, int &expMaskinv, int &shMask, int &shMaskinv, int &vibMask, int &softMask, int &blMask, int &tmMask, int &retiMask, int &sharMask, int &lcMask, int &cbMask, int &logMask, int &maskMask, int &cieMask) override;
+    int nbmaskvib;
 
     Gtk::ToggleButton *getPreviewDeltaEButton() const override;
     sigc::connection *getPreviewDeltaEButtonConnection() override;
@@ -920,9 +971,12 @@ private:
     Adjuster* const nlpat;
     Adjuster* const nlrad;
     Adjuster* const nlgam;
+    Adjuster* const nliter;
     Adjuster* const bilateral;
     Adjuster* const sensiden;
-    
+
+    rtengine::ProcEvent Evlocallabnliter;
+   
     Adjuster* const reparden;
     Gtk::Button* neutral;
     MyExpander* const expmaskbl;
@@ -1341,6 +1395,7 @@ private:
     Adjuster* const clarisoft;
     Gtk::CheckButton* const origlc;
     MyExpander* const expcontrastpyr;
+    Gtk::Frame* const gradwavFrame;
     Gtk::CheckButton* const wavgradl;
     Adjuster* const sigmalc2;
     Adjuster* const strwav;
@@ -1420,6 +1475,7 @@ public:
     bool isMaskViewActive() override;
     void resetMaskView() override;
     void getMaskView(int &colorMask, int &colorMaskinv, int &expMask, int &expMaskinv, int &shMask, int &shMaskinv, int &vibMask, int &softMask, int &blMask, int &tmMask, int &retiMask, int &sharMask, int &lcMask, int &cbMask, int &logMask, int &maskMask, int &cieMask) override;
+    int nbmaskcont;
 
     Gtk::ToggleButton *getPreviewDeltaEButton() const override;
     sigc::connection *getPreviewDeltaEButtonConnection() override;
@@ -1640,7 +1696,7 @@ public:
     void getMaskView(int &colorMask, int &colorMaskinv, int &expMask, int &expMaskinv, int &shMask, int &shMaskinv, int &vibMask, int &softMask, int &blMask, int &tmMask, int &retiMask, int &sharMask, int &lcMask, int &cbMask, int &logMask, int &maskMask, int &cieMask) override;
     void updateguilog(int spottype);
     void previewlogChanged();
-
+    int nbmasklog;
     Gtk::ToggleButton *getPreviewDeltaEButton() const override;
     sigc::connection *getPreviewDeltaEButtonConnection() override;
 
@@ -2065,7 +2121,7 @@ public:
     bool isMaskViewActive() override;
     void resetMaskView() override;
     void getMaskView(int &colorMask, int &colorMaskinv, int &expMask, int &expMaskinv, int &shMask, int &shMaskinv, int &vibMask, int &softMask, int &blMask, int &tmMask, int &retiMask, int &sharMask, int &lcMask, int &cbMask, int &logMask, int &maskMask, int &cieMask) override;
-
+    int nbmaskcie;
     Gtk::ToggleButton *getPreviewDeltaEButton() const override;
     sigc::connection *getPreviewDeltaEButtonConnection() override;
 

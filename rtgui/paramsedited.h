@@ -598,6 +598,22 @@ public:
         bool expshadhigh;
         bool complexshadhigh;
         bool shMethod;
+        bool ghsMethod;
+        bool ghsMode;
+        bool ghs_D;
+        bool ghs_slope;
+        bool ghs_chro;
+        bool ghs_B;
+        bool ghs_SP;
+        bool ghs_LP;
+        bool ghs_HP;
+        bool ghs_LC;
+        bool ghs_MID;
+        bool ghs_BLP;
+        bool ghs_HLP;
+        bool ghs_smooth;
+        bool ghs_inv;
+        
         bool multsh[7];
         bool highlights;
         bool h_tonalwidth;
@@ -727,6 +743,7 @@ public:
         bool nlpat;
         bool nlrad;
         bool nlgam;
+        bool nliter;
         bool sensiden;
         bool reparden;
         bool detailthr;

@@ -493,6 +493,12 @@ public:
         bool linkrgblc;
     };
 
+
+    struct locallabshGHSbw {//To draw GHS  S curve
+       int ghsbw[2];
+       double ghsbwvalue[2];
+    };
+
 //select spot settings 
     struct locallabsetLC {
         int mainf;
@@ -523,6 +529,7 @@ public:
     virtual void denChanged(const std::vector<locallabDenoiseLC> &denlc, int selspot) = 0;
     virtual void den2Changed(const std::vector<locallabDenoiseLC2> &den2lc, int selspot) = 0;
     virtual void cieChanged(const std::vector<locallabcieLC> &cielc, int selspot) = 0;
+    virtual void ghsbwChanged(const std::vector<locallabshGHSbw> &shghsbw, int selspot) = 0;
     virtual void maiChanged(const std::vector<locallabsetLC> &csetlc, int selspot) = 0;
     virtual void sigChanged(const std::vector<locallabcieSIG> &ciesig, int selspot) = 0;
     virtual void ciebefChanged(const std::vector<locallabcieBEF> &ciebef, int selspot) = 0;

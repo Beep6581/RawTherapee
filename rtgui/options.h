@@ -488,6 +488,7 @@ public:
     Glib::ustring lastWaveletCurvesDir;
     Glib::ustring lastIcmCurvesDir;
     Glib::ustring lastlocalCurvesDir;
+    Glib::ustring lastlocalCurvesDirghs;
     Glib::ustring lastPFCurvesDir;
     Glib::ustring lastHsvCurvesDir;
     Glib::ustring lastToneCurvesDir;

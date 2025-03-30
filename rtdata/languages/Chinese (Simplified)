@@ -10,6 +10,7 @@
 #009 2023-12-25 十一元人民币
 #010 2024-06-03 十一元人民币
 #011 2025-02-07 十一元人民币
+#012 2025-03-28 十一元人民币
 #100
 #101 @LANGUAGE_DISPLAY_NAME=简体中文
 
@@ -79,6 +80,7 @@ EXIFPANEL_ADDEDITHINT;添加/编辑标签
 EXIFPANEL_ADDTAGDLG_ENTERVALUE;输入内容
 EXIFPANEL_ADDTAGDLG_SELECTTAG;选择标签
 EXIFPANEL_ADDTAGDLG_TITLE;添加/编辑标签
+EXIFPANEL_BASIC_GROUP;基本信息
 EXIFPANEL_KEEP;保留
 EXIFPANEL_KEEPHINT;输出文件时保留“已选”标签
 EXIFPANEL_REMOVE;移除
@@ -87,6 +89,7 @@ EXIFPANEL_RESET;重置
 EXIFPANEL_RESETALL;全部重置
 EXIFPANEL_RESETALLHINT;重置所有标签内容
 EXIFPANEL_RESETHINT;重置所选标签内容
+EXIFPANEL_VALUE_NOT_SHOWN;不显示
 EXPORT_BYPASS;要跳过的处理步骤
 EXPORT_BYPASS_ALL;选择/取消选择全部选项
 EXPORT_BYPASS_DEFRINGE;跳过去除色边处理
@@ -182,11 +185,11 @@ FILEBROWSER_POPUPUNTRASH;从垃圾箱中移除
 FILEBROWSER_QUERYBUTTONHINT;清除搜索队列
 FILEBROWSER_QUERYHINT;输入文件名进行搜索。支持不完整文件名。使用英文逗号分割关键词，例：\n<i>1001,1004,1199</i>\n\n在关键词前面加入<i>!=</i>以排除此关键词，例：\n<i>!=1001,1004,1199</i>\n\n快捷键：\n<b>Ctrl-f</b>-让搜索框获得焦点，\n<b>Enter</b>-搜索，\n<b>Esc</b>-清空搜索框，\n<b>Shift-Esc</b>-让搜索框失去焦点
 FILEBROWSER_QUERYLABEL; 查找：
-FILEBROWSER_RANK1_TOOLTIP;评1星\n快捷键：Shift-1
-FILEBROWSER_RANK2_TOOLTIP;评2星\n快捷键：Shift-2
-FILEBROWSER_RANK3_TOOLTIP;评3星\n快捷键：Shift-3
-FILEBROWSER_RANK4_TOOLTIP;评4星\n快捷键：Shift-4
-FILEBROWSER_RANK5_TOOLTIP;评5星\n快捷键：Shift-5
+FILEBROWSER_RANK1_TOOLTIP;评1星\n快捷键：<b>1</b>
+FILEBROWSER_RANK2_TOOLTIP;评2星\n快捷键：<b>2</b>
+FILEBROWSER_RANK3_TOOLTIP;评3星\n快捷键：<b>3</b>
+FILEBROWSER_RANK4_TOOLTIP;评4星\n快捷键：<b>4</b>
+FILEBROWSER_RANK5_TOOLTIP;评5星\n快捷键：<b>5</b>
 FILEBROWSER_RENAMEDLGLABEL;文件重命名
 FILEBROWSER_RESETDEFAULTPROFILE;还原到默认
 FILEBROWSER_SELECTDARKFRAME;选择暗场…
@@ -197,26 +200,26 @@ FILEBROWSER_SHOWCOLORLABEL3HINT;显示被标记为绿色的照片\n快捷键：<
 FILEBROWSER_SHOWCOLORLABEL4HINT;显示被标记为蓝色的照片\n快捷键：<b>Alt-4</b>
 FILEBROWSER_SHOWCOLORLABEL5HINT;显示被标记为紫色的照片\n快捷键：<b>Alt-5</b>
 FILEBROWSER_SHOWDIRHINT;显示文件夹中所有图片
-FILEBROWSER_SHOWEDITEDHINT;显示已编辑的照片\n快捷键：<b>7</b>
-FILEBROWSER_SHOWEDITEDNOTHINT;显示未编辑的照片\n快捷键：<b>6</b>
+FILEBROWSER_SHOWEDITEDHINT;显示已编辑的照片\n快捷键：<b>Shift-7</b>
+FILEBROWSER_SHOWEDITEDNOTHINT;显示未编辑的照片\n快捷键：<b>Shift-6</b>
 FILEBROWSER_SHOWEXIFINFO;显示Exif信息\n\n快捷键：\n<b>i</b> - 多编辑标签页模式, \n<b>Alt-i</b> - 单编辑标签模式
 FILEBROWSER_SHOWNOTTRASHHINT;仅显示未进入垃圾箱的照片
 FILEBROWSER_SHOWORIGINALHINT;仅显示原图\n\n当多张文件名相同，但扩展名不同的图片存在时，在<i>参数设置-文件浏览器-已知扩展名</i>列表中，扩展名排得更靠上的图片会被当作这些图片的原图。
-FILEBROWSER_SHOWRANK1HINT;显示1星图片
-FILEBROWSER_SHOWRANK2HINT;显示2星图片
-FILEBROWSER_SHOWRANK3HINT;显示3星图片
-FILEBROWSER_SHOWRANK4HINT;显示4星图片
-FILEBROWSER_SHOWRANK5HINT;显示5星图片
+FILEBROWSER_SHOWRANK1HINT;显示1星图片\n快捷键：<b>Shift-1</b>
+FILEBROWSER_SHOWRANK2HINT;显示2星图片\n快捷键：<b>Shift-2</b>
+FILEBROWSER_SHOWRANK3HINT;显示3星图片\n快捷键：<b>Shift-3</b>
+FILEBROWSER_SHOWRANK4HINT;显示4星图片\n快捷键：<b>Shift-4</b>
+FILEBROWSER_SHOWRANK5HINT;显示5星图片\n快捷键：<b>Shift-5</b>
 FILEBROWSER_SHOWRECENTLYSAVEDHINT;显示保存的图片\n快捷键：<b>Alt-7</b>
 FILEBROWSER_SHOWRECENTLYSAVEDNOTHINT;显示未保存的图片\n快捷键：<b>Alt-6</b>
 FILEBROWSER_SHOWRECURSIVE;显示子文件夹中的图片
-FILEBROWSER_SHOWTRASHHINT;显示垃圾箱内容
+FILEBROWSER_SHOWTRASHHINT;显示垃圾箱内容\n快捷键：<b>Ctrl-t</b>
 FILEBROWSER_SHOWUNCOLORHINT;显示没有颜色标记的照片\n快捷键：<b>Alt-0</b>
-FILEBROWSER_SHOWUNRANKHINT;显示未评星图片
+FILEBROWSER_SHOWUNRANKHINT;显示未评星图片\n快捷键：<b>Shift-0</b>
 FILEBROWSER_THUMBSIZE;缩略图大小
-FILEBROWSER_UNRANK_TOOLTIP;未评级\n快捷键：<b>Shift-0</b>
-FILEBROWSER_ZOOMINHINT;增大缩略图
-FILEBROWSER_ZOOMOUTHINT;缩小缩略图
+FILEBROWSER_UNRANK_TOOLTIP;不评星\n快捷键：<b>0</b>
+FILEBROWSER_ZOOMINHINT;增大缩略图\n\n快捷键：\n<b>+</b> - 多编辑器标签模式,\n<b>Alt</b>-<b>+</b> - 单编辑器标签模式
+FILEBROWSER_ZOOMOUTHINT;缩小缩略图\n\n快捷键：\n<b>-</b> - 多编辑器标签模式,\n<b>Alt</b>-<b>-</b> - 单编辑器标签模式
 FILECHOOSER_FILTER_ANY;所有文件
 FILECHOOSER_FILTER_COLPROF;色彩配置文件
 FILECHOOSER_FILTER_CURVE;曲线文件
@@ -592,6 +595,7 @@ HISTORY_MSG_348;小波-去噪-第2级
 HISTORY_MSG_349;小波-去噪-第3级
 HISTORY_MSG_350;小波-边缘-边缘检测
 HISTORY_MSG_351;小波-残差图-HH曲线
+HISTORY_MSG_352;小波-背景
 HISTORY_MSG_353;小波-边缘-渐变敏感度
 HISTORY_MSG_354;小波-边缘-增强
 HISTORY_MSG_355;小波-边缘-阈值低
@@ -621,11 +625,15 @@ HISTORY_MSG_382;PRS RLD-数量
 HISTORY_MSG_383;PRS RLD-衰减
 HISTORY_MSG_384;PRS RLD-迭代
 HISTORY_MSG_385;小波-残差图-色彩平衡
+HISTORY_MSG_402;小波-去噪子工具
 HISTORY_MSG_403;小波-边缘-敏感度
 HISTORY_MSG_404;小波-边缘-放大基数
 HISTORY_MSG_405;小波-去噪-第4级
 HISTORY_MSG_406;小波-边缘-边缘像素
+HISTORY_MSG_427;输出渲染意图
+HISTORY_MSG_428;显示器渲染意图
 HISTORY_MSG_440;CbDL-方法
+HISTORY_MSG_443;输出黑点补偿
 HISTORY_MSG_444;白平衡-色温偏向
 HISTORY_MSG_445;Raw子图像
 HISTORY_MSG_449;像素偏移-ISO适应
@@ -668,7 +676,7 @@ HISTORY_MSG_500;局部调整点形状
 HISTORY_MSG_501;局部调整点模式
 HISTORY_MSG_502;局部调整点形状模式
 HISTORY_MSG_512;局部调整点ΔE -衰减
-HISTORY_MSG_515;局部调整
+HISTORY_MSG_515;选区编辑
 HISTORY_MSG_516;局部-色彩与亮度
 HISTORY_MSG_518;局部-亮度
 HISTORY_MSG_519;局部-反差
@@ -733,6 +741,7 @@ HISTORY_MSG_633;局部-阴影高光 范围
 HISTORY_MSG_645;局部-ΔE ab-L平衡
 HISTORY_MSG_674;局部-工具移除
 HISTORY_MSG_688;局部-工具移除
+HISTORY_MSG_747;添加局部调整点
 HISTORY_MSG_767;局部-颗粒ISO
 HISTORY_MSG_768;局部-颗粒力度
 HISTORY_MSG_786;局部-阴影高光 方法
@@ -743,6 +752,8 @@ HISTORY_MSG_845;局部-Log编码
 HISTORY_MSG_854;局部-Log编码 范围
 HISTORY_MSG_927;局部-阴影
 HISTORY_MSG_954;局部-显示/隐藏工具
+HISTORY_MSG_955;局部-启用点
+HISTORY_MSG_957;局部-去噪模式
 HISTORY_MSG_958;局部-显示/隐藏设置
 HISTORY_MSG_960;局部-Log编码 cat16
 HISTORY_MSG_961;局部-Log编码 Ciecam
@@ -801,7 +812,11 @@ HISTORY_MSG_FILMNEGATIVE_COLORSPACE;胶片负片色彩空间
 HISTORY_MSG_FILMNEGATIVE_ENABLED;胶片负片
 HISTORY_MSG_FILMNEGATIVE_VALUES;胶片负片值
 HISTORY_MSG_HISTMATCHING;自适应色调曲线
+HISTORY_MSG_HLBL;色彩延伸-模糊
+HISTORY_MSG_HLTH;填色修复-增益阈值
+HISTORY_MSG_ICM_AINTENT;抽象档案意图
 HISTORY_MSG_ICM_FBW;黑白
+HISTORY_MSG_ICM_TRCEXP;抽象档案
 HISTORY_MSG_LOCALCONTRAST_AMOUNT;局部反差-数量
 HISTORY_MSG_LOCALCONTRAST_DARKNESS;局部反差-暗部
 HISTORY_MSG_LOCALCONTRAST_ENABLED;局部反差
@@ -816,6 +831,7 @@ HISTORY_MSG_PDSHARPEN_CONTRAST;捕图加锐-反差阈值
 HISTORY_MSG_PDSHARPEN_ITERATIONS;捕图加锐-迭代
 HISTORY_MSG_PDSHARPEN_RADIUS;捕图加锐-半径
 HISTORY_MSG_PDSHARPEN_RADIUS_BOOST;捕图加锐-边缘半径值提升
+HISTORY_MSG_PIXELSHIFT_AVERAGE;像素偏移-平均值
 HISTORY_MSG_PIXELSHIFT_DEMOSAIC;像素偏移-动体部分去马赛克算法
 HISTORY_MSG_PREPROCESS_LINEDENOISE_DIRECTION;线状噪点过滤方向
 HISTORY_MSG_PREPROCESS_PDAFLINESFILTER;PDAF条纹过滤
@@ -832,6 +848,8 @@ HISTORY_MSG_SH_COLORSPACE;阴影/高光-色彩空间
 HISTORY_MSG_SOFTLIGHT_ENABLED;柔光
 HISTORY_MSG_SOFTLIGHT_STRENGTH;柔光-力度
 HISTORY_MSG_SPOT;污点移除
+HISTORY_MSG_TEMPOUT;CAM02自动色温
+HISTORY_MSG_THRESWAV;平衡阈值
 HISTORY_MSG_TM_FATTAL_ANCHOR;DRC-锚点
 HISTORY_MSG_TONE_EQUALIZER_BANDS;色调均衡器-调值
 HISTORY_MSG_TONE_EQUALIZER_ENABLED;色调均衡器
@@ -839,6 +857,10 @@ HISTORY_MSG_TONE_EQUALIZER_PIVOT;色调均衡器-锚点
 HISTORY_MSG_TONE_EQUALIZER_REGULARIZATION;色调均衡器-正则化
 HISTORY_MSG_TONE_EQUALIZER_SHOW_COLOR_MAP;色调均衡器-色调范围图
 HISTORY_MSG_TRANS_METHOD;几何-方法
+HISTORY_MSG_WAVCHROMCO;色度粗糙
+HISTORY_MSG_WAVCHROMFI;色度精细
+HISTORY_MSG_WAVDENLH;第5级
+HISTORY_MSG_WAVDENOISE;局部反差
 HISTORY_MSG_WAVLEVELSIGM;去噪-半径
 HISTORY_MSG_WAVLEVSIGM;半径
 HISTORY_MSG_WAVOFFSET;偏移
@@ -860,15 +882,20 @@ IPTCPANEL_CATEGORY;类别
 IPTCPANEL_CITY;城市
 IPTCPANEL_COPYHINT;将IPTC设置复制到剪贴板
 IPTCPANEL_COUNTRY;国家
+IPTCPANEL_COUNTRYHINT;输入图片拍摄地所处在的国家名
 IPTCPANEL_CREDIT;提供者
 IPTCPANEL_CREDITHINT;图片提供者, 未必是作者
 IPTCPANEL_DATECREATED;创作日期
+IPTCPANEL_DESCRIPTION;描述
 IPTCPANEL_EMBEDDED;内嵌
 IPTCPANEL_EMBEDDEDHINT;将IPTC数据重置为图片内嵌数据
 IPTCPANEL_HEADLINE;摘要
 IPTCPANEL_INSTRUCTIONS;指令
 IPTCPANEL_KEYWORDS;关键词
+IPTCPANEL_KEYWORDSHINT;输入一些能够描述图片内容的关键词，词语或短语
 IPTCPANEL_PASTEHINT;粘贴剪贴板内的IPTC设置
+IPTCPANEL_PROVINCE;省/州
+IPTCPANEL_PROVINCEHINT;输入图片拍摄地所处在的省或州
 IPTCPANEL_RESET;重置
 IPTCPANEL_RESETHINT;重置为默认配置
 IPTCPANEL_SOURCE;来源
@@ -922,7 +949,7 @@ MAIN_TAB_FAVORITES_TOOLTIP;快捷键： <b>Alt-u</b>
 MAIN_TAB_FILTER;过滤器
 MAIN_TAB_INSPECT;检视
 MAIN_TAB_IPTC;IPTC
-MAIN_TAB_LOCALLAB;局部
+MAIN_TAB_LOCALLAB;选区编辑
 MAIN_TAB_LOCALLAB_TOOLTIP;快捷键：<b>Alt-o</b>
 MAIN_TAB_METADATA;元数据
 MAIN_TAB_METADATA_TOOLTIP;快捷键：<b>Alt-m</b>
@@ -1007,8 +1034,8 @@ PARTIALPASTE_LABCURVE;L*a*b*调整
 PARTIALPASTE_LENSGROUP;镜头相关设置
 PARTIALPASTE_LENSPROFILE;镜片修正档案
 PARTIALPASTE_LOCALCONTRAST;局部反差
-PARTIALPASTE_LOCALLAB;局部调整
-PARTIALPASTE_LOCALLABGROUP;局部调整设置
+PARTIALPASTE_LOCALLAB;选区编辑
+PARTIALPASTE_LOCALLABGROUP;选区编辑设置
 PARTIALPASTE_METADATA;元数据模式
 PARTIALPASTE_METAGROUP;元数据
 PARTIALPASTE_PCVIGNETTE;暗角滤镜
@@ -1084,7 +1111,7 @@ PREFERENCES_CLUTSCACHE;HaldCLUT缓存
 PREFERENCES_CLUTSCACHE_LABEL;CLUT最大缓存数
 PREFERENCES_CLUTSDIR;HaldCLUT路径
 PREFERENCES_CMMBPC;黑场补偿
-PREFERENCES_COMPLEXITYLOC;局部调整工具默认复杂程度
+PREFERENCES_COMPLEXITYLOC;选区编辑工具默认复杂程度
 PREFERENCES_COMPLEXITY_EXP;高级
 PREFERENCES_COMPLEXITY_NORM;标准
 PREFERENCES_COMPLEXITY_SIMP;基础
@@ -1215,7 +1242,7 @@ PREFERENCES_SHOWBASICEXIF;显示基本Exif信息
 PREFERENCES_SHOWDATETIME;显示时间日期
 PREFERENCES_SHOWEXPOSURECOMPENSATION;附带曝光补偿
 PREFERENCES_SHOWFILMSTRIPTOOLBAR;显示“数码底片夹”栏
-PREFERENCES_SHOWTOOLTIP;显示局部调整工具提示
+PREFERENCES_SHOWTOOLTIP;显示选区编辑工具提示
 PREFERENCES_SHTHRESHOLD;阴影过暗阈值
 PREFERENCES_SINGLETAB;单编辑器标签模式
 PREFERENCES_SINGLETABVERTAB;单编辑器标签模式, 标签栏垂直
@@ -1710,7 +1737,10 @@ TP_GRADIENT_STRENGTH_TOOLTIP;滤镜的强度（档数）
 TP_HLREC_BLEND;混合
 TP_HLREC_CIELAB;CIELab混合
 TP_HLREC_COLOR;色彩延伸
+TP_HLREC_COLOROPP;填色修复
 TP_HLREC_ENA_TOOLTIP;可能会被自动色阶功能启用
+TP_HLREC_HLBLUR;模糊
+TP_HLREC_HLTH;增益阈值
 TP_HLREC_LABEL;高光还原
 TP_HLREC_LUMINANCE;亮度还原
 TP_HLREC_METHOD;方法:
@@ -1719,6 +1749,7 @@ TP_HSVEQUALIZER_HUE;H
 TP_HSVEQUALIZER_LABEL;HSV均衡器
 TP_HSVEQUALIZER_SAT;S
 TP_HSVEQUALIZER_VAL;V
+TP_ICM_GAMUT;色域控制
 TP_ICM_INPUTCAMERA;相机缺省
 TP_ICM_INPUTCAMERAICC;自适应相机档案
 TP_ICM_INPUTCUSTOM;自定义
@@ -1735,6 +1766,7 @@ TP_ICM_OUTPUTPROFILE;输出配置
 TP_ICM_PROFILEINTENT;渲染意图
 TP_ICM_SAVEREFERENCE_APPLYWB;应用白平衡
 TP_ICM_TONECURVE;使用DCP色调曲线
+TP_ICM_TONECURVE_TOOLTIP;使用内嵌的DCP色调曲线。仅在所选的DCP文件内有色调曲线时才可使用
 TP_ICM_TRCFRAME;抽象档案
 TP_ICM_WORKINGPROFILE;当前配置
 TP_ICM_WORKING_ILLU_NONE;默认
@@ -1836,7 +1868,7 @@ TP_LOCALLAB_CIEMODE_TM;色调映射
 TP_LOCALLAB_CIEMODE_WAV;小波
 TP_LOCALLAB_CIETOOLEXP;曲线
 TP_LOCALLAB_CIE_TOOLNAME;色貌（Cam16 & JzCzHz）
-TP_LOCALLAB_CIRCRADIUS;调整点大小
+TP_LOCALLAB_CIRCRADIUS;点大小
 TP_LOCALLAB_COFR;色彩 & 亮度
 TP_LOCALLAB_COLORDE;ΔE预览颜色-密度
 TP_LOCALLAB_COLORSCOPE;范围（色彩工具）
@@ -1927,7 +1959,7 @@ TP_LOCALLAB_JZLIGHT;视明度
 TP_LOCALLAB_JZSAT;饱和度
 TP_LOCALLAB_JZSHFRA;阴影/高光 Jz
 TP_LOCALLAB_LABBLURM;Blur Mask
-TP_LOCALLAB_LABEL;局部调整
+TP_LOCALLAB_LABEL;选区编辑
 TP_LOCALLAB_LABGRID;色彩矫正网格
 TP_LOCALLAB_LC_TOOLNAME;局部反差 & 小波
 TP_LOCALLAB_LEVELWAV;小波层级
@@ -2027,7 +2059,7 @@ TP_LOCALLAB_SOFTM;柔光
 TP_LOCALLAB_SOFTRETI;减少ΔE杂点
 TP_LOCALLAB_SOURCE_ABS;绝对亮度
 TP_LOCALLAB_SOURCE_GRAY;平均亮度(Yb%)
-TP_LOCALLAB_SPOTNAME;建立新调整点
+TP_LOCALLAB_SPOTNAME;新调整点
 TP_LOCALLAB_STD;标准
 TP_LOCALLAB_STR;力度
 TP_LOCALLAB_STRBL;力度
@@ -2329,7 +2361,9 @@ TP_WAVELET_BACUR;曲线
 TP_WAVELET_BALANCE;反差平衡 斜/纵-横
 TP_WAVELET_BALANCE_TOOLTIP;调整小波在各方向：纵向-横向与斜向上的平衡。\n如果启用了反差，色度，或是残差图色调映射，那么该平衡的效果会被放大
 TP_WAVELET_BALCHRO;色度平衡
+TP_WAVELET_BALCHROM;色彩均衡器
 TP_WAVELET_BALCHRO_TOOLTIP;启用后，“反差平衡”曲线/滑条也会调整色度平衡
+TP_WAVELET_BALLUM;去噪黑白均衡器
 TP_WAVELET_BANONE;无
 TP_WAVELET_BASLI;滑条
 TP_WAVELET_BATYPE;反差平衡方法
@@ -2341,6 +2375,9 @@ TP_WAVELET_CH3;与反差等级挂钩
 TP_WAVELET_CHCU;曲线
 TP_WAVELET_CHR;色度-反差挂钩力度
 TP_WAVELET_CHRO;根据饱和度高低
+TP_WAVELET_CHROFRAME;色度去噪
+TP_WAVELET_CHROMCO;色度粗糙
+TP_WAVELET_CHROMFI;色度精细
 TP_WAVELET_CHSL;滑条
 TP_WAVELET_CHTYPE;色度应用方法
 TP_WAVELET_COLORT;红-绿不透明度
@@ -2364,9 +2401,11 @@ TP_WAVELET_DAUB6;D6-标准增强
 TP_WAVELET_DAUB10;D10-中等
 TP_WAVELET_DAUB14;D14-高
 TP_WAVELET_DAUB_TOOLTIP;改变多贝西系数：\nD4 = 标准\nD14 = 一般而言表现最好，但会增加10%的处理耗时\n\n影响边缘检测以及较低层级的质量。但是质量不完全和该系数有关，可能会随具体的图像和处理方式而变化
+TP_WAVELET_DENCURV;曲线
 TP_WAVELET_DENOISEHUE;去噪色相均衡器
 TP_WAVELET_DENQUA;模式
 TP_WAVELET_DENSLI;滑条
+TP_WAVELET_DENSLILAB;方法
 TP_WAVELET_DENWAVHUE_TOOLTIP;根据色相来增强/减弱降噪力度
 TP_WAVELET_DETEND;细节
 TP_WAVELET_DONE;纵向
@@ -2391,12 +2430,13 @@ TP_WAVELET_FINCFRAME;最终局部反差
 TP_WAVELET_FINEST;最精细
 TP_WAVELET_HIGHLIGHT;精细层级亮度范围
 TP_WAVELET_HS1;全部亮度范围
-TP_WAVELET_HS2;选择性亮度范围
+TP_WAVELET_HS2;选择亮度范围
 TP_WAVELET_HUESKIN;肤色和其它色彩
 TP_WAVELET_HUESKY;色相范围
 TP_WAVELET_LABEL;小波层级
 TP_WAVELET_LARGEST;最粗糙
 TP_WAVELET_LEVCH;色度
+TP_WAVELET_LEVDEN;5-6级去噪
 TP_WAVELET_LEVDIR_ALL;所有方向的全部层级
 TP_WAVELET_LEVDIR_INF;更精细的细节层级（包括此层级）
 TP_WAVELET_LEVDIR_ONE;一个层级
@@ -2475,6 +2515,7 @@ TP_WBALANCE_CLOUDY;阴天
 TP_WBALANCE_CUSTOM;自定义
 TP_WBALANCE_DAYLIGHT;晴天
 TP_WBALANCE_EQBLUERED;蓝红均衡器
+TP_WBALANCE_EQBLUERED_TOOLTIP;此工具使你能够跳出“白平衡”的正常调整模式，单独控制蓝/红色的平衡。\n在下列拍摄条件下，此工具可以发挥用途：\n1. 场景的光照条件过于不同寻常（比如水下拍摄）；\n2. 图片没有经过任何色彩矫正且发生了偏色；\n3. 当前使用的转换矩阵或ICC档案并不适用于正在处理的图片
 TP_WBALANCE_FLASH55;徕卡
 TP_WBALANCE_FLASH60;标准，佳能，宾得，奥林巴斯
 TP_WBALANCE_FLASH65;尼康，松下，索尼，美能达
@@ -2522,8 +2563,6 @@ ZOOMPANEL_ZOOMOUT;缩放拉远\n快捷键：<b>-</b>
 !ERROR_MSG_METADATA_VALUE;Metadata: error setting %1 to %2
 !EXIFPANEL_ACTIVATE_ALL_HINT;Select all tags
 !EXIFPANEL_ACTIVATE_NONE_HINT;Unselect all tags
-!EXIFPANEL_BASIC_GROUP;Basic
-!EXIFPANEL_VALUE_NOT_SHOWN;Not shown
 !HISTORY_MSG_112;--unused--
 !HISTORY_MSG_137;Black level - Green 1
 !HISTORY_MSG_138;Black level - Red
@@ -2536,7 +2575,6 @@ ZOOMPANEL_ZOOMOUT;缩放拉远\n快捷键：<b>-</b>
 !HISTORY_MSG_291;Black Level - Green
 !HISTORY_MSG_292;Black Level - Blue
 !HISTORY_MSG_344;W - Meth chroma sl/cur
-!HISTORY_MSG_352;W - Background
 !HISTORY_MSG_358;W - Gamut - CH
 !HISTORY_MSG_365;W - Final - Delta balance
 !HISTORY_MSG_366;W - Residual - Compression gamma
@@ -2557,7 +2595,6 @@ ZOOMPANEL_ZOOMOUT;缩放拉远\n快捷键：<b>-</b>
 !HISTORY_MSG_399;W - Residual sub-tool
 !HISTORY_MSG_400;W - Final sub-tool
 !HISTORY_MSG_401;W - Toning sub-tool
-!HISTORY_MSG_402;W - Denoise sub-tool
 !HISTORY_MSG_407;Retinex - Method
 !HISTORY_MSG_408;Retinex - Radius
 !HISTORY_MSG_410;Retinex - Offset
@@ -2577,8 +2614,6 @@ ZOOMPANEL_ZOOMOUT;缩放拉远\n快捷键：<b>-</b>
 !HISTORY_MSG_424;Retinex - HL threshold
 !HISTORY_MSG_425;--unused--
 !HISTORY_MSG_426;Retinex - Hue equalizer
-!HISTORY_MSG_427;Output rendering intent
-!HISTORY_MSG_428;Monitor rendering intent
 !HISTORY_MSG_429;Retinex - Iterations
 !HISTORY_MSG_430;Retinex - Transmission gradient
 !HISTORY_MSG_431;Retinex - Strength gradient
@@ -2592,7 +2627,6 @@ ZOOMPANEL_ZOOMOUT;缩放拉远\n快捷键：<b>-</b>
 !HISTORY_MSG_439;Retinex - Process
 !HISTORY_MSG_441;Retinex - Gain transmission
 !HISTORY_MSG_442;Retinex - Scale
-!HISTORY_MSG_443;Output black point compensation
 !HISTORY_MSG_446;--unused--
 !HISTORY_MSG_447;--unused--
 !HISTORY_MSG_448;--unused--
@@ -2780,7 +2814,6 @@ ZOOMPANEL_ZOOMOUT;缩放拉远\n快捷键：<b>-</b>
 !HISTORY_MSG_744;Local - Exp Fattal Detail
 !HISTORY_MSG_745;Local - Exp Fattal Offset
 !HISTORY_MSG_746;Local - Exp Fattal Sigma
-!HISTORY_MSG_747;Local Spot created
 !HISTORY_MSG_748;Local - Exp Denoise
 !HISTORY_MSG_749;Local - Reti Depth
 !HISTORY_MSG_750;Local - Reti Mode log - lin
@@ -2972,9 +3005,7 @@ ZOOMPANEL_ZOOMOUT;缩放拉远\n快捷键：<b>-</b>
 !HISTORY_MSG_951;Local - Mask Common GF angle
 !HISTORY_MSG_952;Local - Mask Common soft radius
 !HISTORY_MSG_953;Local - Mask Common blend chroma
-!HISTORY_MSG_955;Local - Enable Spot
 !HISTORY_MSG_956;Local - CH Curve
-!HISTORY_MSG_957;Local - Denoise mode
 !HISTORY_MSG_959;Local - Inverse blur
 !HISTORY_MSG_962;Local - Log encoding Absolute luminance source
 !HISTORY_MSG_963;Local - Log encoding Absolute luminance target
@@ -3182,10 +3213,7 @@ ZOOMPANEL_ZOOMOUT;缩放拉远\n快捷键：<b>-</b>
 !HISTORY_MSG_FRAMING_MIN_WIDTH;Framing - Min Width
 !HISTORY_MSG_FRAMING_ORIENTATION;Framing - Orientation
 !HISTORY_MSG_GAMUTMUNSEL;Gamut-Munsell
-!HISTORY_MSG_HLBL;Color propagation - blur
-!HISTORY_MSG_HLTH;Inpaint opposed - gain threshold
 !HISTORY_MSG_ICL_LABGRIDCIEXY;Cie xy
-!HISTORY_MSG_ICM_AINTENT;Abstract profile intent
 !HISTORY_MSG_ICM_BLUX;Primaries Blue X
 !HISTORY_MSG_ICM_BLUY;Primaries Blue Y
 !HISTORY_MSG_ICM_CAT;Matrix adaptation
@@ -3208,7 +3236,6 @@ ZOOMPANEL_ZOOMOUT;缩放拉远\n快捷键：<b>-</b>
 !HISTORY_MSG_ICM_SHIFTY;Refinement Colors - Shift y
 !HISTORY_MSG_ICM_SIGMATRC;Local contrast Attenation response
 !HISTORY_MSG_ICM_SMOOTHCIE;Smooth highlights
-!HISTORY_MSG_ICM_TRCEXP;Abstract Profile
 !HISTORY_MSG_ICM_WAVEXP;Contrast Enhancement
 !HISTORY_MSG_ICM_WORKING_GAMMA;TRC - Gamma
 !HISTORY_MSG_ICM_WORKING_ILLUM_METHOD;Illuminant method
@@ -3318,7 +3345,6 @@ ZOOMPANEL_ZOOMOUT;缩放拉远\n快捷键：<b>-</b>
 !HISTORY_MSG_PERSP_PROJ_ANGLE;Perspective - Recovery
 !HISTORY_MSG_PERSP_PROJ_ROTATE;Perspective - PCA rotation
 !HISTORY_MSG_PERSP_PROJ_SHIFT;Perspective - PCA
-!HISTORY_MSG_PIXELSHIFT_AVERAGE;PS - Average
 !HISTORY_MSG_PREPROCWB_MODE;Preprocess WB Mode
 !HISTORY_MSG_PROTAB;Protection
 !HISTORY_MSG_RANGEAB;Range ab
@@ -3327,18 +3353,12 @@ ZOOMPANEL_ZOOMOUT;缩放拉远\n快捷键：<b>-</b>
 !HISTORY_MSG_SIGMAFIN;Final contrast Attenuation response
 !HISTORY_MSG_SIGMATON;Toning Attenuation response
 !HISTORY_MSG_SPOT_ENTRY;Spot removal - Point modif.
-!HISTORY_MSG_TEMPOUT;CAM02 automatic temperature
-!HISTORY_MSG_THRESWAV;Balance threshold
 !HISTORY_MSG_TRANS_SCALE;Geometry - Scale
 !HISTORY_MSG_WAVBALCHROM;Equalizer chrominance
 !HISTORY_MSG_WAVBALLUM;Equalizer luminance
 !HISTORY_MSG_WAVBL;Blur levels
 !HISTORY_MSG_WAVCHR;Blur levels - blur chroma
-!HISTORY_MSG_WAVCHROMCO;Chroma coarse
-!HISTORY_MSG_WAVCHROMFI;Chroma fine
 !HISTORY_MSG_WAVCLARI;Clarity
-!HISTORY_MSG_WAVDENLH;Level 5
-!HISTORY_MSG_WAVDENOISE;Local contrast
 !HISTORY_MSG_WAVDENOISEH;High levels Local contrast
 !HISTORY_MSG_WAVDETEND;Details soft
 !HISTORY_MSG_WAVEDGS;Edge stopping
@@ -3420,21 +3440,16 @@ ZOOMPANEL_ZOOMOUT;缩放拉远\n快捷键：<b>-</b>
 !IPTCPANEL_CITYHINT;Enter the name of the city pictured in this image.
 !IPTCPANEL_COPYRIGHT;Copyright notice
 !IPTCPANEL_COPYRIGHTHINT;Enter a Notice on the current owner of the Copyright for this image, such as ©2008 Jane Doe.
-!IPTCPANEL_COUNTRYHINT;Enter the name of the country pictured in this image.
 !IPTCPANEL_CREATOR;Creator
 !IPTCPANEL_CREATORHINT;Enter the name of the person that created this image.
 !IPTCPANEL_CREATORJOBTITLE;Creator's job title
 !IPTCPANEL_CREATORJOBTITLEHINT;Enter the Job Title of the person listed in the Creator field.
 !IPTCPANEL_DATECREATEDHINT;Enter the Date the image was taken.
-!IPTCPANEL_DESCRIPTION;Description
 !IPTCPANEL_DESCRIPTIONHINT;Enter a 'caption' describing the who, what, and why of what is happening in this image, this might include names of people, and/or their role in the action that is taking place within the image.
 !IPTCPANEL_DESCRIPTIONWRITER;Description writer
 !IPTCPANEL_DESCRIPTIONWRITERHINT;Enter the name of the person involved in writing, editing or correcting the description of the image.
 !IPTCPANEL_HEADLINEHINT;Enter a brief publishable synopsis or summary of the contents of the image.
 !IPTCPANEL_INSTRUCTIONSHINT;Enter information about embargoes, or other restrictions not covered by the Copyright field.
-!IPTCPANEL_KEYWORDSHINT;Enter any number of keywords, terms or phrases used to express the subject matter in the image.
-!IPTCPANEL_PROVINCE;Province or state
-!IPTCPANEL_PROVINCEHINT;Enter the name of the province or state pictured in this image.
 !IPTCPANEL_SOURCEHINT;Enter or edit the name of a person or party who has a role in the content supply chain, such as a person or entity from whom you received this image from.
 !IPTCPANEL_SUPPCATEGORIES;Supplemental categories
 !IPTCPANEL_SUPPCATEGORIESHINT;Further refines the subject of the image.
@@ -3627,9 +3642,6 @@ ZOOMPANEL_ZOOMOUT;缩放拉远\n快捷键：<b>-</b>
 !TP_FRAMING_MIN_WIDTH;Minimum Width
 !TP_FRAMING_ORIENTATION;Orientation:
 !TP_FRAMING_RED;Red
-!TP_HLREC_COLOROPP;Inpaint Opposed
-!TP_HLREC_HLBLUR;Blur
-!TP_HLREC_HLTH;Gain threshold
 !TP_ICM_APPLYBASELINEEXPOSUREOFFSET;Baseline exposure
 !TP_ICM_APPLYBASELINEEXPOSUREOFFSET_TOOLTIP;Employ the embedded DCP baseline exposure offset. The setting is only available if the selected DCP has one.
 !TP_ICM_APPLYHUESATMAP;Base table
@@ -3642,7 +3654,6 @@ ZOOMPANEL_ZOOMOUT;缩放拉远\n快捷键：<b>-</b>
 !TP_ICM_DCPILLUMINANT_INTERPOLATED;Interpolated
 !TP_ICM_DCPILLUMINANT_TOOLTIP;Select which embedded DCP illuminant to employ. Default is 'interpolated' which is a mix between the two based on white balance. The setting is only available if a dual-illuminant DCP with interpolation support is selected.
 !TP_ICM_FBW;Black-and-White
-!TP_ICM_GAMUT;Gamut control
 !TP_ICM_ILLUMPRIM_TOOLTIP;Choose the illuminant closest to the shooting conditions.\nChanges can only be made when the 'Destination primaries' selection is set to 'Custom (sliders)'.
 !TP_ICM_INPUTCAMERAICC_TOOLTIP;Use RawTherapee's camera-specific DCP or ICC input color profiles. These profiles are more precise than simpler matrix ones. They are not available for all cameras. These profiles are stored in the /iccprofiles/input and /dcpprofiles folders and are automatically retrieved based on a file name matching to the exact model name of the camera.
 !TP_ICM_INPUTCAMERA_TOOLTIP;Use a simple color matrix from dcraw, an enhanced RawTherapee version (whichever is available based on camera model) or one embedded in the DNG.
@@ -3660,7 +3671,6 @@ ZOOMPANEL_ZOOMOUT;缩放拉远\n快捷键：<b>-</b>
 !TP_ICM_SAVEREFERENCE_APPLYWB_TOOLTIP;Generally, apply the white balance when saving images to create ICC profiles, and do not apply the white balance to create DCP profiles.
 !TP_ICM_SAVEREFERENCE_TOOLTIP;Save the linear TIFF image before the input profile is applied. The result can be used for calibration purposes and generation of a camera profile.
 !TP_ICM_SMOOTHFRAME;Highlight attenuation
-!TP_ICM_TONECURVE_TOOLTIP;Employ the embedded DCP tone curve. The setting is only available if the selected DCP has a tone curve.
 !TP_ICM_TRCFRAME_TOOLTIP;Also known as 'synthetic' or 'virtual' profiles, which are applied at the end of the processing pipeline (prior to CIECAM) allowing you to create custom image effects.\nYou can make changes to the:\n 'Tone response curve', which modifies the tones of the image.\n 'Illuminant', which allows you to change the profile primaries to adapt them to the shooting conditions.\n 'Destination primaries', which allows you to change the destination primaries with three main uses - channel mixer, restore image color (saturation), and calibration.\nNote: Abstract profiles take into account the built-in working profiles without modifying them. They do not work with custom working profiles.
 !TP_ICM_TRC_TOOLTIP;Allows you to change the default sRGB 'Tone response curve' in RT (g=2.4 s=12.92).\nThis TRC modifies the tones of the image. The RGB and Lab values, histogram and output (screen, TIF, JPG) are changed:\n-Gamma acts mainly on light tones -Slope acts mainly on dark tones.\nYou can choose any pair of 'gamma and slope' (values >1) and the algorithm will ensure that there is continuity between the linear and parabolic parts of the curve.\nA selection other than 'none' activates the 'Illuminant' and 'Destination primaries' menus.
 !TP_ICM_WAVFRAME;Contrast Enhancement
@@ -4227,7 +4237,7 @@ ZOOMPANEL_ZOOMOUT;缩放拉远\n快捷键：<b>-</b>
 !TP_LOCALLAB_SLOMASK_TOOLTIP;Adjusting Gamma and Slope can provide a soft and artifact-free transformation of the mask by progressively modifying 'L' to avoid any discontinuities.
 !TP_LOCALLAB_SLOPESMOOTH;Gray balance (Slope)
 !TP_LOCALLAB_SLOPESMOOTHB;Blue Slope
-!TP_LOCALLAB_SLOPESMOOTHG;Green balance (Slope)
+!TP_LOCALLAB_SLOPESMOOTHG;Green Slope
 !TP_LOCALLAB_SLOPESMOOTHR;Red Slope
 !TP_LOCALLAB_SLOPESMOOTRCB;Blue balance (TRC)
 !TP_LOCALLAB_SLOPESMOOTRCG;Green balance (TRC)
@@ -4427,17 +4437,12 @@ ZOOMPANEL_ZOOMOUT;缩放拉远\n快捷键：<b>-</b>
 !TP_SPOT_ENTRYCHANGED;Point changed
 !TP_TONE_EQUALIZER_BANDS;Bands
 !TP_VIBRANCE_CURVEEDITOR_SKINTONES;HH
-!TP_WAVELET_BALCHROM;Equalizer Color
-!TP_WAVELET_BALLUM;Denoise equalizer White-Black
 !TP_WAVELET_BL;Blur levels
 !TP_WAVELET_BLCURVE;Blur by levels
 !TP_WAVELET_BLURFRAME;Blur
 !TP_WAVELET_CBENAB;Toning and Color balance
 !TP_WAVELET_CB_TOOLTIP;With high values you can create special effects, similar to those achieved with the Chroma Module, but focused on the residual image\nWith moderate values you can manually correct the white balance.
-!TP_WAVELET_CHROFRAME;Denoise chrominance
 !TP_WAVELET_CHROMAFRAME;Chroma
-!TP_WAVELET_CHROMCO;Chrominance Coarse
-!TP_WAVELET_CHROMFI;Chrominance Fine
 !TP_WAVELET_CHRO_TOOLTIP;Sets the wavelet level which will be the threshold between saturated and pastel colors.\n1-x: saturated\nx-9: pastel\n\nIf the value exceeds the amount of wavelet levels you are using then it will be ignored.
 !TP_WAVELET_CHRWAV;Blur chroma
 !TP_WAVELET_CHR_TOOLTIP;Adjusts chroma as a function of 'contrast levels' and 'chroma-contrast link strength'.
@@ -4458,7 +4463,6 @@ ZOOMPANEL_ZOOMOUT;缩放拉远\n快捷键：<b>-</b>
 !TP_WAVELET_DAUB20;D20 - high plus
 !TP_WAVELET_DAUBLOCAL;Wavelet Edge performance
 !TP_WAVELET_DEN5THR;Guided threshold
-!TP_WAVELET_DENCURV;Curve
 !TP_WAVELET_DENL;Correction structure
 !TP_WAVELET_DENLH;Guided threshold levels 1-4
 !TP_WAVELET_DENLOCAL_TOOLTIP;Use a curve in order to guide the denoising according to the local contrast.\nThe areas are denoised, the structures are maintained.
@@ -4467,7 +4471,6 @@ ZOOMPANEL_ZOOMOUT;缩放拉远\n快捷键：<b>-</b>
 !TP_WAVELET_DENOISEGUID;Guided threshold based on hue
 !TP_WAVELET_DENOISEH;High levels Curve Local contrast
 !TP_WAVELET_DENSIGMA_TOOLTIP;Adapts the shape of the guide.
-!TP_WAVELET_DENSLILAB;Method
 !TP_WAVELET_DENWAVGUID_TOOLTIP;Uses hue to reduce or increase the action of the guided filter.
 !TP_WAVELET_DIRFRAME;Directional contrast
 !TP_WAVELET_EDEFFECT_TOOLTIP;This slider selects the range of contrast values that will receive the full effect of any adjustment.
@@ -4484,7 +4487,6 @@ ZOOMPANEL_ZOOMOUT;缩放拉远\n快捷键：<b>-</b>
 !TP_WAVELET_ITER;Delta balance levels
 !TP_WAVELET_ITER_TOOLTIP;Left: increase low levels and reduce high levels,\nRight: reduce low levels and increase high levels.
 !TP_WAVELET_LABGRID_VALUES;High(a)=%1 High(b)=%2\nLow(a)=%3 Low(b)=%4
-!TP_WAVELET_LEVDEN;Level 5-6 denoise
 !TP_WAVELET_LEVELHIGH;Radius 5-6
 !TP_WAVELET_LEVELLOW;Radius 1-4
 !TP_WAVELET_LEVELSIGM;Radius
@@ -4529,7 +4531,6 @@ ZOOMPANEL_ZOOMOUT;缩放拉远\n快捷键：<b>-</b>
 !TP_WAVELET_WAVLOWTHR;Low contrast threshold
 !TP_WBALANCE_AUTOITCGREEN;Temperature correlation
 !TP_WBALANCE_AUTOOLD;RGB grey
-!TP_WBALANCE_EQBLUERED_TOOLTIP;Allows to deviate from the normal behavior of 'white balance' by modulating the blue/red balance.\nThis can be useful when shooting conditions:\na) are far from the standard illuminant (e.g. underwater),\nb) are far from conditions where calibrations were performed,\nc) where the matrices or ICC profiles are unsuitable.
 !TP_WBALANCE_FLUO6;F6 - Lite White
 !TP_WBALANCE_FLUO7;F7 - D65 Daylight Simulator
 !TP_WBALANCE_FLUO8;F8 - D50 / Sylvania F40 Design

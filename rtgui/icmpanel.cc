@@ -89,7 +89,7 @@ ICMPanel::ICMPanel() : FoldableToolPanel(this, TOOL_NAME, M("TP_ICM_LABEL")), iu
     ipDialog = Gtk::manage(new MyFileChooserButton(M("TP_ICM_INPUTDLGLABEL"), Gtk::FILE_CHOOSER_ACTION_OPEN));
     ipDialog->set_tooltip_text(M("TP_ICM_INPUTCUSTOM_TOOLTIP"));
     bindCurrentFolder(*ipDialog, options.lastIccDir);
-    labgridcie = Gtk::manage(new LabGrid(EvICMLabGridciexy, M("TP_ICM_LABGRID_CIEXY"), true, true, true));
+    labgridcie = Gtk::manage(new LabGrid(EvICMLabGridciexy, M("TP_ICM_LABGRID_CIEXY"), true, true, false, true));
 
 
     // ------------------------------- Input profile
@@ -828,7 +828,7 @@ void ICMPanel::iprimChanged (float r_x, float r_y, float b_x, float b_y, float g
         [this]() -> bool
         {
             disableListener();
-            labgridcie->setParams(nextrx, nextry, nextbx, nextby, nextgx, nextgy, nextwx, nextwy, nextmx, nextmy,  false);
+            labgridcie->setParams(nextrx, nextry, nextbx, nextby, nextgx, nextgy, nextwx, nextwy, nextmx, nextmy, false);
             enableListener();
             return false;
         }
@@ -1467,6 +1467,8 @@ void ICMPanel::write(ProcParams* pp, ParamsEdited* pedited)
 
     pp->icm.workingProfile = wProfNames->get_active_text();
     pp->icm.dcpIlluminant = rtengine::max<int>(dcpIll->get_active_row_number(), 0);
+
+
     labgridcie->getParams(pp->icm.labgridcieALow, pp->icm.labgridcieBLow, pp->icm.labgridcieAHigh, pp->icm.labgridcieBHigh, pp->icm.labgridcieGx, pp->icm.labgridcieGy, pp->icm.labgridcieWx, pp->icm.labgridcieWy, pp->icm.labgridcieMx, pp->icm.labgridcieMy);
 
     if (oProfNames->get_active_text() == M("TP_ICM_NOICM")) {
@@ -1596,6 +1598,8 @@ void ICMPanel::setDefaults(const ProcParams* defParams, const ParamsEdited* pedi
     shiftx->setDefault(defParams->icm.shiftx);
     shifty->setDefault(defParams->icm.shifty);
     preser->setDefault(defParams->icm.preser);
+
+
     labgridcie->setDefault(defParams->icm.labgridcieALow, defParams->icm.labgridcieBLow , defParams->icm.labgridcieAHigh, defParams->icm.labgridcieBHigh, defParams->icm.labgridcieGx, defParams->icm.labgridcieGy, defParams->icm.labgridcieWx, defParams->icm.labgridcieWy, defParams->icm.labgridcieMx, defParams->icm.labgridcieMy);
 
     if (pedited) {

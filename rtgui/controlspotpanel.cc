@@ -121,6 +121,7 @@ ControlSpotPanel::ControlSpotPanel():
     EvLocallabavoidgamutMethod = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_GAMUTMUNSEL");
     EvLocallabavoidnegative =  m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_AVOIDNEGATIVE");
     const bool showtooltip = options.showtooltip;
+
 //    pack_start(*hishow_);
 
     Gtk::Box* const ctboxprevmethod = Gtk::manage(new Gtk::Box());
@@ -390,8 +391,6 @@ ControlSpotPanel::ControlSpotPanel():
     artifBox->pack_start(*balan_);
     artifBox->pack_start(*balanh_);
     artifBox->pack_start(*colorde_);
-//    artifBox->pack_start(*preview_);
-//    artifBox->pack_start(*colorscope_);
     expShapeDetect_->add(*artifBox, false);
     pack_start(*expShapeDetect_, false, false);
 //    ToolParamBlock* const artifBox2 = Gtk::manage(new ToolParamBlock());
@@ -868,10 +867,13 @@ void ControlSpotPanel::load_ControlSpot_param()
     feather_->setValue((double)row[spots_.feather]);
     struc_->setValue((double)row[spots_.struc]);
     thresh_->setValue((double)row[spots_.thresh]);
-    iter_->setValue((double)row[spots_.iter]);
+
+    iter_->setValue((double)row[spots_.iter]);    
     balan_->setValue((double)row[spots_.balan]);
     balanh_->setValue((double)row[spots_.balanh]);
     colorde_->setValue((double)row[spots_.colorde]);
+
+    
     colorscope_->setValue((double)row[spots_.colorscope]);
     avoidrad_->setValue((double)row[spots_.avoidrad]);
     hishow_->set_active(row[spots_.hishow]);
@@ -2910,12 +2912,12 @@ void ControlSpotPanel::deleteControlSpot(const int index)
 }
 
 //new function linked to Global and options 
-void ControlSpotPanel::updateguiset(int spottype, bool iscolor, bool issh, bool isvib, bool isexpos, bool issoft, bool isblur, bool istom, bool isret, bool issharp, bool iscont, bool iscbdl, bool islog, bool ismas, bool iscie)
+void ControlSpotPanel::updateguiset(int spottype, bool iscolor, bool issh, bool isvib, bool isexpos, bool issoft, bool isblur, bool istom, bool isret, bool issharp, bool iscont, bool iscbdl, bool islog, bool ismas, bool isci)
 {
     {  //with this function we can 1) activate Settings SpotMethod
         // also if need GUI for mask ,  todo...
         idle_register.add(
-        [this, spottype, iscolor, issh , isvib, isexpos, issoft, isblur, istom, isret, issharp, iscont, iscbdl, islog, ismas, iscie]() -> bool {
+        [this, spottype, iscolor, issh , isvib, isexpos, issoft, isblur, istom, isret, issharp, iscont, iscbdl, islog, ismas, isci]() -> bool {
             GThreadLock lock; // All GUI access from idle_add callbacks or separate thread HAVE to be protected
 
             // Update GUI fullimage or main
@@ -2924,7 +2926,7 @@ void ControlSpotPanel::updateguiset(int spottype, bool iscolor, bool issh, bool 
                 spotMethodChanged();
             }
             
-            if((iscolor || issh || isvib || isexpos || istom || iscont || islog || ismas || iscie)
+            if((iscolor || issh || isvib || isexpos || istom || iscont || islog || ismas || isci)
                 && !issharp && !issoft && !isret && !isblur  & !iscbdl) {
                 preview_->hide();               
             } else if (issoft || isblur || isret || issharp || iscbdl) {

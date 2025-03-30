@@ -647,7 +647,7 @@ void ColorToning::read (const ProcParams* pp, const ParamsEdited* pedited)
 
     lastLumamode = pp->colorToning.lumamode;
 
-    labgrid->setParams(pp->colorToning.labgridALow / ColorToningParams::LABGRID_CORR_MAX, pp->colorToning.labgridBLow / ColorToningParams::LABGRID_CORR_MAX, pp->colorToning.labgridAHigh / ColorToningParams::LABGRID_CORR_MAX, pp->colorToning.labgridBHigh / ColorToningParams::LABGRID_CORR_MAX, 0, 0, 0, 0, 0, 0,false);
+    labgrid->setParams(pp->colorToning.labgridALow / ColorToningParams::LABGRID_CORR_MAX, pp->colorToning.labgridBLow / ColorToningParams::LABGRID_CORR_MAX, pp->colorToning.labgridAHigh / ColorToningParams::LABGRID_CORR_MAX, pp->colorToning.labgridBHigh / ColorToningParams::LABGRID_CORR_MAX, 0, 0, 0, 0, 0, 0, false);
 
     if (pedited && !pedited->colorToning.method) {
         method->set_active (7);

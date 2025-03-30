@@ -751,7 +751,6 @@ static void calcGradientParams (int oW, int oH, const GradientParams& gradient, 
     double gradient_center_y = gradient.centerY / 200.0 + 0.5;
     double gradient_angle = gradient.degree / 180.0 * rtengine::RT_PI;
     //fprintf(stderr, "%f %f %f %f %f %d %d\n", gradient_stops, gradient_span, gradient_center_x, gradient_center_y, gradient_angle, w, h);
-
     // make 0.0 <= gradient_angle < 2 * rtengine::RT_PI
     gradient_angle = fmod (gradient_angle, 2 * rtengine::RT_PI);
 

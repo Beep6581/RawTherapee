@@ -152,7 +152,6 @@ Locallab::Locallab():
     // Tool list widget
     toollist(Gtk::manage(new LocallabToolList()))
 
-  //  expcie(Gtk::manage(new Locallabcie())),
     // Other widgets
     //resetshowButton(Gtk::manage(new Gtk::Button(M("TP_LOCALLAB_RESETSHOW"))))
 {
@@ -247,6 +246,7 @@ void Locallab::read(const rtengine::procparams::ProcParams* pp, const ParamsEdit
 
     // Update Locallab activation state
     setEnabled(pp->locallab.enabled);
+ //   const int showsettings = options.complexity;
 
     // Transmit Locallab activation state to Locallab tools
     for (auto tool : locallabTools) {
@@ -266,6 +266,7 @@ void Locallab::read(const rtengine::procparams::ProcParams* pp, const ParamsEdit
     ControlSpotPanel::SpotRow r;
 
     for (int i = 0; i < (int)pp->locallab.spots.size(); i++) {
+       
         r.name = pp->locallab.spots.at(i).name;
         r.isvisible = pp->locallab.spots.at(i).isvisible;
 
@@ -1143,7 +1144,7 @@ void Locallab::minmaxChanged(const std::vector<locallabRetiMinMax> &minmax, int 
         const double cdmin = retiMinMax.at(selspot).cdmin;
         const double mini = retiMinMax.at(selspot).mini;
         const double maxi = retiMinMax.at(selspot).maxi;
-        const  double Tmean = retiMinMax.at(selspot).Tmean;
+        const double Tmean = retiMinMax.at(selspot).Tmean;
         const double Tsigma = retiMinMax.at(selspot).Tsigma;
         const double Tmin = retiMinMax.at(selspot).Tmin;
         const double Tmax = retiMinMax.at(selspot).Tmax;
@@ -1163,7 +1164,7 @@ void Locallab::denChanged(const std::vector<locallabDenoiseLC> &denlc, int selsp
         const double nres = denoiselc.at(selspot).nres;
         const double highres46 = denoiselc.at(selspot).highres46;
         const double nres46 = denoiselc.at(selspot).nres46;
-        const  double Lhighres = denoiselc.at(selspot).Lhighres;
+        const double Lhighres = denoiselc.at(selspot).Lhighres;
         const double Lnres = denoiselc.at(selspot).Lnres;
         const double Lhighres46 = denoiselc.at(selspot).Lhighres46;
         const double Lnres46 = denoiselc.at(selspot).Lnres46;
@@ -1225,72 +1226,7 @@ void Locallab::scopeChangedset(int scope, int selspot, bool enab)
     }
    
 }
-/*
-//main new fonction global to hide show and activated or not some functions - inverse, scope...
-void Locallab::mainChanged(int spottype, int selspot, bool iscolor, bool issh, bool isvib, bool isexpos, bool issoft, bool isblur, bool istom, bool isret, bool issharp, bool iscont, bool iscbdl, bool islog, bool ismas, bool iscie )
-{
-    
 
-    if(iscolor) {
-        expcolor.updateguicolor(spottype);
-    }
-    
-    if(issh) {
-        expshadhigh.updateguishad(spottype);
-    }
-    
-    if(isvib) {   
-        expvibrance.updateguivib(spottype);
-    }
-    
-    if(isexpos) {     
-        expexpose.updateguiexpos(spottype);
-    }
-    
-    if(issoft) {         
-        expsoft.updateguisoft(spottype);
-    }
-    
-    if(isblur) {        
-        expblur.updateguiblur(spottype);
-    }
-    
-    if(istom) {         
-        exptonemap.updateguitone(spottype);
-    }
-    
-    if(isret) {        
-        expreti.updateguireti(spottype);
-    }
-    
-    if(issharp) {        
-        expsharp.updateguisharp(spottype);
-    }
-    
-    if(iscont) {         
-        expcontrast.updateguicont(spottype);
-    }
-    
-    if(iscbdl) {       
-        expcbdl.updateguicbdl(spottype);
-    }
-    
-    if(islog) {     
-        explog.updateguilog(spottype);
-    }
-    
-    if(ismas) {     
-        expmask.updateguimask(spottype);
-    }
-    
-    if(iscie) {        
-        expcie.updateguicie(spottype);
-    }
-
-    expsettings->updateguiset(spottype, iscolor, issh, isvib, isexpos, issoft, isblur, istom, isret, issharp, iscont, iscbdl, islog, ismas, iscie);
-
-}
-*/
 void Locallab::sigChanged(const std::vector<locallabcieSIG> &ciesig, int selspot)
 {
      cie_sig = ciesig;
@@ -1383,7 +1319,7 @@ void Locallab::maiChanged(const std::vector<locallabsetLC> &setlc, int selspot)
         const bool iscbdl = set_lc.at(selspot).iscbd;
         const bool islog = set_lc.at(selspot).islo;
         const bool ismas = set_lc.at(selspot).isma;
-        const bool iscie = set_lc.at(selspot).isci;
+        const bool isci = set_lc.at(selspot).isci;
 
         if(iscolor) {
             expcolor.updateguicolor(spottype);
@@ -1437,18 +1373,35 @@ void Locallab::maiChanged(const std::vector<locallabsetLC> &setlc, int selspot)
             expmask.updateguimask(spottype);
         }
 
-        if(iscie) {
+        if(isci) {
             expcie.updateguicie(spottype);
         }
 
-        expsettings->updateguiset(spottype, iscolor, issh, isvib, isexpos, issoft, isblur, istom, isret, issharp, iscont, iscbdl, islog, ismas, iscie);
+        expsettings->updateguiset(spottype, iscolor, issh, isvib, isexpos, issoft, isblur, istom, isret, issharp, iscont, iscbdl, islog, ismas, isci);
     }
 }
 
+void Locallab::ghsbwChanged(const std::vector<locallabshGHSbw> &shghsbw, int selspot)
+{
+    sh_ghsbw = shghsbw;
+    int bw[2] = {0, 1};
+    double bwvalue[2] = {0., 1.};
+    
+    if (selspot < (int) sh_ghsbw.size()) {
+        for(int i=0; i < 2; i++) {
+            bw[i] = sh_ghsbw.at(selspot).ghsbw[i];
+            bwvalue[i] = sh_ghsbw.at(selspot).ghsbwvalue[i];
+        }
+    
+        expshadhigh.updateghsbw(bw[0], bw[1], bwvalue[0], bwvalue[1]);
+    }
+
+}
 void Locallab::cieChanged(const std::vector<locallabcieLC> &cielc, int selspot)
 {
     // Saving transmitted min/max data
     cie_lc = cielc;
+
     
     //Update Locallab Denoise tool lum chro
     if (selspot < (int) cie_lc.size()) {
@@ -1456,7 +1409,7 @@ void Locallab::cieChanged(const std::vector<locallabcieLC> &cielc, int selspot)
         const double r2 = cie_lc.at(selspot).redylc;
         const double g1 = cie_lc.at(selspot).grexlc;
         const double g2 = cie_lc.at(selspot).greylc;
-        const  double b1 = cie_lc.at(selspot).bluxlc;
+        const double b1 = cie_lc.at(selspot).bluxlc;
         const double b2 = cie_lc.at(selspot).bluylc;
         const double w1 = cie_lc.at(selspot).wxlc;
         const double w2 = cie_lc.at(selspot).wylc;
