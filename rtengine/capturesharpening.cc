@@ -802,8 +802,9 @@ BENCHFUN
     rgbSourceModified = false;
 }
 
-//To call Capture Sharpening from Improcoordinator for Selective Editing
-bool RawImageSource::getDeconvAutoRadius(float *out)
+// To call Capture Sharpening from Improcoordinator for Selective Editing
+// call to 2 RAW functions of CaptureSharpening Raw - calcRadiusBayer and  calcRadiusXtrans
+bool RawImageSource::getDeconvAutoRadius_capturesharpening_SE(float *out)
 {
     const float clipVal = (ri->get_white(1) - ri->get_cblack(1)) * scale_mul[1];
     if (ri->getSensorType() == ST_BAYER) {//Bayer

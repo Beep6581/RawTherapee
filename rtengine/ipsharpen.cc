@@ -489,10 +489,10 @@ bool checkForStop(float** tmpIThr, float** iterCheck, int fullTileSize, int bord
     return false;
 }
 
-void ImProcFunctions::CaptureDeconvSharpening2 (float** luminance, const float* const * oldLuminance, const float * const * blend, int bfw, int bfh, struct localpass &locp, float sigma, float sigmaCornerOffset, int iterations, bool checkIterStop, double startVal, double endVal)
+void ImProcFunctions::CaptureDeconvSharpening_SE (float** luminance, const float* const * oldLuminance, const float * const * blend, int bfw, int bfh, struct localpass &locp, float sigma, float sigmaCornerOffset, int iterations, bool checkIterStop, double startVal, double endVal)
 {
  // Copyright (c) 2019 Ingo Weyrich (heckflosse67@gmx.de)
- // adaptation november 2024 - Jacques Desmis  
+ // adaptation november 2024 - Jacques Desmis - for Selective Editing 
 BENCHFUN
    
     const bool is9x9 = (sigma <= 1.5f && sigmaCornerOffset == 0.f);
@@ -720,7 +720,7 @@ BENCHFUN
 
 
 
-void ImProcFunctions::doSharpening(Imagefloat *rgb, int bfw, int bfh, struct localpass &locp, int sk, float &sharpc, bool autoshar, float capradiu,  float deconvCo, float deconvLat, bool itcheck, bool showMask)
+void ImProcFunctions::doCapture_Sharpening_SE(Imagefloat *rgb, int bfw, int bfh, struct localpass &locp, int sk, float &sharpc, bool autoshar, float capradiu,  float deconvCo, float deconvLat, bool itcheck, bool showMask)
 
 {
     
@@ -831,7 +831,7 @@ void ImProcFunctions::doSharpening(Imagefloat *rgb, int bfw, int bfh, struct loc
         printf("Contrast threshold SE Captur=%f \n", (double) sharpc);
     }
 
-    CaptureDeconvSharpening2(YNew, YOld, clipMask2, bfw, bfh, locp, capradiu, deconvCo, deconvLat, itcheck, 0.2, 0.9);
+    CaptureDeconvSharpening_SE(YNew, YOld, clipMask2, bfw, bfh, locp, capradiu, deconvCo, deconvLat, itcheck, 0.2, 0.9);
  
 #ifdef _OPENMP
     #pragma omp parallel for schedule(dynamic, 16)

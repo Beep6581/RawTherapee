@@ -224,7 +224,7 @@ public:
     virtual void captureSharpening(const procparams::CaptureSharpeningParams &sharpeningParams, bool showMask, double &conrastThreshold, double &radius) = 0;
     virtual void wbMul2Camera(double &rm, double &gm, double &bm) = 0;
     virtual void wbCamera2Mul(double &rm, double &gm, double &bm) = 0;
-    virtual bool getDeconvAutoRadius(float *out=nullptr) { return false; }
+    virtual bool getDeconvAutoRadius_capturesharpening_SE(float *out=nullptr) { return false; }
 
 };
 

@@ -28,7 +28,7 @@
 
 namespace rtengine
 {
-
+//J.Desmis - November 2024 - change (a little) these functions to be used also by Selective Editing.
 void compute13x13kernel2(float sigma, float kernel[13][13]) {
 
     const double temp = -2.f * rtengine::SQR(sigma);

@@ -19731,7 +19731,7 @@ void ImProcFunctions::Lab_Local(
                 }
             }
               
-            ImProcFunctions::doSharpening(tmpImagered.get(), bfw, bfh, locp, sk, sharc, autoshar, capradiu,  deconvCo, deconvLat, itcheck, sharpshow);
+            ImProcFunctions::doCapture_Sharpening_SE(tmpImagered.get(), bfw, bfh, locp, sk, sharc, autoshar, capradiu,  deconvCo, deconvLat, itcheck, sharpshow);
             
 #ifdef _OPENMP
             #pragma omp parallel for schedule(dynamic,16) if (multiThread)

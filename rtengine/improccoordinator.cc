@@ -1046,7 +1046,7 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                     }
                     if (shar[sp] && autoradius[sp]){
                         float rad = -1.f;
-                        if (imgsrc->getDeconvAutoRadius(&rad)) {//To call Capture Sharpening from Selective Editing
+                        if (imgsrc->getDeconvAutoRadius_capturesharpening_SE(&rad)) {//To call Capture Sharpening from Selective Editing
                             caprad[sp] = kradreduc * rad;
                         } else {
                             rad = -1.f;

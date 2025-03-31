@@ -20,7 +20,7 @@
 #include "opthelper.h"
 
 namespace rtengine
-{
+{//added these functions November 2024 - J.Desmis for Capture Sharpening SE
 void compute13x13kernel2(float sigma, float kernel[13][13]);
 void compute9x9kernel2(float sigma, float kernel[9][9]);
 void compute7x7kernel2(float sigma, float kernel[7][7]);
