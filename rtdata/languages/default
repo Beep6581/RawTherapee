@@ -3593,6 +3593,7 @@ TP_LOCALLAB_MERTHR;Difference
 TP_LOCALLAB_MERTWE;Exclusion
 TP_LOCALLAB_MERTWO;Subtract
 TP_LOCALLAB_METHOD_TOOLTIP;'Enhanced + chroma denoise' significantly increases processing times.\nBut reduce artifacts.
+TP_LOCALLAB_METHODCAP_TOOLTIP;You can use two methods:\n 1. RL Deconvolution, which is similar to the version in the Detail tab.\n 2. Capture Deconvolution, which is an adaptation of Capture Sharpening in Raw tab, to Selective Editing and allows you to use this algorithm after denoising. Capture Sharpening's capabilities allow for finer sharpening control by allowing you to soften the sharpness in the corners, thus enhancing the main subject's focus.
 TP_LOCALLAB_MIDTCIE;Midtones
 TP_LOCALLAB_MLABEL;Restored data Min=%1 Max=%2
 TP_LOCALLAB_MLABEL_TOOLTIP;The values should be close to Min=0 Max=32768 (log mode) but other values are possible.You can adjust 'Clip restored data (gain)' and 'Offset' to normalize.\nRecovers image data without blending.
