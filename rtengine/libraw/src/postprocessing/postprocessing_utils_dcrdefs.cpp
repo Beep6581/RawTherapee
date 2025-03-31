@@ -59,11 +59,11 @@ void LibRaw::convert_to_rgb()
 	std::vector<char> prof_desc;
     int i, j, k;
     prof_desc_len = snprintf(NULL, 0, "%s gamma %g toe slope %g", name[output_color - 1],
-                             floorf(1000.f / gamm[0] + .5f) / 1000.f, floorf(gamm[1] * 1000.0f + .5f) / 1000.f) +
+                             floor(1000. / gamm[0] + .5) / 1000., floor(gamm[1] * 1000.0 + .5) / 1000.) +
                     1;
     prof_desc.resize(prof_desc_len);
-    sprintf(prof_desc.data(), "%s gamma %g toe slope %g", name[output_color - 1], floorf(1000.f / gamm[0] + .5f) / 1000.f,
-            floorf(gamm[1] * 1000.0f + .5f) / 1000.f);
+    sprintf(prof_desc.data(), "%s gamma %g toe slope %g", name[output_color - 1], floor(1000. / gamm[0] + .5) / 1000.,
+            floor(gamm[1] * 1000.0 + .5) / 1000.);
 
 	oprof = (unsigned *)calloc(phead[0], 1);
     memcpy(oprof, phead, sizeof phead);
@@ -88,7 +88,7 @@ void LibRaw::convert_to_rgb()
       {
         for (num = k = 0; k < 3; k++)
           num += LibRaw_constants::xyzd50_srgb[i][k] * inverse[j][k];
-        oprof[pbody[j * 3 + 23] / 4 + i + 2] = num * 0x10000 + 0.5;
+        oprof[pbody[j * 3 + 23] / 4 + i + 2] = unsigned(num * 0x10000 + 0.5);
       }
     for (i = 0; i < (int)phead[0] / 4; i++)
       oprof[i] = htonl(oprof[i]);
@@ -97,8 +97,8 @@ void LibRaw::convert_to_rgb()
 		strcpy((char *)oprof + pbody[5] + 12, prof_desc.data());
     for (i = 0; i < 3; i++)
       for (j = 0; j < colors; j++)
-        for (out_cam[i][j] = k = 0; k < 3; k++)
-          out_cam[i][j] += out_rgb[output_color - 1][i][k] * rgb_cam[k][j];
+        for (out_cam[i][j] = 0.f, k = 0; k < 3; k++)
+          out_cam[i][j] += float(out_rgb[output_color - 1][i][k] * rgb_cam[k][j]);
   }
   convert_to_rgb_loop(out_cam);
 
@@ -156,7 +156,7 @@ void LibRaw::scale_colors()
         FORC(8) dsum[c] += sum[c];
       skip_block:;
       }
-    FORC4 if (dsum[c]) pre_mul[c] = dsum[c + 4] / dsum[c];
+    FORC4 if (dsum[c]) pre_mul[c] = float(dsum[c + 4] / dsum[c]);
   }
   if (use_camera_wb && cam_mul[0] > 0.00001f)
   {
@@ -207,7 +207,7 @@ void LibRaw::scale_colors()
   if (!highlight)
     dmax = dmin;
   if (dmax > 0.00001 && maximum > 0)
-    FORC4 scale_mul[c] = (pre_mul[c] /= dmax) * 65535.0 / maximum;
+    FORC4 scale_mul[c] = (pre_mul[c] /= float(dmax)) * 65535.f / maximum;
   else
     FORC4 scale_mul[c] = 1.0;
 
@@ -230,20 +230,24 @@ void LibRaw::scale_colors()
         img[i] = image[i][c];
       for (row = 0; row < iheight; row++)
       {
-        ur = fr = (row - iheight * 0.5) * aber[c] + iheight * 0.5;
+        fr = float((row - iheight * 0.5) * aber[c] + iheight * 0.5);
+		ur = unsigned(fr);
         if (ur > (unsigned)iheight - 2)
           continue;
         fr -= ur;
         for (col = 0; col < iwidth; col++)
         {
-          uc = fc = (col - iwidth * 0.5) * aber[c] + iwidth * 0.5;
+          fc = float((col - iwidth * 0.5) * aber[c] + iwidth * 0.5);
+		  uc = unsigned(fc);
           if (uc > (unsigned)iwidth - 2)
             continue;
           fc -= uc;
           pix = img + ur * iwidth + uc;
           image[row * iwidth + col][c] =
+			  ushort(
               (pix[0] * (1 - fc) + pix[1] * fc) * (1 - fr) +
-              (pix[iwidth] * (1 - fc) + pix[iwidth + 1] * fc) * fr;
+              (pix[iwidth] * (1 - fc) + pix[iwidth + 1] * fc) * fr
+				  );
         }
       }
       free(img);
@@ -300,8 +304,8 @@ void LibRaw::green_matching()
       if ((img[j * width + i][3] < maximum * 0.95) && (c1 < maximum * thr) &&
           (c2 < maximum * thr))
       {
-        f = image[j * width + i][3] * m1 / m2;
-        image[j * width + i][3] = f > 0xffff ? 0xffff : f;
+        f = float(image[j * width + i][3] * m1 / m2);
+        image[j * width + i][3] = f > 65535.f ? 0xffff : ushort(f);
       }
     }
   free(img);

@@ -140,17 +140,17 @@ void LibRaw::parse_x3f()
       for (i = 0; i < (int)PL->num_properties; i++)
       {
         char name[100], value[100];
-        int noffset = (P[i].name - datap);
-        int voffset = (P[i].value - datap);
+        int noffset = int(P[i].name - datap);
+        int voffset = int(P[i].value - datap);
         if (noffset < 0 || noffset > (int)maxitems || voffset < 0 ||
             voffset > (int)maxitems)
           throw LIBRAW_EXCEPTION_IO_CORRUPT;
-        int maxnsize = maxitems - (P[i].name - datap);
-        int maxvsize = maxitems - (P[i].value - datap);
+        int maxnsize = maxitems - int(P[i].name - datap);
+        int maxvsize = maxitems - int(P[i].value - datap);
         utf2char(P[i].name, name, MIN(maxnsize, ((int)sizeof(name))));
         utf2char(P[i].value, value, MIN(maxvsize, ((int)sizeof(value))));
         if (!strcmp(name, "ISO"))
-          imgdata.other.iso_speed = atoi(value);
+          imgdata.other.iso_speed = float(atoi(value));
         if (!strcmp(name, "CAMMANUF"))
           strcpy(imgdata.idata.make, value);
         if (!strcmp(name, "CAMMODEL"))
@@ -162,24 +162,24 @@ void LibRaw::parse_x3f()
         if (!strcmp(name, "TIME"))
           imgdata.other.timestamp = atoi(value);
         if (!strcmp(name, "SHUTTER"))
-          imgdata.other.shutter = atof(value);
+          imgdata.other.shutter = float(atof(value));
         if (!strcmp(name, "APERTURE"))
-          imgdata.other.aperture = atof(value);
+          imgdata.other.aperture = float(atof(value));
         if (!strcmp(name, "FLENGTH"))
-          imgdata.other.focal_len = atof(value);
+          imgdata.other.focal_len = float(atof(value));
         if (!strcmp(name, "FLEQ35MM"))
-          imgdata.lens.makernotes.FocalLengthIn35mmFormat = atof(value);
+          imgdata.lens.makernotes.FocalLengthIn35mmFormat = float(atof(value));
         if (!strcmp(name, "IMAGERTEMP"))
-          MN.common.SensorTemperature = atof(value);
+          MN.common.SensorTemperature = float(atof(value));
         if (!strcmp(name, "LENSARANGE"))
         {
           char *sp;
           imgdata.lens.makernotes.MaxAp4CurFocal =
-              imgdata.lens.makernotes.MinAp4CurFocal = atof(value);
+              imgdata.lens.makernotes.MinAp4CurFocal = float(atof(value));
           sp = strrchr(value, ' ');
           if (sp)
           {
-            imgdata.lens.makernotes.MinAp4CurFocal = atof(sp);
+            imgdata.lens.makernotes.MinAp4CurFocal = float(atof(sp));
             if (imgdata.lens.makernotes.MaxAp4CurFocal >
                 imgdata.lens.makernotes.MinAp4CurFocal)
               my_swap(float, imgdata.lens.makernotes.MaxAp4CurFocal,
@@ -189,12 +189,11 @@ void LibRaw::parse_x3f()
         if (!strcmp(name, "LENSFRANGE"))
         {
           char *sp;
-          imgdata.lens.makernotes.MinFocal = imgdata.lens.makernotes.MaxFocal =
-              atof(value);
+          imgdata.lens.makernotes.MinFocal = imgdata.lens.makernotes.MaxFocal = float(atof(value));
           sp = strrchr(value, ' ');
           if (sp)
           {
-            imgdata.lens.makernotes.MaxFocal = atof(sp);
+            imgdata.lens.makernotes.MaxFocal = float(atof(sp));
             if ((imgdata.lens.makernotes.MaxFocal + 0.17f) <
                 imgdata.lens.makernotes.MinFocal)
               my_swap(float, imgdata.lens.makernotes.MaxFocal,
@@ -243,7 +242,7 @@ void LibRaw::parse_x3f()
       strcpy(imgdata.idata.make, "SIGMA");
 #if 1
       // Try to find model number in first 2048 bytes;
-      int pos = libraw_internal_data.internal_data.input->tell();
+      INT64 pos = libraw_internal_data.internal_data.input->tell();
       libraw_internal_data.internal_data.input->seek(0, SEEK_SET);
       unsigned char buf[2048];
       libraw_internal_data.internal_data.input->read(buf, 2048, 1);
@@ -309,7 +308,7 @@ void LibRaw::parse_x3f()
   }
 }
 
-INT64 LibRaw::x3f_thumb_size()
+int LibRaw::x3f_thumb_size()
 {
   try
   {
@@ -321,7 +320,7 @@ INT64 LibRaw::x3f_thumb_size()
       DE = x3f_get_thumb_plain(x3f);
     if (!DE)
       return -1;
-    int64_t p = x3f_load_data_size(x3f, DE);
+    int32_t p = x3f_load_data_size(x3f, DE);
     if (p < 0 || p > 0xffffffff)
       return -1;
     return p;
@@ -473,23 +472,23 @@ void LibRaw::x3f_dpq_interpolate_af(int xstep, int ystep, int scale)
           pixel0[1] = imgdata.color.black;
         float pixf0 = pixf[0];
         if (pixf0 < imgdata.color.black)
-          pixf0 = imgdata.color.black;
+          pixf0 = float(imgdata.color.black);
         float pixf1 = pixf[1];
         if (pixf1 < imgdata.color.black)
-          pixf1 = imgdata.color.black;
+          pixf1 = float(imgdata.color.black);
 
-        pixel0[0] = CLIP(
+        pixel0[0] = uint16_t(CLIP(
             ((float(pixf0 - imgdata.color.black) * multip +
               imgdata.color.black) +
              ((pixel0[0] - imgdata.color.black) * 3.75 + imgdata.color.black)) /
                 2,
-            16383);
-        pixel0[1] = CLIP(
+            16383));
+        pixel0[1] = uint16_t(CLIP(
             ((float(pixf1 - imgdata.color.black) * multip +
               imgdata.color.black) +
              ((pixel0[1] - imgdata.color.black) * 3.75 + imgdata.color.black)) /
                 2,
-            16383);
+            16383));
         // pixel0[1] = float(pixf[1]-imgdata.color.black)*multip +
         // imgdata.color.black;
       }
@@ -536,8 +535,8 @@ void LibRaw::x3f_dpq_interpolate_af_sd(int xstart, int ystart, int xend,
           sumG += row0[(x + xx) * 3 + 1];
         }
       }
-      pixel00[0] = sumR / 8.f;
-      pixel00[1] = sumG / 8.f;
+      pixel00[0] = uint16_t(sumR / 8.f);
+      pixel00[1] = uint16_t(sumG / 8.f);
 
       if (scale == 2)
       {
@@ -559,8 +558,8 @@ void LibRaw::x3f_dpq_interpolate_af_sd(int xstart, int ystart, int xend,
         }
         if (_cnt > 1.0)
         {
-          pixel0B[2] = sumG0 / _cnt;
-          pixel1B[2] = sumG1 / _cnt;
+          pixel0B[2] = uint16_t(sumG0 / _cnt);
+          pixel1B[2] = uint16_t(sumG1 / _cnt);
         }
       }
 

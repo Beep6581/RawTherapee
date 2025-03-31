@@ -18,14 +18,15 @@
 
 #include "../../internal/dcraw_defs.h"
 
-void LibRaw::parseSigmaMakernote (int base, int /*uptag*/, unsigned /*dng_writer*/) {
+void LibRaw::parseSigmaMakernote (INT64 base, int uptag, unsigned /*dng_writer*/) {
 unsigned wb_table1 [] = {
   LIBRAW_WBI_Auto, LIBRAW_WBI_Daylight, LIBRAW_WBI_Shade, LIBRAW_WBI_Cloudy,
   LIBRAW_WBI_Tungsten, LIBRAW_WBI_Fluorescent, LIBRAW_WBI_Flash,
   LIBRAW_WBI_Custom, LIBRAW_WBI_Custom1, LIBRAW_WBI_Custom2
 };
 
-  unsigned entries, tag, type, len, save;
+  unsigned entries, tag, type, len;
+  INT64 save;
   unsigned i;
 
   entries = get2();
@@ -33,14 +34,22 @@ unsigned wb_table1 [] = {
     return;
   while (entries--) {
     tiff_get(base, &tag, &type, &len, &save);
+
+	if (callbacks.makernotes_cb)
+    {
+      INT64 _savepos = ifp->tell();
+      callbacks.makernotes_cb(callbacks.makernotesparser_data, tag | (uptag << 16), type, len, order, ifp, base);
+      fseek(ifp, _savepos, SEEK_SET);
+    }
+
     if (tag == 0x0027) {
       ilm.LensID = get2();
     } else if (tag == 0x002a) {
-      ilm.MinFocal = getreal(type);
-      ilm.MaxFocal = getreal(type);
+      ilm.MinFocal = getrealf(type);
+      ilm.MaxFocal = getrealf(type);
     } else if (tag == 0x002b) {
-      ilm.MaxAp4MinFocal = getreal(type);
-      ilm.MaxAp4MaxFocal = getreal(type);
+      ilm.MaxAp4MinFocal = getrealf(type);
+      ilm.MaxAp4MaxFocal = getrealf(type);
     } else if (tag == 0x0120) {
       const unsigned tblsz = (sizeof wb_table1 / sizeof wb_table1[0]);
       if ((len >= tblsz) && (len%3 == 0) && len/3 <= tblsz) {
@@ -57,7 +66,7 @@ unsigned wb_table1 [] = {
   return;
 }
 
-void LibRaw::parse_makernote_0xc634(int base, int uptag, unsigned dng_writer)
+void LibRaw::parse_makernote_0xc634(INT64 base, int uptag, unsigned dng_writer)
 {
 
   if (metadata_blocks++ > LIBRAW_MAX_METADATA_BLOCKS)
@@ -91,7 +100,8 @@ void LibRaw::parse_makernote_0xc634(int base, int uptag, unsigned dng_writer)
     return;
   }
 
-  unsigned entries, tag, type, len, save, c;
+  unsigned entries, tag, type, len, c;
+  INT64 save;
 
   uchar *CanonCameraInfo = NULL;
   unsigned lenCanonCameraInfo = 0;
@@ -202,18 +212,25 @@ void LibRaw::parse_makernote_0xc634(int base, int uptag, unsigned dng_writer)
     if (len > 100 * 1024 * 1024)
       goto next; // 100Mb tag? No!
 
+	if (callbacks.makernotes_cb)
+    {
+      INT64 _savepos = ifp->tell();
+      callbacks.makernotes_cb(callbacks.makernotesparser_data, tag, type, len, order, ifp, base);
+      fseek(ifp, _savepos, SEEK_SET);
+    }
+
     if (!strncmp(make, "Canon", 5))
     {
       if (tag == 0x000d && len < 256000)
       { // camera info
         if (!tagtypeIs(LIBRAW_EXIFTAG_TYPE_LONG))
         {
-          CanonCameraInfo = (uchar *)malloc(MAX(16, len));
+          CanonCameraInfo = (uchar *)calloc(MAX(16, len),1);
           fread(CanonCameraInfo, len, 1, ifp);
         }
         else
         {
-          CanonCameraInfo = (uchar *)malloc(MAX(16, len * 4));
+          CanonCameraInfo = (uchar *)calloc(MAX(16, len * 4),1);
           fread(CanonCameraInfo, len, 4, ifp);
         }
         lenCanonCameraInfo = len;
@@ -331,7 +348,7 @@ void LibRaw::parse_makernote_0xc634(int base, int uptag, unsigned dng_writer)
   order = sorder;
 }
 
-void LibRaw::parse_makernote(int base, int uptag)
+void LibRaw::parse_makernote(INT64 base, int uptag)
 {
 
   if (metadata_blocks++ > LIBRAW_MAX_METADATA_BLOCKS)
@@ -381,8 +398,9 @@ void LibRaw::parse_makernote(int base, int uptag)
   }
 
 
-  unsigned entries, tag, type, len, save, c;
-  unsigned i, wb[4] = {0, 0, 0, 0};
+  unsigned entries, tag, type, len, c;
+  INT64 save;
+  unsigned wb[4] = {0, 0, 0, 0};
   short morder, sorder = order;
 
   uchar *CanonCameraInfo = 0;;
@@ -420,7 +438,8 @@ void LibRaw::parse_makernote(int base, int uptag)
       !strncmp(buf, "MLY", 3))  /* Minolta DiMAGE G series */
   {
     order = 0x4d4d;
-    while ((i = ftell(ifp)) < data_offset && i < 16384)
+	INT64 ii;
+    while ((ii = ftell(ifp)) < data_offset && ii < 16384LL)
     {
       wb[0] = wb[2];
       wb[2] = wb[1];
@@ -430,7 +449,7 @@ void LibRaw::parse_makernote(int base, int uptag)
       wb[3] = get2();
       if (wb[1] == 256 && wb[3] == 256 && wb[0] > 256 && wb[0] < 640 &&
           wb[2] > 256 && wb[2] < 640)
-        FORC4 cam_mul[c] = wb[c];
+        FORC4 cam_mul[c] = float(wb[c]);
     }
     goto quit;
   }
@@ -533,6 +552,14 @@ void LibRaw::parse_makernote(int base, int uptag)
       fseek(ifp, save, SEEK_SET); // Recover tiff-read position!!
       continue;
     }
+
+	if (callbacks.makernotes_cb)
+    {
+      INT64 _savepos = ifp->tell();
+      callbacks.makernotes_cb(callbacks.makernotesparser_data, tag, type, len, order, ifp, base);
+      fseek(ifp, _savepos, SEEK_SET);
+    }
+
     if (imKodak.MakerNoteKodak8a)
     {
       if ((tag == 0xff00) && tagtypeIs(LIBRAW_EXIFTAG_TYPE_LONG) && (len == 1))
@@ -561,12 +588,12 @@ void LibRaw::parse_makernote(int base, int uptag)
       {
         if (!tagtypeIs(LIBRAW_EXIFTAG_TYPE_LONG))
         {
-          CanonCameraInfo = (uchar *)malloc(MAX(16, len));
+          CanonCameraInfo = (uchar *)calloc(MAX(16, len),1);
           fread(CanonCameraInfo, len, 1, ifp);
         }
         else
         {
-          CanonCameraInfo = (uchar *)malloc(MAX(16, len * 4));
+          CanonCameraInfo = (uchar *)calloc(MAX(16, len * 4),1);
           fread(CanonCameraInfo, len, 4, ifp);
         }
         lenCanonCameraInfo = len;
@@ -752,7 +779,7 @@ void LibRaw::parse_makernote(int base, int uptag)
     {
       order = 0x4949;
       fseek(ifp, 140, SEEK_CUR);
-      FORC3 cam_mul[c] = get4();
+      FORC3 cam_mul[c] = float(get4());
     }
 
     if (tag == 0xb001 && tagtypeIs(LIBRAW_EXIFTAG_TYPE_SHORT)) // Sony ModelID
@@ -777,8 +804,8 @@ void LibRaw::parse_makernote(int base, int uptag)
     {
     get2_256:
       order = 0x4d4d;
-      cam_mul[0] = get2() / 256.0;
-      cam_mul[2] = get2() / 256.0;
+      cam_mul[0] = float(get2()) / 256.0f;
+      cam_mul[2] = float(get2()) / 256.0f;
     }
 
   next:

@@ -33,6 +33,10 @@ int LibRaw::dcraw_process(void)
     if (~O.cropbox[2] && ~O.cropbox[3])
       no_crop = 0;
 
+	for(int c = 0; c < 4; c++)
+		if (O.aber[c]< 0.001 || O.aber[c] > 1000.f)
+			O.aber[c] = 1.0;
+
     libraw_decoder_info_t di;
     get_decoder_info(&di);
 
@@ -155,7 +159,7 @@ int LibRaw::dcraw_process(void)
         (callbacks.interpolate_xtrans_cb)(this);
       else if (quality == 0)
         lin_interpolate();
-      else if (quality == 1 || P1.colors > 3)
+      else if (quality == 1 || P1.colors > 3 || (P1.filters != LIBRAW_XTRANS && P1.filters <= 1000))
         vng_interpolate();
       else if (quality == 2 && P1.filters > 1000)
         ppg_interpolate();
@@ -218,7 +222,7 @@ int LibRaw::dcraw_process(void)
     if (!libraw_internal_data.output_data.histogram)
     {
       libraw_internal_data.output_data.histogram =
-          (int(*)[LIBRAW_HISTOGRAM_SIZE])malloc(
+          (int(*)[LIBRAW_HISTOGRAM_SIZE])calloc(1,
               sizeof(*libraw_internal_data.output_data.histogram) * 4);
     }
 #ifndef NO_LCMS

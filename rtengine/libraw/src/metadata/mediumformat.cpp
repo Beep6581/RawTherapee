@@ -18,7 +18,7 @@
 
 #include "../../internal/dcraw_defs.h"
 
-void LibRaw::parse_phase_one(int base)
+void LibRaw::parse_phase_one(INT64 base)
 {
   unsigned entries, tag, type, len, data, i, c;
   INT64 save;
@@ -135,13 +135,13 @@ void LibRaw::parse_phase_one(int base)
       ph1.split_col = data;
       break;
     case 0x0223:
-      ph1.black_col = data + base;
+      ph1.black_col = int(data + base);
       break;
     case 0x0224:
       ph1.split_row = data;
       break;
     case 0x0225:
-      ph1.black_row = data + base;
+      ph1.black_row = int(data + base);
       break;
     case 0x0226:
       for (i = 0; i < 9; i++)
@@ -193,7 +193,7 @@ void LibRaw::parse_phase_one(int base)
       if (tagtypeIs(LIBRAW_EXIFTAG_TYPE_LONG))
         ilm.CurAp = libraw_powf64l(2.0f, (int_to_float(data) / 2.0f));
       else
-        ilm.CurAp = libraw_powf64l(2.0f, float(getreal(type) / 2.0f));
+        ilm.CurAp = libraw_powf64l(2.0f, getrealf(type) / 2.0f);
       break;
     case 0x0403:
       if (tagtypeIs(LIBRAW_EXIFTAG_TYPE_LONG))
@@ -218,7 +218,7 @@ void LibRaw::parse_phase_one(int base)
       }
       else
       {
-        ilm.MaxAp4CurFocal = libraw_powf64l(2.0f, float(getreal(type) / 2.0f));
+        ilm.MaxAp4CurFocal = libraw_powf64l(2.0f, getrealf(type) / 2.0f);
       }
       break;
     case 0x0415:
@@ -228,7 +228,7 @@ void LibRaw::parse_phase_one(int base)
       }
       else
       {
-        ilm.MinAp4CurFocal = libraw_powf64l(2.0f, float(getreal(type) / 2.0f));
+        ilm.MinAp4CurFocal = libraw_powf64l(2.0f, getrealf(type) / 2.0f);
       }
       break;
     case 0x0416:

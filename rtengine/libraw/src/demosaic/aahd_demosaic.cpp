@@ -63,18 +63,18 @@ struct AAHD
   }
   int inline Y(ushort3 &rgb) throw()
   {
-    return yuv_cam[0][0] * rgb[0] + yuv_cam[0][1] * rgb[1] +
-           yuv_cam[0][2] * rgb[2];
+    return int(yuv_cam[0][0] * rgb[0] + yuv_cam[0][1] * rgb[1] +
+           yuv_cam[0][2] * rgb[2]);
   }
   int inline U(ushort3 &rgb) throw()
   {
-    return yuv_cam[1][0] * rgb[0] + yuv_cam[1][1] * rgb[1] +
-           yuv_cam[1][2] * rgb[2];
+    return int(yuv_cam[1][0] * rgb[0] + yuv_cam[1][1] * rgb[1] +
+           yuv_cam[1][2] * rgb[2]);
   }
   int inline V(ushort3 &rgb) throw()
   {
-    return yuv_cam[2][0] * rgb[0] + yuv_cam[2][1] * rgb[1] +
-           yuv_cam[2][2] * rgb[2];
+    return int(yuv_cam[2][0] * rgb[0] + yuv_cam[2][1] * rgb[1] +
+           yuv_cam[2][2] * rgb[2]);
   }
   inline int nr_offset(int row, int col) throw()
   {
@@ -307,7 +307,7 @@ void AAHD::evaluate_ahd()
       ushort3 rgb;
       for (int c = 0; c < 3; ++c)
       {
-        rgb[c] = gammaLUT[rgb_ahd[d][i][c]];
+        rgb[c] = ushort(gammaLUT[rgb_ahd[d][i][c]]);
       }
       yuv[d][i][0] = Y(rgb);
       yuv[d][i][1] = U(rgb);
@@ -363,7 +363,7 @@ void AAHD::evaluate_ahd()
         ynr = &yuv[d][moff];
         for (int k = 0; k < 4; k++)
         {
-          ydiff[d][k] = ABS(ynr[0][0] - ynr[hvdir[k]][0]);
+          ydiff[d][k] = float(ABS(ynr[0][0] - ynr[hvdir[k]][0]));
           uvdiff[d][k] = SQR(ynr[0][1] - ynr[hvdir[k]][1]) +
                          SQR(ynr[0][2] - ynr[hvdir[k]][2]);
         }
@@ -606,9 +606,9 @@ void AAHD::make_ahd_gline(int i)
       min -= min / OverFraction;
       max += max / OverFraction;
       if (eg < min)
-        eg = min - sqrt(float(min - eg));
+        eg = min - int(sqrtf(float(min - eg)));
       else if (eg > max)
-        eg = max + sqrt(float(eg - max));
+        eg = max + int(sqrtf(float(eg - max)));
       if (eg > channel_maximum[1])
         eg = channel_maximum[1];
       else if (eg < channel_minimum[1])

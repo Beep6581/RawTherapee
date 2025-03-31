@@ -412,7 +412,7 @@ function CreateDmg {
     CreateWebloc       'Website' 'https://www.rawtherapee.com/'
     CreateWebloc 'Documentation' 'https://rawpedia.rawtherapee.com/'
     CreateWebloc         'Forum' 'https://discuss.pixls.us/c/software/rawtherapee'
-    CreateWebloc    'Report Bug' 'https://github.com/Beep6581/RawTherapee/issues/new'
+    CreateWebloc    'Report Bug' 'https://github.com/RawTherapee/RawTherapee/issues/new'
 
     # Disk image name
     if [[ -n $UNIVERSAL_URL ]]; then

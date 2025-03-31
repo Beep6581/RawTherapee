@@ -154,8 +154,8 @@ void LibRaw::romm_coeff(float romm_cam[3][3])
 
   for (i = 0; i < 3; i++)
     for (j = 0; j < 3; j++)
-      for (cmatrix[i][j] = k = 0; k < 3; k++)
-        cmatrix[i][j] += rgb_romm[i][k] * romm_cam[k][j];
+      for (cmatrix[i][j] = 0.f, k = 0; k < 3; k++)
+        cmatrix[i][j] += float(rgb_romm[i][k] * romm_cam[k][j]);
 }
 
 void LibRaw::remove_zeroes()
@@ -297,7 +297,7 @@ void LibRaw::cam_xyz_coeff(float _rgb_cam[3][4], double cam_xyz[4][3])
     {
       for (j = 0; j < 3; j++)
         cam_rgb[i][j] /= num;
-      pre_mul[i] = 1 / num;
+      pre_mul[i] = float(1.0 / num);
     }
     else
     {
@@ -309,11 +309,11 @@ void LibRaw::cam_xyz_coeff(float _rgb_cam[3][4], double cam_xyz[4][3])
   pseudoinverse(cam_rgb, inverse, colors);
   for (i = 0; i < 3; i++)
     for (j = 0; j < colors && j < 4; j++)
-      _rgb_cam[i][j] = inverse[j][i];
+      _rgb_cam[i][j] = float(inverse[j][i]);
 }
 
-void LibRaw::tiff_get(unsigned base, unsigned *tag, unsigned *type,
-                      unsigned *len, unsigned *save)
+void LibRaw::tiff_get(INT64 base, unsigned *tag, unsigned *type,
+                      unsigned *len, INT64 *save)
 {
 #ifdef LIBRAW_IOSPACE_CHECK
   INT64 pos = ftell(ifp);
@@ -324,7 +324,7 @@ void LibRaw::tiff_get(unsigned base, unsigned *tag, unsigned *type,
   *tag = get2();
   *type = get2();
   *len = get4();
-  *save = ftell(ifp) + 4;
+  *save = ftell(ifp) + 4LL;
   if (*len * tagtype_dataunit_bytes[(*type <= LIBRAW_EXIFTAG_TYPE_IFD8) ? *type : 0] > 4)
-    fseek(ifp, get4() + base, SEEK_SET);
+    fseek(ifp, INT64(get4()) + base, SEEK_SET);
 }

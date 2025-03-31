@@ -51,7 +51,7 @@ void LibRaw::dcb_ver(float (*image3)[3])
          col += 2, indx += 2)
     {
 
-      image3[indx][1] = CLIP((image[indx + u][1] + image[indx - u][1]) / 2.0);
+      image3[indx][1] = float(CLIP((image[indx + u][1] + image[indx - u][1]) / 2.0));
     }
 }
 
@@ -65,7 +65,7 @@ void LibRaw::dcb_hor(float (*image2)[3])
          col += 2, indx += 2)
     {
 
-      image2[indx][1] = CLIP((image[indx + 1][1] + image[indx - 1][1]) / 2.0);
+      image2[indx][1] = float(CLIP((image[indx + 1][1] + image[indx - 1][1]) / 2.0));
     }
 }
 
@@ -117,12 +117,14 @@ void LibRaw::dcb_color2(float (*image2)[3])
     {
 
       image2[indx][c] =
+		  float(
           CLIP((4 * image2[indx][1] - image2[indx + u + 1][1] -
                 image2[indx + u - 1][1] - image2[indx - u + 1][1] -
                 image2[indx - u - 1][1] + image[indx + u + 1][c] +
                 image[indx + u - 1][c] + image[indx - u + 1][c] +
                 image[indx - u - 1][c]) /
-               4.0);
+               4.0)
+			  );
     }
 
   for (row = 1; row < height - 1; row++)
@@ -131,11 +133,11 @@ void LibRaw::dcb_color2(float (*image2)[3])
          col < width - 1; col += 2, indx += 2)
     {
 
-      image2[indx][c] = CLIP((image[indx + 1][c] + image[indx - 1][c]) / 2.0);
+      image2[indx][c] = float(CLIP((image[indx + 1][c] + image[indx - 1][c]) / 2.0));
       image2[indx][d] =
-          CLIP((2 * image2[indx][1] - image2[indx + u][1] -
+          float(CLIP((2 * image2[indx][1] - image2[indx + u][1] -
                 image2[indx - u][1] + image[indx + u][d] + image[indx - u][d]) /
-               2.0);
+               2.0));
     }
 }
 
@@ -151,12 +153,14 @@ void LibRaw::dcb_color3(float (*image3)[3])
     {
 
       image3[indx][c] =
+		  float(
           CLIP((4 * image3[indx][1] - image3[indx + u + 1][1] -
                 image3[indx + u - 1][1] - image3[indx - u + 1][1] -
                 image3[indx - u - 1][1] + image[indx + u + 1][c] +
                 image[indx + u - 1][c] + image[indx - u + 1][c] +
                 image[indx - u - 1][c]) /
-               4.0);
+               4.0)
+			  );
     }
 
   for (row = 1; row < height - 1; row++)
@@ -166,10 +170,12 @@ void LibRaw::dcb_color3(float (*image3)[3])
     {
 
       image3[indx][c] =
+		  float(
           CLIP((2 * image3[indx][1] - image3[indx + 1][1] -
                 image3[indx - 1][1] + image[indx + 1][c] + image[indx - 1][c]) /
-               2.0);
-      image3[indx][d] = CLIP((image[indx + u][d] + image[indx - u][d]) / 2.0);
+               2.0)
+			  );
+      image3[indx][d] = float(CLIP((image[indx + u][d] + image[indx - u][d]) / 2.0));
     }
 }
 
@@ -186,7 +192,7 @@ void LibRaw::dcb_decide(float (*image2)[3], float (*image3)[3])
 
       d = ABS(c - 2);
 
-      current = MAX(image[indx + v][c],
+      current = float(MAX(image[indx + v][c],
                     MAX(image[indx - v][c],
                         MAX(image[indx - 2][c], image[indx + 2][c]))) -
                 MIN(image[indx + v][c],
@@ -197,9 +203,10 @@ void LibRaw::dcb_decide(float (*image2)[3], float (*image3)[3])
                         MAX(image[indx - 1 + u][d], image[indx - 1 - u][d]))) -
                 MIN(image[indx + 1 + u][d],
                     MIN(image[indx + 1 - u][d],
-                        MIN(image[indx - 1 + u][d], image[indx - 1 - u][d])));
+                        MIN(image[indx - 1 + u][d], image[indx - 1 - u][d]))));
 
       current2 =
+		  float(
           MAX(image2[indx + v][d],
               MAX(image2[indx - v][d],
                   MAX(image2[indx - 2][d], image2[indx + 2][d]))) -
@@ -211,9 +218,11 @@ void LibRaw::dcb_decide(float (*image2)[3], float (*image3)[3])
                   MAX(image2[indx - 1 + u][c], image2[indx - 1 - u][c]))) -
           MIN(image2[indx + 1 + u][c],
               MIN(image2[indx + 1 - u][c],
-                  MIN(image2[indx - 1 + u][c], image2[indx - 1 - u][c])));
+                  MIN(image2[indx - 1 + u][c], image2[indx - 1 - u][c])))
+			  );
 
       current3 =
+		  float(
           MAX(image3[indx + v][d],
               MAX(image3[indx - v][d],
                   MAX(image3[indx - 2][d], image3[indx + 2][d]))) -
@@ -225,12 +234,13 @@ void LibRaw::dcb_decide(float (*image2)[3], float (*image3)[3])
                   MAX(image3[indx - 1 + u][c], image3[indx - 1 - u][c]))) -
           MIN(image3[indx + 1 + u][c],
               MIN(image3[indx + 1 - u][c],
-                  MIN(image3[indx - 1 + u][c], image3[indx - 1 - u][c])));
+                  MIN(image3[indx - 1 + u][c], image3[indx - 1 - u][c])))
+			  );
 
       if (ABS(current - current2) < ABS(current - current3))
-        image[indx][1] = image2[indx][1];
+        image[indx][1] = ushort(image2[indx][1]);
       else
-        image[indx][1] = image3[indx][1];
+        image[indx][1] = ushort(image3[indx][1]);
     }
 }
 
@@ -253,8 +263,8 @@ void LibRaw::dcb_restore_from_buffer(float (*image2)[3])
 
   for (indx = 0; indx < height * width; indx++)
   {
-    image[indx][0] = image2[indx][0]; // R
-    image[indx][2] = image2[indx][2]; // B
+    image[indx][0] = ushort(image2[indx][0]); // R
+    image[indx][2] = ushort(image2[indx][2]); // B
   }
 }
 
@@ -267,21 +277,21 @@ void LibRaw::dcb_pp()
     for (col = 2, indx = row * u + col; col < width - 2; col++, indx++)
     {
 
-      r1 = (image[indx - 1][0] + image[indx + 1][0] + image[indx - u][0] +
+      r1 = int((image[indx - 1][0] + image[indx + 1][0] + image[indx - u][0] +
             image[indx + u][0] + image[indx - u - 1][0] +
             image[indx + u + 1][0] + image[indx - u + 1][0] +
             image[indx + u - 1][0]) /
-           8.0;
-      g1 = (image[indx - 1][1] + image[indx + 1][1] + image[indx - u][1] +
+           8.0f);
+      g1 = int((image[indx - 1][1] + image[indx + 1][1] + image[indx - u][1] +
             image[indx + u][1] + image[indx - u - 1][1] +
             image[indx + u + 1][1] + image[indx - u + 1][1] +
             image[indx + u - 1][1]) /
-           8.0;
-      b1 = (image[indx - 1][2] + image[indx + 1][2] + image[indx - u][2] +
+           8.0f);
+      b1 = int((image[indx - 1][2] + image[indx + 1][2] + image[indx - u][2] +
             image[indx + u][2] + image[indx - u - 1][2] +
             image[indx + u + 1][2] + image[indx - u + 1][2] +
             image[indx + u - 1][2]) /
-           8.0;
+           8.0f);
 
       image[indx][0] = CLIP(r1 + (image[indx][1] - g1));
       image[indx][2] = CLIP(b1 + (image[indx][1] - g1));
@@ -321,41 +331,41 @@ void LibRaw::dcb_color_full()
     for (col = 1 + (FC(row, 1) & 1), indx = row * width + col, c = FC(row, col),
         d = c / 2;
          col < u - 1; col += 2, indx += 2)
-      chroma[indx][d] = image[indx][c] - image[indx][1];
+      chroma[indx][d] = float(image[indx][c] - image[indx][1]);
 
   for (row = 3; row < height - 3; row++)
     for (col = 3 + (FC(row, 1) & 1), indx = row * width + col,
         c = 1 - FC(row, col) / 2, d = 1 - c;
          col < u - 3; col += 2, indx += 2)
     {
-      f[0] = 1.0 /
+      f[0] = 1.0f /
              (float)(1.0 +
-                     fabs(chroma[indx - u - 1][c] - chroma[indx + u + 1][c]) +
-                     fabs(chroma[indx - u - 1][c] - chroma[indx - w - 3][c]) +
-                     fabs(chroma[indx + u + 1][c] - chroma[indx - w - 3][c]));
-      f[1] = 1.0 /
+                     fabsf(chroma[indx - u - 1][c] - chroma[indx + u + 1][c]) +
+                     fabsf(chroma[indx - u - 1][c] - chroma[indx - w - 3][c]) +
+                     fabsf(chroma[indx + u + 1][c] - chroma[indx - w - 3][c]));
+      f[1] = 1.0f /
              (float)(1.0 +
-                     fabs(chroma[indx - u + 1][c] - chroma[indx + u - 1][c]) +
-                     fabs(chroma[indx - u + 1][c] - chroma[indx - w + 3][c]) +
-                     fabs(chroma[indx + u - 1][c] - chroma[indx - w + 3][c]));
-      f[2] = 1.0 /
+                     fabsf(chroma[indx - u + 1][c] - chroma[indx + u - 1][c]) +
+                     fabsf(chroma[indx - u + 1][c] - chroma[indx - w + 3][c]) +
+                     fabsf(chroma[indx + u - 1][c] - chroma[indx - w + 3][c]));
+      f[2] = 1.0f /
              (float)(1.0 +
-                     fabs(chroma[indx + u - 1][c] - chroma[indx - u + 1][c]) +
-                     fabs(chroma[indx + u - 1][c] - chroma[indx + w + 3][c]) +
-                     fabs(chroma[indx - u + 1][c] - chroma[indx + w - 3][c]));
-      f[3] = 1.0 /
+                     fabsf(chroma[indx + u - 1][c] - chroma[indx - u + 1][c]) +
+                     fabsf(chroma[indx + u - 1][c] - chroma[indx + w + 3][c]) +
+                     fabsf(chroma[indx - u + 1][c] - chroma[indx + w - 3][c]));
+      f[3] = 1.0f /
              (float)(1.0 +
-                     fabs(chroma[indx + u + 1][c] - chroma[indx - u - 1][c]) +
-                     fabs(chroma[indx + u + 1][c] - chroma[indx + w - 3][c]) +
-                     fabs(chroma[indx - u - 1][c] - chroma[indx + w + 3][c]));
-      g[0] = 1.325 * chroma[indx - u - 1][c] - 0.175 * chroma[indx - w - 3][c] -
-             0.075 * chroma[indx - w - 1][c] - 0.075 * chroma[indx - u - 3][c];
-      g[1] = 1.325 * chroma[indx - u + 1][c] - 0.175 * chroma[indx - w + 3][c] -
-             0.075 * chroma[indx - w + 1][c] - 0.075 * chroma[indx - u + 3][c];
-      g[2] = 1.325 * chroma[indx + u - 1][c] - 0.175 * chroma[indx + w - 3][c] -
-             0.075 * chroma[indx + w - 1][c] - 0.075 * chroma[indx + u - 3][c];
-      g[3] = 1.325 * chroma[indx + u + 1][c] - 0.175 * chroma[indx + w + 3][c] -
-             0.075 * chroma[indx + w + 1][c] - 0.075 * chroma[indx + u + 3][c];
+                     fabsf(chroma[indx + u + 1][c] - chroma[indx - u - 1][c]) +
+                     fabsf(chroma[indx + u + 1][c] - chroma[indx + w - 3][c]) +
+                     fabsf(chroma[indx - u - 1][c] - chroma[indx + w + 3][c]));
+      g[0] = 1.325f * chroma[indx - u - 1][c] - 0.175f * chroma[indx - w - 3][c] -
+             0.075f * chroma[indx - w - 1][c] - 0.075f * chroma[indx - u - 3][c];
+      g[1] = 1.325f * chroma[indx - u + 1][c] - 0.175f * chroma[indx - w + 3][c] -
+             0.075f * chroma[indx - w + 1][c] - 0.075f * chroma[indx - u + 3][c];
+      g[2] = 1.325f * chroma[indx + u - 1][c] - 0.175f * chroma[indx + w - 3][c] -
+             0.075f * chroma[indx + w - 1][c] - 0.075f * chroma[indx + u - 3][c];
+      g[3] = 1.325f * chroma[indx + u + 1][c] - 0.175f * chroma[indx + w + 3][c] -
+             0.075f * chroma[indx + w + 1][c] - 0.075f * chroma[indx + u + 3][c];
       chroma[indx][c] =
           (f[0] * g[0] + f[1] * g[1] + f[2] * g[2] + f[3] * g[3]) /
           (f[0] + f[1] + f[2] + f[3]);
@@ -366,27 +376,27 @@ void LibRaw::dcb_color_full()
          col < u - 3; col += 2, indx += 2)
       for (d = 0; d <= 1; c = 1 - c, d++)
       {
-        f[0] = 1.0 /
-               (float)(1.0 + fabs(chroma[indx - u][c] - chroma[indx + u][c]) +
-                       fabs(chroma[indx - u][c] - chroma[indx - w][c]) +
-                       fabs(chroma[indx + u][c] - chroma[indx - w][c]));
-        f[1] = 1.0 /
-               (float)(1.0 + fabs(chroma[indx + 1][c] - chroma[indx - 1][c]) +
-                       fabs(chroma[indx + 1][c] - chroma[indx + 3][c]) +
-                       fabs(chroma[indx - 1][c] - chroma[indx + 3][c]));
-        f[2] = 1.0 /
+        f[0] = 1.0f /
+               (float)(1.0f + fabsf(chroma[indx - u][c] - chroma[indx + u][c]) +
+                       fabsf(chroma[indx - u][c] - chroma[indx - w][c]) +
+                       fabsf(chroma[indx + u][c] - chroma[indx - w][c]));
+        f[1] = 1.0f /
+               (float)(1.0f + fabsf(chroma[indx + 1][c] - chroma[indx - 1][c]) +
+                       fabsf(chroma[indx + 1][c] - chroma[indx + 3][c]) +
+                       fabsf(chroma[indx - 1][c] - chroma[indx + 3][c]));
+        f[2] = 1.0f /
                (float)(1.0 + fabs(chroma[indx - 1][c] - chroma[indx + 1][c]) +
                        fabs(chroma[indx - 1][c] - chroma[indx - 3][c]) +
                        fabs(chroma[indx + 1][c] - chroma[indx - 3][c]));
-        f[3] = 1.0 /
+        f[3] = 1.0f /
                (float)(1.0 + fabs(chroma[indx + u][c] - chroma[indx - u][c]) +
                        fabs(chroma[indx + u][c] - chroma[indx + w][c]) +
                        fabs(chroma[indx - u][c] - chroma[indx + w][c]));
 
-        g[0] = 0.875 * chroma[indx - u][c] + 0.125 * chroma[indx - w][c];
-        g[1] = 0.875 * chroma[indx + 1][c] + 0.125 * chroma[indx + 3][c];
-        g[2] = 0.875 * chroma[indx - 1][c] + 0.125 * chroma[indx - 3][c];
-        g[3] = 0.875 * chroma[indx + u][c] + 0.125 * chroma[indx + w][c];
+        g[0] = 0.875f * chroma[indx - u][c] + 0.125f * chroma[indx - w][c];
+        g[1] = 0.875f * chroma[indx + 1][c] + 0.125f * chroma[indx + 3][c];
+        g[2] = 0.875f * chroma[indx - 1][c] + 0.125f * chroma[indx - 3][c];
+        g[3] = 0.875f * chroma[indx + u][c] + 0.125f * chroma[indx + w][c];
 
         chroma[indx][c] =
             (f[0] * g[0] + f[1] * g[1] + f[2] * g[2] + f[3] * g[3]) /
@@ -488,9 +498,10 @@ void LibRaw::dcb_correction()
                 image[indx - 2][3];
 
       image[indx][1] =
+		  ushort(
           ((16 - current) * (image[indx - 1][1] + image[indx + 1][1]) / 2.0 +
            current * (image[indx - u][1] + image[indx + u][1]) / 2.0) /
-          16.0;
+          16.0f);
     }
 }
 
@@ -568,7 +579,7 @@ void LibRaw::dcb_refinement()
         else
           f[4] = f[0];
 
-        g1 = (5 * f[0] + 3 * f[1] + f[2] + 3 * f[3] + f[4]) / 13.0;
+        g1 = (5.f * f[0] + 3.f * f[1] + f[2] + 3.f * f[3] + f[4]) / 13.0f;
 
         f[0] = (float)(image[indx - 1][1] + image[indx + 1][1]) /
                (2 * image[indx][c]);
@@ -597,7 +608,7 @@ void LibRaw::dcb_refinement()
         else
           f[4] = f[0];
 
-        g2 = (5 * f[0] + 3 * f[1] + f[2] + 3 * f[3] + f[4]) / 13.0;
+        g2 = (5.f * f[0] + 3.f * f[1] + f[2] + 3.f * f[3] + f[4]) / 13.0f;
 
         image[indx][1] = CLIP((image[indx][c]) *
                               (current * g1 + (16 - current) * g2) / 16.0);
@@ -625,7 +636,7 @@ void LibRaw::dcb_refinement()
                           MAX(image[indx + 1][1],
                               MAX(image[indx - u][1], image[indx + u][1])))))));
 
-      image[indx][1] = ULIM(image[indx][1], g2, g1);
+      image[indx][1] = ushort(ULIM(image[indx][1], g2, g1));
     }
 }
 
@@ -743,35 +754,35 @@ void LibRaw::fbdd_green()
          col < u - 5; col += 2, indx += 2)
     {
 
-      f[0] = 1.0 / (1.0 + abs(image[indx - u][1] - image[indx - w][1]) +
+      f[0] = 1.0f / (1.0f + abs(image[indx - u][1] - image[indx - w][1]) +
                     abs(image[indx - w][1] - image[indx + y][1]));
-      f[1] = 1.0 / (1.0 + abs(image[indx + 1][1] - image[indx + 3][1]) +
+      f[1] = 1.0f / (1.0f + abs(image[indx + 1][1] - image[indx + 3][1]) +
                     abs(image[indx + 3][1] - image[indx - 5][1]));
-      f[2] = 1.0 / (1.0 + abs(image[indx - 1][1] - image[indx - 3][1]) +
+      f[2] = 1.0f / (1.0f + abs(image[indx - 1][1] - image[indx - 3][1]) +
                     abs(image[indx - 3][1] - image[indx + 5][1]));
-      f[3] = 1.0 / (1.0 + abs(image[indx + u][1] - image[indx + w][1]) +
+      f[3] = 1.0f / (1.0f + abs(image[indx + u][1] - image[indx + w][1]) +
                     abs(image[indx + w][1] - image[indx - y][1]));
 
-      g[0] = CLIP((23 * image[indx - u][1] + 23 * image[indx - w][1] +
+      g[0] = float(CLIP((23 * image[indx - u][1] + 23 * image[indx - w][1] +
                    2 * image[indx - y][1] +
                    8 * (image[indx - v][c] - image[indx - x][c]) +
                    40 * (image[indx][c] - image[indx - v][c])) /
-                  48.0);
-      g[1] = CLIP((23 * image[indx + 1][1] + 23 * image[indx + 3][1] +
+                  48.0f));
+      g[1] = float(CLIP((23 * image[indx + 1][1] + 23 * image[indx + 3][1] +
                    2 * image[indx + 5][1] +
                    8 * (image[indx + 2][c] - image[indx + 4][c]) +
                    40 * (image[indx][c] - image[indx + 2][c])) /
-                  48.0);
-      g[2] = CLIP((23 * image[indx - 1][1] + 23 * image[indx - 3][1] +
+                  48.f));
+      g[2] = float(CLIP((23 * image[indx - 1][1] + 23 * image[indx - 3][1] +
                    2 * image[indx - 5][1] +
                    8 * (image[indx - 2][c] - image[indx - 4][c]) +
                    40 * (image[indx][c] - image[indx - 2][c])) /
-                  48.0);
-      g[3] = CLIP((23 * image[indx + u][1] + 23 * image[indx + w][1] +
+                  48.0f));
+      g[3] = float(CLIP((23 * image[indx + u][1] + 23 * image[indx + w][1] +
                    2 * image[indx + y][1] +
                    8 * (image[indx + v][c] - image[indx + x][c]) +
                    40 * (image[indx][c] - image[indx + v][c])) /
-                  48.0);
+                  48.0f));
 
       image[indx][1] =
           CLIP((f[0] * g[0] + f[1] * g[1] + f[2] * g[2] + f[3] * g[3]) /

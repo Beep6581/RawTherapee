@@ -166,12 +166,12 @@ void LibRaw::smal_v9_load_raw()
   nseg = (uchar)fgetc(ifp);
   fseek(ifp, offset, SEEK_SET);
   for (i = 0; i < nseg * 2; i++)
-    ((unsigned *)seg)[i] = get4() + data_offset * (i & 1);
+    ((unsigned *)seg)[i] = get4() + unsigned(data_offset & 0xffffffff) * (i & 1);
   fseek(ifp, 78, SEEK_SET);
   holes = fgetc(ifp);
   fseek(ifp, 88, SEEK_SET);
   seg[nseg][0] = raw_height * raw_width;
-  seg[nseg][1] = get4() + data_offset;
+  seg[nseg][1] = get4() + unsigned(data_offset & 0xffffffff);
   for (i = 0; i < nseg; i++)
     smal_decode_segment(seg + i, holes);
   if (holes)

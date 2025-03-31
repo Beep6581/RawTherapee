@@ -81,7 +81,7 @@ int LibRaw::get_decoder_info(libraw_decoder_info_t *d_info)
   else if (load_raw == &LibRaw::canon_sraw_load_raw)
   {
     d_info->decoder_name = "canon_sraw_load_raw()";
-    d_info->decoder_flags = LIBRAW_DECODER_TRYRAWSPEED3;
+    //d_info->decoder_flags = LIBRAW_DECODER_TRYRAWSPEED3;
   }
   else if (load_raw == &LibRaw::crxLoadRaw)
   {
@@ -204,7 +204,7 @@ int LibRaw::get_decoder_info(libraw_decoder_info_t *d_info)
   else if (load_raw == &LibRaw::panasonic_load_raw)
   {
     d_info->decoder_name = "panasonic_load_raw()";
-    d_info->decoder_flags = LIBRAW_DECODER_TRYRAWSPEED | LIBRAW_DECODER_TRYRAWSPEED;
+    d_info->decoder_flags = LIBRAW_DECODER_TRYRAWSPEED | LIBRAW_DECODER_TRYRAWSPEED3;
   }
   else if (load_raw == &LibRaw::panasonicC6_load_raw)
   {
@@ -219,10 +219,10 @@ int LibRaw::get_decoder_info(libraw_decoder_info_t *d_info)
   {
     d_info->decoder_name = "panasonicC8_load_raw()";
   }
-  else if (load_raw == &LibRaw::olympus_load_raw)
+  else if (load_raw == &LibRaw::olympus14_load_raw)
   {
-    d_info->decoder_name = "olympus_load_raw()";
-    d_info->decoder_flags = LIBRAW_DECODER_TRYRAWSPEED | LIBRAW_DECODER_TRYRAWSPEED3;;
+    d_info->decoder_flags = 0; 
+    d_info->decoder_name = "olympus14_load_raw()";
   }
   else if (load_raw == &LibRaw::minolta_rd175_load_raw)
   {

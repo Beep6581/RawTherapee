@@ -1,6 +1,6 @@
 /* -*- C++ -*-
  * File: huffmandec.cpp
- * Copyright (C) 2023-2024 Alex Tutubalin, LibRaw LLC
+ * Copyright (C) 2024 Alex Tutubalin, LibRaw LLC
  *
    Lossless JPEG decoder
 
@@ -170,8 +170,8 @@ bool LibRaw_LjpegDecompressor::parse_dht(bool init[4], uint32_t bits[4][17], uin
       return false;
 
     if (length < 1 + 16 + acc)
-      return 0xff;
-	for (int i = 0; i < acc; i++)
+      return false;
+	for (uint32_t i = 0; i < acc; i++)
 		huffval[th][i] = buffer.get_u8();
 
     init[th] = true;
@@ -202,12 +202,15 @@ void copy_yuv_422(uint16_t *out, uint32_t row, uint32_t col, uint32_t width, int
 
 bool LibRaw_LjpegDecompressor::decode_ljpeg_422(std::vector<uint16_t> &_dest, int width, int height)
 {
-  if (sof.width * 3 != width || sof.height != height)
+  if (sof.width * 3u != unsigned(width) || sof.height != unsigned(height))
     return false;
   if (width % 2 || width % 6 || height % 2)
     return false;
 
-  if (_dest.size() < width * height)
+  if (_dest.size() < size_t(width * height))
+    return false;
+
+  if(width < 1 || height < 1)
     return false;
 
   uint16_t *dest = _dest.data();
@@ -228,20 +231,20 @@ bool LibRaw_LjpegDecompressor::decode_ljpeg_422(std::vector<uint16_t> &_dest, in
   int32_t cr = base + h3.decode(pump);
   copy_yuv_422(dest, 0, 0, width, y1, y2, cb, cr);
 
-  for (uint32_t row = 0; row < height; row++)
+  for (uint32_t row = 0; row < uint32_t(height); row++)
   {
 	  uint32_t startcol = row == 0 ? 6 : 0;
-	  for (uint32_t col = startcol; col < width; col += 6)
+	  for (uint32_t col = startcol; col < uint32_t(width); col += 6)
 	  {
         uint32_t pos = (col == 0) ? (row - 1) * width : row * width + col - 3;
         int32_t py = dest[pos],
 			pcb = dest[pos + 1],
 			pcr = dest[pos + 2];
-        int32_t y1 = py + h1.decode(pump);
-        int32_t y2 = y1 + h1.decode(pump);
-        int32_t cb = pcb + h2.decode(pump);
-        int32_t cr = pcr + h3.decode(pump);
-        copy_yuv_422(dest, row, col, width, y1, y2, cb, cr);
+        int32_t _y1 = py + h1.decode(pump);
+        int32_t _y2 = _y1 + h1.decode(pump);
+        int32_t _cb = pcb + h2.decode(pump);
+        int32_t _cr = pcr + h3.decode(pump);
+        copy_yuv_422(dest, row, col, width, _y1, _y2, _cb, _cr);
 	  }
   }
   return true;
@@ -263,7 +266,7 @@ bool LibRaw_SOFInfo::parse_sof(ByteStreamBE& input)
 		return false;
 
 	components.clear();
-	for (int i = 0; i < cps; i++)
+	for (unsigned i = 0; i < cps; i++)
 	{
       unsigned id = input.get_u8();
 	  unsigned subs = input.get_u8();
@@ -288,7 +291,7 @@ uint32_t LibRaw_SOFInfo::parse_sos(ByteStreamBE& input)
     uint32_t readcs = input.get_u8();
 	uint32_t cs = csfix ? csi : readcs; // csfix might be used in MOS decoder
 	int cid = -1;
-	for(int c = 0; c < components.size(); c++)
+	for(unsigned c = 0; c < components.size(); c++)
 		if (components[c].id == cs)
 		{
 			cid = c;
@@ -357,14 +360,14 @@ void HuffTable::initval(uint32_t _bits[17], uint32_t _huffval[256], bool _dng_bu
 			break;
 		nbits--;
       }
-	hufftable.resize(1 << nbits);
-	for (int i = 0; i < hufftable.size(); i++) hufftable[i] = 0;
+	hufftable.resize( size_t(1ULL << nbits));
+	for (unsigned i = 0; i < hufftable.size(); i++) hufftable[i] = 0;
 
 	int h = 0;
     int pos = 0;
     for (uint8_t len = 0; len < nbits; len++)
     {
-      for (int i = 0; i < bits[len + 1]; i++)
+      for (uint32_t i = 0; i < bits[len + 1]; i++)
       {
         for (int j = 0; j < (1 << (nbits - len - 1)); j++)
         {

@@ -41,8 +41,28 @@ void LibRaw::setOlympusBodyFeatures(unsigned long long id)
       ilm.CameraMount = LIBRAW_MOUNT_mFT;
     }
   }
+
   else
   {
+    if (
+        (id == OlyID_SH_2)  ||
+        (id == OlyID_TG_4)  ||
+        (id == OlyID_TG_5)  ||
+        (id == OlyID_TG_6)  ||
+        (id == OlyID_TG_7)  ||
+        (id == OlyID_XZ_10)
+       ) {
+      ilm.CameraFormat = LIBRAW_FORMAT_1div2p3INCH;
+    }
+    else
+    {
+      if (
+           (id == OlyID_STYLUS_1) ||
+           (id == OlyID_XZ_2)
+         ) {
+        ilm.CameraFormat = LIBRAW_FORMAT_1div1p7INCH;
+      }
+    }
     ilm.LensMount = ilm.CameraMount = LIBRAW_MOUNT_FixedLens;
   }
   return;
@@ -173,7 +193,7 @@ void LibRaw::parseOlympus_Equipment(unsigned tag, unsigned /*type */, unsigned l
 
   return;
 }
-void LibRaw::parseOlympus_CameraSettings(int base, unsigned tag, unsigned type,
+void LibRaw::parseOlympus_CameraSettings(INT64 base, unsigned tag, unsigned type,
                                          unsigned len, unsigned dng_writer)
 {
   // uptag 0x2020
@@ -225,7 +245,7 @@ void LibRaw::parseOlympus_CameraSettings(int base, unsigned tag, unsigned type,
     FORC3 imOly.AFFineTuneAdj[c] = get2();
     break;
   case 0x0401:
-    imCommon.FlashEC = getreal(type);
+    imCommon.FlashEC = getrealf(type);
     break;
   case 0x0507:
     imOly.ColorSpace = get2();
@@ -284,15 +304,16 @@ void LibRaw::parseOlympus_ImageProcessing(unsigned tag, unsigned type,
 
   if ((tag == 0x0100) && (dng_writer == nonDNG))
   {
-    cam_mul[0] = get2() / 256.0;
-    cam_mul[2] = get2() / 256.0;
+    cam_mul[0] = float(get2()) / 256.f;
+    cam_mul[2] = float(get2()) / 256.f;
   }
   else if ((tag == 0x0101) && (len == 2) &&
            ((OlyID == OlyID_E_410) || (OlyID == OlyID_E_510)))
   {
     for (i = 0; i < 64; i++)
     {
-      icWBCCTC[i][2] = icWBCCTC[i][4] = icWBC[i][1] = icWBC[i][3] = 0x100;
+		icWBCCTC[i][2] = icWBCCTC[i][4] = 256.f;
+		icWBC[i][1] = icWBC[i][3] = 0x100;
     }
     for (i = 64; i < 256; i++)
     {
@@ -314,8 +335,8 @@ void LibRaw::parseOlympus_ImageProcessing(unsigned tag, unsigned type,
     if (CT)
     {
       icWBCCTC[nWB - 1][0] = CT;
-      icWBCCTC[nWB - 1][1] = wb[0];
-      icWBCCTC[nWB - 1][3] = wb[2];
+      icWBCCTC[nWB - 1][1] = float(wb[0]);
+      icWBCCTC[nWB - 1][3] = float(wb[2]);
     }
     if (len == 4)
     {
@@ -328,8 +349,8 @@ void LibRaw::parseOlympus_ImageProcessing(unsigned tag, unsigned type,
       }
       if (CT)
       {
-        icWBCCTC[nWB - 1][2] = wb[1];
-        icWBCCTC[nWB - 1][4] = wb[3];
+        icWBCCTC[nWB - 1][2] = float(wb[1]);
+        icWBCCTC[nWB - 1][4] = float(wb[3]);
       }
     }
   }
@@ -339,7 +360,7 @@ void LibRaw::parseOlympus_ImageProcessing(unsigned tag, unsigned type,
     wbG = get2();
     tWB = Oly_wb_list2[nWB << 1];
     if (nWB)
-      icWBCCTC[nWB - 1][2] = icWBCCTC[nWB - 1][4] = wbG;
+      icWBCCTC[nWB - 1][2] = icWBCCTC[nWB - 1][4] = float(wbG);
     if (tWB != 0x100)
       icWBC[tWB][1] = icWBC[tWB][3] = wbG;
   }
@@ -370,11 +391,11 @@ void LibRaw::parseOlympus_ImageProcessing(unsigned tag, unsigned type,
     {
       if (!imOly.ColorSpace)
       {
-        FORC3 cmatrix[i][c] = ((short)get2()) / 256.0;
+        FORC3 cmatrix[i][c] = float((short)get2()) / 256.f;
       }
       else
       {
-        FORC3 imgdata.color.ccm[i][c] = ((short)get2()) / 256.0;
+        FORC3 imgdata.color.ccm[i][c] = float((short)get2()) / 256.f;
       }
     }
   }
@@ -402,10 +423,66 @@ void LibRaw::parseOlympus_ImageProcessing(unsigned tag, unsigned type,
   {
     imgdata.sizes.raw_inset_crops[0].cheight = get2();
   }
+  else if ((tag == 0x0640) && (dng_writer == nonDNG))
+  {
+    imOly.tagX640 = get2();
+  }
+  else if ((tag == 0x0641) && (dng_writer == nonDNG))
+  {
+    imOly.tagX641 = get2();
+  }
+  else if ((tag == 0x0642) && (dng_writer == nonDNG))
+  {
+    imOly.tagX642 = get2();
+  }
+  else if ((tag == 0x0643) && (dng_writer == nonDNG))
+  {
+    imOly.tagX643 = get2();
+  }
+  else if ((tag == 0x0644) && (dng_writer == nonDNG))
+  {
+    imOly.tagX644 = get2();
+  }
+  else if ((tag == 0x0645) && (dng_writer == nonDNG))
+  {
+    imOly.tagX645 = get2();
+  }
+  else if ((tag == 0x0646) && (dng_writer == nonDNG))
+  {
+    imOly.tagX646 = get2();
+  }
+  else if ((tag == 0x0647) && (dng_writer == nonDNG))
+  {
+    imOly.tagX647 = get2();
+  }
+  else if ((tag == 0x0648) && (dng_writer == nonDNG))
+  {
+    imOly.tagX648 = get2();
+  }
+  else if ((tag == 0x0649) && (dng_writer == nonDNG))
+  {
+    imOly.tagX649 = get2();
+  }
+  else if ((tag == 0x0650) && (dng_writer == nonDNG))
+  {
+    imOly.tagX650 = get2();
+  }
+  else if ((tag == 0x0651) && (dng_writer == nonDNG))
+  {
+    imOly.tagX651 = get2();
+  }
+  else if ((tag == 0x0652) && (dng_writer == nonDNG))
+  {
+    imOly.tagX652 = get2();
+  }
+  else if ((tag == 0x0653) && (dng_writer == nonDNG))
+  {
+    imOly.tagX653 = get2();
+  }
   else if ((tag == 0x0805) && (len == 2))
   {
-    imOly.SensorCalibration[0] = getreal(type);
-    imOly.SensorCalibration[1] = getreal(type);
+    imOly.SensorCalibration[0] = int(getreal(type));
+    imOly.SensorCalibration[1] = int(getreal(type));
     if ((dng_writer == nonDNG) && (OlyID != OlyID_XZ_1))
       FORC4 imgdata.color.linear_max[c] = imOly.SensorCalibration[0];
   }
@@ -472,7 +549,8 @@ void LibRaw::parseOlympus_ImageProcessing(unsigned tag, unsigned type,
         imCommon.CameraTemperature = (float)(c - 32) / 1.8f;
       if ((imCommon.exifAmbientTemperature > -273.15f) &&
           ((OlyID == OlyID_TG_5) ||
-           (OlyID == OlyID_TG_6))
+           (OlyID == OlyID_TG_6) ||
+           (OlyID == OlyID_TG_7))
       )
         imCommon.CameraTemperature += imCommon.exifAmbientTemperature;
     }
@@ -516,11 +594,11 @@ void LibRaw::parseOlympus_RawInfo(unsigned tag, unsigned /*type */, unsigned len
     {
       if (!imOly.ColorSpace)
       {
-        FORC3 cmatrix[i][c] = ((short)get2()) / 256.0;
+        FORC3 cmatrix[i][c] = float((short)get2()) / 256.f;
       }
       else
       {
-        FORC3 imgdata.color.ccm[i][c] = ((short)get2()) / 256.0;
+        FORC3 imgdata.color.ccm[i][c] = float((short)get2()) / 256.f;
       }
     }
   }
@@ -548,7 +626,7 @@ void LibRaw::parseOlympus_RawInfo(unsigned tag, unsigned /*type */, unsigned len
 }
 
 
-void LibRaw::parseOlympusMakernotes (int base, unsigned tag, unsigned type, unsigned len, unsigned dng_writer) {
+void LibRaw::parseOlympusMakernotes (INT64 base, unsigned tag, unsigned type, unsigned len, unsigned dng_writer) {
 
   int c;
   unsigned a;
@@ -578,7 +656,7 @@ void LibRaw::parseOlympusMakernotes (int base, unsigned tag, unsigned type, unsi
 					stmread(imgdata.shootinginfo.BodySerial, len, ifp);
 				break;
 			case 0x1002:
-				ilm.CurAp = libraw_powf64l(2.0f, getreal(type) / 2);
+				ilm.CurAp = float(libraw_powf64l(2.0f, getrealf(type) / 2.f));
 				break;
 			case 0x1007:
 				imCommon.SensorTemperature = (float)get2();
@@ -603,9 +681,9 @@ void LibRaw::parseOlympusMakernotes (int base, unsigned tag, unsigned type, unsi
 				if (strcmp(software, "v757-71") && (dng_writer == nonDNG)) {
 					for (int i = 0; i < 3; i++) {
 						if (!imOly.ColorSpace) {
-							FORC3 cmatrix[i][c] = ((short)get2()) / 256.0;
+							FORC3 cmatrix[i][c] = float((short)get2()) / 256.f;
 						} else {
-							FORC3 imgdata.color.ccm[i][c] = ((short)get2()) / 256.0;
+							FORC3 imgdata.color.ccm[i][c] = float((short)get2()) / 256.f;
 						}
 					}
 				}
@@ -616,11 +694,11 @@ void LibRaw::parseOlympusMakernotes (int base, unsigned tag, unsigned type, unsi
 				break;
 			case 0x1017:
 				if (dng_writer == nonDNG)
-				  cam_mul[0] = get2() / 256.0;
+				  cam_mul[0] = float(get2()) / 256.f;
 				break;
 			case 0x1018:
 				if (dng_writer == nonDNG)
-				  cam_mul[2] = get2() / 256.0;
+				  cam_mul[2] = float(get2()) / 256.f;
 				break;
 			case 0x102c:
 				if (dng_writer == nonDNG)

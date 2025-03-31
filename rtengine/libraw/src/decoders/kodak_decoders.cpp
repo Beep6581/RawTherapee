@@ -55,7 +55,7 @@ void LibRaw::kodak_radc_load_raw()
       3, -49, 3, -9,  3, 9,   4, 49,  5, -79, 5, 79,  2, -1,  2, 13,  2, 26,
       3, 39,  4, -16, 5, 55,  6, -37, 6, 76,  2, -26, 2, -13, 2, 1,   3, -39,
       4, 16,  5, -55, 6, -76, 6, 37};
-  std::vector<ushort> huff_buffer(19 * 256);
+  std::vector<ushort> huff_buffer(19 * 256,0);
   ushort* huff = &huff_buffer[0];
   int row, col, tree, nreps, rep, step, i, c, s, r, x, y, val;
   short last[3] = {16, 16, 16}, mul[3], buf[3][3][386];
@@ -64,9 +64,9 @@ void LibRaw::kodak_radc_load_raw()
 
   for (i = 2; i < 12; i += 2)
     for (c = pt[i - 2]; c <= pt[i]; c++)
-      curve[c] = (float)(c - pt[i - 2]) / (pt[i] - pt[i - 2]) *
+      curve[c] = ushort((float)(c - pt[i - 2]) / (pt[i] - pt[i - 2]) *
                      (pt[i + 1] - pt[i - 1]) +
-                 pt[i - 1] + 0.5;
+                 pt[i - 1] + 0.5f);
   for (s = i = 0; i < int(sizeof src); i += 2)
     FORC(256 >> src[i])
   ((ushort *)huff)[s++] = src[i] << 8 | (uchar)src[i + 1];
@@ -88,7 +88,8 @@ void LibRaw::kodak_radc_load_raw()
       x = ~((~0u) << (s - 1));
       val <<= 12 - s;
       for (i = 0; i < int(sizeof(buf[0]) / sizeof(short)); i++)
-        ((short *)buf[c])[i] = MIN(0x7FFFFFFF, (((short *)buf[c])[i] * static_cast<long long>(val) + x)) >> s;
+        ((short *)buf[c])[i] =
+            short((MIN(0x7FFFFFFF, (((short *)buf[c])[i] * static_cast<long long>(val) + x)) >> s) & 0xffff);
       last[c] = mul[c];
       for (r = 0; r <= int(!c); r++)
       {
@@ -181,15 +182,15 @@ void LibRaw::kodak_jpeg_load_raw()
           INT64(imgdata.rawparams.max_raw_memory_mb) * INT64(1024 * 1024))
 	  throw LIBRAW_EXCEPTION_TOOBIG;
 
-  unsigned char *jpg_buf = (unsigned char *)malloc(data_size);
-  std::vector<uchar> pixel_buf(width * 3);
+  unsigned char *jpg_buf = (unsigned char *)calloc(data_size,1);
+  std::vector<uchar> pixel_buf(width * 3, 0);
   jpeg_create_decompress(&cinfo);
 
   fread(jpg_buf, data_size, 1, ifp);
-  libraw_swab(jpg_buf, data_size);
+  libraw_swab(jpg_buf, int(data_size));
   try
   {
-    jpeg_mem_src(&cinfo, jpg_buf, data_size);
+    jpeg_mem_src(&cinfo, jpg_buf, (unsigned long)data_size);
     int rc = jpeg_read_header(&cinfo, TRUE);
     if (rc != 1)
       throw LIBRAW_EXCEPTION_DECODE_JPEG;
@@ -369,7 +370,8 @@ int LibRaw::kodak_65000_decode(short *out, int bsize)
   uchar c, blen[768];
   ushort raw[6];
   INT64 bitbuf = 0;
-  int save, bits = 0, i, j, len, diff;
+  int bits = 0, i, j, len, diff;
+  INT64 save;
 
   save = ftell(ifp);
   bsize = (bsize + 3) & -4;

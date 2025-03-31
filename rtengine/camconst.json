@@ -10,7 +10,7 @@ this file.
 If you add values for your own camera, consider sharing them with the community for everyone's benefit. You can do so
 via our forum or GitHub page:
 - https://discuss.pixls.us/c/software/rawtherapee
-- https://github.com/Beep6581/RawTherapee/issues
+- https://github.com/RawTherapee/RawTherapee/issues
 
 Value priority:
 1. If you set the dcraw matrix in your user camconst.json file for a camera entry which already exists in RT's file

@@ -19,9 +19,10 @@
 #include "../../internal/dcraw_defs.h"
 #include "../../internal/libraw_cameraids.h"
 
-void LibRaw::parse_exif_interop(int base)
+void LibRaw::parse_exif_interop(INT64 base)
 {
-	unsigned entries, tag, type, len, save;
+	unsigned entries, tag, type, len;
+	INT64 save;
 	char value[4] = { 0,0,0,0 };
 	entries = get2();
 	INT64 fsize = ifp->size();
@@ -59,10 +60,11 @@ void LibRaw::parse_exif_interop(int base)
 	}
 }
 
-void LibRaw::parse_exif(int base)
+void LibRaw::parse_exif(INT64 base)
 {
-  unsigned entries, tag, type, len, save, c;
+  unsigned entries, tag, type, len, c;
   double expo, ape;
+  INT64 save;
 
   unsigned kodak = !strncmp(make, "EASTMAN", 7) && tiff_nifds < 3;
 
@@ -81,7 +83,7 @@ void LibRaw::parse_exif(int base)
     tiff_get(base, &tag, &type, &len, &save);
 
     INT64 savepos = ftell(ifp);
-    if (len > 8 && savepos + len > fsize * 2)
+    if (len > 8 && savepos + INT64(len) > fsize * 2LL)
     {
       fseek(ifp, save, SEEK_SET); // Recover tiff-read position!!
       continue;
@@ -107,7 +109,7 @@ void LibRaw::parse_exif(int base)
 			imgdata.color.ExifColorSpace = LIBRAW_COLORSPACE_AdobeRGB;
 		break;
     case 0x9400:
-      imCommon.exifAmbientTemperature = getreal(type);
+      imCommon.exifAmbientTemperature = getrealf(type);
       if ((imCommon.CameraTemperature > -273.15f) &&
           ((OlyID == OlyID_TG_5) ||
            (OlyID == OlyID_TG_6))
@@ -115,19 +117,19 @@ void LibRaw::parse_exif(int base)
         imCommon.CameraTemperature += imCommon.exifAmbientTemperature;
       break;
     case 0x9401:
-      imCommon.exifHumidity = getreal(type);
+      imCommon.exifHumidity = getrealf(type);
       break;
     case 0x9402:
-      imCommon.exifPressure = getreal(type);
+      imCommon.exifPressure = getrealf(type);
       break;
     case 0x9403:
-      imCommon.exifWaterDepth = getreal(type);
+      imCommon.exifWaterDepth = getrealf(type);
       break;
     case 0x9404:
-      imCommon.exifAcceleration = getreal(type);
+      imCommon.exifAcceleration = getrealf(type);
       break;
     case 0x9405:
-      imCommon.exifCameraElevationAngle = getreal(type);
+      imCommon.exifCameraElevationAngle = getrealf(type);
       break;
 
     case 0xa405: // FocalLengthIn35mmFormat
@@ -137,10 +139,10 @@ void LibRaw::parse_exif(int base)
       stmread(imgdata.shootinginfo.BodySerial, len, ifp);
       break;
     case 0xa432: // LensInfo, 42034dec, Lens Specification per EXIF standard
-      imgdata.lens.MinFocal = getreal(type);
-      imgdata.lens.MaxFocal = getreal(type);
-      imgdata.lens.MaxAp4MinFocal = getreal(type);
-      imgdata.lens.MaxAp4MaxFocal = getreal(type);
+      imgdata.lens.MinFocal = getrealf(type);
+      imgdata.lens.MaxFocal = getrealf(type);
+      imgdata.lens.MaxAp4MinFocal = getrealf(type);
+      imgdata.lens.MaxAp4MaxFocal = getrealf(type);
       break;
     case 0xa435: // LensSerialNumber
       stmread(imgdata.lens.LensSerial, len, ifp);
@@ -155,10 +157,10 @@ void LibRaw::parse_exif(int base)
       fread(imgdata.color.RawDataUniqueID, 1, 16, ifp);
       break;
     case 0xc630: // DNG LensInfo, Lens Specification per EXIF standard
-      imgdata.lens.dng.MinFocal = getreal(type);
-      imgdata.lens.dng.MaxFocal = getreal(type);
-      imgdata.lens.dng.MaxAp4MinFocal = getreal(type);
-      imgdata.lens.dng.MaxAp4MaxFocal = getreal(type);
+      imgdata.lens.dng.MinFocal = getrealf(type);
+      imgdata.lens.dng.MaxFocal = getrealf(type);
+      imgdata.lens.dng.MaxAp4MinFocal = getrealf(type);
+      imgdata.lens.dng.MaxAp4MaxFocal = getrealf(type);
       break;
     case 0xc68b: /* 50827, OriginalRawFileName */
       stmread(imgdata.color.OriginalRawFileName, len, ifp);
@@ -172,27 +174,27 @@ void LibRaw::parse_exif(int base)
         imgdata.lens.Lens[0] = '\0';
       break;
     case 0x9205:
-      imgdata.lens.EXIF_MaxAp = libraw_powf64l(2.0f, (getreal(type) / 2.0f));
+      imgdata.lens.EXIF_MaxAp = libraw_powf64l(2.0f, getrealf(type) / 2.0f);
       break;
     case 0x829a: // 33434
-      shutter = getreal(type);
+      shutter = getrealf(type);
       if (tiff_nifds > 0 && tiff_nifds <= LIBRAW_IFD_MAXCOUNT)
           tiff_ifd[tiff_nifds - 1].t_shutter = shutter;
       break;
     case 0x829d: // 33437, FNumber
-      aperture = getreal(type);
+      aperture = getrealf(type);
       break;
     case 0x8827: // 34855
       iso_speed = get2();
       break;
     case 0x8831: // 34865
       if (iso_speed == 0xffff && !strncasecmp(make, "FUJI", 4))
-        iso_speed = getreal(type);
+        iso_speed = getrealf(type);
       break;
     case 0x8832: // 34866
       if (iso_speed == 0xffff &&
           (!strncasecmp(make, "SONY", 4) || !strncasecmp(make, "CANON", 5)))
-        iso_speed = getreal(type);
+        iso_speed = getrealf(type);
       break;
     case 0x9003: // 36867
     case 0x9004: // 36868
@@ -201,20 +203,20 @@ void LibRaw::parse_exif(int base)
     case 0x9201: // 37377
        if ((expo = -getreal(type)) < 128 && shutter == 0.)
        {
-            shutter = libraw_powf64l(2.0, expo);
+            shutter = libraw_powf64l(2.0f, float(expo));
             if (tiff_nifds > 0 && tiff_nifds <= LIBRAW_IFD_MAXCOUNT)
               tiff_ifd[tiff_nifds - 1].t_shutter = shutter;
        }
       break;
     case 0x9202: // 37378 ApertureValue
       if ((fabs(ape = getreal(type)) < 256.0) && (!aperture))
-        aperture = libraw_powf64l(2.0, ape / 2);
+        aperture = libraw_powf64l(2.0f, float(ape / 2.0));
       break;
     case 0x9209: // 37385
-      flash_used = getreal(type);
+      flash_used = getrealf(type);
       break;
     case 0x920a: // 37386
-      focal_len = getreal(type);
+      focal_len = getrealf(type);
       break;
     case 0x927c: // 37500
 #ifndef USE_6BY9RPI
@@ -239,14 +241,14 @@ void LibRaw::parse_exif(int base)
 
         pos = strstr(mn_text, "ev=");
         if (pos)
-          imCommon.ExposureCalibrationShift = atof(pos + 3);
+          imCommon.ExposureCalibrationShift = float(atof(pos + 3));
 
         pos = strstr(mn_text, "gain_r=");
         if (pos)
-          cam_mul[0] = atof(pos + 7);
+          cam_mul[0] = float(atof(pos + 7));
         pos = strstr(mn_text, "gain_b=");
         if (pos)
-          cam_mul[2] = atof(pos + 7);
+          cam_mul[2] = float(atof(pos + 7));
         if ((cam_mul[0] > 0.001f) && (cam_mul[2] > 0.001f))
           cam_mul[1] = cam_mul[3] = 1.0f;
         else
@@ -259,7 +261,7 @@ void LibRaw::parse_exif(int base)
           char *pos2 = strstr(pos, " ");
           if (pos2)
           {
-            l = pos2 - pos;
+            l = LIM(ushort(pos2 - pos), 0, 511);
             memcpy(ccms, pos, l);
             ccms[l] = '\0';
 #ifdef LIBRAW_WIN32_CALLS
@@ -326,9 +328,10 @@ void LibRaw::parse_exif(int base)
   }
 }
 
-void LibRaw::parse_gps_libraw(int base)
+void LibRaw::parse_gps_libraw(INT64 base)
 {
-  unsigned entries, tag, type, len, save, c;
+  unsigned entries, tag, type, len, c;
+  INT64 save;
 
   entries = get2();
   if (entries > 40)
@@ -370,18 +373,18 @@ void LibRaw::parse_gps_libraw(int base)
       break;
     case 0x0002:
       if (len == 3)
-        FORC(3) imgdata.other.parsed_gps.latitude[c] = getreal(type);
+        FORC(3) imgdata.other.parsed_gps.latitude[c] = getrealf(type);
       break;
     case 0x0004:
       if (len == 3)
-        FORC(3) imgdata.other.parsed_gps.longitude[c] = getreal(type);
+        FORC(3) imgdata.other.parsed_gps.longitude[c] = getrealf(type);
       break;
     case 0x0007:
       if (len == 3)
-        FORC(3) imgdata.other.parsed_gps.gpstimestamp[c] = getreal(type);
+        FORC(3) imgdata.other.parsed_gps.gpstimestamp[c] = getrealf(type);
       break;
     case 0x0006:
-      imgdata.other.parsed_gps.altitude = getreal(type);
+      imgdata.other.parsed_gps.altitude = getrealf(type);
       break;
     case 0x0009:
       imgdata.other.parsed_gps.gpsstatus = getc(ifp);
@@ -391,9 +394,10 @@ void LibRaw::parse_gps_libraw(int base)
   }
 }
 
-void LibRaw::parse_gps(int base)
+void LibRaw::parse_gps(INT64 base)
 {
-  unsigned entries, tag, type, len, save, c;
+  unsigned entries, tag, type, len, c;
+  INT64 save;
 
   entries = get2();
   if (entries > 40)

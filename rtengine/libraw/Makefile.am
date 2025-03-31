@@ -33,6 +33,7 @@ lib_libraw_a_SOURCES = src/libraw_c_api.cpp \
 	src/decoders/crx.cpp src/decoders/pana8.cpp src/decoders/decoders_dcraw.cpp \
 	src/decoders/sonycc.cpp src/decompressors/losslessjpeg.cpp  \
 	src/decoders/decoders_libraw_dcrdefs.cpp \
+	src/decoders/olympus14.cpp \
 	src/decoders/decoders_libraw.cpp src/decoders/dng.cpp \
 	src/decoders/fp_dng.cpp src/decoders/fuji_compressed.cpp \
 	src/decoders/generic.cpp src/decoders/kodak_decoders.cpp \

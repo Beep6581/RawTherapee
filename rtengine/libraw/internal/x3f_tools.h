@@ -534,6 +534,6 @@ x3f_directory_entry_t *x3f_get_thumb_huffman(x3f_t *x3f);
 x3f_directory_entry_t *x3f_get_thumb_jpeg(x3f_t *x3f);
 x3f_directory_entry_t *x3f_get_camf(x3f_t *x3f);
 x3f_directory_entry_t *x3f_get_prop(x3f_t *x3f);
-/* extern */ int64_t x3f_load_data_size(x3f_t *x3f, x3f_directory_entry_t *DE);
+/* extern */ int32_t x3f_load_data_size(x3f_t *x3f, x3f_directory_entry_t *DE);
 
 #endif

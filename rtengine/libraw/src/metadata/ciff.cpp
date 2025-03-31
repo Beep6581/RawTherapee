@@ -57,7 +57,7 @@ void LibRaw::ciff_block_1030()
 /*
    Parse a CIFF file, better known as Canon CRW format.
  */
-void LibRaw::parse_ciff(int offset, int length, int depth)
+void LibRaw::parse_ciff(INT64 offset, int length, int depth)
 {
   int nrecs, c, type, len, wbi = -1;
   INT64 save, tboff;

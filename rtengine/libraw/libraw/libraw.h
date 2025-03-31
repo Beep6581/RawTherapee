@@ -120,14 +120,17 @@ extern "C"
   DllDef int libraw_raw2image(libraw_data_t *);
   DllDef void libraw_free_image(libraw_data_t *);
   /* version helpers */
-  DllDef const char *libraw_version();
-  DllDef int libraw_versionNumber();
+  DllDef const char *libraw_version(void);
+  DllDef int libraw_versionNumber(void);
   /* Camera list */
-  DllDef const char **libraw_cameraList();
-  DllDef int libraw_cameraCount();
+  DllDef const char **libraw_cameraList(void);
+  DllDef int libraw_cameraCount(void);
 
   /* helpers */
   DllDef void libraw_set_exifparser_handler(libraw_data_t *,
+                                            exif_parser_callback cb,
+                                            void *datap);
+  DllDef void libraw_set_makernotes_handler(libraw_data_t *,
                                             exif_parser_callback cb,
                                             void *datap);
   DllDef void libraw_set_dataerror_handler(libraw_data_t *, data_callback func,
@@ -138,7 +141,8 @@ extern "C"
   DllDef int libraw_get_decoder_info(libraw_data_t *lr,
                                      libraw_decoder_info_t *d);
   DllDef int libraw_COLOR(libraw_data_t *, int row, int col);
-  DllDef unsigned libraw_capabilities();
+  DllDef unsigned libraw_capabilities(void);
+  DllDef int libraw_adjust_to_raw_inset_crop(libraw_data_t *lr, unsigned mask, float maxcrop);
 
   /* DCRAW compatibility */
   DllDef int libraw_adjust_sizes_info_only(libraw_data_t *);
@@ -231,6 +235,11 @@ public:
     callbacks.exifparser_data = data;
     callbacks.exif_cb = cb;
   }
+  void set_makernotes_handler(exif_parser_callback cb, void *data)
+  {
+    callbacks.makernotesparser_data = data;
+    callbacks.makernotes_cb = cb;
+  }
   void set_dataerror_handler(data_callback func, void *data)
   {
     callbacks.datacb_data = data;
@@ -247,6 +256,10 @@ public:
 
   void convertFloatToInt(float dmin = 4096.f, float dmax = 32767.f,
                          float dtarget = 16383.f);
+
+  /* Make/Model simplification */
+  static int simplify_make_model(unsigned *_maker_index, char *_make, unsigned _make_buf_size, char *_model, unsigned _model_buf_size);
+
   /* helpers */
   static unsigned capabilities();
   static const char *version();

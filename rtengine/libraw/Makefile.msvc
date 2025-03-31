@@ -42,6 +42,7 @@ $(LIBDLL): $(DLL)
 LIB_OBJECTS= object\libraw_datastream_st.obj object\libraw_c_api_st.obj \
   object\cameralist_st.obj object\fuji_compressed_st.obj \
   object\crx_st.obj object\pana8_st.obj object\fp_dng_st.obj object\decoders_libraw_st.obj \
+  object\olympus14_st.obj \
   object\sonycc_st.obj object\losslessjpeg_st.obj \
   object\unpack_st.obj object\unpack_thumb_st.obj \
   object\rawspeed_glue_st.obj object\dngsdk_glue_st.obj \
@@ -76,6 +77,7 @@ LIB_OBJECTS= object\libraw_datastream_st.obj object\libraw_c_api_st.obj \
 DLL_OBJECTS= object\libraw_datastream.obj object\libraw_c_api.obj \
   object\cameralist.obj object\fuji_compressed.obj \
   object\crx.obj object\pana8.obj object\fp_dng.obj object\decoders_libraw.obj \
+  object\olympus14.obj \
   object\sonycc.obj object\losslessjpeg.obj \
   object\unpack.obj object\unpack_thumb.obj \
   object\rawspeed_glue.obj object\dngsdk_glue.obj \
@@ -167,14 +169,14 @@ $(DLL): $(DLL_OBJECTS)
 
 # LIBRARY BUILD
 $(LIBSTATIC): $(LIB_OBJECTS)
-        -del /f $(LIBSTATIC)
+	-del /f $(LIBSTATIC)
 	lib /OUT:$(LIBSTATIC) /LTCG $(LIB_OBJECTS)
 
 # clean
 clean:
 	-del $(LIBSTATIC) $(LIBDLL) lib\*.exp
 	-del $(LIB_OBJECTS) $(DLL_OBJECTS)
-        -del object\*.o
+	-del object\*.o
 	-del $(DLL) $(SAMPLES)
 
 # OBJ generation rules
@@ -195,6 +197,12 @@ object\pana8_st.obj: src\decoders\pana8.cpp
 
 object\pana8.obj: src\decoders\pana8.cpp
 	$(CC) $(COPT) /DLIBRAW_BUILDLIB /Fo"object\\pana8.obj" /c src\decoders\pana8.cpp
+
+object\olympus14_st.obj: src\decoders\olympus14.cpp
+	$(CC) $(COPT) /DLIBRAW_NODLL /DLIBRAW_BUILDLIB /Fo"object\\olympus14_st.obj" /c src\decoders\olympus14.cpp
+
+object\olympus14.obj: src\decoders\olympus14.cpp
+	$(CC) $(COPT) /DLIBRAW_BUILDLIB /Fo"object\\olympus14.obj" /c src\decoders\olympus14.cpp
 
 object\sonycc_st.obj: src\decoders\sonycc.cpp
 	$(CC) $(COPT) /DLIBRAW_NODLL /DLIBRAW_BUILDLIB /Fo"object\\sonycc_st.obj" /c src\decoders\sonycc.cpp

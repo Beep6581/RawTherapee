@@ -53,8 +53,8 @@ void LibRaw::wavelet_denoise()
     nc++;
   FORC(nc)
   { /* denoise R,G1,B,G3 individually */
-    for (i = 0; i < size; i++)
-      fimg[i] = 256 * sqrt((double)(image[i][c] << scale));
+	  for (i = 0; i < size; i++)
+		  fimg[i] = 256.f * sqrtf((float)(image[i][c] << scale));
     for (hpass = lev = 0; lev < 5; lev++)
     {
       lpass = size * ((lev & 1) + 1);
@@ -62,13 +62,13 @@ void LibRaw::wavelet_denoise()
       {
         hat_transform(temp, fimg + hpass + row * iwidth, 1, iwidth, 1 << lev);
         for (col = 0; col < iwidth; col++)
-          fimg[lpass + row * iwidth + col] = temp[col] * 0.25;
+          fimg[lpass + row * iwidth + col] = temp[col] * 0.25f;
       }
       for (col = 0; col < iwidth; col++)
       {
         hat_transform(temp, fimg + lpass + col, iwidth, iheight, 1 << lev);
         for (row = 0; row < iheight; row++)
-          fimg[lpass + row * iwidth + col] = temp[row] * 0.25;
+          fimg[lpass + row * iwidth + col] = temp[row] * 0.25f;
       }
       thold = threshold * noise[lev];
       for (i = 0; i < size; i++)
@@ -92,7 +92,7 @@ void LibRaw::wavelet_denoise()
   { /* pull G1 and G3 closer together */
     for (row = 0; row < 2; row++)
     {
-      mul[row] = 0.125 * pre_mul[FC(row + 1, 0) | 1] / pre_mul[FC(row, 0) | 1];
+      mul[row] = 0.125f * pre_mul[FC(row + 1, 0) | 1] / pre_mul[FC(row, 0) | 1];
       blk[row] = cblack[FC(row, 0) | 1];
     }
     for (i = 0; i < 4; i++)
@@ -112,9 +112,9 @@ void LibRaw::wavelet_denoise()
         avg = (window[0][col - 1] + window[0][col + 1] + window[2][col - 1] +
                window[2][col + 1] - blk[~row & 1] * 4) *
                   mul[row & 1] +
-              (window[1][col] + blk[row & 1]) * 0.5;
+              (window[1][col] + blk[row & 1]) * 0.5f;
         avg = avg < 0 ? 0 : sqrt(avg);
-        diff = sqrt((double)BAYER(row, col)) - avg;
+        diff = sqrtf((float)BAYER(row, col)) - avg;
         if (diff < -thold)
           diff += thold;
         else if (diff > thold)
@@ -287,7 +287,7 @@ void LibRaw::blend_highlights()
   if ((unsigned)(colors - 3) > 1)
     return;
   RUN_CALLBACK(LIBRAW_PROGRESS_HIGHLIGHTS, 0, 2);
-  FORCC if (clip > (i = 65535 * pre_mul[c])) clip = i;
+  FORCC if (clip > (i = int(65535.f * pre_mul[c]))) clip = i;
   for (row = 0; row < height; row++)
     for (col = 0; col < width; col++)
     {
@@ -301,17 +301,17 @@ void LibRaw::blend_highlights()
       }
       for (i = 0; i < 2; i++)
       {
-        FORCC for (lab[i][c] = j = 0; j < colors; j++) lab[i][c] +=
-            trans[colors - 3][c][j] * cam[i][j];
+        FORCC for (lab[i][c] = 0, j = 0; j < colors; j++) lab[i][c] +=
+            int(trans[colors - 3][c][j] * cam[i][j]);
         for (sum[i] = 0, c = 1; c < colors; c++)
           sum[i] += SQR(lab[i][c]);
       }
       chratio = sqrt(sum[1] / sum[0]);
       for (c = 1; c < colors; c++)
         lab[0][c] *= chratio;
-      FORCC for (cam[0][c] = j = 0; j < colors; j++) cam[0][c] +=
+      FORCC for (cam[0][c] = 0, j = 0; j < colors; j++) cam[0][c] +=
           itrans[colors - 3][c][j] * lab[0][j];
-      FORCC image[row * width + col][c] = cam[0][c] / colors;
+      FORCC image[row * width + col][c] = ushort(cam[0][c] / colors);
     }
   RUN_CALLBACK(LIBRAW_PROGRESS_HIGHLIGHTS, 1, 2);
 }
@@ -326,8 +326,8 @@ void LibRaw::recover_highlights()
   static const signed char dir[8][2] = {{-1, -1}, {-1, 0}, {-1, 1}, {0, 1},
                                         {1, 1},   {1, 0},  {1, -1}, {0, -1}};
 
-  grow = pow(2.0, 4 - highlight);
-  FORC(unsigned(colors)) hsat[c] = 32000 * pre_mul[c];
+  grow = powf(2.0f, float(4 - highlight));
+  FORC(unsigned(colors)) hsat[c] = int(32000.f * pre_mul[c]);
   FORC(unsigned(colors))
 	  if(hsat[c]<1)
 		  return;
@@ -344,7 +344,8 @@ void LibRaw::recover_highlights()
     for (mrow = 0; mrow < high; mrow++)
       for (mcol = 0; mcol < wide; mcol++)
       {
-        sum = wgt = count = 0;
+        count = 0;
+		sum = wgt = 0;
         for (row = mrow * SCALE; row < (mrow + 1) * SCALE; row++)
           for (col = mcol * SCALE; col < (mcol + 1) * SCALE; col++)
           {
@@ -359,14 +360,15 @@ void LibRaw::recover_highlights()
         if (count == SCALE * SCALE)
           map[mrow * wide + mcol] = sum / wgt;
       }
-    for (spread = 32 / grow; spread--;)
+    for (spread = int(32.f / grow); spread--;)
     {
       for (mrow = 0; mrow < high; mrow++)
         for (mcol = 0; mcol < wide; mcol++)
         {
           if (map[mrow * wide + mcol])
             continue;
-          sum = count = 0;
+		  sum = 0;
+		  count = 0;
           for (d = 0; d < 8; d++)
           {
             y = mrow + dir[d][0];
@@ -401,7 +403,7 @@ void LibRaw::recover_highlights()
             pixel = image[row * width + col];
             if (pixel[c] / hsat[c] > 1)
             {
-              val = pixel[kc] * map[mrow * wide + mcol];
+              val = int(pixel[kc] * map[mrow * wide + mcol]);
               if (pixel[c] < val)
                 pixel[c] = CLIP(val);
             }

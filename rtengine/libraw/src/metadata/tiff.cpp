@@ -19,9 +19,10 @@
 #include "../../internal/dcraw_defs.h"
 #include "../../internal/libraw_cameraids.h"
 
-int LibRaw::parse_tiff_ifd(int base)
+int LibRaw::parse_tiff_ifd(INT64 base)
 {
-  unsigned entries, tag, type, len, plen = 16, save, utmp;
+  unsigned entries, tag, type, len, plen = 16, utmp;
+  INT64 save;
   int ifd, use_cm = 0, cfa, i, j, c, ima_len = 0;
   char *cbuf, *cp;
   uchar cfa_pat[16], cfa_pc[] = {0, 1, 2, 3}, tab[256];
@@ -90,8 +91,8 @@ int LibRaw::parse_tiff_ifd(int base)
       case 0x0111: /* 273, StripOffset */
         if (len > 1 && len < 16384)
         {
-          off_t sav = ftell(ifp);
-          tiff_ifd[ifd].strip_offsets = (int *)calloc(len, sizeof(int));
+          INT64 sav = ftell(ifp);
+          tiff_ifd[ifd].strip_offsets = (INT64 *)calloc(len, sizeof(INT64));
           tiff_ifd[ifd].strip_offsets_count = len;
           for (int ii = 0; ii < (int)len; ii++)
             tiff_ifd[ifd].strip_offsets[ii] = get4() + base;
@@ -175,10 +176,12 @@ int LibRaw::parse_tiff_ifd(int base)
         {
           if ((j = get2()) < 0x100)
           {
-            icWBC[j][0] = get2();
-            icWBC[j][2] = get2();
-            icWBC[j][1] = icWBC[j][3] =
-                0x100;
+			  if (j >= 0) {
+				  icWBC[j][0] = get2();
+				  icWBC[j][2] = get2();
+				  icWBC[j][1] = icWBC[j][3] =
+					  0x100;
+			  }
           }
           else // light source out of EXIF numbers range
             get4();
@@ -223,7 +226,7 @@ int LibRaw::parse_tiff_ifd(int base)
         break;
       case 0x0037: /*  55, ISO if  ISO in 0x8827 & ISO in 0x0017 == 65535 */
         if (iso_speed == 65535)
-          iso_speed = get4();
+          iso_speed = float(get4());
         break;
 	  case 0x0039:
         if (type == LIBRAW_EXIFTAG_TYPE_UNDEFINED && len == 26)
@@ -372,7 +375,7 @@ int LibRaw::parse_tiff_ifd(int base)
       case 0x0120: /* 288, CameraIFD, contains tags 0x1xxx, 0x2xxx, 0x3xxx */
       {
         unsigned sorder = order;
-        unsigned long sbase = base;
+        INT64 sbase = base;
         base = ftell(ifp);
         order = get2();
         fseek(ifp, 2, SEEK_CUR);
@@ -441,7 +444,7 @@ int LibRaw::parse_tiff_ifd(int base)
         break;
       case 0x3420: /* 13344, WB_RedLevelAuto, contained in 0x0120 CameraIFD */
         icWBC[LIBRAW_WBI_Auto][0] = get2();
-        icWBC[LIBRAW_WBI_Auto][1] = icWBC[LIBRAW_WBI_Auto][3] = 1024.0f;
+        icWBC[LIBRAW_WBI_Auto][1] = icWBC[LIBRAW_WBI_Auto][3] = 1024;
         break;
       case 0x3421: /* 13345, WB_BlueLevelAuto, contained in 0x0120 CameraIFD */
         icWBC[LIBRAW_WBI_Auto][2] = get2();
@@ -474,7 +477,7 @@ int LibRaw::parse_tiff_ifd(int base)
       case 0x0011: /*  17, RedBalance */
       case 0x0012: /*  18, BlueBalance */
         if (tagtypeIs(LIBRAW_EXIFTAG_TYPE_SHORT) && len == 1)
-          cam_mul[(tag - 0x0011) * 2] = get2() / 256.0;
+          cam_mul[(tag - 0x0011) * 2] = get2() / 256.f;
         break;
       case 0x0017: /*  23, ISO */
         if (tagtypeIs(LIBRAW_EXIFTAG_TYPE_SHORT))
@@ -492,12 +495,14 @@ int LibRaw::parse_tiff_ifd(int base)
         {
           if ((j = get2()) < 0x100)
           {
+           if(j >= 0) {
             icWBC[j][0] = get2();
             icWBC[j][1] = icWBC[j][3] = get2();
             icWBC[j][2] = get2();
             if (c == 1 && i > 6 && cam_mul[0] <= 0.001f)
                 for (int q = 0; q < 4; q++)
-                    cam_mul[q] = icWBC[j][q];
+                    cam_mul[q] = float(icWBC[j][q]);
+	   }
           }
           else
             fseek(ifp, 6, SEEK_CUR);
@@ -518,8 +523,8 @@ int LibRaw::parse_tiff_ifd(int base)
       case 0x0111: /* 273, StripOffset */
         if (len > 1 && len < 16384)
         {
-          off_t sav = ftell(ifp);
-          tiff_ifd[ifd].strip_offsets = (int *)calloc(len, sizeof(int));
+          INT64 sav = ftell(ifp);
+          tiff_ifd[ifd].strip_offsets = (INT64 *)calloc(len, sizeof(INT64));
           tiff_ifd[ifd].strip_offsets_count = len;
           for (int ii = 0; ii < (int)len; ii++)
             tiff_ifd[ifd].strip_offsets[ii] = get4() + base;
@@ -561,7 +566,7 @@ int LibRaw::parse_tiff_ifd(int base)
       parse_tiff_ifd(base);
       break;
     case 0x00fe: /* NewSubfileType */
-      tiff_ifd[ifd].newsubfiletype = getreal(type);
+      tiff_ifd[ifd].newsubfiletype = int(getreal(type));
       break;
     case 0x0100: /* 256, ImageWidth */
     case 0xf001: /* 61441, Fuji RAF RawImageFullWidth */
@@ -630,8 +635,8 @@ int LibRaw::parse_tiff_ifd(int base)
     case 0x0117: /* 279, StripByteCounts */
       if (len > 1 && len < 16384)
       {
-        off_t sav = ftell(ifp);
-        tiff_ifd[ifd].strip_byte_counts = (int *)calloc(len, sizeof(int));
+        INT64 sav = ftell(ifp);
+        tiff_ifd[ifd].strip_byte_counts = (INT64 *)calloc(len, sizeof(INT64));
         tiff_ifd[ifd].strip_byte_counts_count = len;
         for (int ii = 0; ii < (int)len; ii++)
           tiff_ifd[ifd].strip_byte_counts[ii] = get4();
@@ -643,7 +648,7 @@ int LibRaw::parse_tiff_ifd(int base)
       tiff_ifd[ifd].bytes = get4();
       break;
     case 0xf00e: // 61454, FujiFilm "As Shot"
-      FORC3 cam_mul[GRBG_2_RGBG(c)] = getint(type);
+      FORC3 cam_mul[GRBG_2_RGBG(c)] = float(getint(type));
       break;
     case 0x0131: /* 305, Software */
       fgets(software, 64, ifp);
@@ -668,7 +673,7 @@ int LibRaw::parse_tiff_ifd(int base)
       tiff_ifd[ifd].t_tile_length = getint(type);
       break;
     case 0x0144: /* 324, TileOffsets */
-      tiff_ifd[ifd].offset = len > 1 ? ftell(ifp) : get4();
+      tiff_ifd[ifd].offset = len > 1 ? ftell(ifp) : get4(); // FIXME: get8 for BigTIFF
       if (len == 1)
         tiff_ifd[ifd].t_tile_width = tiff_ifd[ifd].t_tile_length = 0;
       if (len == 4)
@@ -678,7 +683,7 @@ int LibRaw::parse_tiff_ifd(int base)
       }
       break;
     case 0x0145: // 325
-      tiff_ifd[ifd].bytes = len > 1 ? ftell(ifp) : get4();
+      tiff_ifd[ifd].bytes = len > 1 ? ftell(ifp) : get4(); // FIXME: get8 for BigTIFF
       break;
     case 0x014a: /* 330, SubIFDs */
       if (!strcmp(model, "DSLR-A100") && tiff_ifd[ifd].t_width == 3872)
@@ -702,11 +707,11 @@ int LibRaw::parse_tiff_ifd(int base)
         len = 1000; /* 1000 SubIFDs is enough */
       while (len--)
       {
-        i = ftell(ifp);
+        INT64 ii = ftell(ifp);
         fseek(ifp, get4() + base, SEEK_SET);
         if (parse_tiff_ifd(base))
           break;
-        fseek(ifp, i + 4, SEEK_SET);
+        fseek(ifp, ii + 4LL, SEEK_SET);
       }
       break;
     case 0x0153: // 339
@@ -723,9 +728,9 @@ int LibRaw::parse_tiff_ifd(int base)
           tagtypeIs(LIBRAW_EXIFTOOLTAGTYPE_binary)) &&
           (len > 1) && (len < 5100000))
       {
-        xmpdata = (char *)malloc(xmplen = len + 1);
-        fread(xmpdata, len, 1, ifp);
-        xmpdata[len] = 0;
+        xmpdata = (char *)calloc(xmplen = len + 1,1);
+        unsigned br = fread(xmpdata,1, len, ifp);
+        xmpdata[br] = 0;
       }
       break;
     case 0x7000:
@@ -814,32 +819,34 @@ int LibRaw::parse_tiff_ifd(int base)
       parse_kodak_ifd(base);
       break;
     case 0x829a: /* 33434, ExposureTime */
-      tiff_ifd[ifd].t_shutter = shutter = getreal(type);
+      tiff_ifd[ifd].t_shutter = shutter = getrealf(type);
       break;
     case 0x829d: /* 33437, FNumber */
-      aperture = getreal(type);
+      aperture = getrealf(type);
       break;
     case 0x9400:
-      imCommon.exifAmbientTemperature = getreal(type);
+      imCommon.exifAmbientTemperature = getrealf(type);
       if ((imCommon.CameraTemperature > -273.15f) &&
-          ((OlyID == OlyID_TG_5) || (OlyID == OlyID_TG_6)))
+          ((OlyID == OlyID_TG_5) ||
+           (OlyID == OlyID_TG_6) ||
+           (OlyID == OlyID_TG_7)))
         imCommon.CameraTemperature +=
             imCommon.exifAmbientTemperature;
       break;
     case 0x9401:
-      imCommon.exifHumidity = getreal(type);
+      imCommon.exifHumidity = getrealf(type);
       break;
     case 0x9402:
-      imCommon.exifPressure = getreal(type);
+      imCommon.exifPressure = getrealf(type);
       break;
     case 0x9403:
-      imCommon.exifWaterDepth = getreal(type);
+      imCommon.exifWaterDepth = getrealf(type);
       break;
     case 0x9404:
-      imCommon.exifAcceleration = getreal(type);
+      imCommon.exifAcceleration = getrealf(type);
       break;
     case 0x9405:
-      imCommon.exifCameraElevationAngle = getreal(type);
+      imCommon.exifCameraElevationAngle = getrealf(type);
       break;
     case 0xa405: // FocalLengthIn35mmFormat
       imgdata.lens.FocalLengthIn35mmFormat = get2();
@@ -849,19 +856,19 @@ int LibRaw::parse_tiff_ifd(int base)
       stmread(imgdata.shootinginfo.BodySerial, len, ifp);
       break;
     case 0xa432: // LensInfo, 42034dec, Lens Specification per EXIF standard
-      imgdata.lens.MinFocal = getreal(type);
-      imgdata.lens.MaxFocal = getreal(type);
-      imgdata.lens.MaxAp4MinFocal = getreal(type);
-      imgdata.lens.MaxAp4MaxFocal = getreal(type);
+      imgdata.lens.MinFocal = getrealf(type);
+      imgdata.lens.MaxFocal = getrealf(type);
+      imgdata.lens.MaxAp4MinFocal = getrealf(type);
+      imgdata.lens.MaxAp4MaxFocal = getrealf(type);
       break;
     case 0xa435: // LensSerialNumber
       stmread(imgdata.lens.LensSerial, len, ifp);
       break;
     case 0xc630: // DNG LensInfo, Lens Specification per EXIF standard
-      imgdata.lens.MinFocal = getreal(type);
-      imgdata.lens.MaxFocal = getreal(type);
-      imgdata.lens.MaxAp4MinFocal = getreal(type);
-      imgdata.lens.MaxAp4MaxFocal = getreal(type);
+      imgdata.lens.MinFocal = getrealf(type);
+      imgdata.lens.MaxFocal = getrealf(type);
+      imgdata.lens.MaxAp4MinFocal = getrealf(type);
+      imgdata.lens.MaxAp4MaxFocal = getrealf(type);
       break;
     case 0xa420: /* 42016, ImageUniqueID */
       stmread(imgdata.color.ImageUniqueID, len, ifp);
@@ -879,14 +886,14 @@ int LibRaw::parse_tiff_ifd(int base)
         imgdata.lens.Lens[0] = 0;
       break;
     case 0x9205:
-      imgdata.lens.EXIF_MaxAp = libraw_powf64l(2.0f, (getreal(type) / 2.0f));
+      imgdata.lens.EXIF_MaxAp = libraw_powf64l(2.0f, (getrealf(type) / 2.0f));
       break;
     case 0x8602: /* 34306, Leaf white balance */
       FORC4
       {
         int q = get2();
         if (q)
-          cam_mul[GRGB_2_RGBG(c)] = 4096.0 / q;
+          cam_mul[GRGB_2_RGBG(c)] = 4096.f / q;
       }
       break;
     case 0x8603: /* 34307, Leaf CatchLight color matrix */
@@ -901,7 +908,7 @@ int LibRaw::parse_tiff_ifd(int base)
           continue;
         num = 0;
         FORC4 num += rgb_cam[i][c];
-        FORC4 rgb_cam[i][c] /= MAX(1, num);
+        FORC4 rgb_cam[i][c] /= float(MAX(1, num));
       }
       break;
     case 0x8606: /* 34310, Leaf metadata */
@@ -915,7 +922,7 @@ int LibRaw::parse_tiff_ifd(int base)
       break;
     case 0x8825: /* 34853, GPSInfo tag */
     {
-      unsigned pos;
+      INT64 pos;
       fseek(ifp, pos = (get4() + base), SEEK_SET);
       parse_gps(base);
       fseek(ifp, pos, SEEK_SET);
@@ -931,19 +938,19 @@ int LibRaw::parse_tiff_ifd(int base)
       kodak_cbpp = get4();
       break;
     case 0x920a: /* 37386, FocalLength */
-      focal_len = getreal(type);
+      focal_len = getrealf(type);
       break;
     case 0x9211: /* 37393, ImageNumber */
       shot_order = getint(type);
       break;
     case 0x9215: /* 37397, ExposureIndex */
-      imCommon.exifExposureIndex = getreal(type);
+      imCommon.exifExposureIndex = getrealf(type);
       break;
     case 0x9218: /* 37400, old Kodak KDC tag */
       for (raw_color = i = 0; i < 3; i++)
       {
         getreal(type);
-        FORC3 rgb_cam[i][c] = getreal(type);
+        FORC3 rgb_cam[i][c] = getrealf(type);
       }
       break;
     case 0xa010: // 40976
@@ -993,7 +1000,7 @@ int LibRaw::parse_tiff_ifd(int base)
         left_margin = 7;
       }
       fseek(ifp, 52, SEEK_CUR);
-      FORC3 cam_mul[c] = getreal(LIBRAW_EXIFTAG_TYPE_FLOAT);
+      FORC3 cam_mul[c] = getrealf(LIBRAW_EXIFTAG_TYPE_FLOAT);
       fseek(ifp, 114, SEEK_CUR);
       flip = (get2() >> 7) * 90;
       if (width * (height * 6l) == ima_len)
@@ -1038,11 +1045,12 @@ int LibRaw::parse_tiff_ifd(int base)
       {
         libraw_internal_data.unpacker_data.hasselblad_parser_flag = 1;
         i = order;
-        j = ftell(ifp);
+        INT64 jj = ftell(ifp);
         c = tiff_nifds;
         order = get2();
-        fseek(ifp, j + (get2(), get4()), SEEK_SET);
-        parse_tiff_ifd(j);
+		get2();
+        fseek(ifp, jj + get4(), SEEK_SET);
+        parse_tiff_ifd(jj);
         maximum = 0xffff;
         tiff_nifds = c;
         order = i;
@@ -1094,18 +1102,23 @@ int LibRaw::parse_tiff_ifd(int base)
       break;
     case 0xc619: /* 50713, BlackLevelRepeatDim */
       tiff_ifd[ifd].dng_levels.parsedfields |= LIBRAW_DNGFM_BLACK;
-      tiff_ifd[ifd].dng_levels.dng_fcblack[4] =
-          tiff_ifd[ifd].dng_levels.dng_cblack[4] = cblack[4] = get2();
-      tiff_ifd[ifd].dng_levels.dng_fcblack[5] =
-          tiff_ifd[ifd].dng_levels.dng_cblack[5] = cblack[5] = get2();
-      if (cblack[4] * cblack[5] >
-          (LIBRAW_CBLACK_SIZE -
-           7)) // Use last cblack item as DNG black level count
-        tiff_ifd[ifd].dng_levels.dng_fcblack[4] =
-            tiff_ifd[ifd].dng_levels.dng_fcblack[5] =
-                tiff_ifd[ifd].dng_levels.dng_cblack[4] =
-                    tiff_ifd[ifd].dng_levels.dng_cblack[5] = cblack[4] =
-                        cblack[5] = 1;
+      
+	  tiff_ifd[ifd].dng_levels.dng_cblack[4] = cblack[4] = get2();
+	  tiff_ifd[ifd].dng_levels.dng_fcblack[4] = float(cblack[4]);
+		 
+	  
+      tiff_ifd[ifd].dng_levels.dng_cblack[5] = cblack[5] = get2();
+	  tiff_ifd[ifd].dng_levels.dng_fcblack[5] = float(cblack[5]);
+
+	  if (cblack[4] * cblack[5] >
+		  (LIBRAW_CBLACK_SIZE -
+			  7)) // Use last cblack item as DNG black level count
+	  {
+		  tiff_ifd[ifd].dng_levels.dng_fcblack[4] =
+			  tiff_ifd[ifd].dng_levels.dng_fcblack[5] = 1.f;
+		  tiff_ifd[ifd].dng_levels.dng_cblack[4] = tiff_ifd[ifd].dng_levels.dng_cblack[5] =
+			  cblack[4] = cblack[5] = 1;
+	  }
       break;
 
     case 0xf00c:
@@ -1122,8 +1135,8 @@ int LibRaw::parse_tiff_ifd(int base)
               (libraw_internal_data.unpacker_data.lenRAFData < 10240000))
           {
             INT64 f_save = ftell(ifp);
-            rafdata = (ushort *)malloc(
-                sizeof(ushort) * libraw_internal_data.unpacker_data.lenRAFData);
+            rafdata = (ushort *)calloc(
+                sizeof(ushort) * libraw_internal_data.unpacker_data.lenRAFData,1);
             fseek(ifp, libraw_internal_data.unpacker_data.posRAFData, SEEK_SET);
             fread(rafdata, sizeof(ushort),
                   libraw_internal_data.unpacker_data.lenRAFData, ifp);
@@ -1150,10 +1163,12 @@ int LibRaw::parse_tiff_ifd(int base)
                 (imFuji.RAFDataVersion == 0x0265) || // X-E4, X-T5
                 (imFuji.RAFDataVersion == 0x0266) || // X-T30 II, X-S20
                 (imFuji.RAFDataVersion == 0x0267) || // GFX 100 II
+                (imFuji.RAFDataVersion == 0x0369) || // X100VI
                 !strcmp(model, "X-Pro3")     ||
                 !strcmp(model, "GFX100 II")  || !strcmp(model, "GFX 100 II") ||
                 !strcmp(model, "GFX100S")    || !strcmp(model, "GFX 100S")   ||
                 !strcmp(model, "GFX50S II")  || !strcmp(model, "GFX 50S II") ||
+                !strcmp(model, "X100VI")     ||
                 !strcmp(model, "X100V")      ||
                 !strcmp(model, "X-T4")       ||
                 !strcmp(model, "X-H2S")      ||
@@ -1173,34 +1188,40 @@ int LibRaw::parse_tiff_ifd(int base)
               if ((fwb[0] == rafdata[fi]) && (fwb[1] == rafdata[fi + 1]) &&
                   (fwb[2] == rafdata[fi + 2])) // found Tungsten WB
               {
-                if (rafdata[fi - 15] !=
+                if (fi > 14 && rafdata[fi - 15] !=
                     fwb[0]) // 15 is offset of Tungsten WB from the first
                             // preset, Fine Weather WB
                   continue;
-                for (int wb_ind = 0, ofst = fi - 15; wb_ind < (int)Fuji_wb_list1.size();
-                     wb_ind++, ofst += 3)
-                {
-                  icWBC[Fuji_wb_list1[wb_ind]][1] =
-                      icWBC[Fuji_wb_list1[wb_ind]][3] = rafdata[ofst];
-                  icWBC[Fuji_wb_list1[wb_ind]][0] = rafdata[ofst + 1];
-                  icWBC[Fuji_wb_list1[wb_ind]][2] = rafdata[ofst + 2];
-                }
+				if (fi >= 15)
+				{
+					for (int wb_ind = 0, ofst = fi - 15; wb_ind < (int)Fuji_wb_list1.size();
+						wb_ind++, ofst += 3)
+					{
+						icWBC[Fuji_wb_list1[wb_ind]][1] =
+							icWBC[Fuji_wb_list1[wb_ind]][3] = rafdata[ofst];
+						icWBC[Fuji_wb_list1[wb_ind]][0] = rafdata[ofst + 1];
+						icWBC[Fuji_wb_list1[wb_ind]][2] = rafdata[ofst + 2];
+					}
+				}
 
                 if (is34)
                   fi += 24;
                 fi += 96;
                 for (fj = fi; fj < (fi + 15); fj += 3) // looking for the end of the WB table
                 {
+					if (fj > libraw_internal_data.unpacker_data.lenRAFData - 3)
+						break;
                   if (rafdata[fj] != rafdata[fi])
                   {
                     fj -= 93;
                     if (is34)
                       fj -= 9;
 //printf ("wb start in DNG: 0x%04x\n", fj*2-0x4e);
-                    for (int iCCT = 0, ofst = fj; iCCT < 31;
+                    for (int iCCT = 0, ofst = fj; iCCT < 31 
+						&& ofst < libraw_internal_data.unpacker_data.lenRAFData - 3;
                          iCCT++, ofst += 3)
                     {
-                      icWBCCTC[iCCT][0] = FujiCCT_K[iCCT];
+                      icWBCCTC[iCCT][0] = float(FujiCCT_K[iCCT]);
                       icWBCCTC[iCCT][1] = rafdata[ofst + 1];
                       icWBCCTC[iCCT][2] = icWBCCTC[iCCT][4] = rafdata[ofst];
                       icWBCCTC[iCCT][3] = rafdata[ofst + 2];
@@ -1232,7 +1253,7 @@ int LibRaw::parse_tiff_ifd(int base)
       stmread(imgdata.color.LocalizedCameraModel, len, ifp);
       break;
     case 0xf00a: // 61450
-      cblack[4] = cblack[5] = MIN(sqrt((double)len), 64);
+      cblack[4] = cblack[5] = int(MIN(sqrtf((float)len), 64.f));
     case 0xc61a: /* 50714, BlackLevel */
       if (tiff_ifd[ifd].samples > 1 &&
           tiff_ifd[ifd].samples == (int)len) // LinearDNG, per-channel black
@@ -1240,15 +1261,15 @@ int LibRaw::parse_tiff_ifd(int base)
         tiff_ifd[ifd].dng_levels.parsedfields |= LIBRAW_DNGFM_BLACK;
         for (i = 0; i < 4 && i < (int)len; i++)
         {
-          tiff_ifd[ifd].dng_levels.dng_fcblack[i] = getreal(type);
+          tiff_ifd[ifd].dng_levels.dng_fcblack[i] = getrealf(type);
           tiff_ifd[ifd].dng_levels.dng_cblack[i] = cblack[i] =
-              tiff_ifd[ifd].dng_levels.dng_fcblack[i] + 0.5;
+              unsigned(tiff_ifd[ifd].dng_levels.dng_fcblack[i] + 0.5f);
         }
         // Record len in last cblack field
         tiff_ifd[ifd].dng_levels.dng_cblack[LIBRAW_CBLACK_SIZE - 1] = len;
 
-        tiff_ifd[ifd].dng_levels.dng_fblack =
-            tiff_ifd[ifd].dng_levels.dng_black = black = 0;
+		tiff_ifd[ifd].dng_levels.dng_fblack = 0.f;
+        tiff_ifd[ifd].dng_levels.dng_black = black = 0;
       }
       else if (tiff_ifd[ifd].samples > 1 // Linear DNG w repeat dim
                && (tiff_ifd[ifd].samples * cblack[4] * cblack[5] == len))
@@ -1258,24 +1279,24 @@ int LibRaw::parse_tiff_ifd(int base)
             cblack[LIBRAW_CBLACK_SIZE - 1] = len;
         for (i = 0; i < (int)len && i < LIBRAW_CBLACK_SIZE - 7; i++)
         {
-          tiff_ifd[ifd].dng_levels.dng_fcblack[i + 6] = getreal(type);
+          tiff_ifd[ifd].dng_levels.dng_fcblack[i + 6] = getrealf(type);
           tiff_ifd[ifd].dng_levels.dng_cblack[i + 6] = cblack[i + 6] =
-              tiff_ifd[ifd].dng_levels.dng_fcblack[i + 6] + 0.5;
+              unsigned(tiff_ifd[ifd].dng_levels.dng_fcblack[i + 6] + 0.5f);
         }
       }
       else if ((cblack[4] * cblack[5] < 2) && len == 1)
       {
         tiff_ifd[ifd].dng_levels.parsedfields |= LIBRAW_DNGFM_BLACK;
-        tiff_ifd[ifd].dng_levels.dng_fblack = getreal(type);
+        tiff_ifd[ifd].dng_levels.dng_fblack = getrealf(type);
         black = tiff_ifd[ifd].dng_levels.dng_black =
-            tiff_ifd[ifd].dng_levels.dng_fblack;
+            unsigned(tiff_ifd[ifd].dng_levels.dng_fblack);
       }
       else if (cblack[4] * cblack[5] <= len)
       {
         FORC(int(cblack[4] * cblack[5]))
         {
-          tiff_ifd[ifd].dng_levels.dng_fcblack[6 + c] = getreal(type);
-          cblack[6 + c] = tiff_ifd[ifd].dng_levels.dng_fcblack[6 + c];
+          tiff_ifd[ifd].dng_levels.dng_fcblack[6 + c] = getrealf(type);
+          cblack[6 + c] = unsigned(tiff_ifd[ifd].dng_levels.dng_fcblack[6 + c]);
         }
         black = 0;
         FORC4
@@ -1288,9 +1309,11 @@ int LibRaw::parse_tiff_ifd(int base)
           tiff_ifd[ifd].dng_levels.dng_cblack[6 + c] = cblack[6 + c];
           tiff_ifd[ifd].dng_levels.dng_fblack = 0;
           tiff_ifd[ifd].dng_levels.dng_black = 0;
-          FORC4
-          tiff_ifd[ifd].dng_levels.dng_fcblack[c] =
-              tiff_ifd[ifd].dng_levels.dng_cblack[c] = 0;
+		  FORC4
+		  {
+			  tiff_ifd[ifd].dng_levels.dng_fcblack[c] = 0.f;
+			  tiff_ifd[ifd].dng_levels.dng_cblack[c] = 0;
+		  }
         }
       }
       break;
@@ -1300,9 +1323,9 @@ int LibRaw::parse_tiff_ifd(int base)
         num += getreal(type);
       if (len > 0)
       {
-        black += num / len + 0.5;
-        tiff_ifd[ifd].dng_levels.dng_fblack += num / float(len);
-        tiff_ifd[ifd].dng_levels.dng_black += num / len + 0.5;
+        black += unsigned(num / len + 0.5);
+        tiff_ifd[ifd].dng_levels.dng_fblack += float(num / len);
+        tiff_ifd[ifd].dng_levels.dng_black += unsigned(num / len + 0.5);
         tiff_ifd[ifd].dng_levels.parsedfields |= LIBRAW_DNGFM_BLACK;
       }
       break;
@@ -1315,8 +1338,8 @@ int LibRaw::parse_tiff_ifd(int base)
       break;
     case 0xc61e: /* DefaultScale */
     {
-      float q1 = getreal(type);
-      float q2 = getreal(type);
+      float q1 = getrealf(type);
+      float q2 = getrealf(type);
       if (q1 > 0.00001f && q2 > 0.00001f)
       {
         pixel_aspect = q1 / q2;
@@ -1329,8 +1352,8 @@ int LibRaw::parse_tiff_ifd(int base)
       if (len == 2)
       {
         tiff_ifd[ifd].dng_levels.parsedfields |= LIBRAW_DNGFM_CROPORIGIN;
-        tiff_ifd[ifd].dng_levels.default_crop[0] = getreal(type);
-        tiff_ifd[ifd].dng_levels.default_crop[1] = getreal(type);
+        tiff_ifd[ifd].dng_levels.default_crop[0] = ushort(getreal(type));
+        tiff_ifd[ifd].dng_levels.default_crop[1] = ushort(getreal(type));
         if (!strncasecmp(make, "SONY", 4))
         {
           imgdata.sizes.raw_inset_crops[0].cleft =
@@ -1345,8 +1368,8 @@ int LibRaw::parse_tiff_ifd(int base)
       if (len == 2)
       {
         tiff_ifd[ifd].dng_levels.parsedfields |= LIBRAW_DNGFM_CROPSIZE;
-        tiff_ifd[ifd].dng_levels.default_crop[2] = getreal(type);
-        tiff_ifd[ifd].dng_levels.default_crop[3] = getreal(type);
+        tiff_ifd[ifd].dng_levels.default_crop[2] = ushort(getreal(type));
+        tiff_ifd[ifd].dng_levels.default_crop[3] = ushort(getreal(type));
         if (!strncasecmp(make, "SONY", 4))
         {
           imgdata.sizes.raw_inset_crops[0].cwidth =
@@ -1363,7 +1386,7 @@ int LibRaw::parse_tiff_ifd(int base)
           int cnt = 0;
           FORC4
           {
-              float v = getreal(type);
+              float v = getrealf(type);
               if (v >= 0.f && v <= 1.f)
               {
                   tiff_ifd[ifd].dng_levels.user_crop[c] = v;
@@ -1414,7 +1437,8 @@ int LibRaw::parse_tiff_ifd(int base)
       }
       FORC(chan) for (j = 0; j < 3; j++)
       {
-        tiff_ifd[ifd].dng_color[i].colormatrix[c][j] = cm[c][j] = getreal(type);
+		  cm[c][j] = getreal(type);
+		  tiff_ifd[ifd].dng_color[i].colormatrix[c][j] = float(cm[c][j]);
       }
       use_cm = 1;
     }
@@ -1430,8 +1454,8 @@ int LibRaw::parse_tiff_ifd(int base)
       for (j = 0; j < 3; j++)
         FORC(chan)
         {
-          tiff_ifd[ifd].dng_color[i].forwardmatrix[j][c] = fm[j][c] =
-              getreal(type);
+          fm[j][c] = getreal(type);
+		  tiff_ifd[ifd].dng_color[i].forwardmatrix[j][c] = float(fm[j][c]);
         }
     }
     break;
@@ -1445,9 +1469,9 @@ int LibRaw::parse_tiff_ifd(int base)
         tiff_ifd[ifd].dng_color[j].parsedfields |= LIBRAW_DNGFM_CALIBRATION;
       for (i = 0; i < chan; i++)
         FORC(chan)
-        {
-          tiff_ifd[ifd].dng_color[j].calibration[i][c] = cc[i][c] =
-              getreal(type);
+        {         
+		  cc[i][c] = getreal(type);
+          tiff_ifd[ifd].dng_color[j].calibration[i][c] = float(cc[i][c]);
         }
     }
     break;
@@ -1456,14 +1480,18 @@ int LibRaw::parse_tiff_ifd(int base)
         tiff_ifd[ifd].dng_levels.parsedfields |= LIBRAW_DNGFM_ANALOGBALANCE;
       for (c = 0; c < (int)len && c < 4; c++)
       {
-        tiff_ifd[ifd].dng_levels.analogbalance[c] = ab[c] = getreal(type);
+        ab[c] = getreal(type);
+        tiff_ifd[ifd].dng_levels.analogbalance[c] = float(ab[c]);
       }
       break;
     case 0xc628: /* 50728, AsShotNeutral */
       if (len >= 3)
         tiff_ifd[ifd].dng_levels.parsedfields |= LIBRAW_DNGFM_ASSHOTNEUTRAL;
-      for (c = 0; c < (int)len && c < 4; c++)
-        tiff_ifd[ifd].dng_levels.asshotneutral[c] = asn[c] = getreal(type);
+	  for (c = 0; c < (int)len && c < 4; c++)
+	  {
+		  asn[c] = getreal(type);
+		  tiff_ifd[ifd].dng_levels.asshotneutral[c] = float(asn[c]);
+	  }
       break;
     case 0xc629: /* 50729, AsShotWhiteXY */
       xyz[0] = getreal(type);
@@ -1473,11 +1501,11 @@ int LibRaw::parse_tiff_ifd(int base)
       break;
     case 0xc62a: /* DNG: 50730 BaselineExposure */
       tiff_ifd[ifd].dng_levels.parsedfields |= LIBRAW_DNGFM_BASELINEEXPOSURE;
-      tiff_ifd[ifd].dng_levels.baseline_exposure = getreal(type);
+      tiff_ifd[ifd].dng_levels.baseline_exposure = getrealf(type);
       break;
     case 0xc62e: /* DNG: 50734 LinearResponseLimit */
       tiff_ifd[ifd].dng_levels.parsedfields |= LIBRAW_DNGFM_LINEARRESPONSELIMIT;
-      tiff_ifd[ifd].dng_levels.LinearResponseLimit = getreal(type);
+      tiff_ifd[ifd].dng_levels.LinearResponseLimit = getrealf(type);
       break;
 
     case 0xc634: /* 50740 : DNG Adobe, DNG Pentax, Sony SR2, DNG Private */
@@ -1549,12 +1577,20 @@ int LibRaw::parse_tiff_ifd(int base)
                 unsigned SR2SubIFDLength = 0;
                 unsigned SR2SubIFDKey = 0;
                 {
-                  int _base = curr_pos + 6 - pos_in_original_raw;
-                  unsigned _entries, _tag, _type, _len, _save;
-                  _entries = get2();
+                  INT64 _base = curr_pos + 6 - pos_in_original_raw;
+                  unsigned _entries, _tag, _type, _len;
+				  INT64 _save;
+				  _entries = get2();
                   while (_entries--)
                   {
                     tiff_get(_base, &_tag, &_type, &_len, &_save);
+                    if (callbacks.exif_cb)
+                    {
+                      INT64 _savepos = ftell(ifp);
+                      callbacks.exif_cb(callbacks.exifparser_data, tag | 0x60000,
+                                        _type, _len, order, ifp, base);
+                      fseek(ifp, _savepos, SEEK_SET);
+                    }
 
                     if (_tag == 0x7200)
                     {
@@ -1573,14 +1609,16 @@ int LibRaw::parse_tiff_ifd(int base)
                 }
 
                 if (SR2SubIFDLength && (SR2SubIFDLength < 10240000) &&
-                    (buf_SR2 = (unsigned *)malloc(SR2SubIFDLength + 1024)))
+                    (buf_SR2 = (unsigned *)calloc(SR2SubIFDLength + 1024,1)))
                 { // 1024b for safety
                   fseek(ifp, SR2SubIFDOffset + base, SEEK_SET);
-                  fread(buf_SR2, SR2SubIFDLength, 1, ifp);
-                  sony_decrypt(buf_SR2, SR2SubIFDLength / 4, 1, SR2SubIFDKey);
-                  parseSonySR2((uchar *)buf_SR2, SR2SubIFDOffset,
-                               SR2SubIFDLength, AdobeDNG);
-
+                  int items = fread(buf_SR2, 1, SR2SubIFDLength, ifp);
+				  if (items == SR2SubIFDLength)
+				  {
+					  sony_decrypt(buf_SR2, SR2SubIFDLength / 4, 1, SR2SubIFDKey);
+					  parseSonySR2((uchar *)buf_SR2, SR2SubIFDOffset,
+						  SR2SubIFDLength, AdobeDNG);
+				  }
                   free(buf_SR2);
                 }
 
@@ -1611,8 +1649,12 @@ int LibRaw::parse_tiff_ifd(int base)
       {
         break;
       }
-      parse_minolta(j = get4() + base);
-      fseek(ifp, j, SEEK_SET);
+
+	  {
+		  INT64 jj = get4() + base;
+		  parse_minolta(jj);
+		  fseek(ifp, jj, SEEK_SET);
+	  }
       parse_tiff_ifd(base);
       break;
     case 0xc640: // 50752
@@ -1662,12 +1704,15 @@ int LibRaw::parse_tiff_ifd(int base)
     fseek(ifp, save, SEEK_SET);
   }
   if (sony_length && sony_length < 10240000 &&
-      (buf = (unsigned *)malloc(sony_length)))
+      (buf = (unsigned *)calloc(sony_length, 1)))
   {
     fseek(ifp, sony_offset, SEEK_SET);
-    fread(buf, sony_length, 1, ifp);
-    sony_decrypt(buf, sony_length / 4, 1, sony_key);
-    parseSonySR2((uchar *)buf, sony_offset, sony_length, nonDNG);
+    int items = fread(buf, 1, sony_length, ifp);
+	if (items == sony_length)
+	{
+		sony_decrypt(buf, sony_length / 4, 1, sony_key);
+		parseSonySR2((uchar *)buf, sony_offset, sony_length, nonDNG);
+	}
     free(buf);
   }
   for (i = 0; i < colors && i < 4; i++)
@@ -1683,14 +1728,14 @@ int LibRaw::parse_tiff_ifd(int base)
     cam_mul[3] = 0;
     FORCC
     if (fabs(asn[c]) > 0.0001)
-      cam_mul[c] = 1 / asn[c];
+      cam_mul[c] = float(1. / asn[c]);
   }
   if (!use_cm)
-    FORCC if (fabs(cc[c][c]) > 0.0001) pre_mul[c] /= cc[c][c];
+    FORCC if (fabs(cc[c][c]) > 0.0001) pre_mul[c] /= float(cc[c][c]);
   return 0;
 }
 
-int LibRaw::parse_tiff(int _base)
+int LibRaw::parse_tiff(INT64 _base)
 {
   INT64 base = _base;
   int doff;
@@ -1817,9 +1862,9 @@ void LibRaw::apply_tiff()
               (libraw_internal_data.unpacker_data.dng_frames[q] >> 8) & 0xff;
           arr[q].ifdi = libraw_internal_data.unpacker_data.dng_frames[q];
           arr[q].databits =
-              tiff_ifd[ifdidx].t_width * tiff_ifd[ifdidx].t_height *
-                  tiff_ifd[ifdidx].samples * tiff_ifd[ifdidx].bps +
-              (0x100 -
+              INT64(tiff_ifd[ifdidx].t_width) * INT64(tiff_ifd[ifdidx].t_height) *
+                  INT64(tiff_ifd[ifdidx].samples) * INT64(tiff_ifd[ifdidx].bps) +
+              INT64(0x100 -
                (arr[q].ifdi & 0xff)); // add inverted frame # to ensure same
                                       // sort order for similar sized frames.
           if (tiff_ifd[ifdidx].phint == 4)
@@ -1956,7 +2001,7 @@ void LibRaw::apply_tiff()
     {
       if (tiff_compress == 1)
       {
-        if ((raw_width * raw_height * 3) == (tiff_ifd[raw].bytes << 1))
+        if ((INT64(raw_width) * INT64(raw_height) * 3LL) == (tiff_ifd[raw].bytes << 1))
         {
           tiff_bps = tiff_ifd[raw].bps = 12;
         }
@@ -1994,21 +2039,20 @@ void LibRaw::apply_tiff()
     {
     case 32767:
       if (!dng_version &&
-          INT64(tiff_ifd[raw].bytes) == INT64(raw_width) * INT64(raw_height))
+          tiff_ifd[raw].bytes == INT64(raw_width) * INT64(raw_height))
       {
         tiff_bps = 14;
         load_raw = &LibRaw::sony_arw2_load_raw;
         break;
       }
       if (!dng_version && !strncasecmp(make, "Sony", 4) &&
-          INT64(tiff_ifd[raw].bytes) ==
-              INT64(raw_width) * INT64(raw_height) * 2LL)
+          tiff_ifd[raw].bytes == INT64(raw_width) * INT64(raw_height) * 2LL)
       {
         tiff_bps = 14;
         load_raw = &LibRaw::unpacked_load_raw;
         break;
       }
-      if (INT64(tiff_ifd[raw].bytes) * 8LL !=
+      if (tiff_ifd[raw].bytes * 8LL !=
           INT64(raw_width) * INT64(raw_height) * INT64(tiff_bps))
       {
         raw_height += 8;
@@ -2030,18 +2074,15 @@ void LibRaw::apply_tiff()
             break;
         }
       // Sony 14-bit uncompressed
-      if (!dng_version && !strncasecmp(make, "Sony", 4) &&
-          INT64(tiff_ifd[raw].bytes) ==
-              INT64(raw_width) * INT64(raw_height) * 2LL)
+        if (!dng_version && !strncasecmp(make, "Sony", 4) &&
+            tiff_ifd[raw].bytes == INT64(raw_width) * INT64(raw_height) * 2LL)
       {
         tiff_bps = 14;
         load_raw = &LibRaw::unpacked_load_raw;
         break;
       }
-      if (!dng_version && !strncasecmp(make, "Sony", 4) &&
-          tiff_ifd[raw].samples == 4 &&
-          INT64(tiff_ifd[raw].bytes) ==
-              INT64(raw_width) * INT64(raw_height) * 8LL) // Sony ARQ
+      if (!dng_version && !strncasecmp(make, "Sony", 4) && tiff_ifd[raw].samples == 4 &&
+          tiff_ifd[raw].bytes == INT64(raw_width) * INT64(raw_height) * 8LL) // Sony ARQ
       {
         // maybe to detect ARQ with the following:
         // if (tiff_ifd[raw].phint == 32892)
@@ -2063,13 +2104,10 @@ void LibRaw::apply_tiff()
         break;
       }
       if ((!strncmp(make, "OLYMPUS", 7) || !strncmp(make, "OM Digi", 7) ||
-           (!strncasecmp(make, "CLAUSS", 6) &&
-            !strncasecmp(model, "piX 5oo", 7))) && // 0x5330303539 works here
-          (INT64(tiff_ifd[raw].bytes) * 2ULL ==
-           INT64(raw_width) * INT64(raw_height) * 3ULL))
+           (!strncasecmp(make, "CLAUSS", 6) && !strncasecmp(model, "piX 5oo", 7))) && // 0x5330303539 works here
+          (tiff_ifd[raw].bytes * 2LL == INT64(raw_width) * INT64(raw_height) * 3LL))
         load_flags = 24;
-      if (!dng_version && INT64(tiff_ifd[raw].bytes) * 5ULL ==
-                              INT64(raw_width) * INT64(raw_height) * 8ULL)
+      if (!dng_version && tiff_ifd[raw].bytes * 5LL == INT64(raw_width) * INT64(raw_height) * 8LL)
       {
         load_flags = 81;
         tiff_bps = 12;
@@ -2094,12 +2132,12 @@ void LibRaw::apply_tiff()
         load_flags = 0;
       case 16:
         load_raw = &LibRaw::unpacked_load_raw;
-        if ((!strncmp(make, "OLYMPUS", 7) || !strncmp(make, "OM Digi", 7) ||
-             (!strncasecmp(make, "CLAUSS", 6) &&
-              !strncasecmp(model, "piX 5oo", 7))) && // 0x5330303539 works here
-            (INT64(tiff_ifd[raw].bytes) * 7LL >
-             INT64(raw_width) * INT64(raw_height)))
-          load_raw = &LibRaw::olympus_load_raw;
+		if ((!strncmp(make, "OLYMPUS", 7) || !strncmp(make, "OM Digi", 7) ||
+			(!strncasecmp(make, "CLAUSS", 6) && !strncasecmp(model, "piX 5oo", 7))) && // 0x5330303539 works here
+			(tiff_ifd[raw].bytes * 7LL > INT64(raw_width) * INT64(raw_height)))
+		{
+			load_raw = &LibRaw::olympus14_load_raw;
+		}
       }
       break;
     case 6:
@@ -2130,29 +2168,25 @@ void LibRaw::apply_tiff()
       load_raw = &LibRaw::kodak_262_load_raw;
       break;
     case 34713:
-      if ((INT64(raw_width) + 9LL) / 10LL * 16LL * INT64(raw_height) ==
-          INT64(tiff_ifd[raw].bytes))
+      if ((INT64(raw_width) + 9LL) / 10LL * 16LL * INT64(raw_height) == tiff_ifd[raw].bytes)
       {
         load_raw = &LibRaw::packed_load_raw;
         load_flags = 1;
       }
-      else if (INT64(raw_width) * INT64(raw_height) * 3LL ==
-               INT64(tiff_ifd[raw].bytes) * 2LL)
+      else if (INT64(raw_width) * INT64(raw_height) * 3LL == tiff_ifd[raw].bytes * 2LL)
       {
         load_raw = &LibRaw::packed_load_raw;
         if (model[0] == 'N')
           load_flags = 80;
       }
-      else if (INT64(raw_width) * INT64(raw_height) * 3LL ==
-               INT64(tiff_ifd[raw].bytes))
+      else if (INT64(raw_width) * INT64(raw_height) * 3LL == tiff_ifd[raw].bytes)
       {
         load_raw = &LibRaw::nikon_yuv_load_raw;
         gamma_curve(1 / 2.4, 12.92, 1, 4095);
         memset(cblack, 0, sizeof cblack);
         filters = 0;
       }
-      else if (INT64(raw_width) * INT64(raw_height) * 2LL ==
-               INT64(tiff_ifd[raw].bytes))
+      else if (INT64(raw_width) * INT64(raw_height) * 2LL == tiff_ifd[raw].bytes)
       {
         load_raw = &LibRaw::unpacked_load_raw;
         load_flags = 4;
@@ -2185,15 +2219,14 @@ void LibRaw::apply_tiff()
         else
           load_raw = &LibRaw::nikon_load_raw; // fallback
       }
-      else if ((((INT64(raw_width) * 3LL / 2LL) + 15LL) / 16LL) * 16LL *
-                   INT64(raw_height) ==
-               INT64(tiff_ifd[raw].bytes))
+      else if ((((INT64(raw_width) * 3LL / 2LL) + 15LL) / 16LL) * 16LL * INT64(raw_height) == tiff_ifd[raw].bytes)
       {
         load_raw = &LibRaw::nikon_load_padded_packed_raw;
         load_flags = (((INT64(raw_width) * 3ULL / 2ULL) + 15ULL) / 16ULL) *
                      16ULL; // bytes per row
       }
-      else if ((!strncmp(model, "NIKON Z 9", 9) || !strncmp(model, "NIKON Z 8", 9)) && tiff_ifd[raw].offset)
+      else if ((!strncmp(model, "NIKON Z 9", 9) || !strncmp(model, "NIKON Z 8", 9) || !strcmp(model, "NIKON Z f")) &&
+               tiff_ifd[raw].offset)
       {
           INT64 pos = ftell(ifp);
           unsigned char cmp[] = "CONTACT_INTOPIX"; // 15
@@ -2231,18 +2264,14 @@ void LibRaw::apply_tiff()
       break;
     case 8:
       break;
-#ifdef USE_DNGSDK
     case 52546:
-      if (dng_version)
-        break; /* Compression=9 supported for dng if we compiled with GPR SDK */
-               /* Else: fallthrough */
-#endif
-#ifdef USE_GPRSDK
+      if (dng_version) /* DNG 1.7 JPEG XL: if not compiled w/ DNG SDK decoder will return NOT SUPPORTED*/
+        break;
+	  // else: fallthrough
     case 9:
       if (dng_version)
-        break; /* Compression=9 supported for dng if we compiled with GPR SDK */
-               /* Else: fallthrough */
-#endif
+        break; /* Compression=9 supported for dng if we compiled with GPR SDK; if NO SDK: decoder will return NOT Supported */
+	  // else: fallthrough
     default:
       is_raw = 0;
     }
@@ -2310,7 +2339,7 @@ void LibRaw::apply_tiff()
 			thumb_width = tiff_ifd[i].t_width;
 			thumb_height = tiff_ifd[i].t_height;
 			thumb_offset = tiff_ifd[i].offset;
-			thumb_length = tiff_ifd[i].bytes;
+			thumb_length = unsigned(tiff_ifd[i].bytes); // do we expect >4GB thumbnail?
 			thumb_misc = tiff_ifd[i].bps;
 			thm = i;
 		}
@@ -2331,7 +2360,7 @@ void LibRaw::apply_tiff()
 				imgdata.thumbs_list.thumblist[idx].twidth = tiff_ifd[i].t_width;
 				imgdata.thumbs_list.thumblist[idx].theight = tiff_ifd[i].t_height;
 				imgdata.thumbs_list.thumblist[idx].tflip = tiff_ifd[i].t_flip;
-				imgdata.thumbs_list.thumblist[idx].tlength = tiff_ifd[i].bytes;
+				imgdata.thumbs_list.thumblist[idx].tlength = unsigned(tiff_ifd[i].bytes);
 				imgdata.thumbs_list.thumblist[idx].tmisc = tiff_ifd[i].bps | (tiff_ifd[i].samples << 5);
 				imgdata.thumbs_list.thumblist[idx].toffset = tiff_ifd[i].offset;
 				imgdata.thumbs_list.thumbcount++;

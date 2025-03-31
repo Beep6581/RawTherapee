@@ -54,8 +54,8 @@ libraw_inline void _BitScanReverse(DWORD *Index, unsigned long Mask)
 struct CrxBitstream
 {
   uint8_t mdatBuf[CRX_BUF_SIZE];
-  uint64_t mdatSize;
-  uint64_t curBufOffset;
+  INT64 mdatSize;
+  INT64 curBufOffset;
   uint32_t curPos;
   uint32_t curBufSize;
   uint32_t bitData;
@@ -98,7 +98,7 @@ struct CrxWaveletTransform
 struct CrxSubband
 {
   CrxBandParam *bandParam;
-  uint64_t mdatOffset;
+  INT64 mdatOffset;
   uint8_t *bandBuf;
   uint16_t width;
   uint16_t height;
@@ -108,8 +108,8 @@ struct CrxSubband
   uint32_t qStepMult;
   bool supportsPartial;
   int32_t bandSize;
-  uint64_t dataSize;
-  int64_t dataOffset;
+  INT64 dataSize;
+  INT64 dataOffset;
   short rowStartAddOn;
   short rowEndAddOn;
   short colStartAddOn;
@@ -123,7 +123,7 @@ struct CrxPlaneComp
   CrxSubband *subBands;
   CrxWaveletTransform *wvltTransform;
   int8_t compNumber;
-  int64_t dataOffset;
+  INT64 dataOffset;
   int32_t compSize;
   bool supportsPartial;
   int32_t roundedBitsMask;
@@ -252,7 +252,7 @@ libraw_inline int crxBitstreamGetZeros(CrxBitstream *bitStrm)
         {
           _BitScanReverse((DWORD *)&nonZeroBit, (DWORD)nextData);
           result = bitsLeft + 31 - nonZeroBit;
-          bitStrm->bitData = nextData << (32 - nonZeroBit);
+          bitStrm->bitData = uint32_t((nextData << (32 - nonZeroBit))&0xffffffffu);
           bitStrm->bitsLeft = nonZeroBit;
           return result;
         }
@@ -268,7 +268,7 @@ libraw_inline int crxBitstreamGetZeros(CrxBitstream *bitStrm)
     }
     _BitScanReverse((DWORD *)&nonZeroBit, (DWORD)nextData);
     result = (uint32_t)(bitsLeft + 7 - nonZeroBit);
-    bitStrm->bitData = nextData << (32 - nonZeroBit);
+    bitStrm->bitData = uint32_t((nextData << (32 - nonZeroBit)) & 0xffffffffu);
     bitStrm->bitsLeft = nonZeroBit;
   }
   return result;
@@ -1771,7 +1771,7 @@ int crxParamInit(CrxImage *img, CrxBandParam **param, uint64_t subbandMdatOffset
   return 0;
 }
 
-int crxSetupSubbandData(CrxImage *img, CrxPlaneComp *planeComp, const CrxTile *tile, uint32_t mdatOffset)
+int crxSetupSubbandData(CrxImage *img, CrxPlaneComp *planeComp, const CrxTile *tile, uint64_t mdatOffset)
 {
   long compDataSize = 0;
   long waveletDataOffset = 0;
@@ -2003,7 +2003,8 @@ int crxMakeQStep(CrxImage *img, CrxTile *tile, int32_t *qpTable, uint32_t /*tota
     totalHeight += qpHeight4;
   if (img->levels > 2)
     totalHeight += qpHeight8;
-    tile->qStep = (CrxQStep *)
+
+  tile->qStep = (CrxQStep *)
 #ifdef LIBRAW_CR3_MEMPOOL
                       img->memmgr.
 #endif
@@ -2032,7 +2033,7 @@ int crxMakeQStep(CrxImage *img, CrxTile *tile, int32_t *qpTable, uint32_t /*tota
         // not sure about this nonsense - why is it not just avg like with 2 levels?
         quantVal = ((quantVal < 0) * 3 + quantVal) >> 2;
         if (quantVal / 6 >= 6)
-          *qStepTbl = q_step_tbl[quantVal % 6] * (1 << ((quantVal / 6 - 6 ) & 0x1f));
+          *qStepTbl = q_step_tbl[quantVal % 6] << ((quantVal / 6 - 6 ) & 0x1f);
         else
           *qStepTbl = q_step_tbl[quantVal % 6] >> (6 - quantVal / 6);
       }
@@ -2052,7 +2053,7 @@ int crxMakeQStep(CrxImage *img, CrxTile *tile, int32_t *qpTable, uint32_t /*tota
       {
         int32_t quantVal = (qpTable[row0Idx++] + qpTable[row1Idx++]) / 2;
         if (quantVal / 6 >= 6)
-          *qStepTbl = q_step_tbl[quantVal % 6] * (1 << ((quantVal / 6 - 6) & 0x1f));
+          *qStepTbl = q_step_tbl[quantVal % 6] << ((quantVal / 6 - 6) & 0x1f);
         else
           *qStepTbl = q_step_tbl[quantVal % 6] >> (6 - quantVal / 6);
       }
@@ -2066,7 +2067,7 @@ int crxMakeQStep(CrxImage *img, CrxTile *tile, int32_t *qpTable, uint32_t /*tota
     for (int qpRow = 0; qpRow < qpHeight; ++qpRow)
       for (int qpCol = 0; qpCol < qpWidth; ++qpCol, ++qStepTbl, ++qpTable)
         if (*qpTable / 6 >= 6)
-          *qStepTbl = q_step_tbl[*qpTable % 6] * (1 << ((*qpTable / 6 - 6) & 0x1f));
+          *qStepTbl = q_step_tbl[*qpTable % 6] << ((*qpTable / 6 - 6) & 0x1f);
         else
           *qStepTbl = q_step_tbl[*qpTable % 6] >> (6 - *qpTable / 6);
 
@@ -2493,7 +2494,7 @@ int crxReadImageHeaders(crx_data_header_t *hdr, CrxImage *img, uint8_t *mdatPtr,
   return 0;
 }
 
-int crxSetupImageData(crx_data_header_t *hdr, CrxImage *img, int16_t *outBuf, uint64_t mdatOffset, uint32_t mdatSize,
+int crxSetupImageData(crx_data_header_t *hdr, CrxImage *img, int16_t *outBuf, int64_t mdatOffset, int64_t mdatSize,
                       uint8_t *mdatHdrPtr, int32_t mdatHdrSize)
 {
   int IncrBitTable[16] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 1, 0};
@@ -2677,7 +2678,7 @@ void LibRaw::crxLoadRaw()
 
   std::vector<uint8_t> hdrBuf(hdr.mdatHdrSize);
 
-  unsigned bytes = 0;
+  int bytes = 0;
   // read image header
 #ifdef LIBRAW_USE_OPENMP
 #pragma omp critical
@@ -2710,9 +2711,9 @@ void LibRaw::crxLoadRaw()
   crxFreeImageData(&img);
 }
 
-int LibRaw::crxParseImageHeader(uchar *cmp1TagData, int nTrack, int size)
+int LibRaw::crxParseImageHeader(uchar *cmp1TagData, int nTrack, INT64 size)
 {
-  if (nTrack < 0 || nTrack >= LIBRAW_CRXTRACKS_MAXCOUNT)
+  if (nTrack < 0 || nTrack >= LIBRAW_CRXTRACKS_MAXCOUNT || size < 32)
     return -1;
   if (!cmp1TagData)
     return -1;

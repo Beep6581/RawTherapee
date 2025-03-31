@@ -41,6 +41,10 @@ void LibRaw::raw2image_start()
     break;
   }
 
+  for (int c = 0; c < 4; c++)
+    if (O.aber[c] < 0.001 || O.aber[c] > 1000.f)
+      O.aber[c] = 1.0;
+
   // adjust for half mode!
   IO.shrink =
 	  !imgdata.rawdata.color4_image && !imgdata.rawdata.color3_image &&
@@ -82,15 +86,16 @@ int LibRaw::raw2image(void)
     }
 
     // free and re-allocate image bitmap
+	int extra = P1.filters ? (P1.filters == 9 ? 6 : 2) : 0;
     if (imgdata.image)
     {
       imgdata.image = (ushort(*)[4])realloc(
-          imgdata.image, S.iheight * S.iwidth * sizeof(*imgdata.image));
-      memset(imgdata.image, 0, S.iheight * S.iwidth * sizeof(*imgdata.image));
+          imgdata.image, (S.iheight+extra) * (S.iwidth+extra) * sizeof(*imgdata.image));
+      memset(imgdata.image, 0, (S.iheight+extra) * (S.iwidth+extra) * sizeof(*imgdata.image));
     }
     else
       imgdata.image =
-          (ushort(*)[4])calloc(S.iheight * S.iwidth, sizeof(*imgdata.image));
+          (ushort(*)[4])calloc((S.iheight+extra) * (S.iwidth+extra), sizeof(*imgdata.image));
 
 
     libraw_decoder_info_t decoder_info;
@@ -348,8 +353,8 @@ int LibRaw::raw2image_ex(int do_subtract_black)
         crop[1] = (crop[1] / 4) * 4;
         if (!libraw_internal_data.unpacker_data.fuji_layout)
         {
-          crop[2] *= sqrt(2.0);
-          crop[3] /= sqrt(2.0);
+          crop[2] = int(crop[2] * sqrtf(2.f));
+          crop[3] = int(crop[3] / sqrtf(2.f));
         }
         crop[2] = (crop[2] / 4 + 1) * 4;
         crop[3] = (crop[3] / 4 + 1) * 4;
@@ -388,8 +393,9 @@ int LibRaw::raw2image_ex(int do_subtract_black)
       }
     }
 
-    int alloc_width = S.iwidth;
-    int alloc_height = S.iheight;
+	int extra = P1.filters ? (P1.filters == 9 ? 6 : 2) : 0;
+    int alloc_width = S.iwidth + extra;
+    int alloc_height = S.iheight + extra;
 
     if (IO.fuji_width && do_crop)
     {

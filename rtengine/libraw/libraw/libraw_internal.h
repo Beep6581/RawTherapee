@@ -174,7 +174,7 @@ typedef struct
   INT64 strip_offset, data_offset;
   INT64 meta_offset;
   INT64 exif_offset, exif_subdir_offset, ifd0_offset;
-  unsigned data_size;
+  INT64 data_size;
   unsigned meta_length;
   unsigned cr3_exif_length, cr3_ifd0_length;
   unsigned thumb_misc;
@@ -228,11 +228,14 @@ struct decode
 
 struct tiff_ifd_t
 {
-  int t_width, t_height, bps, comp, phint, offset, t_flip, samples, bytes, extrasamples;
+  int t_width, t_height, bps, comp, phint, t_flip, samples, extrasamples;
+  INT64 offset, bytes;
   int t_tile_width, t_tile_length, sample_format, predictor;
   int rows_per_strip;
-  int *strip_offsets, strip_offsets_count;
-  int *strip_byte_counts, strip_byte_counts_count;
+  INT64 *strip_offsets;
+  int strip_offsets_count;
+  INT64 *strip_byte_counts;
+  int strip_byte_counts_count;
   unsigned t_filters;
   int t_vwidth, t_vheight, t_lm,t_tm;
   int t_fuji_width;

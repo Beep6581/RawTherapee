@@ -566,7 +566,7 @@ void print_verbose(FILE *outfile, LibRaw &MyCoolRawProcessor, std::string &fn)
   {
     fprintf(outfile, "\nHighlight linearity limits:");
     for (int c = 0; c < 4; c++)
-      fprintf(outfile, " %ld", C.linear_max[c]);
+      fprintf(outfile, " %u", C.linear_max[c]);
   }
 
   if (P1.colors > 1)

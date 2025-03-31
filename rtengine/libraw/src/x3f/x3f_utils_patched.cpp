@@ -391,7 +391,7 @@ static x3f_huffman_t *new_huffman(x3f_huffman_t **HUFP)
     {
       x3f_directory_entry_t *DE = &DS->directory_entry[d];
       x3f_directory_entry_header_t *DEH = &DE->header;
-      uint32_t save_dir_pos;
+      INT64 save_dir_pos;
 
       /* Read the directory entry info */
       GET4(DE->input.offset);
@@ -1174,7 +1174,7 @@ static void simple_decode_row(x3f_info_t * /*I*/, x3f_directory_entry_t *DE,
       case X3F_IMAGE_THUMB_HUFFMAN:
         c_fix = (int8_t)c[color] > 0 ? c[color] : 0;
 
-        HUF->rgb8.data[3 * (row * ID->columns + col) + color] = c_fix;
+        HUF->rgb8.data[3 * (row * ID->columns + col) + color] = uint8_t(c_fix);
         break;
       default:
         /* TODO: Shouldn't this be treated as a fatal error? */
@@ -1215,7 +1215,7 @@ static void read_data_set_offset(x3f_info_t *I, x3f_directory_entry_t *DE,
 static uint32_t read_data_block(void **data, x3f_info_t *I,
                                 x3f_directory_entry_t *DE, uint32_t footer)
 {
-  INT64 fpos = I->input.file->tell();
+  uint32_t fpos = (I->input.file->tell() & 0x7fffffffU) ;
   uint32_t size = DE->input.size + DE->input.offset - fpos - footer;
 
   if (fpos + size > I->input.file->size())
@@ -1231,8 +1231,9 @@ static uint32_t read_data_block(void **data, x3f_info_t *I,
 static uint32_t data_block_size(void ** /*data*/, x3f_info_t *I,
                                 x3f_directory_entry_t *DE, uint32_t footer)
 {
+  uint32_t fpos = (I->input.file->tell() & 0x7fffffffU);
   uint32_t size =
-      DE->input.size + DE->input.offset - I->input.file->tell() - footer;
+      DE->input.size + DE->input.offset - fpos - footer;
   return size;
 }
 
@@ -1481,7 +1482,7 @@ static void x3f_load_pixmap(x3f_info_t *I, x3f_directory_entry_t *DE)
   x3f_load_image_verbatim(I, DE);
 }
 
-static uint32_t x3f_load_pixmap_size(x3f_info_t *I, x3f_directory_entry_t *DE)
+static int32_t x3f_load_pixmap_size(x3f_info_t *I, x3f_directory_entry_t *DE)
 {
   return x3f_load_image_verbatim_size(I, DE);
 }
@@ -1491,7 +1492,7 @@ static void x3f_load_jpeg(x3f_info_t *I, x3f_directory_entry_t *DE)
   x3f_load_image_verbatim(I, DE);
 }
 
-static uint32_t x3f_load_jpeg_size(x3f_info_t *I, x3f_directory_entry_t *DE)
+static int32_t x3f_load_jpeg_size(x3f_info_t *I, x3f_directory_entry_t *DE)
 {
   return x3f_load_image_verbatim_size(I, DE);
 }
@@ -1536,7 +1537,7 @@ static void x3f_load_image(x3f_info_t *I, x3f_directory_entry_t *DE)
 }
 
 // Used only for thumbnail size estimation
-static uint32_t x3f_load_image_size(x3f_info_t *I, x3f_directory_entry_t *DE)
+static int32_t x3f_load_image_size(x3f_info_t *I, x3f_directory_entry_t *DE)
 {
   x3f_directory_entry_header_t *DEH = &DE->header;
   x3f_image_data_t *ID = &DEH->data_subsection.image_data;
@@ -2074,7 +2075,7 @@ static void x3f_load_camf(x3f_info_t *I, x3f_directory_entry_t *DE)
   return X3F_OK;
 }
 
-/* extern */ int64_t x3f_load_data_size(x3f_t *x3f, x3f_directory_entry_t *DE)
+/* extern */ int32_t x3f_load_data_size(x3f_t *x3f, x3f_directory_entry_t *DE)
 {
   x3f_info_t *I = &x3f->info;
 

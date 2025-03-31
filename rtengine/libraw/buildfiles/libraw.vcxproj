@@ -150,6 +150,7 @@
     <ClCompile Include="..\src\metadata\cr3_parser.cpp" />
     <ClCompile Include="..\src\decoders\crx.cpp" />
     <ClCompile Include="..\src\decoders\pana8.cpp" />
+    <ClCompile Include="..\src\decoders\olympus14.cpp" />
     <ClCompile Include="..\src\decoders\sonycc.cpp" />
     <ClCompile Include="..\src\decompressors\losslessjpeg.cpp" />
     <ClCompile Include="..\src\utils\curves.cpp" />

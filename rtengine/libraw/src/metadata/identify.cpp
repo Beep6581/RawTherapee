@@ -129,6 +129,81 @@ const char *LibRaw::cameramakeridx2maker(unsigned maker)
     return 0;
 }
 
+int LibRaw::simplify_make_model(unsigned *_maker_index, 
+	char *_make, unsigned _make_buf_size, char *_model, unsigned _model_buf_size)
+{
+	if (!_make || _make_buf_size < 2 || !_model || _model_buf_size < 2)
+		return -1;
+
+	unsigned mkindex = 0;
+    for (int i = 0; i < int(sizeof CorpTable / sizeof *CorpTable); i++)
+    {
+      if (strcasestr(_make, CorpTable[i].CorpName))
+      { /* Simplify company names */
+        mkindex = CorpTable[i].CorpId;
+        break;
+      }
+    }
+
+    if (mkindex == LIBRAW_CAMERAMAKER_HMD_Global && !strncasecmp(_model, "Nokia", 5))
+    {
+      mkindex = LIBRAW_CAMERAMAKER_Nokia;
+    }
+    else if (mkindex == LIBRAW_CAMERAMAKER_JK_Imaging && !strncasecmp(_model, "Kodak", 5))
+    {
+      mkindex = LIBRAW_CAMERAMAKER_Kodak;
+    }
+    else if (mkindex == LIBRAW_CAMERAMAKER_Ricoh && !strncasecmp(_model, "PENTAX", 6))
+    {
+      mkindex = LIBRAW_CAMERAMAKER_Pentax;
+    }
+
+  for (int i = 0; i < int(sizeof CorpTable / sizeof *CorpTable); i++)
+    {
+      if (mkindex == (unsigned)CorpTable[i].CorpId)
+      {
+        strncpy(_make, CorpTable[i].CorpName, _make_buf_size - 1);
+        _make[_make_buf_size - 1] = 0;
+        break;
+      }
+    }
+
+    char *cp = 0;
+    if ((mkindex == LIBRAW_CAMERAMAKER_Kodak || mkindex == LIBRAW_CAMERAMAKER_Leica) &&
+        ((cp = strcasestr(_model, " DIGITAL CAMERA")) || (cp = strstr(_model, "FILE VERSION"))))
+    {
+      *cp = 0;
+    }
+
+    remove_trailing_spaces(_make, _make_buf_size);
+    remove_trailing_spaces(_model, _model_buf_size);
+
+    int i = int(strnlen(_make, _make_buf_size - 1)); /* Remove make from model */
+    if (!strncasecmp(_model, _make, i) && _model[i++] == ' ')
+      memmove(_model, _model + i, _model_buf_size - i);
+
+    if (mkindex == LIBRAW_CAMERAMAKER_Fujifilm && !strncmp(_model, "FinePix", 7))
+    {
+      memmove(_model, _model + 7, strlen(_model) - 6);
+      if (_model[0] == ' ')
+      {
+        memmove(_model, _model + 1, strlen(_model));
+      }
+    }
+    else if ((mkindex == LIBRAW_CAMERAMAKER_Kodak || mkindex == LIBRAW_CAMERAMAKER_Konica) &&
+             !strncmp(_model, "Digital Camera ", 15))
+    {
+      memmove(_model, _model + 15, strlen(_model) - 14);
+    }
+
+    if (mkindex)
+    {
+      if (_maker_index)
+        *_maker_index = mkindex;
+      return 0; // maker index is set
+    }
+    return 1; // maker index is not set
+}
 
 /*
    Identify which camera created this file, and set global variables
@@ -365,8 +440,8 @@ void LibRaw::identify()
   // clang-format on
 
   char head[64] = {0}, *cp;
-  int hlen, fsize, flen, zero_fsize = 1, i, c;
-  INT64 fsize64;
+  int hlen, zero_fsize = 1, i, c;
+  INT64 flen, fsize;
   struct jhead jh;
 
   unsigned camera_count =
@@ -447,19 +522,19 @@ void LibRaw::identify()
 
   if (fread(head, 1, 64, ifp) < 64)
     throw LIBRAW_EXCEPTION_IO_CORRUPT;
-  libraw_internal_data.unpacker_data.lenRAFData =
-      libraw_internal_data.unpacker_data.posRAFData = 0;
+  libraw_internal_data.unpacker_data.lenRAFData = 0;
+  libraw_internal_data.unpacker_data.posRAFData = 0;
 
   fseek(ifp, 0, SEEK_END);
-  fsize64 = ftell(ifp);
-  if(fsize64 > LIBRAW_MAX_NONDNG_RAW_FILE_SIZE && fsize64 > LIBRAW_MAX_DNG_RAW_FILE_SIZE)
+  flen = fsize = ftell(ifp);
+  if(fsize > LIBRAW_MAX_NONDNG_RAW_FILE_SIZE && fsize > LIBRAW_MAX_DNG_RAW_FILE_SIZE 
+	  && fsize > LIBRAW_MAX_CR3_RAW_FILE_SIZE)
       throw LIBRAW_EXCEPTION_TOOBIG;
 
-  flen = fsize = ftell(ifp);
   if ((cp = (char *)memmem(head, 32, (char *)"MMMM", 4)) ||
       (cp = (char *)memmem(head, 32, (char *)"IIII", 4)))
   {
-    parse_phase_one(cp - head);
+    parse_phase_one(int(cp - head));
     if (cp - head && parse_tiff(0))
       apply_tiff();
   }
@@ -468,7 +543,7 @@ void LibRaw::identify()
     if (!memcmp(head + 6, "HEAPCCDR", 8))
     {
       data_offset = hlen;
-      parse_ciff(hlen, flen - hlen, 0);
+      parse_ciff(INT64(hlen), int(flen - hlen), 0);
       load_raw = &LibRaw::canon_load_raw;
     }
     else if (parse_tiff(0))
@@ -635,18 +710,23 @@ void LibRaw::identify()
 
   if (dng_version)
   {
-      if (fsize64 > LIBRAW_MAX_DNG_RAW_FILE_SIZE)
+      if (fsize > LIBRAW_MAX_DNG_RAW_FILE_SIZE)
           throw LIBRAW_EXCEPTION_TOOBIG;
+  }
+  else if (load_raw == &LibRaw::crxLoadRaw)
+  {
+    if (fsize > LIBRAW_MAX_CR3_RAW_FILE_SIZE)
+      throw LIBRAW_EXCEPTION_TOOBIG;
   }
   else
   {
-    if (fsize64 > LIBRAW_MAX_NONDNG_RAW_FILE_SIZE)
+    if (fsize > LIBRAW_MAX_NONDNG_RAW_FILE_SIZE)
       throw LIBRAW_EXCEPTION_TOOBIG;
   }
 
   if (make[0] == 0)
     for (zero_fsize = i = 0; i < (int)camera_count; i++)
-      if (fsize == (int)table[i].fsize)
+      if (fsize == (INT64)table[i].fsize)
       {
         strcpy(make, table[i].t_make);
         strcpy(model, table[i].t_model);
@@ -667,7 +747,7 @@ void LibRaw::identify()
           colors = 1;
           filters = 0;
         }
-        switch (tiff_bps = (fsize - data_offset) * 8 / (raw_width * raw_height))
+        switch (tiff_bps = unsigned((fsize - data_offset) * 8LL / (INT64(raw_width) * INT64(raw_height))))
         {
         case 6:
           load_raw = &LibRaw::minolta_rd175_load_raw;
@@ -677,7 +757,7 @@ void LibRaw::identify()
           load_raw = &LibRaw::eight_bit_load_raw;
           break;
         case 10:
-          if ((fsize - data_offset) / raw_height * 3 >= raw_width * 4)
+          if ((fsize - data_offset) / INT64(raw_height) * 3LL >= INT64(raw_width) * 4LL)
           {
             load_raw = &LibRaw::android_loose_load_raw;
             break;
@@ -704,7 +784,7 @@ void LibRaw::identify()
       }
   if (zero_fsize)
     fsize = 0;
-  if (make[0] == 0 && fsize64 < 25000000LL)
+  if (make[0] == 0 && fsize < 25000000LL)
     parse_smal(0, flen);
   if (make[0] == 0)
   {
@@ -835,6 +915,14 @@ void LibRaw::identify()
   // make sure strings are terminated
   desc[511] = artist[63] = make[63] = model[63] = model2[63] = 0;
 
+#if 1
+  unsigned mkindex = 0;
+  if (simplify_make_model(&mkindex, make, sizeof(make), model, sizeof(model)) == 0)
+  {
+	  maker_index = mkindex;
+  }
+#else
+
   for (i = 0; i < int(sizeof CorpTable / sizeof *CorpTable); i++)
   {
     if (strcasestr(make, CorpTable[i].CorpName))
@@ -881,6 +969,7 @@ void LibRaw::identify()
              !strncmp(model, "Digital Camera ", 15)) {
     memmove(model, model + 15, strlen(model) - 14);
   }
+#endif
 
   desc[511] = artist[63] = make[63] = model[63] = model2[63] = 0;
   if (!is_raw)
@@ -917,16 +1006,12 @@ void LibRaw::identify()
         else if((tiff_sampleformat == 0 || tiff_sampleformat == 1) && tiff_bps>=8 && tiff_bps <=16)
           load_raw = &LibRaw::deflate_dng_load_raw;
         break;
-#ifdef USE_GPRSDK
     case 9:
         load_raw = &LibRaw::vc5_dng_load_raw_placeholder;
         break;
-#endif
-#ifdef USE_DNGSDK
     case 52546:
       load_raw = &LibRaw::jxl_dng_load_raw_placeholder;
       break;
-#endif
     case 34892:
       load_raw = &LibRaw::lossy_dng_load_raw;
       break;
@@ -1156,7 +1241,7 @@ dng_skip:
       (tiff_bps > 16 &&
        (load_raw != &LibRaw::deflate_dng_load_raw &&
         load_raw != &LibRaw::uncompressed_fp_dng_load_raw)) ||
-      tiff_samples > 6 || colors > 4)
+      tiff_samples > 6 || colors > 4 || colors == 2)
     is_raw = 0;
 
   if (raw_width < 22 || raw_width > 64000 || raw_height < 22 ||
@@ -1586,11 +1671,13 @@ void LibRaw::identify_process_dng_fields()
 						bl64 /= LIM(cnt, 1, 4096);
 					}
 					int rblack = black + bl4 + bl64;
-                    for (int chan = 0; chan < colors && chan < 4; chan++)
-                        imgdata.color.linear_max[chan] =
-                            (maximum - rblack) *
-                            imgdata.color.dng_levels.LinearResponseLimit +
-                            rblack;
+					for (int chan = 0; chan < colors && chan < 4; chan++)
+						imgdata.color.linear_max[chan] =
+						unsigned(
+						(maximum - rblack) *
+							imgdata.color.dng_levels.LinearResponseLimit +
+							rblack
+							);
                     if (imgdata.color.linear_max[1] && !imgdata.color.linear_max[3])
                         imgdata.color.linear_max[3] = imgdata.color.linear_max[1];
 				}
@@ -1659,6 +1746,13 @@ void LibRaw::identify_finetune_pentax()
 			filters = 0x16161616;
 			top_margin = 2;
 		}
+		if (width == 6080 && (unique_id == PentaxID_KF))
+		{
+			top_margin = 28;
+			height = 4024;
+			left_margin = 56;
+			width = 6024;
+		}
 		if ((width == 6080) && (unique_id == PentaxID_K_3_II))
 		{
 			left_margin = 4;
@@ -1670,6 +1764,18 @@ void LibRaw::identify_finetune_pentax()
           width = 6224;
           top_margin = 34;
           height = 4160;
+        }
+        if (unique_id == PentaxID_K_3_III_Mono) 
+        {
+			if (width == 6304)
+			{
+              left_margin = 26;
+              width = 6224;
+              top_margin = 34;
+              height = 4160;
+            }
+		  filters = 0;
+		  colors = 1;
         }
         if ((width == 6112) && (unique_id == PentaxID_KP))
 		{
@@ -1698,7 +1804,7 @@ void LibRaw::identify_finetune_pentax()
 		width = 4014;
 }
 
-void LibRaw::identify_finetune_by_filesize(int fsize)
+void LibRaw::identify_finetune_by_filesize(INT64 fsize)
 {
 
 	if (fsize == 4771840)
@@ -1731,7 +1837,7 @@ void LibRaw::identify_finetune_by_filesize(int fsize)
 	}
 }
 
-void LibRaw::identify_finetune_dcr(char head[64], int fsize, int flen)
+void LibRaw::identify_finetune_dcr(char head[64], INT64 fsize, INT64 flen)
 {
 	static const short pana[][6] = {
 		// raw_width, raw_height, left_margin, top_margin, width_increment,
@@ -2109,8 +2215,8 @@ void LibRaw::identify_finetune_dcr(char head[64], int fsize, int flen)
 
 	else if (makeIs(LIBRAW_CAMERAMAKER_Olympus)) {
 		if (OlyID == OlyID_C_740UZ) { // (fsize == 4775936)
-			i = find_green(12, 32, 1188864, 3576832);
-			c = find_green(12, 32, 2383920, 2387016);
+			i = int(find_green(12, 32, 1188864, 3576832));
+			c = int(find_green(12, 32, 2383920, 2387016));
 			if (abs(i) < abs(c)) {
 				SWAP(i, c);
 				load_flags = 24;
@@ -2152,9 +2258,17 @@ void LibRaw::identify_finetune_dcr(char head[64], int fsize, int flen)
 
 			if (load_raw == &LibRaw::unpacked_load_raw) {
 				load_flags = 4;
-        if (imOly.ValidBits == 10) load_flags += 2;
+				if (imOly.ValidBits == 10) load_flags += 2;
 			}
-      tiff_bps = imOly.ValidBits;
+			tiff_bps = imOly.ValidBits;
+			if (tiff_bps == 14)
+			{
+				black *= 4;
+				FORC(4) cblack[c] *= 4;
+				FORC(4) imgdata.color.linear_max[c] *= 4;
+				FORC(MIN(cblack[4] * cblack[5], LIBRAW_CBLACK_SIZE - 6)) cblack[c] *= 4;
+			}
+
 
 			if ((OlyID == OlyID_E_300) ||
 				(OlyID == OlyID_E_500)) {
@@ -2176,17 +2290,19 @@ void LibRaw::identify_finetune_dcr(char head[64], int fsize, int flen)
 
 			}
 			else if (OlyID == OlyID_SP_550UZ) {
-				thumb_length = flen - (thumb_offset = 0xa39800);
+				thumb_length = unsigned(flen - INT64(thumb_offset = 0xa39800));
 				thumb_height = 480;
 				thumb_width = 640;
 
 			}
 			else if (OlyID == OlyID_TG_4) {
 				width -= 16;
-
 			}
-			else if ((OlyID == OlyID_TG_5) ||
-				(OlyID == OlyID_TG_6)) {
+			else if (
+			   (OlyID == OlyID_TG_5) ||
+				 (OlyID == OlyID_TG_6) ||
+				 (OlyID == OlyID_TG_7)
+				) {
 				width -= 26;
 			}
 		}
@@ -2389,15 +2505,18 @@ void LibRaw::identify_finetune_dcr(char head[64], int fsize, int flen)
       default:
         /* insert model name-based width/height/margins/etc. assignments */
 
-		  /* raw_inset_crops default*/
-        if (imgdata.sizes.raw_inset_crops[0].cwidth > 0 && imgdata.sizes.raw_inset_crops[0].cwidth <= raw_width &&
-            imgdata.sizes.raw_inset_crops[0].cheight > 0 && imgdata.sizes.raw_inset_crops[0].cheight <= raw_height)
-        {
-          top_margin = imgdata.sizes.raw_inset_crops[0].ctop;
-          left_margin = imgdata.sizes.raw_inset_crops[0].cleft;
-          width = imgdata.sizes.raw_inset_crops[0].cwidth;
-          height = imgdata.sizes.raw_inset_crops[0].cheight;
-        }
+		  if (strncmp(model, "S6000", 5) && strncmp(model, "S6500", 5))
+		  {
+			  /* raw_inset_crops default*/
+			  if (imgdata.sizes.raw_inset_crops[0].cwidth > 0 && imgdata.sizes.raw_inset_crops[0].cwidth <= raw_width &&
+				  imgdata.sizes.raw_inset_crops[0].cheight > 0 && imgdata.sizes.raw_inset_crops[0].cheight <= raw_height)
+			  {
+				  top_margin = imgdata.sizes.raw_inset_crops[0].ctop;
+				  left_margin = imgdata.sizes.raw_inset_crops[0].cleft;
+				  width = imgdata.sizes.raw_inset_crops[0].cwidth;
+				  height = imgdata.sizes.raw_inset_crops[0].cheight;
+			  }
+		  }
         break;
       }
     }
@@ -2613,7 +2732,7 @@ void LibRaw::identify_finetune_dcr(char head[64], int fsize, int flen)
 
 		}
 		else if ((imHassy.SensorCode == 15) &&
-			!imHassy.SensorSubCode && // Hasselblad H5D-50c
+			!imHassy.SensorSubCode && // Hasselblad H5D-50c, CFV-50c
 			imHassy.uncropped) {
 			left_margin = 52;
 			top_margin = 100;
@@ -2659,7 +2778,7 @@ void LibRaw::identify_finetune_dcr(char head[64], int fsize, int flen)
 			height = raw_height - top_margin;
 		}
         else if ((imHassy.SensorCode == 20) && imHassy.uncropped)
-        { // Hasselblad X2D-100c
+        { // Hasselblad X2D-100c, CFV-100c
 			left_margin = 124;
 			width = 11664;
 			top_margin = 92;
@@ -2830,7 +2949,9 @@ void LibRaw::identify_finetune_dcr(char head[64], int fsize, int flen)
 			load_raw = &LibRaw::sony_load_raw;
 
 		}
-        else if ((unique_id == SonyID_ILCE_7RM5) || (unique_id == SonyID_ILCE_7CR))
+        else if ((unique_id == SonyID_ILCE_7RM5) ||
+                 (unique_id == SonyID_ILCE_7CR)  ||
+                 (unique_id == SonyID_ILX_LR1))
         {
           if (raw_width == 6304)
           {
@@ -2891,6 +3012,35 @@ void LibRaw::identify_finetune_dcr(char head[64], int fsize, int flen)
 			// DSC-RX100M5, DSC-RX100M5A;
 			width -= height > 3664 ? 8 : 32;
 
+		}
+		else if (unique_id == SonyID_ILCE_9M3)
+		{
+			if (raw_width == 6048)
+				width -= 36; // 
+			else if (raw_width == 6144) // Lossless/L, FF
+			{
+				width = 6012;
+				height = 4020;
+			}
+			else if (raw_width == 4096) // Lossless/M
+			{
+				width = 3944;
+				height = 2644;
+			}
+			else if (raw_width == 3072) // Lossless/S
+			{
+				width = 3016;
+				height = 2008;
+			}
+			else if (raw_width == 3968)   // Uncompressed, APS
+			{
+				width = 3948;
+			}
+			else // We do not have other samples, offer vendor crop to caller
+			{
+              width = raw_width - 32; // fallback
+              imgdata.process_warnings |= LIBRAW_WARN_VENDOR_CROP_SUGGESTED;
+			}
 		}
 		else if (raw_width == 6048) {
 			// Sony SLT-A65, DSC-RX1, SLT-A77, DSC-RX1, ILCA-77M2,
@@ -2965,6 +3115,11 @@ void LibRaw::identify_finetune_dcr(char head[64], int fsize, int flen)
           {
             width = 7028;
             height = 4688;
+          }
+          else if (raw_width == 4736) // APS-C crop
+          {
+            width = 4692;
+            //height = 3080;
           }
           else if (raw_width == 5120) // Lossy/Medium
           {

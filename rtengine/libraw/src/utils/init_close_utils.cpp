@@ -52,6 +52,7 @@ LibRaw::LibRaw(unsigned int flags) : memmgr(1024)
                           ? NULL
                           : &default_data_callback;
   callbacks.exif_cb = NULL; // no default callback
+  callbacks.makernotes_cb = NULL;
   callbacks.pre_identify_cb = NULL;
   callbacks.post_identify_cb = NULL;
   callbacks.pre_subtractblack_cb = callbacks.pre_scalecolors_cb =
@@ -305,15 +306,13 @@ void LibRaw::recycle()
 #ifdef USE_DNGSDK
   if (dngnegative)
   {
-    dng_negative *ng = (dng_negative *)dngnegative;
-    delete ng;
-    dngnegative = 0;
+	clear_dng_negative(dngnegative);
+	dngnegative = 0;
   }
   if(dngimage)
   {
-      dng_image *dimage = (dng_image*)dngimage;
-      delete dimage;
-      dngimage = 0;
+	clear_dng_image(dngimage);
+    dngimage = 0;
   }
 #endif
 #ifdef USE_X3FTOOLS

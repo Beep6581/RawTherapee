@@ -1,6 +1,6 @@
 /* -*- C++ -*-
  * File: sonycc.cpp
- * Copyright (C) 2023-2024 Alex Tutubalin, LibRaw LLC
+ * Copyright (C) 2024 Alex Tutubalin, LibRaw LLC
  *
    Sony YCC (small/medium lossy compressed) decoder
 
@@ -66,11 +66,11 @@ void copy_yuv_420(uint16_t *out, uint32_t row, uint32_t col, uint32_t width,
 
 bool LibRaw_SonyYCC_Decompressor::decode_sony_ljpeg_420(std::vector<uint16_t> &_dest, int width, int height)
 {
-  if (sof.width * 3 != width || sof.height != height)
+  if (sof.width * 3 != unsigned(width) || sof.height != unsigned(height))
     return false;
   if (width % 2 || width % 6 || height % 2)
     return false;
-  if (_dest.size() < width*height)
+  if (_dest.size() < size_t(width*height))
 	  return false;
 
   HuffTable &huff1 = dhts[sof.components[0].dc_tbl];
@@ -94,10 +94,10 @@ bool LibRaw_SonyYCC_Decompressor::decode_sony_ljpeg_420(std::vector<uint16_t> &_
   uint16_t *dest = _dest.data();
   copy_yuv_420(dest, 0, 0, width, y1, y2, y3, y4, cb, cr);
 
-  for (uint32_t row = 0; row < height; row += 2)
+  for (int32_t row = 0; row < height; row += 2)
   {
-    uint32_t startcol = row == 0 ? 6 : 0;
-    for (uint32_t col = startcol; col < width; col += 6)
+    int32_t startcol = row == 0 ? 6 : 0;
+    for (int32_t col = startcol; col < width; col += 6)
     {
       int32_t py1, py3, pcb, pcr;
       if (col == 0)
@@ -271,7 +271,7 @@ void LibRaw::sony_ycbcr_load_raw()
   {
 	  ifp->seek(toffsets[tile],SEEK_SET);
 	  int readed =  ifp->read(iobuffer.data(), 1, tlengths[tile]);
-	  if(readed != tlengths[tile])
+	  if(unsigned(readed) != tlengths[tile])
         throw LIBRAW_EXCEPTION_IO_EOF;
 	  LibRaw_SonyYCC_Decompressor dec(iobuffer.data(), readed);
 	  if(dec.sof.cps != 3) // !YUV

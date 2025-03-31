@@ -53,7 +53,7 @@ void LibRaw::tiff_set(struct tiff_hdr *th, ushort *ntag, ushort tag,
   tt->tag = tag;
 }
 
-#define TOFF(ptr) ((char *)(&(ptr)) - (char *)th)
+#define TOFF(ptr) int((char *)(&(ptr)) - (char *)th)
 
 void LibRaw::tiff_head(struct tiff_hdr *th, int full)
 {
@@ -67,9 +67,9 @@ void LibRaw::tiff_head(struct tiff_hdr *th, int full)
   th->rat[0] = th->rat[2] = 300;
   th->rat[1] = th->rat[3] = 1;
   FORC(6) th->rat[4 + c] = 1000000;
-  th->rat[4] *= shutter;
-  th->rat[6] *= aperture;
-  th->rat[8] *= focal_len;
+  th->rat[4] = int(shutter * 1000000.f);
+  th->rat[6] = int(aperture * 1000000.f);
+  th->rat[8] = int(focal_len * 1000000.f);
   strncpy(th->t_desc, desc, 512);
   strncpy(th->t_make, make, 64);
   strncpy(th->t_model, model, 64);
@@ -117,7 +117,7 @@ void LibRaw::tiff_head(struct tiff_hdr *th, int full)
     tiff_set(th, &th->ntag, 34675, 7, psize, sizeof *th);
   tiff_set(th, &th->nexif, 33434, 5, 1, TOFF(th->rat[4]));
   tiff_set(th, &th->nexif, 33437, 5, 1, TOFF(th->rat[6]));
-  tiff_set(th, &th->nexif, 34855, 3, 1, iso_speed);
+  tiff_set(th, &th->nexif, 34855, 3, 1, int(iso_speed));
   tiff_set(th, &th->nexif, 37386, 5, 1, TOFF(th->rat[8]));
   if (gpsdata[1])
   {
@@ -163,7 +163,7 @@ void LibRaw::write_ppm_tiff()
         int c, row, col, soff, rstep, cstep;
         int perc, val, total, t_white = 0x2000;
 
-        perc = width * height * auto_bright_thr;
+        perc = int(width * height * auto_bright_thr);
 
         if (fuji_width)
             perc /= 2;
@@ -176,7 +176,7 @@ void LibRaw::write_ppm_tiff()
                 if (t_white < val)
                     t_white = val;
             }
-        gamma_curve(gamm[0], gamm[1], 2, (t_white << 3) / bright);
+        gamma_curve(gamm[0], gamm[1], 2, int((t_white << 3) / bright));
         iheight = height;
         iwidth = width;
         if (flip & 4)

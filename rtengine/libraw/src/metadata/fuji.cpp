@@ -60,7 +60,7 @@ int LibRaw::guess_RAFDataGeneration (uchar *RAFData_start) // returns offset to 
      X-E2S, X-E3, X-H1, X-S10, X-H2
      X-T2, X-T3, X-T4, X-T20, X-T30
      X-Pro2, X-Pro3
-     X100F, X100V
+     X100F, X100V, X100VI
 
    RAFData gen. set to 4096:
    - RAFData length is exactly 4096
@@ -99,8 +99,8 @@ int LibRaw::guess_RAFDataGeneration (uchar *RAFData_start) // returns offset to 
     imFuji.RAFDataVersion = b23;
   }
 
-//printf ("ID: 0x%llx, RAFDataVersion: 0x%04x, RAFDataGeneration: %d\n",
-//ilm.CamID, imFuji.RAFDataVersion, imFuji.RAFDataGeneration);
+// printf (">> ID: 0x%llx, RAFDataVersion: 0x%04x, RAFDataGeneration: %d\n",
+// ilm.CamID, imFuji.RAFDataVersion, imFuji.RAFDataGeneration);
 
   return offsetWH_inRAFData;
 }
@@ -168,17 +168,19 @@ void LibRaw::parseAdobeRAFMakernote()
 #endif
 
 #define get_average_WB(wb_index)                                               \
-  FORC4 icWBC[wb_index][GRGB_2_RGBG(c)] =                                      \
-      PrivateMknBuf.sget2(posPrivateMknBuf + (c << 1));                        \
-  if ((PrivateTagBytes == 16) && average_WBData) {                             \
-    FORC4 icWBC[wb_index][GRGB_2_RGBG(c)] =                                    \
-             (icWBC[wb_index][GRGB_2_RGBG(c)] +                                \
-              PrivateMknBuf.sget2(posPrivateMknBuf + (c << 1)+8)) /2;          \
-  }                                                                            \
-  if (use_WBcorr_coeffs) {                                                     \
-    icWBC[wb_index][0] *= wbR_corr;                                            \
-    icWBC[wb_index][2] *= wbB_corr;                                            \
-  }
+  do {                                                                         \
+	  FORC4 icWBC[wb_index][GRGB_2_RGBG(c)] =                                      \
+		  PrivateMknBuf.sget2(posPrivateMknBuf + (c << 1));                        \
+	  if ((PrivateTagBytes == 16) && average_WBData) {                             \
+		FORC4 icWBC[wb_index][GRGB_2_RGBG(c)] =                                    \
+				 (icWBC[wb_index][GRGB_2_RGBG(c)] +                                \
+				  PrivateMknBuf.sget2(posPrivateMknBuf + (c << 1)+8)) /2;          \
+	  }                                                                            \
+	  if (use_WBcorr_coeffs) {                                                     \
+		icWBC[wb_index][0] = int(icWBC[wb_index][0]*wbR_corr);                     \
+		icWBC[wb_index][2] = int(icWBC[wb_index][2]*wbB_corr);                     \
+	  }                                                                            \
+  } while(0)
 
   ushort use_WBcorr_coeffs = 0;
   double wbR_corr = 1.0;
@@ -289,8 +291,8 @@ void LibRaw::parseAdobeRAFMakernote()
 						PrivateMknBuf.sget2(posWB + (c << 1))) /2;
           }
           if (use_WBcorr_coeffs) {
-             icWBC[wb_ind][0] *= wbR_corr;
-             icWBC[wb_ind][2] *= wbB_corr;
+             icWBC[wb_ind][0] = int(icWBC[wb_ind][0]*wbR_corr);
+             icWBC[wb_ind][2] = int(icWBC[wb_ind][2]*wbB_corr);
           }
           posWB += 8;
         }
@@ -298,7 +300,7 @@ void LibRaw::parseAdobeRAFMakernote()
       else if (PrivateTagID == 0x2ff0)
       {
         get_average_WB(LIBRAW_WBI_AsShot);
-        FORC4 cam_mul[c] = icWBC[LIBRAW_WBI_AsShot][c];
+        FORC4 cam_mul[c] = float(icWBC[LIBRAW_WBI_AsShot][c]);
       }
       else if ((PrivateTagID == 0x4000) &&
                ((PrivateTagBytes == 8) || (PrivateTagBytes == 16)))
@@ -329,8 +331,8 @@ void LibRaw::parseAdobeRAFMakernote()
 		  PrivateMknBuf.checkoffset(posPrivateMknBuf + 8); // will raise exception if no space
           guess_RAFDataGeneration (PrivateMknBuf.data() + posPrivateMknBuf);
 
-//printf ("ID: 0x%llx, RAFDataVersion: 0x%04x, RAFDataGeneration: %d\n",
-//ilm.CamID, imFuji.RAFDataVersion, imFuji.RAFDataGeneration);
+// printf (">> ID: 0x%llx, RAFDataVersion: 0x%04x, RAFDataGeneration: %d\n",
+// ilm.CamID, imFuji.RAFDataVersion, imFuji.RAFDataGeneration);
 
           for (posWB = 0; posWB < (int)PrivateTagBytes - 16; posWB++)
           {
@@ -358,10 +360,12 @@ void LibRaw::parseAdobeRAFMakernote()
               (imFuji.RAFDataVersion == 0x0265) || // X-E4, X-T5
               (imFuji.RAFDataVersion == 0x0266) || // X-T30 II
               (imFuji.RAFDataVersion == 0x0267) || // GFX 100 II
+              (imFuji.RAFDataVersion == 0x0369) || // X100VI
                 !strcmp(model, "X-Pro3")     ||
                 !strcmp(model, "GFX 100 II") || !strcmp(model, "GFX100 II")  ||
                 !strcmp(model, "GFX 100S")   || !strcmp(model, "GFX100S")    ||
                 !strcmp(model, "GFX 50S II") || !strcmp(model, "GFX50S II")  ||
+                !strcmp(model, "X100VI")     ||
                 !strcmp(model, "X100V")      ||
                 !strcmp(model, "X-H2")       ||
                 !strcmp(model, "X-H2S")      ||
@@ -506,6 +510,10 @@ void LibRaw::parseAdobeRAFMakernote()
           {
             wb_section_offset = 0x1840;
           }
+          else if (imFuji.RAFDataVersion == 0x0369) // X100VI
+          {
+            wb_section_offset = 0x0c5a;
+          }
 
 /* try for unknown RAF Data versions */
           else if (!strcmp(model, "X-Pro2"))
@@ -600,6 +608,11 @@ void LibRaw::parseAdobeRAFMakernote()
           {
             if (PrivateMknBuf.isWB(posPrivateMknBuf + 0x2014))
               wb_section_offset = 0x2014;
+          }
+          else if (!strcmp(model, "X100VI"))
+          {
+            if (PrivateMknBuf.isWB(posPrivateMknBuf + 0x0c5a))
+              wb_section_offset = 0x0c5a;
           }
           else if (!strcmp(model, "X100V"))
           {
@@ -770,7 +783,7 @@ void LibRaw::parseAdobeRAFMakernote()
             {
               for (int iCCT = 0; iCCT < 31; iCCT++)
               {
-                icWBCCTC[iCCT][0] = FujiCCT_K[iCCT];
+                icWBCCTC[iCCT][0] = float(FujiCCT_K[iCCT]);
                 icWBCCTC[iCCT][1] = PrivateMknBuf.sget2(wb_section_offset + iCCT * 6 + 2);
                 icWBCCTC[iCCT][2] = icWBCCTC[iCCT][4] = PrivateMknBuf.sget2(wb_section_offset + iCCT * 6);
                 icWBCCTC[iCCT][3] = PrivateMknBuf.sget2(wb_section_offset + iCCT * 6 + 4);
@@ -800,10 +813,10 @@ void LibRaw::parseAdobeRAFMakernote()
             wb[2] = PrivateMknBuf.sget4(posWB) << 1;
             posWB += 4;
 
-            if (tWB && (iCCT < 255))
+            if (tWB && (iCCT < 64))
             {
-              icWBCCTC[iCCT][0] = tWB;
-              FORC4 icWBCCTC[iCCT][c + 1] = wb[c];
+              icWBCCTC[iCCT][0] = float(tWB);
+              FORC4 icWBCCTC[iCCT][c + 1] = float(wb[c]);
               iCCT++;
             }
             if (nWB != 0x46)
@@ -952,7 +965,7 @@ void LibRaw::parseFujiMakernotes(unsigned tag, unsigned type, unsigned len,
       imFuji.WB_Preset = get2();
       break;
     case 0x1011:
-      imCommon.FlashEC = getreal(type);
+      imCommon.FlashEC = getrealf(type);
       break;
     case 0x1020:
       imFuji.Macro = get2();
@@ -999,8 +1012,8 @@ void LibRaw::parseFujiMakernotes(unsigned tag, unsigned type, unsigned len,
       imFuji.SeriesLength = get2();
       break;
     case 0x1106:
-      imFuji.PixelShiftOffset[0] = getreal(type);
-      imFuji.PixelShiftOffset[1] = getreal(type);
+      imFuji.PixelShiftOffset[0] = getrealf(type);
+      imFuji.PixelShiftOffset[1] = getrealf(type);
       break;
     case 0x1301:
       imFuji.FocusWarning = get2();
@@ -1018,16 +1031,16 @@ void LibRaw::parseFujiMakernotes(unsigned tag, unsigned type, unsigned len,
       imFuji.DevelopmentDynamicRange = get2();
       break;
     case 0x1404:
-      ilm.MinFocal = getreal(type);
+      ilm.MinFocal = getrealf(type);
       break;
     case 0x1405:
-      ilm.MaxFocal = getreal(type);
+      ilm.MaxFocal = getrealf(type);
       break;
     case 0x1406:
-      ilm.MaxAp4MinFocal = getreal(type);
+      ilm.MaxAp4MinFocal = getrealf(type);
       break;
     case 0x1407:
-      ilm.MaxAp4MaxFocal = getreal(type);
+      ilm.MaxAp4MaxFocal = getrealf(type);
       break;
     case 0x140b:
       imFuji.AutoDynamicRange = get2();
@@ -1064,7 +1077,7 @@ void LibRaw::parseFujiMakernotes(unsigned tag, unsigned type, unsigned len,
   return;
 }
 
-void LibRaw::parse_fuji_thumbnail(int offset)
+void LibRaw::parse_fuji_thumbnail(INT64 offset)
 {
     uchar xmpmarker[] = "http://ns.adobe.com/xap/1.0/";
     uchar buf[sizeof(xmpmarker)+1];
@@ -1089,9 +1102,9 @@ void LibRaw::parse_fuji_thumbnail(int offset)
               if ((fread(buf, 1, xmpsz, ifp) == xmpsz) && !memcmp(buf, xmpmarker, xmpsz)) // got it
               {
                   xmplen = len - xmpsz - 2;
-                  xmpdata = (char*) malloc(xmplen+1);
-                  fread(xmpdata, 1, xmplen, ifp);
-                  xmpdata[xmplen] = 0;
+                  xmpdata = (char*) calloc(xmplen+1,1);
+                  unsigned br = fread(xmpdata, 1, xmplen, ifp);
+                  xmpdata[br] = 0;
                   break;
               }
           }
@@ -1103,20 +1116,23 @@ void LibRaw::parse_fuji_thumbnail(int offset)
     fseek(ifp, pos, SEEK_SET);
 }
 
-void LibRaw::parse_fuji(int offset)
+void LibRaw::parse_fuji(INT64 offset)
 {
-  unsigned entries, tag, len, save, c;
+  unsigned entries, tag, len, c;
+  INT64 save;
 
 #define get_average_WB(wb_index)                                               \
-  FORC4 icWBC[wb_index][GRGB_2_RGBG(c)] = get2();                              \
-  if ((len == 16) && average_WBData) {                                         \
-    FORC4 icWBC[wb_index][GRGB_2_RGBG(c)] =                                    \
-             (icWBC[wb_index][GRGB_2_RGBG(c)] + get2())/2;                     \
-  }                                                                            \
-  if (use_WBcorr_coeffs) {                                                     \
-    icWBC[wb_index][0] *= wbR_corr;                                            \
-    icWBC[wb_index][2] *= wbB_corr;                                            \
-  }
+  do {                                                                         \
+	  FORC4 icWBC[wb_index][GRGB_2_RGBG(c)] = get2();                              \
+	  if ((len == 16) && average_WBData) {                                         \
+		FORC4 icWBC[wb_index][GRGB_2_RGBG(c)] =                                    \
+				 (icWBC[wb_index][GRGB_2_RGBG(c)] + get2())/2;                     \
+	  }                                                                            \
+	  if (use_WBcorr_coeffs) {                                                     \
+		icWBC[wb_index][0] = int(icWBC[wb_index][0] * wbR_corr);                   \
+		icWBC[wb_index][2] = int( icWBC[wb_index][2] * wbB_corr);                  \
+	  }                                                                            \
+  } while(0)
 
   ushort raw_inset_present = 0;
   ushort use_WBcorr_coeffs = 0;
@@ -1204,7 +1220,7 @@ void LibRaw::parse_fuji(int offset)
     else if (tag == 0x2ff0) // WB_GRGBLevels
     {
       get_average_WB(LIBRAW_WBI_AsShot);
-      FORC4 cam_mul[c] = icWBC[LIBRAW_WBI_AsShot][c];
+      FORC4 cam_mul[c] = float(icWBC[LIBRAW_WBI_AsShot][c]);
     }
     else if ((tag == 0x4000) &&
              ((len == 8) || (len == 16)))
@@ -1229,7 +1245,7 @@ void LibRaw::parse_fuji(int offset)
       else if ((s1*16) == s2)
         imFuji.BrightnessCompensation = 4.0f;
       else
-        imFuji.BrightnessCompensation = log(double(s2)/double(s1))/log(2.0);
+        imFuji.BrightnessCompensation = logf(float(s2)/float(s1))/logf(2.f);
     }
     else if (tag == 0x9650) // RawExposureBias
     {
@@ -1258,8 +1274,8 @@ void LibRaw::parse_fuji(int offset)
                   (icWBC[wb_ind][GRGB_2_RGBG(c)] +get2()) /2;
         }
         if (use_WBcorr_coeffs) {
-          icWBC[LIBRAW_WBI_Custom1 + wb_ind][0] *= wbR_corr;
-          icWBC[LIBRAW_WBI_Custom1 + wb_ind][2] *= wbB_corr;
+          icWBC[LIBRAW_WBI_Custom1 + wb_ind][0] = int(icWBC[LIBRAW_WBI_Custom1 + wb_ind][0] * wbR_corr);
+          icWBC[LIBRAW_WBI_Custom1 + wb_ind][2] = int(icWBC[LIBRAW_WBI_Custom1 + wb_ind][2] * wbB_corr);
         }
       }
     }
@@ -1309,10 +1325,10 @@ void LibRaw::parse_fuji(int offset)
           wb[1] = get4();
           wb[3] = get4();
           wb[2] = get4() << 1;
-          if (tWB && (iCCT < 255))
+          if (tWB && (iCCT < 64))
           {
-            icWBCCTC[iCCT][0] = tWB;
-            FORC4 icWBCCTC[iCCT][c + 1] = wb[c];
+            icWBCCTC[iCCT][0] = float(tWB);
+            FORC4 icWBCCTC[iCCT][c + 1] = float(wb[c]);
             iCCT++;
           }
           if (nWB != 70)

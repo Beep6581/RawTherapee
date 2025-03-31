@@ -14,12 +14,13 @@
 
 #include "../../internal/dcraw_defs.h"
 
-void LibRaw::parseEpsonMakernote(int base, int uptag, unsigned dng_writer)
+void LibRaw::parseEpsonMakernote(INT64 base, int uptag, unsigned dng_writer)
 {
 
 #define isRIC imgdata.sizes.raw_inset_crops[0]
 
-  unsigned entries, tag, type, len, save;
+  unsigned entries, tag, type, len;
+  INT64 save;
   short morder, sorder = order;
   ushort c;
   INT64 fsize = ifp->size();
@@ -45,6 +46,13 @@ void LibRaw::parseEpsonMakernote(int base, int uptag, unsigned dng_writer)
     tag |= uptag << 16;
     if (len > 100 * 1024 * 1024)
       goto next; // 100Mb tag? No!
+
+	if (callbacks.makernotes_cb)
+    {
+      INT64 _savepos = ifp->tell();
+      callbacks.makernotes_cb(callbacks.makernotesparser_data, tag, type, len, order, ifp, base);
+      fseek(ifp, _savepos, SEEK_SET);
+    }
 
     if (tag == 0x020b)
     {
@@ -83,8 +91,8 @@ void LibRaw::parseEpsonMakernote(int base, int uptag, unsigned dng_writer)
       else if (tag == 0x0e80)
       {
         fseek(ifp, 48, SEEK_CUR);
-        cam_mul[0] = get2() * 567.0 / 0x10000;
-        cam_mul[2] = get2() * 431.0 / 0x10000;
+        cam_mul[0] = get2() * 567.0f / 0x10000;
+        cam_mul[2] = get2() * 431.0f / 0x10000;
       }
     }
 

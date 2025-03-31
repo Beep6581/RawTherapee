@@ -126,6 +126,8 @@ int main(int ac, char *av[])
     if (verbose)
       printf("Processing file %s\n", av[i]);
 
+	RawProcessor->imgdata.rawparams.options |= LIBRAW_RAWOPTIONS_ALLOW_JPEGXL_PREVIEWS;
+
     if ((ret = RawProcessor->open_file(av[i])) != LIBRAW_SUCCESS)
     {
       fprintf(stderr, "Cannot open_file %s: %s\n", av[i], libraw_strerror(ret));
@@ -151,8 +153,10 @@ int main(int ac, char *av[])
           fprintf(stderr, "Cannot unpack_thumb #%d from %s: %s\n", t, av[i], libraw_strerror(ret));
         if (LIBRAW_FATAL_ERROR(ret))
           break; // skip to next file
-        snprintf(thumbfn, sizeof(thumbfn), "%s.thumb.%d.%s", av[i], t,
-                 T.tformat == LIBRAW_THUMBNAIL_JPEG ? "jpg" : "ppm");
+		snprintf(thumbfn, sizeof(thumbfn), "%s.thumb.%d.%s", av[i], t,
+			T.tformat == LIBRAW_THUMBNAIL_JPEG ? "jpg"
+					: (T.tformat == LIBRAW_THUMBNAIL_JPEGXL ? "jxl"
+						: (T.tcolors == 1 ? "pgm" : "ppm")));
         if (verbose)
           printf("Writing thumbnail file %s\n", thumbfn);
         if (LIBRAW_SUCCESS != (ret = RawProcessor->dcraw_thumb_writer(thumbfn)))
@@ -177,7 +181,8 @@ int main(int ac, char *av[])
       {
         snprintf(thumbfn, sizeof(thumbfn), "%s.%s", av[i],
                  T.tformat == LIBRAW_THUMBNAIL_JPEG ? "thumb.jpg"
-                                                    : (T.tcolors == 1? "thumb.pgm" : "thumb.ppm"));
+					:  (T.tformat == LIBRAW_THUMBNAIL_JPEGXL ? "thumb.jxl"
+                         : (T.tcolors == 1? "thumb.pgm" : "thumb.ppm")));
         if (verbose)
           printf("Writing thumbnail file %s\n", thumbfn);
         if (LIBRAW_SUCCESS != (ret = RawProcessor->dcraw_thumb_writer(thumbfn)))

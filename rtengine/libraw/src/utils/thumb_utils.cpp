@@ -113,7 +113,7 @@ void LibRaw::kodak_thumb_loader()
         dmax = C.pre_mul[c];
 
     for (c = 0; c < 3; c++)
-      scale_mul[c] = (C.pre_mul[c] / dmax) * 65535.0 / C.maximum;
+      scale_mul[c] = float((C.pre_mul[c] / dmax) * 65535. / C.maximum);
     scale_mul[3] = scale_mul[1];
 
     size_t size = S.height * S.width;
@@ -122,7 +122,7 @@ void LibRaw::kodak_thumb_loader()
       val = imgdata.image[0][i];
       if (!val)
         continue;
-      val *= scale_mul[i & 3];
+      val = int(val * scale_mul[i & 3]);
       imgdata.image[0][i] = CLIP(val);
     }
   }
@@ -177,7 +177,7 @@ void LibRaw::kodak_thumb_loader()
   {
     int perc, val, total, t_white = 0x2000, c;
 
-    perc = S.width * S.height * 0.01; /* 99th percentile white level */
+    perc = int(S.width * S.height * 0.01f); /* 99th percentile white level */
     if (IO.fuji_width)
       perc /= 2;
     if (!((O.highlight & ~2) || O.no_auto_bright))
@@ -190,7 +190,7 @@ void LibRaw::kodak_thumb_loader()
         if (t_white < val)
           t_white = val;
       }
-    gamma_curve(O.gamm[0], O.gamm[1], 2, (t_white << 3) / O.bright);
+    gamma_curve(O.gamm[0], O.gamm[1], 2, int((t_white << 3) / O.bright));
   }
 
   libraw_internal_data.output_data.histogram = save_hist;
@@ -320,6 +320,9 @@ int LibRaw::dcraw_thumb_writer(const char *fname)
   {
     switch (T.tformat)
     {
+    case LIBRAW_THUMBNAIL_JPEGXL:
+      fwrite(T.thumb, 1, T.tlength, tfp);
+      break;
     case LIBRAW_THUMBNAIL_JPEG:
       jpeg_thumb_writer(tfp, T.thumb, T.tlength);
       break;

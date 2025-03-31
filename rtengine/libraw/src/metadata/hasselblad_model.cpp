@@ -148,7 +148,7 @@ static const char *Hasselblad_SensorEnclosures[] = {
   if (imHassy.format == LIBRAW_HF_AdobeDNG) { // Adobe DNG, use LocalizedCameraModel
       imgdata.color.LocalizedCameraModel[63] = 0; // make sure it's 0-terminated
     if ((ps = strrchr(imgdata.color.LocalizedCameraModel, '-')))
-      c = ps-imgdata.color.LocalizedCameraModel;
+      c = int(ps-imgdata.color.LocalizedCameraModel);
     else c = int(strlen(imgdata.color.LocalizedCameraModel));
     int cc = MIN(c, (int)sizeof(tmp_model)-1);
     memcpy(tmp_model, imgdata.color.LocalizedCameraModel,cc);
@@ -162,7 +162,7 @@ static const char *Hasselblad_SensorEnclosures[] = {
         memmove(normalized_model, normalized_model+11, 64-11);
   } else {
     if ((ps = strrchr(imgdata.color.UniqueCameraModel, '/'))) {
-      c = ps-imgdata.color.UniqueCameraModel;
+      c = int(ps-imgdata.color.UniqueCameraModel);
     }
     else c = int(strlen(imgdata.color.UniqueCameraModel));
     int cc = MIN(c, (int)sizeof(tmp_model)-1);
@@ -410,7 +410,7 @@ static const char *Hasselblad_SensorEnclosures[] = {
       }
     }
 
-  } else if (((raw_width == 8374) && (raw_height == 6304)) ||  // (H5D-50c)
+  } else if (((raw_width == 8374) && (raw_height == 6304)) ||  // (H5D-50c, CFV-50c)
              ((raw_width == 8384) && (raw_height == 6304)) ||  // (X1D-50c, "X1D II 50C", "CFV II 50C")
              ((raw_width == 8280) && (raw_height == 6208)) ||  // Adobe crop
              ((raw_width == 8272) && (raw_height == 6200))) {  // Phocus crop
@@ -458,7 +458,7 @@ static const char *Hasselblad_SensorEnclosures[] = {
     if (!imHassy.SensorCode) imHassy.SensorCode = 17;
     if (!imHassy.CoatingCode) imHassy.CoatingCode = 5;
 
-  } else if (((raw_width == 11904) && (raw_height == 8842)) || // X2D 100C
+  } else if (((raw_width == 11904) && (raw_height == 8842)) || // X2D 100C, CFV 100C
              ((raw_width == 11664) && (raw_height == 8750)) || // Adobe crop
              ((raw_width == 11656) && (raw_height == 8742))) { // Phocus crop
     strcpy(imHassy.Sensor, "-100c");
@@ -534,7 +534,7 @@ static const char *Hasselblad_SensorEnclosures[] = {
       } else if (!imgdata.lens.Lens[0] &&
                  (aperture > 1.0f)   &&
                  (focal_len > 10.0f)) {
-        ilm.LensID = focal_len;
+        ilm.LensID = uint64_t(focal_len);
         if (ilm.LensID == 35) {
           ilm.FocalType = LIBRAW_FT_ZOOM_LENS;
           ilm.LensID = LIBRAW_MOUNT_Hasselblad_XCD*100000000ULL +
@@ -548,8 +548,8 @@ static const char *Hasselblad_SensorEnclosures[] = {
       }
     }
   }
-
-// printf (">> SensorCode: %d, CoatingCode: %d, Sensor: %s\n", imHassy.SensorCode, imHassy.CoatingCode, imHassy.Sensor);
+// printf (">>Host Body: =%s= CaptureSequenceInitiator: =%s=\n", imHassy.HostBody, imHassy.CaptureSequenceInitiator);
+// printf (">> SensorCode: %d, CoatingCode: %d, Sensor: =%s=\n", imHassy.SensorCode, imHassy.CoatingCode, imHassy.Sensor);
 // printf (">> raw_width: %d, raw_height: %d\n", raw_width, raw_height);
 
   if (normalized_model[0]  && !CM_found)

@@ -167,13 +167,13 @@ struct DHT
   }
   static inline float scale_over(float ec, float base)
   {
-    float s = base * .4;
+    float s = base * .4f;
     float o = ec - base;
     return base + sqrt(s * (o + s)) - s;
   }
   static inline float scale_under(float ec, float base)
   {
-    float s = base * .6;
+    float s = base * .6f;
     float o = base - ec;
     return base - sqrt(s * (o + s)) + s;
   }
@@ -787,10 +787,10 @@ void DHT::illustrate_dline(int i)
     l = 1;
     if (ndir[nr_offset(y, x)] & HOT)
       nraw[nr_offset(y, x)][0] =
-          l * channel_maximum[0] / 4 + channel_maximum[0] / 4;
+          l * channel_maximum[0] / 4.f + channel_maximum[0] / 4.f;
     else
       nraw[nr_offset(y, x)][2] =
-          l * channel_maximum[2] / 4 + channel_maximum[2] / 4;
+          l * channel_maximum[2] / 4.f + channel_maximum[2] / 4.f;
   }
 }
 

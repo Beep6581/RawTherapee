@@ -39,22 +39,24 @@ void LibRaw::setPentaxBodyFeatures(unsigned long long id)
   case PentaxID_K200D:
   case PentaxID_K2000:
   case PentaxID_K_m:
-  case PentaxID_K_7:
   case PentaxID_K_x:
   case PentaxID_K_r:
-  case PentaxID_K_5:
   case PentaxID_K_01:
-  case PentaxID_K_30:
+  case PentaxID_K_3:
+  case PentaxID_K_3_II:
+  case PentaxID_K_3_III:
+  case PentaxID_K_3_III_Mono:
+  case PentaxID_K_5:
   case PentaxID_K_5_II:
   case PentaxID_K_5_II_s:
+  case PentaxID_K_7:
+  case PentaxID_K_30:
   case PentaxID_K_50:
-  case PentaxID_K_3:
+  case PentaxID_K_70:
   case PentaxID_K_500:
   case PentaxID_K_S1:
   case PentaxID_K_S2:
-  case PentaxID_K_3_II:
-  case PentaxID_K_3_III:
-  case PentaxID_K_70:
+  case PentaxID_KF:
   case PentaxID_KP:
     ilm.CameraMount = LIBRAW_MOUNT_Pentax_K;
     ilm.CameraFormat = LIBRAW_FORMAT_APSC;
@@ -123,7 +125,7 @@ void LibRaw::PentaxISO(ushort c)
   {
     if (code[i] == c)
     {
-      iso_speed = value[i];
+      iso_speed = float(value[i]);
       return;
     }
   }
@@ -136,7 +138,7 @@ void LibRaw::PentaxLensInfo(unsigned long long id, unsigned len) // tag 0x0207
 {
   ushort iLensData = 0;
   uchar *table_buf;
-  table_buf = (uchar *)malloc(MAX(len, 128));
+  table_buf = (uchar *)calloc(MAX(len, 128),1);
   fread(table_buf, len, 1, ifp);
   if ((id < PentaxID_K100D) ||
       (((id == PentaxID_K100D) ||
@@ -185,8 +187,8 @@ void LibRaw::PentaxLensInfo(unsigned long long id, unsigned len) // tag 0x0207
   if (iLensData)
   {
     if (table_buf[iLensData + 9] && (fabs(ilm.CurFocal) < 0.1f))
-      ilm.CurFocal = 10 * (table_buf[iLensData + 9] >> 2) *
-                     libraw_powf64l(4, (table_buf[iLensData + 9] & 0x03) - 2);
+      ilm.CurFocal = 10.f * (table_buf[iLensData + 9] >> 2) *
+                     libraw_powf64l(4.f, float((table_buf[iLensData + 9] & 0x03) - 2.f));
     if (table_buf[iLensData + 10] & 0xf0)
       ilm.MaxAp4CurFocal = libraw_powf64l(
           2.0f, (float)((table_buf[iLensData + 10] & 0xf0) >> 4) / 4.0f);
@@ -235,7 +237,7 @@ void LibRaw::PentaxLensInfo(unsigned long long id, unsigned len) // tag 0x0207
   return;
 }
 
-void LibRaw::parsePentaxMakernotes(int /*base*/, unsigned tag, unsigned type,
+void LibRaw::parsePentaxMakernotes(INT64 /*base*/, unsigned tag, unsigned type,
                                    unsigned len, unsigned dng_writer)
 {
 
@@ -294,10 +296,10 @@ void LibRaw::parsePentaxMakernotes(int /*base*/, unsigned tag, unsigned type,
     imgdata.shootinginfo.MeteringMode = get2();
   }
   else if (tag == 0x001b) {
-    cam_mul[2] = get2() / 256.0;
+    cam_mul[2] = float(get2()) / 256.f;
   }
   else if (tag == 0x001c) {
-    cam_mul[0] = get2() / 256.0;
+	  cam_mul[0] = float(get2()) / 256.f;
   }
   else if (tag == 0x001d)
   {
@@ -360,7 +362,7 @@ void LibRaw::parsePentaxMakernotes(int /*base*/, unsigned tag, unsigned type,
   else if (tag == 0x004d)
   {
     if (tagtypeIs(LIBRAW_EXIFTAG_TYPE_SLONG))
-      imCommon.FlashEC = getreal(type) / 256.0f;
+      imCommon.FlashEC = getrealf(type) / 256.0f;
     else
       imCommon.FlashEC = (float)((signed short)fgetc(ifp)) / 6.0f;
   }
@@ -368,6 +370,15 @@ void LibRaw::parsePentaxMakernotes(int /*base*/, unsigned tag, unsigned type,
   {
     fgetc(ifp);
     imgdata.shootinginfo.ImageStabilization = (short)fgetc(ifp);
+  }
+  else if (tag == 0x0069)
+  {
+    uchar uc;
+    FORC4
+    {
+      fread(&uc, 1, 1, ifp);
+      imPentax.DynamicRangeExpansion[c] = uc;
+    }
   }
   else if (tag == 0x0072)
   {
@@ -410,7 +421,7 @@ void LibRaw::parsePentaxMakernotes(int /*base*/, unsigned tag, unsigned type,
   else if ((tag == 0x0203) && (dng_writer == nonDNG))
   {
     for (int i = 0; i < 3; i++)
-      FORC3 cmatrix[i][c] = ((short)get2()) / 8192.0;
+      FORC3 cmatrix[i][c] = float((short)get2()) / 8192.f;
   }
   else if (tag == 0x0205)
   {
@@ -419,7 +430,7 @@ void LibRaw::parsePentaxMakernotes(int /*base*/, unsigned tag, unsigned type,
       imCommon.afdata[imCommon.afcount].AFInfoData_tag = tag;
       imCommon.afdata[imCommon.afcount].AFInfoData_order = order;
       imCommon.afdata[imCommon.afcount].AFInfoData_length = len;
-      imCommon.afdata[imCommon.afcount].AFInfoData = (uchar *)malloc(imCommon.afdata[imCommon.afcount].AFInfoData_length);
+      imCommon.afdata[imCommon.afcount].AFInfoData = (uchar *)calloc(imCommon.afdata[imCommon.afcount].AFInfoData_length,1);
       fread(imCommon.afdata[imCommon.afcount].AFInfoData, imCommon.afdata[imCommon.afcount].AFInfoData_length, 1, ifp);
       if ((len < 25) && (len >= 11))
       {
@@ -445,7 +456,7 @@ void LibRaw::parsePentaxMakernotes(int /*base*/, unsigned tag, unsigned type,
            tagtypeIs(LIBRAW_EXIFTAG_TYPE_UNDEFINED) && (dng_writer == nonDNG))
   {
     for (int i = 0; i < 3; i++)
-      FORC3 cmatrix[i][c] = ((short)get2()) / 8192.0;
+      FORC3 cmatrix[i][c] = float((short)get2()) / 8192.f;
   }
   else if (tag == 0x021f)
   {
@@ -466,10 +477,10 @@ void LibRaw::parsePentaxMakernotes(int /*base*/, unsigned tag, unsigned type,
   else if (tag == 0x0221)
   {
     int nWB = get2();
-    if (nWB <= int(sizeof(icWBCCTC) / sizeof(icWBCCTC[0])))
+    if (nWB > 0 && nWB <= int(sizeof(icWBCCTC) / sizeof(icWBCCTC[0])))
       FORC(nWB)
       {
-        icWBCCTC[c][0] = (unsigned)0xcfc6 - get2();
+        icWBCCTC[c][0] = float((unsigned)0xcfc6 - get2());
         fseek(ifp, 2, SEEK_CUR);
         icWBCCTC[c][1] = get2();
         icWBCCTC[c][2] = icWBCCTC[c][4] = 0x2000;
@@ -511,14 +522,14 @@ void LibRaw::parsePentaxMakernotes(int /*base*/, unsigned tag, unsigned type,
       imCommon.afdata[imCommon.afcount].AFInfoData_tag = tag;
       imCommon.afdata[imCommon.afcount].AFInfoData_order = order;
       imCommon.afdata[imCommon.afcount].AFInfoData_length = len;
-      imCommon.afdata[imCommon.afcount].AFInfoData = (uchar *)malloc(imCommon.afdata[imCommon.afcount].AFInfoData_length);
+      imCommon.afdata[imCommon.afcount].AFInfoData = (uchar *)calloc(imCommon.afdata[imCommon.afcount].AFInfoData_length,1);
       fread(imCommon.afdata[imCommon.afcount].AFInfoData, imCommon.afdata[imCommon.afcount].AFInfoData_length, 1, ifp);
       imCommon.afcount++;
     }
   }
 }
 
-void LibRaw::parseRicohMakernotes(int /*base*/, unsigned tag, unsigned type,
+void LibRaw::parseRicohMakernotes(INT64 /*base*/, unsigned tag, unsigned type,
                                   unsigned /*len*/, unsigned /*dng_writer */)
 {
   char buffer[17];
@@ -591,7 +602,7 @@ void LibRaw::parseRicohMakernotes(int /*base*/, unsigned tag, unsigned type,
   }
   else if ((tag == 0x100b) && tagtypeIs(LIBRAW_EXIFTAG_TYPE_SRATIONAL))
   {
-    imCommon.FlashEC = getreal(type);
+    imCommon.FlashEC = getrealf(type);
   }
   else if ((tag == 0x1017) && ((imRicoh.WideAdapter = get2()) == 2))
   {
@@ -631,7 +642,7 @@ void LibRaw::parseRicohMakernotes(int /*base*/, unsigned tag, unsigned type,
   }
   else if (tag == 0x1500)
   {
-    ilm.CurFocal = getreal(type);
+    ilm.CurFocal = getrealf(type);
   }
   else if (tag == 0x1601)
   {

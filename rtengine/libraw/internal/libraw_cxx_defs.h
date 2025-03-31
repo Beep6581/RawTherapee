@@ -44,6 +44,10 @@ void *make_camera_metadata();
 void clear_camera_metadata(void*);
 void clear_rawspeed_decoder(void*);
 #endif
+#ifdef USE_DNGSDK
+void clear_dng_negative(void *);
+void clear_dng_image(void*);
+#endif
 
 
 #define P1 imgdata.idata

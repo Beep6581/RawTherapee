@@ -35,6 +35,22 @@
 #endif
 
 #ifdef USE_DNGSDK
+
+void clear_dng_negative(void *p)
+{
+  if (!p)
+    return;
+  dng_negative *dn = (dng_negative *)p;
+  delete dn;
+}
+
+void clear_dng_image(void *p)
+{
+	if (!p) return;
+	dng_image *dimage = (dng_image *)p;
+	delete dimage;
+}
+
 static dng_ifd* search_single_ifd(const std::vector <dng_ifd *>& v, uint64 offset, int& idx, dng_stream& stream)
 {
     idx = -1;
@@ -93,17 +109,15 @@ int LibRaw::valid_for_dngsdk()
   if (!imgdata.idata.dng_version)
     return 0;
 
-#ifdef qDNGSupportJXL
   if (libraw_internal_data.unpacker_data.tiff_compress == 52546) // regardless of flags or use_dngsdk value!
   {
 #ifdef qDNGSupportJXL
-    if (dngVersion_Current >= dngVersion_1_7_0_0)
-      return 1;
-    else
+	  if (dngVersion_Current >= dngVersion_1_7_0_0)
+		  return 1;
+	  else
 #endif
-      return 0; // Old DNG SDK
+		  return 0; // Old DNG SDK
   }
-#endif
 
 
   // All DNG larger than 2GB - to DNG SDK
@@ -118,30 +132,44 @@ int LibRaw::valid_for_dngsdk()
 
   if (libraw_internal_data.unpacker_data.tiff_compress == 34892
 	  && libraw_internal_data.unpacker_data.tiff_bps == 8
-	  && (libraw_internal_data.unpacker_data.tiff_samples == 3 || libraw_internal_data.unpacker_data.tiff_samples == 1)
+	  && (libraw_internal_data.unpacker_data.tiff_samples == 3
+		  || libraw_internal_data.unpacker_data.tiff_samples == 1
+		  || libraw_internal_data.unpacker_data.tiff_samples == 4 )
 	  && load_raw == &LibRaw::lossy_dng_load_raw
 	  )
   {
       if (!dnghost)
           return 0;
-      dng_host *host = static_cast<dng_host *>(dnghost);
-      libraw_dng_stream stream(libraw_internal_data.internal_data.input);
-      AutoPtr<dng_negative> negative;
-      negative.Reset(host->Make_dng_negative());
-      dng_info info;
-      info.Parse(*host, stream);
-      info.PostParse(*host);
-      if (!info.IsValidDNG())
-          return 0;
-      negative->Parse(*host, stream, info);
-      negative->PostParse(*host, stream, info);
-      int ifdindex = -1;
-      dng_ifd *rawIFD = search_for_ifd(info, libraw_internal_data.unpacker_data.data_offset, imgdata.sizes.raw_width, imgdata.sizes.raw_height, ifdindex,stream);
-      if (rawIFD && ifdindex >= 0 && ifdindex == info.fMainIndex)
+	  try
+	  {
+        dng_host *host = static_cast<dng_host *>(dnghost);
+        libraw_dng_stream stream(libraw_internal_data.internal_data.input);
+        AutoPtr<dng_negative> negative;
+        negative.Reset(host->Make_dng_negative());
+        dng_info info;
+        info.Parse(*host, stream);
+        info.PostParse(*host);
+		if (!info.IsValidDNG())
+		{
+			imgdata.process_warnings |= LIBRAW_WARN_DNG_NOT_PARSED;
+			return 0;
+		}
+        negative->Parse(*host, stream, info);
+        negative->PostParse(*host, stream, info);
+        int ifdindex = -1;
+        dng_ifd *rawIFD = search_for_ifd(info, libraw_internal_data.unpacker_data.data_offset, imgdata.sizes.raw_width,
+                                         imgdata.sizes.raw_height, ifdindex, stream);
+        if (rawIFD && ifdindex >= 0 && ifdindex == info.fMainIndex)
           return 1;
-	  if (rawIFD && ifdindex >= 0 && (imgdata.rawparams.options & LIBRAW_RAWOPTIONS_DNG_ADD_PREVIEWS))
-		  return 1;
-	  return 0;
+        if (rawIFD && ifdindex >= 0 && (imgdata.rawparams.options & LIBRAW_RAWOPTIONS_DNG_ADD_PREVIEWS))
+          return 1;
+        return 0;
+	  }
+	  catch (...)
+	  {
+		  imgdata.process_warnings |= LIBRAW_WARN_DNG_NOT_PARSED;
+		  return 0;
+	  }
   }
 
 #ifdef USE_GPRSDK
@@ -205,8 +233,11 @@ int LibRaw::try_dngsdk()
     negative->PostParse(*host, stream, info);
     int ifdindex;
     dng_ifd *rawIFD = search_for_ifd(info,libraw_internal_data.unpacker_data.data_offset,imgdata.sizes.raw_width,imgdata.sizes.raw_height,ifdindex,stream);
-    if(!rawIFD)
-        return LIBRAW_DATA_ERROR;
+	if (!rawIFD)
+	{
+		imgdata.process_warnings |= LIBRAW_WARN_DNG_NOT_PROCESSED;
+		return LIBRAW_DATA_ERROR;
+	}
 
     AutoPtr<dng_simple_image> stage2;
 	unsigned stageBits = 0; // 1=> release Stage2, 2=> change Black/Max
@@ -303,6 +334,7 @@ int LibRaw::try_dngsdk()
 		else
 		{
 			stage2.Release(); // It holds copy to internal dngnegative
+			imgdata.process_warnings |= LIBRAW_WARN_DNG_NOT_PROCESSED;
 			return LIBRAW_DATA_ERROR;
 		}
     }
@@ -316,6 +348,7 @@ int LibRaw::try_dngsdk()
 		// reset BL and whitepoint
 		imgdata.color.black = 0;
 		memset(imgdata.color.cblack, 0, sizeof(imgdata.color.cblack));
+		memset(imgdata.color.linear_max, 0, sizeof(imgdata.color.linear_max));
 		imgdata.color.maximum = 0xffff;
 	}
 
@@ -344,8 +377,7 @@ int LibRaw::try_dngsdk()
       ushort *dst = (ushort *)imgdata.rawdata.raw_alloc;
       if (is_curve_linear())
       {
-        for (int i = 0; i < pixels; i++)
-          dst[i] = src[i];
+        memmove(dst, src, pixels * TagTypeSize(ptype));
       }
       else
       {
@@ -448,10 +480,14 @@ int LibRaw::try_dngsdk()
   }
   catch (...)
   {
+    imgdata.process_warnings |= LIBRAW_WARN_DNG_NOT_PROCESSED;
     return LIBRAW_UNSPECIFIED_ERROR;
   }
   
-  return (dngnegative || imgdata.rawdata.raw_alloc) ? LIBRAW_SUCCESS : LIBRAW_UNSPECIFIED_ERROR;
+  int ret = (dngnegative || imgdata.rawdata.raw_alloc) ? LIBRAW_SUCCESS : LIBRAW_UNSPECIFIED_ERROR;
+  if(ret != LIBRAW_SUCCESS)
+	imgdata.process_warnings |= LIBRAW_WARN_DNG_NOT_PROCESSED;
+  return ret;
 #else
   return LIBRAW_UNSPECIFIED_ERROR;
 #endif

@@ -36,7 +36,7 @@ void LibRaw::xtrans_interpolate(int passes)
   short allhex[3][3][2][8];
   ushort sgrow = 0, sgcol = 0;
 
-  if (width < LIBRAW_AHD_TILE || height < LIBRAW_AHD_TILE)
+  if (width < LIBRAW_AHD_TILE || height < LIBRAW_AHD_TILE || filters != 9)
     throw LIBRAW_EXCEPTION_IO_CORRUPT; // too small image
                                        /* Check against right pattern */
   for (int row = 0; row < 6; row++)
@@ -360,9 +360,11 @@ void LibRaw::xtrans_interpolate(int passes)
                         lix = &lab[row][col];
                         int g = 2 * lix[0][0] - lix[f][0] - lix[-f][0];
                         drv[d][row][col] =
+							float(
                             SQR(g) +
                             SQR((2 * lix[0][1] - lix[f][1] - lix[-f][1] + g * 500 / 232)) +
-                            SQR((2 * lix[0][2] - lix[f][2] - lix[-f][2] - g * 500 / 580));
+                            SQR((2 * lix[0][2] - lix[f][2] - lix[-f][2] - g * 500 / 580))
+								);
                     }
             }
 

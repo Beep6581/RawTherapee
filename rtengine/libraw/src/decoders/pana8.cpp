@@ -1,6 +1,6 @@
 /* -*- C++ -*-
  * File: pana8.cpp
- * Copyright (C) 2022-2024 Alex Tutubalin, LibRaw LLC
+ * Copyright (C) 2022 Alex Tutubalin, LibRaw LLC
  *
    Panasonic RawFormat=8 file decoder
 

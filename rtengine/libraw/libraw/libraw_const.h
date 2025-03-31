@@ -29,14 +29,18 @@ it under the terms of the one of two licenses as you choose:
 #endif
 
 #ifndef LIBRAW_MAX_NONDNG_RAW_FILE_SIZE
-#define LIBRAW_MAX_NONDNG_RAW_FILE_SIZE 2147483647ULL
+#define LIBRAW_MAX_NONDNG_RAW_FILE_SIZE 2147483647LL
+#endif
+
+#ifndef LIBRAW_MAX_CR3_RAW_FILE_SIZE
+#define LIBRAW_MAX_CR3_RAW_FILE_SIZE LIBRAW_MAX_NONDNG_RAW_FILE_SIZE
 #endif
 
 #ifndef LIBRAW_MAX_DNG_RAW_FILE_SIZE
 #ifdef USE_DNGSDK
-#define LIBRAW_MAX_DNG_RAW_FILE_SIZE 4294967295ULL
+#define LIBRAW_MAX_DNG_RAW_FILE_SIZE 4294967295LL
 #else
-#define LIBRAW_MAX_DNG_RAW_FILE_SIZE 2147483647ULL
+#define LIBRAW_MAX_DNG_RAW_FILE_SIZE 2147483647LL
 #endif
 #endif
 
@@ -474,6 +478,37 @@ enum LibRawImageAspects
   LIBRAW_IMAGE_ASPECT_7to5 = (1000 * 7) / 5
 };
 
+/*
+inch-based ID (diameter) -> diagonal, mm
+ID	diagonal	aspect
+1/4"	4.00	4:3
+1/3.6"	5.00	4:3
+1/3.4"	5.29	4:3
+1/3.2"	5.62	4:3
+1/3"	6.00	4:3
+1/2.9"	6.20	4:3
+1/2.7"	6.66	4:3
+1/2.5"	7.19	4:3
+1/2.4"	7.38	4:3
+1/2.35"	7.54	4:3
+1/2.33"	7.60	4:3
+1/2.3"	7.70	4:3
+1/2"	8.00	4:3
+1/1.9"	8.42	4:3
+1/1.8"	8.89	4:3
+1/1.76"	9.09	4:3
+1/1.75"	9.14	4:3
+1/1.72"	9.30	4:3
+1/1.7"	9.41	4:3
+1/1.65"	9.69	4:3
+1/1.63"	9.81	4:3
+1/1.6"	10.00	4:3
+2/3"	11.00	4:3
+1"	15.86	3:2
+4/3"	21.64	4:3
+1.5"	23.36	4:3
+*/
+
 enum LibRaw_lens_focal_types
 {
   LIBRAW_FT_UNDEFINED = 0,
@@ -699,7 +734,9 @@ enum LibRaw_warnings
   LIBRAW_WARN_RAWSPEED3_UNSUPPORTED = 1 << 22,
   LIBRAW_WARN_RAWSPEED3_PROCESSED = 1 << 23,
   LIBRAW_WARN_RAWSPEED3_NOTLISTED = 1 << 24,
-  LIBRAW_WARN_VENDOR_CROP_SUGGESTED = 1 << 25
+  LIBRAW_WARN_VENDOR_CROP_SUGGESTED = 1 << 25,
+  LIBRAW_WARN_DNG_NOT_PROCESSED = 1 << 26,
+  LIBRAW_WARN_DNG_NOT_PARSED = 1 << 27
 };
 
 enum LibRaw_exceptions
@@ -813,7 +850,9 @@ enum LibRaw_thumbnail_formats
 enum LibRaw_image_formats
 {
   LIBRAW_IMAGE_JPEG = 1,
-  LIBRAW_IMAGE_BITMAP = 2
+  LIBRAW_IMAGE_BITMAP = 2,
+  LIBRAW_IMAGE_JPEGXL = 3,
+  LIBRAW_IMAGE_H265 = 4
 };
 
 #endif

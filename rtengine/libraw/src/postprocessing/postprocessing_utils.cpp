@@ -156,7 +156,7 @@ void LibRaw::scale_colors_loop(float scale_mul[4])
         val -= C.cblack[6 + i / S.iwidth % C.cblack[4] * C.cblack[5] +
                         i % S.iwidth % C.cblack[5]];
         val -= C.cblack[c];
-        val *= scale_mul[c];
+        val = int(val * scale_mul[c]);
         imgdata.image[i][c] = CLIP(val);
       }
     }
@@ -170,7 +170,7 @@ void LibRaw::scale_colors_loop(float scale_mul[4])
         int val = imgdata.image[i][c];
         if (!val) continue;
         val -= C.cblack[c];
-        val *= scale_mul[c];
+        val = int(val * scale_mul[c]);
         imgdata.image[i][c] = CLIP(val);
       }
     }
@@ -182,7 +182,7 @@ void LibRaw::scale_colors_loop(float scale_mul[4])
       for (unsigned c = 0; c < 4; c++)
       {
         int val = imgdata.image[i][c];
-        val *= scale_mul[c];
+        val = int(val * scale_mul[c]);
         imgdata.image[i][c] = CLIP(val);
       }
     }

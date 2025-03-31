@@ -20,7 +20,7 @@ void LibRaw::Kodak_KDC_WBtags(int wb, int wbi)
   FORC3 icWBC[wb][c] = get4();
   icWBC[wb][3] = icWBC[wb][1];
   if (wbi == wb)
-    FORC4 cam_mul[c] = icWBC[wb][c];
+    FORC4 cam_mul[c] = float(icWBC[wb][c]);
   return;
 }
 
@@ -28,13 +28,13 @@ void LibRaw::Kodak_DCR_WBtags(int wb, unsigned type, int wbi)
 {
   float mul[3] = {1.0f, 1.0f, 1.0f}, num, mul2;
   int c;
-  FORC3 mul[c] = (num = getreal(type)) <= 0.001f ? 1.0f : num;
-  icWBC[wb][1] = icWBC[wb][3] = mul[1];
+  FORC3 mul[c] = (num = getrealf(type)) <= 0.001f ? 1.0f : num;
+  icWBC[wb][1] = icWBC[wb][3] = int(mul[1]);
   mul2 = mul[1] * mul[1];
-  icWBC[wb][0] = mul2 / mul[0];
-  icWBC[wb][2] = mul2 / mul[2];
+  icWBC[wb][0] = int(mul2 / mul[0]);
+  icWBC[wb][2] = int(mul2 / mul[2]);
   if (wbi == wb)
-    FORC4 cam_mul[c] = icWBC[wb][c];
+    FORC4 cam_mul[c] = float(icWBC[wb][c]);
   return;
 }
 
@@ -44,7 +44,7 @@ short LibRaw::KodakIllumMatrix(unsigned type, float *romm_camIllum)
   if (tagtypeIs(LIBRAW_EXIFTAG_TYPE_SRATIONAL))
   {
     for (j = 0; j < 9; j++)
-      ((float *)romm_camIllum)[j] = getreal(type);
+      ((float *)romm_camIllum)[j] = getrealf(type);
     return 1;
   }
   else if (tagtypeIs(LIBRAW_EXIFTAG_TYPE_SLONG))
@@ -70,9 +70,10 @@ short LibRaw::KodakIllumMatrix(unsigned type, float *romm_camIllum)
 }
 
 /* Thanks to Alexey Danilchenko for wb as-shot parsing code */
-void LibRaw::parse_kodak_ifd(int base)
+void LibRaw::parse_kodak_ifd(INT64 base)
 {
-  unsigned entries, tag, type, len, save;
+  unsigned entries, tag, type, len;
+  INT64 save;
   int c, wbi = -1;
 
   static const int wbtag_kdc[] = {
@@ -172,7 +173,7 @@ void LibRaw::parse_kodak_ifd(int base)
           c = 5;
           if (((int)strlen(pkti) > c) && (!strncasecmp(pkti, "Lens:", c)))
           {
-            ilm.CurFocal = atoi(pkti + c);
+            ilm.CurFocal = float(atoi(pkti + c));
           }
           c = 9;
           if (((int)strlen(pkti) > c) && (!strncasecmp(pkti, "Aperture:", c)))
@@ -181,17 +182,17 @@ void LibRaw::parse_kodak_ifd(int base)
             {
               c++;
             }
-            ilm.CurAp = atof(pkti + c);
+            ilm.CurAp = float(atof(pkti + c));
           }
           c = 10;
           if (((int)strlen(pkti) > c) && (!strncasecmp(pkti, "ISO Speed:", c)))
           {
-            iso_speed = atoi(pkti + c);
+            iso_speed = float(atoi(pkti + c));
           }
           c = 13;
           if (((int)strlen(pkti) > c) && (!strncasecmp(pkti, "Focal Length:", c)))
           {
-            ilm.CurFocal = atoi(pkti + c);
+            ilm.CurFocal = float(atoi(pkti + c));
           }
           c = 13;
           if (((int)strlen(pkti) > c) && (!strncasecmp(pkti, "Max Aperture:", c)))
@@ -200,7 +201,7 @@ void LibRaw::parse_kodak_ifd(int base)
             {
               c++;
             }
-            ilm.MaxAp4CurFocal = atof(pkti + c);
+            ilm.MaxAp4CurFocal = float(atof(pkti + c));
           }
           c = 13;
           if (((int)strlen(pkti) > c) && (!strncasecmp(pkti, "Min Aperture:", c)))
@@ -209,7 +210,7 @@ void LibRaw::parse_kodak_ifd(int base)
             {
               c++;
             }
-            ilm.MinAp4CurFocal = atof(pkti + c);
+            ilm.MinAp4CurFocal = float(atof(pkti + c));
           }
 #ifdef LIBRAW_WIN32_CALLS
           pkti = strtok(NULL, "\x0a");
@@ -221,7 +222,7 @@ void LibRaw::parse_kodak_ifd(int base)
     }
 
     else if (tag == 0x03f3) // 1011
-      imCommon.FlashEC = getreal(type);
+      imCommon.FlashEC = getrealf(type);
 
     else if (tag == 0x03fc) // 1020
     {
@@ -232,14 +233,14 @@ void LibRaw::parse_kodak_ifd(int base)
     else if (tag == 0x03fd && len == 72) // 1021
     {                                    /* WB set in software */
       fseek(ifp, 40, SEEK_CUR);
-      FORC3 cam_mul[c] = 2048.0 / fMAX(1.0f, get2());
+      FORC3 cam_mul[c] = 2048.0f / fMAX(1.0f, get2());
       wbi = -2;
     }
 
     else if ((tag == 0x0406) && (len == 1)) // 1030
-      imCommon.CameraTemperature = getreal(type);
+      imCommon.CameraTemperature = getrealf(type);
     else if ((tag == 0x0413) && (len == 1)) // 1043
-      imCommon.SensorTemperature = getreal(type);
+      imCommon.SensorTemperature = getrealf(type);
     else if (tag == 0x0848) // 2120
       Kodak_DCR_WBtags(LIBRAW_WBI_Daylight, type, wbi);
     else if (tag == 0x0849) // 2121
@@ -257,9 +258,9 @@ void LibRaw::parse_kodak_ifd(int base)
       Kodak_DCR_WBtags(LIBRAW_WBI_Auto, type, wbi);
     }
     else if (tag == 0x089f) // 2207
-      imKodak.ISOCalibrationGain = getreal(type);
+      imKodak.ISOCalibrationGain = getrealf(type);
     else if (tag == 0x0903) // 2307
-      imKodak.AnalogISO = iso_speed = getreal(type);
+      imKodak.AnalogISO = iso_speed = getrealf(type);
     else if (tag == 0x090d) // 2317
       linear_table(len);
     else if (tag == 0x09ce) // 2510

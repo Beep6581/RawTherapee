@@ -510,7 +510,7 @@ int processLineParams ( int argc, char **argv )
                     std::cout << "  Website: http://www.rawtherapee.com/" << std::endl;
                     std::cout << "  Documentation: http://rawpedia.rawtherapee.com/" << std::endl;
                     std::cout << "  Forum: https://discuss.pixls.us/c/software/rawtherapee" << std::endl;
-                    std::cout << "  Code and bug reports: https://github.com/Beep6581/RawTherapee" << std::endl;
+                    std::cout << "  Code and bug reports: https://github.com/RawTherapee/RawTherapee" << std::endl;
                     std::cout << std::endl;
                     std::cout << "Symbols:" << std::endl;
                     std::cout << "  <Chevrons> indicate parameters you can change." << std::endl;

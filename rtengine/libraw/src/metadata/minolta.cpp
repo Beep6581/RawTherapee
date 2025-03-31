@@ -18,11 +18,11 @@
 
 #include "../../internal/dcraw_defs.h"
 
-void LibRaw::parse_minolta(int base)
+void LibRaw::parse_minolta(INT64 base)
 {
-  int tag, len, offset, high = 0, wide = 0, i, c;
+  int tag, len, high = 0, wide = 0, i, c;
   short sorder = order;
-  INT64 save;
+  INT64 save,offset;
 
   fseek(ifp, base, SEEK_SET);
   if (fgetc(ifp) || fgetc(ifp) - 'M' || fgetc(ifp) - 'R')
@@ -30,8 +30,8 @@ void LibRaw::parse_minolta(int base)
   order = fgetc(ifp) * 0x101;
   offset = base + get4() + 8;
   INT64 fsize = ifp->size();
-  if (offset > fsize - 8) // At least 8 bytes for tag/len
-    offset = fsize - 8;
+  if (offset > fsize - 8LL) // At least 8 bytes for tag/len
+    offset = fsize - 8LL;
 
   while ((save = ftell(ifp)) < offset)
   {

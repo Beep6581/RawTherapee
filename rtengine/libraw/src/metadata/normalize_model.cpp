@@ -40,6 +40,9 @@ void LibRaw::GetNormalizedModel()
       { CanonID_EOS_M5,            "EOS M5"},
       { CanonID_EOS_M100,          "EOS M100"},
       { CanonID_EOS_M6,            "EOS M6"},
+
+      { CanonID_EOS_R5_C,          "EOS R5 C"},
+
       { CanonID_EOS_1D,            "EOS-1D"},
       { CanonID_EOS_1Ds,           "EOS-1Ds"},
       { CanonID_EOS_10D,           "EOS 10D"},
@@ -135,6 +138,7 @@ void LibRaw::GetNormalizedModel()
       { OlyID_TG_4,            "TG-4"},
       { OlyID_TG_5,            "TG-5"},
       { OlyID_TG_6,            "TG-6"},
+      { OlyID_TG_7,            "TG-7"},
       { OlyID_E_10,            "E-10"},
       { OlyID_AIR_A01,         "AIR A01"},
       { OlyID_AIR_A01,         "AIR-A01"},
@@ -275,10 +279,12 @@ void LibRaw::GetNormalizedModel()
       { PentaxID_K_3_II,       "K-3 II"},       // Ricoh
       { PentaxID_GR_III,       "GR III"},       // Ricoh
       { PentaxID_K_70,         "K-70"},         // Ricoh
+      { PentaxID_KF,           "KF"},           // Ricoh
       { PentaxID_KP,           "KP"},           // Ricoh
       { PentaxID_K_1_Mark_II,  "K-1 Mark II"},  // Ricoh
       { PentaxID_K_3_III,      "K-3 Mark III"}, // Ricoh
       { PentaxID_GR_IIIx,      "GR IIIx"},
+      { PentaxID_K_3_III_Mono, "K-3 Mark III Monochrome"},
     },
 #endif
     sonique[] = {
@@ -381,11 +387,13 @@ void LibRaw::GetNormalizedModel()
 
       { SonyID_ILCE_7RM5,      "ILCE-7RM5"},
       { SonyID_ILME_FX30,      "ILME-FX30"},
+      { SonyID_ILCE_9M3,       "ILCE-9M3"},
       { SonyID_ZV_E1,          "ZV-E1"},
       { SonyID_ILCE_6700,      "ILCE-6700"},
       { SonyID_ZV_1M2,         "ZV-1M2"},
       { SonyID_ILCE_7CR,       "ILCE-7CR"},
       { SonyID_ILCE_7CM2,      "ILCE-7CM2"},
+      { SonyID_ILX_LR1,        "ILX-LR1"},
     };
 
   static const char *orig;
@@ -496,6 +504,7 @@ void LibRaw::GetNormalizedModel()
     "@E-M1 Mark III", "E-M1MarkIII", "E-M1_M3",
     "@E-M5 Mark II", "E-M5MarkII", "E-M5_M2",
     "@E-M5 Mark III", "E-M5MarkIII", "E-M5_M3",
+    "@OM-1 Mark II", "OM-1MarkII", "OM-1_M2",
     "@SH-2", "SH-3",
     "@SP-310", "SP310",
     "@SP-320", "SP320",
@@ -1485,16 +1494,16 @@ printf("catchme\t%s\t%s\t%s\t9050%c\t%d\t%d\n",
 }
 
 void LibRaw::SetStandardIlluminants (unsigned makerIdx, const char* /*normModel*/) {
-  int i = -1;
+//  int i = -1;
   int c;
   if (!icWBC[LIBRAW_WBI_Ill_A][0] &&
       !icWBC[LIBRAW_WBI_D65][0]) {
     if (makerIdx == LIBRAW_CAMERAMAKER_Olympus ) {
-      while (++i, icWBCCTC[i][0]) {
+		for (int i = 0; i < 64 && icWBCCTC[i][0]; i++) {
         if (icWBCCTC[i][0] == 3000)
-          FORC4 icWBC[LIBRAW_WBI_Ill_A][c] = icWBCCTC[i][c+1];
+          FORC4 icWBC[LIBRAW_WBI_Ill_A][c] = int(icWBCCTC[i][c+1]);
         else if (icWBCCTC[i][0] == 6600)
-          FORC4 icWBC[LIBRAW_WBI_D65][c] = icWBCCTC[i][c+1];
+          FORC4 icWBC[LIBRAW_WBI_D65][c] = int(icWBCCTC[i][c+1]);
       }
     }
   }

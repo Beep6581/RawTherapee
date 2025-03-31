@@ -1,6 +1,6 @@
 /* -*- C++ -*-
  * File: huffmandec.h
- * Copyright (C) 2023-2024 Alex Tutubalin, LibRaw LLC
+ * Copyright (C) 2024 Alex Tutubalin, LibRaw LLC
  *
    Lossless JPEG decoder
 
@@ -159,15 +159,15 @@ struct HuffTable
       uint64_t cached = disable_cache ? 0 : decodecache[pump.peek(LIBRAW_DECODE_CACHE_BITS)];
       if (cached & LIBRAW_CACHE_PRESENT_FLAG)
       {
-        uint32_t bits = (cached >> 16) & 0xff;
+        uint32_t _bits = (cached >> 16) & 0xff;
         int16_t val = int16_t(cached & 0xffff);
         if (val == -32768 && dng_bug)
         {
-          if (bits > 16)
-            pump.consume(bits - 16);
+          if (_bits > 16)
+            pump.consume(_bits - 16);
         }
         else
-          pump.consume(bits);
+          pump.consume(_bits);
         return val;
       }
       else
@@ -194,8 +194,8 @@ struct HuffTable
     {
       uint32_t code = pump.peek(nbits);
       uint32_t huffdata = hufftable[code];
-      uint32_t bits = (huffdata >> 16) & 0xff;
-      pump.consume(bits);
+      uint32_t _bits = (huffdata >> 16) & 0xff;
+      pump.consume(_bits);
       return huffdata;
     }
 
@@ -212,8 +212,8 @@ struct HuffTable
       }
       uint32_t shift = hentry & 0xff;
 	  uint32_t fulllen = len + shift;
-      uint32_t bits = pump.get(len);
-      int32_t diff = ((bits << 1) + 1) << shift >> 1;
+      uint32_t _bits = pump.get(len);
+      int32_t diff = ((_bits << 1) + 1) << shift >> 1;
       if ((diff & (1 << (fulllen - 1))) == 0)
       {
         diff -= int32_t((1 << fulllen) - ((shift == 0)));

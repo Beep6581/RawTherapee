@@ -113,6 +113,7 @@ void LibRaw::setCanonBodyFeatures(unsigned long long id)
            || (id == CanonID_EOS_RP)
            || (id == CanonID_EOS_R3)
            || (id == CanonID_EOS_R5)
+           || (id == CanonID_EOS_R5_C)
            || (id == CanonID_EOS_R6)
            || (id == CanonID_EOS_R6m2)
            || (id == CanonID_EOS_R8)
@@ -845,7 +846,7 @@ void LibRaw::parseCanonMakernotes(unsigned tag, unsigned /*type*/, unsigned len,
       imCommon.afdata[imCommon.afcount].AFInfoData_tag = tag;
       imCommon.afdata[imCommon.afcount].AFInfoData_order = order;
       imCommon.afdata[imCommon.afcount].AFInfoData_length = len;
-      imCommon.afdata[imCommon.afcount].AFInfoData = (uchar *)malloc(imCommon.afdata[imCommon.afcount].AFInfoData_length);
+      imCommon.afdata[imCommon.afcount].AFInfoData = (uchar *)calloc(imCommon.afdata[imCommon.afcount].AFInfoData_length,1);
       fread(imCommon.afdata[imCommon.afcount].AFInfoData, imCommon.afdata[imCommon.afcount].AFInfoData_length, 1, ifp);
       imCommon.afcount = 1;
     }

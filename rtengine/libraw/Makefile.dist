@@ -44,6 +44,7 @@ CSTFLAGS=$(CFLAGS) -DLIBRAW_NOTHREADS
 LIB_OBJECTS= object/libraw_datastream.o object/libraw_c_api.o \
   object/cameralist.o object/fuji_compressed.o \
   object/crx.o object/pana8.o object/fp_dng.o object/decoders_libraw.o \
+  object/olympus14.o \
   object/sonycc.o object/losslessjpeg.o \
   object/unpack.o object/unpack_thumb.o \
   object/rawspeed_glue.o object/dngsdk_glue.o \
@@ -78,6 +79,7 @@ LIB_OBJECTS= object/libraw_datastream.o object/libraw_c_api.o \
 LIB_MT_OBJECTS= object/libraw_datastream.mt.o object/libraw_c_api.mt.o \
   object/cameralist.mt.o object/fuji_compressed.mt.o \
   object/crx.mt.o object/pana8.mt.o object/fp_dng.mt.o object/decoders_libraw.mt.o \
+  object/olympus14.mt.o \
   object/sonycc.mt.o object/losslessjpeg.mt.o \
   object/unpack.mt.o object/unpack_thumb.mt.o \
   object/rawspeed_glue.mt.o object/dngsdk_glue.mt.o \
@@ -217,6 +219,10 @@ object/pana8.o: src/decoders/pana8.cpp
 	${CXX} -c -DLIBRAW_NOTHREADS  ${CFLAGS} -o object/pana8.o src/decoders/pana8.cpp
 object/pana8.mt.o: src/decoders/pana8.cpp $(HEADERS)
 	${CXX} -c ${CFLAGS} -o object/pana8.mt.o src/decoders/pana8.cpp
+object/olympus14.o: src/decoders/olympus14.cpp
+	${CXX} -c -DLIBRAW_NOTHREADS  ${CFLAGS} -o object/olympus14.o src/decoders/olympus14.cpp
+object/olympus14.mt.o: src/decoders/olympus14.cpp $(HEADERS)
+	${CXX} -c ${CFLAGS} -o object/olympus14.mt.o src/decoders/olympus14.cpp
 object/sonycc.o: src/decoders/sonycc.cpp
 	${CXX} -c -DLIBRAW_NOTHREADS  ${CFLAGS} -o object/sonycc.o src/decoders/sonycc.cpp
 object/sonycc.mt.o: src/decoders/sonycc.cpp $(HEADERS)

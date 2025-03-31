@@ -119,6 +119,24 @@ libraw_processed_image_t *LibRaw::dcraw_make_mem_thumb(int *errcode)
       *errcode = 0;
     return ret;
   }
+  else if (T.tformat == LIBRAW_THUMBNAIL_H265 || T.tformat == LIBRAW_THUMBNAIL_JPEGXL)
+  {
+    int dsize = T.tlength;
+    libraw_processed_image_t *ret = (libraw_processed_image_t *)::malloc(sizeof(libraw_processed_image_t) + dsize);
+    if (!ret)
+    {
+      if (errcode)
+        *errcode = ENOMEM;
+      return NULL;
+    }
+    memset(ret, 0, sizeof(libraw_processed_image_t));
+    ret->type = T.tformat == LIBRAW_THUMBNAIL_H265 ? LIBRAW_IMAGE_H265 : LIBRAW_IMAGE_JPEGXL;
+    ret->data_size = dsize;
+    memmove(ret->data, T.thumb, dsize);
+    if (errcode)
+      *errcode = 0;
+    return ret;
+  }
   else
   {
     if (errcode)
@@ -177,7 +195,7 @@ int LibRaw::copy_mem_image(void *scan0, int stride, int bgr)
   if (libraw_internal_data.output_data.histogram)
   {
     int perc, val, total, t_white = 0x2000, c;
-    perc = S.width * S.height * O.auto_bright_thr;
+    perc = int(S.width * S.height * O.auto_bright_thr);
     if (IO.fuji_width)
       perc /= 2;
     if (!((O.highlight & ~2) || O.no_auto_bright))
@@ -190,7 +208,7 @@ int LibRaw::copy_mem_image(void *scan0, int stride, int bgr)
         if (t_white < val)
           t_white = val;
       }
-    gamma_curve(O.gamm[0], O.gamm[1], 2, (t_white << 3) / O.bright);
+    gamma_curve(O.gamm[0], O.gamm[1], 2, int((t_white << 3) / O.bright));
   }
 
   int s_iheight = S.iheight;

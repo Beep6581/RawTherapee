@@ -198,6 +198,15 @@ extern "C"
     ip->set_exifparser_handler(cb, data);
   }
 
+  void libraw_set_makernotes_handler(libraw_data_t *lr, exif_parser_callback cb,
+                                     void *data)
+  {
+    if (!lr)
+      return;
+    LibRaw *ip = (LibRaw *)lr->parent_class;
+    ip->set_makernotes_handler(cb, data);
+  }
+
   void libraw_set_dataerror_handler(libraw_data_t *lr, data_callback func,
                                     void *data)
   {
@@ -213,6 +222,14 @@ extern "C"
       return;
     LibRaw *ip = (LibRaw *)lr->parent_class;
     ip->set_progress_handler(cb, data);
+  }
+
+  int libraw_adjust_to_raw_inset_crop(libraw_data_t *lr, unsigned mask, float maxcrop)
+  {
+    if (!lr)
+      return EINVAL;
+    LibRaw *ip = (LibRaw *)lr->parent_class;
+    return ip->adjust_to_raw_inset_crop(mask,maxcrop);
   }
 
   // DCRAW

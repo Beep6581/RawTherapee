@@ -15,7 +15,7 @@
 
 #include "../../internal/dcraw_defs.h"
 
-void LibRaw::parseSamsungMakernotes(int /*base*/, unsigned tag, unsigned type,
+void LibRaw::parseSamsungMakernotes(INT64 /*base*/, unsigned tag, unsigned type,
                                     unsigned len, unsigned dng_writer)
 {
   int i, c;
@@ -93,12 +93,12 @@ void LibRaw::parseSamsungMakernotes(int /*base*/, unsigned tag, unsigned type,
   }
   else if (tag == 0xa019)
   {
-    ilm.CurAp = getreal(type);
+    ilm.CurAp = getrealf(type);
   }
   else if ((tag == 0xa01a) && (unique_id != 0x5000000) &&
            (!imgdata.lens.FocalLengthIn35mmFormat))
   {
-    ilm.FocalLengthIn35mmFormat = get4();
+    ilm.FocalLengthIn35mmFormat = float(get4());
     if (ilm.FocalLengthIn35mmFormat >= 160)
       ilm.FocalLengthIn35mmFormat /= 10.0f;
     if ((ilm.CameraMount == LIBRAW_MOUNT_Samsung_NX_M) &&
@@ -111,7 +111,7 @@ void LibRaw::parseSamsungMakernotes(int /*base*/, unsigned tag, unsigned type,
   }
   else if ((tag == 0xa021) && (dng_writer == nonDNG))
   {
-    FORC4 cam_mul[RGGB_2_RGBG(c)] = get4() - imSamsung.key[c];
+    FORC4 cam_mul[RGGB_2_RGBG(c)] = float(get4() - imSamsung.key[c]);
   }
   else if (tag == 0xa022)
   {
@@ -169,7 +169,7 @@ void LibRaw::parseSamsungMakernotes(int /*base*/, unsigned tag, unsigned type,
   {
     for (i = 0; i < 3; i++)
       FORC3 imgdata.color.ccm[i][c] =
-          (float)((short)((get4() + imSamsung.key[i * 3 + c]))) / 256.0;
+          (float)((short)((get4() + imSamsung.key[i * 3 + c]))) / 256.f;
   }
   else if ((tag == 0xa032) && (len == 9) && (dng_writer == nonDNG))
   {

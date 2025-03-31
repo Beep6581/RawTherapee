@@ -221,12 +221,15 @@ int LibRaw::try_rawspeed()
   try
   {
     ID.input->seek(0, SEEK_SET);
-    INT64 _rawspeed_buffer_sz = ID.input->size() + 32;
+    INT64 _rawspeed_buffer_sz = ID.input->size() + 32LL;
+	if(_rawspeed_buffer_sz > 2147483647LL)
+      throw LIBRAW_EXCEPTION_ALLOC;
+
     _rawspeed_buffer = malloc(_rawspeed_buffer_sz);
     if (!_rawspeed_buffer)
       throw LIBRAW_EXCEPTION_ALLOC;
     ID.input->read(_rawspeed_buffer, _rawspeed_buffer_sz, 1);
-    RawSpeed::FileMap map((RawSpeed::uchar8 *)_rawspeed_buffer, _rawspeed_buffer_sz);
+    RawSpeed::FileMap map((RawSpeed::uchar8 *)_rawspeed_buffer, uint32_t(_rawspeed_buffer_sz));
 	RawSpeed::RawParser t(&map);
 	RawSpeed::RawDecoder *d = 0;
     CameraMetaDataLR *meta =

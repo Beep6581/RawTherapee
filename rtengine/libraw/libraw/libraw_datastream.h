@@ -29,7 +29,18 @@ it under the terms of the one of two licenses as you choose:
 #else /* __cplusplus */
 #if defined _WIN32
 #ifndef LIBRAW_NO_WINSOCK2
+#ifdef NOMINMAX
+#define LIBRAW_NO_UNDEF_NOMINMAX
+#else
+#define NOMINMAX
+#endif
+
 #include <winsock2.h>
+
+#ifndef LIBRAW_NO_UNDEF_NOMINMAX
+#undef NOMINMAX /* restore previous mode*/
+#endif
+#undef LIBRAW_NO_UNDEF_NOMINMAX
 #endif
 #endif
 /* No unique_ptr on Apple ?? */
@@ -97,6 +108,8 @@ public:
   virtual int eof() = 0;
   virtual int jpeg_src(void *);
   virtual void buffering_off() {}
+  virtual void buffering_on() {}
+  virtual bool is_buffered() { return false; }
   /* reimplement in subclass to use parallel access in xtrans_load_raw() if
    * OpenMP is not used */
   virtual int lock() { return 1; } /* success */
@@ -209,6 +222,8 @@ public:
     virtual ~LibRaw_bigfile_buffered_datastream();
     virtual int valid();
     virtual void buffering_off() { buffered = 0; }
+	virtual void buffering_on() { buffered = 1; }
+	virtual bool is_buffered() { return buffered; }
     virtual int read(void *ptr, size_t size, size_t nmemb);
     virtual int eof();
     virtual int seek(INT64 o, int whence);
@@ -354,15 +369,20 @@ public:
   {
     if (parent_stream)
     {
+		parent_buffered = parent_stream->is_buffered();
         parent_stream->buffering_off();
-      off = parent_stream->tell();
-      parent_stream->seek(0UL, SEEK_SET); /* seek to start */
+		off = parent_stream->tell();
+		parent_stream->seek(0UL, SEEK_SET); /* seek to start */
     }
   }
   ~libraw_dng_stream()
   {
-    if (parent_stream)
-      parent_stream->seek(off, SEEK_SET);
+	  if (parent_stream)
+	  {
+		  if (parent_buffered)
+			  parent_stream->buffering_on();
+		  parent_stream->seek(off, SEEK_SET);
+	  }
   }
   virtual uint64 DoGetLength()
   {
@@ -384,6 +404,7 @@ private:
   libraw_dng_stream &operator=(const libraw_dng_stream &stream);
   LibRaw_abstract_datastream *parent_stream;
   INT64 off;
+  bool parent_buffered;
 };
 
 #endif

@@ -22,7 +22,7 @@ exe="${prog}"
 exeRelativePath=""
 
 # The path to the repository:
-repo="https://github.com/Beep6581/RawTherapee.git"
+repo="https://github.com/RawTherapee/RawTherapee.git"
 
 # No touching below this line, with the exception of the "Compile" section
 # -----------------------------------------------------------------------------
