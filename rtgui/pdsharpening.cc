@@ -68,6 +68,8 @@ PdSharpening::PdSharpening() :
     noisecap->show();
     showcap->show();
     pack_start(*hb);
+    contrast->set_tooltip_text(M("TP_PDSHARPENING_CONTRAST_TOOLTIP"));
+    noisecap->set_tooltip_text(M("TP_PDSHARPENING_NOISE_TOOLTIP"));
 
     Gtk::Box* rld = Gtk::manage(new Gtk::Box(Gtk::ORIENTATION_VERTICAL));
     dradius = Gtk::manage(new Adjuster(M("TP_SHARPENING_RADIUS"), 0.4, 2.0, 0.01, 0.75));
@@ -79,6 +81,9 @@ PdSharpening::PdSharpening() :
     itercheck->setCheckBoxListener(this);
 
     rld->pack_start(*dradius);
+    dradius->set_tooltip_text(M("TP_PDSHARPENING_RADIUS_TOOLTIP"));
+    dradiusOffset->set_tooltip_text(M("TP_PDSHARPENING_RADIUSOFFSET_TOOLTIP"));
+    diter->set_tooltip_text(M("TP_PDSHARPENING_ITERATIONS_TOOLTIP"));
     rld->pack_start(*dradiusOffset);
     rld->pack_start(*diter);
     rld->pack_start(*itercheck);
