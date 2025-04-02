@@ -143,21 +143,11 @@ jobs:
           echo "-Copying 'index.theme' into 'AppDir/usr/bin/icons/Adwaita'."
           cp /usr/share/icons/Adwaita/index.theme build/AppDir/usr/bin/icons/Adwaita
 
-      - name: Restore AppImage tools from cache
-        id: appimage-tools-cache
-        uses: actions/cache@v4
-        with:
-          key: appimage-tools-1
-          path: |
-            ./build/linuxdeploy-x86_64.AppImage
-            ./build/linuxdeploy-plugin-gtk.sh
-
       - name: Download AppImage tools
-        if: ${{steps.appimage-tools-cache.outputs.cache-hit != 'true'}}
         working-directory: ./build
         run: |
           echo "Downloading linuxdeploy."
-          curl --location 'https://github.com/linuxdeploy/linuxdeploy/releases/download/continuous/linuxdeploy-x86_64.AppImage' > linuxdeploy-x86_64.AppImage
+          curl --location 'https://github.com/linuxdeploy/linuxdeploy/releases/download/1-alpha-20240109-1/linuxdeploy-x86_64.AppImage' > linuxdeploy-x86_64.AppImage
           echo "Downloading GTK plugin for linuxdeploy."
           curl --location 'https://raw.githubusercontent.com/linuxdeploy/linuxdeploy-plugin-gtk/master/linuxdeploy-plugin-gtk.sh' \
             | sed 's/^\(export GTK_THEME\)/#\1/' \
