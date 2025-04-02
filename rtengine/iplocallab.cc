@@ -64,6 +64,7 @@ namespace
 
 constexpr int limscope = 80;
 constexpr int mSPsharp = 39; //minimum size Spot Sharp due to buildblendmask
+constexpr int mSPsharpCS = 150; //minimum size Spot Sharp due to buildblendmask with capture sharpening to allow tiles 
 constexpr int mSPwav = 32; //minimum size Spot Wavelet
 constexpr int mDEN = 128; //minimum size Spot Denoise
 constexpr int mSP = 5; //minimum size Spot
@@ -19405,11 +19406,18 @@ void ImProcFunctions::Lab_Local(
         int bfw = call == 2 ? int (lp.lx + lp.lxL) + del : original->W;
 
         if (call == 2) { //call from simpleprocess
-
-            if (bfw < mSPsharp || bfh < mSPsharp) {
-                printf("too small RT-spot - minimum size 39 * 39\n");
-                return;
-            }
+            if(params->locallab.spots.at(sp).methodcap != "cap") {
+                if (bfw < mSPsharp || bfh < mSPsharp) {
+                    printf("too small RT-spot - minimum size 39 * 39\n");
+                    return;
+                }
+            } else {
+                if (bfw < mSPsharpCS || bfh < mSPsharpCS) {
+                    printf("too small RT-spot - minimum size 150 * 150\n");
+                    return;
+                }
+            }    
+                
 
             int begy = lp.yc - lp.lyT;
             int begx = lp.xc - lp.lxL;
@@ -19669,7 +19677,7 @@ void ImProcFunctions::Lab_Local(
         int bfh = yend - ystart;
         int bfw = xend - xstart;
 
-        if (bfw >= mSPsharp  && bfh >= mSPsharp) {//for buildblendmask
+        if (bfw >= mSPsharpCS  && bfh >= mSPsharpCS) {//for buildblendmask
             const std::unique_ptr<LabImage> bufexporig(new LabImage(bfw, bfh));
             const std::unique_ptr<LabImage> bufexpfin(new LabImage(bfw, bfh));
             const std::unique_ptr<LabImage> copyorig(new LabImage(original->W, original->H));//copy original image to keep initial datas

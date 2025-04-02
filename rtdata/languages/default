@@ -3264,7 +3264,7 @@ TP_LOCALLAB_EXPNOISEMETHOD_TOOLTIP;Applies a median filter before the Laplace tr
 TP_LOCALLAB_EXPOSE;Dynamic Range & Exposure
 TP_LOCALLAB_EXPOSURE_TOOLTIP;Modify exposure in L*a*b space using Laplacian PDE algorithms to take into account dE and minimize artifacts.
 TP_LOCALLAB_EXPRETITOOLS;Advanced Retinex Tools
-TP_LOCALLAB_EXPSHARP_TOOLTIP;Spot minimum 39*39.\nUse low transition values and high 'Transition decay' and 'Scope' values to simulate smaller spots.
+TP_LOCALLAB_EXPSHARP_TOOLTIP;Spot minimum 39*39 RL Deconvolution.\nSpot minimum 150*150 Capture Deconvolution.\nUse low transition values and high 'Transition decay' and 'Scope' values to simulate smaller spots.
 TP_LOCALLAB_EXPTOOL;Exposure Tools
 TP_LOCALLAB_EXP_TOOLNAME;Dynamic Range & Exposure
 TP_LOCALLAB_FATAMOUNT;Amount

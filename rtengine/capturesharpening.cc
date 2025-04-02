@@ -598,21 +598,27 @@ BENCHFUN
         ImProcFunctions::Median medianTypeL = Median::TYPE_3X3_SOFT;
 
         int itera = 1;
-        if(denstr < 0.2f) {
+        if(denstr < 0.1f) {
             medianTypeL = Median::TYPE_3X3_SOFT;
             itera = 1;
-        } else if (denstr < 0.3f) {
+        } else if (denstr < 0.2f) {
             medianTypeL = Median::TYPE_3X3_SOFT;
             itera = 2;
-        } else if (denstr < 0.45f) {
-            medianTypeL = Median::TYPE_3X3_STRONG;
-            itera = 2;
-        } else if (denstr < 0.6f) {
-            medianTypeL = Median::TYPE_3X3_STRONG;
+        } else if (denstr < 0.3f) {
+            medianTypeL = Median::TYPE_3X3_SOFT;
             itera = 3;
+        } else if (denstr < 0.5f) {
+            medianTypeL = Median::TYPE_3X3_SOFT;
+            itera = 4;
+        } else if (denstr < 0.6f) {
+            medianTypeL = Median::TYPE_3X3_SOFT;
+            itera = 5;
+        } else if (denstr < 0.7f) {
+            medianTypeL = Median::TYPE_3X3_STRONG;
+            itera = 5;
         } else if (denstr < 0.8f) {
             medianTypeL = Median::TYPE_3X3_STRONG;
-            itera = 4;
+            itera = 6;
         } else if (denstr < 0.9f) {
             medianTypeL = Median::TYPE_5X5_STRONG;
             itera = 2;
