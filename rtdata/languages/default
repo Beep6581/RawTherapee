@@ -1625,7 +1625,8 @@ HISTORY_MSG_PDSHARPEN_AUTO_RADIUS;CS - Auto radius
 HISTORY_MSG_PDSHARPEN_CHECKITER;CS - Auto limit iterations
 HISTORY_MSG_PDSHARPEN_CONTRAST;CS - Contrast threshold
 HISTORY_MSG_PDSHARPEN_ITERATIONS;CS - Iterations
-HISTORY_MSG_PDSHARPEN_NOISECAP;CS - Predenoise
+HISTORY_MSG_PDSHARPEN_NOISECAP;CS - Presharpening denoise
+HISTORY_MSG_PDSHARPEN_NOISECAPAFTER;CS - Postsharpening denoise luminance
 HISTORY_MSG_PDSHARPEN_RADIUS;CS - Radius
 HISTORY_MSG_PDSHARPEN_RADIUS_BOOST;CS - Corner radius boost
 HISTORY_MSG_PDSHARPEN_SHOWCAP;CS - Show mask contrast
@@ -3975,7 +3976,9 @@ TP_PDSHARPENING_LABEL;Capture Sharpening
 TP_PDSHARPENING_CONTRAST_TOOLTIP;By default the tool analyzes the image and calculates a threshold to prevent sharpening noise.\n You can leave the automatic Contrast Threshold calculation on, or you can turn it off and set it as required: moving the slider to the right means that details will have to have higher contrast before they are sharpened. Higher Contrast Threshold values also reduce the amount of sharpening applied to noise, which tends to have lower detail contrast.\n Presharpening denoise may be necessary to enable detection and reduce noise somewhat.
 TP_PDSHARPENING_ITERATIONS_TOOLTIP;Once the radii have either been automatically calculated or set manually, the tool carries out a series of calculations to try and compensate for any blurring. It is an iterative process, which will produce artifacts if carried too far. Checking the ‘Auto limit iterations’ checkbox will limit the number of iterations or you can do it manually using the Iterations slider.
 TP_PDSHARPENING_NOISE;Presharpening denoise
+TP_PDSHARPENING_NOISEAFTER;Postsharpening denoise luminance
 TP_PDSHARPENING_NOISE_TOOLTIP;Applies gradually by successive iterations a light '3x3 soft' to a fairly strong '5x5 strong' median denoising filter before Capture Sharpening.\n This helps clarify the contrast mask and allows Contrast Threshold to work, and thus Capture Sharpening to work properly.\n This also helps to reduce noise in the output image.\n\nBe careful not to use values ​​that are too high so as not to degrade the image. 
+TP_PDSHARPENING_NOISEAFTER_TOOLTIP;Allows you in raw mode, to do an initial luminance denoising after Capture Sharpening taking into account the mask information.
 TP_PDSHARPENING_CONTRASTRADIUSSE_TOOLTIP;The 'contrast threshold' and 'Capture radius' sliders allow you to control a mask that decides which areas are affected by sharpening and which are left untouched.
 TP_PDSHARPENING_RADIUS_TOOLTIP;When in-camera blurring occurs, the effective resolution is no longer dependent on pixel size and instead, has a radius that increases in proportion to the amount of blurring.\n The purpose of this tool is to reduce this blurring by trying to automatically guess the radius needed to counteract the effect.\n\n You can also choose to adjust the radius yourself bearing in mind that if the value is too low, there will not be enough sharpening and if it is too high, it will lead to strong haloing on the edges. Don’t forget that you are only trying to undo the in-camera blurring.
 TP_PDSHARPENING_RADIUSOFFSET_TOOLTIP;Often images are softer or more blurred in the corners than in the center. The Corner radius boost slider allows you to compensate for this by increasing or decreasing the radius in these areas.\n Moving it to the right increases the sharpening in the outer areas and sliding it to the left will reduce the sharpening.

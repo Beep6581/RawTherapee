@@ -142,6 +142,12 @@ void PdSharpening::read(const ProcParams* pp, const ParamsEdited* pedited)
     contrast->setValue(pp->pdsharpening.contrast);
     contrast->setAutoValue(pp->pdsharpening.autoContrast);
     noisecap->setValue(pp->pdsharpening.noisecap);
+    if(noisecap->getValue()> 0.) {
+        noisecapafter->set_sensitive(true);
+    } else {
+        noisecapafter->set_sensitive(false);               
+    }
+
     noisecapafter->setValue(pp->pdsharpening.noisecapafter);
     dradius->setValue(pp->pdsharpening.deconvradius);
     dradius->setAutoValue(pp->pdsharpening.autoRadius);
@@ -236,6 +242,11 @@ void PdSharpening::adjusterChanged(Adjuster* a, double newval)
         if (a == contrast) {
             listener->panelChanged(EvPdShrContrast, costr);
         } else if (a == noisecap) {
+            if(noisecap->getValue()> 0.) {
+                noisecapafter->set_sensitive(true);
+            } else {
+                noisecapafter->set_sensitive(false);               
+            }
             listener->panelChanged(EvPdShrnoisecap, costr);
         } else if (a == noisecapafter) {
             listener->panelChanged(EvPdShrnoisecapafter, costr);
