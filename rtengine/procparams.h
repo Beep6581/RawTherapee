@@ -582,6 +582,7 @@ struct CaptureSharpeningParams {
     bool           autoRadius;
     double         contrast;
     double         noisecap;
+    double         noisecapafter;
     double         deconvradius;
     double         deconvradiusOffset;
     int            deconviter;

@@ -229,6 +229,7 @@ struct CaptureSharpeningParamsEdited {
     bool deconvitercheck;
     bool showcap;
     bool noisecap;
+    bool noisecapafter;
     bool isUnchanged() const;
 };
 

@@ -39,6 +39,7 @@ protected:
     Adjuster* dradiusOffset;
     Adjuster* diter;
     CheckBox* itercheck;
+    Adjuster* noisecapafter;
 
     bool lastAutoContrast;
     bool lastAutoRadius;
@@ -51,6 +52,7 @@ protected:
     rtengine::ProcEvent EvPdShrAutoRadius;
     rtengine::ProcEvent EvPdShrshowcap;
     rtengine::ProcEvent EvPdShrnoisecap;
+    rtengine::ProcEvent EvPdShrnoisecapafter;
     IdleRegister idle_register;
 
 public:

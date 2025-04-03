@@ -48,7 +48,7 @@ PdSharpening::PdSharpening() :
     EvPdShrAutoRadius = m->newEvent(CAPTURESHARPEN, "HISTORY_MSG_PDSHARPEN_AUTO_RADIUS");
     EvPdShrshowcap = m->newEvent(CAPTURESHARPEN, "HISTORY_MSG_PDSHARPEN_SHOWCAP");
     EvPdShrnoisecap = m->newEvent(CAPTURESHARPEN, "HISTORY_MSG_PDSHARPEN_NOISECAP");
-
+    EvPdShrnoisecapafter = m->newEvent(CAPTURESHARPEN, "HISTORY_MSG_PDSHARPEN_NOISECAPAFTER");
     Gtk::Box* hb = Gtk::manage(new Gtk::Box());
     hb->show();
     contrast = Gtk::manage(new Adjuster(M("TP_SHARPENING_CONTRAST"), 0, 200, 1, 10));
@@ -57,7 +57,9 @@ PdSharpening::PdSharpening() :
     contrast->setAutoValue(true);
     noisecap = Gtk::manage(new Adjuster(M("TP_PDSHARPENING_NOISE"), 0., 100., 1., 0.));
     noisecap->setAdjusterListener(this);
-
+    noisecapafter = Gtk::manage(new Adjuster(M("TP_PDSHARPENING_NOISEAFTER"), 0., 100., 1., 0.));
+    noisecapafter->setAdjusterListener(this);
+    noisecapafter->set_tooltip_text(M("TP_PDSHARPENING_NOISEAFTER_TOOLTIP"));
     showcap = Gtk::manage(new CheckBox(M("TP_PDSHARPENING_SHOWCAP"), multiImage));
     showcap->setCheckBoxListener(this);
 
@@ -87,10 +89,13 @@ PdSharpening::PdSharpening() :
     rld->pack_start(*dradiusOffset);
     rld->pack_start(*diter);
     rld->pack_start(*itercheck);
+    rld->pack_start(*noisecapafter);
     dradius->show();
     dradiusOffset->show();
     diter->show();
     itercheck->show();
+    noisecapafter->show();
+
     rld->show();
     pack_start(*rld);
 
@@ -100,6 +105,7 @@ PdSharpening::PdSharpening() :
 
     contrast->setDelay(std::max(options.adjusterMinDelay, options.adjusterMaxDelay));
     noisecap->setDelay(std::max(options.adjusterMinDelay, options.adjusterMaxDelay));
+    noisecapafter->setDelay(std::max(options.adjusterMinDelay, options.adjusterMaxDelay));
     dradius->setDelay(std::max(options.adjusterMinDelay, options.adjusterMaxDelay));
     dradiusOffset->setDelay(std::max(options.adjusterMinDelay, options.adjusterMaxDelay));
     diter->setDelay(std::max(options.adjusterMinDelay, options.adjusterMaxDelay));
@@ -120,6 +126,7 @@ void PdSharpening::read(const ProcParams* pp, const ParamsEdited* pedited)
         contrast->setEditedState(pedited->pdsharpening.contrast ? Edited : UnEdited);
         contrast->setAutoInconsistent(multiImage && !pedited->pdsharpening.autoContrast);
         noisecap->setEditedState(pedited->pdsharpening.noisecap ? Edited : UnEdited);
+        noisecapafter->setEditedState(pedited->pdsharpening.noisecapafter ? Edited : UnEdited);
         dradius->setAutoInconsistent(multiImage && !pedited->pdsharpening.autoRadius);
         dradius->setEditedState(pedited->pdsharpening.deconvradius ? Edited : UnEdited);
         dradiusOffset->setEditedState(pedited->pdsharpening.deconvradiusOffset ? Edited : UnEdited);
@@ -135,6 +142,7 @@ void PdSharpening::read(const ProcParams* pp, const ParamsEdited* pedited)
     contrast->setValue(pp->pdsharpening.contrast);
     contrast->setAutoValue(pp->pdsharpening.autoContrast);
     noisecap->setValue(pp->pdsharpening.noisecap);
+    noisecapafter->setValue(pp->pdsharpening.noisecapafter);
     dradius->setValue(pp->pdsharpening.deconvradius);
     dradius->setAutoValue(pp->pdsharpening.autoRadius);
     dradiusOffset->setValue(pp->pdsharpening.deconvradiusOffset);
@@ -154,6 +162,7 @@ void PdSharpening::write(ProcParams* pp, ParamsEdited* pedited)
     pp->pdsharpening.contrast = contrast->getValue();
     pp->pdsharpening.autoContrast = contrast->getAutoValue();
     pp->pdsharpening.noisecap = noisecap->getValue();
+    pp->pdsharpening.noisecapafter = noisecapafter->getValue();
     pp->pdsharpening.enabled = getEnabled();
     pp->pdsharpening.deconvradius = dradius->getValue();
     pp->pdsharpening.autoRadius = dradius->getAutoValue();
@@ -166,6 +175,7 @@ void PdSharpening::write(ProcParams* pp, ParamsEdited* pedited)
         pedited->pdsharpening.contrast = contrast->getEditedState();
         pedited->pdsharpening.autoContrast = !contrast->getAutoInconsistent();
         pedited->pdsharpening.noisecap = noisecap->getEditedState();
+        pedited->pdsharpening.noisecapafter = noisecapafter->getEditedState();
         pedited->pdsharpening.deconvradius = dradius->getEditedState();
         pedited->pdsharpening.autoRadius = !dradius->getAutoInconsistent();
         pedited->pdsharpening.deconvradiusOffset = dradiusOffset->getEditedState();
@@ -181,6 +191,7 @@ void PdSharpening::setDefaults(const ProcParams* defParams, const ParamsEdited* 
 
     contrast->setDefault(defParams->pdsharpening.contrast);
     noisecap->setDefault(defParams->pdsharpening.noisecap);
+    noisecapafter->setDefault(defParams->pdsharpening.noisecapafter);
     dradius->setDefault(defParams->pdsharpening.deconvradius);
     dradiusOffset->setDefault(defParams->pdsharpening.deconvradiusOffset);
     diter->setDefault(defParams->pdsharpening.deconviter);
@@ -188,12 +199,14 @@ void PdSharpening::setDefaults(const ProcParams* defParams, const ParamsEdited* 
     if (pedited) {
         contrast->setDefaultEditedState(pedited->pdsharpening.contrast ? Edited : UnEdited);
         noisecap->setDefaultEditedState(pedited->pdsharpening.noisecap ? Edited : UnEdited);
+        noisecapafter->setDefaultEditedState(pedited->pdsharpening.noisecapafter ? Edited : UnEdited);
         dradius->setDefaultEditedState(pedited->pdsharpening.deconvradius ? Edited : UnEdited);
         dradiusOffset->setDefaultEditedState(pedited->pdsharpening.deconvradiusOffset ? Edited : UnEdited);
         diter->setDefaultEditedState(pedited->pdsharpening.deconviter ? Edited : UnEdited);
     } else {
         contrast->setDefaultEditedState(Irrelevant);
         noisecap->setDefaultEditedState(Irrelevant);
+        noisecapafter->setDefaultEditedState(Irrelevant);
         dradius->setDefaultEditedState(Irrelevant);
         dradiusOffset->setDefaultEditedState(Irrelevant);
         diter->setDefaultEditedState(Irrelevant);
@@ -224,6 +237,8 @@ void PdSharpening::adjusterChanged(Adjuster* a, double newval)
             listener->panelChanged(EvPdShrContrast, costr);
         } else if (a == noisecap) {
             listener->panelChanged(EvPdShrnoisecap, costr);
+        } else if (a == noisecapafter) {
+            listener->panelChanged(EvPdShrnoisecapafter, costr);
         } else if (a == dradius) {
             listener->panelChanged(EvPdShrDRadius, costr);
         } else if (a == dradiusOffset) {
@@ -254,6 +269,7 @@ void PdSharpening::setBatchMode(bool batchMode)
 
     contrast->showEditedCB();
     noisecap->showEditedCB();
+    noisecapafter->showEditedCB();
     dradius->showEditedCB();
     dradiusOffset->showEditedCB();
     diter->showEditedCB();
@@ -273,6 +289,7 @@ void PdSharpening::trimValues(rtengine::procparams::ProcParams* pp)
 
     contrast->trimValue(pp->pdsharpening.contrast);
     noisecap->trimValue(pp->pdsharpening.noisecap);
+    noisecapafter->trimValue(pp->pdsharpening.noisecapafter);
     dradius->trimValue(pp->pdsharpening.deconvradius);
     dradiusOffset->trimValue(pp->pdsharpening.deconvradiusOffset);
     diter->trimValue(pp->pdsharpening.deconviter);

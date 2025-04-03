@@ -1238,6 +1238,7 @@ void PartialPasteDlg::applyPaste (rtengine::procparams::ProcParams* dstPP, Param
         filterPE.pdsharpening.enabled   = falsePE.pdsharpening.enabled;
         filterPE.pdsharpening.contrast   = falsePE.pdsharpening.contrast;
         filterPE.pdsharpening.noisecap   = falsePE.pdsharpening.noisecap;
+        filterPE.pdsharpening.noisecapafter   = falsePE.pdsharpening.noisecapafter;
         filterPE.pdsharpening.showcap   = falsePE.pdsharpening.showcap;
         filterPE.pdsharpening.autoContrast   = falsePE.pdsharpening.autoContrast;
         filterPE.pdsharpening.autoRadius   = falsePE.pdsharpening.autoRadius;

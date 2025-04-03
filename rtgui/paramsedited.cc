@@ -306,6 +306,7 @@ void ParamsEdited::set(bool v)
     pdsharpening.deconvitercheck     = v;
     pdsharpening.showcap     = v;
     pdsharpening.noisecap     = v;
+    pdsharpening.noisecapafter     = v;
     prsharpening.enabled            = v;
     prsharpening.contrast           = v;
     prsharpening.radius             = v;
@@ -1059,6 +1060,7 @@ void ParamsEdited::initFrom(const std::vector<rtengine::procparams::ProcParams>&
         pdsharpening.enabled = pdsharpening.enabled && p.pdsharpening.enabled == other.pdsharpening.enabled;
         pdsharpening.contrast = pdsharpening.contrast && p.pdsharpening.contrast == other.pdsharpening.contrast;
         pdsharpening.noisecap = pdsharpening.noisecap && p.pdsharpening.noisecap == other.pdsharpening.noisecap;
+        pdsharpening.noisecapafter = pdsharpening.noisecapafter && p.pdsharpening.noisecapafter == other.pdsharpening.noisecapafter;
         pdsharpening.autoContrast = pdsharpening.autoContrast && p.pdsharpening.autoContrast == other.pdsharpening.autoContrast;
         pdsharpening.autoRadius = pdsharpening.autoRadius && p.pdsharpening.autoRadius == other.pdsharpening.autoRadius;
         pdsharpening.deconvradius = pdsharpening.deconvradius && p.pdsharpening.deconvradius == other.pdsharpening.deconvradius;
@@ -3063,6 +3065,10 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
 
     if (pdsharpening.noisecap) {
         toEdit.pdsharpening.noisecap = mods.pdsharpening.noisecap;
+    }
+
+    if (pdsharpening.noisecapafter) {
+        toEdit.pdsharpening.noisecapafter = mods.pdsharpening.noisecapafter;
     }
 
     if (pdsharpening.autoContrast) {

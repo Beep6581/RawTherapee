@@ -1469,6 +1469,7 @@ CaptureSharpeningParams::CaptureSharpeningParams() :
     autoRadius(true),
     contrast(10.0),
     noisecap(0.),
+    noisecapafter(0.),
     deconvradius(0.75),
     deconvradiusOffset(0.0),
     deconviter(20),
@@ -1488,6 +1489,7 @@ bool CaptureSharpeningParams::operator ==(const CaptureSharpeningParams& other) 
         && deconvitercheck == other.deconvitercheck
         && showcap == other.showcap
         && noisecap == other.noisecap
+        && noisecapafter == other.noisecapafter
         && deconvradiusOffset == other.deconvradiusOffset
         && deconviter == other.deconviter;
 }
@@ -8181,6 +8183,7 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
         saveToKeyfile(!pedited || pedited->pdsharpening.deconvitercheck, "PostDemosaicSharpening", "DeconvIterCheck", pdsharpening.deconvitercheck, keyFile);
         saveToKeyfile(!pedited || pedited->pdsharpening.showcap, "PostDemosaicSharpening", "Showcap", pdsharpening.showcap, keyFile);
         saveToKeyfile(!pedited || pedited->pdsharpening.noisecap, "PostDemosaicSharpening", "Noisecap", pdsharpening.noisecap, keyFile);
+        saveToKeyfile(!pedited || pedited->pdsharpening.noisecapafter, "PostDemosaicSharpening", "Noisecapafter", pdsharpening.noisecapafter, keyFile);
         saveToKeyfile(!pedited || pedited->pdsharpening.deconviter, "PostDemosaicSharpening", "DeconvIterations", pdsharpening.deconviter, keyFile);
 
 // Post resize sharpening
@@ -10872,6 +10875,7 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
             assignFromKeyfile(keyFile, "PostDemosaicSharpening", "DeconvIterCheck", pdsharpening.deconvitercheck, pedited->pdsharpening.deconvitercheck);
             assignFromKeyfile(keyFile, "PostDemosaicSharpening", "Showcap", pdsharpening.showcap, pedited->pdsharpening.showcap);
             assignFromKeyfile(keyFile, "PostDemosaicSharpening", "Noisecap", pdsharpening.noisecap, pedited->pdsharpening.noisecap);
+            assignFromKeyfile(keyFile, "PostDemosaicSharpening", "Noisecapafter", pdsharpening.noisecapafter, pedited->pdsharpening.noisecapafter);
             assignFromKeyfile(keyFile, "PostDemosaicSharpening", "DeconvIterations", pdsharpening.deconviter, pedited->pdsharpening.deconviter);
         }
 
