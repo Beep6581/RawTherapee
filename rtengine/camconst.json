@@ -1857,7 +1857,7 @@ Camera constants:
     { // Quality B, no LENR samples
         "make_model": "Nikon D5",
         "dcraw_matrix": [ 9200,-3522,-992,-5755,13803,2117,-754,1486,6338 ], // DNG v13.2
-        "ranges": { "black": 0, "white": 16300 } // WL typical 16383 set to 16300 for safety
+        "ranges": { "white": 16300 } // WL typical 16383 set to 16300 for safety
     },
 
     { // Quality C
