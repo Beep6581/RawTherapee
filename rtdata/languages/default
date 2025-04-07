@@ -3697,7 +3697,7 @@ TP_LOCALLAB_SENSI_TOOLTIP;Adjusts the scope of the action:\nSmall values limit t
 TP_LOCALLAB_SETTINGS;Settings
 TP_LOCALLAB_SH1;Shadows Highlights
 TP_LOCALLAB_SH2;Equalizer
-TP_LOCALLAB_SH3;Generalized Hyperbolic Stretch
+TP_LOCALLAB_SH3;Generalized Hyperbolic Stretch (GHS)
 TP_LOCALLAB_SHADEX;Shadows
 TP_LOCALLAB_SHADEXCOMP;Shadow compression
 TP_LOCALLAB_SHADHIGH;Shadows/Highlights, Equalizer & GHS
