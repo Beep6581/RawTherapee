@@ -2363,13 +2363,18 @@ void LocallabSharp::updateguisharp(int spottype)
             if(spottype == 3) {
                 sensisha->hide();
                 inverssha->hide();
+                sharFrame->hide();
             } else {
                 sensisha->show();
+                sharFrame->show();
+                
                 if (methodcap->get_active_row_number() == 1) {
                     inverssha->show();
                 } else {
                     inverssha->hide();            
                 }
+                updateGUIToMode(static_cast<modeType>(complexity->get_active_row_number()));
+                
             }
             enableListener();
 

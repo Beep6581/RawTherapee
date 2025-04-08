@@ -3961,7 +3961,7 @@ TP_LOCAL_WIDTH_L;Left
 TP_LOCRETI_METHOD_TOOLTIP;Low = Reinforce low light.\nUniform = Evenly distributed.\nHigh = Reinforce strong light.
 TP_METADATA_EDIT;Apply modifications
 TP_METADATA_MODE;Metadata copy mode
-TP_METADATA_STRIP;Strip all metadata
+TP_METADATA_STRIP;Strip al"l metadata
 TP_METADATA_TUNNEL;Copy unchanged
 TP_NEUTRAL;Reset
 TP_NEUTRAL_TOOLTIP;Resets exposure sliders to neutral values.\nApplies to the same controls that Auto Levels applies to, regardless of whether you used Auto Levels or not.
@@ -3975,6 +3975,7 @@ TP_PCVIGNETTE_STRENGTH_TOOLTIP;Filter strength in stops (reached in corners).
 TP_PDSHARPENING_LABEL;Capture Sharpening
 TP_PDSHARPENING_CONTRAST_TOOLTIP;By default the tool analyzes the image and calculates a threshold to prevent sharpening noise.\n You can leave the automatic Contrast Threshold calculation on, or you can turn it off and set it as required: moving the slider to the right means that details will have to have higher contrast before they are sharpened. Higher Contrast Threshold values also reduce the amount of sharpening applied to noise, which tends to have lower detail contrast.\n Presharpening denoise may be necessary to enable detection and reduce noise somewhat.
 TP_PDSHARPENING_ITERATIONS_TOOLTIP;Once the radii have either been automatically calculated or set manually, the tool carries out a series of calculations to try and compensate for any blurring. It is an iterative process, which will produce artifacts if carried too far. Checking the ‘Auto limit iterations’ checkbox will limit the number of iterations or you can do it manually using the Iterations slider.
+TP_PDSHARPENING_LABEL88;Capture Sharpening
 TP_PDSHARPENING_NOISE;Presharpening denoise
 TP_PDSHARPENING_NOISEAFTER;Postsharpening denoise luminance
 TP_PDSHARPENING_NOISE_TOOLTIP;Applies gradually by successive iterations a light '3x3 soft' to a fairly strong '5x5 strong' median denoising filter before Capture Sharpening.\n This helps clarify the contrast mask and allows Contrast Threshold to work, and thus Capture Sharpening to work properly.\n This also helps to reduce noise in the output image.\n\nBe careful not to use values ​​that are too high so as not to degrade the image. 
