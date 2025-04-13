@@ -33,8 +33,15 @@
 #include "improcfun.h"
 #include "boxblur.h"
 #include "median.h"
+#include "imagefloat.h"
+#include "labimage.h"
+#include "cplx_wavelet_dec.h"
+#ifdef _OPENMP
+#include <omp.h>
+#endif
 
-namespace {
+namespace 
+{
 
 
 void buildClipMaskBayer(const float * const *rawData, int W, int H, float** clipMask, const float whites[2][2])
@@ -530,8 +537,164 @@ BENCHFUN
 
 namespace rtengine
 {
+    
+void ShrinkAllL2(wavelet_decomposition& WaveletCoeffs_L, float **buffer, int level, int dir,
+        float *noisevarlum, float * madL, float * vari, int edge)
+{//very similar with Shrinkall in Ftblockdn.cc but simplified.
+    //simple wavelet shrinkage
+    const float eps = 0.01f;
+
+    float * sfave = buffer[0] + 32;
+    float * sfaved = buffer[1] + 64;
+
+    const int W_L = WaveletCoeffs_L.level_W(level);
+    const int H_L = WaveletCoeffs_L.level_H(level);
+
+    float* const* WavCoeffs_L = WaveletCoeffs_L.level_coeffs(level);
+    const float mad_L = madL[dir - 1] ;
+    const float levelFactor = mad_L * 5.f / static_cast<float>(level + 1);
+
+    float *nvl = nullptr;
+    nvl = new float[ H_L * W_L];
+
+    for (int i = 0; i < W_L * H_L; ++i) {
+        nvl[i] = 0.f;
+    }
+
+    if (edge == 6 && vari) {
+        for (int i = 0; i < W_L * H_L; ++i) {
+            nvl[i] = vari[level] * SQR(noisevarlum[i]);
+        }
+    }
+
+    int i = 0;
+#ifdef __SSE2__
+    const vfloat levelFactorv = F2V(levelFactor);
+    const vfloat ninev = F2V(9.f);
+    const vfloat epsv = F2V(eps);
+
+
+    for (i = 0; i < W_L * H_L - 3; i += 4) {
+        const vfloat mad_Lv = LVFU(nvl[i]) * levelFactorv;
+        const vfloat magv = SQRV(LVFU(WavCoeffs_L[dir][i]));
+        STVFU(sfave[i], magv / (magv + mad_Lv * xexpf(-magv / (ninev * mad_Lv)) + epsv));
+    }
+
+#endif
+    // few remaining pixels
+    for (; i < W_L * H_L; ++i) {
+        float mag = SQR(WavCoeffs_L[dir][i]);
+        sfave[i] = mag / (mag + levelFactor * nvl[i] * xexpf(-mag / (9 * levelFactor * nvl[i])) + eps);
+    }
+
+    boxblur(sfave, sfaved, level + 2, W_L, H_L, false); //increase smoothness by locally averaging shrinkage
+
+    i = 0;
+#ifdef __SSE2__
+
+    for (; i < W_L * H_L - 3; i += 4) {
+        const vfloat sfv = LVFU(sfave[i]);
+        //use smoothed shrinkage unless local shrinkage is much less
+        STVFU(WavCoeffs_L[dir][i], LVFU(WavCoeffs_L[dir][i]) * (SQRV(LVFU(sfaved[i])) + SQRV(sfv)) / (LVFU(sfaved[i]) + sfv + epsv));
+    }
+#endif
+    // few remaining pixels
+    for (; i < W_L * H_L; ++i) {
+        const float sf = sfave[i];
+        //use smoothed shrinkage unless local shrinkage is much less
+        WavCoeffs_L[dir][i] *= (SQR(sfaved[i]) + SQR(sf)) / (sfaved[i] + sf + eps);
+    }//now luminance coefficients are denoised
+
+    delete [] nvl;
+}
+   
+   
+bool WaveletDenoiseAllL2(wavelet_decomposition& WaveletCoeffs_L, float *noisevarlum, float madL[8][3], float * vari, int edge, int denoiseNestedLevels)
+    {   //same code simplified as in Ftblockdn.cc
+    int maxlvl = min(WaveletCoeffs_L.maxlevel(), 5);//probably useless, but reassuring
+
+    if (edge == 6) {//always true but I can change
+        maxlvl = 6;    //for wavelet  post sharpening
+    }
+
+    int maxWL = 0, maxHL = 0;
+
+    for (int lvl = 0; lvl < maxlvl; ++lvl) {
+        if (WaveletCoeffs_L.level_W(lvl) > maxWL) {
+            maxWL = WaveletCoeffs_L.level_W(lvl);
+        }
+
+        if (WaveletCoeffs_L.level_H(lvl) > maxHL) {
+            maxHL = WaveletCoeffs_L.level_H(lvl);
+        }
+    }
+    bool memoryAllocationFailed = false;
+#ifdef _OPENMP
+    #pragma omp parallel num_threads(denoiseNestedLevels) if (denoiseNestedLevels>1)
+#endif
+    {
+        float *buffer[4];
+        buffer[0] = new (std::nothrow) float[maxWL * maxHL + 32];
+        buffer[1] = new (std::nothrow) float[maxWL * maxHL + 64];
+        buffer[2] = new (std::nothrow) float[maxWL * maxHL + 96];
+        buffer[3] = new (std::nothrow) float[maxWL * maxHL + 128];
+
+        if (buffer[0] == nullptr || buffer[1] == nullptr || buffer[2] == nullptr || buffer[3] == nullptr) {
+            memoryAllocationFailed = true;
+        }
+
+        if (!memoryAllocationFailed) {
+#ifdef _OPENMP
+            #pragma omp for schedule(dynamic) collapse(2)
+#endif
+
+            for (int lvl = 0; lvl < maxlvl; ++lvl) {
+                for (int dir = 1; dir < 4; ++dir) {
+                    ShrinkAllL2(WaveletCoeffs_L, buffer, lvl, dir, noisevarlum, madL[lvl], vari, edge);
+                }
+            }
+        }
+        for (int i = 3; i >= 0; i--) {
+            delete[] buffer[i];
+        }
+    }
+    return (!memoryAllocationFailed);
+    }
+
+
+float Madraw(const float * DataList, const int datalen)
+//same code, but perhaps to adapt (tiles ??= as Mad in Ftblockdn.cc)
+{
+    if (datalen <= 1) { // Avoid possible buffer underrun
+        return 0;
+    }
+    //computes Median Absolute Deviation
+    //DataList values should mostly have abs val < 256 because we are in Lab mode (32768)
+    int histo[32768] ALIGNED64 = {0};
+
+    //calculate histogram of absolute values of wavelet coeffs
+    for (int i = 0; i < datalen; ++i) {
+        histo[static_cast<int>(rtengine::min(32767.f, fabsf(DataList[i])))]++;
+    }
+
+    //find median of histogram
+    int lmedian = 0, count = 0;
+
+    while (count < datalen / 2) {
+        count += histo[lmedian];
+        ++lmedian;
+    }
+
+    int count_ = count - histo[lmedian - 1];
+
+    // interpolate
+    return ((lmedian - 1) + (datalen / 2 - count_) / (static_cast<float>(count - count_))) / 0.6745f;
+}
+
+
 
 void RawImageSource::captureSharpening(const procparams::CaptureSharpeningParams &sharpeningParams, bool showMask, double &conrastThreshold, double &radius) {
+#include "improcfun.h"
 
     if (!(ri->getSensorType() == ST_BAYER || ri->getSensorType() == ST_FUJI_XTRANS || ri->get_colors() == 1)) {
         return;
@@ -805,6 +968,113 @@ BENCHFUN
     if (plistener) {
         plistener->setProgress(1.0);
     }
+    
+        //denoise luminance in RGB mode after capture sharpening
+    
+        LabImage labdn(W, H);
+#ifdef _OPENMP
+        const int numThreads = omp_get_max_threads();
+#else
+        const int numThreads = 1;
+
+#endif
+        int levwav = 6;//128 x 128 must be enough for this usage...and no test memory allocation, we work on all image in Raw mode
+
+        const std::unique_ptr<Imagefloat> prov1(new Imagefloat(W, H));
+        procparams::ColorManagementParams cmp;
+
+#ifdef _OPENMP
+    #pragma omp parallel for schedule(dynamic, 16)
+#endif
+        for (int i = 0; i < H; ++i) {//save values of red green blue
+            for (int j = 0; j < W; ++j) {
+                prov1->r(i, j) = red[i][j];
+                prov1->g(i, j) = green[i][j];
+                prov1->b(i, j) = blue[i][j]; 
+                labdn.L[i][j] = prov1->g(i, j);//initialize Labdn.L
+            }
+        }
+    
+        wavelet_decomposition Ldecomp(labdn.L[0], labdn.W, labdn.H, levwav, 1, 1, numThreads, 6);
+        
+        float madL[10][3];
+        if (!Ldecomp.memory_allocation_failed()) {
+                //calculate Median absolute deviation
+            for (int lvl = 0; lvl < levwav; lvl++) {
+                for (int dir = 1; dir < 4; dir++) {
+                    int Wlvl_L = Ldecomp.level_W(lvl);
+                    int Hlvl_L = Ldecomp.level_H(lvl);
+                    const float* const* WavCoeffs_L = Ldecomp.level_coeffs(lvl);
+                    madL[lvl][dir - 1] = SQR(Madraw(WavCoeffs_L[dir], Wlvl_L * Hlvl_L));
+                }
+            }
+        }
+        float noiseluma = sharpeningParams.noisecapafter;
+       
+        const float noisevarL = SQR(((noiseluma + 1.f) / 125.f) * (10.f + (noiseluma + 1.f) / 25.f));
+        //evaluate noisevarL same formula as Denoise main
+        float vari[levwav];
+        for (int v = 0; v < levwav; v++) {
+            vari[v] = noisevarL;//same value for each level, but we can change
+        }
+        
+        int edge = 6;//as maxlevels
+        
+        float* noisevarlum = new float[H * W];
+        int GW2 = (W + 1) / 2;//work on half image
+                    
+        float nvlh[13] = {1.f, 1.f, 1.f, 1.f, 1.f, 1.f, 1.f, 1.f, 1.f, 1.f, 1.f, 0.7f, 0.5f}; //high value
+        float nvll[13] = {0.1f, 0.15f, 0.2f, 0.25f, 0.3f, 0.35f, 0.4f, 0.45f, 0.7f, 0.8f, 1.f, 1.f, 1.f}; //low value
+
+        float seuillow = 3000.f;//low
+        float seuilhigh = 18000.f;//high
+        int noiselequal = 5;//equalizer black - white
+        int i = 10 - noiselequal;
+        float ac = (nvlh[i] - nvll[i]) / (seuillow - seuilhigh);
+        float bc = nvlh[i] - seuillow * ac;
+#ifdef _OPENMP
+        #pragma omp parallel for schedule(dynamic, 16)
+#endif
+        
+            for (int ir = 0; ir < H; ir++){
+                for (int jr = 0; jr < W; jr++) {
+                    float lN = labdn.L[ir][jr];
+                    //adapt noisevarlum to lN value
+                    if (lN < seuillow) {
+                        noisevarlum[(ir >> 1)*GW2 + (jr >> 1)] =  nvlh[i];
+                    } else if (lN < seuilhigh) {
+                        noisevarlum[(ir >> 1)*GW2 + (jr >> 1)] = ac * lN + bc;
+                    } else {
+                        noisevarlum[(ir >> 1)*GW2 + (jr >> 1)] =  nvll[i];
+                    }
+                }
+            }
+   
+            WaveletDenoiseAllL2(Ldecomp, noisevarlum, madL, vari, edge, numThreads);
+            delete[] noisevarlum;
+            Ldecomp.reconstruct(labdn.L[0]);
+#ifdef _OPENMP
+            #pragma omp parallel for schedule(dynamic,16)
+#endif
+            //uses Clipmask to only denoise flat areas
+            for (int ir = 0; ir < H; ir++) {
+                for (int jr = 0; jr < W; jr++) {
+                    labdn.L[ir][jr] = intp(clipMask[ir][jr], prov1->g(ir, jr) , labdn.L[ir][jr]);
+                }
+            }
+                    
+#ifdef _OPENMP
+    #pragma omp parallel for schedule(dynamic, 16)
+#endif                   
+        for (int i = 0; i < H; ++i) {
+            for (int j = 0; j < W; ++j) {
+                red[i][j] = prov1->r(i, j);
+                green[i][j] = labdn.L[i][j];
+                blue[i][j] = prov1->b(i, j); 
+            }
+        }
+      
+   
     rgbSourceModified = false;
 }
 
