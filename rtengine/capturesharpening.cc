@@ -538,8 +538,7 @@ BENCHFUN
 namespace rtengine
 {
     
-void ShrinkAllL2(wavelet_decomposition& WaveletCoeffs_L, float **buffer, int level, int dir,
-        float *noisevarlum, float * madL, float * vari, int edge)
+void ShrinkAllL2(wavelet_decomposition& WaveletCoeffs_L, float **buffer, int level, int dir, float *noisevarlum, float * madL, float * vari, int edge)
 {//very similar with Shrinkall in Ftblockdn.cc but simplified.
     //simple wavelet shrinkage
     const float eps = 0.01f;
@@ -663,18 +662,23 @@ bool WaveletDenoiseAllL2(wavelet_decomposition& WaveletCoeffs_L, float *noisevar
 
 
 float Madraw(const float * DataList, const int datalen)
-//same code, but perhaps to adapt (tiles ??= as Mad in Ftblockdn.cc)
+//same code, but perhaps to adapt (tiles ??= as Madrgb in Ftblockdn.cc)
 {
-    if (datalen <= 1) { // Avoid possible buffer underrun
+     if (datalen <= 1) { // Avoid possible buffer underrun
         return 0;
     }
+
     //computes Median Absolute Deviation
-    //DataList values should mostly have abs val < 256 because we are in Lab mode (32768)
-    int histo[32768] ALIGNED64 = {0};
+    //DataList values should mostly have abs val < 65536 because we are in RGB mode
+    int * histo = new int[65536];
+
+    for (int i = 0; i < 65536; ++i) {
+        histo[i] = 0;
+    }
 
     //calculate histogram of absolute values of wavelet coeffs
     for (int i = 0; i < datalen; ++i) {
-        histo[static_cast<int>(rtengine::min(32767.f, fabsf(DataList[i])))]++;
+        histo[static_cast<int>(rtengine::min(65535.f, fabsf(DataList[i])))]++;
     }
 
     //find median of histogram
@@ -688,6 +692,7 @@ float Madraw(const float * DataList, const int datalen)
     int count_ = count - histo[lmedian - 1];
 
     // interpolate
+    delete[] histo;
     return ((lmedian - 1) + (datalen / 2 - count_) / (static_cast<float>(count - count_))) / 0.6745f;
 }
 
@@ -726,7 +731,7 @@ BENCHFUN
     typedef ImProcFunctions::Median Median;
 
     //predoise : small median to denoise before capture sharpening : allow CS to work correctly and reduce a little the noise
-    //J.Desmis October 2024
+    //J.Desmis October 2024 - be carefull not to strong...
     if(sharpeningParams.noisecap > 0.f) {
         //I have choose median due to its low aggressiveness and for a 3x3 its speed
         float denstr = 0.01 * sharpeningParams.noisecap;
@@ -970,110 +975,112 @@ BENCHFUN
     }
     
         //denoise luminance in RGB mode after capture sharpening
-    
-        LabImage labdn(W, H);
+        //not a complete denoise, just the minimum to exploit the mask buildblendmak 
+        // enable only if noisecap (denoise before is enable).
+        if(sharpeningParams.noisecap > 0.f){
+            LabImage labdn(W, H);
 #ifdef _OPENMP
-        const int numThreads = omp_get_max_threads();
+            const int numThreads = omp_get_max_threads();
 #else
-        const int numThreads = 1;
+            const int numThreads = 1;
 
 #endif
-        int levwav = 6;//128 x 128 must be enough for this usage...and no test memory allocation, we work on all image in Raw mode
+            int levwav = 6;//128 x 128 must be enough for this usage...and no test memory allocation, we work on all image in Raw mode
 
-        const std::unique_ptr<Imagefloat> prov1(new Imagefloat(W, H));
-        procparams::ColorManagementParams cmp;
+            const std::unique_ptr<Imagefloat> prov1(new Imagefloat(W, H));
+            procparams::ColorManagementParams cmp;
 
 #ifdef _OPENMP
-    #pragma omp parallel for schedule(dynamic, 16)
+        #pragma omp parallel for schedule(dynamic, 16)
 #endif
-        for (int i = 0; i < H; ++i) {//save values of red green blue
-            for (int j = 0; j < W; ++j) {
-                prov1->r(i, j) = red[i][j];
-                prov1->g(i, j) = green[i][j];
-                prov1->b(i, j) = blue[i][j]; 
-                labdn.L[i][j] = prov1->g(i, j);//initialize Labdn.L
-            }
-        }
-    
-        wavelet_decomposition Ldecomp(labdn.L[0], labdn.W, labdn.H, levwav, 1, 1, numThreads, 6);
-        
-        float madL[10][3];
-        if (!Ldecomp.memory_allocation_failed()) {
-                //calculate Median absolute deviation
-            for (int lvl = 0; lvl < levwav; lvl++) {
-                for (int dir = 1; dir < 4; dir++) {
-                    int Wlvl_L = Ldecomp.level_W(lvl);
-                    int Hlvl_L = Ldecomp.level_H(lvl);
-                    const float* const* WavCoeffs_L = Ldecomp.level_coeffs(lvl);
-                    madL[lvl][dir - 1] = SQR(Madraw(WavCoeffs_L[dir], Wlvl_L * Hlvl_L));
+            for (int i = 0; i < H; ++i) {//save values of red green blue
+                for (int j = 0; j < W; ++j) {
+                    prov1->r(i, j) = red[i][j];
+                    prov1->g(i, j) = green[i][j];
+                    prov1->b(i, j) = blue[i][j]; 
+                    labdn.L[i][j] = prov1->g(i, j);//initialize Labdn.L - channel green "near" Luminance
                 }
             }
-        }
-        float noiseluma = sharpeningParams.noisecapafter;
+    
+            wavelet_decomposition Ldecomp(labdn.L[0], labdn.W, labdn.H, levwav, 1, 1, numThreads, 8);//daublen = 8 - better moment 
+        
+            float madL[10][3];
+            if (!Ldecomp.memory_allocation_failed()) {
+                //calculate Median absolute deviation
+                for (int lvl = 0; lvl < levwav; lvl++) {
+                    for (int dir = 1; dir < 4; dir++) {
+                        int Wlvl_L = Ldecomp.level_W(lvl);
+                        int Hlvl_L = Ldecomp.level_H(lvl);
+                        const float* const* WavCoeffs_L = Ldecomp.level_coeffs(lvl);
+                        madL[lvl][dir - 1] = SQR(Madraw(WavCoeffs_L[dir], Wlvl_L * Hlvl_L));
+                    }
+                }
+            }
+            float noiseluma = sharpeningParams.noisecapafter;
        
-        const float noisevarL = SQR(((noiseluma + 1.f) / 125.f) * (10.f + (noiseluma + 1.f) / 25.f));
-        //evaluate noisevarL same formula as Denoise main
-        float vari[levwav];
-        for (int v = 0; v < levwav; v++) {
-            vari[v] = noisevarL;//same value for each level, but we can change
-        }
+            const float noisevarL = SQR(((noiseluma + 1.f) / 125.f) * (10.f + (noiseluma + 1.f) / 25.f));
+            //evaluate noisevarL same formula as Denoise main
+            float vari[levwav];
+            for (int v = 0; v < levwav; v++) {
+                vari[v] = noisevarL;//same value for each level, but we can change
+            }
         
-        int edge = 6;//as maxlevels
+            int edge = 6;//as maxlevels
         
-        float* noisevarlum = new float[H * W];
-        int GW2 = (W + 1) / 2;//work on half image
+            float* noisevarlum = new float[H * W];
+            int GW2 = (W + 1) / 2;//work on half image
                     
-        float nvlh[13] = {1.f, 1.f, 1.f, 1.f, 1.f, 1.f, 1.f, 1.f, 1.f, 1.f, 1.f, 0.7f, 0.5f}; //high value
-        float nvll[13] = {0.1f, 0.15f, 0.2f, 0.25f, 0.3f, 0.35f, 0.4f, 0.45f, 0.7f, 0.8f, 1.f, 1.f, 1.f}; //low value
+            float nvlh[13] = {1.f, 1.f, 1.f, 1.f, 1.f, 1.f, 1.f, 1.f, 1.f, 1.f, 1.f, 0.7f, 0.5f}; //high value
+            float nvll[13] = {0.1f, 0.15f, 0.2f, 0.25f, 0.3f, 0.35f, 0.4f, 0.45f, 0.7f, 0.8f, 1.f, 1.f, 1.f}; //low value
 
-        float seuillow = 3000.f;//low
-        float seuilhigh = 18000.f;//high
-        int noiselequal = 5;//equalizer black - white
-        int i = 10 - noiselequal;
-        float ac = (nvlh[i] - nvll[i]) / (seuillow - seuilhigh);
-        float bc = nvlh[i] - seuillow * ac;
+            float seuillow = 3000.f;//low
+            float seuilhigh = 18000.f;//high
+            int noiselequal = 5;//equalizer black - white - same value for white and black
+            int i = 10 - noiselequal;
+            float ac = (nvlh[i] - nvll[i]) / (seuillow - seuilhigh);
+            float bc = nvlh[i] - seuillow * ac;
 #ifdef _OPENMP
         #pragma omp parallel for schedule(dynamic, 16)
 #endif
         
-            for (int ir = 0; ir < H; ir++){
-                for (int jr = 0; jr < W; jr++) {
-                    float lN = labdn.L[ir][jr];
-                    //adapt noisevarlum to lN value
-                    if (lN < seuillow) {
-                        noisevarlum[(ir >> 1)*GW2 + (jr >> 1)] =  nvlh[i];
-                    } else if (lN < seuilhigh) {
-                        noisevarlum[(ir >> 1)*GW2 + (jr >> 1)] = ac * lN + bc;
-                    } else {
-                        noisevarlum[(ir >> 1)*GW2 + (jr >> 1)] =  nvll[i];
+                for (int ir = 0; ir < H; ir++){
+                    for (int jr = 0; jr < W; jr++) {
+                        float lN = labdn.L[ir][jr];
+                        //adapt noisevarlum to lN value
+                        if (lN < seuillow) {
+                            noisevarlum[(ir >> 1)*GW2 + (jr >> 1)] =  nvlh[i];
+                        } else if (lN < seuilhigh) {
+                            noisevarlum[(ir >> 1)*GW2 + (jr >> 1)] = ac * lN + bc;
+                        } else {
+                            noisevarlum[(ir >> 1)*GW2 + (jr >> 1)] =  nvll[i];
+                        }
                     }
                 }
-            }
    
-            WaveletDenoiseAllL2(Ldecomp, noisevarlum, madL, vari, edge, numThreads);
-            delete[] noisevarlum;
-            Ldecomp.reconstruct(labdn.L[0]);
+                WaveletDenoiseAllL2(Ldecomp, noisevarlum, madL, vari, edge, numThreads);
+                delete[] noisevarlum;
+                Ldecomp.reconstruct(labdn.L[0]);
 #ifdef _OPENMP
-            #pragma omp parallel for schedule(dynamic,16)
+                #pragma omp parallel for schedule(dynamic,16)
 #endif
-            //uses Clipmask to only denoise flat areas
-            for (int ir = 0; ir < H; ir++) {
-                for (int jr = 0; jr < W; jr++) {
-                    labdn.L[ir][jr] = intp(clipMask[ir][jr], prov1->g(ir, jr) , labdn.L[ir][jr]);
+                //uses Clipmask to only denoise flat areas
+                for (int ir = 0; ir < H; ir++) {
+                    for (int jr = 0; jr < W; jr++) {
+                        labdn.L[ir][jr] = intp(clipMask[ir][jr], prov1->g(ir, jr) , labdn.L[ir][jr]);
+                    }
                 }
-            }
                     
 #ifdef _OPENMP
-    #pragma omp parallel for schedule(dynamic, 16)
+        #pragma omp parallel for schedule(dynamic, 16)
 #endif                   
-        for (int i = 0; i < H; ++i) {
-            for (int j = 0; j < W; ++j) {
-                red[i][j] = prov1->r(i, j);
-                green[i][j] = labdn.L[i][j];
-                blue[i][j] = prov1->b(i, j); 
+            for (int i = 0; i < H; ++i) {//re active red blue green with denoise and taking account mask 
+                for (int j = 0; j < W; ++j) {
+                    red[i][j] = prov1->r(i, j);
+                    green[i][j] = labdn.L[i][j];
+                    blue[i][j] = prov1->b(i, j); 
+                }
             }
         }
-      
    
     rgbSourceModified = false;
 }
