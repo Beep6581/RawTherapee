@@ -277,10 +277,10 @@ private:
         currWB = ColorTemp(params.wb.temperature, params.wb.green, params.wb.equal, params.wb.method, params.wb.observer);
         ColorTemp currWBitc;
 
-        if (params.wb.method == "autitcgreen"  && flush) {
+        if (params.wb.method == "autitcgreen") {
             imgsrc->getrgbloc(0, 0, fh, fw, 0, 0, fh, fw, params.wb);
         }
-        const bool autowb = (params.wb.method == "autitcgreen" && imgsrc->isRAW() && flush);
+        const bool autowb = (params.wb.method == "autitcgreen" && imgsrc->isRAW());
         ColorTemp autoWB;
         int dread = 0;
         int bia = 1;
