@@ -1021,10 +1021,10 @@ BENCHFUN
             const float noisevarL = SQR(((noiseluma + 1.f) / 125.f) * (10.f + (noiseluma + 1.f) / 25.f));
             //evaluate noisevarL same formula as Denoise main
             float vari[levwav];
-            for (int v = 0; v < levwav; v++) {
+            for (int v = 0; v < levwav -1; v++) {
                 vari[v] = noisevarL;//same value for each level, but we can change
             }
-        
+            vari[5] = 0.6f * noisevarL;//reduce action for level 5 - 128x128
             int edge = 6;//as maxlevels
         
             float* noisevarlum = new float[H * W];
@@ -1033,8 +1033,8 @@ BENCHFUN
             float nvlh[13] = {1.f, 1.f, 1.f, 1.f, 1.f, 1.f, 1.f, 1.f, 1.f, 1.f, 1.f, 0.7f, 0.5f}; //high value
             float nvll[13] = {0.1f, 0.15f, 0.2f, 0.25f, 0.3f, 0.35f, 0.4f, 0.45f, 0.7f, 0.8f, 1.f, 1.f, 1.f}; //low value
 
-            float seuillow = 3000.f;//low
-            float seuilhigh = 18000.f;//high
+            float seuillow = 4000.f;//low RGB values
+            float seuilhigh = 35000.f;//high RGB values
             int noiselequal = 5;//equalizer black - white - same value for white and black
             int i = 10 - noiselequal;
             float ac = (nvlh[i] - nvll[i]) / (seuillow - seuilhigh);
@@ -1058,7 +1058,9 @@ BENCHFUN
                 }
    
                 WaveletDenoiseAllL2(Ldecomp, noisevarlum, madL, vari, edge, numThreads);
+                
                 delete[] noisevarlum;
+                
                 Ldecomp.reconstruct(labdn.L[0]);
 #ifdef _OPENMP
                 #pragma omp parallel for schedule(dynamic,16)
