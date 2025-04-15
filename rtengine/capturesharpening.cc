@@ -699,7 +699,6 @@ float Madraw(const float * DataList, const int datalen)
 
 
 void RawImageSource::captureSharpening(const procparams::CaptureSharpeningParams &sharpeningParams, bool showMask, double &conrastThreshold, double &radius) {
-#include "improcfun.h"
 
     if (!(ri->getSensorType() == ST_BAYER || ri->getSensorType() == ST_FUJI_XTRANS || ri->get_colors() == 1)) {
         return;
@@ -976,7 +975,7 @@ BENCHFUN
     
         //denoise luminance in RGB mode after capture sharpening
         //not a complete denoise, just the minimum to exploit the mask buildblendmak 
-        // enable only if noisecap (denoise before is enable).
+        // enable only if noisecap (denoise before capture sharpening is enable).
         if(sharpeningParams.noisecap > 0.f){
             LabImage labdn(W, H);
 #ifdef _OPENMP
@@ -1002,7 +1001,7 @@ BENCHFUN
                 }
             }
     
-            wavelet_decomposition Ldecomp(labdn.L[0], labdn.W, labdn.H, levwav, 1, 1, numThreads, 8);//daublen = 8 - better moment 
+            wavelet_decomposition Ldecomp(labdn.L[0], labdn.W, labdn.H, levwav, 1, 1, numThreads, 8);//daublen = 8 - better moment wavelet
         
             float madL[10][3];
             if (!Ldecomp.memory_allocation_failed()) {
