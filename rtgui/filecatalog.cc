@@ -1810,7 +1810,11 @@ void FileCatalog::reparseDirectory (bool onlyDelete)
 
     // when handling FILE_MONITOR_EVENT_DELETED we can stop here, otherwise there can be significant performance penalty
     // with network shares
-    if (onlyDelete) {
+    if (onlyDelete && fileNamesToRemove.size() == 1) {
+        auto pos = std::find(fileNameList.cbegin(), fileNameList.cend(), *fileNamesToRemove.cbegin());
+        if (pos != fileNameList.cend()) {
+            fileNameList.erase(pos);
+        }
         return;
     }
 
