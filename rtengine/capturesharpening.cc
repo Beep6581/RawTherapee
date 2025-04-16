@@ -562,13 +562,11 @@ bool WaveletDenoiseAllL2(wavelet_decomposition& WaveletCoeffs_L, float *noisevar
     #pragma omp parallel num_threads(denoiseNestedLevels) if (denoiseNestedLevels>1)
 #endif
     {
-        float *buffer[4];
+        float *buffer[2];
         buffer[0] = new (std::nothrow) float[maxWL * maxHL + 32];
         buffer[1] = new (std::nothrow) float[maxWL * maxHL + 64];
-        buffer[2] = new (std::nothrow) float[maxWL * maxHL + 96];
-        buffer[3] = new (std::nothrow) float[maxWL * maxHL + 128];
 
-        if (buffer[0] == nullptr || buffer[1] == nullptr || buffer[2] == nullptr || buffer[3] == nullptr) {
+        if (buffer[0] == nullptr || buffer[1] == nullptr) {
             memoryAllocationFailed = true;
         }
 
@@ -583,7 +581,7 @@ bool WaveletDenoiseAllL2(wavelet_decomposition& WaveletCoeffs_L, float *noisevar
                 }
             }
         }
-        for (int i = 3; i >= 0; i--) {
+        for (int i = 1; i >= 0; i--) {
             delete[] buffer[i];
         }
     }
