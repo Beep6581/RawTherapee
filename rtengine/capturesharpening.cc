@@ -2,7 +2,7 @@
  *  This file is part of RawTherapee.
  *
  *  Copyright (c) 2019 Ingo Weyrich (heckflosse67@gmx.de)
- *
+ *  Jacques Desmis -2024 - 2025 (jdesmis@gmail.com=
  *  RawTherapee is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
  *  the Free Software Foundation, either version 3 of the License, or
@@ -537,76 +537,6 @@ BENCHFUN
 
 namespace rtengine
 {
-    
-void ShrinkAllL2(wavelet_decomposition& WaveletCoeffs_L, float **buffer, int level, int dir, float *noisevarlum, float * madL, float * vari, int edge)
-{//very similar with Shrinkall in Ftblockdn.cc but simplified.
-    //simple wavelet shrinkage
-    const float eps = 0.01f;
-
-    float * sfave = buffer[0] + 32;
-    float * sfaved = buffer[1] + 64;
-
-    const int W_L = WaveletCoeffs_L.level_W(level);
-    const int H_L = WaveletCoeffs_L.level_H(level);
-
-    float* const* WavCoeffs_L = WaveletCoeffs_L.level_coeffs(level);
-    const float mad_L = madL[dir - 1] ;
-    const float levelFactor = mad_L * 5.f / static_cast<float>(level + 1);
-
-    float *nvl = nullptr;
-    nvl = new float[ H_L * W_L];
-
-    for (int i = 0; i < W_L * H_L; ++i) {
-        nvl[i] = 0.f;
-    }
-
-    if (edge == 6 && vari) {
-        for (int i = 0; i < W_L * H_L; ++i) {
-            nvl[i] = vari[level] * SQR(noisevarlum[i]);
-        }
-    }
-
-    int i = 0;
-#ifdef __SSE2__
-    const vfloat levelFactorv = F2V(levelFactor);
-    const vfloat ninev = F2V(9.f);
-    const vfloat epsv = F2V(eps);
-
-
-    for (i = 0; i < W_L * H_L - 3; i += 4) {
-        const vfloat mad_Lv = LVFU(nvl[i]) * levelFactorv;
-        const vfloat magv = SQRV(LVFU(WavCoeffs_L[dir][i]));
-        STVFU(sfave[i], magv / (magv + mad_Lv * xexpf(-magv / (ninev * mad_Lv)) + epsv));
-    }
-
-#endif
-    // few remaining pixels
-    for (; i < W_L * H_L; ++i) {
-        float mag = SQR(WavCoeffs_L[dir][i]);
-        sfave[i] = mag / (mag + levelFactor * nvl[i] * xexpf(-mag / (9 * levelFactor * nvl[i])) + eps);
-    }
-
-    boxblur(sfave, sfaved, level + 2, W_L, H_L, false); //increase smoothness by locally averaging shrinkage
-
-    i = 0;
-#ifdef __SSE2__
-
-    for (; i < W_L * H_L - 3; i += 4) {
-        const vfloat sfv = LVFU(sfave[i]);
-        //use smoothed shrinkage unless local shrinkage is much less
-        STVFU(WavCoeffs_L[dir][i], LVFU(WavCoeffs_L[dir][i]) * (SQRV(LVFU(sfaved[i])) + SQRV(sfv)) / (LVFU(sfaved[i]) + sfv + epsv));
-    }
-#endif
-    // few remaining pixels
-    for (; i < W_L * H_L; ++i) {
-        const float sf = sfave[i];
-        //use smoothed shrinkage unless local shrinkage is much less
-        WavCoeffs_L[dir][i] *= (SQR(sfaved[i]) + SQR(sf)) / (sfaved[i] + sf + eps);
-    }//now luminance coefficients are denoised
-
-    delete [] nvl;
-}
-   
    
 bool WaveletDenoiseAllL2(wavelet_decomposition& WaveletCoeffs_L, float *noisevarlum, float madL[8][3], float * vari, int edge, int denoiseNestedLevels)
     {   //same code simplified as in Ftblockdn.cc
@@ -649,7 +579,7 @@ bool WaveletDenoiseAllL2(wavelet_decomposition& WaveletCoeffs_L, float *noisevar
 
             for (int lvl = 0; lvl < maxlvl; ++lvl) {
                 for (int dir = 1; dir < 4; ++dir) {
-                    ShrinkAllL2(WaveletCoeffs_L, buffer, lvl, dir, noisevarlum, madL[lvl], vari, edge);
+                    ImProcFunctions::ShrinkAllL(WaveletCoeffs_L, buffer, lvl, dir, noisevarlum, madL[lvl], vari, edge);
                 }
             }
         }
@@ -659,42 +589,6 @@ bool WaveletDenoiseAllL2(wavelet_decomposition& WaveletCoeffs_L, float *noisevar
     }
     return (!memoryAllocationFailed);
     }
-
-
-float Madraw(const float * DataList, const int datalen)
-//same code, but perhaps to adapt (tiles ??= as Madrgb in Ftblockdn.cc)
-{
-     if (datalen <= 1) { // Avoid possible buffer underrun
-        return 0;
-    }
-
-    //computes Median Absolute Deviation
-    //DataList values should mostly have abs val < 65536 because we are in RGB mode
-    int * histo = new int[65536];
-
-    for (int i = 0; i < 65536; ++i) {
-        histo[i] = 0;
-    }
-
-    //calculate histogram of absolute values of wavelet coeffs
-    for (int i = 0; i < datalen; ++i) {
-        histo[static_cast<int>(rtengine::min(65535.f, fabsf(DataList[i])))]++;
-    }
-
-    //find median of histogram
-    int lmedian = 0, count = 0;
-
-    while (count < datalen / 2) {
-        count += histo[lmedian];
-        ++lmedian;
-    }
-
-    int count_ = count - histo[lmedian - 1];
-
-    // interpolate
-    delete[] histo;
-    return ((lmedian - 1) + (datalen / 2 - count_) / (static_cast<float>(count - count_))) / 0.6745f;
-}
 
 
 
@@ -730,6 +624,7 @@ BENCHFUN
     typedef ImProcFunctions::Median Median;
 
     //predoise : small median to denoise before capture sharpening : allow CS to work correctly and reduce a little the noise
+    // high median acts also on chroma noise
     //J.Desmis October 2024 - be carefull not to strong...
     if(sharpeningParams.noisecap > 0.f) {
         //I have choose median due to its low aggressiveness and for a 3x3 its speed
@@ -973,7 +868,7 @@ BENCHFUN
         plistener->setProgress(1.0);
     }
     
-        //denoise luminance in RGB mode after capture sharpening
+        //denoise luminance in RGB mode after capture sharpening - Jacques Desmis April 2025
         //not a complete denoise, just the minimum to exploit the mask buildblendmak 
         // enable only if noisecap (denoise before capture sharpening is enable).
         if(sharpeningParams.noisecap > 0.f){
@@ -1011,7 +906,7 @@ BENCHFUN
                         int Wlvl_L = Ldecomp.level_W(lvl);
                         int Hlvl_L = Ldecomp.level_H(lvl);
                         const float* const* WavCoeffs_L = Ldecomp.level_coeffs(lvl);
-                        madL[lvl][dir - 1] = SQR(Madraw(WavCoeffs_L[dir], Wlvl_L * Hlvl_L));
+                        madL[lvl][dir - 1] = SQR(ImProcFunctions::MadRgb(WavCoeffs_L[dir], Wlvl_L * Hlvl_L));
                     }
                 }
             }
@@ -1056,7 +951,7 @@ BENCHFUN
                     }
                 }
    
-                WaveletDenoiseAllL2(Ldecomp, noisevarlum, madL, vari, edge, numThreads);
+                WaveletDenoiseAllL2(Ldecomp, noisevarlum, madL, vari, edge, numThreads);//simplified version of WaveletDenoiseAllL
                 
                 delete[] noisevarlum;
                 
