@@ -873,6 +873,8 @@ BENCHFUN
             LabImage labdng(W, H);
             LabImage labdnr(W, H);
             LabImage labdnb(W, H);
+            bool memoryAllocationFailed = false;
+
 #ifdef _OPENMP
             const int numThreads = omp_get_max_threads();
 #else
@@ -898,8 +900,17 @@ BENCHFUN
             }
             //contrary to usual practice, I do not denoise the 'a' and 'b' (or R and B) channels, but duplicate 3 times as if each channel was of the same type, as if R,G,B are "luminance"
             wavelet_decomposition Ldecompg(labdng.L[0], labdng.W, labdng.H, levwav, 1, 1, numThreads, 8);//daublen = 8 - better moment wavelet
+            if (Ldecompg.memory_allocation_failed()) {
+                memoryAllocationFailed = true;
+            }
             wavelet_decomposition Ldecompr(labdnr.L[0], labdnr.W, labdnr.H, levwav, 1, 1, numThreads, 8);//daublen = 8 - better moment wavelet
+            if (Ldecompr.memory_allocation_failed()) {
+                memoryAllocationFailed = true;
+            }
             wavelet_decomposition Ldecompb(labdnb.L[0], labdnb.W, labdnb.H, levwav, 1, 1, numThreads, 8);//daublen = 8 - better moment wavelet
+            if (Ldecompb.memory_allocation_failed()) {
+                memoryAllocationFailed = true;
+            }
         
             float madL[10][3];
             //but only one evaluation MAD RGB with green channel - near luminance
@@ -914,80 +925,83 @@ BENCHFUN
                     }
                 }
             }
-            float noiseluma = sharpeningParams.noisecapafter;
-            //but only one vari[] for the 3 channels
+            if (!memoryAllocationFailed) {
+            
+                float noiseluma = sharpeningParams.noisecapafter;
+                //but only one vari[] for the 3 channels
        
-            const float noisevarL = SQR(((noiseluma + 1.f) / 125.f) * (10.f + (noiseluma + 1.f) / 25.f));
-            //evaluate noisevarL same formula as Denoise main
-            float vari[levwav];
-            for (int v = 0; v < levwav -1; v++) {
-                vari[v] = noisevarL;//same value for each level, but we can change
-            }
-            vari[5] = 0.6f * noisevarL;//empirical 'reduction' of action for level 5 - 128x128
-            int edge = 6;//as maxlevels
+                const float noisevarL = SQR(((noiseluma + 1.f) / 125.f) * (10.f + (noiseluma + 1.f) / 25.f));
+                //evaluate noisevarL same formula as Denoise main
+                float vari[levwav];
+                for (int v = 0; v < levwav -1; v++) {
+                    vari[v] = noisevarL;//same value for each level, but we can change
+                }
+                vari[5] = 0.6f * noisevarL;//empirical 'reduction' of action for level 5 - 128x128
+                int edge = 6;//as maxlevels
         
-            float* noisevarlum = new float[H * W];
-            int GW2 = (W + 1) / 2;//work on half image
+                float* noisevarlum = new float[H * W];
+                int GW2 = (W + 1) / 2;//work on half image
                     
-            float nvlh[13] = {1.f, 1.f, 1.f, 1.f, 1.f, 1.f, 1.f, 1.f, 1.f, 1.f, 1.f, 0.7f, 0.5f}; //high value
-            float nvll[13] = {0.1f, 0.15f, 0.2f, 0.25f, 0.3f, 0.35f, 0.4f, 0.45f, 0.7f, 0.8f, 1.f, 1.f, 1.f}; //low value
+                float nvlh[13] = {1.f, 1.f, 1.f, 1.f, 1.f, 1.f, 1.f, 1.f, 1.f, 1.f, 1.f, 0.7f, 0.5f}; //high value
+                float nvll[13] = {0.1f, 0.15f, 0.2f, 0.25f, 0.3f, 0.35f, 0.4f, 0.45f, 0.7f, 0.8f, 1.f, 1.f, 1.f}; //low value
 
-            float seuillow = 4000.f;//low empirical RGB values
-            float seuilhigh = 35000.f;//high empirical RGB values
-            int noiselequal = 5;//equalizer black - white - same value for white and black
-            int i = 10 - noiselequal;
-            float ac = (nvlh[i] - nvll[i]) / (seuillow - seuilhigh);
-            float bc = nvlh[i] - seuillow * ac;
+                float seuillow = 4000.f;//low empirical RGB values
+                float seuilhigh = 35000.f;//high empirical RGB values
+                int noiselequal = 5;//equalizer black - white - same value for white and black
+                int i = 10 - noiselequal;
+                float ac = (nvlh[i] - nvll[i]) / (seuillow - seuilhigh);
+                float bc = nvlh[i] - seuillow * ac;
 #ifdef _OPENMP
         #pragma omp parallel for schedule(dynamic, 16)
 #endif
         
-                for (int ir = 0; ir < H; ir++){
-                    for (int jr = 0; jr < W; jr++) {
-                        float lN = labdng.L[ir][jr];
-                        //adapt noisevarlum to lN value
-                        if (lN < seuillow) {
-                            noisevarlum[(ir >> 1) * GW2 + (jr >> 1)] =  nvlh[i];
-                        } else if (lN < seuilhigh) {
-                            noisevarlum[(ir >> 1) * GW2 + (jr >> 1)] = ac * lN + bc;
-                        } else {
-                            noisevarlum[(ir >> 1) * GW2 + (jr >> 1)] =  nvll[i];
+                    for (int ir = 0; ir < H; ir++){
+                        for (int jr = 0; jr < W; jr++) {
+                            float lN = labdng.L[ir][jr];
+                            //adapt noisevarlum to lN value
+                            if (lN < seuillow) {
+                                noisevarlum[(ir >> 1) * GW2 + (jr >> 1)] =  nvlh[i];
+                            } else if (lN < seuilhigh) {
+                                noisevarlum[(ir >> 1) * GW2 + (jr >> 1)] = ac * lN + bc;
+                            } else {
+                                noisevarlum[(ir >> 1) * GW2 + (jr >> 1)] =  nvll[i];
+                            }
                         }
                     }
-                }
-                //but only one noisevarlum for the 3 channels
-                //3 times the same wavelet for G, R and B
-                WaveletDenoiseAllL2(Ldecompg, noisevarlum, madL, vari, edge, numThreads);//simplified version of WaveletDenoiseAllL
-                WaveletDenoiseAllL2(Ldecompr, noisevarlum, madL, vari, edge, numThreads);//simplified version of WaveletDenoiseAllL
-                WaveletDenoiseAllL2(Ldecompb, noisevarlum, madL, vari, edge, numThreads);//simplified version of WaveletDenoiseAllL
+                    //but only one noisevarlum for the 3 channels
+                    //3 times the same wavelet for G, R and B
+                    WaveletDenoiseAllL2(Ldecompg, noisevarlum, madL, vari, edge, numThreads);//simplified version of WaveletDenoiseAllL
+                    WaveletDenoiseAllL2(Ldecompr, noisevarlum, madL, vari, edge, numThreads);//simplified version of WaveletDenoiseAllL
+                    WaveletDenoiseAllL2(Ldecompb, noisevarlum, madL, vari, edge, numThreads);//simplified version of WaveletDenoiseAllL
                 
                 
-                delete[] noisevarlum;
+                    delete[] noisevarlum;
                 
-                Ldecompg.reconstruct(labdng.L[0]);//reconstruct channel G after wavelets
-                Ldecompr.reconstruct(labdnr.L[0]);//reconstruct channel R after wavelets
-                Ldecompb.reconstruct(labdnb.L[0]);//reconstruct channel B after wavelets
+                    Ldecompg.reconstruct(labdng.L[0]);//reconstruct channel G after wavelets
+                    Ldecompr.reconstruct(labdnr.L[0]);//reconstruct channel R after wavelets
+                    Ldecompb.reconstruct(labdnb.L[0]);//reconstruct channel B after wavelets
                 
 #ifdef _OPENMP
                 #pragma omp parallel for schedule(dynamic,16)
 #endif
                 //uses Clipmask to only denoise flat areas
-                for (int ir = 0; ir < H; ir++) {
-                    for (int jr = 0; jr < W; jr++) {
-                        labdng.L[ir][jr] = intp(clipMask[ir][jr], prov1->g(ir, jr) , labdng.L[ir][jr]);
-                        labdnr.L[ir][jr] = intp(clipMask[ir][jr], prov1->r(ir, jr) , labdnr.L[ir][jr]);
-                        labdnb.L[ir][jr] = intp(clipMask[ir][jr], prov1->b(ir, jr) , labdnb.L[ir][jr]);
+                    for (int ir = 0; ir < H; ir++) {
+                        for (int jr = 0; jr < W; jr++) {
+                            labdng.L[ir][jr] = intp(clipMask[ir][jr], prov1->g(ir, jr) , labdng.L[ir][jr]);
+                            labdnr.L[ir][jr] = intp(clipMask[ir][jr], prov1->r(ir, jr) , labdnr.L[ir][jr]);
+                            labdnb.L[ir][jr] = intp(clipMask[ir][jr], prov1->b(ir, jr) , labdnb.L[ir][jr]);
+                        }
                     }
-                }
                     
 #ifdef _OPENMP
         #pragma omp parallel for schedule(dynamic, 16)
 #endif                   
-            for (int i = 0; i < H; ++i) {//re active red blue green with denoise and taking account mask 
-                for (int j = 0; j < W; ++j) {
-                    red[i][j] = labdnr.L[i][j];
-                    green[i][j] = labdng.L[i][j];
-                    blue[i][j] = labdnb.L[i][j];
+                for (int i = 0; i < H; ++i) {//re active red blue green with denoise and taking account mask 
+                    for (int j = 0; j < W; ++j) {
+                        red[i][j] = labdnr.L[i][j];
+                        green[i][j] = labdng.L[i][j];
+                        blue[i][j] = labdnb.L[i][j];
+                    }
                 }
             }
         }
