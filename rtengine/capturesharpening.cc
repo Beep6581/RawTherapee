@@ -870,7 +870,9 @@ BENCHFUN
         //not a complete denoise, just the minimum to exploit the mask buildblendmak 
         // enable only if noisecap (denoise before capture sharpening is enable).
         if(sharpeningParams.noisecap > 0.f){
-            LabImage labdn(W, H);
+            LabImage labdng(W, H);
+            LabImage labdnr(W, H);
+            LabImage labdnb(W, H);
 #ifdef _OPENMP
             const int numThreads = omp_get_max_threads();
 #else
@@ -889,25 +891,31 @@ BENCHFUN
                     prov1->r(i, j) = red[i][j];
                     prov1->g(i, j) = green[i][j];
                     prov1->b(i, j) = blue[i][j]; 
-                    labdn.L[i][j] = prov1->g(i, j);//initialize Labdn.L - channel green "near" Luminance
+                    labdng.L[i][j] = prov1->g(i, j);//initialize Labdn.L - channel green "near" Luminance
+                    labdnr.L[i][j] = prov1->r(i, j);//initialize Labdn.L - channel red
+                    labdnb.L[i][j] = prov1->b(i, j);//initialize Labdn.L - channel blue
                 }
             }
-    
-            wavelet_decomposition Ldecomp(labdn.L[0], labdn.W, labdn.H, levwav, 1, 1, numThreads, 8);//daublen = 8 - better moment wavelet
+            //contrary to usual practice, I do not denoise the 'a' and 'b' (or R and B) channels, but duplicate 3 times as if each channel was of the same type, as if R,G,B are "luminance"
+            wavelet_decomposition Ldecompg(labdng.L[0], labdng.W, labdng.H, levwav, 1, 1, numThreads, 8);//daublen = 8 - better moment wavelet
+            wavelet_decomposition Ldecompr(labdnr.L[0], labdnr.W, labdnr.H, levwav, 1, 1, numThreads, 8);//daublen = 8 - better moment wavelet
+            wavelet_decomposition Ldecompb(labdnb.L[0], labdnb.W, labdnb.H, levwav, 1, 1, numThreads, 8);//daublen = 8 - better moment wavelet
         
             float madL[10][3];
-            if (!Ldecomp.memory_allocation_failed()) {
+            //but only one evaluation MAD RGB with green channel - near luminance
+            if (!Ldecompg.memory_allocation_failed()) {
                 //calculate Median absolute deviation
                 for (int lvl = 0; lvl < levwav; lvl++) {
                     for (int dir = 1; dir < 4; dir++) {
-                        int Wlvl_L = Ldecomp.level_W(lvl);
-                        int Hlvl_L = Ldecomp.level_H(lvl);
-                        const float* const* WavCoeffs_L = Ldecomp.level_coeffs(lvl);
+                        int Wlvl_L = Ldecompg.level_W(lvl);
+                        int Hlvl_L = Ldecompg.level_H(lvl);
+                        const float* const* WavCoeffs_L = Ldecompg.level_coeffs(lvl);
                         madL[lvl][dir - 1] = SQR(ImProcFunctions::MadRgb(WavCoeffs_L[dir], Wlvl_L * Hlvl_L));
                     }
                 }
             }
             float noiseluma = sharpeningParams.noisecapafter;
+            //but only one vari[] for the 3 channels
        
             const float noisevarL = SQR(((noiseluma + 1.f) / 125.f) * (10.f + (noiseluma + 1.f) / 25.f));
             //evaluate noisevarL same formula as Denoise main
@@ -936,30 +944,39 @@ BENCHFUN
         
                 for (int ir = 0; ir < H; ir++){
                     for (int jr = 0; jr < W; jr++) {
-                        float lN = labdn.L[ir][jr];
+                        float lN = labdng.L[ir][jr];
                         //adapt noisevarlum to lN value
                         if (lN < seuillow) {
-                            noisevarlum[(ir >> 1)*GW2 + (jr >> 1)] =  nvlh[i];
+                            noisevarlum[(ir >> 1) * GW2 + (jr >> 1)] =  nvlh[i];
                         } else if (lN < seuilhigh) {
-                            noisevarlum[(ir >> 1)*GW2 + (jr >> 1)] = ac * lN + bc;
+                            noisevarlum[(ir >> 1) * GW2 + (jr >> 1)] = ac * lN + bc;
                         } else {
-                            noisevarlum[(ir >> 1)*GW2 + (jr >> 1)] =  nvll[i];
+                            noisevarlum[(ir >> 1) * GW2 + (jr >> 1)] =  nvll[i];
                         }
                     }
                 }
-   
-                WaveletDenoiseAllL2(Ldecomp, noisevarlum, madL, vari, edge, numThreads);//simplified version of WaveletDenoiseAllL
+                //but only one noisevarlum for the 3 channels
+                //3 times the same wavelet for G, R and B
+                WaveletDenoiseAllL2(Ldecompg, noisevarlum, madL, vari, edge, numThreads);//simplified version of WaveletDenoiseAllL
+                WaveletDenoiseAllL2(Ldecompr, noisevarlum, madL, vari, edge, numThreads);//simplified version of WaveletDenoiseAllL
+                WaveletDenoiseAllL2(Ldecompb, noisevarlum, madL, vari, edge, numThreads);//simplified version of WaveletDenoiseAllL
+                
                 
                 delete[] noisevarlum;
                 
-                Ldecomp.reconstruct(labdn.L[0]);//reconstruct after wavelets
+                Ldecompg.reconstruct(labdng.L[0]);//reconstruct channel G after wavelets
+                Ldecompr.reconstruct(labdnr.L[0]);//reconstruct channel R after wavelets
+                Ldecompb.reconstruct(labdnb.L[0]);//reconstruct channel B after wavelets
+                
 #ifdef _OPENMP
                 #pragma omp parallel for schedule(dynamic,16)
 #endif
                 //uses Clipmask to only denoise flat areas
                 for (int ir = 0; ir < H; ir++) {
                     for (int jr = 0; jr < W; jr++) {
-                        labdn.L[ir][jr] = intp(clipMask[ir][jr], prov1->g(ir, jr) , labdn.L[ir][jr]);
+                        labdng.L[ir][jr] = intp(clipMask[ir][jr], prov1->g(ir, jr) , labdng.L[ir][jr]);
+                        labdnr.L[ir][jr] = intp(clipMask[ir][jr], prov1->r(ir, jr) , labdnr.L[ir][jr]);
+                        labdnb.L[ir][jr] = intp(clipMask[ir][jr], prov1->b(ir, jr) , labdnb.L[ir][jr]);
                     }
                 }
                     
@@ -968,9 +985,9 @@ BENCHFUN
 #endif                   
             for (int i = 0; i < H; ++i) {//re active red blue green with denoise and taking account mask 
                 for (int j = 0; j < W; ++j) {
-                    red[i][j] = prov1->r(i, j);
-                    green[i][j] = labdn.L[i][j];
-                    blue[i][j] = prov1->b(i, j); 
+                    red[i][j] = labdnr.L[i][j];
+                    green[i][j] = labdng.L[i][j];
+                    blue[i][j] = labdnb.L[i][j];
                 }
             }
         }
