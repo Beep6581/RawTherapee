@@ -36,24 +36,21 @@ class DFProvider
 {
 public:
     virtual ~DFProvider() = default;
-    virtual const rtengine::RawImage* getDF() = 0;
+    virtual const rtengine::RawImage *getDF() = 0;
     virtual Glib::ustring GetCurrentImageFilePath() = 0;
     // add other info here
 };
 
-class DarkFrame final:
-    public ToolParamBlock,
-    public FoldableToolPanel
+class DarkFrame final : public ToolParamBlock, public FoldableToolPanel
 {
 
 protected:
-
     MyFileChooserButton *darkFrameFile;
     Gtk::Box *hbdf;
     Gtk::Button *btnReset;
     Gtk::Label *dfLabel;
     Gtk::Label *dfInfo;
-    Gtk::CheckButton* dfAuto;
+    Gtk::CheckButton *dfAuto;
     bool dfChanged;
     bool lastDFauto;
     DFProvider *dfp;
@@ -64,16 +61,15 @@ protected:
 public:
     static const Glib::ustring TOOL_NAME;
 
-    DarkFrame ();
+    DarkFrame();
 
-    void read           (const rtengine::procparams::ProcParams* pp, const ParamsEdited* pedited = nullptr) override;
-    void write          (rtengine::procparams::ProcParams* pp, ParamsEdited* pedited = nullptr) override;
+    void read(const rtengine::procparams::ProcParams *pp,
+        const ParamsEdited *pedited = nullptr) override;
+    void write(
+        rtengine::procparams::ProcParams *pp, ParamsEdited *pedited = nullptr) override;
 
-    void darkFrameChanged ();
-    void darkFrameReset   ();
-    void dfAutoChanged    ();
-    void setDFProvider    (DFProvider* p)
-    {
-        dfp = p;
-    };
+    void darkFrameChanged();
+    void darkFrameReset();
+    void dfAutoChanged();
+    void setDFProvider(DFProvider *p) { dfp = p; };
 };

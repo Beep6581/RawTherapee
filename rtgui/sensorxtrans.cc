@@ -22,8 +22,9 @@
 
 const Glib::ustring SensorXTrans::TOOL_NAME = "sensorxtrans";
 
-SensorXTrans::SensorXTrans () : FoldableToolPanel(this, TOOL_NAME, M("TP_RAW_SENSOR_XTRANS_LABEL"))
+SensorXTrans::SensorXTrans() :
+    FoldableToolPanel(this, TOOL_NAME, M("TP_RAW_SENSOR_XTRANS_LABEL"))
 {
 
-    show_all ();
+    show_all();
 }

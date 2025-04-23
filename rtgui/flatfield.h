@@ -38,25 +38,28 @@ class FFProvider
 {
 public:
     virtual ~FFProvider() {}
-    virtual rtengine::RawImage* getFF() = 0;
+    virtual rtengine::RawImage *getFF() = 0;
     virtual Glib::ustring GetCurrentImageFilePath() = 0;
     // add other info here
 };
 
-class FlatField final : public ToolParamBlock, public AdjusterListener, public CheckBoxListener, public FoldableToolPanel, public rtengine::FlatFieldAutoClipListener
+class FlatField final : public ToolParamBlock,
+                        public AdjusterListener,
+                        public CheckBoxListener,
+                        public FoldableToolPanel,
+                        public rtengine::FlatFieldAutoClipListener
 {
 
 protected:
-
     MyFileChooserButton *flatFieldFile;
     Gtk::Label *ffLabel;
     Gtk::Label *ffInfo;
     Gtk::Button *flatFieldFileReset;
-    Gtk::CheckButton* flatFieldAutoSelect;
-    CheckBox* flatFieldFromMetaData;
-    Adjuster* flatFieldClipControl;
-    Adjuster* flatFieldBlurRadius;
-    MyComboBoxText* flatFieldBlurType;
+    Gtk::CheckButton *flatFieldAutoSelect;
+    CheckBox *flatFieldFromMetaData;
+    Adjuster *flatFieldClipControl;
+    Adjuster *flatFieldBlurRadius;
+    MyComboBoxText *flatFieldBlurType;
     Gtk::Box *hbff;
     bool ffChanged;
     bool lastFFAutoSelect;
@@ -73,28 +76,28 @@ protected:
 public:
     static const Glib::ustring TOOL_NAME;
 
-    FlatField ();
-    ~FlatField () override;
+    FlatField();
+    ~FlatField() override;
 
-    void read                (const rtengine::procparams::ProcParams* pp, const ParamsEdited* pedited = nullptr) override;
-    void write               (rtengine::procparams::ProcParams* pp, ParamsEdited* pedited = nullptr) override;
-    void setBatchMode        (bool batchMode) override;
-    void setAdjusterBehavior (bool clipctrladd);
-    void trimValues          (rtengine::procparams::ProcParams* pp) override;
-    void setDefaults         (const rtengine::procparams::ProcParams* defParams, const ParamsEdited* pedited = nullptr) override;
+    void read(const rtengine::procparams::ProcParams *pp,
+        const ParamsEdited *pedited = nullptr) override;
+    void write(
+        rtengine::procparams::ProcParams *pp, ParamsEdited *pedited = nullptr) override;
+    void setBatchMode(bool batchMode) override;
+    void setAdjusterBehavior(bool clipctrladd);
+    void trimValues(rtengine::procparams::ProcParams *pp) override;
+    void setDefaults(const rtengine::procparams::ProcParams *defParams,
+        const ParamsEdited *pedited = nullptr) override;
 
-    void adjusterChanged            (Adjuster* a, double newval) override;
-    void adjusterAutoToggled        (Adjuster* a) override;
-    void flatFieldFileChanged       ();
-    void flatFieldFile_Reset        ();
-    void flatFieldAutoSelectChanged ();
-    void flatFieldBlurTypeChanged   ();
-    void setShortcutPath (const Glib::ustring& path);
-    void setFFProvider              (FFProvider* p)
-    {
-        ffp = p;
-    };
+    void adjusterChanged(Adjuster *a, double newval) override;
+    void adjusterAutoToggled(Adjuster *a) override;
+    void flatFieldFileChanged();
+    void flatFieldFile_Reset();
+    void flatFieldAutoSelectChanged();
+    void flatFieldBlurTypeChanged();
+    void setShortcutPath(const Glib::ustring &path);
+    void setFFProvider(FFProvider *p) { ffp = p; };
     void flatFieldAutoClipValueChanged(int n = 0) override;
-    void checkBoxToggled(CheckBox* c, CheckValue newval) override;
+    void checkBoxToggled(CheckBox *c, CheckValue newval) override;
     void setGainMap(bool enabled);
 };

@@ -31,64 +31,68 @@ class FileCatalog;
 class Thumbnail;
 
 class BatchQueuePanel : public Gtk::Box,
-    public BatchQueueListener,
-    public FormatChangeListener
+                        public BatchQueueListener,
+                        public FormatChangeListener
 {
 
-    Gtk::Button* zoomInButton;
-    Gtk::Button* zoomOutButton;
-    Gtk::Switch* qStartStop;
+    Gtk::Button *zoomInButton;
+    Gtk::Button *zoomOutButton;
+    Gtk::Switch *qStartStop;
     sigc::connection qStartStopConn;
-    Gtk::CheckButton* qAutoStart;
+    Gtk::CheckButton *qAutoStart;
 
-    Gtk::Entry* outdirTemplate;
-    Gtk::Label* destinationPreviewLabel;
-    MyFileChooserButton* outdirFolder;
-    Gtk::Button* outdirFolderButton;
-    Gtk::RadioButton* useTemplate;
-    Gtk::RadioButton* useFolder;
-    SaveFormatPanel* saveFormatPanel;
+    Gtk::Entry *outdirTemplate;
+    Gtk::Label *destinationPreviewLabel;
+    MyFileChooserButton *outdirFolder;
+    Gtk::Button *outdirFolderButton;
+    Gtk::RadioButton *useTemplate;
+    Gtk::RadioButton *useFolder;
+    SaveFormatPanel *saveFormatPanel;
     Gtk::Frame *fdir, *fformat;
 
-    RTWindow* parent;
-    BatchQueue* batchQueue;
-    Gtk::TextView* templateHelpTextView;
-    Gtk::ScrolledWindow* scrolledTemplateHelpWindow;
-    Gtk::ToggleButton* templateHelpButton;
-    Gtk::Box* bottomBox;
-    Gtk::Box* topBox;
-    Gtk::Paned* middleSplitPane;
+    RTWindow *parent;
+    BatchQueue *batchQueue;
+    Gtk::TextView *templateHelpTextView;
+    Gtk::ScrolledWindow *scrolledTemplateHelpWindow;
+    Gtk::ToggleButton *templateHelpButton;
+    Gtk::Box *bottomBox;
+    Gtk::Box *topBox;
+    Gtk::Paned *middleSplitPane;
 
     std::atomic<bool> queueShouldRun;
 
     IdleRegister idle_register;
 
 public:
-    explicit BatchQueuePanel (FileCatalog* aFileCatalog);
+    explicit BatchQueuePanel(FileCatalog *aFileCatalog);
     ~BatchQueuePanel() override;
 
-    void init (RTWindow* parent);
+    void init(RTWindow *parent);
 
-    void addBatchQueueJobs(const std::vector<BatchQueueEntry*>& entries , bool head = false);
-    void saveOptions ();
+    void addBatchQueueJobs(
+        const std::vector<BatchQueueEntry *> &entries, bool head = false);
+    void saveOptions();
 
-    bool handleShortcutKey (GdkEventKey* event);
+    bool handleShortcutKey(GdkEventKey *event);
 
     // batchqueuelistener interface
-    void queueSizeChanged(int qsize, bool queueRunning, bool queueError, const Glib::ustring& queueErrorMessage) override;
+    void queueSizeChanged(int qsize, bool queueRunning, bool queueError,
+        const Glib::ustring &queueErrorMessage) override;
     bool canStartNext() override;
-    void setDestinationPreviewText(const Glib::ustring& destinationPath) override;
+    void setDestinationPreviewText(const Glib::ustring &destinationPath) override;
 
 private:
-    void startBatchProc ();
-    void stopBatchProc ();
+    void startBatchProc();
+    void stopBatchProc();
     void startOrStopBatchProc();
     void setGuiFromBatchState(bool queueRunning, int qsize);
     void templateHelpButtonToggled();
     void populateTemplateHelpBuffer(Glib::RefPtr<Gtk::TextBuffer> buffer);
 
-    void pathFolderChanged ();
-    void pathFolderButtonPressed ();
-    void formatChanged(const Glib::ustring& format) override;
-    void updateTab (int qsize, int forceOrientation = 0); // forceOrientation=0: base on options / 1: horizontal / 2: vertical
+    void pathFolderChanged();
+    void pathFolderButtonPressed();
+    void formatChanged(const Glib::ustring &format) override;
+    void updateTab(int qsize,
+        int forceOrientation =
+            0); // forceOrientation=0: base on options / 1: horizontal / 2: vertical
 };

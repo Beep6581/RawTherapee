@@ -29,28 +29,25 @@
 #include <omp.h>
 #endif
 
-#define DEBUG(format,args...)
-//#define DEBUG(format,args...) printf("PreviewLoader::%s: " format "\n", __FUNCTION__, ## args)
+#define DEBUG(format, args...)
+// #define DEBUG(format,args...) printf("PreviewLoader::%s: " format "\n", __FUNCTION__,
+// ## args)
 
-class PreviewLoader::Impl :
-    public rtengine::NonCopyable
+class PreviewLoader::Impl : public rtengine::NonCopyable
 {
 public:
     struct Job {
-        Job(int dir_id, const Glib::ustring& dir_entry, PreviewLoaderListener* listener):
-            dir_id_(dir_id),
-            dir_entry_(dir_entry),
-            listener_(listener)
-        {}
+        Job(int dir_id, const Glib::ustring &dir_entry,
+            PreviewLoaderListener *listener) :
+            dir_id_(dir_id), dir_entry_(dir_entry), listener_(listener)
+        {
+        }
 
-        Job():
-            dir_id_(0),
-            listener_(nullptr)
-        {}
+        Job() : dir_id_(0), listener_(nullptr) {}
 
         int dir_id_;
         Glib::ustring dir_entry_;
-        PreviewLoaderListener* listener_;
+        PreviewLoaderListener *listener_;
     };
     /* Issue 2406
         struct OutputJob
@@ -62,9 +59,9 @@ public:
         };
     */
     struct JobCompare {
-        bool operator()(const Job& lhs, const Job& rhs) const
+        bool operator()(const Job &lhs, const Job &rhs) const
         {
-            if ( lhs.dir_id_ == rhs.dir_id_ ) {
+            if (lhs.dir_id_ == rhs.dir_id_) {
                 return lhs.dir_entry_ < rhs.dir_entry_;
             }
 
@@ -74,7 +71,7 @@ public:
 
     typedef std::set<Job, JobCompare> JobSet;
 
-    Impl(): nConcurrentThreads(0)
+    Impl() : nConcurrentThreads(0)
     {
 #ifdef _OPENMP
         int threadCount = omp_get_num_procs();
@@ -89,17 +86,17 @@ public:
     MyMutex mutex_;
     JobSet jobs_;
     gint nConcurrentThreads;
-// Issue 2406   std::vector<OutputJob *> output_;
+    // Issue 2406   std::vector<OutputJob *> output_;
 
     void processNextJob()
     {
         Job j;
-// Issue 2406       OutputJob *oj;
+        // Issue 2406       OutputJob *oj;
         {
             MyMutex::MyLock lock(mutex_);
 
             // nothing to do; could be jobs have been removed
-            if ( jobs_.empty() ) {
+            if (jobs_.empty()) {
                 DEBUG("processing: nothing to do");
                 return;
             }
@@ -119,30 +116,36 @@ public:
             */
         }
 
-        g_atomic_int_inc (&nConcurrentThreads);  // to detect when last thread in pool has run out
+        g_atomic_int_inc(
+            &nConcurrentThreads); // to detect when last thread in pool has run out
 
         // unlock and do processing; will relock on block exit, then call listener
         // if something got
-// Issue 2406       FileBrowserEntry* fdn = 0;
+        // Issue 2406       FileBrowserEntry* fdn = 0;
         try {
-            Thumbnail* tmb = nullptr;
+            Thumbnail *tmb = nullptr;
             {
                 if (Glib::file_test(j.dir_entry_, Glib::FILE_TEST_EXISTS)) {
                     tmb = cacheMgr->getEntry(j.dir_entry_);
                 }
             }
 
-            if ( tmb ) {
+            if (tmb) {
                 DEBUG("Preview Ready\n");
-                j.listener_->previewReady(j.dir_id_, new FileBrowserEntry(tmb, j.dir_entry_));
-// Issue 2406               fdn = new FileBrowserEntry(tmb,j.dir_entry_);
+                j.listener_->previewReady(
+                    j.dir_id_, new FileBrowserEntry(tmb, j.dir_entry_));
+                // Issue 2406               fdn = new
+                // FileBrowserEntry(tmb,j.dir_entry_);
             }
 
-        } catch (Glib::Error &e) {} catch(...) {}
+        } catch (Glib::Error &e) {
+        } catch (...) {
+        }
 
         /* Issue 2406
                 {
-                    // the purpose of the output_ vector is to deliver the previewReady() calls in the same
+                    // the purpose of the output_ vector is to deliver the
+           previewReady() calls in the same
                     // order as we got the jobs from the jobs_ queue.
                     MyMutex::MyLock lock(mutex_);
                     oj->fdn = fdn;
@@ -157,7 +160,7 @@ public:
                     }
                 }
         */
-        bool last = g_atomic_int_dec_and_test (&nConcurrentThreads);
+        bool last = g_atomic_int_dec_and_test(&nConcurrentThreads);
 
         // signal at end
         if (last && jobs_.empty()) {
@@ -166,25 +169,21 @@ public:
     }
 };
 
-PreviewLoader::PreviewLoader():
-    impl_(new Impl())
-{
-}
+PreviewLoader::PreviewLoader() : impl_(new Impl()) {}
 
-PreviewLoader::~PreviewLoader() {
-    delete impl_;
-}
+PreviewLoader::~PreviewLoader() { delete impl_; }
 
-PreviewLoader* PreviewLoader::getInstance()
+PreviewLoader *PreviewLoader::getInstance()
 {
     static PreviewLoader instance_;
     return &instance_;
 }
 
-void PreviewLoader::add(int dir_id, const Glib::ustring& dir_entry, PreviewLoaderListener* l)
+void PreviewLoader::add(
+    int dir_id, const Glib::ustring &dir_entry, PreviewLoaderListener *l)
 {
     // somebody listening?
-    if ( l != nullptr ) {
+    if (l != nullptr) {
         {
             MyMutex::MyLock lock(impl_->mutex_);
 
@@ -195,7 +194,8 @@ void PreviewLoader::add(int dir_id, const Glib::ustring& dir_entry, PreviewLoade
 
         // queue a run request
         DEBUG("adding run request %s", dir_entry.c_str());
-        impl_->threadPool_->push(sigc::mem_fun(*impl_, &PreviewLoader::Impl::processNextJob));
+        impl_->threadPool_->push(
+            sigc::mem_fun(*impl_, &PreviewLoader::Impl::processNextJob));
     }
 }
 
@@ -205,5 +205,3 @@ void PreviewLoader::removeAllJobs()
     MyMutex::MyLock lock(impl_->mutex_);
     impl_->jobs_.clear();
 }
-
-

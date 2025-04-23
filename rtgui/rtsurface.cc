@@ -24,8 +24,7 @@
 
 #include "options.h"
 
-RTSurface::RTSurface() :
-    surface(new Cairo::ImageSurface(nullptr, false))
+RTSurface::RTSurface() : surface(new Cairo::ImageSurface(nullptr, false))
 {
     // Initialize "back" parameters from RTScalable
     dpiBack = RTScalable::getDPI();
@@ -51,8 +50,7 @@ RTSurface::RTSurface(const Glib::ustring &icon_name, const Gtk::IconSize iconSiz
     }
 }
 
-RTSurface::RTSurface(const Glib::ustring &fname) :
-    RTSurface()
+RTSurface::RTSurface(const Glib::ustring &fname) : RTSurface()
 {
     // Create surface based on file extension
     const auto pos = fname.find_last_of('.');
@@ -95,7 +93,7 @@ int RTSurface::getWidth()
             case RTSurfaceType::IconType:
                 // Get width from Gtk::IconSize
                 if (!Gtk::IconSize::lookup(icon_size, w, h)) { // Size in invalid
-                    w = h = -1; // Invalid case
+                    w = h = -1;                                // Invalid case
                 }
 
                 return w;
@@ -128,7 +126,7 @@ int RTSurface::getHeight()
             case RTSurfaceType::IconType:
                 // Get width from Gtk::IconSize
                 if (!Gtk::IconSize::lookup(icon_size, w, h)) { // Size in invalid
-                    w = h = -1; // Invalid case
+                    w = h = -1;                                // Invalid case
                 }
 
                 return h;
@@ -152,21 +150,17 @@ int RTSurface::getHeight()
     }
 }
 
-bool RTSurface::hasSurface()
-{
-    return static_cast<bool>(surface);
-}
+bool RTSurface::hasSurface() { return static_cast<bool>(surface); }
 
 Cairo::RefPtr<Cairo::ImageSurface> RTSurface::get()
 {
-    if (dpiBack != RTScalable::getDPI() ||
-        scaleBack != RTScalable::getScale()) {
-            updateSurface();
+    if (dpiBack != RTScalable::getDPI() || scaleBack != RTScalable::getScale()) {
+        updateSurface();
 
-            // Save new DPI and scale
-            dpiBack = RTScalable::getDPI();
-            scaleBack = RTScalable::getScale();
-        }
+        // Save new DPI and scale
+        dpiBack = RTScalable::getDPI();
+        scaleBack = RTScalable::getScale();
+    }
 
     return surface;
 }
@@ -175,16 +169,16 @@ void RTSurface::updateSurface()
 {
     // Update surface based on the scale
     switch (type) {
-        case RTSurfaceType::IconType :
+        case RTSurfaceType::IconType:
             surface = RTScalable::loadSurfaceFromIcon(name, icon_size);
             break;
-        case RTSurfaceType::PNGType :
+        case RTSurfaceType::PNGType:
             surface = RTScalable::loadSurfaceFromPNG(name);
             break;
-        case RTSurfaceType::SVGType :
+        case RTSurfaceType::SVGType:
             surface = RTScalable::loadSurfaceFromSVG(name);
             break;
-        default :
+        default:
             break;
     }
 }

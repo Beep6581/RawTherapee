@@ -31,52 +31,42 @@
 namespace delayed_helper
 {
 
-    // C++14
+// C++14
 
-    // See https://gist.github.com/ntessore/dc17769676fb3c6daa1f
-    template<std::size_t... Is>
-    struct index_sequence
-    {
-    };
+// See https://gist.github.com/ntessore/dc17769676fb3c6daa1f
+template <std::size_t... Is> struct index_sequence {
+};
 
-    template<std::size_t N, std::size_t... Is>
-    struct make_index_sequence :
-        make_index_sequence<N-1, N-1, Is...>
-    {
-    };
+template <std::size_t N, std::size_t... Is>
+struct make_index_sequence : make_index_sequence<N - 1, N - 1, Is...> {
+};
 
-    template<std::size_t... Is>
-    struct make_index_sequence<0, Is...> :
-        index_sequence<Is...>
-    {
-    };
+template <std::size_t... Is>
+struct make_index_sequence<0, Is...> : index_sequence<Is...> {
+};
 
-    // C++17
+// C++17
 
-    // See https://aherrmann.github.io/programming/2016/02/28/unpacking-tuples-in-cpp14/
-    template<typename F, typename T, size_t... Is>
-    void apply_impl(F f, T t, index_sequence<Is...>)
-    {
-        f(std::get<Is>(t)...);
-    }
-
-    template <typename T, typename F>
-    void apply(F f, T t)
-    {
-        apply_impl(f, t, make_index_sequence<std::tuple_size<T>{}>{});
-    }
-
+// See https://aherrmann.github.io/programming/2016/02/28/unpacking-tuples-in-cpp14/
+template <typename F, typename T, size_t... Is>
+void apply_impl(F f, T t, index_sequence<Is...>)
+{
+    f(std::get<Is>(t)...);
 }
 
-template<typename... Ts>
-class DelayedCall final :
-    public rtengine::NonCopyable
+template <typename T, typename F> void apply(F f, T t)
+{
+    apply_impl(f, t, make_index_sequence<std::tuple_size<T>{}>{});
+}
+
+} // namespace delayed_helper
+
+template <typename... Ts> class DelayedCall final : public rtengine::NonCopyable
 {
 public:
-    DelayedCall(std::function<void (Ts...)> _function, unsigned int _min_delay_ms, unsigned int _max_delay_ms = 0) :
-        function(_function),
-        min_delay_ms(_min_delay_ms),
-        max_delay_ms(_max_delay_ms)
+    DelayedCall(std::function<void(Ts...)> _function, unsigned int _min_delay_ms,
+        unsigned int _max_delay_ms = 0) :
+        function(_function), min_delay_ms(_min_delay_ms), max_delay_ms(_max_delay_ms)
     {
     }
 
@@ -85,12 +75,9 @@ public:
     {
     }
 
-    void setFunction(std::function<void (Ts...)> function)
-    {
-        this->function = function;
-    }
+    void setFunction(std::function<void(Ts...)> function) { this->function = function; }
 
-    void operator ()(Ts... ts)
+    void operator()(Ts... ts)
     {
         if (!function) {
             return;
@@ -104,10 +91,12 @@ public:
         params = std::make_tuple(ts...);
 
         min_timeout.disconnect();
-        min_timeout = Glib::signal_timeout().connect(sigc::mem_fun(*this, &DelayedCall::onMinTimeout), min_delay_ms);
+        min_timeout = Glib::signal_timeout().connect(
+            sigc::mem_fun(*this, &DelayedCall::onMinTimeout), min_delay_ms);
 
         if (max_delay_ms && !max_timeout.connected()) {
-            max_timeout = Glib::signal_timeout().connect(sigc::mem_fun(*this, &DelayedCall::onMaxTimeout), max_delay_ms);
+            max_timeout = Glib::signal_timeout().connect(
+                sigc::mem_fun(*this, &DelayedCall::onMaxTimeout), max_delay_ms);
         }
     }
 
@@ -136,7 +125,7 @@ private:
         return false;
     }
 
-    std::function<void (Ts...)> function;
+    std::function<void(Ts...)> function;
 
     unsigned int min_delay_ms;
     unsigned int max_delay_ms;
@@ -147,33 +136,28 @@ private:
     std::tuple<Ts...> params;
 };
 
-template<typename... Ts>
-class DelayedConnection final :
-    public rtengine::NonCopyable
+template <typename... Ts> class DelayedConnection final : public rtengine::NonCopyable
 {
 public:
-    explicit DelayedConnection(unsigned int _min_delay_ms, unsigned int _max_delay_ms = 0) :
-        min_delay_ms(_min_delay_ms),
-        max_delay_ms(_max_delay_ms)
+    explicit DelayedConnection(
+        unsigned int _min_delay_ms, unsigned int _max_delay_ms = 0) :
+        min_delay_ms(_min_delay_ms), max_delay_ms(_max_delay_ms)
     {
     }
 
-    void connect(Glib::SignalProxy<void, Ts...> signal, const sigc::slot<void, Ts...>& slot, const sigc::slot<void, Ts...>& immediate_slot = {})
+    void connect(Glib::SignalProxy<void, Ts...> signal,
+        const sigc::slot<void, Ts...> &slot,
+        const sigc::slot<void, Ts...> &immediate_slot = {})
     {
         this->slot = slot;
         this->immediate_slot = immediate_slot;
-        this->signal = signal.connect(sigc::mem_fun(*this, &DelayedConnection::onSignal));
+        this->signal =
+            signal.connect(sigc::mem_fun(*this, &DelayedConnection::onSignal));
     }
 
-    void block(bool value = true)
-    {
-        signal.block(value);
-    }
+    void block(bool value = true) { signal.block(value); }
 
-    void unblock()
-    {
-        signal.unblock();
-    }
+    void unblock() { signal.unblock(); }
 
     void cancel()
     {
@@ -205,10 +189,12 @@ private:
         params = std::make_tuple(ts...);
 
         min_timeout.disconnect();
-        min_timeout = Glib::signal_timeout().connect(sigc::mem_fun(*this, &DelayedConnection::onMinTimeout), min_delay_ms);
+        min_timeout = Glib::signal_timeout().connect(
+            sigc::mem_fun(*this, &DelayedConnection::onMinTimeout), min_delay_ms);
 
         if (max_delay_ms && !max_timeout.connected()) {
-            max_timeout = Glib::signal_timeout().connect(sigc::mem_fun(*this, &DelayedConnection::onMaxTimeout), max_delay_ms);
+            max_timeout = Glib::signal_timeout().connect(
+                sigc::mem_fun(*this, &DelayedConnection::onMaxTimeout), max_delay_ms);
         }
     }
 

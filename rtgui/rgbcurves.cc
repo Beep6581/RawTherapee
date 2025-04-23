@@ -29,43 +29,51 @@ using namespace rtengine::procparams;
 
 const Glib::ustring RGBCurves::TOOL_NAME = "rgbcurves";
 
-RGBCurves::RGBCurves () : FoldableToolPanel(this, TOOL_NAME, M("TP_RGBCURVES_LABEL"), false, true), lastLumamode(false)
+RGBCurves::RGBCurves() :
+    FoldableToolPanel(this, TOOL_NAME, M("TP_RGBCURVES_LABEL"), false, true),
+    lastLumamode(false)
 {
 
-    lumamode = Gtk::manage (new Gtk::CheckButton (M("TP_RGBCURVES_LUMAMODE")));
-    lumamode->set_tooltip_markup (M("TP_RGBCURVES_LUMAMODE_TOOLTIP"));
-    lumamode->set_active (false);
-    lumamode->show ();
-    pack_start (*lumamode);
+    lumamode = Gtk::manage(new Gtk::CheckButton(M("TP_RGBCURVES_LUMAMODE")));
+    lumamode->set_tooltip_markup(M("TP_RGBCURVES_LUMAMODE_TOOLTIP"));
+    lumamode->set_active(false);
+    lumamode->show();
+    pack_start(*lumamode);
 
-    Gtk::Separator *hsep1 = Gtk::manage (new Gtk::Separator(Gtk::ORIENTATION_HORIZONTAL));
-    hsep1->show ();
-    pack_start (*hsep1);
+    Gtk::Separator *hsep1 =
+        Gtk::manage(new Gtk::Separator(Gtk::ORIENTATION_HORIZONTAL));
+    hsep1->show();
+    pack_start(*hsep1);
 
-    lumamodeConn = lumamode->signal_toggled().connect( sigc::mem_fun(*this, &RGBCurves::lumamodeChanged) );
+    lumamodeConn = lumamode->signal_toggled().connect(
+        sigc::mem_fun(*this, &RGBCurves::lumamodeChanged));
 
     std::vector<GradientMilestone> milestones;
 
-    curveEditorG = new CurveEditorGroup (options.lastRgbCurvesDir, M("TP_RGBCURVES_CHANNEL"));
-    curveEditorG->setCurveListener (this);
+    curveEditorG =
+        new CurveEditorGroup(options.lastRgbCurvesDir, M("TP_RGBCURVES_CHANNEL"));
+    curveEditorG->setCurveListener(this);
 
-    Rshape = static_cast<DiagonalCurveEditor*>(curveEditorG->addCurve(CT_Diagonal, M("TP_RGBCURVES_RED")));
+    Rshape = static_cast<DiagonalCurveEditor *>(
+        curveEditorG->addCurve(CT_Diagonal, M("TP_RGBCURVES_RED")));
     Rshape->setEditID(EUID_RGB_R, BT_SINGLEPLANE_FLOAT);
-    milestones.push_back( GradientMilestone(0.0, 0.0, 0.0, 0.0) );
-    milestones.push_back( GradientMilestone(1.0, 1.0, 0.0, 0.0) );
+    milestones.push_back(GradientMilestone(0.0, 0.0, 0.0, 0.0));
+    milestones.push_back(GradientMilestone(1.0, 1.0, 0.0, 0.0));
     Rshape->setBottomBarBgGradient(milestones);
     Rshape->setLeftBarBgGradient(milestones);
 
     milestones[1].r = 0.0;
     milestones[1].g = 1.0;
-    Gshape = static_cast<DiagonalCurveEditor*>(curveEditorG->addCurve(CT_Diagonal, M("TP_RGBCURVES_GREEN")));
+    Gshape = static_cast<DiagonalCurveEditor *>(
+        curveEditorG->addCurve(CT_Diagonal, M("TP_RGBCURVES_GREEN")));
     Gshape->setEditID(EUID_RGB_G, BT_SINGLEPLANE_FLOAT);
     Gshape->setBottomBarBgGradient(milestones);
     Gshape->setLeftBarBgGradient(milestones);
 
     milestones[1].g = 0.0;
     milestones[1].b = 1.0;
-    Bshape = static_cast<DiagonalCurveEditor*>(curveEditorG->addCurve(CT_Diagonal, M("TP_RGBCURVES_BLUE")));
+    Bshape = static_cast<DiagonalCurveEditor *>(
+        curveEditorG->addCurve(CT_Diagonal, M("TP_RGBCURVES_BLUE")));
     Bshape->setEditID(EUID_RGB_B, BT_SINGLEPLANE_FLOAT);
     Bshape->setBottomBarBgGradient(milestones);
     Bshape->setLeftBarBgGradient(milestones);
@@ -73,51 +81,47 @@ RGBCurves::RGBCurves () : FoldableToolPanel(this, TOOL_NAME, M("TP_RGBCURVES_LAB
     // This will add the reset button at the end of the curveType buttons
     curveEditorG->curveListComplete();
 
-    pack_start (*curveEditorG, Gtk::PACK_SHRINK, 4);
-
+    pack_start(*curveEditorG, Gtk::PACK_SHRINK, 4);
 }
 
-RGBCurves::~RGBCurves ()
-{
-    delete curveEditorG;
-}
+RGBCurves::~RGBCurves() { delete curveEditorG; }
 
-void RGBCurves::read (const ProcParams* pp, const ParamsEdited* pedited)
+void RGBCurves::read(const ProcParams *pp, const ParamsEdited *pedited)
 {
 
-    disableListener ();
+    disableListener();
 
     if (pedited) {
-        Rshape->setUnChanged (!pedited->rgbCurves.rcurve);
-        Gshape->setUnChanged (!pedited->rgbCurves.gcurve);
-        Bshape->setUnChanged (!pedited->rgbCurves.bcurve);
-        lumamode->set_inconsistent (!pedited->rgbCurves.lumamode);
+        Rshape->setUnChanged(!pedited->rgbCurves.rcurve);
+        Gshape->setUnChanged(!pedited->rgbCurves.gcurve);
+        Bshape->setUnChanged(!pedited->rgbCurves.bcurve);
+        lumamode->set_inconsistent(!pedited->rgbCurves.lumamode);
         set_inconsistent(multiImage && !pedited->rgbCurves.enabled);
     }
 
-    lumamodeConn.block (true);
-    lumamode->set_active (pp->rgbCurves.lumamode);
-    lumamodeConn.block (false);
+    lumamodeConn.block(true);
+    lumamode->set_active(pp->rgbCurves.lumamode);
+    lumamodeConn.block(false);
 
     lastLumamode = pp->rgbCurves.lumamode;
 
-    Rshape->setCurve         (pp->rgbCurves.rcurve);
-    Gshape->setCurve         (pp->rgbCurves.gcurve);
-    Bshape->setCurve         (pp->rgbCurves.bcurve);
+    Rshape->setCurve(pp->rgbCurves.rcurve);
+    Gshape->setCurve(pp->rgbCurves.gcurve);
+    Bshape->setCurve(pp->rgbCurves.bcurve);
 
     setEnabled(pp->rgbCurves.enabled);
 
-    enableListener ();
+    enableListener();
 }
 
-void RGBCurves::setEditProvider (EditDataProvider *provider)
+void RGBCurves::setEditProvider(EditDataProvider *provider)
 {
     Rshape->setEditProvider(provider);
     Gshape->setEditProvider(provider);
     Bshape->setEditProvider(provider);
 }
 
-void RGBCurves::autoOpenCurve  ()
+void RGBCurves::autoOpenCurve()
 {
     // Open up the first curve if selected
     bool active = Rshape->openIfNonlinear();
@@ -131,23 +135,22 @@ void RGBCurves::autoOpenCurve  ()
     }
 }
 
-void RGBCurves::write (ProcParams* pp, ParamsEdited* pedited)
+void RGBCurves::write(ProcParams *pp, ParamsEdited *pedited)
 {
     pp->rgbCurves.enabled = getEnabled();
-    pp->rgbCurves.rcurve         = Rshape->getCurve ();
-    pp->rgbCurves.gcurve         = Gshape->getCurve ();
-    pp->rgbCurves.bcurve         = Bshape->getCurve ();
-    pp->rgbCurves.lumamode       = lumamode->get_active();
+    pp->rgbCurves.rcurve = Rshape->getCurve();
+    pp->rgbCurves.gcurve = Gshape->getCurve();
+    pp->rgbCurves.bcurve = Bshape->getCurve();
+    pp->rgbCurves.lumamode = lumamode->get_active();
 
     if (pedited) {
         pedited->rgbCurves.enabled = !get_inconsistent();
-        pedited->rgbCurves.rcurve    = !Rshape->isUnChanged ();
-        pedited->rgbCurves.gcurve    = !Gshape->isUnChanged ();
-        pedited->rgbCurves.bcurve    = !Bshape->isUnChanged ();
-        pedited->rgbCurves.lumamode  = !lumamode->get_inconsistent();
+        pedited->rgbCurves.rcurve = !Rshape->isUnChanged();
+        pedited->rgbCurves.gcurve = !Gshape->isUnChanged();
+        pedited->rgbCurves.bcurve = !Bshape->isUnChanged();
+        pedited->rgbCurves.lumamode = !lumamode->get_inconsistent();
     }
 }
-
 
 /*
  * Curve listener
@@ -155,72 +158,62 @@ void RGBCurves::write (ProcParams* pp, ParamsEdited* pedited)
  * If more than one curve has been added, the curve listener is automatically
  * set to 'multi=true', and send a pointer of the modified curve in a parameter
  */
-void RGBCurves::curveChanged (CurveEditor* ce)
+void RGBCurves::curveChanged(CurveEditor *ce)
 {
 
     if (listener && getEnabled()) {
         if (ce == Rshape) {
-            listener->panelChanged (EvRGBrCurve, M("HISTORY_CUSTOMCURVE"));
+            listener->panelChanged(EvRGBrCurve, M("HISTORY_CUSTOMCURVE"));
         }
 
         if (ce == Gshape) {
-            listener->panelChanged (EvRGBgCurve, M("HISTORY_CUSTOMCURVE"));
+            listener->panelChanged(EvRGBgCurve, M("HISTORY_CUSTOMCURVE"));
         }
 
         if (ce == Bshape) {
-            listener->panelChanged (EvRGBbCurve, M("HISTORY_CUSTOMCURVE"));
+            listener->panelChanged(EvRGBbCurve, M("HISTORY_CUSTOMCURVE"));
         }
     }
 }
 
-void RGBCurves::lumamodeChanged ()
+void RGBCurves::lumamodeChanged()
 {
 
     if (batchMode) {
         if (lumamode->get_inconsistent()) {
-            lumamode->set_inconsistent (false);
-            lumamodeConn.block (true);
-            lumamode->set_active (false);
-            lumamodeConn.block (false);
+            lumamode->set_inconsistent(false);
+            lumamodeConn.block(true);
+            lumamode->set_active(false);
+            lumamodeConn.block(false);
         } else if (lastLumamode) {
-            lumamode->set_inconsistent (true);
+            lumamode->set_inconsistent(true);
         }
 
-        lastLumamode = lumamode->get_active ();
+        lastLumamode = lumamode->get_active();
     }
 
     if (listener && getEnabled()) {
-        if (lumamode->get_active ()) {
-            listener->panelChanged (EvRGBrCurveLumamode, M("GENERAL_ENABLED"));
+        if (lumamode->get_active()) {
+            listener->panelChanged(EvRGBrCurveLumamode, M("GENERAL_ENABLED"));
         } else {
-            listener->panelChanged (EvRGBrCurveLumamode, M("GENERAL_DISABLED"));
+            listener->panelChanged(EvRGBrCurveLumamode, M("GENERAL_DISABLED"));
         }
     }
 }
 
-void RGBCurves::setBatchMode (bool batchMode)
+void RGBCurves::setBatchMode(bool batchMode)
 {
 
-    ToolPanel::setBatchMode (batchMode);
-    curveEditorG->setBatchMode (batchMode);
+    ToolPanel::setBatchMode(batchMode);
+    curveEditorG->setBatchMode(batchMode);
 }
 
-
-void RGBCurves::updateCurveBackgroundHistogram(
-    const LUTu& histToneCurve,
-    const LUTu& histLCurve,
-    const LUTu& histCCurve,
-    const LUTu& histLCAM,
-    const LUTu& histCCAM,
-    const LUTu& histRed,
-    const LUTu& histGreen,
-    const LUTu& histBlue,
-    const LUTu& histLuma,
-    const LUTu& histLRETI
-)
+void RGBCurves::updateCurveBackgroundHistogram(const LUTu &histToneCurve,
+    const LUTu &histLCurve, const LUTu &histCCurve, const LUTu &histLCAM,
+    const LUTu &histCCAM, const LUTu &histRed, const LUTu &histGreen,
+    const LUTu &histBlue, const LUTu &histLuma, const LUTu &histLRETI)
 {
 }
-
 
 void RGBCurves::enabledChanged()
 {

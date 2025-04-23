@@ -1,5 +1,5 @@
 /** -*- C++ -*-
- *  
+ *
  *  This file is part of RawTherapee.
  *
  *  Copyright (c) 2018 Alberto Griggio <alberto.griggio@gmail.com>
@@ -23,26 +23,30 @@
 #include "adjuster.h"
 #include "toolpanel.h"
 
-class SoftLight final : public ToolParamBlock, public AdjusterListener, public FoldableToolPanel
+class SoftLight final : public ToolParamBlock,
+                        public AdjusterListener,
+                        public FoldableToolPanel
 {
 private:
     Adjuster *strength;
 
     rtengine::ProcEvent EvSoftLightEnabled;
     rtengine::ProcEvent EvSoftLightStrength;
-    
+
 public:
     static const Glib::ustring TOOL_NAME;
 
     SoftLight();
 
-    void read(const rtengine::procparams::ProcParams *pp, const ParamsEdited *pedited=nullptr) override;
-    void write(rtengine::procparams::ProcParams *pp, ParamsEdited *pedited=nullptr) override;
-    void setDefaults(const rtengine::procparams::ProcParams *defParams, const ParamsEdited *pedited=nullptr) override;
+    void read(const rtengine::procparams::ProcParams *pp,
+        const ParamsEdited *pedited = nullptr) override;
+    void write(
+        rtengine::procparams::ProcParams *pp, ParamsEdited *pedited = nullptr) override;
+    void setDefaults(const rtengine::procparams::ProcParams *defParams,
+        const ParamsEdited *pedited = nullptr) override;
     void setBatchMode(bool batchMode) override;
 
     void adjusterChanged(Adjuster *a, double newval) override;
     void enabledChanged() override;
     void setAdjusterBehavior(bool strengthAdd);
 };
-

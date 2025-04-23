@@ -21,9 +21,10 @@
 
 #include "aspectratios.h"
 
-namespace {
+namespace
+{
 
-static const std::vector<AspectRatio> ASPECT_RATIOS {
+static const std::vector<AspectRatio> ASPECT_RATIOS{
     {"3:2", 3.0 / 2.0},                 // L1.5,        P0.666...
     {"4:3", 4.0 / 3.0},                 // L1.333...,   P0.75
     {"16:9", 16.0 / 9.0},               // L1.777...,   P0.5625
@@ -54,12 +55,13 @@ static const std::vector<AspectRatio> ASPECT_RATIOS {
     {"13:18", 13.0 / 18.0},             // L1.384...,   P0.722...
 };
 
-}  // namespace
+} // namespace
 
-void fillAspectRatios(std::vector<AspectRatio>& ratios) {
+void fillAspectRatios(std::vector<AspectRatio> &ratios)
+{
     ratios.reserve(ratios.size() + ASPECT_RATIOS.size());
 
-    for (const auto& ratio : ASPECT_RATIOS) {
+    for (const auto &ratio : ASPECT_RATIOS) {
         ratios.push_back(ratio);
     }
 }

@@ -28,18 +28,16 @@
 #include "adjuster.h"
 #include "toolpanel.h"
 
-class SharpenMicro final :
-    public ToolParamBlock,
-    public AdjusterListener,
-    public FoldableToolPanel
+class SharpenMicro final : public ToolParamBlock,
+                           public AdjusterListener,
+                           public FoldableToolPanel
 {
 
 protected:
-
-    Gtk::CheckButton* matrix;
-    Adjuster* amount;
-    Adjuster* uniformity;
-    Adjuster* contrast;
+    Gtk::CheckButton *matrix;
+    Adjuster *amount;
+    Adjuster *uniformity;
+    Adjuster *contrast;
 
     rtengine::ProcEvent EvSharpenMicroContrast;
 
@@ -49,18 +47,19 @@ protected:
 public:
     static const Glib::ustring TOOL_NAME;
 
-    SharpenMicro           ();
+    SharpenMicro();
 
-    void read                (const rtengine::procparams::ProcParams* pp, const ParamsEdited* pedited = nullptr) override;
-    void write               (rtengine::procparams::ProcParams* pp, ParamsEdited* pedited = nullptr) override;
-    void setDefaults         (const rtengine::procparams::ProcParams* defParams, const ParamsEdited* pedited = nullptr) override;
-    void setBatchMode        (bool batchMode) override;
-    void trimValues          (rtengine::procparams::ProcParams* pp) override;
-    void setAdjusterBehavior (bool amountadd, bool contrastadd, bool uniformityadd);
-    void adjusterChanged     (Adjuster* a, double newval) override;
+    void read(const rtengine::procparams::ProcParams *pp,
+        const ParamsEdited *pedited = nullptr) override;
+    void write(
+        rtengine::procparams::ProcParams *pp, ParamsEdited *pedited = nullptr) override;
+    void setDefaults(const rtengine::procparams::ProcParams *defParams,
+        const ParamsEdited *pedited = nullptr) override;
+    void setBatchMode(bool batchMode) override;
+    void trimValues(rtengine::procparams::ProcParams *pp) override;
+    void setAdjusterBehavior(bool amountadd, bool contrastadd, bool uniformityadd);
+    void adjusterChanged(Adjuster *a, double newval) override;
 
-    void enabledChanged      () override;
-    void matrix_toggled      ();
-
-
+    void enabledChanged() override;
+    void matrix_toggled();
 };

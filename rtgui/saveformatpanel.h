@@ -30,37 +30,34 @@ class FormatChangeListener
 {
 public:
     virtual ~FormatChangeListener() = default;
-    virtual void formatChanged(const Glib::ustring& format) = 0;
+    virtual void formatChanged(const Glib::ustring &format) = 0;
 };
 
-class SaveFormatPanel : public Gtk::Grid, public AdjusterListener, public rtengine::NonCopyable
+class SaveFormatPanel : public Gtk::Grid,
+                        public AdjusterListener,
+                        public rtengine::NonCopyable
 {
 
 protected:
-    Adjuster*           jpegQual;
-    Gtk::CheckButton*   tiffUncompressed;
-    Gtk::CheckButton*   bigTiff;
-    MyComboBoxText*     format;
-    MyComboBoxText*     jpegSubSamp;
-    Gtk::Grid*          formatOpts;
-    Gtk::Grid*          jpegOpts;
-    Gtk::Label*         jpegSubSampLabel;
-    FormatChangeListener* listener;
-    Gtk::CheckButton*   savesPP;
-
+    Adjuster *jpegQual;
+    Gtk::CheckButton *tiffUncompressed;
+    Gtk::CheckButton *bigTiff;
+    MyComboBoxText *format;
+    MyComboBoxText *jpegSubSamp;
+    Gtk::Grid *formatOpts;
+    Gtk::Grid *jpegOpts;
+    Gtk::Label *jpegSubSampLabel;
+    FormatChangeListener *listener;
+    Gtk::CheckButton *savesPP;
 
 public:
+    SaveFormatPanel();
+    ~SaveFormatPanel() override;
+    void setListener(FormatChangeListener *l) { listener = l; }
 
-    SaveFormatPanel ();
-    ~SaveFormatPanel () override;
-    void        setListener     (FormatChangeListener* l)
-    {
-        listener = l;
-    }
+    void init(SaveFormat &sf);
+    SaveFormat getFormat();
 
-    void        init            (SaveFormat& sf);
-    SaveFormat  getFormat       ();
-
-    void        formatChanged   ();
-    void        adjusterChanged (Adjuster* a, double newval) override;
+    void formatChanged();
+    void adjusterChanged(Adjuster *a, double newval) override;
 };

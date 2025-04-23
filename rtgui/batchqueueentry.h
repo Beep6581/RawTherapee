@@ -42,29 +42,30 @@ class ProcParams;
 
 }
 
-}
+} // namespace rtengine
 
 class BatchQueueEntry;
 struct BatchQueueEntryIdleHelper {
-    BatchQueueEntry* bqentry;
+    BatchQueueEntry *bqentry;
     bool destroyed;
     int pending;
 };
 
-class BatchQueueEntry final : public ThumbBrowserEntryBase, public BQEntryUpdateListener, public rtengine::NonCopyable
+class BatchQueueEntry final : public ThumbBrowserEntryBase,
+                              public BQEntryUpdateListener,
+                              public rtengine::NonCopyable
 {
 
-    guint8* opreview;
+    guint8 *opreview;
     int origpw, origph;
-    BatchQueueEntryIdleHelper* bqih;
+    BatchQueueEntryIdleHelper *bqih;
     bool opreviewDone;
     static bool iconsLoaded;
 
 public:
-
     static std::shared_ptr<RTSurface> savedAsIcon;
 
-    rtengine::ProcessingJob* job;
+    rtengine::ProcessingJob *job;
     const std::unique_ptr<rtengine::procparams::ProcParams> params;
     Glib::ustring savedParamsFile;
     double progress;
@@ -75,21 +76,25 @@ public:
     bool fast_pipeline;
     bool overwriteFile;
 
-    BatchQueueEntry (rtengine::ProcessingJob* job, const rtengine::procparams::ProcParams& pparams, Glib::ustring fname, int prevw, int prevh, Thumbnail* thm = nullptr, bool overwrite = false);
-    ~BatchQueueEntry () override;
+    BatchQueueEntry(rtengine::ProcessingJob *job,
+        const rtengine::procparams::ProcParams &pparams, Glib::ustring fname, int prevw,
+        int prevh, Thumbnail *thm = nullptr, bool overwrite = false);
+    ~BatchQueueEntry() override;
 
-    void refreshThumbnailImage () override;
-    void calcThumbnailSize () override;
+    void refreshThumbnailImage() override;
+    void calcThumbnailSize() override;
 
-    void drawProgressBar (Glib::RefPtr<Gdk::Window> win, const Gdk::RGBA& foregr, const Gdk::RGBA& backgr, int x, int w, int y, int h) override;
+    void drawProgressBar(Glib::RefPtr<Gdk::Window> win, const Gdk::RGBA &foregr,
+        const Gdk::RGBA &backgr, int x, int w, int y, int h) override;
 
-    void removeButtonSet ();
+    void removeButtonSet();
 
-    std::vector<std::shared_ptr<RTSurface>> getIconsOnImageArea () override;
-    void getIconSize (int& w, int& h) const override;
-    std::tuple<Glib::ustring, bool> getToolTip (int x, int y) const override;
+    std::vector<std::shared_ptr<RTSurface>> getIconsOnImageArea() override;
+    void getIconSize(int &w, int &h) const override;
+    std::tuple<Glib::ustring, bool> getToolTip(int x, int y) const override;
 
     // bqentryupdatelistener interface
-    void updateImage (guint8* img, int w, int h, int origw, int origh, guint8* newOPreview) override;
-    void _updateImage (guint8* img, int w, int h); // inside gtk thread
+    void updateImage(
+        guint8 *img, int w, int h, int origw, int origh, guint8 *newOPreview) override;
+    void _updateImage(guint8 *img, int w, int h); // inside gtk thread
 };

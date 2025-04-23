@@ -32,10 +32,9 @@ extern Options options;
 const Glib::ustring Locallab::TOOL_NAME = "locallab";
 
 /* ==== LocallabToolList ==== */
-LocallabToolList::LocallabToolList():
+LocallabToolList::LocallabToolList() :
     // Tool list GUI elements
-    list(Gtk::manage(new MyComboBox())),
-    listTreeModel(Gtk::ListStore::create(toolRow)),
+    list(Gtk::manage(new MyComboBox())), listTreeModel(Gtk::ListStore::create(toolRow)),
 
     // Tool list listener
     listListener(nullptr)
@@ -43,7 +42,8 @@ LocallabToolList::LocallabToolList():
     set_orientation(Gtk::ORIENTATION_VERTICAL);
     list->set_model(listTreeModel);
     list->pack_start(toolRow.name);
-    listConn = list->signal_changed().connect(sigc::mem_fun(*this, &LocallabToolList::toolRowSelected));
+    listConn = list->signal_changed().connect(
+        sigc::mem_fun(*this, &LocallabToolList::toolRowSelected));
     list->set_tooltip_text(M("TP_LOCALLAB_LIST_TOOLTIP"));
     // Append title row to list
     // Important: Title row shall always be the first one
@@ -143,7 +143,7 @@ void LocallabToolList::toolRowSelected()
 }
 
 /* ==== Locallab ==== */
-Locallab::Locallab():
+Locallab::Locallab() :
     FoldableToolPanel(this, TOOL_NAME, M("TP_LOCALLAB_LABEL"), false, true),
 
     // Spot control panel widget
@@ -156,9 +156,9 @@ Locallab::Locallab():
     //resetshowButton(Gtk::manage(new Gtk::Button(M("TP_LOCALLAB_RESETSHOW"))))
 {
     set_orientation(Gtk::ORIENTATION_VERTICAL);
-    
+
     // Create panel widget to receive Locallab GUI elements
-    ToolVBox* const panel = Gtk::manage(new ToolVBox());
+    ToolVBox *const panel = Gtk::manage(new ToolVBox());
     panel->set_spacing(2);
 
     // Add spot control panel to panel widget
@@ -167,7 +167,8 @@ Locallab::Locallab():
     panel->pack_start(*expsettings->getExpander(), false, false);
 
     // Add separator
-    Gtk::Separator* const separator = Gtk::manage(new Gtk::Separator(Gtk::ORIENTATION_HORIZONTAL));
+    Gtk::Separator *const separator =
+        Gtk::manage(new Gtk::Separator(Gtk::ORIENTATION_HORIZONTAL));
     panel->pack_start(*separator, false, false);
 
     // Add tool list widget
@@ -197,7 +198,7 @@ Locallab::Locallab():
     }
 
     // Add Locallab tools to panel widget
-    ToolVBox* const toolpanel = Gtk::manage(new ToolVBox());
+    ToolVBox *const toolpanel = Gtk::manage(new ToolVBox());
     toolpanel->set_name("LocallabToolPanel");
     addTool(toolpanel, &expcolor);
     addTool(toolpanel, &expshadhigh);
@@ -216,12 +217,14 @@ Locallab::Locallab():
     panel->pack_start(*toolpanel, false, false);
 
     // Add separator
- //   Gtk::Separator* const separator2 = Gtk::manage(new Gtk::Separator(Gtk::ORIENTATION_HORIZONTAL));
- //   panel->pack_start(*separator2, false, false);
+    //   Gtk::Separator* const separator2 = Gtk::manage(new
+    //   Gtk::Separator(Gtk::ORIENTATION_HORIZONTAL)); panel->pack_start(*separator2,
+    //   false, false);
 
     // Add mask reset button to panel widget
-    //resetshowButton->signal_pressed().connect(sigc::mem_fun(*this, &Locallab::resetshowPressed));
-   // panel->pack_start(*resetshowButton);
+    // resetshowButton->signal_pressed().connect(sigc::mem_fun(*this,
+    // &Locallab::resetshowPressed));
+    // panel->pack_start(*resetshowButton);
 
     // Add panel widget to Locallab GUI
     pack_start(*panel);
@@ -234,12 +237,13 @@ Locallab::Locallab():
         tool->updateAdviceTooltips(options.showtooltip);
     }
 
-    // By default, if no photo is loaded, all Locallab tools are removed and it's not possible to add them
-    // (to be necessary called after "show_all" function)
+    // By default, if no photo is loaded, all Locallab tools are removed and it's not
+    // possible to add them (to be necessary called after "show_all" function)
     setParamEditable(false);
 }
 
-void Locallab::read(const rtengine::procparams::ProcParams* pp, const ParamsEdited* pedited)
+void Locallab::read(
+    const rtengine::procparams::ProcParams *pp, const ParamsEdited *pedited)
 {
     // Disable all listeners
     disableListener();
@@ -272,7 +276,7 @@ void Locallab::read(const rtengine::procparams::ProcParams* pp, const ParamsEdit
 
         if (pp->locallab.spots.at(i).shape == "ELI") {
             r.shape = 0;
-        } else if (pp->locallab.spots.at(i).shape == "RECT")  {
+        } else if (pp->locallab.spots.at(i).shape == "RECT") {
             r.shape = 1;
         }
 
@@ -284,14 +288,14 @@ void Locallab::read(const rtengine::procparams::ProcParams* pp, const ParamsEdit
 
         if (pp->locallab.spots.at(i).spotMethod == "norm") {
             r.spotMethod = 0;
-        } else if(pp->locallab.spots.at(i).spotMethod == "exc"){
+        } else if (pp->locallab.spots.at(i).spotMethod == "exc") {
             r.spotMethod = 1;
-        } else if (pp->locallab.spots.at(i).spotMethod == "full"){
+        } else if (pp->locallab.spots.at(i).spotMethod == "full") {
             r.spotMethod = 2;
-        } else if (pp->locallab.spots.at(i).spotMethod == "main"){
+        } else if (pp->locallab.spots.at(i).spotMethod == "main") {
             r.spotMethod = 3;
         }
-        
+
         r.sensiexclu = pp->locallab.spots.at(i).sensiexclu;
         r.structexclu = pp->locallab.spots.at(i).structexclu;
 
@@ -304,18 +308,18 @@ void Locallab::read(const rtengine::procparams::ProcParams* pp, const ParamsEdit
         } else {
             r.shapeMethod = 3;
         }
-		
+
         if (pp->locallab.spots.at(i).avoidgamutMethod == "NONE") {
             r.avoidgamutMethod = 0;
         } else if (pp->locallab.spots.at(i).avoidgamutMethod == "LAB") {
             r.avoidgamutMethod = 1;
         } else if (pp->locallab.spots.at(i).avoidgamutMethod == "XYZ") {
-            r.avoidgamutMethod= 2;
+            r.avoidgamutMethod = 2;
         } else if (pp->locallab.spots.at(i).avoidgamutMethod == "XYZREL") {
-            r.avoidgamutMethod= 3;
+            r.avoidgamutMethod = 3;
         } else if (pp->locallab.spots.at(i).avoidgamutMethod == "MUNS") {
-            r.avoidgamutMethod= 4;
-        } 
+            r.avoidgamutMethod = 4;
+        }
 
         r.locX = pp->locallab.spots.at(i).loc.at(0);
         r.locXL = pp->locallab.spots.at(i).loc.at(1);
@@ -348,31 +352,31 @@ void Locallab::read(const rtengine::procparams::ProcParams* pp, const ParamsEdit
         r.avoidneg = pp->locallab.spots.at(i).avoidneg;
         r.blwh = pp->locallab.spots.at(i).blwh;
         r.recurs = pp->locallab.spots.at(i).recurs;
-        r.laplac = true; //pp->locallab.spots.at(i).laplac;
+        r.laplac = true; // pp->locallab.spots.at(i).laplac;
         r.deltae = pp->locallab.spots.at(i).deltae;
         r.scopemask = pp->locallab.spots.at(i).scopemask;
         r.denoichmask = pp->locallab.spots.at(i).denoichmask;
         r.shortc = pp->locallab.spots.at(i).shortc;
         r.lumask = pp->locallab.spots.at(i).lumask;
-        //r.savrest = pp->locallab.spots.at(i).savrest;
+        // r.savrest = pp->locallab.spots.at(i).savrest;
 
         if (pp->locallab.spots.at(i).complexMethod == "sim") {
             r.complexMethod = 0;
-        } else  if (pp->locallab.spots.at(i).complexMethod == "mod") {
+        } else if (pp->locallab.spots.at(i).complexMethod == "mod") {
             r.complexMethod = 1;
-        } else  if (pp->locallab.spots.at(i).complexMethod == "all") {
+        } else if (pp->locallab.spots.at(i).complexMethod == "all") {
             r.complexMethod = 2;
         }
 
         if (pp->locallab.spots.at(i).wavMethod == "D2") {
             r.wavMethod = 0;
-        } else  if (pp->locallab.spots.at(i).wavMethod == "D4") {
+        } else if (pp->locallab.spots.at(i).wavMethod == "D4") {
             r.wavMethod = 1;
-        } else  if (pp->locallab.spots.at(i).wavMethod == "D6") {
+        } else if (pp->locallab.spots.at(i).wavMethod == "D6") {
             r.wavMethod = 2;
-        } else  if (pp->locallab.spots.at(i).wavMethod == "D10") {
+        } else if (pp->locallab.spots.at(i).wavMethod == "D10") {
             r.wavMethod = 3;
-        } else  if (pp->locallab.spots.at(i).wavMethod == "D14") {
+        } else if (pp->locallab.spots.at(i).wavMethod == "D14") {
             r.wavMethod = 4;
         } else  if (pp->locallab.spots.at(i).wavMethod == "D20") {
             r.wavMethod = 5;
@@ -404,7 +408,8 @@ void Locallab::read(const rtengine::procparams::ProcParams* pp, const ParamsEdit
         }
     }
 
-    // Specific case: if there is no spot, GUI isn't anymore editable (i.e. Locallab tool cannot be managed)
+    // Specific case: if there is no spot, GUI isn't anymore editable (i.e. Locallab
+    // tool cannot be managed)
     if (pp->locallab.spots.size() > 0) {
         setParamEditable(true);
     } else {
@@ -417,7 +422,7 @@ void Locallab::read(const rtengine::procparams::ProcParams* pp, const ParamsEdit
     // Note: No need to manage pedited as batch mode is deactivated for Locallab
 }
 
-void Locallab::write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedited)
+void Locallab::write(rtengine::procparams::ProcParams *pp, ParamsEdited *pedited)
 {
     // Update Locallab activation state
     pp->locallab.enabled = getEnabled();
@@ -429,12 +434,12 @@ void Locallab::write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedited
 
     const int spotPanelEvent = expsettings->getEventType();
     int spotIndex;
-    rtengine::procparams::LocallabParams::LocallabSpot* newSpot;
+    rtengine::procparams::LocallabParams::LocallabSpot *newSpot;
 
     int imW, imH; // Size of image
     int prW, prH; // Size of preview area
     int prX, prY; // Coord of preview area center
-    EditDataProvider* const provider = expsettings->getEditProvider();
+    EditDataProvider *const provider = expsettings->getEditProvider();
 
     int toolNb;
 
@@ -448,7 +453,7 @@ void Locallab::write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedited
 
             if (newSpot->shape == "ELI") {
                 r.shape = 0;
-            } else if (newSpot->shape == "RECT"){
+            } else if (newSpot->shape == "RECT") {
                 r.shape = 1;
             }
 
@@ -458,14 +463,13 @@ void Locallab::write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedited
                 r.prevMethod = 1;
             }
 
-
             if (newSpot->spotMethod == "norm") {
                 r.spotMethod = 0;
-            } else if(newSpot->spotMethod == "exc") {
+            } else if (newSpot->spotMethod == "exc") {
                 r.spotMethod = 1;
-            } else if(newSpot->spotMethod == "full") {
+            } else if (newSpot->spotMethod == "full") {
                 r.spotMethod = 2;
-            } else if(newSpot->spotMethod == "main") {
+            } else if (newSpot->spotMethod == "main") {
                 r.spotMethod = 3;
             }
 
@@ -502,13 +506,25 @@ void Locallab::write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedited
 
                 if (imW && imH) { // Image loaded
                     // Spot center position computation
-                    newSpot->centerX = rtengine::LIM(int(int((double)prX - (double)imW / 2.) * 2000. / (double)imW), -1000, 1000);
-                    newSpot->centerY = rtengine::LIM(int(int((double)prY - (double)imH / 2.) * 2000. / (double)imH), -1000, 1000);
+                    newSpot->centerX = rtengine::LIM(
+                        int(int((double)prX - (double)imW / 2.) * 2000. / (double)imW),
+                        -1000, 1000);
+                    newSpot->centerY = rtengine::LIM(
+                        int(int((double)prY - (double)imH / 2.) * 2000. / (double)imH),
+                        -1000, 1000);
                     // Ellipse/rectangle size computation
-                    newSpot->loc.at(0) = rtengine::LIM(int(((double)prW / 2. - 5.) * 2000. / (double)imW), 2, newSpot->loc.at(0));
-                    newSpot->loc.at(1) = rtengine::LIM(int(((double)prW / 2. - 5.) * 2000. / (double)imW), 2, newSpot->loc.at(1));
-                    newSpot->loc.at(2) = rtengine::LIM(int(((double)prH / 2. - 5.) * 2000. / (double)imH), 2, newSpot->loc.at(2));
-                    newSpot->loc.at(3) = rtengine::LIM(int(((double)prH / 2. - 5.) * 2000. / (double)imH), 2, newSpot->loc.at(3));
+                    newSpot->loc.at(0) = rtengine::LIM(
+                        int(((double)prW / 2. - 5.) * 2000. / (double)imW), 2,
+                        newSpot->loc.at(0));
+                    newSpot->loc.at(1) = rtengine::LIM(
+                        int(((double)prW / 2. - 5.) * 2000. / (double)imW), 2,
+                        newSpot->loc.at(1));
+                    newSpot->loc.at(2) = rtengine::LIM(
+                        int(((double)prH / 2. - 5.) * 2000. / (double)imH), 2,
+                        newSpot->loc.at(2));
+                    newSpot->loc.at(3) = rtengine::LIM(
+                        int(((double)prH / 2. - 5.) * 2000. / (double)imH), 2,
+                        newSpot->loc.at(3));
                 }
             }
 
@@ -550,13 +566,13 @@ void Locallab::write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedited
             r.denoichmask = newSpot->denoichmask;
             r.shortc = newSpot->shortc;
             r.lumask = newSpot->lumask;
-            //r.savrest = newSpot->savrest;
+            // r.savrest = newSpot->savrest;
 
             if (newSpot->complexMethod == "sim") {
                 r.complexMethod = 0;
-            } else  if (newSpot->complexMethod == "mod") {
+            } else if (newSpot->complexMethod == "mod") {
                 r.complexMethod = 1;
-            } else  if (newSpot->complexMethod == "all") {
+            } else if (newSpot->complexMethod == "all") {
                 r.complexMethod = 2;
             }
 
@@ -631,7 +647,9 @@ void Locallab::write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedited
                     // Select the first remaining spot before deleted one
                     if (pp->locallab.spots.size() > 0) {
                         for (int j = i - 1; j >= 0; j--) {
-                            if (expsettings->setSelectedSpot(j)) { // True if an existing spot has been selected on controlspotpanel
+                            if (expsettings->setSelectedSpot(
+                                    j)) { // True if an existing spot has been selected
+                                          // on controlspotpanel
                                 pp->locallab.selspot = j;
 
                                 break;
@@ -674,7 +692,8 @@ void Locallab::write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedited
                     // Update default values according to selected spot
                     setDefaults(pp, pedited);
 
-                    // Note: No need to manage pedited as batch mode is deactivated for Locallab
+                    // Note: No need to manage pedited as batch mode is deactivated for
+                    // Locallab
 
                     break;
                 }
@@ -682,7 +701,7 @@ void Locallab::write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedited
 
             break;
 
-        case (ControlSpotPanel::SpotSelection):  // Spot selection event
+        case (ControlSpotPanel::SpotSelection): // Spot selection event
             pp->locallab.selspot = expsettings->getSelectedSpot();
 
             // Update control spots and Locallab tools GUI with selected spot
@@ -710,19 +729,20 @@ void Locallab::write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedited
                     toollist->addToolRow(tool->getToolName(), toolNb);
                 }
             }
-/*
-            // Update locallab tools mask background
-            if (pp->locallab.selspot < (int)maskBackRef.size()) {
-                const double huer = maskBackRef.at(pp->locallab.selspot).huer;
-                const double lumar = maskBackRef.at(pp->locallab.selspot).lumar;
-                const double chromar = maskBackRef.at(pp->locallab.selspot).chromar;
-                const float fab = maskBackRef.at(pp->locallab.selspot).fab;
+            /*
+                        // Update locallab tools mask background
+                        if (pp->locallab.selspot < (int)maskBackRef.size()) {
+                            const double huer =
+               maskBackRef.at(pp->locallab.selspot).huer; const double lumar =
+               maskBackRef.at(pp->locallab.selspot).lumar; const double chromar =
+               maskBackRef.at(pp->locallab.selspot).chromar; const float fab =
+               maskBackRef.at(pp->locallab.selspot).fab;
 
-                for (auto tool : locallabTools) {
-                    tool->refChanged(huer, lumar, chromar, fab);
-                }
-            }
-*/
+                            for (auto tool : locallabTools) {
+                                tool->refChanged(huer, lumar, chromar, fab);
+                            }
+                        }
+            */
             // Update Locallab Retinex tool min/max
             if (pp->locallab.selspot < (int)retiMinMax.size()) {
                 const double cdma = retiMinMax.at(pp->locallab.selspot).cdma;
@@ -734,20 +754,22 @@ void Locallab::write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedited
                 const double Tmin = retiMinMax.at(pp->locallab.selspot).Tmin;
                 const double Tmax = retiMinMax.at(pp->locallab.selspot).Tmax;
 
-                expreti.updateMinMax(cdma, cdmin, mini, maxi, Tmean, Tsigma, Tmin, Tmax);
+                expreti.updateMinMax(
+                    cdma, cdmin, mini, maxi, Tmean, Tsigma, Tmin, Tmax);
             }
             // Update Locallab Denoise tool lum/chro
-            if (pp->locallab.selspot < (int) denoiselc.size()) {
+            if (pp->locallab.selspot < (int)denoiselc.size()) {
                 const double highres = denoiselc.at(pp->locallab.selspot).highres;
                 const double nres = denoiselc.at(pp->locallab.selspot).nres;
                 const double highres46 = denoiselc.at(pp->locallab.selspot).highres46;
                 const double nres46 = denoiselc.at(pp->locallab.selspot).nres46;
-                const  double Lhighres = denoiselc.at(pp->locallab.selspot).Lhighres;
+                const double Lhighres = denoiselc.at(pp->locallab.selspot).Lhighres;
                 const double Lnres = denoiselc.at(pp->locallab.selspot).Lnres;
                 const double Lhighres46 = denoiselc.at(pp->locallab.selspot).Lhighres46;
                 const double Lnres46 = denoiselc.at(pp->locallab.selspot).Lnres46;
 
-                expblur.updatedenlc(highres, nres, highres46, nres46, Lhighres, Lnres, Lhighres46, Lnres46);
+                expblur.updatedenlc(highres, nres, highres46, nres46, Lhighres, Lnres,
+                    Lhighres46, Lnres46);
             }
 
             // Update default values according to selected spot
@@ -763,7 +785,8 @@ void Locallab::write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedited
 
             for (int i = 0; i < (int)pp->locallab.spots.size(); i++) {
                 if (i == spotIndex) {
-                    newSpot = new LocallabParams::LocallabSpot(pp->locallab.spots.at(i));
+                    newSpot =
+                        new LocallabParams::LocallabSpot(pp->locallab.spots.at(i));
                     break;
                 }
             }
@@ -774,12 +797,13 @@ void Locallab::write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedited
 
             // Spot creation (initialization at currently selected spot)
             ControlSpotPanel::SpotRow r;
-            r.name = newSpot->name = newSpot->name + " - " + M("TP_LOCALLAB_DUPLSPOTNAME");
+            r.name = newSpot->name =
+                newSpot->name + " - " + M("TP_LOCALLAB_DUPLSPOTNAME");
             r.isvisible = newSpot->isvisible;
 
             if (newSpot->shape == "ELI") {
                 r.shape = 0;
-            } else if (newSpot->shape == "RECT"){
+            } else if (newSpot->shape == "RECT") {
                 r.shape = 1;
             }
 
@@ -798,7 +822,7 @@ void Locallab::write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedited
             } else if (newSpot->spotMethod == "main") {
                 r.spotMethod = 3;
             }
-            
+
             r.sensiexclu = newSpot->sensiexclu;
             r.structexclu = newSpot->structexclu;
 
@@ -811,19 +835,23 @@ void Locallab::write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedited
             } else {
                 r.shapeMethod = 3;
             }
-            //printf("n0=%f n1=%f n2=%f n3=%f\n", (double) newSpot->loc.at(0), (double) newSpot->loc.at(1), (double) newSpot->loc.at(2), (double) newSpot->loc.at(3));
+            // printf("n0=%f n1=%f n2=%f n3=%f\n", (double) newSpot->loc.at(0), (double)
+            // newSpot->loc.at(1), (double) newSpot->loc.at(2), (double)
+            // newSpot->loc.at(3));
             if (newSpot->avoidgamutMethod == "NONE") {
                 r.avoidgamutMethod = 0;
             } else if (newSpot->avoidgamutMethod == "LAB") {
                 r.avoidgamutMethod = 1;
-            } else if (newSpot->avoidgamutMethod== "XYZ") {
+            } else if (newSpot->avoidgamutMethod == "XYZ") {
                 r.avoidgamutMethod = 2;
-            } else if (newSpot->avoidgamutMethod== "XYZREL") {
+            } else if (newSpot->avoidgamutMethod == "XYZREL") {
                 r.avoidgamutMethod = 3;
-             } else if (newSpot->avoidgamutMethod== "MUNS") {
+            } else if (newSpot->avoidgamutMethod == "MUNS") {
                 r.avoidgamutMethod = 4;
-           } 
-            //printf("n0=%f n1=%f n2=%f n3=%f\n", (double) newSpot->loc.at(0), (double) newSpot->loc.at(1), (double) newSpot->loc.at(2), (double) newSpot->loc.at(3));
+            }
+            // printf("n0=%f n1=%f n2=%f n3=%f\n", (double) newSpot->loc.at(0), (double)
+            // newSpot->loc.at(1), (double) newSpot->loc.at(2), (double)
+            // newSpot->loc.at(3));
 
             // Calculate spot size and center position according to preview area
             if (provider && !batchMode) {
@@ -833,19 +861,27 @@ void Locallab::write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedited
 
                 if (imW && imH) { // Image loaded
                     // Spot center position computation
-                    newSpot->centerX = rtengine::LIM(int(int((double)prX - (double)imW / 2.) * 2000. / (double)imW), -1000, 1000);
-                    newSpot->centerY = rtengine::LIM(int(int((double)prY - (double)imH / 2.) * 2000. / (double)imH), -1000, 1000);
+                    newSpot->centerX = rtengine::LIM(
+                        int(int((double)prX - (double)imW / 2.) * 2000. / (double)imW),
+                        -1000, 1000);
+                    newSpot->centerY = rtengine::LIM(
+                        int(int((double)prY - (double)imH / 2.) * 2000. / (double)imH),
+                        -1000, 1000);
                     // Ellipse/rectangle size computation
                     /*
-                    newSpot->loc.at(0) = rtengine::LIM(int(((double)prW / 2. - 5.) * 2000. / (double)imW), 2, newSpot->loc.at(0));
-                    newSpot->loc.at(1) = rtengine::LIM(int(((double)prW / 2. - 5.) * 2000. / (double)imW), 2, newSpot->loc.at(1));
-                    newSpot->loc.at(2) = rtengine::LIM(int(((double)prH / 2. - 5.) * 2000. / (double)imH), 2, newSpot->loc.at(2));
-                    newSpot->loc.at(3) = rtengine::LIM(int(((double)prH / 2. - 5.) * 2000. / (double)imH), 2, newSpot->loc.at(3));
+                    newSpot->loc.at(0) = rtengine::LIM(int(((double)prW / 2. - 5.) *
+                    2000. / (double)imW), 2, newSpot->loc.at(0)); newSpot->loc.at(1) =
+                    rtengine::LIM(int(((double)prW / 2. - 5.) * 2000. / (double)imW), 2,
+                    newSpot->loc.at(1)); newSpot->loc.at(2) =
+                    rtengine::LIM(int(((double)prH / 2. - 5.) * 2000. / (double)imH), 2,
+                    newSpot->loc.at(2)); newSpot->loc.at(3) =
+                    rtengine::LIM(int(((double)prH / 2. - 5.) * 2000. / (double)imH), 2,
+                    newSpot->loc.at(3));
                     */
                 }
             }
 
-            if(r.spotMethod == 0 || r.spotMethod == 1 ) {
+            if (r.spotMethod == 0 || r.spotMethod == 1) {
                 r.locX = newSpot->loc.at(0);
                 r.locXL = newSpot->loc.at(1);
                 r.locY = newSpot->loc.at(2);
@@ -891,13 +927,13 @@ void Locallab::write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedited
             r.denoichmask = newSpot->denoichmask;
             r.shortc = newSpot->shortc;
             r.lumask = newSpot->lumask;
-            //r.savrest = newSpot->savrest;
+            // r.savrest = newSpot->savrest;
 
             if (newSpot->complexMethod == "sim") {
                 r.complexMethod = 0;
-            } else  if (newSpot->complexMethod == "mod") {
+            } else if (newSpot->complexMethod == "mod") {
                 r.complexMethod = 1;
-            } else  if (newSpot->complexMethod == "all") {
+            } else if (newSpot->complexMethod == "all") {
                 r.complexMethod = 2;
             }
 
@@ -920,7 +956,6 @@ void Locallab::write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedited
             // ProcParams update
             pp->locallab.spots.push_back(*newSpot);
             pp->locallab.selspot = pp->locallab.spots.size() - 1;
-
 
             // New created spot selection
             expsettings->setSelectedSpot(pp->locallab.selspot);
@@ -956,7 +991,8 @@ void Locallab::write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedited
             break;
         }
 
-        case (ControlSpotPanel::SpotAllVisibilityChanged): { // Event when updating visibility of all spots
+        case (ControlSpotPanel::SpotAllVisibilityChanged): { // Event when updating
+                                                             // visibility of all spots
             const auto r = expsettings->getSpot(expsettings->getSelectedSpot());
 
             // ProcParams update
@@ -977,7 +1013,8 @@ void Locallab::write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedited
                 if (pp->locallab.selspot < (int)pp->locallab.spots.size()) {
                     // Control spot settings
                     pp->locallab.spots.at(pp->locallab.selspot).name = r->name;
-                    pp->locallab.spots.at(pp->locallab.selspot).isvisible = r->isvisible;
+                    pp->locallab.spots.at(pp->locallab.selspot).isvisible =
+                        r->isvisible;
 
                     if (r->shape == 0) {
                         pp->locallab.spots.at(pp->locallab.selspot).shape = "ELI";
@@ -991,10 +1028,9 @@ void Locallab::write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedited
                         pp->locallab.spots.at(pp->locallab.selspot).prevMethod = "show";
                     }
 
-
                     if (r->spotMethod == 0) {
                         pp->locallab.spots.at(pp->locallab.selspot).spotMethod = "norm";
-                    } else if (r->spotMethod == 1){
+                    } else if (r->spotMethod == 1) {
                         pp->locallab.spots.at(pp->locallab.selspot).spotMethod = "exc";
                     } else if (r->spotMethod == 2) {
                         pp->locallab.spots.at(pp->locallab.selspot).spotMethod = "full";
@@ -1002,30 +1038,39 @@ void Locallab::write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedited
                         pp->locallab.spots.at(pp->locallab.selspot).spotMethod = "main";
                     }
 
-                    pp->locallab.spots.at(pp->locallab.selspot).sensiexclu = r->sensiexclu;
-                    pp->locallab.spots.at(pp->locallab.selspot).structexclu = r->structexclu;
+                    pp->locallab.spots.at(pp->locallab.selspot).sensiexclu =
+                        r->sensiexclu;
+                    pp->locallab.spots.at(pp->locallab.selspot).structexclu =
+                        r->structexclu;
 
                     if (r->shapeMethod == 0) {
                         pp->locallab.spots.at(pp->locallab.selspot).shapeMethod = "IND";
                     } else if (r->shapeMethod == 1) {
                         pp->locallab.spots.at(pp->locallab.selspot).shapeMethod = "SYM";
                     } else if (r->shapeMethod == 2) {
-                        pp->locallab.spots.at(pp->locallab.selspot).shapeMethod = "INDSL";
+                        pp->locallab.spots.at(pp->locallab.selspot).shapeMethod =
+                            "INDSL";
                     } else {
-                        pp->locallab.spots.at(pp->locallab.selspot).shapeMethod = "SYMSL";
+                        pp->locallab.spots.at(pp->locallab.selspot).shapeMethod =
+                            "SYMSL";
                     }
 
                     if (r->avoidgamutMethod == 0) {
-                        pp->locallab.spots.at(pp->locallab.selspot).avoidgamutMethod = "NONE";
+                        pp->locallab.spots.at(pp->locallab.selspot).avoidgamutMethod =
+                            "NONE";
                     } else if (r->avoidgamutMethod == 1) {
-                        pp->locallab.spots.at(pp->locallab.selspot).avoidgamutMethod = "LAB";
+                        pp->locallab.spots.at(pp->locallab.selspot).avoidgamutMethod =
+                            "LAB";
                     } else if (r->avoidgamutMethod == 2) {
-                        pp->locallab.spots.at(pp->locallab.selspot).avoidgamutMethod = "XYZ";
+                        pp->locallab.spots.at(pp->locallab.selspot).avoidgamutMethod =
+                            "XYZ";
                     } else if (r->avoidgamutMethod == 3) {
-                        pp->locallab.spots.at(pp->locallab.selspot).avoidgamutMethod = "XYZREL";
+                        pp->locallab.spots.at(pp->locallab.selspot).avoidgamutMethod =
+                            "XYZREL";
                     } else if (r->avoidgamutMethod == 4) {
-                        pp->locallab.spots.at(pp->locallab.selspot).avoidgamutMethod = "MUNS";
-                    } 
+                        pp->locallab.spots.at(pp->locallab.selspot).avoidgamutMethod =
+                            "MUNS";
+                    }
 
                     pp->locallab.spots.at(pp->locallab.selspot).loc.at(0) = r->locX;
                     pp->locallab.spots.at(pp->locallab.selspot).loc.at(1) = r->locXL;
@@ -1036,14 +1081,18 @@ void Locallab::write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedited
                     pp->locallab.spots.at(pp->locallab.selspot).circrad = r->circrad;
 
                     if (r->qualityMethod == 0) {
-                        pp->locallab.spots.at(pp->locallab.selspot).qualityMethod = "enh";
+                        pp->locallab.spots.at(pp->locallab.selspot).qualityMethod =
+                            "enh";
                     } else {
-                        pp->locallab.spots.at(pp->locallab.selspot).qualityMethod = "enhden";
+                        pp->locallab.spots.at(pp->locallab.selspot).qualityMethod =
+                            "enhden";
                     }
 
                     pp->locallab.spots.at(pp->locallab.selspot).transit = r->transit;
-                    pp->locallab.spots.at(pp->locallab.selspot).transitweak = r->transitweak;
-                    pp->locallab.spots.at(pp->locallab.selspot).transitgrad = r->transitgrad;
+                    pp->locallab.spots.at(pp->locallab.selspot).transitweak =
+                        r->transitweak;
+                    pp->locallab.spots.at(pp->locallab.selspot).transitgrad =
+                        r->transitgrad;
                     pp->locallab.spots.at(pp->locallab.selspot).feather = r->feather;
                     pp->locallab.spots.at(pp->locallab.selspot).struc = r->struc;
                     pp->locallab.spots.at(pp->locallab.selspot).thresh = r->thresh;
@@ -1051,7 +1100,8 @@ void Locallab::write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedited
                     pp->locallab.spots.at(pp->locallab.selspot).balan = r->balan;
                     pp->locallab.spots.at(pp->locallab.selspot).balanh = r->balanh;
                     pp->locallab.spots.at(pp->locallab.selspot).colorde = r->colorde;
-                    pp->locallab.spots.at(pp->locallab.selspot).colorscope = r->colorscope;
+                    pp->locallab.spots.at(pp->locallab.selspot).colorscope =
+                        r->colorscope;
                     pp->locallab.spots.at(pp->locallab.selspot).avoidrad = r->avoidrad;
                     pp->locallab.spots.at(pp->locallab.selspot).hishow = r->hishow;
                     pp->locallab.spots.at(pp->locallab.selspot).activ = r->activ;
@@ -1060,18 +1110,23 @@ void Locallab::write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedited
                     pp->locallab.spots.at(pp->locallab.selspot).recurs = r->recurs;
                     pp->locallab.spots.at(pp->locallab.selspot).laplac = r->laplac;
                     pp->locallab.spots.at(pp->locallab.selspot).deltae = r->deltae;
-                    pp->locallab.spots.at(pp->locallab.selspot).scopemask = r->scopemask;
-                    pp->locallab.spots.at(pp->locallab.selspot).denoichmask = r->denoichmask;
+                    pp->locallab.spots.at(pp->locallab.selspot).scopemask =
+                        r->scopemask;
+                    pp->locallab.spots.at(pp->locallab.selspot).denoichmask =
+                        r->denoichmask;
                     pp->locallab.spots.at(pp->locallab.selspot).shortc = r->shortc;
                     pp->locallab.spots.at(pp->locallab.selspot).lumask = r->lumask;
-                    //pp->locallab.spots.at(pp->locallab.selspot).savrest = r->savrest;
+                    // pp->locallab.spots.at(pp->locallab.selspot).savrest = r->savrest;
 
                     if (r->complexMethod == 0) {
-                        pp->locallab.spots.at(pp->locallab.selspot).complexMethod = "sim";
+                        pp->locallab.spots.at(pp->locallab.selspot).complexMethod =
+                            "sim";
                     } else if (r->complexMethod == 1) {
-                        pp->locallab.spots.at(pp->locallab.selspot).complexMethod = "mod";
+                        pp->locallab.spots.at(pp->locallab.selspot).complexMethod =
+                            "mod";
                     } else if (r->complexMethod == 2) {
-                        pp->locallab.spots.at(pp->locallab.selspot).complexMethod = "all";
+                        pp->locallab.spots.at(pp->locallab.selspot).complexMethod =
+                            "all";
                     }
 
                     if (r->wavMethod == 0) {
@@ -1093,23 +1148,26 @@ void Locallab::write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedited
                     tool->write(pp, pedited);
                 }
 
-                // Note: No need to manage pedited as batch mode is deactivated for Locallab
+                // Note: No need to manage pedited as batch mode is deactivated for
+                // Locallab
             }
     }
 }
 
 /*
  * Note:
- * By default, this function is called when a new image/profile is loaded (after read function). In this case,
- * if there is at least one spot, default values are set to selected spot ones.
- * To keep having default values according to selected spot, this function shall also be called in the following
- * situations (after having called write function for controlspotpanel):
+ * By default, this function is called when a new image/profile is loaded (after read
+ * function). In this case, if there is at least one spot, default values are set to
+ * selected spot ones. To keep having default values according to selected spot, this
+ * function shall also be called in the following situations (after having called write
+ * function for controlspotpanel):
  * - After spot creation
  * - After spot deletion
  * - After spot selection
  * - After spot duplication
  */
-void Locallab::setDefaults(const rtengine::procparams::ProcParams* defParams, const ParamsEdited* pedited)
+void Locallab::setDefaults(
+    const rtengine::procparams::ProcParams *defParams, const ParamsEdited *pedited)
 {
     // Set default values in spot panel control
     expsettings->setDefaults(defParams, pedited);
@@ -1120,7 +1178,7 @@ void Locallab::setDefaults(const rtengine::procparams::ProcParams* defParams, co
     }
 }
 
-void Locallab::setListener(ToolPanelListener* tpl)
+void Locallab::setListener(ToolPanelListener *tpl)
 {
     this->listener = tpl;
 
@@ -1157,9 +1215,9 @@ void Locallab::denChanged(const std::vector<locallabDenoiseLC> &denlc, int selsp
 {
     // Saving transmitted min/max data
     denoiselc = denlc;
-    
-    //Update Locallab Denoise tool lum chro
-    if (selspot < (int) denoiselc.size()) {
+
+    // Update Locallab Denoise tool lum chro
+    if (selspot < (int)denoiselc.size()) {
         const double highres = denoiselc.at(selspot).highres;
         const double nres = denoiselc.at(selspot).nres;
         const double highres46 = denoiselc.at(selspot).highres46;
@@ -1169,64 +1227,60 @@ void Locallab::denChanged(const std::vector<locallabDenoiseLC> &denlc, int selsp
         const double Lhighres46 = denoiselc.at(selspot).Lhighres46;
         const double Lnres46 = denoiselc.at(selspot).Lnres46;
 
-        expblur.updatedenlc(highres, nres, highres46, nres46, Lhighres, Lnres, Lhighres46, Lnres46);
+        expblur.updatedenlc(
+            highres, nres, highres46, nres46, Lhighres, Lnres, Lhighres46, Lnres46);
     }
-    
 }
-// New fonctions to change Scope color 
+// New fonctions to change Scope color
 void Locallab::scopeChangedcol(int scope, int selspot, bool enab)
 {
-    if(enab) {
+    if (enab) {
         expcolor.updateguiscopecolor(scope);
     }
-   
 }
 // New fonctions to change Scope Shadows Highlight
 
 void Locallab::scopeChangedsh(int scope, int selspot, bool enab)
 {
-    if(enab) {
-        expshadhigh.updateguiscopesahd(scope); 
+    if (enab) {
+        expshadhigh.updateguiscopesahd(scope);
     }
-   
 }
 
 // New fonctions to change Scope Vibrance
 
 void Locallab::scopeChangedvib(int scope, int selspot, bool enab)
 {
-    if(enab) {
-        expvibrance.updateguiscopevib(scope); 
+    if (enab) {
+        expvibrance.updateguiscopevib(scope);
     }
-   
 }
 
-//reinit expsettings
+// reinit expsettings
 void Locallab::scopeChangedset(int scope, int selspot, bool enab)
 {
-    if(enab) {
-        expsettings->updateguiscopeset(30);//30 defaut value..perhaps possible to pass default value ??
+    if (enab) {
+        expsettings->updateguiscopeset(
+            30); // 30 defaut value..perhaps possible to pass default value ??
     }
-   
 }
 
 void Locallab::sigChanged(const std::vector<locallabcieSIG> &ciesig, int selspot)
 {
-     cie_sig = ciesig;
+    cie_sig = ciesig;
 
-    if (selspot < (int) cie_sig.size()) {
+    if (selspot < (int)cie_sig.size()) {
         const double s1 = cie_sig.at(selspot).contsigq;
         const double s2 = cie_sig.at(selspot).lightsigq;
-        
+
         expcie.updatesigloc(s1, s2);
     }
-     
 }
 
 void Locallab::ciebefChanged(const std::vector<locallabcieBEF> &ciebef, int selspot)
 {
     cie_bef = ciebef;
-    if (selspot < (int) cie_bef.size()) {
+    if (selspot < (int)cie_bef.size()) {
         const double blackev = cie_bef.at(selspot).blackevbef;
         const double whiteev = cie_bef.at(selspot).whiteevbef;
         const double sourceg = cie_bef.at(selspot).sourcegbef;
@@ -1236,21 +1290,19 @@ void Locallab::ciebefChanged(const std::vector<locallabcieBEF> &ciebef, int sels
         const bool autocomput = cie_bef.at(selspot).autocomputbef;
         const bool autocie = cie_bef.at(selspot).autociebef;
 
-        if(autocomput) {
+        if (autocomput) {
             explog.updateAutocompute(blackev, whiteev, sourceg, sourceab, targetg, jz1);
         }
-        if(autocie) {
+        if (autocie) {
             expcie.updateAutocompute(blackev, whiteev, sourceg, sourceab, targetg, jz1);
         }
-
     }
-
 }
 
 void Locallab::maiChanged(const std::vector<locallabsetLC> &setlc, int selspot)
 {
     set_lc = setlc;
-    if (selspot < (int) set_lc.size()) {
+    if (selspot < (int)set_lc.size()) {
         const int spottype = set_lc.at(selspot).mainf;
         const bool iscolor = set_lc.at(selspot).iscolo;
         const bool issh = set_lc.at(selspot).iss;
@@ -1267,55 +1319,55 @@ void Locallab::maiChanged(const std::vector<locallabsetLC> &setlc, int selspot)
         const bool ismas = set_lc.at(selspot).isma;
         const bool isci = set_lc.at(selspot).isci;
 
-        if(iscolor) {
+        if (iscolor) {
             expcolor.updateguicolor(spottype);
         }
 
-        if(issh) {
+        if (issh) {
             expshadhigh.updateguishad(spottype);
         }
 
-        if(isvib) {
+        if (isvib) {
             expvibrance.updateguivib(spottype);
         }
 
-        if(isexpos) {
+        if (isexpos) {
             expexpose.updateguiexpos(spottype);
         }
 
-        if(issoft) {
+        if (issoft) {
             expsoft.updateguisoft(spottype);
         }
 
-        if(isblur) {
+        if (isblur) {
             expblur.updateguiblur(spottype);
         }
 
-        if(istom) {
+        if (istom) {
             exptonemap.updateguitone(spottype);
         }
 
-        if(isret) {
+        if (isret) {
             expreti.updateguireti(spottype);
         }
 
-        if(issharp) {
+        if (issharp) {
             expsharp.updateguisharp(spottype);
         }
 
-        if(iscont) {
+        if (iscont) {
             expcontrast.updateguicont(spottype);
         }
 
-        if(iscbdl) {
+        if (iscbdl) {
             expcbdl.updateguicbdl(spottype);
         }
 
-        if(islog) {
+        if (islog) {
             explog.updateguilog(spottype);
         }
 
-        if(ismas) {
+        if (ismas) {
             expmask.updateguimask(spottype);
         }
 
@@ -1369,19 +1421,18 @@ void Locallab::cieChanged(const std::vector<locallabcieLC> &cielc, int selspot)
 
         expcie.updateiPrimloc(r1, r2, g1, g2, b1, b2, w1, w2, m1, m2, me1, me2, pri, slg, lkg);
     }
-    
 }
 
-
-void Locallab::refChanged2(float *huerefp, float *chromarefp, float *lumarefp, float *fabrefp, int selspot)
+void Locallab::refChanged2(
+    float *huerefp, float *chromarefp, float *lumarefp, float *fabrefp, int selspot)
 {
-        const double huer = huerefp[selspot];
-        const double lumar = lumarefp[selspot];
-        const double chromar = chromarefp[selspot];
-        const float fab = fabrefp[selspot];
-        for (auto tool : locallabTools) {
-            tool->refChanged(huer, lumar, chromar, fab);
-        }
+    const double huer = huerefp[selspot];
+    const double lumar = lumarefp[selspot];
+    const double chromar = chromarefp[selspot];
+    const float fab = fabrefp[selspot];
+    for (auto tool : locallabTools) {
+        tool->refChanged(huer, lumar, chromar, fab);
+    }
 }
 /*
 void Locallab::refChanged(const std::vector<locallabRef> &ref, int selspot)
@@ -1446,44 +1497,46 @@ Locallab::llMaskVisibility Locallab::getMaskVisibility() const
     const bool prevDeltaE = expsettings->isDeltaEPrevActive();
 
     // Get mask preview from Locallab tools
-    int colorMask, colorMaskinv, expMask, expMaskinv, shMask, shMaskinv, vibMask, softMask, blMask, tmMask, retiMask, sharMask, lcMask, cbMask, logMask, maskMask, cieMask;
+    int colorMask, colorMaskinv, expMask, expMaskinv, shMask, shMaskinv, vibMask,
+        softMask, blMask, tmMask, retiMask, sharMask, lcMask, cbMask, logMask, maskMask,
+        cieMask;
 
     for (auto tool : locallabTools) {
-        tool->getMaskView(colorMask, colorMaskinv, expMask, expMaskinv, shMask, shMaskinv, vibMask, softMask, blMask, tmMask, retiMask, sharMask, lcMask, cbMask, logMask, maskMask, cieMask);
+        tool->getMaskView(colorMask, colorMaskinv, expMask, expMaskinv, shMask,
+            shMaskinv, vibMask, softMask, blMask, tmMask, retiMask, sharMask, lcMask,
+            cbMask, logMask, maskMask, cieMask);
     }
 
     // Indicate to spot control panel if one mask preview is active
-    const bool isMaskActive = (colorMask == 0) || (colorMaskinv == 0) || (expMask == 0) || (expMaskinv == 0) ||
-                              (shMask == 0) || (shMaskinv == 0) || (vibMask == 0) || (softMask == 0) ||
-                              (blMask == 0) || (tmMask == 0) || (retiMask == 0) || (sharMask == 0) ||
-                              (lcMask == 0) || (cbMask == 0) || (logMask == 0) || (maskMask == 0) || (cieMask == 0);
+    const bool isMaskActive = (colorMask == 0) || (colorMaskinv == 0) ||
+                              (expMask == 0) || (expMaskinv == 0) || (shMask == 0) ||
+                              (shMaskinv == 0) || (vibMask == 0) || (softMask == 0) ||
+                              (blMask == 0) || (tmMask == 0) || (retiMask == 0) ||
+                              (sharMask == 0) || (lcMask == 0) || (cbMask == 0) ||
+                              (logMask == 0) || (maskMask == 0) || (cieMask == 0);
     expsettings->setMaskPrevActive(isMaskActive);
 
-    return {prevDeltaE, colorMask, colorMaskinv, expMask, expMaskinv, shMask, shMaskinv, vibMask, softMask, blMask, tmMask, retiMask, sharMask, lcMask, cbMask, logMask, maskMask, cieMask};
+    return {prevDeltaE, colorMask, colorMaskinv, expMask, expMaskinv, shMask, shMaskinv,
+        vibMask, softMask, blMask, tmMask, retiMask, sharMask, lcMask, cbMask, logMask,
+        maskMask, cieMask};
 }
 
-//void Locallab::resetshowPressed()
+// void Locallab::resetshowPressed()
 //{
-//    // Raise event to reset mask
-//    if (listener) {
-//        listener->panelChanged(Evlocallabshowreset, "");
-//    }
-//}
+//     // Raise event to reset mask
+//     if (listener) {
+//         listener->panelChanged(Evlocallabshowreset, "");
+//     }
+// }
 
-void Locallab::setEditProvider(EditDataProvider * provider)
+void Locallab::setEditProvider(EditDataProvider *provider)
 {
     expsettings->setEditProvider(provider);
 }
 
-void Locallab::subscribe()
-{
-    expsettings->subscribe();
-}
+void Locallab::subscribe() { expsettings->subscribe(); }
 
-void Locallab::unsubscribe()
-{
-    expsettings->unsubscribe();
-}
+void Locallab::unsubscribe() { expsettings->unsubscribe(); }
 
 void Locallab::enabledChanged()
 {
@@ -1501,7 +1554,7 @@ void Locallab::autoOpenCurve()
     // TODO Actually autoOpenCurve only considers linearity state of selected spot curve
 }
 
-void Locallab::foldAllButOne(LocallabTool* except)
+void Locallab::foldAllButOne(LocallabTool *except)
 {
     for (auto tool : locallabTools) {
         if (tool != except) {
@@ -1536,12 +1589,9 @@ void Locallab::updateShowtooltipVisibility(bool showtooltip)
     }
 }
 
-void Locallab::spotNameChanged(const Glib::ustring &newName)
-{
-    spotName = newName;
-}
+void Locallab::spotNameChanged(const Glib::ustring &newName) { spotName = newName; }
 
-void Locallab::addTool(Gtk::Box* where, LocallabTool* tool)
+void Locallab::addTool(Gtk::Box *where, LocallabTool *tool)
 {
     tool->getExpander()->setLevel(3);
     where->pack_start(*tool->getExpander(), false, false);
@@ -1553,7 +1603,8 @@ void Locallab::addTool(Gtk::Box* where, LocallabTool* tool)
 void Locallab::setParamEditable(bool cond)
 {
     // Update params editable state for controlspotpanel
-    expsettings->setParamEditable(cond); // TODO Move this code to controlspotpanel.cc when there is zero spot
+    expsettings->setParamEditable(
+        cond); // TODO Move this code to controlspotpanel.cc when there is zero spot
 
     // Enable/disable possibility to add Locallab tool
     toollist->set_sensitive(cond);
@@ -1580,7 +1631,7 @@ void Locallab::resetToolMaskView()
     }
 }
 
-void Locallab::resetOtherMaskView(LocallabTool* current)
+void Locallab::resetOtherMaskView(LocallabTool *current)
 {
     // Reset deltaE preview
     expsettings->resetDeltaEPreview();
@@ -1593,7 +1644,7 @@ void Locallab::resetOtherMaskView(LocallabTool* current)
     }
 }
 
-void Locallab::toolRemoved(LocallabTool* current)
+void Locallab::toolRemoved(LocallabTool *current)
 {
     // Update tool list widget according to removed tool
     int toolNb = 0;

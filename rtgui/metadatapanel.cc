@@ -1,5 +1,5 @@
 /** -*- C++ -*-
- *  
+ *
  *  This file is part of RawTherapee.
  *
  *  Copyright (c) 2017 Alberto Griggio <alberto.griggio@gmail.com>
@@ -25,13 +25,15 @@
 using namespace rtengine;
 using namespace rtengine::procparams;
 
-
-MetaDataPanel::MetaDataPanel() : EvMetaDataMode(ProcEventMapper::getInstance()->newEvent(M_VOID, "HISTORY_MSG_METADATA_MODE"))
+MetaDataPanel::MetaDataPanel() :
+    EvMetaDataMode(
+        ProcEventMapper::getInstance()->newEvent(M_VOID, "HISTORY_MSG_METADATA_MODE"))
 {
     set_orientation(Gtk::ORIENTATION_VERTICAL);
 
     Gtk::Box *box = Gtk::manage(new Gtk::Box());
-    box->pack_start(*Gtk::manage(new Gtk::Label(M("TP_METADATA_MODE") + ": ")), Gtk::PACK_SHRINK, 4);
+    box->pack_start(*Gtk::manage(new Gtk::Label(M("TP_METADATA_MODE") + ": ")),
+        Gtk::PACK_SHRINK, 4);
     metadataMode = Gtk::manage(new MyComboBoxText());
     metadataMode->append(M("TP_METADATA_TUNNEL"));
     metadataMode->append(M("TP_METADATA_EDIT"));
@@ -40,7 +42,8 @@ MetaDataPanel::MetaDataPanel() : EvMetaDataMode(ProcEventMapper::getInstance()->
     box->pack_end(*metadataMode, Gtk::PACK_EXPAND_WIDGET, 4);
     pack_start(*box, Gtk::PACK_SHRINK, 4);
 
-    metadataMode->signal_changed().connect(sigc::mem_fun(*this, &MetaDataPanel::metaDataModeChanged));
+    metadataMode->signal_changed().connect(
+        sigc::mem_fun(*this, &MetaDataPanel::metaDataModeChanged));
 
     tagsNotebook = Gtk::manage(new Gtk::Notebook());
     exifpanel = new ExifPanel();
@@ -52,13 +55,11 @@ MetaDataPanel::MetaDataPanel() : EvMetaDataMode(ProcEventMapper::getInstance()->
     pack_end(*tagsNotebook);
 }
 
-
 MetaDataPanel::~MetaDataPanel()
 {
     delete iptcpanel;
     delete exifpanel;
 }
-
 
 void MetaDataPanel::setBatchMode(bool batchMode)
 {
@@ -68,8 +69,8 @@ void MetaDataPanel::setBatchMode(bool batchMode)
     tagsNotebook->remove_page(-1);
 }
 
-
-void MetaDataPanel::read(const rtengine::procparams::ProcParams* pp, const ParamsEdited* pedited)
+void MetaDataPanel::read(
+    const rtengine::procparams::ProcParams *pp, const ParamsEdited *pedited)
 {
     disableListener();
     metadataMode->set_active(int(pp->metadata.mode));
@@ -83,15 +84,15 @@ void MetaDataPanel::read(const rtengine::procparams::ProcParams* pp, const Param
         exifpanel->read(pp, pedited);
         iptcpanel->read(pp, pedited);
     }
-    
+
     enableListener();
 }
 
-
-void MetaDataPanel::write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedited)
+void MetaDataPanel::write(rtengine::procparams::ProcParams *pp, ParamsEdited *pedited)
 {
-    pp->metadata.mode = static_cast<MetaDataParams::Mode>(min(metadataMode->get_active_row_number(), 2));
-    
+    pp->metadata.mode = static_cast<MetaDataParams::Mode>(
+        min(metadataMode->get_active_row_number(), 2));
+
     if (pedited) {
         pedited->metadata.mode = metadataMode->get_active_row_number() != 3;
     }
@@ -102,20 +103,18 @@ void MetaDataPanel::write(rtengine::procparams::ProcParams* pp, ParamsEdited* pe
     }
 }
 
-
-void MetaDataPanel::setDefaults(const rtengine::procparams::ProcParams* defParams, const ParamsEdited* pedited)
+void MetaDataPanel::setDefaults(
+    const rtengine::procparams::ProcParams *defParams, const ParamsEdited *pedited)
 {
     exifpanel->setDefaults(defParams, pedited);
     iptcpanel->setDefaults(defParams, pedited);
 }
 
-
-void MetaDataPanel::setImageData(const rtengine::FramesMetaData* id)
+void MetaDataPanel::setImageData(const rtengine::FramesMetaData *id)
 {
     exifpanel->setImageData(id);
     iptcpanel->setImageData(id);
 }
-
 
 void MetaDataPanel::setListener(ToolPanelListener *tpl)
 {
@@ -124,14 +123,12 @@ void MetaDataPanel::setListener(ToolPanelListener *tpl)
     iptcpanel->setListener(tpl);
 }
 
-
 void MetaDataPanel::metaDataModeChanged()
 {
     if (listener) {
         listener->panelChanged(EvMetaDataMode, M("HISTORY_CHANGED"));
     }
 }
-
 
 void MetaDataPanel::setProgressListener(rtengine::ProgressListener *pl)
 {

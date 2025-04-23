@@ -24,5 +24,5 @@ class FileSelectionChangeListener
 {
 public:
     virtual ~FileSelectionChangeListener() = default;
-    virtual void selectionChanged(const std::vector<Thumbnail*>& selected) = 0;
+    virtual void selectionChanged(const std::vector<Thumbnail *> &selected) = 0;
 };

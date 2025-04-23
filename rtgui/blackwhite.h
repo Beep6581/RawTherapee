@@ -31,52 +31,55 @@ class CurveEditorGroup;
 class EditDataProvider;
 class FlatCurveEditor;
 
-class BlackWhite final :
-    public ToolParamBlock,
-    public AdjusterListener,
-    public FoldableToolPanel,
-    public rtengine::AutoBWListener,
-    public CurveListener,
-    public ColorProvider
+class BlackWhite final : public ToolParamBlock,
+                         public AdjusterListener,
+                         public FoldableToolPanel,
+                         public rtengine::AutoBWListener,
+                         public CurveListener,
+                         public ColorProvider
 {
 public:
     static const Glib::ustring TOOL_NAME;
 
-    BlackWhite ();
-    ~BlackWhite () override;
+    BlackWhite();
+    ~BlackWhite() override;
 
-    void read            (const rtengine::procparams::ProcParams* pp, const ParamsEdited* pedited = nullptr) override;
-    void write           (rtengine::procparams::ProcParams* pp, ParamsEdited* pedited = nullptr) override;
-    void setDefaults     (const rtengine::procparams::ProcParams* defParams, const ParamsEdited* pedited = nullptr) override;
-    void setBatchMode    (bool batchMode) override;
-    void autoOpenCurve   () override;
-    void setEditProvider (EditDataProvider *provider) override;
+    void read(const rtengine::procparams::ProcParams *pp,
+        const ParamsEdited *pedited = nullptr) override;
+    void write(
+        rtengine::procparams::ProcParams *pp, ParamsEdited *pedited = nullptr) override;
+    void setDefaults(const rtengine::procparams::ProcParams *defParams,
+        const ParamsEdited *pedited = nullptr) override;
+    void setBatchMode(bool batchMode) override;
+    void autoOpenCurve() override;
+    void setEditProvider(EditDataProvider *provider) override;
 
-    void autoch_toggled  ();
-    void neutral_pressed ();
+    void autoch_toggled();
+    void neutral_pressed();
 
-    void updateRGBLabel      ();
-    void adjusterChanged     (Adjuster* a, double newval) override;
-    void setAdjusterBehavior (bool bwadd, bool bwgadd);
-    void trimValues          (rtengine::procparams::ProcParams* pp) override;
-    void enabledcc_toggled   ();
-    void enabledChanged      () override;
-    void methodChanged       ();
-    void filterChanged       ();
-    void settingChanged      ();
-    void colorForValue (double valX, double valY, enum ColorCaller::ElemType elemType, int callerId, ColorCaller* caller) override;
-    void BWChanged           (double redbw, double greenbw, double bluebw) override;
-    bool BWComputed_         ();
-    void curveChanged        (CurveEditor* ce) override;
-    void curveMode1Changed   ();
-    bool curveMode1Changed_  ();
-    void curveMode1Changed2  ();
-    bool curveMode1Changed2_ ();
-    void algoChanged         ();
+    void updateRGBLabel();
+    void adjusterChanged(Adjuster *a, double newval) override;
+    void setAdjusterBehavior(bool bwadd, bool bwgadd);
+    void trimValues(rtengine::procparams::ProcParams *pp) override;
+    void enabledcc_toggled();
+    void enabledChanged() override;
+    void methodChanged();
+    void filterChanged();
+    void settingChanged();
+    void colorForValue(double valX, double valY, enum ColorCaller::ElemType elemType,
+        int callerId, ColorCaller *caller) override;
+    void BWChanged(double redbw, double greenbw, double bluebw) override;
+    bool BWComputed_();
+    void curveChanged(CurveEditor *ce) override;
+    void curveMode1Changed();
+    bool curveMode1Changed_();
+    void curveMode1Changed2();
+    bool curveMode1Changed2_();
+    void algoChanged();
 
-    Glib::ustring getSettingString ();
-    Glib::ustring getFilterString  ();
-    Glib::ustring getalgoString  ();
+    Glib::ustring getSettingString();
+    Glib::ustring getFilterString();
+    Glib::ustring getalgoString();
 
 private:
     void showLuminance();
@@ -90,23 +93,23 @@ private:
     void showGamma();
     void hideGamma();
 
-    FlatCurveEditor*     luminanceCurve;
-    Gtk::Separator*     luminanceSep;
-    CurveEditorGroup*    luminanceCEG;
-    CurveEditorGroup*    beforeCurveCEG;
-    DiagonalCurveEditor* beforeCurve;
-    MyComboBoxText*      beforeCurveMode;
-    CurveEditorGroup*    afterCurveCEG;
-    DiagonalCurveEditor* afterCurve;
-    MyComboBoxText*      afterCurveMode;
-    Gtk::ToggleButton*   autoch;
-    Gtk::Box*            autoHBox;
-    Gtk::Button*         neutral;
-    Gtk::Label*          RGBLabels;
-    MyComboBoxText*      algo;
-    sigc::connection     algoconn;
-    Gtk::Label*          alLabel;
-    Gtk::Box*            algoHBox;
+    FlatCurveEditor *luminanceCurve;
+    Gtk::Separator *luminanceSep;
+    CurveEditorGroup *luminanceCEG;
+    CurveEditorGroup *beforeCurveCEG;
+    DiagonalCurveEditor *beforeCurve;
+    MyComboBoxText *beforeCurveMode;
+    CurveEditorGroup *afterCurveCEG;
+    DiagonalCurveEditor *afterCurve;
+    MyComboBoxText *afterCurveMode;
+    Gtk::ToggleButton *autoch;
+    Gtk::Box *autoHBox;
+    Gtk::Button *neutral;
+    Gtk::Label *RGBLabels;
+    MyComboBoxText *algo;
+    sigc::connection algoconn;
+    Gtk::Label *alLabel;
+    Gtk::Box *algoHBox;
 
     Adjuster *mixerRed;
     Adjuster *mixerGreen;
@@ -119,23 +122,23 @@ private:
     Adjuster *mixerCyan;
     Adjuster *mixerMagenta;
     Adjuster *mixerPurple;
-    MyComboBoxText*   method;
-    sigc::connection  methodconn;
-    Gtk::Box*         filterHBox;
-    Gtk::Separator*  filterSep, *filterSep2;
-    MyComboBoxText*   filter;
-    sigc::connection  filterconn;
-    Gtk::Box*         settingHBox;
-    MyComboBoxText*   setting;
-    sigc::connection  settingconn;
-    Gtk::Frame* mixerFrame;
-    Gtk::Box*  mixerVBox;
-    Gtk::Frame* gammaFrame;
+    MyComboBoxText *method;
+    sigc::connection methodconn;
+    Gtk::Box *filterHBox;
+    Gtk::Separator *filterSep, *filterSep2;
+    MyComboBoxText *filter;
+    sigc::connection filterconn;
+    Gtk::Box *settingHBox;
+    MyComboBoxText *setting;
+    sigc::connection settingconn;
+    Gtk::Frame *mixerFrame;
+    Gtk::Box *mixerVBox;
+    Gtk::Frame *gammaFrame;
 
     Gtk::Image *imgIcon[11];
 
-    Gtk::Separator* enabledccSep;
-    Gtk::CheckButton* enabledcc;
+    Gtk::Separator *enabledccSep;
+    Gtk::CheckButton *enabledcc;
     bool lastEnabledcc, lastAuto;
     sigc::connection enaccconn, tcmodeconn, tcmodeconn2, autoconn, neutralconn;
 

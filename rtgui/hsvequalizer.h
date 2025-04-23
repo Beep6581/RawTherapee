@@ -29,34 +29,36 @@ class CurveEditor;
 class CurveEditorGroup;
 class FlatCurveEditor;
 
-class HSVEqualizer final :
-    public ToolParamBlock,
-    public FoldableToolPanel,
-    public CurveListener,
-    public ColorProvider
+class HSVEqualizer final : public ToolParamBlock,
+                           public FoldableToolPanel,
+                           public CurveListener,
+                           public ColorProvider
 {
 
 protected:
-
-    CurveEditorGroup*  curveEditorG;
-    FlatCurveEditor*   hshape;
-    FlatCurveEditor*   sshape;
-    FlatCurveEditor*   vshape;
+    CurveEditorGroup *curveEditorG;
+    FlatCurveEditor *hshape;
+    FlatCurveEditor *sshape;
+    FlatCurveEditor *vshape;
 
 public:
     static const Glib::ustring TOOL_NAME;
 
-    HSVEqualizer ();
-    ~HSVEqualizer () override;
+    HSVEqualizer();
+    ~HSVEqualizer() override;
 
-    void read            (const rtengine::procparams::ProcParams* pp, const ParamsEdited* pedited = nullptr) override;
-    void write           (rtengine::procparams::ProcParams* pp, ParamsEdited* pedited = nullptr) override;
-    void curveChanged    (CurveEditor* ce) override;
-    //void setDefaults     (const rtengine::procparams::ProcParams* defParams, const ParamsEdited* pedited=NULL);
-    void setBatchMode    (bool batchMode) override;
-    void setEditProvider (EditDataProvider *provider) override;
-    void autoOpenCurve   () override;
-    void colorForValue (double valX, double valY, enum ColorCaller::ElemType elemType, int callerId, ColorCaller* caller) override;
+    void read(const rtengine::procparams::ProcParams *pp,
+        const ParamsEdited *pedited = nullptr) override;
+    void write(
+        rtengine::procparams::ProcParams *pp, ParamsEdited *pedited = nullptr) override;
+    void curveChanged(CurveEditor *ce) override;
+    // void setDefaults     (const rtengine::procparams::ProcParams* defParams, const
+    // ParamsEdited* pedited=NULL);
+    void setBatchMode(bool batchMode) override;
+    void setEditProvider(EditDataProvider *provider) override;
+    void autoOpenCurve() override;
+    void colorForValue(double valX, double valY, enum ColorCaller::ElemType elemType,
+        int callerId, ColorCaller *caller) override;
 
     void enabledChanged() override;
 };

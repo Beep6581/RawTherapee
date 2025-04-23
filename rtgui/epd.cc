@@ -28,14 +28,17 @@ using namespace rtengine::procparams;
 
 const Glib::ustring EdgePreservingDecompositionUI::TOOL_NAME = "epd";
 
-EdgePreservingDecompositionUI::EdgePreservingDecompositionUI () : FoldableToolPanel(this, TOOL_NAME, M("TP_EPD_LABEL"), true, true)
+EdgePreservingDecompositionUI::EdgePreservingDecompositionUI() :
+    FoldableToolPanel(this, TOOL_NAME, M("TP_EPD_LABEL"), true, true)
 {
 
-    strength = Gtk::manage(new Adjuster (M("TP_EPD_STRENGTH"), -1.0, 2.0, 0.01, 0.5));
-    gamma = Gtk::manage(new Adjuster (M("TP_EPD_GAMMA"), 0.8, 1.5, 0.01, 1.));
-    edgeStopping = Gtk::manage(new Adjuster (M("TP_EPD_EDGESTOPPING"), 0.1, 4.0, 0.01, 1.4));
-    scale = Gtk::manage(new Adjuster (M("TP_EPD_SCALE"), 0.1, 10.0, 0.01, 1.0));
-    reweightingIterates = Gtk::manage(new Adjuster (M("TP_EPD_REWEIGHTINGITERATES"), 0, 9, 1, 0));
+    strength = Gtk::manage(new Adjuster(M("TP_EPD_STRENGTH"), -1.0, 2.0, 0.01, 0.5));
+    gamma = Gtk::manage(new Adjuster(M("TP_EPD_GAMMA"), 0.8, 1.5, 0.01, 1.));
+    edgeStopping =
+        Gtk::manage(new Adjuster(M("TP_EPD_EDGESTOPPING"), 0.1, 4.0, 0.01, 1.4));
+    scale = Gtk::manage(new Adjuster(M("TP_EPD_SCALE"), 0.1, 10.0, 0.01, 1.0));
+    reweightingIterates =
+        Gtk::manage(new Adjuster(M("TP_EPD_REWEIGHTINGITERATES"), 0, 9, 1, 0));
 
     strength->setAdjusterListener(this);
     gamma->setAdjusterListener(this);
@@ -56,33 +59,35 @@ EdgePreservingDecompositionUI::EdgePreservingDecompositionUI () : FoldableToolPa
     pack_start(*reweightingIterates);
 }
 
-void EdgePreservingDecompositionUI::read(const ProcParams *pp, const ParamsEdited *pedited)
+void EdgePreservingDecompositionUI::read(
+    const ProcParams *pp, const ParamsEdited *pedited)
 {
     disableListener();
 
-    if(pedited) {
+    if (pedited) {
         strength->setEditedState(pedited->epd.strength ? Edited : UnEdited);
         gamma->setEditedState(pedited->epd.gamma ? Edited : UnEdited);
         edgeStopping->setEditedState(pedited->epd.edgeStopping ? Edited : UnEdited);
         scale->setEditedState(pedited->epd.scale ? Edited : UnEdited);
-        reweightingIterates->setEditedState(pedited->epd.reweightingIterates ? Edited : UnEdited);
+        reweightingIterates->setEditedState(
+            pedited->epd.reweightingIterates ? Edited : UnEdited);
         set_inconsistent(multiImage && !pedited->epd.enabled);
     }
 
     setEnabled(pp->epd.enabled);
-    strength->set_sensitive (true);
-    gamma->set_sensitive (true);
-/*
-    if(pp->wavelet.enabled) { 
-        if(pp->wavelet.tmrs == 0 || pp->wavelet.TMmethod == "cont") {
-            strength->set_sensitive (true);
-            gamma->set_sensitive (true);
-        } else if(pp->wavelet.tmrs != 0 && pp->wavelet.TMmethod == "tm") {
-            strength->set_sensitive (false);
-            gamma->set_sensitive (false);
+    strength->set_sensitive(true);
+    gamma->set_sensitive(true);
+    /*
+        if(pp->wavelet.enabled) {
+            if(pp->wavelet.tmrs == 0 || pp->wavelet.TMmethod == "cont") {
+                strength->set_sensitive (true);
+                gamma->set_sensitive (true);
+            } else if(pp->wavelet.tmrs != 0 && pp->wavelet.TMmethod == "tm") {
+                strength->set_sensitive (false);
+                gamma->set_sensitive (false);
+            }
         }
-    }
-*/
+    */
     strength->setValue(pp->epd.strength);
     gamma->setValue(pp->epd.gamma);
     edgeStopping->setValue(pp->epd.edgeStopping);
@@ -100,20 +105,20 @@ void EdgePreservingDecompositionUI::write(ProcParams *pp, ParamsEdited *pedited)
     pp->epd.scale = scale->getValue();
     pp->epd.reweightingIterates = reweightingIterates->getValue();
     pp->epd.enabled = getEnabled();
-    strength->set_sensitive (true);
-    gamma->set_sensitive (true);
-/*
-    if(pp->wavelet.enabled) { 
-        if(pp->wavelet.tmrs == 0 || pp->wavelet.TMmethod == "cont") {
-            strength->set_sensitive (true);
-            gamma->set_sensitive (true);
-        } else if(pp->wavelet.tmrs != 0 && pp->wavelet.TMmethod == "tm") {
-            strength->set_sensitive (false);
-            gamma->set_sensitive (false);
+    strength->set_sensitive(true);
+    gamma->set_sensitive(true);
+    /*
+        if(pp->wavelet.enabled) {
+            if(pp->wavelet.tmrs == 0 || pp->wavelet.TMmethod == "cont") {
+                strength->set_sensitive (true);
+                gamma->set_sensitive (true);
+            } else if(pp->wavelet.tmrs != 0 && pp->wavelet.TMmethod == "tm") {
+                strength->set_sensitive (false);
+                gamma->set_sensitive (false);
+            }
         }
-    }
-*/
-    if(pedited) {
+    */
+    if (pedited) {
         pedited->epd.strength = strength->getEditedState();
         pedited->epd.gamma = gamma->getEditedState();
         pedited->epd.edgeStopping = edgeStopping->getEditedState();
@@ -123,7 +128,8 @@ void EdgePreservingDecompositionUI::write(ProcParams *pp, ParamsEdited *pedited)
     }
 }
 
-void EdgePreservingDecompositionUI::setDefaults(const ProcParams *defParams, const ParamsEdited *pedited)
+void EdgePreservingDecompositionUI::setDefaults(
+    const ProcParams *defParams, const ParamsEdited *pedited)
 {
     strength->setDefault(defParams->epd.strength);
     gamma->setDefault(defParams->epd.gamma);
@@ -131,12 +137,14 @@ void EdgePreservingDecompositionUI::setDefaults(const ProcParams *defParams, con
     scale->setDefault(defParams->epd.scale);
     reweightingIterates->setDefault(defParams->epd.reweightingIterates);
 
-    if(pedited) {
+    if (pedited) {
         strength->setDefaultEditedState(pedited->epd.strength ? Edited : UnEdited);
         gamma->setDefaultEditedState(pedited->epd.gamma ? Edited : UnEdited);
-        edgeStopping->setDefaultEditedState(pedited->epd.edgeStopping ? Edited : UnEdited);
+        edgeStopping->setDefaultEditedState(
+            pedited->epd.edgeStopping ? Edited : UnEdited);
         scale->setDefaultEditedState(pedited->epd.scale ? Edited : UnEdited);
-        reweightingIterates->setDefaultEditedState(pedited->epd.reweightingIterates ? Edited : UnEdited);
+        reweightingIterates->setDefaultEditedState(
+            pedited->epd.reweightingIterates ? Edited : UnEdited);
     } else {
         strength->setDefaultEditedState(Irrelevant);
         gamma->setDefaultEditedState(Irrelevant);
@@ -146,32 +154,41 @@ void EdgePreservingDecompositionUI::setDefaults(const ProcParams *defParams, con
     }
 }
 
-void EdgePreservingDecompositionUI::adjusterChanged(Adjuster* a, double newval)
+void EdgePreservingDecompositionUI::adjusterChanged(Adjuster *a, double newval)
 {
     if (listener && getEnabled()) {
-        if(a == strength) {
-            listener->panelChanged(EvEPDStrength, Glib::ustring::format(std::setw(2), std::fixed, std::setprecision(2), a->getValue()));
-        } else if(a == gamma) {
-            listener->panelChanged(EvEPDgamma, Glib::ustring::format(std::setw(2), std::fixed, std::setprecision(2), a->getValue()));
-        } else if(a == edgeStopping) {
-            listener->panelChanged(EvEPDEdgeStopping, Glib::ustring::format(std::setw(2), std::fixed, std::setprecision(2), a->getValue()));
-        } else if(a == scale) {
-            listener->panelChanged(EvEPDScale, Glib::ustring::format(std::setw(2), std::fixed, std::setprecision(2), a->getValue()));
-        } else if(a == reweightingIterates) {
-            listener->panelChanged(EvEPDReweightingIterates, Glib::ustring::format((int)a->getValue()));
+        if (a == strength) {
+            listener->panelChanged(
+                EvEPDStrength, Glib::ustring::format(std::setw(2), std::fixed,
+                                   std::setprecision(2), a->getValue()));
+        } else if (a == gamma) {
+            listener->panelChanged(
+                EvEPDgamma, Glib::ustring::format(std::setw(2), std::fixed,
+                                std::setprecision(2), a->getValue()));
+        } else if (a == edgeStopping) {
+            listener->panelChanged(
+                EvEPDEdgeStopping, Glib::ustring::format(std::setw(2), std::fixed,
+                                       std::setprecision(2), a->getValue()));
+        } else if (a == scale) {
+            listener->panelChanged(
+                EvEPDScale, Glib::ustring::format(std::setw(2), std::fixed,
+                                std::setprecision(2), a->getValue()));
+        } else if (a == reweightingIterates) {
+            listener->panelChanged(
+                EvEPDReweightingIterates, Glib::ustring::format((int)a->getValue()));
         }
     }
 }
 
-void EdgePreservingDecompositionUI::enabledChanged ()
+void EdgePreservingDecompositionUI::enabledChanged()
 {
     if (listener) {
         if (get_inconsistent()) {
-            listener->panelChanged (EvEPDEnabled, M("GENERAL_UNCHANGED"));
+            listener->panelChanged(EvEPDEnabled, M("GENERAL_UNCHANGED"));
         } else if (getEnabled()) {
-            listener->panelChanged (EvEPDEnabled, M("GENERAL_ENABLED"));
+            listener->panelChanged(EvEPDEnabled, M("GENERAL_ENABLED"));
         } else {
-            listener->panelChanged (EvEPDEnabled, M("GENERAL_DISABLED"));
+            listener->panelChanged(EvEPDEnabled, M("GENERAL_DISABLED"));
         }
     }
 }
@@ -187,7 +204,8 @@ void EdgePreservingDecompositionUI::setBatchMode(bool batchMode)
     reweightingIterates->showEditedCB();
 }
 
-void EdgePreservingDecompositionUI::setAdjusterBehavior (bool stAdd, bool gAdd, bool esAdd, bool scAdd, bool rAdd)
+void EdgePreservingDecompositionUI::setAdjusterBehavior(
+    bool stAdd, bool gAdd, bool esAdd, bool scAdd, bool rAdd)
 {
     strength->setAddMode(stAdd);
     gamma->setAddMode(gAdd);

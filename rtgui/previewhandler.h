@@ -39,49 +39,48 @@ public:
 class PreviewHandler;
 
 struct PreviewHandlerIdleHelper {
-    PreviewHandler* phandler;
+    PreviewHandler *phandler;
     bool destroyed;
     int pending;
 };
 
-class PreviewHandler final : public rtengine::PreviewImageListener, public rtengine::NonCopyable
+class PreviewHandler final : public rtengine::PreviewImageListener,
+                             public rtengine::NonCopyable
 {
 private:
-    friend int setImageUI   (void* data);
-    friend int delImageUI   (void* data);
-    friend int imageReadyUI (void* data);
+    friend int setImageUI(void *data);
+    friend int delImageUI(void *data);
+    friend int imageReadyUI(void *data);
 
     IdleRegister idle_register;
 
 protected:
-    rtengine::IImage8* image;
+    rtengine::IImage8 *image;
     const std::unique_ptr<rtengine::procparams::CropParams> cropParams;
     double previewScale;
-    PreviewHandlerIdleHelper* pih;
-    std::list<PreviewListener*> listeners;
+    PreviewHandlerIdleHelper *pih;
+    std::list<PreviewListener *> listeners;
     MyMutex previewImgMutex;
     Glib::RefPtr<Gdk::Pixbuf> previewImg;
 
 public:
+    PreviewHandler();
+    ~PreviewHandler() override;
 
-    PreviewHandler ();
-    ~PreviewHandler () override;
-
-    void addPreviewImageListener (PreviewListener* l)
-    {
-        listeners.push_back (l);
-    }
+    void addPreviewImageListener(PreviewListener *l) { listeners.push_back(l); }
 
     // previewimagelistener
-    void setImage(rtengine::IImage8* img, double scale, const rtengine::procparams::CropParams& cp) override;
-    void delImage(rtengine::IImage8* img) override;
-    void imageReady(const rtengine::procparams::CropParams& cp) override;
+    void setImage(rtengine::IImage8 *img, double scale,
+        const rtengine::procparams::CropParams &cp) override;
+    void delImage(rtengine::IImage8 *img) override;
+    void imageReady(const rtengine::procparams::CropParams &cp) override;
 
     // this function is called when a new preview image arrives from rtengine
-    void previewImageChanged ();
+    void previewImageChanged();
 
-    // with this function it is possible to ask for a rough approximation of a (possibly zoomed) crop of the image
-    Glib::RefPtr<Gdk::Pixbuf>           getRoughImage (int x, int y, int w, int h, double zoom);
-    Glib::RefPtr<Gdk::Pixbuf>           getRoughImage (int desiredW, int desiredH, double& zoom);
-    rtengine::procparams::CropParams    getCropParams ();
+    // with this function it is possible to ask for a rough approximation of a (possibly
+    // zoomed) crop of the image
+    Glib::RefPtr<Gdk::Pixbuf> getRoughImage(int x, int y, int w, int h, double zoom);
+    Glib::RefPtr<Gdk::Pixbuf> getRoughImage(int desiredW, int desiredH, double &zoom);
+    rtengine::procparams::CropParams getCropParams();
 };

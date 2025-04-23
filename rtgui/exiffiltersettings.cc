@@ -18,13 +18,9 @@
  */
 #include "exiffiltersettings.h"
 
-ExifFilterSettings::ExifFilterSettings ()
-{
+ExifFilterSettings::ExifFilterSettings() { clear(); }
 
-    clear ();
-}
-
-void ExifFilterSettings::clear ()
+void ExifFilterSettings::clear()
 {
     fnumberFrom = 100;
     fnumberTo = 0;
@@ -34,10 +30,10 @@ void ExifFilterSettings::clear ()
     isoTo = 0;
     focalFrom = 1e8;
     focalTo = 0;
-    lenses.clear ();
-    cameras.clear ();
-    expcomp.clear ();
-    filetypes.clear ();
+    lenses.clear();
+    cameras.clear();
+    expcomp.clear();
+    filetypes.clear();
 
     filterFNumber = false;
     filterShutter = false;

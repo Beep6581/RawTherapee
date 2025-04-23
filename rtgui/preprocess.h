@@ -24,35 +24,37 @@
 #include "guiutils.h"
 #include "toolpanel.h"
 
-class PreProcess final :
-    public ToolParamBlock,
-    public AdjusterListener,
-    public FoldableToolPanel
+class PreProcess final : public ToolParamBlock,
+                         public AdjusterListener,
+                         public FoldableToolPanel
 {
 
 protected:
-    Gtk::CheckButton* hotPixel;
-    Gtk::CheckButton* deadPixel;
+    Gtk::CheckButton *hotPixel;
+    Gtk::CheckButton *deadPixel;
     bool lastHot, lastDead;
     sigc::connection hpixelconn;
     sigc::connection dpixelconn;
-    Adjuster* hdThreshold;
+    Adjuster *hdThreshold;
+
 public:
     static const Glib::ustring TOOL_NAME;
 
-    PreProcess ();
+    PreProcess();
 
-    void read           (const rtengine::procparams::ProcParams* pp, const ParamsEdited* pedited = nullptr) override;
-    void write          (rtengine::procparams::ProcParams* pp, ParamsEdited* pedited = nullptr) override;
-    //void setBatchMode   (bool batchMode);
-    //void setDefaults    (const rtengine::procparams::ProcParams* defParams, const ParamsEdited* pedited=NULL);
+    void read(const rtengine::procparams::ProcParams *pp,
+        const ParamsEdited *pedited = nullptr) override;
+    void write(
+        rtengine::procparams::ProcParams *pp, ParamsEdited *pedited = nullptr) override;
+    // void setBatchMode   (bool batchMode);
+    // void setDefaults    (const rtengine::procparams::ProcParams* defParams, const
+    // ParamsEdited* pedited=NULL);
 
     void hotPixelChanged();
     void deadPixelChanged();
-    void adjusterChanged(Adjuster* a, double newval) override;
+    void adjusterChanged(Adjuster *a, double newval) override;
 
-
-    //void adjusterChanged     (Adjuster* a, double newval);
-    //void setAdjusterBehavior (bool linedenoiseadd, bool greenequiladd);
-    //void trimValues          (rtengine::procparams::ProcParams* pp);
+    // void adjusterChanged     (Adjuster* a, double newval);
+    // void setAdjusterBehavior (bool linedenoiseadd, bool greenequiladd);
+    // void trimValues          (rtengine::procparams::ProcParams* pp);
 };

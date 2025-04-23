@@ -27,33 +27,36 @@
 #include "rtimage.h"
 #include "threadutils.h"
 
-PopUpCommon::PopUpCommon (Gtk::Button* thisButton, const Glib::ustring& label)
-    : buttonImage (nullptr)
-    , menu(new Gtk::Menu())
-    , selected (-1) // -1 means that the button is invalid
+PopUpCommon::PopUpCommon(Gtk::Button *thisButton, const Glib::ustring &label) :
+    buttonImage(nullptr), menu(new Gtk::Menu()),
+    selected(-1) // -1 means that the button is invalid
 {
     button = thisButton;
     hasMenu = false;
-    imageContainer = Gtk::manage( new Gtk::Grid());
-    setExpandAlignProperties(imageContainer, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_CENTER);
-    button->set_relief (Gtk::RELIEF_NORMAL);
+    imageContainer = Gtk::manage(new Gtk::Grid());
+    setExpandAlignProperties(
+        imageContainer, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_CENTER);
+    button->set_relief(Gtk::RELIEF_NORMAL);
     button->add(*imageContainer);
 
     if (!label.empty()) {
-        Gtk::Label* buttonLabel = Gtk::manage ( new Gtk::Label(label + " ") );
-        setExpandAlignProperties(buttonLabel, false, false, Gtk::ALIGN_START, Gtk::ALIGN_CENTER);
+        Gtk::Label *buttonLabel = Gtk::manage(new Gtk::Label(label + " "));
+        setExpandAlignProperties(
+            buttonLabel, false, false, Gtk::ALIGN_START, Gtk::ALIGN_CENTER);
         imageContainer->attach(*buttonLabel, 0, 0, 1, 1);
     }
 
     // Create the global container and put the button in it
-    buttonGroup = Gtk::manage( new Gtk::Grid());
-    setExpandAlignProperties(buttonGroup, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_CENTER);
+    buttonGroup = Gtk::manage(new Gtk::Grid());
+    setExpandAlignProperties(
+        buttonGroup, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_CENTER);
     buttonGroup->attach(*button, 0, 0, 1, 1);
     buttonGroup->get_style_context()->add_class("image-combo");
 
     // Create the image for the button
     buttonImage = Gtk::manage(new RTImage());
-    setExpandAlignProperties(buttonImage, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_CENTER);
+    setExpandAlignProperties(
+        buttonImage, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_CENTER);
     imageContainer->attach_next_to(*buttonImage, Gtk::POS_RIGHT, 1, 1);
     buttonImage->set_no_show_all();
 
@@ -61,39 +64,43 @@ PopUpCommon::PopUpCommon (Gtk::Button* thisButton, const Glib::ustring& label)
     arrowButton = Gtk::manage(new Gtk::Button());
     Gtk::Image *arrowImage = Gtk::manage(new Gtk::Image());
     arrowImage->set_from_icon_name("pan-down-symbolic", Gtk::ICON_SIZE_BUTTON);
-    setExpandAlignProperties(arrowButton, false, false, Gtk::ALIGN_CENTER, Gtk::ALIGN_FILL);
-    arrowButton->add(*arrowImage); //menuSymbol);
+    setExpandAlignProperties(
+        arrowButton, false, false, Gtk::ALIGN_CENTER, Gtk::ALIGN_FILL);
+    arrowButton->add(*arrowImage); // menuSymbol);
     arrowImage->show();
     buttonGroup->attach_next_to(*arrowButton, *button, Gtk::POS_RIGHT, 1, 1);
-    arrowButton->signal_button_release_event().connect_notify(sigc::mem_fun(*this, &PopUpCommon::showMenu));
+    arrowButton->signal_button_release_event().connect_notify(
+        sigc::mem_fun(*this, &PopUpCommon::showMenu));
     arrowButton->get_style_context()->add_class("Right");
     arrowButton->get_style_context()->add_class("popupbutton-arrow");
     arrowButton->set_no_show_all();
 }
 
-PopUpCommon::~PopUpCommon ()
-{
-}
+PopUpCommon::~PopUpCommon() {}
 
-bool PopUpCommon::addEntry (const Glib::ustring& fileName, const Glib::ustring& label, Gtk::RadioButtonGroup* radioGroup)
+bool PopUpCommon::addEntry(const Glib::ustring &fileName, const Glib::ustring &label,
+    Gtk::RadioButtonGroup *radioGroup)
 {
     return insertEntry(getEntryCount(), fileName, label, radioGroup);
 }
 
-bool PopUpCommon::insertEntry(int position, const Glib::ustring& iconName, const Glib::ustring& label, Gtk::RadioButtonGroup *radioGroup)
+bool PopUpCommon::insertEntry(int position, const Glib::ustring &iconName,
+    const Glib::ustring &label, Gtk::RadioButtonGroup *radioGroup)
 {
-    RTImage* image = nullptr;
+    RTImage *image = nullptr;
     if (!iconName.empty()) {
         image = Gtk::manage(new RTImage(iconName));
     }
-    bool success = insertEntryImpl(position, iconName, Glib::RefPtr<const Gio::Icon>(), image, label, radioGroup);
+    bool success = insertEntryImpl(
+        position, iconName, Glib::RefPtr<const Gio::Icon>(), image, label, radioGroup);
     if (!success && image) {
         delete image;
     }
     return success;
 }
 
-bool PopUpCommon::insertEntry(int position, const Glib::RefPtr<const Gio::Icon>& gIcon, const Glib::ustring& label, Gtk::RadioButtonGroup *radioGroup)
+bool PopUpCommon::insertEntry(int position, const Glib::RefPtr<const Gio::Icon> &gIcon,
+    const Glib::ustring &label, Gtk::RadioButtonGroup *radioGroup)
 {
     auto image = Gtk::manage(new RTImage(gIcon, Gtk::ICON_SIZE_BUTTON));
     bool success = insertEntryImpl(position, "", gIcon, image, label, radioGroup);
@@ -103,17 +110,17 @@ bool PopUpCommon::insertEntry(int position, const Glib::RefPtr<const Gio::Icon>&
     return success;
 }
 
-bool PopUpCommon::insertEntryImpl(int position, const Glib::ustring& iconName, const Glib::RefPtr<const Gio::Icon>& gIcon, RTImage* image, const Glib::ustring& label, Gtk::RadioButtonGroup* radioGroup)
+bool PopUpCommon::insertEntryImpl(int position, const Glib::ustring &iconName,
+    const Glib::RefPtr<const Gio::Icon> &gIcon, RTImage *image,
+    const Glib::ustring &label, Gtk::RadioButtonGroup *radioGroup)
 {
-    if (label.empty() || position < 0 || position > getEntryCount())
-        return false;
+    if (label.empty() || position < 0 || position > getEntryCount()) return false;
 
     // Create the menu item and image
     Gtk::MenuItem *newItem;
     if (radioGroup) {
         newItem = Gtk::manage(new MyRadioImageMenuItem(label, image, *radioGroup));
-    }
-    else {
+    } else {
         newItem = Gtk::manage(new MyImageMenuItem(label, image));
     }
     imageIcons.insert(imageIcons.begin() + position, gIcon);
@@ -133,7 +140,8 @@ bool PopUpCommon::insertEntryImpl(int position, const Glib::ustring& iconName, c
     }
 
     void (PopUpCommon::*entrySelectedFunc)(Gtk::Widget *) = &PopUpCommon::entrySelected;
-    newItem->signal_activate ().connect (sigc::bind (sigc::mem_fun (*this, entrySelectedFunc), newItem));
+    newItem->signal_activate().connect(
+        sigc::bind(sigc::mem_fun(*this, entrySelectedFunc), newItem));
     menu->insert(*newItem, position);
     return true;
 }
@@ -172,11 +180,9 @@ void PopUpCommon::removeEntry(int position)
             changeImage(emptyImageFilename, Glib::RefPtr<const Gio::Icon>());
         }
         selected = -1;
-    }
-    else if (position < selected) {
+    } else if (position < selected) {
         selected--;
-    }
-    else if (position == selected) { // Select a different entry before removing.
+    } else if (position == selected) { // Select a different entry before removing.
         int nextSelection = position + (position == getEntryCount() - 1 ? -1 : 1);
         changeImage(nextSelection);
         setButtonHint();
@@ -194,7 +200,8 @@ void PopUpCommon::changeImage(int position)
     changeImage(imageIconNames.at(position), imageIcons.at(position));
 }
 
-void PopUpCommon::changeImage(const Glib::ustring& iconName, const Glib::RefPtr<const Gio::Icon>& gIcon)
+void PopUpCommon::changeImage(
+    const Glib::ustring &iconName, const Glib::RefPtr<const Gio::Icon> &gIcon)
 {
     if (!iconName.empty()) {
         buttonImage->set_from_icon_name(iconName, Gtk::ICON_SIZE_BUTTON);
@@ -203,7 +210,7 @@ void PopUpCommon::changeImage(const Glib::ustring& iconName, const Glib::RefPtr<
     }
 }
 
-void PopUpCommon::entrySelected(Gtk::Widget* widget)
+void PopUpCommon::entrySelected(Gtk::Widget *widget)
 {
     if (widget != menu->get_active()) { // Not actually selected.
         return;
@@ -215,7 +222,7 @@ void PopUpCommon::entrySelected(Gtk::Widget* widget)
     entrySelectionMutex.unlock();
 
     int i = 0;
-    for (const auto & child : menu->get_children()) {
+    for (const auto &child : menu->get_children()) {
         if (widget == child) {
             break;
         }
@@ -228,38 +235,40 @@ void PopUpCommon::entrySelected(Gtk::Widget* widget)
 void PopUpCommon::entrySelected(int i)
 {
     // Emit a signal if the selected item has changed
-    if (setSelected (posToIndex(i)))
-        messageChanged (posToIndex(selected));
+    if (setSelected(posToIndex(i))) messageChanged(posToIndex(selected));
 
     // Emit a signal in all case (i.e. propagate the signal_activate event)
-    messageItemSelected (posToIndex(selected));
+    messageItemSelected(posToIndex(selected));
 }
 
-void PopUpCommon::setItemSensitivity (int index, bool isSensitive) {
-    const auto items = menu->get_children ();
+void PopUpCommon::setItemSensitivity(int index, bool isSensitive)
+{
+    const auto items = menu->get_children();
     size_t pos = indexToPos(index);
-    if (pos < items.size ()) {
-        items[pos]->set_sensitive (isSensitive);
+    if (pos < items.size()) {
+        items[pos]->set_sensitive(isSensitive);
     }
 }
-
 
 /*
  * Set the button image with the selected item
  */
-bool PopUpCommon::setSelected (int entryNum)
+bool PopUpCommon::setSelected(int entryNum)
 {
     entryNum = indexToPos(entryNum);
 
-    if (entryNum < 0 || entryNum > ((int)images.size() - 1) || (int)entryNum == selected) {
+    if (entryNum < 0 || entryNum > ((int)images.size() - 1) ||
+        (int)entryNum == selected) {
         return false;
     } else {
-        // Maybe we could do something better than loading the image file each time the selection is changed !?
+        // Maybe we could do something better than loading the image file each time the
+        // selection is changed !?
         changeImage(entryNum);
         selected = entryNum;
         setButtonHint();
 
-        auto radioMenuItem = dynamic_cast<Gtk::RadioMenuItem*>(menu->get_children()[entryNum]);
+        auto radioMenuItem =
+            dynamic_cast<Gtk::RadioMenuItem *>(menu->get_children()[entryNum]);
         if (radioMenuItem && !radioMenuItem->get_active()) {
             MyMutex::MyLock updateLock(entrySelectionMutex);
             radioMenuItem->set_active();
@@ -290,8 +299,8 @@ void PopUpCommon::setButtonHint()
     }
 
     if (selected > -1) {
-        auto widget = menu->get_children ()[selected];
-        auto item = dynamic_cast<MyImageMenuItemInterface*>(widget);
+        auto widget = menu->get_children()[selected];
+        auto item = dynamic_cast<MyImageMenuItemInterface *>(widget);
 
         if (item) {
             hint += escapeHtmlChars(item->getLabel()->get_text());
@@ -301,14 +310,14 @@ void PopUpCommon::setButtonHint()
     button->set_tooltip_markup(hint);
 }
 
-void PopUpCommon::showMenu(GdkEventButton* event)
+void PopUpCommon::showMenu(GdkEventButton *event)
 {
     if (event->button == 1) {
         menu->popup(event->button, event->time);
     }
 }
 
-void PopUpCommon::set_tooltip_text (const Glib::ustring &text)
+void PopUpCommon::set_tooltip_text(const Glib::ustring &text)
 {
     buttonHint = text;
     setButtonHint();

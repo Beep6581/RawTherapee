@@ -35,15 +35,13 @@ class ExifPairs;
 
 }
 
-}
+} // namespace rtengine
 
-class ExifPanel final :
-    public Gtk::Box,
-    public ToolPanel
+class ExifPanel final : public Gtk::Box, public ToolPanel
 {
 
 private:
-    const rtengine::FramesMetaData* idata;
+    const rtengine::FramesMetaData *idata;
     const std::unique_ptr<rtengine::procparams::ExifPairs> changeList;
     const std::unique_ptr<rtengine::procparams::ExifPairs> defChangeList;
 
@@ -76,19 +74,19 @@ private:
         }
     };
 
-    //Glib::ustring keepicon;
+    // Glib::ustring keepicon;
     Glib::ustring editicon;
     Glib::ustring open_icon_;
     Glib::ustring closed_icon_;
 
     ExifColumns exifColumns;
-    Gtk::TreeView* exifTree;
-    Gtk::ScrolledWindow* scrolledWindow;
+    Gtk::TreeView *exifTree;
+    Gtk::ScrolledWindow *scrolledWindow;
     Glib::RefPtr<Gtk::TreeStore> exifTreeModel;
 
-    Gtk::Button* add;
-    Gtk::Button* reset;
-    Gtk::Button* resetAll;
+    Gtk::Button *add;
+    Gtk::Button *reset;
+    Gtk::Button *resetAll;
     Gtk::Button *activate_all_;
     Gtk::Button *activate_none_;
 
@@ -102,9 +100,11 @@ private:
 
     rtengine::ProgressListener *pl_;
 
-    void addTag(const std::string &key, const std::pair<Glib::ustring, Glib::ustring> &label, const Glib::ustring &value, bool editable, bool edited);
+    void addTag(const std::string &key,
+        const std::pair<Glib::ustring, Glib::ustring> &label,
+        const Glib::ustring &value, bool editable, bool edited);
     void refreshTags();
-    void resetIt(const Gtk::TreeModel::const_iterator& iter);
+    void resetIt(const Gtk::TreeModel::const_iterator &iter);
     void resetPressed();
     void resetAllPressed();
     void addPressed();
@@ -118,24 +118,31 @@ private:
     std::unordered_set<std::string> get_active_keys() const;
 
     void onExifTreeClick(GdkEventButton *event);
-    void onExifRowExpanded(const Gtk::TreeModel::iterator &it, const Gtk::TreeModel::Path &path);
-    void onExifRowCollapsed(const Gtk::TreeModel::iterator &it, const Gtk::TreeModel::Path &path);
+    void onExifRowExpanded(
+        const Gtk::TreeModel::iterator &it, const Gtk::TreeModel::Path &path);
+    void onExifRowCollapsed(
+        const Gtk::TreeModel::iterator &it, const Gtk::TreeModel::Path &path);
 
-    void setExifTagValue(Gtk::CellRenderer *renderer, const Gtk::TreeModel::iterator &it);
+    void setExifTagValue(
+        Gtk::CellRenderer *renderer, const Gtk::TreeModel::iterator &it);
     void onEditExifTagValue(const Glib::ustring &path, const Glib::ustring &value);
 
 public:
-    ExifPanel ();
+    ExifPanel();
     ~ExifPanel() override;
 
-    void read (const rtengine::procparams::ProcParams* pp, const ParamsEdited* pedited = nullptr) override;
-    void write (rtengine::procparams::ProcParams* pp, ParamsEdited* pedited = nullptr) override;
-    void setDefaults (const rtengine::procparams::ProcParams* defParams, const ParamsEdited* pedited = nullptr) override;
+    void read(const rtengine::procparams::ProcParams *pp,
+        const ParamsEdited *pedited = nullptr) override;
+    void write(
+        rtengine::procparams::ProcParams *pp, ParamsEdited *pedited = nullptr) override;
+    void setDefaults(const rtengine::procparams::ProcParams *defParams,
+        const ParamsEdited *pedited = nullptr) override;
 
-    void setImageData (const rtengine::FramesMetaData* id);
+    void setImageData(const rtengine::FramesMetaData *id);
 
     void exifSelectionChanged();
-    // void row_activated (const Gtk::TreeModel::Path& path, Gtk::TreeViewColumn* column);
+    // void row_activated (const Gtk::TreeModel::Path& path, Gtk::TreeViewColumn*
+    // column);
 
     void notifyListener();
 

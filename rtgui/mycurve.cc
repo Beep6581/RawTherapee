@@ -22,24 +22,11 @@
 #include <gdkmm/types.h>
 #include "rtscalable.h"
 
-MyCurve::MyCurve () :
-    pipetteR(-1.f),
-    pipetteG(-1.f),
-    pipetteB(-1.f),
-    pipetteVal(-1.f),
-    listener(nullptr),
-    cursor_type(CSArrow),
-    graphX(0),
-    graphY(0),
-    graphW(0),
-    graphH(0),
-    mod_type(Gdk::MODIFIER_MASK),
-    cursorX(0),
-    cursorY(0),
-    snapToMinDistX(0.0),
-    snapToMinDistY(0.0),
-    snapToValX(0.0),
-    snapToValY(0.0)
+MyCurve::MyCurve() :
+    pipetteR(-1.f), pipetteG(-1.f), pipetteB(-1.f), pipetteVal(-1.f), listener(nullptr),
+    cursor_type(CSArrow), graphX(0), graphY(0), graphW(0), graphH(0),
+    mod_type(Gdk::MODIFIER_MASK), cursorX(0), cursorY(0), snapToMinDistX(0.0),
+    snapToMinDistY(0.0), snapToValX(0.0), snapToValY(0.0)
 {
     int pointDiameter = (int)(RADIUS * 2.);
     graphW = get_allocation().get_width() - pointDiameter;
@@ -55,7 +42,10 @@ MyCurve::MyCurve () :
     curveIsDirty = true;
     edited_point = -1;
 
-    add_events(Gdk::POINTER_MOTION_MASK | Gdk::POINTER_MOTION_HINT_MASK | Gdk::ENTER_NOTIFY_MASK | Gdk::LEAVE_NOTIFY_MASK | Gdk::BUTTON_PRESS_MASK | Gdk::BUTTON_RELEASE_MASK | Gdk::BUTTON1_MOTION_MASK);
+    add_events(Gdk::POINTER_MOTION_MASK | Gdk::POINTER_MOTION_HINT_MASK |
+               Gdk::ENTER_NOTIFY_MASK | Gdk::LEAVE_NOTIFY_MASK |
+               Gdk::BUTTON_PRESS_MASK | Gdk::BUTTON_RELEASE_MASK |
+               Gdk::BUTTON1_MOTION_MASK);
     get_style_context()->add_class("drawingarea");
 
     mcih = new MyCurveIdleHelper;
@@ -64,7 +54,7 @@ MyCurve::MyCurve () :
     mcih->pending = 0;
 }
 
-MyCurve::~MyCurve ()
+MyCurve::~MyCurve()
 {
     if (mcih->pending) {
         mcih->destroyed = true;
@@ -73,37 +63,41 @@ MyCurve::~MyCurve ()
     }
 }
 
-void MyCurve::calcDimensions ()
+void MyCurve::calcDimensions()
 {
     double newRequestedW, newRequestedH;
 
     newRequestedW = newRequestedH = get_allocation().get_width();
 
-    graphX = (double)RADIUS + (leftBar ? (double)CBAR_WIDTH + 2. + (double)CBAR_MARGIN : 0.);
+    graphX =
+        (double)RADIUS + (leftBar ? (double)CBAR_WIDTH + 2. + (double)CBAR_MARGIN : 0.);
     graphH = graphW = newRequestedW - graphX - (double)RADIUS;
     graphY = (double)RADIUS + graphW;
     return;
 }
 
-Gtk::SizeRequestMode MyCurve::get_request_mode_vfunc () const
+Gtk::SizeRequestMode MyCurve::get_request_mode_vfunc() const
 {
     return Gtk::SIZE_REQUEST_HEIGHT_FOR_WIDTH;
 }
 
-void MyCurve::get_preferred_height_vfunc (int &minimum_height, int &natural_height) const
+void MyCurve::get_preferred_height_vfunc(int &minimum_height, int &natural_height) const
 {
     int minimumWidth = 0;
     int naturalWidth = 0;
-    get_preferred_width_vfunc (minimumWidth, naturalWidth);
-    get_preferred_height_for_width_vfunc (minimumWidth, minimum_height, natural_height);
+    get_preferred_width_vfunc(minimumWidth, naturalWidth);
+    get_preferred_height_for_width_vfunc(minimumWidth, minimum_height, natural_height);
 }
 
-void MyCurve::get_preferred_width_vfunc (int &minimum_width, int &natural_width) const
+void MyCurve::get_preferred_width_vfunc(int &minimum_width, int &natural_width) const
 {
-    natural_width = minimum_width = (GRAPH_SIZE + (int)(RADIUS * 2.) + RTScalable::scalePixelSize(leftBar ? (CBAR_WIDTH + 2 + CBAR_MARGIN) : 0));
+    natural_width = minimum_width =
+        (GRAPH_SIZE + (int)(RADIUS * 2.) +
+            RTScalable::scalePixelSize(leftBar ? (CBAR_WIDTH + 2 + CBAR_MARGIN) : 0));
 }
 
-void MyCurve::get_preferred_height_for_width_vfunc (int width, int &minimum_height, int &natural_height) const
+void MyCurve::get_preferred_height_for_width_vfunc(
+    int width, int &minimum_height, int &natural_height) const
 {
     minimum_height = width;
 
@@ -118,22 +112,23 @@ void MyCurve::get_preferred_height_for_width_vfunc (int width, int &minimum_heig
     natural_height = minimum_height;
 }
 
-void MyCurve::get_preferred_width_for_height_vfunc (int height, int &minimum_width, int &natural_width) const
+void MyCurve::get_preferred_width_for_height_vfunc(
+    int height, int &minimum_width, int &natural_width) const
 {
-    get_preferred_width_vfunc (minimum_width, natural_width);
+    get_preferred_width_vfunc(minimum_width, natural_width);
 }
 
-void MyCurve::setColoredBar (ColoredBar *left, ColoredBar *bottom)
+void MyCurve::setColoredBar(ColoredBar *left, ColoredBar *bottom)
 {
     leftBar = left;
     bottomBar = bottom;
 }
 
-void MyCurve::notifyListener ()
+void MyCurve::notifyListener()
 {
 
     if (listener) {
-        listener->curveChanged ();
+        listener->curveChanged();
     }
 }
 
@@ -182,10 +177,7 @@ float MyCurve::getVal(LUTf &curve, int x)
     }
 }
 
-void MyCurve::on_style_updated ()
-{
-    queue_draw ();
-}
+void MyCurve::on_style_updated() { queue_draw(); }
 
 void MyCurve::refresh()
 {

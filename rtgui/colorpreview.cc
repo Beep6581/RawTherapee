@@ -23,9 +23,7 @@
 
 #include "rtscalable.h"
 
-ColorPreview::ColorPreview() : color_red(1.0), color_green(1.0), color_blue(1.0)
-{
-}
+ColorPreview::ColorPreview() : color_red(1.0), color_green(1.0), color_blue(1.0) {}
 
 void ColorPreview::setRgb(double r, double g, double b)
 {
@@ -36,7 +34,7 @@ void ColorPreview::setRgb(double r, double g, double b)
     queue_draw();
 }
 
-bool ColorPreview::on_draw(const Cairo::RefPtr<Cairo::Context>& cr)
+bool ColorPreview::on_draw(const Cairo::RefPtr<Cairo::Context> &cr)
 {
     cr->set_source_rgb(color_red, color_green, color_blue);
     cr->paint();
@@ -44,26 +42,28 @@ bool ColorPreview::on_draw(const Cairo::RefPtr<Cairo::Context>& cr)
     return true;
 }
 
-void ColorPreview::get_preferred_height_vfunc(int& minimum_height, int& natural_height) const
+void ColorPreview::get_preferred_height_vfunc(
+    int &minimum_height, int &natural_height) const
 {
     minimum_height = RTScalable::scalePixelSize(10);
     natural_height = RTScalable::scalePixelSize(100);
 }
 
-void ColorPreview::get_preferred_width_vfunc(int& minimum_width, int& natural_width) const
+void ColorPreview::get_preferred_width_vfunc(
+    int &minimum_width, int &natural_width) const
 {
     minimum_width = RTScalable::scalePixelSize(10);
     natural_width = RTScalable::scalePixelSize(100);
 }
 
-void ColorPreview::get_preferred_height_for_width_vfunc(int width, int& minimum_height,
-                                                        int& natural_height) const
+void ColorPreview::get_preferred_height_for_width_vfunc(
+    int width, int &minimum_height, int &natural_height) const
 {
     get_preferred_height_vfunc(minimum_height, natural_height);
 }
 
-void ColorPreview::get_preferred_width_for_height_vfunc(int height, int& minimum_width,
-                                                        int& natural_width) const
+void ColorPreview::get_preferred_width_for_height_vfunc(
+    int height, int &minimum_width, int &natural_width) const
 {
     get_preferred_width_vfunc(minimum_width, natural_width);
 }

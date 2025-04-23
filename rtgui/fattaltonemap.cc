@@ -27,19 +27,20 @@
 
 #include "rtengine/procparams.h"
 
-
 using namespace rtengine;
 using namespace rtengine::procparams;
 
 const Glib::ustring FattalToneMapping::TOOL_NAME = "fattal";
 
-FattalToneMapping::FattalToneMapping(): FoldableToolPanel(this, TOOL_NAME, M("TP_TM_FATTAL_LABEL"), true, true)
+FattalToneMapping::FattalToneMapping() :
+    FoldableToolPanel(this, TOOL_NAME, M("TP_TM_FATTAL_LABEL"), true, true)
 {
     auto m = ProcEventMapper::getInstance();
     EvTMFattalAnchor = m->newEvent(HDR, "HISTORY_MSG_TM_FATTAL_ANCHOR");
 
-    amount = Gtk::manage(new Adjuster (M("TP_TM_FATTAL_AMOUNT"), 1., 100., 1., 30.));
-    threshold = Gtk::manage(new Adjuster (M("TP_TM_FATTAL_THRESHOLD"), -100., 300., 1., 0.0));
+    amount = Gtk::manage(new Adjuster(M("TP_TM_FATTAL_AMOUNT"), 1., 100., 1., 30.));
+    threshold =
+        Gtk::manage(new Adjuster(M("TP_TM_FATTAL_THRESHOLD"), -100., 300., 1., 0.0));
     threshold->setLogScale(10, 0);
     Gtk::Image *al = Gtk::manage(new RTImage("circle-black-small"));
     Gtk::Image *ar = Gtk::manage(new RTImage("circle-white-small"));
@@ -84,7 +85,7 @@ void FattalToneMapping::write(ProcParams *pp, ParamsEdited *pedited)
     pp->fattal.anchor = anchor->getValue();
     pp->fattal.enabled = getEnabled();
 
-    if(pedited) {
+    if (pedited) {
         pedited->fattal.threshold = threshold->getEditedState();
         pedited->fattal.amount = amount->getEditedState();
         pedited->fattal.anchor = anchor->getEditedState();
@@ -92,13 +93,14 @@ void FattalToneMapping::write(ProcParams *pp, ParamsEdited *pedited)
     }
 }
 
-void FattalToneMapping::setDefaults(const ProcParams *defParams, const ParamsEdited *pedited)
+void FattalToneMapping::setDefaults(
+    const ProcParams *defParams, const ParamsEdited *pedited)
 {
     threshold->setDefault(defParams->fattal.threshold);
     amount->setDefault(defParams->fattal.amount);
     anchor->setDefault(defParams->fattal.anchor);
 
-    if(pedited) {
+    if (pedited) {
         threshold->setDefaultEditedState(pedited->fattal.threshold ? Edited : UnEdited);
         amount->setDefaultEditedState(pedited->fattal.amount ? Edited : UnEdited);
         anchor->setDefaultEditedState(pedited->fattal.anchor ? Edited : UnEdited);
@@ -109,28 +111,28 @@ void FattalToneMapping::setDefaults(const ProcParams *defParams, const ParamsEdi
     }
 }
 
-void FattalToneMapping::adjusterChanged(Adjuster* a, double newval)
+void FattalToneMapping::adjusterChanged(Adjuster *a, double newval)
 {
-    if(listener && getEnabled()) {
-        if(a == threshold) {
+    if (listener && getEnabled()) {
+        if (a == threshold) {
             listener->panelChanged(EvTMFattalThreshold, a->getTextValue());
-        } else if(a == amount) {
+        } else if (a == amount) {
             listener->panelChanged(EvTMFattalAmount, a->getTextValue());
-        } else if(a == anchor) {
+        } else if (a == anchor) {
             listener->panelChanged(EvTMFattalAnchor, a->getTextValue());
         }
     }
 }
 
-void FattalToneMapping::enabledChanged ()
+void FattalToneMapping::enabledChanged()
 {
     if (listener) {
         if (get_inconsistent()) {
-            listener->panelChanged (EvTMFattalEnabled, M("GENERAL_UNCHANGED"));
+            listener->panelChanged(EvTMFattalEnabled, M("GENERAL_UNCHANGED"));
         } else if (getEnabled()) {
-            listener->panelChanged (EvTMFattalEnabled, M("GENERAL_ENABLED"));
+            listener->panelChanged(EvTMFattalEnabled, M("GENERAL_ENABLED"));
         } else {
-            listener->panelChanged (EvTMFattalEnabled, M("GENERAL_DISABLED"));
+            listener->panelChanged(EvTMFattalEnabled, M("GENERAL_DISABLED"));
         }
     }
 }
@@ -144,10 +146,10 @@ void FattalToneMapping::setBatchMode(bool batchMode)
     anchor->showEditedCB();
 }
 
-void FattalToneMapping::setAdjusterBehavior(bool amountAdd, bool thresholdAdd, bool anchorAdd)
+void FattalToneMapping::setAdjusterBehavior(
+    bool amountAdd, bool thresholdAdd, bool anchorAdd)
 {
     amount->setAddMode(amountAdd);
     threshold->setAddMode(thresholdAdd);
     anchor->setAddMode(anchorAdd);
 }
-

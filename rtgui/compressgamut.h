@@ -23,23 +23,22 @@
 #include "adjuster.h"
 #include "toolpanel.h"
 
-class Compressgamut final :
-    public ToolParamBlock,
-    public AdjusterListener,
-    public FoldableToolPanel
+class Compressgamut final : public ToolParamBlock,
+                            public AdjusterListener,
+                            public FoldableToolPanel
 {
 
 protected:
-    Adjuster* th_c;
-    Adjuster* th_m;
-    Adjuster* th_y;
-    Adjuster* d_c;
-    Adjuster* d_m;
-    Adjuster* d_y;
-    Adjuster* pwr;
+    Adjuster *th_c;
+    Adjuster *th_m;
+    Adjuster *th_y;
+    Adjuster *d_c;
+    Adjuster *d_m;
+    Adjuster *d_y;
+    Adjuster *pwr;
     MyComboBoxText *colorspace;
     sigc::connection colorspaceconn;
-    Gtk::CheckButton* rolloff;
+    Gtk::CheckButton *rolloff;
     sigc::connection rolloffconn;
     bool lastrolloff;
 
@@ -57,18 +56,21 @@ protected:
 public:
     static const Glib::ustring TOOL_NAME;
 
-    Compressgamut ();
+    Compressgamut();
 
-    void read           (const rtengine::procparams::ProcParams* pp, const ParamsEdited* pedited = nullptr) override;
-    void write          (rtengine::procparams::ProcParams* pp, ParamsEdited* pedited = nullptr) override;
-    void setDefaults    (const rtengine::procparams::ProcParams* defParams, const ParamsEdited* pedited = nullptr) override;
-    void setBatchMode   (bool batchMode) override;
+    void read(const rtengine::procparams::ProcParams *pp,
+        const ParamsEdited *pedited = nullptr) override;
+    void write(
+        rtengine::procparams::ProcParams *pp, ParamsEdited *pedited = nullptr) override;
+    void setDefaults(const rtengine::procparams::ProcParams *defParams,
+        const ParamsEdited *pedited = nullptr) override;
+    void setBatchMode(bool batchMode) override;
 
-    void adjusterChanged (Adjuster* a, double newval) override;
-    void enabledChanged  () override;
+    void adjusterChanged(Adjuster *a, double newval) override;
+    void enabledChanged() override;
     void rolloff_change();
 
-    void trimValues          (rtengine::procparams::ProcParams* pp) override;
+    void trimValues(rtengine::procparams::ProcParams *pp) override;
 
     void colorspaceChanged();
 };

@@ -1,5 +1,5 @@
 /** -*- C++ -*-
- *  
+ *
  *  This file is part of RawTherapee.
  *
  *  Copyright (c) 2018 Alberto Griggio <alberto.griggio@gmail.com>
@@ -31,7 +31,7 @@ using namespace rtengine::procparams;
 
 const Glib::ustring Dehaze::TOOL_NAME = "dehaze";
 
-Dehaze::Dehaze(): FoldableToolPanel(this, TOOL_NAME, M("TP_DEHAZE_LABEL"), false, true)
+Dehaze::Dehaze() : FoldableToolPanel(this, TOOL_NAME, M("TP_DEHAZE_LABEL"), false, true)
 {
     auto m = ProcEventMapper::getInstance();
     EvDehazeEnabled = m->newEvent(HDR, "HISTORY_MSG_DEHAZE_ENABLED");
@@ -39,7 +39,7 @@ Dehaze::Dehaze(): FoldableToolPanel(this, TOOL_NAME, M("TP_DEHAZE_LABEL"), false
     EvDehazeShowDepthMap = m->newEvent(HDR, "HISTORY_MSG_DEHAZE_SHOW_DEPTH_MAP");
     EvDehazeDepth = m->newEvent(HDR, "HISTORY_MSG_DEHAZE_DEPTH");
     EvDehazeSaturation = m->newEvent(HDR, "HISTORY_MSG_DEHAZE_SATURATION");
-    
+
     strength = Gtk::manage(new Adjuster(M("TP_DEHAZE_STRENGTH"), 0., 100., 1., 50.));
     strength->setAdjusterListener(this);
     strength->show();
@@ -48,14 +48,16 @@ Dehaze::Dehaze(): FoldableToolPanel(this, TOOL_NAME, M("TP_DEHAZE_LABEL"), false
     depth->setAdjusterListener(this);
     depth->show();
 
-    saturation = Gtk::manage(new Adjuster(M("TP_DEHAZE_SATURATION"), 0., 100., 1., 50.));
+    saturation =
+        Gtk::manage(new Adjuster(M("TP_DEHAZE_SATURATION"), 0., 100., 1., 50.));
     saturation->setAdjusterListener(this);
     saturation->show();
 
     showDepthMap = Gtk::manage(new Gtk::CheckButton(M("TP_DEHAZE_SHOW_DEPTH_MAP")));
-    showDepthMap->signal_toggled().connect(sigc::mem_fun(*this, &Dehaze::showDepthMapChanged));
+    showDepthMap->signal_toggled().connect(
+        sigc::mem_fun(*this, &Dehaze::showDepthMapChanged));
     showDepthMap->show();
-    
+
     pack_start(*strength);
     pack_start(*depth);
     pack_start(*saturation);
@@ -107,7 +109,8 @@ void Dehaze::setDefaults(const ProcParams *defParams, const ParamsEdited *pedite
     depth->setDefault(defParams->dehaze.depth);
 
     if (pedited) {
-        saturation->setDefaultEditedState(pedited->dehaze.saturation ? Edited : UnEdited);
+        saturation->setDefaultEditedState(
+            pedited->dehaze.saturation ? Edited : UnEdited);
         strength->setDefaultEditedState(pedited->dehaze.strength ? Edited : UnEdited);
         depth->setDefaultEditedState(pedited->dehaze.depth ? Edited : UnEdited);
     } else {
@@ -117,7 +120,7 @@ void Dehaze::setDefaults(const ProcParams *defParams, const ParamsEdited *pedite
     }
 }
 
-void Dehaze::adjusterChanged(Adjuster* a, double newval)
+void Dehaze::adjusterChanged(Adjuster *a, double newval)
 {
     if (listener && getEnabled()) {
         if (a == strength) {
@@ -130,7 +133,7 @@ void Dehaze::adjusterChanged(Adjuster* a, double newval)
     }
 }
 
-void Dehaze::enabledChanged ()
+void Dehaze::enabledChanged()
 {
     if (listener) {
         if (get_inconsistent()) {
@@ -146,7 +149,8 @@ void Dehaze::enabledChanged ()
 void Dehaze::showDepthMapChanged()
 {
     if (listener) {
-        listener->panelChanged(EvDehazeShowDepthMap, showDepthMap->get_active() ? M("GENERAL_ENABLED") : M("GENERAL_DISABLED"));
+        listener->panelChanged(EvDehazeShowDepthMap,
+            showDepthMap->get_active() ? M("GENERAL_ENABLED") : M("GENERAL_DISABLED"));
     }
 }
 

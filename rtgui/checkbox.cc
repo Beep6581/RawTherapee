@@ -23,32 +23,30 @@
 #include "checkbox.h"
 #include "guiutils.h"
 
-CheckBox::CheckBox (Glib::ustring label, bool const& multiImageVal)
-    : Gtk::CheckButton (label)
-    , listener (nullptr)
-    , lastActive (false)
-    , multiImage (multiImageVal)
+CheckBox::CheckBox(Glib::ustring label, bool const &multiImageVal) :
+    Gtk::CheckButton(label), listener(nullptr), lastActive(false),
+    multiImage(multiImageVal)
 {
-    conn = signal_toggled().connect( sigc::mem_fun(*this, &CheckBox::buttonToggled) );
+    conn = signal_toggled().connect(sigc::mem_fun(*this, &CheckBox::buttonToggled));
 }
 
-void CheckBox::buttonToggled ()
+void CheckBox::buttonToggled()
 {
 
     CheckValue newValue = CheckValue::unchanged;
 
     if (multiImage) {
         if (get_inconsistent()) {
-            set_inconsistent (false);
-            ConnectionBlocker bloker (conn);
-            set_active (false);
+            set_inconsistent(false);
+            ConnectionBlocker bloker(conn);
+            set_active(false);
             newValue = CheckValue::off;
         } else if (getLastActive()) {
-            set_inconsistent (true);
+            set_inconsistent(true);
             newValue = CheckValue::unchanged;
         }
     } else {
-        newValue = get_active () ? CheckValue::on : CheckValue::off;
+        newValue = get_active() ? CheckValue::on : CheckValue::off;
     }
     setLastActive();
 
@@ -57,59 +55,55 @@ void CheckBox::buttonToggled ()
     }
 }
 
-void CheckBox::setLastActive()
-{
-    lastActive = get_active();
-}
+void CheckBox::setLastActive() { lastActive = get_active(); }
 
 // return the actual bool value, ignoring the inconsistent state
-bool CheckBox::getLastActive ()
-{
-    return lastActive;
-}
+bool CheckBox::getLastActive() { return lastActive; }
 
-void CheckBox::setValue (CheckValue newValue)
+void CheckBox::setValue(CheckValue newValue)
 {
 
-    ConnectionBlocker blocker (conn);
+    ConnectionBlocker blocker(conn);
     switch (newValue) {
-    case CheckValue::on:
-        set_inconsistent (false);
-        set_active(true);
-        lastActive = true;
-        break;
-    case CheckValue::off:
-        set_inconsistent (false);
-        set_active(false);
-        lastActive = false;
-        break;
-    case CheckValue::unchanged:
-        set_inconsistent (true);
-        break;
-    default:
-        break;
+        case CheckValue::on:
+            set_inconsistent(false);
+            set_active(true);
+            lastActive = true;
+            break;
+        case CheckValue::off:
+            set_inconsistent(false);
+            set_active(false);
+            lastActive = false;
+            break;
+        case CheckValue::unchanged:
+            set_inconsistent(true);
+            break;
+        default:
+            break;
     }
 }
 
-void CheckBox::setValue (bool active)
+void CheckBox::setValue(bool active)
 {
 
-    ConnectionBlocker blocker (conn);
-    set_inconsistent (false);
+    ConnectionBlocker blocker(conn);
+    set_inconsistent(false);
     set_active(active);
     lastActive = active;
 }
 
-CheckValue CheckBox::getValue ()
+CheckValue CheckBox::getValue()
 {
-    return (get_inconsistent() ? CheckValue::unchanged : get_active() ? CheckValue::on : CheckValue::off);
+    return (get_inconsistent() ? CheckValue::unchanged
+            : get_active()     ? CheckValue::on
+                               : CheckValue::off);
 }
 
-Glib::ustring CheckBox::getValueAsStr ()
+Glib::ustring CheckBox::getValueAsStr()
 {
     if (get_inconsistent()) {
         return M("GENERAL_UNCHANGED");
-    } else if (get_active ()) {
+    } else if (get_active()) {
         return M("GENERAL_ENABLED");
     } else {
         return M("GENERAL_DISABLED");
@@ -133,23 +127,19 @@ void CheckBox::set_tooltip_markup (const Glib::ustring& tooltip)
 }
 */
 
-void CheckBox::setEdited (bool edited)
+void CheckBox::setEdited(bool edited)
 {
 
-    ConnectionBlocker blocker (conn);
-    set_inconsistent (!edited);
+    ConnectionBlocker blocker(conn);
+    set_inconsistent(!edited);
     if (edited) {
-       set_active (lastActive);
+        set_active(lastActive);
     }
 }
 
-bool CheckBox::getEdited ()
-{
+bool CheckBox::getEdited() { return !get_inconsistent(); }
 
-    return !get_inconsistent ();
-}
-
-void CheckBox::setCheckBoxListener (CheckBoxListener* cblistener)
+void CheckBox::setCheckBoxListener(CheckBoxListener *cblistener)
 {
     listener = cblistener;
 }

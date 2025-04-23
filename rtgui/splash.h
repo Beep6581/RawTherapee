@@ -21,8 +21,7 @@
 #include <gtkmm.h>
 #include "rtsurface.h"
 
-class SplashImage final :
-    public Gtk::DrawingArea
+class SplashImage final : public Gtk::DrawingArea
 {
 
 private:
@@ -30,33 +29,34 @@ private:
     Glib::RefPtr<Pango::Layout> version;
 
 public:
-    SplashImage ();
-    bool on_draw(const ::Cairo::RefPtr< Cairo::Context> &cr) override;
-    Gtk::SizeRequestMode get_request_mode_vfunc () const override;
-    void get_preferred_height_vfunc (int &minimum_height, int &natural_height) const override;
-    void get_preferred_width_vfunc (int &minimum_width, int &natural_width) const override;
-    void get_preferred_height_for_width_vfunc (int width, int &minimum_height, int &natural_height) const override;
-    void get_preferred_width_for_height_vfunc (int height, int &minimum_width, int &natural_width) const override;
+    SplashImage();
+    bool on_draw(const ::Cairo::RefPtr<Cairo::Context> &cr) override;
+    Gtk::SizeRequestMode get_request_mode_vfunc() const override;
+    void get_preferred_height_vfunc(
+        int &minimum_height, int &natural_height) const override;
+    void get_preferred_width_vfunc(
+        int &minimum_width, int &natural_width) const override;
+    void get_preferred_height_for_width_vfunc(
+        int width, int &minimum_height, int &natural_height) const override;
+    void get_preferred_width_for_height_vfunc(
+        int height, int &minimum_width, int &natural_width) const override;
 };
 
-//class Splash : public Gtk::Window {
+// class Splash : public Gtk::Window {
 class Splash final : public Gtk::Dialog
 {
 
 private:
-    SplashImage* splashImage;
-    Gtk::Notebook* nb;
-    Gtk::ScrolledWindow* releaseNotesSW;
+    SplashImage *splashImage;
+    Gtk::Notebook *nb;
+    Gtk::ScrolledWindow *releaseNotesSW;
 
 public:
-    explicit Splash (Gtk::Window& parent);
+    explicit Splash(Gtk::Window &parent);
 
-    bool hasReleaseNotes()
-    {
-        return releaseNotesSW != nullptr;
-    };
+    bool hasReleaseNotes() { return releaseNotesSW != nullptr; };
     void showReleaseNotes();
-    bool on_timer ();
-    //virtual bool on_button_release_event (GdkEventButton* event);
+    bool on_timer();
+    // virtual bool on_button_release_event (GdkEventButton* event);
     void closePressed();
 };

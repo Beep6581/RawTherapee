@@ -27,36 +27,34 @@ class CurveListener
 
 private:
     bool multi;
+
 public:
     CurveListener() : multi(false) {}
     virtual ~CurveListener() {}
-    virtual void curveChanged () {}
-    virtual void curveChanged (CurveEditor* ce) {}
-    void setMulti(bool value)
-    {
-        multi = value;
-    }
-    bool isMulti()
-    {
-        return multi;
-    }
+    virtual void curveChanged() {}
+    virtual void curveChanged(CurveEditor *ce) {}
+    void setMulti(bool value) { multi = value; }
+    bool isMulti() { return multi; }
 
     /** @brief Ask the reset curve for a given curve type
      * @param ce CurveEditor that we want to reset
-     * @param curve Actual curve for the return value. The actual curve type (given by the first value of the vector)
-     *              should be kept the same. Change the curve type if REALLY necessary! */
+     * @param curve Actual curve for the return value. The actual curve type (given by
+     * the first value of the vector) should be kept the same. Change the curve type if
+     * REALLY necessary! */
     virtual bool getResetCurve(CurveEditor *ce, std::vector<double> &curve)
     {
         return false;
     }
 
     /** @brief Blend pipette values from its different channels into a single value
-    If the buffer has more than one channel and one channel, this method will blend them together.
+    If the buffer has more than one channel and one channel, this method will blend them
+    together.
     @param chan1 first channel's value
     @param chan2 second channel's value
     @param chan3 third channel's value
     @return the blended value */
-    virtual float blendPipetteValues(CurveEditor *ce, float chan1, float chan2, float chan3)
+    virtual float blendPipetteValues(
+        CurveEditor *ce, float chan1, float chan2, float chan3)
     {
         float retVal = 0.f;
         int n = 0;

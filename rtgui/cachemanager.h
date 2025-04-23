@@ -30,43 +30,44 @@
 class CacheImageData;
 class Thumbnail;
 
-class CacheManager :
-    public rtengine::NonCopyable
+class CacheManager : public rtengine::NonCopyable
 {
 private:
-    using Entries = std::map<std::string, Thumbnail*>;
+    using Entries = std::map<std::string, Thumbnail *>;
     Entries openEntries;
-    Glib::ustring    baseDir;
-    mutable MyMutex  mutex;
+    Glib::ustring baseDir;
+    mutable MyMutex mutex;
 
-    void deleteDir   (const Glib::ustring& dirName) const;
-    void deleteFiles (const Glib::ustring& fname, const std::string& md5, bool purgeData, bool purgeProfile) const;
+    void deleteDir(const Glib::ustring &dirName) const;
+    void deleteFiles(const Glib::ustring &fname, const std::string &md5, bool purgeData,
+        bool purgeProfile) const;
 
-    void applyCacheSizeLimitation () const;
-    void updateImageInfo(const Glib::ustring &fname, CacheImageData &imageData, const Glib::ustring &xmpSidecarMd5) const;
+    void applyCacheSizeLimitation() const;
+    void updateImageInfo(const Glib::ustring &fname, CacheImageData &imageData,
+        const Glib::ustring &xmpSidecarMd5) const;
 
 public:
-    static CacheManager* getInstance ();
+    static CacheManager *getInstance();
 
-    void        init        ();
+    void init();
 
-    Thumbnail*  getEntry    (const Glib::ustring& fname);
-    void        deleteEntry (const Glib::ustring& fname);
-    void        renameEntry (const std::string& oldfilename, const std::string& oldmd5, const std::string& newfilename);
+    Thumbnail *getEntry(const Glib::ustring &fname);
+    void deleteEntry(const Glib::ustring &fname);
+    void renameEntry(const std::string &oldfilename, const std::string &oldmd5,
+        const std::string &newfilename);
 
-    void closeThumbnail (Thumbnail* thumbnail);
-    void closeCache () const;
+    void closeThumbnail(Thumbnail *thumbnail);
+    void closeCache() const;
 
-    void clearAll () const;
-    void clearImages () const;
-    void clearProfiles () const;
-    void clearFromCache (const Glib::ustring& fname, bool purge) const;
-    static std::string getMD5 (const Glib::ustring& fname);
+    void clearAll() const;
+    void clearImages() const;
+    void clearProfiles() const;
+    void clearFromCache(const Glib::ustring &fname, bool purge) const;
+    static std::string getMD5(const Glib::ustring &fname);
 
-    Glib::ustring    getCacheFileName (const Glib::ustring& subDir,
-                                       const Glib::ustring& fname,
-                                       const Glib::ustring& fext,
-                                       const Glib::ustring& md5) const;
+    Glib::ustring getCacheFileName(const Glib::ustring &subDir,
+        const Glib::ustring &fname, const Glib::ustring &fext,
+        const Glib::ustring &md5) const;
 };
 
 #define cacheMgr CacheManager::getInstance()

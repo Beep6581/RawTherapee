@@ -22,22 +22,20 @@
 
 #include <giomm.h>
 
-class PlacesBrowser :
-    public Gtk::Box
+class PlacesBrowser : public Gtk::Box
 {
 public:
-    typedef sigc::slot<void, const Glib::ustring&> DirSelectionSlot;
+    typedef sigc::slot<void, const Glib::ustring &> DirSelectionSlot;
 
 private:
-
     class PlacesColumns : public Gtk::TreeModel::ColumnRecord
     {
     public:
-        Gtk::TreeModelColumn<Glib::RefPtr<Gio::Icon> >   icon;
-        Gtk::TreeModelColumn<Glib::ustring>              label;
-        Gtk::TreeModelColumn<Glib::ustring>              root;
-        Gtk::TreeModelColumn<int>                        type;
-        Gtk::TreeModelColumn<bool>                       rowSeparator;
+        Gtk::TreeModelColumn<Glib::RefPtr<Gio::Icon>> icon;
+        Gtk::TreeModelColumn<Glib::ustring> label;
+        Gtk::TreeModelColumn<Glib::ustring> root;
+        Gtk::TreeModelColumn<int> type;
+        Gtk::TreeModelColumn<bool> rowSeparator;
         PlacesColumns()
         {
             add(icon);
@@ -47,40 +45,39 @@ private:
             add(rowSeparator);
         }
     };
-    PlacesColumns            placesColumns;
-    Gtk::ScrolledWindow*    scrollw;
-    Gtk::TreeView*          treeView;
+    PlacesColumns placesColumns;
+    Gtk::ScrolledWindow *scrollw;
+    Gtk::TreeView *treeView;
     Glib::RefPtr<Gtk::ListStore> placesModel;
     Glib::RefPtr<Gio::VolumeMonitor> vm;
-    DirSelectionSlot             selectDir;
-    Glib::ustring                lastSelectedDir;
-    Gtk::Button*                 add;
-    Gtk::Button*                 del;
+    DirSelectionSlot selectDir;
+    Glib::ustring lastSelectedDir;
+    Gtk::Button *add;
+    Gtk::Button *del;
 
 public:
+    PlacesBrowser();
 
-    PlacesBrowser ();
+    void setDirSelector(const DirSelectionSlot &selectDir);
+    void dirSelected(const Glib::ustring &dirname, const Glib::ustring &openfile);
 
-    void setDirSelector (const DirSelectionSlot& selectDir);
-    void dirSelected (const Glib::ustring& dirname, const Glib::ustring& openfile);
-
-    void refreshPlacesList ();
-    void mountChanged (const Glib::RefPtr<Gio::Mount>& m);
-    void volumeChanged (const Glib::RefPtr<Gio::Volume>& v);
-    void driveChanged (const Glib::RefPtr<Gio::Drive>& d);
-    bool rowSeparatorFunc (const Glib::RefPtr<Gtk::TreeModel>& model, const Gtk::TreeModel::iterator& iter);
-    void selectionChanged ();
-    void addPressed ();
-    void delPressed ();
+    void refreshPlacesList();
+    void mountChanged(const Glib::RefPtr<Gio::Mount> &m);
+    void volumeChanged(const Glib::RefPtr<Gio::Volume> &v);
+    void driveChanged(const Glib::RefPtr<Gio::Drive> &d);
+    bool rowSeparatorFunc(const Glib::RefPtr<Gtk::TreeModel> &model,
+        const Gtk::TreeModel::iterator &iter);
+    void selectionChanged();
+    void addPressed();
+    void delPressed();
 
 public:
-
-    static Glib::ustring userHomeDir ();
-    static Glib::ustring userPicturesDir ();
-
+    static Glib::ustring userHomeDir();
+    static Glib::ustring userPicturesDir();
 };
 
-inline void PlacesBrowser::setDirSelector (const PlacesBrowser::DirSelectionSlot& selectDir)
+inline void PlacesBrowser::setDirSelector(
+    const PlacesBrowser::DirSelectionSlot &selectDir)
 {
     this->selectDir = selectDir;
 }

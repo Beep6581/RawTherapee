@@ -32,7 +32,8 @@ using namespace rtengine::procparams;
 
 const Glib::ustring Defringe::TOOL_NAME = "defringe";
 
-Defringe::Defringe () : FoldableToolPanel(this, TOOL_NAME, M("TP_DEFRINGE_LABEL"), true, true)
+Defringe::Defringe() :
+    FoldableToolPanel(this, TOOL_NAME, M("TP_DEFRINGE_LABEL"), true, true)
 {
 
     std::vector<GradientMilestone> bottomMilestones;
@@ -41,40 +42,40 @@ Defringe::Defringe () : FoldableToolPanel(this, TOOL_NAME, M("TP_DEFRINGE_LABEL"
     for (int i = 0; i < 7; i++) {
         float x = i / 6.f;
         Color::hsv2rgb01(x, 0.5f, 0.5f, R, G, B);
-        bottomMilestones.push_back( GradientMilestone(double(x), double(R), double(G), double(B)) );
+        bottomMilestones.push_back(
+            GradientMilestone(double(x), double(R), double(G), double(B)));
     }
 
-    curveEditorPF = new CurveEditorGroup (options.lastPFCurvesDir);
-    curveEditorPF->setCurveListener (this);
-    chshape = static_cast<FlatCurveEditor*>(curveEditorPF->addCurve(CT_Flat, M("TP_PFCURVE_CURVEEDITOR_CH")));
+    curveEditorPF = new CurveEditorGroup(options.lastPFCurvesDir);
+    curveEditorPF->setCurveListener(this);
+    chshape = static_cast<FlatCurveEditor *>(
+        curveEditorPF->addCurve(CT_Flat, M("TP_PFCURVE_CURVEEDITOR_CH")));
     chshape->setTooltip(M("TP_PFCURVE_CURVEEDITOR_CH_TOOLTIP"));
     chshape->setIdentityValue(0.);
     chshape->setBottomBarBgGradient(bottomMilestones);
     chshape->setCurveColorProvider(this, 1);
 
-    //edgConn = enabled->signal_toggled().connect( sigc::mem_fun(*this, &Defringe::edgeChanged) );
+    // edgConn = enabled->signal_toggled().connect( sigc::mem_fun(*this,
+    // &Defringe::edgeChanged) );
 
-    radius  = Gtk::manage (new Adjuster (M("TP_DEFRINGE_RADIUS"), 0.5, 5.0, 0.1, 2.0));
-    threshold    = Gtk::manage (new Adjuster (M("TP_DEFRINGE_THRESHOLD"), 0, 100, 1, 13));
-    radius->setAdjusterListener (this);
-    threshold->setAdjusterListener (this);
-// radius->show();
-// threshold->show();
+    radius = Gtk::manage(new Adjuster(M("TP_DEFRINGE_RADIUS"), 0.5, 5.0, 0.1, 2.0));
+    threshold = Gtk::manage(new Adjuster(M("TP_DEFRINGE_THRESHOLD"), 0, 100, 1, 13));
+    radius->setAdjusterListener(this);
+    threshold->setAdjusterListener(this);
+    // radius->show();
+    // threshold->show();
 
-    pack_start (*radius);
-    pack_start (*threshold);
+    pack_start(*radius);
+    pack_start(*threshold);
     curveEditorPF->curveListComplete();
 
-    pack_start (*curveEditorPF, Gtk::PACK_SHRINK, 4);
-
+    pack_start(*curveEditorPF, Gtk::PACK_SHRINK, 4);
 }
 
-Defringe::~Defringe ()
-{
-    delete curveEditorPF;
-}
+Defringe::~Defringe() { delete curveEditorPF; }
 
-void Defringe::colorForValue (double valX, double valY, enum ColorCaller::ElemType elemType, int callerId, ColorCaller *caller)
+void Defringe::colorForValue(double valX, double valY,
+    enum ColorCaller::ElemType elemType, int callerId, ColorCaller *caller)
 {
 
     float R = 0.f, G = 0.f, B = 0.f;
@@ -92,102 +93,105 @@ void Defringe::colorForValue (double valX, double valY, enum ColorCaller::ElemTy
     caller->ccBlue = double(B);
 }
 
-void Defringe::read (const ProcParams* pp, const ParamsEdited* pedited)
+void Defringe::read(const ProcParams *pp, const ParamsEdited *pedited)
 {
 
-    disableListener ();
+    disableListener();
 
     if (pedited) {
-        radius->setEditedState    ( pedited->defringe.radius ? Edited : UnEdited);
-        threshold->setEditedState ( pedited->defringe.threshold ? Edited : UnEdited);
-        set_inconsistent          (multiImage && !pedited->defringe.enabled);
-        chshape->setUnChanged     (!pedited->defringe.huecurve);
+        radius->setEditedState(pedited->defringe.radius ? Edited : UnEdited);
+        threshold->setEditedState(pedited->defringe.threshold ? Edited : UnEdited);
+        set_inconsistent(multiImage && !pedited->defringe.enabled);
+        chshape->setUnChanged(!pedited->defringe.huecurve);
     }
 
     setEnabled(pp->defringe.enabled);
 
-    radius->setValue    (pp->defringe.radius);
-    threshold->setValue (pp->defringe.threshold);
-    chshape->setCurve   (pp->defringe.huecurve);
+    radius->setValue(pp->defringe.radius);
+    threshold->setValue(pp->defringe.threshold);
+    chshape->setCurve(pp->defringe.huecurve);
 
-    enableListener ();
+    enableListener();
 }
 
-
-void Defringe::autoOpenCurve ()
+void Defringe::autoOpenCurve()
 {
     // WARNING: The following line won't work, since linear is a flat curve at 0.
     // chshape->openIfNonlinear();
 }
 
-void Defringe::write (ProcParams* pp, ParamsEdited* pedited)
+void Defringe::write(ProcParams *pp, ParamsEdited *pedited)
 {
 
-    pp->defringe.radius    = radius->getValue ();
-    pp->defringe.threshold = (int)threshold->getValue ();
-    pp->defringe.enabled   = getEnabled();
-    pp->defringe.huecurve  = chshape->getCurve ();
+    pp->defringe.radius = radius->getValue();
+    pp->defringe.threshold = (int)threshold->getValue();
+    pp->defringe.enabled = getEnabled();
+    pp->defringe.huecurve = chshape->getCurve();
 
     if (pedited) {
-        pedited->defringe.radius    = radius->getEditedState ();
-        pedited->defringe.threshold = threshold->getEditedState ();
-        pedited->defringe.enabled   = !get_inconsistent();
-        pedited->defringe.huecurve  = !chshape->isUnChanged ();
+        pedited->defringe.radius = radius->getEditedState();
+        pedited->defringe.threshold = threshold->getEditedState();
+        pedited->defringe.enabled = !get_inconsistent();
+        pedited->defringe.huecurve = !chshape->isUnChanged();
     }
 }
 
-void Defringe::setDefaults (const ProcParams* defParams, const ParamsEdited* pedited)
+void Defringe::setDefaults(const ProcParams *defParams, const ParamsEdited *pedited)
 {
 
-    radius->setDefault (defParams->defringe.radius);
-    threshold->setDefault (defParams->defringe.threshold);
+    radius->setDefault(defParams->defringe.radius);
+    threshold->setDefault(defParams->defringe.threshold);
 
     if (pedited) {
-        radius->setDefaultEditedState (pedited->defringe.radius ? Edited : UnEdited);
-        threshold->setDefaultEditedState (pedited->defringe.threshold ? Edited : UnEdited);
+        radius->setDefaultEditedState(pedited->defringe.radius ? Edited : UnEdited);
+        threshold->setDefaultEditedState(
+            pedited->defringe.threshold ? Edited : UnEdited);
     } else {
-        radius->setDefaultEditedState (Irrelevant);
-        threshold->setDefaultEditedState (Irrelevant);
+        radius->setDefaultEditedState(Irrelevant);
+        threshold->setDefaultEditedState(Irrelevant);
     }
 }
-void Defringe::curveChanged ()
+void Defringe::curveChanged()
 {
 
     if (listener && getEnabled()) {
-        listener->panelChanged (EvPFCurve, M("HISTORY_CUSTOMCURVE"));
+        listener->panelChanged(EvPFCurve, M("HISTORY_CUSTOMCURVE"));
     }
 }
 
-void Defringe::adjusterChanged(Adjuster* a, double newval)
+void Defringe::adjusterChanged(Adjuster *a, double newval)
 {
     if (listener && getEnabled()) {
 
         if (a == radius) {
-            listener->panelChanged (EvDefringeRadius, Glib::ustring::format (std::setw(2), std::fixed, std::setprecision(1), a->getValue()));
+            listener->panelChanged(
+                EvDefringeRadius, Glib::ustring::format(std::setw(2), std::fixed,
+                                      std::setprecision(1), a->getValue()));
         } else if (a == threshold) {
-            listener->panelChanged (EvDefringeThreshold, Glib::ustring::format ((int)a->getValue()));
+            listener->panelChanged(
+                EvDefringeThreshold, Glib::ustring::format((int)a->getValue()));
         }
     }
 }
 
-void Defringe::enabledChanged ()
+void Defringe::enabledChanged()
 {
 
     if (listener) {
         if (get_inconsistent()) {
-            listener->panelChanged (EvDefringeEnabled, M("GENERAL_UNCHANGED"));
+            listener->panelChanged(EvDefringeEnabled, M("GENERAL_UNCHANGED"));
         } else if (getEnabled()) {
-            listener->panelChanged (EvDefringeEnabled, M("GENERAL_ENABLED"));
+            listener->panelChanged(EvDefringeEnabled, M("GENERAL_ENABLED"));
         } else {
-            listener->panelChanged (EvDefringeEnabled, M("GENERAL_DISABLED"));
+            listener->panelChanged(EvDefringeEnabled, M("GENERAL_DISABLED"));
         }
     }
 }
 
-void Defringe::setBatchMode (bool batchMode)
+void Defringe::setBatchMode(bool batchMode)
 {
 
-    ToolPanel::setBatchMode (batchMode);
-    radius->showEditedCB ();
-    threshold->showEditedCB ();
+    ToolPanel::setBatchMode(batchMode);
+    radius->showEditedCB();
+    threshold->showEditedCB();
 }

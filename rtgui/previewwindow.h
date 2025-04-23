@@ -25,18 +25,17 @@
 #include "guiutils.h"
 #include "previewhandler.h"
 
-class PreviewWindow :
-    public Gtk::DrawingArea,
-    public PreviewListener,
-    public CropWindowListener
+class PreviewWindow : public Gtk::DrawingArea,
+                      public PreviewListener,
+                      public CropWindowListener
 {
 
 private:
     Cairo::RefPtr<BackBuffer> backBuffer;
-    PreviewHandler* previewHandler;
+    PreviewHandler *previewHandler;
     sigc::connection rconn;
-    CropWindow* mainCropWin;
-    ImageArea* imageArea;
+    CropWindow *mainCropWin;
+    ImageArea *imageArea;
     int imgX, imgY, imgW, imgH;
     double zoom;
     double press_x, press_y;
@@ -44,33 +43,37 @@ private:
     bool needsUpdate;
     CursorShape cursor_type;
 
-    void updatePreviewImage     ();
-    void getObservedFrameArea   (int& x, int& y, int& w, int& h);
+    void updatePreviewImage();
+    void getObservedFrameArea(int &x, int &y, int &w, int &h);
 
 public:
-    PreviewWindow ();
+    PreviewWindow();
 
-    void setPreviewHandler  (PreviewHandler* ph);
-    void setImageArea       (ImageArea* ia);
+    void setPreviewHandler(PreviewHandler *ph);
+    void setImageArea(ImageArea *ia);
 
-    void on_realize             () override;
-    void on_resized             (Gtk::Allocation& req);
-    bool on_draw                (const ::Cairo::RefPtr< Cairo::Context> &cr) override;
-    bool on_motion_notify_event (GdkEventMotion* event) override;
-    bool on_button_press_event  (GdkEventButton* event) override;
-    bool on_button_release_event(GdkEventButton* event) override;
-    Gtk::SizeRequestMode get_request_mode_vfunc () const override;
-    void get_preferred_height_vfunc (int& minimum_height, int& natural_height) const override;
-    void get_preferred_width_vfunc (int &minimum_width, int &natural_width) const override;
-    void get_preferred_height_for_width_vfunc (int width, int &minimum_height, int &natural_height) const override;
-    void get_preferred_width_for_height_vfunc (int height, int &minimum_width, int &natural_width) const override;
+    void on_realize() override;
+    void on_resized(Gtk::Allocation &req);
+    bool on_draw(const ::Cairo::RefPtr<Cairo::Context> &cr) override;
+    bool on_motion_notify_event(GdkEventMotion *event) override;
+    bool on_button_press_event(GdkEventButton *event) override;
+    bool on_button_release_event(GdkEventButton *event) override;
+    Gtk::SizeRequestMode get_request_mode_vfunc() const override;
+    void get_preferred_height_vfunc(
+        int &minimum_height, int &natural_height) const override;
+    void get_preferred_width_vfunc(
+        int &minimum_width, int &natural_width) const override;
+    void get_preferred_height_for_width_vfunc(
+        int width, int &minimum_height, int &natural_height) const override;
+    void get_preferred_width_for_height_vfunc(
+        int height, int &minimum_width, int &natural_width) const override;
 
     // PreviewListener interface
-    void previewImageChanged () override;
+    void previewImageChanged() override;
 
     // CropWindowListener interface
-    void cropPositionChanged(CropWindow* w) override;
-    void cropWindowSizeChanged(CropWindow* w) override;
-    void cropZoomChanged(CropWindow* w) override;
+    void cropPositionChanged(CropWindow *w) override;
+    void cropWindowSizeChanged(CropWindow *w) override;
+    void cropZoomChanged(CropWindow *w) override;
     void initialImageArrived() override;
 };

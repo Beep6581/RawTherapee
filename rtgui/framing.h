@@ -31,10 +31,9 @@
 
 class ColorPreview;
 
-class Framing final :
-    public ToolParamBlock,
-    public AdjusterListener,
-    public FoldableToolPanel
+class Framing final : public ToolParamBlock,
+                      public AdjusterListener,
+                      public FoldableToolPanel
 {
 public:
     static const Glib::ustring TOOL_NAME;
@@ -43,21 +42,22 @@ public:
     ~Framing();
 
     // FoldableToolPanel
-    void read(const rtengine::procparams::ProcParams* pp,
-              const ParamsEdited* pedited = nullptr) override;
-    void write(rtengine::procparams::ProcParams* pp,
-               ParamsEdited* pedited = nullptr) override;
-    void setDefaults(const rtengine::procparams::ProcParams* defParams,
-                     const ParamsEdited* pedited = nullptr) override;
-    void trimValues(rtengine::procparams::ProcParams* pp) override;
+    void read(const rtengine::procparams::ProcParams *pp,
+        const ParamsEdited *pedited = nullptr) override;
+    void write(
+        rtengine::procparams::ProcParams *pp, ParamsEdited *pedited = nullptr) override;
+    void setDefaults(const rtengine::procparams::ProcParams *defParams,
+        const ParamsEdited *pedited = nullptr) override;
+    void trimValues(rtengine::procparams::ProcParams *pp) override;
     void setBatchMode(bool batchMode) override;
     void enabledChanged() override;
 
     void update(int originalWidth = 0, int originalHeight = 0);
-    void setAdjusterBehavior(bool addRelativeBorderSize, bool addRed, bool addGreen, bool addBlue);
+    void setAdjusterBehavior(
+        bool addRelativeBorderSize, bool addRed, bool addGreen, bool addBlue);
 
     // AdjusterListener
-    void adjusterChanged(Adjuster* adj, double newVal) override;
+    void adjusterChanged(Adjuster *adj, double newVal) override;
 
     // Signal connections
     void onFramingMethodChanged();
@@ -78,22 +78,21 @@ private:
     class AspectRatios;
 
     // Helper struct for repeated patterns
-    struct DimensionGui
-    {
-        using CallbackFunc = void(Framing::*)();
+    struct DimensionGui {
+        using CallbackFunc = void (Framing::*)();
 
         DimensionGui() = default;
-        DimensionGui(Gtk::Box* parent, const char* text);
+        DimensionGui(Gtk::Box *parent, const char *text);
 
         void setValue(int newValue) { value->set_value(newValue); }
         void setRange(int min, int max) { value->set_range(min, max); }
-        void connect(Framing& framing, CallbackFunc callback);
+        void connect(Framing &framing, CallbackFunc callback);
 
         void show() { box->show(); }
         void hide() { box->hide(); }
 
-        Gtk::Box* box;
-        MySpinButton* value;
+        Gtk::Box *box;
+        MySpinButton *value;
         sigc::connection connection;
         bool isDirty;
     };
@@ -103,10 +102,10 @@ private:
     void setupBorderSizeGui();
     void setupBorderColorsGui();
 
-    void readParams(const rtengine::procparams::ProcParams* pp);
-    void readEdited(const ParamsEdited* pedited);
-    void writeParams(rtengine::procparams::ProcParams* pp);
-    void writeEdited(ParamsEdited* pedited);
+    void readParams(const rtengine::procparams::ProcParams *pp);
+    void readEdited(const ParamsEdited *pedited);
+    void writeParams(rtengine::procparams::ProcParams *pp);
+    void writeEdited(ParamsEdited *pedited);
 
     void setDimensions();
     void updateFramingMethodGui();
@@ -114,29 +113,29 @@ private:
     void updateBorderColorGui();
 
     // Framing method
-    MyComboBoxText* framingMethod;
+    MyComboBoxText *framingMethod;
     sigc::connection framingMethodChanged;
-    Gtk::Label* aspectRatioLabel;
-    MyComboBoxText* aspectRatio;
+    Gtk::Label *aspectRatioLabel;
+    MyComboBoxText *aspectRatio;
     sigc::connection aspectRatioChanged;
-    Gtk::Label* orientationLabel;
-    MyComboBoxText* orientation;
+    Gtk::Label *orientationLabel;
+    MyComboBoxText *orientation;
     sigc::connection orientationChanged;
     DimensionGui width;
     DimensionGui height;
-    Gtk::CheckButton* allowUpscaling;
+    Gtk::CheckButton *allowUpscaling;
     sigc::connection allowUpscalingConnection;
 
     // Border sizing
-    MyComboBoxText* borderSizeMethod;
+    MyComboBoxText *borderSizeMethod;
     sigc::connection borderSizeMethodChanged;
-    Gtk::Label* basisLabel;
-    MyComboBoxText* basis;
+    Gtk::Label *basisLabel;
+    MyComboBoxText *basis;
     sigc::connection basisChanged;
-    Adjuster* relativeBorderSize;
-    Gtk::Frame* minSizeFrame;
-    Gtk::Box* minSizeFrameContent;
-    Gtk::CheckButton* minSizeEnabled;
+    Adjuster *relativeBorderSize;
+    Gtk::Frame *minSizeFrame;
+    Gtk::Box *minSizeFrameContent;
+    Gtk::CheckButton *minSizeEnabled;
     sigc::connection minSizeEnabledConnection;
     DimensionGui minWidth;
     DimensionGui minHeight;
@@ -144,10 +143,10 @@ private:
     DimensionGui absHeight;
 
     // Border colors
-    Adjuster* redAdj;
-    Adjuster* greenAdj;
-    Adjuster* blueAdj;
-    ColorPreview* colorPreview;
+    Adjuster *redAdj;
+    Adjuster *greenAdj;
+    Adjuster *blueAdj;
+    ColorPreview *colorPreview;
 
     // Events
     rtengine::ProcEvent EvFramingEnabled;

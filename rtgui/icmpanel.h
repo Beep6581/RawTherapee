@@ -35,7 +35,7 @@ class ICMPanelListener
 {
 public:
     virtual ~ICMPanelListener() = default;
-    virtual void saveInputICCReference(const Glib::ustring& fname, bool apply_wb) = 0;
+    virtual void saveInputICCReference(const Glib::ustring &fname, bool apply_wb) = 0;
 };
 
 class LabGrid;
@@ -88,12 +88,12 @@ protected:
     Adjuster* shifty;
     sigc::connection wsmoothcieconn;
     bool lastwsmoothcie;
-    Gtk::Label* labmga;
-    Gtk::Box* gabox;
-    //Gtk::Label* blr;
-    //Gtk::Label* blg;
-    //Gtk::Label* blb;
-    Gtk::Button* neutral;
+    Gtk::Label *labmga;
+    Gtk::Box *gabox;
+    // Gtk::Label* blr;
+    // Gtk::Label* blg;
+    // Gtk::Label* blb;
+    Gtk::Button *neutral;
     sigc::connection trcExpconn;
     sigc::connection wavExpconn;
 
@@ -118,12 +118,12 @@ private:
     rtengine::ProcEvent EvICMprimariMethod;
     rtengine::ProcEvent EvICMprofileMethod;
     rtengine::ProcEvent EvICMtempMethod;
-    //rtengine::ProcEvent EvICMpredx;
-    //rtengine::ProcEvent EvICMpredy;
-    //rtengine::ProcEvent EvICMpgrex;
-    //rtengine::ProcEvent EvICMpgrey;
-    //rtengine::ProcEvent EvICMpblux;
-    //rtengine::ProcEvent EvICMpbluy;
+    // rtengine::ProcEvent EvICMpredx;
+    // rtengine::ProcEvent EvICMpredy;
+    // rtengine::ProcEvent EvICMpgrex;
+    // rtengine::ProcEvent EvICMpgrey;
+    // rtengine::ProcEvent EvICMpblux;
+    // rtengine::ProcEvent EvICMpbluy;
     rtengine::ProcEvent EvICMgamm;
     rtengine::ProcEvent EvICMslop;
     rtengine::ProcEvent EvICMtrcinMethod;
@@ -157,59 +157,58 @@ private:
     LabGrid *labgridcie;
     IdleRegister idle_register;
 
-    Gtk::Box* willuBox;
-    Gtk::Label* willulab;
-    Gtk::Box* wprimBox;
-    Gtk::Label* wprimlab;
-    Gtk::Label* cielab;
-    Gtk::Grid* primCoordGrid;
-    Gtk::Box* riaHBox;
-    Gtk::Box* preBox;
-    Gtk::Box* iVBox;
-    Gtk::Box* wTRCBox;
-    Gtk::CheckButton* fbw;
-    Gtk::CheckButton* gamut;
+    Gtk::Box *willuBox;
+    Gtk::Label *willulab;
+    Gtk::Box *wprimBox;
+    Gtk::Label *wprimlab;
+    Gtk::Label *cielab;
+    Gtk::Grid *primCoordGrid;
+    Gtk::Box *riaHBox;
+    Gtk::Box *preBox;
+    Gtk::Box *iVBox;
+    Gtk::Box *wTRCBox;
+    Gtk::CheckButton *fbw;
+    Gtk::CheckButton *gamut;
 
-    Gtk::Box* wcatBox;
-    Gtk::Label* wcatlab;
+    Gtk::Box *wcatBox;
+    Gtk::Label *wcatlab;
 
+    Gtk::CheckButton *obpc;
+    Gtk::RadioButton *inone;
 
-    Gtk::CheckButton* obpc;
-    Gtk::RadioButton* inone;
-
-    Gtk::RadioButton* iembedded;
-    Gtk::RadioButton* icamera;
-    Gtk::RadioButton* icameraICC;
-    Gtk::RadioButton* ifromfile;
-    Gtk::Label* dcpIllLabel;
-    MyComboBoxText* dcpIll;
+    Gtk::RadioButton *iembedded;
+    Gtk::RadioButton *icamera;
+    Gtk::RadioButton *icameraICC;
+    Gtk::RadioButton *ifromfile;
+    Gtk::Label *dcpIllLabel;
+    MyComboBoxText *dcpIll;
     sigc::connection dcpillconn;
-    Gtk::CheckButton* ckbToneCurve;
-    Gtk::CheckButton* ckbApplyLookTable;
-    Gtk::CheckButton* ckbApplyBaselineExposureOffset;
-    Gtk::CheckButton* ckbApplyHueSatMap;
-    MyComboBoxText* wProfNames;
+    Gtk::CheckButton *ckbToneCurve;
+    Gtk::CheckButton *ckbApplyLookTable;
+    Gtk::CheckButton *ckbApplyBaselineExposureOffset;
+    Gtk::CheckButton *ckbApplyHueSatMap;
+    MyComboBoxText *wProfNames;
     sigc::connection wprofnamesconn;
-    MyComboBoxText* wTRC;
+    MyComboBoxText *wTRC;
     sigc::connection wtrcconn;
-    MyComboBoxText* will;
+    MyComboBoxText *will;
     sigc::connection willconn;
-    MyComboBoxText* wprim;
+    MyComboBoxText *wprim;
     sigc::connection wprimconn;
-    MyComboBoxText* wcat;
+    MyComboBoxText *wcat;
     sigc::connection wcatconn;
 
     std::unique_ptr<PopUpButton> aRendIntent;
     sigc::connection arendintentconn;
 
-    MyComboBoxText* oProfNames;
+    MyComboBoxText *oProfNames;
     sigc::connection oprofnamesconn;
     std::unique_ptr<PopUpButton> oRendIntent;
     sigc::connection orendintentconn;
-    Gtk::RadioButton* iunchanged;
-    MyFileChooserButton* ipDialog;
+    Gtk::RadioButton *iunchanged;
+    MyFileChooserButton *ipDialog;
     Gtk::RadioButton::Group opts;
-    Gtk::Button* saveRef;
+    Gtk::Button *saveRef;
     sigc::connection ipc;
     Glib::ustring oldip;
     ICMPanelListener* icmplistener;
@@ -240,13 +239,18 @@ public:
     ICMPanel();
     ~ICMPanel() override;
 
-    void read(const rtengine::procparams::ProcParams* pp, const ParamsEdited* pedited = nullptr) override;
-    void write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedited = nullptr) override;
+    void read(const rtengine::procparams::ProcParams *pp,
+        const ParamsEdited *pedited = nullptr) override;
+    void write(
+        rtengine::procparams::ProcParams *pp, ParamsEdited *pedited = nullptr) override;
     void setBatchMode(bool batchMode) override;
-    void setDefaults(const rtengine::procparams::ProcParams* defParams, const ParamsEdited* pedited = nullptr) override;
-    void adjusterChanged(Adjuster* a, double newval) override;
-    void primChanged (float rx, float ry, float bx, float by, float gx, float gy) override;
-    void iprimChanged (float r_x, float r_y, float b_x, float b_y, float g_x, float g_y, float w_x, float w_y, float m_x, float m_y) override;
+    void setDefaults(const rtengine::procparams::ProcParams *defParams,
+        const ParamsEdited *pedited = nullptr) override;
+    void adjusterChanged(Adjuster *a, double newval) override;
+    void primChanged(
+        float rx, float ry, float bx, float by, float gx, float gy) override;
+    void iprimChanged(float r_x, float r_y, float b_x, float b_y, float g_x, float g_y,
+        float w_x, float w_y, float m_x, float m_y) override;
     void neutral_pressed();
     void curveChanged(CurveEditor* ce) override;
     void wavlocChanged(double nlevel, double nmax, bool curveloc) override;
@@ -264,7 +268,7 @@ public:
     void oBPCChanged();
     void fbwChanged();
     void wsmoothcieChanged();
-    
+
     void gamutChanged();
     void ipChanged();
     void ipSelectionChanged();
@@ -274,15 +278,10 @@ public:
     void applyBaselineExposureOffsetChanged();
     void applyHueSatMapChanged();
 
-    void setRawMeta(bool raw, const rtengine::FramesData* pMeta);
+    void setRawMeta(bool raw, const rtengine::FramesData *pMeta);
     void saveReferencePressed();
-    void setListener(ToolPanelListener* tpl) override;
+    void setListener(ToolPanelListener *tpl) override;
     void setEditProvider(EditDataProvider *provider) override;
 
-    void setICMPanelListener(ICMPanelListener* ipl)
-    {
-        icmplistener = ipl;
-    }
-
+    void setICMPanelListener(ICMPanelListener *ipl) { icmplistener = ipl; }
 };
-

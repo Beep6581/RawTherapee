@@ -26,22 +26,18 @@
 
 class CacheImageData;
 
-class RenameDialog final :
-    public Gtk::Dialog
+class RenameDialog final : public Gtk::Dialog
 {
 
 protected:
-
-
-    Gtk::Window* p;
-    Gtk::Label* oldName;
-    Gtk::Entry* newName;
-    const CacheImageData* imageData;
+    Gtk::Window *p;
+    Gtk::Label *oldName;
+    Gtk::Entry *newName;
+    const CacheImageData *imageData;
 
 public:
-    explicit RenameDialog (Gtk::Window* parent);
+    explicit RenameDialog(Gtk::Window *parent);
 
-    void initName (const Glib::ustring& iname, const CacheImageData* cid);
-    Glib::ustring getNewName ();
-
+    void initName(const Glib::ustring &iname, const CacheImageData *cid);
+    Glib::ustring getNewName();
 };

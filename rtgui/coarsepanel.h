@@ -22,29 +22,28 @@
 
 #include "toolpanel.h"
 
-class CoarsePanel final :
-    public Gtk::Box,
-    public ToolPanel
+class CoarsePanel final : public Gtk::Box, public ToolPanel
 {
 
 protected:
-    Gtk::Button* rotate_left;
-    Gtk::Button* rotate_right;
-    Gtk::ToggleButton* hflip;
-    Gtk::ToggleButton* vflip;
+    Gtk::Button *rotate_left;
+    Gtk::Button *rotate_right;
+    Gtk::ToggleButton *hflip;
+    Gtk::ToggleButton *vflip;
     int degree;
     bool oldhflip, oldvflip, degreechanged;
 
 public:
+    CoarsePanel();
 
-    CoarsePanel ();
+    void read(const rtengine::procparams::ProcParams *pp,
+        const ParamsEdited *pedited = nullptr) override;
+    void write(
+        rtengine::procparams::ProcParams *pp, ParamsEdited *pedited = nullptr) override;
+    void initBatchBehavior();
 
-    void read               (const rtengine::procparams::ProcParams* pp, const ParamsEdited* pedited = nullptr) override;
-    void write              (rtengine::procparams::ProcParams* pp, ParamsEdited* pedited = nullptr) override;
-    void initBatchBehavior  ();
-
-    void rotateLeft     ();
-    void rotateRight    ();
-    void flipHorizontal ();
-    void flipVertical   ();
+    void rotateLeft();
+    void rotateRight();
+    void flipHorizontal();
+    void flipVertical();
 };

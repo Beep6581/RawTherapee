@@ -21,7 +21,6 @@
 #include <glibmm/ustring.h>
 #include <sigc++/sigc++.h>
 
-
 namespace rtengine
 {
 
@@ -32,8 +31,7 @@ struct ColorManagementParams;
 
 }
 
-}
-
+} // namespace rtengine
 
 class PointerMotionListener
 {
@@ -43,17 +41,31 @@ protected:
 
 public:
     virtual ~PointerMotionListener() = default;
-    virtual void pointerMoved(bool validPos, const rtengine::procparams::ColorManagementParams &cmp, int x, int y, int r, int g, int b, bool isRaw = false) = 0;
-    virtual void getRGBText (int r, int g, int b, Glib::ustring &sR, Glib::ustring &sG, Glib::ustring &sB, bool isRaw = false) { sR = "--"; sG = "--"; sB = "--"; }
-    virtual void getHSVText (float h, float s, float v, Glib::ustring &sH, Glib::ustring &sS, Glib::ustring &sV) { sH = "--"; sS = "--"; sV = "--"; }
-    virtual void getLABText (float l, float a, float b, Glib::ustring &sL, Glib::ustring &sA, Glib::ustring &sB) { sL = "--"; sA = "--"; sB = "--"; }
+    virtual void pointerMoved(bool validPos,
+        const rtengine::procparams::ColorManagementParams &cmp, int x, int y, int r,
+        int g, int b, bool isRaw = false) = 0;
+    virtual void getRGBText(int r, int g, int b, Glib::ustring &sR, Glib::ustring &sG,
+        Glib::ustring &sB, bool isRaw = false)
+    {
+        sR = "--";
+        sG = "--";
+        sB = "--";
+    }
+    virtual void getHSVText(float h, float s, float v, Glib::ustring &sH,
+        Glib::ustring &sS, Glib::ustring &sV)
+    {
+        sH = "--";
+        sS = "--";
+        sV = "--";
+    }
+    virtual void getLABText(float l, float a, float b, Glib::ustring &sL,
+        Glib::ustring &sA, Glib::ustring &sB)
+    {
+        sL = "--";
+        sA = "--";
+        sB = "--";
+    }
 
-    sigc::signal<void> signal_cycle_rgb()
-    {
-        return sig_cycle_rgb;
-    }
-    sigc::signal<void> signal_cycle_hsv()
-    {
-        return sig_cycle_hsv;
-    }
+    sigc::signal<void> signal_cycle_rgb() { return sig_cycle_rgb; }
+    sigc::signal<void> signal_cycle_hsv() { return sig_cycle_hsv; }
 };

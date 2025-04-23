@@ -1,5 +1,5 @@
 /** -*- C++ -*-
- *  
+ *
  *  This file is part of RawTherapee.
  *
  *  Copyright (c) 2017 Alberto Griggio <alberto.griggio@gmail.com>
@@ -24,7 +24,8 @@
 #include "exifpanel.h"
 #include "iptcpanel.h"
 
-class MetaDataPanel: public Gtk::Box, public ToolPanel {
+class MetaDataPanel : public Gtk::Box, public ToolPanel
+{
 private:
     rtengine::ProcEvent EvMetaDataMode;
     MyComboBoxText *metadataMode;
@@ -37,15 +38,17 @@ private:
 public:
     MetaDataPanel();
     ~MetaDataPanel() override;
-    
-    void setBatchMode(bool batchMode) override;
-    void read(const rtengine::procparams::ProcParams* pp, const ParamsEdited* pedited = nullptr) override;
-    void write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedited = nullptr) override;
-    void setDefaults(const rtengine::procparams::ProcParams* defParams, const ParamsEdited* pedited = nullptr) override;
 
-    void setImageData(const rtengine::FramesMetaData* id);
+    void setBatchMode(bool batchMode) override;
+    void read(const rtengine::procparams::ProcParams *pp,
+        const ParamsEdited *pedited = nullptr) override;
+    void write(
+        rtengine::procparams::ProcParams *pp, ParamsEdited *pedited = nullptr) override;
+    void setDefaults(const rtengine::procparams::ProcParams *defParams,
+        const ParamsEdited *pedited = nullptr) override;
+
+    void setImageData(const rtengine::FramesMetaData *id);
     void setListener(ToolPanelListener *tpl) override;
 
     void setProgressListener(rtengine::ProgressListener *pl);
 };
-

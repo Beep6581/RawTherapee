@@ -97,145 +97,141 @@
 class ImageEditorCoordinator;
 class MetaDataPanel;
 
-class ToolPanelCoordinator :
-    public ToolPanelListener,
-    public ToolBarListener,
-    public ProfileChangeListener,
-    public WBProvider,
-    public DFProvider,
-    public FFProvider,
-    public LensGeomListener,
-    public SpotWBListener,
-    public CropPanelListener,
-    public PerspCorrectionPanelListener,
-    public ICMPanelListener,
-    public ImageAreaToolListener,
-    public rtengine::ImageTypeListener,
-    public FilmNegProvider,
-    public rtengine::NonCopyable
+class ToolPanelCoordinator : public ToolPanelListener,
+                             public ToolBarListener,
+                             public ProfileChangeListener,
+                             public WBProvider,
+                             public DFProvider,
+                             public FFProvider,
+                             public LensGeomListener,
+                             public SpotWBListener,
+                             public CropPanelListener,
+                             public PerspCorrectionPanelListener,
+                             public ICMPanelListener,
+                             public ImageAreaToolListener,
+                             public rtengine::ImageTypeListener,
+                             public FilmNegProvider,
+                             public rtengine::NonCopyable
 {
 protected:
-    WhiteBalance* whitebalance;
-    Vignetting* vignetting;
-    Gradient* gradient;
-    Locallab* locallab;
-    Retinex*  retinex;
-    PCVignette* pcvignette;
-    LensGeometry* lensgeom;
-    LensProfilePanel* lensProf;
-    Rotate* rotate;
-    Distortion* distortion;
-    PerspCorrection* perspective;
-    CACorrection* cacorrection;
-    ColorAppearance* colorappearance;
-    Vibrance* vibrance;
-    ChMixer* chmixer;
-    BlackWhite* blackwhite;
-    Resize* resize;
-    Framing* framing;
-    PrSharpening* prsharpening;
-    ICMPanel* icm;
-    Crop* crop;
-    ToneCurve* toneCurve;
-    ShadowsHighlights* shadowshighlights;
-    ToneEqualizer* toneEqualizer;
+    WhiteBalance *whitebalance;
+    Vignetting *vignetting;
+    Gradient *gradient;
+    Locallab *locallab;
+    Retinex *retinex;
+    PCVignette *pcvignette;
+    LensGeometry *lensgeom;
+    LensProfilePanel *lensProf;
+    Rotate *rotate;
+    Distortion *distortion;
+    PerspCorrection *perspective;
+    CACorrection *cacorrection;
+    ColorAppearance *colorappearance;
+    Vibrance *vibrance;
+    ChMixer *chmixer;
+    BlackWhite *blackwhite;
+    Resize *resize;
+    Framing *framing;
+    PrSharpening *prsharpening;
+    ICMPanel *icm;
+    Crop *crop;
+    ToneCurve *toneCurve;
+    ShadowsHighlights *shadowshighlights;
+    ToneEqualizer *toneEqualizer;
     LocalContrast *localContrast;
-    Spot* spot;
-    Defringe* defringe;
-    Compressgamut* compressgamut;
-    ImpulseDenoise* impulsedenoise;
-    DirPyrDenoise* dirpyrdenoise;
+    Spot *spot;
+    Defringe *defringe;
+    Compressgamut *compressgamut;
+    ImpulseDenoise *impulsedenoise;
+    DirPyrDenoise *dirpyrdenoise;
     EdgePreservingDecompositionUI *epd;
-    Sharpening* sharpening;
-    SharpenEdge* sharpenEdge;
-    SharpenMicro* sharpenMicro;
-    LCurve* lcurve;
-    RGBCurves* rgbcurves;
-    ColorToning* colortoning;
-    Wavelet * wavelet;
-    DirPyrEqualizer* dirpyrequalizer;
-    HSVEqualizer* hsvequalizer;
+    Sharpening *sharpening;
+    SharpenEdge *sharpenEdge;
+    SharpenMicro *sharpenMicro;
+    LCurve *lcurve;
+    RGBCurves *rgbcurves;
+    ColorToning *colortoning;
+    Wavelet *wavelet;
+    DirPyrEqualizer *dirpyrequalizer;
+    HSVEqualizer *hsvequalizer;
     SoftLight *softlight;
     Dehaze *dehaze;
     FilmSimulation *filmSimulation;
-    SensorBayer * sensorbayer;
-    SensorXTrans * sensorxtrans;
-    BayerProcess* bayerprocess;
-    XTransProcess* xtransprocess;
-    BayerPreProcess* bayerpreprocess;
-    PreProcess* preprocess;
-    DarkFrame* darkframe;
-    FlatField* flatfield;
-    RAWCACorr* rawcacorrection;
-    RAWExposure* rawexposure;
-    PreprocessWB* preprocessWB;
-    BayerRAWExposure* bayerrawexposure;
-    XTransRAWExposure* xtransrawexposure;
+    SensorBayer *sensorbayer;
+    SensorXTrans *sensorxtrans;
+    BayerProcess *bayerprocess;
+    XTransProcess *xtransprocess;
+    BayerPreProcess *bayerpreprocess;
+    PreProcess *preprocess;
+    DarkFrame *darkframe;
+    FlatField *flatfield;
+    RAWCACorr *rawcacorrection;
+    RAWExposure *rawexposure;
+    PreprocessWB *preprocessWB;
+    BayerRAWExposure *bayerrawexposure;
+    XTransRAWExposure *xtransrawexposure;
     FattalToneMapping *fattal;
-    MetaDataPanel* metadata;
-    FilmNegative* filmNegative;
-    PdSharpening* pdSharpening;
-    std::vector<PParamsChangeListener*> paramcListeners;
-    std::unordered_map<Gtk::Widget *, FoldableToolPanel *>
-        expanderToToolPanelMap;
+    MetaDataPanel *metadata;
+    FilmNegative *filmNegative;
+    PdSharpening *pdSharpening;
+    std::vector<PParamsChangeListener *> paramcListeners;
+    std::unordered_map<Gtk::Widget *, FoldableToolPanel *> expanderToToolPanelMap;
 
-    rtengine::StagedImageProcessor* ipc;
+    rtengine::StagedImageProcessor *ipc;
 
-    std::vector<ToolPanel*> toolPanels;
-    std::vector<FoldableToolPanel*> favoritesToolPanels;
-    ToolVBox* favoritePanel;
-    ToolVBox* exposurePanel;
-    ToolVBox* detailsPanel;
-    ToolVBox* colorPanel;
-    ToolVBox* transformPanel;
-    ToolVBox* rawPanel;
-    ToolVBox* advancedPanel;
-    ToolVBox* locallabPanel;
-    ToolBar* toolBar;
+    std::vector<ToolPanel *> toolPanels;
+    std::vector<FoldableToolPanel *> favoritesToolPanels;
+    ToolVBox *favoritePanel;
+    ToolVBox *exposurePanel;
+    ToolVBox *detailsPanel;
+    ToolVBox *colorPanel;
+    ToolVBox *transformPanel;
+    ToolVBox *rawPanel;
+    ToolVBox *advancedPanel;
+    ToolVBox *locallabPanel;
+    ToolBar *toolBar;
 
     std::unique_ptr<TextOrIcon> toiF;
-    TextOrIcon* toiE;
-    TextOrIcon* toiD;
-    TextOrIcon* toiC;
-    TextOrIcon* toiT;
-    TextOrIcon* toiR;
-    TextOrIcon* toiM;
-    TextOrIcon* toiW;
-    TextOrIcon* toiL;
+    TextOrIcon *toiE;
+    TextOrIcon *toiD;
+    TextOrIcon *toiC;
+    TextOrIcon *toiT;
+    TextOrIcon *toiR;
+    TextOrIcon *toiM;
+    TextOrIcon *toiW;
+    TextOrIcon *toiL;
 
-    Gtk::Image* imgPanelEnd[8];
-    Gtk::Box* vbPanelEnd[8];
+    Gtk::Image *imgPanelEnd[8];
+    Gtk::Box *vbPanelEnd[8];
 
     std::unique_ptr<Gtk::ScrolledWindow> favoritePanelSW;
-    Gtk::ScrolledWindow* exposurePanelSW;
-    Gtk::ScrolledWindow* detailsPanelSW;
-    Gtk::ScrolledWindow* colorPanelSW;
-    Gtk::ScrolledWindow* transformPanelSW;
-    Gtk::ScrolledWindow* rawPanelSW;
-    Gtk::ScrolledWindow* advancedPanelSW;
-    Gtk::ScrolledWindow* locallabPanelSW;
+    Gtk::ScrolledWindow *exposurePanelSW;
+    Gtk::ScrolledWindow *detailsPanelSW;
+    Gtk::ScrolledWindow *colorPanelSW;
+    Gtk::ScrolledWindow *transformPanelSW;
+    Gtk::ScrolledWindow *rawPanelSW;
+    Gtk::ScrolledWindow *advancedPanelSW;
+    Gtk::ScrolledWindow *locallabPanelSW;
 
-    std::vector<MyExpander*> expList;
+    std::vector<MyExpander *> expList;
 
     bool hasChanged;
     bool batch;
 
-    void addPanel(Gtk::Box* where, FoldableToolPanel* panel, int level = 1);
-    void foldThemAll(GdkEventButton* event);
+    void addPanel(Gtk::Box *where, FoldableToolPanel *panel, int level = 1);
+    void foldThemAll(GdkEventButton *event);
     void updateVScrollbars(bool hide);
-    void addfavoritePanel (Gtk::Box* where, FoldableToolPanel* panel, int level = 1);
-    void notebookPageChanged(Gtk::Widget* page, guint page_num);
-    void updatePanelTools(
-        Gtk::Widget *page,
-        const std::vector<Glib::ustring> &favorites,
-        bool cloneFavoriteTools);
+    void addfavoritePanel(Gtk::Box *where, FoldableToolPanel *panel, int level = 1);
+    void notebookPageChanged(Gtk::Widget *page, guint page_num);
+    void updatePanelTools(Gtk::Widget *page,
+        const std::vector<Glib::ustring> &favorites, bool cloneFavoriteTools);
 
 private:
     EditDataProvider *editDataProvider;
     sigc::connection notebookconn;
     bool photoLoadedOnce; // Used to indicated that a photo has been loaded yet
     std::shared_ptr<RTSurface> ornamentSurface;
-    Gtk::Widget* prevPage;
+    Gtk::Widget *prevPage;
 
 public:
     enum class Panel {
@@ -316,13 +312,14 @@ public:
         std::vector<ToolTree> children;
     };
 
-    using ToolLayout = std::unordered_map<Panel, const std::vector<ToolTree> &, ScopedEnumHash>;
+    using ToolLayout =
+        std::unordered_map<Panel, const std::vector<ToolTree> &, ScopedEnumHash>;
 
-    CoarsePanel* coarse;
-    Gtk::Notebook* toolPanelNotebook;
+    CoarsePanel *coarse;
+    Gtk::Notebook *toolPanelNotebook;
 
     ToolPanelCoordinator(bool batch = false);
-    ~ToolPanelCoordinator () override;
+    ~ToolPanelCoordinator() override;
 
     static const ToolLayout &getDefaultToolLayout();
     /**
@@ -342,129 +339,125 @@ public:
     static std::string getToolName(Tool tool);
     static bool isFavoritable(Tool tool);
 
-    bool getChangedState()
-    {
-        return hasChanged;
-    }
-    void updateCurveBackgroundHistogram(
-        const LUTu& histToneCurve,
-        const LUTu& histLCurve,
-        const LUTu& histCCurve,
-        const LUTu& histLCAM,
-        const LUTu& histCCAM,
-        const LUTu& histRed,
-        const LUTu& histGreen,
-        const LUTu& histBlue,
-        const LUTu& histLuma,
-        const LUTu& histLRETI
-    );
-    void foldAllButOne(Gtk::Box* parent, FoldableToolPanel* openedSection);
+    bool getChangedState() { return hasChanged; }
+    void updateCurveBackgroundHistogram(const LUTu &histToneCurve,
+        const LUTu &histLCurve, const LUTu &histCCurve, const LUTu &histLCAM,
+        const LUTu &histCCAM, const LUTu &histRed, const LUTu &histGreen,
+        const LUTu &histBlue, const LUTu &histLuma, const LUTu &histLRETI);
+    void foldAllButOne(Gtk::Box *parent, FoldableToolPanel *openedSection);
     void updateToolLocations(
         const std::vector<Glib::ustring> &favorites, bool cloneFavoriteTools);
 
-    // multiple listeners can be added that are notified on changes (typical: profile panel and the history)
-    void addPParamsChangeListener(PParamsChangeListener* pp)
+    // multiple listeners can be added that are notified on changes (typical: profile
+    // panel and the history)
+    void addPParamsChangeListener(PParamsChangeListener *pp)
     {
         paramcListeners.push_back(pp);
     }
 
     // toolpanellistener interface
-    void refreshPreview(const rtengine::ProcEvent& event) override;
-    void panelChanged(const rtengine::ProcEvent& event, const Glib::ustring& descr) override;
-    void setTweakOperator (rtengine::TweakOperator *tOperator) override;
-    void unsetTweakOperator (rtengine::TweakOperator *tOperator) override;
+    void refreshPreview(const rtengine::ProcEvent &event) override;
+    void panelChanged(
+        const rtengine::ProcEvent &event, const Glib::ustring &descr) override;
+    void setTweakOperator(rtengine::TweakOperator *tOperator) override;
+    void unsetTweakOperator(rtengine::TweakOperator *tOperator) override;
 
     // FilmNegProvider interface
-    void imageTypeChanged (bool isRaw, bool isBayer, bool isXtrans, bool isMono = false, bool isGainMapSupported = false) override;
+    void imageTypeChanged(bool isRaw, bool isBayer, bool isXtrans, bool isMono = false,
+        bool isGainMapSupported = false) override;
 
     // profilechangelistener interface
-    void profileChange(
-        const rtengine::procparams::PartialProfile* nparams,
-        const rtengine::ProcEvent& event,
-        const Glib::ustring& descr,
-        const ParamsEdited* paramsEdited = nullptr,
-        bool fromLastSave = false
-    ) override;
-    void setDefaults(const rtengine::procparams::ProcParams* defparams) override;
+    void profileChange(const rtengine::procparams::PartialProfile *nparams,
+        const rtengine::ProcEvent &event, const Glib::ustring &descr,
+        const ParamsEdited *paramsEdited = nullptr, bool fromLastSave = false) override;
+    void setDefaults(const rtengine::procparams::ProcParams *defparams) override;
 
     // DirSelectionListener interface
-    void dirSelected(const Glib::ustring& dirname, const Glib::ustring& openfile);
+    void dirSelected(const Glib::ustring &dirname, const Glib::ustring &openfile);
 
     // to support the GUI:
-    CropGUIListener* getCropGUIListener();  // through the CropGUIListener the editor area can notify the "crop" ToolPanel when the crop selection changes
+    CropGUIListener *
+    getCropGUIListener(); // through the CropGUIListener the editor area can notify the
+                          // "crop" ToolPanel when the crop selection changes
 
     // init the toolpanelcoordinator with an image & close it
-    void initImage(rtengine::StagedImageProcessor* ipc_, bool israw);
+    void initImage(rtengine::StagedImageProcessor *ipc_, bool israw);
     void closeImage();
 
     // update the "expanded" state of the Tools
     void updateToolState();
     void openAllTools();
     void closeAllTools();
-    // read/write the "expanded" state of the expanders & read/write the crop panel settings (ratio, guide type, etc.)
+    // read/write the "expanded" state of the expanders & read/write the crop panel
+    // settings (ratio, guide type, etc.)
     void readOptions();
     void writeOptions();
     void writeToolExpandedStatus(std::vector<int> &tpOpen);
-    void updateShowtooltipVisibility (bool showtooltip);
+    void updateShowtooltipVisibility(bool showtooltip);
 
     // wbprovider interface
-    void getAutoWB (double& temp, double& green, double equal, rtengine::StandardObserver observer, double tempBias) override
+    void getAutoWB(double &temp, double &green, double equal,
+        rtengine::StandardObserver observer, double tempBias) override
     {
         if (ipc) {
             ipc->getAutoWB(temp, green, equal, observer, tempBias);
         }
     }
-    void getCamWB (double& temp, double& green, rtengine::StandardObserver observer) override
+    void getCamWB(
+        double &temp, double &green, rtengine::StandardObserver observer) override
     {
         if (ipc) {
             ipc->getCamWB(temp, green, observer);
         }
     }
 
-    //DFProvider interface
-    const rtengine::RawImage* getDF() override;
+    // DFProvider interface
+    const rtengine::RawImage *getDF() override;
 
-    //FFProvider interface
-    rtengine::RawImage* getFF() override;
+    // FFProvider interface
+    rtengine::RawImage *getFF() override;
     Glib::ustring GetCurrentImageFilePath() override;
 
     // FilmNegProvider interface
-    bool getFilmNegativeSpot(rtengine::Coord spot, int spotSize, RGB &refInput, RGB &refOutput) override;
+    bool getFilmNegativeSpot(
+        rtengine::Coord spot, int spotSize, RGB &refInput, RGB &refOutput) override;
 
     // rotatelistener interface
-    void straightenRequested () override;
-    void autoCropRequested () override;
-    void autoPerspRequested (bool corr_pitch, bool corr_yaw, double& rot, double& pitch, double& yaw, const std::vector<rtengine::ControlLine> *lines = nullptr) override;
-    double autoDistorRequested () override;
+    void straightenRequested() override;
+    void autoCropRequested() override;
+    void autoPerspRequested(bool corr_pitch, bool corr_yaw, double &rot, double &pitch,
+        double &yaw,
+        const std::vector<rtengine::ControlLine> *lines = nullptr) override;
+    double autoDistorRequested() override;
 
     // spotwblistener interface
-    void spotWBRequested (int size) override;
+    void spotWBRequested(int size) override;
 
     // croppanellistener interface
-    void cropSelectRequested () override;
+    void cropSelectRequested() override;
 
     // PerspCorrectionPanelListener interface
     void controlLineEditModeChanged(bool active) override;
 
     // icmpanellistener interface
-    void saveInputICCReference(const Glib::ustring& fname, bool apply_wb) override;
+    void saveInputICCReference(const Glib::ustring &fname, bool apply_wb) override;
 
     // imageareatoollistener interface
-    void spotWBselected(int x, int y, Thumbnail* thm = nullptr) override;
+    void spotWBselected(int x, int y, Thumbnail *thm = nullptr) override;
     void sharpMaskSelected(bool sharpMask) override final;
     int getSpotWBRectSize() const override;
     void cropSelectionReady() override;
-    void rotateSelectionReady(double rotate_deg, Thumbnail* thm = nullptr) override;
-    ToolBar* getToolBar() const final;
-    CropGUIListener* startCropEditing(Thumbnail* thm = nullptr) override;
+    void rotateSelectionReady(double rotate_deg, Thumbnail *thm = nullptr) override;
+    ToolBar *getToolBar() const final;
+    CropGUIListener *startCropEditing(Thumbnail *thm = nullptr) override;
 
     void updateTPVScrollbar(bool hide);
-    bool handleShortcutKey(GdkEventKey* event);
+    bool handleShortcutKey(GdkEventKey *event);
 
     // ToolBarListener interface
     void toolDeselected(ToolMode tool) override;
-    void toolSelected (ToolMode tool) override;
-    void editModeSwitchedOff () final;
+    void toolSelected(ToolMode tool) override;
+    void editModeSwitchedOff() final;
 
     void setEditProvider(EditDataProvider *provider);
 
@@ -473,8 +466,7 @@ public:
 protected:
     static std::unordered_map<std::string, Tool> toolNamesReverseMap;
 
-    std::unordered_map<Tool, const ToolTree *, ScopedEnumHash>
-        toolToDefaultToolTreeMap;
+    std::unordered_map<Tool, const ToolTree *, ScopedEnumHash> toolToDefaultToolTreeMap;
 
     FoldableToolPanel *getFoldableToolPanel(Tool tool) const;
     FoldableToolPanel *getFoldableToolPanel(const ToolTree &tool) const;
@@ -482,10 +474,7 @@ protected:
         const std::vector<Glib::ustring> &favorites, bool cloneFavoriteTools);
     template <typename T>
     typename std::enable_if<std::is_convertible<T, const ToolTree>::value, void>::type
-    updateToolPanel(
-        Gtk::Box *panelBox,
-        const std::vector<T> &children,
-        int level,
+    updateToolPanel(Gtk::Box *panelBox, const std::vector<T> &children, int level,
         const std::unordered_set<Tool, ScopedEnumHash> &favorites,
         bool cloneFavoriteTools);
 

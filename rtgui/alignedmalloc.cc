@@ -23,9 +23,6 @@
 
 #include <malloc.h>
 
-void* malloc(size_t size)
-{
-    return memalign(16, size);
-}
+void *malloc(size_t size) { return memalign(16, size); }
 
 #endif

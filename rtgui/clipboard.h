@@ -35,37 +35,37 @@ class ProcParams;
 class PartialProfile;
 class IPTCPairs;
 
-}
+} // namespace procparams
 
-}
+} // namespace rtengine
 
 class Clipboard
 {
 public:
-    Clipboard ();
-    ~Clipboard ();
+    Clipboard();
+    ~Clipboard();
 
     bool hasIPTC() const;
-    const rtengine::procparams::IPTCPairs& getIPTC() const;
-    void setIPTC(const rtengine::procparams::IPTCPairs& iptcc);
+    const rtengine::procparams::IPTCPairs &getIPTC() const;
+    void setIPTC(const rtengine::procparams::IPTCPairs &iptcc);
 
-    const rtengine::procparams::PartialProfile& getPartialProfile() const;
-    void setPartialProfile(const rtengine::procparams::PartialProfile& pprofile);
+    const rtengine::procparams::PartialProfile &getPartialProfile() const;
+    void setPartialProfile(const rtengine::procparams::PartialProfile &pprofile);
 
-    const rtengine::procparams::ProcParams& getProcParams() const;
-    void setProcParams(const rtengine::procparams::ProcParams& pparams);
+    const rtengine::procparams::ProcParams &getProcParams() const;
+    void setProcParams(const rtengine::procparams::ProcParams &pparams);
 
-    const ParamsEdited& getParamsEdited() const;
+    const ParamsEdited &getParamsEdited() const;
 
     bool hasProcParams() const;
     bool hasPEdited() const;
 
     DiagonalCurveType hasDiagonalCurveData() const;
-    const std::vector<double>& getDiagonalCurveData() const;
-    void setDiagonalCurveData(const std::vector<double>& p, DiagonalCurveType type);
+    const std::vector<double> &getDiagonalCurveData() const;
+    void setDiagonalCurveData(const std::vector<double> &p, DiagonalCurveType type);
 
-    void setFlatCurveData(const std::vector<double>& p, FlatCurveType type);
-    const std::vector<double>& getFlatCurveData() const;
+    void setFlatCurveData(const std::vector<double> &p, FlatCurveType type);
+    const std::vector<double> &getFlatCurveData() const;
     FlatCurveType hasFlatCurveData() const;
 
 private:

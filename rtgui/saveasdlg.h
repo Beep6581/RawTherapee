@@ -22,46 +22,44 @@
 
 #include "saveformatpanel.h"
 
-class SaveAsDialog final :
-    public Gtk::Dialog,
-    public FormatChangeListener
+class SaveAsDialog final : public Gtk::Dialog, public FormatChangeListener
 {
 
 protected:
-    Gtk::FileChooserWidget* fchooser;
-    Gtk::CheckButton* autoSuffix;
-    Gtk::CheckButton* forceFormatOpts;
-    SaveFormatPanel* formatOpts;
+    Gtk::FileChooserWidget *fchooser;
+    Gtk::CheckButton *autoSuffix;
+    Gtk::CheckButton *forceFormatOpts;
+    SaveFormatPanel *formatOpts;
     Glib::ustring fname;
     Glib::RefPtr<Gtk::FileFilter> filter_jpg;
     Glib::RefPtr<Gtk::FileFilter> filter_tif;
     Glib::RefPtr<Gtk::FileFilter> filter_png;
-    Gtk::RadioButton* saveMethod[3]; /*  0 -> immediately
+    Gtk::RadioButton *saveMethod[3]; /*  0 -> immediately
                                       *  1 -> putToQueueHead
                                       *  2 -> putToQueueTail
                                       */
-    void  forceFmtOptsSwitched ();
-    void  saveImmediatlyClicked ();
-    void  putToQueueClicked ();
+    void forceFmtOptsSwitched();
+    void saveImmediatlyClicked();
+    void putToQueueClicked();
 
 public:
-    explicit SaveAsDialog (const Glib::ustring &initialDir, Gtk::Window* parent);
+    explicit SaveAsDialog(const Glib::ustring &initialDir, Gtk::Window *parent);
 
-    Glib::ustring   getFileName        ();
-    Glib::ustring   getDirectory       ();
-    SaveFormat      getFormat          ();
-    bool            getForceFormatOpts ();
-    bool            getAutoSuffix      ();
-    bool            getImmediately     ();
-    bool            getToHeadOfQueue   ();
-    bool            getToTailOfQueue   ();
-    int             getSaveMethodNum   ();
+    Glib::ustring getFileName();
+    Glib::ustring getDirectory();
+    SaveFormat getFormat();
+    bool getForceFormatOpts();
+    bool getAutoSuffix();
+    bool getImmediately();
+    bool getToHeadOfQueue();
+    bool getToTailOfQueue();
+    int getSaveMethodNum();
 
-    void  setInitialFileName (const Glib::ustring& iname);
-    void  setImagePath (const Glib::ustring& imagePath);
+    void setInitialFileName(const Glib::ustring &iname);
+    void setImagePath(const Glib::ustring &imagePath);
 
-    void okPressed ();
-    void cancelPressed ();
-    void formatChanged(const Glib::ustring& format) override;
-    bool keyPressed (GdkEventKey* event);
+    void okPressed();
+    void cancelPressed();
+    void formatChanged(const Glib::ustring &format) override;
+    bool keyPressed(GdkEventKey *event);
 };

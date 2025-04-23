@@ -25,9 +25,7 @@
 #include "guiutils.h"
 #include "toolpanel.h"
 
-class IPTCPanel final :
-    public Gtk::Box,
-    public ToolPanel
+class IPTCPanel final : public Gtk::Box, public ToolPanel
 {
 
 private:
@@ -36,61 +34,64 @@ private:
     const std::unique_ptr<rtengine::procparams::IPTCPairs> embeddedData;
     bool changelist_valid_;
 
-    Gtk::TextView*  captionView;
+    Gtk::TextView *captionView;
     Glib::RefPtr<Gtk::TextBuffer> captionText;
-    Gtk::Entry*     captionWriter;
-    Gtk::Entry*     headline;
-    Gtk::Entry*     instructions;
-    MyComboBoxText* keyword;
-    Gtk::ListViewText*  keywords;
-    Gtk::Button*    addKW;
-    Gtk::Button*    delKW;
-    MyComboBoxText* category;
-    MyComboBoxText* suppCategory;
-    Gtk::ListViewText*      suppCategories;
-    Gtk::Button*    addSC;
-    Gtk::Button*    delSC;
+    Gtk::Entry *captionWriter;
+    Gtk::Entry *headline;
+    Gtk::Entry *instructions;
+    MyComboBoxText *keyword;
+    Gtk::ListViewText *keywords;
+    Gtk::Button *addKW;
+    Gtk::Button *delKW;
+    MyComboBoxText *category;
+    MyComboBoxText *suppCategory;
+    Gtk::ListViewText *suppCategories;
+    Gtk::Button *addSC;
+    Gtk::Button *delSC;
 
-    Gtk::Entry*     creator;
-    Gtk::Entry*     creatorJobTitle;
-    Gtk::Entry*     credit;
-    Gtk::Entry*     source;
-    Gtk::Entry*     copyright;
-    Gtk::Entry*     city;
-    Gtk::Entry*     province;
-    Gtk::Entry*     country;
-    Gtk::Entry*     title;
-    Gtk::Entry*     dateCreated;
-    Gtk::Entry*     transReference;
+    Gtk::Entry *creator;
+    Gtk::Entry *creatorJobTitle;
+    Gtk::Entry *credit;
+    Gtk::Entry *source;
+    Gtk::Entry *copyright;
+    Gtk::Entry *city;
+    Gtk::Entry *province;
+    Gtk::Entry *country;
+    Gtk::Entry *title;
+    Gtk::Entry *dateCreated;
+    Gtk::Entry *transReference;
 
-    Gtk::Button*    reset;
-    Gtk::Button*    file;
-    Gtk::Button*    copy;
-    Gtk::Button*    paste;
+    Gtk::Button *reset;
+    Gtk::Button *file;
+    Gtk::Button *copy;
+    Gtk::Button *paste;
 
     sigc::connection conns[16];
 
-    void applyChangeList ();
-    void updateChangeList ();
+    void applyChangeList();
+    void updateChangeList();
 
 public:
-    IPTCPanel ();
+    IPTCPanel();
 
-    void read           (const rtengine::procparams::ProcParams* pp, const ParamsEdited* pedited = nullptr) override;
-    void write          (rtengine::procparams::ProcParams* pp, ParamsEdited* pedited = nullptr) override;
-    void setDefaults    (const rtengine::procparams::ProcParams* defParams, const ParamsEdited* pedited = nullptr) override;
+    void read(const rtengine::procparams::ProcParams *pp,
+        const ParamsEdited *pedited = nullptr) override;
+    void write(
+        rtengine::procparams::ProcParams *pp, ParamsEdited *pedited = nullptr) override;
+    void setDefaults(const rtengine::procparams::ProcParams *defParams,
+        const ParamsEdited *pedited = nullptr) override;
 
-    void setImageData   (const rtengine::FramesMetaData* id);
+    void setImageData(const rtengine::FramesMetaData *id);
 
-    void notifyListener ();
+    void notifyListener();
 
-    void addKeyWord     ();
-    void delKeyWord     ();
-    void addSuppCategory ();
-    void delSuppCategory ();
+    void addKeyWord();
+    void delKeyWord();
+    void addSuppCategory();
+    void delSuppCategory();
 
-    void resetClicked   ();
-    void fileClicked    ();
-    void copyClicked    ();
-    void pasteClicked   ();
+    void resetClicked();
+    void fileClicked();
+    void copyClicked();
+    void pasteClicked();
 };

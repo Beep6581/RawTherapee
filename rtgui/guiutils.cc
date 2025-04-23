@@ -30,48 +30,41 @@
 
 #include <assert.h>
 
-//extern Glib::Threads::Thread* mainThread;
+// extern Glib::Threads::Thread* mainThread;
 
 using namespace std;
 
-IdleRegister::~IdleRegister()
+IdleRegister::~IdleRegister() { destroy(); }
+
+void IdleRegister::add(std::function<bool()> function, gint priority)
 {
-    destroy();
-}
+    const auto dispatch = [](gpointer data) -> gboolean {
+        DataWrapper *const data_wrapper = static_cast<DataWrapper *>(data);
 
-void IdleRegister::add(std::function<bool ()> function, gint priority)
-{
-    const auto dispatch =
-        [](gpointer data) -> gboolean
-        {
-            DataWrapper* const data_wrapper = static_cast<DataWrapper*>(data);
+        if (!data_wrapper->function()) {
+            data_wrapper->self->mutex.lock();
+            data_wrapper->self->ids.erase(data_wrapper);
+            data_wrapper->self->mutex.unlock();
 
-            if (!data_wrapper->function()) {
-                data_wrapper->self->mutex.lock();
-                data_wrapper->self->ids.erase(data_wrapper);
-                data_wrapper->self->mutex.unlock();
+            delete data_wrapper;
+            return FALSE;
+        }
 
-                delete data_wrapper;
-                return FALSE;
-            }
-
-            return TRUE;
-        };
-
-    DataWrapper* const data_wrapper = new DataWrapper{
-        this,
-        std::move(function)
+        return TRUE;
     };
 
+    DataWrapper *const data_wrapper = new DataWrapper{this, std::move(function)};
+
     mutex.lock();
-    ids[data_wrapper] = gdk_threads_add_idle_full(priority, dispatch, data_wrapper, nullptr);
+    ids[data_wrapper] =
+        gdk_threads_add_idle_full(priority, dispatch, data_wrapper, nullptr);
     mutex.unlock();
 }
 
 void IdleRegister::destroy()
 {
     mutex.lock();
-    for (const auto& id : ids) {
+    for (const auto &id : ids) {
         g_source_remove(id.second);
         delete id.first;
     }
@@ -79,7 +72,7 @@ void IdleRegister::destroy()
     mutex.unlock();
 }
 
-BlockAdjusterEvents::BlockAdjusterEvents(Adjuster* adjuster) : adj(adjuster)
+BlockAdjusterEvents::BlockAdjusterEvents(Adjuster *adjuster) : adj(adjuster)
 {
     if (adj) {
         adj->block(true);
@@ -93,7 +86,7 @@ BlockAdjusterEvents::~BlockAdjusterEvents()
     }
 }
 
-DisableListener::DisableListener(ToolPanel* panelToDisable) : panel(panelToDisable)
+DisableListener::DisableListener(ToolPanel *panelToDisable) : panel(panelToDisable)
 {
     if (panel) {
         panel->disableListener();
@@ -141,7 +134,8 @@ Glib::ustring escapeHtmlChars(const Glib::ustring &src)
     return dst;
 }
 
-void setExpandAlignProperties(Gtk::Widget *widget, bool hExpand, bool vExpand, enum Gtk::Align hAlign, enum Gtk::Align vAlign)
+void setExpandAlignProperties(Gtk::Widget *widget, bool hExpand, bool vExpand,
+    enum Gtk::Align hAlign, enum Gtk::Align vAlign)
 {
     widget->set_hexpand(hExpand);
     widget->set_vexpand(vExpand);
@@ -169,75 +163,89 @@ Gtk::Border getPadding(const Glib::RefPtr<Gtk::StyleContext> style)
     return padding;
 }
 
-bool removeIfThere (Gtk::Container* cont, Gtk::Widget* w, bool increference)
+bool removeIfThere(Gtk::Container *cont, Gtk::Widget *w, bool increference)
 {
 
-    Glib::ListHandle<Gtk::Widget*> list = cont->get_children ();
-    Glib::ListHandle<Gtk::Widget*>::iterator i = list.begin ();
+    Glib::ListHandle<Gtk::Widget *> list = cont->get_children();
+    Glib::ListHandle<Gtk::Widget *>::iterator i = list.begin();
 
-    for (; i != list.end() && *i != w; ++i);
+    for (; i != list.end() && *i != w; ++i)
+        ;
 
     if (i != list.end()) {
         if (increference) {
-            w->reference ();
+            w->reference();
         }
 
-        cont->remove (*w);
+        cont->remove(*w);
         return true;
     } else {
         return false;
     }
 }
 
-bool confirmOverwrite (Gtk::Window& parent, const std::string& filename)
+bool confirmOverwrite(Gtk::Window &parent, const std::string &filename)
 {
     bool safe = true;
 
-    if (Glib::file_test (filename, Glib::FILE_TEST_EXISTS)) {
-        Glib::ustring msg_ = Glib::ustring ("<b>\"") + escapeHtmlChars(Glib::path_get_basename (filename)) + "\": "
-                             + M("MAIN_MSG_ALREADYEXISTS") + "</b>\n" + M("MAIN_MSG_QOVERWRITE");
-        Gtk::MessageDialog msgd (parent, msg_, true, Gtk::MESSAGE_WARNING, Gtk::BUTTONS_YES_NO, true);
-        safe = (msgd.run () == Gtk::RESPONSE_YES);
+    if (Glib::file_test(filename, Glib::FILE_TEST_EXISTS)) {
+        Glib::ustring msg_ = Glib::ustring("<b>\"") +
+                             escapeHtmlChars(Glib::path_get_basename(filename)) +
+                             "\": " + M("MAIN_MSG_ALREADYEXISTS") + "</b>\n" +
+                             M("MAIN_MSG_QOVERWRITE");
+        Gtk::MessageDialog msgd(
+            parent, msg_, true, Gtk::MESSAGE_WARNING, Gtk::BUTTONS_YES_NO, true);
+        safe = (msgd.run() == Gtk::RESPONSE_YES);
     }
 
     return safe;
 }
 
-void writeFailed (Gtk::Window& parent, const std::string& filename)
+void writeFailed(Gtk::Window &parent, const std::string &filename)
 {
-    Glib::ustring msg_ = Glib::ustring::compose(M("MAIN_MSG_WRITEFAILED"), escapeHtmlChars(filename));
-    Gtk::MessageDialog msgd (parent, msg_, true, Gtk::MESSAGE_ERROR, Gtk::BUTTONS_OK, true);
-    msgd.run ();
+    Glib::ustring msg_ =
+        Glib::ustring::compose(M("MAIN_MSG_WRITEFAILED"), escapeHtmlChars(filename));
+    Gtk::MessageDialog msgd(
+        parent, msg_, true, Gtk::MESSAGE_ERROR, Gtk::BUTTONS_OK, true);
+    msgd.run();
 }
 
-void drawCrop (Cairo::RefPtr<Cairo::Context> cr, int imx, int imy, int imw, int imh, int startx, int starty, double scale, const rtengine::procparams::CropParams& cparams, bool drawGuide, bool useBgColor, bool fullImageVisible)
+void drawCrop(Cairo::RefPtr<Cairo::Context> cr, int imx, int imy, int imw, int imh,
+    int startx, int starty, double scale,
+    const rtengine::procparams::CropParams &cparams, bool drawGuide, bool useBgColor,
+    bool fullImageVisible)
 {
 
-    cr->set_line_width (0.);
-    cr->rectangle (imx, imy, imw, imh);
-    cr->clip ();
+    cr->set_line_width(0.);
+    cr->rectangle(imx, imy, imw, imh);
+    cr->clip();
 
     double c1x = (cparams.x - startx) * scale;
     double c1y = (cparams.y - starty) * scale;
-    double c2x = (cparams.x + cparams.w - startx) * scale - (fullImageVisible ? 0.0 : 1.0);
-    double c2y = (cparams.y + cparams.h - starty) * scale - (fullImageVisible ? 0.0 : 1.0);
+    double c2x =
+        (cparams.x + cparams.w - startx) * scale - (fullImageVisible ? 0.0 : 1.0);
+    double c2y =
+        (cparams.y + cparams.h - starty) * scale - (fullImageVisible ? 0.0 : 1.0);
 
     // crop overlay color, linked with crop windows background
     if (options.bgcolor == 0 || !useBgColor) {
-        cr->set_source_rgba (options.cutOverlayBrush[0], options.cutOverlayBrush[1], options.cutOverlayBrush[2], options.cutOverlayBrush[3]);
+        cr->set_source_rgba(options.cutOverlayBrush[0], options.cutOverlayBrush[1],
+            options.cutOverlayBrush[2], options.cutOverlayBrush[3]);
     } else if (options.bgcolor == 1) {
-        cr->set_source_rgb (0, 0, 0);
+        cr->set_source_rgb(0, 0, 0);
     } else if (options.bgcolor == 2) {
-        cr->set_source_rgb (1, 1, 1);
+        cr->set_source_rgb(1, 1, 1);
     } else if (options.bgcolor == 3) {
-        cr->set_source_rgb (0.467, 0.467, 0.467);
+        cr->set_source_rgb(0.467, 0.467, 0.467);
     }
 
-    cr->rectangle (imx, imy, imw + 0.5, round(c1y) + 0.5);
-    cr->rectangle (imx, round(imy + c2y) + 0.5, imw + 0.5, round(imh - c2y) + 0.5);
-    cr->rectangle (imx, round(imy + c1y) + 0.5, round(c1x) + 0.5, round(c2y - c1y + 1) + 0.5);
-    cr->rectangle (round(imx + c2x) + 0.5, round(imy + c1y) + 0.5, round(imw - c2x) + 0.5, round(c2y - c1y + 1) + 0.5);
-    cr->fill ();
+    cr->rectangle(imx, imy, imw + 0.5, round(c1y) + 0.5);
+    cr->rectangle(imx, round(imy + c2y) + 0.5, imw + 0.5, round(imh - c2y) + 0.5);
+    cr->rectangle(
+        imx, round(imy + c1y) + 0.5, round(c1x) + 0.5, round(c2y - c1y + 1) + 0.5);
+    cr->rectangle(round(imx + c2x) + 0.5, round(imy + c1y) + 0.5,
+        round(imw - c2x) + 0.5, round(c2y - c1y + 1) + 0.5);
+    cr->fill();
 
     // rectangle around the cropped area and guides
     if (cparams.guide != rtengine::procparams::CropParams::Guide::NONE && drawGuide) {
@@ -246,34 +254,35 @@ void drawCrop (Cairo::RefPtr<Cairo::Context> cr, int imx, int imy, int imw, int 
         double rectx2 = round(c2x) + imx + 0.5;
         double recty2 = round(c2y) + imy + 0.5;
 
-        if(fullImageVisible) {
+        if (fullImageVisible) {
             rectx2 = min(rectx2, imx + imw - 0.5);
             recty2 = min(recty2, imy + imh - 0.5);
         }
 
-        cr->set_line_width (1.0);
-        cr->set_source_rgba (1.0, 1.0, 1.0, 0.618);
-        cr->move_to (rectx1, recty1);
-        cr->line_to (rectx2, recty1);
-        cr->line_to (rectx2, recty2);
-        cr->line_to (rectx1, recty2);
-        cr->line_to (rectx1, recty1);
-        cr->stroke ();
-        cr->set_source_rgba (0.0, 0.0, 0.0, 0.618);
-        cr->set_dash (std::valarray<double>({4}), 0);
-        cr->move_to (rectx1, recty1);
-        cr->line_to (rectx2, recty1);
-        cr->line_to (rectx2, recty2);
-        cr->line_to (rectx1, recty2);
-        cr->line_to (rectx1, recty1);
-        cr->stroke ();
-        cr->set_dash (std::valarray<double>(), 0);
+        cr->set_line_width(1.0);
+        cr->set_source_rgba(1.0, 1.0, 1.0, 0.618);
+        cr->move_to(rectx1, recty1);
+        cr->line_to(rectx2, recty1);
+        cr->line_to(rectx2, recty2);
+        cr->line_to(rectx1, recty2);
+        cr->line_to(rectx1, recty1);
+        cr->stroke();
+        cr->set_source_rgba(0.0, 0.0, 0.0, 0.618);
+        cr->set_dash(std::valarray<double>({4}), 0);
+        cr->move_to(rectx1, recty1);
+        cr->line_to(rectx2, recty1);
+        cr->line_to(rectx2, recty2);
+        cr->line_to(rectx1, recty2);
+        cr->line_to(rectx1, recty1);
+        cr->stroke();
+        cr->set_dash(std::valarray<double>(), 0);
 
-        if (
-            cparams.guide != rtengine::procparams::CropParams::Guide::RULE_OF_DIAGONALS
-            && cparams.guide != rtengine::procparams::CropParams::Guide::GOLDEN_TRIANGLE_1
-            && cparams.guide != rtengine::procparams::CropParams::Guide::GOLDEN_TRIANGLE_2
-        ) {
+        if (cparams.guide !=
+                rtengine::procparams::CropParams::Guide::RULE_OF_DIAGONALS &&
+            cparams.guide !=
+                rtengine::procparams::CropParams::Guide::GOLDEN_TRIANGLE_1 &&
+            cparams.guide !=
+                rtengine::procparams::CropParams::Guide::GOLDEN_TRIANGLE_2) {
             // draw guide lines
             std::vector<double> horiz_ratios;
             std::vector<double> vert_ratios;
@@ -288,18 +297,18 @@ void drawCrop (Cairo::RefPtr<Cairo::Context> cr, int imx, int imy, int imw, int 
                 }
 
                 case rtengine::procparams::CropParams::Guide::RULE_OF_THIRDS: {
-                    horiz_ratios.push_back (1.0 / 3.0);
-                    horiz_ratios.push_back (2.0 / 3.0);
-                    vert_ratios.push_back (1.0 / 3.0);
-                    vert_ratios.push_back (2.0 / 3.0);
+                    horiz_ratios.push_back(1.0 / 3.0);
+                    horiz_ratios.push_back(2.0 / 3.0);
+                    vert_ratios.push_back(1.0 / 3.0);
+                    vert_ratios.push_back(2.0 / 3.0);
                     break;
                 }
 
                 case rtengine::procparams::CropParams::Guide::HARMONIC_MEANS: {
-                    horiz_ratios.push_back (1.0 - 0.618);
-                    horiz_ratios.push_back (0.618);
-                    vert_ratios.push_back (0.618);
-                    vert_ratios.push_back (1.0 - 0.618);
+                    horiz_ratios.push_back(1.0 - 0.618);
+                    horiz_ratios.push_back(0.618);
+                    vert_ratios.push_back(0.618);
+                    vert_ratios.push_back(1.0 - 0.618);
                     break;
                 }
 
@@ -312,23 +321,25 @@ void drawCrop (Cairo::RefPtr<Cairo::Context> cr, int imx, int imy, int imw, int 
                     if (w > longSideNumLines && h > longSideNumLines) {
                         if (w > h) {
                             for (int i = 1; i < longSideNumLines; i++) {
-                                vert_ratios.push_back ((double)i / longSideNumLines);
+                                vert_ratios.push_back((double)i / longSideNumLines);
                             }
 
-                            int shortSideNumLines = (int)round(h * (double)longSideNumLines / w);
+                            int shortSideNumLines =
+                                (int)round(h * (double)longSideNumLines / w);
 
                             for (int i = 1; i < shortSideNumLines; i++) {
-                                horiz_ratios.push_back ((double)i / shortSideNumLines);
+                                horiz_ratios.push_back((double)i / shortSideNumLines);
                             }
                         } else {
                             for (int i = 1; i < longSideNumLines; i++) {
-                                horiz_ratios.push_back ((double)i / longSideNumLines);
+                                horiz_ratios.push_back((double)i / longSideNumLines);
                             }
 
-                            int shortSideNumLines = (int)round(w * (double)longSideNumLines / h);
+                            int shortSideNumLines =
+                                (int)round(w * (double)longSideNumLines / h);
 
                             for (int i = 1; i < shortSideNumLines; i++) {
-                                vert_ratios.push_back ((double)i / shortSideNumLines);
+                                vert_ratios.push_back((double)i / shortSideNumLines);
                             }
                         }
                     }
@@ -336,15 +347,20 @@ void drawCrop (Cairo::RefPtr<Cairo::Context> cr, int imx, int imy, int imw, int 
                 }
 
                 case rtengine::procparams::CropParams::Guide::EPASSPORT: {
-                    /* Official measurements do not specify exact ratios, just min/max measurements within which the eyes and chin-crown distance must lie. I averaged those measurements to produce these guides.
-                     * The first horizontal guide is for the crown, the second is roughly for the nostrils, the third is for the chin.
+                    /* Official measurements do not specify exact ratios, just min/max
+                     * measurements within which the eyes and chin-crown distance must
+                     * lie. I averaged those measurements to produce these guides. The
+                     * first horizontal guide is for the crown, the second is roughly
+                     * for the nostrils, the third is for the chin.
                      * http://www.homeoffice.gov.uk/agencies-public-bodies/ips/passports/information-photographers/
-                     * "(...) the measurement of the face from the bottom of the chin to the crown (ie the top of the head, not the top of the hair) is between 29mm and 34mm."
+                     * "(...) the measurement of the face from the bottom of the chin to
+                     * the crown (ie the top of the head, not the top of the hair) is
+                     * between 29mm and 34mm."
                      */
-                    horiz_ratios.push_back (7.0 / 45.0);
-                    horiz_ratios.push_back (26.0 / 45.0);
-                    horiz_ratios.push_back (37.0 / 45.0);
-                    vert_ratios.push_back (0.5);
+                    horiz_ratios.push_back(7.0 / 45.0);
+                    horiz_ratios.push_back(26.0 / 45.0);
+                    horiz_ratios.push_back(37.0 / 45.0);
+                    vert_ratios.push_back(0.5);
                     break;
                 }
 
@@ -365,92 +381,98 @@ void drawCrop (Cairo::RefPtr<Cairo::Context> cr, int imx, int imy, int imw, int 
 
             // Horizontals
             for (size_t i = 0; i < horiz_ratios.size(); i++) {
-                cr->set_source_rgba (1.0, 1.0, 1.0, 0.618);
-                cr->move_to (rectx1, recty1 + round((recty2 - recty1) * horiz_ratios[i]));
-                cr->line_to (rectx2, recty1 + round((recty2 - recty1) * horiz_ratios[i]));
-                cr->stroke ();
-                cr->set_source_rgba (0.0, 0.0, 0.0, 0.618);
-                std::valarray<double> ds (1);
+                cr->set_source_rgba(1.0, 1.0, 1.0, 0.618);
+                cr->move_to(
+                    rectx1, recty1 + round((recty2 - recty1) * horiz_ratios[i]));
+                cr->line_to(
+                    rectx2, recty1 + round((recty2 - recty1) * horiz_ratios[i]));
+                cr->stroke();
+                cr->set_source_rgba(0.0, 0.0, 0.0, 0.618);
+                std::valarray<double> ds(1);
                 ds[0] = 4;
-                cr->set_dash (ds, 0);
-                cr->move_to (rectx1, recty1 + round((recty2 - recty1) * horiz_ratios[i]));
-                cr->line_to (rectx2, recty1 + round((recty2 - recty1) * horiz_ratios[i]));
-                cr->stroke ();
-                ds.resize (0);
-                cr->set_dash (ds, 0);
+                cr->set_dash(ds, 0);
+                cr->move_to(
+                    rectx1, recty1 + round((recty2 - recty1) * horiz_ratios[i]));
+                cr->line_to(
+                    rectx2, recty1 + round((recty2 - recty1) * horiz_ratios[i]));
+                cr->stroke();
+                ds.resize(0);
+                cr->set_dash(ds, 0);
             }
 
             // Verticals
             for (size_t i = 0; i < vert_ratios.size(); i++) {
-                cr->set_source_rgba (1.0, 1.0, 1.0, 0.618);
-                cr->move_to (rectx1 + round((rectx2 - rectx1) * vert_ratios[i]), recty1);
-                cr->line_to (rectx1 + round((rectx2 - rectx1) * vert_ratios[i]), recty2);
-                cr->stroke ();
-                cr->set_source_rgba (0.0, 0.0, 0.0, 0.618);
-                std::valarray<double> ds (1);
+                cr->set_source_rgba(1.0, 1.0, 1.0, 0.618);
+                cr->move_to(rectx1 + round((rectx2 - rectx1) * vert_ratios[i]), recty1);
+                cr->line_to(rectx1 + round((rectx2 - rectx1) * vert_ratios[i]), recty2);
+                cr->stroke();
+                cr->set_source_rgba(0.0, 0.0, 0.0, 0.618);
+                std::valarray<double> ds(1);
                 ds[0] = 4;
-                cr->set_dash (ds, 0);
-                cr->move_to (rectx1 + round((rectx2 - rectx1) * vert_ratios[i]), recty1);
-                cr->line_to (rectx1 + round((rectx2 - rectx1) * vert_ratios[i]), recty2);
-                cr->stroke ();
-                ds.resize (0);
-                cr->set_dash (ds, 0);
+                cr->set_dash(ds, 0);
+                cr->move_to(rectx1 + round((rectx2 - rectx1) * vert_ratios[i]), recty1);
+                cr->line_to(rectx1 + round((rectx2 - rectx1) * vert_ratios[i]), recty2);
+                cr->stroke();
+                ds.resize(0);
+                cr->set_dash(ds, 0);
             }
-        } else if (cparams.guide == rtengine::procparams::CropParams::Guide::RULE_OF_DIAGONALS) {
+        } else if (cparams.guide ==
+                   rtengine::procparams::CropParams::Guide::RULE_OF_DIAGONALS) {
             double corners_from[4][2];
             double corners_to[4][2];
             int mindim = min(rectx2 - rectx1, recty2 - recty1);
             corners_from[0][0] = rectx1;
             corners_from[0][1] = recty1;
-            corners_to[0][0]   = rectx1 + mindim;
-            corners_to[0][1]   = recty1 + mindim;
+            corners_to[0][0] = rectx1 + mindim;
+            corners_to[0][1] = recty1 + mindim;
             corners_from[1][0] = rectx1;
             corners_from[1][1] = recty2;
-            corners_to[1][0]   = rectx1 + mindim;
-            corners_to[1][1]   = recty2 - mindim;
+            corners_to[1][0] = rectx1 + mindim;
+            corners_to[1][1] = recty2 - mindim;
             corners_from[2][0] = rectx2;
             corners_from[2][1] = recty1;
-            corners_to[2][0]   = rectx2 - mindim;
-            corners_to[2][1]   = recty1 + mindim;
+            corners_to[2][0] = rectx2 - mindim;
+            corners_to[2][1] = recty1 + mindim;
             corners_from[3][0] = rectx2;
             corners_from[3][1] = recty2;
-            corners_to[3][0]   = rectx2 - mindim;
-            corners_to[3][1]   = recty2 - mindim;
+            corners_to[3][0] = rectx2 - mindim;
+            corners_to[3][1] = recty2 - mindim;
 
             for (int i = 0; i < 4; i++) {
-                cr->set_source_rgba (1.0, 1.0, 1.0, 0.618);
-                cr->move_to (corners_from[i][0], corners_from[i][1]);
-                cr->line_to (corners_to[i][0], corners_to[i][1]);
-                cr->stroke ();
-                cr->set_source_rgba (0.0, 0.0, 0.0, 0.618);
-                std::valarray<double> ds (1);
+                cr->set_source_rgba(1.0, 1.0, 1.0, 0.618);
+                cr->move_to(corners_from[i][0], corners_from[i][1]);
+                cr->line_to(corners_to[i][0], corners_to[i][1]);
+                cr->stroke();
+                cr->set_source_rgba(0.0, 0.0, 0.0, 0.618);
+                std::valarray<double> ds(1);
                 ds[0] = 4;
-                cr->set_dash (ds, 0);
-                cr->move_to (corners_from[i][0], corners_from[i][1]);
-                cr->line_to (corners_to[i][0], corners_to[i][1]);
-                cr->stroke ();
-                ds.resize (0);
-                cr->set_dash (ds, 0);
+                cr->set_dash(ds, 0);
+                cr->move_to(corners_from[i][0], corners_from[i][1]);
+                cr->line_to(corners_to[i][0], corners_to[i][1]);
+                cr->stroke();
+                ds.resize(0);
+                cr->set_dash(ds, 0);
             }
-        } else if (
-            cparams.guide == rtengine::procparams::CropParams::Guide::GOLDEN_TRIANGLE_1
-            || cparams.guide == rtengine::procparams::CropParams::Guide::GOLDEN_TRIANGLE_2
-        ) {
+        } else if (cparams.guide ==
+                       rtengine::procparams::CropParams::Guide::GOLDEN_TRIANGLE_1 ||
+                   cparams.guide ==
+                       rtengine::procparams::CropParams::Guide::GOLDEN_TRIANGLE_2) {
             // main diagonal
-            if(cparams.guide == rtengine::procparams::CropParams::Guide::GOLDEN_TRIANGLE_2) {
+            if (cparams.guide ==
+                rtengine::procparams::CropParams::Guide::GOLDEN_TRIANGLE_2) {
                 std::swap(rectx1, rectx2);
             }
 
-            cr->set_source_rgba (1.0, 1.0, 1.0, 0.618);
-            cr->move_to (rectx1, recty1);
-            cr->line_to (rectx2, recty2);
-            cr->stroke ();
-            cr->set_source_rgba (0.0, 0.0, 0.0, 0.618);
-            cr->set_dash (std::valarray<double>({4}), 0);
-            cr->move_to (rectx1, recty1);
-            cr->line_to (rectx2, recty2);
-            cr->stroke ();
-            cr->set_dash (std::valarray<double>(), 0);
+            cr->set_source_rgba(1.0, 1.0, 1.0, 0.618);
+            cr->move_to(rectx1, recty1);
+            cr->line_to(rectx2, recty2);
+            cr->stroke();
+            cr->set_source_rgba(0.0, 0.0, 0.0, 0.618);
+            cr->set_dash(std::valarray<double>({4}), 0);
+            cr->move_to(rectx1, recty1);
+            cr->line_to(rectx2, recty2);
+            cr->stroke();
+            cr->set_dash(std::valarray<double>(), 0);
 
             double height = recty2 - recty1;
             double width = rectx2 - rectx1;
@@ -462,33 +484,33 @@ void drawCrop (Cairo::RefPtr<Cairo::Context> cr, int imx, int imy, int imw, int 
 
             double x = (a * b) / height;
             double y = height - (b * (d - a)) / width;
-            cr->set_source_rgba (1.0, 1.0, 1.0, 0.618);
-            cr->move_to (rectx1, recty2);
-            cr->line_to (rectx1 + x, recty1 + y);
-            cr->stroke ();
-            cr->set_source_rgba (0.0, 0.0, 0.0, 0.618);
-            cr->set_dash (std::valarray<double>({4}), 0);
-            cr->move_to (rectx1, recty2);
-            cr->line_to (rectx1 + x, recty1 + y);
-            cr->stroke ();
-            cr->set_dash (std::valarray<double>(), 0);
+            cr->set_source_rgba(1.0, 1.0, 1.0, 0.618);
+            cr->move_to(rectx1, recty2);
+            cr->line_to(rectx1 + x, recty1 + y);
+            cr->stroke();
+            cr->set_source_rgba(0.0, 0.0, 0.0, 0.618);
+            cr->set_dash(std::valarray<double>({4}), 0);
+            cr->move_to(rectx1, recty2);
+            cr->line_to(rectx1 + x, recty1 + y);
+            cr->stroke();
+            cr->set_dash(std::valarray<double>(), 0);
 
             x = width - (a * b) / height;
             y = (b * (d - a)) / width;
-            cr->set_source_rgba (1.0, 1.0, 1.0, 0.618);
-            cr->move_to (rectx2, recty1);
-            cr->line_to (rectx1 + x, recty1 + y);
-            cr->stroke ();
-            cr->set_source_rgba (0.0, 0.0, 0.0, 0.618);
-            cr->set_dash (std::valarray<double>({4}), 0);
-            cr->move_to (rectx2, recty1);
-            cr->line_to (rectx1 + x, recty1 + y);
-            cr->stroke ();
-            cr->set_dash (std::valarray<double>(), 0);
+            cr->set_source_rgba(1.0, 1.0, 1.0, 0.618);
+            cr->move_to(rectx2, recty1);
+            cr->line_to(rectx1 + x, recty1 + y);
+            cr->stroke();
+            cr->set_source_rgba(0.0, 0.0, 0.0, 0.618);
+            cr->set_dash(std::valarray<double>({4}), 0);
+            cr->move_to(rectx2, recty1);
+            cr->line_to(rectx1 + x, recty1 + y);
+            cr->stroke();
+            cr->set_dash(std::valarray<double>(), 0);
         }
     }
 
-    cr->reset_clip ();
+    cr->reset_clip();
 }
 
 /*
@@ -525,14 +547,14 @@ bool ExpanderBox::on_draw(const ::Cairo::RefPtr< Cairo::Context> &cr) {
 }
 */
 
-ExpanderBox::ExpanderBox( Gtk::Container *p): pC(p)
+ExpanderBox::ExpanderBox(Gtk::Container *p) : pC(p)
 {
-    set_name ("ExpanderBox");
-//GTK318
+    set_name("ExpanderBox");
+// GTK318
 #if GTK_MAJOR_VERSION == 3 && GTK_MINOR_VERSION < 20
     set_border_width(2);
 #endif
-//GTK318
+    // GTK318
 }
 
 void ExpanderBox::setLevel(int level)
@@ -552,25 +574,16 @@ void ExpanderBox::show_all()
     Gtk::Container::show_all_children(true);
 }
 
-void ExpanderBox::showBox()
-{
-    Gtk::EventBox::show();
-}
+void ExpanderBox::showBox() { Gtk::EventBox::show(); }
 
-void ExpanderBox::hideBox()
-{
-    Gtk::EventBox::hide();
-}
+void ExpanderBox::hideBox() { Gtk::EventBox::hide(); }
 
-MyExpander::MyExpander(bool useEnabled, Gtk::Widget* titleWidget) :
-    inconsistentImage("power-inconsistent-small"),
-    enabledImage("power-on-small"),
-    disabledImage("power-off-small"),
-    openedImage("expander-open-small"),
-    closedImage("expander-closed-small"),
-    enabled(false), inconsistent(false), flushEvent(false), expBox(nullptr),
-    child(nullptr), headerWidget(nullptr), statusImage(nullptr),
-    label(nullptr), useEnabled(useEnabled)
+MyExpander::MyExpander(bool useEnabled, Gtk::Widget *titleWidget) :
+    inconsistentImage("power-inconsistent-small"), enabledImage("power-on-small"),
+    disabledImage("power-off-small"), openedImage("expander-open-small"),
+    closedImage("expander-closed-small"), enabled(false), inconsistent(false),
+    flushEvent(false), expBox(nullptr), child(nullptr), headerWidget(nullptr),
+    statusImage(nullptr), label(nullptr), useEnabled(useEnabled)
 {
     set_orientation(Gtk::ORIENTATION_VERTICAL);
     set_spacing(0);
@@ -578,7 +591,7 @@ MyExpander::MyExpander(bool useEnabled, Gtk::Widget* titleWidget) :
     set_can_focus(false);
     setExpandAlignProperties(this, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_FILL);
 
-    headerHBox = Gtk::manage( new Gtk::Box());
+    headerHBox = Gtk::manage(new Gtk::Box());
     headerHBox->set_can_focus(false);
     setExpandAlignProperties(headerHBox, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_FILL);
 
@@ -589,9 +602,12 @@ MyExpander::MyExpander(bool useEnabled, Gtk::Widget* titleWidget) :
         imageEvBox->set_name("MyExpanderStatus");
         imageEvBox->add(*statusImage);
         imageEvBox->set_above_child(true);
-        imageEvBox->signal_button_release_event().connect( sigc::mem_fun(this, & MyExpander::on_enabled_change) );
-        imageEvBox->signal_enter_notify_event().connect( sigc::mem_fun(this, & MyExpander::on_enter_leave_enable), false );
-        imageEvBox->signal_leave_notify_event().connect( sigc::mem_fun(this, & MyExpander::on_enter_leave_enable), false );
+        imageEvBox->signal_button_release_event().connect(
+            sigc::mem_fun(this, &MyExpander::on_enabled_change));
+        imageEvBox->signal_enter_notify_event().connect(
+            sigc::mem_fun(this, &MyExpander::on_enter_leave_enable), false);
+        imageEvBox->signal_leave_notify_event().connect(
+            sigc::mem_fun(this, &MyExpander::on_enter_leave_enable), false);
         headerHBox->pack_start(*imageEvBox, Gtk::PACK_SHRINK, 0);
     } else {
         get_style_context()->add_class("Fold");
@@ -602,7 +618,8 @@ MyExpander::MyExpander(bool useEnabled, Gtk::Widget* titleWidget) :
     statusImage->set_can_focus(false);
 
     if (titleWidget) {
-        setExpandAlignProperties(titleWidget, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_FILL);
+        setExpandAlignProperties(
+            titleWidget, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_FILL);
         headerHBox->pack_start(*titleWidget, Gtk::PACK_EXPAND_WIDGET, 0);
         headerWidget = titleWidget;
     }
@@ -611,26 +628,27 @@ MyExpander::MyExpander(bool useEnabled, Gtk::Widget* titleWidget) :
     titleEvBox->set_name("MyExpanderTitle");
     titleEvBox->set_border_width(0);
     titleEvBox->add(*headerHBox);
-    titleEvBox->set_above_child(false);  // this is the key! By making it below the child, they will get the events first.
+    titleEvBox->set_above_child(false); // this is the key! By making it below the
+                                        // child, they will get the events first.
     titleEvBox->set_can_focus(false);
 
     pack_start(*titleEvBox, Gtk::PACK_EXPAND_WIDGET, 0);
 
     updateStyle();
 
-    titleEvBox->signal_button_release_event().connect( sigc::mem_fun(this, & MyExpander::on_toggle) );
-    titleEvBox->signal_enter_notify_event().connect( sigc::mem_fun(this, & MyExpander::on_enter_leave_title), false);
-    titleEvBox->signal_leave_notify_event().connect( sigc::mem_fun(this, & MyExpander::on_enter_leave_title), false);
+    titleEvBox->signal_button_release_event().connect(
+        sigc::mem_fun(this, &MyExpander::on_toggle));
+    titleEvBox->signal_enter_notify_event().connect(
+        sigc::mem_fun(this, &MyExpander::on_enter_leave_title), false);
+    titleEvBox->signal_leave_notify_event().connect(
+        sigc::mem_fun(this, &MyExpander::on_enter_leave_title), false);
 }
 
 MyExpander::MyExpander(bool useEnabled, Glib::ustring titleLabel) :
-    inconsistentImage("power-inconsistent-small"),
-    enabledImage("power-on-small"),
-    disabledImage("power-off-small"),
-    openedImage("expander-open-small"),
-    closedImage("expander-closed-small"),
-    enabled(false), inconsistent(false), flushEvent(false), expBox(nullptr),
-    child(nullptr), headerWidget(nullptr),
+    inconsistentImage("power-inconsistent-small"), enabledImage("power-on-small"),
+    disabledImage("power-off-small"), openedImage("expander-open-small"),
+    closedImage("expander-closed-small"), enabled(false), inconsistent(false),
+    flushEvent(false), expBox(nullptr), child(nullptr), headerWidget(nullptr),
     label(nullptr), useEnabled(useEnabled)
 {
     set_orientation(Gtk::ORIENTATION_VERTICAL);
@@ -639,7 +657,7 @@ MyExpander::MyExpander(bool useEnabled, Glib::ustring titleLabel) :
     set_can_focus(false);
     setExpandAlignProperties(this, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_FILL);
 
-    headerHBox = Gtk::manage( new Gtk::Box());
+    headerHBox = Gtk::manage(new Gtk::Box());
     headerHBox->set_can_focus(false);
     setExpandAlignProperties(headerHBox, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_FILL);
 
@@ -650,9 +668,12 @@ MyExpander::MyExpander(bool useEnabled, Glib::ustring titleLabel) :
         imageEvBox->set_name("MyExpanderStatus");
         imageEvBox->add(*statusImage);
         imageEvBox->set_above_child(true);
-        imageEvBox->signal_button_release_event().connect( sigc::mem_fun(this, & MyExpander::on_enabled_change) );
-        imageEvBox->signal_enter_notify_event().connect( sigc::mem_fun(this, & MyExpander::on_enter_leave_enable), false );
-        imageEvBox->signal_leave_notify_event().connect( sigc::mem_fun(this, & MyExpander::on_enter_leave_enable), false );
+        imageEvBox->signal_button_release_event().connect(
+            sigc::mem_fun(this, &MyExpander::on_enabled_change));
+        imageEvBox->signal_enter_notify_event().connect(
+            sigc::mem_fun(this, &MyExpander::on_enter_leave_enable), false);
+        imageEvBox->signal_leave_notify_event().connect(
+            sigc::mem_fun(this, &MyExpander::on_enter_leave_enable), false);
         headerHBox->pack_start(*imageEvBox, Gtk::PACK_SHRINK, 0);
     } else {
         get_style_context()->add_class("Fold");
@@ -671,19 +692,23 @@ MyExpander::MyExpander(bool useEnabled, Glib::ustring titleLabel) :
     titleEvBox->set_name("MyExpanderTitle");
     titleEvBox->set_border_width(0);
     titleEvBox->add(*headerHBox);
-    titleEvBox->set_above_child(false);  // this is the key! By make it below the child, they will get the events first.
+    titleEvBox->set_above_child(false); // this is the key! By make it below the child,
+                                        // they will get the events first.
     titleEvBox->set_can_focus(false);
 
     pack_start(*titleEvBox, Gtk::PACK_EXPAND_WIDGET, 0);
 
     updateStyle();
 
-    titleEvBox->signal_button_release_event().connect( sigc::mem_fun(this, & MyExpander::on_toggle));
-    titleEvBox->signal_enter_notify_event().connect( sigc::mem_fun(this, & MyExpander::on_enter_leave_title), false);
-    titleEvBox->signal_leave_notify_event().connect( sigc::mem_fun(this, & MyExpander::on_enter_leave_title), false);
+    titleEvBox->signal_button_release_event().connect(
+        sigc::mem_fun(this, &MyExpander::on_toggle));
+    titleEvBox->signal_enter_notify_event().connect(
+        sigc::mem_fun(this, &MyExpander::on_enter_leave_title), false);
+    titleEvBox->signal_leave_notify_event().connect(
+        sigc::mem_fun(this, &MyExpander::on_enter_leave_title), false);
 }
 
-bool MyExpander::on_enter_leave_title (GdkEventCrossing* event)
+bool MyExpander::on_enter_leave_title(GdkEventCrossing *event)
 {
     if (is_sensitive()) {
         if (event->type == GDK_ENTER_NOTIFY) {
@@ -698,7 +723,7 @@ bool MyExpander::on_enter_leave_title (GdkEventCrossing* event)
     return true;
 }
 
-bool MyExpander::on_enter_leave_enable (GdkEventCrossing* event)
+bool MyExpander::on_enter_leave_enable(GdkEventCrossing *event)
 {
     if (is_sensitive()) {
         if (event->type == GDK_ENTER_NOTIFY) {
@@ -717,14 +742,14 @@ void MyExpander::updateStyle()
 {
     updateVScrollbars(options.hideTPVScrollbar);
 
-//GTK318
+// GTK318
 #if GTK_MAJOR_VERSION == 3 && GTK_MINOR_VERSION < 20
     headerHBox->set_spacing(2);
     headerHBox->set_border_width(1);
     set_spacing(0);
     set_border_width(0);
 #endif
-//GTK318
+    // GTK318
 }
 
 void MyExpander::updateVScrollbars(bool hide)
@@ -736,21 +761,21 @@ void MyExpander::updateVScrollbars(bool hide)
     }
 }
 
-void MyExpander::setLevel (int level)
+void MyExpander::setLevel(int level)
 {
     if (expBox) {
         expBox->setLevel(level);
     }
 }
 
-void MyExpander::setLabel (Glib::ustring newLabel)
+void MyExpander::setLabel(Glib::ustring newLabel)
 {
     if (label) {
         label->set_markup(escapeHtmlChars(newLabel));
     }
 }
 
-void MyExpander::setLabel (Gtk::Widget *newWidget)
+void MyExpander::setLabel(Gtk::Widget *newWidget)
 {
     if (headerWidget) {
         removeIfThere(headerHBox, headerWidget, false);
@@ -758,10 +783,7 @@ void MyExpander::setLabel (Gtk::Widget *newWidget)
     }
 }
 
-bool MyExpander::get_inconsistent()
-{
-    return inconsistent;
-}
+bool MyExpander::get_inconsistent() { return inconsistent; }
 
 void MyExpander::set_inconsistent(bool isInconsistent)
 {
@@ -781,19 +803,12 @@ void MyExpander::set_inconsistent(bool isInconsistent)
                 }
             }
         }
-
     }
 }
 
-bool MyExpander::getUseEnabled()
-{
-    return useEnabled;
-}
+bool MyExpander::getUseEnabled() { return useEnabled; }
 
-bool MyExpander::getEnabled()
-{
-    return enabled;
-}
+bool MyExpander::getEnabled() { return enabled; }
 
 void MyExpander::setEnabled(bool isEnabled)
 {
@@ -834,14 +849,14 @@ void MyExpander::setEnabledTooltipText(Glib::ustring tooltipText)
     }
 }
 
-void MyExpander::set_expanded( bool expanded )
+void MyExpander::set_expanded(bool expanded)
 {
     if (!expBox) {
         return;
     }
 
     if (!useEnabled) {
-        if (expanded ) {
+        if (expanded) {
             statusImage->set_from_icon_name(openedImage);
         } else {
             statusImage->set_from_icon_name(closedImage);
@@ -855,24 +870,21 @@ void MyExpander::set_expanded( bool expanded )
     }
 }
 
-bool MyExpander::get_expanded()
-{
-    return expBox ? expBox->get_visible() : false;
-}
+bool MyExpander::get_expanded() { return expBox ? expBox->get_visible() : false; }
 
-void MyExpander::add  (Gtk::Container& widget, bool setChild)
+void MyExpander::add(Gtk::Container &widget, bool setChild)
 {
-    if(setChild) {
+    if (setChild) {
         child = &widget;
     }
-    expBox = Gtk::manage (new ExpanderBox (child));
-    expBox->add (widget);
+    expBox = Gtk::manage(new ExpanderBox(child));
+    expBox->add(widget);
     pack_start(*expBox, Gtk::PACK_SHRINK, 0);
     widget.show();
     expBox->hideBox();
 }
 
-bool MyExpander::on_toggle(GdkEventButton* event)
+bool MyExpander::on_toggle(GdkEventButton *event)
 {
     if (flushEvent) {
         flushEvent = false;
@@ -908,8 +920,9 @@ MyExpander::type_signal_enabled_toggled MyExpander::signal_enabled_toggled()
     return message;
 }
 
-// internal use ; when the user clicks on the toggle button, it calls this method that will emit an enabled_change event
-bool MyExpander::on_enabled_change(GdkEventButton* event)
+// internal use ; when the user clicks on the toggle button, it calls this method that
+// will emit an enabled_change event
+bool MyExpander::on_enabled_change(GdkEventButton *event)
 {
     if (event->button == 1) {
         if (enabled) {
@@ -936,14 +949,12 @@ bool MyExpander::on_enabled_change(GdkEventButton* event)
  * otherwise the mouse wheel will scroll the editor's tabs content.
  *
  */
-MyScrolledWindow::MyScrolledWindow ()
-{
-}
+MyScrolledWindow::MyScrolledWindow() {}
 
-bool MyScrolledWindow::on_scroll_event (GdkEventScroll* event)
+bool MyScrolledWindow::on_scroll_event(GdkEventScroll *event)
 {
     if (!options.hideTPVScrollbar) {
-        Gtk::ScrolledWindow::on_scroll_event (event);
+        Gtk::ScrolledWindow::on_scroll_event(event);
         return true;
     }
 
@@ -954,7 +965,7 @@ bool MyScrolledWindow::on_scroll_event (GdkEventScroll* event)
         const double upperBound = adjust->get_upper();
         const double lowerBound = adjust->get_lower();
         double value = adjust->get_value();
-        double step  = adjust->get_step_increment();
+        double step = adjust->get_step_increment();
 
         if (event->direction == GDK_SCROLL_DOWN) {
             const double value2 = rtengine::min<double>(value + step, upperBound);
@@ -969,7 +980,8 @@ bool MyScrolledWindow::on_scroll_event (GdkEventScroll* event)
                 scroll->set_value(value2);
             }
         } else if (event->direction == GDK_SCROLL_SMOOTH) {
-            const double value2 = rtengine::LIM<double>(value + event->delta_y * step, lowerBound, upperBound);
+            const double value2 = rtengine::LIM<double>(
+                value + event->delta_y * step, lowerBound, upperBound);
 
             if (value2 != value) {
                 scroll->set_value(value2);
@@ -980,17 +992,20 @@ bool MyScrolledWindow::on_scroll_event (GdkEventScroll* event)
     return true;
 }
 
-void MyScrolledWindow::get_preferred_width_vfunc (int &minimum_width, int &natural_width) const
+void MyScrolledWindow::get_preferred_width_vfunc(
+    int &minimum_width, int &natural_width) const
 {
     natural_width = minimum_width = RTScalable::scalePixelSize(100);
 }
 
-void MyScrolledWindow::get_preferred_height_vfunc (int &minimum_height, int &natural_height) const
+void MyScrolledWindow::get_preferred_height_vfunc(
+    int &minimum_height, int &natural_height) const
 {
     natural_height = minimum_height = RTScalable::scalePixelSize(50);
 }
 
-void MyScrolledWindow::get_preferred_height_for_width_vfunc (int width, int &minimum_height, int &natural_height) const
+void MyScrolledWindow::get_preferred_height_for_width_vfunc(
+    int width, int &minimum_height, int &natural_height) const
 {
     natural_height = minimum_height = RTScalable::scalePixelSize(50);
 }
@@ -1002,17 +1017,17 @@ void MyScrolledWindow::get_preferred_height_for_width_vfunc (int width, int &min
  * otherwise the mouse wheel will scroll the toolbar.
  *
  */
-MyScrolledToolbar::MyScrolledToolbar ()
+MyScrolledToolbar::MyScrolledToolbar()
 {
-    set_policy (Gtk::POLICY_EXTERNAL, Gtk::POLICY_NEVER);
+    set_policy(Gtk::POLICY_EXTERNAL, Gtk::POLICY_NEVER);
     get_style_context()->add_class("scrollableToolbar");
 
-    // Works fine with Gtk 3.22, but a custom made get_preferred_height had to be created as a workaround
-    // taken from the official Gtk3.22 source code
-    //set_propagate_natural_height(true);
+    // Works fine with Gtk 3.22, but a custom made get_preferred_height had to be
+    // created as a workaround taken from the official Gtk3.22 source code
+    // set_propagate_natural_height(true);
 }
 
-bool MyScrolledToolbar::on_scroll_event (GdkEventScroll* event)
+bool MyScrolledToolbar::on_scroll_event(GdkEventScroll *event)
 {
     Glib::RefPtr<Gtk::Adjustment> adjust = get_hadjustment();
     Gtk::Scrollbar *scroll = get_hscrollbar();
@@ -1021,11 +1036,13 @@ bool MyScrolledToolbar::on_scroll_event (GdkEventScroll* event)
         const double upperBound = adjust->get_upper();
         const double lowerBound = adjust->get_lower();
         double value = adjust->get_value();
-        double step  = adjust->get_step_increment() * 2;
+        double step = adjust->get_step_increment() * 2;
         double value2 = 0.;
 
-//        printf("MyScrolledToolbar::on_scroll_event / delta_x=%.5f, delta_y=%.5f, direction=%d, type=%d, send_event=%d\n",
-//                event->delta_x, event->delta_y, (int)event->direction, (int)event->type, event->send_event);
+        //        printf("MyScrolledToolbar::on_scroll_event / delta_x=%.5f,
+        //        delta_y=%.5f, direction=%d, type=%d, send_event=%d\n",
+        //                event->delta_x, event->delta_y, (int)event->direction,
+        //                (int)event->type, event->send_event);
 
         if (event->direction == GDK_SCROLL_DOWN) {
             value2 = rtengine::min<double>(value + step, upperBound);
@@ -1038,10 +1055,12 @@ bool MyScrolledToolbar::on_scroll_event (GdkEventScroll* event)
                 scroll->set_value(value2);
             }
         } else if (event->direction == GDK_SCROLL_SMOOTH) {
-            if (event->delta_x) {  // if the user use a pad, it can scroll horizontally
-                value2 = rtengine::LIM<double>(value + (event->delta_x > 0 ? 30 : -30), lowerBound, upperBound);
+            if (event->delta_x) { // if the user use a pad, it can scroll horizontally
+                value2 = rtengine::LIM<double>(
+                    value + (event->delta_x > 0 ? 30 : -30), lowerBound, upperBound);
             } else if (event->delta_y) {
-                value2 = rtengine::LIM<double>(value + (event->delta_y > 0 ? 30 : -30), lowerBound, upperBound);
+                value2 = rtengine::LIM<double>(
+                    value + (event->delta_y > 0 ? 30 : -30), lowerBound, upperBound);
             }
             if (value2 != value) {
                 scroll->set_value(value2);
@@ -1052,16 +1071,16 @@ bool MyScrolledToolbar::on_scroll_event (GdkEventScroll* event)
     return true;
 }
 
-void MyScrolledToolbar::get_preferred_height_vfunc (int &minimumHeight, int &naturalHeight) const
+void MyScrolledToolbar::get_preferred_height_vfunc(
+    int &minimumHeight, int &naturalHeight) const
 {
     int currMinHeight = 0;
     int currNatHeight = 0;
-    std::vector<const Widget*> childs = get_children();
+    std::vector<const Widget *> childs = get_children();
     minimumHeight = naturalHeight = 0;
 
-    for (auto child : childs)
-    {
-        if(child->is_visible()) {
+    for (auto child : childs) {
+        if (child->is_visible()) {
             child->get_preferred_height(currMinHeight, currNatHeight);
             minimumHeight = rtengine::max(currMinHeight, minimumHeight);
             naturalHeight = rtengine::max(currNatHeight, naturalHeight);
@@ -1069,19 +1088,22 @@ void MyScrolledToolbar::get_preferred_height_vfunc (int &minimumHeight, int &nat
     }
 }
 
-MyComboBoxText::MyComboBoxText (bool has_entry) : Gtk::ComboBoxText(has_entry)
+MyComboBoxText::MyComboBoxText(bool has_entry) : Gtk::ComboBoxText(has_entry)
 {
     minimumWidth = naturalWidth = RTScalable::scalePixelSize(70);
-    Gtk::CellRendererText* cellRenderer = dynamic_cast<Gtk::CellRendererText*>(get_first_cell());
+    Gtk::CellRendererText *cellRenderer =
+        dynamic_cast<Gtk::CellRendererText *>(get_first_cell());
     cellRenderer->property_ellipsize() = Pango::ELLIPSIZE_MIDDLE;
-    add_events(Gdk::SCROLL_MASK|Gdk::SMOOTH_SCROLL_MASK);
+    add_events(Gdk::SCROLL_MASK | Gdk::SMOOTH_SCROLL_MASK);
 }
 
-bool MyComboBoxText::on_scroll_event (GdkEventScroll* event)
+bool MyComboBoxText::on_scroll_event(GdkEventScroll *event)
 {
 
-//    printf("MyComboboxText::on_scroll_event / delta_x=%.5f, delta_y=%.5f, direction=%d, type=%d, send_event=%d\n",
-//            event->delta_x, event->delta_y, (int)event->direction, (int)event->type, event->send_event);
+    //    printf("MyComboboxText::on_scroll_event / delta_x=%.5f, delta_y=%.5f,
+    //    direction=%d, type=%d, send_event=%d\n",
+    //            event->delta_x, event->delta_y, (int)event->direction,
+    //            (int)event->type, event->send_event);
     // If Shift is pressed, the widget is modified
     if (event->state & GDK_SHIFT_MASK) {
         Gtk::ComboBoxText::on_scroll_event(event);
@@ -1092,12 +1114,12 @@ bool MyComboBoxText::on_scroll_event (GdkEventScroll* event)
     return false;
 }
 
-void MyComboBoxText::setPreferredWidth (int minimum_width, int natural_width)
+void MyComboBoxText::setPreferredWidth(int minimum_width, int natural_width)
 {
     if (natural_width == -1 && minimum_width == -1) {
         naturalWidth = minimumWidth = RTScalable::scalePixelSize(70);
     } else if (natural_width == -1) {
-        naturalWidth =  minimumWidth = minimum_width;
+        naturalWidth = minimumWidth = minimum_width;
     } else if (minimum_width == -1) {
         naturalWidth = natural_width;
         minimumWidth = rtengine::max(naturalWidth / 2, RTScalable::scalePixelSize(20));
@@ -1108,25 +1130,26 @@ void MyComboBoxText::setPreferredWidth (int minimum_width, int natural_width)
     }
 }
 
-void MyComboBoxText::get_preferred_width_vfunc (int &minimum_width, int &natural_width) const
+void MyComboBoxText::get_preferred_width_vfunc(
+    int &minimum_width, int &natural_width) const
 {
     natural_width = rtengine::max(naturalWidth, RTScalable::scalePixelSize(10));
     minimum_width = rtengine::max(minimumWidth, RTScalable::scalePixelSize(10));
 }
 
-void MyComboBoxText::get_preferred_width_for_height_vfunc (int height, int &minimum_width, int &natural_width) const
+void MyComboBoxText::get_preferred_width_for_height_vfunc(
+    int height, int &minimum_width, int &natural_width) const
 {
     natural_width = rtengine::max(naturalWidth, RTScalable::scalePixelSize(10));
     minimum_width = rtengine::max(minimumWidth, RTScalable::scalePixelSize(10));
 }
 
-
-MyComboBox::MyComboBox ()
+MyComboBox::MyComboBox()
 {
     minimumWidth = naturalWidth = RTScalable::scalePixelSize(70);
 }
 
-bool MyComboBox::on_scroll_event (GdkEventScroll* event)
+bool MyComboBox::on_scroll_event(GdkEventScroll *event)
 {
 
     // If Shift is pressed, the widget is modified
@@ -1139,12 +1162,12 @@ bool MyComboBox::on_scroll_event (GdkEventScroll* event)
     return false;
 }
 
-void MyComboBox::setPreferredWidth (int minimum_width, int natural_width)
+void MyComboBox::setPreferredWidth(int minimum_width, int natural_width)
 {
     if (natural_width == -1 && minimum_width == -1) {
         naturalWidth = minimumWidth = RTScalable::scalePixelSize(70);
     } else if (natural_width == -1) {
-        naturalWidth =  minimumWidth = minimum_width;
+        naturalWidth = minimumWidth = minimum_width;
     } else if (minimum_width == -1) {
         naturalWidth = natural_width;
         minimumWidth = rtengine::max(naturalWidth / 2, RTScalable::scalePixelSize(20));
@@ -1155,19 +1178,20 @@ void MyComboBox::setPreferredWidth (int minimum_width, int natural_width)
     }
 }
 
-void MyComboBox::get_preferred_width_vfunc (int &minimum_width, int &natural_width) const
+void MyComboBox::get_preferred_width_vfunc(int &minimum_width, int &natural_width) const
 {
     natural_width = rtengine::max(naturalWidth, RTScalable::scalePixelSize(10));
     minimum_width = rtengine::max(minimumWidth, RTScalable::scalePixelSize(10));
 }
 
-void MyComboBox::get_preferred_width_for_height_vfunc (int height, int &minimum_width, int &natural_width) const
+void MyComboBox::get_preferred_width_for_height_vfunc(
+    int height, int &minimum_width, int &natural_width) const
 {
     natural_width = rtengine::max(naturalWidth, RTScalable::scalePixelSize(10));
     minimum_width = rtengine::max(minimumWidth, RTScalable::scalePixelSize(10));
 }
 
-MySpinButton::MySpinButton ()
+MySpinButton::MySpinButton()
 {
     Gtk::Border border;
     border.set_bottom(0);
@@ -1178,7 +1202,9 @@ MySpinButton::MySpinButton ()
     set_numeric(true);
     set_wrap(false);
     set_alignment(Gtk::ALIGN_END);
-    set_update_policy(Gtk::SpinButtonUpdatePolicy::UPDATE_IF_VALID); // Avoid updating text if input is not a numeric
+    set_update_policy(
+        Gtk::SpinButtonUpdatePolicy::UPDATE_IF_VALID); // Avoid updating text if input
+                                                       // is not a numeric
 }
 
 void MySpinButton::updateSize()
@@ -1206,28 +1232,32 @@ void MySpinButton::updateSize()
     set_max_width_chars(maxLen);
 }
 
-bool MySpinButton::on_key_press_event (GdkEventKey* event)
+bool MySpinButton::on_key_press_event(GdkEventKey *event)
 {
     double vMin, vMax;
     get_range(vMin, vMax);
 
-    if ((event->keyval >= GDK_KEY_a && event->keyval <= GDK_KEY_z)
-            || (event->keyval >= GDK_KEY_A && event->keyval <= GDK_KEY_Z)
-            || event->keyval == GDK_KEY_equal || event->keyval == GDK_KEY_underscore
-            || event->keyval == GDK_KEY_plus || (event->keyval == GDK_KEY_minus && vMin >= 0)) {
+    if ((event->keyval >= GDK_KEY_a && event->keyval <= GDK_KEY_z) ||
+        (event->keyval >= GDK_KEY_A && event->keyval <= GDK_KEY_Z) ||
+        event->keyval == GDK_KEY_equal || event->keyval == GDK_KEY_underscore ||
+        event->keyval == GDK_KEY_plus ||
+        (event->keyval == GDK_KEY_minus && vMin >= 0)) {
         return false; // Event is propagated further
     } else {
         if (event->keyval == GDK_KEY_comma || event->keyval == GDK_KEY_KP_Decimal) {
             set_text(get_text() + ".");
-            set_position(get_text().length()); // When setting text, cursor position is reset at text start. Avoiding this with this code
-            return true; // Event is not propagated further
+            set_position(
+                get_text().length()); // When setting text, cursor position is reset at
+                                      // text start. Avoiding this with this code
+            return true;              // Event is not propagated further
         }
 
-        return Gtk::SpinButton::on_key_press_event(event); // Event is propagated normally
+        return Gtk::SpinButton::on_key_press_event(
+            event); // Event is propagated normally
     }
 }
 
-bool MySpinButton::on_scroll_event (GdkEventScroll* event)
+bool MySpinButton::on_scroll_event(GdkEventScroll *event)
 {
     // If Shift is pressed, the widget is modified
     if (event->state & GDK_SHIFT_MASK) {
@@ -1239,11 +1269,13 @@ bool MySpinButton::on_scroll_event (GdkEventScroll* event)
     return false;
 }
 
-bool MyHScale::on_scroll_event (GdkEventScroll* event)
+bool MyHScale::on_scroll_event(GdkEventScroll *event)
 {
 
-//    printf("MyHScale::on_scroll_event / delta_x=%.5f, delta_y=%.5f, direction=%d, type=%d, send_event=%d\n",
-//            event->delta_x, event->delta_y, (int)event->direction, (int)event->type, event->send_event);
+    //    printf("MyHScale::on_scroll_event / delta_x=%.5f, delta_y=%.5f, direction=%d,
+    //    type=%d, send_event=%d\n",
+    //            event->delta_x, event->delta_y, (int)event->direction,
+    //            (int)event->type, event->send_event);
     // If Shift is pressed, the widget is modified
     if (event->state & GDK_SHIFT_MASK) {
         Gtk::Scale::on_scroll_event(event);
@@ -1254,10 +1286,10 @@ bool MyHScale::on_scroll_event (GdkEventScroll* event)
     return false;
 }
 
-bool MyHScale::on_key_press_event (GdkEventKey* event)
+bool MyHScale::on_key_press_event(GdkEventKey *event)
 {
 
-    if ( event->string[0] == '+' || event->string[0] == '-' ) {
+    if (event->string[0] == '+' || event->string[0] == '-') {
         return false;
     } else {
         return Gtk::Widget::on_key_press_event(event);
@@ -1268,8 +1300,7 @@ class MyFileChooserWidget::Impl
 {
 public:
     Impl(const Glib::ustring &title, Gtk::FileChooserAction action) :
-        title_(title),
-        action_(action)
+        title_(title), action_(action)
     {
     }
 
@@ -1284,23 +1315,25 @@ public:
     sigc::signal<void> selection_changed_;
 };
 
-
-MyFileChooserWidget::MyFileChooserWidget(const Glib::ustring &title, Gtk::FileChooserAction action) :
-    pimpl(new Impl(title, action))
+MyFileChooserWidget::MyFileChooserWidget(const Glib::ustring &title,
+    Gtk::FileChooserAction action) : pimpl(new Impl(title, action))
 {
 }
 
-
 std::unique_ptr<Gtk::Image> MyFileChooserWidget::make_folder_image()
 {
-    return std::unique_ptr<Gtk::Image>(new RTImage("folder-open-small", Gtk::ICON_SIZE_BUTTON));
+    return std::unique_ptr<Gtk::Image>(
+        new RTImage("folder-open-small", Gtk::ICON_SIZE_BUTTON));
 }
 
 void MyFileChooserWidget::show_chooser(Gtk::Widget *parent)
 {
-    Gtk::FileChooserDialog dlg(getToplevelWindow(parent), pimpl->title_, pimpl->action_);
+    Gtk::FileChooserDialog dlg(
+        getToplevelWindow(parent), pimpl->title_, pimpl->action_);
     dlg.add_button(M("GENERAL_CANCEL"), Gtk::RESPONSE_CANCEL);
-    dlg.add_button(M(pimpl->action_ == Gtk::FILE_CHOOSER_ACTION_SAVE ? "GENERAL_SAVE" : "GENERAL_OPEN"), Gtk::RESPONSE_OK);
+    dlg.add_button(M(pimpl->action_ == Gtk::FILE_CHOOSER_ACTION_SAVE ? "GENERAL_SAVE"
+                                                                     : "GENERAL_OPEN"),
+        Gtk::RESPONSE_OK);
     dlg.set_filename(pimpl->filename_);
     for (auto &f : pimpl->file_filters_) {
         dlg.add_filter(f);
@@ -1324,30 +1357,22 @@ void MyFileChooserWidget::show_chooser(Gtk::Widget *parent)
     }
 }
 
-
 void MyFileChooserWidget::on_filename_set()
 {
     // Sub-classes decide if anything needs to be done.
 }
-
 
 sigc::signal<void> &MyFileChooserWidget::signal_selection_changed()
 {
     return pimpl->selection_changed_;
 }
 
-
 sigc::signal<void> &MyFileChooserWidget::signal_file_set()
 {
     return pimpl->selection_changed_;
 }
 
-
-std::string MyFileChooserWidget::get_filename() const
-{
-    return pimpl->filename_;
-}
-
+std::string MyFileChooserWidget::get_filename() const { return pimpl->filename_; }
 
 bool MyFileChooserWidget::set_filename(const std::string &filename)
 {
@@ -1356,33 +1381,29 @@ bool MyFileChooserWidget::set_filename(const std::string &filename)
     return true;
 }
 
-
 void MyFileChooserWidget::add_filter(const Glib::RefPtr<Gtk::FileFilter> &filter)
 {
     pimpl->file_filters_.push_back(filter);
 }
 
-
 void MyFileChooserWidget::remove_filter(const Glib::RefPtr<Gtk::FileFilter> &filter)
 {
-    auto it = std::find(pimpl->file_filters_.begin(), pimpl->file_filters_.end(), filter);
+    auto it =
+        std::find(pimpl->file_filters_.begin(), pimpl->file_filters_.end(), filter);
     if (it != pimpl->file_filters_.end()) {
         pimpl->file_filters_.erase(it);
     }
 }
-
 
 void MyFileChooserWidget::set_filter(const Glib::RefPtr<Gtk::FileFilter> &filter)
 {
     pimpl->cur_filter_ = filter;
 }
 
-
 std::vector<Glib::RefPtr<Gtk::FileFilter>> MyFileChooserWidget::list_filters() const
 {
     return pimpl->file_filters_;
 }
-
 
 bool MyFileChooserWidget::set_current_folder(const std::string &filename)
 {
@@ -1398,30 +1419,27 @@ std::string MyFileChooserWidget::get_current_folder() const
     return pimpl->current_folder_;
 }
 
-
 bool MyFileChooserWidget::add_shortcut_folder(const std::string &folder)
 {
     pimpl->shortcut_folders_.push_back(folder);
     return true;
 }
 
-
 bool MyFileChooserWidget::remove_shortcut_folder(const std::string &folder)
 {
-    auto it = std::find(pimpl->shortcut_folders_.begin(), pimpl->shortcut_folders_.end(), folder);
+    auto it = std::find(
+        pimpl->shortcut_folders_.begin(), pimpl->shortcut_folders_.end(), folder);
     if (it != pimpl->shortcut_folders_.end()) {
         pimpl->shortcut_folders_.erase(it);
     }
     return true;
 }
 
-
 void MyFileChooserWidget::unselect_all()
 {
     pimpl->filename_ = "";
     on_filename_set();
 }
-
 
 void MyFileChooserWidget::unselect_filename(const std::string &filename)
 {
@@ -1430,12 +1448,7 @@ void MyFileChooserWidget::unselect_filename(const std::string &filename)
     }
 }
 
-
-void MyFileChooserWidget::set_show_hidden(bool yes)
-{
-    pimpl->show_hidden_ = yes;
-}
-
+void MyFileChooserWidget::set_show_hidden(bool yes) { pimpl->show_hidden_ = yes; }
 
 class MyFileChooserButton::Impl
 {
@@ -1444,21 +1457,20 @@ public:
     Gtk::Label lbl_{"", Gtk::ALIGN_START};
 };
 
-MyFileChooserButton::MyFileChooserButton(const Glib::ustring &title, Gtk::FileChooserAction action):
-    MyFileChooserWidget(title, action),
-    pimpl(new Impl())
+MyFileChooserButton::MyFileChooserButton(
+    const Glib::ustring &title, Gtk::FileChooserAction action) :
+    MyFileChooserWidget(title, action), pimpl(new Impl())
 {
     pimpl->lbl_.set_ellipsize(Pango::ELLIPSIZE_MIDDLE);
     pimpl->lbl_.set_justify(Gtk::JUSTIFY_LEFT);
     on_filename_set();
     pimpl->box_.pack_start(pimpl->lbl_, true, true);
-    pimpl->box_.pack_start(*Gtk::manage(new Gtk::Separator(Gtk::ORIENTATION_VERTICAL)), false, false, 5);
+    pimpl->box_.pack_start(
+        *Gtk::manage(new Gtk::Separator(Gtk::ORIENTATION_VERTICAL)), false, false, 5);
     pimpl->box_.pack_start(*Gtk::manage(make_folder_image().release()), false, false);
     pimpl->box_.show_all_children();
     add(pimpl->box_);
-    signal_clicked().connect([this]() {
-        show_chooser(this);
-    });
+    signal_clicked().connect([this]() { show_chooser(this); });
 
     if (GTK_MINOR_VERSION < 20) {
         set_border_width(2); // margin doesn't work on GTK < 3.20
@@ -1476,9 +1488,9 @@ void MyFileChooserButton::on_filename_set()
     }
 }
 
-
-// For an unknown reason (a bug ?), it doesn't work when action = FILE_CHOOSER_ACTION_SELECT_FOLDER !
-bool MyFileChooserButton::on_scroll_event (GdkEventScroll* event)
+// For an unknown reason (a bug ?), it doesn't work when action =
+// FILE_CHOOSER_ACTION_SELECT_FOLDER !
+bool MyFileChooserButton::on_scroll_event(GdkEventScroll *event)
 {
 
     // If Shift is pressed, the widget is modified
@@ -1491,16 +1503,17 @@ bool MyFileChooserButton::on_scroll_event (GdkEventScroll* event)
     return false;
 }
 
-void MyFileChooserButton::get_preferred_width_vfunc (int &minimum_width, int &natural_width) const
+void MyFileChooserButton::get_preferred_width_vfunc(
+    int &minimum_width, int &natural_width) const
 {
     minimum_width = natural_width = RTScalable::scalePixelSize(35);
 }
 
-void MyFileChooserButton::get_preferred_width_for_height_vfunc (int height, int &minimum_width, int &natural_width) const
+void MyFileChooserButton::get_preferred_width_for_height_vfunc(
+    int height, int &minimum_width, int &natural_width) const
 {
     minimum_width = natural_width = RTScalable::scalePixelSize(35);
 }
-
 
 class MyFileChooserEntry::Impl
 {
@@ -1509,16 +1522,15 @@ public:
     Gtk::Button file_chooser_button;
 };
 
-
-MyFileChooserEntry::MyFileChooserEntry(const Glib::ustring &title, Gtk::FileChooserAction action) :
-    MyFileChooserWidget(title, action),
-    pimpl(new Impl())
+MyFileChooserEntry::MyFileChooserEntry(
+    const Glib::ustring &title, Gtk::FileChooserAction action) :
+    MyFileChooserWidget(title, action), pimpl(new Impl())
 {
-    const auto on_text_changed = [this]() {
-        set_filename(pimpl->entry.get_text());
-    };
-    pimpl->entry.get_buffer()->signal_deleted_text().connect([on_text_changed](guint, guint) { on_text_changed(); });
-    pimpl->entry.get_buffer()->signal_inserted_text().connect([on_text_changed](guint, const gchar *, guint) { on_text_changed(); });
+    const auto on_text_changed = [this]() { set_filename(pimpl->entry.get_text()); };
+    pimpl->entry.get_buffer()->signal_deleted_text().connect(
+        [on_text_changed](guint, guint) { on_text_changed(); });
+    pimpl->entry.get_buffer()->signal_inserted_text().connect(
+        [on_text_changed](guint, const gchar *, guint) { on_text_changed(); });
 
     pimpl->file_chooser_button.set_image(*Gtk::manage(make_folder_image().release()));
     pimpl->file_chooser_button.signal_clicked().connect([this]() {
@@ -1533,18 +1545,15 @@ MyFileChooserEntry::MyFileChooserEntry(const Glib::ustring &title, Gtk::FileChoo
     pack_start(pimpl->file_chooser_button, false, false);
 }
 
-
 Glib::ustring MyFileChooserEntry::get_placeholder_text() const
 {
     return pimpl->entry.get_placeholder_text();
 }
 
-
 void MyFileChooserEntry::set_placeholder_text(const Glib::ustring &text)
 {
     pimpl->entry.set_placeholder_text(text);
 }
-
 
 void MyFileChooserEntry::on_filename_set()
 {
@@ -1553,46 +1562,48 @@ void MyFileChooserEntry::on_filename_set()
     }
 }
 
-
-TextOrIcon::TextOrIcon (const Glib::ustring &icon_name, const Glib::ustring &labelTx, const Glib::ustring &tooltipTx)
+TextOrIcon::TextOrIcon(const Glib::ustring &icon_name, const Glib::ustring &labelTx,
+    const Glib::ustring &tooltipTx)
 {
 
     RTImage *img = Gtk::manage(new RTImage(icon_name, Gtk::ICON_SIZE_LARGE_TOOLBAR));
     pack_start(*img, Gtk::PACK_SHRINK, 0);
-    set_tooltip_markup("<span font_size=\"large\" font_weight=\"bold\">" + labelTx  + "</span>\n" + tooltipTx);
+    set_tooltip_markup("<span font_size=\"large\" font_weight=\"bold\">" + labelTx +
+                       "</span>\n" + tooltipTx);
 
     set_name("TextOrIcon");
     show_all();
-
 }
 
 class ImageAndLabel::Impl
 {
 public:
-    RTImage* image;
-    Gtk::Label* label;
+    RTImage *image;
+    Gtk::Label *label;
 
-    Impl(RTImage* image, Gtk::Label* label) : image(image), label(label) {}
-    static std::unique_ptr<RTImage> createImage(const Glib::ustring& iconName);
+    Impl(RTImage *image, Gtk::Label *label) : image(image), label(label) {}
+    static std::unique_ptr<RTImage> createImage(const Glib::ustring &iconName);
 };
 
-std::unique_ptr<RTImage> ImageAndLabel::Impl::createImage(const Glib::ustring& iconName)
+std::unique_ptr<RTImage> ImageAndLabel::Impl::createImage(const Glib::ustring &iconName)
 {
     if (iconName.empty()) {
         return nullptr;
     }
-    return std::unique_ptr<RTImage>(new RTImage(iconName, Gtk::ICON_SIZE_LARGE_TOOLBAR));
+    return std::unique_ptr<RTImage>(
+        new RTImage(iconName, Gtk::ICON_SIZE_LARGE_TOOLBAR));
 }
 
-ImageAndLabel::ImageAndLabel(const Glib::ustring& label, const Glib::ustring& iconName) :
+ImageAndLabel::ImageAndLabel(
+    const Glib::ustring &label, const Glib::ustring &iconName) :
     ImageAndLabel(label, Gtk::manage(Impl::createImage(iconName).release()))
 {
 }
 
-ImageAndLabel::ImageAndLabel(const Glib::ustring& label, RTImage *image) :
+ImageAndLabel::ImageAndLabel(const Glib::ustring &label, RTImage *image) :
     pimpl(new Impl(image, Gtk::manage(new Gtk::Label(label))))
 {
-    Gtk::Grid* grid = Gtk::manage(new Gtk::Grid());
+    Gtk::Grid *grid = Gtk::manage(new Gtk::Grid());
     grid->set_orientation(Gtk::ORIENTATION_HORIZONTAL);
 
     if (image) {
@@ -1605,15 +1616,9 @@ ImageAndLabel::ImageAndLabel(const Glib::ustring& label, RTImage *image) :
     pack_start(*grid, Gtk::PACK_SHRINK, 0);
 }
 
-const RTImage* ImageAndLabel::getImage() const
-{
-    return pimpl->image;
-}
+const RTImage *ImageAndLabel::getImage() const { return pimpl->image; }
 
-const Gtk::Label* ImageAndLabel::getLabel() const
-{
-    return pimpl->label;
-}
+const Gtk::Label *ImageAndLabel::getLabel() const { return pimpl->label; }
 
 class MyImageMenuItem::Impl
 {
@@ -1622,30 +1627,34 @@ private:
 
 public:
     Impl(const Glib::ustring &label, const Glib::ustring &iconName) :
-        widget(new ImageAndLabel(label, iconName)) {}
+        widget(new ImageAndLabel(label, iconName))
+    {
+    }
     Impl(const Glib::ustring &label, RTImage *itemImage) :
-        widget(new ImageAndLabel(label, itemImage)) {}
-    ImageAndLabel* getWidget() const { return widget.get(); }
+        widget(new ImageAndLabel(label, itemImage))
+    {
+    }
+    ImageAndLabel *getWidget() const { return widget.get(); }
 };
 
-MyImageMenuItem::MyImageMenuItem(const Glib::ustring& label, const Glib::ustring& iconName) :
-    pimpl(new Impl(label, iconName))
+MyImageMenuItem::MyImageMenuItem(const Glib::ustring &label,
+    const Glib::ustring &iconName) : pimpl(new Impl(label, iconName))
 {
     add(*(pimpl->getWidget()));
 }
 
-MyImageMenuItem::MyImageMenuItem(const Glib::ustring& label, RTImage* itemImage) :
+MyImageMenuItem::MyImageMenuItem(const Glib::ustring &label, RTImage *itemImage) :
     pimpl(new Impl(label, itemImage))
 {
     add(*(pimpl->getWidget()));
 }
 
-const RTImage *MyImageMenuItem::getImage () const
+const RTImage *MyImageMenuItem::getImage() const
 {
     return pimpl->getWidget()->getImage();
 }
 
-const Gtk::Label* MyImageMenuItem::getLabel () const
+const Gtk::Label *MyImageMenuItem::getLabel() const
 {
     return pimpl->getWidget()->getLabel();
 }
@@ -1656,23 +1665,28 @@ class MyRadioImageMenuItem::Impl
 
 public:
     Impl(const Glib::ustring &label, RTImage *image) :
-        widget(new ImageAndLabel(label, image)) {}
-    ImageAndLabel* getWidget() const { return widget.get(); }
+        widget(new ImageAndLabel(label, image))
+    {
+    }
+    ImageAndLabel *getWidget() const { return widget.get(); }
 };
 
-MyRadioImageMenuItem::MyRadioImageMenuItem(const Glib::ustring& label, RTImage *image, Gtk::RadioButton::Group& group) :
-    Gtk::RadioMenuItem(group),
-    pimpl(new Impl(label, image))
+MyRadioImageMenuItem::MyRadioImageMenuItem(
+    const Glib::ustring &label, RTImage *image, Gtk::RadioButton::Group &group) :
+    Gtk::RadioMenuItem(group), pimpl(new Impl(label, image))
 {
     add(*(pimpl->getWidget()));
 }
 
-const Gtk::Label* MyRadioImageMenuItem::getLabel() const
+const Gtk::Label *MyRadioImageMenuItem::getLabel() const
 {
     return pimpl->getWidget()->getLabel();
 }
 
-MyProgressBar::MyProgressBar(int width) : w(rtengine::max(width, RTScalable::scalePixelSize(10))) {}
+MyProgressBar::MyProgressBar(int width) :
+    w(rtengine::max(width, RTScalable::scalePixelSize(10)))
+{
+}
 MyProgressBar::MyProgressBar() : w(RTScalable::scalePixelSize(200)) {}
 
 void MyProgressBar::setPreferredWidth(int width)
@@ -1680,19 +1694,22 @@ void MyProgressBar::setPreferredWidth(int width)
     w = rtengine::max(width, RTScalable::scalePixelSize(10));
 }
 
-void MyProgressBar::get_preferred_width_vfunc (int &minimum_width, int &natural_width) const
+void MyProgressBar::get_preferred_width_vfunc(
+    int &minimum_width, int &natural_width) const
 {
     minimum_width = rtengine::max(w / 2, RTScalable::scalePixelSize(50));
     natural_width = rtengine::max(w, RTScalable::scalePixelSize(50));
 }
 
-void MyProgressBar::get_preferred_width_for_height_vfunc (int height, int &minimum_width, int &natural_width) const
+void MyProgressBar::get_preferred_width_for_height_vfunc(
+    int height, int &minimum_width, int &natural_width) const
 {
-    get_preferred_width_vfunc (minimum_width, natural_width);
+    get_preferred_width_vfunc(minimum_width, natural_width);
 }
 
 BackBuffer::BackBuffer() : x(0), y(0), w(0), h(0), offset(0, 0), dirty(true) {}
-BackBuffer::BackBuffer(int width, int height, Cairo::Format format) : x(0), y(0), w(width), h(height), offset(0, 0), dirty(true)
+BackBuffer::BackBuffer(int width, int height, Cairo::Format format) :
+    x(0), y(0), w(width), h(height), offset(0, 0), dirty(true)
 {
     if (w > 0 && h > 0) {
         surface = Cairo::ImageSurface::create(format, w, h);
@@ -1733,13 +1750,16 @@ void BackBuffer::getSrcOffset(rtengine::Coord &offset)
 }
 
 // Note: newW & newH must be > 0
-bool BackBuffer::setDrawRectangle(Glib::RefPtr<Gdk::Window> window, Gdk::Rectangle &rectangle, bool updateBackBufferSize)
+bool BackBuffer::setDrawRectangle(Glib::RefPtr<Gdk::Window> window,
+    Gdk::Rectangle &rectangle, bool updateBackBufferSize)
 {
-    return setDrawRectangle(window, rectangle.get_x(), rectangle.get_y(), rectangle.get_width(), rectangle.get_height(), updateBackBufferSize);
+    return setDrawRectangle(window, rectangle.get_x(), rectangle.get_y(),
+        rectangle.get_width(), rectangle.get_height(), updateBackBufferSize);
 }
 
 // Note: newW & newH must be > 0
-bool BackBuffer::setDrawRectangle(Glib::RefPtr<Gdk::Window> window, int newX, int newY, int newW, int newH, bool updateBackBufferSize)
+bool BackBuffer::setDrawRectangle(Glib::RefPtr<Gdk::Window> window, int newX, int newY,
+    int newW, int newH, bool updateBackBufferSize)
 {
     assert(newW && newH);
 
@@ -1754,10 +1774,12 @@ bool BackBuffer::setDrawRectangle(Glib::RefPtr<Gdk::Window> window, int newX, in
         h = newH;
     }
 
-    // WARNING: we're assuming that the surface type won't change during all the execution time of RT. I guess it may be wrong when the user change the gfx card display settings!?
+    // WARNING: we're assuming that the surface type won't change during all the
+    // execution time of RT. I guess it may be wrong when the user change the gfx card
+    // display settings!?
     if (((updateBackBufferSize && newSize) || !surface) && window) {
         // allocate a new Surface
-        surface.clear();  // ... don't know if this is necessary?
+        surface.clear(); // ... don't know if this is necessary?
         surface = Cairo::ImageSurface::create(Cairo::FORMAT_RGB24, w, h);
         dirty = true;
     }
@@ -1766,13 +1788,16 @@ bool BackBuffer::setDrawRectangle(Glib::RefPtr<Gdk::Window> window, int newX, in
 }
 
 // Note: newW & newH must be > 0
-bool BackBuffer::setDrawRectangle(Cairo::Format format, Gdk::Rectangle &rectangle, bool updateBackBufferSize)
+bool BackBuffer::setDrawRectangle(
+    Cairo::Format format, Gdk::Rectangle &rectangle, bool updateBackBufferSize)
 {
-    return setDrawRectangle(format, rectangle.get_x(), rectangle.get_y(), rectangle.get_width(), rectangle.get_height(), updateBackBufferSize);
+    return setDrawRectangle(format, rectangle.get_x(), rectangle.get_y(),
+        rectangle.get_width(), rectangle.get_height(), updateBackBufferSize);
 }
 
 // Note: newW & newH must be > 0
-bool BackBuffer::setDrawRectangle(Cairo::Format format, int newX, int newY, int newW, int newH, bool updateBackBufferSize)
+bool BackBuffer::setDrawRectangle(Cairo::Format format, int newX, int newY, int newW,
+    int newH, bool updateBackBufferSize)
 {
     assert(newW && newH);
 
@@ -1787,10 +1812,12 @@ bool BackBuffer::setDrawRectangle(Cairo::Format format, int newX, int newY, int 
         h = newH;
     }
 
-    // WARNING: we're assuming that the surface type won't change during all the execution time of RT. I guess it may be wrong when the user change the gfx card display settings!?
+    // WARNING: we're assuming that the surface type won't change during all the
+    // execution time of RT. I guess it may be wrong when the user change the gfx card
+    // display settings!?
     if ((updateBackBufferSize && newSize) || !surface) {
         // allocate a new Surface
-        surface.clear();  // ... don't know if this is necessary?
+        surface.clear(); // ... don't know if this is necessary?
         surface = Cairo::ImageSurface::create(format, w, h);
         dirty = true;
     }
@@ -1799,9 +1826,11 @@ bool BackBuffer::setDrawRectangle(Cairo::Format format, int newX, int newY, int 
 }
 
 /*
- * Copy uint8 RGB raw data to an ImageSurface. We're assuming that the source contains enough data for the given srcX, srcY, srcW, srcH -> no error checking!
+ * Copy uint8 RGB raw data to an ImageSurface. We're assuming that the source contains
+ * enough data for the given srcX, srcY, srcW, srcH -> no error checking!
  */
-void BackBuffer::copyRGBCharData(const unsigned char *srcData, int srcX, int srcY, int srcW, int srcH, int srcRowStride, int dstX, int dstY)
+void BackBuffer::copyRGBCharData(const unsigned char *srcData, int srcX, int srcY,
+    int srcW, int srcH, int srcRowStride, int dstX, int dstY)
 {
     unsigned char r, g, b;
 
@@ -1809,13 +1838,15 @@ void BackBuffer::copyRGBCharData(const unsigned char *srcData, int srcX, int src
         return;
     }
 
-    //printf("copyRGBCharData:    src: (X:%d Y:%d, W:%d H:%d)  /  dst: (X: %d Y:%d)\n", srcX, srcY, srcW, srcH, dstX, dstY);
+    // printf("copyRGBCharData:    src: (X:%d Y:%d, W:%d H:%d)  /  dst: (X: %d Y:%d)\n",
+    // srcX, srcY, srcW, srcH, dstX, dstY);
 
     unsigned char *dstData = surface->get_data();
     int surfW = surface->get_width();
     int surfH = surface->get_height();
 
-    if (!srcData || dstX >= surfW || dstY >= surfH || srcW <= 0 || srcH <= 0 || srcX < 0 || srcY < 0) {
+    if (!srcData || dstX >= surfW || dstY >= surfH || srcW <= 0 || srcH <= 0 ||
+        srcX < 0 || srcY < 0) {
         return;
     }
 
@@ -1841,16 +1872,17 @@ void BackBuffer::copyRGBCharData(const unsigned char *srcData, int srcX, int src
     }
 
     surface->mark_dirty();
-
 }
 
 /*
  * Copy the backbuffer to a Gdk::Window
  */
-void BackBuffer::copySurface(Glib::RefPtr<Gdk::Window> window, Gdk::Rectangle *destRectangle)
+void BackBuffer::copySurface(
+    Glib::RefPtr<Gdk::Window> window, Gdk::Rectangle *destRectangle)
 {
     if (surface && window) {
-        // TODO: look out if window can be different on each call, and if not, store a reference to the window
+        // TODO: look out if window can be different on each call, and if not, store a
+        // reference to the window
         Cairo::RefPtr<Cairo::Context> crSrc = window->create_cairo_context();
         Cairo::RefPtr<Cairo::Surface> destSurface = crSrc->get_target();
 
@@ -1863,17 +1895,20 @@ void BackBuffer::copySurface(Glib::RefPtr<Gdk::Window> window, Gdk::Rectangle *d
         crDest->set_line_width(0.);
 
         if (destRectangle) {
-            crDest->set_source(surface, -offsetX + destRectangle->get_x(), -offsetY + destRectangle->get_y());
+            crDest->set_source(surface, -offsetX + destRectangle->get_x(),
+                -offsetY + destRectangle->get_y());
             int w_ = destRectangle->get_width() > 0 ? destRectangle->get_width() : w;
             int h_ = destRectangle->get_height() > 0 ? destRectangle->get_height() : h;
-            //printf("BackBuffer::copySurface / rectangle1(%d, %d, %d, %d)\n", destRectangle->get_x(), destRectangle->get_y(), w_, h_);
+            // printf("BackBuffer::copySurface / rectangle1(%d, %d, %d, %d)\n",
+            // destRectangle->get_x(), destRectangle->get_y(), w_, h_);
             crDest->rectangle(destRectangle->get_x(), destRectangle->get_y(), w_, h_);
-            //printf("BackBuffer::copySurface / rectangle1\n");
+            // printf("BackBuffer::copySurface / rectangle1\n");
         } else {
             crDest->set_source(surface, -offsetX + x, -offsetY + y);
-            //printf("BackBuffer::copySurface / rectangle2(%d, %d, %d, %d)\n", x, y, w, h);
+            // printf("BackBuffer::copySurface / rectangle2(%d, %d, %d, %d)\n", x, y, w,
+            // h);
             crDest->rectangle(x, y, w, h);
-            //printf("BackBuffer::copySurface / rectangle2\n");
+            // printf("BackBuffer::copySurface / rectangle2\n");
         }
 
         crDest->fill();
@@ -1901,17 +1936,20 @@ void BackBuffer::copySurface(BackBuffer *destBackBuffer, Gdk::Rectangle *destRec
         crDest->set_line_width(0.);
 
         if (destRectangle) {
-            crDest->set_source(surface, -offsetX + destRectangle->get_x(), -offsetY + destRectangle->get_y());
+            crDest->set_source(surface, -offsetX + destRectangle->get_x(),
+                -offsetY + destRectangle->get_y());
             int w_ = destRectangle->get_width() > 0 ? destRectangle->get_width() : w;
             int h_ = destRectangle->get_height() > 0 ? destRectangle->get_height() : h;
-            //printf("BackBuffer::copySurface / rectangle3(%d, %d, %d, %d)\n", destRectangle->get_x(), destRectangle->get_y(), w_, h_);
+            // printf("BackBuffer::copySurface / rectangle3(%d, %d, %d, %d)\n",
+            // destRectangle->get_x(), destRectangle->get_y(), w_, h_);
             crDest->rectangle(destRectangle->get_x(), destRectangle->get_y(), w_, h_);
-            //printf("BackBuffer::copySurface / rectangle3\n");
+            // printf("BackBuffer::copySurface / rectangle3\n");
         } else {
             crDest->set_source(surface, -offsetX + x, -offsetY + y);
-            //printf("BackBuffer::copySurface / rectangle4(%d, %d, %d, %d)\n", x, y, w, h);
+            // printf("BackBuffer::copySurface / rectangle4(%d, %d, %d, %d)\n", x, y, w,
+            // h);
             crDest->rectangle(x, y, w, h);
-            //printf("BackBuffer::copySurface / rectangle4\n");
+            // printf("BackBuffer::copySurface / rectangle4\n");
         }
 
         crDest->fill();
@@ -1921,7 +1959,8 @@ void BackBuffer::copySurface(BackBuffer *destBackBuffer, Gdk::Rectangle *destRec
 /*
  * Copy the BackBuffer to another Cairo::Surface
  */
-void BackBuffer::copySurface(Cairo::RefPtr<Cairo::ImageSurface> destSurface, Gdk::Rectangle *destRectangle)
+void BackBuffer::copySurface(
+    Cairo::RefPtr<Cairo::ImageSurface> destSurface, Gdk::Rectangle *destRectangle)
 {
     if (surface && destSurface) {
         // compute the source offset
@@ -1933,17 +1972,20 @@ void BackBuffer::copySurface(Cairo::RefPtr<Cairo::ImageSurface> destSurface, Gdk
         crDest->set_line_width(0.);
 
         if (destRectangle) {
-            crDest->set_source(surface, -offsetX + destRectangle->get_x(), -offsetY + destRectangle->get_y());
+            crDest->set_source(surface, -offsetX + destRectangle->get_x(),
+                -offsetY + destRectangle->get_y());
             int w_ = destRectangle->get_width() > 0 ? destRectangle->get_width() : w;
             int h_ = destRectangle->get_height() > 0 ? destRectangle->get_height() : h;
-            //printf("BackBuffer::copySurface / rectangle5(%d, %d, %d, %d)\n", destRectangle->get_x(), destRectangle->get_y(), w_, h_);
+            // printf("BackBuffer::copySurface / rectangle5(%d, %d, %d, %d)\n",
+            // destRectangle->get_x(), destRectangle->get_y(), w_, h_);
             crDest->rectangle(destRectangle->get_x(), destRectangle->get_y(), w_, h_);
-            //printf("BackBuffer::copySurface / rectangle5\n");
+            // printf("BackBuffer::copySurface / rectangle5\n");
         } else {
             crDest->set_source(surface, -offsetX + x, -offsetY + y);
-            //printf("BackBuffer::copySurface / rectangle6(%d, %d, %d, %d)\n", x, y, w, h);
+            // printf("BackBuffer::copySurface / rectangle6(%d, %d, %d, %d)\n", x, y, w,
+            // h);
             crDest->rectangle(x, y, w, h);
-            //printf("BackBuffer::copySurface / rectangle6\n");
+            // printf("BackBuffer::copySurface / rectangle6\n");
         }
 
         crDest->fill();
@@ -1953,7 +1995,8 @@ void BackBuffer::copySurface(Cairo::RefPtr<Cairo::ImageSurface> destSurface, Gdk
 /*
  * Copy the BackBuffer to another Cairo::Surface
  */
-void BackBuffer::copySurface(Cairo::RefPtr<Cairo::Context> crDest, Gdk::Rectangle *destRectangle)
+void BackBuffer::copySurface(
+    Cairo::RefPtr<Cairo::Context> crDest, Gdk::Rectangle *destRectangle)
 {
     if (surface && crDest) {
         // compute the source offset
@@ -1963,31 +2006,33 @@ void BackBuffer::copySurface(Cairo::RefPtr<Cairo::Context> crDest, Gdk::Rectangl
         // now copy the off-screen Surface to the destination Surface
         // int srcSurfW = surface->get_width();
         // int srcSurfH = surface->get_height();
-        //printf("srcSurf:  w: %d, h: %d\n", srcSurfW, srcSurfH);
+        // printf("srcSurf:  w: %d, h: %d\n", srcSurfW, srcSurfH);
         crDest->set_line_width(0.);
 
         if (destRectangle) {
-            crDest->set_source(surface, -offsetX + destRectangle->get_x(), -offsetY + destRectangle->get_y());
+            crDest->set_source(surface, -offsetX + destRectangle->get_x(),
+                -offsetY + destRectangle->get_y());
             int w_ = destRectangle->get_width() > 0 ? destRectangle->get_width() : w;
             int h_ = destRectangle->get_height() > 0 ? destRectangle->get_height() : h;
-            //printf("BackBuffer::copySurface / rectangle7(%d, %d, %d, %d)\n", destRectangle->get_x(), destRectangle->get_y(), w_, h_);
+            // printf("BackBuffer::copySurface / rectangle7(%d, %d, %d, %d)\n",
+            // destRectangle->get_x(), destRectangle->get_y(), w_, h_);
             crDest->rectangle(destRectangle->get_x(), destRectangle->get_y(), w_, h_);
-            //printf("BackBuffer::copySurface / rectangle7\n");
+            // printf("BackBuffer::copySurface / rectangle7\n");
         } else {
             crDest->set_source(surface, -offsetX + x, -offsetY + y);
-            //printf("BackBuffer::copySurface / rectangle8(%d, %d, %d, %d)\n", x, y, w, h);
+            // printf("BackBuffer::copySurface / rectangle8(%d, %d, %d, %d)\n", x, y, w,
+            // h);
             crDest->rectangle(x, y, w, h);
-            //printf("BackBuffer::copySurface / rectangle8\n");
+            // printf("BackBuffer::copySurface / rectangle8\n");
         }
 
         crDest->fill();
     }
 }
 
-SpotPicker::SpotPicker(int const defaultValue, Glib::ustring const &buttonKey, Glib::ustring const &buttonTooltip, Glib::ustring const &labelKey) :
-    Gtk::Grid(),
-    _spotHalfWidth(defaultValue),
-    _spotLabel(labelSetup(labelKey)),
+SpotPicker::SpotPicker(int const defaultValue, Glib::ustring const &buttonKey,
+    Glib::ustring const &buttonTooltip, Glib::ustring const &labelKey) :
+    Gtk::Grid(), _spotHalfWidth(defaultValue), _spotLabel(labelSetup(labelKey)),
     _spotSizeSetter(MyComboBoxText(selecterSetup())),
     _spotButton(spotButtonTemplate(buttonKey, buttonTooltip))
 
@@ -1995,10 +2040,11 @@ SpotPicker::SpotPicker(int const defaultValue, Glib::ustring const &buttonKey, G
     this->get_style_context()->add_class("grid-spacing");
     setExpandAlignProperties(this, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_CENTER);
 
-    this->attach (_spotButton, 0, 0, 1, 1);
-    this->attach (_spotLabel, 1, 0, 1, 1);
-    this->attach (_spotSizeSetter, 2, 0, 1, 1);
-    _spotSizeSetter.signal_changed().connect( sigc::mem_fun(*this, &SpotPicker::spotSizeChanged));
+    this->attach(_spotButton, 0, 0, 1, 1);
+    this->attach(_spotLabel, 1, 0, 1, 1);
+    this->attach(_spotSizeSetter, 2, 0, 1, 1);
+    _spotSizeSetter.signal_changed().connect(
+        sigc::mem_fun(*this, &SpotPicker::spotSizeChanged));
 }
 
 Gtk::Label SpotPicker::labelSetup(Glib::ustring const &key) const
@@ -2011,32 +2057,33 @@ Gtk::Label SpotPicker::labelSetup(Glib::ustring const &key) const
 MyComboBoxText SpotPicker::selecterSetup() const
 {
     MyComboBoxText spotSize = MyComboBoxText();
-    setExpandAlignProperties(&spotSize, false, false, Gtk::ALIGN_START, Gtk::ALIGN_CENTER);
+    setExpandAlignProperties(
+        &spotSize, false, false, Gtk::ALIGN_START, Gtk::ALIGN_CENTER);
 
-    spotSize.append ("2");
+    spotSize.append("2");
     if (_spotHalfWidth == 2) {
         spotSize.set_active(0);
     }
 
-    spotSize.append ("4");
+    spotSize.append("4");
 
     if (_spotHalfWidth == 4) {
         spotSize.set_active(1);
     }
 
-    spotSize.append ("8");
+    spotSize.append("8");
 
     if (_spotHalfWidth == 8) {
         spotSize.set_active(2);
     }
 
-    spotSize.append ("16");
+    spotSize.append("16");
 
     if (_spotHalfWidth == 16) {
         spotSize.set_active(3);
     }
 
-    spotSize.append ("32");
+    spotSize.append("32");
 
     if (_spotHalfWidth == 32) {
         spotSize.set_active(4);
@@ -2044,10 +2091,12 @@ MyComboBoxText SpotPicker::selecterSetup() const
     return spotSize;
 }
 
-Gtk::ToggleButton SpotPicker::spotButtonTemplate(Glib::ustring const &key, const Glib::ustring &tooltip) const
+Gtk::ToggleButton SpotPicker::spotButtonTemplate(
+    Glib::ustring const &key, const Glib::ustring &tooltip) const
 {
     Gtk::ToggleButton spotButton = Gtk::ToggleButton(key);
-    setExpandAlignProperties(&spotButton, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_CENTER);
+    setExpandAlignProperties(
+        &spotButton, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_CENTER);
     spotButton.get_style_context()->add_class("independent");
     spotButton.set_tooltip_text(tooltip);
     spotButton.set_image_from_icon_name("color-picker-small");
@@ -2093,7 +2142,6 @@ Gtk::ToggleButton *OptionalRadioButtonGroup::getActiveButton() const
 void OptionalRadioButtonGroup::register_button(Gtk::ToggleButton &button)
 {
     button.signal_toggled().connect(sigc::bind(
-        sigc::mem_fun(this, &OptionalRadioButtonGroup::onButtonToggled),
-        &button));
+        sigc::mem_fun(this, &OptionalRadioButtonGroup::onButtonToggled), &button));
     onButtonToggled(&button);
 }

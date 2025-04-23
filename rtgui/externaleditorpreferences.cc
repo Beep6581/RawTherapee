@@ -26,8 +26,7 @@
 #include "externaleditorpreferences.h"
 #include "multilangmgr.h"
 
-
-ExternalEditorPreferences::ExternalEditorPreferences():
+ExternalEditorPreferences::ExternalEditorPreferences() :
     Box(Gtk::Orientation::ORIENTATION_VERTICAL),
     list_model(Gtk::ListStore::create(model_columns)),
     toolbar(Gtk::Orientation::ORIENTATION_HORIZONTAL)
@@ -64,21 +63,22 @@ ExternalEditorPreferences::ExternalEditorPreferences():
 #else
         Gtk::manage(new Gtk::Button(M("PREFERENCES_EXTERNALEDITOR_CHANGE")));
 #endif
-    button_file_chooser = Gtk::manage(new Gtk::Button(M("PREFERENCES_EXTERNALEDITOR_CHANGE_FILE")));
+    button_file_chooser =
+        Gtk::manage(new Gtk::Button(M("PREFERENCES_EXTERNALEDITOR_CHANGE_FILE")));
 
     if (button_app_chooser) {
-        button_app_chooser->signal_pressed().connect(sigc::mem_fun(
-                    *this, &ExternalEditorPreferences::openAppChooserDialog));
+        button_app_chooser->signal_pressed().connect(
+            sigc::mem_fun(*this, &ExternalEditorPreferences::openAppChooserDialog));
     }
-    button_add->signal_pressed().connect(sigc::mem_fun(
-            *this, &ExternalEditorPreferences::addEditor));
-    button_file_chooser->signal_pressed().connect(sigc::mem_fun(
-        *this, &ExternalEditorPreferences::openFileChooserDialog));
-    button_remove->signal_pressed().connect(sigc::mem_fun(
-            *this, &ExternalEditorPreferences::removeSelectedEditors));
+    button_add->signal_pressed().connect(
+        sigc::mem_fun(*this, &ExternalEditorPreferences::addEditor));
+    button_file_chooser->signal_pressed().connect(
+        sigc::mem_fun(*this, &ExternalEditorPreferences::openFileChooserDialog));
+    button_remove->signal_pressed().connect(
+        sigc::mem_fun(*this, &ExternalEditorPreferences::removeSelectedEditors));
 
-    list_view->get_selection()->signal_changed().connect(sigc::mem_fun(
-                *this, &ExternalEditorPreferences::updateToolbarSensitivity));
+    list_view->get_selection()->signal_changed().connect(
+        sigc::mem_fun(*this, &ExternalEditorPreferences::updateToolbarSensitivity));
     updateToolbarSensitivity();
 
     // Toolbar.
@@ -106,10 +106,8 @@ ExternalEditorPreferences::getEditors() const
     for (auto rowIter = children.begin(); rowIter != children.end(); rowIter++) {
         const auto icon = rowIter->get_value(model_columns.icon);
         const auto &icon_serialized = !icon ? "" : icon->serialize().print();
-        editors.emplace_back(
-            rowIter->get_value(model_columns.name),
-            rowIter->get_value(model_columns.command),
-            icon_serialized,
+        editors.emplace_back(rowIter->get_value(model_columns.name),
+            rowIter->get_value(model_columns.command), icon_serialized,
             rowIter->get_value(model_columns.native_command),
             rowIter->get_value(model_columns.other_data));
     }
@@ -122,7 +120,7 @@ void ExternalEditorPreferences::setEditors(
 {
     list_model->clear();
 
-    for (const EditorInfo & editor : editors) {
+    for (const EditorInfo &editor : editors) {
         auto row = *list_model->append();
         Glib::RefPtr<Gio::Icon> icon;
 
@@ -134,10 +132,9 @@ void ExternalEditorPreferences::setEditors(
             GVariant *icon_variant = g_variant_parse(
                 nullptr, editor.icon_serialized.c_str(), nullptr, nullptr, &e);
             if (e) {
-                std::cerr
-                    << "Error loading external editor icon from \""
-                    << editor.icon_serialized << "\": " << e->message
-                    << std::endl;
+                std::cerr << "Error loading external editor icon from \""
+                          << editor.icon_serialized << "\": " << e->message
+                          << std::endl;
                 icon = Glib::RefPtr<Gio::Icon>();
             } else {
                 icon = Gio::Icon::deserialize(Glib::VariantBase(icon_variant));
@@ -214,7 +211,8 @@ Gtk::TreeViewColumn *ExternalEditorPreferences::makeNativeCommandColumn()
 
     col->set_title(M("PREFERENCES_EXTERNALEDITOR_COLUMN_NATIVE_COMMAND"));
     col->pack_start(*toggle_renderer);
-    col->add_attribute(toggle_renderer->property_active(), model_columns.native_command);
+    col->add_attribute(
+        toggle_renderer->property_active(), model_columns.native_command);
 
     toggle_renderer->signal_toggled().connect([this](const Glib::ustring &path) {
         const auto row_iter = list_model->get_iter(path);
@@ -245,7 +243,7 @@ void ExternalEditorPreferences::onAppChooserDialogResponse(
 }
 
 void ExternalEditorPreferences::onFileChooserDialogResponse(
-        int response_id, Gtk::FileChooserDialog *dialog)
+    int response_id, Gtk::FileChooserDialog *dialog)
 {
     switch (response_id) {
         case Gtk::RESPONSE_OK: {
@@ -292,9 +290,8 @@ void ExternalEditorPreferences::openAppChooserDialog()
 
     app_chooser_dialog.reset(new RTAppChooserDialog("image/tiff"));
     app_chooser_dialog->signal_response().connect(sigc::bind(
-                sigc::mem_fun(*this, &ExternalEditorPreferences::onAppChooserDialogResponse),
-                app_chooser_dialog.get()
-            ));
+        sigc::mem_fun(*this, &ExternalEditorPreferences::onAppChooserDialogResponse),
+        app_chooser_dialog.get()));
     app_chooser_dialog->set_modal();
     app_chooser_dialog->show();
 }
@@ -306,17 +303,19 @@ void ExternalEditorPreferences::openFileChooserDialog()
         return;
     }
 
-    file_chooser_dialog.reset(new Gtk::FileChooserDialog(M("PREFERENCES_EXTERNALEDITOR_CHANGE_FILE")));
+    file_chooser_dialog.reset(
+        new Gtk::FileChooserDialog(M("PREFERENCES_EXTERNALEDITOR_CHANGE_FILE")));
 
     const auto exe_filter = Gtk::FileFilter::create();
     exe_filter->set_name(M("FILECHOOSER_FILTER_EXECUTABLE"));
-    exe_filter->add_custom(Gtk::FILE_FILTER_MIME_TYPE, [](const Gtk::FileFilter::Info &info) {
+    exe_filter->add_custom(
+        Gtk::FILE_FILTER_MIME_TYPE, [](const Gtk::FileFilter::Info &info) {
 #ifdef _WIN32
-        return info.mime_type == "application/x-msdownload";
+            return info.mime_type == "application/x-msdownload";
 #else
         return Gio::content_type_can_be_executable(info.mime_type);
 #endif
-    });
+        });
     const auto all_filter = Gtk::FileFilter::create();
     all_filter->set_name(M("FILECHOOSER_FILTER_ANY"));
     all_filter->add_pattern("*");
@@ -355,7 +354,7 @@ void ExternalEditorPreferences::setApp(const Glib::RefPtr<Gio::AppInfo> app_info
 }
 
 void ExternalEditorPreferences::setAppCommand(
-    const Glib::ustring & path, const Glib::ustring & new_text)
+    const Glib::ustring &path, const Glib::ustring &new_text)
 {
     auto row_iter = list_model->get_iter(path);
 
@@ -368,7 +367,7 @@ void ExternalEditorPreferences::setAppCommand(
 }
 
 void ExternalEditorPreferences::setAppName(
-    const Glib::ustring & path, const Glib::ustring & new_text)
+    const Glib::ustring &path, const Glib::ustring &new_text)
 {
     list_model->get_iter(path)->set_value(model_columns.name, new_text);
 }
@@ -383,17 +382,11 @@ void ExternalEditorPreferences::updateToolbarSensitivity()
     button_remove->set_sensitive(selected);
 }
 
-ExternalEditorPreferences::EditorInfo::EditorInfo(
-    const Glib::ustring &name,
-    const Glib::ustring &command,
-    const Glib::ustring &icon_serialized,
-    bool native_command,
-    EditorTag other_data) :
-    name(name),
-    icon_serialized(icon_serialized),
-    command(command),
-    native_command(native_command),
-    other_data(other_data)
+ExternalEditorPreferences::EditorInfo::EditorInfo(const Glib::ustring &name,
+    const Glib::ustring &command, const Glib::ustring &icon_serialized,
+    bool native_command, EditorTag other_data) :
+    name(name), icon_serialized(icon_serialized), command(command),
+    native_command(native_command), other_data(other_data)
 {
 }
 

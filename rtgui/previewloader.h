@@ -42,7 +42,7 @@ public:
      * @param dir_id directory ID this is for
      * @param fd entry
      */
-    virtual void previewReady(int dir_id, FileBrowserEntry* fd) = 0;
+    virtual void previewReady(int dir_id, FileBrowserEntry *fd) = 0;
 
     /**
      * @brief all previews have finished loading
@@ -50,8 +50,7 @@ public:
     virtual void previewsFinished(int dir_id_) = 0;
 };
 
-class PreviewLoader :
-    public rtengine::NonCopyable
+class PreviewLoader : public rtengine::NonCopyable
 {
 public:
     /**
@@ -61,7 +60,7 @@ public:
      *
      * @return Pointer to thumbnail image updater.
      */
-    static PreviewLoader* getInstance(void);
+    static PreviewLoader *getInstance(void);
 
     /**
      * @brief Add an thumbnail image update request.
@@ -73,7 +72,7 @@ public:
      * @param dir_entry entry in it
      * @param l listener
      */
-    void add(int dir_id, const Glib::ustring& dir_entry, PreviewLoaderListener* l);
+    void add(int dir_id, const Glib::ustring &dir_entry, PreviewLoaderListener *l);
 
     /**
      * @brief Stop processing and remove all jobs.
@@ -85,12 +84,11 @@ public:
     void removeAllJobs(void);
 
 private:
-
     PreviewLoader();
     ~PreviewLoader();
 
     class Impl;
-    Impl* impl_;
+    Impl *impl_;
 };
 
 /**

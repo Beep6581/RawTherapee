@@ -23,30 +23,33 @@
 #include "adjuster.h"
 #include "toolpanel.h"
 
-class Vignetting final :
-    public ToolParamBlock,
-    public AdjusterListener,
-    public FoldableToolPanel
+class Vignetting final : public ToolParamBlock,
+                         public AdjusterListener,
+                         public FoldableToolPanel
 {
 
 protected:
-    Adjuster* amount;
-    Adjuster* radius;
-    Adjuster* strength;
-    Adjuster* centerX;
-    Adjuster* centerY;
+    Adjuster *amount;
+    Adjuster *radius;
+    Adjuster *strength;
+    Adjuster *centerX;
+    Adjuster *centerY;
 
 public:
     static const Glib::ustring TOOL_NAME;
 
-    Vignetting ();
+    Vignetting();
 
-    void read           (const rtengine::procparams::ProcParams* pp, const ParamsEdited* pedited = nullptr) override;
-    void write          (rtengine::procparams::ProcParams* pp, ParamsEdited* pedited = nullptr) override;
-    void setDefaults    (const rtengine::procparams::ProcParams* defParams, const ParamsEdited* pedited = nullptr) override;
-    void setBatchMode   (bool batchMode) override;
+    void read(const rtengine::procparams::ProcParams *pp,
+        const ParamsEdited *pedited = nullptr) override;
+    void write(
+        rtengine::procparams::ProcParams *pp, ParamsEdited *pedited = nullptr) override;
+    void setDefaults(const rtengine::procparams::ProcParams *defParams,
+        const ParamsEdited *pedited = nullptr) override;
+    void setBatchMode(bool batchMode) override;
 
-    void adjusterChanged(Adjuster* a, double newval) override;
-    void setAdjusterBehavior (bool amountadd, bool radiusadd, bool strengthadd, bool centeradd);
-    void trimValues          (rtengine::procparams::ProcParams* pp) override;
+    void adjusterChanged(Adjuster *a, double newval) override;
+    void setAdjusterBehavior(
+        bool amountadd, bool radiusadd, bool strengthadd, bool centeradd);
+    void trimValues(rtengine::procparams::ProcParams *pp) override;
 };

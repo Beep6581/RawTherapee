@@ -29,36 +29,38 @@
 class CurveEditorGroup;
 class FlatCurveEditor;
 
-class Defringe final :
-    public ToolParamBlock,
-    public AdjusterListener,
-    public FoldableToolPanel,
-    public CurveListener,
-    public ColorProvider
+class Defringe final : public ToolParamBlock,
+                       public AdjusterListener,
+                       public FoldableToolPanel,
+                       public CurveListener,
+                       public ColorProvider
 {
 
 protected:
-    CurveEditorGroup* curveEditorPF;
-    FlatCurveEditor*   chshape;
+    CurveEditorGroup *curveEditorPF;
+    FlatCurveEditor *chshape;
 
-    Adjuster* radius;
-    Adjuster* threshold;
+    Adjuster *radius;
+    Adjuster *threshold;
     bool edges;
 
 public:
     static const Glib::ustring TOOL_NAME;
 
-    Defringe ();
-    ~Defringe () override;
-    void read           (const rtengine::procparams::ProcParams* pp, const ParamsEdited* pedited = nullptr) override;
-    void write          (rtengine::procparams::ProcParams* pp, ParamsEdited* pedited = nullptr) override;
-    void setDefaults    (const rtengine::procparams::ProcParams* defParams, const ParamsEdited* pedited = nullptr) override;
-    void setBatchMode   (bool batchMode) override;
-    void autoOpenCurve  () override;
-    void curveChanged   () override;
+    Defringe();
+    ~Defringe() override;
+    void read(const rtengine::procparams::ProcParams *pp,
+        const ParamsEdited *pedited = nullptr) override;
+    void write(
+        rtengine::procparams::ProcParams *pp, ParamsEdited *pedited = nullptr) override;
+    void setDefaults(const rtengine::procparams::ProcParams *defParams,
+        const ParamsEdited *pedited = nullptr) override;
+    void setBatchMode(bool batchMode) override;
+    void autoOpenCurve() override;
+    void curveChanged() override;
 
-    void adjusterChanged (Adjuster* a, double newval) override;
-    void enabledChanged  () override;
-    void colorForValue (double valX, double valY, enum ColorCaller::ElemType elemType, int callerId, ColorCaller* caller) override;
-
+    void adjusterChanged(Adjuster *a, double newval) override;
+    void enabledChanged() override;
+    void colorForValue(double valX, double valY, enum ColorCaller::ElemType elemType,
+        int callerId, ColorCaller *caller) override;
 };

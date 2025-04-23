@@ -24,8 +24,7 @@
 class ImageArea;
 class RTImage;
 
-class IndicateClippedPanel :
-    public Gtk::Box
+class IndicateClippedPanel : public Gtk::Box
 {
 
 protected:
@@ -33,37 +32,28 @@ protected:
     const Glib::ustring Foff;
     const Glib::ustring Son;
     const Glib::ustring Soff;
-    RTImage* const iF;
-    RTImage* const iS;
-    Gtk::ToggleButton* previewSharpMask;
-    Gtk::ToggleButton* previewFocusMask;
-    Gtk::ToggleButton* indClippedH;
-    Gtk::ToggleButton* indClippedS;
-    ImageArea* imageArea;
+    RTImage *const iF;
+    RTImage *const iS;
+    Gtk::ToggleButton *previewSharpMask;
+    Gtk::ToggleButton *previewFocusMask;
+    Gtk::ToggleButton *indClippedH;
+    Gtk::ToggleButton *indClippedS;
+    ImageArea *imageArea;
 
 public:
-    explicit IndicateClippedPanel(ImageArea* ia);
+    explicit IndicateClippedPanel(ImageArea *ia);
     ~IndicateClippedPanel() override;
 
-    void buttonToggled(Gtk::ToggleButton* tb);
-    void toggleClipped(bool highlights);  // inverts a toggle programmatically
+    void buttonToggled(Gtk::ToggleButton *tb);
+    void toggleClipped(bool highlights); // inverts a toggle programmatically
     void toggleFocusMask();
-    void silentlyDisableSharpMask();  // toggle the button off without throwing a toggle event
+    void
+    silentlyDisableSharpMask(); // toggle the button off without throwing a toggle event
     void toggleSharpMask();
 
     sigc::connection connFocusMask, connSharpMask, connClippedS, connClippedH;
 
-
-    bool showFocusMask ()
-    {
-        return previewFocusMask->get_active ();
-    }
-    bool showClippedShadows()
-    {
-        return indClippedS->get_active();
-    }
-    bool showClippedHighlights()
-    {
-        return indClippedH->get_active();
-    }
+    bool showFocusMask() { return previewFocusMask->get_active(); }
+    bool showClippedShadows() { return indClippedS->get_active(); }
+    bool showClippedHighlights() { return indClippedH->get_active(); }
 };

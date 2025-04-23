@@ -27,7 +27,8 @@
  *
  * WARNING: If the color has no gradient defined or can't get colors from the provider,
  *          the bar will have undefined data, and the calling class will have to draw
- *          the bar itself, i.e. use render_background (depending on its Gtk::StyleContext)
+ *          the bar itself, i.e. use render_background (depending on its
+ * Gtk::StyleContext)
  *
  */
 class ColoredBar final : public ColorCaller
@@ -45,16 +46,20 @@ protected:
     std::vector<GradientMilestone> bgGradient;
 
 public:
-    explicit ColoredBar (eRTOrientation orient);
-    void setColoredBarSize(const int newX, const int newY, const int newW, const int newH); // Note: updateColoredBar shall be called after to update the bar
+    explicit ColoredBar(eRTOrientation orient);
+    void setColoredBarSize(const int newX, const int newY, const int newW,
+        const int
+            newH); // Note: updateColoredBar shall be called after to update the bar
 
-    void updateColoredBar(const Cairo::RefPtr< Cairo::Context> &cr);
+    void updateColoredBar(const Cairo::RefPtr<Cairo::Context> &cr);
 
     bool canGetColors();
 
-    // Method for convenience; if no Gradient provided, the ColoredBar will ask colors on a per pixel basis
-    void setBgGradient (const std::vector<GradientMilestone> &milestones);
-    // by clearing the gradient, the ColorProvider will have to provide colors on a per pixel basis if a ColorProvider
-    // has been set, through ColorProvider::colorForValue on next ColoredBar::expose
-    void clearBgGradient ();
+    // Method for convenience; if no Gradient provided, the ColoredBar will ask colors
+    // on a per pixel basis
+    void setBgGradient(const std::vector<GradientMilestone> &milestones);
+    // by clearing the gradient, the ColorProvider will have to provide colors on a per
+    // pixel basis if a ColorProvider has been set, through ColorProvider::colorForValue
+    // on next ColoredBar::expose
+    void clearBgGradient();
 };

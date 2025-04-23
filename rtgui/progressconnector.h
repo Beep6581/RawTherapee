@@ -28,14 +28,10 @@
 
 #undef THREAD_PRIORITY_NORMAL
 
-class PLDBridge final :
-    public rtengine::ProgressListener
+class PLDBridge final : public rtengine::ProgressListener
 {
 public:
-    explicit PLDBridge(rtengine::ProgressListener* pb) :
-        pl(pb)
-    {
-    }
+    explicit PLDBridge(rtengine::ProgressListener *pb) : pl(pb) {}
 
     // ProgressListener interface
     void setProgress(double p) override
@@ -43,7 +39,7 @@ public:
         GThreadLock lock;
         pl->setProgress(p);
     }
-    void setProgressStr(const Glib::ustring& str) override
+    void setProgressStr(const Glib::ustring &str) override
     {
         GThreadLock lock;
         Glib::ustring progrstr;
@@ -57,18 +53,17 @@ public:
         pl->setProgressState(inProcessing);
     }
 
-    void error(const Glib::ustring& descr) override
+    void error(const Glib::ustring &descr) override
     {
         GThreadLock lock;
         pl->error(descr);
     }
 
 private:
-    rtengine::ProgressListener* const pl;
+    rtengine::ProgressListener *const pl;
 };
 
-template<class T>
-class ProgressConnector
+template <class T> class ProgressConnector
 {
 
     sigc::signal0<T> opStart;
@@ -76,38 +71,39 @@ class ProgressConnector
     T retval;
     Glib::Thread *workThread;
 
-    static int emitEndSignalUI (void* data)
+    static int emitEndSignalUI(void *data)
     {
 
-        const sigc::signal0<bool>* lopEnd = reinterpret_cast<sigc::signal0<bool>*>(data);
-        const int r = lopEnd->emit ();
+        const sigc::signal0<bool> *lopEnd =
+            reinterpret_cast<sigc::signal0<bool> *>(data);
+        const int r = lopEnd->emit();
         delete lopEnd;
 
         return r;
     }
 
-    void workingThread ()
+    void workingThread()
     {
-        retval = opStart.emit ();
-        gdk_threads_add_idle(ProgressConnector<T>::emitEndSignalUI, new sigc::signal0<bool>(opEnd));
+        retval = opStart.emit();
+        gdk_threads_add_idle(
+            ProgressConnector<T>::emitEndSignalUI, new sigc::signal0<bool>(opEnd));
         workThread = nullptr;
     }
 
 public:
+    ProgressConnector() : retval(0), workThread(nullptr) {}
 
-    ProgressConnector (): retval( 0 ), workThread( nullptr ) { }
-
-    void startFunc (const sigc::slot0<T>& startHandler, const sigc::slot0<bool>& endHandler )
+    void startFunc(
+        const sigc::slot0<T> &startHandler, const sigc::slot0<bool> &endHandler)
     {
-        if( !workThread ) {
-            opStart.connect (startHandler);
-            opEnd.connect (endHandler);
-            workThread = Glib::Thread::create(sigc::mem_fun(*this, &ProgressConnector<T>::workingThread), 0, true, true, Glib::THREAD_PRIORITY_NORMAL);
+        if (!workThread) {
+            opStart.connect(startHandler);
+            opEnd.connect(endHandler);
+            workThread = Glib::Thread::create(
+                sigc::mem_fun(*this, &ProgressConnector<T>::workingThread), 0, true,
+                true, Glib::THREAD_PRIORITY_NORMAL);
         }
     }
 
-    T returnValue()
-    {
-        return retval;
-    }
+    T returnValue() { return retval; }
 };

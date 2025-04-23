@@ -19,13 +19,11 @@
 
 #include "editcallbacks.h"
 
-EditSubscriber::EditSubscriber (EditType editType) :
-    ID(EUID_None),
-    editingType(editType),
-    bufferType(BT_SINGLEPLANE_FLOAT),
-    provider(nullptr),
-    action(EditSubscriber::Action::NONE)
-{}
+EditSubscriber::EditSubscriber(EditType editType) :
+    ID(EUID_None), editingType(editType), bufferType(BT_SINGLEPLANE_FLOAT),
+    provider(nullptr), action(EditSubscriber::Action::NONE)
+{
+}
 
 void EditSubscriber::setEditProvider(EditDataProvider *provider)
 {
@@ -40,8 +38,8 @@ void EditSubscriber::setEditID(EditUniqueID ID, BufferType buffType)
 
 bool EditSubscriber::isCurrentSubscriber() const
 {
-    //if (provider && provider->getCurrSubscriber())
-    //  return provider->getCurrSubscriber()->getEditID() == ID;
+    // if (provider && provider->getCurrSubscriber())
+    //   return provider->getCurrSubscriber()->getEditID() == ID;
 
     if (provider) {
         return provider->getCurrSubscriber() == this;
@@ -64,25 +62,13 @@ void EditSubscriber::unsubscribe()
     }
 }
 
-void EditSubscriber::switchOffEditMode()
-{
-    unsubscribe();
-}
+void EditSubscriber::switchOffEditMode() { unsubscribe(); }
 
-EditUniqueID EditSubscriber::getEditID() const
-{
-    return ID;
-}
+EditUniqueID EditSubscriber::getEditID() const { return ID; }
 
-EditType EditSubscriber::getEditingType() const
-{
-    return editingType;
-}
+EditType EditSubscriber::getEditingType() const { return editingType; }
 
-BufferType EditSubscriber::getPipetteBufferType() const
-{
-    return bufferType;
-}
+BufferType EditSubscriber::getPipetteBufferType() const { return bufferType; }
 
 bool EditSubscriber::isDragging() const
 {
@@ -96,21 +82,14 @@ bool EditSubscriber::isPicking() const
 
 //--------------------------------------------------------------------------------------------------
 
-
 EditDataProvider::EditDataProvider() :
     currSubscriber(nullptr),
-//    object(0),
-    pipetteVal1(0.f),
-    pipetteVal2(0.f),
-    pipetteVal3(0.f),
-    object(0),
-    posScreen(-1, -1),
-    posImage(-1, -1),
-    deltaScreen(0, 0),
-    deltaImage(0, 0),
-    deltaPrevScreen(0, 0),
+    //    object(0),
+    pipetteVal1(0.f), pipetteVal2(0.f), pipetteVal3(0.f), object(0), posScreen(-1, -1),
+    posImage(-1, -1), deltaScreen(0, 0), deltaImage(0, 0), deltaPrevScreen(0, 0),
     deltaPrevImage(0, 0)
-{}
+{
+}
 
 void EditDataProvider::subscribe(EditSubscriber *subscriber)
 {
@@ -121,57 +100,30 @@ void EditDataProvider::subscribe(EditSubscriber *subscriber)
     currSubscriber = subscriber;
 }
 
-void EditDataProvider::unsubscribe()
-{
-    currSubscriber = nullptr;
-}
+void EditDataProvider::unsubscribe() { currSubscriber = nullptr; }
 
 void EditDataProvider::switchOffEditMode()
 {
     if (currSubscriber) {
-        currSubscriber->switchOffEditMode ();
+        currSubscriber->switchOffEditMode();
     }
 }
 
-int EditDataProvider::getObject() const
-{
-    return object;
-}
+int EditDataProvider::getObject() const { return object; }
 
-void EditDataProvider::setObject(int newObject)
-{
-    object = newObject;
-}
+void EditDataProvider::setObject(int newObject) { object = newObject; }
 
-float EditDataProvider::getPipetteVal1() const
-{
-    return pipetteVal1;
-}
+float EditDataProvider::getPipetteVal1() const { return pipetteVal1; }
 
-float EditDataProvider::getPipetteVal2() const
-{
-    return pipetteVal2;
-}
+float EditDataProvider::getPipetteVal2() const { return pipetteVal2; }
 
-float EditDataProvider::getPipetteVal3() const
-{
-    return pipetteVal3;
-}
+float EditDataProvider::getPipetteVal3() const { return pipetteVal3; }
 
-void EditDataProvider::setPipetteVal1(float newVal)
-{
-    pipetteVal1 = newVal;
-}
+void EditDataProvider::setPipetteVal1(float newVal) { pipetteVal1 = newVal; }
 
-void EditDataProvider::setPipetteVal2(float newVal)
-{
-    pipetteVal2 = newVal;
-}
+void EditDataProvider::setPipetteVal2(float newVal) { pipetteVal2 = newVal; }
 
-void EditDataProvider::setPipetteVal3(float newVal)
-{
-    pipetteVal3 = newVal;
-}
+void EditDataProvider::setPipetteVal3(float newVal) { pipetteVal3 = newVal; }
 
 CursorShape EditDataProvider::getCursor(int objectID, int xPos, int yPos) const
 {
@@ -182,92 +134,47 @@ CursorShape EditDataProvider::getCursor(int objectID, int xPos, int yPos) const
     return CSHandOpen;
 }
 
-EditSubscriber* EditDataProvider::getCurrSubscriber() const
-{
-    return currSubscriber;
-}
+EditSubscriber *EditDataProvider::getCurrSubscriber() const { return currSubscriber; }
 
-EditDataProvider* EditSubscriber::getEditProvider() const
-{
-    return provider;
-}
+EditDataProvider *EditSubscriber::getEditProvider() const { return provider; }
 
 CursorShape EditSubscriber::getCursor(int objectID, int xPos, int yPos) const
 {
     return CSHandOpen;
 }
 
-bool EditSubscriber::mouseOver(int modifierKey)
-{
-    return false;
-}
+bool EditSubscriber::mouseOver(int modifierKey) { return false; }
 
-bool EditSubscriber::button1Pressed(int modifierKey)
-{
-    return false;
-}
+bool EditSubscriber::button1Pressed(int modifierKey) { return false; }
 
-bool EditSubscriber::button1Released()
-{
-    return false;
-}
+bool EditSubscriber::button1Released() { return false; }
 
-bool EditSubscriber::button2Pressed(int modifierKey)
-{
-    return false;
-}
+bool EditSubscriber::button2Pressed(int modifierKey) { return false; }
 
-bool EditSubscriber::button2Released()
-{
-    return false;
-}
+bool EditSubscriber::button2Released() { return false; }
 
-bool EditSubscriber::button3Pressed(int modifierKey)
-{
-    return false;
-}
+bool EditSubscriber::button3Pressed(int modifierKey) { return false; }
 
-bool EditSubscriber::button3Released()
-{
-    return false;
-}
+bool EditSubscriber::button3Released() { return false; }
 
-bool EditSubscriber::drag1(int modifierKey)
-{
-    return false;
-}
+bool EditSubscriber::drag1(int modifierKey) { return false; }
 
-bool EditSubscriber::drag2(int modifierKey)
-{
-    return false;
-}
+bool EditSubscriber::drag2(int modifierKey) { return false; }
 
-bool EditSubscriber::drag3(int modifierKey)
-{
-    return false;
-}
+bool EditSubscriber::drag3(int modifierKey) { return false; }
 
-bool EditSubscriber::pick1(bool picked)
-{
-    return false;
-}
+bool EditSubscriber::pick1(bool picked) { return false; }
 
-bool EditSubscriber::pick2(bool picked)
-{
-    return false;
-}
+bool EditSubscriber::pick2(bool picked) { return false; }
 
-bool EditSubscriber::pick3(bool picked)
-{
-    return false;
-}
+bool EditSubscriber::pick3(bool picked) { return false; }
 
-const std::vector<Geometry*>& EditSubscriber::getVisibleGeometry()
+const std::vector<Geometry *> &EditSubscriber::getVisibleGeometry()
 {
     return visibleGeometry;
 }
 
-const std::vector<Geometry*>& EditSubscriber::getMouseOverGeometry()
+const std::vector<Geometry *> &EditSubscriber::getMouseOverGeometry()
 {
     return mouseOverGeometry;
 }

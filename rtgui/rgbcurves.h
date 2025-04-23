@@ -27,48 +27,41 @@
 class CurveEditorGroup;
 class DiagonalCurveEditor;
 
-class RGBCurves final :
-    public ToolParamBlock,
-    public FoldableToolPanel,
-    public CurveListener,
-    public ColorProvider
+class RGBCurves final : public ToolParamBlock,
+                        public FoldableToolPanel,
+                        public CurveListener,
+                        public ColorProvider
 {
 
 protected:
-    CurveEditorGroup* curveEditorG;
-    DiagonalCurveEditor* Rshape;
-    DiagonalCurveEditor* Gshape;
-    DiagonalCurveEditor* Bshape;
+    CurveEditorGroup *curveEditorG;
+    DiagonalCurveEditor *Rshape;
+    DiagonalCurveEditor *Gshape;
+    DiagonalCurveEditor *Bshape;
 
-    Gtk::CheckButton* lumamode;
+    Gtk::CheckButton *lumamode;
     bool lastLumamode;
     sigc::connection lumamodeConn;
 
 public:
     static const Glib::ustring TOOL_NAME;
 
-    RGBCurves ();
-    ~RGBCurves () override;
+    RGBCurves();
+    ~RGBCurves() override;
 
-    void read            (const rtengine::procparams::ProcParams* pp, const ParamsEdited* pedited = nullptr) override;
-    void write           (rtengine::procparams::ProcParams* pp, ParamsEdited* pedited = nullptr) override;
-    void setBatchMode    (bool batchMode) override;
-    void setEditProvider (EditDataProvider *provider) override;
-    void autoOpenCurve   () override;
+    void read(const rtengine::procparams::ProcParams *pp,
+        const ParamsEdited *pedited = nullptr) override;
+    void write(
+        rtengine::procparams::ProcParams *pp, ParamsEdited *pedited = nullptr) override;
+    void setBatchMode(bool batchMode) override;
+    void setEditProvider(EditDataProvider *provider) override;
+    void autoOpenCurve() override;
 
-    void curveChanged (CurveEditor* ce) override;
-    void updateCurveBackgroundHistogram(
-        const LUTu& histToneCurve,
-        const LUTu& histLCurve,
-        const LUTu& histCCurve,
-        const LUTu& histLCAM,
-        const LUTu& histCCAM,
-        const LUTu& histRed,
-        const LUTu& histGreen,
-        const LUTu& histBlue,
-        const LUTu& histLuma,
-        const LUTu& histLRETI
-    );
-    void lumamodeChanged  ();
+    void curveChanged(CurveEditor *ce) override;
+    void updateCurveBackgroundHistogram(const LUTu &histToneCurve,
+        const LUTu &histLCurve, const LUTu &histCCurve, const LUTu &histLCAM,
+        const LUTu &histCCAM, const LUTu &histRed, const LUTu &histGreen,
+        const LUTu &histBlue, const LUTu &histLuma, const LUTu &histLRETI);
+    void lumamodeChanged();
     void enabledChanged() override;
 };

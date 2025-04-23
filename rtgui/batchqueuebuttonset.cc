@@ -33,20 +33,26 @@ Glib::ustring BatchQueueButtonSet::moveHeadToolTip;
 Glib::ustring BatchQueueButtonSet::moveEndToolTip;
 Glib::ustring BatchQueueButtonSet::cancelJobToolTip;
 
-BatchQueueButtonSet::BatchQueueButtonSet (BatchQueueEntry* myEntry)
+BatchQueueButtonSet::BatchQueueButtonSet(BatchQueueEntry *myEntry)
 {
 
     if (!iconsLoaded) {
-        cancelIcon = std::shared_ptr<RTSurface>(new RTSurface("cancel-small", Gtk::ICON_SIZE_BUTTON));
-        headIcon = std::shared_ptr<RTSurface>(new RTSurface("goto-start-small", Gtk::ICON_SIZE_BUTTON));
-        tailIcon = std::shared_ptr<RTSurface>(new RTSurface("goto-end-small", Gtk::ICON_SIZE_BUTTON));
+        cancelIcon = std::shared_ptr<RTSurface>(
+            new RTSurface("cancel-small", Gtk::ICON_SIZE_BUTTON));
+        headIcon = std::shared_ptr<RTSurface>(
+            new RTSurface("goto-start-small", Gtk::ICON_SIZE_BUTTON));
+        tailIcon = std::shared_ptr<RTSurface>(
+            new RTSurface("goto-end-small", Gtk::ICON_SIZE_BUTTON));
         moveHeadToolTip = M("FILEBROWSER_POPUPMOVEHEAD");
         moveEndToolTip = M("FILEBROWSER_POPUPMOVEEND");
         cancelJobToolTip = M("FILEBROWSER_POPUPCANCELJOB");
         iconsLoaded = true;
     }
 
-    add(new LWButton(headIcon, 8, myEntry, LWButton::Left, LWButton::Center, &moveHeadToolTip));
-    add(new LWButton(tailIcon, 9, myEntry, LWButton::Left, LWButton::Center, &moveEndToolTip));
-    add(new LWButton(cancelIcon, 10, myEntry, LWButton::Right, LWButton::Center, &cancelJobToolTip));
+    add(new LWButton(
+        headIcon, 8, myEntry, LWButton::Left, LWButton::Center, &moveHeadToolTip));
+    add(new LWButton(
+        tailIcon, 9, myEntry, LWButton::Left, LWButton::Center, &moveEndToolTip));
+    add(new LWButton(
+        cancelIcon, 10, myEntry, LWButton::Right, LWButton::Center, &cancelJobToolTip));
 }

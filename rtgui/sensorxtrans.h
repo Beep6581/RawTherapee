@@ -22,13 +22,11 @@
 
 #include "toolpanel.h"
 
-class SensorXTrans final:
-    public ToolParamBlock,
-    public FoldableToolPanel
+class SensorXTrans final : public ToolParamBlock, public FoldableToolPanel
 {
 
 public:
     static const Glib::ustring TOOL_NAME;
 
-    SensorXTrans ();
+    SensorXTrans();
 };

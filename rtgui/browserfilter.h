@@ -38,5 +38,5 @@ public:
     ExifFilterSettings exifFilter;
     std::vector<std::string> vFilterStrings;
 
-    BrowserFilter ();
+    BrowserFilter();
 };

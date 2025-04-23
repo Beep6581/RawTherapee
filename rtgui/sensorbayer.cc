@@ -22,8 +22,9 @@
 
 const Glib::ustring SensorBayer::TOOL_NAME = "sensorbayer";
 
-SensorBayer::SensorBayer () : FoldableToolPanel(this, TOOL_NAME, M("TP_RAW_SENSOR_BAYER_LABEL"))
+SensorBayer::SensorBayer() :
+    FoldableToolPanel(this, TOOL_NAME, M("TP_RAW_SENSOR_BAYER_LABEL"))
 {
 
-    show_all ();
+    show_all();
 }

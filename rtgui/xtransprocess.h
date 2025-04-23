@@ -25,22 +25,20 @@
 #include "guiutils.h"
 #include "toolpanel.h"
 
-class XTransProcess final :
-    public ToolParamBlock,
-    public AdjusterListener,
-    public CheckBoxListener,
-    public FoldableToolPanel,
-    public rtengine::AutoContrastListener
+class XTransProcess final : public ToolParamBlock,
+                            public AdjusterListener,
+                            public CheckBoxListener,
+                            public FoldableToolPanel,
+                            public rtengine::AutoContrastListener
 {
 
 protected:
-
-    MyComboBoxText* method;
-    Gtk::Box* borderbox;
-    Adjuster* border;
-    Adjuster* ccSteps;
-    Gtk::Box* dualDemosaicOptions;
-    Adjuster* dualDemosaicContrast;
+    MyComboBoxText *method;
+    Gtk::Box *borderbox;
+    Adjuster *border;
+    Adjuster *ccSteps;
+    Gtk::Box *dualDemosaicOptions;
+    Adjuster *dualDemosaicContrast;
     bool lastAutoContrast;
 
     int oldSelection;
@@ -54,18 +52,21 @@ protected:
 public:
     static const Glib::ustring TOOL_NAME;
 
-    XTransProcess ();
-    ~XTransProcess () override;
+    XTransProcess();
+    ~XTransProcess() override;
 
-    void read(const rtengine::procparams::ProcParams* pp, const ParamsEdited* pedited = nullptr) override;
-    void write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedited = nullptr) override;
+    void read(const rtengine::procparams::ProcParams *pp,
+        const ParamsEdited *pedited = nullptr) override;
+    void write(
+        rtengine::procparams::ProcParams *pp, ParamsEdited *pedited = nullptr) override;
     void setAdjusterBehavior(bool falsecoloradd, bool dualDemosaicContrastAdd);
     void setBatchMode(bool batchMode) override;
-    void setDefaults(const rtengine::procparams::ProcParams* defParams, const ParamsEdited* pedited = nullptr) override;
+    void setDefaults(const rtengine::procparams::ProcParams *defParams,
+        const ParamsEdited *pedited = nullptr) override;
 
     void methodChanged();
-    void autoContrastChanged (double autoContrast) override;
-    void adjusterChanged(Adjuster* a, double newval) override;
-    void checkBoxToggled(CheckBox* c, CheckValue newval) override;
-    void adjusterAutoToggled(Adjuster* a) override;
+    void autoContrastChanged(double autoContrast) override;
+    void adjusterChanged(Adjuster *a, double newval) override;
+    void checkBoxToggled(CheckBox *c, CheckValue newval) override;
+    void adjusterAutoToggled(Adjuster *a) override;
 };

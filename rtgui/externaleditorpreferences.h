@@ -27,14 +27,12 @@
 
 #include "rtappchooserdialog.h"
 
-
 namespace Gtk
 {
 
 class FileChooserDialog;
 
 }
-
 
 /**
  * Widget for editing the external editors options.
@@ -44,21 +42,18 @@ class ExternalEditorPreferences : public Gtk::Box
 public:
     struct EditorTag {
         bool selected;
-        EditorTag(): selected(false) {}
-        explicit EditorTag(bool selected): selected(selected) {}
+        EditorTag() : selected(false) {}
+        explicit EditorTag(bool selected) : selected(selected) {}
     };
 
     /**
      * Data struct containing information about an external editor.
      */
     struct EditorInfo {
-        explicit EditorInfo(
-            const Glib::ustring &name = Glib::ustring(),
+        explicit EditorInfo(const Glib::ustring &name = Glib::ustring(),
             const Glib::ustring &command = Glib::ustring(),
             const Glib::ustring &icon_serialized = Glib::ustring(),
-            bool native_command = false,
-            EditorTag other_data = EditorTag()
-        );
+            bool native_command = false, EditorTag other_data = EditorTag());
         /**
          * Name of the external editor.
          */
@@ -113,9 +108,9 @@ private:
 
     ModelColumns model_columns;
     Glib::RefPtr<Gtk::ListStore> list_model; // The list of editors.
-    Gtk::ScrolledWindow list_scroll_area; // Allows the list to be scrolled.
-    Gtk::TreeView *list_view; // Widget for displaying the list.
-    Gtk::Box toolbar; // Contains buttons for editing the list.
+    Gtk::ScrolledWindow list_scroll_area;    // Allows the list to be scrolled.
+    Gtk::TreeView *list_view;                // Widget for displaying the list.
+    Gtk::Box toolbar;                        // Contains buttons for editing the list.
     Gtk::Button *button_app_chooser;
     Gtk::Button *button_add;
     Gtk::Button *button_file_chooser;
@@ -169,11 +164,11 @@ private:
     /**
      * Updates the application command and removes the icon for the given row.
      */
-    void setAppCommand(const Glib::ustring & path, const Glib::ustring & new_text);
+    void setAppCommand(const Glib::ustring &path, const Glib::ustring &new_text);
     /**
      * Updates the application name for the given row.
      */
-    void setAppName(const Glib::ustring & path, const Glib::ustring & new_text);
+    void setAppName(const Glib::ustring &path, const Glib::ustring &new_text);
     /**
      * Sets the sensitivity of the widgets in the toolbar to reflect the current
      * state of the list. For example, makes the remove button insensitive if no

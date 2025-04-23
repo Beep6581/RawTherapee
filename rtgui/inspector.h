@@ -26,13 +26,13 @@
 
 class InspectorBuffer
 {
-//private:
-//    int infoFromImage (const Glib::ustring& fname);
+    // private:
+    //     int infoFromImage (const Glib::ustring& fname);
 
 public:
     BackBuffer imgBuffer;
     Glib::ustring imgPath;
-    int currTransform;  // coarse rotation from RT, not from shot orientation
+    int currTransform; // coarse rotation from RT, not from shot orientation
     bool fromRaw;
 
     explicit InspectorBuffer(const Glib::ustring &imgagePath);
@@ -44,17 +44,17 @@ class Inspector final : public Gtk::DrawingArea
 
 private:
     rtengine::Coord2D center;
-    std::vector<InspectorBuffer*> images;
-    InspectorBuffer* currImage;
-    bool scaled;  // fit image into window
-    double scale; // current scale
-    double zoomScale, zoomScaleBegin; // scale during zoom
+    std::vector<InspectorBuffer *> images;
+    InspectorBuffer *currImage;
+    bool scaled;                                 // fit image into window
+    double scale;                                // current scale
+    double zoomScale, zoomScaleBegin;            // scale during zoom
     rtengine::Coord2D centerBegin, dcenterBegin; // center during zoom
     bool active;
     bool pinned;
     bool dirty;
     bool initialized;
-    bool fullscreen;  // window is shown in fullscreen mode
+    bool fullscreen; // window is shown in fullscreen mode
     bool keyDown;
     bool windowShowing;
 
@@ -81,7 +81,7 @@ private:
     void on_zoom_begin(GdkEventSequence *);
     void on_zoom_scale_changed(double zscale);
 
-    bool on_draw(const ::Cairo::RefPtr< Cairo::Context> &cr) override;
+    bool on_draw(const ::Cairo::RefPtr<Cairo::Context> &cr) override;
     void deleteBuffers();
 
     bool doSwitchImage();
@@ -102,41 +102,46 @@ public:
     void hideWindow();
 
     /** @brief Mouse movement to a new position
-     * @param pos Location of the mouse, in percentage (i.e. [0;1] range) relative to the full size image ; -1,-1 == out of the image
+     * @param pos Location of the mouse, in percentage (i.e. [0;1] range) relative to
+     * the full size image ; -1,-1 == out of the image
      * @param transform H/V flip and coarse rotation transformation
      */
-    void mouseMove (rtengine::Coord2D pos, int transform);
+    void mouseMove(rtengine::Coord2D pos, int transform);
 
     /** @brief A new image is being flown over
-     * @param fullPath Full path of the image that is being hovered inspect, or an empty string if out of any image.
+     * @param fullPath Full path of the image that is being hovered inspect, or an empty
+     * string if out of any image.
      */
-    void switchImage (const Glib::ustring &fullPath);
+    void switchImage(const Glib::ustring &fullPath);
 
     /** @brief Set the new coarse rotation transformation
-     * @param transform A semi-bitfield coarse transformation using #defines from iimage.h
+     * @param transform A semi-bitfield coarse transformation using #defines from
+     * iimage.h
      */
-    void setTransformation (int transform);
+    void setTransformation(int transform);
 
-    /** @brief Use this method to flush all image buffer whenever the Inspector panel is hidden
+    /** @brief Use this method to flush all image buffer whenever the Inspector panel is
+     * hidden
      */
-    void flushBuffers ();
+    void flushBuffers();
 
     /** @brief Set the inspector on/off
-     * @param state true if to activate the Inspector, false to disable it and flush the buffers
+     * @param state true if to activate the Inspector, false to disable it and flush the
+     * buffers
      */
     void setActive(bool state);
 
     /** @brief Get the on/off state
      */
-    bool isActive() const
-    {
-        return active;
-    };
+    bool isActive() const { return active; };
 
-    Gtk::SizeRequestMode get_request_mode_vfunc () const override;
-    void get_preferred_height_vfunc (int& minimum_height, int& natural_height) const override;
-    void get_preferred_width_vfunc (int &minimum_width, int &natural_width) const override;
-    void get_preferred_height_for_width_vfunc (int width, int &minimum_height, int &natural_height) const override;
-    void get_preferred_width_for_height_vfunc (int height, int &minimum_width, int &natural_width) const override;
-
+    Gtk::SizeRequestMode get_request_mode_vfunc() const override;
+    void get_preferred_height_vfunc(
+        int &minimum_height, int &natural_height) const override;
+    void get_preferred_width_vfunc(
+        int &minimum_width, int &natural_width) const override;
+    void get_preferred_height_for_width_vfunc(
+        int width, int &minimum_height, int &natural_height) const override;
+    void get_preferred_width_for_height_vfunc(
+        int height, int &minimum_width, int &natural_width) const override;
 };

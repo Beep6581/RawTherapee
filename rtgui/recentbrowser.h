@@ -22,28 +22,27 @@
 
 #include "guiutils.h"
 
-class RecentBrowser :
-    public Gtk::Box
+class RecentBrowser : public Gtk::Box
 {
 public:
-    typedef sigc::slot<void, const Glib::ustring&> DirSelectionSlot;
+    typedef sigc::slot<void, const Glib::ustring &> DirSelectionSlot;
 
 private:
-    Gtk::ComboBoxText*              recentDirs;
-    sigc::connection             conn;
-    DirSelectionSlot             selectDir;
+    Gtk::ComboBoxText *recentDirs;
+    sigc::connection conn;
+    DirSelectionSlot selectDir;
 
 public:
+    RecentBrowser();
 
-    RecentBrowser ();
+    void setDirSelector(const DirSelectionSlot &selectDir);
 
-    void setDirSelector (const DirSelectionSlot& selectDir);
-
-    void selectionChanged ();
-    void dirSelected (const Glib::ustring& dirname, const Glib::ustring& openfile);
+    void selectionChanged();
+    void dirSelected(const Glib::ustring &dirname, const Glib::ustring &openfile);
 };
 
-inline void RecentBrowser::setDirSelector (const RecentBrowser::DirSelectionSlot& selectDir)
+inline void RecentBrowser::setDirSelector(
+    const RecentBrowser::DirSelectionSlot &selectDir)
 {
     this->selectDir = selectDir;
 }

@@ -47,11 +47,8 @@ constexpr int INDEX_STANDARD = 0;
 constexpr int INDEX_BBOX = 1;
 constexpr int INDEX_FIXED = 2;
 constexpr int INDEX_FRAMING_METHOD_UNCHANGED = 3;
-constexpr std::array<const char*, 3> FRAMING_METHODS = {
-    "TP_FRAMING_METHOD_STANDARD",
-    "TP_FRAMING_METHOD_BBOX",
-    "TP_FRAMING_METHOD_FIXED"
-};
+constexpr std::array<const char *, 3> FRAMING_METHODS = {
+    "TP_FRAMING_METHOD_STANDARD", "TP_FRAMING_METHOD_BBOX", "TP_FRAMING_METHOD_FIXED"};
 
 int mapFramingMethod(FramingParams::FramingMethod framingMethod)
 {
@@ -88,11 +85,8 @@ constexpr int INDEX_AS_IMAGE = 0;
 constexpr int INDEX_LANDSCAPE = 1;
 constexpr int INDEX_PORTRAIT = 2;
 constexpr int INDEX_ORIENTATION_UNCHANGED = 3;
-constexpr std::array<const char*, 3> ORIENTATION = {
-    "GENERAL_ASIMAGE",
-    "GENERAL_LANDSCAPE",
-    "GENERAL_PORTRAIT"
-};
+constexpr std::array<const char *, 3> ORIENTATION = {
+    "GENERAL_ASIMAGE", "GENERAL_LANDSCAPE", "GENERAL_PORTRAIT"};
 
 int mapOrientation(FramingParams::Orientation orientation)
 {
@@ -129,11 +123,9 @@ constexpr int INDEX_SIZE_RELATIVE = 0;
 constexpr int INDEX_SIZE_UNIFORM_RELATIVE = 1;
 constexpr int INDEX_SIZE_ABSOLUTE = 2;
 constexpr int INDEX_SIZE_UNCHANGED = 3;
-constexpr std::array<const char*, 3> BORDER_SIZE_METHODS = {
-    "TP_FRAMING_BORDER_SIZE_RELATIVE",
-    "TP_FRAMING_BORDER_SIZE_UNIFORM_RELATIVE",
-    "TP_FRAMING_BORDER_SIZE_ABSOLUTE"
-};
+constexpr std::array<const char *, 3> BORDER_SIZE_METHODS = {
+    "TP_FRAMING_BORDER_SIZE_RELATIVE", "TP_FRAMING_BORDER_SIZE_UNIFORM_RELATIVE",
+    "TP_FRAMING_BORDER_SIZE_ABSOLUTE"};
 
 int mapBorderSizeMethod(FramingParams::BorderSizing sizing)
 {
@@ -172,18 +164,14 @@ constexpr int INDEX_BASIS_HEIGHT = 2;
 constexpr int INDEX_BASIS_LONG = 3;
 constexpr int INDEX_BASIS_SHORT = 4;
 constexpr int INDEX_BASIS_UNCHANGED = 5;
-constexpr std::array<const char*, 5> BORDER_SIZE_BASIS = {
-    "TP_FRAMING_BASIS_AUTO",
-    "TP_FRAMING_BASIS_WIDTH",
-    "TP_FRAMING_BASIS_HEIGHT",
-    "TP_FRAMING_BASIS_LONG_SIDE",
-    "TP_FRAMING_BASIS_SHORT_SIDE"
-};
+constexpr std::array<const char *, 5> BORDER_SIZE_BASIS = {"TP_FRAMING_BASIS_AUTO",
+    "TP_FRAMING_BASIS_WIDTH", "TP_FRAMING_BASIS_HEIGHT", "TP_FRAMING_BASIS_LONG_SIDE",
+    "TP_FRAMING_BASIS_SHORT_SIDE"};
 
 int mapBasis(FramingParams::Basis basis)
 {
     using Basis = FramingParams::Basis;
-    switch(basis) {
+    switch (basis) {
         case Basis::AUTO:
             return INDEX_BASIS_AUTO;
         case Basis::WIDTH:
@@ -202,7 +190,7 @@ int mapBasis(FramingParams::Basis basis)
 FramingParams::Basis mapBasis(int comboIndex)
 {
     using Basis = FramingParams::Basis;
-    switch(comboIndex) {
+    switch (comboIndex) {
         case INDEX_BASIS_AUTO:
             return Basis::AUTO;
         case INDEX_BASIS_WIDTH:
@@ -226,16 +214,16 @@ constexpr int ROW_SPACING = 4;
 constexpr float FRAME_LABEL_ALIGN_X = 0.025;
 constexpr float FRAME_LABEL_ALIGN_Y = 0.5;
 
-Gtk::Label* createGridLabel(const char* text)
+Gtk::Label *createGridLabel(const char *text)
 {
-    Gtk::Label* label = Gtk::manage(new Gtk::Label(M(text)));
+    Gtk::Label *label = Gtk::manage(new Gtk::Label(M(text)));
     label->set_halign(Gtk::ALIGN_START);
     return label;
 }
 
-MySpinButton* createSpinButton()
+MySpinButton *createSpinButton()
 {
-    MySpinButton* button = Gtk::manage(new MySpinButton());
+    MySpinButton *button = Gtk::manage(new MySpinButton());
     button->set_width_chars(5);
     button->set_digits(0);
     button->set_increments(1, 100);
@@ -243,7 +231,7 @@ MySpinButton* createSpinButton()
     return button;
 }
 
-}  // namespace
+} // namespace
 
 const Glib::ustring Framing::TOOL_NAME = "framing";
 
@@ -252,15 +240,11 @@ class Framing::AspectRatios
 public:
     static constexpr int INDEX_CURRENT = 0;
 
-    AspectRatios() :
-        ratios{{M("GENERAL_ASIMAGE")}}
-    {
-        fillAspectRatios(ratios);
-    }
+    AspectRatios() : ratios{{M("GENERAL_ASIMAGE")}} { fillAspectRatios(ratios); }
 
-    void fillCombo(MyComboBoxText* combo) const
+    void fillCombo(MyComboBoxText *combo) const
     {
-        for (const auto& aspectRatio : ratios) {
+        for (const auto &aspectRatio : ratios) {
             combo->append(aspectRatio.label);
         }
         combo->set_active(INDEX_CURRENT);
@@ -268,10 +252,7 @@ public:
 
     int unchangedIndex() const { return ratios.size(); }
 
-    double value(int index) const
-    {
-        return ratios.at(index).value;
-    }
+    double value(int index) const { return ratios.at(index).value; }
 
     int findIndex(double aspectRatio) const
     {
@@ -289,10 +270,10 @@ private:
     std::vector<AspectRatio> ratios;
 };
 
-Framing::DimensionGui::DimensionGui(Gtk::Box* parent, const char* text)
+Framing::DimensionGui::DimensionGui(Gtk::Box *parent, const char *text)
 {
     box = Gtk::manage(new Gtk::Box());
-    Gtk::Label* label = Gtk::manage(new Gtk::Label(M(text)));
+    Gtk::Label *label = Gtk::manage(new Gtk::Label(M(text)));
     setExpandAlignProperties(label, false, false, Gtk::ALIGN_START, Gtk::ALIGN_CENTER);
     value = createSpinButton();
     box->pack_start(*label);
@@ -300,18 +281,16 @@ Framing::DimensionGui::DimensionGui(Gtk::Box* parent, const char* text)
     parent->pack_start(*box);
 }
 
-void Framing::DimensionGui::connect(Framing& framing, CallbackFunc callback)
+void Framing::DimensionGui::connect(Framing &framing, CallbackFunc callback)
 {
-    connection = value->signal_value_changed().connect(sigc::mem_fun(framing, callback), true);
+    connection =
+        value->signal_value_changed().connect(sigc::mem_fun(framing, callback), true);
 }
 
 Framing::Framing() :
     FoldableToolPanel(this, TOOL_NAME, M("TP_FRAMING_LABEL"), false, true),
-    aspectRatioData(new AspectRatios),
-    imgWidth(INITIAL_IMG_WIDTH),
-    imgHeight(INITIAL_IMG_HEIGHT),
-    lastAllowUpscaling(false),
-    lastMinSizeEnabled(false)
+    aspectRatioData(new AspectRatios), imgWidth(INITIAL_IMG_WIDTH),
+    imgHeight(INITIAL_IMG_HEIGHT), lastAllowUpscaling(false), lastMinSizeEnabled(false)
 {
     setupEvents();
     setupFramingMethodGui();
@@ -321,9 +300,7 @@ Framing::Framing() :
     setupBorderColorsGui();
 }
 
-Framing::~Framing() {
-    idleRegister.destroy();
-}
+Framing::~Framing() { idleRegister.destroy(); }
 
 void Framing::setupEvents()
 {
@@ -353,7 +330,7 @@ void Framing::setupEvents()
 
 void Framing::setupFramingMethodGui()
 {
-    Gtk::Grid* combos = Gtk::manage(new Gtk::Grid());
+    Gtk::Grid *combos = Gtk::manage(new Gtk::Grid());
     combos->set_row_spacing(ROW_SPACING);
 
     framingMethod = Gtk::manage(new MyComboBoxText());
@@ -415,7 +392,7 @@ void Framing::setupFramingMethodGui()
 
 void Framing::setupBorderSizeGui()
 {
-    Gtk::Grid* combos = Gtk::manage(new Gtk::Grid());
+    Gtk::Grid *combos = Gtk::manage(new Gtk::Grid());
     combos->set_row_spacing(ROW_SPACING);
 
     borderSizeMethod = Gtk::manage(new MyComboBoxText());
@@ -443,7 +420,8 @@ void Framing::setupBorderSizeGui()
 
     pack_start(*combos);
 
-    relativeBorderSize = Gtk::manage(new Adjuster(M("TP_FRAMING_BORDER_SIZE"), 0, 1, 0.01, 0.1));
+    relativeBorderSize =
+        Gtk::manage(new Adjuster(M("TP_FRAMING_BORDER_SIZE"), 0, 1, 0.01, 0.1));
     pack_start(*relativeBorderSize);
 
     minSizeFrame = Gtk::manage(new Gtk::Frame());
@@ -474,8 +452,8 @@ void Framing::setupBorderSizeGui()
 
     borderSizeMethodChanged = borderSizeMethod->signal_changed().connect(
         sigc::mem_fun(*this, &Framing::onBorderSizeMethodChanged));
-    basisChanged = basis->signal_changed().connect(
-        sigc::mem_fun(*this, &Framing::onBasisChanged));
+    basisChanged =
+        basis->signal_changed().connect(sigc::mem_fun(*this, &Framing::onBasisChanged));
     relativeBorderSize->setAdjusterListener(this);
     minSizeEnabledConnection = minSizeEnabled->signal_toggled().connect(
         sigc::mem_fun(*this, &Framing::onMinSizeToggled));
@@ -487,21 +465,24 @@ void Framing::setupBorderSizeGui()
 
 void Framing::setupBorderColorsGui()
 {
-    Gtk::Frame* const frame = Gtk::manage(new Gtk::Frame());
+    Gtk::Frame *const frame = Gtk::manage(new Gtk::Frame());
 
-    Gtk::Label* const label = Gtk::manage(new Gtk::Label(M("TP_FRAMING_BORDER_COLOR")));
+    Gtk::Label *const label = Gtk::manage(new Gtk::Label(M("TP_FRAMING_BORDER_COLOR")));
     frame->set_label_align(FRAME_LABEL_ALIGN_X, FRAME_LABEL_ALIGN_Y);
     frame->set_label_widget(*label);
 
-    Gtk::Box* const box = Gtk::manage(new Gtk::Box(Gtk::ORIENTATION_VERTICAL));
-    redAdj = Gtk::manage(new Adjuster(M("TP_FRAMING_RED"), 0, MAX_COLOR_VAL, 1, MAX_COLOR_VAL));
+    Gtk::Box *const box = Gtk::manage(new Gtk::Box(Gtk::ORIENTATION_VERTICAL));
+    redAdj = Gtk::manage(
+        new Adjuster(M("TP_FRAMING_RED"), 0, MAX_COLOR_VAL, 1, MAX_COLOR_VAL));
     box->add(*redAdj);
-    greenAdj = Gtk::manage(new Adjuster(M("TP_FRAMING_GREEN"), 0, MAX_COLOR_VAL, 1, MAX_COLOR_VAL));
+    greenAdj = Gtk::manage(
+        new Adjuster(M("TP_FRAMING_GREEN"), 0, MAX_COLOR_VAL, 1, MAX_COLOR_VAL));
     box->add(*greenAdj);
-    blueAdj = Gtk::manage(new Adjuster(M("TP_FRAMING_BLUE"), 0, MAX_COLOR_VAL, 1, MAX_COLOR_VAL));
+    blueAdj = Gtk::manage(
+        new Adjuster(M("TP_FRAMING_BLUE"), 0, MAX_COLOR_VAL, 1, MAX_COLOR_VAL));
     box->add(*blueAdj);
 
-    Gtk::Frame* const colorFrame = Gtk::manage(new Gtk::Frame());
+    Gtk::Frame *const colorFrame = Gtk::manage(new Gtk::Frame());
     colorPreview = Gtk::manage(new ColorPreview());
     colorFrame->add(*colorPreview);
     box->add(*colorFrame);
@@ -516,25 +497,21 @@ void Framing::setupBorderColorsGui()
     blueAdj->setAdjusterListener(this);
 }
 
-void Framing::read(const rtengine::procparams::ProcParams* pp, const ParamsEdited* pedited)
+void Framing::read(
+    const rtengine::procparams::ProcParams *pp, const ParamsEdited *pedited)
 {
     DisableListener disableListener(this);
 
     std::array<ConnectionBlocker, 13> blockers = {
-        ConnectionBlocker(framingMethodChanged),
-        ConnectionBlocker(aspectRatioChanged),
-        ConnectionBlocker(orientationChanged),
-        ConnectionBlocker(width.connection),
+        ConnectionBlocker(framingMethodChanged), ConnectionBlocker(aspectRatioChanged),
+        ConnectionBlocker(orientationChanged), ConnectionBlocker(width.connection),
         ConnectionBlocker(height.connection),
         ConnectionBlocker(allowUpscalingConnection),
-        ConnectionBlocker(borderSizeMethodChanged),
-        ConnectionBlocker(basisChanged),
+        ConnectionBlocker(borderSizeMethodChanged), ConnectionBlocker(basisChanged),
         ConnectionBlocker(minSizeEnabledConnection),
-        ConnectionBlocker(minWidth.connection),
-        ConnectionBlocker(minHeight.connection),
+        ConnectionBlocker(minWidth.connection), ConnectionBlocker(minHeight.connection),
         ConnectionBlocker(absWidth.connection),
-        ConnectionBlocker(absHeight.connection)
-    };
+        ConnectionBlocker(absHeight.connection)};
 
     BlockAdjusterEvents blockRelative(relativeBorderSize);
     BlockAdjusterEvents blockRed(redAdj);
@@ -550,9 +527,9 @@ void Framing::read(const rtengine::procparams::ProcParams* pp, const ParamsEdite
     setDimensions();
 }
 
-void Framing::readParams(const rtengine::procparams::ProcParams* pp)
+void Framing::readParams(const rtengine::procparams::ProcParams *pp)
 {
-    const rtengine::procparams::FramingParams& params = pp->framing;
+    const rtengine::procparams::FramingParams &params = pp->framing;
 
     setEnabled(params.enabled);
 
@@ -585,11 +562,11 @@ void Framing::readParams(const rtengine::procparams::ProcParams* pp)
     blueAdj->setValue(params.borderBlue);
 }
 
-void Framing::readEdited(const ParamsEdited* pedited)
+void Framing::readEdited(const ParamsEdited *pedited)
 {
     if (!pedited) return;
 
-    const FramingParamsEdited& edits = pedited->framing;
+    const FramingParamsEdited &edits = pedited->framing;
 
     set_inconsistent(multiImage && !edits.enabled);
 
@@ -624,15 +601,15 @@ void Framing::readEdited(const ParamsEdited* pedited)
     blueAdj->setEditedState(edits.borderBlue ? Edited : UnEdited);
 }
 
-void Framing::write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedited)
+void Framing::write(rtengine::procparams::ProcParams *pp, ParamsEdited *pedited)
 {
     writeParams(pp);
     writeEdited(pedited);
 }
 
-void Framing::writeParams(rtengine::procparams::ProcParams* pp)
+void Framing::writeParams(rtengine::procparams::ProcParams *pp)
 {
-    rtengine::procparams::FramingParams& params = pp->framing;
+    rtengine::procparams::FramingParams &params = pp->framing;
 
     params.enabled = getEnabled();
 
@@ -643,7 +620,8 @@ void Framing::writeParams(rtengine::procparams::ProcParams* pp)
     params.framedHeight = height.value->get_value_as_int();
     params.allowUpscaling = allowUpscaling->get_active();
 
-    params.borderSizingMethod = mapBorderSizeMethod(borderSizeMethod->get_active_row_number());
+    params.borderSizingMethod =
+        mapBorderSizeMethod(borderSizeMethod->get_active_row_number());
     params.basis = mapBasis(basis->get_active_row_number());
     params.relativeBorderSize = relativeBorderSize->getValue();
     params.minSizeEnabled = minSizeEnabled->get_active();
@@ -657,22 +635,26 @@ void Framing::writeParams(rtengine::procparams::ProcParams* pp)
     params.borderBlue = blueAdj->getValue();
 }
 
-void Framing::writeEdited(ParamsEdited* pedited)
+void Framing::writeEdited(ParamsEdited *pedited)
 {
     if (!pedited) return;
 
-    FramingParamsEdited& edits = pedited->framing;
+    FramingParamsEdited &edits = pedited->framing;
 
     edits.enabled = !get_inconsistent();
 
-    edits.framingMethod = framingMethod->get_active_row_number() != INDEX_FRAMING_METHOD_UNCHANGED;
-    edits.aspectRatio = aspectRatio->get_active_row_number() != aspectRatioData->unchangedIndex();
-    edits.orientation = orientation->get_active_row_number() != INDEX_ORIENTATION_UNCHANGED;
+    edits.framingMethod =
+        framingMethod->get_active_row_number() != INDEX_FRAMING_METHOD_UNCHANGED;
+    edits.aspectRatio =
+        aspectRatio->get_active_row_number() != aspectRatioData->unchangedIndex();
+    edits.orientation =
+        orientation->get_active_row_number() != INDEX_ORIENTATION_UNCHANGED;
     edits.framedWidth = width.isDirty;
     edits.framedHeight = height.isDirty;
     edits.allowUpscaling = !allowUpscaling->get_inconsistent();
 
-    edits.borderSizingMethod = borderSizeMethod->get_active_row_number() != INDEX_SIZE_UNCHANGED;
+    edits.borderSizingMethod =
+        borderSizeMethod->get_active_row_number() != INDEX_SIZE_UNCHANGED;
     edits.basis = basis->get_active_row_number() != INDEX_BASIS_UNCHANGED;
     edits.relativeBorderSize = relativeBorderSize->getEditedState();
     edits.minSizeEnabled = !minSizeEnabled->get_inconsistent();
@@ -686,9 +668,10 @@ void Framing::writeEdited(ParamsEdited* pedited)
     edits.borderBlue = blueAdj->getEditedState();
 }
 
-void Framing::setDefaults(const rtengine::procparams::ProcParams* defParams, const ParamsEdited* pedited)
+void Framing::setDefaults(
+    const rtengine::procparams::ProcParams *defParams, const ParamsEdited *pedited)
 {
-    const FramingParams& params = defParams->framing;
+    const FramingParams &params = defParams->framing;
 
     relativeBorderSize->setDefault(params.relativeBorderSize);
     redAdj->setDefault(params.borderRed);
@@ -696,9 +679,10 @@ void Framing::setDefaults(const rtengine::procparams::ProcParams* defParams, con
     blueAdj->setDefault(params.borderBlue);
 
     if (pedited) {
-        const FramingParamsEdited& edits = pedited->framing;
+        const FramingParamsEdited &edits = pedited->framing;
 
-        relativeBorderSize->setDefaultEditedState(edits.relativeBorderSize ? Edited : UnEdited);
+        relativeBorderSize->setDefaultEditedState(
+            edits.relativeBorderSize ? Edited : UnEdited);
         redAdj->setDefaultEditedState(edits.borderRed ? Edited : UnEdited);
         greenAdj->setDefaultEditedState(edits.borderGreen ? Edited : UnEdited);
         blueAdj->setDefaultEditedState(edits.borderBlue ? Edited : UnEdited);
@@ -710,7 +694,7 @@ void Framing::setDefaults(const rtengine::procparams::ProcParams* defParams, con
     }
 }
 
-void Framing::trimValues(rtengine::procparams::ProcParams* pp)
+void Framing::trimValues(rtengine::procparams::ProcParams *pp)
 {
     relativeBorderSize->trimValue(pp->framing.relativeBorderSize);
     redAdj->trimValue(pp->framing.borderRed);
@@ -755,8 +739,8 @@ void Framing::update(int originalWidth, int originalHeight)
     }
 }
 
-void Framing::setAdjusterBehavior(bool addRelativeBorderSize, bool addRed, bool addGreen,
-                                  bool addBlue)
+void Framing::setAdjusterBehavior(
+    bool addRelativeBorderSize, bool addRed, bool addGreen, bool addBlue)
 {
     relativeBorderSize->setAddMode(addRelativeBorderSize);
     redAdj->setAddMode(addRed);
@@ -768,13 +752,11 @@ void Framing::setDimensions()
 {
     idleRegister.add([this]() -> bool {
         std::array<ConnectionBlocker, 6> blockers = {
-            ConnectionBlocker(width.connection),
-            ConnectionBlocker(height.connection),
+            ConnectionBlocker(width.connection), ConnectionBlocker(height.connection),
             ConnectionBlocker(minWidth.connection),
             ConnectionBlocker(minHeight.connection),
             ConnectionBlocker(absWidth.connection),
-            ConnectionBlocker(absHeight.connection)
-        };
+            ConnectionBlocker(absHeight.connection)};
 
         // 16x the full image size is probably a reasonable max
         width.value->set_range(Resize::MIN_SIZE, Resize::MAX_SCALE * imgWidth);
@@ -896,7 +878,7 @@ void Framing::updateBorderColorGui()
     colorPreview->setRgb(r, g, b);
 }
 
-void Framing::adjusterChanged(Adjuster* adj, double newVal)
+void Framing::adjusterChanged(Adjuster *adj, double newVal)
 {
     if (adj == redAdj || adj == greenAdj || adj == blueAdj) {
         updateBorderColorGui();
@@ -905,8 +887,8 @@ void Framing::adjusterChanged(Adjuster* adj, double newVal)
     if (listener && (getEnabled() || batchMode)) {
         Glib::ustring costr;
         if (adj == relativeBorderSize) {
-            costr = Glib::ustring::format(std::setw(3), std::fixed, std::setprecision(2),
-                                          adj->getValue());
+            costr = Glib::ustring::format(
+                std::setw(3), std::fixed, std::setprecision(2), adj->getValue());
         } else {
             costr = Glib::ustring::format(static_cast<int>(adj->getValue()));
         }
@@ -952,7 +934,7 @@ void Framing::onWidthChanged()
 
     if (listener && (getEnabled() || batchMode)) {
         listener->panelChanged(EvFramingFramedWidth,
-                               Glib::ustring::format(width.value->get_value_as_int()));
+            Glib::ustring::format(width.value->get_value_as_int()));
     }
 }
 
@@ -962,7 +944,7 @@ void Framing::onHeightChanged()
 
     if (listener && (getEnabled() || batchMode)) {
         listener->panelChanged(EvFramingFramedHeight,
-                               Glib::ustring::format(height.value->get_value_as_int()));
+            Glib::ustring::format(height.value->get_value_as_int()));
     }
 }
 
@@ -1002,7 +984,8 @@ void Framing::onBorderSizeMethodChanged()
     updateBorderSizeGui();
 
     if (listener && (getEnabled() || batchMode)) {
-        listener->panelChanged(EvFramingBorderSizingMethod, borderSizeMethod->get_active_text());
+        listener->panelChanged(
+            EvFramingBorderSizingMethod, borderSizeMethod->get_active_text());
     }
 }
 
@@ -1078,7 +1061,7 @@ void Framing::onAbsWidthChanged()
 
     if (listener && (getEnabled() || batchMode)) {
         listener->panelChanged(EvFramingAbsWidth,
-                               Glib::ustring::format(absWidth.value->get_value_as_int()));
+            Glib::ustring::format(absWidth.value->get_value_as_int()));
     }
 }
 
@@ -1088,6 +1071,6 @@ void Framing::onAbsHeightChanged()
 
     if (listener && (getEnabled() || batchMode)) {
         listener->panelChanged(EvFramingAbsHeight,
-                               Glib::ustring::format(absHeight.value->get_value_as_int()));
+            Glib::ustring::format(absHeight.value->get_value_as_int()));
     }
 }

@@ -33,41 +33,45 @@ class ProcParams;
 
 }
 
-}
+} // namespace rtengine
 class BQEntryUpdateListener
 {
 
 public:
     virtual ~BQEntryUpdateListener() = default;
-    virtual void updateImage(guint8* img, int w, int h, int origw, int origh, guint8* newOPreview) = 0;
+    virtual void updateImage(
+        guint8 *img, int w, int h, int origw, int origh, guint8 *newOPreview) = 0;
 };
 
 class BatchQueueEntryUpdater
 {
 
     struct Job {
-        guint8* oimg;
+        guint8 *oimg;
         int ow, oh, newh;
-        BQEntryUpdateListener* listener;
-        rtengine::procparams::ProcParams* pparams;
-        Thumbnail* thumbnail;
+        BQEntryUpdateListener *listener;
+        rtengine::procparams::ProcParams *pparams;
+        Thumbnail *thumbnail;
     };
 
 protected:
     bool tostop;
     bool stopped;
     std::list<Job> jqueue;
-    Glib::Thread* thread;
-    MyMutex* qMutex;
+    Glib::Thread *thread;
+    MyMutex *qMutex;
 
 public:
-    BatchQueueEntryUpdater ();
+    BatchQueueEntryUpdater();
 
-    void process    (guint8* oimg, int ow, int oh, int newh, BQEntryUpdateListener* listener, rtengine::procparams::ProcParams* pparams = nullptr, Thumbnail* thumbnail = nullptr);
-    void removeJobs (BQEntryUpdateListener* listener);
-    void terminate  ();
+    void process(guint8 *oimg, int ow, int oh, int newh,
+        BQEntryUpdateListener *listener,
+        rtengine::procparams::ProcParams *pparams = nullptr,
+        Thumbnail *thumbnail = nullptr);
+    void removeJobs(BQEntryUpdateListener *listener);
+    void terminate();
 
-    void processThread ();
+    void processThread();
 };
 
 extern BatchQueueEntryUpdater batchQueueEntryUpdater;

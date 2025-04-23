@@ -37,21 +37,18 @@ namespace
  * Observer to use for displaying the temperature and tint equivalent of the
  * multipliers.
  */
-constexpr rtengine::StandardObserver standard_observer = rtengine::ColorTemp::DEFAULT_OBSERVER;
+constexpr rtengine::StandardObserver standard_observer =
+    rtengine::ColorTemp::DEFAULT_OBSERVER;
 
-double toAdjuster(double v)
-{
-    return CLAMP(std::log2(v), 6, 16) - 6;
-}
+double toAdjuster(double v) { return CLAMP(std::log2(v), 6, 16) - 6; }
 
-double fromAdjuster(double v)
-{
-    return std::pow(2, v + 6);
-}
+double fromAdjuster(double v) { return std::pow(2, v + 6); }
 
-Adjuster* createExponentAdjuster(AdjusterListener* listener, const Glib::ustring& label, double minV, double maxV, double step, double defaultVal)
+Adjuster *createExponentAdjuster(AdjusterListener *listener, const Glib::ustring &label,
+    double minV, double maxV, double step, double defaultVal)
 {
-    Adjuster* const adj = Gtk::manage(new Adjuster(label, minV, maxV, step, defaultVal));
+    Adjuster *const adj =
+        Gtk::manage(new Adjuster(label, minV, maxV, step, defaultVal));
     adj->setAdjusterListener(listener);
     adj->setLogScale(6, 1, true);
 
@@ -61,12 +58,14 @@ Adjuster* createExponentAdjuster(AdjusterListener* listener, const Glib::ustring
     return adj;
 }
 
-Adjuster* createLevelAdjuster(AdjusterListener* listener, const Glib::ustring& label)
+Adjuster *createLevelAdjuster(AdjusterListener *listener, const Glib::ustring &label)
 {
-//    Adjuster* const adj = Gtk::manage(new Adjuster(label, 1.0, 65535.0, 1.0, rtengine::MAXVALF / 24.));
-    Adjuster* const adj = Gtk::manage(new Adjuster(label, 0.0, 10.0, 0.01, toAdjuster(rtengine::MAXVALF / 24.)));
+    //    Adjuster* const adj = Gtk::manage(new Adjuster(label, 1.0, 65535.0, 1.0,
+    //    rtengine::MAXVALF / 24.));
+    Adjuster *const adj = Gtk::manage(
+        new Adjuster(label, 0.0, 10.0, 0.01, toAdjuster(rtengine::MAXVALF / 24.)));
     adj->setAdjusterListener(listener);
-//    adj->setLogScale(6, 1000.0, true);
+    //    adj->setLogScale(6, 1000.0, true);
 
     adj->setDelay(std::max(options.adjusterMinDelay, options.adjusterMaxDelay));
 
@@ -74,11 +73,12 @@ Adjuster* createLevelAdjuster(AdjusterListener* listener, const Glib::ustring& l
     return adj;
 }
 
-Adjuster* createBalanceAdjuster(AdjusterListener* listener, const Glib::ustring& label, double minV, double maxV, double defaultVal,
-                                const Glib::ustring& leftIcon, const Glib::ustring& rightIcon)
+Adjuster *createBalanceAdjuster(AdjusterListener *listener, const Glib::ustring &label,
+    double minV, double maxV, double defaultVal, const Glib::ustring &leftIcon,
+    const Glib::ustring &rightIcon)
 {
-    Adjuster* const adj = Gtk::manage(new Adjuster(label, minV, maxV, 0.01, defaultVal,
-                                      Gtk::manage(new RTImage(leftIcon)), Gtk::manage(new RTImage(rightIcon))));
+    Adjuster *const adj = Gtk::manage(new Adjuster(label, minV, maxV, 0.01, defaultVal,
+        Gtk::manage(new RTImage(leftIcon)), Gtk::manage(new RTImage(rightIcon))));
     adj->setAdjusterListener(listener);
     adj->setLogScale(9, 0, true);
 
@@ -88,8 +88,7 @@ Adjuster* createBalanceAdjuster(AdjusterListener* listener, const Glib::ustring&
     return adj;
 }
 
-
-Glib::ustring fmt(const RGB& rgb)
+Glib::ustring fmt(const RGB &rgb)
 {
     if (rgb.r <= 0.f && rgb.g <= 0.f && rgb.b <= 0.f) {
         return "- - -";
@@ -100,8 +99,8 @@ Glib::ustring fmt(const RGB& rgb)
     }
 }
 
-
-RGB getFilmNegativeExponents(const RGB &ref1, const RGB &ref2) // , const RGB &clearValsOut, const RGB &denseValsOut)
+RGB getFilmNegativeExponents(const RGB &ref1,
+    const RGB &ref2) // , const RGB &clearValsOut, const RGB &denseValsOut)
 {
     using rtengine::settings;
 
@@ -111,25 +110,28 @@ RGB getFilmNegativeExponents(const RGB &ref1, const RGB &ref2) // , const RGB &c
     // Detect which one is the dense spot, based on green channel
     if (clearVals.g < denseVals.g) {
         std::swap(clearVals, denseVals);
-        //std::swap(clearValsOut, denseValsOut);
+        // std::swap(clearValsOut, denseValsOut);
     }
 
     if (settings->verbose) {
-        printf("Clear input values: R=%g G=%g B=%g\n", static_cast<double>(clearVals.r), static_cast<double>(clearVals.g), static_cast<double>(clearVals.b));
-        printf("Dense input values: R=%g G=%g B=%g\n", static_cast<double>(denseVals.r), static_cast<double>(denseVals.g), static_cast<double>(denseVals.b));
+        printf("Clear input values: R=%g G=%g B=%g\n", static_cast<double>(clearVals.r),
+            static_cast<double>(clearVals.g), static_cast<double>(clearVals.b));
+        printf("Dense input values: R=%g G=%g B=%g\n", static_cast<double>(denseVals.r),
+            static_cast<double>(denseVals.g), static_cast<double>(denseVals.b));
 
-        // printf("Clear output values: R=%g G=%g B=%g\n", static_cast<double>(clearValsOut.r), static_cast<double>(clearValsOut.g), static_cast<double>(clearValsOut.b));
-        // printf("Dense output values: R=%g G=%g B=%g\n", static_cast<double>(denseValsOut.r), static_cast<double>(denseValsOut.g), static_cast<double>(denseValsOut.b));
+        // printf("Clear output values: R=%g G=%g B=%g\n",
+        // static_cast<double>(clearValsOut.r), static_cast<double>(clearValsOut.g),
+        // static_cast<double>(clearValsOut.b)); printf("Dense output values: R=%g G=%g
+        // B=%g\n", static_cast<double>(denseValsOut.r),
+        // static_cast<double>(denseValsOut.g), static_cast<double>(denseValsOut.b));
     }
 
     const float denseGreenRatio = clearVals.g / denseVals.g;
 
     // Calculate logarithms in arbitrary base
-    const auto logBase =
-        [](float base, float num) -> float
-        {
-            return std::log(num) / std::log(base);
-        };
+    const auto logBase = [](float base, float num) -> float {
+        return std::log(num) / std::log(base);
+    };
 
     // const auto ratio =
     //     [](float a, float b) -> float
@@ -139,13 +141,13 @@ RGB getFilmNegativeExponents(const RGB &ref1, const RGB &ref2) // , const RGB &c
 
     RGB newExps;
     newExps.r = logBase(clearVals.r / denseVals.r, denseGreenRatio);
-    newExps.g = 1.f; // logBase(ratio(clearVals.g, denseVals.g), ratio(denseValsOut.g, clearValsOut.g) );
+    newExps.g = 1.f; // logBase(ratio(clearVals.g, denseVals.g), ratio(denseValsOut.g,
+                     // clearValsOut.g) );
     newExps.b = logBase(clearVals.b / denseVals.b, denseGreenRatio);
 
-
-
     if (settings->verbose) {
-        printf("New exponents:  R=%g G=%g B=%g\n", static_cast<double>(newExps.r), static_cast<double>(newExps.g), static_cast<double>(newExps.b));
+        printf("New exponents:  R=%g G=%g B=%g\n", static_cast<double>(newExps.r),
+            static_cast<double>(newExps.g), static_cast<double>(newExps.b));
     }
 
     // // Re-adjust color balance based on dense spot values and new exponents
@@ -155,12 +157,12 @@ RGB getFilmNegativeExponents(const RGB &ref1, const RGB &ref2) // , const RGB &c
     //     rBal, bBal);
 
     return newExps;
-
 }
 
 void temp2rgb(double outLev, double temp, double green, RGB &refOut)
 {
-    rtengine::ColorTemp ct = rtengine::ColorTemp(temp, green, 1., "Custom", standard_observer);
+    rtengine::ColorTemp ct =
+        rtengine::ColorTemp(temp, green, 1., "Custom", standard_observer);
 
     double rm, gm, bm;
     ct.getMultipliers(rm, gm, bm);
@@ -172,70 +174,77 @@ void temp2rgb(double outLev, double temp, double green, RGB &refOut)
     refOut.b = (bm / maxGain) * outLev;
 }
 
-
 void rgb2temp(const RGB &refOut, double &outLev, double &temp, double &green)
 {
     double maxVal = rtengine::max(refOut.r, refOut.g, refOut.b);
 
     rtengine::ColorTemp ct = rtengine::ColorTemp(
-                                 refOut.r / maxVal,
-                                 refOut.g / maxVal,
-                                 refOut.b / maxVal,
-                                 1.,
-                                 standard_observer);
+        refOut.r / maxVal, refOut.g / maxVal, refOut.b / maxVal, 1., standard_observer);
 
     outLev = maxVal;
     temp = ct.getTemp();
     green = ct.getGreen();
 }
 
-
-}
+} // namespace
 
 FilmNegative::FilmNegative() :
     FoldableToolPanel(this, TOOL_NAME, M("TP_FILMNEGATIVE_LABEL"), false, true),
-    EditSubscriber(ET_OBJECTS),
-    NEUTRAL_TEMP(rtengine::ColorTemp(1., 1., 1., 1., rtengine::ColorTemp::DEFAULT_OBSERVER)),
-    evFilmNegativeExponents(ProcEventMapper::getInstance()->newEvent(ALLNORAW, "HISTORY_MSG_FILMNEGATIVE_VALUES")),
-    evFilmNegativeEnabled(ProcEventMapper::getInstance()->newEvent(ALLNORAW, "HISTORY_MSG_FILMNEGATIVE_ENABLED")),
-    evFilmNegativeRefSpot(ProcEventMapper::getInstance()->newEvent(ALLNORAW, "HISTORY_MSG_FILMNEGATIVE_REF_SPOT")),
-    evFilmNegativeBalance(ProcEventMapper::getInstance()->newEvent(ALLNORAW, "HISTORY_MSG_FILMNEGATIVE_BALANCE")),
-    evFilmNegativeColorSpace(ProcEventMapper::getInstance()->newEvent(ALLNORAW, "HISTORY_MSG_FILMNEGATIVE_COLORSPACE")),
-    refInputValues({0.f, 0.f, 0.f}),
-    paramsUpgraded(false),
-    refLuminance({{0.f, 0.f, 0.f}, 0.f}),
-    fnp(nullptr),
+    EditSubscriber(ET_OBJECTS), NEUTRAL_TEMP(rtengine::ColorTemp(1., 1., 1., 1.,
+                                    rtengine::ColorTemp::DEFAULT_OBSERVER)),
+    evFilmNegativeExponents(ProcEventMapper::getInstance()->newEvent(
+        ALLNORAW, "HISTORY_MSG_FILMNEGATIVE_VALUES")),
+    evFilmNegativeEnabled(ProcEventMapper::getInstance()->newEvent(
+        ALLNORAW, "HISTORY_MSG_FILMNEGATIVE_ENABLED")),
+    evFilmNegativeRefSpot(ProcEventMapper::getInstance()->newEvent(
+        ALLNORAW, "HISTORY_MSG_FILMNEGATIVE_REF_SPOT")),
+    evFilmNegativeBalance(ProcEventMapper::getInstance()->newEvent(
+        ALLNORAW, "HISTORY_MSG_FILMNEGATIVE_BALANCE")),
+    evFilmNegativeColorSpace(ProcEventMapper::getInstance()->newEvent(
+        ALLNORAW, "HISTORY_MSG_FILMNEGATIVE_COLORSPACE")),
+    refInputValues({0.f, 0.f, 0.f}), paramsUpgraded(false),
+    refLuminance({{0.f, 0.f, 0.f}, 0.f}), fnp(nullptr),
     colorSpace(Gtk::manage(new MyComboBoxText())),
-    greenExp(createExponentAdjuster(this, M("TP_FILMNEGATIVE_GREEN"), 0.3, 4, 0.01, 1.5)),  // master exponent (green channel)
-    redRatio(createExponentAdjuster(this, M("TP_FILMNEGATIVE_RED"), 0.3, 5, 0.01, (2.04 / 1.5))), // ratio of red exponent to master exponent
-    blueRatio(createExponentAdjuster(this, M("TP_FILMNEGATIVE_BLUE"), 0.3, 5, 0.01, (1.29 / 1.5))), // ratio of blue exponent to master exponent
-    picker(DEFAULT_SPOT_WIDTH, M("TP_FILMNEGATIVE_PICK"), M("TP_FILMNEGATIVE_GUESS_TOOLTIP"), M("TP_FILMNEGATIVE_PICK_SIZE")),
-    refInputLabel(Gtk::manage(new Gtk::Label(Glib::ustring::compose(M("TP_FILMNEGATIVE_REF_LABEL"), "- - -")))),
-    refPicker(DEFAULT_SPOT_WIDTH, M("TP_FILMNEGATIVE_REF_PICK"), M("TP_FILMNEGATIVE_REF_TOOLTIP"), M("TP_FILMNEGATIVE_REF_SIZE")),
+    greenExp(createExponentAdjuster(this, M("TP_FILMNEGATIVE_GREEN"), 0.3, 4, 0.01,
+        1.5)), // master exponent (green channel)
+    redRatio(createExponentAdjuster(this, M("TP_FILMNEGATIVE_RED"), 0.3, 5, 0.01,
+        (2.04 / 1.5))), // ratio of red exponent to master exponent
+    blueRatio(createExponentAdjuster(this, M("TP_FILMNEGATIVE_BLUE"), 0.3, 5, 0.01,
+        (1.29 / 1.5))), // ratio of blue exponent to master exponent
+    picker(DEFAULT_SPOT_WIDTH, M("TP_FILMNEGATIVE_PICK"),
+        M("TP_FILMNEGATIVE_GUESS_TOOLTIP"), M("TP_FILMNEGATIVE_PICK_SIZE")),
+    refInputLabel(Gtk::manage(new Gtk::Label(
+        Glib::ustring::compose(M("TP_FILMNEGATIVE_REF_LABEL"), "- - -")))),
+    refPicker(DEFAULT_SPOT_WIDTH, M("TP_FILMNEGATIVE_REF_PICK"),
+        M("TP_FILMNEGATIVE_REF_TOOLTIP"), M("TP_FILMNEGATIVE_REF_SIZE")),
     activePicker(&picker),
-    outputLevel(createLevelAdjuster(this, M("TP_FILMNEGATIVE_OUT_LEVEL"))),  // ref level
-    greenBalance(createBalanceAdjuster(this, M("TP_FILMNEGATIVE_GREENBALANCE"), -3.0, 3.0, 0.0, "circle-magenta-small", "circle-green-small")),  // green balance
-    blueBalance(createBalanceAdjuster(this, M("TP_FILMNEGATIVE_BLUEBALANCE"), -3.0, 3.0, 0.0, "circle-blue-small", "circle-yellow-small"))  // blue balance
+    outputLevel(createLevelAdjuster(this, M("TP_FILMNEGATIVE_OUT_LEVEL"))), // ref level
+    greenBalance(createBalanceAdjuster(this, M("TP_FILMNEGATIVE_GREENBALANCE"), -3.0,
+        3.0, 0.0, "circle-magenta-small", "circle-green-small")), // green balance
+    blueBalance(createBalanceAdjuster(this, M("TP_FILMNEGATIVE_BLUEBALANCE"), -3.0, 3.0,
+        0.0, "circle-blue-small", "circle-yellow-small")) // blue balance
 {
-    setExpandAlignProperties(refInputLabel, false, false, Gtk::ALIGN_START, Gtk::ALIGN_CENTER);
-//    refInputLabel->set_justify(Gtk::Justification::JUSTIFY_CENTER);
-//    refInputLabel->set_line_wrap(true);
-
+    setExpandAlignProperties(
+        refInputLabel, false, false, Gtk::ALIGN_START, Gtk::ALIGN_CENTER);
+    //    refInputLabel->set_justify(Gtk::Justification::JUSTIFY_CENTER);
+    //    refInputLabel->set_line_wrap(true);
 
     colorSpace->append(M("TP_FILMNEGATIVE_COLORSPACE_INPUT"));
     colorSpace->append(M("TP_FILMNEGATIVE_COLORSPACE_WORKING"));
-    setExpandAlignProperties(colorSpace, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_CENTER);
+    setExpandAlignProperties(
+        colorSpace, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_CENTER);
     colorSpace->set_tooltip_markup(M("TP_FILMNEGATIVE_COLORSPACE_TOOLTIP"));
 
-    Gtk::Grid* csGrid = Gtk::manage(new Gtk::Grid());
-    Gtk::Label* csLabel = Gtk::manage(new Gtk::Label(M("TP_FILMNEGATIVE_COLORSPACE")));
+    Gtk::Grid *csGrid = Gtk::manage(new Gtk::Grid());
+    Gtk::Label *csLabel = Gtk::manage(new Gtk::Label(M("TP_FILMNEGATIVE_COLORSPACE")));
     csGrid->attach(*csLabel, 0, 0, 1, 1);
     csGrid->attach(*colorSpace, 1, 0, 1, 1);
 
     pack_start(*csGrid);
 
     colorSpace->set_active((int)ColorSpace::WORKING);
-    colorSpace->signal_changed().connect(sigc::mem_fun(*this, &FilmNegative::colorSpaceChanged));
+    colorSpace->signal_changed().connect(
+        sigc::mem_fun(*this, &FilmNegative::colorSpaceChanged));
     colorSpace->show();
 
     pack_start(*greenExp, Gtk::PACK_SHRINK, 0);
@@ -243,14 +252,15 @@ FilmNegative::FilmNegative() :
     pack_start(*blueRatio, Gtk::PACK_SHRINK, 0);
     pack_start(picker, Gtk::PACK_SHRINK, 0);
 
-    Gtk::Separator* const sep = Gtk::manage(new Gtk::Separator(Gtk::ORIENTATION_HORIZONTAL));
+    Gtk::Separator *const sep =
+        Gtk::manage(new Gtk::Separator(Gtk::ORIENTATION_HORIZONTAL));
     sep->get_style_context()->add_class("grid-row-separator");
     pack_start(*sep, Gtk::PACK_SHRINK, 0);
 
-//    Gtk::Grid* const fbGrid = Gtk::manage(new Gtk::Grid());
-//    fbGrid->attach(*refInputLabel, 0, 0, 1, 1);
-//    fbGrid->attach(*filmBaseValuesLabel, 1, 0, 1, 1);
-//    pack_start(*fbGrid, Gtk::PACK_SHRINK, 0);
+    //    Gtk::Grid* const fbGrid = Gtk::manage(new Gtk::Grid());
+    //    fbGrid->attach(*refInputLabel, 0, 0, 1, 1);
+    //    fbGrid->attach(*filmBaseValuesLabel, 1, 0, 1, 1);
+    //    pack_start(*fbGrid, Gtk::PACK_SHRINK, 0);
     pack_start(*refInputLabel, Gtk::PACK_SHRINK, 0);
 
     pack_start(*outputLevel, Gtk::PACK_SHRINK, 0);
@@ -263,15 +273,16 @@ FilmNegative::FilmNegative() :
     refPicker.add_button_toggled_event(*this, &FilmNegative::refSpotToggled);
 
     // Editing geometry; create the spot rectangle
-    // TODO: Change behaviour to match that of the white balance spot picker (rectangle disappears behind right toolbar)
-    EditRectangle* const spotRect = new EditRectangle();
+    // TODO: Change behaviour to match that of the white balance spot picker (rectangle
+    // disappears behind right toolbar)
+    EditRectangle *const spotRect = new EditRectangle();
     spotRect->filled = false;
 
     visibleGeometry.push_back(spotRect);
 
     // Stick a dummy rectangle over the whole image in mouseOverGeometry.
     // This is to make sure the getCursor() call is fired everywhere.
-    EditRectangle* const imgRect = new EditRectangle();
+    EditRectangle *const imgRect = new EditRectangle();
     imgRect->filled = true;
 
     mouseOverGeometry.push_back(imgRect);
@@ -290,13 +301,11 @@ FilmNegative::~FilmNegative()
     }
 }
 
-
 void FilmNegative::readOutputSliders(RGB &refOut)
 {
     temp2rgb(fromAdjuster(outputLevel->getValue()),
-             NEUTRAL_TEMP.getTemp() / std::pow(2., blueBalance->getValue()),
-             NEUTRAL_TEMP.getGreen() / std::pow(2., greenBalance->getValue()),
-             refOut);
+        NEUTRAL_TEMP.getTemp() / std::pow(2., blueBalance->getValue()),
+        NEUTRAL_TEMP.getGreen() / std::pow(2., greenBalance->getValue()), refOut);
 }
 
 void FilmNegative::writeOutputSliders(const RGB &refOut)
@@ -309,8 +318,8 @@ void FilmNegative::writeOutputSliders(const RGB &refOut)
     greenBalance->setValue(std::log2(NEUTRAL_TEMP.getGreen() / green));
 }
 
-
-void FilmNegative::read(const rtengine::procparams::ProcParams* pp, const ParamsEdited* pedited)
+void FilmNegative::read(
+    const rtengine::procparams::ProcParams *pp, const ParamsEdited *pedited)
 {
     disableListener();
 
@@ -318,9 +327,12 @@ void FilmNegative::read(const rtengine::procparams::ProcParams* pp, const Params
         redRatio->setEditedState(pedited->filmNegative.redRatio ? Edited : UnEdited);
         greenExp->setEditedState(pedited->filmNegative.greenExp ? Edited : UnEdited);
         blueRatio->setEditedState(pedited->filmNegative.blueRatio ? Edited : UnEdited);
-        outputLevel->setEditedState(pedited->filmNegative.refOutput  ? Edited : UnEdited);
-        greenBalance->setEditedState(pedited->filmNegative.refOutput ? Edited : UnEdited);
-        blueBalance->setEditedState(pedited->filmNegative.refOutput ? Edited : UnEdited);
+        outputLevel->setEditedState(
+            pedited->filmNegative.refOutput ? Edited : UnEdited);
+        greenBalance->setEditedState(
+            pedited->filmNegative.refOutput ? Edited : UnEdited);
+        blueBalance->setEditedState(
+            pedited->filmNegative.refOutput ? Edited : UnEdited);
         set_inconsistent(multiImage && !pedited->filmNegative.enabled);
     }
 
@@ -336,8 +348,8 @@ void FilmNegative::read(const rtengine::procparams::ProcParams* pp, const Params
 
     refInputValues = pp->filmNegative.refInput;
 
-    // If reference input values are not set in params, estimated values will be passed in later
-    // (after processing) via FilmNegListener
+    // If reference input values are not set in params, estimated values will be passed
+    // in later (after processing) via FilmNegListener
     refInputLabel->set_markup(
         Glib::ustring::compose(M("TP_FILMNEGATIVE_REF_LABEL"), fmt(refInputValues)));
 
@@ -363,10 +375,12 @@ void FilmNegative::read(const rtengine::procparams::ProcParams* pp, const Params
     enableListener();
 }
 
-void FilmNegative::write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedited)
+void FilmNegative::write(rtengine::procparams::ProcParams *pp, ParamsEdited *pedited)
 {
-    if (colorSpace->get_active_row_number() != 3) {  // UNCHANGED entry, see setBatchMode
-        pp->filmNegative.colorSpace = rtengine::procparams::FilmNegativeParams::ColorSpace(colorSpace->get_active_row_number());
+    if (colorSpace->get_active_row_number() != 3) { // UNCHANGED entry, see setBatchMode
+        pp->filmNegative.colorSpace =
+            rtengine::procparams::FilmNegativeParams::ColorSpace(
+                colorSpace->get_active_row_number());
     }
 
     pp->filmNegative.redRatio = redRatio->getValue();
@@ -376,13 +390,18 @@ void FilmNegative::write(rtengine::procparams::ProcParams* pp, ParamsEdited* ped
     pp->filmNegative.enabled = getEnabled();
 
     if (pedited) {
-        pedited->filmNegative.colorSpace = colorSpace->get_active_row_number() != 3; // UNCHANGED entry, see setBatchMode
+        pedited->filmNegative.colorSpace = colorSpace->get_active_row_number() !=
+                                           3; // UNCHANGED entry, see setBatchMode
         pedited->filmNegative.redRatio = redRatio->getEditedState();
         pedited->filmNegative.greenExp = greenExp->getEditedState();
         pedited->filmNegative.blueRatio = blueRatio->getEditedState();
-        pedited->filmNegative.refOutput = outputLevel->getEditedState() ||  greenBalance->getEditedState() || blueBalance->getEditedState();
-        // In batch mode, make sure refinput is always updated together with the balance sliders
-        pedited->filmNegative.refInput = pedited->filmNegative.refOutput || (refInputValues != pp->filmNegative.refInput);
+        pedited->filmNegative.refOutput = outputLevel->getEditedState() ||
+                                          greenBalance->getEditedState() ||
+                                          blueBalance->getEditedState();
+        // In batch mode, make sure refinput is always updated together with the balance
+        // sliders
+        pedited->filmNegative.refInput = pedited->filmNegative.refOutput ||
+                                         (refInputValues != pp->filmNegative.refInput);
         pedited->filmNegative.enabled = !get_inconsistent();
     }
 
@@ -393,10 +412,10 @@ void FilmNegative::write(rtengine::procparams::ProcParams* pp, ParamsEdited* ped
     if (paramsUpgraded) {
         pp->filmNegative.backCompat = BackCompat::CURRENT;
     }
-
 }
 
-void FilmNegative::setDefaults(const rtengine::procparams::ProcParams* defParams, const ParamsEdited* pedited)
+void FilmNegative::setDefaults(
+    const rtengine::procparams::ProcParams *defParams, const ParamsEdited *pedited)
 {
     redRatio->setValue(defParams->filmNegative.redRatio);
     greenExp->setValue(defParams->filmNegative.greenExp);
@@ -406,13 +425,19 @@ void FilmNegative::setDefaults(const rtengine::procparams::ProcParams* defParams
     writeOutputSliders({gray, gray, gray});
 
     if (pedited) {
-        redRatio->setDefaultEditedState(pedited->filmNegative.redRatio ? Edited : UnEdited);
-        greenExp->setDefaultEditedState(pedited->filmNegative.greenExp ? Edited : UnEdited);
-        blueRatio->setDefaultEditedState(pedited->filmNegative.blueRatio ? Edited : UnEdited);
+        redRatio->setDefaultEditedState(
+            pedited->filmNegative.redRatio ? Edited : UnEdited);
+        greenExp->setDefaultEditedState(
+            pedited->filmNegative.greenExp ? Edited : UnEdited);
+        blueRatio->setDefaultEditedState(
+            pedited->filmNegative.blueRatio ? Edited : UnEdited);
 
-        outputLevel->setDefaultEditedState(pedited->filmNegative.refOutput ? Edited : UnEdited);
-        greenBalance->setDefaultEditedState(pedited->filmNegative.refOutput ? Edited : UnEdited);
-        blueBalance->setDefaultEditedState(pedited->filmNegative.refOutput ? Edited : UnEdited);
+        outputLevel->setDefaultEditedState(
+            pedited->filmNegative.refOutput ? Edited : UnEdited);
+        greenBalance->setDefaultEditedState(
+            pedited->filmNegative.refOutput ? Edited : UnEdited);
+        blueBalance->setDefaultEditedState(
+            pedited->filmNegative.refOutput ? Edited : UnEdited);
     } else {
         redRatio->setDefaultEditedState(Irrelevant);
         greenExp->setDefaultEditedState(Irrelevant);
@@ -442,33 +467,21 @@ void FilmNegative::setBatchMode(bool batchMode)
     }
 }
 
-void FilmNegative::adjusterChanged(Adjuster* a, double newval)
+void FilmNegative::adjusterChanged(Adjuster *a, double newval)
 {
     if (listener && getEnabled()) {
         if (a == redRatio || a == greenExp || a == blueRatio) {
-            listener->panelChanged(
-                evFilmNegativeExponents,
-                Glib::ustring::compose(
-                    "Ref=%1\nR=%2\nB=%3",
-                    greenExp->getValue(),
-                    redRatio->getValue(),
-                    blueRatio->getValue()
-                )
-            );
+            listener->panelChanged(evFilmNegativeExponents,
+                Glib::ustring::compose("Ref=%1\nR=%2\nB=%3", greenExp->getValue(),
+                    redRatio->getValue(), blueRatio->getValue()));
         } else if (a == outputLevel || a == greenBalance || a == blueBalance) {
 
             // Reset luminance reference when output level/color sliders are changed
             refLuminance.lum = 0.f;
 
-            listener->panelChanged(
-                evFilmNegativeBalance,
-                Glib::ustring::compose(
-                    "Lev=%1 G=%2 B=%3",
-                    outputLevel->getValue(),
-                    greenBalance->getValue(),
-                    blueBalance->getValue()
-                )
-            );
+            listener->panelChanged(evFilmNegativeBalance,
+                Glib::ustring::compose("Lev=%1 G=%2 B=%3", outputLevel->getValue(),
+                    greenBalance->getValue(), blueBalance->getValue()));
         }
     }
 }
@@ -496,35 +509,29 @@ void FilmNegative::colorSpaceChanged()
 void FilmNegative::filmRefValuesChanged(const RGB &refInput, const RGB &refOutput)
 {
 
-    idle_register.add(
-        [this, refInput, refOutput]() -> bool {
-            refInputValues = refInput;
-            paramsUpgraded = true;
+    idle_register.add([this, refInput, refOutput]() -> bool {
+        refInputValues = refInput;
+        paramsUpgraded = true;
 
-            disableListener();
+        disableListener();
 
-            refInputLabel->set_markup(
-                Glib::ustring::compose(M("TP_FILMNEGATIVE_REF_LABEL"), fmt(refInputValues)));
+        refInputLabel->set_markup(Glib::ustring::compose(
+            M("TP_FILMNEGATIVE_REF_LABEL"), fmt(refInputValues)));
 
-            writeOutputSliders(refOutput);
+        writeOutputSliders(refOutput);
 
-            outputLevel->show();
-            blueBalance->show();
-            greenBalance->show();
+        outputLevel->show();
+        blueBalance->show();
+        greenBalance->show();
 
-            enableListener();
-            return false;
-        }
-    );
-
+        enableListener();
+        return false;
+    });
 }
 
-void FilmNegative::setFilmNegProvider(FilmNegProvider* provider)
-{
-    fnp = provider;
-}
+void FilmNegative::setFilmNegProvider(FilmNegProvider *provider) { fnp = provider; }
 
-void FilmNegative::setEditProvider(EditDataProvider* provider)
+void FilmNegative::setEditProvider(EditDataProvider *provider)
 {
     EditSubscriber::setEditProvider(provider);
 }
@@ -536,16 +543,18 @@ CursorShape FilmNegative::getCursor(int objectID, int xPos, int yPos) const
 
 bool FilmNegative::mouseOver(int modifierKey)
 {
-    EditDataProvider* const provider = getEditProvider();
-    EditRectangle* const spotRect = static_cast<EditRectangle*>(visibleGeometry.at(0));
-    spotRect->setXYWH(provider->posImage.x - activePicker->get_spot_half_width(), provider->posImage.y - activePicker->get_spot_half_width() ,activePicker->get_spot_full_width(), activePicker->get_spot_full_width());
+    EditDataProvider *const provider = getEditProvider();
+    EditRectangle *const spotRect = static_cast<EditRectangle *>(visibleGeometry.at(0));
+    spotRect->setXYWH(provider->posImage.x - activePicker->get_spot_half_width(),
+        provider->posImage.y - activePicker->get_spot_half_width(),
+        activePicker->get_spot_full_width(), activePicker->get_spot_full_width());
 
     return true;
 }
 
 bool FilmNegative::button1Pressed(int modifierKey)
 {
-    EditDataProvider* const provider = getEditProvider();
+    EditDataProvider *const provider = getEditProvider();
 
     EditSubscriber::action = EditSubscriber::Action::NONE;
 
@@ -560,38 +569,32 @@ bool FilmNegative::button1Pressed(int modifierKey)
 
                 RGB ref1, ref2, dummy;
 
-                if (fnp->getFilmNegativeSpot(refSpotCoords[0], picker.get_spot_full_width(), ref1, dummy) &&
-                        fnp->getFilmNegativeSpot(refSpotCoords[1], picker.get_spot_full_width(), ref2, dummy)) {
+                if (fnp->getFilmNegativeSpot(
+                        refSpotCoords[0], picker.get_spot_full_width(), ref1, dummy) &&
+                    fnp->getFilmNegativeSpot(
+                        refSpotCoords[1], picker.get_spot_full_width(), ref2, dummy)) {
 
                     disableListener();
 
                     RGB newExps = getFilmNegativeExponents(ref1, ref2);
 
-                    // Leaving green exponent unchanged, setting red and blue exponents based on
-                    // the ratios between newly calculated exponents.
+                    // Leaving green exponent unchanged, setting red and blue exponents
+                    // based on the ratios between newly calculated exponents.
                     redRatio->setValue(newExps.r / newExps.g);
                     blueRatio->setValue(newExps.b / newExps.g);
 
                     enableListener();
 
                     if (getEnabled()) {
-                        listener->panelChanged(
-                            evFilmNegativeExponents,
-                            Glib::ustring::compose(
-                                "Ref=%1\nR=%2\nB=%3",
-                                greenExp->getValue(),
-                                redRatio->getValue(),
-                                blueRatio->getValue()
-                            )
-                        );
+                        listener->panelChanged(evFilmNegativeExponents,
+                            Glib::ustring::compose("Ref=%1\nR=%2\nB=%3",
+                                greenExp->getValue(), redRatio->getValue(),
+                                blueRatio->getValue()));
                     }
-
                 }
 
                 switchOffEditMode();
-
             }
-
 
         } else if (refPicker.get_active()) {
 
@@ -599,7 +602,7 @@ bool FilmNegative::button1Pressed(int modifierKey)
 
             // If the luminance reference is not set, copy the current reference input
             // values, and the corresponding output luminance
-            if(refLuminance.lum <= 0.f) {
+            if (refLuminance.lum <= 0.f) {
                 RGB out;
                 readOutputSliders(out);
                 refLuminance.input = refInputValues;
@@ -607,7 +610,8 @@ bool FilmNegative::button1Pressed(int modifierKey)
             }
 
             RGB refOut;
-            fnp->getFilmNegativeSpot(provider->posImage, refPicker.get_spot_full_width(), refInputValues, refOut);
+            fnp->getFilmNegativeSpot(provider->posImage,
+                refPicker.get_spot_full_width(), refInputValues, refOut);
 
             // Output luminance of the sampled spot
             float spotLum = rtengine::Color::rgbLuminance(refOut.r, refOut.g, refOut.b);
@@ -616,11 +620,9 @@ bool FilmNegative::button1Pressed(int modifierKey)
             float gexp = -greenExp->getValue();
             float bexp = -(greenExp->getValue() * blueRatio->getValue());
 
-            RGB mult = {
-                spotLum / pow_F(rtengine::max(refInputValues.r, 1.f), rexp),
+            RGB mult = {spotLum / pow_F(rtengine::max(refInputValues.r, 1.f), rexp),
                 spotLum / pow_F(rtengine::max(refInputValues.g, 1.f), gexp),
-                spotLum / pow_F(rtengine::max(refInputValues.b, 1.f), bexp)
-            };
+                spotLum / pow_F(rtengine::max(refInputValues.b, 1.f), bexp)};
 
             // Calculate the new luminance of the initial luminance reference spot, by
             // applying current multipliers
@@ -635,19 +637,14 @@ bool FilmNegative::button1Pressed(int modifierKey)
 
             writeOutputSliders({gray, gray, gray});
 
-            refInputLabel->set_text(
-                Glib::ustring::compose(M("TP_FILMNEGATIVE_REF_LABEL"), fmt(refInputValues)));
+            refInputLabel->set_text(Glib::ustring::compose(
+                M("TP_FILMNEGATIVE_REF_LABEL"), fmt(refInputValues)));
 
             enableListener();
 
-            listener->panelChanged(
-                evFilmNegativeRefSpot,
-                Glib::ustring::compose(
-                    "%1, %2, %3",
-                    round(refInputValues.r), round(refInputValues.g), round(refInputValues.b)
-                )
-            );
-
+            listener->panelChanged(evFilmNegativeRefSpot,
+                Glib::ustring::compose("%1, %2, %3", round(refInputValues.r),
+                    round(refInputValues.g), round(refInputValues.b)));
         }
     }
 
@@ -690,14 +687,14 @@ void FilmNegative::editToggled()
 
         // Stick a dummy rectangle over the whole image in mouseOverGeometry.
         // This is to make sure the getCursor() call is fired everywhere.
-        EditRectangle* const imgRect = static_cast<EditRectangle*>(mouseOverGeometry.at(0));
+        EditRectangle *const imgRect =
+            static_cast<EditRectangle *>(mouseOverGeometry.at(0));
         imgRect->setXYWH(0, 0, w, h);
     } else {
         refSpotCoords.clear();
         unsubscribe();
     }
 }
-
 
 void FilmNegative::refSpotToggled()
 {
@@ -714,7 +711,8 @@ void FilmNegative::refSpotToggled()
 
         // Stick a dummy rectangle over the whole image in mouseOverGeometry.
         // This is to make sure the getCursor() call is fired everywhere.
-        EditRectangle* const imgRect = static_cast<EditRectangle*>(mouseOverGeometry.at(0));
+        EditRectangle *const imgRect =
+            static_cast<EditRectangle *>(mouseOverGeometry.at(0));
         imgRect->setXYWH(0, 0, w, h);
 
     } else {
@@ -722,4 +720,3 @@ void FilmNegative::refSpotToggled()
         unsubscribe();
     }
 }
-

@@ -23,45 +23,35 @@
 
 Clipboard clipboard;
 
-Clipboard::Clipboard () :
-    _hasIPTC(false),
-    iptc(new rtengine::procparams::IPTCPairs),
+Clipboard::Clipboard() :
+    _hasIPTC(false), iptc(new rtengine::procparams::IPTCPairs),
     partProfile(new rtengine::procparams::PartialProfile(false)),
-    hasDiagonalCurveDataType(DCT_Empty),
-    hasFlatCurveDataType(FCT_Empty)
+    hasDiagonalCurveDataType(DCT_Empty), hasFlatCurveDataType(FCT_Empty)
 {
 }
 
-Clipboard::~Clipboard ()
-{
-    partProfile->deleteInstance();
-}
+Clipboard::~Clipboard() { partProfile->deleteInstance(); }
 
-bool Clipboard::hasIPTC() const
-{
-    return _hasIPTC;
-}
+bool Clipboard::hasIPTC() const { return _hasIPTC; }
 
-const rtengine::procparams::IPTCPairs& Clipboard::getIPTC() const
-{
-    return *iptc;
-}
+const rtengine::procparams::IPTCPairs &Clipboard::getIPTC() const { return *iptc; }
 
-void Clipboard::setIPTC(const rtengine::procparams::IPTCPairs& iptcc)
+void Clipboard::setIPTC(const rtengine::procparams::IPTCPairs &iptcc)
 {
     *iptc = iptcc;
     _hasIPTC = true;
 }
 
-const rtengine::procparams::PartialProfile& Clipboard::getPartialProfile() const
+const rtengine::procparams::PartialProfile &Clipboard::getPartialProfile() const
 {
     return *partProfile;
 }
 
 /*
- * set both the "pparams" and "pedited" field of the PartialProfile; each one can be NULL
+ * set both the "pparams" and "pedited" field of the PartialProfile; each one can be
+ * NULL
  */
-void Clipboard::setPartialProfile(const rtengine::procparams::PartialProfile& pprofile)
+void Clipboard::setPartialProfile(const rtengine::procparams::PartialProfile &pprofile)
 {
     if (pprofile.pparams) {
         if (!partProfile->pparams) {
@@ -90,7 +80,7 @@ void Clipboard::setPartialProfile(const rtengine::procparams::PartialProfile& pp
     }
 }
 
-const rtengine::procparams::ProcParams& Clipboard::getProcParams() const
+const rtengine::procparams::ProcParams &Clipboard::getProcParams() const
 {
     return *partProfile->pparams;
 }
@@ -98,7 +88,7 @@ const rtengine::procparams::ProcParams& Clipboard::getProcParams() const
 /*
  * this method copy the procparams to "pparams" and delete "pedited"
  */
-void Clipboard::setProcParams(const rtengine::procparams::ProcParams& pparams)
+void Clipboard::setProcParams(const rtengine::procparams::ProcParams &pparams)
 {
     // copy procparams
     if (!partProfile->pparams) {
@@ -114,49 +104,35 @@ void Clipboard::setProcParams(const rtengine::procparams::ProcParams& pparams)
     }
 }
 
-const ParamsEdited& Clipboard::getParamsEdited() const
-{
-    return *partProfile->pedited;
-}
+const ParamsEdited &Clipboard::getParamsEdited() const { return *partProfile->pedited; }
 
-bool Clipboard::hasProcParams() const
-{
-    return partProfile->pparams;
-}
+bool Clipboard::hasProcParams() const { return partProfile->pparams; }
 
-bool Clipboard::hasPEdited() const
-{
-    return partProfile->pedited;
-}
+bool Clipboard::hasPEdited() const { return partProfile->pedited; }
 
 DiagonalCurveType Clipboard::hasDiagonalCurveData() const
 {
     return hasDiagonalCurveDataType;
 }
 
-const std::vector<double>& Clipboard::getDiagonalCurveData() const
+const std::vector<double> &Clipboard::getDiagonalCurveData() const
 {
     return diagonalCurve;
 }
 
-void Clipboard::setDiagonalCurveData(const std::vector<double>& p, DiagonalCurveType type)
+void Clipboard::setDiagonalCurveData(
+    const std::vector<double> &p, DiagonalCurveType type)
 {
     diagonalCurve = p;
     hasDiagonalCurveDataType = type;
     return;
 }
 
-FlatCurveType Clipboard::hasFlatCurveData() const
-{
-    return hasFlatCurveDataType;
-}
+FlatCurveType Clipboard::hasFlatCurveData() const { return hasFlatCurveDataType; }
 
-const std::vector<double>& Clipboard:: getFlatCurveData() const
-{
-    return flatCurve;
-}
+const std::vector<double> &Clipboard::getFlatCurveData() const { return flatCurve; }
 
-void Clipboard::setFlatCurveData(const std::vector<double>& p, FlatCurveType type)
+void Clipboard::setFlatCurveData(const std::vector<double> &p, FlatCurveType type)
 {
     flatCurve = p;
     hasFlatCurveDataType = type;

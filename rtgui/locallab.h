@@ -40,13 +40,11 @@ public:
 };
 
 /* ==== LocallabToolList ==== */
-class LocallabToolList:
-    public Gtk::Box
+class LocallabToolList : public Gtk::Box
 {
 private:
     // Tree model to manage ComboBox rows
-    class ToolRow:
-        public Gtk::TreeModel::ColumnRecord
+    class ToolRow : public Gtk::TreeModel::ColumnRecord
     {
     public:
         Gtk::TreeModelColumn<int> id;
@@ -60,19 +58,19 @@ private:
     };
 
     // Tool list GUI widgets
-    MyComboBox* const list;
+    MyComboBox *const list;
     sigc::connection listConn;
     ToolRow toolRow;
     Glib::RefPtr<Gtk::ListStore> listTreeModel;
 
     // Tool list listener
-    LocallabToolListListener* listListener;
+    LocallabToolListListener *listListener;
 
 public:
     LocallabToolList();
 
     // Setter for tool list listener
-    void setLocallabToolListListener(LocallabToolListListener* ltll)
+    void setLocallabToolListListener(LocallabToolListListener *ltll)
     {
         listListener = ltll;
     }
@@ -88,20 +86,19 @@ private:
 };
 
 /* ==== Locallab ==== */
-class Locallab :
-    public ToolParamBlock,
-    public FoldableToolPanel,
-    public rtengine::LocallabListener,
-    public ControlPanelListener,
-    public LocallabToolListener,
-    public LocallabToolListListener
+class Locallab : public ToolParamBlock,
+                 public FoldableToolPanel,
+                 public rtengine::LocallabListener,
+                 public ControlPanelListener,
+                 public LocallabToolListener,
+                 public LocallabToolListListener
 {
 private:
     // Spot control panel widget
-    ControlSpotPanel* const expsettings;
+    ControlSpotPanel *const expsettings;
 
     // Tool list widget
-    LocallabToolList* const toollist;
+    LocallabToolList *const toollist;
 
     // Locallab tool widgets
     LocallabColor expcolor;
@@ -121,7 +118,7 @@ private:
 
     OptionalRadioButtonGroup delta_e_preview_button_group;
 
-    std::vector<LocallabTool*> locallabTools;
+    std::vector<LocallabTool *> locallabTools;
 
     // Locallab tools mask background management data
     std::vector<locallabRetiMinMax> retiMinMax;
@@ -143,7 +140,7 @@ private:
     std::vector<locallabRef> maskBackRef;
 
     // Other widgets
-    //Gtk::Button* const resetshowButton;
+    // Gtk::Button* const resetshowButton;
 
     Glib::ustring spotName;
 
@@ -153,14 +150,18 @@ public:
     Locallab();
 
     // FoldableToolPanel management functions
-    void read(const rtengine::procparams::ProcParams* pp, const ParamsEdited* pedited = nullptr) override;
-    void write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedited = nullptr) override;
-    void setDefaults(const rtengine::procparams::ProcParams* defParams, const ParamsEdited* pedited = nullptr) override;
-    void setListener(ToolPanelListener* tpl) override;
+    void read(const rtengine::procparams::ProcParams *pp,
+        const ParamsEdited *pedited = nullptr) override;
+    void write(
+        rtengine::procparams::ProcParams *pp, ParamsEdited *pedited = nullptr) override;
+    void setDefaults(const rtengine::procparams::ProcParams *defParams,
+        const ParamsEdited *pedited = nullptr) override;
+    void setListener(ToolPanelListener *tpl) override;
 
     // Locallab Retinex tool min/man management function
-    void minmaxChanged(const std::vector<locallabRetiMinMax> &minmax, int selspot) override;
-    
+    void minmaxChanged(
+        const std::vector<locallabRetiMinMax> &minmax, int selspot) override;
+
     // new functions for global - normal use
 //    void mainChanged(int spottype, int selspot, bool iscolor, bool issh, bool isvib, bool isexpos, bool issoft, bool isblur, bool istom, bool isret, bool issharp, bool iscont, bool iscbdl, bool islog, bool ismas, bool isci)override;
     void scopeChangedcol(int scope, int selspot, bool enab)override;
@@ -169,11 +170,11 @@ public:
     void scopeChangedset(int scope, int selspot, bool enab)override;
     
     void maiChanged(const std::vector<locallabsetLC> &setlc, int selspot) override;
-    
-    //Locallab denoise 
-    // Locallab Retinex tool min/man management function
+
+    // Locallab denoise
+    //  Locallab Retinex tool min/man management function
     void denChanged(const std::vector<locallabDenoiseLC> &denlc, int selspot) override;
-    
+
     // Locallab CIE tool primaries function
     void cieChanged(const std::vector<locallabcieLC> &cielc, int selspot) override;
 
@@ -185,10 +186,10 @@ public:
 
     void sigChanged(const std::vector<locallabcieSIG> &ciesig, int selspot) override;
 
-
     // Locallab tools mask background management function
-//    void refChanged(const std::vector<locallabRef> &ref, int selspot) override;
-    void refChanged2(float *huerefp, float *chromarefp, float *lumarefp, float *fabrefp, int selspot)override;
+    //    void refChanged(const std::vector<locallabRef> &ref, int selspot) override;
+    void refChanged2(float *huerefp, float *chromarefp, float *lumarefp, float *fabrefp,
+        int selspot) override;
 
     // Mask visibility management functions
     struct llMaskVisibility {
@@ -216,10 +217,10 @@ public:
     llMaskVisibility getMaskVisibility() const;
 
     // Other widgets event functions
-    //void resetshowPressed();
+    // void resetshowPressed();
 
     // EditProvider management function
-    void setEditProvider(EditDataProvider* provider) override;
+    void setEditProvider(EditDataProvider *provider) override;
     void subscribe();
     void unsubscribe();
 
@@ -230,7 +231,7 @@ public:
     void autoOpenCurve() override;
 
     // Locallab tools expanders management functions
-    void foldAllButOne(LocallabTool* except);
+    void foldAllButOne(LocallabTool *except);
     void openAllTools();
 
     // Locallab tools advice tooltips management function
@@ -238,7 +239,7 @@ public:
 
 private:
     // Locallab tools management functions
-    void addTool(Gtk::Box* where, LocallabTool* tool);
+    void addTool(Gtk::Box *where, LocallabTool *tool);
 
     // Locallab GUI management function
     void setParamEditable(bool cond);
@@ -248,8 +249,8 @@ private:
     void spotNameChanged(const Glib::ustring &newName) override;
 
     // LocallabToolListener function
-    void resetOtherMaskView(LocallabTool* current) override;
-    void toolRemoved(LocallabTool* current) override;
+    void resetOtherMaskView(LocallabTool *current) override;
+    void toolRemoved(LocallabTool *current) override;
 
     // LocallabToolListListener function
     void locallabToolToAdd(const Glib::ustring &toolname) override;

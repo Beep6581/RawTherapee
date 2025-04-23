@@ -29,22 +29,25 @@ using namespace rtengine::procparams;
 
 const Glib::ustring CACorrection::TOOL_NAME = "cacorrection";
 
-CACorrection::CACorrection () : FoldableToolPanel(this, TOOL_NAME, M("TP_CACORRECTION_LABEL"))
+CACorrection::CACorrection() :
+    FoldableToolPanel(this, TOOL_NAME, M("TP_CACORRECTION_LABEL"))
 {
 
-    Gtk::Image* icaredL =   Gtk::manage (new RTImage ("circle-red-cyan-small"));
-    Gtk::Image* icaredR =   Gtk::manage (new RTImage ("circle-cyan-red-small"));
-    Gtk::Image* icablueL =  Gtk::manage (new RTImage ("circle-blue-yellow-small"));
-    Gtk::Image* icablueR =  Gtk::manage (new RTImage ("circle-yellow-blue-small"));
+    Gtk::Image *icaredL = Gtk::manage(new RTImage("circle-red-cyan-small"));
+    Gtk::Image *icaredR = Gtk::manage(new RTImage("circle-cyan-red-small"));
+    Gtk::Image *icablueL = Gtk::manage(new RTImage("circle-blue-yellow-small"));
+    Gtk::Image *icablueR = Gtk::manage(new RTImage("circle-yellow-blue-small"));
 
-    red = Gtk::manage (new Adjuster (M("TP_CACORRECTION_RED"), -0.005, 0.005, 0.0001, 0, icaredL, icaredR));
-    red->setAdjusterListener (this);
+    red = Gtk::manage(new Adjuster(
+        M("TP_CACORRECTION_RED"), -0.005, 0.005, 0.0001, 0, icaredL, icaredR));
+    red->setAdjusterListener(this);
 
-    blue = Gtk::manage (new Adjuster (M("TP_CACORRECTION_BLUE"), -0.005, 0.005, 0.0001, 0, icablueL, icablueR));
-    blue->setAdjusterListener (this);
+    blue = Gtk::manage(new Adjuster(
+        M("TP_CACORRECTION_BLUE"), -0.005, 0.005, 0.0001, 0, icablueL, icablueR));
+    blue->setAdjusterListener(this);
 
-    pack_start (*red);
-    pack_start (*blue);
+    pack_start(*red);
+    pack_start(*blue);
 
     red->setLogScale(10, 0);
     blue->setLogScale(10, 0);
@@ -52,75 +55,81 @@ CACorrection::CACorrection () : FoldableToolPanel(this, TOOL_NAME, M("TP_CACORRE
     show_all();
 }
 
-void CACorrection::read (const ProcParams* pp, const ParamsEdited* pedited)
+void CACorrection::read(const ProcParams *pp, const ParamsEdited *pedited)
 {
 
-    disableListener ();
+    disableListener();
 
     if (pedited) {
-        red->setEditedState (pedited->cacorrection.red ? Edited : UnEdited);
-        blue->setEditedState (pedited->cacorrection.blue ? Edited : UnEdited);
+        red->setEditedState(pedited->cacorrection.red ? Edited : UnEdited);
+        blue->setEditedState(pedited->cacorrection.blue ? Edited : UnEdited);
     }
 
-    red->setValue (pp->cacorrection.red);
-    blue->setValue (pp->cacorrection.blue);
+    red->setValue(pp->cacorrection.red);
+    blue->setValue(pp->cacorrection.blue);
 
-    enableListener ();
+    enableListener();
 }
 
-void CACorrection::write (ProcParams* pp, ParamsEdited* pedited)
+void CACorrection::write(ProcParams *pp, ParamsEdited *pedited)
 {
 
-    pp->cacorrection.red  = red->getValue ();
-    pp->cacorrection.blue = blue->getValue ();
+    pp->cacorrection.red = red->getValue();
+    pp->cacorrection.blue = blue->getValue();
 
     if (pedited) {
-        pedited->cacorrection.red = red->getEditedState ();
-        pedited->cacorrection.blue = blue->getEditedState ();
+        pedited->cacorrection.red = red->getEditedState();
+        pedited->cacorrection.blue = blue->getEditedState();
     }
 }
 
-void CACorrection::setDefaults (const ProcParams* defParams, const ParamsEdited* pedited)
+void CACorrection::setDefaults(const ProcParams *defParams, const ParamsEdited *pedited)
 {
 
-    red->setDefault (defParams->cacorrection.red);
-    blue->setDefault (defParams->cacorrection.blue);
+    red->setDefault(defParams->cacorrection.red);
+    blue->setDefault(defParams->cacorrection.blue);
 
     if (pedited) {
-        red->setDefaultEditedState (pedited->cacorrection.red ? Edited : UnEdited);
-        blue->setDefaultEditedState (pedited->cacorrection.blue ? Edited : UnEdited);
+        red->setDefaultEditedState(pedited->cacorrection.red ? Edited : UnEdited);
+        blue->setDefaultEditedState(pedited->cacorrection.blue ? Edited : UnEdited);
     } else {
-        red->setDefaultEditedState (Irrelevant);
-        blue->setDefaultEditedState (Irrelevant);
+        red->setDefaultEditedState(Irrelevant);
+        blue->setDefaultEditedState(Irrelevant);
     }
 }
 
-void CACorrection::adjusterChanged (Adjuster* a, double newval)
+void CACorrection::adjusterChanged(Adjuster *a, double newval)
 {
 
     if (listener) {
-        listener->panelChanged (EvCACorr, Glib::ustring::compose ("%1=%3\n%2=%4", M("TP_CACORRECTION_RED"), M("TP_CACORRECTION_BLUE"), Glib::ustring::format (std::setw(5), std::fixed, std::setprecision(4), red->getValue()), Glib::ustring::format (std::setw(5), std::fixed, std::setprecision(4), blue->getValue())));
+        listener->panelChanged(EvCACorr,
+            Glib::ustring::compose("%1=%3\n%2=%4", M("TP_CACORRECTION_RED"),
+                M("TP_CACORRECTION_BLUE"),
+                Glib::ustring::format(
+                    std::setw(5), std::fixed, std::setprecision(4), red->getValue()),
+                Glib::ustring::format(
+                    std::setw(5), std::fixed, std::setprecision(4), blue->getValue())));
     }
 }
 
-void CACorrection::setAdjusterBehavior (bool badd)
+void CACorrection::setAdjusterBehavior(bool badd)
 {
 
     red->setAddMode(badd);
     blue->setAddMode(badd);
 }
 
-void CACorrection::trimValues (rtengine::procparams::ProcParams* pp)
+void CACorrection::trimValues(rtengine::procparams::ProcParams *pp)
 {
 
     red->trimValue(pp->cacorrection.red);
     blue->trimValue(pp->cacorrection.blue);
 }
 
-void CACorrection::setBatchMode (bool batchMode)
+void CACorrection::setBatchMode(bool batchMode)
 {
 
-    ToolPanel::setBatchMode (batchMode);
-    red->showEditedCB ();
-    blue->showEditedCB ();
+    ToolPanel::setBatchMode(batchMode);
+    red->showEditedCB();
+    blue->showEditedCB();
 }

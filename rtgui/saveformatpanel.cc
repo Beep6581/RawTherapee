@@ -26,108 +26,110 @@
 namespace
 {
 
-const std::array<std::pair<const char*, SaveFormat>, 7> sf_templates = {{
-     {"JPEG (8-bit)", SaveFormat("jpg", 8, 8, false)},
-     {"TIFF (8-bit)", SaveFormat("tif", 8, 8, false)},
-     {"TIFF (16-bit)", SaveFormat("tif", 8, 16, false)},
-     {"TIFF (16-bit float)", SaveFormat("tif", 8, 16, true)},
-     {"TIFF (32-bit float)", SaveFormat("tif", 8, 32, true)},
-     {"PNG (8-bit)", SaveFormat("png", 8, 8, false)},
-     {"PNG (16-bit)", SaveFormat("png", 16, 8, false)}
-}};
+const std::array<std::pair<const char *, SaveFormat>, 7> sf_templates = {
+    {{"JPEG (8-bit)", SaveFormat("jpg", 8, 8, false)},
+        {"TIFF (8-bit)", SaveFormat("tif", 8, 8, false)},
+        {"TIFF (16-bit)", SaveFormat("tif", 8, 16, false)},
+        {"TIFF (16-bit float)", SaveFormat("tif", 8, 16, true)},
+        {"TIFF (32-bit float)", SaveFormat("tif", 8, 32, true)},
+        {"PNG (8-bit)", SaveFormat("png", 8, 8, false)},
+        {"PNG (16-bit)", SaveFormat("png", 16, 8, false)}}};
 
 }
 
-SaveFormatPanel::SaveFormatPanel () : listener (nullptr)
+SaveFormatPanel::SaveFormatPanel() : listener(nullptr)
 {
-
 
     // ---------------------  FILE FORMAT SELECTOR
 
-
-    Gtk::Grid* hb1 = Gtk::manage (new Gtk::Grid ());
+    Gtk::Grid *hb1 = Gtk::manage(new Gtk::Grid());
     hb1->set_column_spacing(5);
     hb1->set_row_spacing(5);
     setExpandAlignProperties(hb1, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_CENTER);
-    Gtk::Label* flab = Gtk::manage (new Gtk::Label (M("SAVEDLG_FILEFORMAT") + ":"));
+    Gtk::Label *flab = Gtk::manage(new Gtk::Label(M("SAVEDLG_FILEFORMAT") + ":"));
     setExpandAlignProperties(flab, false, false, Gtk::ALIGN_START, Gtk::ALIGN_CENTER);
-    format = Gtk::manage (new MyComboBoxText ());
+    format = Gtk::manage(new MyComboBoxText());
     setExpandAlignProperties(format, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_CENTER);
-    format->signal_changed ().connect (sigc::mem_fun (*this, &SaveFormatPanel::formatChanged));
+    format->signal_changed().connect(
+        sigc::mem_fun(*this, &SaveFormatPanel::formatChanged));
 
-    for (const auto& sf_template : sf_templates) {
+    for (const auto &sf_template : sf_templates) {
         format->append(sf_template.first);
     }
 
-    hb1->attach (*flab, 0, 0, 1, 1);
-    hb1->attach (*format, 1, 0, 1, 1);
+    hb1->attach(*flab, 0, 0, 1, 1);
+    hb1->attach(*format, 1, 0, 1, 1);
     hb1->show_all();
 
     // ---------------------  JPEG OPTIONS
 
-
-    jpegOpts = Gtk::manage (new Gtk::Grid ());
+    jpegOpts = Gtk::manage(new Gtk::Grid());
     jpegOpts->set_column_spacing(15);
     jpegOpts->set_row_spacing(5);
     setExpandAlignProperties(jpegOpts, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_CENTER);
 
-    jpegQual = Gtk::manage (new Adjuster (M("SAVEDLG_JPEGQUAL"), 0, 100, 1, 100) );
+    jpegQual = Gtk::manage(new Adjuster(M("SAVEDLG_JPEGQUAL"), 0, 100, 1, 100));
     setExpandAlignProperties(jpegQual, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_CENTER);
-    jpegQual->setAdjusterListener (this);
+    jpegQual->setAdjusterListener(this);
 
-    jpegSubSampLabel = Gtk::manage (new Gtk::Label (M("SAVEDLG_SUBSAMP") + Glib::ustring(":")) );
-    setExpandAlignProperties(jpegSubSampLabel, true, false, Gtk::ALIGN_START, Gtk::ALIGN_CENTER);
+    jpegSubSampLabel =
+        Gtk::manage(new Gtk::Label(M("SAVEDLG_SUBSAMP") + Glib::ustring(":")));
+    setExpandAlignProperties(
+        jpegSubSampLabel, true, false, Gtk::ALIGN_START, Gtk::ALIGN_CENTER);
 
-    jpegSubSamp = Gtk::manage (new MyComboBoxText ());
-    setExpandAlignProperties(jpegSubSamp, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_CENTER);
-    jpegSubSamp->append (M("SAVEDLG_SUBSAMP_1"));
-    jpegSubSamp->append (M("SAVEDLG_SUBSAMP_2"));
-    jpegSubSamp->append (M("SAVEDLG_SUBSAMP_3"));
-    jpegSubSamp->set_tooltip_text (M("SAVEDLG_SUBSAMP_TOOLTIP"));
-    jpegSubSamp->set_active (2);
-    jpegSubSamp->signal_changed().connect( sigc::mem_fun(*this, &SaveFormatPanel::formatChanged) );
+    jpegSubSamp = Gtk::manage(new MyComboBoxText());
+    setExpandAlignProperties(
+        jpegSubSamp, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_CENTER);
+    jpegSubSamp->append(M("SAVEDLG_SUBSAMP_1"));
+    jpegSubSamp->append(M("SAVEDLG_SUBSAMP_2"));
+    jpegSubSamp->append(M("SAVEDLG_SUBSAMP_3"));
+    jpegSubSamp->set_tooltip_text(M("SAVEDLG_SUBSAMP_TOOLTIP"));
+    jpegSubSamp->set_active(2);
+    jpegSubSamp->signal_changed().connect(
+        sigc::mem_fun(*this, &SaveFormatPanel::formatChanged));
 
     jpegOpts->attach(*jpegQual, 0, 0, 1, 2);
     jpegOpts->attach(*jpegSubSampLabel, 1, 0, 1, 1);
     jpegOpts->attach(*jpegSubSamp, 1, 1, 1, 1);
-    jpegOpts->show_all ();
+    jpegOpts->show_all();
 
     // ---------------------  TIFF OPTIONS
 
-
-    tiffUncompressed = Gtk::manage (new Gtk::CheckButton (M("SAVEDLG_TIFFUNCOMPRESSED")) );
-    setExpandAlignProperties(tiffUncompressed, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_CENTER);
-    tiffUncompressed->signal_toggled().connect( sigc::mem_fun(*this, &SaveFormatPanel::formatChanged));
+    tiffUncompressed = Gtk::manage(new Gtk::CheckButton(M("SAVEDLG_TIFFUNCOMPRESSED")));
+    setExpandAlignProperties(
+        tiffUncompressed, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_CENTER);
+    tiffUncompressed->signal_toggled().connect(
+        sigc::mem_fun(*this, &SaveFormatPanel::formatChanged));
     tiffUncompressed->show_all();
 
-    bigTiff = Gtk::manage (new Gtk::CheckButton (M("SAVEDLG_BIGTIFF")) );
+    bigTiff = Gtk::manage(new Gtk::CheckButton(M("SAVEDLG_BIGTIFF")));
     setExpandAlignProperties(bigTiff, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_CENTER);
-    bigTiff->signal_toggled().connect( sigc::mem_fun(*this, &SaveFormatPanel::formatChanged));
+    bigTiff->signal_toggled().connect(
+        sigc::mem_fun(*this, &SaveFormatPanel::formatChanged));
     bigTiff->show_all();
-
 
     // ---------------------  MAIN BOX
 
-
-    savesPP = Gtk::manage (new Gtk::CheckButton (M("SAVEDLG_SAVESPP")));
-    savesPP->signal_toggled().connect( sigc::mem_fun(*this, &SaveFormatPanel::formatChanged));
+    savesPP = Gtk::manage(new Gtk::CheckButton(M("SAVEDLG_SAVESPP")));
+    savesPP->signal_toggled().connect(
+        sigc::mem_fun(*this, &SaveFormatPanel::formatChanged));
     savesPP->show_all();
 
     set_column_spacing(5);
     set_row_spacing(5);
 
-    attach (*hb1, 0, 0, 1, 1);
-    attach (*jpegOpts, 0, 1, 1, 1);
-    attach (*tiffUncompressed, 0, 2, 1, 1);
-    attach (*bigTiff, 0, 3, 1, 1);
-    attach (*savesPP, 0, 4, 1, 2);
+    attach(*hb1, 0, 0, 1, 1);
+    attach(*jpegOpts, 0, 1, 1, 1);
+    attach(*tiffUncompressed, 0, 2, 1, 1);
+    attach(*bigTiff, 0, 3, 1, 1);
+    attach(*savesPP, 0, 4, 1, 2);
 }
 
-SaveFormatPanel::~SaveFormatPanel () = default;
+SaveFormatPanel::~SaveFormatPanel() = default;
 
-void SaveFormatPanel::init (SaveFormat &sf)
+void SaveFormatPanel::init(SaveFormat &sf)
 {
-    FormatChangeListener* const tmp = listener;
+    FormatChangeListener *const tmp = listener;
     listener = nullptr;
 
     std::pair<int, std::size_t> index;
@@ -144,11 +146,10 @@ void SaveFormatPanel::init (SaveFormat &sf)
         // tampered with, some entry within SaveFormat::format
         // will be selected, which will be consistent again.
 
-        const int weight =
-            10 * (sf.format == sf_templates[i].second.format)
-            + (sf.tiffBits == sf_templates[i].second.tiffBits)
-            + (sf.tiffFloat == sf_templates[i].second.tiffFloat)
-            + (sf.pngBits == sf_templates[i].second.pngBits);
+        const int weight = 10 * (sf.format == sf_templates[i].second.format) +
+                           (sf.tiffBits == sf_templates[i].second.tiffBits) +
+                           (sf.tiffFloat == sf_templates[i].second.tiffFloat) +
+                           (sf.pngBits == sf_templates[i].second.pngBits);
 
         if (weight > index.first) {
             index = {weight, i};
@@ -166,7 +167,7 @@ void SaveFormatPanel::init (SaveFormat &sf)
     listener = tmp;
 }
 
-SaveFormat SaveFormatPanel::getFormat ()
+SaveFormat SaveFormatPanel::getFormat()
 {
     SaveFormat sf;
 
@@ -185,7 +186,7 @@ SaveFormat SaveFormatPanel::getFormat ()
     return sf;
 }
 
-void SaveFormatPanel::formatChanged ()
+void SaveFormatPanel::formatChanged()
 {
     const unsigned int act = format->get_active_row_number();
 
@@ -193,7 +194,7 @@ void SaveFormatPanel::formatChanged ()
         return;
     }
 
-    const Glib::ustring& fr = sf_templates[act].second.format;
+    const Glib::ustring &fr = sf_templates[act].second.format;
 
     if (fr == "jpg") {
         jpegOpts->show_all();
@@ -210,11 +211,11 @@ void SaveFormatPanel::formatChanged ()
     }
 
     if (listener) {
-        listener->formatChanged (fr);
+        listener->formatChanged(fr);
     }
 }
 
-void SaveFormatPanel::adjusterChanged(Adjuster* a, double newval)
+void SaveFormatPanel::adjusterChanged(Adjuster *a, double newval)
 {
     const unsigned int act = format->get_active_row_number();
 

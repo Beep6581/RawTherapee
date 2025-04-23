@@ -19,6 +19,7 @@
 #pragma once
 
 #include <gtkmm.h>
+#include <unordered_map>
 
 #include "toolenum.h"
 
@@ -48,54 +49,47 @@ private:
     std::unique_ptr<RTImage> hidecolpickersimg;
     bool showColPickers;
 
-    void hand_pressed ();
-    void wb_pressed ();
-    void colPicker_pressed (GdkEventButton* event);
-    void crop_pressed ();
-    void stra_pressed ();
-    void persp_pressed ();
+    void hand_pressed();
+    void wb_pressed();
+    void colPicker_pressed(GdkEventButton *event);
+    void crop_pressed();
+    void stra_pressed();
+    void persp_pressed();
     bool showColorPickers(bool showCP);
     void switchColorPickersVisibility();
-
+    
 protected:
-    Gtk::ToggleButton* handTool;
-    Gtk::ToggleButton* wbTool;
-    Gtk::ToggleButton* colPickerTool;
-    Gtk::ToggleButton* cropTool;
-    Gtk::ToggleButton* straTool;
-    Gtk::ToggleButton* perspTool;
-    ToolBarListener* listener;
-    LockablePickerToolListener* pickerListener;
+    Gtk::ToggleButton *handTool;
+    Gtk::ToggleButton *wbTool;
+    Gtk::ToggleButton *colPickerTool;
+    Gtk::ToggleButton *cropTool;
+    Gtk::ToggleButton *straTool;
+    Gtk::ToggleButton *perspTool;
+    ToolBarListener *listener;
+    LockablePickerToolListener *pickerListener;
     ToolMode current;
     bool allowNoTool;
-    bool editingMode;  // true if the cursor is being used to remotely edit tool's values
-    bool blockEdit; // true if edit tool shouldn't be disabled when pressing hand button or h/H key
-    sigc::connection  handConn;
-    sigc::connection  wbConn;
-    sigc::connection  cpConn;
-    sigc::connection  cropConn;
-    sigc::connection  straConn;
-    sigc::connection  perspConn;
+    bool editingMode; // true if the cursor is being used to remotely edit tool's values
+    bool blockEdit; // true if edit tool shouldn't be disabled when pressing hand button
+                    // or h/H key
+    sigc::connection handConn;
+    sigc::connection wbConn;
+    sigc::connection cpConn;
+    sigc::connection cropConn;
+    sigc::connection straConn;
+    sigc::connection perspConn;
 
 public:
-    ToolBar ();
+    ToolBar();
 
-    void     setTool (ToolMode tool);
-    ToolMode getTool ()
-    {
-        return current;
-    }
+    void setTool(ToolMode tool);
+    ToolMode getTool() { return current; }
 
-    bool showColorPickers() {
-        return showColPickers;
-    }
+    bool showColorPickers() { return showColPickers; }
 
-    void setToolBarListener (ToolBarListener* tpl)
-    {
-        listener = tpl;
-    }
+    void setToolBarListener(ToolBarListener *tpl) { listener = tpl; }
 
-    void setLockablePickerToolListener (LockablePickerToolListener* lptl)
+    void setLockablePickerToolListener(LockablePickerToolListener *lptl)
     {
         pickerListener = lptl;
     }
@@ -103,11 +97,8 @@ public:
     void startEditMode();
     void stopEditMode();
 
-    bool handleShortcutKey (GdkEventKey* event);
+    bool handleShortcutKey(GdkEventKey *event);
     void setBatchMode();
 
-    void blockEditDeactivation(bool cond = true)
-    {
-        blockEdit = cond;
-    }
+    void blockEditDeactivation(bool cond = true) { blockEdit = cond; }
 };

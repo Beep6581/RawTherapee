@@ -1,5 +1,5 @@
 /* -*- C++ -*-
- *  
+ *
  *  This file is part of RawTherapee.
  *
  *  Copyright (c) 2017 Alberto Griggio <alberto.griggio@gmail.com>
@@ -24,16 +24,16 @@
 #include <unordered_map>
 #include "rtengine/refreshmap.h"
 
-
-class ProcEventMapper {
+class ProcEventMapper
+{
 public:
     static ProcEventMapper *getInstance();
-    rtengine::ProcEvent newEvent(int action, const std::string &history_msg="");
+    rtengine::ProcEvent newEvent(int action, const std::string &history_msg = "");
     const std::string &getHistoryMsg(rtengine::ProcEvent event) const;
 
 private:
     ProcEventMapper();
-    
+
     std::unordered_map<int, std::string> history_msgs_;
     std::map<std::string, rtengine::ProcEvent> events_;
 };

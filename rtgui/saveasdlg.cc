@@ -30,12 +30,14 @@
 namespace
 {
 
-Glib::ustring getCurrentFilename(const Gtk::FileChooserWidget* fchooser)
+Glib::ustring getCurrentFilename(const Gtk::FileChooserWidget *fchooser)
 {
     Glib::ustring res = fchooser->get_filename();
 
-    // NB: There seem to be a bug in Gtkmm2.22 / FileChooserWidget : if you suppress the filename entry and
-    //     click on a folder in the list, the filename field is empty but get_filename will return the folder's path :/
+    // NB: There seem to be a bug in Gtkmm2.22 / FileChooserWidget : if you suppress the
+    // filename entry and
+    //     click on a folder in the list, the filename field is empty but get_filename
+    //     will return the folder's path :/
     if (Glib::file_test(res, Glib::FILE_TEST_IS_DIR)) {
         res = fchooser->get_current_name();
     }
@@ -43,16 +45,17 @@ Glib::ustring getCurrentFilename(const Gtk::FileChooserWidget* fchooser)
     return res;
 }
 
-}
+} // namespace
 
-SaveAsDialog::SaveAsDialog (const Glib::ustring &initialDir, Gtk::Window* parent)
-    : Gtk::Dialog (M("GENERAL_SAVE"), *parent)
+SaveAsDialog::SaveAsDialog(const Glib::ustring &initialDir, Gtk::Window *parent) :
+    Gtk::Dialog(M("GENERAL_SAVE"), *parent)
 {
-    Gtk::Box* box = get_content_area ();
+    Gtk::Box *box = get_content_area();
 
-    fchooser = Gtk::manage( new Gtk::FileChooserWidget (Gtk::FILE_CHOOSER_ACTION_SAVE) );
-    fchooser->set_current_folder (initialDir);
-    fchooser->signal_file_activated().connect(sigc::mem_fun(*this, &SaveAsDialog::okPressed));
+    fchooser = Gtk::manage(new Gtk::FileChooserWidget(Gtk::FILE_CHOOSER_ACTION_SAVE));
+    fchooser->set_current_folder(initialDir);
+    fchooser->signal_file_activated().connect(
+        sigc::mem_fun(*this, &SaveAsDialog::okPressed));
 
     filter_jpg = Gtk::FileFilter::create();
     filter_jpg->set_name(M("SAVEDLG_JPGFILTER"));
@@ -75,137 +78,130 @@ SaveAsDialog::SaveAsDialog (const Glib::ustring &initialDir, Gtk::Window* parent
     filter_png->add_pattern("*.png");
     filter_png->add_pattern("*.PNG");
 
-    formatChanged (options.saveFormat.format);
+    formatChanged(options.saveFormat.format);
 
-// Output Options
-// ~~~~~~~~~~~~~~
-    formatOpts = Gtk::manage( new SaveFormatPanel () );
-    setExpandAlignProperties(formatOpts, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_START);
-    formatOpts->setListener (this);
+    // Output Options
+    // ~~~~~~~~~~~~~~
+    formatOpts = Gtk::manage(new SaveFormatPanel());
+    setExpandAlignProperties(
+        formatOpts, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_START);
+    formatOpts->setListener(this);
 
-// queue/immediate
-// ~~~~~~~~~~~~~~~
-    saveMethod[0]  = Gtk::manage( new Gtk::RadioButton (M("SAVEDLG_SAVEIMMEDIATELY")) );
-    saveMethod[1]  = Gtk::manage( new Gtk::RadioButton (M("SAVEDLG_PUTTOQUEUEHEAD")) );
-    saveMethod[2]  = Gtk::manage( new Gtk::RadioButton (M("SAVEDLG_PUTTOQUEUETAIL")) );
+    // queue/immediate
+    // ~~~~~~~~~~~~~~~
+    saveMethod[0] = Gtk::manage(new Gtk::RadioButton(M("SAVEDLG_SAVEIMMEDIATELY")));
+    saveMethod[1] = Gtk::manage(new Gtk::RadioButton(M("SAVEDLG_PUTTOQUEUEHEAD")));
+    saveMethod[2] = Gtk::manage(new Gtk::RadioButton(M("SAVEDLG_PUTTOQUEUETAIL")));
 
     Gtk::RadioButton::Group g = saveMethod[0]->get_group();
-    saveMethod[1]->set_group (g);
-    saveMethod[2]->set_group (g);
+    saveMethod[1]->set_group(g);
+    saveMethod[2]->set_group(g);
 
     if (options.saveMethodNum >= 0 && options.saveMethodNum < 3) {
-        saveMethod[options.saveMethodNum]->set_active (true);
+        saveMethod[options.saveMethodNum]->set_active(true);
     }
 
-    saveMethod[0]->signal_clicked().connect( sigc::mem_fun(*this, &SaveAsDialog::saveImmediatlyClicked) );
-    saveMethod[1]->signal_clicked().connect( sigc::mem_fun(*this, &SaveAsDialog::putToQueueClicked) );
-    saveMethod[2]->signal_clicked().connect( sigc::mem_fun(*this, &SaveAsDialog::putToQueueClicked) );
+    saveMethod[0]->signal_clicked().connect(
+        sigc::mem_fun(*this, &SaveAsDialog::saveImmediatlyClicked));
+    saveMethod[1]->signal_clicked().connect(
+        sigc::mem_fun(*this, &SaveAsDialog::putToQueueClicked));
+    saveMethod[2]->signal_clicked().connect(
+        sigc::mem_fun(*this, &SaveAsDialog::putToQueueClicked));
 
-// Force output format option
-// ~~~~~~~~~~~~~~~~~~~~~~~~~~
-    forceFormatOpts = Gtk::manage( new Gtk::CheckButton (M("SAVEDLG_FORCEFORMATOPTS")) );
+    // Force output format option
+    // ~~~~~~~~~~~~~~~~~~~~~~~~~~
+    forceFormatOpts = Gtk::manage(new Gtk::CheckButton(M("SAVEDLG_FORCEFORMATOPTS")));
     forceFormatOpts->set_active(options.forceFormatOpts);
     forceFormatOpts->set_sensitive(options.saveMethodNum > 0);
-    forceFormatOpts->signal_clicked().connect( sigc::mem_fun(*this, &SaveAsDialog::forceFmtOptsSwitched) );
+    forceFormatOpts->signal_clicked().connect(
+        sigc::mem_fun(*this, &SaveAsDialog::forceFmtOptsSwitched));
     // update sensitivity of the SaveFormatPanel
     formatOpts->set_sensitive(options.saveMethodNum == 0 || options.forceFormatOpts);
 
-// Unique filename option
-// ~~~~~~~~~~~~~~~~~~~~~~
-    autoSuffix = Gtk::manage( new Gtk::CheckButton (M("SAVEDLG_AUTOSUFFIX")) );
+    // Unique filename option
+    // ~~~~~~~~~~~~~~~~~~~~~~
+    autoSuffix = Gtk::manage(new Gtk::CheckButton(M("SAVEDLG_AUTOSUFFIX")));
     autoSuffix->set_active(options.autoSuffix);
 
-// buttons
-// ~~~~~~~
-    Gtk::Button* ok     = Gtk::manage( new Gtk::Button (M("GENERAL_OK")) );
-    Gtk::Button* cancel = Gtk::manage( new Gtk::Button (M("GENERAL_CANCEL")) );
+    // buttons
+    // ~~~~~~~
+    Gtk::Button *ok = Gtk::manage(new Gtk::Button(M("GENERAL_OK")));
+    Gtk::Button *cancel = Gtk::manage(new Gtk::Button(M("GENERAL_CANCEL")));
 
-    ok->set_tooltip_markup (M("TP_SAVEDIALOG_OK_TOOLTIP"));
+    ok->set_tooltip_markup(M("TP_SAVEDIALOG_OK_TOOLTIP"));
 
-    ok->signal_clicked().connect( sigc::mem_fun(*this, &SaveAsDialog::okPressed) );
-    cancel->signal_clicked().connect( sigc::mem_fun(*this, &SaveAsDialog::cancelPressed) );
+    ok->signal_clicked().connect(sigc::mem_fun(*this, &SaveAsDialog::okPressed));
+    cancel->signal_clicked().connect(
+        sigc::mem_fun(*this, &SaveAsDialog::cancelPressed));
 
-// pack everything
-// ~~~~~~~~~~~~~~~
-    Gtk::Box* vbox_bottomRight = Gtk::manage(new Gtk::Box(Gtk::ORIENTATION_VERTICAL));
+    // pack everything
+    // ~~~~~~~~~~~~~~~
+    Gtk::Box *vbox_bottomRight = Gtk::manage(new Gtk::Box(Gtk::ORIENTATION_VERTICAL));
 
     // There is no queue in simple mode, so no need to choose
     if (!simpleEditor) {
-        vbox_bottomRight->pack_start (*saveMethod[0], Gtk::PACK_SHRINK, 2);
-        vbox_bottomRight->pack_start (*saveMethod[1], Gtk::PACK_SHRINK, 2);
-        vbox_bottomRight->pack_start (*saveMethod[2], Gtk::PACK_SHRINK, 2);
-        vbox_bottomRight->pack_start (*Gtk::manage(new Gtk::Separator(Gtk::ORIENTATION_HORIZONTAL)), Gtk::PACK_SHRINK, 5);
+        vbox_bottomRight->pack_start(*saveMethod[0], Gtk::PACK_SHRINK, 2);
+        vbox_bottomRight->pack_start(*saveMethod[1], Gtk::PACK_SHRINK, 2);
+        vbox_bottomRight->pack_start(*saveMethod[2], Gtk::PACK_SHRINK, 2);
+        vbox_bottomRight->pack_start(
+            *Gtk::manage(new Gtk::Separator(Gtk::ORIENTATION_HORIZONTAL)),
+            Gtk::PACK_SHRINK, 5);
     }
 
-    vbox_bottomRight->pack_start (*forceFormatOpts, Gtk::PACK_SHRINK, 4);
-    vbox_bottomRight->pack_start (*autoSuffix, Gtk::PACK_SHRINK, 4);
+    vbox_bottomRight->pack_start(*forceFormatOpts, Gtk::PACK_SHRINK, 4);
+    vbox_bottomRight->pack_start(*autoSuffix, Gtk::PACK_SHRINK, 4);
 
-    Gtk::Box* hbox_bottom = Gtk::manage( new Gtk::Box() );
-    hbox_bottom->pack_start (*formatOpts, Gtk::PACK_EXPAND_WIDGET, 2);
-    hbox_bottom->pack_start (*Gtk::manage(new Gtk::Separator(Gtk::ORIENTATION_VERTICAL)), Gtk::PACK_SHRINK, 2);
-    hbox_bottom->pack_start (*vbox_bottomRight, Gtk::PACK_EXPAND_WIDGET, 2);
+    Gtk::Box *hbox_bottom = Gtk::manage(new Gtk::Box());
+    hbox_bottom->pack_start(*formatOpts, Gtk::PACK_EXPAND_WIDGET, 2);
+    hbox_bottom->pack_start(*Gtk::manage(new Gtk::Separator(Gtk::ORIENTATION_VERTICAL)),
+        Gtk::PACK_SHRINK, 2);
+    hbox_bottom->pack_start(*vbox_bottomRight, Gtk::PACK_EXPAND_WIDGET, 2);
 
-    box->pack_start (*fchooser);
-    box->pack_start (*hbox_bottom, Gtk::PACK_SHRINK, 2);
+    box->pack_start(*fchooser);
+    box->pack_start(*hbox_bottom, Gtk::PACK_SHRINK, 2);
 
-    get_action_area()->pack_end (*ok, Gtk::PACK_SHRINK, 4);
-    get_action_area()->pack_end (*cancel, Gtk::PACK_SHRINK, 4);
+    get_action_area()->pack_end(*ok, Gtk::PACK_SHRINK, 4);
+    get_action_area()->pack_end(*cancel, Gtk::PACK_SHRINK, 4);
 
-    show_all_children ();
+    show_all_children();
 
-    formatOpts->init (options.saveFormat);
+    formatOpts->init(options.saveFormat);
 
-    signal_key_press_event().connect( sigc::mem_fun(*this, &SaveAsDialog::keyPressed) );
+    signal_key_press_event().connect(sigc::mem_fun(*this, &SaveAsDialog::keyPressed));
 }
 
-void SaveAsDialog::saveImmediatlyClicked ()
+void SaveAsDialog::saveImmediatlyClicked()
 {
     forceFormatOpts->set_sensitive(false);
     formatOpts->set_sensitive(true);
 }
 
-void SaveAsDialog::putToQueueClicked ()
+void SaveAsDialog::putToQueueClicked()
 {
     forceFormatOpts->set_sensitive(true);
     formatOpts->set_sensitive(forceFormatOpts->get_active());
 }
 
-void SaveAsDialog::forceFmtOptsSwitched ()
+void SaveAsDialog::forceFmtOptsSwitched()
 {
     formatOpts->set_sensitive(forceFormatOpts->get_active());
 }
 
-bool SaveAsDialog::getForceFormatOpts ()
+bool SaveAsDialog::getForceFormatOpts() { return forceFormatOpts->get_active(); }
+
+bool SaveAsDialog::getAutoSuffix() { return autoSuffix->get_active(); }
+
+bool SaveAsDialog::getImmediately()
 {
 
-    return forceFormatOpts->get_active();
+    return simpleEditor ? true : saveMethod[0]->get_active();
 }
 
-bool SaveAsDialog::getAutoSuffix ()
-{
+bool SaveAsDialog::getToHeadOfQueue() { return saveMethod[1]->get_active(); }
 
-    return autoSuffix->get_active();
-}
+bool SaveAsDialog::getToTailOfQueue() { return saveMethod[2]->get_active(); }
 
-bool SaveAsDialog::getImmediately ()
-{
-
-    return simpleEditor ? true : saveMethod[0]->get_active ();
-}
-
-bool SaveAsDialog::getToHeadOfQueue ()
-{
-
-    return saveMethod[1]->get_active ();
-}
-
-bool SaveAsDialog::getToTailOfQueue ()
-{
-
-    return saveMethod[2]->get_active ();
-}
-
-int SaveAsDialog::getSaveMethodNum ()
+int SaveAsDialog::getSaveMethodNum()
 {
     if (simpleEditor) {
         return 0;
@@ -219,77 +215,43 @@ int SaveAsDialog::getSaveMethodNum ()
     return -1;
 }
 
-Glib::ustring SaveAsDialog::getFileName ()
-{
+Glib::ustring SaveAsDialog::getFileName() { return fname; }
 
-    return fname;
-}
+Glib::ustring SaveAsDialog::getDirectory() { return fchooser->get_current_folder(); }
 
-Glib::ustring SaveAsDialog::getDirectory ()
-{
+SaveFormat SaveAsDialog::getFormat() { return formatOpts->getFormat(); }
 
-    return fchooser->get_current_folder ();
-}
-
-SaveFormat SaveAsDialog::getFormat ()
-{
-
-    return formatOpts->getFormat ();
-}
-
-void SaveAsDialog::okPressed ()
+void SaveAsDialog::okPressed()
 {
     fname = getCurrentFilename(fchooser);
 
-    // Checking if the filename field is empty. The user have to click Cancel if he don't want to specify a filename
+    // Checking if the filename field is empty. The user have to click Cancel if he
+    // don't want to specify a filename
     if (fname.empty()) {
-        Gtk::MessageDialog(
-            *this,
-            Glib::ustring("<b>")
-                + M("MAIN_MSG_EMPTYFILENAME")
-                + "</b>",
-            true,
-            Gtk::MESSAGE_WARNING,
-            Gtk::BUTTONS_OK,
-            true
-        ).run();
+        Gtk::MessageDialog(*this,
+            Glib::ustring("<b>") + M("MAIN_MSG_EMPTYFILENAME") + "</b>", true,
+            Gtk::MESSAGE_WARNING, Gtk::BUTTONS_OK, true)
+            .run();
         return;
     }
 
     if (getExtension(fname).empty()) {
         // Extension is either empty or unfamiliar
         fname += '.' + formatOpts->getFormat().format;
-    } else if (
-        (
-            formatOpts->getFormat().format == "jpg"
-            && !rtengine::hasJpegExtension(fname)
-        )
-        || (
-            formatOpts->getFormat().format == "tif"
-            && !rtengine::hasTiffExtension(fname)
-        )
-        || (
-            formatOpts->getFormat().format == "png"
-            && !rtengine::hasPngExtension(fname)
-        )
-    ) {
-        // Create dialog to warn user that the filename may have two extensions on the end
-        Gtk::MessageDialog msgd(
-            *this,
-            Glib::ustring("<b>")
-                + M("GENERAL_WARNING")
-                + ": "
-                + M("SAVEDLG_WARNFILENAME")
-                + " \""
-                + escapeHtmlChars(Glib::path_get_basename (fname))
-                + '.'
-                + escapeHtmlChars(formatOpts->getFormat().format)
-                + "\"</b>",
-            true,
-            Gtk::MESSAGE_WARNING,
-            Gtk::BUTTONS_OK_CANCEL,
-            true
-        );
+    } else if ((formatOpts->getFormat().format == "jpg" &&
+                   !rtengine::hasJpegExtension(fname)) ||
+               (formatOpts->getFormat().format == "tif" &&
+                   !rtengine::hasTiffExtension(fname)) ||
+               (formatOpts->getFormat().format == "png" &&
+                   !rtengine::hasPngExtension(fname))) {
+        // Create dialog to warn user that the filename may have two extensions on the
+        // end
+        Gtk::MessageDialog msgd(*this,
+            Glib::ustring("<b>") + M("GENERAL_WARNING") + ": " +
+                M("SAVEDLG_WARNFILENAME") + " \"" +
+                escapeHtmlChars(Glib::path_get_basename(fname)) + '.' +
+                escapeHtmlChars(formatOpts->getFormat().format) + "\"</b>",
+            true, Gtk::MESSAGE_WARNING, Gtk::BUTTONS_OK_CANCEL, true);
 
         if (msgd.run() == Gtk::RESPONSE_OK) {
             fname += "." + formatOpts->getFormat().format;
@@ -298,80 +260,70 @@ void SaveAsDialog::okPressed ()
         }
     }
 
-    response (Gtk::RESPONSE_OK);
+    response(Gtk::RESPONSE_OK);
 }
 
-void SaveAsDialog::cancelPressed ()
-{
-    response (Gtk::RESPONSE_CANCEL);
-}
+void SaveAsDialog::cancelPressed() { response(Gtk::RESPONSE_CANCEL); }
 
-void SaveAsDialog::formatChanged(const Glib::ustring& format)
+void SaveAsDialog::formatChanged(const Glib::ustring &format)
 {
     const auto sanitize_suffix =
-        [this, format](const std::function<bool (const Glib::ustring&)>& has_suffix)
-        {
+        [this, format](const std::function<bool(const Glib::ustring &)> &has_suffix) {
             const Glib::ustring name = getCurrentFilename(fchooser);
 
             if (!has_suffix(name)) {
-                fchooser->set_current_name(removeExtension(Glib::path_get_basename(name)) + '.' + format);
+                fchooser->set_current_name(
+                    removeExtension(Glib::path_get_basename(name)) + '.' + format);
             }
         };
 
     if (format == "jpg") {
-        fchooser->set_filter (filter_jpg);
-        sanitize_suffix(
-            [](const Glib::ustring& filename)
-            {
-                return rtengine::hasJpegExtension(filename);
-            }
-        );
+        fchooser->set_filter(filter_jpg);
+        sanitize_suffix([](const Glib::ustring &filename) {
+            return rtengine::hasJpegExtension(filename);
+        });
     } else if (format == "png") {
-        fchooser->set_filter (filter_png);
-        sanitize_suffix(
-            [](const Glib::ustring& filename)
-            {
-                return rtengine::hasPngExtension(filename);
-            }
-        );
+        fchooser->set_filter(filter_png);
+        sanitize_suffix([](const Glib::ustring &filename) {
+            return rtengine::hasPngExtension(filename);
+        });
     } else if (format == "tif") {
-        fchooser->set_filter (filter_tif);
-        sanitize_suffix(
-            [](const Glib::ustring& filename)
-            {
-                return rtengine::hasTiffExtension(filename);
-            }
-        );
+        fchooser->set_filter(filter_tif);
+        sanitize_suffix([](const Glib::ustring &filename) {
+            return rtengine::hasTiffExtension(filename);
+        });
     }
 }
 
-void SaveAsDialog::setInitialFileName (const Glib::ustring& fname)
+void SaveAsDialog::setInitialFileName(const Glib::ustring &fname)
 {
     this->fname = fname;
     fchooser->set_current_name(fname);
 }
 
-void SaveAsDialog::setImagePath (const Glib::ustring& imagePath)
+void SaveAsDialog::setImagePath(const Glib::ustring &imagePath)
 {
-    const auto dirName = Glib::path_get_dirname (imagePath);
+    const auto dirName = Glib::path_get_dirname(imagePath);
 
     try {
-        fchooser->add_shortcut_folder (dirName);
-    } catch (Glib::Error&) {}
+        fchooser->add_shortcut_folder(dirName);
+    } catch (Glib::Error &) {
+    }
 }
 
-
-bool SaveAsDialog::keyPressed (GdkEventKey* event)
+bool SaveAsDialog::keyPressed(GdkEventKey *event)
 {
 
     bool ctrl = event->state & GDK_CONTROL_MASK;
 
     if (ctrl) {
-        switch(event->keyval) {
-        case GDK_KEY_Return:  // Ctrl-Enter equivalent to pressing OK button
-        case GDK_KEY_KP_Enter:
-            SaveAsDialog::okPressed();
-            return true;
+        switch (event->keyval) {
+            case GDK_KEY_Return:   // Shortcut Ctrl-Return: equivalent to pressing OK
+                                   // button
+            case GDK_KEY_KP_Enter: // Shortcut Ctrl-Enter: equivalent to pressing OK
+                                   // button
+                SaveAsDialog::okPressed();
+                return true;
         }
     }
 

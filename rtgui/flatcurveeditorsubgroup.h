@@ -27,35 +27,34 @@
 class FlatCurveEditor;
 class MyFlatCurve;
 
-class FlatCurveEditorSubGroup final :
-    public CurveEditorSubGroup,
-    public rtengine::NonCopyable
+class FlatCurveEditorSubGroup final : public CurveEditorSubGroup,
+                                      public rtengine::NonCopyable
 {
 
     friend class FlatCurveEditor;
 
 protected:
-    Gtk::Grid* CPointsCurveGrid;
+    Gtk::Grid *CPointsCurveGrid;
 
-    MyFlatCurve* CPointsCurve;
+    MyFlatCurve *CPointsCurve;
 
     CoordinateAdjuster *CPointsCoordAdjuster;
 
-    Gtk::Button*       saveCPoints;
-    Gtk::Button*       loadCPoints;
-    Gtk::Button*       copyCPoints;
-    Gtk::Button*       pasteCPoints;
-    Gtk::ToggleButton* editPointCPoints;
-    Gtk::ToggleButton* editCPoints;
-    sigc::connection   editCPointsConn, editPointCPointsConn;
+    Gtk::Button *saveCPoints;
+    Gtk::Button *loadCPoints;
+    Gtk::Button *copyCPoints;
+    Gtk::Button *pasteCPoints;
+    Gtk::ToggleButton *editPointCPoints;
+    Gtk::ToggleButton *editCPoints;
+    sigc::connection editCPointsConn, editPointCPointsConn;
 
 public:
-    FlatCurveEditorSubGroup(CurveEditorGroup* prt, Glib::ustring& curveDir);
+    FlatCurveEditorSubGroup(CurveEditorGroup *prt, Glib::ustring &curveDir);
     ~FlatCurveEditorSubGroup() override;
 
-    FlatCurveEditor* addCurve(Glib::ustring curveLabel = "", bool periodic = true);
-    //virtual void updateBackgroundHistogram (CurveEditor* ce);
-    void updateLocallabBackground(CurveEditor* ce) override;    
+    FlatCurveEditor *addCurve(Glib::ustring curveLabel = "", bool periodic = true);
+    // virtual void updateBackgroundHistogram (CurveEditor* ce);
+    void updateLocallabBackground(CurveEditor *ce) override;
     void switchGUI() override;
     void refresh(CurveEditor *curveToRefresh) override;
     void editModeSwitchedOff() override;
@@ -66,19 +65,19 @@ public:
     void showCoordinateAdjuster(CoordinateProvider *provider) override;
     void stopNumericalAdjustment() override;
 
-    bool curveReset (CurveEditor *ce) override;
+    bool curveReset(CurveEditor *ce) override;
 
 protected:
-    void storeCurveValues (CurveEditor* ce, const std::vector<double>& p) override;
-    void storeDisplayedCurve () override;
-    void restoreDisplayedHistogram () override;
+    void storeCurveValues(CurveEditor *ce, const std::vector<double> &p) override;
+    void storeDisplayedCurve() override;
+    void restoreDisplayedHistogram() override;
     void restoreLocallabBackground() override;
-    void savePressed ();
-    void loadPressed ();
-    void copyPressed ();
-    void pastePressed ();
-    void removeEditor () override;
-    const std::vector<double> getCurveFromGUI (int type) override;
+    void savePressed();
+    void loadPressed();
+    void copyPressed();
+    void pastePressed();
+    void removeEditor() override;
+    const std::vector<double> getCurveFromGUI(int type) override;
     void editPointToggled(Gtk::ToggleButton *button);
-    void editToggled (Gtk::ToggleButton *button);
+    void editToggled(Gtk::ToggleButton *button);
 };

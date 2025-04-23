@@ -33,7 +33,6 @@ class SHCSelector final : public Gtk::DrawingArea
 {
 
 protected:
-
     int movingPosition;
     double tmpX, tmpPos;
 
@@ -41,44 +40,50 @@ protected:
     double positions[3];
     double wslider;
 
-    // left margin, essentially a workaround to take care of an eventual right colored bar (e.g. for curves)
+    // left margin, essentially a workaround to take care of an eventual right colored
+    // bar (e.g. for curves)
     int leftMargin;
-    // right margin, essentially a workaround to take care of an eventual right colored bar
+    // right margin, essentially a workaround to take care of an eventual right colored
+    // bar
     int rightMargin;
 
-    const static int hb = 3;  // horizontal border
-    const static int vb = 4;  // vertical border
+    const static int hb = 3; // horizontal border
+    const static int vb = 4; // vertical border
 
-    SHCListener* cl;
+    SHCListener *cl;
 
-    Gtk::SizeRequestMode get_request_mode_vfunc () const override;
-    void get_preferred_height_vfunc (int& minimum_height, int& natural_height) const override;
-    void get_preferred_width_vfunc (int &minimum_width, int &natural_width) const override;
-    void get_preferred_height_for_width_vfunc (int width, int &minimum_height, int &natural_height) const override;
-    void get_preferred_width_for_height_vfunc (int height, int &minimum_width, int &natural_width) const override;
+    Gtk::SizeRequestMode get_request_mode_vfunc() const override;
+    void get_preferred_height_vfunc(
+        int &minimum_height, int &natural_height) const override;
+    void get_preferred_width_vfunc(
+        int &minimum_width, int &natural_width) const override;
+    void get_preferred_height_for_width_vfunc(
+        int width, int &minimum_height, int &natural_height) const override;
+    void get_preferred_width_for_height_vfunc(
+        int height, int &minimum_width, int &natural_width) const override;
     void on_realize() override;
-    bool on_draw(const ::Cairo::RefPtr< Cairo::Context> &cr) override;
-    bool on_button_press_event (GdkEventButton* event) override;
-    bool on_button_release_event (GdkEventButton* event) override;
-    bool on_motion_notify_event (GdkEventMotion* event) override;
-    void updateDrawingArea (const ::Cairo::RefPtr< Cairo::Context> &cr);
+    bool on_draw(const ::Cairo::RefPtr<Cairo::Context> &cr) override;
+    bool on_button_press_event(GdkEventButton *event) override;
+    bool on_button_release_event(GdkEventButton *event) override;
+    bool on_motion_notify_event(GdkEventMotion *event) override;
+    void updateDrawingArea(const ::Cairo::RefPtr<Cairo::Context> &cr);
 
 public:
-
     ColoredBar coloredBar;
 
     SHCSelector();
 
-    void setSHCListener (SHCListener* l)
+    void setSHCListener(SHCListener *l)
     {
-        cl = l;;
+        cl = l;
+        ;
     }
 
     void setMargins(int left, int right);
-    void setDefaults (double spos, double cpos, double hpos);
-    void setPositions (double spos, double cpos, double hpos);
-    void getPositions (double& spos, double& cpos, double& hpos);
-    void styleChanged (const Glib::RefPtr<Gtk::StyleContext>& style);
-    bool reset ();
+    void setDefaults(double spos, double cpos, double hpos);
+    void setPositions(double spos, double cpos, double hpos);
+    void getPositions(double &spos, double &cpos, double &hpos);
+    void styleChanged(const Glib::RefPtr<Gtk::StyleContext> &style);
+    bool reset();
     void refresh();
 };

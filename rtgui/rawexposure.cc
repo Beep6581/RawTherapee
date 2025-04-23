@@ -30,76 +30,74 @@ using namespace rtengine::procparams;
 
 const Glib::ustring RAWExposure::TOOL_NAME = "rawexposure";
 
-RAWExposure::RAWExposure () : FoldableToolPanel(this, TOOL_NAME, M("TP_EXPOS_WHITEPOINT_LABEL"))
+RAWExposure::RAWExposure() :
+    FoldableToolPanel(this, TOOL_NAME, M("TP_EXPOS_WHITEPOINT_LABEL"))
 {
-    PexPos = Gtk::manage(new Adjuster (M("TP_RAWEXPOS_LINEAR"), 0.1, 16.0, 0.01, 1));
-    PexPos->setAdjusterListener (this);
+    PexPos = Gtk::manage(new Adjuster(M("TP_RAWEXPOS_LINEAR"), 0.1, 16.0, 0.01, 1));
+    PexPos->setAdjusterListener(this);
 
     PexPos->setDelay(std::max(options.adjusterMinDelay, options.adjusterMaxDelay));
 
     PexPos->show();
-    pack_start( *PexPos, Gtk::PACK_SHRINK, 4);//exposi
+    pack_start(*PexPos, Gtk::PACK_SHRINK, 4); // exposi
     PexPos->setLogScale(100, 0);
 }
 
-void RAWExposure::read(const rtengine::procparams::ProcParams* pp, const ParamsEdited* pedited)
+void RAWExposure::read(
+    const rtengine::procparams::ProcParams *pp, const ParamsEdited *pedited)
 {
-    disableListener ();
+    disableListener();
 
-    if(pedited ) {
-        PexPos->setEditedState( pedited->raw.exPos ? Edited : UnEdited );
+    if (pedited) {
+        PexPos->setEditedState(pedited->raw.exPos ? Edited : UnEdited);
     }
 
-    PexPos->setValue (pp->raw.expos);
+    PexPos->setValue(pp->raw.expos);
 
-    enableListener ();
+    enableListener();
 }
 
-void RAWExposure::write( rtengine::procparams::ProcParams* pp, ParamsEdited* pedited)
+void RAWExposure::write(rtengine::procparams::ProcParams *pp, ParamsEdited *pedited)
 {
     pp->raw.expos = PexPos->getValue();
 
     if (pedited) {
-        pedited->raw.exPos = PexPos->getEditedState ();
+        pedited->raw.exPos = PexPos->getEditedState();
     }
-
 }
 
-void RAWExposure::adjusterChanged(Adjuster* a, double newval)
+void RAWExposure::adjusterChanged(Adjuster *a, double newval)
 {
     if (listener) {
         Glib::ustring value = a->getTextValue();
 
-        if (a == PexPos ) {
-            listener->panelChanged (EvPreProcessExpCorrLinear,  value );
+        if (a == PexPos) {
+            listener->panelChanged(EvPreProcessExpCorrLinear, value);
         }
     }
 }
 
 void RAWExposure::setBatchMode(bool batchMode)
 {
-    ToolPanel::setBatchMode (batchMode);
-    PexPos->showEditedCB ();
+    ToolPanel::setBatchMode(batchMode);
+    PexPos->showEditedCB();
 }
 
-void RAWExposure::setDefaults(const rtengine::procparams::ProcParams* defParams, const ParamsEdited* pedited)
+void RAWExposure::setDefaults(
+    const rtengine::procparams::ProcParams *defParams, const ParamsEdited *pedited)
 {
-    PexPos->setDefault( defParams->raw.expos);
+    PexPos->setDefault(defParams->raw.expos);
 
     if (pedited) {
-        PexPos->setDefaultEditedState( pedited->raw.exPos ? Edited : UnEdited);
+        PexPos->setDefaultEditedState(pedited->raw.exPos ? Edited : UnEdited);
     } else {
-        PexPos->setDefaultEditedState( Irrelevant );
+        PexPos->setDefaultEditedState(Irrelevant);
     }
 }
 
-void RAWExposure::setAdjusterBehavior (bool pexposadd)
-{
+void RAWExposure::setAdjusterBehavior(bool pexposadd) { PexPos->setAddMode(pexposadd); }
 
-    PexPos->setAddMode(pexposadd);
-}
-
-void RAWExposure::trimValues (rtengine::procparams::ProcParams* pp)
+void RAWExposure::trimValues(rtengine::procparams::ProcParams *pp)
 {
 
     PexPos->trimValue(pp->raw.expos);

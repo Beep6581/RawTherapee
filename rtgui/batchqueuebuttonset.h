@@ -39,5 +39,5 @@ public:
     static Glib::ustring moveEndToolTip;
     static Glib::ustring cancelJobToolTip;
 
-    explicit BatchQueueButtonSet (BatchQueueEntry* myEntry);
+    explicit BatchQueueButtonSet(BatchQueueEntry *myEntry);
 };

@@ -1,5 +1,5 @@
 /** -*- C++ -*-
- *  
+ *
  *  This file is part of RawTherapee.
  *
  *  Copyright (c) 2018 Alberto Griggio <alberto.griggio@gmail.com>
@@ -23,35 +23,39 @@
 #include "adjuster.h"
 #include "toolpanel.h"
 
-class Dehaze final : public ToolParamBlock, public AdjusterListener, public FoldableToolPanel
+class Dehaze final : public ToolParamBlock,
+                     public AdjusterListener,
+                     public FoldableToolPanel
 {
 private:
     Adjuster *strength;
     Adjuster *depth;
     Adjuster *saturation;
     Gtk::CheckButton *showDepthMap;
-//    Gtk::CheckButton *luminance;
+    //    Gtk::CheckButton *luminance;
 
     rtengine::ProcEvent EvDehazeEnabled;
     rtengine::ProcEvent EvDehazeStrength;
     rtengine::ProcEvent EvDehazeDepth;
     rtengine::ProcEvent EvDehazeShowDepthMap;
     rtengine::ProcEvent EvDehazeSaturation;
-    
+
 public:
     static const Glib::ustring TOOL_NAME;
 
     Dehaze();
 
-    void read(const rtengine::procparams::ProcParams *pp, const ParamsEdited *pedited=nullptr) override;
-    void write(rtengine::procparams::ProcParams *pp, ParamsEdited *pedited=nullptr) override;
-    void setDefaults(const rtengine::procparams::ProcParams *defParams, const ParamsEdited *pedited=nullptr) override;
+    void read(const rtengine::procparams::ProcParams *pp,
+        const ParamsEdited *pedited = nullptr) override;
+    void write(
+        rtengine::procparams::ProcParams *pp, ParamsEdited *pedited = nullptr) override;
+    void setDefaults(const rtengine::procparams::ProcParams *defParams,
+        const ParamsEdited *pedited = nullptr) override;
     void setBatchMode(bool batchMode) override;
 
     void adjusterChanged(Adjuster *a, double newval) override;
     void enabledChanged() override;
     void showDepthMapChanged();
-//    void luminanceChanged();
+    //    void luminanceChanged();
     void setAdjusterBehavior(bool strengthAdd);
 };
-

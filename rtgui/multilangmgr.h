@@ -33,8 +33,8 @@ public:
     TranslationMetadata(TranslationMetadata &&other) = delete;
     explicit TranslationMetadata(std::map<std::string, std::string> &&metadata);
 
-    TranslationMetadata &operator =(const TranslationMetadata &other) = delete;
-    TranslationMetadata &operator =(TranslationMetadata &&other) noexcept = default;
+    TranslationMetadata &operator=(const TranslationMetadata &other) = delete;
+    TranslationMetadata &operator=(TranslationMetadata &&other) noexcept = default;
 
     std::string get(const std::string &key, const std::string &default_value) const;
     std::string getLanguageName(const std::string &default_name) const;
@@ -46,10 +46,10 @@ private:
 class MultiLangMgr
 {
 public:
-    MultiLangMgr ();
+    MultiLangMgr();
 
     void load(const Glib::ustring &language, const std::vector<Glib::ustring> &fnames);
-    Glib::ustring getStr(const std::string& key) const;
+    Glib::ustring getStr(const std::string &key) const;
     const TranslationMetadata *getMetadata(const Glib::ustring &fname) const;
     static bool isOSLanguageDetectSupported();
     static Glib::ustring getOSUserLanguage();
@@ -61,7 +61,4 @@ private:
 
 extern MultiLangMgr langMgr;
 
-inline Glib::ustring M (const std::string& key)
-{
-    return langMgr.getStr (key);
-}
+inline Glib::ustring M(const std::string &key) { return langMgr.getStr(key); }

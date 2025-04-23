@@ -30,93 +30,98 @@ using namespace rtengine::procparams;
 
 const Glib::ustring ImpulseDenoise::TOOL_NAME = "impulsedenoise";
 
-ImpulseDenoise::ImpulseDenoise () : FoldableToolPanel(this, TOOL_NAME, M("TP_IMPULSEDENOISE_LABEL"), true, true)
+ImpulseDenoise::ImpulseDenoise() :
+    FoldableToolPanel(this, TOOL_NAME, M("TP_IMPULSEDENOISE_LABEL"), true, true)
 {
 
-    thresh = Gtk::manage (new Adjuster (M("TP_IMPULSEDENOISE_THRESH"), 0, 100, 1, 50));
+    thresh = Gtk::manage(new Adjuster(M("TP_IMPULSEDENOISE_THRESH"), 0, 100, 1, 50));
 
-    pack_start (*thresh);
+    pack_start(*thresh);
 
-    thresh->setAdjusterListener (this);
+    thresh->setAdjusterListener(this);
 
-    show_all_children ();
+    show_all_children();
 }
 
-void ImpulseDenoise::read (const ProcParams* pp, const ParamsEdited* pedited)
+void ImpulseDenoise::read(const ProcParams *pp, const ParamsEdited *pedited)
 {
 
-    disableListener ();
+    disableListener();
 
     if (pedited) {
-        thresh->setEditedState    (pedited->impulseDenoise.thresh ? Edited : UnEdited);
-        set_inconsistent          (multiImage && !pedited->impulseDenoise.enabled);
+        thresh->setEditedState(pedited->impulseDenoise.thresh ? Edited : UnEdited);
+        set_inconsistent(multiImage && !pedited->impulseDenoise.enabled);
     }
 
     setEnabled(pp->impulseDenoise.enabled);
 
-    thresh->setValue (pp->impulseDenoise.thresh);
+    thresh->setValue(pp->impulseDenoise.thresh);
 
-    enableListener ();
+    enableListener();
 }
 
-void ImpulseDenoise::write (ProcParams* pp, ParamsEdited* pedited)
+void ImpulseDenoise::write(ProcParams *pp, ParamsEdited *pedited)
 {
 
-    pp->impulseDenoise.thresh    = thresh->getValue ();
-    pp->impulseDenoise.enabled   = getEnabled();
+    pp->impulseDenoise.thresh = thresh->getValue();
+    pp->impulseDenoise.enabled = getEnabled();
 
     if (pedited) {
-        pedited->impulseDenoise.thresh        = thresh->getEditedState ();
-        pedited->impulseDenoise.enabled       = !get_inconsistent();
+        pedited->impulseDenoise.thresh = thresh->getEditedState();
+        pedited->impulseDenoise.enabled = !get_inconsistent();
     }
 }
 
-void ImpulseDenoise::setDefaults (const ProcParams* defParams, const ParamsEdited* pedited)
+void ImpulseDenoise::setDefaults(
+    const ProcParams *defParams, const ParamsEdited *pedited)
 {
 
-    thresh->setDefault (defParams->impulseDenoise.thresh);
+    thresh->setDefault(defParams->impulseDenoise.thresh);
 
     if (pedited) {
-        thresh->setDefaultEditedState (pedited->impulseDenoise.thresh ? Edited : UnEdited);
+        thresh->setDefaultEditedState(
+            pedited->impulseDenoise.thresh ? Edited : UnEdited);
     } else {
-        thresh->setDefaultEditedState (Irrelevant);
+        thresh->setDefaultEditedState(Irrelevant);
     }
 }
 
-void ImpulseDenoise::adjusterChanged(Adjuster* a, double newval)
+void ImpulseDenoise::adjusterChanged(Adjuster *a, double newval)
 {
     if (listener && getEnabled()) {
-        listener->panelChanged (EvIDNThresh, Glib::ustring::format (std::setw(2), std::fixed, std::setprecision(1), a->getValue()));
+        listener->panelChanged(
+            EvIDNThresh, Glib::ustring::format(std::setw(2), std::fixed,
+                             std::setprecision(1), a->getValue()));
     }
 }
 
-void ImpulseDenoise::enabledChanged ()
+void ImpulseDenoise::enabledChanged()
 {
     if (listener) {
         if (get_inconsistent()) {
-            listener->panelChanged (EvIDNEnabled, M("GENERAL_UNCHANGED"));
+            listener->panelChanged(EvIDNEnabled, M("GENERAL_UNCHANGED"));
         } else if (getEnabled()) {
-            listener->panelChanged (EvIDNEnabled, M("GENERAL_ENABLED"));
+            listener->panelChanged(EvIDNEnabled, M("GENERAL_ENABLED"));
         } else {
-            listener->panelChanged (EvIDNEnabled, M("GENERAL_DISABLED"));
+            listener->panelChanged(EvIDNEnabled, M("GENERAL_DISABLED"));
         }
     }
 }
 
-void ImpulseDenoise::setBatchMode (bool batchMode)
+void ImpulseDenoise::setBatchMode(bool batchMode)
 {
 
-    ToolPanel::setBatchMode (batchMode);
-    thresh->showEditedCB ();
+    ToolPanel::setBatchMode(batchMode);
+    thresh->showEditedCB();
 }
 
-void ImpulseDenoise::setAdjusterBehavior (bool threshadd)
+void ImpulseDenoise::setAdjusterBehavior(bool threshadd)
 {
 
     thresh->setAddMode(threshadd);
 }
 
-void ImpulseDenoise::trimValues (rtengine::procparams::ProcParams* pp)
+void ImpulseDenoise::trimValues(rtengine::procparams::ProcParams *pp)
 {
 
     thresh->trimValue(pp->impulseDenoise.thresh);

@@ -22,13 +22,11 @@
 
 #include "toolpanel.h"
 
-class SensorBayer final :
-    public ToolParamBlock,
-    public FoldableToolPanel
+class SensorBayer final : public ToolParamBlock, public FoldableToolPanel
 {
 
 public:
     static const Glib::ustring TOOL_NAME;
 
-    SensorBayer ();
+    SensorBayer();
 };

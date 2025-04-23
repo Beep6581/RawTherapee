@@ -26,18 +26,11 @@
 class Circle;
 class Line;
 class OPIcon;
-class EditRectangle; 
+class EditRectangle;
 class RTSurface;
 
-
 struct ControlLine {
-    enum ObjectIndex {
-        LINE,
-        ICON,
-        BEGIN,
-        END,
-        OBJECT_COUNT
-    };
+    enum ObjectIndex { LINE, ICON, BEGIN, END, OBJECT_COUNT };
 
     std::unique_ptr<Line> line;
     std::shared_ptr<OPIcon> icon;
@@ -48,7 +41,7 @@ struct ControlLine {
     ~ControlLine();
 };
 
-class ControlLineManager: EditSubscriber
+class ControlLineManager : EditSubscriber
 {
 
 protected:
@@ -67,7 +60,7 @@ protected:
     int selected_object;
 
     void addLine(rtengine::Coord begin, rtengine::Coord end,
-                 rtengine::ControlLine::Type type = rtengine::ControlLine::VERTICAL);
+        rtengine::ControlLine::Type type = rtengine::ControlLine::VERTICAL);
     /**
      * Set the line type of the line containing the object according to the
      * line's angle.
@@ -108,14 +101,14 @@ public:
     /** Set whether or not lines can be drawn and deleted. */
     void setDrawMode(bool draw);
     void setEdited(bool edited);
-    void setEditProvider(EditDataProvider* provider);
-    void setLines(const std::vector<rtengine::ControlLine>& lines);
+    void setEditProvider(EditDataProvider *provider);
+    void setLines(const std::vector<rtengine::ControlLine> &lines);
     /** Returns the number of lines. */
     std::size_t size() const;
     /**
      * Allocates a new array and populates it with copies of the control lines.
      */
-    void toControlLines(std::vector<rtengine::ControlLine>& converted) const;
+    void toControlLines(std::vector<rtengine::ControlLine> &converted) const;
 
     // EditSubscriber overrides
     bool button1Pressed(int modifierKey) override;

@@ -30,22 +30,22 @@ class HistoryBeforeLineListener
 {
 public:
     virtual ~HistoryBeforeLineListener() = default;
-    virtual void historyBeforeLineChanged(const rtengine::procparams::ProcParams& params) = 0;
+    virtual void historyBeforeLineChanged(
+        const rtengine::procparams::ProcParams &params) = 0;
 };
 
 class History : public Gtk::Box, public PParamsChangeListener
 {
 
 public:
-
     class HistoryColumns : public Gtk::TreeModel::ColumnRecord
     {
     public:
-        Gtk::TreeModelColumn<Glib::ustring>  text;
-        Gtk::TreeModelColumn<Glib::ustring>  value;
-        Gtk::TreeModelColumn<rtengine::procparams::ProcParams>     params;
-        Gtk::TreeModelColumn<rtengine::ProcEvent>    chev;
-        Gtk::TreeModelColumn<ParamsEdited>     paramsEdited;
+        Gtk::TreeModelColumn<Glib::ustring> text;
+        Gtk::TreeModelColumn<Glib::ustring> value;
+        Gtk::TreeModelColumn<rtengine::procparams::ProcParams> params;
+        Gtk::TreeModelColumn<rtengine::ProcEvent> chev;
+        Gtk::TreeModelColumn<ParamsEdited> paramsEdited;
         HistoryColumns()
         {
             add(text);
@@ -59,9 +59,9 @@ public:
     class BookmarkColumns : public Gtk::TreeModel::ColumnRecord
     {
     public:
-        Gtk::TreeModelColumn<Glib::ustring>  text;
-        Gtk::TreeModelColumn<rtengine::procparams::ProcParams>     params;
-        Gtk::TreeModelColumn<ParamsEdited>     paramsEdited;
+        Gtk::TreeModelColumn<Glib::ustring> text;
+        Gtk::TreeModelColumn<rtengine::procparams::ProcParams> params;
+        Gtk::TreeModelColumn<ParamsEdited> paramsEdited;
         BookmarkColumns()
         {
             add(text);
@@ -72,67 +72,58 @@ public:
     BookmarkColumns bookmarkColumns;
 
 protected:
-    Gtk::Paned*            historyVPaned;
-    Gtk::TreeView*          hTreeView;
+    Gtk::Paned *historyVPaned;
+    Gtk::TreeView *hTreeView;
     Glib::RefPtr<Gtk::ListStore> historyModel;
 
-    Gtk::ScrolledWindow*    bscrollw;
-    Gtk::TreeView*          bTreeView;
+    Gtk::ScrolledWindow *bscrollw;
+    Gtk::TreeView *bTreeView;
     Glib::RefPtr<Gtk::ListStore> bookmarkModel;
 
-    Gtk::Button*            addBookmark;
-    Gtk::Button*            delBookmark;
+    Gtk::Button *addBookmark;
+    Gtk::Button *delBookmark;
 
-    sigc::connection        selchangehist;
-    sigc::connection        selchangebm;
+    sigc::connection selchangehist;
+    sigc::connection selchangebm;
 
-    HistoryBeforeLineListener * blistener;
-    ProfileChangeListener* tpc;
+    HistoryBeforeLineListener *blistener;
+    ProfileChangeListener *tpc;
     ParamsEdited defParamsEdited;
     int bmnum;
 
-    bool on_query_tooltip(int x, int y, bool keyboard_tooltip, const Glib::RefPtr<Gtk::Tooltip>& tooltip);
+    bool on_query_tooltip(
+        int x, int y, bool keyboard_tooltip, const Glib::RefPtr<Gtk::Tooltip> &tooltip);
 
 public:
+    explicit History(bool bookmarkSupport = true);
 
-    explicit History (bool bookmarkSupport = true);
-
-    void setProfileChangeListener     (ProfileChangeListener* tpc_)
-    {
-        tpc = tpc_;
-    }
-    void setHistoryBeforeLineListener (HistoryBeforeLineListener* bll)
+    void setProfileChangeListener(ProfileChangeListener *tpc_) { tpc = tpc_; }
+    void setHistoryBeforeLineListener(HistoryBeforeLineListener *bll)
     {
         blistener = bll;
     }
 
     // pparamschangelistener interface
-    void procParamsChanged(
-        const rtengine::procparams::ProcParams* params,
-        const rtengine::ProcEvent& ev,
-        const Glib::ustring& descr,
-        const ParamsEdited* paramsEdited = nullptr
-    ) override;
-    void clearParamChanges () override;
+    void procParamsChanged(const rtengine::procparams::ProcParams *params,
+        const rtengine::ProcEvent &ev, const Glib::ustring &descr,
+        const ParamsEdited *paramsEdited = nullptr) override;
+    void clearParamChanges() override;
 
-    void historySelectionChanged ();
-    void bookmarkSelectionChanged ();
-    void initHistory ();
+    void historySelectionChanged();
+    void bookmarkSelectionChanged();
+    void initHistory();
 
-    bool getBeforeLineParams (rtengine::procparams::ProcParams& params);
+    bool getBeforeLineParams(rtengine::procparams::ProcParams &params);
 
-    void addBookmarkWithText (Glib::ustring text);
-    void addBookmarkPressed ();
-    void delBookmarkPressed ();
+    void addBookmarkWithText(Glib::ustring text);
+    void addBookmarkPressed();
+    void delBookmarkPressed();
 
-    //void resized (Gtk::Allocation& req);
+    // void resized (Gtk::Allocation& req);
 
-    void undo ();
-    void redo ();
+    void undo();
+    void redo();
 
     bool blistenerLock;
-    void resetSnapShotNumber()
-    {
-        bmnum = 1;
-    };
+    void resetSnapShotNumber() { bmnum = 1; };
 };

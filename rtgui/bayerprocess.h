@@ -25,47 +25,45 @@
 #include "guiutils.h"
 #include "toolpanel.h"
 
-class BayerProcess final :
-    public ToolParamBlock,
-    public AdjusterListener,
-    public CheckBoxListener,
-    public FoldableToolPanel,
-    public rtengine::FrameCountListener,
-    public rtengine::AutoContrastListener
+class BayerProcess final : public ToolParamBlock,
+                           public AdjusterListener,
+                           public CheckBoxListener,
+                           public FoldableToolPanel,
+                           public rtengine::FrameCountListener,
+                           public rtengine::AutoContrastListener
 {
 
 protected:
-
-    MyComboBoxText* method;
-    Gtk::Box* borderbox;
+    MyComboBoxText *method;
+    Gtk::Box *borderbox;
     Gtk::Box *imageNumberBox;
-    Adjuster* border;
-    MyComboBoxText* imageNumber;
-    Adjuster* ccSteps;
+    Adjuster *border;
+    MyComboBoxText *imageNumber;
+    Adjuster *ccSteps;
     Gtk::Box *dcbOptions;
-    Adjuster* dcbIterations;
-    CheckBox* dcbEnhance;
+    Adjuster *dcbIterations;
+    CheckBox *dcbEnhance;
     Gtk::Box *lmmseOptions;
-    Adjuster* lmmseIterations;
+    Adjuster *lmmseIterations;
     Gtk::Frame *pixelShiftFrame;
     Gtk::Box *pixelShiftOptions;
-    MyComboBoxText* pixelShiftMotionMethod;
-    MyComboBoxText* pixelShiftDemosaicMethod;
-    CheckBox* pixelShiftShowMotion;
-    CheckBox* pixelShiftShowMotionMaskOnly;
-    CheckBox* pixelShiftNonGreenCross;
-    CheckBox* pixelShiftGreen;
-    CheckBox* pixelShiftBlur;
-    CheckBox* pixelShiftHoleFill;
-    CheckBox* pixelShiftMedian;
-    CheckBox* pixelShiftAverage;
-    CheckBox* pixelShiftEqualBright;
-    CheckBox* pixelShiftEqualBrightChannel;
-    Adjuster* pixelShiftSmooth;
-    Adjuster* pixelShiftEperIso;
-    Adjuster* pixelShiftSigma;
+    MyComboBoxText *pixelShiftMotionMethod;
+    MyComboBoxText *pixelShiftDemosaicMethod;
+    CheckBox *pixelShiftShowMotion;
+    CheckBox *pixelShiftShowMotionMaskOnly;
+    CheckBox *pixelShiftNonGreenCross;
+    CheckBox *pixelShiftGreen;
+    CheckBox *pixelShiftBlur;
+    CheckBox *pixelShiftHoleFill;
+    CheckBox *pixelShiftMedian;
+    CheckBox *pixelShiftAverage;
+    CheckBox *pixelShiftEqualBright;
+    CheckBox *pixelShiftEqualBrightChannel;
+    Adjuster *pixelShiftSmooth;
+    Adjuster *pixelShiftEperIso;
+    Adjuster *pixelShiftSigma;
     Gtk::Box *dualDemosaicOptions;
-    Adjuster* dualDemosaicContrast;
+    Adjuster *dualDemosaicContrast;
     int oldMethod;
     bool lastAutoContrast;
     IdleRegister idle_register;
@@ -75,26 +73,32 @@ protected:
     rtengine::ProcEvent EvDemosaicContrast;
     rtengine::ProcEvent EvDemosaicPixelshiftDemosaicMethod;
     rtengine::ProcEvent EvPixelshiftAverage;
+
 public:
     static const Glib::ustring TOOL_NAME;
 
-    BayerProcess ();
-    ~BayerProcess () override;
+    BayerProcess();
+    ~BayerProcess() override;
 
-    void read(const rtengine::procparams::ProcParams* pp, const ParamsEdited* pedited = nullptr) override;
-    void write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedited = nullptr) override;
-    void setAdjusterBehavior(bool falsecoloradd, bool iteradd, bool dualdemozecontrastadd, bool pssigmaadd, bool pssmoothadd, bool pseperisoadd);
-    void trimValues(rtengine::procparams::ProcParams* pp) override;
+    void read(const rtengine::procparams::ProcParams *pp,
+        const ParamsEdited *pedited = nullptr) override;
+    void write(
+        rtengine::procparams::ProcParams *pp, ParamsEdited *pedited = nullptr) override;
+    void setAdjusterBehavior(bool falsecoloradd, bool iteradd,
+        bool dualdemozecontrastadd, bool pssigmaadd, bool pssmoothadd,
+        bool pseperisoadd);
+    void trimValues(rtengine::procparams::ProcParams *pp) override;
     void setBatchMode(bool batchMode) override;
-    void setDefaults(const rtengine::procparams::ProcParams* defParams, const ParamsEdited* pedited = nullptr) override;
+    void setDefaults(const rtengine::procparams::ProcParams *defParams,
+        const ParamsEdited *pedited = nullptr) override;
 
     void methodChanged();
     void imageNumberChanged();
-    void adjusterChanged(Adjuster* a, double newval) override;
-    void adjusterAutoToggled (Adjuster* a) override;
-    void checkBoxToggled(CheckBox* c, CheckValue newval) override;
+    void adjusterChanged(Adjuster *a, double newval) override;
+    void adjusterAutoToggled(Adjuster *a) override;
+    void checkBoxToggled(CheckBox *c, CheckValue newval) override;
     void pixelShiftMotionMethodChanged();
     void pixelShiftDemosaicMethodChanged();
-    void autoContrastChanged (double autoContrast) override;
+    void autoContrastChanged(double autoContrast) override;
     void FrameCountChanged(int n, int frameNum) override;
 };

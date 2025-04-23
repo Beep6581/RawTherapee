@@ -51,7 +51,8 @@ RTAppChooserDialog::RTAppChooserDialog(const Glib::ustring &content_type) :
     // handlers to prevent the function call.
     auto signal_id = g_signal_lookup("response", GTK_TYPE_APP_CHOOSER_DIALOG);
     while (true) {
-        auto handler_id = g_signal_handler_find(gobj(), G_SIGNAL_MATCH_ID, signal_id, GQuark(), nullptr, nullptr, nullptr);
+        auto handler_id = g_signal_handler_find(
+            gobj(), G_SIGNAL_MATCH_ID, signal_id, GQuark(), nullptr, nullptr, nullptr);
         if (!handler_id) {
             break;
         }
@@ -69,8 +70,8 @@ Glib::RefPtr<Gio::AppInfo> RTAppChooserDialog::get_app_info()
 
 Glib::RefPtr<const Gio::AppInfo> RTAppChooserDialog::get_app_info() const
 {
-    GAppInfo *gAppInfo = gtk_app_chooser_get_app_info(GTK_APP_CHOOSER(
-        const_cast<GtkAppChooserDialog *>(gobj())));
+    GAppInfo *gAppInfo = gtk_app_chooser_get_app_info(
+        GTK_APP_CHOOSER(const_cast<GtkAppChooserDialog *>(gobj())));
     return Glib::wrap(gAppInfo, true);
 }
 

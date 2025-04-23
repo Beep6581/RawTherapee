@@ -24,19 +24,18 @@
 #include "checkbox.h"
 #include "toolpanel.h"
 
-class RAWCACorr final:
-    public ToolParamBlock,
-    public AdjusterListener,
-    public CheckBoxListener,
-    public FoldableToolPanel
+class RAWCACorr final : public ToolParamBlock,
+                        public AdjusterListener,
+                        public CheckBoxListener,
+                        public FoldableToolPanel
 {
 
 protected:
-    CheckBox* caAutocorrect;
-    Adjuster* caAutoiterations;
-    Adjuster* caRed;
-    Adjuster* caBlue;
-    CheckBox* caAvoidcolourshift;
+    CheckBox *caAutocorrect;
+    Adjuster *caAutoiterations;
+    Adjuster *caRed;
+    Adjuster *caBlue;
+    CheckBox *caAvoidcolourshift;
 
     rtengine::ProcEvent EvPreProcessCAAutoiterations;
     rtengine::ProcEvent EvPreProcessCAColourshift;
@@ -45,15 +44,18 @@ protected:
 public:
     static const Glib::ustring TOOL_NAME;
 
-    RAWCACorr ();
+    RAWCACorr();
 
-    void read                (const rtengine::procparams::ProcParams* pp, const ParamsEdited* pedited = nullptr) override;
-    void write               (rtengine::procparams::ProcParams* pp, ParamsEdited* pedited = nullptr) override;
-    void setBatchMode        (bool batchMode) override;
-    void setDefaults         (const rtengine::procparams::ProcParams* defParams, const ParamsEdited* pedited = nullptr) override;
-    void setAdjusterBehavior (bool caadd);
-    void trimValues          (rtengine::procparams::ProcParams* pp) override;
+    void read(const rtengine::procparams::ProcParams *pp,
+        const ParamsEdited *pedited = nullptr) override;
+    void write(
+        rtengine::procparams::ProcParams *pp, ParamsEdited *pedited = nullptr) override;
+    void setBatchMode(bool batchMode) override;
+    void setDefaults(const rtengine::procparams::ProcParams *defParams,
+        const ParamsEdited *pedited = nullptr) override;
+    void setAdjusterBehavior(bool caadd);
+    void trimValues(rtengine::procparams::ProcParams *pp) override;
 
-    void adjusterChanged     (Adjuster* a, double newval) override;
-    void checkBoxToggled     (CheckBox* c, CheckValue newval) override;
+    void adjusterChanged(Adjuster *a, double newval) override;
+    void checkBoxToggled(CheckBox *c, CheckValue newval) override;
 };

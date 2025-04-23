@@ -47,6 +47,6 @@ public:
     bool filterLens;
     bool filterFiletype;
 
-    ExifFilterSettings ();
-    void clear ();
+    ExifFilterSettings();
+    void clear();
 };

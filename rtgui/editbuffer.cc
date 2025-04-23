@@ -20,13 +20,12 @@
 #include "editbuffer.h"
 #include "editcallbacks.h"
 
-ObjectMOBuffer::ObjectMOBuffer(EditDataProvider *dataProvider) : objectMap(nullptr), objectMode(OM_255), dataProvider(dataProvider) {}
-
-ObjectMOBuffer::~ObjectMOBuffer()
+ObjectMOBuffer::ObjectMOBuffer(EditDataProvider *dataProvider) :
+    objectMap(nullptr), objectMode(OM_255), dataProvider(dataProvider)
 {
-    flush();
 }
 
+ObjectMOBuffer::~ObjectMOBuffer() { flush(); }
 
 /* Upgrade or downgrade the objectModeType */
 void ObjectMOBuffer::setObjectMode(ObjectMode newType)
@@ -36,23 +35,24 @@ void ObjectMOBuffer::setObjectMode(ObjectMode newType)
         return;
     }
 
-    int w = objectMap->get_width ();
-    int h = objectMap->get_height ();
+    int w = objectMap->get_width();
+    int h = objectMap->get_height();
     if (w && h) {
         switch (newType) {
-        case (OM_255):
-            if (objectMode==OM_65535) {
-                objectMap.clear();
-                objectMap = Cairo::ImageSurface::create(Cairo::FORMAT_A8, w, h);
-            }
-            break;
+            case (OM_255):
+                if (objectMode == OM_65535) {
+                    objectMap.clear();
+                    objectMap = Cairo::ImageSurface::create(Cairo::FORMAT_A8, w, h);
+                }
+                break;
 
-        case (OM_65535):
-            if (objectMode==OM_255) {
-                objectMap.clear();
-                objectMap = Cairo::ImageSurface::create(Cairo::FORMAT_RGB16_565, w, h);
-            }
-            break;
+            case (OM_65535):
+                if (objectMode == OM_255) {
+                    objectMap.clear();
+                    objectMap =
+                        Cairo::ImageSurface::create(Cairo::FORMAT_RGB16_565, w, h);
+                }
+                break;
         }
     }
     objectMode = newType;
@@ -60,19 +60,19 @@ void ObjectMOBuffer::setObjectMode(ObjectMode newType)
 
 void ObjectMOBuffer::flush()
 {
-    if (objectMap ) {
+    if (objectMap) {
         objectMap.clear();
     }
 }
 
-EditSubscriber *ObjectMOBuffer::getEditSubscriber () {
+EditSubscriber *ObjectMOBuffer::getEditSubscriber()
+{
     if (dataProvider) {
         return dataProvider->getCurrSubscriber();
     } else {
         return nullptr;
     }
 }
-
 
 // Resize buffers if they already exist
 void ObjectMOBuffer::resize(int newWidth, int newHeight)
@@ -81,14 +81,17 @@ void ObjectMOBuffer::resize(int newWidth, int newHeight)
         return;
     }
 
-    if (const auto currSubscriber = dataProvider->getCurrSubscriber ()) {
+    if (const auto currSubscriber = dataProvider->getCurrSubscriber()) {
         if (currSubscriber->getEditingType() == ET_OBJECTS) {
-            if (objectMap && (objectMap->get_width() != newWidth || objectMap->get_height() != newHeight)) {
+            if (objectMap && (objectMap->get_width() != newWidth ||
+                                 objectMap->get_height() != newHeight)) {
                 objectMap.clear();
             }
 
-            if (!objectMap && newWidth>0 && newHeight>0) {
-                objectMap = Cairo::ImageSurface::create(objectMode==OM_255?Cairo::FORMAT_A8:Cairo::FORMAT_RGB16_565, newWidth, newHeight);
+            if (!objectMap && newWidth > 0 && newHeight > 0) {
+                objectMap = Cairo::ImageSurface::create(
+                    objectMode == OM_255 ? Cairo::FORMAT_A8 : Cairo::FORMAT_RGB16_565,
+                    newWidth, newHeight);
             }
 
         } else {
@@ -99,20 +102,27 @@ void ObjectMOBuffer::resize(int newWidth, int newHeight)
     }
 }
 
-int ObjectMOBuffer::getObjectID(const rtengine::Coord& location)
+int ObjectMOBuffer::getObjectID(const rtengine::Coord &location)
 {
     int id = 0;
 
-    if (!objectMap || location.x < 0 || location.y < 0 || location.x >= objectMap->get_width() || location.y >= objectMap->get_height()) {
+    if (!objectMap || location.x < 0 || location.y < 0 ||
+        location.x >= objectMap->get_width() || location.y >= objectMap->get_height()) {
         return -1;
     }
 
     if (objectMode == OM_255) {
         // In OM_255 mode, size of pixel is 1 Byte (i.e. size of uint8_t)
-        memcpy(&id, ( objectMap->get_data() + location.y * objectMap->get_stride() + sizeof(std::uint8_t) * location.x ), sizeof(std::uint8_t));
+        memcpy(&id,
+            (objectMap->get_data() + location.y * objectMap->get_stride() +
+                sizeof(std::uint8_t) * location.x),
+            sizeof(std::uint8_t));
     } else {
         // In OM_65535 mode, size of pixel is 2 Bytes (i.e. size of uint16_t)
-        memcpy(&id, ( objectMap->get_data() + location.y * objectMap->get_stride() + sizeof(std::uint16_t) * location.x ), sizeof(std::uint16_t));
+        memcpy(&id,
+            (objectMap->get_data() + location.y * objectMap->get_stride() +
+                sizeof(std::uint16_t) * location.x),
+            sizeof(std::uint16_t));
     }
 
     return id - 1;
@@ -120,7 +130,7 @@ int ObjectMOBuffer::getObjectID(const rtengine::Coord& location)
 
 bool ObjectMOBuffer::bufferCreated()
 {
-    EditSubscriber* subscriber;
+    EditSubscriber *subscriber;
 
     if (dataProvider && (subscriber = dataProvider->getCurrSubscriber())) {
         return subscriber->getEditingType() == ET_OBJECTS ? bool(objectMap) : false;
@@ -128,4 +138,3 @@ bool ObjectMOBuffer::bufferCreated()
 
     return false;
 }
-

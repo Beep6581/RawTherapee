@@ -27,24 +27,22 @@ using namespace rtengine::procparams;
 
 const Glib::ustring ToneEqualizer::TOOL_NAME = "toneequalizer";
 
-ToneEqualizer::ToneEqualizer(): FoldableToolPanel(this, TOOL_NAME, M("TP_TONE_EQUALIZER_LABEL"), false, true)
+ToneEqualizer::ToneEqualizer() :
+    FoldableToolPanel(this, TOOL_NAME, M("TP_TONE_EQUALIZER_LABEL"), false, true)
 {
     auto m = ProcEventMapper::getInstance();
     EvEnabled = m->newEvent(AUTOEXP, "HISTORY_MSG_TONE_EQUALIZER_ENABLED");
     EvBands = m->newEvent(AUTOEXP, "HISTORY_MSG_TONE_EQUALIZER_BANDS");
-    EvRegularization = m->newEvent(AUTOEXP, "HISTORY_MSG_TONE_EQUALIZER_REGULARIZATION");
+    EvRegularization =
+        m->newEvent(AUTOEXP, "HISTORY_MSG_TONE_EQUALIZER_REGULARIZATION");
     EvColormap = m->newEvent(AUTOEXP, "HISTORY_MSG_TONE_EQUALIZER_SHOW_COLOR_MAP");
     EvPivot = m->newEvent(AUTOEXP, "HISTORY_MSG_TONE_EQUALIZER_PIVOT");
 
-    std::array<const char *, 5> images = {
-        "purple",
-        "blue",
-        "gray",
-        "yellow",
-        "red"
-    };
+    std::array<const char *, 5> images = {"purple", "blue", "gray", "yellow", "red"};
     for (size_t i = 0; i < bands.size(); ++i) {
-        bands[i] = Gtk::manage(new Adjuster(M("TP_TONE_EQUALIZER_BAND_" + std::to_string(i)), -100, 100, 1, 0, Gtk::manage(new RTImage(Glib::ustring("circle-") + images[i] + "-small"))));
+        bands[i] = Gtk::manage(new Adjuster(
+            M("TP_TONE_EQUALIZER_BAND_" + std::to_string(i)), -100, 100, 1, 0,
+            Gtk::manage(new RTImage(Glib::ustring("circle-") + images[i] + "-small"))));
         bands[i]->setAdjusterListener(this);
         pack_start(*bands[i]);
         bands[i]->showIcons(false);
@@ -56,30 +54,34 @@ ToneEqualizer::ToneEqualizer(): FoldableToolPanel(this, TOOL_NAME, M("TP_TONE_EQ
     pack_start(*pivot);
 
     pack_start(*Gtk::manage(new Gtk::HSeparator()));
-    regularization = Gtk::manage(new Adjuster(M("TP_TONE_EQUALIZER_DETAIL"), -5, 5, 1, 0));
+    regularization =
+        Gtk::manage(new Adjuster(M("TP_TONE_EQUALIZER_DETAIL"), -5, 5, 1, 0));
     regularization->setAdjusterListener(this);
     pack_start(*regularization);
 
-    show_colormap = Gtk::manage(new CheckBox(M("TP_TONE_EQUALIZER_SHOW_COLOR_MAP"), multiImage));
+    show_colormap =
+        Gtk::manage(new CheckBox(M("TP_TONE_EQUALIZER_SHOW_COLOR_MAP"), multiImage));
     pack_start(*show_colormap);
     show_colormap->setCheckBoxListener(this);
 
-    show_all_children ();
+    show_all_children();
 }
 
-
-void ToneEqualizer::read(const ProcParams *pp, const ParamsEdited* pedited)
+void ToneEqualizer::read(const ProcParams *pp, const ParamsEdited *pedited)
 {
     disableListener();
 
     if (pedited) {
         set_inconsistent(multiImage && !pedited->toneEqualizer.enabled);
         for (size_t i = 0; i < bands.size(); ++i) {
-            bands[i]->setEditedState(pedited->toneEqualizer.bands[i] ? Edited : UnEdited);
+            bands[i]->setEditedState(
+                pedited->toneEqualizer.bands[i] ? Edited : UnEdited);
         }
-        regularization->setEditedState(pedited->toneEqualizer.regularization ? Edited : UnEdited);
+        regularization->setEditedState(
+            pedited->toneEqualizer.regularization ? Edited : UnEdited);
         pivot->setEditedState(pedited->toneEqualizer.pivot ? Edited : UnEdited);
-        show_colormap->setEdited(pedited->toneEqualizer.show_colormap ? Edited : UnEdited);
+        show_colormap->setEdited(
+            pedited->toneEqualizer.show_colormap ? Edited : UnEdited);
     }
 
     setEnabled(pp->toneEqualizer.enabled);
@@ -96,8 +98,7 @@ void ToneEqualizer::read(const ProcParams *pp, const ParamsEdited* pedited)
     enableListener();
 }
 
-
-void ToneEqualizer::write(ProcParams *pp, ParamsEdited* pedited)
+void ToneEqualizer::write(ProcParams *pp, ParamsEdited *pedited)
 {
     for (size_t i = 0; i < bands.size(); ++i) {
         pp->toneEqualizer.bands[i] = bands[i]->getValue();
@@ -119,8 +120,8 @@ void ToneEqualizer::write(ProcParams *pp, ParamsEdited* pedited)
     }
 }
 
-
-void ToneEqualizer::setDefaults(const ProcParams *defParams, const ParamsEdited* pedited)
+void ToneEqualizer::setDefaults(
+    const ProcParams *defParams, const ParamsEdited *pedited)
 {
     for (size_t i = 0; i < bands.size(); ++i) {
         bands[i]->setDefault(defParams->toneEqualizer.bands[i]);
@@ -135,7 +136,8 @@ void ToneEqualizer::setDefaults(const ProcParams *defParams, const ParamsEdited*
         for (size_t i = 0; i < bands.size(); ++i) {
             bands[i]->setDefaultEditedState(edited.bands[i] ? Edited : UnEdited);
         }
-        regularization->setDefaultEditedState(edited.regularization ? Edited : UnEdited);
+        regularization->setDefaultEditedState(
+            edited.regularization ? Edited : UnEdited);
         pivot->setDefaultEditedState(edited.pivot ? Edited : UnEdited);
     } else {
         for (auto band : bands) {
@@ -146,12 +148,12 @@ void ToneEqualizer::setDefaults(const ProcParams *defParams, const ParamsEdited*
     }
 }
 
-
 void ToneEqualizer::adjusterChanged(Adjuster *a, double newval)
 {
     if (listener && getEnabled()) {
         if (a == regularization) {
-            listener->panelChanged(EvRegularization, Glib::ustring::format(a->getValue()));
+            listener->panelChanged(
+                EvRegularization, Glib::ustring::format(a->getValue()));
         } else if (a == pivot) {
             listener->panelChanged(EvPivot, Glib::ustring::format(a->getValue()));
         } else {
@@ -164,11 +166,7 @@ void ToneEqualizer::adjusterChanged(Adjuster *a, double newval)
     }
 }
 
-
-void ToneEqualizer::adjusterAutoToggled(Adjuster *a)
-{
-}
-
+void ToneEqualizer::adjusterAutoToggled(Adjuster *a) {}
 
 void ToneEqualizer::enabledChanged()
 {
@@ -183,7 +181,6 @@ void ToneEqualizer::enabledChanged()
     }
 }
 
-
 void ToneEqualizer::setBatchMode(bool batchMode)
 {
     ToolPanel::setBatchMode(batchMode);
@@ -196,8 +193,8 @@ void ToneEqualizer::setBatchMode(bool batchMode)
     }
 }
 
-
-void ToneEqualizer::setAdjusterBehavior(bool bands_add, bool regularization_add, bool pivot_add)
+void ToneEqualizer::setAdjusterBehavior(
+    bool bands_add, bool regularization_add, bool pivot_add)
 {
     for (auto band : bands) {
         band->setAddMode(bands_add);
@@ -206,7 +203,6 @@ void ToneEqualizer::setAdjusterBehavior(bool bands_add, bool regularization_add,
     pivot->setAddMode(pivot_add);
 }
 
-
 void ToneEqualizer::checkBoxToggled(CheckBox *c, CheckValue newval)
 {
     if (c == show_colormap) {
@@ -214,17 +210,17 @@ void ToneEqualizer::checkBoxToggled(CheckBox *c, CheckValue newval)
     }
 }
 
-
 void ToneEqualizer::colormapToggled()
 {
     for (size_t i = 0; i < bands.size(); ++i) {
         bands[i]->showIcons(show_colormap->getLastActive());
     }
     if (listener && getEnabled()) {
-        listener->panelChanged(EvColormap, show_colormap->getLastActive() ? M("GENERAL_ENABLED") : M("GENERAL_DISABLED"));
+        listener->panelChanged(EvColormap, show_colormap->getLastActive()
+                                               ? M("GENERAL_ENABLED")
+                                               : M("GENERAL_DISABLED"));
     }
 }
-
 
 void ToneEqualizer::trimValues(rtengine::procparams::ProcParams *pp)
 {
@@ -234,4 +230,3 @@ void ToneEqualizer::trimValues(rtengine::procparams::ProcParams *pp)
     regularization->trimValue(pp->toneEqualizer.regularization);
     pivot->trimValue(pp->toneEqualizer.pivot);
 }
-

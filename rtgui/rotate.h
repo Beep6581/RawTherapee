@@ -24,35 +24,34 @@
 #include "toolpanel.h"
 
 class LensGeomListener;
-class Rotate final :
-    public ToolParamBlock,
-    public AdjusterListener,
-    public FoldableToolPanel
+class Rotate final : public ToolParamBlock,
+                     public AdjusterListener,
+                     public FoldableToolPanel
 {
 
 protected:
-    Adjuster*           degree;
-    Gtk::Button*        selectStraight;
-    LensGeomListener*   rlistener;
+    Adjuster *degree;
+    Gtk::Button *selectStraight;
+    LensGeomListener *rlistener;
 
 public:
     static const Glib::ustring TOOL_NAME;
 
-    Rotate ();
+    Rotate();
 
-    void read           (const rtengine::procparams::ProcParams* pp, const ParamsEdited* pedited = nullptr) override;
-    void write          (rtengine::procparams::ProcParams* pp, ParamsEdited* pedited = nullptr) override;
-    void setDefaults    (const rtengine::procparams::ProcParams* defParams, const ParamsEdited* pedited = nullptr) override;
-    void setBatchMode   (bool batchMode) override;
+    void read(const rtengine::procparams::ProcParams *pp,
+        const ParamsEdited *pedited = nullptr) override;
+    void write(
+        rtengine::procparams::ProcParams *pp, ParamsEdited *pedited = nullptr) override;
+    void setDefaults(const rtengine::procparams::ProcParams *defParams,
+        const ParamsEdited *pedited = nullptr) override;
+    void setBatchMode(bool batchMode) override;
 
-    void straighten (double deg);
+    void straighten(double deg);
 
-    void adjusterChanged        (Adjuster* a, double newval) override;
-    void setAdjusterBehavior    (bool rotadd);
-    void trimValues             (rtengine::procparams::ProcParams* pp) override;
-    void selectStraightPressed  ();
-    void setLensGeomListener    (LensGeomListener* l)
-    {
-        rlistener = l;
-    }
+    void adjusterChanged(Adjuster *a, double newval) override;
+    void setAdjusterBehavior(bool rotadd);
+    void trimValues(rtengine::procparams::ProcParams *pp) override;
+    void selectStraightPressed();
+    void setLensGeomListener(LensGeomListener *l) { rlistener = l; }
 };

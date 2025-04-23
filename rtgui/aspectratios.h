@@ -34,4 +34,4 @@ struct AspectRatio {
 //
 // Callers should populate ratios for entries like "As Imange" and "Current"
 // before calling this function.
-void fillAspectRatios(std::vector<AspectRatio>& ratios);
+void fillAspectRatios(std::vector<AspectRatio> &ratios);

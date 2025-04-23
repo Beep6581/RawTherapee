@@ -15,7 +15,7 @@
  *
  *  You should have received a copy of the GNU General Public License
  *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 
 #include <cmath>
 #include <iomanip>
@@ -35,19 +35,22 @@ const Glib::ustring PdSharpening::TOOL_NAME = "capturesharpening";
 
 PdSharpening::PdSharpening() :
     FoldableToolPanel(this, TOOL_NAME, M("TP_PDSHARPENING_LABEL"), false, true),
-    lastAutoContrast(true),
-    lastAutoRadius(true)
+    lastAutoContrast(true), lastAutoRadius(true)
 {
     auto m = ProcEventMapper::getInstance();
     EvPdShrContrast = m->newEvent(CAPTURESHARPEN, "HISTORY_MSG_PDSHARPEN_CONTRAST");
     EvPdShrCheckIter = m->newEvent(CAPTURESHARPEN, "HISTORY_MSG_PDSHARPEN_CHECKITER");
     EvPdShrDRadius = m->newEvent(CAPTURESHARPEN, "HISTORY_MSG_PDSHARPEN_RADIUS");
-    EvPdShrDRadiusOffset = m->newEvent(CAPTURESHARPEN, "HISTORY_MSG_PDSHARPEN_RADIUS_BOOST");
-    EvPdShrDIterations = m->newEvent(CAPTURESHARPEN, "HISTORY_MSG_PDSHARPEN_ITERATIONS");
-    EvPdShrAutoContrast = m->newEvent(CAPTURESHARPEN, "HISTORY_MSG_PDSHARPEN_AUTO_CONTRAST");
-    EvPdShrAutoRadius = m->newEvent(CAPTURESHARPEN, "HISTORY_MSG_PDSHARPEN_AUTO_RADIUS");
+    EvPdShrDRadiusOffset =
+        m->newEvent(CAPTURESHARPEN, "HISTORY_MSG_PDSHARPEN_RADIUS_BOOST");
+    EvPdShrDIterations =
+        m->newEvent(CAPTURESHARPEN, "HISTORY_MSG_PDSHARPEN_ITERATIONS");
+    EvPdShrAutoContrast =
+        m->newEvent(CAPTURESHARPEN, "HISTORY_MSG_PDSHARPEN_AUTO_CONTRAST");
+    EvPdShrAutoRadius =
+        m->newEvent(CAPTURESHARPEN, "HISTORY_MSG_PDSHARPEN_AUTO_RADIUS");
 
-    Gtk::Box* hb = Gtk::manage(new Gtk::Box());
+    Gtk::Box *hb = Gtk::manage(new Gtk::Box());
     hb->show();
     contrast = Gtk::manage(new Adjuster(M("TP_SHARPENING_CONTRAST"), 0, 200, 1, 10));
     contrast->setAdjusterListener(this);
@@ -59,11 +62,13 @@ PdSharpening::PdSharpening() :
 
     pack_start(*hb);
 
-    Gtk::Box* rld = Gtk::manage(new Gtk::Box(Gtk::ORIENTATION_VERTICAL));
-    dradius = Gtk::manage(new Adjuster(M("TP_SHARPENING_RADIUS"), 0.4, 2.0, 0.01, 0.75));
+    Gtk::Box *rld = Gtk::manage(new Gtk::Box(Gtk::ORIENTATION_VERTICAL));
+    dradius =
+        Gtk::manage(new Adjuster(M("TP_SHARPENING_RADIUS"), 0.4, 2.0, 0.01, 0.75));
     dradius->addAutoButton();
     dradius->setAutoValue(true);
-    dradiusOffset = Gtk::manage(new Adjuster(M("TP_SHARPENING_RADIUS_BOOST"), -0.5, 0.5, 0.01, 0.0));
+    dradiusOffset = Gtk::manage(
+        new Adjuster(M("TP_SHARPENING_RADIUS_BOOST"), -0.5, 0.5, 0.01, 0.0));
     diter = Gtk::manage(new Adjuster(M("TP_SHARPENING_RLD_ITERATIONS"), 1, 100, 1, 20));
     itercheck = Gtk::manage(new CheckBox(M("TP_SHARPENING_ITERCHECK"), multiImage));
     itercheck->setCheckBoxListener(this);
@@ -85,27 +90,26 @@ PdSharpening::PdSharpening() :
 
     contrast->setDelay(std::max(options.adjusterMinDelay, options.adjusterMaxDelay));
     dradius->setDelay(std::max(options.adjusterMinDelay, options.adjusterMaxDelay));
-    dradiusOffset->setDelay(std::max(options.adjusterMinDelay, options.adjusterMaxDelay));
+    dradiusOffset->setDelay(
+        std::max(options.adjusterMinDelay, options.adjusterMaxDelay));
     diter->setDelay(std::max(options.adjusterMinDelay, options.adjusterMaxDelay));
 }
 
-PdSharpening::~PdSharpening()
-{
-    idle_register.destroy();
-}
+PdSharpening::~PdSharpening() { idle_register.destroy(); }
 
-
-void PdSharpening::read(const ProcParams* pp, const ParamsEdited* pedited)
+void PdSharpening::read(const ProcParams *pp, const ParamsEdited *pedited)
 {
 
     disableListener();
 
     if (pedited) {
         contrast->setEditedState(pedited->pdsharpening.contrast ? Edited : UnEdited);
-        contrast->setAutoInconsistent(multiImage && !pedited->pdsharpening.autoContrast);
+        contrast->setAutoInconsistent(
+            multiImage && !pedited->pdsharpening.autoContrast);
         dradius->setAutoInconsistent(multiImage && !pedited->pdsharpening.autoRadius);
         dradius->setEditedState(pedited->pdsharpening.deconvradius ? Edited : UnEdited);
-        dradiusOffset->setEditedState(pedited->pdsharpening.deconvradiusOffset ? Edited : UnEdited);
+        dradiusOffset->setEditedState(
+            pedited->pdsharpening.deconvradiusOffset ? Edited : UnEdited);
         diter->setEditedState(pedited->pdsharpening.deconviter ? Edited : UnEdited);
         itercheck->setEdited(pedited->pdsharpening.deconvitercheck);
 
@@ -128,7 +132,7 @@ void PdSharpening::read(const ProcParams* pp, const ParamsEdited* pedited)
     enableListener();
 }
 
-void PdSharpening::write(ProcParams* pp, ParamsEdited* pedited)
+void PdSharpening::write(ProcParams *pp, ParamsEdited *pedited)
 {
 
     pp->pdsharpening.contrast = contrast->getValue();
@@ -137,7 +141,7 @@ void PdSharpening::write(ProcParams* pp, ParamsEdited* pedited)
     pp->pdsharpening.deconvradius = dradius->getValue();
     pp->pdsharpening.autoRadius = dradius->getAutoValue();
     pp->pdsharpening.deconvradiusOffset = dradiusOffset->getValue();
-    pp->pdsharpening.deconviter =(int)diter->getValue();
+    pp->pdsharpening.deconviter = (int)diter->getValue();
     pp->pdsharpening.deconvitercheck = itercheck->getLastActive();
 
     if (pedited) {
@@ -152,7 +156,7 @@ void PdSharpening::write(ProcParams* pp, ParamsEdited* pedited)
     }
 }
 
-void PdSharpening::setDefaults(const ProcParams* defParams, const ParamsEdited* pedited)
+void PdSharpening::setDefaults(const ProcParams *defParams, const ParamsEdited *pedited)
 {
 
     contrast->setDefault(defParams->pdsharpening.contrast);
@@ -161,10 +165,14 @@ void PdSharpening::setDefaults(const ProcParams* defParams, const ParamsEdited* 
     diter->setDefault(defParams->pdsharpening.deconviter);
 
     if (pedited) {
-        contrast->setDefaultEditedState(pedited->pdsharpening.contrast ? Edited : UnEdited);
-        dradius->setDefaultEditedState(pedited->pdsharpening.deconvradius ? Edited : UnEdited);
-        dradiusOffset->setDefaultEditedState(pedited->pdsharpening.deconvradiusOffset ? Edited : UnEdited);
-        diter->setDefaultEditedState(pedited->pdsharpening.deconviter ? Edited : UnEdited);
+        contrast->setDefaultEditedState(
+            pedited->pdsharpening.contrast ? Edited : UnEdited);
+        dradius->setDefaultEditedState(
+            pedited->pdsharpening.deconvradius ? Edited : UnEdited);
+        dradiusOffset->setDefaultEditedState(
+            pedited->pdsharpening.deconvradiusOffset ? Edited : UnEdited);
+        diter->setDefaultEditedState(
+            pedited->pdsharpening.deconviter ? Edited : UnEdited);
     } else {
         contrast->setDefaultEditedState(Irrelevant);
         dradius->setDefaultEditedState(Irrelevant);
@@ -173,21 +181,23 @@ void PdSharpening::setDefaults(const ProcParams* defParams, const ParamsEdited* 
     }
 }
 
-void PdSharpening::checkBoxToggled (CheckBox* c, CheckValue newval)
+void PdSharpening::checkBoxToggled(CheckBox *c, CheckValue newval)
 {
     if (listener) {
-        listener->panelChanged (EvPdShrCheckIter, itercheck->getLastActive() ? M("GENERAL_ENABLED") : M("GENERAL_DISABLED"));
+        listener->panelChanged(EvPdShrCheckIter,
+            itercheck->getLastActive() ? M("GENERAL_ENABLED") : M("GENERAL_DISABLED"));
     }
 }
 
-void PdSharpening::adjusterChanged(Adjuster* a, double newval)
+void PdSharpening::adjusterChanged(Adjuster *a, double newval)
 {
     if (listener && (multiImage || getEnabled())) {
 
         Glib::ustring costr;
 
         if (a == dradius || a == dradiusOffset) {
-            costr = Glib::ustring::format(std::setw(3), std::fixed, std::setprecision(2), a->getValue());
+            costr = Glib::ustring::format(
+                std::setw(3), std::fixed, std::setprecision(2), a->getValue());
         } else {
             costr = Glib::ustring::format((int)a->getValue());
         }
@@ -237,7 +247,7 @@ void PdSharpening::setAdjusterBehavior(bool contrastadd, bool radiusadd, bool it
     diter->setAddMode(iteradd);
 }
 
-void PdSharpening::trimValues(rtengine::procparams::ProcParams* pp)
+void PdSharpening::trimValues(rtengine::procparams::ProcParams *pp)
 {
 
     contrast->trimValue(pp->pdsharpening.contrast);
@@ -248,31 +258,25 @@ void PdSharpening::trimValues(rtengine::procparams::ProcParams* pp)
 
 void PdSharpening::autoContrastChanged(double autoContrast)
 {
-    idle_register.add(
-        [this, autoContrast]() -> bool
-        {
-            disableListener();
-            contrast->setValue(autoContrast);
-            enableListener();
-            return false;
-        }
-    );
+    idle_register.add([this, autoContrast]() -> bool {
+        disableListener();
+        contrast->setValue(autoContrast);
+        enableListener();
+        return false;
+    });
 }
 
 void PdSharpening::autoRadiusChanged(double autoRadius)
 {
-    idle_register.add(
-        [this, autoRadius]() -> bool
-        {
-            disableListener();
-            dradius->setValue(autoRadius);
-            enableListener();
-            return false;
-        }
-    );
+    idle_register.add([this, autoRadius]() -> bool {
+        disableListener();
+        dradius->setValue(autoRadius);
+        enableListener();
+        return false;
+    });
 }
 
-void PdSharpening::adjusterAutoToggled(Adjuster* a)
+void PdSharpening::adjusterAutoToggled(Adjuster *a)
 {
     if (multiImage) {
         if (a->getAutoInconsistent()) {

@@ -27,47 +27,25 @@
 #include "rtscalable.h"
 #include "rtengine/rt_math.h"
 
-namespace {
+namespace
+{
 
 constexpr int MIN_RESET_BUTTON_HEIGHT = 17;
 
-double one2one(double val)
-{
-    return val;
-}
-}
+double one2one(double val) { return val; }
+} // namespace
 
-Adjuster::Adjuster(
-    Glib::ustring vlabel,
-    double vmin,
-    double vmax,
-    double vstep,
-    double vdefault,
-    Gtk::Image *imgIcon1,
-    Gtk::Image *imgIcon2,
-    double2double_fun slider2value,
-    double2double_fun value2slider
-) :
-    adjustmentName(std::move(vlabel)),
-    grid(nullptr),
-    label(nullptr),
-    imageIcon1(imgIcon1),
-    imageIcon2(imgIcon2),
-    automatic(nullptr),
+Adjuster::Adjuster(Glib::ustring vlabel, double vmin, double vmax, double vstep,
+    double vdefault, Gtk::Image *imgIcon1, Gtk::Image *imgIcon2,
+    double2double_fun slider2value, double2double_fun value2slider) :
+    adjustmentName(std::move(vlabel)), grid(nullptr), label(nullptr),
+    imageIcon1(imgIcon1), imageIcon2(imgIcon2), automatic(nullptr),
     adjusterListener(nullptr),
     spinChange(options.adjusterMinDelay, options.adjusterMaxDelay),
     sliderChange(options.adjusterMinDelay, options.adjusterMaxDelay),
-    editedCheckBox(nullptr),
-    afterReset(false),
-    blocked(false),
-    addMode(false),
-    vMin(vmin),
-    vMax(vmax),
-    vStep(vstep),
-    logBase(0),
-    logPivot(0),
-    logAnchorMiddle(false),
-    value2slider(value2slider ? value2slider : &one2one),
+    editedCheckBox(nullptr), afterReset(false), blocked(false), addMode(false),
+    vMin(vmin), vMax(vmax), vStep(vstep), logBase(0), logPivot(0),
+    logAnchorMiddle(false), value2slider(value2slider ? value2slider : &one2one),
     slider2value(slider2value ? slider2value : &one2one)
 
 {
@@ -75,11 +53,13 @@ Adjuster::Adjuster(
     set_vexpand(false);
 
     if (imageIcon1) {
-        setExpandAlignProperties(imageIcon1, false, false, Gtk::ALIGN_CENTER, Gtk::ALIGN_CENTER);
+        setExpandAlignProperties(
+            imageIcon1, false, false, Gtk::ALIGN_CENTER, Gtk::ALIGN_CENTER);
     }
 
     if (imageIcon2) {
-        setExpandAlignProperties(imageIcon2, false, false, Gtk::ALIGN_CENTER, Gtk::ALIGN_CENTER);
+        setExpandAlignProperties(
+            imageIcon2, false, false, Gtk::ALIGN_CENTER, Gtk::ALIGN_CENTER);
     }
 
     set_column_spacing(0);
@@ -89,7 +69,8 @@ Adjuster::Adjuster(
 
     if (!adjustmentName.empty()) {
         label = Gtk::manage(new Gtk::Label(adjustmentName));
-        setExpandAlignProperties(label, true, false, Gtk::ALIGN_START, Gtk::ALIGN_BASELINE);
+        setExpandAlignProperties(
+            label, true, false, Gtk::ALIGN_START, Gtk::ALIGN_BASELINE);
     }
 
     reset = Gtk::manage(new Gtk::Button());
@@ -106,11 +87,15 @@ Adjuster::Adjuster(
     setExpandAlignProperties(spin, false, false, Gtk::ALIGN_CENTER, Gtk::ALIGN_CENTER);
     spin->set_input_purpose(Gtk::INPUT_PURPOSE_DIGITS);
 
-    reset->set_size_request(-1, RTScalable::scalePixelSize(spin->get_height() > MIN_RESET_BUTTON_HEIGHT ? spin->get_height() : MIN_RESET_BUTTON_HEIGHT));
+    reset->set_size_request(
+        -1, RTScalable::scalePixelSize(spin->get_height() > MIN_RESET_BUTTON_HEIGHT
+                                           ? spin->get_height()
+                                           : MIN_RESET_BUTTON_HEIGHT));
     slider = Gtk::manage(new MyHScale());
     setExpandAlignProperties(slider, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_CENTER);
     slider->set_draw_value(false);
-    //slider->set_has_origin(false);  // ------------------ This will remove the colored part on the left of the slider's knob
+    // slider->set_has_origin(false);  // ------------------ This will remove the
+    // colored part on the left of the slider's knob
 
     setLimits(vmin, vmax, vstep, vdefault);
 
@@ -155,53 +140,52 @@ Adjuster::Adjuster(
     defaultVal = ctorDefaultVal = shapeValue(vdefault);
     editedState = defEditedState = Irrelevant;
 
-    spinChange.connect(
-        spin->signal_value_changed(),
-        sigc::mem_fun(*this, &Adjuster::spinChanged),
-        [this]()
-        {
+    spinChange.connect(spin->signal_value_changed(),
+        sigc::mem_fun(*this, &Adjuster::spinChanged), [this]() {
             sliderChange.block(true);
-            setSliderValue(addMode ? spin->get_value() : this->value2slider(spin->get_value()));
+            setSliderValue(
+                addMode ? spin->get_value() : this->value2slider(spin->get_value()));
             sliderChange.block(false);
-        }
-    );
-    sliderChange.connect(
-        slider->signal_value_changed(),
-        sigc::mem_fun(*this, &Adjuster::sliderChanged),
-        [this]()
-        {
+        });
+    sliderChange.connect(slider->signal_value_changed(),
+        sigc::mem_fun(*this, &Adjuster::sliderChanged), [this]() {
             spinChange.block();
             const double v = shapeValue(getSliderValue());
             spin->set_value(addMode ? v : this->slider2value(v));
             spinChange.unblock();
-        }
-    );
-    reset->signal_button_release_event().connect_notify( sigc::mem_fun(*this, &Adjuster::resetPressed) );
+        });
+    reset->signal_button_release_event().connect_notify(
+        sigc::mem_fun(*this, &Adjuster::resetPressed));
 
     show_all();
 }
 
-Adjuster::~Adjuster ()
+Adjuster::~Adjuster()
 {
 
     sliderChange.block();
     spinChange.block();
     adjusterListener = nullptr;
-
 }
 
-void Adjuster::addAutoButton (const Glib::ustring &tooltip)
+void Adjuster::addAutoButton(const Glib::ustring &tooltip)
 {
     if (!automatic) {
         automatic = Gtk::manage(new Gtk::CheckButton());
-        //automatic->add (*Gtk::manage (new RTImage ("gears")));
-        automatic->set_tooltip_markup(tooltip.length() ? Glib::ustring::compose("<b>%1</b>\n\n%2", M("GENERAL_AUTO"), tooltip) : M("GENERAL_AUTO"));
-        setExpandAlignProperties(automatic, false, false, Gtk::ALIGN_CENTER, Gtk::ALIGN_CENTER);
-        autoChange = automatic->signal_toggled().connect( sigc::mem_fun(*this, &Adjuster::autoToggled) );
+        // automatic->add (*Gtk::manage (new RTImage ("gears")));
+        automatic->set_tooltip_markup(
+            tooltip.length()
+                ? Glib::ustring::compose("<b>%1</b>\n\n%2", M("GENERAL_AUTO"), tooltip)
+                : M("GENERAL_AUTO"));
+        setExpandAlignProperties(
+            automatic, false, false, Gtk::ALIGN_CENTER, Gtk::ALIGN_CENTER);
+        autoChange = automatic->signal_toggled().connect(
+            sigc::mem_fun(*this, &Adjuster::autoToggled));
 
         if (grid) {
-            // Hombre, adding the checkbox next to the reset button because adding it next to the spin button (as before)
-            // would diminish the available size for the label and would require a much heavier reorganization of the grid !
+            // Hombre, adding the checkbox next to the reset button because adding it
+            // next to the spin button (as before) would diminish the available size for
+            // the label and would require a much heavier reorganization of the grid !
             grid->attach_next_to(*automatic, *reset, Gtk::POS_RIGHT, 1, 1);
         } else {
             attach_next_to(*automatic, *reset, Gtk::POS_RIGHT, 1, 1);
@@ -214,11 +198,14 @@ void Adjuster::throwOnButtonRelease(bool throwOnBRelease)
 
     if (throwOnBRelease) {
         if (!buttonReleaseSlider.connected()) {
-            buttonReleaseSlider = slider->signal_button_release_event().connect_notify( sigc::mem_fun(*this, &Adjuster::sliderReleased) );
+            buttonReleaseSlider = slider->signal_button_release_event().connect_notify(
+                sigc::mem_fun(*this, &Adjuster::sliderReleased));
         }
 
         if (!buttonReleaseSpin.connected()) {
-            buttonReleaseSpin = spin->signal_button_release_event().connect_notify( sigc::mem_fun(*this, &Adjuster::spinReleased) );    // Use the same callback hook
+            buttonReleaseSpin =
+                spin->signal_button_release_event().connect_notify(sigc::mem_fun(
+                    *this, &Adjuster::spinReleased)); // Use the same callback hook
         }
     } else {
         if (buttonReleaseSlider.connected()) {
@@ -231,19 +218,11 @@ void Adjuster::throwOnButtonRelease(bool throwOnBRelease)
     }
 }
 
-void Adjuster::setDefault (double def)
-{
+void Adjuster::setDefault(double def) { defaultVal = shapeValue(def); }
 
-    defaultVal = shapeValue(def);
-}
+void Adjuster::setDefaultEditedState(EditedState eState) { defEditedState = eState; }
 
-void Adjuster::setDefaultEditedState (EditedState eState)
-{
-
-    defEditedState = eState;
-}
-
-void Adjuster::autoToggled ()
+void Adjuster::autoToggled()
 {
 
     if (adjusterListener && !blocked) {
@@ -251,7 +230,7 @@ void Adjuster::autoToggled ()
     }
 }
 
-void Adjuster::sliderReleased (GdkEventButton* event)
+void Adjuster::sliderReleased(GdkEventButton *event)
 {
 
     if ((event != nullptr) && (event->button == 1)) {
@@ -261,7 +240,7 @@ void Adjuster::sliderReleased (GdkEventButton* event)
     }
 }
 
-void Adjuster::spinReleased (GdkEventButton* event)
+void Adjuster::spinReleased(GdkEventButton *event)
 {
 
     if (event) {
@@ -271,7 +250,7 @@ void Adjuster::spinReleased (GdkEventButton* event)
     }
 }
 
-void Adjuster::resetValue (bool toInitial)
+void Adjuster::resetValue(bool toInitial)
 {
     if (editedState != Irrelevant) {
         editedState = defEditedState;
@@ -281,7 +260,6 @@ void Adjuster::resetValue (bool toInitial)
             editedCheckBox->set_active(defEditedState == Edited);
             editedChange.block(false);
         }
-
     }
 
     afterReset = true;
@@ -300,30 +278,33 @@ void Adjuster::resetValue (bool toInitial)
 }
 
 // Please note that it won't change the "Auto" CheckBox's state, if there
-void Adjuster::resetPressed (GdkEventButton* event)
+void Adjuster::resetPressed(GdkEventButton *event)
 {
 
-    if ((event != nullptr) && (event->state & GDK_CONTROL_MASK) && (event->button == 1)) {
+    if ((event != nullptr) && (event->state & GDK_CONTROL_MASK) &&
+        (event->button == 1)) {
         resetValue(true);
     } else {
         resetValue(false);
     }
 }
 
-double Adjuster::shapeValue (double a) const
+double Adjuster::shapeValue(double a) const
 {
     const double pow10 = std::pow(10.0, digits);
     const double val = std::round(a * pow10) / pow10;
     return val == -0.0 ? 0.0 : val;
 }
 
-void Adjuster::setLimits (double vmin, double vmax, double vstep, double vdefault)
+void Adjuster::setLimits(double vmin, double vmax, double vstep, double vdefault)
 {
     sliderChange.block(true);
     spinChange.block(true);
 
     double pow10 = vstep;
-    for (digits = 0; std::fabs(pow10 - floor(pow10)) > 0.000000000001; digits++, pow10 *= 10.0);
+    for (digits = 0; std::fabs(pow10 - floor(pow10)) > 0.000000000001;
+        digits++, pow10 *= 10.0)
+        ;
 
     const double shapeVal = shapeValue(vdefault);
     spin->set_digits(digits);
@@ -334,7 +315,8 @@ void Adjuster::setLimits (double vmin, double vmax, double vstep, double vdefaul
 
     slider->set_digits(digits);
     slider->set_increments(vstep, 2.0 * vstep);
-    slider->set_range(addMode ? vmin : value2slider(vmin), addMode ? vmax : value2slider(vmax));
+    slider->set_range(
+        addMode ? vmin : value2slider(vmin), addMode ? vmax : value2slider(vmax));
     setSliderValue(addMode ? shapeVal : value2slider(shapeVal));
 
     sliderChange.block(false);
@@ -387,7 +369,7 @@ void Adjuster::spinChanged()
     afterReset = false;
 }
 
-void Adjuster::sliderChanged ()
+void Adjuster::sliderChanged()
 {
     if (adjusterListener && !blocked) {
         if (!buttonReleaseSlider.connected() || afterReset) {
@@ -411,7 +393,7 @@ void Adjuster::sliderChanged ()
     afterReset = false;
 }
 
-void Adjuster::setValue (double a)
+void Adjuster::setValue(double a)
 {
     spinChange.block();
     sliderChange.block(true);
@@ -422,7 +404,7 @@ void Adjuster::setValue (double a)
     afterReset = false;
 }
 
-void Adjuster::setAutoValue (bool a)
+void Adjuster::setAutoValue(bool a)
 {
     if (automatic) {
         const bool oldVal = autoChange.block(true);
@@ -431,7 +413,7 @@ void Adjuster::setAutoValue (bool a)
     }
 }
 
-bool Adjuster::notifyListener ()
+bool Adjuster::notifyListener()
 {
     if (adjusterListener != nullptr && !blocked) {
         if (automatic) {
@@ -443,7 +425,7 @@ bool Adjuster::notifyListener ()
     return false;
 }
 
-bool Adjuster::notifyListenerAutoToggled ()
+bool Adjuster::notifyListenerAutoToggled()
 {
 
     if (adjusterListener != nullptr && !blocked) {
@@ -453,7 +435,7 @@ bool Adjuster::notifyListenerAutoToggled ()
     return false;
 }
 
-void Adjuster::setEnabled (bool enabled)
+void Adjuster::setEnabled(bool enabled)
 {
 
     const bool autoVal = automatic && !editedCheckBox ? automatic->get_active() : true;
@@ -465,7 +447,7 @@ void Adjuster::setEnabled (bool enabled)
     }
 }
 
-void Adjuster::setEditedState (EditedState eState)
+void Adjuster::setEditedState(EditedState eState)
 {
 
     if (editedState != eState) {
@@ -479,7 +461,7 @@ void Adjuster::setEditedState (EditedState eState)
     }
 }
 
-EditedState Adjuster::getEditedState ()
+EditedState Adjuster::getEditedState()
 {
 
     if (editedState != Irrelevant && editedCheckBox) {
@@ -489,7 +471,7 @@ EditedState Adjuster::getEditedState ()
     return editedState;
 }
 
-void Adjuster::showEditedCB ()
+void Adjuster::showEditedCB()
 {
 
     if (label) {
@@ -517,12 +499,13 @@ void Adjuster::showEditedCB ()
             }
         }
 
-        editedChange = editedCheckBox->signal_toggled().connect( sigc::mem_fun(*this, &Adjuster::editedToggled) );
+        editedChange = editedCheckBox->signal_toggled().connect(
+            sigc::mem_fun(*this, &Adjuster::editedToggled));
         editedCheckBox->show();
     }
 }
 
-void Adjuster::editedToggled ()
+void Adjuster::editedToggled()
 {
     if (adjusterListener && !blocked) {
         if (automatic) {
@@ -532,17 +515,11 @@ void Adjuster::editedToggled ()
     }
 }
 
-void Adjuster::trimValue (double &val) const
-{
-    val = rtengine::LIM(val, vMin, vMax);
-}
+void Adjuster::trimValue(double &val) const { val = rtengine::LIM(val, vMin, vMax); }
 
-void Adjuster::trimValue (int &val) const
-{
-    val = rtengine::LIM<int>(val, vMin, vMax);
-}
+void Adjuster::trimValue(int &val) const { val = rtengine::LIM<int>(val, vMin, vMax); }
 
-void Adjuster::trimValue (float &val) const
+void Adjuster::trimValue(float &val) const
 {
     val = rtengine::LIM<float>(val, vMin, vMax);
 }
@@ -557,11 +534,13 @@ double Adjuster::getSliderValue() const
             if (val >= mmid) {
                 double range = vMax - mmid;
                 double x = (val - mmid) / range;
-                val = logPivot + (std::pow(logBase, x) - 1.0) / (logBase - 1.0) * (vMax - logPivot);
+                val = logPivot + (std::pow(logBase, x) - 1.0) / (logBase - 1.0) *
+                                     (vMax - logPivot);
             } else {
                 double range = mmid - vMin;
                 double x = (mmid - val) / range;
-                val = logPivot - (std::pow(logBase, x) - 1.0) / (logBase - 1.0) * (logPivot - vMin);
+                val = logPivot - (std::pow(logBase, x) - 1.0) / (logBase - 1.0) *
+                                     (logPivot - vMin);
             }
         } else {
             if (val >= logPivot) {
@@ -586,21 +565,25 @@ void Adjuster::setSliderValue(double val)
             if (val >= logPivot) {
                 double range = vMax - logPivot;
                 double x = (val - logPivot) / range;
-                val = (vMin + mid) + std::log1p(x * (logBase - 1.0)) / std::log(logBase) * mid;
+                val = (vMin + mid) +
+                      std::log1p(x * (logBase - 1.0)) / std::log(logBase) * mid;
             } else {
                 double range = logPivot - vMin;
                 double x = (logPivot - val) / range;
-                val = (vMin + mid) - std::log1p(x * (logBase - 1.0)) / std::log(logBase) * mid;
+                val = (vMin + mid) -
+                      std::log1p(x * (logBase - 1.0)) / std::log(logBase) * mid;
             }
         } else {
             if (val >= logPivot) {
                 double range = vMax - logPivot;
                 double x = (val - logPivot) / range;
-                val = logPivot + std::log1p(x * (logBase - 1.0)) / std::log(logBase) * range;
+                val = logPivot +
+                      std::log1p(x * (logBase - 1.0)) / std::log(logBase) * range;
             } else {
                 double range = logPivot - vMin;
                 double x = (logPivot - val) / range;
-                val = logPivot - std::log1p(x * (logBase - 1.0)) / std::log(logBase) * range;
+                val = logPivot -
+                      std::log1p(x * (logBase - 1.0)) / std::log(logBase) * range;
             }
         }
     }
@@ -636,23 +619,18 @@ void Adjuster::setAutoInconsistent(bool i)
 
 bool Adjuster::getAutoInconsistent() const
 {
-    return automatic ? automatic->get_inconsistent() : true /* we have to return something */;
+    return automatic ? automatic->get_inconsistent()
+                     : true /* we have to return something */;
 }
 
-void Adjuster::setAdjusterListener (AdjusterListener* alistener)
+void Adjuster::setAdjusterListener(AdjusterListener *alistener)
 {
     adjusterListener = alistener;
 }
 
-double Adjuster::getValue() const
-{
-    return shapeValue(spin->get_value());
-}
+double Adjuster::getValue() const { return shapeValue(spin->get_value()); }
 
-int Adjuster::getIntValue() const
-{
-    return spin->get_value_as_int();
-}
+int Adjuster::getIntValue() const { return spin->get_value_as_int(); }
 
 Glib::ustring Adjuster::getTextValue() const
 {
@@ -663,10 +641,7 @@ Glib::ustring Adjuster::getTextValue() const
     }
 }
 
-void Adjuster::setLabel(const Glib::ustring &lbl)
-{
-    label->set_label(lbl);
-}
+void Adjuster::setLabel(const Glib::ustring &lbl) { label->set_label(lbl); }
 
 bool Adjuster::block(bool isBlocked)
 {
@@ -675,10 +650,7 @@ bool Adjuster::block(bool isBlocked)
     return oldValue;
 }
 
-bool Adjuster::getAddMode() const
-{
-    return addMode;
-}
+bool Adjuster::getAddMode() const { return addMode; }
 
 void Adjuster::setDelay(unsigned int min_delay_ms, unsigned int max_delay_ms)
 {

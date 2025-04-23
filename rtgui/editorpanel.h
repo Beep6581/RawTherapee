@@ -35,7 +35,7 @@
 
 namespace rtengine
 {
-template<typename T>
+template <typename T>
 class array2D;
 }
 
@@ -52,7 +52,7 @@ class Thumbnail;
 class ToolPanelCoordinator;
 
 struct EditorPanelIdleHelper {
-    EditorPanel* epanel;
+    EditorPanel *epanel;
     bool destroyed;
     int pending;
 };
@@ -60,96 +60,79 @@ struct EditorPanelIdleHelper {
 class RTWindow;
 
 class EditorPanel final :
-    public Gtk::Box,
-    public PParamsChangeListener,
-    public rtengine::ProgressListener,
-    public ThumbnailListener,
-    public HistoryBeforeLineListener,
-    public rtengine::HistogramListener,
-    public HistogramPanelListener,
-    public rtengine::NonCopyable
+  public Gtk::Box,
+  public PParamsChangeListener,
+  public rtengine::ProgressListener,
+  public ThumbnailListener,
+  public HistoryBeforeLineListener,
+  public rtengine::HistogramListener,
+  public HistogramPanelListener,
+  public rtengine::NonCopyable
 {
 public:
+    // bool firstProcessingDone;
+    Gtk::Paned *getCatalogPane() { return catalogPane; }
+    bool firstProcessingDone;
 
-    explicit EditorPanel (FilePanel* filePanel = nullptr);
-    ~EditorPanel () override;
+    explicit EditorPanel(FilePanel *filePanel = nullptr);
+    ~EditorPanel() override;
 
-    void open (Thumbnail* tmb, rtengine::InitialImage* isrc);
-    void setAspect ();
-    void on_realize () override;
-    void leftPaneButtonReleased (GdkEventButton *event);
-    void rightPaneButtonReleased (GdkEventButton *event);
+    // Gtk::Paned* catalogPane;
+    void open(Thumbnail *tmb, rtengine::InitialImage *isrc);
+    void setAspect();
+    void on_realize() override;
+    void leftPaneButtonReleased(GdkEventButton *event);
+    void rightPaneButtonReleased(GdkEventButton *event);
 
-    void setParent (RTWindow* p)
-    {
-        parent = p;
-    }
+    void setParent(RTWindow *p) { parent = p; }
 
-    void setParentWindow (Gtk::Window* p)
-    {
-        parentWindow = p;
-    }
+    void setParentWindow(Gtk::Window *p) { parentWindow = p; }
 
     void writeOptions();
-    void writeToolExpandedStatus (std::vector<int> &tpOpen);
-    void updateShowtooltipVisibility (bool showtooltip);
+    void writeToolExpandedStatus(std::vector<int> &tpOpen);
+    void updateShowtooltipVisibility(bool showtooltip);
 
-    void showTopPanel (bool show);
-    bool isRealized()
-    {
-        return realized;
-    }
+    void showTopPanel(bool show);
+    bool isRealized() { return realized; }
     // ProgressListener interface
     void setProgress(double p) override;
-    void setProgressStr(const Glib::ustring& str) override;
+    void setProgressStr(const Glib::ustring &str) override;
     void setProgressState(bool inProcessing) override;
-    void error(const Glib::ustring& descr) override;
+    void error(const Glib::ustring &descr) override;
 
-    void error(const Glib::ustring& title, const Glib::ustring& descr);
-    void displayError(const Glib::ustring& title, const Glib::ustring& descr);  // this is called by error in the gtk thread
-    void refreshProcessingState (bool inProcessing); // this is called by setProcessingState in the gtk thread
+    void error(const Glib::ustring &title, const Glib::ustring &descr);
+    void displayError(const Glib::ustring &title,
+        const Glib::ustring &descr); // this is called by error in the gtk thread
+    void refreshProcessingState(
+        bool inProcessing); // this is called by setProcessingState in the gtk thread
 
     // PParamsChangeListener interface
     void procParamsChanged(
-        const rtengine::procparams::ProcParams* params,
-        const rtengine::ProcEvent& ev,
-        const Glib::ustring& descr,
-        const ParamsEdited* paramsEdited = nullptr
-    ) override;
+      const rtengine::procparams::ProcParams *params,
+      const rtengine::ProcEvent &ev,
+      const Glib::ustring &descr,
+      const ParamsEdited *paramsEdited = nullptr
+      ) override;
     void clearParamChanges() override;
 
     // thumbnaillistener interface
-    void procParamsChanged (Thumbnail* thm, int whoChangedIt, bool upgradeHint) override;
+    void procParamsChanged(Thumbnail *thm, int whoChangedIt, bool upgradeHint) override;
 
     // HistoryBeforeLineListener
-    void historyBeforeLineChanged (const rtengine::procparams::ProcParams& params) override;
+    void historyBeforeLineChanged(
+        const rtengine::procparams::ProcParams &params) override;
 
     // HistogramListener
-    void histogramChanged(
-        const LUTu& histRed,
-        const LUTu& histGreen,
-        const LUTu& histBlue,
-        const LUTu& histLuma,
-        const LUTu& histToneCurve,
-        const LUTu& histLCurve,
-        const LUTu& histCCurve,
-        const LUTu& histLCAM,
-        const LUTu& histCCAM,
-        const LUTu& histRedRaw,
-        const LUTu& histGreenRaw,
-        const LUTu& histBlueRaw,
-        const LUTu& histChroma,
-        const LUTu& histLRETI,
-        int vectorscopeScale,
-        const array2D<int>& vectorscopeHC,
-        const array2D<int>& vectorscopeHS,
-        int waveformScale,
-        const array2D<int>& waveformRed,
-        const array2D<int>& waveformGreen,
-        const array2D<int>& waveformBlue,
-        const array2D<int>& waveformLuma
-    ) override;
-    void setObservable(rtengine::HistogramObservable* observable) override;
+    void histogramChanged(const LUTu &histRed, const LUTu &histGreen,
+        const LUTu &histBlue, const LUTu &histLuma, const LUTu &histToneCurve,
+        const LUTu &histLCurve, const LUTu &histCCurve, const LUTu &histLCAM,
+        const LUTu &histCCAM, const LUTu &histRedRaw, const LUTu &histGreenRaw,
+        const LUTu &histBlueRaw, const LUTu &histChroma, const LUTu &histLRETI,
+        int vectorscopeScale, const array2D<int> &vectorscopeHC,
+        const array2D<int> &vectorscopeHS, int waveformScale,
+        const array2D<int> &waveformRed, const array2D<int> &waveformGreen,
+        const array2D<int> &waveformBlue, const array2D<int> &waveformLuma) override;
+    void setObservable(rtengine::HistogramObservable *observable) override;
     bool updateHistogram(void) const override;
     bool updateHistogramRaw(void) const override;
     bool updateVectorscopeHC(void) const override;
@@ -160,99 +143,115 @@ public:
     void scopeTypeChanged(Options::ScopeType new_type) override;
 
     // event handlers
-    void info_toggled ();
-    void hideHistoryActivated ();
-    void tbRightPanel_1_toggled ();
-    void tbTopPanel_1_toggled ();
-    void beforeAfterToggled ();
+    void info_toggled();
+    void hideHistoryActivated();
+    void tbRightPanel_1_toggled();
+    void tbTopPanel_1_toggled();
+    void beforeAfterToggled();
     void tbBeforeLock_toggled();
-    void saveAsPressed ();
-    void queueImgPressed ();
+    void saveAsPressed();
+    void queueImgPressed();
     void sendToExternal();
     void sendToExternalChanged(int);
     void sendToExternalPressed();
-    void openNextEditorImage ();
-    void openPreviousEditorImage ();
-    void syncFileBrowser ();
+    void openNextEditorImage();
+    void openPreviousEditorImage();
+    void syncFileBrowser();
 
     // Signals.
-    ExternalEditorChangedSignal * getExternalEditorChangedSignal();
+    ExternalEditorChangedSignal *getExternalEditorChangedSignal();
     void setExternalEditorChangedSignal(ExternalEditorChangedSignal *signal);
 
-    void tbTopPanel_1_visible (bool visible);
+    void tbTopPanel_1_visible(bool visible);
     bool CheckSidePanelsVisibility();
     void tbShowHideSidePanels_managestate();
     void toggleSidePanels();
     void toggleSidePanelsZoomFit();
 
-    void saveProfile ();
-    Glib::ustring getShortName ();
-    Glib::ustring getFileName () const;
-    bool handleShortcutKey (GdkEventKey* event);
+    void saveProfile();
+    Glib::ustring getShortName();
+    Glib::ustring getFileName() const;
+    bool handleShortcutKey(GdkEventKey *event);
 
-    bool getIsProcessing() const
-    {
-        return isProcessing;
-    }
-    void updateExternalEditorWidget(int selectedIndex, const std::vector<ExternalEditor> &editors);
-    void updateProfiles (const Glib::ustring &printerProfile, rtengine::RenderingIntent printerIntent, bool printerBPC);
-    void updateTPVScrollbar (bool hide);
-    void updateHistogramPosition (int oldPosition, int newPosition);
+    bool getIsProcessing() const { return isProcessing; }
+    void updateExternalEditorWidget(
+        int selectedIndex, const std::vector<ExternalEditor> &editors);
+    void updateProfiles(const Glib::ustring &printerProfile,
+        rtengine::RenderingIntent printerIntent, bool printerBPC);
+    void updateTPVScrollbar(bool hide);
+    void updateHistogramPosition(int oldPosition, int newPosition);
     void updateToolPanelToolLocations(
         const std::vector<Glib::ustring> &favorites, bool cloneFavoriteTools);
 
-    void defaultMonitorProfileChanged (const Glib::ustring &profile_name, bool auto_monitor_profile);
+    void defaultMonitorProfileChanged(
+        const Glib::ustring &profile_name, bool auto_monitor_profile);
 
-    bool saveImmediately (const Glib::ustring &filename, const SaveFormat &sf);
-
-    Gtk::Paned* catalogPane;
-
+    bool saveImmediately(const Glib::ustring &filename, const SaveFormat &sf);
+  
 private:
-    void close ();
+    bool realized;
+    bool isProcessing;
 
-    BatchQueueEntry*    createBatchQueueEntry ();
-    bool                idle_imageSaved (ProgressConnector<int> *pc, rtengine::IImagefloat* img, Glib::ustring fname, SaveFormat sf, rtengine::procparams::ProcParams &pparams);
-    bool                idle_saveImage (ProgressConnector<rtengine::IImagefloat*> *pc, Glib::ustring fname, SaveFormat sf, rtengine::procparams::ProcParams &pparams);
-    bool                idle_sendToGimp ( ProgressConnector<rtengine::IImagefloat*> *pc, Glib::ustring fname);
-    bool                idle_sentToGimp (ProgressConnector<int> *pc, rtengine::IImagefloat* img, Glib::ustring filename);
-    void                histogramProfile_toggled ();
+    Gtk::Paned *catalogPane;
+    Gtk::Paned *hpanedl;
+    Gtk::Paned *hpanedr;
+    Gtk::Paned *leftbox;
+    Gtk::Paned *leftsubpaned;
+    Gtk::Paned *vboxright;
+
+    FilePanel *fPanel;
+    Thumbnail *openThm;
+    Glib::ustring fname;
+    Glib::ustring lastSaveAsFileName;
+
+    void close();
+
+    BatchQueueEntry *createBatchQueueEntry();
+    bool idle_imageSaved(ProgressConnector<int> *pc, rtengine::IImagefloat *img,
+        Glib::ustring fname, SaveFormat sf, rtengine::procparams::ProcParams &pparams);
+    bool idle_saveImage(ProgressConnector<rtengine::IImagefloat *> *pc,
+        Glib::ustring fname, SaveFormat sf, rtengine::procparams::ProcParams &pparams);
+    bool idle_sendToGimp(
+        ProgressConnector<rtengine::IImagefloat *> *pc, Glib::ustring fname);
+    bool idle_sentToGimp(
+        ProgressConnector<int> *pc, rtengine::IImagefloat *img, Glib::ustring filename);
+    void histogramProfile_toggled();
     RTAppChooserDialog *getAppChooserDialog();
-    void onAppChooserDialogResponse(int resposneId);
+    void onAppChooserDialogResponse(int responseId);
     void updateExternalEditorSelection();
 
+    // Glib::ustring lastSaveAsFileName;
+    // bool realized;
 
-    Glib::ustring lastSaveAsFileName;
-    bool realized;
-
-    MyProgressBar  *progressLabel;
-    Gtk::ToggleButton* info;
-    Gtk::ToggleButton* hidehp;
-    Gtk::ToggleButton* tbShowHideSidePanels;
-    Gtk::ToggleButton* tbTopPanel_1;
-    Gtk::ToggleButton* tbRightPanel_1;
-    Gtk::ToggleButton* tbBeforeLock;
-    //bool bAllSidePanelsVisible;
-    Gtk::ToggleButton* beforeAfter;
-    Gtk::Paned* hpanedl;
-    Gtk::Paned* hpanedr;
+    MyProgressBar *progressLabel;
+    Gtk::ToggleButton *info;
+    Gtk::ToggleButton *hidehp;
+    Gtk::ToggleButton *tbShowHideSidePanels;
+    Gtk::ToggleButton *tbTopPanel_1;
+    Gtk::ToggleButton *tbRightPanel_1;
+    Gtk::ToggleButton *tbBeforeLock;
+    // bool bAllSidePanelsVisible;
+    Gtk::ToggleButton *beforeAfter;
+    // Gtk::Paned* hpanedl;
+    // Gtk::Paned* hpanedr;
     Gtk::Image *iHistoryShow, *iHistoryHide;
     Gtk::Image *iTopPanel_1_Show, *iTopPanel_1_Hide;
     Gtk::Image *iRightPanel_1_Show, *iRightPanel_1_Hide;
     Gtk::Image *iShowHideSidePanels;
     Gtk::Image *iShowHideSidePanels_exit;
     Gtk::Image *iBeforeLockON, *iBeforeLockOFF;
-    Gtk::Paned *leftbox;
-    Gtk::Paned *leftsubpaned;
-    Gtk::Paned *vboxright;
+    // Gtk::Paned *leftbox;
+    // Gtk::Paned *leftsubpaned;
+    // Gtk::Paned *vboxright;
     Gtk::Box *vsubboxright;
 
-    Gtk::Button* queueimg;
-    Gtk::Button* saveimgas;
-    PopUpButton* send_to_external;
+    Gtk::Button *queueimg;
+    Gtk::Button *saveimgas;
+    PopUpButton *send_to_external;
     Gtk::RadioButtonGroup send_to_external_radio_group;
-    Gtk::Button* navSync;
-    Gtk::Button* navNext;
-    Gtk::Button* navPrev;
+    Gtk::Button *navSync;
+    Gtk::Button *navNext;
+    Gtk::Button *navPrev;
     EditorInfo external_editor_info;
     std::unique_ptr<RTAppChooserDialog> app_chooser_dialog;
     ExternalEditorChangedSignal *externalEditorChangedSignal;
@@ -265,42 +264,42 @@ private:
     class ColorManagementToolbar;
     std::unique_ptr<ColorManagementToolbar> colorMgmtToolBar;
 
-    ImageAreaPanel* iareapanel;
-    PreviewHandler* previewHandler;
-    PreviewHandler* beforePreviewHandler;   // for the before-after view
-    Navigator* navigator;
-    ImageAreaPanel* beforeIarea;    // for the before-after view
-    Gtk::Box* beforeBox;
-    Gtk::Box* afterBox;
-    Gtk::Label* beforeLabel;
-    Gtk::Label* afterLabel;
-    Gtk::Box* beforeAfterBox;
-    Gtk::Box* beforeHeaderBox;
-    Gtk::Box* afterHeaderBox;
-    Gtk::ToggleButton* toggleHistogramProfile;
+    ImageAreaPanel *iareapanel;
+    PreviewHandler *previewHandler;
+    PreviewHandler *beforePreviewHandler; // for the before-after view
+    Navigator *navigator;
+    ImageAreaPanel *beforeIarea; // for the before-after view
+    Gtk::Box *beforeBox;
+    Gtk::Box *afterBox;
+    Gtk::Label *beforeLabel;
+    Gtk::Label *afterLabel;
+    Gtk::Box *beforeAfterBox;
+    Gtk::Box *beforeHeaderBox;
+    Gtk::Box *afterHeaderBox;
+    Gtk::ToggleButton *toggleHistogramProfile;
 
-    Gtk::Frame* ppframe;
-    ProfilePanel* profilep;
-    History* history;
-    HistogramPanel* histogramPanel;
-    ToolPanelCoordinator* tpc;
-    RTWindow* parent;
-    Gtk::Window* parentWindow;
-    //SaveAsDialog* saveAsDialog;
-    FilePanel* fPanel;
+    Gtk::Frame *ppframe;
+    ProfilePanel *profilep;
+    History *history;
+    HistogramPanel *histogramPanel;
+    ToolPanelCoordinator *tpc;
+    RTWindow *parent;
+    Gtk::Window *parentWindow;
+    // SaveAsDialog* saveAsDialog;
+    //  FilePanel* fPanel;
 
-    bool firstProcessingDone;
+    // bool firstProcessingDone;
 
-    Thumbnail* openThm;  // may get invalid on external delete event
-    Glib::ustring fname;  // must be saved separately
+    // Thumbnail* openThm;  // may get invalid on external delete event
+    // Glib::ustring fname;  // must be saved separately
 
     int selectedFrame;
 
-    rtengine::InitialImage* isrc;
-    rtengine::StagedImageProcessor* ipc;
-    rtengine::StagedImageProcessor* beforeIpc;    // for the before-after view
+    rtengine::InitialImage *isrc;
+    rtengine::StagedImageProcessor *ipc;
+    rtengine::StagedImageProcessor *beforeIpc; // for the before-after view
 
-    EditorPanelIdleHelper* epih;
+    EditorPanelIdleHelper *epih;
 
     int err;
 
@@ -308,10 +307,10 @@ private:
 
     sigc::connection ShowHideSidePanelsconn;
 
-    bool isProcessing;
+    // bool isProcessing;
 
     IdleRegister idle_register;
 
-    rtengine::HistogramObservable* histogram_observable;
+    rtengine::HistogramObservable *histogram_observable;
     Options::ScopeType histogram_scope_type;
 };

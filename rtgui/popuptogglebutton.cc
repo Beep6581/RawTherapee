@@ -24,18 +24,19 @@
 /*
  * PopUpToggleButton::PopUpToggleButton (const Glib::ustring& label, bool imgRight)
  *
- * Creates a toggle button with a contextual menu where you can select an item that the button content will reflect
+ * Creates a toggle button with a contextual menu where you can select an item that the
+ * button content will reflect
  *
  * Parameters:
  *      label = label displayed in the button
  */
-PopUpToggleButton::PopUpToggleButton (const Glib::ustring& label) : Gtk::ToggleButton(), PopUpCommon(this, label) { }
-
-void PopUpToggleButton::show()
+PopUpToggleButton::PopUpToggleButton(const Glib::ustring &label) :
+    Gtk::ToggleButton(), PopUpCommon(this, label)
 {
-    PopUpCommon::show();
 }
-void PopUpToggleButton::set_tooltip_text (const Glib::ustring &text)
+
+void PopUpToggleButton::show() { PopUpCommon::show(); }
+void PopUpToggleButton::set_tooltip_text(const Glib::ustring &text)
 {
-    PopUpCommon::set_tooltip_text (text);
+    PopUpCommon::set_tooltip_text(text);
 }

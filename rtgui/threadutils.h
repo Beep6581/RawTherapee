@@ -18,11 +18,12 @@
  */
 #pragma once
 
-// Uncomment this if you want to bypass the CMakeList options and force the values, but do not commit!
-//#undef TRACE_MYRWMUTEX
-//#define TRACE_MYRWMUTEX 1
-//#undef STRICT_MUTEX
-//#define STRICT_MUTEX 1
+// Uncomment this if you want to bypass the CMakeList options and force the values, but
+// do not commit!
+// #undef TRACE_MYRWMUTEX
+// #define TRACE_MYRWMUTEX 1
+// #undef STRICT_MUTEX
+// #define STRICT_MUTEX 1
 
 #include <mutex>
 #include <thread>
@@ -38,54 +39,51 @@ using MyMutexBase = std::recursive_mutex;
 /**
  * @brief Custom implementation to replace Glib::Threads::Mutex.
  *
- * Glib::Threads::Mutex shows different behaviour on Windows (recursive) and Linux (non-recursive).
- * We therefore use a custom implementation that is optionally recursive and instrumented.
- * It will behave like Glib::Threads::RecMutex (STRICT_MUTEX=0) or Glib::Threads::Mutex (STRICT_MUTEX=1).
- * Debug builds with strict mutexes, will emit a message and crash immediately upon recursive locking.
+ * Glib::Threads::Mutex shows different behaviour on Windows (recursive) and Linux
+ * (non-recursive). We therefore use a custom implementation that is optionally
+ * recursive and instrumented. It will behave like Glib::Threads::RecMutex
+ * (STRICT_MUTEX=0) or Glib::Threads::Mutex (STRICT_MUTEX=1). Debug builds with strict
+ * mutexes, will emit a message and crash immediately upon recursive locking.
  */
-class MyMutex :
-    public rtengine::NonCopyable,
-    private MyMutexBase
+class MyMutex : public rtengine::NonCopyable, private MyMutexBase
 {
 public:
     class MyLock;
 
-    void lock ();
-    bool trylock ();
-    void unlock ();
+    void lock();
+    bool trylock();
+    void unlock();
 
 #if STRICT_MUTEX && !NDEBUG
     MyMutex();
 
 private:
     bool locked;
-    bool checkLock (bool noError = false);
-    void checkUnlock ();
+    bool checkLock(bool noError = false);
+    void checkUnlock();
 #endif
 };
 
-class MyMutex::MyLock :
-    public rtengine::NonCopyable
+class MyMutex::MyLock : public rtengine::NonCopyable
 {
 public:
-    explicit MyLock (MyMutex& mutex);
+    explicit MyLock(MyMutex &mutex);
 
-    ~MyLock ();
+    ~MyLock();
 
-    void acquire ();
-    bool try_acquire ();
-    void release ();
+    void acquire();
+    bool try_acquire();
+    void release();
 
 private:
-    MyMutex& mutex;
+    MyMutex &mutex;
     bool locked;
 };
 
 /**
  * @brief Custom implementation to replace Glib::Threads::RWLock
  */
-class MyRWMutex :
-    public rtengine::NonCopyable
+class MyRWMutex : public rtengine::NonCopyable
 {
 public:
     friend class MyReaderLock;
@@ -96,7 +94,7 @@ public:
 private:
 #if TRACE_MYRWMUTEX
     std::thread::id ownerThread;
-    const char* lastWriterFile;
+    const char *lastWriterFile;
     int lastWriterLine;
 #endif
 
@@ -110,67 +108,65 @@ private:
 /**
  * @brief Custom implementation to replace Glib::Threads::RWLock::ReaderLock
  */
-class MyReaderLock :
-    public rtengine::NonCopyable
+class MyReaderLock : public rtengine::NonCopyable
 {
 public:
-    ~MyReaderLock ();
+    ~MyReaderLock();
 
 #if !TRACE_MYRWMUTEX
-    explicit MyReaderLock (MyRWMutex& mutex);
+    explicit MyReaderLock(MyRWMutex &mutex);
 
-    void acquire ();
-    void release ();
+    void acquire();
+    void release();
 #else
-    explicit MyReaderLock (MyRWMutex& mutex, const char* file, int line);
+    explicit MyReaderLock(MyRWMutex &mutex, const char *file, int line);
 
-    void acquire (const char* file, int line);
-    void release (const char* file, int line);
+    void acquire(const char *file, int line);
+    void release(const char *file, int line);
 #endif
 
 private:
-    MyRWMutex& mutex;
+    MyRWMutex &mutex;
     bool locked;
 };
 
 /**
  * @brief Custom implementation to replace Glib::Threads::RWLock::WriterLock
  */
-class MyWriterLock :
-    public rtengine::NonCopyable
+class MyWriterLock : public rtengine::NonCopyable
 {
 public:
-    ~MyWriterLock ();
+    ~MyWriterLock();
 
 #if !TRACE_MYRWMUTEX
-    explicit MyWriterLock (MyRWMutex& mutex);
+    explicit MyWriterLock(MyRWMutex &mutex);
 
-    void acquire ();
-    void release ();
+    void acquire();
+    void release();
 #else
-    MyWriterLock (MyRWMutex& mutex, const char* file, int line);
+    MyWriterLock(MyRWMutex &mutex, const char *file, int line);
 
-    void acquire (const char* file, int line);
-    void release (const char* file, int line);
+    void acquire(const char *file, int line);
+    void release(const char *file, int line);
 #endif
 
 private:
-    MyRWMutex& mutex;
+    MyRWMutex &mutex;
     bool locked;
 };
 
-inline void MyMutex::lock ()
+inline void MyMutex::lock()
 {
-    MyMutexBase::lock ();
+    MyMutexBase::lock();
 
 #if STRICT_MUTEX && !NDEBUG
-    checkLock ();
+    checkLock();
 #endif
 }
 
-inline bool MyMutex::trylock ()
+inline bool MyMutex::trylock()
 {
-    if (MyMutexBase::try_lock ()) {
+    if (MyMutexBase::try_lock()) {
 #if STRICT_MUTEX && !NDEBUG
         return checkLock(true);
 #else
@@ -181,102 +177,91 @@ inline bool MyMutex::trylock ()
     return false;
 }
 
-inline void MyMutex::unlock ()
+inline void MyMutex::unlock()
 {
 #if STRICT_MUTEX && !NDEBUG
-    checkUnlock ();
+    checkUnlock();
 #endif
 
-    MyMutexBase::unlock ();
+    MyMutexBase::unlock();
 }
 
-inline MyMutex::MyLock::MyLock (MyMutex& mutex)
-    : mutex (mutex)
-    , locked (true)
+inline MyMutex::MyLock::MyLock(MyMutex &mutex) : mutex(mutex), locked(true)
 {
     mutex.lock();
 }
 
-inline MyMutex::MyLock::~MyLock ()
+inline MyMutex::MyLock::~MyLock()
 {
     if (locked) {
-        mutex.unlock ();
+        mutex.unlock();
     }
 }
 
-inline void MyMutex::MyLock::acquire ()
+inline void MyMutex::MyLock::acquire()
 {
-    mutex.lock ();
+    mutex.lock();
     locked = true;
 }
-inline bool MyMutex::MyLock::try_acquire ()
-{
-    return locked = mutex.trylock ();
-}
+inline bool MyMutex::MyLock::try_acquire() { return locked = mutex.trylock(); }
 
-inline void MyMutex::MyLock::release ()
+inline void MyMutex::MyLock::release()
 {
-    mutex.unlock ();
+    mutex.unlock();
     locked = false;
 }
 
 #if !TRACE_MYRWMUTEX
 
-inline MyReaderLock::MyReaderLock (MyRWMutex& mutex)
-    : mutex (mutex)
-    , locked (false)
+inline MyReaderLock::MyReaderLock(MyRWMutex &mutex) : mutex(mutex), locked(false)
 {
-    acquire ();
+    acquire();
 }
 
-inline MyWriterLock::MyWriterLock (MyRWMutex& mutex)
-    : mutex (mutex)
-    , locked (false)
+inline MyWriterLock::MyWriterLock(MyRWMutex &mutex) : mutex(mutex), locked(false)
 {
-    acquire ();
+    acquire();
 }
 
-inline MyReaderLock::~MyReaderLock ()
+inline MyReaderLock::~MyReaderLock()
 {
     if (locked) {
-        release ();
+        release();
     }
 }
 
-inline MyWriterLock::~MyWriterLock ()
+inline MyWriterLock::~MyWriterLock()
 {
     if (locked) {
-        release ();
+        release();
     }
 }
 
 #else
 
-inline MyReaderLock::MyReaderLock (MyRWMutex& mutex, const char* file, int line)
-    : mutex (mutex)
-    , locked (false)
+inline MyReaderLock::MyReaderLock(MyRWMutex &mutex, const char *file, int line) :
+    mutex(mutex), locked(false)
 {
-    acquire (file, line);
+    acquire(file, line);
 }
 
-inline MyWriterLock::MyWriterLock (MyRWMutex& mutex, const char* file, int line)
-    : mutex (mutex)
-    , locked (false)
+inline MyWriterLock::MyWriterLock(MyRWMutex &mutex, const char *file, int line) :
+    mutex(mutex), locked(false)
 {
-    acquire (file, line);
+    acquire(file, line);
 }
 
-inline MyReaderLock::~MyReaderLock ()
+inline MyReaderLock::~MyReaderLock()
 {
     if (locked) {
-        release (__FILE__, __LINE__);
+        release(__FILE__, __LINE__);
     }
 }
 
-inline MyWriterLock::~MyWriterLock ()
+inline MyWriterLock::~MyWriterLock()
 {
     if (locked) {
-        release (__FILE__, __LINE__);
+        release(__FILE__, __LINE__);
     }
 }
 

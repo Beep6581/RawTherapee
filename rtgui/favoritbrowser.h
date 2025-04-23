@@ -23,15 +23,12 @@
 #include "dirbrowserremoteinterface.h"
 #include "dirselectionlistener.h"
 
-class FavoritBrowser :
-    public Gtk::Box,
-    public DirSelectionListener
+class FavoritBrowser : public Gtk::Box, public DirSelectionListener
 {
-    class FavoritColumns :
-        public Gtk::TreeModel::ColumnRecord
+    class FavoritColumns : public Gtk::TreeModel::ColumnRecord
     {
     public:
-        Gtk::TreeModelColumn<Glib::RefPtr<Gio::Icon> >   icon;
+        Gtk::TreeModelColumn<Glib::RefPtr<Gio::Icon>> icon;
         Gtk::TreeModelColumn<Glib::ustring> shortdir;
         Gtk::TreeModelColumn<Glib::ustring> fulldir;
         FavoritColumns()
@@ -41,25 +38,22 @@ class FavoritBrowser :
         }
     };
 
-    FavoritColumns               favoritColumns;
-    Gtk::ScrolledWindow*         scrollw;
-    Gtk::TreeView*               treeView;
+    FavoritColumns favoritColumns;
+    Gtk::ScrolledWindow *scrollw;
+    Gtk::TreeView *treeView;
     Glib::RefPtr<Gtk::ListStore> favoritModel;
-    DirBrowserRemoteInterface*   listener;
-    Glib::ustring                lastSelectedDir;
-    Gtk::Button*                 add;
-    Gtk::Button*                 del;
+    DirBrowserRemoteInterface *listener;
+    Glib::ustring lastSelectedDir;
+    Gtk::Button *add;
+    Gtk::Button *del;
+
 public:
+    FavoritBrowser();
 
-    FavoritBrowser ();
+    void setDirBrowserRemoteInterface(DirBrowserRemoteInterface *l) { listener = l; }
+    void dirSelected(const Glib::ustring &dirname, const Glib::ustring &openfile = "");
 
-    void setDirBrowserRemoteInterface (DirBrowserRemoteInterface* l)
-    {
-        listener = l;
-    }
-    void dirSelected (const Glib::ustring& dirname, const Glib::ustring& openfile = "");
-
-    void addPressed ();
-    void delPressed ();
-    void selectionChanged ();
+    void addPressed();
+    void delPressed();
+    void selectionChanged();
 };

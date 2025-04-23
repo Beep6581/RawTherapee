@@ -24,5 +24,6 @@ class ThumbnailListener
 {
 public:
     virtual ~ThumbnailListener() = default;
-    virtual void procParamsChanged(Thumbnail* thm, int whoChangedIt, bool upgradeHint) = 0;
+    virtual void procParamsChanged(
+        Thumbnail *thm, int whoChangedIt, bool upgradeHint) = 0;
 };

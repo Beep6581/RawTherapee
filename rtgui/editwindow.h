@@ -27,17 +27,16 @@ class EditorPanel;
 struct ExternalEditor;
 class RTWindow;
 
-class EditWindow :
-    public Gtk::Window
+class EditWindow : public Gtk::Window
 {
 
 private:
-    RTWindow* parent;
+    RTWindow *parent;
     RTImage appIcon;
 
-    Gtk::Notebook* mainNB;
+    Gtk::Notebook *mainNB;
     std::set<Glib::ustring> filesEdited;
-    std::map<Glib::ustring, EditorPanel*> epanels;
+    std::map<Glib::ustring, EditorPanel *> epanels;
 
     sigc::signal<void> externalEditorChangedSignal;
 
@@ -45,7 +44,7 @@ private:
     bool isClosed;
     bool isMinimized;
     sigc::connection onConfEventConn;
-    void toggleFullscreen ();
+    void toggleFullscreen();
 
     IdleRegister idle_register;
 
@@ -54,28 +53,29 @@ public:
     static bool isMultiDisplayEnabled();
 
     // Should only be created once
-    static EditWindow* getInstance(RTWindow* p);
+    static EditWindow *getInstance(RTWindow *p);
 
-    explicit EditWindow (RTWindow* p);
+    explicit EditWindow(RTWindow *p);
 
     void writeOptions();
-    void addEditorPanel (EditorPanel* ep, const std::string &name);
-    void remEditorPanel (EditorPanel* ep);
+    void addEditorPanel(EditorPanel *ep, const std::string &name);
+    void remEditorPanel(EditorPanel *ep);
     bool selectEditorPanel(const std::string &name);
     bool closeOpenEditors();
     bool isProcessing();
-    void updateExternalEditorWidget(int selectedIndex, const std::vector<ExternalEditor> &editors);
+    void updateExternalEditorWidget(
+        int selectedIndex, const std::vector<ExternalEditor> &editors);
     void updateToolPanelToolLocations(
         const std::vector<Glib::ustring> &favorites, bool cloneFavoriteTools);
 
     void toFront();
-    bool keyPressed (GdkEventKey* event);
-    bool on_configure_event(GdkEventConfigure* event) override;
-    bool on_delete_event(GdkEventAny* event) override;
-    bool on_window_state_event(GdkEventWindowState* event) override;
-    void on_mainNB_switch_page(Gtk::Widget* page, guint page_num);
+    bool keyPressed(GdkEventKey *event);
+    bool on_configure_event(GdkEventConfigure *event) override;
+    bool on_delete_event(GdkEventAny *event) override;
+    bool on_window_state_event(GdkEventWindowState *event) override;
+    void on_mainNB_switch_page(Gtk::Widget *page, guint page_num);
     void set_title_decorated(Glib::ustring fname);
-    void on_realize () override;
-    void get_position(int& x, int& y) const;
+    void on_realize() override;
+    void get_position(int &x, int &y) const;
     void restoreWindow();
 };

@@ -34,10 +34,11 @@ class ThresholdCurveProvider
 public:
     virtual ~ThresholdCurveProvider() {};
     /*
-     * The curve provider has to send back a list of point (at least 2 points) in the [0.0 ; 1.0] range
-     * for both X and Y axis; X and Y values are streamlined ( X1, Y1, X2, Y2, X3, Y3, ...)
+     * The curve provider has to send back a list of point (at least 2 points) in the
+     * [0.0 ; 1.0] range for both X and Y axis; X and Y values are streamlined ( X1, Y1,
+     * X2, Y2, X3, Y3, ...)
      */
-    virtual std::vector<double> getCurvePoints(ThresholdSelector* tAdjuster) const = 0;
+    virtual std::vector<double> getCurvePoints(ThresholdSelector *tAdjuster) const = 0;
 };
 
 /*
@@ -55,16 +56,16 @@ public:
  * Please note that the values are related to the cursors, depending on their position
  * on the graph. E.g. the "bottomLeft" value is related to the bottom left cursor.
  *
- * It is also possible to have a threshold with 2 totally independent cursors, each one having his own range,
- * min/max/default values and precision. This let developers create their own threshold curve, that they will
- * have to provide through the ThresholdCurveProvider interface
+ * It is also possible to have a threshold with 2 totally independent cursors, each one
+ * having his own range, min/max/default values and precision. This let developers
+ * create their own threshold curve, that they will have to provide through the
+ * ThresholdCurveProvider interface
  *
  */
 class ThresholdSelector : public Gtk::DrawingArea
 {
 
 public:
-
     enum ThreshCursorId {
         TS_UNDEFINED = -1,
         TS_BOTTOMLEFT,
@@ -73,21 +74,27 @@ public:
         TS_TOPRIGHT
     };
 
-
 protected:
-
     sigc::signal<void> sig_val_changed;
 
-    ThresholdCurveProvider* bgCurveProvider;
+    ThresholdCurveProvider *bgCurveProvider;
 
     Glib::ustring additionalTTip;
-    Glib::ustring separatedLabelBottom;  // Label for the bottom cursor, displayed if separatedSliders==true only
-    Glib::ustring separatedLabelTop;     // Label for the top cursor, displayed if separatedSliders==true only
-    bool separatedSliders; // If true, the Top and Bottom sliders are totally separate and can be drag through the full range; for simple threshold only!
-    bool doubleThresh;  // If true: there curve is a double threshold (0 to 1 to 0, or 1 to 0 to 1).
-    bool initalEq1;     // If true: the curve start at 1 (top); if false: the curve start at 0 (bottom)
-    unsigned int precisionTop;     // Decimal number if this object has to handle "double" values, for the Top slider
-    unsigned int precisionBottom;  // Decimal number if this object has to handle "double" values, for the Bottom slider
+    Glib::ustring separatedLabelBottom; // Label for the bottom cursor, displayed if
+                                        // separatedSliders==true only
+    Glib::ustring separatedLabelTop;    // Label for the top cursor, displayed if
+                                        // separatedSliders==true only
+    bool separatedSliders; // If true, the Top and Bottom sliders are totally separate
+                           // and can be drag through the full range; for simple
+                           // threshold only!
+    bool doubleThresh; // If true: there curve is a double threshold (0 to 1 to 0, or 1
+                       // to 0 to 1).
+    bool initalEq1; // If true: the curve start at 1 (top); if false: the curve start at
+                    // 0 (bottom)
+    unsigned int precisionTop; // Decimal number if this object has to handle "double"
+                               // values, for the Top slider
+    unsigned int precisionBottom; // Decimal number if this object has to handle
+                                  // "double" values, for the Bottom slider
     ThreshCursorId litCursor;
     ThreshCursorId oldLitCursor;
     double boundary1[2], boundary2[2];
@@ -103,7 +110,7 @@ protected:
     constexpr static double sliderWidth = 11.; // constant must be an odd value
     constexpr static double verticalSliderPaddingFactor = 1.5 / 7.;
 
-    void initValues ();
+    void initValues();
     void findLitCursor(int posX, int posY);
     void findSecondaryMovedCursor(guint state);
     void findBoundaries(double &min, double &max);
@@ -111,141 +118,140 @@ protected:
 
     // Internal drawing functions
     void updateTooltip();
-    void updateDrawingArea (const ::Cairo::RefPtr< Cairo::Context> &cr);
+    void updateDrawingArea(const ::Cairo::RefPtr<Cairo::Context> &cr);
 
     // GtkDrawingArea override functions
-    void on_realize () override;
-    bool on_draw(const ::Cairo::RefPtr< Cairo::Context> &cr) override;
+    void on_realize() override;
+    bool on_draw(const ::Cairo::RefPtr<Cairo::Context> &cr) override;
 
-    Gtk::SizeRequestMode get_request_mode_vfunc () const override;
-    void get_preferred_height_vfunc (int& minimum_height, int& natural_height) const final;
-    void get_preferred_width_vfunc (int &minimum_width, int &natural_width) const final;
-    void get_preferred_height_for_width_vfunc (int width, int &minimum_height, int &natural_height) const final;
-    void get_preferred_width_for_height_vfunc (int height, int &minimum_width, int &natural_width) const final;
-    bool on_button_press_event (GdkEventButton* event) override;
-    bool on_button_release_event (GdkEventButton* event) override;
-    bool on_motion_notify_event (GdkEventMotion* event) override;
-    bool on_leave_notify_event (GdkEventCrossing* event) override;
+    Gtk::SizeRequestMode get_request_mode_vfunc() const override;
+    void get_preferred_height_vfunc(
+        int &minimum_height, int &natural_height) const final;
+    void get_preferred_width_vfunc(int &minimum_width, int &natural_width) const final;
+    void get_preferred_height_for_width_vfunc(
+        int width, int &minimum_height, int &natural_height) const final;
+    void get_preferred_width_for_height_vfunc(
+        int height, int &minimum_width, int &natural_width) const final;
+    bool on_button_press_event(GdkEventButton *event) override;
+    bool on_button_release_event(GdkEventButton *event) override;
+    bool on_motion_notify_event(GdkEventMotion *event) override;
+    bool on_leave_notify_event(GdkEventCrossing *event) override;
 
 public:
-
     ColoredBar coloredBar;
     sigc::signal<void> signal_value_changed();
 
-    ThresholdSelector(double minValueBottom, double maxValueBottom, double defBottom, Glib::ustring labelBottom, unsigned int precisionBottom,
-                      double minValueTop,    double maxValueTop,    double defTop,    Glib::ustring labelTop,    unsigned int precisionTop,
-                      ThresholdCurveProvider* curveProvider);
-    ThresholdSelector(double minValue, double maxValue, double defBottom, double defTop, unsigned int precision, bool startAtOne);
-    ThresholdSelector(double minValue, double maxValue, double defBottomLeft, double defTopLeft, double defBottomRight, double defTopRight, unsigned int precision, bool startAtOne);
+    ThresholdSelector(double minValueBottom, double maxValueBottom, double defBottom,
+        Glib::ustring labelBottom, unsigned int precisionBottom, double minValueTop,
+        double maxValueTop, double defTop, Glib::ustring labelTop,
+        unsigned int precisionTop, ThresholdCurveProvider *curveProvider);
+    ThresholdSelector(double minValue, double maxValue, double defBottom, double defTop,
+        unsigned int precision, bool startAtOne);
+    ThresholdSelector(double minValue, double maxValue, double defBottomLeft,
+        double defTopLeft, double defBottomRight, double defTopRight,
+        unsigned int precision, bool startAtOne);
 
-    double shapePositionValue (ThreshCursorId cursorId);
-    template <typename T>
-    void setDefaults (const rtengine::procparams::Threshold<T> &t)
+    double shapePositionValue(ThreshCursorId cursorId);
+    template <typename T> void setDefaults(const rtengine::procparams::Threshold<T> &t)
     {
-        defPos[TS_BOTTOMLEFT] = double(t.getBottomLeft());  // should we use shapeValue() ?
-        defPos[TS_TOPLEFT]    = double(t.getTopLeft());
+        defPos[TS_BOTTOMLEFT] =
+            double(t.getBottomLeft()); // should we use shapeValue() ?
+        defPos[TS_TOPLEFT] = double(t.getTopLeft());
 
         if (doubleThresh) {
             defPos[TS_BOTTOMRIGHT] = double(t.getBottomRight());
-            defPos[TS_TOPRIGHT]    = double(t.getTopRight());
+            defPos[TS_TOPRIGHT] = double(t.getTopRight());
         }
     }
-    void setDefaults (double bottom, double top);
-    void setDefaults (double bottomLeft, double topLeft, double bottomRight, double topRight);
+    void setDefaults(double bottom, double top);
+    void setDefaults(
+        double bottomLeft, double topLeft, double bottomRight, double topRight);
     template <typename T>
-    void setPositions (const rtengine::procparams::Threshold<T> &tValues)
+    void setPositions(const rtengine::procparams::Threshold<T> &tValues)
     {
-        positions[TS_BOTTOMLEFT]  = static_cast<double>(tValues.getBottomLeft());
-        positions[TS_TOPLEFT]     = static_cast<double>(tValues.getTopLeft());
+        positions[TS_BOTTOMLEFT] = static_cast<double>(tValues.getBottomLeft());
+        positions[TS_TOPLEFT] = static_cast<double>(tValues.getTopLeft());
 
         if (tValues.isDouble()) {
             positions[TS_BOTTOMRIGHT] = static_cast<double>(tValues.getBottomRight());
-            positions[TS_TOPRIGHT]    = static_cast<double>(tValues.getTopRight());
+            positions[TS_TOPRIGHT] = static_cast<double>(tValues.getTopRight());
         }
 
         updateTooltip();
         queue_draw();
     }
-    void setPositions (double bottom, double top);
-    void setPositions (double bottomLeft, double topLeft, double bottomRight, double topRight);
+    void setPositions(double bottom, double top);
+    void setPositions(
+        double bottomLeft, double topLeft, double bottomRight, double topRight);
 
-    template <typename T>
-    rtengine::procparams::Threshold<T> getPositions ()
+    template <typename T> rtengine::procparams::Threshold<T> getPositions()
     {
         if (doubleThresh) {
             rtengine::procparams::Threshold<T> rThresh(
                 static_cast<T>(shapePositionValue(TS_BOTTOMLEFT)),
                 static_cast<T>(shapePositionValue(TS_TOPLEFT)),
                 static_cast<T>(shapePositionValue(TS_BOTTOMRIGHT)),
-                static_cast<T>(shapePositionValue(TS_TOPRIGHT)),
-                initalEq1
-            );
+                static_cast<T>(shapePositionValue(TS_TOPRIGHT)), initalEq1);
             return rThresh;
         } else {
             rtengine::procparams::Threshold<T> rThresh(
                 static_cast<T>(shapePositionValue(TS_BOTTOMLEFT)),
-                static_cast<T>(shapePositionValue(TS_TOPLEFT)),
-                initalEq1
-            );
+                static_cast<T>(shapePositionValue(TS_TOPLEFT)), initalEq1);
             return rThresh;
         }
     }
 
-    template <typename T>
-    void getPositions (T &bottom, T &top)
+    template <typename T> void getPositions(T &bottom, T &top)
     {
         bottom = static_cast<T>(shapePositionValue(TS_BOTTOMLEFT));
-        top    = static_cast<T>(shapePositionValue(TS_TOPLEFT));
+        top = static_cast<T>(shapePositionValue(TS_TOPLEFT));
     }
 
     template <typename T>
-    void getPositions (T &bottomLeft, T &topLeft, T &bottomRight, T &topRight)
+    void getPositions(T &bottomLeft, T &topLeft, T &bottomRight, T &topRight)
     {
-        bottomLeft  = static_cast<T>(shapePositionValue(TS_BOTTOMLEFT));
-        topLeft     = static_cast<T>(shapePositionValue(TS_TOPLEFT));
+        bottomLeft = static_cast<T>(shapePositionValue(TS_BOTTOMLEFT));
+        topLeft = static_cast<T>(shapePositionValue(TS_TOPLEFT));
         bottomRight = static_cast<T>(shapePositionValue(TS_BOTTOMRIGHT));
-        topRight    = static_cast<T>(shapePositionValue(TS_TOPRIGHT));
+        topRight = static_cast<T>(shapePositionValue(TS_TOPRIGHT));
     }
 
     void setSeparatedSliders(bool separated);
     bool getSeparatedSliders();
-    void setBgCurveProvider (ThresholdCurveProvider* provider);
-    bool isStartAtOne()
-    {
-        return initalEq1;
-    }
-    bool isDouble()
-    {
-        return doubleThresh;
-    }
-    void styleChanged (const Glib::RefPtr<Gtk::StyleContext>& style);
-    unsigned int getPrecision ()
-    {
-        return precisionTop;
-    }
-    void reset ();
-    void setUpdatePolicy (eUpdatePolicy policy)
-    {
-        updatePolicy = policy;
-    }
-    void set_tooltip_markup(const Glib::ustring& markup);
-    // this set_tooltip_text method is to set_tooltip_markup, and text can contain markups
-    void set_tooltip_text(const Glib::ustring& text);
+    void setBgCurveProvider(ThresholdCurveProvider *provider);
+    bool isStartAtOne() { return initalEq1; }
+    bool isDouble() { return doubleThresh; }
+    void styleChanged(const Glib::RefPtr<Gtk::StyleContext> &style);
+    unsigned int getPrecision() { return precisionTop; }
+    void reset();
+    void setUpdatePolicy(eUpdatePolicy policy) { updatePolicy = policy; }
+    void set_tooltip_markup(const Glib::ustring &markup);
+    // this set_tooltip_text method is to set_tooltip_markup, and text can contain
+    // markups
+    void set_tooltip_text(const Glib::ustring &text);
 };
 
-template<>
-inline void ThresholdSelector::getPositions<Glib::ustring> (Glib::ustring& bottom, Glib::ustring& top)
+template <>
+inline void ThresholdSelector::getPositions<Glib::ustring>(
+    Glib::ustring &bottom, Glib::ustring &top)
 {
-    bottom = Glib::ustring::format(std::fixed, std::setprecision(precisionBottom), shapePositionValue(TS_BOTTOMLEFT));
-    top    = Glib::ustring::format(std::fixed, std::setprecision(precisionTop),    shapePositionValue(TS_TOPLEFT));
+    bottom = Glib::ustring::format(std::fixed, std::setprecision(precisionBottom),
+        shapePositionValue(TS_BOTTOMLEFT));
+    top = Glib::ustring::format(
+        std::fixed, std::setprecision(precisionTop), shapePositionValue(TS_TOPLEFT));
 }
 
-template<>
-inline void ThresholdSelector::getPositions<Glib::ustring> (Glib::ustring& bottomLeft, Glib::ustring& topLeft, Glib::ustring& bottomRight, Glib::ustring& topRight)
+template <>
+inline void ThresholdSelector::getPositions<Glib::ustring>(Glib::ustring &bottomLeft,
+    Glib::ustring &topLeft, Glib::ustring &bottomRight, Glib::ustring &topRight)
 {
 
-    bottomLeft  = Glib::ustring::format(std::fixed, std::setprecision(precisionBottom), shapePositionValue(TS_BOTTOMLEFT));
-    topLeft     = Glib::ustring::format(std::fixed, std::setprecision(precisionTop),    shapePositionValue(TS_TOPLEFT));
-    bottomRight = Glib::ustring::format(std::fixed, std::setprecision(precisionBottom), shapePositionValue(TS_BOTTOMRIGHT));
-    topRight    = Glib::ustring::format(std::fixed, std::setprecision(precisionTop),    shapePositionValue(TS_TOPRIGHT));
+    bottomLeft = Glib::ustring::format(std::fixed, std::setprecision(precisionBottom),
+        shapePositionValue(TS_BOTTOMLEFT));
+    topLeft = Glib::ustring::format(
+        std::fixed, std::setprecision(precisionTop), shapePositionValue(TS_TOPLEFT));
+    bottomRight = Glib::ustring::format(std::fixed, std::setprecision(precisionBottom),
+        shapePositionValue(TS_BOTTOMRIGHT));
+    topRight = Glib::ustring::format(
+        std::fixed, std::setprecision(precisionTop), shapePositionValue(TS_TOPRIGHT));
 }

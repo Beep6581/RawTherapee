@@ -18,84 +18,77 @@
  */
 #include "imageareapanel.h"
 
-ImageAreaPanel::ImageAreaPanel () : before(nullptr), after(nullptr)
+ImageAreaPanel::ImageAreaPanel() : before(nullptr), after(nullptr)
 {
     set_orientation(Gtk::ORIENTATION_VERTICAL);
 
-    imageArea = new ImageArea (this);
+    imageArea = new ImageArea(this);
 
-    Gtk::Box*  hb1   = Gtk::manage (new Gtk::Box ());
-    Gtk::Frame* frame = Gtk::manage (new Gtk::Frame ());
+    Gtk::Box *hb1 = Gtk::manage(new Gtk::Box());
+    Gtk::Frame *frame = Gtk::manage(new Gtk::Frame());
 
-    frame->add (*imageArea);
-    frame->set_shadow_type (Gtk::SHADOW_IN );
-    hb1->pack_start (*frame, Gtk::PACK_EXPAND_WIDGET);
+    frame->add(*imageArea);
+    frame->set_shadow_type(Gtk::SHADOW_IN);
+    hb1->pack_start(*frame, Gtk::PACK_EXPAND_WIDGET);
 
-    pack_start (*hb1);
-    frame->show ();
-    imageArea->show ();
-    hb1->show ();
-
+    pack_start(*hb1);
+    frame->show();
+    imageArea->show();
+    hb1->show();
 }
 
-ImageAreaPanel::~ImageAreaPanel ()
-{
+ImageAreaPanel::~ImageAreaPanel() { delete imageArea; }
 
-    delete imageArea;
-}
-
-void ImageAreaPanel::syncBeforeAfterViews ()
+void ImageAreaPanel::syncBeforeAfterViews()
 {
 
     if (before && this == after) {
-        before->synchronize ();
+        before->synchronize();
     } else if (after && this == before) {
-        after->synchronize ();
+        after->synchronize();
     }
 
-    queue_draw ();
+    queue_draw();
 }
 
-void ImageAreaPanel::setBeforeAfterViews (ImageAreaPanel* bef, ImageAreaPanel* aft)
+void ImageAreaPanel::setBeforeAfterViews(ImageAreaPanel *bef, ImageAreaPanel *aft)
 {
 
     before = bef;
     after = aft;
-    syncBeforeAfterViews ();
+    syncBeforeAfterViews();
 }
 
-void ImageAreaPanel::zoomChanged ()
+void ImageAreaPanel::zoomChanged()
 {
 
     if (after && this == before) {
-        after->imageArea->setZoom (imageArea->getZoom ());
+        after->imageArea->setZoom(imageArea->getZoom());
     } else if (before && this == after) {
-        before->imageArea->setZoom (imageArea->getZoom ());
+        before->imageArea->setZoom(imageArea->getZoom());
     }
 }
 
-void ImageAreaPanel::synchronize ()
+void ImageAreaPanel::synchronize()
 {
 
     if (after && this == before) {
         int imgw, imgh, x, y;
-        after->imageArea->getScrollImageSize (imgw, imgh);
-        after->imageArea->getScrollPosition (x, y);
+        after->imageArea->getScrollImageSize(imgw, imgh);
+        after->imageArea->getScrollPosition(x, y);
 
         if (imgw > 0 && imgh > 0) {
-            imageArea->setScrollPosition (x, y);
-            imageArea->queue_draw ();
+            imageArea->setScrollPosition(x, y);
+            imageArea->queue_draw();
         }
     } else if (before && this == after) {
         int imgw, imgh, x, y;
-        before->imageArea->getScrollImageSize (imgw, imgh);
-        before->imageArea->getScrollPosition (x, y);
+        before->imageArea->getScrollImageSize(imgw, imgh);
+        before->imageArea->getScrollPosition(x, y);
 
         if (imgw > 0 && imgh > 0) {
-            imageArea->setScrollPosition (x, y);
-            imageArea->queue_draw ();
+            imageArea->setScrollPosition(x, y);
+            imageArea->queue_draw();
         }
     }
-
 }
-

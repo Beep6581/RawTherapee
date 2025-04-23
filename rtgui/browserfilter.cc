@@ -18,11 +18,8 @@
  */
 #include "browserfilter.h"
 
-BrowserFilter::BrowserFilter () : 
-    showTrash(true),
-    showNotTrash(true),
-    showOriginal(false),
-    exifFilterEnabled(false),
+BrowserFilter::BrowserFilter() :
+    showTrash(true), showNotTrash(true), showOriginal(false), exifFilterEnabled(false),
     matchEqual(true)
 {
     for (int i = 0; i < 6; i++) {
@@ -35,4 +32,3 @@ BrowserFilter::BrowserFilter () :
         showRecentlySaved[i] = true;
     }
 }
-

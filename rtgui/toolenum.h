@@ -18,4 +18,12 @@
  */
 #pragma once
 
-enum ToolMode {TMNone = -1, TMHand = 0, TMSpotWB = 1, TMCropSelect = 2, TMStraighten = 3, TMColorPicker = 4, TMPerspective = 5};
+enum ToolMode {
+    TMNone = -1,
+    TMHand = 0,
+    TMSpotWB = 1,
+    TMCropSelect = 2,
+    TMStraighten = 3,
+    TMColorPicker = 4,
+    TMPerspective = 5
+};

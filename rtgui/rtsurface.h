@@ -27,12 +27,7 @@
 class RTSurface final : public RTScalable
 {
 public:
-    enum class RTSurfaceType {
-        InvalidType,
-        IconType,
-        PNGType,
-        SVGType
-    };
+    enum class RTSurfaceType { InvalidType, IconType, PNGType, SVGType };
 
 private:
     double dpiBack; // Used to identify dpi change

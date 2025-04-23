@@ -24,42 +24,41 @@
 #include "toolpanel.h"
 #include "adjuster.h"
 
-class LensGeometry final :
-    public ToolParamBlock,
-    public FoldableToolPanel,
-    public AdjusterListener
+class LensGeometry final : public ToolParamBlock,
+                           public FoldableToolPanel,
+                           public AdjusterListener
 {
 
 protected:
-    MyComboBoxText*     method;
-    Gtk::Button*        autoCrop;
-    LensGeomListener*   rlistener;
-    Adjuster*           scale;
-    Gtk::CheckButton*   fill;
-    bool                lastFill;
-    sigc::connection    fillConn;
+    MyComboBoxText *method;
+    Gtk::Button *autoCrop;
+    LensGeomListener *rlistener;
+    Adjuster *scale;
+    Gtk::CheckButton *fill;
+    bool lastFill;
+    sigc::connection fillConn;
 
     rtengine::ProcEvent EvTransMethod;
     rtengine::ProcEvent EvTransScale;
+
 public:
     static const Glib::ustring TOOL_NAME;
 
-    LensGeometry ();
-    ~LensGeometry () override;
+    LensGeometry();
+    ~LensGeometry() override;
 
-    void read           (const rtengine::procparams::ProcParams* pp, const ParamsEdited* pedited = nullptr) override;
-    void write          (rtengine::procparams::ProcParams* pp, ParamsEdited* pedited = nullptr) override;
-    void setBatchMode   (bool batchMode) override;
+    void read(const rtengine::procparams::ProcParams *pp,
+        const ParamsEdited *pedited = nullptr) override;
+    void write(
+        rtengine::procparams::ProcParams *pp, ParamsEdited *pedited = nullptr) override;
+    void setBatchMode(bool batchMode) override;
 
     void methodChanged();
-    void fillPressed            ();
-    void autoCropPressed        ();
-    void setLensGeomListener    (LensGeomListener* l)
-    {
-        rlistener = l;
-    }
+    void fillPressed();
+    void autoCropPressed();
+    void setLensGeomListener(LensGeomListener *l) { rlistener = l; }
 
-    void adjusterChanged (Adjuster* a, double newval) override;
+    void adjusterChanged(Adjuster *a, double newval) override;
 
 private:
     IdleRegister idle_register;

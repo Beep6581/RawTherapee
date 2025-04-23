@@ -26,82 +26,91 @@ using namespace rtengine::procparams;
 
 const Glib::ustring DirPyrEqualizer::TOOL_NAME = "dirpyrequalizer";
 
-DirPyrEqualizer::DirPyrEqualizer () : FoldableToolPanel(this, TOOL_NAME, M("TP_DIRPYREQUALIZER_LABEL"), true, true)
+DirPyrEqualizer::DirPyrEqualizer() :
+    FoldableToolPanel(this, TOOL_NAME, M("TP_DIRPYREQUALIZER_LABEL"), true, true)
 {
 
     std::vector<GradientMilestone> milestones;
 
     float r, g, b;
     Color::hsv2rgb01(0.7500, 0.5, 0.5, r, g, b);
-    milestones.push_back( GradientMilestone(0.    , r, g, b) ); // hsv: 0.75   rad: -0.9
+    milestones.push_back(GradientMilestone(0., r, g, b)); // hsv: 0.75   rad: -0.9
     Color::hsv2rgb01(0.8560, 0.5, 0.5, r, g, b);
-    milestones.push_back( GradientMilestone(0.1470, r, g, b) ); // hsv: 0.856  rad: -0.4
+    milestones.push_back(GradientMilestone(0.1470, r, g, b)); // hsv: 0.856  rad: -0.4
     Color::hsv2rgb01(0.9200, 0.5, 0.5, r, g, b);
-    milestones.push_back( GradientMilestone(0.2353, r, g, b) ); // hsv: 0.92   rad: -0.1
+    milestones.push_back(GradientMilestone(0.2353, r, g, b)); // hsv: 0.92   rad: -0.1
     Color::hsv2rgb01(0.9300, 0.5, 0.5, r, g, b);
-    milestones.push_back( GradientMilestone(0.2647, r, g, b) ); // hsv: 0.93   rad:  0
+    milestones.push_back(GradientMilestone(0.2647, r, g, b)); // hsv: 0.93   rad:  0
     Color::hsv2rgb01(0.9600, 0.5, 0.5, r, g, b);
-    milestones.push_back( GradientMilestone(0.3380, r, g, b) ); // hsv: 0.96   rad:  0.25
+    milestones.push_back(GradientMilestone(0.3380, r, g, b)); // hsv: 0.96   rad:  0.25
     Color::hsv2rgb01(1.0000, 0.5, 0.5, r, g, b);
-    milestones.push_back( GradientMilestone(0.4412, r, g, b) ); // hsv: 1.     rad:  0.6
+    milestones.push_back(GradientMilestone(0.4412, r, g, b)); // hsv: 1.     rad:  0.6
     Color::hsv2rgb01(0.0675, 0.5, 0.5, r, g, b);
-    milestones.push_back( GradientMilestone(0.6176, r, g, b) ); // hsv: 0.0675 rad:  1.2
+    milestones.push_back(GradientMilestone(0.6176, r, g, b)); // hsv: 0.0675 rad:  1.2
     Color::hsv2rgb01(0.0900, 0.5, 0.5, r, g, b);
-    milestones.push_back( GradientMilestone(0.6764, r, g, b) ); // hsv: 0.09   rad:  1.4
+    milestones.push_back(GradientMilestone(0.6764, r, g, b)); // hsv: 0.09   rad:  1.4
     Color::hsv2rgb01(0.1700, 0.5, 0.5, r, g, b);
-    milestones.push_back( GradientMilestone(0.7647, r, g, b) ); // hsv: 0.17   rad:  1.7
+    milestones.push_back(GradientMilestone(0.7647, r, g, b)); // hsv: 0.17   rad:  1.7
     Color::hsv2rgb01(0.2650, 0.5, 0.5, r, g, b);
-    milestones.push_back( GradientMilestone(0.8824, r, g, b) ); // hsv: 0.265  rad:  2.1
+    milestones.push_back(GradientMilestone(0.8824, r, g, b)); // hsv: 0.265  rad:  2.1
     Color::hsv2rgb01(0.3240, 0.5, 0.5, r, g, b);
-    milestones.push_back( GradientMilestone(1.    , r, g, b) ); // hsv: 0.324  rad:  2.5
+    milestones.push_back(GradientMilestone(1., r, g, b)); // hsv: 0.324  rad:  2.5
 
-    Gtk::Box*  cbVBox = Gtk::manage ( new Gtk::Box(Gtk::ORIENTATION_VERTICAL));
+    Gtk::Box *cbVBox = Gtk::manage(new Gtk::Box(Gtk::ORIENTATION_VERTICAL));
     cbVBox->set_border_width(4);
     cbVBox->set_spacing(2);
 
-    cdbox = Gtk::manage (new Gtk::Box ());
-    labmcd = Gtk::manage (new Gtk::Label (M("TP_CBDL_METHOD") + ":"));
-    cdbox->pack_start (*labmcd, Gtk::PACK_SHRINK, 1);
+    cdbox = Gtk::manage(new Gtk::Box());
+    labmcd = Gtk::manage(new Gtk::Label(M("TP_CBDL_METHOD") + ":"));
+    cdbox->pack_start(*labmcd, Gtk::PACK_SHRINK, 1);
 
-    cbdlMethod = Gtk::manage (new MyComboBoxText ());
-    cbdlMethod->append (M("TP_CBDL_BEF"));
-    cbdlMethod->append (M("TP_CBDL_AFT"));
+    cbdlMethod = Gtk::manage(new MyComboBoxText());
+    cbdlMethod->append(M("TP_CBDL_BEF"));
+    cbdlMethod->append(M("TP_CBDL_AFT"));
     cbdlMethod->set_active(0);
-    cbdlMethodConn = cbdlMethod->signal_changed().connect ( sigc::mem_fun(*this, &DirPyrEqualizer::cbdlMethodChanged) );
-    cbdlMethod->set_tooltip_markup (M("TP_CBDL_METHOD_TOOLTIP"));
+    cbdlMethodConn = cbdlMethod->signal_changed().connect(
+        sigc::mem_fun(*this, &DirPyrEqualizer::cbdlMethodChanged));
+    cbdlMethod->set_tooltip_markup(M("TP_CBDL_METHOD_TOOLTIP"));
     cdbox->pack_start(*cbdlMethod);
     cbVBox->pack_start(*cdbox);
     pack_start(*cbVBox);
 
-    Gtk::Box * buttonBox1 = Gtk::manage (new Gtk::Box());
+    Gtk::Box *buttonBox1 = Gtk::manage(new Gtk::Box());
     buttonBox1->set_spacing(10);
     buttonBox1->set_homogeneous(true);
     pack_start(*buttonBox1);
 
-    Gtk::Button * lumacontrastMinusButton = Gtk::manage (new Gtk::Button(M("TP_DIRPYREQUALIZER_LUMACONTRAST_MINUS")));
+    Gtk::Button *lumacontrastMinusButton =
+        Gtk::manage(new Gtk::Button(M("TP_DIRPYREQUALIZER_LUMACONTRAST_MINUS")));
     buttonBox1->pack_start(*lumacontrastMinusButton);
-    lumacontrastMinusPressedConn = lumacontrastMinusButton->signal_pressed().connect( sigc::mem_fun(*this, &DirPyrEqualizer::lumacontrastMinusPressed));
+    lumacontrastMinusPressedConn = lumacontrastMinusButton->signal_pressed().connect(
+        sigc::mem_fun(*this, &DirPyrEqualizer::lumacontrastMinusPressed));
 
-    Gtk::Button * lumaneutralButton = Gtk::manage (new Gtk::Button(M("TP_DIRPYREQUALIZER_LUMANEUTRAL")));
+    Gtk::Button *lumaneutralButton =
+        Gtk::manage(new Gtk::Button(M("TP_DIRPYREQUALIZER_LUMANEUTRAL")));
     buttonBox1->pack_start(*lumaneutralButton);
-    lumaneutralPressedConn = lumaneutralButton->signal_pressed().connect( sigc::mem_fun(*this, &DirPyrEqualizer::lumaneutralPressed));
+    lumaneutralPressedConn = lumaneutralButton->signal_pressed().connect(
+        sigc::mem_fun(*this, &DirPyrEqualizer::lumaneutralPressed));
 
-    Gtk::Button * lumacontrastPlusButton = Gtk::manage (new Gtk::Button(M("TP_DIRPYREQUALIZER_LUMACONTRAST_PLUS")));
+    Gtk::Button *lumacontrastPlusButton =
+        Gtk::manage(new Gtk::Button(M("TP_DIRPYREQUALIZER_LUMACONTRAST_PLUS")));
     buttonBox1->pack_start(*lumacontrastPlusButton);
-    lumacontrastPlusPressedConn = lumacontrastPlusButton->signal_pressed().connect( sigc::mem_fun(*this, &DirPyrEqualizer::lumacontrastPlusPressed));
+    lumacontrastPlusPressedConn = lumacontrastPlusButton->signal_pressed().connect(
+        sigc::mem_fun(*this, &DirPyrEqualizer::lumacontrastPlusPressed));
 
     buttonBox1->show_all_children();
 
-    Gtk::Separator *separator2 = Gtk::manage (new Gtk::Separator(Gtk::ORIENTATION_HORIZONTAL));
+    Gtk::Separator *separator2 =
+        Gtk::manage(new Gtk::Separator(Gtk::ORIENTATION_HORIZONTAL));
     pack_start(*separator2, Gtk::PACK_SHRINK, 2);
 
-    for(int i = 0; i < 6; i++) {
+    for (int i = 0; i < 6; i++) {
         Glib::ustring ss;
         ss = Glib::ustring::format(i);
 
-        if     (i == 0) {
+        if (i == 0) {
             ss += Glib::ustring::compose(" (%1)", M("TP_DIRPYREQUALIZER_LUMAFINEST"));
-        } else if(i == 5) {
+        } else if (i == 5) {
             ss += Glib::ustring::compose(" (%1)", M("TP_DIRPYREQUALIZER_LUMACOARSEST"));
         }
 
@@ -110,22 +119,25 @@ DirPyrEqualizer::DirPyrEqualizer () : FoldableToolPanel(this, TOOL_NAME, M("TP_D
         pack_start(*multiplier[i]);
     }
 
-    Gtk::Separator *separator3 = Gtk::manage (new Gtk::Separator(Gtk::ORIENTATION_HORIZONTAL));
+    Gtk::Separator *separator3 =
+        Gtk::manage(new Gtk::Separator(Gtk::ORIENTATION_HORIZONTAL));
     pack_start(*separator3, Gtk::PACK_SHRINK, 2);
 
-    threshold = Gtk::manage ( new Adjuster (M("TP_DIRPYREQUALIZER_THRESHOLD"), 0, 1, 0.01, 0.2) );
+    threshold =
+        Gtk::manage(new Adjuster(M("TP_DIRPYREQUALIZER_THRESHOLD"), 0, 1, 0.01, 0.2));
     threshold->setAdjusterListener(this);
     pack_start(*threshold);
 
-    Gtk::Separator *separator4 = Gtk::manage (new Gtk::Separator(Gtk::ORIENTATION_HORIZONTAL));
+    Gtk::Separator *separator4 =
+        Gtk::manage(new Gtk::Separator(Gtk::ORIENTATION_HORIZONTAL));
     pack_start(*separator4, Gtk::PACK_SHRINK, 2);
     /*
         algoHBox = Gtk::manage (new Gtk::Box ());
         algoHBox->set_spacing (2);
         algoHBox->set_tooltip_markup (M("TP_DIRPYREQUALIZER_ALGO_TOOLTIP"));
     */
-//    alLabel = Gtk::manage (new Gtk::Label (M("TP_DIRPYREQUALIZER_ALGO")+":"));
-//  algoHBox->pack_start (*alLabel, Gtk::PACK_SHRINK);
+    //    alLabel = Gtk::manage (new Gtk::Label (M("TP_DIRPYREQUALIZER_ALGO")+":"));
+    //  algoHBox->pack_start (*alLabel, Gtk::PACK_SHRINK);
     /*
         algo = Gtk::manage (new MyComboBoxText ());
         algo->append (M("TP_DIRPYREQUALIZER_ALGO_FI"));
@@ -133,58 +145,63 @@ DirPyrEqualizer::DirPyrEqualizer () : FoldableToolPanel(this, TOOL_NAME, M("TP_D
         algo->set_active (1);
     //  algoHBox->pack_start (*algo);
     //  pack_start(*algoHBox);
-        algoconn = algo->signal_changed().connect ( sigc::mem_fun(*this, &DirPyrEqualizer::algoChanged) );
+        algoconn = algo->signal_changed().connect ( sigc::mem_fun(*this,
+    &DirPyrEqualizer::algoChanged) );
     */
-    hueskin = Gtk::manage (new ThresholdAdjuster (M("TP_DIRPYREQUALIZER_HUESKIN"), -40., 210., -5., 25., 170., 120., 0, false));        //default (b_l 0, t_l 30, b_r 170, t_r 120);
-    hueskin->set_tooltip_markup (M("TP_DIRPYREQUALIZER_HUESKIN_TOOLTIP"));
+    hueskin = Gtk::manage(
+        new ThresholdAdjuster(M("TP_DIRPYREQUALIZER_HUESKIN"), -40., 210., -5., 25.,
+            170., 120., 0, false)); // default (b_l 0, t_l 30, b_r 170, t_r 120);
+    hueskin->set_tooltip_markup(M("TP_DIRPYREQUALIZER_HUESKIN_TOOLTIP"));
 
     hueskin->setBgGradient(milestones);
     pack_start(*hueskin);
 
-    skinprotect = Gtk::manage ( new Adjuster (M("TP_DIRPYREQUALIZER_SKIN"), -100, 100, 1, 0.) );
+    skinprotect =
+        Gtk::manage(new Adjuster(M("TP_DIRPYREQUALIZER_SKIN"), -100, 100, 1, 0.));
     skinprotect->setAdjusterListener(this);
     pack_start(*skinprotect);
-    skinprotect->set_tooltip_markup (M("TP_DIRPYREQUALIZER_SKIN_TOOLTIP"));
+    skinprotect->set_tooltip_markup(M("TP_DIRPYREQUALIZER_SKIN_TOOLTIP"));
 
-    gamutlab = Gtk::manage (new Gtk::CheckButton (M("TP_DIRPYREQUALIZER_ARTIF")));
-    gamutlab->set_active (true);
+    gamutlab = Gtk::manage(new Gtk::CheckButton(M("TP_DIRPYREQUALIZER_ARTIF")));
+    gamutlab->set_active(true);
     pack_start(*gamutlab);
-    gamutlabConn = gamutlab->signal_toggled().connect( sigc::mem_fun(*this, &DirPyrEqualizer::gamutlabToggled) );
-    gamutlab->set_tooltip_markup (M("TP_DIRPYREQUALIZER_TOOLTIP"));
+    gamutlabConn = gamutlab->signal_toggled().connect(
+        sigc::mem_fun(*this, &DirPyrEqualizer::gamutlabToggled));
+    gamutlab->set_tooltip_markup(M("TP_DIRPYREQUALIZER_TOOLTIP"));
 
-    hueskin->setAdjusterListener (this);
+    hueskin->setAdjusterListener(this);
 
-    show_all_children ();
+    show_all_children();
     //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 }
 
-DirPyrEqualizer::~DirPyrEqualizer ()
+DirPyrEqualizer::~DirPyrEqualizer() {}
+
+void DirPyrEqualizer::read(const ProcParams *pp, const ParamsEdited *pedited)
 {
 
-}
-
-void DirPyrEqualizer::read (const ProcParams* pp, const ParamsEdited* pedited)
-{
-
-    disableListener ();
+    disableListener();
     cbdlMethodConn.block(true);
 
     if (pedited) {
 
-        set_inconsistent (multiImage && !pedited->dirpyrequalizer.enabled);
-        gamutlab->set_inconsistent (!pedited->dirpyrequalizer.gamutlab);
+        set_inconsistent(multiImage && !pedited->dirpyrequalizer.enabled);
+        gamutlab->set_inconsistent(!pedited->dirpyrequalizer.gamutlab);
 
         if (!pedited->dirpyrequalizer.cbdlMethod) {
             cbdlMethod->set_active_text(M("GENERAL_UNCHANGED"));
         }
 
-        for(int i = 0; i < 6; i++) {
-            multiplier[i]->setEditedState (pedited->dirpyrequalizer.mult[i] ? Edited : UnEdited);
+        for (int i = 0; i < 6; i++) {
+            multiplier[i]->setEditedState(
+                pedited->dirpyrequalizer.mult[i] ? Edited : UnEdited);
         }
 
-        threshold->setEditedState (pedited->dirpyrequalizer.threshold ? Edited : UnEdited);
-        skinprotect->setEditedState (pedited->dirpyrequalizer.skinprotect ? Edited : UnEdited);
-        hueskin->setEditedState     (pedited->dirpyrequalizer.hueskin ? Edited : UnEdited);
+        threshold->setEditedState(
+            pedited->dirpyrequalizer.threshold ? Edited : UnEdited);
+        skinprotect->setEditedState(
+            pedited->dirpyrequalizer.skinprotect ? Edited : UnEdited);
+        hueskin->setEditedState(pedited->dirpyrequalizer.hueskin ? Edited : UnEdited);
     }
 
     setEnabled(pp->dirpyrequalizer.enabled);
@@ -200,10 +217,10 @@ void DirPyrEqualizer::read (const ProcParams* pp, const ParamsEdited* pedited)
         algoconn.block(false);
         algoChanged();
     */
-    gamutlabConn.block (true);
-    gamutlab->set_active (pp->dirpyrequalizer.gamutlab);
-    gamutlab->set_sensitive (pp->dirpyrequalizer.skinprotect != 0);
-    gamutlabConn.block (false);
+    gamutlabConn.block(true);
+    gamutlab->set_active(pp->dirpyrequalizer.gamutlab);
+    gamutlab->set_sensitive(pp->dirpyrequalizer.skinprotect != 0);
+    gamutlabConn.block(false);
     lastgamutlab = pp->dirpyrequalizer.gamutlab;
 
     for (int i = 0; i < 6; i++) {
@@ -215,23 +232,23 @@ void DirPyrEqualizer::read (const ProcParams* pp, const ParamsEdited* pedited)
     hueskin->setValue<int>(pp->dirpyrequalizer.hueskin);
 
     if (pp->dirpyrequalizer.cbdlMethod == "bef") {
-        cbdlMethod->set_active (0);
+        cbdlMethod->set_active(0);
     } else if (pp->dirpyrequalizer.cbdlMethod == "aft") {
-        cbdlMethod->set_active (1);
+        cbdlMethod->set_active(1);
     }
 
-    cbdlMethodChanged ();
+    cbdlMethodChanged();
     cbdlMethodConn.block(false);
 
-    enableListener ();
+    enableListener();
 }
 
-void DirPyrEqualizer::write (ProcParams* pp, ParamsEdited* pedited)
+void DirPyrEqualizer::write(ProcParams *pp, ParamsEdited *pedited)
 {
 
     pp->dirpyrequalizer.enabled = getEnabled();
-    pp->dirpyrequalizer.gamutlab = gamutlab->get_active ();
-    pp->dirpyrequalizer.hueskin        = hueskin->getValue<int> ();
+    pp->dirpyrequalizer.gamutlab = gamutlab->get_active();
+    pp->dirpyrequalizer.hueskin = hueskin->getValue<int>();
 
     for (int i = 0; i < 6; i++) {
         pp->dirpyrequalizer.mult[i] = multiplier[i]->getValue();
@@ -242,19 +259,20 @@ void DirPyrEqualizer::write (ProcParams* pp, ParamsEdited* pedited)
 
     if (pedited) {
 
-        pedited->dirpyrequalizer.enabled =  !get_inconsistent();
-        pedited->dirpyrequalizer.hueskin        = hueskin->getEditedState ();
-        pedited->dirpyrequalizer.cbdlMethod    = cbdlMethod->get_active_text() != M("GENERAL_UNCHANGED");
+        pedited->dirpyrequalizer.enabled = !get_inconsistent();
+        pedited->dirpyrequalizer.hueskin = hueskin->getEditedState();
+        pedited->dirpyrequalizer.cbdlMethod =
+            cbdlMethod->get_active_text() != M("GENERAL_UNCHANGED");
 
-        for(int i = 0; i < 6; i++) {
+        for (int i = 0; i < 6; i++) {
             pedited->dirpyrequalizer.mult[i] = multiplier[i]->getEditedState();
         }
 
         pedited->dirpyrequalizer.threshold = threshold->getEditedState();
         pedited->dirpyrequalizer.skinprotect = skinprotect->getEditedState();
-//       pedited->dirpyrequalizer.algo          = algo->get_active_text()!=M("GENERAL_UNCHANGED");
+        //       pedited->dirpyrequalizer.algo          =
+        //       algo->get_active_text()!=M("GENERAL_UNCHANGED");
     }
-
 
     if (cbdlMethod->get_active_row_number() == 0) {
         pp->dirpyrequalizer.cbdlMethod = "bef";
@@ -274,7 +292,8 @@ void DirPyrEqualizer::algoChanged () {
         listener->panelChanged (EvDirPyrEqualizeralg, algo->get_active_text ());}
 }
 */
-void DirPyrEqualizer::setDefaults (const ProcParams* defParams, const ParamsEdited* pedited)
+void DirPyrEqualizer::setDefaults(
+    const ProcParams *defParams, const ParamsEdited *pedited)
 {
 
     for (int i = 0; i < 6; i++) {
@@ -282,16 +301,20 @@ void DirPyrEqualizer::setDefaults (const ProcParams* defParams, const ParamsEdit
     }
 
     threshold->setDefault(defParams->dirpyrequalizer.threshold);
-    hueskin->setDefault<int> (defParams->dirpyrequalizer.hueskin);
+    hueskin->setDefault<int>(defParams->dirpyrequalizer.hueskin);
 
     if (pedited) {
         for (int i = 0; i < 6; i++) {
-            multiplier[i]->setDefaultEditedState(pedited->dirpyrequalizer.mult[i] ? Edited : UnEdited);
+            multiplier[i]->setDefaultEditedState(
+                pedited->dirpyrequalizer.mult[i] ? Edited : UnEdited);
         }
 
-        threshold->setDefaultEditedState(pedited->dirpyrequalizer.threshold ? Edited : UnEdited);
-        skinprotect->setDefaultEditedState(pedited->dirpyrequalizer.skinprotect ? Edited : UnEdited);
-        hueskin->setDefaultEditedState  (pedited->dirpyrequalizer.hueskin ? Edited : UnEdited);
+        threshold->setDefaultEditedState(
+            pedited->dirpyrequalizer.threshold ? Edited : UnEdited);
+        skinprotect->setDefaultEditedState(
+            pedited->dirpyrequalizer.skinprotect ? Edited : UnEdited);
+        hueskin->setDefaultEditedState(
+            pedited->dirpyrequalizer.hueskin ? Edited : UnEdited);
     } else {
         for (int i = 0; i < 6; i++) {
             multiplier[i]->setDefaultEditedState(Irrelevant);
@@ -299,37 +322,41 @@ void DirPyrEqualizer::setDefaults (const ProcParams* defParams, const ParamsEdit
 
         threshold->setDefaultEditedState(Irrelevant);
         skinprotect->setDefaultEditedState(Irrelevant);
-        hueskin->setDefaultEditedState (Irrelevant);
+        hueskin->setDefaultEditedState(Irrelevant);
     }
 }
 
-void DirPyrEqualizer::adjusterChanged(ThresholdAdjuster* a, double newBottom, double newTop)
+void DirPyrEqualizer::adjusterChanged(
+    ThresholdAdjuster *a, double newBottom, double newTop)
 {
 }
 
-void DirPyrEqualizer::adjusterChanged(ThresholdAdjuster* a, double newBottomLeft, double newTopLeft, double newBottomRight, double newTopRight)
+void DirPyrEqualizer::adjusterChanged(ThresholdAdjuster *a, double newBottomLeft,
+    double newTopLeft, double newBottomRight, double newTopRight)
 {
 }
 
-void DirPyrEqualizer::adjusterChanged(ThresholdAdjuster* a, int newBottom, int newTop)
+void DirPyrEqualizer::adjusterChanged(ThresholdAdjuster *a, int newBottom, int newTop)
 {
 }
 
-void DirPyrEqualizer::adjusterChanged(ThresholdAdjuster* a, int newBottomLeft, int newTopLeft, int newBottomRight, int newTopRight)
+void DirPyrEqualizer::adjusterChanged(ThresholdAdjuster *a, int newBottomLeft,
+    int newTopLeft, int newBottomRight, int newTopRight)
 {
-    if (listener && (multiImage || getEnabled()) ) {
-        listener->panelChanged (EvDirPyrEqualizerHueskin, hueskin->getHistoryString());
+    if (listener && (multiImage || getEnabled())) {
+        listener->panelChanged(EvDirPyrEqualizerHueskin, hueskin->getHistoryString());
     }
 }
 
-void DirPyrEqualizer::adjusterChanged2(ThresholdAdjuster* a, int newBottomL, int newTopL, int newBottomR, int newTopR)
+void DirPyrEqualizer::adjusterChanged2(
+    ThresholdAdjuster *a, int newBottomL, int newTopL, int newBottomR, int newTopR)
 {
 }
 
-void DirPyrEqualizer::setBatchMode (bool batchMode)
+void DirPyrEqualizer::setBatchMode(bool batchMode)
 {
 
-    ToolPanel::setBatchMode (batchMode);
+    ToolPanel::setBatchMode(batchMode);
 
     for (int i = 0; i < 6; i++) {
         multiplier[i]->showEditedCB();
@@ -337,88 +364,91 @@ void DirPyrEqualizer::setBatchMode (bool batchMode)
 
     threshold->showEditedCB();
     skinprotect->showEditedCB();
-    hueskin->showEditedCB ();
-//   algo->append (M("GENERAL_UNCHANGED"));
+    hueskin->showEditedCB();
+    //   algo->append (M("GENERAL_UNCHANGED"));
 }
 
 void DirPyrEqualizer::cbdlMethodChanged()
 {
 
     if (listener) {
-        listener->panelChanged (EvcbdlMethod, cbdlMethod->get_active_text ());
+        listener->panelChanged(EvcbdlMethod, cbdlMethod->get_active_text());
     }
 }
 
-
-
-void DirPyrEqualizer::adjusterChanged(Adjuster* a, double newval)
+void DirPyrEqualizer::adjusterChanged(Adjuster *a, double newval)
 {
     if (listener && getEnabled()) {
         if (a == threshold) {
-            listener->panelChanged (EvDirPyrEqualizerThreshold,
-                                    Glib::ustring::compose("%1",
-                                            Glib::ustring::format(std::fixed, std::setprecision(2), threshold->getValue()))
-                                   );
+            listener->panelChanged(EvDirPyrEqualizerThreshold,
+                Glib::ustring::compose(
+                    "%1", Glib::ustring::format(std::fixed, std::setprecision(2),
+                              threshold->getValue())));
         } else if (a == skinprotect) {
-            gamutlab->set_sensitive (skinprotect->getValue() != 0);
-            listener->panelChanged (EvDirPyrEqualizerSkin,
-                                    Glib::ustring::compose("%1",
-                                            Glib::ustring::format(std::fixed, std::setprecision(2), skinprotect->getValue()))
-                                   );
+            gamutlab->set_sensitive(skinprotect->getValue() != 0);
+            listener->panelChanged(EvDirPyrEqualizerSkin,
+                Glib::ustring::compose(
+                    "%1", Glib::ustring::format(std::fixed, std::setprecision(2),
+                              skinprotect->getValue())));
         } else {
-            listener->panelChanged (EvDirPyrEqualizer,
-                                    Glib::ustring::compose("%1, %2, %3, %4, %5, %6",
-                                            Glib::ustring::format(std::fixed, std::setprecision(2), multiplier[0]->getValue()),
-                                            Glib::ustring::format(std::fixed, std::setprecision(2), multiplier[1]->getValue()),
-                                            Glib::ustring::format(std::fixed, std::setprecision(2), multiplier[2]->getValue()),
-                                            Glib::ustring::format(std::fixed, std::setprecision(2), multiplier[3]->getValue()),
-                                            Glib::ustring::format(std::fixed, std::setprecision(2), multiplier[4]->getValue()),
-                                            Glib::ustring::format(std::fixed, std::setprecision(2), multiplier[5]->getValue()))
-                                   );
+            listener->panelChanged(EvDirPyrEqualizer,
+                Glib::ustring::compose("%1, %2, %3, %4, %5, %6",
+                    Glib::ustring::format(
+                        std::fixed, std::setprecision(2), multiplier[0]->getValue()),
+                    Glib::ustring::format(
+                        std::fixed, std::setprecision(2), multiplier[1]->getValue()),
+                    Glib::ustring::format(
+                        std::fixed, std::setprecision(2), multiplier[2]->getValue()),
+                    Glib::ustring::format(
+                        std::fixed, std::setprecision(2), multiplier[3]->getValue()),
+                    Glib::ustring::format(
+                        std::fixed, std::setprecision(2), multiplier[4]->getValue()),
+                    Glib::ustring::format(
+                        std::fixed, std::setprecision(2), multiplier[5]->getValue())));
         }
     }
 }
 
-void DirPyrEqualizer::enabledChanged ()
+void DirPyrEqualizer::enabledChanged()
 {
 
     if (listener) {
         if (get_inconsistent()) {
-            listener->panelChanged (EvDirPyrEqlEnabled, M("GENERAL_UNCHANGED"));
+            listener->panelChanged(EvDirPyrEqlEnabled, M("GENERAL_UNCHANGED"));
         } else if (getEnabled()) {
-            listener->panelChanged (EvDirPyrEqlEnabled, M("GENERAL_ENABLED"));
+            listener->panelChanged(EvDirPyrEqlEnabled, M("GENERAL_ENABLED"));
         } else {
-            listener->panelChanged (EvDirPyrEqlEnabled, M("GENERAL_DISABLED"));
+            listener->panelChanged(EvDirPyrEqlEnabled, M("GENERAL_DISABLED"));
         }
     }
 }
 
-void DirPyrEqualizer::gamutlabToggled ()
+void DirPyrEqualizer::gamutlabToggled()
 {
 
     if (batchMode) {
         if (gamutlab->get_inconsistent()) {
-            gamutlab->set_inconsistent (false);
-            gamutlabConn.block (true);
-            gamutlab->set_active (false);
-            gamutlabConn.block (false);
+            gamutlab->set_inconsistent(false);
+            gamutlabConn.block(true);
+            gamutlab->set_active(false);
+            gamutlabConn.block(false);
         } else if (lastgamutlab) {
-            gamutlab->set_inconsistent (true);
+            gamutlab->set_inconsistent(true);
         }
 
-        lastgamutlab = gamutlab->get_active ();
+        lastgamutlab = gamutlab->get_active();
     }
 
     if (listener) {
-        if (gamutlab->get_active ()) {
-            listener->panelChanged (EvDirPyrEqlgamutlab, M("GENERAL_ENABLED"));
+        if (gamutlab->get_active()) {
+            listener->panelChanged(EvDirPyrEqlgamutlab, M("GENERAL_ENABLED"));
         } else {
-            listener->panelChanged (EvDirPyrEqlgamutlab, M("GENERAL_DISABLED"));
+            listener->panelChanged(EvDirPyrEqlgamutlab, M("GENERAL_DISABLED"));
         }
     }
 }
 
-void DirPyrEqualizer::lumaneutralPressed ()
+void DirPyrEqualizer::lumaneutralPressed()
 {
 
     for (int i = 0; i < 6; i++) {
@@ -427,8 +457,7 @@ void DirPyrEqualizer::lumaneutralPressed ()
     }
 }
 
-
-void DirPyrEqualizer::lumacontrastPlusPressed ()
+void DirPyrEqualizer::lumacontrastPlusPressed()
 {
 
     for (int i = 0; i < 6; i++) {
@@ -438,8 +467,7 @@ void DirPyrEqualizer::lumacontrastPlusPressed ()
     }
 }
 
-
-void DirPyrEqualizer::lumacontrastMinusPressed ()
+void DirPyrEqualizer::lumacontrastMinusPressed()
 {
 
     for (int i = 0; i < 6; i++) {
@@ -449,7 +477,8 @@ void DirPyrEqualizer::lumacontrastMinusPressed ()
     }
 }
 
-void DirPyrEqualizer::setAdjusterBehavior (bool multiplieradd, bool thresholdadd, bool skinadd)
+void DirPyrEqualizer::setAdjusterBehavior(
+    bool multiplieradd, bool thresholdadd, bool skinadd)
 {
 
     for (int i = 0; i < 6; i++) {
@@ -460,7 +489,7 @@ void DirPyrEqualizer::setAdjusterBehavior (bool multiplieradd, bool thresholdadd
     skinprotect->setAddMode(skinadd);
 }
 
-void DirPyrEqualizer::trimValues (rtengine::procparams::ProcParams* pp)
+void DirPyrEqualizer::trimValues(rtengine::procparams::ProcParams *pp)
 {
 
     for (int i = 0; i < 6; i++) {

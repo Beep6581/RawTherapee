@@ -33,8 +33,10 @@ public:
     double rangeUpperBound;
 
     Axis();
-    Axis(Glib::ustring label, unsigned int decimal, double increment, double pageIncrement, double valMin, double valMax);
-    void setValues(Glib::ustring label, unsigned int decimal, double increment, double pageIncrement, double valMin, double valMax);
+    Axis(Glib::ustring label, unsigned int decimal, double increment,
+        double pageIncrement, double valMin, double valMax);
+    void setValues(Glib::ustring label, unsigned int decimal, double increment,
+        double pageIncrement, double valMin, double valMax);
 };
 
 class CoordinateAdjuster;
@@ -45,13 +47,11 @@ class CoordinateProvider
 {
 protected:
     CoordinateAdjuster *coordinateAdjuster;
+
 public:
     CoordinateProvider() : coordinateAdjuster(nullptr) {}
     virtual ~CoordinateProvider() {}
-    void setListener(CoordinateAdjuster *adjuster)
-    {
-        coordinateAdjuster = adjuster;
-    }
+    void setListener(CoordinateAdjuster *adjuster) { coordinateAdjuster = adjuster; }
 
     /** @brief Update the position of the edited point ; will trigger events
      *
@@ -65,9 +65,11 @@ public:
 /**
  * @brief Widget that displays spin buttons to adjust coordinates
  *
- * You can set up to 4 axis that will be displayed on a single line, so keep the labels short!
+ * You can set up to 4 axis that will be displayed on a single line, so keep the labels
+ * short!
  *
- * The position of the Axis in the vector will be used in the communication between the Adjuster and the Provider to identify the Axis
+ * The position of the Axis in the vector will be used in the communication between the
+ * Adjuster and the Provider to identify the Axis
  */
 class CoordinateAdjuster final : public Gtk::FlowBox
 {
@@ -78,6 +80,7 @@ public:
     {
     private:
         char idx;
+
     public:
         CoordinateAdjuster *parent;
         Gtk::Label *label;
@@ -92,7 +95,7 @@ public:
         void updateGUI(const Axis &axis);
         // used to update the displayed value
         void setValue(double newValue);
-        //bool keyPressed(GdkEventKey* event);
+        // bool keyPressed(GdkEventKey* event);
         void valueChanged();
     };
     //----------------------------------------------------------------
@@ -107,33 +110,27 @@ public:
     //---------------------------------------------------------------
 
 private:
-    typedef enum {
-        CA_STATUS_IDLE,
-        CA_STATUS_EDITING,
-        CA_STATUS_END_EDITING
-    } Status;
+    typedef enum { CA_STATUS_IDLE, CA_STATUS_EDITING, CA_STATUS_END_EDITING } Status;
 
-    std::vector<AxisAdjuster*> axisAdjusters;
+    std::vector<AxisAdjuster *> axisAdjusters;
     Status status;
     CurveEditorSubGroup *parent;
 
     void createWidgets(const std::vector<Axis> &axis);
 
 protected:
-
     friend class AxisAdjuster;
 
     CoordinateProvider *coordinateProvider;
 
     void updatePos(char index, double value);
 
-
 public:
-
     /// Basic X/Y adjuster, in the [0-1] range
     CoordinateAdjuster(CoordinateProvider *provider, CurveEditorSubGroup *parent);
     /// For more complex adjuster
-    CoordinateAdjuster(CoordinateProvider *provider, CurveEditorSubGroup *parent, const std::vector<Axis> &axis);
+    CoordinateAdjuster(CoordinateProvider *provider, CurveEditorSubGroup *parent,
+        const std::vector<Axis> &axis);
 
     ~CoordinateAdjuster() override;
 
@@ -150,12 +147,13 @@ public:
     void startNumericalAdjustment(const std::vector<Boundaries> &newBoundaries);
 
     /// Edit another point
-    void switchAdjustedPoint(std::vector<double> &pos, const std::vector<Boundaries> &newBoundaries);
+    void switchAdjustedPoint(
+        std::vector<double> &pos, const std::vector<Boundaries> &newBoundaries);
 
     /// Trigger the event to show the CoordinateAdjuster
     void showMe(CoordinateProvider *provider);
 
-    /// Stop the adjustment session (disable the widget, i.e. you won't be able to edit the values)
+    /// Stop the adjustment session (disable the widget, i.e. you won't be able to edit
+    /// the values)
     void stopNumericalAdjustment();
-
 };

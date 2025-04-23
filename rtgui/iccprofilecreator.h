@@ -31,11 +31,10 @@ class ICCProfileCreator final : public Gtk::Dialog, public AdjusterListener
 {
 
 private:
-
     enum class ColorTemp {
-        D50 = 5003,  // for Widegamut, Prophoto Best, Beta -> D50
-        D60 = 6005,  // for ACESc                          -> D60
-        D65 = 6504   // for sRGB, AdobeRGB, Bruce Rec2020  -> D65
+        D50 = 5003, // for Widegamut, Prophoto Best, Beta -> D50
+        D60 = 6005, // for ACESc                          -> D60
+        D65 = 6504  // for sRGB, AdobeRGB, Bruce Rec2020  -> D65
     };
 
     cmsFloat64Number ga[7]; // 7 parameters for smoother curves
@@ -61,39 +60,39 @@ private:
 
     RTWindow *parent;
 
-    Adjuster* aGamma;
-    Adjuster* aSlope;
-    Adjuster* aPrimariesRedX;
-    Adjuster* aPrimariesRedY;
-    Adjuster* aPrimariesGreenX;
-    Adjuster* aPrimariesGreenY;
-    Adjuster* aPrimariesBlueX;
-    Adjuster* aPrimariesBlueY;
+    Adjuster *aGamma;
+    Adjuster *aSlope;
+    Adjuster *aPrimariesRedX;
+    Adjuster *aPrimariesRedY;
+    Adjuster *aPrimariesGreenX;
+    Adjuster *aPrimariesGreenY;
+    Adjuster *aPrimariesBlueX;
+    Adjuster *aPrimariesBlueY;
 
-    Gtk::Grid* primariesGrid;
-    MyComboBoxText* iccVersion;
-    MyComboBoxText* trcPresets;
+    Gtk::Grid *primariesGrid;
+    MyComboBoxText *iccVersion;
+    MyComboBoxText *trcPresets;
     sigc::connection trcpresetsconn;
-    MyComboBoxText* primaries;
+    MyComboBoxText *primaries;
     sigc::connection primariesconn;
-    MyComboBoxText* cIlluminant;
+    MyComboBoxText *cIlluminant;
     sigc::connection illconn;
-    Gtk::Entry* eDescription;
-    Gtk::Entry* eCopyright;
-    Gtk::Button* resetCopyright;
+    Gtk::Entry *eDescription;
+    Gtk::Entry *eCopyright;
+    Gtk::Button *resetCopyright;
     Gtk::CheckButton *cAppendParamsToDesc;
 
-    //Glib::ustring lastPath;
+    // Glib::ustring lastPath;
 
-    void initWithDefaults ();
-    void storeDefaults ();
+    void initWithDefaults();
+    void storeDefaults();
     void storeValues();
 
     void updateICCVersion();
     void primariesChanged();
     void illuminantChanged();
     void trcPresetsChanged();
-    void adjusterChanged(Adjuster* a, double newval) override;
+    void adjusterChanged(Adjuster *a, double newval) override;
     static std::vector<Glib::ustring> getGamma();
     Glib::ustring getPrimariesPresetName(const Glib::ustring &preset);
     void getPrimaries(const Glib::ustring &preset, double *p, ColorTemp &temp);
@@ -104,5 +103,5 @@ private:
     void onResetCopyright();
 
 public:
-    explicit ICCProfileCreator (RTWindow *rtwindow);
+    explicit ICCProfileCreator(RTWindow *rtwindow);
 };

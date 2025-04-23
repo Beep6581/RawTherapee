@@ -23,27 +23,29 @@
 #include "adjuster.h"
 #include "toolpanel.h"
 
-class CACorrection final:
-    public ToolParamBlock,
-    public AdjusterListener,
-    public FoldableToolPanel
+class CACorrection final : public ToolParamBlock,
+                           public AdjusterListener,
+                           public FoldableToolPanel
 {
 
 protected:
-    Adjuster* red;
-    Adjuster* blue;
+    Adjuster *red;
+    Adjuster *blue;
 
 public:
     static const Glib::ustring TOOL_NAME;
 
-    CACorrection ();
+    CACorrection();
 
-    void read           (const rtengine::procparams::ProcParams* pp, const ParamsEdited* pedited = nullptr) override;
-    void write          (rtengine::procparams::ProcParams* pp, ParamsEdited* pedited = nullptr) override;
-    void setDefaults    (const rtengine::procparams::ProcParams* defParams, const ParamsEdited* pedited = nullptr) override;
-    void setBatchMode   (bool batchMode) override;
+    void read(const rtengine::procparams::ProcParams *pp,
+        const ParamsEdited *pedited = nullptr) override;
+    void write(
+        rtengine::procparams::ProcParams *pp, ParamsEdited *pedited = nullptr) override;
+    void setDefaults(const rtengine::procparams::ProcParams *defParams,
+        const ParamsEdited *pedited = nullptr) override;
+    void setBatchMode(bool batchMode) override;
 
-    void adjusterChanged (Adjuster* a, double newval) override;
-    void setAdjusterBehavior (bool badd);
-    void trimValues          (rtengine::procparams::ProcParams* pp) override;
+    void adjusterChanged(Adjuster *a, double newval) override;
+    void setAdjusterBehavior(bool badd);
+    void trimValues(rtengine::procparams::ProcParams *pp) override;
 };

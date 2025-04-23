@@ -21,45 +21,47 @@
 
 #include "pathutils.h"
 
-
-Glib::ustring removeExtension (const Glib::ustring& filename)
+Glib::ustring removeExtension(const Glib::ustring &filename)
 {
 
     Glib::ustring bname = Glib::path_get_basename(filename);
-    size_t lastdot = bname.find_last_of ('.');
-    size_t lastwhitespace = bname.find_last_of (" \t\f\v\n\r");
+    size_t lastdot = bname.find_last_of('.');
+    size_t lastwhitespace = bname.find_last_of(" \t\f\v\n\r");
 
-    if (lastdot != bname.npos && (lastwhitespace == bname.npos || lastdot > lastwhitespace)) {
-        return filename.substr (0, filename.size() - (bname.size() - lastdot));
+    if (lastdot != bname.npos &&
+        (lastwhitespace == bname.npos || lastdot > lastwhitespace)) {
+        return filename.substr(0, filename.size() - (bname.size() - lastdot));
     } else {
         return filename;
     }
 }
 
-Glib::ustring getExtension (const Glib::ustring& filename)
+Glib::ustring getExtension(const Glib::ustring &filename)
 {
 
     Glib::ustring bname = Glib::path_get_basename(filename);
-    size_t lastdot = bname.find_last_of ('.');
-    size_t lastwhitespace = bname.find_last_of (" \t\f\v\n\r");
+    size_t lastdot = bname.find_last_of('.');
+    size_t lastwhitespace = bname.find_last_of(" \t\f\v\n\r");
 
-    if (lastdot != bname.npos && (lastwhitespace == bname.npos || lastdot > lastwhitespace)) {
-        return filename.substr (filename.size() - (bname.size() - lastdot) + 1, filename.npos);
+    if (lastdot != bname.npos &&
+        (lastwhitespace == bname.npos || lastdot > lastwhitespace)) {
+        return filename.substr(
+            filename.size() - (bname.size() - lastdot) + 1, filename.npos);
     } else {
         return "";
     }
 }
 
-
 // For an unknown reason, Glib::filename_to_utf8 doesn't work on reliably Windows,
-// so we're using Glib::filename_to_utf8 for Linux/Apple and Glib::locale_to_utf8 for Windows.
+// so we're using Glib::filename_to_utf8 for Linux/Apple and Glib::locale_to_utf8 for
+// Windows.
 Glib::ustring fname_to_utf8(const std::string &fname)
 {
 #ifdef _WIN32
 
     try {
         return Glib::locale_to_utf8(fname);
-    } catch (Glib::Error&) {
+    } catch (Glib::Error &) {
         return Glib::convert_with_fallback(fname, "UTF-8", "ISO-8859-1", "?");
     }
 

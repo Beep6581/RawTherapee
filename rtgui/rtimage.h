@@ -26,10 +26,12 @@ class RTSurface;
 class RTImageCache final
 {
 private:
-    static std::map<std::pair<Glib::ustring, Gtk::IconSize>, std::shared_ptr<RTSurface>> cache;
+    static std::map<std::pair<Glib::ustring, Gtk::IconSize>, std::shared_ptr<RTSurface>>
+        cache;
 
 public:
-    static std::shared_ptr<RTSurface> getCachedSurface(const Glib::ustring &icon_name, const Gtk::IconSize icon_size);
+    static std::shared_ptr<RTSurface> getCachedSurface(
+        const Glib::ustring &icon_name, const Gtk::IconSize icon_size);
     static void updateCache();
 };
 
@@ -45,14 +47,18 @@ private:
     Glib::RefPtr<const Gio::Icon> g_icon;
 
 public:
-    RTImage ();
-    explicit RTImage (const Glib::ustring& iconName, const Gtk::IconSize iconSize = Gtk::ICON_SIZE_SMALL_TOOLBAR);
-    explicit RTImage (const Glib::RefPtr<const Gio::Icon>& gIcon, const Gtk::IconSize iconSize = Gtk::ICON_SIZE_SMALL_TOOLBAR);
+    RTImage();
+    explicit RTImage(const Glib::ustring &iconName,
+        const Gtk::IconSize iconSize = Gtk::ICON_SIZE_SMALL_TOOLBAR);
+    explicit RTImage(const Glib::RefPtr<const Gio::Icon> &gIcon,
+        const Gtk::IconSize iconSize = Gtk::ICON_SIZE_SMALL_TOOLBAR);
 
-    void set_from_icon_name(const Glib::ustring& iconName);
-    void set_from_icon_name(const Glib::ustring& iconName, const Gtk::IconSize iconSize);
-    void set_from_gicon(const Glib::RefPtr<const Gio::Icon>& gIcon);
-    void set_from_gicon(const Glib::RefPtr<const Gio::Icon>& gIcon, const Gtk::IconSize iconSize);
+    void set_from_icon_name(const Glib::ustring &iconName);
+    void set_from_icon_name(
+        const Glib::ustring &iconName, const Gtk::IconSize iconSize);
+    void set_from_gicon(const Glib::RefPtr<const Gio::Icon> &gIcon);
+    void set_from_gicon(
+        const Glib::RefPtr<const Gio::Icon> &gIcon, const Gtk::IconSize iconSize);
 
     int get_width();
     int get_height();

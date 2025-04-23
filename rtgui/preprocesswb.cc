@@ -33,11 +33,13 @@ const Glib::ustring PreprocessWB::TOOL_NAME = "preprocesswb";
 
 PreprocessWB::PreprocessWB() :
     FoldableToolPanel(this, TOOL_NAME, M("TP_PREPROCWB_LABEL")),
-    evPreprocessWBMode(ProcEventMapper::getInstance()->newEvent(FIRST, "HISTORY_MSG_PREPROCWB_MODE")),
+    evPreprocessWBMode(
+        ProcEventMapper::getInstance()->newEvent(FIRST, "HISTORY_MSG_PREPROCWB_MODE")),
     mode(Gtk::manage(new MyComboBoxText()))
 {
     Gtk::Box *hb = Gtk::manage(new Gtk::Box());
-    hb->pack_start(*Gtk::manage(new Gtk::Label(M("TP_PREPROCWB_MODE") + ": ")), Gtk::PACK_SHRINK, 0);
+    hb->pack_start(*Gtk::manage(new Gtk::Label(M("TP_PREPROCWB_MODE") + ": ")),
+        Gtk::PACK_SHRINK, 0);
 
     mode->append(M("TP_PREPROCWB_MODE_CAMERA"));
     mode->append(M("TP_PREPROCWB_MODE_AUTO"));
@@ -52,7 +54,8 @@ PreprocessWB::PreprocessWB() :
     pack_start(*hb, Gtk::PACK_SHRINK, 4);
 }
 
-void PreprocessWB::read(const rtengine::procparams::ProcParams* pp, const ParamsEdited* pedited)
+void PreprocessWB::read(
+    const rtengine::procparams::ProcParams *pp, const ParamsEdited *pedited)
 {
     disableListener();
 
@@ -61,16 +64,17 @@ void PreprocessWB::read(const rtengine::procparams::ProcParams* pp, const Params
     enableListener();
 }
 
-void PreprocessWB::write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedited)
+void PreprocessWB::write(rtengine::procparams::ProcParams *pp, ParamsEdited *pedited)
 {
     if (mode->get_active_row_number() != 2) {
-        pp->raw.preprocessWB.mode = RAWParams::PreprocessWB::Mode(mode->get_active_row_number());
+        pp->raw.preprocessWB.mode =
+            RAWParams::PreprocessWB::Mode(mode->get_active_row_number());
     }
 
     if (pedited) {
-        pedited->raw.preprocessWB.mode = mode->get_active_row_number() != 2; // UNCHANGED entry, see setBatchMode
+        pedited->raw.preprocessWB.mode =
+            mode->get_active_row_number() != 2; // UNCHANGED entry, see setBatchMode
     }
-
 }
 
 void PreprocessWB::setBatchMode(bool batchMode)
@@ -83,13 +87,12 @@ void PreprocessWB::setBatchMode(bool batchMode)
     }
 }
 
-void PreprocessWB::setDefaults(const rtengine::procparams::ProcParams* defParams, const ParamsEdited* pedited)
+void PreprocessWB::setDefaults(
+    const rtengine::procparams::ProcParams *defParams, const ParamsEdited *pedited)
 {
 }
 
-void PreprocessWB::trimValues(rtengine::procparams::ProcParams* pp)
-{
-}
+void PreprocessWB::trimValues(rtengine::procparams::ProcParams *pp) {}
 
 void PreprocessWB::modeChanged()
 {
