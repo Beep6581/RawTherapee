@@ -871,8 +871,6 @@ BENCHFUN
         // enable only if noisecap (denoise before capture sharpening is enable).
         if(sharpeningParams.noisecap > 0.f){
             LabImage labdng(W, H);
-            LabImage labdnr(W, H);
-            LabImage labdnb(W, H);
             bool memoryAllocationFailed = false;
 
 #ifdef _OPENMP
@@ -893,27 +891,27 @@ BENCHFUN
                     prov1->r(i, j) = red[i][j];
                     prov1->g(i, j) = green[i][j];
                     prov1->b(i, j) = blue[i][j]; 
-                    labdng.L[i][j] = prov1->g(i, j);//initialize Labdn.L - channel green "near" Luminance
-                    labdnr.L[i][j] = prov1->r(i, j);//initialize Labdn.L - channel red
-                    labdnb.L[i][j] = prov1->b(i, j);//initialize Labdn.L - channel blue
+                    labdng.L[i][j] = prov1->g(i, j);//initialize Labdng.L - channel green "near" Luminance
+                    labdng.a[i][j] = prov1->r(i, j);//initialize Labdng.a - channel red
+                    labdng.b[i][j] = prov1->b(i, j);//initialize Labdnb.b - channel blue
                 }
             }
-            //contrary to usual practice, I do not denoise the 'a' and 'b' (or R and B) channels, but duplicate 3 times as if each channel was of the same type, as if R,G,B are "luminance"
+            //contrary to usual practice, I do not denoise the 'a' and 'b' with a specifivc manner (or R and B) channels, but duplicate 3 times as if each channel was of the same type, as if R,G,B are "luminance"
             wavelet_decomposition Ldecompg(labdng.L[0], labdng.W, labdng.H, levwav, 1, 1, numThreads, 8);//daublen = 8 - better moment wavelet
             if (Ldecompg.memory_allocation_failed()) {
                 memoryAllocationFailed = true;
             }
-            wavelet_decomposition Ldecompr(labdnr.L[0], labdnr.W, labdnr.H, levwav, 1, 1, numThreads, 8);//daublen = 8 - better moment wavelet
+            wavelet_decomposition Ldecompr(labdng.a[0], labdng.W, labdng.H, levwav, 1, 1, numThreads, 8);//daublen = 8 - better moment wavelet
             if (Ldecompr.memory_allocation_failed()) {
                 memoryAllocationFailed = true;
             }
-            wavelet_decomposition Ldecompb(labdnb.L[0], labdnb.W, labdnb.H, levwav, 1, 1, numThreads, 8);//daublen = 8 - better moment wavelet
+            wavelet_decomposition Ldecompb(labdng.b[0], labdng.W, labdng.H, levwav, 1, 1, numThreads, 8);//daublen = 8 - better moment wavelet
             if (Ldecompb.memory_allocation_failed()) {
                 memoryAllocationFailed = true;
             }
         
             float madL[10][3];
-            //but only one evaluation MAD RGB with green channel - near luminance
+            //but only one evaluation MAD RGB with green channel - "near luminance"
             if (!Ldecompg.memory_allocation_failed()) {
                 //calculate Median absolute deviation
                 for (int lvl = 0; lvl < levwav; lvl++) {
@@ -978,8 +976,8 @@ BENCHFUN
                     delete[] noisevarlum;
                 
                     Ldecompg.reconstruct(labdng.L[0]);//reconstruct channel G after wavelets
-                    Ldecompr.reconstruct(labdnr.L[0]);//reconstruct channel R after wavelets
-                    Ldecompb.reconstruct(labdnb.L[0]);//reconstruct channel B after wavelets
+                    Ldecompr.reconstruct(labdng.a[0]);//reconstruct channel R after wavelets
+                    Ldecompb.reconstruct(labdng.b[0]);//reconstruct channel B after wavelets
                 
 #ifdef _OPENMP
                 #pragma omp parallel for schedule(dynamic,16)
@@ -987,9 +985,9 @@ BENCHFUN
                 //uses Clipmask to only denoise flat areas
                     for (int ir = 0; ir < H; ir++) {
                         for (int jr = 0; jr < W; jr++) {
-                            labdng.L[ir][jr] = intp(clipMask[ir][jr], prov1->g(ir, jr) , labdng.L[ir][jr]);
-                            labdnr.L[ir][jr] = intp(clipMask[ir][jr], prov1->r(ir, jr) , labdnr.L[ir][jr]);
-                            labdnb.L[ir][jr] = intp(clipMask[ir][jr], prov1->b(ir, jr) , labdnb.L[ir][jr]);
+                            labdng.L[ir][jr] = intp(clipMask[ir][jr], prov1->g(ir, jr) , labdng.L[ir][jr]);//green
+                            labdng.a[ir][jr] = intp(clipMask[ir][jr], prov1->r(ir, jr) , labdng.a[ir][jr]);//red
+                            labdng.b[ir][jr] = intp(clipMask[ir][jr], prov1->b(ir, jr) , labdng.b[ir][jr]);//blue
                         }
                     }
                     
@@ -998,9 +996,9 @@ BENCHFUN
 #endif                   
                 for (int i = 0; i < H; ++i) {//re active red blue green with denoise and taking account mask 
                     for (int j = 0; j < W; ++j) {
-                        red[i][j] = labdnr.L[i][j];
+                        red[i][j] = labdng.a[i][j];
                         green[i][j] = labdng.L[i][j];
-                        blue[i][j] = labdnb.L[i][j];
+                        blue[i][j] = labdng.b[i][j];
                     }
                 }
             }
