@@ -8586,7 +8586,7 @@ Locallabcie::Locallabcie():
 
     bwevMethod12->append(M("TP_LOCALLAB_BWEVSIG"));
     bwevMethod12->append(M("TP_LOCALLAB_BWEVSLOP"));
-    bwevMethod12->set_active(1);
+    bwevMethod12->set_active(0);
     bwevMethod12Conn = bwevMethod12->signal_changed().connect(sigc::mem_fun(*this, &Locallabcie::bwevMethod12Changed));
     modeHBoxbwev12->pack_start(*bwevMethod12);
     

@@ -4797,7 +4797,7 @@ LocallabParams::LocallabSpot::LocallabSpot() :
     modecie("com"),
     modecam("cam16"),
     modeQJ("512"),
-    bwevMethod12("slop"),
+    bwevMethod12("sigQ"),
     bwevMethod("sig"),
     saturlcie(0.),
     rstprotectcie(0.),
