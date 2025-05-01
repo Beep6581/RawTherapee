@@ -7842,6 +7842,8 @@ void CLASS parse_qt (int end)
   while (ftell(ifp)+7 < end) {
     save = ftell(ifp);
     if ((size = get4()) < 8) return;
+    if ((int)size < 0) return; // 2+GB is too much
+    if (save + size < save) return; // 32bit overflow
     fread (tag, 4, 1, ifp);
     if (!memcmp(tag,"moov",4) ||
 	!memcmp(tag,"udta",4) ||
