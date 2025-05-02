@@ -7704,6 +7704,8 @@ LocallabBlur::LocallabBlur():
     lum46Labels(Gtk::manage(new Gtk::Label("---"))),
     chroLabels(Gtk::manage(new Gtk::Label("---"))),
     chro46Labels(Gtk::manage(new Gtk::Label("---"))),
+    lockmadl(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_LOCKMADL")))),
+    
     expdenoise1(Gtk::manage(new MyExpander(false, M("TP_LOCALLAB_DENOI1_EXP")))),
     maskusable(Gtk::manage(new Gtk::Label(M("TP_LOCALLAB_MASKUSABLE")))),
     maskunusable(Gtk::manage(new Gtk::Label(M("TP_LOCALLAB_MASKUNUSABLE")))),
@@ -7790,6 +7792,7 @@ LocallabBlur::LocallabBlur():
     Evlocallabenacontrast = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_DENOENA");
     Evlocallabdenomask = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_DENOMASK");
     EvlocallabwavCurvehuecont = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_DENOMASKCURV");   
+    Evlocallablockmadl = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_LOCKMADL");
    
     set_orientation(Gtk::ORIENTATION_VERTICAL);
     denocontrast->addAutoButton(M("TP_LOCALLAB_DENORADIUS_TOOLTIP"));
@@ -7819,6 +7822,7 @@ LocallabBlur::LocallabBlur():
     invmaskConn = invmask->signal_toggled().connect(sigc::mem_fun(*this, &LocallabBlur::invmaskChanged));
     contrshowConn = contrshow->signal_toggled().connect(sigc::mem_fun(*this, &LocallabBlur::contrshowChanged));
     enacontrastConn = enacontrast->signal_toggled().connect(sigc::mem_fun(*this, &LocallabBlur::enacontrastChanged));
+    lockmadlConn = lockmadl->signal_toggled().connect(sigc::mem_fun(*this, &LocallabBlur::lockmadlChanged));
     
     denocontrast->setAdjusterListener(this);
     
@@ -8129,6 +8133,7 @@ LocallabBlur::LocallabBlur():
     prevBox->pack_start(*lCLabels);
     prevBox->pack_start(*chroLabels);
     prevBox->pack_start(*chro46Labels);
+    prevBox->pack_start(*lockmadl);
     prevFrame->add(*prevBox);
     wavBox->pack_start(*prevFrame);
 
@@ -8591,6 +8596,7 @@ void LocallabBlur::disableListener()
     toolblConn.block(true);
     enacontrastConn.block(true);
     contrshowConn.block(true);
+    lockmadlConn.block(true);
 }
 
 void LocallabBlur::enableListener()
@@ -8614,6 +8620,7 @@ void LocallabBlur::enableListener()
     toolblConn.block(false);
     enacontrastConn.block(false);
     contrshowConn.block(false);
+    lockmadlConn.block(false);
 
 }
 
@@ -8760,6 +8767,7 @@ void LocallabBlur::read(const rtengine::procparams::ProcParams* pp, const Params
         denocontrast->setValue((double)spot.denocontrast);
         denocontrast->setAutoValue(spot.denoAutocontrast);
         contrshow->set_active(spot.contrshow);
+        lockmadl->set_active(spot.lockmadl);
         enacontrast->set_active(spot.enacontrast);
         denoratio->setValue((double)spot.denoratio);
         denomask->setValue((double)spot.denomask);
@@ -8917,6 +8925,7 @@ void LocallabBlur::write(rtengine::procparams::ProcParams* pp, ParamsEdited* ped
         spot.denocontrast = denocontrast->getValue();
         spot.denoAutocontrast = denocontrast->getAutoValue();
         spot.contrshow = contrshow->get_active();
+        spot.lockmadl = lockmadl->get_active();
         spot.enacontrast = enacontrast->get_active();
         spot.denoratio = denoratio->getValue();
         spot.denomask = denomask->getValue();
@@ -9028,6 +9037,20 @@ void LocallabBlur::contrshowChanged()
     }
 }
 
+void LocallabBlur::lockmadlChanged()
+{
+    if (isLocActivated && exp->getEnabled()) {
+        if (listener) {
+            if (lockmadl->get_active()) {
+                listener->panelChanged(Evlocallablockmadl,
+                                       M("GENERAL_ENABLED") + " (" + escapeHtmlChars(getSpotName()) + ")");
+            } else {
+                listener->panelChanged(Evlocallablockmadl,
+                                       M("GENERAL_DISABLED") + " (" + escapeHtmlChars(getSpotName()) + ")");
+            }
+        }
+    }
+}
 
 void LocallabBlur::adjusterChanged(Adjuster* a, double newval)
 {

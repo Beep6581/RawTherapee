@@ -925,6 +925,7 @@ private:
     Gtk::Label* const lum46Labels;
     Gtk::Label* const chroLabels;
     Gtk::Label* const chro46Labels;
+    Gtk::CheckButton* const lockmadl;
     
     MyExpander* const expdenoise1;
     Gtk::Label* const maskusable;
@@ -1006,7 +1007,7 @@ private:
     Gtk::Box* const quaHBox;
     ThresholdAdjuster* const csThresholdblur;
 
-    sigc::connection blMethodConn, fftwblConn, invblConn, contrshowConn, enacontrastConn, medMethodConn, blurMethodConn, chroMethodConn, activlumConn, showmaskblMethodConn, showmaskblMethodtypConn, enablMaskConn, toolblConn;
+    sigc::connection blMethodConn, fftwblConn, invblConn, contrshowConn, lockmadlConn, enacontrastConn, medMethodConn, blurMethodConn, chroMethodConn, activlumConn, showmaskblMethodConn, showmaskblMethodtypConn, enablMaskConn, toolblConn;
     sigc::connection  quamethodconn, usemaskConn, invmaskdConn, invmaskConn, neutralconn;
     rtengine::ProcEvent Evlocallabdenocontrast;
     rtengine::ProcEvent Evlocallabautodenoon;
@@ -1016,6 +1017,7 @@ private:
     rtengine::ProcEvent Evlocallabdenoratio;
     rtengine::ProcEvent Evlocallabdenomask;
     rtengine::ProcEvent EvlocallabwavCurvehuecont;
+    rtengine::ProcEvent Evlocallablockmadl;
 
 
 public:
@@ -1057,6 +1059,7 @@ private:
     void updateMaskBackground(const double normChromar, const double normLumar, const double normHuer, const double normHuerjz) override;
     void contrshowChanged();
     void enacontrastChanged();
+    void lockmadlChanged();
 
     void blMethodChanged();
     void fftwblChanged();
