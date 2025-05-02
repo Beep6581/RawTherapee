@@ -8399,6 +8399,7 @@ void LocallabBlur::updateAdviceTooltips(const bool showTooltips)
         decayd->set_tooltip_text(M("TP_LOCALLAB_MASKDECAY_TOOLTIP"));
         lCLabels->set_tooltip_text(M("TP_LOCALLAB_LCLABELS_TOOLTIP"));
         denoFrame->set_tooltip_text(M("TP_LOCALLAB_DENORADIUS_TOOLTIP"));
+        lockmadl->set_tooltip_text(M("TP_LOCALLAB_LOCKMADL_TOOLTIP"));
     } else {
 
         expblnoise->set_tooltip_markup("");
@@ -8472,6 +8473,7 @@ void LocallabBlur::updateAdviceTooltips(const bool showTooltips)
         lCLabels->set_tooltip_text("");
         denoFrame->set_tooltip_text("");
         expdenoisenl->set_tooltip_markup("");
+        lockmadl->set_tooltip_text("");
 
     }
 }
