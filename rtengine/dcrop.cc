@@ -1100,7 +1100,7 @@ void Crop::update(int todo)
             float denocont = 0.f;
             int ghsbpwp[2];
             float ghsbpwpvalue[2];
-            float savmadl[30]  = {0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f}; 
+            float savmadl[30]  = {100.f, 100.f, 100.f, 100.f, 100.f, 100.f, 100.f, 100.f, 100.f, 100.f, 100.f, 100.f, 100.f, 100.f, 100.f, 100.f, 100.f, 100.f, 100.f, 100.f, 100.f, 100.f, 100.f, 100.f, 100.f, 100.f, 100.f, 100.f, 100.f, 100.f}; 
 /*          
             huerefp[sp] = huere;
             chromarefp[sp] = chromare;

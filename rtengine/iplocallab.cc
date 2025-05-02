@@ -12170,8 +12170,8 @@ void ImProcFunctions::recovm(float highrec, float lowrec, float thrrec, bool inv
 }
 
 
-void ImProcFunctions::DeNoise(float *savmadl, int call, int aut,  bool noiscfactiv, const struct local_params & lp, LabImage * originalmaskbl, LabImage *  bufmaskblurbl, int levred, float huerefblur, float lumarefblur, float chromarefblur, LabImage * original, LabImage * transformed,
-    int cx, int cy, int sk, const LocwavCurve& locwavCurvehue, bool locwavhueutili, const LocwavCurve& locwavCurvehuecont, bool locwavhueutilicont, float *resi, float &denocont)
+void ImProcFunctions::DeNoise(int call, int aut,  bool noiscfactiv, const struct local_params & lp, LabImage * originalmaskbl, LabImage *  bufmaskblurbl, int levred, float huerefblur, float lumarefblur, float chromarefblur, LabImage * original, LabImage * transformed,
+    int cx, int cy, int sk, const LocwavCurve& locwavCurvehue, bool locwavhueutili, const LocwavCurve& locwavCurvehuecont, bool locwavhueutilicont, float *resi, float &denocont, float *savmadl)
 {
    // BENCHFUN
 //local denoise
@@ -16402,8 +16402,8 @@ void ImProcFunctions::Lab_Local(
 //local denoise
     if (lp.activspot && lp.denoiena && (lp.noiself > 0.f || lp.noiself0 > 0.f || lp.noiself2 > 0.f || lp.wavcurvedenoi ||lp.nlstr > 0 || lp.noiselc > 0.f || lp.noisecf > 0.f || lp.noisecc > 0.f )) {//disable denoise if not used
         constexpr int aut = 0;
-        DeNoise(savmadl, call, aut, noiscfactiv, lp, originalmaskbl.get(), bufmaskblurbl.get(), levred, huerefblur, lumarefblur, chromarefblur, original, transformed, cx, cy, sk, locwavCurvehue, locwavhueutili, locwavCurvehuecont, locwavhueutilicont,
-               resi, denocont);
+        DeNoise(call, aut, noiscfactiv, lp, originalmaskbl.get(), bufmaskblurbl.get(), levred, huerefblur, lumarefblur, chromarefblur, original, transformed, cx, cy, sk, locwavCurvehue, locwavhueutili, locwavCurvehuecont, locwavhueutilicont,
+               resi, denocont, savmadl);
         if (lp.recur) {
             original->CopyFrom(transformed, multiThread);
             float avge;
