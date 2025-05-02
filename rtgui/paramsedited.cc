@@ -1592,6 +1592,10 @@ void ParamsEdited::initFrom(const std::vector<rtengine::procparams::ProcParams>&
                 locallab.spots.at(j).levelthrlow = locallab.spots.at(j).levelthrlow && pSpot.levelthrlow == otherSpot.levelthrlow;
                 locallab.spots.at(j).medMethod = locallab.spots.at(j).medMethod && pSpot.medMethod == otherSpot.medMethod;
                 locallab.spots.at(j).activlum = locallab.spots.at(j).activlum && pSpot.activlum == otherSpot.activlum;
+                for (int k = 0; k < 30; k++) {
+                    locallab.spots.at(j).madlsav[k] = locallab.spots.at(j).madlsav[k] && pSpot.madlsav[k] == otherSpot.madlsav[k];
+                }
+
                 locallab.spots.at(j).noiselumf = locallab.spots.at(j).noiselumf && pSpot.noiselumf == otherSpot.noiselumf;
                 locallab.spots.at(j).noiselumf0 = locallab.spots.at(j).noiselumf0 && pSpot.noiselumf0 == otherSpot.noiselumf0;
                 locallab.spots.at(j).noiselumf2 = locallab.spots.at(j).noiselumf2 && pSpot.noiselumf2 == otherSpot.noiselumf2;
@@ -5066,6 +5070,12 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
 
         if (locallab.spots.at(i).activlum) {
             toEdit.locallab.spots.at(i).activlum = mods.locallab.spots.at(i).activlum;
+        }
+        
+        for (int j = 0; j < 30; j++) {
+            if (locallab.spots.at(i).madlsav[j]) {
+                toEdit.locallab.spots.at(i).madlsav[j] = mods.locallab.spots.at(i).madlsav[j];
+            }
         }
 
         if (locallab.spots.at(i).noiselumf) {
@@ -8790,6 +8800,8 @@ LocallabParamsEdited::LocallabSpotEdited::LocallabSpotEdited(bool v) :
     blurMethod(v),
     medMethod(v),
     activlum(v),
+    madlsav{v, v, v, v, v, v, v, v, v, v, v, v, v, v, v, v, v, v, v, v,v, v, v, v, v, v, v, v, v, v},
+
     noiselumf(v),
     noiselumf0(v),
     noiselumf2(v),
@@ -9613,6 +9625,10 @@ void LocallabParamsEdited::LocallabSpotEdited::set(bool v)
     blurMethod = v;
     medMethod = v;
     activlum = v;
+    for (int i = 0; i < 30; i++) {
+        madlsav[i] = v;
+    }
+
     noiselumf = v;
     noiselumf0 = v;
     noiselumf2 = v;

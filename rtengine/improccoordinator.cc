@@ -1458,6 +1458,7 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                 float denocont = 0.f;
                 int ghsbpwp[2] = {0, 0};
                 float ghsbpwpvalue[2] = {0.f, 1.f};                
+                float savmadl[30];
 
                 Glib::ustring prof = params->icm.workingProfile;
                 if(params->locallab.spots.at(sp).complexcie == 2) {
@@ -1522,7 +1523,7 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                               huerblu, chromarblu, lumarblu, huer, chromar, lumar, sobeler, lastsav, false, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
                               minCD, maxCD, mini, maxi, Tmean, Tsigma, Tmin, Tmax,
                               meantm, stdtm, meanreti, stdreti, fab, maxicam, rdx, rdy, grx, gry, blx, bly, meanx, meany, meanxe, meanye, prim, ill, contsig, lightsig, slopeg, linkrgb,
-                              resi, sharc, denocont, ghsbpwp, ghsbpwpvalue);
+                              resi, sharc, denocont, ghsbpwp, ghsbpwpvalue, savmadl);
 
                 fabrefp[sp] = fab;
                 //Illuminant
@@ -1655,8 +1656,9 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                     fabrefp[sp] = fab;
 
                 }
-             
-
+          //      for (int l = 0; l < 30; l++) {
+          //          params->locallab.spots.at(sp).madlsav[l] = savmadl[l];
+          //      }
                 
                 // new used linked to global and scope 
                 mainfp[sp] = 0;

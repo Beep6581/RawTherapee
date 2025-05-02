@@ -3923,6 +3923,8 @@ LocallabParams::LocallabSpot::LocallabSpot() :
     lnoiselow(1.),
     levelthrlow(12.),
     activlum(true),
+    madlsav{0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0},
+    
     noiselumf(0.),
     noiselumf0(0.),
     noiselumf2(0.),
@@ -5554,6 +5556,16 @@ bool LocallabParams::LocallabSpot::operator ==(const LocallabSpot& other) const
         && levelthrlow == other.levelthrlow
         && medMethod == other.medMethod
         && activlum == other.activlum
+        && [this, &other]() -> bool
+            {
+                for (int i = 0; i < 30; ++i) {
+                    if (madlsav[i] != other.madlsav[i]) {
+                        return false;
+                    }
+                }
+                return true;
+            }()
+        
         && noiselumf == other.noiselumf
         && noiselumf0 == other.noiselumf0
         && noiselumf2 == other.noiselumf2
@@ -7596,6 +7608,10 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
                     saveToKeyfile(!pedited || spot_edited->levelthrlow, "Locallab", "Levelthrlow_" + index_str, spot.levelthrlow, keyFile);
                     saveToKeyfile(!pedited || spot_edited->medMethod, "Locallab", "MedMethod_" + index_str, spot.medMethod, keyFile);
                     saveToKeyfile(!pedited || spot_edited->activlum, "Locallab", "activlum_" + index_str, spot.activlum, keyFile);
+                    for (int j = 0; j < 30; j++) {
+                        saveToKeyfile(!pedited || spot_edited->madlsav[j], "Locallab", "Madlsav" + std::to_string(j) + "_" + index_str, spot.madlsav[j], keyFile);
+                    }
+
                     saveToKeyfile(!pedited || spot_edited->noiselumf, "Locallab", "noiselumf_" + index_str, spot.noiselumf, keyFile);
                     saveToKeyfile(!pedited || spot_edited->noiselumf0, "Locallab", "noiselumf0_" + index_str, spot.noiselumf0, keyFile);
                     saveToKeyfile(!pedited || spot_edited->noiselumf2, "Locallab", "noiselumf2_" + index_str, spot.noiselumf2, keyFile);
@@ -10069,6 +10085,10 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
                 assignFromKeyfile(keyFile, "Locallab", "Levelthrlow_" + index_str, spot.levelthrlow, spotEdited.levelthrlow);
                 assignFromKeyfile(keyFile, "Locallab", "MedMethod_" + index_str, spot.medMethod, spotEdited.medMethod);
                 assignFromKeyfile(keyFile, "Locallab", "activlum_" + index_str, spot.activlum, spotEdited.activlum);
+                for (int j = 0; j < 30; j ++) {
+                    assignFromKeyfile(keyFile, "Locallab", "Madlsav" + std::to_string(j) + "_" + index_str, spot.madlsav[j], spotEdited.madlsav[j]);
+                }
+                
                 assignFromKeyfile(keyFile, "Locallab", "noiselumf_" + index_str, spot.noiselumf, spotEdited.noiselumf);
                 assignFromKeyfile(keyFile, "Locallab", "noiselumf0_" + index_str, spot.noiselumf0, spotEdited.noiselumf0);
                 assignFromKeyfile(keyFile, "Locallab", "noiselumf2_" + index_str, spot.noiselumf2, spotEdited.noiselumf2);

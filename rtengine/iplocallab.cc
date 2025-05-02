@@ -1058,7 +1058,7 @@ struct local_params {
 
 };
 
-static void calcLocalParams(int sp, int oW, int oH, const LocallabParams& locallab, struct local_params& lp, bool prevDeltaE, int llColorMask, int llColorMaskinv, int llExpMask, int llExpMaskinv, int llSHMask, int llSHMaskinv, int llvibMask, int lllcMask, int llsharMask, int llcbMask, int llretiMask, int llsoftMask, int lltmMask, int llblMask, int lllogMask, int ll_Mask, int llcieMask, const LocwavCurve & locwavCurveden, bool locwavdenutili)
+static void calcLocalParams(int sp, int oW, int oH,  const LocallabParams& locallab, struct local_params& lp, bool prevDeltaE, int llColorMask, int llColorMaskinv, int llExpMask, int llExpMaskinv, int llSHMask, int llSHMaskinv, int llvibMask, int lllcMask, int llsharMask, int llcbMask, int llretiMask, int llsoftMask, int lltmMask, int llblMask, int lllogMask, int ll_Mask, int llcieMask, const LocwavCurve & locwavCurveden, bool locwavdenutili)
 {
     int w = oW;
     int h = oH;
@@ -12170,7 +12170,7 @@ void ImProcFunctions::recovm(float highrec, float lowrec, float thrrec, bool inv
 }
 
 
-void ImProcFunctions::DeNoise(int call, int aut,  bool noiscfactiv, const struct local_params & lp, LabImage * originalmaskbl, LabImage *  bufmaskblurbl, int levred, float huerefblur, float lumarefblur, float chromarefblur, LabImage * original, LabImage * transformed,
+void ImProcFunctions::DeNoise(float *savmadl, int call, int aut,  bool noiscfactiv, const struct local_params & lp, LabImage * originalmaskbl, LabImage *  bufmaskblurbl, int levred, float huerefblur, float lumarefblur, float chromarefblur, LabImage * original, LabImage * transformed,
     int cx, int cy, int sk, const LocwavCurve& locwavCurvehue, bool locwavhueutili, const LocwavCurve& locwavCurvehuecont, bool locwavhueutilicont, float *resi, float &denocont)
 {
    // BENCHFUN
@@ -12332,7 +12332,7 @@ void ImProcFunctions::DeNoise(int call, int aut,  bool noiscfactiv, const struct
 
             float madL[10][3];
             int edge = 2;
-
+          //  std::vector<float> madlsav;
             if (!Ldecomp.memory_allocation_failed()) {
 #ifdef _OPENMP
             //    #pragma omp parallel for schedule(dynamic) collapse(2) if (multiThread)
@@ -12344,6 +12344,8 @@ void ImProcFunctions::DeNoise(int call, int aut,  bool noiscfactiv, const struct
                         int Hlvl_L = Ldecomp.level_H(lvl);
                         const float* const* WavCoeffs_L = Ldecomp.level_coeffs(lvl);
                         madL[lvl][dir - 1] = SQR(Mad(WavCoeffs_L[dir], Wlvl_L * Hlvl_L));
+                        savmadl[lvl +  (dir - 1) * 10] = madL[lvl][dir - 1];
+                        //save current MadL information 
                     }
                 }
 
@@ -15360,7 +15362,7 @@ void ImProcFunctions::Lab_Local(
     bool prevDeltaE, int llColorMask, int llColorMaskinv, int llExpMask, int llExpMaskinv, int llSHMask, int llSHMaskinv, int llvibMask, int lllcMask, int llsharMask, int llcbMask, int llretiMask, int llsoftMask, int lltmMask, int llblMask, int lllogMask, int ll_Mask, int llcieMask,
     float& minCD, float& maxCD, float& mini, float& maxi, float& Tmean, float& Tsigma, float& Tmin, float& Tmax,
     float& meantm, float& stdtm, float& meanreti, float& stdreti, float &fab,float &maxicam, float &rdx, float &rdy, float &grx, float &gry, float &blx, float &bly, float &meanx, float &meany, float &meanxe, float &meanye, int &prim, int &ill, float &contsig, float &lightsig, float &slopeg, bool &linkrgb,
-    float *resi, float &sharc, float &denocont, int *ghsbpwp, float *ghsbpwpvalue)
+    float *resi, float &sharc, float &denocont, int *ghsbpwp, float *ghsbpwpvalue, float *savmadl)
 
 
 
@@ -16400,7 +16402,7 @@ void ImProcFunctions::Lab_Local(
 //local denoise
     if (lp.activspot && lp.denoiena && (lp.noiself > 0.f || lp.noiself0 > 0.f || lp.noiself2 > 0.f || lp.wavcurvedenoi ||lp.nlstr > 0 || lp.noiselc > 0.f || lp.noisecf > 0.f || lp.noisecc > 0.f )) {//disable denoise if not used
         constexpr int aut = 0;
-        DeNoise(call, aut, noiscfactiv, lp, originalmaskbl.get(), bufmaskblurbl.get(), levred, huerefblur, lumarefblur, chromarefblur, original, transformed, cx, cy, sk, locwavCurvehue, locwavhueutili, locwavCurvehuecont, locwavhueutilicont,
+        DeNoise(savmadl, call, aut, noiscfactiv, lp, originalmaskbl.get(), bufmaskblurbl.get(), levred, huerefblur, lumarefblur, chromarefblur, original, transformed, cx, cy, sk, locwavCurvehue, locwavhueutili, locwavCurvehuecont, locwavhueutilicont,
                resi, denocont);
         if (lp.recur) {
             original->CopyFrom(transformed, multiThread);
