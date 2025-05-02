@@ -3457,7 +3457,7 @@ TP_LOCALLAB_LOC_CONTRASTPYR2LAB; Contrast by level/TM/Directional contrast
 TP_LOCALLAB_LOC_CONTRASTPYRLAB; Graduated Filter/Edge Sharpness/Blur
 TP_LOCALLAB_LOC_RESIDPYR;Residual image (Main)
 TP_LOCALLAB_LOCKMADL;Locks MadL noise evaluation
-TP_LOCALLAB_LOCKMADL_TOOLTIP;Allows you to lock the noise evaluation used for Wavelet denoise. In fact, the overall result takes this evaluation into account.\nWavelet denoise uses MadL (Median absolute deviation luminance) to act on the noise based on a slider or a curve.\nRawtherapee's pipeline design results in different MadL values ​​depending on the preview position and may lead to differences with the output.\nIf you enable this checbox, the value used for global processing will be that of the preview at that time.
+TP_LOCALLAB_LOCKMADL_TOOLTIP;Allows you to lock the noise evaluation used for Wavelet denoise. In fact, the overall result takes this evaluation into account.\nWavelet denoise uses MadL (Median absolute deviation luminance) to act on the noise based on a slider or a curve.\nRawtherapee's pipeline design results in different MadL values ​​depending on the preview position and may lead to differences with the output.\nIf you enable this checkbox, the value used for global processing will be that of the preview at that time.
 TP_LOCALLAB_LOG;Log Encoding
 TP_LOCALLAB_LOG1FRA;CAM16 Image Adjustments
 TP_LOCALLAB_LOG2FRA;Viewing Conditions
