@@ -498,7 +498,7 @@ enum class BlurType {
     void DeNoise_Local(int call, const struct local_params& lp, LabImage* originalmask, int levred, float hueref, float lumaref, float chromaref, LabImage* original, LabImage* transformed, const LabImage &tmp1, int cx, int cy, int sk);
     void DeNoise_Local2(const struct local_params& lp, LabImage* originalmask, int levred, float hueref, float lumaref, float chromaref, LabImage* original, LabImage* transformed, const LabImage &tmp1, int cx, int cy, int sk);
 
-    void DeNoise(int call, int aut, bool noiscfactiv, const struct local_params& lp, LabImage* originalmaskbl, LabImage *  bufmaskblurbl, int levred, float huerefblur, float lumarefblur, float chromarefblur, LabImage* original, LabImage* transformed, 
+    void DeNoise(int sp, int call, int aut, bool noiscfactiv, const struct local_params& lp, LabImage* originalmaskbl, LabImage *  bufmaskblurbl, int levred, float huerefblur, float lumarefblur, float chromarefblur, LabImage* original, LabImage* transformed, 
         int cx, int cy, int sk, const LocwavCurve& locwavCurvehue, bool locwavhueutili, const LocwavCurve& locwavCurvehuecont, bool locwavhueutilicont, float *resi, float &denocont, float *savmadl);
 
    // void recovm(const struct local_params & lp, int bfw, int bfh,  int xstart, int ystart, int sk, LabImage *bufmaskblurbl, LabImage *tmp1, LabImage *tmp3);
