@@ -13287,9 +13287,9 @@ void ImProcFunctions::DeNoise(int sp, int call, int aut,  bool noiscfactiv, cons
                             madL[lvl][dir - 1] = SQR(Mad(WavCoeffs_L[dir], Wlvl_L * Hlvl_L));
                         }
                     }
-                    int levreal = 7;//only activ levels here
+                    //int levreal = 7;//only activ levels here
                     if (params->locallab.spots.at(sp).lockmadl) {
-                        for (int lvl = 0; lvl < levreal; lvl++) {
+                        for (int lvl = 0; lvl < levred; lvl++) {
                             for (int dir = 1; dir < 4; dir++) {
                                 madL[lvl][dir - 1] = params->locallab.spots.at(sp).madlsav[lvl +  (dir - 1) * 10];
                             }
@@ -13297,7 +13297,7 @@ void ImProcFunctions::DeNoise(int sp, int call, int aut,  bool noiscfactiv, cons
                     }
                     
                     if (settings->verbose) {
-                        for (int lvl = 0; lvl < levreal; lvl++) {
+                        for (int lvl = 0; lvl < levred; lvl++) {
                             for (int dir = 1; dir < 4; dir++) {
                                  printf("level=%i dir=%i madL=%f\n", lvl, dir-1, (double) madL[lvl][dir-1]);                               
                             }
