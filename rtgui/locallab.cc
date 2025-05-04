@@ -1155,8 +1155,8 @@ void Locallab::minmaxChanged(const std::vector<locallabRetiMinMax> &minmax, int 
 
 void Locallab::madChanged(const std::vector<locallabDenoiseMAD> &madlc, int selspot)
 {
-   madllc = madlc; 
-     if (selspot < (int) madllc.size()) {
+    madllc = madlc; 
+    if (selspot < (int) madllc.size()) {
         const double m0 = madllc.at(selspot).mad0;
         const double m1 = madllc.at(selspot).mad1;
         const double m2 = madllc.at(selspot).mad2;
@@ -1178,9 +1178,8 @@ void Locallab::madChanged(const std::vector<locallabDenoiseMAD> &madlc, int sels
         const double m18 = madllc.at(selspot).mad18;
         const double m19 = madllc.at(selspot).mad19;
         const double m20 = madllc.at(selspot).mad20;
-        expblur.updatemadlc(m0, m1, m2, m3, m4, m5, m6, m7, m8, m9, m10, m11, m12, m13, m14, m15, m16, m17, m18, m19, m20);
-        
-     }
+        expblur.updatemadlc(m0, m1, m2, m3, m4, m5, m6, m7, m8, m9, m10, m11, m12, m13, m14, m15, m16, m17, m18, m19, m20);        
+    }
 }
 
 

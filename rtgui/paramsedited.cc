@@ -1595,7 +1595,6 @@ void ParamsEdited::initFrom(const std::vector<rtengine::procparams::ProcParams>&
                 for (int k = 0; k < 21; k++) {
                     locallab.spots.at(j).madlsav[k] = locallab.spots.at(j).madlsav[k] && pSpot.madlsav[k] == otherSpot.madlsav[k];
                 }
-
                 locallab.spots.at(j).noiselumf = locallab.spots.at(j).noiselumf && pSpot.noiselumf == otherSpot.noiselumf;
                 locallab.spots.at(j).noiselumf0 = locallab.spots.at(j).noiselumf0 && pSpot.noiselumf0 == otherSpot.noiselumf0;
                 locallab.spots.at(j).noiselumf2 = locallab.spots.at(j).noiselumf2 && pSpot.noiselumf2 == otherSpot.noiselumf2;
@@ -8805,8 +8804,7 @@ LocallabParamsEdited::LocallabSpotEdited::LocallabSpotEdited(bool v) :
     blurMethod(v),
     medMethod(v),
     activlum(v),
-    madlsav{v, v, v, v, v, v, v, v, v, v, v, v, v, v, v, v, v, v, v, v,v},
-
+    madlsav{v, v, v, v, v, v, v, v, v, v, v, v, v, v, v, v, v, v, v, v, v},
     noiselumf(v),
     noiselumf0(v),
     noiselumf2(v),
@@ -9634,7 +9632,6 @@ void LocallabParamsEdited::LocallabSpotEdited::set(bool v)
     for (int i = 0; i < 21; i++) {
         madlsav[i] = v;
     }
-
     noiselumf = v;
     noiselumf0 = v;
     noiselumf2 = v;

@@ -7707,26 +7707,26 @@ LocallabBlur::LocallabBlur():
     lockmadl(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_LOCKMADL")))),
     madls([]() -> std::array<Adjuster *, 21>
 
-{
-    std::array<Adjuster*, 21> res = {};
+    {
+        std::array<Adjuster*, 21> res = {};
 
-    for (unsigned int i = 0; i < res.size(); ++i) {
-        Glib::ustring ss = Glib::ustring::format(i);
+        for (unsigned int i = 0; i < res.size(); ++i) {
+            Glib::ustring ss = Glib::ustring::format(i);
 
-        if (i == 0) {
-            ss += Glib::ustring::compose(" (%1)", M("TP_LOCALLAB_MADLDIRH"));
-        } else if (i == 7) {
-            ss += Glib::ustring::compose(" (%1)", M("TP_LOCALLAB_MADLDIRV"));          
-        } else if (i == 14) {
-            ss += Glib::ustring::compose(" (%1)", M("TP_LOCALLAB_MADLDIRD"));          
+            if (i == 0) {
+                ss += Glib::ustring::compose(" (%1)", M("TP_LOCALLAB_MADLDIRH"));
+            } else if (i == 7) {
+                ss += Glib::ustring::compose(" (%1)", M("TP_LOCALLAB_MADLDIRV"));          
+            } else if (i == 14) {
+                ss += Glib::ustring::compose(" (%1)", M("TP_LOCALLAB_MADLDIRD"));          
+            }
+
+            res[i] = Gtk::manage(new Adjuster(std::move(ss), 1.0, 1000000.0, 1., 100.0));
         }
 
-        res[i] = Gtk::manage(new Adjuster(std::move(ss), 1.0, 50000.0, 1., 100.0));
+        return res;
     }
-
-    return res;
-}
-()),
+    ()),
     
     expdenoise1(Gtk::manage(new MyExpander(false, M("TP_LOCALLAB_DENOI1_EXP")))),
     maskusable(Gtk::manage(new Gtk::Label(M("TP_LOCALLAB_MASKUSABLE")))),
@@ -8160,6 +8160,7 @@ LocallabBlur::LocallabBlur():
     prevBox->pack_start(*chroLabels);
     prevBox->pack_start(*chro46Labels);
     prevBox->pack_start(*lockmadl);
+    
     for (const auto adj : madls) {
         prevBox->pack_start(*adj);
     }
@@ -8552,9 +8553,42 @@ void LocallabBlur::neutral_pressed ()
 }
 
 void LocallabBlur::updatemadlc(const double m0, const double m1, const double m2, const double m3, const double m4, const double m5, const double m6, const double m7,
-        const double m8, const double m9, const double m10, const double m11, const double m12, const double m13, const double m14, const double m15,
-        const double m16, const double m17, const double m18, const double m19, const double m20)
+        const double m8, const double m9, const double m10, const double m11, const double m12, const double m13, const double m14, const double m15, const double m16,
+        const double m17, const double m18, const double m19, const double m20)
 {
+    idle_register.add(
+    [this, m0, m1, m2, m3, m4, m5, m6, m7, m8, m9, m10, m11, m12, m13, m14, m15, m16, m17, m18, m19, m20]() -> bool {
+        
+            GThreadLock lock; // All GUI access from idle_add callbacks or separate thread HAVE to be protected
+        
+            disableListener();
+            madls[0]->setValue(m0);
+            madls[1]->setValue(m1);
+            madls[2]->setValue(m2);
+            madls[3]->setValue(m3);
+            madls[4]->setValue(m4);
+            madls[5]->setValue(m5);
+            madls[6]->setValue(m6);
+            madls[7]->setValue(m7);
+            madls[8]->setValue(m8);
+            madls[9]->setValue(m9);
+            madls[10]->setValue(m10);
+            madls[11]->setValue(m11);
+            madls[12]->setValue(m12);
+            madls[13]->setValue(m13);
+            madls[14]->setValue(m14);
+            madls[15]->setValue(m15);
+            madls[16]->setValue(m16);
+            madls[17]->setValue(m17);
+            madls[18]->setValue(m18);
+            madls[19]->setValue(m19);
+            madls[20]->setValue(m20);
+            enableListener();
+
+            return false;
+    }
+    );
+
 
 
 }

@@ -1598,6 +1598,7 @@ HISTORY_MSG_LOCAL_GHS_MID;Local - GHS - Midtones
 HISTORY_MSG_LOCAL_GHS_SLOPE;Local - GHS - Lab slope factor
 HISTORY_MSG_LOCAL_GHS_SMOOTH;Local - GHS - Highlight attenuation
 HISTORY_MSG_LOCAL_GHS_SP;Local - GHS - Symmetry point
+HISTORY_MSG_LOCAL_LOCKMADLS;Local - Denoise - MadL
 HISTORY_MSG_LOCAL_LOGCIE12;Local - CIECAM - Log encoding
 HISTORY_MSG_LOCAL_LOG_BLACKS;Local - Log Blacks distribution
 HISTORY_MSG_LOCAL_LOG_COMPR;Local - Log Compress brightness
@@ -3507,6 +3508,9 @@ TP_LOCALLAB_LUMASK_TOOLTIP;Adjusts the shade of gray or color of the mask backgr
 TP_LOCALLAB_LUMAWHITESEST;Lightest
 TP_LOCALLAB_LUMFRA;L*a*b* standard
 TP_LOCALLAB_LUMLABEL;Luma levels 0123: Mean=%1 High=%2
+TP_LOCALLAB_MADLDIRH;Horizontal - Levels 0 to 6
+TP_LOCALLAB_MADLDIRV;Vertical - Levels 0 to 6
+TP_LOCALLAB_MADLDIRD;Diagonal - Levels 0 to 6
 TP_LOCALLAB_MASFRAME;Mask and Merge
 TP_LOCALLAB_MASFRAME_TOOLTIP;For all masks.\nTakes into account the ΔE image to avoid modifying the selection area when the following Mask Tools are used: Gamma, Slope, Chroma, Contrast curve, Local contrast (by wavelet level), Blur Mask and Structure Mask (if enabled ).\nDisabled when Inverse mode is used.
 TP_LOCALLAB_MASK;Curves

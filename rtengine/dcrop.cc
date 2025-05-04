@@ -1264,9 +1264,9 @@ void Crop::update(int todo)
                         meantme, stdtme, meanretie, stdretie, fab, maxicam, rdx, rdy, grx, gry, blx, bly, meanx, meany, meanxe, meanye, prim, ill, contsig, lightsig, slopeg, linkrgb,
                         resi, sharc, denocont, ghsbpwp, ghsbpwpvalue, savmadl);
             }
-                        for (int l = 0; l < 21; l++) {
-                            params.locallab.spots.at(sp).madlsav[l] = savmadl[l];
-                        }
+                       // for (int l = 0; l < 21; l++) {
+                        //    params.locallab.spots.at(sp).madlsav[l] = savmadl[l];
+                       // }
 
                         LocallabListener::locallabDenoiseLC2 denoiselc2;
                         denoiselc2.denocontrastaft = denocont;
@@ -1320,7 +1320,9 @@ void Crop::update(int todo)
                         */
                         if (parent->locallListener) {
                             parent->locallListener->denChanged(localldenoiselc, params.locallab.selspot);
-                            parent->locallListener->madChanged(localldenoisemadl, params.locallab.selspot);
+                            if (params.locallab.spots.at(sp).lockmadl) {
+                                parent->locallListener->madChanged(localldenoisemadl, params.locallab.selspot);
+                            }
                             parent->locallListener->den2Changed(localldenoiselc2, params.locallab.selspot);
                             parent->locallListener->sharaftChanged(locallsharaft,params.locallab.selspot); 
                         }
