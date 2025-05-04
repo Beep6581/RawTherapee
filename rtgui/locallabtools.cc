@@ -7705,6 +7705,8 @@ LocallabBlur::LocallabBlur():
     chroLabels(Gtk::manage(new Gtk::Label("---"))),
     chro46Labels(Gtk::manage(new Gtk::Label("---"))),
     lockmadl(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_LOCKMADL")))),
+    madlFrame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_MADLFRA")))),
+
     madls([]() -> std::array<Adjuster *, 21>
 
     {
@@ -8160,10 +8162,14 @@ LocallabBlur::LocallabBlur():
     prevBox->pack_start(*chroLabels);
     prevBox->pack_start(*chro46Labels);
     prevBox->pack_start(*lockmadl);
+    madlFrame->set_label_align(0.025, 0.5);
+    ToolParamBlock* const madlBox = Gtk::manage(new ToolParamBlock());
     
     for (const auto adj : madls) {
-        prevBox->pack_start(*adj);
+        madlBox->pack_start(*adj);
     }
+    madlFrame->add(*madlBox);
+    madlFrame->hide();
 
     prevFrame->add(*prevBox);
     wavBox->pack_start(*prevFrame);

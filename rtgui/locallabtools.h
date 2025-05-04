@@ -926,6 +926,7 @@ private:
     Gtk::Label* const chroLabels;
     Gtk::Label* const chro46Labels;
     Gtk::CheckButton* const lockmadl;
+    Gtk::Frame* const madlFrame;
     const std::array<Adjuster*, 21> madls;
     
     MyExpander* const expdenoise1;
