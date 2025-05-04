@@ -1458,7 +1458,7 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                 float denocont = 0.f;
                 int ghsbpwp[2] = {0, 0};
                 float ghsbpwpvalue[2] = {0.f, 1.f};                
-                float savmadl[21];
+                float savmadl[21];//just to intialize, not used here - but in dcrop.cc
 
                 Glib::ustring prof = params->icm.workingProfile;
                 if(params->locallab.spots.at(sp).complexcie == 2) {
@@ -1656,9 +1656,6 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                     fabrefp[sp] = fab;
 
                 }
-          //      for (int l = 0; l < 30; l++) {
-          //          params->locallab.spots.at(sp).madlsav[l] = savmadl[l];
-          //      }
                 
                 // new used linked to global and scope 
                 mainfp[sp] = 0;
