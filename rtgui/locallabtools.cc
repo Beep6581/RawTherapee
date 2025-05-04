@@ -7705,6 +7705,28 @@ LocallabBlur::LocallabBlur():
     chroLabels(Gtk::manage(new Gtk::Label("---"))),
     chro46Labels(Gtk::manage(new Gtk::Label("---"))),
     lockmadl(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_LOCKMADL")))),
+    madls([]() -> std::array<Adjuster *, 21>
+
+{
+    std::array<Adjuster*, 21> res = {};
+
+    for (unsigned int i = 0; i < res.size(); ++i) {
+        Glib::ustring ss = Glib::ustring::format(i);
+
+        if (i == 0) {
+            ss += Glib::ustring::compose(" (%1)", M("TP_LOCALLAB_MADLDIRH"));
+        } else if (i == 7) {
+            ss += Glib::ustring::compose(" (%1)", M("TP_LOCALLAB_MADLDIRV"));          
+        } else if (i == 14) {
+            ss += Glib::ustring::compose(" (%1)", M("TP_LOCALLAB_MADLDIRD"));          
+        }
+
+        res[i] = Gtk::manage(new Adjuster(std::move(ss), 1.0, 50000.0, 1., 100.0));
+    }
+
+    return res;
+}
+()),
     
     expdenoise1(Gtk::manage(new MyExpander(false, M("TP_LOCALLAB_DENOI1_EXP")))),
     maskusable(Gtk::manage(new Gtk::Label(M("TP_LOCALLAB_MASKUSABLE")))),
@@ -7793,6 +7815,7 @@ LocallabBlur::LocallabBlur():
     Evlocallabdenomask = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_DENOMASK");
     EvlocallabwavCurvehuecont = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_DENOMASKCURV");   
     Evlocallablockmadl = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_LOCKMADL");
+    Evlocallablockmadls = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_LOCKMADLS");
    
     set_orientation(Gtk::ORIENTATION_VERTICAL);
     denocontrast->addAutoButton(M("TP_LOCALLAB_DENORADIUS_TOOLTIP"));
@@ -7823,6 +7846,9 @@ LocallabBlur::LocallabBlur():
     contrshowConn = contrshow->signal_toggled().connect(sigc::mem_fun(*this, &LocallabBlur::contrshowChanged));
     enacontrastConn = enacontrast->signal_toggled().connect(sigc::mem_fun(*this, &LocallabBlur::enacontrastChanged));
     lockmadlConn = lockmadl->signal_toggled().connect(sigc::mem_fun(*this, &LocallabBlur::lockmadlChanged));
+    for (const auto adj : madls) {
+        adj->setAdjusterListener(this);
+    }
     
     denocontrast->setAdjusterListener(this);
     
@@ -8134,6 +8160,10 @@ LocallabBlur::LocallabBlur():
     prevBox->pack_start(*chroLabels);
     prevBox->pack_start(*chro46Labels);
     prevBox->pack_start(*lockmadl);
+    for (const auto adj : madls) {
+        prevBox->pack_start(*adj);
+    }
+
     prevFrame->add(*prevBox);
     wavBox->pack_start(*prevFrame);
 
@@ -8520,6 +8550,15 @@ void LocallabBlur::neutral_pressed ()
 
 
 }
+
+void LocallabBlur::updatemadlc(const double m0, const double m1, const double m2, const double m3, const double m4, const double m5, const double m6, const double m7,
+        const double m8, const double m9, const double m10, const double m11, const double m12, const double m13, const double m14, const double m15,
+        const double m16, const double m17, const double m18, const double m19, const double m20)
+{
+
+
+}
+
 void LocallabBlur::updatedenlc(const double highres, const double nres, const double highres46, const double nres46, const double Lhighres, const double Lnres, const double Lhighres46, const double Lnres46)
 {
     idle_register.add(
@@ -8647,6 +8686,9 @@ void LocallabBlur::read(const rtengine::procparams::ProcParams* pp, const Params
             blMethod->set_active(1);
         } else if (spot.blMethod == "guid") {
             blMethod->set_active(2);
+        }
+        for (int i = 0; i < 21; i++) {
+            madls[i]->setValue(spot.madlsav[i]);
         }
 
         fftwbl->set_active(spot.fftwbl);
@@ -8806,6 +8848,9 @@ void LocallabBlur::write(rtengine::procparams::ProcParams* pp, ParamsEdited* ped
         } else if (blMethod->get_active_row_number() == 2) {
             spot.blMethod = "guid";
         }
+        for (int i = 0; i < 21; i++) {
+            spot.madlsav[i] =  madls[i]->getValue();
+        }
 
         spot.fftwbl = fftwbl->get_active();
         spot.usemask = usemask->get_active();
@@ -8945,6 +8990,10 @@ void LocallabBlur::setDefaults(const rtengine::procparams::ProcParams* defParams
         const LocallabParams::LocallabSpot& defSpot = defParams->locallab.spots.at(index);
 
         // Set default value for adjuster and threshold adjuster widgets
+        for (int i = 0; i < 21; i++) {
+            madls[i]->setDefault(defSpot.madlsav[i]);
+        }
+        
         radius->setDefault(defSpot.radius);
         strength->setDefault((double)defSpot.strength);
         isogr->setDefault((double)defSpot.isogr);
@@ -9061,6 +9110,52 @@ void LocallabBlur::adjusterChanged(Adjuster* a, double newval)
             if (listener) {
                 listener->panelChanged(Evlocallabradius,
                                        radius->getTextValue() + " (" + escapeHtmlChars(getSpotName()) + ")");
+            }
+        }
+
+        if (a == madls[0] || a == madls[1] || a == madls[2] || a == madls[3] || a == madls[4] || a == madls[5] || a == madls[6]){
+            if (listener) {//MadL Horizontal
+                listener->panelChanged(Evlocallablockmadls,
+                                       Glib::ustring::compose("%1, %2, %3, %4, %5, %6, %7",
+                                               Glib::ustring::format(std::fixed, std::setprecision(0), madls[0]->getValue()),
+                                               Glib::ustring::format(std::fixed, std::setprecision(0), madls[1]->getValue()),
+                                               Glib::ustring::format(std::fixed, std::setprecision(0), madls[2]->getValue()),
+                                               Glib::ustring::format(std::fixed, std::setprecision(0), madls[3]->getValue()),
+                                               Glib::ustring::format(std::fixed, std::setprecision(0), madls[4]->getValue()),
+                                               Glib::ustring::format(std::fixed, std::setprecision(0), madls[5]->getValue()),
+                                               Glib::ustring::format(std::fixed, std::setprecision(0), madls[6]->getValue()))
+                                       + " (" + escapeHtmlChars(getSpotName()) + ")");
+            }
+        }
+
+
+        if (a == madls[7] || a == madls[8] || a == madls[9] || a == madls[10] || a == madls[11] || a == madls[12] || a == madls[13]){
+            if (listener) {//MadL Vertical
+                listener->panelChanged(Evlocallablockmadls,
+                                       Glib::ustring::compose("%1, %2, %3, %4, %5, %6, %7",
+                                               Glib::ustring::format(std::fixed, std::setprecision(0), madls[7]->getValue()),
+                                               Glib::ustring::format(std::fixed, std::setprecision(0), madls[8]->getValue()),
+                                               Glib::ustring::format(std::fixed, std::setprecision(0), madls[9]->getValue()),
+                                               Glib::ustring::format(std::fixed, std::setprecision(0), madls[10]->getValue()),
+                                               Glib::ustring::format(std::fixed, std::setprecision(0), madls[11]->getValue()),
+                                               Glib::ustring::format(std::fixed, std::setprecision(0), madls[12]->getValue()),
+                                               Glib::ustring::format(std::fixed, std::setprecision(0), madls[13]->getValue()))
+                                       + " (" + escapeHtmlChars(getSpotName()) + ")");
+            }
+        }
+
+        if (a == madls[14] || a == madls[15] || a == madls[16] || a == madls[17] || a == madls[18] || a == madls[19] || a == madls[20]) {
+            if (listener) {//MadL Diagonal
+                listener->panelChanged(Evlocallablockmadls,
+                                       Glib::ustring::compose("%1, %2, %3, %4 ,%5, %6, %7",
+                                               Glib::ustring::format(std::fixed, std::setprecision(0), madls[14]->getValue()),
+                                               Glib::ustring::format(std::fixed, std::setprecision(0), madls[15]->getValue()),
+                                               Glib::ustring::format(std::fixed, std::setprecision(0), madls[16]->getValue()),
+                                               Glib::ustring::format(std::fixed, std::setprecision(0), madls[17]->getValue()),
+                                               Glib::ustring::format(std::fixed, std::setprecision(0), madls[18]->getValue()),
+                                               Glib::ustring::format(std::fixed, std::setprecision(0), madls[19]->getValue()),
+                                               Glib::ustring::format(std::fixed, std::setprecision(0), madls[20]->getValue()))
+                                       + " (" + escapeHtmlChars(getSpotName()) + ")");
             }
         }
 

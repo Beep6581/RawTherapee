@@ -1592,7 +1592,7 @@ void ParamsEdited::initFrom(const std::vector<rtengine::procparams::ProcParams>&
                 locallab.spots.at(j).levelthrlow = locallab.spots.at(j).levelthrlow && pSpot.levelthrlow == otherSpot.levelthrlow;
                 locallab.spots.at(j).medMethod = locallab.spots.at(j).medMethod && pSpot.medMethod == otherSpot.medMethod;
                 locallab.spots.at(j).activlum = locallab.spots.at(j).activlum && pSpot.activlum == otherSpot.activlum;
-                for (int k = 0; k < 30; k++) {
+                for (int k = 0; k < 21; k++) {
                     locallab.spots.at(j).madlsav[k] = locallab.spots.at(j).madlsav[k] && pSpot.madlsav[k] == otherSpot.madlsav[k];
                 }
 
@@ -5073,7 +5073,7 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
             toEdit.locallab.spots.at(i).activlum = mods.locallab.spots.at(i).activlum;
         }
         
-        for (int j = 0; j < 30; j++) {
+        for (int j = 0; j < 21; j++) {
             if (locallab.spots.at(i).madlsav[j]) {
                 toEdit.locallab.spots.at(i).madlsav[j] = mods.locallab.spots.at(i).madlsav[j];
             }
@@ -8805,7 +8805,7 @@ LocallabParamsEdited::LocallabSpotEdited::LocallabSpotEdited(bool v) :
     blurMethod(v),
     medMethod(v),
     activlum(v),
-    madlsav{v, v, v, v, v, v, v, v, v, v, v, v, v, v, v, v, v, v, v, v,v, v, v, v, v, v, v, v, v, v},
+    madlsav{v, v, v, v, v, v, v, v, v, v, v, v, v, v, v, v, v, v, v, v,v},
 
     noiselumf(v),
     noiselumf0(v),
@@ -9631,7 +9631,7 @@ void LocallabParamsEdited::LocallabSpotEdited::set(bool v)
     blurMethod = v;
     medMethod = v;
     activlum = v;
-    for (int i = 0; i < 30; i++) {
+    for (int i = 0; i < 21; i++) {
         madlsav[i] = v;
     }
 

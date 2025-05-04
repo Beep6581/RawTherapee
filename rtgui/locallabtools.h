@@ -926,6 +926,7 @@ private:
     Gtk::Label* const chroLabels;
     Gtk::Label* const chro46Labels;
     Gtk::CheckButton* const lockmadl;
+    const std::array<Adjuster*, 21> madls;
     
     MyExpander* const expdenoise1;
     Gtk::Label* const maskusable;
@@ -1018,12 +1019,16 @@ private:
     rtengine::ProcEvent Evlocallabdenomask;
     rtengine::ProcEvent EvlocallabwavCurvehuecont;
     rtengine::ProcEvent Evlocallablockmadl;
+    rtengine::ProcEvent Evlocallablockmadls;
 
 
 public:
     LocallabBlur();
     ~LocallabBlur();
     void updatedenlc(const double highres, const double nres, const double highres46, const double nres46, const double Lhighres, const double Lnres, const double Lhighres46, const double Lnres46);
+    void updatemadlc(const double m0, const double m1, const double m2, const double m3, const double m4, const double m5, const double m6, const double m7,
+        const double m8, const double m9, const double m10, const double m11, const double m12, const double m13, const double m14, const double m15,
+        const double m16, const double m17, const double m18, const double m19, const double m20);
 
     bool isMaskViewActive() override;
     void resetMaskView() override;

@@ -448,6 +448,31 @@ public:
         double Lnres46;
     };
 
+    struct locallabDenoiseMAD  {
+        double mad0;
+        double mad1; 
+        double mad2;
+        double mad3; 
+        double mad4; 
+        double mad5; 
+        double mad6; 
+        double mad7;
+        double mad8; 
+        double mad9;
+        double mad10; 
+        double mad11; 
+        double mad12; 
+        double mad13; 
+        double mad14;
+        double mad15; 
+        double mad16;
+        double mad17; 
+        double mad18; 
+        double mad19; 
+        double mad20; 
+       
+    };
+
     struct locallabcieBEF {
         double blackevbef;
         double whiteevbef;
@@ -527,6 +552,7 @@ public:
 //    virtual void refChanged(const std::vector<locallabRef> &ref, int selspot) = 0;
     virtual void minmaxChanged(const std::vector<locallabRetiMinMax> &minmax, int selspot) = 0;
     virtual void denChanged(const std::vector<locallabDenoiseLC> &denlc, int selspot) = 0;
+    virtual void madChanged(const std::vector<locallabDenoiseMAD> &madlc, int selspot) = 0;
     virtual void den2Changed(const std::vector<locallabDenoiseLC2> &den2lc, int selspot) = 0;
     virtual void cieChanged(const std::vector<locallabcieLC> &cielc, int selspot) = 0;
     virtual void ghsbwChanged(const std::vector<locallabshGHSbw> &shghsbw, int selspot) = 0;

@@ -128,6 +128,7 @@ private:
 
     // Locallab tools mask background management data
     std::vector<locallabDenoiseLC> denoiselc;
+    std::vector<locallabDenoiseMAD> madllc;
 
     std::vector<locallabDenoiseLC2> denoiselc2;
     std::vector<locallabcieBEF> cie_bef;
@@ -177,6 +178,7 @@ public:
     //Locallab denoise 
     // Locallab Retinex tool min/man management function
     void denChanged(const std::vector<locallabDenoiseLC> &denlc, int selspot) override;
+    void madChanged(const std::vector<locallabDenoiseMAD> &madlc, int selspot) override;
     void den2Changed(const std::vector<locallabDenoiseLC2> &denlc2, int selspot) override;
    
     // Locallab CIE tool primaries function

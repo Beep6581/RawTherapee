@@ -1300,7 +1300,7 @@ private:
                 float ghsbpwpvalue[2];
                 ghsbpwpvalue[0] = 0.f;
                 ghsbpwpvalue[1] = 1.f;
-                float savmadl[30];
+                float savmadl[21];
 
                 float slopeg = 1.f;
                 bool linkrgb = true;

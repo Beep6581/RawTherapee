@@ -1392,7 +1392,7 @@ struct LocallabParams {
         double lnoiselow;
         double levelthrlow;
         bool activlum;
-        double madlsav[30];
+        double madlsav[21];
 
         double noiselumf;
         double noiselumf0;

@@ -3923,7 +3923,7 @@ LocallabParams::LocallabSpot::LocallabSpot() :
     lnoiselow(1.),
     levelthrlow(12.),
     activlum(true),
-    madlsav{100.0, 100.0, 100.0, 100.0, 100.0, 100.0, 100.0, 100.0, 100.0, 100.0, 100.0, 100.0, 100.0, 100.0, 100.0, 100.0, 100.0, 100.0, 100.0, 100.0, 100.0, 100.0, 100.0, 100.0, 100.0, 100.0, 100.0, 100.0, 100.0, 100.0},
+    madlsav{100.0, 100.0, 100.0, 100.0, 100.0, 100.0, 100.0, 100.0, 100.0, 100.0, 100.0, 100.0, 100.0, 100.0, 100.0, 100.0, 100.0, 100.0, 100.0, 100.0, 100.0},
     
     noiselumf(0.),
     noiselumf0(0.),
@@ -5559,7 +5559,7 @@ bool LocallabParams::LocallabSpot::operator ==(const LocallabSpot& other) const
         && activlum == other.activlum
         && [this, &other]() -> bool
             {
-                for (int i = 0; i < 30; ++i) {
+                for (int i = 0; i < 21; ++i) {
                     if (madlsav[i] != other.madlsav[i]) {
                         return false;
                     }
@@ -7610,7 +7610,7 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
                     saveToKeyfile(!pedited || spot_edited->levelthrlow, "Locallab", "Levelthrlow_" + index_str, spot.levelthrlow, keyFile);
                     saveToKeyfile(!pedited || spot_edited->medMethod, "Locallab", "MedMethod_" + index_str, spot.medMethod, keyFile);
                     saveToKeyfile(!pedited || spot_edited->activlum, "Locallab", "activlum_" + index_str, spot.activlum, keyFile);
-                    for (int j = 0; j < 30; j++) {
+                    for (int j = 0; j < 21; j++) {
                         saveToKeyfile(!pedited || spot_edited->madlsav[j], "Locallab", "Madlsav" + std::to_string(j) + "_" + index_str, spot.madlsav[j], keyFile);
                     }
 
@@ -10088,7 +10088,7 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
                 assignFromKeyfile(keyFile, "Locallab", "Levelthrlow_" + index_str, spot.levelthrlow, spotEdited.levelthrlow);
                 assignFromKeyfile(keyFile, "Locallab", "MedMethod_" + index_str, spot.medMethod, spotEdited.medMethod);
                 assignFromKeyfile(keyFile, "Locallab", "activlum_" + index_str, spot.activlum, spotEdited.activlum);
-                for (int j = 0; j < 30; j ++) {
+                for (int j = 0; j < 21; j ++) {
                     assignFromKeyfile(keyFile, "Locallab", "Madlsav" + std::to_string(j) + "_" + index_str, spot.madlsav[j], spotEdited.madlsav[j]);
                 }
                 

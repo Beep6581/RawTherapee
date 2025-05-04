@@ -1458,7 +1458,7 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                 float denocont = 0.f;
                 int ghsbpwp[2] = {0, 0};
                 float ghsbpwpvalue[2] = {0.f, 1.f};                
-                float savmadl[30];
+                float savmadl[21];
 
                 Glib::ustring prof = params->icm.workingProfile;
                 if(params->locallab.spots.at(sp).complexcie == 2) {

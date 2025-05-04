@@ -959,6 +959,7 @@ void Crop::update(int todo)
         auto& loclmasCurve_wav = parent->loclmasCurve_wav;
         //big bug found 29//11/2024
         std::vector<LocallabListener::locallabDenoiseLC> localldenoiselc;
+        std::vector<LocallabListener::locallabDenoiseMAD> localldenoisemadl;
         std::vector<LocallabListener::locallabsharAFT> locallsharaft;
         std::vector<LocallabListener::locallabDenoiseLC2> localldenoiselc2;
 
@@ -1100,7 +1101,7 @@ void Crop::update(int todo)
             float denocont = 0.f;
             int ghsbpwp[2];
             float ghsbpwpvalue[2];
-            float savmadl[30]  = {100.f, 100.f, 100.f, 100.f, 100.f, 100.f, 100.f, 100.f, 100.f, 100.f, 100.f, 100.f, 100.f, 100.f, 100.f, 100.f, 100.f, 100.f, 100.f, 100.f, 100.f, 100.f, 100.f, 100.f, 100.f, 100.f, 100.f, 100.f, 100.f, 100.f}; 
+            float savmadl[21]  = {100.f, 100.f, 100.f, 100.f, 100.f, 100.f, 100.f, 100.f, 100.f, 100.f, 100.f, 100.f, 100.f, 100.f, 100.f, 100.f, 100.f, 100.f, 100.f, 100.f, 100.f}; 
 /*          
             huerefp[sp] = huere;
             chromarefp[sp] = chromare;
@@ -1263,7 +1264,7 @@ void Crop::update(int todo)
                         meantme, stdtme, meanretie, stdretie, fab, maxicam, rdx, rdy, grx, gry, blx, bly, meanx, meany, meanxe, meanye, prim, ill, contsig, lightsig, slopeg, linkrgb,
                         resi, sharc, denocont, ghsbpwp, ghsbpwpvalue, savmadl);
             }
-                        for (int l = 0; l < 30; l++) {
+                        for (int l = 0; l < 21; l++) {
                             params.locallab.spots.at(sp).madlsav[l] = savmadl[l];
                         }
 
@@ -1281,7 +1282,31 @@ void Crop::update(int todo)
                         denoiselc.Lhighres46 = resi[6];
                         denoiselc.Lnres46 = resi[7];
                         localldenoiselc.push_back(denoiselc);
-            
+ 
+                        LocallabListener::locallabDenoiseMAD madllc;
+                        madllc.mad0 = savmadl[0];
+                        madllc.mad1 = savmadl[1];
+                        madllc.mad2 = savmadl[2];
+                        madllc.mad3 = savmadl[3];
+                        madllc.mad4 = savmadl[4];
+                        madllc.mad5 = savmadl[5];
+                        madllc.mad6 = savmadl[6];
+                        madllc.mad7 = savmadl[7];
+                        madllc.mad8 = savmadl[8];
+                        madllc.mad9 = savmadl[9];
+                        madllc.mad10 = savmadl[10];
+                        madllc.mad11 = savmadl[11];
+                        madllc.mad12 = savmadl[12];
+                        madllc.mad13 = savmadl[13];
+                        madllc.mad14 = savmadl[14];
+                        madllc.mad15 = savmadl[15];
+                        madllc.mad16 = savmadl[16];
+                        madllc.mad17 = savmadl[17];
+                        madllc.mad18 = savmadl[18];
+                        madllc.mad19 = savmadl[19];
+                        madllc.mad20 = savmadl[20];
+                        localldenoisemadl.push_back(madllc);
+ 
                         LocallabListener::locallabsharAFT locsharaft;
                         locsharaft.autocontrastaft = params.locallab.spots.at(sp).deconvAutoshar;
                         locsharaft.sharcontrastaft = sharc;
@@ -1295,6 +1320,7 @@ void Crop::update(int todo)
                         */
                         if (parent->locallListener) {
                             parent->locallListener->denChanged(localldenoiselc, params.locallab.selspot);
+                            parent->locallListener->madChanged(localldenoisemadl, params.locallab.selspot);
                             parent->locallListener->den2Changed(localldenoiselc2, params.locallab.selspot);
                             parent->locallListener->sharaftChanged(locallsharaft,params.locallab.selspot); 
                         }

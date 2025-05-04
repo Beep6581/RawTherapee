@@ -12332,7 +12332,6 @@ void ImProcFunctions::DeNoise(int sp, int call, int aut,  bool noiscfactiv, cons
 
             float madL[10][3];
             int edge = 2;
-          //  std::vector<float> madlsav;
             if (!Ldecomp.memory_allocation_failed()) {
 #ifdef _OPENMP
                #pragma omp parallel for schedule(dynamic) collapse(2) if (multiThread)
@@ -12344,7 +12343,7 @@ void ImProcFunctions::DeNoise(int sp, int call, int aut,  bool noiscfactiv, cons
                         int Hlvl_L = Ldecomp.level_H(lvl);
                         const float* const* WavCoeffs_L = Ldecomp.level_coeffs(lvl);
                         madL[lvl][dir - 1] = SQR(Mad(WavCoeffs_L[dir], Wlvl_L * Hlvl_L));
-                        savmadl[lvl +  (dir - 1) * 10] = madL[lvl][dir - 1];
+                        savmadl[lvl +  (dir - 1) * 7] = madL[lvl][dir - 1];
                         //save current MadL information 
                     }
                 }
@@ -12352,10 +12351,18 @@ void ImProcFunctions::DeNoise(int sp, int call, int aut,  bool noiscfactiv, cons
                 if (params->locallab.spots.at(sp).lockmadl) {
                     for (int lvl = 0; lvl < levred; lvl++) {
                         for (int dir = 1; dir < 4; dir++) {
-                            madL[lvl][dir - 1] = params->locallab.spots.at(sp).madlsav[lvl +  (dir - 1) * 10];
+                            madL[lvl][dir - 1] = params->locallab.spots.at(sp).madlsav[lvl +  (dir - 1) * 7];
                         }
                     }  
                 }
+                    if (settings->verbose) {
+                        for (int lvl = 0; lvl < levred; lvl++) {
+                            for (int dir = 1; dir < 4; dir++) {
+                                 printf("Preview level=%i dir=%i madL=%f\n", lvl, dir-1, (double) madL[lvl][dir-1]);                               
+                            }
+                        }                        
+                    }
+                
                 float vari[levred];
                 float mxsl = 0.f;
                 //      float mxsfl = 0.f;
@@ -13289,9 +13296,10 @@ void ImProcFunctions::DeNoise(int sp, int call, int aut,  bool noiscfactiv, cons
                     }
                     //int levreal = 7;//only activ levels here
                     if (params->locallab.spots.at(sp).lockmadl) {
+                        printf("OK lock output\n");
                         for (int lvl = 0; lvl < levred; lvl++) {
                             for (int dir = 1; dir < 4; dir++) {
-                                madL[lvl][dir - 1] = params->locallab.spots.at(sp).madlsav[lvl +  (dir - 1) * 10];
+                                madL[lvl][dir - 1] = params->locallab.spots.at(sp).madlsav[lvl +  (dir - 1) * 7];
                             }
                         }  
                     }
@@ -13299,7 +13307,7 @@ void ImProcFunctions::DeNoise(int sp, int call, int aut,  bool noiscfactiv, cons
                     if (settings->verbose) {
                         for (int lvl = 0; lvl < levred; lvl++) {
                             for (int dir = 1; dir < 4; dir++) {
-                                 printf("level=%i dir=%i madL=%f\n", lvl, dir-1, (double) madL[lvl][dir-1]);                               
+                                 printf("Output level=%i dir=%i madL=%f\n", lvl, dir-1, (double) madL[lvl][dir-1]);                               
                             }
                         }                        
                     }
