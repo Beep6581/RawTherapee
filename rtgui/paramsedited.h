@@ -777,6 +777,7 @@ public:
         bool denoAutocontrast;
         bool contrshow;
         bool lockmadl;
+        bool madllock;
         bool enacontrast;
         bool denoratio;
         bool denomask;

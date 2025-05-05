@@ -1643,6 +1643,7 @@ void ParamsEdited::initFrom(const std::vector<rtengine::procparams::ProcParams>&
                 locallab.spots.at(j).denoAutocontrast = locallab.spots.at(j).denoAutocontrast && pSpot.denoAutocontrast == otherSpot.denoAutocontrast;
                 locallab.spots.at(j).contrshow = locallab.spots.at(j).contrshow && pSpot.contrshow == otherSpot.contrshow;
                 locallab.spots.at(j).lockmadl = locallab.spots.at(j).lockmadl && pSpot.lockmadl == otherSpot.lockmadl;
+                locallab.spots.at(j).madllock = locallab.spots.at(j).madllock && pSpot.madllock == otherSpot.madllock;
                 locallab.spots.at(j).enacontrast = locallab.spots.at(j).enacontrast && pSpot.enacontrast == otherSpot.enacontrast;
                 locallab.spots.at(j).denoratio = locallab.spots.at(j).denoratio && pSpot.denoratio == otherSpot.denoratio;
                 locallab.spots.at(j).denomask = locallab.spots.at(j).denomask && pSpot.denomask == otherSpot.denomask;
@@ -5267,6 +5268,10 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
             toEdit.locallab.spots.at(i).lockmadl = mods.locallab.spots.at(i).lockmadl;
         }
 
+        if (locallab.spots.at(i).madllock) {
+            toEdit.locallab.spots.at(i).madllock = mods.locallab.spots.at(i).madllock;
+        }
+
         if (locallab.spots.at(i).enacontrast) {
             toEdit.locallab.spots.at(i).enacontrast = mods.locallab.spots.at(i).enacontrast;
         }
@@ -8853,6 +8858,7 @@ LocallabParamsEdited::LocallabSpotEdited::LocallabSpotEdited(bool v) :
     denoAutocontrast(v),
     contrshow(v),
     lockmadl(v),
+    madllock(v),
     enacontrast(v),
     denoratio(v),
     denomask(v),
@@ -9680,6 +9686,7 @@ void LocallabParamsEdited::LocallabSpotEdited::set(bool v)
     denoAutocontrast = v;
     contrshow = v;
     lockmadl = v;
+    madllock = v;
     enacontrast = v;
     denoratio = v;
     denomask = v;

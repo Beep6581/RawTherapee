@@ -928,6 +928,7 @@ private:
     Gtk::CheckButton* const lockmadl;
     Gtk::Frame* const madlFrame;
     const std::array<Adjuster*, 21> madls;
+    Gtk::CheckButton* const madllock;
     
     MyExpander* const expdenoise1;
     Gtk::Label* const maskusable;
@@ -1009,7 +1010,7 @@ private:
     Gtk::Box* const quaHBox;
     ThresholdAdjuster* const csThresholdblur;
 
-    sigc::connection blMethodConn, fftwblConn, invblConn, contrshowConn, lockmadlConn, enacontrastConn, medMethodConn, blurMethodConn, chroMethodConn, activlumConn, showmaskblMethodConn, showmaskblMethodtypConn, enablMaskConn, toolblConn;
+    sigc::connection blMethodConn, fftwblConn, invblConn, contrshowConn, lockmadlConn, madllockConn, enacontrastConn, medMethodConn, blurMethodConn, chroMethodConn, activlumConn, showmaskblMethodConn, showmaskblMethodtypConn, enablMaskConn, toolblConn;
     sigc::connection  quamethodconn, usemaskConn, invmaskdConn, invmaskConn, neutralconn;
     rtengine::ProcEvent Evlocallabdenocontrast;
     rtengine::ProcEvent Evlocallabautodenoon;
@@ -1021,6 +1022,7 @@ private:
     rtengine::ProcEvent EvlocallabwavCurvehuecont;
     rtengine::ProcEvent Evlocallablockmadl;
     rtengine::ProcEvent Evlocallablockmadls;
+    rtengine::ProcEvent Evlocallabmadllock;
 
 
 public:
@@ -1029,7 +1031,7 @@ public:
     void updatedenlc(const double highres, const double nres, const double highres46, const double nres46, const double Lhighres, const double Lnres, const double Lhighres46, const double Lnres46);
     void updatemadlc(const double m0, const double m1, const double m2, const double m3, const double m4, const double m5, const double m6, const double m7,
         const double m8, const double m9, const double m10, const double m11, const double m12, const double m13, const double m14, const double m15,
-        const double m16, const double m17, const double m18, const double m19, const double m20);
+        const double m16, const double m17, const double m18, const double m19, const double m20, const bool madloc);
 
     bool isMaskViewActive() override;
     void resetMaskView() override;
@@ -1066,6 +1068,7 @@ private:
     void contrshowChanged();
     void enacontrastChanged();
     void lockmadlChanged();
+    void madllockChanged();
 
     void blMethodChanged();
     void fftwblChanged();

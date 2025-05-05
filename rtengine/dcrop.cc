@@ -1305,6 +1305,7 @@ void Crop::update(int todo)
                         madllc.mad18 = savmadl[18];
                         madllc.mad19 = savmadl[19];
                         madllc.mad20 = savmadl[20];
+                        madllc.madlock = params.locallab.spots.at(sp).madllock;
                         localldenoisemadl.push_back(madllc);
  
                         LocallabListener::locallabsharAFT locsharaft;

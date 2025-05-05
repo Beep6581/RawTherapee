@@ -1441,6 +1441,7 @@ struct LocallabParams {
         bool denoAutocontrast;
         bool contrshow;
         bool lockmadl;
+        bool madllock;
         bool enacontrast;
         double denoratio;
         double denomask;

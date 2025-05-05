@@ -1524,6 +1524,7 @@ HISTORY_MSG_LOCAL_CIE_GREYL;Local - CIECAM Green Y
 HISTORY_MSG_LOCAL_CIE_ILL;Local - CIECAM TRC Illuminant
 HISTORY_MSG_LOCAL_CIE_LOGCIEQ;Local - CIECAM Log encoding Q
 HISTORY_MSG_LOCAL_LOCKMADL;Local - Denoise Lock MadL
+HISTORY_MSG_LOCAL_LOCKMADL2;Local - Manual MadL
 HISTORY_MSG_LOCAL_CIE_MIDT;Local - CIECAM Mid Tones
 HISTORY_MSG_LOCAL_CIE_NORM11;Local - CIECAM Normalize luminance 5.11
 HISTORY_MSG_LOCAL_CIE_PRIM;Local - CIECAM TRC primaries
@@ -3458,6 +3459,7 @@ TP_LOCALLAB_LOC_CONTRASTPYR2LAB; Contrast by level/TM/Directional contrast
 TP_LOCALLAB_LOC_CONTRASTPYRLAB; Graduated Filter/Edge Sharpness/Blur
 TP_LOCALLAB_LOC_RESIDPYR;Residual image (Main)
 TP_LOCALLAB_LOCKMADL;Locks MadL noise evaluation
+TP_LOCALLAB_LOCKMADL2;Manual settings
 TP_LOCALLAB_LOCKMADL_TOOLTIP;Allows you to lock the noise evaluation used for Wavelet denoise.\n\nWavelet denoise uses MadL (Median absolute deviation luminance) to act on the noise based on a slider or a curve.\nRawtherapee's pipeline design results in different MadL values ​​depending on the preview position and lead to differences with the output.\n\nIf you enable this checkbox, the value used for global processing will be that of the preview at that time. This will allow you to prioritize a specific area, background, or face for noise reduction, rather than an overall average value. Of course, you should only check the box once you've selected the area.
 TP_LOCALLAB_LOG;Log Encoding
 TP_LOCALLAB_LOG1FRA;CAM16 Image Adjustments

@@ -469,7 +469,8 @@ public:
         double mad17; 
         double mad18; 
         double mad19; 
-        double mad20;        
+        double mad20;
+        bool madlock;
     };
 
     struct locallabcieBEF {
