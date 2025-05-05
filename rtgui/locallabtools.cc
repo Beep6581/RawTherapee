@@ -7706,7 +7706,6 @@ LocallabBlur::LocallabBlur():
     chro46Labels(Gtk::manage(new Gtk::Label("---"))),
     lockmadl(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_LOCKMADL")))),
     madlFrame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_MADLFRA")))),
-    madllock(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_LOCKMADL2")))),
 
     madls([]() -> std::array<Adjuster *, 21>
 
@@ -7730,6 +7729,7 @@ LocallabBlur::LocallabBlur():
         return res;
     }
     ()),
+    madllock(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_LOCKMADL2")))),
     
     expdenoise1(Gtk::manage(new MyExpander(false, M("TP_LOCALLAB_DENOI1_EXP")))),
     maskusable(Gtk::manage(new Gtk::Label(M("TP_LOCALLAB_MASKUSABLE")))),
@@ -8442,6 +8442,8 @@ void LocallabBlur::updateAdviceTooltips(const bool showTooltips)
         lCLabels->set_tooltip_text(M("TP_LOCALLAB_LCLABELS_TOOLTIP"));
         denoFrame->set_tooltip_text(M("TP_LOCALLAB_DENORADIUS_TOOLTIP"));
         lockmadl->set_tooltip_text(M("TP_LOCALLAB_LOCKMADL_TOOLTIP"));
+        madllock->set_tooltip_text(M("TP_LOCALLAB_LOCKMADL2_TOOLTIP"));
+
     } else {
 
         expblnoise->set_tooltip_markup("");
@@ -8516,6 +8518,7 @@ void LocallabBlur::updateAdviceTooltips(const bool showTooltips)
         denoFrame->set_tooltip_text("");
         expdenoisenl->set_tooltip_markup("");
         lockmadl->set_tooltip_text("");
+        madllock->set_tooltip_text("");
 
     }
 }
@@ -8573,28 +8576,28 @@ void LocallabBlur::updatemadlc(const double m0, const double m1, const double m2
             GThreadLock lock; // All GUI access from idle_add callbacks or separate thread HAVE to be protected
         
             disableListener();
-            if(!madloc) {
-            madls[0]->setValue(m0);
-            madls[1]->setValue(m1);
-            madls[2]->setValue(m2);
-            madls[3]->setValue(m3);
-            madls[4]->setValue(m4);
-            madls[5]->setValue(m5);
-            madls[6]->setValue(m6);
-            madls[7]->setValue(m7);
-            madls[8]->setValue(m8);
-            madls[9]->setValue(m9);
-            madls[10]->setValue(m10);
-            madls[11]->setValue(m11);
-            madls[12]->setValue(m12);
-            madls[13]->setValue(m13);
-            madls[14]->setValue(m14);
-            madls[15]->setValue(m15);
-            madls[16]->setValue(m16);
-            madls[17]->setValue(m17);
-            madls[18]->setValue(m18);
-            madls[19]->setValue(m19);
-            madls[20]->setValue(m20);
+            if(!madloc) {//allows manual mode
+                madls[0]->setValue(m0);
+                madls[1]->setValue(m1);
+                madls[2]->setValue(m2);
+                madls[3]->setValue(m3);
+                madls[4]->setValue(m4);
+                madls[5]->setValue(m5);
+                madls[6]->setValue(m6);
+                madls[7]->setValue(m7);
+                madls[8]->setValue(m8);
+                madls[9]->setValue(m9);
+                madls[10]->setValue(m10);
+                madls[11]->setValue(m11);
+                madls[12]->setValue(m12);
+                madls[13]->setValue(m13);
+                madls[14]->setValue(m14);
+                madls[15]->setValue(m15);
+                madls[16]->setValue(m16);
+                madls[17]->setValue(m17);
+                madls[18]->setValue(m18);
+                madls[19]->setValue(m19);
+                madls[20]->setValue(m20);
             }
             enableListener();
 
@@ -9756,7 +9759,8 @@ void LocallabBlur::convertParamToSimple()
     scalegr->setValue(defSpot.scalegr);
     // Set hidden specific GUI widgets in Simple mode to default spot values
     showmaskblMethod->set_active(0);
-
+    madllock->set_active(defSpot.madllock);
+    
     if (defSpot.showmaskblMethodtyp == "blur") {
         showmaskblMethodtyp ->set_active(0);
     } else if (defSpot.showmaskblMethodtyp == "nois") {
