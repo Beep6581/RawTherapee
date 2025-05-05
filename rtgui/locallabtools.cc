@@ -7716,14 +7716,14 @@ LocallabBlur::LocallabBlur():
             Glib::ustring ss = Glib::ustring::format(i);
 
             if (i == 0) {
-                ss += Glib::ustring::compose(" (%1)", M("TP_LOCALLAB_MADLDIRH"));
+                ss += Glib::ustring::compose(" %1", M("TP_LOCALLAB_MADLDIRH"));
             } else if (i == 7) {
-                ss += Glib::ustring::compose(" (%1)", M("TP_LOCALLAB_MADLDIRV"));          
+                ss += Glib::ustring::compose(" %1", M("TP_LOCALLAB_MADLDIRV"));          
             } else if (i == 14) {
-                ss += Glib::ustring::compose(" (%1)", M("TP_LOCALLAB_MADLDIRD"));          
+                ss += Glib::ustring::compose(" %1", M("TP_LOCALLAB_MADLDIRD"));          
             }
 
-            res[i] = Gtk::manage(new Adjuster(std::move(ss), 1.0, 1000000.0, 1., 100.0));
+            res[i] = Gtk::manage(new Adjuster(std::move(ss), 1.0, 2000000.0, 1., 100.0));
         }
 
         return res;
@@ -8167,10 +8167,12 @@ LocallabBlur::LocallabBlur():
     
     for (const auto adj : madls) {
         madlBox->pack_start(*adj);
-    }
-    madlFrame->add(*madlBox);
-    madlFrame->hide();
+        adj->setLogScale(10, 0);
 
+    }
+
+    madlFrame->add(*madlBox);
+    prevBox->pack_start(*madlFrame);
     prevFrame->add(*prevBox);
     wavBox->pack_start(*prevFrame);
 
@@ -8860,6 +8862,7 @@ void LocallabBlur::read(const rtengine::procparams::ProcParams* pp, const Params
 
     // Enable all listeners
     enableListener();
+    //madlFrame->hide();
 
     // Update GUI according to complexity mode
     updateGUIToMode(static_cast<modeType>(complexity->get_active_row_number()));
@@ -9801,6 +9804,8 @@ void LocallabBlur::updateGUIToMode(const modeType new_type)
             nlgam->hide();
             scalegr->hide();
             noisegam->hide();
+            madlFrame->hide();
+
             break;
 
         case Normal:
@@ -9827,6 +9832,8 @@ void LocallabBlur::updateGUIToMode(const modeType new_type)
             nlgam->show();
             scalegr->show();
             noisegam->hide();
+            madlFrame->show();
+
 
           //  if (blMethod->get_active_row_number() == 2) {
           //      expdenoise2->show();
@@ -9909,6 +9916,7 @@ void LocallabBlur::updateGUIToMode(const modeType new_type)
             nlrad->show();
             nlgam->show();
             noisegam->show();
+            madlFrame->show();
 
             if(lnoiselow->getValue()!= 1.) {
                 if (showmaskblMethodtyp->get_active_row_number() == 0) {
