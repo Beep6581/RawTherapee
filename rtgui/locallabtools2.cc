@@ -2440,6 +2440,8 @@ void LocallabSharp::convertParamToSimple()
 
 void LocallabSharp::updateGUIToMode(const modeType new_type)
 {
+    const LocallabParams::LocallabSpot defSpot;
+    
     switch (new_type) {
         case Simple:
             // Expert and Normal mode widgets are hidden in Simple mode
@@ -2475,11 +2477,25 @@ void LocallabSharp::updateGUIToMode(const modeType new_type)
             shardamping->show();
             shariter->show();
             sharFrame->show();
+            if (inverssha->get_active()) {
+                shargam->hide();
+                shargam->setValue(defSpot.shargam);
+            }
     }
 }
 
 void LocallabSharp::inversshaChanged()
 {
+    const LocallabParams::LocallabSpot defSpot;
+    const int mode = complexity->get_active_row_number();    
+    if (inverssha->get_active()) {
+        shargam->hide();
+        shargam->setValue(defSpot.shargam);      
+    } else {
+        if(mode == Expert) {
+            shargam->show();
+       }
+    }
     if (isLocActivated && exp->getEnabled()) {
         if (listener) {
             if (inverssha->get_active()) {
