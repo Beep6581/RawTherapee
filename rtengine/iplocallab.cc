@@ -19002,8 +19002,11 @@ void ImProcFunctions::Lab_Local(
             }
         }
     }
-
-    if (!lp.invshar && lp.shrad > 0.42 && call < 3 && lp.sharpena && sk == 1) { //interior ellipse for sharpening, call = 1 and 2 only with Dcrop and simpleprocess
+    bool sharinit = true;
+    if(params->locallab.spots.at(sp).sharamount < 1) {//disable all shapening and inverse if amount < 1
+        sharinit = false;
+    }
+    if (!lp.invshar && lp.shrad > 0.42 && call < 3 && lp.sharpena && sk == 1 && sharinit) { //interior ellipse for sharpening, call = 1 and 2 only with Dcrop and simpleprocess
         int bfh = call == 2 ? int (lp.ly + lp.lyT) + del : original->H; //bfw bfh real size of square zone
         int bfw = call == 2 ? int (lp.lx + lp.lxL) + del : original->W;
 
@@ -19187,7 +19190,7 @@ void ImProcFunctions::Lab_Local(
             calc_ref(sp, original, transformed, 0, 0, original->W, original->H, sk, huerefblur, chromarefblur, lumarefblur, hueref, chromaref, lumaref, sobelref, avge, locwavCurveden, locwavdenutili);
         }
 
-    } else if (lp.invshar && lp.shrad > 0.42 && call < 3 && lp.sharpena && sk == 1) {
+    } else if (lp.invshar && lp.shrad > 0.42 && call < 3 && lp.sharpena && sk == 1  && sharinit) {
         int GW = original->W;
         int GH = original->H;
         JaggedArray<float> loctemp(GW, GH);
@@ -19239,14 +19242,14 @@ void ImProcFunctions::Lab_Local(
 
                 for (; x < GW - 3; x += 4) {
                     STVFU(original->L[y][x], F2V(32768.f) * gammalog(LVFU(original->L[y][x]) / F2V(32768.f), F2V(gamma1), F2V(ts1), F2V(g_a[3]), F2V(g_a[4])));
-                    STVFU(loctemp[y][x], F2V(32768.f) * igammalog(LVFU(loctemp[y][x]) / F2V(32768.f), F2V(gamma1), F2V(ts1), F2V(g_a[3]), F2V(g_a[4])));
+                    STVFU(loctemp[y][x], F2V(32768.f) * gammalog(LVFU(loctemp[y][x]) / F2V(32768.f), F2V(gamma1), F2V(ts1), F2V(g_a[3]), F2V(g_a[4])));
                 }
 
 #endif
 
                 for (; x < GW; ++x) {
                     original->L[y][x] = 32768.f * gammalog(original->L[y][x] / 32768.f, gamma1, ts1, g_a[3], g_a[4]);
-                    loctemp[y][x] = 32768.f * igammalog(loctemp[y][x] / 32768.f, gamma1, ts1, g_a[3], g_a[4]);
+                    loctemp[y][x] = 32768.f * gammalog(loctemp[y][x] / 32768.f, gamma1, ts1, g_a[3], g_a[4]);
                 }
             }
         }
