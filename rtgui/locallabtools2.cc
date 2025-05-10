@@ -2212,7 +2212,7 @@ LocallabSharp::LocallabSharp():
     rlb->pack_start(*sharradius);
     rlb->pack_start(*sharblur);
     rlb->pack_start(*shargam);
-    //pack_start(*sharamount);
+    pack_start(*sharamount);
     rlb->pack_start(*shardamping);
     rlb->pack_start(*shariter);
 
@@ -2424,7 +2424,6 @@ void LocallabSharp::read(const rtengine::procparams::ProcParams* pp, const Param
         deconvCoProt->setValue((double)spot.deconvCoProt);
         deconvCoLat->setValue((double)spot.deconvCoLat);
     }
-
     // Enable all listeners
     enableListener();
 
@@ -2621,7 +2620,7 @@ void LocallabSharp::convertParamToNormal()
     // Set hidden GUI widgets in Normal mode to default spot values
     sharcontrast->setValue((double)defSpot.sharcontrast);
     sharblur->setValue(defSpot.sharblur);
-    sharamount->setValue(defSpot.sharamount);
+    //sharamount->setValue(defSpot.sharamount);
     shardamping->setValue((double)defSpot.shardamping);
     shariter->setValue((double)defSpot.shariter);
     shargam->setValue(defSpot.shargam);
@@ -2648,31 +2647,44 @@ void LocallabSharp::convertParamToSimple()
 
 void LocallabSharp::updateGUIToMode(const modeType new_type)
 {
+    const LocallabParams::LocallabSpot defSpot;
+    
     switch (new_type) {
         case Simple:
             // Expert and Normal mode widgets are hidden in Simple mode
             
             sharcontrast->show();
             sharblur->hide();
-            sharamount->hide();
             shardamping->hide();
             shariter->hide();
             sharFrame->hide();
             shargam->hide();
             if (methodcap->get_active_row_number() == 1) {
-               inverssha->show();
+                inverssha->show();
+                reparsha->hide();
+                reparsha->setValue(defSpot.reparsha);
+                sharamount->show();
+                
             } else {
-                inverssha->hide();            
+                inverssha->hide();
+                reparsha->show();               
+                sharamount->hide();
+                
             }
             if (methodcap->get_active_row_number() == 0) {
+                reparsha->show();               
                 sharshow->show();
+                sharamount->hide();
                 itercheck->show();
                 capradius->show();
                 capFrame->show();
                 rlFrame->hide();
                 inverssha->hide();        
             } else {
+                reparsha->hide();               
+                reparsha->setValue(defSpot.reparsha);
                 sharshow->hide();
+                sharamount->hide();
                 itercheck->hide();
                 capradius->hide();
                 capFrame->hide();
@@ -2687,25 +2699,37 @@ void LocallabSharp::updateGUIToMode(const modeType new_type)
             sharcontrast->show();
             sharblur->hide();
             shargam->hide();
-            sharamount->hide();
             shardamping->hide();
             shariter->hide();
             // Specific Simple mode widgets are shown in Normal mode
             sharFrame->show();
             if (methodcap->get_active_row_number() == 1) {
                 inverssha->show();
+                reparsha->hide();               
+                reparsha->setValue(defSpot.reparsha);
+                sharamount->show();
+
             } else {
-                inverssha->hide();            
+                inverssha->hide();
+                reparsha->show();               
+                sharamount->hide();
+               
             }
             if (methodcap->get_active_row_number() == 0) {
+                reparsha->show();               
                 sharshow->show();
                 itercheck->show();
                 capradius->show();
                 capFrame->show();
                 rlFrame->hide();
-                inverssha->hide();        
+                inverssha->hide();
+                sharamount->hide();
+                
             } else {
+                reparsha->hide();               
+                reparsha->setValue(defSpot.reparsha);
                 sharshow->hide();
+                sharamount->show();
                 itercheck->hide();
                 capradius->hide();
                 capFrame->hide();
@@ -2720,23 +2744,33 @@ void LocallabSharp::updateGUIToMode(const modeType new_type)
             sharcontrast->show();
             sharblur->show();
             shargam->show();
-            sharamount->show();
             shardamping->show();
             shariter->show();
             sharFrame->show();
             if (methodcap->get_active_row_number() == 1) {
                 inverssha->show();
+                reparsha->hide();               
+                reparsha->setValue(defSpot.reparsha);
+                sharamount->show();
             } else {
-                inverssha->hide();            
+                inverssha->hide();
+                reparsha->show();               
+                sharamount->hide();
+                
             }
             if (methodcap->get_active_row_number() == 0) {
+                reparsha->show();               
                 sharshow->show();
+                sharamount->hide();               
                 itercheck->show();
                 capradius->show();
                 capFrame->show();
                 rlFrame->hide();
                 inverssha->hide();        
             } else {
+                reparsha->hide();               
+                reparsha->setValue(defSpot.reparsha);
+                sharamount->show();
                 sharshow->hide();
                 itercheck->hide();
                 capradius->hide();
@@ -2796,6 +2830,8 @@ void LocallabSharp::itercheckChanged()
 
 void LocallabSharp::methodcapChanged()
 {
+   // const LocallabParams::LocallabSpot defSpot;
+    
     if (methodcap->get_active_row_number() == 0) {
         capradius->show();
         capFrame->show();
@@ -2803,6 +2839,9 @@ void LocallabSharp::methodcapChanged()
         inverssha->hide();        
         sharshow->show();
         itercheck->show();
+        reparsha->show();
+        sharamount->hide();
+        
     } else {
         capradius->hide();
         capFrame->hide();
@@ -2810,6 +2849,8 @@ void LocallabSharp::methodcapChanged()
         inverssha->show();        
         sharshow->hide();
         itercheck->hide();
+        reparsha->hide();
+        sharamount->show();
     }
 
     if (exp->getEnabled()) {
