@@ -2659,37 +2659,28 @@ void LocallabSharp::updateGUIToMode(const modeType new_type)
             shariter->hide();
             sharFrame->hide();
             shargam->hide();
-            if (methodcap->get_active_row_number() == 1) {
+            if (methodcap->get_active_row_number() == 1) {//first settings group
                 inverssha->show();
                 reparsha->hide();
                 reparsha->setValue(defSpot.reparsha);
-                sharamount->show();
-                
+                sharamount->show();             
             } else {
                 inverssha->hide();
                 reparsha->show();               
-                sharamount->hide();
-                
+                sharamount->hide();                
             }
-            if (methodcap->get_active_row_number() == 0) {
-                reparsha->show();               
+            if (methodcap->get_active_row_number() == 0) {//second settings group
                 sharshow->show();
-                sharamount->hide();
                 itercheck->show();
                 capradius->show();
                 capFrame->show();
                 rlFrame->hide();
-                inverssha->hide();        
             } else {
-                reparsha->hide();               
-                reparsha->setValue(defSpot.reparsha);
                 sharshow->hide();
-                sharamount->hide();
                 itercheck->hide();
                 capradius->hide();
                 capFrame->hide();
                 rlFrame->show();
-                inverssha->show();        
             }
 
             break;
@@ -2708,7 +2699,6 @@ void LocallabSharp::updateGUIToMode(const modeType new_type)
                 reparsha->hide();               
                 reparsha->setValue(defSpot.reparsha);
                 sharamount->show();
-
             } else {
                 inverssha->hide();
                 reparsha->show();               
@@ -2716,25 +2706,18 @@ void LocallabSharp::updateGUIToMode(const modeType new_type)
                
             }
             if (methodcap->get_active_row_number() == 0) {
-                reparsha->show();               
                 sharshow->show();
                 itercheck->show();
                 capradius->show();
                 capFrame->show();
-                rlFrame->hide();
-                inverssha->hide();
-                sharamount->hide();
-                
+                rlFrame->hide();                
             } else {
-                reparsha->hide();               
-                reparsha->setValue(defSpot.reparsha);
                 sharshow->hide();
                 sharamount->show();
                 itercheck->hide();
                 capradius->hide();
                 capFrame->hide();
                 rlFrame->show();
-                inverssha->show();        
             }
 
             break;
@@ -2755,28 +2738,21 @@ void LocallabSharp::updateGUIToMode(const modeType new_type)
             } else {
                 inverssha->hide();
                 reparsha->show();               
-                sharamount->hide();
-                
+                sharamount->hide();              
             }
             if (methodcap->get_active_row_number() == 0) {
-                reparsha->show();               
                 sharshow->show();
-                sharamount->hide();               
                 itercheck->show();
                 capradius->show();
                 capFrame->show();
                 rlFrame->hide();
                 inverssha->hide();        
             } else {
-                reparsha->hide();               
-                reparsha->setValue(defSpot.reparsha);
-                sharamount->show();
                 sharshow->hide();
                 itercheck->hide();
                 capradius->hide();
                 capFrame->hide();
                 rlFrame->show();
-                inverssha->show();        
             }
 
     }
@@ -2830,7 +2806,6 @@ void LocallabSharp::itercheckChanged()
 
 void LocallabSharp::methodcapChanged()
 {
-   // const LocallabParams::LocallabSpot defSpot;
     
     if (methodcap->get_active_row_number() == 0) {
         capradius->show();

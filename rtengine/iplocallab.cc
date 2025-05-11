@@ -19811,7 +19811,6 @@ void ImProcFunctions::Lab_Local(
                 }
             }
           
-          //transit_shapedetect2(sp, 0.f, 0.f, call, 99, bufexporig.get(), bufexpfin.get(), nullptr, hueref, chromaref, lumaref, sobelref, 0.f, nullptr, lp, original, transformed, cx, cy, sk);
             transit_shapedetect2(sp, 0.f, 0.f, call, 99, bufexporig.get(), bufexpfin.get(), nullptr, hueref, chromaref, lumaref, sobelref, 0.f, nullptr, lp, original, transformed, nullptr, LocalLabGradientMode::STANDARD, cx, cy, sk);
 
             if (lp.recur) {
