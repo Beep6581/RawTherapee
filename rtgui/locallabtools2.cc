@@ -2316,6 +2316,7 @@ void LocallabSharp::updateAdviceTooltips(const bool showTooltips)
         deconvCoBoost->set_tooltip_text(M("TP_PDSHARPENING_RADIUSOFFSETSE_TOOLTIP"));
         deconvCoProt->set_tooltip_text(M("TP_SHARPENING_RADIUS_PROTSE_TOOLTIP"));
         deconvCoLat->set_tooltip_text(M("TP_PDSHARPENING_ITERATIONS_TOOLTIP"));
+        deconvCogam->set_tooltip_text(M("TP_PDSHARPENING_GAMMA_TOOLTIP"));
         sharcontrast->set_tooltip_text(M("TP_PDSHARPENING_CONTRASTRADIUSSE_TOOLTIP"));
     } else {
         exp->set_tooltip_text("");
@@ -2326,6 +2327,7 @@ void LocallabSharp::updateAdviceTooltips(const bool showTooltips)
         deconvCoBoost->set_tooltip_text("");
         deconvCoProt->set_tooltip_text("");
         deconvCoLat->set_tooltip_text("");
+        deconvCogam->set_tooltip_text("");
         sharcontrast->set_tooltip_text("");
     }
 }

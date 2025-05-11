@@ -3986,6 +3986,7 @@ TP_PCVIGNETTE_STRENGTH;Strength
 TP_PCVIGNETTE_STRENGTH_TOOLTIP;Filter strength in stops (reached in corners).
 TP_PDSHARPENING_LABEL;Capture Sharpening
 TP_PDSHARPENING_CONTRAST_TOOLTIP;By default the tool analyzes the image and calculates a threshold to prevent sharpening noise.\n You can leave the automatic Contrast Threshold calculation on, or you can turn it off and set it as required: moving the slider to the right means that details will have to have higher contrast before they are sharpened. Higher Contrast Threshold values also reduce the amount of sharpening applied to noise, which tends to have lower detail contrast.\n Presharpening denoise may be necessary to enable detection and reduce noise somewhat.
+TP_PDSHARPENING_GAMMA_TOOLTIP;Allows you to vary the ratio between shadows and highlights to play with accentuation. The mask is sensitive to this setting.
 TP_PDSHARPENING_ITERATIONS_TOOLTIP;Once the radii have either been automatically calculated or set manually, the tool carries out a series of calculations to try and compensate for any blurring. It is an iterative process, which will produce artifacts if carried too far. Checking the ‘Auto limit iterations’ checkbox will limit the number of iterations or you can do it manually using the Iterations slider.
 TP_PDSHARPENING_LABEL88;Capture Sharpening
 TP_PDSHARPENING_NOISE;Presharpening denoise
