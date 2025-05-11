@@ -2123,6 +2123,7 @@ LocallabSharp::LocallabSharp():
     deconvCoBoost(Gtk::manage(new Adjuster(M("TP_SHARPENING_RADIUS_BOOST"), -0.7, 0.7, 0.01, 0))),
     deconvCoProt(Gtk::manage(new Adjuster(M("TP_SHARPENING_RADIUS_PROT"), 20., 80., 1., 50.))),
     deconvCoLat(Gtk::manage(new Adjuster(M("TP_SHARPENING_RLD_ITERATIONS"), 0, 100, 1, 25))),
+    deconvCogam(Gtk::manage(new Adjuster(M("TP_LOCALLAB_GAMC"), 0.4, 3.0, 0.05, 1.))),
     itercheck(Gtk::manage(new Gtk::CheckButton(M("TP_SHARPENING_ITERCHECK")))),
     capFrame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_SHARCAPFRAME")))),
     rlFrame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_SHARRLFRAME")))),
@@ -2152,6 +2153,7 @@ LocallabSharp::LocallabSharp():
     Evlocallabsharrepar = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_SHARREPAR");
     Evlocallababsharshow = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_SHARSHOW");   
     Evlocallababitercheck = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_SHARITERCHECK");   
+    Evlocallababdconvgam = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_CONVGAM");
     set_orientation(Gtk::ORIENTATION_VERTICAL);
     capradius->addAutoButton(M("TP_SHARPENING_EDRADIUS_TOOLTIP"));
     sharcontrast->addAutoButton(M("TP_SHARPENING_CONTRASTAUTO_TOOLTIP"));
@@ -2173,6 +2175,8 @@ LocallabSharp::LocallabSharp():
     deconvCoProt->setAdjusterListener(this);
 
     deconvCoLat->setAdjusterListener(this);    
+    
+    deconvCogam->setAdjusterListener(this);
     
     sharamount->setAdjusterListener(this);
 
@@ -2225,6 +2229,7 @@ LocallabSharp::LocallabSharp():
     capb->pack_start(*deconvCoBoost);
     capb->pack_start(*deconvCoProt);
     capb->pack_start(*deconvCoLat);
+    capb->pack_start(*deconvCogam);
     capb->pack_start(*itercheck);
     capFrame->add(*capb);
     pack_start(*capFrame);
@@ -2423,6 +2428,7 @@ void LocallabSharp::read(const rtengine::procparams::ProcParams* pp, const Param
         deconvCoBoost->setValue((double)spot.deconvCoBoost);
         deconvCoProt->setValue((double)spot.deconvCoProt);
         deconvCoLat->setValue((double)spot.deconvCoLat);
+        deconvCogam->setValue((double)spot.deconvCogam);
     }
     // Enable all listeners
     enableListener();
@@ -2467,6 +2473,7 @@ void LocallabSharp::write(rtengine::procparams::ProcParams* pp, ParamsEdited* pe
         spot.deconvCoBoost = deconvCoBoost->getValue();
         spot.deconvCoProt = deconvCoProt->getValue();
         spot.deconvCoLat = deconvCoLat->getValue();
+        spot.deconvCogam = deconvCogam->getValue();
     }
 
     // Note: No need to manage pedited as batch mode is deactivated for Locallab
@@ -2493,6 +2500,7 @@ void LocallabSharp::setDefaults(const rtengine::procparams::ProcParams* defParam
         deconvCoBoost->setDefault(defSpot.deconvCoBoost);
         deconvCoProt->setDefault(defSpot.deconvCoProt);
         deconvCoLat->setDefault(defSpot.deconvCoLat);
+        deconvCogam->setDefault(defSpot.deconvCogam);
 
     }
 
@@ -2548,6 +2556,13 @@ void LocallabSharp::adjusterChanged(Adjuster* a, double newval)
             if (listener) {
                 listener->panelChanged(Evlocallababdconvlat,
                                        deconvCoLat->getTextValue() + " (" + escapeHtmlChars(getSpotName()) + ")");
+            }
+        }
+
+        if (a == deconvCogam) {
+            if (listener) {
+                listener->panelChanged(Evlocallababdconvgam,
+                                       deconvCogam->getTextValue() + " (" + escapeHtmlChars(getSpotName()) + ")");
             }
         }
 

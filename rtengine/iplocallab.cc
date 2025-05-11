@@ -19746,6 +19746,7 @@ void ImProcFunctions::Lab_Local(
             float deconvCo = params->locallab.spots.at(sp).deconvCoBoost;
             float deconvCopro = 0.01 * params->locallab.spots.at(sp).deconvCoProt;
             float deconvLat = params->locallab.spots.at(sp).deconvCoLat;
+            float deconvgam = params->locallab.spots.at(sp).deconvCogam;
             bool autoshar = params->locallab.spots.at(sp).deconvAutoshar;
             bool sharpshow = params->locallab.spots.at(sp).sharshow;
             bool itcheck = params->locallab.spots.at(sp).itercheck;
@@ -19783,7 +19784,7 @@ void ImProcFunctions::Lab_Local(
                 }
             }
               
-            ImProcFunctions::doCapture_Sharpening_SE(tmpImagered.get(), bfw, bfh, locp, sk, sharc, autoshar, capradiu,  deconvCo, deconvLat, itcheck, sharpshow);
+            ImProcFunctions::doCapture_Sharpening_SE(tmpImagered.get(), bfw, bfh, locp, sk, sharc, autoshar, capradiu,  deconvCo, deconvLat, itcheck, sharpshow, deconvgam);
             
 #ifdef _OPENMP
             #pragma omp parallel for schedule(dynamic,16) if (multiThread)

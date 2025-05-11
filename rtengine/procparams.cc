@@ -4320,6 +4320,7 @@ LocallabParams::LocallabSpot::LocallabSpot() :
     deconvCoBoost(0.),
     deconvCoProt(50.),
     deconvCoLat(25.),
+    deconvCogam(1.),
     reparsha(100.),
     
     // Local Contrast
@@ -5714,6 +5715,7 @@ bool LocallabParams::LocallabSpot::operator ==(const LocallabSpot& other) const
         && deconvCoBoost == other.deconvCoBoost     
         && deconvCoProt == other.deconvCoProt     
         && deconvCoLat == other.deconvCoLat     
+        && deconvCogam == other.deconvCogam     
         && reparsha == other.reparsha     
 
         // Local contrast
@@ -7764,6 +7766,7 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
                     saveToKeyfile(!pedited || spot_edited->deconvCoBoost, "Locallab", "deconvCoBoost_" + index_str, spot.deconvCoBoost, keyFile);
                     saveToKeyfile(!pedited || spot_edited->deconvCoProt, "Locallab", "deconvCoProt_" + index_str, spot.deconvCoProt, keyFile);
                     saveToKeyfile(!pedited || spot_edited->deconvCoLat, "Locallab", "deconvCoLat_" + index_str, spot.deconvCoLat, keyFile);
+                    saveToKeyfile(!pedited || spot_edited->deconvCogam, "Locallab", "deconvCogam_" + index_str, spot.deconvCogam, keyFile);
                     saveToKeyfile(!pedited || spot_edited->reparsha, "Locallab", "reparsha_" + index_str, spot.reparsha, keyFile);
                     
 
@@ -10261,6 +10264,7 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
                 assignFromKeyfile(keyFile, "Locallab", "deconvCoBoost_" + index_str, spot.deconvCoBoost, spotEdited.deconvCoBoost);
                 assignFromKeyfile(keyFile, "Locallab", "deconvCoProt_" + index_str, spot.deconvCoProt, spotEdited.deconvCoProt);
                 assignFromKeyfile(keyFile, "Locallab", "deconvCoLat_" + index_str, spot.deconvCoLat, spotEdited.deconvCoLat);
+                assignFromKeyfile(keyFile, "Locallab", "deconvCogam_" + index_str, spot.deconvCogam, spotEdited.deconvCogam);
                 assignFromKeyfile(keyFile, "Locallab", "reparsha_" + index_str, spot.reparsha, spotEdited.reparsha);
 
                 

@@ -527,7 +527,7 @@ BENCHFUN
     if (settings->verbose) {
         printf("sigma=%f Tilesize=%i cornerrad=%f cornerDist=%f distanceFactor=%f\n", sigma, fullTileSize, cornerRadius, cornerDistance, distanceFactor);
     }
-
+    //I don't use startval and endval to show progress... but ...
     constexpr float minBlend = 0.01f;
 
 #ifdef _OPENMP
@@ -718,10 +718,20 @@ BENCHFUN
     }
 }
 
+float igammalog2(float x, float p, float s, float g2, float g4) // same function as in iplocallab.cc
+{
+    return x <= g2 ? x / s : pow_F((x + g4) / (1.f + g4), p);//continuous
+}
 
 
-void ImProcFunctions::doCapture_Sharpening_SE(Imagefloat *rgb, int bfw, int bfh, struct localpass &locp, int sk, float &sharpc, bool autoshar, float capradiu,  float deconvCo, float deconvLat, bool itcheck, bool showMask)
+float gammalog2(float x, float p, float s, float g3, float g4) // same function as in iplocallab.cc
+{
+    return x <= g3 ? x * s : (1.f + g4) * xexpf(xlogf(x) / p) - g4;
+}
 
+
+void ImProcFunctions::doCapture_Sharpening_SE(Imagefloat *rgb, int bfw, int bfh, struct localpass &locp, int sk, float &sharpc, bool autoshar, float capradiu,  float deconvCo, float deconvLat, bool itcheck, bool showMask, float deconvgam)
+//Jacques Desmis - 
 {
     
     TMatrix wprof = ICCStore::getInstance()->workingSpaceMatrix(params->icm.workingProfile);
@@ -731,9 +741,42 @@ void ImProcFunctions::doCapture_Sharpening_SE(Imagefloat *rgb, int bfw, int bfh,
         {(float) wprof[1][0], (float) wprof[1][1], (float) wprof[1][2]},
         {(float) wprof[2][0], (float) wprof[2][1], (float) wprof[2][2]}
     };
-
-
-
+        //tempory variables for gamma
+        array2D<float> redgam (bfw, bfh);
+        array2D<float> greengam(bfw, bfh);
+        array2D<float> bluegam(bfw, bfh);
+        
+#ifdef _OPENMP
+            #pragma omp parallel for schedule(dynamic,16) if (multiThread)
+#endif
+        for (int i = 0; i < bfh; ++i) {//save temp gamma
+            for (int j = 0; j < bfw; ++j) {
+                redgam[i][j] = rgb->r(i,j);
+                greengam[i][j] = rgb->g(i,j);
+                bluegam[i][j] = rgb->b(i,j);
+            }
+        }
+        //calculate gamma as it was with Lab calculation but in RGB mode to have the same behavior as other gamma in Selective Editing
+        float gamma1 = deconvgam;
+        rtengine::GammaValues g_a; //gamma parameters
+        double pwr1 = 1.0 / (double) gamma1;//default 3.0 - gamma Lab
+        double ts1 = 9.03296;//always the same 'slope' in the extreme shadows - slope Lab
+        rtengine::Color::calcGamma(pwr1, ts1, g_a); // call to calcGamma with selected gamma and slope
+        
+        if (gamma1 != 1.f) {//calculate new values with gamma for R, G, B of course with 65535 instead of 32768
+#ifdef _OPENMP
+            #   pragma omp parallel for schedule(dynamic,16) if (multiThread)
+#endif
+            for (int i = 0; i < bfh; ++i) {
+                for (int j = 0; j < bfw; ++j) {
+                    redgam[i][j] = 65535.f * igammalog2(redgam[i][j] / 65535.f, gamma1, ts1, g_a[2], g_a[4]);
+                    greengam[i][j] = 65535.f * igammalog2(greengam[i][j] / 65535.f, gamma1, ts1, g_a[2], g_a[4]);
+                    bluegam[i][j] = 65535.f * igammalog2(bluegam[i][j] / 65535.f, gamma1, ts1, g_a[2], g_a[4]);
+                }
+            }
+        }
+        
+        
     float s_scale = std::sqrt(sk);
    
     if (showMask) {
@@ -747,19 +790,19 @@ void ImProcFunctions::doCapture_Sharpening_SE(Imagefloat *rgb, int bfw, int bfh,
             #pragma omp parallel for schedule(dynamic,16) if (multiThread)
 #endif
 
-    for (int i = 0; i < bfh; ++i) {
-        for (int j = 0; j < bfw; ++j) {
-            redVals[i][j] = rgb->r(i,j);
-            greenVals[i][j] = rgb->g(i,j);
-            blueVals[i][j] = rgb->b(i,j);
+        for (int i = 0; i < bfh; ++i) {
+            for (int j = 0; j < bfw; ++j) {
+                redVals[i][j] = redgam[i][j];
+                greenVals[i][j] = greengam[i][j];
+                blueVals[i][j] = bluegam[i][j];
+            }
         }
-    }
         
         array2D<float> Y (bfw, bfh);
         float contrastsh = pow_F(sharpc / 100.f, 1.f) * s_scale;
         
          for (int i = 0; i < bfh; ++i) {
-            Color::RGB2L(redVals[i], greenVals[i], blueVals[i], Y[i], wip, bfw);
+            Color::RGB2L(redVals[i], greenVals[i], blueVals[i], Y[i], wip, bfw);//mask values with gamma
         }
         float reducautocontrast = 1.f;//to take noise into account
 
@@ -773,7 +816,7 @@ void ImProcFunctions::doCapture_Sharpening_SE(Imagefloat *rgb, int bfw, int bfh,
 #endif
         for (int i = 0; i < bfh; ++i) {
             for (int j = 0; j < bfw; ++j) {
-                rgb->r(i, j)= rgb->g(i, j)= rgb->b(i, j) =  clipMask[i][j] * 65536.f;              
+                rgb->r(i, j)= rgb->g(i, j)= rgb->b(i, j) =  clipMask[i][j] * 65536.f; //same values R G B to black and white image             
             }
         }
         if (settings->verbose) {
@@ -791,11 +834,11 @@ void ImProcFunctions::doCapture_Sharpening_SE(Imagefloat *rgb, int bfw, int bfh,
 #ifdef _OPENMP
             #pragma omp parallel for schedule(dynamic,16) if (multiThread)
 #endif   
-         for (int i = 0; i < bfh; ++i) {
+         for (int i = 0; i < bfh; ++i) {//values with gamma
             for (int j = 0; j < bfw; ++j) {
-                redVal[i][j] = rgb->r(i,j);
-                greenVal[i][j] = rgb->g(i,j);
-                blueVal[i][j] = rgb->b(i,j);
+                redVal[i][j] = redgam[i][j];
+                greenVal[i][j] = greengam[i][j];
+                blueVal[i][j] = bluegam[i][j];
             }
         }
 
@@ -808,42 +851,69 @@ void ImProcFunctions::doCapture_Sharpening_SE(Imagefloat *rgb, int bfw, int bfh,
 #endif        
          for (int i = 0; i < bfh; ++i) {
             for (int j = 0; j < bfw; ++j) {
-                L[i][j] = rgb->r(i,j);
-                YOld[i][j] = rgb->g(i,j);
-                YNew[i][j] = rgb->b(i,j);
+                L[i][j] = redgam[i][j];
+                YOld[i][j] = greengam[i][j];
+                YNew[i][j] = bluegam[i][j];
             }
         }
 
 #ifdef _OPENMP
-    #pragma omp parallel for schedule(dynamic, 16)
+        #pragma omp parallel for schedule(dynamic, 16)
 #endif
-    for (int i = 0; i < bfh; ++i) {
-        Color::RGB2L(redVal[i], greenVal[i], blueVal[i], L[i], wip, bfw);
-        Color::RGB2Y(redVal[i], greenVal[i], blueVal[i], YOld[i], YNew[i], bfw);
-    }
-    float contrast = pow_F(sharpc / 100.f, 1.f) * s_scale;
-    float reducautocontrast = 1.f;//to take noise into account
+        for (int i = 0; i < bfh; ++i) {
+            Color::RGB2L(redVal[i], greenVal[i], blueVal[i], L[i], wip, bfw);
+            Color::RGB2Y(redVal[i], greenVal[i], blueVal[i], YOld[i], YNew[i], bfw);
+        }
+        float contrast = pow_F(sharpc / 100.f, 1.f) * s_scale;
+        float reducautocontrast = 1.f;//to take noise into account
 
-    buildBlendMask2(L, clipMask2, bfw, bfh, contrast, 1.f, autoshar, 2.f / s_scale, 1.f, reducautocontrast);
-    sharpc = 100.f * pow_F(contrast, 1.f) / s_scale;
+        buildBlendMask2(L, clipMask2, bfw, bfh, contrast, 1.f, autoshar, 2.f / s_scale, 1.f, reducautocontrast);
+        sharpc = 100.f * pow_F(contrast, 1.f) / s_scale;
 
-    if (settings->verbose) {
-        printf("Contrast threshold SE Captur=%f \n", (double) sharpc);
-    }
+        if (settings->verbose) {
+            printf("Contrast threshold SE Captur=%f \n", (double) sharpc);
+        }
 
-    CaptureDeconvSharpening_SE(YNew, YOld, clipMask2, bfw, bfh, locp, capradiu, deconvCo, deconvLat, itcheck, 0.2, 0.9);
+        CaptureDeconvSharpening_SE(YNew, YOld, clipMask2, bfw, bfh, locp, capradiu, deconvCo, deconvLat, itcheck, 0.2, 0.9);
  
 #ifdef _OPENMP
-    #pragma omp parallel for schedule(dynamic, 16)
+        #pragma omp parallel for schedule(dynamic, 16)
 #endif
-    for (int i = 0; i < bfh; ++i) {
-        for (int j = 0; j < bfw; ++j) {
-            const float factor = YNew[i][j] / std::max(YOld[i][j], 0.00001f);
-            rgb->r(i,j)= redVal[i][j] * factor;
-            rgb->g(i,j)= greenVal[i][j] * factor;
-            rgb->b(i,j)=  blueVal[i][j] * factor;
+        for (int i = 0; i < bfh; ++i) {
+            for (int j = 0; j < bfw; ++j) {
+                const float factor = YNew[i][j] / std::max(YOld[i][j], 0.00001f);
+                redgam[i][j] = redVal[i][j] * factor;
+                greengam[i][j] = greenVal[i][j] * factor;
+                bluegam[i][j] = blueVal[i][j] * factor;
+            }
         }
-    }
+    
+        if (gamma1 != 1.f) {//inverse gamma 
+#ifdef _OPENMP
+        #pragma omp parallel for schedule(dynamic,16) if (multiThread)
+#endif
+            for (int i = 0; i < bfh; ++i) {
+                for (int j = 0; j < bfw; ++j) {
+                    redgam[i][j] = 65535.f * gammalog2(redgam[i][j] / 65535.f, gamma1, ts1, g_a[3], g_a[4]);
+                    greengam[i][j] = 65535.f * gammalog2(greengam[i][j] / 65535.f, gamma1, ts1, g_a[3], g_a[4]);
+                    bluegam[i][j] = 65535.f * gammalog2(bluegam[i][j] / 65535.f, gamma1, ts1, g_a[3], g_a[4]);
+                }
+            }
+        }
+
+#ifdef _OPENMP
+         #pragma omp parallel for schedule(dynamic,16) if (multiThread)
+#endif               
+        for (int i = 0; i < bfh; ++i) {
+            for (int j = 0; j < bfw; ++j) {
+                rgb->r(i,j) = redgam[i][j]; 
+                rgb->g(i,j) = greengam[i][j]; 
+                rgb->b(i,j) = bluegam[i][j]; 
+            }
+        }
+                
+       
+    
 }
 }
 

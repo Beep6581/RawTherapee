@@ -1743,6 +1743,7 @@ void ParamsEdited::initFrom(const std::vector<rtengine::procparams::ProcParams>&
                 locallab.spots.at(j).deconvCoBoost = locallab.spots.at(j).deconvCoBoost && pSpot.deconvCoBoost == otherSpot.deconvCoBoost;
                 locallab.spots.at(j).deconvCoProt = locallab.spots.at(j).deconvCoProt && pSpot.deconvCoProt == otherSpot.deconvCoProt;
                 locallab.spots.at(j).deconvCoLat = locallab.spots.at(j).deconvCoLat && pSpot.deconvCoLat == otherSpot.deconvCoLat;
+                locallab.spots.at(j).deconvCogam = locallab.spots.at(j).deconvCogam && pSpot.deconvCogam == otherSpot.deconvCogam;
                 locallab.spots.at(j).reparsha = locallab.spots.at(j).reparsha && pSpot.reparsha == otherSpot.reparsha;
 
                 // Local Contrast
@@ -5651,6 +5652,10 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
             toEdit.locallab.spots.at(i).deconvCoLat = mods.locallab.spots.at(i).deconvCoLat;
         }
 
+        if (locallab.spots.at(i).deconvCogam) {
+            toEdit.locallab.spots.at(i).deconvCogam = mods.locallab.spots.at(i).deconvCogam;
+        }
+
         if (locallab.spots.at(i).reparsha) {
             toEdit.locallab.spots.at(i).reparsha = mods.locallab.spots.at(i).reparsha;
         }
@@ -8958,6 +8963,7 @@ LocallabParamsEdited::LocallabSpotEdited::LocallabSpotEdited(bool v) :
     deconvCoBoost(v),
     deconvCoProt(v),
     deconvCoLat(v),
+    deconvCogam(v),
     reparsha(v),
     // Local Contrast
     visicontrast(v),
@@ -9786,6 +9792,7 @@ void LocallabParamsEdited::LocallabSpotEdited::set(bool v)
     deconvCoBoost = v;
     deconvCoProt = v;
     deconvCoLat = v;
+    deconvCogam = v;
     reparsha = v;
 
     // Local Contrast

@@ -1044,14 +1044,13 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                     if(params->pdsharpening.enabled) {// reduce value if Capture Sharpening RAW used
                         kradreduc = 0.9f;
                     }
-                    if (shar[sp] && autoradius[sp]){
+                    if (shar[sp] && autoradius[sp]){//calculate auto radius deconvolution.
                         float rad = -1.f;
                         if (imgsrc->getDeconvAutoRadius_capturesharpening_SE(&rad)) {//To call Capture Sharpening from Selective Editing
                             caprad[sp] = kradreduc * rad;
                         } else {
                             rad = -1.f;
                         }
-                      //   printf("capradius=%f \n", (double) rad);
                        
                     }
                         params->locallab.spots.at(sp).capradius = caprad[sp];

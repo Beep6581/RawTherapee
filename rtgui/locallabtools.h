@@ -1301,6 +1301,7 @@ private:
     Adjuster* const deconvCoBoost;
     Adjuster* const deconvCoProt;
     Adjuster* const deconvCoLat;
+    Adjuster* const deconvCogam;
     Gtk::CheckButton* const itercheck;
     Gtk::Frame* const capFrame;
     Gtk::Frame* const rlFrame;
@@ -1328,6 +1329,7 @@ private:
     rtengine::ProcEvent Evlocallababdconvlat;
     rtengine::ProcEvent Evlocallababsharshow;
     rtengine::ProcEvent Evlocallababitercheck;
+    rtengine::ProcEvent Evlocallababdconvgam;
 
     sigc::connection inversshaConn, showmasksharMethodConn, methodcapConn, sharshowConn, itercheckConn;
 

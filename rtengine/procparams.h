@@ -1541,6 +1541,7 @@ struct LocallabParams {
         double deconvCoBoost;                
         double deconvCoProt;                
         double deconvCoLat;                
+        double deconvCogam;                
         double reparsha;                
 
         // Local Contrast
