@@ -19710,7 +19710,7 @@ void ImProcFunctions::Lab_Local(
         }
     }
 
-//Sharp methodcap Capture
+//Sharp methodcap Capture deconvolution
     bool cap = params->locallab.spots.at(sp).methodcap == "cap";
 
     if (!lp.invshar && cap && lp.sharpena) {//  &&  lp.fullim >= 2) {//provisory spot normal not possible (allocation memory ??)

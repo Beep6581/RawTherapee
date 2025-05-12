@@ -756,11 +756,12 @@ void ImProcFunctions::doCapture_Sharpening_SE(Imagefloat *rgb, int bfw, int bfh,
                 bluegam[i][j] = rgb->b(i,j);
             }
         }
-        //calculate gamma as it was with Lab calculation but in RGB mode to have the same behavior as other gamma in Selective Editing
+        //calculate gamma as it was with Lab calculation but in RGB linear mode to have the same 'behavior' as other gamma in Selective Editing
+        //This is actually not of major importance, the main thing is to use the inverse function afterwards
         float gamma1 = deconvgam;
         rtengine::GammaValues g_a; //gamma parameters
         double pwr1 = 1.0 / (double) gamma1;//default 3.0 - gamma Lab
-        double ts1 = 9.03296;//always the same 'slope' in the extreme shadows - slope Lab
+        double ts1 = 9.03296;//always the same 'slope' in the extreme shadows - slope Lab , I can choose also 5 or 13!
         rtengine::Color::calcGamma(pwr1, ts1, g_a); // call to calcGamma with selected gamma and slope
         
         if (gamma1 != 1.f) {//calculate new values with gamma for R, G, B of course with 65535 instead of 32768
@@ -806,7 +807,7 @@ void ImProcFunctions::doCapture_Sharpening_SE(Imagefloat *rgb, int bfw, int bfh,
         }
         float reducautocontrast = 1.f;//to take noise into account
 
-        buildBlendMask2(Y, clipMask, bfw, bfh, contrastsh, 1.f, autoshar, 2.f / s_scale, 1.f, reducautocontrast);
+        buildBlendMask2(Y, clipMask, bfw, bfh, contrastsh, 1.f, autoshar, 2.f / s_scale, 1.f, reducautocontrast);//build with gamma if need
 
         sharpc = 100.f * pow_F(contrastsh, 1.f)/ s_scale;
        
@@ -816,7 +817,7 @@ void ImProcFunctions::doCapture_Sharpening_SE(Imagefloat *rgb, int bfw, int bfh,
 #endif
         for (int i = 0; i < bfh; ++i) {
             for (int j = 0; j < bfw; ++j) {
-                rgb->r(i, j)= rgb->g(i, j)= rgb->b(i, j) =  clipMask[i][j] * 65536.f; //same values R G B to black and white image             
+                rgb->r(i, j) = rgb->g(i, j) = rgb->b(i, j) =  clipMask[i][j] * 65536.f; //same values R G B to black and white image, just for mask             
             }
         }
         if (settings->verbose) {
@@ -874,7 +875,7 @@ void ImProcFunctions::doCapture_Sharpening_SE(Imagefloat *rgb, int bfw, int bfh,
             printf("Contrast threshold SE Captur=%f \n", (double) sharpc);
         }
 
-        CaptureDeconvSharpening_SE(YNew, YOld, clipMask2, bfw, bfh, locp, capradiu, deconvCo, deconvLat, itcheck, 0.2, 0.9);
+        CaptureDeconvSharpening_SE(YNew, YOld, clipMask2, bfw, bfh, locp, capradiu, deconvCo, deconvLat, itcheck, 0.2, 0.9);// 0.2 and 0.9 not used but in case.
  
 #ifdef _OPENMP
         #pragma omp parallel for schedule(dynamic, 16)
@@ -910,10 +911,7 @@ void ImProcFunctions::doCapture_Sharpening_SE(Imagefloat *rgb, int bfw, int bfh,
                 rgb->g(i,j) = greengam[i][j]; 
                 rgb->b(i,j) = bluegam[i][j]; 
             }
-        }
-                
-       
-    
+        } 
 }
 }
 
