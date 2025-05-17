@@ -36,6 +36,9 @@ jobs:
            echo "----====Pourage====----"
            cat depslog | grep Pouring
            zsh -c 'echo "Completed installation of dependencies in $(printf "%0.2f" $(($[$(date +%s)-$(cat build/stamp)]/$((60.))))) minutes"' >> $GITHUB_STEP_SUMMARY
+      - name: Update GDK pixbuf cache
+        run: |
+            /usr/local/Cellar/gdk-pixbuf/2.42.12_1/bin/gdk-pixbuf-query-loaders --update-cache
       - name: Configure build system
         env:
           IDENT: '-'
