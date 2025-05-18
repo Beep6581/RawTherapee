@@ -265,9 +265,6 @@ for lib in "${LIB}"/*; do
     install_name_tool -change libfreetype.6.dylib "${LIB}"/libfreetype.6.dylib "${lib}" 2>/dev/null
 done
 
-# Change a relative path for the SVG pixbufloader
-sudo install_name_tool -change @rpath/librsvg-2.2.dylib /Applications/RawTherapee.app/Contents/Frameworks/librsvg-2.2.dylib RawTherapee.app/Contents/Frameworks/libpixbufloader_svg.so
-
 # Build GTK3 pixbuf loaders & immodules database
 msg "Build GTK3 databases:"
 mkdir -p "${RESOURCES}"/share/gtk-3.0
@@ -278,6 +275,9 @@ sed -i.bak -e "s|${PWD}/RawTherapee.app/Contents/|/Applications/RawTherapee.app/
 sed -i.bak -e "s|${LOCAL_PREFIX}/share/|/Applications/RawTherapee.app/Contents/Resources/share/|" "${ETC}"/gtk-3.0/gtk.immodules
 sed -i.bak -e "s|${LOCAL_PREFIX}/|/Applications/RawTherapee.app/Contents/Frameworks/|" "${ETC}"/gtk-3.0/gtk.immodules
 rm "${ETC}"/*/*.bak
+
+# Change a relative path for the SVG pixbufloader
+sudo install_name_tool -change @rpath/librsvg-2.2.dylib /Applications/RawTherapee.app/Contents/Frameworks/librsvg-2.2.dylib RawTherapee.app/Contents/Frameworks/libpixbufloader_svg.so
 
 # Install names
 ModifyInstallNames 2>/dev/null
