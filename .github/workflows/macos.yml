@@ -31,18 +31,11 @@ jobs:
            mkdir build
            date +%s > build/stamp
            brew uninstall --ignore-dependencies libtiff
-           brew install -v imagemagick create-dmg libtiff gtk+3 gtkmm3 gtk-mac-integration adwaita-icon-theme libsigc++@2 little-cms2 libiptcdata fftw lensfun expat pkgconfig llvm shared-mime-info exiv2 jpeg-xl libomp automake libtool | tee -a depslog
+           brew install imagemagick create-dmg libtiff gtk+3 gtkmm3 gtk-mac-integration adwaita-icon-theme libsigc++@2 little-cms2 libiptcdata fftw lensfun expat pkgconfig llvm shared-mime-info exiv2 jpeg-xl libomp automake libtool | tee -a depslog
            date -u
            echo "----====Pourage====----"
            cat depslog | grep Pouring
            zsh -c 'echo "Completed installation of dependencies in $(printf "%0.2f" $(($[$(date +%s)-$(cat build/stamp)]/$((60.))))) minutes"' >> $GITHUB_STEP_SUMMARY
-      - name: Update GDK pixbuf cache
-        run: |
-            echo /usr/local/lib/gdk-pixbuf-2.0/2.10.0/loaders/*
-            echo "${GDK_PIXBUF_MODULEDIR}"
-            export GDK_PIXBUF_MODULEDIR="/usr/local/lib/gdk-pixbuf-2.0/2.10.0/loaders/"
-            /usr/local/Cellar/gdk-pixbuf/2.42.12_1/bin/gdk-pixbuf-query-loaders
-            /usr/local/Cellar/gdk-pixbuf/2.42.12_1/bin/gdk-pixbuf-query-loaders --update-cache
       - name: Configure build system
         env:
           IDENT: '-'
@@ -161,18 +154,11 @@ jobs:
            mkdir build
            date +%s > build/stamp
            brew uninstall --ignore-dependencies libtiff
-           brew install -v imagemagick create-dmg libtiff gtk+3 gtkmm3 gtk-mac-integration adwaita-icon-theme libsigc++@2 little-cms2 libiptcdata fftw lensfun expat pkgconfig llvm shared-mime-info exiv2 jpeg-xl libomp automake libtool | tee -a depslog
+           brew install imagemagick create-dmg libtiff gtk+3 gtkmm3 gtk-mac-integration adwaita-icon-theme libsigc++@2 little-cms2 libiptcdata fftw lensfun expat pkgconfig llvm shared-mime-info exiv2 jpeg-xl libomp automake libtool | tee -a depslog
            date -u
            echo "----====Pourage====----"
            cat depslog | grep Pouring
            zsh -c 'echo "Completed installation of dependencies in $(printf "%0.2f" $(($[$(date +%s)-$(cat build/stamp)]/$((60.))))) minutes"' >> $GITHUB_STEP_SUMMARY
-      - name: Update GDK pixbuf cache
-        run: |
-            echo /opt/homebrew/lib/gdk-pixbuf-2.0/2.10.0/loaders/*
-            echo "${GDK_PIXBUF_MODULEDIR}"
-            export GDK_PIXBUF_MODULEDIR="/opt/homebrew/lib/gdk-pixbuf-2.0/2.10.0/loaders"
-            /opt/homebrew/Cellar/gdk-pixbuf/2.42.12_1/bin/gdk-pixbuf-query-loaders
-            /opt/homebrew/Cellar/gdk-pixbuf/2.42.12_1/bin/gdk-pixbuf-query-loaders --update-cache
       - name: Configure build system
         env:
           IDENT: '-'
