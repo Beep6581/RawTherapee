@@ -43,7 +43,6 @@ jobs:
             export GDK_PIXBUF_MODULEDIR="/usr/local/lib/gdk-pixbuf-2.0/2.10.0/loaders/"
             /usr/local/Cellar/gdk-pixbuf/2.42.12_1/bin/gdk-pixbuf-query-loaders
             /usr/local/Cellar/gdk-pixbuf/2.42.12_1/bin/gdk-pixbuf-query-loaders --update-cache
-            find / -name 'libpixbufloader_svg.so'
       - name: Configure build system
         env:
           IDENT: '-'
@@ -174,7 +173,6 @@ jobs:
             export GDK_PIXBUF_MODULEDIR="/opt/homebrew/lib/gdk-pixbuf-2.0/2.10.0/loaders"
             /opt/homebrew/Cellar/gdk-pixbuf/2.42.12_1/bin/gdk-pixbuf-query-loaders
             /opt/homebrew/Cellar/gdk-pixbuf/2.42.12_1/bin/gdk-pixbuf-query-loaders --update-cache
-            find / -name 'libpixbufloader_svg.so'
       - name: Configure build system
         env:
           IDENT: '-'
