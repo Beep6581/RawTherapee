@@ -38,6 +38,9 @@ jobs:
            zsh -c 'echo "Completed installation of dependencies in $(printf "%0.2f" $(($[$(date +%s)-$(cat build/stamp)]/$((60.))))) minutes"' >> $GITHUB_STEP_SUMMARY
       - name: Update GDK pixbuf cache
         run: |
+            echo /usr/local/lib/gdk-pixbuf-2.0/2.10.0/loaders/*
+            echo "${GDK_PIXBUF_MODULEDIR}"
+            export GDK_PIXBUF_MODULEDIR="/usr/local/lib/gdk-pixbuf-2.0/2.10.0/loaders/"
             /usr/local/Cellar/gdk-pixbuf/2.42.12_1/bin/gdk-pixbuf-query-loaders
             /usr/local/Cellar/gdk-pixbuf/2.42.12_1/bin/gdk-pixbuf-query-loaders --update-cache
             find / -name 'libpixbufloader_svg.so'
@@ -166,6 +169,9 @@ jobs:
            zsh -c 'echo "Completed installation of dependencies in $(printf "%0.2f" $(($[$(date +%s)-$(cat build/stamp)]/$((60.))))) minutes"' >> $GITHUB_STEP_SUMMARY
       - name: Update GDK pixbuf cache
         run: |
+            echo /opt/homebrew/lib/gdk-pixbuf-2.0/2.10.0/loaders/*
+            echo "${GDK_PIXBUF_MODULEDIR}"
+            export GDK_PIXBUF_MODULEDIR="/opt/homebrew/lib/gdk-pixbuf-2.0/2.10.0/loaders"
             /opt/homebrew/Cellar/gdk-pixbuf/2.42.12_1/bin/gdk-pixbuf-query-loaders
             /opt/homebrew/Cellar/gdk-pixbuf/2.42.12_1/bin/gdk-pixbuf-query-loaders --update-cache
             find / -name 'libpixbufloader_svg.so'
