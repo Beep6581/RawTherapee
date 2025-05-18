@@ -118,7 +118,8 @@ jobs:
         run: |
           cd build
           sudo cp -R RawTherapee.app /Applications
-          /Applications/RawTherapee.app/Contents/MacOS/RawTherapee > log.txt 2>&1 && echo Launch successful || echo Launch failed
+          /Applications/RawTherapee.app/Contents/MacOS/RawTherapee > log.txt 2>&1 && echo Launch successful || echo Launch failed &
+          sleep 5
           cat log.txt
           open -a /Applications/RawTherapee.app
           sleep 5
@@ -243,7 +244,8 @@ jobs:
         run: |
           cd build
           sudo cp -R RawTherapee.app /Applications
-          /Applications/RawTherapee.app/Contents/MacOS/RawTherapee > log.txt 2>&1 && echo Launch successful || echo Launch failed
+          /Applications/RawTherapee.app/Contents/MacOS/RawTherapee > log.txt 2>&1 && echo Launch successful || echo Launch failed &
+          sleep 5
           cat log.txt
           open -a /Applications/RawTherapee.app
           sleep 5
