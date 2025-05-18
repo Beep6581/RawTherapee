@@ -118,6 +118,8 @@ jobs:
         run: |
           cd build
           sudo cp -R RawTherapee.app /Applications
+          /Applications/RawTherapee.app/Contents/MacOS/RawTherapee > log.txt 2>&1 && echo Launch successful || echo Launch failed
+          cat log.txt
           open -a /Applications/RawTherapee.app
           sleep 5
           echo "Applications running: $(osascript -e 'tell application "Finder" to get the name of every process whose visible is true')" >> $GITHUB_STEP_SUMMARY
@@ -241,6 +243,8 @@ jobs:
         run: |
           cd build
           sudo cp -R RawTherapee.app /Applications
+          /Applications/RawTherapee.app/Contents/MacOS/RawTherapee > log.txt 2>&1 && echo Launch successful || echo Launch failed
+          cat log.txt
           open -a /Applications/RawTherapee.app
           sleep 5
           echo "Applications running: $(osascript -e 'tell application "Finder" to get the name of every process whose visible is true')" >> $GITHUB_STEP_SUMMARY
