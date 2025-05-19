@@ -52,7 +52,7 @@
 #include "rawimagesource.h"
 #include "rtengine.h"
 #include "shmap.h"
-#define BENCHMARK
+//#define BENCHMARK
 #include "StopWatch.h"
 #include "guidedfilter.h"
 #include "boxblur.h"
@@ -188,7 +188,7 @@ namespace rtengine
 
 void RawImageSource::MSR(float** luminance, float** originalLuminance, float **exLuminance, const LUTf& mapcurve, bool mapcontlutili, int width, int height, const procparams::RetinexParams &deh, const RetinextransmissionCurve & dehatransmissionCurve, const RetinexgaintransmissionCurve & dehagaintransmissionCurve, float &minCD, float &maxCD, float &mini, float &maxi, float &Tmean, float &Tsigma, float &Tmin, float &Tmax)
 {
-    BENCHFUN
+   // BENCHFUN
 
     if (!deh.enabled) {
         return;
@@ -1161,7 +1161,7 @@ void ImProcFunctions::MSRLocal(int call, int sp, bool fftw, int lum, float** red
                                float maxdE, float mindE, float maxdElim,  float mindElim, float iterat, float limscope, int scope, float balance, float balanceh, float lumask)
 
 {
-    BENCHFUN
+    //BENCHFUN
 
     float mean, stddv, maxtr, mintr;
     mean = 0.f;

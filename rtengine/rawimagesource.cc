@@ -47,7 +47,7 @@
 #include "lensmetadata.h"
 #include "rtgui/options.h"
 
-#define BENCHMARK
+//#define BENCHMARK
 #include "StopWatch.h"
 
 #ifdef _OPENMP
@@ -8545,7 +8545,7 @@ void RawImageSource::applyDngGainMap(const float black[4], const std::vector<Gai
     Copyright (c) Ingo Weyrich  2020 (heckflosse67@gmx.de)
 */
 void RawImageSource::getMinValsBayer(const array2D<float> &rawData, bool zeroIsBad) {
-BENCHFUN
+//BENCHFUN
     if (!zeroIsBad) {
 #ifdef _OPENMP
         #pragma omp parallel for reduction(min:minVals)
