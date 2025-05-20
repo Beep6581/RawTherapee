@@ -3973,7 +3973,7 @@ TP_LOCAL_WIDTH_L;Left
 TP_LOCRETI_METHOD_TOOLTIP;Low = Reinforce low light.\nUniform = Evenly distributed.\nHigh = Reinforce strong light.
 TP_METADATA_EDIT;Apply modifications
 TP_METADATA_MODE;Metadata copy mode
-TP_METADATA_STRIP;Strip al"l metadata
+TP_METADATA_STRIP;Strip all metadata
 TP_METADATA_TUNNEL;Copy unchanged
 TP_NEUTRAL;Reset
 TP_NEUTRAL_TOOLTIP;Resets exposure sliders to neutral values.\nApplies to the same controls that Auto Levels applies to, regardless of whether you used Auto Levels or not.

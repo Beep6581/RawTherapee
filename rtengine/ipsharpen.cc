@@ -912,7 +912,7 @@ void ImProcFunctions::doCapture_Sharpening_SE(Imagefloat *rgb, int bfw, int bfh,
                 rgb->b(i,j) = bluegam[i][j]; 
             }
         } 
-}
+    }
 }
 
 void ImProcFunctions::sharpening (LabImage* lab, const procparams::SharpeningParams &sharpenParam, bool showMask)
