@@ -8443,7 +8443,7 @@ void LocallabBlur::updateAdviceTooltips(const bool showTooltips)
         denoFrame->set_tooltip_text(M("TP_LOCALLAB_DENORADIUS_TOOLTIP"));
         lockmadl->set_tooltip_text(M("TP_LOCALLAB_LOCKMADL_TOOLTIP"));
         madllock->set_tooltip_text(M("TP_LOCALLAB_LOCKMADL2_TOOLTIP"));
-
+        madlFrame->set_tooltip_text(M("TP_LOCALLAB_LOCKMADLFRA_TOOLTIP"));
     } else {
 
         expblnoise->set_tooltip_markup("");
@@ -8519,6 +8519,7 @@ void LocallabBlur::updateAdviceTooltips(const bool showTooltips)
         expdenoisenl->set_tooltip_markup("");
         lockmadl->set_tooltip_text("");
         madllock->set_tooltip_text("");
+        madlFrame->set_tooltip_text("");
 
     }
 }
@@ -8873,7 +8874,6 @@ void LocallabBlur::read(const rtengine::procparams::ProcParams* pp, const Params
 
     // Enable all listeners
     enableListener();
-    //madlFrame->hide();
 
     // Update GUI according to complexity mode
     updateGUIToMode(static_cast<modeType>(complexity->get_active_row_number()));
@@ -9743,6 +9743,7 @@ void LocallabBlur::convertParamToNormal()
     lnoiselow->setValue(defSpot.lnoiselow);
     nlrad->setValue(defSpot.nlrad);
     noisegam->setValue(defSpot.noisegam);
+    madllock->set_active(defSpot.madllock);
 
     // Enable all listeners
     enableListener();
@@ -9860,7 +9861,7 @@ void LocallabBlur::updateGUIToMode(const modeType new_type)
             nlgam->show();
             scalegr->show();
             noisegam->hide();
-            madlFrame->show();
+            madlFrame->hide();
 
 
           //  if (blMethod->get_active_row_number() == 2) {

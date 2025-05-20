@@ -12358,7 +12358,7 @@ void ImProcFunctions::DeNoise(int sp, int call, int aut,  bool noiscfactiv, cons
                     if (settings->verbose) {
                         for (int lvl = 0; lvl < levred; lvl++) {
                             for (int dir = 1; dir < 4; dir++) {
-                                 printf("Preview level=%i dir=%i madL=%f\n", lvl, dir-1, (double) madL[lvl][dir-1]);                               
+                                 printf("Preview level=%i dir=%i madL=%6.0f\n", lvl, dir-1, (double) madL[lvl][dir-1]);                               
                             }
                         }                        
                     }
@@ -13305,7 +13305,7 @@ void ImProcFunctions::DeNoise(int sp, int call, int aut,  bool noiscfactiv, cons
                     if (settings->verbose) {
                         for (int lvl = 0; lvl < levred; lvl++) {
                             for (int dir = 1; dir < 4; dir++) {
-                                 printf("Output level=%i dir=%i madL=%f\n", lvl, dir-1, (double) madL[lvl][dir-1]);                               
+                                 printf("Output level=%i dir=%i madL=%6.0f\n", lvl, dir-1, (double) madL[lvl][dir-1]);                               
                             }
                         }                        
                     }
