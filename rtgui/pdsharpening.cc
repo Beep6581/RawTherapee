@@ -47,6 +47,7 @@ PdSharpening::PdSharpening() :
     EvPdShrAutoContrast = m->newEvent(CAPTURESHARPEN, "HISTORY_MSG_PDSHARPEN_AUTO_CONTRAST");
     EvPdShrAutoRadius = m->newEvent(CAPTURESHARPEN, "HISTORY_MSG_PDSHARPEN_AUTO_RADIUS");
     EvPdShrshowcap = m->newEvent(CAPTURESHARPEN, "HISTORY_MSG_PDSHARPEN_SHOWCAP");
+    EvPdShrnoisecaptype = m->newEvent(CAPTURESHARPEN, "HISTORY_MSG_PDSHARPEN_NOISECAPTYPE");
     EvPdShrnoisecap = m->newEvent(CAPTURESHARPEN, "HISTORY_MSG_PDSHARPEN_NOISECAP");
     EvPdShrnoisecapafter = m->newEvent(CAPTURESHARPEN, "HISTORY_MSG_PDSHARPEN_NOISECAPAFTER");
     Gtk::Box* hb = Gtk::manage(new Gtk::Box());
@@ -55,20 +56,30 @@ PdSharpening::PdSharpening() :
     contrast->setAdjusterListener(this);
     contrast->addAutoButton();
     contrast->setAutoValue(true);
-    noisecap = Gtk::manage(new Adjuster(M("TP_PDSHARPENING_NOISE"), 0., 100., 1., 0.));
+    noisecap = Gtk::manage(new Adjuster(M("TP_PDSHARPENING_NOISE"), 0., 100., 0.5, 0.));
     noisecap->setAdjusterListener(this);
     noisecapafter = Gtk::manage(new Adjuster(M("TP_PDSHARPENING_NOISEAFTER"), 0., 100., 1., 0.));
     noisecapafter->setAdjusterListener(this);
     noisecapafter->set_tooltip_text(M("TP_PDSHARPENING_NOISEAFTER_TOOLTIP"));
     showcap = Gtk::manage(new CheckBox(M("TP_PDSHARPENING_SHOWCAP"), multiImage));
     showcap->setCheckBoxListener(this);
+    noisecaptype = Gtk::manage(new CheckBox(M("TP_PDSHARPENING_NOISECAPTYPE"), multiImage));
+    noisecaptype->setCheckBoxListener(this);
+    Gtk::Frame* const capFrame = Gtk::manage(new Gtk::Frame());
+    capFrame->set_label_align(0.025, 0.5);
+    ToolParamBlock* const capBox = Gtk::manage(new ToolParamBlock());
 
     pack_start(*contrast);
-    pack_start(*noisecap);
+    capBox->pack_start(*noisecap);
+    capBox->pack_start(*noisecaptype);
+    capFrame->add(*capBox);
+    pack_start(*capFrame);
+   
     pack_start(*showcap);
     contrast->show();
     noisecap->show();
     showcap->show();
+    noisecaptype->show();
     pack_start(*hb);
     contrast->set_tooltip_text(M("TP_PDSHARPENING_CONTRAST_TOOLTIP"));
     noisecap->set_tooltip_text(M("TP_PDSHARPENING_NOISE_TOOLTIP"));
@@ -133,6 +144,7 @@ void PdSharpening::read(const ProcParams* pp, const ParamsEdited* pedited)
         diter->setEditedState(pedited->pdsharpening.deconviter ? Edited : UnEdited);
         itercheck->setEdited(pedited->pdsharpening.deconvitercheck);
         showcap->setEdited(pedited->pdsharpening.showcap);
+        noisecaptype->setEdited(pedited->pdsharpening.noisecaptype);
 
         set_inconsistent(multiImage && !pedited->pdsharpening.enabled);
     }
@@ -142,7 +154,7 @@ void PdSharpening::read(const ProcParams* pp, const ParamsEdited* pedited)
     contrast->setValue(pp->pdsharpening.contrast);
     contrast->setAutoValue(pp->pdsharpening.autoContrast);
     noisecap->setValue(pp->pdsharpening.noisecap);
-    if(noisecap->getValue()> 0.) {
+    if(noisecap->getValue()>= 0.) {
         noisecapafter->set_sensitive(true);
     } else {
         noisecapafter->set_sensitive(false);               
@@ -155,6 +167,7 @@ void PdSharpening::read(const ProcParams* pp, const ParamsEdited* pedited)
     diter->setValue(pp->pdsharpening.deconviter);
     itercheck->setValue(pp->pdsharpening.deconvitercheck);
     showcap->setValue(pp->pdsharpening.showcap);
+    noisecaptype->setValue(pp->pdsharpening.noisecaptype);
 
     lastAutoContrast = pp->pdsharpening.autoContrast;
     lastAutoRadius = pp->pdsharpening.autoRadius;
@@ -176,6 +189,7 @@ void PdSharpening::write(ProcParams* pp, ParamsEdited* pedited)
     pp->pdsharpening.deconviter =(int)diter->getValue();
     pp->pdsharpening.deconvitercheck = itercheck->getLastActive();
     pp->pdsharpening.showcap = showcap->getLastActive();
+    pp->pdsharpening.noisecaptype = noisecaptype->getLastActive();
 
     if (pedited) {
         pedited->pdsharpening.contrast = contrast->getEditedState();
@@ -188,6 +202,7 @@ void PdSharpening::write(ProcParams* pp, ParamsEdited* pedited)
         pedited->pdsharpening.deconviter = diter->getEditedState();
         pedited->pdsharpening.deconvitercheck = !itercheck->get_inconsistent();
         pedited->pdsharpening.showcap = !showcap->get_inconsistent();
+        pedited->pdsharpening.noisecaptype = !noisecaptype->get_inconsistent();
         pedited->pdsharpening.enabled = !get_inconsistent();
     }
 }
@@ -224,6 +239,7 @@ void PdSharpening::checkBoxToggled (CheckBox* c, CheckValue newval)
     if (listener) {
         listener->panelChanged (EvPdShrCheckIter, itercheck->getLastActive() ? M("GENERAL_ENABLED") : M("GENERAL_DISABLED"));
         listener->panelChanged (EvPdShrshowcap, showcap->getLastActive() ? M("GENERAL_ENABLED") : M("GENERAL_DISABLED"));
+        listener->panelChanged (EvPdShrnoisecaptype, noisecaptype->getLastActive() ? M("GENERAL_ENABLED") : M("GENERAL_DISABLED"));
     }
 }
 
@@ -242,7 +258,7 @@ void PdSharpening::adjusterChanged(Adjuster* a, double newval)
         if (a == contrast) {
             listener->panelChanged(EvPdShrContrast, costr);
         } else if (a == noisecap) {
-            if(noisecap->getValue()> 0.) {
+            if(noisecap->getValue()>= 0.) {
                 noisecapafter->set_sensitive(true);
             } else {
                 noisecapafter->set_sensitive(false);               

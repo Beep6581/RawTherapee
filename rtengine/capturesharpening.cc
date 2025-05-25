@@ -623,8 +623,8 @@ BENCHFUN
 
     //predoise : small median to denoise before capture sharpening : allow CS to work correctly and reduce a little the noise
     // high median acts also on chroma noise
-    //J.Desmis October 2024 - be carefull not to strong...
-    if(sharpeningParams.noisecap > 0.f) {
+    //J.Desmis October 2024 - may 2025 - be carefull not to strong...
+    if(sharpeningParams.noisecap > 0.f  && sharpeningParams.noisecaptype == false) {//median
         //I have choose median due to its low aggressiveness and for a 3x3 its speed
         float denstr = 0.01 * sharpeningParams.noisecap;
 
@@ -713,7 +713,135 @@ BENCHFUN
         delete[] mG;
         delete[] mB;
     }
-//end predenoise sharpening
+    if(sharpeningParams.noisecap > 0.f  && sharpeningParams.noisecaptype == true) {//wavelets
+        LabImage labdngpre(W, H);
+        bool memoryAllocationFailed = false;
+
+#ifdef _OPENMP
+        const int numThreads = omp_get_max_threads();
+#else
+        const int numThreads = 1;
+
+#endif
+        int levwav = 6;//128 x 128 must be enough for this usage...and no test memory allocation, we work on all image in Raw mode, probably too strong... but no problem with vari[]
+
+        const std::unique_ptr<Imagefloat> provpre(new Imagefloat(W, H));
+
+#ifdef _OPENMP
+        #pragma omp parallel for schedule(dynamic, 16)
+#endif
+        for (int i = 0; i < H; ++i) {//save values of red green blue
+            for (int j = 0; j < W; ++j) {
+                provpre->r(i, j) = redVals[i][j];
+                provpre->g(i, j) = greenVals[i][j];
+                provpre->b(i, j) = blueVals[i][j]; 
+                labdngpre.L[i][j] = provpre->g(i, j);
+                labdngpre.a[i][j] = provpre->r(i, j);
+                labdngpre.b[i][j] = provpre->b(i, j);
+            }
+        }
+        //contrary to usual practice, I do not denoise the 'a' and 'b' with a specifivc manner (or R and B) channels, but duplicate 3 times as if each channel was of the same type, as if R,G,B are "luminance"
+        wavelet_decomposition Ldecompgpre(labdngpre.L[0], labdngpre.W, labdngpre.H, levwav, 1, 1, numThreads, 8);//daublen = 8 - better moment wavelet
+        if (Ldecompgpre.memory_allocation_failed()) {
+            memoryAllocationFailed = true;
+        }
+        wavelet_decomposition Ldecomprpre(labdngpre.a[0], labdngpre.W, labdngpre.H, levwav, 1, 1, numThreads, 8);//daublen = 8 - better moment wavelet
+        if (Ldecomprpre.memory_allocation_failed()) {
+            memoryAllocationFailed = true;
+        }
+        wavelet_decomposition Ldecompbpre(labdngpre.b[0], labdngpre.W, labdngpre.H, levwav, 1, 1, numThreads, 8);//daublen = 8 - better moment wavelet
+        if (Ldecompbpre.memory_allocation_failed()) {
+            memoryAllocationFailed = true;
+        }
+        
+        float madL[10][3];
+        //but only one evaluation MAD RGB with green channel - "near luminance"
+        if (!Ldecompgpre.memory_allocation_failed()) {
+            //calculate Median absolute deviation
+            for (int lvl = 0; lvl < levwav; lvl++) {
+                for (int dir = 1; dir < 4; dir++) {
+                    int Wlvl_L = Ldecompgpre.level_W(lvl);
+                    int Hlvl_L = Ldecompgpre.level_H(lvl);
+                    const float* const* WavCoeffs_L = Ldecompgpre.level_coeffs(lvl);
+                    madL[lvl][dir - 1] = SQR(ImProcFunctions::MadRgb(WavCoeffs_L[dir], Wlvl_L * Hlvl_L));
+                }
+            }
+        }
+        if (!memoryAllocationFailed) {
+            
+            float noiseluma = sharpeningParams.noisecap; 
+            //but only one vari[] for the 3 channels
+       
+            const float noisevarL = SQR(((noiseluma + 1.f) / 125.f) * (10.f + (noiseluma + 1.f) / 25.f));
+           //evaluate noisevarL same formula as Denoise main
+            float vari[levwav];
+            for (int v = 0; v < levwav -1; v++) {
+                vari[v] = noisevarL;//same value for each level, but we can change
+            }
+            vari[0] = 0.15f * noisevarL;//empirical 'reduction' of action for level 0 2x2
+            vari[1] = 0.15f * noisevarL;//empirical 'reduction' of action for level 1 4x4
+            vari[2] = 0.15f * noisevarL;//empirical 'reduction' of action for level 2
+            vari[3] = 0.15f * noisevarL;//empirical 'reduction' of action for level 3
+            vari[4] = 0.005f * noisevarL;//empirical 'reduction' of action for level 4 very low action
+            vari[5] = 0.005f * noisevarL;//empirical 'reduction' of action for level 5 very low action
+            int edge = 6;//as maxlevels
+        
+            float* noisevarlum = new float[H * W];
+            int GW2 = (W + 1) / 2;//work on half image
+                    
+            float nvlh[13] = {1.f, 1.f, 1.f, 1.f, 1.f, 1.f, 1.f, 1.f, 1.f, 1.f, 1.f, 0.7f, 0.5f}; //high value
+            float nvll[13] = {0.1f, 0.15f, 0.2f, 0.25f, 0.3f, 0.35f, 0.4f, 0.45f, 0.7f, 0.8f, 1.f, 1.f, 1.f}; //low value
+
+            float seuillow = 4000.f;//low empirical RGB values
+            float seuilhigh = 35000.f;//high empirical RGB values
+            int noiselequal = 5;//equalizer black - white - same value for white and black
+            int i = 10 - noiselequal;
+            float ac = (nvlh[i] - nvll[i]) / (seuillow - seuilhigh);
+            float bc = nvlh[i] - seuillow * ac;
+#ifdef _OPENMP
+        #pragma omp parallel for schedule(dynamic, 16)
+#endif
+        
+                for (int ir = 0; ir < H; ir++){
+                    for (int jr = 0; jr < W; jr++) {
+                        float lN = labdngpre.L[ir][jr];
+                        //adapt noisevarlum to lN value
+                        if (lN < seuillow) {
+                            noisevarlum[(ir >> 1) * GW2 + (jr >> 1)] =  nvlh[i];
+                        } else if (lN < seuilhigh) {
+                            noisevarlum[(ir >> 1) * GW2 + (jr >> 1)] = ac * lN + bc;
+                        } else {
+                            noisevarlum[(ir >> 1) * GW2 + (jr >> 1)] =  nvll[i];
+                        }
+                    }
+                }
+                    //but only one noisevarlum for the 3 channels
+                    //3 times the same wavelet for G, R and B
+                WaveletDenoiseAllL2(Ldecompgpre, noisevarlum, madL, vari, edge, numThreads);//simplified version of WaveletDenoiseAllL
+                WaveletDenoiseAllL2(Ldecomprpre, noisevarlum, madL, vari, edge, numThreads);//simplified version of WaveletDenoiseAllL
+                WaveletDenoiseAllL2(Ldecompbpre, noisevarlum, madL, vari, edge, numThreads);//simplified version of WaveletDenoiseAllL
+                
+                
+                delete[] noisevarlum;
+                
+                Ldecompgpre.reconstruct(labdngpre.L[0]);//reconstruct channel G after wavelets
+                Ldecomprpre.reconstruct(labdngpre.a[0]);//reconstruct channel R after wavelets
+                Ldecompbpre.reconstruct(labdngpre.b[0]);//reconstruct channel B after wavelets
+                
+                    
+#ifdef _OPENMP
+        #pragma omp parallel for schedule(dynamic, 16)
+#endif                   
+            for (int i = 0; i < H; ++i) {//re active redVals blueVals greenVals with denoise and taking account mask 
+                for (int j = 0; j < W; ++j) {
+                    redVals[i][j] = labdngpre.a[i][j];
+                    greenVals[i][j] = labdngpre.L[i][j];
+                    blueVals[i][j] = labdngpre.b[i][j];
+                }
+            }
+        }  
+    }
+//end predenoise sharpening wavelet
 
     array2D<float> clipMask(W, H);
     constexpr float clipLimit = 0.95f;
@@ -869,7 +997,8 @@ BENCHFUN
         //denoise luminance in RGB mode after capture sharpening - Jacques Desmis April 2025
         //not a complete denoise, just the minimum to exploit the mask buildblendmak 
         // enable only if noisecap (denoise before capture sharpening is enable).
-        if(sharpeningParams.noisecap > 0.f){
+     //   if(sharpeningParams.noisecap > 0.f){//disabled 
+        {
             LabImage labdng(W, H);
             bool memoryAllocationFailed = false;
 

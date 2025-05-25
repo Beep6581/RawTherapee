@@ -306,6 +306,7 @@ void ParamsEdited::set(bool v)
     pdsharpening.deconvitercheck     = v;
     pdsharpening.showcap     = v;
     pdsharpening.noisecap     = v;
+    pdsharpening.noisecaptype     = v;
     pdsharpening.noisecapafter     = v;
     prsharpening.enabled            = v;
     prsharpening.contrast           = v;
@@ -1068,6 +1069,7 @@ void ParamsEdited::initFrom(const std::vector<rtengine::procparams::ProcParams>&
         pdsharpening.deconviter = pdsharpening.deconviter && p.pdsharpening.deconviter == other.pdsharpening.deconviter;
         pdsharpening.deconvitercheck = pdsharpening.deconvitercheck && p.pdsharpening.deconvitercheck == other.pdsharpening.deconvitercheck;
         pdsharpening.showcap = pdsharpening.showcap && p.pdsharpening.showcap == other.pdsharpening.showcap;
+        pdsharpening.noisecaptype = pdsharpening.noisecaptype && p.pdsharpening.noisecaptype == other.pdsharpening.noisecaptype;
         prsharpening.enabled = prsharpening.enabled && p.prsharpening.enabled == other.prsharpening.enabled;
         prsharpening.contrast = prsharpening.contrast && p.prsharpening.contrast == other.prsharpening.contrast;
         prsharpening.radius = prsharpening.radius && p.prsharpening.radius == other.prsharpening.radius;
@@ -3103,6 +3105,10 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
 
     if (pdsharpening.showcap) {
         toEdit.pdsharpening.showcap =  mods.pdsharpening.showcap;
+    }
+
+    if (pdsharpening.noisecaptype) {
+        toEdit.pdsharpening.noisecaptype =  mods.pdsharpening.noisecaptype;
     }
 
     if (prsharpening.enabled) {
@@ -10176,7 +10182,7 @@ void LocallabParamsEdited::LocallabSpotEdited::set(bool v)
 
 bool CaptureSharpeningParamsEdited::isUnchanged() const
 {
-    return enabled && contrast && autoContrast && autoRadius && deconvradius && deconvradiusOffset && deconviter && deconvitercheck  && showcap;
+    return enabled && contrast && autoContrast && autoRadius && deconvradius && deconvradiusOffset && deconviter && deconvitercheck  && showcap  && noisecaptype;
 }
 
 bool RAWParamsEdited::PreprocessWBParamsEdited::isUnchanged() const

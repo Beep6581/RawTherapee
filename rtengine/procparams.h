@@ -588,6 +588,7 @@ struct CaptureSharpeningParams {
     int            deconviter;
     bool           deconvitercheck;
     bool           showcap;
+    bool           noisecaptype;
 
     CaptureSharpeningParams();
 
