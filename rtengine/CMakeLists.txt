@@ -181,6 +181,7 @@ set(RTENGINESOURCEFILES
     simpleprocess.cc
     spot.cc
     stdimagesource.cc
+    text.c
     tmo_fattal02.cc
     utils.cc
     vng4_demosaic_RT.cc
