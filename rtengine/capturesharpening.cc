@@ -713,7 +713,8 @@ BENCHFUN
         delete[] mG;
         delete[] mB;
     }
-    if(sharpeningParams.noisecap > 0.f  && sharpeningParams.noisecaptype == true) {//wavelets
+
+    if(sharpeningParams.noisecap > 0.f  && sharpeningParams.noisecaptype == true) {//wavelets, slower
         LabImage labdngpre(W, H);
         bool memoryAllocationFailed = false;
 
@@ -723,7 +724,7 @@ BENCHFUN
         const int numThreads = 1;
 
 #endif
-        int levwav = 6;//128 x 128 must be enough for this usage...and no test memory allocation, we work on all image in Raw mode, probably too strong... but no problem with vari[]
+        int levwav = 6;//64x64 must be enough for this usage...and no test memory allocation, we work on all image in Raw mode, probably too strong... but no problem with vari[]
 
         const std::unique_ptr<Imagefloat> provpre(new Imagefloat(W, H));
 
@@ -740,7 +741,7 @@ BENCHFUN
                 labdngpre.b[i][j] = provpre->b(i, j);
             }
         }
-        //contrary to usual practice, I do not denoise the 'a' and 'b' with a specifivc manner (or R and B) channels, but duplicate 3 times as if each channel was of the same type, as if R,G,B are "luminance"
+        //contrary to usual practice, I do not denoise the 'a' and 'b' with a specific manner (or R and B) channels, but duplicate 3 times as if each channel was of the same type, as if R,G,B are "luminance"
         wavelet_decomposition Ldecompgpre(labdngpre.L[0], labdngpre.W, labdngpre.H, levwav, 1, 1, numThreads, 8);//daublen = 8 - better moment wavelet
         if (Ldecompgpre.memory_allocation_failed()) {
             memoryAllocationFailed = true;
@@ -760,7 +761,7 @@ BENCHFUN
             //calculate Median absolute deviation
             for (int lvl = 0; lvl < levwav; lvl++) {
                 for (int dir = 1; dir < 4; dir++) {
-                    int Wlvl_L = Ldecompgpre.level_W(lvl);
+                    int Wlvl_L = Ldecompgpre.level_W(lvl);//green
                     int Hlvl_L = Ldecompgpre.level_H(lvl);
                     const float* const* WavCoeffs_L = Ldecompgpre.level_coeffs(lvl);
                     madL[lvl][dir - 1] = SQR(ImProcFunctions::MadRgb(WavCoeffs_L[dir], Wlvl_L * Hlvl_L));
@@ -804,7 +805,7 @@ BENCHFUN
         
                 for (int ir = 0; ir < H; ir++){
                     for (int jr = 0; jr < W; jr++) {
-                        float lN = labdngpre.L[ir][jr];
+                        float lN = labdngpre.L[ir][jr];//green channel
                         //adapt noisevarlum to lN value
                         if (lN < seuillow) {
                             noisevarlum[(ir >> 1) * GW2 + (jr >> 1)] =  nvlh[i];
@@ -815,8 +816,8 @@ BENCHFUN
                         }
                     }
                 }
-                    //but only one noisevarlum for the 3 channels
-                    //3 times the same wavelet for G, R and B
+                //but only one noisevarlum for the 3 channels
+                //3 times the same wavelet for G, R and B
                 WaveletDenoiseAllL2(Ldecompgpre, noisevarlum, madL, vari, edge, numThreads);//simplified version of WaveletDenoiseAllL
                 WaveletDenoiseAllL2(Ldecomprpre, noisevarlum, madL, vari, edge, numThreads);//simplified version of WaveletDenoiseAllL
                 WaveletDenoiseAllL2(Ldecompbpre, noisevarlum, madL, vari, edge, numThreads);//simplified version of WaveletDenoiseAllL
@@ -997,7 +998,7 @@ BENCHFUN
         //denoise luminance in RGB mode after capture sharpening - Jacques Desmis April 2025
         //not a complete denoise, just the minimum to exploit the mask buildblendmak 
         // enable only if noisecap (denoise before capture sharpening is enable).
-     //   if(sharpeningParams.noisecap > 0.f){//disabled 
+     //   if(sharpeningParams.noisecap > 0.f){//disabled and allows to run in all cases
         {
             LabImage labdng(W, H);
             bool memoryAllocationFailed = false;
@@ -1008,7 +1009,7 @@ BENCHFUN
             const int numThreads = 1;
 
 #endif
-            int levwav = 6;//128 x 128 must be enough for this usage...and no test memory allocation, we work on all image in Raw mode!
+            int levwav = 6;//64 x 64 must be enough for this usage...and no test memory allocation, we work on all image in Raw mode!
 
             const std::unique_ptr<Imagefloat> prov1(new Imagefloat(W, H));
 
@@ -1025,7 +1026,7 @@ BENCHFUN
                     labdng.b[i][j] = prov1->b(i, j);//initialize Labdnb.b - channel blue
                 }
             }
-            //contrary to usual practice, I do not denoise the 'a' and 'b' with a specifivc manner (or R and B) channels, but duplicate 3 times as if each channel was of the same type, as if R,G,B are "luminance"
+            //contrary to usual practice, I do not denoise the 'a' and 'b' with a specific manner (or R and B) channels, but duplicate 3 times as if each channel was of the same type, as if R,G,B are "luminance"
             wavelet_decomposition Ldecompg(labdng.L[0], labdng.W, labdng.H, levwav, 1, 1, numThreads, 8);//daublen = 8 - better moment wavelet
             if (Ldecompg.memory_allocation_failed()) {
                 memoryAllocationFailed = true;
@@ -1111,7 +1112,7 @@ BENCHFUN
 #ifdef _OPENMP
                 #pragma omp parallel for schedule(dynamic,16)
 #endif
-                //uses Clipmask to only denoise flat areas
+                    //uses Clipmask to only denoise flat areas
                     for (int ir = 0; ir < H; ir++) {
                         for (int jr = 0; jr < W; jr++) {
                             labdng.L[ir][jr] = intp(clipMask[ir][jr], prov1->g(ir, jr) , labdng.L[ir][jr]);//green
