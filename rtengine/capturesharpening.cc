@@ -781,8 +781,13 @@ BENCHFUN
             }
             vari[0] = 0.15f * noisevarL;//empirical 'reduction' of action for level 0 2x2
             vari[1] = 0.15f * noisevarL;//empirical 'reduction' of action for level 1 4x4
-            vari[2] = 0.15f * noisevarL;//empirical 'reduction' of action for level 2
-            vari[3] = 0.15f * noisevarL;//empirical 'reduction' of action for level 3
+            
+            vari[2] = 0.05f * noisevarL;//empirical low 'reduction' of action for level 2
+            vari[3] = 0.05f * noisevarL;//empirical low 'reduction' of action for level 3
+            if(noiseluma > 15.f){
+                vari[2] = 0.15f * noisevarL;//empirical normal 'reduction' of action for level 2
+                vari[3] = 0.15f * noisevarL;//empirical normal 'reduction' of action for level 3
+            }
             vari[4] = 0.005f * noisevarL;//empirical 'reduction' of action for level 4 very low action
             vari[5] = 0.005f * noisevarL;//empirical 'reduction' of action for level 5 very low action
             int edge = 6;//as maxlevels
@@ -998,8 +1003,8 @@ BENCHFUN
         //denoise luminance in RGB mode after capture sharpening - Jacques Desmis April 2025
         //not a complete denoise, just the minimum to exploit the mask buildblendmak 
         // enable only if noisecap (denoise before capture sharpening is enable).
-     //   if(sharpeningParams.noisecap > 0.f){//disabled and allows to run in all cases
-        {
+        if(sharpeningParams.noisecapafter > 0.f) {
+        
             LabImage labdng(W, H);
             bool memoryAllocationFailed = false;
 
