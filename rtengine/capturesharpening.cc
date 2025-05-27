@@ -2,7 +2,7 @@
  *  This file is part of RawTherapee.
  *
  *  Copyright (c) 2019 Ingo Weyrich (heckflosse67@gmx.de)
- *  Jacques Desmis -2024 - 2025 (jdesmis@gmail.com=
+ *  Jacques Desmis -2024 - 2025 (jdesmis@gmail.com)
  *  RawTherapee is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
  *  the Free Software Foundation, either version 3 of the License, or
@@ -623,28 +623,16 @@ BENCHFUN
 
     //predoise : small median to denoise before capture sharpening : allow CS to work correctly and reduce a little the noise
     // high median acts also on chroma noise
-    //J.Desmis October 2024 - may 2025 - be carefull not to strong...
+    //J.Desmis October 2024 - May 2025 - be carefull not to strong...
     if(sharpeningParams.noisecap > 0.f  && sharpeningParams.noisecaptype == false) {//median
         //I have choose median due to its low aggressiveness and for a 3x3 its speed
         float denstr = 0.01 * sharpeningParams.noisecap;
 
-        float** tmL;
-        float** mR;
-        float** mG;
-        float** mB;
-        int wid = W;
-        int hei = H;
-        tmL = new float*[hei];
-        mR = new float*[hei];
-        mG = new float*[hei];
-        mB = new float*[hei];
-
-        for (int i = 0; i < hei; ++i) {
-            tmL[i] = new float[wid];
-            mR[i] = new float[wid];
-            mG[i] = new float[wid];
-            mB[i] = new float[wid];
-        }
+        array2D<float> tmL (W, H);
+        array2D<float> mR (W, H);
+        array2D<float> mG (W, H);
+        array2D<float> mB (W, H);
+        
 #ifdef _OPENMP
     #pragma omp parallel for schedule(dynamic, 16)
 #endif                  
@@ -699,19 +687,6 @@ BENCHFUN
                 blueVals[i][j] = intp(denstr, mB[i][j], blueVals[i][j]); 
            }
         }
-
-
-        for (int i = 0; i < hei; ++i) {
-            delete[] tmL[i];
-            delete[] mR[i];
-            delete[] mG[i];
-            delete[] mB[i];
-        }
-
-        delete[] tmL;
-        delete[] mR;
-        delete[] mG;
-        delete[] mB;
     }
 
     if(sharpeningParams.noisecap > 0.f  && sharpeningParams.noisecaptype == true) {//wavelets, slower
@@ -1001,7 +976,7 @@ BENCHFUN
     }
     
         //denoise luminance in RGB mode after capture sharpening - Jacques Desmis April 2025
-        //not a complete denoise, just the minimum to exploit the mask buildblendmak 
+        // not a complete denoise, just the minimum to exploit the mask buildblendmak 
         // enable only if noisecap (denoise before capture sharpening is enable).
         if(sharpeningParams.noisecapafter > 0.f) {
         
@@ -1026,9 +1001,9 @@ BENCHFUN
                     prov1->r(i, j) = red[i][j];
                     prov1->g(i, j) = green[i][j];
                     prov1->b(i, j) = blue[i][j]; 
-                    labdng.L[i][j] = prov1->g(i, j);//initialize Labdng.L - channel green "near" Luminance
-                    labdng.a[i][j] = prov1->r(i, j);//initialize Labdng.a - channel red
-                    labdng.b[i][j] = prov1->b(i, j);//initialize Labdnb.b - channel blue
+                    labdng.L[i][j] = prov1->g(i, j);//initialize labdng.L - channel green "near" Luminance
+                    labdng.a[i][j] = prov1->r(i, j);//initialize labdng.a - channel red
+                    labdng.b[i][j] = prov1->b(i, j);//initialize labdnb.b - channel blue
                 }
             }
             //contrary to usual practice, I do not denoise the 'a' and 'b' with a specific manner (or R and B) channels, but duplicate 3 times as if each channel was of the same type, as if R,G,B are "luminance"
