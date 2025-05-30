@@ -13039,24 +13039,13 @@ void ImProcFunctions::DeNoise(int sp, int call, int aut,  bool noiscfactiv, cons
                 float denstr = lp.denomas;
                
                 if(lp.denomas > 0.f) {//denoise mask
-
-                    float** tmL;
-                    float** mR;
-                    float** mG;
-                    float** mB;
-                    int wid = GW;
-                    int hei = GH;
-                    tmL = new float*[hei];
-                    mR = new float*[hei];
-                    mG = new float*[hei];
-                    mB = new float*[hei];
-
-                    for (int i = 0; i < hei; ++i) {
-                        tmL[i] = new float[wid];
-                        mR[i] = new float[wid];
-                        mG[i] = new float[wid];
-                        mB[i] = new float[wid];
-                    }
+                //here I use only median (faster), because I act only on mask and not on image.
+                    array2D<float> tmL (GW, GH);
+                    array2D<float> mR (GW, GH);
+                    array2D<float> mG (GW, GH);
+                    array2D<float> mB (GW, GH);
+                    
+                    
 #ifdef _OPENMP
     #pragma omp parallel for schedule(dynamic, 16)
 #endif                  
@@ -13116,18 +13105,6 @@ void ImProcFunctions::DeNoise(int sp, int call, int aut,  bool noiscfactiv, cons
                         }
                     }
 
-
-                    for (int i = 0; i < hei; ++i) {
-                        delete[] tmL[i];
-                        delete[] mR[i];
-                        delete[] mG[i];
-                        delete[] mB[i];
-                    }
-
-                    delete[] tmL;
-                    delete[] mR;
-                    delete[] mG;
-                    delete[] mB;
                 }
 
                 float s_scale = std::sqrt(sk);

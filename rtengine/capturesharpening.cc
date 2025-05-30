@@ -1007,15 +1007,15 @@ BENCHFUN
                 }
             }
             //contrary to usual practice, I do not denoise the 'a' and 'b' with a specific manner (or R and B) channels, but duplicate 3 times as if each channel was of the same type, as if R,G,B are "luminance"
-            wavelet_decomposition Ldecompg(labdng.L[0], labdng.W, labdng.H, levwav, 1, 1, numThreads, 8);//daublen = 8 - better moment wavelet
+            wavelet_decomposition Ldecompg(labdng.L[0], labdng.W, labdng.H, levwav, 1, 1, numThreads, 22);//daublen = 22 - maximum better moment wavelet
             if (Ldecompg.memory_allocation_failed()) {
                 memoryAllocationFailed = true;
             }
-            wavelet_decomposition Ldecompr(labdng.a[0], labdng.W, labdng.H, levwav, 1, 1, numThreads, 8);//daublen = 8 - better moment wavelet
+            wavelet_decomposition Ldecompr(labdng.a[0], labdng.W, labdng.H, levwav, 1, 1, numThreads, 22);//daublen = 22 - maximum better moment wavelet
             if (Ldecompr.memory_allocation_failed()) {
                 memoryAllocationFailed = true;
             }
-            wavelet_decomposition Ldecompb(labdng.b[0], labdng.W, labdng.H, levwav, 1, 1, numThreads, 8);//daublen = 8 - better moment wavelet
+            wavelet_decomposition Ldecompb(labdng.b[0], labdng.W, labdng.H, levwav, 1, 1, numThreads, 22);//daublen = 22 - maximum better moment wavelet
             if (Ldecompb.memory_allocation_failed()) {
                 memoryAllocationFailed = true;
             }
