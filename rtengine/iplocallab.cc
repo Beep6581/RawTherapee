@@ -13246,7 +13246,6 @@ void ImProcFunctions::DeNoise(int sp, int call, int aut,  bool noiscfactiv, cons
                     }
                 }
 
-                //   int DaubLen = 6;
 
                 int levwavL = levred;
                 int skip = 1;
