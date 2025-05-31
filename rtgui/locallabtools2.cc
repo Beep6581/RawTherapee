@@ -2129,7 +2129,7 @@ LocallabSharp::LocallabSharp():
     rlFrame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_SHARRLFRAME")))),
     sharblur(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SHARBLUR"), 0.2, 2.0, 0.05, 0.2))),
     shargam(Gtk::manage(new Adjuster(M("TP_LOCALLAB_GAMC"), 0.5, 3.0, 0.05, 1.))),
-    sharamount(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SHARAMOUNT"), 0, 100, 1, 100))),
+    sharamount(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SHARAMOUNT"), 1, 100, 1, 100))),
     shardamping(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SHARDAMPING"), 0, 100, 1, 0))),
     shariter(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SHARITER"), 5, 100, 1, 30))),
     sharradius(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SHARRADIUS"), 0.4, 2.5, 0.01, 0.75))),
@@ -2672,6 +2672,7 @@ void LocallabSharp::updateGUIToMode(const modeType new_type)
             
             sharcontrast->show();
             sharblur->hide();
+            sharamount->show();
             shardamping->hide();
             shariter->hide();
             sharFrame->hide();
@@ -2707,6 +2708,7 @@ void LocallabSharp::updateGUIToMode(const modeType new_type)
             sharcontrast->show();
             sharblur->hide();
             shargam->hide();
+            sharamount->show();
             shardamping->hide();
             shariter->hide();
             // Specific Simple mode widgets are shown in Normal mode
@@ -2772,11 +2774,26 @@ void LocallabSharp::updateGUIToMode(const modeType new_type)
                 rlFrame->show();
             }
 
+
+            if (inverssha->get_active()) {
+                shargam->hide();
+                shargam->setValue(defSpot.shargam);
+            }
     }
 }
 
 void LocallabSharp::inversshaChanged()
 {
+    const LocallabParams::LocallabSpot defSpot;
+    const int mode = complexity->get_active_row_number();    
+    if (inverssha->get_active()) {
+        shargam->hide();
+        shargam->setValue(defSpot.shargam);      
+    } else {
+        if(mode == Expert) {
+            shargam->show();
+       }
+    }
     if (isLocActivated && exp->getEnabled()) {
         if (listener) {
             if (inverssha->get_active()) {

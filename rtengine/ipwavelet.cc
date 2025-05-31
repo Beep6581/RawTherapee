@@ -50,7 +50,7 @@
 #endif
 
 #include "cplx_wavelet_dec.h"
-#define BENCHMARK
+//#define BENCHMARK
 #include "StopWatch.h"
 
 namespace rtengine

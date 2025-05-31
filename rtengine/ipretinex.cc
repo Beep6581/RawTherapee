@@ -52,7 +52,7 @@
 #include "rawimagesource.h"
 #include "rtengine.h"
 #include "shmap.h"
-#define BENCHMARK
+//#define BENCHMARK
 #include "StopWatch.h"
 #include "guidedfilter.h"
 #include "boxblur.h"

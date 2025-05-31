@@ -32,7 +32,7 @@
 #include "opthelper.h"
 #include "rawimagesource.h"
 #include "rt_math.h"
-#define BENCHMARK
+//#define BENCHMARK
 #include "StopWatch.h"
 #include "guidedfilter.h"
 #include "settings.h"

@@ -859,6 +859,16 @@ int RawImage::loadRaw(bool loadData, unsigned int imageNum, bool closeFile, Prog
             RT_blacklevel_from_constant = ThreeValBool::F;
             RT_whitelevel_from_constant = ThreeValBool::F;
 
+            if (get_colors() < 4 && get_pre_mul(3) > 0.f) {
+                if (get_pre_mul(1) != get_pre_mul(3)) {
+                    printf("Warning: Number of colors is less than 4, but pre-multiplier for color 4 is set and different from pre-multiplier for color 1\n");
+                } else {
+                    // This will be calculated later. adobe_coeff() does not
+                    // handle pre-multipliers beyond the number of colors.
+                    pre_mul[3] = 0;
+                }
+            }
+
             adobe_coeff(make, model);
 
             RT_blacklevel_from_constant = bl;

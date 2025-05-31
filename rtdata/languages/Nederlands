@@ -18,6 +18,7 @@
 #018 2024-02-18	update to RawTherapee 5.10 by Paul Matthijsse
 #019 2024-03-08 update by Paul Matthijsse
 #020 2024-08-09 update naar RawTherapee 5.11 door pm
+#021 22-04-2025 update naar RawTherapee 5.12 door pm
 #100
 #101 @LANGUAGE_DISPLAY_NAME=Nederlands
 
@@ -710,15 +711,31 @@ HISTORY_MSG_442;Retinex - Schaal
 HISTORY_MSG_443;Zwartpuntcompensatie uitvoerprofiel
 HISTORY_MSG_444;WB - Temp. afwijking
 HISTORY_MSG_445;Raw Sub-afbeelding
+HISTORY_MSG_446;--niet-gebruikt--
+HISTORY_MSG_447;--niet-gebruikt--
+HISTORY_MSG_448;--niet-gebruikt--
 HISTORY_MSG_449;PV ISO toepassen
+HISTORY_MSG_450;--niet-gebruikt--
+HISTORY_MSG_451;--niet-gebruikt--
 HISTORY_MSG_452;PV Toon beweging
 HISTORY_MSG_453;PV Toon alleen masker
+HISTORY_MSG_454;--niet-gebruikt--
+HISTORY_MSG_455;--niet-gebruikt--
+HISTORY_MSG_456;--niet-gebruikt--
 HISTORY_MSG_457;PV Controleer rood/blauw
+HISTORY_MSG_458;--niet-gebruikt--
+HISTORY_MSG_459;--niet-gebruikt--
+HISTORY_MSG_460;--niet-gebruikt--
+HISTORY_MSG_461;--niet-gebruikt--
 HISTORY_MSG_462;PV Controleer groen
+HISTORY_MSG_463;--niet-gebruikt--
 HISTORY_MSG_464;PV Vervagen bewegingsmasker
 HISTORY_MSG_465;PV Vervagen straal
+HISTORY_MSG_466;--niet-gebruikt--
+HISTORY_MSG_467;--niet-gebruikt--
 HISTORY_MSG_468;PV Vul holtes
 HISTORY_MSG_469;PV Mediaan
+HISTORY_MSG_470;--niet-gebruikt--
 HISTORY_MSG_471;PV Bewegingscorrectie
 HISTORY_MSG_472;PV Zachte overgang
 HISTORY_MSG_474;PV Balans
@@ -826,6 +843,7 @@ HISTORY_MSG_576;SB - cbdl mult
 HISTORY_MSG_577;SB - cbdl chroma
 HISTORY_MSG_578;SB - cbdl drempel
 HISTORY_MSG_579;SB - cbdl bereik
+HISTORY_MSG_580;--niet-gebruikt--
 HISTORY_MSG_581;SB - Ruisverm. lum f 1
 HISTORY_MSG_582;SB - Ruisverm. lum c
 HISTORY_MSG_583;SB - Ruisverm. lum detail
@@ -908,6 +926,7 @@ HISTORY_MSG_660;SB - CBDL klaarheid
 HISTORY_MSG_661;SB - CBDL residueel contrast
 HISTORY_MSG_662;SB - Verminder ruis lum f 0
 HISTORY_MSG_663;SB - Verminder ruis lum f 2
+HISTORY_MSG_664;--niet-gebruikt--
 HISTORY_MSG_665;SB - cbdl masker meng
 HISTORY_MSG_666;SB - cbdl masker straal
 HISTORY_MSG_667;SB - cbdl masker chroma
@@ -1388,6 +1407,16 @@ HISTORY_MSG_BLUWAV;Versterkingsrespons
 HISTORY_MSG_CATCAT;CAL - Instellingen - Modus
 HISTORY_MSG_CATCOMPLEX;CAL - Instellingen - Complexiteit
 HISTORY_MSG_CATMODEL;CAL - Instellingen - CAM
+HISTORY_MSG_CG_COLORSPACE;Kleurruimtecompressie - Doel
+HISTORY_MSG_CG_CYANLIM;Kleurruimtecompressie - Max. limieten cyaan
+HISTORY_MSG_CG_CYANTH;Kleurruimtecompressie - Drempel cyaan
+HISTORY_MSG_CG_ENABLED;Kleurruimtecompressie - Ingeschakeld
+HISTORY_MSG_CG_MAGENTALIM;Kleurruimtecompressie - Max. limieten magenta
+HISTORY_MSG_CG_MAGENTATH;Kleurruimtecompressie - Drempel magenta
+HISTORY_MSG_CG_ROLLOFF;Kleurruimtecompressie - Rolloff
+HISTORY_MSG_CG_VALUE;Kleurruimtecompressie - Kracht
+HISTORY_MSG_CG_YELLOWLIM;Kleurruimtecompressie - Max. limieten geel
+HISTORY_MSG_CG_YELLOWTH;Kleurruimtecompressie - Drempel geel
 HISTORY_MSG_CLAMPOOG;Kleuren afkappen die buiten het gamma vallen
 HISTORY_MSG_COLORTONING_LABGRID_VALUE;CT - Kleurcorrectie
 HISTORY_MSG_COLORTONING_LABREGION_AB;CT - Kleurcorrectie
@@ -1405,12 +1434,16 @@ HISTORY_MSG_COLORTONING_LABREGION_SHOWMASK;CT - toon gebiedsmasker
 HISTORY_MSG_COLORTONING_LABREGION_SLOPE;CT - hellingsgebied
 HISTORY_MSG_COMPLEX;Waveletcomplexiteit
 HISTORY_MSG_COMPLEXRETI;Retinexcomplexiteit
+HISTORY_MSG_DEHABLACK;Ontnevel Bayer zwart
+HISTORY_MSG_DEHABLACKX;Ontnevel X-Trans zwart
 HISTORY_MSG_DEHAZE_DEPTH;Ontnevelen - Diepte
 HISTORY_MSG_DEHAZE_ENABLED;Ontnevelen
 HISTORY_MSG_DEHAZE_SATURATION;Nevelvermindering - Verzadiging
 HISTORY_MSG_DEHAZE_SHOW_DEPTH_MAP;Ontnevelen - Toon dieptemap
 HISTORY_MSG_DEHAZE_STRENGTH;Ontnevelen - Sterkte
 HISTORY_MSG_DIRPYRDENOISE_GAIN;NR - Compenseer lichtheid
+HISTORY_MSG_DISTORTION_DEFISH;Ont-fisheye
+HISTORY_MSG_DISTORTION_DEFISH_FOCAL;Ont-fisheye - Brandpuntsafstand
 HISTORY_MSG_DUALDEMOSAIC_AUTO_CONTRAST;Dual-demozaïek - auto-drempel
 HISTORY_MSG_DUALDEMOSAIC_CONTRAST;Dual-demozaïek - Contrastdrempel
 HISTORY_MSG_EDGEFFECT;Randversterking respons
@@ -1420,6 +1453,24 @@ HISTORY_MSG_FILMNEGATIVE_COLORSPACE;Filmnegatief kleurruimte
 HISTORY_MSG_FILMNEGATIVE_ENABLED;Filmnegatief
 HISTORY_MSG_FILMNEGATIVE_REF_SPOT;FN - Referentie-invoer
 HISTORY_MSG_FILMNEGATIVE_VALUES;Filmnegatief waarden
+HISTORY_MSG_FRAMING_ABSOLUTE_HEIGHT;Framing - Randhoogte
+HISTORY_MSG_FRAMING_ABSOLUTE_WIDTH;Framing - Randbreedte
+HISTORY_MSG_FRAMING_ALLOW_UPSCALING;Framing - Opschalen
+HISTORY_MSG_FRAMING_ASPECT_RATIO;Framing - Beeldverhouding
+HISTORY_MSG_FRAMING_BASIS;Framing - Basis
+HISTORY_MSG_FRAMING_BORDER_BLUE;Framing - Rand (B)
+HISTORY_MSG_FRAMING_BORDER_GREEN;Framing - Rand (G)
+HISTORY_MSG_FRAMING_BORDER_RED;Framing - Rand (R)
+HISTORY_MSG_FRAMING_BORDER_SIZE;Framing - Relatieve grootte
+HISTORY_MSG_FRAMING_BORDER_SIZE_METHOD;Framing - Randgrootte methode
+HISTORY_MSG_FRAMING_ENABLED;Framing
+HISTORY_MSG_FRAMING_FRAMED_HEIGHT;Framing - Hoogte frame
+HISTORY_MSG_FRAMING_FRAMED_WIDTH;Framing - Breedte frame
+HISTORY_MSG_FRAMING_METHOD;Framing - Methode
+HISTORY_MSG_FRAMING_MIN_HEIGHT;Framing - Min. hoogte
+HISTORY_MSG_FRAMING_MIN_SIZE_ENABLED;Framing - Min. grootte
+HISTORY_MSG_FRAMING_MIN_WIDTH;Framing - Min. breedte
+HISTORY_MSG_FRAMING_ORIENTATION;Framing - Oriëntatie
 HISTORY_MSG_GAMUTMUNSEL;Gamut-Munsell
 HISTORY_MSG_HISTMATCHING;Auto-tooncurve
 HISTORY_MSG_HLBL;Kleurpropagatie - vervaging
@@ -1434,17 +1485,23 @@ HISTORY_MSG_ICM_GAMUT;Beperk kleurbereik
 HISTORY_MSG_ICM_GREX;Primair groen X
 HISTORY_MSG_ICM_GREY;Primair groen Y
 HISTORY_MSG_ICM_MIDTCIE;Middentonen
+HISTORY_MSG_ICM_OFFSTRC;Verschuiving
+HISTORY_MSG_ICM_OPACITYW;Verschuiving
 HISTORY_MSG_ICM_OUTPUT_PRIMARIES;Uitvoer - Primaire kleuren
 HISTORY_MSG_ICM_OUTPUT_TEMP;Uitvoer - ICC-v4 Lichtbron D
 HISTORY_MSG_ICM_OUTPUT_TYPE;Uitvoer - Type
 HISTORY_MSG_ICM_PRESER;Behoud neutraal
+HISTORY_MSG_ICM_PYRWAVTRC;Contrastprofiel
 HISTORY_MSG_ICM_REDX;Primair rood X
 HISTORY_MSG_ICM_REDY;Primair rood Y
 HISTORY_MSG_ICM_REFI;Kleurverfijning
+HISTORY_MSG_ICM_RESIDTRC;Residueel contrast
 HISTORY_MSG_ICM_SHIFTX;Kleurverfijning - Verschuif x
 HISTORY_MSG_ICM_SHIFTY;Kleurverfijning - Verschuif y
+HISTORY_MSG_ICM_SIGMATRC;Lokaal contrast verzwakkingsrespons
 HISTORY_MSG_ICM_SMOOTHCIE;Vloeiende hoge lichten
 HISTORY_MSG_ICM_TRCEXP;Abstract Profiel
+HISTORY_MSG_ICM_WAVEXP;Contrastversterking
 HISTORY_MSG_ICM_WORKING_GAMMA;Werkend - Gamma
 HISTORY_MSG_ICM_WORKING_ILLUM_METHOD;Methode lichtsterkte
 HISTORY_MSG_ICM_WORKING_PRIM_METHOD;Methode primaire kleuren
@@ -1457,6 +1514,7 @@ HISTORY_MSG_LOCALCONTRAST_ENABLED;Lokaal Contrast
 HISTORY_MSG_LOCALCONTRAST_LIGHTNESS;Lokaal Contrast - Licht
 HISTORY_MSG_LOCALCONTRAST_RADIUS;Lokaal Contrast - Radius
 HISTORY_MSG_LOCALLAB_TE_PIVOT;Lokaal - draaipunt Equalizer
+HISTORY_MSG_LOCAL_AVOIDNEGATIVE;Lokaal - SC - Pre-filter nul en negatieve waarden
 HISTORY_MSG_LOCAL_CIEMASK_BLURCONT;Lokaal - CIECAM masker vervaging contrast
 HISTORY_MSG_LOCAL_CIEMASK_BLURFFT;Lokaal - CIECAM masker vervaging FFTW
 HISTORY_MSG_LOCAL_CIEMASK_BLURRAD;Lokaal - CIECAM masker vervaging straal
@@ -1475,6 +1533,7 @@ HISTORY_MSG_LOCAL_CIE_BRICOMP;Lokaal - CIECAM helderheidscompressie
 HISTORY_MSG_LOCAL_CIE_BRICOMPTH;Lokaal - CIECAM drempel helderheidscompressie
 HISTORY_MSG_LOCAL_CIE_BWCIE;Lokaal - CIECAM Zwart en Wit
 HISTORY_MSG_LOCAL_CIE_CAT;Lokaal - Matrixaanpassing
+HISTORY_MSG_LOCAL_CIE_CONTSIG;Lokaal CIECAM - Sigmoïde contrast
 HISTORY_MSG_LOCAL_CIE_DETAILJZ;Lokaal - JzCzHz Lokaal contrast
 HISTORY_MSG_LOCAL_CIE_ENAMASKALL;Lokaal - CIECAM Alle maskergereedschappen
 HISTORY_MSG_LOCAL_CIE_EXPPRECAM;Lokaal - CIECAM Pre-Cam
@@ -1485,6 +1544,7 @@ HISTORY_MSG_LOCAL_CIE_GREYL;Lokaal - CIECAM groen Y
 HISTORY_MSG_LOCAL_CIE_ILL;Lokaal - CIECAM TRC Lichtbron
 HISTORY_MSG_LOCAL_CIE_LOGCIEQ;Lokaal - CIECAM Log-codering Q
 HISTORY_MSG_LOCAL_CIE_MIDT;Lokaal - CIECAM Middentonen
+HISTORY_MSG_LOCAL_CIE_NORM11;Lokaal - CIECAM Normaliseer luminantie 5.11
 HISTORY_MSG_LOCAL_CIE_PRIM;Lokaal - CIECAM TRC primaire kleuren
 HISTORY_MSG_LOCAL_CIE_REDXL;Lokaal - CIECAM rood X
 HISTORY_MSG_LOCAL_CIE_REDYL;Lokaal - CIECAM rood Y
@@ -1495,19 +1555,28 @@ HISTORY_MSG_LOCAL_CIE_SHIFTYL;Lokaal - CIECAM verschuif y
 HISTORY_MSG_LOCAL_CIE_SIG;Lokaal - Sigmoid
 HISTORY_MSG_LOCAL_CIE_SIGADAP;Lokaal - CIECAM Sigmoid aanpasbaarheid
 HISTORY_MSG_LOCAL_CIE_SIGMET;Lokaal - CIECAM Sigmoid methode
+HISTORY_MSG_LOCAL_CIE_SKEWSIG;Lokaal CIECAM - Sigmoïde scheefheid
 HISTORY_MSG_LOCAL_CIE_SLOP;Lokaal - CIECAM helling
 HISTORY_MSG_LOCAL_CIE_SLOPESMO;Lokaal - CIECAM grijsbalans
 HISTORY_MSG_LOCAL_CIE_SLOPESMOB;Lokaal - CIECAM blauwbalans
 HISTORY_MSG_LOCAL_CIE_SLOPESMOG;Lokaal - CIECAM groenbalans
+HISTORY_MSG_LOCAL_CIE_SLOPESMOQ;Lokaal - CIECAM Grijsbalans
 HISTORY_MSG_LOCAL_CIE_SLOPESMOR;Lokaal - CIECAM roodbalans
 HISTORY_MSG_LOCAL_CIE_SMOOTH;Lokaal - CIECAM Schaal Yb opname
+HISTORY_MSG_LOCAL_CIE_SMOOTHLNK;Lokaal CIECAM - Koppel R G B
 HISTORY_MSG_LOCAL_CIE_SMOOTHMET;Lokaal - CIECAM Zachte lichten  methode
+HISTORY_MSG_LOCAL_CIE_SMOOTHTH;Lokaal CIECAM - Verzwakkingsdrempel
+HISTORY_MSG_LOCAL_CIE_SMOOTHTRC;Lokaal CIECAM - Gamma-gebaseerde verzwakking hoge lichten
+HISTORY_MSG_LOCAL_CIE_SMOOTHTRCREL;Lokaal CIECAM - Relatieve gamma-modus
 HISTORY_MSG_LOCAL_CIE_SMOOTHYB;Lokaal - CIECAM Schaal Yb weergave
+HISTORY_MSG_LOCAL_CIE_SMOOTH_HIGH;Lokaal CIECAM - Alleen verzwakking hoge lichten
 HISTORY_MSG_LOCAL_CIE_SMOOTH_LUM;Lokaal - CIECAM Niveaus - Luminositeitsmodus
 HISTORY_MSG_LOCAL_CIE_STRGRAD;Lokaal - CIECAM verloop kracht L
 HISTORY_MSG_LOCAL_CIE_STRLOG;Lokaal - CIECAM Log-codering kracht
 HISTORY_MSG_LOCAL_CIE_TRC;Lokaal - CIECAM TRC
+HISTORY_MSG_LOCAL_CIE_WEVMETHOD11;Lokaal CIECAM - Zwart LW Wit LW
 HISTORY_MSG_LOCAL_CIE_WHITES;Lokaal - CIECAM Spreiding witten
+HISTORY_MSG_LOCAL_CIE_WHITSIG;Lokaal CIECAM - Sigmoïde display witpunt
 HISTORY_MSG_LOCAL_DEHAZE_BLACK;Lokaal - Nevelvermindering Zwart
 HISTORY_MSG_LOCAL_FEATHERCIE;Lokaal - CIECAM verloop verzachting
 HISTORY_MSG_LOCAL_FEATHERCOL;Lokaal - kleur verloop verzachting
@@ -1518,10 +1587,40 @@ HISTORY_MSG_LOCAL_FEATHERSH;Lokaal - SH verloop verzachting
 HISTORY_MSG_LOCAL_FEATHERVIB;Lokaal - Vib verloop verzachting
 HISTORY_MSG_LOCAL_FEATHERWAV;Lokaal - Wav verloop verzachting
 HISTORY_MSG_LOCAL_GAMUTMUNSEL;Lokaal - SC - Voorkom kleurverschuiving
+HISTORY_MSG_LOCAL_GHSMETHOD;Lokaal - GHS - Methode
+HISTORY_MSG_LOCAL_GHS_B;Lokaal - GHS - Lokale intensiteit
+HISTORY_MSG_LOCAL_GHS_BLP;Lokaal - GHS - Zwartpunt
+HISTORY_MSG_LOCAL_GHS_CHRO;Lokaal - GHS - Lab chromaticiteitsfactor
+HISTORY_MSG_LOCAL_GHS_D;Lokaal - GHS - Rekfactor
+HISTORY_MSG_LOCAL_GHS_HLP;Lokaal - GHS - Witpunt
+HISTORY_MSG_LOCAL_GHS_HP;Lokaal - GHS - Bescherm hoge lichten
+HISTORY_MSG_LOCAL_GHS_INV;Lokaal - GHS - Omgekeerd
+HISTORY_MSG_LOCAL_GHS_LC;Lokaal - GHS - Lokaal Contrast
+HISTORY_MSG_LOCAL_GHS_LP;Lokaal - GHS - Bescherm schaduwen
+HISTORY_MSG_LOCAL_GHS_MID;Lokaal - GHS - Middentonen
+HISTORY_MSG_LOCAL_GHS_SLOPE;Lokaal - GHS - Lab hellingsfactor
+HISTORY_MSG_LOCAL_GHS_SMOOTH;Lokaal - GHS - Verzwakking hoge lichten
+HISTORY_MSG_LOCAL_GHS_SP;Lokaal - GHS - Symmetriepunt
+HISTORY_MSG_LOCAL_LOGCIE12;Lokaal - CIECAM - Logcodering
 HISTORY_MSG_LOCAL_LOG_BLACKS;Lokaal - Log Zwartdistributie
 HISTORY_MSG_LOCAL_LOG_COMPR;Lokaal - Log Comprimeer helderheid
 HISTORY_MSG_LOCAL_LOG_SAT;Lokaal - Log Beperk verzadiging
 HISTORY_MSG_LOCAL_LOG_WHITES;Lokaal - Log Witdistributie
+HISTORY_MSG_LOCAL_NLITER;Lokaal - Nlmeans - Herhalingen
+HISTORY_MSG_LOCAL_OFFSETWAV;Lokaal Wav verschuiving
+HISTORY_MSG_LOCAL_PROCESSWAV;Lokaal - Wavelets - Toon wijzigingen
+HISTORY_MSG_LOCAL_QJMETHOD;Lokaal - CIECAM toonmapping-operator Q en J
+HISTORY_MSG_LOCAL_SIGBLCIE;Lokaal - CIECAM Mengen 5.11
+HISTORY_MSG_LOCAL_SIGDACIE;Lokaal - CIECAM Contrast 5.11
+HISTORY_MSG_LOCAL_SIGFORCEBW;Lokaal - Jz Wit LW en Zwart LW 5.11
+HISTORY_MSG_LOCAL_SIGJZ11;Lokaal - Jz Sigmoïde J 5.11
+HISTORY_MSG_LOCAL_SIGJZ11BL;Lokaal - Jz Mengen 5.11
+HISTORY_MSG_LOCAL_SIGJZ11CONT;Lokaal - Jz Contrast 5.11
+HISTORY_MSG_LOCAL_SIGJZ11GRAY;Lokaal - Jz Drempel 5.11
+HISTORY_MSG_LOCAL_SIGQ11;Lokaal - CIECAM Sigmoïde Q - verouderd
+HISTORY_MSG_LOCAL_SIGQ12;Lokaal - CIECAM Sigmoïde Q en hellingsgebaseerd
+HISTORY_MSG_LOCAL_SIGSENSICIE;Lokaal - CIECAM Aanpasbaarheid 5.11
+HISTORY_MSG_LOCAL_SIGTHCIE;Lokaal - CIECAM Drempel 5.11
 HISTORY_MSG_LOCAL_TMO_SATUR;Lokaal Bel. Fattal-verzadiging
 HISTORY_MSG_METADATA_MODE;Metadata kopieermodus
 HISTORY_MSG_MICROCONTRAST_CONTRAST;Microcontrast - Contrastdrempel
@@ -1574,6 +1673,7 @@ HISTORY_MSG_TONE_EQUALIZER_PIVOT;Toonequalizer - Draaipunt
 HISTORY_MSG_TONE_EQUALIZER_REGULARIZATION;Toonequalizer - Regularisatie
 HISTORY_MSG_TONE_EQUALIZER_SHOW_COLOR_MAP;Toonequalizer - Tonale map
 HISTORY_MSG_TRANS_METHOD;Geometrie - Methode
+HISTORY_MSG_TRANS_SCALE;Geometrie - Schaal
 HISTORY_MSG_WAVBALCHROM;Equalizer chrominantie
 HISTORY_MSG_WAVBALLUM;Equalizer luminantie
 HISTORY_MSG_WAVBL;Vervagingsniveaus
@@ -1826,6 +1926,7 @@ PARTIALPASTE_COLORGROUP;Kleurgerelateerde instellingen
 PARTIALPASTE_COLORTONING;Kleurtinten
 PARTIALPASTE_COMMONTRANSFORMPARAMS;Automatisch uitvullen
 PARTIALPASTE_COMPOSITIONGROUP;Compositie-instellingen
+PARTIALPASTE_COMPRESSGAMUT;Kleurruimtecompressie
 PARTIALPASTE_CROP;Bijsnijden
 PARTIALPASTE_DARKFRAMEAUTOSELECT;Donkerframe autom. selectie
 PARTIALPASTE_DARKFRAMEFILE;Donkerframe-opname
@@ -1849,6 +1950,7 @@ PARTIALPASTE_FLATFIELDBLURTYPE;Vlakveld verzachting type
 PARTIALPASTE_FLATFIELDCLIPCONTROL;Vlakveld afkapcontrole
 PARTIALPASTE_FLATFIELDFILE;Vlakveldopname
 PARTIALPASTE_FLATFIELDFROMMETADATA;Vlakveld uit metadata
+PARTIALPASTE_FRAMING;Frame
 PARTIALPASTE_GRADIENT;Grijsverloopfilter
 PARTIALPASTE_HSVEQUALIZER;HSV-balans
 PARTIALPASTE_ICMSETTINGS;ICM-instellingen
@@ -2499,6 +2601,28 @@ TP_COLORTONING_TWOALL;Speciaal chroma
 TP_COLORTONING_TWOBY;Speciaal a* en b*
 TP_COLORTONING_TWOCOLOR_TOOLTIP;Standaard chroma:\nLineaire respons, a* = b*.\n\nSpeciaal chroma:\nLineaire respons, a* = b*, maar ontbonden - gebruik de diagonaal hieronder.\n\nSpeciaal a* en b*:\nLineair ontbonden respons met aparte curves voor a* en b*. Bedoeld voor speciale effecten.\n\nSpeciaal chroma twee kleuren: beter voorspelbaar.
 TP_COLORTONING_TWOSTD;Standaard chroma
+TP_COMPRESSGAMUT_ACESP1;ACES AP1
+TP_COMPRESSGAMUT_ADOBE;Adobe RGB
+TP_COMPRESSGAMUT_COLORSPACE_TOOLTIP;Kleurruimtecompressie is een hulpmiddel waarmee u zeer chromatische camerabronkleuren kunt comprimeren naar een kleinere kleurruimte.\n Negatieve pixelwaarden buiten de kleurruimte zijn problematisch voor het werken met afbeeldingen en moeten indien mogelijk worden vermeden.\n Blauwe LED's worden als zeer kleurrijk waargenomen en kleuren zoals kevers, bloemen en kolibries zijn vaak oververzadigd.\n\n Dit is geen kleurruimteconversie: het converteren van de ene kleurruimte naar de andere verandert de waarden van de pixels. Het verandert echter niet de colorimetrische betekenis van de pixeldata. Je zou kunnen zeggen dat door tussen kleurruimten te converteren, je het referentiekader van dezelfde kleuren verandert. Na compressie wordt het werkprofiel hersteld.\n\n Kies de werkruimte die wordt gebruikt om de kleurruimtelimieten in te stellen. Afhankelijk van het geval kun je kiezen:\n De kleurruimte van het beeldscherm (sRGB, DCI P3,...). \n De kleurruimte van een uitvoerbestand voor gebruik door andere software (Prophoto, Rec 2020...).
+TP_COMPRESSGAMUT_CYANLIM;Cyaan
+TP_COMPRESSGAMUT_CYANTH;Cyaan
+TP_COMPRESSGAMUT_DCIP3;DCI-P3
+TP_COMPRESSGAMUT_LABEL;Kleurruimtecompressie
+TP_COMPRESSGAMUT_LIMIT;Maximale afstandslimieten
+TP_COMPRESSGAMUT_LIMIT_TOOLTIP;Maximale afstandslimiet: is de afstand buiten de kleurruimtegrens om te comprimeren naar de kleurruimtegrens. Bijvoorbeeld, een waarde van 1,2 zal afstandswaarden van 1,2 comprimeren tot een waarde van 1,0. \nAfzonderlijke controleknoppen zijn beschikbaar voor elke kleurcomponent. Ze worden cyaan, magenta en geel genoemd omdat ze eigenlijk de maximaal toegestane afstand van de rand van de driehoek (primaire kleuren verwant aan het CIExy-diagram) bepalen, niet de hoek. Bijvoorbeeld, door de waarde van de cyaanafstandslimiet te verhogen, vergroot u de afstand waarop waarden worden toegewezen aan de rand tussen de blauwe en groene hoeken van de driehoek.\nDe afstandslimieten bepalen ook de RGB-verhoudingen van de gecomprimeerde waarden, wat de schijnbare tint beïnvloedt.\n\nDe afstanden zijn relatief ten opzichte van de Doelcompressiekleurruimte. Ze moeten mogelijk worden aangepast na het wijzigen van de doelkleurruimte als u wilt dat de hoeveelheid compressie ongewijzigd blijft.
+TP_COMPRESSGAMUT_MAGENTALIM;Magenta
+TP_COMPRESSGAMUT_MAGENTATH;Magenta
+TP_COMPRESSGAMUT_MAIN_COLORSPACE;Doelcompressiekleurruimte
+TP_COMPRESSGAMUT_POWER_TOOLTIP;Kracht: Controleert de agressiviteit van de compressiecurve.\n Hogere krachtwaarden resulteren in meer gecomprimeerde waarden die dichter bij de kleurruimtegrens zijn verdeeld. Dit verhoogt de "kleurzuiverheid" of "verzadiging" nadat de afbeelding is weergegeven via een beeldschermtransformatie.\n Hogere waarden hebben een gladdere overgang.
+TP_COMPRESSGAMUT_PROPHOTO;ProPhoto
+TP_COMPRESSGAMUT_PWR;Kracht
+TP_COMPRESSGAMUT_REC2020;Rec. 2020
+TP_COMPRESSGAMUT_ROLLOFF;Afvlakking
+TP_COMPRESSGAMUT_SRGB;sRGB
+TP_COMPRESSGAMUT_THRESHOLD;Drempel
+TP_COMPRESSGAMUT_THRESHOLD_TOOLTIP;Drempel: beheert het percentage van de buitenste kleurruimte die wordt beïnvloed. Een waarde van 0,8 comprimeert waarden buiten de kleurruimte naar de buitenste 20% van de kleurruimte. De binnenste 80% van de kleurruimtekern zal niet worden beïnvloed. Je kunt de kleuren afzonderlijk aanpassen: bijvoorbeeld, als je magenta en geel een beetje meer wilt beschermen dan cyaan, kun je de drempel voor cyaan iets hoger instellen.\n\nDe drempels zijn relatief ten opzichte van de Doelcompressiekleurruimte. Ze moeten mogelijk worden aangepast na het wijzigen van de doelkleurruimte als je wilt dat het beschermde kleurbereik ongewijzigd blijft.
+TP_COMPRESSGAMUT_YELLOWLIM;Geel
+TP_COMPRESSGAMUT_YELLOWTH;Geel
 TP_CROP_FIXRATIO;Verhouding:
 TP_CROP_GTCENTEREDSQUARE;Vierkant gecentreerd
 TP_CROP_GTDIAGONALS;Diagonaalmethode
@@ -2601,6 +2725,8 @@ TP_DIRPYREQUALIZER_THRESHOLD;Drempel
 TP_DIRPYREQUALIZER_TOOLTIP;Probeer onregelmatigheden te verminderen die het gevolg zijn van een kleurverschuiving van de huidtinten (tint, chroma, luma) en de rest van de afbeelding
 TP_DISTORTION_AMOUNT;Hoeveelheid
 TP_DISTORTION_AUTO_TOOLTIP;Corrigeert automatisch lensafwijkingen in RAW-afbeeldingen op basis van de ingebedde JPEG indien deze is gecorrigeerd door de camera.
+TP_DISTORTION_DEFISH;Ontvissen (fisheye)
+TP_DISTORTION_FOCAL_LENGTH;Brandpuntsafstand
 TP_DISTORTION_LABEL;Corrigeer lensvervorming
 TP_EPD_EDGESTOPPING;Randen
 TP_EPD_GAMMA;Gamma
@@ -2670,6 +2796,36 @@ TP_FLATFIELD_CLIPCONTROL;Afkapcontrole
 TP_FLATFIELD_CLIPCONTROL_TOOLTIP;Afkapcontrole vermijdt uitgevreten hoge lichten veroorzaakt door het toepassen van een vlakveld. Als er al uitgevreten hoge lichten waren voor het toepassen van het vlakveld, dan kan afkapcontrole kleurzweem veroorzaken.
 TP_FLATFIELD_FROMMETADATA;Uit metadata
 TP_FLATFIELD_LABEL;Vlakveld
+TP_FRAMING_ABSOLUTE_HEIGHT;Randhoogte
+TP_FRAMING_ABSOLUTE_WIDTH;Randbreedte
+TP_FRAMING_ALLOW_UPSCALING;Sta opschalen naar frame toe
+TP_FRAMING_ASPECT_RATIO;Beeldverhouding:
+TP_FRAMING_BASIS;Basis
+TP_FRAMING_BASIS_AUTO;Automatisch
+TP_FRAMING_BASIS_HEIGHT;Hoogte
+TP_FRAMING_BASIS_LONG_SIDE;Lange zijde
+TP_FRAMING_BASIS_SHORT_SIDE;Korte zijde
+TP_FRAMING_BASIS_WIDTH;Breedte
+TP_FRAMING_BLUE;Blauw
+TP_FRAMING_BORDER_COLOR;Randkleur
+TP_FRAMING_BORDER_SIZE;Grootte
+TP_FRAMING_BORDER_SIZE_ABSOLUTE;Absoluut
+TP_FRAMING_BORDER_SIZE_METHOD;Grootte:
+TP_FRAMING_BORDER_SIZE_RELATIVE;Relatief
+TP_FRAMING_BORDER_SIZE_UNIFORM_RELATIVE;Uniform relatief
+TP_FRAMING_FRAMED_HEIGHT;Hoogte frame
+TP_FRAMING_FRAMED_WIDTH;Breedte frame
+TP_FRAMING_GREEN;Groen
+TP_FRAMING_LABEL;Frame
+TP_FRAMING_LIMIT_MINIMUM;Beperk minimale grootte
+TP_FRAMING_METHOD;Methode:
+TP_FRAMING_METHOD_BBOX;Begrenzingsvak
+TP_FRAMING_METHOD_FIXED;Vast frame
+TP_FRAMING_METHOD_STANDARD;Standaard
+TP_FRAMING_MIN_HEIGHT;Minimum hoogte
+TP_FRAMING_MIN_WIDTH;Minimum breedte
+TP_FRAMING_ORIENTATION;Oriëntatie:
+TP_FRAMING_RED;Rood
 TP_GENERAL_11SCALE_TOOLTIP;De werking is alleen zichtbaar op schaal 1:1 van het voorbeeld
 TP_GRADIENT_CENTER;Centrum
 TP_GRADIENT_CENTER_X;Centrum X
@@ -2728,9 +2884,11 @@ TP_ICM_LABEL;Kleurbeheer
 TP_ICM_LABGRID_CIEXY;R(x)=%1 R(y)=%2\nG(x)=%3 G(y)=%4\nB(x)=%5 B(y)=%6
 TP_ICM_NEUTRAL;Zet terug
 TP_ICM_NOICM;Geen ICM: sRGB-uitvoer
+TP_ICM_OPACITYWLI;Variabel contrast
 TP_ICM_OUTPUTPROFILE;Uitvoerprofiel
 TP_ICM_OUTPUTPROFILE_TOOLTIP;Alle RTv4- of RTv2-profielen zijn met TRC - sRGB: g=2,4 s=12,92\n\nMet de ICC-profielmaker kunt u v4- of v2-profielen creëren met de volgende keuzen:\n-Primaire kleuren: Aces AP0, Aces AP1, AdobeRGB, Prophoto, Rec2020, sRGB, Widegamut, BestRGB, BetaRGB, BruceRGB en Aangepast\n-TRC: BT709, sRGB, lineair, standaard g=2,2, standaard g=1,8, Aangepast\n-Lichtbron: D41, D50, D55, D60, D65, D80, stdA 2856K
 TP_ICM_PRIMBLU_TOOLTIP;Primair Blauw:\nsRGB x=0.15 y=0.06\nAdobe x=0.15 y=0.06\nWidegamut x=0.157 y=0.018\nRec2020 x=0.131 y=0.046\nACES P1 x=0.128 y=0.044\nACES P0 x=0.0001 y=-0.077\nProphoto x=0.0366 y=0.0001\nBruceRGB x=0.15 y=0.06\nBeta RGB x=0.1265 y=0.0352\nBestRGB x=0.131 y=0.046
+TP_ICM_PRIMFRAME;Primaire kleuren & Lichtbron
 TP_ICM_PRIMGRE_TOOLTIP;Primair Groen:\nsRGB x=0.3 y=0.6\nAdobe x=0.21 y=0.71\nWidegamut x=0.115 y=0.826\nRec2020 x=0.17 y=0.797\nACES P1 x=0.165 y=0.83\nACES P0 x=0.0 y=1.0\nProphoto x=0.1596 y=0.8404\nBruceRGB x=0.28 y=0.65\nBeta RGB x=0.1986 y=0.7551\nBest RGB x=0.2150 y=0.7750
 TP_ICM_PRIMILLUM_TOOLTIP;U kunt een afbeelding wijzigen van de oorspronkelijke modus ('werkprofiel') naar een andere modus ('Bestemming primaire kleuren'). Wanneer u een andere kleurmodus voor een afbeelding kiest, veranderen de kleurwaarden in de afbeelding permanent.\n\nHet wijzigen van de 'primaire kleuren' is vrij complex en moeilijk te gebruiken en vereist veel experimenteren.\nHiermee kunnen exotische kleurcorrecties worden gemaakt, zoals bij de kanaalmixer primaire kleuren.\nPas de camerakalibratie aan met 'Aangepast (schuifregelaars)'.
 TP_ICM_PRIMRED_TOOLTIP;Primair Rood:\nsRGB x=0.64 y=0.33\nAdobe x=0.64 y=0.33\nWidegamut x=0.735 y=0.265\nRec2020 x=0.708 y=0.292\nACES P1 x=0.713 y=0.293\nACES P0 x=0.7347 y=0.2653\nProphoto x=0.7347 y=0.2653\nBruceRGB x=0.64 y=0.33\nBeta RGB x=0.688 y=0.3112\nBestRGB x=0.7347 y=0.2653
@@ -2740,11 +2898,14 @@ TP_ICM_SAVEREFERENCE;Bewaar referentie-afbeelding
 TP_ICM_SAVEREFERENCE_APPLYWB;Toepassen witbalans
 TP_ICM_SAVEREFERENCE_APPLYWB_TOOLTIP;Gebruik witbalans bij het opslaan van afbeeldingen voor het maken van ICC-profielen. Gebruik geen witbalans bij het maken van DCP-profielen.
 TP_ICM_SAVEREFERENCE_TOOLTIP;Sla de lineaire TIFF-afbeelding op voordat het invoerprofiel is toegepast. Het resultaat kan worden gebruikt voor kalibratie en het genereren van een cameraprofiel.
+TP_ICM_SMOOTHFRAME;Verzwakking hoge lichten
 TP_ICM_TONECURVE;Gebruik DCP-tooncurve
 TP_ICM_TONECURVE_TOOLTIP;Gebruik de ingebedde DCP-tooncurve. De instelling is alleen actief als de geselecteerde DCP een tooncurve bevat.
 TP_ICM_TRCFRAME;Abstract Profiel
 TP_ICM_TRCFRAME_TOOLTIP;Ook bekend als 'synthetische' of 'virtuele' profielen. Deze worden toegepast aan het eind van de verwerkingspijplijn (voor ciecam), waardoor speciale beeldeffecten kunnen worden gecreëerd.\nU kunt wijzigingen aanbrengen in:\n'Toonresponscurve', die de tonen van het beeld aanpast\n'Verlichting', waarmee de primaire kleuren van het profiel worden aangepast aan de opnamemstandigheden.\n'Primaire kleuren Bestemming': waarmee u de Primaire kleuren Bestemming kunt wijzigen met drie hoofdtoepassingen - kanalenmixer, herstel beeldkleur (verzadiging) en kalibratie.\nOpmerking: Abstracte profielen maken gebruik van de ingebouwde werkprofielen zonder deze te wijzigen. Ze werken niet met aangepaste werkprofielen.
 TP_ICM_TRC_TOOLTIP;Hiermee kunt u de standaard sRGB Toonresponscurve in RT wijzigen (g=2.4 s=12.92).\nDeze TRC wijzigt de tonen van het beeld. De RGB- en Lab-waarden, het histogram en de uitvoer (scherm, TIF, JPG) worden gewijzigd:\n-Gamma werkt voornamelijk op lichte tonen \n-Hellingshoek werkt voornamelijk op donkere tonen.\nU kunt willekeurige gamma en hellingshoek-paren (waarden >1) kiezen en het algoritme zorgt ervoor dat er continuïteit is tussen de lineaire en parabolische delen van de curve.\nEen andere selectie dan 'Geen' activeert de menu's 'Verlichting' en 'Primaire kleuren Bestemming'.
+TP_ICM_WAVFRAME;Contrastversterking
+TP_ICM_WAVREFI;Verfijning
 TP_ICM_WORKINGPROFILE;Werkprofiel
 TP_ICM_WORKING_CAT;Matrixaanpassing
 TP_ICM_WORKING_CAT_BRAD;Bradford
@@ -2788,6 +2949,7 @@ TP_ICM_WORKING_PRIM_REC;Rec2020
 TP_ICM_WORKING_PRIM_SRGB;sRGB
 TP_ICM_WORKING_PRIM_TOOLTIP;Controleert de kleuromvang (gamut). Primaire kleuren Bestemming (Geavanceerd) stelt u in staat om de primaire kleuren van de bestemming te wijzigen, om de kleur van het beeld (verzadiging) te herstellen of te veranderen. De kleurbalans blijft behouden wanneer het 'Werkprofiel' en de 'Primaire kleuren Bestemming' gelijk zijn. Het 'Werkprofiel' wordt niet gewijzigd.\nWanneer 'Aangepast LA (schuiven)' is geselecteerd, kunt u de waarden van de drie primaire kleuren (Rood, Groen en Blauw) voor x en y wijzigen.
 TP_ICM_WORKING_PRIM_WID;WideGamut
+TP_ICM_WORKING_SMOOTH;Verzwakking hoge lichten
 TP_ICM_WORKING_TRC;Tooncurve:
 TP_ICM_WORKING_TRC_18;Prophoto g=1,8
 TP_ICM_WORKING_TRC_22;Adobe g=2,2
@@ -2841,6 +3003,7 @@ TP_LENSGEOM_FILL;Automatisch uitvullen
 TP_LENSGEOM_LABEL;Objectief / Geometrie
 TP_LENSGEOM_LIN;Lineair
 TP_LENSGEOM_LOG;Logarithmisch
+TP_LENSGEOM_SCALE;Schaal
 TP_LENSPROFILE_CORRECTION_AUTOMATCH;Automatische selectie
 TP_LENSPROFILE_CORRECTION_LCPFILE;LCP-bestand
 TP_LENSPROFILE_CORRECTION_MANUAL;Handmatige selectie
@@ -2869,6 +3032,7 @@ TP_LOCALLAB_AVOID;Voorkom kleurverschuiving
 TP_LOCALLAB_AVOIDCOLORSHIFT_TOOLTIP;Pas kleuren aan tot ze binnen het bereik van de werkkleurruimte vallen en pas Munsell-correctie toe (Uniform Perceptual Lab). Standaard: Alleen Munsell.\n\nAlleen Munsell: Corrigeert tintafwijkingen in de Lab-modus als gevolg van non-lineariteit wanneer de chromaticiteit wordt gewijzigd (Uniform Perceptual Lab).\nLab: Past een gamutcontrole toe in relatieve colorimetrie. Vervolgens wordt Munsell toegepast.\nXYZ Absoluut: Past gamutcontrole toe in absolute colorimetrie. Vervolgens wordt Munsell toegepast.\nXYZ Relatief: Past gamutcontrole toe in relatieve colorimetrie. Vervolgens wordt Munsell toegepast. Het resultaat is niet hetzelfde als bij Lab.
 TP_LOCALLAB_AVOIDMUN;Alleen Munsell-correctie
 TP_LOCALLAB_AVOIDMUN_TOOLTIP;Munsell-correctie is altijd uitgeschakeld wanneer Jz of CAM16 wordt gebruikt.
+TP_LOCALLAB_AVOIDNEG;Pre-filter nul en negatieve waarden
 TP_LOCALLAB_AVOIDRAD;Verzachtingsstraal
 TP_LOCALLAB_BALAN;ab-L-balans (ΔE)
 TP_LOCALLAB_BALANEXP;Laplacian-balans
@@ -2910,7 +3074,10 @@ TP_LOCALLAB_BUTTON_DUPL;Dupliceer
 TP_LOCALLAB_BUTTON_REN;Hernoem
 TP_LOCALLAB_BUTTON_VIS;Toon/verberg
 TP_LOCALLAB_BWEVNONE;Geen
+TP_LOCALLAB_BWEVNONE11;Geen
 TP_LOCALLAB_BWEVSIG;Geactiveerd
+TP_LOCALLAB_BWEVSIG11;Geactiveerd
+TP_LOCALLAB_BWEVSLOP;Hellingsgebaseerd
 TP_LOCALLAB_BWFORCE;Gebruik Zwart LW & Wit LW
 TP_LOCALLAB_CAM16PQREMAP;HDR PQ (Piekluminantie)
 TP_LOCALLAB_CAM16PQREMAP_TOOLTIP;PQ (Perceptual Quantizer) aangepast aan CAM16 (experimenteel). Hiermee kunt u de interne PQ-functie wijzigen (meestal 10000 cd/m2 - standaard 100 cd/m2 - uitgeschakeld voor 100 cd/m2).\nKan bijvoorbeeld worden gebruikt om CAM16-verwerking af te stemmen op de maximale monitorhelderheid van 400 cd/m2.
@@ -2954,11 +3121,14 @@ TP_LOCALLAB_CIEMODE_TOOLTIP;In de standaardmodus wordt Ciecam aan het einde van 
 TP_LOCALLAB_CIEMODE_WAV;Wavelet
 TP_LOCALLAB_CIETOOLEXP;Curven
 TP_LOCALLAB_CIE_SMOOTHFRAME;Versterking hoge lichten & Niveaus
+TP_LOCALLAB_CIE_SMOOTHFRAME12;Toonmap-operatoren
 TP_LOCALLAB_CIE_SMOOTH_EV;Gebaseerd op LW
 TP_LOCALLAB_CIE_SMOOTH_GAMMA;Gebaseerd op helling
 TP_LOCALLAB_CIE_SMOOTH_GAMMA ROLLOFF;Gebaseerd op gamma
 TP_LOCALLAB_CIE_SMOOTH_LEVELS;Niveaus
+TP_LOCALLAB_CIE_SMOOTH_LEVELSTRC;RGB-kanaal TRC
 TP_LOCALLAB_CIE_SMOOTH_NONE;Geen
+TP_LOCALLAB_CIE_SMOOTH_SIG;Sigmoïde-gebaseerd
 TP_LOCALLAB_CIE_TOOLNAME;Kleurweergave (Cam16 & JzCzHz)
 TP_LOCALLAB_CIRCRADIUS;Spotgrootte
 TP_LOCALLAB_CIRCRAD_TOOLTIP;Bevat de referenties van de spot, nuttig voor vormdetectie (tint, luma, chroma, Sobel).\nLage waarden kunnen nuttig zijn bij het verwerken van gebladerte.\nGebruik hoge waarden voor huidtinten.
@@ -3124,6 +3294,51 @@ TP_LOCALLAB_GAMUTNON;Geen
 TP_LOCALLAB_GAMUTXYZABSO;XYZ absoluut
 TP_LOCALLAB_GAMUTXYZRELA;XYZ relatief
 TP_LOCALLAB_GAMW;Gamma (wavelet-pyramiden)
+TP_LOCALLAB_GHSBPWP;Aantal afgekapte pixels - Schaduwen:%1 Hoge lichten:%2
+TP_LOCALLAB_GHSBPWPVALUE;Pixelwaarden - Donkerst:%1 Lichtst:%2
+TP_LOCALLAB_GHSFRA;Rekinstellingen
+TP_LOCALLAB_GHSHUE;Tint (HSL)
+TP_LOCALLAB_GHSLAB;Lichtheid & chromaticiteit (Lab)
+TP_LOCALLAB_GHSLABFRA;Lab-instellingen
+TP_LOCALLAB_GHSLUM;Luminantie (HSL)
+TP_LOCALLAB_GHSRGBLUM;RGB Luminantie
+TP_LOCALLAB_GHSRGBSTD;RGB Standaard
+TP_LOCALLAB_GHSSAT;Verzadiging (HSL)
+TP_LOCALLAB_GHS_B;Lokale intensiteit (b)
+TP_LOCALLAB_GHS_BLACKPOINT_FRAME;Zwartpunt/Witpunt/Hoge lichten
+TP_LOCALLAB_GHS_BLP;Zwartpunt (ZP lineair)
+TP_LOCALLAB_GHS_BLP_TOOLTIP;Stelt het zwartpunt in voor een lineaire rek van de afbeelding.\n * Voor negatieve schuifwaarden, in GHS ‘normaal’, worden schaduwen lineair verhoogd om overmatige ruisopbouw te voorkomen en het GHS-werk te vergemakkelijken.\n * Voor positieve schuifwaarden wordt het histogram naar links verschoven. Voor Raw-afbeeldingen kun je ook Raw-Tab > Raw-zwartpunten – Nevelvermindering gebruiken, wat preciezer is.\n * Contrast dat wordt verkregen door de lineaire rek uit te voeren, zal gelijkmatig over de afbeelding worden verdeeld.\n\n * Je kunt een lineaire zwartpuntverschuiving aanpassen om of:\n  - rekening te houden met ruis in de diepe schaduwen.\n  - of het histogram aan te passen.\n\n * Het wordt aanbevolen deze schuifknoppen aan te passen vòòr de hoofd-GHS-schuifknoppen om afkapping van data te voorkomen. Een zeer lage rekfactor (D)-waarde (standaard 0,001) wordt aanbevolen voor het uitvoeren van deze aanpassing.\n * Het label 'Aantal afgekapte pixels Schaduwen:x Hoge lichten=y' laat zien hoeveel pixels er zouden worden afgekapt zonder de twee schuifknoppen aan te passen.\n * Het label Pixelwaarden - Donkerst:w Lichtst:z laat de minimale en maximale waarden in het bereik [0, 1] zien.\n\n * In de ‘Geïnverteerde GHS’-modus is het gedrag omgekeerd en zijn er mogelijk interacties met het witpunt.
+TP_LOCALLAB_GHS_BPFRAME_TOOLTIP;Stelt het Zwartpunt (ZP lineair), Witpunt (WP lineair) en de Hoge lichten in voor een lineaire rek van de afbeelding.\n\n * Zwartpunt (ZP lineair) en Witpunt (WP lineair) kunnen alleen ingesteld worden als de rekfactor (D) tussen 0,001 en 0,002 ligt, zodat het histogram niet wordt beïnvloed.\n\n * Wanneer de rekfactor 0,002 of minder is, hebben alle rekinstellingen behalve zwartpunt en witpunt geen effect.\n\n * Zwartpunt (ZP lineair) en witpunt (WP lineair) zijn gevoelig voor de algemene instellingen verderop in GHS: Reconstructie hoge lichten, Witbalans en RAW-processen.\n\n * Om relevante zwartpunt (ZP lineair) en witpunt (WP lineair) instellingen te verkrijgen, moet de hele afbeelding worden geanalyseerd. Het wordt aanbevolen om 'Toon hele afbeelding op scherm - Sneltoets Alt-f' te gebruiken.
+TP_LOCALLAB_GHS_B_TOOLTIP;Deze parameter bepaalt hoe nauw de rek rond het symmetriepunt (SP) wordt geplaatst door de vorm van de transformatie zelf te veranderen:\n * Voor geconcentreerde rekken (zoals initiële rekken op lineaire afbeeldingen) moet een grote 'b'-factor worden toegepast om een rek binnen een histogram-piek te plaatsen, terwijl de rek buiten de histogrampiek aan kracht verliest.\n * Voor het aanpassen van niet-lineaire afbeeldingen moeten lagere 'b'-parameters worden toegepast om contrast en helderheid gelijkmatiger te verdelen.\n * Grote positieve waarden van 'b' kunnen worden beschouwd als een histogramverbreding, d.w.z. het histogram breder maken rond het focuspunt, SP.\n * Daarentegen neigen lagere waarden van 'b' het histogram te verschuiven naar een heldere of donkerdere positie zonder de breedte ervan te veel te beïnvloeden.\n * Als algemene regel zal het niveau van 'b' afnemen naarmate een rek-operatie bijna compleet is, hoewel grotere 'b'-waarden nog steeds kunnen worden toegepast voor precieze plaatsing van extra contrast.
+TP_LOCALLAB_GHS_CHRO;Chromaticiteitsfactor Lab (C)
+TP_LOCALLAB_GHS_CHRO_TOOLTIP;GHS chromaticiteit - compenseer grote rekken
+TP_LOCALLAB_GHS_CURVE_TOOLTIP;Toont de 'S'-curve die door GHS-berekeningen is gegenereerd. Voornamelijk voor educatieve doeleinden.\n\n * De curve reageert alleen op de schuiven en kan niet rechtstreeks worden gewijzigd.
+TP_LOCALLAB_GHS_D;Rekfactor (D)
+TP_LOCALLAB_GHS_D_TOOLTIP;Deze parameter beheert de hoeveelheid rek. Als de rekfactor op nul is gesteld, is er geen rek. Met andere woorden, de transformatie is de identiteitstransformatie.\n\n * Zwartpunt (ZP lineair) en witpunt (WP lineair) kunnen alleen worden ingesteld als de rekfactor (D) tussen 0,001 en 0,002 ligt.
+TP_LOCALLAB_GHS_GHSDIAG;GHS Curve-visualisatie
+TP_LOCALLAB_GHS_HLP;Witpunt (WP lineair)
+TP_LOCALLAB_GHS_HLP_TOOLTIP;Stelt het witpunt in voor een lineaire rek van de afbeelding. Elke pixel met een waarde groter dan de witpuntinvoer zal worden afgekapt en de gegevens gaan verloren.\n * Contrast dat wordt verkregen door de lineaire rek uit te voeren, zal gelijkmatig over de afbeelding worden verdeeld, die daardoor lichter zal worden. Pixels met waarden groter dan het witpunt zullen wit lijken en een waarde van 1,0 hebben.\n * Door deze parameter op een waarde groter dan 1 in te stellen, wordt het dynamisch bereik aan de hoge kant vergroot.\n * De methode voor 'Reconstructie hoge lichten' heeft een zeer sterke invloed op de waarde van het witpunt.\n\n * Het wordt aanbevolen deze schuif aan te passen vòòr de hoofd-GHS-schuiven om afkapping van gegevens te voorkomen. Een zeer lage rekfactor (D)-waarde (standaard 0,001) wordt aanbevolen om deze aanpassing uit te voeren.\n * Het label 'Aantal afgekapte pixels - Schaduwen:x Hoge lichten=y' laat zien hoeveel pixels er zouden worden afgekapt zonder de twee schuifknoppen aan te passen.\n * Het label 'Pixelwaarden - Donkerst:w Lichtst:z' laat de minimale en maximale waarden in het bereik [0, 1] zien.\n\n * In de ‘Geïnverteerde GHS’-modus is het gedrag omgekeerd en zijn er mogelijke interacties met het zwartpunt.
+TP_LOCALLAB_GHS_HP;Bescherm hoge lichten (HP)
+TP_LOCALLAB_GHS_HP_TOOLTIP;Stelt een waarde in waarboven de rek wordt gewijzigd om contrast in de hoge lichten te behouden. Dit wordt gedaan door een lineaire rek van de gegevens boven het 'HP'-niveau uit te voeren door contrast van de rest van de afbeelding te reserveren. Door het HP-niveau naar de huidige instelling van SP te verplaatsen, wordt zowel het bereik (omvang) als de hoeveelheid van deze contrastreservering vergroot. Het netto-effect is om de algemene rek naar lagere helderheidsniveaus te duwen terwijl het contrast en de definitie in de hoge lichten behouden blijven. De hoeveelheid contrast die voor de hoge lichten is gereserveerd, is zodanig dat de continuïteit van de rek behouden blijft.\n * Deze parameter mag maximaal 1 en niet minder dan het symmetriepunt zijn.\n * De aanpasser beperkt automatisch de maximale waarde tot het symmetriepunt (SP).\n\n * Het gebruik van 'Verzwakking hoge lichten' helpt de actie van 'Bescherm hoge lichten (HP)' te versterken.
+TP_LOCALLAB_GHS_INV;Geïnverteerde GHS
+TP_LOCALLAB_GHS_INV_TOOLTIP;De Geïnverteerde GHS is nuttig voor het werken in negatieve ruimte. Het voegt contrast toe aan de uiterste rechter- en linkerkant van het histogram, verheldert de diepe schaduwen, verdonkert de heldere hoge lichten en drukt het histogram naar het midden.\n\n * De Generalized Hyperbolic omkeertransformatie stelt je in staat de oorspronkelijke afbeelding te herstellen, onderworpen aan wiskundige precisie, maar je kunt het ook voor andere doeleinden gebruiken.\n\n * Als het witpunt en zwartpunt in de normale modus waren gewijzigd, zullen ze waarschijnlijk opnieuw moeten worden aangepast. Het witpunt moet vaak lager worden aangepast. Er is interactie tussen de twee instellingen.
+TP_LOCALLAB_GHS_LC;Waarde (LC)
+TP_LOCALLAB_GHS_LC_FRAME;Rek-regularisatie & Middentonen
+TP_LOCALLAB_GHS_LC_TOOLTIP;Verhoogt het lokaal contrast lichtelijk dat door rekken is verzwakt.\nKan worden aangevuld met andere  specifieke hulpmiddelen voor lokaal contrast, zoals wavelets.\n\nWanneer de rekfactor 0,002 of minder is, is Rek-regularisatie & Middentonen uitgeschakeld.
+TP_LOCALLAB_GHS_LP;Bescherm schaduwen (LP)
+TP_LOCALLAB_GHS_LP_TOOLTIP;Stelt een waarde in waaronder de rek wordt gewijzigd om contrast in de schaduwen/lage lichten te behouden. Dit wordt gedaan door een lineaire rek van de gegevens onder het 'LP'-niveau uit te voeren door contrast van de rest van de afbeelding te reserveren. Door het LP-niveau naar de huidige instelling van SP te verplaatsen, wordt zowel het bereik (omvang) als de hoeveelheid van deze contrastreservering veranderd. Het netto-effect is om de algemene rek naar hogere helderheidsniveaus te duwen, terwijl het contrast en de definitie in de achtergrond behouden blijven. De hoeveelheid contrast die voor de lag lichten is gereserveerd, is zodanig dat de continuïteit van de rek behouden blijft.\n * Deze parameter moet minimaal 0 en niet groter dan het symmetriepunt zijn.\n * De aanpasser beperkt automatisch de maximale waarde tot het symmetriepunt (SP).\n\n * Het gebruik van zwartpunt - negatieve waarden - wanneer mogelijk, stelt je in staat zowel de waarde van het symmetriepunt (SP) als de actie van Bescherm schaduwen (LP) te wijzigen.
+TP_LOCALLAB_GHS_METHOD_TOOLTIP;Het Generalized Hyperbolic Stretch (GHS) proces stelt je in staat de waarden van pixels in je afbeelding te transformeren om de representatie van de onderliggende gegevens voor menselijke visualisatie te verbeteren.\nDe veralgemeende hyperbolische vergelijkingen die in het GHS-proces worden gebruikt, hebben vijf hoofdparameters. Dit biedt aanzienlijke flexibiliteit in het ontwerpen van de "vorm" van de transformatie.\n\nTypische toepassingen van pixelintensiteits-transformaties zijn:\n * Initiële rek van pixelgegevens vanuit lineaire toestand.\n * Toevoegen van contrast aan belangrijke gebieden van de afbeelding.\n * Algehele verheldering of verdonkering van de afbeelding.\n * Aanpassing van het dynamisch bereik van de afbeelding.\n * Aanpassing van pixelgegevens in de volgende kanalen: RGB Luminantie, RGB-standaard, Luminantie - chromaticiteit (Lab/Lch), Luminantie (HSL), Verzadiging (HSL) of Tint (HSL).\n\n * Voor betere resultaten kun je in meerdere stappen werken en twee of meer RT-spots maken die elk met het GHS-hulpmiddel worden bewerkt. Voor elk van de RT-spots zal de basiswaarde van het symmetriepunt (SP) verschillend zijn. Gebruik de histogram-piek om de SP-waarde te positioneren.\n * Zo kun je bijvoorbeeld het systeem starten in RGB-modus (eerste Spot), dan de tweede Spot in RGB-modus met een ander SP en de derde in Verzadiging of Tint-modus.\n * Je kunt RT-spots in 'Normale' modus en 'Omgekeerde' modus mengen om de contrastbalans te herstellen.\n * Volledige Afbeelding stelt je in staat het effect te beperken tot specifieke kleuren op basis van de deltaE.
+TP_LOCALLAB_GHS_MID;Middentonen
+TP_LOCALLAB_GHS_MID_TOOLTIP;Past de middentoonbalans na GHS-transformatie aan.\nKan worden gebruikt om de middentonen van de afbeelding na het rekken opnieuw in balans te brengen.\n\nWanneer de rekfactor 0,002 of minder is, is Rek-regularisatie & Middentonen uitgeschakeld
+TP_LOCALLAB_GHS_MODECUR;GHS
+TP_LOCALLAB_GHS_MODELIN;Lineair
+TP_LOCALLAB_GHS_SIMUL_TOOLTIP;Geeft een representatie van de GHS-functie.
+TP_LOCALLAB_GHS_SLOPE;Hellingsfactor Lab (S)
+TP_LOCALLAB_GHS_SLOPE_TOOLTIP;Verbetert de helling van de Lab-transformatie om het renderen van schaduwen te verbeteren.
+TP_LOCALLAB_GHS_SMOOTH;Verzwakking hoge lichten
+TP_LOCALLAB_GHS_SMOOTH_TOOLTIP;Verzacht de gebieden met hoge lichten. Versterkt de actie van 'Bescherm hoge lichten (HP)'.
+TP_LOCALLAB_GHS_SP;Symmetriepunt (SP)
+TP_LOCALLAB_GHS_SP_TOOLTIP;De standaardwaarde van 0,015 is geschikt voor de meeste afbeeldingen.\n * Dit is de belangrijkste balanswaarde van het GHS-systeem.\n * Stelt het focuspunt in waar de rek wordt toegepast - contrast zal symmetrisch rond SP worden verdeeld.\n * Terwijl 'b' de mate van focus van de rek bepaalt, bepaalt SP waar die focus wordt toegepast.\n * SP moet algemeen binnen een histogram-piek worden geplaatst zodat de rek de piek zal verbreden en verlagen door het meeste contrast op dat punt toe te voegen. Pixelwaarden zullen zich van de SP-locatie verwijderen.
 TP_LOCALLAB_GRADANG;Verloophoek
 TP_LOCALLAB_GRADANG_TOOLTIP;Rotatiehoek in graden: -180, 0, +180.
 TP_LOCALLAB_GRADFRA;Masker Verloopfilter
@@ -3347,7 +3562,7 @@ TP_LOCALLAB_MEDNONE;Geen
 TP_LOCALLAB_MERCOL;Kleur
 TP_LOCALLAB_MERDCOL;Voeg samen met achtergrond (ΔE)
 TP_LOCALLAB_MERELE;Alleen ophelderen
-TP_LOCALLAB_MERFIV;Optellinh
+TP_LOCALLAB_MERFIV;Optelling
 TP_LOCALLAB_MERFOR;Kleur tegenhouden
 TP_LOCALLAB_MERFOU;Vermenigvuldig
 TP_LOCALLAB_MERGE1COLFRA;Voeg samen met Origineel/Vorige/Achtergrond
@@ -3386,6 +3601,7 @@ TP_LOCALLAB_MRTHR;Originele afbeelding
 TP_LOCALLAB_MULTIPL_TOOLTIP;Breedbereik-tintaanpassing: -18EV tot +4EV. De eerste schuifregelaar werkt op zeer donkere tinten tussen -18EV en -6EV. De laatste schuifregelaar werkt op lichte tinten tot 4EV.
 TP_LOCALLAB_NEIGH;Radius
 TP_LOCALLAB_NLDENOISENLGAM_TOOLTIP;Lagere waarden behouden details en textuur, hogere waarden versterken de ruisonderdrukking.\nAls gamma = 3.0 wordt luminantie 'lineair' gebruikt.
+TP_LOCALLAB_NLDENOISENLITER_TOOLTIP;Voer meerdere iteraties van Nlmeans uit. Resultaten zijn vaak beter met meerdere iteraties en lage sterkte.
 TP_LOCALLAB_NLDENOISENLPAT_TOOLTIP;Gebruik deze schuif om de hoeveelheid ruisonderdrukking aan te passen aan de grootte van de te verwerken objecten.
 TP_LOCALLAB_NLDENOISENLRAD_TOOLTIP;Hogere waarden verbeteren de ruisonderdrukking ten koste van de verwerkingstijd.
 TP_LOCALLAB_NLDENOISE_TOOLTIP;Detailherstel werkt op een Laplace-transformatie op uniforme gebieden in plaats van gebieden met details.
@@ -3393,6 +3609,7 @@ TP_LOCALLAB_NLDET;Detailherstel
 TP_LOCALLAB_NLFRA;Non-local Means: Luminantie
 TP_LOCALLAB_NLFRAME_TOOLTIP;Non-local means ruisonderdrukking neemt een gemiddelde van alle pixels in de afbeelding, gewogen naar hoe gelijkend ze zijn met de doelpixel.\nVermindert verlies van details vergeleken met local-mean algoritmen.\nAlleen luminantieruis wordt in aanmerking genomen. Chrominantieruis wordt het beste aangepakt met wavelets en Fourier-transformaties (DCT).\nKan in combinatie met 'Luminantieruisvermindering per niveau' of op zichzelf worden gebruikt.
 TP_LOCALLAB_NLGAM;Gamma
+TP_LOCALLAB_NLITER;Herhalingen
 TP_LOCALLAB_NLLUM;Kracht
 TP_LOCALLAB_NLPAT;Maximale patch-grootte
 TP_LOCALLAB_NLRAD;Maximale straalgrootte
@@ -3430,7 +3647,13 @@ TP_LOCALLAB_PREVHIDE;Verberg extra instellingen
 TP_LOCALLAB_PREVIEW;Voorbeeld ΔE
 TP_LOCALLAB_PREVSHOW;Toon extra instellingen
 TP_LOCALLAB_PRIMILLFRAME;Primaire kleuren & Lichtbron
+TP_LOCALLAB_PROCESSWAV;Toon gewijzigde gebieden met Wavelets
+TP_LOCALLAB_PROCESSWAV_TOOLTIP;Wavelet-decompositie:\nToont de wijzigingen die door de wavelet-instellingen zijn aangebracht.\n\nJe ziet de wijzigingen die aan het gedecodeerde beeld zijn aangebracht, rekening houdend met de deltaE en overgangen, wanneer je de wavelet-instellingen wijzigt. Merk op dat dit anders is dan Wavelet-niveaus in het tabblad Geavanceerd, waar je altijd de resultaten van de decompositie ziet.
 TP_LOCALLAB_PROXI;ΔE-verval
+TP_LOCALLAB_QJMODE;Toonmapping-operatoren Q(CAM16) & J(Jz)
+TP_LOCALLAB_QJMODE_511;5.11 verouderd
+TP_LOCALLAB_QJMODE_512;5.12
+TP_LOCALLAB_QJMODE_TOOLTIP;De toonmapping-operatoren die helderheidsgegevens (Q voor CAM16 en J voor Jz) gebruiken, zijn gewijzigd in RawTherapee versie 5.12. Dit stelt je in staat om de huidige of verouderde versie te selecteren.
 TP_LOCALLAB_QUAAGRES;Aggressief
 TP_LOCALLAB_QUACONSER;Conservatief
 TP_LOCALLAB_QUALCURV_METHOD;Soort curve
@@ -3494,6 +3717,7 @@ TP_LOCALLAB_SENSI_TOOLTIP;Past het bereik van de actie aan:\nKleine waarden bepe
 TP_LOCALLAB_SETTINGS;Instellingen
 TP_LOCALLAB_SH1;Schaduwen/Hoge lichten
 TP_LOCALLAB_SH2;Equalizer
+TP_LOCALLAB_SH3;Generalized Hyperbolic Stretch
 TP_LOCALLAB_SHADEX;Schaduwen
 TP_LOCALLAB_SHADEXCOMP;Schaduwcompressie
 TP_LOCALLAB_SHADHIGH;Schaduwen/hoge lichten & Toonequalizer
@@ -3548,21 +3772,28 @@ TP_LOCALLAB_SH_TOOLNAME;Schaduwen/Hoge lichten & Toonequalizer
 TP_LOCALLAB_SIGBLACKSSCIE;Zwartdistributie
 TP_LOCALLAB_SIGCIE;Sigmoid
 TP_LOCALLAB_SIGFRA;Sigmoid Q & Log-codering Q
+TP_LOCALLAB_SIGFRA11;Sigmoïde Q (verouderd)
 TP_LOCALLAB_SIGGAMJCIE;Gamma
 TP_LOCALLAB_SIGJZFRA;Sigmoid Jz
+TP_LOCALLAB_SIGJZFRA11;Sigmoïde Jz (verouderd)
 TP_LOCALLAB_SIGMAWAV;Versterkingsrespons
 TP_LOCALLAB_SIGMOID16_TOOLTIP;Hiermee kunt u een toonmapping-uiterlijk simuleren met zowel 'Ciecam' als 'Sigmoid Q'. Sigmoid Q heeft drie schuiven:\na) Contrast werkt op de vorm van de sigmoïde-curve en daarmee de sterkte\nb) Drempel (Grijspunt) verdeelt de actie volgens de luminantie\nc) Aanpasbaarheid weegt de actie van de sigmoïde met de interne exponentiële functie.
 TP_LOCALLAB_SIGMOIDBL;Samenvoegen
+TP_LOCALLAB_SIGMOIDBL11;Mengen
 TP_LOCALLAB_SIGMOIDLAMBDA;Contrast
 TP_LOCALLAB_SIGMOIDLOGAUTO;Auto-drempel
 TP_LOCALLAB_SIGMOIDLOGEV_TOOLTIP;Als in de combobox 'Zwart LW en Wit LW' en 'Sigmoid en Log-codering' zijn aangevinkt in plaats van 'Alleen Sigmoid', worden de twee algoritmes 'Log-codering' en 'Sigmoid' samen gebruikt.
 TP_LOCALLAB_SIGMOIDNORMCIE;Normaliseer Luminantie
+TP_LOCALLAB_SIGMOIDNORMCIE11;Normaliseer Luminantie
 TP_LOCALLAB_SIGMOIDNORMCIEBLEND_TOOLTIP;Mengen beïnvloedt het uiteindelijke aspect van het beeld, het contrast en de luminantie. Verhouding tussen origineel en uitvoerbeeld.
+TP_LOCALLAB_SIGMOIDNORMCIEDISP_TOOLTIP;Stelt je in staat het witpunt aan te passen aan de piekhelderheid van het weergaveapparaat. De positie in de verwerkingspijplijn is niet ideaal, dus wees hier voorzichtig mee.
 TP_LOCALLAB_SIGMOIDNORMCIE_TOOLTIP;Reconstructie van de luminantie zodat het gemiddelde en de variantie van het uitvoerbeeld rekening houden met die van het origineel.\nAlle aanpassingen die invloed hebben op J of Q worden meegenomen, inclusief die welke niet gerelateerd zijn aan Sigmoid Q.
 TP_LOCALLAB_SIGMOIDQJ;Gebruikt Zwart LW & Wit LW
+TP_LOCALLAB_SIGMOIDQJ11;Zwart LW & Wit LWEv
 TP_LOCALLAB_SIGMOIDQJCOMPRCIE_TOOLTIP;Wanneer in de combobox-selectie 'Zwart LW en Wit LW', 'Sigmoid en Log encoding Q' of 'Log-codering in plaats van Sigmoid' is aangevinkt. Dit algoritme comprimeert de data boven de waarde van de drempelschuif. De laatste waarde staat voor helderheid (Q) en moet zo dicht mogelijk bij de waarde 'Compressiedrempel' liggen (berekend wanneer 'Auto-drempel' is aangevinkt, vaak > 1).
 TP_LOCALLAB_SIGMOIDSENSI;Aanpasbaarheid
 TP_LOCALLAB_SIGMOIDTH;Drempel (Grijspunt)
+TP_LOCALLAB_SIGMOIDTH11;Drempel (Grijspunt)
 TP_LOCALLAB_SIGMOIDWHITESCIE_TOOLTIP;Hiermee kunt u, in Automatische modus, wanneer het dynamisch bereik van het beeld groot is, de distributie van lichten in witten en diepe zwarten wijzigen.\nKan worden gebruikt met Log-codering of Sigmoid met Zwart LW en Wit LW ingeschakeld.\n\nHet algoritme verandert de basisgegevens niet, maar werkt op de componenten die nodig zijn om het dynamisch bereik, Zwart LW, Wit LW en het Grijspunt te berekenen.
 TP_LOCALLAB_SIGMOID_TOOLTIP;Hiermee kunt u een toonmap-uiterlijk simuleren met zowel de 'Jz'- als de 'Sigmoid'-functie. Drie schuifregelaars:\na) Contrast beïnvloedt de vorm van de sigmoïde-curve en daarmee de sterkte\nb) Drempel (Grijspunt) verdeelt de actie op basis van de luminantie\nc) Samenvoegen beïnvloedt het uiteindelijke beeld, het contrast en de luminantie.
 TP_LOCALLAB_SIGSLOPJCIE;Helling
@@ -3574,12 +3805,23 @@ TP_LOCALLAB_SLOPESMOOTH;Grijsbalans (Helling)
 TP_LOCALLAB_SLOPESMOOTHB;Blauwbalans (Helling)
 TP_LOCALLAB_SLOPESMOOTHG;Groenbalans (Helling)
 TP_LOCALLAB_SLOPESMOOTHR;Roodbalans (Helling)
+TP_LOCALLAB_SLOPESMOOTRCB;Blauwbalans (TRC)
+TP_LOCALLAB_SLOPESMOOTRCG;Groenbalans (TRC)
+TP_LOCALLAB_SLOPESMOOTRCR;Roodbalans (TRC)
 TP_LOCALLAB_SLOSH;Helling
 TP_LOCALLAB_SMOOTHCIE;Versterking hoge lichten
+TP_LOCALLAB_SMOOTHCIETH;Verzwakkingsdrempel
+TP_LOCALLAB_SMOOTHCIE_HIGH;Alleen verzwakking hoge lichten
+TP_LOCALLAB_SMOOTHCIE_LNK;Koppel R, G & B
 TP_LOCALLAB_SMOOTHCIE_LUM;Luminositeitsmodus
 TP_LOCALLAB_SMOOTHCIE_SCA;Schaal Yb Opname
 TP_LOCALLAB_SMOOTHCIE_TOOLTIP;Voltooit de bewerkingen uitgevoerd door gamma, helling en middentonen door de lichten iets te verzwakken. Let op, dit is geen vervanging van 'Reconstructie Hoge lichten'.\n\nGamma-gebaseerd en Helling-gebaseerd (Standaard en Geavanceerd) stelt u in staat toonmapping te simuleren met behulp van:\na) Opname-omstandigheden: Zwart LW, Wit LW, Gemiddelde luminantie (Yb%)\nb) Weergaveomstandigheden: Gemiddelde luminantie (Yb%).\n\nSchaal Yb Opname is een functie van Wit LW.
+TP_LOCALLAB_SMOOTHCIE_TRC;Verhoog gamma-gebaseerde verzwakking
+TP_LOCALLAB_SMOOTHCIE_TRCREL;Relatieve gamma-modus
 TP_LOCALLAB_SMOOTHCIE_YB;Schaal Yb Weergave
+TP_LOCALLAB_SMOOTHCONTSIG;Contrast
+TP_LOCALLAB_SMOOTHSKEWSIG;Scheefheid
+TP_LOCALLAB_SMOOTHWHITSIG;Weergave Witpunt (cd/m2)
 TP_LOCALLAB_SOFT;Zacht licht & Originele Retinex
 TP_LOCALLAB_SOFTM;Zacht licht
 TP_LOCALLAB_SOFTMETHOD_TOOLTIP;Pas een Zacht-licht mengmodus toe (identiek aan de globale aanpassing). Voer doordrukken en tegenhouden uit met het originele Retinex-algoritme.
@@ -3781,6 +4023,7 @@ TP_RAWEXPOS_BLACK_3;Groen 2
 TP_RAWEXPOS_BLACK_BLUE;Blauw
 TP_RAWEXPOS_BLACK_GREEN;Groen
 TP_RAWEXPOS_BLACK_RED;Rood
+TP_RAWEXPOS_DEHA;Nevelvermindering
 TP_RAWEXPOS_LINEAR;Witpuntcorrectie
 TP_RAWEXPOS_RGB;Rood, Groen, Blauw
 TP_RAWEXPOS_TWOGREEN;Koppel Groen 1 en 2
@@ -4128,6 +4371,7 @@ TP_WAVELET_DAUB4;D4 - standaard
 TP_WAVELET_DAUB6;D6 - standaard plus
 TP_WAVELET_DAUB10;D10 - medium
 TP_WAVELET_DAUB14;D14 - hoog
+TP_WAVELET_DAUB20;D20 - hoog plus
 TP_WAVELET_DAUBLOCAL;Wavelet Rand-performance
 TP_WAVELET_DAUB_TOOLTIP;Wijzigt de Daubechies-coëfficiënten:\nD4 = Standaard,\nD14 = Geeft meestal het beste resultaat met een iets langere verwerkingstijd.\n\nBeïnvloed zowel randdetectie als het algemene resultaat van de eerste niveaus. De kwaliteit is niet strikt gerelateerd aan deze coëfficiënt en kan variëren per afbeelding en toepassing.
 TP_WAVELET_DEN5THR;Begeleid drempel
@@ -4203,6 +4447,7 @@ TP_WAVELET_LEVELS_TOOLTIP;Kies het aantal detailniveaus. Meer niveaus vereisen m
 TP_WAVELET_LEVF;Contrast
 TP_WAVELET_LEVFOUR;Niveau 5-6 ruisvermindering en begeleide drempel
 TP_WAVELET_LEVLABEL;Voorbeeld maximum mogelijke niveaus=%1
+TP_WAVELET_LEVLOCLABEL;Vergroot het voorbeeldvenster
 TP_WAVELET_LEVONE;Niveau 2
 TP_WAVELET_LEVTHRE;Niveau 4
 TP_WAVELET_LEVTWO;Niveau 3
@@ -4232,6 +4477,7 @@ TP_WAVELET_NPNONE;Geen
 TP_WAVELET_NPTYPE;Naburige pixels
 TP_WAVELET_NPTYPE_TOOLTIP;Gebruikt de nabijheid van een pixel en acht naburige pixels. Indien weinig verschil, dan worden randen verscherpt.
 TP_WAVELET_OFFSET_TOOLTIP;De verschuiving wijzigt de balans tussen details met laag contrast en met hoog contrast.\nHoge waarden versterken de contrastveranderingen in de details met hoog contrast, terwijl lage waarden de contrastveranderingen in details met laag contrast versterken.\nDoor een lage verzwakkingsresponswaarde te gebruiken, kunt u selecteren welke contrastwaarden worden versterkt.
+TP_WAVELET_OFFSFIN;Verschuiving
 TP_WAVELET_OLDSH;Algoritme met negatieve waarden
 TP_WAVELET_OPACITY;Dekking Blauw-Geel niveau
 TP_WAVELET_OPACITYW;Contrastbalans d/v-h curve
@@ -4240,6 +4486,11 @@ TP_WAVELET_OPACITYWL_TOOLTIP;Wijzigt het lokaal contrast aan het einde van de wa
 TP_WAVELET_PASTEL;Pastel-chromaciteit
 TP_WAVELET_PROC;Proces
 TP_WAVELET_PROTAB;Bescherming
+TP_WAVELET_PYRWAVTRC;Contrastprofiel
+TP_WAVELET_PYRWAVTRC_CURVE_TOOLTIP;Het linkereinde van de horizontale as komt overeen met bijna nul contrast, terwijl het rechtereinde overeenkomt met het sterkste contrast in de afbeelding. Het midden van de horizontale as komt overeen met de overheersende contraststerkte over alle detailniveaus.\n\nHet effect van deze curve is verminderd voor hogere Contrastprofiel-voorinstellingen.\n\nOm hard contrast en halo's te voorkomen, is het beter om het verhogen van de rechterhelft van de curve te vermijden.
+TP_WAVELET_PYRWAVTRC_RESID_TOOLTIP;Past het contrast aan voor alle detailniveaus die groter zijn dan die, die door het geselecteerde Contrastprofiel worden gedekt.
+TP_WAVELET_PYRWAVTRC_SIGMA_TOOLTIP;Rekt de breedte van de 'Variabel contrast'-curve uit. Een waarde van 1 betekent geen rekking.
+TP_WAVELET_PYRWAVTRC_TOOLTIP;Een serie voorinstellingen die de sterkte van de contrastaanpassing op verschillende detailniveaus definieert. Lagere voorinstellingen beïnvloeden alleen fijne details, terwijl hogere voorinstellingen zowel fijne als grove details beïnvloeden.\n\nLet op: het effect op grove details kan niet zichtbaar zijn in de voorvertoning als de voorvertoning te klein is.
 TP_WAVELET_QUAAGRES;Agressief
 TP_WAVELET_QUACONSER;Conservatief
 TP_WAVELET_RADIUS;Straal schaduwen - hoge lichten
@@ -4254,6 +4505,7 @@ TP_WAVELET_RESCHRO;Chromaticiteit
 TP_WAVELET_RESCON;Schaduwen
 TP_WAVELET_RESCONH;Hoge lichten
 TP_WAVELET_RESID;Residuele afbeelding
+TP_WAVELET_RESIDTRC;Residueel contrast
 TP_WAVELET_SAT;Verzadigd chromaciteit
 TP_WAVELET_SETTINGS;Wavelet-instellingen
 TP_WAVELET_SHA;Scherptemasker
@@ -4275,8 +4527,8 @@ TP_WAVELET_SUPE;Extra
 TP_WAVELET_THR;Drempel schaduwen
 TP_WAVELET_THRDEN_TOOLTIP;Genereert een getrapte curve die wordt gebruikt om de ruisonderdrukking aan te sturen als functie van lokaal contrast. De ruisonderdrukking zal worden toegepast op uniforme gebieden met laag lokaal contrast. Gebieden met details (hoger lokaal contrast) worden behouden.
 TP_WAVELET_THREND;Drempel lokaal contrast
-TP_WAVELET_THRESHOLD;Hoge lichten: Aantal te gebruiken niveaus (fijn naar grof - leidend)
-TP_WAVELET_THRESHOLD2;Schaduwen: Aantal te gebruiken niveaus (grof naar fijn)
+TP_WAVELET_THRESHOLD;Fijnere niveaus
+TP_WAVELET_THRESHOLD2;Grovere niveaus
 TP_WAVELET_THRESHOLD2_TOOLTIP;Alleen niveaus van de gekozen waarde tot het gekozen aantal Wavelet-niveaus zullen worden beïnvloed door het Schaduwluminantiebereik.
 TP_WAVELET_THRESHOLD_TOOLTIP;Alleen niveaus beneden en inclusief de gekozen waarde zullen worden beïnvloed door het luminantiebereik van de hoge lichten.
 TP_WAVELET_THRH;Drempel hoge lichten
@@ -4406,261 +4658,6 @@ ZOOMPANEL_ZOOMFITCROPSCREEN;Maak uitsnede passend in het scherm\nSneltoets: <b>F
 ZOOMPANEL_ZOOMFITSCREEN;Passend in venster\nSneltoets: <b>Alt+F</b>
 ZOOMPANEL_ZOOMIN;Zoom in\nSneltoets: <b>+</b>
 ZOOMPANEL_ZOOMOUT;Zoom uit\nSneltoets: <b>-</b>
+//TP_WBALANCE_ITCWBNOPURPLE_TOOLTIP;Wanneer "Inpaint opposed" is geactiveerd, worden paarse kleuren standaard niet in aanmerking genomen. Maar als de afbeelding geen reconstructie van hoge lichten nodig heeft, of als de afbeelding van nature paarse tinten bevat (bloemen, enz.), kan het nodig zijn om deze optie uit te schakelen om op alle kleuren te werken.
+//TP_WBALANCE_ITCWB_FORCED;Forceert het gebruik van het hele CIE-diagram
 
-!!!!!!!!!!!!!!!!!!!!!!!!!
-! Untranslated keys follow; remove the ! prefix after an entry is translated.
-!!!!!!!!!!!!!!!!!!!!!!!!!
-
-!HISTORY_MSG_446;--unused--
-!HISTORY_MSG_447;--unused--
-!HISTORY_MSG_448;--unused--
-!HISTORY_MSG_450;--unused--
-!HISTORY_MSG_451;--unused--
-!HISTORY_MSG_454;--unused--
-!HISTORY_MSG_455;--unused--
-!HISTORY_MSG_456;--unused--
-!HISTORY_MSG_458;--unused--
-!HISTORY_MSG_459;--unused--
-!HISTORY_MSG_460;--unused--
-!HISTORY_MSG_461;--unused--
-!HISTORY_MSG_463;--unused--
-!HISTORY_MSG_466;--unused--
-!HISTORY_MSG_467;--unused--
-!HISTORY_MSG_470;--unused--
-!HISTORY_MSG_580;--unused--
-!HISTORY_MSG_664;--unused--
-!HISTORY_MSG_CG_COLORSPACE;Gamut Compression - Target
-!HISTORY_MSG_CG_CYANLIM;Gamut Compression - Max Limits Cyan
-!HISTORY_MSG_CG_CYANTH;Gamut Compression - Threshold Cyan
-!HISTORY_MSG_CG_ENABLED;Gamut Compression - Enabled
-!HISTORY_MSG_CG_MAGENTALIM;Gamut Compression - Max Limits Magenta
-!HISTORY_MSG_CG_MAGENTATH;Gamut Compression - Threshold Magenta
-!HISTORY_MSG_CG_ROLLOFF;Gamut Compression - Rolloff
-!HISTORY_MSG_CG_VALUE;Gamut Compression - Power
-!HISTORY_MSG_CG_YELLOWLIM;Gamut Compression - Max Limits Yellow
-!HISTORY_MSG_CG_YELLOWTH;Gamut Compression - Threshold Yellow
-!HISTORY_MSG_DEHABLACK;Dehaze Bayer Black
-!HISTORY_MSG_DEHABLACKX;Dehaze X-Trans Black
-!HISTORY_MSG_DISTORTION_DEFISH;De-fish
-!HISTORY_MSG_DISTORTION_DEFISH_FOCAL;De-fish - Focal length
-!HISTORY_MSG_FRAMING_ABSOLUTE_HEIGHT;Framing - Border Height
-!HISTORY_MSG_FRAMING_ABSOLUTE_WIDTH;Framing - Border Width
-!HISTORY_MSG_FRAMING_ALLOW_UPSCALING;Framing - Upscaling
-!HISTORY_MSG_FRAMING_ASPECT_RATIO;Framing - Aspect Ratio
-!HISTORY_MSG_FRAMING_BASIS;Framing - Basis
-!HISTORY_MSG_FRAMING_BORDER_BLUE;Framing - Border (B)
-!HISTORY_MSG_FRAMING_BORDER_GREEN;Framing - Border (G)
-!HISTORY_MSG_FRAMING_BORDER_RED;Framing - Border (R)
-!HISTORY_MSG_FRAMING_BORDER_SIZE;Framing - Relative Size
-!HISTORY_MSG_FRAMING_BORDER_SIZE_METHOD;Framing - Border Sizing Method
-!HISTORY_MSG_FRAMING_ENABLED;Framing
-!HISTORY_MSG_FRAMING_FRAMED_HEIGHT;Framing - Framed Height
-!HISTORY_MSG_FRAMING_FRAMED_WIDTH;Framing - Framed Width
-!HISTORY_MSG_FRAMING_METHOD;Framing - Method
-!HISTORY_MSG_FRAMING_MIN_HEIGHT;Framing - Min Height
-!HISTORY_MSG_FRAMING_MIN_SIZE_ENABLED;Framing - Min Size
-!HISTORY_MSG_FRAMING_MIN_WIDTH;Framing - Min Width
-!HISTORY_MSG_FRAMING_ORIENTATION;Framing - Orientation
-!HISTORY_MSG_ICM_OFFSTRC;Offset
-!HISTORY_MSG_ICM_OPACITYW;Offset
-!HISTORY_MSG_ICM_PYRWAVTRC;Contrast profile
-!HISTORY_MSG_ICM_RESIDTRC;Residual contrast
-!HISTORY_MSG_ICM_SIGMATRC;Local contrast Attenation response
-!HISTORY_MSG_ICM_WAVEXP;Contrast Enhancement
-!HISTORY_MSG_LOCAL_AVOIDNEGATIVE;Local - SC - Pre-filter zero and negative values
-!HISTORY_MSG_LOCAL_CIE_CONTSIG;Local CIECAM - Sigmoid contrast
-!HISTORY_MSG_LOCAL_CIE_NORM11;Local - CIECAM Normalize luminance 5.11
-!HISTORY_MSG_LOCAL_CIE_SKEWSIG;Local CIECAM - Sigmoid skew
-!HISTORY_MSG_LOCAL_CIE_SLOPESMOQ;Local - CIECAM Gray balance
-!HISTORY_MSG_LOCAL_CIE_SMOOTHLNK;Local CIECAM - Link R G B
-!HISTORY_MSG_LOCAL_CIE_SMOOTHTH;Local CIECAM - Attenuation threshold
-!HISTORY_MSG_LOCAL_CIE_SMOOTHTRC;Local CIECAM - Gamma based Highlight attenuation
-!HISTORY_MSG_LOCAL_CIE_SMOOTHTRCREL;Local CIECAM - Relative gamma mode
-!HISTORY_MSG_LOCAL_CIE_SMOOTH_HIGH;Local CIECAM - Highlight Attenuation only
-!HISTORY_MSG_LOCAL_CIE_WEVMETHOD11;Local CIECAM - Black Ev White Ev
-!HISTORY_MSG_LOCAL_CIE_WHITSIG;Local CIECAM - Sigmoid Display white point
-!HISTORY_MSG_LOCAL_GHSMETHOD;Local - GHS - Method
-!HISTORY_MSG_LOCAL_GHS_B;Local - GHS - Local intensity
-!HISTORY_MSG_LOCAL_GHS_BLP;Local - GHS - Black point
-!HISTORY_MSG_LOCAL_GHS_CHRO;Local - GHS - Lab chromaticity factor
-!HISTORY_MSG_LOCAL_GHS_D;Local - GHS - Stretch factor
-!HISTORY_MSG_LOCAL_GHS_HLP;Local - GHS - White point
-!HISTORY_MSG_LOCAL_GHS_HP;Local - GHS - Protect highlights
-!HISTORY_MSG_LOCAL_GHS_INV;Local - GHS - Inverse
-!HISTORY_MSG_LOCAL_GHS_LC;Local - GHS - Local Contrast
-!HISTORY_MSG_LOCAL_GHS_LP;Local - GHS - Protect shadows
-!HISTORY_MSG_LOCAL_GHS_MID;Local - GHS - Midtones
-!HISTORY_MSG_LOCAL_GHS_SLOPE;Local - GHS - Lab slope factor
-!HISTORY_MSG_LOCAL_GHS_SMOOTH;Local - GHS - Highlight attenuation
-!HISTORY_MSG_LOCAL_GHS_SP;Local - GHS - Symmetry point
-!HISTORY_MSG_LOCAL_LOGCIE12;Local - CIECAM - Log encoding
-!HISTORY_MSG_LOCAL_NLITER;Local - Nlmeans - Iterations
-!HISTORY_MSG_LOCAL_OFFSETWAV;Local Wav offset
-!HISTORY_MSG_LOCAL_PROCESSWAV;Local - Wavelets - Show modifications
-!HISTORY_MSG_LOCAL_QJMETHOD;Local - CIECAM Tone mapping operator Q and J
-!HISTORY_MSG_LOCAL_SIGBLCIE;Local - CIECAM Blend 5.11
-!HISTORY_MSG_LOCAL_SIGDACIE;Local - CIECAM Contrast 5.11
-!HISTORY_MSG_LOCAL_SIGFORCEBW;Local - Jz White Ev and Black Ev 5.11
-!HISTORY_MSG_LOCAL_SIGJZ11;Local - Jz Sigmoid J 5.11
-!HISTORY_MSG_LOCAL_SIGJZ11BL;Local - Jz Blend 5.11
-!HISTORY_MSG_LOCAL_SIGJZ11CONT;Local - Jz Contrast 5.11
-!HISTORY_MSG_LOCAL_SIGJZ11GRAY;Local - Jz Threshold 5.11
-!HISTORY_MSG_LOCAL_SIGQ11;Local - CIECAM Sigmoid Q - deprecated
-!HISTORY_MSG_LOCAL_SIGQ12;Local - CIECAM Sigmoid Q and Slope based
-!HISTORY_MSG_LOCAL_SIGSENSICIE;Local - CIECAM Adaptability 5.11
-!HISTORY_MSG_LOCAL_SIGTHCIE;Local - CIECAM Threshold 5.11
-!HISTORY_MSG_TRANS_SCALE;Geometry - Scale
-!PARTIALPASTE_COMPRESSGAMUT;Gamut Compression
-!PARTIALPASTE_FRAMING;Framing
-!TP_COMPRESSGAMUT_ACESP1;ACES AP1
-!TP_COMPRESSGAMUT_ADOBE;Adobe RGB
-!TP_COMPRESSGAMUT_COLORSPACE_TOOLTIP;Gamut-compress is a tool which allows you to compress highly chromatic camera source colorimetry into a smaller gamut.\n Out of gamut negative pixel values are problematic for working on images and should be avoided if possible.\n Blue LED are perceive as highly colorful and colors like beetles, flowers and hummingbirds often over saturated.\n\n This is not a gamut conversion : converting from one gamut to another does change the values of the pixels. However it does not actually change the colorimetric meaning of the pixel data. You could say that by converting between gamuts, you are changing frame of reference to the same colors. After compression the working profile is restored.\n\n Choose the workspace that will be used to set the gamut limits. Depending on the case you can choose:\n The display gamut (sRGB, DCI P3,...). \n The gamut of an output file for use by another software (Prophoto, Rec 2020...). 
-!TP_COMPRESSGAMUT_CYANLIM;Cyan
-!TP_COMPRESSGAMUT_CYANTH;Cyan
-!TP_COMPRESSGAMUT_DCIP3;DCI-P3
-!TP_COMPRESSGAMUT_LABEL;Gamut Compression
-!TP_COMPRESSGAMUT_LIMIT;Maximum Distance Limits
-!TP_COMPRESSGAMUT_LIMIT_TOOLTIP;Maximum Distance Limit: is the distance outside of the gamut boundary to compress to the gamut boundary. For example, a value of 1.2 will compress distance values of 1.2 to a value of 1.0. \nIndividual controls are given for each color component. They are named cyan magenta and yellow because they actually control the max distance from the edge of the triangle (primaries related to the CIExy diagram), not the corner. For example, boosting the value of the cyan distance limit will increase the distance from which values are mapped to the edge between the blue and green corners of the triangle.\nThe distance limits also control the RGB ratios of the compressed values, which affects the apparent hue.\n\nThe distances are relative to the Target Compression Gamut. They may need to be adjusted after changing the target gamut if you want the amount of compression to remain unchanged.
-!TP_COMPRESSGAMUT_MAGENTALIM;Magenta
-!TP_COMPRESSGAMUT_MAGENTATH;Magenta
-!TP_COMPRESSGAMUT_MAIN_COLORSPACE;Target Compression Gamut
-!TP_COMPRESSGAMUT_POWER_TOOLTIP;Power: Control the aggressiveness of the compression curve.\n Higher power values result in more compressed values distributed closer to the gamut boundary. This will increase the "color purity" or "saturation" once the image has been rendered through a display transform.\n Higher values have a smoother transition.
-!TP_COMPRESSGAMUT_PROPHOTO;ProPhoto
-!TP_COMPRESSGAMUT_PWR;Power
-!TP_COMPRESSGAMUT_REC2020;Rec. 2020
-!TP_COMPRESSGAMUT_ROLLOFF;Rolloff
-!TP_COMPRESSGAMUT_SRGB;sRGB
-!TP_COMPRESSGAMUT_THRESHOLD;Threshold
-!TP_COMPRESSGAMUT_THRESHOLD_TOOLTIP;Threshold: controls the percentage of the outer gamut to affect. A value of 0.8 will compress out of gamut values into the outer 20% of the gamut. The inner 80% of the gamut core will not be affected. You can adjust the colors separately: for example if you wanted to protect magenta and yellow a little more than cyan, you could set the threshold a bit higher for cyan.\n\nThe thresholds are relative to the Target Compression Gamut. They may need to be adjusted after changing the target gamut if you want the protected color range to remain unchanged.
-!TP_COMPRESSGAMUT_YELLOWLIM;Yellow
-!TP_COMPRESSGAMUT_YELLOWTH;Yellow
-!TP_DISTORTION_DEFISH;De-fish
-!TP_DISTORTION_FOCAL_LENGTH;Focal length
-!TP_FRAMING_ABSOLUTE_HEIGHT;Border Height
-!TP_FRAMING_ABSOLUTE_WIDTH;Border Width
-!TP_FRAMING_ALLOW_UPSCALING;Allow upscaling to frame
-!TP_FRAMING_ASPECT_RATIO;Aspect Ratio:
-!TP_FRAMING_BASIS;Basis
-!TP_FRAMING_BASIS_AUTO;Auto
-!TP_FRAMING_BASIS_HEIGHT;Height
-!TP_FRAMING_BASIS_LONG_SIDE;Long Edge
-!TP_FRAMING_BASIS_SHORT_SIDE;Short Edge
-!TP_FRAMING_BASIS_WIDTH;Width
-!TP_FRAMING_BLUE;Blue
-!TP_FRAMING_BORDER_COLOR;Border Color
-!TP_FRAMING_BORDER_SIZE;Size
-!TP_FRAMING_BORDER_SIZE_ABSOLUTE;Absolute
-!TP_FRAMING_BORDER_SIZE_METHOD;Sizing:
-!TP_FRAMING_BORDER_SIZE_RELATIVE;Relative
-!TP_FRAMING_BORDER_SIZE_UNIFORM_RELATIVE;Uniform Relative
-!TP_FRAMING_FRAMED_HEIGHT;Framed Height
-!TP_FRAMING_FRAMED_WIDTH;Framed Width
-!TP_FRAMING_GREEN;Green
-!TP_FRAMING_LABEL;Framing
-!TP_FRAMING_LIMIT_MINIMUM;Limit minimum size
-!TP_FRAMING_METHOD;Method:
-!TP_FRAMING_METHOD_BBOX;Bounding Box
-!TP_FRAMING_METHOD_FIXED;Fixed Frame
-!TP_FRAMING_METHOD_STANDARD;Standard
-!TP_FRAMING_MIN_HEIGHT;Minimum Height
-!TP_FRAMING_MIN_WIDTH;Minimum Width
-!TP_FRAMING_ORIENTATION;Orientation:
-!TP_FRAMING_RED;Red
-!TP_ICM_OPACITYWLI;Variable contrast
-!TP_ICM_PRIMFRAME;Primaries & Illuminant
-!TP_ICM_SMOOTHFRAME;Highlight attenuation
-!TP_ICM_WAVFRAME;Contrast Enhancement
-!TP_ICM_WAVREFI;Refinement
-!TP_ICM_WORKING_SMOOTH;Highlight attenuation
-!TP_LENSGEOM_SCALE;Scale
-!TP_LOCALLAB_AVOIDNEG;Pre-filter zero and negative values
-!TP_LOCALLAB_BWEVNONE11;None
-!TP_LOCALLAB_BWEVSIG11;Activated
-!TP_LOCALLAB_BWEVSLOP;Slope based
-!TP_LOCALLAB_CIE_SMOOTHFRAME12;Tone Mapping Operators
-!TP_LOCALLAB_CIE_SMOOTH_LEVELSTRC;RGB channel TRC
-!TP_LOCALLAB_CIE_SMOOTH_SIG;Sigmoid based
-!TP_LOCALLAB_GHSBPWP;Clipped pixel count - Shadows:%1 Highlights:%2
-!TP_LOCALLAB_GHSBPWPVALUE;Pixel values - Darkest:%1 Lightest:%2
-!TP_LOCALLAB_GHSFRA;Stretch Settings
-!TP_LOCALLAB_GHSHUE;Hue (HSL)
-!TP_LOCALLAB_GHSLAB;Lightness & chromaticity (Lab)
-!TP_LOCALLAB_GHSLABFRA;Lab settings
-!TP_LOCALLAB_GHSLUM;Luminance (HSL)
-!TP_LOCALLAB_GHSRGBLUM;RGB Luminance
-!TP_LOCALLAB_GHSRGBSTD;RGB Standard
-!TP_LOCALLAB_GHSSAT;Saturation (HSL)
-!TP_LOCALLAB_GHS_B;Local intensity (b)
-!TP_LOCALLAB_GHS_BLACKPOINT_FRAME;Black point/White point/Highlights
-!TP_LOCALLAB_GHS_BLP;Black point (BP linear)
-!TP_LOCALLAB_GHS_BLP_TOOLTIP;Sets the Black point for a linear stretch of the image.\n * For negatives slider values, in GHS ‘normal’, shadows are raised linearly to avoid excessive noise build-up and facilitate GHS work.\n * For positives slider values, the histogram is shifted to the left. For Raw images, you can also use Raw-Tab > Raw Black Points – Dehaze,  which is more precise.\n * Contrast gained by performing the linear stretch will be evenly distributed over the image.\n\n * You can adjust a linear black point offset to either:\n  - account for noise in the deep shadows.\n  - adjust the histogram.\n\n * It is recommended to adjust these sliders before the main GHS sliders to avoid clipping data. A very low Stretch factor (D) value (0.001 by default) is recommended for performing this adjustment.\n * The label 'Clipped pixel count Shadows:x Highlights=y' shows you the number of pixels that would be clipped without adjusting the two sliders.\n * The label Pixel values - Darkest:w Lightest:z shows you the minimum and maximum values in the range [0, 1].\n\n * In ‘Inverse GHS’ mode the behavior is reversed and there are possible interactions with the White point.
-!TP_LOCALLAB_GHS_BPFRAME_TOOLTIP;Sets the Black point (BP linear), White point (WP linear) and Highlight for a linear stretch of the image.\n\n * Black Point (BP linear) and White Point (WP linear) settings are only available if Stretch factor (D) is between 0.001 and 0.002 so as to not affect the histogram.\n\n * When Stretch factor is 0.002 or less, all stretch settings except for Black point and White point have no effect.\n\n * Black point (BP linear) and White point (WP linear) settings are sensitive to the general settings upstream of GHS: Highlight reconstruction, White balance and RAW processes.\n\n * To have relevant Black Point (BP linear) and White Point (WP linear) settings, the entire image must be analyzed. It is recommended to use 'Fit whole image to screen - Shortcut Alt-f'.
-!TP_LOCALLAB_GHS_B_TOOLTIP;This parameter controls how tightly focused the stretch is around the Symmetry point (SP) by changing the form of the transform itself:\n * For concentrated stretches (such as initial stretches on linear images) a large 'b' factor should be employed to focus a stretch within a histogram peak while de-focusing the stretch away from the histogram peak.\n * For adjustment of non-linear images, lower 'b' parameters should be employed to distribute contrast and brightness more evenly.\n * Large positive values of 'b' can be thought of as a histogram widener, i.e. spreading the histogram wider about the focus point, SP.\n * By contrast, lower values of 'b' tend to shift the histogram to a brighter or dimmer position without affecting its width too greatly.\n * As a general rule, the level of 'b' employed will decrease as a stretch sequence nears completion, although larger 'b' values can still be employed for precise placement of additional contrast.
-!TP_LOCALLAB_GHS_CHRO;Chromaticity Lab factor (C)
-!TP_LOCALLAB_GHS_CHRO_TOOLTIP;GHS chromaticity - compensate large stretches
-!TP_LOCALLAB_GHS_CURVE_TOOLTIP;Shows the 'S' curve generated by GHS calculations. Mainly for educational purposes.\n\n * The curve only reacts to the adjusters and cannot be modified directly.
-!TP_LOCALLAB_GHS_D;Stretch factor (D)
-!TP_LOCALLAB_GHS_D_TOOLTIP;This parameter controls the amount of stretch. If the Stretch factor is set to zero, there is no stretch. In other words, the transformation is the identity transformation.\n\n * Black Point (BP linear) and White Point (WP linear) settings are only available if Stretch factor (D) is between 0.001 and 0.002.
-!TP_LOCALLAB_GHS_GHSDIAG;GHS Curve Visualization
-!TP_LOCALLAB_GHS_HLP;White point (WP linear)
-!TP_LOCALLAB_GHS_HLP_TOOLTIP;Sets the White point for a linear stretch of the image. Any pixel with value greater than the White point input will be clipped and the data lost.\n * Contrast gained by performing the linear stretch will be evenly distributed over the image, which will be brightened. Pixels with values greater than the White point will appear white and have a value of 1.0.\n * Setting this parameter to a value greater than 1 will extend the dynamic range at the high end.\n * The 'Highlight reconstruction' method has a very strong impact on the White-point value.\n\n * It is recommended to adjust this slider before the main GHS sliders to avoid clipping data. A very low Stretch factor (D) value (0.001 by default) is recommended for performing this adjustment.\n * The label 'Clipped pixel count - Shadows:x Highlights=y' shows you the number of pixels that would be clipped without adjusting the two sliders.\n * The label Pixel values - Darkest:w Lightest:z shows you the minimum and maximum values in the range [0, 1].\n\n * In ‘Inverse GHS’ mode the behavior is reversed and there are possible interactions with the Black point.
-!TP_LOCALLAB_GHS_HP;Protect highlights (HP)
-!TP_LOCALLAB_GHS_HP_TOOLTIP;Sets a value above which the stretch is modified to preserve contrast in the highlights. This is done by performing a linear stretch of the data above the 'HP' level by reserving contrast from the rest of the image. Moving the HP level towards the current setting of SP increases both the scope (range) and the amount of this contrast reservation. The net effect is to push the overall stretch to lower brightness levels while keeping the contrast and definition in the highlights. The amount of contrast reserved for the highlights is such that the continuity of the stretch is preserved.\n * This parameter must be at most 1 and no less than the Symmetry point.\n * The adjuster will automatically limits the maximum value to the Symmetry Point (SP).\n\n * Using Highlight attenuation helps to reinforce the action of Protect highlights (HP).
-!TP_LOCALLAB_GHS_INV;Inverse GHS
-!TP_LOCALLAB_GHS_INV_TOOLTIP;The inverse GHS is useful for working in negative space. It adds contrast on the far right and left of the histogram, brightening the deep shadows, darkening the bright highlights, and squeezing the histogram to the middle.\n\n * The Generalized Hyperbolic inverse transformation allows you to recover your original image, subject to mathematical precision, but you can use it for other purposes.\n\n * If the White point and Black point were changed in normal mode, they will likely need to be readjusted. The White point often needs to be readjusted lower. There is interaction between the two settings.
-!TP_LOCALLAB_GHS_LC;Value (LC)
-!TP_LOCALLAB_GHS_LC_FRAME;Stretch Regularization & Midtones
-!TP_LOCALLAB_GHS_LC_TOOLTIP;Slightly increases local contrast that was weakened by stretching.\nCan be completed by other tools specific to local contrast such as wavelets.\n\nWhen Stretch factor is 0.002 or less, Stretch Regularization & Midtones is disabled.
-!TP_LOCALLAB_GHS_LP;Protect shadows (LP)
-!TP_LOCALLAB_GHS_LP_TOOLTIP;Sets a value below which the stretch is modified to preserve contrast in the shadows/lowlights. This is done by performing a linear stretch of the data below the 'LP' level by reserving contrast from the rest of the image. Moving the LP level towards the current setting of SP changes both the scope (range) and the amount of this contrast reservation. The net effect is to push the overall stretch to higher brightness levels while keeping the contrast and definition in the background. The amount of contrast reserved for the lowlights is such that the continuity of the stretch is preserved.\n * This parameter must be at least 0 and no greater than the Symmetry point.\n * The adjuster will automatically limit the maximum value to the Symmetry Point (SP).\n\n * Using Black point - negative values - when possible, allows to change both the value of Symmetry point (SP) and the action of Protect shadows (LP).
-!TP_LOCALLAB_GHS_METHOD_TOOLTIP;The Generalized Hyperbolic Stretch (GHS) process allows you to transform the values of pixels in your image to improve the representation of the underlying data for human visualisation.\nThe generalized hyperbolic equations used in the GHS process have five main parameters. This allows significant flexibility in designing the "shape" of the transformation.\n\nTypical uses of pixel intensity transformations include:\n * Initial stretch of pixel data from linear state.\n * Addition of contrast to key areas of the image.\n * Overall brightening or darkening of the image.\n * Adjustment of the image dynamic range.\n * Adjustment of pixel data in RGB Luminance, RGB standard, Luminance - chromaticity (Lab/Lch), Luminance (HSL), Saturation (HSL), or Hue (HSL) channels.\n\n * For a better results, you can proceed in several steps, creating 2 or more RT-spots each superimposed with the GHS tool. For each of the RT-Spots, the Symmetry point (SP) base value will be different. Use the histogram peak to position the SP value.\n * For example, you can start the system in RGB mode (1st Spot), then the 2nd Spot in RGB mode with a different SP, and the 3rd in Saturation or Hue mode.\n * You can mix RT-spots in 'Normal' mode and 'Inverse' mode to restore contrast balance.\n * Full Image allows you to limit the effect to specific colors based on the deltaE.
-!TP_LOCALLAB_GHS_MID;Midtones
-!TP_LOCALLAB_GHS_MID_TOOLTIP;Adjusts midtone balance after GHS transformation.\n Can be used to rebalance the midtones of the image after stretching.\n\nWhen Stretch factor is 0.002 or less, Stretch Regularization & Midtones is disabled
-!TP_LOCALLAB_GHS_MODECUR;GHS
-!TP_LOCALLAB_GHS_MODELIN;Linear
-!TP_LOCALLAB_GHS_SIMUL_TOOLTIP;Gives a representation of the GHS function.
-!TP_LOCALLAB_GHS_SLOPE;Slope Lab factor (S)
-!TP_LOCALLAB_GHS_SLOPE_TOOLTIP;Changes the slope of the Lab transform to improve shadow rendering.
-!TP_LOCALLAB_GHS_SMOOTH;Highlight attenuation
-!TP_LOCALLAB_GHS_SMOOTH_TOOLTIP;Smooth and soften highlight areas. Amplifies 'Protect highlights (HP)' action.
-!TP_LOCALLAB_GHS_SP;Symmetry point (SP)
-!TP_LOCALLAB_GHS_SP_TOOLTIP;The default value of 0.015 is suitable for the majority of images.\n * This is the key balance value of the GHS system.\n * Sets the focus point around which the stretch is applied - contrast will be distributed symmetrically about SP.\n * While 'b' provides the degree of focus of the stretch, SP determines where that focus is applied.\n * SP should generally be placed within a histogram peak so that the stretch will widen and lower the peak by adding the most contrast in the stretch at that point. Pixel values will move away from the SP location.
-!TP_LOCALLAB_NLDENOISENLITER_TOOLTIP;Run multiple iterations of Nlmeans. Results are often better with multiple iterations and low Strength.
-!TP_LOCALLAB_NLITER;Iterations
-!TP_LOCALLAB_PROCESSWAV;Show modified areas with Wavelets
-!TP_LOCALLAB_PROCESSWAV_TOOLTIP;Wavelet decomposition:\nShows the changes made by the wavelet settings.\n\nYou see the changes made to the decomposed image, factoring in the deltaE and transitions, when you modify the wavelet settings. Note that this is different from Wavelet levels in the Advanced tab in which you always see the results of the decomposition.
-!TP_LOCALLAB_QJMODE;Tone Mapping Operators Q(CAM16) & J(Jz) 
-!TP_LOCALLAB_QJMODE_511;5.11 deprecated
-!TP_LOCALLAB_QJMODE_512;5.12
-!TP_LOCALLAB_QJMODE_TOOLTIP;The tone-mapping operators that use brightness data (Q for CAM16 and J for Jz) have been modified in RawTherapee version 5.12. This allows you to select either the current or the deprecated version.
-!TP_LOCALLAB_SH3;Generalized Hyperbolic Stretch
-!TP_LOCALLAB_SIGFRA11;Sigmoid Q (deprecated)
-!TP_LOCALLAB_SIGJZFRA11;Sigmoid Jz (deprecated)
-!TP_LOCALLAB_SIGMOIDBL11;Blend
-!TP_LOCALLAB_SIGMOIDNORMCIE11;Normalize Luminance
-!TP_LOCALLAB_SIGMOIDNORMCIEDISP_TOOLTIP;Allows you to adapt the white point to the peak luminance of the display device. Its position in the processing pipeline is not optimal so use with caution.
-!TP_LOCALLAB_SIGMOIDQJ11;Black Ev & White Ev
-!TP_LOCALLAB_SIGMOIDTH11;Threshold (Gray point)
-!TP_LOCALLAB_SLOPESMOOTRCB;Blue balance (TRC)
-!TP_LOCALLAB_SLOPESMOOTRCG;Green balance (TRC)
-!TP_LOCALLAB_SLOPESMOOTRCR;Red balance (TRC)
-!TP_LOCALLAB_SMOOTHCIETH;Attenuation threshold
-!TP_LOCALLAB_SMOOTHCIE_HIGH;Highlight attenuation only
-!TP_LOCALLAB_SMOOTHCIE_LNK;Link R, G, & B
-!TP_LOCALLAB_SMOOTHCIE_TRC;Increase gamma-based attenuation
-!TP_LOCALLAB_SMOOTHCIE_TRCREL;Relative gamma mode
-!TP_LOCALLAB_SMOOTHCONTSIG;Contrast
-!TP_LOCALLAB_SMOOTHSKEWSIG;Skew
-!TP_LOCALLAB_SMOOTHWHITSIG;Display White point (cd/m2)
-!TP_RAWEXPOS_DEHA;Dehaze
-!TP_WAVELET_DAUB20;D20 - high plus
-!TP_WAVELET_LEVLOCLABEL;Increase the preview window size
-!TP_WAVELET_OFFSFIN;Offset
-!TP_WAVELET_PYRWAVTRC;Contrast profile
-!TP_WAVELET_PYRWAVTRC_CURVE_TOOLTIP;The left end of the horizontal axis corresponds to close to zero contrast, while the right end corresponds to the strongest contrast in the image. The midpoint of the horizontal axis corresponds to the predominant contrast strength across all detail levels.\n\nThe effect of this curve is reduced for higher Contrast profile presets.\n\nTo avoid harsh contrast and halos, refrain from increasing the right half of the curve.
-!TP_WAVELET_PYRWAVTRC_RESID_TOOLTIP;Adjusts the contrast for all detail levels larger than those covered by the selected Contrast profile.
-!TP_WAVELET_PYRWAVTRC_SIGMA_TOOLTIP;Stretches the width of the "Variable contrast" curve. A value of 1 means no stretching.
-!TP_WAVELET_PYRWAVTRC_TOOLTIP;A series of presets defining the strength of the contrast adjustment at different detail levels. Lower presets only affect fine details while higher presets affect both fine and coarse details.\n\nNote: The effect on coarse details may not be visible in the preview if the preview is too small.
-!TP_WAVELET_RESIDTRC;Residual contrast
-!//TP_WBALANCE_ITCWBNOPURPLE_TOOLTIP;By default when "Inpaint opposed" is activated, purple colors are not taken into account. However, if the image does not need highlight reconstruction, or if this image naturally contains purple tints (flowers, etc.), it may be necessary to deactivate, to take into account all the colors.
-!//TP_WBALANCE_ITCWB_FORCED;Forces use of the entire CIE diagram

@@ -47,7 +47,7 @@
 #include "cplx_wavelet_dec.h"
 #include "ciecam02.h"
 
-#define BENCHMARK
+//#define BENCHMARK
 #include "StopWatch.h"
 #include "guidedfilter.h"
 #include "boxblur.h"
@@ -8272,10 +8272,19 @@ void ImProcFunctions::transit_shapedetect_retinex(int call, int senstype, LabIma
 
         const bool retishow = ((lp.showmaskretimet == 1 || lp.showmaskretimet == 2));
         const bool previewreti = ((lp.showmaskretimet == 4));
-        //balance deltaE
-        const float kL = lp.balance / SQR(327.68f);
-        const float kab = balancedeltaE(lp.balance) / SQR(327.68f);
-        const float kH = lp.balanceh;
+        
+        //balance deltaE - keep for Global
+        float balanceglobal = lp.balance;
+        float balanceHglobal = lp.balanceh;
+        
+        if(lp.fullim == 3 ) {//disable scope, but keep calculation of reducdE
+            balanceglobal = 1.f;
+            balanceHglobal = 1.f;
+        }
+        
+        const float kL = balanceglobal / SQR(327.68f);
+        const float kab = balancedeltaE(balanceglobal) / SQR(327.68f);
+        const float kH = balanceHglobal;
         const float kch = balancedeltaE(kH);
 
         if (lp.colorde == 0) {
@@ -8291,6 +8300,16 @@ void ImProcFunctions::transit_shapedetect_retinex(int call, int senstype, LabIma
                 float bbdark = darklim;
         */
         const bool showmas = lp.showmaskretimet == 3 ;
+        // keep for Global
+        float varsensglobal = varsens;
+        float thrglobal = lp.thr;
+        float iteratglobal = lp.iterat;
+        
+        if(lp.fullim == 3 ) {//Global - disable scope, but keep calculation of reducdE
+            varsensglobal = 100.f;
+            thrglobal = 2.f;
+            iteratglobal = 2.f;
+        }
 
         const std::unique_ptr<LabImage> origblur(new LabImage(GW, GH));
         const float radius = 3.f / sk;
@@ -8310,15 +8329,14 @@ void ImProcFunctions::transit_shapedetect_retinex(int call, int senstype, LabIma
             gaussianBlur(original->b, origblur->b, GW, GH, radius);
         }
 
-
 #ifdef _OPENMP
         #pragma omp parallel if (multiThread)
 #endif
         {
-            const float mindE = 2.f + MINSCOPE * varsens * lp.thr;
-            const float maxdE = 5.f + MAXSCOPE * varsens * (1 + 0.1f * lp.thr);
-            const float mindElim = 2.f + MINSCOPE * limscope * lp.thr;
-            const float maxdElim = 5.f + MAXSCOPE * limscope * (1 + 0.1f * lp.thr);
+            const float mindE = 2.f + MINSCOPE * varsensglobal * thrglobal;
+            const float maxdE = 5.f + MAXSCOPE * varsensglobal * (1 + 0.1f * thrglobal);
+            const float mindElim = 2.f + MINSCOPE * limscope * thrglobal;
+            const float maxdElim = 5.f + MAXSCOPE * limscope * (1 + 0.1f * thrglobal);
             float previewint = 0.f; //reducdE * 10000.f * lp.colorde; //settings->previewselection;
 
 #ifdef _OPENMP
@@ -8371,11 +8389,9 @@ void ImProcFunctions::transit_shapedetect_retinex(int call, int senstype, LabIma
                     }
 
                     float cli, clc;
-                    float reducdE = calcreducdE(dE, maxdE, mindE, maxdElim, mindElim, lp.iterat, limscope, varsens) / 100.f;
+                    //take into account for Global
+                    float reducdE = calcreducdE(dE, maxdE, mindE, maxdElim, mindElim, iteratglobal, limscope, varsensglobal) / 100.f;
                     
-                    if(lp.fullim == 3 ) {//disable scope
-                        reducdE = 1.f;
-                    }
 
                     previewint = reducdE * 10000.f * lp.colorde; //settings->previewselection;
 
@@ -22662,6 +22678,10 @@ void ImProcFunctions::Lab_Local(
     if(((lp.laplacexp > 0.f && lp.laplacexp <= 1.f) && lp.exposena && lp.blac == 0.f)) { // use Laplacian with very small values
         notzero = true;
     } else if ((lp.laplacexp > 0.f && lp.laplacexp <= 1.f) && lp.exposena && lp.blac != 0.f) {//for curvelocal simplebasecurve with black
+        notlaplacian = true;
+    }
+
+    if(ghsactiv && params->locallab.spots.at(sp).ghs_BLP > 0.) {//avoid crash in some rare cases when BP > 0 and datas image near zero.
         notlaplacian = true;
     }
 

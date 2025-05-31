@@ -30,16 +30,6 @@
 namespace
 {
 
-bool isCStringIn(const char *str, const char *const *list)
-{
-    for (auto element_ptr = list; *element_ptr; element_ptr++) {
-        if (!strcmp(str, *element_ptr)) {
-            return true;
-        }
-    }
-    return false;
-}
-
 bool isNextLensCropFactorBetter(const lfLens *current_lens, const lfCamera *camera, float next_lens_crop_factor)
 {
     if (!current_lens) {
@@ -75,8 +65,7 @@ bool isNextLensCropFactorBetter(const lfLens *current_lens, const lfCamera *came
 bool isNextLensBetter(const lfCamera *camera, const lfLens *current_lens, const lfLens &next_lens, const Glib::ustring &lens_name, const Glib::ustring &next_lens_name)
 {
     return isNextLensCropFactorBetter(current_lens, camera, next_lens.CropFactor) &&
-           lens_name == next_lens_name &&
-           (!camera || isCStringIn(camera->Mount, next_lens.Mounts));
+           lens_name == next_lens_name;
 }
 
 /**

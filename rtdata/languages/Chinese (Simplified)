@@ -241,8 +241,8 @@ GENERAL_DELETE_ALL;删除全部
 GENERAL_DISABLE;禁用
 GENERAL_DISABLED;禁用
 GENERAL_EDIT;编辑
-GENERAL_ENABLE;启用
-GENERAL_ENABLED;开启
+GENERAL_ENABLE;开启
+GENERAL_ENABLED;启用
 GENERAL_FILE;文件
 GENERAL_HELP;帮助
 GENERAL_LANDSCAPE;横向
@@ -676,7 +676,7 @@ HISTORY_MSG_500;局部调整点形状
 HISTORY_MSG_501;局部调整点模式
 HISTORY_MSG_502;局部调整点形状模式
 HISTORY_MSG_512;局部调整点ΔE -衰减
-HISTORY_MSG_515;选区编辑
+HISTORY_MSG_515;局部调整
 HISTORY_MSG_516;局部-色彩与亮度
 HISTORY_MSG_518;局部-亮度
 HISTORY_MSG_519;局部-反差
@@ -806,11 +806,29 @@ HISTORY_MSG_DEHAZE_ENABLED;去雾
 HISTORY_MSG_DEHAZE_SATURATION;去雾-饱和度
 HISTORY_MSG_DEHAZE_SHOW_DEPTH_MAP;去雾-显示纵深蒙版
 HISTORY_MSG_DEHAZE_STRENGTH;去雾-力度
+HISTORY_MSG_DISTORTION_DEFISH;去鱼眼
+HISTORY_MSG_DISTORTION_DEFISH_FOCAL;去鱼眼-焦距
 HISTORY_MSG_DUALDEMOSAIC_AUTO_CONTRAST;双重去马赛克-自动阈值
 HISTORY_MSG_DUALDEMOSAIC_CONTRAST;双重去马赛克-反差阈值
 HISTORY_MSG_FILMNEGATIVE_COLORSPACE;胶片负片色彩空间
 HISTORY_MSG_FILMNEGATIVE_ENABLED;胶片负片
 HISTORY_MSG_FILMNEGATIVE_VALUES;胶片负片值
+HISTORY_MSG_FRAMING_ABSOLUTE_HEIGHT;画框-边框高度
+HISTORY_MSG_FRAMING_ABSOLUTE_WIDTH;画框-边框宽度
+HISTORY_MSG_FRAMING_ALLOW_UPSCALING;画框-上采样
+HISTORY_MSG_FRAMING_ASPECT_RATIO;画框-比例
+HISTORY_MSG_FRAMING_BASIS;画框-基于
+HISTORY_MSG_FRAMING_BORDER_BLUE;画框-色彩（蓝）
+HISTORY_MSG_FRAMING_BORDER_GREEN;画框-色彩（绿）
+HISTORY_MSG_FRAMING_BORDER_SIZE;画框-相对大小
+HISTORY_MSG_FRAMING_ENABLED;画框
+HISTORY_MSG_FRAMING_FRAMED_HEIGHT;画框-被框高度
+HISTORY_MSG_FRAMING_FRAMED_WIDTH;画框-被框宽度
+HISTORY_MSG_FRAMING_METHOD;画框-方法
+HISTORY_MSG_FRAMING_MIN_HEIGHT;画框-最低高度
+HISTORY_MSG_FRAMING_MIN_SIZE_ENABLED;画框-最小大小
+HISTORY_MSG_FRAMING_MIN_WIDTH;画框-最小宽度
+HISTORY_MSG_FRAMING_ORIENTATION;画框-方向
 HISTORY_MSG_HISTMATCHING;自适应色调曲线
 HISTORY_MSG_HLBL;色彩延伸-模糊
 HISTORY_MSG_HLTH;填色修复-增益阈值
@@ -822,6 +840,19 @@ HISTORY_MSG_LOCALCONTRAST_DARKNESS;局部反差-暗部
 HISTORY_MSG_LOCALCONTRAST_ENABLED;局部反差
 HISTORY_MSG_LOCALCONTRAST_LIGHTNESS;局部反差-亮部
 HISTORY_MSG_LOCALCONTRAST_RADIUS;局部反差-半径
+HISTORY_MSG_LOCAL_GHSMETHOD;局部-GHS-方法
+HISTORY_MSG_LOCAL_GHS_B;局部-GHS-局部强度
+HISTORY_MSG_LOCAL_GHS_BLP;局部-GHS-黑点
+HISTORY_MSG_LOCAL_GHS_CHRO;局部-GHS-Lab色度系数
+HISTORY_MSG_LOCAL_GHS_D;局部-GHS-拉伸系数
+HISTORY_MSG_LOCAL_GHS_HLP;局部-GHS-白点
+HISTORY_MSG_LOCAL_GHS_HP;局部-GHS-高光保护
+HISTORY_MSG_LOCAL_GHS_INV;局部-GHS-反转
+HISTORY_MSG_LOCAL_GHS_LC;局部-GHS-局部反差
+HISTORY_MSG_LOCAL_GHS_LP;局部-GHS-阴影保护
+HISTORY_MSG_LOCAL_GHS_MID;局部-GHS-中间调
+HISTORY_MSG_LOCAL_GHS_SMOOTH;局部-GHS-高光衰减
+HISTORY_MSG_LOCAL_GHS_SP;局部-GHS-对称点
 HISTORY_MSG_METADATA_MODE;元数据复制模式
 HISTORY_MSG_MICROCONTRAST_CONTRAST;微反差-反差阈值
 HISTORY_MSG_PDSHARPEN_AUTO_CONTRAST;捕图加锐-自动阈值
@@ -1025,6 +1056,7 @@ PARTIALPASTE_FLATFIELDBLURRADIUS;平场模糊半径
 PARTIALPASTE_FLATFIELDBLURTYPE;平场模糊类型
 PARTIALPASTE_FLATFIELDCLIPCONTROL;平场剪切控制
 PARTIALPASTE_FLATFIELDFILE;平场文件夹
+PARTIALPASTE_FRAMING;增加画框
 PARTIALPASTE_GRADIENT;渐变滤镜
 PARTIALPASTE_HSVEQUALIZER;HSV均衡器
 PARTIALPASTE_ICMSETTINGS;ICM设置
@@ -1034,8 +1066,8 @@ PARTIALPASTE_LABCURVE;L*a*b*调整
 PARTIALPASTE_LENSGROUP;镜头相关设置
 PARTIALPASTE_LENSPROFILE;镜片修正档案
 PARTIALPASTE_LOCALCONTRAST;局部反差
-PARTIALPASTE_LOCALLAB;选区编辑
-PARTIALPASTE_LOCALLABGROUP;选区编辑设置
+PARTIALPASTE_LOCALLAB;局部调整
+PARTIALPASTE_LOCALLABGROUP;局部调整设置
 PARTIALPASTE_METADATA;元数据模式
 PARTIALPASTE_METAGROUP;元数据
 PARTIALPASTE_PCVIGNETTE;暗角滤镜
@@ -1111,7 +1143,7 @@ PREFERENCES_CLUTSCACHE;HaldCLUT缓存
 PREFERENCES_CLUTSCACHE_LABEL;CLUT最大缓存数
 PREFERENCES_CLUTSDIR;HaldCLUT路径
 PREFERENCES_CMMBPC;黑场补偿
-PREFERENCES_COMPLEXITYLOC;选区编辑工具默认复杂程度
+PREFERENCES_COMPLEXITYLOC;局部调整工具默认复杂程度
 PREFERENCES_COMPLEXITY_EXP;高级
 PREFERENCES_COMPLEXITY_NORM;标准
 PREFERENCES_COMPLEXITY_SIMP;基础
@@ -1146,6 +1178,11 @@ PREFERENCES_EXTEDITOR_DIR_CURRENT;与输入图片相同
 PREFERENCES_EXTEDITOR_DIR_CUSTOM;自定义
 PREFERENCES_EXTEDITOR_DIR_TEMP;操作系统临时文件夹
 PREFERENCES_EXTERNALEDITOR;外部编辑器
+PREFERENCES_EXTERNALEDITOR_CHANGE;更改应用程序
+PREFERENCES_EXTERNALEDITOR_CHANGE_FILE;更改可执行文件
+PREFERENCES_EXTERNALEDITOR_COLUMN_COMMAND;命令
+PREFERENCES_EXTERNALEDITOR_COLUMN_NAME;名称
+PREFERENCES_EXTERNALEDITOR_COLUMN_NATIVE_COMMAND;原生命令
 PREFERENCES_FBROWSEROPTS;文件浏览器选项
 PREFERENCES_FILEBROWSERTOOLBARSINGLEROW;在文件浏览器中显示紧凑的工具栏
 PREFERENCES_FLATFIELDFOUND;找到
@@ -1242,7 +1279,7 @@ PREFERENCES_SHOWBASICEXIF;显示基本Exif信息
 PREFERENCES_SHOWDATETIME;显示时间日期
 PREFERENCES_SHOWEXPOSURECOMPENSATION;附带曝光补偿
 PREFERENCES_SHOWFILMSTRIPTOOLBAR;显示“数码底片夹”栏
-PREFERENCES_SHOWTOOLTIP;显示选区编辑工具提示
+PREFERENCES_SHOWTOOLTIP;显示局部调整工具提示
 PREFERENCES_SHTHRESHOLD;阴影过暗阈值
 PREFERENCES_SINGLETAB;单编辑器标签模式
 PREFERENCES_SINGLETABVERTAB;单编辑器标签模式, 标签栏垂直
@@ -1275,6 +1312,9 @@ PREFERENCES_TP_LABEL;工具栏
 PREFERENCES_TP_VSCROLLBAR;隐藏垂直滚动条
 PREFERENCES_USEBUNDLEDPROFILES;启用内置预设
 PREFERENCES_WBA;白平衡
+PREFERENCES_WBACORR;白平衡 - 自动色温适应
+PREFERENCES_WBAENA;显示白平衡自动色温适应设置
+PREFERENCES_WBAENACUSTOM;使用自定义色温/色调
 PREFERENCES_WORKFLOW;软件界面
 PREFERENCES_ZOOMONSCROLL;滚动鼠标滚轮控制图片缩放
 PROFILEPANEL_COPYPPASTE;要复制的参数
@@ -1350,6 +1390,8 @@ SAVEDLG_SUBSAMP_2;平衡
 SAVEDLG_SUBSAMP_3;质量至优
 SAVEDLG_TIFFUNCOMPRESSED;无压缩TIFF
 SAVEDLG_WARNFILENAME;文件将被命名
+SORT_ASCENDING;升序
+SORT_DESCENDING;降序
 TOOLBAR_TOOLTIP_CROP;裁剪选择\n快捷键：<b>c</b>
 TOOLBAR_TOOLTIP_HAND;手形工具\n快捷键：<b>n</b>
 TOOLBAR_TOOLTIP_STRAIGHTEN;基准线选择\n快捷键：<b>s</b>
@@ -1653,6 +1695,8 @@ TP_DIRPYREQUALIZER_THRESHOLD;阈值
 TP_DIRPYREQUALIZER_TOOLTIP;尝试减少肤色（色相，色度，亮度）与图像其余部分之间交界处的杂点
 TP_DISTORTION_AMOUNT;数量
 TP_DISTORTION_AUTO_TOOLTIP;如果Raw文件内有矫正畸变的内嵌JPEG，则会将Raw图像与其对比并自动矫正畸变
+TP_DISTORTION_DEFISH;去鱼眼
+TP_DISTORTION_FOCAL_LENGTH;焦距
 TP_DISTORTION_LABEL;畸变
 TP_EPD_EDGESTOPPING;边缘敏感度
 TP_EPD_GAMMA;伽马
@@ -1721,6 +1765,33 @@ TP_FLATFIELD_BT_VERTICAL;垂直
 TP_FLATFIELD_CLIPCONTROL;溢出控制
 TP_FLATFIELD_CLIPCONTROL_TOOLTIP;溢出控制能够避免使用平场而导致的高光溢出。如果在应用平场之前就有溢出的高光，数值就会为0
 TP_FLATFIELD_LABEL;平场
+TP_FRAMING_ABSOLUTE_HEIGHT;画框高度
+TP_FRAMING_ABSOLUTE_WIDTH;画框宽度
+TP_FRAMING_ALLOW_UPSCALING;允许上采样至边框
+TP_FRAMING_ASPECT_RATIO;比例：
+TP_FRAMING_BASIS;基于：
+TP_FRAMING_BASIS_AUTO;自动
+TP_FRAMING_BASIS_HEIGHT;高度
+TP_FRAMING_BASIS_LONG_SIDE;长边
+TP_FRAMING_BASIS_SHORT_SIDE;短边
+TP_FRAMING_BASIS_WIDTH;宽度
+TP_FRAMING_BLUE;蓝色
+TP_FRAMING_BORDER_COLOR;画框色彩
+TP_FRAMING_BORDER_SIZE;画框大小
+TP_FRAMING_BORDER_SIZE_ABSOLUTE;绝对值
+TP_FRAMING_BORDER_SIZE_METHOD;大小：
+TP_FRAMING_BORDER_SIZE_RELATIVE;相对值
+TP_FRAMING_FRAMED_HEIGHT;被框高度
+TP_FRAMING_FRAMED_WIDTH;被框宽度
+TP_FRAMING_GREEN;绿色
+TP_FRAMING_LABEL;添加画框
+TP_FRAMING_LIMIT_MINIMUM;最小限制
+TP_FRAMING_METHOD;方法：
+TP_FRAMING_METHOD_STANDARD;标准
+TP_FRAMING_MIN_HEIGHT;最低高度
+TP_FRAMING_MIN_WIDTH;最小宽度
+TP_FRAMING_ORIENTATION;方向
+TP_FRAMING_RED;红色
 TP_GENERAL_11SCALE_TOOLTIP;此工具的效果仅在以1:1大小预览时才可见/准确
 TP_GRADIENT_CENTER;中心
 TP_GRADIENT_CENTER_X;中心 X
@@ -1749,6 +1820,7 @@ TP_HSVEQUALIZER_HUE;H
 TP_HSVEQUALIZER_LABEL;HSV均衡器
 TP_HSVEQUALIZER_SAT;S
 TP_HSVEQUALIZER_VAL;V
+TP_ICM_BPC;黑点补偿
 TP_ICM_GAMUT;色域控制
 TP_ICM_INPUTCAMERA;相机缺省
 TP_ICM_INPUTCAMERAICC;自适应相机档案
@@ -1824,6 +1896,8 @@ TP_LOCALLAB_ARTIF;形状检测
 TP_LOCALLAB_AUTOGRAY;自动平均亮度(Yb%)
 TP_LOCALLAB_AUTOGRAYCIE;自动
 TP_LOCALLAB_AVOID;避免偏色
+TP_LOCALLAB_AVOIDMUN;仅孟塞尔矫正
+TP_LOCALLAB_AVOIDMUN_TOOLTIP;使用Jz或CAM16时，孟塞尔矫正将被禁用
 TP_LOCALLAB_BALAN;ab-L平衡(ΔE)
 TP_LOCALLAB_BALANH;色度(C)-色相(H)平衡(ΔE)
 TP_LOCALLAB_BLCO;仅色度
@@ -1868,7 +1942,7 @@ TP_LOCALLAB_CIEMODE_TM;色调映射
 TP_LOCALLAB_CIEMODE_WAV;小波
 TP_LOCALLAB_CIETOOLEXP;曲线
 TP_LOCALLAB_CIE_TOOLNAME;色貌（Cam16 & JzCzHz）
-TP_LOCALLAB_CIRCRADIUS;点大小
+TP_LOCALLAB_CIRCRADIUS;参考点大小
 TP_LOCALLAB_COFR;色彩 & 亮度
 TP_LOCALLAB_COLORDE;ΔE预览颜色-密度
 TP_LOCALLAB_COLORSCOPE;范围（色彩工具）
@@ -1936,6 +2010,47 @@ TP_LOCALLAB_GAMUTMUNSELL;仅孟塞尔矫正
 TP_LOCALLAB_GAMUTNON;无
 TP_LOCALLAB_GAMUTXYZABSO;绝对XYZ
 TP_LOCALLAB_GAMUTXYZRELA;相对XYZ
+TP_LOCALLAB_GHSBPWP;溢出像素数量 - 阴影：%1 高光：%2
+TP_LOCALLAB_GHSBPWPVALUE;像素值 - 最暗：%1 最亮：%2
+TP_LOCALLAB_GHSFRA;调整设置
+TP_LOCALLAB_GHSHUE;色相(HSL)
+TP_LOCALLAB_GHSLAB;亮度 & 色度(Lab)
+TP_LOCALLAB_GHSLABFRA;Lab设置
+TP_LOCALLAB_GHSLUM;亮度(HSL)
+TP_LOCALLAB_GHSRGBLUM;RGB亮度
+TP_LOCALLAB_GHSRGBSTD;RGB标准
+TP_LOCALLAB_GHSSAT;饱和度(HSL)
+TP_LOCALLAB_GHS_B;局部强度(b)
+TP_LOCALLAB_GHS_BLACKPOINT_FRAME;黑点/白点/高光
+TP_LOCALLAB_GHS_BLP;黑点(线性黑点)
+TP_LOCALLAB_GHS_BLP_TOOLTIP;设置黑点，以用于对图像的线性拉伸。\n * 若滑条数值在负数区间，在正常的GHS模式下，阴影部分会被线性增减以避免噪点的大量生成，并促进GHS的效果。\n * 若滑条数值在正数区间，直方图会向左偏移。你也可以启用Raw栏->Raw黑点->“去雾”选项，其效果更加精确。\n * 通过线性调整所增加的反差会均匀分布在整张图片当中。\n\n * 调整黑点偏移值可以让你：\n  - 控制好阴影中的噪点\n  - 对直方图作出调整\n\n * 推荐先对此滑条作出调整，然后再调整其他的GHS滑条，以避免像素溢出。而若想调整此滑条，建议使用极低的拉伸系数(D)（默认为0.001）。\n * “溢出像素数 - 阴影/高光”部分所显示的是两个滑条未被调整时就已经溢出的像素数。\n * “像素值 - 最暗/最亮”显示的是以[0, 1]为区间，最小和最大的像素亮度值。\n\n * 在“反向GHS”模式中，以上操作将被反转，白点将会受到影响。
+TP_LOCALLAB_GHS_BPFRAME_TOOLTIP;设置黑点（线性黑点），白点（线性白点）和高光，以对图片进行线性拉伸。\n\n * 为了避免影响直方图，黑点（线性黑点）和白点（线性白点）设置仅在调整系数(D)为0.001和0.002时可以调整。\n\n * 当拉伸系数(D)小于等于0.02时，只有黑点和白点滑条会产生效果，其他GHS滑条设置将会无效。\n\n * 黑点（线性黑点）和白点（线性白点）设置对处在GHS上游的工具较为敏感，即高光还原，白平衡和Raw处理相关的设置。\n\n * 合理设置黑点和白点需要你对整张图片作出合适的分析，因此最好使用“适应屏幕”选项（快捷键Alt-f）。
+TP_LOCALLAB_GHS_B_TOOLTIP;此参数通过控制变换的形式来控制所有的调整参数适用在对称点(SP)附近多大的区域：\n * 要进行集中于某部分的拉伸（比如对于线性图片的首次拉伸），应当使用大的b值，让拉伸集中在直方图的尖峰部分，并最小化对直方图尖峰部位以外的拉伸。\n * 要对非线性图片进行调整，应当使用较小的b值，使图像的反差和亮度分布更加均衡。\n * 你可以将较大的b值理解为直方图拉平器，即直方图围绕对称点(SP)的部分被削平，削平部分被平摊到其周围。\n * 与之相反，较小的b值会让图片更加偏亮或偏暗，但直方图本身的宽度并不会受太大影响。\n * 一般而言，在多次使用拉伸工具时，b值会倾向于逐渐减小，但用户还是可以在多次拉伸的过程中使用较大的b值来进行有针对性的反差增强。
+TP_LOCALLAB_GHS_CHRO;Lab色度系数(C)
+TP_LOCALLAB_GHS_CHRO_TOOLTIP;GHS色度-为大幅拉伸补正
+TP_LOCALLAB_GHS_CURVE_TOOLTIP;显示GHS计算所生成的S型曲线，显示主要是为了教育目的。\n\n * 曲线仅为用户所做拉伸的图形化显示，曲线本身无法被直接调整
+TP_LOCALLAB_GHS_D;拉伸系数(D)
+TP_LOCALLAB_GHS_D_TOOLTIP;此参数控制调整的数量。若拉伸系数被设为0，则没有拉伸会发生。即所发生的所有变换都是恒等变换。\n\n * 黑点（线性黑点）和白点（线性白点）设置仅在调整系数(D)为0.001和0.002时可以调整。
+TP_LOCALLAB_GHS_GHSDIAG;可视化GHS曲线
+TP_LOCALLAB_GHS_HLP;白点（线性白点）
+TP_LOCALLAB_GHS_HLP_TOOLTIP;设置白点，以用于对图像的线性拉伸。所有大于白点数值的像素将会溢出，导致信息丢失。\n * 通过线性调整所增加的反差会均匀分布在整张图片当中，并使图像变亮亮度大于白点值的像素将会显示为全白，像素值为1.0。\n * 将此值设置为大于1的数字将提升高光部分的动态范围。\n * “高光恢复”功能对白点值有极大影响。\n\n * 推荐先对此滑条作出调整，然后再调整其他的GHS滑条，以避免像素溢出。而若想调整此滑条，建议使用极低的拉伸系数(D)（默认为0.001）。\n * “溢出像素数 - 阴影/高光”部分所显示的是两个滑条未被调整时就已经溢出的像素数。\n * “像素值 - 最暗/最亮”显示的是以[0, 1]为区间，最小和最大的像素亮度值。\n\n * 在“反向GHS”模式中，以上操作将被反转，黑点将会受到影响。
+TP_LOCALLAB_GHS_HP;高光保护(HP)
+TP_LOCALLAB_GHS_HP_TOOLTIP;设置一个数值，使该数值以上的亮度范围被特殊改变，以保持高光部分的反差。其原理是对大于高光保护(HP)值的数据进行线性拉伸并保持图像其余部分的反差。将该数值向对称点(SP)调整会增大线性拉伸的亮度范围，并使图像其余部分的反差增大。其总体效果就是拉伸被推移到低亮度部分，而高光部分的反差和细节得以保留。在保留高光部分的反差时，算法会保持高光与其余部分拉伸的一致性。\n * 此参数最大为1，最小不低于SP。\n * 软件会自动限制最小值不低于SP。\n\n * 使用高光衰减会强化HP的效果
+TP_LOCALLAB_GHS_INV;反向GHS
+TP_LOCALLAB_GHS_LC;数值(LC)
+TP_LOCALLAB_GHS_LC_FRAME;拉伸正则化 & 中间调
+TP_LOCALLAB_GHS_LC_TOOLTIP;拉伸会带来局部反差的降低，此工具可对此略作弥补。\n你还可以使用小波反差等专门用于调整局部反差的工具来完成反差恢复。\n\n当拉伸系数小于等于0.002时，此工具将不可用
+TP_LOCALLAB_GHS_LP;阴影保护(LP)
+TP_LOCALLAB_GHS_LP_TOOLTIP;设置一个数值，使该数值以下的亮度范围被特殊改变，以保持阴影部分的反差。其原理是对小于阴影保护(LP)值的数据进行线性拉伸并保持图像其余部分的反差。将该数值向对称点(SP)调整会增大线性拉伸的亮度范围，并使图像其余部分的反差增大。其总体效果就是拉伸被推移到高亮度部分，而背景部分的反差和细节得以保留。在保留阴影部分的反差时，算法会保持阴影与其余部分拉伸的一致性。\n * 此参数最小为0，最大不高于SP。\n * 软件会自动限制最大值不大于SP。\n\n * 使用黑点-负值能够让你修改SP的值以及阴影保护的效果
+TP_LOCALLAB_GHS_METHOD_TOOLTIP;一般化双曲线式拉伸(GHS)处理可以让你变换图片中像素的数值，改善图像数据的表现样式，提升其视觉表现力。\nGHS处理所使用的一般化双曲线方程共有5个主要参数。这令设计变换的“形式”有极强的灵活性。\n\n像素强度变换一般可以用于实现以下目标：\n * 对于处在线性状态的像素数据进行首次拉伸。\n * 对于图片关键部位进行对比度增强。\n * 对于图片整体亮暗的控制。\n * 调整图片的动态范围。\n * 在RGB亮度，RGB标准，亮度-色度（Lab/Lch），亮度（HSL），饱和度（HSL）或色相（HSL）通道上调整像素数据\n\n * 若想获得更好的效果，你可以创建多个局部调整点（RT点），进行多次GHS处理。在每一个RT点应用不同的对称点(SP)值。SP值应通过参考直方图的尖峰部位来确定。\n * 比如，你可以先（在第一个RT点里面）用RGB模式进行第一次GHS处理，然后再创建第二个RT点，使用RGB模式，再设置一个不一样的SP参数，然后再创建第三个点，使用饱和度或是色相模式进行处理。\n * 你可以在不同的RT点混合使用正常模式和反向模式，以恢复反差平衡。\n * 使用覆盖整张图片的RT点，你可以通过调整deltaE将调整的效果局限在某些颜色上。
+TP_LOCALLAB_GHS_MID;中间调
+TP_LOCALLAB_GHS_MID_TOOLTIP;调整GHS变换后的中间调平衡。\n可以用来二次平衡图像在拉伸之后的中间调。\n\n当拉伸系数小于等于0.002时，此选项无法调整
+TP_LOCALLAB_GHS_MODELIN;线性
+TP_LOCALLAB_GHS_SIMUL_TOOLTIP;以图像的形式展现的GHS函数
+TP_LOCALLAB_GHS_SMOOTH;高光衰减
+TP_LOCALLAB_GHS_SMOOTH_TOOLTIP;让高光处更加细腻柔和。此工具会放大“高光保护(HP)”的效果
+TP_LOCALLAB_GHS_SP;对称点(SP)
+TP_LOCALLAB_GHS_SP_TOOLTIP;默认的0.015适用于大部分图像。\n * 此数值是控制GHS系统平衡的关键值。\n * 此数值决定拉伸发生的核心区域-然后反差将对称分布在对称点的两边。\n * 局部强度(b)控制的是这片核心区域的大小，而核心区域本身在哪里则是由对称点(SP)决定的。\n * 一般而言，SP应该被设置在直方图的最高处所对应的位置，以将大部分反差添加在该区域，使直方图的尖峰被削减，直方图整体变宽。像素的数值会远离SP的位置。
 TP_LOCALLAB_GRADANG;渐变角度
 TP_LOCALLAB_GRADANG_TOOLTIP;旋转角度（单位为°）：-180 0 +180
 TP_LOCALLAB_GRADFRA;渐变滤镜蒙版
@@ -1959,7 +2074,7 @@ TP_LOCALLAB_JZLIGHT;视明度
 TP_LOCALLAB_JZSAT;饱和度
 TP_LOCALLAB_JZSHFRA;阴影/高光 Jz
 TP_LOCALLAB_LABBLURM;Blur Mask
-TP_LOCALLAB_LABEL;选区编辑
+TP_LOCALLAB_LABEL;局部调整
 TP_LOCALLAB_LABGRID;色彩矫正网格
 TP_LOCALLAB_LC_TOOLNAME;局部反差 & 小波
 TP_LOCALLAB_LEVELWAV;小波层级
@@ -2034,9 +2149,10 @@ TP_LOCALLAB_SENSIEXCLU;范围
 TP_LOCALLAB_SETTINGS;设置
 TP_LOCALLAB_SH1;阴影与高光
 TP_LOCALLAB_SH2;均衡器
+TP_LOCALLAB_SH3;一般化双曲线式拉伸(GHS)
 TP_LOCALLAB_SHADEX;阴影
 TP_LOCALLAB_SHADEXCOMP;阴影压缩
-TP_LOCALLAB_SHADHIGH;阴影/高光 & 色调均衡器
+TP_LOCALLAB_SHADHIGH;阴影/高光，色调均衡器 & GHS
 TP_LOCALLAB_SHAMASKCOL;阴影
 TP_LOCALLAB_SHAPETYPE;RT调整点形状
 TP_LOCALLAB_SHAPE_TOOLTIP;“椭圆”是正常模式\n部分情况下会用到“矩形”，比如需要让一个调整点覆盖整张图片的时候，便可以使用矩形点，并将限位点拖移到图片之外。这种情况需要你将过渡值设为100\n\n未来会开发多边形调整点与贝塞尔曲线
@@ -2052,7 +2168,7 @@ TP_LOCALLAB_SHOWMASKTYP2;去噪
 TP_LOCALLAB_SHOWMASKTYP3;模糊 & 噪点 + 去噪
 TP_LOCALLAB_SHOWREF;预览ΔE
 TP_LOCALLAB_SHRESFRA;阴影/高光 & 色调响应曲线
-TP_LOCALLAB_SH_TOOLNAME;阴影/高光 & 色调均衡器
+TP_LOCALLAB_SH_TOOLNAME;阴影/高光，色调均衡器 & GHS
 TP_LOCALLAB_SIGMAWAV;衰减响应
 TP_LOCALLAB_SIGMOIDLAMBDA;对比度
 TP_LOCALLAB_SOFTM;柔光
@@ -2067,8 +2183,12 @@ TP_LOCALLAB_STREN;压缩力度
 TP_LOCALLAB_STRENG;力度
 TP_LOCALLAB_STRENGR;力度
 TP_LOCALLAB_STRENGTH;噪点
+TP_LOCALLAB_STRENGTHCIELOG;力度
 TP_LOCALLAB_STRGRID;力度
 TP_LOCALLAB_TARGET_GRAY;平均亮度(Yb%)
+TP_LOCALLAB_THRESDELTAE;范围
+TP_LOCALLAB_THRESRETI;阈值
+TP_LOCALLAB_THRESWAV;平衡阈值
 TP_LOCALLAB_TM;色调映射
 TP_LOCALLAB_TONE_TOOLNAME;色调映射
 TP_LOCALLAB_TOOLMASK_2;小波
@@ -2160,6 +2280,7 @@ TP_RAWEXPOS_BLACK_3;绿 2
 TP_RAWEXPOS_BLACK_BLUE;蓝
 TP_RAWEXPOS_BLACK_GREEN;绿
 TP_RAWEXPOS_BLACK_RED;红
+TP_RAWEXPOS_DEHA;去雾
 TP_RAWEXPOS_LINEAR;白点矫正
 TP_RAWEXPOS_RGB;红，绿，蓝
 TP_RAWEXPOS_TWOGREEN;将两个绿值挂钩
@@ -2400,6 +2521,7 @@ TP_WAVELET_DAUB4;D4-标准
 TP_WAVELET_DAUB6;D6-标准增强
 TP_WAVELET_DAUB10;D10-中等
 TP_WAVELET_DAUB14;D14-高
+TP_WAVELET_DAUBLOCAL;小波边缘表现
 TP_WAVELET_DAUB_TOOLTIP;改变多贝西系数：\nD4 = 标准\nD14 = 一般而言表现最好，但会增加10%的处理耗时\n\n影响边缘检测以及较低层级的质量。但是质量不完全和该系数有关，可能会随具体的图像和处理方式而变化
 TP_WAVELET_DENCURV;曲线
 TP_WAVELET_DENOISEHUE;去噪色相均衡器
@@ -3188,30 +3310,12 @@ ZOOMPANEL_ZOOMOUT;缩放拉远\n快捷键：<b>-</b>
 !HISTORY_MSG_DEHABLACK;Dehaze Bayer Black
 !HISTORY_MSG_DEHABLACKX;Dehaze X-Trans Black
 !HISTORY_MSG_DIRPYRDENOISE_GAIN;NR - Compensate for lightness
-!HISTORY_MSG_DISTORTION_DEFISH;De-fish
-!HISTORY_MSG_DISTORTION_DEFISH_FOCAL;De-fish - Focal length
 !HISTORY_MSG_EDGEFFECT;Edge Attenuation response
 !HISTORY_MSG_FF_FROMMETADATA;Flat-Field - From Metadata
 !HISTORY_MSG_FILMNEGATIVE_BALANCE;FN - Reference output
 !HISTORY_MSG_FILMNEGATIVE_REF_SPOT;FN - Reference input
-!HISTORY_MSG_FRAMING_ABSOLUTE_HEIGHT;Framing - Border Height
-!HISTORY_MSG_FRAMING_ABSOLUTE_WIDTH;Framing - Border Width
-!HISTORY_MSG_FRAMING_ALLOW_UPSCALING;Framing - Upscaling
-!HISTORY_MSG_FRAMING_ASPECT_RATIO;Framing - Aspect Ratio
-!HISTORY_MSG_FRAMING_BASIS;Framing - Basis
-!HISTORY_MSG_FRAMING_BORDER_BLUE;Framing - Border (B)
-!HISTORY_MSG_FRAMING_BORDER_GREEN;Framing - Border (G)
 !HISTORY_MSG_FRAMING_BORDER_RED;Framing - Border (R)
-!HISTORY_MSG_FRAMING_BORDER_SIZE;Framing - Relative Size
 !HISTORY_MSG_FRAMING_BORDER_SIZE_METHOD;Framing - Border Sizing Method
-!HISTORY_MSG_FRAMING_ENABLED;Framing
-!HISTORY_MSG_FRAMING_FRAMED_HEIGHT;Framing - Framed Height
-!HISTORY_MSG_FRAMING_FRAMED_WIDTH;Framing - Framed Width
-!HISTORY_MSG_FRAMING_METHOD;Framing - Method
-!HISTORY_MSG_FRAMING_MIN_HEIGHT;Framing - Min Height
-!HISTORY_MSG_FRAMING_MIN_SIZE_ENABLED;Framing - Min Size
-!HISTORY_MSG_FRAMING_MIN_WIDTH;Framing - Min Width
-!HISTORY_MSG_FRAMING_ORIENTATION;Framing - Orientation
 !HISTORY_MSG_GAMUTMUNSEL;Gamut-Munsell
 !HISTORY_MSG_ICL_LABGRIDCIEXY;Cie xy
 !HISTORY_MSG_ICM_BLUX;Primaries Blue X
@@ -3317,20 +3421,7 @@ ZOOMPANEL_ZOOMOUT;缩放拉远\n快捷键：<b>-</b>
 !HISTORY_MSG_LOCAL_FEATHERVIB;Local - Vib Gradient feather
 !HISTORY_MSG_LOCAL_FEATHERWAV;Local - Wav Gradient feather
 !HISTORY_MSG_LOCAL_GAMUTMUNSEL;Local - SC - Avoid Color Shift
-!HISTORY_MSG_LOCAL_GHSMETHOD;Local - GHS - Method
-!HISTORY_MSG_LOCAL_GHS_B;Local - GHS - Local intensity
-!HISTORY_MSG_LOCAL_GHS_BLP;Local - GHS - Black point
-!HISTORY_MSG_LOCAL_GHS_CHRO;Local - GHS - Lab chromaticity factor
-!HISTORY_MSG_LOCAL_GHS_D;Local - GHS - Stretch factor
-!HISTORY_MSG_LOCAL_GHS_HLP;Local - GHS - White point
-!HISTORY_MSG_LOCAL_GHS_HP;Local - GHS - Protect highlights
-!HISTORY_MSG_LOCAL_GHS_INV;Local - GHS - Inverse
-!HISTORY_MSG_LOCAL_GHS_LC;Local - GHS - Local Contrast
-!HISTORY_MSG_LOCAL_GHS_LP;Local - GHS - Protect shadows
-!HISTORY_MSG_LOCAL_GHS_MID;Local - GHS - Midtones
 !HISTORY_MSG_LOCAL_GHS_SLOPE;Local - GHS - Lab slope factor
-!HISTORY_MSG_LOCAL_GHS_SMOOTH;Local - GHS - Highlight attenuation
-!HISTORY_MSG_LOCAL_GHS_SP;Local - GHS - Symmetry point
 !HISTORY_MSG_LOCAL_LOGCIE12;Local - CIECAM - Log encoding
 !HISTORY_MSG_LOCAL_LOG_BLACKS;Local - Log Blacks distribution
 !HISTORY_MSG_LOCAL_LOG_COMPR;Local - Log Compress brightness
@@ -3477,7 +3568,6 @@ ZOOMPANEL_ZOOMOUT;缩放拉远\n快捷键：<b>-</b>
 !MAIN_TOOLTIP_BEFOREAFTERLOCK;<b>Lock</b> / <b>Unlock</b> the <b>Before</b> view\n\n<b>Lock</b>: keep the <b>Before</b> view unchanged.\nUseful to evaluate the cumulative effect of multiple tools.\nAdditionally, comparisons can be made to any state in the History.\n\n<b>Unlock</b>: the <b>Before</b> view will follow the <b>After</b> view one step behind, showing the image before the effect of the currently used tool.
 !PARTIALPASTE_COMPRESSGAMUT;Gamut Compression
 !PARTIALPASTE_FLATFIELDFROMMETADATA;Flat-field from Metadata
-!PARTIALPASTE_FRAMING;Framing
 !PARTIALPASTE_RETINEX;Retinex
 !PARTIALPASTE_TONE_EQUALIZER;Tone equalizer
 !PREFERENCES_BROWSERECURSIVEFOLLOWLINKS;Follow symbolic links when browsing sub-folders
@@ -3491,16 +3581,8 @@ ZOOMPANEL_ZOOMOUT;缩放拉远\n快捷键：<b>-</b>
 !PREFERENCES_CUSTPROFBUILDKEYFORMAT_TID;TagID
 !PREFERENCES_EXTEDITOR_BYPASS_OUTPUT_PROFILE;Bypass output profile
 !PREFERENCES_EXTEDITOR_FLOAT32;32-bit float TIFF output
-!PREFERENCES_EXTERNALEDITOR_CHANGE;Change Application
-!PREFERENCES_EXTERNALEDITOR_CHANGE_FILE;Change Executable
-!PREFERENCES_EXTERNALEDITOR_COLUMN_COMMAND;Command
-!PREFERENCES_EXTERNALEDITOR_COLUMN_NAME;Name
-!PREFERENCES_EXTERNALEDITOR_COLUMN_NATIVE_COMMAND;Native command
 !PREFERENCES_INSPECT_MAXBUFFERS_TOOLTIP;Set the maximum number of images stored in cache when hovering over them in the File Browser; systems with little RAM (2GB) should keep this value set to 1 or 2.
-!PREFERENCES_WBACORR;White Balance - Automatic temperature correlation
 !PREFERENCES_WBACORR_TOOLTIP;These settings allow, depending on the images (type of raw file, colorimetry, etc.), an adaptation of the " Temperature correlation " algorithm in order to obtain the best overall results. There is no absolute rule, linking these parameters to the results obtained.\n\nThe settings are of 3 types: \n* those accessible to the user from the GUI.\n* those accessible only in reading from each pp3 file : Itcwb_minsize=20, Itcwb_delta=4 Itcwb_rgreen=1 Itcwb_nopurple=false (See Rawpedia)\n* those accessible to the user in 'options' (see Rawpedia)\n You can use "Awb temperature bias" and "Green refinement" to adjust the results. Each movement of these commands brings a new calculation of temperature, tint and correlation.\n\nPlease note that the 3 indicators 'Correlation factor', 'Patch chroma' and ΔE are given for information only. It is not because one of these indicators is better that the result will necessarily be better.
-!PREFERENCES_WBAENA;Show White Balance Auto temperature correlation settings
-!PREFERENCES_WBAENACUSTOM;Use Custom temperature & tint
 !PREFERENCES_WBAFORC;Forces Extra algoritm
 !PREFERENCES_WBAGREENDELTA;Delta temperature in green iterate loop (if Force Extra enabled)
 !PREFERENCES_WBANOPURP;No purple color used
@@ -3542,13 +3624,11 @@ ZOOMPANEL_ZOOMOUT;缩放拉远\n快捷键：<b>-</b>
 !SHCSELECTOR_TOOLTIP;Click right mouse button to reset the position of those 3 sliders.
 !SOFTPROOF_GAMUTCHECK_TOOLTIP;Highlight pixels with out-of-gamut colors with respect to:\n- the printer profile, if one is set and soft-proofing is enabled,\n- the output profile, if a printer profile is not set and soft-proofing is enabled,\n- the monitor profile, if soft-proofing is disabled.
 !SOFTPROOF_TOOLTIP;Soft-proofing simulates the appearance of the image:\n- when printed, if a printer profile is set in Preferences > Color Management,\n- when viewed on a display that uses the current output profile, if a printer profile is not set.
-!SORT_ASCENDING;Ascending
 !SORT_BY_DATE;By Date
 !SORT_BY_EXIF;By EXIF
 !SORT_BY_LABEL;By Color Label
 !SORT_BY_NAME;By Name
 !SORT_BY_RANK;By Rank
-!SORT_DESCENDING;Descending
 !TC_LOCALLAB_PRIM_SHIFTX;Shift x
 !TC_LOCALLAB_PRIM_SHIFTX_TOOLTIP;In combination with "Refine colors", allows you to:\n 1) for low values, adjust the image purity.\n 2) for higher values, carry out moderate color toning.\nBe careful not to go outside the CIE xy diagram.
 !TC_LOCALLAB_PRIM_SHIFTY;Shift y
@@ -3624,46 +3704,16 @@ ZOOMPANEL_ZOOMOUT;缩放拉远\n快捷键：<b>-</b>
 !TP_DIRPYRDENOISE_CHROMINANCE_PMZ;Preview multi-zones
 !TP_DIRPYREQUALIZER_ALGO_TOOLTIP;Fine: closer to the colors of the skin, minimizing the action on other colors\nLarge: avoid more artifacts.
 !TP_DIRPYREQUALIZER_HUESKIN_TOOLTIP;This pyramid is for the upper part, so far as the algorithm at its maximum efficiency.\nTo the lower part, the transition zones.\nIf you need to move the area significantly to the left or right - or if there are artifacts: the <b>white balance is incorrect</b>\nYou can slightly reduce the zone to prevent the rest of the image is affected.
-!TP_DISTORTION_DEFISH;De-fish
-!TP_DISTORTION_FOCAL_LENGTH;Focal length
 !TP_FLATFIELD_FROMMETADATA;From Metadata
-!TP_FRAMING_ABSOLUTE_HEIGHT;Border Height
-!TP_FRAMING_ABSOLUTE_WIDTH;Border Width
-!TP_FRAMING_ALLOW_UPSCALING;Allow upscaling to frame
-!TP_FRAMING_ASPECT_RATIO;Aspect Ratio:
-!TP_FRAMING_BASIS;Basis
-!TP_FRAMING_BASIS_AUTO;Auto
-!TP_FRAMING_BASIS_HEIGHT;Height
-!TP_FRAMING_BASIS_LONG_SIDE;Long Edge
-!TP_FRAMING_BASIS_SHORT_SIDE;Short Edge
-!TP_FRAMING_BASIS_WIDTH;Width
-!TP_FRAMING_BLUE;Blue
-!TP_FRAMING_BORDER_COLOR;Border Color
-!TP_FRAMING_BORDER_SIZE;Size
-!TP_FRAMING_BORDER_SIZE_ABSOLUTE;Absolute
-!TP_FRAMING_BORDER_SIZE_METHOD;Sizing:
-!TP_FRAMING_BORDER_SIZE_RELATIVE;Relative
 !TP_FRAMING_BORDER_SIZE_UNIFORM_RELATIVE;Uniform Relative
-!TP_FRAMING_FRAMED_HEIGHT;Framed Height
-!TP_FRAMING_FRAMED_WIDTH;Framed Width
-!TP_FRAMING_GREEN;Green
-!TP_FRAMING_LABEL;Framing
-!TP_FRAMING_LIMIT_MINIMUM;Limit minimum size
-!TP_FRAMING_METHOD;Method:
 !TP_FRAMING_METHOD_BBOX;Bounding Box
 !TP_FRAMING_METHOD_FIXED;Fixed Frame
-!TP_FRAMING_METHOD_STANDARD;Standard
-!TP_FRAMING_MIN_HEIGHT;Minimum Height
-!TP_FRAMING_MIN_WIDTH;Minimum Width
-!TP_FRAMING_ORIENTATION;Orientation:
-!TP_FRAMING_RED;Red
 !TP_ICM_APPLYBASELINEEXPOSUREOFFSET;Baseline exposure
 !TP_ICM_APPLYBASELINEEXPOSUREOFFSET_TOOLTIP;Employ the embedded DCP baseline exposure offset. The setting is only available if the selected DCP has one.
 !TP_ICM_APPLYHUESATMAP;Base table
 !TP_ICM_APPLYHUESATMAP_TOOLTIP;Employ the embedded DCP base table (HueSatMap). The setting is only available if the selected DCP has one.
 !TP_ICM_APPLYLOOKTABLE;Look table
 !TP_ICM_APPLYLOOKTABLE_TOOLTIP;Employ the embedded DCP look table. The setting is only available if the selected DCP has one.
-!TP_ICM_BPC;Black Point Compensation
 !TP_ICM_BW;Black and White
 !TP_ICM_DCPILLUMINANT;Illuminant
 !TP_ICM_DCPILLUMINANT_INTERPOLATED;Interpolated
@@ -3758,8 +3808,6 @@ ZOOMPANEL_ZOOMOUT;缩放拉远\n快捷键：<b>-</b>
 !TP_LOCALLAB_ADJ;Equalizer Color
 !TP_LOCALLAB_ARTIF_TOOLTIP;ΔE scope threshold increases the range of ΔE scope. High values are for very wide gamut images.\nIncreasing ΔE decay can improve shape detection, but can also reduce the scope.
 !TP_LOCALLAB_AVOIDCOLORSHIFT_TOOLTIP;Fit colors into gamut of the working color space and apply Munsell correction (Uniform Perceptual Lab). Default: Munsell only.\n\nMunsell only: Fixes Lab mode hue drifts due to non-linearity when chromaticity is changed (Uniform Perceptual Lab).\nLab: Applies a gamut control in relative colorimetric. Munsell is then applied.\nXYZ Absolute: Applies gamut control in absolute colorimetric. Munsell is then applied.\nXYZ Relative: Applies gamut control in relative colorimetric. Munsell is then applied. The result is not the same as Lab.
-!TP_LOCALLAB_AVOIDMUN;Munsell correction only
-!TP_LOCALLAB_AVOIDMUN_TOOLTIP;Munsell correction always disabled when Jz or CAM16 is used.
 !TP_LOCALLAB_AVOIDNEG;Pre-filter zero and negative values
 !TP_LOCALLAB_AVOIDRAD;Soft radius
 !TP_LOCALLAB_BALANEXP;Laplacian balance
@@ -3910,51 +3958,10 @@ ZOOMPANEL_ZOOMOUT;缩放拉远\n快捷键：<b>-</b>
 !TP_LOCALLAB_GAMMASK_TOOLTIP;Adjusting Gamma and Slope can provide a soft and artifact-free transformation of the mask by progressively modifying 'L' to avoid any discontinuities.
 !TP_LOCALLAB_GAMUTLABRELA;Lab
 !TP_LOCALLAB_GAMW;Gamma (wavelet pyramids)
-!TP_LOCALLAB_GHSBPWP;Clipped pixel count - Shadows:%1 Highlights:%2
-!TP_LOCALLAB_GHSBPWPVALUE;Pixel values - Darkest:%1 Lightest:%2
-!TP_LOCALLAB_GHSFRA;Stretch Settings
-!TP_LOCALLAB_GHSHUE;Hue (HSL)
-!TP_LOCALLAB_GHSLAB;Lightness & chromaticity (Lab)
-!TP_LOCALLAB_GHSLABFRA;Lab settings
-!TP_LOCALLAB_GHSLUM;Luminance (HSL)
-!TP_LOCALLAB_GHSRGBLUM;RGB Luminance
-!TP_LOCALLAB_GHSRGBSTD;RGB Standard
-!TP_LOCALLAB_GHSSAT;Saturation (HSL)
-!TP_LOCALLAB_GHS_B;Local intensity (b)
-!TP_LOCALLAB_GHS_BLACKPOINT_FRAME;Black point/White point/Highlights
-!TP_LOCALLAB_GHS_BLP;Black point (BP linear)
-!TP_LOCALLAB_GHS_BLP_TOOLTIP;Sets the Black point for a linear stretch of the image.\n * For negatives slider values, in GHS ‘normal’, shadows are raised linearly to avoid excessive noise build-up and facilitate GHS work.\n * For positives slider values, the histogram is shifted to the left. For Raw images, you can also use Raw-Tab > Raw Black Points – Dehaze,  which is more precise.\n * Contrast gained by performing the linear stretch will be evenly distributed over the image.\n\n * You can adjust a linear black point offset to either:\n  - account for noise in the deep shadows.\n  - adjust the histogram.\n\n * It is recommended to adjust these sliders before the main GHS sliders to avoid clipping data. A very low Stretch factor (D) value (0.001 by default) is recommended for performing this adjustment.\n * The label 'Clipped pixel count Shadows:x Highlights=y' shows you the number of pixels that would be clipped without adjusting the two sliders.\n * The label Pixel values - Darkest:w Lightest:z shows you the minimum and maximum values in the range [0, 1].\n\n * In ‘Inverse GHS’ mode the behavior is reversed and there are possible interactions with the White point.
-!TP_LOCALLAB_GHS_BPFRAME_TOOLTIP;Sets the Black point (BP linear), White point (WP linear) and Highlight for a linear stretch of the image.\n\n * Black Point (BP linear) and White Point (WP linear) settings are only available if Stretch factor (D) is between 0.001 and 0.002 so as to not affect the histogram.\n\n * When Stretch factor is 0.002 or less, all stretch settings except for Black point and White point have no effect.\n\n * Black point (BP linear) and White point (WP linear) settings are sensitive to the general settings upstream of GHS: Highlight reconstruction, White balance and RAW processes.\n\n * To have relevant Black Point (BP linear) and White Point (WP linear) settings, the entire image must be analyzed. It is recommended to use 'Fit whole image to screen - Shortcut Alt-f'.
-!TP_LOCALLAB_GHS_B_TOOLTIP;This parameter controls how tightly focused the stretch is around the Symmetry point (SP) by changing the form of the transform itself:\n * For concentrated stretches (such as initial stretches on linear images) a large 'b' factor should be employed to focus a stretch within a histogram peak while de-focusing the stretch away from the histogram peak.\n * For adjustment of non-linear images, lower 'b' parameters should be employed to distribute contrast and brightness more evenly.\n * Large positive values of 'b' can be thought of as a histogram widener, i.e. spreading the histogram wider about the focus point, SP.\n * By contrast, lower values of 'b' tend to shift the histogram to a brighter or dimmer position without affecting its width too greatly.\n * As a general rule, the level of 'b' employed will decrease as a stretch sequence nears completion, although larger 'b' values can still be employed for precise placement of additional contrast.
-!TP_LOCALLAB_GHS_CHRO;Chromaticity Lab factor (C)
-!TP_LOCALLAB_GHS_CHRO_TOOLTIP;GHS chromaticity - compensate large stretches
-!TP_LOCALLAB_GHS_CURVE_TOOLTIP;Shows the 'S' curve generated by GHS calculations. Mainly for educational purposes.\n\n * The curve only reacts to the adjusters and cannot be modified directly.
-!TP_LOCALLAB_GHS_D;Stretch factor (D)
-!TP_LOCALLAB_GHS_D_TOOLTIP;This parameter controls the amount of stretch. If the Stretch factor is set to zero, there is no stretch. In other words, the transformation is the identity transformation.\n\n * Black Point (BP linear) and White Point (WP linear) settings are only available if Stretch factor (D) is between 0.001 and 0.002.
-!TP_LOCALLAB_GHS_GHSDIAG;GHS Curve Visualization
-!TP_LOCALLAB_GHS_HLP;White point (WP linear)
-!TP_LOCALLAB_GHS_HLP_TOOLTIP;Sets the White point for a linear stretch of the image. Any pixel with value greater than the White point input will be clipped and the data lost.\n * Contrast gained by performing the linear stretch will be evenly distributed over the image, which will be brightened. Pixels with values greater than the White point will appear white and have a value of 1.0.\n * Setting this parameter to a value greater than 1 will extend the dynamic range at the high end.\n * The 'Highlight reconstruction' method has a very strong impact on the White-point value.\n\n * It is recommended to adjust this slider before the main GHS sliders to avoid clipping data. A very low Stretch factor (D) value (0.001 by default) is recommended for performing this adjustment.\n * The label 'Clipped pixel count - Shadows:x Highlights=y' shows you the number of pixels that would be clipped without adjusting the two sliders.\n * The label Pixel values - Darkest:w Lightest:z shows you the minimum and maximum values in the range [0, 1].\n\n * In ‘Inverse GHS’ mode the behavior is reversed and there are possible interactions with the Black point.
-!TP_LOCALLAB_GHS_HP;Protect highlights (HP)
-!TP_LOCALLAB_GHS_HP_TOOLTIP;Sets a value above which the stretch is modified to preserve contrast in the highlights. This is done by performing a linear stretch of the data above the 'HP' level by reserving contrast from the rest of the image. Moving the HP level towards the current setting of SP increases both the scope (range) and the amount of this contrast reservation. The net effect is to push the overall stretch to lower brightness levels while keeping the contrast and definition in the highlights. The amount of contrast reserved for the highlights is such that the continuity of the stretch is preserved.\n * This parameter must be at most 1 and no less than the Symmetry point.\n * The adjuster will automatically limits the maximum value to the Symmetry Point (SP).\n\n * Using Highlight attenuation helps to reinforce the action of Protect highlights (HP).
-!TP_LOCALLAB_GHS_INV;Inverse GHS
 !TP_LOCALLAB_GHS_INV_TOOLTIP;The inverse GHS is useful for working in negative space. It adds contrast on the far right and left of the histogram, brightening the deep shadows, darkening the bright highlights, and squeezing the histogram to the middle.\n\n * The Generalized Hyperbolic inverse transformation allows you to recover your original image, subject to mathematical precision, but you can use it for other purposes.\n\n * If the White point and Black point were changed in normal mode, they will likely need to be readjusted. The White point often needs to be readjusted lower. There is interaction between the two settings.
-!TP_LOCALLAB_GHS_LC;Value (LC)
-!TP_LOCALLAB_GHS_LC_FRAME;Stretch Regularization & Midtones
-!TP_LOCALLAB_GHS_LC_TOOLTIP;Slightly increases local contrast that was weakened by stretching.\nCan be completed by other tools specific to local contrast such as wavelets.\n\nWhen Stretch factor is 0.002 or less, Stretch Regularization & Midtones is disabled.
-!TP_LOCALLAB_GHS_LP;Protect shadows (LP)
-!TP_LOCALLAB_GHS_LP_TOOLTIP;Sets a value below which the stretch is modified to preserve contrast in the shadows/lowlights. This is done by performing a linear stretch of the data below the 'LP' level by reserving contrast from the rest of the image. Moving the LP level towards the current setting of SP changes both the scope (range) and the amount of this contrast reservation. The net effect is to push the overall stretch to higher brightness levels while keeping the contrast and definition in the background. The amount of contrast reserved for the lowlights is such that the continuity of the stretch is preserved.\n * This parameter must be at least 0 and no greater than the Symmetry point.\n * The adjuster will automatically limit the maximum value to the Symmetry Point (SP).\n\n * Using Black point - negative values - when possible, allows to change both the value of Symmetry point (SP) and the action of Protect shadows (LP).
-!TP_LOCALLAB_GHS_METHOD_TOOLTIP;The Generalized Hyperbolic Stretch (GHS) process allows you to transform the values of pixels in your image to improve the representation of the underlying data for human visualisation.\nThe generalized hyperbolic equations used in the GHS process have five main parameters. This allows significant flexibility in designing the "shape" of the transformation.\n\nTypical uses of pixel intensity transformations include:\n * Initial stretch of pixel data from linear state.\n * Addition of contrast to key areas of the image.\n * Overall brightening or darkening of the image.\n * Adjustment of the image dynamic range.\n * Adjustment of pixel data in RGB Luminance, RGB standard, Luminance - chromaticity (Lab/Lch), Luminance (HSL), Saturation (HSL), or Hue (HSL) channels.\n\n * For a better results, you can proceed in several steps, creating 2 or more RT-spots each superimposed with the GHS tool. For each of the RT-Spots, the Symmetry point (SP) base value will be different. Use the histogram peak to position the SP value.\n * For example, you can start the system in RGB mode (1st Spot), then the 2nd Spot in RGB mode with a different SP, and the 3rd in Saturation or Hue mode.\n * You can mix RT-spots in 'Normal' mode and 'Inverse' mode to restore contrast balance.\n * Full Image allows you to limit the effect to specific colors based on the deltaE.
-!TP_LOCALLAB_GHS_MID;Midtones
-!TP_LOCALLAB_GHS_MID_TOOLTIP;Adjusts midtone balance after GHS transformation.\n Can be used to rebalance the midtones of the image after stretching.\n\nWhen Stretch factor is 0.002 or less, Stretch Regularization & Midtones is disabled
 !TP_LOCALLAB_GHS_MODECUR;GHS
-!TP_LOCALLAB_GHS_MODELIN;Linear
-!TP_LOCALLAB_GHS_SIMUL_TOOLTIP;Gives a representation of the GHS function.
 !TP_LOCALLAB_GHS_SLOPE;Slope Lab factor (S)
 !TP_LOCALLAB_GHS_SLOPE_TOOLTIP;Changes the slope of the Lab transform to improve shadow rendering.
-!TP_LOCALLAB_GHS_SMOOTH;Highlight attenuation
-!TP_LOCALLAB_GHS_SMOOTH_TOOLTIP;Smooth and soften highlight areas. Amplifies 'Protect highlights (HP)' action.
-!TP_LOCALLAB_GHS_SP;Symmetry point (SP)
-!TP_LOCALLAB_GHS_SP_TOOLTIP;The default value of 0.015 is suitable for the majority of images.\n * This is the key balance value of the GHS system.\n * Sets the focus point around which the stretch is applied - contrast will be distributed symmetrically about SP.\n * While 'b' provides the degree of focus of the stretch, SP determines where that focus is applied.\n * SP should generally be placed within a histogram peak so that the stretch will widen and lower the peak by adding the most contrast in the stretch at that point. Pixel values will move away from the SP location.
 !TP_LOCALLAB_GRADGEN_TOOLTIP;Adjusts luminance gradient strength.
 !TP_LOCALLAB_GRADSTRAB_TOOLTIP;Adjusts chroma gradient strength.
 !TP_LOCALLAB_GRADSTRCHRO;Chroma gradient strength
@@ -4235,7 +4242,6 @@ ZOOMPANEL_ZOOMOUT;缩放拉远\n快捷键：<b>-</b>
 !TP_LOCALLAB_SENSIEXCLU_TOOLTIP;Adjust the colors to be excluded.
 !TP_LOCALLAB_SENSIMASK_TOOLTIP;Scope adjustment specific to common mask tool.\nActs on the difference between the original image and the mask.\nUses the luma, chroma and hue references from the center of the spot\n\nYou can also adjust the ΔE of the mask itself by using 'Scope (ΔE image mask)' in 'Settings' > 'Mask and Merge'.
 !TP_LOCALLAB_SENSI_TOOLTIP;Adjusts the scope of the action:\nSmall values limit the action to colors similar to those in the center of the spot.\nHigh values let the tool act on a wider range of colors.
-!TP_LOCALLAB_SH3;Generalized Hyperbolic Stretch
 !TP_LOCALLAB_SHADHMASK_TOOLTIP;Lowers the highlights of the mask in the same way as the shadows/highlights algorithm.
 !TP_LOCALLAB_SHADMASK_TOOLTIP;Lifts the shadows of the mask in the same way as the shadows/highlights algorithm.
 !TP_LOCALLAB_SHADOWHIGHLIGHT_TOOLTIP;Adjust shadows and highlights either with 'Shadows Highlights' sliders, 'Tone Equalizer', or 'Generalized Hyperbolic Stretch' (GHS).\nCan be used instead of, or in conjunction with the Exposure module, or for GHS as a tone mapper.
@@ -4328,7 +4334,6 @@ ZOOMPANEL_ZOOMOUT;缩放拉远\n快捷键：<b>-</b>
 !TP_LOCALLAB_SPECIAL;Special use of RGB curves
 !TP_LOCALLAB_SPECIAL_TOOLTIP;The checkbox allows you to remove all other actions i.e. 'Scope', masks, sliders etc., (except for transitions) and use just the effect of the RGB tone-curve.
 !TP_LOCALLAB_STRENGRID_TOOLTIP;You can adjust the desired effect with 'strength', but you can also use the 'scope' function which allows you to delimit the action (e.g. to isolate a particular color).
-!TP_LOCALLAB_STRENGTHCIELOG;Strength
 !TP_LOCALLAB_STRUC;Structure
 !TP_LOCALLAB_STRUCCOL;Spot structure
 !TP_LOCALLAB_STRUCCOL1;Spot structure
@@ -4342,9 +4347,6 @@ ZOOMPANEL_ZOOMOUT;缩放拉远\n快捷键：<b>-</b>
 !TP_LOCALLAB_SYMSL;Symmetrical (mouse + sliders)
 !TP_LOCALLAB_TE_PIVOT;Pivot (Ev)
 !TP_LOCALLAB_THRES;Threshold structure
-!TP_LOCALLAB_THRESDELTAE;Range
-!TP_LOCALLAB_THRESRETI;Threshold
-!TP_LOCALLAB_THRESWAV;Balance threshold
 !TP_LOCALLAB_TLABEL;TM Min=%1 Max=%2 Mean=%3 Sig=%4
 !TP_LOCALLAB_TLABEL_TOOLTIP;Transmission map result.\nMin and Max are used by Variance.\nTm=Min TM=Max of Transmission Map.\nYou can normalize the results with the threshold slider.
 !TP_LOCALLAB_TM_MASK;Use transmission map
@@ -4415,7 +4417,6 @@ ZOOMPANEL_ZOOMOUT;缩放拉远\n快捷键：<b>-</b>
 !TP_LOCAL_WIDTH;Right
 !TP_LOCAL_WIDTH_L;Left
 !TP_LOCRETI_METHOD_TOOLTIP;Low = Reinforce low light.\nUniform = Evenly distributed.\nHigh = Reinforce strong light.
-!TP_RAWEXPOS_DEHA;Dehaze
 !TP_RAW_1PASSMEDIUM;1-pass (Markesteijn)
 !TP_RAW_2PASS;1-pass+fast
 !TP_RAW_3PASSBEST;3-pass (Markesteijn)
@@ -4524,7 +4525,6 @@ ZOOMPANEL_ZOOMOUT;缩放拉远\n快捷键：<b>-</b>
 !TP_WAVELET_CURVEEDITOR_HH;HH
 !TP_WAVELET_CURVEEDITOR_HH_TOOLTIP;Modifies the residual image hue as a function of hue.
 !TP_WAVELET_DAUB20;D20 - high plus
-!TP_WAVELET_DAUBLOCAL;Wavelet Edge performance
 !TP_WAVELET_DEN5THR;Guided threshold
 !TP_WAVELET_DENL;Correction structure
 !TP_WAVELET_DENLH;Guided threshold levels 1-4

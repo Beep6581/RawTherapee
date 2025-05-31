@@ -47,7 +47,7 @@
 #include "lensmetadata.h"
 #include "rtgui/options.h"
 
-#define BENCHMARK
+//#define BENCHMARK
 #include "StopWatch.h"
 
 #ifdef _OPENMP

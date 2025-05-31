@@ -4448,7 +4448,11 @@ LocallabShadow::LocallabShadow():
     ghs_MID->setAdjusterListener(this);
     ghs_BLP->setAdjusterListener(this);
     ghs_HLP->setAdjusterListener(this);
+    ghsbpwpLabels->set_line_wrap();
+    ghsbpwpLabels->set_justify(Gtk::Justification::JUSTIFY_CENTER);
     setExpandAlignProperties(ghsbpwpLabels, true, false, Gtk::ALIGN_CENTER, Gtk::ALIGN_START);
+    ghsbpwpvalueLabels->set_line_wrap();
+    ghsbpwpvalueLabels->set_justify(Gtk::Justification::JUSTIFY_CENTER);
     setExpandAlignProperties(ghsbpwpvalueLabels, true, false, Gtk::ALIGN_CENTER, Gtk::ALIGN_START);
     ghs_D->setLogScale(10, 0);
    //ghs_B->setLogScale(10, -5);
