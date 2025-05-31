@@ -7696,7 +7696,7 @@ LocallabBlur::LocallabBlur():
     expdenoisenl(Gtk::manage(new MyExpander(false, M("TP_LOCALLAB_NLFRA")))),
     expdenoiselum(Gtk::manage(new MyExpander(false, M("TP_LOCALLAB_DENOIWAVLUM")))),
     expdenoisech(Gtk::manage(new MyExpander(false, M("TP_LOCALLAB_DENOIWAVCH")))),
-    LocalcurveEditorwavden(new CurveEditorGroup(options.lastlocalCurvesDir, M("TP_LOCALLAB_WAVDEN"))),
+    LocalcurveEditorwavden(std::unique_ptr<CurveEditorGroup>(new CurveEditorGroup(options.lastlocalCurvesDir,M("TP_LOCALLAB_WAVDEN")))),
     wavshapeden(static_cast<FlatCurveEditor*>(LocalcurveEditorwavden->addCurve(CT_Flat, "", nullptr, false, false))),
   //  lCLabels(Gtk::manage(new Gtk::Label(M("TP_LOCALLAB_LCLABELS")))),
     lCLabels(Gtk::manage(new Gtk::Label("-----------------"))),
@@ -7749,7 +7749,7 @@ LocallabBlur::LocallabBlur():
     noiselumdetail(Gtk::manage(new Adjuster(M("TP_LOCALLAB_NOISELUMDETAIL"), 0., 100., 0.01, 50.))),
     noiselequal(Gtk::manage(new Adjuster(M("TP_LOCALLAB_NOISELEQUAL"), -2, 10, 1, 7, Gtk::manage(new RTImage("circle-white-small")), Gtk::manage(new RTImage("circle-black-small"))))),
     noisegam(Gtk::manage(new Adjuster(M("TP_LOCALLAB_NOISEGAM"), 1.0, 5., 0.1, 1.))),
-    LocalcurveEditorwavhue(new CurveEditorGroup(options.lastlocalCurvesDir, M("TP_WAVELET_DENOISEHUE"))),
+    LocalcurveEditorwavhue(std::unique_ptr<CurveEditorGroup>(new CurveEditorGroup(options.lastlocalCurvesDir,M("TP_LOCALLAB_DENOIHUE")))),
     wavhue(static_cast<FlatCurveEditor*>(LocalcurveEditorwavhue->addCurve(CT_Flat, "", nullptr, false, true))),
     LocalcurveEditorwavhuecont(std::unique_ptr<CurveEditorGroup>(new CurveEditorGroup(options.lastlocalCurvesDir,M("TP_LOCALLAB_DENOIHUECONT")))),
     wavhuecont(static_cast<FlatCurveEditor*>(LocalcurveEditorwavhuecont->addCurve(CT_Flat, "", nullptr, false, true))),
@@ -7783,8 +7783,7 @@ LocallabBlur::LocallabBlur():
     showmaskblMethod(Gtk::manage(new MyComboBoxText())),
     showmaskblMethodtyp(Gtk::manage(new MyComboBoxText())),
     enablMask(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_ENABLE_MASK")))),
-//    maskblCurveEditorG(new CurveEditorGroup(options.lastlocalCurvesDir, M("TP_LOCALLAB_MASK"))),
-    maskblCurveEditorG(new CurveEditorGroup(options.lastlocalCurvesDir, "", 1)),
+    maskblCurveEditorG(std::unique_ptr<CurveEditorGroup>(new CurveEditorGroup(options.lastlocalCurvesDir,"",1))),
     CCmaskblshape(static_cast<FlatCurveEditor*>(maskblCurveEditorG->addCurve(CT_Flat, "C", nullptr, false, false))),
     LLmaskblshape(static_cast<FlatCurveEditor*>(maskblCurveEditorG->addCurve(CT_Flat, "L", nullptr, false, false))),
     HHmaskblshape(static_cast<FlatCurveEditor *>(maskblCurveEditorG->addCurve(CT_Flat, "LC(h)", nullptr, false, true))),
@@ -7800,9 +7799,9 @@ LocallabBlur::LocallabBlur():
     slomaskbl(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SLOMASKCOL"), 0.0, 15.0, 0.1, 0.))),
     shadmaskbl(Gtk::manage(new Adjuster(M("TP_LOCALLAB_HIGHMASKCOL"), 0, 100, 1, 0))),
     shadmaskblsha(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SHAMASKCOL"), 0, 100, 1, 0))),
-    mask2blCurveEditorG(new CurveEditorGroup(options.lastlocalCurvesDir, M("TP_LOCALLAB_MASK"))),
+    mask2blCurveEditorG(std::unique_ptr<CurveEditorGroup>(new CurveEditorGroup(options.lastlocalCurvesDir,M("TP_LOCALLAB_MASK")))),
     Lmaskblshape(static_cast<DiagonalCurveEditor*>(mask2blCurveEditorG->addCurve(CT_Diagonal, "L(L)"))),
-    mask2blCurveEditorGwav(new CurveEditorGroup(options.lastlocalCurvesDir, M("TP_LOCALLAB_WAVMASK"))),
+    mask2blCurveEditorGwav(std::unique_ptr<CurveEditorGroup>(new CurveEditorGroup(options.lastlocalCurvesDir,M("TP_LOCALLAB_WAVMASK")))),
     LLmaskblshapewav(static_cast<FlatCurveEditor*>(mask2blCurveEditorGwav->addCurve(CT_Flat, "L(L)", nullptr, false, false))),
     quaHBox(Gtk::manage(new Gtk::Box())),
     csThresholdblur(Gtk::manage(new ThresholdAdjuster(M("TP_LOCALLAB_CSTHRESHOLDBLUR"), 0, 9, 0, 0, 6, 5, 0, false)))
@@ -8280,11 +8279,7 @@ LocallabBlur::LocallabBlur():
 
 LocallabBlur::~LocallabBlur()
 {
-    delete LocalcurveEditorwavden;
-    delete LocalcurveEditorwavhue;
-    delete maskblCurveEditorG;
-    delete mask2blCurveEditorG;
-    delete mask2blCurveEditorGwav;
+
 }
 
 void LocallabBlur::adjusterAutoToggled(Adjuster* a, bool newval)

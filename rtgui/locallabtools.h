@@ -918,7 +918,7 @@ private:
     MyExpander* const expdenoisenl;
     MyExpander* const expdenoiselum;
     MyExpander* const expdenoisech;
-    CurveEditorGroup* const LocalcurveEditorwavden;
+    std::unique_ptr<CurveEditorGroup> LocalcurveEditorwavden;    
     FlatCurveEditor* const wavshapeden;
     Gtk::Label* const lCLabels;
     Gtk::Label* const lumLabels;
@@ -949,7 +949,7 @@ private:
     Adjuster* const noiselumdetail;
     Adjuster* const noiselequal;
     Adjuster* const noisegam;
-    CurveEditorGroup* const LocalcurveEditorwavhue;
+    std::unique_ptr<CurveEditorGroup> LocalcurveEditorwavhue;    
     FlatCurveEditor* wavhue;
     std::unique_ptr<CurveEditorGroup> LocalcurveEditorwavhuecont;    
     FlatCurveEditor* wavhuecont;
@@ -987,7 +987,7 @@ private:
     MyComboBoxText* const showmaskblMethod;
     MyComboBoxText* const showmaskblMethodtyp;
     Gtk::CheckButton* const enablMask;
-    CurveEditorGroup* const maskblCurveEditorG;
+    std::unique_ptr<CurveEditorGroup> maskblCurveEditorG;    
     FlatCurveEditor* const CCmaskblshape;
     FlatCurveEditor* const LLmaskblshape;
     FlatCurveEditor* const HHmaskblshape;
@@ -1003,9 +1003,9 @@ private:
     Adjuster* const slomaskbl;
     Adjuster* const shadmaskbl;
     Adjuster* const shadmaskblsha;
-    CurveEditorGroup* const mask2blCurveEditorG;
+    std::unique_ptr<CurveEditorGroup> mask2blCurveEditorG;    
     DiagonalCurveEditor* const Lmaskblshape;
-    CurveEditorGroup* const mask2blCurveEditorGwav;
+    std::unique_ptr<CurveEditorGroup> mask2blCurveEditorGwav;    
     FlatCurveEditor* const LLmaskblshapewav;
     Gtk::Box* const quaHBox;
     ThresholdAdjuster* const csThresholdblur;
