@@ -3301,7 +3301,7 @@ LocallabParams::LocallabSpot::LocallabSpot() :
     prevMethod("hide"),
     shape("ELI"),
     spotMethod("norm"),
-    wavMethod("D4"),
+    wavMethod("D6"),
     sensiexclu(12),
     structexclu(0),
     struc(4.0),

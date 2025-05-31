@@ -38,7 +38,7 @@ public:
     using internal_type = float;
 
     template<typename E>
-    wavelet_decomposition(E * src, int width, int height, int maxlvl, int subsampling, int skipcrop = 1, int numThreads = 1, int Daub4Len = 6);
+    wavelet_decomposition(E * src, int width, int height, int maxlvl, int subsampling, int skipcrop = 1, int numThreads = 1, int Daub4Len = 8);
 
     ~wavelet_decomposition();
 
