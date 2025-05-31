@@ -7751,7 +7751,7 @@ LocallabBlur::LocallabBlur():
     noisegam(Gtk::manage(new Adjuster(M("TP_LOCALLAB_NOISEGAM"), 1.0, 5., 0.1, 1.))),
     LocalcurveEditorwavhue(new CurveEditorGroup(options.lastlocalCurvesDir, M("TP_WAVELET_DENOISEHUE"))),
     wavhue(static_cast<FlatCurveEditor*>(LocalcurveEditorwavhue->addCurve(CT_Flat, "", nullptr, false, true))),
-    LocalcurveEditorwavhuecont(new CurveEditorGroup(options.lastlocalCurvesDir, M("TP_LOCALLAB_DENOIHUECONT"))),
+    LocalcurveEditorwavhuecont(std::unique_ptr<CurveEditorGroup>(new CurveEditorGroup(options.lastlocalCurvesDir,M("TP_LOCALLAB_DENOIHUECONT")))),
     wavhuecont(static_cast<FlatCurveEditor*>(LocalcurveEditorwavhuecont->addCurve(CT_Flat, "", nullptr, false, true))),
     noisechrof(Gtk::manage(new Adjuster(M("TP_LOCALLAB_NOISECHROFINE"), MINCHRO, MAXCHRO, 0.01, 0.))),
     noisechroc(Gtk::manage(new Adjuster(M("TP_LOCALLAB_NOISECHROCOARSE"), MINCHRO, MAXCHROCC, 0.01, 0.))),
@@ -8282,7 +8282,6 @@ LocallabBlur::~LocallabBlur()
 {
     delete LocalcurveEditorwavden;
     delete LocalcurveEditorwavhue;
-    delete LocalcurveEditorwavhuecont;
     delete maskblCurveEditorG;
     delete mask2blCurveEditorG;
     delete mask2blCurveEditorGwav;

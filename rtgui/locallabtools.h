@@ -951,7 +951,7 @@ private:
     Adjuster* const noisegam;
     CurveEditorGroup* const LocalcurveEditorwavhue;
     FlatCurveEditor* wavhue;
-    CurveEditorGroup* const LocalcurveEditorwavhuecont;
+    std::unique_ptr<CurveEditorGroup> LocalcurveEditorwavhuecont;    
     FlatCurveEditor* wavhuecont;
     Adjuster* const noisechrof;
     Adjuster* const noisechroc;
