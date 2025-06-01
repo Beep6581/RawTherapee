@@ -3201,6 +3201,7 @@ TP_LOCALLAB_DENOIEQUALCHRO_TOOLTIP;Allows you to direct the chroma noise reducti
 TP_LOCALLAB_DENOIEQUAL_TOOLTIP;Allows you to carry out more or less noise reduction in either the shadows or the highlights.
 TP_LOCALLAB_DENOIENA;Enable contrast threshold
 TP_LOCALLAB_DENOIFRA;Denoise Settings
+TP_LOCALLAB_DENOIHUE;Equalizer denoise
 TP_LOCALLAB_DENOIHUECONT;Equalizer denoise mask
 TP_LOCALLAB_DENOILUMDETAIL_TOOLTIP;Allows you to recover luminance detail by progressively applying a Fourier transform (DCT).
 TP_LOCALLAB_DENOIRATIO;Ratio flat-structure areas
@@ -3213,7 +3214,7 @@ TP_LOCALLAB_DENOIWAVCH;Wavelets: Chrominance
 TP_LOCALLAB_DENOIWAVLUM;Wavelets: Luminance
 TP_LOCALLAB_DENOI_EXP;Denoise
 TP_LOCALLAB_DENOI_TOOLTIP;This module can be used for noise reduction either on its own (at the end of the processing pipeline) or in addition to the Noise Reduction module in the Detail tab (which works at the beginning of the pipeline).\n Scope allows you to differentiate the action based on color (ΔE).\nMinimum spot size: 128x128.
-TP_LOCALLAB_DENORADIUS_TOOLTIP;Allows you to differentiate Denoise action based on image details and your wishes to process the background.\n The resulting action is the combination of the Denoise of the image and that of the mask created by 'Contrast threshold'\n On very noisy images you can reduce the mask noise.\n You can also differentiate the action with the curve 'Equalizer denoise mask'.\n The ratio flat-structure areas allows you to correct the action between the two.
+TP_LOCALLAB_DENORADIUS_TOOLTIP;Allows you to differentiate Denoise action based on image details and your wishes to process the background.\n The resulting action is the combination of the Denoise of the image and that of the mask created by 'Contrast threshold'\n On very noisy images you can reduce the mask noise.\n You can also differentiate the action with the curve 'Equalizer denoise mask'.\n The ratio flat-structure areas allows you to correct the action between the two.\n\nOn noisy images and in Raw format, you should use the Presharpening denoise and Postsharpening denoise functions in order to have a more effective action of the mask.
 TP_LOCALLAB_DEPTH;Depth
 TP_LOCALLAB_DETAIL;Local contrast
 TP_LOCALLAB_DETAILFRA;Edge Detection - DCT
@@ -3464,7 +3465,7 @@ TP_LOCALLAB_LOCKMADL;Locks MadL noise evaluation
 TP_LOCALLAB_LOCKMADL2;Manual settings
 TP_LOCALLAB_LOCKMADL_TOOLTIP;Allows you to lock the noise evaluation used for Wavelet denoise.\n\nWavelet denoise uses MadL (Median absolute deviation luminance) to act on the noise based on a slider or a curve.\nRawtherapee's pipeline design results in different MadL values ​​depending on the preview position and lead to differences with the output.\n\nIf you enable this checkbox, the value used for global processing will be that of the preview at that time. This will allow you to prioritize a specific area, background, or face for noise reduction, rather than an overall average value. Of course, you should only check the box once you've selected the area.
 TP_LOCALLAB_LOCKMADL2_TOOLTIP;Allows you to manually control MadL values. Be careful to avoid doing anything wrong, it is important that the values ​​have been initialized by an automatic setting according to the chosen zone.\n\nBe careful not to confuse the action on MadL which is a noise estimation, which is only used in Wavelet Denoise, with the strength set here in Selective Editing, by a curve and a level (Aggressive / Conservative). The scale of MadL is not linear, but is taken into account in an exponential function.\n\nThe first levels of wavelet decomposition allow a visible noise reduction, those of the higher levels affect more the banding effects.
-TP_LOCALLAB_LOCKMADLFRA_TOOLTIP;Shows you the actual values ​​of Median Absolute Deviation (MadL).\nIf 'Locks MadL noise evaluation' is not enabled you can manually change these values ​​which will affect the entire image.\nThe first levels 0,1,2,3 for the Horizontal direction - 7,8,9,10 for the Vertical - 14,15,16,17 for the Diagonal, act on the detail noise. The higher levels are more effective on the banding noise.
+TP_LOCALLAB_LOCKMADLFRA_TOOLTIP;Shows you the actual values ​​of Median Absolute Deviation (MadL).\nIf 'Locks MadL noise evaluation' is not enabled you can manually change these values ​​which will affect the entire image.\nThe first levels 0,1,2,3 for the Horizontal direction - 7,8,9,10 for the Vertical - 14,15,16,17 for the Diagonal, act on the detail noise. The higher levels are more effective on the banding noise.\n\nLuminance noise reduction is a function that implements MadL (depending on level and direction) divided by the level of detail (high, medium, low frequency), the actual value of the decomposition at that location (depending on level and direction) and the curve applied by the user according to the level of wavelet decomposition.
 TP_LOCALLAB_LOG;Log Encoding
 TP_LOCALLAB_LOG1FRA;CAM16 Image Adjustments
 TP_LOCALLAB_LOG2FRA;Viewing Conditions
