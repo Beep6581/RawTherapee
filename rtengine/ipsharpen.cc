@@ -269,7 +269,8 @@ void ImProcFunctions::deconvsharpeningloc (float** luminance, float** tmp, int W
 #endif
     for (int i = 0; i < H; i++) {
         for (int j = 0; j < W; j++) {
-            tmpI[i][j] = max(luminance[i][j], 0.f);
+            //tmpI[i][j] = max(luminance[i][j], 0.f)
+            tmpI[i][j] = luminance[i][j] = max(luminance[i][j], 0.f);
         }
     }
 

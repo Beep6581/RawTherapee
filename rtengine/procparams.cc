@@ -3054,7 +3054,7 @@ WaveletParams::WaveletParams() :
     mixmethod("mix"),
     slimethod("sli"),
     quamethod("cons"),
-    daubcoeffmethod("4_"),
+    daubcoeffmethod("6_"),
     CHmethod("without"),
     Medgreinf("less"),
     ushamethod("clari"),
