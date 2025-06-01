@@ -3234,7 +3234,7 @@ TP_LOCALLAB_ENARETIMASKTMAP_TOOLTIP;If enabled the Mask uses Restored Data after
 TP_LOCALLAB_ENH;Enhanced
 TP_LOCALLAB_ENHDEN;Enhanced + chroma denoise
 TP_LOCALLAB_EPSBL;Detail
-TP_LOCALLAB_EQUIL;Normalize luminancecd
+TP_LOCALLAB_EQUIL;Normalize luminance
 TP_LOCALLAB_EQUILTM_TOOLTIP;Reconstruct luminance so that the mean and variance of the output image are identical to those of the original.
 TP_LOCALLAB_ESTOP;Edge stopping
 TP_LOCALLAB_EV_DUPL;Copy of
