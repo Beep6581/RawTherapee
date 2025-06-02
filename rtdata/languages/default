@@ -3751,7 +3751,7 @@ TP_LOCALLAB_SHTRC_TOOLTIP;Based on 'working profile' (only those provided), modi
 TP_LOCALLAB_SH_TOOLNAME;Shadows/Highlights, Equalizer & GHS
 TP_LOCALLAB_SIGBLACKSSCIE;Blacks distribution
 TP_LOCALLAB_SIGCIE;Sigmoid
-TP_LOCALLAB_SIGFRA;Sigmoid Q & Slope based
+TP_LOCALLAB_SIGFRA;Slope based & Sigmoid Q
 TP_LOCALLAB_SIGFRA11;Sigmoid Q (deprecated)
 TP_LOCALLAB_SIGGAMJCIE;Gamma
 TP_LOCALLAB_SIGJZFRA;Sigmoid Jz
