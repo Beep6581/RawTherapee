@@ -2080,6 +2080,9 @@ PREFERENCES_FORIMAGE;For non-raw photos
 PREFERENCES_FORRAW;For raw photos
 PREFERENCES_FSTRIP_SAME_THUMB_HEIGHT;Same thumbnail height between the Filmstrip and the File Browser
 PREFERENCES_FSTRIP_SAME_THUMB_HEIGHT_HINT;Having separate thumbnail size will require more processing time each time you'll switch between the single Editor tab and the File Browser.
+PREFERENCES_GENERAL;Define general complexity 
+PREFERENCES_GENERAL_MINI;Optimized tools
+PREFERENCES_GENERAL_ALL;All tools
 PREFERENCES_GIMPPATH;GIMP installation directory
 PREFERENCES_HISTOGRAMPOSITIONLEFT;Histogram in left panel
 PREFERENCES_HISTOGRAM_TOOLTIP;If enabled, the working profile is used for rendering the main histogram and the Navigator panel, otherwise the gamma-corrected output profile is used.
