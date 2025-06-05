@@ -479,6 +479,7 @@ void Options::setDefaults()
     curvebboxpos = 1;
     complexity = 2;
     spotmet = 0;
+    genemet = 0;
 
     inspectorWindow = false;
     zoomOnScroll = true;
@@ -1789,6 +1790,10 @@ void Options::readFromFile(Glib::ustring fname)
                     spotmet = keyFile.get_integer("GUI", "Spotmet");
                 }
 
+                if (keyFile.has_key("GUI", "Genmet")) {
+                    genemet = keyFile.get_integer("GUI", "Genmet");
+                }
+
                 if (keyFile.has_key("GUI", "InspectorWindow")) {
                     inspectorWindow = keyFile.get_boolean("GUI", "InspectorWindow");
                 }
@@ -2676,6 +2681,7 @@ void Options::saveToFile(Glib::ustring fname)
         keyFile.set_boolean("GUI", "Showtooltip", showtooltip);
         keyFile.set_integer("GUI", "Complexity", complexity);
         keyFile.set_integer("GUI", "Spotmet", spotmet);
+        keyFile.set_integer("GUI", "Genmet", genemet);
         keyFile.set_boolean("GUI", "InspectorWindow", inspectorWindow);
         keyFile.set_boolean("GUI", "ZoomOnScroll", zoomOnScroll);
         keyFile.set_integer("GUI", "MaxZoom", static_cast<int>(maxZoomLimit));

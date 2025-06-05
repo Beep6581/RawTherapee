@@ -983,12 +983,12 @@ ToolPanelCoordinator::~ToolPanelCoordinator ()
     delete toolBar;
 }
 
-void ToolPanelCoordinator::imageTypeChanged(bool isRaw, bool isBayer, bool isXtrans, bool isMono, bool isGainMapSupported)
+void ToolPanelCoordinator::imageTypeChanged(bool isoption, bool issharE, bool isRaw, bool isBayer, bool isXtrans, bool isMono, bool isGainMapSupported)
 {
     if (isRaw) {
         if (isBayer) {
             idle_register.add(
-                [this, isGainMapSupported]() -> bool
+                [this, isGainMapSupported, isoption, issharE]() -> bool
                 {
                     rawPanelSW->set_sensitive(true);
                     sensorxtrans->FoldableToolPanel::hide();
@@ -1005,12 +1005,18 @@ void ToolPanelCoordinator::imageTypeChanged(bool isRaw, bool isBayer, bool isXtr
                     flatfield->setGainMap(isGainMapSupported);
                     pdSharpening->FoldableToolPanel::show();
                     retinex->FoldableToolPanel::setGrayedOut(false);
+                    if(issharE) {
+                        sharpenEdge->FoldableToolPanel::show();
+                    } else {
+                        sharpenEdge->FoldableToolPanel::hide();
+                    }    
+                        
                     return false;
                 }
             );
         } else if (isXtrans) {
             idle_register.add(
-                [this, isGainMapSupported]() -> bool
+                [this, isGainMapSupported,  isoption, issharE]() -> bool
                 {
                     rawPanelSW->set_sensitive(true);
                     sensorxtrans->FoldableToolPanel::show();
@@ -1027,12 +1033,18 @@ void ToolPanelCoordinator::imageTypeChanged(bool isRaw, bool isBayer, bool isXtr
                     flatfield->setGainMap(isGainMapSupported);
                     pdSharpening->FoldableToolPanel::show();
                     retinex->FoldableToolPanel::setGrayedOut(false);
+                    if(issharE) {
+                        sharpenEdge->FoldableToolPanel::show();
+                    } else {
+                        sharpenEdge->FoldableToolPanel::hide();
+                    }    
+                    
                     return false;
                 }
             );
         } else if (isMono) {
             idle_register.add(
-                [this, isGainMapSupported]() -> bool
+                [this, isGainMapSupported, isoption, issharE]() -> bool
                 {
                     rawPanelSW->set_sensitive(true);
                     sensorbayer->FoldableToolPanel::hide();
@@ -1048,12 +1060,17 @@ void ToolPanelCoordinator::imageTypeChanged(bool isRaw, bool isBayer, bool isXtr
                     flatfield->setGainMap(isGainMapSupported);
                     pdSharpening->FoldableToolPanel::show();
                     retinex->FoldableToolPanel::setGrayedOut(false);
+                    if(issharE) {
+                        sharpenEdge->FoldableToolPanel::show();
+                    } else {
+                        sharpenEdge->FoldableToolPanel::hide();
+                    }    
                     return false;
                 }
             );
         } else {
             idle_register.add(
-                [this]() -> bool
+                [this, isoption, issharE]() -> bool
                 {
                     rawPanelSW->set_sensitive(true);
                     sensorbayer->FoldableToolPanel::hide();
@@ -1068,13 +1085,18 @@ void ToolPanelCoordinator::imageTypeChanged(bool isRaw, bool isBayer, bool isXtr
                     flatfield->FoldableToolPanel::hide();
                     pdSharpening->FoldableToolPanel::hide();
                     retinex->FoldableToolPanel::setGrayedOut(false);
+                    if(issharE) {
+                        sharpenEdge->FoldableToolPanel::show();
+                    } else {
+                        sharpenEdge->FoldableToolPanel::hide();
+                    }    
                     return false;
                 }
             );
         }
     } else {
         idle_register.add(
-            [this]() -> bool
+            [this, isoption, issharE]() -> bool
             {
                 rawPanelSW->set_sensitive(false);
                 sensorbayer->FoldableToolPanel::hide();
@@ -1089,6 +1111,11 @@ void ToolPanelCoordinator::imageTypeChanged(bool isRaw, bool isBayer, bool isXtr
                 flatfield->FoldableToolPanel::hide();
                 pdSharpening->FoldableToolPanel::hide();
                 retinex->FoldableToolPanel::setGrayedOut(true);
+                if(issharE) {
+                    sharpenEdge->FoldableToolPanel::show();
+                } else {
+                    sharpenEdge->FoldableToolPanel::hide();
+                }    
                 return false;
             }
         );
