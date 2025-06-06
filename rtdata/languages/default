@@ -2713,7 +2713,7 @@ TP_DISTORTION_FOCAL_LENGTH;Focal length
 TP_DISTORTION_LABEL;Distortion Correction
 TP_EPD_EDGESTOPPING;Edge stopping
 TP_EPD_GAMMA;Gamma
-TP_EPD_LABEL;Tone Mapping
+TP_EPD_LABEL;Tone Mapping - Texture
 TP_EPD_REWEIGHTINGITERATES;Reweighting iterates
 TP_EPD_SCALE;Scale
 TP_EPD_STRENGTH;Strength
@@ -3847,14 +3847,14 @@ TP_LOCALLAB_THRESRETI;Threshold
 TP_LOCALLAB_THRESWAV;Balance threshold
 TP_LOCALLAB_TLABEL;TM Min=%1 Max=%2 Mean=%3 Sig=%4
 TP_LOCALLAB_TLABEL_TOOLTIP;Transmission map result.\nMin and Max are used by Variance.\nTm=Min TM=Max of Transmission Map.\nYou can normalize the results with the threshold slider.
-TP_LOCALLAB_TM;Tone Mapping
+TP_LOCALLAB_TM;Tone Mapping - Texture
 TP_LOCALLAB_TM_MASK;Use transmission map
 TP_LOCALLAB_TONEMAPESTOP_TOOLTIP;This slider affects edge sensitivity.\n The greater the value, the more likely a change in contrast will be interpreted as an 'edge'.\n If set to zero the tone mapping will have an effect similar to unsharp masking.
 TP_LOCALLAB_TONEMAPGAM_TOOLTIP;The Gamma slider shifts the tone-mapping effect towards either the shadows or the highlights.
 TP_LOCALLAB_TONEMAPREWEI_TOOLTIP;In some cases tone mapping may result in a cartoonish appearance, and in some rare cases soft but wide halos may appear.\n Increasing the number of reweighting iterates will help fight some of these problems.
-TP_LOCALLAB_TONEMAP_TOOLTIP;Same as the tone mapping tool in the main menu.\nThe main-menu tool must be deactivated if this tool is used.
+TP_LOCALLAB_TONEMAP_TOOLTIP;Same as the 'Tone Mapping - Texture' tool in the main menu.\nThe main-menu tool must be deactivated if this tool is used.
 TP_LOCALLAB_TONEMASCALE_TOOLTIP;This slider allows you to adjust the transition between 'local' and 'global' contrast.\nThe greater the value, the larger a detail needs to be for it to be boosted.
-TP_LOCALLAB_TONE_TOOLNAME;Tone Mapping
+TP_LOCALLAB_TONE_TOOLNAME;Tone Mapping - Texture
 TP_LOCALLAB_TOOLCOL;Structure mask as tool
 TP_LOCALLAB_TOOLCOLFRMASK_TOOLTIP;Allows you to modify the mask, if one exists.
 TP_LOCALLAB_TOOLMASK;Mask Tools
