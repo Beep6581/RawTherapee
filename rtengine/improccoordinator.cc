@@ -427,8 +427,8 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
             If white balance changed with inpaint opposed, because inpaint opposed depends on the white balance
         */
         // If high detail (=100%) is newly selected, do a demosaic update, since the last was just with FAST
-        bool isoption = false;
-        bool issharE = params->retinex.enabled;
+        int isoption = options.genemet;
+        bool issharE = params->sharpenEdge.enabled;//sharpenEdge
         if (imageTypeListener) {
             imageTypeListener->imageTypeChanged(isoption, issharE, imgsrc->isRAW(), imgsrc->getSensorType() == ST_BAYER, imgsrc->getSensorType() == ST_FUJI_XTRANS, imgsrc->isMono(), imgsrc->isGainMapSupported());
         }

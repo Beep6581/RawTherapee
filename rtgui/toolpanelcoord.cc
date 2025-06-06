@@ -983,7 +983,7 @@ ToolPanelCoordinator::~ToolPanelCoordinator ()
     delete toolBar;
 }
 
-void ToolPanelCoordinator::imageTypeChanged(bool isoption, bool issharE, bool isRaw, bool isBayer, bool isXtrans, bool isMono, bool isGainMapSupported)
+void ToolPanelCoordinator::imageTypeChanged(int isoption, bool issharE, bool isRaw, bool isBayer, bool isXtrans, bool isMono, bool isGainMapSupported)
 {
     if (isRaw) {
         if (isBayer) {
@@ -1005,7 +1005,7 @@ void ToolPanelCoordinator::imageTypeChanged(bool isoption, bool issharE, bool is
                     flatfield->setGainMap(isGainMapSupported);
                     pdSharpening->FoldableToolPanel::show();
                     retinex->FoldableToolPanel::setGrayedOut(false);
-                    if(issharE) {
+                    if(issharE || isoption == 1) {
                         sharpenEdge->FoldableToolPanel::show();
                     } else {
                         sharpenEdge->FoldableToolPanel::hide();
@@ -1033,7 +1033,7 @@ void ToolPanelCoordinator::imageTypeChanged(bool isoption, bool issharE, bool is
                     flatfield->setGainMap(isGainMapSupported);
                     pdSharpening->FoldableToolPanel::show();
                     retinex->FoldableToolPanel::setGrayedOut(false);
-                    if(issharE) {
+                    if(issharE || isoption == 1) {
                         sharpenEdge->FoldableToolPanel::show();
                     } else {
                         sharpenEdge->FoldableToolPanel::hide();
@@ -1060,7 +1060,7 @@ void ToolPanelCoordinator::imageTypeChanged(bool isoption, bool issharE, bool is
                     flatfield->setGainMap(isGainMapSupported);
                     pdSharpening->FoldableToolPanel::show();
                     retinex->FoldableToolPanel::setGrayedOut(false);
-                    if(issharE) {
+                    if(issharE || isoption == 1) {
                         sharpenEdge->FoldableToolPanel::show();
                     } else {
                         sharpenEdge->FoldableToolPanel::hide();
@@ -1085,7 +1085,7 @@ void ToolPanelCoordinator::imageTypeChanged(bool isoption, bool issharE, bool is
                     flatfield->FoldableToolPanel::hide();
                     pdSharpening->FoldableToolPanel::hide();
                     retinex->FoldableToolPanel::setGrayedOut(false);
-                    if(issharE) {
+                    if(issharE || isoption == 1) {
                         sharpenEdge->FoldableToolPanel::show();
                     } else {
                         sharpenEdge->FoldableToolPanel::hide();
@@ -1111,7 +1111,7 @@ void ToolPanelCoordinator::imageTypeChanged(bool isoption, bool issharE, bool is
                 flatfield->FoldableToolPanel::hide();
                 pdSharpening->FoldableToolPanel::hide();
                 retinex->FoldableToolPanel::setGrayedOut(true);
-                if(issharE) {
+                if(issharE || isoption == 1) {
                     sharpenEdge->FoldableToolPanel::show();
                 } else {
                     sharpenEdge->FoldableToolPanel::hide();
