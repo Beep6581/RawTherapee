@@ -2717,9 +2717,11 @@ void ImProcFunctions::WaveletcontAllL(LabImage * labco, float ** varhue, float *
             float LL100 = LL / 327.68f;
             float tran = 5.f;//transition
             //shadow
+            cp.th = std::max(cp.th, 0.01f);
 
             if (cp.th > (100.f - tran)) {
                 tran = 100.f - cp.th;
+                tran = std::max(tran, 0.01f);
             }
 
             if (LL100 < cp.th) {
@@ -2738,6 +2740,7 @@ void ImProcFunctions::WaveletcontAllL(LabImage * labco, float ** varhue, float *
 
             if (cp.thH < (tran)) {
                 tran = cp.thH;
+                tran = std::max(tran, 0.01f);
             }
 
             if (LL100 > cp.thH) {
