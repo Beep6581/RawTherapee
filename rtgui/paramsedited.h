@@ -1373,6 +1373,8 @@ struct FramingParamsEdited {
     bool borderRed;
     bool borderGreen;
     bool borderBlue;
+
+    bool borderAnnotation;
 };
 
 class SpotParamsEdited
