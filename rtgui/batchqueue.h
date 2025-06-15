@@ -91,7 +91,7 @@ public:
     bool loadBatchQueue ();
     void resizeLoadedQueue();
 
-    static Glib::ustring calcAutoFileNameBase (const Glib::ustring& origFileName, int sequence = 0);
+    static Glib::ustring calcAutoFileNameBase (const Glib::ustring& origFileName, int sequence=0, const Glib::ustring& format="");
     static int calcMaxThumbnailHeight();
 
 private:

@@ -429,6 +429,9 @@ void BatchQueuePanel::populateTemplateHelpBuffer(Glib::RefPtr<Gtk::TextBuffer> b
         pos = buffer->insert_markup(pos, Glib::ustring::format("\n  <tt><b>", fspecifier, "</b> = <i>", result, "</i></tt>"));
     }
 
+    insertTopicHeading(M("QUEUE_LOCATION_TEMPLATE_HELP_FORMAT_TITLE"));
+    pos = buffer->insert_markup(pos, M("QUEUE_LOCATION_TEMPLATE_HELP_FORMAT_BODY"));
+
     insertTopicHeading(M("QUEUE_LOCATION_TEMPLATE_HELP_RANK_TITLE"));
     pos = buffer->insert_markup(pos, M("QUEUE_LOCATION_TEMPLATE_HELP_RANK_BODY"));
 
