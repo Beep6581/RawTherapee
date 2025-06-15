@@ -643,7 +643,7 @@ void BatchQueue::updateDestinationPathPreview()
     if (!selected.empty()) {
         auto& entry = *selected.at(0);
         int sequence = 0;   // Sequence during subsequent queue processing can't be determined here
-        Glib::ustring baseDestination = calcAutoFileNameBase(entry.filename, sequence);
+        Glib::ustring baseDestination = calcAutoFileNameBase(entry.filename, sequence, options.saveFormatBatch.format);
         Glib::ustring destination = Glib::ustring::compose ("%1.%2", baseDestination, options.saveFormatBatch.format);
 
         if (listener) {
@@ -759,8 +759,8 @@ rtengine::ProcessingJob* BatchQueue::imageReady(rtengine::IImagefloat* img)
     SaveFormat saveFormat;
 
     if (processing->outFileName.empty()) { // auto file name
-        Glib::ustring s = calcAutoFileNameBase (processing->filename, processing->sequence);
         saveFormat = options.saveFormatBatch;
+        Glib::ustring s = calcAutoFileNameBase (processing->filename, processing->sequence, saveFormat.format);
         fname = autoCompleteFileName (s, saveFormat.format);
     } else { // use the save-as filename with automatic completion for uniqueness
         if (processing->forceFormatOpts) {
@@ -893,7 +893,8 @@ rtengine::ProcessingJob* BatchQueue::imageReady(rtengine::IImagefloat* img)
 
 // Calculates automatic filename of processed batch entry, but just the base name
 // example output: "c:\out\converted\dsc0121"
-Glib::ustring BatchQueue::calcAutoFileNameBase (const Glib::ustring& origFileName, int sequence)
+// format is the output file format, e.g. "jpg", "tif", "png", etc.  It is used to put format in file path using "%e"
+Glib::ustring BatchQueue::calcAutoFileNameBase (const Glib::ustring& origFileName, int sequence, const Glib::ustring& format)
 {
 
     std::vector<Glib::ustring> da;
@@ -990,6 +991,8 @@ Glib::ustring BatchQueue::calcAutoFileNameBase (const Glib::ustring& origFileNam
                     }
                 } else if (options.savePathTemplate[ix] == 'f') {
                     path += filename;
+                } else if (options.savePathTemplate[ix] == 'e') { // file format from input args
+                    path += format;
                 } else if (options.savePathTemplate[ix] == 'r') { // rank from pparams
                     char rank;
                     rtengine::procparams::ProcParams pparams;
