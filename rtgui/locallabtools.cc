@@ -5525,10 +5525,10 @@ void LocallabShadow::adjusterChanged(Adjuster* a, double newval)
 }
 
 
-void LocallabShadow::updateghsbw(int bp, int wp, double minbp, double maxwp) //update informations for Black point and White point
+void LocallabShadow::updateghsbw(int bp, int wp, double minbp, double maxwp, double ghsb, double ghsw) //update informations for Black point and White point
 {
     idle_register.add(
-    [this, bp, wp, minbp, maxwp]() -> bool {
+    [this, bp, wp, minbp, maxwp, ghsb, ghsw]() -> bool {
         GThreadLock lock; // All GUI access from idle_add callbacks or separate thread HAVE to be protected
 
         ghsbpwpLabels->set_text(
@@ -5544,6 +5544,8 @@ void LocallabShadow::updateghsbw(int bp, int wp, double minbp, double maxwp) //u
         );
 
         enableListener();
+        if(ghs_autobw->get_active()){
+        }
         return false;
     }
    );

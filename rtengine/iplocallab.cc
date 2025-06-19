@@ -14854,7 +14854,7 @@ void ImProcFunctions::Lab_Local(
     float& minCD, float& maxCD, float& mini, float& maxi, float& Tmean, float& Tsigma, float& Tmin, float& Tmax,
     float& meantm, float& stdtm, float& meanreti, float& stdreti, float &fab,float &maxicam, float &rdx, float &rdy, float &grx, float &gry, float &blx, float &bly, float &meanx, float &meany, float &meanxe, float &meanye, int &prim, int &ill, float &contsig, float &lightsig,
     float& highresi, float& nresi, float& highresi46, float& nresi46, float& Lhighresi, float& Lnresi, float& Lhighresi46, float& Lnresi46, float &slopeg, bool &linkrgb,
-    int *ghsbpwp, float *ghsbpwpvalue)
+    int *ghsbpwp, float *ghsbpwpvalue, float *ghsbwslider)
 
 
 
@@ -17930,6 +17930,8 @@ void ImProcFunctions::Lab_Local(
                                 ghsbpwp[1] = wpnb;
                                 ghsbpwpvalue[0] = minbp;
                                 ghsbpwpvalue[1] = maxwp;
+                                ghsbwslider[0]= 0.f;
+                                ghsbwslider[1]= 1.f;
                                 
                                 t2.set();
                                 if (settings->verbose) {

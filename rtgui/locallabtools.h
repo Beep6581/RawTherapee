@@ -684,7 +684,7 @@ public:
     void updateguiscopesahd(int scope);
     int nbmasksh;
 
-    void updateghsbw(int bp, int wp, double minbp, double maxwp);
+    void updateghsbw(int bp, int wp, double minbp, double maxwp, double ghsb, double ghsw);
     void setDefaultExpanderVisibility() override;
     void disableListener() override;
     void enableListener() override;
