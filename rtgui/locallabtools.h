@@ -615,6 +615,7 @@ private:
     Adjuster* const ghs_MID;
     
     Gtk::Frame* const BP_Frame;
+    Gtk::CheckButton* const ghs_autobw;
     Adjuster* const ghs_BLP;
     Adjuster* const ghs_HLP;
     Gtk::Label* const ghsbpwpLabels;
@@ -662,9 +663,10 @@ private:
     rtengine::ProcEvent Evlocallabghs_BLP;
     rtengine::ProcEvent Evlocallabghs_HLP;
     rtengine::ProcEvent Evlocallabghs_smooth;
+    rtengine::ProcEvent Evlocallabghs_autobw;
     rtengine::ProcEvent Evlocallabghs_inv;
 
-    sigc::connection shMethodConn, ghsMethodConn, previewshConn, inversshConn, ghs_smoothConn, ghs_invConn, showmaskSHMethodConn, showmaskSHMethodConninv, enaSHMaskConn;
+    sigc::connection shMethodConn, ghsMethodConn, previewshConn, inversshConn, ghs_smoothConn, ghs_autobwConn, ghs_invConn, showmaskSHMethodConn, showmaskSHMethodConninv, enaSHMaskConn;
 
 public:
     LocallabShadow();
@@ -705,6 +707,7 @@ private:
     void ghsMethodChanged();
     void inversshChanged();
     void ghs_smoothChanged();
+    void ghs_autobwChanged();
     void ghs_invChanged();
     void showmaskSHMethodChanged();
     void showmaskSHMethodChangedinv();

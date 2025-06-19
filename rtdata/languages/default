@@ -1568,6 +1568,7 @@ HISTORY_MSG_LOCAL_FEATHERVIB;Local - Vib Gradient feather
 HISTORY_MSG_LOCAL_FEATHERWAV;Local - Wav Gradient feather
 HISTORY_MSG_LOCAL_GAMUTMUNSEL;Local - SC - Avoid Color Shift
 HISTORY_MSG_LOCAL_GHSMETHOD;Local - GHS - Method
+HISTORY_MSG_LOCAL_GHS_AUTOBW;Local - GHS - Auto Black point and White point
 HISTORY_MSG_LOCAL_GHS_B;Local - GHS - Local intensity
 HISTORY_MSG_LOCAL_GHS_BLP;Local - GHS - Black point
 HISTORY_MSG_LOCAL_GHS_CHRO;Local - GHS - Lab chromaticity factor
@@ -3286,6 +3287,7 @@ TP_LOCALLAB_GHSLUM;Luminance (HSL)
 TP_LOCALLAB_GHSRGBLUM;RGB Luminance
 TP_LOCALLAB_GHSRGBSTD;RGB Standard
 TP_LOCALLAB_GHSSAT;Saturation (HSL)
+TP_LOCALLAB_GHS_AUTOBW;Auto Black point & White point
 TP_LOCALLAB_GHS_B;Local intensity (b)
 TP_LOCALLAB_GHS_BLACKPOINT_FRAME;Black point/White point/Highlights
 TP_LOCALLAB_GHS_BLP;Black point (BP linear)
