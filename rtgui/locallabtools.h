@@ -608,6 +608,8 @@ private:
     Adjuster* const ghs_chro;
     Adjuster* const ghs_B;
     Adjuster* const ghs_SP;
+    Gtk::Label* const ghssymLabel;
+    
     Adjuster* const ghs_LP;
     Adjuster* const ghs_HP;
     Gtk::Frame* const LC_Frame;

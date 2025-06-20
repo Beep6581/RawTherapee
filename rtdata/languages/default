@@ -3279,6 +3279,7 @@ TP_LOCALLAB_GAMUTXYZRELA;XYZ Relative
 TP_LOCALLAB_GAMW;Gamma (wavelet pyramids)
 TP_LOCALLAB_GHSBPWP;Clipped pixel count - Shadows:%1 Highlights:%2
 TP_LOCALLAB_GHSBPWPVALUE;Pixel values - Darkest:%1 Lightest:%2
+TP_LOCALLAB_GHSSYM;Evaluation Symmetry point=%1
 TP_LOCALLAB_GHSFRA;Stretch Settings
 TP_LOCALLAB_GHSHUE;Hue (HSL)
 TP_LOCALLAB_GHSLAB;Lightness & chromaticity (Lab)

@@ -4324,6 +4324,7 @@ LocallabShadow::LocallabShadow():
     ghs_chro(Gtk::manage(new Adjuster(M("TP_LOCALLAB_GHS_CHRO"), -30., 100.0, 0.001, 0.))),
     ghs_B(Gtk::manage(new Adjuster(M("TP_LOCALLAB_GHS_B"), -5.0, 15.0, 0.001, 0.0))),
     ghs_SP(Gtk::manage(new Adjuster(M("TP_LOCALLAB_GHS_SP"), 0.0, 1.0, 0.00001, 0.015))),
+    ghssymLabel(Gtk::manage(new Gtk::Label("---"))),
     ghs_LP(Gtk::manage(new Adjuster(M("TP_LOCALLAB_GHS_LP"), 0.0, 1.0, 0.00001, 0.0))),
     ghs_HP(Gtk::manage(new Adjuster(M("TP_LOCALLAB_GHS_HP"), 0.0, 1.0, 0.00001, 1.0))),
     LC_Frame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_GHS_LC_FRAME")))),
@@ -4444,6 +4445,10 @@ LocallabShadow::LocallabShadow():
     ghs_chro->setAdjusterListener(this);
     ghs_B->setAdjusterListener(this);
     ghs_SP->setAdjusterListener(this);
+    ghssymLabel->set_line_wrap();
+    ghssymLabel->set_justify(Gtk::Justification::JUSTIFY_CENTER);
+    setExpandAlignProperties(ghssymLabel, true, false, Gtk::ALIGN_CENTER, Gtk::ALIGN_START);
+    
     ghs_LP->setAdjusterListener(this);
     ghs_HP->setAdjusterListener(this);
     ghs_LC->setAdjusterListener(this);
@@ -4570,6 +4575,7 @@ LocallabShadow::LocallabShadow():
     ghsBox->pack_start(*Lab_Frame);
     ghsBox->pack_start(*ghs_B);
     ghsBox->pack_start(*ghs_SP);
+    ghsBox->pack_start(*ghssymLabel);
     ghsBox->pack_start(*ghs_LP);
     ghsBox->pack_start(*ghs_HP);
     
@@ -5543,9 +5549,13 @@ void LocallabShadow::adjusterChanged(Adjuster* a, double newval)
 void LocallabShadow::updateghsbw(int bp, int wp, double minbp, double maxwp, double ghsb, double ghsw, double symev) //update informations for Black point and White point
 {
     idle_register.add(
-    [this, bp, wp, minbp, maxwp, ghsb, ghsw]() -> bool {
+    [this, bp, wp, minbp, maxwp, ghsb, ghsw, symev]() -> bool {
         GThreadLock lock; // All GUI access from idle_add callbacks or separate thread HAVE to be protected
-
+        ghssymLabel->set_text(
+            Glib::ustring::compose(M("TP_LOCALLAB_GHSSYM"),
+                                   Glib::ustring::format(std::fixed, std::setprecision(4), symev))
+        );
+        
         ghsbpwpLabels->set_text(
             Glib::ustring::compose(M("TP_LOCALLAB_GHSBPWP"),
                                    Glib::ustring::format(std::fixed, std::setprecision(0), bp),
