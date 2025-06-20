@@ -4829,6 +4829,7 @@ void LocallabShadow::updateAdviceTooltips(const bool showTooltips)
         ghs_LC->set_tooltip_text(M("TP_LOCALLAB_GHS_LC_TOOLTIP"));
         ghs_MID->set_tooltip_text(M("TP_LOCALLAB_GHS_MID_TOOLTIP"));
         ghs_BLP->set_tooltip_text(M("TP_LOCALLAB_GHS_BLP_TOOLTIP"));
+        ghs_autobw->set_tooltip_text(M("TP_LOCALLAB_GHS_BLPHLPAUTO_TOOLTIP"));
         ghs_HLP->set_tooltip_text(M("TP_LOCALLAB_GHS_HLP_TOOLTIP"));
         ghs_smooth->set_tooltip_text(M("TP_LOCALLAB_GHS_SMOOTH_TOOLTIP"));
         ghs_inv->set_tooltip_text(M("TP_LOCALLAB_GHS_INV_TOOLTIP"));
@@ -4880,6 +4881,7 @@ void LocallabShadow::updateAdviceTooltips(const bool showTooltips)
         ghs_MID->set_tooltip_text("");
         ghs_BLP->set_tooltip_text("");
         ghs_HLP->set_tooltip_text("");
+        ghs_autobw->set_tooltip_text("");      
         ghs_smooth->set_tooltip_text("");
         ghs_inv->set_tooltip_text("");
         BP_Frame->set_tooltip_text("");
