@@ -482,6 +482,7 @@ public:
        int ghsbw[2];
        double ghsbwvalue[2];
        double ghsbw_slider[2];
+       double ghs_sym;
     };
 
 //select spot settings 

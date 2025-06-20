@@ -5540,7 +5540,7 @@ void LocallabShadow::adjusterChanged(Adjuster* a, double newval)
 }
 
 
-void LocallabShadow::updateghsbw(int bp, int wp, double minbp, double maxwp, double ghsb, double ghsw) //update informations for Black point and White point
+void LocallabShadow::updateghsbw(int bp, int wp, double minbp, double maxwp, double ghsb, double ghsw, double symev) //update informations for Black point and White point
 {
     idle_register.add(
     [this, bp, wp, minbp, maxwp, ghsb, ghsw]() -> bool {

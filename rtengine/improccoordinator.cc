@@ -1588,6 +1588,7 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                         locshghsbw.ghsbw[j] = ghsbpwp[j];
                         locshghsbw.ghsbwvalue[j] = ghsbpwpvalue[j];
                         locshghsbw.ghsbw_slider[j] = ghsbwslider[j];
+                        locshghsbw.ghs_sym = ghssym;
                     }
                 locallshgshbw.push_back(locshghsbw);
 
