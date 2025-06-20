@@ -1404,6 +1404,7 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                 int ghsbpwp[2] = {0, 0};
                 float ghsbpwpvalue[2] = {0.f, 1.f};                
                 float ghsbwslider[2] = {0.f, 1.f};
+                float ghssym = 0.f;
 
                 Glib::ustring prof = params->icm.workingProfile;
                 if(params->locallab.spots.at(sp).complexcie == 2) {
@@ -1470,7 +1471,7 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                               minCD, maxCD, mini, maxi, Tmean, Tsigma, Tmin, Tmax,
                               meantm, stdtm, meanreti, stdreti, fab, maxicam, rdx, rdy, grx, gry, blx, bly, meanx, meany, meanxe, meanye, prim, ill, contsig, lightsig,
                               highresi, nresi, highresi46, nresi46, Lhighresi, Lnresi, Lhighresi46, Lnresi46, slopeg, linkrgb,
-                              ghsbpwp, ghsbpwpvalue, ghsbwslider);
+                              ghsbpwp, ghsbpwpvalue, ghsbwslider, ghssym);
 
 
                 fabrefp[sp] = fab;

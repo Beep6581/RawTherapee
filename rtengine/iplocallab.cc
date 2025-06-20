@@ -14792,6 +14792,37 @@ float ImProcFunctions::GHT(float x, float B, float D, float LP, float SP, float 
     }
     return out;
 }
+/*
+void SymRgb(const float * DataList, const int datalen)
+{
+    if (datalen <= 1) { // Avoid possible buffer underrun
+        return 0;
+    }
+
+    //DataList values should mostly have abs val < 65536 because we are in RGB mode
+    int * histo = new int[65536];
+
+    for (int i = 0; i < 65536; ++i) {
+        histo[i] = 0;
+    }
+
+    //calculate histogram of absolute values of wavelet coeffs
+    for (int i = 0; i < datalen; ++i) {
+        histo[static_cast<int>(rtengine::min(65535.f, fabsf(DataList[i])))]++;
+    }
+    int maxhist = 0;
+    for (int j = 0; j < 65535; ++j) {
+        if(histo[j] > maxhist) {
+            maxhist = histo[j]
+        }       
+    }
+    printf("maxhist=%i \n", maxhist);
+
+}
+*/
+
+
+
 
 void ImProcFunctions::Lab_Local(
     int call, int sp, float** shbuffer, LabImage * original, LabImage * transformed, LabImage * reserved, LabImage * savenormtm, LabImage * savenormreti, LabImage * lastorig, int fw, int fh, int cx, int cy, int oW, int oH, int tX, int tY, int tW, int tH, int sk,
@@ -14854,7 +14885,7 @@ void ImProcFunctions::Lab_Local(
     float& minCD, float& maxCD, float& mini, float& maxi, float& Tmean, float& Tsigma, float& Tmin, float& Tmax,
     float& meantm, float& stdtm, float& meanreti, float& stdreti, float &fab,float &maxicam, float &rdx, float &rdy, float &grx, float &gry, float &blx, float &bly, float &meanx, float &meany, float &meanxe, float &meanye, int &prim, int &ill, float &contsig, float &lightsig,
     float& highresi, float& nresi, float& highresi46, float& nresi46, float& Lhighresi, float& Lnresi, float& Lhighresi46, float& Lnresi46, float &slopeg, bool &linkrgb,
-    int *ghsbpwp, float *ghsbpwpvalue, float *ghsbwslider)
+    int *ghsbpwp, float *ghsbpwpvalue, float *ghsbwslider, float &ghssym)
 
 
 
@@ -17859,11 +17890,11 @@ void ImProcFunctions::Lab_Local(
                         double ts1 = ghsslop;//always the same 'slope' in the extreme shadows - slope Lab
                         rtengine::Color::calcGamma(pwr1, ts1, g_a); // call to calcGamma with selected gamma and slope
                         const float noise = pow_F(2.f, -16.f);//GHS - do not process very low values which are probably noise.
-
-
                         float minb = 100.f;
                         float maxw = -100.f;
-                           
+ 
+
+ 
                         if(params->locallab.spots.at(sp).ghs_autobw == true  && strtype == GHTStrType::NORMAL) { //find probably White point and black point ...Must be adjusted manually in soma cases notably Black point with negatives values...                        
 #ifdef _OPENMP
         #   pragma omp parallel for reduction(min:minb) reduction(max:maxw) if (multiThread)
@@ -17961,11 +17992,39 @@ void ImProcFunctions::Lab_Local(
                                         tmpImage->b(i, j) = clipR(rtengine::max(0.00001f, Bo * 65535.f));
                                     } 
                                 }
+                                
+                                //evaluation symmetry point    
+                                LUTu symhist(65535);
+                                symhist.clear();
+                                array2D<float> Y2(bfw, bfh);
+                                //generate histogram RGB with norm2 equivalent luminance
+                                for (int i = 0; i < bfh; ++i)
+                                    for (int j = 0; j < bfw; ++j) {
+                                        Y2[i][j] = norm2(clipR(tmpImage->r(i, j)), clipR(tmpImage->g(i, j)), clipR(tmpImage->b(i, j)), wprof);//clipR to avoid bad datas in histogram - This is not a precise calculation but an assessment
+                                        int pos = (int) Y2[i][j];
+                                        symhist[pos]++;
+                                    }
+                                //find maximum number - pic luminance
+                                unsigned int maxhist = 0;
+                                int kk = 0;
+                                float symref = 0.f;
+
+                                for (int j=0; j < 65535; ++j) {
+                                    if(symhist[j] > maxhist) {
+                                        maxhist =  symhist[j];
+                                        kk = j;
+                                        symref = (float)kk / 65535.f;                                   
+                                    }                               
+                                }
+                            
+                                
                                 ghsbpwp[0] = bpnb;
                                 ghsbpwp[1] = wpnb;
                                 ghsbpwpvalue[0] = minbp;
                                 ghsbpwpvalue[1] = maxwp;
-                                
+                                ghssym = symref;
+                                printf("maxhist=%i kk=%i symref=%f\n", maxhist, kk, (double) ghssym);
+                               
                                 t2.set();
                                 if (settings->verbose) {
                                     printf("calculate Black Point and White Point: %d nsec\n",  t2.etime(t1));
