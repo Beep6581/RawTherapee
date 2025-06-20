@@ -17811,9 +17811,11 @@ void ImProcFunctions::Lab_Local(
                         float LP = params->locallab.spots.at(sp).ghs_LP;//Protect shadows
                         float SP = params->locallab.spots.at(sp).ghs_SP;//Symmetry point
                         float HP = params->locallab.spots.at(sp).ghs_HP;//Protect highlights
+                        /*
                         int blackpoint = 100. * params->locallab.spots.at(sp).ghs_BLP;//Black point
                         float shiftblackpoint = params->locallab.spots.at(sp).ghs_BLP;//Black point
                         float shiftwhitepoint = params->locallab.spots.at(sp).ghs_HLP;//White point
+                        */
                         if(LP > SP) {
                             LP = SP;
                         }
@@ -17857,6 +17859,38 @@ void ImProcFunctions::Lab_Local(
                         double ts1 = ghsslop;//always the same 'slope' in the extreme shadows - slope Lab
                         rtengine::Color::calcGamma(pwr1, ts1, g_a); // call to calcGamma with selected gamma and slope
                         const float noise = pow_F(2.f, -16.f);//GHS - do not process very low values which are probably noise.
+
+
+                        float minb = 100.f;
+                        float maxw = -100.f;
+                           
+                        if(params->locallab.spots.at(sp).ghs_autobw == true  && strtype == GHTStrType::NORMAL) { //find probably White point and black point ...Must be adjusted manually in soma cases notably Black point with negatives values...                        
+#ifdef _OPENMP
+        #   pragma omp parallel for reduction(min:minb) reduction(max:maxw) if (multiThread)
+#endif
+                             for (int i = 0; i < bfh; ++i)
+                                for (int j = 0; j < bfw; ++j) {
+                                    float r = tmpImage->r(i, j) / 65535.f;
+                                    float g = tmpImage->g(i, j) / 65535.f;
+                                    float b = tmpImage->b(i, j) / 65535.f;
+                                    float minrgb = rtengine::min(r, g, b);
+                                    if(minrgb < minb){
+                                        minb = minrgb;
+                                    }
+                                 
+                                    float maxrgb = rtengine::max(r, g, b);
+                                    if(maxrgb > maxw){
+                                        maxw = maxrgb;
+                                    }
+                                }
+                                ghsbwslider[1]= maxw;
+                                ghsbwslider[0]= minb;                 
+
+                        }
+                               
+                        int blackpoint = 100. * params->locallab.spots.at(sp).ghs_BLP;//Black point
+                        float shiftblackpoint = params->locallab.spots.at(sp).ghs_BLP;//Black point
+                        float shiftwhitepoint = params->locallab.spots.at(sp).ghs_HLP;//White point
                        
                         if(shiftblackpoint < 0.f && strtype == GHTStrType::NORMAL) {//change only Black point with negatives values for in some cases out of gamut values
                             //rgb value can be very weakly negatives (eg working space sRGB in some rare cases) - tone_eqblack prevents it
@@ -17873,6 +17907,7 @@ void ImProcFunctions::Lab_Local(
                             if(strtype == GHTStrType::INVERSE) {
                                 shiftblackpoint2 = shiftblackpoint;
                             }
+                            
                             int bpnb = 0;
                             int wpnb = 0;
                             float minbp = 1.f;
@@ -17930,8 +17965,6 @@ void ImProcFunctions::Lab_Local(
                                 ghsbpwp[1] = wpnb;
                                 ghsbpwpvalue[0] = minbp;
                                 ghsbpwpvalue[1] = maxwp;
-                                ghsbwslider[0]= 0.f;
-                                ghsbwslider[1]= 1.f;
                                 
                                 t2.set();
                                 if (settings->verbose) {

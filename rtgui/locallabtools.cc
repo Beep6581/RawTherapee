@@ -5542,10 +5542,25 @@ void LocallabShadow::updateghsbw(int bp, int wp, double minbp, double maxwp, dou
                                    Glib::ustring::format(std::fixed, std::setprecision(2), minbp),
                                    Glib::ustring::format(std::fixed, std::setprecision(2), maxwp))
         );
-
-        enableListener();
         if(ghs_autobw->get_active()){
+            if (ghsw != ghs_HLP->getValue()) {
+                disableListener();
+                ghs_HLP->setValue(ghsw);
+                enableListener();
+                listener->panelChanged (Evlocallabghs_HLP,ghs_HLP->getTextValue());
+            }
+            if (ghsb != ghs_BLP->getValue()) {
+                disableListener();
+                ghs_BLP->setValue(ghsb);
+                enableListener();
+                listener->panelChanged (Evlocallabghs_BLP,ghs_BLP->getTextValue());
+            }
+            disableListener();
+            ghs_autobw->set_active(false);
+            enableListener();
+
         }
+
         return false;
     }
    );
