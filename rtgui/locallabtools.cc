@@ -5003,6 +5003,7 @@ void LocallabShadow::read(const rtengine::procparams::ProcParams* pp, const Para
             ghs_autobw->set_sensitive(true);
             if(ghs_inv->get_active()) {
                 ghs_autobw->set_sensitive(false);
+                ghs_autobw->set_active(false);
             }
             
             ghs_LC->set_sensitive(false); 
@@ -5251,6 +5252,7 @@ void LocallabShadow::adjusterChanged(Adjuster* a, double newval)
                 ghs_autobw->set_sensitive(true);
                 if(ghs_inv->get_active()) {
                     ghs_autobw->set_sensitive(false);
+                    ghs_autobw->set_active(false);                   
                 }
                 ghs_LC->set_sensitive(false); 
                 ghs_MID->set_sensitive(false); 
@@ -6089,6 +6091,7 @@ void LocallabShadow::updateShadowGUImask()
             ghs_autobw->set_sensitive(true);
             if(ghs_inv->get_active()) {
                 ghs_autobw->set_sensitive(false);
+                ghs_autobw->set_active(false);
             }
             
             ghs_LC->set_sensitive(false); 
@@ -6216,6 +6219,7 @@ void LocallabShadow::updateShadowGUIshmet()
             ghs_autobw->set_sensitive(true);
             if(ghs_inv->get_active()) {
                ghs_autobw->set_sensitive(false);
+               ghs_autobw->set_active(false);
             }
 
             ghs_LC->set_sensitive(false); 
