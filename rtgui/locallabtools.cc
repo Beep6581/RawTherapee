@@ -5551,10 +5551,14 @@ void LocallabShadow::updateghsbw(int bp, int wp, double minbp, double maxwp, dou
     idle_register.add(
     [this, bp, wp, minbp, maxwp, ghsb, ghsw, symev]() -> bool {
         GThreadLock lock; // All GUI access from idle_add callbacks or separate thread HAVE to be protected
-        ghssymLabel->set_text(
-            Glib::ustring::compose(M("TP_LOCALLAB_GHSSYM"),
-                                   Glib::ustring::format(std::fixed, std::setprecision(4), symev))
-        );
+        
+        
+        if (ghsMethod->get_active_row_number() == 0 || ghsMethod->get_active_row_number() == 1) {//only in RGB mode
+            ghssymLabel->set_text(
+                Glib::ustring::compose(M("TP_LOCALLAB_GHSSYM"),
+                                    Glib::ustring::format(std::fixed, std::setprecision(4), symev))
+            );
+        }
         
         ghsbpwpLabels->set_text(
             Glib::ustring::compose(M("TP_LOCALLAB_GHSBPWP"),
