@@ -4994,7 +4994,6 @@ void LocallabShadow::read(const rtengine::procparams::ProcParams* pp, const Para
             ghs_BLP->set_sensitive(false);
             ghs_HLP->set_sensitive(false);
             ghs_autobw->set_sensitive(false);
-            
             ghs_LC->set_sensitive(true); 
             ghs_MID->set_sensitive(true);        
         } else {
@@ -5004,8 +5003,7 @@ void LocallabShadow::read(const rtengine::procparams::ProcParams* pp, const Para
             if(ghs_inv->get_active()) {
                 ghs_autobw->set_sensitive(false);
                 ghs_autobw->set_active(false);
-            }
-            
+            }            
             ghs_LC->set_sensitive(false); 
             ghs_MID->set_sensitive(false); 
         }
@@ -5243,7 +5241,6 @@ void LocallabShadow::adjusterChanged(Adjuster* a, double newval)
                 ghs_BLP->set_sensitive(false);
                 ghs_HLP->set_sensitive(false);     //   ghs_inv->get_active(),
                 ghs_autobw->set_sensitive(false);
-
                 ghs_LC->set_sensitive(true); 
                 ghs_MID->set_sensitive(true);               
             } else {
@@ -6092,8 +6089,7 @@ void LocallabShadow::updateShadowGUImask()
             if(ghs_inv->get_active()) {
                 ghs_autobw->set_sensitive(false);
                 ghs_autobw->set_active(false);
-            }
-            
+            }          
             ghs_LC->set_sensitive(false); 
             ghs_MID->set_sensitive(false); 
         }
@@ -6209,8 +6205,7 @@ void LocallabShadow::updateShadowGUIshmet()
         if(ghs_D->getValue() > 0.002  || ghs_D->getValue() == 0.f) {
             ghs_BLP->set_sensitive(false);
             ghs_HLP->set_sensitive(false);
-            ghs_autobw->set_sensitive(false);
-            
+            ghs_autobw->set_sensitive(false);      
             ghs_LC->set_sensitive(true); 
             ghs_MID->set_sensitive(true); 
        } else {
@@ -6221,7 +6216,6 @@ void LocallabShadow::updateShadowGUIshmet()
                ghs_autobw->set_sensitive(false);
                ghs_autobw->set_active(false);
             }
-
             ghs_LC->set_sensitive(false); 
             ghs_MID->set_sensitive(false); 
         }
