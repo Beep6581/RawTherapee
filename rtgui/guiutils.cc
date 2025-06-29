@@ -222,6 +222,7 @@ void drawCrop (Cairo::RefPtr<Cairo::Context> cr, int imx, int imy, int imw, int 
     double c2x = (cparams.x + cparams.w - startx) * scale - (fullImageVisible ? 0.0 : 1.0);
     double c2y = (cparams.y + cparams.h - starty) * scale - (fullImageVisible ? 0.0 : 1.0);
 
+    const auto& options = App::get().options();
     // crop overlay color, linked with crop windows background
     if (options.bgcolor == 0 || !useBgColor) {
         cr->set_source_rgba (options.cutOverlayBrush[0], options.cutOverlayBrush[1], options.cutOverlayBrush[2], options.cutOverlayBrush[3]);
@@ -715,7 +716,7 @@ bool MyExpander::on_enter_leave_enable (GdkEventCrossing* event)
 
 void MyExpander::updateStyle()
 {
-    updateVScrollbars(options.hideTPVScrollbar);
+    updateVScrollbars(App::get().options().hideTPVScrollbar);
 
 //GTK318
 #if GTK_MAJOR_VERSION == 3 && GTK_MINOR_VERSION < 20
@@ -942,7 +943,7 @@ MyScrolledWindow::MyScrolledWindow ()
 
 bool MyScrolledWindow::on_scroll_event (GdkEventScroll* event)
 {
-    if (!options.hideTPVScrollbar) {
+    if (!App::get().options().hideTPVScrollbar) {
         Gtk::ScrolledWindow::on_scroll_event (event);
         return true;
     }

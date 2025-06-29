@@ -242,6 +242,7 @@ bool ExtProgStore::openInGimp (const Glib::ustring& fileName)
 {
 #if defined _WIN32
 
+    const auto& options = App::get().options();
     auto executable = Glib::build_filename (options.gimpDir, "bin", "gimp-win-remote");
     auto success = ShellExecute( NULL, "open", executable.c_str(), fileName.c_str(), NULL, SW_SHOWNORMAL );
 
@@ -300,6 +301,7 @@ bool ExtProgStore::openInGimp (const Glib::ustring& fileName)
 
 bool ExtProgStore::openInPhotoshop (const Glib::ustring& fileName)
 {
+    const auto& options = App::get().options();
 #if defined _WIN32
 
     const auto executable = Glib::build_filename(options.psDir, "Photoshop.exe");
@@ -321,7 +323,7 @@ bool ExtProgStore::openInPhotoshop (const Glib::ustring& fileName)
 bool ExtProgStore::openInCustomEditor (const Glib::ustring& fileName, const Glib::ustring* command)
 {
     if (!command) {
-        command = &(options.customEditorProg);
+        command = &(App::get().options().customEditorProg);
     }
 
 #if defined _WIN32

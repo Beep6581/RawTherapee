@@ -108,6 +108,7 @@ void BatchQueueEntry::refreshThumbnailImage ()
 void BatchQueueEntry::calcThumbnailSize ()
 {
     prew = preh * origpw / origph;
+    const auto& options = App::get().options();
     if (prew > options.maxThumbnailWidth) {
         const float s = static_cast<float>(options.maxThumbnailWidth) / prew;
         prew = options.maxThumbnailWidth;

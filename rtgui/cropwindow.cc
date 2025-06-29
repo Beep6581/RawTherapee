@@ -79,7 +79,7 @@ Glib::ustring CropWindow::closett;
 CropWindow::CropWindow (ImageArea* parent, bool isLowUpdatePriority_, bool isDetailWindow)
     : ObjectMOBuffer(parent), state(SNormal), press_x(0), press_y(0), action_x(0), action_y(0), pickedObject(-1), pickModifierKey(0), rot_deg(0), onResizeArea(false), deleted(false),
       fitZoomEnabled(true), fitZoom(false), cursor_type(CSArrow), /*isLowUpdatePriority(isLowUpdatePriority_),*/ hoveredPicker(nullptr), cropLabel(Glib::ustring("100%")),
-      backColor(options.bgcolor), decorated(true), isFlawnOver(false), titleHeight(30), sideBorderWidth(3), lowerBorderWidth(3),
+      backColor(App::get().options().bgcolor), decorated(true), isFlawnOver(false), titleHeight(30), sideBorderWidth(3), lowerBorderWidth(3),
       upperBorderWidth(1), sepWidth(2), xpos(30), ypos(30), width(0), height(0), imgAreaX(0), imgAreaY(0), imgAreaW(0), imgAreaH(0),
       imgX(-1), imgY(-1), imgW(1), imgH(1), iarea(parent), cropZoom(0), zoomVersion(0), exposeVersion(0), cropgl(nullptr),
       pmlistener(nullptr), pmhlistener(nullptr), scrollAccum(0.0), observedCropWin(nullptr),
@@ -382,7 +382,7 @@ void CropWindow::buttonPress (int button, int type, int bstate, int x, int y)
                     screenCoordToImage (x, y, action_x, action_y);
                     changeZoom (zoom11index, true, action_x, action_y);
                     fitZoom = false;
-                } else if (options.cropAutoFit) {
+                } else if (App::get().options().cropAutoFit) {
                     zoomFitCrop();
                 } else {
                     zoomFit();
@@ -685,6 +685,7 @@ void CropWindow::buttonPress (int button, int type, int bstate, int x, int y)
 
 void CropWindow::buttonRelease (int button, int num, int bstate, int x, int y)
 {
+    auto& options = App::get().mut_options();
 
     EditSubscriber *editSubscriber = iarea->getCurrSubscriber();
 
@@ -891,6 +892,7 @@ void CropWindow::pointerMoved (int bstate, int x, int y)
 
         iarea->redraw ();
     } else if (state == SCropImgMove) {
+        const auto& options = App::get().options();
         // multiplier is the amplification factor ; disabled if the user selected "1" (no amplification)
         double factor = options.panAccelFactor == 1 ? 1.0 : options.panAccelFactor * zoomSteps[cropZoom].zoom;
 
@@ -1448,6 +1450,8 @@ void CropWindow::expose (Cairo::RefPtr<Cairo::Context> cr)
     if (decorated) {
         drawDecoration (cr);
     }
+
+    auto& options = App::get().mut_options();
 
     int x = xpos, y = ypos;
 
@@ -2251,7 +2255,7 @@ void CropWindow::zoomFitCrop ()
         centerY = cropHandler.cropParams->y + cropHandler.cropParams->h / 2;
         setCropAnchorPosition(centerX, centerY);
         changeZoom (cz, true, centerX, centerY);
-        fitZoom = options.cropAutoFit;
+        fitZoom = App::get().options().cropAutoFit;
     } else {
         zoomFit();
     }
@@ -2320,7 +2324,7 @@ void CropWindow::changeZoom (int zoom, bool notify, int centerx, int centery, bo
     }
 
     // Limit zoom according to user preferences
-    double zoomLimit = zoomLimitToFraction(options.maxZoomLimit);
+    double zoomLimit = zoomLimitToFraction(App::get().options().maxZoomLimit);
     while(zoomSteps[zoom].zoom > zoomLimit && zoom != 0) {
         --zoom;
     }
@@ -2680,6 +2684,8 @@ void CropWindow::drawObservedFrame (Cairo::RefPtr<Cairo::Context> cr, int rw, in
     cr->set_line_width (1);
     cr->rectangle (x - 0.5, y - 0.5, w + 4, h + 4);
     cr->stroke ();
+
+    const auto& options = App::get().options();
 
     // draw a "frame" line. Color of frame line can be set in preferences
     cr->set_source_rgba(options.navGuideBrush[0], options.navGuideBrush[1], options.navGuideBrush[2], options.navGuideBrush[3]); //( 1, 1, 1, 1.0);

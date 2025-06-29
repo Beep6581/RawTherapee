@@ -281,6 +281,7 @@ WhiteBalance::WhiteBalance () : FoldableToolPanel(this, TOOL_NAME, M("TP_WBALANC
     setExpandAlignProperties(spotsize, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_CENTER);
     spotsize->append ("2");
 
+    const auto& options = App::get().options();
     if (options.whiteBalanceSpotSize == 2) {
         spotsize->set_active(0);
     }
@@ -745,7 +746,7 @@ void WhiteBalance::spotPressed ()
 
 void WhiteBalance::spotSizeChanged ()
 {
-    options.whiteBalanceSpotSize = getSize();
+    App::get().mut_options().whiteBalanceSpotSize = getSize();
 
     if (wblistener) {
         wblistener->spotWBRequested (getSize());
@@ -785,7 +786,7 @@ void WhiteBalance::read (const ProcParams* pp, const ParamsEdited* pedited)
 
 
 
-    if(options.rtSettings.itcwb_enable) {
+    if(App::get().options().rtSettings.itcwb_enable) {
         itcwb_green->show();
         itcwb_alg->show();
         itcwb_prim->show();

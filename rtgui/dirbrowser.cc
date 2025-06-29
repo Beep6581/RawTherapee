@@ -144,6 +144,7 @@ void DirBrowser::fillDirTree ()
 
     dirtree->append_column(tvc);
 
+    const auto& options = App::get().options();
     tvc.set_sort_order(options.dirBrowserSortType);
     tvc.set_sort_column(dtColumns.filename);
     tvc.set_sort_indicator(true);
@@ -267,6 +268,7 @@ void DirBrowser::fillRoot ()
 
 void DirBrowser::on_sort_column_changed() const
 {
+    auto& options = App::get().mut_options();
     options.dirBrowserSortType = tvc.get_sort_order();
 }
 
@@ -285,13 +287,14 @@ void DirBrowser::row_expanded (const Gtk::TreeModel::iterator& iter, const Gtk::
     dirTreeModel->get_sort_column_id(prevSortColumn, prevSortType);
     dirTreeModel->set_sort_column(Gtk::TreeSortable::DEFAULT_UNSORTED_COLUMN_ID, Gtk::SORT_ASCENDING);
 
+    const auto& options = App::get().options();
     auto dir = Gio::File::create_for_path (iter->get_value (dtColumns.dirname));
     auto subDirs = listSubDirs (dir, options.fbShowHidden);
 
     Gtk::TreeNodeChildren children = iter->children();
     std::list<Gtk::TreeIter> forErase(children.begin(), children.end());
 
-    std::sort (subDirs.begin (), subDirs.end (), [] (const Glib::ustring& firstDir, const Glib::ustring& secondDir)
+    std::sort (subDirs.begin (), subDirs.end (), [&](const Glib::ustring& firstDir, const Glib::ustring& secondDir)
     {
         switch (options.dirBrowserSortType) {
         default:
@@ -353,7 +356,7 @@ void DirBrowser::updateDir (const Gtk::TreeModel::iterator& iter)
 
     // test if new files are created
     auto dir = Gio::File::create_for_path (iter->get_value (dtColumns.dirname));
-    auto subDirs = listSubDirs (dir, options.fbShowHidden);
+    auto subDirs = listSubDirs (dir, App::get().options().fbShowHidden);
 
     for (size_t i = 0; i < subDirs.size(); i++) {
         bool found = false;

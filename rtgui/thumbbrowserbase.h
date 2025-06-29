@@ -110,7 +110,7 @@ public:
 protected:
     virtual int getMaxThumbnailHeight() const
     {
-        return options.maxThumbnailHeight;    // Differs between batch and file
+        return App::get().options().maxThumbnailHeight;    // Differs between batch and file
     }
     virtual void saveThumbnailHeight (int height) = 0;
     virtual int  getThumbnailHeight () = 0;

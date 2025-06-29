@@ -23,10 +23,9 @@
 #include <iostream>
 #include <librsvg/rsvg.h>
 
+#include "rtengine/rtapp.h"
 #include "rtengine/settings.h"
 #include "guiutils.h"
-
-extern Glib::ustring argv0;
 
 // Default static parameter values
 double RTScalable::dpi = 96.;
@@ -119,7 +118,7 @@ Cairo::RefPtr<Cairo::ImageSurface> RTScalable::loadSurfaceFromPNG(const Glib::us
         path = fname;
     } else {
         // Look for PNG file in "images" folder
-        Glib::ustring imagesFolder = Glib::build_filename(argv0, "images");
+        Glib::ustring imagesFolder = Glib::build_filename(App::get().argv0(), "images");
         path = Glib::build_filename(imagesFolder, fname);
     }
 
@@ -146,7 +145,7 @@ Cairo::RefPtr<Cairo::ImageSurface> RTScalable::loadSurfaceFromSVG(const Glib::us
         path = fname;
     } else {
         // Look for SVG file in "images" folder
-        Glib::ustring imagesFolder = Glib::build_filename(argv0, "images");
+        Glib::ustring imagesFolder = Glib::build_filename(App::get().argv0(), "images");
         path = Glib::build_filename(imagesFolder, fname);
     }
 

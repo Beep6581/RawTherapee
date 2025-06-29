@@ -30,7 +30,7 @@ using namespace rtengine::procparams;
 
 const Glib::ustring PreProcess::TOOL_NAME = "preprocess";
 
-PreProcess::PreProcess () : FoldableToolPanel(this, TOOL_NAME, M("TP_PREPROCESS_LABEL"), options.prevdemo != PD_Sidecar)
+PreProcess::PreProcess () : FoldableToolPanel(this, TOOL_NAME, M("TP_PREPROCESS_LABEL"), App::get().options().prevdemo != PD_Sidecar)
 {
 
     Gtk::Box* hotdeadPixel = Gtk::manage( new Gtk::Box () );
@@ -48,6 +48,7 @@ PreProcess::PreProcess () : FoldableToolPanel(this, TOOL_NAME, M("TP_PREPROCESS_
     hdThreshold->set_tooltip_markup (M("TP_RAW_HD_TOOLTIP"));
     hdThreshold->setAdjusterListener (this);
 
+    const auto& options = App::get().options();
     hdThreshold->setDelay(std::max(options.adjusterMinDelay, options.adjusterMaxDelay));
 
     hdThreshold->show();

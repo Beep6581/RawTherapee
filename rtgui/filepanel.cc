@@ -32,6 +32,7 @@
 
 FilePanel::FilePanel () : parent(nullptr), error(0)
 {
+    const auto& options = App::get().options();
 
     // Contains everything except for the batch Tool Panel and tabs (Fast Export, Inspect, etc)
     dirpaned = Gtk::manage ( new Gtk::Paned () );
@@ -186,6 +187,7 @@ void FilePanel::setAspect ()
 {
     int winW, winH;
     parent->get_size(winW, winH);
+    const auto& options = App::get().options();
     placespaned->set_position(options.dirBrowserHeight);
     dirpaned->set_position(options.dirBrowserWidth);
     tpcPaned->set_position(options.browserToolPanelHeight);
@@ -206,17 +208,18 @@ void FilePanel::init ()
     dirBrowser->fillDirTree ();
     placesBrowser->refreshPlacesList ();
 
-    if (!argv1.empty() && Glib::file_test (argv1, Glib::FILE_TEST_EXISTS)) {
-        Glib::ustring d(argv1);
+    if (!App::get().argv0().empty() && Glib::file_test (App::get().argv1(), Glib::FILE_TEST_EXISTS)) {
+        Glib::ustring d(App::get().argv1());
         if (!Glib::file_test(d, Glib::FILE_TEST_IS_DIR)) {
             d = Glib::path_get_dirname(d);
         }
         dirBrowser->open(d);
     } else {
+        const auto& options = App::get().options();
         if (options.startupDir == STARTUPDIR_HOME) {
             dirBrowser->open (PlacesBrowser::userPicturesDir ());
         } else if (options.startupDir == STARTUPDIR_CURRENT) {
-            dirBrowser->open (argv0);
+            dirBrowser->open (App::get().argv0());
         } else if (options.startupDir == STARTUPDIR_CUSTOM || options.startupDir == STARTUPDIR_LAST) {
             if (options.startupPath.length() && Glib::file_test(options.startupPath, Glib::FILE_TEST_EXISTS) && Glib::file_test(options.startupPath, Glib::FILE_TEST_IS_DIR)) {
                 dirBrowser->open (options.startupPath);
@@ -246,7 +249,7 @@ bool FilePanel::fileSelected (Thumbnail* thm)
     }
 
     // Check if it's already open BEFORE loading the file
-    if (options.tabbedUI && parent->selectEditorPanel(thm->getFileName())) {
+    if (App::get().options().tabbedUI && parent->selectEditorPanel(thm->getFileName())) {
         return true;
     }
 
@@ -293,6 +296,8 @@ bool FilePanel::imageLoaded( Thumbnail* thm, ProgressConnector<rtengine::Initial
             break;
         }
     }
+
+    const auto& options = App::get().options();
 
     // The purpose of the pendingLoads vector is to open tabs in the same order as the loads where initiated. It has no effect on single editor mode.
     while (pendingLoads.size() > 0 && pendingLoads.front()->complete) {
@@ -363,6 +368,7 @@ MAXGDIHANDLESREACHED:
 
 void FilePanel::saveOptions ()
 {
+    auto& options = App::get().mut_options();
 
     int winW, winH;
     parent->get_size(winW, winH);

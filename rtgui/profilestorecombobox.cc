@@ -69,7 +69,7 @@ void ProfileStoreComboBox::refreshProfileList_ (Gtk::TreeModel::Row *parentRow, 
             if (entry->type == PSET_FOLDER) {
                 Glib::ustring folderPath ( ProfileStore::getInstance()->getPathFromId (entry->folderId) );
 
-                if (options.useBundledProfiles || ((folderPath != "${G}" ) && (folderPath != "${U}" ))) {
+                if (App::get().options().useBundledProfiles || ((folderPath != "${G}" ) && (folderPath != "${U}" ))) {
                     // creating the new submenu
                     Gtk::TreeModel::Row newSubMenu;
 

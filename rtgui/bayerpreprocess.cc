@@ -30,8 +30,9 @@ using namespace rtengine::procparams;
 
 const Glib::ustring BayerPreProcess::TOOL_NAME = "bayerpreprocess";
 
-BayerPreProcess::BayerPreProcess() : FoldableToolPanel(this, TOOL_NAME, M("TP_PREPROCESS_LABEL"), options.prevdemo != PD_Sidecar)
+BayerPreProcess::BayerPreProcess() : FoldableToolPanel(this, TOOL_NAME, M("TP_PREPROCESS_LABEL"), App::get().options().prevdemo != PD_Sidecar)
 {
+    const auto& options = App::get().options();
     auto m = ProcEventMapper::getInstance();
     EvLineDenoiseDirection = m->newEvent(DARKFRAME, "HISTORY_MSG_PREPROCESS_LINEDENOISE_DIRECTION");
     EvPDAFLinesFilter = m->newEvent(DARKFRAME, "HISTORY_MSG_PREPROCESS_PDAFLINESFILTER");

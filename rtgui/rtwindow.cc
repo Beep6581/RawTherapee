@@ -74,7 +74,7 @@ osx_open_file_cb (GtkosxApplication *app, gchar *path_, gpointer data)
 {
     RTWindow *rtWin = static_cast<RTWindow*>(data);
 
-    if (!argv1.empty()) {
+    if (!App::get().argv1().empty()) {
         // skip handling if we have a file argument or else we get double open of same file
         return false;
     }
@@ -107,6 +107,7 @@ RTWindow::RTWindow ()
     // ------- loading theme files
 
     Glib::RefPtr<Gdk::Screen> screen = Gdk::Screen::get_default();
+    auto& options = App::get().mut_options();
 
     if (screen) {
         // Setting default theme and icon theme (bases for custom themes)
@@ -119,10 +120,10 @@ RTWindow::RTWindow ()
 
         // Look for theme and set it
         // Check if the current theme name in options exists, otherwise set it to default one (i.e. "RawTherapee.css")
-        auto filename = Glib::build_filename(argv0, "themes", options.theme + ".css");
+        auto filename = Glib::build_filename(App::get().argv0(), "themes", options.theme + ".css");
         if (!Glib::file_test(filename, Glib::FILE_TEST_EXISTS)) {
             options.theme = "RawTherapee";
-            filename = Glib::build_filename(argv0, "themes", options.theme + ".css");
+            filename = Glib::build_filename(App::get().argv0(), "themes", options.theme + ".css");
         }
 
         cssRT = Gtk::CssProvider::create();
@@ -214,7 +215,7 @@ RTWindow::RTWindow ()
         gtkosx_application_ready (osxApp);
     }
 #endif
-    versionStr = "RawTherapee " + versionString;
+    versionStr = "RawTherapee " + App::VERSION;
 
     set_title_decorated ("");
     set_resizable (true);
@@ -231,7 +232,7 @@ RTWindow::RTWindow ()
     signal_key_press_event().connect ( sigc::mem_fun (*this, &RTWindow::keyPressed) );
     signal_key_release_event().connect(sigc::mem_fun(*this, &RTWindow::keyReleased));
 
-    if (simpleEditor) {
+    if (App::get().isSimpleEditor()) {
         epanel = Gtk::manage ( new EditorPanel (nullptr) );
         epanel->setParent (this);
         epanel->setParentWindow (this);
@@ -241,11 +242,11 @@ RTWindow::RTWindow ()
         pldBridge = nullptr; // No progress listener
 
         CacheManager* cm = CacheManager::getInstance();
-        Thumbnail* thm = cm->getEntry ( argv1 );
+        Thumbnail* thm = cm->getEntry ( App::get().argv1() );
 
         if (thm) {
             int error;
-            rtengine::InitialImage *ii = rtengine::InitialImage::load (argv1, thm->getType() == FT_Raw, &error, nullptr);
+            rtengine::InitialImage *ii = rtengine::InitialImage::load (App::get().argv1(), thm->getType() == FT_Raw, &error, nullptr);
             epanel->open ( thm, ii );
         }
     } else {
@@ -372,8 +373,8 @@ RTWindow::RTWindow ()
 
         bpanel->init (this);
 
-        if (!argv1.empty() && !remote) {
-            Thumbnail* thm = cacheMgr->getEntry (argv1);
+        if (!App::get().argv1().empty() && !App::get().isRemote()) {
+            Thumbnail* thm = cacheMgr->getEntry (App::get().argv1());
 
             if (thm) {
                 fpanel->fileCatalog->openRequested ({thm});
@@ -384,7 +385,7 @@ RTWindow::RTWindow ()
 
 RTWindow::~RTWindow()
 {
-    if (!simpleEditor) {
+    if (!App::get().isSimpleEditor()) {
         delete pldBridge;
     }
 
@@ -406,7 +407,7 @@ void RTWindow::on_realize ()
         fpanel->setAspect();
     }
 
-    if (simpleEditor) {
+    if (App::get().isSimpleEditor()) {
         epanel->setAspect();
     }
 
@@ -414,9 +415,10 @@ void RTWindow::on_realize ()
 
     // Display release notes only if new major version.
     bool waitForSplash = false;
+    auto& options = App::get().mut_options();
     if (options.is_new_version()) {
         // Update the version parameter with the right value
-        options.version = versionString;
+        options.version = App::VERSION;
 
         splash = new Splash (*this);
         splash->set_transient_for (*this);
@@ -439,6 +441,7 @@ void RTWindow::on_realize ()
 
 void RTWindow::showErrors()
 {
+    auto& options = App::get().mut_options();
     // alerting users if the default raw and image profiles are missing
     if (options.is_defProfRawMissing()) {
         options.defProfRaw = DEFPROFILE_RAW;
@@ -465,6 +468,7 @@ void RTWindow::showErrors()
 
 bool RTWindow::on_configure_event (GdkEventConfigure* event)
 {
+    auto& options = App::get().mut_options();
     if (!options.windowMaximized && !is_fullscreen && !is_minimized) {
         get_size (options.windowWidth, options.windowHeight);
         get_position (options.windowX, options.windowY);
@@ -479,7 +483,7 @@ bool RTWindow::on_configure_event (GdkEventConfigure* event)
 bool RTWindow::on_window_state_event (GdkEventWindowState* event)
 {
     // Retrieve RT window states
-    options.windowMaximized = event->new_window_state & GDK_WINDOW_STATE_MAXIMIZED;
+    App::get().mut_options().windowMaximized = event->new_window_state & GDK_WINDOW_STATE_MAXIMIZED;
     is_minimized = event->new_window_state & GDK_WINDOW_STATE_ICONIFIED;
     is_fullscreen = event->new_window_state & GDK_WINDOW_STATE_FULLSCREEN;
 
@@ -519,7 +523,7 @@ void RTWindow::on_mainNB_switch_page (Gtk::Widget* widget, guint page_num)
 
 void RTWindow::addEditorPanel (EditorPanel* ep, const std::string &name)
 {
-    if (options.multiDisplayMode > 0) {
+    if (App::get().options().multiDisplayMode > 0) {
         EditWindow * wndEdit = EditWindow::getInstance (this);
         wndEdit->addEditorPanel (ep, name);
         wndEdit->show_all();
@@ -573,7 +577,7 @@ void RTWindow::remEditorPanel (EditorPanel* ep)
         return;    // Will crash if destroyed while loading
     }
 
-    if (options.multiDisplayMode > 0) {
+    if (App::get().options().multiDisplayMode > 0) {
         EditWindow * wndEdit = EditWindow::getInstance (this);
         wndEdit->remEditorPanel (ep);
     } else {
@@ -602,7 +606,7 @@ void RTWindow::remEditorPanel (EditorPanel* ep)
 
 bool RTWindow::selectEditorPanel (const std::string &name)
 {
-    if (options.multiDisplayMode > 0) {
+    if (App::get().options().multiDisplayMode > 0) {
         EditWindow * wndEdit = EditWindow::getInstance (this);
 
         if (wndEdit->selectEditorPanel (name)) {
@@ -658,7 +662,7 @@ bool RTWindow::keyPressed (GdkEventKey* event)
         toggle_fullscreen();
     }
 
-    if (simpleEditor)
+    if (App::get().isSimpleEditor())
         // in simpleEditor mode, there's no other tab that can handle pressed keys, so we can send the event to editor panel then return
     {
         return epanel->handleShortcutKey (event);
@@ -739,8 +743,9 @@ bool RTWindow::on_delete_event (GdkEventAny* event)
     // Check if any editor is still processing, and do NOT quit if so. Otherwise crashes and inconsistent caches
     bool isProcessing = false;
     EditWindow* editWindow = nullptr;
+    auto& options = App::get().mut_options();
 
-    if (isSingleTabMode() || simpleEditor) {
+    if (isSingleTabMode() || App::get().isSimpleEditor()) {
         isProcessing = epanel->getIsProcessing();
     } else if (options.multiDisplayMode > 0) {
         editWindow = EditWindow::getInstance (this);
@@ -767,7 +772,7 @@ bool RTWindow::on_delete_event (GdkEventAny* event)
         bpanel->saveOptions ();
     }
 
-    if ((isSingleTabMode() || simpleEditor) && epanel->isRealized()) {
+    if ((isSingleTabMode() || App::get().isSimpleEditor()) && epanel->isRealized()) {
         epanel->saveProfile();
         epanel->writeOptions ();
     } else {
@@ -840,7 +845,7 @@ bool RTWindow::on_delete_event (GdkEventAny* event)
 
 void RTWindow::writeToolExpandedStatus (std::vector<int> &tpOpen)
 {
-    if ((isSingleTabMode() || gimpPlugin) && epanel->isRealized()) {
+    if ((isSingleTabMode() || App::get().isGimpPlugin()) && epanel->isRealized()) {
         epanel->writeToolExpandedStatus (tpOpen);
     } else {
         // Storing the options of the last EditorPanel before Gtk destroys everything
@@ -881,6 +886,7 @@ void RTWindow::showICCProfileCreator ()
 
     fpanel->optionsChanged ();
 
+    const auto& options = App::get().options();
     if (epanel) {
         epanel->defaultMonitorProfileChanged (options.rtSettings.monitorProfile, options.rtSettings.autoMonitorProfile);
     }
@@ -898,6 +904,7 @@ void RTWindow::showPreferences ()
 
     fpanel->optionsChanged ();
 
+    const auto& options = App::get().options();
     if (epanel) {
         epanel->defaultMonitorProfileChanged (options.rtSettings.monitorProfile, options.rtSettings.autoMonitorProfile);
     }
@@ -914,7 +921,7 @@ void RTWindow::setProgress(double p)
 
 void RTWindow::setProgressStr(const Glib::ustring& str)
 {
-    if (!options.mainNBVertical) {
+    if (!App::get().options().mainNBVertical) {
         prProgBar.set_text(str);
     }
 }
@@ -985,7 +992,7 @@ void RTWindow::MoveFileBrowserToEditor()
         fpanel->ribbonPane->remove (*fCatalog);
         fCatalog->disableInspector();
         epanel->catalogPane->add (*fCatalog);
-        epanel->showTopPanel (options.editorFilmStripOpened);
+        epanel->showTopPanel (App::get().options().editorFilmStripOpened);
         fCatalog->enableTabMode (true);
         fCatalog->refreshHeight();
         fCatalog->tbLeftPanel_1_visible (false);
@@ -1003,7 +1010,7 @@ void RTWindow::updateExternalEditorWidget(int selectedIndex, const std::vector<E
         panel.second->updateExternalEditorWidget(selectedIndex, editors);
     }
 
-    if (options.multiDisplayMode > 0) {
+    if (App::get().options().multiDisplayMode > 0) {
         EditWindow::getInstance(this)
             ->updateExternalEditorWidget(selectedIndex, editors);
     }
@@ -1080,7 +1087,7 @@ void RTWindow::updateToolPanelToolLocations(
         panel.second->updateToolPanelToolLocations(favorites, cloneFavoriteTools);
     }
 
-    if (options.multiDisplayMode > 0) {
+    if (App::get().options().multiDisplayMode > 0) {
         EditWindow::getInstance(this)
             ->updateToolPanelToolLocations(favorites, cloneFavoriteTools);
     }
@@ -1098,6 +1105,7 @@ void RTWindow::setWindowSize ()
 {
     onConfEventConn.block(true); // Avoid getting size and position while window is being moved, maximized, ...
 
+    const auto& options = App::get().options();
     Gdk::Rectangle lMonitorRect;
     const auto display = get_screen()->get_display();
     display->get_monitor (std::min (options.windowMonitor, display->get_n_monitors() - 1))->get_geometry(lMonitorRect);
@@ -1223,6 +1231,7 @@ void RTWindow::createSetmEditor()
     setExpandAlignProperties (editorLabelGrid, false, false, Gtk::ALIGN_CENTER, Gtk::ALIGN_CENTER);
     Gtk::Label* const el = Gtk::manage (new Gtk::Label ( Glib::ustring (" ") + M ("MAIN_FRAME_EDITOR") ));
 
+    const auto& options = App::get().options();
     const auto pos = options.mainNBVertical ? Gtk::POS_TOP : Gtk::POS_RIGHT;
 
     if (options.mainNBVertical) {
@@ -1241,5 +1250,6 @@ void RTWindow::createSetmEditor()
 
 bool RTWindow::isSingleTabMode() const
 {
+    const auto& options = App::get().options();
     return !options.tabbedUI && ! (options.multiDisplayMode > 0);
 }

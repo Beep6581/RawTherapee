@@ -29,6 +29,7 @@
 #else
 #include <gtkmm/enums.h>
 #endif
+#include "rtengine/rtapp.h"
 #include "rtengine/settings.h"
 #include <exception>
 
@@ -532,30 +533,21 @@ public:
     static void save();
 
     // if multiUser=false, send back the global profile path
-    Glib::ustring getPreferredProfilePath();
-    Glib::ustring getUserProfilePath();
-    Glib::ustring getGlobalProfilePath();
-    Glib::ustring findProfilePath (Glib::ustring &profName);
-    bool is_parse_extention (Glib::ustring fname);
-    bool has_retained_extention (const Glib::ustring& fname);
-    bool is_new_version();
-    bool is_extention_enabled (const Glib::ustring& ext);
-    bool is_defProfRawMissing();
-    bool is_bundledDefProfRawMissing();
-    bool is_defProfImgMissing();
-    bool is_bundledDefProfImgMissing();
+    Glib::ustring getPreferredProfilePath() const;
+    Glib::ustring getUserProfilePath() const;
+    Glib::ustring getGlobalProfilePath() const;
+    Glib::ustring findProfilePath (Glib::ustring &profName) const;
+    bool is_parse_extention (Glib::ustring fname) const;
+    bool has_retained_extention (const Glib::ustring& fname) const;
+    bool is_new_version() const;
+    bool is_extention_enabled (const Glib::ustring& ext) const;
+    bool is_defProfRawMissing() const;
+    bool is_bundledDefProfRawMissing() const;
+    bool is_defProfImgMissing() const;
+    bool is_bundledDefProfImgMissing() const;
     void setDefProfRawMissing (bool value);
     void setBundledDefProfRawMissing (bool value);
     void setDefProfImgMissing (bool value);
     void setBundledDefProfImgMissing (bool value);
     static Glib::ustring getICCProfileCopyright();
 };
-
-extern Options options;
-extern Glib::ustring argv0;
-extern Glib::ustring argv1;
-extern bool simpleEditor;
-extern bool gimpPlugin;
-extern bool remote;
-extern Glib::ustring versionString;
-extern Glib::ustring paramFileExtension;

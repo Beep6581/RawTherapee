@@ -30,7 +30,7 @@
 using namespace std;
 
 ThumbBrowserBase::ThumbBrowserBase ()
-    : location(THLOC_FILEBROWSER), inspector(nullptr), isInspectorActive(false), eventTime(0), lastClicked(nullptr), anchor(nullptr), previewHeight(options.thumbSize), numOfCols(1), lastRowHeight(0), arrangement(TB_Horizontal)
+    : location(THLOC_FILEBROWSER), inspector(nullptr), isInspectorActive(false), eventTime(0), lastClicked(nullptr), anchor(nullptr), previewHeight(App::get().options().thumbSize), numOfCols(1), lastRowHeight(0), arrangement(TB_Horizontal)
 {
     inW = -1;
     inH = -1;
@@ -1101,10 +1101,11 @@ void ThumbBrowserBase::resort ()
     {
         MYWRITERLOCK(l, entryRW);
 
+        const auto& options = App::get().options();
         std::sort(
             fd.begin(),
             fd.end(),
-            [](const ThumbBrowserEntryBase* a, const ThumbBrowserEntryBase* b)
+            [&](const ThumbBrowserEntryBase* a, const ThumbBrowserEntryBase* b)
             {
                 bool lt = a->compare(*b, options.sortMethod);
                 return options.sortDescending ? !lt : lt;
@@ -1129,6 +1130,7 @@ void ThumbBrowserBase::zoomChanged (bool zoomIn)
     int newHeight = 0;
     int optThumbSize = getThumbnailHeight();
 
+    const auto& options = App::get().options();
     if (zoomIn)
         for (size_t i = 0; i < options.thumbnailZoomRatios.size(); i++) {
             newHeight = (int)(options.thumbnailZoomRatios[i] * getMaxThumbnailHeight());
@@ -1212,6 +1214,7 @@ void ThumbBrowserBase::enableTabMode(bool enable)
     location = enable ? THLOC_EDITOR : THLOC_FILEBROWSER;
     arrangement = enable ? ThumbBrowserBase::TB_Horizontal : ThumbBrowserBase::TB_Vertical;
 
+    const auto& options = App::get().options();
     if ((!options.sameThumbSize && (options.thumbSizeTab != options.thumbSize)) || (options.showFileNames || options.filmStripShowFileNames)) {
 
         MYWRITERLOCK(l, entryRW);
@@ -1248,12 +1251,13 @@ void ThumbBrowserBase::insertEntry (ThumbBrowserEntryBase* entry)
     {
         MYWRITERLOCK(l, entryRW);
 
+        const auto& options = App::get().options();
         fd.insert(
             std::lower_bound(
                 fd.begin(),
                 fd.end(),
                 entry,
-                [](const ThumbBrowserEntryBase* a, const ThumbBrowserEntryBase* b)
+                [&](const ThumbBrowserEntryBase* a, const ThumbBrowserEntryBase* b)
                 {
                     bool lt = a->compare(*b, options.sortMethod);
                     return options.sortDescending ? !lt : lt;

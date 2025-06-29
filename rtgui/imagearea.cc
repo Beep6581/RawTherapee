@@ -24,7 +24,6 @@
 #include "cropwindow.h"
 #include "rtengine/refreshmap.h"
 #include "rtengine/procparams.h"
-#include "options.h"
 #include "rtscalable.h"
 
 ImageArea::ImageArea (ImageAreaPanel* p) : parent(p), fullImageWidth(0), fullImageHeight(0)
@@ -155,7 +154,7 @@ void ImageArea::setInfoText (Glib::ustring text)
 
     // update font
     fontd.set_weight (Pango::WEIGHT_BOLD);
-    const int fontSize = options.fontSize;
+    const int fontSize = App::get().options().fontSize;
     // Non-absolute size is defined in "Pango units" and shall be multiplied by
     // Pango::SCALE from "pt":
     fontd.set_size (fontSize * Pango::SCALE);
@@ -195,7 +194,7 @@ void ImageArea::setInfoText (Glib::ustring text)
 
 void ImageArea::infoEnabled (bool e)
 {
-
+    auto& options = App::get().mut_options();
     if (options.showInfo != e) {
         options.showInfo = e;
         queue_draw ();
@@ -250,7 +249,7 @@ bool ImageArea::on_draw(const ::Cairo::RefPtr< Cairo::Context> &cr)
         (*i)->expose (cr);
     }
 
-    if (options.showInfo && !infotext.empty()) {
+    if (App::get().options().showInfo && !infotext.empty()) {
         iBackBuffer.copySurface(cr);
     }
 
@@ -467,6 +466,7 @@ void ImageArea::addCropWindow ()
     cw->setCropGUIListener (cropgl);
     cw->setPointerMotionListener (pmlistener);
     cw->setPointerMotionHListener (pmhlistener);
+    const auto& options = App::get().options();
     int lastWidth = options.detailWindowWidth;
     int lastHeight = options.detailWindowHeight;
 
@@ -685,6 +685,7 @@ void ImageArea::initialImageArrived ()
     if (mainCropWindow) {
         int w, h;
         mainCropWindow->cropHandler.getFullImageSize(w, h);
+        const auto& options = App::get().options();
         if(options.prevdemo != PD_Sidecar || !options.rememberZoomAndPan || w != fullImageWidth || h != fullImageHeight) {
             if (options.cropAutoFit || options.bgcolor != 0) {
                 mainCropWindow->zoomFitCrop();

@@ -263,6 +263,7 @@ void ThumbBrowserEntryBase::updateBackBuffer ()
     int istartx = prex;
     int istarty = prey;
 
+    const auto& options = App::get().options();
     if ((parent->getLocation() != ThumbBrowserBase::THLOC_EDITOR && options.showFileNames && options.overlayedFileNames)
             || (parent->getLocation() == ThumbBrowserBase::THLOC_EDITOR && options.filmStripShowFileNames && options.filmStripOverlayedFileNames)) {
         cc->begin_new_path ();
@@ -453,6 +454,8 @@ void ThumbBrowserEntryBase::getTextSizes (int& infow, int& infoh)
     infow = 0;
 
     if (withFilename == WFNAME_FULL) {
+        const auto& options = App::get().options();
+
         // datetime
         fontd.set_weight (Pango::WEIGHT_NORMAL);
         context->set_font_description (fontd);
@@ -503,6 +506,7 @@ void ThumbBrowserEntryBase::resize (int h)
         buttonSet->getMinimalDimensions (bsw, bsh);
     }
 
+    const auto& options = App::get().options();
     if (parent->getLocation() == ThumbBrowserBase::THLOC_FILEBROWSER) {
         if (options.showFileNames) {
             withFilename = WFNAME_FULL;
@@ -738,6 +742,7 @@ std::tuple<Glib::ustring, bool> ThumbBrowserEntryBase::getToolTip (int x, int y)
     if (inside(x, y) && tooltip.empty()) {
         tooltip = dispname;
 
+        const auto& options = App::get().options();
         if (withFilename < WFNAME_FULL) {
             if (options.fbShowDateTime && !datetimeline.empty()) {
                 tooltip += Glib::ustring("\n") + datetimeline;

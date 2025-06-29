@@ -319,7 +319,7 @@ std::shared_ptr<rtengine::HaldCLUT> rtengine::CLUTStore::getClut(const Glib::ust
 
     const Glib::ustring full_filename =
         !Glib::path_is_absolute(filename)
-            ? Glib::ustring(Glib::build_filename(options.clutsDir, filename))
+            ? Glib::ustring(Glib::build_filename(App::get().options().clutsDir, filename))
             : filename;
 
     if (!cache.get(full_filename, result)) {
@@ -340,6 +340,6 @@ void rtengine::CLUTStore::clearCache()
 }
 
 rtengine::CLUTStore::CLUTStore() :
-    cache(options.clutCacheSize)
+    cache(App::get().options().clutCacheSize)
 {
 }

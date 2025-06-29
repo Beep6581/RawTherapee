@@ -338,7 +338,8 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
     // TODO Locallab printf
     MyMutex::MyLock processingLock(mProcessing);
 
-    bool highDetailNeeded = options.prevdemo == PD_Sidecar ? true : (todo & M_HIGHQUAL);
+    const auto prevdemo = App::get().options().prevdemo;
+    bool highDetailNeeded = prevdemo == PD_Sidecar ? true : (todo & M_HIGHQUAL);
     //    printf("metwb=%s \n", params->wb.method.c_str());
 
     // Check if any detail crops need high detail. If not, take a fast path short cut
@@ -351,7 +352,7 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
         }
     }
 
-    if (((todo & ALL) == ALL) || (todo & M_MONITOR) || panningRelatedChange || (highDetailNeeded && options.prevdemo != PD_Sidecar)) {
+    if (((todo & ALL) == ALL) || (todo & M_MONITOR) || panningRelatedChange || (highDetailNeeded && prevdemo != PD_Sidecar)) {
         bwAutoR = bwAutoG = bwAutoB = -9000.f;
 
         if (todo == CROP && ipf.needsPCVignetting()) {
@@ -2466,7 +2467,7 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
 
 // process crop, if needed
     for (size_t i = 0; i < crops.size(); i++)
-        if (crops[i]->hasListener() && (panningRelatedChange || (highDetailNeeded && options.prevdemo != PD_Sidecar) || (todo & (M_MONITOR | M_RGBCURVE | M_LUMACURVE)) || crops[i]->get_skip() == 1)) {
+        if (crops[i]->hasListener() && (panningRelatedChange || (highDetailNeeded && prevdemo != PD_Sidecar) || (todo & (M_MONITOR | M_RGBCURVE | M_LUMACURVE)) || crops[i]->get_skip() == 1)) {
             crops[i]->update(todo);     // may call ourselves
         }
 
@@ -3342,7 +3343,7 @@ bool ImProcCoordinator::getHighQualComputed()
 {
     // this function may only be called from detail windows
     if (!highQualityComputed) {
-        if (options.prevdemo == PD_Sidecar) {
+        if (App::get().options().prevdemo == PD_Sidecar) {
             // we already have high quality preview
             setHighQualComputed();
         } else {
