@@ -2875,6 +2875,8 @@ void Options::saveToFile(Glib::ustring fname)
 
 void Options::load(bool lightweight)
 {
+    // Start from fresh options
+    options = Options{};
 
     // Find the application data path
 
