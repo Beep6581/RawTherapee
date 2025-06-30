@@ -411,6 +411,8 @@ struct CoarseTransformParamsEdited {
 struct CommonTransformParamsEdited {
     bool method;
     bool scale;
+    bool scale_horizontally;
+    bool scale_vertically;
     bool autofill;
 };
 

@@ -949,13 +949,17 @@ struct CoarseTransformParams {
   * Common transformation parameters
   */
 struct CommonTransformParams {
-    Glib::ustring method;
-    bool autofill;
-    double scale;
+    Glib::ustring method = "log";
+    bool autofill = true;
+    double scale = 1.0;
+    double scale_horizontally = 1.0;
+    double scale_vertically = 1.0;
 
     CommonTransformParams();
 
     double getScale() const;
+    double getScaleHorizontally() const;
+    double getScaleVertically() const;
 
     bool operator ==(const CommonTransformParams& other) const;
     bool operator !=(const CommonTransformParams& other) const;

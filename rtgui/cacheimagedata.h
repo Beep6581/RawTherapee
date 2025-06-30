@@ -60,6 +60,7 @@ public:
     float focusDist;
     unsigned iso;
     int rating;
+    int colorLabel;
     bool isHDR;
     bool isDNG;
     bool isPixelShift;
@@ -114,6 +115,7 @@ public:
     std::string getOrientation() const override { return ""; } // TODO
     Glib::ustring getFileName() const override { return ""; }
     int getRating () const override { return rating; } // FIXME-piotr : missing rating
+    int getColorLabel() const override { return colorLabel; }
     bool getPixelShift () const override { return isPixelShift; }
     bool getHDR() const override { return isHDR; }
     bool getDNG() const override { return isDNG; }
