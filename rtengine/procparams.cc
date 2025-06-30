@@ -2187,21 +2187,26 @@ bool CoarseTransformParams::operator !=(const CoarseTransformParams& other) cons
     return !(*this == other);
 }
 
-CommonTransformParams::CommonTransformParams() :
-    method("log"),
-    autofill(true),
-    scale(1.0)
-{
-}
+CommonTransformParams::CommonTransformParams() {}
 
 double CommonTransformParams::getScale() const
 {
-    return autofill ? 1.0 : scale;
+  return autofill ? 1.0 : scale;
+}
+
+double CommonTransformParams::getScaleHorizontally() const
+{
+  return autofill ? 1.0 : scale_horizontally;
+}
+
+double CommonTransformParams::getScaleVertically() const
+{
+  return autofill ? 1.0 : scale_vertically;
 }
 
 bool CommonTransformParams::operator ==(const CommonTransformParams& other) const
 {
-    return method == other.method && autofill == other.autofill && std::abs(scale - other.scale) < 1e-6;
+    return method == other.method && autofill == other.autofill && std::abs(scale - other.scale) < 1e-6 && std::abs(scale_horizontally - other.scale_horizontally) < 1e-6 && std::abs(scale_vertically - other.scale_vertically) < 1e-6;
 }
 
 bool CommonTransformParams::operator !=(const CommonTransformParams& other) const
@@ -7164,6 +7169,8 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
 // Common properties for transformations
         saveToKeyfile(!pedited || pedited->commonTrans.method, "Common Properties for Transformations", "Method", commonTrans.method, keyFile);
         saveToKeyfile(!pedited || pedited->commonTrans.scale, "Common Properties for Transformations", "Scale", commonTrans.scale, keyFile);
+        saveToKeyfile(!pedited || pedited->commonTrans.scale_horizontally, "Common Properties for Transformations", "Scale horizontally", commonTrans.scale_horizontally, keyFile);
+        saveToKeyfile(!pedited || pedited->commonTrans.scale_vertically, "Common Properties for Transformations", "Scale vertically", commonTrans.scale_vertically, keyFile);
         saveToKeyfile(!pedited || pedited->commonTrans.autofill, "Common Properties for Transformations", "AutoFill", commonTrans.autofill, keyFile);
 
 // Rotation
@@ -9449,8 +9456,12 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
             }
             if (keyFile.has_key("Common Properties for Transformations", "Scale")) {
                 assignFromKeyfile(keyFile, "Common Properties for Transformations", "Scale", commonTrans.scale, pedited->commonTrans.scale);
-            } else {
-                commonTrans.scale = 1.0;
+            }
+            if (keyFile.has_key("Common Properties for Transformations", "Scale horizontally")) {
+                assignFromKeyfile(keyFile, "Common Properties for Transformations", "Scale horizontally", commonTrans.scale_horizontally, pedited->commonTrans.scale_horizontally);
+            }
+            if (keyFile.has_key("Common Properties for Transformations", "Scale vertically")) {
+                assignFromKeyfile(keyFile, "Common Properties for Transformations", "Scale vertically", commonTrans.scale_vertically, pedited->commonTrans.scale_vertically);
             }
             assignFromKeyfile(keyFile, "Common Properties for Transformations", "AutoFill", commonTrans.autofill, pedited->commonTrans.autofill);
         }

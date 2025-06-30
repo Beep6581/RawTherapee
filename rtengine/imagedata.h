@@ -54,6 +54,7 @@ private:
     std::string make, model, serial;
     std::string orientation;
     int rating;
+    int color_label;
     std::string lens;
     IIOSampleFormat sampleFormat;
     struct tm modTime;
@@ -94,6 +95,7 @@ public:
     std::string getOrientation() const override;
     Glib::ustring getFileName() const override;
     int getRating() const override;
+    int getColorLabel() const override { return color_label; }
     std::uint32_t getFixBadPixelsConstant() const override;
     bool hasFixBadPixelsConstant() const override;
     std::vector<GainMap> getGainMaps() const override;
@@ -102,6 +104,9 @@ public:
     void fillBasicTags(Exiv2::ExifData &exif) const;
 
     void setDimensions(int w, int h);
+
+    static int xmp_label2color(const std::string &label);
+    static std::string xmp_color2label(int color);
 };
 
 }

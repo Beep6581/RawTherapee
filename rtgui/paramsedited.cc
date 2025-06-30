@@ -485,6 +485,8 @@ void ParamsEdited::set(bool v)
     commonTrans.method = v;
     commonTrans.autofill = v;
     commonTrans.scale = v;
+    commonTrans.scale_horizontally = v;
+    commonTrans.scale_vertically = v;
     rotate.degree = v;
     distortion.amount = v;
     distortion.defish = v;
@@ -1240,6 +1242,8 @@ void ParamsEdited::initFrom(const std::vector<rtengine::procparams::ProcParams>&
         coarse.vflip = coarse.vflip && p.coarse.vflip == other.coarse.vflip;
         commonTrans.method = commonTrans.method && p.commonTrans.method == other.commonTrans.method;
         commonTrans.scale = commonTrans.scale && p.commonTrans.scale == other.commonTrans.scale;
+        commonTrans.scale_horizontally = commonTrans.scale_horizontally && p.commonTrans.scale_horizontally == other.commonTrans.scale_horizontally;
+        commonTrans.scale_vertically = commonTrans.scale_vertically && p.commonTrans.scale_vertically == other.commonTrans.scale_vertically;
         commonTrans.autofill = commonTrans.autofill && p.commonTrans.autofill == other.commonTrans.autofill;
         rotate.degree = rotate.degree && p.rotate.degree == other.rotate.degree;
         distortion.amount = distortion.amount && p.distortion.amount == other.distortion.amount;
@@ -3704,6 +3708,14 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
 
     if (commonTrans.scale) {
         toEdit.commonTrans.scale = dontforceSet && options.baBehav[ADDSET_LENSGEOM_SCALE] ? toEdit.commonTrans.scale + mods.commonTrans.scale : mods.commonTrans.scale;
+    }
+
+    if (commonTrans.scale_horizontally) {
+        toEdit.commonTrans.scale_horizontally = dontforceSet && options.baBehav[ADDSET_LENSGEOM_SCALE_HORIZONTALLY] ? toEdit.commonTrans.scale_horizontally + mods.commonTrans.scale_horizontally : mods.commonTrans.scale_horizontally;
+    }
+
+    if (commonTrans.scale_vertically) {
+        toEdit.commonTrans.scale_vertically = dontforceSet && options.baBehav[ADDSET_LENSGEOM_SCALE_VERTICALLY] ? toEdit.commonTrans.scale_vertically + mods.commonTrans.scale_vertically : mods.commonTrans.scale_vertically;
     }
 
     if (commonTrans.autofill) {

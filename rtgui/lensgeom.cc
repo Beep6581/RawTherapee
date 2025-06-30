@@ -35,6 +35,8 @@ LensGeometry::LensGeometry () : FoldableToolPanel(this, TOOL_NAME, M("TP_LENSGEO
 {
     auto m = ProcEventMapper::getInstance();
     EvTransScale  = m->newEvent(TRANSFORM, "HISTORY_MSG_TRANS_SCALE");
+    EvTransScaleHorizontally  = m->newEvent(TRANSFORM, "HISTORY_MSG_TRANS_SCALE_HORIZONTALLY");
+    EvTransScaleVertically  = m->newEvent(TRANSFORM, "HISTORY_MSG_TRANS_SCALE_VERTICALLY");
     EvTransMethod = m->newEvent(TRANSFORM, "HISTORY_MSG_TRANS_METHOD");
 
     Gtk::Box* hb1 = Gtk::manage (new Gtk::Box ());
@@ -46,10 +48,20 @@ LensGeometry::LensGeometry () : FoldableToolPanel(this, TOOL_NAME, M("TP_LENSGEO
     hb1->pack_end (*method, Gtk::PACK_EXPAND_WIDGET, 4);
     pack_start( *hb1, Gtk::PACK_SHRINK, 4);
 
-    scale= Gtk::manage (new Adjuster (M("TP_LENSGEOM_SCALE"), 0.1, 10, 0.01, 1));
+    scale = Gtk::manage (new Adjuster (M("TP_LENSGEOM_SCALE"), 0.1, 10, 0.01, 1));
     scale->setAdjusterListener (this);
     scale->setLogScale(300, 0.1);
     pack_start (*scale);
+
+    scale_horizontally = Gtk::manage (new Adjuster (M("TP_LENSGEOM_SCALE_HORIZONTALLY"), 0.1, 10, 0.01, 1));
+    scale_horizontally->setAdjusterListener (this);
+    scale_horizontally->setLogScale(300, 0.1);
+    pack_start (*scale_horizontally);
+
+    scale_vertically = Gtk::manage (new Adjuster (M("TP_LENSGEOM_SCALE_VERTICALLY"), 0.1, 10, 0.01, 1));
+    scale_vertically->setAdjusterListener (this);
+    scale_vertically->setLogScale(300, 0.1);
+    pack_start (*scale_vertically);
 
     fill = Gtk::manage (new Gtk::CheckButton (M("TP_LENSGEOM_FILL")));
     pack_start (*fill);
@@ -65,6 +77,8 @@ LensGeometry::LensGeometry () : FoldableToolPanel(this, TOOL_NAME, M("TP_LENSGEO
 
     fill->set_active (true);
     scale->setEnabled(!fill->get_active());
+    scale_horizontally->setEnabled(!fill->get_active());
+    scale_vertically->setEnabled(!fill->get_active());
     show_all ();
 }
 
@@ -87,6 +101,8 @@ void LensGeometry::read (const ProcParams* pp, const ParamsEdited* pedited)
 
         fill->set_inconsistent (!pedited->commonTrans.autofill);
         scale->setEditedState (pedited->commonTrans.scale ? Edited : UnEdited);
+        scale_horizontally->setEditedState (pedited->commonTrans.scale_horizontally ? Edited : UnEdited);
+        scale_vertically->setEditedState (pedited->commonTrans.scale_vertically ? Edited : UnEdited);
     }
 
     fillConn.block (true);
@@ -95,11 +111,15 @@ void LensGeometry::read (const ProcParams* pp, const ParamsEdited* pedited)
     autoCrop->set_sensitive (!pp->commonTrans.autofill);
 
     scale->setValue (pp->commonTrans.scale);
+    scale_horizontally->setValue (pp->commonTrans.scale_horizontally);
+    scale_vertically->setValue (pp->commonTrans.scale_vertically);
 
     lastFill = pp->commonTrans.autofill;
 
     method->block (false);
     scale->setEnabled(!fill->get_active());
+    scale_horizontally->setEnabled(!fill->get_active());
+    scale_vertically->setEnabled(!fill->get_active());
     enableListener ();
 }
 
@@ -111,11 +131,15 @@ void LensGeometry::write (ProcParams* pp, ParamsEdited* pedited)
     }
     pp->commonTrans.autofill = fill->get_active ();
     pp->commonTrans.scale = scale->getValue ();
+    pp->commonTrans.scale_horizontally = scale_horizontally->getValue ();
+    pp->commonTrans.scale_vertically = scale_vertically->getValue ();
 
     if (pedited) {
         pedited->commonTrans.method = method->get_active_text() != M("GENERAL_UNCHANGED");
         pedited->commonTrans.autofill = !fill->get_inconsistent();
         pedited->commonTrans.scale = scale->getEditedState();
+        pedited->commonTrans.scale_horizontally = scale_horizontally->getEditedState();
+        pedited->commonTrans.scale_vertically = scale_vertically->getEditedState();
     }
 }
 
@@ -133,6 +157,14 @@ void LensGeometry::adjusterChanged(Adjuster *a, double newval)
         if (a == scale) {
             listener->panelChanged (EvTransScale,
                     Glib::ustring::format(scale->getValue()));
+        }
+        else if (a == scale_horizontally) {
+            listener->panelChanged (EvTransScaleHorizontally,
+                    Glib::ustring::format(scale_horizontally->getValue()));
+        }
+        else if (a == scale_vertically) {
+            listener->panelChanged (EvTransScaleVertically,
+                    Glib::ustring::format(scale_vertically->getValue()));
         }
         else {
             if (settings->verbose) {
@@ -168,6 +200,8 @@ void LensGeometry::fillPressed ()
         }
     }
     scale->setEnabled(!fill->get_active());
+    scale_horizontally->setEnabled(!fill->get_active());
+    scale_vertically->setEnabled(!fill->get_active());
 }
 
 void LensGeometry::methodChanged ()
@@ -184,5 +218,7 @@ void LensGeometry::setBatchMode (bool batchMode)
     ToolPanel::setBatchMode (batchMode);
     removeIfThere (this, autoCrop);
     scale->showEditedCB ();
+    scale_horizontally->showEditedCB ();
+    scale_vertically->showEditedCB ();
 }
 

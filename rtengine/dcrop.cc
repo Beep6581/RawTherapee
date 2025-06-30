@@ -1883,7 +1883,7 @@ bool check_need_larger_crop_for_lcp_distortion(int fw, int fh, int x, int y, int
  * If the scale changes, this method will free all buffers and reallocate ones of the new size.
  * It will then tell to the SizeListener that size has changed (sizeChanged)
  */
-bool Crop::setCropSizes(int cropX, int cropY, int cropW, int cropH, int skip, bool internal)
+bool Crop::setCropSizes(const int cropX, const int cropY, const int cropW, const int cropH, const int skip, const bool internal)
 {
 
     if (!internal) {

@@ -376,6 +376,14 @@ Gtk::Widget* Preferences::getBatchProcPanel()
     appendBehavList(mi, M("TP_LENSGEOM_SCALE"), ADDSET_LENSGEOM_SCALE, true);
 
     mi = behModel->append();
+    mi->set_value(behavColumns.label, M("TP_LENSGEOM_SCALE_HORIZONTALLY"));
+    appendBehavList(mi, M("TP_LENSGEOM_SCALE_HORIZONTALLY"), ADDSET_LENSGEOM_SCALE_HORIZONTALLY, true);
+
+    mi = behModel->append();
+    mi->set_value(behavColumns.label, M("TP_LENSGEOM_SCALE_VERTICALLY"));
+    appendBehavList(mi, M("TP_LENSGEOM_SCALE_VERTICALLY"), ADDSET_LENSGEOM_SCALE_VERTICALLY, true);
+
+    mi = behModel->append();
     mi->set_value(behavColumns.label, M("TP_DISTORTION_LABEL"));
     appendBehavList(mi, M("TP_DISTORTION_AMOUNT"), ADDSET_DIST_AMOUNT, false);
     appendBehavList(mi, M("TP_DISTORTION_DEFISH"), ADDSET_DIST_DEFISH, false);

@@ -35,12 +35,16 @@ protected:
     Gtk::Button*        autoCrop;
     LensGeomListener*   rlistener;
     Adjuster*           scale;
+    Adjuster*           scale_horizontally;
+    Adjuster*           scale_vertically;
     Gtk::CheckButton*   fill;
     bool                lastFill;
     sigc::connection    fillConn;
 
     rtengine::ProcEvent EvTransMethod;
     rtengine::ProcEvent EvTransScale;
+    rtengine::ProcEvent EvTransScaleHorizontally;
+    rtengine::ProcEvent EvTransScaleVertically;
 public:
     static const Glib::ustring TOOL_NAME;
 
