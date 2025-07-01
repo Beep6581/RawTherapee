@@ -2658,6 +2658,12 @@ bool FramingParams::operator !=(const FramingParams& other) const
 const Glib::ustring ColorManagementParams::NoICMString = Glib::ustring("No ICM: sRGB output");
 const Glib::ustring ColorManagementParams::NoProfileString = Glib::ustring("(none)");
 
+const ColorManagementParams& ColorManagementParams::getDefault()
+{
+    static ColorManagementParams singleton;
+    return singleton;
+}
+
 ColorManagementParams::ColorManagementParams() :
     inputProfile("(cameraICC)"),
     toneCurve(false),

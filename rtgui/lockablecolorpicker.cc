@@ -27,13 +27,6 @@
 #include "multilangmgr.h"
 #include "navigator.h"
 
-namespace
-{
-
-const rtengine::procparams::ColorManagementParams DEFAULT_CMP;
-
-}
-
 LockableColorPicker::LockableColorPicker (CropWindow* cropWindow, rtengine::procparams::ColorManagementParams *color_management_params)
 : cropWindow(cropWindow), displayedValues(ColorPickerType::RGB), position(0, 0), size(Size::S15),
   color_management_params(color_management_params), validity(Validity::OUTSIDE),
@@ -288,12 +281,14 @@ void LockableColorPicker::setRGB (const float R, const float G, const float B, c
     bpreview = previewB;
 
     rtengine::Color::rgb2hsv01(r, g, b, hue, sat, val);
+    using ColorManagementParams = rtengine::procparams::ColorManagementParams;
     rtengine::ImProcFunctions::rgb2lab(
         static_cast<std::uint8_t>(255 * r),
         static_cast<std::uint8_t>(255 * g),
         static_cast<std::uint8_t>(255 * b),
         L, a, bb,
-        color_management_params != nullptr ? *color_management_params : DEFAULT_CMP,
+        color_management_params != nullptr
+            ? *color_management_params : ColorManagementParams::getDefault(),
         true);
     L /= 327.68f;
     a /= 327.68f;

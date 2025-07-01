@@ -36,14 +36,6 @@ constexpr float HistogramArea::MIN_BRIGHT;
 
 using ScopeType = Options::ScopeType;
 
-
-namespace
-{
-
-const rtengine::procparams::ColorManagementParams DEFAULT_CMP;
-
-}
-
 //
 //
 // HistogramPanel
@@ -893,12 +885,13 @@ bool HistogramRGBArea::updatePointer (const int new_r, const int new_g, const in
         r = new_r;
         g = new_g;
         b = new_b;
+        using ColorManagementParams = rtengine::procparams::ColorManagementParams;
         ImProcFunctions::rgb2lab(
             static_cast<std::uint8_t>(r),
             static_cast<std::uint8_t>(g),
             static_cast<std::uint8_t>(b),
             lab_L, lab_a, lab_b,
-            cmp != nullptr ? *cmp : DEFAULT_CMP,
+            cmp != nullptr ? *cmp : ColorManagementParams::getDefault(),
             true);
         pointerValid = true;
     }
@@ -1421,12 +1414,13 @@ bool HistogramArea::updatePointer(const int r, const int g, const int b, const r
         pointer_red = r;
         pointer_green = g;
         pointer_blue = b;
+        using ColorManagementParams = rtengine::procparams::ColorManagementParams;
         ImProcFunctions::rgb2lab(
             static_cast<std::uint8_t>(r),
             static_cast<std::uint8_t>(g),
             static_cast<std::uint8_t>(b),
             L, pointer_a, pointer_b,
-            cmp != nullptr ? *cmp : DEFAULT_CMP,
+            cmp != nullptr ? *cmp : ColorManagementParams::getDefault(),
             true);
         L /= 327.68f;
         pointer_a /= 327.68f;

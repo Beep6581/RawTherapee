@@ -27,13 +27,6 @@
 
 using namespace rtengine;
 
-namespace
-{
-
-const rtengine::procparams::ColorManagementParams DEFAULT_CMP;
-
-}
-
 Navigator::Navigator() :
     pointer_moved_delayed_call(50, 100),
     currentRGBUnit(options.navRGBUnit),
@@ -74,7 +67,8 @@ Navigator::Navigator() :
                         static_cast<std::uint8_t>(g),
                         static_cast<std::uint8_t>(b),
                         LAB_l, LAB_a, LAB_b,
-                        cmp != nullptr ? *cmp : DEFAULT_CMP,
+                        cmp != nullptr
+                            ? *cmp : procparams::ColorManagementParams::getDefault(),
                         true);
                     LAB_l /= 327.68f;
                     LAB_a /= 327.68f;
