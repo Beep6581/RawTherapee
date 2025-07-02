@@ -1167,7 +1167,7 @@ Gtk::Widget* Preferences::getGeneralPanel()
     workflowGrid->attach_next_to(*spotlocalL, *complexityL, Gtk::POS_BOTTOM, 1, 1);
     workflowGrid->attach_next_to(*spotlocal, *complexitylocal, Gtk::POS_BOTTOM, 1, 1);
 
-
+    // little used or obsolete functions with targetgen
     Gtk::Label* generalL = Gtk::manage(new Gtk::Label(M("PREFERENCES_GENERAL") + ":"));
     setExpandAlignProperties(generalL, false, false, Gtk::ALIGN_START, Gtk::ALIGN_BASELINE);
     targetgen = Gtk::manage(new Gtk::ComboBoxText());

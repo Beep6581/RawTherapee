@@ -428,9 +428,14 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
         */
         // If high detail (=100%) is newly selected, do a demosaic update, since the last was just with FAST
         int isoption = options.genemet;
+        //list of little used or obsolete functions (arbitrary)
         bool issharE = params->sharpenEdge.enabled;//sharpenEdge
+        bool issharMicro = params->sharpenMicro.enabled; // sharpenMicro
+        
+        
+        //end of little used or obsolete functions
         if (imageTypeListener) {
-            imageTypeListener->imageTypeChanged(isoption, issharE, imgsrc->isRAW(), imgsrc->getSensorType() == ST_BAYER, imgsrc->getSensorType() == ST_FUJI_XTRANS, imgsrc->isMono(), imgsrc->isGainMapSupported());
+            imageTypeListener->imageTypeChanged(isoption, issharE, issharMicro, imgsrc->isRAW(), imgsrc->getSensorType() == ST_BAYER, imgsrc->getSensorType() == ST_FUJI_XTRANS, imgsrc->isMono(), imgsrc->isGainMapSupported());
         }
 
         bool iscolor = (params->toneCurve.method == "Color" || params->toneCurve.method == "Coloropp");

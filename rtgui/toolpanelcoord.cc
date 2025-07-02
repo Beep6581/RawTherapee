@@ -983,12 +983,13 @@ ToolPanelCoordinator::~ToolPanelCoordinator ()
     delete toolBar;
 }
 
-void ToolPanelCoordinator::imageTypeChanged(int isoption, bool issharE, bool isRaw, bool isBayer, bool isXtrans, bool isMono, bool isGainMapSupported)
+void ToolPanelCoordinator::imageTypeChanged(int isoption, bool issharE,  bool issharMicro, bool isRaw, bool isBayer, bool isXtrans, bool isMono, bool isGainMapSupported)
 {
+     // bool issharE, issharMicro of little used or obsolete functions
     if (isRaw) {
         if (isBayer) {
             idle_register.add(
-                [this, isGainMapSupported, isoption, issharE]() -> bool
+                [this, isGainMapSupported, isoption, issharE, issharMicro]() -> bool
                 {
                     rawPanelSW->set_sensitive(true);
                     sensorxtrans->FoldableToolPanel::hide();
@@ -1009,14 +1010,19 @@ void ToolPanelCoordinator::imageTypeChanged(int isoption, bool issharE, bool isR
                         sharpenEdge->FoldableToolPanel::show();
                     } else {
                         sharpenEdge->FoldableToolPanel::hide();
+                    }
+                    if(issharMicro || isoption == 1) {
+                        sharpenMicro->FoldableToolPanel::show();
+                    } else {
+                        sharpenMicro->FoldableToolPanel::hide();
                     }    
-                        
+                    
                     return false;
                 }
             );
         } else if (isXtrans) {
             idle_register.add(
-                [this, isGainMapSupported,  isoption, issharE]() -> bool
+                [this, isGainMapSupported,  isoption, issharE, issharMicro]() -> bool
                 {
                     rawPanelSW->set_sensitive(true);
                     sensorxtrans->FoldableToolPanel::show();
@@ -1038,13 +1044,18 @@ void ToolPanelCoordinator::imageTypeChanged(int isoption, bool issharE, bool isR
                     } else {
                         sharpenEdge->FoldableToolPanel::hide();
                     }    
+                    if(issharMicro || isoption == 1) {
+                        sharpenMicro->FoldableToolPanel::show();
+                    } else {
+                        sharpenMicro->FoldableToolPanel::hide();
+                    }    
                     
                     return false;
                 }
             );
         } else if (isMono) {
             idle_register.add(
-                [this, isGainMapSupported, isoption, issharE]() -> bool
+                [this, isGainMapSupported, isoption, issharE, issharMicro]() -> bool
                 {
                     rawPanelSW->set_sensitive(true);
                     sensorbayer->FoldableToolPanel::hide();
@@ -1064,13 +1075,19 @@ void ToolPanelCoordinator::imageTypeChanged(int isoption, bool issharE, bool isR
                         sharpenEdge->FoldableToolPanel::show();
                     } else {
                         sharpenEdge->FoldableToolPanel::hide();
+                    }
+                    if(issharMicro || isoption == 1) {
+                        sharpenMicro->FoldableToolPanel::show();
+                    } else {
+                        sharpenMicro->FoldableToolPanel::hide();
                     }    
+                    
                     return false;
                 }
             );
         } else {
             idle_register.add(
-                [this, isoption, issharE]() -> bool
+                [this, isoption, issharE, issharMicro]() -> bool
                 {
                     rawPanelSW->set_sensitive(true);
                     sensorbayer->FoldableToolPanel::hide();
@@ -1089,14 +1106,20 @@ void ToolPanelCoordinator::imageTypeChanged(int isoption, bool issharE, bool isR
                         sharpenEdge->FoldableToolPanel::show();
                     } else {
                         sharpenEdge->FoldableToolPanel::hide();
+                    }
+                    if(issharMicro || isoption == 1) {
+                        sharpenMicro->FoldableToolPanel::show();
+                    } else {
+                        sharpenMicro->FoldableToolPanel::hide();
                     }    
+                    
                     return false;
                 }
             );
         }
     } else {
         idle_register.add(
-            [this, isoption, issharE]() -> bool
+            [this, isoption, issharE, issharMicro]() -> bool
             {
                 rawPanelSW->set_sensitive(false);
                 sensorbayer->FoldableToolPanel::hide();
@@ -1115,7 +1138,13 @@ void ToolPanelCoordinator::imageTypeChanged(int isoption, bool issharE, bool isR
                     sharpenEdge->FoldableToolPanel::show();
                 } else {
                     sharpenEdge->FoldableToolPanel::hide();
+                }
+                if(issharMicro || isoption == 1) {
+                    sharpenMicro->FoldableToolPanel::show();
+                } else {
+                    sharpenMicro->FoldableToolPanel::hide();
                 }    
+                
                 return false;
             }
         );
