@@ -434,9 +434,10 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
         bool isshadhigh  = params->sh.enabled; //Shadows Highlights replace by Tone Equalizer
         bool iscbdl = params->dirpyrequalizer.enabled; // CBDL replace by Abstract profile - Contrast enhancement
         bool isretin = params->retinex.enabled; //Retinex
-        //end of little used or obsolete functions
+        bool isfattal = params->fattal.enabled;//Fattal - Dynamic Range compression - replace by numerous Tone mapper in Selective Editing
+        //end of little used or obsolete functions or replaced by more efficient functions
         if (imageTypeListener) {
-            imageTypeListener->imageTypeChanged(isoption, issharE, issharMicro, isshadhigh, iscbdl, isretin, imgsrc->isRAW(), imgsrc->getSensorType() == ST_BAYER, imgsrc->getSensorType() == ST_FUJI_XTRANS, imgsrc->isMono(), imgsrc->isGainMapSupported());
+            imageTypeListener->imageTypeChanged(isoption, issharE, issharMicro, isshadhigh, iscbdl, isretin, isfattal, imgsrc->isRAW(), imgsrc->getSensorType() == ST_BAYER, imgsrc->getSensorType() == ST_FUJI_XTRANS, imgsrc->isMono(), imgsrc->isGainMapSupported());
         }
 
         bool iscolor = (params->toneCurve.method == "Color" || params->toneCurve.method == "Coloropp");

@@ -583,7 +583,7 @@ class ImageTypeListener
 public:
     virtual ~ImageTypeListener() = default;
     // bool issharE, issharMicro of little used or obsolete functions or replaced by more efficient functions
-    virtual void imageTypeChanged(int isoption, bool issharE, bool issharMicro, bool isshadhigh, bool iscbdl, bool isretin, bool isRaw, bool isBayer, bool isXtrans, bool is_Mono = false, bool isGainMapSupported = false) = 0;
+    virtual void imageTypeChanged(int isoption, bool issharE, bool issharMicro, bool isshadhigh, bool iscbdl, bool isretin, bool isfattal, bool isRaw, bool isBayer, bool isXtrans, bool is_Mono = false, bool isGainMapSupported = false) = 0;
 };
 
 class AutoContrastListener
