@@ -1175,6 +1175,7 @@ Gtk::Widget* Preferences::getGeneralPanel()
     targetgen->append(M("PREFERENCES_GENERAL_MINI"));
     targetgen->append(M("PREFERENCES_GENERAL_ALL"));
    // targetgen->append(M("PREFERENCES_GENERAL_XXX"));
+    targetgen->set_tooltip_text(M("PREFERENCES_GENERAL_TOOLTIP"));
     targetgen->set_active(0);
     workflowGrid->attach_next_to(*generalL, *spotlocalL, Gtk::POS_BOTTOM, 1, 1);
     workflowGrid->attach_next_to(*targetgen, *spotlocal, Gtk::POS_BOTTOM, 1, 1);
