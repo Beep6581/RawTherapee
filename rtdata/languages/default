@@ -2085,7 +2085,7 @@ PREFERENCES_FSTRIP_SAME_THUMB_HEIGHT_HINT;Having separate thumbnail size will re
 PREFERENCES_GENERAL;Define general complexity 
 PREFERENCES_GENERAL_MINI;Essential tools
 PREFERENCES_GENERAL_ALL;All tools
-PREFERENCES_GENERAL_TOOLTIP;Allows you to hide certain tools to simplify the GUI interface:\nIf you used one of these tools (pp3) in a previous version of Rawtherapee, they will be present in the "Essential tools" interface.\n\nThe tools concerned:\n * Shadows/Highlighs (Exposure Tab).\n * Dynamic Range compression (Exposure Tab) - Can be replaced by the Tone-mappers present in Selective Editing.\n * Edges (Detail Tab).\n * Microcontrast (Detail Tab).\n * Contrast by Detail Levels (Detail Tab) - Can be replaced by Abstract profile - Contrast enhancement.\n * Retinex (Advanced Tab).
+PREFERENCES_GENERAL_TOOLTIP;Allows you to hide certain tools to simplify the GUI interface:\nIf you used one of these tools (pp3) in a previous version of Rawtherapee, they will be present in the "Essential tools" interface.\n\nThe tools concerned:\n * Shadows/Highlighs (Exposure Tab)- Can be replaced by Tone Equalizer.\n * Dynamic Range Compression (Exposure Tab) - Can be replaced by the Tone-mappers present in Selective Editing.\n * Edges (Detail Tab).\n * Microcontrast (Detail Tab).\n * Contrast by Detail Levels (Detail Tab) - Can be replaced by Abstract profile - Contrast enhancement.\n * Retinex (Advanced Tab).
 PREFERENCES_GIMPPATH;GIMP installation directory
 PREFERENCES_HISTOGRAMPOSITIONLEFT;Histogram in left panel
 PREFERENCES_HISTOGRAM_TOOLTIP;If enabled, the working profile is used for rendering the main histogram and the Navigator panel, otherwise the gamma-corrected output profile is used.
