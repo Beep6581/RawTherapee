@@ -982,14 +982,15 @@ ToolPanelCoordinator::~ToolPanelCoordinator ()
     delete toolPanelNotebook;
     delete toolBar;
 }
-
-void ToolPanelCoordinator::imageTypeChanged(int isoption, bool issharE,  bool issharMicro, bool isRaw, bool isBayer, bool isXtrans, bool isMono, bool isGainMapSupported)
+//dirpyrequalizer
+//retinex
+void ToolPanelCoordinator::imageTypeChanged(int isoption, bool issharE,  bool issharMicro, bool isshadhigh, bool iscbdl, bool isretin, bool isRaw, bool isBayer, bool isXtrans, bool isMono, bool isGainMapSupported)
 {
-     // bool issharE, issharMicro of little used or obsolete functions
+     // bool issharE, issharMicro of little used or obsolete functions or replaced by more efficient functions
     if (isRaw) {
         if (isBayer) {
             idle_register.add(
-                [this, isGainMapSupported, isoption, issharE, issharMicro]() -> bool
+                [this, isGainMapSupported, isoption, issharE, issharMicro, isshadhigh, iscbdl, isretin]() -> bool
                 {
                     rawPanelSW->set_sensitive(true);
                     sensorxtrans->FoldableToolPanel::hide();
@@ -1015,6 +1016,21 @@ void ToolPanelCoordinator::imageTypeChanged(int isoption, bool issharE,  bool is
                         sharpenMicro->FoldableToolPanel::show();
                     } else {
                         sharpenMicro->FoldableToolPanel::hide();
+                    } 
+                    if(isshadhigh || isoption == 1) {
+                        shadowshighlights->FoldableToolPanel::show();
+                    } else {
+                        shadowshighlights->FoldableToolPanel::hide();
+                    }    
+                    if(iscbdl || isoption == 1) {
+                        dirpyrequalizer->FoldableToolPanel::show();
+                    } else {
+                        dirpyrequalizer->FoldableToolPanel::hide();
+                    }    
+                    if(isretin || isoption == 1) {
+                        retinex->FoldableToolPanel::show();
+                    } else {
+                        retinex->FoldableToolPanel::hide();
                     }    
                     
                     return false;
@@ -1022,7 +1038,7 @@ void ToolPanelCoordinator::imageTypeChanged(int isoption, bool issharE,  bool is
             );
         } else if (isXtrans) {
             idle_register.add(
-                [this, isGainMapSupported,  isoption, issharE, issharMicro]() -> bool
+                [this, isGainMapSupported,  isoption, issharE, issharMicro, isshadhigh, iscbdl, isretin]() -> bool
                 {
                     rawPanelSW->set_sensitive(true);
                     sensorxtrans->FoldableToolPanel::show();
@@ -1049,13 +1065,28 @@ void ToolPanelCoordinator::imageTypeChanged(int isoption, bool issharE,  bool is
                     } else {
                         sharpenMicro->FoldableToolPanel::hide();
                     }    
+                    if(isshadhigh || isoption == 1) {
+                        shadowshighlights->FoldableToolPanel::show();
+                    } else {
+                        shadowshighlights->FoldableToolPanel::hide();
+                    }    
+                    if(iscbdl || isoption == 1) {
+                        dirpyrequalizer->FoldableToolPanel::show();
+                    } else {
+                        dirpyrequalizer->FoldableToolPanel::hide();
+                    }    
+                    if(isretin || isoption == 1) {
+                        retinex->FoldableToolPanel::show();
+                    } else {
+                        retinex->FoldableToolPanel::hide();
+                    }    
                     
                     return false;
                 }
             );
         } else if (isMono) {
             idle_register.add(
-                [this, isGainMapSupported, isoption, issharE, issharMicro]() -> bool
+                [this, isGainMapSupported, isoption, issharE, issharMicro, isshadhigh, iscbdl, isretin]() -> bool
                 {
                     rawPanelSW->set_sensitive(true);
                     sensorbayer->FoldableToolPanel::hide();
@@ -1081,13 +1112,28 @@ void ToolPanelCoordinator::imageTypeChanged(int isoption, bool issharE,  bool is
                     } else {
                         sharpenMicro->FoldableToolPanel::hide();
                     }    
+                    if(isshadhigh || isoption == 1) {
+                        shadowshighlights->FoldableToolPanel::show();
+                    } else {
+                        shadowshighlights->FoldableToolPanel::hide();
+                    }    
+                    if(iscbdl || isoption == 1) {
+                        dirpyrequalizer->FoldableToolPanel::show();
+                    } else {
+                        dirpyrequalizer->FoldableToolPanel::hide();
+                    }    
+                    if(isretin || isoption == 1) {
+                        retinex->FoldableToolPanel::show();
+                    } else {
+                        retinex->FoldableToolPanel::hide();
+                    }    
                     
                     return false;
                 }
             );
         } else {
             idle_register.add(
-                [this, isoption, issharE, issharMicro]() -> bool
+                [this, isoption, issharE, issharMicro, isshadhigh, iscbdl, isretin]() -> bool
                 {
                     rawPanelSW->set_sensitive(true);
                     sensorbayer->FoldableToolPanel::hide();
@@ -1112,6 +1158,21 @@ void ToolPanelCoordinator::imageTypeChanged(int isoption, bool issharE,  bool is
                     } else {
                         sharpenMicro->FoldableToolPanel::hide();
                     }    
+                    if(isshadhigh || isoption == 1) {
+                        shadowshighlights->FoldableToolPanel::show();
+                    } else {
+                        shadowshighlights->FoldableToolPanel::hide();
+                    }    
+                    if(iscbdl || isoption == 1) {
+                        dirpyrequalizer->FoldableToolPanel::show();
+                    } else {
+                        dirpyrequalizer->FoldableToolPanel::hide();
+                    }    
+                    if(isretin || isoption == 1) {
+                        retinex->FoldableToolPanel::show();
+                    } else {
+                        retinex->FoldableToolPanel::hide();
+                    }    
                     
                     return false;
                 }
@@ -1119,7 +1180,7 @@ void ToolPanelCoordinator::imageTypeChanged(int isoption, bool issharE,  bool is
         }
     } else {
         idle_register.add(
-            [this, isoption, issharE, issharMicro]() -> bool
+            [this, isoption, issharE, issharMicro, isshadhigh, iscbdl, isretin]() -> bool
             {
                 rawPanelSW->set_sensitive(false);
                 sensorbayer->FoldableToolPanel::hide();
@@ -1144,7 +1205,17 @@ void ToolPanelCoordinator::imageTypeChanged(int isoption, bool issharE,  bool is
                 } else {
                     sharpenMicro->FoldableToolPanel::hide();
                 }    
-                
+                if(isshadhigh || isoption == 1) {
+                    shadowshighlights->FoldableToolPanel::show();
+                } else {
+                    shadowshighlights->FoldableToolPanel::hide();
+                }    
+                if(iscbdl || isoption == 1) {
+                    dirpyrequalizer->FoldableToolPanel::show();
+                } else {
+                    dirpyrequalizer->FoldableToolPanel::hide();
+                }    
+                //no retinex with tif/JPG
                 return false;
             }
         );

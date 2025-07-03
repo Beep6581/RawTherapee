@@ -428,14 +428,15 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
         */
         // If high detail (=100%) is newly selected, do a demosaic update, since the last was just with FAST
         int isoption = options.genemet;
-        //list of little used or obsolete functions (arbitrary)
+        //list of little used or obsolete functions or replaced by more efficient functions... (arbitrary)
         bool issharE = params->sharpenEdge.enabled;//sharpenEdge
         bool issharMicro = params->sharpenMicro.enabled; // sharpenMicro
-        
-        
+        bool isshadhigh  = params->sh.enabled; //Shadows Highlights replace by Tone Equalizer
+        bool iscbdl = params->dirpyrequalizer.enabled; // CBDL replace by Abstract profile - Contrast enhancement
+        bool isretin = params->retinex.enabled; //Retinex
         //end of little used or obsolete functions
         if (imageTypeListener) {
-            imageTypeListener->imageTypeChanged(isoption, issharE, issharMicro, imgsrc->isRAW(), imgsrc->getSensorType() == ST_BAYER, imgsrc->getSensorType() == ST_FUJI_XTRANS, imgsrc->isMono(), imgsrc->isGainMapSupported());
+            imageTypeListener->imageTypeChanged(isoption, issharE, issharMicro, isshadhigh, iscbdl, isretin, imgsrc->isRAW(), imgsrc->getSensorType() == ST_BAYER, imgsrc->getSensorType() == ST_FUJI_XTRANS, imgsrc->isMono(), imgsrc->isGainMapSupported());
         }
 
         bool iscolor = (params->toneCurve.method == "Color" || params->toneCurve.method == "Coloropp");
