@@ -26,13 +26,13 @@
 #include "editwindow.h"
 #include "rtimage.h"
 #include "thumbnail.h"
-#include "whitebalance.h"
+#include "tools/whitebalance.h"
 #include "rtengine/settings.h"
 #include "batchqueuepanel.h"
 #include "batchqueueentry.h"
 #include "editorpanel.h"
 #include "filepanel.h"
-#include "filmsimulation.h"
+#include "tools/filmsimulation.h"
 
 Glib::RefPtr<Gtk::CssProvider> cssForced;
 Glib::RefPtr<Gtk::CssProvider> cssRT;

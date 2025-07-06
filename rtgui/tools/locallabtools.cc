@@ -23,7 +23,7 @@ fft *
 #include "options.h"
 #include "rtengine/improcfun.h"
 #include "rtengine/procparams.h"
-#include "locallab.h"
+#include "tools/locallab.h"
 #include "thresholdadjuster.h"
 #include "rtimage.h"
 #include "rtengine/color.h"

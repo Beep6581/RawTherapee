@@ -17,8 +17,8 @@
  *  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#include "bayerpreprocess.h"
-#include "bayerprocess.h"
+#include "tools/bayerpreprocess.h"
+#include "tools/bayerprocess.h"
 
 #include "multilangmgr.h"
 #include "batchtoolpanelcoord.h"
