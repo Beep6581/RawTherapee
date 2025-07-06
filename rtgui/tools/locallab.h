@@ -26,7 +26,7 @@
 
 #include "controlspotpanel.h"
 #include "guiutils.h"
-#include "locallabtools.h"
+#include "tools/locallabtools.h"
 
 /* ==== LocallabToolListListener ==== */
 class LocallabToolList;
