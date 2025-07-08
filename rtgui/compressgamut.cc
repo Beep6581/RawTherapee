@@ -240,8 +240,14 @@ void Compressgamut::updategamutGUI()
     const double temp_dm = d_m->getValue();
     const double temp_dy = d_y->getValue();
     double maxth = 1.;// 1.0 (or 0.9999) leeds in some cases to artifacts or segmentation fault - I change in color.cc aces_reference_gamut_compression by limiting theshold to 0.999
-    
-     if (colorspace->get_active_row_number() == 0) {//rec2020
+    // all these coefficients are quite empirical because they depend on many parameters, most of which are unknown or very difficult to find and formulate
+    // 1) the gamut of the camera which is different depending on the brands, models and different from those of the Cinema for which the model was created by ACES. Most of the time it is well beyond ACESP0
+    // 2) the illuminant when shooting which, if it is not close to Daylight or Blackbody, is absolutely not linear and causes color distortions
+    // 3) the actual spectral colors of the image: are we with normal colors often towards AdobeRGB or flowers or artificial colors which bring reds, purples, or blues which can be outside the gamut of the Working profile
+    // 4) In summary, the color seen is the matrix product of the spectral data of the illuminant, the color of the subject and the Observer 2°
+    // Taking colorchecker24 as a reference is, I think, an imperfect choice, because the colors are generally in sRGB, so if the user has a Rec2020 monitor... we're missing out... 
+    // So I prefer to do tests on many difficult images -taking account of 1) 2) 3) 4)- so that the user has a starting point around which he can refine his settings
+    if (colorspace->get_active_row_number() == 0) {//rec2020
         th_c->setLimits(0., maxth, 0.001, 0.80);
         th_m->setLimits(0., maxth, 0.001, 0.79);
         th_y->setLimits(0., maxth, 0.001, 0.90);
@@ -257,17 +263,17 @@ void Compressgamut::updategamutGUI()
         d_y->setLimits(1.001, 2., 0.001, 1.30);
     } else if (colorspace->get_active_row_number() == 2){//Adobe
         th_c->setLimits(0., maxth, 0.001, 0.45);
-        th_m->setLimits(0., maxth, 0.001, 0.86);
+        th_m->setLimits(0., maxth, 0.001, 0.81);
         th_y->setLimits(0., maxth, 0.001, 0.91);
         d_c->setLimits(1.001, 2., 0.001, 1.09);
         d_m->setLimits(1.001, 2., 0.001, 1.20);
         d_y->setLimits(1.001, 2., 0.001, 1.09);
     } else if (colorspace->get_active_row_number() == 3){//srgb
         th_c->setLimits(0., maxth, 0.001, 0.25);
-        th_m->setLimits(0., maxth, 0.001, 0.90);
+        th_m->setLimits(0., maxth, 0.001, 0.82);
         th_y->setLimits(0., maxth, 0.001, 0.93);
         d_c->setLimits(1.001, 2., 0.001, 1.05);
-        d_m->setLimits(1.001, 2., 0.001, 1.08);
+        d_m->setLimits(1.001, 2., 0.001, 1.15);
         d_y->setLimits(1.001, 2., 0.001, 1.10);
     } else if (colorspace->get_active_row_number() == 4){//dci-p3
         th_c->setLimits(0., maxth, 0.001, 0.40);
