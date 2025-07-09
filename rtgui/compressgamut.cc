@@ -245,6 +245,7 @@ void Compressgamut::updategamutGUI()
     // 2) the illuminant when shooting which, if it is not close to Daylight or Blackbody, is absolutely not linear and causes color distortions
     // 3) the actual spectral colors of the image: are we with normal colors often towards AdobeRGB or flowers or artificial colors which bring reds, purples, or blues which can be outside the gamut of the Working profile
     // 4) In summary, the color seen is the matrix product of the spectral data of the illuminant, the color of the subject and the Observer 2°
+    // 5) of course the working profile...default Prophoto while the coefficients of ACES are for AcesP0
     // Taking colorchecker24 as a reference is, I think, an imperfect choice, because the colors are generally in sRGB, so if the user has a Rec2020 monitor... we're missing out... 
     // So I prefer to do tests on many difficult images -taking account of 1) 2) 3) 4)- so that the user has a starting point around which he can refine his settings
     if (colorspace->get_active_row_number() == 0) {//rec2020
