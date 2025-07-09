@@ -74,6 +74,16 @@ set(RT_GUI_TOOL_PANEL_SOURCES
     tools/xtransrawexposure.cc
 )
 
+set(RT_GUI_WIDGET_SOURCES
+    widgets/curves/curveeditor.cc
+    widgets/curves/curveeditorgroup.cc
+    widgets/curves/diagonalcurveeditorsubgroup.cc
+    widgets/curves/flatcurveeditorsubgroup.cc
+    widgets/curves/mycurve.cc
+    widgets/curves/mydiagonalcurve.cc
+    widgets/curves/myflatcurve.cc
+)
+
 set(NONCLISOURCEFILES
     adjuster.cc
     alignedmalloc.cc
@@ -98,9 +108,6 @@ set(NONCLISOURCEFILES
     crophandler.cc
     cropwindow.cc
     cursormanager.cc
-    curveeditor.cc
-    curveeditorgroup.cc
-    diagonalcurveeditorsubgroup.cc
     dirbrowser.cc
     dynamicprofilepanel.cc
     editbuffer.cc
@@ -120,7 +127,6 @@ set(NONCLISOURCEFILES
     filepanel.cc
     filethumbnailbuttonset.cc
     filterpanel.cc
-    flatcurveeditorsubgroup.cc
     guiutils.cc
     histogrampanel.cc
     history.cc
@@ -137,9 +143,6 @@ set(NONCLISOURCEFILES
     main.cc
     metadatapanel.cc
     multilangmgr.cc
-    mycurve.cc
-    mydiagonalcurve.cc
-    myflatcurve.cc
     navigator.cc
     options.cc
     paramsedited.cc
@@ -181,6 +184,7 @@ set(NONCLISOURCEFILES
     toolpanelcoord.cc
     zoompanel.cc
     ${RT_GUI_TOOL_PANEL_SOURCES}
+    ${RT_GUI_WIDGET_SOURCES}
 )
 
 if(APPLE)

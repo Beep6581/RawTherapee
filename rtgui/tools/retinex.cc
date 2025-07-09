@@ -3,13 +3,14 @@
  */
 #include "retinex.h"
 
-#include "curveeditor.h"
-#include "curveeditorgroup.h"
-#include "mycurve.h"
-#include "rtimage.h"
-#include "options.h"
-#include "rtengine/color.h"
 #include "eventmapper.h"
+#include "options.h"
+#include "rtimage.h"
+#include "widgets/curves/curveeditor.h"
+#include "widgets/curves/curveeditorgroup.h"
+#include "widgets/curves/mycurve.h"
+
+#include "rtengine/color.h"
 
 using namespace rtengine;
 using namespace rtengine::procparams;

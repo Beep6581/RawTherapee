@@ -8,10 +8,10 @@
 #include "adjuster.h"
 #include "colorprovider.h"
 #include "curvelistener.h"
-#include "curveeditorgroup.h"
 #include "guiutils.h"
 #include "thresholdadjuster.h"
 #include "toolpanel.h"
+#include "widgets/curves/curveeditorgroup.h"
 
 class CurveEditor;
 class CurveEditorGroup;

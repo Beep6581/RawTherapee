@@ -21,12 +21,12 @@
 
 #include "dirpyrdenoise.h"
 
-#include "curveeditor.h"
-#include "curveeditorgroup.h"
 #include "editbuffer.h"
+#include "eventmapper.h"
 #include "guiutils.h"
 #include "options.h"
-#include "eventmapper.h"
+#include "widgets/curves/curveeditor.h"
+#include "widgets/curves/curveeditorgroup.h"
 
 #include "rtengine/color.h"
 #include "rtengine/procparams.h"

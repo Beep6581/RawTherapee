@@ -21,11 +21,11 @@
 
 #include "blackwhite.h"
 
-#include "curveeditor.h"
-#include "curveeditorgroup.h"
 #include "guiutils.h"
-#include "rtimage.h"
 #include "options.h"
+#include "rtimage.h"
+#include "widgets/curves/curveeditor.h"
+#include "widgets/curves/curveeditorgroup.h"
 
 #include "rtengine/color.h"
 #include "rtengine/procparams.h"
