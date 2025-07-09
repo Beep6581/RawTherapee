@@ -30,7 +30,6 @@
 #include "rtimage.h"
 #include "filepanel.h"
 #include "guiutils.h"
-#include "popupbutton.h"
 #include "options.h"
 #include "navigator.h"
 #include "previewwindow.h"
@@ -40,6 +39,7 @@
 #include "pathutils.h"
 #include "thumbnail.h"
 #include "toolpanelcoord.h"
+#include "widgets/basic/popupbutton.h"
 #include "windows/rtappchooserdialog.h"
 #include "windows/rtwindow.h"
 

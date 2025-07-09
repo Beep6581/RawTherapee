@@ -18,11 +18,12 @@
  */
 #pragma once
 
-#include <gtkmm.h>
-
 #include "curveeditorgroup.h"
-#include "adjuster.h"
+#include "widgets/basic/adjuster.h"
+
 #include "rtengine/noncopyable.h"
+
+#include <gtkmm.h>
 
 class DiagonalCurveEditor;
 class MyDiagonalCurve;

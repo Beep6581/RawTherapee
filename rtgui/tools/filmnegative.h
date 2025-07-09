@@ -22,10 +22,10 @@
 
 #include <gtkmm.h>
 
-#include "adjuster.h"
 #include "editcallbacks.h"
 #include "guiutils.h"
 #include "toolpanel.h"
+#include "widgets/basic/adjuster.h"
 
 #include "rtengine/colortemp.h"
 

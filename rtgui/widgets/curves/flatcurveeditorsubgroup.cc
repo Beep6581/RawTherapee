@@ -17,25 +17,26 @@
  *  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
  */
 
+#include "flatcurveeditorsubgroup.h"
+
 #include "clipboard.h"
-#include <gtkmm.h>
-#include <fstream>
-#include <string>
+#include "curveeditor.h"
 #include "guiutils.h"
 #include "multilangmgr.h"
-#include "guiutils.h"
-#include "mycurve.h"
-#include "shcselector.h"
-#include "adjuster.h"
 #include "mycurve.h"
 #include "myflatcurve.h"
-#include "curveeditor.h"
-#include "flatcurveeditorsubgroup.h"
-#include "rtimage.h"
 #include "options.h"
-#include "popuptogglebutton.h"
+#include "rtimage.h"
+#include "widgets/basic/adjuster.h"
+#include "widgets/basic/popuptogglebutton.h"
+#include "widgets/basic/shcselector.h"
 
 #include "rtengine/curves.h"
+
+#include <gtkmm.h>
+
+#include <fstream>
+#include <string>
 
 FlatCurveEditorSubGroup::FlatCurveEditorSubGroup (CurveEditorGroup* prt, Glib::ustring& curveDir) : CurveEditorSubGroup(curveDir)
 {

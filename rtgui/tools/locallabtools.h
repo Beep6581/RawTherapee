@@ -21,10 +21,10 @@
 #ifndef _LOCALLABTOOLS_H_
 #define _LOCALLABTOOLS_H_
 
-#include "adjuster.h"
 #include "labgrid.h"
-#include "thresholdadjuster.h"
 #include "toolpanel.h"
+#include "widgets/basic/adjuster.h"
+#include "widgets/basic/thresholdadjuster.h"
 #include "widgets/curves/curveeditorgroup.h"
 #include "widgets/curves/curveeditor.h"
 

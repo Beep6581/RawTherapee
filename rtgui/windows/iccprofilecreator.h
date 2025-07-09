@@ -19,10 +19,11 @@
  */
 #pragma once
 
-#include <lcms2.h>
+#include "widgets/basic/adjuster.h"
 
 #include <gtkmm.h>
-#include "adjuster.h"
+#include <lcms2.h>
+
 #include <vector>
 
 class RTWindow;

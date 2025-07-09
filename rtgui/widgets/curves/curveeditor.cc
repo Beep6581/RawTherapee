@@ -16,15 +16,17 @@
  *  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
  */
 #include "curveeditor.h"
+
 #include "curveeditorgroup.h"
-#include <fstream>
-#include <string>
 #include "guiutils.h"
 #include "multilangmgr.h"
-#include "popuptogglebutton.h"
+#include "widgets/basic/popuptogglebutton.h"
+
 #include "rtengine/LUT.h"
 
 #include <cstring>
+#include <fstream>
+#include <string>
 
 namespace {
 

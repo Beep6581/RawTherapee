@@ -6,9 +6,9 @@
 
 #include <glibmm/ustring.h>
 
-#include "adjuster.h"
 #include "guiutils.h"
 #include "toolpanel.h"
+#include "widgets/basic/adjuster.h"
 
 class ClutComboBox final :
     public MyComboBox

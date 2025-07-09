@@ -18,10 +18,10 @@
  */
 #include "batchqueuebuttonset.h"
 
-#include "lwbutton.h"
 #include "multilangmgr.h"
 #include "rtimage.h"
 #include "rtsurface.h"
+#include "widgets/basic/lwbutton.h"
 
 bool BatchQueueButtonSet::iconsLoaded = false;
 

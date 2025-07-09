@@ -75,6 +75,21 @@ set(RT_GUI_TOOL_PANEL_SOURCES
 )
 
 set(RT_GUI_WIDGET_SOURCES
+    # Basic
+    widgets/basic/adjuster.cc
+    widgets/basic/checkbox.cc
+    widgets/basic/coloredbar.cc
+    widgets/basic/colorpreview.cc
+    widgets/basic/coordinateadjuster.cc
+    widgets/basic/lwbutton.cc
+    widgets/basic/lwbuttonset.cc
+    widgets/basic/popupbutton.cc
+    widgets/basic/popupcommon.cc
+    widgets/basic/popuptogglebutton.cc
+    widgets/basic/shcselector.cc
+    widgets/basic/thresholdadjuster.cc
+    widgets/basic/thresholdselector.cc
+    # Curves
     widgets/curves/curveeditor.cc
     widgets/curves/curveeditorgroup.cc
     widgets/curves/diagonalcurveeditorsubgroup.cc
@@ -97,7 +112,6 @@ set(RT_GUI_WINDOWS_SOURCES
 )
 
 set(NONCLISOURCEFILES
-    adjuster.cc
     alignedmalloc.cc
     aspectratios.cc
     batchqueue.cc
@@ -109,14 +123,10 @@ set(NONCLISOURCEFILES
     browserfilter.cc
     cacheimagedata.cc
     cachemanager.cc
-    checkbox.cc
     clipboard.cc
     coarsepanel.cc
-    coloredbar.cc
-    colorpreview.cc
     controllines.cc
     controlspotpanel.cc
-    coordinateadjuster.cc
     crophandler.cc
     cropwindow.cc
     cursormanager.cc
@@ -148,8 +158,6 @@ set(NONCLISOURCEFILES
     iptcpanel.cc
     labgrid.cc
     lockablecolorpicker.cc
-    lwbutton.cc
-    lwbuttonset.cc
     main.cc
     metadatapanel.cc
     multilangmgr.cc
@@ -158,9 +166,6 @@ set(NONCLISOURCEFILES
     paramsedited.cc
     pathutils.cc
     placesbrowser.cc
-    popupbutton.cc
-    popupcommon.cc
-    popuptogglebutton.cc
     previewhandler.cc
     previewloader.cc
     previewmodepanel.cc
@@ -172,11 +177,8 @@ set(NONCLISOURCEFILES
     rtscalable.cc
     rtsurface.cc
     saveformatpanel.cc
-    shcselector.cc
     soundman.cc
     threadutils.cc
-    thresholdadjuster.cc
-    thresholdselector.cc
     thumbbrowserbase.cc
     thumbbrowserentrybase.cc
     thumbimageupdater.cc

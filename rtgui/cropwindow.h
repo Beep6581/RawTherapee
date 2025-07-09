@@ -28,8 +28,8 @@
 #include "editbuffer.h"
 #include "editcoordsys.h"
 #include "editenums.h"
-#include "lwbutton.h"
-#include "lwbuttonset.h"
+#include "widgets/basic/lwbutton.h"
+#include "widgets/basic/lwbuttonset.h"
 
 #include "rtengine/noncopyable.h"
 

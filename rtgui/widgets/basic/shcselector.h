@@ -20,7 +20,7 @@
 
 #include <gtkmm.h>
 
-#include "coloredbar.h"
+#include "widgets/basic/coloredbar.h"
 
 class SHCListener
 {

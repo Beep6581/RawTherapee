@@ -22,9 +22,9 @@
 #include "exportpanel.h"
 #include "extprog.h"
 #include "filebrowserentry.h"
-#include "lwbutton.h"
 #include "pparamschangelistener.h"
 #include "thumbbrowserbase.h"
+#include "widgets/basic/lwbutton.h"
 #include "windows/partialpastedlg.h"
 
 #include "rtengine/noncopyable.h"

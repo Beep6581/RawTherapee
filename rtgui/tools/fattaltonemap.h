@@ -19,9 +19,10 @@
  */
 #pragma once
 
-#include <gtkmm.h>
-#include "adjuster.h"
 #include "toolpanel.h"
+#include "widgets/basic/adjuster.h"
+
+#include <gtkmm.h>
 
 class FattalToneMapping final : public ToolParamBlock, public AdjusterListener, public FoldableToolPanel
 {

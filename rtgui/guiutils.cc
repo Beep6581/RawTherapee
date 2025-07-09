@@ -19,14 +19,15 @@
 #include "rtengine/rt_math.h"
 
 #include "guiutils.h"
+
 #include "options.h"
 #include "rtengine/utils.h"
 #include "rtengine/procparams.h"
 #include "rtimage.h"
 #include "rtscalable.h"
 #include "multilangmgr.h"
-#include "adjuster.h"
 #include "toolpanel.h"
+#include "widgets/basic/adjuster.h"
 
 #include <assert.h>
 

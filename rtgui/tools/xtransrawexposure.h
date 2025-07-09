@@ -18,12 +18,12 @@
  */
 #pragma once
 
-#include <gtkmm.h>
-
-#include "adjuster.h"
-#include "checkbox.h"
-#include "toolpanel.h"
 #include "eventmapper.h"
+#include "toolpanel.h"
+#include "widgets/basic/adjuster.h"
+#include "widgets/basic/checkbox.h"
+
+#include <gtkmm.h>
 
 class XTransRAWExposure final :
     public ToolParamBlock,

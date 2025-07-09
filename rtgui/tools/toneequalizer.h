@@ -21,10 +21,11 @@
  */
 #pragma once
 
-#include <gtkmm.h>
-#include "adjuster.h"
-#include "checkbox.h"
 #include "toolpanel.h"
+#include "widgets/basic/adjuster.h"
+#include "widgets/basic/checkbox.h"
+
+#include <gtkmm.h>
 
 class ToneEqualizer: public ToolParamBlock, public AdjusterListener, public FoldableToolPanel, public CheckBoxListener {
 public:
