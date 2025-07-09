@@ -17,11 +17,12 @@
  *  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
  */
 #include "batchqueuepanel.h"
-#include "options.h"
+
 #include "multilangmgr.h"
-#include "rtwindow.h"
-#include "soundman.h"
+#include "options.h"
 #include "rtimage.h"
+#include "soundman.h"
+#include "windows/rtwindow.h"
 
 static Glib::ustring makeFolderLabel(Glib::ustring path)
 {

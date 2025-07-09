@@ -84,6 +84,18 @@ set(RT_GUI_WIDGET_SOURCES
     widgets/curves/myflatcurve.cc
 )
 
+set(RT_GUI_WINDOWS_SOURCES
+    windows/editwindow.cc
+    windows/iccprofilecreator.cc
+    windows/partialpastedlg.cc
+    windows/preferences.cc
+    windows/renamedlg.cc
+    windows/rtappchooserdialog.cc
+    windows/rtwindow.cc
+    windows/saveasdlg.cc
+    windows/splash.cc
+)
+
 set(NONCLISOURCEFILES
     adjuster.cc
     alignedmalloc.cc
@@ -114,7 +126,6 @@ set(NONCLISOURCEFILES
     editcallbacks.cc
     editorpanel.cc
     editwidgets.cc
-    editwindow.cc
     eventmapper.cc
     exiffiltersettings.cc
     exifpanel.cc
@@ -130,7 +141,6 @@ set(NONCLISOURCEFILES
     guiutils.cc
     histogrampanel.cc
     history.cc
-    iccprofilecreator.cc
     imagearea.cc
     imageareapanel.cc
     indclippedpanel.cc
@@ -146,13 +156,11 @@ set(NONCLISOURCEFILES
     navigator.cc
     options.cc
     paramsedited.cc
-    partialpastedlg.cc
     pathutils.cc
     placesbrowser.cc
     popupbutton.cc
     popupcommon.cc
     popuptogglebutton.cc
-    preferences.cc
     previewhandler.cc
     previewloader.cc
     previewmodepanel.cc
@@ -160,17 +168,12 @@ set(NONCLISOURCEFILES
     profilepanel.cc
     profilestorecombobox.cc
     recentbrowser.cc
-    renamedlg.cc
-    rtappchooserdialog.cc
     rtimage.cc
     rtscalable.cc
     rtsurface.cc
-    rtwindow.cc
-    saveasdlg.cc
     saveformatpanel.cc
     shcselector.cc
     soundman.cc
-    splash.cc
     threadutils.cc
     thresholdadjuster.cc
     thresholdselector.cc
@@ -185,6 +188,7 @@ set(NONCLISOURCEFILES
     zoompanel.cc
     ${RT_GUI_TOOL_PANEL_SOURCES}
     ${RT_GUI_WIDGET_SOURCES}
+    ${RT_GUI_WINDOWS_SOURCES}
 )
 
 if(APPLE)
