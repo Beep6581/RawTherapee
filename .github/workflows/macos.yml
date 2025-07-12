@@ -118,21 +118,19 @@ jobs:
         run: |
           cd build
           sudo cp -R RawTherapee.app /Applications
-          export XDG_DATA_DIRS=/Applications/RawTherapee.app/Contents/Resources/share
-          export DYLD_FALLBACK_LIBRARY_PATH=/Applications/RawTherapee.app/Contents/Frameworks
-          export GTK_PATH=/Applications/RawTherapee.app/Contents/Frameworks
+          export XDG_CONFIG_DIRS=/Applications/RawTherapee.app/Contents/Resources/share/gtk-3.0
+          export XDG_CONFIG_HOME=/Applications/RawTherapee.app/Contents/Resources/share
+          export XDG_DATA_DIRS=/Applications/RawTherapee.app/Contents/Resources/share/gtk-3.0
+          export GTK_PATH=/Applications/RawTherapee.app/Contents/Resources/share/gtk-3.0
           export GTK_IM_MODULE_FILE=/Applications/RawTherapee.app/Contents/Resources/etc/gtk-3.0/gtk.immodules
-          export GTK_MODULES=/Applications/RawTherapee.app/Contents/Frameworks/im-quartz.so
           export XDG_DATA_HOME=/Applications/RawTherapee.app/Contents/Resources/share
           export GSETTINGS_SCHEMA_DIR=/Applications/RawTherapee.app/Contents/Resources/share/glib-2.0/schemas
           export GDK_PIXBUF_MODULE_FILE=/Applications/RawTherapee.app/Contents/Resources/etc/gtk-3.0/gdk-pixbuf.loaders
           export GDK_PIXBUF_MODULEDIR=/Applications/RawTherapee.app/Contents/Frameworks
-          export FONTCONFIG_PATH=/Applications/RawTherapee.app/Contents/Resources/etc/fonts
           export LIBDIR=/Applications/RawTherapee.app/Contents/Frameworks
           export DATADIR=/Applications/RawTherapee.app/Contents/Resources
           export GDK_RENDERING=similar
           export GTK_OVERLAY_SCROLLING=0
-          export GDK_NATIVE_WINDOWS=1
           /Applications/RawTherapee.app/Contents/MacOS/RawTherapee > log.txt 2>&1 && echo Launch successful || echo Launch failed &
           sleep 5
           cat log.txt
@@ -259,21 +257,19 @@ jobs:
         run: |
           cd build
           sudo cp -R RawTherapee.app /Applications
-          export XDG_DATA_DIRS=/Applications/RawTherapee.app/Contents/Resources/share
-          export DYLD_FALLBACK_LIBRARY_PATH=/Applications/RawTherapee.app/Contents/Frameworks
-          export GTK_PATH=/Applications/RawTherapee.app/Contents/Frameworks
+          export XDG_CONFIG_DIRS=/Applications/RawTherapee.app/Contents/Resources/share/gtk-3.0
+          export XDG_CONFIG_HOME=/Applications/RawTherapee.app/Contents/Resources/share
+          export XDG_DATA_DIRS=/Applications/RawTherapee.app/Contents/Resources/share/gtk-3.0
+          export GTK_PATH=/Applications/RawTherapee.app/Contents/Resources/share/gtk-3.0
           export GTK_IM_MODULE_FILE=/Applications/RawTherapee.app/Contents/Resources/etc/gtk-3.0/gtk.immodules
-          export GTK_MODULES=/Applications/RawTherapee.app/Contents/Frameworks/im-quartz.so
           export XDG_DATA_HOME=/Applications/RawTherapee.app/Contents/Resources/share
           export GSETTINGS_SCHEMA_DIR=/Applications/RawTherapee.app/Contents/Resources/share/glib-2.0/schemas
           export GDK_PIXBUF_MODULE_FILE=/Applications/RawTherapee.app/Contents/Resources/etc/gtk-3.0/gdk-pixbuf.loaders
           export GDK_PIXBUF_MODULEDIR=/Applications/RawTherapee.app/Contents/Frameworks
-          export FONTCONFIG_PATH=/Applications/RawTherapee.app/Contents/Resources/etc/fonts
           export LIBDIR=/Applications/RawTherapee.app/Contents/Frameworks
           export DATADIR=/Applications/RawTherapee.app/Contents/Resources
           export GDK_RENDERING=similar
           export GTK_OVERLAY_SCROLLING=0
-          export GDK_NATIVE_WINDOWS=1
           /Applications/RawTherapee.app/Contents/MacOS/RawTherapee > log.txt 2>&1 && echo Launch successful || echo Launch failed &
           sleep 5
           cat log.txt
