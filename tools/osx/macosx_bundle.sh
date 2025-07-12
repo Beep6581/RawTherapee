@@ -243,10 +243,14 @@ find -E "${LIB}" -type f -regex '.*\.(a|la|cache)$' | while read -r; do rm "${RE
 
 # Make Frameworks folder flat
 msg "Flattening the Frameworks folder"
+echo "Current Frameworks folder:"
+ls -R "${LIB}"
 cp -RL "${LIB}"/gdk-pixbuf-2.0/2*/loaders/* "${LIB}"
 cp "${LIB}"/gtk-3.0/3*/immodules/*.{dylib,so} "${LIB}" >/dev/null 2>&1
 rm -r "${LIB}"/gtk-3.0
 rm -r "${LIB}"/gdk-pixbuf-2.0
+echo "Flattened Frameworks folder:"
+ls -R "${LIB}"
 
 # GTK+3 themes
 msg "Copy GTK+3 theme and icon resources:"
