@@ -269,6 +269,12 @@ for lib in "${LIB}"/*; do
     install_name_tool -change libfreetype.6.dylib "${LIB}"/libfreetype.6.dylib "${lib}" 2>/dev/null
 done
 
+msg "Debugging pixbuf issue"
+echo "Checking libpixbufloader_svg.so and librsvg-2.2.dylib"
+file /Applications/RawTherapee.app/Contents/Frameworks/librsvg-2.2.dylib RawTherapee.app/Contents/Frameworks/libpixbufloader_svg.so
+echo "Dependencies for librsvg-2.2.dylib:"
+otool -L "${LIB}"/librsvg-2.2.dylib
+
 # Change a relative path for the SVG pixbufloader
 sudo install_name_tool -change @rpath/librsvg-2.2.dylib /Applications/RawTherapee.app/Contents/Frameworks/librsvg-2.2.dylib RawTherapee.app/Contents/Frameworks/libpixbufloader_svg.so
 
