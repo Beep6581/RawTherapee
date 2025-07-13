@@ -249,6 +249,9 @@ cp -RL "${LIB}"/gdk-pixbuf-2.0/2*/loaders/* "${LIB}"
 cp "${LIB}"/gtk-3.0/3*/immodules/*.{dylib,so} "${LIB}" >/dev/null 2>&1
 rm -r "${LIB}"/gtk-3.0
 rm -r "${LIB}"/gdk-pixbuf-2.0
+echo "Before: DYLD_LIBRARY_PATH=${DYLD_LIBRARY_PATH}"
+export DYLD_LIBRARY_PATH="$DYLD_LIBRARY_PATH:${LIB}"
+echo "After: DYLD_LIBRARY_PATH=${DYLD_LIBRARY_PATH}"
 echo "Flattened Frameworks folder:"
 ls -R "${LIB}"
 
