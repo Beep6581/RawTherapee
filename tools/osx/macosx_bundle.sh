@@ -247,7 +247,6 @@ cp -RL "${LIB}"/gdk-pixbuf-2.0/2*/loaders/* "${LIB}"
 cp "${LIB}"/gtk-3.0/3*/immodules/*.{dylib,so} "${LIB}" >/dev/null 2>&1
 rm -r "${LIB}"/gtk-3.0
 rm -r "${LIB}"/gdk-pixbuf-2.0
-export DYLD_LIBRARY_PATH="$DYLD_LIBRARY_PATH:${LIB}"
 
 # GTK+3 themes
 msg "Copy GTK+3 theme and icon resources:"
@@ -270,7 +269,8 @@ done
 msg "Build GTK3 databases:"
 mkdir -p "${RESOURCES}"/share/gtk-3.0
 mkdir -p "${ETC}"/gtk-3.0
-"${LOCAL_PREFIX}"/bin/gdk-pixbuf-query-loaders "${LIB}"/libpixbufloader*.so > "${ETC}"/gtk-3.0/gdk-pixbuf.loaders
+DYLD_LIBRARY_PATH="$DYLD_LIBRARY_PATH:${LIB}" "${LOCAL_PREFIX}"/bin/gdk-pixbuf-query-loaders "${LIB}"/libpixbufloader*.so > "${ETC}"/gtk-3.0/gdk-pixbuf.loaders
+echo "DYLD_LIBRARY_PATH=${DYLD_LIBRARY_PATH}"
 "${LOCAL_PREFIX}"/bin/gtk-query-immodules-3.0 "${LIB}"/im-* > "${ETC}"/gtk-3.0/gtk.immodules || "${LOCAL_PREFIX}"/bin/gtk-query-immodules "${LIB}"/im-* > "${ETC}"/gtk-3.0/gtk.immodules
 sed -i.bak -e "s|${PWD}/RawTherapee.app/Contents/|/Applications/RawTherapee.app/Contents/|" "${ETC}"/gtk-3.0/gdk-pixbuf.loaders "${ETC}/gtk-3.0/gtk.immodules"
 sed -i.bak -e "s|${LOCAL_PREFIX}/share/|/Applications/RawTherapee.app/Contents/Resources/share/|" "${ETC}"/gtk-3.0/gtk.immodules
