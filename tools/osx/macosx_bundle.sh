@@ -243,17 +243,11 @@ find -E "${LIB}" -type f -regex '.*\.(a|la|cache)$' | while read -r; do rm "${RE
 
 # Make Frameworks folder flat
 msg "Flattening the Frameworks folder"
-echo "Current Frameworks folder:"
-ls -R "${LIB}"
 cp -RL "${LIB}"/gdk-pixbuf-2.0/2*/loaders/* "${LIB}"
 cp "${LIB}"/gtk-3.0/3*/immodules/*.{dylib,so} "${LIB}" >/dev/null 2>&1
 rm -r "${LIB}"/gtk-3.0
 rm -r "${LIB}"/gdk-pixbuf-2.0
-echo "Before: DYLD_LIBRARY_PATH=${DYLD_LIBRARY_PATH}"
 export DYLD_LIBRARY_PATH="$DYLD_LIBRARY_PATH:${LIB}"
-echo "After: DYLD_LIBRARY_PATH=${DYLD_LIBRARY_PATH}"
-echo "Flattened Frameworks folder:"
-ls -R "${LIB}"
 
 # GTK+3 themes
 msg "Copy GTK+3 theme and icon resources:"
@@ -272,15 +266,6 @@ for lib in "${LIB}"/*; do
     install_name_tool -change libfreetype.6.dylib "${LIB}"/libfreetype.6.dylib "${lib}" 2>/dev/null
 done
 
-msg "Debugging pixbuf issue"
-echo "Checking libpixbufloader_svg.so and librsvg-2.2.dylib"
-file /Applications/RawTherapee.app/Contents/Frameworks/librsvg-2.2.dylib RawTherapee.app/Contents/Frameworks/libpixbufloader_svg.so
-echo "Dependencies for librsvg-2.2.dylib:"
-otool -L "${LIB}"/librsvg-2.2.dylib
-
-# Change a relative path for the SVG pixbufloader
-sudo install_name_tool -change @rpath/librsvg-2.2.dylib /Applications/RawTherapee.app/Contents/Frameworks/librsvg-2.2.dylib RawTherapee.app/Contents/Frameworks/libpixbufloader_svg.so
-
 # Build GTK3 pixbuf loaders & immodules database
 msg "Build GTK3 databases:"
 mkdir -p "${RESOURCES}"/share/gtk-3.0
@@ -291,6 +276,9 @@ sed -i.bak -e "s|${PWD}/RawTherapee.app/Contents/|/Applications/RawTherapee.app/
 sed -i.bak -e "s|${LOCAL_PREFIX}/share/|/Applications/RawTherapee.app/Contents/Resources/share/|" "${ETC}"/gtk-3.0/gtk.immodules
 sed -i.bak -e "s|${LOCAL_PREFIX}/|/Applications/RawTherapee.app/Contents/Frameworks/|" "${ETC}"/gtk-3.0/gtk.immodules
 rm "${ETC}"/*/*.bak
+
+# Change a relative path for the SVG pixbufloader
+sudo install_name_tool -change @rpath/librsvg-2.2.dylib /Applications/RawTherapee.app/Contents/Frameworks/librsvg-2.2.dylib RawTherapee.app/Contents/Frameworks/libpixbufloader_svg.so
 
 # Install names
 ModifyInstallNames 2>/dev/null
@@ -332,6 +320,8 @@ install_name_tool -add_rpath /Applications/"${LIB}" "${EXECUTABLE}"-cli 2>/dev/n
 # Link to libomp instead of libgomp
 sudo install_name_tool -change /Applications/RawTherapee.app/Contents/Frameworks/libgomp.1.dylib /Applications/RawTherapee.app/Contents/Frameworks/libomp.dylib RawTherapee.app/Contents/Frameworks/libfftw3f_omp.3.dylib
 rm RawTherapee.app/Contents/Frameworks/libgomp.1.dylib
+echo "Dependencies of libfftw3f_omp.3.dylib:"
+otool -L RawTherapee.app/Contents/Frameworks/libfftw3f_omp.3.dylib
 
 # Merge the app with the other architecture to create the Universal app.
 if [[ -n $UNIVERSAL_URL ]]; then
