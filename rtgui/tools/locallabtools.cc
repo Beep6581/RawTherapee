@@ -5544,13 +5544,27 @@ void LocallabShadow::adjusterChanged(Adjuster* a, double newval)
     }
 }
 
-
-void LocallabShadow::updateghsbw(int bp, int wp, double minbp, double maxwp, double ghsb, double ghsw, double symev) //update informations for Black point and White point
+void LocallabShadow::updateghsbw2(double ghsb, double ghsw, bool ghsaut)
 {
     idle_register.add(
-    [this, bp, wp, minbp, maxwp, ghsb, ghsw, symev]() -> bool {
+    [this, ghsb, ghsw, ghsaut]() -> bool {
         GThreadLock lock; // All GUI access from idle_add callbacks or separate thread HAVE to be protected
-        
+        if(ghsaut) {
+            disableListener();
+            ghs_HLP->setValue(ghsw);
+            ghs_BLP->setValue(ghsb);  
+            enableListener();
+        }
+        return false;
+    }
+   );
+  
+}
+void LocallabShadow::updateghsbw(int bp, int wp, double minbp, double maxwp, double symev) //update informations for Black point and White point
+{
+    idle_register.add(
+    [this, bp, wp, minbp, maxwp, symev]() -> bool {
+        GThreadLock lock; // All GUI access from idle_add callbacks or separate thread HAVE to be protected
         
         if (ghsMethod->get_active_row_number() == 0 || ghsMethod->get_active_row_number() == 1) {//only in RGB mode
             ghssymLabel->set_text(
@@ -5570,25 +5584,6 @@ void LocallabShadow::updateghsbw(int bp, int wp, double minbp, double maxwp, dou
                                    Glib::ustring::format(std::fixed, std::setprecision(2), minbp),
                                    Glib::ustring::format(std::fixed, std::setprecision(2), maxwp))
         );
-        if(ghs_autobw->get_active()){
-            if (ghsw != ghs_HLP->getValue()) {
-                disableListener();
-                ghs_HLP->setValue(ghsw);
-                enableListener();
-                listener->panelChanged (Evlocallabghs_HLP,ghs_HLP->getTextValue());
-            }
-            if (ghsb != ghs_BLP->getValue()) {
-                disableListener();
-                ghs_BLP->setValue(ghsb);
-                enableListener();
-                listener->panelChanged (Evlocallabghs_BLP,ghs_BLP->getTextValue());
-            }
-            disableListener();
-            ghs_autobw->set_active(false);
-            enableListener();
-
-        }
-
         return false;
     }
    );
