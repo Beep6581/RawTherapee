@@ -1402,10 +1402,10 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                 float Lnresi = 0.f;
                 float Lhighresi46 = 0.f;
                 float Lnresi46 = 0.f;
-                int ghsbpwp[2] = {0, 0};
-                float ghsbpwpvalue[2] = {0.f, 1.f};                
-                float ghsbwslider[2] = {0.f, 1.f};
-                float ghssym = 0.f;
+                int ghsbpwp[2] = {0, 0};//infos Black and white point
+                float ghsbpwpvalue[2] = {0.f, 1.f};//infos Black and white point                
+                float ghsbwslider[2] = {0.f, 1.f};// Black and white point auto sliders
+                float ghssym = 0.f;//info symmetry point
                 bool ghsauto = params->locallab.spots.at(sp).ghs_autobw;
                 
                 Glib::ustring prof = params->icm.workingProfile;
@@ -1585,10 +1585,10 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                 locallciesig.push_back(locciesig);
 
                 LocallabListener::locallabshGHSbw2 locshghsbw2;//ghs sliders Black and white point
-                for(int j = 0; j < 2; j++) {
+                    for(int j = 0; j < 2; j++) {
                         locshghsbw2.ghsbw_slider[j] = ghsbwslider[j];
                     }
-                   locshghsbw2.ghs_auto = ghsauto;
+                    locshghsbw2.ghs_auto = ghsauto;
                 locallshgshbw2.push_back(locshghsbw2);
 
 

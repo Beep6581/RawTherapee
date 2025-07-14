@@ -481,14 +481,14 @@ public:
 
     struct locallabshGHSbw2 {//update sliders black and white point 
         double ghsbw_slider[2];
-       bool ghs_auto;
+        bool ghs_auto;
     };
 
 
     struct locallabshGHSbw {//infos black and white point GHS
-       int ghsbw[2];
-       double ghsbwvalue[2];
-       double ghs_sym;
+        int ghsbw[2];
+        double ghsbwvalue[2];
+        double ghs_sym;
     };
 
 //select spot settings 

@@ -5544,16 +5544,27 @@ void LocallabShadow::adjusterChanged(Adjuster* a, double newval)
     }
 }
 
-void LocallabShadow::updateghsbw2(double ghsb, double ghsw, bool ghsaut)
+void LocallabShadow::updateghsbw2(double ghsb, double ghsw, bool ghsaut)//auto GHS black point and white point
 {
     idle_register.add(
     [this, ghsb, ghsw, ghsaut]() -> bool {
         GThreadLock lock; // All GUI access from idle_add callbacks or separate thread HAVE to be protected
         if(ghsaut) {
-            disableListener();
-            ghs_HLP->setValue(ghsw);
-            ghs_BLP->setValue(ghsb);  
-            enableListener();
+            
+            if (ghsw != ghs_HLP->getValue()) {
+                disableListener();
+                ghs_HLP->setValue(ghsw);
+                enableListener();
+                listener->panelChanged (Evlocallabghs_HLP,ghs_HLP->getTextValue());
+            }
+
+            if (ghsb != ghs_BLP->getValue()) {
+                disableListener();
+                ghs_BLP->setValue(ghsb);
+                enableListener();
+                listener->panelChanged (Evlocallabghs_BLP,ghs_BLP->getTextValue());
+            }                 
+            
         }
         return false;
     }
