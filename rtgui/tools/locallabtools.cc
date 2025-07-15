@@ -4565,6 +4565,21 @@ LocallabShadow::LocallabShadow():
     pack_start(*ghsMethod);
     ghsFrame->set_label_align(0.025, 0.5);
     ToolParamBlock* const ghsBox = Gtk::manage(new ToolParamBlock());
+    ToolParamBlock* const ghsBox2 = Gtk::manage(new ToolParamBlock());
+    BP_Frame->set_label_align(0.025, 0.5);
+    ToolParamBlock* const BPBox = Gtk::manage(new ToolParamBlock());
+    BPBox->pack_start(*ghs_autobw);
+    BPBox->pack_start(*ghs_BLP);
+    BPBox->pack_start(*ghs_HLP);
+    BPBox->pack_start(*ghsbpwpLabels);
+    BPBox->pack_start(*ghsbpwpvalueLabels);
+//    BPBox->pack_start(*ghs_smooth);
+    BP_Frame->add(*BPBox);
+    ghsBox2->pack_start(*BP_Frame);
+    ghsBox2->pack_start(*ghs_inv);
+    pack_start(*ghsBox2);
+    
+    
     ghsBox->pack_start(*gridFrameghs);
     ghsBox->pack_start(*ghs_D);
     Lab_Frame->set_label_align(0.025, 0.5);
@@ -4584,7 +4599,13 @@ LocallabShadow::LocallabShadow():
     LCBox->pack_start(*ghs_LC);
     LCBox->pack_start(*ghs_MID);
     LC_Frame->add(*LCBox);
-    ghsBox->pack_start(*LC_Frame);    
+    
+    
+    
+    
+    
+    ghsBox->pack_start(*LC_Frame);
+/*    
     BP_Frame->set_label_align(0.025, 0.5);
     ToolParamBlock* const BPBox = Gtk::manage(new ToolParamBlock());
     BPBox->pack_start(*ghs_autobw);
@@ -4595,7 +4616,10 @@ LocallabShadow::LocallabShadow():
     BPBox->pack_start(*ghs_smooth);
     BP_Frame->add(*BPBox);
     ghsBox->pack_start(*BP_Frame);
-    ghsBox->pack_start(*ghs_inv);
+*/
+//    ghsBox->pack_start(*ghs_inv);
+    ghsBox->pack_start(*ghs_smooth);
+
     ghsFrame->add(*ghsBox);
     pack_start(*ghsFrame);
 
