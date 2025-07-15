@@ -102,8 +102,8 @@ public:
     // thumbnaillistener interface
     void procParamsChanged (Thumbnail* thm, int whoChangedIt, bool upgradeHint) override;
     // thumbimageupdatelistener interface
-    void updateImage(rtengine::IImage8* img, double scale, const rtengine::procparams::CropParams& cropParams) override;
-    void _updateImage(rtengine::IImage8* img, double scale, const rtengine::procparams::CropParams& cropParams); // inside gtk thread
+    void updateImage(ThumbImageUpdateListener::ImageUpdate&& update) override;
+    void _updateImage(ThumbImageUpdateListener::ImageUpdate&& update); // inside gtk thread
 
     bool    motionNotify  (int x, int y) override;
     bool    pressNotify   (int button, int type, int bstate, int x, int y) override;

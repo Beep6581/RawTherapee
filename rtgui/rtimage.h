@@ -20,9 +20,12 @@
  */
 #pragma once
 
+#include "rtsigc.h"
+
 #include <gtkmm.h>
 
 class RTSurface;
+
 class RTImageCache final
 {
 private:
@@ -43,6 +46,10 @@ private:
     Glib::ustring icon_name;
     std::shared_ptr<RTSurface> surface;
     Glib::RefPtr<const Gio::Icon> g_icon;
+
+    RtScopedConnection conn;
+
+    void onUpdate(double dpi, int scale);
 
 public:
     RTImage ();

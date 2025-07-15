@@ -35,8 +35,6 @@ CropHandler::CropHandler() :
     cropParams(new procparams::CropParams),
     colorParams(new procparams::ColorManagementParams),
     zoom(100),
-    ww(0),
-    wh(0),
     cax(-1),
     cay(-1),
     cx(0),
@@ -50,11 +48,7 @@ CropHandler::CropHandler() :
     enabled(false),
     cropimg_width(0),
     cropimg_height(0),
-    cix(0),
-    ciy(0),
-    ciw(0),
-    cih(0),
-    cis(1),
+    deviceScale(1),
     isLowUpdatePriority(false),
     ipc(nullptr),
     crop(nullptr),
@@ -117,27 +111,29 @@ void CropHandler::sizeChanged(int x, int y, int ow, int oh)    // the ipc notifi
 
 bool CropHandler::isFullDisplay ()
 {
-    int w, h;
-    getFullImageSize(w, h);
-    if (!w) {
+    ImageSize fullSize = getFullImageSize();
+    if (fullSize.width == 0) {
         return false;
     }
-    return cropW == w && cropH == h;
+    return cropW == fullSize.width && cropH == fullSize.height;
 }
 
 double CropHandler::getFitCropZoom ()
 {
-    double z1 = (double) wh / cropParams->h;
-    double z2 = (double) ww / cropParams->w;
+    hidpi::DeviceSize device = getDeviceWSize();
+
+    double z1 = (double) device.height / cropParams->h;
+    double z2 = (double) device.width / cropParams->w;
     return z1 < z2 ? z1 : z2;
 }
 
 double CropHandler::getFitZoom ()
 {
-
     if (ipc) {
-        double z1 = (double) wh / ipc->getFullHeight ();
-        double z2 = (double) ww / ipc->getFullWidth ();
+        hidpi::DeviceSize device = getDeviceWSize();
+        ImageSize imageSize = getFullImageSize();
+        double z1 = (double) device.height / imageSize.height;
+        double z2 = (double) device.width / imageSize.width;
         return z1 < z2 ? z1 : z2;
     } else {
         return 1.0;
@@ -155,8 +151,9 @@ void CropHandler::setZoom (int z, int centerx, int centery)
     int oldcax = cax;
     int oldcay = cay;
 
+    ImageSize imageSize = getFullImageSize();
     if (centerx == -1) {
-        cax = ipc->getFullWidth () / 2;
+        cax = imageSize.width / 2;
     } else {
         float distToAnchor = float(cax - centerx);
         distToAnchor = distToAnchor / newScale * oldScale;
@@ -164,7 +161,7 @@ void CropHandler::setZoom (int z, int centerx, int centery)
     }
 
     if (centery == -1) {
-        cay = ipc->getFullHeight () / 2;
+        cay = imageSize.height / 2;
     } else {
         float distToAnchor = float(cay - centery);
         distToAnchor = distToAnchor / newScale * oldScale;
@@ -176,12 +173,13 @@ void CropHandler::setZoom (int z, int centerx, int centery)
 
     zoom = z;
 
+    hidpi::DeviceSize output = getDeviceWSize();
     if (zoom >= 1000) {
-        cw = ww * 1000 / zoom;
-        ch = wh * 1000 / zoom;
+        cw = output.width * 1000 / zoom;
+        ch = output.height * 1000 / zoom;
     } else {
-        cw = ww * (zoom / 10);
-        ch = wh * (zoom / 10);
+        cw = output.width * (zoom / 10);
+        ch = output.height * (zoom / 10);
     }
 
     cx = cax - cw / 2;
@@ -216,18 +214,17 @@ float CropHandler::getZoomFactor ()
 }
 
 
-void CropHandler::setWSize (int w, int h)
+void CropHandler::setWSize(hidpi::LogicalSize newSize)
 {
-
-    ww = w;
-    wh = h;
+    windowSize = newSize;
+    hidpi::DeviceSize output = getDeviceWSize();
 
     if (zoom >= 1000) {
-        cw = ww * 1000 / zoom;
-        ch = wh * 1000 / zoom;
+        cw = output.width * 1000 / zoom;
+        ch = output.height * 1000 / zoom;
     } else {
-        cw = ww * (zoom / 10);
-        ch = wh * (zoom / 10);
+        cw = output.width * (zoom / 10);
+        ch = output.height * (zoom / 10);
     }
 
     compDim ();
@@ -237,66 +234,71 @@ void CropHandler::setWSize (int w, int h)
     }
 }
 
-void CropHandler::getWSize (int& w, int &h)
+hidpi::DeviceSize CropHandler::getDeviceWSize() const
 {
-
-    w = ww;
-    h = wh;
+    hidpi::DeviceSize device = {};
+    device.width = windowSize.width * deviceScale;
+    device.height = windowSize.height * deviceScale;
+    return device;
 }
 
-void CropHandler::getAnchorPosition (int& x, int& y)
+void CropHandler::setAnchorPosition(ImageCoord pos, bool update_)
 {
-    x = cax;
-    y = cay;
-}
+    cax = pos.x;
+    cay = pos.y;
 
-void CropHandler::setAnchorPosition (int x, int y, bool update_)
-{
-    cax = x;
-    cay = y;
-
-    compDim ();
+    compDim();
 
     if (enabled && update_) {
-        update ();
+        update();
     }
 }
 
-void CropHandler::moveAnchor (int deltaX, int deltaY, bool update_)
+void CropHandler::moveAnchor(ImageCoord delta, bool update_)
 {
-    cax += deltaX;
-    cay += deltaY;
+    cax += delta.x;
+    cay += delta.y;
 
-    compDim ();
+    compDim();
 
     if (enabled && update_) {
-        update ();
+        update();
     }
 }
 
-void CropHandler::centerAnchor (bool update_)
+void CropHandler::centerAnchor(bool update_)
 {
     assert (ipc);
 
     // Computes the crop's size and position given the anchor's position and display size
 
-    cax = ipc->getFullWidth() / 2;
-    cay = ipc->getFullHeight() / 2;
+    ImageSize size = getFullImageSize();
+    cax = size.width / 2;
+    cay = size.height / 2;
 
-    compDim ();
+    compDim();
 
-    if (enabled && update_) {
-        update ();
+    if (update_) {
+        update();
     }
 }
 
-void CropHandler::getPosition (int& x, int& y)
-{
-
-    x = cropX;
-    y = cropY;
+void CropHandler::setDeviceScale(int scale) {
+    deviceScale = scale;
+    compDim();
+    update();
 }
 
+bool CropHandler::acceptUpdate(const PendingUpdate& pending) const
+{
+    bool accept =
+        pending.x == cropX &&
+        pending.y == cropY &&
+        pending.width == cropW &&
+        pending.height == cropH &&
+        pending.scale == (zoom >= 1000 ? 1 : zoom / 10);
+    return accept;
+}
 
 void CropHandler::setDetailedCrop(
     IImage8* im,
@@ -327,17 +329,20 @@ void CropHandler::setDetailedCrop(
         cropimgtrue.clear();
     }
 
-    if (ax == cropX && ay == cropY && aw == cropW && ah == cropH && askip == (zoom >= 1000 ? 1 : zoom / 10)) {
+    PendingUpdate received = {};
+    received.x = ax;
+    received.y = ay;
+    received.width = aw;
+    received.height = ah;
+    received.scale = askip;
+
+    if (acceptUpdate(received)) {
         cropimg_width = im->getWidth ();
         cropimg_height = im->getHeight ();
         const std::size_t cropimg_size = 3 * cropimg_width * cropimg_height;
         cropimg.assign(im->getData(), im->getData() + cropimg_size);
         cropimgtrue.assign(imtrue->getData(), imtrue->getData() + cropimg_size);
-        cix = ax;
-        ciy = ay;
-        ciw = aw;
-        cih = ah;
-        cis = askip;
+        pendingUpdate = received;
 
         bool expected = false;
 
@@ -358,20 +363,21 @@ void CropHandler::setDetailedCrop(
                         }
 
                         if (!cropimg.empty()) {
-                            if (cix == cropX && ciy == cropY && ciw == cropW && cih == cropH && cis == (zoom >= 1000 ? 1 : zoom / 10)) {
+                            if (acceptUpdate(pendingUpdate)) {
                                 // calculate final image size
                                 float czoom = zoom >= 1000 ?
                                     zoom / 1000.f :
                                     float((zoom/10) * 10) / float(zoom);
+
                                 int imw = cropimg_width * czoom;
                                 int imh = cropimg_height * czoom;
 
-                                if (imw > ww) {
-                                    imw = ww;
+                                hidpi::DeviceSize window = getDeviceWSize();
+                                if (imw > window.width) {
+                                    imw = window.width;
                                 }
-
-                                if (imh > wh) {
-                                    imh = wh;
+                                if (imh > window.height) {
+                                    imh = window.height;
                                 }
 
                                 Glib::RefPtr<Gdk::Pixbuf> tmpPixbuf = Gdk::Pixbuf::create_from_data (cropimg.data(), Gdk::COLORSPACE_RGB, false, 8, cropimg_width, cropimg_height, 3 * cropimg_width);
@@ -415,6 +421,7 @@ void CropHandler::getWindow(int& cwx, int& cwy, int& cww, int& cwh, int& cskip)
 {
     cwx = cropX;
     cwy = cropY;
+    // These values already accounted for HiDPI scaling.
     cww = cropW;
     cwh = cropH;
 
@@ -567,74 +574,54 @@ void CropHandler::colorPick (const rtengine::Coord &pickerPos, float &r, float &
     bpreview = (float)b2 / (float)count / 255.f;
 }
 
-void CropHandler::getSize (int& w, int& h)
+ImageSize CropHandler::getSize() const
 {
-
-    w = cropW;
-    h = cropH;
+    return ImageSize(cropW, cropH);
 }
 
-void CropHandler::getFullImageSize (int& w, int& h)
+ImageSize CropHandler::getFullImageSize() const
 {
     if (ipc) {
-        w = ipc->getFullWidth ();
-        h = ipc->getFullHeight ();
+        return ImageSize(ipc->getFullWidth(), ipc->getFullHeight());
     } else {
-        w = h = 0;
+        return ImageSize(0, 0);
     }
 }
 
-void CropHandler::compDim ()
+void CropHandler::compDim()
 {
     assert (ipc && displayHandler);
 
     // Computes the crop's size and position given the anchor's position and display size
 
-    int fullW = ipc->getFullWidth();
-    int fullH = ipc->getFullHeight();
-    int imgX = -1, imgY = -1;
-    //int scaledFullW, scaledFullH;
-    int scaledCAX, scaledCAY;
-    int wwImgSpace;
-    int whImgSpace;
+    ImageSize imageSize = getFullImageSize();
+    int fullW = imageSize.width;
+    int fullH = imageSize.height;
 
     cax = rtengine::LIM(cax, 0, fullW-1);
     cay = rtengine::LIM(cay, 0, fullH-1);
 
+    // Convert GUI logical pixel coord space to image pixel coord space
+    hidpi::DeviceSize output = getDeviceWSize();
+
+    double scaledWidth;
+    double scaledHeight;
     if (zoom >= 1000) {
-        wwImgSpace = int(float(ww) / float(zoom/1000) + 0.5f);
-        whImgSpace = int(float(wh) / float(zoom/1000) + 0.5f);
-        //scaledFullW = fullW * (zoom/1000);
-        //scaledFullH = fullH * (zoom/1000);
-        scaledCAX = cax * (zoom/1000);
-        scaledCAY = cay * (zoom/1000);
+        scaledWidth = static_cast<double>(output.width) / (zoom/1000.0) + 0.5;
+        scaledHeight = static_cast<double>(output.height) / (zoom/1000.0) + 0.5;
     } else {
-        wwImgSpace = int(float(ww) * (float(zoom)/10.f) + 0.5f);
-        whImgSpace = int(float(wh) * (float(zoom)/10.f) + 0.5f);
-        //scaledFullW = fullW / zoom;
-        //scaledFullH = fullH / zoom;
-        scaledCAX = int(float(cax) / (float(zoom)/10.f));
-        scaledCAY = int(float(cay) / (float(zoom)/10.f));
+        scaledWidth = static_cast<double>(output.width) * (zoom/10.0) + 0.5;
+        scaledHeight = static_cast<double>(output.height) * (zoom/10.0) + 0.5;
     }
 
-    imgX = ww / 2 - scaledCAX;
-    if (imgX < 0) {
-        imgX = 0;
-    }
-    imgY = wh / 2 - scaledCAY;
-    if (imgY < 0) {
-        imgY = 0;
-    }
-
-    cropX = cax - (wwImgSpace/2);
-    cropY = cay - (whImgSpace/2);
-    cropW = wwImgSpace;
-    cropH = whImgSpace;
+    cropX = cax - (scaledWidth/2);
+    cropY = cay - (scaledHeight/2);
+    cropW = scaledWidth;
+    cropH = scaledHeight;
 
     if (cropX + cropW > fullW) {
         cropW = fullW - cropX;
     }
-
     if (cropY + cropH > fullH) {
         cropH = fullH - cropY;
     }
@@ -643,21 +630,40 @@ void CropHandler::compDim ()
         cropW += cropX;
         cropX = 0;
     }
-
     if (cropY < 0) {
         cropH += cropY;
         cropY = 0;
     }
 
     // Should be good already, but this will correct eventual rounding error
-
     if (cropW > fullW) {
         cropW = fullW;
     }
-
     if (cropH > fullH) {
         cropH = fullH;
     }
 
-    displayHandler->setDisplayPosition(imgX, imgY);
+    // Update display position
+    ImageCoord scaledAnchor;
+    if (zoom >= 1000) {
+        scaledAnchor.x = cax * (zoom/1000);
+        scaledAnchor.y = cay * (zoom/1000);
+    } else {
+        scaledAnchor.x = int(float(cax) / (float(zoom)/10.f));
+        scaledAnchor.y = int(float(cay) / (float(zoom)/10.f));
+    }
+
+    // Go from image pixel space back to GUI logical pixel space
+    scaledAnchor.x /= deviceScale;
+    scaledAnchor.y /= deviceScale;
+
+    int imgX = windowSize.width / 2 - scaledAnchor.x;
+    if (imgX < 0) {
+        imgX = 0;
+    }
+    int imgY = windowSize.height / 2 - scaledAnchor.y;
+    if (imgY < 0) {
+        imgY = 0;
+    }
+    displayHandler->setDisplayPosition(hidpi::LogicalCoord(imgX, imgY));
 }

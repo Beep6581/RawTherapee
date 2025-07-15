@@ -98,7 +98,7 @@ int RTSurface::getWidth()
                     w = h = -1; // Invalid case
                 }
 
-                return w;
+                return RTScalable::scalePixelSize(w);
 
             case RTSurfaceType::PNGType:
                 // Directly return surface width
@@ -131,7 +131,7 @@ int RTSurface::getHeight()
                     w = h = -1; // Invalid case
                 }
 
-                return h;
+                return RTScalable::scalePixelSize(h);
 
             case RTSurfaceType::PNGType:
                 // Directly return surface width

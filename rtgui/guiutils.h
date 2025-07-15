@@ -53,17 +53,39 @@ Glib::ustring escapeHtmlChars(const Glib::ustring &src);
 bool removeIfThere (Gtk::Container* cont, Gtk::Widget* w, bool increference = true);
 bool confirmOverwrite (Gtk::Window& parent, const std::string& filename);
 void writeFailed (Gtk::Window& parent, const std::string& filename);
-void drawCrop (Cairo::RefPtr<Cairo::Context> cr, int imx, int imy, int imw, int imh, int startx, int starty, double scale, const rtengine::procparams::CropParams& cparams, bool drawGuide = true, bool useBgColor = true, bool fullImageVisible = true);
+void drawCrop (const Cairo::RefPtr<Cairo::Context>& cr,
+               double imx, double imy, double imw, double imh,
+               double clipWidth, double clipHeight,
+               double startx, double starty, double scale,
+               const rtengine::procparams::CropParams& cparams,
+               bool drawGuide = true, bool useBgColor = true, bool fullImageVisible = true);
 gboolean acquireGUI(void* data);
 void setExpandAlignProperties(Gtk::Widget *widget, bool hExpand, bool vExpand, enum Gtk::Align hAlign, enum Gtk::Align vAlign);
 Gtk::Border getPadding(const Glib::RefPtr<Gtk::StyleContext> style);
 
+/**
+ * @class IdleRegister
+ * 
+ * @brief A helper class for registering functions to be called asynchronously when there are no higher priority events pending.
+ * Purpose of the IdleRegister is to make sure in-flight idle functions queued by `IdleRegister::add()` are unregistered and not
+ * called after destruction.
+ * 
+ * Uses gdk_threads_add_idle_full
+ * 
+ * Notes:
+ * It's best to call `IdleRegister::destroy()` in the destructor of the class owning the `IdleRegister` instance.
+ * Otherwise make sure, it is the last member which will be deleted first.
+ */
 class IdleRegister final :
     public rtengine::NonCopyable
 {
 public:
     ~IdleRegister();
 
+    /**
+     * Registers a function to be called from the GTK event main loop later when there are no higher priority events pending.
+     * If the registered function returns false, it is automatically cleared from the list of event sources and will not be called again.
+     */
     void add(std::function<bool ()> function, gint priority = G_PRIORITY_DEFAULT_IDLE);
     void destroy();
 

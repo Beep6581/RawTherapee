@@ -24,6 +24,7 @@
 
 #include "cursormanager.h"
 #include "guiutils.h"
+#include "hidpi.h"
 #include "lwbuttonset.h"
 #include "threadutils.h"
 #include "options.h"
@@ -48,10 +49,11 @@ protected:
     int fnlabw, fnlabh; // dimensions of the filename label
     int dtlabw, dtlabh; // dimensions of the date/time label
     int exlabw, exlabh; // dimensions of the exif label
-    int prew;       // width of the thumbnail
-    int preh;       // height of the thumbnail
-    int prex;
-    int prey;
+    hidpi::LogicalSize previewSize;
+    hidpi::LogicalCoord prevPos;
+
+    int activeDeviceScale;
+    int pendingDeviceScale;
 
     int upperMargin;
     int borderWidth;
@@ -63,6 +65,11 @@ protected:
     MyRWMutex lockRW;  // Locks access to all image thumb changing actions
 
     std::vector<guint8> preview;  // holds the preview image. used in updateBackBuffer.
+    struct PreviewDataLayout {
+        int width = 0;
+        int height = 0;
+    };
+    PreviewDataLayout previewDataLayout;
 
     Glib::ustring dispname;
 
@@ -70,9 +77,9 @@ protected:
 
     int width;      // minimal width
     int height;     // minimal height
-// set by arrangeFiles() of thumbbrowser
-    int exp_width;  // arranged width (backbuffer dimensions)
-    int exp_height; // arranged height
+    // Arranged size (back buffer dimensions)
+    // set by arrangeFiles() of thumbbrowser
+    hidpi::LogicalSize expected;
     int startx;     // x coord. in the widget
     int starty;     // y coord. in the widget
 
@@ -145,16 +152,15 @@ public:
 
     int getEffectiveWidth () const
     {
-        return exp_width;
+        return expected.width;
     }
     int getEffectiveHeight () const
     {
-        return exp_height;
+        return expected.height;
     }
-    int getPreviewHeight () const
-    {
-        return preh;
-    }
+
+    std::pair<hidpi::LogicalSize, int> getDesiredPreviewSize() const;
+
     int getStartX () const
     {
         return startx;
@@ -205,6 +211,8 @@ public:
 
         return cmp < 0;
     }
+
+    void onDeviceScaleChanged(int newDeviceScale);
 
     virtual void refreshThumbnailImage () = 0;
     virtual void refreshQuickThumbnailImage () {}

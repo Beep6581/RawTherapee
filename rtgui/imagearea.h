@@ -48,6 +48,7 @@ protected:
     Glib::ustring infotext;
     Glib::RefPtr<Pango::Layout> deglayout;
     BackBuffer iBackBuffer;
+    int backBufferDeviceScale;
     bool showClippedH, showClippedS;
 
     ImageAreaPanel* parent;
@@ -98,7 +99,8 @@ public:
     void setScrollPosition  (int x, int y);     // called by the imageareapanel when the scrollbars have been changed
 
     // enabling and setting text of info area
-    void setInfoText (Glib::ustring text);
+    void setInfoText (Glib::ustring&& text);
+    void updateInfoTextBackBuffer();
     void infoEnabled (bool e);
 
     // widget base events

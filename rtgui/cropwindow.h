@@ -28,6 +28,7 @@
 #include "editbuffer.h"
 #include "editcoordsys.h"
 #include "editenums.h"
+#include "hidpi.h"
 #include "lwbutton.h"
 #include "lwbuttonset.h"
 
@@ -93,11 +94,14 @@ class CropWindow final : public LWButtonListener, public CropDisplayHandler, pub
     int titleHeight, sideBorderWidth, lowerBorderWidth, upperBorderWidth, sepWidth, minWidth;
     // size & position of the crop relative to the top left corner
     // of the main preview area
-    int xpos, ypos, width, height;
+    hidpi::LogicalCoord windowPos;
+    hidpi::LogicalSize windowSize;
     // size & pos of the drawable area relative to the top left corner of the crop
-    int imgAreaX, imgAreaY, imgAreaW, imgAreaH;
+    hidpi::LogicalCoord imgAreaPos;
+    hidpi::LogicalSize imgAreaSize;
     // size & pos of the piece of preview image relative to the top left corner of the crop
-    int imgX, imgY, imgW, imgH;
+    hidpi::LogicalCoord imgPos;
+    hidpi::DeviceSize imgSize;
 
     // image handling
 
@@ -122,7 +126,7 @@ class CropWindow final : public LWButtonListener, public CropDisplayHandler, pub
     void drawStraightenGuide       (Cairo::RefPtr<Cairo::Context> cr);
     void drawScaledSpotRectangle   (Cairo::RefPtr<Cairo::Context> cr, int rectSize);
     void drawUnscaledSpotRectangle (Cairo::RefPtr<Cairo::Context> cr, int rectSize);
-    void drawObservedFrame         (Cairo::RefPtr<Cairo::Context> cr, int rw = 0, int rh = 0);
+    void drawObservedFrame         (const Cairo::RefPtr<Cairo::Context>& cr);
     void changeZoom                (int zoom, bool notify = true, int centerx = -1, int centery = -1, bool needsRedraw = true);
     void updateHoveredPicker       (rtengine::Coord *imgPos = nullptr);
     void cycleRGB                  ();
@@ -131,7 +135,7 @@ class CropWindow final : public LWButtonListener, public CropDisplayHandler, pub
     LockableColorPicker::Validity checkValidity (LockableColorPicker*  picker, const rtengine::Coord &pos);
 
     // Used by the mainCropWindow only
-    void getObservedFrameArea      (int& x, int& y, int& w, int& h, int rw = 0, int rh = 0);
+    void getObservedFrameArea      (int& x, int& y, int& w, int& h) const;
 
     struct ZoomStep {
         Glib::ustring label;
@@ -167,9 +171,9 @@ public:
     }
     void deleteColorPickers ();
 
-    void screenCoordToCropBuffer (int phyx, int phyy, int& cropx, int& cropy) override;
-    void screenCoordToImage (int phyx, int phyy, int& imgx, int& imgy) override;
-    void screenCoordToCropCanvas (int phyx, int phyy, int& prevx, int& prevy);
+    void screenCoordToCropBuffer (double phyx, double phyy, int& cropx, int& cropy) override;
+    void screenCoordToImage (double phyx, double phyy, int& imgx, int& imgy) override;
+    void screenCoordToCropCanvas (double phyx, double phyy, int& prevx, int& prevy);
     void imageCoordToCropCanvas (int imgx, int imgy, int& phyx, int& phyy) override;
     void imageCoordToScreen (int imgx, int imgy, int& phyx, int& phyy) override;
     void imageCoordToCropBuffer (int imgx, int imgy, int& phyx, int& phyy) override;
@@ -218,7 +222,7 @@ public:
     void redrawNeeded  (LWButton* button) override;
 
     // crop handling
-    void getCropRectangle      (int& x, int& y, int& w, int& h);
+    void getCropRectangle      (int& x, int& y, int& w, int& h) const;
     void getCropPosition       (int& x, int& y);
     void setCropPosition       (int x, int y, bool update = true);
     void centerCrop            (bool update = true);
@@ -240,7 +244,7 @@ public:
     void cropImageUpdated () override;
     void cropWindowChanged () override;
     void initialImageArrived () override;
-    void setDisplayPosition (int x, int y) override;
+    void setDisplayPosition (hidpi::LogicalCoord pos) override;
 
     void remoteMove      (int deltaX, int deltaY);
     void remoteMoveReady ();
