@@ -127,10 +127,10 @@ ThumbBrowserEntryBase::ThumbBrowserEntryBase (const Glib::ustring& fname, Thumbn
     dtlabh(0),
     exlabw(0),
     exlabh(0),
-    prew(0),
-    preh(0),
-    prex(0),
-    prey(0),
+    previewSize(0, 0),
+    prevPos(0, 0),
+    activeDeviceScale(1),
+    pendingDeviceScale(1),
     upperMargin(6),
     borderWidth(1),
     textGap(6),
@@ -140,8 +140,7 @@ ThumbBrowserEntryBase::ThumbBrowserEntryBase (const Glib::ustring& fname, Thumbn
     buttonSet(nullptr),
     width(0),
     height(0),
-    exp_width(0),
-    exp_height(0),
+    expected(0, 0),
     startx(0),
     starty(0),
     ofsX(0),
@@ -182,23 +181,24 @@ void ThumbBrowserEntryBase::addButtonSet (LWButtonSet* bs)
 
 void ThumbBrowserEntryBase::updateBackBuffer ()
 {
-
     if (!parent) {
         return;
     }
 
     Gtk::Widget* w = parent->getDrawingArea ();
+    const hidpi::ScaledDeviceSize expectedDeviceSize = expected.scaleToDevice(activeDeviceScale);
 
-    if (backBuffer && (backBuffer->getWidth() != exp_width || backBuffer->getHeight() != exp_height )) {
+    if (backBuffer && (backBuffer->getWidth() != expectedDeviceSize.width || backBuffer->getHeight() != expectedDeviceSize.height)) {
         // deleting the existing BackBuffer
         backBuffer.reset();
     }
     if (!backBuffer) {
-        backBuffer = Glib::RefPtr<BackBuffer>(new BackBuffer(exp_width, exp_height));
+        backBuffer = Glib::RefPtr<BackBuffer>(new BackBuffer(expectedDeviceSize.width, expectedDeviceSize.height));
+        hidpi::setDeviceScale(backBuffer->getSurface(), expectedDeviceSize.device_scale);
     }
 
     // If thumbnail is hidden by a filter, drawing to it will crash
-    // if either with or height is zero then return early
+    // if either width or height is zero then return early
     if (!backBuffer->getWidth() || !backBuffer->getHeight()) {
         return;
     }
@@ -218,15 +218,7 @@ void ThumbBrowserEntryBase::updateBackBuffer ()
     Gdk::RGBA bgs = parent->getSelectedBgColor();
 
     // clear area, draw frames and background
-    style->render_background(cc, 0., 0., exp_width, exp_height);
-    /*
-    cc->set_line_width(0.);
-    cc->set_line_cap(Cairo::LINE_CAP_BUTT);
-    cc->set_antialias(Cairo::ANTIALIAS_NONE);
-    cc->set_source_rgb(bgn.get_red(), bgn.get_green(), bgn.get_blue());
-    cc->rectangle(0., 0., exp_width, exp_height);
-    cc->fill();
-    */
+    style->render_background(cc, 0., 0., expected.width, expected.height);
 
     cc->set_antialias(Cairo::ANTIALIAS_SUBPIXEL);
 
@@ -243,14 +235,21 @@ void ThumbBrowserEntryBase::updateBackBuffer ()
     int infow, infoh;
     getTextSizes(infow, infoh);
 
-    // draw preview frame
-    //backBuffer->draw_rectangle (cc, false, (exp_width-prew)/2, upperMargin+bsHeight, prew+1, preh+1);
     // draw thumbnail image
-    if (!preview.empty()) {
-        prex = borderWidth + (exp_width - prew) / 2;
-        const int hh = exp_height - (upperMargin + bsHeight + borderWidth + infoh + lowerMargin);
-        prey = upperMargin + bsHeight + borderWidth + std::max((hh - preh) / 2, 0);
-        backBuffer->copyRGBCharData(preview.data(), 0, 0, prew, preh, prew * 3, prex, prey);
+    if ((activeDeviceScale == pendingDeviceScale) && !preview.empty()) {
+        prevPos.x = borderWidth + (expected.width - previewSize.width) / 2;
+        const int hh = expected.height - (upperMargin + bsHeight + borderWidth + infoh + lowerMargin);
+        prevPos.y = upperMargin + bsHeight + borderWidth + std::max((hh - previewSize.height) / 2, 0);
+
+        hidpi::DeviceCoord deviceOffset = prevPos.scaleToDevice(activeDeviceScale);
+
+        // clang-format off
+        backBuffer->copyRGBCharData(
+            preview.data(),
+            0, 0, previewDataLayout.width, previewDataLayout.height,
+            previewDataLayout.width * 3,
+            deviceOffset.x, deviceOffset.y);
+        // clang-format on
     }
 
     customBackBufferUpdate (cc);
@@ -260,13 +259,13 @@ void ThumbBrowserEntryBase::updateBackBuffer ()
     bbSpecificityIcons = getSpecificityIconsOnImageArea ();
 
     int iofs_x = 4, iofs_y = 4;
-    int istartx = prex;
-    int istarty = prey;
+    int istartx = prevPos.x;
+    int istarty = prevPos.y;
 
     if ((parent->getLocation() != ThumbBrowserBase::THLOC_EDITOR && options.showFileNames && options.overlayedFileNames)
             || (parent->getLocation() == ThumbBrowserBase::THLOC_EDITOR && options.filmStripShowFileNames && options.filmStripOverlayedFileNames)) {
         cc->begin_new_path ();
-        cc->rectangle (istartx, istarty, prew, fnlabh + dtlabh + exlabh + 2 * iofs_y);
+        cc->rectangle (istartx, istarty, previewSize.width, fnlabh + dtlabh + exlabh + 2 * iofs_y);
 
         if ((texts.get_red() + texts.get_green() + texts.get_blue()) / 3 > 0.5) {
             cc->set_source_rgba (0, 0, 0, 0.5);
@@ -321,8 +320,8 @@ void ThumbBrowserEntryBase::updateBackBuffer ()
 
     if (!bbSpecificityIcons.empty()) {
         int igap = 2;
-        int istartx2 = prex + prew - 1 + igap;
-        int istarty2 = prey + preh - igap - 1;
+        int istartx2 = prevPos.x + previewSize.width - 1 + igap;
+        int istarty2 = prevPos.y + previewSize.height - igap - 1;
 
         for (size_t i = 0; i < bbSpecificityIcons.size(); ++i) {
             istartx2 -= bbSpecificityIcons[i]->getWidth() - igap;
@@ -339,26 +338,26 @@ void ThumbBrowserEntryBase::updateBackBuffer ()
 
         if (! ((parent->getLocation() != ThumbBrowserBase::THLOC_EDITOR && options.overlayedFileNames)
                 || (parent->getLocation() == ThumbBrowserBase::THLOC_EDITOR && options.filmStripOverlayedFileNames)) ) {
-            textposx_fn = exp_width / 2 - fnlabw / 2;
+            textposx_fn = expected.width / 2 - fnlabw / 2;
 
             if (textposx_fn < 0) {
                 textposx_fn = 0;
             }
 
-            textposx_ex = exp_width / 2 - exlabw / 2;
+            textposx_ex = expected.width / 2 - exlabw / 2;
 
             if (textposx_ex < 0) {
                 textposx_ex = 0;
             }
 
-            textposx_dt = exp_width / 2 - dtlabw / 2;
+            textposx_dt = expected.width / 2 - dtlabw / 2;
 
             if (textposx_dt < 0) {
                 textposx_dt = 0;
             }
 
-            textposy = exp_height - lowerMargin - infoh;
-            textw = exp_width - 2 * textGap;
+            textposy = expected.height - lowerMargin - infoh;
+            textw = expected.width - 2 * textGap;
 
             if (selected) {
                 cc->set_source_rgb(texts.get_red(), texts.get_green(), texts.get_blue());
@@ -370,7 +369,7 @@ void ThumbBrowserEntryBase::updateBackBuffer ()
             textposx_ex = istartx;
             textposx_dt = istartx;
             textposy = istarty;
-            textw = prew - (istartx - prex);
+            textw = previewSize.width - (istartx - prevPos.x);
             cc->set_source_rgb(texts.get_red(), texts.get_green(), texts.get_blue());
         }
 
@@ -493,8 +492,8 @@ void ThumbBrowserEntryBase::resize (int h)
     MYWRITERLOCK(l, lockRW);
 
     height = h;
-    int old_preh = preh;
-    int old_prew = prew;
+    int old_preh = previewSize.height;
+    int old_prew = previewSize.width;
 
     // dimensions of the button set
     int bsw = 0, bsh = 0;
@@ -520,7 +519,7 @@ void ThumbBrowserEntryBase::resize (int h)
     }
 
     // calculate the height remaining for the thumbnail image
-    preh = height - upperMargin - 2 * borderWidth - lowerMargin - bsh;
+    previewSize.height = height - upperMargin - 2 * borderWidth - lowerMargin - bsh;
     int infow = 0;
     int infoh = 0;
 
@@ -529,23 +528,23 @@ void ThumbBrowserEntryBase::resize (int h)
         // dimensions of the info text
         getTextSizes (infow, infoh);
         infoh += textGap;
-        //preh -= infoh;
+        //previewSize.height -= infoh;
         height += infoh;
     }
 
     // Minimum size for thumbs
-    if (preh < 24) {
-        preh = 24;
-        height = preh + (upperMargin + 2 * borderWidth + lowerMargin) + bsh + infoh;
+    if (previewSize.height < 24) {
+        previewSize.height = 24;
+        height = previewSize.height + (upperMargin + 2 * borderWidth + lowerMargin) + bsh + infoh;
     }
 
-    calcThumbnailSize ();  // recalculates prew
+    calcThumbnailSize ();  // recalculates previewSize
 
-    width = prew + 2 * sideMargin + 2 * borderWidth;
+    width = previewSize.width + 2 * sideMargin + 2 * borderWidth;
 
     if (    (parent->getLocation() != ThumbBrowserBase::THLOC_EDITOR && options.showFileNames && !options.overlayedFileNames)
             || (parent->getLocation() == ThumbBrowserBase::THLOC_EDITOR && options.filmStripShowFileNames && !options.filmStripOverlayedFileNames)) {
-        width = prew + 2 * sideMargin + 2 * borderWidth;
+        width = previewSize.width + 2 * sideMargin + 2 * borderWidth;
 
         if (width < infow + 2 * sideMargin + 2 * borderWidth) {
             width = infow + 2 * sideMargin + 2 * borderWidth;
@@ -556,7 +555,7 @@ void ThumbBrowserEntryBase::resize (int h)
         width = bsw + 2 * sideMargin + 2 * borderWidth;
     }
 
-    if (preh != old_preh || prew != old_prew) { // if new thumbnail height or new orientation
+    if (previewSize.height != old_preh || previewSize.width != old_prew) { // if new thumbnail height or new orientation
         preview.clear();
         refreshThumbnailImage ();
     } else if (backBuffer) {
@@ -566,6 +565,17 @@ void ThumbBrowserEntryBase::resize (int h)
     drawable = true;
 }
 
+std::pair<hidpi::LogicalSize, int> ThumbBrowserEntryBase::getDesiredPreviewSize() const {
+    return {previewSize, pendingDeviceScale};
+}
+
+void ThumbBrowserEntryBase::onDeviceScaleChanged(int newDeviceScale) {
+    if (newDeviceScale != activeDeviceScale) {
+        pendingDeviceScale = newDeviceScale;
+        refreshThumbnailImage();
+    }
+}
+
 void ThumbBrowserEntryBase::drawFrame (Cairo::RefPtr<Cairo::Context> cc, const Gdk::RGBA& bg, const Gdk::RGBA& fg)
 {
 
@@ -573,9 +583,9 @@ void ThumbBrowserEntryBase::drawFrame (Cairo::RefPtr<Cairo::Context> cc, const G
 
     if (selected || framed) {
         cc->move_to (radius, 0);
-        cc->arc (exp_width - 1 - radius, radius, radius, -rtengine::RT_PI / 2, 0);
-        cc->arc (exp_width - 1 - radius, exp_height - 1 - radius, radius, 0, rtengine::RT_PI / 2);
-        cc->arc (radius, exp_height - 1 - radius, radius, rtengine::RT_PI / 2, rtengine::RT_PI);
+        cc->arc (expected.width - 1 - radius, radius, radius, -rtengine::RT_PI / 2, 0);
+        cc->arc (expected.width - 1 - radius, expected.height - 1 - radius, radius, 0, rtengine::RT_PI / 2);
+        cc->arc (radius, expected.height - 1 - radius, radius, rtengine::RT_PI / 2, rtengine::RT_PI);
         cc->arc (radius, radius, radius, rtengine::RT_PI, -rtengine::RT_PI / 2);
         cc->close_path ();
 
@@ -591,9 +601,9 @@ void ThumbBrowserEntryBase::drawFrame (Cairo::RefPtr<Cairo::Context> cc, const G
 
     if (framed) {
         cc->move_to (+2 + 0.5 + radius, +2 + 0.5);
-        cc->arc (-2 + 0.5 + exp_width - 1 - radius, +2 + 0.5 + radius, radius, -rtengine::RT_PI / 2, 0);
-        cc->arc (-2 + 0.5 + exp_width - 1 - radius, -2 + 0.5 + exp_height - 1 - radius, radius, 0, rtengine::RT_PI / 2);
-        cc->arc (+2 + 0.5 + radius, -2 + exp_height - 1 - radius, radius, rtengine::RT_PI / 2, rtengine::RT_PI);
+        cc->arc (-2 + 0.5 + expected.width - 1 - radius, +2 + 0.5 + radius, radius, -rtengine::RT_PI / 2, 0);
+        cc->arc (-2 + 0.5 + expected.width - 1 - radius, -2 + 0.5 + expected.height - 1 - radius, radius, 0, rtengine::RT_PI / 2);
+        cc->arc (+2 + 0.5 + radius, -2 + expected.height - 1 - radius, radius, rtengine::RT_PI / 2, rtengine::RT_PI);
         cc->arc (+2 + 0.5 + radius, +2 + radius, radius, rtengine::RT_PI, -rtengine::RT_PI / 2);
         cc->close_path ();
         cc->set_source_rgb (fg.get_red(), fg.get_green(), fg.get_blue());
@@ -604,36 +614,43 @@ void ThumbBrowserEntryBase::drawFrame (Cairo::RefPtr<Cairo::Context> cc, const G
 
 void ThumbBrowserEntryBase::draw (Cairo::RefPtr<Cairo::Context> cc)
 {
-
     if (!drawable || !parent) {
         return;
     }
 
     MYREADERLOCK(l, lockRW);  // No resizes, position moves etc. inbetween
 
-    int bbWidth, bbHeight;
+    bool shouldUpdateBackBuffer = [&]() -> bool {
+        if (!backBuffer || backBuffer->isDirty()) return true;
 
-    if (backBuffer) {
-        bbWidth = backBuffer->getWidth();
-        bbHeight = backBuffer->getHeight();
+        if (selected != bbSelected || framed != bbFramed
+                || getIconsOnImageArea() != bbIcons
+                || getSpecificityIconsOnImageArea() != bbSpecificityIcons) {
+            return true;
+        }
+
+        int bbWidth = backBuffer->getWidth();
+        int bbHeight = backBuffer->getHeight();
+        hidpi::ScaledDeviceSize device = expected.scaleToDevice(activeDeviceScale);
+        if (preview.data() != bbPreview
+                || device.width != bbWidth
+                || device.height != bbHeight) return true;
+
+        return false;
+    }();
+
+    if (shouldUpdateBackBuffer) {
+        updateBackBuffer();
     }
 
-    if (!backBuffer || selected != bbSelected || framed != bbFramed || preview.data() != bbPreview
-            || exp_width != bbWidth || exp_height != bbHeight || getIconsOnImageArea () != bbIcons
-            || getSpecificityIconsOnImageArea() != bbSpecificityIcons || backBuffer->isDirty())
-    {
-        updateBackBuffer ();
-    }
-
-    int w_ = startx + ofsX;
-    int h_ = starty + ofsY;
-    cc->set_source(backBuffer->getSurface(), w_, h_);
-    cc->rectangle(w_, h_, backBuffer->getWidth(), backBuffer->getHeight());
-    cc->fill();
+    int x_offset = startx + ofsX;
+    int y_offset = starty + ofsY;
+    cc->set_source(backBuffer->getSurface(), x_offset, y_offset);
+    cc->paint();
 
     // check icon set changes!!!
 
-//    drawProgressBar (window, cc, selected ? texts : textn, selected ? bgs : bgn, ofsX+startx, exp_width, ofsY+starty + upperMargin+bsHeight+borderWidth+preh+borderWidth+textGap+tpos, fnlabh);
+//    drawProgressBar (window, cc, selected ? texts : textn, selected ? bgs : bgn, ofsX+startx, expected.width, ofsY+starty + upperMargin+bsHeight+borderWidth+previewSize.height+borderWidth+textGap+tpos, fnlabh);
 
     // redraw button set above the thumbnail
     if (buttonSet) {
@@ -646,8 +663,8 @@ void ThumbBrowserEntryBase::setPosition (int x, int y, int w, int h)
 {
     MYWRITERLOCK(l, lockRW);
 
-    exp_width = w;
-    exp_height = h;
+    expected.width = w;
+    expected.height = h;
     startx = x;
     starty = y;
 
@@ -671,7 +688,7 @@ void ThumbBrowserEntryBase::setOffset (int x, int y)
 bool ThumbBrowserEntryBase::inside (int x, int y) const
 {
 
-    return x > ofsX + startx && x < ofsX + startx + exp_width && y > ofsY + starty && y < ofsY + starty + exp_height;
+    return x > ofsX + startx && x < ofsX + startx + expected.width && y > ofsY + starty && y < ofsY + starty + expected.height;
 }
 
 rtengine::Coord2D ThumbBrowserEntryBase::getPosInImgSpace (int x, int y) const
@@ -682,9 +699,10 @@ rtengine::Coord2D ThumbBrowserEntryBase::getPosInImgSpace (int x, int y) const
         x -= ofsX + startx;
         y -= ofsY + starty;
 
-        if (x >= prex && x <= prex + prew && y >= prey && y <= prey + preh) {
-            coord.x = double(x - prex) / double(prew);
-            coord.y = double(y - prey) / double(preh);
+        if (x >= prevPos.x && x <= prevPos.x + previewSize.width
+                && y >= prevPos.y && y <= prevPos.y + previewSize.height) {
+            coord.x = double(x - prevPos.x) / double(previewSize.width);
+            coord.y = double(y - prevPos.y) / double(previewSize.height);
         }
     }
     return coord;
@@ -693,7 +711,7 @@ rtengine::Coord2D ThumbBrowserEntryBase::getPosInImgSpace (int x, int y) const
 bool ThumbBrowserEntryBase::insideWindow (int x, int y, int w, int h) const
 {
 
-    return !(ofsX + startx > x + w || ofsX + startx + exp_width < x || ofsY + starty > y + h || ofsY + starty + exp_height < y);
+    return !(ofsX + startx > x + w || ofsX + startx + expected.width < x || ofsY + starty > y + h || ofsY + starty + expected.height < y);
 }
 
 std::vector<std::shared_ptr<RTSurface>> ThumbBrowserEntryBase::getIconsOnImageArea()

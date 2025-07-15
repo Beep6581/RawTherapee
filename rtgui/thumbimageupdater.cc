@@ -156,17 +156,23 @@ public:
         rtengine::IImage8* img = nullptr;
         Thumbnail* thm = j.tbe_->thumbnail;
 
+        auto size_and_scale = j.tbe_->getDesiredPreviewSize();
+        hidpi::LogicalSize& logical = size_and_scale.first;
+        int device_scale = size_and_scale.second;
+        int preview_height = logical.scaleToDevice(device_scale).height;
+
         if ( j.upgrade_ ) {
             if ( thm->isQuick() || j.force_upgrade_ ) {
-                img = thm->upgradeThumbImage(thm->getProcParams(), j.tbe_->getPreviewHeight(), scale, j.force_upgrade_);
+                img = thm->upgradeThumbImage(thm->getProcParams(), preview_height, scale, j.force_upgrade_);
             }
         } else {
-            img = thm->processThumbImage(thm->getProcParams(), j.tbe_->getPreviewHeight(), scale);
+            img = thm->processThumbImage(thm->getProcParams(), preview_height, scale);
         }
 
         if (img) {
             DEBUG("pushing image %s", thm->getFileName().c_str());
-            j.listener_->updateImage(img, scale, thm->getProcParams().crop);
+            ThumbImageUpdateListener::ImageUpdate update(img, logical, device_scale, scale, thm->getProcParams().crop);
+            j.listener_->updateImage(std::move(update));
         }
 
         if ( --active_ == 0 ) {

@@ -24,6 +24,7 @@
 
 #include <gtkmm.h>
 
+#include "hidpi.h"
 #include "lockablecolorpicker.h"
 #include "threadutils.h"
 
@@ -39,7 +40,7 @@ public:
     virtual void cropImageUpdated    () {}
     virtual void cropWindowChanged   () {}
     virtual void initialImageArrived () {}
-    virtual void setDisplayPosition  (int x, int y) {}
+    virtual void setDisplayPosition  (hidpi::LogicalCoord pos) {}
 };
 
 /**
@@ -66,15 +67,22 @@ public:
     double  getFitZoom    ();
     double  getFitCropZoom();
     bool    isFullDisplay ();
-    void    setWSize      (int w, int h);
-    void    getWSize      (int& w, int &h);
-    void    getAnchorPosition (int& x, int& y);
-    void    setAnchorPosition (int x, int y, bool update = true);
-    void    moveAnchor    (int deltaX, int deltaY, bool update = true);
-    void    centerAnchor  (bool update = true);
-    void    getPosition   (int& x, int& y);
-    void    getSize       (int& w, int& h);
-    void    getFullImageSize (int& w, int& h);
+
+    hidpi::DeviceSize getDeviceWSize() const;
+    void setWSize(hidpi::LogicalSize size);
+
+    ImageCoord getAnchorPosition() const { return ImageCoord(cax, cay); }
+    void setAnchorPosition(ImageCoord pos, bool update = true);
+    void moveAnchor(ImageCoord delta, bool update = true);
+    void centerAnchor(bool update = true);
+
+    ImageCoord getPosition() const { return ImageCoord(cropX, cropY); }
+
+    ImageSize getSize() const;
+    ImageSize getFullImageSize() const;
+
+    int getDeviceScale() const { return deviceScale; }
+    void setDeviceScale(int scale);
 
     void    setEnabled (bool e);
     bool    getEnabled ();
@@ -105,7 +113,7 @@ public:
 
     void    update  ();
 
-
+    // For HiDPI support, these params and buffers are sized for device pixels.
     const std::unique_ptr<rtengine::procparams::CropParams> cropParams;
     const std::unique_ptr<rtengine::procparams::ColorManagementParams> colorParams;
     Glib::RefPtr<Gdk::Pixbuf> cropPixbuf;     // image displayed on monitor, using the monitor profile (i.e. lab to monitor profile)
@@ -114,17 +122,30 @@ public:
     MyMutex cimg;
 
 private:
-    void    compDim ();
+    struct PendingUpdate {
+        int x = 0;
+        int y = 0;
+        int width = 0;
+        int height = 0;
+        int scale = 1;
+    };
+
+    void compDim();
+    bool acceptUpdate(const PendingUpdate& update) const;
+
+    // size of the crop's canvas on the screen ; might be bigger than the displayed image, but not smaller
+    hidpi::LogicalSize windowSize;
 
     int zoom;               // scale factor (e.g. 5 if 1:5 scale) ; if 1:1 scale and bigger, factor is multiplied by 1000  (i.e. 1000 for 1:1 scale, 2000 for 2:1, etc...)
-    int ww, wh;             // size of the crop's canvas on the screen ; might be bigger than the displayed image, but not smaller
     int cax, cay;           // clamped crop anchor's coordinate, i.e. point of the image that coincide to the center of the display area, expressed in image coordinates; cannot be outside the image's bounds; but if cax==cay==-1, designate the center of the image
     int cx, cy, cw, ch;     // position and size of the requested crop ; position expressed in image coordinates, so cx and cy might be negative and cw and ch higher than the image's 1:1 size
     int cropX, cropY, cropW, cropH; // cropPixbuf's displayed area (position and size), i.e. coordinates in 1:1 scale, i.e. cx, cy, cw & ch trimmed to the image's bounds
     bool enabled;
     std::vector<unsigned char> cropimg;
     std::vector<unsigned char> cropimgtrue;
-    int cropimg_width, cropimg_height, cix, ciy, ciw, cih, cis;
+    int cropimg_width, cropimg_height;
+    PendingUpdate pendingUpdate;
+    int deviceScale;
     bool isLowUpdatePriority;
 
     rtengine::StagedImageProcessor* ipc;

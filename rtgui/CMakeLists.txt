@@ -122,6 +122,7 @@ set(NONCLISOURCEFILES
     filterpanel.cc
     flatcurveeditorsubgroup.cc
     guiutils.cc
+    hidpi.cc
     histogrampanel.cc
     history.cc
     iccprofilecreator.cc

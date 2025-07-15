@@ -20,6 +20,7 @@
 
 #include <glibmm/thread.h>
 
+#include "hidpi.h"
 #include "threadutils.h"
 
 class Thumbnail;
@@ -39,7 +40,8 @@ class BQEntryUpdateListener
 
 public:
     virtual ~BQEntryUpdateListener() = default;
-    virtual void updateImage(guint8* img, int w, int h, int origw, int origh, guint8* newOPreview) = 0;
+    virtual void updateImage(guint8* img, hidpi::LogicalSize size, int deviceScale, int origw, int origh,
+                             guint8* newOPreview) = 0;
 };
 
 class BatchQueueEntryUpdater
@@ -48,6 +50,7 @@ class BatchQueueEntryUpdater
     struct Job {
         guint8* oimg;
         int ow, oh, newh;
+        double device_scale;
         BQEntryUpdateListener* listener;
         rtengine::procparams::ProcParams* pparams;
         Thumbnail* thumbnail;
@@ -63,7 +66,10 @@ protected:
 public:
     BatchQueueEntryUpdater ();
 
-    void process    (guint8* oimg, int ow, int oh, int newh, BQEntryUpdateListener* listener, rtengine::procparams::ProcParams* pparams = nullptr, Thumbnail* thumbnail = nullptr);
+    void process    (guint8* oimg, int ow, int oh, int newh, int device_scale,
+                     BQEntryUpdateListener* listener,
+                     rtengine::procparams::ProcParams* pparams = nullptr,
+                     Thumbnail* thumbnail = nullptr);
     void removeJobs (BQEntryUpdateListener* listener);
     void terminate  ();
 
