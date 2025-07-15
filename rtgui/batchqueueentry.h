@@ -44,19 +44,11 @@ class ProcParams;
 
 }
 
-class BatchQueueEntry;
-struct BatchQueueEntryIdleHelper {
-    BatchQueueEntry* bqentry;
-    bool destroyed;
-    int pending;
-};
-
 class BatchQueueEntry final : public ThumbBrowserEntryBase, public BQEntryUpdateListener, public rtengine::NonCopyable
 {
 
     guint8* opreview;
     int origpw, origph;
-    BatchQueueEntryIdleHelper* bqih;
     bool opreviewDone;
     static bool iconsLoaded;
 
@@ -90,6 +82,7 @@ public:
     std::tuple<Glib::ustring, bool> getToolTip (int x, int y) const override;
 
     // bqentryupdatelistener interface
-    void updateImage (guint8* img, int w, int h, int origw, int origh, guint8* newOPreview) override;
-    void _updateImage (guint8* img, int w, int h); // inside gtk thread
+    void updateImage (guint8* img, hidpi::LogicalSize size, int deviceScale,
+                      int origw, int origh, guint8* newOPreview) override;
+    void _updateImage (guint8* img, hidpi::LogicalSize size, int deviceScale); // inside gtk thread
 };
