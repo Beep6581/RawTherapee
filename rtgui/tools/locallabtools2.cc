@@ -12108,26 +12108,26 @@ void Locallabcie::updateGUIToMode(const modeType new_type)
                     smoothcie->hide();
                     skewsig->show();
                     whitsig->hide();
-    } else if(smoothciemet->get_active_row_number() == 6) {
-       contsig->hide();
-       skewsig->hide();
-       whitsig->hide();
-       smoothcie->hide();
-       slopesmo->hide();
-       slopesmor->hide();
-       slopesmog->hide();
-       slopesmob->hide();
-       kslopesmor->show();
-       kslopesmog->show();
-       kslopesmob->show();
-       smoothcietrc->show();
-       smoothcietrcrel->show();
-       smoothcieyb->hide();
-       smoothcieth->hide();
-       smoothcielum->hide();
-       smoothciehigh->hide();
-       smoothcielnk->hide();
-       smoothcieinv->hide();
+                } else if(smoothciemet->get_active_row_number() == 6) {
+                    contsig->hide();
+                    skewsig->hide();
+                    whitsig->hide();
+                    smoothcie->hide();
+                    slopesmo->hide();
+                    slopesmor->hide();
+                    slopesmog->hide();
+                    slopesmob->hide();
+                    kslopesmor->show();
+                    kslopesmog->show();
+                    kslopesmob->show();
+                    smoothcietrc->show();
+                    smoothcietrcrel->show();
+                    smoothcieyb->hide();
+                    smoothcieth->hide();
+                    smoothcielum->hide();
+                    smoothciehigh->hide();
+                    smoothcielnk->hide();
+                    smoothcieinv->hide();
 
                 } else {
                     contsig->hide();
@@ -12340,26 +12340,26 @@ void Locallabcie::updateGUIToMode(const modeType new_type)
                     smoothcieyb->hide();
                     smoothcieth->hide();
                     smoothcie->hide();
-    } else if(smoothciemet->get_active_row_number() == 6) {
-       contsig->hide();
-       skewsig->hide();
-       whitsig->hide();
-       smoothcie->hide();
-       slopesmo->hide();
-       slopesmor->hide();
-       slopesmog->hide();
-       slopesmob->hide();
-       kslopesmor->show();
-       kslopesmog->show();
-       kslopesmob->show();
-       smoothcietrc->show();
-       smoothcietrcrel->show();
-       smoothcieyb->hide();
-       smoothcieth->hide();
-       smoothcielum->hide();
-       smoothciehigh->hide();
-       smoothcielnk->hide();
-       smoothcieinv->hide();
+                } else if(smoothciemet->get_active_row_number() == 6) {
+                    contsig->hide();
+                    skewsig->hide();
+                    whitsig->hide();
+                    smoothcie->hide();
+                    slopesmo->hide();
+                    slopesmor->hide();
+                    slopesmog->hide();
+                    slopesmob->hide();
+                    kslopesmor->show();
+                    kslopesmog->show();
+                    kslopesmob->show();
+                    smoothcietrc->show();
+                    smoothcietrcrel->show();
+                    smoothcieyb->hide();
+                    smoothcieth->hide();
+                    smoothcielum->hide();
+                    smoothciehigh->hide();
+                    smoothcielnk->hide();
+                    smoothcieinv->hide();
                     
                 } else {
                     contsig->hide();
@@ -12559,26 +12559,26 @@ void Locallabcie::updateGUIToMode(const modeType new_type)
                     smoothcieyb->hide();
                     smoothcieth->hide();
                     smoothcie->hide();
-    } else if(smoothciemet->get_active_row_number() == 6) {
-       contsig->hide();
-       skewsig->hide();
-       whitsig->hide();
-       smoothcie->hide();
-       slopesmo->hide();
-       slopesmor->hide();
-       slopesmog->hide();
-       slopesmob->hide();
-       kslopesmor->show();
-       kslopesmog->show();
-       kslopesmob->show();
-       smoothcietrc->show();
-       smoothcietrcrel->show();
-       smoothcieyb->hide();
-       smoothcieth->hide();
-       smoothcielum->hide();
-       smoothciehigh->hide();
-       smoothcielnk->hide();
-       smoothcieinv->hide();
+                } else if(smoothciemet->get_active_row_number() == 6) {
+                    contsig->hide();
+                    skewsig->hide();
+                    whitsig->hide();
+                    smoothcie->hide();
+                    slopesmo->hide();
+                    slopesmor->hide();
+                    slopesmog->hide();
+                    slopesmob->hide();
+                    kslopesmor->show();
+                    kslopesmog->show();
+                    kslopesmob->show();
+                    smoothcietrc->show();
+                    smoothcietrcrel->show();
+                    smoothcieyb->hide();
+                    smoothcieth->hide();
+                    smoothcielum->hide();
+                    smoothciehigh->hide();
+                    smoothcielnk->hide();
+                    smoothcieinv->hide();
 
                 } else {
                     contsig->hide();
@@ -12713,26 +12713,26 @@ void Locallabcie::updateGUIToMode(const modeType new_type)
                     smoothcieyb->hide();
                     smoothcieth->hide();
                     smoothcie->hide();
-    } else if(smoothciemet->get_active_row_number() == 6) {
-       contsig->hide();
-       skewsig->hide();
-       whitsig->hide();
-       smoothcie->hide();
-       slopesmo->hide();
-       slopesmor->hide();
-       slopesmog->hide();
-       slopesmob->hide();
-       kslopesmor->show();
-       kslopesmog->show();
-       kslopesmob->show();
-       smoothcietrc->show();
-       smoothcietrcrel->show();
-       smoothcieyb->hide();
-       smoothcieth->hide();
-       smoothcielum->hide();
-       smoothciehigh->hide();
-       smoothcielnk->hide();
-       smoothcieinv->hide();
+                } else if(smoothciemet->get_active_row_number() == 6) {
+                    contsig->hide();
+                    skewsig->hide();
+                    whitsig->hide();
+                    smoothcie->hide();
+                    slopesmo->hide();
+                    slopesmor->hide();
+                    slopesmog->hide();
+                    slopesmob->hide();
+                    kslopesmor->show();
+                    kslopesmog->show();
+                    kslopesmob->show();
+                    smoothcietrc->show();
+                    smoothcietrcrel->show();
+                    smoothcieyb->hide();
+                    smoothcieth->hide();
+                    smoothcielum->hide();
+                    smoothciehigh->hide();
+                    smoothcielnk->hide();
+                    smoothcieinv->hide();
 
                 } else {
                     contsig->hide();
