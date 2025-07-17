@@ -1143,6 +1143,8 @@ static void calcLocalParams(int sp, int oW, int oH, const LocallabParams& locall
 	//if need I will add an other smoothciemet  with variable 		
     } else if (locallab.spots.at(sp).smoothciemet == "sigm") {
         lp.smoothciem = 6;
+    } else if (locallab.spots.at(sp).smoothciemet == "trc") {
+        lp.smoothciem = 7;
     }
 
 
@@ -21699,8 +21701,8 @@ void ImProcFunctions::Lab_Local(
                    float ksb = 1.f;
                    float ksg = 1.f;
                    //gamtone, slotone
-                   /* comment this code - will probably not used with new PR GHS
-                   if(lp.smoothciem == 5) {
+                   //comment this code - will probably not used with new PR GHS
+                   if(lp.smoothciem == 7) {
                         ksr = params->locallab.spots.at(sp).kslopesmor;
                         float gamr = 2.4f * ksr;
                         float slr = 12.92f;
@@ -21775,6 +21777,16 @@ void ImProcFunctions::Lab_Local(
                         Color::calcGamma(pwrb, slb, g_ab); // call to calcGamma with selected gamma and slope
                         Imagefloat *srcp = nullptr;
                         srcp = new Imagefloat(bfw, bfh);
+  
+
+                        //LUT to inverse color
+                        LUTf rCurve;
+                        LUTf gCurve;
+                        LUTf bCurve;
+                        CurveFactory::RGBCurve(params->locallab.spots.at(sp).invcurve, rCurve, 1);//generated curve with inverse color
+                        CurveFactory::RGBCurve(params->locallab.spots.at(sp).invcurve, gCurve, 1);
+                        CurveFactory::RGBCurve(params->locallab.spots.at(sp).invcurve, bCurve, 1);
+                       
 
 #ifdef _OPENMP
         #pragma omp parallel for schedule(dynamic, 16) if (multiThread)
@@ -21791,6 +21803,7 @@ void ImProcFunctions::Lab_Local(
                                 srcp->r(i, j) =  r;
                                 srcp->g(i, j) =  g;
                                 srcp->b(i, j) =  b;
+
                             }
             
 #ifdef _OPENMP
@@ -21816,15 +21829,29 @@ void ImProcFunctions::Lab_Local(
                             }
                         }
                         delete srcp;
+                        
+                       if(params->locallab.spots.at(sp).smoothcietrc) {//invert color 
+#ifdef _OPENMP
+        #pragma omp parallel for schedule(dynamic, 16) if (multiThread)
+#endif
 
-                        tone_eqsmooth(this, tmpImage, lp, params->icm.workingProfile, sk, multiThread);//reduce Ev > 0 < 12
-                        if(params->locallab.spots.at(sp).smoothcietrc) {//add more control on highlights with gamma based 
-                            gambas = true;
+                            for (int i = 0; i < bfh; ++i)
+                                for (int j = 0; j < bfw; ++j) {
+                                    float rr = tmpImage->r(i, j); 
+                                    float gg = tmpImage->g(i, j);
+                                    float bb = tmpImage->b(i, j);
+                                    setUnlessOOG(rr, rCurve[rr]);
+                                    setUnlessOOG(gg, gCurve[gg]);
+                                    setUnlessOOG(bb, bCurve[gg]);
+                                    tmpImage->r(i, j) = rr;
+                                    tmpImage->g(i, j) = gg;
+                                    tmpImage->b(i, j) = bb;
+                               
+                                }
                         }
-
                     }
 					
-					*/
+				
                     if(lp.smoothciem == 6) {//Sigmoid - from Darktable
                         float middle_grey_contrast = params->locallab.spots.at(sp).contsig;
                         float contrast_skewness = params->locallab.spots.at(sp).skewsig;

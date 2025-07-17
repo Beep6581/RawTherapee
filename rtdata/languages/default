@@ -3115,6 +3115,7 @@ TP_LOCALLAB_CIE_SMOOTH_LEVELS;RGB channel Slope
 TP_LOCALLAB_CIE_SMOOTH_LEVELSTRC;RGB channel TRC
 TP_LOCALLAB_CIE_SMOOTH_NONE;None
 TP_LOCALLAB_CIE_SMOOTH_SIG;Sigmoid based
+TP_LOCALLAB_CIE_SMOOTH_TRC;TRC based
 TP_LOCALLAB_CIE_TOOLNAME;Color Appearance (CAM16 & JzCzHz)
 TP_LOCALLAB_CIRCRADIUS;Spot size
 TP_LOCALLAB_CIRCRAD_TOOLTIP;Contains the references of the spot, useful for shape detection (hue, luma, chroma, Sobel).\nLow values may be useful for processing foliage.\nHigh values may be useful for processing skin.
@@ -3802,7 +3803,7 @@ TP_LOCALLAB_SMOOTHCIE_LNK;Link R, G, & B
 TP_LOCALLAB_SMOOTHCIE_LUM;Luminosity mode
 TP_LOCALLAB_SMOOTHCIE_SCA;Scale Yb Scene
 TP_LOCALLAB_SMOOTHCIE_TOOLTIP;Completes the processing carried out by gamma, slope and midtones by causing a slight lowering of lights. Please note this does not replace Highlight reconstruction.\n\nGamma based and Slope based (Standard and Advanced) allow you to simulate a tone mapping using:\na) Scene conditions: Black-Ev, White-Ev, Mean luminance (Yb%)\nb) Viewing conditions: Mean luminance (Yb%).\n\nScale Yb Scene is function of White-Ev.\n\nSigmoid applies tone mapping with Contrast and Skew and Display White point allows you to adapt the white point to the peak luminance of the display device. Its position in the processing pipeline is not optimal so use with caution.\n\nThis new version of Sigmoid is incompatible with previous versions 5.11 and earlier.
-TP_LOCALLAB_SMOOTHCIE_TRC;Increase gamma-based attenuation
+TP_LOCALLAB_SMOOTHCIE_TRC;Invert color
 TP_LOCALLAB_SMOOTHCIE_TRCREL;Relative gamma mode
 TP_LOCALLAB_SMOOTHCIE_YB;Scale Yb Viewing
 TP_LOCALLAB_SMOOTHCONTSIG;Contrast

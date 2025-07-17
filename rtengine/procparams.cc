@@ -4993,6 +4993,13 @@ LocallabParams::LocallabSpot::LocallabSpot() :
     kslopesmor(1.),
     kslopesmog(1.),
     kslopesmob(1.),
+    invcurve{//set to 0, 1 and 1, 0 to inverse color
+        static_cast<double>(DCT_NURBS),
+        0.0,
+        1.0,
+        1.0,
+        0.0
+    },
     midtcie(0),
     grexl(0.1596),
     greyl(0.8404),
@@ -5897,6 +5904,7 @@ bool LocallabParams::LocallabSpot::operator ==(const LocallabSpot& other) const
         && jzcurve == other.jzcurve
         && czcurve == other.czcurve
         && czjzcurve == other.czjzcurve
+        && invcurve == other.invcurve
         && HHcurvejz == other.HHcurvejz
         && CHcurvejz == other.CHcurvejz
         && LHcurvejz == other.LHcurvejz
@@ -7924,9 +7932,9 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
                     saveToKeyfile(!pedited || spot_edited->softjzcie, "Locallab", "Softjzcie_" + index_str, spot.softjzcie, keyFile);
                     saveToKeyfile(!pedited || spot_edited->strsoftjzcie, "Locallab", "strSoftjzcie_" + index_str, spot.strsoftjzcie, keyFile);
                     saveToKeyfile(!pedited || spot_edited->thrhjzcie, "Locallab", "Thrhjzcie_" + index_str, spot.thrhjzcie, keyFile);
-                    saveToKeyfile(!pedited || spot_edited->CHcurvejz, "Locallab", "JzCurve_" + index_str, spot.jzcurve, keyFile);
-                    saveToKeyfile(!pedited || spot_edited->CHcurvejz, "Locallab", "CzCurve_" + index_str, spot.czcurve, keyFile);
-                    saveToKeyfile(!pedited || spot_edited->CHcurvejz, "Locallab", "CzJzCurve_" + index_str, spot.czjzcurve, keyFile);
+                    saveToKeyfile(!pedited || spot_edited->jzcurve, "Locallab", "JzCurve_" + index_str, spot.jzcurve, keyFile);
+                    saveToKeyfile(!pedited || spot_edited->czcurve, "Locallab", "CzCurve_" + index_str, spot.czcurve, keyFile);
+                    saveToKeyfile(!pedited || spot_edited->czjzcurve, "Locallab", "CzJzCurve_" + index_str, spot.czjzcurve, keyFile);
                     saveToKeyfile(!pedited || spot_edited->HHcurvejz, "Locallab", "HHCurvejz_" + index_str, spot.HHcurvejz, keyFile);
                     saveToKeyfile(!pedited || spot_edited->CHcurvejz, "Locallab", "CHCurvejz_" + index_str, spot.CHcurvejz, keyFile);
                     saveToKeyfile(!pedited || spot_edited->CHcurvejz, "Locallab", "LHCurvejz_" + index_str, spot.LHcurvejz, keyFile);
@@ -7983,6 +7991,8 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
                     saveToKeyfile(!pedited || spot_edited->kslopesmor, "Locallab", "kslopesmor_" + index_str, spot.kslopesmor, keyFile);
                     saveToKeyfile(!pedited || spot_edited->kslopesmog, "Locallab", "kslopesmog_" + index_str, spot.kslopesmog, keyFile);
                     saveToKeyfile(!pedited || spot_edited->kslopesmob, "Locallab", "kslopesmob_" + index_str, spot.kslopesmob, keyFile);
+                    saveToKeyfile(!pedited || spot_edited->invcurve, "Locallab", "invcurve_" + index_str, spot.invcurve, keyFile);
+                    
                     saveToKeyfile(!pedited || spot_edited->midtcie, "Locallab", "midtcie_" + index_str, spot.midtcie, keyFile);
                     saveToKeyfile(!pedited || spot_edited->redxl, "Locallab", "redxl_" + index_str, spot.redxl, keyFile);
                     saveToKeyfile(!pedited || spot_edited->redyl, "Locallab", "redyl_" + index_str, spot.redyl, keyFile);
@@ -10562,6 +10572,7 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
                 assignFromKeyfile(keyFile, "Locallab", "kslopesmor_" + index_str, spot.kslopesmor, spotEdited.kslopesmor);
                 assignFromKeyfile(keyFile, "Locallab", "kslopesmog_" + index_str, spot.kslopesmog, spotEdited.kslopesmog);
                 assignFromKeyfile(keyFile, "Locallab", "kslopesmob_" + index_str, spot.kslopesmob, spotEdited.kslopesmob);
+                assignFromKeyfile(keyFile, "Locallab", "invcurve_" + index_str, spot.invcurve, spotEdited.invcurve);               
                 assignFromKeyfile(keyFile, "Locallab", "grexl_" + index_str, spot.grexl, spotEdited.grexl);
                 assignFromKeyfile(keyFile, "Locallab", "greyl_" + index_str, spot.greyl, spotEdited.greyl);
                 assignFromKeyfile(keyFile, "Locallab", "bluxl_" + index_str, spot.bluxl, spotEdited.bluxl);

@@ -1105,6 +1105,7 @@ public:
         bool jzcurve;
         bool czcurve;
         bool czjzcurve;
+        bool invcurve;
         bool HHcurvejz;
         bool CHcurvejz;
         bool LHcurvejz;
