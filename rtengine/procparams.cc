@@ -4789,6 +4789,7 @@ LocallabParams::LocallabSpot::LocallabSpot() :
     smoothcielum(false),
     smoothciehigh(true),
     smoothcielnk(true),
+    smoothcieinv(false),
     logjz(false),
     sigjz12(false),
     sigjz(false),
@@ -5872,6 +5873,7 @@ bool LocallabParams::LocallabSpot::operator ==(const LocallabSpot& other) const
         && smoothcielum == other.smoothcielum
         && smoothciehigh == other.smoothciehigh
         && smoothcielnk == other.smoothcielnk
+        && smoothcieinv == other.smoothcieinv
         && logjz == other.logjz
         && sigjz12 == other.sigjz12
         && sigjz == other.sigjz
@@ -7903,6 +7905,7 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
                     saveToKeyfile(!pedited || spot_edited->smoothcielum, "Locallab", "smoothcielum_" + index_str, spot.smoothcielum, keyFile);
                     saveToKeyfile(!pedited || spot_edited->smoothciehigh, "Locallab", "smoothciehigh_" + index_str, spot.smoothciehigh, keyFile);
                     saveToKeyfile(!pedited || spot_edited->smoothcielnk, "Locallab", "smoothcielnk_" + index_str, spot.smoothcielnk, keyFile);
+                    saveToKeyfile(!pedited || spot_edited->smoothcieinv, "Locallab", "smoothcieinv_" + index_str, spot.smoothcieinv, keyFile);
                     saveToKeyfile(!pedited || spot_edited->logjz, "Locallab", "Logjz_" + index_str, spot.logjz, keyFile);
                     saveToKeyfile(!pedited || spot_edited->sigjz12, "Locallab", "Sigjz12_" + index_str, spot.sigjz12, keyFile);
                     saveToKeyfile(!pedited || spot_edited->sigjz, "Locallab", "Sigjz_" + index_str, spot.sigjz, keyFile);
@@ -10443,6 +10446,7 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
                 assignFromKeyfile(keyFile, "Locallab", "smoothcielum_" + index_str, spot.smoothcielum, spotEdited.smoothcielum);
                 assignFromKeyfile(keyFile, "Locallab", "smoothciehigh_" + index_str, spot.smoothciehigh, spotEdited.smoothciehigh);
                 assignFromKeyfile(keyFile, "Locallab", "smoothcielnk_" + index_str, spot.smoothcielnk, spotEdited.smoothcielnk);
+                assignFromKeyfile(keyFile, "Locallab", "smoothcieinv_" + index_str, spot.smoothcieinv, spotEdited.smoothcieinv);
                 assignFromKeyfile(keyFile, "Locallab", "Logjz_" + index_str, spot.logjz, spotEdited.logjz);
                 assignFromKeyfile(keyFile, "Locallab", "Sigjz12_" + index_str, spot.sigjz12, spotEdited.sigjz12);
                 assignFromKeyfile(keyFile, "Locallab", "Sigjz_" + index_str, spot.sigjz, spotEdited.sigjz);

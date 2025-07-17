@@ -8139,6 +8139,7 @@ Locallabcie::Locallabcie():
     midtcie(Gtk::manage(new Adjuster(M("TP_LOCALLAB_MIDTCIE"), -100, 100, 1, 0))),
     smoothcie(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_SMOOTHCIE_SCA")))),
     smoothcielnk(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_SMOOTHCIE_LNK")))),
+    smoothcieinv(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_SMOOTHCIE_TRC")))),
     smoothcietrc(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_SMOOTHCIE_TRC")))),
     smoothcietrcrel(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_SMOOTHCIE_TRCREL")))),
     smoothcieyb(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_SMOOTHCIE_YB")))),
@@ -8328,6 +8329,7 @@ Locallabcie::Locallabcie():
     Evlocallabkslopesmob = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_CIE_KSLOPESMOB");
     Evlocallabsmoothcie = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_CIE_SMOOTH");
     Evlocallabsmoothcielnk = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_CIE_SMOOTHLNK");
+    Evlocallabsmoothcieinv = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_CIE_SMOOTHINV");
     Evlocallabsmoothcietrc = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_CIE_SMOOTHTRC");
     Evlocallabsmoothcietrcrel = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_CIE_SMOOTHTRCREL");
     Evlocallabsmoothcieyb = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_CIE_SMOOTHYB");
@@ -8658,6 +8660,7 @@ Locallabcie::Locallabcie():
     ciesmoothBox->pack_start(*skewsig);
     ciesmoothBox->pack_start(*whitsig);
     ciesmoothBox->pack_start(*smoothcielnk);
+    ciesmoothBox->pack_start(*smoothcieinv);
     ciesmoothBox->pack_start(*smoothciehigh);
     ciesmoothBox->pack_start(*smoothcielum);
     ciesmoothBox->pack_start(*smoothcieyb);
@@ -8933,6 +8936,7 @@ Locallabcie::Locallabcie():
     logcieqconn = logcieq->signal_toggled().connect(sigc::mem_fun(*this, &Locallabcie::logcieqChanged));
     smoothcieconn = smoothcie->signal_toggled().connect(sigc::mem_fun(*this, &Locallabcie::smoothcieChanged));
     smoothcielnkconn = smoothcielnk->signal_toggled().connect(sigc::mem_fun(*this, &Locallabcie::smoothcielnkChanged));
+    smoothcieinvconn = smoothcieinv->signal_toggled().connect(sigc::mem_fun(*this, &Locallabcie::smoothcieinvChanged));
     smoothcietrcconn = smoothcietrc->signal_toggled().connect(sigc::mem_fun(*this, &Locallabcie::smoothcietrcChanged));
     smoothcietrcrelconn = smoothcietrcrel->signal_toggled().connect(sigc::mem_fun(*this, &Locallabcie::smoothcietrcrelChanged));
     smoothcieybconn = smoothcieyb->signal_toggled().connect(sigc::mem_fun(*this, &Locallabcie::smoothcieybChanged));
@@ -9648,6 +9652,7 @@ void Locallabcie::disableListener()
     logcieqconn.block(true);
     smoothcieconn.block(true);
     smoothcielnkconn.block(true);
+    smoothcieinvconn.block(true);
     smoothcietrcconn.block(true);
     smoothcietrcrelconn.block(true);
     smoothcieybconn.block(true);
@@ -9699,6 +9704,7 @@ void Locallabcie::enableListener()
     logcieqconn.block(false);
     smoothcieconn.block(false);
     smoothcielnkconn.block(false);
+    smoothcieinvconn.block(false);
     smoothcietrcconn.block(false);
     smoothcietrcrelconn.block(false);
     smoothcieybconn.block(false);
@@ -10046,6 +10052,7 @@ void Locallabcie::read(const rtengine::procparams::ProcParams* pp, const ParamsE
         logcieq->set_active(spot.logcieq);
         smoothcie->set_active(spot.smoothcie);
         smoothcielnk->set_active(spot.smoothcielnk);
+        smoothcieinv->set_active(spot.smoothcieinv);
         smoothcietrc->set_active(spot.smoothcietrc);
         smoothcietrcrel->set_active(spot.smoothcietrcrel);
         smoothcieyb->set_active(spot.smoothcieyb);
@@ -10080,6 +10087,7 @@ void Locallabcie::read(const rtengine::procparams::ProcParams* pp, const ParamsE
         logcieqChanged();
         smoothcieChanged();
         smoothcielnkChanged();
+        smoothcieinvChanged();
         smoothcietrcChanged();
         smoothcietrcrelChanged();
         smoothcieybChanged();
@@ -10368,6 +10376,7 @@ void Locallabcie::write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedi
         spot.logcieq = logcieq->get_active();
         spot.smoothcie = smoothcie->get_active();
         spot.smoothcielnk = smoothcielnk->get_active();
+        spot.smoothcieinv = smoothcieinv->get_active();
         spot.smoothcietrc = smoothcietrc->get_active();
         spot.smoothcietrcrel = smoothcietrcrel->get_active();
         spot.smoothcieyb = smoothcieyb->get_active();
@@ -11100,6 +11109,21 @@ void Locallabcie::smoothcielnkChanged()
     }
 }
 
+void Locallabcie::smoothcieinvChanged()   
+{
+    if (isLocActivated && exp->getEnabled()) {
+        if (listener) {
+            if (smoothcieinv->get_active()) {
+                listener->panelChanged(Evlocallabsmoothcieinv,
+                                       M("GENERAL_ENABLED") + " (" + escapeHtmlChars(getSpotName()) + ")");
+            } else {
+                listener->panelChanged(Evlocallabsmoothcieinv,
+                                       M("GENERAL_DISABLED") + " (" + escapeHtmlChars(getSpotName()) + ")");
+            }
+        }
+    }
+}
+
 void Locallabcie::smoothcietrcChanged()
 {
     if (smoothcietrc->get_active()) {
@@ -11648,6 +11672,7 @@ void Locallabcie::smoothciemetChanged()
        smoothcielum->hide();
        smoothciehigh->hide();
        smoothcielnk->hide();
+       smoothcieinv->hide();
        
     } else if(smoothciemet->get_active_row_number() == 4) {
        contsig->hide();
@@ -11666,6 +11691,7 @@ void Locallabcie::smoothciemetChanged()
        smoothcielum->show();
        smoothciehigh->show();
        smoothcielnk->show();
+       smoothcieinv->show();
        smoothcieyb->show();
        if (smoothciehigh->get_active()) {
             smoothcieth->show();
@@ -11692,6 +11718,7 @@ void Locallabcie::smoothciemetChanged()
        smoothcielum->hide();
        smoothciehigh->hide();
        smoothcielnk->hide();
+       smoothcieinv->hide();
     } else if(smoothciemet->get_active_row_number() == 6) {
        contsig->hide();
        skewsig->hide();
@@ -11711,6 +11738,7 @@ void Locallabcie::smoothciemetChanged()
        smoothcielum->hide();
        smoothciehigh->hide();
        smoothcielnk->hide();
+       smoothcieinv->hide();
     } else {
        contsig->hide();
        skewsig->hide();
@@ -11728,6 +11756,7 @@ void Locallabcie::smoothciemetChanged()
        smoothcielum->hide();
        smoothciehigh->hide();
        smoothcielnk->hide();
+       smoothcieinv->hide();
        smoothcieyb->hide();
        smoothcieth->hide();
     }
@@ -12001,6 +12030,7 @@ void Locallabcie::updateGUIToMode(const modeType new_type)
             smoothcieyb->hide();
             smoothciehigh->hide();
             smoothcielnk->hide();
+            smoothcieinv->hide();
             sigmoidblcie12->hide();
             if (modecam->get_active_row_number() == 0) {
                 bevwevFrame->show();
@@ -12031,6 +12061,7 @@ void Locallabcie::updateGUIToMode(const modeType new_type)
                     smoothcielum->hide();
                     smoothciehigh->hide();
                     smoothcielnk->hide();
+                    smoothcieinv->hide();
                     smoothcieyb->hide();
                     smoothcieth->hide();
                 } else if(smoothciemet->get_active_row_number() == 4) {
@@ -12049,6 +12080,7 @@ void Locallabcie::updateGUIToMode(const modeType new_type)
                     smoothcie->show();
                     smoothcielum->hide();
                     smoothcielnk->show();
+                    smoothcieinv->show();
                     smoothciehigh->show();
                     if (smoothciehigh->get_active()) {
                        smoothcieth->show();
@@ -12071,6 +12103,7 @@ void Locallabcie::updateGUIToMode(const modeType new_type)
                     smoothcielum->hide();
                     smoothciehigh->hide();
                     smoothcielnk->hide();
+                    smoothcieinv->hide();
                     contsig->show();
                     smoothcie->hide();
                     skewsig->show();
@@ -12094,6 +12127,7 @@ void Locallabcie::updateGUIToMode(const modeType new_type)
        smoothcielum->hide();
        smoothciehigh->hide();
        smoothcielnk->hide();
+       smoothcieinv->hide();
 
                 } else {
                     contsig->hide();
@@ -12112,6 +12146,7 @@ void Locallabcie::updateGUIToMode(const modeType new_type)
                     smoothcielum->hide();
                     smoothciehigh->hide();
                     smoothcielnk->hide();
+                    smoothcieinv->hide();
                     smoothcieyb->hide();
                     smoothcieth->hide();
                 }
@@ -12257,6 +12292,7 @@ void Locallabcie::updateGUIToMode(const modeType new_type)
                     smoothcielum->hide();
                     smoothciehigh->hide();
                     smoothcielnk->hide();
+                    smoothcieinv->hide();
                     smoothcieyb->hide();
                     smoothcieth->hide();
                 } else if(smoothciemet->get_active_row_number() == 4) {
@@ -12276,6 +12312,7 @@ void Locallabcie::updateGUIToMode(const modeType new_type)
                     smoothcielum->hide();
                     smoothciehigh->show();
                     smoothcielnk->show();
+                    smoothcieinv->show();
                     smoothcieyb->hide();
                     if (smoothciehigh->get_active()) {
                         smoothcieth->show();
@@ -12299,6 +12336,7 @@ void Locallabcie::updateGUIToMode(const modeType new_type)
                     smoothcielum->hide();
                     smoothciehigh->hide();
                     smoothcielnk->hide();
+                    smoothcieinv->hide();
                     smoothcieyb->hide();
                     smoothcieth->hide();
                     smoothcie->hide();
@@ -12321,6 +12359,7 @@ void Locallabcie::updateGUIToMode(const modeType new_type)
        smoothcielum->hide();
        smoothciehigh->hide();
        smoothcielnk->hide();
+       smoothcieinv->hide();
                     
                 } else {
                     contsig->hide();
@@ -12339,6 +12378,7 @@ void Locallabcie::updateGUIToMode(const modeType new_type)
                     smoothcielum->hide();
                     smoothciehigh->hide();
                     smoothcielnk->hide();
+                    smoothcieinv->hide();
                     smoothcieyb->hide();
                     smoothcieth->hide();
                 }
@@ -12472,6 +12512,7 @@ void Locallabcie::updateGUIToMode(const modeType new_type)
                     smoothcielum->hide();
                     smoothciehigh->hide();
                     smoothcielnk->hide();
+                    smoothcieinv->hide();
                     smoothcieyb->hide();
                     smoothcieth->hide();
                 } else if(smoothciemet->get_active_row_number() == 4) {
@@ -12491,6 +12532,7 @@ void Locallabcie::updateGUIToMode(const modeType new_type)
                     smoothcielum->show();
                     smoothciehigh->show();
                     smoothcielnk->show();
+                    smoothcieinv->show();
                     smoothcieyb->show();
                     if (smoothciehigh->get_active()) {
                         smoothcieth->show();
@@ -12513,6 +12555,7 @@ void Locallabcie::updateGUIToMode(const modeType new_type)
                     smoothcielum->hide();
                     smoothciehigh->hide();
                     smoothcielnk->hide();
+                    smoothcieinv->hide();
                     smoothcieyb->hide();
                     smoothcieth->hide();
                     smoothcie->hide();
@@ -12535,6 +12578,7 @@ void Locallabcie::updateGUIToMode(const modeType new_type)
        smoothcielum->hide();
        smoothciehigh->hide();
        smoothcielnk->hide();
+       smoothcieinv->hide();
 
                 } else {
                     contsig->hide();
@@ -12552,6 +12596,7 @@ void Locallabcie::updateGUIToMode(const modeType new_type)
                     smoothcie->hide();
                     smoothciehigh->hide();
                     smoothcielnk->hide();
+                    smoothcieinv->hide();
                     smoothcielum->hide();
                     smoothcieyb->hide();
                     smoothcieth->hide();
@@ -12620,6 +12665,7 @@ void Locallabcie::updateGUIToMode(const modeType new_type)
                     smoothcielum->hide();
                     smoothciehigh->hide();
                     smoothcielnk->hide();
+                    smoothcieinv->hide();
                     smoothcieyb->hide();
                     smoothcieth->hide();
                 } else if(smoothciemet->get_active_row_number() == 4) {
@@ -12639,6 +12685,7 @@ void Locallabcie::updateGUIToMode(const modeType new_type)
                     smoothcielum->show();
                     smoothciehigh->show();
                     smoothcielnk->show();
+                    smoothcieinv->show();
                     smoothcieyb->show();
                     if (smoothciehigh->get_active()) {
                         smoothcieth->show();
@@ -12662,6 +12709,7 @@ void Locallabcie::updateGUIToMode(const modeType new_type)
                     smoothcielum->hide();
                     smoothciehigh->hide();
                     smoothcielnk->hide();
+                    smoothcieinv->hide();
                     smoothcieyb->hide();
                     smoothcieth->hide();
                     smoothcie->hide();
@@ -12684,6 +12732,7 @@ void Locallabcie::updateGUIToMode(const modeType new_type)
        smoothcielum->hide();
        smoothciehigh->hide();
        smoothcielnk->hide();
+       smoothcieinv->hide();
 
                 } else {
                     contsig->hide();
@@ -12702,6 +12751,7 @@ void Locallabcie::updateGUIToMode(const modeType new_type)
                     smoothcielum->hide();
                     smoothciehigh->hide();
                     smoothcielnk->hide();
+                    smoothcieinv->hide();
                     smoothcieyb->hide();
                     smoothcieth->hide();
                 }
@@ -12817,6 +12867,7 @@ void Locallabcie::updatecieGUI()
             smoothcielum->hide();
             smoothciehigh->hide();
             smoothcielnk->hide();
+            smoothcieinv->hide();
             smoothcieyb->hide();
             smoothcieth->hide();
         } else if(smoothciemet->get_active_row_number() == 4) {
@@ -12848,6 +12899,7 @@ void Locallabcie::updatecieGUI()
 
             smoothciehigh->show();
             smoothcielnk->show();
+            smoothcieinv->show();
        
         } else if(smoothciemet->get_active_row_number() == 5) {
                     contsig->show();
@@ -12868,6 +12920,7 @@ void Locallabcie::updatecieGUI()
                     smoothcielum->hide();
                     smoothciehigh->hide();
                     smoothcielnk->hide();
+                    smoothcieinv->hide();
                     smoothcieyb->hide();
                     smoothcieth->hide();
                     smoothcie->hide();
@@ -12890,6 +12943,7 @@ void Locallabcie::updatecieGUI()
        smoothcielum->hide();
        smoothciehigh->hide();
        smoothcielnk->hide();
+       smoothcieinv->hide();
 
         } else {
             contsig->hide();
@@ -12908,6 +12962,7 @@ void Locallabcie::updatecieGUI()
             smoothcielum->hide();
             smoothciehigh->hide();
             smoothcielnk->hide();
+            smoothcieinv->hide();
             smoothcieyb->hide();
             smoothcieth->hide();
         }

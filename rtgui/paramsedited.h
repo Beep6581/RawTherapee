@@ -1073,6 +1073,7 @@ public:
         bool smoothcielum;
         bool smoothciehigh;
         bool smoothcielnk;
+        bool smoothcieinv;
         bool logjz;
         bool sigjz12;
         bool sigjz;

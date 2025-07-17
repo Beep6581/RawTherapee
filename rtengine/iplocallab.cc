@@ -21570,6 +21570,14 @@ void ImProcFunctions::Lab_Local(
                     
                     lab2rgb(*bufexpfin, *tmpImage, params->icm.workingProfile);
                     Glib::ustring prof = params->icm.workingProfile;
+                        
+                        //LUT to inverse color
+                    LUTf rCurve;
+                    LUTf gCurve;
+                    LUTf bCurve;
+                    CurveFactory::RGBCurve(params->locallab.spots.at(sp).invcurve, rCurve, 1);//generated curve with inverse color
+                    CurveFactory::RGBCurve(params->locallab.spots.at(sp).invcurve, gCurve, 1);
+                    CurveFactory::RGBCurve(params->locallab.spots.at(sp).invcurve, bCurve, 1);
 
                     float gamtone = params->locallab.spots.at(sp).gamjcie;
                     float slotone = params->locallab.spots.at(sp).slopjcie;
@@ -21778,15 +21786,6 @@ void ImProcFunctions::Lab_Local(
                         Imagefloat *srcp = nullptr;
                         srcp = new Imagefloat(bfw, bfh);
   
-
-                        //LUT to inverse color
-                        LUTf rCurve;
-                        LUTf gCurve;
-                        LUTf bCurve;
-                        CurveFactory::RGBCurve(params->locallab.spots.at(sp).invcurve, rCurve, 1);//generated curve with inverse color
-                        CurveFactory::RGBCurve(params->locallab.spots.at(sp).invcurve, gCurve, 1);
-                        CurveFactory::RGBCurve(params->locallab.spots.at(sp).invcurve, bCurve, 1);
-                       
 
 #ifdef _OPENMP
         #pragma omp parallel for schedule(dynamic, 16) if (multiThread)
@@ -22030,6 +22029,27 @@ void ImProcFunctions::Lab_Local(
                                 }
                             }
                         }
+                        
+                       if(params->locallab.spots.at(sp).smoothcieinv && lp.smoothciem == 4) {//invert color with RGB slope
+#ifdef _OPENMP
+        #pragma omp parallel for schedule(dynamic, 16) if (multiThread)
+#endif
+
+                            for (int i = 0; i < bfh; ++i)
+                                for (int j = 0; j < bfw; ++j) {
+                                    float rr = tmpImage->r(i, j); 
+                                    float gg = tmpImage->g(i, j);
+                                    float bb = tmpImage->b(i, j);
+                                    setUnlessOOG(rr, rCurve[rr]);
+                                    setUnlessOOG(gg, gCurve[gg]);
+                                    setUnlessOOG(bb, bCurve[gg]);
+                                    tmpImage->r(i, j) = rr;
+                                    tmpImage->g(i, j) = gg;
+                                    tmpImage->b(i, j) = bb;
+                               
+                                }
+                        }
+                        
                     } 
                     rgb2lab(*tmpImage, *bufexpfin, params->icm.workingProfile);
 
