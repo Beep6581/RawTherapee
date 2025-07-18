@@ -4981,7 +4981,7 @@ LocallabParams::LocallabSpot::LocallabSpot() :
     strcielog(80.),
     comprcieth(6.),
     gamjcie(2.4),
-    smoothcieth(1.),
+    smoothcieth(1.0),
     smoothciethtrc(0.),
     slopjcie(12.923),
     contsig(1.15),

@@ -11131,13 +11131,7 @@ void Locallabcie::smoothcieinvChanged()
 }
 
 void Locallabcie::smoothcietrcChanged()
-{  /*
-    if (smoothcietrc->get_active()) {
-        smoothcieth->show();
-    } else {
-        smoothcieth->hide();
-    }
-    */
+{  
     if (isLocActivated && exp->getEnabled()) {
         if (listener) {
             if (smoothcietrc->get_active()) {
@@ -11198,12 +11192,13 @@ void Locallabcie::smoothcielumChanged()
 
 void Locallabcie::smoothciehighChanged()
 {
+    /*
     if (smoothciehigh->get_active()) {
         smoothcieth->show();
     } else {
         smoothcieth->hide();
     }
-    
+ */   
     if (isLocActivated && exp->getEnabled()) {
         if (listener) {
             if (smoothciehigh->get_active()) {
@@ -11701,11 +11696,11 @@ void Locallabcie::smoothciemetChanged()
        smoothcielnk->show();
        smoothcieinv->show();
        smoothcieyb->show();
-       if (smoothciehigh->get_active()) {
+     //  if (smoothciehigh->get_active()) {
             smoothcieth->show();
-        } else {
-            smoothcieth->hide();
-        }   
+     //   } else {
+      //      smoothcieth->hide();
+     //   }   
 
     } else if(smoothciemet->get_active_row_number() == 5) {
        contsig->show();
@@ -12094,11 +12089,11 @@ void Locallabcie::updateGUIToMode(const modeType new_type)
                     smoothcielnk->show();
                     smoothcieinv->show();
                     smoothciehigh->show();
-                    if (smoothciehigh->get_active()) {
+                //    if (smoothciehigh->get_active()) {
                        smoothcieth->show();
-                    } else {
-                        smoothcieth->hide();
-                    } 
+                //    } else {
+                //        smoothcieth->hide();
+                //    } 
                     smoothciethtrc->hide();
                     
                     smoothcieyb->hide();
@@ -12333,11 +12328,11 @@ void Locallabcie::updateGUIToMode(const modeType new_type)
                     smoothcielnk->show();
                     smoothcieinv->show();
                     smoothcieyb->hide();
-                    if (smoothciehigh->get_active()) {
+                 //   if (smoothciehigh->get_active()) {
                         smoothcieth->show();
-                    } else {
-                        smoothcieth->hide();
-                    } 
+                 //   } else {
+                 //       smoothcieth->hide();
+                 //   } 
                     smoothciethtrc->hide();
 
                 } else if(smoothciemet->get_active_row_number() == 5) {
@@ -12561,11 +12556,11 @@ void Locallabcie::updateGUIToMode(const modeType new_type)
                     smoothcielnk->show();
                     smoothcieinv->show();
                     smoothcieyb->show();
-                    if (smoothciehigh->get_active()) {
+                 //   if (smoothciehigh->get_active()) {
                         smoothcieth->show();
-                    } else {
-                        smoothcieth->hide();
-                    }
+                 //   } else {
+                  //      smoothcieth->hide();
+                 //   }
                     smoothciethtrc->hide();
                     
                 } else if(smoothciemet->get_active_row_number() == 5) {
@@ -12723,11 +12718,11 @@ void Locallabcie::updateGUIToMode(const modeType new_type)
                     smoothcielnk->show();
                     smoothcieinv->show();
                     smoothcieyb->show();
-                    if (smoothciehigh->get_active()) {
+               //     if (smoothciehigh->get_active()) {
                         smoothcieth->show();
-                    } else {
-                        smoothcieth->hide();
-                    }   
+               //     } else {
+                //        smoothcieth->hide();
+               //     }   
                     smoothciethtrc->hide();
 
                 } else if(smoothciemet->get_active_row_number() == 5) {
@@ -12932,11 +12927,11 @@ void Locallabcie::updatecieGUI()
                 smoothcielum->hide();
                 smoothcieyb->hide();
             }
-            if (smoothciehigh->get_active()) {
+         //   if (smoothciehigh->get_active()) {
                 smoothcieth->show();
-            } else {
-                smoothcieth->hide();
-            }   
+         //   } else {
+         //       smoothcieth->hide();
+         //   }   
             smoothciethtrc->hide();
 
             smoothciehigh->show();

@@ -3130,11 +3130,12 @@ void ImProcFunctions::tonemapFreeman(float target_slope, float target_sloper, fl
         float sloplimb = 1.f;
         if(limslope) {
             rolloff = true;
-            
-            sloplimr *= smooththreshold;
-            sloplimg *= smooththreshold;
-            sloplimb *= smooththreshold;
-        }
+        }  
+        //always apply threshold
+        sloplimr *= smooththreshold;
+        sloplimg *= smooththreshold;
+        sloplimb *= smooththreshold;
+        
         for (int i = 0; i < 65536; ++i) {// i - value image RGB
             lutr[i] = get_freeman_parameters(float(i) / 65535.f, rolloff, mid_gray_scene_, gammar, sloplimr, dr, b, c, kmid);//call main function
             lutg[i] = get_freeman_parameters(float(i) / 65535.f, rolloff, mid_gray_scene_, gammag, sloplimg, dr, b, c, kmid);//call main function
