@@ -21582,9 +21582,9 @@ void ImProcFunctions::Lab_Local(
                     LUTf rCurve;
                     LUTf gCurve;
                     LUTf bCurve;
-                    CurveFactory::RGBCurve(params->locallab.spots.at(sp).invcurve, rCurve, 1);//generated curve with inverse color
-                    CurveFactory::RGBCurve(params->locallab.spots.at(sp).invcurve, gCurve, 1);
-                    CurveFactory::RGBCurve(params->locallab.spots.at(sp).invcurve, bCurve, 1);
+                    CurveFactory::RGBCurve(params->locallab.spots.at(sp).invcurve, rCurve, sk);//generated curve with inverse color
+                    CurveFactory::RGBCurve(params->locallab.spots.at(sp).invcurve, gCurve, sk);
+                    CurveFactory::RGBCurve(params->locallab.spots.at(sp).invcurve, bCurve, sk);
 
                     float gamtone = params->locallab.spots.at(sp).gamjcie;
                     float slotone = params->locallab.spots.at(sp).slopjcie;
