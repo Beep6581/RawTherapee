@@ -100,6 +100,7 @@ protected:
     rtengine::ProcEvent Evlocallabsmoothcielnk;
     rtengine::ProcEvent Evlocallabsmoothcieinv;
     rtengine::ProcEvent Evlocallabsmoothcieth;
+    rtengine::ProcEvent Evlocallabsmoothciethtrc;
     rtengine::ProcEvent Evlocallabsmoothcietrc;
     rtengine::ProcEvent Evlocallabsmoothcietrcrel;
     rtengine::ProcEvent Evlocallabsmoothcieyb;
@@ -1906,6 +1907,8 @@ private:
     Adjuster* const kslopesmor;
     Adjuster* const kslopesmog;
     Adjuster* const kslopesmob;
+    Adjuster* const smoothciethtrc;
+    
     Adjuster* const contsig;
     Adjuster* const skewsig;
     Adjuster* const whitsig;

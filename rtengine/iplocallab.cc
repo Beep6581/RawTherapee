@@ -1046,6 +1046,7 @@ struct local_params {
     int moka;
     int sursouci;
     int smoothciem;
+    float smoothtrc;
 
 };
 
@@ -1146,6 +1147,7 @@ static void calcLocalParams(int sp, int oW, int oH, const LocallabParams& locall
     } else if (locallab.spots.at(sp).smoothciemet == "trc") {
         lp.smoothciem = 7;
     }
+    lp.smoothtrc = locallab.spots.at(sp).smoothciethtrc;
 
 
     if (locallab.spots.at(sp).spotMethod == "norm") {
@@ -2931,6 +2933,10 @@ void tone_eqsmooth(ImProcFunctions *ipf, Imagefloat *rgb, const struct local_par
     params.bands[5] = -100;//8 Ev and above
     if(lp.whiteevjz < 6) {//EV = 6 majority of images
         params.bands[4] = -15;
+    }
+    if(lp.smoothtrc != 0) {//RGB TRC
+        params.bands[4] = -30 * lp.smoothtrc;
+        params.bands[5] = -10 * lp.smoothtrc;
     }
     if(lp.islogcie || lp.issmoothghs) {//with log encoding Cie and GHS shadows Highlight
         if(!lp.issmoothghs) {
@@ -21848,6 +21854,10 @@ void ImProcFunctions::Lab_Local(
                                
                                 }
                         }
+                        if(lp.smoothtrc > 0.f) {
+                            tone_eqsmooth(this, tmpImage, lp, params->icm.workingProfile, sk, multiThread);//reduce Ev > 0 < 12
+                        }
+                        
                     }
 					
 				

@@ -1142,6 +1142,7 @@ public:
         bool comprcieth;
         bool gamjcie;
         bool smoothcieth;
+        bool smoothciethtrc;
         bool slopjcie;
         bool contsig;
         bool skewsig;

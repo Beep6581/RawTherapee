@@ -1810,6 +1810,7 @@ struct LocallabParams {
         double comprcieth;
         double gamjcie;
         double smoothcieth;
+        double smoothciethtrc;
         double slopjcie;
         double contsig;
         double skewsig;
