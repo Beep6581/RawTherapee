@@ -1141,7 +1141,6 @@ static void calcLocalParams(int sp, int oW, int oH, const LocallabParams& locall
         lp.smoothciem = 3;
     } else if (locallab.spots.at(sp).smoothciemet == "level") {
         lp.smoothciem = 4;
-	//if need I will add an other smoothciemet  with variable 		
     } else if (locallab.spots.at(sp).smoothciemet == "sigm") {
         lp.smoothciem = 6;
     } else if (locallab.spots.at(sp).smoothciemet == "trc") {
@@ -21716,12 +21715,13 @@ void ImProcFunctions::Lab_Local(
                    float ksb = 1.f;
                    float ksg = 1.f;
                    //gamtone, slotone
-                   //comment this code - will probably not used with new PR GHS
-                   if(lp.smoothciem == 7) {
+                   //
+                   if(lp.smoothciem == 7) {//TRC mode
+                                            
                         ksr = params->locallab.spots.at(sp).kslopesmor;
                         float gamr = 2.4f * ksr;
                         float slr = 12.92f;
-                        if(!params->locallab.spots.at(sp).smoothcietrcrel) {
+                        if(!params->locallab.spots.at(sp).smoothcietrcrel) {//relative gamma
                             gamr = 2.4f * ksr;
                             slr = 12.92f;
                             if(gamr < 2.f) {
@@ -21846,15 +21846,22 @@ void ImProcFunctions::Lab_Local(
                                     float rr = tmpImage->r(i, j); 
                                     float gg = tmpImage->g(i, j);
                                     float bb = tmpImage->b(i, j);
-                                    setUnlessOOG(rr, rCurve[rr]);
-                                    setUnlessOOG(gg, gCurve[gg]);
-                                    setUnlessOOG(bb, bCurve[gg]);
+                                    if (rCurve) {
+                                        setUnlessOOG(rr, rCurve[rr]);
+                                    }
+                                    if (gCurve) {
+                                        setUnlessOOG(gg, gCurve[gg]);
+                                    }
+                                    if (bCurve) {
+                                        setUnlessOOG(bb, bCurve[gg]);
+                                    }
                                     tmpImage->r(i, j) = rr;
                                     tmpImage->g(i, j) = gg;
                                     tmpImage->b(i, j) = bb;
                                
                                 }
                         }
+                        
                         if(lp.smoothtrc > 0.f) {
                             tone_eqsmooth(this, tmpImage, lp, params->icm.workingProfile, sk, multiThread);//reduce Ev > 0 < 12
                         }
@@ -21897,7 +21904,7 @@ void ImProcFunctions::Lab_Local(
                     }
                     if(lp.smoothciem == 1) {
                         tone_eqsmooth(this, tmpImage, lp, params->icm.workingProfile, sk, multiThread);//reduce Ev > 0 < 12
-                    } else if(lp.smoothciem == 2  || lp.smoothciem == 3 || lp.smoothciem == 4 || (gambas && lp.smoothciem == 5)) {//  2 - only smmoth highlightd  - 3 - Tone mapping with slope and mid_grey
+                    } else if(lp.smoothciem == 2  || lp.smoothciem == 3 || lp.smoothciem == 4) {//  2 - only smmoth highlightd  - 3 - Tone mapping with slope and mid_grey
 
                         //TonemapFreeman - Copyright (c) 2023 Thatcher Freeman
                         float mid_gray = 0.01f * lp.sourcegraycie;//Mean luminance Yb Scene
@@ -21919,11 +21926,6 @@ void ImProcFunctions::Lab_Local(
                         float slopsmootb = 1.f - ((float) params->locallab.spots.at(sp).slopesmob - 1.f);
                         slopeg = params->locallab.spots.at(sp).slopesmog; 
                         linkrgb = params->locallab.spots.at(sp).smoothcielnk;
-                        if(gambas  && lp.smoothciem == 5) {
-                            slopsmootr = 1.f - (ksr - 1.f);
-                            slopsmootg = 1.f - (ksg - 1.f);
-                            slopsmootb = 1.f - (ksb - 1.f);
-                        }
                         float smooththreshold = params->locallab.spots.at(sp).smoothcieth;
                         bool takeyb = params->locallab.spots.at(sp).smoothcieyb;
                         bool lummod = params->locallab.spots.at(sp).smoothcielum;
@@ -21944,11 +21946,8 @@ void ImProcFunctions::Lab_Local(
                             slopegrayb = slopsmoot;
                             mode = 3;
                         }//modify slope
-                        if(lp.smoothciem == 4 || (gambas && lp.smoothciem == 5)) {//levels
+                        if(lp.smoothciem == 4) {//levels
                             rolloff = false;//allows tone-mapping slope
-                            if(gambas && lp.smoothciem == 5) {
-                                rolloff = true;
-                            }
                             if(slopsmootr < 0.1f) {
                                 slopsmootr = aa * slopsmootr + bb;
                             }
@@ -21971,11 +21970,8 @@ void ImProcFunctions::Lab_Local(
                         
                         bool scale = lp.issmoothcie;//scale Yb mid_gray - WhiteEv and BlavkEv
                         bool limslope = lumhigh;
-                        if(gambas && lp.smoothciem == 5) {
-                           limslope = true;
-                        }
                         tonemapFreeman(slopegray, slopegrayr, slopegrayg, slopegrayb, white_point, black_point, mid_gray, mid_gray_view, rolloff, smooththreshold, limslope, lut, lutr, lutg, lutb, mode, scale, takeyb);
-                        if(lp.smoothciem == 4 || (gambas && lp.smoothciem == 5)) {
+                        if(lp.smoothciem == 4) {
                             if(lummod  && lp.smoothciem == 4) {//luminosity mode by Lab conversion
  #ifdef _OPENMP
         #pragma omp parallel for
@@ -22051,13 +22047,18 @@ void ImProcFunctions::Lab_Local(
                                     float rr = tmpImage->r(i, j); 
                                     float gg = tmpImage->g(i, j);
                                     float bb = tmpImage->b(i, j);
-                                    setUnlessOOG(rr, rCurve[rr]);
-                                    setUnlessOOG(gg, gCurve[gg]);
-                                    setUnlessOOG(bb, bCurve[gg]);
+                                    if (rCurve) {
+                                        setUnlessOOG(rr, rCurve[rr]);
+                                    }
+                                    if (gCurve) {                                    
+                                        setUnlessOOG(gg, gCurve[gg]);
+                                    }
+                                    if (bCurve) {                                   
+                                        setUnlessOOG(bb, bCurve[gg]);
+                                    }
                                     tmpImage->r(i, j) = rr;
                                     tmpImage->g(i, j) = gg;
-                                    tmpImage->b(i, j) = bb;
-                               
+                                    tmpImage->b(i, j) = bb;                              
                                 }
                         }
                         
