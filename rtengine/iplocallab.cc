@@ -2798,7 +2798,7 @@ void ImProcFunctions::getAutoLogloc(int sp, ImageSource *imgsrc, float *sourceg,
 
 
     maxVal *= 1.5f;
-    if (!blackredu[sp]){//reduces blackpoint when Freeman algo
+    if (!blackredu[sp]){//reduces blackpoint when Freeman algo  or Sigmoid
         minVal *= 0.5f;
     }
 
