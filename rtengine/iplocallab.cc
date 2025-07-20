@@ -2730,7 +2730,7 @@ void ImProcFunctions::log_encode(Imagefloat *rgb, struct local_params & lp, bool
 }
  
 // Copyright 2018 Alberto Griggio <alberto.griggio@gmail.com>
-void ImProcFunctions::getAutoLogloc(int sp, ImageSource *imgsrc, float *sourceg, float *blackev, float *whiteev, bool *Autogr, float *sourceab,  int *whits,  int *blacks, int *whitslog,  int *blackslog, int fw, int fh, float xsta, float xend, float ysta, float yend, int SCALE)
+void ImProcFunctions::getAutoLogloc(int sp, ImageSource *imgsrc, float *sourceg, float *blackev, float *whiteev, bool *blackredu,  bool *Autogr, float *sourceab,  int *whits,  int *blacks, int *whitslog,  int *blackslog, int fw, int fh, float xsta, float xend, float ysta, float yend, int SCALE)
 {
     //BENCHFUN
 //adpatation to local adjustments Jacques Desmis 12 2019 and 11 2021 (from ART)
@@ -2798,7 +2798,9 @@ void ImProcFunctions::getAutoLogloc(int sp, ImageSource *imgsrc, float *sourceg,
 
 
     maxVal *= 1.5f;
-    minVal *= 0.5f;
+    if (!blackredu[sp]){//reduces blackpoint when Freeman algo
+        minVal *= 0.5f;
+    }
 
     //E = 2.5*2^EV => e=2.5 depends on the sensor type C=250 e=2.5 to C=330 e=3.3
     //repartition with 2.5 between 1.45 Light and shadows 0.58 => a little more 0.55...
@@ -21710,7 +21712,7 @@ void ImProcFunctions::Lab_Local(
                         }
                     }
                     
-                   bool gambas = false;
+                  // bool gambas = false;
                    float ksr = 1.f;
                    float ksb = 1.f;
                    float ksg = 1.f;

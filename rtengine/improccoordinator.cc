@@ -989,7 +989,8 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                 whitslog = new int[sizespot];
                 int *blackslog = nullptr;
                 blackslog = new int[sizespot];
-
+                bool *blackredu;
+                blackredu = new bool[sizespot];
 
                 float *locx = nullptr;
                 locx = new float[sizespot];
@@ -1025,6 +1026,7 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                     locyT[sp] = params->locallab.spots.at(sp).loc.at(3) / 2000.0;
                     centx[sp] = params->locallab.spots.at(sp).centerX / 2000.0 + 0.5;
                     centy[sp] = params->locallab.spots.at(sp).centerY / 2000.0 + 0.5;
+                    blackredu[sp] = (params->locallab.spots.at(sp).smoothciemet == "gamnorol") || (params->locallab.spots.at(sp).smoothciemet == "level");
 
                     const bool fullimstd = params->locallab.spots.at(sp).fullimage;//for log encoding standard
                     const bool fullimjz = true;//always force fullimage in log encoding Jz - always possible to put a checkbox if need
@@ -1053,7 +1055,7 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                             xsta = 0.f;
                             xend = 1.f;
                         }
-                        ipf.getAutoLogloc(sp, imgsrc, sourceg, blackev, whiteev, Autogr, sourceab, whits, blacks, whitslog, blackslog, fw, fh, xsta, xend, ysta, yend, SCALE);
+                        ipf.getAutoLogloc(sp, imgsrc, sourceg, blackev, whiteev, blackredu, Autogr, sourceab, whits, blacks, whitslog, blackslog, fw, fh, xsta, xend, ysta, yend, SCALE);
                         params->locallab.spots.at(sp).blackEv = blackev[sp];
                         params->locallab.spots.at(sp).whiteEv = whiteev[sp];
                         params->locallab.spots.at(sp).blackEvjz = blackev[sp];
@@ -1102,6 +1104,7 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                 delete [] blacks;
                 delete [] whitslog;
                 delete [] blackslog;
+                delete [] blackredu;
                 delete [] sourceg;
                 delete [] cie;
                 delete [] log;
