@@ -205,6 +205,8 @@ protected:
     ThreeValBool RT_blacklevel_from_constant;
     ThreeValBool RT_matrix_from_constant;
     std::string RT_software;
+    std::string normalized_make;
+    std::string normalized_model;
     double RT_baseline_exposure;
     struct MergedPixelshift merged_pixelshift;
     struct SonyMeta sony_meta;
