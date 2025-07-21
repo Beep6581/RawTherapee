@@ -1270,6 +1270,19 @@ Camera constants:
         "ranges" : { "white" : 16300 } // 16382 without LENR, add margin for LENR. Dual-pixel frame 2 is lower for low ISOs.
     },
 
+    { // Quality A
+        "make_model": "Canon EOS R5m2",
+        "raw_crop" : [
+            { "frame" : [ 8480, 5650 ], "crop" : [ 256, 160, 8224, 5490 ] },
+            { "frame" : [ 5376, 3574 ], "crop" : [ 256, 160, 5120, 3414 ] }
+        ],
+        "masked_areas" : [
+            { "frame" : [ 8480, 5650 ], "areas": [ 10, 266, 150, 8000 ] },
+            { "frame" : [ 5376, 3574 ], "areas": [ 74, 266, 150, 3564 ] }
+        ],
+        "ranges" : { "white" : 16000 } // 16382 without LENR, add margin for LENR.
+    },
+
     { // Quality C
         "make_model": "Canon EOS R6",
         "dcraw_matrix" : [8293, -1611, -1132, -4759, 12710, 2275, -1013, 2415, 5508],
@@ -2857,6 +2870,16 @@ Camera constants:
                 { "iso": 400, "levels": 4080 }, // R,G1 = 4093-94, B=4094 G2= 4087or93or94
                 { "iso": 800, "levels": 4070 }, // R,G1 = 4091-4093, B=4091-92 G2= 4078or82or84-86
                 { "iso": [ 1600, 3200 ], "levels": 4060 } // 4067or4073-76
+            ]
+        }
+    },
+
+    { // Quality A
+        "make_model": [ "Pentax K20D", "Samsung GX20" ], // Based on Samsung GX20 data.
+        "ranges": {
+            "white": [
+                { "iso": 100, "levels": 4000 },
+                { "iso": 200, "levels": 4095 }
             ]
         }
     },

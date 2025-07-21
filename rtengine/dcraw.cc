@@ -9695,15 +9695,18 @@ void CLASS adobe_coeff (const char *make, const char *model)
 
   // -- RT --------------------------------------------------------------------
   const bool is_pentax_dng = dng_version && !strncmp(RT_software.c_str(), "PENTAX", 6);
+  const bool is_samsung_dng = dng_version && !strcmp("Samsung", make) && normalized_make == "Pentax" && RT_software.rfind(model, 0) == 0;
+  /** Is it a DNG from the camera? */
+  const bool is_camera_dng = is_pentax_dng || is_samsung_dng;
   // indicate that DCRAW wants these from constants (rather than having loaded these from RAW file
   // note: this is simplified so far, in some cases dcraw calls this when it has say the black level
   // from file, but then we will not provide any black level in the tables. This case is mainly just
   // to avoid loading table values if we have loaded a DNG conversion of a raw file (which already
   // have constants stored in the file).
-  if (RT_whitelevel_from_constant == ThreeValBool::X || is_pentax_dng) {
+  if (RT_whitelevel_from_constant == ThreeValBool::X || is_camera_dng) {
     RT_whitelevel_from_constant = ThreeValBool::T;
   }
-  if (RT_blacklevel_from_constant == ThreeValBool::X || is_pentax_dng) {
+  if (RT_blacklevel_from_constant == ThreeValBool::X || is_camera_dng) {
     RT_blacklevel_from_constant = ThreeValBool::T;
   }
   if (RT_matrix_from_constant == ThreeValBool::X) {

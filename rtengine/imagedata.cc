@@ -672,6 +672,22 @@ FramesData::FramesData(const Glib::ustring &fname, time_t ts) :
                     lens = validateUft8(lens);
                 }
             }
+        } else if (!make.compare(0, 7, "OLYMPUS")) {
+            if (find_exif_tag("Exif.OlympusEq.LensType")) {
+                const bool is_none = tag_values_equal<decltype(pos), long>(
+                    pos,
+                    {0L, 0L, 0L, 0L, 0L, 0L},
+                    [](const decltype(pos) &iter, std::size_t n) {
+                        return to_long(iter, n);
+                    });
+
+                lens = validateUft8(pos->print(&exif));
+
+                if (is_none || lens == pos->toString()) {
+                    // Lens type is "None" or cannot be interpreted by Exiv2.
+                    lens = "Unknown";
+                }
+            }
         } else if (!make.compare(0, 4, "SONY")) {
             // ExifTool prefers LensType2 over LensType (called
             // Exif.Sony2.LensID by Exiv2). Exiv2 doesn't support LensType2 yet,
