@@ -2939,7 +2939,7 @@ void tone_eqsmooth(ImProcFunctions *ipf, Imagefloat *rgb, const struct local_par
     }
     if(lp.smoothtrc != 0) {//RGB TRC
         params.bands[4] = -30 * lp.smoothtrc;
-        params.bands[5] = -10 * lp.smoothtrc;
+        params.bands[5] = -6.6f * lp.smoothtrc;
     }
     if(lp.islogcie || lp.issmoothghs) {//with log encoding Cie and GHS shadows Highlight
         if(!lp.issmoothghs) {

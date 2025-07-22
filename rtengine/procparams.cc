@@ -2693,6 +2693,7 @@ ColorManagementParams::ColorManagementParams() :
         0.35
     },
     wsmoothcie(false),
+    wsmoothciesli(0.),
     redx(0.7347),
     redy(0.2653),
     grex(0.1596),
@@ -2747,6 +2748,7 @@ bool ColorManagementParams::operator ==(const ColorManagementParams& other) cons
 		&& residtrc == other.residtrc
         && opacityCurveWLI == other.opacityCurveWLI
         && wsmoothcie == other.wsmoothcie
+        && wsmoothciesli == other.wsmoothciesli
         && redx == other.redx
         && redy == other.redy
         && grex == other.grex
@@ -8230,6 +8232,7 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
         saveToKeyfile(!pedited || pedited->icm.residtrc, "Color Management", "Residtrc", icm.residtrc, keyFile);
         saveToKeyfile(!pedited || pedited->icm.pyrwavtrc, "Color Management", "Pyrwavtrc", icm.pyrwavtrc, keyFile);
         saveToKeyfile(!pedited || pedited->icm.wsmoothcie, "Color Management", "Wsmoothcie", icm.wsmoothcie, keyFile);
+        saveToKeyfile(!pedited || pedited->icm.wsmoothciesli, "Color Management", "Wsmoothciesli", icm.wsmoothciesli, keyFile);
         saveToKeyfile(!pedited || pedited->icm.redx, "Color Management", "Redx", icm.redx, keyFile);
         saveToKeyfile(!pedited || pedited->icm.redy, "Color Management", "Redy", icm.redy, keyFile);
         saveToKeyfile(!pedited || pedited->icm.grex, "Color Management", "Grex", icm.grex, keyFile);
@@ -10956,6 +10959,18 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
             assignFromKeyfile(keyFile, "Color Management", "WorkingTRCGamma", icm.wGamma, pedited->icm.wGamma);
             assignFromKeyfile(keyFile, "Color Management", "Wmidtcie", icm.wmidtcie, pedited->icm.wmidtcie);
             assignFromKeyfile(keyFile, "Color Management", "Wsmoothcie", icm.wsmoothcie, pedited->icm.wsmoothcie);
+            assignFromKeyfile(keyFile, "Color Management", "Wsmoothciesli", icm.wsmoothciesli, pedited->icm.wsmoothciesli);
+            if (ppVersion >= 353) {
+                assignFromKeyfile(keyFile, "Color Management", "Wsmoothciesli", icm.wsmoothciesli, pedited->icm.wsmoothciesli);
+            } else {
+                if(icm.wsmoothcie == true) {
+                    icm.wsmoothciesli = 0.5;
+                }
+                if (pedited) {
+                    pedited->icm.wsmoothciesli = true;
+                }
+            }
+           
             assignFromKeyfile(keyFile, "Color Management", "Sigmatrc", icm.sigmatrc, pedited->icm.sigmatrc);
             assignFromKeyfile(keyFile, "Color Management", "Offstrc", icm.offstrc, pedited->icm.offstrc);
             assignFromKeyfile(keyFile, "Color Management", "Pyrwavtrc", icm.pyrwavtrc, pedited->icm.pyrwavtrc);

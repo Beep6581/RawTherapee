@@ -1407,6 +1407,7 @@ struct ColorManagementParamsEdited {
     bool opacityCurveWLI;
 
     bool wsmoothcie;
+    bool wsmoothciesli;
     bool will;
     bool wprim;
     bool wcat;

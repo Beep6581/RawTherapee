@@ -1574,6 +1574,7 @@ IImage8* Thumbnail::processImage (const procparams::ProcParams& params, eSensorT
                 }
 
         const bool smoothi = params.icm.wsmoothcie;
+        const float smoothisli = params.icm.wsmoothciesli;
             if(smoothi) {
                 ToneEqualizerParams params;
                 params.enabled = true;
@@ -1592,6 +1593,26 @@ IImage8* Thumbnail::processImage (const procparams::ProcParams& params, eSensorT
                 
                 ipf.toneEqualizer(tmpImage1.get(), params, prof, 1, false);
             }
+                if(smoothisli > 0.f) {
+                    ToneEqualizerParams params;
+                    params.enabled = true;
+                    params.regularization = 0.f;
+                    params.pivot = 0.f;
+                    params.bands[0] = 0;
+                    params.bands[1] = 0;
+                    params.bands[2] = 0;
+                    params.bands[3] = 0;
+                    params.bands[4] = -40;//arbitrary value to adapt with WhiteEvjz - here White Ev # 10
+                    params.bands[5] = -80;//8 Ev and above
+                    bool Evsix = true;
+                    if(Evsix) {//EV = 6 majority of images
+                        params.bands[4] = -30 * smoothisli;
+                        float smmothsli5 = std::min(smoothisli, 1.f);
+                        params.bands[5] = -80 * smmothsli5;                     
+                    }
+                
+                    ipf.toneEqualizer(tmpImage1.get(), params, prof, 1, false);
+                }
 
         ipf.rgb2lab(*tmpImage1, *labView, params.icm.workingProfile);
         // labView and provis

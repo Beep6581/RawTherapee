@@ -611,6 +611,7 @@ void ParamsEdited::set(bool v)
     icm.pyrwavtrc = v;
     icm.opacityCurveWLI = v;
     icm.wsmoothcie = v;
+    icm.wsmoothciesli = v;
     icm.redx = v;
     icm.redy = v;
     icm.grex = v;
@@ -2198,6 +2199,7 @@ void ParamsEdited::initFrom(const std::vector<rtengine::procparams::ProcParams>&
         icm.pyrwavtrc = icm.pyrwavtrc && p.icm.pyrwavtrc == other.icm.pyrwavtrc;
         icm.opacityCurveWLI = icm.opacityCurveWLI && p.icm.opacityCurveWLI == other.icm.opacityCurveWLI;
         icm.wsmoothcie = icm.wsmoothcie && p.icm.wsmoothcie == other.icm.wsmoothcie;
+        icm.wsmoothciesli = icm.wsmoothciesli && p.icm.wsmoothciesli == other.icm.wsmoothciesli;
         icm.redx = icm.redx && p.icm.redx == other.icm.redx;
         icm.redy = icm.redy && p.icm.redy == other.icm.redy;
         icm.grex = icm.grex && p.icm.grex == other.icm.grex;
@@ -7320,6 +7322,10 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
 
     if (icm.wsmoothcie) {
         toEdit.icm.wsmoothcie = mods.icm.wsmoothcie;
+    }
+
+    if (icm.wsmoothciesli) {
+        toEdit.icm.wsmoothciesli = mods.icm.wsmoothciesli;
     }
 
     if (icm.redx) {
