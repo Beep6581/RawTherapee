@@ -1026,7 +1026,7 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                     locyT[sp] = params->locallab.spots.at(sp).loc.at(3) / 2000.0;
                     centx[sp] = params->locallab.spots.at(sp).centerX / 2000.0 + 0.5;
                     centy[sp] = params->locallab.spots.at(sp).centerY / 2000.0 + 0.5;
-                    blackredu[sp] = (params->locallab.spots.at(sp).smoothciemet == "gamnorol") || (params->locallab.spots.at(sp).smoothciemet == "level") || (params->locallab.spots.at(sp).smoothciemet == "sigm");
+                    blackredu[sp] = (params->locallab.spots.at(sp).smoothciemet == "gamnorol") || (params->locallab.spots.at(sp).smoothciemet == "gam")|| (params->locallab.spots.at(sp).smoothciemet == "level") || (params->locallab.spots.at(sp).smoothciemet == "sigm");
 
                     const bool fullimstd = params->locallab.spots.at(sp).fullimage;//for log encoding standard
                     const bool fullimjz = true;//always force fullimage in log encoding Jz - always possible to put a checkbox if need
