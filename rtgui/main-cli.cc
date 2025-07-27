@@ -281,16 +281,23 @@ public:
     std::vector<Glib::ustring> inputFiles;
 };
 
+/* Parse line command options
+ *
+ * Returns
+ *   1 if the user provided a non-flag command-line argument
+ *   0 on success
+ *  -1 if there is an error in parameter
+ *  -3 if at least one required procparam file was not found */
+static int parseLineParams ( int argc, char **argv, CliArgs& parsed_args );
+
 /* Process line command options
  *
  * Returns
  *   0 if process in batch has executed
- *   1 to start GUI (with a dir or file option)
- *   2 to start GUI because no files found
- *  -1 if there is an error in parameters
+ *  -1 if the there are no input files
  *  -2 if an error occurred during processing
  *  -3 if at least one required procparam file was not found */
-static int processLineParams ( int argc, char **argv );
+static int processLineParams ( const CliArgs& parsed_args );
 
 bool dontLoadCache ( int argc, char **argv );
 
@@ -336,6 +343,11 @@ int main (int argc, char **argv)
     options.rtSettings.lensfunDbBundleDirectory = LENSFUN_DB_PATH;
 #endif
 
+    CliArgs parsed_args;
+    int ret = parseLineParams (argc, argv, parsed_args);
+    if ( ret != 0 ) {
+        return ret;
+    }
     bool quickstart = dontLoadCache (argc, argv);
 
     try {
@@ -390,13 +402,11 @@ int main (int argc, char **argv)
 
 #endif
 
-    int ret = 0;
-
     // printing RT's version in all case, particularly useful for the 'verbose' mode, but also for the batch processing
     std::cout << "RawTherapee, version " << RTVERSION << ", command line." << std::endl;
 
     if (argc > 1) {
-        ret = processLineParams (argc, argv);
+        ret = processLineParams (parsed_args);
     } else {
         std::cout << "Terminating without anything to do." << std::endl;
     }
@@ -417,14 +427,11 @@ bool dontLoadCache ( int argc, char **argv )
     return false;
 }
 
-static int processLineParams ( int argc, char **argv )
+static int parseLineParams ( int argc, char **argv, CliArgs& parsed_args )
 {
-    CliArgs parsed_args;
     std::unique_ptr<rtengine::procparams::AutoPartialProfile> rawParams = nullptr, imgParams = nullptr;
-    std::vector<Glib::ustring> inputFiles;
     std::vector<rtengine::procparams::AutoPartialProfile> processingParams;
-    unsigned errors = 0;
-
+ 
     for ( int iArg = 1; iArg < argc; iArg++) {
         Glib::ustring currParam (argv[iArg]);
         if ( currParam.empty() ) {
@@ -613,6 +620,15 @@ static int processLineParams ( int argc, char **argv )
             return 1;
         }
     }
+    return 0;
+}
+
+static int processLineParams ( const CliArgs& parsed_args )
+{
+    std::unique_ptr<rtengine::procparams::AutoPartialProfile> rawParams = nullptr, imgParams = nullptr;
+    std::vector<Glib::ustring> inputFiles;
+    std::vector<rtengine::procparams::AutoPartialProfile> processingParams;
+    unsigned errors = 0;
 
     for ( const auto& argument : parsed_args.inputFiles ) {
         if (!Glib::file_test (argument, Glib::FILE_TEST_EXISTS)) {
@@ -688,7 +704,7 @@ static int processLineParams ( int argc, char **argv )
     }
 
     if ( inputFiles.empty() ) {
-        return 2;
+        return -1;
     }
 
     for ( const auto& fname : parsed_args.paramsFiles ) {
