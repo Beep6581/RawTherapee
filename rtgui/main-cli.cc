@@ -71,6 +71,18 @@ bool fast_export = false;
 
 }
 
+static Glib::ustring uneclipse(Glib::ustring input) {
+#if ECLIPSE_ARGS
+    if (input.size() >= 2) {
+        return input.substr(1, input.length() - 2);
+    } else {
+        return input;
+    }
+#else
+    return input;
+#endif
+}
+
 /* Process line command options
  *
  * Returns
@@ -224,9 +236,7 @@ bool dontLoadCache ( int argc, char **argv )
 {
     for (int iArg = 1; iArg < argc; iArg++) {
         Glib::ustring currParam (argv[iArg]);
-#if ECLIPSE_ARGS
-        currParam = currParam.substr (1, currParam.length() - 2);
-#endif
+        currParam = uneclipse(currParam);
         if ( currParam.length() > 1 && currParam.at(0) == '-' && currParam.at(1) == 'q' ) {
             return true;
         }
@@ -262,9 +272,7 @@ static int processLineParams ( int argc, char **argv )
         if ( currParam.empty() ) {
             continue;
         }
-#if ECLIPSE_ARGS
-        currParam = currParam.substr (1, currParam.length() - 2);
-#endif
+        currParam = uneclipse(currParam);
 
         if ( currParam.at (0) == '-' && currParam.size() > 1) {
             switch ( currParam.at (1) ) {
@@ -275,10 +283,7 @@ static int processLineParams ( int argc, char **argv )
                 case 'o': // outputfile or dir
                     if ( iArg + 1 < argc ) {
                         iArg++;
-                        outputPath = Glib::ustring (fname_to_utf8 (argv[iArg]));
-#if ECLIPSE_ARGS
-                        outputPath = outputPath.substr (1, outputPath.length() - 2);
-#endif
+                        outputPath = uneclipse (Glib::ustring (fname_to_utf8 (argv[iArg])));
 
                         if (outputPath.substr (0, 9) == "/dev/null") {
                             outputPath.assign ("/dev/null"); // removing any useless chars or filename
@@ -297,9 +302,7 @@ static int processLineParams ( int argc, char **argv )
                     if ( iArg + 1 < argc ) {
                         iArg++;
                         Glib::ustring fname (fname_to_utf8 (argv[iArg]));
-#if ECLIPSE_ARGS
-                        fname = fname.substr (1, fname.length() - 2);
-#endif
+                        fname = uneclipse (fname);
 
                         if (fname.at (0) == '-') {
                             std::cerr << "Error: filename missing next to the -p switch." << std::endl;
@@ -418,9 +421,7 @@ static int processLineParams ( int argc, char **argv )
                     while (iArg + 1 < argc) {
                         iArg++;
                         Glib::ustring argument (fname_to_utf8 (argv[iArg]));
-#if ECLIPSE_ARGS
-                        argument = argument.substr (1, argument.length() - 2);
-#endif
+                        argument = uneclipse (argument);
 
                         if (!Glib::file_test (argument, Glib::FILE_TEST_EXISTS)) {
                             std::cout << "\"" << argument << "\"  doesn't exist!" << std::endl;
@@ -577,9 +578,7 @@ static int processLineParams ( int argc, char **argv )
             }
         } else {
             argv1 = Glib::ustring (fname_to_utf8 (argv[iArg]));
-#if ECLIPSE_ARGS
-            argv1 = argv1.substr (1, argv1.length() - 2);
-#endif
+            argv1 = uneclipse (argv1);
 
             if ( outputDirectory ) {
                 options.savePathFolder = outputPath;

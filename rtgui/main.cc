@@ -92,6 +92,17 @@ static void myGdkLockLeave()
     myGdkRecMutex.unlock();
 }
 
+static Glib::ustring uneclipse(Glib::ustring input) {
+#if ECLIPSE_ARGS
+    if (input.size() >= 2) {
+        return input.substr(1, input.length() - 2);
+    } else {
+        return input;
+    }
+#else
+    return input;
+#endif
+}
 
 /* Process line command options
  *
@@ -108,9 +119,7 @@ static int processLineParams ( int argc, char **argv )
         if ( currParam.empty() ) {
             continue;
         }
-#if ECLIPSE_ARGS
-        currParam = currParam.substr (1, currParam.length() - 2);
-#endif
+        currParam = uneclipse(currParam);
 
         if ( currParam.at (0) == '-' && currParam.size() > 1 ) {
             switch ( currParam.at (1) ) {
@@ -180,9 +189,7 @@ static int processLineParams ( int argc, char **argv )
         } else {
             if (argv1.empty()) {
                 argv1 = Glib::ustring (fname_to_utf8 (argv[iArg]));
-#if ECLIPSE_ARGS
-                argv1 = argv1.substr (1, argv1.length() - 2);
-#endif
+                argv1 = uneclipse (argv1);
             } else if (gimpPlugin) {
                 argv2 = Glib::ustring (fname_to_utf8 (argv[iArg]));
                 break;
