@@ -157,6 +157,15 @@ public:
     bool copyParamsFile = false;
     // Whether to overwrite output files if they exist already. Set by -Y.
     bool overwriteFiles = false;
+    // Whether to include the parameters associated with the input file (i.e. the parameters
+    // with the same name but a .pp3 extension attached). Set by -s.
+    bool sideProcParams = false;
+    // If -s is set, we insert the sidecar parameters into the stack of parameters specified
+    // by -p. So the user can do e.g. `-p 1.pp3 -p 2.pp3 -s -p 4.pp3`. You can only do specify
+    // -s once.
+    unsigned int sideCarFilePos = 0;
+    // A variant of -s where if the sidecar file is missing, the file is skipped. Set by -S.
+    bool skipIfNoSidecar = false;
     // Set by -o and -O (TODO in C++ 17 use a std::optional here)
     OutputPath outputPath;
 };
@@ -303,9 +312,6 @@ static int processLineParams ( int argc, char **argv )
     std::unique_ptr<rtengine::procparams::AutoPartialProfile> rawParams = nullptr, imgParams = nullptr;
     std::vector<Glib::ustring> inputFiles;
     std::vector<rtengine::procparams::AutoPartialProfile> processingParams;
-    bool sideProcParams = false;
-    bool skipIfNoSidecar = false;
-    unsigned int sideCarFilePos = 0;
     int compression = 92;
     int subsampling = 3;
     int bits = -1;
@@ -359,12 +365,12 @@ static int processLineParams ( int argc, char **argv )
                     break;
 
                 case 'S':
-                    skipIfNoSidecar = true;
+                    parsed_args.skipIfNoSidecar = true;
                     // fall through
 
                 case 's': // Processing params next to file (file extension appended)
-                    sideProcParams = true;
-                    sideCarFilePos = processingParams.size();
+                    parsed_args.sideProcParams = true;
+                    parsed_args.sideCarFilePos = processingParams.size();
                     break;
 
                 case 'd':
@@ -507,7 +513,7 @@ static int processLineParams ( int argc, char **argv )
 
                                     }
 
-                                    if (sideProcParams && skipIfNoSidecar) {
+                                    if (parsed_args.sideProcParams && parsed_args.skipIfNoSidecar) {
                                         // look for the sidecar proc params
                                         if (!Glib::file_test (fileName + paramFileExtension, Glib::FILE_TEST_EXISTS)) {
                                             std::cout << "\"" << fileName << "\"  has no side-car file. Image skipped." << std::endl;
@@ -711,7 +717,7 @@ static int processLineParams ( int argc, char **argv )
 
         // Iterate the procparams file list in order to build the final ProcParams
         do {
-            if (sideProcParams && i == sideCarFilePos) {
+            if (parsed_args.sideProcParams && i == parsed_args.sideCarFilePos) {
                 // using the sidecar file
                 Glib::ustring sideProcessingParams = inputFile + paramFileExtension;
 
@@ -730,9 +736,9 @@ static int processLineParams ( int argc, char **argv )
             }
 
             i++;
-        } while (i < processingParams.size() + (sideProcParams ? 1 : 0));
+        } while (i < processingParams.size() + (parsed_args.sideProcParams ? 1 : 0));
 
-        if ( sideProcParams && !sideCarFound && skipIfNoSidecar ) {
+        if ( parsed_args.sideProcParams && !sideCarFound && parsed_args.skipIfNoSidecar ) {
             delete ii;
             errors++;
             std::cerr << "Error: no sidecar procparams found for: " << inputFile << std::endl;
