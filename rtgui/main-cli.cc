@@ -268,10 +268,6 @@ static int processLineParams ( int argc, char **argv )
 
         if ( currParam.at (0) == '-' && currParam.size() > 1) {
             switch ( currParam.at (1) ) {
-                case '-':
-                    // GTK --argument, we're skipping it
-                    break;
-
                 case 'O':
                     copyParamsFile = true;
                     // fall through
