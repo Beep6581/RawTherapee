@@ -30,6 +30,8 @@
 #include "windows.h"
 #endif
 
+extern Glib::ustring argv1;
+
 FilePanel::FilePanel () : parent(nullptr), error(0)
 {
 

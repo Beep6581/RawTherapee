@@ -553,7 +553,6 @@ public:
 
 extern Options options;
 extern Glib::ustring argv0;
-extern Glib::ustring argv1;
 extern bool simpleEditor;
 extern bool gimpPlugin;
 extern bool remote;

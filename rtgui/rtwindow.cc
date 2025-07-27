@@ -34,6 +34,8 @@
 #include "filepanel.h"
 #include "tools/filmsimulation.h"
 
+extern Glib::ustring argv1;
+
 Glib::RefPtr<Gtk::CssProvider> cssForced;
 Glib::RefPtr<Gtk::CssProvider> cssRT;
 

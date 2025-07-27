@@ -56,9 +56,9 @@
 // Set this to 1 to make RT work when started with Eclipse and arguments, at least on Windows platform
 #define ECLIPSE_ARGS 0
 
-// stores path to data files
+// Name of the program; used in options.cc in ways that are irrelevant to the CLI,
+// but we should set it correctly anyway.
 Glib::ustring argv0;
-Glib::ustring argv1;
 
 namespace
 {
@@ -556,9 +556,9 @@ static int processLineParams ( int argc, char **argv )
                 }
             }
         } else {
-            argv1 = Glib::ustring (fname_to_utf8 (argv[iArg]));
-            argv1 = uneclipse (argv1);
-            break;
+            // There should be no command-line arguments except short flags and things
+            // that are consumed by short flags.
+            return 1;
         }
     }
 
@@ -572,10 +572,6 @@ static int processLineParams ( int argc, char **argv )
                 bits = 16;
                 break;
         }
-    }
-
-    if ( !argv1.empty() ) {
-        return 1;
     }
 
     if ( inputFiles.empty() ) {
