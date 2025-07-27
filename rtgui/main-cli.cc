@@ -249,6 +249,8 @@ public:
 
 class CliArgs {
 public:
+    // Measure of how much extra data to output. Currently only values 0 and 1 are used.
+    int verbosity = 0;
     // Whether to disable loading of cached data for a faster start.
     bool quickstart = false;
     // Use the custom fast-export porecssing pipeline. Set by -f.
@@ -479,6 +481,7 @@ static void longUsage (const std::string& cmd_name) {
     std::cerr << "                   Compression is hard-coded to PNG_FILTER_PAETH, Z_RLE." << std::endl;
     std::cerr << "  -Y               Overwrite output if present." << std::endl;
     std::cerr << "  -f               Use the custom fast-export processing pipeline." << std::endl;
+    std::cerr << "  -v               Output extra verbose information." << std::endl;
     std::cerr << std::endl;
     std::cerr << "Your " << pparamsExt << " files can be incomplete, RawTherapee will build the final values as follows:" << std::endl;
     std::cerr << "  1- A new processing profile is created using neutral values," << std::endl;
@@ -668,6 +671,10 @@ static int parseLineParams ( int argc, char **argv, CliArgs& parsed_args )
 
                 break;
 
+            case 'v':
+                parsed_args.verbosity = 1;
+                break;
+
             case 'h':
             case '?':
                 longUsage (Glib::path_get_basename (argv[0]));
@@ -718,6 +725,9 @@ static int processLineParams ( const CliArgs& parsed_args )
             } else if (notRetained) {
                 std::cout << "\"" << argument << "\"  is not one of the selected parsed extensions. Image skipped." << std::endl;
             } else {
+                if ( parsed_args.verbosity > 0 ) {
+                    std::cout << "Adding input file " << argument << std::endl;
+                }
                 inputFiles.emplace_back (argument);
             }
 
@@ -730,9 +740,15 @@ static int processLineParams ( const CliArgs& parsed_args )
             auto dir = Gio::File::create_for_path (argument);
 
             if (!dir || !dir->query_exists()) {
+                if ( parsed_args.verbosity > 0 ) {
+                    std::cout << "Skipping directory " << argument << " (appears not to exist)" << std::endl;
+                }
                 continue;
             }
 
+            if ( parsed_args.verbosity > 0 ) {
+                std::cout << "Adding directory " << argument << std::endl;
+            }
             try {
 
                 auto enumerator = dir->enumerate_children ("standard::name,standard::type");
@@ -765,6 +781,9 @@ static int processLineParams ( const CliArgs& parsed_args )
                         }
                     }
 
+                    if ( parsed_args.verbosity > 0 ) {
+                        std::cout << "Adding input file from directory " << fileName << std::endl;
+                    }
                     inputFiles.emplace_back (fileName);
                 }
 
@@ -832,6 +851,9 @@ static int processLineParams ( const CliArgs& parsed_args )
         if ( !parsed_args.overwriteFiles && Glib::file_test ( outputFile, Glib::FILE_TEST_EXISTS ) ) {
             std::cerr << outputFile  << " already exists: use -Y option to overwrite. This image has been skipped." << std::endl;
             continue;
+        }
+        if ( parsed_args.verbosity > 0 ) {
+            std::cout << "Output file: " << outputFile << std::endl;
         }
 
         // Load the image
@@ -929,6 +951,9 @@ static int processLineParams ( const CliArgs& parsed_args )
         } else {
             if ( parsed_args.copyParamsFile ) {
                 Glib::ustring outputProcessingParams = outputFile + paramFileExtension;
+                if ( parsed_args.verbosity > 0 ) {
+                    std::cout << "Saving parameters to: " << outputProcessingParams << std::endl;
+                }
                 currentParams.save ( outputProcessingParams );
             }
         }
