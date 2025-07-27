@@ -220,18 +220,6 @@ int main (int argc, char **argv)
     return ret;
 }
 
-void deleteProcParams (std::vector<rtengine::procparams::PartialProfile*> &pparams)
-{
-    for (unsigned int i = 0; i < pparams.size(); i++) {
-        pparams[i]->deleteInstance();
-        delete pparams[i];
-        pparams[i] = NULL;
-    }
-
-    return;
-}
-
-
 bool dontLoadCache ( int argc, char **argv )
 {
     for (int iArg = 1; iArg < argc; iArg++) {
@@ -247,10 +235,10 @@ bool dontLoadCache ( int argc, char **argv )
 
 static int processLineParams ( int argc, char **argv )
 {
-    rtengine::procparams::PartialProfile *rawParams = nullptr, *imgParams = nullptr;
+    std::unique_ptr<rtengine::procparams::AutoPartialProfile> rawParams = nullptr, imgParams = nullptr;
     std::vector<Glib::ustring> inputFiles;
     Glib::ustring outputPath;
-    std::vector<rtengine::procparams::PartialProfile*> processingParams;
+    std::vector<rtengine::procparams::AutoPartialProfile> processingParams;
     bool outputDirectory = false;
     bool leaveUntouched = false;
     bool overwriteFiles = false;
@@ -306,17 +294,14 @@ static int processLineParams ( int argc, char **argv )
 
                         if (fname.at (0) == '-') {
                             std::cerr << "Error: filename missing next to the -p switch." << std::endl;
-                            deleteProcParams (processingParams);
                             return -3;
                         }
 
-                        rtengine::procparams::PartialProfile* currentParams = new rtengine::procparams::PartialProfile (true);
-
-                        if (! (currentParams->load ( fname ))) {
-                            processingParams.push_back (currentParams);
+                        rtengine::procparams::AutoPartialProfile currentParams (true);
+                        if (! (currentParams.load ( fname ))) {
+                            processingParams.emplace_back (std::move (currentParams));
                         } else {
                             std::cerr << "Error: \"" << fname << "\" not found." << std::endl;
-                            deleteProcParams (processingParams);
                             return -3;
                         }
                     }
@@ -351,7 +336,6 @@ static int processLineParams ( int argc, char **argv )
                     if (currParam.length() > 2 && currParam.at (2) == 's') {
                         if (currParam.length() == 3) {
                             std::cerr << "Error: the -js switch requires a mandatory value!" << std::endl;
-                            deleteProcParams (processingParams);
                             return -3;
                         }
 
@@ -360,7 +344,6 @@ static int processLineParams ( int argc, char **argv )
 
                         if (subsampling < 1 || subsampling > 3) {
                             std::cerr << "Error: the value accompanying the -js switch has to be in the [1-3] range!" << std::endl;
-                            deleteProcParams (processingParams);
                             return -3;
                         }
                     } else {
@@ -372,7 +355,6 @@ static int processLineParams ( int argc, char **argv )
 
                             if (compression < 0 || compression > 100) {
                                 std::cerr << "Error: the value accompanying the -j switch has to be in the [0-100] range!" << std::endl;
-                                deleteProcParams (processingParams);
                                 return -3;
                             }
                         }
@@ -397,7 +379,6 @@ static int processLineParams ( int argc, char **argv )
 
                     if (bits != 8 && bits != 16 && bits != 32) {
                         std::cerr << "Error: specify output bit depth per channel as -b8 for 8-bit integer, -b16 for 16-bit integer, -b16f for 16-bit float or -b32 for 32-bit float." << std::endl;
-                        deleteProcParams (processingParams);
                         return -3;
                     }
 
@@ -628,27 +609,19 @@ static int processLineParams ( int argc, char **argv )
     }
 
     if (useDefault) {
-        rawParams = new rtengine::procparams::PartialProfile (true, true);
+        rawParams = std::unique_ptr<rtengine::procparams::AutoPartialProfile>(new rtengine::procparams::AutoPartialProfile (true, true));
         Glib::ustring profPath = options.findProfilePath (options.defProfRaw);
 
         if (options.is_defProfRawMissing() || profPath.empty() || (profPath != DEFPROFILE_DYNAMIC && rawParams->load (profPath == DEFPROFILE_INTERNAL ? DEFPROFILE_INTERNAL : Glib::build_filename (profPath, Glib::path_get_basename (options.defProfRaw) + paramFileExtension)))) {
             std::cerr << "Error: default raw processing profile not found." << std::endl;
-            rawParams->deleteInstance();
-            delete rawParams;
-            deleteProcParams (processingParams);
             return -3;
         }
 
-        imgParams = new rtengine::procparams::PartialProfile (true);
+        imgParams = std::unique_ptr<rtengine::procparams::AutoPartialProfile>(new rtengine::procparams::AutoPartialProfile (true));
         profPath = options.findProfilePath (options.defProfImg);
 
         if (options.is_defProfImgMissing() || profPath.empty() || (profPath != DEFPROFILE_DYNAMIC && imgParams->load (profPath == DEFPROFILE_INTERNAL ? DEFPROFILE_INTERNAL : Glib::build_filename (profPath, Glib::path_get_basename (options.defProfImg) + paramFileExtension)))) {
             std::cerr << "Error: default non-raw processing profile not found." << std::endl;
-            imgParams->deleteInstance();
-            delete imgParams;
-            rawParams->deleteInstance();
-            delete rawParams;
-            deleteProcParams (processingParams);
             return -3;
         }
     }
@@ -720,18 +693,14 @@ static int processLineParams ( int argc, char **argv )
         if (useDefault) {
             if (isRaw) {
                 if (options.defProfRaw == DEFPROFILE_DYNAMIC) {
-                    rawParams->deleteInstance();
-                    delete rawParams;
-                    rawParams = ProfileStore::getInstance()->loadDynamicProfile (ii->getMetaData(), inputFile);
+                    rawParams = std::unique_ptr<rtengine::procparams::AutoPartialProfile>(ProfileStore::getInstance()->loadDynamicProfile (ii->getMetaData(), inputFile));
                 }
 
                 std::cout << "  Merging default raw processing profile." << std::endl;
                 rawParams->applyTo (&currentParams);
             } else {
                 if (options.defProfImg == DEFPROFILE_DYNAMIC) {
-                    imgParams->deleteInstance();
-                    delete imgParams;
-                    imgParams = ProfileStore::getInstance()->loadDynamicProfile (ii->getMetaData(), inputFile);
+                    imgParams = std::unique_ptr<rtengine::procparams::AutoPartialProfile>(ProfileStore::getInstance()->loadDynamicProfile (ii->getMetaData(), inputFile));
                 }
 
                 std::cout << "  Merging default non-raw processing profile." << std::endl;
@@ -759,7 +728,7 @@ static int processLineParams ( int argc, char **argv )
 
             if ( processingParams.size() > i  ) {
                 std::cout << "  Merging procparams #" << i << std::endl;
-                processingParams[i]->applyTo (&currentParams);
+                processingParams[i].applyTo (&currentParams);
             }
 
             i++;
@@ -815,18 +784,6 @@ static int processLineParams ( int argc, char **argv )
         ii->decreaseRef();
         delete resultImage;
     }
-
-    if (imgParams) {
-        imgParams->deleteInstance();
-        delete imgParams;
-    }
-
-    if (rawParams) {
-        rawParams->deleteInstance();
-        delete rawParams;
-    }
-
-    deleteProcParams (processingParams);
 
     return errors > 0 ? -2 : 0;
 }

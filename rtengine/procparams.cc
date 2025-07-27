@@ -12039,6 +12039,14 @@ int ProcParams::write(const Glib::ustring& fname, const Glib::ustring& content) 
     return error;
 }
 
+PartialProfile::PartialProfile(PartialProfile&& other) :
+    pparams (other.pparams),
+    pedited (other.pedited)
+{
+    other.pparams = nullptr;
+    other.pedited = nullptr;
+}
+
 PartialProfile::PartialProfile(bool createInstance, bool paramsEditedValue)
 {
     if (createInstance) {
@@ -12143,8 +12151,12 @@ void PartialProfile::applyTo(ProcParams* destParams, bool fromLastSave) const
     }
 }
 
-AutoPartialProfile::AutoPartialProfile() :
-    PartialProfile(true)
+AutoPartialProfile::AutoPartialProfile(bool createInstance, bool paramsEditedValue) :
+    PartialProfile(createInstance, paramsEditedValue)
+{
+}
+
+AutoPartialProfile::AutoPartialProfile(AutoPartialProfile&& other)
 {
 }
 

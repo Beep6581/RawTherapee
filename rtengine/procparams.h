@@ -2969,6 +2969,7 @@ class PartialProfile :
     public NonCopyable
 {
 public:
+    PartialProfile(PartialProfile&& other);
     PartialProfile(bool createInstance = false, bool paramsEditedValue = false);
     explicit PartialProfile(ProcParams* pp, ParamsEdited* pe = nullptr, bool fullCopy = false);
     explicit PartialProfile(const ProcParams* pp, const ParamsEdited* pe = nullptr);
@@ -2991,7 +2992,8 @@ class AutoPartialProfile :
     public PartialProfile
 {
 public:
-    AutoPartialProfile();
+    AutoPartialProfile(bool createInstance = false, bool paramsEditedValue = false);
+    AutoPartialProfile(AutoPartialProfile&&);
     ~AutoPartialProfile();
 };
 

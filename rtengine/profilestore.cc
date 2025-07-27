@@ -511,13 +511,13 @@ void ProfileStore::dumpFolderList()
     printf ("\n");
 }
 
-PartialProfile *ProfileStore::loadDynamicProfile (const FramesMetaData *im, const Glib::ustring& filename)
+AutoPartialProfile *ProfileStore::loadDynamicProfile (const FramesMetaData *im, const Glib::ustring& filename)
 {
     if (storeState == STORESTATE_NOTINITIALIZED) {
         parseProfilesOnce();
     }
 
-    PartialProfile *ret = new PartialProfile (true, true);
+    AutoPartialProfile *ret = new AutoPartialProfile (true, true);
 
     if (!rulesLoaded) {
         loadRules();
