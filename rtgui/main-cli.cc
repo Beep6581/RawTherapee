@@ -83,6 +83,22 @@ static Glib::ustring uneclipse(Glib::ustring input) {
 #endif
 }
 
+enum class OutputType {
+    JPG,
+    PNG,
+    TIF,
+};
+
+static Glib::ustring output_type_ext (OutputType outputType)
+{
+    switch (outputType) {
+        case OutputType::JPG: return ".jpg";
+        case OutputType::PNG: return ".png";
+        case OutputType::TIF: return ".tif";
+    }
+    std::abort();
+}
+
 /* Process line command options
  *
  * Returns
@@ -252,7 +268,7 @@ static int processLineParams ( int argc, char **argv )
     int subsampling = 3;
     int bits = -1;
     bool isFloat = false;
-    std::string outputType;
+    auto outputType = OutputType::JPG;
     unsigned errors = 0;
 
     for ( int iArg = 1; iArg < argc; iArg++) {
@@ -347,7 +363,7 @@ static int processLineParams ( int argc, char **argv )
                             return -3;
                         }
                     } else {
-                        outputType = "jpg";
+                        outputType = OutputType::JPG;
                         if(currParam.size() < 3) {
                             compression = 92;
                         } else {
@@ -385,12 +401,12 @@ static int processLineParams ( int argc, char **argv )
                     break;
 
                 case 't':
-                    outputType = "tif";
+                    outputType = OutputType::TIF;
                     compression = ((currParam.size() < 3 || currParam.at (2) != 'z') ? 0 : 1);
                     break;
 
                 case 'n':
-                    outputType = "png";
+                    outputType = OutputType::PNG;
                     compression = -1;
                     break;
 
@@ -574,14 +590,18 @@ static int processLineParams ( int argc, char **argv )
                 }
             }
 
-            if (outputType == "jpg") {
-                options.saveFormat.format = outputType;
-                options.saveFormat.jpegQuality = compression;
-                options.saveFormat.jpegSubSamp = subsampling;
-            } else if (outputType == "tif") {
-                options.saveFormat.format = outputType;
-            } else if (outputType == "png") {
-                options.saveFormat.format = outputType;
+            switch (outputType) {
+                case OutputType::JPG:
+                    options.saveFormat.format = "jpg";
+                    options.saveFormat.jpegQuality = compression;
+                    options.saveFormat.jpegSubSamp = subsampling;
+                    break;
+                case OutputType::TIF:
+                    options.saveFormat.format = "tif";
+                    break;
+                case OutputType::PNG:
+                    options.saveFormat.format = "png";
+                    break;
             }
 
             break;
@@ -589,14 +609,14 @@ static int processLineParams ( int argc, char **argv )
     }
 
     if (bits == -1) {
-        if (outputType == "jpg") {
-            bits = 8;
-        } else if (outputType == "png") {
-            bits = 8;
-        } else if (outputType == "tif") {
-            bits = 16;
-        } else {
-            bits = 8;
+        switch (outputType) {
+            case OutputType::JPG:
+            case OutputType::PNG:
+                bits = 8;
+                break;
+            case OutputType::TIF:
+                bits = 16;
+                break;
         }
     }
 
@@ -642,25 +662,21 @@ static int processLineParams ( int argc, char **argv )
 
         Glib::ustring outputFile;
 
-        if ( outputType.empty() ) {
-            outputType = "jpg";
-        }
-
         if ( outputPath.empty() ) {
             Glib::ustring s = inputFile;
             Glib::ustring::size_type ext = s.find_last_of ('.');
-            outputFile = s.substr (0, ext) + "." + outputType;
+            outputFile = s.substr (0, ext) + output_type_ext (outputType);
         } else if ( outputDirectory ) {
             Glib::ustring s = Glib::path_get_basename ( inputFile );
             Glib::ustring::size_type ext = s.find_last_of ('.');
-            outputFile = Glib::build_filename (outputPath, s.substr (0, ext) + "." + outputType);
+            outputFile = Glib::build_filename (outputPath, s.substr (0, ext) + output_type_ext (outputType));
         } else {
             if (leaveUntouched) {
                 outputFile = outputPath;
             } else {
                 Glib::ustring s = outputPath;
                 Glib::ustring::size_type ext = s.find_last_of ('.');
-                outputFile = s.substr (0, ext) + "." + outputType;
+                outputFile = s.substr (0, ext) + output_type_ext (outputType);
             }
         }
 
@@ -761,14 +777,16 @@ static int processLineParams ( int argc, char **argv )
         }
 
         // save image to disk
-        if ( outputType == "jpg" ) {
-            errorCode = resultImage->saveAsJPEG ( outputFile, compression, subsampling );
-        } else if ( outputType == "tif" ) {
-            errorCode = resultImage->saveAsTIFF ( outputFile, bits, isFloat, compression == 0  );
-        } else if ( outputType == "png" ) {
-            errorCode = resultImage->saveAsPNG ( outputFile, bits );
-        } else {
-            errorCode = resultImage->saveToFile (outputFile);
+        switch (outputType) {
+            case OutputType::JPG:
+                errorCode = resultImage->saveAsJPEG ( outputFile, compression, subsampling );
+                break;
+            case OutputType::TIF:
+                errorCode = resultImage->saveAsTIFF ( outputFile, bits, isFloat, compression == 0  );
+                break;
+            case OutputType::PNG:
+                errorCode = resultImage->saveAsPNG ( outputFile, bits );
+                break;
         }
 
         if (errorCode) {
