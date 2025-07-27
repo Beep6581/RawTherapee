@@ -493,6 +493,11 @@ static void longUsage (const std::string& cmd_name) {
 
 static int parseLineParams ( int argc, char **argv, CliArgs& parsed_args )
 {
+    bool alreadySetB = false;
+    bool alreadySetO = false;
+    bool alreadySetJ = false;
+    bool alreadySetS = false;
+
     char last_ch = 0;
     std::unique_ptr<rtengine::procparams::AutoPartialProfile> rawParams = nullptr, imgParams = nullptr;
     std::vector<rtengine::procparams::AutoPartialProfile> processingParams;
@@ -528,6 +533,13 @@ static int parseLineParams ( int argc, char **argv, CliArgs& parsed_args )
                 // fall through
 
             case 'o': // outputfile or dir
+                if ( alreadySetO ) {
+                    shortUsage (Glib::path_get_basename (argv[0]));
+                    std::cerr << "At most one of -o and -O may appear, at most once." << std::endl;
+                    return -1;
+                }
+                alreadySetO = true;
+
                 if ( iArg + 1 < argc ) {
                     iArg++;
                     parsed_args.outputPath = OutputPath(uneclipse (Glib::ustring (fname_to_utf8 (argv[iArg]))));
@@ -558,6 +570,13 @@ static int parseLineParams ( int argc, char **argv, CliArgs& parsed_args )
                 // fall through
 
             case 's': // Processing params next to file (file extension appended)
+                if ( alreadySetS ) {
+                    shortUsage (Glib::path_get_basename (argv[0]));
+                    std::cerr << "At most one of -s and -S may appear, at most once." << std::endl;
+                    return -1;
+                }
+                alreadySetS = true;
+
                 parsed_args.sideProcParams = true;
                 parsed_args.sideCarFilePos = parsed_args.paramsFiles.size();
                 break;
@@ -579,23 +598,51 @@ static int parseLineParams ( int argc, char **argv, CliArgs& parsed_args )
                 break;
 
             case 'j':
+                if ( alreadySetJ ) {
+                    shortUsage (Glib::path_get_basename (argv[0]));
+                    std::cerr << "At most one of -j, -t or -n may appear, at most once." << std::endl;
+                    return -1;
+                }
+                alreadySetJ = true;
+
                 if (parsed_args.outputArgs.parseJpeg (currParam) < 0) {
                     return -1;
                 }
                 break;
 
             case 'b':
+                if ( alreadySetB ) {
+                    shortUsage (Glib::path_get_basename (argv[0]));
+                    std::cerr << "The -b flag may appear at most once." << std::endl;
+                    return -1;
+                }
+                alreadySetB = true;
+
                 if (parsed_args.outputArgs.parseBits (currParam) < 0) {
                     return -1;
                 }
                 break;
 
             case 't':
+                if ( alreadySetJ ) {
+                    shortUsage (Glib::path_get_basename (argv[0]));
+                    std::cerr << "At most one of -j, -t or -n may appear, at most once." << std::endl;
+                    return -1;
+                }
+                alreadySetJ = true;
+
                 parsed_args.outputArgs.outputType = OutputType::TIF;
                 parsed_args.outputArgs.compression = ((currParam.size() < 3 || currParam.at (2) != 'z') ? 0 : 1);
                 break;
 
             case 'n':
+                if ( alreadySetJ ) {
+                    shortUsage (Glib::path_get_basename (argv[0]));
+                    std::cerr << "At most one of -j, -t or -n may appear, at most once." << std::endl;
+                    return -1;
+                }
+                alreadySetJ = true;
+
                 parsed_args.outputArgs.outputType = OutputType::PNG;
                 parsed_args.outputArgs.compression = -1;
                 break;
