@@ -249,6 +249,8 @@ public:
 
 class CliArgs {
 public:
+    // Whether to disable loading of cached data for a faster start.
+    bool quickstart = false;
     // Use the custom fast-export porecssing pipeline. Set by -f.
     bool fastExport = false;
     // Whether to allow all supported extensions, or limit to ones set by the
@@ -299,8 +301,6 @@ static int parseLineParams ( int argc, char **argv, CliArgs& parsed_args );
  *  -3 if at least one required procparam file was not found */
 static int processLineParams ( const CliArgs& parsed_args );
 
-bool dontLoadCache ( int argc, char **argv );
-
 int main (int argc, char **argv)
 {
     setlocale (LC_ALL, "");
@@ -348,7 +348,7 @@ int main (int argc, char **argv)
     if ( ret != 0 ) {
         return ret;
     }
-    bool quickstart = dontLoadCache (argc, argv);
+    bool quickstart = parsed_args.quickstart;
 
     try {
         Options::load (quickstart);
@@ -414,19 +414,6 @@ int main (int argc, char **argv)
     return ret;
 }
 
-bool dontLoadCache ( int argc, char **argv )
-{
-    for (int iArg = 1; iArg < argc; iArg++) {
-        Glib::ustring currParam (argv[iArg]);
-        currParam = uneclipse(currParam);
-        if ( currParam.length() > 1 && currParam.at(0) == '-' && currParam.at(1) == 'q' ) {
-            return true;
-        }
-    }
-
-    return false;
-}
-
 static int parseLineParams ( int argc, char **argv, CliArgs& parsed_args )
 {
     std::unique_ptr<rtengine::procparams::AutoPartialProfile> rawParams = nullptr, imgParams = nullptr;
@@ -485,6 +472,7 @@ static int parseLineParams ( int argc, char **argv, CliArgs& parsed_args )
                     break;
 
                 case 'q':
+                    parsed_args.quickstart = true;
                     break;
 
                 case 'Y':
