@@ -94,15 +94,13 @@ static void myGdkLockLeave()
 
 
 /* Process line command options
+ *
  * Returns
- *  0 if process in batch has executed
- *  1 to start GUI (with a dir or file option)
- *  2 to start GUI because no files found
+ *   0 if we output the version text (and therefore should not start the GUI)
+ *   1 to start GUI (with a dir or file option)
  *  -1 if there is an error in parameters
- *  -2 if an error occurred during processing
- *  -3 if at least one required procparam file was not found */
-//int processLineParams ( int argc, char **argv );
-int processLineParams ( int argc, char **argv )
+ */
+static int processLineParams ( int argc, char **argv )
 {
     int ret = 1;
     for ( int iArg = 1; iArg < argc; iArg++) {

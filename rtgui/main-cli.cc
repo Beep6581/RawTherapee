@@ -72,14 +72,15 @@ bool fast_export = false;
 }
 
 /* Process line command options
+ *
  * Returns
- *  0 if process in batch has executed
- *  1 to start GUI (with a dir or file option)
- *  2 to start GUI because no files found
+ *   0 if process in batch has executed
+ *   1 to start GUI (with a dir or file option)
+ *   2 to start GUI because no files found
  *  -1 if there is an error in parameters
  *  -2 if an error occurred during processing
  *  -3 if at least one required procparam file was not found */
-int processLineParams ( int argc, char **argv );
+static int processLineParams ( int argc, char **argv );
 
 bool dontLoadCache ( int argc, char **argv );
 
@@ -234,7 +235,7 @@ bool dontLoadCache ( int argc, char **argv )
     return false;
 }
 
-int processLineParams ( int argc, char **argv )
+static int processLineParams ( int argc, char **argv )
 {
     rtengine::procparams::PartialProfile *rawParams = nullptr, *imgParams = nullptr;
     std::vector<Glib::ustring> inputFiles;
