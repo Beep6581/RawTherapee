@@ -277,8 +277,7 @@ public:
     OutputArgs outputArgs;
     // List of processing files; set by -p. (Also, see -s above.)
     std::vector<Glib::ustring> paramsFiles;
-    // List of input files; set by -c. During parsing, directories are expanded into their
-    // contents, so this vector does not directly represent the data that the user passed.
+    // List of input files; set by -c.
     std::vector<Glib::ustring> inputFiles;
 };
 
@@ -422,6 +421,7 @@ static int processLineParams ( int argc, char **argv )
 {
     CliArgs parsed_args;
     std::unique_ptr<rtengine::procparams::AutoPartialProfile> rawParams = nullptr, imgParams = nullptr;
+    std::vector<Glib::ustring> inputFiles;
     std::vector<rtengine::procparams::AutoPartialProfile> processingParams;
     unsigned errors = 0;
 
@@ -514,82 +514,18 @@ static int processLineParams ( int argc, char **argv )
                     parsed_args.fastExport = true;
                     break;
 
-                case 'c': // MUST be last option
+                case 'c':
                     while (iArg + 1 < argc) {
                         iArg++;
                         Glib::ustring argument (fname_to_utf8 (argv[iArg]));
                         argument = uneclipse (argument);
 
-                        if (!Glib::file_test (argument, Glib::FILE_TEST_EXISTS)) {
-                            std::cout << "\"" << argument << "\"  doesn't exist!" << std::endl;
-                            continue;
+                        // Stop once we've hit another flag.
+                        if (argument.at (0) == '-') {
+                            iArg--;
+                            break;
                         }
-
-                        if (Glib::file_test (argument, Glib::FILE_TEST_IS_REGULAR)) {
-                            bool notAll = parsed_args.allExtensions && !options.is_parse_extention (argument);
-                            bool notRetained = !parsed_args.allExtensions && !options.has_retained_extention (argument);
-
-                            if (notAll) {
-                                std::cout << "\"" << argument << "\"  is not one of the parsed extensions. Image skipped." << std::endl;
-                            } else if (notRetained) {
-                                std::cout << "\"" << argument << "\"  is not one of the selected parsed extensions. Image skipped." << std::endl;
-                            } else {
-                                parsed_args.inputFiles.emplace_back (argument);
-                            }
-
-                            continue;
-
-                        }
-
-                        if (Glib::file_test (argument, Glib::FILE_TEST_IS_DIR)) {
-
-                            auto dir = Gio::File::create_for_path (argument);
-
-                            if (!dir || !dir->query_exists()) {
-                                continue;
-                            }
-
-                            try {
-
-                                auto enumerator = dir->enumerate_children ("standard::name,standard::type");
-
-                                while (auto file = enumerator->next_file()) {
-
-                                    const auto fileName = Glib::build_filename (argument, file->get_name());
-                                    bool isDir = file->get_file_type() == Gio::FILE_TYPE_DIRECTORY;
-                                    bool notAll = parsed_args.allExtensions && !options.is_parse_extention (fileName);
-                                    bool notRetained = !parsed_args.allExtensions && !options.has_retained_extention (fileName);
-
-                                    if (isDir || notAll || notRetained) {
-                                        if (isDir) {
-                                            std::cout << "\"" << fileName << "\"  is a folder. Folder skipped" << std::endl;
-                                        } else if (notAll) {
-                                            std::cout << "\"" << fileName << "\"  is not one of the parsed extensions. Image skipped." << std::endl;
-                                        } else if (notRetained) {
-                                            std::cout << "\"" << fileName << "\"  is not one of the selected parsed extensions. Image skipped." << std::endl;
-                                        }
-
-                                        continue;
-
-                                    }
-
-                                    if (parsed_args.sideProcParams && parsed_args.skipIfNoSidecar) {
-                                        // look for the sidecar proc params
-                                        if (!Glib::file_test (fileName + paramFileExtension, Glib::FILE_TEST_EXISTS)) {
-                                            std::cout << "\"" << fileName << "\"  has no side-car file. Image skipped." << std::endl;
-                                            continue;
-                                        }
-                                    }
-
-                                    parsed_args.inputFiles.emplace_back (fileName);
-                                }
-
-                            } catch (Glib::Exception&) {}
-
-                            continue;
-                        }
-
-                        std::cerr << "\"" << argument << "\" is neither a regular file nor a directory." << std::endl;
+                        parsed_args.inputFiles.emplace_back (argument);
                     }
 
                     break;
@@ -678,7 +614,80 @@ static int processLineParams ( int argc, char **argv )
         }
     }
 
-    if ( parsed_args.inputFiles.empty() ) {
+    for ( const auto& argument : parsed_args.inputFiles ) {
+        if (!Glib::file_test (argument, Glib::FILE_TEST_EXISTS)) {
+            std::cout << "\"" << argument << "\"  doesn't exist!" << std::endl;
+            continue;
+        }
+
+        if (Glib::file_test (argument, Glib::FILE_TEST_IS_REGULAR)) {
+            bool notAll = parsed_args.allExtensions && !options.is_parse_extention (argument);
+            bool notRetained = !parsed_args.allExtensions && !options.has_retained_extention (argument);
+
+            if (notAll) {
+                std::cout << "\"" << argument << "\"  is not one of the parsed extensions. Image skipped." << std::endl;
+            } else if (notRetained) {
+                std::cout << "\"" << argument << "\"  is not one of the selected parsed extensions. Image skipped." << std::endl;
+            } else {
+                inputFiles.emplace_back (argument);
+            }
+
+            continue;
+
+        }
+
+        if (Glib::file_test (argument, Glib::FILE_TEST_IS_DIR)) {
+
+            auto dir = Gio::File::create_for_path (argument);
+
+            if (!dir || !dir->query_exists()) {
+                continue;
+            }
+
+            try {
+
+                auto enumerator = dir->enumerate_children ("standard::name,standard::type");
+
+                while (auto file = enumerator->next_file()) {
+
+                    const auto fileName = Glib::build_filename (argument, file->get_name());
+                    bool isDir = file->get_file_type() == Gio::FILE_TYPE_DIRECTORY;
+                    bool notAll = parsed_args.allExtensions && !options.is_parse_extention (fileName);
+                    bool notRetained = !parsed_args.allExtensions && !options.has_retained_extention (fileName);
+
+                    if (isDir || notAll || notRetained) {
+                        if (isDir) {
+                            std::cout << "\"" << fileName << "\"  is a folder. Folder skipped" << std::endl;
+                        } else if (notAll) {
+                            std::cout << "\"" << fileName << "\"  is not one of the parsed extensions. Image skipped." << std::endl;
+                        } else if (notRetained) {
+                            std::cout << "\"" << fileName << "\"  is not one of the selected parsed extensions. Image skipped." << std::endl;
+                        }
+
+                        continue;
+
+                    }
+
+                    if (parsed_args.sideProcParams && parsed_args.skipIfNoSidecar) {
+                        // look for the sidecar proc params
+                        if (!Glib::file_test (fileName + paramFileExtension, Glib::FILE_TEST_EXISTS)) {
+                            std::cout << "\"" << fileName << "\"  has no side-car file. Image skipped." << std::endl;
+                            continue;
+                        }
+                    }
+
+                    inputFiles.emplace_back (fileName);
+                }
+
+            } catch (Glib::Exception&) {}
+
+            continue;
+        }
+
+        std::cerr << "\"" << argument << "\" is neither a regular file nor a directory." << std::endl;
+    }
+
+    if ( inputFiles.empty() ) {
         return 2;
     }
 
@@ -710,12 +719,11 @@ static int processLineParams ( int argc, char **argv )
         }
     }
 
-    for ( size_t iFile = 0; iFile < parsed_args.inputFiles.size(); iFile++) {
+    for ( const auto& inputFile : inputFiles ) {
 
         // Has to be reinstanciated at each profile to have a ProcParams object with default values
         rtengine::procparams::ProcParams currentParams;
 
-        Glib::ustring inputFile = parsed_args.inputFiles[iFile];
         std::cout << "Output is " << parsed_args.outputArgs.bits << "-bit " << (parsed_args.outputArgs.isFloat ? "floating-point" : "integer") << "." << std::endl;
         std::cout << "Processing: " << inputFile << std::endl;
 
