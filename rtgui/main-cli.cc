@@ -693,14 +693,14 @@ static int processLineParams ( int argc, char **argv )
         if (useDefault) {
             if (isRaw) {
                 if (options.defProfRaw == DEFPROFILE_DYNAMIC) {
-                    rawParams = std::unique_ptr<rtengine::procparams::AutoPartialProfile>(ProfileStore::getInstance()->loadDynamicProfile (ii->getMetaData(), inputFile));
+                    rawParams = ProfileStore::getInstance()->loadDynamicProfile (ii->getMetaData(), inputFile);
                 }
 
                 std::cout << "  Merging default raw processing profile." << std::endl;
                 rawParams->applyTo (&currentParams);
             } else {
                 if (options.defProfImg == DEFPROFILE_DYNAMIC) {
-                    imgParams = std::unique_ptr<rtengine::procparams::AutoPartialProfile>(ProfileStore::getInstance()->loadDynamicProfile (ii->getMetaData(), inputFile));
+                    imgParams = ProfileStore::getInstance()->loadDynamicProfile (ii->getMetaData(), inputFile);
                 }
 
                 std::cout << "  Merging default non-raw processing profile." << std::endl;

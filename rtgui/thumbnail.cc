@@ -497,18 +497,11 @@ rtengine::procparams::ProcParams* Thumbnail::createProcParamsForUpdate(bool retu
 
     if (!run_cpb) {
         if (defProf == DEFPROFILE_DYNAMIC && create && cfs && cfs->exifValid) {
-            const auto pp_deleter =
-                [](PartialProfile* pp)
-                {
-                    pp->deleteInstance();
-                    delete pp;
-                };
             const std::unique_ptr<const rtengine::FramesMetaData> imageMetaData(rtengine::FramesMetaData::fromFile(fname));
-            const std::unique_ptr<PartialProfile, decltype(pp_deleter)> pp(
+            const std::unique_ptr<AutoPartialProfile> pp(
                 imageMetaData
                     ? ProfileStore::getInstance()->loadDynamicProfile(imageMetaData.get(), fname)
-                    : nullptr,
-                pp_deleter
+                    : nullptr
             );
             if (pp && !pp->pparams->save(outFName)) {
                 loadProcParams();

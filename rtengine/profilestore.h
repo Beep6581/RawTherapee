@@ -210,7 +210,7 @@ public:
     void addListener (ProfileStoreListener *listener);
     void removeListener (ProfileStoreListener *listener);
 
-    rtengine::procparams::AutoPartialProfile*        loadDynamicProfile (const rtengine::FramesMetaData *im, const Glib::ustring& filename);
+    std::unique_ptr<rtengine::procparams::AutoPartialProfile> loadDynamicProfile (const rtengine::FramesMetaData *im, const Glib::ustring& filename);
 
     void dumpFolderList();
 };

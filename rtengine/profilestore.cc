@@ -511,13 +511,13 @@ void ProfileStore::dumpFolderList()
     printf ("\n");
 }
 
-AutoPartialProfile *ProfileStore::loadDynamicProfile (const FramesMetaData *im, const Glib::ustring& filename)
+std::unique_ptr<AutoPartialProfile> ProfileStore::loadDynamicProfile (const FramesMetaData *im, const Glib::ustring& filename)
 {
     if (storeState == STORESTATE_NOTINITIALIZED) {
         parseProfilesOnce();
     }
 
-    AutoPartialProfile *ret = new AutoPartialProfile (true, true);
+    std::unique_ptr<AutoPartialProfile> ret (new AutoPartialProfile (true, true));
 
     if (!rulesLoaded) {
         loadRules();
