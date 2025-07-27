@@ -492,6 +492,7 @@ static void longUsage (const std::string& cmd_name) {
 
 static int parseLineParams ( int argc, char **argv, CliArgs& parsed_args )
 {
+    char last_ch = 0;
     std::unique_ptr<rtengine::procparams::AutoPartialProfile> rawParams = nullptr, imgParams = nullptr;
     std::vector<rtengine::procparams::AutoPartialProfile> processingParams;
 
@@ -505,7 +506,18 @@ static int parseLineParams ( int argc, char **argv, CliArgs& parsed_args )
         if ( currParam.at(0) != '-' ) {
             shortUsage (Glib::path_get_basename (argv[0]));
             std::cerr << "Invalid CLI argument " << currParam << "." << std::endl;
-            std::cerr << "(Hint: if you meant to provide an input file, use -c. See -h for full help.)";
+
+            switch (last_ch) {
+                case 'b':
+                    std::cerr << "(Hint: the -b flag does not allow a space. For example, use -b16 rather than -b 16.)" << std::endl;
+                    break;
+                case 'j':
+                    std::cerr << "(Hint: the -j flag does not allow a space. For example, use -j99 rather than -j 99.)" << std::endl;
+                    break;
+                default:
+                    std::cerr << "(Hint: if you meant to provide an input file, use -c. See -h for full help.)" << std::endl;
+                    break;
+            }
             return -1;
         }
 
@@ -616,14 +628,21 @@ static int parseLineParams ( int argc, char **argv, CliArgs& parsed_args )
                 shortUsage (Glib::path_get_basename (argv[0]));
                 std::cerr << "Unrecognized flag " << currParam << "." << std::endl;
                 std::cerr << "(Hint: rawtherapee-cli has no --long-form arguments. Use -h or -? to see help.)" << std::endl;
+                if (last_ch == 'c' || last_ch == 'p') {
+                    std::cerr << "(Hint: if you meant to provide a filename, prefix it with ./.)" << std::endl;
+                }
                 return -1;
 
             default:
                 shortUsage (Glib::path_get_basename (argv[0]));
                 std::cerr << "Unrecognized flag " << currParam << "." << std::endl;
                 std::cerr << "(Hint: use -h or -? to see help.)";
+                if (last_ch == 'c' || last_ch == 'p') {
+                    std::cerr << "(Hint: if you meant to provide a filename, prefix it with ./.)" << std::endl;
+                }
                 return -1;
         }
+        last_ch = currParam.at (1);
     }
     return 0;
 }
