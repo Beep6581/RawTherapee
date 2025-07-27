@@ -60,13 +60,6 @@
 // but we should set it correctly anyway.
 Glib::ustring argv0;
 
-namespace
-{
-
-bool fast_export = false;
-
-}
-
 static Glib::ustring uneclipse(Glib::ustring input) {
 #if ECLIPSE_ARGS
     if (input.size() >= 2) {
@@ -151,6 +144,19 @@ private:
 
 class CliArgs {
 public:
+    // Use the custom fast-export porecssing pipeline. Set by -f.
+    bool fastExport = false;
+    // Whether to allow all supported extensions, or limit to ones set by the
+    // user's options. Set by -a.
+    bool allExtensions = false;
+    // Whether to start with the default processing profile or the neutral one.
+    // Set by -d.
+    bool useDefault = false;
+    // Whether to copy the user-provided .pp3 file to the output directory.
+    // Set by -O.
+    bool copyParamsFile = false;
+    // Whether to overwrite output files if they exist already. Set by -Y.
+    bool overwriteFiles = false;
     // Set by -o and -O (TODO in C++ 17 use a std::optional here)
     OutputPath outputPath;
 };
@@ -297,12 +303,8 @@ static int processLineParams ( int argc, char **argv )
     std::unique_ptr<rtengine::procparams::AutoPartialProfile> rawParams = nullptr, imgParams = nullptr;
     std::vector<Glib::ustring> inputFiles;
     std::vector<rtengine::procparams::AutoPartialProfile> processingParams;
-    bool overwriteFiles = false;
     bool sideProcParams = false;
-    bool copyParamsFile = false;
     bool skipIfNoSidecar = false;
-    bool allExtensions = false;
-    bool useDefault = false;
     unsigned int sideCarFilePos = 0;
     int compression = 92;
     int subsampling = 3;
@@ -321,7 +323,7 @@ static int processLineParams ( int argc, char **argv )
         if ( currParam.at (0) == '-' && currParam.size() > 1) {
             switch ( currParam.at (1) ) {
                 case 'O':
-                    copyParamsFile = true;
+                    parsed_args.copyParamsFile = true;
                     // fall through
 
                 case 'o': // outputfile or dir
@@ -366,18 +368,18 @@ static int processLineParams ( int argc, char **argv )
                     break;
 
                 case 'd':
-                    useDefault = true;
+                    parsed_args.useDefault = true;
                     break;
 
                 case 'q':
                     break;
 
                 case 'Y':
-                    overwriteFiles = true;
+                    parsed_args.overwriteFiles = true;
                     break;
 
                 case 'a':
-                    allExtensions = true;
+                    parsed_args.allExtensions = true;
                     break;
 
                 case 'j':
@@ -443,7 +445,7 @@ static int processLineParams ( int argc, char **argv )
                     break;
 
                 case 'f':
-                    fast_export = true;
+                    parsed_args.fastExport = true;
                     break;
 
                 case 'c': // MUST be last option
@@ -458,15 +460,13 @@ static int processLineParams ( int argc, char **argv )
                         }
 
                         if (Glib::file_test (argument, Glib::FILE_TEST_IS_REGULAR)) {
-                            bool notAll = allExtensions && !options.is_parse_extention (argument);
-                            bool notRetained = !allExtensions && !options.has_retained_extention (argument);
+                            bool notAll = parsed_args.allExtensions && !options.is_parse_extention (argument);
+                            bool notRetained = !parsed_args.allExtensions && !options.has_retained_extention (argument);
 
-                            if (notAll || notRetained) {
-                                if (notAll) {
-                                    std::cout << "\"" << argument << "\"  is not one of the parsed extensions. Image skipped." << std::endl;
-                                } else if (notRetained) {
-                                    std::cout << "\"" << argument << "\"  is not one of the selected parsed extensions. Image skipped." << std::endl;
-                                }
+                            if (notAll) {
+                                std::cout << "\"" << argument << "\"  is not one of the parsed extensions. Image skipped." << std::endl;
+                            } else if (notRetained) {
+                                std::cout << "\"" << argument << "\"  is not one of the selected parsed extensions. Image skipped." << std::endl;
                             } else {
                                 inputFiles.emplace_back (argument);
                             }
@@ -491,8 +491,8 @@ static int processLineParams ( int argc, char **argv )
 
                                     const auto fileName = Glib::build_filename (argument, file->get_name());
                                     bool isDir = file->get_file_type() == Gio::FILE_TYPE_DIRECTORY;
-                                    bool notAll = allExtensions && !options.is_parse_extention (fileName);
-                                    bool notRetained = !allExtensions && !options.has_retained_extention (fileName);
+                                    bool notAll = parsed_args.allExtensions && !options.is_parse_extention (fileName);
+                                    bool notRetained = !parsed_args.allExtensions && !options.has_retained_extention (fileName);
 
                                     if (isDir || notAll || notRetained) {
                                         if (isDir) {
@@ -628,7 +628,7 @@ static int processLineParams ( int argc, char **argv )
         return 2;
     }
 
-    if (useDefault) {
+    if (parsed_args.useDefault) {
         rawParams = std::unique_ptr<rtengine::procparams::AutoPartialProfile>(new rtengine::procparams::AutoPartialProfile (true, true));
         Glib::ustring profPath = options.findProfilePath (options.defProfRaw);
 
@@ -667,7 +667,7 @@ static int processLineParams ( int argc, char **argv )
             continue;
         }
 
-        if ( !overwriteFiles && Glib::file_test ( outputFile, Glib::FILE_TEST_EXISTS ) ) {
+        if ( !parsed_args.overwriteFiles && Glib::file_test ( outputFile, Glib::FILE_TEST_EXISTS ) ) {
             std::cerr << outputFile  << " already exists: use -Y option to overwrite. This image has been skipped." << std::endl;
             continue;
         }
@@ -688,7 +688,7 @@ static int processLineParams ( int argc, char **argv )
             continue;
         }
 
-        if (useDefault) {
+        if (parsed_args.useDefault) {
             if (isRaw) {
                 if (options.defProfRaw == DEFPROFILE_DYNAMIC) {
                     rawParams = ProfileStore::getInstance()->loadDynamicProfile (ii->getMetaData(), inputFile);
@@ -739,7 +739,7 @@ static int processLineParams ( int argc, char **argv )
             continue;
         }
 
-        job = rtengine::ProcessingJob::create (ii, currentParams, fast_export);
+        job = rtengine::ProcessingJob::create (ii, currentParams, parsed_args.fastExport);
 
         if ( !job ) {
             errors++;
@@ -775,7 +775,7 @@ static int processLineParams ( int argc, char **argv )
             errors++;
             std::cerr << "Error saving to: " << outputFile << std::endl;
         } else {
-            if ( copyParamsFile ) {
+            if ( parsed_args.copyParamsFile ) {
                 Glib::ustring outputProcessingParams = outputFile + paramFileExtension;
                 currentParams.save ( outputProcessingParams );
             }
