@@ -275,6 +275,11 @@ public:
     OutputPath outputPath;
     // Various arguments controlling what kind of output to produce.
     OutputArgs outputArgs;
+    // List of processing files; set by -p. (Also, see -s above.)
+    std::vector<Glib::ustring> paramsFiles;
+    // List of input files; set by -c. During parsing, directories are expanded into their
+    // contents, so this vector does not directly represent the data that the user passed.
+    std::vector<Glib::ustring> inputFiles;
 };
 
 /* Process line command options
@@ -417,7 +422,6 @@ static int processLineParams ( int argc, char **argv )
 {
     CliArgs parsed_args;
     std::unique_ptr<rtengine::procparams::AutoPartialProfile> rawParams = nullptr, imgParams = nullptr;
-    std::vector<Glib::ustring> inputFiles;
     std::vector<rtengine::procparams::AutoPartialProfile> processingParams;
     unsigned errors = 0;
 
@@ -455,13 +459,7 @@ static int processLineParams ( int argc, char **argv )
                             return -3;
                         }
 
-                        rtengine::procparams::AutoPartialProfile currentParams (true);
-                        if (! (currentParams.load ( fname ))) {
-                            processingParams.emplace_back (std::move (currentParams));
-                        } else {
-                            std::cerr << "Error: \"" << fname << "\" not found." << std::endl;
-                            return -3;
-                        }
+                        parsed_args.paramsFiles.emplace_back (fname);
                     }
 
                     break;
@@ -472,7 +470,7 @@ static int processLineParams ( int argc, char **argv )
 
                 case 's': // Processing params next to file (file extension appended)
                     parsed_args.sideProcParams = true;
-                    parsed_args.sideCarFilePos = processingParams.size();
+                    parsed_args.sideCarFilePos = parsed_args.paramsFiles.size();
                     break;
 
                 case 'd':
@@ -536,7 +534,7 @@ static int processLineParams ( int argc, char **argv )
                             } else if (notRetained) {
                                 std::cout << "\"" << argument << "\"  is not one of the selected parsed extensions. Image skipped." << std::endl;
                             } else {
-                                inputFiles.emplace_back (argument);
+                                parsed_args.inputFiles.emplace_back (argument);
                             }
 
                             continue;
@@ -583,7 +581,7 @@ static int processLineParams ( int argc, char **argv )
                                         }
                                     }
 
-                                    inputFiles.emplace_back (fileName);
+                                    parsed_args.inputFiles.emplace_back (fileName);
                                 }
 
                             } catch (Glib::Exception&) {}
@@ -680,8 +678,18 @@ static int processLineParams ( int argc, char **argv )
         }
     }
 
-    if ( inputFiles.empty() ) {
+    if ( parsed_args.inputFiles.empty() ) {
         return 2;
+    }
+
+    for ( const auto& fname : parsed_args.paramsFiles ) {
+        rtengine::procparams::AutoPartialProfile currentParams (true);
+        if (! (currentParams.load ( fname ))) {
+            processingParams.emplace_back (std::move (currentParams));
+        } else {
+            std::cerr << "Error: \"" << fname << "\" not found." << std::endl;
+            return -3;
+        }
     }
 
     if (parsed_args.useDefault) {
@@ -702,12 +710,12 @@ static int processLineParams ( int argc, char **argv )
         }
     }
 
-    for ( size_t iFile = 0; iFile < inputFiles.size(); iFile++) {
+    for ( size_t iFile = 0; iFile < parsed_args.inputFiles.size(); iFile++) {
 
         // Has to be reinstanciated at each profile to have a ProcParams object with default values
         rtengine::procparams::ProcParams currentParams;
 
-        Glib::ustring inputFile = inputFiles[iFile];
+        Glib::ustring inputFile = parsed_args.inputFiles[iFile];
         std::cout << "Output is " << parsed_args.outputArgs.bits << "-bit " << (parsed_args.outputArgs.isFloat ? "floating-point" : "integer") << "." << std::endl;
         std::cout << "Processing: " << inputFile << std::endl;
 
