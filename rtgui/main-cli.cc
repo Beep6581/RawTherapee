@@ -95,6 +95,66 @@ static Glib::ustring output_type_ext (OutputType outputType)
     std::abort();
 }
 
+class OutputPath {
+public:
+    // TODO remove default constructor once we move parsing into constructor for CliArgs
+    OutputPath() {}
+
+    // Constructs an output path from a stringly-typed path.
+    OutputPath(Glib::ustring path) :
+        path(path)
+    {
+        if (path.substr (0, 9) == "/dev/null") {
+            path.assign ("/dev/null"); // removing any useless chars or filename
+            isDirectory = false;
+            leaveUntouched = true;
+        } else if (Glib::file_test (path, Glib::FILE_TEST_IS_DIR)) {
+            isDirectory = true;
+            leaveUntouched = false;
+        }
+    }
+
+    // Computes the output filename from an input filename and this path.
+    //
+    // If this path is not a directory, the input filename is entirely ignored.
+    // See https://github.com/RawTherapee/RawTherapee/issues/7243
+    Glib::ustring outputFile(const Glib::ustring& inputFile, OutputType outputType) const
+    {
+        Glib::ustring outputFile;
+        if ( path.empty() ) {
+            const Glib::ustring& s = inputFile;
+            Glib::ustring::size_type ext = s.find_last_of ('.');
+            outputFile = s.substr (0, ext) + output_type_ext (outputType);
+        } else if ( isDirectory ) {
+            Glib::ustring s = Glib::path_get_basename ( inputFile );
+            Glib::ustring::size_type ext = s.find_last_of ('.');
+            outputFile = Glib::build_filename (path, s.substr (0, ext) + output_type_ext (outputType));
+        } else {
+            if (leaveUntouched) {
+                outputFile = path;
+            } else {
+                Glib::ustring s = path;
+                Glib::ustring::size_type ext = s.find_last_of ('.');
+                outputFile = s.substr (0, ext) + output_type_ext (outputType);
+            }
+        }
+        return outputFile;
+    }
+
+private:
+    Glib::ustring path;
+    bool isDirectory = false;
+    // For certain special non-directories (currently just /dev/null), we avoid
+    // renaming to change extension.
+    bool leaveUntouched = false;
+};
+
+class CliArgs {
+public:
+    // Set by -o and -O (TODO in C++ 17 use a std::optional here)
+    OutputPath outputPath;
+};
+
 /* Process line command options
  *
  * Returns
@@ -233,12 +293,10 @@ bool dontLoadCache ( int argc, char **argv )
 
 static int processLineParams ( int argc, char **argv )
 {
+    CliArgs parsed_args;
     std::unique_ptr<rtengine::procparams::AutoPartialProfile> rawParams = nullptr, imgParams = nullptr;
     std::vector<Glib::ustring> inputFiles;
-    Glib::ustring outputPath;
     std::vector<rtengine::procparams::AutoPartialProfile> processingParams;
-    bool outputDirectory = false;
-    bool leaveUntouched = false;
     bool overwriteFiles = false;
     bool sideProcParams = false;
     bool copyParamsFile = false;
@@ -269,15 +327,7 @@ static int processLineParams ( int argc, char **argv )
                 case 'o': // outputfile or dir
                     if ( iArg + 1 < argc ) {
                         iArg++;
-                        outputPath = uneclipse (Glib::ustring (fname_to_utf8 (argv[iArg])));
-
-                        if (outputPath.substr (0, 9) == "/dev/null") {
-                            outputPath.assign ("/dev/null"); // removing any useless chars or filename
-                            outputDirectory = false;
-                            leaveUntouched = true;
-                        } else if (Glib::file_test (outputPath, Glib::FILE_TEST_IS_DIR)) {
-                            outputDirectory = true;
-                        }
+                        parsed_args.outputPath = OutputPath(uneclipse (Glib::ustring (fname_to_utf8 (argv[iArg]))));
                     }
 
                     break;
@@ -610,25 +660,7 @@ static int processLineParams ( int argc, char **argv )
         int errorCode;
         bool isRaw = false;
 
-        Glib::ustring outputFile;
-
-        if ( outputPath.empty() ) {
-            Glib::ustring s = inputFile;
-            Glib::ustring::size_type ext = s.find_last_of ('.');
-            outputFile = s.substr (0, ext) + output_type_ext (outputType);
-        } else if ( outputDirectory ) {
-            Glib::ustring s = Glib::path_get_basename ( inputFile );
-            Glib::ustring::size_type ext = s.find_last_of ('.');
-            outputFile = Glib::build_filename (outputPath, s.substr (0, ext) + output_type_ext (outputType));
-        } else {
-            if (leaveUntouched) {
-                outputFile = outputPath;
-            } else {
-                Glib::ustring s = outputPath;
-                Glib::ustring::size_type ext = s.find_last_of ('.');
-                outputFile = s.substr (0, ext) + output_type_ext (outputType);
-            }
-        }
+        Glib::ustring outputFile = parsed_args.outputPath.outputFile(inputFile, outputType);
 
         if ( inputFile == outputFile) {
             std::cerr << "Cannot overwrite: " << inputFile << std::endl;
