@@ -279,6 +279,10 @@ public:
     OutputArgs outputArgs;
     // List of processing files; set by -p. (Also, see -s above.)
     std::vector<Glib::ustring> paramsFiles;
+    // Whether the user provided -c. Note that if the user provides '-c' with an empty
+    // set of files, this will still be passed (and the tool will output a warning but
+    // not an error).
+    bool hasInputFiles = false;
     // List of input files; set by -c.
     std::vector<Glib::ustring> inputFiles;
 };
@@ -341,15 +345,21 @@ int main (int argc, char **argv)
     options.rtSettings.lensfunDbBundleDirectory = LENSFUN_DB_PATH;
 #endif
 
+    // Print RT's version in all cases.
+    std::cerr << "RawTherapee, version " << RTVERSION << ", command line." << std::endl;
     CliArgs parsed_args;
     int ret = parseLineParams (argc, argv, parsed_args);
     if ( ret != 0 ) {
         return ret;
     }
-    bool quickstart = parsed_args.quickstart;
+    if ( !parsed_args.hasInputFiles ) {
+        std::cerr << "No input files provided. Use -c to add input files or -h for help." << std::endl;
+        std::cerr << "(Hint: if you intended to do nothing, provide -c by itself with no filenames.)" << std::endl;
+        return -1;
+    }
 
     try {
-        Options::load (quickstart);
+        Options::load (parsed_args.quickstart);
     } catch (Options::Error &e) {
         std::cerr << std::endl
                   << "FATAL ERROR:" << std::endl
@@ -400,16 +410,7 @@ int main (int argc, char **argv)
 
 #endif
 
-    // printing RT's version in all case, particularly useful for the 'verbose' mode, but also for the batch processing
-    std::cout << "RawTherapee, version " << RTVERSION << ", command line." << std::endl;
-
-    if (argc > 1) {
-        ret = processLineParams (parsed_args);
-    } else {
-        std::cout << "Terminating without anything to do." << std::endl;
-    }
-
-    return ret;
+    return processLineParams (parsed_args);
 }
 
 static void shortUsage (const std::string& cmd_name) {
@@ -604,6 +605,7 @@ static int parseLineParams ( int argc, char **argv, CliArgs& parsed_args )
                 break;
 
             case 'c':
+                parsed_args.hasInputFiles = true;
                 while (iArg + 1 < argc) {
                     iArg++;
                     Glib::ustring argument (fname_to_utf8 (argv[iArg]));
@@ -728,7 +730,8 @@ static int processLineParams ( const CliArgs& parsed_args )
     }
 
     if ( inputFiles.empty() ) {
-        return -1;
+        std::cerr << "Warning: no input files. Doing nothing and exiting with success." << std::endl;
+        return 0;
     }
 
     for ( const auto& fname : parsed_args.paramsFiles ) {
