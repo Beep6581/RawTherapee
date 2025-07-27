@@ -142,6 +142,111 @@ private:
     bool leaveUntouched = false;
 };
 
+class OutputArgs {
+public:
+    // Compression level: 0-100 for jpegs; 0 or 1 for TIFs.
+    int compression = 92;
+    // Subsam
+    int subsampling = 3;
+    // Bits per channel: 8, 16 or 32.
+    int bits = -1;
+    // Whether the bit-depth should be used as an integer or a float.
+    bool isFloat = false;
+    // The type of the output.
+    OutputType outputType = OutputType::JPG;
+
+    // Parse the -j flag and update the struct accordingly.
+    //
+    // Returns 0 on success, < 0 on error.
+    int parseJpeg (const Glib::ustring& currParam)
+    {
+        if (currParam.length() > 2 && currParam.at (2) == 's') {
+            if (currParam.length() == 3) {
+                std::cerr << "Error: the -js switch requires a mandatory value!" << std::endl;
+                return -3;
+            }
+
+            // looking for the subsampling parameter
+            subsampling = atoi (currParam.substr (3).c_str());
+
+            if (subsampling < 1 || subsampling > 3) {
+                std::cerr << "Error: the value accompanying the -js switch has to be in the [1-3] range!" << std::endl;
+                return -3;
+            }
+        } else {
+            outputType = OutputType::JPG;
+            if(currParam.size() < 3) {
+                compression = 92;
+            } else {
+                compression = atoi (currParam.substr (2).c_str());
+
+                if (compression < 0 || compression > 100) {
+                    std::cerr << "Error: the value accompanying the -j switch has to be in the [0-100] range!" << std::endl;
+                    return -3;
+                }
+            }
+        }
+        return 0;
+    }
+
+    // Parse the -b flag and update the struct accordingly.
+    //
+    // Returns 0 on success, < 0 on error.
+    int parseBits (const Glib::ustring& currParam)
+    {
+        bits = atoi (currParam.substr (2).c_str());
+
+        if (currParam.length() >= 3 && currParam.at(2) == '8') { // -b8
+            bits = 8;
+        } else if (currParam.length() >= 4 && currParam.length() <= 5 && currParam.at(2) == '1' && currParam.at(3) == '6') { // -b16, -b16f
+            bits = 16;
+            if (currParam.length() == 5 && currParam.at(4) == 'f') {
+                isFloat = true;
+            }
+        } else if (currParam.length() >= 4 && currParam.length() <= 5 && currParam.at(2) == '3' && currParam.at(3) == '2') { // -b32 == -b32f
+            bits = 32;
+            isFloat = true;
+        }
+
+        if (bits != 8 && bits != 16 && bits != 32) {
+            std::cerr << "Error: specify output bit depth per channel as -b8 for 8-bit integer, -b16 for 16-bit integer, -b16f for 16-bit float or -b32 for 32-bit float." << std::endl;
+            return -3;
+        }
+        return 0;
+    }
+
+    // If we never called parseBits, then use a default value based on the
+    // output type.
+    void setBitsIfUnset ()
+    {
+        if (bits == -1) {
+            switch (outputType) {
+                case OutputType::JPG:
+                case OutputType::PNG:
+                    bits = 8;
+                    break;
+                case OutputType::TIF:
+                    bits = 16;
+                    break;
+            }
+        }
+    }
+
+    // Save the given image to disk with the given file name, using these arguments.
+    int saveToDisk (const rtengine::IImagefloat* resultImage, const Glib::ustring& outputFile) const
+    {
+        switch (outputType) {
+            case OutputType::JPG:
+                return resultImage->saveAsJPEG ( outputFile, compression, subsampling );
+            case OutputType::TIF:
+                return resultImage->saveAsTIFF ( outputFile, bits, isFloat, compression == 0  );
+            case OutputType::PNG:
+                return resultImage->saveAsPNG ( outputFile, bits );
+        }
+        std::abort();
+    }
+};
+
 class CliArgs {
 public:
     // Use the custom fast-export porecssing pipeline. Set by -f.
@@ -168,6 +273,8 @@ public:
     bool skipIfNoSidecar = false;
     // Set by -o and -O (TODO in C++ 17 use a std::optional here)
     OutputPath outputPath;
+    // Various arguments controlling what kind of output to produce.
+    OutputArgs outputArgs;
 };
 
 /* Process line command options
@@ -312,11 +419,6 @@ static int processLineParams ( int argc, char **argv )
     std::unique_ptr<rtengine::procparams::AutoPartialProfile> rawParams = nullptr, imgParams = nullptr;
     std::vector<Glib::ustring> inputFiles;
     std::vector<rtengine::procparams::AutoPartialProfile> processingParams;
-    int compression = 92;
-    int subsampling = 3;
-    int bits = -1;
-    bool isFloat = false;
-    auto outputType = OutputType::JPG;
     unsigned errors = 0;
 
     for ( int iArg = 1; iArg < argc; iArg++) {
@@ -389,65 +491,25 @@ static int processLineParams ( int argc, char **argv )
                     break;
 
                 case 'j':
-                    if (currParam.length() > 2 && currParam.at (2) == 's') {
-                        if (currParam.length() == 3) {
-                            std::cerr << "Error: the -js switch requires a mandatory value!" << std::endl;
-                            return -3;
-                        }
-
-                        // looking for the subsampling parameter
-                        subsampling = atoi (currParam.substr (3).c_str());
-
-                        if (subsampling < 1 || subsampling > 3) {
-                            std::cerr << "Error: the value accompanying the -js switch has to be in the [1-3] range!" << std::endl;
-                            return -3;
-                        }
-                    } else {
-                        outputType = OutputType::JPG;
-                        if(currParam.size() < 3) {
-                            compression = 92;
-                        } else {
-                            compression = atoi (currParam.substr (2).c_str());
-
-                            if (compression < 0 || compression > 100) {
-                                std::cerr << "Error: the value accompanying the -j switch has to be in the [0-100] range!" << std::endl;
-                                return -3;
-                            }
-                        }
+                    if (parsed_args.outputArgs.parseJpeg (currParam) < 0) {
+                        return -3;
                     }
-
                     break;
 
                 case 'b':
-                    bits = atoi (currParam.substr (2).c_str());
-
-                    if (currParam.length() >= 3 && currParam.at(2) == '8') { // -b8
-                        bits = 8;
-                    } else if (currParam.length() >= 4 && currParam.length() <= 5 && currParam.at(2) == '1' && currParam.at(3) == '6') { // -b16, -b16f
-                        bits = 16;
-                        if (currParam.length() == 5 && currParam.at(4) == 'f') {
-                            isFloat = true;
-                        }
-                    } else if (currParam.length() >= 4 && currParam.length() <= 5 && currParam.at(2) == '3' && currParam.at(3) == '2') { // -b32 == -b32f
-                        bits = 32;
-                        isFloat = true;
-                    }
-
-                    if (bits != 8 && bits != 16 && bits != 32) {
-                        std::cerr << "Error: specify output bit depth per channel as -b8 for 8-bit integer, -b16 for 16-bit integer, -b16f for 16-bit float or -b32 for 32-bit float." << std::endl;
+                    if (parsed_args.outputArgs.parseBits (currParam) < 0) {
                         return -3;
                     }
-
                     break;
 
                 case 't':
-                    outputType = OutputType::TIF;
-                    compression = ((currParam.size() < 3 || currParam.at (2) != 'z') ? 0 : 1);
+                    parsed_args.outputArgs.outputType = OutputType::TIF;
+                    parsed_args.outputArgs.compression = ((currParam.size() < 3 || currParam.at (2) != 'z') ? 0 : 1);
                     break;
 
                 case 'n':
-                    outputType = OutputType::PNG;
-                    compression = -1;
+                    parsed_args.outputArgs.outputType = OutputType::PNG;
+                    parsed_args.outputArgs.compression = -1;
                     break;
 
                 case 'f':
@@ -618,18 +680,6 @@ static int processLineParams ( int argc, char **argv )
         }
     }
 
-    if (bits == -1) {
-        switch (outputType) {
-            case OutputType::JPG:
-            case OutputType::PNG:
-                bits = 8;
-                break;
-            case OutputType::TIF:
-                bits = 16;
-                break;
-        }
-    }
-
     if ( inputFiles.empty() ) {
         return 2;
     }
@@ -658,7 +708,7 @@ static int processLineParams ( int argc, char **argv )
         rtengine::procparams::ProcParams currentParams;
 
         Glib::ustring inputFile = inputFiles[iFile];
-        std::cout << "Output is " << bits << "-bit " << (isFloat ? "floating-point" : "integer") << "." << std::endl;
+        std::cout << "Output is " << parsed_args.outputArgs.bits << "-bit " << (parsed_args.outputArgs.isFloat ? "floating-point" : "integer") << "." << std::endl;
         std::cout << "Processing: " << inputFile << std::endl;
 
         rtengine::InitialImage* ii = nullptr;
@@ -666,7 +716,7 @@ static int processLineParams ( int argc, char **argv )
         int errorCode;
         bool isRaw = false;
 
-        Glib::ustring outputFile = parsed_args.outputPath.outputFile(inputFile, outputType);
+        Glib::ustring outputFile = parsed_args.outputPath.outputFile(inputFile, parsed_args.outputArgs.outputType);
 
         if ( inputFile == outputFile) {
             std::cerr << "Cannot overwrite: " << inputFile << std::endl;
@@ -765,17 +815,7 @@ static int processLineParams ( int argc, char **argv )
         }
 
         // save image to disk
-        switch (outputType) {
-            case OutputType::JPG:
-                errorCode = resultImage->saveAsJPEG ( outputFile, compression, subsampling );
-                break;
-            case OutputType::TIF:
-                errorCode = resultImage->saveAsTIFF ( outputFile, bits, isFloat, compression == 0  );
-                break;
-            case OutputType::PNG:
-                errorCode = resultImage->saveAsPNG ( outputFile, bits );
-                break;
-        }
+        errorCode = parsed_args.outputArgs.saveToDisk (resultImage, outputFile);
 
         if (errorCode) {
             errors++;
