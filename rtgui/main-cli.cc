@@ -58,11 +58,7 @@
 
 // stores path to data files
 Glib::ustring argv0;
-Glib::ustring creditsPath;
-Glib::ustring licensePath;
 Glib::ustring argv1;
-//bool simpleEditor;
-//Glib::Threads::Thread* mainThread;
 
 namespace
 {
@@ -145,25 +141,11 @@ int main (int argc, char **argv)
         argv0 = Glib::build_filename (exePath, DATA_SEARCH_PATH);
     }
 
-    if (Glib::path_is_absolute (CREDITS_SEARCH_PATH)) {
-        creditsPath = CREDITS_SEARCH_PATH;
-    } else {
-        creditsPath = Glib::build_filename (exePath, CREDITS_SEARCH_PATH);
-    }
-
-    if (Glib::path_is_absolute (LICENCE_SEARCH_PATH)) {
-        licensePath = LICENCE_SEARCH_PATH;
-    } else {
-        licensePath = Glib::build_filename (exePath, LICENCE_SEARCH_PATH);
-    }
-
     options.rtSettings.lensfunDbDirectory = LENSFUN_DB_PATH;
     options.rtSettings.lensfunDbBundleDirectory = LENSFUN_DB_PATH;
 
 #else
     argv0 = DATA_SEARCH_PATH;
-    creditsPath = CREDITS_SEARCH_PATH;
-    licensePath = LICENCE_SEARCH_PATH;
     options.rtSettings.lensfunDbDirectory = LENSFUN_DB_PATH;
     options.rtSettings.lensfunDbBundleDirectory = LENSFUN_DB_PATH;
 #endif
