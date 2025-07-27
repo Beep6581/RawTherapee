@@ -576,34 +576,6 @@ static int processLineParams ( int argc, char **argv )
         } else {
             argv1 = Glib::ustring (fname_to_utf8 (argv[iArg]));
             argv1 = uneclipse (argv1);
-
-            if ( outputDirectory ) {
-                options.savePathFolder = outputPath;
-                options.saveUsePathTemplate = false;
-            } else {
-                options.saveUsePathTemplate = true;
-
-                if (options.savePathTemplate.empty())
-                    // If the save path template is empty, we use its default value
-                {
-                    options.savePathTemplate = "%p1/converted/%f";
-                }
-            }
-
-            switch (outputType) {
-                case OutputType::JPG:
-                    options.saveFormat.format = "jpg";
-                    options.saveFormat.jpegQuality = compression;
-                    options.saveFormat.jpegSubSamp = subsampling;
-                    break;
-                case OutputType::TIF:
-                    options.saveFormat.format = "tif";
-                    break;
-                case OutputType::PNG:
-                    options.saveFormat.format = "png";
-                    break;
-            }
-
             break;
         }
     }
