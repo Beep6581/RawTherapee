@@ -163,7 +163,7 @@ public:
         if (currParam.length() > 2 && currParam.at (2) == 's') {
             if (currParam.length() == 3) {
                 std::cerr << "Error: the -js switch requires a mandatory value!" << std::endl;
-                return -3;
+                return -1;
             }
 
             // looking for the subsampling parameter
@@ -171,7 +171,7 @@ public:
 
             if (subsampling < 1 || subsampling > 3) {
                 std::cerr << "Error: the value accompanying the -js switch has to be in the [1-3] range!" << std::endl;
-                return -3;
+                return -1;
             }
         } else {
             outputType = OutputType::JPG;
@@ -182,7 +182,7 @@ public:
 
                 if (compression < 0 || compression > 100) {
                     std::cerr << "Error: the value accompanying the -j switch has to be in the [0-100] range!" << std::endl;
-                    return -3;
+                    return -1;
                 }
             }
         }
@@ -210,7 +210,7 @@ public:
 
         if (bits != 8 && bits != 16 && bits != 32) {
             std::cerr << "Error: specify output bit depth per channel as -b8 for 8-bit integer, -b16 for 16-bit integer, -b16f for 16-bit float or -b32 for 32-bit float." << std::endl;
-            return -3;
+            return -1;
         }
         return 0;
     }
@@ -286,10 +286,8 @@ public:
 /* Parse line command options
  *
  * Returns
- *   1 if the user provided a non-flag command-line argument
  *   0 on success
- *  -1 if there is an error in parameter
- *  -3 if at least one required procparam file was not found */
+ *  -1 if there is an error in parameter */
 static int parseLineParams ( int argc, char **argv, CliArgs& parsed_args );
 
 /* Process line command options
@@ -496,7 +494,7 @@ static int parseLineParams ( int argc, char **argv, CliArgs& parsed_args )
 {
     std::unique_ptr<rtengine::procparams::AutoPartialProfile> rawParams = nullptr, imgParams = nullptr;
     std::vector<rtengine::procparams::AutoPartialProfile> processingParams;
- 
+
     for ( int iArg = 1; iArg < argc; iArg++) {
         Glib::ustring currParam (argv[iArg]);
         if ( currParam.empty() ) {
@@ -504,115 +502,127 @@ static int parseLineParams ( int argc, char **argv, CliArgs& parsed_args )
         }
         currParam = uneclipse(currParam);
 
-        if ( currParam.at (0) == '-' && currParam.size() > 1) {
-            switch ( currParam.at (1) ) {
-                case 'O':
-                    parsed_args.copyParamsFile = true;
-                    // fall through
+        if ( currParam.at(0) != '-' ) {
+            shortUsage (Glib::path_get_basename (argv[0]));
+            std::cerr << "Invalid CLI argument " << currParam << "." << std::endl;
+            std::cerr << "(Hint: if you meant to provide an input file, use -c. See -h for full help.)";
+            return -1;
+        }
 
-                case 'o': // outputfile or dir
-                    if ( iArg + 1 < argc ) {
-                        iArg++;
-                        parsed_args.outputPath = OutputPath(uneclipse (Glib::ustring (fname_to_utf8 (argv[iArg]))));
+        switch ( currParam.at (1) ) {
+            case 'O':
+                parsed_args.copyParamsFile = true;
+                // fall through
+
+            case 'o': // outputfile or dir
+                if ( iArg + 1 < argc ) {
+                    iArg++;
+                    parsed_args.outputPath = OutputPath(uneclipse (Glib::ustring (fname_to_utf8 (argv[iArg]))));
+                }
+
+                break;
+
+            case 'p': // processing parameters for all inputs; all set procparams are required, so
+
+                // RT stop if any of them can't be loaded for any reason.
+                if ( iArg + 1 < argc ) {
+                    iArg++;
+                    Glib::ustring fname (fname_to_utf8 (argv[iArg]));
+                    fname = uneclipse (fname);
+
+                    if (fname.at (0) == '-') {
+                        std::cerr << "Error: filename missing next to the -p switch." << std::endl;
+                        return -1;
                     }
 
-                    break;
+                    parsed_args.paramsFiles.emplace_back (fname);
+                }
 
-                case 'p': // processing parameters for all inputs; all set procparams are required, so
+                break;
 
-                    // RT stop if any of them can't be loaded for any reason.
-                    if ( iArg + 1 < argc ) {
-                        iArg++;
-                        Glib::ustring fname (fname_to_utf8 (argv[iArg]));
-                        fname = uneclipse (fname);
+            case 'S':
+                parsed_args.skipIfNoSidecar = true;
+                // fall through
 
-                        if (fname.at (0) == '-') {
-                            std::cerr << "Error: filename missing next to the -p switch." << std::endl;
-                            return -3;
-                        }
+            case 's': // Processing params next to file (file extension appended)
+                parsed_args.sideProcParams = true;
+                parsed_args.sideCarFilePos = parsed_args.paramsFiles.size();
+                break;
 
-                        parsed_args.paramsFiles.emplace_back (fname);
-                    }
+            case 'd':
+                parsed_args.useDefault = true;
+                break;
 
-                    break;
+            case 'q':
+                parsed_args.quickstart = true;
+                break;
 
-                case 'S':
-                    parsed_args.skipIfNoSidecar = true;
-                    // fall through
+            case 'Y':
+                parsed_args.overwriteFiles = true;
+                break;
 
-                case 's': // Processing params next to file (file extension appended)
-                    parsed_args.sideProcParams = true;
-                    parsed_args.sideCarFilePos = parsed_args.paramsFiles.size();
-                    break;
+            case 'a':
+                parsed_args.allExtensions = true;
+                break;
 
-                case 'd':
-                    parsed_args.useDefault = true;
-                    break;
-
-                case 'q':
-                    parsed_args.quickstart = true;
-                    break;
-
-                case 'Y':
-                    parsed_args.overwriteFiles = true;
-                    break;
-
-                case 'a':
-                    parsed_args.allExtensions = true;
-                    break;
-
-                case 'j':
-                    if (parsed_args.outputArgs.parseJpeg (currParam) < 0) {
-                        return -3;
-                    }
-                    break;
-
-                case 'b':
-                    if (parsed_args.outputArgs.parseBits (currParam) < 0) {
-                        return -3;
-                    }
-                    break;
-
-                case 't':
-                    parsed_args.outputArgs.outputType = OutputType::TIF;
-                    parsed_args.outputArgs.compression = ((currParam.size() < 3 || currParam.at (2) != 'z') ? 0 : 1);
-                    break;
-
-                case 'n':
-                    parsed_args.outputArgs.outputType = OutputType::PNG;
-                    parsed_args.outputArgs.compression = -1;
-                    break;
-
-                case 'f':
-                    parsed_args.fastExport = true;
-                    break;
-
-                case 'c':
-                    while (iArg + 1 < argc) {
-                        iArg++;
-                        Glib::ustring argument (fname_to_utf8 (argv[iArg]));
-                        argument = uneclipse (argument);
-
-                        // Stop once we've hit another flag.
-                        if (argument.at (0) == '-') {
-                            iArg--;
-                            break;
-                        }
-                        parsed_args.inputFiles.emplace_back (argument);
-                    }
-
-                    break;
-
-                case 'h':
-                case '?':
-                default:
-                    longUsage (Glib::path_get_basename (argv[0]));
+            case 'j':
+                if (parsed_args.outputArgs.parseJpeg (currParam) < 0) {
                     return -1;
-            }
-        } else {
-            // There should be no command-line arguments except short flags and things
-            // that are consumed by short flags.
-            return 1;
+                }
+                break;
+
+            case 'b':
+                if (parsed_args.outputArgs.parseBits (currParam) < 0) {
+                    return -1;
+                }
+                break;
+
+            case 't':
+                parsed_args.outputArgs.outputType = OutputType::TIF;
+                parsed_args.outputArgs.compression = ((currParam.size() < 3 || currParam.at (2) != 'z') ? 0 : 1);
+                break;
+
+            case 'n':
+                parsed_args.outputArgs.outputType = OutputType::PNG;
+                parsed_args.outputArgs.compression = -1;
+                break;
+
+            case 'f':
+                parsed_args.fastExport = true;
+                break;
+
+            case 'c':
+                while (iArg + 1 < argc) {
+                    iArg++;
+                    Glib::ustring argument (fname_to_utf8 (argv[iArg]));
+                    argument = uneclipse (argument);
+
+                    // Stop once we've hit another flag.
+                    if (argument.at (0) == '-') {
+                        iArg--;
+                        break;
+                    }
+                    parsed_args.inputFiles.emplace_back (argument);
+                }
+
+                break;
+
+            case 'h':
+            case '?':
+                longUsage (Glib::path_get_basename (argv[0]));
+                return -1;
+
+            case '-':
+                shortUsage (Glib::path_get_basename (argv[0]));
+                std::cerr << "Unrecognized flag " << currParam << "." << std::endl;
+                std::cerr << "(Hint: rawtherapee-cli has no --long-form arguments. Use -h or -? to see help.)" << std::endl;
+                return -1;
+
+            default:
+                shortUsage (Glib::path_get_basename (argv[0]));
+                std::cerr << "Unrecognized flag " << currParam << "." << std::endl;
+                std::cerr << "(Hint: use -h or -? to see help.)";
+                return -1;
         }
     }
     return 0;
@@ -708,7 +718,7 @@ static int processLineParams ( const CliArgs& parsed_args )
             processingParams.emplace_back (std::move (currentParams));
         } else {
             std::cerr << "Error: \"" << fname << "\" not found." << std::endl;
-            return -3;
+            return -1;
         }
     }
 
@@ -718,7 +728,7 @@ static int processLineParams ( const CliArgs& parsed_args )
 
         if (options.is_defProfRawMissing() || profPath.empty() || (profPath != DEFPROFILE_DYNAMIC && rawParams->load (profPath == DEFPROFILE_INTERNAL ? DEFPROFILE_INTERNAL : Glib::build_filename (profPath, Glib::path_get_basename (options.defProfRaw) + paramFileExtension)))) {
             std::cerr << "Error: default raw processing profile not found." << std::endl;
-            return -3;
+            return -1;
         }
 
         imgParams = std::unique_ptr<rtengine::procparams::AutoPartialProfile>(new rtengine::procparams::AutoPartialProfile (true));
@@ -726,7 +736,7 @@ static int processLineParams ( const CliArgs& parsed_args )
 
         if (options.is_defProfImgMissing() || profPath.empty() || (profPath != DEFPROFILE_DYNAMIC && imgParams->load (profPath == DEFPROFILE_INTERNAL ? DEFPROFILE_INTERNAL : Glib::build_filename (profPath, Glib::path_get_basename (options.defProfImg) + paramFileExtension)))) {
             std::cerr << "Error: default non-raw processing profile not found." << std::endl;
-            return -3;
+            return -1;
         }
     }
 
