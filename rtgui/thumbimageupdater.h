@@ -20,8 +20,9 @@
 
 #include <glib.h>
 
-
 #include "rtengine/noncopyable.h"
+
+#include "hidpi.h"
 
 namespace rtengine
 {
@@ -43,16 +44,28 @@ class ThumbImageUpdateListener
 public:
     virtual ~ThumbImageUpdateListener() = default;
 
+    struct ImageUpdate {
+        rtengine::IImage8* img;  // New thumbnail image
+        hidpi::LogicalSize size;  // Desired logical pixel size
+        int device_scale;  // logical to device pixel scaling factor
+        double scale;  // scale (??)
+        // Why is this a reference? Seems dangerous and could diverge from
+        // used values?
+        const rtengine::procparams::CropParams& crop;  // crop params used (??)
+
+        ImageUpdate(rtengine::IImage8* a_img, hidpi::LogicalSize a_size,
+                    int a_device_scale, double a_scale,
+                    const rtengine::procparams::CropParams& a_crop)
+                : img(a_img), size(a_size), device_scale(a_device_scale),
+                  scale(a_scale), crop(a_crop) {}
+    };
+
     /**
      * @brief Called when thumbnail image is update
-     *
-     * @param img new thumbnail image
-     * @param scale scale (??)
-     * @param cropParams how it was cropped (??)
-     *
+     * @param update thumbnail image and associated data
      * @note no locks are held when called back
      */
-    virtual void updateImage(rtengine::IImage8* img, double scale, const rtengine::procparams::CropParams& cropParams) = 0;
+    virtual void updateImage(ImageUpdate&& update) = 0;
 };
 
 class ThumbImageUpdater :
@@ -73,8 +86,6 @@ public:
      * thread to process it.
      *
      * @param t thumbnail
-     * @param params processing params (?)
-     * @param height how big
      * @param priority if \c true then run as soon as possible
      * @param l listener waiting on update
      */

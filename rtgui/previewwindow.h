@@ -37,7 +37,7 @@ private:
     sigc::connection rconn;
     CropWindow* mainCropWin;
     ImageArea* imageArea;
-    int imgX, imgY, imgW, imgH;
+    int imgW, imgH;
     double zoom;
     double press_x, press_y;
     bool isMoving;

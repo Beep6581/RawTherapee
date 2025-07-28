@@ -17,13 +17,16 @@
  *  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
  */
 #include "imagearea.h"
+
 #include <ctime>
 #include <cmath>
-#include "options.h"
-#include "multilangmgr.h"
-#include "cropwindow.h"
+
 #include "rtengine/refreshmap.h"
 #include "rtengine/procparams.h"
+
+#include "cropwindow.h"
+#include "hidpi.h"
+#include "multilangmgr.h"
 #include "options.h"
 #include "rtscalable.h"
 
@@ -97,6 +100,11 @@ void ImageArea::on_resized (Gtk::Allocation& req)
             mainCropWindow->setCropGUIListener (cropgl);
             mainCropWindow->setPointerMotionListener (pmlistener);
             mainCropWindow->setPointerMotionHListener (pmhlistener);
+
+            int deviceScale = RTScalable::getScaleForWidget(this);
+            // Needs to be before setSize()
+            mainCropWindow->cropHandler.setDeviceScale(deviceScale);
+
             mainCropWindow->setPosition (0, 0);
             mainCropWindow->setSize (get_width(), get_height());  // this execute the refresh itself
             mainCropWindow->enable();  // start processing !
@@ -145,10 +153,15 @@ void ImageArea::on_style_updated ()
     queue_draw ();
 }
 
-void ImageArea::setInfoText (Glib::ustring text)
+void ImageArea::setInfoText (Glib::ustring&& text)
 {
-
     infotext = std::move(text);
+    updateInfoTextBackBuffer();
+}
+
+void ImageArea::updateInfoTextBackBuffer()
+{
+    backBufferDeviceScale = RTScalable::getScaleForWidget(this);
 
     Glib::RefPtr<Pango::Context> context = get_pango_context () ;
     Pango::FontDescription fontd(get_style_context()->get_font());
@@ -169,9 +182,14 @@ void ImageArea::setInfoText (Glib::ustring text)
     int iw, ih;
     ilayout->get_pixel_size (iw, ih);
 
+    int bufferWidth = (iw + 16) * backBufferDeviceScale;
+    int bufferHeight = (ih + 16) * backBufferDeviceScale;
+    int bufferOffset = 8;
+
     // create BackBuffer
-    iBackBuffer.setDrawRectangle(Cairo::FORMAT_ARGB32, 0, 0, iw + 16, ih + 16, true);
-    iBackBuffer.setDestPosition(8, 8);
+    iBackBuffer.setDrawRectangle(Cairo::FORMAT_ARGB32, 0, 0, bufferWidth, bufferHeight, true);
+    iBackBuffer.setDestPosition(bufferOffset, bufferOffset);
+    hidpi::setDeviceScale(iBackBuffer.getSurface(), backBufferDeviceScale);
 
     Cairo::RefPtr<Cairo::Context> cr = iBackBuffer.getContext();
 
@@ -234,15 +252,16 @@ bool ImageArea::on_draw(const ::Cairo::RefPtr< Cairo::Context> &cr)
 {
     dirty = false;
 
-    /* HOMBRE: How do we replace that??
-
-    if (event->count) {
-        return true;
-    }
-
-     */
+    int deviceScale = RTScalable::getScaleForWidget(this);
 
     if (mainCropWindow) {
+        if (deviceScale != mainCropWindow->cropHandler.getDeviceScale()) {
+            for (const auto& win : cropWins) {
+                win->cropHandler.setDeviceScale(deviceScale);
+            }
+            mainCropWindow->setSize(get_width(), get_height());
+        }
+
         mainCropWindow->expose (cr);
     }
 
@@ -251,6 +270,9 @@ bool ImageArea::on_draw(const ::Cairo::RefPtr< Cairo::Context> &cr)
     }
 
     if (options.showInfo && !infotext.empty()) {
+        if (deviceScale != backBufferDeviceScale) {
+            updateInfoTextBackBuffer();
+        }
         iBackBuffer.copySurface(cr);
     }
 
@@ -501,6 +523,10 @@ void ImageArea::addCropWindow ()
         cropheight = lastHeight;
     }
 
+    int deviceScale = RTScalable::getScaleForWidget(this);
+    // Needs to be before setSize()
+    cw->cropHandler.setDeviceScale(deviceScale);
+
     cw->setSize (cropwidth, cropheight);
     int x, y;
     int maxRows = get_height() / cropheight;
@@ -681,11 +707,10 @@ void ImageArea::setZoom (double zoom)
 
 void ImageArea::initialImageArrived ()
 {
-
     if (mainCropWindow) {
-        int w, h;
-        mainCropWindow->cropHandler.getFullImageSize(w, h);
-        if(options.prevdemo != PD_Sidecar || !options.rememberZoomAndPan || w != fullImageWidth || h != fullImageHeight) {
+        ImageSize size = mainCropWindow->cropHandler.getFullImageSize();
+        if(options.prevdemo != PD_Sidecar || !options.rememberZoomAndPan ||
+                size.width != fullImageWidth || size.height != fullImageHeight) {
             if (options.cropAutoFit || options.bgcolor != 0) {
                 mainCropWindow->zoomFitCrop();
             } else {
@@ -694,8 +719,8 @@ void ImageArea::initialImageArrived ()
         } else if ((options.cropAutoFit || options.bgcolor != 0) && mainCropWindow->cropHandler.cropParams->enabled) {
             mainCropWindow->zoomFitCrop();
         }
-        fullImageWidth = w;
-        fullImageHeight = h;
+        fullImageWidth = size.width;
+        fullImageHeight = size.height;
     }
 }
 

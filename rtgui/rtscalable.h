@@ -20,6 +20,8 @@
 
 #pragma once
 
+#include "rtsigc.h"
+
 #include <gtkmm.h>
 
 /**
@@ -52,8 +54,10 @@
 class RTScalable
 {
 private:
-    static double dpi;
-    static int scale;
+    static double s_dpi;
+    static int s_scale;
+    static sigc::signal<void(double, int)> s_signal_changed;
+
     static void getDPInScale(const Gtk::Window* window, double &newDPI, int &newScale);
 
 protected:
@@ -64,12 +68,17 @@ protected:
 public:
     static constexpr double pangoDPI = 72.; // Pango default DPI for "pt" size
     static constexpr double baseDPI = 96.; // Cairo default DPI
+
     static void init(const Gtk::Window* window);
     static void setDPInScale(const Gtk::Window* window);
     static void setDPInScale(const double newDPI, const int newScale);
     static double getDPI();
+    static int getScaleForWindow(const Gtk::Window* window);
+    static int getScaleForWidget(const Gtk::Widget* widget);
     static int getScale();
     static double getGlobalScale();
     static int scalePixelSize(const int pixel_size);
     static double scalePixelSize(const double pixel_size);
+
+    static RtScopedConnection connectToChanged(sigc::slot<void(double, int)>&& slot);
 };

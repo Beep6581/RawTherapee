@@ -20,6 +20,7 @@
 #include <gtkmm.h>
 #include "rtengine/rtengine.h"
 #include "rtengine/procparams.h"
+#include "rtscalable.h"
 
 using namespace rtengine;
 using namespace rtengine::procparams;
@@ -152,7 +153,8 @@ void PreviewHandler::imageReady(const rtengine::procparams::CropParams& cp)
     );
 }
 
-Glib::RefPtr<Gdk::Pixbuf> PreviewHandler::getRoughImage (int x, int y, int w, int h, double zoom)
+Glib::RefPtr<Gdk::Pixbuf> PreviewHandler::getRoughImage (
+    ImageCoord pos, hidpi::ScaledDeviceSize desiredSize, double zoom)
 {
     MyMutex::MyLock lock(previewImgMutex);
 
@@ -160,6 +162,9 @@ Glib::RefPtr<Gdk::Pixbuf> PreviewHandler::getRoughImage (int x, int y, int w, in
 
     if (previewImg) {
         double totalZoom = zoom * previewScale;
+
+        int w = desiredSize.width;
+        int h = desiredSize.height;
 
         if (w > previewImg->get_width()*totalZoom) {
             w = image->getWidth() * totalZoom;
@@ -169,36 +174,41 @@ Glib::RefPtr<Gdk::Pixbuf> PreviewHandler::getRoughImage (int x, int y, int w, in
             h = image->getHeight() * totalZoom;
         }
 
-        x *= zoom;
-        y *= zoom;
+        pos.x *= zoom;
+        pos.y *= zoom;
 
-        w = rtengine::LIM<int>(w, 0, int(previewImg->get_width() * totalZoom) - x);
-        h = rtengine::LIM<int>(h, 0, int(previewImg->get_height() * totalZoom) - y);
+        w = rtengine::LIM<int>(w, 0, int(previewImg->get_width() * totalZoom) - pos.x);
+        h = rtengine::LIM<int>(h, 0, int(previewImg->get_height() * totalZoom) - pos.y);
 
         resPixbuf = Gdk::Pixbuf::create (Gdk::COLORSPACE_RGB, false, 8, w, h);
-        previewImg->scale (resPixbuf, 0, 0, w, h, -x, -y, totalZoom, totalZoom, Gdk::INTERP_NEAREST);
+        previewImg->scale (resPixbuf, 0, 0, w, h, -pos.x, -pos.y, totalZoom, totalZoom, Gdk::INTERP_NEAREST);
     }
 
     return resPixbuf;
 }
 
-Glib::RefPtr<Gdk::Pixbuf> PreviewHandler::getRoughImage (int desiredW, int desiredH, double& zoom_)
+hidpi::DevicePixbuf PreviewHandler::getRoughImage (hidpi::LogicalSize desiredSize,
+                                                   int deviceScale, double& outLogicalZoom)
 {
     MyMutex::MyLock lock(previewImgMutex);
 
-    Glib::RefPtr<Gdk::Pixbuf> resPixbuf;
+    hidpi::DevicePixbuf result;
 
     if (previewImg) {
-        double zoom1 = (double)max(desiredW, 20) / previewImg->get_width(); // too small values lead to extremely increased processing time in scale function, Issue 2783
-        double zoom2 = (double)max(desiredH, 20) / previewImg->get_height(); // ""
+        double zoom1 = (double)max(desiredSize.width, 20) / previewImg->get_width(); // too small values lead to extremely increased processing time in scale function, Issue 2783
+        double zoom2 = (double)max(desiredSize.height, 20) / previewImg->get_height();
         double zoom = zoom1 < zoom2 ? zoom1 : zoom2;
 
-        resPixbuf = Gdk::Pixbuf::create (Gdk::COLORSPACE_RGB, false, 8, image->getWidth() * zoom, image->getHeight() * zoom);
-        previewImg->scale (resPixbuf, 0, 0, previewImg->get_width()*zoom, previewImg->get_height()*zoom, 0, 0, zoom, zoom, Gdk::INTERP_BILINEAR);
-        zoom_ = zoom / previewScale;
+        outLogicalZoom = zoom / previewScale;
+        zoom = zoom * deviceScale;
+
+        auto pixbuf = Gdk::Pixbuf::create (Gdk::COLORSPACE_RGB, false, 8, image->getWidth() * zoom, image->getHeight() * zoom);
+        previewImg->scale (pixbuf, 0, 0, previewImg->get_width()*zoom, previewImg->get_height()*zoom, 0, 0, zoom, zoom, Gdk::INTERP_BILINEAR);
+
+        result = hidpi::DevicePixbuf(pixbuf, deviceScale);
     }
 
-    return resPixbuf;
+    return result;
 }
 
 void PreviewHandler::previewImageChanged ()

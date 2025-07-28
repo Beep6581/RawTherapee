@@ -214,9 +214,6 @@ cp ${LOCAL_PREFIX}/lib/libomp.dylib "${CONTENTS}/Frameworks"
 msg "Copying dependencies from ${GTK_PREFIX}."
 CheckLink "${EXECUTABLE}" 2>&1
 
-# dylib install names
-ModifyInstallNames 2>&1
-
 # Copy libpng16 to the app bundle
 cp ${LOCAL_PREFIX}/lib/libpng16.16.dylib "${CONTENTS}/Frameworks/libpng16.16.dylib"
 
@@ -265,19 +262,26 @@ for lib in "${LIB}"/*; do
     install_name_tool -change libfreetype.6.dylib "${LIB}"/libfreetype.6.dylib "${lib}" 2>/dev/null
 done
 
-# Build GTK3 pixbuf loaders & immodules database
+# Prepare GTK3 pixbuf loaders & immodules
 msg "Build GTK3 databases:"
 mkdir -p "${RESOURCES}"/share/gtk-3.0
 mkdir -p "${ETC}"/gtk-3.0
-"${LOCAL_PREFIX}"/bin/gdk-pixbuf-query-loaders "${LIB}"/libpixbufloader*.so > "${ETC}"/gtk-3.0/gdk-pixbuf.loaders
+# Change a relative path for the SVG pixbufloader
+install_name_tool -delete_rpath @loader_path/../lib "${LIB}"/libpixbufloader_svg.so
+install_name_tool -change @rpath/librsvg-2.2.dylib "${LOCAL_PREFIX}"/lib/librsvg-2.2.dylib  "${LIB}"/libpixbufloader_svg.so
+# codesign Frameworks
+sudo codesign --sign "${CODESIGNID}" --force "${LIB}"/*
+# Build databases
+"${LOCAL_PREFIX}"/bin/gdk-pixbuf-query-loaders "${LIB}"/libpixbufloader*[^dylib] > "${ETC}"/gtk-3.0/gdk-pixbuf.loaders
 "${LOCAL_PREFIX}"/bin/gtk-query-immodules-3.0 "${LIB}"/im-* > "${ETC}"/gtk-3.0/gtk.immodules || "${LOCAL_PREFIX}"/bin/gtk-query-immodules "${LIB}"/im-* > "${ETC}"/gtk-3.0/gtk.immodules
 sed -i.bak -e "s|${PWD}/RawTherapee.app/Contents/|/Applications/RawTherapee.app/Contents/|" "${ETC}"/gtk-3.0/gdk-pixbuf.loaders "${ETC}/gtk-3.0/gtk.immodules"
 sed -i.bak -e "s|${LOCAL_PREFIX}/share/|/Applications/RawTherapee.app/Contents/Resources/share/|" "${ETC}"/gtk-3.0/gtk.immodules
 sed -i.bak -e "s|${LOCAL_PREFIX}/|/Applications/RawTherapee.app/Contents/Frameworks/|" "${ETC}"/gtk-3.0/gtk.immodules
 rm "${ETC}"/*/*.bak
-
-# Change a relative path for the SVG pixbufloader
-sudo install_name_tool -change @rpath/librsvg-2.2.dylib /Applications/RawTherapee.app/Contents/Frameworks/librsvg-2.2.dylib RawTherapee.app/Contents/Frameworks/libpixbufloader_svg.so
+# Remove a relative path for the SVG pixbufloader
+install_name_tool -change @rpath/librsvg-2.2.dylib /Applications/RawTherapee.app/Contents/Frameworks/librsvg-2.2.dylib "${LIB}"/libpixbufloader_svg.so
+# Modify the libpixbufloader_svg librsvg install_name
+install_name_tool -change "${PWD}"/"${LIB}"/librsvg-2.2.dylib /Applications/"${LIB}"/librsvg-2.2.dylib "${LIB}"/libpixbufloader_svg.so
 
 # Install names
 ModifyInstallNames 2>/dev/null
