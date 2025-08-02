@@ -35,7 +35,7 @@
 // Mark the end of a frame
 #define RT_MARK_FRAME_TICK() FrameMark
 
-#define RT_IS_ACTIVE_ZONE(TAG) Profiling::ACTIVE_TAGS & Profiling::Tag:: TAG
+#define RT_IS_ACTIVE_ZONE(TAG) Profiling::ZONE_FILTER & Profiling::Tag:: TAG
 
 // Auto-generates zone name based on current function
 #define RT_PROFILE_FUNC(TAG) ZoneNamed(RT_DEFAULT_ZONE_NAME, RT_IS_ACTIVE_ZONE(TAG))
@@ -77,9 +77,10 @@ struct Profiling {
         ALL = ~(std::uint64_t{0})
     };
 
-    // To profile only specific tags, modify ACTIVE_TAGS. For example:
-    // static constexpr auto ACTIVE_TAGS = GUI_EDITOR | GUI_THUMBNAIL_BROWSER;
-    static constexpr Tag ACTIVE_TAGS = ALL;
+    // To profile only specific tags, modify ZONE_FILTER. For example, setting
+    // ZONE_FILTER = GUI_EDITOR | GUI_THUMBNAIL_BROWSER will only trace zones
+    // in the GUI_EDITOR and GUI_THUMBNAIL_BROWSER categories.
+    static constexpr Tag ZONE_FILTER = ALL;
 
     // Vibrant X11 colors for use with known problematic zones
     enum Color {

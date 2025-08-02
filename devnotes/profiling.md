@@ -96,7 +96,7 @@ functionality, consult Tracy's documentation and add a wrapper macro.
 The most common macro is `RT_PROFILE(NAME, TAG)` which wraps Tracy's
 `ZoneNamed` macro. It takes a constexpr string literal for the profiling zone's
 name. It also takes a profiling tag (see `Profiling::Tag`). These tags are for
-use with `Profiling::ACTIVE_TAGS` which acts as compile-time toggles to limit
+use with `Profiling::ZONE_FILTER` which acts as compile-time toggles to limit
 which zones have data collected.
 
 ```cpp
@@ -108,7 +108,7 @@ void func()
 
 ### Profiling
 
-Modify `Profiling::ACTIVE_TAGS` in `rtengine/profiling.h` to limit which
+Modify `Profiling::ZONE_FILTER` in `rtengine/profiling.h` to limit which
 profiling zones you want to view. Rebuild RawTherapee to apply your changes.
 
 1. Run the Tracy profiler GUI
