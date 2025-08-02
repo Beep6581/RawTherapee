@@ -148,6 +148,23 @@ macro(rt_fetch_content)
         endif()
     endif()
 
+    if(WITH_TRACY_PROFILER)
+        set(TRACY_ENABLE ON)
+        set(TRACY_ON_DEMAND "${WITH_TRACY_ON_DEMAND}")
+        set(TRACY_ONLY_LOCALHOST "${WITH_TRACY_ONLY_LOCALHOST}")
+        set(TRACY_NO_BROADCAST "${WITH_TRACY_NO_BROADCAST}")
+        set(TRACY_NO_CALLSTACK_INLINES ON)
+        set(TRACY_NO_FRAME_IMAGE ON)
+        set(TRACY_NO_VSYNC_CAPTURE ON)
+        FetchContent_Declare(
+            tracy
+            GIT_REPOSITORY https://github.com/wolfpld/tracy.git
+            GIT_TAG 05cceee0df3b8d7c6fa87e9638af311dbabc63cb # v0.13.1
+            GIT_SHALLOW ON
+        )
+        list(APPEND DEPS tracy)
+    endif()
+
     # Add all FetchContent-declared libraries here.
     # Don't use FetchContent_Declare after this.
     FetchContent_MakeAvailable(${DEPS})

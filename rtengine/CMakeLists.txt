@@ -256,6 +256,11 @@ else()
     message(FATAL_ERROR "Unknown SVG rendering backend")
 endif()
 
+if(WITH_TRACY_PROFILER)
+    target_link_libraries(rtengine PUBLIC Tracy::TracyClient)
+    target_compile_definitions(rtengine PUBLIC "RT_TRACING_ENABLE")
+endif()
+
 # It may be nice to store library version too
 if(BUILD_SHARED_LIBS)
     install(TARGETS rtengine DESTINATION "${LIBDIR}")
