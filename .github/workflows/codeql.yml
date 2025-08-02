@@ -39,9 +39,9 @@ jobs:
       - name: Install dependencies
         run: |
           echo "Running apt update."
-          sudo apt update
+          sudo apt-get update
           echo "Installing dependencies with apt."
-          DEBIAN_FRONTEND=noninteractive sudo apt install -y cmake libgtk-3-dev libgtkmm-3.0-dev liblensfun-dev librsvg2-dev liblcms2-dev libfftw3-dev libiptcdata0-dev libtiff5-dev libcanberra-gtk3-dev liblensfun-bin libexiv2-dev libtcmalloc-minimal4 libhwy-dev libopenexr-dev libgif-dev
+          sudo apt-get install -y cmake libgtk-3-dev libgtkmm-3.0-dev liblensfun-dev librsvg2-dev liblcms2-dev libfftw3-dev libiptcdata0-dev libtiff5-dev libcanberra-gtk3-dev liblensfun-bin libexiv2-dev libtcmalloc-minimal4 libhwy-dev libopenexr-dev libgif-dev
 
       - name: Install libjxl
         run: |
@@ -68,6 +68,9 @@ jobs:
           mkdir build
           echo "Changing working directory to the build directory."
           cd build
+
+          cmake --version
+
           echo "Running CMake configure."
           cmake \
             -DCMAKE_BUILD_TYPE='${{matrix.build_type}}'  \
@@ -94,6 +97,8 @@ jobs:
       - name: Build RawTherapee
         working-directory: ./build
         run: |
+          gcc --version
+
           echo "Running make install."
           make -j$(nproc) install DESTDIR=AppDir/usr/bin
           echo "Moving usr/bin/share to usr/share."
