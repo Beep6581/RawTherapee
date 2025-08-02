@@ -8,7 +8,10 @@
 .vscode
 .DS_Store
 .idea
+.env
+.venv
 
+CMakeUserPresets.json
 CMakeCache.txt
 CMakeFiles
 CMakeScripts
