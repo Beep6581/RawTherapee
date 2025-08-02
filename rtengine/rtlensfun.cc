@@ -669,10 +669,13 @@ LFLens LFDatabase::findLens(const LFCamera &camera, const Glib::ustring &name, b
         // lenses.
         const lfLens **found = nullptr;
         lfCamera camera_without_mount;
-        camera_without_mount = *(camera.data_);
-        camera_without_mount.SetMount(nullptr);
-        const lfCamera *camera_without_mount_ptr = &camera_without_mount;
-        for (auto camera_data : {camera.data_, camera_without_mount_ptr}) {
+        std::vector<const lfCamera *> camera_ptrs = {camera.data_};
+        if (camera.data_ && camera.data_->Mount) {
+            camera_without_mount = *(camera.data_);
+            camera_without_mount.SetMount(nullptr);
+            camera_ptrs.push_back(&camera_without_mount);
+        }
+        for (auto camera_data : camera_ptrs) {
             if (!found) {
                 found = find_lens_from_name(data_, camera_data, name);
             }

@@ -195,73 +195,7 @@ if(WIN32)
     set(EXTRA_SRC_CLI myicon.rc)
     set(EXTRA_SRC_NONCLI myicon.rc)
     set(EXTRA_LIB_RTGUI winmm)
-    include_directories(${EXTRA_INCDIR}
-        ${GIOMM_INCLUDE_DIRS}
-        ${GIO_INCLUDE_DIRS}
-        ${GLIB2_INCLUDE_DIRS}
-        ${GLIBMM_INCLUDE_DIRS}
-        ${GTKMM_INCLUDE_DIRS}
-        ${GTK_INCLUDE_DIRS}
-        ${LENSFUN_INCLUDE_DIRS}
-        ${RSVG_INCLUDE_DIRS}
-        ${TIFF_INCLUDE_DIRS}
-        )
-    link_directories(.
-        ${EXTRA_LIBDIR}
-        ${GIOMM_LIBRARY_DIRS}
-        ${GIO_LIBRARY_DIRS}
-        ${GLIB2_LIBRARY_DIRS}
-        ${GLIBMM_LIBRARY_DIRS}
-        ${GTKMM_LIBRARY_DIRS}
-        ${GTK_LIBRARY_DIRS}
-        ${LENSFUN_LIBRARY_DIRS}
-        ${RSVG_LIBRARY_DIRS}
-        ${TIFF_LIBRARY_DIRS}
-        )
-else()
-    include_directories(${EXTRA_INCDIR}
-        ${CANBERRA-GTK_INCLUDE_DIRS}
-        ${EXPAT_INCLUDE_DIRS}
-        ${FFTW3F_LIBRARY_DIRS}
-        ${GIOMM_INCLUDE_DIRS}
-        ${GIO_INCLUDE_DIRS}
-        ${GLIB2_INCLUDE_DIRS}
-        ${GLIBMM_INCLUDE_DIRS}
-        ${GOBJECT_INCLUDE_DIRS}
-        ${GTHREAD_INCLUDE_DIRS}
-        ${GTKMM_INCLUDE_DIRS}
-        ${GTK_INCLUDE_DIRS}
-        ${IPTCDATA_INCLUDE_DIRS}
-        ${LCMS_INCLUDE_DIRS}
-        ${LENSFUN_INCLUDE_DIRS}
-        ${RSVG_INCLUDE_DIRS}
-        ${TIFF_INCLUDE_DIRS}
-        )
-    link_directories(${EXTRA_LIBDIR}
-        ${CANBERRA-GTK_LIBRARY_DIRS}
-        ${EXPAT_LIBRARY_DIRS}
-        ${FFTW3F_LIBRARY_DIRS}
-        ${GIOMM_LIBRARY_DIRS}
-        ${GIO_LIBRARY_DIRS}
-        ${GLIB2_LIBRARY_DIRS}
-        ${GLIBMM_LIBRARY_DIRS}
-        ${GOBJECT_LIBRARY_DIRS}
-        ${GTHREAD_LIBRARY_DIRS}
-        ${GTKMM_LIBRARY_DIRS}
-        ${GTK_LIBRARY_DIRS}
-        ${IPTCDATA_LIBRARY_DIRS}
-        ${LCMS_LIBRARY_DIRS}
-        ${LENSFUN_LIBRARY_DIRS}
-        ${RSVG_LIBRARY_DIRS}
-        ${TIFF_LIBRARY_DIRS}
-        )
 endif()
-
-# Excluding libatomic needed by Clang/FreeBSD, #3636
-# Now handled in cmake/modules/findATOMIC.cmake, #6821
-# if(OPENMP_FOUND AND NOT APPLE AND NOT ${CMAKE_SYSTEM_NAME} STREQUAL "FreeBSD")
-#     set(EXTRA_LIB_RTGUI "${EXTRA_LIB_RTGUI}" "atomic")
-# endif()
 
 # Create new executables targets
 add_executable(rth "${EXTRA_SRC_NONCLI}" "${NONCLISOURCEFILES}")
@@ -282,64 +216,46 @@ configure_file("${CMAKE_CURRENT_SOURCE_DIR}/config.h.in" "${CMAKE_CURRENT_BINARY
 target_include_directories(rth BEFORE PRIVATE ${CMAKE_BINARY_DIR}/rtgui)
 target_include_directories(rth-cli BEFORE PRIVATE ${CMAKE_BINARY_DIR}/rtgui)
 
+rt_setup_target(rth)
+rt_setup_target(rth-cli)
+
 #Define a target specific definition to use in code
 target_compile_definitions(rth PUBLIC GUIVERSION)
 target_compile_definitions(rth-cli PUBLIC CLIVERSION)
 
 # Set executables targets properties, i.e. output filename and compile flags
 # for "Debug" builds, open a console in all cases for Windows version
-if((WIN32) AND NOT(UPPER_CMAKE_BUILD_TYPE STREQUAL "DEBUG"))
+if((WIN32) AND NOT (CMAKE_BUILD_TYPE STREQUAL "Debug"))
     set_target_properties(rth PROPERTIES LINK_FLAGS "-mwindows")
 endif()
-set_target_properties(rth PROPERTIES COMPILE_FLAGS "${CMAKE_CXX_FLAGS}" OUTPUT_NAME rawtherapee)
-set_target_properties(rth-cli PROPERTIES COMPILE_FLAGS "${CMAKE_CXX_FLAGS}" OUTPUT_NAME rawtherapee-cli)
+set_target_properties(rth PROPERTIES OUTPUT_NAME rawtherapee)
+set_target_properties(rth-cli PROPERTIES OUTPUT_NAME rawtherapee-cli)
+
+target_include_directories(rth PRIVATE ${EXTRA_INCDIR})
+target_include_directories(rth-cli PRIVATE ${EXTRA_INCDIR})
+
+target_link_directories(rth PRIVATE ${EXTRA_LIBDIR})
+target_link_directories(rth-cli PRIVATE ${EXTRA_LIBDIR})
 
 # Add linked libraries dependencies to executables targets
-target_link_libraries(rth rtengine
-    ${CANBERRA-GTK_LIBRARIES}
-    ${EXPAT_LIBRARIES}
+target_link_libraries(rth PRIVATE
+    rtengine
+    PkgConfig::GTKMM
     ${EXTRA_LIB_RTGUI}
-    ${FFTW3F_LIBRARIES}
-    ${GIOMM_LIBRARIES}
-    ${GIO_LIBRARIES}
-    ${GLIB2_LIBRARIES}
-    ${GLIBMM_LIBRARIES}
-    ${GOBJECT_LIBRARIES}
-    ${GTHREAD_LIBRARIES}
-    ${GTKMM_LIBRARIES}
-    ${GTK_LIBRARIES}
-    ${IPTCDATA_LIBRARIES}
-    ${JPEG_LIBRARIES}
-    ${LCMS_LIBRARIES}
-    ${PNG_LIBRARIES}
-    ${TIFF_LIBRARIES}
-    ${ZLIB_LIBRARIES}
-    ${LENSFUN_LIBRARIES}
-    ${RSVG_LIBRARIES}
-    ${TCMALLOC_LIBRARIES}
-    )
+)
+target_link_libraries(rth-cli PRIVATE
+    rtengine
+    PkgConfig::GTKMM
+    ${EXTRA_LIB_RTGUI}
+)
 
-target_link_libraries(rth-cli rtengine
-    ${CAIROMM_LIBRARIES}
-    ${EXPAT_LIBRARIES}
-    ${EXTRA_LIB_RTGUI}
-    ${FFTW3F_LIBRARIES}
-    ${GIOMM_LIBRARIES}
-    ${GIO_LIBRARIES}
-    ${GLIB2_LIBRARIES}
-    ${GLIBMM_LIBRARIES}
-    ${GOBJECT_LIBRARIES}
-    ${GTHREAD_LIBRARIES}
-    ${IPTCDATA_LIBRARIES}
-    ${JPEG_LIBRARIES}
-    ${LCMS_LIBRARIES}
-    ${PNG_LIBRARIES}
-    ${TIFF_LIBRARIES}
-    ${ZLIB_LIBRARIES}
-    ${LENSFUN_LIBRARIES}
-    ${RSVG_LIBRARIES}
-    ${TCMALLOC_LIBRARIES}
-    )
+if(TCMALLOC_FOUND)
+    target_link_libraries(rth PRIVATE TCMALLOC::TCMALLOC)
+    target_link_libraries(rth-cli PRIVATE TCMALLOC::TCMALLOC)
+endif()
+if(USE_LIBCANBERRA)
+    target_link_libraries(rth PRIVATE PkgConfig::CANBERRA)
+endif()
 
 # Install executables
 install(TARGETS rth DESTINATION "${BINDIR}")

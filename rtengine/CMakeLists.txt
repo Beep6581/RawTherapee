@@ -1,79 +1,3 @@
-if(EXTRA_INCDIR)
-    include_directories("${EXTRA_INCDIR}")
-endif()
-if(EXPAT_INCLUDE_DIRS)
-    include_directories("${EXPAT_INCLUDE_DIRS}")
-endif()
-if(FFTW3F_INCLUDE_DIRS)
-    include_directories("${FFTW3F_INCLUDE_DIRS}")
-endif()
-if(GLIB2_INCLUDE_DIRS)
-    include_directories("${GLIB2_INCLUDE_DIRS}")
-endif()
-if(GLIBMM_INCLUDE_DIRS)
-    include_directories("${GLIBMM_INCLUDE_DIRS}")
-endif()
-if(GOBJECT_INCLUDE_DIRS)
-    include_directories("${GOBJECT_INCLUDE_DIRS}")
-endif()
-if(GTHREAD_INCLUDE_DIRS)
-    include_directories("${GTHREAD_INCLUDE_DIRS}")
-endif()
-if(GTKMM_INCLUDE_DIRS)
-    include_directories("${GTKMM_INCLUDE_DIRS}")
-endif()
-if(GTK_INCLUDE_DIRS)
-    include_directories("${GTK_INCLUDE_DIRS}")
-endif()
-if(IPTCDATA_INCLUDE_DIRS)
-    include_directories("${IPTCDATA_INCLUDE_DIRS}")
-endif()
-if(LCMS_INCLUDE_DIRS)
-    include_directories("${LCMS_INCLUDE_DIRS}")
-endif()
-if(LENSFUN_INCLUDE_DIRS)
-    include_directories("${LENSFUN_INCLUDE_DIRS}")
-endif()
-if(RSVG_INCLUDE_DIRS)
-    include_directories("${RSVG_INCLUDE_DIRS}")
-endif()
-if(NOT WITH_SYSTEM_KLT)
-    include_directories("${CMAKE_SOURCE_DIR}/rtengine/klt")
-else()
-    include_directories("${KLT_INCLUDE_DIRS}")
-endif()
-if(EXIV2_INCLUDE_DIRS)
-    include_directories("${EXIV2_INCLUDE_DIRS}")
-endif()
-if(JXL_INCLUDE_DIRS)
-    include_directories("${JXL_INCLUDE_DIRS}")
-endif()
-if(NOT WITH_SYSTEM_LIBRAW)
-    include_directories("${CMAKE_SOURCE_DIR}/rtengine/libraw")
-else()
-    include_directories("${LIBRAW_INCLUDE_DIRS}")
-endif()
-
-link_directories(
-    "${EXPAT_LIBRARY_DIRS}"
-    "${EXTRA_LIBDIR}"
-    "${FFTW3F_LIBRARY_DIRS}"
-    "${GLIB2_LIBRARY_DIRS}"
-    "${GLIBMM_LIBRARY_DIRS}"
-    "${GOBJECT_LIBRARY_DIRS}"
-    "${GTHREAD_LIBRARY_DIRS}"
-    "${IPTCDATA_LIBRARY_DIRS}"
-    "${LCMS_LIBRARY_DIRS}"
-    "${LENSFUN_LIBRARY_DIRS}"
-    "${RSVG_LIBRARY_DIRS}"
-)
-
-if(OpenMP_FOUND)
-    include_directories(${OpenMP_CXX_INCLUDE_DIRS})
-endif()
-
-set(CAMCONSTSFILE "camconst.json")
-
 set(RTENGINESOURCEFILES
     alpha.cc
     ahd_demosaic_RT.cc
@@ -188,7 +112,10 @@ set(RTENGINESOURCEFILES
 )
 
 if(LENSFUN_HAS_LOAD_DIRECTORY)
-    set_source_files_properties(rtlensfun.cc PROPERTIES COMPILE_DEFINITIONS RT_LENSFUN_HAS_LOAD_DIRECTORY)
+    set_source_files_properties(
+        rtlensfun.cc PROPERTIES
+        COMPILE_DEFINITIONS RT_LENSFUN_HAS_LOAD_DIRECTORY
+    )
 endif()
 
 if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU" AND CMAKE_CXX_COMPILER_VERSION VERSION_GREATER_EQUAL "12.0")
@@ -201,11 +128,11 @@ if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU" AND CMAKE_CXX_COMPILER_VERSION VERSION_G
         set(PROCPARAMS_COMPILE_OPTIONS "${PROCPARAMS_COMPILE_OPTIONS};")
     endif()
     set(PROCPARAMS_COMPILE_OPTIONS "${PROCPARAMS_COMPILE_OPTIONS}-fno-tree-pta")
-    set_source_files_properties(procparams.cc PROPERTIES COMPILE_OPTIONS ${PROCPARAMS_COMPILE_OPTIONS})
-endif()
 
-if(WITH_BENCHMARK)
-    add_definitions(-DBENCHMARK)
+    set_source_files_properties(
+        procparams.cc PROPERTIES
+        COMPILE_OPTIONS ${PROCPARAMS_COMPILE_OPTIONS}
+    )
 endif()
 
 if(NOT WITH_SYSTEM_KLT)
@@ -228,13 +155,6 @@ add_library(rtengine STATIC "${RTENGINESOURCEFILES}")
 
 add_dependencies(rtengine UpdateInfo)
 
-# It may be nice to store library version too
-if(BUILD_SHARED_LIBS)
-    install(TARGETS rtengine DESTINATION "${LIBDIR}")
-endif()
-
-set_target_properties(rtengine PROPERTIES COMPILE_FLAGS "${RTENGINE_CXX_FLAGS}")
-
 target_include_directories(rtengine
     PUBLIC
         # Other libraries should use #include "rtengine/header.h"
@@ -247,35 +167,75 @@ target_include_directories(rtengine
 # UpdateInfo creates "rtgui/version.h"
 target_include_directories(rtengine BEFORE PRIVATE ${CMAKE_BINARY_DIR})
 
-target_link_libraries(rtengine
-    ${EXPAT_LIBRARIES}
-    ${EXTRA_LIB}
-    ${FFTW3F_LIBRARIES}
-    ${GLIB2_LIBRARIES}
-    ${GLIBMM_LIBRARIES}
-    ${GOBJECT_LIBRARIES}
-    ${GTHREAD_LIBRARIES}
-    ${IPTCDATA_LIBRARIES}
-    ${JPEG_LIBRARIES}
-    ${LCMS_LIBRARIES}
-    ${PNG_LIBRARIES}
-    ${TIFF_LIBRARIES}
-    ${ZLIB_LIBRARIES}
-    ${LENSFUN_LIBRARIES}
-    ${RSVG_LIBRARIES}
-    ${KLT_LIBRARIES}
-    ${EXIV2_LIBRARIES}
-    ${JXL_LIBRARIES}
-    ${LIBRAW_LIBRARIES}
-    )
-
-if(OpenMP_FOUND)
-    target_link_libraries(rtengine ${OpenMP_CXX_LIBRARIES})
+if(EXTRA_INCDIR)
+    target_include_directories(rtengine PUBLIC "${EXTRA_INCDIR}")
 endif()
 
-# Configure LibRaw
+rt_setup_target(rtengine)
+target_compile_options(rtengine PRIVATE ${RTENGINE_CXX_FLAGS})
+
+if(WITH_BENCHMARK)
+    target_compile_definitions(rtengine PUBLIC "BENCHMARK")
+endif()
+
+# When linking against RT's version of libraw, there will be linking issues for
+# jpeg and zlib if libraw is not linked before them.
 if(NOT WITH_SYSTEM_LIBRAW)
     include(LibRaw.cmake)
+    target_include_directories(rtengine PRIVATE "${CMAKE_SOURCE_DIR}/rtengine/libraw")
+    target_link_libraries(rtengine PUBLIC ${LIBRAW_LIBRARIES})
+else()
+    target_link_libraries(rtengine PUBLIC PkgConfig::LIBRAW)
 endif()
 
+target_link_libraries(rtengine
+    PUBLIC
+        fmt::fmt
+        JPEG::JPEG
+        PkgConfig::CAIROMM
+        PkgConfig::EXIV2
+        PkgConfig::EXPAT
+        PkgConfig::FFTW3F
+        PkgConfig::GLIBMM
+        PkgConfig::GTKMM
+        PkgConfig::IPTCDATA
+        PkgConfig::LCMS
+        PkgConfig::LENSFUN
+        PkgConfig::RSVG
+        PNG::PNG
+        TIFF::TIFF
+        ZLIB::ZLIB
+        ${EXTRA_LIB}
+)
+
+# Atomic is required in some builds: #6821
+if(ATOMIC_FOUND)
+    target_link_libraries(rtengine PUBLIC ${ATOMIC_LIBRARIES})
+endif()
+
+if(JXL_FOUND)
+    target_link_libraries(rtengine PUBLIC PkgConfig::JXL)
+    if (JXLTHREADS_FOUND)
+        target_link_libraries(rtengine PUBLIC PkgConfig::JXLTHREADS)
+    endif()
+endif()
+
+if(NOT WITH_SYSTEM_KLT)
+    target_include_directories(rtengine PUBLIC "${CMAKE_SOURCE_DIR}/rtengine/klt")
+    # Source files are compiled as part of rtengine directly.
+else()
+    target_include_directories(rtengine PUBLIC ${KLT_INCLUDE_DIRS})
+    target_link_libraries(rtengine PUBLIC ${KLT_LIBRARIES})
+endif()
+
+if(OpenMP_CXX_FOUND)
+    target_link_libraries(rtengine PUBLIC OpenMP::OpenMP_CXX)
+endif()
+
+# It may be nice to store library version too
+if(BUILD_SHARED_LIBS)
+    install(TARGETS rtengine DESTINATION "${LIBDIR}")
+endif()
+
+set(CAMCONSTSFILE "camconst.json")
 install(FILES ${CAMCONSTSFILE} DESTINATION "${DATADIR}" PERMISSIONS OWNER_WRITE OWNER_READ GROUP_READ WORLD_READ)
