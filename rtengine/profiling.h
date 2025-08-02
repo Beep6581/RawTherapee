@@ -64,19 +64,22 @@
 // clang-format off
 struct Profiling {
     enum Tag : std::uint64_t {
-        GUI_EDITOR            = 0x1,
-        GUI_THUMBNAIL_BROWSER = 0x2,
+        // Binary flags for each profiling tag. Keep the flags one-hot.
+        // The current size only allows for 64 different tags.
+        PROCESS_IMAGE         = 0x1,
+        GUI_EDITOR            = 0x2,
+        GUI_THUMBNAIL_BROWSER = 0x4,
 
         // Enable all GUI-related profiling zones
-        // GUI_ALL = GUI_EDITOR | GUI_THUMBNAIL_BROWSER,
+        GUI_ALL = GUI_EDITOR | GUI_THUMBNAIL_BROWSER,
 
         // Enable all profiling zones
-        // ALL = GUI_ALL,
+        ALL = ~(std::uint64_t{0})
     };
 
     // To profile only specific tags, modify ACTIVE_TAGS. For example:
-    static constexpr auto ACTIVE_TAGS = GUI_EDITOR | GUI_THUMBNAIL_BROWSER;
-    // static constexpr auto ACTIVE_TAGS = ALL;
+    // static constexpr auto ACTIVE_TAGS = GUI_EDITOR | GUI_THUMBNAIL_BROWSER;
+    static constexpr Tag ACTIVE_TAGS = ALL;
 
     // Vibrant X11 colors for use with known problematic zones
     enum Color {
@@ -90,7 +93,7 @@ struct Profiling {
         BIG_O  = tracy::Color::LimeGreen,
         IO     = tracy::Color::Blue,
         FICKLE = tracy::Color::Magenta,
-#endif // RT_TRACING_ENABLE
+#endif // TRACY_ENABLE
     };
 };
 // clang-format on

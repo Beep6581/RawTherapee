@@ -68,6 +68,12 @@ There are a few ways to obtain the profiling server:
 - Install using your favorite package manager
 - Build the profiling server locally
 
+By default, we configure Tracy's server-client connection to be on localhost
+only. If you have extra computers, it is advised to run the profiler from a
+separate computer from RawTherapee. The profiling data will be transferred over
+the network. To enable this flow, additionally configure CMake with
+`-DWITH_TRACY_ONLY_LOCALHOST="OFF" -DWITH_TRACY_NO_BROADCAST="OFF"`.
+
 #### Building the Server
 
 Follow the Tracy documentation PDF section 2.3 - Building the server.
@@ -82,3 +88,43 @@ cmake --build build
 ```
 
 ### Code Annotations
+
+We wrap Tracy's profiling macros with our own in `rtengine/profiling.h`. Not
+all of Tracy's features have been wrapped. If you need additional
+functionality, consult Tracy's documentation and add a wrapper macro.
+
+The most common macro is `RT_PROFILE(NAME, TAG)` which wraps Tracy's
+`ZoneNamed` macro. It takes a constexpr string literal for the profiling zone's
+name. It also takes a profiling tag (see `Profiling::Tag`). These tags are for
+use with `Profiling::ACTIVE_TAGS` which acts as compile-time toggles to limit
+which zones have data collected.
+
+```cpp
+void func()
+{
+    RT_PROFILE("Put whatever zone text", GUI_EDITOR);
+}
+```
+
+### Profiling
+
+Modify `Profiling::ACTIVE_TAGS` in `rtengine/profiling.h` to limit which
+profiling zones you want to view. Rebuild RawTherapee to apply your changes.
+
+1. Run the Tracy profiler GUI
+2. Tell the profiler to search for connections
+3. Run RawTherapee
+4. Perform some actions
+5. Close RawTherapee and stop the profiler from recording more data
+
+Since Tracy starts collecting data immediately on program execution, there may
+be a lot of irrelevant data when profiling the GUI due to waiting for user
+interaction. Configure CMake with `-DWITH_TRACY_ON_DEMAND="ON"` to only gather
+data in RawTherapee when the profiling server is connected. If so, the
+profiling flow is changed slightly.
+
+1. Run RawTherapee GUI
+2. Setup up GUI to before the interaction you want to profile
+3. Run the Tracy profiler GUI and connect
+4. Perform a user interaction to profile
+5. Disconnect the Tracy profiler
