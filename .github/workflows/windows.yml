@@ -59,6 +59,10 @@ jobs:
             libjxl:p
             exiv2:p
 
+      - name: Downgrade pango
+        run: |
+          curl --location https://repo.msys2.org/mingw/mingw64/mingw-w64-x86_64-pango-1.56.3-2-any.pkg.tar.zst > mingw-w64-x86_64-pango-1.56.3-2-any.pkg.tar.zst && pacman -U --noconfirm mingw-w64-x86_64-pango-1.56.3-2-any.pkg.tar.zst
+
       - name: Configure build
         run: |
           export REF_NAME_FILTERED="$(echo '${{github.ref_name}}' | sed 's/[^A-z0-9_.-]//g')"
