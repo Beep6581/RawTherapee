@@ -25,6 +25,7 @@
 #include <glibmm/fileutils.h>
 #include <glibmm/miscutils.h>
 #include <glibmm/keyfile.h>
+#include <glibmm/ustring.h>
 
 #include "color.h"
 #include "colortemp.h"
@@ -42,6 +43,73 @@ using namespace std;
 
 namespace
 {
+
+Glib::ustring camelCapped(const Glib::ustring& str)
+{
+    Glib::ustring result(str);
+    result.replace(0, 1, 1, Glib::Unicode::toupper(result[0]));
+    bool nextShouldBeCapital = false;
+    for (size_t i = 1; i < result.size(); ++i) {
+        if (result[i] == ' ') {
+            nextShouldBeCapital = true;
+        } else {
+            if (nextShouldBeCapital) {
+                result.replace(i, 1, 1, Glib::Unicode::toupper(result[i]));
+                nextShouldBeCapital = false;
+            } else {
+                result.replace(i, 1, 1, Glib::Unicode::tolower(result[i]));
+            }
+        }
+    }
+    return result;
+}
+
+enum class KeyFormat {
+    Original,
+    CapitalizeWords,
+    CapitalizeFirstLetterOnly,
+    AllUppercase,
+    AllLowercase
+};
+
+Glib::ustring formatKey(const Glib::ustring& key, KeyFormat format = KeyFormat::Original)
+{
+    if (key.empty()) {
+        return key;
+    }
+    switch (format)
+    {
+        case KeyFormat::Original:
+            return key;
+        case KeyFormat::CapitalizeWords:
+            return camelCapped(key);
+        case KeyFormat::CapitalizeFirstLetterOnly: {
+            Glib::ustring result(key);
+            result.replace(0, 1, 1, Glib::Unicode::toupper(result[0]));
+            for (size_t i = 1; i < result.size(); ++i) {
+                result.replace(i, 1, 1, Glib::Unicode::tolower(result[i]));
+            }
+            return result;
+        }
+        case KeyFormat::AllUppercase: {
+            Glib::ustring result;
+            for (auto c : key) {
+                result += Glib::Unicode::toupper(c);
+            }
+            return result;
+        }
+        case KeyFormat::AllLowercase: {
+            Glib::ustring result;
+            for (auto c : key) {
+                result += Glib::Unicode::tolower(c);
+            }
+            return result;
+        }
+        default:
+            break;
+    }
+    return key;
+}
 
 Glib::ustring expandRelativePath(const Glib::ustring &procparams_fname, const Glib::ustring &prefix, Glib::ustring embedded_fname)
 {
@@ -92,7 +160,7 @@ Glib::ustring expandRelativePath2(const Glib::ustring &procparams_fname, const G
 		&& !procparams_fname2.empty()
 		&& Glib::path_is_absolute(procparams_fname2)) {
 		// embedded_fname is not a valid path;
-		// try with procparams_fname2 (the path defined in Preferences) as a prefix 
+		// try with procparams_fname2 (the path defined in Preferences) as a prefix
 		rPath = expandRelativePath(procparams_fname2 + G_DIR_SEPARATOR_S, prefix, embedded_fname);
 	}
 	return(rPath);
@@ -142,7 +210,7 @@ Glib::ustring relativePathIfInside2(const Glib::ustring &procparams_fname, const
 		// (the path defined in Preferences)
 		rPath = relativePathIfInside(procparams_fname2 + G_DIR_SEPARATOR_S, false, embedded_fname);
 	}
-	return(rPath);		
+	return(rPath);
 }
 
 
@@ -2072,7 +2140,7 @@ CGParams::CGParams() :
     pwr(1.2),
     colorspace("acesp1"),
     rolloff(true)
-    
+
 {
 }
 
@@ -2676,7 +2744,7 @@ ColorManagementParams::ColorManagementParams() :
     sigmatrc(1.),
     offstrc(1.),
     residtrc(0.),
-    pyrwavtrc(2),    
+    pyrwavtrc(2),
     opacityCurveWLI{
         static_cast<double>(FCT_MinMaxCPoints),
         0.0,
@@ -3708,7 +3776,7 @@ LocallabParams::LocallabSpot::LocallabSpot() :
     ghs_HLP(1.),
     ghs_smooth(false),
     ghs_inv(false),
-    
+
     multsh{0, 0, 0, 0, 0, 0},
     highlights(0),
     h_tonalwidth(70),
@@ -3866,7 +3934,7 @@ LocallabParams::LocallabSpot::LocallabSpot() :
     angvib(1.0),
    // feathervib(25.0),
     feathervib(1.0),
-    
+
     Lmaskvibcurve{
         static_cast<double>(DCT_NURBS),
         0.0,
@@ -4997,7 +5065,7 @@ LocallabParams::LocallabSpot::LocallabSpot() :
     grexl(0.1596),
     greyl(0.8404),
     bluxl(0.0366),
-    bluyl(0.0001),   
+    bluyl(0.0001),
     redxl(0.7347),
     redyl(0.2653),
     refi(0.),
@@ -5125,7 +5193,7 @@ LocallabParams::LocallabSpot::LocallabSpot() :
         0.35
     },
     csthresholdcie(0, 0, 6, 5, false)
-   
+
 
 {
   // init settings with Preferences / options : must be followed by call to spotMethodChanged in controlspotpanel.cc  (idle_register)
@@ -5141,23 +5209,23 @@ LocallabParams::LocallabSpot::LocallabSpot() :
         spotMethod = "full";
         loc = {3000, 3000, 3000, 3000};
         transit =100.;
-        shape = "RECT";       
+        shape = "RECT";
         sensi = 30;
         sensiex = 60;
         sensihs = 30;
         sensiv = 30;
-        sensisf = 30; 
+        sensisf = 30;
         sensibn = 40;
         sensiden = 60;
         sensitm = 60;
         sensih = 60;
         sensisha = 40;
         sensilc = 60;
-        sensicb = 60; 
+        sensicb = 60;
         sensilog = 60;
         sensimask = 60;
         sensicie = 60;
-        
+
     } else if(options.spotmet == 1) {//exclude
         spotMethod = "exc";
         shape = "ELI";
@@ -5171,13 +5239,13 @@ LocallabParams::LocallabSpot::LocallabSpot() :
         sensiden = 60;
         sensitm = 60;
         sensih = 60;
-        sensisha = 40;       
-        sensilc = 60;        
-        sensicb = 60; 
+        sensisha = 40;
+        sensilc = 60;
+        sensicb = 60;
         sensilog = 60;
         sensimask = 60;
         sensicie = 60;
-        
+
     } else if(options.spotmet == 0) {//normal
         spotMethod = "norm";
         shape = "ELI";
@@ -5191,12 +5259,12 @@ LocallabParams::LocallabSpot::LocallabSpot() :
         sensiden = 60;
         sensitm = 60;
         sensih = 60;
-        sensisha = 40;       
-        sensilc = 60;        
-        sensicb = 60; 
+        sensisha = 40;
+        sensilc = 60;
+        sensicb = 60;
         sensilog = 60;
         sensimask = 60;
-        sensicie = 60;  
+        sensicie = 60;
     }
 
 }
@@ -5388,7 +5456,7 @@ bool LocallabParams::LocallabSpot::operator ==(const LocallabSpot& other) const
         && ghs_HLP == other.ghs_HLP
         && ghs_smooth == other.ghs_smooth
         && ghs_inv == other.ghs_inv
-        
+
         && [this, &other]() -> bool
             {
                 for (int i = 0; i < 6; ++i) {
@@ -5968,9 +6036,9 @@ bool LocallabParams::LocallabSpot::operator ==(const LocallabSpot& other) const
         && labgridcieGx == other.labgridcieGx
         && labgridcieGy == other.labgridcieGy
         && labgridcieWx == other.labgridcieWx
-        && labgridcieWy == other.labgridcieWy        
+        && labgridcieWy == other.labgridcieWy
         && labgridcieMx == other.labgridcieMx
-        && labgridcieMy == other.labgridcieMy        
+        && labgridcieMy == other.labgridcieMy
         && whitescie == other.whitescie
         && blackscie == other.blackscie
         && illMethod == other.illMethod
@@ -6012,7 +6080,7 @@ bool LocallabParams::LocallabSpot::operator ==(const LocallabSpot& other) const
         && higthrescie == other.higthrescie
         && decaycie == other.decaycie
         && strumaskcie == other.strumaskcie
-        && toolcie == other.toolcie       
+        && toolcie == other.toolcie
         && blurcie == other.blurcie
         && contcie == other.contcie
         && highmaskcie == other.highmaskcie
@@ -7993,7 +8061,7 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
                     saveToKeyfile(!pedited || spot_edited->refi, "Locallab", "refi_" + index_str, spot.refi, keyFile);
                     saveToKeyfile(!pedited || spot_edited->shiftxl, "Locallab", "shiftxl_" + index_str, spot.shiftxl, keyFile);
                     saveToKeyfile(!pedited || spot_edited->shiftyl, "Locallab", "shiftyl_" + index_str, spot.shiftyl, keyFile);
-                    
+
                     saveToKeyfile(!pedited || spot_edited->labgridcieALow, "Locallab", "labgridcieALow_" + index_str, spot.labgridcieALow, keyFile);
                     saveToKeyfile(!pedited || spot_edited->labgridcieBLow, "Locallab", "labgridcieBLow_" + index_str, spot.labgridcieBLow, keyFile);
                     saveToKeyfile(!pedited || spot_edited->labgridcieAHigh, "Locallab", "labgridcieAHigh_" + index_str, spot.labgridcieAHigh, keyFile);
@@ -8017,7 +8085,7 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
                     saveToKeyfile(!pedited || spot_edited->sigmoidldajzcie, "Locallab", "Sigmoidldajzcie_" + index_str, spot.sigmoidldajzcie, keyFile);
                     saveToKeyfile(!pedited || spot_edited->sigmoidthjzcie, "Locallab", "Sigmoidthjzcie_" + index_str, spot.sigmoidthjzcie, keyFile);
                     saveToKeyfile(!pedited || spot_edited->sigmoidbljzcie, "Locallab", "Sigmoidbljzcie_" + index_str, spot.sigmoidbljzcie, keyFile);
-     
+
                     saveToKeyfile(!pedited || spot_edited->contqcie, "Locallab", "Contqcie_" + index_str, spot.contqcie, keyFile);
                     saveToKeyfile(!pedited || spot_edited->contsigqcie, "Locallab", "Contsigqcie_" + index_str, spot.contsigqcie, keyFile);
                     saveToKeyfile(!pedited || spot_edited->colorflcie, "Locallab", "Colorflcie_" + index_str, spot.colorflcie, keyFile);
@@ -8203,9 +8271,9 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
             icm.wcat,
             keyFile
         );
-        
+
         saveToKeyfile(!pedited || pedited->icm.opacityCurveWLI, "Color Management", "OpacityCurveWLI", icm.opacityCurveWLI, keyFile);
-        
+
         saveToKeyfile(!pedited || pedited->icm.wGamma, "Color Management", "WorkingTRCGamma", icm.wGamma, keyFile);
         saveToKeyfile(!pedited || pedited->icm.wSlope, "Color Management", "WorkingTRCSlope", icm.wSlope, keyFile);
         saveToKeyfile(!pedited || pedited->icm.wmidtcie, "Color Management", "Wmidtcie", icm.wmidtcie, keyFile);
@@ -8529,7 +8597,7 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
 // Raw
         saveToKeyfile(!pedited || pedited->raw.darkFrame, "RAW", "DarkFrame", relativePathIfInside2(fname, options.rtSettings.darkFramesPath, fnameAbsolute, raw.dark_frame), keyFile);
         saveToKeyfile(!pedited || pedited->raw.df_autoselect, "RAW", "DarkFrameAuto", raw.df_autoselect, keyFile);
-        saveToKeyfile(!pedited || pedited->raw.ff_file, "RAW", "FlatFieldFile", relativePathIfInside2(fname, options.rtSettings.flatFieldsPath, fnameAbsolute, raw.ff_file), keyFile);       
+        saveToKeyfile(!pedited || pedited->raw.ff_file, "RAW", "FlatFieldFile", relativePathIfInside2(fname, options.rtSettings.flatFieldsPath, fnameAbsolute, raw.ff_file), keyFile);
         saveToKeyfile(!pedited || pedited->raw.ff_AutoSelect, "RAW", "FlatFieldAutoSelect", raw.ff_AutoSelect, keyFile);
         saveToKeyfile(!pedited || pedited->raw.ff_FromMetaData, "RAW", "FlatFieldFromMetaData", raw.ff_FromMetaData, keyFile);
         saveToKeyfile(!pedited || pedited->raw.ff_BlurRadius, "RAW", "FlatFieldBlurRadius", raw.ff_BlurRadius, keyFile);
@@ -9127,6 +9195,7 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
             assignFromKeyfile(keyFile, "White Balance", "TemperatureBias", wb.tempBias, pedited->wb.tempBias);
             Glib::ustring standard_observer;
             assignFromKeyfile(keyFile, "White Balance", "StandardObserver", standard_observer, pedited->wb.observer);
+            standard_observer = formatKey(standard_observer, KeyFormat::AllUppercase);
             if (standard_observer == "TEN_DEGREES") {
                 wb.observer = StandardObserver::TEN_DEGREES;
             } else if (standard_observer == "TWO_DEGREES") {
@@ -9206,12 +9275,24 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
             assignFromKeyfile(keyFile, "Color appearance", "CatCat", colorappearance.catmethod, pedited->colorappearance.catmethod);
 
             assignFromKeyfile(keyFile, "Color appearance", "Surround", colorappearance.surround, pedited->colorappearance.surround);
+            colorappearance.surround = formatKey(colorappearance.surround, KeyFormat::CapitalizeWords);
+            if (colorappearance.surround == "Extremelydark") {
+                colorappearance.surround = "ExtremelyDark";
+            }
             assignFromKeyfile(keyFile, "Color appearance", "Surrsrc", colorappearance.surrsrc, pedited->colorappearance.surrsrc);
+            colorappearance.surrsrc = formatKey(colorappearance.surrsrc, KeyFormat::CapitalizeWords);
+            if (colorappearance.surrsrc == "Extremelydark") {
+                colorappearance.surrsrc = "ExtremelyDark";
+            }
             assignFromKeyfile(keyFile, "Color appearance", "AdaptLum", colorappearance.adaplum, pedited->colorappearance.adaplum);
             assignFromKeyfile(keyFile, "Color appearance", "Badpixsl", colorappearance.badpixsl, pedited->colorappearance.badpixsl);
             assignFromKeyfile(keyFile, "Color appearance", "Model", colorappearance.wbmodel, pedited->colorappearance.wbmodel);
+            if (colorappearance.wbmodel == "RAW_T") {
+                colorappearance.wbmodel = "RawT";
+            }
             assignFromKeyfile(keyFile, "Color appearance", "Illum", colorappearance.illum, pedited->colorappearance.illum);
             assignFromKeyfile(keyFile, "Color appearance", "Algorithm", colorappearance.algo, pedited->colorappearance.algo);
+            colorappearance.algo = formatKey(colorappearance.algo, KeyFormat::AllUppercase);
             assignFromKeyfile(keyFile, "Color appearance", "J-Light", colorappearance.jlight, pedited->colorappearance.jlight);
             assignFromKeyfile(keyFile, "Color appearance", "Q-Bright", colorappearance.qbright, pedited->colorappearance.qbright);
             assignFromKeyfile(keyFile, "Color appearance", "C-Chroma", colorappearance.chroma, pedited->colorappearance.chroma);
@@ -9277,23 +9358,31 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
             assignFromKeyfile(keyFile, "Directional Pyramid Denoising", "Ldetail", dirpyrDenoise.Ldetail, pedited->dirpyrDenoise.Ldetail);
             assignFromKeyfile(keyFile, "Directional Pyramid Denoising", "Chroma", dirpyrDenoise.chroma, pedited->dirpyrDenoise.chroma);
             assignFromKeyfile(keyFile, "Directional Pyramid Denoising", "Method", dirpyrDenoise.dmethod, pedited->dirpyrDenoise.dmethod);
+            dirpyrDenoise.dmethod = formatKey(dirpyrDenoise.dmethod, KeyFormat::CapitalizeWords);
             assignFromKeyfile(keyFile, "Directional Pyramid Denoising", "LMethod", dirpyrDenoise.Lmethod, pedited->dirpyrDenoise.Lmethod);
+            dirpyrDenoise.Lmethod = formatKey(dirpyrDenoise.Lmethod, KeyFormat::AllUppercase);
             assignFromKeyfile(keyFile, "Directional Pyramid Denoising", "CMethod", dirpyrDenoise.Cmethod, pedited->dirpyrDenoise.Cmethod);
+            dirpyrDenoise.Cmethod = formatKey(dirpyrDenoise.Cmethod, KeyFormat::AllUppercase);
 
             if (dirpyrDenoise.Cmethod == "PRE") {
                 dirpyrDenoise.Cmethod = "MAN"; // Never load 'auto chroma preview mode' from pp3
             }
 
             assignFromKeyfile(keyFile, "Directional Pyramid Denoising", "C2Method", dirpyrDenoise.C2method, pedited->dirpyrDenoise.C2method);
+            dirpyrDenoise.C2method = formatKey(dirpyrDenoise.C2method, KeyFormat::AllUppercase);
 
             if (dirpyrDenoise.C2method == "PREV") {
                 dirpyrDenoise.C2method = "MANU";
             }
 
             assignFromKeyfile(keyFile, "Directional Pyramid Denoising", "SMethod", dirpyrDenoise.smethod, pedited->dirpyrDenoise.smethod);
+            dirpyrDenoise.Lmethod = formatKey(dirpyrDenoise.Lmethod, KeyFormat::AllLowercase);
             assignFromKeyfile(keyFile, "Directional Pyramid Denoising", "MedMethod", dirpyrDenoise.medmethod, pedited->dirpyrDenoise.medmethod);
+            dirpyrDenoise.medmethod = formatKey(dirpyrDenoise.medmethod, KeyFormat::AllLowercase);
             assignFromKeyfile(keyFile, "Directional Pyramid Denoising", "MethodMed", dirpyrDenoise.methodmed, pedited->dirpyrDenoise.methodmed);
+            dirpyrDenoise.methodmed = formatKey(dirpyrDenoise.methodmed, KeyFormat::AllLowercase);
             assignFromKeyfile(keyFile, "Directional Pyramid Denoising", "RGBMethod", dirpyrDenoise.rgbmethod, pedited->dirpyrDenoise.rgbmethod);
+            dirpyrDenoise.rgbmethod = formatKey(dirpyrDenoise.rgbmethod, KeyFormat::AllLowercase);
             assignFromKeyfile(keyFile, "Directional Pyramid Denoising", "LCurve", dirpyrDenoise.lcurve, pedited->dirpyrDenoise.lcurve);
 
             assignFromKeyfile(keyFile, "Directional Pyramid Denoising", "CCCurve", dirpyrDenoise.cccurve, pedited->dirpyrDenoise.cccurve);
@@ -9403,16 +9492,23 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
 
             if (assignFromKeyfile(keyFile, "Crop", "Ratio", crop.ratio, pedited->crop.ratio)) {
                 //backwards compatibility for crop.ratio
+                bool modified = false;
                 if (crop.ratio == "DIN") {
                     crop.ratio = "1.414 - DIN EN ISO 216";
+                    modified = true;
                 }
 
                 if (crop.ratio == "8.5:11") {
                     crop.ratio = "8.5:11 - US Letter";
+                    modified = true;
                 }
 
                 if (crop.ratio == "11:17") {
                     crop.ratio = "11:17 - Tabloid";
+                    modified = true;
+                }
+                if (!modified) {
+                    crop.ratio = formatKey(crop.ratio, KeyFormat::CapitalizeWords);
                 }
             }
 
@@ -9741,7 +9837,7 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
                     spot.complexexpose = 0;
                     spotEdited.complexexpose = true;
                 }
-                
+
                 assignFromKeyfile(keyFile, "Locallab", "Expcomp_" + index_str, spot.expcomp, spotEdited.expcomp);
                 assignFromKeyfile(keyFile, "Locallab", "Hlcompr_" + index_str, spot.hlcompr, spotEdited.hlcompr);
                 assignFromKeyfile(keyFile, "Locallab", "Hlcomprthresh_" + index_str, spot.hlcomprthresh, spotEdited.hlcomprthresh);
@@ -10450,14 +10546,14 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
                             spot.modeQJ = "511";
                             spot.sigq12 = false;
                             spotEdited.modeQJ = true;
-                            spotEdited.sigq12 = true;                             
+                            spotEdited.sigq12 = true;
                         }
                     }
                     if (keyFile.has_key("Locallab", "logcieq_" + index_str)) {
                         if (spot.logcieq == true) {
                             spot.modeQJ = "511";
                             spotEdited.modeQJ = true;
-                            spotEdited.logcieq = true;                             
+                            spotEdited.logcieq = true;
                         }
                     }
 
@@ -10466,12 +10562,12 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
                             spot.modeQJ = "511";
                             spot.sigjz12 = false;
                             spotEdited.modeQJ = true;
-                            spotEdited.sigjz12 = true;                             
+                            spotEdited.sigjz12 = true;
                         }
                     }
 
-                } 
-                  
+                }
+
                 assignFromKeyfile(keyFile, "Locallab", "chjzcie_" + index_str, spot.chjzcie, spotEdited.chjzcie);
                 assignFromKeyfile(keyFile, "Locallab", "SourceGraycie_" + index_str, spot.sourceGraycie, spotEdited.sourceGraycie);
                 assignFromKeyfile(keyFile, "Locallab", "Sourceabscie_" + index_str, spot.sourceabscie, spotEdited.sourceabscie);
@@ -10581,7 +10677,7 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
                 assignFromKeyfile(keyFile, "Locallab", "labgridcieWy_" + index_str, spot.labgridcieWy, spotEdited.labgridcieWy);
                 assignFromKeyfile(keyFile, "Locallab", "labgridcieMx_" + index_str, spot.labgridcieMx, spotEdited.labgridcieMx);
                 assignFromKeyfile(keyFile, "Locallab", "labgridcieMy_" + index_str, spot.labgridcieMy, spotEdited.labgridcieMy);
-                
+
                 assignFromKeyfile(keyFile, "Locallab", "whitescie_" + index_str, spot.whitescie, spotEdited.whitescie);
                 assignFromKeyfile(keyFile, "Locallab", "blackscie_" + index_str, spot.blackscie, spotEdited.blackscie);
                 assignFromKeyfile(keyFile, "Locallab", "illMethod_" + index_str, spot.illMethod, spotEdited.illMethod);
@@ -10720,6 +10816,7 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
             assignFromKeyfile(keyFile, "Resize", "Enabled", resize.enabled, pedited->resize.enabled);
             assignFromKeyfile(keyFile, "Resize", "Scale", resize.scale, pedited->resize.scale);
             assignFromKeyfile(keyFile, "Resize", "AppliesTo", resize.appliesTo, pedited->resize.appliesTo);
+            resize.appliesTo = formatKey(resize.appliesTo, KeyFormat::CapitalizeFirstLetterOnly);
             assignFromKeyfile(keyFile, "Resize", "Method", resize.method, pedited->resize.method);
             assignFromKeyfile(keyFile, "Resize", "DataSpecified", resize.dataspec, pedited->resize.dataspec);
             assignFromKeyfile(keyFile, "Resize", "Width", resize.width, pedited->resize.width);
@@ -10826,6 +10923,7 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
             assignFromKeyfile(keyFile, "Color Management", "ApplyHueSatMap", icm.applyHueSatMap, pedited->icm.applyHueSatMap);
             assignFromKeyfile(keyFile, "Color Management", "DCPIlluminant", icm.dcpIlluminant, pedited->icm.dcpIlluminant);
             assignFromKeyfile(keyFile, "Color Management", "WorkingProfile", icm.workingProfile, pedited->icm.workingProfile);
+            //TODO: ^^^ This should be an enum really.
             assignFromKeyfile(keyFile, "Color Management", "OpacityCurveWLI", icm.opacityCurveWLI, pedited->icm.opacityCurveWLI);
 
             if (
@@ -10931,7 +11029,7 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
                     pedited->icm.wcat = true;
                 }
             }
-            
+
             assignFromKeyfile(keyFile, "Color Management", "Gamut", icm.gamut, pedited->icm.gamut);
             assignFromKeyfile(keyFile, "Color Management", "WorkingTRCSlope", icm.wSlope, pedited->icm.wSlope);
             assignFromKeyfile(keyFile, "Color Management", "WorkingTRCGamma", icm.wGamma, pedited->icm.wGamma);
@@ -11003,10 +11101,13 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
                     icm.outputProfile = "RTv4_Bruce";
                 } else if (icm.outputProfile == "ACES") {
                     icm.outputProfile = "RTv4_ACES-AP0";
+                } else {
+                    icm.outputProfile = "sRGB";
                 }
             }
             if (keyFile.has_key("Color Management", "OutputProfileIntent")) {
                 Glib::ustring intent = keyFile.get_string("Color Management", "OutputProfileIntent");
+                intent = formatKey(intent, KeyFormat::CapitalizeFirstLetterOnly);
 
                 if (intent == "Perceptual") {
                     icm.outputIntent = RI_PERCEPTUAL;
@@ -11084,11 +11185,15 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
             }
 
             assignFromKeyfile(keyFile, "Wavelet", "ChoiceLevMethod", wavelet.CLmethod, pedited->wavelet.CLmethod);
+            wavelet.CLmethod = formatKey(wavelet.CLmethod, KeyFormat::AllLowercase);
             assignFromKeyfile(keyFile, "Wavelet", "BackMethod", wavelet.Backmethod, pedited->wavelet.Backmethod);
+            wavelet.Backmethod = formatKey(wavelet.Backmethod, KeyFormat::AllLowercase);
             assignFromKeyfile(keyFile, "Wavelet", "TilesMethod", wavelet.Tilesmethod, pedited->wavelet.Tilesmethod);
+            wavelet.Tilesmethod = formatKey(wavelet.Tilesmethod, KeyFormat::AllLowercase);
 
             if (keyFile.has_key("Wavelet", "complexMethod")) {
                 assignFromKeyfile(keyFile, "Wavelet", "complexMethod", wavelet.complexmethod, pedited->wavelet.complexmethod);
+                wavelet.complexmethod = formatKey(wavelet.complexmethod, KeyFormat::AllLowercase);
             } else if (wavelet.enabled) {
                 wavelet.complexmethod = "expert";
                 if (pedited) {
@@ -11098,18 +11203,30 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
 
             //assignFromKeyfile(keyFile, "Wavelet", "denMethod", wavelet.denmethod, pedited->wavelet.denmethod);
             assignFromKeyfile(keyFile, "Wavelet", "mixMethod", wavelet.mixmethod, pedited->wavelet.mixmethod);
+            wavelet.mixmethod = formatKey(wavelet.mixmethod, KeyFormat::AllLowercase);
             assignFromKeyfile(keyFile, "Wavelet", "sliMethod", wavelet.slimethod, pedited->wavelet.slimethod);
+            wavelet.slimethod = formatKey(wavelet.slimethod, KeyFormat::AllLowercase);
             assignFromKeyfile(keyFile, "Wavelet", "quaMethod", wavelet.quamethod, pedited->wavelet.quamethod);
+            wavelet.quamethod = formatKey(wavelet.quamethod, KeyFormat::AllLowercase);
             assignFromKeyfile(keyFile, "Wavelet", "DaubMethod", wavelet.daubcoeffmethod, pedited->wavelet.daubcoeffmethod);
             assignFromKeyfile(keyFile, "Wavelet", "CHromaMethod", wavelet.CHmethod, pedited->wavelet.CHmethod);
+            wavelet.CHmethod = formatKey(wavelet.CHmethod, KeyFormat::AllLowercase);
             assignFromKeyfile(keyFile, "Wavelet", "Medgreinf", wavelet.Medgreinf, pedited->wavelet.Medgreinf);
+            wavelet.Medgreinf = formatKey(wavelet.Medgreinf, KeyFormat::AllLowercase);
             assignFromKeyfile(keyFile, "Wavelet", "Ushamethod", wavelet.ushamethod, pedited->wavelet.ushamethod);
+            wavelet.ushamethod = formatKey(wavelet.ushamethod, KeyFormat::AllLowercase);
             assignFromKeyfile(keyFile, "Wavelet", "CHSLromaMethod", wavelet.CHSLmethod, pedited->wavelet.CHSLmethod);
+            wavelet.CHSLmethod = formatKey(wavelet.CHSLmethod, KeyFormat::AllUppercase);
             assignFromKeyfile(keyFile, "Wavelet", "EDMethod", wavelet.EDmethod, pedited->wavelet.EDmethod);
+            wavelet.EDmethod = formatKey(wavelet.EDmethod, KeyFormat::AllUppercase);
             assignFromKeyfile(keyFile, "Wavelet", "NPMethod", wavelet.NPmethod, pedited->wavelet.NPmethod);
+            wavelet.NPmethod = formatKey(wavelet.NPmethod, KeyFormat::AllLowercase);
             assignFromKeyfile(keyFile, "Wavelet", "BAMethod", wavelet.BAmethod, pedited->wavelet.BAmethod);
+            wavelet.BAmethod = formatKey(wavelet.BAmethod, KeyFormat::AllLowercase);
             assignFromKeyfile(keyFile, "Wavelet", "TMMethod", wavelet.TMmethod, pedited->wavelet.TMmethod);
+            wavelet.TMmethod = formatKey(wavelet.TMmethod, KeyFormat::AllLowercase);
             assignFromKeyfile(keyFile, "Wavelet", "HSMethod", wavelet.HSmethod, pedited->wavelet.HSmethod);
+            wavelet.HSmethod = formatKey(wavelet.HSmethod, KeyFormat::AllLowercase);
             assignFromKeyfile(keyFile, "Wavelet", "DirMethod", wavelet.Dirmethod, pedited->wavelet.Dirmethod);
             assignFromKeyfile(keyFile, "Wavelet", "Sigma", wavelet.sigma, pedited->wavelet.sigma);
             assignFromKeyfile(keyFile, "Wavelet", "Offset", wavelet.offset, pedited->wavelet.offset);
@@ -11359,6 +11476,7 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
             assignFromKeyfile(keyFile, "Directional Pyramid Equalizer", "Enabled", dirpyrequalizer.enabled, pedited->dirpyrequalizer.enabled);
             assignFromKeyfile(keyFile, "Directional Pyramid Equalizer", "Gamutlab", dirpyrequalizer.gamutlab, pedited->dirpyrequalizer.gamutlab);
             assignFromKeyfile(keyFile, "Directional Pyramid Equalizer", "cbdlMethod", dirpyrequalizer.cbdlMethod, pedited->dirpyrequalizer.cbdlMethod);
+            dirpyrequalizer.cbdlMethod = formatKey(dirpyrequalizer.cbdlMethod, KeyFormat::AllLowercase);
 
             if (keyFile.has_key("Directional Pyramid Equalizer", "Hueskin")) {
                 const std::vector<int> thresh = keyFile.get_integer_list("Directional Pyramid Equalizer", "Hueskin");
@@ -11507,8 +11625,10 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
         if (keyFile.has_group("ColorToning")) {
             assignFromKeyfile(keyFile, "ColorToning", "Enabled", colorToning.enabled, pedited->colorToning.enabled);
             assignFromKeyfile(keyFile, "ColorToning", "Method", colorToning.method, pedited->colorToning.method);
+            //TODO: ^^^ This should be an enum?
             assignFromKeyfile(keyFile, "ColorToning", "Lumamode", colorToning.lumamode, pedited->colorToning.lumamode);
             assignFromKeyfile(keyFile, "ColorToning", "Twocolor", colorToning.twocolor, pedited->colorToning.twocolor);
+            colorToning.twocolor = formatKey(colorToning.twocolor, KeyFormat::CapitalizeFirstLetterOnly);
             assignFromKeyfile(keyFile, "ColorToning", "OpacityCurve", colorToning.opacityCurve, pedited->colorToning.opacityCurve);
             assignFromKeyfile(keyFile, "ColorToning", "ColorCurve", colorToning.colorCurve, pedited->colorToning.colorCurve);
             assignFromKeyfile(keyFile, "ColorToning", "Autosat", colorToning.autosat, pedited->colorToning.autosat);
@@ -11647,6 +11767,7 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
             assignFromKeyfile(keyFile, "RAW", "FlatFieldFromMetaData", raw.ff_FromMetaData, pedited->raw.ff_FromMetaData);
             assignFromKeyfile(keyFile, "RAW", "FlatFieldBlurRadius", raw.ff_BlurRadius, pedited->raw.ff_BlurRadius);
             assignFromKeyfile(keyFile, "RAW", "FlatFieldBlurType", raw.ff_BlurType, pedited->raw.ff_BlurType);
+            raw.ff_BlurType = formatKey(raw.ff_BlurType, KeyFormat::CapitalizeWords);
             assignFromKeyfile(keyFile, "RAW", "FlatFieldAutoClipControl", raw.ff_AutoClipControl, pedited->raw.ff_AutoClipControl);
 
             if (ppVersion < 328) {
@@ -11686,6 +11807,7 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
 
             if (ppVersion < 320) {
                 assignFromKeyfile(keyFile, "RAW", "Method", raw.bayersensor.method, pedited->raw.bayersensor.method);
+                raw.bayersensor.method = formatKey(raw.bayersensor.method, KeyFormat::AllLowercase);
                 assignFromKeyfile(keyFile, "RAW", "CcSteps", raw.bayersensor.ccSteps, pedited->raw.bayersensor.ccSteps);
                 assignFromKeyfile(keyFile, "RAW", "LineDenoise", raw.bayersensor.linenoise, pedited->raw.bayersensor.linenoise);
                 assignFromKeyfile(keyFile, "RAW", "GreenEqThreshold", raw.bayersensor.greenthresh, pedited->raw.bayersensor.greenEq);
@@ -11785,6 +11907,7 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
                 }
             } else {
                 assignFromKeyfile(keyFile, "RAW Bayer", "pixelShiftDemosaicMethod", raw.bayersensor.pixelShiftDemosaicMethod, pedited->raw.bayersensor.pixelShiftDemosaicMethod);
+                raw.bayersensor.pixelShiftDemosaicMethod = formatKey(raw.bayersensor.pixelShiftDemosaicMethod, KeyFormat::AllLowercase);
             }
 
             assignFromKeyfile(keyFile, "RAW Bayer", "PDAFLinesFilter", raw.bayersensor.pdafLinesFilter, pedited->raw.bayersensor.pdafLinesFilter);
