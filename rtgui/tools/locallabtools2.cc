@@ -8658,7 +8658,6 @@ Locallabcie::Locallabcie():
     ciesmoothBox->pack_start(*kslopesmor);
     ciesmoothBox->pack_start(*kslopesmog);
     ciesmoothBox->pack_start(*kslopesmob);
-    ciesmoothBox->pack_start(*smoothciethtrc);
     ciesmoothBox->pack_start(*contsig);
     ciesmoothBox->pack_start(*skewsig);
     ciesmoothBox->pack_start(*whitsig);
@@ -8671,6 +8670,8 @@ Locallabcie::Locallabcie():
     ciesmoothBox->pack_start(*smoothcietrc);
     ciesmoothBox->pack_start(*smoothcietrcrel);
     ciesmoothBox->pack_start(*smoothcieth);
+    ciesmoothBox->pack_start(*smoothciethtrc);
+    
     smoothciemetconn = smoothciemet->signal_changed().connect(sigc::mem_fun(*this, &Locallabcie::smoothciemetChanged));
 
     smoothcieBox->pack_start(*ciesmoothBox);
