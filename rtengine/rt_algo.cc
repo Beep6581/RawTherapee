@@ -909,5 +909,3 @@ double accumulateProduct(const float* data1, const float* data2, size_t n, bool 
     }
     return acc1 + acc2;
 }}
-//}
-//}
