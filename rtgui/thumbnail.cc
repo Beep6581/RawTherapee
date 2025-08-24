@@ -15,9 +15,6 @@
  *  You should have received a copy of the GNU General Public License
  *  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
  */
-#ifdef _WIN32
-#include <windows.h>
-#endif
 
 #include "cachemanager.h"
 #include "multilangmgr.h"
@@ -48,6 +45,10 @@
 #include "procparamchangers.h"
 #include "version.h"
 
+#ifdef _WIN32
+#include "rtengine/leanwindows.h"
+#include <shellapi.h>
+#endif // _WIN32
 
 namespace {
 

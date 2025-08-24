@@ -657,12 +657,6 @@ int RawImage::loadRaw(bool loadData, unsigned int imageNum, bool closeFile, Prog
 
         auto &d = libraw->imgdata.idata;
         is_raw = d.raw_count;
-        strncpy(make, d.normalized_make, sizeof(make)-1);
-        make[sizeof(make)-1] = 0;
-        normalized_make = make;
-        strncpy(model, d.normalized_model, sizeof(model)-1);
-        model[sizeof(model)-1] = 0;
-        normalized_model = model;
         RT_software = d.software;
         dng_version = d.dng_version;
         filters = d.filters;
@@ -670,16 +664,25 @@ int RawImage::loadRaw(bool loadData, unsigned int imageNum, bool closeFile, Prog
         colors = d.colors;
         tiff_bps = 0;
 
+        auto rt_strncpy = [](char* dest, char* src, size_t n) {
+            if (!dest || !src) return;
+            memset(dest, 0, n);
+            if (n == 0) return;
+            memcpy(dest, src, strnlen(src, n - 1));
+        };
+
+        rt_strncpy(make, d.normalized_make, sizeof(make));
+        normalized_make = make;
+        rt_strncpy(model, d.normalized_model, sizeof(model));
+        normalized_model = model;
+
         if (!strcmp("Hasselblad", make)) {
             // For Hasselblad, "model" provides the better name.
-            strncpy(model, d.model, sizeof(model) - 1);
-            model[sizeof(model) - 1] = 0;
+            rt_strncpy(model, d.model, sizeof(model));
         } else if (!strcmp("Pentax", make) && !strcmp("Samsung", d.make)) {
             // For Samsung cameras that have a Pentax counterpart.
-            strncpy(make, d.make, sizeof(make) - 1);
-            make[sizeof(make) - 1] = 0;
-            strncpy(model, d.model, sizeof(model) - 1);
-            model[sizeof(model) - 1] = 0;
+            rt_strncpy(make, d.make, sizeof(make));
+            rt_strncpy(model, d.model, sizeof(model));
         }
 
         if (merged_pixelshift.is_merged_pixelshift ||

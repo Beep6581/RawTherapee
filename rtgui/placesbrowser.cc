@@ -18,16 +18,16 @@
  */
 #include "placesbrowser.h"
 
-#ifdef _WIN32
-#include <windows.h>
-#include <shlobj.h>
-#include <Shlwapi.h>
-#endif
-
 #include "guiutils.h"
 #include "rtimage.h"
 #include "options.h"
 #include "toolpanel.h"
+
+#ifdef _WIN32
+#include "rtengine/leanwindows.h"
+#include <shlwapi.h>
+#include <shlobj.h>
+#endif
 
 PlacesBrowser::PlacesBrowser ()
 {

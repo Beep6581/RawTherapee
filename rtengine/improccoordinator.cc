@@ -3216,9 +3216,6 @@ void ImProcCoordinator::stopProcessing()
 
 void ImProcCoordinator::startProcessing()
 {
-
-#undef THREAD_PRIORITY_NORMAL
-
     if (!destroying) {
         if (!updaterRunning) {
             updaterThreadStart.lock();

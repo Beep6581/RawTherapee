@@ -22,14 +22,13 @@
 #include "options.h"
 
 #ifdef _WIN32
-#include <windows.h>
+#include "rtengine/leanwindows.h"
 #include <mmsystem.h>
 #endif
 
 #if defined(__linux__) && defined(USE_CANBERRA)
 #include <canberra-gtk.h>
 #endif
-
 
 void SoundManager::init()
 {
