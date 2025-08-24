@@ -208,7 +208,7 @@ void FilePanel::init ()
     dirBrowser->fillDirTree ();
     placesBrowser->refreshPlacesList ();
 
-    if (!App::get().argv0().empty() && Glib::file_test (App::get().argv1(), Glib::FILE_TEST_EXISTS)) {
+    if (!App::get().argv1().empty() && Glib::file_test (App::get().argv1(), Glib::FILE_TEST_EXISTS)) {
         Glib::ustring d(App::get().argv1());
         if (!Glib::file_test(d, Glib::FILE_TEST_IS_DIR)) {
             d = Glib::path_get_dirname(d);

@@ -139,7 +139,7 @@ int processLineParams ( int argc, char **argv )
                     if (currParam == "-gimp") {
                         app.setIsGimpPlugin(true);
                         app.setIsSimpleEditor(true);
-                        app.setIsRemote(true);
+                        app.setIsRemote(false);
                         break;
                     }
 
