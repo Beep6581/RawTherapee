@@ -21,16 +21,14 @@
 #include <iostream>
 #include <cstring>
 
-#ifdef _WIN32_WINNT
-#undef _WIN32_WINNT
-#define _WIN32_WINNT 0x0600
-#include <windows.h>
-#endif
-
 #include "guiutils.h"
 #include "rtsurface.h"
 #include "multilangmgr.h"
 #include "options.h"
+
+#ifdef _WIN32
+#include "rtengine/leanwindows.h"
+#endif // _WIN32
 
 namespace
 {

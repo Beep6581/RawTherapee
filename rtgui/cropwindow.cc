@@ -17,9 +17,6 @@
  *  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
  */
 #include <iomanip>
-#ifdef _WIN32
-#include <windows.h>
-#endif
 
 #include "cropwindow.h"
 
@@ -40,6 +37,10 @@
 #include "rtengine/imagesource.h"
 #include "rtengine/procparams.h"
 #include "rtengine/rt_math.h"
+
+#ifdef _WIN32
+#include "rtengine/leanwindows.h"
+#endif // _WIN32
 
 using namespace rtengine;
 

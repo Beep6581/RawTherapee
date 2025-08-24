@@ -47,11 +47,12 @@
 #include <glib/gstdio.h>
 #include <glibmm/threads.h>
 #else
-#include <windows.h>
+#include "rtengine/leanwindows.h"
+#include <conio.h>
 #include <shlobj.h>
+
 #include <glibmm/thread.h>
-#include "conio.h"
-#endif
+#endif // _WIN32
 
 // Set this to 1 to make RT work when started with Eclipse and arguments, at least on Windows platform
 #define ECLIPSE_ARGS 0
