@@ -24,7 +24,6 @@
 #include "rawimagesource.h"
 #include "sleef.h"
 #include "jaggedarray.h"
-#undef THREAD_PRIORITY_NORMAL
 #include "opthelper.h"
 
 namespace {

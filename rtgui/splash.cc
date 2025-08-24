@@ -95,7 +95,7 @@ void SplashImage::get_preferred_width_for_height_vfunc (int height, int &minimum
     get_preferred_width_vfunc (minimum_width, natural_width);
 }
 
-Splash::Splash (Gtk::Window& parent) : Gtk::Dialog(M("GENERAL_ABOUT"), parent, true)
+Splash::Splash (Gtk::Window& parent) : Gtk::Dialog(M("GENERAL_ABOUT"), parent, false)
 {
 
     releaseNotesSW = nullptr;
