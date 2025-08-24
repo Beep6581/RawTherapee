@@ -20,11 +20,10 @@
 
 #ifdef _WIN32
 
-#include <aclapi.h>
-#include <windows.h>
-
 #include "noncopyable.h"
 
+#include "rtengine/leanwindows.h"
+#include <aclapi.h>
 
 /**
  * Wrapper for pointers to memory allocated by HeapAlloc.

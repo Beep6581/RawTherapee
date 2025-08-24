@@ -43,8 +43,6 @@
 #include "rtgui/multilangmgr.h"
 #include "rtgui/options.h"
 
-#undef THREAD_PRIORITY_NORMAL
-
 namespace rtengine
 {
 
@@ -1585,8 +1583,7 @@ private:
             }
         }
 
-        int savestr = params.wavelet.strength;//work around for abstract profile: time about = 0.1 second
-        if ((params.wavelet.enabled)  || (params.icm.workingTRC != ColorManagementParams::WorkingTrc::NONE  && params.icm.trcExp)) {
+        if ((params.wavelet.enabled)){
             LabImage *unshar = nullptr;
             WaveletParams WaveParams = params.wavelet;
             WavCurve wavCLVCurve;
@@ -1606,9 +1603,6 @@ private:
             bool proton = WaveParams.exptoning;
             bool pronois = WaveParams.expnoise;
 
-            if(params.icm.workingTRC != ColorManagementParams::WorkingTrc::NONE  && params.icm.trcExp) {
-                params.wavelet.strength = 0;
-            }
             if (WaveParams.softrad > 0.f) {
                 provradius = new LabImage(*labView, true);
             }
@@ -1742,7 +1736,6 @@ private:
 
             wavCLVCurve.Reset();
         }
-        params.wavelet.strength = savestr;
 
         ipf.softLight(labView, params.softlight);
 

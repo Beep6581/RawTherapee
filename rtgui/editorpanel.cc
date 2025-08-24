@@ -44,8 +44,7 @@
 #include "toolpanelcoord.h"
 
 #ifdef _WIN32
-#include "windows.h"
-
+#include "rtengine/leanwindows.h"
 #include "rtengine/winutils.h"
 #endif
 

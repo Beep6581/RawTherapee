@@ -18,19 +18,21 @@
  */
 #include "multilangmgr.h"
 
+#include "rtengine/settings.h"
+
 #include <fstream>
 #include <glib.h>
 #include <iostream>
 #include <utility>
+
 #ifdef _WIN32
-#include <windows.h>
+#include "rtengine/leanwindows.h"
 #include <winnls.h>
 #endif
+
 #ifdef __APPLE__
 #include <CoreFoundation/CoreFoundation.h>
 #endif
-
-#include "rtengine/settings.h"
 
 namespace
 {

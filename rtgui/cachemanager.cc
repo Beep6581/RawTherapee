@@ -189,6 +189,8 @@ void CacheManager::deleteEntry (const Glib::ustring& fname)
 
 void CacheManager::clearFromCache (const Glib::ustring& fname, bool purge) const
 {
+    MyMutex::MyLock lock (mutex);
+
     deleteFiles (fname, getMD5 (fname), true, purge);
 }
 
