@@ -39,8 +39,14 @@
 #include "rtengine.h"
 #include "iccstore.h"
 
+namespace rtengine
+{
 
-    procparams::ColorManagementParams icm{};
+using namespace std;
+
+namespace {
+    using rtengine::procparams::ColorManagementParams;
+    procparams::ColorManagementParams icm;
 
 float calcBlendFactor(float val, float threshold) {
     // sigmoid function
