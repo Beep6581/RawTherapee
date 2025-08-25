@@ -28,8 +28,9 @@ using namespace rtengine::procparams;
 
 const Glib::ustring BayerRAWExposure::TOOL_NAME = "bayerrawexposure";
 
-BayerRAWExposure::BayerRAWExposure () : FoldableToolPanel(this, TOOL_NAME, M("TP_EXPOS_BLACKPOINT_LABEL"), options.prevdemo != PD_Sidecar)
+BayerRAWExposure::BayerRAWExposure () : FoldableToolPanel(this, TOOL_NAME, M("TP_EXPOS_BLACKPOINT_LABEL"), App::get().options().prevdemo != PD_Sidecar)
 {
+    const auto& options = App::get().options();
     auto m = ProcEventMapper::getInstance();
     EvDehablack = m->newEvent(DARKFRAME, "HISTORY_MSG_DEHABLACK");
     EvDehablackVoid = m->newEvent(M_VOID, "HISTORY_MSG_DEHABLACK");

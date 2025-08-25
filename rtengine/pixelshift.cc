@@ -308,6 +308,8 @@ using namespace std;
 using namespace rtengine;
 void RawImageSource::pixelshift(int winx, int winy, int winw, int winh, const procparams::RAWParams &rawParamsIn, unsigned int frame, const std::string &make, const std::string &model, float rawWpCorrection)
 {
+    const auto& options = App::get().options();
+
 BENCHFUN
     if(numFrames != 4) { // fallback for non pixelshift files
         amaze_demosaic_RT(winx, winy, winw, winh, rawData, red, green, blue, options.chunkSizeAMAZE, options.measure);

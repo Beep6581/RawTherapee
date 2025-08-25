@@ -40,6 +40,7 @@
 
 DiagonalCurveEditorSubGroup::DiagonalCurveEditorSubGroup (CurveEditorGroup* prt, Glib::ustring& curveDir) : CurveEditorSubGroup(curveDir)
 {
+    const auto& options = App::get().options();
 
     editedAdjuster = nullptr;
     editedAdjusterValue = 0;

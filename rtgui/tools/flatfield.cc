@@ -38,6 +38,8 @@ FlatField::FlatField () : FoldableToolPanel(this, TOOL_NAME, M("TP_FLATFIELD_LAB
     auto m = ProcEventMapper::getInstance();
     EvFlatFieldFromMetaData = m->newEvent(DARKFRAME, "HISTORY_MSG_FF_FROMMETADATA");
 
+    auto& options = App::get().mut_options();
+
     hbff = Gtk::manage(new Gtk::Box());
     flatFieldFile = Gtk::manage(new MyFileChooserButton(M("TP_FLATFIELD_LABEL"), Gtk::FILE_CHOOSER_ACTION_OPEN));
     bindCurrentFolder (*flatFieldFile, options.lastFlatfieldDir);
@@ -332,6 +334,7 @@ void FlatField::flatFieldFileChanged()
 void FlatField::flatFieldFile_Reset()
 {
     ffChanged = true;
+    const auto& options = App::get().options();
 
 // caution: I had to make this hack, because set_current_folder() doesn't work correctly!
 //          Because szeva doesn't exist since he was committed to happy hunting ground in Issue 316

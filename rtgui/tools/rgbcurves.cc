@@ -46,6 +46,7 @@ RGBCurves::RGBCurves () : FoldableToolPanel(this, TOOL_NAME, M("TP_RGBCURVES_LAB
 
     std::vector<GradientMilestone> milestones;
 
+    auto& options = App::get().mut_options();
     curveEditorG = new CurveEditorGroup (options.lastRgbCurvesDir, M("TP_RGBCURVES_CHANNEL"));
     curveEditorG->setCurveListener (this);
 

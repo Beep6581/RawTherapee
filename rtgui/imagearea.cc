@@ -168,7 +168,7 @@ void ImageArea::updateInfoTextBackBuffer()
 
     // update font
     fontd.set_weight (Pango::WEIGHT_BOLD);
-    const int fontSize = options.fontSize;
+    const int fontSize = App::get().options().fontSize;
     // Non-absolute size is defined in "Pango units" and shall be multiplied by
     // Pango::SCALE from "pt":
     fontd.set_size (fontSize * Pango::SCALE);
@@ -213,7 +213,7 @@ void ImageArea::updateInfoTextBackBuffer()
 
 void ImageArea::infoEnabled (bool e)
 {
-
+    auto& options = App::get().mut_options();
     if (options.showInfo != e) {
         options.showInfo = e;
         queue_draw ();
@@ -269,7 +269,7 @@ bool ImageArea::on_draw(const ::Cairo::RefPtr< Cairo::Context> &cr)
         (*i)->expose (cr);
     }
 
-    if (options.showInfo && !infotext.empty()) {
+    if (App::get().options().showInfo && !infotext.empty()) {
         if (deviceScale != backBufferDeviceScale) {
             updateInfoTextBackBuffer();
         }
@@ -489,6 +489,7 @@ void ImageArea::addCropWindow ()
     cw->setCropGUIListener (cropgl);
     cw->setPointerMotionListener (pmlistener);
     cw->setPointerMotionHListener (pmhlistener);
+    const auto& options = App::get().options();
     int lastWidth = options.detailWindowWidth;
     int lastHeight = options.detailWindowHeight;
 
@@ -708,6 +709,7 @@ void ImageArea::setZoom (double zoom)
 void ImageArea::initialImageArrived ()
 {
     if (mainCropWindow) {
+        const auto& options = App::get().options();
         ImageSize size = mainCropWindow->cropHandler.getFullImageSize();
         if(options.prevdemo != PD_Sidecar || !options.rememberZoomAndPan ||
                 size.width != fullImageWidth || size.height != fullImageHeight) {

@@ -54,24 +54,17 @@
 #include <glib/gstdio.h>
 #include <glibmm/threads.h>
 #else
+#include "rtengine/leanwindows.h"
+#include <conio.h>
+
 #include <glibmm/thread.h>
-#include "conio.h"
-#include "windows.h"
 #endif
 
 // Set this to 1 to make RT work when started with Eclipse and arguments, at least on Windows platform
 #define ECLIPSE_ARGS 0
 
 // stores path to data files
-Glib::ustring argv0;
-Glib::ustring creditsPath;
-Glib::ustring licensePath;
-Glib::ustring argv1;
 Glib::ustring argv2;
-bool simpleEditor = false;
-bool gimpPlugin = false;
-bool remote = false;
-//Glib::Threads::Thread* mainThread;
 
 namespace {
 
@@ -106,6 +99,8 @@ static void myGdkLockLeave()
 //int processLineParams ( int argc, char **argv );
 int processLineParams ( int argc, char **argv )
 {
+    auto& app = App::get();
+
     int ret = 1;
     for ( int iArg = 1; iArg < argc; iArg++) {
         Glib::ustring currParam (argv[iArg]);
@@ -136,8 +131,8 @@ int processLineParams ( int argc, char **argv )
 #ifndef __APPLE__ // TODO agriggio - there seems to be already some "single instance app" support for OSX in rtwindow. Disabling it here until I understand how to merge the two
 
                 case 'R':
-                    if (!gimpPlugin) {
-                        remote = true;
+                    if (!app.isGimpPlugin()) {
+                        app.setIsRemote(true);
                     }
 
                     break;
@@ -145,9 +140,9 @@ int processLineParams ( int argc, char **argv )
 
                 case 'g':
                     if (currParam == "-gimp") {
-                        gimpPlugin = true;
-                        simpleEditor = true;
-                        remote = false;
+                        app.setIsGimpPlugin(true);
+                        app.setIsSimpleEditor(true);
+                        app.setIsRemote(false);
                         break;
                     }
 
@@ -182,17 +177,17 @@ int processLineParams ( int argc, char **argv )
                 }
             }
         } else {
-            if (argv1.empty()) {
-                argv1 = Glib::ustring (fname_to_utf8 (argv[iArg]));
+            if (app.argv1().empty()) {
+                app.setArgv1(Glib::ustring (fname_to_utf8 (argv[iArg])));
 #if ECLIPSE_ARGS
-                argv1 = argv1.substr (1, argv1.length() - 2);
+                app.setArgv1(app.argv1().substr (1, app.argv1().length() - 2));
 #endif
-            } else if (gimpPlugin) {
+            } else if (app.isGimpPlugin()) {
                 argv2 = Glib::ustring (fname_to_utf8 (argv[iArg]));
                 break;
             }
 
-            if (!gimpPlugin) {
+            if (!app.isGimpPlugin()) {
                 break;
             }
         }
@@ -213,6 +208,7 @@ bool init_rt()
 
 #ifndef _WIN32
 
+    const auto& options = App::get().options();
     // Move the old path to the new one if the new does not exist
     if (Glib::file_test (Glib::build_filename (options.rtdir, "cache"), Glib::FILE_TEST_IS_DIR) && !Glib::file_test (options.cacheBaseDir, Glib::FILE_TEST_IS_DIR)) {
         g_rename (Glib::build_filename (options.rtdir, "cache").c_str (), options.cacheBaseDir.c_str ());
@@ -232,7 +228,7 @@ void cleanup_rt()
 
 RTWindow *create_rt_window()
 {
-    Glib::ustring icon_path = Glib::build_filename (argv0, "icons");
+    Glib::ustring icon_path = Glib::build_filename (App::get().argv0(), "icons");
     Glib::RefPtr<Gtk::IconTheme> defaultIconTheme = Gtk::IconTheme::get_default();
     defaultIconTheme->append_search_path (icon_path);
 
@@ -334,6 +330,7 @@ private:
 
 void show_gimp_plugin_info_dialog(Gtk::Window *parent)
 {
+    auto& options = App::get().mut_options();
     if (options.gimpPluginShowInfoDialog) {
         Gtk::MessageDialog info(*parent, M("GIMP_PLUGIN_INFO"), false, Gtk::MESSAGE_INFO, Gtk::BUTTONS_OK, true);
         Gtk::Box *box = info.get_message_area();
@@ -353,13 +350,6 @@ int main (int argc, char **argv)
     setlocale (LC_ALL, "");
     setlocale (LC_NUMERIC, "C"); // to set decimal point to "."
 
-    simpleEditor = false;
-    gimpPlugin = false;
-    remote = false;
-    argv0 = "";
-    argv1 = "";
-    argv2 = "";
-
     Glib::init();  // called by Gtk::Main, but this may be important for thread handling, so we call it ourselves now
     Gio::init ();
 
@@ -369,6 +359,8 @@ int main (int argc, char **argv)
         setbuf(stdout, NULL);
     }
 #endif
+
+    auto& app = App::get();
 
 #ifdef BUILD_BUNDLE
     char exname[512] = {0};
@@ -384,38 +376,35 @@ int main (int argc, char **argv)
         strncpy (exname, argv[0], 511);
     }
 
-#endif
+#endif // _WIN32
     exePath = Glib::path_get_dirname (exname);
 
     // set paths
     if (Glib::path_is_absolute (DATA_SEARCH_PATH)) {
-        argv0 = DATA_SEARCH_PATH;
+        app.setArgv0(DATA_SEARCH_PATH);
     } else {
-        argv0 = Glib::build_filename (exePath, DATA_SEARCH_PATH);
+        app.setArgv0(Glib::build_filename(exePath, DATA_SEARCH_PATH));
     }
 
     if (Glib::path_is_absolute (CREDITS_SEARCH_PATH)) {
-        creditsPath = CREDITS_SEARCH_PATH;
+        app.setCreditsPath(CREDITS_SEARCH_PATH);
     } else {
-        creditsPath = Glib::build_filename (exePath, CREDITS_SEARCH_PATH);
+        app.setCreditsPath(Glib::build_filename(exePath, CREDITS_SEARCH_PATH));
     }
 
     if (Glib::path_is_absolute (LICENCE_SEARCH_PATH)) {
-        licensePath = LICENCE_SEARCH_PATH;
+        app.setLicensePath(LICENCE_SEARCH_PATH);
     } else {
-        licensePath = Glib::build_filename (exePath, LICENCE_SEARCH_PATH);
+        app.setLicensePath(Glib::build_filename(exePath, LICENCE_SEARCH_PATH));
     }
-
-    options.rtSettings.lensfunDbDirectory = LENSFUN_DB_PATH;
-    options.rtSettings.lensfunDbBundleDirectory = LENSFUN_DB_PATH;
-
 #else
-    argv0 = DATA_SEARCH_PATH;
-    creditsPath = CREDITS_SEARCH_PATH;
-    licensePath = LICENCE_SEARCH_PATH;
-    options.rtSettings.lensfunDbDirectory = LENSFUN_DB_PATH;
-    options.rtSettings.lensfunDbBundleDirectory = LENSFUN_DB_PATH;
-#endif
+    app.setArgv0(DATA_SEARCH_PATH);
+    app.setCreditsPath(CREDITS_SEARCH_PATH);
+    app.setLicensePath(LICENCE_SEARCH_PATH);
+#endif // BUILD_BUNDLE
+
+    app.mut_options().rtSettings.lensfunDbDirectory = LENSFUN_DB_PATH;
+    app.mut_options().rtSettings.lensfunDbBundleDirectory = LENSFUN_DB_PATH;
 
 #ifdef _WIN32
     bool consoleOpened = false;
@@ -424,7 +413,7 @@ int main (int argc, char **argv)
     SetErrorMode (SEM_FAILCRITICALERRORS | SEM_NOGPFAULTERRORBOX | SEM_NOOPENFILEERRORBOX);
 
     if (argc > 1) {
-        if (!remote && !Glib::file_test (argv1, Glib::FILE_TEST_EXISTS ) && !Glib::file_test (argv1, Glib::FILE_TEST_IS_DIR)) {
+        if (!app.isRemote() && !Glib::file_test (app.argv1(), Glib::FILE_TEST_EXISTS ) && !Glib::file_test (app.argv1(), Glib::FILE_TEST_IS_DIR)) {
             const bool stdoutRedirecttoConsole = (GetFileType (GetStdHandle (STD_OUTPUT_HANDLE)) == 0x0000);
             // open console, if stdout is invalid
             if (stdoutRedirecttoConsole) {
@@ -501,8 +490,8 @@ int main (int argc, char **argv)
         fatalError = e.get_msg();
     }
 
-    if (gimpPlugin) {
-        if (!Glib::file_test (argv1, Glib::FILE_TEST_EXISTS) || Glib::file_test (argv1, Glib::FILE_TEST_IS_DIR)) {
+    if (app.isGimpPlugin()) {
+        if (!Glib::file_test (app.argv1(), Glib::FILE_TEST_EXISTS) || Glib::file_test (app.argv1(), Glib::FILE_TEST_IS_DIR)) {
             printf ("Error: argv1 doesn't exist\n");
             return 1;
         }
@@ -511,8 +500,8 @@ int main (int argc, char **argv)
             printf ("Error: -gimp requires two arguments\n");
             return 1;
         }
-    } else if (!remote && Glib::file_test(argv1, Glib::FILE_TEST_EXISTS) && !Glib::file_test(argv1, Glib::FILE_TEST_IS_DIR)) {
-        simpleEditor = true;
+    } else if (!app.isRemote() && Glib::file_test(app.argv1(), Glib::FILE_TEST_EXISTS) && !Glib::file_test(app.argv1(), Glib::FILE_TEST_IS_DIR)) {
+        app.setIsSimpleEditor(true);
     }
 
     int ret = 0;
@@ -521,13 +510,13 @@ int main (int argc, char **argv)
     gdk_threads_init();
     gtk_init (&argc, &argv);  // use the "--g-fatal-warnings" command line flag to make warnings fatal
 
-    if (fatalError.empty() && remote) {
-        char *app_argv[2] = { const_cast<char *> (argv0.c_str()) };
+    if (fatalError.empty() && app.isRemote()) {
+        char *app_argv[2] = { const_cast<char *> (app.argv0().c_str()) };
         int app_argc = 1;
 
-        if (!argv1.empty()) {
+        if (!app.argv1().empty()) {
             app_argc = 2;
-            app_argv[1] = const_cast<char *> (argv1.c_str());
+            app_argv[1] = const_cast<char *> (app.argv1().c_str());
         }
 
         RTApplication app;
@@ -537,13 +526,13 @@ int main (int argc, char **argv)
             Gtk::Main m (&argc, &argv);
             gdk_threads_enter();
             const std::unique_ptr<RTWindow> rtWindow (create_rt_window());
-            if (gimpPlugin) {
+            if (app.isGimpPlugin()) {
                 show_gimp_plugin_info_dialog(rtWindow.get());
             }
             m.run (*rtWindow);
             gdk_threads_leave();
 
-            if (gimpPlugin && rtWindow->epanel && rtWindow->epanel->isRealized()) {
+            if (app.isGimpPlugin() && rtWindow->epanel && rtWindow->epanel->isRealized()) {
                 if (!rtWindow->epanel->saveImmediately(argv2, SaveFormat())) {
                     ret = -2;
                 }

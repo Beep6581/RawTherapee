@@ -47,13 +47,13 @@ void ProfilePanel::cleanup ()
 
 ProfilePanel::ProfilePanel () : storedPProfile(nullptr),
     modeOn("profile-filled"), modeOff("profile-partial"),
-    profileFillImage(Gtk::manage(new RTImage(options.filledProfile ? modeOn : modeOff, Gtk::ICON_SIZE_LARGE_TOOLBAR))),
+    profileFillImage(Gtk::manage(new RTImage(App::get().options().filledProfile ? modeOn : modeOff, Gtk::ICON_SIZE_LARGE_TOOLBAR))),
     lastSavedPSE(nullptr), customPSE(nullptr)
 {
     tpc = nullptr;
 
     fillMode = Gtk::manage (new Gtk::ToggleButton());
-    fillMode->set_active(options.filledProfile);
+    fillMode->set_active(App::get().options().filledProfile);
     fillMode->add(*profileFillImage);
     fillMode->signal_toggled().connect ( sigc::mem_fun(*this, &ProfilePanel::profileFillModeToggled) );
     fillMode->set_tooltip_text(M("PROFILEPANEL_MODE_TOOLTIP"));
@@ -311,6 +311,7 @@ void ProfilePanel::save_clicked (GdkEventButton* event)
         }
     }
 
+    auto& options = App::get().mut_options();
     Gtk::FileChooserDialog dialog(getToplevelWindow(this), M("PROFILEPANEL_SAVEDLGLABEL"), Gtk::FILE_CHOOSER_ACTION_SAVE);
     bindCurrentFolder(dialog, options.loadSaveProfilePath);
     dialog.set_current_name(lastFilename);
@@ -332,7 +333,7 @@ void ProfilePanel::save_clicked (GdkEventButton* event)
     //Add filters, so that only certain file types can be selected:
     auto filter_pp = Gtk::FileFilter::create();
     filter_pp->set_name(M("FILECHOOSER_FILTER_PP"));
-    filter_pp->add_pattern("*" + paramFileExtension);
+    filter_pp->add_pattern("*" + App::PARAM_FILE_EXTENSION);
     dialog.add_filter(filter_pp);
 
     auto filter_any = Gtk::FileFilter::create();
@@ -354,8 +355,8 @@ void ProfilePanel::save_clicked (GdkEventButton* event)
 
             auto fname = dialog.get_filename();
 
-            if (("." + getExtension(fname)) != paramFileExtension) {
-                fname += paramFileExtension;
+            if (("." + getExtension(fname)) != App::PARAM_FILE_EXTENSION) {
+                fname += App::PARAM_FILE_EXTENSION;
             }
 
             if (!confirmOverwrite(dialog, fname)) {
@@ -467,6 +468,7 @@ void ProfilePanel::load_clicked (GdkEventButton* event)
     }
 
     Gtk::FileChooserDialog dialog (getToplevelWindow (this), M("PROFILEPANEL_LOADDLGLABEL"), Gtk::FILE_CHOOSER_ACTION_OPEN);
+    auto& options = App::get().mut_options();
     bindCurrentFolder (dialog, options.loadSaveProfilePath);
 
     //Add the user's default (or global if multiuser=false) profile path to the Shortcut list
@@ -486,7 +488,7 @@ void ProfilePanel::load_clicked (GdkEventButton* event)
     //Add filters, so that only certain file types can be selected:
     Glib::RefPtr<Gtk::FileFilter> filter_pp = Gtk::FileFilter::create();
     filter_pp->set_name(M("FILECHOOSER_FILTER_PP"));
-    filter_pp->add_pattern("*" + paramFileExtension);
+    filter_pp->add_pattern("*" + App::PARAM_FILE_EXTENSION);
     dialog.add_filter(filter_pp);
 
     Glib::RefPtr<Gtk::FileFilter> filter_any = Gtk::FileFilter::create();
@@ -903,7 +905,7 @@ void ProfilePanel::initProfile (const Glib::ustring& profileFullPath, ProcParams
 
 void ProfilePanel::setInitialFileName (const Glib::ustring& filename)
 {
-    lastFilename = Glib::path_get_basename(filename) + paramFileExtension;
+    lastFilename = Glib::path_get_basename(filename) + App::PARAM_FILE_EXTENSION;
     imagePath = Glib::path_get_dirname(filename);
 }
 
@@ -920,6 +922,6 @@ void ProfilePanel::profileFillModeToggled()
 
 void ProfilePanel::writeOptions()
 {
-    options.filledProfile = fillMode->get_active();
+    App::get().mut_options().filledProfile = fillMode->get_active();
 }
 

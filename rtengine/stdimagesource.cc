@@ -28,8 +28,6 @@
 #include "procparams.h"
 #include "utils.h"
 
-#undef THREAD_PRIORITY_NORMAL
-
 namespace rtengine
 {
 using namespace procparams;

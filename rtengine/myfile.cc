@@ -24,8 +24,8 @@
 
 #ifdef _WIN32
 
+#include "rtengine/leanwindows.h"
 #include <fcntl.h>
-#include <windows.h>
 
 // dummy values
 #define MAP_PRIVATE 1

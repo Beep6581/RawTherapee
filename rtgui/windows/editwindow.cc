@@ -26,15 +26,13 @@
 #include <gtk/gtk.h>
 #include "threadutils.h"
 
-extern Glib::ustring argv0;
-
 // Check if the system has more than one display and option is set
 bool EditWindow::isMultiDisplayEnabled()
 {
     const auto screen = Gdk::Screen::get_default();
 
     if (screen) {
-        return options.multiDisplayMode > 0 && screen->get_display()->get_n_monitors() > 1;
+        return App::get().options().multiDisplayMode > 0 && screen->get_display()->get_n_monitors() > 1;
     } else {
         return false; // There is no default screen
     }
@@ -70,6 +68,7 @@ EditWindow::EditWindow (RTWindow* p)
     set_title_decorated("");
     set_modal(false);
     set_resizable(true);
+    const auto& options = App::get().options();
     set_default_size(options.meowWidth, options.meowHeight);
 
     property_destroy_with_parent().set_value(false);
@@ -96,6 +95,7 @@ void EditWindow::restoreWindow()
 
         int meowMonitor = 0; // By default, set to main monitor
         const auto display = get_screen()->get_display();
+        const auto& options = App::get().options();
 
         if (isMultiDisplayEnabled()) {
             if (options.meowMonitor >= 0) { // Use display from last session if available
@@ -168,6 +168,7 @@ void EditWindow::on_realize ()
 
 bool EditWindow::on_configure_event(GdkEventConfigure* event)
 {
+    auto& options = App::get().mut_options();
     if (!options.meowMaximized && !isFullscreen && !isMinimized) {
         get_position(options.meowX, options.meowY);
         get_size(options.meowWidth, options.meowHeight);
@@ -178,6 +179,7 @@ bool EditWindow::on_configure_event(GdkEventConfigure* event)
 
 bool EditWindow::on_window_state_event(GdkEventWindowState* event)
 {
+    auto& options = App::get().mut_options();
     // Retrieve RT window states
     options.meowMaximized = event->new_window_state & GDK_WINDOW_STATE_MAXIMIZED;
     isMinimized = event->new_window_state & GDK_WINDOW_STATE_ICONIFIED;
@@ -346,6 +348,7 @@ void EditWindow::get_position(int& x, int& y) const
 
 void EditWindow::writeOptions()
 {
+    auto& options = App::get().mut_options();
     if (is_visible()) {
         if (isMultiDisplayEnabled()) {
             // Retrieve window monitor ID

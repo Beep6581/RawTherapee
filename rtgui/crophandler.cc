@@ -17,7 +17,6 @@
  *  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
  */
 #include "crophandler.h"
-#undef THREAD_PRIORITY_NORMAL
 
 #include <cstring>
 #include "guiutils.h"

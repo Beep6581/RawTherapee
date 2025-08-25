@@ -31,7 +31,7 @@
 #include "rtscalable.h"
 #include "widgets/basic/popuptogglebutton.h"
 
-CurveEditorGroup::CurveEditorGroup (Glib::ustring& curveDir, Glib::ustring groupLabel, int blank) : curveDir(curveDir), line(0), curve_reset(nullptr),
+CurveEditorGroup::CurveEditorGroup (Glib::ustring& curveDir, const Glib::ustring& groupLabel, int blank) : curveDir(curveDir), line(0), curve_reset(nullptr),
     displayedCurve(nullptr), flatSubGroup(nullptr), diagonalSubGroup(nullptr), cl(nullptr), numberOfPackedCurve(0)
 {
 
@@ -427,6 +427,7 @@ CurveEditorSubGroup::~CurveEditorSubGroup()
 
 void CurveEditorSubGroup::initButton (Gtk::Button &button, const Glib::ustring &iconName, Gtk::Align align, bool separatorButton, const Glib::ustring &tooltip)
 {
+    const auto& options = App::get().options();
     bool hExpand, vExpand;
     if (separatorButton) {
         hExpand = vExpand = true;

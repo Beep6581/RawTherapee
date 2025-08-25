@@ -9,6 +9,10 @@
 #endif
 #endif
 
+/*RT*/#ifdef _WIN32
+/*RT*/#include <winsock2.h>
+/*RT*/#endif
+
 /*RT*/#include <glib.h>
 /*RT*/#include <glib/gstdio.h>
 /*RT*/#undef MAX
@@ -88,7 +92,6 @@
 #endif
 #ifdef _WIN32
 #include <sys/utime.h>
-#include <winsock2.h>
 #ifndef strcasecmp
 #define strcasecmp stricmp
 #endif

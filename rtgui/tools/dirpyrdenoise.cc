@@ -70,6 +70,7 @@ DirPyrDenoise::DirPyrDenoise () : FoldableToolPanel(this, TOOL_NAME, M("TP_DIRPY
 
     luma  = Gtk::manage (new Adjuster (M("TP_DIRPYRDENOISE_LUMINANCE_SMOOTHING"), 0, 100, 0.01, 0));
     Ldetail  = Gtk::manage (new Adjuster (M("TP_DIRPYRDENOISE_LUMINANCE_DETAIL"), 0, 100, 0.01, 0));
+    auto& options = App::get().mut_options();
     NoiscurveEditorG = new CurveEditorGroup (options.lastDenoiseCurvesDir, M("TP_DIRPYRDENOISE_LUMINANCE_CURVE"));
     //curveEditorG = new CurveEditorGroup (options.lastLabCurvesDir);
     NoiscurveEditorG->setCurveListener (this);
@@ -444,7 +445,7 @@ void DirPyrDenoise::read (const ProcParams* pp, const ParamsEdited* pedited)
 
     LmethodChanged();
 
-    if(options.rtSettings.leveldnautsimpl == 1) {
+    if(App::get().options().rtSettings.leveldnautsimpl == 1) {
         Cmethod->set_active (0);
 
         if (pp->dirpyrDenoise.Cmethod == "MAN") {
@@ -690,7 +691,7 @@ void DirPyrDenoise::write (ProcParams* pp, ParamsEdited* pedited)
         pp->dirpyrDenoise.Lmethod = "SLI";
     }
 
-    if(options.rtSettings.leveldnautsimpl == 1) {
+    if(App::get().options().rtSettings.leveldnautsimpl == 1) {
         if (Cmethod->get_active_row_number() == 0) {
             pp->dirpyrDenoise.Cmethod = "MAN";
         } else if (Cmethod->get_active_row_number() == 1) {

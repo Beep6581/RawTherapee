@@ -45,7 +45,7 @@ HSVEqualizer::HSVEqualizer () : FoldableToolPanel(this, TOOL_NAME, M("TP_HSVEQUA
         bottomMilestones.push_back( GradientMilestone(double(x), double(R), double(G), double(B)) );
     }
 
-    curveEditorG = new CurveEditorGroup (options.lastHsvCurvesDir, M("TP_HSVEQUALIZER_CHANNEL"));
+    curveEditorG = new CurveEditorGroup (App::get().mut_options().lastHsvCurvesDir, M("TP_HSVEQUALIZER_CHANNEL"));
     curveEditorG->setCurveListener (this);
 
     hshape = static_cast<FlatCurveEditor*>(curveEditorG->addCurve(CT_Flat, M("TP_HSVEQUALIZER_HUE")));

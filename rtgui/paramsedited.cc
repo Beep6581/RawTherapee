@@ -84,6 +84,8 @@ void initFrom(FramingParamsEdited& edits, const ProcParams& params, const ProcPa
 void combine(FramingParams& toEdit, const FramingParams& mod, const FramingParamsEdited& edits,
              bool dontForceSet)
 {
+    const auto& options = App::get().options();
+
     if (edits.enabled) {
         toEdit.enabled = mod.enabled;
     }
@@ -2473,6 +2475,7 @@ void ParamsEdited::initFrom(const std::vector<rtengine::procparams::ProcParams>&
 
 void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rtengine::procparams::ProcParams& mods, bool forceSet)
 {
+    const Options& options = App::get().options();
 
     bool dontforceSet = !forceSet;
 

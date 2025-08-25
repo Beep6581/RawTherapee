@@ -75,6 +75,7 @@ SaveAsDialog::SaveAsDialog (const Glib::ustring &initialDir, Gtk::Window* parent
     filter_png->add_pattern("*.png");
     filter_png->add_pattern("*.PNG");
 
+    const auto& options = App::get().options();
     formatChanged (options.saveFormat.format);
 
 // Output Options
@@ -130,7 +131,7 @@ SaveAsDialog::SaveAsDialog (const Glib::ustring &initialDir, Gtk::Window* parent
     Gtk::Box* vbox_bottomRight = Gtk::manage(new Gtk::Box(Gtk::ORIENTATION_VERTICAL));
 
     // There is no queue in simple mode, so no need to choose
-    if (!simpleEditor) {
+    if (!App::get().isSimpleEditor()) {
         vbox_bottomRight->pack_start (*saveMethod[0], Gtk::PACK_SHRINK, 2);
         vbox_bottomRight->pack_start (*saveMethod[1], Gtk::PACK_SHRINK, 2);
         vbox_bottomRight->pack_start (*saveMethod[2], Gtk::PACK_SHRINK, 2);
@@ -190,7 +191,7 @@ bool SaveAsDialog::getAutoSuffix ()
 bool SaveAsDialog::getImmediately ()
 {
 
-    return simpleEditor ? true : saveMethod[0]->get_active ();
+    return App::get().isSimpleEditor() ? true : saveMethod[0]->get_active();
 }
 
 bool SaveAsDialog::getToHeadOfQueue ()
@@ -207,7 +208,7 @@ bool SaveAsDialog::getToTailOfQueue ()
 
 int SaveAsDialog::getSaveMethodNum ()
 {
-    if (simpleEditor) {
+    if (App::get().isSimpleEditor()) {
         return 0;
     }
 

@@ -77,6 +77,7 @@ BlackWhite::BlackWhite (): FoldableToolPanel(this, TOOL_NAME, M("TP_BWMIX_LABEL"
         bottomMilestones.push_back( GradientMilestone(double(x), double(R), double(G), double(B)) );
     }
 
+    auto& options = App::get().mut_options();
     luminanceCEG = new CurveEditorGroup (options.lastBWCurvesDir, M("TP_BWMIX_CHANNEL"));
     luminanceCEG->setCurveListener (this);
     luminanceCurve = static_cast<FlatCurveEditor*>(luminanceCEG->addCurve(CT_Flat, M("TP_BWMIX_VAL")));
