@@ -60,7 +60,6 @@ void placeSpinBox(Gtk::Container* where, Gtk::SpinButton* &spin, const std::stri
 }
 }
 
-extern Glib::ustring argv0;
 Glib::RefPtr<Gtk::CssProvider> themecss;
 Glib::RefPtr<Gtk::CssProvider> fontcss;
 
@@ -76,8 +75,8 @@ Preferences::Preferences(RTWindow *rtwindow)
     , toolLocationPreference(nullptr)
     , swFavorites(nullptr)
 {
-
-    moptions.copyFrom(&options);
+    const auto& options = App::get().options();
+    moptions.copyFrom(&App::get().mut_options());
 
     set_size_request(650, -1);
     set_default_size(options.preferencesWidth, options.preferencesHeight);
@@ -145,8 +144,8 @@ Preferences::Preferences(RTWindow *rtwindow)
 
 Preferences::~Preferences()
 {
-
     ProfileStore::getInstance()->removeListener(this);
+    auto& options = App::get().mut_options();
     get_size(options.preferencesWidth, options.preferencesHeight);
 }
 
@@ -1236,11 +1235,11 @@ Gtk::Widget* Preferences::getGeneralPanel()
     setExpandAlignProperties(languages, false, false, Gtk::ALIGN_START, Gtk::ALIGN_BASELINE);
 
     std::vector<Glib::ustring> langs;
-    parseDir(argv0 + "/languages", langs, "");
+    parseDir(App::get().argv0() + "/languages", langs, "");
 
     for (const auto &lang : langs) {
         if ("default" != lang && "README" != lang && "LICENSE" != lang) {
-            auto lang_metadata = langMgr.getMetadata(Glib::build_filename(argv0 + "/languages", lang));
+            auto lang_metadata = langMgr.getMetadata(Glib::build_filename(App::get().argv0() + "/languages", lang));
             const auto &display_name =
                 lang_metadata != nullptr
                     ? Glib::ustring(lang_metadata->getLanguageName(lang))
@@ -1273,7 +1272,7 @@ Gtk::Widget* Preferences::getGeneralPanel()
 
     themeCBT = Gtk::manage(new Gtk::ComboBoxText());
     themeCBT->set_active(0);
-    parseThemeDir(Glib::build_filename(argv0, "themes"));
+    parseThemeDir(Glib::build_filename(App::get().argv0(), "themes"));
     for (size_t i = 0; i < themeNames.size(); i++) {
         themeCBT->append(themeNames.at(i));
     }
@@ -1281,6 +1280,7 @@ Gtk::Widget* Preferences::getGeneralPanel()
     Gtk::Label* mainFontLbl = Gtk::manage(new Gtk::Label(M("PREFERENCES_APPEARANCE_MAINFONT")));
     setExpandAlignProperties(mainFontLbl, false, false, Gtk::ALIGN_START, Gtk::ALIGN_CENTER);
 
+    const auto& options = App::get().options();
     mainFontFB = Gtk::manage(new Gtk::FontButton());
     mainFontFB->set_use_size(true);
     if (options.fontFamily == "default") {
@@ -2180,6 +2180,7 @@ void Preferences::fillPreferences()
     navGuideColorCB->set_rgba (NavGuideCol);
     navGuideColorCB->set_alpha ( (unsigned short) (moptions.navGuideBrush[3] * 65535.0));
 
+    const auto& options = App::get().options();
     if (options.fontFamily == "default") {
         mainFontFB->set_font_name (Glib::ustring::compose ("%1, %2", initialFontFamily, initialFontSize));
     } else {
@@ -2397,7 +2398,7 @@ void Preferences::langAutoDetectToggled()
 
 void Preferences::okPressed()
 {
-
+    auto& options = App::get().mut_options();
     storePreferences();
     workflowUpdate();
     options.copyFrom(&moptions);
@@ -2416,6 +2417,7 @@ void Preferences::okPressed()
 
 void Preferences::cancelPressed()
 {
+    auto& options = App::get().mut_options();
     // set the initial theme back
     if (themeNames.at (themeCBT->get_active_row_number ()) != options.theme) {
         switchThemeTo(options.theme);
@@ -2516,6 +2518,7 @@ void Preferences::bundledProfilesChanged()
     rpconn.block(true);
     ipconn.block(true);
 
+    auto& options = App::get().mut_options();
     // parseProfiles does use options.useBundledProfiles, so we temporarily change its value
     bool currValue = options.useBundledProfiles;
     options.useBundledProfiles = useBundledProfiles->get_active();
@@ -2589,7 +2592,7 @@ void Preferences::restoreValue()
 void Preferences::switchThemeTo(Glib::ustring newTheme)
 {
 
-    Glib::ustring filename(Glib::build_filename(argv0, "themes", newTheme + ".css"));
+    Glib::ustring filename(Glib::build_filename(App::get().argv0(), "themes", newTheme + ".css"));
 
     if (!themecss) {
         themecss = Gtk::CssProvider::create();
@@ -2643,6 +2646,7 @@ void Preferences::switchFontTo(const Glib::ustring &newFontFamily, const int new
 
 void Preferences::workflowUpdate()
 {
+    const auto& options = App::get().options();
 
     if (moptions.tabbedUI != options.tabbedUI) {
         parent->setEditorMode(moptions.tabbedUI);

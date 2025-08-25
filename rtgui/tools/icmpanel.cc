@@ -84,6 +84,8 @@ ICMPanel::ICMPanel() : FoldableToolPanel(this, TOOL_NAME, M("TP_ICM_LABEL")), iu
     EvICMresidtrc = m->newEvent(LUMINANCECURVE, "HISTORY_MSG_ICM_RESIDTRC");
     EvICMwavExp = m->newEvent(LUMINANCECURVE, "HISTORY_MSG_ICM_WAVEXP");
 
+    auto& options = App::get().mut_options();
+
     isBatchMode = lastToneCurve = lastApplyLookTable = lastApplyBaselineExposureOffset = lastApplyHueSatMap = false;
 
     ipDialog = Gtk::manage(new MyFileChooserButton(M("TP_ICM_INPUTDLGLABEL"), Gtk::FILE_CHOOSER_ACTION_OPEN));
@@ -2703,7 +2705,7 @@ void ICMPanel::saveReferencePressed()
     }
 
     Gtk::FileChooserDialog dialog(getToplevelWindow(this), M("TP_ICM_SAVEREFERENCE"), Gtk::FILE_CHOOSER_ACTION_SAVE);
-    bindCurrentFolder(dialog, options.lastProfilingReferenceDir);
+    bindCurrentFolder(dialog, App::get().mut_options().lastProfilingReferenceDir);
     dialog.set_current_name(lastRefFilename);
 
     dialog.add_button(M("GENERAL_CANCEL"), Gtk::RESPONSE_CANCEL);

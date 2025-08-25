@@ -107,7 +107,7 @@ LCurve::LCurve() : FoldableToolPanel(this, TOOL_NAME, M("TP_LABCURVE_LABEL"), fa
     hsep3->show();
     pack_start(*hsep3, Gtk::PACK_EXPAND_WIDGET, 4);
 
-    curveEditorG = new CurveEditorGroup(options.lastLabCurvesDir);
+    curveEditorG = new CurveEditorGroup(App::get().mut_options().lastLabCurvesDir);
     curveEditorG->setCurveListener(this);
 
     lshape = static_cast<DiagonalCurveEditor*>(curveEditorG->addCurve(CT_Diagonal, "L*"));

@@ -48,7 +48,7 @@ void SoundManager::init()
 // param is either file name or name of the system event on Windows (e.g. "SystemAsterisk" or "SystemDefault").
 void SoundManager::playSoundAsync(const Glib::ustring &sound)
 {
-    if (sound.empty() || !options.sndEnable) {
+    if (sound.empty() || !App::get().options().sndEnable) {
         return;
     }
 

@@ -65,7 +65,7 @@ bool notifySlowParseDir (const std::chrono::system_clock::time_point& startedAt)
 FilmSimulation::FilmSimulation()
     :   FoldableToolPanel( this, TOOL_NAME, M("TP_FILMSIMULATION_LABEL"), false, true )
 {
-    m_clutComboBox = Gtk::manage( new ClutComboBox(options.clutsDir) );
+    m_clutComboBox = Gtk::manage( new ClutComboBox(App::get().options().clutsDir) );
 
     int foundClutsCount = m_clutComboBox->foundClutsCount();
 
@@ -132,6 +132,7 @@ void FilmSimulation::read( const rtengine::procparams::ProcParams* pp, const Par
 
     setEnabled(pp->filmSimulation.enabled);
 
+    const auto& options = App::get().options();
     if (!pp->filmSimulation.clutFilename.empty()) {
         m_clutComboBox->setSelectedClut(
             !Glib::path_is_absolute(pp->filmSimulation.clutFilename)
@@ -185,7 +186,7 @@ void FilmSimulation::write( rtengine::procparams::ProcParams* pp, ParamsEdited* 
     const Glib::ustring clutFName = m_clutComboBox->getSelectedClut();
 
     if (clutFName != "NULL") { // We do not want to set "NULL" in clutFilename, even if "unedited"
-        pp->filmSimulation.clutFilename = stripPrefixDir(clutFName, options.clutsDir);
+        pp->filmSimulation.clutFilename = stripPrefixDir(clutFName, App::get().options().clutsDir);
     }
 
     pp->filmSimulation.strength = m_strength->getValue();
@@ -214,6 +215,7 @@ ClutComboBox::ClutComboBox(const Glib::ustring &path):
     if (!cm) {
         cm.reset(new ClutModel(path));
     }
+    const auto& options = App::get().options();
     if (!cm2 && options.multiDisplayMode) {
         cm2.reset(new ClutModel(path));
     }
@@ -236,7 +238,7 @@ ClutComboBox::ClutComboBox(const Glib::ustring &path):
 
 inline Glib::RefPtr<Gtk::TreeStore> &ClutComboBox::m_model()
 {
-    if (!batchMode || !options.multiDisplayMode) {
+    if (!batchMode || !App::get().options().multiDisplayMode) {
         return cm->m_model;
     } else {
         return cm2->m_model;
@@ -246,7 +248,7 @@ inline Glib::RefPtr<Gtk::TreeStore> &ClutComboBox::m_model()
 
 inline ClutComboBox::ClutColumns &ClutComboBox::m_columns()
 {
-    if (!batchMode || !options.multiDisplayMode) {
+    if (!batchMode || !App::get().options().multiDisplayMode) {
         return cm->m_columns;
     } else {
         return cm2->m_columns;

@@ -162,6 +162,8 @@ Retinex::Retinex () : FoldableToolPanel (this, TOOL_NAME, M ("TP_RETINEX_LABEL")
     maskGrid->attach (*mapgrid, 0, 0, 1, 1);
     mapgrid->show();
 
+    auto& options = App::get().mut_options();
+
     // Map Equalizer
     curveEditormap = new CurveEditorGroup (options.lastRetinexDir, M ("TP_RETINEX_CONTEDIT_MAP"));
     setExpandAlignProperties (curveEditormap, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_START);

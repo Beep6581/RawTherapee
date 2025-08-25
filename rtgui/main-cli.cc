@@ -57,14 +57,6 @@
 // Set this to 1 to make RT work when started with Eclipse and arguments, at least on Windows platform
 #define ECLIPSE_ARGS 0
 
-// stores path to data files
-Glib::ustring argv0;
-Glib::ustring creditsPath;
-Glib::ustring licensePath;
-Glib::ustring argv1;
-//bool simpleEditor;
-//Glib::Threads::Thread* mainThread;
-
 namespace
 {
 
@@ -91,7 +83,7 @@ int main (int argc, char **argv)
 
     Gio::init ();
 
-    //mainThread = Glib::Threads::Thread::self();
+    auto& app = App::get();
 
 #ifdef BUILD_BUNDLE
     char exname[512] = {0};
@@ -107,38 +99,36 @@ int main (int argc, char **argv)
         strncpy (exname, argv[0], 511);
     }
 
-#endif
+#endif // _WIN32
     exePath = Glib::path_get_dirname (exname);
 
     // set paths
     if (Glib::path_is_absolute (DATA_SEARCH_PATH)) {
-        argv0 = DATA_SEARCH_PATH;
+        app.setArgv0(DATA_SEARCH_PATH);
     } else {
-        argv0 = Glib::build_filename (exePath, DATA_SEARCH_PATH);
+        app.setArgv0(Glib::build_filename(exePath, DATA_SEARCH_PATH));
     }
 
     if (Glib::path_is_absolute (CREDITS_SEARCH_PATH)) {
-        creditsPath = CREDITS_SEARCH_PATH;
+        app.setCreditsPath(CREDITS_SEARCH_PATH);
     } else {
-        creditsPath = Glib::build_filename (exePath, CREDITS_SEARCH_PATH);
+        app.setCreditsPath(Glib::build_filename(exePath, CREDITS_SEARCH_PATH));
     }
 
     if (Glib::path_is_absolute (LICENCE_SEARCH_PATH)) {
-        licensePath = LICENCE_SEARCH_PATH;
+        app.setLicensePath(LICENCE_SEARCH_PATH);
     } else {
-        licensePath = Glib::build_filename (exePath, LICENCE_SEARCH_PATH);
+        app.setLicensePath(Glib::build_filename(exePath, LICENCE_SEARCH_PATH));
     }
-
-    options.rtSettings.lensfunDbDirectory = LENSFUN_DB_PATH;
-    options.rtSettings.lensfunDbBundleDirectory = LENSFUN_DB_PATH;
-
 #else
-    argv0 = DATA_SEARCH_PATH;
-    creditsPath = CREDITS_SEARCH_PATH;
-    licensePath = LICENCE_SEARCH_PATH;
+    app.setArgv0(DATA_SEARCH_PATH);
+    app.setCreditsPath(CREDITS_SEARCH_PATH);
+    app.setLicensePath(LICENCE_SEARCH_PATH);
+#endif // BUILD_BUNDLE
+
+    Options& options = app.mut_options();
     options.rtSettings.lensfunDbDirectory = LENSFUN_DB_PATH;
     options.rtSettings.lensfunDbBundleDirectory = LENSFUN_DB_PATH;
-#endif
 
     bool quickstart = dontLoadCache (argc, argv);
 
@@ -257,6 +247,7 @@ int processLineParams ( int argc, char **argv )
     std::string outputType;
     unsigned errors = 0;
 
+    auto& options = App::get().mut_options();
     for ( int iArg = 1; iArg < argc; iArg++) {
         Glib::ustring currParam (argv[iArg]);
         if ( currParam.empty() ) {
@@ -483,7 +474,7 @@ int processLineParams ( int argc, char **argv )
 
                                     if (sideProcParams && skipIfNoSidecar) {
                                         // look for the sidecar proc params
-                                        if (!Glib::file_test (fileName + paramFileExtension, Glib::FILE_TEST_EXISTS)) {
+                                        if (!Glib::file_test (fileName + App::PARAM_FILE_EXTENSION, Glib::FILE_TEST_EXISTS)) {
                                             std::cout << "\"" << fileName << "\"  has no side-car file. Image skipped." << std::endl;
                                             continue;
                                         }
@@ -505,7 +496,7 @@ int processLineParams ( int argc, char **argv )
                 case 'h':
                 case '?':
                 default: {
-                    Glib::ustring pparamsExt = paramFileExtension.substr (1);
+                    Glib::ustring pparamsExt = App::PARAM_FILE_EXTENSION.substr (1);
                     std::cout << "  An advanced, cross-platform program for developing raw photos." << std::endl;
                     std::cout << std::endl;
                     std::cout << "  Website: http://www.rawtherapee.com/" << std::endl;
@@ -580,9 +571,9 @@ int processLineParams ( int argc, char **argv )
                 }
             }
         } else {
-            argv1 = Glib::ustring (fname_to_utf8 (argv[iArg]));
+            App::get().setArgv1(Glib::ustring (fname_to_utf8 (argv[iArg])));
 #if ECLIPSE_ARGS
-            argv1 = argv1.substr (1, argv1.length() - 2);
+            App::get().setArgv1(App::get().argv1().substr (1, App::get().argv1().length() - 2));
 #endif
 
             if ( outputDirectory ) {
@@ -624,7 +615,7 @@ int processLineParams ( int argc, char **argv )
         }
     }
 
-    if ( !argv1.empty() ) {
+    if ( !App::get().argv1().empty() ) {
         return 1;
     }
 
@@ -636,7 +627,7 @@ int processLineParams ( int argc, char **argv )
         rawParams = new rtengine::procparams::PartialProfile (true, true);
         Glib::ustring profPath = options.findProfilePath (options.defProfRaw);
 
-        if (options.is_defProfRawMissing() || profPath.empty() || (profPath != DEFPROFILE_DYNAMIC && rawParams->load (profPath == DEFPROFILE_INTERNAL ? DEFPROFILE_INTERNAL : Glib::build_filename (profPath, Glib::path_get_basename (options.defProfRaw) + paramFileExtension)))) {
+        if (options.is_defProfRawMissing() || profPath.empty() || (profPath != DEFPROFILE_DYNAMIC && rawParams->load (profPath == DEFPROFILE_INTERNAL ? DEFPROFILE_INTERNAL : Glib::build_filename (profPath, Glib::path_get_basename (options.defProfRaw) + App::PARAM_FILE_EXTENSION)))) {
             std::cerr << "Error: default raw processing profile not found." << std::endl;
             rawParams->deleteInstance();
             delete rawParams;
@@ -647,7 +638,7 @@ int processLineParams ( int argc, char **argv )
         imgParams = new rtengine::procparams::PartialProfile (true);
         profPath = options.findProfilePath (options.defProfImg);
 
-        if (options.is_defProfImgMissing() || profPath.empty() || (profPath != DEFPROFILE_DYNAMIC && imgParams->load (profPath == DEFPROFILE_INTERNAL ? DEFPROFILE_INTERNAL : Glib::build_filename (profPath, Glib::path_get_basename (options.defProfImg) + paramFileExtension)))) {
+        if (options.is_defProfImgMissing() || profPath.empty() || (profPath != DEFPROFILE_DYNAMIC && imgParams->load (profPath == DEFPROFILE_INTERNAL ? DEFPROFILE_INTERNAL : Glib::build_filename (profPath, Glib::path_get_basename (options.defProfImg) + App::PARAM_FILE_EXTENSION)))) {
             std::cerr << "Error: default non-raw processing profile not found." << std::endl;
             imgParams->deleteInstance();
             delete imgParams;
@@ -751,7 +742,7 @@ int processLineParams ( int argc, char **argv )
         do {
             if (sideProcParams && i == sideCarFilePos) {
                 // using the sidecar file
-                Glib::ustring sideProcessingParams = inputFile + paramFileExtension;
+                Glib::ustring sideProcessingParams = inputFile + App::PARAM_FILE_EXTENSION;
 
                 // the "load" method don't reset the procparams values anymore, so values found in the procparam file override the one of currentParams
                 if ( !Glib::file_test ( sideProcessingParams, Glib::FILE_TEST_EXISTS ) || currentParams.load ( sideProcessingParams )) {
@@ -812,7 +803,7 @@ int processLineParams ( int argc, char **argv )
             std::cerr << "Error saving to: " << outputFile << std::endl;
         } else {
             if ( copyParamsFile ) {
-                Glib::ustring outputProcessingParams = outputFile + paramFileExtension;
+                Glib::ustring outputProcessingParams = outputFile + App::PARAM_FILE_EXTENSION;
                 currentParams.save ( outputProcessingParams );
             }
         }

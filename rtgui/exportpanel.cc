@@ -169,6 +169,7 @@ ExportPanel::ExportPanel () : listener (nullptr), ornamentSurface(new RTSurface(
     pack_start (*wbox, Gtk::PACK_SHRINK, 4);
     pack_start (*hbox, Gtk::PACK_SHRINK, 4);
 
+    const auto& options = App::get().options();
     MaxWidth->set_digits (0);
     MaxWidth->set_width_chars (5);
     MaxWidth->set_max_width_chars (5);
@@ -255,6 +256,7 @@ void ExportPanel::SaveSettingsAsDefault()
             changed = true;                     \
         }                                       \
     } while (false)
+    auto& options = App::get().mut_options();
     // Save fast export settings to options
     FE_OPT_STORE_ (options.fastexport_bypass_sharpening, bypass_sharpening->get_active        ());
     FE_OPT_STORE_ (options.fastexport_bypass_sharpenEdge, bypass_sharpenEdge->get_active       ());
@@ -318,6 +320,7 @@ void ExportPanel::SaveSettingsAsDefault()
 
 void ExportPanel::LoadDefaultSettings()
 {
+    const auto& options = App::get().options();
     // Load fast export settings from options
     bypass_sharpening->set_active        (options.fastexport_bypass_sharpening         );
     bypass_sharpenEdge->set_active       (options.fastexport_bypass_sharpenEdge        );

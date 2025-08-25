@@ -55,6 +55,7 @@ Adjuster* createExponentAdjuster(AdjusterListener* listener, const Glib::ustring
     adj->setAdjusterListener(listener);
     adj->setLogScale(6, 1, true);
 
+    const auto& options = App::get().options();
     adj->setDelay(std::max(options.adjusterMinDelay, options.adjusterMaxDelay));
 
     adj->show();
@@ -68,6 +69,7 @@ Adjuster* createLevelAdjuster(AdjusterListener* listener, const Glib::ustring& l
     adj->setAdjusterListener(listener);
 //    adj->setLogScale(6, 1000.0, true);
 
+    const auto& options = App::get().options();
     adj->setDelay(std::max(options.adjusterMinDelay, options.adjusterMaxDelay));
 
     adj->show();
@@ -82,6 +84,7 @@ Adjuster* createBalanceAdjuster(AdjusterListener* listener, const Glib::ustring&
     adj->setAdjusterListener(listener);
     adj->setLogScale(9, 0, true);
 
+    const auto& options = App::get().options();
     adj->setDelay(std::max(options.adjusterMinDelay, options.adjusterMaxDelay));
 
     adj->show();

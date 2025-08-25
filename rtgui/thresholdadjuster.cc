@@ -80,7 +80,7 @@ void ThresholdAdjuster::initObject (Glib::ustring label, bool editedcb)
 
     addMode = false;
 
-    delay = options.adjusterMinDelay;
+    delay = App::get().options().adjusterMinDelay;
 
     set_name("ThresholdAdjuster");
 

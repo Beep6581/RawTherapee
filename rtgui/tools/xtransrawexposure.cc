@@ -38,6 +38,7 @@ XTransRAWExposure::XTransRAWExposure () : FoldableToolPanel(this, TOOL_NAME, M("
     PexBlackRed = Gtk::manage(new Adjuster (M("TP_RAWEXPOS_BLACK_RED"), -2048, 2048, 1.0, 0)); //black level
     PexBlackRed->setAdjusterListener (this);
 
+    const auto& options = App::get().options();
     PexBlackRed->setDelay(std::max(options.adjusterMinDelay, options.adjusterMaxDelay));
 
     PexBlackRed->show();

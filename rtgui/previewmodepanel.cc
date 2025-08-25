@@ -33,6 +33,7 @@ PreviewModePanel::PreviewModePanel (ImageArea* ia) :
     nBC2("square-toggle-white-on-narrow"), ngBC2("square-toggle-white-off-narrow"),
     nBC3("square-toggle-gray-on-narrow"), ngBC3("square-toggle-gray-off-narrow")
 {
+    const auto& options = App::get().options();
     backColor0 = Gtk::manage (new Gtk::ToggleButton ());
     backColor0->get_style_context()->add_class("narrowbutton");
     backColor0->set_relief(Gtk::RELIEF_NONE);

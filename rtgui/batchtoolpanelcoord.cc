@@ -184,6 +184,7 @@ void BatchToolPanelCoordinator::initSession ()
             bayerrawexposure->setAdjusterBehavior (false);
             xtransrawexposure->setAdjusterBehavior (false);
         } else {
+            const Options& options = App::get().options();
 
             for (size_t i = 0; i < toolPanels.size(); i++) {
                 toolPanels.at (i)->setMultiImage (true);
@@ -757,6 +758,7 @@ void BatchToolPanelCoordinator::spotWBselected (int x, int y, Thumbnail* thm)
 
 //    toolBar->setTool (TOOL_HAND);
     if (x > 0 && y > 0 && thm) {
+        const auto& options = App::get().options();
         for (size_t i = 0; i < selected.size(); i++)
             if (selected[i] == thm) {
                 double temp;

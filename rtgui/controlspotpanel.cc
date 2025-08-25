@@ -29,8 +29,6 @@
 using namespace rtengine;
 using namespace procparams;
 
-extern Options options;
-
 //-----------------------------------------------------------------------------
 // ControlSpotPanel
 //-----------------------------------------------------------------------------
@@ -120,7 +118,7 @@ ControlSpotPanel::ControlSpotPanel():
     auto m = ProcEventMapper::getInstance();
     EvLocallabavoidgamutMethod = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_GAMUTMUNSEL");
     EvLocallabavoidnegative =  m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_AVOIDNEGATIVE");
-    const bool showtooltip = options.showtooltip;
+    const bool showtooltip = App::get().options().showtooltip;
 
 //    pack_start(*hishow_);
 
@@ -2922,7 +2920,7 @@ void ControlSpotPanel::updateguiset(int spottype, bool iscolor, bool issh, bool 
 
             // Update GUI fullimage or main
             disableListener();
-            if(spottype >= 2  && options.spotmet >= 2) {//optimize update
+            if(spottype >= 2  && App::get().options().spotmet >= 2) {//optimize update
                 spotMethodChanged();
             }
             

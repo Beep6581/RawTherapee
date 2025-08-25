@@ -688,7 +688,7 @@ int ImageIO::loadTIFF (const Glib::ustring &fname)
     static MyMutex thumbMutex;
     MyMutex::MyLock lock(thumbMutex);
 
-    if(!options.serializeTiffRead) {
+    if(!App::get().options().serializeTiffRead) {
         lock.release();
     }
 

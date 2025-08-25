@@ -106,6 +106,7 @@ void PlacesBrowser::refreshPlacesList ()
 {
     placesModel->clear ();
 
+    const auto& options = App::get().options();
     // append favorites
     for (size_t i = 0; i < options.favoriteDirs.size(); i++) {
         Glib::RefPtr<Gio::File> fav = Gio::File::create_for_path (options.favoriteDirs[i]);
@@ -314,6 +315,7 @@ void PlacesBrowser::addPressed ()
         return;
     }
 
+    auto& options = App::get().mut_options();
     // check if the dirname is already in the list. If yes, return.
     for (size_t i = 0; i < options.favoriteDirs.size(); i++)
         if (options.favoriteDirs[i] == lastSelectedDir) {
@@ -340,6 +342,7 @@ void PlacesBrowser::delPressed ()
     Glib::RefPtr<Gtk::TreeSelection> selection = treeView->get_selection();
     Gtk::TreeModel::iterator iter = selection->get_selected();
 
+    auto& options = App::get().mut_options();
     if (iter && iter->get_value (placesColumns.type) == 5) {
         std::vector<Glib::ustring>::iterator i = std::find (options.favoriteDirs.begin(), options.favoriteDirs.end(), iter->get_value (placesColumns.root));
 

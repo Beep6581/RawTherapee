@@ -216,6 +216,8 @@ static double wbTemp2Slider (double temp)
 
 ColorAppearance::ColorAppearance () : FoldableToolPanel (this, TOOL_NAME, M ("TP_COLORAPP_LABEL"), false, true)
 {
+    auto& options = App::get().mut_options();
+
     CurveListener::setMulti (true);
     std::vector<GradientMilestone> milestones;
     milestones.push_back ( GradientMilestone (0., 0., 0., 0.) );

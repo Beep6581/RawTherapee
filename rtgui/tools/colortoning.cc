@@ -65,6 +65,8 @@ ColorToning::ColorToning () : FoldableToolPanel(this, TOOL_NAME, M("TP_COLORTONI
     colorSep = Gtk::manage (new Gtk::Separator(Gtk::ORIENTATION_HORIZONTAL));
     pack_start (*colorSep);
 
+    auto& options = App::get().mut_options();
+
     colorCurveEditorG = new CurveEditorGroup (options.lastColorToningCurvesDir, M("TP_COLORTONING_COLOR"));
     colorCurveEditorG->setCurveListener (this);
 
