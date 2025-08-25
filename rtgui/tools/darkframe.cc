@@ -37,6 +37,7 @@ DarkFrame::DarkFrame () : FoldableToolPanel(this, TOOL_NAME, M("TP_DARKFRAME_LAB
     hbdf = Gtk::manage(new Gtk::Box());
     hbdf->set_spacing(4);
     darkFrameFile = Gtk::manage(new MyFileChooserButton(M("TP_DARKFRAME_LABEL"), Gtk::FILE_CHOOSER_ACTION_OPEN));
+    auto& options = App::get().mut_options();
     bindCurrentFolder (*darkFrameFile, options.lastDarkframeDir);
     dfLabel = Gtk::manage(new Gtk::Label(M("GENERAL_FILE")));
     btnReset = Gtk::manage(new Gtk::Button());
@@ -211,6 +212,7 @@ void DarkFrame::darkFrameChanged()
 void DarkFrame::darkFrameReset()
 {
     dfChanged = true;
+    const auto& options = App::get().options();
 
 // caution: I had to make this hack, because set_current_folder() doesn't work correctly!
 //          Because szeva doesn't exist since he was committed to happy hunting ground in Issue 316

@@ -335,7 +335,7 @@ Crop::~Crop()
 void Crop::writeOptions ()
 {
 
-    options.cropPPI = (int)ppi->get_value ();
+    App::get().mut_options().cropPPI = (int)ppi->get_value ();
 }
 
 void Crop::readOptions ()
@@ -343,7 +343,7 @@ void Crop::readOptions ()
 
     disableListener ();
 
-    ppi->set_value (options.cropPPI);
+    ppi->set_value (App::get().options().cropPPI);
 
     enableListener ();
 }

@@ -32,6 +32,7 @@ RecentBrowser::RecentBrowser ()
     frame->set_label_align(0.025, 0.5);
     frame->add (*recentDirs);
 
+    const auto& options = App::get().options();
     for(size_t i = 0; i < options.recentFolders.size(); i++) {
         recentDirs->append (options.recentFolders[i]);
     }
@@ -55,7 +56,7 @@ void RecentBrowser::selectionChanged ()
 
 void RecentBrowser::dirSelected (const Glib::ustring& dirname, const Glib::ustring& openfile)
 {
-
+    auto& options = App::get().mut_options();
     ssize_t numFolders = options.recentFolders.size();
     ssize_t i = -1;
 

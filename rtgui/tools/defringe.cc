@@ -44,6 +44,7 @@ Defringe::Defringe () : FoldableToolPanel(this, TOOL_NAME, M("TP_DEFRINGE_LABEL"
         bottomMilestones.push_back( GradientMilestone(double(x), double(R), double(G), double(B)) );
     }
 
+    auto& options = App::get().mut_options();
     curveEditorPF = new CurveEditorGroup (options.lastPFCurvesDir);
     curveEditorPF->setCurveListener (this);
     chshape = static_cast<FlatCurveEditor*>(curveEditorPF->addCurve(CT_Flat, M("TP_PFCURVE_CURVEEDITOR_CH")));

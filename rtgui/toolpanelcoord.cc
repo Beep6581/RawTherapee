@@ -470,6 +470,7 @@ ToolPanelCoordinator::ToolPanelCoordinator (bool batch) : ipc (nullptr), favorit
         vbPanelEnd[i]->pack_start(*imgPanelEnd[i], Gtk::PACK_SHRINK);
         vbPanelEnd[i]->show_all();
     }
+    const auto& options = App::get().options();
     updateVScrollbars(options.hideTPVScrollbar);
 
     Gtk::Box *favoritePanelContainer =
@@ -763,6 +764,7 @@ bool ToolPanelCoordinator::isFavoritable(Tool tool)
 
 void ToolPanelCoordinator::notebookPageChanged(Gtk::Widget* page, guint page_num)
 {
+    const auto& options = App::get().options();
     updatePanelTools(page, options.favorites, options.cloneFavoriteTools);
 
     // Locallab spot curves are set visible if at least one photo has been loaded (to avoid
@@ -1578,6 +1580,7 @@ void ToolPanelCoordinator::closeImage()
 
 void ToolPanelCoordinator::closeAllTools()
 {
+    const auto& options = App::get().options();
     for (size_t i = 0; i < options.tpOpen.size(); ++i) {
         if (i < expList.size()) {
             expList[i]->set_expanded(false);
@@ -1587,6 +1590,7 @@ void ToolPanelCoordinator::closeAllTools()
 
 void ToolPanelCoordinator::openAllTools()
 {
+    const auto& options = App::get().options();
     for (size_t i = 0; i < options.tpOpen.size(); ++i) {
         if (i < expList.size()) {
             expList[i]->set_expanded(true);
@@ -1596,6 +1600,7 @@ void ToolPanelCoordinator::openAllTools()
 
 void ToolPanelCoordinator::updateToolState()
 {
+    const auto& options = App::get().options();
     if (options.tpOpen.empty()) {
         for (auto expander : expList) {
             expander->set_expanded(false);
@@ -1638,6 +1643,7 @@ void ToolPanelCoordinator::writeOptions()
 
     crop->writeOptions();
 
+    auto& options = App::get().mut_options();
     if (options.autoSaveTpOpen) {
         writeToolExpandedStatus(options.tpOpen);
     }
@@ -2109,6 +2115,7 @@ void ToolPanelCoordinator::toolSelected(ToolMode tool)
             break;
     }
 
+    const auto& options = App::get().options();
     updateToolLocations(options.favorites, options.cloneFavoriteTools);
 
     notebookconn.block(false);

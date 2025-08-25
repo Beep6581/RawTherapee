@@ -2718,7 +2718,7 @@ ColorManagementParams::ColorManagementParams() :
     labgridcieMx(0.),//
     labgridcieMy(0.),//
     aRendIntent(RI_RELATIVE),
-    outputProfile(options.rtSettings.srgb),
+    outputProfile(App::get().options().rtSettings.srgb),
     outputIntent(RI_RELATIVE),
     outputBPC(true)
 {
@@ -3320,7 +3320,7 @@ LocallabParams::LocallabSpot::LocallabSpot() :
     avoidrad(0.),
     transitweak(1.0),
     transitgrad(0.0),
-    hishow(options.complexity != 2),
+    hishow(App::get().options().complexity != 2),
     activ(true),
     avoidneg(true),
     blwh(false),
@@ -5131,13 +5131,15 @@ LocallabParams::LocallabSpot::LocallabSpot() :
   // init settings with Preferences / options : must be followed by call to spotMethodChanged in controlspotpanel.cc  (idle_register)
   // new values default with different SpotMethod.
 
-    if(options.spotmet == 3) {//global
+    const auto spotmet = App::get().options().spotmet;
+
+    if(spotmet == 3) {//global
         spotMethod = "main";
         loc = {3000, 3000, 3000, 3000};
         transit =100.;
         shape = "RECT";
 
-    } else if(options.spotmet == 2) {//full image
+    } else if(spotmet == 2) {//full image
         spotMethod = "full";
         loc = {3000, 3000, 3000, 3000};
         transit =100.;
@@ -5158,7 +5160,7 @@ LocallabParams::LocallabSpot::LocallabSpot() :
         sensimask = 60;
         sensicie = 60;
         
-    } else if(options.spotmet == 1) {//exclude
+    } else if(spotmet == 1) {//exclude
         spotMethod = "exc";
         shape = "ELI";
         loc = {150, 150, 150, 150};
@@ -5178,7 +5180,7 @@ LocallabParams::LocallabSpot::LocallabSpot() :
         sensimask = 60;
         sensicie = 60;
         
-    } else if(options.spotmet == 0) {//normal
+    } else if(spotmet == 0) {//normal
         spotMethod = "norm";
         shape = "ELI";
         loc = {150, 150, 150, 150};
@@ -6739,6 +6741,8 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
     if (fname.empty() && fname2.empty()) {
         return 0;
     }
+
+    const auto& options = App::get().options();
 
     Glib::ustring sPParams;
 
@@ -8676,6 +8680,8 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
     if (fname.empty()) {
         return 1;
     }
+
+    const auto& options = App::get().options();
 
     Glib::KeyFile keyFile;
 

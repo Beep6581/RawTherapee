@@ -126,6 +126,7 @@ void ProfileStore::_parseProfiles ()
 
     folders.push_back ("<<< ROOT >>>"); // Fake path, so parentFolderId == 0 will be used to attach a ProfileStoreEntry to the root container, not sub-menu
 
+    auto& options = App::get().mut_options();
     Glib::ustring p1 = options.getUserProfilePath();
     Glib::ustring p2 = options.getGlobalProfilePath();
     bool displayLevel0 = options.useBundledProfiles && !p1.empty() && !p2.empty() && p1 != p2;
@@ -221,7 +222,7 @@ bool ProfileStore::parseDir (Glib::ustring& realPath, Glib::ustring& virtualPath
             } else {
                 size_t lastdot = currDir.find_last_of ('.');
 
-                if (lastdot != Glib::ustring::npos && lastdot == currDir.length() - 4 && currDir.substr (lastdot).casefold() == paramFileExtension) {
+                if (lastdot != Glib::ustring::npos && lastdot == currDir.length() - 4 && currDir.substr (lastdot).casefold() == App::PARAM_FILE_EXTENSION) {
                     // file found
                     if (settings->verbose) {
                         printf ("Processing file %s...", fname.c_str());
@@ -307,7 +308,7 @@ const ProfileStoreEntry* ProfileStore::findEntryFromFullPathU (Glib::ustring pat
     if (
         lastdot_pos != Glib::ustring::npos
         && lastdot_pos <= casefolded_path.size() - 4
-        && !casefolded_path.compare (lastdot_pos, 4, paramFileExtension)
+        && !casefolded_path.compare (lastdot_pos, 4, App::PARAM_FILE_EXTENSION)
     ) {
         // removing the extension
         // now use dot position without casefold()
@@ -432,6 +433,7 @@ const ProcParams* ProfileStore::getDefaultProcParams (bool isRaw)
     //Note: the mutex is locked in getProfile, called below
     //      eventual initialization is done there too
 
+    const auto& options = App::get().options();
     const PartialProfile* pProf = getProfile (isRaw ? options.defProfRaw : options.defProfImg);
 
     if (!pProf) {
@@ -452,6 +454,7 @@ const PartialProfile* ProfileStore::getDefaultPartialProfile (bool isRaw)
     //Note: the mutex is locked in getProfile, called below
     //      eventual initialization is done there too
 
+    const auto& options = App::get().options();
     const PartialProfile* pProf = getProfile (isRaw ? options.defProfRaw : options.defProfImg);
 
     if (!pProf) {

@@ -56,7 +56,7 @@ namespace   // local helper functions
     // For N, return Nth index from the end, and for -N return the Nth index from the start.
     // N is a digit 1 through 9. The returned value is not range-checked, so it may be >=numPathElements.
     // or negative. The caller performs any required range-checking.
-    int decodePathIndex(unsigned int& ix, Glib::ustring& templateText, size_t numPathElements)
+    int decodePathIndex(unsigned int& ix, const Glib::ustring& templateText, size_t numPathElements)
     {
         int pathIndex = static_cast<int>(numPathElements);    // a value that means input was invalid
         bool fromStart = false;
@@ -196,7 +196,7 @@ void BatchQueue::resizeLoadedQueue()
 // leading to very long waiting when adding more images
 int BatchQueue::calcMaxThumbnailHeight()
 {
-    return std::min(options.maxThumbnailHeight, 200);
+    return std::min(App::get().options().maxThumbnailHeight, 200);
 }
 
 // Function for virtual override in thumbbrowser base
@@ -207,13 +207,13 @@ int BatchQueue::getMaxThumbnailHeight() const
 
 void BatchQueue::saveThumbnailHeight (int height)
 {
-    options.thumbSizeQueue = height;
+    App::get().mut_options().thumbSizeQueue = height;
 }
 
 int BatchQueue::getThumbnailHeight ()
 {
     // The user could have manually forced the option to a too big value
-    return std::max(std::min(options.thumbSizeQueue, 200), 10);
+    return std::max(std::min(App::get().options().thumbSizeQueue, 200), 10);
 }
 
 void BatchQueue::rightClicked ()
@@ -297,7 +297,7 @@ void BatchQueue::addEntries (const std::vector<BatchQueueEntry*>& entries, bool 
 
 bool BatchQueue::saveBatchQueue ()
 {
-    const auto fileName = Glib::build_filename (options.rtdir, "batch", "queue.csv");
+    const auto fileName = Glib::build_filename (App::get().options().rtdir, "batch", "queue.csv");
 
     std::ofstream file (fileName, std::ios::binary | std::ios::trunc);
 
@@ -343,6 +343,7 @@ bool BatchQueue::saveBatchQueue ()
 
 bool BatchQueue::loadBatchQueue ()
 {
+    const auto& options = App::get().options();
     const auto fileName = Glib::build_filename (options.rtdir, "batch", "queue.csv");
 
     std::ifstream file (fileName, std::ios::binary);
@@ -471,12 +472,12 @@ Glib::ustring BatchQueue::getTempFilenameForParams( const Glib::ustring &filenam
     timeinfo = localtime ( &rawtime );
     strftime (stringTimestamp, sizeof(stringTimestamp), "_%Y%m%d%H%M%S_", timeinfo);
     Glib::ustring savedParamPath;
-    savedParamPath = options.rtdir + "/batch/";
+    savedParamPath = App::get().options().rtdir + "/batch/";
     g_mkdir_with_parents (savedParamPath.c_str (), 0755);
     savedParamPath += Glib::path_get_basename (filename);
     savedParamPath += stringTimestamp;
     savedParamPath += mseconds;
-    savedParamPath += paramFileExtension;
+    savedParamPath += App::PARAM_FILE_EXTENSION;
     return savedParamPath;
 }
 
@@ -643,6 +644,7 @@ void BatchQueue::updateDestinationPathPreview()
     if (!selected.empty()) {
         auto& entry = *selected.at(0);
         int sequence = 0;   // Sequence during subsequent queue processing can't be determined here
+        const auto& options = App::get().options();
         Glib::ustring baseDestination = calcAutoFileNameBase(entry.filename, sequence, options.saveFormatBatch.format);
         Glib::ustring destination = Glib::ustring::compose ("%1.%2", baseDestination, options.saveFormatBatch.format);
 
@@ -758,6 +760,7 @@ rtengine::ProcessingJob* BatchQueue::imageReady(rtengine::IImagefloat* img)
     Glib::ustring fname;
     SaveFormat saveFormat;
 
+    const auto& options = App::get().options();
     if (processing->outFileName.empty()) { // auto file name
         saveFormat = options.saveFormatBatch;
         Glib::ustring s = calcAutoFileNameBase (processing->filename, processing->sequence, saveFormat.format);
@@ -803,8 +806,8 @@ rtengine::ProcessingJob* BatchQueue::imageReady(rtengine::IImagefloat* img)
         if (saveFormat.saveParams) {
             // We keep the extension to avoid overwriting the profile when we have
             // the same output filename with different extension
-            //processing->params.save (removeExtension(fname) + paramFileExtension);
-            processing->params->save (fname + ".out" + paramFileExtension);
+            //processing->params.save (removeExtension(fname) + App::PARAM_FILE_EXTENSION);
+            processing->params->save (fname + ".out" + App::PARAM_FILE_EXTENSION);
         }
 
         if (processing->thumbnail) {
@@ -933,6 +936,8 @@ Glib::ustring BatchQueue::calcAutoFileNameBase (const Glib::ustring& origFileNam
         filename = origFileName[k] + filename;
     }
 
+    const auto& options = App::get().options();
+
 //    printf ("%d, |%s|\n", extpos, filename.c_str());
 
     // constructing full output path
@@ -997,7 +1002,7 @@ Glib::ustring BatchQueue::calcAutoFileNameBase (const Glib::ustring& origFileNam
                     char rank;
                     rtengine::procparams::ProcParams pparams;
 
-                    if( pparams.load(origFileName + paramFileExtension) == 0 ) {
+                    if( pparams.load(origFileName + App::PARAM_FILE_EXTENSION) == 0 ) {
                         if (!pparams.inTrash) {
                             rank = pparams.rank + '0';
                         } else {

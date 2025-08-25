@@ -87,6 +87,7 @@ Inspector::Inspector () : currImage(nullptr), scaled(false), scale(1.0), zoomSca
 {
     set_name("Inspector");
 
+    const auto& options = App::get().options();
     if (!options.inspectorWindow) {
         window = nullptr;
     }
@@ -321,6 +322,7 @@ bool Inspector::on_scroll_event(GdkEventScroll *event)
         break;
     }
 
+    const auto& options = App::get().options();
     if ((options.zoomOnScroll && !alt) || (!options.zoomOnScroll && alt)) {
         // zoom
         beginZoom(event->x, event->y);
@@ -579,6 +581,7 @@ void Inspector::switchImage (const Glib::ustring &fullPath)
     if (window && !window->get_visible())
         return;
 
+    const auto& options = App::get().options();
     if (!options.inspectorDelay) {
         doSwitchImage();
     } else {
@@ -591,6 +594,7 @@ bool Inspector::doSwitchImage()
 {
     Glib::ustring fullPath = next_image_path;
 
+    const auto& options = App::get().options();
     // we first check the size of the list, it may have been changed in Preference
     if (images.size() > size_t(options.maxInspectorBuffers)) {
         // deleting the last entries

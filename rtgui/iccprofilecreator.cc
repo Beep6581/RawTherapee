@@ -53,21 +53,21 @@ cmsToneCurve *make_trc(size_t size, float (*trcFunc)(float, bool))
 
 ICCProfileCreator::ICCProfileCreator(RTWindow *rtwindow)
     : Gtk::Dialog(M("MAIN_BUTTON_ICCPROFCREATOR"), *rtwindow, true)
-    , primariesPreset(options.ICCPC_primariesPreset)
-    , redPrimaryX(options.ICCPC_redPrimaryX)
-    , redPrimaryY(options.ICCPC_redPrimaryY)
-    , greenPrimaryX(options.ICCPC_greenPrimaryX)
-    , greenPrimaryY(options.ICCPC_greenPrimaryY)
-    , bluePrimaryX(options.ICCPC_bluePrimaryX)
-    , bluePrimaryY(options.ICCPC_bluePrimaryY)
-    , gammaPreset(options.ICCPC_gammaPreset)
-    , gamma(options.ICCPC_gamma)
-    , slope(options.ICCPC_slope)
-    , appendParamsToDesc(options.ICCPC_appendParamsToDesc)
-    , profileVersion(options.ICCPC_profileVersion)
-    , illuminant(options.ICCPC_illuminant)
-    , description(options.ICCPC_description)
-    , copyright(options.ICCPC_copyright)
+    , primariesPreset(App::get().options().ICCPC_primariesPreset)
+    , redPrimaryX(App::get().options().ICCPC_redPrimaryX)
+    , redPrimaryY(App::get().options().ICCPC_redPrimaryY)
+    , greenPrimaryX(App::get().options().ICCPC_greenPrimaryX)
+    , greenPrimaryY(App::get().options().ICCPC_greenPrimaryY)
+    , bluePrimaryX(App::get().options().ICCPC_bluePrimaryX)
+    , bluePrimaryY(App::get().options().ICCPC_bluePrimaryY)
+    , gammaPreset(App::get().options().ICCPC_gammaPreset)
+    , gamma(App::get().options().ICCPC_gamma)
+    , slope(App::get().options().ICCPC_slope)
+    , appendParamsToDesc(App::get().options().ICCPC_appendParamsToDesc)
+    , profileVersion(App::get().options().ICCPC_profileVersion)
+    , illuminant(App::get().options().ICCPC_illuminant)
+    , description(App::get().options().ICCPC_description)
+    , copyright(App::get().options().ICCPC_copyright)
     , parent(rtwindow)
 {
 
@@ -154,6 +154,7 @@ ICCProfileCreator::ICCProfileCreator(RTWindow *rtwindow)
     aGamma = Gtk::manage(new Adjuster(M("ICCPROFCREATOR_GAMMA"), 1, 3.5, 0.00001, 2.4));
     setExpandAlignProperties(aGamma, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_BASELINE);
 
+    const auto& options = App::get().options();
     aGamma->setDelay(std::max(options.adjusterMinDelay, options.adjusterMaxDelay));
 
     aGamma->show();
@@ -429,6 +430,7 @@ void ICCProfileCreator::trcPresetsChanged()
 
 void ICCProfileCreator::storeValues()
 {
+    auto& options = App::get().mut_options();
     if (iccVersion->get_active_text() == M("ICCPROFCREATOR_PROF_V4")) {
         options.ICCPC_profileVersion = profileVersion = "v4";
     } else if (iccVersion->get_active_text() == M("ICCPROFCREATOR_PROF_V2")) {
@@ -683,6 +685,7 @@ void ICCProfileCreator::savePressed()
 
     //necessary for V2 profile
 
+    auto& options = App::get().mut_options();
     if (!v2except) {
         //used partially for v4, and in case of if we want to back to old manner for v2
         if (primariesPreset == "ACES-AP0"   && rtengine::ICCStore::getInstance()->outputProfileExist(options.rtSettings.ACESp0)) {

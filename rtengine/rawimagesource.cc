@@ -1759,6 +1759,7 @@ void RawImageSource::preprocess(const RAWParams &raw, const LensProfParams &lens
             plistener->setProgress(0.0);
         }
 
+        const auto& options = App::get().options();
         if (numFrames == 4) {
             double fitParams[64];
             float *buffer = CA_correct_RT(raw.ca_autocorrect, raw.caautoiterations, raw.cared, raw.cablue, raw.ca_avoidcolourshift, raw.bayersensor.border, *rawDataFrames[0], fitParams, false, true, nullptr, false, options.chunkSizeCA, options.measure);
@@ -1799,6 +1800,7 @@ void RawImageSource::demosaic(const RAWParams &raw, bool autoContrast, double &c
     MyTime t1, t2;
     t1.set();
 
+    const auto& options = App::get().options();
     if (ri->getSensorType() == ST_BAYER) {
         if (raw.bayersensor.method == RAWParams::BayerSensor::getMethodString(RAWParams::BayerSensor::Method::HPHD)) {
             hphd_demosaic();

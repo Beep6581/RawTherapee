@@ -67,6 +67,7 @@ Vibrance::Vibrance () : FoldableToolPanel(this, TOOL_NAME, M("TP_VIBRANCE_LABEL"
     pastSatTog->set_active (true);
     pack_start(*pastSatTog, Gtk::PACK_SHRINK, 0);
 
+    auto& options = App::get().mut_options();
     curveEditorGG = new CurveEditorGroup (options.lastVibranceCurvesDir, M("TP_VIBRANCE_CURVEEDITOR_SKINTONES_LABEL"));
     curveEditorGG->setCurveListener (this);
 

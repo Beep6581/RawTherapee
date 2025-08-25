@@ -75,6 +75,7 @@ bool CPBDump(
         return false;
     }
 
+    const auto& options = App::get().options();
     try {
         kf->set_string ("RT General", "CachePath", options.cacheBaseDir);
         kf->set_string ("RT General", "AppVersion", RTVERSION);
@@ -368,6 +369,7 @@ void Thumbnail::_generateThumbnailImage()
     tpp = nullptr;
     delete[] lastImg;
     lastImg = nullptr;
+    const auto& options = App::get().options();
     tw = options.maxThumbnailWidth;
     th = options.maxThumbnailHeight;
     imgRatio = -1.;
@@ -484,6 +486,7 @@ rtengine::procparams::ProcParams* Thumbnail::createProcParamsForUpdate(bool retu
     // try to load the last saved parameters from the cache or from the paramfile file
     ProcParams* ldprof = nullptr;
 
+    const auto& options = App::get().options();
     Glib::ustring defProf = getType() == FT_Raw ? options.defProfRaw : options.defProfImg;
 
     const CacheImageData* cfs = getCacheImageData();
@@ -493,8 +496,8 @@ rtengine::procparams::ProcParams* Thumbnail::createProcParamsForUpdate(bool retu
 
     const Glib::ustring outFName =
         (options.paramsLoadLocation == PLL_Input && options.saveParamsFile) ?
-        fname + paramFileExtension :
-        getCacheFileName("profiles", paramFileExtension);
+        fname + App::PARAM_FILE_EXTENSION :
+        getCacheFileName("profiles", App::PARAM_FILE_EXTENSION);
 
     if (!run_cpb) {
         if (defProf == DEFPROFILE_DYNAMIC && create && cfs && cfs->exifValid) {
@@ -526,7 +529,7 @@ rtengine::procparams::ProcParams* Thumbnail::createProcParamsForUpdate(bool retu
         Glib::ustring tmpFileName( Glib::build_filename(options.cacheBaseDir, Glib::ustring::compose("CPB_temp_%1.txt", index++)) );
 
         CPBDump(tmpFileName, fname, outFName,
-                defaultPparamsPath == DEFPROFILE_INTERNAL ? DEFPROFILE_INTERNAL : Glib::build_filename(defaultPparamsPath, Glib::path_get_basename(defProf) + paramFileExtension), cfs, flaggingMode);
+                defaultPparamsPath == DEFPROFILE_INTERNAL ? DEFPROFILE_INTERNAL : Glib::build_filename(defaultPparamsPath, Glib::path_get_basename(defProf) + App::PARAM_FILE_EXTENSION), cfs, flaggingMode);
 
         // For the filename etc. do NOT use streams, since they are not UTF8 safe
         Glib::ustring cmdLine = options.CPBPath + Glib::ustring(" \"") + tmpFileName + Glib::ustring("\"");
@@ -574,22 +577,22 @@ void Thumbnail::loadProcParams()
     pparamsValid = false;
     pparams->setDefaults();
 
-    if (options.paramsLoadLocation == PLL_Input) {
+    if (App::get().options().paramsLoadLocation == PLL_Input) {
         // try to load it from params file next to the image file
-        const int ppres = pparams->load(fname + paramFileExtension);
+        const int ppres = pparams->load(fname + App::PARAM_FILE_EXTENSION);
         pparamsValid = !ppres && pparams->ppVersion >= 220;
 
         // if no success, try to load the cached version of the procparams
         if (!pparamsValid) {
-            pparamsValid = !pparams->load(getCacheFileName("profiles", paramFileExtension));
+            pparamsValid = !pparams->load(getCacheFileName("profiles", App::PARAM_FILE_EXTENSION));
         }
     } else {
         // try to load it from cache
-        pparamsValid = !pparams->load(getCacheFileName("profiles", paramFileExtension));
+        pparamsValid = !pparams->load(getCacheFileName("profiles", App::PARAM_FILE_EXTENSION));
 
         // if no success, try to load it from params file next to the image file
         if (!pparamsValid) {
-            const int ppres = pparams->load(fname + paramFileExtension);
+            const int ppres = pparams->load(fname + App::PARAM_FILE_EXTENSION);
             pparamsValid = !ppres && pparams->ppVersion >= 220;
         }
     }
@@ -627,17 +630,17 @@ void Thumbnail::clearProcParams (int whoClearedIt)
             updateCache();
         } else {
             // remove param file from cache
-            Glib::ustring fname_ = getCacheFileName ("profiles", paramFileExtension);
+            Glib::ustring fname_ = getCacheFileName ("profiles", App::PARAM_FILE_EXTENSION);
             g_remove (fname_.c_str ());
 
             // remove param file located next to the file
-            fname_ = fname + paramFileExtension;
+            fname_ = fname + App::PARAM_FILE_EXTENSION;
             g_remove (fname_.c_str ());
 
-            fname_ = removeExtension(fname) + paramFileExtension;
+            fname_ = removeExtension(fname) + App::PARAM_FILE_EXTENSION;
             g_remove (fname_.c_str ());
 
-            if (cfs.format == FT_Raw && options.internalThumbIfUntouched && cfs.thumbImgType != CacheImageData::QUICK_THUMBNAIL) {
+            if (cfs.format == FT_Raw && App::get().options().internalThumbIfUntouched && cfs.thumbImgType != CacheImageData::QUICK_THUMBNAIL) {
                 // regenerate thumbnail, ie load the quick thumb again. For the rare formats not supporting quick thumbs this will
                 // be a bit slow as a new full thumbnail will be generated unnecessarily, but currently there is no way to pre-check
                 // if the format supports quick thumbs.
@@ -755,8 +758,8 @@ void Thumbnail::imageDeveloped ()
     cfs.recentlySaved = true;
     cfs.save (getCacheFileName ("data", ".txt"));
 
-    if (options.saveParamsCache) {
-        pparams->save (getCacheFileName ("profiles", paramFileExtension));
+    if (App::get().options().saveParamsCache) {
+        pparams->save (getCacheFileName ("profiles", App::PARAM_FILE_EXTENSION));
     }
 }
 
@@ -846,6 +849,7 @@ void Thumbnail::getThumbnailSize(int &w, int &h, const rtengine::procparams::Pro
         w = tw_ * h / th_;
     }
 
+    const auto& options = App::get().options();
     if (w > options.maxThumbnailWidth) {
         const float s = static_cast<float>(options.maxThumbnailWidth) / w;
         w = options.maxThumbnailWidth;
@@ -938,6 +942,7 @@ rtengine::IImage8* Thumbnail::upgradeThumbImage (const rtengine::procparams::Pro
 
 void Thumbnail::generateExifDateTimeStrings ()
 {
+    const auto& options = App::get().options();
     if (cfs.timeValid) {
         std::string dateFormat = options.dateFormat;
         std::ostringstream ostr;
@@ -1108,7 +1113,7 @@ void Thumbnail::_loadThumbnail(bool firstTrial)
 {
 
     tw = -1;
-    th = options.maxThumbnailHeight;
+    th = App::get().options().maxThumbnailHeight;
     delete tpp;
     tpp = new rtengine::Thumbnail ();
     tpp->isRaw = (cfs.format == (int) FT_Raw);
@@ -1203,9 +1208,10 @@ void Thumbnail::updateCache (bool updatePParams, bool updateCacheImageData)
     updateProcParamsProperties();
 
     if (updatePParams && pparamsValid) {
+        const auto& options = App::get().options();
         pparams->save (
-            options.saveParamsFile  ? fname + paramFileExtension : "",
-            options.saveParamsCache ? getCacheFileName ("profiles", paramFileExtension) : "",
+            options.saveParamsFile  ? fname + App::PARAM_FILE_EXTENSION : "",
+            options.saveParamsCache ? getCacheFileName ("profiles", App::PARAM_FILE_EXTENSION) : "",
             true
         );
     }
@@ -1300,6 +1306,7 @@ bool Thumbnail::openDefaultViewer(int destination)
 #ifdef _WIN32
     Glib::ustring openFName;
 
+    const auto& options = App::get().options();
     if (destination == 1) {
         openFName = Glib::ustring::compose ("%1.%2", BatchQueue::calcAutoFileNameBase(fname), options.saveFormatBatch.format);
 
@@ -1391,6 +1398,8 @@ void Thumbnail::loadProperties()
     getRankAndColorFromMetadata(
         cfs, fname, properties.rank.value, properties.color.value, nullptr, nullptr);
 
+    const auto& options = App::get().options();
+
     // update rank and color from procparams or xmp sidecar
     // load trash from procparams
     if (pparamsValid) {
@@ -1431,6 +1440,8 @@ void Thumbnail::updateProcParamsProperties(bool forceUpdate)
     const rtengine::MemoizingSupplier<Exiv2::XmpData> getXmpSidecar([this]() {
         return rtengine::Exiv2Metadata::getXmpSidecar(fname);
     });
+
+    const auto& options = App::get().options();
 
     // save procparams rank and color also when options.thumbnailRankColorMode == Options::ThumbnailPropertyMode::XMP
     // so they'll be kept in sync
@@ -1474,7 +1485,7 @@ void Thumbnail::saveXMPSidecarProperties()
         return;
     }
 
-    if (options.thumbnailRankColorMode != Options::ThumbnailPropertyMode::XMP) {
+    if (App::get().options().thumbnailRankColorMode != Options::ThumbnailPropertyMode::XMP) {
         return;
     }
 
@@ -1499,6 +1510,7 @@ void Thumbnail::saveXMPSidecarProperties()
 
 void Thumbnail::saveMetadata()
 {
+    const auto& options = App::get().options();
     if (options.rtSettings.metadata_xmp_sync != rtengine::Settings::MetadataXmpSync::READ_WRITE) {
         return;
     }
