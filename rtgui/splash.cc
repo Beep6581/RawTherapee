@@ -21,10 +21,7 @@
 #include <glib/gstdio.h>
 
 #include "multilangmgr.h"
-
-extern Glib::ustring creditsPath;
-extern Glib::ustring licensePath;
-extern Glib::ustring versionString;
+#include "rtengine/rtapp.h"
 
 SplashImage::SplashImage () : surface(new RTSurface("splash.svg"))
 {
@@ -50,7 +47,7 @@ bool SplashImage::on_draw(const ::Cairo::RefPtr< Cairo::Context> &cr)
         context->set_font_description (fontd);
 
         int w, h;
-        Glib::ustring versionStr(versionString);
+        Glib::ustring versionStr(App::VERSION);
 
         version = create_pango_layout (versionStr);
         version->set_text(versionStr);
@@ -120,7 +117,7 @@ Splash::Splash (Gtk::Window& parent) : Gtk::Dialog(M("GENERAL_ABOUT"), parent, f
     splashImage->show ();
 
     // Tab 2: the information about the current version
-    std::string buildFileName = Glib::build_filename (creditsPath, "AboutThisBuild.txt");
+    std::string buildFileName = Glib::build_filename (App::get().creditsPath(), "AboutThisBuild.txt");
 
     if ( Glib::file_test(buildFileName, (Glib::FILE_TEST_EXISTS)) ) {
         FILE *f = g_fopen (buildFileName.c_str (), "rt");
@@ -151,7 +148,7 @@ Splash::Splash (Gtk::Window& parent) : Gtk::Dialog(M("GENERAL_ABOUT"), parent, f
     }
 
     // Tab 3: the credits
-    std::string creditsFileName = Glib::build_filename (creditsPath, "AUTHORS.txt");
+    std::string creditsFileName = Glib::build_filename (App::get().creditsPath(), "AUTHORS.txt");
 
     if ( Glib::file_test(creditsFileName, (Glib::FILE_TEST_EXISTS)) ) {
         FILE *f = g_fopen (creditsFileName.c_str (), "rt");
@@ -183,7 +180,7 @@ Splash::Splash (Gtk::Window& parent) : Gtk::Dialog(M("GENERAL_ABOUT"), parent, f
     }
 
     // Tab 4: the license
-    std::string licenseFileName = Glib::build_filename (licensePath, "LICENSE");
+    std::string licenseFileName = Glib::build_filename (App::get().licensePath(), "LICENSE");
 
     if ( Glib::file_test(licenseFileName, (Glib::FILE_TEST_EXISTS)) ) {
         FILE *f = g_fopen (licenseFileName.c_str (), "rt");
@@ -216,7 +213,7 @@ Splash::Splash (Gtk::Window& parent) : Gtk::Dialog(M("GENERAL_ABOUT"), parent, f
     }
 
     // Tab 5: the Release Notes
-    std::string releaseNotesFileName = Glib::build_filename (creditsPath, "RELEASE_NOTES.txt");
+    std::string releaseNotesFileName = Glib::build_filename (App::get().creditsPath(), "RELEASE_NOTES.txt");
 
     if ( Glib::file_test(releaseNotesFileName, (Glib::FILE_TEST_EXISTS)) ) {
         FILE *f = g_fopen (releaseNotesFileName.c_str (), "rt");

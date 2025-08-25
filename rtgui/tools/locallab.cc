@@ -27,8 +27,6 @@
 using namespace rtengine;
 using namespace procparams;
 
-extern Options options;
-
 const Glib::ustring Locallab::TOOL_NAME = "locallab";
 
 /* ==== LocallabToolList ==== */
@@ -231,7 +229,7 @@ Locallab::Locallab():
 
     // Update Locallab tools advice tooltips visibility based on saved option
     for (auto tool : locallabTools) {
-        tool->updateAdviceTooltips(options.showtooltip);
+        tool->updateAdviceTooltips(App::get().options().showtooltip);
     }
 
     // By default, if no photo is loaded, all Locallab tools are removed and it's not possible to add them

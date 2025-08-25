@@ -50,10 +50,6 @@ Glib::ustring Options::rtdir;
 // User's cached data directory
 Glib::ustring Options::cacheBaseDir;
 
-Options options;
-Glib::ustring versionString = RTVERSION;
-Glib::ustring paramFileExtension = ".pp3";
-
 Options::Options()
 {
 
@@ -71,13 +67,13 @@ inline bool Options::checkProfilePath(Glib::ustring &path)
 
     Glib::ustring p = getUserProfilePath();
 
-    if (!p.empty() && Glib::file_test(path + paramFileExtension, Glib::FILE_TEST_EXISTS)) {
+    if (!p.empty() && Glib::file_test(path + App::PARAM_FILE_EXTENSION, Glib::FILE_TEST_EXISTS)) {
         return true;
     }
 
     p = getGlobalProfilePath();
 
-    return !p.empty() && Glib::file_test(path + paramFileExtension, Glib::FILE_TEST_EXISTS);
+    return !p.empty() && Glib::file_test(path + App::PARAM_FILE_EXTENSION, Glib::FILE_TEST_EXISTS);
 }
 
 bool Options::checkDirPath(Glib::ustring &path, Glib::ustring errString)
@@ -114,7 +110,7 @@ void Options::updatePaths()
 
         if (checkDirPath(profilePath, "Error: the user's processing profile path doesn't point to a directory or doesn't exist!\n")) {
             userProfilePath = profilePath;
-            tmpPath = Glib::build_filename(argv0, "profiles");
+            tmpPath = Glib::build_filename(App::get().argv0(), "profiles");
 
             if (checkDirPath(tmpPath, "Error: the global's processing profile path doesn't point to a directory or doesn't exist!\n")) {
                 if (userProfilePath != tmpPath) {
@@ -122,7 +118,7 @@ void Options::updatePaths()
                 }
             }
         } else {
-            tmpPath = Glib::build_filename(argv0, "profiles");
+            tmpPath = Glib::build_filename(App::get().argv0(), "profiles");
 
             if (checkDirPath(tmpPath, "Error: the global's processing profile path doesn't point to a directory or doesn't exist!\n")) {
                 globalProfilePath = tmpPath;
@@ -145,7 +141,7 @@ void Options::updatePaths()
             userProfilePath = tmpPath;
         }
 
-        tmpPath = Glib::build_filename(argv0, "profiles");
+        tmpPath = Glib::build_filename(App::get().argv0(), "profiles");
 
         if (checkDirPath(tmpPath, "Error: the user's processing profile path doesn't point to a directory or doesn't exist!\n")) {
             globalProfilePath = tmpPath;
@@ -220,7 +216,7 @@ void Options::updatePaths()
     }
 }
 
-Glib::ustring Options::getPreferredProfilePath()
+Glib::ustring Options::getPreferredProfilePath() const
 {
     if (!userProfilePath.empty()) {
         return userProfilePath;
@@ -238,7 +234,7 @@ Glib::ustring Options::getPreferredProfilePath()
   *@return Send back the absolute path of the given filename or "Neutral" if "Neutral" has been set to profName. Implementer will have
   *        to test for this particular value. If the absolute path is invalid (e.g. the file doesn't exist), it will return an empty string.
   */
-Glib::ustring Options::findProfilePath(Glib::ustring &profName)
+Glib::ustring Options::findProfilePath(Glib::ustring &profName) const
 {
     if (profName.empty()) {
         return "";
@@ -257,7 +253,7 @@ Glib::ustring Options::findProfilePath(Glib::ustring &profName)
     if (p == "${U}") {
         // the path starts by the User virtual path
         p = getUserProfilePath();
-        Glib::ustring fullPath = Glib::build_filename(p, profName.substr(5) + paramFileExtension);
+        Glib::ustring fullPath = Glib::build_filename(p, profName.substr(5) + App::PARAM_FILE_EXTENSION);
 
         if (!p.empty() && Glib::file_test(fullPath, Glib::FILE_TEST_EXISTS)) {
             return Glib::path_get_dirname(fullPath);
@@ -265,7 +261,7 @@ Glib::ustring Options::findProfilePath(Glib::ustring &profName)
     } else if (p == "${G}") {
         // the path starts by the User virtual path
         p = getGlobalProfilePath();
-        Glib::ustring fullPath = Glib::build_filename(p, profName.substr(5) + paramFileExtension);
+        Glib::ustring fullPath = Glib::build_filename(p, profName.substr(5) + App::PARAM_FILE_EXTENSION);
 
         if (!p.empty() && Glib::file_test(fullPath, Glib::FILE_TEST_EXISTS)) {
             return Glib::path_get_dirname(fullPath);
@@ -273,7 +269,7 @@ Glib::ustring Options::findProfilePath(Glib::ustring &profName)
     } else {
         // compatibility case -> convert the path to the new format
         p = getUserProfilePath();
-        Glib::ustring fullPath = Glib::build_filename(p, profName + paramFileExtension);
+        Glib::ustring fullPath = Glib::build_filename(p, profName + App::PARAM_FILE_EXTENSION);
 
         if (!p.empty() && Glib::file_test(fullPath, Glib::FILE_TEST_EXISTS)) {
             // update the profile path
@@ -282,7 +278,7 @@ Glib::ustring Options::findProfilePath(Glib::ustring &profName)
         }
 
         p = getGlobalProfilePath();
-        fullPath = Glib::build_filename(p, profName + paramFileExtension);
+        fullPath = Glib::build_filename(p, profName + App::PARAM_FILE_EXTENSION);
 
         if (!p.empty() && Glib::file_test(fullPath, Glib::FILE_TEST_EXISTS)) {
             profName = Glib::build_filename("${G}", profName);
@@ -521,43 +517,6 @@ void Options::setDefaults()
     ICCPC_copyright = Options::getICCProfileCopyright();
     ICCPC_appendParamsToDesc = false;
 
-    fastexport_bypass_sharpening         = true;
-    fastexport_bypass_sharpenEdge        = true;
-    fastexport_bypass_sharpenMicro       = true;
-    //fastexport_bypass_lumaDenoise        = true;
-    //fastexport_bypass_colorDenoise       = true;
-    fastexport_bypass_defringe           = true;
-    fastexport_bypass_dirpyrDenoise      = true;
-    fastexport_bypass_dirpyrequalizer    = true;
-    fastexport_bypass_wavelet    = true;
-    fastexport_raw_bayer_method                  = "fast";
-    //fastexport_bypass_raw_bayer_all_enhance    = true;
-    fastexport_bypass_raw_bayer_dcb_iterations   = true;
-    fastexport_bypass_raw_bayer_dcb_enhance      = true;
-    fastexport_bypass_raw_bayer_lmmse_iterations = true;
-    fastexport_bypass_raw_bayer_linenoise        = true;
-    fastexport_bypass_raw_bayer_greenthresh      = true;
-    fastexport_raw_xtrans_method                 = "fast";
-    fastexport_bypass_raw_ccSteps        = true;
-    fastexport_bypass_raw_ca             = true;
-    fastexport_bypass_raw_df             = true;
-    fastexport_bypass_raw_ff             = true;
-    fastexport_icm_input_profile         = "(camera)";
-    fastexport_icm_working_profile       = "ProPhoto";
-    fastexport_icm_output_profile        = options.rtSettings.srgb;
-    fastexport_icm_outputIntent          = rtengine::RI_RELATIVE;
-    fastexport_icm_outputBPC             = true;
-    fastexport_resize_enabled            = true;
-    fastexport_resize_scale              = 1;
-    fastexport_resize_appliesTo          = "Cropped area";
-    fastexport_resize_method             = "Lanczos";
-    fastexport_resize_dataspec           = 3;
-    fastexport_resize_width              = 900;
-    fastexport_resize_height             = 900;
-    fastexport_resize_longedge           = 900;
-    fastexport_resize_shortedge          = 900;
-    fastexport_use_fast_pipeline         = true;
-
     clutsDir = "./cluts";
 
     cutOverlayBrush = std::vector<double> (4);
@@ -673,6 +632,45 @@ void Options::setDefaults()
 //  rtSettings.decaction =0.3;
 //  rtSettings.ciebadpixgauss=false;
     rtSettings.rgbcurveslumamode_gamut = true;
+
+    fastexport_bypass_sharpening         = true;
+    fastexport_bypass_sharpenEdge        = true;
+    fastexport_bypass_sharpenMicro       = true;
+    //fastexport_bypass_lumaDenoise        = true;
+    //fastexport_bypass_colorDenoise       = true;
+    fastexport_bypass_defringe           = true;
+    fastexport_bypass_dirpyrDenoise      = true;
+    fastexport_bypass_dirpyrequalizer    = true;
+    fastexport_bypass_wavelet    = true;
+    fastexport_raw_bayer_method                  = "fast";
+    //fastexport_bypass_raw_bayer_all_enhance    = true;
+    fastexport_bypass_raw_bayer_dcb_iterations   = true;
+    fastexport_bypass_raw_bayer_dcb_enhance      = true;
+    fastexport_bypass_raw_bayer_lmmse_iterations = true;
+    fastexport_bypass_raw_bayer_linenoise        = true;
+    fastexport_bypass_raw_bayer_greenthresh      = true;
+    fastexport_raw_xtrans_method                 = "fast";
+    fastexport_bypass_raw_ccSteps        = true;
+    fastexport_bypass_raw_ca             = true;
+    fastexport_bypass_raw_df             = true;
+    fastexport_bypass_raw_ff             = true;
+    fastexport_icm_input_profile         = "(camera)";
+    fastexport_icm_working_profile       = "ProPhoto";
+    // Must be set after options.rtSettings.srgb has already been initialized!
+    fastexport_icm_output_profile        = rtSettings.srgb;
+    fastexport_icm_outputIntent          = rtengine::RI_RELATIVE;
+    fastexport_icm_outputBPC             = true;
+    fastexport_resize_enabled            = true;
+    fastexport_resize_scale              = 1;
+    fastexport_resize_appliesTo          = "Cropped area";
+    fastexport_resize_method             = "Lanczos";
+    fastexport_resize_dataspec           = 3;
+    fastexport_resize_width              = 900;
+    fastexport_resize_height             = 900;
+    fastexport_resize_longedge           = 900;
+    fastexport_resize_shortedge          = 900;
+    fastexport_use_fast_pipeline         = true;
+
     lastIccDir = rtSettings.iccDirectory;
     lastDarkframeDir = rtSettings.darkFramesPath;
     lastFlatfieldDir = rtSettings.flatFieldsPath;
@@ -963,7 +961,7 @@ void Options::readFromFile(Glib::ustring fname)
                     if (keyFile.has_key("External Editor", "GimpDir")) {
                         gimpDir = keyFile.get_string("External Editor", "GimpDir");
                     }
-                    auto executable = Glib::build_filename(options.gimpDir, "bin", "gimp-win-remote");
+                    auto executable = Glib::build_filename(gimpDir, "bin", "gimp-win-remote");
                     if (Glib::file_test(executable, Glib::FILE_TEST_IS_EXECUTABLE)) {
                         if (editorToSendTo == 1) {
                             externalEditorIndex = externalEditors.size();
@@ -2369,7 +2367,7 @@ void Options::readFromFile(Glib::ustring fname)
     } catch (Glib::Error &err) {
         Glib::ustring msg = Glib::ustring::compose("Options::readFromFile / Error code %1 while reading values from \"%2\":\n%3", err.code(), fname, err.what());
 
-        if (options.rtSettings.verbose) {
+        if (App::get().options().rtSettings.verbose) {
             printf("%s\n", msg.c_str());
         }
 
@@ -2377,7 +2375,7 @@ void Options::readFromFile(Glib::ustring fname)
     } catch (...) {
         Glib::ustring msg = Glib::ustring::compose("Options::readFromFile / Unknown exception while trying to load \"%1\"!", fname);
 
-        if (options.rtSettings.verbose) {
+        if (App::get().options().rtSettings.verbose) {
             printf("%s\n", msg.c_str());
         }
 
@@ -2867,7 +2865,6 @@ void Options::saveToFile(Glib::ustring fname)
 
 void Options::load(bool lightweight)
 {
-
     // Find the application data path
 
     const gchar* path;
@@ -2902,22 +2899,23 @@ void Options::load(bool lightweight)
 #endif
     }
 
+    auto& options = App::get().mut_options();
     if (options.rtSettings.verbose) {
         printf("Settings directory (rtdir) = %s\n", rtdir.c_str());
     }
 
     // Set the cache folder in RT's base folder
-    cacheBaseDir = Glib::build_filename(argv0, "mycache");
+    cacheBaseDir = Glib::build_filename(App::get().argv0(), "mycache");
 
     // Read the global option file (the one located in the application's base folder)
     try {
-        options.readFromFile(Glib::build_filename(argv0, "options"));
+        options.readFromFile(Glib::build_filename(App::get().argv0(), "options"));
     } catch (Options::Error &) {
         // ignore errors here
     }
 
     if (!options.multiUser && path == nullptr) {
-        rtdir = Glib::build_filename(argv0, "mysettings");
+        rtdir = Glib::build_filename(App::get().argv0(), "mysettings");
     }
 
     // Modify the path of the cache folder to the one provided in RT_CACHE environment variable.
@@ -3033,7 +3031,7 @@ void Options::load(bool lightweight)
     // out which are the parent translations.  Furthermore, there must be a file <Language> for each locale <Language> (<LC>) -- you cannot have
     // 'French (CA)' unless there is a file 'French'.
 
-    Glib::ustring defaultTranslation = Glib::build_filename(argv0, "languages", "default");
+    Glib::ustring defaultTranslation = Glib::build_filename(App::get().argv0(), "languages", "default");
     Glib::ustring languageTranslation = "";
     Glib::ustring localeTranslation = "";
 
@@ -3045,29 +3043,29 @@ void Options::load(bool lightweight)
         std::vector<Glib::ustring> langPortions = Glib::Regex::split_simple(" ", options.language);
 
         if (langPortions.size() >= 1) {
-            languageTranslation = Glib::build_filename(argv0, "languages", langPortions.at(0));
+            languageTranslation = Glib::build_filename(App::get().argv0(), "languages", langPortions.at(0));
         }
 
         if (langPortions.size() >= 2) {
-            localeTranslation = Glib::build_filename(argv0, "languages", options.language);
+            localeTranslation = Glib::build_filename(App::get().argv0(), "languages", options.language);
         }
     }
 
     langMgr.load(options.language, {localeTranslation, languageTranslation, defaultTranslation});
 
-    rtengine::init(&options.rtSettings, argv0, rtdir, !lightweight);
+    rtengine::init(&options.rtSettings, App::get().argv0(), rtdir, !lightweight);
 }
 
 void Options::save()
 {
 
-    options.saveToFile(Glib::build_filename(rtdir, "options"));
+    App::get().mut_options().saveToFile(Glib::build_filename(rtdir, "options"));
 }
 
 /*
  * return true if ext is a parsed extension (retained or not)
  */
-bool Options::is_parse_extention(Glib::ustring fname)
+bool Options::is_parse_extention(Glib::ustring fname) const
 {
     Glib::ustring ext = getExtension(fname).lowercase();
 
@@ -3088,14 +3086,14 @@ bool Options::is_parse_extention(Glib::ustring fname)
 /*
  * return true if fname ends with one of the retained image file extensions
  */
-bool Options::has_retained_extention(const Glib::ustring& fname)
+bool Options::has_retained_extention(const Glib::ustring& fname) const
 {
     return parsedExtensionsSet.find(getExtension(fname).lowercase()) != parsedExtensionsSet.end();
 }
 
 // Pattern matches "5.1" from "5.1-23-g12345678", when comparing option.version to RTVERSION
-bool Options::is_new_version() {
-    const std::string vs[] = {versionString, version};
+bool Options::is_new_version() const {
+    const std::string vs[] = {App::VERSION, version};
     std::vector<std::string> vMajor;
 
     for (const auto& v : vs) {
@@ -3108,26 +3106,26 @@ bool Options::is_new_version() {
 /*
  * return true if ext is an enabled extension
  */
-bool Options::is_extention_enabled(const Glib::ustring& ext)
+bool Options::is_extention_enabled(const Glib::ustring& ext) const
 {
     return parsedExtensionsSet.find(ext.lowercase()) != parsedExtensionsSet.end();
 }
 
-Glib::ustring Options::getUserProfilePath()
+Glib::ustring Options::getUserProfilePath() const
 {
     return userProfilePath;
 }
 
-Glib::ustring Options::getGlobalProfilePath()
+Glib::ustring Options::getGlobalProfilePath() const
 {
     return globalProfilePath;
 }
 
-bool Options::is_defProfRawMissing()
+bool Options::is_defProfRawMissing() const
 {
     return defProfError & rtengine::toUnderlying(DefProfError::defProfRawMissing);
 }
-bool Options::is_defProfImgMissing()
+bool Options::is_defProfImgMissing() const
 {
     return defProfError & rtengine::toUnderlying(DefProfError::defProfImgMissing);
 }
@@ -3147,11 +3145,11 @@ void Options::setDefProfImgMissing(bool value)
         defProfError &= ~rtengine::toUnderlying(DefProfError::defProfImgMissing);
     }
 }
-bool Options::is_bundledDefProfRawMissing()
+bool Options::is_bundledDefProfRawMissing() const
 {
     return defProfError & rtengine::toUnderlying(DefProfError::bundledDefProfRawMissing);
 }
-bool Options::is_bundledDefProfImgMissing()
+bool Options::is_bundledDefProfImgMissing() const
 {
     return defProfError & rtengine::toUnderlying(DefProfError::bundledDefProfImgMissing);
 }

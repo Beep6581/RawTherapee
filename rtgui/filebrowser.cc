@@ -51,7 +51,7 @@ const Glib::ustring* getOriginalExtension (const ThumbBrowserEntryBase* entry)
     typedef std::vector<Glib::ustring> ExtensionVector;
     typedef ExtensionVector::const_iterator ExtensionIterator;
 
-    const ExtensionVector& originalExtensions = options.parsedExtensions;
+    const ExtensionVector& originalExtensions = App::get().options().parsedExtensions;
 
     // Extract extension from basename
     const Glib::ustring basename = Glib::path_get_basename (entry->filename.lowercase());
@@ -148,6 +148,7 @@ FileBrowser::FileBrowser () :
     session_id_ = 0;
 
     ProfileStore::getInstance()->addListener(this);
+    const auto& options = App::get().options();
 
     int p = 0;
     pmenu = new Gtk::Menu ();
@@ -771,6 +772,8 @@ void FileBrowser::menuItemActivated (Gtk::MenuItem* m)
             return;
         }
 
+    const auto& options = App::get().options();
+
     for (size_t j = 0; j < mMenuExtProgs.size(); j++) {
         if (m == amiExtProg[j]) {
             const auto pAct = mMenuExtProgs[m->get_label()];
@@ -869,7 +872,7 @@ void FileBrowser::menuItemActivated (Gtk::MenuItem* m)
         if( !mselected.empty() ) {
             rtengine::procparams::ProcParams pp = mselected[0]->thumbnail->getProcParams();
             Gtk::FileChooserDialog fc (getToplevelWindow (this), "Dark Frame", Gtk::FILE_CHOOSER_ACTION_OPEN );
-            bindCurrentFolder (fc, options.lastDarkframeDir);
+            bindCurrentFolder (fc, App::get().mut_options().lastDarkframeDir);
             fc.add_button( M("GENERAL_CANCEL"), Gtk::RESPONSE_CANCEL);
             fc.add_button( M("GENERAL_APPLY"), Gtk::RESPONSE_APPLY);
 
@@ -913,7 +916,7 @@ void FileBrowser::menuItemActivated (Gtk::MenuItem* m)
                 rtengine::DFManager::getInstance().init( options.rtSettings.darkFramesPath );
             } else {
                 // Target directory creation failed, we clear the darkFramesPath setting
-                options.rtSettings.darkFramesPath.clear();
+                App::get().mut_options().rtSettings.darkFramesPath.clear();
                 Glib::ustring msg_ = Glib::ustring::compose (M("MAIN_MSG_PATHDOESNTEXIST"), escapeHtmlChars(options.rtSettings.darkFramesPath))
                                      + "\n\n" + M("MAIN_MSG_OPERATIONCANCELLED");
                 Gtk::MessageDialog msgd (msg_, true, Gtk::MESSAGE_ERROR, Gtk::BUTTONS_OK, true);
@@ -945,7 +948,7 @@ void FileBrowser::menuItemActivated (Gtk::MenuItem* m)
         if( !mselected.empty() ) {
             rtengine::procparams::ProcParams pp = mselected[0]->thumbnail->getProcParams();
             Gtk::FileChooserDialog fc (getToplevelWindow (this), "Flat Field", Gtk::FILE_CHOOSER_ACTION_OPEN );
-            bindCurrentFolder (fc, options.lastFlatfieldDir);
+            bindCurrentFolder (fc, App::get().mut_options().lastFlatfieldDir);
             fc.add_button( M("GENERAL_CANCEL"), Gtk::RESPONSE_CANCEL);
             fc.add_button( M("GENERAL_APPLY"), Gtk::RESPONSE_APPLY);
 
@@ -989,7 +992,7 @@ void FileBrowser::menuItemActivated (Gtk::MenuItem* m)
                 rtengine::ffm.init( options.rtSettings.flatFieldsPath );
             } else {
                 // Target directory creation failed, we clear the flatFieldsPath setting
-                options.rtSettings.flatFieldsPath.clear();
+                App::get().mut_options().rtSettings.flatFieldsPath.clear();
                 Glib::ustring msg_ = Glib::ustring::compose (M("MAIN_MSG_PATHDOESNTEXIST"), escapeHtmlChars(options.rtSettings.flatFieldsPath))
                                      + "\n\n" + M("MAIN_MSG_OPERATIONCANCELLED");
                 Gtk::MessageDialog msgd (msg_, true, Gtk::MESSAGE_ERROR, Gtk::BUTTONS_OK, true);
@@ -1392,6 +1395,7 @@ bool FileBrowser::keyPressed (GdkEventKey* event)
 
 void FileBrowser::saveThumbnailHeight (int height)
 {
+    auto& options = App::get().mut_options();
     if (!options.sameThumbSize && getLocation() == THLOC_EDITOR) {
         options.thumbSizeTab = height;
     } else {
@@ -1401,6 +1405,7 @@ void FileBrowser::saveThumbnailHeight (int height)
 
 int FileBrowser::getThumbnailHeight ()
 {
+    const auto& options = App::get().options();
     // The user could have manually forced the option to a too big value
     if (!options.sameThumbSize && getLocation() == THLOC_EDITOR) {
         return std::max(std::min(options.thumbSizeTab, 800), 10);
@@ -1412,6 +1417,7 @@ int FileBrowser::getThumbnailHeight ()
 void FileBrowser::enableTabMode(bool enable)
 {
     ThumbBrowserBase::enableTabMode(enable);
+    const auto& options = App::get().options();
     if (options.inspectorWindow) {
         if (enable) {
             inspect->remove_accelerator(pmenu->get_accel_group(), GDK_KEY_f, (Gdk::ModifierType)0);
@@ -1669,12 +1675,14 @@ void FileBrowser::fromTrashRequested (std::vector<FileBrowserEntry*> tbe)
 
 void FileBrowser::sortMethodRequested (int method)
 {
+    auto& options = App::get().mut_options();
     options.sortMethod = Options::SortMethod(method);
     resort ();
 }
 
 void FileBrowser::sortOrderRequested (int order)
 {
+    auto& options = App::get().mut_options();
     options.sortDescending = !!order;
     resort ();
 }
@@ -1800,7 +1808,7 @@ void FileBrowser::openNextImage()
 {
     MYWRITERLOCK(l, entryRW);
 
-    if (!fd.empty() && selected.size() > 0 && !options.tabbedUI) {
+    if (!fd.empty() && selected.size() > 0 && !App::get().options().tabbedUI) {
         for (size_t i = 0; i < fd.size() - 1; i++) {
             if (selected[0]->thumbnail->getFileName() == fd[i]->filename) { // located 1-st image in current selection
                 if (i < fd.size() && tbl) {
@@ -1863,7 +1871,7 @@ void FileBrowser::openPrevImage()
 {
     MYWRITERLOCK(l, entryRW);
 
-    if (!fd.empty() && selected.size() > 0 && !options.tabbedUI) {
+    if (!fd.empty() && selected.size() > 0 && !App::get().options().tabbedUI) {
         for (size_t i = 1; i < fd.size(); i++) {
             if (selected[0]->thumbnail->getFileName() == fd[i]->filename) { // located 1-st image in current selection
                 if (i > 0 && tbl) {
@@ -1926,7 +1934,7 @@ void FileBrowser::selectImage(const Glib::ustring& fname, bool doScroll)
 {
     MYWRITERLOCK(l, entryRW);
 
-    if (!fd.empty() && !options.tabbedUI) {
+    if (!fd.empty() && !App::get().options().tabbedUI) {
         for (size_t i = 0; i < fd.size(); i++) {
             if (fname == fd[i]->filename && !fd[i]->filtered) {
                 // matching file found for sync
@@ -2058,6 +2066,8 @@ void FileBrowser::updateProfileList()
 
     subMenuList[0] = Gtk::manage (new Gtk::Menu ()); // adding the root submenu
 
+    const auto& options = App::get().options();
+
     // iterate the profile store's profile list
     for (size_t i = 0; i < profEntries->size(); i++) {
         // create a new label for the current entry (be it a folder or file)
@@ -2149,7 +2159,7 @@ void FileBrowser::openRequested( std::vector<FileBrowserEntry*> mselected)
 {
     std::vector<Thumbnail*> entries;
     // in Single Editor Mode open only last selected image
-    size_t openStart = options.tabbedUI ? 0 : ( mselected.size() > 0 ? mselected.size() - 1 : 0);
+    size_t openStart = App::get().options().tabbedUI ? 0 : ( mselected.size() > 0 ? mselected.size() - 1 : 0);
 
     for (size_t i = openStart; i < mselected.size(); i++) {
         entries.push_back (mselected[i]->thumbnail);

@@ -36,6 +36,7 @@ SharpenEdge::SharpenEdge () : FoldableToolPanel(this, TOOL_NAME, M("TP_SHARPENED
     passes = Gtk::manage(new Adjuster (M("TP_SHARPENEDGE_PASSES"), 1, 4, 1, 2));
     passes->setAdjusterListener (this);
 
+    const auto& options = App::get().options();
     passes->setDelay(std::max(options.adjusterMinDelay, options.adjusterMaxDelay));
 
     amount = Gtk::manage(new Adjuster (M("TP_SHARPENEDGE_AMOUNT"), 0, 100, 1, 50));

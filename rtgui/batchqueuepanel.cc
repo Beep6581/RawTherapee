@@ -42,6 +42,8 @@ static Glib::ustring makeFolderLabel(Glib::ustring path)
 
 BatchQueuePanel::BatchQueuePanel (FileCatalog* aFileCatalog) : parent(nullptr)
 {
+    const auto& options = App::get().options();
+
     set_orientation(Gtk::ORIENTATION_VERTICAL);
     batchQueue = Gtk::manage( new BatchQueue(aFileCatalog) );
 
@@ -215,7 +217,7 @@ void BatchQueuePanel::init (RTWindow *parent)
 {
     this->parent = parent;
 
-    saveFormatPanel->init (options.saveFormatBatch);
+    saveFormatPanel->init (App::get().options().saveFormatBatch);
 }
 
 // it is expected to have a non null forceOrientation value on Preferences update only. In this case, qsize is ignored and computed automatically
@@ -228,7 +230,7 @@ void BatchQueuePanel::updateTab (int qsize, int forceOrientation)
     }
 
     Gtk::Grid* grid = Gtk::manage (new Gtk::Grid ());
-    if ((forceOrientation == 0 && options.mainNBVertical) || (forceOrientation == 2)) {
+    if ((forceOrientation == 0 && App::get().options().mainNBVertical) || (forceOrientation == 2)) {
         Gtk::Label* l;
 
         if(!qsize ) {
@@ -279,7 +281,7 @@ void BatchQueuePanel::queueSizeChanged(int qsize, bool queueRunning, bool queueE
         // There was work, but it is all done now.
         queueShouldRun = false;
 
-        SoundManager::playSoundAsync(options.sndBatchQueueDone);
+        SoundManager::playSoundAsync(App::get().options().sndBatchQueueDone);
     }
 
     if (queueError) {
@@ -353,6 +355,8 @@ void BatchQueuePanel::templateHelpButtonToggled()
 
 void BatchQueuePanel::populateTemplateHelpBuffer(Glib::RefPtr<Gtk::TextBuffer> buffer)
 {
+    auto& options = App::get().mut_options();
+
     auto pos = buffer->begin();
     const auto insertTopicHeading = [&pos, buffer](const Glib::ustring& text) {
         pos = buffer->insert_markup(pos, Glib::ustring::format("\n\n<u><b>", text, "</b></u>\n"));
@@ -403,6 +407,7 @@ void BatchQueuePanel::populateTemplateHelpBuffer(Glib::RefPtr<Gtk::TextBuffer> b
     // number of elements in the path.
     const auto insertPathExamples = [&buffer, &pos, pathElementCount, exampleFilePath](char letter, int offset1, int mult1, int offset2, int mult2)
     {
+        auto& options = App::get().mut_options();
         for (int n=0; n<pathElementCount; n++) {
             auto path1 = Glib::ustring::format("%", letter, offset1+n*mult1);
             auto path2 = Glib::ustring::format("%", letter, offset2+n*mult2);
@@ -468,6 +473,7 @@ void BatchQueuePanel::addBatchQueueJobs(const std::vector<BatchQueueEntry*>& ent
 
 void BatchQueuePanel::saveOptions ()
 {
+    auto& options = App::get().mut_options();
 
     options.savePathTemplate    = outdirTemplate->get_text();
     options.saveUsePathTemplate = useTemplate->get_active();
@@ -509,6 +515,7 @@ void BatchQueuePanel::setDestinationPreviewText(const Glib::ustring &destination
 
 void BatchQueuePanel::pathFolderButtonPressed ()
 {
+    auto& options = App::get().mut_options();
 
     Gtk::FileChooserDialog fc (getToplevelWindow (this), M("QUEUE_LOCATION_FOLDER"), Gtk::FILE_CHOOSER_ACTION_SELECT_FOLDER );
     fc.add_button( "_Cancel", Gtk::RESPONSE_CANCEL); // STOCKICON WAS THERE
@@ -529,12 +536,14 @@ void BatchQueuePanel::pathFolderButtonPressed ()
 // since these settings are shared with editorpanel :
 void BatchQueuePanel::pathFolderChanged ()
 {
+    auto& options = App::get().mut_options();
     options.savePathFolder = outdirFolder->get_filename();
     batchQueue->updateDestinationPathPreview();
 }
 
 void BatchQueuePanel::formatChanged(const Glib::ustring& format)
 {
+    auto& options = App::get().mut_options();
     options.saveFormatBatch = saveFormatPanel->getFormat();
     batchQueue->updateDestinationPathPreview();
 }

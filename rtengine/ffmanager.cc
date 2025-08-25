@@ -302,6 +302,8 @@ void FFManager::init(const Glib::ustring& pathname)
 
 ffInfo* FFManager::addFileInfo (const Glib::ustring& filename, bool pool)
 {
+    const Options& options = App::get().options();
+
     auto ext = getFileExtension(filename);
 
     if (ext.empty() || !options.is_extention_enabled(ext)) {

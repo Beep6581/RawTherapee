@@ -453,6 +453,8 @@ public:
         fileProfiles.clear();
         fileProfileContents.clear();
 
+        const auto& options = App::get().options();
+
         if (loadAll) {
             loadProfiles(profilesDir, &fileProfiles, &fileProfileContents, nullptr, false);
             loadProfiles(userICCDir, &fileProfiles, &fileProfileContents, nullptr, false);

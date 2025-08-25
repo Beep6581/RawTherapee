@@ -593,6 +593,7 @@ bool LabGridArea::on_motion_notify_event(GdkEventMotion *event)
         }
         edited = true;
         grab_focus();
+        const auto& options = App::get().options();
         if (options.adjusterMinDelay == 0) {
             notifyListener();
         } else {

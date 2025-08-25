@@ -49,6 +49,7 @@ RAWCACorr::RAWCACorr () : FoldableToolPanel(this, TOOL_NAME, M("TP_RAWCACORR_LAB
     caAutoiterations->setAdjusterListener (this);
     caAutoiterations->set_tooltip_markup(M("TP_RAWCACORR_AUTOIT_TOOLTIP"));
 
+    const auto& options = App::get().options();
     caAutoiterations->setDelay(std::max(options.adjusterMinDelay, options.adjusterMaxDelay));
 
     caRed = Gtk::manage(new Adjuster (M("TP_RAWCACORR_CARED"), -4.0, 4.0, 0.1, 0, icaredL, icaredR));

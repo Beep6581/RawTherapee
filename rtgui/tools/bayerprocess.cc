@@ -31,9 +31,10 @@ using namespace rtengine::procparams;
 const Glib::ustring BayerProcess::TOOL_NAME = "bayerprocess";
 
 BayerProcess::BayerProcess () :
-    FoldableToolPanel(this, TOOL_NAME, M("TP_RAW_LABEL"), options.prevdemo != PD_Sidecar),
+    FoldableToolPanel(this, TOOL_NAME, M("TP_RAW_LABEL"), App::get().options().prevdemo != PD_Sidecar),
     oldMethod(-1)
 {
+    const auto& options = App::get().options();
 
     auto m = ProcEventMapper::getInstance();
     EvDemosaicBorder = m->newEvent(DARKFRAME, "HISTORY_MSG_RAW_BORDER");

@@ -395,7 +395,7 @@ private:
         if (find_default_monitor_profile (profileBox.get_root_window()->gobj(), defprof, defprofname)) {
             profileBox.append (M ("MONITOR_PROFILE_SYSTEM") + " (" + defprofname + ")");
 
-            if (options.rtSettings.autoMonitorProfile) {
+            if (App::get().options().rtSettings.autoMonitorProfile) {
                 rtengine::ICCStore::getInstance()->setDefaultMonitorProfileName (defprof);
                 profileBox.set_active (1);
             } else {
@@ -479,6 +479,7 @@ private:
         ConnectionBlocker intentBlocker (intentConn);
 
         Glib::ustring profile;
+        const auto& options = App::get().options();
 
 #if !defined(__APPLE__) // monitor profile not supported on apple
 
@@ -644,6 +645,8 @@ public:
 
     void reset ()
     {
+        const auto& options = App::get().options();
+
         ConnectionBlocker intentBlocker (intentConn);
 #if !defined(__APPLE__) // monitor profile not supported on apple
         ConnectionBlocker profileBlocker (profileConn);
@@ -784,6 +787,7 @@ EditorPanel::EditorPanel (FilePanel* filePanel)
     iHistoryShow = new RTImage ("panel-to-right", Gtk::ICON_SIZE_LARGE_TOOLBAR);
     iHistoryHide = new RTImage ("panel-to-left", Gtk::ICON_SIZE_LARGE_TOOLBAR);
 
+    const auto& options = App::get().options();
     hidehp->set_relief (Gtk::RELIEF_NONE);
     hidehp->set_active (options.showHistory);
     hidehp->set_tooltip_markup (M ("MAIN_TOOLTIP_HIDEHP"));
@@ -796,7 +800,7 @@ EditorPanel::EditorPanel (FilePanel* filePanel)
 
     tbTopPanel_1 = nullptr;
 
-    if (!simpleEditor && filePanel) {
+    if (!App::get().isSimpleEditor() && filePanel) {
         tbTopPanel_1 = new Gtk::ToggleButton ();
         iTopPanel_1_Show = new RTImage ("panel-to-bottom", Gtk::ICON_SIZE_LARGE_TOOLBAR);
         iTopPanel_1_Hide = new RTImage ("panel-to-top", Gtk::ICON_SIZE_LARGE_TOOLBAR);
@@ -941,7 +945,7 @@ EditorPanel::EditorPanel (FilePanel* filePanel)
 
     navPrev = navNext = navSync = nullptr;
 
-    if (!simpleEditor && !options.tabbedUI) {
+    if (!App::get().isSimpleEditor() && !options.tabbedUI) {
         // Navigation buttons
         Gtk::Image *navPrevImage = Gtk::manage (new RTImage ("arrow2-left", Gtk::ICON_SIZE_LARGE_TOOLBAR));
         navPrevImage->set_padding (0, 0);
@@ -975,15 +979,15 @@ EditorPanel::EditorPanel (FilePanel* filePanel)
     iops->attach_next_to (*progressLabel, Gtk::POS_LEFT, 1, 1);
     iops->attach_next_to (*vsep1, Gtk::POS_LEFT, 1, 1);
 
-    if (!gimpPlugin) {
+    if (!App::get().isGimpPlugin()) {
         iops->attach_next_to(*send_to_external->buttonGroup, Gtk::POS_LEFT, 1, 1);
     }
 
-    if (!gimpPlugin && !simpleEditor) {
+    if (!App::get().isGimpPlugin() && !App::get().isSimpleEditor()) {
         iops->attach_next_to (*queueimg, Gtk::POS_LEFT, 1, 1);
     }
 
-    if (!gimpPlugin) {
+    if (!App::get().isGimpPlugin()) {
         iops->attach_next_to (*saveimgas, Gtk::POS_LEFT, 1, 1);
     }
 
@@ -992,7 +996,7 @@ EditorPanel::EditorPanel (FilePanel* filePanel)
     colorMgmtToolBar.reset (new ColorManagementToolbar (ipc));
     colorMgmtToolBar->pack_right_in (iops);
 
-    if (!simpleEditor && !options.tabbedUI) {
+    if (!App::get().isSimpleEditor() && !options.tabbedUI) {
         Gtk::Separator* vsep3 = Gtk::manage (new Gtk::Separator(Gtk::ORIENTATION_VERTICAL));
         iops->attach_next_to (*vsep3, Gtk::POS_RIGHT, 1, 1);
         iops->attach_next_to (*navPrev, Gtk::POS_RIGHT, 1, 1);
@@ -1167,7 +1171,7 @@ void EditorPanel::leftPaneButtonReleased (GdkEventButton *event)
 {
     if (event->button == 1) {
         // Button 1 released : it's a resize
-        options.historyPanelWidth = hpanedl->get_position();
+        App::get().mut_options().historyPanelWidth = hpanedl->get_position();
     }
 
     /*else if (event->button == 3) {
@@ -1180,7 +1184,7 @@ void EditorPanel::rightPaneButtonReleased (GdkEventButton *event)
         int winW, winH;
         parentWindow->get_size (winW, winH);
         // Button 1 released : it's a resize
-        options.toolPanelWidth = winW - hpanedr->get_position();
+        App::get().mut_options().toolPanelWidth = winW - hpanedr->get_position();
     }
 
     /*else if (event->button == 3) {
@@ -1222,6 +1226,7 @@ void EditorPanel::showTopPanel (bool show)
 
 void EditorPanel::setAspect ()
 {
+    const auto& options = App::get().options();
     int winW, winH;
     parentWindow->get_size (winW, winH);
     hpanedl->set_position (options.historyPanelWidth);
@@ -1280,6 +1285,7 @@ void EditorPanel::open (Thumbnail* tmb, rtengine::InitialImage* isrc)
     // try to load the last saved parameters from the cache or from the paramfile file
     ProcParams* ldprof = openThm->createProcParamsForUpdate (true, false); // will be freed by initProfile
 
+    const auto& options = App::get().options();
     // initialize profile
     Glib::ustring defProf = openThm->getType() == FT_Raw ? options.defProfRaw : options.defProfImg;
     profilep->initProfile (defProf, ldprof);
@@ -1534,6 +1540,7 @@ void EditorPanel::refreshProcessingState (bool inProcessingP)
         if (processingStartedTime != 0) {
             time_t curTime = ::time (nullptr);
 
+            const auto& options = App::get().options();
             if (::difftime (curTime, processingStartedTime) > options.sndLngEditProcDoneSecs) {
                 SoundManager::playSoundAsync (options.sndLngEditProcDone);
             }
@@ -1640,6 +1647,7 @@ void EditorPanel::hideHistoryActivated ()
         hpanedl->pack1 (*leftbox, false, false);
     }
 
+    auto& options = App::get().mut_options();
     options.showHistory = hidehp->get_active();
 
     if (options.showHistory) {
@@ -1696,6 +1704,7 @@ void EditorPanel::tbTopPanel_1_toggled ()
 
     if (catalogPane) { // catalogPane does not exist in multitab mode
 
+        auto& options = App::get().mut_options();
         if (tbTopPanel_1->get_active()) {
             catalogPane->show();
             tbTopPanel_1->set_image (*iTopPanel_1_Hide);
@@ -1881,7 +1890,7 @@ bool EditorPanel::handleShortcutKey (GdkEventKey* event)
                     return true;
 
                 case GDK_KEY_y: // synchronize filebrowser with image in Editor
-                    if (!simpleEditor && fPanel && !fname.empty()) {
+                    if (!App::get().isSimpleEditor() && fPanel && !fname.empty()) {
                         fPanel->fileCatalog->selectImage (fname, false);
                         return true;
                     }
@@ -1889,7 +1898,7 @@ bool EditorPanel::handleShortcutKey (GdkEventKey* event)
                     break; // to avoid gcc complain
 
                 case GDK_KEY_x: // clear filters and synchronize filebrowser with image in Editor
-                    if (!simpleEditor && fPanel && !fname.empty()) {
+                    if (!App::get().isSimpleEditor() && fPanel && !fname.empty()) {
                         fPanel->fileCatalog->selectImage (fname, true);
                         return true;
                     }
@@ -1905,21 +1914,21 @@ bool EditorPanel::handleShortcutKey (GdkEventKey* event)
                     return true;
 
                 case GDK_KEY_s:
-                    if (!gimpPlugin) {
+                    if (!App::get().isGimpPlugin()) {
                         saveAsPressed();
                     }
 
                     return true;
 
                 case GDK_KEY_b:
-                    if (!gimpPlugin && !simpleEditor) {
+                    if (!App::get().isGimpPlugin() && !App::get().isSimpleEditor()) {
                         queueImgPressed();
                     }
 
                     return true;
 
                 case GDK_KEY_e:
-                    if (!gimpPlugin) {
+                    if (!App::get().isGimpPlugin()) {
                         sendToExternalPressed();
                     }
 
@@ -1961,7 +1970,7 @@ bool EditorPanel::handleShortcutKey (GdkEventKey* event)
     if (shift) {
         switch (event->keyval) {
             case GDK_KEY_F3: // open Previous image from Editor's perspective
-                if (!simpleEditor && fPanel && !fname.empty()) {
+                if (!App::get().isSimpleEditor() && fPanel && !fname.empty()) {
                     EditorPanel::openPreviousEditorImage();
                     return true;
                 }
@@ -1969,7 +1978,7 @@ bool EditorPanel::handleShortcutKey (GdkEventKey* event)
                 break; // to avoid gcc complain
 
             case GDK_KEY_F4: // open next image from Editor's perspective
-                if (!simpleEditor && fPanel && !fname.empty()) {
+                if (!App::get().isSimpleEditor() && fPanel && !fname.empty()) {
                     EditorPanel::openNextEditorImage();
                     return true;
                 }
@@ -1986,7 +1995,7 @@ bool EditorPanel::handleShortcutKey (GdkEventKey* event)
         return true;
     }
 
-    if (!simpleEditor && fPanel) {
+    if (!App::get().isSimpleEditor() && fPanel) {
         if (fPanel->handleShortcutKey (event)) {
             return true;
         }
@@ -2059,7 +2068,7 @@ bool EditorPanel::idle_imageSaved (ProgressConnector<int> *pc, rtengine::IImagef
         if (sf.saveParams) {
             // We keep the extension to avoid overwriting the profile when we have
             // the same output filename with different extension
-            pparams.save (fname + ".out" + paramFileExtension);
+            pparams.save (fname + ".out" + App::PARAM_FILE_EXTENSION);
         }
     } else {
         error (M ("MAIN_MSG_CANNOTSAVE"), fname);
@@ -2074,7 +2083,7 @@ bool EditorPanel::idle_imageSaved (ProgressConnector<int> *pc, rtengine::IImagef
     setProgressState (false);
 
     delete pc;
-    SoundManager::playSoundAsync (options.sndBatchQueueDone);
+    SoundManager::playSoundAsync (App::get().options().sndBatchQueueDone);
     isProcessing = false;
     return false;
 }
@@ -2090,7 +2099,7 @@ BatchQueueEntry* EditorPanel::createBatchQueueEntry ()
     isrc->getImageSource()->getFullSize (fullW, fullH, pparams.coarse.rotate == 90 || pparams.coarse.rotate == 270 ? TR_R90 : TR_NONE);
     int prevh = BatchQueue::calcMaxThumbnailHeight();
     int prevw = int ((size_t)fullW * (size_t)prevh / (size_t)fullH);
-    return new BatchQueueEntry (job, pparams, openThm->getFileName(), prevw, prevh, openThm, options.overwriteOutputFile);
+    return new BatchQueueEntry (job, pparams, openThm->getFileName(), prevw, prevh, openThm, App::get().options().overwriteOutputFile);
 }
 
 
@@ -2107,6 +2116,7 @@ void EditorPanel::saveAsPressed ()
     SaveAsDialog* saveAsDialog;
     auto toplevel = static_cast<Gtk::Window*> (get_toplevel ());
 
+    auto& options = App::get().mut_options();
     if (Glib::file_test (options.lastSaveAsPath, Glib::FILE_TEST_IS_DIR)) {
         saveAsDialog = new SaveAsDialog (options.lastSaveAsPath, toplevel);
     } else {
@@ -2217,7 +2227,7 @@ void EditorPanel::sendToExternal()
     // develop image
     rtengine::procparams::ProcParams pparams;
     ipc->getParams (&pparams);
-    if (options.editor_bypass_output_profile) {
+    if (App::get().options().editor_bypass_output_profile) {
         pparams.icm.outputProfile = rtengine::procparams::ColorManagementParams::NoProfileString;
     }
 
@@ -2240,6 +2250,7 @@ void EditorPanel::sendToExternal()
 void EditorPanel::sendToExternalChanged(int)
 {
     int index = send_to_external->getSelected();
+    auto& options = App::get().mut_options();
     if (index >= 0 && static_cast<unsigned>(index) == options.externalEditors.size()) {
         index = -1;
     }
@@ -2251,6 +2262,7 @@ void EditorPanel::sendToExternalChanged(int)
 
 void EditorPanel::sendToExternalPressed()
 {
+    const auto& options = App::get().options();
     if (options.externalEditorIndex == -1) {
         // "Other" external editor. Show app chooser dialog to let user pick.
         RTAppChooserDialog *dialog = getAppChooserDialog();
@@ -2278,7 +2290,7 @@ bool EditorPanel::saveImmediately (const Glib::ustring &filename, const SaveForm
 
     int err = 0;
 
-    if (gimpPlugin) {
+    if (App::get().isGimpPlugin()) {
         err = img->saveAsTIFF (filename, 32, true, true);
     } else if (sf.format == "tif") {
         err = img->saveAsTIFF (filename, sf.tiffBits, sf.tiffFloat, sf.tiffUncompressed, sf.bigTiff);
@@ -2297,21 +2309,21 @@ bool EditorPanel::saveImmediately (const Glib::ustring &filename, const SaveForm
 
 void EditorPanel::openPreviousEditorImage()
 {
-    if (!simpleEditor && fPanel && !fname.empty()) {
+    if (!App::get().isSimpleEditor() && fPanel && !fname.empty()) {
         fPanel->fileCatalog->openNextPreviousEditorImage (fname, false, NAV_PREVIOUS);
     }
 }
 
 void EditorPanel::openNextEditorImage()
 {
-    if (!simpleEditor && fPanel && !fname.empty()) {
+    if (!App::get().isSimpleEditor() && fPanel && !fname.empty()) {
         fPanel->fileCatalog->openNextPreviousEditorImage (fname, false, NAV_NEXT);
     }
 }
 
 void EditorPanel::syncFileBrowser()   // synchronize filebrowser with image in Editor
 {
-    if (!simpleEditor && fPanel && !fname.empty()) {
+    if (!App::get().isSimpleEditor() && fPanel && !fname.empty()) {
         fPanel->fileCatalog->selectImage (fname, false);
     }
 }
@@ -2335,6 +2347,7 @@ void EditorPanel::setExternalEditorChangedSignal(ExternalEditorChangedSignal *si
 
 void EditorPanel::histogramProfile_toggled()
 {
+    auto& options = App::get().mut_options();
     options.rtSettings.HistogramWorking = toggleHistogramProfile->get_active();
     colorMgmtToolBar->updateHistogram();
 }
@@ -2345,6 +2358,7 @@ bool EditorPanel::idle_sendToGimp ( ProgressConnector<rtengine::IImagefloat*> *p
     rtengine::IImagefloat* img = pc->returnValue();
     delete pc;
 
+    const auto& options = App::get().options();
     if (img) {
         // get file name base
         Glib::ustring shortname = removeExtension(Glib::path_get_basename(fname));
@@ -2476,6 +2490,7 @@ void EditorPanel::onAppChooserDialogResponse(int responseId)
 
 void EditorPanel::updateExternalEditorSelection()
 {
+    const auto& options = App::get().options();
     int index = send_to_external->getSelected();
     if (index >= 0 && static_cast<unsigned>(index) == options.externalEditors.size()) {
         index = -1;
@@ -2815,6 +2830,7 @@ void EditorPanel::updateTPVScrollbar (bool hide)
 
 void EditorPanel::updateHistogramPosition (int oldPosition, int newPosition)
 {
+    const auto& options = App::get().options();
 
     switch (newPosition) {
         case 0:
