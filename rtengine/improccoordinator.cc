@@ -428,7 +428,8 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
             If white balance changed with inpaint opposed, because inpaint opposed depends on the white balance
         */
         // If high detail (=100%) is newly selected, do a demosaic update, since the last was just with FAST
-        int isoption = options.genemet;
+        int isoption = App::get().options().genemet;
+
         //list of little used or obsolete functions or replaced by more efficient functions... (arbitrary)
         bool issharE = params->sharpenEdge.enabled;//sharpenEdge
         bool issharMicro = params->sharpenMicro.enabled; // sharpenMicro
