@@ -815,8 +815,9 @@ void ImProcFunctions::ip_wavelet(LabImage * lab, LabImage * dst, int kall, const
 
 
     // Calculate number of tiles. If less than omp_get_max_threads(), then limit num_threads to number of tiles
-    if (options.rgbDenoiseThreadLimit > 0) {
-        maxnumberofthreadsforwavelet = rtengine::LIM(options.rgbDenoiseThreadLimit / 2, 1, maxnumberofthreadsforwavelet);
+    const auto rgbDenoiseThreadLimit = App::get().options().rgbDenoiseThreadLimit;
+    if (rgbDenoiseThreadLimit > 0) {
+        maxnumberofthreadsforwavelet = rtengine::LIM(rgbDenoiseThreadLimit / 2, 1, maxnumberofthreadsforwavelet);
     }
 
     numthreads = rtengine::min(numtiles, omp_get_max_threads());

@@ -130,6 +130,7 @@ LensProfilePanel::LensProfilePanel() :
 
     const Glib::ustring defDir = LCPStore::getInstance()->getDefaultCommonDirectory();
 
+    auto& options = App::get().mut_options();
     if (!defDir.empty()) {
 #ifdef _WIN32
         corrLcpFileChooser->set_show_hidden(true);  // ProgramData is hidden on Windows
@@ -247,7 +248,7 @@ void LensProfilePanel::read(const rtengine::procparams::ProcParams* pp, const Pa
             const Glib::ustring lastFolder = corrLcpFileChooser->get_current_folder();
             corrLcpFileChooser->set_current_folder(lastFolder);
             corrLcpFileChooser->unselect_all();
-            bindCurrentFolder(*corrLcpFileChooser, options.lastLensProfileDir);
+            bindCurrentFolder(*corrLcpFileChooser, App::get().mut_options().lastLensProfileDir);
             updateLCPDisabled(false);
         }
         else if (LCPStore::getInstance()->isValidLCPFileName(pp->lensProf.lcpFile)) {

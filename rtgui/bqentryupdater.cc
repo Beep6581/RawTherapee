@@ -28,6 +28,7 @@ namespace
 
 void thumbInterp(const unsigned char* src, int sw, int sh, unsigned char* dst, int dw, int dh)
 {
+    const auto& options = App::get().options();
 
     if (options.thumbInterp == 0) {
         rtengine::nearestInterp (src, sw, sh, dst, dw, dh);

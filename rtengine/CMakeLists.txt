@@ -99,6 +99,7 @@ set(RTENGINESOURCEFILES
     rcd_demosaic.cc
     refreshmap.cc
     rt_algo.cc
+    rtapp.cc
     rtlensfun.cc
     rtthumbnail.cc
     shmap.cc
@@ -165,7 +166,7 @@ target_include_directories(rtengine
         ${CMAKE_CURRENT_SOURCE_DIR}
 )
 # UpdateInfo creates "rtgui/version.h"
-target_include_directories(rtengine BEFORE PRIVATE ${CMAKE_BINARY_DIR})
+target_include_directories(rtengine BEFORE PUBLIC ${CMAKE_BINARY_DIR})
 
 if(EXTRA_INCDIR)
     target_include_directories(rtengine PUBLIC "${EXTRA_INCDIR}")

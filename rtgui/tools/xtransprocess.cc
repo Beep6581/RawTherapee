@@ -29,7 +29,7 @@ using namespace rtengine::procparams;
 
 const Glib::ustring XTransProcess::TOOL_NAME = "xtransprocess";
 
-XTransProcess::XTransProcess () : FoldableToolPanel(this, TOOL_NAME, M("TP_RAW_LABEL"), options.prevdemo != PD_Sidecar)
+XTransProcess::XTransProcess () : FoldableToolPanel(this, TOOL_NAME, M("TP_RAW_LABEL"), App::get().options().prevdemo != PD_Sidecar)
 {
     auto m = ProcEventMapper::getInstance();
     EvDemosaicBorder = m->newEvent(DEMOSAIC, "HISTORY_MSG_RAW_BORDER");
@@ -74,6 +74,7 @@ XTransProcess::XTransProcess () : FoldableToolPanel(this, TOOL_NAME, M("TP_RAW_L
     hb1->pack_end (*method, Gtk::PACK_EXPAND_WIDGET, 4);
     pack_start( *hb1, Gtk::PACK_SHRINK, 4);
 
+    const auto& options = App::get().options();
     dualDemosaicOptions = Gtk::manage (new Gtk::Box(Gtk::ORIENTATION_VERTICAL));
 
     dualDemosaicContrast = Gtk::manage(new Adjuster (M("TP_RAW_DUALDEMOSAICCONTRAST"), 0, 100, 1, 20));

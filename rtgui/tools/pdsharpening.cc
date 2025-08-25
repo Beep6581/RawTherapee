@@ -114,6 +114,7 @@ PdSharpening::PdSharpening() :
     dradiusOffset->setAdjusterListener(this);
     diter->setAdjusterListener(this);
 
+    const auto& options = App::get().options();
     contrast->setDelay(std::max(options.adjusterMinDelay, options.adjusterMaxDelay));
     noisecap->setDelay(std::max(options.adjusterMinDelay, options.adjusterMaxDelay));
     noisecapafter->setDelay(std::max(options.adjusterMinDelay, options.adjusterMaxDelay));

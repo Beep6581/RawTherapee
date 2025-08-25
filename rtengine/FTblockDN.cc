@@ -710,6 +710,7 @@ BENCHFUN
 
         bool memoryAllocationFailed = false;
 
+        const auto rgbDenoiseThreadLimit = App::get().options().rgbDenoiseThreadLimit;
         do {
             ++numTries;
 
@@ -719,7 +720,7 @@ BENCHFUN
 
             int numtiles_W, numtiles_H, tilewidth, tileheight, tileWskip, tileHskip;
 
-            Tile_calc(tilesize, overlap, (options.rgbDenoiseThreadLimit == 0 && !ponder) ? (numTries == 1 ? 0 : 2) : 2, imwidth, imheight, numtiles_W, numtiles_H, tilewidth, tileheight, tileWskip, tileHskip);
+            Tile_calc(tilesize, overlap, (rgbDenoiseThreadLimit == 0 && !ponder) ? (numTries == 1 ? 0 : 2) : 2, imwidth, imheight, numtiles_W, numtiles_H, tilewidth, tileheight, tileWskip, tileHskip);
             memoryAllocationFailed = false;
             const int numtiles = numtiles_W * numtiles_H;
 
@@ -783,8 +784,8 @@ BENCHFUN
             // Calculate number of tiles. If less than omp_get_max_threads(), then limit num_threads to number of tiles
             int numthreads = MIN(numtiles, omp_get_max_threads());
 
-            if (options.rgbDenoiseThreadLimit > 0) {
-                numthreads = MIN(numthreads, options.rgbDenoiseThreadLimit);
+            if (rgbDenoiseThreadLimit > 0) {
+                numthreads = MIN(numthreads, rgbDenoiseThreadLimit);
             }
 
 #ifdef _OPENMP
@@ -797,8 +798,8 @@ BENCHFUN
                 omp_set_nested(true);
             }
 
-            if (options.rgbDenoiseThreadLimit > 0)
-                while (denoiseNestedLevels * numthreads > options.rgbDenoiseThreadLimit) {
+            if (rgbDenoiseThreadLimit > 0)
+                while (denoiseNestedLevels * numthreads > rgbDenoiseThreadLimit) {
                     denoiseNestedLevels--;
                 }
 
@@ -1764,7 +1765,7 @@ BENCHFUN
                 fftwf_destroy_plan(plan_forward_blox[1]);
                 fftwf_destroy_plan(plan_backward_blox[1]);
             }
-        } while (memoryAllocationFailed && numTries < 2 && (options.rgbDenoiseThreadLimit == 0) && !ponder);
+        } while (memoryAllocationFailed && numTries < 2 && (rgbDenoiseThreadLimit == 0) && !ponder);
 
         if (memoryAllocationFailed) {
             printf("tiled denoise failed due to isufficient memory. Output is not denoised!\n");

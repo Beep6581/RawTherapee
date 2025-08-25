@@ -58,7 +58,7 @@ public:
         listener = l;
     }
 
-    void        init            (SaveFormat& sf);
+    void        init            (const SaveFormat& sf);
     SaveFormat  getFormat       ();
 
     void        formatChanged   ();

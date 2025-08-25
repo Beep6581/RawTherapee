@@ -125,7 +125,7 @@ SaveFormatPanel::SaveFormatPanel () : listener (nullptr)
 
 SaveFormatPanel::~SaveFormatPanel () = default;
 
-void SaveFormatPanel::init (SaveFormat &sf)
+void SaveFormatPanel::init (const SaveFormat &sf)
 {
     FormatChangeListener* const tmp = listener;
     listener = nullptr;
