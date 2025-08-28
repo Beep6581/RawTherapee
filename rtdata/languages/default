@@ -2869,7 +2869,7 @@ TP_ICM_INPUTNONE_TOOLTIP;Use no input color profile at all.\nUse only in special
 TP_ICM_INPUTPROFILE;Input Profile
 TP_ICM_LABEL;Color Management
 TP_ICM_LABGRID_CIEXY;R(x)=%1 R(y)=%2\nG(x)=%3 G(y)=%4\nB(x)=%5 B(y)=%6
-TP_ICM_NEUTRAL;Reset
+TP_ICM_NEUTRAL;Reset Primaries & Illuminant
 TP_ICM_NOICM;No ICM: sRGB Output
 TP_ICM_OPACITYWLI;Variable contrast
 TP_ICM_OUTPUTPROFILE;Output Profile
