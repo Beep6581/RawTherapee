@@ -21857,7 +21857,7 @@ void ImProcFunctions::Lab_Local(
                                         setUnlessOOG(gg, gCurve[gg]);
                                     }
                                     if (bCurve) {
-                                        setUnlessOOG(bb, bCurve[gg]);
+                                        setUnlessOOG(bb, bCurve[bb]);
                                     }
                                     tmpImage->r(i, j) = rr;
                                     tmpImage->g(i, j) = gg;
@@ -22058,7 +22058,7 @@ void ImProcFunctions::Lab_Local(
                                         setUnlessOOG(gg, gCurve[gg]);
                                     }
                                     if (bCurve) {                                   
-                                        setUnlessOOG(bb, bCurve[gg]);
+                                        setUnlessOOG(bb, bCurve[bb]);
                                     }
                                     tmpImage->r(i, j) = rr;
                                     tmpImage->g(i, j) = gg;

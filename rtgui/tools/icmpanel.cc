@@ -294,8 +294,6 @@ ICMPanel::ICMPanel() : FoldableToolPanel(this, TOOL_NAME, M("TP_ICM_LABEL")), iu
     wSlope->show();
     trcProfVBox->pack_start(*wmidtcie, Gtk::PACK_SHRINK);
     wmidtcie->show();
-  //  trcProfVBox->pack_start(*wsmoothcie, Gtk::PACK_SHRINK);
-  //  wsmoothcie->show();
     trcProfVBox->pack_start(*wsmoothciesli, Gtk::PACK_SHRINK);
     wsmoothciesli->show();
     
@@ -719,24 +717,6 @@ void ICMPanel::neutral_pressed ()
         wprim->set_active(toUnderlying(ColorManagementParams::Primaries::BEST_RGB));
     }
     const ColorManagementParams defPar;
-  //  wGamma->setValue(defPar.workingTRCGamma);//2.4
-  //  wSlope->setValue(defPar.workingTRCSlope);//12.92
-  /*
-    wGamma->setValue(defPar.wGamma);//2.4
-    wSlope->setValue(defPar.wSlope);//12.92
-    wmidtcie->setValue(defPar.wmidtcie);
-    wsmoothciesli->setValue(defPar.wsmoothciesli);
-    sigmatrc->setValue(defPar.sigmatrc);
-    offstrc->setValue(defPar.offstrc);
-    residtrc->setValue(defPar.residtrc);
-    pyrwavtrc->setValue(defPar.pyrwavtrc);
-    preser->setValue(defPar.preser);
-    fbw->set_active(defPar.fbw);
-    gamut->set_active(defPar.gamut);	
-    wsmoothcie->set_active(defPar.wsmoothcie);
- */	
- //  wTRC->set_active(toUnderlying(ColorManagementParams::WorkingTrc::NONE));//reset to none
- //   will->set_active(toUnderlying(ColorManagementParams::Illuminant::DEFAULT));//reset to default - after wprim
 }
 
 void ICMPanel::updateRenderingIntent(const Glib::ustring &profile)

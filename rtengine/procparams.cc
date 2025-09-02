@@ -10965,7 +10965,6 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
             assignFromKeyfile(keyFile, "Color Management", "WorkingTRCGamma", icm.wGamma, pedited->icm.wGamma);
             assignFromKeyfile(keyFile, "Color Management", "Wmidtcie", icm.wmidtcie, pedited->icm.wmidtcie);
             assignFromKeyfile(keyFile, "Color Management", "Wsmoothcie", icm.wsmoothcie, pedited->icm.wsmoothcie);
-            assignFromKeyfile(keyFile, "Color Management", "Wsmoothciesli", icm.wsmoothciesli, pedited->icm.wsmoothciesli);
             if (ppVersion >= 353) {
                 assignFromKeyfile(keyFile, "Color Management", "Wsmoothciesli", icm.wsmoothciesli, pedited->icm.wsmoothciesli);
             } else {
