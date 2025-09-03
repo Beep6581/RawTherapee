@@ -94,6 +94,16 @@ struct Profiling {
         BIG_O  = tracy::Color::LimeGreen,
         IO     = tracy::Color::Blue,
         FICKLE = tracy::Color::Magenta,
+#else
+        IDLE   = 0x696969,
+        WAIT   = 0xdc143c,
+        SLEEP  = 0xff6347,
+        LOCK   = 0xff7f50,
+        MEMORY = 0xdaa520,
+        SYSTEM = 0xffd700,
+        BIG_O  = 0x32cd32,
+        IO     = 0x0000ff,
+        FICKLE = 0xff00ff,
 #endif // TRACY_ENABLE
     };
 };
