@@ -210,6 +210,8 @@ cmake_dependent_option(WITH_TRACY_ONLY_LOCALHOST "Set TRACY_ONLY_LOCALHOST"
                        ON "WITH_TRACY_PROFILER" ON)
 cmake_dependent_option(WITH_TRACY_NO_BROADCAST "Set TRACY_NO_BROADCAST"
                        ON "WITH_TRACY_PROFILER" ON)
+cmake_dependent_option(WITH_TRACY_MEMORY_PROFILING "Add memory profiling hooks for Tracy"
+                       OFF "WITH_TRACY_PROFILER" OFF)
 
 option(
     STRICT_MUTEX

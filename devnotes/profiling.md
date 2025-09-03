@@ -55,7 +55,8 @@ Basic setup/usage for RawTherapee is provided below.
 ### Setup
 
 To enable profiling with Tracy, configure CMake with
-`-DWITH_TRACY_PROFILER="ON"`.
+`-DWITH_TRACY_PROFILER="ON"`. To additionally enable memory profiling,
+also include `-DWITH_TRACY_MEMORY_PROFILING=ON`.
 
 To view the profiling data, you also need to acquire the Tracy profiling
 server/GUI. The version of the server should match the version of the client
