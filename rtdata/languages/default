@@ -1524,7 +1524,8 @@ HISTORY_MSG_LOCAL_CIE_GREXL;Local - CIECAM Green X
 HISTORY_MSG_LOCAL_CIE_GREYL;Local - CIECAM Green Y
 HISTORY_MSG_LOCAL_CIE_ILL;Local - CIECAM TRC Illuminant
 HISTORY_MSG_LOCAL_CIE_LOGCIEQ;Local - CIECAM Log encoding Q
-HISTORY_MSG_LOCAL_CIE_MIDT;Local - CIECAM Mid Tones
+HISTORY_MSG_LOCAL_CIE_MIDT;Local - CIECAM Midtones
+HISTORY_MSG_LOCAL_CIE_MIDTMET;Local - CIECAM Midtones Method
 HISTORY_MSG_LOCAL_CIE_NORM11;Local - CIECAM Normalize luminance 5.11
 HISTORY_MSG_LOCAL_CIE_PRIM;Local - CIECAM TRC primaries
 HISTORY_MSG_LOCAL_CIE_REDXL;Local - CIECAM Red X
@@ -3578,7 +3579,11 @@ TP_LOCALLAB_MERTHR;Difference
 TP_LOCALLAB_MERTWE;Exclusion
 TP_LOCALLAB_MERTWO;Subtract
 TP_LOCALLAB_METHOD_TOOLTIP;'Enhanced + chroma denoise' significantly increases processing times.\nBut reduce artifacts.
-TP_LOCALLAB_MIDTCIE;Midtones
+TP_LOCALLAB_MIDTCIE;Value
+TP_LOCALLAB_MIDTCIEFRA;Midtones
+TP_LOCALLAB_MIDTCIEM1;Before Gamma & Slope
+TP_LOCALLAB_MIDTCIEM2;After Gamma & Slope
+TP_LOCALLAB_MIDTCIEM3;After CAM16
 TP_LOCALLAB_MLABEL;Restored data Min=%1 Max=%2
 TP_LOCALLAB_MLABEL_TOOLTIP;The values should be close to Min=0 Max=32768 (log mode) but other values are possible.You can adjust 'Clip restored data (gain)' and 'Offset' to normalize.\nRecovers image data without blending.
 TP_LOCALLAB_MODE_EXPERT;Advanced

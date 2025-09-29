@@ -1155,6 +1155,7 @@ public:
         bool kslopesmor;
         bool kslopesmog;
         bool kslopesmob;
+        bool midtciemet;
         bool midtcie;
         bool redxl;
         bool redyl;

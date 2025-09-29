@@ -2032,6 +2032,7 @@ void ParamsEdited::initFrom(const std::vector<rtengine::procparams::ProcParams>&
                 locallab.spots.at(j).kslopesmor = locallab.spots.at(j).kslopesmor && pSpot.kslopesmor == otherSpot.kslopesmor;
                 locallab.spots.at(j).kslopesmog = locallab.spots.at(j).kslopesmog && pSpot.kslopesmog == otherSpot.kslopesmog;
                 locallab.spots.at(j).kslopesmob = locallab.spots.at(j).kslopesmob && pSpot.kslopesmob == otherSpot.kslopesmob;
+                locallab.spots.at(j).midtciemet = locallab.spots.at(j).midtciemet && pSpot.midtciemet == otherSpot.midtciemet;
                 locallab.spots.at(j).midtcie = locallab.spots.at(j).midtcie && pSpot.midtcie == otherSpot.midtcie;
                 locallab.spots.at(j).grexl = locallab.spots.at(j).grexl && pSpot.grexl == otherSpot.grexl;
                 locallab.spots.at(j).greyl = locallab.spots.at(j).greyl && pSpot.greyl == otherSpot.greyl;
@@ -6745,6 +6746,10 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
             toEdit.locallab.spots.at(i).kslopesmob = mods.locallab.spots.at(i).kslopesmob;
         }
 
+        if (locallab.spots.at(i).midtciemet) {
+            toEdit.locallab.spots.at(i).midtciemet = mods.locallab.spots.at(i).midtciemet;
+        }
+
         if (locallab.spots.at(i).midtcie) {
             toEdit.locallab.spots.at(i).midtcie = mods.locallab.spots.at(i).midtcie;
         }
@@ -9155,6 +9160,7 @@ LocallabParamsEdited::LocallabSpotEdited::LocallabSpotEdited(bool v) :
     kslopesmor(v),
     kslopesmog(v),
     kslopesmob(v),
+    midtciemet(v),
     midtcie(v),
     redxl(v),
     redyl(v),
@@ -9968,6 +9974,7 @@ void LocallabParamsEdited::LocallabSpotEdited::set(bool v)
     kslopesmor = v;
     kslopesmog = v;
     kslopesmob = v;
+    midtciemet = v;
     midtcie = v;
     redxl = v;
     redyl = v;

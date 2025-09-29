@@ -1824,6 +1824,7 @@ struct LocallabParams {
         double kslopesmog;
         double kslopesmob;
         std::vector<double> invcurve;//inverse color negative
+        Glib::ustring midtciemet;
         int midtcie;
         double grexl;
         double greyl;

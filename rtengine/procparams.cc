@@ -5004,6 +5004,7 @@ LocallabParams::LocallabSpot::LocallabSpot() :
         1.0,
         0.0
     },
+    midtciemet("one"),
     midtcie(0),
     grexl(0.1596),
     greyl(0.8404),
@@ -5967,6 +5968,7 @@ bool LocallabParams::LocallabSpot::operator ==(const LocallabSpot& other) const
         && kslopesmor == other.kslopesmor
         && kslopesmog == other.kslopesmog
         && kslopesmob == other.kslopesmob
+        && midtciemet == other.midtciemet
         && midtcie == other.midtcie
         && redxl == other.redxl
         && redyl == other.redyl
@@ -8005,6 +8007,7 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
                     saveToKeyfile(!pedited || spot_edited->kslopesmob, "Locallab", "kslopesmob_" + index_str, spot.kslopesmob, keyFile);
                     saveToKeyfile(!pedited || spot_edited->invcurve, "Locallab", "invcurve_" + index_str, spot.invcurve, keyFile);
                     
+                    saveToKeyfile(!pedited || spot_edited->midtcie, "Locallab", "midtciemet_" + index_str, spot.midtciemet, keyFile);
                     saveToKeyfile(!pedited || spot_edited->midtcie, "Locallab", "midtcie_" + index_str, spot.midtcie, keyFile);
                     saveToKeyfile(!pedited || spot_edited->redxl, "Locallab", "redxl_" + index_str, spot.redxl, keyFile);
                     saveToKeyfile(!pedited || spot_edited->redyl, "Locallab", "redyl_" + index_str, spot.redyl, keyFile);
@@ -10584,6 +10587,7 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
                 assignFromKeyfile(keyFile, "Locallab", "slopesmoq_" + index_str, spot.slopesmoq, spotEdited.slopesmoq);
                 assignFromKeyfile(keyFile, "Locallab", "slopesmor_" + index_str, spot.slopesmor, spotEdited.slopesmor);
                 assignFromKeyfile(keyFile, "Locallab", "slopesmog_" + index_str, spot.slopesmog, spotEdited.slopesmog);
+                assignFromKeyfile(keyFile, "Locallab", "midtciemet_" + index_str, spot.midtciemet, spotEdited.midtciemet);
                 assignFromKeyfile(keyFile, "Locallab", "midtcie_" + index_str, spot.midtcie, spotEdited.midtcie);
                 assignFromKeyfile(keyFile, "Locallab", "slopesmob_" + index_str, spot.slopesmob, spotEdited.slopesmob);
                 assignFromKeyfile(keyFile, "Locallab", "kslopesmor_" + index_str, spot.kslopesmor, spotEdited.kslopesmor);

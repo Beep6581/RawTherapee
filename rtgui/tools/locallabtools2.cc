@@ -8134,6 +8134,10 @@ Locallabcie::Locallabcie():
 
     gamjcie(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SIGGAMJCIE"), 0.7, 10., 0.01, 2.4))),
     slopjcie(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SIGSLOPJCIE"), 0., 500., 0.01, 12.923))),
+    midtcieFrame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_MIDTCIEFRA")))),
+
+    midtciemet(Gtk::manage(new MyComboBoxText())),
+    
     midtcie(Gtk::manage(new Adjuster(M("TP_LOCALLAB_MIDTCIE"), -100, 100, 1, 0))),
     smoothcie(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_SMOOTHCIE_SCA")))),
     smoothcielnk(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_SMOOTHCIE_LNK")))),
@@ -8314,6 +8318,7 @@ Locallabcie::Locallabcie():
     EvlocallabbwevMethod12 = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_CIE_SIGMET");
     Evlocallabgamjcie = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_CIE_GAM");
     Evlocallabslopjcie = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_CIE_SLOP");
+    Evlocallabmidtciemet = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_CIE_MIDTMET");
     Evlocallabmidtcie = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_CIE_MIDT");
     Evlocallabcontsig = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_CIE_CONTSIG");
     Evlocallabskewsig = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_CIE_SKEWSIG");
@@ -8626,6 +8631,16 @@ Locallabcie::Locallabcie():
     logcieFrame->add(*comprBox);
     gamcieBox->pack_start(*logcieFrame);
 
+    midtcieFrame->set_label_align(0.025, 0.5);
+    ToolParamBlock* const ciemetBox = Gtk::manage(new ToolParamBlock());
+
+    midtciemet->append(M("TP_LOCALLAB_MIDTCIEM1"));
+    midtciemet->append(M("TP_LOCALLAB_MIDTCIEM2"));
+    midtciemet->append(M("TP_LOCALLAB_MIDTCIEM3"));
+    midtciemet->set_active(0);
+    
+    midtciemetConn = midtciemet->signal_changed().connect(sigc::mem_fun(*this, &Locallabcie::midtciemetChanged));
+
     ToolParamBlock* const trccieBox = Gtk::manage(new ToolParamBlock());
     ToolParamBlock* const smoothcieBox = Gtk::manage(new ToolParamBlock());
     ToolParamBlock* const primillBox = Gtk::manage(new ToolParamBlock());
@@ -8633,7 +8648,11 @@ Locallabcie::Locallabcie():
 
     trccieBox->pack_start(*gamjcie);
     trccieBox->pack_start(*slopjcie);
-    trccieBox->pack_start(*midtcie);
+    ciemetBox->pack_start(*midtciemet);  
+    ciemetBox->pack_start(*midtcie);
+    midtcieFrame->add(*ciemetBox);
+    trccieBox->pack_start(*midtcieFrame);
+    
 
     smoothBox->pack_start(*smoothciemet, Gtk::PACK_EXPAND_WIDGET);
     smoothciemet->append(M("TP_LOCALLAB_CIE_SMOOTH_NONE"));
@@ -9675,6 +9694,7 @@ void Locallabcie::disableListener()
     modeQJconn.block(true);
     bwevMethod12Conn.block(true);
     bwevMethodConn.block(true);
+    midtciemetConn.block(true);
     toneMethodcieConn.block(true);
     toneMethodcieConn2.block(true);
     showmaskcieMethodConn.block(true);
@@ -9727,6 +9747,7 @@ void Locallabcie::enableListener()
     modeQJconn.block(false);
     bwevMethod12Conn.block(false);
     bwevMethodConn.block(false);
+    midtciemetConn.block(false);
     toneMethodcieConn.block(false);
     toneMethodcieConn2.block(false);
     showmaskcieMethodConn.block(false);
@@ -10076,6 +10097,7 @@ void Locallabcie::read(const rtengine::procparams::ProcParams* pp, const ParamsE
         sursourcieChanged();
         bwevMethod12Changed();
         bwevMethodChanged();
+        midtciemetChanged();
         normcie12Changed();
         normcieChanged();
         expprecamChanged();
@@ -10110,6 +10132,14 @@ void Locallabcie::read(const rtengine::procparams::ProcParams* pp, const ParamsE
             bwevMethod->set_active(0);
         } else if (spot.bwevMethod == "sig") {
             bwevMethod->set_active(1);
+        }
+
+        if (spot.midtciemet == "one") {
+            midtciemet->set_active(0);
+        } else if (spot.midtciemet == "two") {
+            midtciemet->set_active(1);
+        } else if (spot.midtciemet == "thr") {
+            midtciemet->set_active(2);
         }
 
         if (spot.sursourcie == "Average") {
@@ -10418,6 +10448,13 @@ void Locallabcie::write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedi
             spot.bwevMethod = "sig";
         }
 
+        if (midtciemet->get_active_row_number() == 0) {
+            spot.midtciemet = "one";
+        } else if (midtciemet->get_active_row_number() == 1) {
+            spot.midtciemet = "two";
+        } else if (midtciemet->get_active_row_number() == 2) {
+            spot.midtciemet = "thr";
+        }
 
         if (smoothciemet->get_active_row_number() == 0) {
             spot.smoothciemet = "none";
@@ -11860,6 +11897,17 @@ void Locallabcie::bwevMethodChanged()
     }
 }
 
+void Locallabcie::midtciemetChanged()
+{
+    const LocallabParams::LocallabSpot defSpot;
+    
+    if (isLocActivated && exp->getEnabled()) {
+        if (listener) {
+            listener->panelChanged(Evlocallabmidtciemet,
+                                   midtciemet->get_active_text());
+        }
+    }
+}
 
 
 

@@ -916,6 +916,7 @@ struct local_params {
     int detailsh;
     int whitescie;
     int midtcie;
+    int midtmet;
     double tePivot;
     float threshol;
     float chromacb;
@@ -1110,6 +1111,15 @@ static void calcLocalParams(int sp, int oW, int oH, const LocallabParams& locall
         lp.gridmet = 0;
     } else if (locallab.spots.at(sp).gridMethod == "two") {
         lp.gridmet = 1;
+    }
+
+
+    if (locallab.spots.at(sp).midtciemet == "one") {
+        lp.midtmet = 0;
+    } else if (locallab.spots.at(sp).midtciemet == "two") {
+        lp.midtmet = 1;
+    } else if (locallab.spots.at(sp).midtciemet == "thr") {
+        lp.midtmet = 2;
     }
 
     /*
@@ -21571,8 +21581,6 @@ void ImProcFunctions::Lab_Local(
                         {wprof[1][0], wprof[1][1], wprof[1][2]},
                         {wprof[2][0], wprof[2][1], wprof[2][2]}
                     };
-    
-    
                     Imagefloat *tmpImage = nullptr;
                     tmpImage = new Imagefloat(bfw, bfh);
                     Imagefloat *tmpImagelog = nullptr;
@@ -21684,16 +21692,17 @@ void ImProcFunctions::Lab_Local(
                     bool gamcie = params->locallab.spots.at(sp).gamutcie;
                     float rx, ry, gx, gy, bx, by = 0.f;
                     float mx, my, mxe, mye = 0.f;
-                    if(lp.midtcie != 0) {
+                    
+                    if(lp.midtcie != 0 && lp.midtmet == 0) {
                         ImProcFunctions::tone_eqcam(this, tmpImage, lp.midtcie, params->icm.workingProfile, sk, multiThread);
                     }
 
                     workingtrc(sp, tmpImage, tmpImage, bfw, bfh, -5, prof, 2.4, 12.92310, 0, ill, 0, 0, rx, ry, gx, gy, bx, by, mx, my, mxe, mye, dummy, true, false, false, false);
                     workingtrc(sp, tmpImage, tmpImage, bfw, bfh, typ, prof, gamtone, slotone, catx, ill, prim, locprim, rdx, rdy, grx, gry, blx, bly, meanx, meany, meanxe, meanye, dummy, false, true, true, gamcie);//with gamut control
 
-                  //  if(lp.midtcie != 0) {
-                  //      ImProcFunctions::tone_eqcam(this, tmpImage, lp.midtcie, params->icm.workingProfile, sk, multiThread);
-                  //  }
+                    if(lp.midtcie != 0 && lp.midtmet == 1) {
+                        ImProcFunctions::tone_eqcam(this, tmpImage, lp.midtcie, params->icm.workingProfile, sk, multiThread);
+                    }
                     
                     tmpImage->copyData(tmpImagelog);
 
@@ -22079,6 +22088,19 @@ void ImProcFunctions::Lab_Local(
                 if (params->locallab.spots.at(sp).expcie) {
                         ImProcFunctions::ciecamloc_02float(lp, sp, bufexpfin.get(), bfw, bfh, 0, sk, cielocalcurve, localcieutili, cielocalcurve2, localcieutili2, jzlocalcurve, localjzutili, czlocalcurve, localczutili, czjzlocalcurve, localczjzutili, locchCurvejz, lochhCurvejz, loclhCurvejz, HHcurvejz, CHcurvejz, LHcurvejz, locwavCurvejz, locwavutilijz, maxicam, contsig, lightsig);
                 }
+                
+                if(lp.midtcie != 0 && lp.midtmet == 2) {
+                    Imagefloat *tmpImageaft = nullptr;
+                    tmpImageaft = new Imagefloat(bfw, bfh);
+                    
+                    lab2rgb(*bufexpfin, *tmpImageaft, params->icm.workingProfile);
+                    ImProcFunctions::tone_eqcam(this, tmpImageaft, lp.midtcie, params->icm.workingProfile, sk, multiThread);
+                    
+                    rgb2lab(*tmpImageaft, *bufexpfin, params->icm.workingProfile);
+
+                    delete tmpImageaft;
+                }
+                
             }
             
             if (lp.strgradcie != 0.f) {
