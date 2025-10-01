@@ -3063,6 +3063,7 @@ TP_LOCALLAB_BUTTON_DEL;Delete
 TP_LOCALLAB_BUTTON_DUPL;Duplicate
 TP_LOCALLAB_BUTTON_REN;Rename
 TP_LOCALLAB_BUTTON_VIS;Show/Hide
+TP_LOCALLAB_BWCIE_TOOLTIP;Only usable in Global mode or if Scope is set to 100.\nThis ‘Black and White’ option allows you to better adjust all the sliders (gamma, slope) and especially the 'Tone Mapping Operators', particularly for controlling low and high lights, because on the histogram you only see the resulting luminance.
 TP_LOCALLAB_BWEVNONE;None
 TP_LOCALLAB_BWEVNONE11;None
 TP_LOCALLAB_BWEVSIG;Sigmoid

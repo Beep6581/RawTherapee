@@ -9486,6 +9486,7 @@ void Locallabcie::updateAdviceTooltips(const bool showTooltips)
         qtoj->set_tooltip_text(M("TP_LOCALLAB_JZQTOJ_TOOLTIP"));
         logcie->set_tooltip_text(M("TP_LOCALLAB_LOGCIE_TOOLTIP"));
         smoothcie->set_tooltip_text(M("TP_LOCALLAB_SMOOTHCIE_TOOLTIP"));
+        bwcie->set_tooltip_text(M("TP_LOCALLAB_BWCIE_TOOLTIP"));
         slopesmo->set_tooltip_text(M("TP_LOCALLAB_SMOOTHCIE_TOOLTIP"));
  //       smoothciemet->set_tooltip_text(M("TP_LOCALLAB_SMOOTHCIE_TOOLTIP"));
         modecam->set_tooltip_text(M("TP_LOCALLAB_JZMODECAM_TOOLTIP"));
@@ -9633,6 +9634,7 @@ void Locallabcie::updateAdviceTooltips(const bool showTooltips)
         smoothcie->set_tooltip_text("");
         slopesmo->set_tooltip_text("");
         smoothFrame->set_tooltip_text("");
+        bwcie->set_tooltip_text("");
 
        // smoothciemet->set_tooltip_text("");
         whitescie->set_tooltip_text("");
