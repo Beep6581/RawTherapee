@@ -21583,6 +21583,8 @@ void ImProcFunctions::Lab_Local(
                     };
                     Imagefloat *tmpImage = nullptr;
                     tmpImage = new Imagefloat(bfw, bfh);
+                    Imagefloat *tmpImage2 = nullptr;
+                    tmpImage2 = new Imagefloat(bfw, bfh);
                     Imagefloat *tmpImagelog = nullptr;
                     tmpImagelog = new Imagefloat(bfw, bfh);
                     
@@ -21686,6 +21688,7 @@ void ImProcFunctions::Lab_Local(
                     } else if (params->locallab.spots.at(sp).catMethod == "xyz") {
                         catx = 4;
                     }
+                    tmpImage->copyData(tmpImage2);
 
                     params->locallab.spots.at(sp).catMethod;
                     int locprim = 1;
@@ -21700,6 +21703,10 @@ void ImProcFunctions::Lab_Local(
                     workingtrc(sp, tmpImage, tmpImage, bfw, bfh, -5, prof, 2.4, 12.92310, 0, ill, 0, 0, rx, ry, gx, gy, bx, by, mx, my, mxe, mye, dummy, true, false, false, false);
                     workingtrc(sp, tmpImage, tmpImage, bfw, bfh, typ, prof, gamtone, slotone, catx, ill, prim, locprim, rdx, rdy, grx, gry, blx, bly, meanx, meany, meanxe, meanye, dummy, false, true, true, gamcie);//with gamut control
 
+                    if (params->locallab.spots.at(sp).apsatur) {//saturation
+                        ImProcFunctions::apsatur(sp, tmpImage, tmpImage2, bfw, bfh) ;
+                    }
+ 
                     if(lp.midtcie != 0 && lp.midtmet == 1) {
                         ImProcFunctions::tone_eqcam(this, tmpImage, lp.midtcie, params->icm.workingProfile, sk, multiThread);
                     }
@@ -22082,6 +22089,7 @@ void ImProcFunctions::Lab_Local(
                     rgb2lab(*tmpImage, *bufexpfin, params->icm.workingProfile);
 
                     delete tmpImage;
+                    delete tmpImage2;
                     delete tmpImagelog;
                 }
 
@@ -22181,6 +22189,7 @@ void ImProcFunctions::Lab_Local(
 
                     ImProcFunctions::localContrast(bufexpfin.get(), bufexpfin->L, localContrastParams, fftwlc, sk);
             }
+            
             if (params->locallab.spots.at(sp).bwcie) {
 #ifdef _OPENMP
                     #pragma omp parallel for schedule(dynamic,16) if (multiThread)

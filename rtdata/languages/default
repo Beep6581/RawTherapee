@@ -1507,6 +1507,7 @@ HISTORY_MSG_LOCAL_CIEMASK_STRU_TOOL;Local - CIECAM Mask structure as tool
 HISTORY_MSG_LOCAL_CIEMASK_WLC;Local - CIECAM Mask wavelet L(L)
 HISTORY_MSG_LOCAL_CIEMASK_WLEV;Local - CIECAM Mask wavelet levels
 HISTORY_MSG_LOCAL_CIE_ANGGRAD;Local - CIECAM Gradient angle
+HISTORY_MSG_LOCAL_CIE_APSATUR;Local - CIECAM Saturation
 HISTORY_MSG_LOCAL_CIE_BLACKS;Local - CIECAM Blacks distribution
 HISTORY_MSG_LOCAL_CIE_BLUXL;Local - CIECAM Blue X
 HISTORY_MSG_LOCAL_CIE_BLUYL;Local - CIECAM Blue Y
@@ -3014,6 +3015,7 @@ TP_LOCALLAB_ACTIV;Luminance only
 TP_LOCALLAB_ACTIVSPOT;Enable Spot
 TP_LOCALLAB_ADJ;Equalizer Color
 TP_LOCALLAB_AMOUNT;Amount
+TP_LOCALLAB_APSATUR;Saturation
 TP_LOCALLAB_ARTIF;ΔE Shape detection
 TP_LOCALLAB_ARTIF_TOOLTIP;ΔE scope threshold increases the range of ΔE scope. High values are for very wide gamut images.\nIncreasing ΔE decay can improve shape detection, but can also reduce the scope.
 TP_LOCALLAB_AUTOGRAY;Auto mean luminance (Yb%)

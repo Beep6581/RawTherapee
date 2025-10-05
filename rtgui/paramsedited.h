@@ -1065,6 +1065,7 @@ public:
         bool sigcie;
         bool logcie;
         bool satcie;
+        bool apsatur;
         bool logcieq;
         bool smoothcie;
         bool smoothcietrc;
