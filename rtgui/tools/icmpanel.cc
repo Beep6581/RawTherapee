@@ -77,6 +77,7 @@ ICMPanel::ICMPanel() : FoldableToolPanel(this, TOOL_NAME, M("TP_ICM_LABEL")), iu
     EvICMshifty = m->newEvent(LUMINANCECURVE, "HISTORY_MSG_ICM_SHIFTY");
     EvICMwmidtcie = m->newEvent(LUMINANCECURVE, "HISTORY_MSG_ICM_MIDTCIE");
     EvICMwsmoothcie = m->newEvent(LUMINANCECURVE, "HISTORY_MSG_ICM_SMOOTHCIE");
+    EvICMwapsatur = m->newEvent(LUMINANCECURVE, "HISTORY_MSG_ICM_APSATUR");
     EvICMwsmoothciesli = m->newEvent(LUMINANCECURVE, "HISTORY_MSG_ICM_SMOOTHCIESLI");
     EvICMsigmatrc = m->newEvent(LUMINANCECURVE, "HISTORY_MSG_ICM_SIGMATRC");
     EvICMoffstrc = m->newEvent(LUMINANCECURVE, "HISTORY_MSG_ICM_OFFSTRC");
@@ -266,7 +267,8 @@ ICMPanel::ICMPanel() : FoldableToolPanel(this, TOOL_NAME, M("TP_ICM_LABEL")), iu
 
     wGamma = Gtk::manage(new Adjuster(M("TP_ICM_WORKING_TRC_GAMMA"), 0.40, 20.0, 0.001, 2.4));//default sRGB
     wSlope = Gtk::manage(new Adjuster(M("TP_ICM_WORKING_TRC_SLOPE"), 0., 300., 0.01, 12.92));//defautl sRGB
-    wmidtcie = Gtk::manage(new Adjuster(M("TP_LOCALLAB_MIDTCIE"), -100., 100., 1., 0.));
+    wapsatur = Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_APSATUR")));//saturation
+    wmidtcie = Gtk::manage(new Adjuster(M("TP_LOCALLAB_MIDTCIEMAIN"), -100., 100., 1., 0.));
     wsmoothcie = Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_SMOOTHCIE")));//highlights
     wsmoothciesli = Gtk::manage(new Adjuster(M("TP_LOCALLAB_SMOOTHCIETH"), 0., 1.5, 0.1, 0.));
     trcProfVBox->pack_start(*wGamma, Gtk::PACK_SHRINK);
@@ -292,11 +294,17 @@ ICMPanel::ICMPanel() : FoldableToolPanel(this, TOOL_NAME, M("TP_ICM_LABEL")), iu
 
     trcProfVBox->pack_start(*wSlope, Gtk::PACK_SHRINK);
     wSlope->show();
+    trcProfVBox->pack_start(*wapsatur, Gtk::PACK_SHRINK);
+    wapsatur->show();
+    
     trcProfVBox->pack_start(*wmidtcie, Gtk::PACK_SHRINK);
     wmidtcie->show();
     trcProfVBox->pack_start(*wsmoothciesli, Gtk::PACK_SHRINK);
     wsmoothciesli->show();
-    
+
+    wapsaturconn = wapsatur->signal_toggled().connect(sigc::mem_fun(*this, &ICMPanel::wapsaturChanged));
+    wapsatur->set_active(true);
+   
     wsmoothcieconn = wsmoothcie->signal_toggled().connect(sigc::mem_fun(*this, &ICMPanel::wsmoothcieChanged));
     wsmoothcie->set_active(false);
 
@@ -977,6 +985,7 @@ void ICMPanel::read(const ProcParams* pp, const ParamsEdited* pedited)
     ConnectionBlocker fbwconn_(fbwconn);
     ConnectionBlocker gamutconn_(gamutconn);
     ConnectionBlocker wsmoothcieconn_(wsmoothcieconn);
+    ConnectionBlocker wapsaturconn_(wapsaturconn);
     ConnectionBlocker ipc_(ipc);
     ConnectionBlocker tcurveconn_(tcurveconn);
     ConnectionBlocker ltableconn_(ltableconn);
@@ -1040,6 +1049,7 @@ void ICMPanel::read(const ProcParams* pp, const ParamsEdited* pedited)
     wprimChanged();
     wcatChanged();
     gamutChanged();
+    wapsaturChanged();
     wsmoothcieChanged();
 
     if (pp->icm.outputProfile == ColorManagementParams::NoICMString) {
@@ -1061,6 +1071,7 @@ void ICMPanel::read(const ProcParams* pp, const ParamsEdited* pedited)
     trcExp->setEnabled(pp->icm.trcExp);
     wavExp->setEnabled(pp->icm.wavExp);
     gamut->set_active(pp->icm.gamut);
+    wapsatur->set_active(pp->icm.wapsatur);
     wsmoothcie->set_active(pp->icm.wsmoothcie);
     ckbToneCurve->set_active(pp->icm.toneCurve);
     lastToneCurve = pp->icm.toneCurve;
@@ -1101,6 +1112,7 @@ void ICMPanel::read(const ProcParams* pp, const ParamsEdited* pedited)
         wavExp->set_inconsistent(!pedited->icm.wavExp);
         gamut->set_inconsistent(!pedited->icm.gamut);
         wsmoothcie->set_inconsistent(!pedited->icm.wsmoothcie);
+        wapsatur->set_inconsistent(!pedited->icm.wapsatur);
         ckbToneCurve->set_inconsistent(!pedited->icm.toneCurve);
         ckbApplyLookTable->set_inconsistent(!pedited->icm.applyLookTable);
         ckbApplyBaselineExposureOffset->set_inconsistent(!pedited->icm.applyBaselineExposureOffset);
@@ -1510,6 +1522,7 @@ void ICMPanel::write(ProcParams* pp, ParamsEdited* pedited)
     pp->icm.wavExp = wavExp->getEnabled();
     pp->icm.gamut = gamut->get_active();
     pp->icm.wsmoothcie = wsmoothcie->get_active();
+    pp->icm.wapsatur = wapsatur->get_active();
  //   pp->icm.workingTRCGamma =  wGamma->getValue();
  //   pp->icm.workingTRCSlope =  wSlope->getValue();
     pp->icm.wGamma =  wGamma->getValue();
@@ -1544,6 +1557,7 @@ void ICMPanel::write(ProcParams* pp, ParamsEdited* pedited)
         pedited->icm.trcExp = !trcExp->get_inconsistent();
         pedited->icm.wavExp = !wavExp->get_inconsistent();
         pedited->icm.gamut = !gamut->get_inconsistent();
+        pedited->icm.wapsatur = !wapsatur->get_inconsistent();
         pedited->icm.wsmoothcie = !wsmoothcie->get_inconsistent();
         pedited->icm.dcpIlluminant = dcpIll->get_active_text() != M("GENERAL_UNCHANGED");
         pedited->icm.toneCurve = !ckbToneCurve->get_inconsistent();
@@ -2654,6 +2668,35 @@ void ICMPanel::gamutChanged()
         }
     }
 }
+
+void ICMPanel::wapsaturChanged()
+{
+    if (multiImage) {
+        if (wapsatur->get_inconsistent()) {
+            wapsatur->set_inconsistent(false);
+            wapsaturconn.block(true);
+            wapsatur->set_active(false);
+            wapsaturconn.block(false);
+        } else if (lastwapsatur) {
+            wapsatur->set_inconsistent(true);
+        }
+
+        lastwapsatur = wapsatur->get_active();
+    }
+    
+    
+    if (listener) {
+        if (wapsatur->get_inconsistent()) {
+            listener->panelChanged(EvICMwapsatur, M("GENERAL_UNCHANGED"));
+        } else if (wapsatur->get_active()) {
+            listener->panelChanged(EvICMwapsatur, M("GENERAL_ENABLED"));
+        } else {
+            listener->panelChanged(EvICMwapsatur, M("GENERAL_DISABLED"));
+        }
+    }
+}
+
+
 
 void ICMPanel::wsmoothcieChanged()
 {

@@ -2692,6 +2692,7 @@ ColorManagementParams::ColorManagementParams() :
         0.35,
         0.35
     },
+    wapsatur(true),
     wsmoothcie(false),
     wsmoothciesli(0.),
     redx(0.7347),
@@ -2747,6 +2748,7 @@ bool ColorManagementParams::operator ==(const ColorManagementParams& other) cons
         && pyrwavtrc == other.pyrwavtrc
 		&& residtrc == other.residtrc
         && opacityCurveWLI == other.opacityCurveWLI
+        && wapsatur == other.wapsatur
         && wsmoothcie == other.wsmoothcie
         && wsmoothciesli == other.wsmoothciesli
         && redx == other.redx
@@ -8242,6 +8244,7 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
         saveToKeyfile(!pedited || pedited->icm.residtrc, "Color Management", "Residtrc", icm.residtrc, keyFile);
         saveToKeyfile(!pedited || pedited->icm.pyrwavtrc, "Color Management", "Pyrwavtrc", icm.pyrwavtrc, keyFile);
         saveToKeyfile(!pedited || pedited->icm.wsmoothcie, "Color Management", "Wsmoothcie", icm.wsmoothcie, keyFile);
+        saveToKeyfile(!pedited || pedited->icm.wapsatur, "Color Management", "Wapsatur", icm.wapsatur, keyFile);
         saveToKeyfile(!pedited || pedited->icm.wsmoothciesli, "Color Management", "Wsmoothciesli", icm.wsmoothciesli, keyFile);
         saveToKeyfile(!pedited || pedited->icm.redx, "Color Management", "Redx", icm.redx, keyFile);
         saveToKeyfile(!pedited || pedited->icm.redy, "Color Management", "Redy", icm.redy, keyFile);
@@ -10972,6 +10975,7 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
             assignFromKeyfile(keyFile, "Color Management", "WorkingTRCSlope", icm.wSlope, pedited->icm.wSlope);
             assignFromKeyfile(keyFile, "Color Management", "WorkingTRCGamma", icm.wGamma, pedited->icm.wGamma);
             assignFromKeyfile(keyFile, "Color Management", "Wmidtcie", icm.wmidtcie, pedited->icm.wmidtcie);
+            assignFromKeyfile(keyFile, "Color Management", "Wapsatur", icm.wapsatur, pedited->icm.wapsatur);
             assignFromKeyfile(keyFile, "Color Management", "Wsmoothcie", icm.wsmoothcie, pedited->icm.wsmoothcie);
             if (ppVersion >= 353) {
                 assignFromKeyfile(keyFile, "Color Management", "Wsmoothciesli", icm.wsmoothciesli, pedited->icm.wsmoothciesli);

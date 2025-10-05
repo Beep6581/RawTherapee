@@ -1536,8 +1536,10 @@ IImage8* Thumbnail::processImage (const procparams::ProcParams& params, eSensorT
         }
 
         const std::unique_ptr<Imagefloat> tmpImage1(new Imagefloat(GW, GH));
+        const std::unique_ptr<Imagefloat> tmpImage2(new Imagefloat(GW, GH));
 
         ipf.lab2rgb(*labView, *tmpImage1, params.icm.workingProfile);
+        tmpImage1.get()->copyData(tmpImage2.get());
 
         const float gamtone = params.icm.wGamma;
         const float slotone = params.icm.wSlope;
@@ -1573,6 +1575,11 @@ IImage8* Thumbnail::processImage (const procparams::ProcParams& params, eSensorT
         float meanx, meany, meanxe, meanye = 0.f;
         ipf.workingtrc(0, tmpImage1.get(), tmpImage1.get(), GW, GH, -5, prof, 2.4, 12.92310, 0, ill, 0, 0, rdx, rdy, grx, gry, blx, bly, meanx, meany, meanxe, meanye, dummy, true, false, false);
         ipf.workingtrc(0, tmpImage1.get(), tmpImage1.get(), GW, GH, 5, prof, gamtone, slotone,0, illum, prim, locprim, rdx, rdy, grx, gry, blx, bly,meanx, meany, meanxe, meanye, dummy, false, true, true);
+        if(params.icm.wapsatur) {
+            ipf.apsatur(0, tmpImage1.get(), tmpImage2.get(), GW, GH) ;
+      
+        }
+
        /* const int midton = params.icm.wmidtcie;
            if(midton != 0) {
                 ToneEqualizerParams params;

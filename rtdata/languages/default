@@ -1457,6 +1457,7 @@ HISTORY_MSG_HLBL;Color propagation - blur
 HISTORY_MSG_HLTH;Inpaint opposed - gain threshold
 HISTORY_MSG_ICL_LABGRIDCIEXY;Cie xy
 HISTORY_MSG_ICM_AINTENT;Abstract profile intent
+HISTORY_MSG_ICM_APSATUR;Abstract profile saturation
 HISTORY_MSG_ICM_BLUX;Primaries Blue X
 HISTORY_MSG_ICM_BLUY;Primaries Blue Y
 HISTORY_MSG_ICM_CAT;Matrix adaptation
@@ -3583,6 +3584,7 @@ TP_LOCALLAB_MERTWE;Exclusion
 TP_LOCALLAB_MERTWO;Subtract
 TP_LOCALLAB_METHOD_TOOLTIP;'Enhanced + chroma denoise' significantly increases processing times.\nBut reduce artifacts.
 TP_LOCALLAB_MIDTCIE;Value
+TP_LOCALLAB_MIDTCIEMAIN;Midtones
 TP_LOCALLAB_MIDTCIEFRA;Midtones
 TP_LOCALLAB_MIDTCIEM1;Before Gamma & Slope
 TP_LOCALLAB_MIDTCIEM2;After Gamma & Slope
