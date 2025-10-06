@@ -4948,6 +4948,7 @@ void LocallabShadow::read(const rtengine::procparams::ProcParams* pp, const Para
     // Disable all listeners
     disableListener();
     nbmasksh = 0;
+    nbwb = 0;//initialize count White and black point
     // Update GUI to selected spot value
     const int index = pp->locallab.selspot;
 
@@ -5559,21 +5560,22 @@ void LocallabShadow::updateghsbw2(double ghsb, double ghsw, bool ghsaut)//auto G
     [this, ghsb, ghsw, ghsaut]() -> bool {
         GThreadLock lock; // All GUI access from idle_add callbacks or separate thread HAVE to be protected
         if(ghsaut) {
-            
-            if (ghsw != ghs_HLP->getValue()) {
-                disableListener();
-                ghs_HLP->setValue(ghsw);
-                enableListener();
-                listener->panelChanged (Evlocallabghs_HLP,ghs_HLP->getTextValue());
-            }
+            nbwb++;
+            if(nbwb < 2) {
+                if (ghsw != ghs_HLP->getValue()) {
+                    disableListener();
+                    ghs_HLP->setValue(ghsw);
+                    enableListener();
+                    listener->panelChanged (Evlocallabghs_HLP,ghs_HLP->getTextValue());
+                }
 
-            if (ghsb != ghs_BLP->getValue()) {
-                disableListener();
-                ghs_BLP->setValue(ghsb);
-                enableListener();
-                listener->panelChanged (Evlocallabghs_BLP,ghs_BLP->getTextValue());
-            }                 
-            
+                if (ghsb != ghs_BLP->getValue()) {
+                    disableListener();
+                    ghs_BLP->setValue(ghsb);
+                    enableListener();
+                    listener->panelChanged (Evlocallabghs_BLP,ghs_BLP->getTextValue());
+                }                 
+            }
         }
         return false;
     }
@@ -5928,6 +5930,7 @@ void LocallabShadow::ghs_autobwChanged()
     if (isLocActivated && exp->getEnabled()) {
         if (listener) {
             if (ghs_autobw->get_active()) {
+                nbwb = 0;//initialize count for white point and black point
                 listener->panelChanged(Evlocallabghs_autobw,
                                        M("GENERAL_ENABLED") + " (" + escapeHtmlChars(getSpotName()) + ")");
             } else {
