@@ -1940,7 +1940,8 @@ void BackBuffer::copySurface(BackBuffer *destBackBuffer, Gdk::Rectangle *destRec
 /*
  * Copy the BackBuffer to another Cairo::Surface
  */
-void BackBuffer::copySurface(Cairo::RefPtr<Cairo::ImageSurface> destSurface, Gdk::Rectangle *destRectangle)
+void BackBuffer::copySurface(const Cairo::RefPtr<Cairo::ImageSurface>& destSurface,
+                             Gdk::Rectangle *destRectangle)
 {
     if (surface && destSurface) {
         // compute the source offset
@@ -1972,7 +1973,8 @@ void BackBuffer::copySurface(Cairo::RefPtr<Cairo::ImageSurface> destSurface, Gdk
 /*
  * Copy the BackBuffer to another Cairo::Surface
  */
-void BackBuffer::copySurface(Cairo::RefPtr<Cairo::Context> crDest, Gdk::Rectangle *destRectangle)
+void BackBuffer::copySurface(const Cairo::RefPtr<Cairo::Context>& crDest,
+                             Gdk::Rectangle *destRectangle)
 {
     if (surface && crDest) {
         // compute the source offset

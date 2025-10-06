@@ -1325,19 +1325,38 @@ void Locallab::maiChanged(const std::vector<locallabsetLC> &setlc, int selspot)
     }
 }
 
-void Locallab::ghsbwChanged(const std::vector<locallabshGHSbw> &shghsbw, int selspot)
+void Locallab::ghsbw2Changed(const std::vector<locallabshGHSbw2> &shghsbw2, int selspot) //update sliders black and white point if auto
+{
+    sh_ghsbw2 = shghsbw2;
+    double bwvalueslider[2] = {0., 1.};
+    bool ghsaut = true;
+
+    if (selspot < (int) sh_ghsbw2.size()) {
+        for(int i=0; i < 2; i++) {
+            bwvalueslider[i] = sh_ghsbw2.at(selspot).ghsbw_slider[i];        
+        }
+        ghsaut = sh_ghsbw2.at(selspot).ghs_auto;
+        expshadhigh.updateghsbw2(bwvalueslider[0], bwvalueslider[1], ghsaut);
+    }
+
+   
+}
+
+
+void Locallab::ghsbwChanged(const std::vector<locallabshGHSbw> &shghsbw, int selspot) // info black and white point
 {
     sh_ghsbw = shghsbw;
     int bw[2] = {0, 1};
     double bwvalue[2] = {0., 1.};
+    double symev = 0.;
     
     if (selspot < (int) sh_ghsbw.size()) {
         for(int i=0; i < 2; i++) {
             bw[i] = sh_ghsbw.at(selspot).ghsbw[i];
             bwvalue[i] = sh_ghsbw.at(selspot).ghsbwvalue[i];
         }
-    
-        expshadhigh.updateghsbw(bw[0], bw[1], bwvalue[0], bwvalue[1]);
+        symev = sh_ghsbw.at(selspot).ghs_sym;
+        expshadhigh.updateghsbw(bw[0], bw[1], bwvalue[0], bwvalue[1], symev);
     }
 
 }

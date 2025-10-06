@@ -65,7 +65,7 @@ public:
      * @param update thumbnail image and associated data
      * @note no locks are held when called back
      */
-    virtual void updateImage(ImageUpdate&& update) = 0;
+    virtual void updateImage(const ImageUpdate& update) = 0;
 };
 
 class ThumbImageUpdater :

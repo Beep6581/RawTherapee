@@ -1300,6 +1300,10 @@ private:
                 float ghsbpwpvalue[2];
                 ghsbpwpvalue[0] = 0.f;
                 ghsbpwpvalue[1] = 1.f;
+                float ghsbwslider[2];
+                ghsbwslider[0] = 0.f;
+                ghsbwslider[1] = 1.f;
+                float ghssym = 0.f;
 
                 float slopeg = 1.f;
                 bool linkrgb = true;
@@ -1360,7 +1364,7 @@ private:
                               minCD, maxCD, mini, maxi, Tmean, Tsigma, Tmin, Tmax,
                               meantme, stdtme, meanretie, stdretie, fab, maxicam, rdx, rdy, grx, gry, blx, bly, meanx, meany, meanxe, meanye, prim, ill, contsig, lightsig,
                               highresi, nresi, highresi46, nresi46, Lhighresi, Lnresi, Lhighresi46, Lnresi46, slopeg, linkrgb,
-                              ghsbpwp, ghsbpwpvalue);
+                              ghsbpwp, ghsbpwpvalue, ghsbwslider, ghssym);
 
                 if (sp + 1u < params.locallab.spots.size()) {
                     // do not copy for last spot as it is not needed anymore

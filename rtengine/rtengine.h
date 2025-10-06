@@ -479,9 +479,16 @@ public:
     };
 
 
-    struct locallabshGHSbw {//To draw GHS  S curve
-       int ghsbw[2];
-       double ghsbwvalue[2];
+    struct locallabshGHSbw2 {//update sliders black and white point 
+        double ghsbw_slider[2];
+        bool ghs_auto;
+    };
+
+
+    struct locallabshGHSbw {//infos black and white point GHS
+        int ghsbw[2];
+        double ghsbwvalue[2];
+        double ghs_sym;
     };
 
 //select spot settings 
@@ -514,6 +521,7 @@ public:
     virtual void denChanged(const std::vector<locallabDenoiseLC> &denlc, int selspot) = 0;
     virtual void cieChanged(const std::vector<locallabcieLC> &cielc, int selspot) = 0;
     virtual void ghsbwChanged(const std::vector<locallabshGHSbw> &shghsbw, int selspot) = 0;
+    virtual void ghsbw2Changed(const std::vector<locallabshGHSbw2> &shghsbw2, int selspot) = 0;
     virtual void maiChanged(const std::vector<locallabsetLC> &csetlc, int selspot) = 0;
     virtual void sigChanged(const std::vector<locallabcieSIG> &ciesig, int selspot) = 0;
     virtual void ciebefChanged(const std::vector<locallabcieBEF> &ciebef, int selspot) = 0;

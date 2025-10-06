@@ -52,7 +52,7 @@ function(rt_setup_target CXX_TARGET)
     endif()
 
     if(WITH_SAN)
-        list(APPEND COMPILE_OPTS "-fsanitize=${WITH_SAN}")
+        list(APPEND COMPILE_OPTS "-fsanitize=${WITH_SAN}" -fno-omit-frame-pointer)
         list(APPEND LINK_OPTS    "-fsanitize=${WITH_SAN}")
     endif()
 

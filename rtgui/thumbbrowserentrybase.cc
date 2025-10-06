@@ -194,7 +194,6 @@ void ThumbBrowserEntryBase::updateBackBuffer ()
     }
     if (!backBuffer) {
         backBuffer = Glib::RefPtr<BackBuffer>(new BackBuffer(expectedDeviceSize.width, expectedDeviceSize.height));
-        hidpi::setDeviceScale(backBuffer->getSurface(), expectedDeviceSize.device_scale);
     }
 
     // If thumbnail is hidden by a filter, drawing to it will crash
@@ -204,6 +203,7 @@ void ThumbBrowserEntryBase::updateBackBuffer ()
     }
 
     Cairo::RefPtr<Cairo::ImageSurface> surface = backBuffer->getSurface();
+    hidpi::setDeviceScale(surface, expectedDeviceSize.device_scale);
 
     bbSelected = selected;
     bbFramed = framed;
@@ -636,9 +636,10 @@ void ThumbBrowserEntryBase::draw (Cairo::RefPtr<Cairo::Context> cc)
         int bbWidth = backBuffer->getWidth();
         int bbHeight = backBuffer->getHeight();
         hidpi::ScaledDeviceSize device = expected.scaleToDevice(activeDeviceScale);
-        if (preview.data() != bbPreview
-                || device.width != bbWidth
-                || device.height != bbHeight) return true;
+        if (device.width != bbWidth || device.height != bbHeight
+                || preview.data() != bbPreview) {
+            return true;
+        }
 
         return false;
     }();
@@ -646,6 +647,7 @@ void ThumbBrowserEntryBase::draw (Cairo::RefPtr<Cairo::Context> cc)
     if (shouldUpdateBackBuffer) {
         updateBackBuffer();
     }
+    if (!backBuffer->surfaceCreated()) return;
 
     int x_offset = startx + ofsX;
     int y_offset = starty + ofsY;
