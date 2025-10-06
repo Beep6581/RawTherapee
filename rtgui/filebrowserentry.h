@@ -102,8 +102,8 @@ public:
     // thumbnaillistener interface
     void procParamsChanged (Thumbnail* thm, int whoChangedIt, bool upgradeHint) override;
     // thumbimageupdatelistener interface
-    void updateImage(ThumbImageUpdateListener::ImageUpdate&& update) override;
-    void _updateImage(ThumbImageUpdateListener::ImageUpdate&& update); // inside gtk thread
+    void updateImage(const ThumbImageUpdateListener::ImageUpdate& update) override;
+    void _updateImage(const ThumbImageUpdateListener::ImageUpdate& update); // inside gtk thread
 
     bool    motionNotify  (int x, int y) override;
     bool    pressNotify   (int button, int type, int bstate, int x, int y) override;

@@ -67,13 +67,19 @@ void PreviewWindow::updatePreviewImage ()
     }
 
     backBuffer.clear();
-    if (!previewHandler) return;
+    if (!previewHandler) {
+        needsUpdate = true;
+        return;
+    }
 
     int scale = RTScalable::getScaleForWidget(this);
     auto logical = hidpi::LogicalSize::forWidget(this);
 
     hidpi::DevicePixbuf result = previewHandler->getRoughImage(logical, scale, zoom);
-    if (!result.pixbuf()) return;
+    if (!result.pixbuf()) {
+        needsUpdate = true;
+        return;
+    }
     
     hidpi::ScaledDeviceSize device = result.size();
     imgW = device.width;
@@ -81,6 +87,10 @@ void PreviewWindow::updatePreviewImage ()
 
     backBuffer = Cairo::RefPtr<BackBuffer> ( new BackBuffer(
         device.width, device.height, Cairo::FORMAT_ARGB32) );
+    if (!backBuffer->surfaceCreated()) {
+        needsUpdate = true;
+        return;
+    }
     Cairo::RefPtr<Cairo::ImageSurface> surface = backBuffer->getSurface();
     hidpi::setDeviceScale(surface, device.device_scale);
 
@@ -133,12 +143,10 @@ void PreviewWindow::on_resized (Gtk::Allocation& req)
 
 bool PreviewWindow::on_draw(const ::Cairo::RefPtr< Cairo::Context> &cr)
 {
+    if (!backBuffer) return true;
+
     const Glib::RefPtr<Gtk::StyleContext> style = get_style_context();
     style->render_background(cr, 0, 0, get_width(), get_height());
-
-    if (!backBuffer) {
-        return true;
-    }
 
     int bufferW, bufferH;
     bufferW = backBuffer->getWidth();
@@ -158,6 +166,11 @@ bool PreviewWindow::on_draw(const ::Cairo::RefPtr< Cairo::Context> &cr)
     if ((deviceSize.width != bufferW && deviceSize.height != bufferH) || needsUpdate) {
         needsUpdate = false;
         updatePreviewImage ();
+    }
+    // updatePreviewImage may clear the buffer
+    if (!backBuffer || !backBuffer->surfaceCreated()) {
+        needsUpdate = true;
+        return true;
     }
 
     cr->save();

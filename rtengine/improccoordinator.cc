@@ -1203,6 +1203,7 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
             std::vector<LocallabListener::locallabRetiMinMax> locallretiminmax;
             std::vector<LocallabListener::locallabcieLC> locallcielc;
             std::vector<LocallabListener::locallabshGHSbw> locallshgshbw;
+            std::vector<LocallabListener::locallabshGHSbw2> locallshgshbw2;
             std::vector<LocallabListener::locallabsetLC> locallsetlc;
             std::vector<LocallabListener::locallabcieSIG> locallciesig;
             
@@ -1459,6 +1460,9 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                 int ghsbpwp[2] = {0, 0};
                 float ghsbpwpvalue[2] = {0.f, 1.f};                
                 float savmadl[21];//just to intialize, not used here - but in dcrop.cc
+                float ghsbwslider[2] = {0.f, 1.f};// Black and white point auto sliders
+                float ghssym = 0.f;//info symmetry point
+                bool ghsauto = params->locallab.spots.at(sp).ghs_autobw;
 
                 Glib::ustring prof = params->icm.workingProfile;
                 if(params->locallab.spots.at(sp).complexcie == 2) {
@@ -1523,7 +1527,7 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                               huerblu, chromarblu, lumarblu, huer, chromar, lumar, sobeler, lastsav, false, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
                               minCD, maxCD, mini, maxi, Tmean, Tsigma, Tmin, Tmax,
                               meantm, stdtm, meanreti, stdreti, fab, maxicam, rdx, rdy, grx, gry, blx, bly, meanx, meany, meanxe, meanye, prim, ill, contsig, lightsig, slopeg, linkrgb,
-                              resi, sharc, denocont, ghsbpwp, ghsbpwpvalue, savmadl);
+                              resi, sharc, denocont, ghsbpwp, ghsbpwpvalue, savmadl, ghsbwslider, ghssym);
 
                 fabrefp[sp] = fab;
                 //Illuminant
@@ -1633,10 +1637,20 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                 locciesig.lightsigq = lightsig;
                 locallciesig.push_back(locciesig);
 
-                LocallabListener::locallabshGHSbw locshghsbw;//ghs S curve
+                LocallabListener::locallabshGHSbw2 locshghsbw2;//ghs sliders Black and white point
+                    for(int j = 0; j < 2; j++) {
+                        locshghsbw2.ghsbw_slider[j] = ghsbwslider[j];
+                    }
+                    locshghsbw2.ghs_auto = ghsauto;
+                locallshgshbw2.push_back(locshghsbw2);
+
+
+
+                LocallabListener::locallabshGHSbw locshghsbw;//ghs Black and white point infos
                     for(int j = 0; j < 2; j++) {
                         locshghsbw.ghsbw[j] = ghsbpwp[j];
                         locshghsbw.ghsbwvalue[j] = ghsbpwpvalue[j];
+                        locshghsbw.ghs_sym = ghssym;
                     }
                 locallshgshbw.push_back(locshghsbw);
 
@@ -1707,8 +1721,13 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                         locallListener->cieChanged(locallcielc,params->locallab.selspot); 
                     }
                     locallListener->sigChanged(locallciesig,params->locallab.selspot);
+
                     if (params->locallab.spots.at(sp).expshadhigh && params->locallab.spots.at(sp).shMethod == "ghs") {
-                        locallListener->ghsbwChanged(locallshgshbw,params->locallab.selspot);//Black and White point
+                        locallListener->ghsbw2Changed(locallshgshbw2,params->locallab.selspot);//Black and White point slider
+                    }
+
+                    if (params->locallab.spots.at(sp).expshadhigh && params->locallab.spots.at(sp).shMethod == "ghs") {
+                        locallListener->ghsbwChanged(locallshgshbw,params->locallab.selspot);//Black and White point infos
                     }
 
                     /*

@@ -68,8 +68,7 @@ void PreviewHandler::setImage(rtengine::IImage8* i, double scale, const rtengine
             }
 
             if (pih->phandler->image) {
-                IImage8* const oldImg = pih->phandler->image;
-
+                IImage8* oldImg = pih->phandler->image;
                 oldImg->getMutex().lock();
                 pih->phandler->image = i;
                 oldImg->getMutex().unlock();
@@ -141,11 +140,24 @@ void PreviewHandler::imageReady(const rtengine::procparams::CropParams& cp)
             }
 
             pih->phandler->previewImgMutex.lock();
-            pih->phandler->previewImg = Gdk::Pixbuf::create_from_data(pih->phandler->image->getData(), Gdk::COLORSPACE_RGB, false, 8, pih->phandler->image->getWidth(), pih->phandler->image->getHeight(), 3 * pih->phandler->image->getWidth());
-            pih->phandler->previewImgMutex.unlock ();
+            if (pih->phandler->image && pih->phandler->image->getData()) {
+                pih->phandler->previewImg = Gdk::Pixbuf::create_from_data(
+                    pih->phandler->image->getData(),
+                    Gdk::COLORSPACE_RGB,
+                    false,
+                    8,
+                    pih->phandler->image->getWidth(),
+                    pih->phandler->image->getHeight(),
+                    3 * pih->phandler->image->getWidth());
+            } else {
+                pih->phandler->previewImg.clear();
+            }
+            pih->phandler->previewImgMutex.unlock();
 
             *pih->phandler->cropParams = cp;
-            pih->phandler->previewImageChanged ();
+            if (pih->phandler->previewImg) {
+                pih->phandler->previewImageChanged();
+            }
             --pih->pending;
 
             return false;
@@ -159,30 +171,30 @@ Glib::RefPtr<Gdk::Pixbuf> PreviewHandler::getRoughImage (
     MyMutex::MyLock lock(previewImgMutex);
 
     Glib::RefPtr<Gdk::Pixbuf> resPixbuf;
+    if (!image || !image->getData()) return resPixbuf;
+    if (!previewImg) return resPixbuf;
 
-    if (previewImg) {
-        double totalZoom = zoom * previewScale;
+    double totalZoom = zoom * previewScale;
 
-        int w = desiredSize.width;
-        int h = desiredSize.height;
+    int w = desiredSize.width;
+    int h = desiredSize.height;
 
-        if (w > previewImg->get_width()*totalZoom) {
-            w = image->getWidth() * totalZoom;
-        }
-
-        if (h > previewImg->get_height()*totalZoom) {
-            h = image->getHeight() * totalZoom;
-        }
-
-        pos.x *= zoom;
-        pos.y *= zoom;
-
-        w = rtengine::LIM<int>(w, 0, int(previewImg->get_width() * totalZoom) - pos.x);
-        h = rtengine::LIM<int>(h, 0, int(previewImg->get_height() * totalZoom) - pos.y);
-
-        resPixbuf = Gdk::Pixbuf::create (Gdk::COLORSPACE_RGB, false, 8, w, h);
-        previewImg->scale (resPixbuf, 0, 0, w, h, -pos.x, -pos.y, totalZoom, totalZoom, Gdk::INTERP_NEAREST);
+    if (w > previewImg->get_width()*totalZoom) {
+        w = image->getWidth() * totalZoom;
     }
+
+    if (h > previewImg->get_height()*totalZoom) {
+        h = image->getHeight() * totalZoom;
+    }
+
+    pos.x *= zoom;
+    pos.y *= zoom;
+
+    w = rtengine::LIM<int>(w, 0, int(previewImg->get_width() * totalZoom) - pos.x);
+    h = rtengine::LIM<int>(h, 0, int(previewImg->get_height() * totalZoom) - pos.y);
+
+    resPixbuf = Gdk::Pixbuf::create (Gdk::COLORSPACE_RGB, false, 8, w, h);
+    previewImg->scale (resPixbuf, 0, 0, w, h, -pos.x, -pos.y, totalZoom, totalZoom, Gdk::INTERP_NEAREST);
 
     return resPixbuf;
 }
@@ -193,21 +205,20 @@ hidpi::DevicePixbuf PreviewHandler::getRoughImage (hidpi::LogicalSize desiredSiz
     MyMutex::MyLock lock(previewImgMutex);
 
     hidpi::DevicePixbuf result;
+    if (!image || !image->getData()) return result;
+    if (!previewImg) return result;
 
-    if (previewImg) {
-        double zoom1 = (double)max(desiredSize.width, 20) / previewImg->get_width(); // too small values lead to extremely increased processing time in scale function, Issue 2783
-        double zoom2 = (double)max(desiredSize.height, 20) / previewImg->get_height();
-        double zoom = zoom1 < zoom2 ? zoom1 : zoom2;
+    double zoom1 = (double)max(desiredSize.width, 20) / previewImg->get_width(); // too small values lead to extremely increased processing time in scale function, Issue 2783
+    double zoom2 = (double)max(desiredSize.height, 20) / previewImg->get_height();
+    double zoom = zoom1 < zoom2 ? zoom1 : zoom2;
 
-        outLogicalZoom = zoom / previewScale;
-        zoom = zoom * deviceScale;
+    outLogicalZoom = zoom / previewScale;
+    zoom = zoom * deviceScale;
 
-        auto pixbuf = Gdk::Pixbuf::create (Gdk::COLORSPACE_RGB, false, 8, image->getWidth() * zoom, image->getHeight() * zoom);
-        previewImg->scale (pixbuf, 0, 0, previewImg->get_width()*zoom, previewImg->get_height()*zoom, 0, 0, zoom, zoom, Gdk::INTERP_BILINEAR);
+    auto pixbuf = Gdk::Pixbuf::create (Gdk::COLORSPACE_RGB, false, 8, image->getWidth() * zoom, image->getHeight() * zoom);
+    previewImg->scale (pixbuf, 0, 0, previewImg->get_width()*zoom, previewImg->get_height()*zoom, 0, 0, zoom, zoom, Gdk::INTERP_BILINEAR);
 
-        result = hidpi::DevicePixbuf(pixbuf, deviceScale);
-    }
-
+    result = hidpi::DevicePixbuf(pixbuf, deviceScale);
     return result;
 }
 
