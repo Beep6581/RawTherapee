@@ -42,8 +42,6 @@
 namespace rtengine
 {
 
-using namespace std;
-
 namespace {
     using rtengine::procparams::ColorManagementParams;
     procparams::ColorManagementParams icm;
