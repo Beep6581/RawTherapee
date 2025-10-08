@@ -18422,10 +18422,10 @@ void ImProcFunctions::Lab_Local(
                                 ghsbpwpvalue[0] = minbp;
                                 ghsbpwpvalue[1] = maxwp;
                                 ghssym = symref;
-                                printf("maxhist=%i kk=%i symref=%f\n", maxhist, kk, (double) ghssym);
                                
                                 t2.set();
                                 if (settings->verbose) {
+                                    printf("Values: maxhist=%i kk=%i symref=%f\n", maxhist, kk, (double) ghssym);
                                     printf("calculate Black Point and White Point: %d nsec\n",  t2.etime(t1));
                                 }
 
