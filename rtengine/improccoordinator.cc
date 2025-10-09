@@ -1408,6 +1408,7 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                 float ghsbwslider[2] = {0.f, 1.f};// Black and white point auto sliders
                 float ghssym = 0.f;//info symmetry point
                 bool ghsauto = params->locallab.spots.at(sp).ghs_autobw;
+                bool ghsautoSP = params->locallab.spots.at(sp).SPAutoRadius;//SP auto
                 
                 Glib::ustring prof = params->icm.workingProfile;
                 if(params->locallab.spots.at(sp).complexcie == 2) {
@@ -1600,6 +1601,7 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                         locshghsbw.ghsbwvalue[j] = ghsbpwpvalue[j];
                         locshghsbw.ghs_sym = ghssym;
                     }
+                    locshghsbw.autoSP =  ghsautoSP;
                 locallshgshbw.push_back(locshghsbw);
 
 
@@ -1677,7 +1679,7 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                     }
 
                     if (params->locallab.spots.at(sp).expshadhigh && params->locallab.spots.at(sp).shMethod == "ghs") {
-                        locallListener->ghsbwChanged(locallshgshbw,params->locallab.selspot);//Black and White point infos
+                        locallListener->ghsbwChanged(locallshgshbw,params->locallab.selspot);//Black and White point infos and SP auto
                     }
 
                     /*

@@ -1494,6 +1494,7 @@ HISTORY_MSG_LOCALCONTRAST_ENABLED;Local Contrast
 HISTORY_MSG_LOCALCONTRAST_LIGHTNESS;Local Contrast - Lightness
 HISTORY_MSG_LOCALCONTRAST_RADIUS;Local Contrast - Radius
 HISTORY_MSG_LOCALLAB_TE_PIVOT;Local - Equalizer pivot
+HISTORY_MSG_LOCAL_AUTOSP;Local - GHS - Auto SP
 HISTORY_MSG_LOCAL_AVOIDNEGATIVE;Local - SC - Pre-filter zero and negative values
 HISTORY_MSG_LOCAL_CIEMASK_BLURCONT;Local - CIECAM Mask blur contrast
 HISTORY_MSG_LOCAL_CIEMASK_BLURFFT;Local - CIECAM Mask blur FFTW
@@ -3825,6 +3826,7 @@ TP_LOCALLAB_SPECCASE;Specific cases
 TP_LOCALLAB_SPECIAL;Special use of RGB curves
 TP_LOCALLAB_SPECIAL_TOOLTIP;The checkbox allows you to remove all other actions i.e. 'Scope', masks, sliders etc., (except for transitions) and use just the effect of the RGB tone-curve.
 TP_LOCALLAB_SPOTNAME;New Spot
+TP_LOCALLAB_SPRADIUS_TOOLTIP;Try to provide an automatic value to Symmetry point.
 TP_LOCALLAB_STD;Standard
 TP_LOCALLAB_STR;Strength
 TP_LOCALLAB_STRBL;Strength

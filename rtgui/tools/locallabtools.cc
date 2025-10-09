@@ -18,7 +18,7 @@ fft *
  *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
  *  2019-2020 Pierre Cabrera <pierre.cab@gmail.com>
  */
-#include "locallabtools.h"
+#include "tools/locallabtools.h"
 
 #include "options.h"
 #include "rtengine/improcfun.h"
@@ -4332,7 +4332,7 @@ LocallabShadow::LocallabShadow():
     BP_Frame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_GHS_BLACKPOINT_FRAME")))),
     ghs_autobw(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_GHS_AUTOBW")))),
     ghs_BLP(Gtk::manage(new Adjuster(M("TP_LOCALLAB_GHS_BLP"), -0.2, 1.0, 0.0001, 0.0))),
-    ghs_HLP(Gtk::manage(new Adjuster(M("TP_LOCALLAB_GHS_HLP"), 0.2002, 5.0, 0.0001, 1.))),
+    ghs_HLP(Gtk::manage(new Adjuster(M("TP_LOCALLAB_GHS_HLP"), 0.2002, 50.0, 0.0001, 1.))),
     ghsbpwpLabels(Gtk::manage(new Gtk::Label("---"))),
     ghsbpwpvalueLabels(Gtk::manage(new Gtk::Label("---"))),
     ghs_smooth(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_GHS_SMOOTH")))),
@@ -4373,6 +4373,9 @@ LocallabShadow::LocallabShadow():
     Evlocallabghs_chro = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_GHS_CHRO");
     Evlocallabghs_B = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_GHS_B");
     Evlocallabghs_SP = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_GHS_SP");
+    EvlocallabautoSPson = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_AUTOSP");
+    EvlocallabautoSPoff = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_AUTOSP");
+    
     Evlocallabghs_LP = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_GHS_LP");
     Evlocallabghs_HP = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_GHS_HP");
     Evlocallabghs_LC = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_GHS_LC");
@@ -4383,6 +4386,7 @@ LocallabShadow::LocallabShadow():
     Evlocallabghs_autobw = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_GHS_AUTOBW");
     Evlocallabghs_inv = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_GHS_INV");
     EvlocallabGridghs = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_CIE_LABGRIDGHS");
+    ghs_SP->addAutoButton(M("TP_LOCALLAB_SPRADIUS_TOOLTIP"));
     set_orientation(Gtk::ORIENTATION_VERTICAL);
 
     const LocallabParams::LocallabSpot defSpot;
@@ -4454,6 +4458,8 @@ LocallabShadow::LocallabShadow():
     ghs_MID->setAdjusterListener(this);
     ghs_BLP->setAdjusterListener(this);
     ghs_HLP->setAdjusterListener(this);
+    ghs_HLP->setLogScale(16, 0);
+    
     ghsbpwpLabels->set_line_wrap();
     ghsbpwpLabels->set_justify(Gtk::Justification::JUSTIFY_CENTER);
     setExpandAlignProperties(ghsbpwpLabels, true, false, Gtk::ALIGN_CENTER, Gtk::ALIGN_START);
@@ -4665,6 +4671,36 @@ LocallabShadow::LocallabShadow():
     expmasksh->add(*maskSHBox, false);
     pack_start(*expmasksh, false, false);
 }
+
+void LocallabShadow::adjusterAutoToggled(Adjuster* a, bool newval)// bool newval
+{
+    
+    if (listener && a == ghs_SP) {
+        auto e = (!newval) ? EvlocallabautoSPoff : EvlocallabautoSPson;
+        listener->panelChanged(e, newval ? M("GENERAL_ENABLED") : M("GENERAL_DISABLED"));
+    }
+
+
+}
+void LocallabShadow::autoSPChanged(float radius)
+{
+    idle_register.add(
+        [this, radius]() -> bool
+        {
+            disableListener();
+            if (radius < 0) {
+                ghs_SP->delAutoButton();
+            } else {
+                ghs_SP->addAutoButton(M("TP_SHARPENING_RLD_AUTORADIUS_TOOLTIP"));
+                ghs_SP->setValue(radius);
+            }
+            enableListener();
+            return false;
+        }
+    );
+}
+
+
 
 LocallabShadow::~LocallabShadow()
 {
@@ -4949,6 +4985,7 @@ void LocallabShadow::read(const rtengine::procparams::ProcParams* pp, const Para
     disableListener();
     nbmasksh = 0;
     nbwb = 0;//initialize count White and black point
+    nbsym = 0;
     // Update GUI to selected spot value
     const int index = pp->locallab.selspot;
 
@@ -4993,6 +5030,8 @@ void LocallabShadow::read(const rtengine::procparams::ProcParams* pp, const Para
         ghs_chro->setValue((double)spot.ghs_chro);
         ghs_B->setValue((double)spot.ghs_B);
         ghs_SP->setValue((double)spot.ghs_SP);
+        ghs_SP->setAutoValue(spot.SPAutoRadius);
+        
         ghs_LP->setValue((double)spot.ghs_LP);
         ghs_HP->setValue((double)spot.ghs_HP);
         ghs_LC->setValue((double)spot.ghs_LC);
@@ -5123,6 +5162,7 @@ void LocallabShadow::write(rtengine::procparams::ProcParams* pp, ParamsEdited* p
         spot.ghs_chro = ghs_chro->getValue();
         spot.ghs_B = ghs_B->getValue();
         spot.ghs_SP = ghs_SP->getValue();
+        spot.SPAutoRadius = ghs_SP->getAutoValue();
         spot.ghs_LP = ghs_LP->getValue();
         spot.ghs_HP = ghs_HP->getValue();
         spot.ghs_LC = ghs_LC->getValue();
@@ -5593,6 +5633,19 @@ void LocallabShadow::updateghsbw(int bp, int wp, double minbp, double maxwp, dou
                 Glib::ustring::compose(M("TP_LOCALLAB_GHSSYM"),
                                     Glib::ustring::format(std::fixed, std::setprecision(4), symev))
             );
+            /*
+            nbsym++;
+            if(nbsym < 2) {
+                
+                
+                 if (symev != ghs_SP->getValue()) {
+                    disableListener();
+                    ghs_SP->setValue(symev);
+                    enableListener();
+                    listener->panelChanged (Evlocallabghs_SP,ghs_SP->getTextValue());
+                }
+            }
+            */
         }
         
         ghsbpwpLabels->set_text(

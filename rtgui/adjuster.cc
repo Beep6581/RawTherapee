@@ -209,6 +209,15 @@ void Adjuster::addAutoButton (const Glib::ustring &tooltip)
     }
 }
 
+void Adjuster::delAutoButton ()
+{
+    if (automatic) {
+        removeIfThere(grid, automatic);
+        delete automatic;
+        automatic = nullptr;
+    }
+}
+
 void Adjuster::throwOnButtonRelease(bool throwOnBRelease)
 {
 
@@ -247,7 +256,7 @@ void Adjuster::autoToggled ()
 {
 
     if (adjusterListener && !blocked) {
-        adjusterListener->adjusterAutoToggled(this);
+        adjusterListener->adjusterAutoToggled(this, automatic->get_active());
     }
 }
 
@@ -447,7 +456,7 @@ bool Adjuster::notifyListenerAutoToggled ()
 {
 
     if (adjusterListener != nullptr && !blocked) {
-        adjusterListener->adjusterAutoToggled(this);
+        adjusterListener->adjusterAutoToggled(this, automatic->get_active());
     }
 
     return false;

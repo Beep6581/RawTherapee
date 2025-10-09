@@ -255,6 +255,7 @@ public:
     void setDefaults(const rtengine::procparams::ProcParams* defParams, const ParamsEdited* pedited = nullptr) override {};
     void adjusterChanged(Adjuster* a, double newval) override {};
     void curveChanged(CurveEditor* ce) override {};
+    virtual void adjusterAutoToggled(Adjuster* a, bool newval){};
 
 protected:
     // To be implemented
@@ -658,6 +659,9 @@ private:
     rtengine::ProcEvent Evlocallabghs_chro;
     rtengine::ProcEvent Evlocallabghs_B;
     rtengine::ProcEvent Evlocallabghs_SP;
+    rtengine::ProcEvent EvlocallabautoSPson;
+    rtengine::ProcEvent EvlocallabautoSPoff;
+    
     rtengine::ProcEvent Evlocallabghs_LP;
     rtengine::ProcEvent Evlocallabghs_HP;
     rtengine::ProcEvent Evlocallabghs_LC;
@@ -686,6 +690,7 @@ public:
     void updateguiscopesahd(int scope);
     int nbmasksh;
     int nbwb;
+    int nbsym;
     void updateghsbw2(double ghsb, double ghsw, bool ghsaut);
     void updateghsbw(int bp, int wp, double minbp, double maxwp, double symev);
     void setDefaultExpanderVisibility() override;
@@ -697,6 +702,9 @@ public:
     void adjusterChanged(Adjuster* a, double newval) override;
     void curveChanged(CurveEditor* ce) override;
     void previewshChanged();
+    void adjusterAutoToggled(Adjuster* a, bool newval);
+  //  void adjusterAutoToggled(Adjuster* a);
+    void autoSPChanged(float radius);
 
 private:
     void enabledChanged() override;

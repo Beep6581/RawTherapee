@@ -485,10 +485,11 @@ public:
     };
 
 
-    struct locallabshGHSbw {//infos black and white point GHS
+    struct locallabshGHSbw {//infos black and white point GHS and update auto SP
         int ghsbw[2];
         double ghsbwvalue[2];
         double ghs_sym;
+        bool autoSP;//update SP
     };
 
 //select spot settings 

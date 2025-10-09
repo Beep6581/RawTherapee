@@ -1468,6 +1468,7 @@ void ParamsEdited::initFrom(const std::vector<rtengine::procparams::ProcParams>&
                 locallab.spots.at(j).ghs_chro = locallab.spots.at(j).ghs_chro && pSpot.ghs_chro == otherSpot.ghs_chro;
                 locallab.spots.at(j).ghs_B = locallab.spots.at(j).ghs_B && pSpot.ghs_B == otherSpot.ghs_B;
                 locallab.spots.at(j).ghs_SP = locallab.spots.at(j).ghs_SP && pSpot.ghs_SP == otherSpot.ghs_SP;
+                locallab.spots.at(j).SPAutoRadius = locallab.spots.at(j).SPAutoRadius && pSpot.SPAutoRadius == otherSpot.SPAutoRadius;
                 locallab.spots.at(j).ghs_LP = locallab.spots.at(j).ghs_LP && pSpot.ghs_LP == otherSpot.ghs_LP;
                 locallab.spots.at(j).ghs_HP = locallab.spots.at(j).ghs_HP && pSpot.ghs_HP == otherSpot.ghs_HP;
                 locallab.spots.at(j).ghs_LC = locallab.spots.at(j).ghs_LC && pSpot.ghs_LC == otherSpot.ghs_LC;
@@ -4572,6 +4573,10 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
 
         if (locallab.spots.at(i).ghs_SP) {
             toEdit.locallab.spots.at(i).ghs_SP = mods.locallab.spots.at(i).ghs_SP;
+        }
+
+        if (locallab.spots.at(i).SPAutoRadius) {
+            toEdit.locallab.spots.at(i).SPAutoRadius = mods.locallab.spots.at(i).SPAutoRadius;
         }
 
         if (locallab.spots.at(i).ghs_LP) {
@@ -8589,6 +8594,7 @@ LocallabParamsEdited::LocallabSpotEdited::LocallabSpotEdited(bool v) :
     ghs_chro(v),
     ghs_B(v),
     ghs_SP(v),
+    SPAutoRadius(v),
     ghs_LP(v),
     ghs_HP(v),
     ghs_LC(v),
@@ -9393,6 +9399,8 @@ void LocallabParamsEdited::LocallabSpotEdited::set(bool v)
     ghs_chro = v;
     ghs_B = v;
     ghs_SP = v;
+    SPAutoRadius = v;
+    
     ghs_LP = v;
     ghs_HP = v;
     ghs_LC = v;
