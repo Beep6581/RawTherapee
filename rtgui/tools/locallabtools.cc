@@ -18,7 +18,7 @@ fft *
  *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
  *  2019-2020 Pierre Cabrera <pierre.cab@gmail.com>
  */
-#include "locallabtools.h"
+#include "tools/locallabtools.h"
 
 #include "options.h"
 #include "rtengine/improcfun.h"
