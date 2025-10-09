@@ -3700,8 +3700,7 @@ LocallabParams::LocallabSpot::LocallabSpot() :
     ghs_chro(0.0),
     ghs_B(0.),
     ghs_SP(0.015),//initialized with a low value to avoid zero
-    SPAutoRadius(false),
-    
+    SPAutoRadius(true), //auto Symmetry point 
     ghs_LP(0.),
     ghs_HP(1.),
     ghs_LC(30.),
