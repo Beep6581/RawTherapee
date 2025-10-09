@@ -3826,7 +3826,7 @@ TP_LOCALLAB_SPECCASE;Specific cases
 TP_LOCALLAB_SPECIAL;Special use of RGB curves
 TP_LOCALLAB_SPECIAL_TOOLTIP;The checkbox allows you to remove all other actions i.e. 'Scope', masks, sliders etc., (except for transitions) and use just the effect of the RGB tone-curve.
 TP_LOCALLAB_SPOTNAME;New Spot
-TP_LOCALLAB_SPRADIUS_TOOLTIP;Try to provide an automatic value to Symmetry point.
+TP_LOCALLAB_SPRADIUS_TOOLTIP;Try to provide an automatic value to Symmetry point (SP).
 TP_LOCALLAB_STD;Standard
 TP_LOCALLAB_STR;Strength
 TP_LOCALLAB_STRBL;Strength

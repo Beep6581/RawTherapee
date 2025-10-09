@@ -4673,15 +4673,13 @@ LocallabShadow::LocallabShadow():
 }
 
 void LocallabShadow::adjusterAutoToggled(Adjuster* a, bool newval)// bool newval
-{
-    
+{    
     if (listener && a == ghs_SP) {
         auto e = (!newval) ? EvlocallabautoSPoff : EvlocallabautoSPson;
         listener->panelChanged(e, newval ? M("GENERAL_ENABLED") : M("GENERAL_DISABLED"));
     }
-
-
 }
+
 void LocallabShadow::autoSPChanged(float radius)
 {
     idle_register.add(
@@ -4691,7 +4689,7 @@ void LocallabShadow::autoSPChanged(float radius)
             if (radius < 0) {
                 ghs_SP->delAutoButton();
             } else {
-                ghs_SP->addAutoButton(M("TP_SHARPENING_RLD_AUTORADIUS_TOOLTIP"));
+                ghs_SP->addAutoButton(M("TP_LOCALLAB_SPRADIUS_TOOLTIP"));
                 ghs_SP->setValue(radius);
             }
             enableListener();

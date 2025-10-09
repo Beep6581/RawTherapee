@@ -1339,11 +1339,10 @@ void Locallab::ghsbw2Changed(const std::vector<locallabshGHSbw2> &shghsbw2, int 
         expshadhigh.updateghsbw2(bwvalueslider[0], bwvalueslider[1], ghsaut);
     }
 
-   
 }
 
 
-void Locallab::ghsbwChanged(const std::vector<locallabshGHSbw> &shghsbw, int selspot) // info black and white point
+void Locallab::ghsbwChanged(const std::vector<locallabshGHSbw> &shghsbw, int selspot) // info black and white point and Symmetry point auto
 {
     sh_ghsbw = shghsbw;
     int bw[2] = {0, 1};
