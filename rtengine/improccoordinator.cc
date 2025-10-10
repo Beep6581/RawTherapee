@@ -1408,8 +1408,7 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                 float ghsbwslider[2] = {0.f, 1.f};// Black and white point auto sliders
                 float ghssym = 0.f;//info symmetry point
                 bool ghsauto = params->locallab.spots.at(sp).ghs_autobw;
-                bool ghsautsp = false; // = params->locallab.spots.at(sp).SPAutoRadius;//SP auto
-                //bool ghsautoSP = params->locallab.spots.at(sp).SPAutoRadius;//SP auto
+                bool ghsautsp = false;//SP auto
                 
                 Glib::ustring prof = params->icm.workingProfile;
                 if(params->locallab.spots.at(sp).complexcie == 2) {
