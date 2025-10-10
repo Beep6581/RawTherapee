@@ -5631,19 +5631,9 @@ void LocallabShadow::updateghsbw(int bp, int wp, double minbp, double maxwp, dou
                 Glib::ustring::compose(M("TP_LOCALLAB_GHSSYM"),
                                     Glib::ustring::format(std::fixed, std::setprecision(4), symev))
             );
-            /*
-            nbsym++;
-            if(nbsym < 2) {
-                
-                
-                 if (symev != ghs_SP->getValue()) {
-                    disableListener();
-                    ghs_SP->setValue(symev);
-                    enableListener();
-                    listener->panelChanged (Evlocallabghs_SP,ghs_SP->getTextValue());
-                }
-            }
-            */
+        } else {
+            ghssymLabel->set_text("--");
+ 
         }
         
         ghsbpwpLabels->set_text(

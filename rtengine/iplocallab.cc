@@ -14885,7 +14885,7 @@ void ImProcFunctions::Lab_Local(
     float& minCD, float& maxCD, float& mini, float& maxi, float& Tmean, float& Tsigma, float& Tmin, float& Tmax,
     float& meantm, float& stdtm, float& meanreti, float& stdreti, float &fab,float &maxicam, float &rdx, float &rdy, float &grx, float &gry, float &blx, float &bly, float &meanx, float &meany, float &meanxe, float &meanye, int &prim, int &ill, float &contsig, float &lightsig,
     float& highresi, float& nresi, float& highresi46, float& nresi46, float& Lhighresi, float& Lnresi, float& Lhighresi46, float& Lnresi46, float &slopeg, bool &linkrgb,
-    int *ghsbpwp, float *ghsbpwpvalue, float *ghsbwslider, float &ghssym)
+    int *ghsbpwp, float *ghsbpwpvalue, float *ghsbwslider, float &ghssym, bool &ghsautsp)
 
 
 
@@ -17875,6 +17875,7 @@ void ImProcFunctions::Lab_Local(
                         } else if (params->locallab.spots.at(sp).ghsMethod == "hue") {// hue hsl
                             met = 5;
                         }
+                        bool ghsautoSP = params->locallab.spots.at(sp).SPAutoRadius;                        
                         
                         const ght_compute_params c = GHT_setup(B, D, LP, SP, HP, strtype);//setup system with entries
 
@@ -17993,7 +17994,7 @@ void ImProcFunctions::Lab_Local(
                                     } 
                                 }
                                 
-                                //evaluation symmetry point    
+                                //evaluation symmetry point only in RGB mode    
                                 LUTu symhist(65535);
                                 symhist.clear();
                                 array2D<float> Y2(bfw, bfh);
@@ -18023,7 +18024,11 @@ void ImProcFunctions::Lab_Local(
                                 ghsbpwpvalue[0] = minbp;
                                 ghsbpwpvalue[1] = maxwp;
                                 ghssym = symref;
-                               
+                                if((met == 0  || met == 1)  && ghsautoSP) {//RGB mode and auto Symmetry point
+                                    ghsautsp = true;
+                                } else {
+                                    ghsautsp = false;
+                                }
                                 t2.set();
                                 if (settings->verbose) {
                                     printf("Values: maxhist=%i kk=%i symref=%f\n", maxhist, kk, (double) ghssym);
@@ -18054,7 +18059,7 @@ void ImProcFunctions::Lab_Local(
                                     float rl = r - ll;
                                     float gl = g - ll;
                                     float bl = b - ll;
-                                    float s = intp(max(sf(rl, r), sf(gl, g), sf(bl, b)), pow_F(f, 0.3f) * 0.6f + 0.4f, 1.f);
+                                    float s = intp(max(sf(rl, r), sf(gl, g), sf(bl, b)), pow_F(f, 0.3f) * 0.6f + 0.4f, 1.f);//we can change these values 
                                     r = ll + s * rl;
                                     g = ll + s * gl;
                                     b = ll + s * bl;

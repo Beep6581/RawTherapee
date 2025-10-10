@@ -1408,7 +1408,8 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                 float ghsbwslider[2] = {0.f, 1.f};// Black and white point auto sliders
                 float ghssym = 0.f;//info symmetry point
                 bool ghsauto = params->locallab.spots.at(sp).ghs_autobw;
-                bool ghsautoSP = params->locallab.spots.at(sp).SPAutoRadius;//SP auto
+                bool ghsautsp = false; // = params->locallab.spots.at(sp).SPAutoRadius;//SP auto
+                //bool ghsautoSP = params->locallab.spots.at(sp).SPAutoRadius;//SP auto
                 
                 Glib::ustring prof = params->icm.workingProfile;
                 if(params->locallab.spots.at(sp).complexcie == 2) {
@@ -1474,7 +1475,7 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                               minCD, maxCD, mini, maxi, Tmean, Tsigma, Tmin, Tmax,
                               meantm, stdtm, meanreti, stdreti, fab, maxicam, rdx, rdy, grx, gry, blx, bly, meanx, meany, meanxe, meanye, prim, ill, contsig, lightsig,
                               highresi, nresi, highresi46, nresi46, Lhighresi, Lnresi, Lhighresi46, Lnresi46, slopeg, linkrgb,
-                              ghsbpwp, ghsbpwpvalue, ghsbwslider, ghssym);
+                              ghsbpwp, ghsbpwpvalue, ghsbwslider, ghssym, ghsautsp);
 
 
                 fabrefp[sp] = fab;
@@ -1601,7 +1602,7 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                         locshghsbw.ghsbwvalue[j] = ghsbpwpvalue[j];
                         locshghsbw.ghs_sym = ghssym;
                     }
-                    locshghsbw.autoSP =  ghsautoSP;
+                    locshghsbw.autoSP =  ghsautsp;//SP auto
                 locallshgshbw.push_back(locshghsbw);
 
 
