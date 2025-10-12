@@ -691,6 +691,7 @@ public:
     int nbmasksh;
     int nbwb;
     int nbsym;
+    int nbsym2;
     void updateghsbw2(double ghsb, double ghsw, bool ghsaut);
     void updateghsbw(int bp, int wp, double minbp, double maxwp, double symev);
     void setDefaultExpanderVisibility() override;

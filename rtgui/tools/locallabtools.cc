@@ -4677,6 +4677,7 @@ void LocallabShadow::adjusterAutoToggled(Adjuster* a, bool newval)// bool newval
     if (listener && a == ghs_SP) {
         auto e = (!newval) ? EvlocallabautoSPoff : EvlocallabautoSPson;
         listener->panelChanged(e, newval ? M("GENERAL_ENABLED") : M("GENERAL_DISABLED"));
+        nbsym2 = 0;
     }
 }
 
@@ -4692,7 +4693,12 @@ void LocallabShadow::autoSPChanged(float radius)
                 ghs_SP->addAutoButton(M("TP_LOCALLAB_SPRADIUS_TOOLTIP"));
                 ghs_SP->setValue(radius);
             }
+            
             enableListener();
+            nbsym2++;                       
+            if(nbsym2 < 2) {
+                adjusterChanged(ghs_SP, 0);
+            }
             return false;
         }
     );
@@ -4984,6 +4990,7 @@ void LocallabShadow::read(const rtengine::procparams::ProcParams* pp, const Para
     nbmasksh = 0;
     nbwb = 0;//initialize count White and black point
     nbsym = 0;
+    nbsym2 = 0;
     // Update GUI to selected spot value
     const int index = pp->locallab.selspot;
 
