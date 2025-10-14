@@ -4332,7 +4332,7 @@ LocallabShadow::LocallabShadow():
     BP_Frame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_GHS_BLACKPOINT_FRAME")))),
     ghs_autobw(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_GHS_AUTOBW")))),
     ghs_BLP(Gtk::manage(new Adjuster(M("TP_LOCALLAB_GHS_BLP"), -0.2, 1.0, 0.0001, 0.0))),
-    ghs_HLP(Gtk::manage(new Adjuster(M("TP_LOCALLAB_GHS_HLP"), 0.2002, 50.0, 0.0001, 1.))),
+    ghs_HLP(Gtk::manage(new Adjuster(M("TP_LOCALLAB_GHS_HLP"), 0.2002, 25.0, 0.0001, 1.))),
     ghsbpwpLabels(Gtk::manage(new Gtk::Label("---"))),
     ghsbpwpvalueLabels(Gtk::manage(new Gtk::Label("---"))),
     ghs_smooth(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_GHS_SMOOTH")))),
@@ -4989,7 +4989,6 @@ void LocallabShadow::read(const rtengine::procparams::ProcParams* pp, const Para
     disableListener();
     nbmasksh = 0;
     nbwb = 0;//initialize count White and black point
-    nbsym = 0;
     nbsym2 = 0;
     // Update GUI to selected spot value
     const int index = pp->locallab.selspot;
