@@ -5042,7 +5042,6 @@ void LocallabShadow::read(const rtengine::procparams::ProcParams* pp, const Para
         ghs_MID->setValue((double)spot.ghs_MID);
         ghs_BLP->setValue((double)spot.ghs_BLP);
         ghs_HLP->setValue((double)spot.ghs_HLP);
-            
         if(ghs_D->getValue() > 0.002 || ghs_D->getValue() == 0.f) {
             ghs_BLP->set_sensitive(false);
             ghs_HLP->set_sensitive(false);
@@ -5050,8 +5049,13 @@ void LocallabShadow::read(const rtengine::procparams::ProcParams* pp, const Para
             ghs_LC->set_sensitive(true); 
             ghs_MID->set_sensitive(true);        
         } else {
-            ghs_BLP->set_sensitive(true);
-            ghs_HLP->set_sensitive(true);        
+            if (ghs_autobw->get_active()) {
+                ghs_BLP->set_sensitive(false);
+                ghs_HLP->set_sensitive(false);
+            } else {
+                ghs_BLP->set_sensitive(true);
+                ghs_HLP->set_sensitive(true);                
+            }
             ghs_autobw->set_sensitive(true);
             if(ghs_inv->get_active()) {
                 ghs_autobw->set_sensitive(false);
@@ -5298,8 +5302,13 @@ void LocallabShadow::adjusterChanged(Adjuster* a, double newval)
                 ghs_LC->set_sensitive(true); 
                 ghs_MID->set_sensitive(true);               
             } else {
-                ghs_BLP->set_sensitive(true);
-                ghs_HLP->set_sensitive(true);               
+                if (ghs_autobw->get_active()) {
+                    ghs_BLP->set_sensitive(false);
+                    ghs_HLP->set_sensitive(false);
+                } else {
+                    ghs_BLP->set_sensitive(true);
+                    ghs_HLP->set_sensitive(true);                
+                }
                 ghs_autobw->set_sensitive(true);
                 if(ghs_inv->get_active()) {
                     ghs_autobw->set_sensitive(false);
@@ -5974,6 +5983,14 @@ void LocallabShadow::ghs_autobwChanged()
         }
     }
 
+    if (ghs_autobw->get_active()) {
+        ghs_BLP->set_sensitive(false);
+        ghs_HLP->set_sensitive(false);        
+    } else {
+        ghs_BLP->set_sensitive(true);
+        ghs_HLP->set_sensitive(true);              
+    }
+
     if (isLocActivated && exp->getEnabled()) {
         if (listener) {
             if (ghs_autobw->get_active()) {
@@ -6148,8 +6165,13 @@ void LocallabShadow::updateShadowGUImask()
             ghs_LC->set_sensitive(true); 
             ghs_MID->set_sensitive(true); 
         } else {
-            ghs_BLP->set_sensitive(true);
-            ghs_HLP->set_sensitive(true);       
+            if (ghs_autobw->get_active()) {
+                ghs_BLP->set_sensitive(false);
+                ghs_HLP->set_sensitive(false);
+            } else {
+                ghs_BLP->set_sensitive(true);
+                ghs_HLP->set_sensitive(true);                
+            }            
             ghs_autobw->set_sensitive(true);
             if(ghs_inv->get_active()) {
                 ghs_autobw->set_sensitive(false);
@@ -6274,8 +6296,13 @@ void LocallabShadow::updateShadowGUIshmet()
             ghs_LC->set_sensitive(true); 
             ghs_MID->set_sensitive(true); 
        } else {
-            ghs_BLP->set_sensitive(true);
-            ghs_HLP->set_sensitive(true);        
+            if (ghs_autobw->get_active()) {
+                ghs_BLP->set_sensitive(false);
+                ghs_HLP->set_sensitive(false);
+            } else {
+                ghs_BLP->set_sensitive(true);
+                ghs_HLP->set_sensitive(true);                
+            }          
             ghs_autobw->set_sensitive(true);
             if(ghs_inv->get_active()) {
                ghs_autobw->set_sensitive(false);
