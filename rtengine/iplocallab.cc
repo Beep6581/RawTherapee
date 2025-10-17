@@ -21827,12 +21827,10 @@ void ImProcFunctions::Lab_Local(
                         }
                     }
                     
-                  // bool gambas = false;
                    float ksr = 1.f;
                    float ksb = 1.f;
                    float ksg = 1.f;
-                   //gamtone, slotone
-                   //
+
                    if(lp.smoothciem == 7) {//TRC mode
                                             
                         ksr = params->locallab.spots.at(sp).kslopesmor;
