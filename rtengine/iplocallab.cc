@@ -18059,7 +18059,12 @@ void ImProcFunctions::Lab_Local(
                                     float rl = r - ll;
                                     float gl = g - ll;
                                     float bl = b - ll;
-                                    float s = intp(max(sf(rl, r), sf(gl, g), sf(bl, b)), pow_F(f, 0.3f) * 0.6f + 0.4f, 1.f);//we can change these values 
+                                    // The parameters 0.3f, 0.6f, and 0.4f control the nonlinearity and scaling of the saturation adjustment:
+                                    // - 0.3f: exponent for the power function, affecting the response curve of the adjustment factor.
+                                    // - 0.6f: scaling factor for the powered value.
+                                    // - 0.4f: base offset added to ensure a minimum effect.
+                                    // Adjust these values to fine-tune the strength and shape of the local saturation effect.
+                                    float s = intp(max(sf(rl, r), sf(gl, g), sf(bl, b)), pow_F(f, 0.3f) * 0.6f + 0.4f, 1.f);                                    
                                     r = ll + s * rl;
                                     g = ll + s * gl;
                                     b = ll + s * bl;

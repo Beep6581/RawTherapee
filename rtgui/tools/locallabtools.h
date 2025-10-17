@@ -703,7 +703,6 @@ public:
     void curveChanged(CurveEditor* ce) override;
     void previewshChanged();
     void adjusterAutoToggled(Adjuster* a, bool newval);
-  //  void adjusterAutoToggled(Adjuster* a);
     void autoSPChanged(float radius);
 
 private:

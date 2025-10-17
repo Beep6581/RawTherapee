@@ -18,7 +18,7 @@ fft *
  *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
  *  2019-2020 Pierre Cabrera <pierre.cab@gmail.com>
  */
-#include "tools/locallabtools.h"
+#include "locallabtools.h"
 
 #include "options.h"
 #include "rtengine/improcfun.h"
@@ -4672,7 +4672,7 @@ LocallabShadow::LocallabShadow():
     pack_start(*expmasksh, false, false);
 }
 
-void LocallabShadow::adjusterAutoToggled(Adjuster* a, bool newval)// bool newval
+void LocallabShadow::adjusterAutoToggled(Adjuster* a, bool newval)
 {    
     if (listener && a == ghs_SP) {
         auto e = (!newval) ? EvlocallabautoSPoff : EvlocallabautoSPson;
@@ -5647,8 +5647,7 @@ void LocallabShadow::updateghsbw(int bp, int wp, double minbp, double maxwp, dou
                                     Glib::ustring::format(std::fixed, std::setprecision(4), symev))
             );
         } else {
-            ghssymLabel->set_text("--");
- 
+            ghssymLabel->set_text(M("TP_LOCALLAB_GHSSYMNO"));
         }
         
         ghsbpwpLabels->set_text(
