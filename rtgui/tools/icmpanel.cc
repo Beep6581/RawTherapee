@@ -698,7 +698,7 @@ void ICMPanel::wavlocChanged(double nlevel, double nmax, bool curveloc)
 }
 
 void ICMPanel::neutral_pressed ()
-{   //find working profile and set the same destination proile
+{   //find working profile and set the same destination profile
     if (wProfNames->get_active_text() == "Rec2020") {
         wprim->set_active(toUnderlying(ColorManagementParams::Primaries::REC2020));
     } else if (wProfNames->get_active_text() == "sRGB") {
@@ -1227,6 +1227,8 @@ void ICMPanel::read(const ProcParams* pp, const ParamsEdited* pedited)
                 redFrame->hide();
             } else {
                 redFrame->show();
+                colorFramecie->set_sensitive(true);
+
                 if (
                     ColorManagementParams::Primaries(wprim->get_active_row_number()) != ColorManagementParams::Primaries::CUSTOM
                     && ColorManagementParams::Primaries(wprim->get_active_row_number()) != ColorManagementParams::Primaries::CUSTOM_GRID
@@ -1239,9 +1241,13 @@ void ICMPanel::read(const ProcParams* pp, const ParamsEdited* pedited)
                   will->set_sensitive(false);
                   if (ColorManagementParams::Primaries(wprim->get_active_row_number()) == ColorManagementParams::Primaries::CUSTOM) {
                     will->set_sensitive(true);
+                    colorFramecie->set_sensitive(true);
+
                   }
                   primCoordGrid->set_sensitive(true);
                   labgridcie->set_sensitive(true);
+                  colorFramecie->set_sensitive(false);
+
                 }
 
             }
@@ -1423,6 +1429,7 @@ void ICMPanel::read(const ProcParams* pp, const ParamsEdited* pedited)
             }
             break;
     }
+    colorFramecie->set_sensitive(true);
 
     switch (ColorManagementParams::Primaries(wprim->get_active_row_number())) {
         case ColorManagementParams::Primaries::DEFAULT:
@@ -1446,6 +1453,8 @@ void ICMPanel::read(const ProcParams* pp, const ParamsEdited* pedited)
         case ColorManagementParams::Primaries::CUSTOM: {
             will->set_sensitive(true);
             labgridcie->set_sensitive(false);
+            colorFramecie->set_sensitive(true);
+
             break;
         }
 
@@ -1453,6 +1462,8 @@ void ICMPanel::read(const ProcParams* pp, const ParamsEdited* pedited)
             labgridcie->set_sensitive(true);
             primCoordGrid->set_sensitive(false);
             will->set_sensitive(false);
+            colorFramecie->set_sensitive(false);
+
             break;
         }
     }
@@ -2020,6 +2031,8 @@ void ICMPanel::wtrcinChanged()
 
 void ICMPanel::willChanged()
 {
+    colorFramecie->set_sensitive(true);
+
     switch (ColorManagementParams::Primaries(wprim->get_active_row_number() )) {
         case ColorManagementParams::Primaries::DEFAULT:
         case ColorManagementParams::Primaries::SRGB:
@@ -2048,6 +2061,8 @@ void ICMPanel::willChanged()
         case ColorManagementParams::Primaries::CUSTOM_GRID: {
             labgridcie->set_sensitive(true);
             will->set_sensitive(false);
+            colorFramecie->set_sensitive(false);
+            
             break;
         }
     }
@@ -2061,6 +2076,8 @@ void ICMPanel::willChanged()
 
 void ICMPanel::wprimChanged()
 {
+    colorFramecie->set_sensitive(true);
+
     switch (ColorManagementParams::Primaries(wprim->get_active_row_number())) {
         case ColorManagementParams::Primaries::DEFAULT:
         case ColorManagementParams::Primaries::CUSTOM:
@@ -2309,13 +2326,19 @@ void ICMPanel::wprimChanged()
             primCoordGrid->set_sensitive(false);
             labgridcie->set_sensitive(false);
             will->set_sensitive(false);
+            colorFramecie->set_sensitive(true);
+
             if (ColorManagementParams::Primaries(wprim->get_active_row_number()) == ColorManagementParams::Primaries::CUSTOM_GRID) {
                 labgridcie->set_sensitive(true);
+                colorFramecie->set_sensitive(false);
+                
             }
         } else {
             primCoordGrid->set_sensitive(true);
             labgridcie->set_sensitive(false);
             will->set_sensitive(true);
+            colorFramecie->set_sensitive(true);
+
         }
 
     }
@@ -2323,8 +2346,12 @@ void ICMPanel::wprimChanged()
 
     if (ColorManagementParams::Primaries(wprim->get_active_row_number()) == ColorManagementParams::Primaries::CUSTOM_GRID) {
         labgridcie->set_sensitive(true);
+        colorFramecie->set_sensitive(false);
+
     } else {
         labgridcie->set_sensitive(false);
+        colorFramecie->set_sensitive(true);
+        
     }
 
     if (listener) {
