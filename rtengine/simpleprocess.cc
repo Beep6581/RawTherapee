@@ -1836,9 +1836,10 @@ private:
                 ipf.toneEqualizer(tmpImage1.get(), params, prof, 1, false);
             }
             */
-            const bool smoothi = params.icm.wsmoothcie;
+//            const bool smoothi = params.icm.wsmoothcie;
             const float smoothisli = params.icm.wsmoothciesli;
-                if(smoothi) {
+/*            
+            if(smoothi) {
                     ToneEqualizerParams params;
                     params.enabled = true;
                     params.regularization = 0.f;
@@ -1856,6 +1857,7 @@ private:
                 
                     ipf.toneEqualizer(tmpImage1.get(), params, prof, 1, false);
             }
+*/
                 if(smoothisli > 0.f) {
                     ToneEqualizerParams params;
                     params.enabled = true;

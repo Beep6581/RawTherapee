@@ -2206,8 +2206,9 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                     ipf.toneEqualizer(tmpImage1.get(), params, prof, scale, false);
                 }
                 */
-                const bool smoothi = params->icm.wsmoothcie;
+//                const bool smoothi = params->icm.wsmoothcie;
                 const float smoothisli = params->icm.wsmoothciesli;
+/*
                 if(smoothi) {
                     ToneEqualizerParams params;
                     params.enabled = true;
@@ -2226,7 +2227,7 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                 
                     ipf.toneEqualizer(tmpImage1.get(), params, prof, scale, false);
                 }
-
+*/
                 if(smoothisli > 0.f) {
                     ToneEqualizerParams params;
                     params.enabled = true;

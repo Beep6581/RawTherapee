@@ -1724,9 +1724,9 @@ void Crop::update(int todo)
                 parent->ipf.toneEqualizer(tmpImage1.get(), params, prof, skip, false);
             }
 */
-                const bool smoothi = params.icm.wsmoothcie;
+              //  const bool smoothi = params.icm.wsmoothcie;
                 const float smoothisli = params.icm.wsmoothciesli;
-                
+                /*
                 if(smoothi) {
                     ToneEqualizerParams params;
                     params.enabled = true;
@@ -1745,6 +1745,7 @@ void Crop::update(int todo)
                 
                     parent->ipf.toneEqualizer(tmpImage1.get(), params, prof, skip, false);
                 }
+                */
                 if(smoothisli > 0.f) {
                     ToneEqualizerParams params;
                     params.enabled = true;
