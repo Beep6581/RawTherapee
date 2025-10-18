@@ -13945,7 +13945,7 @@ void ImProcFunctions::DeNoise(int sp, int call, int aut,  bool noiscfactiv, cons
                         array2D<float> clipMaskchro(bfw, bfh);       
                      
                         array2D<float> redVals (bfw, bfh);
-                        array2D<float> greenVals(GW, GH);
+                        array2D<float> greenVals(bfw, bfh);
                         array2D<float> blueVals(bfw, bfh);
 #ifdef _OPENMP
             #pragma omp parallel for schedule(dynamic,16) if (multiThread)
