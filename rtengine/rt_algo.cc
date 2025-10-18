@@ -33,7 +33,6 @@
 #include "rt_algo.h"
 #include "rt_math.h"
 #include "sleef.h"
-#include "../rtgui/threadutils.h"
 #include "imagefloat.h"
 #include "color.h"
 #include "rtengine.h"

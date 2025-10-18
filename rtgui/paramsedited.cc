@@ -10204,7 +10204,7 @@ void LocallabParamsEdited::LocallabSpotEdited::set(bool v)
 
 bool CaptureSharpeningParamsEdited::isUnchanged() const
 {
-    return enabled && contrast && autoContrast && autoRadius && deconvradius && deconvradiusOffset && deconviter && deconvitercheck  && showcap  && noisecaptype;
+    return enabled && contrast && autoContrast && autoRadius && deconvradius && deconvradiusOffset && deconviter && deconvitercheck  && showcap  && noisecaptype && noisecap && noisecapafter;;
 }
 
 bool RAWParamsEdited::PreprocessWBParamsEdited::isUnchanged() const

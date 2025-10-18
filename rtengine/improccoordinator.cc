@@ -1060,7 +1060,6 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                         
                         
                  //       params->locallab.spots.at(sp).deconvAutoshar = autocontrast[sp];
-                 //       params->locallab.spots.at(sp).sharcontrast = sharcont[sp];
  
                        
                         LocallabListener::locallabsharBEF locsharbef;
@@ -1237,8 +1236,6 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
             
             bool *autocontrast = nullptr;
             autocontrast = new bool[sizespot];
-            float *sharcont = nullptr;
-            sharcont = new float[sizespot];
 
             for (int sp = 0; sp < (int)params->locallab.spots.size(); sp++) {
 
@@ -1755,7 +1752,6 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
             delete [] mainfp;
             delete [] scopefp;
             delete [] autocontrast;
-            delete [] sharcont;
             
             ipf.lab2rgb(*nprevl, *oprevi, params->icm.workingProfile);
             //*************************************************************
