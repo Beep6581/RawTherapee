@@ -1318,11 +1318,13 @@ void Crop::update(int todo)
                         }
                         */
                         if (parent->locallListener) {
-                            parent->locallListener->denChanged(localldenoiselc, params.locallab.selspot);
-                            if (params.locallab.spots.at(sp).lockmadl) {
-                                parent->locallListener->madChanged(localldenoisemadl, params.locallab.selspot);
+                            if(params.locallab.spots.at(sp).expblur){//if not enable disable locallListener to avoid bad GUI behavior
+                                parent->locallListener->denChanged(localldenoiselc, params.locallab.selspot);
+                                if (params.locallab.spots.at(sp).lockmadl) {
+                                    parent->locallListener->madChanged(localldenoisemadl, params.locallab.selspot);
+                                }
+                                parent->locallListener->den2Changed(localldenoiselc2, params.locallab.selspot);
                             }
-                            parent->locallListener->den2Changed(localldenoiselc2, params.locallab.selspot);
                             parent->locallListener->sharaftChanged(locallsharaft,params.locallab.selspot); 
                         }
 
