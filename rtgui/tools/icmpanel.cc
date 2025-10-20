@@ -78,6 +78,7 @@ ICMPanel::ICMPanel() : FoldableToolPanel(this, TOOL_NAME, M("TP_ICM_LABEL")), iu
     EvICMwmidtcie = m->newEvent(LUMINANCECURVE, "HISTORY_MSG_ICM_MIDTCIE");
     EvICMwsmoothcie = m->newEvent(LUMINANCECURVE, "HISTORY_MSG_ICM_SMOOTHCIE");
     EvICMwapsatur = m->newEvent(LUMINANCECURVE, "HISTORY_MSG_ICM_APSATUR");
+    EvICMwapsat = m->newEvent(LUMINANCECURVE, "HISTORY_MSG_ICM_APSAT");
     EvICMwsmoothciesli = m->newEvent(LUMINANCECURVE, "HISTORY_MSG_ICM_SMOOTHCIESLI");
     EvICMsigmatrc = m->newEvent(LUMINANCECURVE, "HISTORY_MSG_ICM_SIGMATRC");
     EvICMoffstrc = m->newEvent(LUMINANCECURVE, "HISTORY_MSG_ICM_OFFSTRC");
@@ -267,6 +268,7 @@ ICMPanel::ICMPanel() : FoldableToolPanel(this, TOOL_NAME, M("TP_ICM_LABEL")), iu
 
     wGamma = Gtk::manage(new Adjuster(M("TP_ICM_WORKING_TRC_GAMMA"), 0.40, 20.0, 0.001, 2.4));//default sRGB
     wSlope = Gtk::manage(new Adjuster(M("TP_ICM_WORKING_TRC_SLOPE"), 0., 300., 0.01, 12.92));//defautl sRGB
+    wapsat = Gtk::manage(new Adjuster(M("TP_ICM_WORKING_TRC_SAT"), 0., 2., 0.1, 1.0));//saturation slider
     wapsatur = Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_APSATUR")));//saturation
     wmidtcie = Gtk::manage(new Adjuster(M("TP_LOCALLAB_MIDTCIEMAIN"), -100., 100., 1., 0.));
     wsmoothcie = Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_SMOOTHCIE")));//highlights
@@ -294,8 +296,11 @@ ICMPanel::ICMPanel() : FoldableToolPanel(this, TOOL_NAME, M("TP_ICM_LABEL")), iu
 
     trcProfVBox->pack_start(*wSlope, Gtk::PACK_SHRINK);
     wSlope->show();
-    trcProfVBox->pack_start(*wapsatur, Gtk::PACK_SHRINK);
-    wapsatur->show();
+    trcProfVBox->pack_start(*wapsat, Gtk::PACK_SHRINK);
+    wapsat->show();
+    
+   // trcProfVBox->pack_start(*wapsatur, Gtk::PACK_SHRINK);
+   // wapsatur->show();
     
     trcProfVBox->pack_start(*wmidtcie, Gtk::PACK_SHRINK);
     wmidtcie->show();
@@ -491,6 +496,7 @@ ICMPanel::ICMPanel() : FoldableToolPanel(this, TOOL_NAME, M("TP_ICM_LABEL")), iu
     wGamma->setAdjusterListener(this);
     wSlope->setLogScale(16, 0);
     wSlope->setAdjusterListener(this);
+    wapsat->setAdjusterListener(this);
     wmidtcie->setAdjusterListener(this);
     wsmoothciesli->setAdjusterListener(this);
     redx->setAdjusterListener(this);
@@ -1086,6 +1092,7 @@ void ICMPanel::read(const ProcParams* pp, const ParamsEdited* pedited)
   //  wSlope->setValue(pp->icm.workingTRCSlope);
     wGamma->setValue(pp->icm.wGamma);
     wSlope->setValue(pp->icm.wSlope);
+    wapsat->setValue(pp->icm.wapsat);
     wmidtcie->setValue(pp->icm.wmidtcie);
     wsmoothciesli->setValue(pp->icm.wsmoothciesli);
     sigmatrc->setValue(pp->icm.sigmatrc);
@@ -1162,6 +1169,7 @@ void ICMPanel::read(const ProcParams* pp, const ParamsEdited* pedited)
      //   wSlope->setEditedState(pedited->icm.workingTRCSlope  ? Edited : UnEdited);
         wGamma->setEditedState(pedited->icm.wGamma ? Edited : UnEdited);
         wSlope->setEditedState(pedited->icm.wSlope  ? Edited : UnEdited);
+        wapsat->setEditedState(pedited->icm.wapsat  ? Edited : UnEdited);
         wmidtcie->setEditedState(pedited->icm.wmidtcie  ? Edited : UnEdited);
         wsmoothciesli->setEditedState(pedited->icm.wsmoothciesli  ? Edited : UnEdited);
         sigmatrc->setEditedState(pedited->icm.sigmatrc  ? Edited : UnEdited);
@@ -1538,6 +1546,7 @@ void ICMPanel::write(ProcParams* pp, ParamsEdited* pedited)
  //   pp->icm.workingTRCSlope =  wSlope->getValue();
     pp->icm.wGamma =  wGamma->getValue();
     pp->icm.wSlope =  wSlope->getValue();
+    pp->icm.wapsat =  wapsat->getValue();
     pp->icm.wmidtcie =  wmidtcie->getValue();
     pp->icm.wsmoothciesli =  wsmoothciesli->getValue();
     pp->icm.sigmatrc =  sigmatrc->getValue();
@@ -1579,6 +1588,7 @@ void ICMPanel::write(ProcParams* pp, ParamsEdited* pedited)
        // pedited->icm.workingTRCSlope = wSlope->getEditedState();
         pedited->icm.wGamma = wGamma->getEditedState();
         pedited->icm.wSlope = wSlope->getEditedState();
+        pedited->icm.wapsat = wapsat->getEditedState();
         pedited->icm.wmidtcie = wmidtcie->getEditedState();
         pedited->icm.wsmoothciesli = wsmoothciesli->getEditedState();
         pedited->icm.sigmatrc = sigmatrc->getEditedState();
@@ -1612,6 +1622,7 @@ void ICMPanel::setDefaults(const ProcParams* defParams, const ParamsEdited* pedi
    // wSlope->setDefault(defParams->icm.workingTRCSlope);
     wGamma->setDefault(defParams->icm.wGamma);
     wSlope->setDefault(defParams->icm.wSlope);
+    wapsat->setDefault(defParams->icm.wapsat);
     wmidtcie->setDefault(defParams->icm.wmidtcie);
     wsmoothciesli->setDefault(defParams->icm.wsmoothciesli);
     sigmatrc->setDefault(defParams->icm.sigmatrc);
@@ -1637,6 +1648,7 @@ void ICMPanel::setDefaults(const ProcParams* defParams, const ParamsEdited* pedi
      //   wSlope->setDefaultEditedState(pedited->icm.workingTRCSlope ? Edited : UnEdited);
         wGamma->setDefaultEditedState(pedited->icm.wGamma ? Edited : UnEdited);
         wSlope->setDefaultEditedState(pedited->icm.wSlope ? Edited : UnEdited);
+        wapsat->setDefaultEditedState(pedited->icm.wapsat ? Edited : UnEdited);
         wmidtcie->setDefaultEditedState(pedited->icm.wmidtcie ? Edited : UnEdited);
         wsmoothciesli->setDefaultEditedState(pedited->icm.wsmoothciesli ? Edited : UnEdited);
         sigmatrc->setDefaultEditedState(pedited->icm.sigmatrc ? Edited : UnEdited);
@@ -1658,6 +1670,7 @@ void ICMPanel::setDefaults(const ProcParams* defParams, const ParamsEdited* pedi
     } else {
         wGamma->setDefaultEditedState(Irrelevant);
         wSlope->setDefaultEditedState(Irrelevant);
+        wapsat->setDefaultEditedState(Irrelevant);
         wmidtcie->setDefaultEditedState(Irrelevant);
         wsmoothciesli->setDefaultEditedState(Irrelevant);
         sigmatrc->setDefaultEditedState(Irrelevant);
@@ -1693,6 +1706,8 @@ void ICMPanel::adjusterChanged(Adjuster* a, double newval)
             listener->panelChanged(EvICMgamm, costr2);
         } else if (a == wSlope) {
             listener->panelChanged(EvICMslop, costr2);
+        } else if (a == wapsat) {
+            listener->panelChanged(EvICMwapsat, costr2);
         } else if (a == wmidtcie) {
             listener->panelChanged(EvICMwmidtcie, costr2);
         } else if (a == wsmoothciesli) {

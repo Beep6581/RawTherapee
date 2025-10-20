@@ -21808,7 +21808,7 @@ void ImProcFunctions::Lab_Local(
                     workingtrc(sp, tmpImage, tmpImage, bfw, bfh, typ, prof, gamtone, slotone, catx, ill, prim, locprim, rdx, rdy, grx, gry, blx, bly, meanx, meany, meanxe, meanye, dummy, false, true, true, gamcie);//with gamut control
 
                     if (params->locallab.spots.at(sp).apsatur) {//saturation
-                        ImProcFunctions::apsatur(sp, tmpImage, tmpImage2, bfw, bfh) ;
+                        ImProcFunctions::apsatur(sp, tmpImage, tmpImage2, bfw, bfh, 1.f) ;
                     }
  
                     if(lp.midtcie != 0 && lp.midtmet == 1) {

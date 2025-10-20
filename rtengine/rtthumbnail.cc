@@ -1575,9 +1575,11 @@ IImage8* Thumbnail::processImage (const procparams::ProcParams& params, eSensorT
         float meanx, meany, meanxe, meanye = 0.f;
         ipf.workingtrc(0, tmpImage1.get(), tmpImage1.get(), GW, GH, -5, prof, 2.4, 12.92310, 0, ill, 0, 0, rdx, rdy, grx, gry, blx, bly, meanx, meany, meanxe, meanye, dummy, true, false, false);
         ipf.workingtrc(0, tmpImage1.get(), tmpImage1.get(), GW, GH, 5, prof, gamtone, slotone,0, illum, prim, locprim, rdx, rdy, grx, gry, blx, bly,meanx, meany, meanxe, meanye, dummy, false, true, true);
-        if(params.icm.wapsatur) {
-            ipf.apsatur(0, tmpImage1.get(), tmpImage2.get(), GW, GH) ;
-      
+        
+        float satu = params.icm.wapsat;
+
+        if(satu > 0.f) {
+            ipf.apsatur(0, tmpImage1.get(), tmpImage2.get(), GW, GH, satu) ;     
         }
 
         const float smoothisli = params.icm.wsmoothciesli;

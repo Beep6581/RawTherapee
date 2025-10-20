@@ -2204,6 +2204,7 @@ struct ColorManagementParams {
     Cat wcat;
     double wGamma;
     double wSlope;
+    double wapsat;
     double wmidtcie;
     double sigmatrc;
     double offstrc;

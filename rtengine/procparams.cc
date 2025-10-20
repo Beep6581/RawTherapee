@@ -2672,6 +2672,8 @@ ColorManagementParams::ColorManagementParams() :
     wcat(Cat::BRAD),
     wGamma(2.4),//gamma sRGB
     wSlope(12.92),
+    wapsat(1.),
+    
     wmidtcie(0.),
     sigmatrc(1.),
     offstrc(1.),
@@ -2742,6 +2744,7 @@ bool ColorManagementParams::operator ==(const ColorManagementParams& other) cons
         && wcat == other.wcat
         && wGamma == other.wGamma
         && wSlope == other.wSlope
+        && wapsat == other.wapsat
         && wmidtcie == other.wmidtcie
         && sigmatrc == other.sigmatrc
         && offstrc == other.offstrc
@@ -8246,6 +8249,7 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
         
         saveToKeyfile(!pedited || pedited->icm.wGamma, "Color Management", "WorkingTRCGamma", icm.wGamma, keyFile);
         saveToKeyfile(!pedited || pedited->icm.wSlope, "Color Management", "WorkingTRCSlope", icm.wSlope, keyFile);
+        saveToKeyfile(!pedited || pedited->icm.wapsat, "Color Management", "WorkingTRCsat", icm.wapsat, keyFile);
         saveToKeyfile(!pedited || pedited->icm.wmidtcie, "Color Management", "Wmidtcie", icm.wmidtcie, keyFile);
         saveToKeyfile(!pedited || pedited->icm.sigmatrc, "Color Management", "Sigmatrc", icm.sigmatrc, keyFile);
         saveToKeyfile(!pedited || pedited->icm.offstrc, "Color Management", "Offstrc", icm.offstrc, keyFile);
@@ -10983,6 +10987,7 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
             
             assignFromKeyfile(keyFile, "Color Management", "Gamut", icm.gamut, pedited->icm.gamut);
             assignFromKeyfile(keyFile, "Color Management", "WorkingTRCSlope", icm.wSlope, pedited->icm.wSlope);
+            assignFromKeyfile(keyFile, "Color Management", "WorkingTRCsat", icm.wapsat, pedited->icm.wapsat);
             assignFromKeyfile(keyFile, "Color Management", "WorkingTRCGamma", icm.wGamma, pedited->icm.wGamma);
             assignFromKeyfile(keyFile, "Color Management", "Wmidtcie", icm.wmidtcie, pedited->icm.wmidtcie);
             assignFromKeyfile(keyFile, "Color Management", "Wapsatur", icm.wapsatur, pedited->icm.wapsatur);

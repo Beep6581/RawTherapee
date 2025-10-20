@@ -1458,6 +1458,7 @@ HISTORY_MSG_HLTH;Inpaint opposed - gain threshold
 HISTORY_MSG_ICL_LABGRIDCIEXY;Cie xy
 HISTORY_MSG_ICM_AINTENT;Abstract profile intent
 HISTORY_MSG_ICM_APSATUR;Abstract profile saturation
+HISTORY_MSG_ICM_APSAT;Abstract profile saturation
 HISTORY_MSG_ICM_BLUX;Primaries Blue X
 HISTORY_MSG_ICM_BLUY;Primaries Blue Y
 HISTORY_MSG_ICM_CAT;Matrix adaptation
@@ -2951,6 +2952,7 @@ TP_ICM_WORKING_TRC_GAMMA;Gamma
 TP_ICM_WORKING_TRC_LIN;Linear g=1
 TP_ICM_WORKING_TRC_NONE;None
 TP_ICM_WORKING_TRC_SLOPE;Slope
+TP_ICM_WORKING_TRC_SAT;Saturation
 TP_ICM_WORKING_TRC_SRGB;sRGB g=2.4 s=12.92
 TP_ICM_WORKING_TRC_TOOLTIP;Only for built-in profiles.
 TP_IMPULSEDENOISE_LABEL;Impulse Noise Reduction

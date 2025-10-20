@@ -590,7 +590,7 @@ enum class BlurType {
     // CieImage *ciec;
     
     void gamutcompr( rtengine::Imagefloat *src, rtengine::Imagefloat *dst) const;
-    void apsatur(int sp, Imagefloat* src, Imagefloat* dst, int bfw, int bfh);
+    void apsatur(int sp, Imagefloat* src, Imagefloat* dst, int bfw, int bfh, float satu);
 
     void workingtrc(int sp, Imagefloat* src, Imagefloat* dst, int cw, int ch , int mul, Glib::ustring &profile, double gampos, double slpos, int cat, int &illum, int prim, int locprim, 
         float &rdx, float &rdy, float &grx, float &gry, float &blx, float &bly, float &meanx, float &meany, float &meanxe, float &meanye,

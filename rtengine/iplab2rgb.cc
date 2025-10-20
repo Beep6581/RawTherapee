@@ -651,7 +651,7 @@ inline float norm3(float r, float g, float b, TMatrix ws)
 }
 
 
-void ImProcFunctions::apsatur(int sp, Imagefloat* tmpImage, Imagefloat* tmpImage2, int bfw, int bfh) 
+void ImProcFunctions::apsatur(int sp, Imagefloat* tmpImage, Imagefloat* tmpImage2, int bfw, int bfh, float satu) 
 //act on saturation RGB after Abstract Profile - main and Selective Editing
 {
     const TMatrix wprof = ICCStore::getInstance()->workingSpaceMatrix(params->icm.workingProfile);
@@ -669,12 +669,12 @@ void ImProcFunctions::apsatur(int sp, Imagefloat* tmpImage, Imagefloat* tmpImage
             };
       
     const auto apply_satcie =
-        [&](float &r, float &g, float &b, float f, float ll) -> void
+        [&](float &r, float &g, float &b, float f, float ll, float satu) -> void
             {
                 float rl = r - ll;
                 float gl = g - ll;
                 float bl = b - ll;
-                float s = intp(max(sfcie(rl, r), sfcie(gl, g), sfcie(bl, b)), pow_F(f, 0.3f) * 0.6f + 0.4f, 1.f);
+                float s = intp(max(sfcie(rl, r), sfcie(gl, g), sfcie(bl, b)), pow_F(f, 0.3f * satu) * (0.6f) + (0.4f), 1.f);
                 r = ll + s * rl;
                 g = ll + s * gl;
                 b = ll + s * bl;
@@ -696,7 +696,7 @@ void ImProcFunctions::apsatur(int sp, Imagefloat* tmpImage, Imagefloat* tmpImage
                     fcie0 = rtengine::max(fcie0, noise);
                     fcie2 = rtengine::max(fcie2, noise);
                     float amp = fcie0 / fcie2;
-                    apply_satcie(R0, G0, B0, amp, fcie2);//always apply saturation
+                    apply_satcie(R0, G0, B0, amp, fcie2, satu);//always apply saturation
                     tmpImage->r(y, x) = R0 * 65535.f;
                     tmpImage->g(y, x) = G0 * 65535.f;
                     tmpImage->b(y, x) = B0 * 65535.f;                                     
