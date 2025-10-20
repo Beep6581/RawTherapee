@@ -15388,8 +15388,7 @@ void ImProcFunctions::Lab_Local(
     bool prevDeltaE, int llColorMask, int llColorMaskinv, int llExpMask, int llExpMaskinv, int llSHMask, int llSHMaskinv, int llvibMask, int lllcMask, int llsharMask, int llcbMask, int llretiMask, int llsoftMask, int lltmMask, int llblMask, int lllogMask, int ll_Mask, int llcieMask,
     float& minCD, float& maxCD, float& mini, float& maxi, float& Tmean, float& Tsigma, float& Tmin, float& Tmax,
     float& meantm, float& stdtm, float& meanreti, float& stdreti, float &fab,float &maxicam, float &rdx, float &rdy, float &grx, float &gry, float &blx, float &bly, float &meanx, float &meany, float &meanxe, float &meanye, int &prim, int &ill, float &contsig, float &lightsig, float &slopeg, bool &linkrgb,
-    float *resi, float &sharc, float &denocont, int *ghsbpwp, float *ghsbpwpvalue, float *savmadl, float *ghsbwslider, float &ghssym)
-
+    float *resi, float &sharc, float &denocont, int *ghsbpwp, float *ghsbpwpvalue, float *savmadl, float *ghsbwslider, float &ghssym, bool &ghsautsp)
 
 {
     //general call of others functions : important return hueref, chromaref, lumaref
@@ -18274,6 +18273,7 @@ void ImProcFunctions::Lab_Local(
                         } else if (params->locallab.spots.at(sp).ghsMethod == "hue") {// hue hsl
                             met = 5;
                         }
+                        bool ghsautoSP = params->locallab.spots.at(sp).SPAutoRadius;                        
                         
                         const ght_compute_params c = GHT_setup(B, D, LP, SP, HP, strtype);//setup system with entries
 
@@ -18392,7 +18392,7 @@ void ImProcFunctions::Lab_Local(
                                     } 
                                 }
                                 
-                                //evaluation symmetry point    
+                                //evaluation symmetry point only in RGB mode    
                                 LUTu symhist(65535);
                                 symhist.clear();
                                 array2D<float> Y2(bfw, bfh);
@@ -18422,7 +18422,11 @@ void ImProcFunctions::Lab_Local(
                                 ghsbpwpvalue[0] = minbp;
                                 ghsbpwpvalue[1] = maxwp;
                                 ghssym = symref;
-                               
+                                if((met == 0  || met == 1)  && ghsautoSP) {//RGB mode and auto Symmetry point
+                                    ghsautsp = true;
+                                } else {
+                                    ghsautsp = false;
+                                }
                                 t2.set();
                                 if (settings->verbose) {
                                     printf("Values: maxhist=%i kk=%i symref=%f\n", maxhist, kk, (double) ghssym);
@@ -18453,7 +18457,12 @@ void ImProcFunctions::Lab_Local(
                                     float rl = r - ll;
                                     float gl = g - ll;
                                     float bl = b - ll;
-                                    float s = intp(max(sf(rl, r), sf(gl, g), sf(bl, b)), pow_F(f, 0.3f) * 0.6f + 0.4f, 1.f);
+                                    // The parameters 0.3f, 0.6f, and 0.4f control the nonlinearity and scaling of the saturation adjustment:
+                                    // - 0.3f: exponent for the power function, affecting the response curve of the adjustment factor.
+                                    // - 0.6f: scaling factor for the powered value.
+                                    // - 0.4f: base offset added to ensure a minimum effect.
+                                    // Adjust these values to fine-tune the strength and shape of the local saturation effect.
+                                    float s = intp(max(sf(rl, r), sf(gl, g), sf(bl, b)), pow_F(f, 0.3f) * 0.6f + 0.4f, 1.f);                                    
                                     r = ll + s * rl;
                                     g = ll + s * gl;
                                     b = ll + s * bl;

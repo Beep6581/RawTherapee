@@ -1276,6 +1276,7 @@ struct LocallabParams {
         double ghs_chro;
         double ghs_B;
         double ghs_SP;
+        bool SPAutoRadius;
         double ghs_LP;
         double ghs_HP;
         double ghs_LC;

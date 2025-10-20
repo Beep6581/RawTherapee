@@ -3709,6 +3709,7 @@ LocallabParams::LocallabSpot::LocallabSpot() :
     ghs_chro(0.0),
     ghs_B(0.),
     ghs_SP(0.015),//initialized with a low value to avoid zero
+    SPAutoRadius(true), //auto Symmetry point 
     ghs_LP(0.),
     ghs_HP(1.),
     ghs_LC(30.),
@@ -5439,7 +5440,10 @@ bool LocallabParams::LocallabSpot::operator ==(const LocallabSpot& other) const
         && ghs_slope == other.ghs_slope
         && ghs_chro == other.ghs_chro
         && ghs_B == other.ghs_B
-        && ghs_SP == other.ghs_SP
+        && SPAutoRadius == other.SPAutoRadius       
+        && (SPAutoRadius || (ghs_SP == other.ghs_SP))
+        
+        //&& ghs_SP == other.ghs_SP
         && ghs_LP == other.ghs_LP
         && ghs_HP == other.ghs_HP
         && ghs_LC == other.ghs_LC
@@ -7502,6 +7506,7 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
                     saveToKeyfile(!pedited || spot_edited->ghs_chro, "Locallab", "Ghs_chro_" + index_str, spot.ghs_chro, keyFile);
                     saveToKeyfile(!pedited || spot_edited->ghs_B, "Locallab", "Ghs_B_" + index_str, spot.ghs_B, keyFile);
                     saveToKeyfile(!pedited || spot_edited->ghs_SP, "Locallab", "Ghs_SP_" + index_str, spot.ghs_SP, keyFile);
+                    saveToKeyfile(!pedited || spot_edited->SPAutoRadius, "Locallab", "SPAutoRadius_" + index_str, spot.SPAutoRadius, keyFile);
                     saveToKeyfile(!pedited || spot_edited->ghs_LP, "Locallab", "Ghs_LP_" + index_str, spot.ghs_LP, keyFile);
                     saveToKeyfile(!pedited || spot_edited->ghs_HP, "Locallab", "Ghs_HP_" + index_str, spot.ghs_HP, keyFile);
                     saveToKeyfile(!pedited || spot_edited->ghs_LC, "Locallab", "Ghs_LC_" + index_str, spot.ghs_LC, keyFile);
@@ -9938,6 +9943,7 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
                 assignFromKeyfile(keyFile, "Locallab", "Ghs_chro_" + index_str, spot.ghs_chro, spotEdited.ghs_chro);
                 assignFromKeyfile(keyFile, "Locallab", "Ghs_B_" + index_str, spot.ghs_B, spotEdited.ghs_B);
                 assignFromKeyfile(keyFile, "Locallab", "Ghs_SP_" + index_str, spot.ghs_SP, spotEdited.ghs_SP);
+                assignFromKeyfile(keyFile, "Locallab", "SPAutoRadius_" + index_str, spot.SPAutoRadius, spotEdited.SPAutoRadius);
                 assignFromKeyfile(keyFile, "Locallab", "Ghs_LP_" + index_str, spot.ghs_LP, spotEdited.ghs_LP);
                 assignFromKeyfile(keyFile, "Locallab", "Ghs_HP_" + index_str, spot.ghs_HP, spotEdited.ghs_HP);
                 assignFromKeyfile(keyFile, "Locallab", "Ghs_LC_" + index_str, spot.ghs_LC, spotEdited.ghs_LC);

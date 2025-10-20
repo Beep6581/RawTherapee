@@ -1303,7 +1303,7 @@ private:
                 ghsbwslider[0] = 0.f;
                 ghsbwslider[1] = 1.f;
                 float ghssym = 0.f;
-
+                bool ghsautsp = false;
                 float slopeg = 1.f;
                 bool linkrgb = true;
                 // No Locallab mask is shown in exported picture
@@ -1362,7 +1362,8 @@ private:
                               huerefblu, chromarefblu, lumarefblu, huere, chromare, lumare, sobelre, lastsav, false, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
                               minCD, maxCD, mini, maxi, Tmean, Tsigma, Tmin, Tmax,
                               meantme, stdtme, meanretie, stdretie, fab, maxicam, rdx, rdy, grx, gry, blx, bly, meanx, meany, meanxe, meanye, prim, ill, contsig, lightsig, slopeg, linkrgb,
-                              resi, sharc, denocont, ghsbpwp, ghsbpwpvalue, savmadl, ghsbwslider, ghssym);
+                              resi, sharc, denocont, ghsbpwp, ghsbpwpvalue, savmadl, ghsbwslider, ghssym, ghsautsp);
+
                 if (sp + 1u < params.locallab.spots.size()) {
                     // do not copy for last spot as it is not needed anymore
                     lastorigView->CopyFrom(labView);
