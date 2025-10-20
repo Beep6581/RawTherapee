@@ -1339,11 +1339,10 @@ void Locallab::ghsbw2Changed(const std::vector<locallabshGHSbw2> &shghsbw2, int 
         expshadhigh.updateghsbw2(bwvalueslider[0], bwvalueslider[1], ghsaut);
     }
 
-   
 }
 
 
-void Locallab::ghsbwChanged(const std::vector<locallabshGHSbw> &shghsbw, int selspot) // info black and white point
+void Locallab::ghsbwChanged(const std::vector<locallabshGHSbw> &shghsbw, int selspot) // info black and white point and Symmetry point auto
 {
     sh_ghsbw = shghsbw;
     int bw[2] = {0, 1};
@@ -1351,12 +1350,17 @@ void Locallab::ghsbwChanged(const std::vector<locallabshGHSbw> &shghsbw, int sel
     double symev = 0.;
     
     if (selspot < (int) sh_ghsbw.size()) {
+        const bool autoradsp = sh_ghsbw.at(selspot).autoSP;
+        
         for(int i=0; i < 2; i++) {
             bw[i] = sh_ghsbw.at(selspot).ghsbw[i];
             bwvalue[i] = sh_ghsbw.at(selspot).ghsbwvalue[i];
         }
         symev = sh_ghsbw.at(selspot).ghs_sym;
         expshadhigh.updateghsbw(bw[0], bw[1], bwvalue[0], bwvalue[1], symev);
+        if(autoradsp) {
+            expshadhigh.autoSPChanged(symev);
+        }
     }
 
 }

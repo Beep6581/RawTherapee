@@ -1101,6 +1101,7 @@ void Crop::update(int todo)
             float ghsbpwpvalue[2];
             float ghsbwslider[2];
             float ghssym;
+            bool ghsautsp;
 /*            huerefp[sp] = huere;
             chromarefp[sp] = chromare;
             lumarefp[sp] = lumare;
@@ -1173,7 +1174,7 @@ void Crop::update(int todo)
                         parent->localllogMask, parent->locall_Mask, parent->locallcieMask, minCD, maxCD, mini, maxi, Tmean, Tsigma, Tmin, Tmax,
                         meantme, stdtme, meanretie, stdretie, fab, maxicam,rdx, rdy, grx, gry, blx, bly, meanx, meany, meanxe, meanye, prim, ill, contsig, lightsig,
                         highresi, nresi, highresi46, nresi46, Lhighresi, Lnresi, Lhighresi46, Lnresi46,slopeg, linkrgb,
-                        ghsbpwp, ghsbpwpvalue, ghsbwslider, ghssym);
+                        ghsbpwp, ghsbpwpvalue, ghsbwslider, ghssym, ghsautsp);
                         
                         
                         if (parent->previewDeltaE || parent->locallColorMask == 5 || parent->locallvibMask == 4 || parent->locallExpMask == 5 || parent->locallSHMask == 4 || parent->localllcMask == 4 || parent->localltmMask == 4 || parent->localllogMask == 4 || parent->locallsoftMask == 6 || parent->localllcMask == 4 || parent->locallcieMask == 4) {
@@ -1263,7 +1264,7 @@ void Crop::update(int todo)
                         minCD, maxCD, mini, maxi, Tmean, Tsigma, Tmin, Tmax,
                         meantme, stdtme, meanretie, stdretie, fab, maxicam, rdx, rdy, grx, gry, blx, bly, meanx, meany, meanxe, meanye, prim, ill, contsig, lightsig,
                         highresi, nresi, highresi46, nresi46, Lhighresi, Lnresi, Lhighresi46, Lnresi46,slopeg, linkrgb,
-                        ghsbpwp, ghsbpwpvalue, ghsbwslider, ghssym);
+                        ghsbpwp, ghsbpwpvalue, ghsbwslider, ghssym, ghsautsp);
             }
 
 

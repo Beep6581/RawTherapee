@@ -605,6 +605,7 @@ public:
         bool ghs_chro;
         bool ghs_B;
         bool ghs_SP;
+        bool SPAutoRadius;
         bool ghs_LP;
         bool ghs_HP;
         bool ghs_LC;
