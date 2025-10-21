@@ -3316,7 +3316,7 @@ TP_LOCALLAB_GAMUTXYZRELA;XYZ Relative
 TP_LOCALLAB_GAMW;Gamma (wavelet pyramids)
 TP_LOCALLAB_GHSBPWP;Clipped pixel count - Shadows:%1 Highlights:%2
 TP_LOCALLAB_GHSBPWPVALUE;Pixel values - Darkest:%1 Lightest:%2
-TP_LOCALLAB_GHSSYM;Evaluation Symmetry point RGB=%1
+TP_LOCALLAB_GHSSYM;Estimated symmetry point RGB=%1
 TP_LOCALLAB_GHSSYMNO;---
 TP_LOCALLAB_GHSFRA;Stretch Settings
 TP_LOCALLAB_GHSHUE;Hue (HSL)
@@ -3328,11 +3328,11 @@ TP_LOCALLAB_GHSRGBSTD;RGB Standard
 TP_LOCALLAB_GHSSAT;Saturation (HSL)
 TP_LOCALLAB_GHS_AUTOBW;Auto Black point & White point
 TP_LOCALLAB_GHS_B;Local intensity (b)
-TP_LOCALLAB_GHS_BLACKPOINT_FRAME;Black point/White point/Highlights
+TP_LOCALLAB_GHS_BLACKPOINT_FRAME;Black point/White point
 TP_LOCALLAB_GHS_BLP;Black point (BP linear)
 TP_LOCALLAB_GHS_BLP_TOOLTIP;Sets the Black point for a linear stretch of the image.\n * For negatives slider values, in GHS ‘normal’, shadows are raised linearly to avoid excessive noise build-up and facilitate GHS work.\n * For positives slider values, the histogram is shifted to the left. For Raw images, you can also use Raw-Tab > Raw Black Points – Dehaze,  which is more precise.\n * Contrast gained by performing the linear stretch will be evenly distributed over the image.\n\n * You can adjust a linear black point offset to either:\n  - account for noise in the deep shadows.\n  - adjust the histogram.\n\n * Set Stretch factor (D) to 0.001 to adjust the sliders.\n * The label 'Clipped pixel count Shadows:x Highlights=y' shows you the number of pixels that would be clipped without adjusting the two sliders.\n * The label Pixel values - Darkest:w Lightest:z shows you the minimum and maximum values in the range [0, 1].\n\n * In ‘Inverse GHS’ mode the behavior is reversed and there are possible interactions with the White point.
-TP_LOCALLAB_GHS_BLPHLPAUTO_TOOLTIP;Adjust automatically the values ​​of Black point and White point.\n Not available in mode Inverse GHS.\n\nThe operating constraints are the same as for the frame 'Black point/White point/Highlights'.\n Generally, the settings will be satisfactory.\n You can then adjust the two points, particularly the black point, depending on the images, using negative slider values ​​to help GHS when the shadows are very blocked
-TP_LOCALLAB_GHS_BPFRAME_TOOLTIP;Sets the Black point (BP linear), White point (WP linear) and Highlight for a linear stretch of the image.\n\n * Black Point (BP linear) and White Point (WP linear) settings are only available if Stretch factor (D) is between 0.001 and 0.002 so as to not affect the histogram.\n\n * When Stretch factor is 0.002 or less, all stretch settings except for Black point and White point have no effect.\n\n * Black point (BP linear) and White point (WP linear) settings are sensitive to the general settings upstream of GHS: Highlight reconstruction, White balance and RAW processes.\n\n * To have relevant Black Point (BP linear) and White Point (WP linear) settings, the entire image must be analyzed. It is recommended to use 'Fit whole image to screen - Shortcut Alt-f'.
+TP_LOCALLAB_GHS_BLPHLPAUTO_TOOLTIP;Adjust automatically the values ​​of Black point and White point.\n Not available in mode Inverse GHS.\n\nThe operating constraints are the same as for the frame 'Black point/White point'.\n Generally, the settings will be satisfactory.\n You can then adjust the two points, particularly the black point, depending on the images, using negative slider values ​​to help GHS when the shadows are very blocked
+TP_LOCALLAB_GHS_BPFRAME_TOOLTIP;Sets the Black point (BP linear), White point (WP linear) for a linear stretch of the image.\n\n * Black Point (BP linear) and White Point (WP linear) settings are only available if Stretch factor (D) is between 0.001 and 0.002 so as to not affect the histogram.\n\n * When Stretch factor is 0.002 or less, all stretch settings except for Black point and White point have no effect.\n\n * Black point (BP linear) and White point (WP linear) settings are sensitive to the general settings upstream of GHS: Highlight reconstruction, White balance and RAW processes.\n\n * To have relevant Black Point (BP linear) and White Point (WP linear) settings, the entire image must be analyzed. It is recommended to use 'Fit whole image to screen - Shortcut Alt-f'.
 TP_LOCALLAB_GHS_B_TOOLTIP;This parameter controls how tightly focused the stretch is around the Symmetry point (SP) by changing the form of the transform itself:\n * For concentrated stretches (such as initial stretches on linear images) a large 'b' factor should be employed to focus a stretch within a histogram peak while de-focusing the stretch away from the histogram peak.\n * For adjustment of non-linear images, lower 'b' parameters should be employed to distribute contrast and brightness more evenly.\n * Large positive values of 'b' can be thought of as a histogram widener, i.e. spreading the histogram wider about the focus point, SP.\n * By contrast, lower values of 'b' tend to shift the histogram to a brighter or dimmer position without affecting its width too greatly.\n * As a general rule, the level of 'b' employed will decrease as a stretch sequence nears completion, although larger 'b' values can still be employed for precise placement of additional contrast.
 TP_LOCALLAB_GHS_CHRO;Chromaticity Lab factor (C)
 TP_LOCALLAB_GHS_CHRO_TOOLTIP;GHS chromaticity - compensate large stretches
@@ -3872,7 +3872,7 @@ TP_LOCALLAB_SPECCASE;Specific cases
 TP_LOCALLAB_SPECIAL;Special use of RGB curves
 TP_LOCALLAB_SPECIAL_TOOLTIP;The checkbox allows you to remove all other actions i.e. 'Scope', masks, sliders etc., (except for transitions) and use just the effect of the RGB tone-curve.
 TP_LOCALLAB_SPOTNAME;New Spot
-TP_LOCALLAB_SPRADIUS_TOOLTIP;Try setting an automatic Symmetry Point (SP) evaluation, only in RGB mode. May require manual adjustment.
+TP_LOCALLAB_SPRADIUS_TOOLTIP;Try setting an automatic Symmetry Point (SP) estimation, only in RGB mode. May require manual adjustment.
 TP_LOCALLAB_STD;Standard
 TP_LOCALLAB_STR;Strength
 TP_LOCALLAB_STRBL;Strength
