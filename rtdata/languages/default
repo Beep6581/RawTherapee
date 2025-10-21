@@ -3212,7 +3212,7 @@ TP_LOCALLAB_DENOIFRA;Denoise Settings
 TP_LOCALLAB_DENOIHUE;Equalizer denoise
 TP_LOCALLAB_DENOIHUECONT;Equalizer denoise mask
 TP_LOCALLAB_DENOILUMDETAIL_TOOLTIP;Allows you to recover luminance detail by progressively applying a Fourier transform (DCT).
-TP_LOCALLAB_DENOIRATIO;Ratio flat-structure areas
+TP_LOCALLAB_DENOIRATIO;Ratio flat-structured areas
 TP_LOCALLAB_DENOI_MASK;Denoise contrast mask
 TP_LOCALLAB_DENOIMASK;Denoise chroma mask
 TP_LOCALLAB_DENOIMASK_TOOLTIP;For all tools, allows you to control the chromatic noise level of the mask.\nUseful for better control of chrominance and to avoid artifacts when using the LC(h) curve.
@@ -3222,7 +3222,7 @@ TP_LOCALLAB_DENOIWAVCH;Wavelets: Chrominance
 TP_LOCALLAB_DENOIWAVLUM;Wavelets: Luminance
 TP_LOCALLAB_DENOI_EXP;Denoise
 TP_LOCALLAB_DENOI_TOOLTIP;This module can be used for noise reduction either on its own (at the end of the processing pipeline) or in addition to the Noise Reduction module in the Detail tab (which works at the beginning of the pipeline).\n Scope allows you to differentiate the action based on color (ΔE).\nMinimum spot size: 128x128.
-TP_LOCALLAB_DENORADIUS_TOOLTIP;Allows you to differentiate the denoising action as a function of image detail and uniform background.\n The resulting action is the a combination of the noise reduction and that of the mask created by 'Contrast threshold'\n On very noisy images you can reduce the mask noise.\n You can also differentiate the action with the curve 'Equalizer denoise mask'.\n The ratio flat-structured areas allows you to correct the action between the two.\n\nOn noisy images and in Raw format, you should use the “Presharpening denoise” and ‘Postsharpening denoise’ functions for more effective mask action.
+TP_LOCALLAB_DENORADIUS_TOOLTIP;Allows you to differentiate the denoising action as a function of image detail and uniform background.\n The resulting action is a combination of the noise reduction and that of the mask created by 'Contrast threshold'\n On very noisy images you can reduce the mask noise.\n You can also differentiate the action with the curve 'Equalizer denoise mask'.\n The ratio flat-structured areas allows you to correct the action between the two.\n\nOn noisy images and in Raw format, you should use the 'Presharpening denoise' and ‘Postsharpening denoise’ functions for more effective mask action.
 TP_LOCALLAB_DEPTH;Depth
 TP_LOCALLAB_DETAIL;Local contrast
 TP_LOCALLAB_DETAILFRA;Edge Detection - DCT
@@ -3279,7 +3279,7 @@ TP_LOCALLAB_EXPNOISEMETHOD_TOOLTIP;Applies a median filter before the Laplace tr
 TP_LOCALLAB_EXPOSE;Dynamic Range & Exposure
 TP_LOCALLAB_EXPOSURE_TOOLTIP;Modify exposure in L*a*b space using Laplacian PDE algorithms to take into account dE and minimize artifacts.
 TP_LOCALLAB_EXPRETITOOLS;Advanced Retinex Tools
-TP_LOCALLAB_EXPSHARP_TOOLTIP;Spot minimum 39*39 RL Deconvolution.\nSpot minimum 150*150 Capture Deconvolution.\nUse low ‘Transition Gradient’ values and high 'Transition decay' and 'Scope' values to simulate smaller spots.
+TP_LOCALLAB_EXPSHARP_TOOLTIP;Spot minimum 39*39 RL Deconvolution.\nSpot minimum 150*150 Capture Deconvolution.\nUse low Transition Gradient values and high 'Transition decay' and Scope values to simulate smaller spots.
 TP_LOCALLAB_EXPTOOL;Exposure Tools
 TP_LOCALLAB_EXP_TOOLNAME;Dynamic Range & Exposure
 TP_LOCALLAB_FATAMOUNT;Amount
@@ -3621,7 +3621,7 @@ TP_LOCALLAB_MERTHR;Difference
 TP_LOCALLAB_MERTWE;Exclusion
 TP_LOCALLAB_MERTWO;Subtract
 TP_LOCALLAB_METHOD_TOOLTIP;'Enhanced + chroma denoise' significantly increases processing times.\nBut reduce artifacts.
-TP_LOCALLAB_METHODCAP_TOOLTIP;You can use two methods:\n 1. RL Deconvolution, which is similar to the version used in the Detail tab.\n\n 2. Capture Deconvolution, which is adaptation of Capture Sharpening in the Raw tab for use in Selective Editing, and allows you to use this algorithm either in standalone mode or after denoising. Capture Sharpening's capabilities allow for finer sharpening control by allowing you to soften the corner sharpness to enhance focus on the main subject. The results in the TIF/JPG outputs correspond to those in the 'fit to screen'view.
+TP_LOCALLAB_METHODCAP_TOOLTIP;You can use two methods:\n 1. RL Deconvolution, which is similar to the version used in the Detail tab.\n\n 2. Capture Deconvolution, which is an adaptation of Capture Sharpening in the Raw tab for use in Selective Editing, and allows you to use this algorithm either in standalone mode or after denoising. Capture Sharpening's capabilities allow for finer sharpening control by allowing you to soften the corner sharpness to enhance focus on the main subject. The results in the TIF/JPG outputs correspond to those in the 'fit to screen'view.
 TP_LOCALLAB_MIDTCIE;Midtones
 TP_LOCALLAB_MLABEL;Restored data Min=%1 Max=%2
 TP_LOCALLAB_MLABEL_TOOLTIP;The values should be close to Min=0 Max=32768 (log mode) but other values are possible.You can adjust 'Clip restored data (gain)' and 'Offset' to normalize.\nRecovers image data without blending.
@@ -3704,7 +3704,7 @@ TP_LOCALLAB_RECURS_TOOLTIP;Forces the algorithm to recalculate the references af
 TP_LOCALLAB_REN_DIALOG_LAB;Enter the new Control Spot name
 TP_LOCALLAB_REN_DIALOG_NAME;Renaming Control Spot
 TP_LOCALLAB_REPARCOL_TOOLTIP;Allows you to adjust the relative strength of the Color and Light image with respect to the original image.
-TP_LOCALLAB_REPARDEN_TOOLTIP;Allows you to adjust the relative strength of the Denoise image with respect to the original image.
+TP_LOCALLAB_REPARDEN_TOOLTIP;Allows you to adjust the relative strength of the denoised image with respect to the original image.
 TP_LOCALLAB_REPAREXP_TOOLTIP;Allows you to adjust the relative strength of the Dynamic Range and Exposure image with respect to the original image.
 TP_LOCALLAB_REPARSH_TOOLTIP;Allows you to adjust the relative strength of the Shadows/Highlights and Tone Equalizer image with respect to the original image.
 TP_LOCALLAB_REPARTM_TOOLTIP;Allows you to adjust the relative strength of the Tone mapping image with respect to the original image.
