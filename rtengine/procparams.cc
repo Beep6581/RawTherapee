@@ -4994,6 +4994,7 @@ LocallabParams::LocallabSpot::LocallabSpot() :
     smoothcieth(1.0),
     smoothciethtrc(0.),
     slopjcie(12.923),
+    satjcie(0.5),
     contsig(1.15),
     skewsig(0.),
     whitsig(100.),
@@ -5970,6 +5971,7 @@ bool LocallabParams::LocallabSpot::operator ==(const LocallabSpot& other) const
         && smoothcieth == other.smoothcieth
         && smoothciethtrc == other.smoothciethtrc
         && slopjcie == other.slopjcie
+        && satjcie == other.satjcie
         && contsig == other.contsig
         && skewsig == other.skewsig
         && whitsig == other.whitsig
@@ -8009,6 +8011,7 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
                     saveToKeyfile(!pedited || spot_edited->smoothcieth, "Locallab", "smoothcieth_" + index_str, spot.smoothcieth, keyFile);
                     saveToKeyfile(!pedited || spot_edited->smoothciethtrc, "Locallab", "smoothciethtrc_" + index_str, spot.smoothciethtrc, keyFile);
                     saveToKeyfile(!pedited || spot_edited->slopjcie, "Locallab", "slopjcie_" + index_str, spot.slopjcie, keyFile);
+                    saveToKeyfile(!pedited || spot_edited->satjcie, "Locallab", "satjcie_" + index_str, spot.satjcie, keyFile);
                     saveToKeyfile(!pedited || spot_edited->slopesmo, "Locallab", "slopesmo_" + index_str, spot.slopesmo, keyFile);
                     saveToKeyfile(!pedited || spot_edited->slopesmoq, "Locallab", "slopesmoq_" + index_str, spot.slopesmoq, keyFile);
                     saveToKeyfile(!pedited || spot_edited->slopesmor, "Locallab", "slopesmor_" + index_str, spot.slopesmor, keyFile);
@@ -10601,6 +10604,7 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
                 assignFromKeyfile(keyFile, "Locallab", "smoothcieth_" + index_str, spot.smoothcieth, spotEdited.smoothcieth);
                 assignFromKeyfile(keyFile, "Locallab", "smoothciethtrc_" + index_str, spot.smoothciethtrc, spotEdited.smoothciethtrc);
                 assignFromKeyfile(keyFile, "Locallab", "slopjcie_" + index_str, spot.slopjcie, spotEdited.slopjcie);
+                assignFromKeyfile(keyFile, "Locallab", "satjcie_" + index_str, spot.satjcie, spotEdited.satjcie);
                 assignFromKeyfile(keyFile, "Locallab", "contsig_" + index_str, spot.contsig, spotEdited.contsig);
                 assignFromKeyfile(keyFile, "Locallab", "skewsig_" + index_str, spot.skewsig, spotEdited.skewsig);
                 assignFromKeyfile(keyFile, "Locallab", "whitsig_" + index_str, spot.whitsig, spotEdited.whitsig);

@@ -84,6 +84,7 @@ protected:
     rtengine::ProcEvent EvlocallabbwevMethod12;
     rtengine::ProcEvent Evlocallabgamjcie;
     rtengine::ProcEvent Evlocallabslopjcie;
+    rtengine::ProcEvent Evlocallabsatjcie;
     rtengine::ProcEvent Evlocallabmidtciemet;
     rtengine::ProcEvent Evlocallabmidtcie;
     rtengine::ProcEvent Evlocallabcontsig;
@@ -1902,6 +1903,7 @@ private:
     MyExpander* const expprecam;    
     Adjuster* const gamjcie;
     Adjuster* const slopjcie;
+    Adjuster* const satjcie;
     Gtk::CheckButton* const apsatur;
     
     Gtk::Frame* const midtcieFrame;

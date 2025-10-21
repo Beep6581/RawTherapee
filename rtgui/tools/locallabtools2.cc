@@ -8134,6 +8134,7 @@ Locallabcie::Locallabcie():
 
     gamjcie(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SIGGAMJCIE"), 0.7, 10., 0.01, 2.4))),
     slopjcie(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SIGSLOPJCIE"), 0., 500., 0.01, 12.923))),
+    satjcie(Gtk::manage(new Adjuster(M("TP_LOCALLAB_APSATUR"), 0., 2., 0.01, 0.5))),
     apsatur(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_APSATUR")))),
     midtcieFrame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_MIDTCIEFRA")))),
 
@@ -8319,6 +8320,7 @@ Locallabcie::Locallabcie():
     EvlocallabbwevMethod12 = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_CIE_SIGMET");
     Evlocallabgamjcie = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_CIE_GAM");
     Evlocallabslopjcie = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_CIE_SLOP");
+    Evlocallabsatjcie = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_CIE_SAT");
     Evlocallabmidtciemet = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_CIE_MIDTMET");
     Evlocallabmidtcie = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_CIE_MIDT");
     Evlocallabcontsig = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_CIE_CONTSIG");
@@ -8650,7 +8652,8 @@ Locallabcie::Locallabcie():
 
     trccieBox->pack_start(*gamjcie);
     trccieBox->pack_start(*slopjcie);
-    trccieBox->pack_start(*apsatur);
+    trccieBox->pack_start(*satjcie);
+   // trccieBox->pack_start(*apsatur);
     ciemetBox->pack_start(*midtciemet);  
     ciemetBox->pack_start(*midtcie);
     midtcieFrame->add(*ciemetBox);
@@ -9076,6 +9079,7 @@ Locallabcie::Locallabcie():
     gamjcie->setAdjusterListener(this);
     slopjcie->setAdjusterListener(this);
     slopjcie->setLogScale(100, 1);
+    satjcie->setAdjusterListener(this);
     smoothcieth->setAdjusterListener(this);
     smoothciethtrc->setAdjusterListener(this);
     midtcie->setAdjusterListener(this);
@@ -10235,6 +10239,7 @@ void Locallabcie::read(const rtengine::procparams::ProcParams* pp, const ParamsE
         smoothcieth->setValue(spot.smoothcieth);
         smoothciethtrc->setValue(spot.smoothciethtrc);
         slopjcie->setValue(spot.slopjcie);
+        satjcie->setValue(spot.satjcie);
         contsig->setValue(spot.contsig);
         skewsig->setValue(spot.skewsig);
         whitsig->setValue(spot.whitsig);
@@ -10616,6 +10621,7 @@ void Locallabcie::write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedi
         spot.smoothcieth = smoothcieth->getValue();
         spot.smoothciethtrc = smoothciethtrc->getValue();
         spot.slopjcie = slopjcie->getValue();
+        spot.satjcie = satjcie->getValue();
         spot.contsig = contsig->getValue();
         spot.skewsig = skewsig->getValue();
         spot.whitsig = whitsig->getValue();
@@ -13354,6 +13360,7 @@ void Locallabcie::setDefaults(const rtengine::procparams::ProcParams* defParams,
         whitescie->setDefault(defSpot.whitescie);
         blackscie->setDefault(defSpot.blackscie);
         slopjcie->setDefault(defSpot.slopjcie);
+        satjcie->setDefault(defSpot.satjcie);
         slopesmo->setDefault(defSpot.slopesmo);
         slopesmoq->setDefault(defSpot.slopesmoq);
         contsig->setDefault(defSpot.contsig);
@@ -13963,6 +13970,13 @@ void Locallabcie::adjusterChanged(Adjuster* a, double newval)
             if (listener) {
                 listener->panelChanged(Evlocallabslopjcie,
                                        slopjcie->getTextValue() + spName);
+            }
+        }
+
+        if (a == satjcie) {
+            if (listener) {
+                listener->panelChanged(Evlocallabsatjcie,
+                                       satjcie->getTextValue() + spName);
             }
         }
 

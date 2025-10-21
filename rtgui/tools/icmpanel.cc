@@ -268,7 +268,7 @@ ICMPanel::ICMPanel() : FoldableToolPanel(this, TOOL_NAME, M("TP_ICM_LABEL")), iu
 
     wGamma = Gtk::manage(new Adjuster(M("TP_ICM_WORKING_TRC_GAMMA"), 0.40, 20.0, 0.001, 2.4));//default sRGB
     wSlope = Gtk::manage(new Adjuster(M("TP_ICM_WORKING_TRC_SLOPE"), 0., 300., 0.01, 12.92));//defautl sRGB
-    wapsat = Gtk::manage(new Adjuster(M("TP_ICM_WORKING_TRC_SAT"), 0., 2., 0.1, 1.0));//saturation slider
+    wapsat = Gtk::manage(new Adjuster(M("TP_ICM_WORKING_TRC_SAT"), 0., 2., 0.1, 0.5));//saturation slider
     wapsatur = Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_APSATUR")));//saturation
     wmidtcie = Gtk::manage(new Adjuster(M("TP_LOCALLAB_MIDTCIEMAIN"), -100., 100., 1., 0.));
     wsmoothcie = Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_SMOOTHCIE")));//highlights
