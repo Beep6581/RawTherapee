@@ -6252,6 +6252,9 @@ void LocallabShadow::updateShadowGUIshmet()
         sh_radius->show();
         ghsFrame->hide();
         ghsMethod->hide();
+        BP_Frame->hide();
+        ghs_inv->hide();
+        
     } else if (shMethod->get_active_row_number() == 1) {
         for (const auto multiplier : multipliersh) {
             multiplier->show();
@@ -6270,6 +6273,9 @@ void LocallabShadow::updateShadowGUIshmet()
         sh_radius->hide();
         ghsFrame->hide();
         ghsMethod->hide();
+        BP_Frame->hide();
+        ghs_inv->hide();
+
     } else if (shMethod->get_active_row_number() == 2) {
         for (const auto multiplier : multipliersh) {
             multiplier->hide();
@@ -6288,6 +6294,9 @@ void LocallabShadow::updateShadowGUIshmet()
         ghsMethod->hide();
         ghs_slope->hide();
         Lab_Frame->hide();
+        BP_Frame->show();
+        ghs_inv->show();
+
         if(ghs_D->getValue() > 0.002  || ghs_D->getValue() == 0.f) {
             ghs_BLP->set_sensitive(false);
             ghs_HLP->set_sensitive(false);
@@ -6323,6 +6332,7 @@ void LocallabShadow::updateShadowGUIshmet()
         }  
         if (mode == Expert) {
             ghs_slope->show();
+            
             
         }
     }
