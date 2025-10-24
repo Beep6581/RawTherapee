@@ -2186,11 +2186,6 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                 ipf.workingtrc(0, tmpImage1.get(), tmpImage1.get(), GW, GH, -5, prof, 2.4, 12.92310, 0, ill, 0, 0,  rdx, rdy, grx, gry, blx, bly, meanx, meany, meanxe, meanye, dummy, true, false, false, false);
                 ipf.workingtrc(0, tmpImage1.get(), tmpImage1.get(), GW, GH, 5, prof, gamtone, slotone, catc, illum, prim, locprim,  rdx, rdy, grx, gry, blx, bly, meanx, meany, meanxe, meanye, dummy, false, true, true, gamutcontrol);
                 float satu = params->icm.wapsat;
- /*
-                if(params->icm.wapsatur) {
-                    ipf.apsatur(0, tmpImage1.get(), tmpImage2.get(), GW, GH) ;    
-                }
- */
                 if(satu > 0.f) {
                     ipf.apsatur(0, tmpImage1.get(), tmpImage2.get(), GW, GH, satu) ;      
                 }

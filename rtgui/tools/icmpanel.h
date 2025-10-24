@@ -66,7 +66,6 @@ protected:
 
     Adjuster* wGamma;
     Adjuster* wSlope;
-    Gtk::CheckButton* wapsatur;
     Adjuster* wapsat;
     
     Adjuster* wmidtcie;
@@ -91,9 +90,7 @@ protected:
     Adjuster* shiftx;
     Adjuster* shifty;
     sigc::connection wsmoothcieconn;
-    sigc::connection wapsaturconn;
     bool lastwsmoothcie;
-    bool lastwapsatur;
     Gtk::Label* labmga;
     Gtk::Box* gabox;
     //Gtk::Label* blr;
@@ -153,7 +150,6 @@ private:
     rtengine::ProcEvent EvICMshifty;
     rtengine::ProcEvent EvICMwmidtcie;
     rtengine::ProcEvent EvICMwsmoothcie;
-    rtengine::ProcEvent EvICMwapsatur;
     rtengine::ProcEvent EvICMwapsat;
     rtengine::ProcEvent EvICMwsmoothciesli;
     rtengine::ProcEvent EvICMsigmatrc;
@@ -273,7 +269,6 @@ public:
     void oBPCChanged();
     void fbwChanged();
     void wsmoothcieChanged();
-    void wapsaturChanged();
     
     void gamutChanged();
     void ipChanged();

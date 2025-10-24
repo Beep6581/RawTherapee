@@ -2210,9 +2210,7 @@ struct ColorManagementParams {
     double offstrc;
     double residtrc;
     int pyrwavtrc;
-    std::vector<double> opacityCurveWLI;
-    
-    bool wapsatur;
+    std::vector<double> opacityCurveWLI;   
     bool wsmoothcie;
     double wsmoothciesli;
     double redx;

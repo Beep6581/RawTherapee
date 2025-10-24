@@ -1577,7 +1577,6 @@ IImage8* Thumbnail::processImage (const procparams::ProcParams& params, eSensorT
         ipf.workingtrc(0, tmpImage1.get(), tmpImage1.get(), GW, GH, 5, prof, gamtone, slotone,0, illum, prim, locprim, rdx, rdy, grx, gry, blx, bly,meanx, meany, meanxe, meanye, dummy, false, true, true);
         
         float satu = params.icm.wapsat;
-
         if(satu > 0.f) {
             ipf.apsatur(0, tmpImage1.get(), tmpImage2.get(), GW, GH, satu) ;     
         }
