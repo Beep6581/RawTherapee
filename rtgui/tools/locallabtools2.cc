@@ -8135,7 +8135,6 @@ Locallabcie::Locallabcie():
     gamjcie(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SIGGAMJCIE"), 0.7, 10., 0.01, 2.4))),
     slopjcie(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SIGSLOPJCIE"), 0., 500., 0.01, 12.923))),
     satjcie(Gtk::manage(new Adjuster(M("TP_LOCALLAB_APSATUR"), 0., 2., 0.01, 0.5))),
-    apsatur(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_APSATUR")))),
     midtcieFrame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_MIDTCIEFRA")))),
 
     midtciemet(Gtk::manage(new MyComboBoxText())),
@@ -8359,7 +8358,6 @@ Locallabcie::Locallabcie():
     EvlocallabGridciexy = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_CIE_LABGRIDCIE");
     Evlocallabgamutcie = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_CIE_GAMUTCIE");
     Evlocallabbwcie = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_CIE_BWCIE");
-    Evlocallabapsatur = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_CIE_APSATUR");
     Evlocallabexpprecam = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_CIE_EXPPRECAM");
     Evlocallablightsigqcie12 = m->newEvent(AUTOEXP, "");
     Evlocallabcontsigqcie = m->newEvent(AUTOEXP, "");
@@ -8653,7 +8651,6 @@ Locallabcie::Locallabcie():
     trccieBox->pack_start(*gamjcie);
     trccieBox->pack_start(*slopjcie);
     trccieBox->pack_start(*satjcie);
-   // trccieBox->pack_start(*apsatur);
     ciemetBox->pack_start(*midtciemet);  
     ciemetBox->pack_start(*midtcie);
     midtcieFrame->add(*ciemetBox);
@@ -8960,7 +8957,6 @@ Locallabcie::Locallabcie():
     sigcieconn = sigcie->signal_toggled().connect(sigc::mem_fun(*this, &Locallabcie::sigcieChanged));
     logcieconn = logcie->signal_toggled().connect(sigc::mem_fun(*this, &Locallabcie::logcieChanged));
     satcieconn = satcie->signal_toggled().connect(sigc::mem_fun(*this, &Locallabcie::satcieChanged));
-    apsaturconn = apsatur->signal_toggled().connect(sigc::mem_fun(*this, &Locallabcie::apsaturChanged));
     logcieqconn = logcieq->signal_toggled().connect(sigc::mem_fun(*this, &Locallabcie::logcieqChanged));
     smoothcieconn = smoothcie->signal_toggled().connect(sigc::mem_fun(*this, &Locallabcie::smoothcieChanged));
     smoothcielnkconn = smoothcielnk->signal_toggled().connect(sigc::mem_fun(*this, &Locallabcie::smoothcielnkChanged));
@@ -9681,7 +9677,6 @@ void Locallabcie::disableListener()
     sigcieconn.block(true);
     logcieconn.block(true);
     satcieconn.block(true);
-    apsaturconn.block(true);
     logcieqconn.block(true);
     smoothcieconn.block(true);
     smoothcielnkconn.block(true);
@@ -9735,7 +9730,6 @@ void Locallabcie::enableListener()
     sigcieconn.block(false);
     logcieconn.block(false);
     satcieconn.block(false);
-    apsaturconn.block(false);
     logcieqconn.block(false);
     smoothcieconn.block(false);
     smoothcielnkconn.block(false);
@@ -10085,7 +10079,6 @@ void Locallabcie::read(const rtengine::procparams::ProcParams* pp, const ParamsE
         sigcie->set_active(spot.sigcie);
         logcie->set_active(spot.logcie);
         satcie->set_active(spot.satcie);
-        apsatur->set_active(spot.apsatur);
         logcieq->set_active(spot.logcieq);
         smoothcie->set_active(spot.smoothcie);
         smoothcielnk->set_active(spot.smoothcielnk);
@@ -10122,7 +10115,6 @@ void Locallabcie::read(const rtengine::procparams::ProcParams* pp, const ParamsE
         sigqChanged();
         logcieChanged();
         satcieChanged();
-        apsaturChanged();
         logcieqChanged();
         smoothcieChanged();
         smoothcielnkChanged();
@@ -10422,7 +10414,6 @@ void Locallabcie::write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedi
         spot.sigcie = sigcie->get_active();
         spot.logcie = logcie->get_active();
         spot.satcie = satcie->get_active();
-        spot.apsatur = apsatur->get_active();
         spot.logcieq = logcieq->get_active();
         spot.smoothcie = smoothcie->get_active();
         spot.smoothcielnk = smoothcielnk->get_active();
@@ -11100,20 +11091,6 @@ void Locallabcie::satcieChanged()
     }
 }
 
-void Locallabcie::apsaturChanged()
-{
-    if (isLocActivated && exp->getEnabled()) {
-        if (listener) {
-            if (apsatur->get_active()) {
-                listener->panelChanged(Evlocallabapsatur,
-                                       M("GENERAL_ENABLED") + " (" + escapeHtmlChars(getSpotName()) + ")");
-            } else {
-                listener->panelChanged(Evlocallabapsatur,
-                                       M("GENERAL_DISABLED") + " (" + escapeHtmlChars(getSpotName()) + ")");
-            }
-        }
-    }
-}
 
 void Locallabcie::logcieqChanged()
 {

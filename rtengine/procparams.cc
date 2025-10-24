@@ -4790,7 +4790,6 @@ LocallabParams::LocallabSpot::LocallabSpot() :
     sigcie(true),
     logcie(false),
     satcie(true),
-    apsatur(true),
     logcieq(false),
     smoothcie(false),
     smoothcietrc(false),
@@ -5884,7 +5883,6 @@ bool LocallabParams::LocallabSpot::operator ==(const LocallabSpot& other) const
         && sigcie == other.sigcie
         && logcie == other.logcie
         && satcie == other.satcie
-        && apsatur == other.apsatur
         && logcieq == other.logcieq
         && smoothcie == other.smoothcie
         && smoothcietrc == other.smoothcietrc
@@ -7924,7 +7922,6 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
                     saveToKeyfile(!pedited || spot_edited->sigcie, "Locallab", "sigcie_" + index_str, spot.sigcie, keyFile);
                     saveToKeyfile(!pedited || spot_edited->logcie, "Locallab", "logcie_" + index_str, spot.logcie, keyFile);
                     saveToKeyfile(!pedited || spot_edited->satcie, "Locallab", "satcie_" + index_str, spot.satcie, keyFile);
-                    saveToKeyfile(!pedited || spot_edited->apsatur, "Locallab", "apsatur_" + index_str, spot.apsatur, keyFile);
                     saveToKeyfile(!pedited || spot_edited->logcieq, "Locallab", "logcieq_" + index_str, spot.logcieq, keyFile);
 					saveToKeyfile(!pedited || spot_edited->smoothcie, "Locallab", "smoothcie_" + index_str, spot.smoothcie, keyFile);
                     saveToKeyfile(!pedited || spot_edited->smoothcietrc, "Locallab", "smoothcietrc_" + index_str, spot.smoothcietrc, keyFile);
@@ -10476,7 +10473,6 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
                 assignFromKeyfile(keyFile, "Locallab", "sigcie_" + index_str, spot.sigcie, spotEdited.sigcie);
                 assignFromKeyfile(keyFile, "Locallab", "logcie_" + index_str, spot.logcie, spotEdited.logcie);
                 assignFromKeyfile(keyFile, "Locallab", "satcie_" + index_str, spot.satcie, spotEdited.satcie);
-                assignFromKeyfile(keyFile, "Locallab", "apsatur_" + index_str, spot.apsatur, spotEdited.apsatur);
                 assignFromKeyfile(keyFile, "Locallab", "logcieq_" + index_str, spot.logcieq, spotEdited.logcieq);
                 assignFromKeyfile(keyFile, "Locallab", "smoothcie_" + index_str, spot.smoothcie, spotEdited.smoothcie);
                 assignFromKeyfile(keyFile, "Locallab", "smoothcietrc_" + index_str, spot.smoothcietrc, spotEdited.smoothcietrc);
