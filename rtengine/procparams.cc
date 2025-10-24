@@ -10605,8 +10605,19 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
                 assignFromKeyfile(keyFile, "Locallab", "slopesmoq_" + index_str, spot.slopesmoq, spotEdited.slopesmoq);
                 assignFromKeyfile(keyFile, "Locallab", "slopesmor_" + index_str, spot.slopesmor, spotEdited.slopesmor);
                 assignFromKeyfile(keyFile, "Locallab", "slopesmog_" + index_str, spot.slopesmog, spotEdited.slopesmog);
-                assignFromKeyfile(keyFile, "Locallab", "midtciemet_" + index_str, spot.midtciemet, spotEdited.midtciemet);
                 assignFromKeyfile(keyFile, "Locallab", "midtcie_" + index_str, spot.midtcie, spotEdited.midtcie);
+
+                if (ppVersion < 353) {
+                    if (keyFile.has_key("Locallab", "midtcie_" + index_str)) {
+                         if (spot.midtcie != 0.) {//if midtone != 0 choose old method after gamma slope
+                             spot.midtciemet = "two";
+                             spotEdited.midtciemet = true;
+                         }
+                    }
+                } else {   
+                    assignFromKeyfile(keyFile, "Locallab", "midtciemet_" + index_str, spot.midtciemet, spotEdited.midtciemet);                
+                }
+                
                 assignFromKeyfile(keyFile, "Locallab", "slopesmob_" + index_str, spot.slopesmob, spotEdited.slopesmob);
                 assignFromKeyfile(keyFile, "Locallab", "kslopesmor_" + index_str, spot.kslopesmor, spotEdited.kslopesmor);
                 assignFromKeyfile(keyFile, "Locallab", "kslopesmog_" + index_str, spot.kslopesmog, spotEdited.kslopesmog);
