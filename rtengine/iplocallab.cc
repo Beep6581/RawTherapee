@@ -18407,8 +18407,8 @@ void ImProcFunctions::Lab_Local(
                                 unsigned int maxhist = 0;
                                 int kk = 0;
                                 float symref = 0.f;
-
-                                for (int j=0; j < 65535; ++j) {
+                                int symmaxvalue = 55000;//Limits (aribitrary) for calculation the maximum value to be scanned in the histogram, as it is probably erroneous, especially with LEDs.
+                                for (int j=0; j < symmaxvalue; ++j) {
                                     if(symhist[j] > maxhist) {
                                         maxhist =  symhist[j];
                                         kk = j;

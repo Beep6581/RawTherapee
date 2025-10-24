@@ -6331,7 +6331,7 @@ void LocallabShadow::updateShadowGUIshmet()
             }
         }  
         if (mode == Expert) {
-            ghs_slope->show();  
+            ghs_slope->show();     
         }
     }
 }
