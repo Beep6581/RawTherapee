@@ -9568,7 +9568,7 @@ void Locallabcie::updateAdviceTooltips(const bool showTooltips)
         gamutcie->set_tooltip_text(M("TP_LOCALLAB_PRECAMGAMUT_TOOLTIP"));
         shiftxl->set_tooltip_text(M("TC_LOCALLAB_PRIM_SHIFTX_TOOLTIP"));
         shiftyl->set_tooltip_text(M("TC_LOCALLAB_PRIM_SHIFTX_TOOLTIP"));
-
+        satjcie->set_tooltip_text(M("TP_LOCALLAB_SATCIE_TOOLTIP"));
     } else {
         reparcie->set_tooltip_text("");
         recothrescie->set_tooltip_text("");
@@ -9654,6 +9654,7 @@ void Locallabcie::updateAdviceTooltips(const bool showTooltips)
         colorFramecie->set_tooltip_text("");
         shiftxl->set_tooltip_text("");
         shiftyl->set_tooltip_text("");
+        satjcie->set_tooltip_text("");
 
     }
 }
