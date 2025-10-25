@@ -1151,6 +1151,37 @@ void Locallab::minmaxChanged(const std::vector<locallabRetiMinMax> &minmax, int 
     }
 }
 
+void Locallab::madChanged(const std::vector<locallabDenoiseMAD> &madlc, int selspot)
+{
+    madllc = madlc; 
+    if (selspot < (int) madllc.size()) {
+        const double m0 = madllc.at(selspot).mad0;
+        const double m1 = madllc.at(selspot).mad1;
+        const double m2 = madllc.at(selspot).mad2;
+        const double m3 = madllc.at(selspot).mad3;
+        const double m4 = madllc.at(selspot).mad4;
+        const double m5 = madllc.at(selspot).mad5;
+        const double m6 = madllc.at(selspot).mad6;
+        const double m7 = madllc.at(selspot).mad7;
+        const double m8 = madllc.at(selspot).mad8;
+        const double m9 = madllc.at(selspot).mad9;
+        const double m10 = madllc.at(selspot).mad10;
+        const double m11 = madllc.at(selspot).mad11;
+        const double m12 = madllc.at(selspot).mad12;
+        const double m13 = madllc.at(selspot).mad13;
+        const double m14 = madllc.at(selspot).mad14;
+        const double m15 = madllc.at(selspot).mad15;
+        const double m16 = madllc.at(selspot).mad16;
+        const double m17 = madllc.at(selspot).mad17;
+        const double m18 = madllc.at(selspot).mad18;
+        const double m19 = madllc.at(selspot).mad19;
+        const double m20 = madllc.at(selspot).mad20;
+        const bool madloc = madllc.at(selspot).madlock;
+        expblur.updatemadlc(m0, m1, m2, m3, m4, m5, m6, m7, m8, m9, m10, m11, m12, m13, m14, m15, m16, m17, m18, m19, m20, madloc);        
+    }
+}
+
+
 void Locallab::denChanged(const std::vector<locallabDenoiseLC> &denlc, int selspot)
 {
     // Saving transmitted min/max data
@@ -1171,6 +1202,23 @@ void Locallab::denChanged(const std::vector<locallabDenoiseLC> &denlc, int selsp
     }
     
 }
+
+void Locallab::den2Changed(const std::vector<locallabDenoiseLC2> &denlc2, int selspot)
+{
+    // Saving transmitted min/max data
+    denoiselc2 = denlc2;
+    
+    //Update Locallab Denoise tool lum chro
+    if (selspot < (int) denoiselc2.size()) {
+        const double deno = denoiselc2.at(selspot).denocontrastaft;
+        expblur.autodenoContrastChanged(deno);
+      //  expblur.updatedenlc(highres, nres, highres46, nres46, Lhighres, Lnres, Lhighres46, Lnres46);
+    }
+    
+}
+
+
+
 // New fonctions to change Scope color 
 void Locallab::scopeChangedcol(int scope, int selspot, bool enab)
 {
@@ -1244,6 +1292,43 @@ void Locallab::ciebefChanged(const std::vector<locallabcieBEF> &ciebef, int sels
     }
 
 }
+
+
+void Locallab::sharbefChanged(const std::vector<locallabsharBEF> &sharbef, int selspot)
+{
+    shar_bef = sharbef;
+    if (selspot < (int) shar_bef.size()) {
+        const double caprad = shar_bef.at(selspot).capradiusbef;
+        const bool autorad = shar_bef.at(selspot).autoradiusbef;
+
+      //  const double sharcon = shar_bef.at(selspot).sharcontrastbef;
+      //  const bool autocon = shar_bef.at(selspot).autocontrastbef;
+
+        if(autorad) {
+            expsharp.autoDeconvRadiusChanged(caprad);
+        }
+
+    }
+
+}
+
+void Locallab::sharaftChanged(const std::vector<locallabsharAFT> &sharaft, int selspot)
+{
+    shar_aft = sharaft;
+    if (selspot < (int) shar_aft.size()) {
+        const double sharcon = shar_aft.at(selspot).sharcontrastaft;
+        const bool autocon = shar_aft.at(selspot).autocontrastaft;
+        if(autocon) {
+            expsharp.autoContrastChanged(sharcon);
+        }
+
+   }
+
+}
+
+
+
+
 
 void Locallab::maiChanged(const std::vector<locallabsetLC> &setlc, int selspot)
 {

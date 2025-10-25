@@ -2,7 +2,7 @@
  *  This file is part of RawTherapee.
  *
  *  Copyright (c) 2019 Ingo Weyrich (heckflosse67@gmx.de)
- *
+ *  Jacques Desmis -2024 - 2025 (jdesmis@gmail.com)
  *  RawTherapee is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
  *  the Free Software Foundation, either version 3 of the License, or
@@ -30,480 +30,19 @@
 #include "StopWatch.h"
 #include "opthelper.h"
 #include "rtgui/multilangmgr.h"
+#include "improcfun.h"
+#include "boxblur.h"
+#include "median.h"
+#include "imagefloat.h"
+#include "labimage.h"
+#include "cplx_wavelet_dec.h"
+#ifdef _OPENMP
+#include <omp.h>
+#endif
 
-namespace {
-
-void compute13x13kernel(float sigma, float kernel[13][13]) {
-
-    const double temp = -2.f * rtengine::SQR(sigma);
-    float sum = 0.f;
-    for (int i = -6; i <= 6; ++i) {
-        for (int j = -6; j <= 6; ++j) {
-            if((rtengine::SQR(i) + rtengine::SQR(j)) <= rtengine::SQR(3.0 * 2.0)) {
-                kernel[i + 6][j + 6] = std::exp((rtengine::SQR(i) + rtengine::SQR(j)) / temp);
-                sum += kernel[i + 6][j + 6];
-            } else {
-                kernel[i + 6][j + 6] = 0.f;
-            }
-        }
-    }
-
-    for (int i = 0; i < 13; ++i) {
-        for (int j = 0; j < 13; ++j) {
-            kernel[i][j] /= sum;
-        }
-    }
-}
-
-void compute9x9kernel(float sigma, float kernel[9][9]) {
-
-    const double temp = -2.f * rtengine::SQR(sigma);
-    float sum = 0.f;
-    for (int i = -4; i <= 4; ++i) {
-        for (int j = -4; j <= 4; ++j) {
-            if((rtengine::SQR(i) + rtengine::SQR(j)) <= rtengine::SQR(3.0 * 1.5)) {
-                kernel[i + 4][j + 4] = std::exp((rtengine::SQR(i) + rtengine::SQR(j)) / temp);
-                sum += kernel[i + 4][j + 4];
-            } else {
-                kernel[i + 4][j + 4] = 0.f;
-            }
-        }
-    }
-
-    for (int i = 0; i < 9; ++i) {
-        for (int j = 0; j < 9; ++j) {
-            kernel[i][j] /= sum;
-        }
-    }
-}
-
-void compute7x7kernel(float sigma, float kernel[7][7]) {
-
-    const double temp = -2.f * rtengine::SQR(sigma);
-    float sum = 0.f;
-    for (int i = -3; i <= 3; ++i) {
-        for (int j = -3; j <= 3; ++j) {
-            if((rtengine::SQR(i) + rtengine::SQR(j)) <= rtengine::SQR(3.0 * 1.15)) {
-                kernel[i + 3][j + 3] = std::exp((rtengine::SQR(i) + rtengine::SQR(j)) / temp);
-                sum += kernel[i + 3][j + 3];
-            } else {
-                kernel[i + 3][j + 3] = 0.f;
-            }
-        }
-    }
-
-    for (int i = 0; i < 7; ++i) {
-        for (int j = 0; j < 7; ++j) {
-            kernel[i][j] /= sum;
-        }
-    }
-}
-
-void compute5x5kernel(float sigma, float kernel[5][5]) {
-
-    const double temp = -2.f * rtengine::SQR(sigma);
-    float sum = 0.f;
-    for (int i = -2; i <= 2; ++i) {
-        for (int j = -2; j <= 2; ++j) {
-            if((rtengine::SQR(i) + rtengine::SQR(j)) <= rtengine::SQR(3.0 * 0.84)) {
-                kernel[i + 2][j + 2] = std::exp((rtengine::SQR(i) + rtengine::SQR(j)) / temp);
-                sum += kernel[i + 2][j + 2];
-            } else {
-                kernel[i + 2][j + 2] = 0.f;
-            }
-        }
-    }
-
-    for (int i = 0; i < 5; ++i) {
-        for (int j = 0; j < 5; ++j) {
-            kernel[i][j] /= sum;
-        }
-    }
-}
-
-void compute3x3kernel(float sigma, float kernel[3][3]) {
-
-    const double temp = -2.f * rtengine::SQR(sigma);
-    float sum = 0.f;
-    for (int i = -1; i <= 1; ++i) {
-        for (int j = -1; j <= 1; ++j) {
-            kernel[i + 1][j + 1] = std::exp((rtengine::SQR(i) + rtengine::SQR(j)) / temp);
-            sum += kernel[i + 1][j + 1];
-        }
-    }
-
-    for (int i = 0; i < 3; ++i) {
-        for (int j = 0; j < 3; ++j) {
-            kernel[i][j] /= sum;
-        }
-    }
-}
-
-void gauss3x3div (float** RESTRICT src, float** RESTRICT dst, float** RESTRICT divBuffer, const int tileSize, const float kernel[3][3])
+namespace 
 {
 
-    const float c11 = kernel[0][0];
-    const float c10 = kernel[0][1];
-    const float c00 = kernel[1][1];
-
-    for (int i = 1; i < tileSize - 1; i++) {
-#if defined(__clang__)
-        #pragma clang loop vectorize(assume_safety)
-#elif defined(__GNUC__)
-        #pragma GCC ivdep
-#endif
-        for (int j = 1; j < tileSize - 1; j++) {
-            const float val = c11 * (src[i - 1][j - 1] + src[i - 1][j + 1] + src[i + 1][j - 1] + src[i + 1][j + 1]) + 
-                              c10 * (src[i - 1][j] + src[i][j - 1] + src[i][j + 1] + src[i + 1][j]) + 
-                              c00 * src[i][j];
-            dst[i][j] = divBuffer[i][j] / std::max(val, 0.00001f);
-        }
-    }
-}
-
-void gauss5x5div (float** RESTRICT src, float** RESTRICT dst, float** RESTRICT divBuffer, const int tileSize, const float kernel[5][5])
-{
-
-    const float c21 = kernel[0][1];
-    const float c20 = kernel[0][2];
-    const float c11 = kernel[1][1];
-    const float c10 = kernel[1][2];
-    const float c00 = kernel[2][2];
-
-    for (int i = 2; i < tileSize - 2; ++i) {
-        // I tried hand written SSE code but gcc vectorizes better
-#if defined(__clang__)
-        #pragma clang loop vectorize(assume_safety)
-#elif defined(__GNUC__)
-        #pragma GCC ivdep
-#endif
-        for (int j = 2; j < tileSize - 2; ++j) {
-            const float val = c21 * ((src[i - 2][j - 1] + src[i - 2][j + 1]) + (src[i - 1][j - 2] + src[i - 1][j + 2]) + (src[i + 1][j - 2] + src[i + 1][j + 2]) + (src[i + 2][j - 1] + src[i + 2][j + 1])) +
-                              c20 * (src[i - 2][j] + src[i][j - 2] + src[i][j + 2] + src[i + 2][j]) +
-                              c11 * (src[i - 1][j - 1] + src[i - 1][j + 1] + src[i + 1][j - 1] + src[i + 1][j + 1]) +
-                              c10 * (src[i - 1][j] + src[i][j - 1] + src[i][j + 1] + src[i + 1][j]) +
-                              c00 * src[i][j];
-
-            dst[i][j] = divBuffer[i][j] / std::max(val, 0.00001f);
-        }
-    }
-}
-
-void gauss7x7div(float** RESTRICT src, float** RESTRICT dst, float** RESTRICT divBuffer, const int tileSize, const float kernel[7][7])
-{
-
-    const float c31 = kernel[0][2];
-    const float c30 = kernel[0][3];
-    const float c22 = kernel[1][1];
-    const float c21 = kernel[1][2];
-    const float c20 = kernel[1][3];
-    const float c11 = kernel[2][2];
-    const float c10 = kernel[2][3];
-    const float c00 = kernel[3][3];
-
-    for (int i = 3; i < tileSize - 3; ++i) {
-        // I tried hand written SSE code but gcc vectorizes better
-#if defined(__clang__)
-        #pragma clang loop vectorize(assume_safety)
-#elif defined(__GNUC__)
-        #pragma GCC ivdep
-#endif
-        for (int j = 3; j < tileSize - 3; ++j) {
-            const float val = c31 * ((src[i - 3][j - 1] + src[i - 3][j + 1]) + (src[i - 1][j - 3] + src[i - 1][j + 3]) + (src[i + 1][j - 3] + src[i + 1][j + 3]) + (src[i + 3][j - 1] + src[i + 3][j + 1])) +
-                              c30 * (src[i - 3][j] + src[i][j - 3] + src[i][j + 3] + src[i + 3][j]) +
-                              c22 * (src[i - 2][j - 2] + src[i - 2][j + 2] + src[i + 2][j - 2] + src[i + 2][j + 2]) +
-                              c21 * ((src[i - 2][j - 1] + src[i - 2][j + 1]) + (src[i - 1][j - 2] + src[i - 1][j + 2]) + (src[i + 1][j - 2] + src[i + 1][j + 2]) + (src[i + 2][j - 1] + src[i + 2][j + 1])) +
-                              c20 * (src[i - 2][j] + src[i][j - 2] + src[i][j + 2] + src[i + 2][j]) +
-                              c11 * (src[i - 1][j - 1] + src[i - 1][j + 1] + src[i + 1][j - 1] + src[i + 1][j + 1]) +
-                              c10 * (src[i - 1][j] + src[i][j - 1] + src[i][j + 1] + src[i + 1][j]) +
-                              c00 * src[i][j];
-
-            dst[i][j] = divBuffer[i][j] / std::max(val, 0.00001f);
-        }
-    }
-}
-
-void gauss9x9div(float** RESTRICT src, float** RESTRICT dst, float** RESTRICT divBuffer, const int tileSize, const float kernel[9][9])
-{
-
-    const float c42 = kernel[0][2];
-    const float c41 = kernel[0][3];
-    const float c40 = kernel[0][4];
-    const float c33 = kernel[1][1];
-    const float c32 = kernel[1][2];
-    const float c31 = kernel[1][3];
-    const float c30 = kernel[1][4];
-    const float c22 = kernel[2][2];
-    const float c21 = kernel[2][3];
-    const float c20 = kernel[2][4];
-    const float c11 = kernel[3][3];
-    const float c10 = kernel[3][4];
-    const float c00 = kernel[4][4];
-
-    for (int i = 4; i < tileSize - 4; ++i) {
-        // I tried hand written SSE code but gcc vectorizes better
-#if defined(__clang__)
-        #pragma clang loop vectorize(assume_safety)
-#elif defined(__GNUC__)
-        #pragma GCC ivdep
-#endif
-        for (int j = 4; j < tileSize - 4; ++j) {
-            const float val = c42 * ((src[i - 4][j - 2] + src[i - 4][j + 2]) + (src[i - 2][j - 4] + src[i - 2][j + 4]) + (src[i + 2][j - 4] + src[i + 2][j + 4]) + (src[i + 4][j - 2] + src[i + 4][j + 2])) +
-                              c41 * ((src[i - 4][j - 1] + src[i - 4][j + 1]) + (src[i - 1][j - 4] + src[i - 1][j + 4]) + (src[i + 1][j - 4] + src[i + 1][j + 4]) + (src[i + 4][j - 1] + src[i + 4][j + 1])) +
-                              c40 * (src[i - 4][j] + src[i][j - 4] + src[i][j + 4] + src[i + 4][j]) +
-                              c33 * (src[i - 3][j - 3] + src[i - 3][j + 3] + src[i + 3][j - 3] + src[i + 3][j + 3]) +
-                              c32 * ((src[i - 3][j - 2] + src[i - 3][j + 2]) + (src[i - 2][j - 3] + src[i - 2][j + 3]) + (src[i + 2][j - 3] + src[i + 2][j + 3]) + (src[i + 3][j - 2] + src[i + 3][j + 2])) +
-                              c31 * ((src[i - 3][j - 1] + src[i - 3][j + 1]) + (src[i - 1][j - 3] + src[i - 1][j + 3]) + (src[i + 1][j - 3] + src[i + 1][j + 3]) + (src[i + 3][j - 1] + src[i + 3][j + 1])) +
-                              c30 * (src[i - 3][j] + src[i][j - 3] + src[i][j + 3] + src[i + 3][j]) +
-                              c22 * (src[i - 2][j - 2] + src[i - 2][j + 2] + src[i + 2][j - 2] + src[i + 2][j + 2]) +
-                              c21 * ((src[i - 2][j - 1] + src[i - 2][j + 1]) + (src[i - 1][j - 2] + src[i - 1][j + 2]) + (src[i + 1][j - 2] + src[i + 1][j + 2]) + (src[i + 2][j - 1] + src[i + 2][j + 1])) +
-                              c20 * (src[i - 2][j] + src[i][j - 2] + src[i][j + 2] + src[i + 2][j]) +
-                              c11 * (src[i - 1][j - 1] + src[i - 1][j + 1] + src[i + 1][j - 1] + src[i + 1][j + 1]) +
-                              c10 * (src[i - 1][j] + src[i][j - 1] + src[i][j + 1] + src[i + 1][j]) +
-                              c00 * src[i][j];
-
-            dst[i][j] = divBuffer[i][j] / std::max(val, 0.00001f);
-        }
-    }
-}
-
-void gauss13x13div(float** RESTRICT src, float** RESTRICT dst, float** RESTRICT divBuffer, const int tileSize, const float kernel[13][13])
-{
-    const float c60 = kernel[0][6];
-    const float c53 = kernel[1][3];
-    const float c52 = kernel[1][4];
-    const float c51 = kernel[1][5];
-    const float c50 = kernel[1][6];
-    const float c44 = kernel[2][2];
-    const float c42 = kernel[2][4];
-    const float c41 = kernel[2][5];
-    const float c40 = kernel[2][6];
-    const float c33 = kernel[3][3];
-    const float c32 = kernel[3][4];
-    const float c31 = kernel[3][5];
-    const float c30 = kernel[3][6];
-    const float c22 = kernel[4][4];
-    const float c21 = kernel[4][5];
-    const float c20 = kernel[4][6];
-    const float c11 = kernel[5][5];
-    const float c10 = kernel[5][6];
-    const float c00 = kernel[6][6];
-
-    for (int i = 6; i < tileSize - 6; ++i) {
-        // I tried hand written SSE code but gcc vectorizes better
-#if defined(__clang__)
-        #pragma clang loop vectorize(assume_safety)
-#elif defined(__GNUC__)
-        #pragma GCC ivdep
-#endif
-        for (int j = 6; j < tileSize - 6; ++j) {
-            const float val = c60 * (src[i - 6][j] + src[i][j - 6] + src[i][j + 6] + src[i + 6][j]) +
-                              c53 * ((src[i - 5][j - 3] + src[i - 5][j + 3]) + (src[i - 3][j - 5] + src[i - 3][j + 5]) + (src[i + 3][j - 5] + src[i + 3][j + 5]) + (src[i + 5][j - 3] + src[i + 5][j + 3])) +
-                              c52 * ((src[i - 5][j - 2] + src[i - 5][j + 2]) + (src[i - 2][j - 5] + src[i - 2][j + 5]) + (src[i + 2][j - 5] + src[i + 2][j + 5]) + (src[i + 5][j - 2] + src[i + 5][j + 2])) +
-                              c51 * ((src[i - 5][j - 1] + src[i - 5][j + 1]) + (src[i - 1][j - 5] + src[i - 1][j + 5]) + (src[i + 1][j - 5] + src[i + 1][j + 5]) + (src[i + 5][j - 1] + src[i + 5][j + 1])) +
-                              c50 * ((src[i - 5][j] + src[i][j - 5] + src[i][j + 5] + src[i + 5][j]) + ((src[i - 4][j - 3] + src[i - 4][j + 3]) + (src[i - 3][j - 4] + src[i - 3][j + 4]) + (src[i + 3][j - 4] + src[i + 3][j + 4]) + (src[i + 4][j - 3] + src[i + 4][j + 3]))) +
-                              c44 * (src[i - 4][j - 4] + src[i - 4][j + 4] + src[i + 4][j - 4] + src[i + 4][j + 4]) +
-                              c42 * ((src[i - 4][j - 2] + src[i - 4][j + 2]) + (src[i - 2][j - 4] + src[i - 2][j + 4]) + (src[i + 2][j - 4] + src[i + 2][j + 4]) + (src[i + 4][j - 2] + src[i + 4][j + 2])) +
-                              c41 * ((src[i - 4][j - 1] + src[i - 4][j + 1]) + (src[i - 1][j - 4] + src[i - 1][j + 4]) + (src[i + 1][j - 4] + src[i + 1][j + 4]) + (src[i + 4][j - 1] + src[i + 4][j + 1])) +
-                              c40 * (src[i - 4][j] + src[i][j - 4] + src[i][j + 4] + src[i + 4][j]) +
-                              c33 * (src[i - 3][j - 3] + src[i - 3][j + 3] + src[i + 3][j - 3] + src[i + 3][j + 3]) +
-                              c32 * ((src[i - 3][j - 2] + src[i - 3][j + 2]) + (src[i - 2][j - 3] + src[i - 2][j + 3]) + (src[i + 2][j - 3] + src[i + 2][j + 3]) + (src[i + 3][j - 2] + src[i + 3][j + 2])) +
-                              c31 * ((src[i - 3][j - 1] + src[i - 3][j + 1]) + (src[i - 1][j - 3] + src[i - 1][j + 3]) + (src[i + 1][j - 3] + src[i + 1][j + 3]) + (src[i + 3][j - 1] + src[i + 3][j + 1])) +
-                              c30 * (src[i - 3][j] + src[i][j - 3] + src[i][j + 3] + src[i + 3][j]) +
-                              c22 * (src[i - 2][j - 2] + src[i - 2][j + 2] + src[i + 2][j - 2] + src[i + 2][j + 2]) +
-                              c21 * ((src[i - 2][j - 1] + src[i - 2][j + 1]) + (src[i - 1][j - 2] + src[i - 1][j + 2]) + (src[i + 1][j - 2] + src[i + 1][j + 2]) + (src[i + 2][j - 1] + src[i + 2][j + 1])) +
-                              c20 * (src[i - 2][j] + src[i][j - 2] + src[i][j + 2] + src[i + 2][j]) +
-                              c11 * (src[i - 1][j - 1] + src[i - 1][j + 1] + src[i + 1][j - 1] + src[i + 1][j + 1]) +
-                              c10 * (src[i - 1][j] + src[i][j - 1] + src[i][j + 1] + src[i + 1][j]) +
-                              c00 * src[i][j];
-
-            dst[i][j] = divBuffer[i][j] / std::max(val, 0.00001f);
-        }
-    }
-}
-
-void gauss3x3mult(float** RESTRICT src, float** RESTRICT dst, const int tileSize, const float kernel[3][3])
-{
-    const float c11 = kernel[0][0];
-    const float c10 = kernel[0][1];
-    const float c00 = kernel[1][1];
-
-    for (int i = 1; i < tileSize - 1; i++) {
-#if defined(__clang__)
-        #pragma clang loop vectorize(assume_safety)
-#elif defined(__GNUC__)
-        #pragma GCC ivdep
-#endif
-        for (int j = 1; j < tileSize - 1; j++) {
-            const float val = c11 * (src[i - 1][j - 1] + src[i - 1][j + 1] + src[i + 1][j - 1] + src[i + 1][j + 1]) + 
-                              c10 * (src[i - 1][j] + src[i][j - 1] + src[i][j + 1] + src[i + 1][j]) + 
-                              c00 * src[i][j];
-            dst[i][j] *= val;
-        }
-    }
-
-}
-
-void gauss5x5mult (float** RESTRICT src, float** RESTRICT dst, const int tileSize, const float kernel[5][5])
-{
-
-    const float c21 = kernel[0][1];
-    const float c20 = kernel[0][2];
-    const float c11 = kernel[1][1];
-    const float c10 = kernel[1][2];
-    const float c00 = kernel[2][2];
-
-    for (int i = 2; i < tileSize - 2; ++i) {
-        // I tried hand written SSE code but gcc vectorizes better
-#if defined(__clang__)
-        #pragma clang loop vectorize(assume_safety)
-#elif defined(__GNUC__)
-        #pragma GCC ivdep
-#endif
-        for (int j = 2; j < tileSize - 2; ++j) {
-            const float val = c21 * ((src[i - 2][j - 1] + src[i - 2][j + 1]) + (src[i - 1][j - 2] + src[i - 1][j + 2]) + (src[i + 1][j - 2] + src[i + 1][j + 2]) + (src[i + 2][j - 1] + src[i + 2][j + 1])) +
-                              c20 * (src[i - 2][j] + src[i][j - 2] + src[i][j + 2] + src[i + 2][j]) +
-                              c11 * (src[i - 1][j - 1] + src[i - 1][j + 1] + src[i + 1][j - 1] + src[i + 1][j + 1]) +
-                              c10 * (src[i - 1][j] + src[i][j - 1] + src[i][j + 1] + src[i + 1][j]) +
-                              c00 * src[i][j];
-
-            dst[i][j] *= val;
-        }
-    }
-}
-
-void gauss7x7mult(float** RESTRICT src, float** RESTRICT dst, const int tileSize, const float kernel[7][7])
-{
-
-    const float c31 = kernel[0][2];
-    const float c30 = kernel[0][3];
-    const float c22 = kernel[1][1];
-    const float c21 = kernel[1][2];
-    const float c20 = kernel[1][3];
-    const float c11 = kernel[2][2];
-    const float c10 = kernel[2][3];
-    const float c00 = kernel[3][3];
-
-    for (int i = 3; i < tileSize - 3; ++i) {
-        // I tried hand written SSE code but gcc vectorizes better
-#if defined(__clang__)
-        #pragma clang loop vectorize(assume_safety)
-#elif defined(__GNUC__)
-        #pragma GCC ivdep
-#endif
-        for (int j = 3; j < tileSize - 3; ++j) {
-            const float val = c31 * ((src[i - 3][j - 1] + src[i - 3][j + 1]) + (src[i - 1][j - 3] + src[i - 1][j + 3]) + (src[i + 1][j - 3] + src[i + 1][j + 3]) + (src[i + 3][j - 1] + src[i + 3][j + 1])) +
-                              c30 * (src[i - 3][j] + src[i][j - 3] + src[i][j + 3] + src[i + 3][j]) +
-                              c22 * (src[i - 2][j - 2] + src[i - 2][j + 2] + src[i + 2][j - 2] + src[i + 2][j + 2]) +
-                              c21 * ((src[i - 2][j - 1] + src[i - 2][j + 1]) + (src[i - 1][j - 2] + src[i - 1][j + 2]) + (src[i + 1][j - 2] + src[i + 1][j + 2]) + (src[i + 2][j - 1] + src[i + 2][j + 1])) +
-                              c20 * (src[i - 2][j] + src[i][j - 2] + src[i][j + 2] + src[i + 2][j]) +
-                              c11 * (src[i - 1][j - 1] + src[i - 1][j + 1] + src[i + 1][j - 1] + src[i + 1][j + 1]) +
-                              c10 * (src[i - 1][j] + src[i][j - 1] + src[i][j + 1] + src[i + 1][j]) +
-                              c00 * src[i][j];
-
-            dst[i][j] *= val;
-        }
-    }
-}
-
-void gauss9x9mult(float** RESTRICT src, float** RESTRICT dst, const int tileSize, const float kernel[9][9])
-{
-
-    const float c42 = kernel[0][2];
-    const float c41 = kernel[0][3];
-    const float c40 = kernel[0][4];
-    const float c33 = kernel[1][1];
-    const float c32 = kernel[1][2];
-    const float c31 = kernel[1][3];
-    const float c30 = kernel[1][4];
-    const float c22 = kernel[2][2];
-    const float c21 = kernel[2][3];
-    const float c20 = kernel[2][4];
-    const float c11 = kernel[3][3];
-    const float c10 = kernel[3][4];
-    const float c00 = kernel[4][4];
-
-    for (int i = 4; i < tileSize - 4; ++i) {
-        // I tried hand written SSE code but gcc vectorizes better
-#if defined(__clang__)
-        #pragma clang loop vectorize(assume_safety)
-#elif defined(__GNUC__)
-        #pragma GCC ivdep
-#endif
-        for (int j = 4; j < tileSize - 4; ++j) {
-            const float val = c42 * ((src[i - 4][j - 2] + src[i - 4][j + 2]) + (src[i - 2][j - 4] + src[i - 2][j + 4]) + (src[i + 2][j - 4] + src[i + 2][j + 4]) + (src[i + 4][j - 2] + src[i + 4][j + 2])) +
-                              c41 * ((src[i - 4][j - 1] + src[i - 4][j + 1]) + (src[i - 1][j - 4] + src[i - 1][j + 4]) + (src[i + 1][j - 4] + src[i + 1][j + 4]) + (src[i + 4][j - 1] + src[i + 4][j + 1])) +
-                              c40 * (src[i - 4][j] + src[i][j - 4] + src[i][j + 4] + src[i + 4][j]) +
-                              c33 * (src[i - 3][j - 3] + src[i - 3][j + 3] + src[i + 3][j - 3] + src[i + 3][j + 3]) +
-                              c32 * ((src[i - 3][j - 2] + src[i - 3][j + 2]) + (src[i - 2][j - 3] + src[i - 2][j + 3]) + (src[i + 2][j - 3] + src[i + 2][j + 3]) + (src[i + 3][j - 2] + src[i + 3][j + 2])) +
-                              c31 * ((src[i - 3][j - 1] + src[i - 3][j + 1]) + (src[i - 1][j - 3] + src[i - 1][j + 3]) + (src[i + 1][j - 3] + src[i + 1][j + 3]) + (src[i + 3][j - 1] + src[i + 3][j + 1])) +
-                              c30 * (src[i - 3][j] + src[i][j - 3] + src[i][j + 3] + src[i + 3][j]) +
-                              c22 * (src[i - 2][j - 2] + src[i - 2][j + 2] + src[i + 2][j - 2] + src[i + 2][j + 2]) +
-                              c21 * ((src[i - 2][j - 1] + src[i - 2][j + 1]) + (src[i - 1][j - 2] + src[i - 1][j + 2]) + (src[i + 1][j - 2] + src[i + 1][j + 2]) + (src[i + 2][j - 1] + src[i + 2][j + 1])) +
-                              c20 * (src[i - 2][j] + src[i][j - 2] + src[i][j + 2] + src[i + 2][j]) +
-                              c11 * (src[i - 1][j - 1] + src[i - 1][j + 1] + src[i + 1][j - 1] + src[i + 1][j + 1]) +
-                              c10 * (src[i - 1][j] + src[i][j - 1] + src[i][j + 1] + src[i + 1][j]) +
-                              c00 * src[i][j];
-            dst[i][j] *= val;
-        }
-    }
-}
-
-void gauss13x13mult(float** RESTRICT src, float** RESTRICT dst, const int tileSize, const float kernel[13][13])
-{
-
-    const float c60 = kernel[0][6];
-    const float c53 = kernel[1][3];
-    const float c52 = kernel[1][4];
-    const float c51 = kernel[1][5];
-    const float c50 = kernel[1][6];
-    const float c44 = kernel[2][2];
-    const float c42 = kernel[2][4];
-    const float c41 = kernel[2][5];
-    const float c40 = kernel[2][6];
-    const float c33 = kernel[3][3];
-    const float c32 = kernel[3][4];
-    const float c31 = kernel[3][5];
-    const float c30 = kernel[3][6];
-    const float c22 = kernel[4][4];
-    const float c21 = kernel[4][5];
-    const float c20 = kernel[4][6];
-    const float c11 = kernel[5][5];
-    const float c10 = kernel[5][6];
-    const float c00 = kernel[6][6];
-
-    for (int i = 6; i < tileSize - 6; ++i) {
-        // I tried hand written SSE code but gcc vectorizes better
-#if defined(__clang__)
-        #pragma clang loop vectorize(assume_safety)
-#elif defined(__GNUC__)
-        #pragma GCC ivdep
-#endif
-        for (int j = 6; j < tileSize - 6; ++j) {
-            const float val = c60 * (src[i - 6][j] + src[i][j - 6] + src[i][j + 6] + src[i + 6][j]) +
-                              c53 * ((src[i - 5][j - 3] + src[i - 5][j + 3]) + (src[i - 3][j - 5] + src[i - 3][j + 5]) + (src[i + 3][j - 5] + src[i + 3][j + 5]) + (src[i + 5][j - 3] + src[i + 5][j + 3])) +
-                              c52 * ((src[i - 5][j - 2] + src[i - 5][j + 2]) + (src[i - 2][j - 5] + src[i - 2][j + 5]) + (src[i + 2][j - 5] + src[i + 2][j + 5]) + (src[i + 5][j - 2] + src[i + 5][j + 2])) +
-                              c51 * ((src[i - 5][j - 1] + src[i - 5][j + 1]) + (src[i - 1][j - 5] + src[i - 1][j + 5]) + (src[i + 1][j - 5] + src[i + 1][j + 5]) + (src[i + 5][j - 1] + src[i + 5][j + 1])) +
-                              c50 * ((src[i - 5][j] + src[i][j - 5] + src[i][j + 5] + src[i + 5][j]) + ((src[i - 4][j - 3] + src[i - 4][j + 3]) + (src[i - 3][j - 4] + src[i - 3][j + 4]) + (src[i + 3][j - 4] + src[i + 3][j + 4]) + (src[i + 4][j - 3] + src[i + 4][j + 3]))) +
-                              c44 * (src[i - 4][j - 4] + src[i - 4][j + 4] + src[i + 4][j - 4] + src[i + 4][j + 4]) +
-                              c42 * ((src[i - 4][j - 2] + src[i - 4][j + 2]) + (src[i - 2][j - 4] + src[i - 2][j + 4]) + (src[i + 2][j - 4] + src[i + 2][j + 4]) + (src[i + 4][j - 2] + src[i + 4][j + 2])) +
-                              c41 * ((src[i - 4][j - 1] + src[i - 4][j + 1]) + (src[i - 1][j - 4] + src[i - 1][j + 4]) + (src[i + 1][j - 4] + src[i + 1][j + 4]) + (src[i + 4][j - 1] + src[i + 4][j + 1])) +
-                              c40 * (src[i - 4][j] + src[i][j - 4] + src[i][j + 4] + src[i + 4][j]) +
-                              c33 * (src[i - 3][j - 3] + src[i - 3][j + 3] + src[i + 3][j - 3] + src[i + 3][j + 3]) +
-                              c32 * ((src[i - 3][j - 2] + src[i - 3][j + 2]) + (src[i - 2][j - 3] + src[i - 2][j + 3]) + (src[i + 2][j - 3] + src[i + 2][j + 3]) + (src[i + 3][j - 2] + src[i + 3][j + 2])) +
-                              c31 * ((src[i - 3][j - 1] + src[i - 3][j + 1]) + (src[i - 1][j - 3] + src[i - 1][j + 3]) + (src[i + 1][j - 3] + src[i + 1][j + 3]) + (src[i + 3][j - 1] + src[i + 3][j + 1])) +
-                              c30 * (src[i - 3][j] + src[i][j - 3] + src[i][j + 3] + src[i + 3][j]) +
-                              c22 * (src[i - 2][j - 2] + src[i - 2][j + 2] + src[i + 2][j - 2] + src[i + 2][j + 2]) +
-                              c21 * ((src[i - 2][j - 1] + src[i - 2][j + 1]) + (src[i - 1][j - 2] + src[i - 1][j + 2]) + (src[i + 1][j - 2] + src[i + 1][j + 2]) + (src[i + 2][j - 1] + src[i + 2][j + 1])) +
-                              c20 * (src[i - 2][j] + src[i][j - 2] + src[i][j + 2] + src[i + 2][j]) +
-                              c11 * (src[i - 1][j - 1] + src[i - 1][j + 1] + src[i + 1][j - 1] + src[i + 1][j + 1]) +
-                              c10 * (src[i - 1][j] + src[i][j - 1] + src[i][j + 1] + src[i + 1][j]) +
-                              c00 * src[i][j];
-
-            dst[i][j] *= val;
-        }
-    }
-}
 
 void buildClipMaskBayer(const float * const *rawData, int W, int H, float** clipMask, const float whites[2][2])
 {
@@ -770,15 +309,15 @@ BENCHFUN
     float kernel5[5][5];
     float kernel3[3][3];
     if (is3x3) {
-        compute3x3kernel(sigma, kernel3);
+        rtengine::compute3x3kernel2(sigma, kernel3);
     } else if (is5x5) {
-        compute5x5kernel(sigma, kernel5);
+        rtengine::compute5x5kernel2(sigma, kernel5);
     } else if (is7x7) {
-        compute7x7kernel(sigma, kernel7);
+        rtengine::compute7x7kernel2(sigma, kernel7);
     } else if (is9x9) {
-        compute9x9kernel(sigma, kernel9);
+        rtengine::compute9x9kernel2(sigma, kernel9);
     } else {
-        compute13x13kernel(sigma, kernel13);
+        rtengine::compute13x13kernel2(sigma, kernel13);
     }
 
     constexpr int tileSize = 32;
@@ -868,8 +407,8 @@ BENCHFUN
                 if (is3x3) {
                     for (int k = 0; k < iterations; ++k) {
                         // apply 3x3 gaussian blur and divide luminance by result of gaussian blur
-                        gauss3x3div(tmpIThr, tmpThr, lumThr, fullTileSize, kernel3);
-                        gauss3x3mult(tmpThr, tmpIThr, fullTileSize, kernel3);
+                        rtengine::gauss3x3div2(tmpIThr, tmpThr, lumThr, fullTileSize, kernel3);
+                        rtengine::gauss3x3mult2(tmpThr, tmpIThr, fullTileSize, kernel3);
                         if (checkIterStop && k < iterations - 1 && checkForStop(tmpIThr, iterCheck, fullTileSize, border)) {
                             break;
                         }
@@ -877,8 +416,8 @@ BENCHFUN
                 } else if (is5x5) {
                     for (int k = 0; k < iterations; ++k) {
                         // apply 5x5 gaussian blur and divide luminance by result of gaussian blur
-                        gauss5x5div(tmpIThr, tmpThr, lumThr, fullTileSize, kernel5);
-                        gauss5x5mult(tmpThr, tmpIThr, fullTileSize, kernel5);
+                        rtengine::gauss5x5div2(tmpIThr, tmpThr, lumThr, fullTileSize, kernel5);
+                        rtengine::gauss5x5mult2(tmpThr, tmpIThr, fullTileSize, kernel5);
                         if (checkIterStop && k < iterations - 1 && checkForStop(tmpIThr, iterCheck, fullTileSize, border)) {
                             break;
                         }
@@ -886,8 +425,8 @@ BENCHFUN
                 } else if (is7x7) {
                     for (int k = 0; k < iterations; ++k) {
                         // apply 5x5 gaussian blur and divide luminance by result of gaussian blur
-                        gauss7x7div(tmpIThr, tmpThr, lumThr, fullTileSize, kernel7);
-                        gauss7x7mult(tmpThr, tmpIThr, fullTileSize, kernel7);
+                        rtengine::gauss7x7div2(tmpIThr, tmpThr, lumThr, fullTileSize, kernel7);
+                        rtengine::gauss7x7mult2(tmpThr, tmpIThr, fullTileSize, kernel7);
                         if (checkIterStop && k < iterations - 1 && checkForStop(tmpIThr, iterCheck, fullTileSize, border)) {
                             break;
                         }
@@ -895,8 +434,8 @@ BENCHFUN
                 } else if (is9x9) {
                     for (int k = 0; k < iterations; ++k) {
                         // apply 5x5 gaussian blur and divide luminance by result of gaussian blur
-                        gauss9x9div(tmpIThr, tmpThr, lumThr, fullTileSize, kernel9);
-                        gauss9x9mult(tmpThr, tmpIThr, fullTileSize, kernel9);
+                        rtengine::gauss9x9div2(tmpIThr, tmpThr, lumThr, fullTileSize, kernel9);
+                        rtengine::gauss9x9mult2(tmpThr, tmpIThr, fullTileSize, kernel9);
                         if (checkIterStop && k < iterations - 1 && checkForStop(tmpIThr, iterCheck, fullTileSize, border)) {
                             break;
                         }
@@ -908,44 +447,44 @@ BENCHFUN
                         if (sigmaTile >= 0.4f) {
                             if (sigmaTile > 1.5f) { // have to use 13x13 kernel
                                 float lkernel13[13][13];
-                                compute13x13kernel(static_cast<float>(sigma) + distanceFactor * distance, lkernel13);
+                                rtengine::compute13x13kernel2(static_cast<float>(sigma) + distanceFactor * distance, lkernel13);
                                 for (int k = 0; k < iterations; ++k) {
                                     // apply 13x13 gaussian blur and divide luminance by result of gaussian blur
-                                    gauss13x13div(tmpIThr, tmpThr, lumThr, fullTileSize, lkernel13);
-                                    gauss13x13mult(tmpThr, tmpIThr, fullTileSize, lkernel13);
+                                    rtengine::gauss13x13div2(tmpIThr, tmpThr, lumThr, fullTileSize, lkernel13);
+                                    rtengine::gauss13x13mult2(tmpThr, tmpIThr, fullTileSize, lkernel13);
                                     if (checkIterStop && k < iterations - 1 && checkForStop(tmpIThr, iterCheck, fullTileSize, border)) {
                                         break;
                                     }
                                 }
                             } else if (sigmaTile > 1.15f) { // have to use 9x9 kernel
                                 float lkernel9[9][9];
-                                compute9x9kernel(static_cast<float>(sigma) + distanceFactor * distance, lkernel9);
+                                rtengine::compute9x9kernel2(static_cast<float>(sigma) + distanceFactor * distance, lkernel9);
                                 for (int k = 0; k < iterations; ++k) {
                                     // apply 9x9 gaussian blur and divide luminance by result of gaussian blur
-                                    gauss9x9div(tmpIThr, tmpThr, lumThr, fullTileSize, lkernel9);
-                                    gauss9x9mult(tmpThr, tmpIThr, fullTileSize, lkernel9);
+                                    rtengine::gauss9x9div2(tmpIThr, tmpThr, lumThr, fullTileSize, lkernel9);
+                                    rtengine::gauss9x9mult2(tmpThr, tmpIThr, fullTileSize, lkernel9);
                                     if (checkIterStop && k < iterations - 1 && checkForStop(tmpIThr, iterCheck, fullTileSize, border)) {
                                         break;
                                     }
                                 }
                             } else if (sigmaTile > 0.84f) { // have to use 7x7 kernel
                                 float lkernel7[7][7];
-                                compute7x7kernel(static_cast<float>(sigma) + distanceFactor * distance, lkernel7);
+                                rtengine::compute7x7kernel2(static_cast<float>(sigma) + distanceFactor * distance, lkernel7);
                                 for (int k = 0; k < iterations; ++k) {
                                     // apply 7x7 gaussian blur and divide luminance by result of gaussian blur
-                                    gauss7x7div(tmpIThr, tmpThr, lumThr, fullTileSize, lkernel7);
-                                    gauss7x7mult(tmpThr, tmpIThr, fullTileSize, lkernel7);
+                                    rtengine::gauss7x7div2(tmpIThr, tmpThr, lumThr, fullTileSize, lkernel7);
+                                    rtengine::gauss7x7mult2(tmpThr, tmpIThr, fullTileSize, lkernel7);
                                     if (checkIterStop && k < iterations - 1 && checkForStop(tmpIThr, iterCheck, fullTileSize, border)) {
                                         break;
                                     }
                                 }
                             } else { // can use 5x5 kernel
                                 float lkernel5[5][5];
-                                compute5x5kernel(static_cast<float>(sigma) + distanceFactor * distance, lkernel5);
+                                rtengine::compute5x5kernel2(static_cast<float>(sigma) + distanceFactor * distance, lkernel5);
                                 for (int k = 0; k < iterations; ++k) {
                                     // apply 7x7 gaussian blur and divide luminance by result of gaussian blur
-                                    gauss5x5div(tmpIThr, tmpThr, lumThr, fullTileSize, lkernel5);
-                                    gauss5x5mult(tmpThr, tmpIThr, fullTileSize, lkernel5);
+                                    rtengine::gauss5x5div2(tmpIThr, tmpThr, lumThr, fullTileSize, lkernel5);
+                                    rtengine::gauss5x5mult2(tmpThr, tmpIThr, fullTileSize, lkernel5);
                                     if (checkIterStop && k < iterations - 1 && checkForStop(tmpIThr, iterCheck, fullTileSize, border)) {
                                         break;
                                     }
@@ -955,8 +494,8 @@ BENCHFUN
                     } else {
                         for (int k = 0; k < iterations; ++k) {
                             // apply 13x13 gaussian blur and divide luminance by result of gaussian blur
-                            gauss13x13div(tmpIThr, tmpThr, lumThr, fullTileSize, kernel13);
-                            gauss13x13mult(tmpThr, tmpIThr, fullTileSize, kernel13);
+                            rtengine::gauss13x13div2(tmpIThr, tmpThr, lumThr, fullTileSize, kernel13);
+                            rtengine::gauss13x13mult2(tmpThr, tmpIThr, fullTileSize, kernel13);
                             if (checkIterStop && k < iterations - 1 && checkForStop(tmpIThr, iterCheck, fullTileSize, border)) {
                                 break;
                             }
@@ -998,6 +537,58 @@ BENCHFUN
 
 namespace rtengine
 {
+   
+bool WaveletDenoiseAllL2(wavelet_decomposition& WaveletCoeffs_L, float *noisevarlum, float madL[8][3], float * vari, int edge, int denoiseNestedLevels)
+    {   //same code simplified as in Ftblockdn.cc
+    int maxlvl = min(WaveletCoeffs_L.maxlevel(), 5);//probably useless, but reassuring
+
+    if (edge == 6) {//always true but I can change
+        maxlvl = 6;    //for wavelet  post sharpening
+    }
+
+    int maxWL = 0, maxHL = 0;
+
+    for (int lvl = 0; lvl < maxlvl; ++lvl) {
+        if (WaveletCoeffs_L.level_W(lvl) > maxWL) {
+            maxWL = WaveletCoeffs_L.level_W(lvl);
+        }
+
+        if (WaveletCoeffs_L.level_H(lvl) > maxHL) {
+            maxHL = WaveletCoeffs_L.level_H(lvl);
+        }
+    }
+    bool memoryAllocationFailed = false;
+#ifdef _OPENMP
+    #pragma omp parallel num_threads(denoiseNestedLevels) if (denoiseNestedLevels>1)
+#endif
+    {
+        float *buffer[2];
+        buffer[0] = new (std::nothrow) float[maxWL * maxHL + 32];
+        buffer[1] = new (std::nothrow) float[maxWL * maxHL + 64];
+
+        if (buffer[0] == nullptr || buffer[1] == nullptr) {
+            memoryAllocationFailed = true;
+        }
+
+        if (!memoryAllocationFailed) {
+#ifdef _OPENMP
+            #pragma omp for schedule(dynamic) collapse(2)
+#endif
+
+            for (int lvl = 0; lvl < maxlvl; ++lvl) {
+                for (int dir = 1; dir < 4; ++dir) {
+                    ImProcFunctions::ShrinkAllL(WaveletCoeffs_L, buffer, lvl, dir, noisevarlum, madL[lvl], vari, edge);
+                }
+            }
+        }
+        for (int i = 1; i >= 0; i--) {
+            delete[] buffer[i];
+        }
+    }
+    return (!memoryAllocationFailed);
+    }
+
+
 
 void RawImageSource::captureSharpening(const procparams::CaptureSharpeningParams &sharpeningParams, bool showMask, double &conrastThreshold, double &radius) {
 
@@ -1006,7 +597,7 @@ void RawImageSource::captureSharpening(const procparams::CaptureSharpeningParams
     }
 
     if (plistener) {
-        plistener->setProgressStr(M("TP_PDSHARPENING_LABEL"));
+        plistener->setProgressStr(M("TP_PDSHARPENING_LABEL88"));
         plistener->setProgress(0.0);
     }
 BENCHFUN
@@ -1020,10 +611,218 @@ BENCHFUN
     float contrast = conrastThreshold / 100.0;
 
     const float clipVal = (ri->get_white(1) - ri->get_cblack(1)) * scale_mul[1];
+    array2D<float> redVals (W, H);
+    array2D<float> greenVals(W, H);
+    array2D<float> blueVals(W, H);
+     
+    redVals = redCache ? *redCache : red;
+    greenVals = greenCache ? *greenCache : green;
+    blueVals = blueCache ? *blueCache : blue;
 
-    const array2D<float>& redVals = redCache ? *redCache : red;
-    const array2D<float>& greenVals = greenCache ? *greenCache : green;
-    const array2D<float>& blueVals = blueCache ? *blueCache : blue;
+    typedef ImProcFunctions::Median Median;
+
+    //predoise : small median to denoise before capture sharpening : allow CS to work correctly and reduce a little the noise
+    // high median acts also on chroma noise
+    //J.Desmis October 2024 - May 2025 - be carefull not to strong...
+    if(sharpeningParams.noisecap > 0.f  && sharpeningParams.noisecaptype == false) {//median
+        //I have choose median due to its low aggressiveness and for a 3x3 its speed
+        float denstr = 0.01 * sharpeningParams.noisecap;
+
+        array2D<float> tmL (W, H);
+        array2D<float> mR (W, H);
+        array2D<float> mG (W, H);
+        array2D<float> mB (W, H);
+        
+#ifdef _OPENMP
+    #pragma omp parallel for schedule(dynamic, 16)
+#endif                  
+        for (int i = 0; i < H; ++i) {
+            for (int j = 0; j < W; ++j) {
+                mR[i][j] = redVals[i][j];
+                mG[i][j] = greenVals[i][j];
+                mB[i][j] = blueVals[i][j];
+            }
+        }
+        ImProcFunctions::Median medianTypeL = Median::TYPE_3X3_SOFT;
+
+        int itera = 1;
+        if(denstr < 0.1f) {
+            medianTypeL = Median::TYPE_3X3_SOFT;
+            itera = 1;
+        } else if (denstr < 0.2f) {
+            medianTypeL = Median::TYPE_3X3_SOFT;
+            itera = 2;
+        } else if (denstr < 0.3f) {
+            medianTypeL = Median::TYPE_3X3_SOFT;
+            itera = 3;
+        } else if (denstr < 0.5f) {
+            medianTypeL = Median::TYPE_3X3_SOFT;
+            itera = 4;
+        } else if (denstr < 0.6f) {
+            medianTypeL = Median::TYPE_3X3_SOFT;
+            itera = 5;
+        } else if (denstr < 0.7f) {
+            medianTypeL = Median::TYPE_3X3_STRONG;
+            itera = 5;
+        } else if (denstr < 0.8f) {
+            medianTypeL = Median::TYPE_3X3_STRONG;
+            itera = 6;
+        } else if (denstr < 0.9f) {
+            medianTypeL = Median::TYPE_5X5_STRONG;
+            itera = 2;
+        } else {
+            medianTypeL = Median::TYPE_5X5_STRONG;
+            itera = 3;            
+        }
+        ImProcFunctions::Median_Denoise(mR, mR, W, H, medianTypeL , itera, false, tmL);
+        ImProcFunctions::Median_Denoise(mG, mG, W, H, medianTypeL , itera, false, tmL);
+        ImProcFunctions::Median_Denoise(mB, mB, W, H, medianTypeL , itera, false, tmL);
+#ifdef _OPENMP
+    #pragma omp parallel for schedule(dynamic, 16)
+#endif
+        for (int i = 0; i < H; ++i) {
+            for (int j = 0; j < W; ++j) {
+                redVals[i][j] = intp(denstr, mR[i][j], redVals[i][j]); 
+                greenVals[i][j] = intp(denstr, mG[i][j], greenVals[i][j]); 
+                blueVals[i][j] = intp(denstr, mB[i][j], blueVals[i][j]); 
+           }
+        }
+    }
+
+    if(sharpeningParams.noisecap > 0.f  && sharpeningParams.noisecaptype == true) {//wavelets, slower
+        LabImage labdngpre(W, H);
+        bool memoryAllocationFailed = false;
+
+#ifdef _OPENMP
+        const int numThreads = omp_get_max_threads();
+#else
+        const int numThreads = 1;
+
+#endif
+        int levwav = 6;//64x64 must be enough for this usage...and no test memory allocation, we work on all image in Raw mode, probably too strong... but no problem with vari[]
+
+        const std::unique_ptr<Imagefloat> provpre(new Imagefloat(W, H));
+
+#ifdef _OPENMP
+        #pragma omp parallel for schedule(dynamic, 16)
+#endif
+        for (int i = 0; i < H; ++i) {//save values of red green blue
+            for (int j = 0; j < W; ++j) {
+                provpre->r(i, j) = redVals[i][j];
+                provpre->g(i, j) = greenVals[i][j];
+                provpre->b(i, j) = blueVals[i][j]; 
+                labdngpre.L[i][j] = provpre->g(i, j);
+                labdngpre.a[i][j] = provpre->r(i, j);
+                labdngpre.b[i][j] = provpre->b(i, j);
+            }
+        }
+        //contrary to usual practice, I do not denoise the 'a' and 'b' with a specific manner (or R and B) channels, but duplicate 3 times as if each channel was of the same type, as if R,G,B are "luminance"
+        wavelet_decomposition Ldecompgpre(labdngpre.L[0], labdngpre.W, labdngpre.H, levwav, 1, 1, numThreads, 8);//daublen = 8 - better moment wavelet
+        if (Ldecompgpre.memory_allocation_failed()) {
+            memoryAllocationFailed = true;
+        }
+        wavelet_decomposition Ldecomprpre(labdngpre.a[0], labdngpre.W, labdngpre.H, levwav, 1, 1, numThreads, 8);//daublen = 8 - better moment wavelet
+        if (Ldecomprpre.memory_allocation_failed()) {
+            memoryAllocationFailed = true;
+        }
+        wavelet_decomposition Ldecompbpre(labdngpre.b[0], labdngpre.W, labdngpre.H, levwav, 1, 1, numThreads, 8);//daublen = 8 - better moment wavelet
+        if (Ldecompbpre.memory_allocation_failed()) {
+            memoryAllocationFailed = true;
+        }
+        
+        float madL[10][3];
+        //but only one evaluation MAD RGB with green channel - "near luminance"
+        if (!Ldecompgpre.memory_allocation_failed()) {
+            //calculate Median absolute deviation
+            for (int lvl = 0; lvl < levwav; lvl++) {
+                for (int dir = 1; dir < 4; dir++) {
+                    int Wlvl_L = Ldecompgpre.level_W(lvl);//green
+                    int Hlvl_L = Ldecompgpre.level_H(lvl);
+                    const float* const* WavCoeffs_L = Ldecompgpre.level_coeffs(lvl);
+                    madL[lvl][dir - 1] = SQR(ImProcFunctions::MadRgb(WavCoeffs_L[dir], Wlvl_L * Hlvl_L));
+                }
+            }
+        }
+        if (!memoryAllocationFailed) {
+            
+            float noiseluma = sharpeningParams.noisecap; 
+            //but only one vari[] for the 3 channels
+       
+            const float noisevarL = SQR(((noiseluma + 1.f) / 125.f) * (10.f + (noiseluma + 1.f) / 25.f));
+           //evaluate noisevarL same formula as Denoise main
+            float vari[levwav];
+            for (int v = 0; v < levwav -1; v++) {
+                vari[v] = noisevarL;//same value for each level, but we can change
+            }
+            vari[0] = 0.15f * noisevarL;//empirical 'reduction' of action for level 0 2x2
+            vari[1] = 0.15f * noisevarL;//empirical 'reduction' of action for level 1 4x4
+            
+            vari[2] = 0.05f * noisevarL;//empirical low 'reduction' of action for level 2
+            vari[3] = 0.05f * noisevarL;//empirical low 'reduction' of action for level 3
+            if(noiseluma > 15.f){
+                vari[2] = 0.15f * noisevarL;//empirical normal 'reduction' of action for level 2
+                vari[3] = 0.15f * noisevarL;//empirical normal 'reduction' of action for level 3
+            }
+            vari[4] = 0.005f * noisevarL;//empirical 'reduction' of action for level 4 very low action
+            vari[5] = 0.005f * noisevarL;//empirical 'reduction' of action for level 5 very low action
+            int edge = 6;//as maxlevels
+        
+            float* noisevarlum = new float[H * W];
+            int GW2 = (W + 1) / 2;//work on half image
+                    
+            float nvlh[13] = {1.f, 1.f, 1.f, 1.f, 1.f, 1.f, 1.f, 1.f, 1.f, 1.f, 1.f, 0.7f, 0.5f}; //high value
+            float nvll[13] = {0.1f, 0.15f, 0.2f, 0.25f, 0.3f, 0.35f, 0.4f, 0.45f, 0.7f, 0.8f, 1.f, 1.f, 1.f}; //low value
+
+            float seuillow = 4000.f;//low empirical RGB values
+            float seuilhigh = 35000.f;//high empirical RGB values
+            int noiselequal = 5;//equalizer black - white - same value for white and black
+            int i = 10 - noiselequal;
+            float ac = (nvlh[i] - nvll[i]) / (seuillow - seuilhigh);
+            float bc = nvlh[i] - seuillow * ac;
+#ifdef _OPENMP
+        #pragma omp parallel for schedule(dynamic, 16)
+#endif
+        
+                for (int ir = 0; ir < H; ir++){
+                    for (int jr = 0; jr < W; jr++) {
+                        float lN = labdngpre.L[ir][jr];//green channel
+                        //adapt noisevarlum to lN value
+                        if (lN < seuillow) {
+                            noisevarlum[(ir >> 1) * GW2 + (jr >> 1)] =  nvlh[i];
+                        } else if (lN < seuilhigh) {
+                            noisevarlum[(ir >> 1) * GW2 + (jr >> 1)] = ac * lN + bc;
+                        } else {
+                            noisevarlum[(ir >> 1) * GW2 + (jr >> 1)] =  nvll[i];
+                        }
+                    }
+                }
+                //but only one noisevarlum for the 3 channels
+                //3 times the same wavelet for G, R and B
+                WaveletDenoiseAllL2(Ldecompgpre, noisevarlum, madL, vari, edge, numThreads);//simplified version of WaveletDenoiseAllL
+                WaveletDenoiseAllL2(Ldecomprpre, noisevarlum, madL, vari, edge, numThreads);//simplified version of WaveletDenoiseAllL
+                WaveletDenoiseAllL2(Ldecompbpre, noisevarlum, madL, vari, edge, numThreads);//simplified version of WaveletDenoiseAllL
+                
+                
+                delete[] noisevarlum;
+                
+                Ldecompgpre.reconstruct(labdngpre.L[0]);//reconstruct channel G after wavelets
+                Ldecomprpre.reconstruct(labdngpre.a[0]);//reconstruct channel R after wavelets
+                Ldecompbpre.reconstruct(labdngpre.b[0]);//reconstruct channel B after wavelets
+                
+                    
+#ifdef _OPENMP
+        #pragma omp parallel for schedule(dynamic, 16)
+#endif                   
+            for (int i = 0; i < H; ++i) {//re active redVals blueVals greenVals with denoise and taking account mask 
+                for (int j = 0; j < W; ++j) {
+                    redVals[i][j] = labdngpre.a[i][j];
+                    greenVals[i][j] = labdngpre.L[i][j];
+                    blueVals[i][j] = labdngpre.b[i][j];
+                }
+            }
+        }  
+    }
+//end predenoise sharpening wavelet
 
     array2D<float> clipMask(W, H);
     constexpr float clipLimit = 0.95f;
@@ -1080,7 +879,10 @@ BENCHFUN
         return;
     }
 
-    if (showMask) {
+    bool showMaskperso = sharpeningParams.showcap;
+
+
+    if (showMask  ||  showMaskperso) {
         array2D<float>& L = blue; // blue will be overridden anyway => we can use its buffer to store L
 #ifdef _OPENMP
         #pragma omp parallel for
@@ -1172,7 +974,198 @@ BENCHFUN
     if (plistener) {
         plistener->setProgress(1.0);
     }
+    
+        //denoise luminance in RGB mode after capture sharpening - Jacques Desmis April 2025
+        // not a complete denoise, just the minimum to exploit the mask buildblendmak 
+        // enable only if noisecap (denoise before capture sharpening is enable).
+        if(sharpeningParams.noisecapafter > 0.f) {
+        
+            LabImage labdng(W, H);
+            bool memoryAllocationFailed = false;
+
+#ifdef _OPENMP
+            const int numThreads = omp_get_max_threads();
+#else
+            const int numThreads = 1;
+
+#endif
+            int levwav = 6;//64 x 64 must be enough for this usage...and no test memory allocation, we work on all image in Raw mode!
+
+            const std::unique_ptr<Imagefloat> prov1(new Imagefloat(W, H));
+
+#ifdef _OPENMP
+        #pragma omp parallel for schedule(dynamic, 16)
+#endif
+            for (int i = 0; i < H; ++i) {//save values of red green blue
+                for (int j = 0; j < W; ++j) {
+                    prov1->r(i, j) = red[i][j];
+                    prov1->g(i, j) = green[i][j];
+                    prov1->b(i, j) = blue[i][j]; 
+                    labdng.L[i][j] = prov1->g(i, j);//initialize labdng.L - channel green "near" Luminance
+                    labdng.a[i][j] = prov1->r(i, j);//initialize labdng.a - channel red
+                    labdng.b[i][j] = prov1->b(i, j);//initialize labdnb.b - channel blue
+                }
+            }
+            //contrary to usual practice, I do not denoise the 'a' and 'b' with a specific manner (or R and B) channels, but duplicate 3 times as if each channel was of the same type, as if R,G,B are "luminance"
+            wavelet_decomposition Ldecompg(labdng.L[0], labdng.W, labdng.H, levwav, 1, 1, numThreads, 22);//daublen = 22 - maximum better moment wavelet
+            if (Ldecompg.memory_allocation_failed()) {
+                memoryAllocationFailed = true;
+            }
+            wavelet_decomposition Ldecompr(labdng.a[0], labdng.W, labdng.H, levwav, 1, 1, numThreads, 22);//daublen = 22 - maximum better moment wavelet
+            if (Ldecompr.memory_allocation_failed()) {
+                memoryAllocationFailed = true;
+            }
+            wavelet_decomposition Ldecompb(labdng.b[0], labdng.W, labdng.H, levwav, 1, 1, numThreads, 22);//daublen = 22 - maximum better moment wavelet
+            if (Ldecompb.memory_allocation_failed()) {
+                memoryAllocationFailed = true;
+            }
+        
+            float madL[10][3];
+            //but only one evaluation MAD RGB with green channel - "near luminance"
+            if (!Ldecompg.memory_allocation_failed()) {
+                //calculate Median absolute deviation
+                for (int lvl = 0; lvl < levwav; lvl++) {
+                    for (int dir = 1; dir < 4; dir++) {
+                        int Wlvl_L = Ldecompg.level_W(lvl);
+                        int Hlvl_L = Ldecompg.level_H(lvl);
+                        const float* const* WavCoeffs_L = Ldecompg.level_coeffs(lvl);
+                        madL[lvl][dir - 1] = SQR(ImProcFunctions::MadRgb(WavCoeffs_L[dir], Wlvl_L * Hlvl_L));
+                    }
+                }
+            }
+            if (!memoryAllocationFailed) {
+            
+                float noiseluma = sharpeningParams.noisecapafter;
+                //but only one vari[] for the 3 channels
+       
+                const float noisevarL = SQR(((noiseluma + 1.f) / 125.f) * (10.f + (noiseluma + 1.f) / 25.f));
+                //evaluate noisevarL same formula as Denoise main
+                float vari[levwav];
+                for (int v = 0; v < levwav -1; v++) {
+                    vari[v] = noisevarL;//same value for each level, but we can change
+                }
+                vari[5] = 0.6f * noisevarL;//empirical 'reduction' of action for level 5 - 128x128
+                int edge = 6;//as maxlevels
+        
+                float* noisevarlum = new float[H * W];
+                int GW2 = (W + 1) / 2;//work on half image
+                    
+                float nvlh[13] = {1.f, 1.f, 1.f, 1.f, 1.f, 1.f, 1.f, 1.f, 1.f, 1.f, 1.f, 0.7f, 0.5f}; //high value
+                float nvll[13] = {0.1f, 0.15f, 0.2f, 0.25f, 0.3f, 0.35f, 0.4f, 0.45f, 0.7f, 0.8f, 1.f, 1.f, 1.f}; //low value
+
+                float seuillow = 4000.f;//low empirical RGB values
+                float seuilhigh = 35000.f;//high empirical RGB values
+                int noiselequal = 5;//equalizer black - white - same value for white and black
+                int i = 10 - noiselequal;
+                float ac = (nvlh[i] - nvll[i]) / (seuillow - seuilhigh);
+                float bc = nvlh[i] - seuillow * ac;
+#ifdef _OPENMP
+        #pragma omp parallel for schedule(dynamic, 16)
+#endif
+        
+                    for (int ir = 0; ir < H; ir++){
+                        for (int jr = 0; jr < W; jr++) {
+                            float lN = labdng.L[ir][jr];
+                            //adapt noisevarlum to lN value
+                            if (lN < seuillow) {
+                                noisevarlum[(ir >> 1) * GW2 + (jr >> 1)] =  nvlh[i];
+                            } else if (lN < seuilhigh) {
+                                noisevarlum[(ir >> 1) * GW2 + (jr >> 1)] = ac * lN + bc;
+                            } else {
+                                noisevarlum[(ir >> 1) * GW2 + (jr >> 1)] =  nvll[i];
+                            }
+                        }
+                    }
+                    //but only one noisevarlum for the 3 channels
+                    //3 times the same wavelet for G, R and B
+                    WaveletDenoiseAllL2(Ldecompg, noisevarlum, madL, vari, edge, numThreads);//simplified version of WaveletDenoiseAllL
+                    WaveletDenoiseAllL2(Ldecompr, noisevarlum, madL, vari, edge, numThreads);//simplified version of WaveletDenoiseAllL
+                    WaveletDenoiseAllL2(Ldecompb, noisevarlum, madL, vari, edge, numThreads);//simplified version of WaveletDenoiseAllL
+                
+                
+                    delete[] noisevarlum;
+                
+                    Ldecompg.reconstruct(labdng.L[0]);//reconstruct channel G after wavelets
+                    Ldecompr.reconstruct(labdng.a[0]);//reconstruct channel R after wavelets
+                    Ldecompb.reconstruct(labdng.b[0]);//reconstruct channel B after wavelets
+                
+#ifdef _OPENMP
+                #pragma omp parallel for schedule(dynamic,16)
+#endif
+                    //uses Clipmask to only denoise flat areas
+                    for (int ir = 0; ir < H; ir++) {
+                        for (int jr = 0; jr < W; jr++) {
+                            labdng.L[ir][jr] = intp(clipMask[ir][jr], prov1->g(ir, jr) , labdng.L[ir][jr]);//green
+                            labdng.a[ir][jr] = intp(clipMask[ir][jr], prov1->r(ir, jr) , labdng.a[ir][jr]);//red
+                            labdng.b[ir][jr] = intp(clipMask[ir][jr], prov1->b(ir, jr) , labdng.b[ir][jr]);//blue
+                        }
+                    }
+                    
+#ifdef _OPENMP
+        #pragma omp parallel for schedule(dynamic, 16)
+#endif                   
+                for (int i = 0; i < H; ++i) {//re active red blue green with denoise and taking account mask 
+                    for (int j = 0; j < W; ++j) {
+                        red[i][j] = labdng.a[i][j];
+                        green[i][j] = labdng.L[i][j];
+                        blue[i][j] = labdng.b[i][j];
+                    }
+                }
+            }
+        }
+   
     rgbSourceModified = false;
 }
+
+// To call Capture Sharpening from Improcoordinator for Selective Editing
+// call to 2 RAW functions of CaptureSharpening Raw - calcRadiusBayer and  calcRadiusXtrans
+bool RawImageSource::getDeconvAutoRadius_capturesharpening_SE(float *out)
+{
+    const float clipVal = (ri->get_white(1) - ri->get_cblack(1)) * scale_mul[1];
+    if (ri->getSensorType() == ST_BAYER) {//Bayer
+        if (!out) {
+            return true; // only check whether this is supported
+        }
+        const unsigned int fc[2] = {FC(0,0), FC(1,0)};
+        *out = calcRadiusBayer(rawData, W, H, 1000.f, clipVal, fc);
+        return true;
+    } else if (ri->getSensorType() == ST_FUJI_XTRANS) {//X trans
+        if (!out) {
+            return true; // only check whether this is supported
+        }
+        bool found = false;
+        int i, j;
+        for (i = 6; i < 12 && !found; ++i) {
+            for (j = 6; j < 12 && !found; ++j) {
+                if (ri->XTRANSFC(i, j) == 1) {
+                    if (ri->XTRANSFC(i, j - 1) != ri->XTRANSFC(i, j + 1)) {
+                        if (ri->XTRANSFC(i - 1, j) != 1) {
+                            if (ri->XTRANSFC(i, j - 1) != 1) {
+                                found = true;
+                                break;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        i-=7;
+        j-=6;
+        // std::cout << "found : " << found << std::endl;
+        // std::cout << "i : " << i << std::endl;
+        // std::cout << "j : " << j << std::endl;
+        
+        *out = calcRadiusXtrans(rawData, W, H, 1000.f, clipVal, i, j);
+        return true;
+    } else if (ri->get_colors() == 1) {
+        if (out) {
+            const unsigned int fc[2] = {0, 0};
+            *out = calcRadiusBayer(rawData, W, H, 1000.f, clipVal, fc);
+        }
+        return true;
+    }
+    return false;
+}
+
 
 } /* namespace */

@@ -28,6 +28,479 @@
 
 namespace rtengine
 {
+//J.Desmis - November 2024 - change (a little) these functions to be used also by Selective Editing.
+void compute13x13kernel2(float sigma, float kernel[13][13]) {
+
+    const double temp = -2.f * rtengine::SQR(sigma);
+    float sum = 0.f;
+    for (int i = -6; i <= 6; ++i) {
+        for (int j = -6; j <= 6; ++j) {
+            if((rtengine::SQR(i) + rtengine::SQR(j)) <= rtengine::SQR(3.0 * 2.0)) {
+                kernel[i + 6][j + 6] = std::exp((rtengine::SQR(i) + rtengine::SQR(j)) / temp);
+                sum += kernel[i + 6][j + 6];
+            } else {
+                kernel[i + 6][j + 6] = 0.f;
+            }
+        }
+    }
+
+    for (int i = 0; i < 13; ++i) {
+        for (int j = 0; j < 13; ++j) {
+            kernel[i][j] /= sum;
+        }
+    }
+}
+
+void compute9x9kernel2(float sigma, float kernel[9][9]) {
+
+    const double temp = -2.f * rtengine::SQR(sigma);
+    float sum = 0.f;
+    for (int i = -4; i <= 4; ++i) {
+        for (int j = -4; j <= 4; ++j) {
+            if((rtengine::SQR(i) + rtengine::SQR(j)) <= rtengine::SQR(3.0 * 1.5)) {
+                kernel[i + 4][j + 4] = std::exp((rtengine::SQR(i) + rtengine::SQR(j)) / temp);
+                sum += kernel[i + 4][j + 4];
+            } else {
+                kernel[i + 4][j + 4] = 0.f;
+            }
+        }
+    }
+
+    for (int i = 0; i < 9; ++i) {
+        for (int j = 0; j < 9; ++j) {
+            kernel[i][j] /= sum;
+        }
+    }
+}
+
+void compute7x7kernel2(float sigma, float kernel[7][7]) {
+
+    const double temp = -2.f * rtengine::SQR(sigma);
+    float sum = 0.f;
+    for (int i = -3; i <= 3; ++i) {
+        for (int j = -3; j <= 3; ++j) {
+            if((rtengine::SQR(i) + rtengine::SQR(j)) <= rtengine::SQR(3.0 * 1.15)) {
+                kernel[i + 3][j + 3] = std::exp((rtengine::SQR(i) + rtengine::SQR(j)) / temp);
+                sum += kernel[i + 3][j + 3];
+            } else {
+                kernel[i + 3][j + 3] = 0.f;
+            }
+        }
+    }
+
+    for (int i = 0; i < 7; ++i) {
+        for (int j = 0; j < 7; ++j) {
+            kernel[i][j] /= sum;
+        }
+    }
+}
+
+void compute5x5kernel2(float sigma, float kernel[5][5]) {
+
+    const double temp = -2.f * rtengine::SQR(sigma);
+    float sum = 0.f;
+    for (int i = -2; i <= 2; ++i) {
+        for (int j = -2; j <= 2; ++j) {
+            if((rtengine::SQR(i) + rtengine::SQR(j)) <= rtengine::SQR(3.0 * 0.84)) {
+                kernel[i + 2][j + 2] = std::exp((rtengine::SQR(i) + rtengine::SQR(j)) / temp);
+                sum += kernel[i + 2][j + 2];
+            } else {
+                kernel[i + 2][j + 2] = 0.f;
+            }
+        }
+    }
+
+    for (int i = 0; i < 5; ++i) {
+        for (int j = 0; j < 5; ++j) {
+            kernel[i][j] /= sum;
+        }
+    }
+}
+
+void compute3x3kernel2(float sigma, float kernel[3][3]) {
+
+    const double temp = -2.f * rtengine::SQR(sigma);
+    float sum = 0.f;
+    for (int i = -1; i <= 1; ++i) {
+        for (int j = -1; j <= 1; ++j) {
+            kernel[i + 1][j + 1] = std::exp((rtengine::SQR(i) + rtengine::SQR(j)) / temp);
+            sum += kernel[i + 1][j + 1];
+        }
+    }
+
+    for (int i = 0; i < 3; ++i) {
+        for (int j = 0; j < 3; ++j) {
+            kernel[i][j] /= sum;
+        }
+    }
+}
+
+void gauss3x3div2 (float** RESTRICT src, float** RESTRICT dst, float** RESTRICT divBuffer, const int tileSize, const float kernel[3][3])
+{
+
+    const float c11 = kernel[0][0];
+    const float c10 = kernel[0][1];
+    const float c00 = kernel[1][1];
+
+    for (int i = 1; i < tileSize - 1; i++) {
+#if defined(__clang__)
+        #pragma clang loop vectorize(assume_safety)
+#elif defined(__GNUC__)
+        #pragma GCC ivdep
+#endif
+        for (int j = 1; j < tileSize - 1; j++) {
+            const float val = c11 * (src[i - 1][j - 1] + src[i - 1][j + 1] + src[i + 1][j - 1] + src[i + 1][j + 1]) + 
+                              c10 * (src[i - 1][j] + src[i][j - 1] + src[i][j + 1] + src[i + 1][j]) + 
+                              c00 * src[i][j];
+            dst[i][j] = divBuffer[i][j] / std::max(val, 0.00001f);
+        }
+    }
+}
+
+void gauss5x5div2 (float** RESTRICT src, float** RESTRICT dst, float** RESTRICT divBuffer, const int tileSize, const float kernel[5][5])
+{
+
+    const float c21 = kernel[0][1];
+    const float c20 = kernel[0][2];
+    const float c11 = kernel[1][1];
+    const float c10 = kernel[1][2];
+    const float c00 = kernel[2][2];
+
+    for (int i = 2; i < tileSize - 2; ++i) {
+        // I tried hand written SSE code but gcc vectorizes better
+#if defined(__clang__)
+        #pragma clang loop vectorize(assume_safety)
+#elif defined(__GNUC__)
+        #pragma GCC ivdep
+#endif
+        for (int j = 2; j < tileSize - 2; ++j) {
+            const float val = c21 * ((src[i - 2][j - 1] + src[i - 2][j + 1]) + (src[i - 1][j - 2] + src[i - 1][j + 2]) + (src[i + 1][j - 2] + src[i + 1][j + 2]) + (src[i + 2][j - 1] + src[i + 2][j + 1])) +
+                              c20 * (src[i - 2][j] + src[i][j - 2] + src[i][j + 2] + src[i + 2][j]) +
+                              c11 * (src[i - 1][j - 1] + src[i - 1][j + 1] + src[i + 1][j - 1] + src[i + 1][j + 1]) +
+                              c10 * (src[i - 1][j] + src[i][j - 1] + src[i][j + 1] + src[i + 1][j]) +
+                              c00 * src[i][j];
+
+            dst[i][j] = divBuffer[i][j] / std::max(val, 0.00001f);
+        }
+    }
+}
+
+void gauss7x7div2(float** RESTRICT src, float** RESTRICT dst, float** RESTRICT divBuffer, const int tileSize, const float kernel[7][7])
+{
+
+    const float c31 = kernel[0][2];
+    const float c30 = kernel[0][3];
+    const float c22 = kernel[1][1];
+    const float c21 = kernel[1][2];
+    const float c20 = kernel[1][3];
+    const float c11 = kernel[2][2];
+    const float c10 = kernel[2][3];
+    const float c00 = kernel[3][3];
+
+    for (int i = 3; i < tileSize - 3; ++i) {
+        // I tried hand written SSE code but gcc vectorizes better
+#if defined(__clang__)
+        #pragma clang loop vectorize(assume_safety)
+#elif defined(__GNUC__)
+        #pragma GCC ivdep
+#endif
+        for (int j = 3; j < tileSize - 3; ++j) {
+            const float val = c31 * ((src[i - 3][j - 1] + src[i - 3][j + 1]) + (src[i - 1][j - 3] + src[i - 1][j + 3]) + (src[i + 1][j - 3] + src[i + 1][j + 3]) + (src[i + 3][j - 1] + src[i + 3][j + 1])) +
+                              c30 * (src[i - 3][j] + src[i][j - 3] + src[i][j + 3] + src[i + 3][j]) +
+                              c22 * (src[i - 2][j - 2] + src[i - 2][j + 2] + src[i + 2][j - 2] + src[i + 2][j + 2]) +
+                              c21 * ((src[i - 2][j - 1] + src[i - 2][j + 1]) + (src[i - 1][j - 2] + src[i - 1][j + 2]) + (src[i + 1][j - 2] + src[i + 1][j + 2]) + (src[i + 2][j - 1] + src[i + 2][j + 1])) +
+                              c20 * (src[i - 2][j] + src[i][j - 2] + src[i][j + 2] + src[i + 2][j]) +
+                              c11 * (src[i - 1][j - 1] + src[i - 1][j + 1] + src[i + 1][j - 1] + src[i + 1][j + 1]) +
+                              c10 * (src[i - 1][j] + src[i][j - 1] + src[i][j + 1] + src[i + 1][j]) +
+                              c00 * src[i][j];
+
+            dst[i][j] = divBuffer[i][j] / std::max(val, 0.00001f);
+        }
+    }
+}
+
+void gauss9x9div2(float** RESTRICT src, float** RESTRICT dst, float** RESTRICT divBuffer, const int tileSize, const float kernel[9][9])
+{
+
+    const float c42 = kernel[0][2];
+    const float c41 = kernel[0][3];
+    const float c40 = kernel[0][4];
+    const float c33 = kernel[1][1];
+    const float c32 = kernel[1][2];
+    const float c31 = kernel[1][3];
+    const float c30 = kernel[1][4];
+    const float c22 = kernel[2][2];
+    const float c21 = kernel[2][3];
+    const float c20 = kernel[2][4];
+    const float c11 = kernel[3][3];
+    const float c10 = kernel[3][4];
+    const float c00 = kernel[4][4];
+
+    for (int i = 4; i < tileSize - 4; ++i) {
+        // I tried hand written SSE code but gcc vectorizes better
+#if defined(__clang__)
+        #pragma clang loop vectorize(assume_safety)
+#elif defined(__GNUC__)
+        #pragma GCC ivdep
+#endif
+        for (int j = 4; j < tileSize - 4; ++j) {
+            const float val = c42 * ((src[i - 4][j - 2] + src[i - 4][j + 2]) + (src[i - 2][j - 4] + src[i - 2][j + 4]) + (src[i + 2][j - 4] + src[i + 2][j + 4]) + (src[i + 4][j - 2] + src[i + 4][j + 2])) +
+                              c41 * ((src[i - 4][j - 1] + src[i - 4][j + 1]) + (src[i - 1][j - 4] + src[i - 1][j + 4]) + (src[i + 1][j - 4] + src[i + 1][j + 4]) + (src[i + 4][j - 1] + src[i + 4][j + 1])) +
+                              c40 * (src[i - 4][j] + src[i][j - 4] + src[i][j + 4] + src[i + 4][j]) +
+                              c33 * (src[i - 3][j - 3] + src[i - 3][j + 3] + src[i + 3][j - 3] + src[i + 3][j + 3]) +
+                              c32 * ((src[i - 3][j - 2] + src[i - 3][j + 2]) + (src[i - 2][j - 3] + src[i - 2][j + 3]) + (src[i + 2][j - 3] + src[i + 2][j + 3]) + (src[i + 3][j - 2] + src[i + 3][j + 2])) +
+                              c31 * ((src[i - 3][j - 1] + src[i - 3][j + 1]) + (src[i - 1][j - 3] + src[i - 1][j + 3]) + (src[i + 1][j - 3] + src[i + 1][j + 3]) + (src[i + 3][j - 1] + src[i + 3][j + 1])) +
+                              c30 * (src[i - 3][j] + src[i][j - 3] + src[i][j + 3] + src[i + 3][j]) +
+                              c22 * (src[i - 2][j - 2] + src[i - 2][j + 2] + src[i + 2][j - 2] + src[i + 2][j + 2]) +
+                              c21 * ((src[i - 2][j - 1] + src[i - 2][j + 1]) + (src[i - 1][j - 2] + src[i - 1][j + 2]) + (src[i + 1][j - 2] + src[i + 1][j + 2]) + (src[i + 2][j - 1] + src[i + 2][j + 1])) +
+                              c20 * (src[i - 2][j] + src[i][j - 2] + src[i][j + 2] + src[i + 2][j]) +
+                              c11 * (src[i - 1][j - 1] + src[i - 1][j + 1] + src[i + 1][j - 1] + src[i + 1][j + 1]) +
+                              c10 * (src[i - 1][j] + src[i][j - 1] + src[i][j + 1] + src[i + 1][j]) +
+                              c00 * src[i][j];
+
+            dst[i][j] = divBuffer[i][j] / std::max(val, 0.00001f);
+        }
+    }
+}
+
+void gauss13x13div2(float** RESTRICT src, float** RESTRICT dst, float** RESTRICT divBuffer, const int tileSize, const float kernel[13][13])
+{
+    const float c60 = kernel[0][6];
+    const float c53 = kernel[1][3];
+    const float c52 = kernel[1][4];
+    const float c51 = kernel[1][5];
+    const float c50 = kernel[1][6];
+    const float c44 = kernel[2][2];
+    const float c42 = kernel[2][4];
+    const float c41 = kernel[2][5];
+    const float c40 = kernel[2][6];
+    const float c33 = kernel[3][3];
+    const float c32 = kernel[3][4];
+    const float c31 = kernel[3][5];
+    const float c30 = kernel[3][6];
+    const float c22 = kernel[4][4];
+    const float c21 = kernel[4][5];
+    const float c20 = kernel[4][6];
+    const float c11 = kernel[5][5];
+    const float c10 = kernel[5][6];
+    const float c00 = kernel[6][6];
+
+    for (int i = 6; i < tileSize - 6; ++i) {
+        // I tried hand written SSE code but gcc vectorizes better
+#if defined(__clang__)
+        #pragma clang loop vectorize(assume_safety)
+#elif defined(__GNUC__)
+        #pragma GCC ivdep
+#endif
+        for (int j = 6; j < tileSize - 6; ++j) {
+            const float val = c60 * (src[i - 6][j] + src[i][j - 6] + src[i][j + 6] + src[i + 6][j]) +
+                              c53 * ((src[i - 5][j - 3] + src[i - 5][j + 3]) + (src[i - 3][j - 5] + src[i - 3][j + 5]) + (src[i + 3][j - 5] + src[i + 3][j + 5]) + (src[i + 5][j - 3] + src[i + 5][j + 3])) +
+                              c52 * ((src[i - 5][j - 2] + src[i - 5][j + 2]) + (src[i - 2][j - 5] + src[i - 2][j + 5]) + (src[i + 2][j - 5] + src[i + 2][j + 5]) + (src[i + 5][j - 2] + src[i + 5][j + 2])) +
+                              c51 * ((src[i - 5][j - 1] + src[i - 5][j + 1]) + (src[i - 1][j - 5] + src[i - 1][j + 5]) + (src[i + 1][j - 5] + src[i + 1][j + 5]) + (src[i + 5][j - 1] + src[i + 5][j + 1])) +
+                              c50 * ((src[i - 5][j] + src[i][j - 5] + src[i][j + 5] + src[i + 5][j]) + ((src[i - 4][j - 3] + src[i - 4][j + 3]) + (src[i - 3][j - 4] + src[i - 3][j + 4]) + (src[i + 3][j - 4] + src[i + 3][j + 4]) + (src[i + 4][j - 3] + src[i + 4][j + 3]))) +
+                              c44 * (src[i - 4][j - 4] + src[i - 4][j + 4] + src[i + 4][j - 4] + src[i + 4][j + 4]) +
+                              c42 * ((src[i - 4][j - 2] + src[i - 4][j + 2]) + (src[i - 2][j - 4] + src[i - 2][j + 4]) + (src[i + 2][j - 4] + src[i + 2][j + 4]) + (src[i + 4][j - 2] + src[i + 4][j + 2])) +
+                              c41 * ((src[i - 4][j - 1] + src[i - 4][j + 1]) + (src[i - 1][j - 4] + src[i - 1][j + 4]) + (src[i + 1][j - 4] + src[i + 1][j + 4]) + (src[i + 4][j - 1] + src[i + 4][j + 1])) +
+                              c40 * (src[i - 4][j] + src[i][j - 4] + src[i][j + 4] + src[i + 4][j]) +
+                              c33 * (src[i - 3][j - 3] + src[i - 3][j + 3] + src[i + 3][j - 3] + src[i + 3][j + 3]) +
+                              c32 * ((src[i - 3][j - 2] + src[i - 3][j + 2]) + (src[i - 2][j - 3] + src[i - 2][j + 3]) + (src[i + 2][j - 3] + src[i + 2][j + 3]) + (src[i + 3][j - 2] + src[i + 3][j + 2])) +
+                              c31 * ((src[i - 3][j - 1] + src[i - 3][j + 1]) + (src[i - 1][j - 3] + src[i - 1][j + 3]) + (src[i + 1][j - 3] + src[i + 1][j + 3]) + (src[i + 3][j - 1] + src[i + 3][j + 1])) +
+                              c30 * (src[i - 3][j] + src[i][j - 3] + src[i][j + 3] + src[i + 3][j]) +
+                              c22 * (src[i - 2][j - 2] + src[i - 2][j + 2] + src[i + 2][j - 2] + src[i + 2][j + 2]) +
+                              c21 * ((src[i - 2][j - 1] + src[i - 2][j + 1]) + (src[i - 1][j - 2] + src[i - 1][j + 2]) + (src[i + 1][j - 2] + src[i + 1][j + 2]) + (src[i + 2][j - 1] + src[i + 2][j + 1])) +
+                              c20 * (src[i - 2][j] + src[i][j - 2] + src[i][j + 2] + src[i + 2][j]) +
+                              c11 * (src[i - 1][j - 1] + src[i - 1][j + 1] + src[i + 1][j - 1] + src[i + 1][j + 1]) +
+                              c10 * (src[i - 1][j] + src[i][j - 1] + src[i][j + 1] + src[i + 1][j]) +
+                              c00 * src[i][j];
+
+            dst[i][j] = divBuffer[i][j] / std::max(val, 0.00001f);
+        }
+    }
+}
+
+void gauss3x3mult2(float** RESTRICT src, float** RESTRICT dst, const int tileSize, const float kernel[3][3])
+{
+    const float c11 = kernel[0][0];
+    const float c10 = kernel[0][1];
+    const float c00 = kernel[1][1];
+
+    for (int i = 1; i < tileSize - 1; i++) {
+#if defined(__clang__)
+        #pragma clang loop vectorize(assume_safety)
+#elif defined(__GNUC__)
+        #pragma GCC ivdep
+#endif
+        for (int j = 1; j < tileSize - 1; j++) {
+            const float val = c11 * (src[i - 1][j - 1] + src[i - 1][j + 1] + src[i + 1][j - 1] + src[i + 1][j + 1]) + 
+                              c10 * (src[i - 1][j] + src[i][j - 1] + src[i][j + 1] + src[i + 1][j]) + 
+                              c00 * src[i][j];
+            dst[i][j] *= val;
+        }
+    }
+
+}
+
+void gauss5x5mult2 (float** RESTRICT src, float** RESTRICT dst, const int tileSize, const float kernel[5][5])
+{
+
+    const float c21 = kernel[0][1];
+    const float c20 = kernel[0][2];
+    const float c11 = kernel[1][1];
+    const float c10 = kernel[1][2];
+    const float c00 = kernel[2][2];
+
+    for (int i = 2; i < tileSize - 2; ++i) {
+        // I tried hand written SSE code but gcc vectorizes better
+#if defined(__clang__)
+        #pragma clang loop vectorize(assume_safety)
+#elif defined(__GNUC__)
+        #pragma GCC ivdep
+#endif
+        for (int j = 2; j < tileSize - 2; ++j) {
+            const float val = c21 * ((src[i - 2][j - 1] + src[i - 2][j + 1]) + (src[i - 1][j - 2] + src[i - 1][j + 2]) + (src[i + 1][j - 2] + src[i + 1][j + 2]) + (src[i + 2][j - 1] + src[i + 2][j + 1])) +
+                              c20 * (src[i - 2][j] + src[i][j - 2] + src[i][j + 2] + src[i + 2][j]) +
+                              c11 * (src[i - 1][j - 1] + src[i - 1][j + 1] + src[i + 1][j - 1] + src[i + 1][j + 1]) +
+                              c10 * (src[i - 1][j] + src[i][j - 1] + src[i][j + 1] + src[i + 1][j]) +
+                              c00 * src[i][j];
+
+            dst[i][j] *= val;
+        }
+    }
+}
+
+void gauss7x7mult2(float** RESTRICT src, float** RESTRICT dst, const int tileSize, const float kernel[7][7])
+{
+
+    const float c31 = kernel[0][2];
+    const float c30 = kernel[0][3];
+    const float c22 = kernel[1][1];
+    const float c21 = kernel[1][2];
+    const float c20 = kernel[1][3];
+    const float c11 = kernel[2][2];
+    const float c10 = kernel[2][3];
+    const float c00 = kernel[3][3];
+
+    for (int i = 3; i < tileSize - 3; ++i) {
+        // I tried hand written SSE code but gcc vectorizes better
+#if defined(__clang__)
+        #pragma clang loop vectorize(assume_safety)
+#elif defined(__GNUC__)
+        #pragma GCC ivdep
+#endif
+        for (int j = 3; j < tileSize - 3; ++j) {
+            const float val = c31 * ((src[i - 3][j - 1] + src[i - 3][j + 1]) + (src[i - 1][j - 3] + src[i - 1][j + 3]) + (src[i + 1][j - 3] + src[i + 1][j + 3]) + (src[i + 3][j - 1] + src[i + 3][j + 1])) +
+                              c30 * (src[i - 3][j] + src[i][j - 3] + src[i][j + 3] + src[i + 3][j]) +
+                              c22 * (src[i - 2][j - 2] + src[i - 2][j + 2] + src[i + 2][j - 2] + src[i + 2][j + 2]) +
+                              c21 * ((src[i - 2][j - 1] + src[i - 2][j + 1]) + (src[i - 1][j - 2] + src[i - 1][j + 2]) + (src[i + 1][j - 2] + src[i + 1][j + 2]) + (src[i + 2][j - 1] + src[i + 2][j + 1])) +
+                              c20 * (src[i - 2][j] + src[i][j - 2] + src[i][j + 2] + src[i + 2][j]) +
+                              c11 * (src[i - 1][j - 1] + src[i - 1][j + 1] + src[i + 1][j - 1] + src[i + 1][j + 1]) +
+                              c10 * (src[i - 1][j] + src[i][j - 1] + src[i][j + 1] + src[i + 1][j]) +
+                              c00 * src[i][j];
+
+            dst[i][j] *= val;
+        }
+    }
+}
+
+void gauss9x9mult2(float** RESTRICT src, float** RESTRICT dst, const int tileSize, const float kernel[9][9])
+{
+
+    const float c42 = kernel[0][2];
+    const float c41 = kernel[0][3];
+    const float c40 = kernel[0][4];
+    const float c33 = kernel[1][1];
+    const float c32 = kernel[1][2];
+    const float c31 = kernel[1][3];
+    const float c30 = kernel[1][4];
+    const float c22 = kernel[2][2];
+    const float c21 = kernel[2][3];
+    const float c20 = kernel[2][4];
+    const float c11 = kernel[3][3];
+    const float c10 = kernel[3][4];
+    const float c00 = kernel[4][4];
+
+    for (int i = 4; i < tileSize - 4; ++i) {
+        // I tried hand written SSE code but gcc vectorizes better
+#if defined(__clang__)
+        #pragma clang loop vectorize(assume_safety)
+#elif defined(__GNUC__)
+        #pragma GCC ivdep
+#endif
+        for (int j = 4; j < tileSize - 4; ++j) {
+            const float val = c42 * ((src[i - 4][j - 2] + src[i - 4][j + 2]) + (src[i - 2][j - 4] + src[i - 2][j + 4]) + (src[i + 2][j - 4] + src[i + 2][j + 4]) + (src[i + 4][j - 2] + src[i + 4][j + 2])) +
+                              c41 * ((src[i - 4][j - 1] + src[i - 4][j + 1]) + (src[i - 1][j - 4] + src[i - 1][j + 4]) + (src[i + 1][j - 4] + src[i + 1][j + 4]) + (src[i + 4][j - 1] + src[i + 4][j + 1])) +
+                              c40 * (src[i - 4][j] + src[i][j - 4] + src[i][j + 4] + src[i + 4][j]) +
+                              c33 * (src[i - 3][j - 3] + src[i - 3][j + 3] + src[i + 3][j - 3] + src[i + 3][j + 3]) +
+                              c32 * ((src[i - 3][j - 2] + src[i - 3][j + 2]) + (src[i - 2][j - 3] + src[i - 2][j + 3]) + (src[i + 2][j - 3] + src[i + 2][j + 3]) + (src[i + 3][j - 2] + src[i + 3][j + 2])) +
+                              c31 * ((src[i - 3][j - 1] + src[i - 3][j + 1]) + (src[i - 1][j - 3] + src[i - 1][j + 3]) + (src[i + 1][j - 3] + src[i + 1][j + 3]) + (src[i + 3][j - 1] + src[i + 3][j + 1])) +
+                              c30 * (src[i - 3][j] + src[i][j - 3] + src[i][j + 3] + src[i + 3][j]) +
+                              c22 * (src[i - 2][j - 2] + src[i - 2][j + 2] + src[i + 2][j - 2] + src[i + 2][j + 2]) +
+                              c21 * ((src[i - 2][j - 1] + src[i - 2][j + 1]) + (src[i - 1][j - 2] + src[i - 1][j + 2]) + (src[i + 1][j - 2] + src[i + 1][j + 2]) + (src[i + 2][j - 1] + src[i + 2][j + 1])) +
+                              c20 * (src[i - 2][j] + src[i][j - 2] + src[i][j + 2] + src[i + 2][j]) +
+                              c11 * (src[i - 1][j - 1] + src[i - 1][j + 1] + src[i + 1][j - 1] + src[i + 1][j + 1]) +
+                              c10 * (src[i - 1][j] + src[i][j - 1] + src[i][j + 1] + src[i + 1][j]) +
+                              c00 * src[i][j];
+            dst[i][j] *= val;
+        }
+    }
+}
+
+void gauss13x13mult2(float** RESTRICT src, float** RESTRICT dst, const int tileSize, const float kernel[13][13])
+{
+
+    const float c60 = kernel[0][6];
+    const float c53 = kernel[1][3];
+    const float c52 = kernel[1][4];
+    const float c51 = kernel[1][5];
+    const float c50 = kernel[1][6];
+    const float c44 = kernel[2][2];
+    const float c42 = kernel[2][4];
+    const float c41 = kernel[2][5];
+    const float c40 = kernel[2][6];
+    const float c33 = kernel[3][3];
+    const float c32 = kernel[3][4];
+    const float c31 = kernel[3][5];
+    const float c30 = kernel[3][6];
+    const float c22 = kernel[4][4];
+    const float c21 = kernel[4][5];
+    const float c20 = kernel[4][6];
+    const float c11 = kernel[5][5];
+    const float c10 = kernel[5][6];
+    const float c00 = kernel[6][6];
+
+    for (int i = 6; i < tileSize - 6; ++i) {
+        // I tried hand written SSE code but gcc vectorizes better
+#if defined(__clang__)
+        #pragma clang loop vectorize(assume_safety)
+#elif defined(__GNUC__)
+        #pragma GCC ivdep
+#endif
+        for (int j = 6; j < tileSize - 6; ++j) {
+            const float val = c60 * (src[i - 6][j] + src[i][j - 6] + src[i][j + 6] + src[i + 6][j]) +
+                              c53 * ((src[i - 5][j - 3] + src[i - 5][j + 3]) + (src[i - 3][j - 5] + src[i - 3][j + 5]) + (src[i + 3][j - 5] + src[i + 3][j + 5]) + (src[i + 5][j - 3] + src[i + 5][j + 3])) +
+                              c52 * ((src[i - 5][j - 2] + src[i - 5][j + 2]) + (src[i - 2][j - 5] + src[i - 2][j + 5]) + (src[i + 2][j - 5] + src[i + 2][j + 5]) + (src[i + 5][j - 2] + src[i + 5][j + 2])) +
+                              c51 * ((src[i - 5][j - 1] + src[i - 5][j + 1]) + (src[i - 1][j - 5] + src[i - 1][j + 5]) + (src[i + 1][j - 5] + src[i + 1][j + 5]) + (src[i + 5][j - 1] + src[i + 5][j + 1])) +
+                              c50 * ((src[i - 5][j] + src[i][j - 5] + src[i][j + 5] + src[i + 5][j]) + ((src[i - 4][j - 3] + src[i - 4][j + 3]) + (src[i - 3][j - 4] + src[i - 3][j + 4]) + (src[i + 3][j - 4] + src[i + 3][j + 4]) + (src[i + 4][j - 3] + src[i + 4][j + 3]))) +
+                              c44 * (src[i - 4][j - 4] + src[i - 4][j + 4] + src[i + 4][j - 4] + src[i + 4][j + 4]) +
+                              c42 * ((src[i - 4][j - 2] + src[i - 4][j + 2]) + (src[i - 2][j - 4] + src[i - 2][j + 4]) + (src[i + 2][j - 4] + src[i + 2][j + 4]) + (src[i + 4][j - 2] + src[i + 4][j + 2])) +
+                              c41 * ((src[i - 4][j - 1] + src[i - 4][j + 1]) + (src[i - 1][j - 4] + src[i - 1][j + 4]) + (src[i + 1][j - 4] + src[i + 1][j + 4]) + (src[i + 4][j - 1] + src[i + 4][j + 1])) +
+                              c40 * (src[i - 4][j] + src[i][j - 4] + src[i][j + 4] + src[i + 4][j]) +
+                              c33 * (src[i - 3][j - 3] + src[i - 3][j + 3] + src[i + 3][j - 3] + src[i + 3][j + 3]) +
+                              c32 * ((src[i - 3][j - 2] + src[i - 3][j + 2]) + (src[i - 2][j - 3] + src[i - 2][j + 3]) + (src[i + 2][j - 3] + src[i + 2][j + 3]) + (src[i + 3][j - 2] + src[i + 3][j + 2])) +
+                              c31 * ((src[i - 3][j - 1] + src[i - 3][j + 1]) + (src[i - 1][j - 3] + src[i - 1][j + 3]) + (src[i + 1][j - 3] + src[i + 1][j + 3]) + (src[i + 3][j - 1] + src[i + 3][j + 1])) +
+                              c30 * (src[i - 3][j] + src[i][j - 3] + src[i][j + 3] + src[i + 3][j]) +
+                              c22 * (src[i - 2][j - 2] + src[i - 2][j + 2] + src[i + 2][j - 2] + src[i + 2][j + 2]) +
+                              c21 * ((src[i - 2][j - 1] + src[i - 2][j + 1]) + (src[i - 1][j - 2] + src[i - 1][j + 2]) + (src[i + 1][j - 2] + src[i + 1][j + 2]) + (src[i + 2][j - 1] + src[i + 2][j + 1])) +
+                              c20 * (src[i - 2][j] + src[i][j - 2] + src[i][j + 2] + src[i + 2][j]) +
+                              c11 * (src[i - 1][j - 1] + src[i - 1][j + 1] + src[i + 1][j - 1] + src[i + 1][j + 1]) +
+                              c10 * (src[i - 1][j] + src[i][j - 1] + src[i][j + 1] + src[i + 1][j]) +
+                              c00 * src[i][j];
+
+            dst[i][j] *= val;
+        }
+    }
+}
+
 
 void boxblur(float** src, float** dst, int radius, int W, int H, bool multiThread)
 {

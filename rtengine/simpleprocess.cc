@@ -1109,6 +1109,7 @@ private:
             LocwavCurve loccomprewavCurve;
             LocwavCurve locedgwavCurve;
             LocwavCurve locwavCurvehue;
+            LocwavCurve locwavCurvehuecont;
             LocwavCurve locwavCurveden;
             LUTf lllocalcurve(65536, LUT_CLIP_OFF);
             LUTf lclocalcurve(65536, LUT_CLIP_OFF);
@@ -1206,6 +1207,7 @@ private:
                 const bool locwavutili = locwavCurve.Set(params.locallab.spots.at(sp).locwavcurve);
                 const bool locwavutilijz = locwavCurvejz.Set(params.locallab.spots.at(sp).locwavcurvejz);
                 const bool locwavhueutili = locwavCurvehue.Set(params.locallab.spots.at(sp).locwavcurvehue);
+                const bool locwavhueutilicont = locwavCurvehuecont.Set(params.locallab.spots.at(sp).locwavcurvehuecont);
                 const bool locwavdenutili = locwavCurveden.Set(params.locallab.spots.at(sp).locwavcurveden);
                 const bool loclevwavutili = loclevwavCurve.Set(params.locallab.spots.at(sp).loclevwavcurve);
                 const bool locconwavutili = locconwavCurve.Set(params.locallab.spots.at(sp).locconwavcurve);
@@ -1286,20 +1288,17 @@ private:
                 float Tsigma;
                 float Tmin;
                 float Tmax;
-                float highresi = 0.f;
-                float nresi = 0.f;
-                float highresi46 = 0.f;
-                float nresi46 = 0.f;
-                float Lhighresi = 0.f;
-                float Lnresi = 0.f;
-                float Lhighresi46 = 0.f;
-                float Lnresi46 = 0.f;
+                float resi[8];
+               
+                float sharc = 0.f;
+                float denocont = 0.f;
                 int ghsbpwp[2];
                 ghsbpwp[0] = 0;
                 ghsbpwp[1] = 0;
                 float ghsbpwpvalue[2];
                 ghsbpwpvalue[0] = 0.f;
                 ghsbpwpvalue[1] = 1.f;
+                float savmadl[21]  = {100.f, 100.f, 100.f, 100.f, 100.f, 100.f, 100.f, 100.f, 100.f, 100.f, 100.f, 100.f, 100.f, 100.f, 100.f, 100.f, 100.f, 100.f, 100.f, 100.f, 100.f}; 
                 float ghsbwslider[2];
                 ghsbwslider[0] = 0.f;
                 ghsbwslider[1] = 1.f;
@@ -1317,7 +1316,6 @@ private:
                               lmasklocalcurve, localmaskutili,
                               lmaskexplocalcurve, localmaskexputili,
                               lmaskSHlocalcurve, localmaskSHutili,
-                            //  ghslocalcurve, localghsutili,
                               lmaskviblocalcurve, localmaskvibutili,
                               lmasktmlocalcurve, localmasktmutili,
                               lmaskretilocalcurve, localmaskretiutili,
@@ -1356,15 +1354,15 @@ private:
                               loccompwavCurve, loccompwavutili,
                               loccomprewavCurve, loccomprewavutili,
                               locwavCurvehue, locwavhueutili,
+                              locwavCurvehuecont, locwavhueutilicont,
                               locwavCurveden, locwavdenutili,
                               locedgwavCurve, locedgwavutili,
                               loclmasCurve_wav, lmasutili_wav,
                               LHutili, HHutili, CHutili, HHutilijz, CHutilijz, LHutilijz, cclocalcurve, localcutili, rgblocalcurve, localrgbutili, localexutili, exlocalcurve, hltonecurveloc, shtonecurveloc, tonecurveloc, lightCurveloc,
                               huerefblu, chromarefblu, lumarefblu, huere, chromare, lumare, sobelre, lastsav, false, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
                               minCD, maxCD, mini, maxi, Tmean, Tsigma, Tmin, Tmax,
-                              meantme, stdtme, meanretie, stdretie, fab, maxicam, rdx, rdy, grx, gry, blx, bly, meanx, meany, meanxe, meanye, prim, ill, contsig, lightsig,
-                              highresi, nresi, highresi46, nresi46, Lhighresi, Lnresi, Lhighresi46, Lnresi46, slopeg, linkrgb,
-                              ghsbpwp, ghsbpwpvalue, ghsbwslider, ghssym, ghsautsp);
+                              meantme, stdtme, meanretie, stdretie, fab, maxicam, rdx, rdy, grx, gry, blx, bly, meanx, meany, meanxe, meanye, prim, ill, contsig, lightsig, slopeg, linkrgb,
+                              resi, sharc, denocont, ghsbpwp, ghsbpwpvalue, savmadl, ghsbwslider, ghssym, ghsautsp);
 
                 if (sp + 1u < params.locallab.spots.size()) {
                     // do not copy for last spot as it is not needed anymore

@@ -1468,10 +1468,15 @@ CaptureSharpeningParams::CaptureSharpeningParams() :
     autoContrast(true),
     autoRadius(true),
     contrast(10.0),
+    noisecap(0.),
+    noisecapafter(0.),
     deconvradius(0.75),
     deconvradiusOffset(0.0),
     deconviter(20),
-    deconvitercheck(true)
+    deconvitercheck(true),
+    showcap(false),
+    noisecaptype(true)
+
 {
 }
 
@@ -1484,6 +1489,10 @@ bool CaptureSharpeningParams::operator ==(const CaptureSharpeningParams& other) 
         && autoRadius == other.autoRadius
         && deconvradius == other.deconvradius
         && deconvitercheck == other.deconvitercheck
+        && showcap == other.showcap
+        && noisecaptype == other.noisecaptype
+        && noisecap == other.noisecap
+        && noisecapafter == other.noisecapafter
         && deconvradiusOffset == other.deconvradiusOffset
         && deconviter == other.deconviter;
 }
@@ -3055,7 +3064,7 @@ WaveletParams::WaveletParams() :
     mixmethod("mix"),
     slimethod("sli"),
     quamethod("cons"),
-    daubcoeffmethod("4_"),
+    daubcoeffmethod("6_"),
     CHmethod("without"),
     Medgreinf("less"),
     ushamethod("clari"),
@@ -3302,7 +3311,7 @@ LocallabParams::LocallabSpot::LocallabSpot() :
     prevMethod("hide"),
     shape("ELI"),
     spotMethod("norm"),
-    wavMethod("D4"),
+    wavMethod("D6"),
     sensiexclu(12),
     structexclu(0),
     struc(4.0),
@@ -3929,6 +3938,7 @@ LocallabParams::LocallabSpot::LocallabSpot() :
     lnoiselow(1.),
     levelthrlow(12.),
     activlum(true),
+    madlsav{100.f, 100.f, 100.f, 100.f, 100.f, 100.f, 100.f, 100.f, 100.f, 100.f, 100.f, 100.f, 100.f, 100.f, 100.f, 100.f, 100.f, 100.f, 100.f, 100.f, 100.f},  
     noiselumf(0.),
     noiselumf0(0.),
     noiselumf2(0.),
@@ -3966,6 +3976,33 @@ LocallabParams::LocallabSpot::LocallabSpot() :
         0.35
     },
     locwavcurvehue{
+        static_cast<double>(FCT_MinMaxCPoints),
+        0.0,
+        0.50,
+        0.35,
+        0.35,
+        0.166,
+        0.50,
+        0.35,
+        0.35,
+        0.333,
+        0.50,
+        0.35,
+        0.35,
+        0.50,
+        0.50,
+        0.35,
+        0.35,
+        0.666,
+        0.50,
+        0.35,
+        0.35,
+        0.833,
+        0.50,
+        0.35,
+        0.35
+    },
+    locwavcurvehuecont{
         static_cast<double>(FCT_MinMaxCPoints),
         0.0,
         0.50,
@@ -4070,6 +4107,14 @@ LocallabParams::LocallabSpot::LocallabSpot() :
         0.35
     },
     csthresholdblur(0, 0, 6, 5, false),
+    denocontrast(10.),
+    denoAutocontrast(true),
+    contrshow(false),
+    lockmadl(false),
+    madllock(false),
+    enacontrast(true),
+    denoratio(95),
+    denomask(30.),
     // Tone Mapping
     visitonemap(false),
     exptonemap(false),
@@ -4273,6 +4318,7 @@ LocallabParams::LocallabSpot::LocallabSpot() :
     expsharp(false),
     complexsharp(0),
     sharcontrast(20),
+    deconvAutoshar(true),
     sharradius(0.75),
     sharamount(100),
     shardamping(0),
@@ -4281,6 +4327,17 @@ LocallabParams::LocallabSpot::LocallabSpot() :
     shargam(1.0),
     sensisha(40),
     inverssha(false),
+    sharshow(false),
+    itercheck(true),
+    methodcap("cap"),
+    capradius(0.75),
+    deconvAutoRadius(false),
+    deconvCoBoost(0.),
+    deconvCoProt(50.),
+    deconvCoLat(25.),
+    deconvCogam(1.),
+    reparsha(100.),
+    
     // Local Contrast
     visicontrast(false),
     expcontrast(false),
@@ -5533,6 +5590,15 @@ bool LocallabParams::LocallabSpot::operator ==(const LocallabSpot& other) const
         && levelthrlow == other.levelthrlow
         && medMethod == other.medMethod
         && activlum == other.activlum
+        && [this, &other]() -> bool
+            {
+                for (int i = 0; i < 21; ++i) {
+                    if (madlsav[i] != other.madlsav[i]) {
+                        return false;
+                    }
+                }
+                return true;
+            }()    
         && noiselumf == other.noiselumf
         && noiselumf0 == other.noiselumf0
         && noiselumf2 == other.noiselumf2
@@ -5556,6 +5622,7 @@ bool LocallabParams::LocallabSpot::operator ==(const LocallabSpot& other) const
         && detailthr == other.detailthr
         && locwavcurveden == other.locwavcurveden
         && locwavcurvehue == other.locwavcurvehue
+        && locwavcurvehuecont == other.locwavcurvehuecont
         && showmaskblMethodtyp == other.showmaskblMethodtyp
         && CCmaskblcurve == other.CCmaskblcurve
         && LLmaskblcurve == other.LLmaskblcurve
@@ -5576,6 +5643,14 @@ bool LocallabParams::LocallabSpot::operator ==(const LocallabSpot& other) const
         && Lmaskblcurve == other.Lmaskblcurve
         && LLmaskblcurvewav == other.LLmaskblcurvewav
         && csthresholdblur == other.csthresholdblur
+        && denocontrast == other.denocontrast
+        && denoAutocontrast == other.denoAutocontrast
+        && contrshow == other.contrshow
+        && lockmadl == other.lockmadl
+        && madllock == other.madllock
+        && enacontrast == other.enacontrast
+        && denoratio == other.denoratio
+        && denomask == other.denomask
         // Tone Mapping
         && visitonemap == other.visitonemap
         && exptonemap == other.exptonemap
@@ -5654,7 +5729,8 @@ bool LocallabParams::LocallabSpot::operator ==(const LocallabSpot& other) const
         && visisharp == other.visisharp
         && expsharp == other.expsharp
         && complexsharp == other.complexsharp
-        && sharcontrast == other.sharcontrast
+    //    && sharcontrast == other.sharcontrast
+        && (deconvAutoshar || (sharcontrast == other.sharcontrast))
         && sharradius == other.sharradius
         && sharamount == other.sharamount
         && shardamping == other.shardamping
@@ -5663,6 +5739,17 @@ bool LocallabParams::LocallabSpot::operator ==(const LocallabSpot& other) const
         && shargam == other.shargam
         && sensisha == other.sensisha
         && inverssha == other.inverssha
+        && sharshow == other.sharshow
+        && itercheck == other.itercheck
+        && methodcap == other.methodcap
+        && deconvAutoRadius == other.deconvAutoRadius       
+        && (deconvAutoRadius || (capradius == other.capradius))
+        && deconvCoBoost == other.deconvCoBoost     
+        && deconvCoProt == other.deconvCoProt     
+        && deconvCoLat == other.deconvCoLat     
+        && deconvCogam == other.deconvCogam     
+        && reparsha == other.reparsha     
+
         // Local contrast
         && visicontrast == other.visicontrast
         && expcontrast == other.expcontrast
@@ -7568,6 +7655,9 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
                     saveToKeyfile(!pedited || spot_edited->levelthrlow, "Locallab", "Levelthrlow_" + index_str, spot.levelthrlow, keyFile);
                     saveToKeyfile(!pedited || spot_edited->medMethod, "Locallab", "MedMethod_" + index_str, spot.medMethod, keyFile);
                     saveToKeyfile(!pedited || spot_edited->activlum, "Locallab", "activlum_" + index_str, spot.activlum, keyFile);
+                    for (int j = 0; j < 21; j++) {
+                        saveToKeyfile(!pedited || spot_edited->madlsav[j], "Locallab", "Madlsav" + std::to_string(j) + "_" + index_str, spot.madlsav[j], keyFile);
+                    }
                     saveToKeyfile(!pedited || spot_edited->noiselumf, "Locallab", "noiselumf_" + index_str, spot.noiselumf, keyFile);
                     saveToKeyfile(!pedited || spot_edited->noiselumf0, "Locallab", "noiselumf0_" + index_str, spot.noiselumf0, keyFile);
                     saveToKeyfile(!pedited || spot_edited->noiselumf2, "Locallab", "noiselumf2_" + index_str, spot.noiselumf2, keyFile);
@@ -7591,6 +7681,7 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
                     saveToKeyfile(!pedited || spot_edited->detailthr, "Locallab", "Detailthr_" + index_str, spot.detailthr, keyFile);
                     saveToKeyfile(!pedited || spot_edited->locwavcurveden, "Locallab", "LocwavCurveden_" + index_str, spot.locwavcurveden, keyFile);
                     saveToKeyfile(!pedited || spot_edited->locwavcurvehue, "Locallab", "LocwavCurvehue_" + index_str, spot.locwavcurvehue, keyFile);
+                    saveToKeyfile(!pedited || spot_edited->locwavcurvehuecont, "Locallab", "LocwavCurvehuecont_" + index_str, spot.locwavcurvehuecont, keyFile);
                     saveToKeyfile(!pedited || spot_edited->showmaskblMethodtyp, "Locallab", "Showmasktyp_" + index_str, spot.showmaskblMethodtyp, keyFile);
                     saveToKeyfile(!pedited || spot_edited->CCmaskblcurve, "Locallab", "CCmaskblCurve_" + index_str, spot.CCmaskblcurve, keyFile);
                     saveToKeyfile(!pedited || spot_edited->LLmaskblcurve, "Locallab", "LLmaskblCurve_" + index_str, spot.LLmaskblcurve, keyFile);
@@ -7611,6 +7702,14 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
                     saveToKeyfile(!pedited || spot_edited->Lmaskblcurve, "Locallab", "LmaskblCurve_" + index_str, spot.Lmaskblcurve, keyFile);
                     saveToKeyfile(!pedited || spot_edited->LLmaskblcurvewav, "Locallab", "LLmaskblCurvewav_" + index_str, spot.LLmaskblcurvewav, keyFile);
                     saveToKeyfile(!pedited || spot_edited->csthresholdblur, "Locallab", "CSThresholdblur_" + index_str, spot.csthresholdblur.toVector(), keyFile);
+                    saveToKeyfile(!pedited || spot_edited->denocontrast, "Locallab", "denocontrast_" + index_str, spot.denocontrast, keyFile);
+                    saveToKeyfile(!pedited || spot_edited->denoAutocontrast, "Locallab", "denoAutocontrast_" + index_str, spot.denoAutocontrast, keyFile);
+                    saveToKeyfile(!pedited || spot_edited->contrshow, "Locallab", "contrshow_" + index_str, spot.contrshow, keyFile);
+                    saveToKeyfile(!pedited || spot_edited->lockmadl, "Locallab", "lockmadl_" + index_str, spot.lockmadl, keyFile);
+                    saveToKeyfile(!pedited || spot_edited->madllock, "Locallab", "madllock_" + index_str, spot.madllock, keyFile);
+                    saveToKeyfile(!pedited || spot_edited->enacontrast, "Locallab", "enacontrast_" + index_str, spot.enacontrast, keyFile);
+                    saveToKeyfile(!pedited || spot_edited->denoratio, "Locallab", "denoratio_" + index_str, spot.denoratio, keyFile);
+                    saveToKeyfile(!pedited || spot_edited->denomask, "Locallab", "denomask_" + index_str, spot.denomask, keyFile);
                 }
                 // Tone Mapping
                 if ((!pedited || spot_edited->visitonemap) && spot.visitonemap) {
@@ -7701,6 +7800,19 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
                     saveToKeyfile(!pedited || spot_edited->shargam, "Locallab", "Shargam_" + index_str, spot.shargam, keyFile);
                     saveToKeyfile(!pedited || spot_edited->sensisha, "Locallab", "Sensisha_" + index_str, spot.sensisha, keyFile);
                     saveToKeyfile(!pedited || spot_edited->inverssha, "Locallab", "Inverssha_" + index_str, spot.inverssha, keyFile);
+                    saveToKeyfile(!pedited || spot_edited->sharshow, "Locallab", "sharshow_" + index_str, spot.sharshow, keyFile);
+                    saveToKeyfile(!pedited || spot_edited->itercheck, "Locallab", "itercheck_" + index_str, spot.itercheck, keyFile);
+                    saveToKeyfile(!pedited || spot_edited->methodcap, "Locallab", "methodcap_" + index_str, spot.methodcap, keyFile);
+                    saveToKeyfile(!pedited || spot_edited->capradius, "Locallab", "capradius_" + index_str, spot.capradius, keyFile);
+                    saveToKeyfile(!pedited || spot_edited->deconvAutoRadius, "Locallab", "deconvAutoRadius_" + index_str, spot.deconvAutoRadius, keyFile);
+                    saveToKeyfile(!pedited || spot_edited->deconvAutoshar, "Locallab", "deconvAutoshar_" + index_str, spot.deconvAutoshar, keyFile);
+                    saveToKeyfile(!pedited || spot_edited->deconvCoBoost, "Locallab", "deconvCoBoost_" + index_str, spot.deconvCoBoost, keyFile);
+                    saveToKeyfile(!pedited || spot_edited->deconvCoProt, "Locallab", "deconvCoProt_" + index_str, spot.deconvCoProt, keyFile);
+                    saveToKeyfile(!pedited || spot_edited->deconvCoLat, "Locallab", "deconvCoLat_" + index_str, spot.deconvCoLat, keyFile);
+                    saveToKeyfile(!pedited || spot_edited->deconvCogam, "Locallab", "deconvCogam_" + index_str, spot.deconvCogam, keyFile);
+                    saveToKeyfile(!pedited || spot_edited->reparsha, "Locallab", "reparsha_" + index_str, spot.reparsha, keyFile);
+                    
+
                 }
                 // Local Contrast
                 if ((!pedited || spot_edited->visicontrast) && spot.visicontrast) {
@@ -8140,6 +8252,10 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
         saveToKeyfile(!pedited || pedited->pdsharpening.deconvradius, "PostDemosaicSharpening", "DeconvRadius", pdsharpening.deconvradius, keyFile);
         saveToKeyfile(!pedited || pedited->pdsharpening.deconvradiusOffset, "PostDemosaicSharpening", "DeconvRadiusOffset", pdsharpening.deconvradiusOffset, keyFile);
         saveToKeyfile(!pedited || pedited->pdsharpening.deconvitercheck, "PostDemosaicSharpening", "DeconvIterCheck", pdsharpening.deconvitercheck, keyFile);
+        saveToKeyfile(!pedited || pedited->pdsharpening.showcap, "PostDemosaicSharpening", "Showcap", pdsharpening.showcap, keyFile);
+        saveToKeyfile(!pedited || pedited->pdsharpening.noisecaptype, "PostDemosaicSharpening", "Noisecaptype", pdsharpening.noisecaptype, keyFile);
+        saveToKeyfile(!pedited || pedited->pdsharpening.noisecap, "PostDemosaicSharpening", "Noisecap", pdsharpening.noisecap, keyFile);
+        saveToKeyfile(!pedited || pedited->pdsharpening.noisecapafter, "PostDemosaicSharpening", "Noisecapafter", pdsharpening.noisecapafter, keyFile);
         saveToKeyfile(!pedited || pedited->pdsharpening.deconviter, "PostDemosaicSharpening", "DeconvIterations", pdsharpening.deconviter, keyFile);
 
 // Post resize sharpening
@@ -10035,6 +10151,9 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
                 assignFromKeyfile(keyFile, "Locallab", "Levelthrlow_" + index_str, spot.levelthrlow, spotEdited.levelthrlow);
                 assignFromKeyfile(keyFile, "Locallab", "MedMethod_" + index_str, spot.medMethod, spotEdited.medMethod);
                 assignFromKeyfile(keyFile, "Locallab", "activlum_" + index_str, spot.activlum, spotEdited.activlum);
+                for (int j = 0; j < 21; j ++) {
+                    assignFromKeyfile(keyFile, "Locallab", "Madlsav" + std::to_string(j) + "_" + index_str, spot.madlsav[j], spotEdited.madlsav[j]);
+                }               
                 assignFromKeyfile(keyFile, "Locallab", "noiselumf_" + index_str, spot.noiselumf, spotEdited.noiselumf);
                 assignFromKeyfile(keyFile, "Locallab", "noiselumf0_" + index_str, spot.noiselumf0, spotEdited.noiselumf0);
                 assignFromKeyfile(keyFile, "Locallab", "noiselumf2_" + index_str, spot.noiselumf2, spotEdited.noiselumf2);
@@ -10058,6 +10177,7 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
                 assignFromKeyfile(keyFile, "Locallab", "Detailthr_" + index_str, spot.detailthr, spotEdited.detailthr);
                 assignFromKeyfile(keyFile, "Locallab", "LocwavCurveden_" + index_str, spot.locwavcurveden, spotEdited.locwavcurveden);
                 assignFromKeyfile(keyFile, "Locallab", "LocwavCurvehue_" + index_str, spot.locwavcurvehue, spotEdited.locwavcurvehue);
+                assignFromKeyfile(keyFile, "Locallab", "LocwavCurvehuecont_" + index_str, spot.locwavcurvehuecont, spotEdited.locwavcurvehuecont);
                 assignFromKeyfile(keyFile, "Locallab", "Showmasktyp_" + index_str, spot.showmaskblMethodtyp, spotEdited.showmaskblMethodtyp);
                 assignFromKeyfile(keyFile, "Locallab", "CCmaskblCurve_" + index_str, spot.CCmaskblcurve, spotEdited.CCmaskblcurve);
                 assignFromKeyfile(keyFile, "Locallab", "LLmaskblCurve_" + index_str, spot.LLmaskblcurve, spotEdited.LLmaskblcurve);
@@ -10077,6 +10197,14 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
                 assignFromKeyfile(keyFile, "Locallab", "strumaskbl_" + index_str, spot.strumaskbl, spotEdited.strumaskbl);
                 assignFromKeyfile(keyFile, "Locallab", "LmaskblCurve_" + index_str, spot.Lmaskblcurve, spotEdited.Lmaskblcurve);
                 assignFromKeyfile(keyFile, "Locallab", "LLmaskblCurvewav_" + index_str, spot.LLmaskblcurvewav, spotEdited.LLmaskblcurvewav);
+                assignFromKeyfile(keyFile, "Locallab", "denocontrast_" + index_str, spot.denocontrast, spotEdited.denocontrast);
+                assignFromKeyfile(keyFile, "Locallab", "denoAutocontrast_" + index_str, spot.denoAutocontrast, spotEdited.denoAutocontrast);
+                assignFromKeyfile(keyFile, "Locallab", "contrshow_" + index_str, spot.contrshow, spotEdited.contrshow);
+                assignFromKeyfile(keyFile, "Locallab", "lockmadl_" + index_str, spot.lockmadl, spotEdited.lockmadl);
+                assignFromKeyfile(keyFile, "Locallab", "madllock_" + index_str, spot.madllock, spotEdited.madllock);
+                assignFromKeyfile(keyFile, "Locallab", "enacontrast_" + index_str, spot.enacontrast, spotEdited.enacontrast);
+                assignFromKeyfile(keyFile, "Locallab", "denoratio_" + index_str, spot.denoratio, spotEdited.denoratio);
+                assignFromKeyfile(keyFile, "Locallab", "denomask_" + index_str, spot.denomask, spotEdited.denomask);
 
                 if (keyFile.has_key("Locallab", "CSThresholdblur_" + index_str)) {
                     const std::vector<int> thresh = keyFile.get_integer_list("Locallab", "CSThresholdblur_" + index_str);
@@ -10186,6 +10314,20 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
                 assignFromKeyfile(keyFile, "Locallab", "Shargam_" + index_str, spot.shargam, spotEdited.shargam);
                 assignFromKeyfile(keyFile, "Locallab", "Sensisha_" + index_str, spot.sensisha, spotEdited.sensisha);
                 assignFromKeyfile(keyFile, "Locallab", "Inverssha_" + index_str, spot.inverssha, spotEdited.inverssha);
+                assignFromKeyfile(keyFile, "Locallab", "sharshow_" + index_str, spot.sharshow, spotEdited.sharshow);
+                assignFromKeyfile(keyFile, "Locallab", "itercheck_" + index_str, spot.itercheck, spotEdited.itercheck);
+                assignFromKeyfile(keyFile, "Locallab", "methodcap_" + index_str, spot.methodcap, spotEdited.methodcap);
+                assignFromKeyfile(keyFile, "Locallab", "capradius_" + index_str, spot.capradius, spotEdited.capradius);
+                assignFromKeyfile(keyFile, "Locallab", "deconvAutoRadius_" + index_str, spot.deconvAutoRadius, spotEdited.deconvAutoRadius);
+                assignFromKeyfile(keyFile, "Locallab", "deconvAutoshar_" + index_str, spot.deconvAutoshar, spotEdited.deconvAutoshar);
+                
+                assignFromKeyfile(keyFile, "Locallab", "deconvCoBoost_" + index_str, spot.deconvCoBoost, spotEdited.deconvCoBoost);
+                assignFromKeyfile(keyFile, "Locallab", "deconvCoProt_" + index_str, spot.deconvCoProt, spotEdited.deconvCoProt);
+                assignFromKeyfile(keyFile, "Locallab", "deconvCoLat_" + index_str, spot.deconvCoLat, spotEdited.deconvCoLat);
+                assignFromKeyfile(keyFile, "Locallab", "deconvCogam_" + index_str, spot.deconvCogam, spotEdited.deconvCogam);
+                assignFromKeyfile(keyFile, "Locallab", "reparsha_" + index_str, spot.reparsha, spotEdited.reparsha);
+
+                
                 // Local Contrast
                 spot.visicontrast = assignFromKeyfile(keyFile, "Locallab", "Expcontrast_" + index_str, spot.expcontrast, spotEdited.expcontrast);
 
@@ -10835,6 +10977,10 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
             assignFromKeyfile(keyFile, "PostDemosaicSharpening", "DeconvRadius", pdsharpening.deconvradius, pedited->pdsharpening.deconvradius);
             assignFromKeyfile(keyFile, "PostDemosaicSharpening", "DeconvRadiusOffset", pdsharpening.deconvradiusOffset, pedited->pdsharpening.deconvradiusOffset);
             assignFromKeyfile(keyFile, "PostDemosaicSharpening", "DeconvIterCheck", pdsharpening.deconvitercheck, pedited->pdsharpening.deconvitercheck);
+            assignFromKeyfile(keyFile, "PostDemosaicSharpening", "Showcap", pdsharpening.showcap, pedited->pdsharpening.showcap);
+            assignFromKeyfile(keyFile, "PostDemosaicSharpening", "Noisecaptype", pdsharpening.noisecaptype, pedited->pdsharpening.noisecaptype);
+            assignFromKeyfile(keyFile, "PostDemosaicSharpening", "Noisecap", pdsharpening.noisecap, pedited->pdsharpening.noisecap);
+            assignFromKeyfile(keyFile, "PostDemosaicSharpening", "Noisecapafter", pdsharpening.noisecapafter, pedited->pdsharpening.noisecapafter);
             assignFromKeyfile(keyFile, "PostDemosaicSharpening", "DeconvIterations", pdsharpening.deconviter, pedited->pdsharpening.deconviter);
         }
 

@@ -33,10 +33,14 @@ class PdSharpening final :
 
 protected:
     Adjuster* contrast;
+    Adjuster* noisecap;
+    CheckBox* noisecaptype;
+    CheckBox* showcap;
     Adjuster* dradius;
     Adjuster* dradiusOffset;
     Adjuster* diter;
     CheckBox* itercheck;
+    Adjuster* noisecapafter;
 
     bool lastAutoContrast;
     bool lastAutoRadius;
@@ -47,6 +51,10 @@ protected:
     rtengine::ProcEvent EvPdShrDIterations;
     rtengine::ProcEvent EvPdShrAutoContrast;
     rtengine::ProcEvent EvPdShrAutoRadius;
+    rtengine::ProcEvent EvPdShrshowcap;
+    rtengine::ProcEvent EvPdShrnoisecap;
+    rtengine::ProcEvent EvPdShrnoisecapafter;
+    rtengine::ProcEvent EvPdShrnoisecaptype;
     IdleRegister idle_register;
 
 public:

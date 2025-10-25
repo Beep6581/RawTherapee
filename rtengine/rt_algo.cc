@@ -26,14 +26,24 @@
 #ifdef _OPENMP
 #include <omp.h>
 #endif
+#include "procparams.h"
 
 #include "gauss.h"
 #include "opthelper.h"
 #include "rt_algo.h"
 #include "rt_math.h"
 #include "sleef.h"
+#include "imagefloat.h"
+#include "color.h"
+#include "rtengine.h"
+#include "iccstore.h"
+
+namespace rtengine
+{
 
 namespace {
+    using rtengine::procparams::ColorManagementParams;
+    procparams::ColorManagementParams icm;
 
 float calcBlendFactor(float val, float threshold) {
     // sigmoid function
@@ -100,6 +110,69 @@ float tileVariance(const float * const *data, size_t tileY, size_t tileX, size_t
     return var / (rtengine::SQR(tilesize) * avg);
 }
 
+float calcContrastThreshold2(float** luminance, int tileY, int tileX, int tilesize, float factor) {
+
+    const float scale = 0.0625f / 327.68f * factor;
+    std::vector<std::vector<float>> blend(tilesize - 4, std::vector<float>(tilesize - 4));
+
+#ifdef __SSE2__
+    const vfloat scalev = F2V(scale);
+#endif
+
+    for(int j = tileY + 2; j < tileY + tilesize - 2; ++j) {
+        int i = tileX + 2;
+#ifdef __SSE2__
+        for(; i < tileX + tilesize - 5; i += 4) {
+            vfloat contrastv = vsqrtf(SQRV(LVFU(luminance[j][i+1]) - LVFU(luminance[j][i-1])) + SQRV(LVFU(luminance[j+1][i]) - LVFU(luminance[j-1][i])) +
+                                      SQRV(LVFU(luminance[j][i+2]) - LVFU(luminance[j][i-2])) + SQRV(LVFU(luminance[j+2][i]) - LVFU(luminance[j-2][i]))) * scalev;
+            STVFU(blend[j - tileY - 2][i - tileX - 2], contrastv);
+        }
+#endif
+        for(; i < tileX + tilesize - 2; ++i) {
+
+            float contrast = sqrtf(rtengine::SQR(luminance[j][i+1] - luminance[j][i-1]) + rtengine::SQR(luminance[j+1][i] - luminance[j-1][i]) + 
+                                   rtengine::SQR(luminance[j][i+2] - luminance[j][i-2]) + rtengine::SQR(luminance[j+2][i] - luminance[j-2][i])) * scale;
+
+            blend[j - tileY - 2][i - tileX - 2] = contrast;
+        }
+    }
+
+    const float limit = rtengine::SQR(tilesize - 4) / 100.f;
+
+    int c;
+    for (c = 1; c < 100; ++c) {
+        const float contrastThreshold = c / 100.f;
+        float sum = 0.f;
+#ifdef __SSE2__
+        const vfloat contrastThresholdv = F2V(contrastThreshold);
+        vfloat sumv = ZEROV;
+#endif
+
+        for(int j = 0; j < tilesize - 4; ++j) {
+            int i = 0;
+#ifdef __SSE2__
+            for(; i < tilesize - 7; i += 4) {
+                sumv += calcBlendFactor(LVFU(blend[j][i]), contrastThresholdv);
+            }
+#endif
+            for(; i < tilesize - 4; ++i) {
+                sum += calcBlendFactor(blend[j][i], contrastThreshold);
+            }
+        }
+#ifdef __SSE2__
+        sum += vhadd(sumv);
+#endif
+        if (sum <= limit) {
+            break;
+        }
+    }
+
+    return c / 100.f;
+}
+
+
+
+
 float calcContrastThreshold(const float* const * luminance, int tileY, int tileX, int tilesize) {
 
     constexpr float scale = 0.0625f / 327.68f;
@@ -159,10 +232,13 @@ float calcContrastThreshold(const float* const * luminance, int tileY, int tileX
 
     return (c + 1) / 100.f;
 }
+
+
+
 }
 
-namespace rtengine
-{
+//namespace rtengine
+//{
 
 void findMinMaxPercentile(const float* data, size_t size, float minPrct, float& minOut, float maxPrct, float& maxOut, bool multithread)
 {
@@ -489,6 +565,332 @@ void buildBlendMask(const float* const * luminance, float **blend, int W, int H,
     }
 }
 
+void buildBlendMask2(float** luminance, float **blend, int W, int H, float &contrastThreshold, float amount, bool autoContrast, float blur_radius, float luminance_factor, float noise)
+{
+    if (autoContrast) {
+        const float minLuminance = 2000.f / luminance_factor;
+        const float maxLuminance = 20000.f / luminance_factor;
+        constexpr float minTileVariance = 0.5f;
+        for (int pass = 0; pass < 2; ++pass) {
+            const int tilesize = 80 / (pass + 1);
+            const int skip = pass == 0 ? tilesize : tilesize / 4;
+            const int numTilesW = W / skip - 3 * pass;
+            const int numTilesH = H / skip - 3 * pass;
+            std::vector<std::vector<float>> variances(numTilesH, std::vector<float>(numTilesW));
+
+#ifdef _OPENMP
+            #pragma omp parallel for schedule(dynamic)
+#endif
+            for (int i = 0; i < numTilesH; ++i) {
+                const int tileY = i * skip;
+                for (int j = 0; j < numTilesW; ++j) {
+                    const int tileX = j * skip;
+                    const float avg = tileAverage(luminance, tileY, tileX, tilesize);
+                    if (avg < minLuminance || avg > maxLuminance) {
+                        // too dark or too bright => skip the tile
+                        variances[i][j] = RT_INFINITY_F;
+                        continue;
+                    } else {
+                        variances[i][j] = tileVariance(luminance, tileY, tileX, tilesize, avg);
+                        // exclude tiles with a variance less than minTileVariance
+                        variances[i][j] = variances[i][j] < minTileVariance ? RT_INFINITY_F : variances[i][j];
+                    }
+                }
+            }
+
+            float minvar = RT_INFINITY_F;
+            int minI = 0, minJ = 0;
+            for (int i = 0; i < numTilesH; ++i) {
+                for (int j = 0; j < numTilesW; ++j) {
+                    if (variances[i][j] < minvar) {
+                        minvar = variances[i][j];
+                        minI = i;
+                        minJ = j;
+                    }
+                }
+            }
+
+            if (minvar <= 1.f || pass == 1) {
+                const int minY = skip * minI;
+                const int minX = skip * minJ;
+                if (pass == 0) {
+                    // a variance <= 1 means we already found a flat region and can skip second pass
+                    contrastThreshold = calcContrastThreshold2(luminance, minY, minX, tilesize, luminance_factor);
+                    break;
+                } else {
+                    // in second pass we allow a variance of 4
+                    // we additionally scan the tiles +-skip pixels around the best tile from pass 2
+                    // Means we scan (2 * skip + 1)^2 tiles in this step to get a better hit rate
+                    // fortunately the scan is quite fast, so we use only one core and don't parallelize
+                    const int topLeftYStart = std::max(minY - skip, 0);
+                    const int topLeftXStart = std::max(minX - skip, 0);
+                    const int topLeftYEnd = std::min(minY + skip, H - tilesize);
+                    const int topLeftXEnd = std::min(minX + skip, W - tilesize);
+                    const int numTilesH = topLeftYEnd - topLeftYStart + 1;
+                    const int numTilesW = topLeftXEnd - topLeftXStart + 1;
+
+                    std::vector<std::vector<float>> variances(numTilesH, std::vector<float>(numTilesW));
+                    for (int i = 0; i < numTilesH; ++i) {
+                        const int tileY = topLeftYStart + i;
+                        for (int j = 0; j < numTilesW; ++j) {
+                            const int tileX = topLeftXStart + j;
+                            const float avg = tileAverage(luminance, tileY, tileX, tilesize);
+
+                            if (avg < minLuminance || avg > maxLuminance) {
+                                // too dark or too bright => skip the tile
+                                variances[i][j] = RT_INFINITY_F;
+                                continue;
+                            } else {
+                                variances[i][j] = tileVariance(luminance, tileY, tileX, tilesize, avg);
+                            // exclude tiles with a variance less than minTileVariance
+                            variances[i][j] = variances[i][j] < minTileVariance ? RT_INFINITY_F : variances[i][j];
+                            }
+                        }
+                    }
+
+                    float minvar = RT_INFINITY_F;
+                    int minI = 0, minJ = 0;
+                    for (int i = 0; i < numTilesH; ++i) {
+                        for (int j = 0; j < numTilesW; ++j) {
+                            if (variances[i][j] < minvar) {
+                                minvar = variances[i][j];
+                                minI = i;
+                                minJ = j;
+                            }
+                        }
+                    }
+
+                    contrastThreshold = minvar <= 8.f ? calcContrastThreshold2(luminance, topLeftYStart + minI, topLeftXStart + minJ, tilesize, luminance_factor) : 0.f;
+                    contrastThreshold *= noise;
+                }
+            }
+        }
+    }
+
+    if(contrastThreshold == 0.f) {
+        for(int j = 0; j < H; ++j) {
+            for(int i = 0; i < W; ++i) {
+                blend[j][i] = amount;
+            }
+        }
+    } else {
+        const float scale = 0.0625f / 327.68f * luminance_factor;
+#ifdef _OPENMP
+        #pragma omp parallel
+#endif
+        {
+#ifdef __SSE2__
+            const vfloat contrastThresholdv = F2V(contrastThreshold);
+            const vfloat scalev = F2V(scale);
+            const vfloat amountv = F2V(amount);
+#endif
+#ifdef _OPENMP
+            #pragma omp for schedule(dynamic,16)
+#endif
+
+            for(int j = 2; j < H - 2; ++j) {
+                int i = 2;
+#ifdef __SSE2__
+                for(; i < W - 5; i += 4) {
+                    vfloat contrastv = vsqrtf(SQRV(LVFU(luminance[j][i+1]) - LVFU(luminance[j][i-1])) + SQRV(LVFU(luminance[j+1][i]) - LVFU(luminance[j-1][i])) +
+                                              SQRV(LVFU(luminance[j][i+2]) - LVFU(luminance[j][i-2])) + SQRV(LVFU(luminance[j+2][i]) - LVFU(luminance[j-2][i]))) * scalev;
+
+                    STVFU(blend[j][i], amountv * calcBlendFactor(contrastv, contrastThresholdv));
+                }
+#endif
+                for(; i < W - 2; ++i) {
+
+                    float contrast = sqrtf(rtengine::SQR(luminance[j][i+1] - luminance[j][i-1]) + rtengine::SQR(luminance[j+1][i] - luminance[j-1][i]) + 
+                                           rtengine::SQR(luminance[j][i+2] - luminance[j][i-2]) + rtengine::SQR(luminance[j+2][i] - luminance[j-2][i])) * scale;
+
+                    blend[j][i] = amount * calcBlendFactor(contrast, contrastThreshold);
+                }
+            }
+
+#ifdef _OPENMP
+            #pragma omp single
+#endif
+            {
+                // upper border
+                for(int j = 0; j < 2; ++j) {
+                    for(int i = 2; i < W - 2; ++i) {
+                        blend[j][i] = blend[2][i];
+                    }
+                }
+                // lower border
+                for(int j = H - 2; j < H; ++j) {
+                    for(int i = 2; i < W - 2; ++i) {
+                        blend[j][i] = blend[H-3][i];
+                    }
+                }
+                for(int j = 0; j < H; ++j) {
+                    // left border
+                    blend[j][0] = blend[j][1] = blend[j][2];
+                    // right border
+                    blend[j][W - 2] = blend[j][W - 1] = blend[j][W - 3];
+                }
+            }
+
+#ifdef __SSE2__
+            // flush denormals to zero for gaussian blur to avoid performance penalty if there are a lot of zero values in the mask
+            const auto oldMode = _MM_GET_FLUSH_ZERO_MODE();
+            _MM_SET_FLUSH_ZERO_MODE(_MM_FLUSH_ZERO_ON);
+#endif
+
+            // blur blend mask to smooth transitions
+            gaussianBlur(blend, blend, W, H, blur_radius); //2.0);
+
+#ifdef __SSE2__
+            _MM_SET_FLUSH_ZERO_MODE(oldMode);
+#endif
+        }
+    }
+}
+
+
+void markImpulse(int width, int height, float **const src, char **impulse, float thresh)
+{
+    // buffer for the lowpass image
+    float * lpf[height] ALIGNED16;
+    lpf[0] = new float [width * height];
+
+    for (int i = 1; i < height; i++) {
+        lpf[i] = lpf[i - 1] + width;
+    }
+
+#ifdef _OPENMP
+    #pragma omp parallel
+#endif
+    {
+        gaussianBlur(const_cast<float **>(src), lpf, width, height, max(2.f, thresh - 1.f));
+    }
+
+    //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+    float impthr = max(1.f, 5.5f - thresh);
+    float impthrDiv24 = impthr / 24.0f;         //Issue 1671: moved the Division outside the loop, impthr can be optimized out too, but I let in the code at the moment
+
+
+#ifdef _OPENMP
+    #pragma omp parallel
+#endif
+    {
+        int i1, j1, j;
+        float hpfabs, hfnbrave;
+#ifdef __SSE2__
+        vfloat hfnbravev, hpfabsv;
+        vfloat impthrDiv24v = F2V( impthrDiv24 );
+#endif
+#ifdef _OPENMP
+        #pragma omp for
+#endif
+
+        for (int i = 0; i < height; i++) {
+            for (j = 0; j < 2; j++) {
+                hpfabs = fabs(src[i][j] - lpf[i][j]);
+
+                //block average of high pass data
+                for (i1 = max(0, i - 2), hfnbrave = 0; i1 <= min(i + 2, height - 1); i1++ )
+                    for (j1 = 0; j1 <= j + 2; j1++) {
+                        hfnbrave += fabs(src[i1][j1] - lpf[i1][j1]);
+                    }
+
+                impulse[i][j] = (hpfabs > ((hfnbrave - hpfabs) * impthrDiv24));
+            }
+
+#ifdef __SSE2__
+
+            for (; j < width - 5; j += 4) {
+                hfnbravev = ZEROV;
+                hpfabsv = vabsf(LVFU(src[i][j]) - LVFU(lpf[i][j]));
+
+                //block average of high pass data
+                for (i1 = max(0, i - 2); i1 <= min(i + 2, height - 1); i1++ ) {
+                    for (j1 = j - 2; j1 <= j + 2; j1++) {
+                        hfnbravev += vabsf(LVFU(src[i1][j1]) - LVFU(lpf[i1][j1]));
+                    }
+                }
+
+                int mask = _mm_movemask_ps((hfnbravev - hpfabsv) * impthrDiv24v - hpfabsv);
+                impulse[i][j] = (mask & 1);
+                impulse[i][j + 1] = ((mask & 2) >> 1);
+                impulse[i][j + 2] = ((mask & 4) >> 2);
+                impulse[i][j + 3] = ((mask & 8) >> 3);
+            }
+
+#endif
+
+            for (; j < width - 2; j++) {
+                hpfabs = fabs(src[i][j] - lpf[i][j]);
+
+                //block average of high pass data
+                for (i1 = max(0, i - 2), hfnbrave = 0; i1 <= min(i + 2, height - 1); i1++ )
+                    for (j1 = j - 2; j1 <= j + 2; j1++) {
+                        hfnbrave += fabs(src[i1][j1] - lpf[i1][j1]);
+                    }
+
+                impulse[i][j] = (hpfabs > ((hfnbrave - hpfabs) * impthrDiv24));
+            }
+
+            for (; j < width; j++) {
+                hpfabs = fabs(src[i][j] - lpf[i][j]);
+
+                //block average of high pass data
+                for (i1 = max(0, i - 2), hfnbrave = 0; i1 <= min(i + 2, height - 1); i1++ )
+                    for (j1 = j - 2; j1 < width; j1++) {
+                        hfnbrave += fabs(src[i1][j1] - lpf[i1][j1]);
+                    }
+
+                impulse[i][j] = (hpfabs > ((hfnbrave - hpfabs) * impthrDiv24));
+            }
+        }
+    }
+
+    delete [] lpf[0];
+}
+
+//void get_luminance(const Imagefloat *src, array2D<float> &out, const float ws[3][3], bool multithread)
+void get_luminance(const Imagefloat *src, array2D<float> &out,  bool multithread)
+{
+    class Imagefloat;
+
+    const int W = src->getWidth();
+    const int H = src->getHeight();
+    out(W, H);
+    using rtengine::TMatrix;
+    const TMatrix ws =ICCStore::getInstance()->workingSpaceMatrix(icm.workingProfile);
+
+    
+#ifdef _OPENMP
+#   pragma omp parallel for if (multithread)
+#endif
+    for (int y = 0; y < H; ++y) {
+        for (int x = 0; x < W; ++x) {
+            out[y][x] = Color::rgbLuminance(src->r(y, x), src->g(y, x), src->b(y, x), ws);
+        }
+    }
+}
+
+void multiply(Imagefloat *img, const array2D<float> &num, const array2D<float> &den, bool multithread)
+{
+    const int W = img->getWidth();
+    const int H = img->getHeight();
+    
+#ifdef _OPENMP
+#   pragma omp parallel for if (multithread)
+#endif
+    for (int y = 0; y < H; ++y) {
+        for (int x = 0; x < W; ++x) {
+            if (den[y][x] > 0.f) {
+                const float f = num[y][x] / den[y][x];
+                img->r(y, x) *= f;
+                img->g(y, x) *= f;
+                img->b(y, x) *= f;
+            }
+        }
+    }
+}
+
 double accumulateProduct(const float* data1, const float* data2, size_t n, bool multiThread) {
     if (n == 0) {
         return 0.0;
@@ -509,5 +911,4 @@ double accumulateProduct(const float* data1, const float* data2, size_t n, bool 
         acc1 += static_cast<double>(data1[n -1]) * static_cast<double>(data2[n -1]);
     }
     return acc1 + acc2;
-}
-}
+}}

@@ -280,6 +280,8 @@ private:
     virtual void convertParamToNormal() {}; // From Expert mode to Normal mode; Only necessary when using mode
     virtual void convertParamToSimple() {}; // From Normal mode to Simple mode; Only necessary when using mode
     virtual void updateGUIToMode(const modeType new_type) {}; // Only necessary when using mode
+ //   virtual void adjusterAutoToggled(Adjuster* a, bool newval) {};
+
 };
 
 /* ==== LocallabColor ==== */
@@ -920,17 +922,29 @@ private:
     MyComboBoxText* const chroMethod;
     Gtk::CheckButton* const activlum;
     MyExpander* const expdenoise;
+    Gtk::Frame* const denoFrame;
+
+    Gtk::CheckButton* const enacontrast;
+    Adjuster* const denocontrast;
+    Adjuster* const denoratio;
+    Gtk::CheckButton* const contrshow;
+    Adjuster* const denomask;
+
     MyComboBoxText* const quamethod;
     MyExpander* const expdenoisenl;
     MyExpander* const expdenoiselum;
     MyExpander* const expdenoisech;
-    CurveEditorGroup* const LocalcurveEditorwavden;
+    std::unique_ptr<CurveEditorGroup> LocalcurveEditorwavden;    
     FlatCurveEditor* const wavshapeden;
     Gtk::Label* const lCLabels;
     Gtk::Label* const lumLabels;
     Gtk::Label* const lum46Labels;
     Gtk::Label* const chroLabels;
     Gtk::Label* const chro46Labels;
+    Gtk::CheckButton* const lockmadl;
+    Gtk::Frame* const madlFrame;
+    const std::array<Adjuster*, 21> madls;
+    Gtk::CheckButton* const madllock;
     
     MyExpander* const expdenoise1;
     Gtk::Label* const maskusable;
@@ -951,8 +965,10 @@ private:
     Adjuster* const noiselumdetail;
     Adjuster* const noiselequal;
     Adjuster* const noisegam;
-    CurveEditorGroup* const LocalcurveEditorwavhue;
+    std::unique_ptr<CurveEditorGroup> LocalcurveEditorwavhue;    
     FlatCurveEditor* wavhue;
+    std::unique_ptr<CurveEditorGroup> LocalcurveEditorwavhuecont;    
+    FlatCurveEditor* wavhuecont;
     Adjuster* const noisechrof;
     Adjuster* const noisechroc;
     Adjuster* const noisechrodetail;
@@ -987,7 +1003,7 @@ private:
     MyComboBoxText* const showmaskblMethod;
     MyComboBoxText* const showmaskblMethodtyp;
     Gtk::CheckButton* const enablMask;
-    CurveEditorGroup* const maskblCurveEditorG;
+    std::unique_ptr<CurveEditorGroup> maskblCurveEditorG;    
     FlatCurveEditor* const CCmaskblshape;
     FlatCurveEditor* const LLmaskblshape;
     FlatCurveEditor* const HHmaskblshape;
@@ -1003,19 +1019,35 @@ private:
     Adjuster* const slomaskbl;
     Adjuster* const shadmaskbl;
     Adjuster* const shadmaskblsha;
-    CurveEditorGroup* const mask2blCurveEditorG;
+    std::unique_ptr<CurveEditorGroup> mask2blCurveEditorG;    
     DiagonalCurveEditor* const Lmaskblshape;
-    CurveEditorGroup* const mask2blCurveEditorGwav;
+    std::unique_ptr<CurveEditorGroup> mask2blCurveEditorGwav;    
     FlatCurveEditor* const LLmaskblshapewav;
     Gtk::Box* const quaHBox;
     ThresholdAdjuster* const csThresholdblur;
 
-    sigc::connection blMethodConn, fftwblConn, invblConn, medMethodConn, blurMethodConn, chroMethodConn, activlumConn, showmaskblMethodConn, showmaskblMethodtypConn, enablMaskConn, toolblConn;
+    sigc::connection blMethodConn, fftwblConn, invblConn, contrshowConn, lockmadlConn, madllockConn, enacontrastConn, medMethodConn, blurMethodConn, chroMethodConn, activlumConn, showmaskblMethodConn, showmaskblMethodtypConn, enablMaskConn, toolblConn;
     sigc::connection  quamethodconn, usemaskConn, invmaskdConn, invmaskConn, neutralconn;
+    rtengine::ProcEvent Evlocallabdenocontrast;
+    rtengine::ProcEvent Evlocallabautodenoon;
+    rtengine::ProcEvent Evlocallabautodenooff;
+    rtengine::ProcEvent Evlocallabcontrshow;
+    rtengine::ProcEvent Evlocallabenacontrast;
+    rtengine::ProcEvent Evlocallabdenoratio;
+    rtengine::ProcEvent Evlocallabdenomask;
+    rtengine::ProcEvent EvlocallabwavCurvehuecont;
+    rtengine::ProcEvent Evlocallablockmadl;
+    rtengine::ProcEvent Evlocallablockmadls;
+    rtengine::ProcEvent Evlocallabmadllock;
+
+
 public:
     LocallabBlur();
     ~LocallabBlur();
     void updatedenlc(const double highres, const double nres, const double highres46, const double nres46, const double Lhighres, const double Lnres, const double Lhighres46, const double Lnres46);
+    void updatemadlc(const double m0, const double m1, const double m2, const double m3, const double m4, const double m5, const double m6, const double m7,
+        const double m8, const double m9, const double m10, const double m11, const double m12, const double m13, const double m14, const double m15,
+        const double m16, const double m17, const double m18, const double m19, const double m20, const bool madloc);
 
     bool isMaskViewActive() override;
     void resetMaskView() override;
@@ -1039,6 +1071,8 @@ public:
     void adjusterChanged(ThresholdAdjuster* a, int newBottomLeft, int newTopLeft, int newBottomRight, int newTopRight) override {}; // Not used
     void adjusterChanged2(ThresholdAdjuster* a, int newBottomL, int newTopL, int newBottomR, int newTopR) override;
     void curveChanged(CurveEditor* ce) override;
+    void adjusterAutoToggled(Adjuster* a, bool newval);
+    void autodenoContrastChanged(float autodenoContrast);
 
 private:
     void enabledChanged() override;
@@ -1047,6 +1081,10 @@ private:
     void updateGUIToMode(const modeType new_type) override;
 
     void updateMaskBackground(const double normChromar, const double normLumar, const double normHuer, const double normHuerjz) override;
+    void contrshowChanged();
+    void enacontrastChanged();
+    void lockmadlChanged();
+    void madllockChanged();
 
     void blMethodChanged();
     void fftwblChanged();
@@ -1267,7 +1305,22 @@ class LocallabSharp:
     public LocallabTool
 {
 private:
+    // Adjuster* blur;
+    MyComboBoxText* methodcap;
+
+
+    Adjuster* const reparsha;
     Adjuster* const sharcontrast;
+    Gtk::CheckButton* const sharshow;
+    Adjuster* const capradius;
+
+    Adjuster* const deconvCoBoost;
+    Adjuster* const deconvCoProt;
+    Adjuster* const deconvCoLat;
+    Adjuster* const deconvCogam;
+    Gtk::CheckButton* const itercheck;
+    Gtk::Frame* const capFrame;
+    Gtk::Frame* const rlFrame;
     Adjuster* const sharblur;
     Adjuster* const shargam;
     Adjuster* const sharamount;
@@ -1279,7 +1332,22 @@ private:
     Gtk::Frame* const sharFrame;
     MyComboBoxText* const showmasksharMethod;
 
-    sigc::connection inversshaConn, showmasksharMethodConn;
+    rtengine::ProcEvent Evlocallabmethodcap;
+    rtengine::ProcEvent Evlocallabcapradius;
+    rtengine::ProcEvent Evlocallabautoradiuson;
+    rtengine::ProcEvent Evlocallabautoradiusoff;
+    rtengine::ProcEvent Evlocallabsharrepar;
+    rtengine::ProcEvent Evlocallabsharcontraston;
+    rtengine::ProcEvent Evlocallabsharcontrastoff;
+
+    rtengine::ProcEvent Evlocallababdconvboost;
+    rtengine::ProcEvent Evlocallababdcoprot;
+    rtengine::ProcEvent Evlocallababdconvlat;
+    rtengine::ProcEvent Evlocallababsharshow;
+    rtengine::ProcEvent Evlocallababitercheck;
+    rtengine::ProcEvent Evlocallababdconvgam;
+
+    sigc::connection inversshaConn, showmasksharMethodConn, methodcapConn, sharshowConn, itercheckConn;
 
 public:
     LocallabSharp();
@@ -1297,14 +1365,21 @@ public:
     void write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedited = nullptr) override;
     void setDefaults(const rtengine::procparams::ProcParams* defParams, const ParamsEdited* pedited = nullptr) override;
     void adjusterChanged(Adjuster* a, double newval) override;
+    void adjusterAutoToggled(Adjuster* a, bool newval);
+ //   void adjusterAutoToggled(Adjuster* a);
+    void autoDeconvRadiusChanged(float radius);
+    void autoContrastChanged(float autoContrast);
 
 private:
     void enabledChanged() override;
     void convertParamToNormal() override;
     void convertParamToSimple() override;
     void updateGUIToMode(const modeType new_type) override;
+    void sharshowChanged();
+    void itercheckChanged();
 
     void inversshaChanged();
+    void methodcapChanged();
     void showmasksharMethodChanged();
 };
 

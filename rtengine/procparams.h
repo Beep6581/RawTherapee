@@ -537,6 +537,11 @@ struct SharpeningParams {
     double         deconvradius;
     int            deconviter;
     int            deconvdamping;
+    bool deconvAutoRadius;
+    double deconvCornerBoost;
+    int deconvCornerLatitude;
+    Glib::ustring psf_kernel;
+    double psf_iterations;
 
     SharpeningParams();
 
@@ -576,10 +581,14 @@ struct CaptureSharpeningParams {
     bool           autoContrast;
     bool           autoRadius;
     double         contrast;
+    double         noisecap;
+    double         noisecapafter;
     double         deconvradius;
     double         deconvradiusOffset;
     int            deconviter;
     bool           deconvitercheck;
+    bool           showcap;
+    bool           noisecaptype;
 
     CaptureSharpeningParams();
 
@@ -1390,6 +1399,7 @@ struct LocallabParams {
         double lnoiselow;
         double levelthrlow;
         bool activlum;
+        double madlsav[21];
         double noiselumf;
         double noiselumf0;
         double noiselumf2;
@@ -1413,6 +1423,7 @@ struct LocallabParams {
         int detailthr;
         std::vector<double> locwavcurveden;
         std::vector<double> locwavcurvehue;
+        std::vector<double> locwavcurvehuecont;
         Glib::ustring showmaskblMethodtyp;
         std::vector<double> CCmaskblcurve;
         std::vector<double> LLmaskblcurve;
@@ -1433,6 +1444,14 @@ struct LocallabParams {
         std::vector<double> Lmaskblcurve;
         std::vector<double> LLmaskblcurvewav;
         Threshold<int> csthresholdblur;
+        double denocontrast;
+        bool denoAutocontrast;
+        bool contrshow;
+        bool lockmadl;
+        bool madllock;
+        bool enacontrast;
+        double denoratio;
+        double denomask;
         // Tone Mapping
         bool visitonemap;
         bool exptonemap;
@@ -1512,6 +1531,7 @@ struct LocallabParams {
         bool expsharp;
         int complexsharp;
         int sharcontrast;
+        bool deconvAutoshar;
         double sharradius;
         int sharamount;
         int shardamping;
@@ -1520,6 +1540,17 @@ struct LocallabParams {
         double shargam;
         int sensisha;
         bool inverssha;
+        bool sharshow;
+        bool itercheck;
+        Glib::ustring methodcap;
+        double capradius;
+        bool deconvAutoRadius;
+        double deconvCoBoost;                
+        double deconvCoProt;                
+        double deconvCoLat;                
+        double deconvCogam;                
+        double reparsha;                
+
         // Local Contrast
         bool visicontrast;
         bool expcontrast;

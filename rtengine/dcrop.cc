@@ -191,6 +191,7 @@ void Crop::update(int todo)
         if (!needsinitupdate) {
             setCropSizes(rqcropx, rqcropy, rqcropw, rqcroph, skip, true);
         }
+        
 
         //       printf("x=%d y=%d crow=%d croh=%d skip=%d\n",rqcropx, rqcropy, rqcropw, rqcroph, skip);
         //      printf("trafx=%d trafyy=%d trafwsk=%d trafHs=%d \n",trafx, trafy, trafw*skip, trafh*skip);
@@ -952,11 +953,15 @@ void Crop::update(int todo)
         auto& loccomprewavCurve = parent->loccomprewavCurve;
         auto& locedgwavCurve = parent->locedgwavCurve;
         auto& locwavCurvehue = parent->locwavCurvehue;
+        auto& locwavCurvehuecont = parent->locwavCurvehuecont;
         auto& locwavCurveden = parent->locwavCurveden;
         auto& lmasklocal_curve2 = parent->lmasklocal_curve;
         auto& loclmasCurve_wav = parent->loclmasCurve_wav;
-        //big bug found 29//11/2024       
+        //big bug found 29//11/2024
         std::vector<LocallabListener::locallabDenoiseLC> localldenoiselc;
+        std::vector<LocallabListener::locallabDenoiseMAD> localldenoisemadl;
+        std::vector<LocallabListener::locallabsharAFT> locallsharaft;
+        std::vector<LocallabListener::locallabDenoiseLC2> localldenoiselc2;
 
         for (int sp = 0; sp < (int)params.locallab.spots.size(); sp++) {
             locRETgainCurve.Set(params.locallab.spots.at(sp).localTgaincurve);
@@ -1014,6 +1019,7 @@ void Crop::update(int todo)
             const bool locwavutili = locwavCurve.Set(params.locallab.spots.at(sp).locwavcurve);
             const bool locwavutilijz = locwavCurvejz.Set(params.locallab.spots.at(sp).locwavcurvejz);
             const bool locwavhueutili = locwavCurvehue.Set(params.locallab.spots.at(sp).locwavcurvehue);
+            const bool locwavhueutilicont = locwavCurvehuecont.Set(params.locallab.spots.at(sp).locwavcurvehuecont);
             const bool locwavdenutili = locwavCurveden.Set(params.locallab.spots.at(sp).locwavcurveden);
             const bool loclevwavutili = loclevwavCurve.Set(params.locallab.spots.at(sp).loclevwavcurve);
             const bool locconwavutili = locconwavCurve.Set(params.locallab.spots.at(sp).locconwavcurve);
@@ -1085,20 +1091,17 @@ void Crop::update(int todo)
             float Tmin;
             float Tmax;
             int lastsav;
-            float highresi = 0.f;
-            float nresi = 0.f;
-            float highresi46 =0.f;
-            float nresi46 = 0.f;
-            float Lhighresi = 0.f;
-            float Lnresi = 0.f;
-            float Lhighresi46 = 0.f;
-            float Lnresi46 = 0.f;
+            float resi[8];
+            
             float contsig = params.locallab.spots.at(sp).contsigqcie;
             float slopeg = 1.f;
             bool linkrgb = true;
             float lightsig = params.locallab.spots.at(sp).lightsigqcie;
+            float sharc = 0.f;
+            float denocont = 0.f;
             int ghsbpwp[2];
             float ghsbpwpvalue[2];
+            float savmadl[21]  = {100.f, 100.f, 100.f, 100.f, 100.f, 100.f, 100.f, 100.f, 100.f, 100.f, 100.f, 100.f, 100.f, 100.f, 100.f, 100.f, 100.f, 100.f, 100.f, 100.f, 100.f}; 
             float ghsbwslider[2];
             float ghssym;
             bool ghsautsp;
@@ -1125,7 +1128,6 @@ void Crop::update(int todo)
                         lmasklocalcurve2, localmaskutili, 
                         lmaskexplocalcurve2, localmaskexputili, 
                         lmaskSHlocalcurve2, localmaskSHutili, 
-                       // ghslocalcurve2, localghsutili, 
                         lmaskviblocalcurve2, localmaskvibutili, 
                         lmasktmlocalcurve2, localmasktmutili, 
                         lmaskretilocalcurve2, localmaskretiutili, 
@@ -1165,6 +1167,7 @@ void Crop::update(int todo)
                         loccompwavCurve, loccompwavutili,
                         loccomprewavCurve, loccomprewavutili,
                         locwavCurvehue, locwavhueutili,
+                        locwavCurvehuecont, locwavhueutilicont,
                         locwavCurveden, locwavdenutili,
                         locedgwavCurve, locedgwavutili,
                         loclmasCurve_wav,lmasutili_wav,
@@ -1172,11 +1175,9 @@ void Crop::update(int todo)
                         huerefblu, chromarefblu, lumarefblu, huere, chromare, lumare, sobelre, lastsav, 
                         parent->previewDeltaE, parent->locallColorMask, parent->locallColorMaskinv, parent->locallExpMask, parent->locallExpMaskinv, parent->locallSHMask, parent->locallSHMaskinv, parent->locallvibMask,  parent->localllcMask, parent->locallsharMask, parent->locallcbMask, parent->locallretiMask, parent->locallsoftMask, parent->localltmMask, parent->locallblMask,
                         parent->localllogMask, parent->locall_Mask, parent->locallcieMask, minCD, maxCD, mini, maxi, Tmean, Tsigma, Tmin, Tmax,
-                        meantme, stdtme, meanretie, stdretie, fab, maxicam,rdx, rdy, grx, gry, blx, bly, meanx, meany, meanxe, meanye, prim, ill, contsig, lightsig,
-                        highresi, nresi, highresi46, nresi46, Lhighresi, Lnresi, Lhighresi46, Lnresi46,slopeg, linkrgb,
-                        ghsbpwp, ghsbpwpvalue, ghsbwslider, ghssym, ghsautsp);
-                        
-                        
+                        meantme, stdtme, meanretie, stdretie, fab, maxicam,rdx, rdy, grx, gry, blx, bly, meanx, meany, meanxe, meanye, prim, ill, contsig, lightsig, slopeg, linkrgb,
+                        resi, sharc, denocont, ghsbpwp, ghsbpwpvalue, savmadl, ghsbwslider, ghssym, ghsautsp);
+
                         if (parent->previewDeltaE || parent->locallColorMask == 5 || parent->locallvibMask == 4 || parent->locallExpMask == 5 || parent->locallSHMask == 4 || parent->localllcMask == 4 || parent->localltmMask == 4 || parent->localllogMask == 4 || parent->locallsoftMask == 6 || parent->localllcMask == 4 || parent->locallcieMask == 4) {
                             params.blackwhite.enabled = false;
                             params.colorToning.enabled = false;
@@ -1216,7 +1217,6 @@ void Crop::update(int todo)
                         lmasklocalcurve2, localmaskutili,
                         lmaskexplocalcurve2, localmaskexputili, 
                         lmaskSHlocalcurve2, localmaskSHutili, 
-                       // ghslocalcurve2, localghsutili, 
                         lmaskviblocalcurve2, localmaskvibutili, 
                         lmasktmlocalcurve2, localmasktmutili, 
                         lmaskretilocalcurve2, localmaskretiutili, 
@@ -1256,34 +1256,83 @@ void Crop::update(int todo)
                         loccompwavCurve, loccompwavutili,
                         loccomprewavCurve, loccomprewavutili,
                         locwavCurvehue, locwavhueutili,
+                        locwavCurvehuecont, locwavhueutilicont,
                         locwavCurveden, locwavdenutili,
                         locedgwavCurve, locedgwavutili,
                         loclmasCurve_wav,lmasutili_wav,
                         LHutili, HHutili, CHutili, HHutilijz, CHutilijz, LHutilijz, cclocalcurve2, localcutili, rgblocalcurve2, localrgbutili, localexutili, exlocalcurve2, hltonecurveloc2, shtonecurveloc2, tonecurveloc2, lightCurveloc2,
                         huerefblu, chromarefblu, lumarefblu, huere, chromare, lumare, sobelre, lastsav, false, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
                         minCD, maxCD, mini, maxi, Tmean, Tsigma, Tmin, Tmax,
-                        meantme, stdtme, meanretie, stdretie, fab, maxicam, rdx, rdy, grx, gry, blx, bly, meanx, meany, meanxe, meanye, prim, ill, contsig, lightsig,
-                        highresi, nresi, highresi46, nresi46, Lhighresi, Lnresi, Lhighresi46, Lnresi46,slopeg, linkrgb,
-                        ghsbpwp, ghsbpwpvalue, ghsbwslider, ghssym, ghsautsp);
+                        meantme, stdtme, meanretie, stdretie, fab, maxicam, rdx, rdy, grx, gry, blx, bly, meanx, meany, meanxe, meanye, prim, ill, contsig, lightsig, slopeg, linkrgb,
+                        resi, sharc, denocont, ghsbpwp, ghsbpwpvalue, savmadl, ghsbwslider, ghssym, ghsautsp);
             }
 
+                       // for (int l = 0; l < 21; l++) {
+                        //    params.locallab.spots.at(sp).madlsav[l] = savmadl[l];
+                       // }
 
+                        LocallabListener::locallabDenoiseLC2 denoiselc2;
+                        denoiselc2.denocontrastaft = denocont;
+                        localldenoiselc2.push_back(denoiselc2);
+            
                         LocallabListener::locallabDenoiseLC denoiselc;
-                        denoiselc.highres = highresi;
-                        denoiselc.nres = nresi; 
-                        denoiselc.highres46 = highresi46;
-                        denoiselc.nres46 = nresi46;
-                        denoiselc.Lhighres =  Lhighresi;
-                        denoiselc.Lnres = Lnresi;
-                        denoiselc.Lhighres46 = Lhighresi46;
-                        denoiselc.Lnres46 = Lnresi46;
+                        denoiselc.highres = resi[0];
+                        denoiselc.nres = resi[1];
+                        denoiselc.highres46 = resi[2];
+                        denoiselc.nres46 = resi[3];
+                        denoiselc.Lhighres = resi[5];
+                        denoiselc.Lnres = resi[4];
+                        denoiselc.Lhighres46 = resi[6];
+                        denoiselc.Lnres46 = resi[7];
                         localldenoiselc.push_back(denoiselc);
-
-                        if (parent->locallListener) {
-                            parent->locallListener->denChanged(localldenoiselc, params.locallab.selspot);
+ 
+                        LocallabListener::locallabDenoiseMAD madllc;
+                        madllc.mad0 = savmadl[0];
+                        madllc.mad1 = savmadl[1];
+                        madllc.mad2 = savmadl[2];
+                        madllc.mad3 = savmadl[3];
+                        madllc.mad4 = savmadl[4];
+                        madllc.mad5 = savmadl[5];
+                        madllc.mad6 = savmadl[6];
+                        madllc.mad7 = savmadl[7];
+                        madllc.mad8 = savmadl[8];
+                        madllc.mad9 = savmadl[9];
+                        madllc.mad10 = savmadl[10];
+                        madllc.mad11 = savmadl[11];
+                        madllc.mad12 = savmadl[12];
+                        madllc.mad13 = savmadl[13];
+                        madllc.mad14 = savmadl[14];
+                        madllc.mad15 = savmadl[15];
+                        madllc.mad16 = savmadl[16];
+                        madllc.mad17 = savmadl[17];
+                        madllc.mad18 = savmadl[18];
+                        madllc.mad19 = savmadl[19];
+                        madllc.mad20 = savmadl[20];
+                        madllc.madlock = params.locallab.spots.at(sp).madllock;
+                        localldenoisemadl.push_back(madllc);
+ 
+                        LocallabListener::locallabsharAFT locsharaft;
+                        locsharaft.autocontrastaft = params.locallab.spots.at(sp).deconvAutoshar;
+                        locsharaft.sharcontrastaft = sharc;
+                        locallsharaft.push_back(locsharaft);
+                        /*
+                        if(locsharaft.autocontrastaft) {
+                            printf("Autoshar\n");
+                        } else {
+                            printf("Pa sautoshar\n");
                         }
-            
-            
+                        */
+                        if (parent->locallListener) {
+                            if(params.locallab.spots.at(sp).expblur){//if not enable disable locallListener to avoid bad GUI behavior
+                                parent->locallListener->denChanged(localldenoiselc, params.locallab.selspot);
+                                if (params.locallab.spots.at(sp).lockmadl) {
+                                    parent->locallListener->madChanged(localldenoisemadl, params.locallab.selspot);
+                                }
+                                parent->locallListener->den2Changed(localldenoiselc2, params.locallab.selspot);
+                            }
+                            parent->locallListener->sharaftChanged(locallsharaft,params.locallab.selspot); 
+                        }
+
             if (sp + 1u < params.locallab.spots.size()) {
                 // do not copy for last spot as it is not needed anymore
                 lastorigCrop->CopyFrom(labnCrop);

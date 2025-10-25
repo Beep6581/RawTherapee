@@ -227,6 +227,10 @@ struct CaptureSharpeningParamsEdited {
     bool deconvradiusOffset;
     bool deconviter;
     bool deconvitercheck;
+    bool showcap;
+    bool noisecap;
+    bool noisecaptype;
+    bool noisecapafter;
     bool isUnchanged() const;
 };
 
@@ -728,6 +732,8 @@ public:
         bool blurMethod;
         bool medMethod;
         bool activlum;
+        bool madlsav[21];
+
         bool noiselumf;
         bool noiselumf0;
         bool noiselumf2;
@@ -751,6 +757,7 @@ public:
         bool detailthr;
         bool locwavcurveden;
         bool locwavcurvehue;
+        bool locwavcurvehuecont;
         bool showmaskblMethodtyp;
         bool CCmaskblcurve;
         bool LLmaskblcurve;
@@ -771,6 +778,15 @@ public:
         bool Lmaskblcurve;
         bool LLmaskblcurvewav;
         bool csthresholdblur;
+        bool denocontrast;
+        bool denoAutocontrast;
+        bool contrshow;
+        bool lockmadl;
+        bool madllock;
+        bool enacontrast;
+        bool denoratio;
+        bool denomask;
+       
         // Tone Mapping
         bool visitonemap;
         bool exptonemap;
@@ -850,6 +866,7 @@ public:
         bool expsharp;
         bool complexsharp;
         bool sharcontrast;
+        bool deconvAutoshar;
         bool sharradius;
         bool sharamount;
         bool shardamping;
@@ -858,6 +875,16 @@ public:
         bool shargam;
         bool sensisha;
         bool inverssha;
+        bool sharshow;
+        bool itercheck;
+        bool methodcap;
+        bool capradius;
+        bool deconvAutoRadius;
+        bool deconvCoBoost;
+        bool deconvCoProt;
+        bool deconvCoLat;
+        bool deconvCogam;
+        bool reparsha;
         // Local Contrast
         bool visicontrast;
         bool expcontrast;

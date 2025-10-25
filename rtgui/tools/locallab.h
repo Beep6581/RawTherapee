@@ -128,8 +128,13 @@ private:
 
     // Locallab tools mask background management data
     std::vector<locallabDenoiseLC> denoiselc;
+    std::vector<locallabDenoiseMAD> madllc;
 
+    std::vector<locallabDenoiseLC2> denoiselc2;
     std::vector<locallabcieBEF> cie_bef;
+
+    std::vector<locallabsharBEF> shar_bef;
+    std::vector<locallabsharAFT> shar_aft;
 
     std::vector<locallabcieLC> cie_lc;
 
@@ -175,7 +180,9 @@ public:
     //Locallab denoise 
     // Locallab Retinex tool min/man management function
     void denChanged(const std::vector<locallabDenoiseLC> &denlc, int selspot) override;
-    
+    void madChanged(const std::vector<locallabDenoiseMAD> &madlc, int selspot) override;
+    void den2Changed(const std::vector<locallabDenoiseLC2> &denlc2, int selspot) override;
+   
     // Locallab CIE tool primaries function
     void cieChanged(const std::vector<locallabcieLC> &cielc, int selspot) override;
 
@@ -185,6 +192,11 @@ public:
 
     // Locallab Log Encoding and Cam16 autocompute function
     void ciebefChanged(const std::vector<locallabcieBEF> &ciebef, int selspot) override;
+
+    // Locallab Sharp
+    void sharbefChanged(const std::vector<locallabsharBEF> &sharbef, int selspot) override;
+    void sharaftChanged(const std::vector<locallabsharAFT> &sharaft, int selspot) override;
+
 
     void sigChanged(const std::vector<locallabcieSIG> &ciesig, int selspot) override;
 

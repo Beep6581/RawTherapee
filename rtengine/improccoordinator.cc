@@ -40,6 +40,7 @@
 #include "tweakoperator.h"
 #include "refreshmap.h"
 #include "utils.h"
+#include "rt_algo.h"
 
 #include "rtgui/options.h"
 
@@ -444,7 +445,6 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                 // || (!params->toneCurve.hrenabled && params->toneCurve.method == "Color" && imgsrc->isRGBSourceModified())) {
                 || (params->toneCurve.hrenabled && !iscolor && imgsrc->isRGBSourceModified())
                 || (!params->toneCurve.hrenabled && iscolor && imgsrc->isRGBSourceModified())) {
-
             if (settings->verbose) {
                 if (imgsrc->getSensorType() == ST_BAYER) {
                     printf("Demosaic Bayer image n.%d using method: %s\n", rp.bayersensor.imageNum + 1, rp.bayersensor.method.c_str());
@@ -956,11 +956,12 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                 }
             }
 
-            // Encoding log with locallab
+            // Encoding log with locallab and SE capture sharpening
             if (params->locallab.enabled && !params->locallab.spots.empty()) {
                 const int sizespot = (int)params->locallab.spots.size();
                 const LocallabParams::LocallabSpot defSpot;
                 std::vector<LocallabListener::locallabcieBEF> locallciebef;
+                std::vector<LocallabListener::locallabsharBEF> locallsharbef;
 
                 float *sourceg = nullptr;
                 sourceg = new float[sizespot];
@@ -972,6 +973,8 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                 log = new bool[sizespot];
                 bool *cie = nullptr;
                 cie = new bool[sizespot];
+                bool *shar = nullptr;
+                shar = new bool[sizespot];
                 bool *autocomput = nullptr;
                 autocomput = new bool[sizespot];
                 float *blackev = nullptr;
@@ -992,6 +995,10 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                 blackslog = new int[sizespot];
                 bool *blackredu = nullptr;
                 blackredu = new bool[sizespot];
+                bool *autoradius = nullptr;
+                autoradius = new bool[sizespot];
+                float *caprad = nullptr;
+                caprad = new float[sizespot];
 
                 float *locx = nullptr;
                 locx = new float[sizespot];
@@ -1009,6 +1016,7 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                 for (int sp = 0; sp < sizespot; sp++) {
                     log[sp] = params->locallab.spots.at(sp).explog;
                     cie[sp] = params->locallab.spots.at(sp).expcie;
+                    shar[sp] = params->locallab.spots.at(sp).expsharp;
                     autocomput[sp] = params->locallab.spots.at(sp).autocompute;
                     autocie[sp] = params->locallab.spots.at(sp).Autograycie;
                     blackev[sp] = params->locallab.spots.at(sp).blackEv;
@@ -1029,14 +1037,51 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                     centy[sp] = params->locallab.spots.at(sp).centerY / 2000.0 + 0.5;
                     blackredu[sp] = (params->locallab.spots.at(sp).smoothciemet == "gamnorol") || (params->locallab.spots.at(sp).smoothciemet == "gam") || (params->locallab.spots.at(sp).smoothciemet == "level") || (params->locallab.spots.at(sp).smoothciemet == "sigm") || (params->locallab.spots.at(sp).sigq12) || (params->locallab.spots.at(sp).sigjz12);
 
-                    const bool fullimstd = params->locallab.spots.at(sp).fullimage;//for log encoding standard
-                    const bool fullimjz = true;//always force fullimage in log encoding Jz - always possible to put a checkbox if need
+                   // const bool fullimstd = params->locallab.spots.at(sp).fullimage;//for log encoding standard
+                   // const bool fullimjz = true;//always force fullimage in log encoding Jz - always possible to put a checkbox if need
 
+                    //to auto sharp Capture
+                    autoradius[sp] = params->locallab.spots.at(sp).deconvAutoRadius;
+                    caprad[sp] = params->locallab.spots.at(sp).capradius;
+                    float kradreduc = 1.f;
+                    if(params->pdsharpening.enabled) {// reduce value if Capture Sharpening RAW used
+                        kradreduc = 0.9f;
+                    }
+                    if (shar[sp] && autoradius[sp]){//calculate auto radius deconvolution.
+                        float rad = -1.f;
+                        if (imgsrc->getDeconvAutoRadius_capturesharpening_SE(&rad)) {//To call Capture Sharpening from Selective Editing
+                            caprad[sp] = kradreduc * rad;
+                        } else {
+                            rad = -1.f;
+                        }
+                       
+                    }
+                        params->locallab.spots.at(sp).capradius = caprad[sp];
+                        params->locallab.spots.at(sp).deconvAutoRadius = autoradius[sp];
+                        
+                        
+                        
+                 //       params->locallab.spots.at(sp).deconvAutoshar = autocontrast[sp];
+ 
+                       
+                        LocallabListener::locallabsharBEF locsharbef;
+                        locsharbef.capradiusbef = caprad[sp];
+                        locsharbef.autoradiusbef = autoradius[sp];
+                        locallsharbef.push_back(locsharbef);
+ 
+                        if (locallListener) {
+                            locallListener->sharbefChanged(locallsharbef,params->locallab.selspot); 
+                        }
+                        
+                    
+                    //end sharp capture
                     if ((log[sp] && autocomput[sp]) || (cie[sp] && autocie[sp])) {
                         constexpr int SCALE = 10;
                         int fw, fh, tr = TR_NONE;
                         imgsrc->getFullSize(fw, fh, tr);
                         PreviewProps pp(0, 0, fw, fh, SCALE);
+                        const bool fullimstd = params->locallab.spots.at(sp).fullimage;//for log encoding standard
+                        const bool fullimjz = true;//always force fullimage in log encoding Jz - always possible to put a checkbox if need
 
                         float ysta = std::max(static_cast<float>(centy[sp] - locyT[sp]), 0.f);
                         float yend = std::min(static_cast<float>(centy[sp] + locy[sp]), 1.f);
@@ -1109,7 +1154,10 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                 delete [] sourceg;
                 delete [] cie;
                 delete [] log;
+                delete [] shar;
                 delete [] autocomput;
+                delete [] autoradius;
+                delete [] caprad;
             }
         }
 
@@ -1160,6 +1208,7 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
             std::vector<LocallabListener::locallabshGHSbw2> locallshgshbw2;
             std::vector<LocallabListener::locallabsetLC> locallsetlc;
             std::vector<LocallabListener::locallabcieSIG> locallciesig;
+            
             huerefs.resize(params->locallab.spots.size());
             huerefblurs.resize(params->locallab.spots.size());
             chromarefblurs.resize(params->locallab.spots.size());
@@ -1187,6 +1236,9 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
             mainfp = new int[sizespot];
             int *scopefp = nullptr;
             scopefp = new int[sizespot];
+            
+            bool *autocontrast = nullptr;
+            autocontrast = new bool[sizespot];
 
             for (int sp = 0; sp < (int)params->locallab.spots.size(); sp++) {
 
@@ -1260,6 +1312,7 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                 const bool loccompwavutili = loccompwavCurve.Set(params->locallab.spots.at(sp).loccompwavcurve);
                 const bool loccomprewavutili = loccomprewavCurve.Set(params->locallab.spots.at(sp).loccomprewavcurve);
                 const bool locwavhueutili = locwavCurvehue.Set(params->locallab.spots.at(sp).locwavcurvehue);
+                const bool locwavhueutilicont = locwavCurvehuecont.Set(params->locallab.spots.at(sp).locwavcurvehuecont);
                 const bool locwavdenutili = locwavCurveden.Set(params->locallab.spots.at(sp).locwavcurveden);
                 const bool locedgwavutili = locedgwavCurve.Set(params->locallab.spots.at(sp).locedgwavcurve);
                 const bool lmasutili_wav = loclmasCurve_wav.Set(params->locallab.spots.at(sp).LLmask_curvewav);
@@ -1376,6 +1429,9 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                 huerefp[sp] = huer;
                 chromarefp[sp] = chromar;
                 lumarefp[sp] = lumar;
+                
+                autocontrast[sp] = params->locallab.spots.at(sp).deconvAutoshar;
+
 
                 CurveFactory::complexCurvelocal(ecomp, black / 65535., hlcompr, hlcomprthresh, shcompr, br, cont, lumar,
                                                 hltonecurveloc, shtonecurveloc, tonecurveloc, lightCurveloc, avg,
@@ -1398,16 +1454,12 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                 float Tmax;
                 int lastsav;
 
-                float highresi = 0.f;
-                float nresi = 0.f;
-                float highresi46 = 0.f;
-                float nresi46 = 0.f;
-                float Lhighresi = 0.f;
-                float Lnresi = 0.f;
-                float Lhighresi46 = 0.f;
-                float Lnresi46 = 0.f;
-                int ghsbpwp[2] = {0, 0};//infos Black and white point
-                float ghsbpwpvalue[2] = {0.f, 1.f};//infos Black and white point                
+                float resi[8];             
+                float sharc = 0.f;
+                float denocont = 0.f;
+                int ghsbpwp[2] = {0, 0};
+                float ghsbpwpvalue[2] = {0.f, 1.f};                
+                float savmadl[21];//just to intialize, not used here - but in dcrop.cc
                 float ghsbwslider[2] = {0.f, 1.f};// Black and white point auto sliders
                 float ghssym = 0.f;//info symmetry point
                 bool ghsauto = params->locallab.spots.at(sp).ghs_autobw;
@@ -1429,7 +1481,6 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                               lmasklocalcurve, localmaskutili,
                               lmaskexplocalcurve, localmaskexputili,
                               lmaskSHlocalcurve, localmaskSHutili,
-                            //  ghslocalcurve, localghsutili,
                               lmaskviblocalcurve, localmaskvibutili,
                               lmasktmlocalcurve, localmasktmutili,
                               lmaskretilocalcurve, localmaskretiutili,
@@ -1469,19 +1520,17 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                               loccompwavCurve, loccompwavutili,
                               loccomprewavCurve, loccomprewavutili,
                               locwavCurvehue, locwavhueutili,
+                              locwavCurvehuecont, locwavhueutilicont,
                               locwavCurveden, locwavdenutili,
                               locedgwavCurve, locedgwavutili,
                               loclmasCurve_wav, lmasutili_wav,
                               LHutili, HHutili, CHutili, HHutilijz, CHutilijz, LHutilijz, cclocalcurve, localcutili, rgblocalcurve, localrgbutili, localexutili, exlocalcurve, hltonecurveloc, shtonecurveloc, tonecurveloc, lightCurveloc,
                               huerblu, chromarblu, lumarblu, huer, chromar, lumar, sobeler, lastsav, false, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
                               minCD, maxCD, mini, maxi, Tmean, Tsigma, Tmin, Tmax,
-                              meantm, stdtm, meanreti, stdreti, fab, maxicam, rdx, rdy, grx, gry, blx, bly, meanx, meany, meanxe, meanye, prim, ill, contsig, lightsig,
-                              highresi, nresi, highresi46, nresi46, Lhighresi, Lnresi, Lhighresi46, Lnresi46, slopeg, linkrgb,
-                              ghsbpwp, ghsbpwpvalue, ghsbwslider, ghssym, ghsautsp);
-
+                              meantm, stdtm, meanreti, stdreti, fab, maxicam, rdx, rdy, grx, gry, blx, bly, meanx, meany, meanxe, meanye, prim, ill, contsig, lightsig, slopeg, linkrgb,
+                              resi, sharc, denocont, ghsbpwp, ghsbpwpvalue, savmadl, ghsbwslider, ghssym, ghsautsp);
 
                 fabrefp[sp] = fab;
-
                 //Illuminant
                 float w_x = 0.3f;
                 float w_y = 0.3f;
@@ -1623,8 +1672,6 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                     fabrefp[sp] = fab;
 
                 }
-             
-
                 
                 // new used linked to global and scope 
                 mainfp[sp] = 0;
@@ -1709,6 +1756,8 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
             delete [] fabrefp;
             delete [] mainfp;
             delete [] scopefp;
+            delete [] autocontrast;
+            
             ipf.lab2rgb(*nprevl, *oprevi, params->icm.workingProfile);
             //*************************************************************
             // end locallab
