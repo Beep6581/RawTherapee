@@ -5754,7 +5754,7 @@ void LocallabShadow::convertParamToSimple()
     // Set hidden specific GUI widgets in Simple mode to default spot values
     ghsMethod->set_active(0);
     ghs_inv->set_active(false);
-    ghs_inv->set_sensitive(false);
+   // ghs_inv->set_sensitive(false);
 
     gamSH->setValue(defSpot.gamSH);
     sloSH->setValue(defSpot.sloSH);
@@ -6202,6 +6202,9 @@ void LocallabShadow::updateShadowGUImask()
         if (mode == Expert || mode == Normal) { // Keep widget hidden in Simple mode
             exprecovs->show();
             ghsMethod->show();
+            ghs_inv->show();
+        } else {
+            ghs_inv->hide();
         }
         if (ghsMethod->get_active_row_number() == 2 && shMethod->get_active_row_number() == 2) {
             Lab_Frame->show();
@@ -6310,7 +6313,10 @@ void LocallabShadow::updateShadowGUIshmet()
         ghs_slope->hide();
         Lab_Frame->hide();
         BP_Frame->show();
-        ghs_inv->show();
+        ghs_inv->hide();
+        if (mode == Expert || mode == Normal) {
+            ghs_inv->show();
+        }
         if(ghs_D->getValue() > 0.002  || ghs_D->getValue() == 0.f) {
             ghs_BLP->set_sensitive(false);
             ghs_HLP->set_sensitive(false);
