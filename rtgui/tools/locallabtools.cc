@@ -4581,7 +4581,6 @@ LocallabShadow::LocallabShadow():
     BP_Frame->add(*BPBox);
     ghsBox2->pack_start(*BP_Frame);
     ghsBox2->pack_start(*ghs_inv);
-    //ghs_inv->set_sensitive(false);//issue 7528
 
     pack_start(*ghsBox2);
     
@@ -5047,6 +5046,7 @@ void LocallabShadow::read(const rtengine::procparams::ProcParams* pp, const Para
         if(ghs_D->getValue() > 0.002 || ghs_D->getValue() == 0.f) {
             ghs_BLP->set_sensitive(false);
             ghs_HLP->set_sensitive(false);
+            ghs_inv->set_sensitive(false);
             ghs_autobw->set_sensitive(false);
             ghs_LC->set_sensitive(true); 
             ghs_MID->set_sensitive(true);        
@@ -5054,9 +5054,12 @@ void LocallabShadow::read(const rtengine::procparams::ProcParams* pp, const Para
             if (ghs_autobw->get_active()) {
                 ghs_BLP->set_sensitive(false);
                 ghs_HLP->set_sensitive(false);
+                ghs_inv->set_sensitive(false);              
             } else {
                 ghs_BLP->set_sensitive(true);
-                ghs_HLP->set_sensitive(true);                
+                ghs_HLP->set_sensitive(true);
+                ghs_inv->set_sensitive(true);
+                
             }
             ghs_autobw->set_sensitive(true);
             if(ghs_inv->get_active()) {
@@ -5115,7 +5118,6 @@ void LocallabShadow::read(const rtengine::procparams::ProcParams* pp, const Para
         ghs_HP->getValue(),
         ghs_inv->get_active(),
         *labgridghs);
-       // ghs_inv->set_active(false);   //issue 7528 
     // Enable all listeners
     enableListener();
 
@@ -5314,8 +5316,7 @@ void LocallabShadow::adjusterChanged(Adjuster* a, double newval)
                 } else {
                     ghs_BLP->set_sensitive(true);
                     ghs_HLP->set_sensitive(true);
-                    ghs_inv->set_sensitive(true);
-                    
+                    ghs_inv->set_sensitive(true);                  
                 }
                 ghs_autobw->set_sensitive(true);
                 if(ghs_inv->get_active()) {
@@ -5753,8 +5754,8 @@ void LocallabShadow::convertParamToSimple()
     disableListener();
     // Set hidden specific GUI widgets in Simple mode to default spot values
     ghsMethod->set_active(0);
-    ghs_inv->set_active(false);//issue 7528
-    ghs_inv->set_sensitive(false);//issue 7528
+    ghs_inv->set_active(false);
+    ghs_inv->set_sensitive(false);
 
     gamSH->setValue(defSpot.gamSH);
     sloSH->setValue(defSpot.sloSH);
@@ -6181,11 +6182,11 @@ void LocallabShadow::updateShadowGUImask()
             if (ghs_autobw->get_active()) {
                 ghs_BLP->set_sensitive(false);
                 ghs_HLP->set_sensitive(false);
+                ghs_inv->set_sensitive(false);              
             } else {
                 ghs_BLP->set_sensitive(true);
                 ghs_HLP->set_sensitive(true);
                 ghs_inv->set_sensitive(true);
-
             }            
             ghs_autobw->set_sensitive(true);
             if(ghs_inv->get_active()) {
@@ -6312,8 +6313,6 @@ void LocallabShadow::updateShadowGUIshmet()
         Lab_Frame->hide();
         BP_Frame->show();
         ghs_inv->show();
-        //ghs_inv->set_active(false);//issue 7528
-        //ghs_inv->set_sensitive(false);//issue 7528
         if(ghs_D->getValue() > 0.002  || ghs_D->getValue() == 0.f) {
             ghs_BLP->set_sensitive(false);
             ghs_HLP->set_sensitive(false);
@@ -6325,11 +6324,11 @@ void LocallabShadow::updateShadowGUIshmet()
             if (ghs_autobw->get_active()) {
                 ghs_BLP->set_sensitive(false);
                 ghs_HLP->set_sensitive(false);
+                ghs_inv->set_sensitive(false);
             } else {
                 ghs_BLP->set_sensitive(true);
                 ghs_HLP->set_sensitive(true);
-                ghs_inv->set_sensitive(true);
-                
+                ghs_inv->set_sensitive(true);               
             }          
             ghs_autobw->set_sensitive(true);
             if(ghs_inv->get_active()) {
