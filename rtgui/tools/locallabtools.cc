@@ -5093,7 +5093,6 @@ void LocallabShadow::read(const rtengine::procparams::ProcParams* pp, const Para
         ghs_smooth->set_active(spot.ghs_smooth);
         ghs_autobw->set_active(spot.ghs_autobw);
         ghs_inv->set_active(spot.ghs_inv);
-        //ghs_inv->set_active(false);//issue 7528
         enaSHMask->set_active(spot.enaSHMask);
         CCmaskSHshape->setCurve(spot.CCmaskSHcurve);
         LLmaskSHshape->setCurve(spot.LLmaskSHcurve);
@@ -6061,7 +6060,6 @@ void LocallabShadow::ghs_invChanged()
             listener->panelChanged(EvlocallabshowmaskMethod, "");
         }
     }
- //issue 7528
     if (isLocActivated && exp->getEnabled()) {
         if (listener) {
             if (ghs_inv->get_active()) {
