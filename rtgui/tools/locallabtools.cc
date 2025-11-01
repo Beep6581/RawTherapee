@@ -5754,7 +5754,6 @@ void LocallabShadow::convertParamToSimple()
     // Set hidden specific GUI widgets in Simple mode to default spot values
     ghsMethod->set_active(0);
     ghs_inv->set_active(false);
-   // ghs_inv->set_sensitive(false);
 
     gamSH->setValue(defSpot.gamSH);
     sloSH->setValue(defSpot.sloSH);
@@ -6070,8 +6069,7 @@ void LocallabShadow::ghs_invChanged()
                                        M("GENERAL_DISABLED") + " (" + escapeHtmlChars(getSpotName()) + ")");
             }
         }
-    }
-  
+    } 
     update_ghs_curve(
         ghs_B->getValue(),
         ghs_D->getValue(),
