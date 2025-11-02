@@ -602,7 +602,7 @@ HISTORY_MSG_352;W - Background
 HISTORY_MSG_353;W - ES - Gradient sensitivity
 HISTORY_MSG_354;W - ES - Enhanced
 HISTORY_MSG_355;W - ES - Threshold low
-HISTORY_MSG_356;W - ES - Threshold high
+HISTORY_MSG_356;W - ES - Edge enhancement
 HISTORY_MSG_357;W - Denoise - Link with ES
 HISTORY_MSG_358;W - Gamut - CH
 HISTORY_MSG_359;Hot/Dead - Threshold
@@ -4519,7 +4519,7 @@ TP_WAVELET_LOWTHR_TOOLTIP;Prevents amplification of fine textures and noise.
 TP_WAVELET_MEDGREINF;First level
 TP_WAVELET_MEDI;Reduce artifacts in blue sky
 TP_WAVELET_MEDILEV;Edge detection
-TP_WAVELET_MEDILEV_TOOLTIP;When you enable Edge Detection, it is recommanded:\n- to disabled low contrast levels to avoid artifacts,\n- to use high values of gradient sensitivity.\n\nYou can modulate the strength with 'refine' from Denoise and Refine.
+TP_WAVELET_MEDILEV_TOOLTIP;When you enable Edge Detection, it is recommended:\n- to disabled low contrast levels to avoid artifacts,\n- to use high values of gradient sensitivity.\n\nYou can modulate the strength with 'refine' from Denoise and Refine.
 TP_WAVELET_MERGEC;Merge chroma
 TP_WAVELET_MERGEL;Merge luma
 TP_WAVELET_MIXCONTRAST;Reference

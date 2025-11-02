@@ -7189,7 +7189,7 @@ void LocallabVibrance::enabledChanged()
                 listener->panelChanged(EvLocenavibrance,
                                        M("GENERAL_ENABLED") + " (" + escapeHtmlChars(getSpotName()) + ")");
             } else {
-                listener->panelChanged(EvLocenashadhigh,
+                listener->panelChanged(EvLocenavibrance,
                                        M("GENERAL_DISABLED") + " (" + escapeHtmlChars(getSpotName()) + ")");
             }
         }
