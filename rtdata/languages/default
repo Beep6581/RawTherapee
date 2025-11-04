@@ -3094,9 +3094,7 @@ TP_LOCALLAB_BUTTON_DEL;Delete
 TP_LOCALLAB_BUTTON_DUPL;Duplicate
 TP_LOCALLAB_BUTTON_REN;Rename
 TP_LOCALLAB_BUTTON_VIS;Show/Hide
-//TP_LOCALLAB_BWCIE_TOOLTIP;Only usable in Global mode or if Scope is set to 100.\nThis ‘Black and White’ option allows you to better adjust all the sliders (gamma, slope) and especially the 'Tone Mapping Operators', particularly for controlling low and high lights, because on the histogram you only see the resulting luminance.
 TP_LOCALLAB_BWCIE_TOOLTIP;Only usable in Global mode or if Scope is set to 100.\nThe 'Black and White' option shows only the luminance in the histogram making it easier to adjust the shadows and highlights when using the Gamma and Slope sliders and the Tone Mapping Operators.
-
 TP_LOCALLAB_BWEVNONE;None
 TP_LOCALLAB_BWEVNONE11;None
 TP_LOCALLAB_BWEVSIG;Sigmoid
@@ -3854,7 +3852,6 @@ TP_LOCALLAB_SIGMOIDWHITESCIE_TOOLTIP;Allows you, in Automatic when the dynamic r
 TP_LOCALLAB_SIGMOID_TOOLTIP;Allows you to simulate a tone mapping appearance using both the 'Jz' and 'Sigmoid' function. Two sliders:\na) Contrast acts on the shape of the sigmoid curve and consequently on the strength\nb) Skew (Gray point) distributes the action according to the luminance.\n\nThis new version of Sigmoid is incompatible with previous versions 5.11 and earlier.
 TP_LOCALLAB_SIGSLOPJCIE;Slope
 TP_LOCALLAB_SIGTRCCIE;Source Data Adjustments
-TP_LOCALLAB_SIGWHITESCIE;Whites distribution
 TP_LOCALLAB_SLOMASKCOL;Slope
 TP_LOCALLAB_SLOMASK_TOOLTIP;Adjusting Gamma and Slope can provide a soft and artifact-free transformation of the mask by progressively modifying 'L' to avoid any discontinuities.
 TP_LOCALLAB_SLOPESMOOTH;Gray balance (slope)
@@ -3868,15 +3865,12 @@ TP_LOCALLAB_SLOSH;Slope
 TP_LOCALLAB_SMOOTHCIE;Highlight attenuation
 TP_LOCALLAB_SMOOTHCIETH;Attenuation threshold
 TP_LOCALLAB_SMOOTHCIETHTRC;Highlight attenuation threshold
-
 TP_LOCALLAB_SMOOTHCIE_HIGH;Highlight attenuation only
 TP_LOCALLAB_SMOOTHCIE_INV;Invert color
 TP_LOCALLAB_SMOOTHCIE_LNK;Link R, G, & B
 TP_LOCALLAB_SMOOTHCIE_LUM;Luminosity mode
 TP_LOCALLAB_SMOOTHCIE_SCA;Scale Yb Scene
-//TP_LOCALLAB_SMOOTHCIE_TOOLTIP;Complements the processing performed by Gamma, Slope, and Midtones by applying either:\n* asymptotic highlight attenuation,\n* or tone mapping.\nPlease note that this does not replace highlight reconstruction.\n\n* Ev based: attenuates highlights using an exponential function.\n\n* Gamma based: attenuates highlights using a hyperbolic function and partial tone mapping.\n\n* Slope based: uses tone mapping. Slope (gray balance) acts on the dynamic range and affects shadows and contrast. ‘Scale Yb scene’ is a function of White Ev.\n\n* RGB channel slope: similar to Slope based, but differentiable for each R, G, B channel. ‘Attenuation threshold’ modifies mid gray and shadow/highlight balance..\n\n* Sigmoid based: applies Sigmoid tone mapping with the Contrast and Skew sliders. ‘Display white point (cd/m2)’ adjusts the maximum screen luminance. This new version of Sigmoid is incompatible with versions 5.11 and earlier..\n\n* TRC based: applies a simplified Tone Response Curve (TRC) to each R, G, B channel. Modifies the gamma by adjusting the shadow/highlight distribution (levels). ‘Relative gamma mode’ is a simplified method that takes into account the Slope. ‘Highlight attenuation threshold’ reduces the effect on the highlights..\n\n* For the RGB operators ‘RGB channel slope’ and ‘TRC based’, the ‘Invert color’ checkbox simulates a film negative function.
 TP_LOCALLAB_SMOOTHCIE_TOOLTIP;Complements the processing performed by Gamma, Slope and Midtones by applying either:\n* asymptotic highlight attenuation,\n* or tone mapping.\nPlease note that this does not replace highlight reconstruction.\n\n* Ev based: attenuates highlights using an exponential function.\n\n* Gamma based: attenuates highlights using a hyperbolic function and partial tone mapping.\n\n* Slope based: uses tone mapping. Slope (gray balance) acts on the dynamic range and affects shadows and contrast. 'Scale Yb scene' is a function of White Ev.\n\n* RGB channel slope: similar to 'Slope based', but differentiable for each R, G, B channel. Attenuation threshold modifies mid gray and shadow/highlight balance.\n\n* Sigmoid based: applies Sigmoid tone mapping with the Contrast and Skew sliders. Display white point (cd/m2) adjusts the maximum screen luminance. This new version of Sigmoid is incompatible with versions 5.11 and earlier..\n\n* TRC based: applies a simplified Tone Response Curve (TRC) to each individual R, G, B channel. Modifies the gamma by adjusting the shadow/highlight distribution (levels). 'Relative gamma' mode is a simplified method that takes into account the Slope. 'Highlight attenuation threshold' reduces the effect on the highlights.\n\n* For the RGB operators 'RGB channel slope' and 'TRC based', the 'Invert color' checkbox simulates a film negative function.
-
 TP_LOCALLAB_SMOOTHCIE_TRC;Invert color
 TP_LOCALLAB_SMOOTHCIE_TRCREL;Relative gamma mode
 TP_LOCALLAB_SMOOTHCIE_YB;Scale Yb Viewing
@@ -4033,7 +4027,7 @@ TP_PDSHARPENING_NOISE;Presharpening denoise
 TP_PDSHARPENING_NOISEAFTER;Postsharpening denoise
 TP_PDSHARPENING_NOISECAPTYPE;Use Wavelets instead of Median
 TP_PDSHARPENING_NOISE_TOOLTIP;In order for Capture Sharpening to work on noisy or very noisy images, applies either :\n * A light '3x3 soft' to a fairly strong '5x5 strong' median denoising filter in successive gradual iterations prior to Capture Sharpening.\n * Wavelet denoising which has a different, more progressive action, mainly on the first 4 levels of decomposition(high and medium frequency).\n * This helps clarify the contrast mask and allows Contrast Threshold to work, and thus Capture Sharpening to work properly.\n * This also helps to reduce noise in the output image.\n\nBe careful not to use values that are too high so as not to degrade the image. The value that allows the mask to appear (or a little more) is usually sufficient.
-TP_PDSHARPENING_NOISEAFTER_TOOLTIP;For raw images,allows you initial denoising after Capture Sharpening taking into account the mask information.\n * Its main use is to separate the action between structured areas where the noise is barely visible and the often plain background (flat areas) where the noise is very visible.\n\nBe careful not to use values that are too high, you can fine-tune the noise reduction later.
+TP_PDSHARPENING_NOISEAFTER_TOOLTIP;For raw images, allows you initial denoising after Capture Sharpening taking into account the mask information.\n * Its main use is to separate the action between structured areas where the noise is barely visible and the often plain background (flat areas) where the noise is very visible.\n\nBe careful not to use values that are too high, you can fine-tune the noise reduction later.
 TP_PDSHARPENING_CONTRASTRADIUSSE_TOOLTIP;The 'contrast threshold' and 'Capture radius' sliders allow you to control a mask that decides which areas are affected by sharpening and which are left untouched.
 TP_PDSHARPENING_RADIUS_TOOLTIP;When in-camera blurring occurs, the effective resolution is no longer dependent on pixel size and instead, has a radius that increases in proportion to the amount of blurring.\n The purpose of this tool is to reduce this blurring by trying to automatically guess the radius needed to counteract the effect.\n\n You can also choose to adjust the radius yourself bearing in mind that if the value is too low, there will not be enough sharpening and if it is too high, it will lead to strong haloing on the edges. Don’t forget that you are only trying to undo the in-camera blurring.
 TP_PDSHARPENING_RADIUSOFFSET_TOOLTIP;Often images are softer or more blurred in the corners than in the center. The Corner radius boost slider allows you to compensate for this by increasing or decreasing the radius in these areas.\nMoving it to the right increases the sharpening in the outer areas and sliding it to the left will reduce the sharpening.
