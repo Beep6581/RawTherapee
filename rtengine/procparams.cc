@@ -2681,7 +2681,7 @@ ColorManagementParams::ColorManagementParams() :
     wcat(Cat::BRAD),
     wGamma(2.4),//gamma sRGB
     wSlope(12.92),
-    wapsat(1.),
+    wapsat(0.5),
     
     wmidtcie(0.),
     sigmatrc(1.),
