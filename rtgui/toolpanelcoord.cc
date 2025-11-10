@@ -241,6 +241,7 @@ const std::vector<ToolTree> RAW_PANEL_TOOLS = {
         .id = Tool::PD_SHARPENING,
         .children = {},
     },
+
     {
         .id = Tool::SENSOR_BAYER,
         .children = {

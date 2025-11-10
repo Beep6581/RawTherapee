@@ -36,7 +36,7 @@ public:
     void write(rtengine::procparams::ProcParams *pp, ParamsEdited* pedited = nullptr) override;
     void setDefaults(const rtengine::procparams::ProcParams *defParams, const ParamsEdited* pedited = nullptr) override;
     void adjusterChanged(Adjuster *a, double newval) override;
-    void adjusterAutoToggled(Adjuster *a) override;
+    void adjusterAutoToggled(Adjuster *a, bool newval) override;
     void enabledChanged() override;
     void setBatchMode(bool batchMode) override;
     void setAdjusterBehavior(bool bands_add, bool regularization_add, bool pivot_add);

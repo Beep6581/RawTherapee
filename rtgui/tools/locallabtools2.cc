@@ -2112,7 +2112,19 @@ LocallabSharp::LocallabSharp():
     LocallabTool(this, M("TP_LOCALLAB_SHARP_TOOLNAME"), M("TP_LOCALLAB_SHARP"), true),
 
     // Sharpening specific widgets
-    sharcontrast(Gtk::manage(new Adjuster(M("TP_SHARPENING_CONTRAST"), 0, 200, 1, 20))),
+
+    methodcap(Gtk::manage(new MyComboBoxText())),
+    reparsha(Gtk::manage(new Adjuster(M("TP_LOCALLAB_LOGREPART"), 1.0, 100.0, 0.5, 100.0))),   
+    sharcontrast(Gtk::manage(new Adjuster(M("TP_SHARPENING_CONTRAST"), 3, 200, 1, 20))),
+    sharshow(Gtk::manage(new Gtk::CheckButton(M("TP_PDSHARPENING_SHOWCAP")))),
+    capradius(Gtk::manage (new Adjuster (M("TP_SHARPENING_EDRADIUS"), 0.4, 2.5, 0.01, 0.75))),
+    deconvCoBoost(Gtk::manage(new Adjuster(M("TP_SHARPENING_RADIUS_BOOST"), -0.7, 0.7, 0.01, 0))),
+    deconvCoProt(Gtk::manage(new Adjuster(M("TP_SHARPENING_RADIUS_PROT"), 20., 80., 1., 50.))),
+    deconvCoLat(Gtk::manage(new Adjuster(M("TP_SHARPENING_RLD_ITERATIONS"), 0, 100, 1, 25))),
+    deconvCogam(Gtk::manage(new Adjuster(M("TP_LOCALLAB_GAMC"), 0.4, 3.0, 0.05, 1.))),
+    itercheck(Gtk::manage(new Gtk::CheckButton(M("TP_SHARPENING_ITERCHECK")))),
+    capFrame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_SHARCAPFRAME")))),
+    rlFrame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_SHARRLFRAME")))),
     sharblur(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SHARBLUR"), 0.2, 2.0, 0.05, 0.2))),
     shargam(Gtk::manage(new Adjuster(M("TP_LOCALLAB_GAMC"), 0.5, 3.0, 0.05, 1.))),
     sharamount(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SHARAMOUNT"), 1, 100, 1, 100))),
@@ -2124,13 +2136,46 @@ LocallabSharp::LocallabSharp():
     sharFrame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_SHARFRAME")))),
     showmasksharMethod(Gtk::manage(new MyComboBoxText()))
 {
+    
+    auto m = ProcEventMapper::getInstance();
+    //rtengine::ProcEvent EvlocallabenacieMaskall;
+    Evlocallabmethodcap = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_METHODCAP");
+    Evlocallabcapradius = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_CAPRADIUS");
+    Evlocallabautoradiuson = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_AUTOCAPRADIUS");
+    Evlocallabautoradiusoff = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_AUTOCAPRADIUS");
+    Evlocallabsharcontraston = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_AUTOSHAR");
+    Evlocallabsharcontrastoff = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_AUTOSHAR");
+    Evlocallababdconvboost = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_CONVBOOST");
+    Evlocallababdcoprot = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_CONVPROT");
+    Evlocallababdconvlat = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_CONVLAT");
+    Evlocallabsharrepar = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_SHARREPAR");
+    Evlocallababsharshow = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_SHARSHOW");   
+    Evlocallababitercheck = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_SHARITERCHECK");   
+    Evlocallababdconvgam = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_CONVGAM");
     set_orientation(Gtk::ORIENTATION_VERTICAL);
+    capradius->addAutoButton(M("TP_SHARPENING_EDRADIUS_TOOLTIP"));
+    sharcontrast->addAutoButton(M("TP_SHARPENING_CONTRASTAUTO_TOOLTIP"));
+
+    methodcap->append (M("TP_SHARPENING_CAP"));
+    methodcap->append (M("TP_SHARPENING_RLN"));
+    methodcap->show ();
+    methodcapConn = methodcap->signal_changed().connect(sigc::mem_fun(*this, &LocallabSharp::methodcapChanged));
 
     // Parameter Sharpening specific widgets
     sharcontrast->setAdjusterListener(this);
 
+    reparsha->setAdjusterListener(this);
+
     sharradius->setAdjusterListener(this);
 
+    deconvCoBoost->setAdjusterListener(this);
+
+    deconvCoProt->setAdjusterListener(this);
+
+    deconvCoLat->setAdjusterListener(this);    
+    
+    deconvCogam->setAdjusterListener(this);
+    
     sharamount->setAdjusterListener(this);
 
     shardamping->setAdjusterListener(this);
@@ -2143,7 +2188,11 @@ LocallabSharp::LocallabSharp():
 
     sensisha->setAdjusterListener(this);
 
+    capradius->setAdjusterListener(this);
+
     inversshaConn = inverssha->signal_toggled().connect(sigc::mem_fun(*this, &LocallabSharp::inversshaChanged));
+    sharshowConn = sharshow->signal_toggled().connect(sigc::mem_fun(*this, &LocallabSharp::sharshowChanged));
+    itercheckConn = itercheck->signal_toggled().connect(sigc::mem_fun(*this, &LocallabSharp::itercheckChanged));
 
     showmasksharMethod->append(M("TP_LOCALLAB_SHOWMNONE"));
     showmasksharMethod->append(M("TP_LOCALLAB_SHOWMODIF2"));
@@ -2153,14 +2202,35 @@ LocallabSharp::LocallabSharp():
     showmasksharMethodConn = showmasksharMethod->signal_changed().connect(sigc::mem_fun(*this, &LocallabSharp::showmasksharMethodChanged));
 
     // Add Sharpening specific widgets to GUI
+    pack_start(*reparsha);
     pack_start(*sensisha);
+    rlFrame->set_label_align(0.025, 0.5);
+    Gtk::VBox *rlb = Gtk::manage(new Gtk::VBox());
+    
     pack_start(*sharcontrast);
-    pack_start(*sharblur);
-    pack_start(*shargam);
-    pack_start(*sharradius);
+    pack_start(*sharshow);
+    pack_start(*methodcap);
+    pack_start(*capradius);
+    rlb->pack_start(*sharradius);
+    rlb->pack_start(*sharblur);
+    rlb->pack_start(*shargam);
     pack_start(*sharamount);
-    pack_start(*shardamping);
-    pack_start(*shariter);
+    rlb->pack_start(*shardamping);
+    rlb->pack_start(*shariter);
+
+    rlFrame->add(*rlb);
+    pack_start(*rlFrame);
+
+    capFrame->set_label_align(0.025, 0.5);
+    Gtk::VBox *capb = Gtk::manage(new Gtk::VBox());
+
+    capb->pack_start(*deconvCoBoost);
+    capb->pack_start(*deconvCoProt);
+    capb->pack_start(*deconvCoLat);
+    capb->pack_start(*deconvCogam);
+    capb->pack_start(*itercheck);
+    capFrame->add(*capb);
+    pack_start(*capFrame);
 //    pack_start(*sensisha);
     pack_start(*inverssha);
     sharFrame->set_label_align(0.025, 0.5);
@@ -2168,6 +2238,51 @@ LocallabSharp::LocallabSharp():
     sharfBox->pack_start(*showmasksharMethod);
     sharFrame->add(*sharfBox);
     pack_start(*sharFrame);
+}
+
+void LocallabSharp::adjusterAutoToggled(Adjuster* a, bool newval)
+{
+    if (listener && a == capradius) {
+        auto e = (!newval) ? Evlocallabautoradiusoff : Evlocallabautoradiuson;
+        listener->panelChanged(e, newval ? M("GENERAL_ENABLED") : M("GENERAL_DISABLED"));
+    }
+
+    if (listener && a == sharcontrast) {
+        auto e = (!newval) ? Evlocallabsharcontrastoff : Evlocallabsharcontraston;
+        listener->panelChanged(e, newval ? M("GENERAL_ENABLED") : M("GENERAL_DISABLED"));
+    }
+
+}
+
+void LocallabSharp::autoDeconvRadiusChanged(float radius)
+{
+    idle_register.add(
+        [this, radius]() -> bool
+        {
+            disableListener();
+            if (radius < 0) {
+                capradius->delAutoButton();
+            } else {
+                capradius->addAutoButton(M("TP_SHARPENING_RLD_AUTORADIUS_TOOLTIP"));
+                capradius->setValue(radius);
+            }
+            enableListener();
+            return false;
+        }
+    );
+}
+
+void LocallabSharp::autoContrastChanged(float autoContrast)
+{
+    idle_register.add(
+        [this, autoContrast]() -> bool
+        {
+            disableListener();
+            sharcontrast->setValue(autoContrast);
+            enableListener();
+            return false;
+        }
+    );
 }
 
 bool LocallabSharp::isMaskViewActive()
@@ -2180,6 +2295,7 @@ void LocallabSharp::resetMaskView()
     showmasksharMethodConn.block(true);
     showmasksharMethod->set_active(0);
     showmasksharMethodConn.block(false);
+   
 }
 
 void LocallabSharp::getMaskView(int &colorMask, int &colorMaskinv, int &expMask, int &expMaskinv, int &shMask, int &shMaskinv, int &vibMask, int &softMask, int &blMask, int &tmMask, int &retiMask, int &sharMask, int &lcMask, int &cbMask, int &logMask, int &maskMask, int &cieMask)
@@ -2193,11 +2309,24 @@ void LocallabSharp::updateAdviceTooltips(const bool showTooltips)
         exp->set_tooltip_text(M("TP_LOCALLAB_EXPSHARP_TOOLTIP"));
         sensisha->set_tooltip_text(M("TP_LOCALLAB_SENSI_TOOLTIP"));
         shargam->set_tooltip_text(M("TP_LOCALLAB_GAMCOL_TOOLTIP"));
-
+        methodcap->set_tooltip_text(M("TP_LOCALLAB_METHODCAP_TOOLTIP"));
+        capradius->set_tooltip_text(M("TP_PDSHARPENING_CONTRASTRADIUSSE_TOOLTIP"));
+        deconvCoBoost->set_tooltip_text(M("TP_PDSHARPENING_RADIUSOFFSETSE_TOOLTIP"));
+        deconvCoProt->set_tooltip_text(M("TP_SHARPENING_RADIUS_PROTSE_TOOLTIP"));
+        deconvCoLat->set_tooltip_text(M("TP_PDSHARPENING_ITERATIONS_TOOLTIP"));
+        deconvCogam->set_tooltip_text(M("TP_PDSHARPENING_GAMMA_TOOLTIP"));
+        sharcontrast->set_tooltip_text(M("TP_PDSHARPENING_CONTRASTRADIUSSE_TOOLTIP"));
     } else {
         exp->set_tooltip_text("");
         sensisha->set_tooltip_text("");
         shargam->set_tooltip_text("");
+        methodcap->set_tooltip_text("");
+        capradius->set_tooltip_text("");
+        deconvCoBoost->set_tooltip_text("");
+        deconvCoProt->set_tooltip_text("");
+        deconvCoLat->set_tooltip_text("");
+        deconvCogam->set_tooltip_text("");
+        sharcontrast->set_tooltip_text("");
     }
 }
 
@@ -2207,6 +2336,10 @@ void LocallabSharp::disableListener()
 
     inversshaConn.block(true);
     showmasksharMethodConn.block(true);
+    methodcapConn.block(true);
+    sharshowConn.block(true);
+    itercheckConn.block(true);
+    
 }
 
 void LocallabSharp::enableListener()
@@ -2215,6 +2348,10 @@ void LocallabSharp::enableListener()
 
     inversshaConn.block(false);
     showmasksharMethodConn.block(false);
+    methodcapConn.block(false);
+    sharshowConn.block(false);
+    itercheckConn.block(false);
+
 }
 
 //new function Global
@@ -2231,9 +2368,18 @@ void LocallabSharp::updateguisharp(int spottype)
             if(spottype == 3) {
                 sensisha->hide();
                 inverssha->hide();
+                sharFrame->hide();
             } else {
                 sensisha->show();
-                inverssha->show();
+                sharFrame->show();
+                
+                if (methodcap->get_active_row_number() == 1) {
+                    inverssha->show();
+                } else {
+                    inverssha->hide();            
+                }
+                updateGUIToMode(static_cast<modeType>(complexity->get_active_row_number()));
+                
             }
             enableListener();
 
@@ -2258,8 +2404,15 @@ void LocallabSharp::read(const rtengine::procparams::ProcParams* pp, const Param
         exp->set_visible(spot.visisharp);
         exp->setEnabled(spot.expsharp);
         complexity->set_active(spot.complexsharp);
+        if (spot.methodcap == "cap") {
+            methodcap->set_active(0);
+        } else if (spot.methodcap == "rl") {
+            methodcap->set_active(1);
+        }
 
+        reparsha->setValue((double)spot.reparsha);
         sharcontrast->setValue((double)spot.sharcontrast);
+        sharcontrast->setAutoValue(spot.deconvAutoshar);
         sharradius->setValue(spot.sharradius);
         sharamount->setValue((double)spot.sharamount);
         shardamping->setValue((double)spot.shardamping);
@@ -2268,8 +2421,15 @@ void LocallabSharp::read(const rtengine::procparams::ProcParams* pp, const Param
         shargam->setValue(spot.shargam);
         sensisha->setValue((double)spot.sensisha);
         inverssha->set_active(spot.inverssha);
+        sharshow->set_active(spot.sharshow);
+        itercheck->set_active(spot.itercheck);
+        capradius->setValue((double)spot.capradius);
+        capradius->setAutoValue(spot.deconvAutoRadius);
+        deconvCoBoost->setValue((double)spot.deconvCoBoost);
+        deconvCoProt->setValue((double)spot.deconvCoProt);
+        deconvCoLat->setValue((double)spot.deconvCoLat);
+        deconvCogam->setValue((double)spot.deconvCogam);
     }
-
     // Enable all listeners
     enableListener();
 
@@ -2289,8 +2449,15 @@ void LocallabSharp::write(rtengine::procparams::ProcParams* pp, ParamsEdited* pe
         spot.expsharp = exp->getEnabled();
         spot.visisharp = exp->get_visible();
         spot.complexsharp = complexity->get_active_row_number();
+        if (methodcap->get_active_row_number() == 0) {
+            spot.methodcap = "cap";
+        } else if (methodcap->get_active_row_number() == 1) {
+            spot.methodcap = "rl";
+        }
 
+        spot.reparsha = reparsha->getValue();
         spot.sharcontrast = sharcontrast->getIntValue();
+        spot.deconvAutoshar = sharcontrast->getAutoValue();
         spot.sharradius = sharradius->getValue();
         spot.sharamount = sharamount->getIntValue();
         spot.shardamping = shardamping->getIntValue();
@@ -2299,6 +2466,14 @@ void LocallabSharp::write(rtengine::procparams::ProcParams* pp, ParamsEdited* pe
         spot.shargam = shargam->getValue();
         spot.sensisha = sensisha->getIntValue();
         spot.inverssha = inverssha->get_active();
+        spot.sharshow = sharshow->get_active();
+        spot.itercheck = itercheck->get_active();
+        spot.capradius = capradius->getValue();
+        spot.deconvAutoRadius = capradius->getAutoValue();
+        spot.deconvCoBoost = deconvCoBoost->getValue();
+        spot.deconvCoProt = deconvCoProt->getValue();
+        spot.deconvCoLat = deconvCoLat->getValue();
+        spot.deconvCogam = deconvCogam->getValue();
     }
 
     // Note: No need to manage pedited as batch mode is deactivated for Locallab
@@ -2313,13 +2488,20 @@ void LocallabSharp::setDefaults(const rtengine::procparams::ProcParams* defParam
 
         // Set default values for adjuster widgets
         sharcontrast->setDefault((double)defSpot.sharcontrast);
+        reparsha->setDefault((double)defSpot.reparsha);
         sharradius->setDefault(defSpot.sharradius);
         sharamount->setDefault((double)defSpot.sharamount);
         shardamping->setDefault((double)defSpot.shardamping);
         shariter->setDefault((double)defSpot.shariter);
         sharblur->setDefault(defSpot.sharblur);
         shargam->setDefault(defSpot.shargam);
+        capradius->setDefault(defSpot.capradius);
         sensisha->setDefault((double)defSpot.sensisha);
+        deconvCoBoost->setDefault(defSpot.deconvCoBoost);
+        deconvCoProt->setDefault(defSpot.deconvCoProt);
+        deconvCoLat->setDefault(defSpot.deconvCoLat);
+        deconvCogam->setDefault(defSpot.deconvCogam);
+
     }
 
     // Note: No need to manage pedited as batch mode is deactivated for Locallab
@@ -2335,10 +2517,52 @@ void LocallabSharp::adjusterChanged(Adjuster* a, double newval)
             }
         }
 
+        if (a == reparsha) {
+            if (listener) {
+                listener->panelChanged(Evlocallabsharrepar,
+                                       reparsha->getTextValue() + " (" + escapeHtmlChars(getSpotName()) + ")");
+            }
+        }
+
         if (a == sharradius) {
             if (listener) {
                 listener->panelChanged(Evlocallabsharradius,
                                        sharradius->getTextValue() + " (" + escapeHtmlChars(getSpotName()) + ")");
+            }
+        }
+
+        if (a == capradius) {
+            if (listener) {
+                listener->panelChanged(Evlocallabcapradius,
+                                       capradius->getTextValue() + " (" + escapeHtmlChars(getSpotName()) + ")");
+            }
+        }
+        
+        if (a == deconvCoBoost) {
+            if (listener) {
+                listener->panelChanged(Evlocallababdconvboost,
+                                       deconvCoBoost->getTextValue() + " (" + escapeHtmlChars(getSpotName()) + ")");
+            }
+        }
+
+        if (a == deconvCoProt) {
+            if (listener) {
+                listener->panelChanged(Evlocallababdcoprot,
+                                       deconvCoProt->getTextValue() + " (" + escapeHtmlChars(getSpotName()) + ")");
+            }
+        }
+        
+        if (a == deconvCoLat) {
+            if (listener) {
+                listener->panelChanged(Evlocallababdconvlat,
+                                       deconvCoLat->getTextValue() + " (" + escapeHtmlChars(getSpotName()) + ")");
+            }
+        }
+
+        if (a == deconvCogam) {
+            if (listener) {
+                listener->panelChanged(Evlocallababdconvgam,
+                                       deconvCogam->getTextValue() + " (" + escapeHtmlChars(getSpotName()) + ")");
             }
         }
 
@@ -2411,7 +2635,7 @@ void LocallabSharp::convertParamToNormal()
     // Set hidden GUI widgets in Normal mode to default spot values
     sharcontrast->setValue((double)defSpot.sharcontrast);
     sharblur->setValue(defSpot.sharblur);
-   // sharamount->setValue(defSpot.sharamount);
+    //sharamount->setValue(defSpot.sharamount);
     shardamping->setValue((double)defSpot.shardamping);
     shariter->setValue((double)defSpot.shariter);
     shargam->setValue(defSpot.shargam);
@@ -2443,19 +2667,43 @@ void LocallabSharp::updateGUIToMode(const modeType new_type)
     switch (new_type) {
         case Simple:
             // Expert and Normal mode widgets are hidden in Simple mode
-            sharcontrast->hide();
+            
+            sharcontrast->show();
             sharblur->hide();
             sharamount->show();
             shardamping->hide();
             shariter->hide();
             sharFrame->hide();
             shargam->hide();
+            if (methodcap->get_active_row_number() == 1) {//first settings group
+                inverssha->show();
+                reparsha->hide();
+                reparsha->setValue(defSpot.reparsha);
+                sharamount->show();             
+            } else {
+                inverssha->hide();
+                reparsha->show();               
+                sharamount->hide();                
+            }
+            if (methodcap->get_active_row_number() == 0) {//second settings group
+                sharshow->show();
+                itercheck->show();
+                capradius->show();
+                capFrame->show();
+                rlFrame->hide();
+            } else {
+                sharshow->hide();
+                itercheck->hide();
+                capradius->hide();
+                capFrame->hide();
+                rlFrame->show();
+            }
 
             break;
 
         case Normal:
             // Expert mode widgets are hidden in Normal mode
-            sharcontrast->hide();
+            sharcontrast->show();
             sharblur->hide();
             shargam->hide();
             sharamount->show();
@@ -2463,6 +2711,31 @@ void LocallabSharp::updateGUIToMode(const modeType new_type)
             shariter->hide();
             // Specific Simple mode widgets are shown in Normal mode
             sharFrame->show();
+            if (methodcap->get_active_row_number() == 1) {
+                inverssha->show();
+                reparsha->hide();               
+                reparsha->setValue(defSpot.reparsha);
+                sharamount->show();
+            } else {
+                inverssha->hide();
+                reparsha->show();               
+                sharamount->hide();
+               
+            }
+            if (methodcap->get_active_row_number() == 0) {
+                sharshow->show();
+                itercheck->show();
+                capradius->show();
+                capFrame->show();
+                rlFrame->hide();                
+            } else {
+                sharshow->hide();
+                sharamount->show();
+                itercheck->hide();
+                capradius->hide();
+                capFrame->hide();
+                rlFrame->show();
+            }
 
             break;
 
@@ -2471,10 +2744,35 @@ void LocallabSharp::updateGUIToMode(const modeType new_type)
             sharcontrast->show();
             sharblur->show();
             shargam->show();
-            sharamount->show();
             shardamping->show();
             shariter->show();
             sharFrame->show();
+            if (methodcap->get_active_row_number() == 1) {
+                inverssha->show();
+                reparsha->hide();               
+                reparsha->setValue(defSpot.reparsha);
+                sharamount->show();
+            } else {
+                inverssha->hide();
+                reparsha->show();               
+                sharamount->hide();              
+            }
+            if (methodcap->get_active_row_number() == 0) {
+                sharshow->show();
+                itercheck->show();
+                capradius->show();
+                capFrame->show();
+                rlFrame->hide();
+                inverssha->hide();        
+            } else {
+                sharshow->hide();
+                itercheck->hide();
+                capradius->hide();
+                capFrame->hide();
+                rlFrame->show();
+            }
+
+
             if (inverssha->get_active()) {
                 shargam->hide();
                 shargam->setValue(defSpot.shargam);
@@ -2506,6 +2804,70 @@ void LocallabSharp::inversshaChanged()
         }
     }
 }
+
+void LocallabSharp::sharshowChanged()
+{
+    if (isLocActivated && exp->getEnabled()) {
+        if (listener) {
+            if (sharshow->get_active()) {
+                listener->panelChanged(Evlocallababsharshow,
+                                       M("GENERAL_ENABLED") + " (" + escapeHtmlChars(getSpotName()) + ")");
+            } else {
+                listener->panelChanged(Evlocallababsharshow,
+                                       M("GENERAL_DISABLED") + " (" + escapeHtmlChars(getSpotName()) + ")");
+            }
+        }
+    }
+}
+
+void LocallabSharp::itercheckChanged()
+{
+    if (isLocActivated && exp->getEnabled()) {
+        if (listener) {
+            if (itercheck->get_active()) {
+                listener->panelChanged(Evlocallababitercheck,
+                                       M("GENERAL_ENABLED") + " (" + escapeHtmlChars(getSpotName()) + ")");
+            } else {
+                listener->panelChanged(Evlocallababitercheck,
+                                       M("GENERAL_DISABLED") + " (" + escapeHtmlChars(getSpotName()) + ")");
+            }
+        }
+    }
+}
+
+
+void LocallabSharp::methodcapChanged()
+{
+    
+    if (methodcap->get_active_row_number() == 0) {
+        capradius->show();
+        capFrame->show();
+        rlFrame->hide();
+        inverssha->hide();        
+        sharshow->show();
+        itercheck->show();
+        reparsha->show();
+        sharamount->hide();
+        
+    } else {
+        capradius->hide();
+        capFrame->hide();
+        rlFrame->show();
+        inverssha->show();        
+        sharshow->hide();
+        itercheck->hide();
+        reparsha->hide();
+        sharamount->show();
+    }
+
+    if (exp->getEnabled()) {
+        if (listener) {
+            listener->panelChanged(Evlocallabmethodcap, "");
+        }
+    }
+}
+
+
 
 void LocallabSharp::showmasksharMethodChanged()
 {
@@ -8134,9 +8496,15 @@ Locallabcie::Locallabcie():
 
     gamjcie(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SIGGAMJCIE"), 0.7, 10., 0.01, 2.4))),
     slopjcie(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SIGSLOPJCIE"), 0., 500., 0.01, 12.923))),
+    satjcie(Gtk::manage(new Adjuster(M("TP_LOCALLAB_APSATUR"), 0., 2., 0.01, 0.5))),
+    midtcieFrame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_MIDTCIEFRA")))),
+
+    midtciemet(Gtk::manage(new MyComboBoxText())),
+    
     midtcie(Gtk::manage(new Adjuster(M("TP_LOCALLAB_MIDTCIE"), -100, 100, 1, 0))),
     smoothcie(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_SMOOTHCIE_SCA")))),
     smoothcielnk(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_SMOOTHCIE_LNK")))),
+    smoothcieinv(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_SMOOTHCIE_INV")))),
     smoothcietrc(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_SMOOTHCIE_TRC")))),
     smoothcietrcrel(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_SMOOTHCIE_TRCREL")))),
     smoothcieyb(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_SMOOTHCIE_YB")))),
@@ -8153,6 +8521,7 @@ Locallabcie::Locallabcie():
     kslopesmor(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SLOPESMOOTRCR"), 0.75, 1.5, 0.01, 1.))),
     kslopesmog(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SLOPESMOOTRCG"), 0.75, 1.5, 0.01, 1.))),
     kslopesmob(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SLOPESMOOTRCB"), 0.75, 1.5, 0.01, 1.))),
+    smoothciethtrc(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SMOOTHCIETHTRC"), 0.0, 1.5, 0.01, 0.0))),
     contsig(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SMOOTHCONTSIG"), 0.5, 3.5, 0.01, 1.15))),
     skewsig(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SMOOTHSKEWSIG"), -1., 1., 0.01, 0., Gtk::manage(new RTImage("circle-black-small")), Gtk::manage(new RTImage("circle-white-small"))))),
     whitsig(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SMOOTHWHITSIG"), 50, 1000., 0.5, 100.))),
@@ -8238,8 +8607,8 @@ Locallabcie::Locallabcie():
     cie2Frame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_LOG2FRA")))),
     targetGraycie(Gtk::manage(new Adjuster(M("TP_LOCALLAB_TARGET_GRAY"), 5.0, 80.0, 0.1, 18.0))),
     targabscie(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SOURCE_ABS"), 0.01, 16384.0, 0.01, 16.0))),
-    detailcie(Gtk::manage(new Adjuster(M("TP_LOCALLAB_DETAIL"), 0., 100., 0.1, 30.))),
-    detailciejz(Gtk::manage(new Adjuster(M("TP_LOCALLAB_DETAIL"), 0., 100., 0.1, 30.))),
+    detailcie(Gtk::manage(new Adjuster(M("TP_LOCALLAB_DETAIL"), 0., 100., 0.1, 0.))),
+    detailciejz(Gtk::manage(new Adjuster(M("TP_LOCALLAB_DETAIL"), 0., 100., 0.1, 0.))),
     catadcie(Gtk::manage(new Adjuster(M("TP_LOCALLAB_CATAD"), -100., 100., 0.5, 0., Gtk::manage(new RTImage("circle-blue-small")), Gtk::manage(new RTImage("circle-orange-small"))))),
     surroundcie(Gtk::manage(new MyComboBoxText())),
     surrHBoxcie(Gtk::manage(new Gtk::Box())),
@@ -8312,6 +8681,8 @@ Locallabcie::Locallabcie():
     EvlocallabbwevMethod12 = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_CIE_SIGMET");
     Evlocallabgamjcie = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_CIE_GAM");
     Evlocallabslopjcie = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_CIE_SLOP");
+    Evlocallabsatjcie = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_CIE_SAT");
+    Evlocallabmidtciemet = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_CIE_MIDTMET");
     Evlocallabmidtcie = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_CIE_MIDT");
     Evlocallabcontsig = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_CIE_CONTSIG");
     Evlocallabskewsig = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_CIE_SKEWSIG");
@@ -8326,10 +8697,12 @@ Locallabcie::Locallabcie():
     Evlocallabkslopesmob = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_CIE_KSLOPESMOB");
     Evlocallabsmoothcie = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_CIE_SMOOTH");
     Evlocallabsmoothcielnk = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_CIE_SMOOTHLNK");
+    Evlocallabsmoothcieinv = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_CIE_SMOOTHINV");
     Evlocallabsmoothcietrc = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_CIE_SMOOTHTRC");
     Evlocallabsmoothcietrcrel = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_CIE_SMOOTHTRCREL");
     Evlocallabsmoothcieyb = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_CIE_SMOOTHYB");
     Evlocallabsmoothcieth = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_CIE_SMOOTHTH");
+    Evlocallabsmoothciethtrc = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_CIE_SMOOTHTHTRC");
     Evlocallabsmoothcielum = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_CIE_SMOOTH_LUM");
     Evlocallabsmoothciehigh = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_CIE_SMOOTH_HIGH");
     Evlocallabsigcie = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_CIE_SIG");
@@ -8622,6 +8995,16 @@ Locallabcie::Locallabcie():
     logcieFrame->add(*comprBox);
     gamcieBox->pack_start(*logcieFrame);
 
+    midtcieFrame->set_label_align(0.025, 0.5);
+    ToolParamBlock* const ciemetBox = Gtk::manage(new ToolParamBlock());
+
+    midtciemet->append(M("TP_LOCALLAB_MIDTCIEM1"));
+    midtciemet->append(M("TP_LOCALLAB_MIDTCIEM2"));
+    midtciemet->append(M("TP_LOCALLAB_MIDTCIEM3"));
+    midtciemet->set_active(0);
+    
+    midtciemetConn = midtciemet->signal_changed().connect(sigc::mem_fun(*this, &Locallabcie::midtciemetChanged));
+
     ToolParamBlock* const trccieBox = Gtk::manage(new ToolParamBlock());
     ToolParamBlock* const smoothcieBox = Gtk::manage(new ToolParamBlock());
     ToolParamBlock* const primillBox = Gtk::manage(new ToolParamBlock());
@@ -8629,7 +9012,12 @@ Locallabcie::Locallabcie():
 
     trccieBox->pack_start(*gamjcie);
     trccieBox->pack_start(*slopjcie);
-    trccieBox->pack_start(*midtcie);
+    trccieBox->pack_start(*satjcie);
+    ciemetBox->pack_start(*midtciemet);  
+    ciemetBox->pack_start(*midtcie);
+    midtcieFrame->add(*ciemetBox);
+    trccieBox->pack_start(*midtcieFrame);
+    
 
     smoothBox->pack_start(*smoothciemet, Gtk::PACK_EXPAND_WIDGET);
     smoothciemet->append(M("TP_LOCALLAB_CIE_SMOOTH_NONE"));
@@ -8639,6 +9027,8 @@ Locallabcie::Locallabcie():
     smoothciemet->append(M("TP_LOCALLAB_CIE_SMOOTH_LEVELS"));
 	//if need I will add an other smoothciemet  with variable 
     smoothciemet->append(M("TP_LOCALLAB_CIE_SMOOTH_SIG"));
+    smoothciemet->append(M("TP_LOCALLAB_CIE_SMOOTH_TRC"));
+    
     smoothciemet->set_active(0);
 	smoothciemet->set_tooltip_text(M("TP_LOCALLAB_SMOOTHCIE_TOOLTIP"));
 
@@ -8654,6 +9044,7 @@ Locallabcie::Locallabcie():
     ciesmoothBox->pack_start(*skewsig);
     ciesmoothBox->pack_start(*whitsig);
     ciesmoothBox->pack_start(*smoothcielnk);
+    ciesmoothBox->pack_start(*smoothcieinv);
     ciesmoothBox->pack_start(*smoothciehigh);
     ciesmoothBox->pack_start(*smoothcielum);
     ciesmoothBox->pack_start(*smoothcieyb);
@@ -8661,6 +9052,8 @@ Locallabcie::Locallabcie():
     ciesmoothBox->pack_start(*smoothcietrc);
     ciesmoothBox->pack_start(*smoothcietrcrel);
     ciesmoothBox->pack_start(*smoothcieth);
+    ciesmoothBox->pack_start(*smoothciethtrc);
+    
     smoothciemetconn = smoothciemet->signal_changed().connect(sigc::mem_fun(*this, &Locallabcie::smoothciemetChanged));
 
     smoothcieBox->pack_start(*ciesmoothBox);
@@ -8929,6 +9322,7 @@ Locallabcie::Locallabcie():
     logcieqconn = logcieq->signal_toggled().connect(sigc::mem_fun(*this, &Locallabcie::logcieqChanged));
     smoothcieconn = smoothcie->signal_toggled().connect(sigc::mem_fun(*this, &Locallabcie::smoothcieChanged));
     smoothcielnkconn = smoothcielnk->signal_toggled().connect(sigc::mem_fun(*this, &Locallabcie::smoothcielnkChanged));
+    smoothcieinvconn = smoothcieinv->signal_toggled().connect(sigc::mem_fun(*this, &Locallabcie::smoothcieinvChanged));
     smoothcietrcconn = smoothcietrc->signal_toggled().connect(sigc::mem_fun(*this, &Locallabcie::smoothcietrcChanged));
     smoothcietrcrelconn = smoothcietrcrel->signal_toggled().connect(sigc::mem_fun(*this, &Locallabcie::smoothcietrcrelChanged));
     smoothcieybconn = smoothcieyb->signal_toggled().connect(sigc::mem_fun(*this, &Locallabcie::smoothcieybChanged));
@@ -9043,7 +9437,9 @@ Locallabcie::Locallabcie():
     gamjcie->setAdjusterListener(this);
     slopjcie->setAdjusterListener(this);
     slopjcie->setLogScale(100, 1);
+    satjcie->setAdjusterListener(this);
     smoothcieth->setAdjusterListener(this);
+    smoothciethtrc->setAdjusterListener(this);
     midtcie->setAdjusterListener(this);
     whitescie->setAdjusterListener(this);
     blackscie->setAdjusterListener(this);
@@ -9456,6 +9852,7 @@ void Locallabcie::updateAdviceTooltips(const bool showTooltips)
         qtoj->set_tooltip_text(M("TP_LOCALLAB_JZQTOJ_TOOLTIP"));
         logcie->set_tooltip_text(M("TP_LOCALLAB_LOGCIE_TOOLTIP"));
         smoothcie->set_tooltip_text(M("TP_LOCALLAB_SMOOTHCIE_TOOLTIP"));
+        bwcie->set_tooltip_text(M("TP_LOCALLAB_BWCIE_TOOLTIP"));
         slopesmo->set_tooltip_text(M("TP_LOCALLAB_SMOOTHCIE_TOOLTIP"));
  //       smoothciemet->set_tooltip_text(M("TP_LOCALLAB_SMOOTHCIE_TOOLTIP"));
         modecam->set_tooltip_text(M("TP_LOCALLAB_JZMODECAM_TOOLTIP"));
@@ -9533,7 +9930,7 @@ void Locallabcie::updateAdviceTooltips(const bool showTooltips)
         gamutcie->set_tooltip_text(M("TP_LOCALLAB_PRECAMGAMUT_TOOLTIP"));
         shiftxl->set_tooltip_text(M("TC_LOCALLAB_PRIM_SHIFTX_TOOLTIP"));
         shiftyl->set_tooltip_text(M("TC_LOCALLAB_PRIM_SHIFTX_TOOLTIP"));
-
+        satjcie->set_tooltip_text(M("TP_LOCALLAB_SATCIE_TOOLTIP"));
     } else {
         reparcie->set_tooltip_text("");
         recothrescie->set_tooltip_text("");
@@ -9603,6 +10000,7 @@ void Locallabcie::updateAdviceTooltips(const bool showTooltips)
         smoothcie->set_tooltip_text("");
         slopesmo->set_tooltip_text("");
         smoothFrame->set_tooltip_text("");
+        bwcie->set_tooltip_text("");
 
        // smoothciemet->set_tooltip_text("");
         whitescie->set_tooltip_text("");
@@ -9618,6 +10016,7 @@ void Locallabcie::updateAdviceTooltips(const bool showTooltips)
         colorFramecie->set_tooltip_text("");
         shiftxl->set_tooltip_text("");
         shiftyl->set_tooltip_text("");
+        satjcie->set_tooltip_text("");
 
     }
 }
@@ -9644,6 +10043,7 @@ void Locallabcie::disableListener()
     logcieqconn.block(true);
     smoothcieconn.block(true);
     smoothcielnkconn.block(true);
+    smoothcieinvconn.block(true);
     smoothcietrcconn.block(true);
     smoothcietrcrelconn.block(true);
     smoothcieybconn.block(true);
@@ -9663,6 +10063,7 @@ void Locallabcie::disableListener()
     modeQJconn.block(true);
     bwevMethod12Conn.block(true);
     bwevMethodConn.block(true);
+    midtciemetConn.block(true);
     toneMethodcieConn.block(true);
     toneMethodcieConn2.block(true);
     showmaskcieMethodConn.block(true);
@@ -9695,6 +10096,7 @@ void Locallabcie::enableListener()
     logcieqconn.block(false);
     smoothcieconn.block(false);
     smoothcielnkconn.block(false);
+    smoothcieinvconn.block(false);
     smoothcietrcconn.block(false);
     smoothcietrcrelconn.block(false);
     smoothcieybconn.block(false);
@@ -9714,6 +10116,7 @@ void Locallabcie::enableListener()
     modeQJconn.block(false);
     bwevMethod12Conn.block(false);
     bwevMethodConn.block(false);
+    midtciemetConn.block(false);
     toneMethodcieConn.block(false);
     toneMethodcieConn2.block(false);
     showmaskcieMethodConn.block(false);
@@ -9946,6 +10349,8 @@ void Locallabcie::read(const rtengine::procparams::ProcParams* pp, const ParamsE
             smoothciemet->set_active(4);
         } else if (spot.smoothciemet == "sigm") {
             smoothciemet->set_active(5);
+        } else if (spot.smoothciemet == "trc") {
+            smoothciemet->set_active(6);
         }
 
 
@@ -10040,6 +10445,7 @@ void Locallabcie::read(const rtengine::procparams::ProcParams* pp, const ParamsE
         logcieq->set_active(spot.logcieq);
         smoothcie->set_active(spot.smoothcie);
         smoothcielnk->set_active(spot.smoothcielnk);
+        smoothcieinv->set_active(spot.smoothcieinv);
         smoothcietrc->set_active(spot.smoothcietrc);
         smoothcietrcrel->set_active(spot.smoothcietrcrel);
         smoothcieyb->set_active(spot.smoothcieyb);
@@ -10060,6 +10466,7 @@ void Locallabcie::read(const rtengine::procparams::ProcParams* pp, const ParamsE
         sursourcieChanged();
         bwevMethod12Changed();
         bwevMethodChanged();
+        midtciemetChanged();
         normcie12Changed();
         normcieChanged();
         expprecamChanged();
@@ -10074,6 +10481,7 @@ void Locallabcie::read(const rtengine::procparams::ProcParams* pp, const ParamsE
         logcieqChanged();
         smoothcieChanged();
         smoothcielnkChanged();
+        smoothcieinvChanged();
         smoothcietrcChanged();
         smoothcietrcrelChanged();
         smoothcieybChanged();
@@ -10093,6 +10501,14 @@ void Locallabcie::read(const rtengine::procparams::ProcParams* pp, const ParamsE
             bwevMethod->set_active(0);
         } else if (spot.bwevMethod == "sig") {
             bwevMethod->set_active(1);
+        }
+
+        if (spot.midtciemet == "one") {
+            midtciemet->set_active(0);
+        } else if (spot.midtciemet == "two") {
+            midtciemet->set_active(1);
+        } else if (spot.midtciemet == "thr") {
+            midtciemet->set_active(2);
         }
 
         if (spot.sursourcie == "Average") {
@@ -10176,7 +10592,9 @@ void Locallabcie::read(const rtengine::procparams::ProcParams* pp, const ParamsE
         comprcieth->setValue(spot.comprcieth);
         gamjcie->setValue(spot.gamjcie);
         smoothcieth->setValue(spot.smoothcieth);
+        smoothciethtrc->setValue(spot.smoothciethtrc);
         slopjcie->setValue(spot.slopjcie);
+        satjcie->setValue(spot.satjcie);
         contsig->setValue(spot.contsig);
         skewsig->setValue(spot.skewsig);
         whitsig->setValue(spot.whitsig);
@@ -10362,6 +10780,7 @@ void Locallabcie::write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedi
         spot.logcieq = logcieq->get_active();
         spot.smoothcie = smoothcie->get_active();
         spot.smoothcielnk = smoothcielnk->get_active();
+        spot.smoothcieinv = smoothcieinv->get_active();
         spot.smoothcietrc = smoothcietrc->get_active();
         spot.smoothcietrcrel = smoothcietrcrel->get_active();
         spot.smoothcieyb = smoothcieyb->get_active();
@@ -10399,6 +10818,13 @@ void Locallabcie::write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedi
             spot.bwevMethod = "sig";
         }
 
+        if (midtciemet->get_active_row_number() == 0) {
+            spot.midtciemet = "one";
+        } else if (midtciemet->get_active_row_number() == 1) {
+            spot.midtciemet = "two";
+        } else if (midtciemet->get_active_row_number() == 2) {
+            spot.midtciemet = "thr";
+        }
 
         if (smoothciemet->get_active_row_number() == 0) {
             spot.smoothciemet = "none";
@@ -10412,6 +10838,8 @@ void Locallabcie::write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedi
             spot.smoothciemet = "level";
         } else if (smoothciemet->get_active_row_number() == 5) {
             spot.smoothciemet = "sigm";
+        } else if (smoothciemet->get_active_row_number() == 6) {
+            spot.smoothciemet = "trc";
         } 
 
         if (illMethod->get_active_row_number() == 0) {
@@ -10545,7 +10973,9 @@ void Locallabcie::write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedi
         spot.comprcieth = comprcieth->getValue();
         spot.gamjcie = gamjcie->getValue();
         spot.smoothcieth = smoothcieth->getValue();
+        spot.smoothciethtrc = smoothciethtrc->getValue();
         spot.slopjcie = slopjcie->getValue();
+        spot.satjcie = satjcie->getValue();
         spot.contsig = contsig->getValue();
         spot.skewsig = skewsig->getValue();
         spot.whitsig = whitsig->getValue();
@@ -11024,6 +11454,7 @@ void Locallabcie::satcieChanged()
     }
 }
 
+
 void Locallabcie::logcieqChanged()
 {
     if (logcieq->get_active()) {
@@ -11092,13 +11523,23 @@ void Locallabcie::smoothcielnkChanged()
     }
 }
 
-void Locallabcie::smoothcietrcChanged()
+void Locallabcie::smoothcieinvChanged()   
 {
-    if (smoothcietrc->get_active()) {
-        smoothcieth->show();
-    } else {
-        smoothcieth->hide();
+    if (isLocActivated && exp->getEnabled()) {
+        if (listener) {
+            if (smoothcieinv->get_active()) {
+                listener->panelChanged(Evlocallabsmoothcieinv,
+                                       M("GENERAL_ENABLED") + " (" + escapeHtmlChars(getSpotName()) + ")");
+            } else {
+                listener->panelChanged(Evlocallabsmoothcieinv,
+                                       M("GENERAL_DISABLED") + " (" + escapeHtmlChars(getSpotName()) + ")");
+            }
+        }
     }
+}
+
+void Locallabcie::smoothcietrcChanged()
+{  
     if (isLocActivated && exp->getEnabled()) {
         if (listener) {
             if (smoothcietrc->get_active()) {
@@ -11159,12 +11600,13 @@ void Locallabcie::smoothcielumChanged()
 
 void Locallabcie::smoothciehighChanged()
 {
+    /*
     if (smoothciehigh->get_active()) {
         smoothcieth->show();
     } else {
         smoothcieth->hide();
     }
-    
+ */   
     if (isLocActivated && exp->getEnabled()) {
         if (listener) {
             if (smoothciehigh->get_active()) {
@@ -11637,9 +12079,11 @@ void Locallabcie::smoothciemetChanged()
        smoothcie->show();
        smoothcieyb->hide();
        smoothcieth->hide();
+       smoothciethtrc->hide();
        smoothcielum->hide();
        smoothciehigh->hide();
        smoothcielnk->hide();
+       smoothcieinv->hide();
        
     } else if(smoothciemet->get_active_row_number() == 4) {
        contsig->hide();
@@ -11658,14 +12102,15 @@ void Locallabcie::smoothciemetChanged()
        smoothcielum->show();
        smoothciehigh->show();
        smoothcielnk->show();
+       smoothcieinv->show();
        smoothcieyb->show();
-       if (smoothciehigh->get_active()) {
+     //  if (smoothciehigh->get_active()) {
             smoothcieth->show();
-        } else {
-            smoothcieth->hide();
-        }   
+     //   } else {
+      //      smoothcieth->hide();
+     //   }   
 
-    } else if(smoothciemet->get_active_row_number() >= 5) {
+    } else if(smoothciemet->get_active_row_number() == 5) {
        contsig->show();
        skewsig->show();
        whitsig->hide();
@@ -11681,9 +12126,32 @@ void Locallabcie::smoothciemetChanged()
        smoothcietrcrel->hide();
        smoothcieyb->hide();
        smoothcieth->hide();
+       smoothciethtrc->hide();
        smoothcielum->hide();
        smoothciehigh->hide();
        smoothcielnk->hide();
+       smoothcieinv->hide();
+    } else if(smoothciemet->get_active_row_number() == 6) {
+       contsig->hide();
+       skewsig->hide();
+       whitsig->hide();
+       smoothcie->hide();
+       slopesmo->hide();
+       slopesmor->hide();
+       slopesmog->hide();
+       slopesmob->hide();
+       kslopesmor->show();
+       kslopesmog->show();
+       kslopesmob->show();
+       smoothcietrc->show();
+       smoothcietrcrel->show();
+       smoothcieyb->hide();
+       smoothcieth->hide();
+       smoothciethtrc->show();
+       smoothcielum->hide();
+       smoothciehigh->hide();
+       smoothcielnk->hide();
+       smoothcieinv->hide();
     } else {
        contsig->hide();
        skewsig->hide();
@@ -11701,8 +12169,10 @@ void Locallabcie::smoothciemetChanged()
        smoothcielum->hide();
        smoothciehigh->hide();
        smoothcielnk->hide();
+       smoothcieinv->hide();
        smoothcieyb->hide();
        smoothcieth->hide();
+       smoothciethtrc->hide();
     }
     updatecieGUI();
     if (listener) {
@@ -11799,6 +12269,17 @@ void Locallabcie::bwevMethodChanged()
     }
 }
 
+void Locallabcie::midtciemetChanged()
+{
+    const LocallabParams::LocallabSpot defSpot;
+    
+    if (isLocActivated && exp->getEnabled()) {
+        if (listener) {
+            listener->panelChanged(Evlocallabmidtciemet,
+                                   midtciemet->get_active_text());
+        }
+    }
+}
 
 
 
@@ -11974,6 +12455,7 @@ void Locallabcie::updateGUIToMode(const modeType new_type)
             smoothcieyb->hide();
             smoothciehigh->hide();
             smoothcielnk->hide();
+            smoothcieinv->hide();
             sigmoidblcie12->hide();
             if (modecam->get_active_row_number() == 0) {
                 bevwevFrame->show();
@@ -12004,8 +12486,10 @@ void Locallabcie::updateGUIToMode(const modeType new_type)
                     smoothcielum->hide();
                     smoothciehigh->hide();
                     smoothcielnk->hide();
+                    smoothcieinv->hide();
                     smoothcieyb->hide();
                     smoothcieth->hide();
+                    smoothciethtrc->hide();
                 } else if(smoothciemet->get_active_row_number() == 4) {
                     contsig->hide();
                     skewsig->hide();
@@ -12022,14 +12506,17 @@ void Locallabcie::updateGUIToMode(const modeType new_type)
                     smoothcie->show();
                     smoothcielum->hide();
                     smoothcielnk->show();
+                    smoothcieinv->show();
                     smoothciehigh->show();
-                    if (smoothciehigh->get_active()) {
+                //    if (smoothciehigh->get_active()) {
                        smoothcieth->show();
-                    } else {
-                        smoothcieth->hide();
-                    }   
+                //    } else {
+                //        smoothcieth->hide();
+                //    } 
+                    smoothciethtrc->hide();
+                    
                     smoothcieyb->hide();
-                } else if(smoothciemet->get_active_row_number() >= 5) {
+                } else if(smoothciemet->get_active_row_number() == 5) {
                     slopesmo->hide();
                     slopesmor->hide();
                     slopesmog->hide();
@@ -12041,13 +12528,36 @@ void Locallabcie::updateGUIToMode(const modeType new_type)
                     smoothcietrcrel->hide();
                     smoothcieyb->hide();
                     smoothcieth->hide();
+                    smoothciethtrc->hide();
                     smoothcielum->hide();
                     smoothciehigh->hide();
                     smoothcielnk->hide();
+                    smoothcieinv->hide();
                     contsig->show();
                     smoothcie->hide();
                     skewsig->show();
                     whitsig->hide();
+                } else if(smoothciemet->get_active_row_number() == 6) {
+                    contsig->hide();
+                    skewsig->hide();
+                    whitsig->hide();
+                    smoothcie->hide();
+                    slopesmo->hide();
+                    slopesmor->hide();
+                    slopesmog->hide();
+                    slopesmob->hide();
+                    kslopesmor->show();
+                    kslopesmog->show();
+                    kslopesmob->show();
+                    smoothcietrc->show();
+                    smoothcietrcrel->show();
+                    smoothcieyb->hide();
+                    smoothcieth->hide();
+                    smoothciethtrc->show();
+                    smoothcielum->hide();
+                    smoothciehigh->hide();
+                    smoothcielnk->hide();
+                    smoothcieinv->hide();
 
                 } else {
                     contsig->hide();
@@ -12066,8 +12576,10 @@ void Locallabcie::updateGUIToMode(const modeType new_type)
                     smoothcielum->hide();
                     smoothciehigh->hide();
                     smoothcielnk->hide();
+                    smoothcieinv->hide();
                     smoothcieyb->hide();
                     smoothcieth->hide();
+                    smoothciethtrc->hide();
                 }
             } else {
                 slopesmo->hide();
@@ -12077,6 +12589,7 @@ void Locallabcie::updateGUIToMode(const modeType new_type)
                 slopesmog->hide();
                 slopesmob->hide();
                 smoothcieth->hide();
+                smoothciethtrc->hide();
             }
 
             if (modecam->get_active_row_number() == 1) {
@@ -12211,8 +12724,10 @@ void Locallabcie::updateGUIToMode(const modeType new_type)
                     smoothcielum->hide();
                     smoothciehigh->hide();
                     smoothcielnk->hide();
+                    smoothcieinv->hide();
                     smoothcieyb->hide();
                     smoothcieth->hide();
+                    smoothciethtrc->hide();
                 } else if(smoothciemet->get_active_row_number() == 4) {
                     contsig->hide();
                     skewsig->hide();
@@ -12230,13 +12745,16 @@ void Locallabcie::updateGUIToMode(const modeType new_type)
                     smoothcielum->hide();
                     smoothciehigh->show();
                     smoothcielnk->show();
+                    smoothcieinv->show();
                     smoothcieyb->hide();
-                    if (smoothciehigh->get_active()) {
+                 //   if (smoothciehigh->get_active()) {
                         smoothcieth->show();
-                    } else {
-                        smoothcieth->hide();
-                    }   
-                } else if(smoothciemet->get_active_row_number() >= 5) {
+                 //   } else {
+                 //       smoothcieth->hide();
+                 //   } 
+                    smoothciethtrc->hide();
+
+                } else if(smoothciemet->get_active_row_number() == 5) {
                     contsig->show();
                     skewsig->show();
                     whitsig->hide();
@@ -12253,9 +12771,35 @@ void Locallabcie::updateGUIToMode(const modeType new_type)
                     smoothcielum->hide();
                     smoothciehigh->hide();
                     smoothcielnk->hide();
+                    smoothcieinv->hide();
                     smoothcieyb->hide();
                     smoothcieth->hide();
+                    smoothciethtrc->hide();
+
                     smoothcie->hide();
+                } else if(smoothciemet->get_active_row_number() == 6) {
+                    contsig->hide();
+                    skewsig->hide();
+                    whitsig->hide();
+                    smoothcie->hide();
+                    slopesmo->hide();
+                    slopesmor->hide();
+                    slopesmog->hide();
+                    slopesmob->hide();
+                    kslopesmor->show();
+                    kslopesmog->show();
+                    kslopesmob->show();
+                    smoothcietrc->show();
+                    smoothcietrcrel->show();
+                    smoothcieyb->hide();
+                    smoothcieth->hide();
+                    smoothciethtrc->show();
+
+                    smoothcielum->hide();
+                    smoothciehigh->hide();
+                    smoothcielnk->hide();
+                    smoothcieinv->hide();
+                    
                 } else {
                     contsig->hide();
                     skewsig->hide();
@@ -12273,8 +12817,10 @@ void Locallabcie::updateGUIToMode(const modeType new_type)
                     smoothcielum->hide();
                     smoothciehigh->hide();
                     smoothcielnk->hide();
+                    smoothcieinv->hide();
                     smoothcieyb->hide();
                     smoothcieth->hide();
+                    smoothciethtrc->hide();
                 }
             }
 
@@ -12406,8 +12952,10 @@ void Locallabcie::updateGUIToMode(const modeType new_type)
                     smoothcielum->hide();
                     smoothciehigh->hide();
                     smoothcielnk->hide();
+                    smoothcieinv->hide();
                     smoothcieyb->hide();
                     smoothcieth->hide();
+                    smoothciethtrc->hide();
                 } else if(smoothciemet->get_active_row_number() == 4) {
                     contsig->hide();
                     skewsig->hide();
@@ -12425,13 +12973,16 @@ void Locallabcie::updateGUIToMode(const modeType new_type)
                     smoothcielum->show();
                     smoothciehigh->show();
                     smoothcielnk->show();
+                    smoothcieinv->show();
                     smoothcieyb->show();
-                    if (smoothciehigh->get_active()) {
+                 //   if (smoothciehigh->get_active()) {
                         smoothcieth->show();
-                    } else {
-                        smoothcieth->hide();
-                    }   
-                } else if(smoothciemet->get_active_row_number() >= 5) {
+                 //   } else {
+                  //      smoothcieth->hide();
+                 //   }
+                    smoothciethtrc->hide();
+                    
+                } else if(smoothciemet->get_active_row_number() == 5) {
                     contsig->show();
                     skewsig->show();
                     whitsig->show();
@@ -12447,9 +12998,34 @@ void Locallabcie::updateGUIToMode(const modeType new_type)
                     smoothcielum->hide();
                     smoothciehigh->hide();
                     smoothcielnk->hide();
+                    smoothcieinv->hide();
                     smoothcieyb->hide();
                     smoothcieth->hide();
+                    smoothciethtrc->hide();
+
                     smoothcie->hide();
+                } else if(smoothciemet->get_active_row_number() == 6) {
+                    contsig->hide();
+                    skewsig->hide();
+                    whitsig->hide();
+                    smoothcie->hide();
+                    slopesmo->hide();
+                    slopesmor->hide();
+                    slopesmog->hide();
+                    slopesmob->hide();
+                    kslopesmor->show();
+                    kslopesmog->show();
+                    kslopesmob->show();
+                    smoothcietrc->show();
+                    smoothcietrcrel->show();
+                    smoothcieyb->hide();
+                    smoothcieth->hide();
+                    smoothciethtrc->show();
+
+                    smoothcielum->hide();
+                    smoothciehigh->hide();
+                    smoothcielnk->hide();
+                    smoothcieinv->hide();
 
                 } else {
                     contsig->hide();
@@ -12467,9 +13043,11 @@ void Locallabcie::updateGUIToMode(const modeType new_type)
                     smoothcie->hide();
                     smoothciehigh->hide();
                     smoothcielnk->hide();
+                    smoothcieinv->hide();
                     smoothcielum->hide();
                     smoothcieyb->hide();
                     smoothcieth->hide();
+                    smoothciethtrc->hide();
                 }
             }
 
@@ -12535,8 +13113,11 @@ void Locallabcie::updateGUIToMode(const modeType new_type)
                     smoothcielum->hide();
                     smoothciehigh->hide();
                     smoothcielnk->hide();
+                    smoothcieinv->hide();
                     smoothcieyb->hide();
                     smoothcieth->hide();
+                    smoothciethtrc->hide();
+ 
                 } else if(smoothciemet->get_active_row_number() == 4) {
                     contsig->hide();
                     skewsig->hide();
@@ -12554,14 +13135,16 @@ void Locallabcie::updateGUIToMode(const modeType new_type)
                     smoothcielum->show();
                     smoothciehigh->show();
                     smoothcielnk->show();
+                    smoothcieinv->show();
                     smoothcieyb->show();
-                    if (smoothciehigh->get_active()) {
+               //     if (smoothciehigh->get_active()) {
                         smoothcieth->show();
-                    } else {
-                        smoothcieth->hide();
-                    }   
+               //     } else {
+                //        smoothcieth->hide();
+               //     }   
+                    smoothciethtrc->hide();
 
-                } else if(smoothciemet->get_active_row_number() >= 5) {
+                } else if(smoothciemet->get_active_row_number() == 5) {
                     contsig->show();
                     skewsig->show();
                     whitsig->show();
@@ -12577,9 +13160,32 @@ void Locallabcie::updateGUIToMode(const modeType new_type)
                     smoothcielum->hide();
                     smoothciehigh->hide();
                     smoothcielnk->hide();
+                    smoothcieinv->hide();
                     smoothcieyb->hide();
                     smoothcieth->hide();
+                    smoothciethtrc->hide();
                     smoothcie->hide();
+                } else if(smoothciemet->get_active_row_number() == 6) {
+                    contsig->hide();
+                    skewsig->hide();
+                    whitsig->hide();
+                    smoothcie->hide();
+                    slopesmo->hide();
+                    slopesmor->hide();
+                    slopesmog->hide();
+                    slopesmob->hide();
+                    kslopesmor->show();
+                    kslopesmog->show();
+                    kslopesmob->show();
+                    smoothcietrc->show();
+                    smoothcietrcrel->show();
+                    smoothcieyb->hide();
+                    smoothcieth->hide();
+                    smoothciethtrc->show();
+                    smoothcielum->hide();
+                    smoothciehigh->hide();
+                    smoothcielnk->hide();
+                    smoothcieinv->hide();
 
                 } else {
                     contsig->hide();
@@ -12598,8 +13204,10 @@ void Locallabcie::updateGUIToMode(const modeType new_type)
                     smoothcielum->hide();
                     smoothciehigh->hide();
                     smoothcielnk->hide();
+                    smoothcieinv->hide();
                     smoothcieyb->hide();
                     smoothcieth->hide();
+                    smoothciethtrc->hide();
                 }
             }
 
@@ -12713,8 +13321,10 @@ void Locallabcie::updatecieGUI()
             smoothcielum->hide();
             smoothciehigh->hide();
             smoothcielnk->hide();
+            smoothcieinv->hide();
             smoothcieyb->hide();
             smoothcieth->hide();
+            smoothciethtrc->hide();
         } else if(smoothciemet->get_active_row_number() == 4) {
             contsig->hide();
             skewsig->hide();
@@ -12736,16 +13346,18 @@ void Locallabcie::updatecieGUI()
                 smoothcielum->hide();
                 smoothcieyb->hide();
             }
-            if (smoothciehigh->get_active()) {
+         //   if (smoothciehigh->get_active()) {
                 smoothcieth->show();
-            } else {
-                smoothcieth->hide();
-            }   
+         //   } else {
+         //       smoothcieth->hide();
+         //   }   
+            smoothciethtrc->hide();
 
             smoothciehigh->show();
             smoothcielnk->show();
+            smoothcieinv->show();
        
-        } else if(smoothciemet->get_active_row_number() >= 5) {
+        } else if(smoothciemet->get_active_row_number() == 5) {
                     contsig->show();
                     skewsig->show();
                     whitsig->hide();
@@ -12764,9 +13376,33 @@ void Locallabcie::updatecieGUI()
                     smoothcielum->hide();
                     smoothciehigh->hide();
                     smoothcielnk->hide();
+                    smoothcieinv->hide();
                     smoothcieyb->hide();
                     smoothcieth->hide();
+                    smoothciethtrc->hide();
+
                     smoothcie->hide();
+    } else if(smoothciemet->get_active_row_number() == 6) {
+       contsig->hide();
+       skewsig->hide();
+       whitsig->hide();
+       smoothcie->hide();
+       slopesmo->hide();
+       slopesmor->hide();
+       slopesmog->hide();
+       slopesmob->hide();
+       kslopesmor->show();
+       kslopesmog->show();
+       kslopesmob->show();
+       smoothcietrc->show();
+       smoothcietrcrel->show();
+       smoothcieyb->hide();
+       smoothcieth->hide();
+       smoothciethtrc->show();
+       smoothcielum->hide();
+       smoothciehigh->hide();
+       smoothcielnk->hide();
+       smoothcieinv->hide();
 
         } else {
             contsig->hide();
@@ -12785,8 +13421,10 @@ void Locallabcie::updatecieGUI()
             smoothcielum->hide();
             smoothciehigh->hide();
             smoothcielnk->hide();
+            smoothcieinv->hide();
             smoothcieyb->hide();
             smoothcieth->hide();
+            smoothciethtrc->hide();
         }
         qjmodcam();
     }
@@ -13058,9 +13696,11 @@ void Locallabcie::setDefaults(const rtengine::procparams::ProcParams* defParams,
         comprcieth->setDefault(defSpot.comprcieth);
         gamjcie->setDefault(defSpot.gamjcie);
         smoothcieth->setDefault(defSpot.smoothcieth);
+        smoothciethtrc->setDefault(defSpot.smoothciethtrc);
         whitescie->setDefault(defSpot.whitescie);
         blackscie->setDefault(defSpot.blackscie);
         slopjcie->setDefault(defSpot.slopjcie);
+        satjcie->setDefault(defSpot.satjcie);
         slopesmo->setDefault(defSpot.slopesmo);
         slopesmoq->setDefault(defSpot.slopesmoq);
         contsig->setDefault(defSpot.contsig);
@@ -13659,10 +14299,24 @@ void Locallabcie::adjusterChanged(Adjuster* a, double newval)
             }
         }
 
+        if (a == smoothciethtrc) {
+            if (listener) {
+                listener->panelChanged(Evlocallabsmoothciethtrc,
+                                       smoothciethtrc->getTextValue() + spName);
+            }
+        }
+
         if (a == slopjcie) {
             if (listener) {
                 listener->panelChanged(Evlocallabslopjcie,
                                        slopjcie->getTextValue() + spName);
+            }
+        }
+
+        if (a == satjcie) {
+            if (listener) {
+                listener->panelChanged(Evlocallabsatjcie,
+                                       satjcie->getTextValue() + spName);
             }
         }
 

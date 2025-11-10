@@ -1821,7 +1821,7 @@ Updated on Sun Mar 23 23:19:09 2025:
         "dcraw_matrix" : [7776, 1285, -1054, -9280, 16543, 2916, -3678, 5679, 7060]
     },
     {
-        "make_model" : "DJI AC003 OSMOACTION4",
+        "make_model" : ["DJI AC003 OSMOACTION4", "DJI AC003"],
         "dcraw_matrix" : [7935, -1818, -1056, -7772, 15676, 2204, -1719, 2485, 6048]
     },
     {
@@ -1841,11 +1841,11 @@ Updated on Sun Mar 23 23:19:09 2025:
         "dcraw_matrix" : [7715, -2945, -536, -1875, 10679, 1368, 1938, -268, 5096]
     },
     {
-        "make_model" : "DJI FC4370 MAVIC3PRO",
+        "make_model" : ["DJI FC4370 MAVIC3PRO", "DJI FC4370"],
         "dcraw_matrix" : [7715, -2945, -536, -1875, 10679, 1368, 1938, -268, 5096]
     },
     {
-        "make_model" : "DJI FC4382 MAVIC3PRO",
+        "make_model" : ["DJI FC4382 MAVIC3PRO", "DJI FC4382"],
         "dcraw_matrix" : [7789, -1611, -1074, -4566, 12974, 1732, -269, 1695, 5328]
     },
     {
@@ -1853,15 +1853,15 @@ Updated on Sun Mar 23 23:19:09 2025:
         "dcraw_matrix" : [11665, -5375, -1093, -2473, 10918, 1778, 109, 1014, 5116]
     },
     {
-        "make_model" : "DJI FC8282 AIR3",
+        "make_model" : ["DJI FC8282 AIR3", "DJI FC8282"],
         "dcraw_matrix" : [10820, -4941, -1002, -4331, 12438, 2107, -292, 1603, 5312]
     },
     {
-        "make_model" : "DJI FC8284 AIR3",
+        "make_model" : ["DJI FC8284 AIR3", "DJI FC8284"],
         "dcraw_matrix" : [10820, -4941, -1002, -4331, 12438, 2107, -292, 1603, 5312]
     },
     {
-        "make_model" : "DJI FC8482 MINI4 PRO",
+        "make_model" : ["DJI FC8482 MINI4 PRO", "DJI FC8482"],
         "dcraw_matrix" : [10820, -4941, -1002, -4331, 12438, 2107, -292, 1603, 5312]
     },
     {
@@ -1873,7 +1873,7 @@ Updated on Sun Mar 23 23:19:09 2025:
         "dcraw_matrix" : [7463, -1428, -1181, -6106, 14578, 1588, -826, 2049, 5430]
     },
     {
-        "make_model" : "DJI PP-101 OSMOPOCKET3",
+        "make_model" : ["DJI PP-101 OSMOPOCKET3", "DJI PP-101"],
         "dcraw_matrix" : [11498, -5339, -1088, -3569, 12204, 1500, -342, 1392, 5188]
     },
     {
@@ -2037,7 +2037,7 @@ Updated on Sun Mar 23 23:19:09 2025:
         "dcraw_matrix" : [16212, -8423, -1583, -4336, 12583, 1937, -195, 726, 6199]
     },
     {
-        "make_model" : "FUJIFILM GFX 100S II",
+        "make_model" : ["FUJIFILM GFX 100S II", "Fujifilm GFX100S II"],
         "dcraw_matrix" : [12806, -5779, -1110, -3546, 11507, 2318, -177, 995, 5715]
     },
     {
@@ -3985,7 +3985,7 @@ Updated on Sun Mar 23 23:19:09 2025:
         "dcraw_matrix" : [11640, -4829, -1079, -5107, 13006, 2325, -972, 1711, 7380]
     },
     {
-        "make_model" : "NIKON Z 50 2",
+        "make_model" : ["NIKON Z 50 2", "NIKON Z50_2"],
         "dcraw_matrix" : [11640, -4829, -1079, -5107, 13006, 2325, -972, 1711, 7380]
     },
     {
@@ -3997,7 +3997,7 @@ Updated on Sun Mar 23 23:19:09 2025:
         "dcraw_matrix" : [9943, -3269, -839, -5323, 13269, 2259, -1198, 2083, 7557]
     },
     {
-        "make_model" : "NIKON Z 6 3",
+        "make_model" : ["NIKON Z 6 3", "NIKON Z6_3"],
         "dcraw_matrix" : [11206, -4286, -941, -4879, 12847, 2251, -745, 1654, 7374]
     },
     {

@@ -537,6 +537,11 @@ struct SharpeningParams {
     double         deconvradius;
     int            deconviter;
     int            deconvdamping;
+    bool deconvAutoRadius;
+    double deconvCornerBoost;
+    int deconvCornerLatitude;
+    Glib::ustring psf_kernel;
+    double psf_iterations;
 
     SharpeningParams();
 
@@ -576,10 +581,14 @@ struct CaptureSharpeningParams {
     bool           autoContrast;
     bool           autoRadius;
     double         contrast;
+    double         noisecap;
+    double         noisecapafter;
     double         deconvradius;
     double         deconvradiusOffset;
     int            deconviter;
     bool           deconvitercheck;
+    bool           showcap;
+    bool           noisecaptype;
 
     CaptureSharpeningParams();
 
@@ -1267,12 +1276,14 @@ struct LocallabParams {
         double ghs_chro;
         double ghs_B;
         double ghs_SP;
+        bool SPAutoRadius;
         double ghs_LP;
         double ghs_HP;
         double ghs_LC;
         double ghs_MID;
         double ghs_BLP;
         double ghs_HLP;
+        bool ghs_autobw;
         bool ghs_smooth;
         bool ghs_inv;
 
@@ -1388,6 +1399,7 @@ struct LocallabParams {
         double lnoiselow;
         double levelthrlow;
         bool activlum;
+        double madlsav[21];
         double noiselumf;
         double noiselumf0;
         double noiselumf2;
@@ -1411,6 +1423,7 @@ struct LocallabParams {
         int detailthr;
         std::vector<double> locwavcurveden;
         std::vector<double> locwavcurvehue;
+        std::vector<double> locwavcurvehuecont;
         Glib::ustring showmaskblMethodtyp;
         std::vector<double> CCmaskblcurve;
         std::vector<double> LLmaskblcurve;
@@ -1431,6 +1444,14 @@ struct LocallabParams {
         std::vector<double> Lmaskblcurve;
         std::vector<double> LLmaskblcurvewav;
         Threshold<int> csthresholdblur;
+        double denocontrast;
+        bool denoAutocontrast;
+        bool contrshow;
+        bool lockmadl;
+        bool madllock;
+        bool enacontrast;
+        double denoratio;
+        double denomask;
         // Tone Mapping
         bool visitonemap;
         bool exptonemap;
@@ -1510,6 +1531,7 @@ struct LocallabParams {
         bool expsharp;
         int complexsharp;
         int sharcontrast;
+        bool deconvAutoshar;
         double sharradius;
         int sharamount;
         int shardamping;
@@ -1518,6 +1540,17 @@ struct LocallabParams {
         double shargam;
         int sensisha;
         bool inverssha;
+        bool sharshow;
+        bool itercheck;
+        Glib::ustring methodcap;
+        double capradius;
+        bool deconvAutoRadius;
+        double deconvCoBoost;                
+        double deconvCoProt;                
+        double deconvCoLat;                
+        double deconvCogam;                
+        double reparsha;                
+
         // Local Contrast
         bool visicontrast;
         bool expcontrast;
@@ -1736,6 +1769,7 @@ struct LocallabParams {
         bool smoothcielum;
         bool smoothciehigh;
         bool smoothcielnk;
+        bool smoothcieinv;
         bool logjz;
         bool sigjz12;
         bool sigjz;
@@ -1809,7 +1843,9 @@ struct LocallabParams {
         double comprcieth;
         double gamjcie;
         double smoothcieth;
+        double smoothciethtrc;
         double slopjcie;
+        double satjcie;
         double contsig;
         double skewsig;
         double whitsig;
@@ -1821,6 +1857,8 @@ struct LocallabParams {
         double kslopesmor;
         double kslopesmog;
         double kslopesmob;
+        std::vector<double> invcurve;//inverse color negative
+        Glib::ustring midtciemet;
         int midtcie;
         double grexl;
         double greyl;
@@ -2197,14 +2235,15 @@ struct ColorManagementParams {
     Cat wcat;
     double wGamma;
     double wSlope;
+    double wapsat;
     double wmidtcie;
     double sigmatrc;
     double offstrc;
     double residtrc;
     int pyrwavtrc;
-    std::vector<double> opacityCurveWLI;
-    
+    std::vector<double> opacityCurveWLI;   
     bool wsmoothcie;
+    double wsmoothciesli;
     double redx;
     double redy;
     double grex;

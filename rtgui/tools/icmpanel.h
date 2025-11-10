@@ -66,8 +66,11 @@ protected:
 
     Adjuster* wGamma;
     Adjuster* wSlope;
+    Adjuster* wapsat;
+    
     Adjuster* wmidtcie;
     Gtk::CheckButton* wsmoothcie;
+    Adjuster* wsmoothciesli;
     Adjuster* sigmatrc;
     Adjuster* offstrc;
     Adjuster* pyrwavtrc;
@@ -147,6 +150,8 @@ private:
     rtengine::ProcEvent EvICMshifty;
     rtengine::ProcEvent EvICMwmidtcie;
     rtengine::ProcEvent EvICMwsmoothcie;
+    rtengine::ProcEvent EvICMwapsat;
+    rtengine::ProcEvent EvICMwsmoothciesli;
     rtengine::ProcEvent EvICMsigmatrc;
     rtengine::ProcEvent EvICMoffstrc;
     rtengine::ProcEvent EvICMopacityWLI;

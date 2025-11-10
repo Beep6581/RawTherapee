@@ -157,7 +157,7 @@ void BatchToolPanelCoordinator::initSession ()
             gradient->setAdjusterBehavior (false, false, false, false);
             pcvignette->setAdjusterBehavior (false, false, false);
             cacorrection->setAdjusterBehavior (false);
-            sharpening->setAdjusterBehavior (false, false, false, false, false, false, false);
+            sharpening->setAdjusterBehavior (false, false,  false, false, false, false, false);
             prsharpening->setAdjusterBehavior (false, false, false, false, false, false, false);
             pdSharpening->setAdjusterBehavior (false, false, false);
             sharpenEdge->setAdjusterBehavior (false, false);
@@ -275,6 +275,7 @@ void BatchToolPanelCoordinator::initSession ()
                 pparams.sharpening.amount = pparams.sharpening.deconvamount =
                 pparams.prsharpening.amount = pparams.prsharpening.deconvamount = 0;
             }
+
             if (options.baBehav[ADDSET_SHARP_DAMPING]) { pparams.sharpening.deconvdamping = pparams.prsharpening.deconvdamping = 0; }
             if (options.baBehav[ADDSET_SHARP_ITER]) { pparams.sharpening.deconviter = pparams.prsharpening.deconviter = 0; }
             if (options.baBehav[ADDSET_SHARP_EDGETOL]) { pparams.sharpening.edges_tolerance = pparams.prsharpening.edges_tolerance = 0; }

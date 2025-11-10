@@ -172,7 +172,7 @@ public:
         if (img) {
             DEBUG("pushing image %s", thm->getFileName().c_str());
             ThumbImageUpdateListener::ImageUpdate update(img, logical, device_scale, scale, thm->getProcParams().crop);
-            j.listener_->updateImage(std::move(update));
+            j.listener_->updateImage(update);
         }
 
         if ( --active_ == 0 ) {

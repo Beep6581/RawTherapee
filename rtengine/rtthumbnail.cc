@@ -1536,8 +1536,10 @@ IImage8* Thumbnail::processImage (const procparams::ProcParams& params, eSensorT
         }
 
         const std::unique_ptr<Imagefloat> tmpImage1(new Imagefloat(GW, GH));
+        const std::unique_ptr<Imagefloat> tmpImage2(new Imagefloat(GW, GH));
 
         ipf.lab2rgb(*labView, *tmpImage1, params.icm.workingProfile);
+        tmpImage1.get()->copyData(tmpImage2.get());
 
         const float gamtone = params.icm.wGamma;
         const float slotone = params.icm.wSlope;
@@ -1550,48 +1552,57 @@ IImage8* Thumbnail::processImage (const procparams::ProcParams& params, eSensorT
         cmsHTRANSFORM dummy = nullptr;
         int ill = 0;
         int locprim = 0;
+        const int midton = params.icm.wmidtcie;
+        if(midton != 0) {
+            ToneEqualizerParams params;
+            params.enabled = true;
+            params.regularization = 0.f;
+            params.pivot = 0.f;
+            params.bands[0] = 0;
+            params.bands[2] = midton;
+            params.bands[4] = 0;
+            params.bands[5] = 0;
+            int mid = abs(midton);
+            int threshmid = 50;
+            if(mid > threshmid) {
+                params.bands[1] = sign(midton) * (mid - threshmid);
+                params.bands[3] = sign(midton) * (mid - threshmid);     
+            }
+            ipf.toneEqualizer(tmpImage1.get(), params, prof, 1, false);
+        }
+        
         float rdx, rdy, grx, gry, blx, bly = 0.f;
         float meanx, meany, meanxe, meanye = 0.f;
         ipf.workingtrc(0, tmpImage1.get(), tmpImage1.get(), GW, GH, -5, prof, 2.4, 12.92310, 0, ill, 0, 0, rdx, rdy, grx, gry, blx, bly, meanx, meany, meanxe, meanye, dummy, true, false, false);
         ipf.workingtrc(0, tmpImage1.get(), tmpImage1.get(), GW, GH, 5, prof, gamtone, slotone,0, illum, prim, locprim, rdx, rdy, grx, gry, blx, bly,meanx, meany, meanxe, meanye, dummy, false, true, true);
-        const int midton = params.icm.wmidtcie;
-           if(midton != 0) {
-                ToneEqualizerParams params;
-                params.enabled = true;
-                params.regularization = 0.f;
-                params.pivot = 0.f;
-                params.bands[0] = 0;
-                params.bands[2] = midton;
-                params.bands[4] = 0;
-                params.bands[5] = 0;
-                int mid = abs(midton);
-                int threshmid = 50;
-                if(mid > threshmid) {
-                    params.bands[1] = sign(midton) * (mid - threshmid);
-                    params.bands[3] = sign(midton) * (mid - threshmid);     
-                }
-                ipf.toneEqualizer(tmpImage1.get(), params, prof, 1, false);
-                }
+        
+        float satu = params.icm.wapsat;
+        if(satu > 0.f) {
+            ipf.apsatur(0, tmpImage1.get(), tmpImage2.get(), GW, GH, satu) ;     
+        }
 
-        const bool smoothi = params.icm.wsmoothcie;
-            if(smoothi) {
-                ToneEqualizerParams params;
-                params.enabled = true;
-                params.regularization = 0.f;
-                params.pivot = 0.f;
-                params.bands[0] = 0;
-                params.bands[1] = 0;
-                params.bands[2] = 0;
-                params.bands[3] = 0;
-                params.bands[4] = -40;//arbitrary value to adapt with WhiteEvjz - here White Ev # 10
-                params.bands[5] = -80;//8 Ev and above
-                bool Evsix = true;
-                if(Evsix) {//EV = 6 majority of images
-                    params.bands[4] = -15;
-                }
+        const float smoothisli = params.icm.wsmoothciesli;
                 
-                ipf.toneEqualizer(tmpImage1.get(), params, prof, 1, false);
+        if(smoothisli > 0.f) {
+            ToneEqualizerParams params;
+            params.enabled = true;
+            params.regularization = 0.f;
+            params.pivot = 0.f;
+            params.bands[0] = 0;
+            params.bands[1] = 0;
+            params.bands[2] = 0;
+            params.bands[3] = 0;
+            params.bands[4] = -40;//arbitrary value to adapt with WhiteEvjz - here White Ev # 10
+            params.bands[5] = -80;//8 Ev and above
+            bool Evsix = true;
+            if(Evsix) {//EV = 6 majority of images
+                params.bands[4] = -30 * smoothisli;
+                float smmothsli5 = std::min(smoothisli, 1.f);
+                params.bands[5] = -80 * smmothsli5;                     
             }
+               
+            ipf.toneEqualizer(tmpImage1.get(), params, prof, 1, false);
+        }
 
         ipf.rgb2lab(*tmpImage1, *labView, params.icm.workingProfile);
         // labView and provis
