@@ -18354,7 +18354,6 @@ void ImProcFunctions::Lab_Local(
                                 ghscolor[0] = maxwred; 
                                 ghscolor[1] = maxwgreen;
                                 ghscolor[2] = maxwblue;              
-                                printf("maxR=%f maxG=%f maxB=%f\n", (double) maxwred, (double) maxwgreen, (double) maxwblue);
                         }
                                
                         int blackpoint = 100. * params->locallab.spots.at(sp).ghs_BLP;//Black point
