@@ -15410,7 +15410,7 @@ void ImProcFunctions::Lab_Local(
     bool prevDeltaE, int llColorMask, int llColorMaskinv, int llExpMask, int llExpMaskinv, int llSHMask, int llSHMaskinv, int llvibMask, int lllcMask, int llsharMask, int llcbMask, int llretiMask, int llsoftMask, int lltmMask, int llblMask, int lllogMask, int ll_Mask, int llcieMask,
     float& minCD, float& maxCD, float& mini, float& maxi, float& Tmean, float& Tsigma, float& Tmin, float& Tmax,
     float& meantm, float& stdtm, float& meanreti, float& stdreti, float &fab,float &maxicam, float &rdx, float &rdy, float &grx, float &gry, float &blx, float &bly, float &meanx, float &meany, float &meanxe, float &meanye, int &prim, int &ill, float &contsig, float &lightsig, float &slopeg, bool &linkrgb,
-    float *resi, float &sharc, float &denocont, int *ghsbpwp, float *ghsbpwpvalue, float *savmadl, float *ghsbwslider, float &ghssym, bool &ghsautsp)
+    float *resi, float &sharc, float &denocont, int *ghsbpwp, float *ghsbpwpvalue, float *savmadl, float *ghsbwslider, float &ghssym, bool &ghsautsp,  float *ghscolor)
 
 {
     //general call of others functions : important return hueref, chromaref, lumaref
@@ -18313,12 +18313,14 @@ void ImProcFunctions::Lab_Local(
                         const float noise = pow_F(2.f, -16.f);//GHS - do not process very low values which are probably noise.
                         float minb = 100.f;
                         float maxw = -100.f;
- 
+                        float maxwred = -100.f;
+                        float maxwgreen = -100.f;                      
+                        float maxwblue = -100.f;                      
 
  
                         if(params->locallab.spots.at(sp).ghs_autobw == true  && strtype == GHTStrType::NORMAL) { //find probably White point and black point ...Must be adjusted manually in soma cases notably Black point with negatives values...                        
 #ifdef _OPENMP
-        #   pragma omp parallel for reduction(min:minb) reduction(max:maxw) if (multiThread)
+        #   pragma omp parallel for reduction(min:minb) reduction(max:maxw) reduction(max:maxwred) reduction(max:maxwgreen) reduction(max:maxwblue) if (multiThread)
 #endif
                              for (int i = 0; i < bfh; ++i)
                                 for (int j = 0; j < bfw; ++j) {
@@ -18334,10 +18336,25 @@ void ImProcFunctions::Lab_Local(
                                     if(maxrgb > maxw){
                                         maxw = maxrgb;
                                     }
-                                }
+                                    float maxr = r;
+                                    if(maxr > maxwred){
+                                        maxwred = maxr;
+                                    }                                    
+                                    float maxg = g;
+                                    if(maxg > maxwgreen){
+                                        maxwgreen = maxg;
+                                    }                                    
+                                    float maxb = b;
+                                    if(maxb > maxwblue){
+                                        maxwblue = maxb;
+                                    }                                    
+                                 }
                                 ghsbwslider[1]= maxw;
-                                ghsbwslider[0]= minb;                 
-
+                                ghsbwslider[0]= minb; 
+                                ghscolor[0] = maxwred; 
+                                ghscolor[1] = maxwgreen;
+                                ghscolor[2] = maxwblue;              
+                                printf("maxR=%f maxG=%f maxB=%f\n", (double) maxwred, (double) maxwgreen, (double) maxwblue);
                         }
                                
                         int blackpoint = 100. * params->locallab.spots.at(sp).ghs_BLP;//Black point

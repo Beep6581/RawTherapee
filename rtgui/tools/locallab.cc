@@ -1433,16 +1433,21 @@ void Locallab::ghsbwChanged(const std::vector<locallabshGHSbw> &shghsbw, int sel
     int bw[2] = {0, 1};
     double bwvalue[2] = {0., 1.};
     double symev = 0.;
-    
+    double bwcol[3] = {0., 0., 0.};
+    bool ghsau = true;
     if (selspot < (int) sh_ghsbw.size()) {
         const bool autoradsp = sh_ghsbw.at(selspot).autoSP;
         
         for(int i=0; i < 2; i++) {
             bw[i] = sh_ghsbw.at(selspot).ghsbw[i];
-            bwvalue[i] = sh_ghsbw.at(selspot).ghsbwvalue[i];
         }
+        
         symev = sh_ghsbw.at(selspot).ghs_sym;
-        expshadhigh.updateghsbw(bw[0], bw[1], bwvalue[0], bwvalue[1], symev);
+        bwcol[0] = sh_ghsbw.at(selspot).ghs_color[0];
+        bwcol[1] = sh_ghsbw.at(selspot).ghs_color[1];
+        bwcol[2] = sh_ghsbw.at(selspot).ghs_color[2];
+        ghsau = sh_ghsbw.at(selspot).ghs_auto;
+        expshadhigh.updateghsbw(bw[0], bw[1], bwvalue[0], bwvalue[1], symev, bwcol[0], bwcol[1], bwcol[2], ghsau);
         if(autoradsp) {
             expshadhigh.autoSPChanged(symev);
         }

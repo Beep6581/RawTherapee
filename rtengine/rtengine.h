@@ -530,7 +530,9 @@ public:
         int ghsbw[2];
         double ghsbwvalue[2];
         double ghs_sym;
+        double ghs_color[3];
         bool autoSP;//update SP
+        bool ghs_auto;
     };
 
 //select spot settings 
