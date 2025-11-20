@@ -1462,7 +1462,7 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                 float savmadl[21];//just to intialize, not used here - but in dcrop.cc
                 float ghsbwslider[2] = {0.f, 1.f};// Black and white point auto sliders
                 float ghssym = 0.f;//info symmetry point
-                float ghscolor[3] = {0.f, 0.f, 0.f};
+                float ghscolor[4] = {0.f, 0.f, 0.f, 0.f};
                 bool ghsauto = params->locallab.spots.at(sp).ghs_autobw;
                 bool ghsautsp = false;//SP auto
                 
@@ -1657,7 +1657,7 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                     locshghsbw.ghs_color[0] = ghscolor[0];
                     locshghsbw.ghs_color[1] = ghscolor[1];
                     locshghsbw.ghs_color[2] = ghscolor[2];
-                   
+                    locshghsbw.ghs_color[3] = ghscolor[3];
                     locshghsbw.autoSP =  ghsautsp;//SP auto
                     locshghsbw.ghs_auto = ghsauto;
                 locallshgshbw.push_back(locshghsbw);

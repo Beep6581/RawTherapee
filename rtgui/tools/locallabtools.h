@@ -630,6 +630,7 @@ private:
     Gtk::Label* const ghsbpwpLabels;
     Gtk::Label* const ghsbpwpvalueLabels;
     Gtk::Label* const ghscolorLabels;
+    Gtk::Label* const ghsDRLabels;   
     Gtk::CheckButton* const ghs_smooth;
     Gtk::CheckButton* const ghs_inv;
 
@@ -698,7 +699,7 @@ public:
     int nbwb;
     int nbsym2;
     void updateghsbw2(double ghsb, double ghsw, bool ghsaut);
-    void updateghsbw(int bp, int wp, double minbp, double maxwp, double symev, double maxR, double maxG, double maxB, bool ghsau);
+    void updateghsbw(int bp, int wp, double minbp, double maxwp, double symev, double maxR, double maxG, double maxB, double drghs, bool ghsau);
     void setDefaultExpanderVisibility() override;
     void disableListener() override;
     void enableListener() override;

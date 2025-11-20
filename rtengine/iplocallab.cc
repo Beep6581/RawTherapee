@@ -18349,11 +18349,18 @@ void ImProcFunctions::Lab_Local(
                                         maxwblue = maxb;
                                     }                                    
                                  }
+                                const float noise = pow_F(2.f, -16.f);
+                                minb = rtengine::max(minb, noise);//set a very minimal value in all cases to avoid 0
+
                                 ghsbwslider[1]= maxw;
                                 ghsbwslider[0]= minb; 
                                 ghscolor[0] = maxwred; 
                                 ghscolor[1] = maxwgreen;
-                                ghscolor[2] = maxwblue;              
+                                ghscolor[2] = maxwblue;  
+                                const float log2 = std::log(2.f);
+                                float minb2 = minb;
+                                const float DRghs = -xlogf(minb2 / maxw) / log2; //calculate dynamic Range GHS with max and min absolute values, and not with luminance
+                                ghscolor[3] = DRghs; 
                         }
                                
                         int blackpoint = 100. * params->locallab.spots.at(sp).ghs_BLP;//Black point

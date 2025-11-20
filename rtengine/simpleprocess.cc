@@ -1302,7 +1302,7 @@ private:
                 float ghsbwslider[2];
                 ghsbwslider[0] = 0.f;
                 ghsbwslider[1] = 1.f;
-                float ghscolor[3];
+                float ghscolor[4];
                 float ghssym = 0.f;
                 bool ghsautsp = false;
                 float slopeg = 1.f;

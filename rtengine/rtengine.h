@@ -530,7 +530,7 @@ public:
         int ghsbw[2];
         double ghsbwvalue[2];
         double ghs_sym;
-        double ghs_color[3];
+        double ghs_color[4];
         bool autoSP;//update SP
         bool ghs_auto;
     };

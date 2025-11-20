@@ -1103,7 +1103,7 @@ void Crop::update(int todo)
             float ghsbpwpvalue[2];
             float savmadl[21]  = {100.f, 100.f, 100.f, 100.f, 100.f, 100.f, 100.f, 100.f, 100.f, 100.f, 100.f, 100.f, 100.f, 100.f, 100.f, 100.f, 100.f, 100.f, 100.f, 100.f, 100.f}; 
             float ghsbwslider[2];
-            float ghscolor[3];
+            float ghscolor[4];
             float ghssym;
             bool ghsautsp;
 /*            huerefp[sp] = huere;
