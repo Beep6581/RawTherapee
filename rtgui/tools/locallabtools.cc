@@ -4473,7 +4473,7 @@ LocallabShadow::LocallabShadow():
     setExpandAlignProperties(ghscolorLabels, true, false, Gtk::ALIGN_CENTER, Gtk::ALIGN_START);    
     ghsDRLabels->set_line_wrap();
     ghsDRLabels->set_justify(Gtk::Justification::JUSTIFY_CENTER);
-    setExpandAlignProperties(ghsDRLabels, true, false, Gtk::ALIGN_CENTER, Gtk::ALIGN_START);    
+    setExpandAlignProperties(ghsDRLabels, true, false, Gtk::ALIGN_CENTER, Gtk::ALIGN_START);
     ghs_D->setLogScale(10, 0);
    //ghs_B->setLogScale(10, -5);
     ghs_slope->setLogScale(10, 1);
@@ -5690,10 +5690,10 @@ void LocallabShadow::updateghsbw(int bp, int wp, double minbp, double maxwp, dou
             ghsDRLabels->set_text(
                 Glib::ustring::compose(M("TP_LOCALLAB_GHSDR"),
                                     Glib::ustring::format(std::fixed, std::setprecision(2), drghs))
-            );            
+            );      
         } else {
             ghscolorLabels->set_text(M("TP_LOCALLAB_GHSCOLORNO"));
-            
+
             ghsDRLabels->set_text(M("TP_LOCALLAB_GHSDRNO"));
                      
         }

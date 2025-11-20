@@ -18358,8 +18358,7 @@ void ImProcFunctions::Lab_Local(
                                 ghscolor[1] = maxwgreen;
                                 ghscolor[2] = maxwblue;  
                                 const float log2 = std::log(2.f);
-                                float minb2 = minb;
-                                const float DRghs = -xlogf(minb2 / maxw) / log2; //calculate dynamic Range GHS with max and min absolute values, and not with luminance
+                                const float DRghs = -xlogf(minb / maxw) / log2; //calculate dynamic Range GHS with max and min absolute values, and not with luminance
                                 ghscolor[3] = DRghs; 
                         }
                                

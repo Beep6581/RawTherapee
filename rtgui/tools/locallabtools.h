@@ -630,7 +630,7 @@ private:
     Gtk::Label* const ghsbpwpLabels;
     Gtk::Label* const ghsbpwpvalueLabels;
     Gtk::Label* const ghscolorLabels;
-    Gtk::Label* const ghsDRLabels;   
+    Gtk::Label* const ghsDRLabels;
     Gtk::CheckButton* const ghs_smooth;
     Gtk::CheckButton* const ghs_inv;
 
