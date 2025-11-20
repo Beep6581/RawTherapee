@@ -128,180 +128,7 @@ float softlig(float a, float b, float minc, float maxc)
     }
 }
 
-// GHT filter ported from Siril.
-// 
-// see https://siril.org/tutorials/ghs/ for more info
-// 
-// Copyright of the original code follows
-/*
- * Copyright (C) 2005-2011 Francois Meyer (dulle at free.fr)
- * Copyright (C) 2012-2023 team free-astro (see more in AUTHORS file)
- * Reference site is https://free-astro.org/index.php/Siril
- *
- * Siril is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * Siril is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with Siril. If not, see <http://www.gnu.org/licenses/>.
- */
-/*
-//Copyright algorithm Pixlnsight David Payne 2021
-https://www.ghsastro.co.uk/doc/tools/GeneralizedHyperbolicStretch/GeneralizedHyperbolicStretch.html#__Description_:_About_GHS__
-*/
-/*
- * Thanks to Alberto Griggio for the code CTL ght.ctl
-*/
 
-/*
-https://www.ghsastro.co.uk/doc/tools/GeneralizedHyperbolicStretch/GeneralizedHyperbolicStretch.html#equationLabel
-
-Summary of calculations made during GHS
-
-
-5.2.1 Definition of variables
-D = e(Stretch factor) - 1
-b = Local intensity
-SP = Symmetry point
-LP = Protect shadows
-HP = Protect highlights
-
-5.2.2 Base transformation equations
-The base transformation for each transformation type is defined by T : x → T(x) in the following table. The table also shows the first derivative of T, denoted T', as this is needed to build the full transformation.
-
-Generalised hyperbolic
-Exponential
-b = 0
-T ->1 - e-D.x
-T'->D.e-D.x
-
-Generalised hyperbolic
-Logarithmic
-b = -1
-T ->ln( 1 + D.x )
-T'= D/( 1 + D.x )
-
-Generalised hyperbolic
-Integral
-b < 0, b ≠ -1
-T->(1 - (1 - b.D.x)((b + 1)/b))/(D.(b + 1))
-T'->( 1 - b.D.x )(1/b)
-
-Generalised hyperbolic
-Harmonic
-b = 1
-T->1 - ( 1 + D.x )-1
-T'-> D.( 1 + D.x )-2
-
-Generalised hyperbolic
-Hyperbolic
-b > 0, b ≠ 1
-T-> 1 - ( 1 + b.D.x )(-1/b)
-T'->D.(1 + b.D.x)(-(1+b)/b)
-
-
-Power law
-T(x) = 1 - (1 - x)1 + D
-T'(x) = (1 + D).(1 - x)D
-
-
-The maximum gradient for the base equations occurs at x=0. This point defines the point of maximum intensity and we want that to occur at x = SP. So we transform the equation by defining:
-T3(x) = T(x-SP).
-This broadly defines the transformation for the range SP ≤ x < HP although it will need to be normalised as described later below.
-The transformation for LP ≤ x < SP is defined by symmetry as follows:
-T2(x) = -T(SP-x).
-This, in effect, is equivalent to rotating the graph above SP through 180° around the point (SP, 0) - hence the name, Symmetry point.
-For the range 0.0 ≤ x < LP we want a linear transformation so we calculate the gradient of T2 at LP, ie T2'(LP), where the prime represents the first derivative. We also want the line to pass through the point (LP, T2(LP)). So we define:
-T1(x) = T2'(LP) * (x - LP) + T2(LP)
-Similarly for the range HP ≤ x ≤ 1.0, we calculate a linear transformation as follows:
-T4(x) = T3'(HP) * (x - HP) + T3(HP)
-Finally we want the transformed values to run from 0.0 to 1.0 so we need to normalise. We define:
-NormTi(x) = (Ti(x) - T1(0))/(T4(1) - T1(0)), for i = 1, 2, 3, 4
-
-We then define the full transformation: NormT: x → NormT(x), as follows:
-0 ≤ x < LP
-NormT1(x)
-
-LP ≤ x < SP
-NormT2(x)
-
-SP ≤ x < HP
-NormT3(x)
-
-HP ≤ x ≤ 1
-NormT4(x)
-
-
-Inverse transformation equations
-Generalised hyperbolic
-Exponential
-b = 0
-InvT(x) = -ln(1 - x)/D
-
-Generalised hyperbolic
-Logarithmic
-b = -1
-InvT(x) = (ex - 1)/D
-
-Generalised hyperbolic
-Integral
-b < 0, b ≠ -1
-InvT(x) = ((1 - (1 - (b+1).D.x)(b/(b+1)))/(D.b)
-
-Generalised hyperbolic
-Harmonic
-b = 1
-InvT(x) = /(D.(1 - x))
-
-Generalised hyperbolic
-Hyperbolic
-b > 0, b ≠ 1
-InvT(x) = ((1 - x)-b - 1)/(b.D)
-
-Power law
-InvT(x) = 1 - (1 - x)1/(1 + D)
-
-Then we can define the full inverse transformation InvNormT: x -> InvNormT(x), as follows:
-
-0 ≤ x < NormT(LP)
-LP + (x' - T2(LP))/T2'(LP)
-
-NormT(LP) ≤ x < NormT(SP)
-SP - InvT(-x')
-
-NormT(SP) ≤ x < NormT(HP)
-SP + InvT(x')
-
-NormT(HP) ≤ x ≤ 1
-HP + (x' - T3(HP))/T3'(HP)
-
-where
-x' = T1(0) + x.(T4(1) - T1(0))
-*/
-
-/*
-In a simplified way, an S-curve (or inverted S-curve) modifies the image.
-The inflection point is defined by SP (Symmetry Point), for example 0.5 will generate a symmetrical 'S-curve' for RGB values ​​lower than SP or Higher.
-
-Stretch factor will make this curve more or less pronounced with very gradual asymptotes in the low and high lights.
-
-Linear factor will change the shape of the S, reducing or increasing the "length" of the asymptotic parts.
-
-All 3 allow you to modify the contrast of the image by filling the valleys and reducing the peaks
-
-*/
-float clamp(float x, float lo, float hi)
-{
-    return fmax(fmin(x, hi), lo);
-}
-
-// end GHT Siril 
 
 
 float softlig3(float a, float b)
@@ -15047,6 +14874,182 @@ void ImProcFunctions::NLMeans(float **img, int strength, int detail_thresh, int 
     delete[] dst;
 
 }
+
+// GHT filter ported from Siril.
+// 
+// see https://siril.org/tutorials/ghs/ for more info
+// 
+// Copyright of the original code follows
+/*
+ * Copyright (C) 2005-2011 Francois Meyer (dulle at free.fr)
+ * Copyright (C) 2012-2023 team free-astro (see more in AUTHORS file)
+ * Reference site is https://free-astro.org/index.php/Siril
+ *
+ * Siril is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * Siril is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with Siril. If not, see <http://www.gnu.org/licenses/>.
+ */
+/*
+//Copyright algorithm Pixlnsight David Payne 2021
+https://www.ghsastro.co.uk/doc/tools/GeneralizedHyperbolicStretch/GeneralizedHyperbolicStretch.html#__Description_:_About_GHS__
+*/
+/*
+ * Thanks to Alberto Griggio for the code CTL ght.ctl
+*/
+
+/*
+https://www.ghsastro.co.uk/doc/tools/GeneralizedHyperbolicStretch/GeneralizedHyperbolicStretch.html#equationLabel
+
+Summary of calculations made during GHS
+
+
+5.2.1 Definition of variables
+D = e(Stretch factor) - 1
+b = Local intensity
+SP = Symmetry point
+LP = Protect shadows
+HP = Protect highlights
+
+5.2.2 Base transformation equations
+The base transformation for each transformation type is defined by T : x → T(x) in the following table. The table also shows the first derivative of T, denoted T', as this is needed to build the full transformation.
+
+Generalised hyperbolic
+Exponential
+b = 0
+T ->1 - e-D.x
+T'->D.e-D.x
+
+Generalised hyperbolic
+Logarithmic
+b = -1
+T ->ln( 1 + D.x )
+T'= D/( 1 + D.x )
+
+Generalised hyperbolic
+Integral
+b < 0, b ≠ -1
+T->(1 - (1 - b.D.x)((b + 1)/b))/(D.(b + 1))
+T'->( 1 - b.D.x )(1/b)
+
+Generalised hyperbolic
+Harmonic
+b = 1
+T->1 - ( 1 + D.x )-1
+T'-> D.( 1 + D.x )-2
+
+Generalised hyperbolic
+Hyperbolic
+b > 0, b ≠ 1
+T-> 1 - ( 1 + b.D.x )(-1/b)
+T'->D.(1 + b.D.x)(-(1+b)/b)
+
+
+Power law
+T(x) = 1 - (1 - x)1 + D
+T'(x) = (1 + D).(1 - x)D
+
+
+The maximum gradient for the base equations occurs at x=0. This point defines the point of maximum intensity and we want that to occur at x = SP. So we transform the equation by defining:
+T3(x) = T(x-SP).
+This broadly defines the transformation for the range SP ≤ x < HP although it will need to be normalised as described later below.
+The transformation for LP ≤ x < SP is defined by symmetry as follows:
+T2(x) = -T(SP-x).
+This, in effect, is equivalent to rotating the graph above SP through 180° around the point (SP, 0) - hence the name, Symmetry point.
+For the range 0.0 ≤ x < LP we want a linear transformation so we calculate the gradient of T2 at LP, ie T2'(LP), where the prime represents the first derivative. We also want the line to pass through the point (LP, T2(LP)). So we define:
+T1(x) = T2'(LP) * (x - LP) + T2(LP)
+Similarly for the range HP ≤ x ≤ 1.0, we calculate a linear transformation as follows:
+T4(x) = T3'(HP) * (x - HP) + T3(HP)
+Finally we want the transformed values to run from 0.0 to 1.0 so we need to normalise. We define:
+NormTi(x) = (Ti(x) - T1(0))/(T4(1) - T1(0)), for i = 1, 2, 3, 4
+
+We then define the full transformation: NormT: x → NormT(x), as follows:
+0 ≤ x < LP
+NormT1(x)
+
+LP ≤ x < SP
+NormT2(x)
+
+SP ≤ x < HP
+NormT3(x)
+
+HP ≤ x ≤ 1
+NormT4(x)
+
+
+Inverse transformation equations
+Generalised hyperbolic
+Exponential
+b = 0
+InvT(x) = -ln(1 - x)/D
+
+Generalised hyperbolic
+Logarithmic
+b = -1
+InvT(x) = (ex - 1)/D
+
+Generalised hyperbolic
+Integral
+b < 0, b ≠ -1
+InvT(x) = ((1 - (1 - (b+1).D.x)(b/(b+1)))/(D.b)
+
+Generalised hyperbolic
+Harmonic
+b = 1
+InvT(x) = /(D.(1 - x))
+
+Generalised hyperbolic
+Hyperbolic
+b > 0, b ≠ 1
+InvT(x) = ((1 - x)-b - 1)/(b.D)
+
+Power law
+InvT(x) = 1 - (1 - x)1/(1 + D)
+
+Then we can define the full inverse transformation InvNormT: x -> InvNormT(x), as follows:
+
+0 ≤ x < NormT(LP)
+LP + (x' - T2(LP))/T2'(LP)
+
+NormT(LP) ≤ x < NormT(SP)
+SP - InvT(-x')
+
+NormT(SP) ≤ x < NormT(HP)
+SP + InvT(x')
+
+NormT(HP) ≤ x ≤ 1
+HP + (x' - T3(HP))/T3'(HP)
+
+where
+x' = T1(0) + x.(T4(1) - T1(0))
+*/
+
+/*
+In a simplified way, an S-curve (or inverted S-curve) modifies the image.
+The inflection point is defined by SP (Symmetry Point), for example 0.5 will generate a symmetrical 'S-curve' for RGB values ​​lower than SP or Higher.
+
+Stretch factor will make this curve more or less pronounced with very gradual asymptotes in the low and high lights.
+
+Linear factor will change the shape of the S, reducing or increasing the "length" of the asymptotic parts.
+
+All 3 allow you to modify the contrast of the image by filling the valleys and reducing the peaks
+
+*/
+
+float clamp(float x, float lo, float hi)
+{
+    return fmax(fmin(x, hi), lo);
+}
+
+// end GHT Siril 
 
 // From Siril.
 ght_compute_params ImProcFunctions::GHT_setup(float in_B, float D, float LP, float SP, float HP, GHTStrType strtype)
