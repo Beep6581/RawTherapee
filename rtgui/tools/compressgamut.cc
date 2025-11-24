@@ -126,9 +126,9 @@ Compressgamut::Compressgamut () : FoldableToolPanel(this, TOOL_NAME, M("TP_COMPR
     d_m->setAdjusterListener (this);
     d_y->setAdjusterListener (this);
     pwr->setAdjusterListener (this);
-    d_c->setLogScale(20, 1);
-    d_m->setLogScale(20, 1);
-    d_y->setLogScale(20, 1);   
+    d_c->setLogScale(4, 1);
+    d_m->setLogScale(4, 1);
+    d_y->setLogScale(4, 1);   
     show_all_children ();
 }
 
