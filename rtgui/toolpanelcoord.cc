@@ -1404,6 +1404,7 @@ void ToolPanelCoordinator::initImage(rtengine::StagedImageProcessor* ipc_, bool 
         ipc->setLocallabListener(locallab);
         ipc->setImageTypeListener(this);
         ipc->setFilmNegListener(filmNegative);
+        ipc->setCompgamutListener(compressgamut);
         flatfield->setShortcutPath(Glib::path_get_dirname(ipc->getInitialImage()->getFileName()));
 
         icm->setRawMeta(raw, (const rtengine::FramesData*)pMetaData);

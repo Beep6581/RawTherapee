@@ -170,6 +170,7 @@ ImProcCoordinator::ImProcCoordinator() :
     adnListener(nullptr),
     awavListener(nullptr),
     dehaListener(nullptr),
+    acmaxListener(nullptr),
     hListener(nullptr),
     resultValid(false),
     params(new procparams::ProcParams),
@@ -838,8 +839,14 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
             }
 
             if (params->cg.enabled) {//gamut compression
-                ipf.gamutcompr(orig_prev, orig_prev);
-            }
+                float mac = 0.f;
+                int typ = 1;
+                ipf.gamutcompr(orig_prev, orig_prev, mac, typ);                          
+                if (acmaxListener) {
+                   acmaxListener->achromaticChanged((double) mac);
+                }
+            }               
+            
 
             ipf.firstAnalysis(orig_prev, *params, vhist16);
         }

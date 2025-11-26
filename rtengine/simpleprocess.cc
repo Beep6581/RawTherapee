@@ -968,7 +968,9 @@ private:
         hist16(65536);
 
         if (params.cg.enabled) {//gamut compression
-            ipf.gamutcompr(baseImg, baseImg);
+            float mac = 0.f;
+            int typ = 0;
+            ipf.gamutcompr(baseImg, baseImg, mac, typ);
         }
 
         ipf.firstAnalysis(baseImg, params, hist16);

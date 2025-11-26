@@ -22,10 +22,13 @@
 
 #include "adjuster.h"
 #include "toolpanel.h"
+#include "guiutils.h"
+#include "toolpanel.h"
 
 class Compressgamut final :
     public ToolParamBlock,
     public AdjusterListener,
+    public rtengine:: CompgamutListener, 
     public FoldableToolPanel
 {
 
@@ -36,13 +39,15 @@ protected:
     Adjuster* d_c;
     Adjuster* d_m;
     Adjuster* d_y;
+    Gtk::Label* mMLabels;   
     Adjuster* pwr;
+
     MyComboBoxText *colorspace;
     sigc::connection colorspaceconn;
     Gtk::CheckButton* rolloff;
     sigc::connection rolloffconn;
     bool lastrolloff;
-
+    double nextmac;
     rtengine::ProcEvent EvcgColorspace;
     rtengine::ProcEvent Evcgthc;
     rtengine::ProcEvent Evcgthm;
@@ -54,16 +59,21 @@ protected:
     rtengine::ProcEvent Evcgpwr;
     rtengine::ProcEvent Evcgenabled;
 
+private:
+    IdleRegister idle_register;
+
 public:
     static const Glib::ustring TOOL_NAME;
-
+ 
     Compressgamut ();
+    ~Compressgamut() override;
 
+    
     void read           (const rtengine::procparams::ProcParams* pp, const ParamsEdited* pedited = nullptr) override;
     void write          (rtengine::procparams::ProcParams* pp, ParamsEdited* pedited = nullptr) override;
     void setDefaults    (const rtengine::procparams::ProcParams* defParams, const ParamsEdited* pedited = nullptr) override;
     void setBatchMode   (bool batchMode) override;
-
+    void achromaticChanged (double acmax) override;
     void adjusterChanged (Adjuster* a, double newval) override;
     void enabledChanged  () override;
     void rolloff_change();
@@ -71,4 +81,5 @@ public:
     void trimValues          (rtengine::procparams::ProcParams* pp) override;
 
     void colorspaceChanged();
+    void updateLabelachro();
 };

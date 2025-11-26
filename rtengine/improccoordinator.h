@@ -200,6 +200,7 @@ protected:
     AutoChromaListener* adnListener;
     WaveletListener* awavListener;
     RetinexListener* dehaListener;
+    CompgamutListener* acmaxListener;
 //    LocallabListener* locallListener;
 
     
@@ -552,6 +553,10 @@ public:
     {
         adnListener = adn;
     }
+    void setCompgamutListener  (CompgamutListener* cop) override
+    {
+        acmaxListener = cop;
+    }    
     void setRetinexListener  (RetinexListener* adh) override
     {
         dehaListener = adh;

@@ -468,7 +468,7 @@ void ImProcFunctions::preserv(LabImage *nprevl, LabImage *provis, int cw, int ch
 //const float PWR = 1.2;
 
 
-void ImProcFunctions::gamutcompr( Imagefloat *src, Imagefloat *dst) const
+void ImProcFunctions::gamutcompr( Imagefloat *src, Imagefloat *dst, float &mac, int typ) const
 {
      if (settings->verbose) {
         printf("Apply compression gamut \n");
@@ -606,9 +606,10 @@ void ImProcFunctions::gamutcompr( Imagefloat *src, Imagefloat *dst) const
     const int width = src->getWidth();
 
     constexpr float range = 65535.f;
-
+    float ac = 0.f;
+    float maxac = -1.f;
 #ifdef _OPENMP
-        #   pragma omp parallel for schedule(dynamic,16) if (multiThread)
+        #   pragma omp parallel for reduction(max:ac) schedule(dynamic,16) if (multiThread)
 #endif
 
     for (int i = 0; i < height; ++i)
@@ -620,13 +621,17 @@ void ImProcFunctions::gamutcompr( Imagefloat *src, Imagefloat *dst) const
             float rout = 0.f;
             float gout = 0.f;
             float bout = 0.f;
-            Color::aces_reference_gamut_compression(rgb_in, th, dl, to_out, from_out, pw, roll, rout, gout, bout);
+            Color::aces_reference_gamut_compression(rgb_in, th, dl, to_out, from_out, pw, roll, rout, gout, bout, ac, maxac, typ);
+            if(ac > maxac){
+                maxac = ac;
+            }
             dst->r(i, j) = range * rout;//in interval 0..65535
             dst->g(i, j) = range * gout;
             dst->b(i, j) = range * bout;
         }
+            mac = maxac;
+          
 }
-
 
 inline float power_norm2(float r, float g, float b)
 {

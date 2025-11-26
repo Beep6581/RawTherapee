@@ -410,6 +410,13 @@ public :
     virtual void noiseTilePrev(int tileX, int tileY, int prevX, int prevY, int sizeT, int sizeP) = 0;
 };
 
+class CompgamutListener
+{
+  public:
+     virtual ~CompgamutListener() = default;
+     virtual void achromaticChanged (double acmax) = 0;
+};
+
 class RetinexListener
 {
 public:
@@ -794,8 +801,9 @@ public:
     virtual void        setAutoWBListener       (AutoWBListener* l) = 0;
     virtual void        setAutoColorTonListener (AutoColorTonListener* l) = 0;
     virtual void        setAutoprimListener     (AutoprimListener* l) = 0;
-
+    virtual void        setCompgamutListener    (CompgamutListener* l) = 0;
     virtual void        setAutoChromaListener   (AutoChromaListener* l) = 0;
+
     virtual void        setRetinexListener      (RetinexListener* l) = 0;
     virtual void        setWaveletListener      (WaveletListener* l) = 0;
     virtual void        setImageTypeListener    (ImageTypeListener* l) = 0;

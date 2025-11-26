@@ -2630,6 +2630,7 @@ TP_COMPRESSGAMUT_LIMIT_TOOLTIP;Maximum Distance Limit: is the distance outside o
 TP_COMPRESSGAMUT_MAGENTALIM;Magenta
 TP_COMPRESSGAMUT_MAGENTATH;Magenta
 TP_COMPRESSGAMUT_MAIN_COLORSPACE;Target Compression Gamut
+TP_COMPRESSGAMUT_MLABEL;Achromatic:%1
 TP_COMPRESSGAMUT_POWER_TOOLTIP;Power: Control the aggressiveness of the compression curve.\n Higher power values result in more compressed values distributed closer to the gamut boundary. This will increase the "color purity" or "saturation" once the image has been rendered through a display transform.\n Higher values have a smoother transition.
 TP_COMPRESSGAMUT_PROPHOTO;ProPhoto
 TP_COMPRESSGAMUT_PWR;Power
