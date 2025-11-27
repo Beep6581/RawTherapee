@@ -70,7 +70,7 @@ Compressgamut::Compressgamut () : FoldableToolPanel(this, TOOL_NAME, M("TP_COMPR
  
     acLabels = Gtk::manage (new Gtk::Label ("---"));
     setExpandAlignProperties (acLabels, true, false, Gtk::ALIGN_CENTER, Gtk::ALIGN_START);
-    acLabels->set_tooltip_markup (M ("TP_COMPRESSGAMUT_ACLABEL_TOOLTIP"));
+    acLabels->set_tooltip_markup (M ("TP_COMPRESSGAMUT_MACLABEL_TOOLTIP"));
 
     acLabels->show ();
     // Percentage of the core gamut to protect Limits
@@ -157,7 +157,7 @@ void Compressgamut::achromaticChanged (double acmax)
 
             disableListener();
             acLabels->set_text(
-                Glib::ustring::compose(M("TP_COMPRESSGAMUT_MLABEL"),
+                Glib::ustring::compose(M("TP_COMPRESSGAMUT_MACLABEL"),
                                     Glib::ustring::format(std::fixed, std::setprecision(2), acmax))
             );
            enableListener();

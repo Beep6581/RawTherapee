@@ -2630,7 +2630,8 @@ TP_COMPRESSGAMUT_LIMIT_TOOLTIP;Maximum Distance Limit: is the distance outside o
 TP_COMPRESSGAMUT_MAGENTALIM;Magenta
 TP_COMPRESSGAMUT_MAGENTATH;Magenta
 TP_COMPRESSGAMUT_MAIN_COLORSPACE;Target Compression Gamut
-TP_COMPRESSGAMUT_MLABEL;Achromatic:%1
+TP_COMPRESSGAMUT_MACLABEL;Maximum achromatic value:%1
+TP_COMPRESSGAMUT_MACLABEL_TOOLTIP;Displays the highest measured value of the 3 RGB (achromatic) channels. This value helps to understand the state of the image and the incidence:\n * Working and Output profile.\n * Highlight reconstruction, even with low incidences.\n * The need or not to retouch white and black points (see GHS for example).\n\n * Very high values, for example above 5 or 10, often indicate the use of an LED or halogen illuminant and a significant exceeding of the color gamut.\n * High values ​​of 2 to 4 are often linked to an excessive light source (sun, etc.) or incorrect exposure settings that have resulted in out-of-range values ​​on the sensor. Try using 'Highlight reconstruction'.\n * Low values, less than 1, often indicate poorly adjusted white and black points (see for example GHS).\n\nThere is a link, but not a correlation, between this value and the 3 'Maximum Distance limits'. 
 TP_COMPRESSGAMUT_POWER_TOOLTIP;Power: Control the aggressiveness of the compression curve.\n Higher power values result in more compressed values distributed closer to the gamut boundary. This will increase the "color purity" or "saturation" once the image has been rendered through a display transform.\n Higher values have a smoother transition.
 TP_COMPRESSGAMUT_PROPHOTO;ProPhoto
 TP_COMPRESSGAMUT_PWR;Power
