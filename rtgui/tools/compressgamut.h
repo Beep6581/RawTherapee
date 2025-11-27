@@ -28,7 +28,7 @@
 class Compressgamut final :
     public ToolParamBlock,
     public AdjusterListener,
-    public rtengine:: CompgamutListener,
+    public rtengine::CompgamutListener,
     public FoldableToolPanel
 {
 
@@ -47,7 +47,6 @@ protected:
     Gtk::CheckButton* rolloff;
     sigc::connection rolloffconn;
     bool lastrolloff;
-    double nextmac;
     rtengine::ProcEvent EvcgColorspace;
     rtengine::ProcEvent Evcgthc;
     rtengine::ProcEvent Evcgthm;

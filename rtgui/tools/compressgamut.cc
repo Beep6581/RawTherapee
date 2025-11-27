@@ -46,7 +46,6 @@ Compressgamut::Compressgamut () : FoldableToolPanel(this, TOOL_NAME, M("TP_COMPR
     Evcgpwr = m->newEvent(COMPR, "HISTORY_MSG_CG_VALUE");
     Evcgenabled = m->newEvent(COMPR, "HISTORY_MSG_CG_ENABLED");
 
-    nextmac = 0.;
 
     Gtk::Frame *iFrame = Gtk::manage(new Gtk::Frame(M("TP_COMPRESSGAMUT_MAIN_COLORSPACE")));
 
@@ -147,7 +146,7 @@ Compressgamut::~Compressgamut()
 
 void Compressgamut::achromaticChanged (double acmax)
 {
-    nextmac = acmax;
+
 
     idle_register.add(
          [this, acmax]() -> bool
@@ -160,7 +159,7 @@ void Compressgamut::achromaticChanged (double acmax)
                 Glib::ustring::compose(M("TP_COMPRESSGAMUT_MACLABEL"),
                                     Glib::ustring::format(std::fixed, std::setprecision(2), acmax))
             );
-           enableListener();
+            enableListener();
             return false;
         }
     );
