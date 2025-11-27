@@ -840,12 +840,11 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
 
             if (params->cg.enabled) {//gamut compression
                 float mac = 0.f;
-                int typ = 1;
-                ipf.gamutcompr(orig_prev, orig_prev, mac, typ);                          
+                ipf.gamutcompr(orig_prev, orig_prev, mac);                       
                 if (acmaxListener) {
                    acmaxListener->achromaticChanged((double) mac);
                 }
-            }               
+            }             
             
 
             ipf.firstAnalysis(orig_prev, *params, vhist16);

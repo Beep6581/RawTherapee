@@ -2206,7 +2206,7 @@ void Color::aces_reference_gamut_compression(
     const std::array<float, 3> &distance_limit,
     const Matrix &to_out, const Matrix &from_out,
     float pwr, bool rolloff,
-    float &R, float &G, float &B, float &ac, float &maxac, int typ)
+    float &R, float &G, float &B, float &ac, float &maxac)
 {
     std::array<float, 3> rgb{rgb_in[0], rgb_in[1], rgb_in[2]};
 
@@ -2221,7 +2221,7 @@ void Color::aces_reference_gamut_compression(
     Color::mult3(rgb, to_out, rgb);
 
     // Achromatic axis
-    //const float 
+
     ac = fmax(rgb[0], fmax(rgb[1], rgb[2]));
 
     // Inverse RGB Ratios: distance from achromatic axis

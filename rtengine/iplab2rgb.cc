@@ -468,7 +468,7 @@ void ImProcFunctions::preserv(LabImage *nprevl, LabImage *provis, int cw, int ch
 //const float PWR = 1.2;
 
 
-void ImProcFunctions::gamutcompr( Imagefloat *src, Imagefloat *dst, float &mac, int typ) const
+void ImProcFunctions::gamutcompr( Imagefloat *src, Imagefloat *dst, float &mac) const
 {
      if (settings->verbose) {
         printf("Apply compression gamut \n");
@@ -621,7 +621,7 @@ void ImProcFunctions::gamutcompr( Imagefloat *src, Imagefloat *dst, float &mac, 
             float rout = 0.f;
             float gout = 0.f;
             float bout = 0.f;
-            Color::aces_reference_gamut_compression(rgb_in, th, dl, to_out, from_out, pw, roll, rout, gout, bout, ac, maxac, typ);
+            Color::aces_reference_gamut_compression(rgb_in, th, dl, to_out, from_out, pw, roll, rout, gout, bout, ac, maxac);
             if(ac > maxac){
                 maxac = ac;
             }
@@ -630,7 +630,7 @@ void ImProcFunctions::gamutcompr( Imagefloat *src, Imagefloat *dst, float &mac, 
             dst->b(i, j) = range * bout;
         }
             mac = maxac;
-          
+      
 }
 
 inline float power_norm2(float r, float g, float b)
