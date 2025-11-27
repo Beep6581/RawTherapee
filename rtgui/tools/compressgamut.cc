@@ -24,10 +24,8 @@
 
 #include "eventmapper.h"
 #include <iomanip>
-#include "rtengine/utils.h"
-#include "editcallbacks.h"
 #include "rtengine/procparams.h"
-#include "options.h"
+
 
 using namespace rtengine;
 using namespace rtengine::procparams;
@@ -70,11 +68,11 @@ Compressgamut::Compressgamut () : FoldableToolPanel(this, TOOL_NAME, M("TP_COMPR
     pack_start(*iFrame);
     colorspaceconn = colorspace->signal_changed().connect(sigc::mem_fun(*this, &Compressgamut::colorspaceChanged));
  
-    mMLabels = Gtk::manage (new Gtk::Label ("---"));
-    setExpandAlignProperties (mMLabels, true, false, Gtk::ALIGN_CENTER, Gtk::ALIGN_START);
-    //mMLabels->set_tooltip_markup (M ("TP_RETINEX_MLABEL_TOOLTIP"));
+    acLabels = Gtk::manage (new Gtk::Label ("---"));
+    setExpandAlignProperties (acLabels, true, false, Gtk::ALIGN_CENTER, Gtk::ALIGN_START);
+    acLabels->set_tooltip_markup (M ("TP_COMPRESSGAMUT_ACLABEL_TOOLTIP"));
 
-    mMLabels->show ();
+    acLabels->show ();
     // Percentage of the core gamut to protect Limits
     // Values calculated to protect all the colors of the ColorChecker Classic 24 as given by
     // ISO 17321-1 and Ohta (1997)
@@ -109,7 +107,7 @@ Compressgamut::Compressgamut () : FoldableToolPanel(this, TOOL_NAME, M("TP_COMPR
     limVBox->pack_start (*d_c);
     limVBox->pack_start (*d_m);
     limVBox->pack_start (*d_y);
-    limVBox->pack_start (*mMLabels);
+    limVBox->pack_start (*acLabels);
 
     limFrame->add(*limVBox);
     pack_start(*limFrame, Gtk::PACK_SHRINK);
@@ -144,7 +142,7 @@ Compressgamut::Compressgamut () : FoldableToolPanel(this, TOOL_NAME, M("TP_COMPR
 
 Compressgamut::~Compressgamut()
 {
-    idle_register.destroy();   
+    idle_register.destroy();
 }
 
 void Compressgamut::achromaticChanged (double acmax)
@@ -152,39 +150,21 @@ void Compressgamut::achromaticChanged (double acmax)
     nextmac = acmax;
 
     idle_register.add(
-         [this, acmax]() -> bool  
+         [this, acmax]() -> bool
 
         {
             GThreadLock lock; // All GUI access from idle_add callbacks or separate thread HAVE to be protected
 
             disableListener();
-            mMLabels->set_text(
+            acLabels->set_text(
                 Glib::ustring::compose(M("TP_COMPRESSGAMUT_MLABEL"),
                                     Glib::ustring::format(std::fixed, std::setprecision(2), acmax))
-            ); 
+            );
            enableListener();
             return false;
         }
     );
 
-}
-
-void Compressgamut::updateLabelachro ()
-{
-    if (!batchMode) {
-        float nX;
-        nX = nextmac;
-    
-        {
-            
-            mMLabels->set_text(
-                Glib::ustring::compose(M("TP_COMPRESSGAMUT_MLABEL"),
-                                    Glib::ustring::format(std::fixed, std::setprecision(2), nX))
-            ); 
-
-
-        }
-    }
 }
 
 

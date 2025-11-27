@@ -22,13 +22,13 @@
 
 #include "adjuster.h"
 #include "toolpanel.h"
-#include "guiutils.h"
-#include "toolpanel.h"
+
+
 
 class Compressgamut final :
     public ToolParamBlock,
     public AdjusterListener,
-    public rtengine:: CompgamutListener, 
+    public rtengine:: CompgamutListener,
     public FoldableToolPanel
 {
 
@@ -39,7 +39,7 @@ protected:
     Adjuster* d_c;
     Adjuster* d_m;
     Adjuster* d_y;
-    Gtk::Label* mMLabels;   
+    Gtk::Label* acLabels;
     Adjuster* pwr;
 
     MyComboBoxText *colorspace;
@@ -79,7 +79,5 @@ public:
     void rolloff_change();
 
     void trimValues          (rtengine::procparams::ProcParams* pp) override;
-
     void colorspaceChanged();
-    void updateLabelachro();
 };
