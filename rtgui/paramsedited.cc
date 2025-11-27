@@ -897,6 +897,27 @@ void ParamsEdited::set(bool v)
     filmNegative.colorSpace = v;
     raw.preprocessWB.mode = v;
 
+    iptcFlags.captionChanged = v;
+    iptcFlags.captionWriterChanged = v;
+    iptcFlags.headlineChanged = v;
+    iptcFlags.instructionsChanged = v;
+    iptcFlags.keywordAdded = v;
+    iptcFlags.keywordDeleted = v;
+    iptcFlags.categoryChanged = v;
+    iptcFlags.suppCategoryAdded = v;
+    iptcFlags.suppCategoryDeleted = v;
+    iptcFlags.creatorChanged = v;
+    iptcFlags.creatorJobTitleChanged = v;
+    iptcFlags.creditChanged = v;
+    iptcFlags.sourceChanged = v;
+    iptcFlags.copyrightChanged = v;
+    iptcFlags.cityChanged = v;
+    iptcFlags.provinceChanged = v;
+    iptcFlags.countryChanged = v;
+    iptcFlags.titleChanged = v;
+    iptcFlags.dateCreatedChanged = v;
+    iptcFlags.transReferenceChanged = v;
+
     exif = v;
     iptc = v;
 }

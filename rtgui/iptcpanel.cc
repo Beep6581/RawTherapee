@@ -32,25 +32,6 @@ using namespace rtengine::procparams;
 
 namespace {
 
-const std::string CAPTION("Iptc.Application2.Caption");
-const std::string CAPTION_WRITER("Iptc.Application2.Writer");
-const std::string CATEGORY("Iptc.Application2.Category");
-const std::string CITY("Iptc.Application2.City");
-const std::string COPYRIGHT("Iptc.Application2.Copyright");
-const std::string COUNTRY("Iptc.Application2.CountryName");
-const std::string CREATOR("Iptc.Application2.Byline");
-const std::string CREATOR_JOB_TITLE("Iptc.Application2.BylineTitle");
-const std::string CREDIT("Iptc.Application2.Credit");
-const std::string DATE_CREATED("Iptc.Application2.DateCreated");
-const std::string HEADLINE("Iptc.Application2.Headline");
-const std::string INSTRUCTIONS("Iptc.Application2.SpecialInstructions");
-const std::string KEYWORDS("Iptc.Application2.Keywords");
-const std::string PROVINCE("Iptc.Application2.ProvinceState");
-const std::string SOURCE("Iptc.Application2.Source");
-const std::string SUPPLEMENTAL_CATEGORIES("Iptc.Application2.SuppCategory");
-const std::string TITLE("Iptc.Application2.ObjectName");
-const std::string TRANS_REFERENCE("Iptc.Application2.TransmissionReference");
-
 const std::set<std::string> iptc_keys = {
     CAPTION,
     CAPTION_WRITER,
@@ -482,7 +463,140 @@ void IPTCPanel::read (const ProcParams* pp, const ParamsEdited* pedited)
 
 void IPTCPanel::write (ProcParams* pp, ParamsEdited* pedited)
 {
+    bool tagFound;
+    
+    if (pp->metadata.iptc.empty()) {
+        pp->metadata.iptc.insert(CAPTION, "");
+        pp->metadata.iptc.insert(CAPTION_WRITER, "");
+        pp->metadata.iptc.insert(CATEGORY, "");
+        pp->metadata.iptc.insert(CITY, "");
+        pp->metadata.iptc.insert(COPYRIGHT, "");
+        pp->metadata.iptc.insert(COUNTRY, "");
+        pp->metadata.iptc.insert(CREATOR, "");
+        pp->metadata.iptc.insert(CREATOR_JOB_TITLE, "");
+        pp->metadata.iptc.insert(CREDIT, "");
+        pp->metadata.iptc.insert(DATE_CREATED, "");
+        pp->metadata.iptc.insert(HEADLINE, "");
+        pp->metadata.iptc.insert(INSTRUCTIONS, "");
+        pp->metadata.iptc.insert(KEYWORDS, "");
+        pp->metadata.iptc[KEYWORDS].clear();
+        pp->metadata.iptc.insert(PROVINCE, "");
+        pp->metadata.iptc.insert(SOURCE, "");
+        pp->metadata.iptc.insert(SUPPLEMENTAL_CATEGORIES, "");
+        pp->metadata.iptc[SUPPLEMENTAL_CATEGORIES].clear();
+        pp->metadata.iptc.insert(TITLE, "");
+        pp->metadata.iptc.insert(TRANS_REFERENCE, "");
+    }
+
     if (changelist_valid_) {
+        if (pedited) {
+            // determine changes to IPTC tags of first selected picture
+            // flags are needed because just checking for an empty string would prevent replacing a tag with an empty string, i.e. clearing it
+            if (pp->metadata.iptc[CAPTION].at(0).compare((*changeList)[CAPTION].at(0)) != 0) {
+                pedited->iptcFlags.captionChanged = true;}
+            else if (pp->metadata.iptc[CAPTION_WRITER].at(0).compare((*changeList)[CAPTION_WRITER].at(0)) != 0) {
+                pedited->iptcFlags.captionWriterChanged = true; }
+            else if (pp->metadata.iptc[HEADLINE].at(0).compare((*changeList)[HEADLINE].at(0)) != 0) {
+                pedited->iptcFlags.headlineChanged = true; } 
+            else if (pp->metadata.iptc[INSTRUCTIONS].at(0).compare((*changeList)[INSTRUCTIONS].at(0)) != 0) {
+                pedited->iptcFlags.instructionsChanged = true; }
+            else if (pp->metadata.iptc[KEYWORDS].size() < (*changeList)[KEYWORDS].size()) {
+                // get added keyword
+                // apparently, I can't rely on a specific order of keywords, so have to check them all
+                for (unsigned int j = 0; j < (*changeList)[KEYWORDS].size(); j++) {
+                    tagFound = false;
+                    for (unsigned int k = 0; k < pp->metadata.iptc[KEYWORDS].size(); k++) {
+                        if (pp->metadata.iptc[KEYWORDS].at(k).compare((*changeList)[KEYWORDS].at(j)) == 0) {
+                            tagFound = true;
+                            break;
+                        }
+                    }
+                    if (!tagFound) {
+                        pp->metadata.keywordAdded = (*changeList)[KEYWORDS].at(j);
+                        pedited->iptcFlags.keywordAdded = true;
+                        break;
+                    }
+                }
+            }
+            else if (pp->metadata.iptc[KEYWORDS].size() > (*changeList)[KEYWORDS].size()) {
+                // get deleted keyword
+                // apparently, I can't rely on a specific order of keywords, so have to check them all
+                for (unsigned int k = 0; k < pp->metadata.iptc[KEYWORDS].size(); k++) {
+                    tagFound = false;
+                    for (unsigned int j = 0; j < (*changeList)[KEYWORDS].size(); j++) {
+                        if (pp->metadata.iptc[KEYWORDS].at(k).compare((*changeList)[KEYWORDS].at(j)) == 0) {
+                            tagFound = true;
+                            break;
+                        }
+                    }
+                    if (!tagFound) {
+                        pp->metadata.keywordDeleted = pp->metadata.iptc[KEYWORDS].at(k);
+                        pedited->iptcFlags.keywordDeleted = true;
+                        break;
+                    }
+                }
+            }
+            else if (pp->metadata.iptc[CATEGORY].at(0).compare((*changeList)[CATEGORY].at(0)) != 0) {
+                pedited->iptcFlags.categoryChanged = true; }
+            else if (pp->metadata.iptc[SUPPLEMENTAL_CATEGORIES].size() < (*changeList)[SUPPLEMENTAL_CATEGORIES].size()) {
+                // get added supplementary category
+                // apparently, I can't rely on a specific order, so have to check them all
+                for (unsigned int j = 0; j < (*changeList)[SUPPLEMENTAL_CATEGORIES].size(); j++) {
+                    tagFound = false;
+                    for (unsigned int k = 0; k < pp->metadata.iptc[SUPPLEMENTAL_CATEGORIES].size(); k++) {
+                        if (pp->metadata.iptc[SUPPLEMENTAL_CATEGORIES].at(k).compare((*changeList)[SUPPLEMENTAL_CATEGORIES].at(j)) == 0) {
+                            tagFound = true;
+                            break;
+                        }
+                    }
+                    if (!tagFound) {
+                        pp->metadata.suppCategoryAdded = (*changeList)[SUPPLEMENTAL_CATEGORIES].at(j);
+                        pedited->iptcFlags.suppCategoryAdded = true;
+                        break;
+                    }
+                }
+            }
+            else if (pp->metadata.iptc[SUPPLEMENTAL_CATEGORIES].size() > (*changeList)[SUPPLEMENTAL_CATEGORIES].size()) {
+                // get deleted supplementary category
+                // apparently, I can't rely on a specific order, so have to check them all
+                for (unsigned int k = 0; k < pp->metadata.iptc[SUPPLEMENTAL_CATEGORIES].size(); k++) {
+                    tagFound = false;
+                    for (unsigned int j = 0; j < (*changeList)[SUPPLEMENTAL_CATEGORIES].size(); j++) {
+                        if (pp->metadata.iptc[SUPPLEMENTAL_CATEGORIES].at(k).compare((*changeList)[SUPPLEMENTAL_CATEGORIES].at(j)) == 0) {
+                            tagFound = true;
+                            break;
+                        }
+                    }
+                    if (!tagFound) {
+                        pp->metadata.suppCategoryDeleted = pp->metadata.iptc[SUPPLEMENTAL_CATEGORIES].at(k);
+                        pedited->iptcFlags.suppCategoryDeleted = true;
+                        break;
+                    }
+                }
+            }
+            else if (pp->metadata.iptc[CREATOR].at(0).compare((*changeList)[CREATOR].at(0)) != 0) {
+                pedited->iptcFlags.creatorChanged = true; }
+            else if (pp->metadata.iptc[CREATOR_JOB_TITLE].at(0).compare((*changeList)[CREATOR_JOB_TITLE].at(0)) != 0) {
+                pedited->iptcFlags.creatorJobTitleChanged = true; }
+            else if (pp->metadata.iptc[CREDIT].at(0).compare((*changeList)[CREDIT].at(0)) != 0) {
+                pedited->iptcFlags.creditChanged = true; }
+            else if (pp->metadata.iptc[SOURCE].at(0).compare((*changeList)[SOURCE].at(0)) != 0) {
+                pedited->iptcFlags.sourceChanged = true; }
+            else if (pp->metadata.iptc[COPYRIGHT].at(0).compare((*changeList)[COPYRIGHT].at(0)) != 0) {
+                pedited->iptcFlags.copyrightChanged = true; }
+            else if (pp->metadata.iptc[CITY].at(0).compare((*changeList)[CITY].at(0)) != 0) {
+                pedited->iptcFlags.cityChanged = true; }
+            else if (pp->metadata.iptc[PROVINCE].at(0).compare((*changeList)[PROVINCE].at(0)) != 0) {
+                pedited->iptcFlags.provinceChanged = true; }
+            else if (pp->metadata.iptc[COUNTRY].at(0).compare((*changeList)[COUNTRY].at(0)) != 0) {
+                pedited->iptcFlags.countryChanged = true; }
+            else if (pp->metadata.iptc[TITLE].at(0).compare((*changeList)[TITLE].at(0)) != 0) {
+                pedited->iptcFlags.titleChanged = true; }
+            else if (pp->metadata.iptc[DATE_CREATED].at(0).compare((*changeList)[DATE_CREATED].at(0)) != 0) {
+                pedited->iptcFlags.dateCreatedChanged = true; }
+            else if (pp->metadata.iptc[TRANS_REFERENCE].at(0).compare((*changeList)[TRANS_REFERENCE].at(0)) != 0) {
+                pedited->iptcFlags.transReferenceChanged = true; }
+        }
         pp->metadata.iptc = *changeList;
     } else {
         pp->metadata.iptc.clear();

@@ -27,6 +27,7 @@
 #include "procparamchangers.h"
 #include "addsetids.h"
 #include "thumbnail.h"
+#include "iptcpanel.h"
 
 using namespace rtengine::procparams;
 
@@ -589,6 +590,110 @@ void BatchToolPanelCoordinator::panelChanged(const rtengine::ProcEvent& event, c
         }
     }
 
+    ProcParams selectedParams, originalParams;
+     
+    if (event == rtengine::EvIPTC) {
+        // The following is necessary because it is not assured that initialPP[i].metadata.iptc is always initialized.
+        // There may be a better way to do this (existing functionality?) but I haven't found out how.
+        // Also, it might be considered to do this initialization in a more "general" place, e.g. procparams::PartialProfile constructor?
+
+        for (size_t i = 0; i < selected.size(); i++) {
+            if (initialPP[i].metadata.iptc.empty()) {
+                initialPP[i].metadata.iptc.insert(CAPTION, "");
+                initialPP[i].metadata.iptc.insert(CAPTION_WRITER, "");
+                initialPP[i].metadata.iptc.insert(CATEGORY, "");
+                initialPP[i].metadata.iptc.insert(CITY, "");
+                initialPP[i].metadata.iptc.insert(COPYRIGHT, "");
+                initialPP[i].metadata.iptc.insert(COUNTRY, "");
+                initialPP[i].metadata.iptc.insert(CREATOR, "");
+                initialPP[i].metadata.iptc.insert(CREATOR_JOB_TITLE, "");
+                initialPP[i].metadata.iptc.insert(CREDIT, "");
+                initialPP[i].metadata.iptc.insert(DATE_CREATED, "");
+                initialPP[i].metadata.iptc.insert(HEADLINE, "");
+                initialPP[i].metadata.iptc.insert(INSTRUCTIONS, "");
+                initialPP[i].metadata.iptc.insert(KEYWORDS, "");
+                initialPP[i].metadata.iptc[KEYWORDS].clear();
+                initialPP[i].metadata.iptc.insert(PROVINCE, "");
+                initialPP[i].metadata.iptc.insert(SOURCE, "");
+                initialPP[i].metadata.iptc.insert(SUPPLEMENTAL_CATEGORIES, "");
+                initialPP[i].metadata.iptc[SUPPLEMENTAL_CATEGORIES].clear();
+                initialPP[i].metadata.iptc.insert(TITLE, "");
+                initialPP[i].metadata.iptc.insert(TRANS_REFERENCE, "");
+            }
+        }
+    }
+
+    if (event == rtengine::EvIPTC) {
+        for (size_t i = 0; i < selected.size(); i++) {
+            selectedParams=initialPP[i];
+            if (pparamsEdited.iptcFlags.captionChanged)
+                initialPP[i].metadata.iptc[CAPTION].at(0) = pparams.metadata.iptc[CAPTION].at(0);
+            if (pparamsEdited.iptcFlags.captionWriterChanged)
+                initialPP[i].metadata.iptc[CAPTION_WRITER].at(0) = pparams.metadata.iptc[CAPTION_WRITER].at(0);
+            if (pparamsEdited.iptcFlags.headlineChanged)
+                initialPP[i].metadata.iptc[HEADLINE].at(0) = pparams.metadata.iptc[HEADLINE].at(0);
+            if (pparamsEdited.iptcFlags.instructionsChanged)
+                initialPP[i].metadata.iptc[INSTRUCTIONS].at(0) = pparams.metadata.iptc[INSTRUCTIONS].at(0);
+            if (pparamsEdited.iptcFlags.keywordAdded) {
+                unsigned int j;
+                for (j = 0; j < selectedParams.metadata.iptc[KEYWORDS].size(); j++) {
+                    if (selectedParams.metadata.iptc[KEYWORDS].at(j).compare(pparams.metadata.keywordAdded) == 0)
+                        break;
+                }
+                if (j == selectedParams.metadata.iptc[KEYWORDS].size())
+                    initialPP[i].metadata.iptc[KEYWORDS].push_back(pparams.metadata.keywordAdded);
+            }
+            if (pparamsEdited.iptcFlags.keywordDeleted) {
+                initialPP[i].metadata.iptc[KEYWORDS].clear();
+                for (unsigned int j = 0; j < selectedParams.metadata.iptc[KEYWORDS].size(); j++) {
+                    if (selectedParams.metadata.iptc[KEYWORDS].at(j).compare(pparams.metadata.keywordDeleted) != 0)
+                        initialPP[i].metadata.iptc[KEYWORDS].push_back(selectedParams.metadata.iptc[KEYWORDS].at(j));
+                }
+            }
+            if (pparamsEdited.iptcFlags.categoryChanged)
+                initialPP[i].metadata.iptc[CATEGORY].at(0) = pparams.metadata.iptc[CATEGORY].at(0);
+            if (pparamsEdited.iptcFlags.suppCategoryAdded) {
+                unsigned int j;
+                for (j = 0; j < selectedParams.metadata.iptc[SUPPLEMENTAL_CATEGORIES].size(); j++) {
+                    if (selectedParams.metadata.iptc[SUPPLEMENTAL_CATEGORIES].at(j).compare(pparams.metadata.suppCategoryAdded) == 0)
+                        break;
+                }
+                if (j == selectedParams.metadata.iptc[SUPPLEMENTAL_CATEGORIES].size())
+                    initialPP[i].metadata.iptc[SUPPLEMENTAL_CATEGORIES].push_back(pparams.metadata.suppCategoryAdded);
+            }
+            if (pparamsEdited.iptcFlags.suppCategoryDeleted) {
+                initialPP[i].metadata.iptc[SUPPLEMENTAL_CATEGORIES].clear();
+                for (unsigned int j = 0; j < selectedParams.metadata.iptc[SUPPLEMENTAL_CATEGORIES].size(); j++) {
+                    if (selectedParams.metadata.iptc[SUPPLEMENTAL_CATEGORIES].at(j).compare(pparams.metadata.suppCategoryDeleted) != 0)
+                        initialPP[i].metadata.iptc[SUPPLEMENTAL_CATEGORIES].push_back(selectedParams.metadata.iptc[SUPPLEMENTAL_CATEGORIES].at(j));
+                }
+            }
+            if (pparamsEdited.iptcFlags.creatorChanged)
+                initialPP[i].metadata.iptc[CREATOR].at(0) = pparams.metadata.iptc[CREATOR].at(0);
+            if (pparamsEdited.iptcFlags.creatorJobTitleChanged)
+                initialPP[i].metadata.iptc[CREATOR_JOB_TITLE].at(0) = pparams.metadata.iptc[CREATOR_JOB_TITLE].at(0);
+            if (pparamsEdited.iptcFlags.creditChanged)
+                initialPP[i].metadata.iptc[CREDIT].at(0) = pparams.metadata.iptc[CREDIT].at(0);
+            if (pparamsEdited.iptcFlags.sourceChanged)
+                initialPP[i].metadata.iptc[SOURCE].at(0) = pparams.metadata.iptc[SOURCE].at(0);
+            if (pparamsEdited.iptcFlags.copyrightChanged)
+                initialPP[i].metadata.iptc[COPYRIGHT].at(0) = pparams.metadata.iptc[COPYRIGHT].at(0);
+            if (pparamsEdited.iptcFlags.cityChanged)
+                initialPP[i].metadata.iptc[CITY].at(0) = pparams.metadata.iptc[CITY].at(0);
+            if (pparamsEdited.iptcFlags.provinceChanged)
+                initialPP[i].metadata.iptc[PROVINCE].at(0) = pparams.metadata.iptc[PROVINCE].at(0);
+            if (pparamsEdited.iptcFlags.countryChanged)
+                initialPP[i].metadata.iptc[COUNTRY].at(0) = pparams.metadata.iptc[COUNTRY].at(0);
+            if (pparamsEdited.iptcFlags.titleChanged)
+                initialPP[i].metadata.iptc[TITLE].at(0) = pparams.metadata.iptc[TITLE].at(0);
+            if (pparamsEdited.iptcFlags.dateCreatedChanged)
+                initialPP[i].metadata.iptc[DATE_CREATED].at(0) = pparams.metadata.iptc[DATE_CREATED].at(0);
+            if (pparamsEdited.iptcFlags.transReferenceChanged)
+                initialPP[i].metadata.iptc[TRANS_REFERENCE].at(0) = pparams.metadata.iptc[TRANS_REFERENCE].at(0);
+            pparamsEdited.iptc = false;
+        }
+    }
+
     // combine with initial parameters and set
     ProcParams newParams;
 
@@ -605,7 +710,7 @@ void BatchToolPanelCoordinator::panelChanged(const rtengine::ProcEvent& event, c
 
         selected[i]->setProcParams (newParams, nullptr, BATCHEDITOR, false);
     }
-
+    
     for (size_t i = 0; i < paramcListeners.size(); i++) {
         paramcListeners[i]->procParamsChanged (&pparams, event, descr, &pparamsEdited);
     }

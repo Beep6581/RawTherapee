@@ -64,8 +64,7 @@ void MetaDataPanel::setBatchMode(bool batchMode)
 {
     ToolPanel::setBatchMode(batchMode);
     metadataMode->append(M("GENERAL_UNCHANGED"));
-    tagsNotebook->remove_page(-1);
-    tagsNotebook->remove_page(-1);
+    tagsNotebook->remove_page(0);   // remove EXIF page
 }
 
 
@@ -81,8 +80,8 @@ void MetaDataPanel::read(const rtengine::procparams::ProcParams* pp, const Param
 
     if (!batchMode) { // Not used in batch mode.
         exifpanel->read(pp, pedited);
-        iptcpanel->read(pp, pedited);
     }
+    iptcpanel->read(pp, pedited);
     
     enableListener();
 }
@@ -97,9 +96,9 @@ void MetaDataPanel::write(rtengine::procparams::ProcParams* pp, ParamsEdited* pe
     }
 
     if (!batchMode) { // Invalid in batch mode.
-        exifpanel->write(pp, pedited);
-        iptcpanel->write(pp, pedited);
-    }
+		exifpanel->write(pp, pedited);
+	}
+    iptcpanel->write(pp, pedited);
 }
 
 
