@@ -39,7 +39,7 @@ protected:
     Adjuster* d_c;
     Adjuster* d_m;
     Adjuster* d_y;
-    Gtk::Label* acLabels;
+    Gtk::Label* acLabel;
     Adjuster* pwr;
 
     MyComboBoxText *colorspace;

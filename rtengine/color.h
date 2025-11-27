@@ -1902,7 +1902,7 @@ static inline void Lab2XYZ(vfloat L, vfloat a, vfloat b, vfloat &x, vfloat &y, v
         const std::array<float, 3> &distance_limit,
         const Matrix &to_out, const Matrix &from_out,
         float pwr, bool rolloff,
-        float &R, float &G, float &B, float &ac, float &maxac);
+        float &R, float &G, float &B, float &ac);
 
     /**
     * @brief Get HSV's hue from the Lab's hue

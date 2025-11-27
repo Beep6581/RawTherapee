@@ -67,11 +67,11 @@ Compressgamut::Compressgamut () : FoldableToolPanel(this, TOOL_NAME, M("TP_COMPR
     pack_start(*iFrame);
     colorspaceconn = colorspace->signal_changed().connect(sigc::mem_fun(*this, &Compressgamut::colorspaceChanged));
  
-    acLabels = Gtk::manage (new Gtk::Label ("---"));
-    setExpandAlignProperties (acLabels, true, false, Gtk::ALIGN_CENTER, Gtk::ALIGN_START);
-    acLabels->set_tooltip_markup (M ("TP_COMPRESSGAMUT_MACLABEL_TOOLTIP"));
+    acLabel = Gtk::manage (new Gtk::Label ("---"));
+    setExpandAlignProperties (acLabel, true, false, Gtk::ALIGN_CENTER, Gtk::ALIGN_START);
+    acLabel->set_tooltip_markup (M ("TP_COMPRESSGAMUT_MACLABEL_TOOLTIP"));
 
-    acLabels->show ();
+    acLabel->show ();
     // Percentage of the core gamut to protect Limits
     // Values calculated to protect all the colors of the ColorChecker Classic 24 as given by
     // ISO 17321-1 and Ohta (1997)
@@ -106,7 +106,7 @@ Compressgamut::Compressgamut () : FoldableToolPanel(this, TOOL_NAME, M("TP_COMPR
     limVBox->pack_start (*d_c);
     limVBox->pack_start (*d_m);
     limVBox->pack_start (*d_y);
-    limVBox->pack_start (*acLabels);
+    limVBox->pack_start (*acLabel);
 
     limFrame->add(*limVBox);
     pack_start(*limFrame, Gtk::PACK_SHRINK);
@@ -155,7 +155,7 @@ void Compressgamut::achromaticChanged (double acmax)
             GThreadLock lock; // All GUI access from idle_add callbacks or separate thread HAVE to be protected
 
             disableListener();
-            acLabels->set_text(
+            acLabel->set_text(
                 Glib::ustring::compose(M("TP_COMPRESSGAMUT_MACLABEL"),
                                     Glib::ustring::format(std::fixed, std::setprecision(2), acmax))
             );
