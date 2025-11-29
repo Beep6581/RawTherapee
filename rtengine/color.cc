@@ -2275,7 +2275,7 @@ void Color::aces_reference_gamut_compression(
         }
     }
     // Inverse RGB Ratios to RGB
-
+    
     for (unsigned i = 0; i < rgb.size(); ++i) {
         rgb[i] = ac - cd[i] * fabs(ac);
     }

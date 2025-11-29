@@ -113,7 +113,7 @@ Compressgamut::Compressgamut () : FoldableToolPanel(this, TOOL_NAME, M("TP_COMPR
 
     // Aggressiveness of the compression curve Pwr
     rolloff = Gtk::manage(new Gtk::CheckButton(M("TP_COMPRESSGAMUT_ROLLOFF")));
-    pwr = Gtk::manage (new Adjuster (M("TP_COMPRESSGAMUT_PWR"), 0.5, 2.0, 0.01, 1.2));
+    pwr = Gtk::manage (new Adjuster (M("TP_COMPRESSGAMUT_PWR"), 0.2, 2.0, 0.01, 1.2));
     rolloffconn = rolloff->signal_toggled().connect (sigc::mem_fun (*this, &Compressgamut::rolloff_change));
 
     Gtk::Frame *rollFrame = Gtk::manage(new Gtk::Frame());
