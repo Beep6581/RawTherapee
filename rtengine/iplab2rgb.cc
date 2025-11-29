@@ -557,7 +557,7 @@ void ImProcFunctions::gamutcompr( Imagefloat *src, Imagefloat *dst, float &mac) 
     Matrix beta = {};//Beta RGB near Pointers'gamut
         beta[0][0] = 0.6712537;
         beta[0][1] = 0.1745834;
-        beta[0][1] = 0.1183829;
+        beta[0][2] = 0.1183829;
         beta[1][0] = 0.3032726;
         beta[1][1] = 0.6637861;
         beta[1][2] = 0.0329413;
