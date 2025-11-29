@@ -89,9 +89,9 @@ Compressgamut::Compressgamut () : FoldableToolPanel(this, TOOL_NAME, M("TP_COMPR
     // https://docs.acescentral.com/specifications/rgc/#appendix-d-ctl-reference-implementation
     // Distance from achromatic which will be compressed to the gamut boundary
     // Values calculated to encompass the encoding gamuts of common digital cinema cameras
-    d_c = Gtk::manage (new Adjuster (M("TP_COMPRESSGAMUT_CYANLIM"), 1.001, 2.0, 0.001, 1.147));//1.05 sRGB
-    d_m = Gtk::manage (new Adjuster (M("TP_COMPRESSGAMUT_MAGENTALIM"), 1.001, 2.0, 0.001, 1.264));//1.08 sRGB
-    d_y = Gtk::manage (new Adjuster (M("TP_COMPRESSGAMUT_YELLOWLIM"), 1.001, 2.0, 0.001, 1.312));//1.10 sRGB
+    d_c = Gtk::manage (new Adjuster (M("TP_COMPRESSGAMUT_CYANLIM"), 1.001, 10., 0.001, 1.147));//1.05 sRGB
+    d_m = Gtk::manage (new Adjuster (M("TP_COMPRESSGAMUT_MAGENTALIM"), 1.001, 10., 0.001, 1.264));//1.08 sRGB
+    d_y = Gtk::manage (new Adjuster (M("TP_COMPRESSGAMUT_YELLOWLIM"), 1.001, 10., 0.001, 1.312));//1.10 sRGB
 
     Gtk::Frame *limFrame = Gtk::manage(new Gtk::Frame(M("TP_COMPRESSGAMUT_LIMIT")));
     limFrame->set_label_align(0.025f, 0.5);
@@ -126,7 +126,9 @@ Compressgamut::Compressgamut () : FoldableToolPanel(this, TOOL_NAME, M("TP_COMPR
     d_m->setAdjusterListener (this);
     d_y->setAdjusterListener (this);
     pwr->setAdjusterListener (this);
-    
+    d_c->setLogScale(100, 1);
+    d_m->setLogScale(100, 1);
+    d_y->setLogScale(100, 1);   
     show_all_children ();
 }
 

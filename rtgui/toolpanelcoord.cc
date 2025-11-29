@@ -238,6 +238,11 @@ const std::vector<ToolTree> TRANSFORM_PANEL_TOOLS = {
 
 const std::vector<ToolTree> RAW_PANEL_TOOLS = {
     {
+        .id = Tool::PD_SHARPENING,
+        .children = {},
+    },
+
+    {
         .id = Tool::SENSOR_BAYER,
         .children = {
             {
@@ -293,10 +298,6 @@ const std::vector<ToolTree> RAW_PANEL_TOOLS = {
     },
     {
         .id = Tool::FLATFIELD_TOOL,
-        .children = {},
-    },
-    {
-        .id = Tool::PD_SHARPENING,
         .children = {},
     },
 };

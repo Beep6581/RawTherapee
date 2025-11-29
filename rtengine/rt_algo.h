@@ -20,11 +20,24 @@
 #pragma once
 
 #include <cstddef>
+#include <vector>
+#include "array2D.h"
+#include "coord.h"
+
+
 
 namespace rtengine
 {
-void findMinMaxPercentile(const float* data, size_t size, float minPrct, float& minOut, float maxPrct, float& maxOut, bool multiThread = true);
+class Imagefloat;
+    
+void findMinMaxPercentile(const float* data, std::size_t size, float minPrct, float& minOut, float maxPrct, float& maxOut, bool multiThread = true);
 void buildBlendMask(const float* const * luminance, float **blend, int W, int H, float &contrastThreshold, bool autoContrast = false, float ** clipmask = nullptr);
+void buildBlendMask2(float** luminance, float **blend, int W, int H, float &contrastThreshold, float amount=1.f, bool autoContrast=false, float blur_radius=2.f, float luminance_factor=1.f, float noise=0.f);
+
+void markImpulse(int W, int H, float **const src, char **impulse, float thresh);
+void get_luminance(const Imagefloat *src, array2D<float> &out,  bool multithread);
+void multiply(Imagefloat *img, const array2D<float> &num, const array2D<float> &den, bool multithread);
+
 // implemented in tmo_fattal02
 void buildGradientsMask(int W, int H, float **luminance, float **out, 
                         float amount, int nlevels, int detail_level,

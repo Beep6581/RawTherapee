@@ -165,7 +165,7 @@ void ToneEqualizer::adjusterChanged(Adjuster *a, double newval)
 }
 
 
-void ToneEqualizer::adjusterAutoToggled(Adjuster *a)
+void ToneEqualizer::adjusterAutoToggled(Adjuster *a, bool newval)
 {
 }
 

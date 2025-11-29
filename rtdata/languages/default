@@ -602,7 +602,7 @@ HISTORY_MSG_352;W - Background
 HISTORY_MSG_353;W - ES - Gradient sensitivity
 HISTORY_MSG_354;W - ES - Enhanced
 HISTORY_MSG_355;W - ES - Threshold low
-HISTORY_MSG_356;W - ES - Threshold high
+HISTORY_MSG_356;W - ES - Edge enhancement
 HISTORY_MSG_357;W - Denoise - Link with ES
 HISTORY_MSG_358;W - Gamut - CH
 HISTORY_MSG_359;Hot/Dead - Threshold
@@ -738,7 +738,7 @@ HISTORY_MSG_490;DRC - Amount
 HISTORY_MSG_491;White Balance
 HISTORY_MSG_492;RGB Curves
 HISTORY_MSG_493;L*a*b* Adjustments
-HISTORY_MSG_494;Capture Sharpening
+HISTORY_MSG_494;Capture sharpening
 HISTORY_MSG_496;Local Spot deleted
 HISTORY_MSG_497;Local Spot selected
 HISTORY_MSG_498;Local - Spot name
@@ -1457,6 +1457,7 @@ HISTORY_MSG_HLBL;Color propagation - blur
 HISTORY_MSG_HLTH;Inpaint opposed - gain threshold
 HISTORY_MSG_ICL_LABGRIDCIEXY;Cie xy
 HISTORY_MSG_ICM_AINTENT;Abstract profile intent
+HISTORY_MSG_ICM_APSAT;Abstract profile saturation
 HISTORY_MSG_ICM_BLUX;Primaries Blue X
 HISTORY_MSG_ICM_BLUY;Primaries Blue Y
 HISTORY_MSG_ICM_CAT;Matrix adaptation
@@ -1480,6 +1481,7 @@ HISTORY_MSG_ICM_SHIFTX;Refinement Colors - Shift x
 HISTORY_MSG_ICM_SHIFTY;Refinement Colors - Shift y
 HISTORY_MSG_ICM_SIGMATRC;Local contrast Attenation response
 HISTORY_MSG_ICM_SMOOTHCIE;Smooth highlights
+HISTORY_MSG_ICM_SMOOTHCIESLI;Attenuation threshold
 HISTORY_MSG_ICM_TRCEXP;Abstract Profile
 HISTORY_MSG_ICM_WAVEXP;Contrast Enhancement
 HISTORY_MSG_ICM_WORKING_GAMMA;TRC - Gamma
@@ -1494,6 +1496,7 @@ HISTORY_MSG_LOCALCONTRAST_ENABLED;Local Contrast
 HISTORY_MSG_LOCALCONTRAST_LIGHTNESS;Local Contrast - Lightness
 HISTORY_MSG_LOCALCONTRAST_RADIUS;Local Contrast - Radius
 HISTORY_MSG_LOCALLAB_TE_PIVOT;Local - Equalizer pivot
+HISTORY_MSG_LOCAL_AUTOSP;Local - GHS - Auto SP
 HISTORY_MSG_LOCAL_AVOIDNEGATIVE;Local - SC - Pre-filter zero and negative values
 HISTORY_MSG_LOCAL_CIEMASK_BLURCONT;Local - CIECAM Mask blur contrast
 HISTORY_MSG_LOCAL_CIEMASK_BLURFFT;Local - CIECAM Mask blur FFTW
@@ -1523,12 +1526,16 @@ HISTORY_MSG_LOCAL_CIE_GREXL;Local - CIECAM Green X
 HISTORY_MSG_LOCAL_CIE_GREYL;Local - CIECAM Green Y
 HISTORY_MSG_LOCAL_CIE_ILL;Local - CIECAM TRC Illuminant
 HISTORY_MSG_LOCAL_CIE_LOGCIEQ;Local - CIECAM Log encoding Q
-HISTORY_MSG_LOCAL_CIE_MIDT;Local - CIECAM Mid Tones
+HISTORY_MSG_LOCAL_CIE_MIDT;Local - CIECAM Midtones
+HISTORY_MSG_LOCAL_CIE_MIDTMET;Local - CIECAM Midtones Method
+HISTORY_MSG_LOCAL_LOCKMADL;Local - Denoise Lock MadL
+HISTORY_MSG_LOCAL_LOCKMADL2;Local - Manual MadL
 HISTORY_MSG_LOCAL_CIE_NORM11;Local - CIECAM Normalize luminance 5.11
 HISTORY_MSG_LOCAL_CIE_PRIM;Local - CIECAM TRC primaries
 HISTORY_MSG_LOCAL_CIE_REDXL;Local - CIECAM Red X
 HISTORY_MSG_LOCAL_CIE_REDYL;Local - CIECAM Red Y
 HISTORY_MSG_LOCAL_CIE_REFI;Local - CIECAM Refinement colors
+HISTORY_MSG_LOCAL_CIE_SAT;Local - CIECAM Saturation
 HISTORY_MSG_LOCAL_CIE_SATCIE;Local - CIECAM Saturation control
 HISTORY_MSG_LOCAL_CIE_SHIFTXL;Local - CIECAM Shift x
 HISTORY_MSG_LOCAL_CIE_SHIFTYL;Local - CIECAM Shift y
@@ -1544,9 +1551,11 @@ HISTORY_MSG_LOCAL_CIE_SLOPESMOQ;Local - CIECAM Gray balance
 HISTORY_MSG_LOCAL_CIE_SLOPESMOR;Local - CIECAM Red balance
 HISTORY_MSG_LOCAL_CIE_SMOOTH;Local - CIECAM Scale Yb scene
 HISTORY_MSG_LOCAL_CIE_SMOOTHLNK;Local CIECAM - Link R G B
+HISTORY_MSG_LOCAL_CIE_SMOOTHINV;Local CIECAM - Inverse color
 HISTORY_MSG_LOCAL_CIE_SMOOTHMET;Local - CIECAM Smooth lights method
 HISTORY_MSG_LOCAL_CIE_SMOOTHTH;Local CIECAM - Attenuation threshold
-HISTORY_MSG_LOCAL_CIE_SMOOTHTRC;Local CIECAM - Gamma based Highlight attenuation
+HISTORY_MSG_LOCAL_CIE_SMOOTHTHTRC;Local CIECAM - Highlight attenuation threshold
+HISTORY_MSG_LOCAL_CIE_SMOOTHTRC;Local CIECAM - Inverse color
 HISTORY_MSG_LOCAL_CIE_SMOOTHTRCREL;Local CIECAM - Relative gamma mode
 HISTORY_MSG_LOCAL_CIE_SMOOTHYB;Local - CIECAM Scale Yb viewing
 HISTORY_MSG_LOCAL_CIE_SMOOTH_HIGH;Local CIECAM - Highlight Attenuation only
@@ -1557,6 +1566,23 @@ HISTORY_MSG_LOCAL_CIE_TRC;Local - CIECAM TRC
 HISTORY_MSG_LOCAL_CIE_WEVMETHOD11;Local CIECAM - Black Ev White Ev
 HISTORY_MSG_LOCAL_CIE_WHITES;Local - CIECAM Whites distribution
 HISTORY_MSG_LOCAL_CIE_WHITSIG;Local CIECAM - Sigmoid Display white point
+HISTORY_MSG_LOCAL_CAPRADIUS;Local - Sh Capture radius
+HISTORY_MSG_LOCAL_DENOCONTRAST;Local - Denoise Contrast threshold
+HISTORY_MSG_LOCAL_DENOMASKCURV;Local - Denoise Equalizer Denoise mask
+HISTORY_MSG_LOCAL_DENOCONTRSHOW;Local - Denoise Show mask contrast
+HISTORY_MSG_LOCAL_DENOAUTO;Local - Denoise Auto Contrast
+HISTORY_MSG_LOCAL_DENORATIO;Local - Denoise Ratio flat-structure
+HISTORY_MSG_LOCAL_DENOMASK;Local - Denoise Contrast mask
+HISTORY_MSG_LOCAL_DENOENA;Local - Denoise Enable Contrast threshold
+HISTORY_MSG_LOCAL_AUTOCAPRADIUS;Local - Sh Auto Capture radius
+HISTORY_MSG_LOCAL_AUTOSHAR;Local - Sh Auto Contrast
+HISTORY_MSG_LOCAL_CONVBOOST;Local - Sh Corner radius
+HISTORY_MSG_LOCAL_CONVGAM;Local - Sh Gamma
+HISTORY_MSG_LOCAL_CONVPROT;Local - Sh Central protected area
+HISTORY_MSG_LOCAL_CONVLAT;Local - Sh Corner iterations
+HISTORY_MSG_LOCAL_SHARREPAR;Local - Sh Strength
+HISTORY_MSG_LOCAL_SHARSHOW;Local - Sh Show contrast mask
+HISTORY_MSG_LOCAL_SHARITERCHECK;Local - Sh Auto limit iterations
 HISTORY_MSG_LOCAL_DEHAZE_BLACK;Local - Dehaze Black
 HISTORY_MSG_LOCAL_FEATHERCIE;Local - CIECAM Gradient feather
 HISTORY_MSG_LOCAL_FEATHERCOL;Local - Color Gradient feather
@@ -1568,6 +1594,7 @@ HISTORY_MSG_LOCAL_FEATHERVIB;Local - Vib Gradient feather
 HISTORY_MSG_LOCAL_FEATHERWAV;Local - Wav Gradient feather
 HISTORY_MSG_LOCAL_GAMUTMUNSEL;Local - SC - Avoid Color Shift
 HISTORY_MSG_LOCAL_GHSMETHOD;Local - GHS - Method
+HISTORY_MSG_LOCAL_GHS_AUTOBW;Local - GHS - Auto Black point and White point
 HISTORY_MSG_LOCAL_GHS_B;Local - GHS - Local intensity
 HISTORY_MSG_LOCAL_GHS_BLP;Local - GHS - Black point
 HISTORY_MSG_LOCAL_GHS_CHRO;Local - GHS - Lab chromaticity factor
@@ -1581,6 +1608,7 @@ HISTORY_MSG_LOCAL_GHS_MID;Local - GHS - Midtones
 HISTORY_MSG_LOCAL_GHS_SLOPE;Local - GHS - Lab slope factor
 HISTORY_MSG_LOCAL_GHS_SMOOTH;Local - GHS - Highlight attenuation
 HISTORY_MSG_LOCAL_GHS_SP;Local - GHS - Symmetry point
+HISTORY_MSG_LOCAL_LOCKMADLS;Local - Denoise - MadL
 HISTORY_MSG_LOCAL_LOGCIE12;Local - CIECAM - Log encoding
 HISTORY_MSG_LOCAL_LOG_BLACKS;Local - Log Blacks distribution
 HISTORY_MSG_LOCAL_LOG_COMPR;Local - Log Compress brightness
@@ -1609,8 +1637,12 @@ HISTORY_MSG_PDSHARPEN_AUTO_RADIUS;CS - Auto radius
 HISTORY_MSG_PDSHARPEN_CHECKITER;CS - Auto limit iterations
 HISTORY_MSG_PDSHARPEN_CONTRAST;CS - Contrast threshold
 HISTORY_MSG_PDSHARPEN_ITERATIONS;CS - Iterations
+HISTORY_MSG_PDSHARPEN_NOISECAP;CS - Presharpening denoise
+HISTORY_MSG_PDSHARPEN_NOISECAPTYPE;CS - Presharpening type
+HISTORY_MSG_PDSHARPEN_NOISECAPAFTER;CS - Postsharpening denoise luminance
 HISTORY_MSG_PDSHARPEN_RADIUS;CS - Radius
 HISTORY_MSG_PDSHARPEN_RADIUS_BOOST;CS - Corner radius boost
+HISTORY_MSG_PDSHARPEN_SHOWCAP;CS - Show mask contrast
 HISTORY_MSG_PERSP_CAM_ANGLE;Perspective - Camera
 HISTORY_MSG_PERSP_CAM_FL;Perspective - Camera
 HISTORY_MSG_PERSP_CAM_SHIFT;Perspective - Camera
@@ -1635,6 +1667,7 @@ HISTORY_MSG_RESIZE_LONGEDGE;Resize - Long Edge
 HISTORY_MSG_RESIZE_SHORTEDGE;Resize - Short Edge
 HISTORY_MSG_SHARPENING_BLUR;Sharpening - Blur radius
 HISTORY_MSG_SHARPENING_CONTRAST;Sharpening - Contrast threshold
+
 HISTORY_MSG_SH_COLORSPACE;S/H - Colorspace
 HISTORY_MSG_SIGMACOL;Chroma Attenuation response
 HISTORY_MSG_SIGMADIR;Dir Attenuation response
@@ -1874,7 +1907,7 @@ MAIN_TOOLTIP_PREVIEWFOCUSMASK;Preview the <b>focus mask</b>.\nShortcut: <b>Shift
 MAIN_TOOLTIP_PREVIEWG;Preview the <b>green channel</b>.\nShortcut: <b>g</b>
 MAIN_TOOLTIP_PREVIEWL;Preview the <b>luminosity</b>.\nShortcut: <b>v</b>\n\n0.299*R + 0.587*G + 0.114*B
 MAIN_TOOLTIP_PREVIEWR;Preview the <b>red channel</b>.\nShortcut: <b>r</b>
-MAIN_TOOLTIP_PREVIEWSHARPMASK;Preview the <b>sharpening contrast mask</b>.\nShortcut: <b>p</b>\n\nOnly works when sharpening is enabled and zoom >= 100%, or when capture sharpening is enabled.
+MAIN_TOOLTIP_PREVIEWSHARPMASK;Preview the <b>sharpening contrast mask</b>.\nShortcut: <b>p</b>\n\nOnly works when sharpening is enabled and zoom >= 100%, or when capture sharpening is enabled.\nFor capture sharpening it is better to use the 'Show contrast mask' checkbox incorporated into the tool.\nDo not use with the contrast masks incorporated into Selective Editing. 
 MAIN_TOOLTIP_QINFO;Quick info on the image.\nShortcut: <b>i</b>
 MAIN_TOOLTIP_SHOWHIDELP1;Show/Hide the left panel.\nShortcut: <b>l</b>
 MAIN_TOOLTIP_SHOWHIDERP1;Show/Hide the right panel.\nShortcut: <b>Alt-l</b>
@@ -2866,7 +2899,7 @@ TP_ICM_INPUTNONE_TOOLTIP;Use no input color profile at all.\nUse only in special
 TP_ICM_INPUTPROFILE;Input Profile
 TP_ICM_LABEL;Color Management
 TP_ICM_LABGRID_CIEXY;R(x)=%1 R(y)=%2\nG(x)=%3 G(y)=%4\nB(x)=%5 B(y)=%6
-TP_ICM_NEUTRAL;Reset
+TP_ICM_NEUTRAL;Reset Primaries & Illuminant
 TP_ICM_NOICM;No ICM: sRGB Output
 TP_ICM_OPACITYWLI;Variable contrast
 TP_ICM_OUTPUTPROFILE;Output Profile
@@ -2943,6 +2976,7 @@ TP_ICM_WORKING_TRC_GAMMA;Gamma
 TP_ICM_WORKING_TRC_LIN;Linear g=1
 TP_ICM_WORKING_TRC_NONE;None
 TP_ICM_WORKING_TRC_SLOPE;Slope
+TP_ICM_WORKING_TRC_SAT;Saturation
 TP_ICM_WORKING_TRC_SRGB;sRGB g=2.4 s=12.92
 TP_ICM_WORKING_TRC_TOOLTIP;Only for built-in profiles.
 TP_IMPULSEDENOISE_LABEL;Impulse Noise Reduction
@@ -3010,6 +3044,7 @@ TP_LOCALLAB_ACTIV;Luminance only
 TP_LOCALLAB_ACTIVSPOT;Enable Spot
 TP_LOCALLAB_ADJ;Equalizer Color
 TP_LOCALLAB_AMOUNT;Amount
+TP_LOCALLAB_APSATUR;Saturation
 TP_LOCALLAB_ARTIF;ΔE Shape detection
 TP_LOCALLAB_ARTIF_TOOLTIP;ΔE scope threshold increases the range of ΔE scope. High values are for very wide gamut images.\nIncreasing ΔE decay can improve shape detection, but can also reduce the scope.
 TP_LOCALLAB_AUTOGRAY;Auto mean luminance (Yb%)
@@ -3037,12 +3072,12 @@ TP_LOCALLAB_BLGUID;Guided Filter
 TP_LOCALLAB_BLINV;Inverse
 TP_LOCALLAB_BLLC;Luminance & Chrominance
 TP_LOCALLAB_BLLO;Luminance only
-TP_LOCALLAB_BLMED;Median
+TP_LOCALLAB_BLMED;Median 1:1
 TP_LOCALLAB_BLMETHOD_TOOLTIP;Normal: direct blur and noise with all settings.\nInverse: blur and noise with all settings. Warning, some settings may give curious results.
 TP_LOCALLAB_BLNOI_EXP;Blur & Noise
 TP_LOCALLAB_BLNORM;Normal
 TP_LOCALLAB_BLUFR;Blur/Grain & Denoise
-TP_LOCALLAB_BLUMETHOD_TOOLTIP;To blur the background and isolate the foreground:\n-blur the background by completely covering the image with a spot (high values for scope and transition and 'Normal' or 'Inverse' in checkbox).\n-Isolate the foreground by using one or more 'Excluding' spots and increase the scope.\n\nThis module (including the 'median' and 'Guided filter') can be used in addition to the main-menu noise reduction.
+TP_LOCALLAB_BLUMETHOD_TOOLTIP;To blur the background and isolate the foreground:\n-blur the background by completely covering the image with a spot (high values for scope and transition and 'Normal' or 'Inverse' in checkbox).\n-Isolate the foreground by using one or more 'Excluding' spots and increase the scope and/or use the masks and Recovery Based On Luminance Mask.\n\nThis module (including the 'Gaussian Blur - Noise - Grain', 'Median' and 'Guided filter') can be used in addition to the main-menu noise reduction.
 TP_LOCALLAB_BLUR;Gaussian Blur - Noise - Grain
 TP_LOCALLAB_BLURCOL;Radius
 TP_LOCALLAB_BLURCOLDE_TOOLTIP;The image used to calculate dE is blurred slightly to avoid taking isolated pixels into account.
@@ -3059,6 +3094,7 @@ TP_LOCALLAB_BUTTON_DEL;Delete
 TP_LOCALLAB_BUTTON_DUPL;Duplicate
 TP_LOCALLAB_BUTTON_REN;Rename
 TP_LOCALLAB_BUTTON_VIS;Show/Hide
+TP_LOCALLAB_BWCIE_TOOLTIP;Only usable in Global mode or if Scope is set to 100.\nThe 'Black and White' option shows only the luminance in the histogram making it easier to adjust the shadows and highlights when using the Gamma and Slope sliders and the Tone Mapping Operators.
 TP_LOCALLAB_BWEVNONE;None
 TP_LOCALLAB_BWEVNONE11;None
 TP_LOCALLAB_BWEVSIG;Sigmoid
@@ -3111,10 +3147,11 @@ TP_LOCALLAB_CIE_SMOOTHFRAME12;Tone Mapping Operators
 TP_LOCALLAB_CIE_SMOOTH_EV;Ev based
 TP_LOCALLAB_CIE_SMOOTH_GAMMA;Slope based
 TP_LOCALLAB_CIE_SMOOTH_GAMMA ROLLOFF;Gamma based
-TP_LOCALLAB_CIE_SMOOTH_LEVELS;RGB channel Slope
+TP_LOCALLAB_CIE_SMOOTH_LEVELS;RGB channel slope
 TP_LOCALLAB_CIE_SMOOTH_LEVELSTRC;RGB channel TRC
 TP_LOCALLAB_CIE_SMOOTH_NONE;None
 TP_LOCALLAB_CIE_SMOOTH_SIG;Sigmoid based
+TP_LOCALLAB_CIE_SMOOTH_TRC;TRC based
 TP_LOCALLAB_CIE_TOOLNAME;Color Appearance (CAM16 & JzCzHz)
 TP_LOCALLAB_CIRCRADIUS;Spot size
 TP_LOCALLAB_CIRCRAD_TOOLTIP;Contains the references of the spot, useful for shape detection (hue, luma, chroma, Sobel).\nLow values may be useful for processing foliage.\nHigh values may be useful for processing skin.
@@ -3180,7 +3217,13 @@ TP_LOCALLAB_DENOICHRODET_TOOLTIP;Allows you to recover chrominance detail by pro
 TP_LOCALLAB_DENOICHROF_TOOLTIP;Allows you to adjust fine-detail chrominance noise.
 TP_LOCALLAB_DENOIEQUALCHRO_TOOLTIP;Allows you to direct the chroma noise reduction towards either the blue-yellow or red-green colors.
 TP_LOCALLAB_DENOIEQUAL_TOOLTIP;Allows you to carry out more or less noise reduction in either the shadows or the highlights.
+TP_LOCALLAB_DENOIENA;Enable contrast threshold
+TP_LOCALLAB_DENOIFRA;Denoise Settings
+TP_LOCALLAB_DENOIHUE;Equalizer denoise
+TP_LOCALLAB_DENOIHUECONT;Equalizer denoise mask
 TP_LOCALLAB_DENOILUMDETAIL_TOOLTIP;Allows you to recover luminance detail by progressively applying a Fourier transform (DCT).
+TP_LOCALLAB_DENOIRATIO;Ratio flat-structured areas
+TP_LOCALLAB_DENOI_MASK;Denoise contrast mask
 TP_LOCALLAB_DENOIMASK;Denoise chroma mask
 TP_LOCALLAB_DENOIMASK_TOOLTIP;For all tools, allows you to control the chromatic noise level of the mask.\nUseful for better control of chrominance and to avoid artifacts when using the LC(h) curve.
 TP_LOCALLAB_DENOIQUA_TOOLTIP;Conservative mode preserves low frequency detail. Aggressive mode removes low frequency detail.\nConservative and Aggressive modes use wavelets and DCT and can be used in conjunction with 'Non-local Means – Luminance'.
@@ -3189,9 +3232,10 @@ TP_LOCALLAB_DENOIWAVCH;Wavelets: Chrominance
 TP_LOCALLAB_DENOIWAVLUM;Wavelets: Luminance
 TP_LOCALLAB_DENOI_EXP;Denoise
 TP_LOCALLAB_DENOI_TOOLTIP;This module can be used for noise reduction either on its own (at the end of the processing pipeline) or in addition to the Noise Reduction module in the Detail tab (which works at the beginning of the pipeline).\n Scope allows you to differentiate the action based on color (ΔE).\nMinimum spot size: 128x128.
+TP_LOCALLAB_DENORADIUS_TOOLTIP;Allows you to differentiate the denoising action as a function of image detail and uniform background.\n The resulting action is a combination of the noise reduction and that of the mask created by 'Contrast threshold'\n On very noisy images you can reduce the mask noise.\n You can also differentiate the action with the curve 'Equalizer denoise mask'.\n The ratio flat-structured areas allows you to correct the action between the two.\n\nOn noisy images and in Raw format, you should use the 'Presharpening denoise' and ‘Postsharpening denoise’ functions for more effective mask action.
 TP_LOCALLAB_DEPTH;Depth
 TP_LOCALLAB_DETAIL;Local contrast
-TP_LOCALLAB_DETAILFRA;Edge detection - DCT
+TP_LOCALLAB_DETAILFRA;Edge Detection - DCT
 TP_LOCALLAB_DETAILSH;Details
 TP_LOCALLAB_DETAILTHR;Lum/chrom detail threshold
 TP_LOCALLAB_DISAB_CIECAM;Disable CIECAM or Weak Jz surround
@@ -3245,7 +3289,7 @@ TP_LOCALLAB_EXPNOISEMETHOD_TOOLTIP;Applies a median filter before the Laplace tr
 TP_LOCALLAB_EXPOSE;Dynamic Range & Exposure
 TP_LOCALLAB_EXPOSURE_TOOLTIP;Modify exposure in L*a*b space using Laplacian PDE algorithms to take into account dE and minimize artifacts.
 TP_LOCALLAB_EXPRETITOOLS;Advanced Retinex Tools
-TP_LOCALLAB_EXPSHARP_TOOLTIP;Spot minimum 39*39.\nUse low transition values and high 'Transition decay' and 'Scope' values to simulate smaller spots.
+TP_LOCALLAB_EXPSHARP_TOOLTIP;Spot minimum 39*39 RL Deconvolution.\nSpot minimum 150*150 Capture Deconvolution.\nUse low Transition Gradient values and high 'Transition decay' and Scope values to simulate smaller spots.
 TP_LOCALLAB_EXPTOOL;Exposure Tools
 TP_LOCALLAB_EXP_TOOLNAME;Dynamic Range & Exposure
 TP_LOCALLAB_FATAMOUNT;Amount
@@ -3282,6 +3326,12 @@ TP_LOCALLAB_GAMUTXYZRELA;XYZ Relative
 TP_LOCALLAB_GAMW;Gamma (wavelet pyramids)
 TP_LOCALLAB_GHSBPWP;Clipped pixel count - Shadows:%1 Highlights:%2
 TP_LOCALLAB_GHSBPWPVALUE;Pixel values - Darkest:%1 Lightest:%2
+TP_LOCALLAB_GHSCOLORVALUE;RGB values - R:%1 G:%2 B:%3
+TP_LOCALLAB_GHSCOLORNO;---
+TP_LOCALLAB_GHSDR;Dynamic Range GHS (Ev):%1
+TP_LOCALLAB_GHSDRNO;---
+TP_LOCALLAB_GHSSYM;Estimated symmetry point RGB=%1
+TP_LOCALLAB_GHSSYMNO;---
 TP_LOCALLAB_GHSFRA;Stretch Settings
 TP_LOCALLAB_GHSHUE;Hue (HSL)
 TP_LOCALLAB_GHSLAB;Lightness & chromaticity (Lab)
@@ -3290,24 +3340,26 @@ TP_LOCALLAB_GHSLUM;Luminance (HSL)
 TP_LOCALLAB_GHSRGBLUM;RGB Luminance
 TP_LOCALLAB_GHSRGBSTD;RGB Standard
 TP_LOCALLAB_GHSSAT;Saturation (HSL)
+TP_LOCALLAB_GHS_AUTOBW;Auto Black point & White point
 TP_LOCALLAB_GHS_B;Local intensity (b)
-TP_LOCALLAB_GHS_BLACKPOINT_FRAME;Black point/White point/Highlights
+TP_LOCALLAB_GHS_BLACKPOINT_FRAME;Black point/White point
 TP_LOCALLAB_GHS_BLP;Black point (BP linear)
-TP_LOCALLAB_GHS_BLP_TOOLTIP;Sets the Black point for a linear stretch of the image.\n * For negatives slider values, in GHS ‘normal’, shadows are raised linearly to avoid excessive noise build-up and facilitate GHS work.\n * For positives slider values, the histogram is shifted to the left. For Raw images, you can also use Raw-Tab > Raw Black Points – Dehaze,  which is more precise.\n * Contrast gained by performing the linear stretch will be evenly distributed over the image.\n\n * You can adjust a linear black point offset to either:\n  - account for noise in the deep shadows.\n  - adjust the histogram.\n\n * It is recommended to adjust these sliders before the main GHS sliders to avoid clipping data. A very low Stretch factor (D) value (0.001 by default) is recommended for performing this adjustment.\n * The label 'Clipped pixel count Shadows:x Highlights=y' shows you the number of pixels that would be clipped without adjusting the two sliders.\n * The label Pixel values - Darkest:w Lightest:z shows you the minimum and maximum values in the range [0, 1].\n\n * In ‘Inverse GHS’ mode the behavior is reversed and there are possible interactions with the White point.
-TP_LOCALLAB_GHS_BPFRAME_TOOLTIP;Sets the Black point (BP linear), White point (WP linear) and Highlight for a linear stretch of the image.\n\n * Black Point (BP linear) and White Point (WP linear) settings are only available if Stretch factor (D) is between 0.001 and 0.002 so as to not affect the histogram.\n\n * When Stretch factor is 0.002 or less, all stretch settings except for Black point and White point have no effect.\n\n * Black point (BP linear) and White point (WP linear) settings are sensitive to the general settings upstream of GHS: Highlight reconstruction, White balance and RAW processes.\n\n * To have relevant Black Point (BP linear) and White Point (WP linear) settings, the entire image must be analyzed. It is recommended to use 'Fit whole image to screen - Shortcut Alt-f'.
+TP_LOCALLAB_GHS_BLP_TOOLTIP;Sets the black point for a linear image stretch.\n * In normal GHS mode, negative slider values lift the shadows linearly to avoid excessive noise and facilitate the GHS calculations.\n * For positive slider values, the histogram is shifted to the left. For raw images, you can also use the more precise Raw Black Points > Dehaze in the Raw tab.\n * Increases in contrast due to the linear stretch will be evenly distributed over the image.\n\n * You can adjust a linear black point offset to either:\n - account for noise in the deep shadows.\n - adjust the histogram.\n\n * Set 'Stretch factor (D)' to 0.001 to adjust the sliders.\n * The label 'Clipped pixel count Shadows:x Highlights:y' shows the number of pixels that would be clipped without adjusting the two sliders.\n * The label ‘Pixel values - Darkest:w Lightest:z’ shows you the minimum and maximum values in the range [0, 1].\n * The label 'RGB values - R:r G:g B:b' shows you the maximum values for each channel.\n * The label 'Dynamic Range GHS (Ev)' shows you the Dynamic Range, which uses the value of the highest and the lowest of the 3 RGB channels, instead of the luminance.\n\n * In Inverse GHS mode the behavior is reversed and there are possible interactions with the White point. In the majority of cases, especially when using a second GHS Spot, the adjustments will be small, or even unnecessary.\n\nTo activate the Inverse GHS checkbox, it may be necessary to move the 'Stretch factor' slider from 0.001 to 0.002. This will work only if the checkbox 'Auto Black point & White point' is disabled. 
+TP_LOCALLAB_GHS_BLPHLPAUTO_TOOLTIP;Automatically adjust the 'Black point' and 'White point' values.\n Not available in Inverse GHS mode and must be disabled to allow Inverse GHS to work.\n Generally, the automatic settings will be satisfactory.\n If necessary, you can subsequently adjust the two points and in particular the black point. Using negative slider values may help when the shadows are particularly blocked.
+TP_LOCALLAB_GHS_BPFRAME_TOOLTIP;Sets the 'Black point (BP linear)', 'White point (WP linear)' for a linear stretch.\n\n * 'Black Point (BP linear)' and 'White Point (WP linear)' settings are only available if the 'Stretch factor (D)' is between 0.001 and 0.002. This is to avoid altering the histogram.\n\n * When the stretch factor is 0.002 or less, all stretch settings except for 'Black point' and 'White point' will have no effect.\n\n * 'Black point (BP linear)' and 'White point (WP linear)' settings are sensitive to the general settings upstream of GHS i.e. highlight reconstruction, white balance and RAW processes.\n\n * To have relevant 'Black Point (BP linear)' and 'White Point (WP linear)' settings, the entire image must be analyzed. It is recommended to use 'Fit whole image to screen - Shortcut Alt-f'.\n\n * To allow Inverse GHS to work the 'Stretch factor (D)' must be between 0.001 and 0.002 and the checkbox 'Auto Black point & White point' disabled. 
 TP_LOCALLAB_GHS_B_TOOLTIP;This parameter controls how tightly focused the stretch is around the Symmetry point (SP) by changing the form of the transform itself:\n * For concentrated stretches (such as initial stretches on linear images) a large 'b' factor should be employed to focus a stretch within a histogram peak while de-focusing the stretch away from the histogram peak.\n * For adjustment of non-linear images, lower 'b' parameters should be employed to distribute contrast and brightness more evenly.\n * Large positive values of 'b' can be thought of as a histogram widener, i.e. spreading the histogram wider about the focus point, SP.\n * By contrast, lower values of 'b' tend to shift the histogram to a brighter or dimmer position without affecting its width too greatly.\n * As a general rule, the level of 'b' employed will decrease as a stretch sequence nears completion, although larger 'b' values can still be employed for precise placement of additional contrast.
 TP_LOCALLAB_GHS_CHRO;Chromaticity Lab factor (C)
 TP_LOCALLAB_GHS_CHRO_TOOLTIP;GHS chromaticity - compensate large stretches
 TP_LOCALLAB_GHS_CURVE_TOOLTIP;Shows the 'S' curve generated by GHS calculations. Mainly for educational purposes.\n\n * The curve only reacts to the adjusters and cannot be modified directly.
 TP_LOCALLAB_GHS_D;Stretch factor (D)
-TP_LOCALLAB_GHS_D_TOOLTIP;This parameter controls the amount of stretch. If the Stretch factor is set to zero, there is no stretch. In other words, the transformation is the identity transformation.\n\n * Black Point (BP linear) and White Point (WP linear) settings are only available if Stretch factor (D) is between 0.001 and 0.002.
+TP_LOCALLAB_GHS_D_TOOLTIP;This parameter controls the amount of stretch. If the 'Stretch factor' is set to zero, there is no stretch.\n\nThe stretch factor values 0.001 and 0.002 allow you to control the dynamic system for calculating the 'Black point (BP linear)', 'White point (WP linear)', and 'Symmetry point (SP)' and to activate Inverse GHS mode. When the 'Stretch factor (D)' is between the values 0.001 and 0.002:\n * You can adjust the BP and WP values, if the checkbox 'Auto Black Point & White Point' is disabled.\n * The calculated BP and WP values determine the SP value.\n * Stretch Regularization & Midtones are disabled.\n * To allow Inverse GHS to work the 'Stretch factor (D)' must be between 0.001 and 0.002 and the checkbox 'Auto Black point & White point' disabled. 
 TP_LOCALLAB_GHS_GHSDIAG;GHS Curve Visualization
 TP_LOCALLAB_GHS_HLP;White point (WP linear)
-TP_LOCALLAB_GHS_HLP_TOOLTIP;Sets the White point for a linear stretch of the image. Any pixel with value greater than the White point input will be clipped and the data lost.\n * Contrast gained by performing the linear stretch will be evenly distributed over the image, which will be brightened. Pixels with values greater than the White point will appear white and have a value of 1.0.\n * Setting this parameter to a value greater than 1 will extend the dynamic range at the high end.\n * The 'Highlight reconstruction' method has a very strong impact on the White-point value.\n\n * It is recommended to adjust this slider before the main GHS sliders to avoid clipping data. A very low Stretch factor (D) value (0.001 by default) is recommended for performing this adjustment.\n * The label 'Clipped pixel count - Shadows:x Highlights=y' shows you the number of pixels that would be clipped without adjusting the two sliders.\n * The label Pixel values - Darkest:w Lightest:z shows you the minimum and maximum values in the range [0, 1].\n\n * In ‘Inverse GHS’ mode the behavior is reversed and there are possible interactions with the Black point.
+TP_LOCALLAB_GHS_HLP_TOOLTIP;Sets the White point for a linear stretch of the image. Any pixel with value greater than the white point input will be clipped and the data lost.\n * Contrast gained by performing the linear stretch will be evenly distributed over the image, which will be brightened. Pixels with values greater than the white point will appear white and have a value of 1.0.\n * Setting this parameter to a value greater than 1 will extend the dynamic range at the high end.\n * The 'Highlight reconstruction' method has a very strong impact on the white-point value.\n\n * Set 'Stretch factor (D)' to 0.001 to adjust the sliders.\n * The label 'Clipped pixel count - Shadows:x Highlights=y' shows you the number of pixels that would be clipped without adjusting the two sliders.\n * The label 'Pixel values - Darkest:w Lightest:z' shows you the minimum and maximum values in the range [0, 1].\n * The label 'RGB values - R:r G:g B:b' shows you the maximum values for each channel.\n * The label 'Dynamic Range GHS (Ev)' shows you the Dynamic Range, which uses the value of the highest and the lowest of the 3 RGB channels, instead of the luminance.\n\n * In Inverse GHS mode the behavior is reversed and there are possible interactions with the black point.\n\n * To allow Inverse GHS to work the 'Stretch factor (D)' must be between 0.001 and 0.002 and the checkbox 'Auto Black point & White point' disabled.
 TP_LOCALLAB_GHS_HP;Protect highlights (HP)
 TP_LOCALLAB_GHS_HP_TOOLTIP;Sets a value above which the stretch is modified to preserve contrast in the highlights. This is done by performing a linear stretch of the data above the 'HP' level by reserving contrast from the rest of the image. Moving the HP level towards the current setting of SP increases both the scope (range) and the amount of this contrast reservation. The net effect is to push the overall stretch to lower brightness levels while keeping the contrast and definition in the highlights. The amount of contrast reserved for the highlights is such that the continuity of the stretch is preserved.\n * This parameter must be at most 1 and no less than the Symmetry point.\n * The adjuster will automatically limit the minimum value based on the Symmetry Point (SP).\n\n * Using Highlight attenuation helps to reinforce the action of Protect highlights (HP).
 TP_LOCALLAB_GHS_INV;Inverse GHS
-TP_LOCALLAB_GHS_INV_TOOLTIP;The inverse GHS is useful for working in negative space. It adds contrast on the far right and left of the histogram, brightening the deep shadows, darkening the bright highlights, and squeezing the histogram to the middle.\n\n * The Generalized Hyperbolic inverse transformation allows you to recover your original image, subject to mathematical precision, but you can use it for other purposes.\n\n * If the White point and Black point were changed in normal mode, they will likely need to be readjusted. The White point often needs to be readjusted lower. There is interaction between the two settings.
+TP_LOCALLAB_GHS_INV_TOOLTIP;Inverse GHS is useful for reducing overall contrast or recovering your original image. It adds contrast on the far right and left of the histogram, brightening the deep shadows, darkening the bright highlights, and squeezing the histogram towards the middle.\n\n * The Generalized Hyperbolic Inverse transformation allows you to recover your original image, subject to mathematical precision, but you can also use it for other purposes. This feature is more like the 'Excluding spot' but more powerful.\n\n * If the White point and Black point were changed in normal mode (automatic or not), they will likely need to be readjusted. The white point often needs to be readjusted lower. There is interaction between the two settings. In the majority of cases, especially when used as a second GHS Spot, the adjustments will be small, or even unnecessary.\n\n * Can be used as a second GHS spot after a first GHS Spot in Global or 'Full image' mode, most often with 'Spot method = Normal spot', for example to darken a sky or a sunset.\n\n * To allow Inverse GHS to work the 'Stretch factor (D)' must be between 0.001 and 0.002 and the checkbox 'Auto Black point & White point' disabled. 
 TP_LOCALLAB_GHS_LC;Value (LC)
 TP_LOCALLAB_GHS_LC_FRAME;Stretch Regularization & Midtones
 TP_LOCALLAB_GHS_LC_TOOLTIP;Slightly increases local contrast that was weakened by stretching.\nCan be completed by other tools specific to local contrast such as wavelets.\n\nWhen Stretch factor is 0.002 or less, Stretch Regularization & Midtones is disabled.
@@ -3412,7 +3464,7 @@ TP_LOCALLAB_LAPRAD1_TOOLTIP;Increases the contrast of the mask by increasing the
 TP_LOCALLAB_LAPRAD2_TOOLTIP;Smooth radius uses a guided filter to decrease artifacts and smooth out the transition.
 TP_LOCALLAB_LAPRAD_TOOLTIP;Smooth radius uses a guided filter to decrease artifacts and smooth out the transition.
 TP_LOCALLAB_LAP_MASK_TOOLTIP;Solves PDEs for all Laplacian masks.\nIf enabled the Laplacian threshold mask reduces artifacts and smooths the result.\nIf disabled the response is linear.
-TP_LOCALLAB_LCLABELS;Residual noise levels
+TP_LOCALLAB_LCLABELS;Residual Noise Levels
 TP_LOCALLAB_LCLABELS_TOOLTIP;Displays the mean and high-end noise values for the area shown in the Preview Panel (at 100% zoom). The noise values are grouped by wavelet levels 0,1,2,3 and 4,5,6.\nThe displayed values are indicative only and are designed to assist with denoise adjustments. They should not be interpreted as absolute noise levels.\n\n 300: Very noisy\n 100-300: Noisy\n 50-100: Moderatly noisy\n < 50: Low noise\n\nThey allow you to see:\n*The impact of Noise Reduction in the main-menu Detail tab.\n*The influence of Non-local Means, Wavelets and DCT on the luminance noise.\n*The influence of Wavelets and DCT on the chroma noise.\n*The influence of Capture Sharpening and Demosaicing.
 TP_LOCALLAB_LC_FFTW_TOOLTIP;FFT improves quality and allows the use of large radii, but increases processing time (depends on the area to be processed). Preferable to use only for large radii. The size of the area can be reduced by a few pixels to optimize the FFTW. This can reduce the processing time by a factor of 1.5 to 10.
 TP_LOCALLAB_LC_TOOLNAME;Local Contrast & Wavelets
@@ -3435,6 +3487,11 @@ TP_LOCALLAB_LOC_CONTRASTPYR2;Pyramid 2:
 TP_LOCALLAB_LOC_CONTRASTPYR2LAB; Contrast by level/TM/Directional contrast
 TP_LOCALLAB_LOC_CONTRASTPYRLAB; Graduated Filter/Edge Sharpness/Blur
 TP_LOCALLAB_LOC_RESIDPYR;Residual image (Main)
+TP_LOCALLAB_LOCKMADL;Locks MadL noise evaluation
+TP_LOCALLAB_LOCKMADL2;Manual settings
+TP_LOCALLAB_LOCKMADL_TOOLTIP;Allows you to lock the noise evaluation used for Wavelet denoise.\n\nWavelet denoise uses MadL (Median absolute deviation luminance) to act on the noise based on a slider or a curve.\nRawtherapee's pipeline design results in different MadL values depending on the preview position and leads to differences in output.\n\nIf you enable this checkbox, the value used for global processing will be the preview at that time. This will allow you to prioritize a specific area, background, or face for noise reduction, rather than an overall average value. Of course, you should only check the box once you've selected the area.
+TP_LOCALLAB_LOCKMADL2_TOOLTIP;Allows you to manually control MadL values. Be careful: this function assumes mastery of the concepts of noise reduction using wavelets. Make sure that the initial values for the selected area have been set automatically.\n\nBe careful not to confuse the action on MadL which is a noise estimation only used in Wavelet Denoise where the strength is set in Selective Editing using a curve and a selected level (Aggressive / Conservative). The MadL scale is exponential and not linear.\n\nThe first levels of wavelet decomposition provide visible noise reduction, whereas the higher levels have more affect on banding.
+TP_LOCALLAB_LOCKMADLFRA_TOOLTIP;Shows the actual values of Median Absolute Deviation (MadL).\nIf 'Locks MadL noise evaluation' is not enabled you can manually change these values which will affect the entire image.\nThe first levels 0,1,2,3 for the Horizontal direction,7,8,9,10 for the Vertical direction and 14,15,16,17 for the Diagonal, act on the detail noise. The higher levels have more effect on banding noise.\n\nLuminance noise reduction is a function that implements MadL (depending on level and direction) divided by the level of detail (high, medium, low frequency), the actual value of the decomposition at that location (depending on level and direction) and the curve applied by the user according to the level of wavelet decomposition.
 TP_LOCALLAB_LOG;Log Encoding
 TP_LOCALLAB_LOG1FRA;CAM16 Image Adjustments
 TP_LOCALLAB_LOG2FRA;Viewing Conditions
@@ -3484,6 +3541,10 @@ TP_LOCALLAB_LUMASK_TOOLTIP;Adjusts the shade of gray or color of the mask backgr
 TP_LOCALLAB_LUMAWHITESEST;Lightest
 TP_LOCALLAB_LUMFRA;L*a*b* standard
 TP_LOCALLAB_LUMLABEL;Luma levels 0123: Mean=%1 High=%2
+TP_LOCALLAB_MADLDIRH;H-Levels 0..6
+TP_LOCALLAB_MADLDIRV;V-Levels 0..6/7-13
+TP_LOCALLAB_MADLDIRD;D-Levels 0..6/14-20
+TP_LOCALLAB_MADLFRA;Median absolute deviation (L)
 TP_LOCALLAB_MASFRAME;Mask and Merge
 TP_LOCALLAB_MASFRAME_TOOLTIP;For all masks.\nTakes into account the ΔE image to avoid modifying the selection area when the following Mask Tools are used: Gamma, Slope, Chroma, Contrast curve, Local contrast (by wavelet level), Blur Mask and Structure Mask (if enabled ).\nDisabled when Inverse mode is used.
 TP_LOCALLAB_MASK;Curves
@@ -3574,7 +3635,13 @@ TP_LOCALLAB_MERTHR;Difference
 TP_LOCALLAB_MERTWE;Exclusion
 TP_LOCALLAB_MERTWO;Subtract
 TP_LOCALLAB_METHOD_TOOLTIP;'Enhanced + chroma denoise' significantly increases processing times.\nBut reduce artifacts.
-TP_LOCALLAB_MIDTCIE;Midtones
+TP_LOCALLAB_MIDTCIE;Value
+TP_LOCALLAB_MIDTCIEMAIN;Midtones
+TP_LOCALLAB_MIDTCIEFRA;Midtones
+TP_LOCALLAB_MIDTCIEM1;Before Gamma & Slope
+TP_LOCALLAB_MIDTCIEM2;After Gamma & Slope
+TP_LOCALLAB_MIDTCIEM3;After CAM16
+TP_LOCALLAB_METHODCAP_TOOLTIP;You can use two methods:\n 1. RL Deconvolution, which is similar to the version used in the Detail tab.\n\n 2. Capture Deconvolution, which is an adaptation of Capture Sharpening in the Raw tab for use in Selective Editing, and allows you to use this algorithm either in standalone mode or after denoising. Capture Sharpening's capabilities allow for finer sharpening control by allowing you to soften the corner sharpness to enhance focus on the main subject. The results in the TIF/JPG outputs correspond to those in the 'fit to screen'view.
 TP_LOCALLAB_MLABEL;Restored data Min=%1 Max=%2
 TP_LOCALLAB_MLABEL_TOOLTIP;The values should be close to Min=0 Max=32768 (log mode) but other values are possible.You can adjust 'Clip restored data (gain)' and 'Offset' to normalize.\nRecovers image data without blending.
 TP_LOCALLAB_MODE_EXPERT;Advanced
@@ -3628,7 +3695,7 @@ TP_LOCALLAB_PDEFRAME_TOOLTIP;PDE IPOL algorithm adapted for RawTherapee: gives d
 TP_LOCALLAB_PRECAMGAMUT_TOOLTIP;If checked, ensures a gamut control just after primary conversion to XYZ.
 TP_LOCALLAB_PRECAMREFIMAIN_TOOLTIP;Allows you to move the white-point in such a way that it approaches the dominant color. This action modifies the purity. In combination with "Shift x" and "Shift y", allows you to carry out moderate color toning.
 TP_LOCALLAB_PRECAMREFI_TOOLTIP;Allows you to move the white-point in such a way that it approaches the dominant color. This action modifies the purity.
-TP_LOCALLAB_PRECAM_TOOLTIP;'Source Data Adjustments' modifies the Dynamic Range using Log encoding, the tones of the image and primaries (simplified Abstract Profile), and midtones, just before the CIECAM process. These values are adjustable:\nGamma: Acts mainly on light tones\nSlope: Acts mainly on dark tones. You can choose any pair of gamma and slope (values >1) and the algorithm will ensure that there is continuity between the linear and parabolic parts of the curve.\nDestination primaries: Allows you to change the destination primaries to restore or change image color (saturation). The color balance is significantly preserved when the 'Working Profile' and the 'Destination primaries' are similar. 'Working Profile' is not modified. You can also finely adapt the primaries and the illuminant (white-point). Moving a primary away from the white point reduces saturation and vice versa. Pay attention to the gamut.
+TP_LOCALLAB_PRECAM_TOOLTIP;Source Data Adjustments modifies the dynamic range (using log encoding), image tones (including midtones) and primaries (using a simplified Abstract Profile), just prior to the CIECAM process. The following parameters can be adjusted\nGamma: acts mainly on light tones\nSlope: acts mainly on dark tones. The algorithm ensures that there is continuity between the linear and parabolic parts of the curve for all combinations of gamma and slope (values >1) .\nDestination primaries: Allows you to adjust the destination primaries to restore or change the image color (saturation). The color balance is largely preserved when the Working Profile and ‘Destination primaries’ are similar. The Working Profile is not modified. You can also fine tune the primaries and illuminant (white-point). Moving a primary away from the white point reduces saturation and vice versa. Pay attention to the gamut.
 TP_LOCALLAB_PREVHIDE;Hide additional settings
 TP_LOCALLAB_PREVIEW;Preview ΔE
 TP_LOCALLAB_PREVSHOW;Show additional settings
@@ -3656,7 +3723,7 @@ TP_LOCALLAB_RECURS_TOOLTIP;Forces the algorithm to recalculate the references af
 TP_LOCALLAB_REN_DIALOG_LAB;Enter the new Control Spot name
 TP_LOCALLAB_REN_DIALOG_NAME;Renaming Control Spot
 TP_LOCALLAB_REPARCOL_TOOLTIP;Allows you to adjust the relative strength of the Color and Light image with respect to the original image.
-TP_LOCALLAB_REPARDEN_TOOLTIP;Allows you to adjust the relative strength of the Denoise image with respect to the original image.
+TP_LOCALLAB_REPARDEN_TOOLTIP;Allows you to adjust the relative strength of the denoised image with respect to the original image.
 TP_LOCALLAB_REPAREXP_TOOLTIP;Allows you to adjust the relative strength of the Dynamic Range and Exposure image with respect to the original image.
 TP_LOCALLAB_REPARSH_TOOLTIP;Allows you to adjust the relative strength of the Shadows/Highlights and Tone Equalizer image with respect to the original image.
 TP_LOCALLAB_REPARTM_TOOLTIP;Allows you to adjust the relative strength of the Tone mapping image with respect to the original image.
@@ -3688,6 +3755,8 @@ TP_LOCALLAB_ROW_NVIS;Not visible
 TP_LOCALLAB_ROW_VIS;Visible
 TP_LOCALLAB_RSTPROTECT_TOOLTIP;Red and skin-tone protection affects the Saturation, Chroma and Colorfulness sliders.
 TP_LOCALLAB_SATCIE;Saturation control
+TP_LOCALLAB_SATCIE_TOOLTIP;Modifies the image saturation whenever the gamma/slope ratio is different from 2.4/12.92. It aims to compensate for the desaturation caused by significant luminance variations.\nValues ​​between 0.2 and 1.0 are often sufficient.
+
 TP_LOCALLAB_SATUR;Saturation
 TP_LOCALLAB_SATURV;Saturation (s)
 TP_LOCALLAB_SCALEGR;Scale
@@ -3715,12 +3784,15 @@ TP_LOCALLAB_SHAPETYPE;Spot shape
 TP_LOCALLAB_SHAPE_TOOLTIP;'Ellipse' is the normal mode.\n 'Rectangle' can be used in certain cases, for example to work in full-image mode by placing the delimiters outside the preview area. In this case, set transition = 100.\n\nFuture developments will include polygon shapes and Bezier curves.
 TP_LOCALLAB_SHARAMOUNT;Amount
 TP_LOCALLAB_SHARBLUR;Blur radius
+TP_LOCALLAB_SHARCAPFRAME;Corners
 TP_LOCALLAB_SHARDAMPING;Damping
 TP_LOCALLAB_SHARFRAME;Modifications
 TP_LOCALLAB_SHARITER;Iterations
 TP_LOCALLAB_SHARP;Sharpening
 TP_LOCALLAB_SHARP_TOOLNAME;Sharpening
 TP_LOCALLAB_SHARRADIUS;Radius
+TP_LOCALLAB_SHARRLFRAME;RL Deconvolution Settings
+
 TP_LOCALLAB_SHORTC;Short Curves 'L' Mask
 TP_LOCALLAB_SHORTCMASK_TOOLTIP;Short circuit the 2 curves L(L) and L(H).\nAllows you to mix the current image with the original image modified by the mask job.\nUsable with masks 2, 3, 4, 6, 7.
 TP_LOCALLAB_SHOWC;Mask And Modifications
@@ -3756,6 +3828,7 @@ TP_LOCALLAB_SHRESFRA;Shadows/Highlights & TRC
 TP_LOCALLAB_SHTRC_TOOLTIP;Based on 'working profile' (only those provided), modifies the tones of the image by acting on a TRC (Tone Response Curve).\nGamma acts mainly on light tones.\nSlope acts mainly on dark tones.\nIt is recommended that the TRC of both devices (monitor and output profile) be sRGB (default).
 TP_LOCALLAB_SH_TOOLNAME;Shadows/Highlights, Equalizer & GHS
 TP_LOCALLAB_SIGBLACKSSCIE;Blacks distribution
+TP_LOCALLAB_SIGWHITESCIE;Whites distribution
 TP_LOCALLAB_SIGCIE;Sigmoid
 TP_LOCALLAB_SIGFRA;Sigmoid Q & Slope based
 TP_LOCALLAB_SIGFRA11;Sigmoid Q (deprecated)
@@ -3784,25 +3857,26 @@ TP_LOCALLAB_SIGMOIDWHITESCIE_TOOLTIP;Allows you, in Automatic when the dynamic r
 TP_LOCALLAB_SIGMOID_TOOLTIP;Allows you to simulate a tone mapping appearance using both the 'Jz' and 'Sigmoid' function. Two sliders:\na) Contrast acts on the shape of the sigmoid curve and consequently on the strength\nb) Skew (Gray point) distributes the action according to the luminance.\n\nThis new version of Sigmoid is incompatible with previous versions 5.11 and earlier.
 TP_LOCALLAB_SIGSLOPJCIE;Slope
 TP_LOCALLAB_SIGTRCCIE;Source Data Adjustments
-TP_LOCALLAB_SIGWHITESCIE;Whites distribution
 TP_LOCALLAB_SLOMASKCOL;Slope
 TP_LOCALLAB_SLOMASK_TOOLTIP;Adjusting Gamma and Slope can provide a soft and artifact-free transformation of the mask by progressively modifying 'L' to avoid any discontinuities.
-TP_LOCALLAB_SLOPESMOOTH;Gray balance (Slope)
-TP_LOCALLAB_SLOPESMOOTHB;Blue Slope
-TP_LOCALLAB_SLOPESMOOTHG;Green Slope
-TP_LOCALLAB_SLOPESMOOTHR;Red Slope
+TP_LOCALLAB_SLOPESMOOTH;Gray balance (slope)
+TP_LOCALLAB_SLOPESMOOTHB;Blue slope
+TP_LOCALLAB_SLOPESMOOTHG;Green slope
+TP_LOCALLAB_SLOPESMOOTHR;Red slope
 TP_LOCALLAB_SLOPESMOOTRCB;Blue balance (TRC)
 TP_LOCALLAB_SLOPESMOOTRCG;Green balance (TRC)
 TP_LOCALLAB_SLOPESMOOTRCR;Red balance (TRC)
 TP_LOCALLAB_SLOSH;Slope
 TP_LOCALLAB_SMOOTHCIE;Highlight attenuation
 TP_LOCALLAB_SMOOTHCIETH;Attenuation threshold
+TP_LOCALLAB_SMOOTHCIETHTRC;Highlight attenuation threshold
 TP_LOCALLAB_SMOOTHCIE_HIGH;Highlight attenuation only
+TP_LOCALLAB_SMOOTHCIE_INV;Invert color
 TP_LOCALLAB_SMOOTHCIE_LNK;Link R, G, & B
 TP_LOCALLAB_SMOOTHCIE_LUM;Luminosity mode
 TP_LOCALLAB_SMOOTHCIE_SCA;Scale Yb Scene
-TP_LOCALLAB_SMOOTHCIE_TOOLTIP;Completes the processing carried out by gamma, slope and midtones by causing a slight lowering of lights. Please note this does not replace Highlight reconstruction.\n\nGamma based and Slope based (Standard and Advanced) allow you to simulate a tone mapping using:\na) Scene conditions: Black-Ev, White-Ev, Mean luminance (Yb%)\nb) Viewing conditions: Mean luminance (Yb%).\n\nScale Yb Scene is function of White-Ev.\n\nSigmoid applies tone mapping with Contrast and Skew and Display White point allows you to adapt the white point to the peak luminance of the display device. Its position in the processing pipeline is not optimal so use with caution.\n\nThis new version of Sigmoid is incompatible with previous versions 5.11 and earlier.
-TP_LOCALLAB_SMOOTHCIE_TRC;Increase gamma-based attenuation
+TP_LOCALLAB_SMOOTHCIE_TOOLTIP;Complements the processing performed by Gamma, Slope and Midtones by applying either:\n* asymptotic highlight attenuation,\n* or tone mapping.\nPlease note that this does not replace highlight reconstruction.\n\n* Ev based: attenuates highlights using an exponential function.\n\n* Gamma based: attenuates highlights using a hyperbolic function and partial tone mapping.\n\n* Slope based: uses tone mapping. Slope (gray balance) acts on the dynamic range and affects shadows and contrast. 'Scale Yb scene' is a function of White Ev.\n\n* RGB channel slope: similar to 'Slope based', but differentiable for each R, G, B channel. Attenuation threshold modifies mid gray and shadow/highlight balance.\n\n* Sigmoid based: applies Sigmoid tone mapping with the Contrast and Skew sliders. Display white point (cd/m2) adjusts the maximum screen luminance. This new version of Sigmoid is incompatible with versions 5.11 and earlier..\n\n* TRC based: applies a simplified Tone Response Curve (TRC) to each individual R, G, B channel. Modifies the gamma by adjusting the shadow/highlight distribution (levels). 'Relative gamma' mode is a simplified method that takes into account the Slope. 'Highlight attenuation threshold' reduces the effect on the highlights.\n\n* For the RGB operators 'RGB channel slope' and 'TRC based', the 'Invert color' checkbox simulates a film negative function.
+TP_LOCALLAB_SMOOTHCIE_TRC;Invert color
 TP_LOCALLAB_SMOOTHCIE_TRCREL;Relative gamma mode
 TP_LOCALLAB_SMOOTHCIE_YB;Scale Yb Viewing
 TP_LOCALLAB_SMOOTHCONTSIG;Contrast
@@ -3821,6 +3895,7 @@ TP_LOCALLAB_SPECCASE;Specific cases
 TP_LOCALLAB_SPECIAL;Special use of RGB curves
 TP_LOCALLAB_SPECIAL_TOOLTIP;The checkbox allows you to remove all other actions i.e. 'Scope', masks, sliders etc., (except for transitions) and use just the effect of the RGB tone-curve.
 TP_LOCALLAB_SPOTNAME;New Spot
+TP_LOCALLAB_SPRADIUS_TOOLTIP;Try setting an automatic Symmetry Point (SP) estimation, only in RGB mode. May require manual adjustment.
 TP_LOCALLAB_STD;Standard
 TP_LOCALLAB_STR;Strength
 TP_LOCALLAB_STRBL;Strength
@@ -3949,6 +4024,20 @@ TP_PCVIGNETTE_ROUNDNESS_TOOLTIP;Roundness:\n0 = rectangle,\n50 = fitted ellipse,
 TP_PCVIGNETTE_STRENGTH;Strength
 TP_PCVIGNETTE_STRENGTH_TOOLTIP;Filter strength in stops (reached in corners).
 TP_PDSHARPENING_LABEL;Capture Sharpening
+TP_PDSHARPENING_CONTRAST_TOOLTIP;By default the tool analyzes the image and calculates a threshold to prevent sharpening noise.\n You can leave the automatic Contrast Threshold calculation on, or you can turn it off and set it as required: moving the slider to the right means that details will have to have higher contrast before they are sharpened. Higher Contrast Threshold values also reduce the amount of sharpening applied to noise, which tends to have lower detail contrast.\n Presharpening denoise may be necessary to enable detection and reduce noise somewhat.
+TP_PDSHARPENING_GAMMA_TOOLTIP;Allows you to differentiate the effect by varying the ratio between shadows and highlights. The mask is sensitive to this setting.
+TP_PDSHARPENING_ITERATIONS_TOOLTIP;Once the radii have either been automatically calculated or set manually, the tool carries out a series of calculations to try and compensate for any blurring. It is an iterative process, which will produce artifacts if carried too far. Checking the ‘Auto limit iterations’ checkbox will limit the number of iterations or you can do it manually using the Iterations slider.
+TP_PDSHARPENING_LABEL88;Capture Sharpening
+TP_PDSHARPENING_NOISE;Presharpening denoise
+TP_PDSHARPENING_NOISEAFTER;Postsharpening denoise
+TP_PDSHARPENING_NOISECAPTYPE;Use Wavelets instead of Median
+TP_PDSHARPENING_NOISE_TOOLTIP;In order for Capture Sharpening to work on noisy or very noisy images, applies either :\n * A light '3x3 soft' to a fairly strong '5x5 strong' median denoising filter in successive gradual iterations prior to Capture Sharpening.\n * Wavelet denoising which has a different, more progressive action, mainly on the first 4 levels of decomposition(high and medium frequency).\n * This helps clarify the contrast mask and allows Contrast Threshold to work, and thus Capture Sharpening to work properly.\n * This also helps to reduce noise in the output image.\n\nBe careful not to use values that are too high so as not to degrade the image. The value that allows the mask to appear (or a little more) is usually sufficient.
+TP_PDSHARPENING_NOISEAFTER_TOOLTIP;For raw images, allows you initial denoising after Capture Sharpening taking into account the mask information.\n * Its main use is to separate the action between structured areas where the noise is barely visible and the often plain background (flat areas) where the noise is very visible.\n\nBe careful not to use values that are too high, you can fine-tune the noise reduction later.
+TP_PDSHARPENING_CONTRASTRADIUSSE_TOOLTIP;The 'contrast threshold' and 'Capture radius' sliders allow you to control a mask that decides which areas are affected by sharpening and which are left untouched.
+TP_PDSHARPENING_RADIUS_TOOLTIP;When in-camera blurring occurs, the effective resolution is no longer dependent on pixel size and instead, has a radius that increases in proportion to the amount of blurring.\n The purpose of this tool is to reduce this blurring by trying to automatically guess the radius needed to counteract the effect.\n\n You can also choose to adjust the radius yourself bearing in mind that if the value is too low, there will not be enough sharpening and if it is too high, it will lead to strong haloing on the edges. Don’t forget that you are only trying to undo the in-camera blurring.
+TP_PDSHARPENING_RADIUSOFFSET_TOOLTIP;Often images are softer or more blurred in the corners than in the center. The Corner radius boost slider allows you to compensate for this by increasing or decreasing the radius in these areas.\nMoving it to the right increases the sharpening in the outer areas and sliding it to the left will reduce the sharpening.
+TP_PDSHARPENING_RADIUSOFFSETSE_TOOLTIP;Often images are softer or more blurred in the corners than in the center. The Corner radius boost slider allows you to compensate for this by increasing or decreasing the radius in these areas.\nMoving it to the right increases the sharpening in the outer areas and sliding it to the left will reduce the sharpening.\nThe results in the TIF/JPG outputs correspond to those in the 'fit to screen'view.
+TP_PDSHARPENING_SHOWCAP;Show contrast mask
 TP_PERSPECTIVE_CAMERA_CROP_FACTOR;Crop factor
 TP_PERSPECTIVE_CAMERA_FOCAL_LENGTH;Focal length
 TP_PERSPECTIVE_CAMERA_FRAME;Correction
@@ -4210,7 +4299,9 @@ TP_SHARPENEDGE_THREE;Luminance only
 TP_SHARPENING_AMOUNT;Amount
 TP_SHARPENING_BLUR;Blur radius
 TP_SHARPENING_CONTRAST;Contrast threshold
-TP_SHARPENING_EDRADIUS;Radius
+TP_SHARPENING_CONTRASTAUTO_TOOLTIP;Auto contrast level estimation.\nValue subject to variation depending on position in preview.\nBe careful, disable auto after estimation.
+TP_SHARPENING_EDRADIUS;Capture Radius
+TP_SHARPENING_EDRADIUS_TOOLTIP;Auto-calculation based on raw data
 TP_SHARPENING_EDTOLERANCE;Edge tolerance
 TP_SHARPENING_HALOCONTROL;Halo control
 TP_SHARPENING_HCAMOUNT;Amount
@@ -4220,10 +4311,15 @@ TP_SHARPENING_METHOD;Method
 TP_SHARPENING_ONLYEDGES;Sharpen only edges
 TP_SHARPENING_RADIUS;Radius
 TP_SHARPENING_RADIUS_BOOST;Corner radius boost
+TP_SHARPENING_RADIUS_PROT;Central protected area %
+TP_SHARPENING_RADIUS_PROTSE_TOOLTIP;Defines the central protection area % (Full image or geographical RT-spot center) that will not be affected by 'Corner radius boost'.\nThe results in the TIF/JPG outputs correspond to those of 'fit to screen'.
 TP_SHARPENING_RLD;RL Deconvolution
 TP_SHARPENING_RLD_AMOUNT;Amount
 TP_SHARPENING_RLD_DAMPING;Damping
 TP_SHARPENING_RLD_ITERATIONS;Iterations
+TP_SHARPENING_RLN;RL Deconvolution
+TP_SHARPENING_CAP;Capture Deconvolution
+TP_SHARPENING_CAPFRAME;Corner boost
 TP_SHARPENING_THRESHOLD;Threshold
 TP_SHARPENING_USM;Unsharp Mask
 TP_SHARPENMICRO_AMOUNT;Quantity
@@ -4446,7 +4542,7 @@ TP_WAVELET_LOWTHR_TOOLTIP;Prevents amplification of fine textures and noise.
 TP_WAVELET_MEDGREINF;First level
 TP_WAVELET_MEDI;Reduce artifacts in blue sky
 TP_WAVELET_MEDILEV;Edge detection
-TP_WAVELET_MEDILEV_TOOLTIP;When you enable Edge Detection, it is recommanded:\n- to disabled low contrast levels to avoid artifacts,\n- to use high values of gradient sensitivity.\n\nYou can modulate the strength with 'refine' from Denoise and Refine.
+TP_WAVELET_MEDILEV_TOOLTIP;When you enable Edge Detection, it is recommended:\n- to disabled low contrast levels to avoid artifacts,\n- to use high values of gradient sensitivity.\n\nYou can modulate the strength with 'refine' from Denoise and Refine.
 TP_WAVELET_MERGEC;Merge chroma
 TP_WAVELET_MERGEL;Merge luma
 TP_WAVELET_MIXCONTRAST;Reference

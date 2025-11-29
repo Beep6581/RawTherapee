@@ -628,6 +628,82 @@ void ImProcFunctions::gamutcompr( Imagefloat *src, Imagefloat *dst) const
 }
 
 
+inline float power_norm2(float r, float g, float b)
+{
+    r = std::abs(r);
+    g = std::abs(g);
+    b = std::abs(b);
+
+    float r2 = SQR(r);
+    float g2 = SQR(g);
+    float b2 = SQR(b);
+    float d = r2 + g2 + b2;
+    float n = r * r2 + g * g2 + b * b2;
+
+    return n / std::max(d, 1e-12f);
+}
+
+
+inline float norm3(float r, float g, float b, TMatrix ws)
+{
+    constexpr float hi = std::numeric_limits<float>::max() / 100.f;
+    return std::min(hi, power_norm2(r, g, b) / 2.f + Color::rgbLuminance(r, g, b, ws) / 2.f);
+}
+
+
+void ImProcFunctions::apsatur(int sp, Imagefloat* tmpImage, Imagefloat* tmpImage2, int bfw, int bfh, float satu) 
+//act on saturation RGB after Abstract Profile - main and Selective Editing
+{
+    const TMatrix wprof = ICCStore::getInstance()->workingSpaceMatrix(params->icm.workingProfile);
+    
+    const float noise = pow_F(2.f, -16.f);
+
+    const auto sfcie =
+        [=](float s, float c) -> float
+            {
+                if (c > noise) {
+                    return 1.f - min(std::abs(s) / c, 1.f);
+                } else {
+                    return 0.f;
+                }
+            };
+      
+    const auto apply_satcie =
+        [&](float &r, float &g, float &b, float f, float ll, float satu) -> void
+            {
+                float rl = r - ll;
+                float gl = g - ll;
+                float bl = b - ll;
+                float s = intp(max(sfcie(rl, r), sfcie(gl, g), sfcie(bl, b)), pow_F(f, 0.3f * satu) * (0.6f) + (0.4f), 1.f);
+                r = ll + s * rl;
+                g = ll + s * gl;
+                b = ll + s * bl;
+            };
+            
+#ifdef _OPENMP
+            #pragma omp parallel for if (multiThread)
+#endif
+            for (int y = 0; y < bfh; ++y)
+                for (int x = 0; x < bfw; ++x) {
+                    float R0 = tmpImage->r(y, x) / 65535.f;
+                    float G0 = tmpImage->g(y, x) / 65535.f;
+                    float B0 = tmpImage->b(y, x) / 65535.f;
+                    float R2 = tmpImage2->r(y, x) /65535.f;
+                    float G2 = tmpImage2->g(y, x) / 65535.f;
+                    float B2 = tmpImage2->b(y, x) / 65535.f;
+                    float fcie2 = norm3(R2, G2, B2, wprof);                                       
+                    float fcie0 = norm3(R0, G0, B0, wprof);
+                    fcie0 = rtengine::max(fcie0, noise);
+                    fcie2 = rtengine::max(fcie2, noise);
+                    float amp = fcie0 / fcie2;
+                    apply_satcie(R0, G0, B0, amp, fcie2, satu);//always apply saturation
+                    tmpImage->r(y, x) = R0 * 65535.f;
+                    tmpImage->g(y, x) = G0 * 65535.f;
+                    tmpImage->b(y, x) = B0 * 65535.f;                                     
+                }               
+}
+
+
 void ImProcFunctions::workingtrc(int sp, Imagefloat* src, Imagefloat* dst, int cw, int ch, int mul, Glib::ustring &profile, double gampos, double slpos, int cat, int &illum, int prim, int locprim,
                                  float &rdx, float &rdy, float &grx, float &gry, float &blx, float &bly, float &meanx, float &meany, float &meanxe, float &meanye,
                                  cmsHTRANSFORM &transform, bool normalizeIn, bool normalizeOut, bool keepTransForm, bool gamutcontrol) const

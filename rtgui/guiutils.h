@@ -705,8 +705,8 @@ public:
     void copyRGBCharData(const unsigned char *srcData, int srcX, int srcY, int srcW, int srcH, int srcRowStride, int dstX, int dstY);
     void copySurface(Glib::RefPtr<Gdk::Window> window, Gdk::Rectangle *rectangle = nullptr);
     void copySurface(BackBuffer *destBackBuffer, Gdk::Rectangle *rectangle = nullptr);
-    void copySurface(Cairo::RefPtr<Cairo::ImageSurface> destSurface, Gdk::Rectangle *rectangle = nullptr);
-    void copySurface(Cairo::RefPtr<Cairo::Context> crDest, Gdk::Rectangle *destRectangle = nullptr);
+    void copySurface(const Cairo::RefPtr<Cairo::ImageSurface>& destSurface, Gdk::Rectangle *rectangle = nullptr);
+    void copySurface(const Cairo::RefPtr<Cairo::Context>& crDest, Gdk::Rectangle *destRectangle = nullptr);
 
     void setDirty(bool isDirty)
     {

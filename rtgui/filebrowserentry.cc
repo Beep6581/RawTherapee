@@ -233,7 +233,7 @@ void FileBrowserEntry::procParamsChanged (Thumbnail* thm, int whoChangedIt, bool
     }
 }
 
-void FileBrowserEntry::updateImage(ThumbImageUpdateListener::ImageUpdate&& update)
+void FileBrowserEntry::updateImage(const ThumbImageUpdateListener::ImageUpdate& update)
 {
     if (!feih) {
         return;
@@ -242,39 +242,35 @@ void FileBrowserEntry::updateImage(ThumbImageUpdateListener::ImageUpdate&& updat
     feih->pending++;
 
     idle_register.add(
-        // Using std::bind as move capture only enabled in C++14
-        std::bind(
-            [this](ThumbImageUpdateListener::ImageUpdate& up) -> bool
-            {
-                if (feih->destroyed) {
-                    if (feih->pending == 1) {
-                        delete feih;
-                    } else {
-                        --feih->pending;
-                    }
-
-                    delete up.img;
-                    return false;
+        [this, update]() -> bool
+        {
+            if (feih->destroyed) {
+                if (feih->pending == 1) {
+                    delete feih;
+                } else {
+                    --feih->pending;
                 }
 
-                feih->fbentry->_updateImage(std::move(up));
-                --feih->pending;
-
+                delete update.img;
                 return false;
-            },
-            std::move(update)
-        ),
+            }
+
+            feih->fbentry->_updateImage(update);
+            --feih->pending;
+
+            return false;
+        },
         G_PRIORITY_LOW
     );
 }
 
-void FileBrowserEntry::_updateImage(ThumbImageUpdateListener::ImageUpdate&& update)
+void FileBrowserEntry::_updateImage(const ThumbImageUpdateListener::ImageUpdate& update)
 {
     MYWRITERLOCK(l, lockRW);
 
     redrawRequests--;
     scale = update.scale;
-    *this->cropParams = std::move(update.crop);
+    *this->cropParams = update.crop;
 
     int imw = update.img->getWidth();
     int imh = update.img->getHeight();
@@ -292,7 +288,11 @@ void FileBrowserEntry::_updateImage(ThumbImageUpdateListener::ImageUpdate&& upda
         previewDataLayout.height = imh;
         int dataSize = imw * imh * 3;
         preview.resize(dataSize);
-        std::copy(update.img->getData(), update.img->getData() + preview.size(), preview.begin());
+        if (update.img->getData()) {
+            std::copy(update.img->getData(), update.img->getData() + preview.size(), preview.begin());
+        } else {
+            std::fill(preview.begin(), preview.end(), 0);
+        }
 
         {
             GThreadLock lock;

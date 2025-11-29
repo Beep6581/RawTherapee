@@ -29,7 +29,7 @@ class AdjusterListener
 public:
     virtual ~AdjusterListener() = default;
     virtual void adjusterChanged (Adjuster* a, double newval) = 0;
-    virtual void adjusterAutoToggled (Adjuster* a) {}
+    virtual void adjusterAutoToggled (Adjuster* a, bool newval) {}
 };
 
 typedef double(*double2double_fun)(double val);
@@ -93,6 +93,7 @@ public:
     // Add an "Automatic" checkbox next to the reset button.
     void addAutoButton(const Glib::ustring &tooltip = "");
     // Send back the value of og the Auto checkbox
+    void delAutoButton();
     bool getAutoValue() const;
     void setAutoValue(bool a);
     bool notifyListenerAutoToggled();

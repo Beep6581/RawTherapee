@@ -29,9 +29,14 @@
 #include "rt_math.h"
 #include "settings.h"
 #include "sleef.h"
+#include "rtengine.h"
+#include "color.h"
+#include "boxblur.h"
 
 //#define BENCHMARK
 #include "StopWatch.h"
+#include "imagefloat.h"
+#include "iccstore.h"
 
 using namespace std;
 
@@ -253,7 +258,7 @@ void ImProcFunctions::deconvsharpeningloc (float** luminance, float** tmp, int W
     }
     JaggedArray<float> blend(W, H);
     float contras = contrast / 100.f;
-    buildBlendMask(luminance, blend, W, H, contras, 1.f);
+    buildBlendMask(luminance, blend, W, H, contras);
 
 
     JaggedArray<float> tmpI(W, H);
@@ -264,7 +269,8 @@ void ImProcFunctions::deconvsharpeningloc (float** luminance, float** tmp, int W
 #endif
     for (int i = 0; i < H; i++) {
         for (int j = 0; j < W; j++) {
-            tmpI[i][j] = max(luminance[i][j], 0.f);
+            //tmpI[i][j] = max(luminance[i][j], 0.f)
+            tmpI[i][j] = luminance[i][j] = max(luminance[i][j], 0.f);
         }
     }
 
@@ -346,6 +352,568 @@ void ImProcFunctions::deconvsharpeningloc (float** luminance, float** tmp, int W
     delete blurbuffer;
 
 
+}
+
+class CornerBoostMask {
+public:
+    CornerBoostMask(int ox, int oy, int width, int height, int latitude):
+        ox_(ox), oy_(oy), w2_(width / 2), h2_(height / 2)
+    {
+        float radius = std::max(w2_, h2_);
+        r2_ = (radius - radius * LIM01(float(latitude)/150.f)) / 2.f;
+        sigma_ = 2.f * SQR(radius * 0.3f);
+    }
+
+    float operator()(int x, int y) const
+    {
+        int xx = x + ox_ - w2_;
+        int yy = y + oy_ - h2_;
+        float distance = std::sqrt(float(SQR(xx) + SQR(yy)));
+        return 1.f - LIM01(xexpf((-SQR(std::max(distance - r2_, 0.f)) / sigma_)));
+    }
+
+private:
+    int ox_;
+    int oy_;
+    int w2_;
+    int h2_;
+    float r2_;
+    float sigma_;
+};
+
+
+
+void deconvsharpeningrgbloc(float **luminance, float **blend, char **impulse, int W, int H, double sigma, float amount, bool multiThread)
+{
+    if (amount <= 0) {
+        return;
+    }
+BENCHFUN
+
+    const int maxiter = 20;
+    const float delta_factor = 0.2f;
+
+    if (sigma < 0.2f) {
+        return;
+    }
+    
+    JaggedArray<float> tmp(W, H);
+    JaggedArray<float> tmpI(W, H);
+    JaggedArray<float> out(W, H);
+
+    constexpr float offset = 1000.f;
+
+#ifdef _OPENMP
+#   pragma omp parallel for if (multiThread)
+#endif
+    for (int i = 0; i < H; i++) {
+        for(int j = 0; j < W; j++) {
+            luminance[i][j] += offset;
+            tmpI[i][j] = std::max(luminance[i][j], 0.f);
+            assert(std::isfinite(tmpI[i][j]));
+            out[i][j] = RT_NAN;
+        }
+    }
+
+    const auto get_output =
+        [&](int i, int j) -> float
+        {
+            if (UNLIKELY(std::isnan(tmpI[i][j]))) {
+                return luminance[i][j];
+            }
+            float b = impulse[i][j] ? 0.f : blend[i][j] * amount;
+            return intp(b, std::max(tmpI[i][j], 0.0f), luminance[i][j]);
+        };
+
+    const auto check_stop =
+        [&](int y, int x) -> void
+        {
+            if (LIKELY(std::isnan(out[y][x]))) {
+                float l = luminance[y][x];
+                float delta = l * delta_factor;
+                if (UNLIKELY(std::abs(tmpI[y][x] - l) > delta)) {
+                    out[y][x] = get_output(y, x);
+                }
+            }
+        };
+
+#ifdef _OPENMP
+#   pragma omp parallel if (multiThread)
+#endif
+    {
+        for (int k = 0; k < maxiter; k++) {
+            gaussianBlur(tmpI, tmp, W, H, sigma);
+            gaussianBlur(tmp, tmpI, W, H, sigma);
+#ifdef _OPENMP
+#           pragma omp for
+#endif
+            for (int y = 0; y < H; ++y) {
+                for (int x = 0; x < W; ++x) {
+                    check_stop(y, x);
+                }
+            }
+        }
+
+#ifdef _OPENMP
+#       pragma omp for
+#endif
+        for (int i = 0; i < H; ++i) {
+            for (int j = 0; j < W; ++j) {
+                float l = out[i][j];
+                if (std::isnan(l)) {
+                    l = get_output(i, j);
+                }
+                assert(std::isfinite(l));
+                luminance[i][j] = std::max(l - offset, 0.f);
+            }
+        }
+    }
+}
+
+bool checkForStop(float** tmpIThr, float** iterCheck, int fullTileSize, int border)
+{
+    for (int ii = border; ii < fullTileSize - border; ++ii) {
+#ifdef __SSE2__
+        for (int jj = border; jj < fullTileSize - border; jj += 4) {
+            if (UNLIKELY(_mm_movemask_ps((vfloat)vmaskf_lt(LVFU(tmpIThr[ii][jj]), LVFU(iterCheck[ii - border][jj - border]))))) {
+                return true;
+            }
+        }
+#else
+        for (int jj = border; jj < fullTileSize - border; ++jj) {
+            if (tmpIThr[ii][jj] < iterCheck[ii - border][jj - border]) {
+                return true;
+            }
+        }
+#endif
+    }
+    return false;
+}
+
+void ImProcFunctions::CaptureDeconvSharpening_SE (float** luminance, const float* const * oldLuminance, const float * const * blend, int bfw, int bfh, struct localpass &locp, float sigma, float sigmaCornerOffset, int iterations, bool checkIterStop, double startVal, double endVal)
+{
+ // Copyright (c) 2019 Ingo Weyrich (heckflosse67@gmx.de)
+ // adaptation november 2024 - Jacques Desmis - for Selective Editing 
+BENCHFUN
+   
+    const bool is9x9 = (sigma <= 1.5f && sigmaCornerOffset == 0.f);
+    const bool is7x7 = (sigma <= 1.15f && sigmaCornerOffset == 0.f);
+    const bool is5x5 = (sigma <= 0.84f && sigmaCornerOffset == 0.f);
+    const bool is3x3 = (sigma < 0.6f && sigmaCornerOffset == 0.f);
+    float kernel13[13][13];
+    float kernel9[9][9];
+    float kernel7[7][7];
+    float kernel5[5][5];
+    float kernel3[3][3];
+    if (is3x3) {
+        rtengine::compute3x3kernel2(sigma, kernel3);
+    } else if (is5x5) {
+        rtengine::compute5x5kernel2(sigma, kernel5);
+    } else if (is7x7) {
+        rtengine::compute7x7kernel2(sigma, kernel7);
+    } else if (is9x9) {
+        rtengine::compute9x9kernel2(sigma, kernel9);
+    } else {
+        rtengine::compute13x13kernel2(sigma, kernel13);
+    }
+    
+    const float nocoboot = locp.sizenocoboot;
+    constexpr int tileSize = 32;
+    const int border = (is3x3 || is5x5 || is7x7) ? iterations <= 30 ? 5 : 7 : 8;
+    const int fullTileSize = tileSize + 2 * border;
+    const float cornerRadius = std::min<float>(2.f, sigma + sigmaCornerOffset);
+    const float cornerDistance = sqrt(rtengine::SQR(bfw * nocoboot) + rtengine::SQR(bfh * nocoboot));
+    const float distanceFactor = (cornerRadius - sigma) / cornerDistance;
+
+    if (settings->verbose) {
+        printf("sigma=%f Tilesize=%i cornerrad=%f cornerDist=%f distanceFactor=%f\n", sigma, fullTileSize, cornerRadius, cornerDistance, distanceFactor);
+    }
+    //I don't use startval and endval to show progress... but ...
+    constexpr float minBlend = 0.01f;
+
+#ifdef _OPENMP
+    #pragma omp parallel
+#endif
+    {
+        array2D<float> tmpIThr(fullTileSize, fullTileSize);
+        array2D<float> tmpThr(fullTileSize, fullTileSize);
+        tmpThr.fill(1.f);
+        array2D<float> lumThr(fullTileSize, fullTileSize);
+        array2D<float> iterCheck(tileSize, tileSize);
+#ifdef _OPENMP
+        #pragma omp for schedule(dynamic,16) collapse(2)
+#endif
+        for (int i = border; i < bfh - border; i+= tileSize) {
+            for(int j = border; j < bfw - border; j+= tileSize) {
+                const bool endOfCol = (i + tileSize + border) >= bfh;
+                const bool endOfRow = (j + tileSize + border) >= bfw;
+                // fill tiles
+                if (endOfRow || endOfCol) {
+                    // special handling for small tiles at end of row or column
+                    float maxVal = 0.f;
+                    if (checkIterStop) {
+                        for (int k = 0, ii = endOfCol ? bfh - fullTileSize + border : i; k < tileSize; ++k, ++ii) {
+                            for (int l = 0, jj = endOfRow ? bfw - fullTileSize + border : j; l < tileSize; ++l, ++jj) {
+                                iterCheck[k][l] = oldLuminance[ii][jj] * blend[ii][jj] * 0.5f;
+                                maxVal = std::max(maxVal, blend[ii][jj]);
+                            }
+                        }
+                    } else {
+                        for (int k = 0, ii = endOfCol ? bfh - fullTileSize + border : i; k < tileSize; ++k, ++ii) {
+                            for (int l = 0, jj = endOfRow ? bfw - fullTileSize + border : j; l < tileSize; ++l, ++jj) {
+                                maxVal = std::max(maxVal, blend[ii][jj]);
+                            }
+                        }
+                    }
+                    if (maxVal < minBlend) {
+                        // no pixel of the tile has a blend factor >= minBlend => skip the tile
+                        continue;
+                    }
+                    for (int k = 0, ii = endOfCol ? bfh - fullTileSize : i - border; k < fullTileSize; ++k, ++ii) {
+                        for (int l = 0, jj = endOfRow ? bfw - fullTileSize : j - border; l < fullTileSize; ++l, ++jj) {
+                            tmpIThr[k][l] = oldLuminance[ii][jj];
+                            lumThr[k][l] = oldLuminance[ii][jj];
+                        }
+                    }
+                } else {
+                    float maxVal = 0.f;
+                    if (checkIterStop) {
+                        for (int ii = 0; ii < tileSize; ++ii) {
+                            for (int jj = 0; jj < tileSize; ++jj) {
+                                iterCheck[ii][jj] = oldLuminance[i + ii][j + jj] * blend[i + ii][j + jj] * 0.5f;
+                                maxVal = std::max(maxVal, blend[i + ii][j + jj]);
+                            }
+                        }
+                    } else {
+                        for (int ii = 0; ii < tileSize; ++ii) {
+                            for (int jj = 0; jj < tileSize; ++jj) {
+                                maxVal = std::max(maxVal, blend[i + ii][j + jj]);
+                            }
+                        }
+                    }
+                    if (maxVal < minBlend) {
+                        // no pixel of the tile has a blend factor >= minBlend => skip the tile
+                        continue;
+                    }
+                    for (int ii = i; ii < i + fullTileSize; ++ii) {
+                        for (int jj = j; jj < j + fullTileSize; ++jj) {
+                            tmpIThr[ii - i][jj - j] = oldLuminance[ii - border][jj - border];
+                            lumThr[ii - i][jj - j] = oldLuminance[ii - border][jj - border];
+                        }
+                    }
+                }
+                if (is3x3) {
+                    for (int k = 0; k < iterations; ++k) {
+                        // apply 3x3 gaussian blur and divide luminance by result of gaussian blur
+                        rtengine::gauss3x3div2(tmpIThr, tmpThr, lumThr, fullTileSize, kernel3);
+                        rtengine::gauss3x3mult2(tmpThr, tmpIThr, fullTileSize, kernel3);
+                        if (checkIterStop && k < iterations - 1 && checkForStop(tmpIThr, iterCheck, fullTileSize, border)) {
+                            break;
+                        }
+                    }
+                } else if (is5x5) {
+                    for (int k = 0; k < iterations; ++k) {
+                        // apply 5x5 gaussian blur and divide luminance by result of gaussian blur
+                        rtengine::gauss5x5div2(tmpIThr, tmpThr, lumThr, fullTileSize, kernel5);
+                        rtengine::gauss5x5mult2(tmpThr, tmpIThr, fullTileSize, kernel5);
+                        if (checkIterStop && k < iterations - 1 && checkForStop(tmpIThr, iterCheck, fullTileSize, border)) {
+                            break;
+                        }
+                    }
+                } else if (is7x7) {
+                    for (int k = 0; k < iterations; ++k) {
+                        // apply 5x5 gaussian blur and divide luminance by result of gaussian blur
+                        rtengine::gauss7x7div2(tmpIThr, tmpThr, lumThr, fullTileSize, kernel7);
+                        rtengine::gauss7x7mult2(tmpThr, tmpIThr, fullTileSize, kernel7);
+                        if (checkIterStop && k < iterations - 1 && checkForStop(tmpIThr, iterCheck, fullTileSize, border)) {
+                            break;
+                        }
+                    }
+                } else if (is9x9) {
+                    for (int k = 0; k < iterations; ++k) {
+                        // apply 5x5 gaussian blur and divide luminance by result of gaussian blur
+                        rtengine::gauss9x9div2(tmpIThr, tmpThr, lumThr, fullTileSize, kernel9);
+                        rtengine::gauss9x9mult2(tmpThr, tmpIThr, fullTileSize, kernel9);
+                        if (checkIterStop && k < iterations - 1 && checkForStop(tmpIThr, iterCheck, fullTileSize, border)) {
+                            break;
+                        }
+                    }
+                } else {
+                    if (sigmaCornerOffset != 0.f) {
+                        const float distance = sqrt(rtengine::SQR(i + tileSize / 2 - bfh / 2) + rtengine::SQR(j + tileSize / 2 - bfw / 2));
+                        const float sigmaTile = static_cast<float>(sigma) + distanceFactor * distance;
+                        if (sigmaTile >= 0.4f) {
+                            if (sigmaTile > 1.5f) { // have to use 13x13 kernel
+                                float lkernel13[13][13];
+                                rtengine::compute13x13kernel2(static_cast<float>(sigma) + distanceFactor * distance, lkernel13);
+                                for (int k = 0; k < iterations; ++k) {
+                                    // apply 13x13 gaussian blur and divide luminance by result of gaussian blur
+                                    rtengine::gauss13x13div2(tmpIThr, tmpThr, lumThr, fullTileSize, lkernel13);
+                                    rtengine::gauss13x13mult2(tmpThr, tmpIThr, fullTileSize, lkernel13);
+                                    if (checkIterStop && k < iterations - 1 && checkForStop(tmpIThr, iterCheck, fullTileSize, border)) {
+                                        break;
+                                    }
+                                }
+                            } else if (sigmaTile > 1.15f) { // have to use 9x9 kernel
+                                float lkernel9[9][9];
+                                rtengine::compute9x9kernel2(static_cast<float>(sigma) + distanceFactor * distance, lkernel9);
+                                for (int k = 0; k < iterations; ++k) {
+                                    // apply 9x9 gaussian blur and divide luminance by result of gaussian blur
+                                    rtengine::gauss9x9div2(tmpIThr, tmpThr, lumThr, fullTileSize, lkernel9);
+                                    rtengine::gauss9x9mult2(tmpThr, tmpIThr, fullTileSize, lkernel9);
+                                    if (checkIterStop && k < iterations - 1 && checkForStop(tmpIThr, iterCheck, fullTileSize, border)) {
+                                        break;
+                                    }
+                                }
+                            } else if (sigmaTile > 0.84f) { // have to use 7x7 kernel
+                                float lkernel7[7][7];
+                                rtengine::compute7x7kernel2(static_cast<float>(sigma) + distanceFactor * distance, lkernel7);
+                                for (int k = 0; k < iterations; ++k) {
+                                    // apply 7x7 gaussian blur and divide luminance by result of gaussian blur
+                                    rtengine::gauss7x7div2(tmpIThr, tmpThr, lumThr, fullTileSize, lkernel7);
+                                    rtengine::gauss7x7mult2(tmpThr, tmpIThr, fullTileSize, lkernel7);
+                                    if (checkIterStop && k < iterations - 1 && checkForStop(tmpIThr, iterCheck, fullTileSize, border)) {
+                                        break;
+                                    }
+                                }
+                            } else { // can use 5x5 kernel
+                                float lkernel5[5][5];
+                                rtengine::compute5x5kernel2(static_cast<float>(sigma) + distanceFactor * distance, lkernel5);
+                                for (int k = 0; k < iterations; ++k) {
+                                    // apply 7x7 gaussian blur and divide luminance by result of gaussian blur
+                                    rtengine::gauss5x5div2(tmpIThr, tmpThr, lumThr, fullTileSize, lkernel5);
+                                    rtengine::gauss5x5mult2(tmpThr, tmpIThr, fullTileSize, lkernel5);
+                                    if (checkIterStop && k < iterations - 1 && checkForStop(tmpIThr, iterCheck, fullTileSize, border)) {
+                                        break;
+                                    }
+                                }
+                            }
+                        }
+                    } else {
+                        for (int k = 0; k < iterations; ++k) {
+                            // apply 13x13 gaussian blur and divide luminance by result of gaussian blur
+                            rtengine::gauss13x13div2(tmpIThr, tmpThr, lumThr, fullTileSize, kernel13);
+                            rtengine::gauss13x13mult2(tmpThr, tmpIThr, fullTileSize, kernel13);
+                            if (checkIterStop && k < iterations - 1 && checkForStop(tmpIThr, iterCheck, fullTileSize, border)) {
+                                break;
+                            }
+                        }
+                    }
+                }
+                if (endOfRow || endOfCol) {
+                    // special handling for small tiles at end of row or column
+                    for (int k = border, ii = endOfCol ? bfh - fullTileSize : i - border; k < fullTileSize - border; ++k) {
+                        for (int l = border, jj = endOfRow ? bfw - fullTileSize : j - border; l < fullTileSize - border; ++l) {
+                            luminance[ii + k][jj + l] = rtengine::intp(blend[ii + k][jj + l], tmpIThr[k][l], luminance[ii + k][jj + l]);
+                        }
+                    }
+                } else {
+                    for (int ii = border; ii < fullTileSize - border; ++ii) {
+                        for (int jj = border; jj < fullTileSize - border; ++jj) {
+                            luminance[i + ii - border][j + jj - border] = rtengine::intp(blend[i + ii - border][j + jj - border], tmpIThr[ii][jj], luminance[i + ii - border][j + jj - border]);
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+float igammalog2(float x, float p, float s, float g2, float g4) // same function as in iplocallab.cc
+{
+    return x <= g2 ? x / s : pow_F((x + g4) / (1.f + g4), p);//continuous
+}
+
+
+float gammalog2(float x, float p, float s, float g3, float g4) // same function as in iplocallab.cc
+{
+    return x <= g3 ? x * s : (1.f + g4) * xexpf(xlogf(x) / p) - g4;
+}
+
+
+void ImProcFunctions::doCapture_Sharpening_SE(Imagefloat *rgb, int bfw, int bfh, struct localpass &locp, int sk, float &sharpc, bool autoshar, float capradiu,  float deconvCo, float deconvLat, bool itcheck, bool showMask, float deconvgam)
+//Jacques Desmis - 
+{
+    
+    TMatrix wprof = ICCStore::getInstance()->workingSpaceMatrix(params->icm.workingProfile);
+
+    const float wip[3][3] = {
+        {(float) wprof[0][0], (float) wprof[0][1], (float) wprof[0][2]},
+        {(float) wprof[1][0], (float) wprof[1][1], (float) wprof[1][2]},
+        {(float) wprof[2][0], (float) wprof[2][1], (float) wprof[2][2]}
+    };
+        //tempory variables for gamma
+        array2D<float> redgam (bfw, bfh);
+        array2D<float> greengam(bfw, bfh);
+        array2D<float> bluegam(bfw, bfh);
+        
+#ifdef _OPENMP
+            #pragma omp parallel for schedule(dynamic,16) if (multiThread)
+#endif
+        for (int i = 0; i < bfh; ++i) {//save temp gamma
+            for (int j = 0; j < bfw; ++j) {
+                redgam[i][j] = rgb->r(i,j);
+                greengam[i][j] = rgb->g(i,j);
+                bluegam[i][j] = rgb->b(i,j);
+            }
+        }
+        //calculate gamma as it was with Lab calculation but in RGB linear mode to have the same 'behavior' as other gamma in Selective Editing
+        //This is actually not of major importance, the main thing is to use the inverse function afterwards
+        float gamma1 = deconvgam;
+        rtengine::GammaValues g_a; //gamma parameters
+        double pwr1 = 1.0 / (double) gamma1;//default 3.0 - gamma Lab
+        double ts1 = 9.03296;//always the same 'slope' in the extreme shadows - slope Lab , I can choose also 5 or 13!
+        rtengine::Color::calcGamma(pwr1, ts1, g_a); // call to calcGamma with selected gamma and slope
+        
+        if (gamma1 != 1.f) {//calculate new values with gamma for R, G, B of course with 65535 instead of 32768
+#ifdef _OPENMP
+            #   pragma omp parallel for schedule(dynamic,16) if (multiThread)
+#endif
+            for (int i = 0; i < bfh; ++i) {
+                for (int j = 0; j < bfw; ++j) {
+                    redgam[i][j] = 65535.f * igammalog2(redgam[i][j] / 65535.f, gamma1, ts1, g_a[2], g_a[4]);
+                    greengam[i][j] = 65535.f * igammalog2(greengam[i][j] / 65535.f, gamma1, ts1, g_a[2], g_a[4]);
+                    bluegam[i][j] = 65535.f * igammalog2(bluegam[i][j] / 65535.f, gamma1, ts1, g_a[2], g_a[4]);
+                }
+            }
+        }
+        
+        
+    float s_scale = std::sqrt(sk);
+   
+    if (showMask) {
+        array2D<float> clipMask(bfw, bfh);
+
+        array2D<float> redVals (bfw, bfh);
+        array2D<float> greenVals(bfw, bfh);
+        array2D<float> blueVals(bfw, bfh);
+
+#ifdef _OPENMP
+            #pragma omp parallel for schedule(dynamic,16) if (multiThread)
+#endif
+
+        for (int i = 0; i < bfh; ++i) {
+            for (int j = 0; j < bfw; ++j) {
+                redVals[i][j] = redgam[i][j];
+                greenVals[i][j] = greengam[i][j];
+                blueVals[i][j] = bluegam[i][j];
+            }
+        }
+        
+        array2D<float> Y (bfw, bfh);
+        float contrastsh = pow_F(sharpc / 100.f, 1.f) * s_scale;
+        
+         for (int i = 0; i < bfh; ++i) {
+            Color::RGB2L(redVals[i], greenVals[i], blueVals[i], Y[i], wip, bfw);//mask values with gamma
+        }
+        float reducautocontrast = 1.f;//to take noise into account
+
+        buildBlendMask2(Y, clipMask, bfw, bfh, contrastsh, 1.f, autoshar, 2.f / s_scale, 1.f, reducautocontrast);//build with gamma if need
+
+        sharpc = 100.f * pow_F(contrastsh, 1.f)/ s_scale;
+       
+        
+#ifdef _OPENMP
+#       pragma omp parallel for if (multiThread)
+#endif
+        for (int i = 0; i < bfh; ++i) {
+            for (int j = 0; j < bfw; ++j) {
+                rgb->r(i, j) = rgb->g(i, j) = rgb->b(i, j) =  clipMask[i][j] * 65536.f; //same values R G B to black and white image, just for mask             
+            }
+        }
+        if (settings->verbose) {
+            int autos = 0;
+            if(autoshar) {autos = 1;}
+            printf("Contrast threshold Selective Editing Capture Show mask=%f auto=%i\n", (double) sharpc, autos);
+        }
+
+    } else {//general case
+        array2D<float> clipMask2(bfw, bfh); 
+        array2D<float> redVal (bfw, bfh);
+        array2D<float> greenVal(bfw, bfh);
+        array2D<float> blueVal(bfw, bfh);
+
+#ifdef _OPENMP
+            #pragma omp parallel for schedule(dynamic,16) if (multiThread)
+#endif   
+         for (int i = 0; i < bfh; ++i) {//values with gamma
+            for (int j = 0; j < bfw; ++j) {
+                redVal[i][j] = redgam[i][j];
+                greenVal[i][j] = greengam[i][j];
+                blueVal[i][j] = bluegam[i][j];
+            }
+        }
+
+        array2D<float> L (bfw, bfh);
+        array2D<float> YOld(bfw, bfh);
+        array2D<float> YNew(bfw, bfh);
+
+#ifdef _OPENMP
+            #pragma omp parallel for schedule(dynamic,16) if (multiThread)
+#endif        
+         for (int i = 0; i < bfh; ++i) {
+            for (int j = 0; j < bfw; ++j) {
+                L[i][j] = redgam[i][j];
+                YOld[i][j] = greengam[i][j];
+                YNew[i][j] = bluegam[i][j];
+            }
+        }
+
+#ifdef _OPENMP
+        #pragma omp parallel for schedule(dynamic, 16)
+#endif
+        for (int i = 0; i < bfh; ++i) {
+            Color::RGB2L(redVal[i], greenVal[i], blueVal[i], L[i], wip, bfw);
+            Color::RGB2Y(redVal[i], greenVal[i], blueVal[i], YOld[i], YNew[i], bfw);
+        }
+        float contrast = pow_F(sharpc / 100.f, 1.f) * s_scale;
+        float reducautocontrast = 1.f;//to take noise into account
+
+        buildBlendMask2(L, clipMask2, bfw, bfh, contrast, 1.f, autoshar, 2.f / s_scale, 1.f, reducautocontrast);
+        sharpc = 100.f * pow_F(contrast, 1.f) / s_scale;
+
+        if (settings->verbose) {
+            printf("Contrast threshold SE Captur=%f \n", (double) sharpc);
+        }
+
+        CaptureDeconvSharpening_SE(YNew, YOld, clipMask2, bfw, bfh, locp, capradiu, deconvCo, deconvLat, itcheck, 0.2, 0.9);// 0.2 and 0.9 not used but in case.
+ 
+#ifdef _OPENMP
+        #pragma omp parallel for schedule(dynamic, 16)
+#endif
+        for (int i = 0; i < bfh; ++i) {
+            for (int j = 0; j < bfw; ++j) {
+                const float factor = YNew[i][j] / std::max(YOld[i][j], 0.00001f);
+                redgam[i][j] = redVal[i][j] * factor;
+                greengam[i][j] = greenVal[i][j] * factor;
+                bluegam[i][j] = blueVal[i][j] * factor;
+            }
+        }
+    
+        if (gamma1 != 1.f) {//inverse gamma 
+#ifdef _OPENMP
+        #pragma omp parallel for schedule(dynamic,16) if (multiThread)
+#endif
+            for (int i = 0; i < bfh; ++i) {
+                for (int j = 0; j < bfw; ++j) {
+                    redgam[i][j] = 65535.f * gammalog2(redgam[i][j] / 65535.f, gamma1, ts1, g_a[3], g_a[4]);
+                    greengam[i][j] = 65535.f * gammalog2(greengam[i][j] / 65535.f, gamma1, ts1, g_a[3], g_a[4]);
+                    bluegam[i][j] = 65535.f * gammalog2(bluegam[i][j] / 65535.f, gamma1, ts1, g_a[3], g_a[4]);
+                }
+            }
+        }
+
+#ifdef _OPENMP
+         #pragma omp parallel for schedule(dynamic,16) if (multiThread)
+#endif               
+        for (int i = 0; i < bfh; ++i) {
+            for (int j = 0; j < bfw; ++j) {
+                rgb->r(i,j) = redgam[i][j]; 
+                rgb->g(i,j) = greengam[i][j]; 
+                rgb->b(i,j) = bluegam[i][j]; 
+            }
+        } 
+    }
 }
 
 void ImProcFunctions::sharpening (LabImage* lab, const procparams::SharpeningParams &sharpenParam, bool showMask)
