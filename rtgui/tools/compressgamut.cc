@@ -61,6 +61,7 @@ Compressgamut::Compressgamut () : FoldableToolPanel(this, TOOL_NAME, M("TP_COMPR
     colorspace->append(M("TP_COMPRESSGAMUT_SRGB"));
     colorspace->append(M("TP_COMPRESSGAMUT_DCIP3"));
     colorspace->append(M("TP_COMPRESSGAMUT_ACESP1"));
+    colorspace->append(M("TP_COMPRESSGAMUT_BETA"));
     colorspace->set_active(3);
     iVBox->pack_start(*colorspace);
     iFrame->add(*iVBox);
@@ -211,6 +212,8 @@ void Compressgamut::read (const ProcParams* pp, const ParamsEdited* pedited)
         colorspace->set_active(4);
     } else if (pp->cg.colorspace == "acesp1") {
         colorspace->set_active(5);
+    } else if (pp->cg.colorspace == "beta") {
+        colorspace->set_active(6);    
     }
     colorspaceconn.block (false);
 
@@ -252,6 +255,8 @@ void Compressgamut::write (ProcParams* pp, ParamsEdited* pedited)
         pp->cg.colorspace = "dcip3";
     } else if (colorspace->get_active_row_number() == 5){
         pp->cg.colorspace = "acesp1";
+    } else if (colorspace->get_active_row_number() == 6){
+        pp->cg.colorspace = "beta";
     }
 
 

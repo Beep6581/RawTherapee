@@ -554,6 +554,17 @@ void ImProcFunctions::gamutcompr( Imagefloat *src, Imagefloat *dst, float &mac) 
         acesp1[2][1] = 0.009998;
         acesp1[2][2] = 0.820945;
 
+    Matrix beta = {};//Beta RGB near Pointers'gamut
+        beta[0][0] = 0.6712537;
+        beta[0][1] = 0.1745834;
+        beta[0][1] = 0.1183829;
+        beta[1][0] = 0.3032726;
+        beta[1][1] = 0.6637861;
+        beta[1][2] = 0.0329413;
+        beta[2][0] = 0.0000000;
+        beta[2][1] = 0.0407010;
+        beta[2][2] = 0.7845090;
+       
     Matrix out = {};
 
     if (params->cg.colorspace == "rec2020") {
@@ -568,6 +579,8 @@ void ImProcFunctions::gamutcompr( Imagefloat *src, Imagefloat *dst, float &mac) 
         out = dcip3;
     } else if  (params->cg.colorspace == "acesp1") {
         out = acesp1;
+   } else if  (params->cg.colorspace == "beta") {
+        out = beta;        
     } else {
         out = acesp1; // Should never happen, but just in case.
     }
