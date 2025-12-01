@@ -843,7 +843,6 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                 float mac0 = 0.f;
                 float mac1 = 0.f;
                 float mac2 = 0.f;
-
                 ipf.gamutcompr(orig_prev, orig_prev, mac, mac0, mac1, mac2);                    
                 if (acmaxListener) {
                    acmaxListener->achromaticChanged((double) mac, mac0, mac1, mac2);

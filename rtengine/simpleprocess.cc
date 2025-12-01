@@ -972,8 +972,6 @@ private:
             float mac0 = 0.f;
             float mac1 = 0.f;
             float mac2 = 0.f;
-
-           
             ipf.gamutcompr(baseImg, baseImg, mac, mac0, mac1, mac2);
         }
 
