@@ -71,8 +71,18 @@ Compressgamut::Compressgamut () : FoldableToolPanel(this, TOOL_NAME, M("TP_COMPR
     acLabel = Gtk::manage (new Gtk::Label ("---"));
     setExpandAlignProperties (acLabel, true, false, Gtk::ALIGN_CENTER, Gtk::ALIGN_START);
     acLabel->set_tooltip_markup (M ("TP_COMPRESSGAMUT_MACLABEL_TOOLTIP"));
-
     acLabel->show ();
+
+    acLabelrgb = Gtk::manage (new Gtk::Label ("---"));
+    setExpandAlignProperties (acLabelrgb, true, false, Gtk::ALIGN_CENTER, Gtk::ALIGN_START);
+    acLabelrgb->set_tooltip_markup (M ("TP_COMPRESSGAMUT_MACLABELRGB_TOOLTIP"));
+    acLabelrgb->show (); 
+
+    acLabelcmy = Gtk::manage (new Gtk::Label ("---"));
+    setExpandAlignProperties (acLabelcmy, true, false, Gtk::ALIGN_CENTER, Gtk::ALIGN_START);
+    acLabelcmy->set_tooltip_markup (M ("TP_COMPRESSGAMUT_MACLABELRGB_TOOLTIP"));
+    acLabelcmy->show ();
+
     // Percentage of the core gamut to protect Limits
     // Values calculated to protect all the colors of the ColorChecker Classic 24 as given by
     // ISO 17321-1 and Ohta (1997)
@@ -108,7 +118,8 @@ Compressgamut::Compressgamut () : FoldableToolPanel(this, TOOL_NAME, M("TP_COMPR
     limVBox->pack_start (*d_m);
     limVBox->pack_start (*d_y);
     limVBox->pack_start (*acLabel);
-
+    limVBox->pack_start (*acLabelrgb);    
+    limVBox->pack_start (*acLabelcmy);
     limFrame->add(*limVBox);
     pack_start(*limFrame, Gtk::PACK_SHRINK);
 
@@ -145,12 +156,12 @@ Compressgamut::~Compressgamut()
     idle_register.destroy();
 }
 
-void Compressgamut::achromaticChanged (double acmax)
+void Compressgamut::achromaticChanged (double acmax, double acmax0, double acmax1, double acmax2)
 {
 
 
     idle_register.add(
-         [this, acmax]() -> bool
+         [this, acmax, acmax0, acmax1, acmax2]() -> bool
 
         {
             GThreadLock lock; // All GUI access from idle_add callbacks or separate thread HAVE to be protected
@@ -158,7 +169,20 @@ void Compressgamut::achromaticChanged (double acmax)
             disableListener();
             acLabel->set_text(
                 Glib::ustring::compose(M("TP_COMPRESSGAMUT_MACLABEL"),
-                                    Glib::ustring::format(std::fixed, std::setprecision(2), acmax))
+
+                                        Glib::ustring::format(std::fixed, std::setprecision(2), acmax))//achromatic maximum value
+            );
+            acLabelrgb->set_text (
+                Glib::ustring::compose (M ("TP_COMPRESSGAMUT_MACLABELRGB"),
+                                        Glib::ustring::format (std::fixed, std::setprecision (2), acmax0),//red
+                                        Glib::ustring::format (std::fixed, std::setprecision (2), acmax1),//green
+                                        Glib::ustring::format (std::fixed, std::setprecision (2), acmax2))//blue
+            );
+            acLabelcmy->set_text (
+                Glib::ustring::compose (M ("TP_COMPRESSGAMUT_MACLABELCMY"),
+                                        Glib::ustring::format (std::fixed, std::setprecision (1), (acmax1 + acmax2) * 0.43),//estimated value for Cyan 
+                                        Glib::ustring::format (std::fixed, std::setprecision (1), (acmax0 + acmax2) * 0.43),//estimated value for Magenta
+                                        Glib::ustring::format (std::fixed, std::setprecision (1), (acmax0 + acmax1) * 0.43))//estimated value for Yellow
             );
             enableListener();
             return false;

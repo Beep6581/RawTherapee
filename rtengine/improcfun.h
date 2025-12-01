@@ -608,7 +608,7 @@ enum class BlurType {
     Imagefloat*    lab2rgbOut(LabImage* lab, int cx, int cy, int cw, int ch, const procparams::ColorManagementParams &icm);
     // CieImage *ciec;
     
-    void gamutcompr( rtengine::Imagefloat *src, rtengine::Imagefloat *dst, float &mac) const;
+    void gamutcompr( rtengine::Imagefloat *src, rtengine::Imagefloat *dst, float &mac, float &mac0, float &mac1, float &mac2) const;
     void apsatur(int sp, Imagefloat* src, Imagefloat* dst, int bfw, int bfh, float satu);
 
     void workingtrc(int sp, Imagefloat* src, Imagefloat* dst, int cw, int ch , int mul, Glib::ustring &profile, double gampos, double slpos, int cat, int &illum, int prim, int locprim, 

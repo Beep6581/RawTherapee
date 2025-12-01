@@ -2079,9 +2079,9 @@ CGParams::CGParams() :
     d_m(1.264),
     d_y(1.312),
     pwr(1.2),
-    colorspace("acesp1"),
+    colorspace("dcip3"),
     rolloff(true)
-    
+
 {
 }
 
@@ -2674,7 +2674,7 @@ ColorManagementParams::ColorManagementParams() :
     applyBaselineExposureOffset(true),
     applyHueSatMap(true),
     dcpIlluminant(0),
-    workingProfile("ProPhoto"),
+    workingProfile("Rec2020"),
     workingTRC(WorkingTrc::NONE),
     will(Illuminant::DEFAULT),
     wprim(Primaries::DEFAULT),

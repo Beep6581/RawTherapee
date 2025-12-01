@@ -40,6 +40,8 @@ protected:
     Adjuster* d_m;
     Adjuster* d_y;
     Gtk::Label* acLabel;
+    Gtk::Label* acLabelrgb;
+    Gtk::Label* acLabelcmy;  
     Adjuster* pwr;
 
     MyComboBoxText *colorspace;
@@ -72,7 +74,7 @@ public:
     void write          (rtengine::procparams::ProcParams* pp, ParamsEdited* pedited = nullptr) override;
     void setDefaults    (const rtengine::procparams::ProcParams* defParams, const ParamsEdited* pedited = nullptr) override;
     void setBatchMode   (bool batchMode) override;
-    void achromaticChanged (double acmax) override;
+    void achromaticChanged (double acmax, double acmax0, double acmax1, double acmax2) override;
     void adjusterChanged (Adjuster* a, double newval) override;
     void enabledChanged  () override;
     void rolloff_change();

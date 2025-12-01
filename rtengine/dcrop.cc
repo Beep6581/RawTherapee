@@ -695,7 +695,10 @@ void Crop::update(int todo)
 
         if (params.cg.enabled) {//gamut compression
             float mac = 0.f;
-            parent->ipf.gamutcompr(baseCrop, baseCrop, mac);
+            float mac0 = 0.f;
+            float mac1 = 0.f;
+            float mac2 = 0.f;        
+            parent->ipf.gamutcompr(baseCrop, baseCrop, mac, mac0, mac1, mac2);
         }
 
         delete [] min_r;

@@ -969,7 +969,12 @@ private:
 
         if (params.cg.enabled) {//gamut compression
             float mac = 0.f;
-            ipf.gamutcompr(baseImg, baseImg, mac);
+            float mac0 = 0.f;
+            float mac1 = 0.f;
+            float mac2 = 0.f;
+
+           
+            ipf.gamutcompr(baseImg, baseImg, mac, mac0, mac1, mac2);
         }
 
         ipf.firstAnalysis(baseImg, params, hist16);
