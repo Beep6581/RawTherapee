@@ -844,9 +844,11 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                 float mac1 = 0.f;
                 float mac2 = 0.f;
                 bool auto_dc = params->cg.autodc;
+                bool auto_dm = params->cg.autodm;
+
                 ipf.gamutcompr(orig_prev, orig_prev, mac, mac0, mac1, mac2);                    
                 if (acmaxListener) {
-                   acmaxListener->achromaticChanged((double) mac, mac0, mac1, mac2, auto_dc);
+                   acmaxListener->achromaticChanged((double) mac, mac0, mac1, mac2, auto_dc, auto_dm);
                 }
             }           
        

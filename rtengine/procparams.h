@@ -878,6 +878,7 @@ struct CGParams {
     double  d_c;
     bool autodc;    
     double  d_m;
+    bool autodm;   
     double  d_y;
     double  pwr;
     Glib::ustring colorspace;

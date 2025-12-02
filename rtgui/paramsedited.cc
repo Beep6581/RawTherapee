@@ -467,6 +467,7 @@ void ParamsEdited::set(bool v)
     cg.d_c = v;
     cg.autodc = v;   
     cg.d_m = v;
+    cg.autodm = v;   
     cg.d_y = v;
     cg.pwr = v;
     cg.colorspace = v;
@@ -1230,6 +1231,7 @@ void ParamsEdited::initFrom(const std::vector<rtengine::procparams::ProcParams>&
         cg.d_c = cg.d_c && p.cg.d_c == other.cg.d_c;
         cg.autodc = cg.autodc && p.cg.autodc == other.cg.autodc;       
         cg.d_m = cg.d_m && p.cg.d_m == other.cg.d_m;
+        cg.autodm = cg.autodm && p.cg.autodm == other.cg.autodm;       
         cg.d_y = cg.d_y && p.cg.d_y == other.cg.d_y;
         cg.pwr = cg.pwr && p.cg.pwr == other.cg.pwr;
         cg.colorspace = cg.colorspace && p.cg.colorspace == other.cg.colorspace;
@@ -3671,6 +3673,10 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
         toEdit.cg.d_m = mods.cg.d_m;
     }
 
+    if (cg.autodm) {
+        toEdit.cg.autodm = mods.cg.autodm;
+    }
+   
     if (cg.d_y) {
         toEdit.cg.d_y = mods.cg.d_y;
     }

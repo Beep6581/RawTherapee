@@ -381,6 +381,7 @@ struct CGParamsEdited {
     bool d_c;
     bool autodc;   
     bool d_m;
+    bool autodm;
     bool d_y;
     bool pwr;
     bool colorspace;
