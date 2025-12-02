@@ -414,8 +414,9 @@ class CompgamutListener
 {
   public:
      virtual ~CompgamutListener() = default;
-     virtual void achromaticChanged (double acmax, double acmax0, double acmax1, double acmax2) = 0;
-};
+     virtual void achromaticChanged (double acmax, double acmax0, double acmax1, double acmax2, bool auto_thc) = 0;
+    };
+
 
 class RetinexListener
 {

@@ -45,8 +45,8 @@ Compressgamut::Compressgamut () : FoldableToolPanel(this, TOOL_NAME, M("TP_COMPR
     Evcgroll = m->newEvent(COMPR, "HISTORY_MSG_CG_ROLLOFF");
     Evcgpwr = m->newEvent(COMPR, "HISTORY_MSG_CG_VALUE");
     Evcgenabled = m->newEvent(COMPR, "HISTORY_MSG_CG_ENABLED");
-
-
+    Evcgdcautoon = m->newEvent(COMPR, "HISTORY_MSG_CG_CYANDC_AUTO");
+    Evcgthcautooff = m->newEvent(COMPR, "HISTORY_MSG_CG_CYANTH_AUTO");
     Gtk::Frame *iFrame = Gtk::manage(new Gtk::Frame(M("TP_COMPRESSGAMUT_MAIN_COLORSPACE")));
 
     iFrame->set_label_align(0.025f, 0.5);
@@ -117,6 +117,8 @@ Compressgamut::Compressgamut () : FoldableToolPanel(this, TOOL_NAME, M("TP_COMPR
     limVBox->pack_start (*d_c);
     limVBox->pack_start (*d_m);
     limVBox->pack_start (*d_y);
+    d_c->addAutoButton();
+    d_c->setAutoValue(true);   
     limVBox->pack_start (*acLabel);
     limVBox->pack_start (*acLabelrgb);    
     limVBox->pack_start (*acLabelcmy);
@@ -156,12 +158,12 @@ Compressgamut::~Compressgamut()
     idle_register.destroy();
 }
 
-void Compressgamut::achromaticChanged (double acmax, double acmax0, double acmax1, double acmax2)
+void Compressgamut::achromaticChanged (double acmax, double acmax0, double acmax1, double acmax2, bool auto_dc)
 {
 
 
     idle_register.add(
-         [this, acmax, acmax0, acmax1, acmax2]() -> bool
+         [this, acmax, acmax0, acmax1, acmax2, auto_dc]() -> bool
 
         {
             GThreadLock lock; // All GUI access from idle_add callbacks or separate thread HAVE to be protected
@@ -184,6 +186,10 @@ void Compressgamut::achromaticChanged (double acmax, double acmax0, double acmax
                                         Glib::ustring::format (std::fixed, std::setprecision (1), (acmax0 + acmax2) * 0.43),//estimated value for Magenta
                                         Glib::ustring::format (std::fixed, std::setprecision (1), (acmax0 + acmax1) * 0.43))//estimated value for Yellow
             );
+            if(auto_dc) {
+                double valdc = max(1.02, (acmax1 + acmax2) * 0.43);
+                d_c->setValue(valdc);
+            }
             enableListener();
             return false;
         }
@@ -202,6 +208,7 @@ void Compressgamut::read (const ProcParams* pp, const ParamsEdited* pedited)
         th_m->setEditedState       (pedited->cg.th_m ? Edited : UnEdited);
         th_y->setEditedState       (pedited->cg.th_y ? Edited : UnEdited);
         d_c->setEditedState        (pedited->cg.d_c ? Edited : UnEdited);
+        d_c->setAutoInconsistent   (multiImage && !pedited->cg.autodc);        
         d_m->setEditedState        (pedited->cg.d_m ? Edited : UnEdited);
         d_y->setEditedState        (pedited->cg.d_y ? Edited : UnEdited);
         pwr->setEditedState        (pedited->cg.pwr ? Edited : UnEdited);
@@ -215,9 +222,11 @@ void Compressgamut::read (const ProcParams* pp, const ParamsEdited* pedited)
     rolloff->set_active (pp->cg.rolloff);
     rolloffconn.block (false);
     th_c->setValue(pp->cg.th_c);
+  
     th_m->setValue(pp->cg.th_m);
     th_y->setValue(pp->cg.th_y);
     d_c->setValue(pp->cg.d_c);
+    d_c->setAutoValue(pp->cg.autodc);    
     d_m->setValue(pp->cg.d_m);
     d_y->setValue(pp->cg.d_y);
     pwr->setValue(pp->cg.pwr);
@@ -246,7 +255,7 @@ void Compressgamut::read (const ProcParams* pp, const ParamsEdited* pedited)
     rolloffconn.block (false);
 
     lastrolloff = pp->cg.rolloff;
-
+    lastAutodc = pp->cg.autodc;
     rolloff_change();
     colorspaceChanged();
     enabledChanged ();
@@ -258,9 +267,11 @@ void Compressgamut::write (ProcParams* pp, ParamsEdited* pedited)
 {
 
     pp->cg.th_c = th_c->getValue ();
+ 
     pp->cg.th_m = th_m->getValue ();
     pp->cg.th_y = th_y->getValue ();
     pp->cg.d_c = d_c->getValue ();
+    pp->cg.autodc = d_c->getAutoValue();     
     pp->cg.d_m = d_m->getValue ();
     pp->cg.d_y = d_y->getValue ();
     pp->cg.pwr = pwr->getValue ();
@@ -286,9 +297,11 @@ void Compressgamut::write (ProcParams* pp, ParamsEdited* pedited)
 
     if (pedited) {
         pedited->cg.th_c          = th_c->getEditedState ();
+      
         pedited->cg.th_m          = th_m->getEditedState ();
         pedited->cg.th_y          = th_y->getEditedState ();
         pedited->cg.d_c           = d_c->getEditedState ();
+        pedited->cg.autodc        = !d_c->getAutoInconsistent();         
         pedited->cg.d_m           = d_m->getEditedState ();
         pedited->cg.d_y           = d_y->getEditedState ();
         pedited->cg.pwr           = pwr->getEditedState ();
@@ -355,6 +368,35 @@ void Compressgamut::adjusterChanged (Adjuster* a, double newval)
     }
    
 }
+
+void Compressgamut::adjusterAutoToggled(Adjuster* a, bool newval)
+{
+    if (multiImage) {
+       if (d_c->getAutoInconsistent()) {
+            d_c->setAutoInconsistent (false);
+            d_c->setAutoValue (false);
+        } else if (lastAutodc) {
+            d_c->setAutoInconsistent (true);
+        }
+
+        lastAutodc = d_c->getAutoValue();  
+    }
+    if (listener && (multiImage || getEnabled()) ) {
+
+        if (a == d_c) {
+            if (d_c->getAutoInconsistent()) {
+                listener->panelChanged (Evcgdcautoon, M ("GENERAL_UNCHANGED"));
+            } else if (d_c->getAutoValue()) {
+                listener->panelChanged (Evcgdcautoon , M ("GENERAL_ENABLED"));
+            } else {
+                listener->panelChanged (Evcgdcautoon, M ("GENERAL_DISABLED"));
+            }
+        }
+
+ 
+    }
+}
+
 
 void Compressgamut::rolloff_change()
 {

@@ -379,6 +379,7 @@ struct CGParamsEdited {
     bool th_m;
     bool th_y;
     bool d_c;
+    bool autodc;   
     bool d_m;
     bool d_y;
     bool pwr;

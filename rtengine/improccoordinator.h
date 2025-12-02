@@ -201,6 +201,7 @@ protected:
     WaveletListener* awavListener;
     RetinexListener* dehaListener;
     CompgamutListener* acmaxListener;
+  
 //    LocallabListener* locallListener;
 
     

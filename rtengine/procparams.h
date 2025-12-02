@@ -876,6 +876,7 @@ struct CGParams {
     double  th_m;
     double  th_y;
     double  d_c;
+    bool autodc;    
     double  d_m;
     double  d_y;
     double  pwr;
