@@ -469,6 +469,7 @@ void ParamsEdited::set(bool v)
     cg.d_m = v;
     cg.autodm = v;   
     cg.d_y = v;
+    cg.autody = v;    
     cg.pwr = v;
     cg.colorspace = v;
     cg.rolloff = v;
@@ -1233,6 +1234,7 @@ void ParamsEdited::initFrom(const std::vector<rtengine::procparams::ProcParams>&
         cg.d_m = cg.d_m && p.cg.d_m == other.cg.d_m;
         cg.autodm = cg.autodm && p.cg.autodm == other.cg.autodm;       
         cg.d_y = cg.d_y && p.cg.d_y == other.cg.d_y;
+        cg.autody = cg.autody && p.cg.autody == other.cg.autody;       
         cg.pwr = cg.pwr && p.cg.pwr == other.cg.pwr;
         cg.colorspace = cg.colorspace && p.cg.colorspace == other.cg.colorspace;
         cg.rolloff = cg.rolloff && p.cg.rolloff == other.cg.rolloff;
@@ -3680,6 +3682,10 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
     if (cg.d_y) {
         toEdit.cg.d_y = mods.cg.d_y;
     }
+
+    if (cg.autody) {
+        toEdit.cg.autody = mods.cg.autody;
+    }   
 
     if (cg.colorspace) {
         toEdit.cg.colorspace = mods.cg.colorspace;

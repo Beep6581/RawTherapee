@@ -414,7 +414,7 @@ class CompgamutListener
 {
   public:
      virtual ~CompgamutListener() = default;
-     virtual void achromaticChanged (double acmax, double acmax0, double acmax1, double acmax2, bool auto_dc, bool auto_dm) = 0;
+     virtual void achromaticChanged (double acmax, double acmax0, double acmax1, double acmax2, bool auto_dc, bool auto_dm, bool auto_dy) = 0;
     };
 
 

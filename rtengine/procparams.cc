@@ -2076,10 +2076,11 @@ CGParams::CGParams() :
     th_m(0.803),
     th_y(0.880),
     d_c(1.147),
-    autodc(true),   
+    autodc(true),
     d_m(1.264),
-    autodm(true),    
+    autodm(true),
     d_y(1.312),
+    autody(true),    
     pwr(1.2),
     colorspace("dcip3"),
     rolloff(true)
@@ -2099,6 +2100,7 @@ bool CGParams::operator ==(const CGParams& other) const
         && d_m == other.d_m
         && autodm == other.autodm 
         && d_y == other.d_y
+        && autody == other.autody 
         && pwr == other.pwr
         && colorspace == other.colorspace
         && rolloff == other.rolloff;
@@ -7243,9 +7245,9 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
         saveToKeyfile(!pedited || pedited->cg.d_c, "Compression gamut", "d_c", cg.d_c, keyFile);
         saveToKeyfile(!pedited || pedited->cg.autodc, "Compression gamut", "Autodc", cg.autodc, keyFile);
         saveToKeyfile(!pedited || pedited->cg.d_m, "Compression gamut", "d_m", cg.d_m, keyFile);
-        saveToKeyfile(!pedited || pedited->cg.autodm, "Compression gamut", "Autodm", cg.autodm, keyFile);       
-       
+        saveToKeyfile(!pedited || pedited->cg.autodm, "Compression gamut", "Autodm", cg.autodm, keyFile);      
         saveToKeyfile(!pedited || pedited->cg.d_y, "Compression gamut", "d_y", cg.d_y, keyFile);
+        saveToKeyfile(!pedited || pedited->cg.autodm, "Compression gamut", "Autody", cg.autody, keyFile);             
         saveToKeyfile(!pedited || pedited->cg.pwr, "Compression gamut", "pwr", cg.pwr, keyFile);
         saveToKeyfile(!pedited || pedited->cg.colorspace, "Compression gamut", "colorspace", cg.colorspace, keyFile);
         saveToKeyfile(!pedited || pedited->cg.rolloff, "Compression gamut", "rolloff", cg.rolloff, keyFile);
@@ -9495,11 +9497,11 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
             assignFromKeyfile(keyFile, "Compression gamut", "th_m", cg.th_m, pedited->cg.th_m);
             assignFromKeyfile(keyFile, "Compression gamut", "th_y", cg.th_y, pedited->cg.th_y);
             assignFromKeyfile(keyFile, "Compression gamut", "d_c", cg.d_c, pedited->cg.d_c);
-            assignFromKeyfile(keyFile, "Compression gamut", "Autodc", cg.autodc, pedited->cg.autodc);           
+            assignFromKeyfile(keyFile, "Compression gamut", "Autodc", cg.autodc, pedited->cg.autodc);        
             assignFromKeyfile(keyFile, "Compression gamut", "d_m", cg.d_m, pedited->cg.d_m);
-            assignFromKeyfile(keyFile, "Compression gamut", "Autodm", cg.autodm, pedited->cg.autodm);     
-           
+            assignFromKeyfile(keyFile, "Compression gamut", "Autodm", cg.autodm, pedited->cg.autodm);         
             assignFromKeyfile(keyFile, "Compression gamut", "d_y", cg.d_y, pedited->cg.d_y);
+            assignFromKeyfile(keyFile, "Compression gamut", "Autody", cg.autody, pedited->cg.autody);           
             assignFromKeyfile(keyFile, "Compression gamut", "pwr", cg.pwr, pedited->cg.pwr);
             assignFromKeyfile(keyFile, "Compression gamut", "colorspace", cg.colorspace, pedited->cg.colorspace);
             assignFromKeyfile(keyFile, "Compression gamut", "rolloff", cg.rolloff, pedited->cg.rolloff);

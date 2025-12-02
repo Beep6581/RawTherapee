@@ -45,7 +45,8 @@ protected:
     Adjuster* pwr;
     bool lastAutodc;
     bool lastAutodm;
-    
+    bool lastAutody;
+   
     MyComboBoxText *colorspace;
     sigc::connection colorspaceconn;
     Gtk::CheckButton* rolloff;
@@ -62,7 +63,9 @@ protected:
     rtengine::ProcEvent Evcgpwr;
     rtengine::ProcEvent Evcgenabled;
     rtengine::ProcEvent Evcgdcautoon;
-    rtengine::ProcEvent Evcgdmautoon;    
+    rtengine::ProcEvent Evcgdmautoon;
+    rtengine::ProcEvent Evcgdyautoon;
+      
 private:
     IdleRegister idle_register;
 
@@ -77,7 +80,7 @@ public:
     void write          (rtengine::procparams::ProcParams* pp, ParamsEdited* pedited = nullptr) override;
     void setDefaults    (const rtengine::procparams::ProcParams* defParams, const ParamsEdited* pedited = nullptr) override;
     void setBatchMode   (bool batchMode) override;
-    void achromaticChanged (double acmax, double acmax0, double acmax1, double acmax2, bool auto_dc, bool auto_dm) override;
+    void achromaticChanged (double acmax, double acmax0, double acmax1, double acmax2, bool auto_dc, bool auto_dm, bool auto_dy) override;
     void adjusterAutoToggled (Adjuster* a, bool newval) override;   
     void adjusterChanged (Adjuster* a, double newval) override;
     void enabledChanged  () override;

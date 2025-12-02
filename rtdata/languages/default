@@ -1388,13 +1388,16 @@ HISTORY_MSG_CATCAT;CAL - Settings - Mode
 HISTORY_MSG_CATCOMPLEX;CAL - Settings - Complexity
 HISTORY_MSG_CATMODEL;CAL - Settings - CAM
 HISTORY_MSG_CG_COLORSPACE;Gamut Compression - Target
+HISTORY_MSG_CG_CYANDC_AUTO;Gamut Compression - Auto Limits Cyan
 HISTORY_MSG_CG_CYANLIM;Gamut Compression - Max Limits Cyan
 HISTORY_MSG_CG_CYANTH;Gamut Compression - Threshold Cyan
 HISTORY_MSG_CG_ENABLED;Gamut Compression - Enabled
+HISTORY_MSG_CG_CYANDM_AUTO;Gamut Compression - Auto Limits Magenta
 HISTORY_MSG_CG_MAGENTALIM;Gamut Compression - Max Limits Magenta
 HISTORY_MSG_CG_MAGENTATH;Gamut Compression - Threshold Magenta
 HISTORY_MSG_CG_ROLLOFF;Gamut Compression - Rolloff
 HISTORY_MSG_CG_VALUE;Gamut Compression - Power
+HISTORY_MSG_CG_CYANDY_AUTO;Gamut Compression - Auto Limits Yellow
 HISTORY_MSG_CG_YELLOWLIM;Gamut Compression - Max Limits Yellow
 HISTORY_MSG_CG_YELLOWTH;Gamut Compression - Threshold Yellow
 HISTORY_MSG_CLAMPOOG;Clip out-of-gamut colors
