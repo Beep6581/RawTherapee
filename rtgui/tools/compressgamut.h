@@ -71,7 +71,7 @@ private:
 
 public:
     static const Glib::ustring TOOL_NAME;
- 
+
     Compressgamut ();
     ~Compressgamut() override;
 
@@ -88,4 +88,5 @@ public:
 
     void trimValues          (rtengine::procparams::ProcParams* pp) override;
     void colorspaceChanged();
+    void updategamutGUI();   
 };

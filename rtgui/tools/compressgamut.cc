@@ -19,6 +19,8 @@
  /*
  * tweaked from the original from https://github.com/jedypod/gamut-compress
  * https://docs.acescentral.com/specifications/rgc/
+
+ //Jacques Desmis - December 2025
 */ 
 #include "compressgamut.h"
 
@@ -187,7 +189,7 @@ void Compressgamut::achromaticChanged (double acmax, double acmax0, double acmax
             );
             acLabelcmy->set_text (
                 Glib::ustring::compose (M ("TP_COMPRESSGAMUT_MACLABELCMY"),
-                                        Glib::ustring::format (std::fixed, std::setprecision (1), (acmax1 + acmax2) * 0.43),//estimated value for Cyan 
+                                        Glib::ustring::format (std::fixed, std::setprecision (1), (acmax1 + acmax2) * 0.43),//estimated value for Cyan - about 2 * (acmax1 + acmax2) * Sin 'PI/3)
                                         Glib::ustring::format (std::fixed, std::setprecision (1), (acmax0 + acmax2) * 0.43),//estimated value for Magenta
                                         Glib::ustring::format (std::fixed, std::setprecision (1), (acmax0 + acmax1) * 0.43))//estimated value for Yellow
             );
@@ -236,17 +238,6 @@ void Compressgamut::read (const ProcParams* pp, const ParamsEdited* pedited)
     rolloffconn.block (true);
     rolloff->set_active (pp->cg.rolloff);
     rolloffconn.block (false);
-    th_c->setValue(pp->cg.th_c);
-  
-    th_m->setValue(pp->cg.th_m);
-    th_y->setValue(pp->cg.th_y);
-    d_c->setValue(pp->cg.d_c);
-    d_c->setAutoValue(pp->cg.autodc);    
-    d_m->setValue(pp->cg.d_m);
-    d_m->setAutoValue(pp->cg.autodm);   
-    d_y->setValue(pp->cg.d_y);
-    d_y->setAutoValue(pp->cg.autody);   
-    pwr->setValue(pp->cg.pwr);
 
     colorspaceconn.block (true);
 
@@ -267,9 +258,26 @@ void Compressgamut::read (const ProcParams* pp, const ParamsEdited* pedited)
     }
     colorspaceconn.block (false);
 
+
+    updategamutGUI(); 
+
+
+    th_c->setValue(pp->cg.th_c);
+    th_m->setValue(pp->cg.th_m);
+    th_y->setValue(pp->cg.th_y);
+    d_c->setValue(pp->cg.d_c);
+    d_c->setAutoValue(pp->cg.autodc);    
+    d_m->setValue(pp->cg.d_m);
+    d_m->setAutoValue(pp->cg.autodm);   
+    d_y->setValue(pp->cg.d_y);
+    d_y->setAutoValue(pp->cg.autody);   
+    pwr->setValue(pp->cg.pwr);   
+    
     rolloffconn.block (true);
     rolloff->set_active (pp->cg.rolloff);
     rolloffconn.block (false);
+
+ 
 
     lastrolloff = pp->cg.rolloff;
     lastAutodc = pp->cg.autodc;
@@ -334,6 +342,50 @@ void Compressgamut::write (ProcParams* pp, ParamsEdited* pedited)
     }
 
 }
+
+void Compressgamut::updategamutGUI()
+{
+    // Update default slider value GUI according to colorspace
+    // Only for Working profile = Rec2020
+/* Calculating the 'Threshold' values ​​is anything but straightforward. Of course, one might say, "Just match them with the colors in ColorChecker24." But there are many unknown parameters:
+* What is the actual illuminant and its temperature and green settings?
+* The image colors may have been compressed using "Maximum limits," but there's no guarantee they're within the new, reduced gamut.
+* Differences in white points, such as the atypical white point of DCI-P3, complicate matters.
+
+* Furthermore, what about the necessary color adaptation, both at this stage of compression and at the stage implied by the output temperature (see CIECAM)?
+
+Therefore, these parameters correspond roughly to the ratio of the distances between the white point of the Working Profile, the white point of the "Target compression gamut," and the Yellow, Magenta, and Cyan values ​​of the primary color triangle.
+*/
+
+
+
+   
+        if (colorspace->get_active_row_number() == 2){//Adobe
+            th_c->setLimits(0., 1., 0.001, 0.82);
+            th_m->setLimits(0., 1., 0.001, 0.77);
+            th_y->setLimits(0., 1., 0.001, 0.95);
+ 
+        } else if (colorspace->get_active_row_number() == 3){//srgb
+            th_c->setLimits(0., 1., 0.001, 0.55);
+            th_m->setLimits(0., 1., 0.001, 0.77);
+            th_y->setLimits(0., 1., 0.001, 0.85);
+
+        } else if (colorspace->get_active_row_number() == 4){//dci-p3
+            th_c->setLimits(0., 1., 0.001, 0.70);
+            th_m->setLimits(0., 1., 0.001, 0.95);
+            th_y->setLimits(0., 1., 0.001, 0.91);
+        } else if (colorspace->get_active_row_number() == 6){//beta RGB
+            th_c->setLimits(0., 1., 0.001, 0.79);
+            th_m->setLimits(0., 1., 0.001, 0.95);
+            th_y->setLimits(0., 1., 0.001, 0.95);            
+        } else {
+            th_c->setLimits(0., 1., 0.001, 0.815);
+            th_m->setLimits(0., 1., 0.001, 0.803);
+            th_y->setLimits(0., 1., 0.001, 0.880);        
+        }
+
+}
+
 
 void Compressgamut::setDefaults (const ProcParams* defParams, const ParamsEdited* pedited)
 {
@@ -494,6 +546,7 @@ void Compressgamut::rolloff_change()
 
 void Compressgamut::colorspaceChanged()
 {
+     updategamutGUI(); 
     if (listener && getEnabled()) {
         listener->panelChanged(EvcgColorspace, colorspace->get_active_text());
     }
@@ -501,6 +554,7 @@ void Compressgamut::colorspaceChanged()
 
 void Compressgamut::enabledChanged ()
 {
+  
     if (listener) {
         if (get_inconsistent()) {
             listener->panelChanged (Evcgenabled, M("GENERAL_UNCHANGED"));

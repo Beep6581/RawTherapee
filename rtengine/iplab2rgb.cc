@@ -467,7 +467,7 @@ void ImProcFunctions::preserv(LabImage *nprevl, LabImage *provis, int cw, int ch
 // Aggressiveness of the compression curve
 //const float PWR = 1.2;
 
-
+//Jacques Desmis December 2025
 void ImProcFunctions::gamutcompr( Imagefloat *src, Imagefloat *dst, float &mac, float &mac0, float &mac1, float &mac2) const
 {
      if (settings->verbose) {
@@ -641,6 +641,7 @@ void ImProcFunctions::gamutcompr( Imagefloat *src, Imagefloat *dst, float &mac, 
             float rout = 0.f;
             float gout = 0.f;
             float bout = 0.f;
+            //find maximum achromatic for red, green, blue
             Color::aces_reference_gamut_compression(rgb_in, th, dl, to_out, from_out, pw, roll, rout, gout, bout, ac, ac0, ac1, ac2);
             if (ac > maxac) {
                 maxac = ac;
