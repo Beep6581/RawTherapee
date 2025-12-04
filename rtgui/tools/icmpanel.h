@@ -22,12 +22,12 @@
 
 #include <gtkmm.h>
 
-#include "adjuster.h"
 #include "guiutils.h"
-#include "popupbutton.h"
 #include "toolpanel.h"
 #include "curvelistener.h"
-#include "thresholdadjuster.h"
+#include "widgets/basic/adjuster.h"
+#include "widgets/basic/popupbutton.h"
+#include "widgets/basic/thresholdadjuster.h"
 
 #include "rtengine/imagedata.h"
 

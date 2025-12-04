@@ -23,28 +23,30 @@
 #endif
 #endif
 
-#include "config.h"
 #include <gtkmm.h>
 #include <giomm.h>
 #include <iostream>
 #include <tiffio.h>
-#include "rtwindow.h"
 #include <cstring>
 #include <cstdlib>
 #include <locale.h>
 #include <lensfun.h>
+
 #include "cachemanager.h"
+#include "config.h"
 #include "editorpanel.h"
+#include "extprog.h"
 #include "filecatalog.h"
 #include "filepanel.h"
 #include "options.h"
-#include "soundman.h"
+#include "pathutils.h"
 #include "rtimage.h"
+#include "soundman.h"
+#include "windows/rtwindow.h"
 #include "version.h"
-#include "extprog.h"
+
 #include "rtengine/dynamicprofile.h"
 #include "rtengine/procparams.h"
-#include "pathutils.h"
 
 #ifndef _WIN32
 #include <glibmm/fileutils.h>

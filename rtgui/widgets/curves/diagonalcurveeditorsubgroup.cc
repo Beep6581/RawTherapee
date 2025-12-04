@@ -17,24 +17,26 @@
  *  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
  */
 
+#include "diagonalcurveeditorsubgroup.h"
+
 #include "clipboard.h"
-#include <gtkmm.h>
-#include <fstream>
-#include <string>
+#include "curveeditor.h"
 #include "guiutils.h"
 #include "multilangmgr.h"
 #include "mycurve.h"
-#include "shcselector.h"
-#include "adjuster.h"
-#include "mycurve.h"
 #include "mydiagonalcurve.h"
-#include "curveeditor.h"
-#include "diagonalcurveeditorsubgroup.h"
-#include "rtimage.h"
 #include "options.h"
-#include "popuptogglebutton.h"
+#include "rtimage.h"
+#include "widgets/basic/adjuster.h"
+#include "widgets/basic/popuptogglebutton.h"
+#include "widgets/basic/shcselector.h"
 
 #include "rtengine/curves.h"
+
+#include <gtkmm.h>
+
+#include <fstream>
+#include <string>
 
 DiagonalCurveEditorSubGroup::DiagonalCurveEditorSubGroup (CurveEditorGroup* prt, Glib::ustring& curveDir) : CurveEditorSubGroup(curveDir)
 {

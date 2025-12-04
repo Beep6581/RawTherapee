@@ -20,10 +20,10 @@
 
 #include <gtkmm.h>
 
-#include "adjuster.h"
-#include "checkbox.h"
 #include "guiutils.h"
 #include "toolpanel.h"
+#include "widgets/basic/adjuster.h"
+#include "widgets/basic/checkbox.h"
 
 class BayerProcess final :
     public ToolParamBlock,

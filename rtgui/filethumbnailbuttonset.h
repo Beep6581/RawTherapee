@@ -22,7 +22,7 @@
 
 #include <gtkmm.h>
 
-#include "lwbuttonset.h"
+#include "widgets/basic/lwbuttonset.h"
 
 class FileBrowserEntry;
 class RTSurface;

@@ -21,12 +21,12 @@ fft *
 #include "tools/locallabtools.h"
 
 #include "options.h"
+#include "rtimage.h"
+#include "tools/locallab.h"
+
+#include "rtengine/color.h"
 #include "rtengine/improcfun.h"
 #include "rtengine/procparams.h"
-#include "tools/locallab.h"
-#include "thresholdadjuster.h"
-#include "rtimage.h"
-#include "rtengine/color.h"
 
 #define MINRAD 1.5
 #define MAXRAD 1000
