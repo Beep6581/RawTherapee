@@ -18,8 +18,8 @@
  */
 #pragma once
 
-#include "colorprovider.h"
-#include "guiutils.h"
+#include "rtgui/colorprovider.h"
+#include "rtgui/guiutils.h"
 
 /*
  * Parent class for all colored bar type; a ColorProvider has to be set

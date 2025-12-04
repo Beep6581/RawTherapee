@@ -20,9 +20,9 @@
 
 #include <gtkmm.h>
 
-#include "adjuster.h"
 #include "lensgeomlistener.h"
 #include "toolpanel.h"
+#include "widgets/basic/adjuster.h"
 
 class Distortion final :
     public ToolParamBlock,

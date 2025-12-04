@@ -41,7 +41,7 @@
 #ifdef _OPENMP
 #include <omp.h>
 #endif
-#include "rtgui/thresholdselector.h"
+#include "rtgui/widgets/basic/thresholdselector.h"
 #include "imagesource.h"
 
 #include "cplx_wavelet_dec.h"

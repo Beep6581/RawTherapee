@@ -20,7 +20,7 @@
 
 #include <gtkmm.h>
 
-#include "lwbuttonset.h"
+#include "widgets/basic/lwbuttonset.h"
 
 class BatchQueueEntry;
 class RTSurface;

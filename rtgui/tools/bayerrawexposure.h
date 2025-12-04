@@ -20,10 +20,10 @@
 
 #include <gtkmm.h>
 
-#include "adjuster.h"
-#include "checkbox.h"
 #include "toolpanel.h"
 #include "eventmapper.h"
+#include "widgets/basic/adjuster.h"
+#include "widgets/basic/checkbox.h"
 
 class BayerRAWExposure final :
     public ToolParamBlock,

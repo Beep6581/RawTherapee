@@ -18,13 +18,14 @@
  */
 #pragma once
 
-#include <gtkmm.h>
-
-#include "adjuster.h"
 #include "controllines.h"
 #include "lensgeomlistener.h"
 #include "toolpanel.h"
+#include "widgets/basic/adjuster.h"
+
 #include "rtengine/tweakoperator.h"
+
+#include <gtkmm.h>
 
 class PerspCorrectionPanelListener
 {

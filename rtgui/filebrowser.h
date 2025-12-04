@@ -18,21 +18,21 @@
  */
 #pragma once
 
-#include <map>
-
-#include <gtkmm.h>
-
 #include "browserfilter.h"
 #include "exportpanel.h"
 #include "extprog.h"
 #include "filebrowserentry.h"
-#include "lwbutton.h"
-#include "partialpastedlg.h"
 #include "pparamschangelistener.h"
-#include "rtengine/profilestore.h"
 #include "thumbbrowserbase.h"
+#include "widgets/basic/lwbutton.h"
+#include "windows/partialpastedlg.h"
 
 #include "rtengine/noncopyable.h"
+#include "rtengine/profilestore.h"
+
+#include <gtkmm.h>
+
+#include <map>
 
 class FileBrowser;
 class FileBrowserEntry;

@@ -18,10 +18,10 @@
  */
 #include "filethumbnailbuttonset.h"
 
-#include "rtsurface.h"
 #include "multilangmgr.h"
-#include "lwbutton.h"
 #include "rtsurface.h"
+#include "widgets/basic/lwbutton.h"
+#include "widgets/basic/lwbuttonset.h"
 
 bool FileThumbnailButtonSet::iconsLoaded = false;
 

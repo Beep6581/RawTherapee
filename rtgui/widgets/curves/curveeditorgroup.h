@@ -18,17 +18,17 @@
  */
 #pragma once
 
-#include <fstream>
-#include <string>
-
-#include <gtkmm.h>
-
 #include "guiutils.h"
 #include "mycurve.h"
-#include "shcselector.h"
+#include "widgets/basic/shcselector.h"
 
 #include "rtengine/diagonalcurvetypes.h"
 #include "rtengine/flatcurvetypes.h"
+
+#include <gtkmm.h>
+
+#include <fstream>
+#include <string>
 
 class CurveEditor;
 class DiagonalCurveEditorSubGroup;

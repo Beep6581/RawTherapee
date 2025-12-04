@@ -27,7 +27,7 @@
 #include "editcallbacks.h"
 #include "threadutils.h"
 #include "toolpanel.h"
-#include "adjuster.h"
+#include "widgets/basic/adjuster.h"
 
 class ControlPanelListener
 {

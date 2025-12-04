@@ -20,12 +20,14 @@
 #ifndef _SPOT_H_
 #define _SPOT_H_
 
-#include <gtkmm.h>
-#include "toolpanel.h"
 #include "editwidgets.h"
-#include "adjuster.h"
+#include "toolpanel.h"
+#include "widgets/basic/adjuster.h"
+
 #include "rtengine/procparams.h"
 #include "rtengine/tweakoperator.h"
+
+#include <gtkmm.h>
 
 /**
  * @brief Let the user create/edit/delete points for Spot Removal tool

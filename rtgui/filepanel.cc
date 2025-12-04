@@ -18,13 +18,13 @@
  */
 #include "filepanel.h"
 
-#include "dirbrowser.h"
 #include "batchtoolpanelcoord.h"
+#include "dirbrowser.h"
 #include "editorpanel.h"
-#include "rtwindow.h"
 #include "inspector.h"
 #include "placesbrowser.h"
 #include "thumbnail.h"
+#include "windows/rtwindow.h"
 
 #ifdef _WIN32
 #include "rtengine/leanwindows.h"
