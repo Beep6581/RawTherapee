@@ -354,28 +354,30 @@ void Compressgamut::updategamutGUI()
 
 * Furthermore, what about the necessary color adaptation, both at this stage of compression and at the stage implied by the output temperature (see CIECAM)?
 
-Therefore, these parameters correspond roughly to the ratio of the distances between the white point of the Working Profile, the white point of the "Target compression gamut," and the Yellow, Magenta, and Cyan values ​​of the primary color triangle.
+Therefore, these parameters correspond roughly to the ratio of the distances between the white point of the Working Profile, 
+* The white point of the "Target compression gamut" corrected by chromatic adaptation and the Yellow, Magenta, and Cyan values ​​of the primary color triangle.
+* These calculated values ​​are for 'normal' cases where the illuminants are not exhaustive, and the colors to be recovered are within reasonable limits.
+* In other cases, the 3 Threshold sliders need to be adjusted (often lowered).Pay attention to the artifacts.
 */
 
 
 
    
-        if (colorspace->get_active_row_number() == 2){//Adobe
-            th_c->setLimits(0., 1., 0.001, 0.82);
-            th_m->setLimits(0., 1., 0.001, 0.77);
-            th_y->setLimits(0., 1., 0.001, 0.95);
- 
-        } else if (colorspace->get_active_row_number() == 3){//srgb
-            th_c->setLimits(0., 1., 0.001, 0.55);
-            th_m->setLimits(0., 1., 0.001, 0.77);
-            th_y->setLimits(0., 1., 0.001, 0.85);
-
-        } else if (colorspace->get_active_row_number() == 4){//dci-p3
-            th_c->setLimits(0., 1., 0.001, 0.70);
-            th_m->setLimits(0., 1., 0.001, 0.95);
-            th_y->setLimits(0., 1., 0.001, 0.91);
-        } else if (colorspace->get_active_row_number() == 6){//beta RGB
+        if (colorspace->get_active_row_number() == 2){//Adobe D65
             th_c->setLimits(0., 1., 0.001, 0.79);
+            th_m->setLimits(0., 1., 0.001, 0.82);
+            th_y->setLimits(0., 1., 0.001, 0.85);
+ 
+        } else if (colorspace->get_active_row_number() == 3){//srgb D65
+            th_c->setLimits(0., 1., 0.001, 0.51);
+            th_m->setLimits(0., 1., 0.001, 0.82);
+            th_y->setLimits(0., 1., 0.001, 0.82);
+        } else if (colorspace->get_active_row_number() == 4){//dci-p3 - WP 0.314 0.351 
+            th_c->setLimits(0., 1., 0.001, 0.68);
+            th_m->setLimits(0., 1., 0.001, 0.89);
+            th_y->setLimits(0., 1., 0.001, 0.9);
+        } else if (colorspace->get_active_row_number() == 6){//beta RGB D50
+            th_c->setLimits(0., 1., 0.001, 0.90);
             th_m->setLimits(0., 1., 0.001, 0.95);
             th_y->setLimits(0., 1., 0.001, 0.95);            
         } else {
