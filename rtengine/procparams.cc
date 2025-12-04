@@ -7247,7 +7247,7 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
         saveToKeyfile(!pedited || pedited->cg.d_m, "Compression gamut", "d_m", cg.d_m, keyFile);
         saveToKeyfile(!pedited || pedited->cg.autodm, "Compression gamut", "Autodm", cg.autodm, keyFile);      
         saveToKeyfile(!pedited || pedited->cg.d_y, "Compression gamut", "d_y", cg.d_y, keyFile);
-        saveToKeyfile(!pedited || pedited->cg.autodm, "Compression gamut", "Autody", cg.autody, keyFile);             
+        saveToKeyfile(!pedited || pedited->cg.autody, "Compression gamut", "Autody", cg.autody, keyFile);             
         saveToKeyfile(!pedited || pedited->cg.pwr, "Compression gamut", "pwr", cg.pwr, keyFile);
         saveToKeyfile(!pedited || pedited->cg.colorspace, "Compression gamut", "colorspace", cg.colorspace, keyFile);
         saveToKeyfile(!pedited || pedited->cg.rolloff, "Compression gamut", "rolloff", cg.rolloff, keyFile);

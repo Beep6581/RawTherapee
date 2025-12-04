@@ -189,7 +189,7 @@ void Compressgamut::achromaticChanged (double acmax, double acmax0, double acmax
             );
             acLabelcmy->set_text (
                 Glib::ustring::compose (M ("TP_COMPRESSGAMUT_MACLABELCMY"),
-                                        Glib::ustring::format (std::fixed, std::setprecision (1), (acmax1 + acmax2) * 0.43),//estimated value for Cyan - about 2 * (acmax1 + acmax2) * Sin 'PI/3)
+                                        Glib::ustring::format (std::fixed, std::setprecision (1), (acmax1 + acmax2) * 0.43),//estimated value for Cyan - about 2 * (acmax1 + acmax2) * Sin (PI/3)
                                         Glib::ustring::format (std::fixed, std::setprecision (1), (acmax0 + acmax2) * 0.43),//estimated value for Magenta
                                         Glib::ustring::format (std::fixed, std::setprecision (1), (acmax0 + acmax1) * 0.43))//estimated value for Yellow
             );
@@ -282,7 +282,7 @@ void Compressgamut::read (const ProcParams* pp, const ParamsEdited* pedited)
     lastrolloff = pp->cg.rolloff;
     lastAutodc = pp->cg.autodc;
     lastAutodm = pp->cg.autodm;
-   
+    lastAutody = pp->cg.autody;  
     rolloff_change();
     colorspaceChanged();
     enabledChanged ();
@@ -357,7 +357,7 @@ void Compressgamut::updategamutGUI()
 Therefore, these parameters correspond roughly to the ratio of the distances between the white point of the Working Profile, 
 * The white point of the "Target compression gamut" corrected by chromatic adaptation and the Yellow, Magenta, and Cyan values ​​of the primary color triangle.
 * These calculated values ​​are for 'normal' cases where the illuminants are not exhaustive, and the colors to be recovered are within reasonable limits.
-* In other cases, the 3 Threshold sliders need to be adjusted (often lowered).Pay attention to the artifacts.
+* In other cases, the 3 Threshold sliders need to be adjusted (often lowered). Pay attention to the artifacts.
 */
 
 

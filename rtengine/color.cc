@@ -2208,7 +2208,7 @@ void Color::aces_reference_gamut_compression(
     const std::array<float, 3> &distance_limit,
     const Matrix &to_out, const Matrix &from_out,
     float pwr, bool rolloff,
-    float &R, float &G, float &B, float &ac, float &ac0, float &ac1, float &ac2)// ac, ac0, ac1, ac2 achromatic values for Red, Gree, Blue
+    float &R, float &G, float &B, float &ac, float &ac0, float &ac1, float &ac2)// ac, ac0, ac1, ac2 achromatic values for Red, Green, Blue
  {
     std::array<float, 3> rgb{rgb_in[0], rgb_in[1], rgb_in[2]};
 
