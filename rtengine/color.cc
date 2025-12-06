@@ -2275,7 +2275,7 @@ void Color::aces_reference_gamut_compression(
                     const float po = pow(nd, pwr);
                     cd[i] = thres + scale * nd / (pow(1.0f + po, 1.0f / pwr));
                 }
-            }    
+            }
         }
     }
     // Inverse RGB Ratios to RGB

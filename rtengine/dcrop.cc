@@ -697,7 +697,7 @@ void Crop::update(int todo)
             float mac = 0.f;
             float mac0 = 0.f;
             float mac1 = 0.f;
-            float mac2 = 0.f;        
+            float mac2 = 0.f;
             parent->ipf.gamutcompr(baseCrop, baseCrop, mac, mac0, mac1, mac2);
         }
 

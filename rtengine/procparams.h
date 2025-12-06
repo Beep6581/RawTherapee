@@ -876,15 +876,15 @@ struct CGParams {
     double  th_m;
     double  th_y;
     double  d_c;
-    bool autodc;    
+    bool autodc;
     double  d_m;
     bool autodm;
     double  d_y;
-    bool autody;    
+    bool autody;
     double  pwr;
     Glib::ustring colorspace;
     bool rolloff;
-    
+
     CGParams();
 
     bool operator ==(const CGParams& other) const;

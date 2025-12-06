@@ -49,7 +49,7 @@ Compressgamut::Compressgamut () : FoldableToolPanel(this, TOOL_NAME, M("TP_COMPR
     Evcgenabled = m->newEvent(COMPR, "HISTORY_MSG_CG_ENABLED");
     Evcgdcautoon = m->newEvent(COMPR, "HISTORY_MSG_CG_CYANDC_AUTO");
     Evcgdmautoon = m->newEvent(COMPR, "HISTORY_MSG_CG_CYANDM_AUTO");
-    Evcgdyautoon = m->newEvent(COMPR, "HISTORY_MSG_CG_CYANDY_AUTO");   
+    Evcgdyautoon = m->newEvent(COMPR, "HISTORY_MSG_CG_CYANDY_AUTO");
     Gtk::Frame *iFrame = Gtk::manage(new Gtk::Frame(M("TP_COMPRESSGAMUT_MAIN_COLORSPACE")));
 
     iFrame->set_label_align(0.025f, 0.5);
@@ -125,9 +125,9 @@ Compressgamut::Compressgamut () : FoldableToolPanel(this, TOOL_NAME, M("TP_COMPR
     d_m->addAutoButton();
     d_m->setAutoValue(true);
     d_y->addAutoButton();
-    d_y->setAutoValue(true);        
+    d_y->setAutoValue(true);
     limVBox->pack_start (*acLabel);
-    limVBox->pack_start (*acLabelrgb);    
+    limVBox->pack_start (*acLabelrgb);
     limVBox->pack_start (*acLabelcmy);
     limFrame->add(*limVBox);
     pack_start(*limFrame, Gtk::PACK_SHRINK);
@@ -156,7 +156,7 @@ Compressgamut::Compressgamut () : FoldableToolPanel(this, TOOL_NAME, M("TP_COMPR
     pwr->setAdjusterListener (this);
     d_c->setLogScale(100, 1);
     d_m->setLogScale(100, 1);
-    d_y->setLogScale(100, 1);   
+    d_y->setLogScale(100, 1);
     show_all_children ();
 }
 
@@ -223,11 +223,11 @@ void Compressgamut::read (const ProcParams* pp, const ParamsEdited* pedited)
         th_m->setEditedState       (pedited->cg.th_m ? Edited : UnEdited);
         th_y->setEditedState       (pedited->cg.th_y ? Edited : UnEdited);
         d_c->setEditedState        (pedited->cg.d_c ? Edited : UnEdited);
-        d_c->setAutoInconsistent   (multiImage && !pedited->cg.autodc);        
+        d_c->setAutoInconsistent   (multiImage && !pedited->cg.autodc);
         d_m->setEditedState        (pedited->cg.d_m ? Edited : UnEdited);
-        d_m->setAutoInconsistent   (multiImage && !pedited->cg.autodm);        
+        d_m->setAutoInconsistent   (multiImage && !pedited->cg.autodm);
         d_y->setEditedState        (pedited->cg.d_y ? Edited : UnEdited);
-        d_y->setAutoInconsistent   (multiImage && !pedited->cg.autody);       
+        d_y->setAutoInconsistent   (multiImage && !pedited->cg.autody);
         pwr->setEditedState        (pedited->cg.pwr ? Edited : UnEdited);
         set_inconsistent           (multiImage && !pedited->cg.enabled);
         rolloff->set_inconsistent  (!pedited->cg.rolloff);
@@ -266,12 +266,12 @@ void Compressgamut::read (const ProcParams* pp, const ParamsEdited* pedited)
     th_m->setValue(pp->cg.th_m);
     th_y->setValue(pp->cg.th_y);
     d_c->setValue(pp->cg.d_c);
-    d_c->setAutoValue(pp->cg.autodc);    
+    d_c->setAutoValue(pp->cg.autodc);
     d_m->setValue(pp->cg.d_m);
-    d_m->setAutoValue(pp->cg.autodm);   
+    d_m->setAutoValue(pp->cg.autodm);
     d_y->setValue(pp->cg.d_y);
-    d_y->setAutoValue(pp->cg.autody);   
-    pwr->setValue(pp->cg.pwr);   
+    d_y->setAutoValue(pp->cg.autody);
+    pwr->setValue(pp->cg.pwr);
     
     rolloffconn.block (true);
     rolloff->set_active (pp->cg.rolloff);
@@ -298,11 +298,11 @@ void Compressgamut::write (ProcParams* pp, ParamsEdited* pedited)
     pp->cg.th_m = th_m->getValue ();
     pp->cg.th_y = th_y->getValue ();
     pp->cg.d_c = d_c->getValue ();
-    pp->cg.autodc = d_c->getAutoValue();     
+    pp->cg.autodc = d_c->getAutoValue();
     pp->cg.d_m = d_m->getValue ();
-    pp->cg.autodm = d_m->getAutoValue();    
+    pp->cg.autodm = d_m->getAutoValue();
     pp->cg.d_y = d_y->getValue ();
-    pp->cg.autody = d_y->getAutoValue();   
+    pp->cg.autody = d_y->getAutoValue();
     pp->cg.pwr = pwr->getValue ();
     pp->cg.rolloff = rolloff->get_active();
     pp->cg.enabled = getEnabled();
@@ -330,11 +330,11 @@ void Compressgamut::write (ProcParams* pp, ParamsEdited* pedited)
         pedited->cg.th_m          = th_m->getEditedState ();
         pedited->cg.th_y          = th_y->getEditedState ();
         pedited->cg.d_c           = d_c->getEditedState ();
-        pedited->cg.autodc        = !d_c->getAutoInconsistent();         
+        pedited->cg.autodc        = !d_c->getAutoInconsistent();
         pedited->cg.d_m           = d_m->getEditedState ();
-        pedited->cg.autodm        = !d_m->getAutoInconsistent();         
+        pedited->cg.autodm        = !d_m->getAutoInconsistent();
         pedited->cg.d_y           = d_y->getEditedState ();
-        pedited->cg.autody        = !d_y->getAutoInconsistent();       
+        pedited->cg.autody        = !d_y->getAutoInconsistent();
         pedited->cg.pwr           = pwr->getEditedState ();
         pedited->cg.enabled       = !get_inconsistent();
         pedited->cg.colorspace = colorspace->get_active_row_number() != 6;
@@ -379,11 +379,11 @@ Therefore, these parameters correspond roughly to the ratio of the distances bet
         } else if (colorspace->get_active_row_number() == 6){//beta RGB D50
             th_c->setLimits(0., 1., 0.001, 0.90);
             th_m->setLimits(0., 1., 0.001, 0.95);
-            th_y->setLimits(0., 1., 0.001, 0.95);            
+            th_y->setLimits(0., 1., 0.001, 0.95);
         } else {
             th_c->setLimits(0., 1., 0.001, 0.815);
             th_m->setLimits(0., 1., 0.001, 0.803);
-            th_y->setLimits(0., 1., 0.001, 0.880);        
+            th_y->setLimits(0., 1., 0.001, 0.880);
         }
 
 }

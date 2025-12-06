@@ -379,11 +379,11 @@ struct CGParamsEdited {
     bool th_m;
     bool th_y;
     bool d_c;
-    bool autodc;   
+    bool autodc;
     bool d_m;
     bool autodm;
     bool d_y;
-    bool autody;   
+    bool autody;
     bool pwr;
     bool colorspace;
     bool rolloff;

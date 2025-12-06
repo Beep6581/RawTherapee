@@ -564,7 +564,7 @@ void ImProcFunctions::gamutcompr( Imagefloat *src, Imagefloat *dst, float &mac, 
         beta[2][0] = 0.0000000;
         beta[2][1] = 0.0407010;
         beta[2][2] = 0.7845090;
-       
+
     Matrix out = {};
 
     if (params->cg.colorspace == "rec2020") {
@@ -580,7 +580,7 @@ void ImProcFunctions::gamutcompr( Imagefloat *src, Imagefloat *dst, float &mac, 
     } else if  (params->cg.colorspace == "acesp1") {
         out = acesp1;
    } else if  (params->cg.colorspace == "beta") {
-        out = beta;        
+        out = beta;
     } else {
         out = acesp1; // Should never happen, but just in case.
     }
@@ -622,7 +622,7 @@ void ImProcFunctions::gamutcompr( Imagefloat *src, Imagefloat *dst, float &mac, 
     float ac = 0.f;
     float ac0 = 0.f;
     float ac1 = 0.f;
-    float ac2 = 0.f;  
+    float ac2 = 0.f;
     float maxac = 0.f;
     float maxac0 = 0.f;
     float maxac1 = 0.f;

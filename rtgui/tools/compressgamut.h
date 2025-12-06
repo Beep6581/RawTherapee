@@ -46,7 +46,7 @@ protected:
     bool lastAutodc;
     bool lastAutodm;
     bool lastAutody;
-   
+
     MyComboBoxText *colorspace;
     sigc::connection colorspaceconn;
     Gtk::CheckButton* rolloff;
@@ -65,7 +65,7 @@ protected:
     rtengine::ProcEvent Evcgdcautoon;
     rtengine::ProcEvent Evcgdmautoon;
     rtengine::ProcEvent Evcgdyautoon;
-      
+
 private:
     IdleRegister idle_register;
 
@@ -75,7 +75,7 @@ public:
     Compressgamut ();
     ~Compressgamut() override;
 
-    
+
     void read           (const rtengine::procparams::ProcParams* pp, const ParamsEdited* pedited = nullptr) override;
     void write          (rtengine::procparams::ProcParams* pp, ParamsEdited* pedited = nullptr) override;
     void setDefaults    (const rtengine::procparams::ProcParams* defParams, const ParamsEdited* pedited = nullptr) override;
@@ -88,5 +88,5 @@ public:
 
     void trimValues          (rtengine::procparams::ProcParams* pp) override;
     void colorspaceChanged();
-    void updategamutGUI();   
+    void updategamutGUI();
 };

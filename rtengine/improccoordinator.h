@@ -557,7 +557,7 @@ public:
     void setCompgamutListener  (CompgamutListener* cop) override
     {
         acmaxListener = cop;
-    }    
+    }
     void setRetinexListener  (RetinexListener* adh) override
     {
         dehaListener = adh;
