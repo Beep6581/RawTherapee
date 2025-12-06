@@ -663,8 +663,7 @@ void ImProcFunctions::gamutcompr( Imagefloat *src, Imagefloat *dst, float &mac, 
         mac = maxac;  
         mac0 = maxac0;
         mac1 = maxac1;
-        mac2 = maxac2;
-    
+        mac2 = maxac2; 
 }
 
 inline float power_norm2(float r, float g, float b)
