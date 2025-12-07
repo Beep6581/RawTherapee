@@ -32,6 +32,29 @@
 using namespace rtengine;
 using namespace rtengine::procparams;
 
+namespace
+{
+    struct ListItem
+    {
+        const int       ID;                 ///< The row number in the combobox
+        const char*     pp3Name;
+        const char*     translationName;
+        const double    limits_th_c[4];
+        const double    limits_th_m[4];
+        const double    limits_th_y[4];
+    };
+
+    ListItem ColorspaceListItems[] = {              
+        {   0,  "rec2020",    "TP_COMPRESSGAMUT_REC2020",   {0., 1., 0.001, 0.815}, {0., 1., 0.001, 0.803}, {0., 1., 0.001, 0.880} },   // default limits
+        {   1,  "prophoto",   "TP_COMPRESSGAMUT_PROPHOTO",  {0., 1., 0.001, 0.815}, {0., 1., 0.001, 0.803}, {0., 1., 0.001, 0.880} },   // default limits
+        {   2,  "adobe",      "TP_COMPRESSGAMUT_ADOBE",     {0., 1., 0.001, 0.79}, {0., 1., 0.001, 0.82}, {0., 1., 0.001, 0.85} },
+        {   3,  "srgb",       "TP_COMPRESSGAMUT_SRGB",      {0., 1., 0.001, 0.51}, {0., 1., 0.001, 0.82}, {0., 1., 0.001, 0.82} },
+        {   4,  "dcip3",      "TP_COMPRESSGAMUT_DCIP3",     {0., 1., 0.001, 0.68}, {0., 1., 0.001, 0.89}, {0., 1., 0.001, 0.95} },
+        {   5,  "acesp1",     "TP_COMPRESSGAMUT_ACESP1",    {0., 1., 0.001, 0.815}, {0., 1., 0.001, 0.803}, {0., 1., 0.001, 0.880} },   // default limits
+        {   6,  "beta",       "TP_COMPRESSGAMUT_BETA",      {0., 1., 0.001, 0.90}, {0., 1., 0.001, 0.95}, {0., 1., 0.001, 0.95} },
+    };
+}
+
 const Glib::ustring Compressgamut::TOOL_NAME = "compressgamut";
 
 Compressgamut::Compressgamut () : FoldableToolPanel(this, TOOL_NAME, M("TP_COMPRESSGAMUT_LABEL"), false, true)
@@ -58,13 +81,9 @@ Compressgamut::Compressgamut () : FoldableToolPanel(this, TOOL_NAME, M("TP_COMPR
     Gtk::Box *iVBox = Gtk::manage(new Gtk::Box(Gtk::ORIENTATION_VERTICAL));
    
     colorspace = Gtk::manage(new MyComboBoxText());
-    colorspace->append(M("TP_COMPRESSGAMUT_REC2020"));
-    colorspace->append(M("TP_COMPRESSGAMUT_PROPHOTO"));
-    colorspace->append(M("TP_COMPRESSGAMUT_ADOBE"));
-    colorspace->append(M("TP_COMPRESSGAMUT_SRGB"));
-    colorspace->append(M("TP_COMPRESSGAMUT_DCIP3"));
-    colorspace->append(M("TP_COMPRESSGAMUT_ACESP1"));
-    colorspace->append(M("TP_COMPRESSGAMUT_BETA"));
+    for (auto item : ColorspaceListItems) {
+        colorspace->append(M(item.translationName));
+    }
     colorspace->set_active(3);
     iVBox->pack_start(*colorspace);
     iFrame->add(*iVBox);
@@ -241,20 +260,10 @@ void Compressgamut::read (const ProcParams* pp, const ParamsEdited* pedited)
 
     colorspaceconn.block (true);
 
-    if (pp->cg.colorspace == "rec2020") {
-        colorspace->set_active(0);
-    } else if (pp->cg.colorspace == "prophoto") {
-        colorspace->set_active(1);
-    } else if (pp->cg.colorspace == "adobe") {
-        colorspace->set_active(2);
-     } else if (pp->cg.colorspace == "srgb") {
-        colorspace->set_active(3);
-    } else if (pp->cg.colorspace == "dcip3") {
-        colorspace->set_active(4);
-    } else if (pp->cg.colorspace == "acesp1") {
-        colorspace->set_active(5);
-    } else if (pp->cg.colorspace == "beta") {
-        colorspace->set_active(6);    
+    for (auto item : ColorspaceListItems) {
+        if (pp->cg.colorspace == item.pp3Name) {
+            colorspace->set_active(item.ID);
+        }
     }
     colorspaceconn.block (false);
 
@@ -307,22 +316,11 @@ void Compressgamut::write (ProcParams* pp, ParamsEdited* pedited)
     pp->cg.rolloff = rolloff->get_active();
     pp->cg.enabled = getEnabled();
 
-    if (colorspace->get_active_row_number() == 0) {
-        pp->cg.colorspace = "rec2020";
-    } else if (colorspace->get_active_row_number() == 1){
-        pp->cg.colorspace = "prophoto";
-    } else if (colorspace->get_active_row_number() == 2){
-        pp->cg.colorspace = "adobe";
-    } else if (colorspace->get_active_row_number() == 3){
-        pp->cg.colorspace = "srgb";
-    } else if (colorspace->get_active_row_number() == 4){
-        pp->cg.colorspace = "dcip3";
-    } else if (colorspace->get_active_row_number() == 5){
-        pp->cg.colorspace = "acesp1";
-    } else if (colorspace->get_active_row_number() == 6){
-        pp->cg.colorspace = "beta";
+    for (auto item : ColorspaceListItems) {
+        if (item.ID == colorspace->get_active_row_number()) {
+            pp->cg.colorspace = item.pp3Name;
+        }
     }
-
 
     if (pedited) {
         pedited->cg.th_c          = th_c->getEditedState ();
@@ -347,45 +345,26 @@ void Compressgamut::updategamutGUI()
 {
     // Update default slider value GUI according to colorspace
     // Only for Working profile = Rec2020
-/* Calculating the 'Threshold' values ​​is anything but straightforward. Of course, one might say, "Just match them with the colors in ColorChecker24." But there are many unknown parameters:
-* What is the actual illuminant and its temperature and green settings?
-* The image colors may have been compressed using "Maximum limits," but there's no guarantee they're within the new, reduced gamut.
-* Differences in white points, such as the atypical white point of DCI-P3, complicate matters.
+    /* Calculating the 'Threshold' values ​​is anything but straightforward. Of course, one might say, "Just match them with the colors in ColorChecker24." But there are many unknown parameters:
+    * What is the actual illuminant and its temperature and green settings?
+    * The image colors may have been compressed using "Maximum limits," but there's no guarantee they're within the new, reduced gamut.
+    * Differences in white points, such as the atypical white point of DCI-P3, complicate matters.
 
-* Furthermore, what about the necessary color adaptation, both at this stage of compression and at the stage implied by the output temperature (see CIECAM)?
+    * Furthermore, what about the necessary color adaptation, both at this stage of compression and at the stage implied by the output temperature (see CIECAM)?
 
-Therefore, these parameters correspond roughly to the ratio of the distances between the white point of the Working Profile, 
-* The white point of the "Target compression gamut" corrected by chromatic adaptation and the Yellow, Magenta, and Cyan values ​​of the primary color triangle.
-* These calculated values ​​are for 'normal' cases where the illuminants are not exhaustive, and the colors to be recovered are within reasonable limits.
-* In other cases, the 3 Threshold sliders need to be adjusted (often lowered). Pay attention to the artifacts.
-*/
+    Therefore, these parameters correspond roughly to the ratio of the distances between the white point of the Working Profile, 
+    * The white point of the "Target compression gamut" corrected by chromatic adaptation and the Yellow, Magenta, and Cyan values ​​of the primary color triangle.
+    * These calculated values ​​are for 'normal' cases where the illuminants are not exhaustive, and the colors to be recovered are within reasonable limits.
+    * In other cases, the 3 Threshold sliders need to be adjusted (often lowered). Pay attention to the artifacts.
+    */
 
-
-
-   
-        if (colorspace->get_active_row_number() == 2){//Adobe D65
-            th_c->setLimits(0., 1., 0.001, 0.79);
-            th_m->setLimits(0., 1., 0.001, 0.82);
-            th_y->setLimits(0., 1., 0.001, 0.85);
- 
-        } else if (colorspace->get_active_row_number() == 3){//srgb D65
-            th_c->setLimits(0., 1., 0.001, 0.51);
-            th_m->setLimits(0., 1., 0.001, 0.82);
-            th_y->setLimits(0., 1., 0.001, 0.82);
-        } else if (colorspace->get_active_row_number() == 4){//dci-p3 - WP 0.314 0.351 
-            th_c->setLimits(0., 1., 0.001, 0.68);
-            th_m->setLimits(0., 1., 0.001, 0.89);
-            th_y->setLimits(0., 1., 0.001, 0.9);
-        } else if (colorspace->get_active_row_number() == 6){//beta RGB D50
-            th_c->setLimits(0., 1., 0.001, 0.90);
-            th_m->setLimits(0., 1., 0.001, 0.95);
-            th_y->setLimits(0., 1., 0.001, 0.95);
-        } else {
-            th_c->setLimits(0., 1., 0.001, 0.815);
-            th_m->setLimits(0., 1., 0.001, 0.803);
-            th_y->setLimits(0., 1., 0.001, 0.880);
+    for (auto item : ColorspaceListItems) {
+        if (colorspace->get_active_row_number() == item.ID) {
+            th_c->setLimits(item.limits_th_c[0], item.limits_th_c[1], item.limits_th_c[2], item.limits_th_c[3]);
+            th_m->setLimits(item.limits_th_m[0], item.limits_th_m[1], item.limits_th_m[2], item.limits_th_m[3]);
+            th_y->setLimits(item.limits_th_y[0], item.limits_th_y[1], item.limits_th_y[2], item.limits_th_y[3]);
         }
-
+    }
 }
 
 
@@ -548,7 +527,7 @@ void Compressgamut::rolloff_change()
 
 void Compressgamut::colorspaceChanged()
 {
-     updategamutGUI(); 
+    updategamutGUI(); 
     if (listener && getEnabled()) {
         listener->panelChanged(EvcgColorspace, colorspace->get_active_text());
     }
