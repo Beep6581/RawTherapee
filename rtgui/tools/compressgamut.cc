@@ -263,6 +263,7 @@ void Compressgamut::read (const ProcParams* pp, const ParamsEdited* pedited)
     for (auto item : ColorspaceListItems) {
         if (pp->cg.colorspace == item.pp3Name) {
             colorspace->set_active(item.ID);
+            break;
         }
     }
     colorspaceconn.block (false);
@@ -319,6 +320,7 @@ void Compressgamut::write (ProcParams* pp, ParamsEdited* pedited)
     for (auto item : ColorspaceListItems) {
         if (item.ID == colorspace->get_active_row_number()) {
             pp->cg.colorspace = item.pp3Name;
+            break;
         }
     }
 
@@ -363,6 +365,7 @@ void Compressgamut::updategamutGUI()
             th_c->setLimits(item.limits_th_c[0], item.limits_th_c[1], item.limits_th_c[2], item.limits_th_c[3]);
             th_m->setLimits(item.limits_th_m[0], item.limits_th_m[1], item.limits_th_m[2], item.limits_th_m[3]);
             th_y->setLimits(item.limits_th_y[0], item.limits_th_y[1], item.limits_th_y[2], item.limits_th_y[3]);
+            break;
         }
     }
 }
