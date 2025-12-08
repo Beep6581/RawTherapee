@@ -34,7 +34,6 @@ using namespace rtengine::procparams;
 
 namespace
 {
-// clang-format off
 
 struct ListItem
 {
@@ -44,6 +43,7 @@ struct ListItem
     const std::array<const double, 3> thresholdDefault; ///< { th_c, th_m, th_y }
 };
 
+// clang-format off
 const std::array<ListItem, 7> COLORSPACE_LIST_ITEMS = {{
     {0,  "rec2020",    "TP_COMPRESSGAMUT_REC2020",   { 0.815, 0.803, 0.880} },
     {1,  "prophoto",   "TP_COMPRESSGAMUT_PROPHOTO",  { 0.815, 0.803, 0.880} },
@@ -53,8 +53,8 @@ const std::array<ListItem, 7> COLORSPACE_LIST_ITEMS = {{
     {5,  "acesp1",     "TP_COMPRESSGAMUT_ACESP1",    { 0.815, 0.803, 0.880} },
     {6,  "beta",       "TP_COMPRESSGAMUT_BETA",      { 0.90 , 0.95 , 0.95} }
 }};
-
 // clang-format on
+
 }
 
 const Glib::ustring Compressgamut::TOOL_NAME = "compressgamut";
