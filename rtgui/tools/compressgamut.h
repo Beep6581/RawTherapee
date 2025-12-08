@@ -46,6 +46,7 @@ protected:
     bool lastAutodc;
     bool lastAutodm;
     bool lastAutody;
+    bool updThrDefaults;    ///< Threshold defaults only available for the Rec2020 working profile
 
     MyComboBoxText *colorspace;
     sigc::connection colorspaceconn;

@@ -34,25 +34,27 @@ using namespace rtengine::procparams;
 
 namespace
 {
-    struct ListItem
-    {
-        const int       ID;                 ///< The row number in the combobox
-        const char*     pp3Name;
-        const char*     translationName;
-        const double    limits_th_c[4];
-        const double    limits_th_m[4];
-        const double    limits_th_y[4];
-    };
+// clang-format off
 
-    ListItem ColorspaceListItems[] = {              
-        {   0,  "rec2020",    "TP_COMPRESSGAMUT_REC2020",   {0., 1., 0.001, 0.815}, {0., 1., 0.001, 0.803}, {0., 1., 0.001, 0.880} },   // default limits
-        {   1,  "prophoto",   "TP_COMPRESSGAMUT_PROPHOTO",  {0., 1., 0.001, 0.815}, {0., 1., 0.001, 0.803}, {0., 1., 0.001, 0.880} },   // default limits
-        {   2,  "adobe",      "TP_COMPRESSGAMUT_ADOBE",     {0., 1., 0.001, 0.79}, {0., 1., 0.001, 0.82}, {0., 1., 0.001, 0.85} },
-        {   3,  "srgb",       "TP_COMPRESSGAMUT_SRGB",      {0., 1., 0.001, 0.51}, {0., 1., 0.001, 0.82}, {0., 1., 0.001, 0.82} },
-        {   4,  "dcip3",      "TP_COMPRESSGAMUT_DCIP3",     {0., 1., 0.001, 0.68}, {0., 1., 0.001, 0.89}, {0., 1., 0.001, 0.95} },
-        {   5,  "acesp1",     "TP_COMPRESSGAMUT_ACESP1",    {0., 1., 0.001, 0.815}, {0., 1., 0.001, 0.803}, {0., 1., 0.001, 0.880} },   // default limits
-        {   6,  "beta",       "TP_COMPRESSGAMUT_BETA",      {0., 1., 0.001, 0.90}, {0., 1., 0.001, 0.95}, {0., 1., 0.001, 0.95} },
-    };
+struct ListItem
+{
+    const int                   ID;                     ///< The row number in the combobox
+    const char*                 pp3Name;
+    const char*                 translationName;
+    const std::array<const double, 3> thresholdDefault; ///< { th_c, th_m, th_y }
+};
+
+const std::array<ListItem, 7> COLORSPACE_LIST_ITEMS = {{
+    {0,  "rec2020",    "TP_COMPRESSGAMUT_REC2020",   { 0.815, 0.803, 0.880} },
+    {1,  "prophoto",   "TP_COMPRESSGAMUT_PROPHOTO",  { 0.815, 0.803, 0.880} },
+    {2,  "adobe",      "TP_COMPRESSGAMUT_ADOBE",     { 0.79 , 0.82 , 0.85} },
+    {3,  "srgb",       "TP_COMPRESSGAMUT_SRGB",      { 0.51 , 0.82 , 0.82} },
+    {4,  "dcip3",      "TP_COMPRESSGAMUT_DCIP3",     { 0.68 , 0.89 , 0.9} },
+    {5,  "acesp1",     "TP_COMPRESSGAMUT_ACESP1",    { 0.815, 0.803, 0.880} },
+    {6,  "beta",       "TP_COMPRESSGAMUT_BETA",      { 0.90 , 0.95 , 0.95} }
+}};
+
+// clang-format on
 }
 
 const Glib::ustring Compressgamut::TOOL_NAME = "compressgamut";
@@ -81,7 +83,7 @@ Compressgamut::Compressgamut () : FoldableToolPanel(this, TOOL_NAME, M("TP_COMPR
     Gtk::Box *iVBox = Gtk::manage(new Gtk::Box(Gtk::ORIENTATION_VERTICAL));
    
     colorspace = Gtk::manage(new MyComboBoxText());
-    for (auto item : ColorspaceListItems) {
+    for (const auto& item : COLORSPACE_LIST_ITEMS) {
         colorspace->append(M(item.translationName));
     }
     colorspace->set_active(3);
@@ -260,7 +262,7 @@ void Compressgamut::read (const ProcParams* pp, const ParamsEdited* pedited)
 
     colorspaceconn.block (true);
 
-    for (auto item : ColorspaceListItems) {
+    for (const auto& item : COLORSPACE_LIST_ITEMS) {
         if (pp->cg.colorspace == item.pp3Name) {
             colorspace->set_active(item.ID);
             break;
@@ -268,9 +270,7 @@ void Compressgamut::read (const ProcParams* pp, const ParamsEdited* pedited)
     }
     colorspaceconn.block (false);
 
-
-    updategamutGUI(); 
-
+    updThrDefaults = (pp->icm.workingProfile == "Rec2020") ? true : false;
 
     th_c->setValue(pp->cg.th_c);
     th_m->setValue(pp->cg.th_m);
@@ -317,7 +317,7 @@ void Compressgamut::write (ProcParams* pp, ParamsEdited* pedited)
     pp->cg.rolloff = rolloff->get_active();
     pp->cg.enabled = getEnabled();
 
-    for (auto item : ColorspaceListItems) {
+    for (const auto& item : COLORSPACE_LIST_ITEMS) {
         if (item.ID == colorspace->get_active_row_number()) {
             pp->cg.colorspace = item.pp3Name;
             break;
@@ -347,6 +347,8 @@ void Compressgamut::updategamutGUI()
 {
     // Update default slider value GUI according to colorspace
     // Only for Working profile = Rec2020
+    if (!updThrDefaults) return;
+
     /* Calculating the 'Threshold' values ​​is anything but straightforward. Of course, one might say, "Just match them with the colors in ColorChecker24." But there are many unknown parameters:
     * What is the actual illuminant and its temperature and green settings?
     * The image colors may have been compressed using "Maximum limits," but there's no guarantee they're within the new, reduced gamut.
@@ -360,11 +362,11 @@ void Compressgamut::updategamutGUI()
     * In other cases, the 3 Threshold sliders need to be adjusted (often lowered). Pay attention to the artifacts.
     */
 
-    for (auto item : ColorspaceListItems) {
+    for (const auto& item : COLORSPACE_LIST_ITEMS) {
         if (colorspace->get_active_row_number() == item.ID) {
-            th_c->setLimits(item.limits_th_c[0], item.limits_th_c[1], item.limits_th_c[2], item.limits_th_c[3]);
-            th_m->setLimits(item.limits_th_m[0], item.limits_th_m[1], item.limits_th_m[2], item.limits_th_m[3]);
-            th_y->setLimits(item.limits_th_y[0], item.limits_th_y[1], item.limits_th_y[2], item.limits_th_y[3]);
+            th_c->setValue (item.thresholdDefault[0]);
+            th_m->setValue (item.thresholdDefault[1]);
+            th_y->setValue (item.thresholdDefault[2]);
             break;
         }
     }
