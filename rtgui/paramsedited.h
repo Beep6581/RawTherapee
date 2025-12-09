@@ -620,6 +620,7 @@ public:
         bool ghs_BLP;
         bool ghs_HLP;
         bool ghs_autobw;
+        bool ghs_agx;
         bool ghs_smooth;
         bool ghs_inv;
         

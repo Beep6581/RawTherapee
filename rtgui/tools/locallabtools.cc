@@ -4317,6 +4317,7 @@ LocallabShadow::LocallabShadow():
     gridFrameghs(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_GHS_GHSDIAG")))),//
     labgridghs(Gtk::manage(new LabGrid(EvlocallabGridciexy, M("TP_LOCALLAB_GHS_GHSDIAG"), true, false, true, false))),
     ghsFrame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_GHSFRA")))),
+    ghs_agx(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_GHS_AGX")))),   
     ghs_D(Gtk::manage(new Adjuster(M("TP_LOCALLAB_GHS_D"), 0., 20.0, 0.001, 0.001))),
     Lab_Frame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_GHSLABFRA")))),
     ghs_slope(Gtk::manage(new Adjuster(M("TP_LOCALLAB_GHS_SLOPE"), 1.0, 100.0, 0.01, 9.03296))),
@@ -4386,6 +4387,8 @@ LocallabShadow::LocallabShadow():
     Evlocallabghs_BLP = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_GHS_BLP");
     Evlocallabghs_smooth = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_GHS_SMOOTH");
     Evlocallabghs_autobw = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_GHS_AUTOBW");
+    Evlocallabghs_agx = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_GHS_AGX");
+   
     Evlocallabghs_inv = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_GHS_INV");
     EvlocallabGridghs = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_CIE_LABGRIDGHS");
     ghs_SP->addAutoButton(M("TP_LOCALLAB_SPRADIUS_TOOLTIP"));
@@ -4484,6 +4487,7 @@ LocallabShadow::LocallabShadow():
     ghs_autobwConn = ghs_autobw->signal_toggled().connect(sigc::mem_fun(*this, &LocallabShadow::ghs_autobwChanged));
     ghs_smoothConn = ghs_smooth->signal_toggled().connect(sigc::mem_fun(*this, &LocallabShadow::ghs_smoothChanged));
     ghs_invConn = ghs_inv->signal_toggled().connect(sigc::mem_fun(*this, &LocallabShadow::ghs_invChanged));
+    ghs_agxConn = ghs_agx->signal_toggled().connect(sigc::mem_fun(*this, &LocallabShadow::ghs_agxChanged));
 
 
     setExpandAlignProperties(expgradsh, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_START);
@@ -4596,6 +4600,7 @@ LocallabShadow::LocallabShadow():
     
     
     ghsBox->pack_start(*gridFrameghs);
+    ghsBox->pack_start(*ghs_agx); 
     ghsBox->pack_start(*ghs_D);
     Lab_Frame->set_label_align(0.025, 0.5);
     ToolParamBlock* const LabBox = Gtk::manage(new ToolParamBlock());
@@ -4896,6 +4901,8 @@ void LocallabShadow::updateAdviceTooltips(const bool showTooltips)
         ghs_MID->set_tooltip_text(M("TP_LOCALLAB_GHS_MID_TOOLTIP"));
         ghs_BLP->set_tooltip_text(M("TP_LOCALLAB_GHS_BLP_TOOLTIP"));
         ghs_autobw->set_tooltip_text(M("TP_LOCALLAB_GHS_BLPHLPAUTO_TOOLTIP"));
+        ghs_agx->set_tooltip_text(M("TP_LOCALLAB_GHS_AGX_TOOLTIP"));
+
         ghs_HLP->set_tooltip_text(M("TP_LOCALLAB_GHS_HLP_TOOLTIP"));
         ghs_smooth->set_tooltip_text(M("TP_LOCALLAB_GHS_SMOOTH_TOOLTIP"));
         ghs_inv->set_tooltip_text(M("TP_LOCALLAB_GHS_INV_TOOLTIP"));
@@ -4948,6 +4955,7 @@ void LocallabShadow::updateAdviceTooltips(const bool showTooltips)
         ghs_BLP->set_tooltip_text("");
         ghs_HLP->set_tooltip_text("");
         ghs_autobw->set_tooltip_text("");      
+        ghs_agx->set_tooltip_text("");      
         ghs_smooth->set_tooltip_text("");
         ghs_inv->set_tooltip_text("");
         BP_Frame->set_tooltip_text("");
@@ -4973,6 +4981,7 @@ void LocallabShadow::disableListener()
     inversshConn.block(true);
     ghs_smoothConn.block(true);
     ghs_autobwConn.block(true);
+    ghs_agxConn.block(true);
     ghs_invConn.block(true);
     showmaskSHMethodConn.block(true);
     showmaskSHMethodConninv.block(true);
@@ -4987,6 +4996,7 @@ void LocallabShadow::enableListener()
     ghsMethodConn.block(false);
     ghs_smoothConn.block(false);
     ghs_autobwConn.block(false);
+    ghs_agxConn.block(false);
     ghs_invConn.block(false);
     inversshConn.block(false);
     showmaskSHMethodConn.block(false);
@@ -5102,6 +5112,7 @@ void LocallabShadow::read(const rtengine::procparams::ProcParams* pp, const Para
         inverssh->set_active(spot.inverssh);
         ghs_smooth->set_active(spot.ghs_smooth);
         ghs_autobw->set_active(spot.ghs_autobw);
+        ghs_agx->set_active(spot.ghs_agx);
         ghs_inv->set_active(spot.ghs_inv);
         enaSHMask->set_active(spot.enaSHMask);
         CCmaskSHshape->setCurve(spot.CCmaskSHcurve);
@@ -5211,6 +5222,7 @@ void LocallabShadow::write(rtengine::procparams::ProcParams* pp, ParamsEdited* p
         spot.inverssh = inverssh->get_active();
         spot.ghs_smooth = ghs_smooth->get_active();
         spot.ghs_autobw = ghs_autobw->get_active();
+        spot.ghs_agx = ghs_agx->get_active();
         spot.ghs_inv = ghs_inv->get_active();
         spot.enaSHMask = enaSHMask->get_active();
         spot.LLmaskSHcurve = LLmaskSHshape->getCurve();
@@ -6007,6 +6019,43 @@ void LocallabShadow::inversshChanged()
         }
     }
 }
+
+void LocallabShadow::ghs_agxChanged()
+{
+    const bool maskPreviewActivated = isMaskViewActive();
+
+    // Update shadow highlight GUI according to inverssh button state
+    updateShadowGUImask();
+
+    if (maskPreviewActivated) {
+        // This event is called to transmit reset mask state
+        if (listener) {
+            listener->panelChanged(EvlocallabshowmaskMethod, "");
+        }
+    }
+/*
+    if (ghs_autobw->get_active()) {
+        ghs_BLP->set_sensitive(false);
+        ghs_HLP->set_sensitive(false);        
+    } else {
+        ghs_BLP->set_sensitive(true);
+        ghs_HLP->set_sensitive(true);              
+    }
+*/
+    if (isLocActivated && exp->getEnabled()) {
+        if (listener) {
+            if (ghs_agx->get_active()) {
+                //nbwb = 0;//initialize count for white point and black point
+                listener->panelChanged(Evlocallabghs_agx,
+                                       M("GENERAL_ENABLED") + " (" + escapeHtmlChars(getSpotName()) + ")");
+            } else {
+                listener->panelChanged(Evlocallabghs_agx,
+                                       M("GENERAL_DISABLED") + " (" + escapeHtmlChars(getSpotName()) + ")");
+            }
+        }
+    }
+}
+
 
 
 void LocallabShadow::ghs_autobwChanged()

@@ -18347,7 +18347,7 @@ void ImProcFunctions::Lab_Local(
                         }
                         //now we have 2 Matrix to convert tmpimage with Agx
                         constexpr float range = 65535.f;
-                        if(MID != 0.f) {
+                        if(params->locallab.spots.at(sp).ghs_agx == true) {
 
 #ifdef _OPENMP
         #   pragma omp parallel for schedule(dynamic,16) if (multiThread)
@@ -18717,7 +18717,8 @@ void ImProcFunctions::Lab_Local(
                                 }
                             lab2rgb(*labtemp, *tmpImage, params->icm.workingProfile);
                         }
-                        if(MID != 0.f) {
+                        
+                        if(params->locallab.spots.at(sp).ghs_agx == true) {
 #ifdef _OPENMP
         #   pragma omp parallel for schedule(dynamic,16) if (multiThread)
 #endif                                            
