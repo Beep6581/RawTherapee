@@ -1597,6 +1597,7 @@ HISTORY_MSG_LOCAL_FEATHERVIB;Local - Vib Gradient feather
 HISTORY_MSG_LOCAL_FEATHERWAV;Local - Wav Gradient feather
 HISTORY_MSG_LOCAL_GAMUTMUNSEL;Local - SC - Avoid Color Shift
 HISTORY_MSG_LOCAL_GHSMETHOD;Local - GHS - Method
+HISTORY_MSG_LOCAL_GHS_AGX;Local - GHS - AgX Matrix
 HISTORY_MSG_LOCAL_GHS_AUTOBW;Local - GHS - Auto Black point and White point
 HISTORY_MSG_LOCAL_GHS_B;Local - GHS - Local intensity
 HISTORY_MSG_LOCAL_GHS_BLP;Local - GHS - Black point
@@ -3348,7 +3349,9 @@ TP_LOCALLAB_GHSLABFRA;Lab settings
 TP_LOCALLAB_GHSLUM;Luminance (HSL)
 TP_LOCALLAB_GHSRGBLUM;RGB Luminance
 TP_LOCALLAB_GHSRGBSTD;RGB Standard
-TP_LOCALLAB_GHSSAT;Saturation (HSL)
+TP_LOCALLAB_GHSSAT;Saturation (HSL) 
+TP_LOCALLAB_GHS_AGX;AgX Matrix
+TP_LOCALLAB_GHS_AGX_TOOLTIP;Performs the entire GHS processing, including AgX conversion.\n * To allow AgX to be enabled or disabled, the Stretch factor (D) must be between 0.001 and 0.002.\n * You need to disable and re-enable 'Auto Black point and White point' to recalculate the values ​​of 'BP linear', 'WP linear' and 'Symmetry point (SP)'.
 TP_LOCALLAB_GHS_AUTOBW;Auto Black point & White point
 TP_LOCALLAB_GHS_B;Local intensity (b)
 TP_LOCALLAB_GHS_BLACKPOINT_FRAME;Black point/White point
