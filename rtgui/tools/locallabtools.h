@@ -609,7 +609,7 @@ private:
     LabGrid* const labgridghs;
    
     Gtk::Frame* const ghsFrame;
-    Gtk::CheckButton* const ghs_agx;   
+    Gtk::CheckButton* const ghs_agx; 
     Adjuster* const ghs_D;
     Gtk::Frame* const Lab_Frame;
     Adjuster* const ghs_slope;
@@ -726,7 +726,7 @@ private:
     void inversshChanged();
     void ghs_smoothChanged();
     void ghs_autobwChanged();
-    void ghs_agxChanged();   
+    void ghs_agxChanged(); 
     void ghs_invChanged();
     void showmaskSHMethodChanged();
     void showmaskSHMethodChangedinv();

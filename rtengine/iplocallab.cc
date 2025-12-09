@@ -18325,7 +18325,7 @@ void ImProcFunctions::Lab_Local(
                         using Triple = std::array<double, 3>;
 
                         using Matrix = std::array<Triple, 3>;
-                        
+                       
                         //Change tmpimage with AgxMat
                         Matrix AgxMat = {};
                             AgxMat[0][0] = 0.856627153315983;
@@ -18339,7 +18339,7 @@ void ImProcFunctions::Lab_Local(
                             AgxMat[2][2] = 0.811302368396859;
 
                         Matrix agx_T = {};
-                        Matrix inv_agx_T = {};                       
+                        Matrix inv_agx_T = {};                      
                         Color::transpose(AgxMat, agx_T);//transpose Matrix
                         //invert matrix
                         if (!rtengine::invertMatrix(agx_T, inv_agx_T)) {
@@ -18357,14 +18357,14 @@ void ImProcFunctions::Lab_Local(
                                 const float r = tmpImage->r(i, j) / range;//in interval 0.. 1
                                 const float g = tmpImage->g(i, j) / range;
                                 const float b = tmpImage->b(i, j) / range;
-                                std::array<float, 3> rgb_in{r, g, b};//
+                                std::array<float, 3> rgb_in{r, g, b};
                                 float rout = 0.f;
                                 float gout = 0.f;
-                                float bout = 0.f;                               
+                                float bout = 0.f;                              
                                 Color::agx_trans(rgb_in, agx_T, rout, gout, bout);
                                 tmpImage->r(i, j) = range * rout;//in interval 0..65535
                                 tmpImage->g(i, j) = range * gout;
-                                tmpImage->b(i, j) = range * bout;                                                             
+                                tmpImage->b(i, j) = range * bout;                                                            
                             }
                         }
  
@@ -18727,10 +18727,10 @@ void ImProcFunctions::Lab_Local(
                                 const float r = tmpImage->r(i, j) / range;//in interval 0.. 1
                                 const float g = tmpImage->g(i, j) / range;
                                 const float b = tmpImage->b(i, j) / range;
-                                std::array<float, 3> rgb_in{r, g, b};//
+                                std::array<float, 3> rgb_in{r, g, b};
                                 float rout = 0.f;
                                 float gout = 0.f;
-                                float bout = 0.f;                               
+                                float bout = 0.f;                              
                                 Color::agx_trans(rgb_in, inv_agx_T, rout, gout, bout);
                                 tmpImage->r(i, j) = range * rout;//in interval 0..65535
                                 tmpImage->g(i, j) = range * gout;
