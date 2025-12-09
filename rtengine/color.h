@@ -1895,6 +1895,7 @@ static inline void Lab2XYZ(vfloat L, vfloat a, vfloat b, vfloat &x, vfloat &y, v
     static void  transpose(const Matrix &ma, Matrix &R);
     static void  multip(const Matrix &ma, const Matrix &mb, Matrix &R);
     static void  mult3(std::array<float, 3> &in, const Matrix &ma, std::array<float, 3> &out);
+    static void agx_trans(const std::array<float, 3> &rgb_in, const Matrix &to_agx, float &R, float &G, float &B);
 
     static void aces_reference_gamut_compression(
         const std::array<float, 3> &rgb_in,
