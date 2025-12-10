@@ -3728,7 +3728,7 @@ LocallabParams::LocallabSpot::LocallabSpot() :
     ghs_BLP(0.),
     ghs_HLP(1.),
     ghs_autobw(false),
-    ghs_agx(false),
+    ghs_agx(true),
     ghs_smooth(false),
     ghs_inv(false),
     
