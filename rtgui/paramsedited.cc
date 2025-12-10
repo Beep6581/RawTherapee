@@ -4684,7 +4684,7 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
         }
 
         if (locallab.spots.at(i).ghs_agx) {
-            toEdit.locallab.spots.at(i).ghs_agx= mods.locallab.spots.at(i).ghs_agx;
+            toEdit.locallab.spots.at(i).ghs_agx = mods.locallab.spots.at(i).ghs_agx;
         }
 
         if (locallab.spots.at(i).ghs_smooth) {

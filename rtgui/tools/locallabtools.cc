@@ -5344,7 +5344,7 @@ void LocallabShadow::adjusterChanged(Adjuster* a, double newval)
                     ghs_HLP->set_sensitive(true);
                     ghs_inv->set_sensitive(true);                  
                     ghs_agx->set_sensitive(true);
-               }
+                }
                 ghs_autobw->set_sensitive(true);
                 if(ghs_inv->get_active()) {
                     ghs_autobw->set_sensitive(false);

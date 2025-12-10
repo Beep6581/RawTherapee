@@ -2175,15 +2175,14 @@ void Color::mult3(std::array<float, 3> &in, const Matrix &ma, std::array<float, 
     std::copy(buf.cbegin(), buf.cend(), out.begin());
 }
 
-//conversion RGB datas with Agx matrix and inverse
-void Color::agx_trans(const std::array<float, 3> &rgb_in, const Matrix &to_agx, float &R, float &G, float &B)
- {
+//conversion RGB data with Agx matrix and inverse
+void Color::agx_trans(const std::array<float, 3> &rgb_in, const Matrix &to_agx, float &R, float &G, float &B) {
     std::array<float, 3> rgb{rgb_in[0], rgb_in[1], rgb_in[2]};
     Color::mult3(rgb, to_agx, rgb);
     R = rgb[0];
     G = rgb[1];
     B = rgb[2];
- }
+}
 
 // ACES-style gamut compression
 //

@@ -18322,52 +18322,52 @@ void ImProcFunctions::Lab_Local(
                         float maxwred = -100.f;
                         float maxwgreen = -100.f;                      
                         float maxwblue = -100.f;
-                        using Triple = std::array<double, 3>;
-
-                        using Matrix = std::array<Triple, 3>;
-                       
-                        //Change tmpimage with AgxMat
-                        Matrix AgxMat = {};
-                            AgxMat[0][0] = 0.856627153315983;
-                            AgxMat[0][1] = 0.0951212405381588;
-                            AgxMat[0][2] = 0.0482516061458583;
-                            AgxMat[1][0] = 0.137318972929847;
-                            AgxMat[1][1] = 0.761241990602591;
-                            AgxMat[1][2] = 0.101439036467562;
-                            AgxMat[2][0] = 0.11189821299995;
-                            AgxMat[2][1] = 0.0767994186031903;
-                            AgxMat[2][2] = 0.811302368396859;
-
-                        Matrix agx_T = {};
-                        Matrix inv_agx_T = {};                      
-                        Color::transpose(AgxMat, agx_T);//transpose Matrix
-                        //invert matrix
-                        if (!rtengine::invertMatrix(agx_T, inv_agx_T)) {
-                            std::cout << "Matrix is not invertible, skipping" << std::endl;
-                        }
-                        //now we have 2 Matrix to convert tmpimage with Agx
                         constexpr float range = 65535.f;
-                        if(params->locallab.spots.at(sp).ghs_agx == true) {
+                        using Triple = std::array<double, 3>;
+                        using Matrix = std::array<Triple, 3>;
+
+                        Matrix inv_agx_T = {};//initialize inv_agx_T
+
+                        if(params->locallab.spots.at(sp).ghs_agx == true) {                    
+                            //Define AgX matrix for color space transformation
+                            Matrix agx_mat = {};
+                                agx_mat[0][0] = 0.856627153315983;
+                                agx_mat[0][1] = 0.0951212405381588;
+                                agx_mat[0][2] = 0.0482516061458583;
+                                agx_mat[1][0] = 0.137318972929847;
+                                agx_mat[1][1] = 0.761241990602591;
+                                agx_mat[1][2] = 0.101439036467562;
+                                agx_mat[2][0] = 0.11189821299995;
+                                agx_mat[2][1] = 0.0767994186031903;
+                                agx_mat[2][2] = 0.811302368396859;
+
+                                Matrix agx_T = {};
+                                Color::transpose(agx_mat, agx_T);//transpose Matrix
+                                //invert matrix
+                                if (!rtengine::invertMatrix(agx_T, inv_agx_T)) {
+                                    std::cout << "Matrix is not invertible, skipping" << std::endl;
+                                }
+                            //now we have 2 Matrix to convert tmpimage with Agx
 
 #ifdef _OPENMP
         #   pragma omp parallel for schedule(dynamic,16) if (multiThread)
 #endif                                            
-                        for (int i = 0; i < bfh; ++i)
-                            for (int j = 0; j < bfw; ++j) {
-                                const float r = tmpImage->r(i, j) / range;//in interval 0.. 1
-                                const float g = tmpImage->g(i, j) / range;
-                                const float b = tmpImage->b(i, j) / range;
-                                std::array<float, 3> rgb_in{r, g, b};
-                                float rout = 0.f;
-                                float gout = 0.f;
-                                float bout = 0.f;                              
-                                Color::agx_trans(rgb_in, agx_T, rout, gout, bout);
-                                tmpImage->r(i, j) = range * rout;//in interval 0..65535
-                                tmpImage->g(i, j) = range * gout;
-                                tmpImage->b(i, j) = range * bout;                                                            
-                            }
+                            for (int i = 0; i < bfh; ++i)
+                                for (int j = 0; j < bfw; ++j) {
+                                    const float r = tmpImage->r(i, j) / range;//in interval 0.. 1
+                                    const float g = tmpImage->g(i, j) / range;
+                                    const float b = tmpImage->b(i, j) / range;
+                                    std::array<float, 3> rgb_in{r, g, b};
+                                    float rout = 0.f;
+                                    float gout = 0.f;
+                                    float bout = 0.f;                              
+                                    Color::agx_trans(rgb_in, agx_T, rout, gout, bout);
+                                    tmpImage->r(i, j) = range * rout;//in interval 0..65535
+                                    tmpImage->g(i, j) = range * gout;
+                                    tmpImage->b(i, j) = range * bout;                                                            
+                                }
                         }
- 
+
                         if(params->locallab.spots.at(sp).ghs_autobw == true  && strtype == GHTStrType::NORMAL) { //find probably White point and black point ...Must be adjusted manually in soma cases notably Black point with negatives values...                        
 #ifdef _OPENMP
         #   pragma omp parallel for reduction(min:minb) reduction(max:maxw) reduction(max:maxwred) reduction(max:maxwgreen) reduction(max:maxwblue) if (multiThread)
