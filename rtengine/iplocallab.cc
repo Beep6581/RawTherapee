@@ -18476,13 +18476,13 @@ void ImProcFunctions::Lab_Local(
                                         wpnb++;
                                     }
                                     if( strtype == GHTStrType::NORMAL ) { //strtype == GHTStrType::NORMAL only strtype == GHTStrType::NORMAL if crash
-                                        tmpImage->r(i, j) = rtengine::max(0.00001f, Ro * 65535.f);//0.00001f to avoid crash
-                                        tmpImage->g(i, j) = rtengine::max(0.00001f, Go * 65535.f);
-                                        tmpImage->b(i, j) = rtengine::max(0.00001f, Bo * 65535.f);
+                                        tmpImage->r(i, j) = rtengine::max(0.00001f, Ro * range);//0.00001f to avoid crash
+                                        tmpImage->g(i, j) = rtengine::max(0.00001f, Go * range);
+                                        tmpImage->b(i, j) = rtengine::max(0.00001f, Bo * range);
                                     }  else if( strtype == GHTStrType::INVERSE) {//to uncomment if crash
-                                        tmpImage->r(i, j) = clipR(rtengine::max(0.00001f, Ro * 65535.f));//0.0001f to avoid crash different from 'normal'
-                                        tmpImage->g(i, j) = clipR(rtengine::max(0.00001f, Go * 65535.f));//clipR to avoid crash in some cases
-                                        tmpImage->b(i, j) = clipR(rtengine::max(0.00001f, Bo * 65535.f));
+                                        tmpImage->r(i, j) = clipR(rtengine::max(0.00001f, Ro * range));//0.0001f to avoid crash different from 'normal'
+                                        tmpImage->g(i, j) = clipR(rtengine::max(0.00001f, Go * range));//clipR to avoid crash in some cases
+                                        tmpImage->b(i, j) = clipR(rtengine::max(0.00001f, Bo * range));
                                     } 
                                 }
                                 
@@ -18632,9 +18632,9 @@ void ImProcFunctions::Lab_Local(
                                         apply_sat(Ro, Go, Bo, fgh, gh);//always apply saturation
                                     }
                                    // rebuild tmpImage with limit 0.00001f to avoid crash after SE 
-                                    tmpImage->r(i, j) = rtengine::max(0.00001f, Ro * 65535.f);//0.00001f to avoid crash
-                                    tmpImage->g(i, j) = rtengine::max(0.00001f, Go * 65535.f);
-                                    tmpImage->b(i, j) = rtengine::max(0.00001f, Bo * 65535.f);
+                                    tmpImage->r(i, j) = rtengine::max(0.00001f, Ro * range);//0.00001f to avoid crash
+                                    tmpImage->g(i, j) = rtengine::max(0.00001f, Go * range);
+                                    tmpImage->b(i, j) = rtengine::max(0.00001f, Bo * range);
                                 }
                         } else if(met ==3 || met == 4 || met == 5) {//Luminance Saturation Hue HSL
 #ifdef _OPENMP
