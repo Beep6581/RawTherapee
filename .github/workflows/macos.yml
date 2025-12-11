@@ -16,7 +16,8 @@ on:
 
 jobs:
   build:
-    runs-on: macos-13
+    # See GitHub's notice on [x86_64 support](https://github.blog/changelog/2025-09-19-github-actions-macos-13-runner-image-is-closing-down/)
+    runs-on: macos-15-intel
     permissions:
       contents: write
     steps:
