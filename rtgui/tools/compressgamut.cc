@@ -59,7 +59,7 @@ const std::array<ListItem, 7> COLORSPACE_LIST_ITEMS = {{
 
 const Glib::ustring Compressgamut::TOOL_NAME = "compressgamut";
 
-Compressgamut::Compressgamut () : FoldableToolPanel(this, TOOL_NAME, M("TP_COMPRESSGAMUT_LABEL"), false, true)
+Compressgamut::Compressgamut () : FoldableToolPanel(this, TOOL_NAME, M("TP_COMPRESSGAMUT_LABEL"), true, true)
 {
     auto m = ProcEventMapper::getInstance();
     EvcgColorspace = m->newEvent(COMPR, "HISTORY_MSG_CG_COLORSPACE");//FIRST to reinit histogram
