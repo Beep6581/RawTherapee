@@ -18342,17 +18342,17 @@ void ImProcFunctions::Lab_Local(
                             if (!rtengine::invertMatrix(agx_T, inv_agx_T)) {
                                 if (settings->verbose) {
                                     std::cout << "Matrix is not invertible, skipping and use this one" << std::endl;
-                                    //If the calculations fail, we use this matrix calculated with a spreadsheet. Note that if 'agx_mat' changes, you must redo the calculations.
-                                    inv_agx_T[0][0] = 1.1974410768877;
-                                    inv_agx_T[0][1] = -0.196474626321346;
-                                    inv_agx_T[0][2] = -0.146557417106601;
-                                    inv_agx_T[1][0] = -0.144261512698001;
-                                    inv_agx_T[1][1] = 1.35409513146973;
-                                    inv_agx_T[1][2] = -0.1082844058788469;
-                                    inv_agx_T[2][0] = -0.0531795641897042;
-                                    inv_agx_T[2][1] = -0.157620505148385;
-                                    inv_agx_T[2][2] = 1.25484147589507;
                                 }
+                                //If the calculations fail, we use this matrix calculated with a spreadsheet. Note that if 'agx_mat' changes, you must redo the calculations.
+                                inv_agx_T[0][0] = 1.1974410768877;
+                                inv_agx_T[0][1] = -0.196474626321346;
+                                inv_agx_T[0][2] = -0.146557417106601;
+                                inv_agx_T[1][0] = -0.144261512698001;
+                                inv_agx_T[1][1] = 1.35409513146973;
+                                inv_agx_T[1][2] = -0.1082844058788469;
+                                inv_agx_T[2][0] = -0.0531795641897042;
+                                inv_agx_T[2][1] = -0.157620505148385;
+                                inv_agx_T[2][2] = 1.25484147589507;                               
                             }
                             //now we have 2 Matrix to convert tmpimage with Agx
 
