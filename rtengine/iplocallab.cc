@@ -18328,44 +18328,51 @@ void ImProcFunctions::Lab_Local(
 
                         Matrix inv_agx_T = {};//initialize inv_agx_T
 
-                        if(params->locallab.spots.at(sp).ghs_agx == true) {                    
+                        if(params->locallab.spots.at(sp).ghs_agx == true) {
                             //Define AgX matrix for color space transformation
-                            Matrix agx_mat = {};
-                                agx_mat[0][0] = 0.856627153315983;
-                                agx_mat[0][1] = 0.0951212405381588;
-                                agx_mat[0][2] = 0.0482516061458583;
-                                agx_mat[1][0] = 0.137318972929847;
-                                agx_mat[1][1] = 0.761241990602591;
-                                agx_mat[1][2] = 0.101439036467562;
-                                agx_mat[2][0] = 0.11189821299995;
-                                agx_mat[2][1] = 0.0767994186031903;
-                                agx_mat[2][2] = 0.811302368396859;
+                            const Matrix agx_mat = {{
+                                { 0.856627153315983, 0.0951212405381588, 0.0482516061458583 },
+                                { 0.137318972929847, 0.761241990602591, 0.101439036467562 },
+                                { 0.11189821299995, 0.0767994186031903, 0.811302368396859 }
+                            }};
 
-                                Matrix agx_T = {};
-                                Color::transpose(agx_mat, agx_T);//transpose Matrix
-                                //invert matrix
-                                if (!rtengine::invertMatrix(agx_T, inv_agx_T)) {
-                                    std::cout << "Matrix is not invertible, skipping" << std::endl;
+                            Matrix agx_T = {};
+                            Color::transpose(agx_mat, agx_T);//transpose Matrix
+                            //invert matrix
+                            if (!rtengine::invertMatrix(agx_T, inv_agx_T)) {
+                                if (settings->verbose) {
+                                    std::cout << "Matrix is not invertible, skipping and use this one" << std::endl;
+                                    //If the calculations fail, we use this matrix calculated with a spreadsheet. Note that if 'agx_mat' changes, you must redo the calculations.
+                                    inv_agx_T[0][0] = 1.1974410768877;
+                                    inv_agx_T[0][1] = -0.196474626321346;
+                                    inv_agx_T[0][2] = -0.146557417106601;
+                                    inv_agx_T[1][0] = -0.144261512698001;
+                                    inv_agx_T[1][1] = 1.35409513146973;
+                                    inv_agx_T[1][2] = -0.1082844058788469;
+                                    inv_agx_T[2][0] = -0.0531795641897042;
+                                    inv_agx_T[2][1] = -0.157620505148385;
+                                    inv_agx_T[2][2] = 1.25484147589507;
                                 }
+                            }
                             //now we have 2 Matrix to convert tmpimage with Agx
 
 #ifdef _OPENMP
         #   pragma omp parallel for schedule(dynamic,16) if (multiThread)
-#endif                                            
+#endif
                             for (int i = 0; i < bfh; ++i)
                                 for (int j = 0; j < bfw; ++j) {
-                                    const float r = tmpImage->r(i, j) / range;//in interval 0.. 1
-                                    const float g = tmpImage->g(i, j) / range;
-                                    const float b = tmpImage->b(i, j) / range;
+                                    const float r = tmpImage->r(i, j);
+                                    const float g = tmpImage->g(i, j);
+                                    const float b = tmpImage->b(i, j);
                                     std::array<float, 3> rgb_in{r, g, b};
                                     float rout = 0.f;
                                     float gout = 0.f;
-                                    float bout = 0.f;                              
+                                    float bout = 0.f;                             
                                     Color::agx_trans(rgb_in, agx_T, rout, gout, bout);
-                                    tmpImage->r(i, j) = range * rout;//in interval 0..65535
-                                    tmpImage->g(i, j) = range * gout;
-                                    tmpImage->b(i, j) = range * bout;                                                            
-                                }
+                                    tmpImage->r(i, j) = rtengine::max(0.00001f, rout);//avoid negatives values. Normally this should never happen because the coefficients of Agx_T are all positive... unless the matrix changes
+                                    tmpImage->g(i, j) = rtengine::max(0.00001f, gout);//these potentially negative values, related to calculations and not to the gamut, are not accepted by the rgblab or labrgb, workingtrc functions, etc,
+                                    tmpImage->b(i, j) = rtengine::max(0.00001f, bout);//but after numerous checks, this has no impact on the results...except to prevent a crash.                                                  
+                                }                               
                         }
 
                         if(params->locallab.spots.at(sp).ghs_autobw == true  && strtype == GHTStrType::NORMAL) { //find probably White point and black point ...Must be adjusted manually in soma cases notably Black point with negatives values...                        
@@ -18722,20 +18729,20 @@ void ImProcFunctions::Lab_Local(
 #ifdef _OPENMP
         #   pragma omp parallel for schedule(dynamic,16) if (multiThread)
 #endif                                            
-                        for (int i = 0; i < bfh; ++i)
-                            for (int j = 0; j < bfw; ++j) {
-                                const float r = tmpImage->r(i, j) / range;//in interval 0.. 1
-                                const float g = tmpImage->g(i, j) / range;
-                                const float b = tmpImage->b(i, j) / range;
-                                std::array<float, 3> rgb_in{r, g, b};
-                                float rout = 0.f;
-                                float gout = 0.f;
-                                float bout = 0.f;                              
-                                Color::agx_trans(rgb_in, inv_agx_T, rout, gout, bout);
-                                tmpImage->r(i, j) = range * rout;//in interval 0..65535
-                                tmpImage->g(i, j) = range * gout;
-                                tmpImage->b(i, j) = range * bout;                                                             
-                            }
+                            for (int i = 0; i < bfh; ++i)
+                                for (int j = 0; j < bfw; ++j) {
+                                    const float r = tmpImage->r(i, j);
+                                    const float g = tmpImage->g(i, j);
+                                    const float b = tmpImage->b(i, j);
+                                    std::array<float, 3> rgb_in{r, g, b};
+                                    float rout = 0.f;
+                                    float gout = 0.f;
+                                    float bout = 0.f;                             
+                                    Color::agx_trans(rgb_in, inv_agx_T, rout, gout, bout);
+                                    tmpImage->r(i, j) = rtengine::max(0.00001f, rout);//avoid negatives values which are mathematically possible due to the values 
+                                    tmpImage->g(i, j) = rtengine::max(0.00001f, gout);//​​of the inverse matrix and the possible 'overflows' of the GHS calculations if the user uses very strong settings
+                                    tmpImage->b(i, j) = rtengine::max(0.00001f, bout);                                                          
+                                }
                         }
  
                         if(smoth && D > 0.002f) {//to preserve settings WP and BP
