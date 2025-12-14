@@ -520,6 +520,7 @@ LocallabParams::LocallabSpot::LocallabSpot() :
     complexshadhigh(0),
     shMethod("ghs"),
     ghsMethod("rgb"),
+    ghsMatmet("agx"),
     ghsMode("ghs"),
     ghs_D(0.001),
     ghs_slope(9.03296),
@@ -2265,6 +2266,7 @@ bool LocallabParams::LocallabSpot::operator ==(const LocallabSpot& other) const
         && complexshadhigh == other.complexshadhigh
         && shMethod == other.shMethod
         && ghsMethod == other.ghsMethod
+        && ghsMatmet == other.ghsMatmet
         && ghsMode == other.ghsMode
         && ghs_D == other.ghs_D
         && ghs_slope == other.ghs_slope
@@ -3265,6 +3267,7 @@ void LoadUtil::shadowHighlight()
     assignFromKeyfile(keyFile, "Locallab", "Complexshadhigh_" + index_str, spot.complexshadhigh, spotEdited.complexshadhigh);
     assignFromKeyfile(keyFile, "Locallab", "ShMethod_" + index_str, spot.shMethod, spotEdited.shMethod);
     assignFromKeyfile(keyFile, "Locallab", "GhsMethod_" + index_str, spot.ghsMethod, spotEdited.ghsMethod);
+    assignFromKeyfile(keyFile, "Locallab", "GhsMatmet_" + index_str, spot.ghsMatmet, spotEdited.ghsMatmet);
     assignFromKeyfile(keyFile, "Locallab", "GhsMode_" + index_str, spot.ghsMode, spotEdited.ghsMode);
     assignFromKeyfile(keyFile, "Locallab", "Ghs_D_" + index_str, spot.ghs_D, spotEdited.ghs_D);
     assignFromKeyfile(keyFile, "Locallab", "Ghs_slope_" + index_str, spot.ghs_slope, spotEdited.ghs_slope);
@@ -4431,6 +4434,7 @@ void SaveUtil::shadowHighlight()
         saveToKeyfile(!pedited || spot_edited->complexshadhigh, "Locallab", "Complexshadhigh_" + index_str, spot.complexshadhigh, keyFile);
         saveToKeyfile(!pedited || spot_edited->shMethod, "Locallab", "ShMethod_" + index_str, spot.shMethod, keyFile);
         saveToKeyfile(!pedited || spot_edited->ghsMethod, "Locallab", "GhsMethod_" + index_str, spot.ghsMethod, keyFile);
+        saveToKeyfile(!pedited || spot_edited->ghsMatmet, "Locallab", "GhsMatmet_" + index_str, spot.ghsMatmet, keyFile);
         saveToKeyfile(!pedited || spot_edited->ghsMode, "Locallab", "GhsMode_" + index_str, spot.ghsMode, keyFile);
         saveToKeyfile(!pedited || spot_edited->ghs_D, "Locallab", "Ghs_D_" + index_str, spot.ghs_D, keyFile);
         saveToKeyfile(!pedited || spot_edited->ghs_slope, "Locallab", "Ghs_slope_" + index_str, spot.ghs_slope, keyFile);

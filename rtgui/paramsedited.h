@@ -606,6 +606,7 @@ public:
         bool complexshadhigh;
         bool shMethod;
         bool ghsMethod;
+        bool ghsMatmet;
         bool ghsMode;
         bool ghs_D;
         bool ghs_slope;

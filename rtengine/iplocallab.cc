@@ -18327,15 +18327,31 @@ void ImProcFunctions::Lab_Local(
                         using Matrix = std::array<Triple, 3>;
 
                         Matrix inv_agx_T = {};//initialize inv_agx_T
-
-                        if(params->locallab.spots.at(sp).ghs_agx == true) {
+                        Matrix agx_mat = {};//initialize inv_agx_T
+                        //if(params->locallab.spots.at(sp).ghs_agx == true) {
+                        if(params->locallab.spots.at(sp).ghsMatmet != "none") {
+                            if(params-> locallab.spots.at(sp).ghsMatmet == "agx") {//for Rec2020 with chromatic adaptation D50 take in Svoboda, but where it's come from...
+                                //it is very curious to apply Matrix in RGB mode...but why not ? 
                             //Define AgX matrix for color space transformation
-                            const Matrix agx_mat = {{
-                                { 0.856627153315983, 0.0951212405381588, 0.0482516061458583 },
-                                { 0.137318972929847, 0.761241990602591, 0.101439036467562 },
-                                { 0.11189821299995, 0.0767994186031903, 0.811302368396859 }
-                            }};
-
+                                agx_mat = {{
+                                    { 0.856627153315983, 0.0951212405381588, 0.0482516061458583 },
+                                    { 0.137318972929847, 0.761241990602591, 0.101439036467562 },
+                                    { 0.11189821299995, 0.0767994186031903, 0.811302368396859 }
+                                }};
+                            } else if(params->locallab.spots.at(sp).ghsMatmet == "JZ") { //original LMS Jzazbz matrix                       
+                                agx_mat = {{
+                                    { 0.41478972, 0.579999, 0.0146480 },
+                                    { -0.2015100, 1.120649, 0.0531008 },
+                                    { -0.0166008, 0.264800, 0.6684799 }
+                                }};
+                            } else if(params->locallab.spots.at(sp).ghsMatmet == "cat16") { //original LMS Cat16 matrix                         
+                                agx_mat = {{
+                                    { 0.44113111, 0.46084198975, 0.090051211104 },
+                                    { 0.176890718, 0.724815611, 0.06249008 },
+                                    { 0.061414342, 0.196120268, 0.5430087122 }
+                                }};                                                             
+                            }
+                                                 
                             Matrix agx_T = {};
                             Color::transpose(agx_mat, agx_T);//transpose Matrix
                             //invert matrix
@@ -18725,7 +18741,9 @@ void ImProcFunctions::Lab_Local(
                             lab2rgb(*labtemp, *tmpImage, params->icm.workingProfile);
                         }
                         
-                        if(params->locallab.spots.at(sp).ghs_agx == true) {
+                      //  if(params->locallab.spots.at(sp).ghs_agx == true) {
+                        if(params->locallab.spots.at(sp).ghsMatmet != "none") {
+
 #ifdef _OPENMP
         #   pragma omp parallel for schedule(dynamic,16) if (multiThread)
 #endif                                            

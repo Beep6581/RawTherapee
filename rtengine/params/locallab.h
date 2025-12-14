@@ -207,6 +207,7 @@ struct LocallabParams {
         int complexshadhigh;
         Glib::ustring shMethod; // std, tone
         Glib::ustring ghsMethod; // rgb, lum, sat
+        Glib::ustring ghsMatmet;      
         Glib::ustring ghsMode; // lin, ghs
         double ghs_D;
         double ghs_slope;
