@@ -1,5 +1,6 @@
 set(PROCPARAM_SRCS
     procparams.cc
+    params/locallab.cc
     params/serdes.cc
 )
 
@@ -127,22 +128,18 @@ endif()
 if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU" AND CMAKE_CXX_COMPILER_VERSION VERSION_GREATER_EQUAL "12.0")
     # procparams.cc takes a long time to compile with optimizations starting
     # with GCC 12.1 due to PTA (see issue #6548)
-    foreach(SRC_FILE PROCPARAM_SRCS)
-        message("Processing file: ${SRC_FILE}")
+    get_source_file_property(PROCPARAMS_COMPILE_OPTIONS procparams.cc COMPILE_OPTIONS)
+    if(PROCPARAMS_COMPILE_OPTIONS STREQUAL "NOTFOUND")
+        set(PROCPARAMS_COMPILE_OPTIONS "")
+    else()
+        set(PROCPARAMS_COMPILE_OPTIONS "${PROCPARAMS_COMPILE_OPTIONS};")
+    endif()
+    set(PROCPARAMS_COMPILE_OPTIONS "${PROCPARAMS_COMPILE_OPTIONS}-fno-tree-pta")
 
-        get_source_file_property(PROCPARAMS_COMPILE_OPTIONS ${SRC_FILE} COMPILE_OPTIONS)
-        if(PROCPARAMS_COMPILE_OPTIONS STREQUAL "NOTFOUND")
-            set(PROCPARAMS_COMPILE_OPTIONS "")
-        else()
-            set(PROCPARAMS_COMPILE_OPTIONS "${PROCPARAMS_COMPILE_OPTIONS};")
-        endif()
-        set(PROCPARAMS_COMPILE_OPTIONS "${PROCPARAMS_COMPILE_OPTIONS}-fno-tree-pta")
-
-        set_source_files_properties(
-            ${SRC_FILE} PROPERTIES
-            COMPILE_OPTIONS ${PROCPARAMS_COMPILE_OPTIONS}
-        )
-    endforeach()
+    set_source_files_properties(
+        procparams.cc PROPERTIES
+        COMPILE_OPTIONS ${PROCPARAMS_COMPILE_OPTIONS}
+    )
 endif()
 
 if(NOT WITH_SYSTEM_KLT)
