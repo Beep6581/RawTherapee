@@ -18360,15 +18360,37 @@ void ImProcFunctions::Lab_Local(
                                     std::cout << "Matrix is not invertible, skipping and use this one" << std::endl;
                                 }
                                 //If the calculations fail, we use this matrix calculated with a spreadsheet. Note that if 'agx_mat' changes, you must redo the calculations.
-                                inv_agx_T[0][0] = 1.1974410768877;
-                                inv_agx_T[0][1] = -0.196474626321346;
-                                inv_agx_T[0][2] = -0.146557417106601;
-                                inv_agx_T[1][0] = -0.144261512698001;
-                                inv_agx_T[1][1] = 1.35409513146973;
-                                inv_agx_T[1][2] = -0.1082844058788469;
-                                inv_agx_T[2][0] = -0.0531795641897042;
-                                inv_agx_T[2][1] = -0.157620505148385;
-                                inv_agx_T[2][2] = 1.25484147589507;                               
+                                if(params-> locallab.spots.at(sp).ghsMatmet == "agx") {
+                                    inv_agx_T[0][0] = 1.1974410768877;
+                                    inv_agx_T[0][1] = -0.196474626321346;
+                                    inv_agx_T[0][2] = -0.146557417106601;
+                                    inv_agx_T[1][0] = -0.144261512698001;
+                                    inv_agx_T[1][1] = 1.35409513146973;
+                                    inv_agx_T[1][2] = -0.1082844058788469;
+                                    inv_agx_T[2][0] = -0.0531795641897042;
+                                    inv_agx_T[2][1] = -0.157620505148385;
+                                    inv_agx_T[2][2] = 1.25484147589507;                                          
+                                } else if(params->locallab.spots.at(sp).ghsMatmet == "JZ") {
+                                    inv_agx_T[0][0] = 1.92488743175646;
+                                    inv_agx_T[0][1] = 0.349838855125251;
+                                    inv_agx_T[0][2] = -0.097770847478916;
+                                    inv_agx_T[1][0] = -1.00252032146704;
+                                    inv_agx_T[1][1] = 0.72483850737164;
+                                    inv_agx_T[1][2] = -0.312021163395669;
+                                    inv_agx_T[2][0] = 0.0265884071012174;
+                                    inv_agx_T[2][1] = -0.0573856961296308;
+                                    inv_agx_T[2][2] = 1.51932335013174;                                    
+                                } else if(params->locallab.spots.at(sp).ghsMatmet == "cat16") {
+                                    inv_agx_T[0][0] = 3.05467729554555;
+                                    inv_agx_T[0][1] = -0.738708117076132;
+                                    inv_agx_T[0][2] = -0.0786826459200281;
+                                    inv_agx_T[1][0] = -1.86312660313314;
+                                    inv_agx_T[1][1] = 1.87455986414727;
+                                    inv_agx_T[1][2] = -0.46632122626262804;
+                                    inv_agx_T[2][0] = -0.29216927086322;
+                                    inv_agx_T[2][1] = -0.0932210370533556;
+                                    inv_agx_T[2][2] = 1.90830440656202;                                    
+                                }
                             }
                             //now we have 2 Matrix to convert tmpimage with Agx
 
