@@ -4317,6 +4317,7 @@ LocallabShadow::LocallabShadow():
     gridFrameghs(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_GHS_GHSDIAG")))),//
     labgridghs(Gtk::manage(new LabGrid(EvlocallabGridciexy, M("TP_LOCALLAB_GHS_GHSDIAG"), true, false, true, false))),
     ghsFrame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_GHSFRA")))),
+    matHBox(Gtk::manage(new Gtk::Box())),    
     ghs_agx(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_GHS_AGX")))),
     ghsMatmet(Gtk::manage(new MyComboBoxText())),     
     ghs_D(Gtk::manage(new Adjuster(M("TP_LOCALLAB_GHS_D"), 0., 20.0, 0.001, 0.001))),
@@ -4607,11 +4608,16 @@ LocallabShadow::LocallabShadow():
     ghsBox2->pack_start(*ghs_inv);
 
     pack_start(*ghsBox2);
-    
-    
+    matHBox->set_spacing(2);    
+
+    Gtk::Label* matLabel = Gtk::manage(new Gtk::Label(M("TP_LOCALLAB_GHSMAT") + ":"));
+    matHBox->pack_start(*matLabel, Gtk::PACK_SHRINK);
+    matHBox->pack_start(*ghsMatmet);
+
     ghsBox->pack_start(*gridFrameghs);
     //ghsBox->pack_start(*ghs_agx);
-    ghsBox->pack_start(*ghsMatmet);    
+//    ghsBox->pack_start(*ghsMatmet);
+    ghsBox->pack_start(*matHBox);    
     ghsBox->pack_start(*ghs_D);
     Lab_Frame->set_label_align(0.025, 0.5);
     ToolParamBlock* const LabBox = Gtk::manage(new ToolParamBlock());

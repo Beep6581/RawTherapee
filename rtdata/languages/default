@@ -1597,7 +1597,7 @@ HISTORY_MSG_LOCAL_FEATHERVIB;Local - Vib Gradient feather
 HISTORY_MSG_LOCAL_FEATHERWAV;Local - Wav Gradient feather
 HISTORY_MSG_LOCAL_GAMUTMUNSEL;Local - SC - Avoid Color Shift
 HISTORY_MSG_LOCAL_GHSMETHOD;Local - GHS - Method
-HISTORY_MSG_LOCAL_GHS_AGX;Local - GHS - AgX Matrix
+HISTORY_MSG_LOCAL_GHS_AGX;Local - GHS - Matrix
 HISTORY_MSG_LOCAL_GHS_AUTOBW;Local - GHS - Auto Black point and White point
 HISTORY_MSG_LOCAL_GHS_B;Local - GHS - Local intensity
 HISTORY_MSG_LOCAL_GHS_BLP;Local - GHS - Black point
@@ -3348,22 +3348,23 @@ TP_LOCALLAB_GHSHUE;Hue (HSL)
 TP_LOCALLAB_GHSLAB;Lightness & chromaticity (Lab)
 TP_LOCALLAB_GHSLABFRA;Lab settings;
 TP_LOCALLAB_GHSLUM;Luminance (HSL)
+TP_LOCALLAB_GHSMAT;Matrix
 TP_LOCALLAB_GHSMATO;None
-TP_LOCALLAB_GHSMAT1;AgX Matrix
-TP_LOCALLAB_GHSMAT2;Jz Matrix
-TP_LOCALLAB_GHSMAT3;Cat16 Matrix
+TP_LOCALLAB_GHSMAT1;AgX
+TP_LOCALLAB_GHSMAT2;JzAzBz
+TP_LOCALLAB_GHSMAT3;Cat16
 TP_LOCALLAB_GHSRGBLUM;RGB Luminance
 TP_LOCALLAB_GHSRGBSTD;RGB Standard
 TP_LOCALLAB_GHSSAT;Saturation (HSL)
 TP_LOCALLAB_GHS_AGX;AgX Matrix
 TP_LOCALLAB_GHS_AGX_TOOLTIP;Performs the entire GHS processing, including AgX conversion.\n * To allow AgX to be enabled or disabled, the 'Stretch factor (D)' must be between 0.001 and 0.002 and 'Auto Black point and White point' disabled.\n * You need to re-enable 'Auto Black point and White point' to recalculate the values ​​of 'BP linear', 'WP linear' and 'Symmetry point (SP)'.
-TP_LOCALLAB_GHS_AGX_MAT_TOOLTIP;Performs the entire GHS processing, including Matrix conversion either AgX or Jz or Cat16.\n * To allow this matrix to be enabled or disabled, the 'Stretch factor (D)' must be between 0.001 and 0.002 and 'Auto Black point and White point' disabled.\n * You need to re-enable 'Auto Black point and White point' to recalculate the values ​​of 'BP linear', 'WP linear' and 'Symmetry point (SP)'.
+TP_LOCALLAB_GHS_AGX_MAT_TOOLTIP;Performs the entire GHS processing, including Matrix conversion either AgX or JzAzBz or Cat16.\n * To allow this matrix to be enabled or disabled, the 'Stretch factor (D)' must be between 0.001 and 0.002 and 'Auto Black point and White point' disabled.\n * You need to re-enable 'Auto Black point and White point' to recalculate the values ​​of 'BP linear', 'WP linear' and 'Symmetry point (SP)'.
 TP_LOCALLAB_GHS_AUTOBW;Auto Black point & White point
 TP_LOCALLAB_GHS_B;Local intensity (b)
 TP_LOCALLAB_GHS_BLACKPOINT_FRAME;Black point/White point
 TP_LOCALLAB_GHS_BLP;Black point (BP linear)
 TP_LOCALLAB_GHS_BLP_TOOLTIP;Sets the black point for a linear image stretch.\n * In normal GHS mode, negative slider values lift the shadows linearly to avoid excessive noise and facilitate the GHS calculations.\n * For positive slider values, the histogram is shifted to the left. For raw images, you can also use the more precise Raw Black Points > Dehaze in the Raw tab.\n * Increases in contrast due to the linear stretch will be evenly distributed over the image.\n\n * You can adjust a linear black point offset to either:\n - account for noise in the deep shadows.\n - adjust the histogram.\n\n * Set 'Stretch factor (D)' to 0.001 to adjust the sliders.\n * The label 'Clipped pixel count Shadows:x Highlights:y' shows the number of pixels that would be clipped without adjusting the two sliders.\n * The label ‘Pixel values - Darkest:w Lightest:z’ shows you the minimum and maximum values in the range [0, 1].\n * The label 'RGB values - R:r G:g B:b' shows you the maximum values for each channel.\n * The label 'Dynamic Range GHS (Ev)' shows you the Dynamic Range, which uses the value of the highest and the lowest of the 3 RGB channels, instead of the luminance.\n\n * In Inverse GHS mode the behavior is reversed and there are possible interactions with the White point. In the majority of cases, especially when using a second GHS Spot, the adjustments will be small, or even unnecessary.\n\nTo activate the Inverse GHS checkbox, it may be necessary to move the 'Stretch factor' slider from 0.001 to 0.002. This will work only if the checkbox 'Auto Black point & White point' is disabled. 
-TP_LOCALLAB_GHS_BLPHLPAUTO_TOOLTIP;Automatically adjust the 'Black point' and 'White point' values.\n Not available in Inverse GHS mode and must be disabled to allow Inverse GHS to work. It must be disabled (and re-enabled) in order to change 'Matrix conversion (AgX, Jz, Cat16)'.\n Generally, the automatic settings will be satisfactory.\n If necessary, you can subsequently adjust the two points and in particular the black point. Using negative slider values may help when the shadows are particularly blocked.
+TP_LOCALLAB_GHS_BLPHLPAUTO_TOOLTIP;Automatically adjust the 'Black point' and 'White point' values.\n Not available in Inverse GHS mode and must be disabled to allow Inverse GHS to work. It must be disabled (and re-enabled) in order to change 'Matrix conversion (AgX, JzAzBz, Cat16)'.\n Generally, the automatic settings will be satisfactory.\n If necessary, you can subsequently adjust the two points and in particular the black point. Using negative slider values may help when the shadows are particularly blocked.
 TP_LOCALLAB_GHS_BPFRAME_TOOLTIP;Sets the 'Black point (BP linear)', 'White point (WP linear)' for a linear stretch.\n\n * 'Black Point (BP linear)' and 'White Point (WP linear)' settings are only available if the 'Stretch factor (D)' is between 0.001 and 0.002. This is to avoid altering the histogram.\n\n * When the stretch factor is 0.002 or less, all stretch settings except for 'Black point' and 'White point' will have no effect.\n\n * 'Black point (BP linear)' and 'White point (WP linear)' settings are sensitive to the general settings upstream of GHS i.e. highlight reconstruction, white balance and RAW processes.\n\n * To have relevant 'Black Point (BP linear)' and 'White Point (WP linear)' settings, the entire image must be analyzed. It is recommended to use 'Fit whole image to screen - Shortcut Alt-f'.\n\n * To allow Inverse GHS or Matrix conversion (AgX, Jz, Cat16)  to work the 'Stretch factor (D)' must be between 0.001 and 0.002 and the checkbox 'Auto Black point & White point' disabled. 
 TP_LOCALLAB_GHS_B_TOOLTIP;This parameter controls how tightly focused the stretch is around the Symmetry point (SP) by changing the form of the transform itself:\n * For concentrated stretches (such as initial stretches on linear images) a large 'b' factor should be employed to focus a stretch within a histogram peak while de-focusing the stretch away from the histogram peak.\n * For adjustment of non-linear images, lower 'b' parameters should be employed to distribute contrast and brightness more evenly.\n * Large positive values of 'b' can be thought of as a histogram widener, i.e. spreading the histogram wider about the focus point, SP.\n * By contrast, lower values of 'b' tend to shift the histogram to a brighter or dimmer position without affecting its width too greatly.\n * As a general rule, the level of 'b' employed will decrease as a stretch sequence nears completion, although larger 'b' values can still be employed for precise placement of additional contrast.
 TP_LOCALLAB_GHS_CHRO;Chromaticity Lab factor (C)

@@ -609,6 +609,8 @@ private:
     LabGrid* const labgridghs;
    
     Gtk::Frame* const ghsFrame;
+    Gtk::Box* const matHBox;
+   
     Gtk::CheckButton* const ghs_agx;
     MyComboBoxText* const ghsMatmet;
     
