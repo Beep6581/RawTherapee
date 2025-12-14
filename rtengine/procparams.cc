@@ -17,19 +17,22 @@
  *  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
  */
 
+#include "procparams.h"
+
 #include <memory>
 
 #include <locale.h>
 
 #include <glib/gstdio.h>
 #include <glibmm/fileutils.h>
-#include <glibmm/miscutils.h>
 #include <glibmm/keyfile.h>
+#include <glibmm/miscutils.h>
+
+#include "params/serdes.h"
 
 #include "color.h"
 #include "colortemp.h"
 #include "curves.h"
-#include "procparams.h"
 #include "utils.h"
 
 #include "rtgui/multilangmgr.h"
@@ -42,180 +45,6 @@ using namespace std;
 
 namespace
 {
-
-Glib::ustring expandRelativePath(const Glib::ustring &procparams_fname, const Glib::ustring &prefix, Glib::ustring embedded_fname)
-{
-    if (embedded_fname.empty() || !Glib::path_is_absolute(procparams_fname)) {
-        return embedded_fname;
-    }
-
-    if (!prefix.empty()) {
-        if (embedded_fname.length() < prefix.length() || embedded_fname.substr(0, prefix.length()) != prefix) {
-            return embedded_fname;
-        }
-
-        embedded_fname = embedded_fname.substr(prefix.length());
-    }
-
-    if (Glib::path_is_absolute(embedded_fname)) {
-        return prefix + embedded_fname;
-    }
-
-    Glib::ustring absPath = prefix + Glib::path_get_dirname(procparams_fname) + G_DIR_SEPARATOR_S + embedded_fname;
-    return absPath;
-}
-
-Glib::ustring expandRelativePath2(const Glib::ustring &procparams_fname, const Glib::ustring &procparams_fname2, const Glib::ustring &prefix, Glib::ustring embedded_fname)
-{
-	#if defined (_WIN32)
-	// if this is Windows, replace any "/" in the filename with "\\"
-	size_t pos = embedded_fname.find("/");
-	while (pos != string::npos) {
-		embedded_fname.replace(pos, 1, "\\");
-		pos = embedded_fname.find("/", pos);
-	}
-	#endif
-	#if !defined (_WIN32)
-	// if this is not Windows, replace any "\\" in the filename with "/"
-	size_t pos = embedded_fname.find("\\");
-	while (pos != string::npos) {
-		embedded_fname.replace(pos, 1, "/");
-		pos = embedded_fname.find("\\", pos);
-	}
-	#endif
-
-	// if embedded_fname is not already an absolute path,
-	// try to convert it using procparams_fname (the directory of the raw file) as prefix
-	Glib::ustring rPath = expandRelativePath(procparams_fname, prefix, embedded_fname);
-	if (rPath.length() >= prefix.length()
-		&& !Glib::file_test(rPath.substr(prefix.length()), Glib::FILE_TEST_IS_REGULAR)
-		&& !procparams_fname2.empty()
-		&& Glib::path_is_absolute(procparams_fname2)) {
-		// embedded_fname is not a valid path;
-		// try with procparams_fname2 (the path defined in Preferences) as a prefix 
-		rPath = expandRelativePath(procparams_fname2 + G_DIR_SEPARATOR_S, prefix, embedded_fname);
-	}
-	return(rPath);
-}
-
-
-Glib::ustring relativePathIfInside(const Glib::ustring &procparams_fname, bool fnameAbsolute, Glib::ustring embedded_fname)
-{
-    if (fnameAbsolute || embedded_fname.empty() || !Glib::path_is_absolute(procparams_fname)) {
-        return embedded_fname;
-    }
-
-    Glib::ustring prefix;
-
-    if (embedded_fname.length() > 5 && embedded_fname.substr(0, 5) == "file:") {
-        embedded_fname = embedded_fname.substr(5);
-        prefix = "file:";
-    }
-
-    if (!Glib::path_is_absolute(embedded_fname)) {
-        return prefix + embedded_fname;
-    }
-
-    Glib::ustring dir1 = Glib::path_get_dirname(procparams_fname) + G_DIR_SEPARATOR_S;
-    Glib::ustring dir2 = Glib::path_get_dirname(embedded_fname) + G_DIR_SEPARATOR_S;
-
-    if (dir2.substr(0, dir1.length()) != dir1) {
-        // it's in a different directory, ie not inside
-        return prefix + embedded_fname;
-    }
-
-    return prefix + embedded_fname.substr(dir1.length());
-}
-
-Glib::ustring relativePathIfInside2(const Glib::ustring &procparams_fname, const Glib::ustring &procparams_fname2, bool fnameAbsolute, Glib::ustring embedded_fname)
-{
-	// try to convert embedded_fname to a path relative to procparams_fname
-	// (the directory of the raw file)
-	// (note: fnameAbsolute seems to be always true, so this will never return a relative path)
-	Glib::ustring rPath = relativePathIfInside(procparams_fname, fnameAbsolute, embedded_fname);
-	if ((Glib::path_is_absolute(rPath)
-		 ||	(rPath.length() >= 5 && rPath.substr(0, 5) == "file:" && Glib::path_is_absolute(rPath.substr(5))))
-		&& !procparams_fname2.empty()
-		&& Glib::path_is_absolute(procparams_fname2)) {
-		// if path is not relative to the directory of the raw file,
-		// try to convert embedded_fname to a path relative to procparams_fname2
-		// (the path defined in Preferences)
-		rPath = relativePathIfInside(procparams_fname2 + G_DIR_SEPARATOR_S, false, embedded_fname);
-	}
-	return(rPath);		
-}
-
-
-void getFromKeyfile(
-    const Glib::KeyFile& keyfile,
-    const Glib::ustring& group_name,
-    const Glib::ustring& key,
-    int& value
-)
-{
-    value = keyfile.get_integer(group_name, key);
-}
-
-void getFromKeyfile(
-    const Glib::KeyFile& keyfile,
-    const Glib::ustring& group_name,
-    const Glib::ustring& key,
-    double& value
-)
-{
-    value = keyfile.get_double(group_name, key);
-}
-
-void getFromKeyfile(
-    const Glib::KeyFile& keyfile,
-    const Glib::ustring& group_name,
-    const Glib::ustring& key,
-    float& value
-)
-{
-    value = static_cast<float>(keyfile.get_double(group_name, key));
-}
-
-void getFromKeyfile(
-    const Glib::KeyFile& keyfile,
-    const Glib::ustring& group_name,
-    const Glib::ustring& key,
-    bool& value
-)
-{
-    value = keyfile.get_boolean(group_name, key);
-}
-
-void getFromKeyfile(
-    const Glib::KeyFile& keyfile,
-    const Glib::ustring& group_name,
-    const Glib::ustring& key,
-    Glib::ustring& value
-)
-{
-    value = keyfile.get_string(group_name, key);
-}
-
-void getFromKeyfile(
-    const Glib::KeyFile& keyfile,
-    const Glib::ustring& group_name,
-    const Glib::ustring& key,
-    std::vector<int>& value
-)
-{
-    value = keyfile.get_integer_list(group_name, key);
-}
-
-void getFromKeyfile(
-    const Glib::KeyFile& keyfile,
-    const Glib::ustring& group_name,
-    const Glib::ustring& key,
-    std::vector<double>& value
-)
-{
-    value = keyfile.get_double_list(group_name, key);
-    rtengine::sanitizeCurve(value);
-}
 
 void getFromKeyfile(
     const Glib::KeyFile& keyfile,
@@ -232,148 +61,20 @@ void getFromKeyfile(
     }
 }
 
-void getFromKeyfile(
+bool assignRgbFromKeyfile(
     const Glib::KeyFile& keyfile,
     const Glib::ustring& group_name,
     const Glib::ustring& key,
-    std::vector<std::string>& value
-)
-{
-    auto tmpval = keyfile.get_string_list(group_name, key);
-    value.assign(tmpval.begin(), tmpval.end());
-}
-
-template<typename T>
-bool assignFromKeyfile(
-    const Glib::KeyFile& keyfile,
-    const Glib::ustring& group_name,
-    const Glib::ustring& key,
-    T& value,
+    rtengine::procparams::FilmNegativeParams::RGB& value,
     bool& params_edited_value
 )
 {
     if (keyfile.has_key(group_name, key)) {
         getFromKeyfile(keyfile, group_name, key, value);
-
         params_edited_value = true;
-
         return true;
     }
-
     return false;
-}
-
-template<typename T, typename = typename std::enable_if<std::is_enum<T>::value>::type>
-bool assignFromKeyfile(
-    const Glib::KeyFile& keyfile,
-    const Glib::ustring& group_name,
-    const Glib::ustring& key,
-    const std::map<std::string, T>& mapping,
-    T& value,
-    bool& params_edited_value
-)
-{
-    if (keyfile.has_key(group_name, key)) {
-        Glib::ustring v;
-        getFromKeyfile(keyfile, group_name, key, v);
-
-        const typename std::map<std::string, T>::const_iterator m = mapping.find(v);
-
-        if (m != mapping.end()) {
-            value = m->second;
-        } else {
-            return false;
-        }
-
-        params_edited_value = true;
-
-        return true;
-    }
-
-    return false;
-}
-
-void putToKeyfile(
-    const Glib::ustring& group_name,
-    const Glib::ustring& key,
-    int value,
-    Glib::KeyFile& keyfile
-)
-{
-    keyfile.set_integer(group_name, key, value);
-}
-
-void putToKeyfile(
-    const Glib::ustring& group_name,
-    const Glib::ustring& key,
-    float value,
-    Glib::KeyFile& keyfile
-)
-{
-    keyfile.set_double(group_name, key, static_cast<double>(value));
-}
-
-void putToKeyfile(
-    const Glib::ustring& group_name,
-    const Glib::ustring& key,
-    double value,
-    Glib::KeyFile& keyfile
-)
-{
-    keyfile.set_double(group_name, key, value);
-}
-
-void putToKeyfile(
-    const Glib::ustring& group_name,
-    const Glib::ustring& key,
-    bool value,
-    Glib::KeyFile& keyfile
-)
-{
-    keyfile.set_boolean(group_name, key, value);
-}
-
-void putToKeyfile(
-    const Glib::ustring& group_name,
-    const Glib::ustring& key,
-    const Glib::ustring& value,
-    Glib::KeyFile& keyfile
-)
-{
-    keyfile.set_string(group_name, key, value);
-}
-
-void putToKeyfile(
-    const Glib::ustring& group_name,
-    const Glib::ustring& key,
-    const std::vector<int>& value,
-    Glib::KeyFile& keyfile
-)
-{
-    const Glib::ArrayHandle<int> list = value;
-    keyfile.set_integer_list(group_name, key, list);
-}
-
-void putToKeyfile(
-    const Glib::ustring& group_name,
-    const Glib::ustring& key,
-    const std::vector<double>& value,
-    Glib::KeyFile& keyfile
-)
-{
-    const Glib::ArrayHandle<double> list = value;
-    keyfile.set_double_list(group_name, key, list);
-}
-
-void putToKeyfile(
-    const Glib::ustring& group_name,
-    const Glib::ustring& key,
-    const std::vector<std::string>& value,
-    Glib::KeyFile& keyfile
-)
-{
-    const Glib::ArrayHandle<Glib::ustring> list = value;
-    keyfile.set_string_list(group_name, key, list);
 }
 
 void putToKeyfile(
@@ -387,13 +88,11 @@ void putToKeyfile(
     keyfile.set_double_list(group_name, key, vec);
 }
 
-
-template<typename T>
-bool saveToKeyfile(
+bool saveRgbToKeyfile(
     bool save,
     const Glib::ustring& group_name,
     const Glib::ustring& key,
-    const T& value,
+    const rtengine::procparams::FilmNegativeParams::RGB& value,
     Glib::KeyFile& keyfile
 )
 {
@@ -401,29 +100,6 @@ bool saveToKeyfile(
         putToKeyfile(group_name, key, value, keyfile);
         return true;
     }
-
-    return false;
-}
-
-template<typename T, typename = typename std::enable_if<std::is_enum<T>::value>::type>
-bool saveToKeyfile(
-    bool save,
-    const Glib::ustring& group_name,
-    const Glib::ustring& key,
-    const std::map<T, const char*>& mapping,
-    const T& value,
-    Glib::KeyFile& keyfile
-)
-{
-    if (save) {
-        const typename std::map<T, const char*>::const_iterator m = mapping.find(value);
-
-        if (m != mapping.end()) {
-            keyfile.set_string(group_name, key, m->second);
-            return true;
-        }
-    }
-
     return false;
 }
 
@@ -8778,8 +8454,8 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
         }
 
         saveToKeyfile(!pedited || pedited->filmNegative.colorSpace, "Film Negative", "ColorSpace", toUnderlying(filmNegative.colorSpace), keyFile);
-        saveToKeyfile(!pedited || pedited->filmNegative.refInput, "Film Negative", "RefInput", filmNegative.refInput, keyFile);
-        saveToKeyfile(!pedited || pedited->filmNegative.refOutput, "Film Negative", "RefOutput", filmNegative.refOutput, keyFile);
+        saveRgbToKeyfile(!pedited || pedited->filmNegative.refInput, "Film Negative", "RefInput", filmNegative.refInput, keyFile);
+        saveRgbToKeyfile(!pedited || pedited->filmNegative.refOutput, "Film Negative", "RefOutput", filmNegative.refOutput, keyFile);
         // Only save the "backCompat" key if the filmneg params are not already upgraded to CURRENT.
         // Also, avoid saving backCompat if the "enabled" key was not saved (most probably the entire key group is excluded).
         saveToKeyfile(filmNegative.backCompat != FilmNegativeParams::BackCompat::CURRENT &&
@@ -12079,8 +11755,8 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
 
             } else { // current version
 
-                assignFromKeyfile(keyFile, "Film Negative", "RefInput", filmNegative.refInput, pedited->filmNegative.refInput);
-                assignFromKeyfile(keyFile, "Film Negative", "RefOutput", filmNegative.refOutput, pedited->filmNegative.refOutput);
+                assignRgbFromKeyfile(keyFile, "Film Negative", "RefInput", filmNegative.refInput, pedited->filmNegative.refInput);
+                assignRgbFromKeyfile(keyFile, "Film Negative", "RefOutput", filmNegative.refOutput, pedited->filmNegative.refOutput);
 
                 int cs = toUnderlying(filmNegative.colorSpace);
                 assignFromKeyfile(keyFile, "Film Negative", "ColorSpace", cs, pedited->filmNegative.colorSpace);
