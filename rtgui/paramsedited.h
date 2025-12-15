@@ -624,7 +624,6 @@ public:
         bool ghs_agx;
         bool ghs_smooth;
         bool ghs_inv;
-        
         bool multsh[7];
         bool highlights;
         bool h_tonalwidth;

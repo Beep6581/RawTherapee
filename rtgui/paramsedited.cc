@@ -4631,7 +4631,7 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
         if (locallab.spots.at(i).ghsMatmet) {
             toEdit.locallab.spots.at(i).ghsMatmet= mods.locallab.spots.at(i).ghsMatmet;
         }
-        
+
         if (locallab.spots.at(i).ghsMode) {
             toEdit.locallab.spots.at(i).ghsMode = mods.locallab.spots.at(i).ghsMode;
         }
@@ -8801,7 +8801,6 @@ LocallabParamsEdited::LocallabSpotEdited::LocallabSpotEdited(bool v) :
     ghs_agx(v),
     ghs_smooth(v),
     ghs_inv(v),
-    
     multsh{v, v, v, v, v, v, v},
     highlights(v),
     h_tonalwidth(v),
@@ -9623,7 +9622,6 @@ void LocallabParamsEdited::LocallabSpotEdited::set(bool v)
     ghs_B = v;
     ghs_SP = v;
     SPAutoRadius = v;
-    
     ghs_LP = v;
     ghs_HP = v;
     ghs_LC = v;

@@ -607,13 +607,10 @@ private:
     MyComboBoxText* const ghsMethod;
     Gtk::Frame* const gridFrameghs;
     LabGrid* const labgridghs;
-   
     Gtk::Frame* const ghsFrame;
     Gtk::Box* const matHBox;
-   
     Gtk::CheckButton* const ghs_agx;
     MyComboBoxText* const ghsMatmet;
-    
     Adjuster* const ghs_D;
     Gtk::Frame* const Lab_Frame;
     Adjuster* const ghs_slope;
@@ -621,13 +618,11 @@ private:
     Adjuster* const ghs_B;
     Adjuster* const ghs_SP;
     Gtk::Label* const ghssymLabel;
-    
     Adjuster* const ghs_LP;
     Adjuster* const ghs_HP;
     Gtk::Frame* const LC_Frame;
     Adjuster* const ghs_LC;
     Adjuster* const ghs_MID;
-    
     Gtk::Frame* const BP_Frame;
     Gtk::CheckButton* const ghs_autobw;
     Adjuster* const ghs_BLP;
@@ -638,7 +633,6 @@ private:
     Gtk::Label* const ghsDRLabels;
     Gtk::CheckButton* const ghs_smooth;
     Gtk::CheckButton* const ghs_inv;
-
     MyExpander* const expgradsh;
     Adjuster* const strSH;
     Adjuster* const angSH;
@@ -673,7 +667,6 @@ private:
     rtengine::ProcEvent Evlocallabghs_SP;
     rtengine::ProcEvent EvlocallabautoSPson;
     rtengine::ProcEvent EvlocallabautoSPoff;
-    
     rtengine::ProcEvent Evlocallabghs_LP;
     rtengine::ProcEvent Evlocallabghs_HP;
     rtengine::ProcEvent Evlocallabghs_LC;
@@ -685,7 +678,7 @@ private:
     rtengine::ProcEvent Evlocallabghs_inv;
     rtengine::ProcEvent Evlocallabghs_agx;
      rtengine::ProcEvent Evlocallabghs_Matmet;
-   
+
     sigc::connection shMethodConn, ghsMethodConn, ghsMatmetConn, previewshConn, inversshConn, ghs_smoothConn, ghs_autobwConn, ghs_agxConn, ghs_invConn, showmaskSHMethodConn, showmaskSHMethodConninv, enaSHMaskConn;
 
 public:
@@ -739,11 +732,9 @@ private:
     void showmaskSHMethodChanged();
     void showmaskSHMethodChangedinv();
     void enaSHMaskChanged();
-
     void updateShadowGUImask();
     void updateShadowGUIshmet();
     void updateShadowGUIsym();
-
 };
 
 /* ==== LocallabVibrance ==== */

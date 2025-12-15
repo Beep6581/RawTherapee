@@ -4319,7 +4319,7 @@ LocallabShadow::LocallabShadow():
     ghsFrame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_GHSFRA")))),
     matHBox(Gtk::manage(new Gtk::Box())),   
     ghs_agx(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_GHS_AGX")))),
-    ghsMatmet(Gtk::manage(new MyComboBoxText())),     
+    ghsMatmet(Gtk::manage(new MyComboBoxText())),
     ghs_D(Gtk::manage(new Adjuster(M("TP_LOCALLAB_GHS_D"), 0., 20.0, 0.001, 0.001))),
     Lab_Frame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_GHSLABFRA")))),
     ghs_slope(Gtk::manage(new Adjuster(M("TP_LOCALLAB_GHS_SLOPE"), 1.0, 100.0, 0.01, 9.03296))),
@@ -4421,9 +4421,9 @@ LocallabShadow::LocallabShadow():
     ghsMatmet->append(M("TP_LOCALLAB_GHSMATO"));
     ghsMatmet->append(M("TP_LOCALLAB_GHSMAT1"));
     ghsMatmet->append(M("TP_LOCALLAB_GHSMAT2"));
-    ghsMatmet->append(M("TP_LOCALLAB_GHSMAT3"));   
+    ghsMatmet->append(M("TP_LOCALLAB_GHSMAT3"));
     ghsMatmet->set_active(1);
-    ghsMatmetConn = ghsMatmet->signal_changed().connect(sigc::mem_fun(*this, &LocallabShadow::ghsMatmetChanged));    
+    ghsMatmetConn = ghsMatmet->signal_changed().connect(sigc::mem_fun(*this, &LocallabShadow::ghsMatmetChanged));
 
     for (const auto multiplier : multipliersh) {
         multiplier->setAdjusterListener(this);
@@ -4608,7 +4608,7 @@ LocallabShadow::LocallabShadow():
     ghsBox2->pack_start(*ghs_inv);
 
     pack_start(*ghsBox2);
-    matHBox->set_spacing(2);   
+    matHBox->set_spacing(2);
 
     Gtk::Label* matLabel = Gtk::manage(new Gtk::Label(M("TP_LOCALLAB_GHSMAT") + ":"));
     matHBox->pack_start(*matLabel, Gtk::PACK_SHRINK);
@@ -4616,7 +4616,7 @@ LocallabShadow::LocallabShadow():
 
     ghsBox->pack_start(*gridFrameghs);
     //ghsBox->pack_start(*ghs_agx);
-    ghsBox->pack_start(*matHBox);    
+    ghsBox->pack_start(*matHBox);
     ghsBox->pack_start(*ghs_D);
     Lab_Frame->set_label_align(0.025, 0.5);
     ToolParamBlock* const LabBox = Gtk::manage(new ToolParamBlock());
@@ -4629,23 +4629,18 @@ LocallabShadow::LocallabShadow():
     ghsBox->pack_start(*ghssymLabel);
     ghsBox->pack_start(*ghs_LP);
     ghsBox->pack_start(*ghs_HP);
-    
+
     LC_Frame->set_label_align(0.025, 0.5);
     ToolParamBlock* const LCBox = Gtk::manage(new ToolParamBlock());
     LCBox->pack_start(*ghs_LC);
     LCBox->pack_start(*ghs_MID);
     LC_Frame->add(*LCBox);
-    
-    
-    
-    
-    
+
     ghsBox->pack_start(*LC_Frame);
     ghsBox->pack_start(*ghs_smooth);
 
     ghsFrame->add(*ghsBox);
     pack_start(*ghsFrame);
-
 
     for (const auto multiplier : multipliersh) {
         pack_start(*multiplier);
@@ -4676,7 +4671,7 @@ LocallabShadow::LocallabShadow():
     gammBox->pack_start(*sloSH);
     gamFrame->add(*gammBox);
     pack_start(*gamFrame);
-    
+
     ToolParamBlock* const gradSHBox = Gtk::manage(new ToolParamBlock());
     gradSHBox->pack_start(*strSH);
     gradSHBox->pack_start(*angSH);
@@ -5103,7 +5098,7 @@ void LocallabShadow::read(const rtengine::procparams::ProcParams* pp, const Para
             ghs_agx->set_sensitive(false);
             ghsMatmet->set_sensitive(false);
             ghs_LC->set_sensitive(true); 
-            ghs_MID->set_sensitive(true);        
+            ghs_MID->set_sensitive(true);
         } else {
             if (ghs_autobw->get_active()) {
                 ghs_BLP->set_sensitive(false);
@@ -5117,18 +5112,18 @@ void LocallabShadow::read(const rtengine::procparams::ProcParams* pp, const Para
                 ghs_HLP->set_sensitive(true);
                 ghs_agx->set_sensitive(true);
                 ghs_inv->set_sensitive(true);
-                ghsMatmet->set_sensitive(true);        
+                ghsMatmet->set_sensitive(true);
             }
             ghs_autobw->set_sensitive(true);
             if(ghs_inv->get_active()) {
                 ghs_autobw->set_sensitive(false);
                 ghs_autobw->set_active(false);
-            }            
+            }
             ghs_LC->set_sensitive(false); 
             ghs_MID->set_sensitive(false); 
         }
         if(ghs_D->getValue() == 0.f) {
-            ghs_LC->set_sensitive(false); 
+            ghs_LC->set_sensitive(false);
             ghs_MID->set_sensitive(false);
         }
            
@@ -5168,7 +5163,7 @@ void LocallabShadow::read(const rtengine::procparams::ProcParams* pp, const Para
         
     }
     ghsMethodChanged();
-    ghsMatmetChanged();   
+    ghsMatmetChanged();
     update_ghs_curve(
         ghs_B->getValue(),
         ghs_D->getValue(),
@@ -5236,7 +5231,7 @@ void LocallabShadow::write(rtengine::procparams::ProcParams* pp, ParamsEdited* p
         } else if (ghsMatmet->get_active_row_number() == 3) {
             spot.ghsMatmet = "cat16";
         }
-     
+
          for (int i = 0; i < 6; i++) {
             spot.multsh[i] = multipliersh[i]->getIntValue();
         }
@@ -5391,14 +5386,14 @@ void LocallabShadow::adjusterChanged(Adjuster* a, double newval)
                 } else {
                     ghs_BLP->set_sensitive(true);
                     ghs_HLP->set_sensitive(true);
-                    ghs_inv->set_sensitive(true);                  
+                    ghs_inv->set_sensitive(true);
                     ghs_agx->set_sensitive(true);
                     ghsMatmet->set_sensitive(true);
                 }
                 ghs_autobw->set_sensitive(true);
                 if(ghs_inv->get_active()) {
                     ghs_autobw->set_sensitive(false);
-                    ghs_autobw->set_active(false);                   
+                    ghs_autobw->set_active(false);
                 }
                 ghs_LC->set_sensitive(false);
                 ghs_MID->set_sensitive(false);
@@ -5407,7 +5402,7 @@ void LocallabShadow::adjusterChanged(Adjuster* a, double newval)
                 ghs_LC->set_sensitive(false);
                 ghs_MID->set_sensitive(false);
             }
-            
+
             if (listener) {
                 listener->panelChanged(Evlocallabghs_D,
                                        ghs_D->getTextValue() + " (" + escapeHtmlChars(getSpotName()) + ")");
@@ -6047,9 +6042,6 @@ void LocallabShadow::ghsMethodChanged()
 
 void LocallabShadow::ghsMatmetChanged()
 {
-  //  const int mode = complexity->get_active_row_number();
-
- 
 
     if (isLocActivated && exp->getEnabled()) {
         if (listener) {
@@ -6312,7 +6304,7 @@ void LocallabShadow::updateShadowGUImask()
             ghs_inv->set_sensitive(false);
             ghs_autobw->set_sensitive(false);
             ghs_agx->set_sensitive(false);
-            ghsMatmet->set_sensitive(false);           
+            ghsMatmet->set_sensitive(false);
             ghs_LC->set_sensitive(true); 
             ghs_MID->set_sensitive(true); 
         } else {
@@ -6321,21 +6313,21 @@ void LocallabShadow::updateShadowGUImask()
                 ghs_HLP->set_sensitive(false);
                 ghs_inv->set_sensitive(false);
                 ghs_agx->set_sensitive(false);
-                ghsMatmet->set_sensitive(false);            
+                ghsMatmet->set_sensitive(false);
             } else {
                 ghs_BLP->set_sensitive(true);
                 ghs_HLP->set_sensitive(true);
                 ghs_inv->set_sensitive(true);
                 ghs_agx->set_sensitive(true);
-                ghsMatmet->set_sensitive(true); 
-            }            
+                ghsMatmet->set_sensitive(true);
+            }
             ghs_autobw->set_sensitive(true);
             if(ghs_inv->get_active()) {
                 ghs_autobw->set_sensitive(false);
                 ghs_autobw->set_active(false);
-            }          
+            }
             ghs_LC->set_sensitive(false); 
-            ghs_MID->set_sensitive(false); 
+            ghs_MID->set_sensitive(false);
         }
         if(ghs_D->getValue() == 0.f) {
             ghs_LC->set_sensitive(false); 
@@ -6465,23 +6457,23 @@ void LocallabShadow::updateShadowGUIshmet()
             ghs_BLP->set_sensitive(false);
             ghs_HLP->set_sensitive(false);
             ghs_inv->set_sensitive(false);
-            ghs_autobw->set_sensitive(false);      
-            ghs_agx->set_sensitive(false);      
+            ghs_autobw->set_sensitive(false);
+            ghs_agx->set_sensitive(false);
             ghsMatmet->set_sensitive(false);
-            ghs_LC->set_sensitive(true); 
-            ghs_MID->set_sensitive(true); 
+            ghs_LC->set_sensitive(true);
+            ghs_MID->set_sensitive(true);
        } else {
             if (ghs_autobw->get_active()) {
                 ghs_BLP->set_sensitive(false);
                 ghs_HLP->set_sensitive(false);
                 ghs_inv->set_sensitive(false);
-                ghs_agx->set_sensitive(false);        
+                ghs_agx->set_sensitive(false);
                 ghsMatmet->set_sensitive(false);
             } else {
                 ghs_BLP->set_sensitive(true);
                 ghs_HLP->set_sensitive(true);
-                ghs_inv->set_sensitive(true);           
-                ghs_agx->set_sensitive(true);            
+                ghs_inv->set_sensitive(true);
+                ghs_agx->set_sensitive(true);
                 ghsMatmet->set_sensitive(true);
             }
             ghs_autobw->set_sensitive(true);
@@ -6504,7 +6496,7 @@ void LocallabShadow::updateShadowGUIshmet()
             }
         }  
         if (mode == Expert) {
-            ghs_slope->show();     
+            ghs_slope->show();
         }
     }
 }

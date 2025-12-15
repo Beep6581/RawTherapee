@@ -538,7 +538,6 @@ LocallabParams::LocallabSpot::LocallabSpot() :
     ghs_agx(true),
     ghs_smooth(false),
     ghs_inv(false),
-    
     multsh{0, 0, 0, 0, 0, 0},
     highlights(0),
     h_tonalwidth(70),
@@ -2274,7 +2273,6 @@ bool LocallabParams::LocallabSpot::operator ==(const LocallabSpot& other) const
         && ghs_B == other.ghs_B
         && SPAutoRadius == other.SPAutoRadius       
         && (SPAutoRadius || (ghs_SP == other.ghs_SP))
-        
         //&& ghs_SP == other.ghs_SP
         && ghs_LP == other.ghs_LP
         && ghs_HP == other.ghs_HP
@@ -2286,7 +2284,6 @@ bool LocallabParams::LocallabSpot::operator ==(const LocallabSpot& other) const
         && ghs_agx == other.ghs_agx
         && ghs_smooth == other.ghs_smooth
         && ghs_inv == other.ghs_inv
-        
         && [this, &other]() -> bool
             {
                 for (int i = 0; i < 6; ++i) {
