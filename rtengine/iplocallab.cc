@@ -18328,30 +18328,31 @@ void ImProcFunctions::Lab_Local(
 
                         Matrix inv_agx_T = {};//initialize inv_agx_T
                         Matrix agx_mat = {};//initialize inv_agx_T
-                        //if(params->locallab.spots.at(sp).ghs_agx == true) {
                         if(params->locallab.spots.at(sp).ghsMatmet != "none") {
-                            if(params-> locallab.spots.at(sp).ghsMatmet == "agx") {//for Rec2020 with chromatic adaptation D50 take in Svoboda, but where it's come from...
-                                //it is very curious to apply Matrix in RGB mode...but why not ? 
+                            if(params-> locallab.spots.at(sp).ghsMatmet == "agx") {//for Rec2020 with chromatic adaptation D50 take in Sobotka AgX-Resolve, but where it's come from...
+                            // It's very unusual to apply this transformation mode in RGB mode and not XYZ, but why not, especially since we're only affecting the differences 
+                            // caused by the change and often we're dealing with a high White Point, therefore outside the usual XYZ values.
+                            
                             //Define AgX matrix for color space transformation
                                 agx_mat = {{
                                     { 0.856627153315983, 0.0951212405381588, 0.0482516061458583 },
                                     { 0.137318972929847, 0.761241990602591, 0.101439036467562 },
                                     { 0.11189821299995, 0.0767994186031903, 0.811302368396859 }
                                 }};
-                            } else if(params->locallab.spots.at(sp).ghsMatmet == "JZ") { //original LMS Jzazbz matrix                       
+                            } else if(params->locallab.spots.at(sp).ghsMatmet == "JZ") { //original LMS JzAzBz matrix without PQ.                      
                                 agx_mat = {{
                                     { 0.41478972, 0.579999, 0.0146480 },
                                     { -0.2015100, 1.120649, 0.0531008 },
                                     { -0.0166008, 0.264800, 0.6684799 }
                                 }};
-                            } else if(params->locallab.spots.at(sp).ghsMatmet == "cat16") { //original LMS Cat16 matrix                         
+                            } else if(params->locallab.spots.at(sp).ghsMatmet == "cat16") { //original 'LMS Cat16' matrix, of course without CIECAM treatment.                     
                                 agx_mat = {{
                                     { 0.44113111, 0.46084198975, 0.090051211104 },
                                     { 0.176890718, 0.724815611, 0.06249008 },
                                     { 0.061414342, 0.196120268, 0.5430087122 }
-                                }};                                                             
+                                }};                                                          
                             }
-                                                 
+                    
                             Matrix agx_T = {};
                             Color::transpose(agx_mat, agx_T);//transpose Matrix
                             //invert matrix
@@ -18369,7 +18370,7 @@ void ImProcFunctions::Lab_Local(
                                     inv_agx_T[1][2] = -0.1082844058788469;
                                     inv_agx_T[2][0] = -0.0531795641897042;
                                     inv_agx_T[2][1] = -0.157620505148385;
-                                    inv_agx_T[2][2] = 1.25484147589507;                                          
+                                    inv_agx_T[2][2] = 1.25484147589507;                                         
                                 } else if(params->locallab.spots.at(sp).ghsMatmet == "JZ") {
                                     inv_agx_T[0][0] = 1.92488743175646;
                                     inv_agx_T[0][1] = 0.349838855125251;
@@ -18379,7 +18380,7 @@ void ImProcFunctions::Lab_Local(
                                     inv_agx_T[1][2] = -0.312021163395669;
                                     inv_agx_T[2][0] = 0.0265884071012174;
                                     inv_agx_T[2][1] = -0.0573856961296308;
-                                    inv_agx_T[2][2] = 1.51932335013174;                                    
+                                    inv_agx_T[2][2] = 1.51932335013174;                                   
                                 } else if(params->locallab.spots.at(sp).ghsMatmet == "cat16") {
                                     inv_agx_T[0][0] = 3.05467729554555;
                                     inv_agx_T[0][1] = -0.738708117076132;
@@ -18389,7 +18390,7 @@ void ImProcFunctions::Lab_Local(
                                     inv_agx_T[1][2] = -0.46632122626262804;
                                     inv_agx_T[2][0] = -0.29216927086322;
                                     inv_agx_T[2][1] = -0.0932210370533556;
-                                    inv_agx_T[2][2] = 1.90830440656202;                                    
+                                    inv_agx_T[2][2] = 1.90830440656202;                                  
                                 }
                             }
                             //now we have 2 Matrix to convert tmpimage with Agx
@@ -18763,7 +18764,6 @@ void ImProcFunctions::Lab_Local(
                             lab2rgb(*labtemp, *tmpImage, params->icm.workingProfile);
                         }
                         
-                      //  if(params->locallab.spots.at(sp).ghs_agx == true) {
                         if(params->locallab.spots.at(sp).ghsMatmet != "none") {
 
 #ifdef _OPENMP
@@ -18781,7 +18781,7 @@ void ImProcFunctions::Lab_Local(
                                     Color::agx_trans(rgb_in, inv_agx_T, rout, gout, bout);
                                     tmpImage->r(i, j) = rtengine::max(0.00001f, rout);//avoid negatives values which are mathematically possible due to the values 
                                     tmpImage->g(i, j) = rtengine::max(0.00001f, gout);//​​of the inverse matrix and the possible 'overflows' of the GHS calculations if the user uses very strong settings
-                                    tmpImage->b(i, j) = rtengine::max(0.00001f, bout);                                                          
+                                    tmpImage->b(i, j) = rtengine::max(0.00001f, bout);                                                        
                                 }
                         }
  
