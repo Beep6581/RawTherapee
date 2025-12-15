@@ -9614,6 +9614,7 @@ void LocallabParamsEdited::LocallabSpotEdited::set(bool v)
     expshadhigh = v;
     complexshadhigh = v;
     shMethod = v;
+    ghsMethod = v;
     ghsMatmet = v;
     ghsMode = v;
     ghs_D = v;
