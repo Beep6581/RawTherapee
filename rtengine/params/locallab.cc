@@ -530,7 +530,7 @@ LocallabParams::LocallabSpot::LocallabSpot() :
     SPAutoRadius(true), //auto Symmetry point 
     ghs_LP(0.),
     ghs_HP(1.),
-    ghs_LC(30.),
+    ghs_LC(10.),
     ghs_MID(0.),
     ghs_BLP(0.),
     ghs_HLP(1.),
