@@ -4317,7 +4317,7 @@ LocallabShadow::LocallabShadow():
     gridFrameghs(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_GHS_GHSDIAG")))),//
     labgridghs(Gtk::manage(new LabGrid(EvlocallabGridciexy, M("TP_LOCALLAB_GHS_GHSDIAG"), true, false, true, false))),
     ghsFrame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_GHSFRA")))),
-    matHBox(Gtk::manage(new Gtk::Box())),    
+    matHBox(Gtk::manage(new Gtk::Box())),   
     ghs_agx(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_GHS_AGX")))),
     ghsMatmet(Gtk::manage(new MyComboBoxText())),     
     ghs_D(Gtk::manage(new Adjuster(M("TP_LOCALLAB_GHS_D"), 0., 20.0, 0.001, 0.001))),
@@ -4608,7 +4608,7 @@ LocallabShadow::LocallabShadow():
     ghsBox2->pack_start(*ghs_inv);
 
     pack_start(*ghsBox2);
-    matHBox->set_spacing(2);    
+    matHBox->set_spacing(2);   
 
     Gtk::Label* matLabel = Gtk::manage(new Gtk::Label(M("TP_LOCALLAB_GHSMAT") + ":"));
     matHBox->pack_start(*matLabel, Gtk::PACK_SHRINK);
@@ -4616,7 +4616,6 @@ LocallabShadow::LocallabShadow():
 
     ghsBox->pack_start(*gridFrameghs);
     //ghsBox->pack_start(*ghs_agx);
-//    ghsBox->pack_start(*ghsMatmet);
     ghsBox->pack_start(*matHBox);    
     ghsBox->pack_start(*ghs_D);
     Lab_Frame->set_label_align(0.025, 0.5);
@@ -4919,8 +4918,8 @@ void LocallabShadow::updateAdviceTooltips(const bool showTooltips)
         ghs_BLP->set_tooltip_text(M("TP_LOCALLAB_GHS_BLP_TOOLTIP"));
         ghs_autobw->set_tooltip_text(M("TP_LOCALLAB_GHS_BLPHLPAUTO_TOOLTIP"));
         ghs_agx->set_tooltip_text(M("TP_LOCALLAB_GHS_AGX_TOOLTIP"));
+        matHBox->set_tooltip_text(M("TP_LOCALLAB_GHS_AGXMAT2_TOOLTIP"));
         ghsMatmet->set_tooltip_text(M("TP_LOCALLAB_GHS_AGX_MAT_TOOLTIP"));
-
         ghs_HLP->set_tooltip_text(M("TP_LOCALLAB_GHS_HLP_TOOLTIP"));
         ghs_smooth->set_tooltip_text(M("TP_LOCALLAB_GHS_SMOOTH_TOOLTIP"));
         ghs_inv->set_tooltip_text(M("TP_LOCALLAB_GHS_INV_TOOLTIP"));
@@ -4975,6 +4974,7 @@ void LocallabShadow::updateAdviceTooltips(const bool showTooltips)
         ghs_autobw->set_tooltip_text("");
         ghsMatmet->set_tooltip_text("");
         ghs_agx->set_tooltip_text("");
+        matHBox->set_tooltip_text("");
         ghs_smooth->set_tooltip_text("");
         ghs_inv->set_tooltip_text("");
         BP_Frame->set_tooltip_text("");
