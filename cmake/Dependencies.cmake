@@ -103,7 +103,7 @@ macro(rt_fetch_content)
     FetchContent_Declare(
         fmt
         GIT_REPOSITORY https://github.com/fmtlib/fmt
-        GIT_TAG 40626af88bd7df9a5fb80be7b25ac85b122d6c21 # 11.2.0
+        GIT_TAG e424e3f2e607da02742f73db84873b8084fc714c # 12.0.0
         GIT_SHALLOW ON
     )
 
