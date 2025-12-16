@@ -18330,10 +18330,10 @@ void ImProcFunctions::Lab_Local(
                         Matrix lms_mat = {};//initialize lms_mat
                         if(params->locallab.spots.at(sp).ghsMatmet != "none") {
                             if(params->locallab.spots.at(sp).ghsMatmet == "agx") {//for Rec2020 with chromatic adaptation D50 take in Sobotka AgX-Resolve, but where it's come from...?
-                            // It's very unusual to apply this transformation mode in RGB mode and not XYZ, but why not, especially since we're only affecting the differences 
-                            // caused by the change and often we're dealing with a high White Point, therefore outside the usual XYZ values.
+                                // It's very unusual to apply this transformation mode in RGB mode and not XYZ, but why not, especially since we're only affecting the differences 
+                                // caused by the change and often we're dealing with a high White Point, therefore outside the usual XYZ values.
 
-                            //Define AgX matrix for color space transformation
+                                //Define AgX matrix for color space transformation
                                 lms_mat = {{//AgX
                                     { 0.856627153315983, 0.0951212405381588, 0.0482516061458583 },
                                     { 0.137318972929847, 0.761241990602591, 0.101439036467562 },
