@@ -4601,7 +4601,7 @@ LocallabShadow::LocallabShadow():
     BPBox->pack_start(*ghs_HLP);
     BPBox->pack_start(*ghsbpwpLabels);
     BPBox->pack_start(*ghsbpwpvalueLabels);
-    BPBox->pack_start(*ghscolorLabels);   
+    BPBox->pack_start(*ghscolorLabels);
     BPBox->pack_start(*ghsDRLabels);
     BP_Frame->add(*BPBox);
     ghsBox2->pack_start(*BP_Frame);
@@ -4613,10 +4613,10 @@ LocallabShadow::LocallabShadow():
     Gtk::Label* matLabel = Gtk::manage(new Gtk::Label(M("TP_LOCALLAB_GHSMAT") + ":"));
     matHBox->pack_start(*matLabel, Gtk::PACK_SHRINK);
     matHBox->pack_start(*ghsMatmet);
+    ghsBox->pack_start(*matHBox);
 
     ghsBox->pack_start(*gridFrameghs);
     //ghsBox->pack_start(*ghs_agx);
-    ghsBox->pack_start(*matHBox);
     ghsBox->pack_start(*ghs_D);
     Lab_Frame->set_label_align(0.025, 0.5);
     ToolParamBlock* const LabBox = Gtk::manage(new ToolParamBlock());
