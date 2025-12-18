@@ -710,8 +710,10 @@ LabGrid::LabGrid(rtengine::ProcEvent evt, const Glib::ustring &msg, bool enable_
     grid(evt, msg, enable_low, ciexy, ghs, mous)
 {
     Gtk::Button *reset = Gtk::manage(new Gtk::Button());
+    bool resetfalse = ghs || ciexy;//disable Icon Reset when using Labgrid with GHS or CIExy in Abstract Profile or in Selective Editing > Color Appearance (CAM16 & JzCzHz) to avoid very bad behavior
+
     reset->set_tooltip_markup(M("ADJUSTER_RESET_TO_DEFAULT"));
-    if(!ciexy || !ghs) {//disabled for Cie xy and GHS
+    if(!resetfalse) {
         reset->add(*Gtk::manage(new RTImage("undo-small", Gtk::ICON_SIZE_BUTTON)));
     }
     reset->signal_button_release_event().connect(sigc::mem_fun(*this, &LabGrid::resetPressed));
@@ -722,12 +724,9 @@ LabGrid::LabGrid(rtengine::ProcEvent evt, const Glib::ustring &msg, bool enable_
     reset->set_can_focus(false);
     reset->set_size_request(-1, 20);
  
-    bool resetfalse = ghs || ciexy;
 
     pack_start(grid, true, true, true);
-    if(!resetfalse) {//disable reset when GHS or CIExy in Abstract Profile or Selective Editing > CAM16 to avoid very bad behavior
-       pack_start(*reset, false, false);
-    }
+    pack_start(*reset, false, false);
     show_all_children();
 }
 
