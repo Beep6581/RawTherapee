@@ -721,10 +721,12 @@ LabGrid::LabGrid(rtengine::ProcEvent evt, const Glib::ustring &msg, bool enable_
     reset->get_style_context()->add_class(GTK_STYLE_CLASS_FLAT);
     reset->set_can_focus(false);
     reset->set_size_request(-1, 20);
+ 
+    bool resetfalse = ghs || ciexy;
 
     pack_start(grid, true, true, true);
-    if(!ghs) {//disable reset when GHS
-        pack_start(*reset, false, false);
+    if(!resetfalse) {//disable reset when GHS or CIExy in Abstract Profile or Selective Editing > CAM16 to avoid very bad behavior
+       pack_start(*reset, false, false);
     }
     show_all_children();
 }
