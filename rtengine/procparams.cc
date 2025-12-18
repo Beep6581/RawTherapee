@@ -2369,7 +2369,7 @@ ColorManagementParams::ColorManagementParams() :
     sigmatrc(1.),
     offstrc(1.),
     residtrc(0.),
-    pyrwavtrc(2),    
+    pyrwavtrc(2),
     opacityCurveWLI{
         static_cast<double>(FCT_MinMaxCPoints),
         0.0,
@@ -2387,12 +2387,12 @@ ColorManagementParams::ColorManagementParams() :
     },
     wsmoothcie(false),
     wsmoothciesli(0.),
-    redx(0.7347),
-    redy(0.2653),
-    grex(0.1596),
-    grey(0.8404),
-    blux(0.0366),
-    bluy(0.0001),
+    redx(0.7080),
+    redy(0.2920),
+    grex(0.1700),
+    grey(0.7970),
+    blux(0.1310),
+    bluy(0.0460),
     refi(0.),
     shiftx(0.),
     shifty(0.),
@@ -2401,14 +2401,15 @@ ColorManagementParams::ColorManagementParams() :
     trcExp(false),
     wavExp(false),
     gamut(true),
-    labgridcieALow(0.51763),//Prophoto red = (0.7347+0.1) * 1.81818 - 1
-    labgridcieBLow(-0.33582),
-    labgridcieAHigh(-0.75163),//Prophoto blue
+
+    labgridcieALow(0.469089),//Rec2020 red = (0.7080+0.1) * 1.81818 - 1
+    labgridcieBLow(-0.287273),
+    labgridcieAHigh(-0.58000),//Rec2020 blue
     labgridcieBHigh(-0.8180),
-    labgridcieGx(-0.69164),//Prophoto green 0.1596
-    labgridcieGy(-0.70909),//0.84
-    labgridcieWx(-0.18964),//D50 0.3457, 0.3585,
-    labgridcieWy(-0.16636),//
+    labgridcieGx(-0.509009),//Rec2020 green
+    labgridcieGy(0.63090),//
+    labgridcieWx(-0.24959),//D65 0.3127 0.329
+    labgridcieWy(-0.22000),
     labgridcieMx(0.),//
     labgridcieMy(0.),//
     aRendIntent(RI_RELATIVE),
