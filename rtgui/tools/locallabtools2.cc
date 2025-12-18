@@ -13599,8 +13599,8 @@ void Locallabcie::convertParamToNormal()
     thrhjzcie->setValue(defSpot.thrhjzcie);
     modecie->set_active(0);
     catMethod->set_active(0);
-    primMethod->set_active(4);//Prophoto
-    illMethod->set_active(4);//D50
+    primMethod->set_active(4);//Rec2020
+    illMethod->set_active(4);//D65
     refi->setValue(defSpot.refi);
     whitsig->setValue(defSpot.whitsig);
 
