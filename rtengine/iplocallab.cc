@@ -18550,13 +18550,13 @@ void ImProcFunctions::Lab_Local(
                                 LUTu symhist(65535);
                                 symhist.clear();
                                 array2D<float> Y2(bfw, bfh);
-                                //generate histogram RGB with norm2 or norm3 equivalent luminance
+                                //generate histogram RGB with norm2 or norm_3 equivalent luminance
                                 for (int i = 0; i < bfh; ++i)
                                     for (int j = 0; j < bfw; ++j) {
-                                        if(maxwp < limmax) { //comparison between the calculated WP and the limit                   
+                                        if(maxwp < limmax) { //comparison between the calculated WP and the limit
                                             Y2[i][j] = norm2(clipR(tmpImage->r(i, j)), clipR(tmpImage->g(i, j)), clipR(tmpImage->b(i, j)), wprof);//clipR to avoid bad datas in histogram - This is not a precise calculation but an assessment
                                         } else {
-                                            Y2[i][j] = norm_3(clipR(tmpImage->r(i, j)), clipR(tmpImage->g(i, j)), clipR(tmpImage->b(i, j)), wprof, maxwp / limmax);//clipR to avoid bad datas in histogram - This is not a precise calculation but an assessment                                         
+                                            Y2[i][j] = norm_3(clipR(tmpImage->r(i, j)), clipR(tmpImage->g(i, j)), clipR(tmpImage->b(i, j)), wprof, maxwp / limmax);//clipR to avoid bad datas in histogram - This is not a precise calculation but an assessment
                                         }
                                         int pos = (int) Y2[i][j];
                                         symhist[pos]++;
@@ -18640,7 +18640,7 @@ void ImProcFunctions::Lab_Local(
                                             if(ghsbpwpvalue[1] < limmax) {//comparison between the calculated WP and the limit
                                                 Y2[y][x] = norm2(tmpImage->r(y, x), tmpImage->g(y, x), tmpImage->b(y, x), wprof) / 65535.f;//norm2
                                             } else {
-                                                Y2[y][x] = norm_3(tmpImage->r(y, x), tmpImage->g(y, x), tmpImage->b(y, x), wprof, ghsbpwpvalue[1] / limmax) / 65535.f;//norm_3                                             
+                                                Y2[y][x] = norm_3(tmpImage->r(y, x), tmpImage->g(y, x), tmpImage->b(y, x), wprof, ghsbpwpvalue[1] / limmax) / 65535.f;//norm_3
                                             }
                                             float l = xlogf(rtengine::max(Y2[y][x], 1e-9f));
                                             float ll = round(l * base_posterization) / base_posterization;
