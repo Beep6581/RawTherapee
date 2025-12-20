@@ -2336,6 +2336,7 @@ inline float power_norm(float r, float g, float b)
     float r2 = SQR(r);
     float g2 = SQR(g);
     float b2 = SQR(b);
+  
     float d = r2 + g2 + b2;
     float n = r * r2 + g * g2 + b * b2;
 
@@ -2361,6 +2362,19 @@ inline float norm2(float r, float g, float b, TMatrix ws)
     return std::min(hi, power_norm(r, g, b) / 2.f + Color::rgbLuminance(r, g, b, ws) / 2.f);
 }
 
+inline float norm_3(float r, float g, float b, TMatrix ws, float raplim)//lowers the equivalent luminance if the white point is high
+{
+    constexpr float hi = std::numeric_limits<float>::max() / 100.f;
+    float pwn = 0.5f;
+    if (raplim < 2.f) {
+        pwn = 0.7f;
+    } else if (raplim < 4.f) {
+        pwn = 0.75f;
+    } else {
+        pwn = 0.85f;
+    }
+    return std::min(hi, pwn * power_norm(r, g, b) + (1.f - pwn) * Color::rgbLuminance(r, g, b, ws));
+}
 
 inline float norm(float r, float g, float b, TMatrix ws)
 {
@@ -18461,6 +18475,7 @@ void ImProcFunctions::Lab_Local(
                         int blackpoint = 100. * params->locallab.spots.at(sp).ghs_BLP;//Black point
                         float shiftblackpoint = params->locallab.spots.at(sp).ghs_BLP;//Black point
                         float shiftwhitepoint = params->locallab.spots.at(sp).ghs_HLP;//White point
+                        float limmax = 1.3f;//reasonable limit where we can consider that the highlights are very high
                        
                         if(shiftblackpoint < 0.f && strtype == GHTStrType::NORMAL) {//change only Black point with negatives values for in some cases out of gamut values
                             //rgb value can be very weakly negatives (eg working space sRGB in some rare cases) - tone_eqblack prevents it
@@ -18535,10 +18550,14 @@ void ImProcFunctions::Lab_Local(
                                 LUTu symhist(65535);
                                 symhist.clear();
                                 array2D<float> Y2(bfw, bfh);
-                                //generate histogram RGB with norm2 equivalent luminance
+                                //generate histogram RGB with norm2 or norm3 equivalent luminance
                                 for (int i = 0; i < bfh; ++i)
                                     for (int j = 0; j < bfw; ++j) {
-                                        Y2[i][j] = norm2(clipR(tmpImage->r(i, j)), clipR(tmpImage->g(i, j)), clipR(tmpImage->b(i, j)), wprof);//clipR to avoid bad datas in histogram - This is not a precise calculation but an assessment
+                                        if(maxwp < limmax) { //comparison between the calculated WP and the limit                   
+                                            Y2[i][j] = norm2(clipR(tmpImage->r(i, j)), clipR(tmpImage->g(i, j)), clipR(tmpImage->b(i, j)), wprof);//clipR to avoid bad datas in histogram - This is not a precise calculation but an assessment
+                                        } else {
+                                            Y2[i][j] = norm_3(clipR(tmpImage->r(i, j)), clipR(tmpImage->g(i, j)), clipR(tmpImage->b(i, j)), wprof, maxwp / limmax);//clipR to avoid bad datas in histogram - This is not a precise calculation but an assessment                                         
+                                        }
                                         int pos = (int) Y2[i][j];
                                         symhist[pos]++;
                                     }
@@ -18618,7 +18637,11 @@ void ImProcFunctions::Lab_Local(
 #endif
                                     for (int y = 0; y < bfh; ++y) {
                                         for (int x = 0; x < bfw; ++x) {
-                                            Y2[y][x] = norm2(tmpImage->r(y, x), tmpImage->g(y, x), tmpImage->b(y, x), wprof) / 65535.f;//norm ?
+                                            if(ghsbpwpvalue[1] < limmax) {//comparison between the calculated WP and the limit
+                                                Y2[y][x] = norm2(tmpImage->r(y, x), tmpImage->g(y, x), tmpImage->b(y, x), wprof) / 65535.f;//norm2
+                                            } else {
+                                                Y2[y][x] = norm_3(tmpImage->r(y, x), tmpImage->g(y, x), tmpImage->b(y, x), wprof, ghsbpwpvalue[1] / limmax) / 65535.f;//norm_3                                             
+                                            }
                                             float l = xlogf(rtengine::max(Y2[y][x], 1e-9f));
                                             float ll = round(l * base_posterization) / base_posterization;
                                             Yc[y][x] = xexpf(ll);
@@ -18652,7 +18675,13 @@ void ImProcFunctions::Lab_Local(
                                         tlc = rtengine::max(tlc, noise);
                                         float ci = GHT(tlc, B, D, LP, SP, HP, c, strtype);
                                         float flc = ci / tlc;
-                                        float gh = norm2(r, g, b, wprof);//Calculate Luminance in function working profile Wprof  norm ?
+                                        float gh = 0.f;
+                                        if(ghsbpwpvalue[1]  < limmax) {//comparison between the calculated WP and the limit
+                                            gh = norm2(r, g, b, wprof);//Calculate Luminance in function working profile Wprof and norm2
+                                        } else {
+                                            gh = norm_3(r, g, b, wprof, ghsbpwpvalue[1] / limmax);//Calculate Luminance in function working profile Wprof and norm_3
+                                        }
+
                                         gh = rtengine::max(gh, noise);
                                         float Mgh = GHT(gh, B, D, LP, SP, HP, c, strtype);//ghs transform with "luminance"
                                         float fgh = Mgh / gh;
