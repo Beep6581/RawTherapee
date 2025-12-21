@@ -2387,6 +2387,9 @@ ColorManagementParams::ColorManagementParams() :
     },
     wsmoothcie(false),
     wsmoothciesli(0.),
+    // These chromaticities correspond to Rec.2020 with a D65 white point.
+    // Earlier versions of RawTherapee used ProPhoto RGB (D50) as the default
+    // This increases compatibility because 'resetting' with Prophoto's values ​​will cause confusion.   
     redx(0.7080),
     redy(0.2920),
     grex(0.1700),

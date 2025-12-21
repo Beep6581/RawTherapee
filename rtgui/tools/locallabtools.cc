@@ -4422,7 +4422,7 @@ LocallabShadow::LocallabShadow():
     ghsMatmet->append(M("TP_LOCALLAB_GHSMAT1"));
     ghsMatmet->append(M("TP_LOCALLAB_GHSMAT2"));
     ghsMatmet->append(M("TP_LOCALLAB_GHSMAT3"));
-    ghsMatmet->set_active(1);
+    ghsMatmet->set_active(1);// Default to AgX (index 1)
     ghsMatmetConn = ghsMatmet->signal_changed().connect(sigc::mem_fun(*this, &LocallabShadow::ghsMatmetChanged));
 
     for (const auto multiplier : multipliersh) {

@@ -2367,12 +2367,12 @@ inline float norm_3(float r, float g, float b, TMatrix ws, float raplim)//lowers
     constexpr float hi = std::numeric_limits<float>::max() / 100.f;
     float pwn = 0.5f;
     if (raplim < 2.f) {
-        pwn = 0.7f;
+        pwn = 0.7f;//Tested on images with WP linear close to 1.5
     } else if (raplim < 4.f) {
-        pwn = 0.75f;
+        pwn = 0.75f;//Tested on images with WP linear close to 5
     } else {
-        pwn = 0.85f;
-    }
+        pwn = 0.85f;//Tested on images with WP linear close to 6 and above
+    }    
     return std::min(hi, pwn * power_norm(r, g, b) + (1.f - pwn) * Color::rgbLuminance(r, g, b, ws));
 }
 
@@ -18343,9 +18343,9 @@ void ImProcFunctions::Lab_Local(
                         Matrix inv_lms_T = {};//initialize inv_lms_T
                         Matrix lms_mat = {};//initialize lms_mat
                         if(params->locallab.spots.at(sp).ghsMatmet != "none") {
-                            if(params->locallab.spots.at(sp).ghsMatmet == "agx") {//for Rec2020 with chromatic adaptation D50 take in Sobotka AgX-Resolve, but where it's come from...?
-                                // It's very unusual to apply this transformation mode in RGB mode and not XYZ, but why not, especially since we're only affecting the differences 
-                                // caused by the change and often we're dealing with a high White Point, therefore outside the usual XYZ values.
+                            if(params->locallab.spots.at(sp).ghsMatmet == "agx") {// for Rec2020 with chromatic adaptation D50 from Sobotka AgX-Resolve (origin uncertain).
+                                //It's very unusual to apply this transformation in RGB space rather than XYZ space, but why not, especially since we're only affecting the differences
+                                //caused by the change and often we're dealing with a high White Point, therefore outside the usual XYZ values.
 
                                 //Define AgX matrix for color space transformation
                                 lms_mat = {{//AgX
@@ -18407,7 +18407,7 @@ void ImProcFunctions::Lab_Local(
                                     inv_lms_T[2][2] = 1.90830440656202;
                                 }
                             }
-                            //now we have 3 Matrix to convert tmpimage with Agx, JzAzBz, Cat16
+                            //now we have 3 Matrices to convert tmpimage with Agx, JzAzBz, Cat16
 
 #ifdef _OPENMP
         #   pragma omp parallel for schedule(dynamic,16) if (multiThread)
@@ -18554,9 +18554,9 @@ void ImProcFunctions::Lab_Local(
                                 for (int i = 0; i < bfh; ++i)
                                     for (int j = 0; j < bfw; ++j) {
                                         if(maxwp < limmax) { //comparison between the calculated WP and the limit
-                                            Y2[i][j] = norm2(clipR(tmpImage->r(i, j)), clipR(tmpImage->g(i, j)), clipR(tmpImage->b(i, j)), wprof);//clipR to avoid bad datas in histogram - This is not a precise calculation but an assessment
+                                            Y2[i][j] = norm2(clipR(tmpImage->r(i, j)), clipR(tmpImage->g(i, j)), clipR(tmpImage->b(i, j)), wprof);//clipR to avoid bad data in histogram - This is not a precise calculation but an assessment
                                         } else {
-                                            Y2[i][j] = norm_3(clipR(tmpImage->r(i, j)), clipR(tmpImage->g(i, j)), clipR(tmpImage->b(i, j)), wprof, maxwp / limmax);//clipR to avoid bad datas in histogram - This is not a precise calculation but an assessment
+                                            Y2[i][j] = norm_3(clipR(tmpImage->r(i, j)), clipR(tmpImage->g(i, j)), clipR(tmpImage->b(i, j)), wprof, maxwp / limmax);//clipR to avoid bad data in histogram - This is not a precise calculation but an assessment
                                         }
                                         int pos = (int) Y2[i][j];
                                         symhist[pos]++;
@@ -18807,7 +18807,7 @@ void ImProcFunctions::Lab_Local(
                                     float gout = 0.f;
                                     float bout = 0.f;                             
                                     Color::agx_trans(rgb_in, inv_lms_T, rout, gout, bout);
-                                    tmpImage->r(i, j) = rtengine::max(0.00001f, rout);//avoid negatives values which are mathematically possible due to the values 
+                                    tmpImage->r(i, j) = rtengine::max(0.00001f, rout);//avoid negative values which are mathematically possible due to the values 
                                     tmpImage->g(i, j) = rtengine::max(0.00001f, gout);//​​of the inverse matrix and the possible 'overflows' of the GHS calculations if the user uses very strong settings
                                     tmpImage->b(i, j) = rtengine::max(0.00001f, bout);
                                 }
