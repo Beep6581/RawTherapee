@@ -1877,7 +1877,7 @@ LocallabParams::LocallabSpot::LocallabSpot() :
     },
     midtciemet("one"),
     midtcie(0),
-    grexl(0.1700),//new Rec2020 default values in Color Appearance (CAM16) as in 'Abstract profile', insteda of Prophoto.
+    grexl(0.1700),//new Rec2020 default values in Color Appearance (CAM16) as in 'Abstract profile', instead of Prophoto.
     greyl(0.7970),
     bluxl(0.1310),
     bluyl(0.0460),
