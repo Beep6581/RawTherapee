@@ -2365,13 +2365,13 @@ inline float norm2(float r, float g, float b, TMatrix ws)
 inline float norm_3(float r, float g, float b, TMatrix ws, float raplim)//lowers the equivalent luminance if the white point is high
 {
     constexpr float hi = std::numeric_limits<float>::max() / 100.f;
-    float pwn = 0.5f;
-    if (raplim < 2.f) {
+    float pwn = 0.5f;//standard repartition between XYZ luminance and Out of gamut values 
+    if (raplim < 2.f) {//raplim : ratio between the normal value 'limmax' and reality
         pwn = 0.7f;//Tested on images with WP linear close to 1.5
-    } else if (raplim < 4.f) {
+    } else if (raplim < 4.f) {//Near Sunset
         pwn = 0.75f;//Tested on images with WP linear close to 5
     } else {
-        pwn = 0.85f;//Tested on images with WP linear close to 6 and above
+        pwn = 0.85f;//Tested on images with WP linear close to 6 and above //LEDs
     }    
     return std::min(hi, pwn * power_norm(r, g, b) + (1.f - pwn) * Color::rgbLuminance(r, g, b, ws));
 }
@@ -18353,14 +18353,14 @@ void ImProcFunctions::Lab_Local(
                                     { 0.137318972929847, 0.761241990602591, 0.101439036467562 },
                                     { 0.11189821299995, 0.0767994186031903, 0.811302368396859 }
                                 }};
-                            } else if(params->locallab.spots.at(sp).ghsMatmet == "JZ") { //original LMS JzAzBz matrix without PQ.
-                                lms_mat = {{//JzAzBz
+                            } else if(params->locallab.spots.at(sp).ghsMatmet == "JZ") { //original LMS JzAzBz matrix without PQ, whitout Absolute luminance, whitout "az and bz"
+                                lms_mat = {{//JzAzBz - Actually, it's not the JzAzBz model but an approximate cognitive bias.
                                     { 0.41478972, 0.579999, 0.0146480 },
                                     { -0.2015100, 1.120649, 0.0531008 },
                                     { -0.0166008, 0.264800, 0.6684799 }
                                 }};
                             } else if(params->locallab.spots.at(sp).ghsMatmet == "cat16") { //original 'LMS Cat16' matrix, of course without CIECAM treatment.
-                                lms_mat = {{//Cat16
+                                lms_mat = {{//Cat16 - Actually, it's not the Cat16 model but an approximate cognitive bias, but less biased than JzAzBz
                                     { 0.44113111, 0.46084198975, 0.090051211104 },
                                     { 0.176890718, 0.724815611, 0.06249008 },
                                     { 0.061414342, 0.196120268, 0.5430087122 }
@@ -18475,7 +18475,11 @@ void ImProcFunctions::Lab_Local(
                         int blackpoint = 100. * params->locallab.spots.at(sp).ghs_BLP;//Black point
                         float shiftblackpoint = params->locallab.spots.at(sp).ghs_BLP;//Black point
                         float shiftwhitepoint = params->locallab.spots.at(sp).ghs_HLP;//White point
-                        float limmax = 1.3f;//reasonable limit where we can consider that the highlights are very high
+                        float limmax = 1.3f;//reasonable limit where we can consider that the highlights are very high.
+                        //This occurs either when 'Highlight reconstruction' is not activated or when the value recovered with reconstruction is quite low. 
+                        //This is the majority of cases. In this case, I apply 'norm2', which combines the estimated XYZ Luminance values ​​with out-of-gamut values ​​at 50%.
+                        //In other cases, sunsets, images with LEDs, the WP linear values ​​can be very high, up to 11... I vary the ratio from 50% up to 85% for out-of-gamut lights.
+                        //But all of this is quite empirical, based on trials/experiments and not sophisticated mathematical formulas (like almost all colorimetry...)
                        
                         if(shiftblackpoint < 0.f && strtype == GHTStrType::NORMAL) {//change only Black point with negatives values for in some cases out of gamut values
                             //rgb value can be very weakly negatives (eg working space sRGB in some rare cases) - tone_eqblack prevents it
@@ -18805,7 +18809,7 @@ void ImProcFunctions::Lab_Local(
                                     std::array<float, 3> rgb_in{r, g, b};
                                     float rout = 0.f;
                                     float gout = 0.f;
-                                    float bout = 0.f;                             
+                                    float bout = 0.f;
                                     Color::agx_trans(rgb_in, inv_lms_T, rout, gout, bout);
                                     tmpImage->r(i, j) = rtengine::max(0.00001f, rout);//avoid negative values which are mathematically possible due to the values 
                                     tmpImage->g(i, j) = rtengine::max(0.00001f, gout);//​​of the inverse matrix and the possible 'overflows' of the GHS calculations if the user uses very strong settings

@@ -691,11 +691,8 @@ LocallabParams::LocallabSpot::LocallabSpot() :
     strvib(0.0),
     strvibab(0.0),
     strvibh(0.0),
- //   angvib(0.0),
     angvib(1.0),
-   // feathervib(25.0),
     feathervib(1.0),
-    
     Lmaskvibcurve{
         static_cast<double>(DCT_NURBS),
         0.0,
@@ -1150,7 +1147,6 @@ LocallabParams::LocallabSpot::LocallabSpot() :
     deconvCoLat(25.),
     deconvCogam(1.),
     reparsha(100.),
-    
     // Local Contrast
     visicontrast(false),
     expcontrast(false),
@@ -1853,7 +1849,6 @@ LocallabParams::LocallabSpot::LocallabSpot() :
     sigmoidthcie(1.2),
     sigmoidsenscie(0.9),
     sigmoidblcie(0.75),
-
     comprcie(0.4),
     strcielog(80.),
     comprcieth(6.),
@@ -1882,7 +1877,7 @@ LocallabParams::LocallabSpot::LocallabSpot() :
     },
     midtciemet("one"),
     midtcie(0),
-    grexl(0.1700),
+    grexl(0.1700),//new Rec2020 default values in Color Appearance (CAM16) as in 'Abstract profile', insteda of Prophoto.
     greyl(0.7970),
     bluxl(0.1310),
     bluyl(0.0460),
@@ -1995,12 +1990,12 @@ LocallabParams::LocallabSpot::LocallabSpot() :
     higthrescie(85.),
     decaycie(2.),
     strumaskcie(0.),
-	toolcie(false),
-	fftcieMask(true),
+    toolcie(false),
+    fftcieMask(true),
     contcie(0.),
     blurcie(0.2),
-	highmaskcie(0.),
-	shadmaskcie(0.),
+    highmaskcie(0.),
+    shadmaskcie(0.),
      LLmaskciecurvewav{
         static_cast<double>(FCT_MinMaxCPoints),
         0.0,
@@ -2732,7 +2727,6 @@ bool LocallabParams::LocallabSpot::operator ==(const LocallabSpot& other) const
         && lowthresl == other.lowthresl
         && higthresl == other.higthresl
         && decayl == other.decayl
-
         // mask
         && visimask == other.visimask
         && complexmask == other.complexmask
@@ -2856,7 +2850,6 @@ bool LocallabParams::LocallabSpot::operator ==(const LocallabSpot& other) const
         && sigmoidldacie12 == other.sigmoidldacie12
         && sigmoidthcie12 == other.sigmoidthcie12
         && sigmoidblcie12 == other.sigmoidblcie12
-
         && sigmoidldacie == other.sigmoidldacie
         && sigmoidthcie == other.sigmoidthcie
         && sigmoidsenscie == other.sigmoidsenscie

@@ -2364,7 +2364,6 @@ ColorManagementParams::ColorManagementParams() :
     wGamma(2.4),//gamma sRGB
     wSlope(12.92),
     wapsat(0.5),
-    
     wmidtcie(0.),
     sigmatrc(1.),
     offstrc(1.),
@@ -2389,7 +2388,8 @@ ColorManagementParams::ColorManagementParams() :
     wsmoothciesli(0.),
     // These chromaticities correspond to Rec.2020 with a D65 white point.
     // Earlier versions of RawTherapee used ProPhoto RGB (D50) as the default
-    // This increases compatibility because 'resetting' with Prophoto's values ​​will cause confusion.   
+    // This increases compatibility because 'resetting' with Prophoto's (in 'Abstract profiles') values ​​will cause confusion.
+    // This is used by 'Abstract profile' to adjust the primaries and illuminants, but this is not where the Working Profile is selected.
     redx(0.7080),
     redy(0.2920),
     grex(0.1700),
@@ -2413,8 +2413,8 @@ ColorManagementParams::ColorManagementParams() :
     labgridcieGy(0.63090),//
     labgridcieWx(-0.24959),//D65 0.3127 0.329
     labgridcieWy(-0.22000),
-    labgridcieMx(0.),//
-    labgridcieMy(0.),//
+    labgridcieMx(0.),
+    labgridcieMy(0.),
     aRendIntent(RI_RELATIVE),
     outputProfile(App::get().options().rtSettings.srgb),
     outputIntent(RI_RELATIVE),

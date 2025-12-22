@@ -5063,9 +5063,13 @@ void LocallabShadow::read(const rtengine::procparams::ProcParams* pp, const Para
             ghsMatmet->set_active(0);
         } else if (spot.ghsMatmet == "agx") {
             ghsMatmet->set_active(1);
-        } else if (spot.ghsMatmet == "JZ") {
+        } else if (spot.ghsMatmet == "JZ") {//I chose JZ rather than JzAzBz because we're dealing with a cognitive bias.
+                                            //it corresponds to original LMS JzAzBz matrix without PQ, whitout Absolute luminance, whitout "az and bz" and applied to RGB values
+                                            //If I had chosen JzAzBz, the reader might believe we are using the JzAzBz model, which is not the case.
+                                            //But to 'simplify' the GUI, JzAzBz and Cat16 appear... this reassures users, but it's more than likely false.
             ghsMatmet->set_active(2);
-        } else if (spot.ghsMatmet == "cat16") {
+        } else if (spot.ghsMatmet == "cat16") {//It's essentially the same for Cat16 as for JZ
+                                               //it's a simplifying cognitive bias, but I kept the term here because the difference is smaller.
             ghsMatmet->set_active(3);
         }
 
