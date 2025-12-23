@@ -18385,7 +18385,7 @@ void ImProcFunctions::Lab_Local(
                                     inv_lms_T[2][0] = -0.0531795641897042;
                                     inv_lms_T[2][1] = -0.157620505148385;
                                     inv_lms_T[2][2] = 1.25484147589507;
-                                } else if(params->locallab.spots.at(sp).ghsMatmet == "JZ") {
+                                } else if(params->locallab.spots.at(sp).ghsMatmet == "JZ") {////I chose JZ rather than JzAzBz because we're dealing with a cognitive bias.
                                     inv_lms_T[0][0] = 1.92488743175646;
                                     inv_lms_T[0][1] = 0.349838855125251;
                                     inv_lms_T[0][2] = -0.097770847478916;
@@ -18395,7 +18395,7 @@ void ImProcFunctions::Lab_Local(
                                     inv_lms_T[2][0] = 0.0265884071012174;
                                     inv_lms_T[2][1] = -0.0573856961296308;
                                     inv_lms_T[2][2] = 1.51932335013174;
-                                } else if(params->locallab.spots.at(sp).ghsMatmet == "cat16") {
+                                } else if(params->locallab.spots.at(sp).ghsMatmet == "cat16") {//I chose cat16 rather than Cat16 because we're dealing with a cognitive bias.
                                     inv_lms_T[0][0] = 3.05467729554555;
                                     inv_lms_T[0][1] = -0.738708117076132;
                                     inv_lms_T[0][2] = -0.0786826459200281;
@@ -18407,7 +18407,7 @@ void ImProcFunctions::Lab_Local(
                                     inv_lms_T[2][2] = 1.90830440656202;
                                 }
                             }
-                            //now we have 3 Matrices to convert tmpimage with Agx, JzAzBz, Cat16
+                            //now we have 3 Matrices to convert tmpimage with Agx, JzAzBz (JZ), Cat16 (cat16)
 
 #ifdef _OPENMP
         #   pragma omp parallel for schedule(dynamic,16) if (multiThread)
@@ -18478,8 +18478,9 @@ void ImProcFunctions::Lab_Local(
                         float limmax = 1.3f;//reasonable limit where we can consider that the highlights are very high.
                         //This occurs either when 'Highlight reconstruction' is not activated or when the value recovered with reconstruction is quite low. 
                         //This is the majority of cases. In this case, I apply 'norm2', which combines the estimated XYZ Luminance values ​​with out-of-gamut values ​​at 50%.
-                        //In other cases, sunsets, images with LEDs, the WP linear values ​​can be very high, up to 11... I vary the ratio from 50% up to 85% for out-of-gamut lights.
+                        //In other cases, sunsets, images with LEDs,etc. the WP linear values ​​can be very high, up to 11... I vary the ratio from 50% up to 85% for out-of-gamut lights.
                         //But all of this is quite empirical, based on trials/experiments and not sophisticated mathematical formulas (like almost all colorimetry...)
+                        //And it's not a magic number, there's a logic behind it.
                        
                         if(shiftblackpoint < 0.f && strtype == GHTStrType::NORMAL) {//change only Black point with negatives values for in some cases out of gamut values
                             //rgb value can be very weakly negatives (eg working space sRGB in some rare cases) - tone_eqblack prevents it
@@ -18595,11 +18596,10 @@ void ImProcFunctions::Lab_Local(
                                     printf("calculate Black Point and White Point: %d nsec\n",  t2.etime(t1));
                                 }
 
-                        /*
-                                if (settings->verbose) {
-                                    printf("Black Point-nb=%i White Point-nb=%i  min-BlackPoint val=%f max-WhitePointPval=%f \n", ghsbpwp[0], ghsbpwp[1], (double)ghsbpwpvalue[0] , (double) ghsbpwpvalue[1]);
-                                }
-                        */
+                               // if (settings->verbose) {
+                               //     printf("Black Point-nb=%i White Point-nb=%i  min-BlackPoint val=%f max-WhitePointPval=%f \n", ghsbpwp[0], ghsbpwp[1], (double)ghsbpwpvalue[0] , (double) ghsbpwpvalue[1]);
+                               // }
+
                         }
                         
                         if(met == 0  || met == 1) {//RGB mode
