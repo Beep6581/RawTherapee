@@ -677,7 +677,7 @@ private:
     rtengine::ProcEvent Evlocallabghs_autobw;
     rtengine::ProcEvent Evlocallabghs_inv;
     rtengine::ProcEvent Evlocallabghs_agx;
-     rtengine::ProcEvent Evlocallabghs_Matmet;
+    rtengine::ProcEvent Evlocallabghs_Matmet;
 
     sigc::connection shMethodConn, ghsMethodConn, ghsMatmetConn, previewshConn, inversshConn, ghs_smoothConn, ghs_autobwConn, ghs_agxConn, ghs_invConn, showmaskSHMethodConn, showmaskSHMethodConninv, enaSHMaskConn;
 
