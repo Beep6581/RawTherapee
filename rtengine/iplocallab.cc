@@ -18475,7 +18475,7 @@ void ImProcFunctions::Lab_Local(
                         int blackpoint = 100. * params->locallab.spots.at(sp).ghs_BLP;//Black point
                         float shiftblackpoint = params->locallab.spots.at(sp).ghs_BLP;//Black point
                         float shiftwhitepoint = params->locallab.spots.at(sp).ghs_HLP;//White point
-                        float reasonable_limit_white_point = 1.3f; //reasonable limit where we can consider that the highlights are very high
+                        constexpr float reasonable_limit_white_point = 1.3f; //reasonable limit where we can consider that the highlights are very high
                         //This occurs either when 'Highlight reconstruction' is not activated or when the value recovered with reconstruction is quite low. 
                         //This is the majority of cases. In this case, I apply 'norm2', which combines the estimated XYZ Luminance values ​​with out-of-gamut values ​​at 50%.
                         //In other cases, sunsets, images with LEDs,etc. the WP linear values ​​can be very high, up to 11... I vary the ratio from 50% up to 85% for out-of-gamut lights.
