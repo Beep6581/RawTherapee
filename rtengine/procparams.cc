@@ -1407,8 +1407,10 @@ ColorAppearanceParams::ColorAppearanceParams() :
     qbright(0.0),
     chroma(0.0),
     schroma(0.0),
+    schromared(0.0),
     mchroma(0.0),
     colorh(0.0),
+    colorhred(0.0),
     rstprotection(0.0),
     surrsource(false),
     gamut(false),
@@ -1457,8 +1459,10 @@ bool ColorAppearanceParams::operator ==(const ColorAppearanceParams& other) cons
         && qbright == other.qbright
         && chroma == other.chroma
         && schroma == other.schroma
+        && schromared == other.schromared
         && mchroma == other.mchroma
         && colorh == other.colorh
+        && colorhred == other.colorhred
         && rstprotection == other.rstprotection
         && surrsource == other.surrsource
         && gamut == other.gamut
@@ -3936,10 +3940,12 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
         saveToKeyfile(!pedited || pedited->colorappearance.qbright, "Color appearance", "Q-Bright", colorappearance.qbright, keyFile);
         saveToKeyfile(!pedited || pedited->colorappearance.chroma, "Color appearance", "C-Chroma", colorappearance.chroma, keyFile);
         saveToKeyfile(!pedited || pedited->colorappearance.schroma, "Color appearance", "S-Chroma", colorappearance.schroma, keyFile);
+        saveToKeyfile(!pedited || pedited->colorappearance.schromared, "Color appearance", "S-Chroma-red", colorappearance.schromared, keyFile);
         saveToKeyfile(!pedited || pedited->colorappearance.mchroma, "Color appearance", "M-Chroma", colorappearance.mchroma, keyFile);
         saveToKeyfile(!pedited || pedited->colorappearance.contrast, "Color appearance", "J-Contrast", colorappearance.contrast, keyFile);
         saveToKeyfile(!pedited || pedited->colorappearance.qcontrast, "Color appearance", "Q-Contrast", colorappearance.qcontrast, keyFile);
         saveToKeyfile(!pedited || pedited->colorappearance.colorh, "Color appearance", "H-Hue", colorappearance.colorh, keyFile);
+        saveToKeyfile(!pedited || pedited->colorappearance.colorhred, "Color appearance", "H-Hue-red", colorappearance.colorhred, keyFile);
         saveToKeyfile(!pedited || pedited->colorappearance.rstprotection, "Color appearance", "RSTProtection", colorappearance.rstprotection, keyFile);
         saveToKeyfile(!pedited || pedited->colorappearance.adapscen, "Color appearance", "AdaptScene", colorappearance.adapscen, keyFile);
         saveToKeyfile(!pedited || pedited->colorappearance.autoadapscen, "Color appearance", "AutoAdapscen", colorappearance.autoadapscen, keyFile);
@@ -5326,11 +5332,13 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
             assignFromKeyfile(keyFile, "Color appearance", "Q-Bright", colorappearance.qbright, pedited->colorappearance.qbright);
             assignFromKeyfile(keyFile, "Color appearance", "C-Chroma", colorappearance.chroma, pedited->colorappearance.chroma);
             assignFromKeyfile(keyFile, "Color appearance", "S-Chroma", colorappearance.schroma, pedited->colorappearance.schroma);
+            assignFromKeyfile(keyFile, "Color appearance", "S-Chroma-red", colorappearance.schromared, pedited->colorappearance.schromared);
             assignFromKeyfile(keyFile, "Color appearance", "M-Chroma", colorappearance.mchroma, pedited->colorappearance.mchroma);
             assignFromKeyfile(keyFile, "Color appearance", "RSTProtection", colorappearance.rstprotection, pedited->colorappearance.rstprotection);
             assignFromKeyfile(keyFile, "Color appearance", "J-Contrast", colorappearance.contrast, pedited->colorappearance.contrast);
             assignFromKeyfile(keyFile, "Color appearance", "Q-Contrast", colorappearance.qcontrast, pedited->colorappearance.qcontrast);
             assignFromKeyfile(keyFile, "Color appearance", "H-Hue", colorappearance.colorh, pedited->colorappearance.colorh);
+            assignFromKeyfile(keyFile, "Color appearance", "H-Hue-red", colorappearance.colorhred, pedited->colorappearance.colorhred);
             assignFromKeyfile(keyFile, "Color appearance", "AdaptScene", colorappearance.adapscen, pedited->colorappearance.adapscen);
             assignFromKeyfile(keyFile, "Color appearance", "AutoAdapscen", colorappearance.autoadapscen, pedited->colorappearance.autoadapscen);
             assignFromKeyfile(keyFile, "Color appearance", "YbScene", colorappearance.ybscen, pedited->colorappearance.ybscen);

@@ -305,10 +305,12 @@ struct ColorAppearanceParamsEdited {
     bool qbright;
     bool chroma;
     bool schroma;
+    bool schromared;
     bool mchroma;
     bool contrast;
     bool qcontrast;
     bool colorh;
+    bool colorhred;
     bool rstprotection;
     bool surrsource;
     bool gamut;

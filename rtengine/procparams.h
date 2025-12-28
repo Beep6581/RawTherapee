@@ -536,8 +536,10 @@ struct ColorAppearanceParams {
     double        qbright;
     double        chroma;
     double        schroma;
+    double        schromared;
     double        mchroma;
     double        colorh;
+    double        colorhred;
     double        rstprotection;
     bool          surrsource;
     bool          gamut;

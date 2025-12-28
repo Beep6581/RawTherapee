@@ -145,6 +145,9 @@ ColorAppearance::ColorAppearance () : FoldableToolPanel (this, TOOL_NAME, M ("TP
     EvCATcomplex = m->newEvent(LUMINANCECURVE, "HISTORY_MSG_CATCOMPLEX");
     EvCATmodel = m->newEvent(LUMINANCECURVE, "HISTORY_MSG_CATMODEL");
     EvCATcat = m->newEvent(LUMINANCECURVE, "HISTORY_MSG_CATCAT");
+    EvCATcolorhred = m->newEvent(LUMINANCECURVE, "HISTORY_MSG_CATHUERED");
+    EvCATschromared = m->newEvent(LUMINANCECURVE, "HISTORY_MSG_CATSCHROMARED");
+    
     //preset button cat02/16
     Gtk::Frame *genFrame;
     Gtk::Box* genVBox;
@@ -366,6 +369,13 @@ ColorAppearance::ColorAppearance () : FoldableToolPanel (this, TOOL_NAME, M ("TP
 
     qcontrast->set_tooltip_markup (M ("TP_COLORAPP_CONTRAST_Q_TOOLTIP"));
     p2VBox->pack_start (*qcontrast);
+
+    //hue red blue green
+    colorhred = Gtk::manage (new Adjuster (M ("TP_COLORAPP_HUE_RED"), -10.0, 10.0, 0.1, 0.));
+    p2VBox->pack_start (*colorhred);
+    schromared = Gtk::manage (new Adjuster (M ("TP_COLORAPP_CHROMA_S_RED"), -10.0, 10.0, 0.1, 0.));
+    p2VBox->pack_start (*schromared);
+
 
 
     colorh = Gtk::manage (new Adjuster (M ("TP_COLORAPP_HUE"), -100.0, 100.0, 0.1, 0.));
@@ -605,8 +615,10 @@ ColorAppearance::ColorAppearance () : FoldableToolPanel (this, TOOL_NAME, M ("TP
     jlight->setAdjusterListener  (this);
     qbright->setAdjusterListener  (this);
     colorh->setAdjusterListener  (this);
+    colorhred->setAdjusterListener  (this);
     chroma->setAdjusterListener  (this);
     schroma->setAdjusterListener  (this);
+    schromared->setAdjusterListener  (this);
     mchroma->setAdjusterListener  (this);
     contrast->setAdjusterListener  (this);
     qcontrast->setAdjusterListener  (this);
@@ -655,11 +667,13 @@ void ColorAppearance::neutral_pressed ()
     qbright->resetValue (false);
     chroma->resetValue (false);
     schroma->resetValue (false);
+    schromared->resetValue (false);
     mchroma->resetValue (false);
     rstprotection->resetValue (false);
     contrast->resetValue (false);
     qcontrast->resetValue (false);
     colorh->resetValue (false);
+    colorhred->resetValue (false);
     tempout->resetValue (false);
     tempout->setAutoValue (true);
     greenout->resetValue (false);
@@ -731,6 +745,7 @@ void ColorAppearance::read (const ProcParams* pp, const ParamsEdited* pedited)
         qbright->setEditedState       (pedited->colorappearance.qbright ? Edited : UnEdited);
         chroma->setEditedState        (pedited->colorappearance.chroma ? Edited : UnEdited);
         schroma->setEditedState       (pedited->colorappearance.schroma ? Edited : UnEdited);
+        schromared->setEditedState    (pedited->colorappearance.schromared ? Edited : UnEdited);
         mchroma->setEditedState       (pedited->colorappearance.mchroma ? Edited : UnEdited);
         rstprotection->setEditedState (pedited->colorappearance.rstprotection ? Edited : UnEdited);
         tempout->setEditedState (pedited->colorappearance.tempout ? Edited : UnEdited);
@@ -741,6 +756,7 @@ void ColorAppearance::read (const ProcParams* pp, const ParamsEdited* pedited)
         contrast->setEditedState      (pedited->colorappearance.contrast ? Edited : UnEdited);
         qcontrast->setEditedState     (pedited->colorappearance.qcontrast ? Edited : UnEdited);
         colorh->setEditedState        (pedited->colorappearance.colorh ? Edited : UnEdited);
+        colorhred->setEditedState     (pedited->colorappearance.colorhred ? Edited : UnEdited);
         gamut->set_inconsistent       (!pedited->colorappearance.gamut);
         datacie->set_inconsistent     (!pedited->colorappearance.datacie);
         tonecie->set_inconsistent     (!pedited->colorappearance.tonecie);
@@ -943,11 +959,13 @@ void ColorAppearance::read (const ProcParams* pp, const ParamsEdited* pedited)
     qbright->setValue (pp->colorappearance.qbright);
     chroma->setValue (pp->colorappearance.chroma);
     schroma->setValue (pp->colorappearance.schroma);
+    schromared->setValue (pp->colorappearance.schromared);
     mchroma->setValue (pp->colorappearance.mchroma);
     rstprotection->setValue (pp->colorappearance.rstprotection);
     contrast->setValue (pp->colorappearance.contrast);
     qcontrast->setValue (pp->colorappearance.qcontrast);
     colorh->setValue (pp->colorappearance.colorh);
+    colorhred->setValue (pp->colorappearance.colorhred);
     tempout->setValue (pp->colorappearance.tempout);
     tempout->setAutoValue (pp->colorappearance.autotempout);
     greenout->setValue (pp->colorappearance.greenout);
@@ -985,23 +1003,25 @@ void ColorAppearance::write (ProcParams* pp, ParamsEdited* pedited)
 
     pp->colorappearance.degree        = degree->getValue ();
     pp->colorappearance.autodegree    = degree->getAutoValue ();
-    pp->colorappearance.degreeout        = degreeout->getValue ();
-    pp->colorappearance.autodegreeout    = degreeout->getAutoValue ();
+    pp->colorappearance.degreeout     = degreeout->getValue ();
+    pp->colorappearance.autodegreeout = degreeout->getAutoValue ();
     pp->colorappearance.enabled       = getEnabled();
     pp->colorappearance.adapscen      = adapscen->getValue ();
     pp->colorappearance.autoadapscen  = adapscen->getAutoValue ();
-    pp->colorappearance.ybscen      = ybscen->getValue ();
-    pp->colorappearance.autoybscen  = ybscen->getAutoValue ();
+    pp->colorappearance.ybscen        = ybscen->getValue ();
+    pp->colorappearance.autoybscen    = ybscen->getAutoValue ();
     pp->colorappearance.adaplum       = adaplum->getValue ();
     pp->colorappearance.badpixsl      = badpixsl->getValue ();
     pp->colorappearance.jlight        = jlight->getValue ();
     pp->colorappearance.qbright       = qbright->getValue ();
     pp->colorappearance.chroma        = chroma->getValue ();
     pp->colorappearance.schroma       = schroma->getValue ();
+    pp->colorappearance.schromared    = schromared->getValue ();
     pp->colorappearance.mchroma       = mchroma->getValue ();
     pp->colorappearance.contrast      = contrast->getValue ();
     pp->colorappearance.qcontrast     = qcontrast->getValue ();
     pp->colorappearance.colorh        = colorh->getValue ();
+    pp->colorappearance.colorhred     = colorhred->getValue ();
     pp->colorappearance.rstprotection = rstprotection->getValue ();
     pp->colorappearance.gamut         = gamut->get_active();
 //  pp->colorappearance.badpix        = badpix->get_active();
@@ -1010,12 +1030,12 @@ void ColorAppearance::write (ProcParams* pp, ParamsEdited* pedited)
     pp->colorappearance.curve         = shape->getCurve ();
     pp->colorappearance.curve2        = shape2->getCurve ();
     pp->colorappearance.curve3        = shape3->getCurve ();
-    pp->colorappearance.tempout        = tempout->getValue ();
-    pp->colorappearance.autotempout    = tempout->getAutoValue ();
-    pp->colorappearance.greenout        = greenout->getValue ();
-    pp->colorappearance.ybout        = ybout->getValue ();
+    pp->colorappearance.tempout       = tempout->getValue ();
+    pp->colorappearance.autotempout   = tempout->getAutoValue ();
+    pp->colorappearance.greenout      = greenout->getValue ();
+    pp->colorappearance.ybout         = ybout->getValue ();
     pp->colorappearance.tempsc        = tempsc->getValue ();
-    pp->colorappearance.greensc        = greensc->getValue ();
+    pp->colorappearance.greensc       = greensc->getValue ();
 
     int tcMode = toneCurveMode->get_active_row_number();
 
@@ -1057,10 +1077,12 @@ void ColorAppearance::write (ProcParams* pp, ParamsEdited* pedited)
         pedited->colorappearance.qbright       = qbright->getEditedState ();
         pedited->colorappearance.chroma        = chroma->getEditedState ();
         pedited->colorappearance.schroma       = schroma->getEditedState ();
+        pedited->colorappearance.schromared    = schromared->getEditedState ();
         pedited->colorappearance.mchroma       = mchroma->getEditedState ();
         pedited->colorappearance.contrast      = contrast->getEditedState ();
         pedited->colorappearance.qcontrast     = qcontrast->getEditedState ();
         pedited->colorappearance.colorh        = colorh->getEditedState ();
+        pedited->colorappearance.colorhred     = colorhred->getEditedState ();
         pedited->colorappearance.rstprotection = rstprotection->getEditedState ();
         pedited->colorappearance.autodegree    = !degree->getAutoInconsistent();
         pedited->colorappearance.autodegreeout    = !degreeout->getAutoInconsistent();
@@ -1255,11 +1277,13 @@ void ColorAppearance::catmethodChanged()
         qbright->resetValue (false);
         chroma->resetValue (false);
         schroma->resetValue (false);
+        schromared->resetValue (false);
         mchroma->resetValue (false);
         rstprotection->resetValue (false);
         contrast->resetValue (false);
         qcontrast->resetValue (false);
         colorh->resetValue (false);
+        colorhred->resetValue (false);
         tempout->resetValue (false);
         greenout->resetValue (false);
         ybout->resetValue (false);
@@ -1557,11 +1581,13 @@ void ColorAppearance::setDefaults (const ProcParams* defParams, const ParamsEdit
     qbright->setDefault (defParams->colorappearance.qbright);
     chroma->setDefault (defParams->colorappearance.chroma);
     schroma->setDefault (defParams->colorappearance.schroma);
+    schromared->setDefault (defParams->colorappearance.schromared);
     mchroma->setDefault (defParams->colorappearance.mchroma);
     rstprotection->setDefault (defParams->colorappearance.rstprotection);
     contrast->setDefault (defParams->colorappearance.contrast);
     qcontrast->setDefault (defParams->colorappearance.qcontrast);
     colorh->setDefault (defParams->colorappearance.colorh);
+    colorhred->setDefault (defParams->colorappearance.colorhred);
     tempout->setDefault (defParams->colorappearance.tempout);
     greenout->setDefault (defParams->colorappearance.greenout);
     ybout->setDefault (defParams->colorappearance.ybout);
@@ -1579,11 +1605,13 @@ void ColorAppearance::setDefaults (const ProcParams* defParams, const ParamsEdit
         qbright->setDefaultEditedState (pedited->colorappearance.qbright ? Edited : UnEdited);
         chroma->setDefaultEditedState (pedited->colorappearance.chroma ? Edited : UnEdited);
         schroma->setDefaultEditedState (pedited->colorappearance.schroma ? Edited : UnEdited);
+        schromared->setDefaultEditedState (pedited->colorappearance.schromared ? Edited : UnEdited);
         mchroma->setDefaultEditedState (pedited->colorappearance.mchroma ? Edited : UnEdited);
         rstprotection->setDefaultEditedState (pedited->colorappearance.rstprotection ? Edited : UnEdited);
         contrast->setDefaultEditedState (pedited->colorappearance.contrast ? Edited : UnEdited);
         qcontrast->setDefaultEditedState (pedited->colorappearance.qcontrast ? Edited : UnEdited);
         colorh->setDefaultEditedState (pedited->colorappearance.colorh ? Edited : UnEdited);
+        colorhred->setDefaultEditedState (pedited->colorappearance.colorhred ? Edited : UnEdited);
         tempout->setDefaultEditedState (pedited->colorappearance.tempout ? Edited : UnEdited);
         greenout->setDefaultEditedState (pedited->colorappearance.greenout ? Edited : UnEdited);
         ybout->setDefaultEditedState (pedited->colorappearance.ybout ? Edited : UnEdited);
@@ -1601,11 +1629,13 @@ void ColorAppearance::setDefaults (const ProcParams* defParams, const ParamsEdit
         qbright->setDefaultEditedState (Irrelevant);
         chroma->setDefaultEditedState (Irrelevant);
         schroma->setDefaultEditedState (Irrelevant);
+        schromared->setDefaultEditedState (Irrelevant);
         mchroma->setDefaultEditedState (Irrelevant);
         contrast->setDefaultEditedState (Irrelevant);
         qcontrast->setDefaultEditedState (Irrelevant);
         rstprotection->setDefaultEditedState (Irrelevant);
         colorh->setDefaultEditedState (Irrelevant);
+        colorhred->setDefaultEditedState (Irrelevant);
         tempout->setDefaultEditedState (Irrelevant);
         greenout->setDefaultEditedState (Irrelevant);
         ybout->setDefaultEditedState (Irrelevant);
@@ -1728,6 +1758,8 @@ void ColorAppearance::adjusterChanged(Adjuster* a, double newval)
             listener->panelChanged (EvCATChroma, a->getTextValue());
         } else if (a == schroma) {
             listener->panelChanged (EvCATSChroma, a->getTextValue());
+        } else if (a == schromared) {
+            listener->panelChanged (EvCATschromared, a->getTextValue());
         } else if (a == mchroma) {
             listener->panelChanged (EvCATMChroma, a->getTextValue());
         } else if (a == rstprotection) {
@@ -1736,6 +1768,8 @@ void ColorAppearance::adjusterChanged(Adjuster* a, double newval)
             listener->panelChanged (EvCATContrast, a->getTextValue());
         } else if (a == colorh) {
             listener->panelChanged (EvCAThue, a->getTextValue());
+        } else if (a == colorhred) {
+            listener->panelChanged (EvCATcolorhred, a->getTextValue());
         } else if (a == qcontrast) {
             listener->panelChanged (EvCATQContrast, a->getTextValue());
         } else if (a == tempout) {
@@ -2037,11 +2071,13 @@ void ColorAppearance::setBatchMode (bool batchMode)
     qbright->showEditedCB ();
     chroma->showEditedCB ();
     schroma->showEditedCB ();
+    schromared->showEditedCB ();
     mchroma->showEditedCB ();
     rstprotection->showEditedCB ();
     contrast->showEditedCB ();
     qcontrast->showEditedCB ();
     colorh->showEditedCB ();
+    colorhred->showEditedCB ();
     tempout->showEditedCB ();
     greenout->showEditedCB ();
     ybout->showEditedCB ();
@@ -2084,7 +2120,7 @@ void ColorAppearance::updateCurveBackgroundHistogram(
 
 
 
-void ColorAppearance::setAdjusterBehavior (bool degreeadd, bool adapscenadd, bool adaplumadd, bool badpixsladd, bool jlightadd, bool chromaadd, bool contrastadd, bool rstprotectionadd, bool qbrightadd, bool qcontrastadd, bool schromaadd, bool mchromaadd, bool colorhadd, bool degreeoutadd, bool tempoutadd)
+void ColorAppearance::setAdjusterBehavior (bool degreeadd, bool adapscenadd, bool adaplumadd, bool badpixsladd, bool jlightadd, bool chromaadd, bool contrastadd, bool rstprotectionadd, bool qbrightadd, bool qcontrastadd, bool schromaadd, bool schromaredadd, bool mchromaadd, bool colorhadd, bool colorhredadd, bool degreeoutadd, bool tempoutadd)
 {
 
     degree->setAddMode (degreeadd);
@@ -2095,11 +2131,13 @@ void ColorAppearance::setAdjusterBehavior (bool degreeadd, bool adapscenadd, boo
     qbright->setAddMode (qbrightadd);
     chroma->setAddMode (chromaadd);
     schroma->setAddMode (schromaadd);
+    schromared->setAddMode (schromaredadd);
     mchroma->setAddMode (mchromaadd);
     rstprotection->setAddMode (rstprotectionadd);
     contrast->setAddMode (contrastadd);
     qcontrast->setAddMode (qcontrastadd);
     colorh->setAddMode (colorhadd);
+    colorhred->setAddMode (colorhredadd);
     degreeout->setAddMode (degreeoutadd);
     tempout->setAddMode (tempoutadd);
 
@@ -2118,11 +2156,13 @@ void ColorAppearance::trimValues (rtengine::procparams::ProcParams* pp)
     qbright->trimValue (pp->colorappearance.qbright);
     chroma->trimValue (pp->colorappearance.chroma);
     schroma->trimValue (pp->colorappearance.schroma);
+    schromared->trimValue (pp->colorappearance.schromared);
     mchroma->trimValue (pp->colorappearance.mchroma);
     rstprotection->trimValue (pp->colorappearance.rstprotection);
     contrast->trimValue (pp->colorappearance.contrast);
     qcontrast->trimValue (pp->colorappearance.qcontrast);
     colorh->trimValue (pp->colorappearance.colorh);
+    colorhred->trimValue (pp->colorappearance.colorhred);
     tempout->trimValue (pp->colorappearance.tempout);
     greenout->trimValue (pp->colorappearance.greenout);
     ybout->trimValue (pp->colorappearance.ybout);

@@ -88,7 +88,7 @@ public:
     bool isCurveExpanded     ();
     void autoOpenCurve       () override;
 
-    void setAdjusterBehavior (bool degreeadd, bool adapscenadd, bool adaplumadd, bool badpixsladd, bool jlightadd, bool chromaadd, bool contrastadd, bool rstprotectionadd, bool qbrightadd, bool qcontrastadd, bool schromaadd, bool mchromaadd, bool colorhadd, bool degreeoutadd, bool tempoutadd);
+    void setAdjusterBehavior (bool degreeadd, bool adapscenadd, bool adaplumadd, bool badpixsladd, bool jlightadd, bool chromaadd, bool contrastadd, bool rstprotectionadd, bool qbrightadd, bool qcontrastadd, bool schromaadd, bool schromaredadd, bool mchromaadd, bool colorhadd, bool colorhredadd, bool degreeoutadd, bool tempoutadd);
     void trimValues          (rtengine::procparams::ProcParams* pp) override;
     void updateCurveBackgroundHistogram(
         const LUTu& histToneCurve,
@@ -112,6 +112,10 @@ private:
     rtengine::ProcEvent EvCATcomplex;
     rtengine::ProcEvent EvCATmodel;
     rtengine::ProcEvent EvCATcat;
+    rtengine::ProcEvent EvCATcolorhred;
+    rtengine::ProcEvent EvCATschromared;
+
+
     bool bgTTipQuery (int x, int y, bool keyboard_tooltip, const Glib::RefPtr<Gtk::Tooltip>& tooltip);
     bool srTTipQuery (int x, int y, bool keyboard_tooltip, const Glib::RefPtr<Gtk::Tooltip>& tooltip);
     void foldAllButMe (GdkEventButton* event, MyExpander *expander);
@@ -136,6 +140,9 @@ private:
     Adjuster* contrast;
     Adjuster* qcontrast;
     Adjuster* colorh;
+    Adjuster* colorhred;
+    Adjuster* schromared;
+
     Adjuster* tempout;
     Adjuster* greenout;
     Adjuster* ybout;

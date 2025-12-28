@@ -363,10 +363,12 @@ void ParamsEdited::set(bool v)
     colorappearance.qbright     = v;
     colorappearance.chroma     = v;
     colorappearance.schroma     = v;
+    colorappearance.schromared     = v;
     colorappearance.mchroma     = v;
     colorappearance.contrast     = v;
     colorappearance.qcontrast     = v;
     colorappearance.colorh     = v;
+    colorappearance.colorhred     = v;
     colorappearance.rstprotection     = v;
     colorappearance.surrsource = v;
     colorappearance.gamut = v;
@@ -1122,11 +1124,13 @@ void ParamsEdited::initFrom(const std::vector<rtengine::procparams::ProcParams>&
         colorappearance.qbright = colorappearance.qbright && p.colorappearance.qbright == other.colorappearance.qbright;
         colorappearance.chroma = colorappearance.chroma && p.colorappearance.chroma == other.colorappearance.chroma;
         colorappearance.schroma = colorappearance.schroma && p.colorappearance.schroma == other.colorappearance.schroma;
+        colorappearance.schroma = colorappearance.schromared && p.colorappearance.schromared == other.colorappearance.schromared;
         colorappearance.mchroma = colorappearance.mchroma && p.colorappearance.mchroma == other.colorappearance.mchroma;
         colorappearance.rstprotection = colorappearance.rstprotection && p.colorappearance.rstprotection == other.colorappearance.rstprotection;
         colorappearance.contrast = colorappearance.contrast && p.colorappearance.contrast == other.colorappearance.contrast;
         colorappearance.qcontrast = colorappearance.qcontrast && p.colorappearance.qcontrast == other.colorappearance.qcontrast;
         colorappearance.colorh = colorappearance.colorh && p.colorappearance.colorh == other.colorappearance.colorh;
+        colorappearance.colorhred = colorappearance.colorhred && p.colorappearance.colorhred == other.colorappearance.colorhred;
         colorappearance.surrsource = colorappearance.surrsource && p.colorappearance.surrsource == other.colorappearance.surrsource;
         colorappearance.gamut = colorappearance.gamut && p.colorappearance.gamut == other.colorappearance.gamut;
 //       colorappearance.badpix = colorappearance.badpix && p.colorappearance.badpix == other.colorappearance.badpix;
@@ -3453,6 +3457,10 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
         toEdit.colorappearance.schroma = dontforceSet && options.baBehav[ADDSET_CAT_CHROMA_S] ? toEdit.colorappearance.schroma + mods.colorappearance.schroma : mods.colorappearance.schroma;
     }
 
+    if (colorappearance.schromared) {
+        toEdit.colorappearance.schromared = dontforceSet && options.baBehav[ADDSET_CAT_CHROMA_S_RED] ? toEdit.colorappearance.schromared + mods.colorappearance.schromared : mods.colorappearance.schromared;
+    }
+
     if (colorappearance.mchroma) {
         toEdit.colorappearance.mchroma = dontforceSet && options.baBehav[ADDSET_CAT_CHROMA_M] ? toEdit.colorappearance.mchroma + mods.colorappearance.mchroma : mods.colorappearance.mchroma;
     }
@@ -3467,6 +3475,10 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
 
     if (colorappearance.colorh) {
         toEdit.colorappearance.colorh = dontforceSet && options.baBehav[ADDSET_CAT_HUE] ? toEdit.colorappearance.colorh + mods.colorappearance.colorh : mods.colorappearance.colorh;
+    }
+
+    if (colorappearance.colorhred) {
+        toEdit.colorappearance.colorhred = dontforceSet && options.baBehav[ADDSET_CAT_HUE_RED] ? toEdit.colorappearance.colorhred + mods.colorappearance.colorhred : mods.colorappearance.colorhred;
     }
 
     if (colorappearance.rstprotection) {
