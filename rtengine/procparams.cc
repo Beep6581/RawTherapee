@@ -1411,7 +1411,7 @@ ColorAppearanceParams::ColorAppearanceParams() :
     colorh(0.0),
     rstprotection(0.0),
     surrsource(false),
-    gamut(true),
+    gamut(false),
     datacie(false),
     tonecie(false),
     tempout(5003),

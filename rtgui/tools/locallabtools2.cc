@@ -12398,7 +12398,7 @@ void Locallabcie::updateGUIToMode(const modeType new_type)
             saturlcie->show();
             rstprotectcie->show();
             chromlcie->hide();
-            huecie->hide();
+            huecie->show();
             lightlcie->show();
             lightqcie->hide();
             contlcie->show();
@@ -13576,7 +13576,7 @@ void Locallabcie::convertParamToNormal()
     colorflcie->setValue(defSpot.colorflcie);
     lightqcie->setValue(defSpot.lightqcie);
     chromlcie->setValue(defSpot.chromlcie);
-    huecie->setValue(defSpot.huecie);
+    //huecie->setValue(defSpot.huecie);
     jabcie->set_active(defSpot.jabcie);
     LHshapejz->setCurve(defSpot.LHcurvejz);
     CHshapejz->setCurve(defSpot.CHcurvejz);

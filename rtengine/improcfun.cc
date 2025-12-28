@@ -578,7 +578,9 @@ void ImProcFunctions::ciecam_02float(CieImage* ncie, float adap, int pW, int pwb
 
         //viewing condition for surround
         if (params->colorappearance.surround == "Average") {
-            f2 = 1.0f, c2 = 0.69f, nc2 = 1.0f;
+            f2  = 1.0f;
+            c2  = 0.69f;
+            nc2 = 1.0f;
         } else if (params->colorappearance.surround == "Dim") {
             f2  = 0.9f;
             c2  = 0.59f;
@@ -1180,6 +1182,12 @@ void ImProcFunctions::ciecam_02float(CieImage* ncie, float adap, int pW, int pwb
                         float sres;
                         Ciecam02::curvecolorfloat(chr, Cp, sres, 1.8f);
                         Color::skinredfloat(Jpro, hpro, sres, Cp, 55.f, 30.f, 1, rstprotection, 100.f, Cpro);
+                        hpro = hpro + hue;
+
+                        if (hpro < 0.0f) {
+                            hpro += 360.0f;    //hue
+                        }
+                        
                     } else if (alg == 1)  {
                         // Lightness saturation
                         Jpro = CAMBrightCurveJ[Jpro * 327.68f]; //lightness CIECAM02 + contrast
@@ -1194,6 +1202,12 @@ void ImProcFunctions::ciecam_02float(CieImage* ncie, float adap, int pW, int pwb
                         Color::skinredfloat(Jpro, hpro, sres, Sp, dred, protect_red, 0, rstprotection, 100.f, spro);
                         Qpro = QproFactor * sqrtf(Jpro);
                         Cpro = (spro * spro * Qpro) / (10000.0f);
+                        hpro = hpro + hue;
+
+                        if (hpro < 0.0f) {
+                            hpro += 360.0f;    //hue
+                        }
+                        
                     } else if (alg == 2) {
                         //printf("Qp0=%f ", Qpro);
 
@@ -1212,6 +1226,12 @@ void ImProcFunctions::ciecam_02float(CieImage* ncie, float adap, int pW, int pwb
                         Cpro = Mpro / coe;
                         Qpro = (Qpro == 0.f ? epsil : Qpro); // avoid division by zero
                         spro = 100.0f * sqrtf(Mpro / Qpro);
+                        hpro = hpro + hue;
+
+                        if (hpro < 0.0f) {
+                            hpro += 360.0f;    //hue
+                        }
+                        
                     } else { /*if(alg == 3) */
                         Qpro = CAMBrightCurveQ[(float)(Qpro * coefQ)] / coefQ;   //brightness and contrast
 
