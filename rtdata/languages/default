@@ -1387,8 +1387,12 @@ HISTORY_MSG_BLUWAV;Attenuation response
 HISTORY_MSG_CATCAT;CAL - Settings - Mode
 HISTORY_MSG_CATCOMPLEX;CAL - Settings - Complexity
 HISTORY_MSG_CATHUERED;CAL - IA - Hue Red
+HISTORY_MSG_CATHUEGREEN;CAL - IA - Hue Green
+
 HISTORY_MSG_CATMODEL;CAL - Settings - CAM
 HISTORY_MSG_CATSCHROMARED;CAL - IA - Saturation Red
+HISTORY_MSG_CATSCHROMAGREEN;CAL - IA - Saturation Green
+
 HISTORY_MSG_CG_COLORSPACE;Gamut Compression - Target
 HISTORY_MSG_CG_CYANDC_AUTO;Gamut Compression - Auto Limits Cyan
 HISTORY_MSG_CG_CYANLIM;Gamut Compression - Max Limits Cyan
@@ -2490,6 +2494,8 @@ TP_COLORAPP_CHROMA_M;Colorfulness (M)
 TP_COLORAPP_CHROMA_M_TOOLTIP;Colorfulness in CIECAM is the perceived amount of hue in relation to gray, an indicator that a stimulus appears to be more or less colored.
 TP_COLORAPP_CHROMA_S;Saturation (S)
 TP_COLORAPP_CHROMA_S_RED;Saturation - red attenuation %
+TP_COLORAPP_CHROMA_S_GREEN;Saturation - green attenuation %
+
 TP_COLORAPP_CHROMA_S_TOOLTIP;Saturation in CIECAM corresponds to the color of a stimulus in relation to its own brightness. It differs from L*a*b* and RGB saturation.
 TP_COLORAPP_CHROMA_TOOLTIP;Chroma in CIECAM corresponds to the color of a stimulus relative to the clarity of a stimulus that appears white under identical conditions. It differs from L*a*b* and RGB chroma.
 TP_COLORAPP_CIECAT_DEGREE;Chromatic Adaptation Scene
@@ -2514,6 +2520,8 @@ TP_COLORAPP_GEN;Settings
 TP_COLORAPP_GEN_TOOLTIP;This module is based on the CIECAM Color Appearance models, which were designed to better simulate how human vision perceives colors under different lighting conditions, e.g. against different backgrounds. It takes into account the environment of each color and modifies its appearance to get as close as possible to human perception. It also adapts the output to the intended viewing conditions (monitor, TV, projector, printer, etc.) so that the chromatic appearance is preserved across the scene and display environments.
 TP_COLORAPP_HUE;Hue rotation (h)
 TP_COLORAPP_HUE_RED;Hue - red rotation
+TP_COLORAPP_HUE_GREEN;Hue - green rotation
+
 TP_COLORAPP_HUE_TOOLTIP;Hue (h) is the degree to which a stimulus can be described as similar to a color described as red, green, blue and yellow.
 TP_COLORAPP_IL41;D41
 TP_COLORAPP_IL50;D50
