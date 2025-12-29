@@ -88,7 +88,7 @@ public:
     bool isCurveExpanded     ();
     void autoOpenCurve       () override;
 
-    void setAdjusterBehavior (bool degreeadd, bool adapscenadd, bool adaplumadd, bool badpixsladd, bool jlightadd, bool chromaadd, bool contrastadd, bool rstprotectionadd, bool qbrightadd, bool qcontrastadd, bool schromaadd, bool schromaredadd, bool mchromaadd, bool colorhadd, bool colorhredadd, bool degreeoutadd, bool tempoutadd);
+    void setAdjusterBehavior (bool degreeadd, bool adapscenadd, bool adaplumadd, bool badpixsladd, bool jlightadd, bool chromaadd, bool contrastadd, bool rstprotectionadd, bool qbrightadd, bool qcontrastadd, bool schromaadd, bool schromaredadd, bool schromagreenadd, bool mchromaadd, bool colorhadd, bool colorhredadd,  bool colorhgreenadd, bool degreeoutadd, bool tempoutadd);
     void trimValues          (rtengine::procparams::ProcParams* pp) override;
     void updateCurveBackgroundHistogram(
         const LUTu& histToneCurve,
@@ -114,6 +114,8 @@ private:
     rtengine::ProcEvent EvCATcat;
     rtengine::ProcEvent EvCATcolorhred;
     rtengine::ProcEvent EvCATschromared;
+    rtengine::ProcEvent EvCATcolorhgreen;
+    rtengine::ProcEvent EvCATschromagreen;
 
 
     bool bgTTipQuery (int x, int y, bool keyboard_tooltip, const Glib::RefPtr<Gtk::Tooltip>& tooltip);
@@ -142,6 +144,8 @@ private:
     Adjuster* colorh;
     Adjuster* colorhred;
     Adjuster* schromared;
+    Adjuster* colorhgreen;
+    Adjuster* schromagreen;
 
     Adjuster* tempout;
     Adjuster* greenout;

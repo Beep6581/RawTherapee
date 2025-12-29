@@ -364,11 +364,13 @@ void ParamsEdited::set(bool v)
     colorappearance.chroma     = v;
     colorappearance.schroma     = v;
     colorappearance.schromared     = v;
+    colorappearance.schromagreen     = v;
     colorappearance.mchroma     = v;
     colorappearance.contrast     = v;
     colorappearance.qcontrast     = v;
     colorappearance.colorh     = v;
     colorappearance.colorhred     = v;
+    colorappearance.colorhgreen     = v;
     colorappearance.rstprotection     = v;
     colorappearance.surrsource = v;
     colorappearance.gamut = v;
@@ -1124,13 +1126,15 @@ void ParamsEdited::initFrom(const std::vector<rtengine::procparams::ProcParams>&
         colorappearance.qbright = colorappearance.qbright && p.colorappearance.qbright == other.colorappearance.qbright;
         colorappearance.chroma = colorappearance.chroma && p.colorappearance.chroma == other.colorappearance.chroma;
         colorappearance.schroma = colorappearance.schroma && p.colorappearance.schroma == other.colorappearance.schroma;
-        colorappearance.schroma = colorappearance.schromared && p.colorappearance.schromared == other.colorappearance.schromared;
+        colorappearance.schromared = colorappearance.schromared && p.colorappearance.schromared == other.colorappearance.schromared;
+        colorappearance.schromagreen = colorappearance.schromagreen && p.colorappearance.schromagreen == other.colorappearance.schromagreen;
         colorappearance.mchroma = colorappearance.mchroma && p.colorappearance.mchroma == other.colorappearance.mchroma;
         colorappearance.rstprotection = colorappearance.rstprotection && p.colorappearance.rstprotection == other.colorappearance.rstprotection;
         colorappearance.contrast = colorappearance.contrast && p.colorappearance.contrast == other.colorappearance.contrast;
         colorappearance.qcontrast = colorappearance.qcontrast && p.colorappearance.qcontrast == other.colorappearance.qcontrast;
         colorappearance.colorh = colorappearance.colorh && p.colorappearance.colorh == other.colorappearance.colorh;
         colorappearance.colorhred = colorappearance.colorhred && p.colorappearance.colorhred == other.colorappearance.colorhred;
+        colorappearance.colorhgreen = colorappearance.colorhgreen && p.colorappearance.colorhgreen == other.colorappearance.colorhgreen;
         colorappearance.surrsource = colorappearance.surrsource && p.colorappearance.surrsource == other.colorappearance.surrsource;
         colorappearance.gamut = colorappearance.gamut && p.colorappearance.gamut == other.colorappearance.gamut;
 //       colorappearance.badpix = colorappearance.badpix && p.colorappearance.badpix == other.colorappearance.badpix;
@@ -3461,6 +3465,10 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
         toEdit.colorappearance.schromared = dontforceSet && options.baBehav[ADDSET_CAT_CHROMA_S_RED] ? toEdit.colorappearance.schromared + mods.colorappearance.schromared : mods.colorappearance.schromared;
     }
 
+    if (colorappearance.schromagreen) {
+        toEdit.colorappearance.schromagreen = dontforceSet && options.baBehav[ADDSET_CAT_CHROMA_S_GREEN] ? toEdit.colorappearance.schromagreen + mods.colorappearance.schromagreen : mods.colorappearance.schromagreen;
+    }
+
     if (colorappearance.mchroma) {
         toEdit.colorappearance.mchroma = dontforceSet && options.baBehav[ADDSET_CAT_CHROMA_M] ? toEdit.colorappearance.mchroma + mods.colorappearance.mchroma : mods.colorappearance.mchroma;
     }
@@ -3479,6 +3487,10 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
 
     if (colorappearance.colorhred) {
         toEdit.colorappearance.colorhred = dontforceSet && options.baBehav[ADDSET_CAT_HUE_RED] ? toEdit.colorappearance.colorhred + mods.colorappearance.colorhred : mods.colorappearance.colorhred;
+    }
+
+    if (colorappearance.colorhgreen) {
+        toEdit.colorappearance.colorhgreen = dontforceSet && options.baBehav[ADDSET_CAT_HUE_GREEN] ? toEdit.colorappearance.colorhgreen + mods.colorappearance.colorhgreen : mods.colorappearance.colorhgreen;
     }
 
     if (colorappearance.rstprotection) {

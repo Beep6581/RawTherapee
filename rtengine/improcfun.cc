@@ -756,7 +756,9 @@ void ImProcFunctions::ciecam_02float(CieImage* ncie, float adap, int pW, int pwb
         const float hue = params->colorappearance.colorh;
         const float huered = params->colorappearance.colorhred;
         const float schrred = params->colorappearance.schromared;
-        
+        const float huegreen = params->colorappearance.colorhgreen;
+        const float schrgreen = params->colorappearance.schromagreen;
+
         const float rstprotection = 100. - params->colorappearance.rstprotection;
 
         // extracting data from 'params' to avoid cache flush (to be confirmed)
@@ -1176,9 +1178,21 @@ void ImProcFunctions::ciecam_02float(CieImage* ncie, float adap, int pW, int pwb
                         Jpro = SQR((10.f * Qpro) / wh);
                     }
                     
-                    if((hpro > 340.f && hpro <= 360.f) || (hpro > 0.f && hpro <= 100.f)) {
-                        hpro = hpro + huered;
+                    if((hpro > 340.f && hpro <= 360.f) || (hpro > 0.f && hpro <= 100.f)) {//Red CIECAM 
+                        hpro = hpro + 0.555f * huered;
                         spro = spro * (1.f + (schrred / 100.f));//change Red saturation 
+                        float Cp = (spro * spro * Qpro) / (1000000.f);
+                        Cpro = Cp * 100.f;
+
+
+                        if (hpro < 0.0f) {
+                            hpro += 360.0f;    //hue
+                        }
+                    }
+
+                    if((hpro > 100.f && hpro < 190)) {//Green CIECAM 
+                        hpro = hpro + 0.555f * huegreen;
+                        spro = spro * (1.f + (schrgreen / 100.f));//change Green saturation 
                         float Cp = (spro * spro * Qpro) / (1000000.f);
                         Cpro = Cp * 100.f;
 
@@ -1186,6 +1200,10 @@ void ImProcFunctions::ciecam_02float(CieImage* ncie, float adap, int pW, int pwb
                             hpro += 360.0f;    //hue
                         }
                     }
+
+
+                    //green CIECAM 100 - 190
+                    //blue CIECAM 190 - 340
 
                     // we cannot have all algorithms with all chroma curves
                     if (alg == 0) {

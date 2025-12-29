@@ -2488,8 +2488,8 @@ TP_COLORAPP_CATSYMSPE;Mixed
 TP_COLORAPP_CHROMA;Chroma (C)
 TP_COLORAPP_CHROMA_M;Colorfulness (M)
 TP_COLORAPP_CHROMA_M_TOOLTIP;Colorfulness in CIECAM is the perceived amount of hue in relation to gray, an indicator that a stimulus appears to be more or less colored.
-TP_COLORAPP_CHROMA_S;Saturation Global (S)
-TP_COLORAPP_CHROMA_S_RED;Saturation Red (S)
+TP_COLORAPP_CHROMA_S;Saturation (S)
+TP_COLORAPP_CHROMA_S_RED;Saturation - red attenuation %
 TP_COLORAPP_CHROMA_S_TOOLTIP;Saturation in CIECAM corresponds to the color of a stimulus in relation to its own brightness. It differs from L*a*b* and RGB saturation.
 TP_COLORAPP_CHROMA_TOOLTIP;Chroma in CIECAM corresponds to the color of a stimulus relative to the clarity of a stimulus that appears white under identical conditions. It differs from L*a*b* and RGB chroma.
 TP_COLORAPP_CIECAT_DEGREE;Chromatic Adaptation Scene
@@ -2512,8 +2512,8 @@ TP_COLORAPP_FREE;Free temp + tint + CAT02/16 +[output]
 TP_COLORAPP_GAMUT;Use gamut control in L*a*b* mode
 TP_COLORAPP_GEN;Settings
 TP_COLORAPP_GEN_TOOLTIP;This module is based on the CIECAM Color Appearance models, which were designed to better simulate how human vision perceives colors under different lighting conditions, e.g. against different backgrounds. It takes into account the environment of each color and modifies its appearance to get as close as possible to human perception. It also adapts the output to the intended viewing conditions (monitor, TV, projector, printer, etc.) so that the chromatic appearance is preserved across the scene and display environments.
-TP_COLORAPP_HUE;Hue global (h)
-TP_COLORAPP_HUE_RED;Hue Red (h)
+TP_COLORAPP_HUE;Hue rotation (h)
+TP_COLORAPP_HUE_RED;Hue - red rotation
 TP_COLORAPP_HUE_TOOLTIP;Hue (h) is the degree to which a stimulus can be described as similar to a color described as red, green, blue and yellow.
 TP_COLORAPP_IL41;D41
 TP_COLORAPP_IL50;D50
@@ -2540,6 +2540,7 @@ TP_COLORAPP_MODELCAT_TOOLTIP;Allows you to choose between CAM02 or CAM16.\nCAM02
 TP_COLORAPP_MODEL_TOOLTIP;White-Point Model.\n\n<b>WB [RT] + [output]</b>: RT's white balance is used for the scene, CIECAM is set to D50, and the output device's white balance is set in Viewing Conditions.\n\n<b>WB [RT+CAT02/16] + [output]</b>: RT's white balance settings are used by CAT02 and the output device's white balance is set in Viewing Conditions.\n\n<b>Free temp + tint + CAT02/16 + [output]:</b> temp and tint are selected by the user, the output device's white balance is set in Viewing Conditions.
 TP_COLORAPP_NEUTRAL;Reset
 TP_COLORAPP_NEUTRAL_TOOLTIP;Reset all sliders checkbox and curves to their default values.
+TP_COLORAPP_LABEL_RGB;Red Green Blue
 TP_COLORAPP_RSTPRO;Red & skin-tones protection
 TP_COLORAPP_RSTPRO_TOOLTIP;Red &amp; skin-tones protection affects both sliders and curves.
 TP_COLORAPP_SOURCEF_TOOLTIP;Corresponds to the shooting conditions and how to bring the conditions and data back to a 'normal' area. Normal means average or standard conditions and data, i.e. without taking into account CIECAM corrections.
