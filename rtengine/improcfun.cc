@@ -758,6 +758,8 @@ void ImProcFunctions::ciecam_02float(CieImage* ncie, float adap, int pW, int pwb
         const float schrred = params->colorappearance.schromared;
         const float huegreen = params->colorappearance.colorhgreen;
         const float schrgreen = params->colorappearance.schromagreen;
+        const float hueblue = params->colorappearance.colorhblue;
+        const float schrblue = params->colorappearance.schromablue;
 
         const float rstprotection = 100. - params->colorappearance.rstprotection;
 
@@ -1190,7 +1192,7 @@ void ImProcFunctions::ciecam_02float(CieImage* ncie, float adap, int pW, int pwb
                         }
                     }
 
-                    if((hpro > 100.f && hpro < 190)) {//Green CIECAM 
+                    if((hpro > 100.f && hpro <= 190)) {//Green CIECAM 
                         hpro = hpro + 0.555f * huegreen;
                         spro = spro * (1.f + (schrgreen / 100.f));//change Green saturation 
                         float Cp = (spro * spro * Qpro) / (1000000.f);
@@ -1201,6 +1203,16 @@ void ImProcFunctions::ciecam_02float(CieImage* ncie, float adap, int pW, int pwb
                         }
                     }
 
+                    if((hpro > 190.f && hpro <= 340)) {//blue CIECAM 
+                        hpro = hpro + 0.555f * hueblue;
+                        spro = spro * (1.f + (schrblue / 100.f));//change Green saturation 
+                        float Cp = (spro * spro * Qpro) / (1000000.f);
+                        Cpro = Cp * 100.f;
+
+                        if (hpro < 0.0f) {
+                            hpro += 360.0f;    //hue
+                        }
+                    }
 
                     //green CIECAM 100 - 190
                     //blue CIECAM 190 - 340

@@ -365,12 +365,14 @@ void ParamsEdited::set(bool v)
     colorappearance.schroma     = v;
     colorappearance.schromared     = v;
     colorappearance.schromagreen     = v;
+    colorappearance.schromablue   = v;
     colorappearance.mchroma     = v;
     colorappearance.contrast     = v;
     colorappearance.qcontrast     = v;
     colorappearance.colorh     = v;
     colorappearance.colorhred     = v;
     colorappearance.colorhgreen     = v;
+    colorappearance.colorhblue     = v;
     colorappearance.rstprotection     = v;
     colorappearance.surrsource = v;
     colorappearance.gamut = v;
@@ -1128,6 +1130,7 @@ void ParamsEdited::initFrom(const std::vector<rtengine::procparams::ProcParams>&
         colorappearance.schroma = colorappearance.schroma && p.colorappearance.schroma == other.colorappearance.schroma;
         colorappearance.schromared = colorappearance.schromared && p.colorappearance.schromared == other.colorappearance.schromared;
         colorappearance.schromagreen = colorappearance.schromagreen && p.colorappearance.schromagreen == other.colorappearance.schromagreen;
+        colorappearance.schromablue = colorappearance.schromablue && p.colorappearance.schromablue == other.colorappearance.schromablue;
         colorappearance.mchroma = colorappearance.mchroma && p.colorappearance.mchroma == other.colorappearance.mchroma;
         colorappearance.rstprotection = colorappearance.rstprotection && p.colorappearance.rstprotection == other.colorappearance.rstprotection;
         colorappearance.contrast = colorappearance.contrast && p.colorappearance.contrast == other.colorappearance.contrast;
@@ -1135,6 +1138,7 @@ void ParamsEdited::initFrom(const std::vector<rtengine::procparams::ProcParams>&
         colorappearance.colorh = colorappearance.colorh && p.colorappearance.colorh == other.colorappearance.colorh;
         colorappearance.colorhred = colorappearance.colorhred && p.colorappearance.colorhred == other.colorappearance.colorhred;
         colorappearance.colorhgreen = colorappearance.colorhgreen && p.colorappearance.colorhgreen == other.colorappearance.colorhgreen;
+        colorappearance.colorhblue = colorappearance.colorhblue && p.colorappearance.colorhblue == other.colorappearance.colorhblue;
         colorappearance.surrsource = colorappearance.surrsource && p.colorappearance.surrsource == other.colorappearance.surrsource;
         colorappearance.gamut = colorappearance.gamut && p.colorappearance.gamut == other.colorappearance.gamut;
 //       colorappearance.badpix = colorappearance.badpix && p.colorappearance.badpix == other.colorappearance.badpix;
@@ -3469,6 +3473,10 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
         toEdit.colorappearance.schromagreen = dontforceSet && options.baBehav[ADDSET_CAT_CHROMA_S_GREEN] ? toEdit.colorappearance.schromagreen + mods.colorappearance.schromagreen : mods.colorappearance.schromagreen;
     }
 
+    if (colorappearance.schromablue) {
+        toEdit.colorappearance.schromablue = dontforceSet && options.baBehav[ADDSET_CAT_CHROMA_S_BLUE] ? toEdit.colorappearance.schromablue + mods.colorappearance.schromablue : mods.colorappearance.schromablue;
+    }
+
     if (colorappearance.mchroma) {
         toEdit.colorappearance.mchroma = dontforceSet && options.baBehav[ADDSET_CAT_CHROMA_M] ? toEdit.colorappearance.mchroma + mods.colorappearance.mchroma : mods.colorappearance.mchroma;
     }
@@ -3491,6 +3499,10 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
 
     if (colorappearance.colorhgreen) {
         toEdit.colorappearance.colorhgreen = dontforceSet && options.baBehav[ADDSET_CAT_HUE_GREEN] ? toEdit.colorappearance.colorhgreen + mods.colorappearance.colorhgreen : mods.colorappearance.colorhgreen;
+    }
+
+    if (colorappearance.colorhblue) {
+        toEdit.colorappearance.colorhblue = dontforceSet && options.baBehav[ADDSET_CAT_HUE_BLUE] ? toEdit.colorappearance.colorhblue + mods.colorappearance.colorhblue : mods.colorappearance.colorhblue;
     }
 
     if (colorappearance.rstprotection) {
