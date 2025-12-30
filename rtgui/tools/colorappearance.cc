@@ -398,19 +398,19 @@ ColorAppearance::ColorAppearance () : FoldableToolPanel (this, TOOL_NAME, M ("TP
     pRGBVBox = Gtk::manage ( new Gtk::Box(Gtk::ORIENTATION_VERTICAL));
     pRGBVBox->set_spacing (2);
     //hue red blue green
-    colorhred = Gtk::manage (new Adjuster (M ("TP_COLORAPP_HUE_RED"), -20.0, 20.0, 0.1, 0.));
+    colorhred = Gtk::manage (new Adjuster (M ("TP_COLORAPP_HUE_RED"), -25.0, 25.0, 0.1, 0.));
     pRGBVBox->pack_start (*colorhred);
-    schromared = Gtk::manage (new Adjuster (M ("TP_COLORAPP_CHROMA_S_RED"), -20.0, 5.0, 0.1, 0.));
+    schromared = Gtk::manage (new Adjuster (M ("TP_COLORAPP_CHROMA_S_RED"), -40.0, 5.0, 0.1, 0.));
     pRGBVBox->pack_start (*schromared);
 
-    colorhgreen = Gtk::manage (new Adjuster (M ("TP_COLORAPP_HUE_GREEN"), -20.0, 20.0, 0.1, 0.));
+    colorhgreen = Gtk::manage (new Adjuster (M ("TP_COLORAPP_HUE_GREEN"), -25.0, 25.0, 0.1, 0.));
     pRGBVBox->pack_start (*colorhgreen);
-    schromagreen = Gtk::manage (new Adjuster (M ("TP_COLORAPP_CHROMA_S_GREEN"), -20.0, 5.0, 0.1, 0.));
+    schromagreen = Gtk::manage (new Adjuster (M ("TP_COLORAPP_CHROMA_S_GREEN"), -40.0, 5.0, 0.1, 0.));
     pRGBVBox->pack_start (*schromagreen);
 
-    colorhblue = Gtk::manage (new Adjuster (M ("TP_COLORAPP_HUE_BLUE"), -20.0, 20.0, 0.1, 0.));
+    colorhblue = Gtk::manage (new Adjuster (M ("TP_COLORAPP_HUE_BLUE"), -25.0, 25.0, 0.1, 0.));
     pRGBVBox->pack_start (*colorhblue);
-    schromablue = Gtk::manage (new Adjuster (M ("TP_COLORAPP_CHROMA_S_BLUE"), -20.0, 5.0, 0.1, 0.));
+    schromablue = Gtk::manage (new Adjuster (M ("TP_COLORAPP_CHROMA_S_BLUE"), -40.0, 5.0, 0.1, 0.));
     pRGBVBox->pack_start (*schromablue);
 
     pRGBFrame->add (*pRGBVBox);

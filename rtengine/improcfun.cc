@@ -1179,9 +1179,9 @@ void ImProcFunctions::ciecam_02float(CieImage* ncie, float adap, int pW, int pwb
                     if (jp) {
                         Jpro = SQR((10.f * Qpro) / wh);
                     }
-                    
+
                     if((hpro > 340.f && hpro <= 360.f) || (hpro > 0.f && hpro <= 100.f)) {//Red CIECAM 
-                        hpro = hpro + 0.555f * huered;
+                        hpro = hpro + 0.555f * huered;//rotation Red
                         spro = spro * (1.f + (schrred / 100.f));//change Red saturation 
                         float Cp = (spro * spro * Qpro) / (1000000.f);
                         Cpro = Cp * 100.f;
@@ -1193,9 +1193,9 @@ void ImProcFunctions::ciecam_02float(CieImage* ncie, float adap, int pW, int pwb
                     }
 
                     if((hpro > 100.f && hpro <= 190)) {//Green CIECAM 
-                        hpro = hpro + 0.555f * huegreen;
+                        hpro = hpro + 0.555f * huegreen;//Rotation Green
                         spro = spro * (1.f + (schrgreen / 100.f));//change Green saturation 
-                        float Cp = (spro * spro * Qpro) / (1000000.f);
+                        float Cp = (spro * spro * Qpro) / (1000000.f);//Evaluate Chroma with Brightness Q and saturation
                         Cpro = Cp * 100.f;
 
                         if (hpro < 0.0f) {
@@ -1204,8 +1204,8 @@ void ImProcFunctions::ciecam_02float(CieImage* ncie, float adap, int pW, int pwb
                     }
 
                     if((hpro > 190.f && hpro <= 340)) {//blue CIECAM 
-                        hpro = hpro + 0.555f * hueblue;
-                        spro = spro * (1.f + (schrblue / 100.f));//change Green saturation 
+                        hpro = hpro + 0.555f * hueblue;//Rotation Blue
+                        spro = spro * (1.f + (schrblue / 100.f));//change Blue saturation 
                         float Cp = (spro * spro * Qpro) / (1000000.f);
                         Cpro = Cp * 100.f;
 
@@ -1213,7 +1213,8 @@ void ImProcFunctions::ciecam_02float(CieImage* ncie, float adap, int pW, int pwb
                             hpro += 360.0f;    //hue
                         }
                     }
-
+                    //We could have introduced Yellow, more in line with the CIECAM concept...but that would have confused (I think) users 'used' to R, G, B
+                    //red CIECAM 340 - 100
                     //green CIECAM 100 - 190
                     //blue CIECAM 190 - 340
 
