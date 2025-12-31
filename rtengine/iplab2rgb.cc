@@ -629,9 +629,7 @@ void ImProcFunctions::gamutcompr( Imagefloat *src, Imagefloat *dst, float &mac, 
     float maxac2 = 0.f;
 
 #ifdef _OPENMP
-       // #   pragma omp parallel for reduction(max:maxac) reduction(max:maxac0) reduction(max:maxac1) reduction(max:maxac2) schedule(dynamic,16) if (multiThread)
-       // #   pragma omp parallel for reduction(max:maxac, maxac0, maxac1, maxac2)
-
+        #   pragma omp parallel for reduction(max:maxac, maxac0, maxac1, maxac2)schedule(dynamic,16) if (multiThread)
 #endif
 
     for (int i = 0; i < height; ++i) {
@@ -644,7 +642,12 @@ void ImProcFunctions::gamutcompr( Imagefloat *src, Imagefloat *dst, float &mac, 
             float gout = 0.f;
             float bout = 0.f;
             //find maximum achromatic for red, green, blue
-            Color::aces_reference_gamut_compression(rgb_in, th, dl, to_out, from_out, pw, roll, rout, gout, bout, ac, ac0, ac1, ac2);
+#ifdef _OPENMP
+            #pragma omp critical
+#endif
+            {
+                Color::aces_reference_gamut_compression(rgb_in, th, dl, to_out, from_out, pw, roll, rout, gout, bout, ac, ac0, ac1, ac2);
+            }
             maxac = rtengine::max(maxac, ac);
             maxac0 = rtengine::max(maxac0, ac0);
             maxac1 = rtengine::max(maxac1, ac1);
