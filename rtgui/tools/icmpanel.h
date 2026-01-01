@@ -284,7 +284,7 @@ public:
     void oBPCChanged();
     void fbwChanged();
     void wsmoothcieChanged();
-    
+    void resetpolar();
     void gamutChanged();
     void ipChanged();
     void ipSelectionChanged();
