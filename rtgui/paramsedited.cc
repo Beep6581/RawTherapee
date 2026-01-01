@@ -634,6 +634,14 @@ void ParamsEdited::set(bool v)
     icm.grey = v;
     icm.blux = v;
     icm.bluy = v;
+    
+    icm.redrot = v;
+    icm.redsat = v;
+    icm.grerot = v;
+    icm.gresat = v;
+    icm.blurot = v;
+    icm.blusat = v;
+    
     icm.refi = v;
     icm.shiftx = v;
     icm.shifty = v;
@@ -2266,6 +2274,14 @@ void ParamsEdited::initFrom(const std::vector<rtengine::procparams::ProcParams>&
         icm.grey = icm.grey && p.icm.grey == other.icm.grey;
         icm.blux = icm.blux && p.icm.blux == other.icm.blux;
         icm.bluy = icm.bluy && p.icm.bluy == other.icm.bluy;
+        
+        icm.redrot = icm.redrot && p.icm.redrot == other.icm.redrot;
+        icm.redsat = icm.redsat && p.icm.redsat == other.icm.redsat;
+        icm.grerot = icm.grerot && p.icm.grerot == other.icm.grerot;
+        icm.gresat = icm.gresat && p.icm.gresat == other.icm.gresat;
+        icm.blurot = icm.blurot && p.icm.blurot == other.icm.blurot;
+        icm.blusat = icm.blusat && p.icm.blusat == other.icm.blusat;
+        
         icm.refi = icm.refi && p.icm.refi == other.icm.refi;
         icm.shiftx = icm.shiftx && p.icm.shiftx == other.icm.shiftx;
         icm.shifty = icm.shifty && p.icm.shifty == other.icm.shifty;
@@ -7574,6 +7590,31 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
     if (icm.bluy) {
         toEdit.icm.bluy = mods.icm.bluy;
     }
+
+    if (icm.redrot) {
+        toEdit.icm.redrot = mods.icm.redrot;
+    }
+
+    if (icm.redsat) {
+        toEdit.icm.redsat = mods.icm.redsat;
+    }
+
+    if (icm.grerot) {
+        toEdit.icm.grerot = mods.icm.grerot;
+    }
+
+    if (icm.gresat) {
+        toEdit.icm.gresat = mods.icm.gresat;
+    }
+
+    if (icm.blurot) {
+        toEdit.icm.blurot = mods.icm.blurot;
+    }
+
+    if (icm.blusat) {
+        toEdit.icm.blusat = mods.icm.blusat;
+    }
+
 
     if (icm.refi) {
         toEdit.icm.refi = mods.icm.refi;

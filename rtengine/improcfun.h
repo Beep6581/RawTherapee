@@ -612,7 +612,7 @@ enum class BlurType {
     void apsatur(int sp, Imagefloat* src, Imagefloat* dst, int bfw, int bfh, float satu);
 
     void workingtrc(int sp, Imagefloat* src, Imagefloat* dst, int cw, int ch , int mul, Glib::ustring &profile, double gampos, double slpos, int cat, int &illum, int prim, int locprim, 
-        float &rdx, float &rdy, float &grx, float &gry, float &blx, float &bly, float &meanx, float &meany, float &meanxe, float &meanye,
+        float &rdx, float &rdy, float &grx, float &gry, float &blx, float &bly, float &meanx, float &meany, float &meanxe, float &meanye, double *p,
         cmsHTRANSFORM &transform, bool normalizeIn = true, bool normalizeOut = true, bool keepTransForm = false, bool gamutcontrol = false) const;
     void preserv(LabImage *nprevl, LabImage *provis, int cw, int ch);
 

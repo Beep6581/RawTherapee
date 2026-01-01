@@ -741,9 +741,77 @@ void ImProcFunctions::apsatur(int sp, Imagefloat* tmpImage, Imagefloat* tmpImage
                 }               
 }
 
+float determinant(float a, float b, float c, float d)
+{
+    return a * d - b * c;
+}
+
+
+float intersect_line_segments(float x1, float y1,
+                              float x2, float y2,
+                              float x3, float y3,
+                              float x4, float y4)
+{
+    const float denominator = determinant(x1 - x2, x3 - x4, y1 - y2, y3 - y4);
+    if (denominator == 0.0) {
+        return FLT_MAX; // lines don't intersect
+    }
+
+    const float t = determinant(x1 - x3, x3 - x4, y1 - y3, y3 - y4) / denominator;
+    if (t >= 0.0) {
+        return t;
+    }
+    return FLT_MAX; // intersection is in the wrong direction
+}
+
+
+float find_distance_to_edge(float primaries[3][2], float cos_angle, float sin_angle, cmsCIExyY xyd)
+{
+    const float whitepoint[2] = {(float) xyd.x, (float) xyd.y};
+    const float x1 = whitepoint[0];
+    const float y1 = whitepoint[1];
+    const float x2 = x1 + cos_angle;
+    const float y2 = y1 + sin_angle;
+
+    float distance_to_edge = FLT_MAX;
+    for (int i = 0; i < 3; i = i+1) {
+        const int next_i = (i + 1) % 3;
+        const float x3 = primaries[i][0];
+        const float y3 = primaries[i][1];
+        const float x4 = primaries[next_i][0];
+        const float y4 = primaries[next_i][1];
+        const float distance = intersect_line_segments(x1, y1, x2, y2, x3, y3, x4, y4);
+        if (distance < distance_to_edge) {
+            distance_to_edge = distance;
+        }
+    }
+
+    return distance_to_edge;
+}
+
+void rotate_and_scale_primary(float primaries[3][2], float scaling, float rotation, int primary_index, float *newprimxy, cmsCIExyY xyd)
+{
+    const float whitepoint[2] = {(float) xyd.x, (float) xyd.y};
+
+    // Generate a custom set of tone mapping primaries by scaling
+    // and rotating the primaries of the given profile.
+    const float px = primaries[primary_index][0];
+    const float py = primaries[primary_index][1];
+    const float dx = px - whitepoint[0];
+    const float dy = py - whitepoint[1];
+    const float angle = atan2(dy, dx) + rotation;
+    const float cos_angle = cos(angle);
+    const float sin_angle = sin(angle);
+    const float distance_to_edge = find_distance_to_edge(primaries, cos_angle, sin_angle, xyd);
+    const float dx_new = scaling * distance_to_edge * cos_angle;
+    const float dy_new = scaling * distance_to_edge * sin_angle;
+    newprimxy[0] = dx_new + whitepoint[0];
+    newprimxy[1] = dy_new + whitepoint[1];
+}
+
 
 void ImProcFunctions::workingtrc(int sp, Imagefloat* src, Imagefloat* dst, int cw, int ch, int mul, Glib::ustring &profile, double gampos, double slpos, int cat, int &illum, int prim, int locprim,
-                                 float &rdx, float &rdy, float &grx, float &gry, float &blx, float &bly, float &meanx, float &meany, float &meanxe, float &meanye,
+                                 float &rdx, float &rdy, float &grx, float &gry, float &blx, float &bly, float &meanx, float &meany, float &meanxe, float &meanye, double *p,
                                  cmsHTRANSFORM &transform, bool normalizeIn, bool normalizeOut, bool keepTransForm, bool gamutcontrol) const
 {
     const TMatrix wprof = ICCStore::getInstance()->workingSpaceMatrix(params->icm.workingProfile);
@@ -1062,7 +1130,7 @@ void ImProcFunctions::workingtrc(int sp, Imagefloat* src, Imagefloat* dst, int c
         D60 = 6005  // for ACES AP0 and AP1
     };
     double tempv4 = 5003.;
-    double p[6]; //primaries
+ //   double p[6]; //primaries
 
     if (locprim == 0 && mul == 5) {
         switch (ColorManagementParams::Primaries(prim)) {
@@ -1132,6 +1200,11 @@ void ImProcFunctions::workingtrc(int sp, Imagefloat* src, Imagefloat* dst, int c
 
             case ColorManagementParams::Primaries::CUSTOM: {
                 profile = "Custom";
+                break;
+            }
+
+            case ColorManagementParams::Primaries::CUSTOM_POL: {
+                profile = "Custompol";
                 break;
             }
 
@@ -1355,8 +1428,6 @@ void ImProcFunctions::workingtrc(int sp, Imagefloat* src, Imagefloat* dst, int c
             blx = p[4];
             bly = p[5];
         }
-
-
     }
 
     if (settings->verbose  && prim != 0) {
@@ -1522,7 +1593,7 @@ void ImProcFunctions::workingtrc(int sp, Imagefloat* src, Imagefloat* dst, int c
                 Wx = 0.964295676;
                 Wz = 0.825104603;
 
-            } else if (profile == "Custom") {
+            } else if (profile == "Custom" || profile == "Custompol") {
                 p[0] = redxx;
                 p[1] = redyy;
                 p[2] = grexx;
@@ -1705,6 +1776,41 @@ void ImProcFunctions::workingtrc(int sp, Imagefloat* src, Imagefloat* dst, int c
                     break;
                 }
                 
+            }
+        }
+        if (profile == "Custompol") {//rotation and saturation primaries
+            float primaries[3][2];
+            primaries[0][0] = p[0];
+            primaries[0][1] = p[1];
+            primaries[1][0] = p[2];
+            primaries[1][1] = p[3];
+            primaries[2][0] = p[4];
+            primaries[2][1] = p[5];
+            float r_inset = params->icm.redsat;
+            float r_rotation = params->icm.redrot;
+            float g_inset = params->icm.gresat;
+            float g_rotation = params->icm.grerot;
+            float b_inset =  params->icm.blusat;
+            float b_rotation = params->icm.blurot;
+            const float inset[3] = { r_inset / 100, g_inset / 100, b_inset / 100 };
+            const float rad = RT_PI / 180.0;
+            const float rotation[3] = { r_rotation * rad, g_rotation * rad, b_rotation * rad };
+            float newprimxy[2];
+            for (int i = 0; i < 3; i++) { 
+                newprimxy[0] = 0.f;
+                newprimxy[1] = 0.f;
+                rotate_and_scale_primary(primaries, 1.f - inset[i], rotation[i], i , newprimxy, xyD);
+                    //printf("newx=%f newy=%f \n", (double)newprimxy[0], (double)newprimxy[1]);
+                if(i == 0) {
+                    p[0] = newprimxy[0];
+                    p[1] = newprimxy[1];
+                } else if (i == 1) {
+                    p[2] = newprimxy[0];
+                    p[3] = newprimxy[1];
+                } else if (i == 2) {
+                    p[4] = newprimxy[0];
+                    p[5] = newprimxy[1];
+                }
             }
         }
 

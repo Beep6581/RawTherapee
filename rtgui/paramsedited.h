@@ -1203,6 +1203,7 @@ public:
         bool greyl;
         bool bluxl;
         bool bluyl;
+        
         bool refi;
         bool shiftxl;
         bool shiftyl;
@@ -1459,6 +1460,13 @@ struct ColorManagementParamsEdited {
     bool grey;
     bool blux;
     bool bluy;
+    bool redrot;
+    bool redsat;
+    bool grerot;
+    bool gresat;
+    bool blurot;
+    bool blusat;
+    
     bool refi;
     bool shiftx;
     bool shifty;

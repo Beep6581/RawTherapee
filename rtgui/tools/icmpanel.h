@@ -85,6 +85,13 @@ protected:
     Adjuster* grey;
     Adjuster* blux;
     Adjuster* bluy;
+    Adjuster* redrot;
+    Adjuster* redsat;
+    Adjuster* grerot;
+    Adjuster* gresat;
+    Adjuster* blurot;
+    Adjuster* blusat;
+    
     Adjuster* preser;
     Adjuster* refi;
     Adjuster* shiftx;
@@ -138,6 +145,13 @@ private:
     rtengine::ProcEvent EvICMgrey;
     rtengine::ProcEvent EvICMblux;
     rtengine::ProcEvent EvICMbluy;
+    rtengine::ProcEvent EvICMredrot;
+    rtengine::ProcEvent EvICMredsat;
+    rtengine::ProcEvent EvICMgrerot;
+    rtengine::ProcEvent EvICMgresat;
+    rtengine::ProcEvent EvICMblurot;
+    rtengine::ProcEvent EvICMblusat;
+    
     rtengine::ProcEvent EvaIntent;
     rtengine::ProcEvent EvICMpreser;
     rtengine::ProcEvent EvICMLabGridciexy;
@@ -168,6 +182,7 @@ private:
     Gtk::Label* wprimlab;
     Gtk::Label* cielab;
     Gtk::Grid* primCoordGrid;
+    Gtk::Grid* primCoordGrid2;
     Gtk::Box* riaHBox;
     Gtk::Box* preBox;
     Gtk::Box* iVBox;

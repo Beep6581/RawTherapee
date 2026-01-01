@@ -1163,7 +1163,8 @@ struct ColorManagementParams {
         BETA_RGB,
         BEST_RGB,
         CUSTOM,
-        CUSTOM_GRID
+        CUSTOM_GRID,
+        CUSTOM_POL
     };
 
     enum class Cat {
@@ -1203,6 +1204,14 @@ struct ColorManagementParams {
     double grey;
     double blux;
     double bluy;
+    
+    double redrot;
+    double redsat;
+    double grerot;
+    double gresat;
+    double blurot;
+    double blusat;
+    
     double refi;
     double shiftx;
     double shifty;
