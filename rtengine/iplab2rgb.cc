@@ -737,10 +737,13 @@ void ImProcFunctions::apsatur(int sp, Imagefloat* tmpImage, Imagefloat* tmpImage
                     apply_satcie(R0, G0, B0, amp, fcie2, satu);//always apply saturation
                     tmpImage->r(y, x) = R0 * 65535.f;
                     tmpImage->g(y, x) = G0 * 65535.f;
-                    tmpImage->b(y, x) = B0 * 65535.f;                                     
+                    tmpImage->b(y, x) = B0 * 65535.f;
                 }               
 }
 
+
+// code taken from Darktable - and adapted to Rawtherapee
+// It was only used to calculate polar coordinates. Why reinvent the wheel when it's already been done elsewhere?
 float determinant(float a, float b, float c, float d)
 {
     return a * d - b * c;
@@ -791,7 +794,7 @@ float find_distance_to_edge(float primaries[3][2], float cos_angle, float sin_an
 
 void rotate_and_scale_primary(float primaries[3][2], float scaling, float rotation, int primary_index, float *newprimxy, cmsCIExyY xyd)
 {
-    const float whitepoint[2] = {(float) xyd.x, (float) xyd.y};
+    const float whitepoint[2] = {(float) xyd.x, (float) xyd.y};//I change white point, and I use the default one (or user choice).
 
     // Generate a custom set of tone mapping primaries by scaling
     // and rotating the primaries of the given profile.
@@ -808,7 +811,7 @@ void rotate_and_scale_primary(float primaries[3][2], float scaling, float rotati
     newprimxy[0] = dx_new + whitepoint[0];
     newprimxy[1] = dy_new + whitepoint[1];
 }
-
+//end code Darktable
 
 void ImProcFunctions::workingtrc(int sp, Imagefloat* src, Imagefloat* dst, int cw, int ch, int mul, Glib::ustring &profile, double gampos, double slpos, int cat, int &illum, int prim, int locprim,
                                  float &rdx, float &rdy, float &grx, float &gry, float &blx, float &bly, float &meanx, float &meany, float &meanxe, float &meanye, double *p,
@@ -900,7 +903,7 @@ void ImProcFunctions::workingtrc(int sp, Imagefloat* src, Imagefloat* dst, int c
         meanx /= (bfh * bfw);
         meany /= (bfh * bfw);
         meanx += 0.005f;
-        meany += 0.005f; //ampirical mean delta with value end in process
+        meany += 0.005f; //empirical mean delta with value end in process
 
         if (settings->verbose) {
             printf("Estimation dominant color : x=%f y=%f\n", (double) meanx, (double) meany);
@@ -1799,17 +1802,25 @@ void ImProcFunctions::workingtrc(int sp, Imagefloat* src, Imagefloat* dst, int c
             for (int i = 0; i < 3; i++) { 
                 newprimxy[0] = 0.f;
                 newprimxy[1] = 0.f;
-                rotate_and_scale_primary(primaries, 1.f - inset[i], rotation[i], i , newprimxy, xyD);
-                    //printf("newx=%f newy=%f \n", (double)newprimxy[0], (double)newprimxy[1]);
+                rotate_and_scale_primary(primaries, 1.f - inset[i], rotation[i], i , newprimxy, xyD);//xyD takes into account the default illuminant or the one chosen by the user
                 if(i == 0) {
                     p[0] = newprimxy[0];
                     p[1] = newprimxy[1];
+                    if(rtengine::settings->verbose) {
+                        printf("newRx_prim=%f newRy_prim=%f \n", (double)newprimxy[0], (double)newprimxy[1]);
+                    }
                 } else if (i == 1) {
                     p[2] = newprimxy[0];
                     p[3] = newprimxy[1];
+                    if(rtengine::settings->verbose) {
+                        printf("newGx_prim=%f newGy_prim=%f \n", (double)newprimxy[0], (double)newprimxy[1]);
+                    }
                 } else if (i == 2) {
                     p[4] = newprimxy[0];
                     p[5] = newprimxy[1];
+                    if(rtengine::settings->verbose) {
+                        printf("newBx_prim=%f newBy_prim=%f \n", (double)newprimxy[0], (double)newprimxy[1]);
+                    }
                 }
             }
         }
