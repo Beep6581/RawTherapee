@@ -619,17 +619,13 @@ void ImProcFunctions::gamutcompr( Imagefloat *src, Imagefloat *dst, float &mac, 
     const int width = src->getWidth();
 
     constexpr float range = 65535.f;
-    float ac = 0.f;
-    float ac0 = 0.f;
-    float ac1 = 0.f;
-    float ac2 = 0.f;
     float maxac = 0.f;
     float maxac0 = 0.f;
     float maxac1 = 0.f;
     float maxac2 = 0.f;
 
 #ifdef _OPENMP
-        #   pragma omp parallel for reduction(max:maxac, maxac0, maxac1, maxac2)schedule(dynamic,16) if (multiThread)
+        #   pragma omp parallel for reduction(max:maxac, maxac0, maxac1, maxac2) schedule(dynamic,16) if (multiThread)
 #endif
 
     for (int i = 0; i < height; ++i) {
@@ -641,18 +637,26 @@ void ImProcFunctions::gamutcompr( Imagefloat *src, Imagefloat *dst, float &mac, 
             float rout = 0.f;
             float gout = 0.f;
             float bout = 0.f;
+            float ac = 0.f;
+            float ac0 = 0.f;
+            float ac1 = 0.f;
+            float ac2 = 0.f;
             //find maximum achromatic for red, green, blue
-#ifdef _OPENMP
-            #pragma omp critical
-#endif
-            {
-                Color::aces_reference_gamut_compression(rgb_in, th, dl, to_out, from_out, pw, roll, rout, gout, bout, ac, ac0, ac1, ac2);
-            }
-            maxac = rtengine::max(maxac, ac);
-            maxac0 = rtengine::max(maxac0, ac0);
-            maxac1 = rtengine::max(maxac1, ac1);
-            maxac2 = rtengine::max(maxac2, ac2);
 
+            Color::aces_reference_gamut_compression(rgb_in, th, dl, to_out, from_out, pw, roll, rout, gout, bout, ac, ac0, ac1, ac2);
+
+            if (ac  > maxac)  {
+                maxac  = ac;
+            }
+            if (ac0 > maxac0) {
+                maxac0 = ac0;
+            }
+            if (ac1 > maxac1) {
+                maxac1 = ac1;
+            }
+            if (ac2 > maxac2) {
+                maxac2 = ac2;
+            }
             dst->r(i, j) = range * rout;//in interval 0..65535
             dst->g(i, j) = range * gout;
             dst->b(i, j) = range * bout;
