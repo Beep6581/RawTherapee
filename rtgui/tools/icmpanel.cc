@@ -1027,6 +1027,7 @@ void ICMPanel::resetpolar () {
     gresat->setValue(0.);
     blurot->setValue(0.);
     blusat->setValue(0.);
+    
 }
 
 void ICMPanel::read(const ProcParams* pp, const ParamsEdited* pedited)
