@@ -30,6 +30,7 @@
 #include "rtengine.h"
 #include "settings.h"
 #include "utils.h"
+#include <fmt/format.h>
 
 namespace rtengine
 {
@@ -1811,19 +1812,22 @@ void ImProcFunctions::workingtrc(int sp, Imagefloat* src, Imagefloat* dst, int c
                     p[0] = newprimxy[0];
                     p[1] = newprimxy[1];
                     if(rtengine::settings->verbose) {
-                        printf("newRx_prim=%f newRy_prim=%f \n", (double)newprimxy[0], (double)newprimxy[1]);
+                        //printf("newRx_prim=%f newRy_prim=%f \n", (double)newprimxy[0], (double)newprimxy[1]);
+                        fmt::println("newRx_prim={} newRy_prim={}", newprimxy[0], newprimxy[1]);
                     }
                 } else if (i == 1) {
                     p[2] = newprimxy[0];
                     p[3] = newprimxy[1];
                     if(rtengine::settings->verbose) {
-                        printf("newGx_prim=%f newGy_prim=%f \n", (double)newprimxy[0], (double)newprimxy[1]);
+                      //  printf("newGx_prim=%f newGy_prim=%f \n", (double)newprimxy[0], (double)newprimxy[1]);
+                        fmt::println("newGx_prim={} newGy_prim={}", newprimxy[0], newprimxy[1]);
                     }
                 } else if (i == 2) {
                     p[4] = newprimxy[0];
                     p[5] = newprimxy[1];
                     if(rtengine::settings->verbose) {
-                        printf("newBx_prim=%f newBy_prim=%f \n", (double)newprimxy[0], (double)newprimxy[1]);
+                        //printf("newBx_prim=%f newBy_prim=%f \n", (double)newprimxy[0], (double)newprimxy[1]);
+                        fmt::println("newBx_prim={} newBy_prim={}", newprimxy[0], newprimxy[1]);
                     }
                 }
             }
