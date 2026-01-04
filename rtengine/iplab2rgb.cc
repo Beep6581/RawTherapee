@@ -1138,7 +1138,6 @@ void ImProcFunctions::workingtrc(int sp, Imagefloat* src, Imagefloat* dst, int c
         D60 = 6005  // for ACES AP0 and AP1
     };
     double tempv4 = 5003.;
- //   double p[6]; //primaries
 
     if (locprim == 0 && mul == 5) {
         switch (ColorManagementParams::Primaries(prim)) {
@@ -1421,14 +1420,14 @@ void ImProcFunctions::workingtrc(int sp, Imagefloat* src, Imagefloat* dst, int c
             p[4] = blx;
             p[5] = bly;
         } else {
-            p[0] = 0.7347;    //ProPhoto and default primaries
-            p[1] = 0.2653;
-            p[2] = 0.1596;
-            p[3] = 0.8404;
-            p[4] = 0.0366;
-            p[5] = 0.0001;
-            Wx = 0.964295676;
-            Wz = 0.825104603;
+            p[0] = 0.7080;    // Rec2020 and default primaries
+            p[1] = 0.2920;
+            p[2] = 0.1700;
+            p[3] = 0.7970;
+            p[4] = 0.1310;
+            p[5] = 0.0460;
+            Wx = 0.95045471;
+            Wz = 1.08905029;
             rdx = p[0];
             rdy = p[1];
             grx = p[2];
@@ -1610,12 +1609,15 @@ void ImProcFunctions::workingtrc(int sp, Imagefloat* src, Imagefloat* dst, int c
                 p[5] = bluyy;
 
             } else {
-                p[0] = 0.7347;    //default primaries always unused
-                p[1] = 0.2653;
-                p[2] = 0.1596;
-                p[3] = 0.8404;
-                p[4] = 0.0366;
-                p[5] = 0.0001;
+                p[0] = 0.7080;    // default Rec2020 primaries always unused
+                p[1] = 0.2920;
+                p[2] = 0.1700;
+                p[3] = 0.7970;
+                p[4] = 0.1310;
+                p[5] = 0.0460;
+                illum = toUnderlying(ColorManagementParams::Illuminant::D65);
+                Wx = 0.95045471;
+                Wz = 1.08905029;
             }
         }
 
