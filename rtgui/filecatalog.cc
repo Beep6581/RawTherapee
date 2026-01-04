@@ -779,7 +779,6 @@ void FileCatalog::_refreshProgressBar ()
     // Also mention that this progress bar only measures the FIRST pass (quick thumbnails)
     // The second, usually longer pass is done multithreaded down in the single entries and is NOT measured by this
     if (!inTabMode && (!previewsToLoad || std::floor(100.f * previewsLoaded / previewsToLoad) != std::floor(100.f * (previewsLoaded - 1) / previewsToLoad))) {
-        GThreadLock lock; // All GUI access from idle_add callbacks or separate thread HAVE to be protected
 
         const auto& options = App::get().options();
         if (!progressImage || !progressLabel) {
@@ -819,99 +818,104 @@ void FileCatalog::_refreshProgressBar ()
 
 void FileCatalog::previewReady (int dir_id, FileBrowserEntry* fdn)
 {
-
-    if ( dir_id != selectedDirectoryId ) {
-        delete fdn;
-        return;
-    }
-
-    // put it into the "full directory" browser
-    fdn->setImageAreaToolListener (iatlistener);
-    fileBrowser->addEntry (fdn);
-
-    // update exif filter settings (minimal & maximal values of exif tags, cameras, lenses, etc...)
-    const CacheImageData* cfs = fdn->thumbnail->getCacheImageData();
-
-    {
-        MyMutex::MyLock lock(dirEFSMutex);
-
-        if (cfs->exifValid) {
-            if (cfs->fnumber < dirEFS.fnumberFrom) {
-                dirEFS.fnumberFrom = cfs->fnumber;
+    idle_register.add(
+        [this, dir_id, fdn]() -> bool
+        {
+            if ( dir_id != selectedDirectoryId ) {
+                delete fdn;
+                return false;
             }
 
-            if (cfs->fnumber > dirEFS.fnumberTo) {
-                dirEFS.fnumberTo = cfs->fnumber;
+            // put it into the "full directory" browser
+            fdn->setImageAreaToolListener (iatlistener);
+            fileBrowser->addEntry_ (fdn);
+
+            // update exif filter settings (minimal & maximal values of exif tags, cameras, lenses, etc...)
+            const CacheImageData* cfs = fdn->thumbnail->getCacheImageData();
+
+            {
+                MyMutex::MyLock lock(dirEFSMutex);
+
+                if (cfs->exifValid) {
+                    if (cfs->fnumber < dirEFS.fnumberFrom) {
+                        dirEFS.fnumberFrom = cfs->fnumber;
+                    }
+
+                    if (cfs->fnumber > dirEFS.fnumberTo) {
+                        dirEFS.fnumberTo = cfs->fnumber;
+                    }
+
+                    if (cfs->shutter < dirEFS.shutterFrom) {
+                        dirEFS.shutterFrom = cfs->shutter;
+                    }
+
+                    if (cfs->shutter > dirEFS.shutterTo) {
+                        dirEFS.shutterTo = cfs->shutter;
+                    }
+
+                    if (cfs->iso > 0 && cfs->iso < dirEFS.isoFrom) {
+                        dirEFS.isoFrom = cfs->iso;
+                    }
+
+                    if (cfs->iso > 0 && cfs->iso > dirEFS.isoTo) {
+                        dirEFS.isoTo = cfs->iso;
+                    }
+
+                    if (cfs->focalLen < dirEFS.focalFrom) {
+                        dirEFS.focalFrom = cfs->focalLen;
+                    }
+
+                    if (cfs->focalLen > dirEFS.focalTo) {
+                        dirEFS.focalTo = cfs->focalLen;
+                    }
+
+                    //TODO: ass filters for HDR and PixelShift files
+                }
+
+                dirEFS.filetypes.insert (cfs->filetype);
+                dirEFS.cameras.insert (cfs->getCamera());
+                dirEFS.lenses.insert (cfs->lens);
+                dirEFS.expcomp.insert (cfs->expcomp);
             }
 
-            if (cfs->shutter < dirEFS.shutterFrom) {
-                dirEFS.shutterFrom = cfs->shutter;
-            }
+            previewsLoaded++;
 
-            if (cfs->shutter > dirEFS.shutterTo) {
-                dirEFS.shutterTo = cfs->shutter;
-            }
-
-            if (cfs->iso > 0 && cfs->iso < dirEFS.isoFrom) {
-                dirEFS.isoFrom = cfs->iso;
-            }
-
-            if (cfs->iso > 0 && cfs->iso > dirEFS.isoTo) {
-                dirEFS.isoTo = cfs->iso;
-            }
-
-            if (cfs->focalLen < dirEFS.focalFrom) {
-                dirEFS.focalFrom = cfs->focalLen;
-            }
-
-            if (cfs->focalLen > dirEFS.focalTo) {
-                dirEFS.focalTo = cfs->focalLen;
-            }
-
-            //TODO: ass filters for HDR and PixelShift files
-        }
-
-        dirEFS.filetypes.insert (cfs->filetype);
-        dirEFS.cameras.insert (cfs->getCamera());
-        dirEFS.lenses.insert (cfs->lens);
-        dirEFS.expcomp.insert (cfs->expcomp);
-    }
-
-    previewsLoaded++;
-
-    _refreshProgressBar();
+            _refreshProgressBar();
+            return false;
+        },
+        G_PRIORITY_DEFAULT_IDLE
+    );
 }
 
 // Called within GTK UI thread
-void FileCatalog::previewsFinishedUI ()
+void FileCatalog::previewsFinishedUI(int dir_id)
 {
-
-    {
-        GThreadLock lock; // All GUI access from idle_add callbacks or separate thread HAVE to be protected
-        redrawAll();
-        previewsToLoad = 0;
-
-        if (filterPanel) {
-            filterPanel->set_sensitive(true);
-
-            if (!hasValidCurrentEFS) {
-                MyMutex::MyLock myLock(dirEFSMutex);
-                currentEFS = dirEFS;
-                filterPanel->setFilter(dirEFS, true);
-            } else {
-                filterPanel->setFilter(currentEFS, false);
-            }
-        }
-
-        if (exportPanel) {
-            exportPanel->set_sensitive(true);
-        }
-
-        // restart anything that might have been loaded low quality
-        fileBrowser->refreshQuickThumbImages();
-        fileBrowser->applyFilter(getFilter());  // refresh total image count
-        _refreshProgressBar();
+    if ( dir_id != selectedDirectoryId ) {
+        return;
     }
+
+    redrawAll();
+    previewsToLoad = 0;
+
+    if (filterPanel) {
+        filterPanel->set_sensitive(true);
+        if (!hasValidCurrentEFS) {
+            MyMutex::MyLock lock(dirEFSMutex);
+            filterPanel->setFilter(dirEFS, true);
+        } else {
+            filterPanel->setFilter(currentEFS, false);
+        }
+    }
+
+    if (exportPanel) {
+        exportPanel->set_sensitive(true);
+    }
+
+    // restart anything that might have been loaded low quality
+    fileBrowser->refreshQuickThumbImages();
+    fileBrowser->applyFilter(getFilter());  // refresh total image count
+    _refreshProgressBar();
+
     filepanel->loadingThumbs(M("PROGRESSBAR_READY"), 0);
 
     if (!imageToSelect_fname.empty()) {
@@ -931,22 +935,14 @@ void FileCatalog::previewsFinishedUI ()
 
 void FileCatalog::previewsFinished (int dir_id)
 {
-
-    if ( dir_id != selectedDirectoryId ) {
-        return;
-    }
-
-    if (!hasValidCurrentEFS) {
-        MyMutex::MyLock lock(dirEFSMutex);
-        currentEFS = dirEFS;
-    }
-
     idle_register.add(
-        [this]() -> bool
+        [this, dir_id]() -> bool
         {
-            previewsFinishedUI();
+            previewsFinishedUI(dir_id);
             return false;
-        }
+        },
+        // keep priority lower than on the other interface functions to make sure callbacks will not be executed out of order
+        G_PRIORITY_DEFAULT_IDLE + 1
     );
 }
 
@@ -1663,7 +1659,19 @@ void FileCatalog::categoryButtonToggled (Gtk::ToggleButton* b, bool isMouseClick
 void FileCatalog::showRecursiveToggled()
 {
     App::get().mut_options().browseRecursive = bRecursive->get_active();
-    reparseDirectory();
+
+    // Killing background threads can sometimes block the UI for a long time,
+    // This may be a spot where giving the user information is needed.
+    previewLoader->removeAllJobs();
+    thumbImageUpdater->removeAllJobs();
+
+    idle_register.add(
+        [this]() -> bool
+        {
+            dirSelected(selectedDirectory, "");
+            return false;
+        }
+    );
 }
 
 BrowserFilter FileCatalog::getFilter ()
@@ -1851,13 +1859,9 @@ void FileCatalog::on_dir_changed (const Glib::RefPtr<Gio::File>& file, const Gli
     if ((App::get().options().has_retained_extention(file->get_parse_name())
             && (event_type == Gio::FILE_MONITOR_EVENT_CREATED || event_type == Gio::FILE_MONITOR_EVENT_DELETED || event_type == Gio::FILE_MONITOR_EVENT_CHANGED))
              || (event_type == Gio::FILE_MONITOR_EVENT_CREATED && Glib::file_test(file->get_path(), Glib::FileTest::FILE_TEST_IS_DIR))
-             || (event_type == Gio::FILE_MONITOR_EVENT_DELETED && std::find_if(dirMonitors.cbegin(), dirMonitors.cend(), [&file](const FileMonitorInfo &monitor) { return monitor.filePath == file->get_path(); }) != dirMonitors.cend())) {
-        if (!internal) {
-            GThreadLock lock;
-            reparseDirectory ();
-        } else {
-            reparseDirectory ();
-        }
+             || (event_type == Gio::FILE_MONITOR_EVENT_DELETED && std::find_if(dirMonitors.cbegin(), dirMonitors.cend(), [&file](const FileMonitorInfo &monitor) { return monitor.filePath == file->get_path(); }) != dirMonitors.cend()))
+    {
+        reparseDirectory ();
     }
 }
 

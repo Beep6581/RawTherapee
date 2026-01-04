@@ -215,15 +215,15 @@ void Compressgamut::achromaticChanged (double acmax, double acmax0, double acmax
                                         Glib::ustring::format (std::fixed, std::setprecision (1), (acmax0 + acmax1) * 0.43))//estimated value for Yellow
             );
             if(auto_dc) {
-                double valdc = max(1.02, (acmax1 + acmax2) * 0.4);//about 90% max
+                double valdc = max(1.147, (acmax1 + acmax2) * 0.4);//about 90% max - 1.147 = default value ACES AP1 Cyan
                 d_c->setValue(valdc);
             }
             if(auto_dm) {
-                double valdm = max(1.02, (acmax0 + acmax2) * 0.4);//about 90% max
+                double valdm = max(1.264, (acmax0 + acmax2) * 0.4);//about 90% max - 1.264 = default value ACES AP1 Magenta
                 d_m->setValue(valdm);
             }
             if(auto_dy) {
-                double valdy = max(1.02, (acmax0 + acmax1) * 0.4);//about 90% max
+                double valdy = max(1.312, (acmax0 + acmax1) * 0.4);//about 90% max - 1.312 = default value ACES AP1 Yellow
                 d_y->setValue(valdy);
             }                       
             enableListener();

@@ -151,8 +151,8 @@ public:
     FileBrowser ();
     ~FileBrowser () override;
 
-    void addEntry (FileBrowserEntry* entry); // can be called from any thread
-    void addEntry_ (FileBrowserEntry* entry); // this must be executed inside the gtk thread
+    void addEntry (FileBrowserEntry* entry);                    ///< Moves the execution to the main UI thread
+    void addEntry_ (FileBrowserEntry* entry);                   ///< Must be called only when the execution is in the main UI thread
     FileBrowserEntry*  delEntry (const Glib::ustring& fname);    // return the entry if found here return NULL otherwise
     void close ();
 

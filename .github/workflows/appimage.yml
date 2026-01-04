@@ -177,14 +177,15 @@ jobs:
           export LD_LIBRARY_PATH="$LD_LIBRARY_PATH:/usr/local/lib"
 
           echo "Creating artifact name."
+          ARCH_NAME="x86_64"
           if [ '${{github.ref_type}}' == 'tag' ]; then
-            ARTIFACT_NAME="RawTherapee_${REF_NAME_FILTERED}_${{matrix.build_type}}"
+            ARTIFACT_NAME="RawTherapee_${REF_NAME_FILTERED}_${ARCH_NAME}_${{matrix.build_type}}"
           else
             echo "Getting RawTherapee version."
             export VERSION="$(grep -m 1 '^Version: .*$' 'AboutThisBuild.txt' | sed 's/^Version: \(.\+\)$/\1/')"
             echo "Version is '$VERSION'."
             FILTERED_VERSION="$(echo "$VERSION" | sed 's/[^A-z0-9_.-]//g')"
-            ARTIFACT_NAME="RawTherapee_${REF_NAME_FILTERED}_${FILTERED_VERSION}_${{matrix.build_type}}"
+            ARTIFACT_NAME="RawTherapee_${REF_NAME_FILTERED}_${FILTERED_VERSION}_${ARCH_NAME}_${{matrix.build_type}}"
           fi
           echo "Artifact name is '$ARTIFACT_NAME'."
 
@@ -212,7 +213,7 @@ jobs:
         if: ${{github.ref_type == 'tag' || github.ref_name == 'dev'}}
         run: |
           echo "Setting publish name."
-          PUBLISH_NAME="RawTherapee_${REF_NAME_FILTERED}_${{matrix.build_type}}"
+          PUBLISH_NAME="RawTherapee_${REF_NAME_FILTERED}_x86_64_${{matrix.build_type}}"
           echo "Publish name is '$PUBLISH_NAME'."
 
           echo "Renaming AppImage."
@@ -242,7 +243,7 @@ jobs:
           echo "Ref name is '$REF_NAME_FILTERED'."
 
           echo "Setting publish name."
-          PUBLISH_NAME="RawTherapee_${REF_NAME_FILTERED}_${{matrix.build_type}}"
+          PUBLISH_NAME="RawTherapee_${REF_NAME_FILTERED}_x86_64_${{matrix.build_type}}"
           echo "Publish name is '$PUBLISH_NAME'."
 
           echo "Renaming AppImage."
@@ -418,14 +419,15 @@ jobs:
           export LD_LIBRARY_PATH="$LD_LIBRARY_PATH:/usr/local/lib"
 
           echo "Creating artifact name."
+          ARCH_NAME="arm64"
           if [ '${{github.ref_type}}' == 'tag' ]; then
-            ARTIFACT_NAME="RawTherapee_${REF_NAME_FILTERED}_${{matrix.build_type}}-arm64"
+            ARTIFACT_NAME="RawTherapee_${REF_NAME_FILTERED}_${ARCH_NAME}_${{matrix.build_type}}"
           else
             echo "Getting RawTherapee version."
             export VERSION="$(grep -m 1 '^Version: .*$' 'AboutThisBuild.txt' | sed 's/^Version: \(.\+\)$/\1/')"
             echo "Version is '$VERSION'."
             FILTERED_VERSION="$(echo "$VERSION" | sed 's/[^A-z0-9_.-]//g')"
-            ARTIFACT_NAME="RawTherapee_${REF_NAME_FILTERED}_${FILTERED_VERSION}_${{matrix.build_type}}-arm64"
+            ARTIFACT_NAME="RawTherapee_${REF_NAME_FILTERED}_${FILTERED_VERSION}_${ARCH_NAME}_${{matrix.build_type}}"
           fi
           echo "Artifact name is '$ARTIFACT_NAME'."
 
@@ -453,7 +455,7 @@ jobs:
         if: ${{github.ref_type == 'tag' || github.ref_name == 'dev'}}
         run: |
           echo "Setting publish name."
-          PUBLISH_NAME="RawTherapee_${REF_NAME_FILTERED}_${{matrix.build_type}}"
+          PUBLISH_NAME="RawTherapee_${REF_NAME_FILTERED}_arm64_${{matrix.build_type}}"
           echo "Publish name is '$PUBLISH_NAME'."
 
           echo "Renaming AppImage."
@@ -483,7 +485,7 @@ jobs:
           echo "Ref name is '$REF_NAME_FILTERED'."
 
           echo "Setting publish name."
-          PUBLISH_NAME="RawTherapee_${REF_NAME_FILTERED}_${{matrix.build_type}}"
+          PUBLISH_NAME="RawTherapee_${REF_NAME_FILTERED}_arm64_${{matrix.build_type}}"
           echo "Publish name is '$PUBLISH_NAME'."
 
           echo "Renaming AppImage."
