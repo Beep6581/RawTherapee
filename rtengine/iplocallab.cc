@@ -18407,7 +18407,7 @@ void ImProcFunctions::Lab_Local(
                                     inv_lms_T[2][0] = -0.0531795641897042;
                                     inv_lms_T[2][1] = -0.157620505148385;
                                     inv_lms_T[2][2] = 1.25484147589507;
-                                } else if(params->locallab.spots.at(sp).ghsMatmet == "JZ" || params->locallab.spots.at(sp).ghsMatmet == "JZxyz") {////I chose JZ rather than JzAzBz because we're dealing with a cognitive bias in RGB mode
+                                } else if(params->locallab.spots.at(sp).ghsMatmet == "JZ" || params->locallab.spots.at(sp).ghsMatmet == "JZxyz") {////I chose JZ rather than JzAzBz because we're dealing with a cognitive bias in RGB mode, not in XYZ. This is only the use of the matrice and not the JzAzBz algorithm.
                                     inv_lms_T[0][0] = 1.92488743175646;
                                     inv_lms_T[0][1] = 0.349838855125251;
                                     inv_lms_T[0][2] = -0.097770847478916;
@@ -18417,7 +18417,7 @@ void ImProcFunctions::Lab_Local(
                                     inv_lms_T[2][0] = 0.0265884071012174;
                                     inv_lms_T[2][1] = -0.0573856961296308;
                                     inv_lms_T[2][2] = 1.51932335013174;
-                                } else if(params->locallab.spots.at(sp).ghsMatmet == "cat16" || params->locallab.spots.at(sp).ghsMatmet == "cat16xyz") {//I chose cat16 rather than Cat16 because we're dealing with a cognitive bias in RGB mode
+                                } else if(params->locallab.spots.at(sp).ghsMatmet == "cat16" || params->locallab.spots.at(sp).ghsMatmet == "cat16xyz") {//I chose cat16 rather than Cat16 because we're dealing with a cognitive bias in RGB mode, not in XYZ. This is only the use of the matrice and not the CAM16 algorithm.
                                     inv_lms_T[0][0] = 3.05467729554555;
                                     inv_lms_T[0][1] = -0.738708117076132;
                                     inv_lms_T[0][2] = -0.0786826459200281;
@@ -18431,7 +18431,7 @@ void ImProcFunctions::Lab_Local(
                             }
                             //now we have 3 Matrices to convert tmpimage with Agx, JzAzBz in RGB (JZ ), Cat16 in RGB (cat16), JzAzBz in XYZ (JZxyz ), Cat16 in XYZ (cat16xyz)
 
-                            if(isrgb ) {//mode RGB for cat16 and JZ, and also Agx
+                            if(isrgb ) {//mode RGB for Cat16 and JZ, and also Agx
 
 #ifdef _OPENMP
         #   pragma omp parallel for schedule(dynamic,16) if (multiThread)
@@ -18461,16 +18461,16 @@ void ImProcFunctions::Lab_Local(
                                         const float g = tmpImage->g(i, j);
                                         const float b = tmpImage->b(i, j);
                                         float X, Y, Z;
-                                        Color::rgbxyz(r, g, b, X, Y, Z, wpi);
+                                        Color::rgbxyz(r, g, b, X, Y, Z, wpi);//convert to XYZ using the working profile
                                         std::array<float, 3> xyz_in{X, Y, Z};
                                         float Xout = 0.f;
                                         float Yout = 0.f;
                                         float Zout = 0.f;
-                                        Color::agx_trans(xyz_in, lms_T, Xout, Yout, Zout);
+                                        Color::agx_trans(xyz_in, lms_T, Xout, Yout, Zout);//multiplies the XYZ data with the conversion matrice Cat16 or JZ
                                         float rout = 0.f;
                                         float gout = 0.f;
                                         float bout = 0.f;
-                                        Color::xyz2rgb(Xout, Yout, Zout, rout, gout, bout, wip);
+                                        Color::xyz2rgb(Xout, Yout, Zout, rout, gout, bout, wip);//convert to RGB using inverse working profile.
                                         tmpImage->r(i, j) = rtengine::max(0.00001f, rout);//avoid negative values. Normally this should never happen because the coefficients of the selected matrix are all positive... unless the matrix changes
                                         tmpImage->g(i, j) = rtengine::max(0.00001f, gout);//these potentially negative values, related to calculations and not to the gamut, are not accepted by the rgblab or labrgb, workingtrc functions, etc,
                                         tmpImage->b(i, j) = rtengine::max(0.00001f, bout);//but after numerous checks, this has no impact on the results...except to prevent a crash.
@@ -18876,16 +18876,16 @@ void ImProcFunctions::Lab_Local(
                                         const float g = tmpImage->g(i, j);
                                         const float b = tmpImage->b(i, j);
                                         float X, Y, Z;
-                                        Color::rgbxyz(r, g, b, X, Y, Z, wpi);
+                                        Color::rgbxyz(r, g, b, X, Y, Z, wpi);//convert to XYZ using the working profile
                                         std::array<float, 3> xyz_in{X, Y, Z};
                                         float Xout = 0.f;
                                         float Yout = 0.f;
                                         float Zout = 0.f;
-                                        Color::agx_trans(xyz_in, inv_lms_T, Xout, Yout, Zout);
+                                        Color::agx_trans(xyz_in, inv_lms_T, Xout, Yout, Zout);//multiplies the XYZ data with the conversion inverse matrice Cat16 or JZ
                                         float rout = 0.f;
                                         float gout = 0.f;
                                         float bout = 0.f;
-                                        Color::xyz2rgb(Xout, Yout, Zout, rout, gout, bout, wip);
+                                        Color::xyz2rgb(Xout, Yout, Zout, rout, gout, bout, wip);//convert to RGB using inverse working profile.
                                         tmpImage->r(i, j) = rtengine::max(0.00001f, rout);//avoid negative values. Normally this should never happen because the coefficients of the selected matrix are all positive... unless the matrix changes
                                         tmpImage->g(i, j) = rtengine::max(0.00001f, gout);//these potentially negative values, related to calculations and not to the gamut, are not accepted by the rgblab or labrgb, workingtrc functions, etc,
                                         tmpImage->b(i, j) = rtengine::max(0.00001f, bout);//but after numerous checks, this has no impact on the results...except to prevent a crash.

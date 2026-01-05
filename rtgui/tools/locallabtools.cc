@@ -4380,7 +4380,6 @@ LocallabShadow::LocallabShadow():
     Evlocallabghs_SP = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_GHS_SP");
     EvlocallabautoSPson = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_AUTOSP");
     EvlocallabautoSPoff = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_AUTOSP");
-    
     Evlocallabghs_LP = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_GHS_LP");
     Evlocallabghs_HP = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_GHS_HP");
     Evlocallabghs_LC = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_GHS_LC");
@@ -4424,7 +4423,7 @@ LocallabShadow::LocallabShadow():
     ghsMatmet->append(M("TP_LOCALLAB_GHSMAT3"));
     ghsMatmet->append(M("TP_LOCALLAB_GHSMAT4"));
     ghsMatmet->append(M("TP_LOCALLAB_GHSMAT5"));
-    ghsMatmet->set_active(1);// Default to AgX (index 1)
+    ghsMatmet->set_active(0);//I think it's better to keep 'none' (index 0) and let the user choose their preferred mode.
     ghsMatmetConn = ghsMatmet->signal_changed().connect(sigc::mem_fun(*this, &LocallabShadow::ghsMatmetChanged));
 
     for (const auto multiplier : multipliersh) {
@@ -4469,7 +4468,7 @@ LocallabShadow::LocallabShadow():
     ghssymLabel->set_line_wrap();
     ghssymLabel->set_justify(Gtk::Justification::JUSTIFY_CENTER);
     setExpandAlignProperties(ghssymLabel, true, false, Gtk::ALIGN_CENTER, Gtk::ALIGN_START);
-    
+
     ghs_LP->setAdjusterListener(this);
     ghs_HP->setAdjusterListener(this);
     ghs_LC->setAdjusterListener(this);
@@ -4722,9 +4721,9 @@ void LocallabShadow::autoSPChanged(float radius)
                 ghs_SP->addAutoButton(M("TP_LOCALLAB_SPRADIUS_TOOLTIP"));
                 ghs_SP->setValue(radius);
             }
-            
+
             enableListener();
-            nbsym2++;                       
+            nbsym2++;
             if(nbsym2 < 2) {
                 adjusterChanged(ghs_SP, 0);
             }
@@ -5065,17 +5064,17 @@ void LocallabShadow::read(const rtengine::procparams::ProcParams* pp, const Para
             ghsMatmet->set_active(0);
         } else if (spot.ghsMatmet == "agx") {
             ghsMatmet->set_active(1);
-        } else if (spot.ghsMatmet == "JZ") {//I chose JZ rather than JzAzBz because we're dealing with a cognitive bias.
+        } else if (spot.ghsMatmet == "JZ") {//I chose JZ rather than JzAzBz because we're dealing with a cognitive bias in RGB mode.
                                             //it corresponds to original LMS JzAzBz matrix without PQ, whitout Absolute luminance, whitout "az and bz" and applied to RGB values
                                             //If I had chosen JzAzBz, the reader might believe we are using the JzAzBz model, which is not the case.
                                             //But to 'simplify' the GUI, JzAzBz and Cat16 appear... this reassures users, but it's more than likely false.
             ghsMatmet->set_active(2);
-        } else if (spot.ghsMatmet == "cat16") {//It's essentially the same for Cat16 as for JZ
-                                               //it's a simplifying cognitive bias, but I kept the term here because the difference is smaller.
+        } else if (spot.ghsMatmet == "cat16") {//It's essentially the same for Cat16 as for JZ. Note that this is not CIECAM, but only the use of the conversion matrix
+                                               //it's a simplifying cognitive bias, but I kept the term here because the difference is often smaller.
             ghsMatmet->set_active(3);
-        } else if (spot.ghsMatmet == "JZxyz") {//Same comment as "JZ" above but without cognitive bias.
+        } else if (spot.ghsMatmet == "JZxyz") {//Same comment as "JZ" above but without cognitive bias, by using XYZ data instead of RGB.
             ghsMatmet->set_active(4);
-        } else if (spot.ghsMatmet == "cat16xyz") {//Same comment as "cat16" above but without cognitive bias.
+        } else if (spot.ghsMatmet == "cat16xyz") {//Same comment as "cat16" above but without cognitive bias, by using XYZ data instead of RGB.
             ghsMatmet->set_active(5);
         }
 
@@ -5093,7 +5092,7 @@ void LocallabShadow::read(const rtengine::procparams::ProcParams* pp, const Para
         ghs_B->setValue((double)spot.ghs_B);
         ghs_SP->setValue((double)spot.ghs_SP);
         ghs_SP->setAutoValue(spot.SPAutoRadius);
-        
+
         ghs_LP->setValue((double)spot.ghs_LP);
         ghs_HP->setValue((double)spot.ghs_HP);
         ghs_LC->setValue((double)spot.ghs_LC);
@@ -6384,7 +6383,7 @@ void LocallabShadow::updateShadowGUIsym()
     double secur = 0.001;//keep range security to avoid crash and wrong GUI - no or small incidence on usage
     double HPL = rtengine::LIM(tempSP - secur, 0.0001, 0.9999);
     double BPH = rtengine::LIM(tempSP + secur, 0.0001, 0.9999);
-    ghs_LP->setLimits(0., HPL, 0.00001, 0.0);//
+    ghs_LP->setLimits(0., HPL, 0.00001, 0.0);
     ghs_HP->setLimits(BPH, 1.0, 0.00001, 0.0);
     //avoid crash at limits
     if(tempHP - tempSP <= 0.) {

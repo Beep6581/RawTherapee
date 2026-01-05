@@ -520,14 +520,14 @@ LocallabParams::LocallabSpot::LocallabSpot() :
     complexshadhigh(0),
     shMethod("ghs"),
     ghsMethod("rgb"),
-    ghsMatmet("agx"),
+    ghsMatmet("none"), // I think it's better to leave it as 'none' and let the user choose their preferred mode.
     ghsMode("ghs"),
     ghs_D(0.001),
     ghs_slope(9.03296),
     ghs_chro(0.0),
     ghs_B(0.),
     ghs_SP(0.015),//initialized with a low value to avoid zero
-    SPAutoRadius(true), //auto Symmetry point 
+    SPAutoRadius(false), //auto Symmetry point - I think it's better to put 'false' and leave the initiative to the user.
     ghs_LP(0.),
     ghs_HP(1.),
     ghs_LC(10.),
