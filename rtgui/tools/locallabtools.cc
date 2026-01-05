@@ -4422,6 +4422,8 @@ LocallabShadow::LocallabShadow():
     ghsMatmet->append(M("TP_LOCALLAB_GHSMAT1"));
     ghsMatmet->append(M("TP_LOCALLAB_GHSMAT2"));
     ghsMatmet->append(M("TP_LOCALLAB_GHSMAT3"));
+    ghsMatmet->append(M("TP_LOCALLAB_GHSMAT4"));
+    ghsMatmet->append(M("TP_LOCALLAB_GHSMAT5"));
     ghsMatmet->set_active(1);// Default to AgX (index 1)
     ghsMatmetConn = ghsMatmet->signal_changed().connect(sigc::mem_fun(*this, &LocallabShadow::ghsMatmetChanged));
 
@@ -5071,6 +5073,10 @@ void LocallabShadow::read(const rtengine::procparams::ProcParams* pp, const Para
         } else if (spot.ghsMatmet == "cat16") {//It's essentially the same for Cat16 as for JZ
                                                //it's a simplifying cognitive bias, but I kept the term here because the difference is smaller.
             ghsMatmet->set_active(3);
+        } else if (spot.ghsMatmet == "JZxyz") {//Same comment as "JZ" above but without cognitive bias.
+            ghsMatmet->set_active(4);
+        } else if (spot.ghsMatmet == "cat16xyz") {//Same comment as "cat16" above but without cognitive bias.
+            ghsMatmet->set_active(5);
         }
 
         for (int i = 0; i < 6; i++) {
@@ -5234,6 +5240,10 @@ void LocallabShadow::write(rtengine::procparams::ProcParams* pp, ParamsEdited* p
             spot.ghsMatmet = "JZ";
         } else if (ghsMatmet->get_active_row_number() == 3) {
             spot.ghsMatmet = "cat16";
+        } else if (ghsMatmet->get_active_row_number() == 4) {
+            spot.ghsMatmet = "JZxyz";
+        } else if (ghsMatmet->get_active_row_number() == 5) {
+            spot.ghsMatmet = "cat16xyz";
         }
 
          for (int i = 0; i < 6; i++) {

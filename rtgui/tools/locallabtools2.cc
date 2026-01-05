@@ -13576,7 +13576,6 @@ void Locallabcie::convertParamToNormal()
     colorflcie->setValue(defSpot.colorflcie);
     lightqcie->setValue(defSpot.lightqcie);
     chromlcie->setValue(defSpot.chromlcie);
-    //huecie->setValue(defSpot.huecie);
     jabcie->set_active(defSpot.jabcie);
     LHshapejz->setCurve(defSpot.LHcurvejz);
     CHshapejz->setCurve(defSpot.CHcurvejz);
