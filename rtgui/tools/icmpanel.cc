@@ -768,6 +768,7 @@ void ICMPanel::neutral_pressed ()
     } else if (wProfNames->get_active_text() == "BestRGB") {
         wprim->set_active(toUnderlying(ColorManagementParams::Primaries::BEST_RGB));
     }
+    resetpolar ();
     const ColorManagementParams defPar;
 }
 
