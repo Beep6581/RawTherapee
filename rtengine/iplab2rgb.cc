@@ -749,16 +749,16 @@ void ImProcFunctions::apsatur(int sp, Imagefloat* tmpImage, Imagefloat* tmpImage
 
 // code taken from Darktable - and adapted to Rawtherapee
 // It was only used to calculate polar coordinates. Why reinvent the wheel when it's already been done elsewhere?
-float determinant(float a, float b, float c, float d)
+constexpr float determinant(const float a, const float b, const float c, const float d)
 {
     return a * d - b * c;
 }
 
 
-float intersect_line_segments(float x1, float y1,
-                              float x2, float y2,
-                              float x3, float y3,
-                              float x4, float y4)
+float intersect_line_segments(const float x1, const float y1,
+                              const float x2, const float y2,
+                              const float x3, const float y3,
+                              const float x4, const float y4)
 {
     const float denominator = determinant(x1 - x2, x3 - x4, y1 - y2, y3 - y4);
     if (denominator == 0.0) {
