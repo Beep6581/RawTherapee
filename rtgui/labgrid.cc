@@ -135,7 +135,6 @@ void LabGridArea::setParams(double la, double lb, double ha, double hb, double g
     whi_y = rtengine::LIM(wy, lo, hi);
     me_x = rtengine::LIM(mx, lo, hi);
     me_y = rtengine::LIM(my, lo, hi);
-    
     queue_draw();
     if (notify) {
         notifyListener();
@@ -360,17 +359,40 @@ bool LabGridArea::on_draw(const ::Cairo::RefPtr<Cairo::Context> &cr)
     const double why = .5 * (static_cast<double>(height) + static_cast<double>(height) * whi_y);
     double mex = .5 * (static_cast<double>(width) + static_cast<double>(width) * me_x);
     double mey = .5 * (static_cast<double>(height) + static_cast<double>(height) * me_y);
+
+    //primaries default Rec2020 - Draw small dots to retain the RGB values ​​of Rec2020
+    //red 0.708 0.2920
+    const double r2rx = 0.46909;//1.81818f * (0.708 + 0.1f) - 1.f
+    const double r2ry = -0.28727;//1.81818f * (0.292 + 0.1f) - 1.f
+    const double r2020_redx = .5 * (static_cast<double>(width) + static_cast<double>(width) * r2rx);
+    const double r2020_redy = .5 * (static_cast<double>(height) + static_cast<double>(height) * r2ry);
+
+    //green 0.17 0.797
+    const double r2gx = -0.50909;//1.81818f * (0.17 + 0.1f) - 1.f
+    const double r2gy = 0.63090;//1.81818f * (0.797 + 0.1f) - 1.f
+    const double r2020_grex = .5 * (static_cast<double>(width) + static_cast<double>(width) * r2gx);
+    const double r2020_grey = .5 * (static_cast<double>(height) + static_cast<double>(height) * r2gy);
+
+    //blue 0.131 0.046
+    const double r2bx = -0.5800;//1.81818f * (0.131 + 0.1f) - 1.f
+    const double r2by = -0.73454;//1.81818f * (0.046 + 0.1f) - 1.f
+    const double r2020_blux = .5 * (static_cast<double>(width) + static_cast<double>(width) * r2bx);
+    const double r2020_bluy = .5 * (static_cast<double>(height) + static_cast<double>(height) * r2by);
+
     cr->set_line_width(1.5);
     if (ciexy_enabled) {       
         mex = .5 * (width + width * me_x);
         mey = .5 * (height + height * me_y);
+        
     }
     cr->set_source_rgb(0.6, 0.6, 0.6);
     if (!ghs_enabled) {
+
         cr->move_to(loa, lob);
         cr->line_to(hia, hib);
     }
     if (ciexy_enabled) {
+        //Rec2020 default  
         cr->move_to(loa, lob);
         cr->line_to(grx, gry);
         cr->move_to(grx, gry);
@@ -483,8 +505,29 @@ bool LabGridArea::on_draw(const ::Cairo::RefPtr<Cairo::Context> &cr)
             } else {
                 cr->arc(grx, gry, 3., 0., 2. * rtengine::RT_PI);
             }
+
+
             cr->fill();
         }
+        //Draw small dots to retain the RGB values ​​of Rec2020
+        if (ciexy_enabled) {
+            cr->set_source_rgb(0.1, 0.1, 0.1);//black for red Rec2020
+            cr->arc(r2020_redx, r2020_redy, 2., 0., 2. * rtengine::RT_PI);
+            cr->fill();
+        }
+
+        if (ciexy_enabled) {
+            cr->set_source_rgb(0.5, 0.5, 0.5);//gray for green Rec2020
+            cr->arc(r2020_grex, r2020_grey, 2., 0., 2. * rtengine::RT_PI);
+            cr->fill();
+        }
+
+        if (ciexy_enabled) {
+            cr->set_source_rgb(0.9, 0.9, 0.9);//white for blue Rec2020
+            cr->arc(r2020_blux, r2020_bluy, 2., 0., 2. * rtengine::RT_PI);
+            cr->fill();
+        }
+
 
         if (ciexy_enabled) {//White Point
             cr->set_source_rgb(1., 1., 1.);//White
