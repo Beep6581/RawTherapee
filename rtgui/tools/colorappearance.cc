@@ -393,12 +393,14 @@ ColorAppearance::ColorAppearance () : FoldableToolPanel (this, TOOL_NAME, M ("TP
 
     pRGBFrame = Gtk::manage (new Gtk::Frame (M ("TP_COLORAPP_LABEL_RGB")) ); //RE Green Blue Hue and saturation
     pRGBFrame->set_label_align (0.025, 0.5);
-    pRGBFrame->set_tooltip_markup (M ("TP_COLORAPP_RGB_TOOLTIP"));
+    //pRGBFrame->set_tooltip_markup (M ("TP_COLORAPP_RGB_TOOLTIP"));
 
     pRGBVBox = Gtk::manage ( new Gtk::Box(Gtk::ORIENTATION_VERTICAL));
     pRGBVBox->set_spacing (2);
     //hue red blue green
     colorhred = Gtk::manage (new Adjuster (M ("TP_COLORAPP_HUE_RED"), -25.0, 25.0, 0.1, 0.));
+    colorhred->set_tooltip_markup (M ("TP_COLORAPP_RGB_TOOLTIP"));
+
     pRGBVBox->pack_start (*colorhred);
     schromared = Gtk::manage (new Adjuster (M ("TP_COLORAPP_CHROMA_S_RED"), -40.0, 5.0, 0.1, 0.));
     pRGBVBox->pack_start (*schromared);
