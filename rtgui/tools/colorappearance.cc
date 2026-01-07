@@ -286,7 +286,7 @@ ColorAppearance::ColorAppearance () : FoldableToolPanel (this, TOOL_NAME, M ("TP
     p1VBox->pack_start (*greensc);
 
 
-    adapscen = Gtk::manage (new Adjuster (M ("TP_COLORAPP_ABSOLUTELUMINANCE"), MINLA0, MAXLA0, 0.01, 2000.));//, NULL, NULL, &wbSlider2la, &wbla2Slider));
+    adapscen = Gtk::manage (new Adjuster (M ("TP_COLORAPP_ABSOLUTELUMINANCE"), MINLA0, MAXLA0, 0.01, 2000.));
     adapscen->setLogScale(500, 0);
 
     adapscen->set_tooltip_markup (M ("TP_COLORAPP_ADAPSCEN_TOOLTIP"));
@@ -393,7 +393,6 @@ ColorAppearance::ColorAppearance () : FoldableToolPanel (this, TOOL_NAME, M ("TP
 
     pRGBFrame = Gtk::manage (new Gtk::Frame (M ("TP_COLORAPP_LABEL_RGB")) ); //RE Green Blue Hue and saturation
     pRGBFrame->set_label_align (0.025, 0.5);
-    //pRGBFrame->set_tooltip_markup (M ("TP_COLORAPP_RGB_TOOLTIP"));
 
     pRGBVBox = Gtk::manage ( new Gtk::Box(Gtk::ORIENTATION_VERTICAL));
     pRGBVBox->set_spacing (2);
@@ -1113,14 +1112,14 @@ void ColorAppearance::write (ProcParams* pp, ParamsEdited* pedited)
     }
 
     if (pedited) {
-        pedited->colorappearance.complexmethod   = complexmethod->get_active_text() != M("GENERAL_UNCHANGED");
+        pedited->colorappearance.complexmethod = complexmethod->get_active_text() != M("GENERAL_UNCHANGED");
         pedited->colorappearance.modelmethod   = modelmethod->get_active_text() != M("GENERAL_UNCHANGED");
-        pedited->colorappearance.catmethod   = catmethod->get_active_text() != M("GENERAL_UNCHANGED");
+        pedited->colorappearance.catmethod     = catmethod->get_active_text() != M("GENERAL_UNCHANGED");
         pedited->colorappearance.degree        = degree->getEditedState ();
-        pedited->colorappearance.degreeout        = degreeout->getEditedState ();
+        pedited->colorappearance.degreeout     = degreeout->getEditedState ();
         pedited->colorappearance.adapscen      = adapscen->getEditedState ();
         pedited->colorappearance.adaplum       = adaplum->getEditedState ();
-        pedited->colorappearance.ybscen      = ybscen->getEditedState ();
+        pedited->colorappearance.ybscen        = ybscen->getEditedState ();
         pedited->colorappearance.badpixsl      = badpixsl->getEditedState ();
         pedited->colorappearance.jlight        = jlight->getEditedState ();
         pedited->colorappearance.qbright       = qbright->getEditedState ();
@@ -1138,14 +1137,14 @@ void ColorAppearance::write (ProcParams* pp, ParamsEdited* pedited)
         pedited->colorappearance.colorhblue    = colorhblue->getEditedState ();
         pedited->colorappearance.rstprotection = rstprotection->getEditedState ();
         pedited->colorappearance.autodegree    = !degree->getAutoInconsistent();
-        pedited->colorappearance.autodegreeout    = !degreeout->getAutoInconsistent();
+        pedited->colorappearance.autodegreeout = !degreeout->getAutoInconsistent();
         pedited->colorappearance.autoadapscen  = !adapscen->getAutoInconsistent();
-        pedited->colorappearance.autoybscen  = !ybscen->getAutoInconsistent();
+        pedited->colorappearance.autoybscen    = !ybscen->getAutoInconsistent();
         pedited->colorappearance.enabled       = !get_inconsistent();
         pedited->colorappearance.surround      = surround->get_active_text() != M ("GENERAL_UNCHANGED");
-        pedited->colorappearance.surrsrc      = surrsrc->get_active_text() != M ("GENERAL_UNCHANGED");
+        pedited->colorappearance.surrsrc       = surrsrc->get_active_text() != M ("GENERAL_UNCHANGED");
         pedited->colorappearance.wbmodel       = wbmodel->get_active_text() != M ("GENERAL_UNCHANGED");
-        pedited->colorappearance.illum       = illum->get_active_text() != M ("GENERAL_UNCHANGED");
+        pedited->colorappearance.illum         = illum->get_active_text() != M ("GENERAL_UNCHANGED");
         pedited->colorappearance.algo          = algo->get_active_text() != M ("GENERAL_UNCHANGED");
         pedited->colorappearance.gamut         = !gamut->get_inconsistent();
         pedited->colorappearance.datacie       = !datacie->get_inconsistent();
@@ -1156,12 +1155,12 @@ void ColorAppearance::write (ProcParams* pp, ParamsEdited* pedited)
         pedited->colorappearance.curveMode     = toneCurveMode->get_active_row_number() != 2;
         pedited->colorappearance.curveMode2    = toneCurveMode2->get_active_row_number() != 2;
         pedited->colorappearance.curveMode3    = toneCurveMode3->get_active_row_number() != 3;
-        pedited->colorappearance.tempout        = tempout->getEditedState ();
-        pedited->colorappearance.greenout        = greenout->getEditedState ();
-        pedited->colorappearance.ybout        = ybout->getEditedState ();
+        pedited->colorappearance.tempout       = tempout->getEditedState ();
+        pedited->colorappearance.greenout      = greenout->getEditedState ();
+        pedited->colorappearance.ybout         = ybout->getEditedState ();
         pedited->colorappearance.tempsc        = tempsc->getEditedState ();
-        pedited->colorappearance.greensc        = greensc->getEditedState ();
-        pedited->colorappearance.autotempout    = !tempout->getAutoInconsistent();
+        pedited->colorappearance.greensc       = greensc->getEditedState ();
+        pedited->colorappearance.autotempout   = !tempout->getAutoInconsistent();
 
     }
 
@@ -1250,13 +1249,10 @@ void ColorAppearance::updateGUIToMode(int mode)
     if(mode ==0) {
         alHBox->hide();
         wbmHBox->hide();
-        //curveEditorG->hide();
         curveEditorG->show();
         curveEditorG2->hide();
         curveEditorG3->hide();
-        //greenout->hide();
         greenout->set_sensitive(false);
-
         badpixsl->hide();
         datacie->hide();
     } else {
@@ -1265,7 +1261,6 @@ void ColorAppearance::updateGUIToMode(int mode)
         curveEditorG->show();
         curveEditorG2->show();
         curveEditorG3->show();
-      //  greenout->show();
         greenout->set_sensitive(true);
         badpixsl->show();
         datacie->show();
@@ -1278,10 +1273,8 @@ void ColorAppearance::convertParamToNormal()
     const ColorAppearanceParams def_params;
     disableListener();
     algo->set_active (0);
-    //shape->setCurve(def_params.curve);
     shape2->setCurve(def_params.curve2);
     shape3->setCurve(def_params.curve3);
-    //shape->reset();
     shape2->reset();
     shape3->reset();
     wbmodel->set_active (0);
