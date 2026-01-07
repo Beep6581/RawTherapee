@@ -1305,6 +1305,8 @@ void ICMPanel::read(const ProcParams* pp, const ParamsEdited* pedited)
                     
                 ) {
                     will->set_sensitive(false);
+                    primCoordGrid->show();
+                    primCoordGrid2->show();
                     primCoordGrid->set_sensitive(false);
                     primCoordGrid2->set_sensitive(false);
                     labgridcie->set_sensitive(false);
@@ -1316,13 +1318,16 @@ void ICMPanel::read(const ProcParams* pp, const ParamsEdited* pedited)
                     {
                         will->set_sensitive(true);
                         colorFramecie->set_sensitive(true);
-
+                        primCoordGrid->show();
+                        primCoordGrid2->show();
                     }
                     if ((ColorManagementParams::Primaries(wprim->get_active_row_number()) == ColorManagementParams::Primaries::CUSTOM)) {
+                        primCoordGrid->show();
                         primCoordGrid->set_sensitive(true);
                         primCoordGrid2->set_sensitive(false);
                         resetpolar();
                     } else {
+                        primCoordGrid->hide();
                         primCoordGrid->set_sensitive(false);
                         primCoordGrid2->set_sensitive(true);
                     }
@@ -1535,6 +1540,8 @@ void ICMPanel::read(const ProcParams* pp, const ParamsEdited* pedited)
             will->set_sensitive(true);
             labgridcie->set_sensitive(false);
             colorFramecie->set_sensitive(true);
+            primCoordGrid->show();
+            primCoordGrid2->show();
             primCoordGrid->set_sensitive(true);
             primCoordGrid2->set_sensitive(false);
             resetpolar();
@@ -1546,7 +1553,9 @@ void ICMPanel::read(const ProcParams* pp, const ParamsEdited* pedited)
             will->set_sensitive(true);
             labgridcie->set_sensitive(false);
             colorFramecie->set_sensitive(true);
+            primCoordGrid2->show();
             primCoordGrid2->set_sensitive(true);
+            primCoordGrid->hide();
             primCoordGrid->set_sensitive(false);
 
             break;
@@ -1554,6 +1563,8 @@ void ICMPanel::read(const ProcParams* pp, const ParamsEdited* pedited)
 
         case ColorManagementParams::Primaries::CUSTOM_GRID: {
             labgridcie->set_sensitive(true);
+            primCoordGrid->show();
+            primCoordGrid2->show();
             primCoordGrid->set_sensitive(false);
             primCoordGrid2->set_sensitive(false);
             will->set_sensitive(false);
@@ -1933,15 +1944,19 @@ void ICMPanel::wtrcinChanged()
                     && ColorManagementParams::Primaries(wprim->get_active_row_number()) != ColorManagementParams::Primaries::CUSTOM_POL
                     
                 ) {
+                    primCoordGrid->show();
+                    primCoordGrid2->show();
                     primCoordGrid->set_sensitive(false);
                     primCoordGrid2->set_sensitive(false);
                 } else {
                     if(ColorManagementParams::Primaries(wprim->get_active_row_number()) == ColorManagementParams::Primaries::CUSTOM) {
+                        primCoordGrid->show();
                         primCoordGrid->set_sensitive(true);
                         primCoordGrid2->set_sensitive(false);
                         resetpolar();
                     }
                     if(ColorManagementParams::Primaries(wprim->get_active_row_number()) == ColorManagementParams::Primaries::CUSTOM_POL) {
+                        primCoordGrid->hide();
                         primCoordGrid->set_sensitive(false);
                         primCoordGrid2->set_sensitive(true);
                     }
@@ -1988,6 +2003,8 @@ void ICMPanel::wtrcinChanged()
                     && ColorManagementParams::Primaries(wprim->get_active_row_number()) != ColorManagementParams::Primaries::CUSTOM_GRID
                     && ColorManagementParams::Primaries(wprim->get_active_row_number()) != ColorManagementParams::Primaries::CUSTOM_POL
                 ) {
+                    primCoordGrid->show();
+                    primCoordGrid2->show();
                     primCoordGrid->set_sensitive(false);
                     primCoordGrid2->set_sensitive(false);
                 }
@@ -2025,16 +2042,19 @@ void ICMPanel::wtrcinChanged()
                     && ColorManagementParams::Primaries(wprim->get_active_row_number()) != ColorManagementParams::Primaries::CUSTOM_GRID
                     && ColorManagementParams::Primaries(wprim->get_active_row_number()) != ColorManagementParams::Primaries::CUSTOM_POL
                 ) {
+                    primCoordGrid->show();
+                    primCoordGrid2->show();
                     primCoordGrid->set_sensitive(false);
                     primCoordGrid2->set_sensitive(false);
                 } else {
                     if(ColorManagementParams::Primaries(wprim->get_active_row_number()) == ColorManagementParams::Primaries::CUSTOM) {
+                        primCoordGrid->show();
                         primCoordGrid->set_sensitive(true);
                         primCoordGrid2->set_sensitive(false);
                         resetpolar();
                     }
-                
                     if(ColorManagementParams::Primaries(wprim->get_active_row_number()) == ColorManagementParams::Primaries::CUSTOM_POL) {
+                        primCoordGrid->hide();
                         primCoordGrid2->set_sensitive(true);
                         primCoordGrid->set_sensitive(false);
                     }
@@ -2073,10 +2093,22 @@ void ICMPanel::wtrcinChanged()
                     && ColorManagementParams::Primaries(wprim->get_active_row_number()) != ColorManagementParams::Primaries::CUSTOM_GRID
                     && ColorManagementParams::Primaries(wprim->get_active_row_number()) != ColorManagementParams::Primaries::CUSTOM_POL
                 ) {
+                    primCoordGrid->show();
+                    primCoordGrid2->show();
                     primCoordGrid->set_sensitive(false);
                     primCoordGrid2->set_sensitive(false);
                 } else {
-                    primCoordGrid->set_sensitive(true);
+                    if(ColorManagementParams::Primaries(wprim->get_active_row_number()) == ColorManagementParams::Primaries::CUSTOM) {
+                        primCoordGrid->show();
+                        primCoordGrid->set_sensitive(true);
+                        primCoordGrid2->set_sensitive(false);
+                        resetpolar();
+                    }
+                    if(ColorManagementParams::Primaries(wprim->get_active_row_number()) == ColorManagementParams::Primaries::CUSTOM_POL) {
+                        primCoordGrid->hide();
+                        primCoordGrid2->set_sensitive(true);
+                        primCoordGrid->set_sensitive(false);
+                    }
                 }
             }
             break;
@@ -2112,10 +2144,22 @@ void ICMPanel::wtrcinChanged()
                     && ColorManagementParams::Primaries(wprim->get_active_row_number()) != ColorManagementParams::Primaries::CUSTOM_GRID
                     && ColorManagementParams::Primaries(wprim->get_active_row_number()) != ColorManagementParams::Primaries::CUSTOM_POL
                 ) {
+                    primCoordGrid->show();
+                    primCoordGrid2->show();
                     primCoordGrid->set_sensitive(false);
                     primCoordGrid2->set_sensitive(false);
                 } else {
-                    primCoordGrid->set_sensitive(true);
+                    if(ColorManagementParams::Primaries(wprim->get_active_row_number()) == ColorManagementParams::Primaries::CUSTOM) {
+                        primCoordGrid->show();
+                        primCoordGrid->set_sensitive(true);
+                        primCoordGrid2->set_sensitive(false);
+                        resetpolar();
+                    }
+                    if(ColorManagementParams::Primaries(wprim->get_active_row_number()) == ColorManagementParams::Primaries::CUSTOM_POL) {
+                        primCoordGrid->hide();
+                        primCoordGrid2->set_sensitive(true);
+                        primCoordGrid->set_sensitive(false);
+                    }
                 }
             }
             break;
@@ -2151,20 +2195,22 @@ void ICMPanel::wtrcinChanged()
                     && ColorManagementParams::Primaries(wprim->get_active_row_number()) != ColorManagementParams::Primaries::CUSTOM_GRID
                     && ColorManagementParams::Primaries(wprim->get_active_row_number()) != ColorManagementParams::Primaries::CUSTOM_POL
                 ) {
+                    primCoordGrid->show();
+                    primCoordGrid2->show();
                     primCoordGrid->set_sensitive(false);
                     primCoordGrid2->set_sensitive(false);
                 } else {
                     if(ColorManagementParams::Primaries(wprim->get_active_row_number()) == ColorManagementParams::Primaries::CUSTOM) {
+                        primCoordGrid->show();
                         primCoordGrid->set_sensitive(true);
                         primCoordGrid2->set_sensitive(false);
                         resetpolar();
                     }
                     if(ColorManagementParams::Primaries(wprim->get_active_row_number()) == ColorManagementParams::Primaries::CUSTOM_POL) {
-                        primCoordGrid->set_sensitive(false);
+                        primCoordGrid->hide();
                         primCoordGrid2->set_sensitive(true);
+                        primCoordGrid->set_sensitive(false);
                     }
-
-                    primCoordGrid->set_sensitive(true);
                 }
             }
             break;
@@ -2195,6 +2241,8 @@ void ICMPanel::wtrcinChanged()
         case ColorManagementParams::Primaries::CUSTOM: {
             will->set_sensitive(true);
             labgridcie->set_sensitive(false);
+            primCoordGrid->show();
+            primCoordGrid2->show();
             primCoordGrid->set_sensitive(true);
             primCoordGrid2->set_sensitive(false);
             resetpolar();
@@ -2204,7 +2252,9 @@ void ICMPanel::wtrcinChanged()
         case ColorManagementParams::Primaries::CUSTOM_POL: {
             will->set_sensitive(true);
             labgridcie->set_sensitive(false);
+            primCoordGrid2->show();
             primCoordGrid2->set_sensitive(true);
+            primCoordGrid->hide();
             primCoordGrid->set_sensitive(false);
 
             break;
@@ -2213,6 +2263,8 @@ void ICMPanel::wtrcinChanged()
         case ColorManagementParams::Primaries::CUSTOM_GRID: {
             labgridcie->set_sensitive(true);
             will->set_sensitive(false);
+            primCoordGrid->show();
+            primCoordGrid2->show();
             primCoordGrid2->set_sensitive(false);
             primCoordGrid->set_sensitive(false);
             resetpolar();
@@ -2257,6 +2309,8 @@ void ICMPanel::willChanged()
         case ColorManagementParams::Primaries::CUSTOM: {
             will->set_sensitive(true);
             labgridcie->set_sensitive(false);
+            primCoordGrid->show();
+            primCoordGrid2->show();
             primCoordGrid->set_sensitive(true);
             primCoordGrid2->set_sensitive(false);
             resetpolar();
@@ -2267,6 +2321,8 @@ void ICMPanel::willChanged()
             will->set_sensitive(true);
             labgridcie->set_sensitive(false);
             primCoordGrid2->set_sensitive(true);
+            primCoordGrid2->show();
+            primCoordGrid->hide();
             primCoordGrid->set_sensitive(false);
 
             break;
@@ -2275,6 +2331,8 @@ void ICMPanel::willChanged()
         case ColorManagementParams::Primaries::CUSTOM_GRID: {
             labgridcie->set_sensitive(true);
             will->set_sensitive(false);
+            primCoordGrid->show();
+            primCoordGrid2->show();
             colorFramecie->set_sensitive(false);
             primCoordGrid2->set_sensitive(false);
             primCoordGrid->set_sensitive(false);
@@ -2542,6 +2600,8 @@ void ICMPanel::wprimChanged()
         if ((ColorManagementParams::Primaries(wprim->get_active_row_number()) != ColorManagementParams::Primaries::CUSTOM) 
             && (ColorManagementParams::Primaries(wprim->get_active_row_number()) != ColorManagementParams::Primaries::CUSTOM_POL))
         {
+            primCoordGrid->show();
+            primCoordGrid2->show();
             primCoordGrid->set_sensitive(false);
             primCoordGrid2->set_sensitive(false);
             labgridcie->set_sensitive(false);
@@ -2554,6 +2614,8 @@ void ICMPanel::wprimChanged()
                 resetpolar();
             }
         } else if (ColorManagementParams::Primaries(wprim->get_active_row_number()) == ColorManagementParams::Primaries::CUSTOM) {
+            primCoordGrid->show();
+            primCoordGrid2->show();
             primCoordGrid->set_sensitive(true);
             primCoordGrid2->set_sensitive(false);
             labgridcie->set_sensitive(false);
@@ -2561,8 +2623,10 @@ void ICMPanel::wprimChanged()
             colorFramecie->set_sensitive(true);
             resetpolar();
         } else if (ColorManagementParams::Primaries(wprim->get_active_row_number()) == ColorManagementParams::Primaries::CUSTOM_POL) {
-            primCoordGrid2->set_sensitive(true);
+            primCoordGrid->hide();
+            primCoordGrid2->show();
             primCoordGrid->set_sensitive(false);
+            primCoordGrid2->set_sensitive(true);
             labgridcie->set_sensitive(false);
             will->set_sensitive(true);
             colorFramecie->set_sensitive(true);
@@ -2572,6 +2636,10 @@ void ICMPanel::wprimChanged()
     willChanged ();
 
     if (ColorManagementParams::Primaries(wprim->get_active_row_number()) == ColorManagementParams::Primaries::CUSTOM_GRID) {
+        primCoordGrid->show();
+        primCoordGrid2->show();
+        primCoordGrid->set_sensitive(false);
+        primCoordGrid2->set_sensitive(false);
         labgridcie->set_sensitive(true);
         colorFramecie->set_sensitive(false);
         resetpolar();

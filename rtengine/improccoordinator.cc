@@ -2302,7 +2302,7 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
 
                 tmpImage1.reset();
 
-                if (prim == 14) {//pass red gre blue xy in function of area data Ciexy
+                if (prim == 14) {//pass red gre blue xy in function of area data Ciexy  - prim = 14 correspond to ColorManagementParams::Primaries::CUSTOM_GRID
                     float redgraphx =  params->icm.labgridcieALow;
                     float redgraphy =  params->icm.labgridcieBLow;
                     float blugraphx =  params->icm.labgridcieAHigh;
@@ -2322,14 +2322,6 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                     grexx = rtengine::LIM(grexx, -0.1f, 0.4f);
                     float greyy = 0.55f * (gregraphy + 1.f) - 0.1f;
                     greyy = rtengine::LIM(greyy, 0.5f, 1.f);
-                    if( params->icm.wprim == ColorManagementParams::Primaries::CUSTOM_POL) {
-                        redxx = p[0];
-                        redyy = p[1];
-                        grexx = p[2];
-                        greyy = p[3];
-                        bluxx = p[4];
-                        bluyy = p[5];
-                    }
                     if (primListener) {
                         primListener->primChanged(redxx, redyy, bluxx, bluyy, grexx, greyy);
                     }
