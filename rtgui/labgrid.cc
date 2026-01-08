@@ -361,21 +361,26 @@ bool LabGridArea::on_draw(const ::Cairo::RefPtr<Cairo::Context> &cr)
     double mey = .5 * (static_cast<double>(height) + static_cast<double>(height) * me_y);
 
     //primaries default Rec2020 - Draw small dots to retain the RGB values ​​of Rec2020
-    //red 0.708 0.2920
-    const double r2rx = 0.46909;//1.81818f * (0.708 + 0.1f) - 1.f
-    const double r2ry = -0.28727;//1.81818f * (0.292 + 0.1f) - 1.f
+
+    constexpr double REC2020_RED_X = 0.708;
+    constexpr double REC2020_RED_Y = 0.292;
+    constexpr double REC2020_GRE_X = 0.17;
+    constexpr double REC2020_GRE_Y = 0.797;
+    constexpr double REC2020_BLU_X = 0.131;
+    constexpr double REC2020_BLU_Y = 0.046;
+    constexpr double OFFSET_MODIFIER = 1.81818f;//Scaling coefficient of primary data and CIExy diagram with that of Labgrid. Used elsewhere, notably in icmanel.cc
+
+    const double r2rx = OFFSET_MODIFIER * (REC2020_RED_X + 0.1f) - 1.f;//0.1 corresponds to the left and bottom margin on the CIExy diagram
+    const double r2ry = OFFSET_MODIFIER * (REC2020_RED_Y + 0.1f) - 1.f;//-1.f center the data after an equation of the type Y= a*x + b
+    const double r2gx = OFFSET_MODIFIER * (REC2020_GRE_X + 0.1f) - 1.f;
+    const double r2gy = OFFSET_MODIFIER * (REC2020_GRE_Y + 0.1f) - 1.f;
+    const double r2bx = OFFSET_MODIFIER * (REC2020_BLU_X + 0.1f) - 1.f;
+    const double r2by = OFFSET_MODIFIER * (REC2020_BLU_Y + 0.1f) - 1.f;
+
     const double r2020_redx = .5 * (static_cast<double>(width) + static_cast<double>(width) * r2rx);
     const double r2020_redy = .5 * (static_cast<double>(height) + static_cast<double>(height) * r2ry);
-
-    //green 0.17 0.797
-    const double r2gx = -0.50909;//1.81818f * (0.17 + 0.1f) - 1.f
-    const double r2gy = 0.63090;//1.81818f * (0.797 + 0.1f) - 1.f
     const double r2020_grex = .5 * (static_cast<double>(width) + static_cast<double>(width) * r2gx);
     const double r2020_grey = .5 * (static_cast<double>(height) + static_cast<double>(height) * r2gy);
-
-    //blue 0.131 0.046
-    const double r2bx = -0.5800;//1.81818f * (0.131 + 0.1f) - 1.f
-    const double r2by = -0.73454;//1.81818f * (0.046 + 0.1f) - 1.f
     const double r2020_blux = .5 * (static_cast<double>(width) + static_cast<double>(width) * r2bx);
     const double r2020_bluy = .5 * (static_cast<double>(height) + static_cast<double>(height) * r2by);
 
@@ -480,10 +485,8 @@ bool LabGridArea::on_draw(const ::Cairo::RefPtr<Cairo::Context> &cr)
         cr->set_source_rgb(0.4, 0., 0.);
         cr->move_to(0.985 * static_cast<double>(width), 0.08 * static_cast<double>(height));
         cr->line_to(0.985 * static_cast<double>(width),  0.055 * static_cast<double>(height));
-
         cr->move_to(0.07 * static_cast<double>(width), 0.99 * static_cast<double>(height));
         cr->line_to(0.07 * static_cast<double>(width),  0.965 * static_cast<double>(height));
-
         cr->stroke();
     }
     if(!ghs_enabled) {//no points with GHS
@@ -505,8 +508,6 @@ bool LabGridArea::on_draw(const ::Cairo::RefPtr<Cairo::Context> &cr)
             } else {
                 cr->arc(grx, gry, 3., 0., 2. * rtengine::RT_PI);
             }
-
-
             cr->fill();
         }
         //Draw small dots to retain the RGB values ​​of Rec2020
@@ -527,7 +528,6 @@ bool LabGridArea::on_draw(const ::Cairo::RefPtr<Cairo::Context> &cr)
             cr->arc(r2020_blux, r2020_bluy, 2., 0., 2. * rtengine::RT_PI);
             cr->fill();
         }
-
 
         if (ciexy_enabled) {//White Point
             cr->set_source_rgb(1., 1., 1.);//White
