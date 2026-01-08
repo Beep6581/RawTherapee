@@ -31,6 +31,7 @@
 #include "settings.h"
 #include "utils.h"
 #include <fmt/format.h>
+#include "rt_math.h"
 
 namespace rtengine
 {
@@ -1076,7 +1077,6 @@ void ImProcFunctions::workingtrc(int sp, Imagefloat* src, Imagefloat* dst, int c
             Wz = 1.;
             xyD = {0.333333, 0.333333, 1.0};
         }
-
     }
 
     if (prim == 14 && locprim == 0 && mul == 5) {//convert data area to xy - Abstract Profile
@@ -1086,17 +1086,19 @@ void ImProcFunctions::workingtrc(int sp, Imagefloat* src, Imagefloat* dst, int c
         float blugraphy =  params->icm.labgridcieBHigh;
         float gregraphx =  params->icm.labgridcieGx;
         float gregraphy =  params->icm.labgridcieGy;
-        redxx = 0.55f * (redgraphx + 1.f) - 0.1f;
+        constexpr float INV_OFFSET_MODIFIER = 1.f / OFFSET_MODIFIER;
+
+        redxx = INV_OFFSET_MODIFIER * (redgraphx + 1.f) - CIExy_MARGIN;
         redxx = rtengine::LIM(redxx, 0.41f, 1.f);//limit values for xy (arbitrary)
-        redyy = 0.55f * (redgraphy + 1.f) - 0.1f;
+        redyy = INV_OFFSET_MODIFIER * (redgraphy + 1.f) - CIExy_MARGIN;
         redyy = rtengine::LIM(redyy, 0.f, 0.7f);
-        bluxx = 0.55f * (blugraphx + 1.f) - 0.1f;
+        bluxx = INV_OFFSET_MODIFIER * (blugraphx + 1.f) - CIExy_MARGIN;
         bluxx = rtengine::LIM(bluxx, -0.1f, 0.5f);
-        bluyy = 0.55f * (blugraphy + 1.f) - 0.1f;
+        bluyy = INV_OFFSET_MODIFIER * (blugraphy + 1.f) - CIExy_MARGIN;
         bluyy = rtengine::LIM(bluyy, -0.1f, 0.49f);
-        grexx = 0.55f * (gregraphx + 1.f) - 0.1f;
+        grexx = INV_OFFSET_MODIFIER * (gregraphx + 1.f) - CIExy_MARGIN;
         grexx = rtengine::LIM(grexx, -0.1f, 0.4f);
-        greyy = 0.55f * (gregraphy + 1.f) - 0.1f;
+        greyy = INV_OFFSET_MODIFIER * (gregraphy + 1.f) - CIExy_MARGIN;
         greyy = rtengine::LIM(greyy, 0.5f, 1.f);
     }
 

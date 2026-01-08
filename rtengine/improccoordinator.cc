@@ -41,6 +41,7 @@
 #include "refreshmap.h"
 #include "utils.h"
 #include "rt_algo.h"
+#include "rt_math.h"
 
 #include "rtgui/options.h"
 
@@ -2309,18 +2310,18 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                     float blugraphy =  params->icm.labgridcieBHigh;
                     float gregraphx =  params->icm.labgridcieGx;
                     float gregraphy =  params->icm.labgridcieGy;
-                    float redxx = 0.55f * (redgraphx + 1.f) - 0.1f;
+                    constexpr float INV_OFFSET_MODIFIER = 1.f / OFFSET_MODIFIER;
+                    float redxx = INV_OFFSET_MODIFIER * (redgraphx + 1.f) - CIExy_MARGIN;
                     redxx = rtengine::LIM(redxx, 0.41f, 1.f);
-                    float redyy = 0.55f * (redgraphy + 1.f) - 0.1f;
+                    float redyy = INV_OFFSET_MODIFIER * (redgraphy + 1.f) - CIExy_MARGIN;
                     redyy = rtengine::LIM(redyy, 0.f, 0.7f);
-                    float bluxx = 0.55f * (blugraphx + 1.f) - 0.1f;
+                    float bluxx = INV_OFFSET_MODIFIER * (blugraphx + 1.f) - CIExy_MARGIN;
                     bluxx = rtengine::LIM(bluxx, -0.1f, 0.5f);
-                    float bluyy = 0.55f * (blugraphy + 1.f) - 0.1f;
+                    float bluyy = INV_OFFSET_MODIFIER * (blugraphy + 1.f) - CIExy_MARGIN;
                     bluyy = rtengine::LIM(bluyy, -0.1f, 0.5f);
-
-                    float grexx = 0.55f * (gregraphx + 1.f) - 0.1f;
+                    float grexx = INV_OFFSET_MODIFIER * (gregraphx + 1.f) - CIExy_MARGIN;
                     grexx = rtengine::LIM(grexx, -0.1f, 0.4f);
-                    float greyy = 0.55f * (gregraphy + 1.f) - 0.1f;
+                    float greyy = INV_OFFSET_MODIFIER * (gregraphy + 1.f) - CIExy_MARGIN;
                     greyy = rtengine::LIM(greyy, 0.5f, 1.f);
                     if (primListener) {
                         primListener->primChanged(redxx, redyy, bluxx, bluyy, grexx, greyy);

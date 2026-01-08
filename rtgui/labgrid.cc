@@ -68,12 +68,13 @@ bool LabGridArea::notifyListener()
         if (! ciexy_enabled &&  !ghs_enabled){
             listener->panelChanged(evt, Glib::ustring::compose(evtMsg, round(high_a), round(high_b), round(low_a), round(low_b)));
         } else if (ciexy_enabled) {
-            float high_a1 = 0.55f * (high_a + 1.f) - 0.1f;
-            float high_b1 = 0.55f * (high_b + 1.f) - 0.1f;
-            float low_a1 = 0.55f * (low_a + 1.f) - 0.1f;
-            float low_b1 = 0.55f * (low_b + 1.f) - 0.1f;
-            float gre_x1 = 0.55f * (gre_x + 1.f) - 0.1f;
-            float gre_y1 = 0.55f * (gre_y + 1.f) - 0.1f;
+            constexpr float INV_OFFSET_MODIFIER = 1.f / rtengine::OFFSET_MODIFIER;
+            float high_a1 = INV_OFFSET_MODIFIER * (high_a + 1.f) - rtengine::CIExy_MARGIN;
+            float high_b1 = INV_OFFSET_MODIFIER * (high_b + 1.f) - rtengine::CIExy_MARGIN;
+            float low_a1 = INV_OFFSET_MODIFIER * (low_a + 1.f) - rtengine::CIExy_MARGIN;
+            float low_b1 = INV_OFFSET_MODIFIER * (low_b + 1.f) - rtengine::CIExy_MARGIN;
+            float gre_x1 = INV_OFFSET_MODIFIER * (gre_x + 1.f) - rtengine::CIExy_MARGIN;
+            float gre_y1 = INV_OFFSET_MODIFIER * (gre_y + 1.f) - rtengine::CIExy_MARGIN;
             listener->panelChanged(evt, Glib::ustring::compose(evtMsg, round(low_a1), round(low_b1), round(gre_x1), round(gre_y1), round(high_a1), round(high_b1)));
         }
     }
@@ -361,21 +362,19 @@ bool LabGridArea::on_draw(const ::Cairo::RefPtr<Cairo::Context> &cr)
     double mey = .5 * (static_cast<double>(height) + static_cast<double>(height) * me_y);
 
     //primaries default Rec2020 - Draw small dots to retain the RGB values ​​of Rec2020
-
     constexpr double REC2020_RED_X = 0.708;
     constexpr double REC2020_RED_Y = 0.292;
     constexpr double REC2020_GRE_X = 0.17;
     constexpr double REC2020_GRE_Y = 0.797;
     constexpr double REC2020_BLU_X = 0.131;
     constexpr double REC2020_BLU_Y = 0.046;
-    constexpr double OFFSET_MODIFIER = 1.81818f;//Scaling coefficient of primary data and CIExy diagram with that of Labgrid. Used elsewhere, notably in icmanel.cc
 
-    const double r2rx = OFFSET_MODIFIER * (REC2020_RED_X + 0.1f) - 1.f;//0.1 corresponds to the left and bottom margin on the CIExy diagram
-    const double r2ry = OFFSET_MODIFIER * (REC2020_RED_Y + 0.1f) - 1.f;//-1.f center the data after an equation of the type Y= a*x + b
-    const double r2gx = OFFSET_MODIFIER * (REC2020_GRE_X + 0.1f) - 1.f;
-    const double r2gy = OFFSET_MODIFIER * (REC2020_GRE_Y + 0.1f) - 1.f;
-    const double r2bx = OFFSET_MODIFIER * (REC2020_BLU_X + 0.1f) - 1.f;
-    const double r2by = OFFSET_MODIFIER * (REC2020_BLU_Y + 0.1f) - 1.f;
+    const double r2rx = rtengine::OFFSET_MODIFIER * (REC2020_RED_X + rtengine::CIExy_MARGIN) - 1.;//center the data after an equation of the type Y= a*x + b
+    const double r2ry = rtengine::OFFSET_MODIFIER * (REC2020_RED_Y + rtengine::CIExy_MARGIN) - 1.;
+    const double r2gx = rtengine::OFFSET_MODIFIER * (REC2020_GRE_X + rtengine::CIExy_MARGIN) - 1.;
+    const double r2gy = rtengine::OFFSET_MODIFIER * (REC2020_GRE_Y + rtengine::CIExy_MARGIN) - 1.;
+    const double r2bx = rtengine::OFFSET_MODIFIER * (REC2020_BLU_X + rtengine::CIExy_MARGIN) - 1.;
+    const double r2by = rtengine::OFFSET_MODIFIER * (REC2020_BLU_Y + rtengine::CIExy_MARGIN) - 1.;
 
     const double r2020_redx = .5 * (static_cast<double>(width) + static_cast<double>(width) * r2rx);
     const double r2020_redy = .5 * (static_cast<double>(height) + static_cast<double>(height) * r2ry);
@@ -516,25 +515,21 @@ bool LabGridArea::on_draw(const ::Cairo::RefPtr<Cairo::Context> &cr)
             cr->arc(r2020_redx, r2020_redy, 2., 0., 2. * rtengine::RT_PI);
             cr->fill();
         }
-
         if (ciexy_enabled) {
             cr->set_source_rgb(0.5, 0.5, 0.5);//gray for green Rec2020
             cr->arc(r2020_grex, r2020_grey, 2., 0., 2. * rtengine::RT_PI);
             cr->fill();
         }
-
         if (ciexy_enabled) {
             cr->set_source_rgb(0.9, 0.9, 0.9);//white for blue Rec2020
             cr->arc(r2020_blux, r2020_bluy, 2., 0., 2. * rtengine::RT_PI);
             cr->fill();
         }
-
         if (ciexy_enabled) {//White Point
             cr->set_source_rgb(1., 1., 1.);//White
             cr->arc(whx, why, 3., 0., 2. * rtengine::RT_PI);
             cr->fill();
         }
-
         if (ciexy_enabled) {//Dominant
             cr->set_source_rgb(0.3, 0.4, 0.3);
             cr->arc(mex, mey, 3., 0, 2. * rtengine::RT_PI);

@@ -34,6 +34,7 @@
 #include "rtengine/iccstore.h"
 #include "rtengine/procparams.h"
 #include "rtengine/utils.h"
+#include "rtengine/rt_math.h"
 
 #include <unistd.h>
 
@@ -857,17 +858,18 @@ void ICMPanel::iprimChanged (float r_x, float r_y, float b_x, float b_y, float g
     nextwy = w_y;
     nextmx = m_x;
     nextmy = m_y;
+    
     //convert xy datas in datas for labgrid areas
-    nextrx = 1.81818f * (nextrx + 0.1f) - 1.f;
-    nextry = 1.81818f * (nextry + 0.1f) - 1.f;
-    nextbx = 1.81818f * (nextbx + 0.1f) - 1.f;
-    nextby = 1.81818f * (nextby + 0.1f) - 1.f;
-    nextgx = 1.81818f * (nextgx + 0.1f) - 1.f;
-    nextgy = 1.81818f * (nextgy + 0.1f) - 1.f;
-    nextwx = 1.81818f * (nextwx + 0.1f) - 1.f;
-    nextwy = 1.81818f * (nextwy + 0.1f) - 1.f;
-    nextmx = 1.81818f * (nextmx + 0.1f) - 1.f;
-    nextmy = 1.81818f * (nextmy + 0.1f) - 1.f;
+    nextrx = OFFSET_MODIFIER * (nextrx + CIExy_MARGIN) - 1.f;
+    nextry = OFFSET_MODIFIER * (nextry + CIExy_MARGIN) - 1.f;
+    nextbx = OFFSET_MODIFIER * (nextbx + CIExy_MARGIN) - 1.f;
+    nextby = OFFSET_MODIFIER * (nextby + CIExy_MARGIN) - 1.f;
+    nextgx = OFFSET_MODIFIER * (nextgx + CIExy_MARGIN) - 1.f;
+    nextgy = OFFSET_MODIFIER * (nextgy + CIExy_MARGIN) - 1.f;
+    nextwx = OFFSET_MODIFIER * (nextwx + CIExy_MARGIN) - 1.f;
+    nextwy = OFFSET_MODIFIER * (nextwy + CIExy_MARGIN) - 1.f;
+    nextmx = OFFSET_MODIFIER * (nextmx + CIExy_MARGIN) - 1.f;
+    nextmy = OFFSET_MODIFIER * (nextmy + CIExy_MARGIN) - 1.f;
 
     idle_register.add(
         [this]() -> bool

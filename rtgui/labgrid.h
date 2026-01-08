@@ -48,6 +48,7 @@
 
 class LabGridArea final : public Gtk::DrawingArea {
 public:
+
     struct FunctionParams {
         using Function = std::function<double(double)>;
         using ResolutionFunction = std::function<int(int)>;
@@ -160,6 +161,7 @@ public:
     Gtk::SizeRequestMode get_request_mode_vfunc() const override;
     void get_preferred_width_vfunc(int &minimum_width, int &natural_width) const override;
     void get_preferred_height_for_width_vfunc (int width, int &minimum_height, int &natural_height) const override;
+    
 };
 
 

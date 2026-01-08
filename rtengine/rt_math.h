@@ -32,6 +32,10 @@ constexpr float RT_2_PI_F = RT_2_PI;
 constexpr float RT_INFINITY_F = std::numeric_limits<float>::infinity();
 constexpr float RT_NAN_F = std::numeric_limits<float>::quiet_NaN();
 
+//OFFSET_MODIFIER and CIExy_MARGIN - Regarding the conversion of xy data to Labgrid coordinates
+constexpr float OFFSET_MODIFIER = 1.81818f;//Scaling coefficient of primary data and CIExy diagram with that of Labgrid.
+constexpr float CIExy_MARGIN = 0.1f;//corresponds to the left and bottom margin on the CIExy diagram
+
 template<typename T>
 constexpr T SQR(T x)
 {
