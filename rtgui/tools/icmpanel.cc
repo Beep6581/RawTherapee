@@ -35,6 +35,7 @@
 #include "rtengine/procparams.h"
 #include "rtengine/utils.h"
 #include "rtengine/rt_math.h"
+#include "labgrid.h"
 
 #include <unistd.h>
 
@@ -858,7 +859,7 @@ void ICMPanel::iprimChanged (float r_x, float r_y, float b_x, float b_y, float g
     nextwy = w_y;
     nextmx = m_x;
     nextmy = m_y;
-    
+
     //convert xy datas in datas for labgrid areas
     nextrx = OFFSET_MODIFIER * (nextrx + CIExy_MARGIN) - 1.f;
     nextry = OFFSET_MODIFIER * (nextry + CIExy_MARGIN) - 1.f;

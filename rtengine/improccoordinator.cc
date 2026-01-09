@@ -41,7 +41,7 @@
 #include "refreshmap.h"
 #include "utils.h"
 #include "rt_algo.h"
-#include "rt_math.h"
+#include "rtgui/labgrid.h"
 
 #include "rtgui/options.h"
 
