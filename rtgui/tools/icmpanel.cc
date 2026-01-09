@@ -1341,7 +1341,6 @@ void ICMPanel::read(const ProcParams* pp, const ParamsEdited* pedited)
             }
             riaHBox->set_sensitive(true);
 
-        //    if (pp->icm.workingTRCGamma <= 1.) {
             if (pp->icm.wGamma <= 1.) {
                 wGamma->set_sensitive(true);
                 wSlope->set_sensitive(false);
@@ -1547,7 +1546,6 @@ void ICMPanel::read(const ProcParams* pp, const ParamsEdited* pedited)
             primCoordGrid->set_sensitive(true);
             primCoordGrid2->set_sensitive(false);
             resetpolar();
-
             break;
         }
 
@@ -1559,7 +1557,6 @@ void ICMPanel::read(const ProcParams* pp, const ParamsEdited* pedited)
             primCoordGrid2->set_sensitive(true);
             primCoordGrid->hide();
             primCoordGrid->set_sensitive(false);
-
             break;
         }
 
@@ -1940,30 +1937,7 @@ void ICMPanel::wtrcinChanged()
                 redFrame->hide();
             } else {
                 redFrame->show();
-                if (
-                    ColorManagementParams::Primaries(wprim->get_active_row_number()) != ColorManagementParams::Primaries::CUSTOM
-                    && ColorManagementParams::Primaries(wprim->get_active_row_number()) != ColorManagementParams::Primaries::CUSTOM_GRID
-                    && ColorManagementParams::Primaries(wprim->get_active_row_number()) != ColorManagementParams::Primaries::CUSTOM_POL
-                    
-                ) {
-                    primCoordGrid->show();
-                    primCoordGrid2->show();
-                    primCoordGrid->set_sensitive(false);
-                    primCoordGrid2->set_sensitive(false);
-                } else {
-                    if(ColorManagementParams::Primaries(wprim->get_active_row_number()) == ColorManagementParams::Primaries::CUSTOM) {
-                        primCoordGrid->show();
-                        primCoordGrid->set_sensitive(true);
-                        primCoordGrid2->set_sensitive(false);
-                        resetpolar();
-                    }
-                    if(ColorManagementParams::Primaries(wprim->get_active_row_number()) == ColorManagementParams::Primaries::CUSTOM_POL) {
-                        primCoordGrid->hide();
-                        primCoordGrid->set_sensitive(false);
-                        primCoordGrid2->set_sensitive(true);
-                    }
-                    
-                }
+                upgateGUI_lin_pol_graph();
             }
             riaHBox->set_sensitive(true);
             if (wGamma->getValue() <= 1.) {
@@ -2000,16 +1974,7 @@ void ICMPanel::wtrcinChanged()
                 redFrame->hide();
             } else {
                 redFrame->show();
-                if (
-                    ColorManagementParams::Primaries(wprim->get_active_row_number()) != ColorManagementParams::Primaries::CUSTOM
-                    && ColorManagementParams::Primaries(wprim->get_active_row_number()) != ColorManagementParams::Primaries::CUSTOM_GRID
-                    && ColorManagementParams::Primaries(wprim->get_active_row_number()) != ColorManagementParams::Primaries::CUSTOM_POL
-                ) {
-                    primCoordGrid->show();
-                    primCoordGrid2->show();
-                    primCoordGrid->set_sensitive(false);
-                    primCoordGrid2->set_sensitive(false);
-                }
+                upgateGUI_lin_pol_graph();
             }
             riaHBox->set_sensitive(true);
             break;
@@ -2039,28 +2004,7 @@ void ICMPanel::wtrcinChanged()
                 redFrame->hide();
             } else {
                 redFrame->show();
-                if (
-                    ColorManagementParams::Primaries(wprim->get_active_row_number()) != ColorManagementParams::Primaries::CUSTOM
-                    && ColorManagementParams::Primaries(wprim->get_active_row_number()) != ColorManagementParams::Primaries::CUSTOM_GRID
-                    && ColorManagementParams::Primaries(wprim->get_active_row_number()) != ColorManagementParams::Primaries::CUSTOM_POL
-                ) {
-                    primCoordGrid->show();
-                    primCoordGrid2->show();
-                    primCoordGrid->set_sensitive(false);
-                    primCoordGrid2->set_sensitive(false);
-                } else {
-                    if(ColorManagementParams::Primaries(wprim->get_active_row_number()) == ColorManagementParams::Primaries::CUSTOM) {
-                        primCoordGrid->show();
-                        primCoordGrid->set_sensitive(true);
-                        primCoordGrid2->set_sensitive(false);
-                        resetpolar();
-                    }
-                    if(ColorManagementParams::Primaries(wprim->get_active_row_number()) == ColorManagementParams::Primaries::CUSTOM_POL) {
-                        primCoordGrid->hide();
-                        primCoordGrid2->set_sensitive(true);
-                        primCoordGrid->set_sensitive(false);
-                    }
-                }
+                upgateGUI_lin_pol_graph();
             }
             break;
         }
@@ -2090,28 +2034,7 @@ void ICMPanel::wtrcinChanged()
                 redFrame->hide();
             } else {
                 redFrame->show();
-                if (
-                    ColorManagementParams::Primaries(wprim->get_active_row_number()) != ColorManagementParams::Primaries::CUSTOM
-                    && ColorManagementParams::Primaries(wprim->get_active_row_number()) != ColorManagementParams::Primaries::CUSTOM_GRID
-                    && ColorManagementParams::Primaries(wprim->get_active_row_number()) != ColorManagementParams::Primaries::CUSTOM_POL
-                ) {
-                    primCoordGrid->show();
-                    primCoordGrid2->show();
-                    primCoordGrid->set_sensitive(false);
-                    primCoordGrid2->set_sensitive(false);
-                } else {
-                    if(ColorManagementParams::Primaries(wprim->get_active_row_number()) == ColorManagementParams::Primaries::CUSTOM) {
-                        primCoordGrid->show();
-                        primCoordGrid->set_sensitive(true);
-                        primCoordGrid2->set_sensitive(false);
-                        resetpolar();
-                    }
-                    if(ColorManagementParams::Primaries(wprim->get_active_row_number()) == ColorManagementParams::Primaries::CUSTOM_POL) {
-                        primCoordGrid->hide();
-                        primCoordGrid2->set_sensitive(true);
-                        primCoordGrid->set_sensitive(false);
-                    }
-                }
+                upgateGUI_lin_pol_graph();
             }
             break;
         }
@@ -2141,28 +2064,7 @@ void ICMPanel::wtrcinChanged()
                 redFrame->hide();
             } else {
                 redFrame->show();
-                if (
-                    ColorManagementParams::Primaries(wprim->get_active_row_number()) != ColorManagementParams::Primaries::CUSTOM
-                    && ColorManagementParams::Primaries(wprim->get_active_row_number()) != ColorManagementParams::Primaries::CUSTOM_GRID
-                    && ColorManagementParams::Primaries(wprim->get_active_row_number()) != ColorManagementParams::Primaries::CUSTOM_POL
-                ) {
-                    primCoordGrid->show();
-                    primCoordGrid2->show();
-                    primCoordGrid->set_sensitive(false);
-                    primCoordGrid2->set_sensitive(false);
-                } else {
-                    if(ColorManagementParams::Primaries(wprim->get_active_row_number()) == ColorManagementParams::Primaries::CUSTOM) {
-                        primCoordGrid->show();
-                        primCoordGrid->set_sensitive(true);
-                        primCoordGrid2->set_sensitive(false);
-                        resetpolar();
-                    }
-                    if(ColorManagementParams::Primaries(wprim->get_active_row_number()) == ColorManagementParams::Primaries::CUSTOM_POL) {
-                        primCoordGrid->hide();
-                        primCoordGrid2->set_sensitive(true);
-                        primCoordGrid->set_sensitive(false);
-                    }
-                }
+                upgateGUI_lin_pol_graph();
             }
             break;
         }
@@ -2192,28 +2094,7 @@ void ICMPanel::wtrcinChanged()
                 redFrame->hide();
             } else {
                 redFrame->show();
-                if (
-                    ColorManagementParams::Primaries(wprim->get_active_row_number()) != ColorManagementParams::Primaries::CUSTOM
-                    && ColorManagementParams::Primaries(wprim->get_active_row_number()) != ColorManagementParams::Primaries::CUSTOM_GRID
-                    && ColorManagementParams::Primaries(wprim->get_active_row_number()) != ColorManagementParams::Primaries::CUSTOM_POL
-                ) {
-                    primCoordGrid->show();
-                    primCoordGrid2->show();
-                    primCoordGrid->set_sensitive(false);
-                    primCoordGrid2->set_sensitive(false);
-                } else {
-                    if(ColorManagementParams::Primaries(wprim->get_active_row_number()) == ColorManagementParams::Primaries::CUSTOM) {
-                        primCoordGrid->show();
-                        primCoordGrid->set_sensitive(true);
-                        primCoordGrid2->set_sensitive(false);
-                        resetpolar();
-                    }
-                    if(ColorManagementParams::Primaries(wprim->get_active_row_number()) == ColorManagementParams::Primaries::CUSTOM_POL) {
-                        primCoordGrid->hide();
-                        primCoordGrid2->set_sensitive(true);
-                        primCoordGrid->set_sensitive(false);
-                    }
-                }
+                upgateGUI_lin_pol_graph();
             }
             break;
         }
@@ -2258,7 +2139,6 @@ void ICMPanel::wtrcinChanged()
             primCoordGrid2->set_sensitive(true);
             primCoordGrid->hide();
             primCoordGrid->set_sensitive(false);
-
             break;
         }
 
@@ -2284,6 +2164,33 @@ void ICMPanel::wtrcinChanged()
         listener->panelChanged(EvICMtrcinMethod, wTRC->get_active_text());
     }
 }
+
+void ICMPanel::upgateGUI_lin_pol_graph()
+{
+    if (
+        ColorManagementParams::Primaries(wprim->get_active_row_number()) != ColorManagementParams::Primaries::CUSTOM
+        && ColorManagementParams::Primaries(wprim->get_active_row_number()) != ColorManagementParams::Primaries::CUSTOM_GRID
+        && ColorManagementParams::Primaries(wprim->get_active_row_number()) != ColorManagementParams::Primaries::CUSTOM_POL
+    )   {
+            primCoordGrid->show();
+            primCoordGrid2->show();
+            primCoordGrid->set_sensitive(false);
+            primCoordGrid2->set_sensitive(false);
+    } else {
+        if(ColorManagementParams::Primaries(wprim->get_active_row_number()) == ColorManagementParams::Primaries::CUSTOM) {
+            primCoordGrid->show();
+            primCoordGrid->set_sensitive(true);
+            primCoordGrid2->set_sensitive(false);
+            resetpolar();
+        }
+        if(ColorManagementParams::Primaries(wprim->get_active_row_number()) == ColorManagementParams::Primaries::CUSTOM_POL) {
+            primCoordGrid->hide();
+            primCoordGrid2->set_sensitive(true);
+            primCoordGrid->set_sensitive(false);
+        }
+    }
+}
+
 
 void ICMPanel::willChanged()
 {

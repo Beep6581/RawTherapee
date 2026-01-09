@@ -293,7 +293,7 @@ public:
     void applyLookTableChanged();
     void applyBaselineExposureOffsetChanged();
     void applyHueSatMapChanged();
-
+    void upgateGUI_lin_pol_graph();
     void setRawMeta(bool raw, const rtengine::FramesData* pMeta);
     void saveReferencePressed();
     void setListener(ToolPanelListener* tpl) override;
