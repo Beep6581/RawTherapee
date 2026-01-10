@@ -1476,6 +1476,8 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                 float savmadl[21];//just to intialize, not used here - but in dcrop.cc
                 float ghsbwslider[2] = {0.f, 1.f};// Black and white point auto sliders
                 float ghssym = 0.f;//info symmetry point
+                float ghsmid = 0.f;//info estimated men luminance (Mid grey) %
+
                 float ghscolor[4] = {0.f, 0.f, 0.f, 0.f};
                 bool ghsauto = params->locallab.spots.at(sp).ghs_autobw;
                 bool ghsautsp = false;//SP auto
@@ -1543,7 +1545,7 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                               huerblu, chromarblu, lumarblu, huer, chromar, lumar, sobeler, lastsav, false, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
                               minCD, maxCD, mini, maxi, Tmean, Tsigma, Tmin, Tmax,
                               meantm, stdtm, meanreti, stdreti, fab, maxicam, rdx, rdy, grx, gry, blx, bly, meanx, meany, meanxe, meanye, prim, ill, contsig, lightsig, slopeg, linkrgb,
-                              resi, sharc, denocont, ghsbpwp, ghsbpwpvalue, savmadl, ghsbwslider, ghssym, ghsautsp, ghscolor);
+                              resi, sharc, denocont, ghsbpwp, ghsbpwpvalue, savmadl, ghsbwslider, ghssym, ghsautsp, ghscolor, ghsmid);
 
                 fabrefp[sp] = fab;
                 //Illuminant
@@ -1667,6 +1669,7 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                         locshghsbw.ghsbw[j] = ghsbpwp[j];
                         locshghsbw.ghsbwvalue[j] = ghsbpwpvalue[j];
                         locshghsbw.ghs_sym = ghssym;
+                        locshghsbw.ghs_mid = ghsmid;
                     }
                     locshghsbw.ghs_color[0] = ghscolor[0];
                     locshghsbw.ghs_color[1] = ghscolor[1];

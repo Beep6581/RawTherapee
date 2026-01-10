@@ -15433,7 +15433,7 @@ void ImProcFunctions::Lab_Local(
     bool prevDeltaE, int llColorMask, int llColorMaskinv, int llExpMask, int llExpMaskinv, int llSHMask, int llSHMaskinv, int llvibMask, int lllcMask, int llsharMask, int llcbMask, int llretiMask, int llsoftMask, int lltmMask, int llblMask, int lllogMask, int ll_Mask, int llcieMask,
     float& minCD, float& maxCD, float& mini, float& maxi, float& Tmean, float& Tsigma, float& Tmin, float& Tmax,
     float& meantm, float& stdtm, float& meanreti, float& stdreti, float &fab,float &maxicam, float &rdx, float &rdy, float &grx, float &gry, float &blx, float &bly, float &meanx, float &meany, float &meanxe, float &meanye, int &prim, int &ill, float &contsig, float &lightsig, float &slopeg, bool &linkrgb,
-    float *resi, float &sharc, float &denocont, int *ghsbpwp, float *ghsbpwpvalue, float *savmadl, float *ghsbwslider, float &ghssym, bool &ghsautsp,  float *ghscolor)
+    float *resi, float &sharc, float &denocont, int *ghsbpwp, float *ghsbpwpvalue, float *savmadl, float *ghsbwslider, float &ghssym, bool &ghsautsp,  float *ghscolor, float &ghsmid)
 
 {
     //general call of others functions : important return hueref, chromaref, lumaref
@@ -18900,6 +18900,24 @@ void ImProcFunctions::Lab_Local(
                                     }
                             }
                         }
+                                //Estimated current Middle grey at the end of GHS algorithm.
+                                float midgrey = 0.f;
+                                int nbm = 0;
+
+#ifdef _OPENMP
+        #   pragma omp parallel for reduction(+:midgrey, nbm) if (multiThread)
+#endif
+                                for (int i = 0; i < bfh; ++i)
+                                    for (int j = 0; j < bfw; ++j) {
+                                        const float r = tmpImage->r(i, j);
+                                        const float g = tmpImage->g(i, j);
+                                        const float b = tmpImage->b(i, j);
+                                        midgrey +=  norm(r, g, b, wprof);//I use norm() because normally the data is in the range [0 1]
+                                        nbm++;
+                                    }
+                                midgrey = (midgrey / nbm) / 65535.f;//simple estimate, based on the average
+                                ghsmid = midgrey;
+
                         if(smoth && D > 0.002f) {//to preserve settings WP and BP
                             //Highlight attenuation in function of HP - protect highlight
                             tone_eqsmooth(this, tmpImage.get(), lp, params->icm.workingProfile, sk, multiThread);//reduce Ev > 0 < 12

@@ -4327,6 +4327,7 @@ LocallabShadow::LocallabShadow():
     ghs_B(Gtk::manage(new Adjuster(M("TP_LOCALLAB_GHS_B"), -5.0, 15.0, 0.001, 0.0))),
     ghs_SP(Gtk::manage(new Adjuster(M("TP_LOCALLAB_GHS_SP"), 0.0, 1.0, 0.00001, 0.015))),
     ghssymLabel(Gtk::manage(new Gtk::Label("---"))),
+    ghsmidLabel(Gtk::manage(new Gtk::Label("---"))),
     ghs_LP(Gtk::manage(new Adjuster(M("TP_LOCALLAB_GHS_LP"), 0.0, 1.0, 0.00001, 0.0))),
     ghs_HP(Gtk::manage(new Adjuster(M("TP_LOCALLAB_GHS_HP"), 0.0, 1.0, 0.00001, 1.0))),
     LC_Frame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_GHS_LC_FRAME")))),
@@ -4468,6 +4469,10 @@ LocallabShadow::LocallabShadow():
     ghssymLabel->set_line_wrap();
     ghssymLabel->set_justify(Gtk::Justification::JUSTIFY_CENTER);
     setExpandAlignProperties(ghssymLabel, true, false, Gtk::ALIGN_CENTER, Gtk::ALIGN_START);
+
+    ghsmidLabel->set_line_wrap();
+    ghsmidLabel->set_justify(Gtk::Justification::JUSTIFY_CENTER);
+    setExpandAlignProperties(ghsmidLabel, true, false, Gtk::ALIGN_CENTER, Gtk::ALIGN_START);
 
     ghs_LP->setAdjusterListener(this);
     ghs_HP->setAdjusterListener(this);
@@ -4630,6 +4635,7 @@ LocallabShadow::LocallabShadow():
     ghsBox->pack_start(*ghssymLabel);
     ghsBox->pack_start(*ghs_LP);
     ghsBox->pack_start(*ghs_HP);
+    ghsBox->pack_start(*ghsmidLabel);
 
     LC_Frame->set_label_align(0.025, 0.5);
     ToolParamBlock* const LCBox = Gtk::manage(new ToolParamBlock());
@@ -5729,10 +5735,10 @@ void LocallabShadow::updateghsbw2(double ghsb, double ghsw, bool ghsaut)//auto G
    );
   
 }
-void LocallabShadow::updateghsbw(int bp, int wp, double minbp, double maxwp, double symev, double maxR, double maxG, double maxB, double drghs, bool ghsau) //update informations for Black point and White point
+void LocallabShadow::updateghsbw(int bp, int wp, double minbp, double maxwp, double symev, double midev, double maxR, double maxG, double maxB, double drghs, bool ghsau) //update informations for Black point and White point
 {
     idle_register.add(
-    [this, bp, wp, minbp, maxwp, symev, maxR, maxG, maxB, drghs, ghsau]() -> bool {
+    [this, bp, wp, minbp, maxwp, symev, midev, maxR, maxG, maxB, drghs, ghsau]() -> bool {
         GThreadLock lock; // All GUI access from idle_add callbacks or separate thread HAVE to be protected
         
         if (ghsMethod->get_active_row_number() == 0 || ghsMethod->get_active_row_number() == 1) {//only in RGB mode
@@ -5743,7 +5749,16 @@ void LocallabShadow::updateghsbw(int bp, int wp, double minbp, double maxwp, dou
         } else {
             ghssymLabel->set_text(M("TP_LOCALLAB_GHSSYMNO"));
         }
-        
+
+        if (ghsMethod->get_active_row_number() == 0 || ghsMethod->get_active_row_number() == 1) {//only in RGB mode
+            ghsmidLabel->set_text(
+                Glib::ustring::compose(M("TP_LOCALLAB_GHSMIDGREY"),
+                                    Glib::ustring::format(std::fixed, std::setprecision(3), midev))
+            );
+        } else {
+            ghsmidLabel->set_text(M("TP_LOCALLAB_GHSMIDGREYNO"));
+        }
+
         ghsbpwpLabels->set_text(
             Glib::ustring::compose(M("TP_LOCALLAB_GHSBPWP"),
                                    Glib::ustring::format(std::fixed, std::setprecision(0), bp),

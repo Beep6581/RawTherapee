@@ -618,6 +618,7 @@ private:
     Adjuster* const ghs_B;
     Adjuster* const ghs_SP;
     Gtk::Label* const ghssymLabel;
+    Gtk::Label* const ghsmidLabel;
     Adjuster* const ghs_LP;
     Adjuster* const ghs_HP;
     Gtk::Frame* const LC_Frame;
@@ -699,7 +700,7 @@ public:
     int nbwb;
     int nbsym2;
     void updateghsbw2(double ghsb, double ghsw, bool ghsaut);
-    void updateghsbw(int bp, int wp, double minbp, double maxwp, double symev, double maxR, double maxG, double maxB, double drghs, bool ghsau);
+    void updateghsbw(int bp, int wp, double minbp, double maxwp, double symev, double midev, double maxR, double maxG, double maxB, double drghs, bool ghsau);
     void setDefaultExpanderVisibility() override;
     void disableListener() override;
     void enableListener() override;
