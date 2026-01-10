@@ -18526,6 +18526,8 @@ void ImProcFunctions::Lab_Local(
                         int blackpoint = 100. * params->locallab.spots.at(sp).ghs_BLP;//Black point
                         float shiftblackpoint = params->locallab.spots.at(sp).ghs_BLP;//Black point
                         float shiftwhitepoint = params->locallab.spots.at(sp).ghs_HLP;//White point
+                        constexpr float low_limit_white_point = 0.9f; //reasonable limit where we can consider that the highlights are low (at least white point < 1).
+                        //This occurs when the limits of the highlights are not reached, then white point low.
                         constexpr float reasonable_limit_white_point = 1.3f; //reasonable limit where we can consider that the highlights are very high
                         //This occurs either when 'Highlight reconstruction' is not activated or when the value recovered with reconstruction is quite low. 
                         //This is the majority of cases. In this case, I apply 'norm2', which combines the estimated XYZ Luminance values ​​with out-of-gamut values ​​at 50%.
@@ -18605,10 +18607,12 @@ void ImProcFunctions::Lab_Local(
                                 LUTu symhist(65535);
                                 symhist.clear();
                                 array2D<float> Y2(bfw, bfh);
-                                //generate histogram RGB with norm2 or norm_3 equivalent luminance
+                                //generate histogram RGB with norm, norm2 or norm_3 equivalent luminance
                                 for (int i = 0; i < bfh; ++i)
                                     for (int j = 0; j < bfw; ++j) {
-                                        if(maxwp < reasonable_limit_white_point) { //comparison between the calculated WP and the reasonable limit
+                                        if(shiftwhitepoint < low_limit_white_point) {//comparison between the calculate WP and low_limit_white_point (low white point)
+                                            Y2[i][j] = norm(clipR(tmpImage->r(i, j)), clipR(tmpImage->g(i, j)), clipR(tmpImage->b(i, j)), wprof);//clipR to avoid bad data in histogram - This is not a precise calculation but an assessment
+                                        } else if(shiftwhitepoint < reasonable_limit_white_point) { //comparison between the calculated WP and the reasonable limit
                                             Y2[i][j] = norm2(clipR(tmpImage->r(i, j)), clipR(tmpImage->g(i, j)), clipR(tmpImage->b(i, j)), wprof);//clipR to avoid bad data in histogram - This is not a precise calculation but an assessment
                                         } else {
                                             Y2[i][j] = norm_3(clipR(tmpImage->r(i, j)), clipR(tmpImage->g(i, j)), clipR(tmpImage->b(i, j)), wprof, maxwp / reasonable_limit_white_point);//clipR to avoid bad data in histogram - This is not a precise calculation but an assessment
@@ -18691,7 +18695,9 @@ void ImProcFunctions::Lab_Local(
 #endif
                                     for (int y = 0; y < bfh; ++y) {
                                         for (int x = 0; x < bfw; ++x) {
-                                            if(ghsbpwpvalue[1] < reasonable_limit_white_point) {//comparison between the calculated WP and the reasonable limit
+                                            if(shiftwhitepoint < low_limit_white_point) {//comparison between the calculate WP and low_limit_white_point (low white point)
+                                                Y2[y][x] = norm(tmpImage->r(y, x), tmpImage->g(y, x), tmpImage->b(y, x), wprof) / 65535.f;//norm
+                                            } else if(shiftwhitepoint < reasonable_limit_white_point) {//comparison between the calculated WP and the reasonable limit
                                                 Y2[y][x] = norm2(tmpImage->r(y, x), tmpImage->g(y, x), tmpImage->b(y, x), wprof) / 65535.f;//norm2
                                             } else {
                                                 Y2[y][x] = norm_3(tmpImage->r(y, x), tmpImage->g(y, x), tmpImage->b(y, x), wprof, ghsbpwpvalue[1] / reasonable_limit_white_point) / 65535.f;//norm_3
@@ -18730,7 +18736,9 @@ void ImProcFunctions::Lab_Local(
                                         float ci = GHT(tlc, B, D, LP, SP, HP, c, strtype);
                                         float flc = ci / tlc;
                                         float gh = 0.f;
-                                        if(ghsbpwpvalue[1]  < reasonable_limit_white_point) {//comparison between the calculated WP and the reasonable limit
+                                        if(shiftwhitepoint < low_limit_white_point) {//comparison between the calculate WP and low_limit_white_point (low white point)
+                                            gh = norm(r, g, b, wprof);////Calculate Luminance in function working profile Wprof and norm
+                                        } else if(shiftwhitepoint  < reasonable_limit_white_point) {//comparison between the calculated WP and the reasonable limit
                                             gh = norm2(r, g, b, wprof);//Calculate Luminance in function working profile Wprof and norm2
                                         } else {
                                             gh = norm_3(r, g, b, wprof, ghsbpwpvalue[1] / reasonable_limit_white_point);//Calculate Luminance in function working profile Wprof and norm_3
