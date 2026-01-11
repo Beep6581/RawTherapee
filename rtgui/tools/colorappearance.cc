@@ -391,7 +391,7 @@ ColorAppearance::ColorAppearance () : FoldableToolPanel (this, TOOL_NAME, M ("TP
     // Vertical box container for the content of the Process 3 frame
     Gtk::Box* pRGBVBox;
 
-    pRGBFrame = Gtk::manage (new Gtk::Frame (M ("TP_COLORAPP_LABEL_RGB")) ); //RE Green Blue Hue and saturation
+    pRGBFrame = Gtk::manage (new Gtk::Frame (M ("TP_COLORAPP_LABEL_RGB")) ); //Red Green Blue Hue and saturation
     pRGBFrame->set_label_align (0.025, 0.5);
 
     pRGBVBox = Gtk::manage ( new Gtk::Box(Gtk::ORIENTATION_VERTICAL));

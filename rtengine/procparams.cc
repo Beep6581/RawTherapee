@@ -1407,6 +1407,7 @@ ColorAppearanceParams::ColorAppearanceParams() :
     qbright(0.0),
     chroma(0.0),
     schroma(0.0),
+    schromared(0.0),
     schromagreen(0.0),
     schromablue(0.0),
     mchroma(0.0),
