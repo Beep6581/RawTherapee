@@ -2825,8 +2825,8 @@ void tone_eqsmooth(ImProcFunctions *ipf, Imagefloat *rgb, const struct local_par
             params.bands[4] = -15;
             params.bands[5] = -50;
         } else {
-            params.bands[4] = -15 -(1.f-lp.ghshp) * 60.f;//in function of HP GHS highligt protection
-            params.bands[5] = -30 -(1.f-lp.ghshp) * 50.f;;
+            params.bands[4] = -15 -(1.f-lp.ghshp) * 120.f;//in function of HP GHS highligt protection
+            params.bands[5] = -30 -(1.f-lp.ghshp) * 100.f;;
         }
         if(lp.whiteevjz < 6 && !lp.issmoothghs) {
             params.bands[4] = -10;
@@ -18970,9 +18970,9 @@ void ImProcFunctions::Lab_Local(
                         midgrey /= 65535.f;
                         stdf /= 65535.f;
                         ghsmid = midgrey;
-                        ghs3sig = midgrey + (3.f * stdf);//three sigma - if Gaussian distribution more than 99.7% data
+                        ghs3sig = midgrey + (3.5f * stdf);//three sigma and half - if Gaussian distribution more than 99.7% data (of course it's not)
                         ghsmaxrgb = maxdata / 65535.f;
-                        if(ghs3sig > maxdata / 65535.f) {//if the distribution is not Gaussian, then we take for 3 sigmas the real maximum.
+                        if(ghs3sig > maxdata / 65535.f) {//if the distribution is not Gaussian, then we take for 3.5 sigmas the real maximum.
                             ghs3sig = maxdata / 65535.f;
                         }
 
@@ -22813,8 +22813,8 @@ void ImProcFunctions::Lab_Local(
                         }
                         
                     }
-					
-				
+
+
                     if(lp.smoothciem == 6) {//Sigmoid - from Darktable
                         float middle_grey_contrast = params->locallab.spots.at(sp).contsig;
                         float contrast_skewness = params->locallab.spots.at(sp).skewsig;
