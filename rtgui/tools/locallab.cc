@@ -1433,7 +1433,9 @@ void Locallab::ghsbwChanged(const std::vector<locallabshGHSbw> &shghsbw, int sel
     int bw[2] = {0, 1};
     double bwvalue[2] = {0., 1.};
     double symev = 0.;
-    double midev = 0.;
+    double midgrey = 0.;
+    double maxrgb = 0.;
+    double sig3 = 0.;
     double bwcol[4] = {0., 0., 0., 0.};
     bool ghsau = true;
     if (selspot < (int) sh_ghsbw.size()) {
@@ -1444,13 +1446,15 @@ void Locallab::ghsbwChanged(const std::vector<locallabshGHSbw> &shghsbw, int sel
         }
 
         symev = sh_ghsbw.at(selspot).ghs_sym;
-        midev = sh_ghsbw.at(selspot).ghs_mid;
+        midgrey = sh_ghsbw.at(selspot).ghs_mid;
+        maxrgb = sh_ghsbw.at(selspot).ghs_maxrgb;
+        sig3 = sh_ghsbw.at(selspot).ghs_3sig;
         bwcol[0] = sh_ghsbw.at(selspot).ghs_color[0];
         bwcol[1] = sh_ghsbw.at(selspot).ghs_color[1];
         bwcol[2] = sh_ghsbw.at(selspot).ghs_color[2];
         bwcol[3] = sh_ghsbw.at(selspot).ghs_color[3];
         ghsau = sh_ghsbw.at(selspot).ghs_auto;
-        expshadhigh.updateghsbw(bw[0], bw[1], bwvalue[0], bwvalue[1], symev, midev, bwcol[0], bwcol[1], bwcol[2], bwcol[3], ghsau);
+        expshadhigh.updateghsbw(bw[0], bw[1], bwvalue[0], bwvalue[1], symev, midgrey, maxrgb, sig3, bwcol[0], bwcol[1], bwcol[2], bwcol[3], ghsau);
         if(autoradsp) {
             expshadhigh.autoSPChanged(symev);
         }

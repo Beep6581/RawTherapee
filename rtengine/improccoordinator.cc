@@ -1477,7 +1477,8 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                 float ghsbwslider[2] = {0.f, 1.f};// Black and white point auto sliders
                 float ghssym = 0.f;//info symmetry point
                 float ghsmid = 0.f;//info estimated men luminance (Mid grey) %
-
+                float ghsmaxrgb = 0.f;//info maximum RGB data after GHS
+                float ghs3sig = 0.f;//Info 3 standard deviations
                 float ghscolor[4] = {0.f, 0.f, 0.f, 0.f};
                 bool ghsauto = params->locallab.spots.at(sp).ghs_autobw;
                 bool ghsautsp = false;//SP auto
@@ -1545,7 +1546,7 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                               huerblu, chromarblu, lumarblu, huer, chromar, lumar, sobeler, lastsav, false, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
                               minCD, maxCD, mini, maxi, Tmean, Tsigma, Tmin, Tmax,
                               meantm, stdtm, meanreti, stdreti, fab, maxicam, rdx, rdy, grx, gry, blx, bly, meanx, meany, meanxe, meanye, prim, ill, contsig, lightsig, slopeg, linkrgb,
-                              resi, sharc, denocont, ghsbpwp, ghsbpwpvalue, savmadl, ghsbwslider, ghssym, ghsautsp, ghscolor, ghsmid);
+                              resi, sharc, denocont, ghsbpwp, ghsbpwpvalue, savmadl, ghsbwslider, ghssym, ghsautsp, ghscolor, ghsmid, ghsmaxrgb, ghs3sig);
 
                 fabrefp[sp] = fab;
                 //Illuminant
@@ -1664,13 +1665,15 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
 
 
 
-                LocallabListener::locallabshGHSbw locshghsbw;//ghs Black and white point infos
+                LocallabListener::locallabshGHSbw locshghsbw;//ghs Black and white point infos, SP, middle grey, max RGB
                     for(int j = 0; j < 2; j++) {
                         locshghsbw.ghsbw[j] = ghsbpwp[j];
                         locshghsbw.ghsbwvalue[j] = ghsbpwpvalue[j];
-                        locshghsbw.ghs_sym = ghssym;
-                        locshghsbw.ghs_mid = ghsmid;
                     }
+                    locshghsbw.ghs_sym = ghssym;
+                    locshghsbw.ghs_mid = ghsmid;
+                    locshghsbw.ghs_maxrgb = ghsmaxrgb;
+                    locshghsbw.ghs_3sig = ghs3sig;
                     locshghsbw.ghs_color[0] = ghscolor[0];
                     locshghsbw.ghs_color[1] = ghscolor[1];
                     locshghsbw.ghs_color[2] = ghscolor[2];
@@ -1752,7 +1755,7 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                     }
 
                     if (params->locallab.spots.at(sp).expshadhigh && params->locallab.spots.at(sp).shMethod == "ghs") {
-                        locallListener->ghsbwChanged(locallshgshbw,params->locallab.selspot);//Black and White point infos and SP auto
+                        locallListener->ghsbwChanged(locallshgshbw,params->locallab.selspot);//Black and White point infos, SP auto, Middle grey, max RGB
                     }
 
                     /*

@@ -539,6 +539,8 @@ public:
         double ghsbwvalue[2];
         double ghs_sym;
         double ghs_mid;
+        double ghs_maxrgb;
+        double ghs_3sig;
         double ghs_color[4];
         bool autoSP;//update SP
         bool ghs_auto;

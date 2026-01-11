@@ -15433,7 +15433,7 @@ void ImProcFunctions::Lab_Local(
     bool prevDeltaE, int llColorMask, int llColorMaskinv, int llExpMask, int llExpMaskinv, int llSHMask, int llSHMaskinv, int llvibMask, int lllcMask, int llsharMask, int llcbMask, int llretiMask, int llsoftMask, int lltmMask, int llblMask, int lllogMask, int ll_Mask, int llcieMask,
     float& minCD, float& maxCD, float& mini, float& maxi, float& Tmean, float& Tsigma, float& Tmin, float& Tmax,
     float& meantm, float& stdtm, float& meanreti, float& stdreti, float &fab,float &maxicam, float &rdx, float &rdy, float &grx, float &gry, float &blx, float &bly, float &meanx, float &meany, float &meanxe, float &meanye, int &prim, int &ill, float &contsig, float &lightsig, float &slopeg, bool &linkrgb,
-    float *resi, float &sharc, float &denocont, int *ghsbpwp, float *ghsbpwpvalue, float *savmadl, float *ghsbwslider, float &ghssym, bool &ghsautsp,  float *ghscolor, float &ghsmid)
+    float *resi, float &sharc, float &denocont, int *ghsbpwp, float *ghsbpwpvalue, float *savmadl, float *ghsbwslider, float &ghssym, bool &ghsautsp,  float *ghscolor, float &ghsmid, float &ghsmaxrgb, float &ghs3sig)
 
 {
     //general call of others functions : important return hueref, chromaref, lumaref
@@ -18615,7 +18615,7 @@ void ImProcFunctions::Lab_Local(
                                         } else if(shiftwhitepoint < reasonable_limit_white_point) { //comparison between the calculated WP and the reasonable limit
                                             Y2[i][j] = norm2(clipR(tmpImage->r(i, j)), clipR(tmpImage->g(i, j)), clipR(tmpImage->b(i, j)), wprof);//clipR to avoid bad data in histogram - This is not a precise calculation but an assessment
                                         } else {
-                                            Y2[i][j] = norm_3(clipR(tmpImage->r(i, j)), clipR(tmpImage->g(i, j)), clipR(tmpImage->b(i, j)), wprof, maxwp / reasonable_limit_white_point);//clipR to avoid bad data in histogram - This is not a precise calculation but an assessment
+                                            Y2[i][j] = norm_3(clipR(tmpImage->r(i, j)), clipR(tmpImage->g(i, j)), clipR(tmpImage->b(i, j)), wprof, shiftwhitepoint / reasonable_limit_white_point);//clipR to avoid bad data in histogram - This is not a precise calculation but an assessment
                                         }
                                         int pos = (int) Y2[i][j];
                                         symhist[pos]++;
@@ -18900,32 +18900,6 @@ void ImProcFunctions::Lab_Local(
                                     }
                             }
                         }
-                                //Estimated current Middle grey at the end of GHS algorithm.
-                                float midgrey = 0.f;
-                                int nbm = 0;
-
-#ifdef _OPENMP
-        #   pragma omp parallel for reduction(+:midgrey, nbm) if (multiThread)
-#endif
-                                for (int i = 0; i < bfh; ++i)
-                                    for (int j = 0; j < bfw; ++j) {
-                                        const float r = tmpImage->r(i, j);
-                                        const float g = tmpImage->g(i, j);
-                                        const float b = tmpImage->b(i, j);
-                                        midgrey +=  norm(r, g, b, wprof);//I use norm() because normally the data is in the range [0 1]
-                                        nbm++;
-                                    }
-                                midgrey = (midgrey / nbm) / 65535.f;//simple estimate, based on the average
-                                ghsmid = midgrey;
-
-                        if(smoth && D > 0.002f) {//to preserve settings WP and BP
-                            //Highlight attenuation in function of HP - protect highlight
-                            tone_eqsmooth(this, tmpImage.get(), lp, params->icm.workingProfile, sk, multiThread);//reduce Ev > 0 < 12
-                        }
-                        if(MID != 0.f  && D > 0.002f) {//to preserve settings WP and BP
-                            //midtones with tone_equ
-                            ImProcFunctions::tone_eqcam(this, tmpImage.get(), MID, params->icm.workingProfile, sk, multiThread);
-                        }
  
                         if(strtype == GHTStrType::INVERSE) {//inverse GHS
 #ifdef _OPENMP
@@ -18947,6 +18921,59 @@ void ImProcFunctions::Lab_Local(
                                     tmpImage->g(i, j) = rtengine::max(0.00001f, tmpImage->g(i, j));
                                     tmpImage->b(i, j) = rtengine::max(0.00001f, tmpImage->b(i, j));
                                 }
+                        }
+                        if(smoth && D > 0.002f) {//to preserve settings WP and BP
+                            //Highlight attenuation in function of HP - protect highlight
+                            tone_eqsmooth(this, tmpImage.get(), lp, params->icm.workingProfile, sk, multiThread);//reduce Ev > 0 < 12
+                        }
+                        if(MID != 0.f  && D > 0.002f) {//to preserve settings WP and BP
+                            //midtones with tone_equ
+                            ImProcFunctions::tone_eqcam(this, tmpImage.get(), MID, params->icm.workingProfile, sk, multiThread);
+                        }
+                        //Estimated current Middle grey at the end of GHS.
+                        //Absolute maximum RGB data at the end of GHS
+                        //3 sigma is very representative of the data in use at the end of GHS
+                        float midgrey = 0.f;
+                        float stdd = 0.f;
+                        float maxdata = 0.f;
+                        const int size = bfh * bfw;
+
+
+#ifdef _OPENMP
+        #   pragma omp parallel for reduction(+:midgrey, stdd) reduction(max:maxdata) if (multiThread)
+#endif
+                        for (int i = 0; i < bfh; ++i){
+                            for (int j = 0; j < bfw; ++j) {
+                                const float r = tmpImage->r(i, j);
+                                const float g = tmpImage->g(i, j);
+                                const float b = tmpImage->b(i, j);
+                                float maxrgb = rtengine::max(r, g, b);
+                                if(maxrgb > maxdata){
+                                    maxdata = maxrgb;
+                                }
+                                if(shiftwhitepoint < low_limit_white_point) {
+                                    midgrey += norm(r, g, b, wprof);//Mean luminance 
+                                    stdd += SQR(norm(r, g, b, wprof));//Standard deviation
+                                } else if(shiftwhitepoint < reasonable_limit_white_point) {
+                                    midgrey += norm2(r, g, b, wprof);//Mean luminance 
+                                    stdd += SQR(norm2(r, g, b, wprof));//Standard deviation
+                                } else {
+                                    midgrey +=  norm_3(r, g, b, wprof, shiftwhitepoint / reasonable_limit_white_point);//Mean luminance
+                                    stdd += SQR(norm_3(r, g, b, wprof, shiftwhitepoint / reasonable_limit_white_point));//Standard deviation
+                                }
+                            }
+                        }
+                        midgrey /= size;
+                        stdd /= size;
+                        stdd -= SQR(midgrey);
+                        float stdf = std::sqrt(stdd);
+                        midgrey /= 65535.f;
+                        stdf /= 65535.f;
+                        ghsmid = midgrey;
+                        ghs3sig = midgrey + (3.f * stdf);//three sigma - if Gaussian distribution more than 99.7% data
+                        ghsmaxrgb = maxdata / 65535.f;
+                        if(ghs3sig > maxdata / 65535.f) {//if the distribution is not Gaussian, then we take for 3 sigmas the real maximum.
+                            ghs3sig = maxdata / 65535.f;
                         }
 
                         rgb2lab(*tmpImage, *bufexpfin, params->icm.workingProfile);
