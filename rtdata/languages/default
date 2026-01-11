@@ -3373,6 +3373,7 @@ TP_LOCALLAB_GHSCOLORNO;---
 TP_LOCALLAB_GHSDR;Dynamic Range GHS (Ev):%1
 TP_LOCALLAB_GHSDRNO;---
 TP_LOCALLAB_GHSMAXRGB;RGB Max & 3 Sigmas: Max=%1 3S=%2
+TP_LOCALLAB_GHSMAXRGB_TOOLTIP;This allows you to preview the changes you make. The main settings that have an effect are 'Stretch factor (D)' and 'Local intensity (b)'.\n\n Try to obtain a value close to or lower (to your liking) than 0.18 for 'Estimated middle grey', although this isn't mandatory as there are other processing steps afterward.\n\n RGB max corresponds to the maximum value of the data; it may only affect a few pixels. 3 Sigmas corresponds to the maximum of slightly more than 99% of the data. You can adjust all GHS settings, but particularly 'Protect Highlights (HP)' and 'Highlight attenuation', in order to avoid, if possible, them exceeding the value of 1.\n\n The purpose of GHS is not to produce a perfect image, but to prepare the image - while keeping some room for maneuver - for further processing.
 TP_LOCALLAB_GHSMAXRGBNO;---
 TP_LOCALLAB_GHSMIDGREY;Estimated middle grey=%1
 TP_LOCALLAB_GHSMIDGREYNO;---

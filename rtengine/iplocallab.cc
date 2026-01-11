@@ -18930,9 +18930,9 @@ void ImProcFunctions::Lab_Local(
                             //midtones with tone_equ
                             ImProcFunctions::tone_eqcam(this, tmpImage.get(), MID, params->icm.workingProfile, sk, multiThread);
                         }
-                        //Estimated current Middle grey at the end of GHS.
-                        //Absolute maximum RGB data at the end of GHS
-                        //3 sigma is very representative of the data in use at the end of GHS
+                        //Estimated current Middle grey at the end of GHS (midgrey)
+                        //Absolute maximum RGB data at the end of GHS (maxdata)
+                        //3 sigma is very representative of the data in use at the end of GHS (stdd)
                         float midgrey = 0.f;
                         float stdd = 0.f;
                         float maxdata = 0.f;
@@ -18952,10 +18952,10 @@ void ImProcFunctions::Lab_Local(
                                     maxdata = maxrgb;
                                 }
                                 if(shiftwhitepoint < low_limit_white_point) {
-                                    midgrey += norm(r, g, b, wprof);//Mean luminance 
+                                    midgrey += norm(r, g, b, wprof);//Mean luminance
                                     stdd += SQR(norm(r, g, b, wprof));//Standard deviation
                                 } else if(shiftwhitepoint < reasonable_limit_white_point) {
-                                    midgrey += norm2(r, g, b, wprof);//Mean luminance 
+                                    midgrey += norm2(r, g, b, wprof);//Mean luminance
                                     stdd += SQR(norm2(r, g, b, wprof));//Standard deviation
                                 } else {
                                     midgrey +=  norm_3(r, g, b, wprof, shiftwhitepoint / reasonable_limit_white_point);//Mean luminance

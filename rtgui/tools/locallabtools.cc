@@ -4898,7 +4898,8 @@ void LocallabShadow::updateAdviceTooltips(const bool showTooltips)
         chromaskSH->set_tooltip_text(M("TP_LOCALLAB_CHROMASK_TOOLTIP"));
         slomaskSH->set_tooltip_text(M("TP_LOCALLAB_SLOMASK_TOOLTIP"));
         lapmaskSH->set_tooltip_text(M("TP_LOCALLAB_LAPRAD1_TOOLTIP"));
-        
+        ghsmaxrgbLabel->set_tooltip_text(M("TP_LOCALLAB_GHSMAXRGB_TOOLTIP"));
+        ghsmidLabel->set_tooltip_text(M("TP_LOCALLAB_GHSMAXRGB_TOOLTIP"));
         /*
         highlights->set_tooltip_text(M("TP_LOCALLAB_NUL_TOOLTIP"));
         h_tonalwidth->set_tooltip_text(M("TP_LOCALLAB_NUL_TOOLTIP"));
@@ -4953,6 +4954,8 @@ void LocallabShadow::updateAdviceTooltips(const bool showTooltips)
         blendmaskSH->set_tooltip_text("");
         radmaskSH->set_tooltip_text("");
         lapmaskSH->set_tooltip_text("");
+        ghsmaxrgbLabel->set_tooltip_text("");
+        ghsmidLabel->set_tooltip_text("");
         mask2SHCurveEditorG->set_tooltip_text("");
         LmaskSHshape->setTooltip("");
         maskSHCurveEditorG->set_tooltip_markup("");
