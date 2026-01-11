@@ -65,6 +65,7 @@ struct LocaleToLang : private std::map<std::pair<Glib::ustring, Glib::ustring>, 
         emplace (key ("he", "IL"), "Hebrew");
         emplace (key ("it", ""  ), "Italiano");
         emplace (key ("ja", "JP"), "Japanese");
+        emplace (key ("ko", ""  ), "Korean");
         emplace (key ("lv", ""  ), "Latvian");
         emplace (key ("hu", ""  ), "Magyar");
         emplace (key ("nl", ""  ), "Nederlands");

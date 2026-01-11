@@ -45,6 +45,42 @@
 #include <shlobj.h>
 #endif
 
+namespace
+{
+
+/**
+ * Removes invalid entries from the extensions and enabled vectors and adds and
+ * enables missing known extensions.
+ *
+ * @param extensions Extensions to tidy.
+ * @param enabled Enabled flags corresponding to the extensions.
+ * @param knownExtensions List of known extensions.
+ */
+void tidyParseExtensions(
+    std::vector<Glib::ustring> &extensions,
+    std::vector<int> &enabled,
+    const std::vector<std::string> &knownExtensions)
+{
+    // Remove excess (invalid) entries.
+    const auto extensionCount = std::min(extensions.size(), enabled.size());
+    extensions.resize(extensionCount);
+    enabled.resize(extensionCount);
+
+    // Gather existing extensions.
+    const std::set<Glib::ustring> existingExtensions(
+            extensions.cbegin(), extensions.cend());
+
+    // Append missing extensions and enable them.
+    for (const auto & ext : knownExtensions) {
+        if (existingExtensions.find(ext) == existingExtensions.cend()) {
+            extensions.emplace_back(ext);
+            enabled.emplace_back(1);
+        }
+    }
+}
+
+} // namespace
+
 // User's settings directory, including images' profiles if used
 Glib::ustring Options::rtdir;
 // User's cached data directory
@@ -1272,27 +1308,7 @@ void Options::readFromFile(Glib::ustring fname)
                 }
 
                 // check and add extensions that are missing from config
-                std::map<std::string, int> checkedExtensions;
-
-                if (parseExtensions.size() == parseExtensionsEnabled.size()) {
-                    for (unsigned i = 0; i < parseExtensions.size(); ++i) {
-                        checkedExtensions[parseExtensions[i]] = parseExtensionsEnabled[i];
-                    }
-                }
-
-                parseExtensions.clear();
-                parseExtensionsEnabled.clear();
-
-                for (auto const &i : knownExtensions) {
-                    if (checkedExtensions.count(i) == 0) {
-                        checkedExtensions[i] = 1;
-                    }
-                }
-
-                for (auto const &x : checkedExtensions) {
-                    parseExtensions.emplace_back(x.first);
-                    parseExtensionsEnabled.emplace_back(x.second);
-                }
+                tidyParseExtensions(parseExtensions, parseExtensionsEnabled, knownExtensions);
 
                 if (keyFile.has_key("File Browser", "ThumbnailArrangement")) {
                     fbArrangement = keyFile.get_integer("File Browser", "ThumbnailArrangement");

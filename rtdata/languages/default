@@ -256,7 +256,7 @@ HISTOGRAM_TOOLTIP_BAR;Show/Hide RGB indicator bar.
 HISTOGRAM_TOOLTIP_CHRO;Show/Hide chromaticity histogram.
 HISTOGRAM_TOOLTIP_CROSSHAIR;Show/Hide indicator crosshair.
 HISTOGRAM_TOOLTIP_G;Show/Hide green histogram.
-HISTOGRAM_TOOLTIP_L;Show/Hide CIELab luminance histogram.
+HISTOGRAM_TOOLTIP_L;Show/Hide CIELab lightness histogram.
 HISTOGRAM_TOOLTIP_MODE;Toggle between linear, log-linear and log-log scaling of the histogram.
 HISTOGRAM_TOOLTIP_R;Show/Hide red histogram.
 HISTOGRAM_TOOLTIP_SHOW_OPTIONS;Toggle visibility of the scope option buttons.
