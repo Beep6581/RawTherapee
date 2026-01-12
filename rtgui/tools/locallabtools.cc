@@ -5937,7 +5937,6 @@ void LocallabShadow::updateGUIToMode(const modeType new_type)
             ghs_slope->hide();
             Lab_Frame->hide();
             ghs_inv->hide();
-            
             break;
 
         case Normal:

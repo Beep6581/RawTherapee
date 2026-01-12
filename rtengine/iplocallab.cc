@@ -723,6 +723,7 @@ struct local_params {
     bool islogcie; 
     bool issmoothcie; 
     bool issmoothghs;
+    float maxdataghs;
     float ghshp;
     int noiselequal;
     float noisechrodetail;
@@ -1033,6 +1034,7 @@ static void calcLocalParams(int sp, int oW, int oH,  const LocallabParams& local
     lp.islogcie = locallab.spots.at(sp).logcie && locallab.spots.at(sp).expprecam;
     lp.issmoothcie = locallab.spots.at(sp).smoothcie;
     lp.issmoothghs = locallab.spots.at(sp).ghs_smooth;
+    lp.maxdataghs = 0.f;
     lp.ghshp =  locallab.spots.at(sp).ghs_HP;
     lp.enaColorMask = locallab.spots.at(sp).enaColorMask && llsoftMask == 0 && llColorMaskinv == 0 && llSHMaskinv == 0 && llColorMask == 0 && llExpMaskinv == 0 && lllcMask == 0 && llsharMask == 0 && llExpMask == 0 && llSHMask == 0 && llcbMask == 0 && llretiMask == 0 && lltmMask == 0 && llblMask == 0 && llvibMask == 0 && lllogMask == 0 && ll_Mask == 0 && llcieMask == 0;// Exposure mask is deactivated if Color & Light mask is visible
     lp.enaColorMaskinv = locallab.spots.at(sp).enaColorMask && llColorMaskinv == 0 && llSHMaskinv == 0 && llsoftMask == 0 && lllcMask == 0 && llsharMask == 0 && llExpMask == 0 && llSHMask == 0 && llcbMask == 0 && llretiMask == 0 && lltmMask == 0 && llblMask == 0 && llvibMask == 0 && lllogMask == 0 && ll_Mask == 0 && llcieMask == 0;// Exposure mask is deactivated if Color & Light mask is visible
@@ -2802,7 +2804,7 @@ void ImProcFunctions::tone_eqcam(ImProcFunctions *ipf, Imagefloat *rgb, int midt
 
 void tone_eqsmooth(ImProcFunctions *ipf, Imagefloat *rgb, const struct local_params &lp, const Glib::ustring &workingProfile, double scale, bool multithread)
 {
-    //smooth highlights after TRC 
+    //smooth highlights after TRC or after GHS or log encoding Cie
     ToneEqualizerParams params;
     params.enabled = true;
     params.regularization = 0.f;
@@ -2820,13 +2822,19 @@ void tone_eqsmooth(ImProcFunctions *ipf, Imagefloat *rgb, const struct local_par
         params.bands[4] = -30 * lp.smoothtrc;
         params.bands[5] = -6.6f * lp.smoothtrc;
     }
+    if(lp.shmeth == 2 && lp.maxdataghs > 65535.f) {//GHS maxdata
+        constexpr float limit_maxdata_auto = 1.4f;//before involving the user through GHS settings
+        float factor = SQR(rtengine::min(limit_maxdata_auto, lp.maxdataghs / 65535.f));//after limit_maxdata_auto user must enable Higlight attenuation, or other GHS settings
+        params.bands[4] = -10 * factor;
+        params.bands[5] = -50 * factor;
+    }
     if(lp.islogcie || lp.issmoothghs) {//with log encoding Cie and GHS shadows Highlight
         if(!lp.issmoothghs) {
             params.bands[4] = -15;
             params.bands[5] = -50;
         } else {
-            params.bands[4] = -15 -(1.f-lp.ghshp) * 120.f;//in function of HP GHS highligt protection
-            params.bands[5] = -30 -(1.f-lp.ghshp) * 100.f;;
+            params.bands[4] = -15 -(1.f-lp.ghshp) * 120.f;//in function of HP GHS Protect highlights (HP)
+            params.bands[5] = -30 -(1.f-lp.ghshp) * 100.f;
         }
         if(lp.whiteevjz < 6 && !lp.issmoothghs) {
             params.bands[4] = -10;
@@ -18360,7 +18368,7 @@ void ImProcFunctions::Lab_Local(
                         {static_cast<float>(wprofi[1][0]), static_cast<float>(wprofi[1][1]), static_cast<float>(wprofi[1][2])},
                         {static_cast<float>(wprofi[2][0]), static_cast<float>(wprofi[2][1]), static_cast<float>(wprofi[2][2])}
                         };
-
+                        const float WP_LINEAR_FREE = 0.1f;//a small value to give the algorithm some leeway
                         const bool isrgb = params->locallab.spots.at(sp).ghsMatmet == "JZ" || params->locallab.spots.at(sp).ghsMatmet == "agx" || params->locallab.spots.at(sp).ghsMatmet == "cat16";
                         //isrgb - when the user chooses the RGB mode which introduces a cognitive bias.
                         
@@ -18513,7 +18521,7 @@ void ImProcFunctions::Lab_Local(
                                 const float noise = pow_F(2.f, -16.f);
                                 minb = rtengine::max(minb, noise);//set a very minimal value in all cases to avoid 0
 
-                                ghsbwslider[1]= maxw;
+                                ghsbwslider[1]= maxw + WP_LINEAR_FREE;//Slightly increase the White Point to allow for some flexibility
                                 ghsbwslider[0]= minb; 
                                 ghscolor[0] = maxwred; 
                                 ghscolor[1] = maxwgreen;
@@ -18955,11 +18963,11 @@ void ImProcFunctions::Lab_Local(
                                     midgrey += norm(r, g, b, wprof);//Mean luminance
                                     stdd += SQR(norm(r, g, b, wprof));//Standard deviation
                                 } else if(shiftwhitepoint < reasonable_limit_white_point) {
-                                    midgrey += norm2(r, g, b, wprof);//Mean luminance
-                                    stdd += SQR(norm2(r, g, b, wprof));//Standard deviation
+                                    midgrey += norm2(r, g, b, wprof);
+                                    stdd += SQR(norm2(r, g, b, wprof));
                                 } else {
-                                    midgrey +=  norm_3(r, g, b, wprof, shiftwhitepoint / reasonable_limit_white_point);//Mean luminance
-                                    stdd += SQR(norm_3(r, g, b, wprof, shiftwhitepoint / reasonable_limit_white_point));//Standard deviation
+                                    midgrey +=  norm_3(r, g, b, wprof, shiftwhitepoint / reasonable_limit_white_point);
+                                    stdd += SQR(norm_3(r, g, b, wprof, shiftwhitepoint / reasonable_limit_white_point));
                                 }
                             }
                         }
@@ -18971,9 +18979,32 @@ void ImProcFunctions::Lab_Local(
                         stdf /= 65535.f;
                         ghsmid = midgrey;
                         ghs3sig = midgrey + (3.5f * stdf);//three sigma and half - if Gaussian distribution more than 99.7% data (of course it's not)
-                        ghsmaxrgb = maxdata / 65535.f;
-                        if(ghs3sig > maxdata / 65535.f) {//if the distribution is not Gaussian, then we take for 3.5 sigmas the real maximum.
-                            ghs3sig = maxdata / 65535.f;
+                        lp.maxdataghs = maxdata;
+                        if(lp.maxdataghs > 65535.f) {//Reduce the maximum value to acceptable limits 'limit_maxdata_auto = 1.4f' in tone_eqsmooth.
+                                                     //after this limit user must enable the other GHS tools.
+                                                     //this approach is clearly preferable to CLIP.
+                            tone_eqsmooth(this, tmpImage.get(), lp, params->icm.workingProfile, sk, multiThread);//reduce Ev for maxdata
+                            float maxdata2 = 0.f;//recalculates the maximum value of the data
+#ifdef _OPENMP
+        #   pragma omp parallel for reduction(max:maxdata2) if (multiThread)
+#endif
+                            for (int i = 0; i < bfh; ++i){
+                                for (int j = 0; j < bfw; ++j) {
+                                    const float r = tmpImage->r(i, j);
+                                    const float g = tmpImage->g(i, j);
+                                    const float b = tmpImage->b(i, j);
+                                    float maxrgb2 = rtengine::max(r, g, b);
+                                    if(maxrgb2 > maxdata2){
+                                        maxdata2 = maxrgb2;
+                                    }
+                                }
+                            }
+                            lp.maxdataghs = maxdata2;
+                        }
+                        ghsmaxrgb = lp.maxdataghs / 65535.f;
+
+                        if(ghs3sig > lp.maxdataghs / 65535.f) {//if the distribution is not Gaussian, then we take for 3.5 sigmas the real maximum.
+                            ghs3sig = lp.maxdataghs / 65535.f;
                         }
 
                         rgb2lab(*tmpImage, *bufexpfin, params->icm.workingProfile);
