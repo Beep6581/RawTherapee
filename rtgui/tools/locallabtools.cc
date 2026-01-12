@@ -5079,17 +5079,17 @@ void LocallabShadow::read(const rtengine::procparams::ProcParams* pp, const Para
             ghsMatmet->set_active(0);
         } else if (spot.ghsMatmet == "agx") {
             ghsMatmet->set_active(1);
+        } else if (spot.ghsMatmet == "JZxyz") {//Same comment as "JZ" under but without cognitive bias, by using XYZ data instead of RGB.
+            ghsMatmet->set_active(2);
+        } else if (spot.ghsMatmet == "cat16xyz") {//Same comment as "cat16" under but without cognitive bias, by using XYZ data instead of RGB.
+            ghsMatmet->set_active(3);
         } else if (spot.ghsMatmet == "JZ") {//I chose JZ rather than JzAzBz because we're dealing with a cognitive bias in RGB mode.
                                             //it corresponds to original LMS JzAzBz matrix without PQ, whitout Absolute luminance, whitout "az and bz" and applied to RGB values
                                             //If I had chosen JzAzBz, the reader might believe we are using the JzAzBz model, which is not the case.
                                             //But to 'simplify' the GUI, JzAzBz and Cat16 appear... this reassures users, but it's more than likely false.
-            ghsMatmet->set_active(2);
+            ghsMatmet->set_active(4);
         } else if (spot.ghsMatmet == "cat16") {//It's essentially the same for Cat16 as for JZ. Note that this is not CIECAM, but only the use of the conversion matrix
                                                //it's a simplifying cognitive bias, but I kept the term here because the difference is often smaller.
-            ghsMatmet->set_active(3);
-        } else if (spot.ghsMatmet == "JZxyz") {//Same comment as "JZ" above but without cognitive bias, by using XYZ data instead of RGB.
-            ghsMatmet->set_active(4);
-        } else if (spot.ghsMatmet == "cat16xyz") {//Same comment as "cat16" above but without cognitive bias, by using XYZ data instead of RGB.
             ghsMatmet->set_active(5);
         }
 
@@ -5251,13 +5251,13 @@ void LocallabShadow::write(rtengine::procparams::ProcParams* pp, ParamsEdited* p
         } else if (ghsMatmet->get_active_row_number() == 1) {
             spot.ghsMatmet = "agx";
         } else if (ghsMatmet->get_active_row_number() == 2) {
-            spot.ghsMatmet = "JZ";
-        } else if (ghsMatmet->get_active_row_number() == 3) {
-            spot.ghsMatmet = "cat16";
-        } else if (ghsMatmet->get_active_row_number() == 4) {
             spot.ghsMatmet = "JZxyz";
-        } else if (ghsMatmet->get_active_row_number() == 5) {
+        } else if (ghsMatmet->get_active_row_number() == 3) {
             spot.ghsMatmet = "cat16xyz";
+        } else if (ghsMatmet->get_active_row_number() == 4) {
+            spot.ghsMatmet = "JZ";
+        } else if (ghsMatmet->get_active_row_number() == 5) {
+            spot.ghsMatmet = "cat16";
         }
 
          for (int i = 0; i < 6; i++) {
@@ -5403,7 +5403,7 @@ void LocallabShadow::adjusterChanged(Adjuster* a, double newval)
                 ghs_agx->set_sensitive(false);
                 ghsMatmet->set_sensitive(false);
                 ghs_LC->set_sensitive(true);
-                ghs_MID->set_sensitive(true);              
+                ghs_MID->set_sensitive(true);
             } else {
                 if (ghs_autobw->get_active()) {
                     ghs_BLP->set_sensitive(false);
