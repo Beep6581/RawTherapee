@@ -1271,7 +1271,7 @@ private:
                 float fab = 1.f;
                 float maxicam = -1000.f;
                 float rdx, rdy, grx, gry, blx, bly = 0.f;
-                float meanx, meany, meanxe, meanye = 0.f;
+                float meanx, meany, meanxe, meanye, maxdat = 0.f;
                 int ill = 2;
                 int prim = 3;
 
@@ -1369,7 +1369,7 @@ private:
                               LHutili, HHutili, CHutili, HHutilijz, CHutilijz, LHutilijz, cclocalcurve, localcutili, rgblocalcurve, localrgbutili, localexutili, exlocalcurve, hltonecurveloc, shtonecurveloc, tonecurveloc, lightCurveloc,
                               huerefblu, chromarefblu, lumarefblu, huere, chromare, lumare, sobelre, lastsav, false, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
                               minCD, maxCD, mini, maxi, Tmean, Tsigma, Tmin, Tmax,
-                              meantme, stdtme, meanretie, stdretie, fab, maxicam, rdx, rdy, grx, gry, blx, bly, meanx, meany, meanxe, meanye, prim, ill, contsig, lightsig, slopeg, linkrgb,
+                              meantme, stdtme, meanretie, stdretie, fab, maxicam, rdx, rdy, grx, gry, blx, bly, meanx, meany, meanxe, meanye, maxdat, prim, ill, contsig, lightsig, slopeg, linkrgb,
                               resi, sharc, denocont, ghsbpwp, ghsbpwpvalue, savmadl, ghsbwslider, ghssym, ghsautsp, ghscolor, ghsmid, ghsmaxrgb, ghs3sig);
 
                 if (sp + 1u < params.locallab.spots.size()) {
@@ -1815,11 +1815,11 @@ private:
             
             
             float rdx, rdy, grx, gry, blx, bly = 0.f;
-            float meanx, meany, meanxe, meanye = 0.f;
+            float meanx, meany, meanxe, meanye, maxdat = 0.f;
             double p[6] = {0., 0., 0., 0., 0., 0.};
 
-            ipf.workingtrc(0, tmpImage1.get(), tmpImage1.get(), GW, GH, -5, prof, 2.4, 12.92310, 0, ill, 0, 0, rdx, rdy, grx, gry, blx, bly, meanx, meany, meanxe, meanye, p, dummy, true, false, false, false);
-            ipf.workingtrc(0, tmpImage1.get(), tmpImage1.get(), GW, GH, 5, prof, gamtone, slotone, catc, illum, prim, locprim, rdx, rdy, grx, gry, blx, bly, meanx, meany, meanxe, meanye, p, dummy, false, true, true, gamutcontrol);
+            ipf.workingtrc(0, tmpImage1.get(), tmpImage1.get(), GW, GH, -5, prof, 2.4, 12.92310, 0, ill, 0, 0, rdx, rdy, grx, gry, blx, bly, meanx, meany, meanxe, meanye, maxdat, p, dummy, true, false, false, false);
+            ipf.workingtrc(0, tmpImage1.get(), tmpImage1.get(), GW, GH, 5, prof, gamtone, slotone, catc, illum, prim, locprim, rdx, rdy, grx, gry, blx, bly, meanx, meany, meanxe, meanye, maxdat, p, dummy, false, true, true, gamutcontrol);
             float satu = params.icm.wapsat;
 
             if(satu > 0.f) {

@@ -8695,12 +8695,12 @@ void ImProcFunctions::InverseColorLight_Local(bool tonequ, bool tonecurv, int sp
                 cmsHTRANSFORM dummy = nullptr;
                 int locprim = 0;
                 float rdx, rdy, grx, gry, blx, bly = 0.f;
-                float meanx, meany, meanxe, meanye = 0.f;
+                float meanx, meany, meanxe, meanye, maxdat = 0.f;
                 double p[6] = {0., 0., 0., 0., 0., 0.};
 
-                workingtrc(0, tmpImage.get(), tmpImage.get(), GW, GH, -5, prof, 2.4, 12.92310, 0, ill, 0,  0, rdx, rdy, grx, gry, blx, bly , meanx, meany, meanxe, meanye, p, dummy, true, false, false, false);
+                workingtrc(0, tmpImage.get(), tmpImage.get(), GW, GH, -5, prof, 2.4, 12.92310, 0, ill, 0,  0, rdx, rdy, grx, gry, blx, bly , meanx, meany, meanxe, meanye, maxdat, p, dummy, true, false, false, false);
                 //  workingtrc(tmpImage.get(), tmpImage.get(), GW, GH, 5, prof, gamtone, slotone, illum, 0, dummy, false, true, true);//to keep if we want improve with illuminant and primaries
-                workingtrc(0, tmpImage.get(), tmpImage.get(), GW, GH, 1, prof, gamtone, slotone, 0, ill, 0, locprim, rdx, rdy, grx, gry, blx, bly , meanx, meany, meanxe, meanye, p, dummy, false, true, true, false);//be careful no gamut control
+                workingtrc(0, tmpImage.get(), tmpImage.get(), GW, GH, 1, prof, gamtone, slotone, 0, ill, 0, locprim, rdx, rdy, grx, gry, blx, bly , meanx, meany, meanxe, meanye, maxdat, p, dummy, false, true, true, false);//be careful no gamut control
 
             }
 
@@ -11687,10 +11687,10 @@ void ImProcFunctions::wavcontrast4(int call, struct local_params& lp, float ** t
         int ill = 0;
         int locprim = 0;
         float rdx, rdy, grx, gry, blx, bly = 0.f;
-        float meanx, meany, meanxe, meanye = 0.f;
+        float meanx, meany, meanxe, meanye, maxdat = 0.f;
         double p[6] = {0., 0., 0., 0., 0., 0.};
-        workingtrc(0, tmpImage, tmpImage, W_Level, H_Level, -5, prof, 2.4, 12.92310, 0, ill, 0, 0, rdx, rdy, grx, gry, blx, bly ,meanx, meany, meanxe, meanye, p, dummy, true, false, false, false);
-        workingtrc(0, tmpImage, tmpImage, W_Level, H_Level, 1, prof, lp.residgam, lp.residslop, 0, ill, 0, locprim, rdx, rdy, grx, gry, blx, bly , meanx, meany, meanxe, meanye, p, dummy, false, true, true, false);//be careful no gamut control
+        workingtrc(0, tmpImage, tmpImage, W_Level, H_Level, -5, prof, 2.4, 12.92310, 0, ill, 0, 0, rdx, rdy, grx, gry, blx, bly ,meanx, meany, meanxe, meanye, maxdat, p, dummy, true, false, false, false);
+        workingtrc(0, tmpImage, tmpImage, W_Level, H_Level, 1, prof, lp.residgam, lp.residslop, 0, ill, 0, locprim, rdx, rdy, grx, gry, blx, bly , meanx, meany, meanxe, meanye, maxdat, p, dummy, false, true, true, false);//be careful no gamut control
         rgb2lab(*tmpImage, *labresid, params->icm.workingProfile);
         delete tmpImage;
 
@@ -15440,7 +15440,7 @@ void ImProcFunctions::Lab_Local(
     double& huerefblur, double& chromarefblur, double& lumarefblur, double& hueref, double& chromaref, double& lumaref, double& sobelref, int &lastsav,
     bool prevDeltaE, int llColorMask, int llColorMaskinv, int llExpMask, int llExpMaskinv, int llSHMask, int llSHMaskinv, int llvibMask, int lllcMask, int llsharMask, int llcbMask, int llretiMask, int llsoftMask, int lltmMask, int llblMask, int lllogMask, int ll_Mask, int llcieMask,
     float& minCD, float& maxCD, float& mini, float& maxi, float& Tmean, float& Tsigma, float& Tmin, float& Tmax,
-    float& meantm, float& stdtm, float& meanreti, float& stdreti, float &fab,float &maxicam, float &rdx, float &rdy, float &grx, float &gry, float &blx, float &bly, float &meanx, float &meany, float &meanxe, float &meanye, int &prim, int &ill, float &contsig, float &lightsig, float &slopeg, bool &linkrgb,
+    float& meantm, float& stdtm, float& meanreti, float& stdreti, float &fab,float &maxicam, float &rdx, float &rdy, float &grx, float &gry, float &blx, float &bly, float &meanx, float &meany, float &meanxe, float &meanye, float &maxdat, int &prim, int &ill, float &contsig, float &lightsig, float &slopeg, bool &linkrgb,
     float *resi, float &sharc, float &denocont, int *ghsbpwp, float *ghsbpwpvalue, float *savmadl, float *ghsbwslider, float &ghssym, bool &ghsautsp,  float *ghscolor, float &ghsmid, float &ghsmaxrgb, float &ghs3sig)
 
 {
@@ -18270,11 +18270,11 @@ void ImProcFunctions::Lab_Local(
                         int ill = 0;
                         int locprim = 0;
                         float rdx, rdy, grx, gry, blx, bly = 0.f;
-                        float meanx, meany, meanxe, meanye = 0.f;
+                        float meanx, meany, meanxe, meanye, maxdat = 0.f;
                         double p[6] = {0., 0., 0., 0., 0., 0.};
 
-                        workingtrc(0, tmpImage, tmpImage, bfw, bfh, -5, prof, 2.4, 12.92310, 0, ill, 0, 0, rdx, rdy, grx, gry, blx, bly , meanx, meany, meanxe, meanye, p, dummy, true, false, false, false);
-                        workingtrc(0, tmpImage, tmpImage, bfw, bfh, 1, prof, gamtone, slotone, 0, ill, 0, locprim, rdx, rdy, grx, gry, blx, bly , meanx, meany, meanxe, meanye, p, dummy, false, true, true, false);//be careful no gamut control
+                        workingtrc(0, tmpImage, tmpImage, bfw, bfh, -5, prof, 2.4, 12.92310, 0, ill, 0, 0, rdx, rdy, grx, gry, blx, bly , meanx, meany, meanxe, meanye, maxdat, p, dummy, true, false, false, false);
+                        workingtrc(0, tmpImage, tmpImage, bfw, bfh, 1, prof, gamtone, slotone, 0, ill, 0, locprim, rdx, rdy, grx, gry, blx, bly , meanx, meany, meanxe, meanye, maxdat, p, dummy, false, true, true, false);//be careful no gamut control
                     }
 
                     if (tonequ) {
@@ -22649,15 +22649,15 @@ void ImProcFunctions::Lab_Local(
                     int locprim = 1;
                     bool gamcie = params->locallab.spots.at(sp).gamutcie;
                     float rx, ry, gx, gy, bx, by = 0.f;
-                    float mx, my, mxe, mye = 0.f;
+                    float mx, my, mxe, mye, mdat = 0.f;
                     
                     if(lp.midtcie != 0 && lp.midtmet == 0) {
                         ImProcFunctions::tone_eqcam(this, tmpImage, lp.midtcie, params->icm.workingProfile, sk, multiThread);
                     }
                     double p[6] = {0., 0., 0., 0., 0., 0.};
 
-                    workingtrc(sp, tmpImage, tmpImage, bfw, bfh, -5, prof, 2.4, 12.92310, 0, ill, 0, 0, rx, ry, gx, gy, bx, by, mx, my, mxe, mye, p, dummy, true, false, false, false);
-                    workingtrc(sp, tmpImage, tmpImage, bfw, bfh, typ, prof, gamtone, slotone, catx, ill, prim, locprim, rdx, rdy, grx, gry, blx, bly, meanx, meany, meanxe, meanye, p, dummy, false, true, true, gamcie);//with gamut control
+                    workingtrc(sp, tmpImage, tmpImage, bfw, bfh, -5, prof, 2.4, 12.92310, 0, ill, 0, 0, rx, ry, gx, gy, bx, by, mx, my, mxe, mye, mdat, p, dummy, true, false, false, false);
+                    workingtrc(sp, tmpImage, tmpImage, bfw, bfh, typ, prof, gamtone, slotone, catx, ill, prim, locprim, rdx, rdy, grx, gry, blx, bly, meanx, meany, meanxe, meanye, maxdat, p, dummy, false, true, true, gamcie);//with gamut control
                     float satu = params->locallab.spots.at(sp).satjcie;
                     if (satu > 0.f) {//saturation
                         ImProcFunctions::apsatur(sp, tmpImage, tmpImage2, bfw, bfh, satu) ;

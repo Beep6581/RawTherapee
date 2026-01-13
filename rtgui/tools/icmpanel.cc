@@ -280,7 +280,7 @@ ICMPanel::ICMPanel() : FoldableToolPanel(this, TOOL_NAME, M("TP_ICM_LABEL")), iu
     wapsat = Gtk::manage(new Adjuster(M("TP_ICM_WORKING_TRC_SAT"), 0., 2., 0.1, 0.5));//saturation slider
     wmidtcie = Gtk::manage(new Adjuster(M("TP_LOCALLAB_MIDTCIEMAIN"), -100., 100., 1., 0.));
     wsmoothcie = Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_SMOOTHCIE")));//highlights
-    wsmoothciesli = Gtk::manage(new Adjuster(M("TP_LOCALLAB_SMOOTHCIETH"), 0., 1.5, 0.1, 0.));
+    wsmoothciesli = Gtk::manage(new Adjuster(M("TP_LOCALLAB_SMOOTHCIETH"), 0., 1.5, 0.01, 0.));
     trcProfVBox->pack_start(*wGamma, Gtk::PACK_SHRINK);
     wGamma->show();
 
@@ -289,6 +289,8 @@ ICMPanel::ICMPanel() : FoldableToolPanel(this, TOOL_NAME, M("TP_ICM_LABEL")), iu
     offstrc = Gtk::manage(new Adjuster(M("TP_WAVELET_OFFSFIN"), 0.33, 1.66, 0.01, 1.));
     pyrwavtrc = Gtk::manage(new Adjuster(M("TP_WAVELET_PYRWAVTRC"), 1, 5, 1, 2));
     residtrc = Gtk::manage(new Adjuster(M("TP_WAVELET_RESIDTRC"), -100., 100., 1., 0.));
+    trcmaxdata = Gtk::manage(new Gtk::Label("---"));
+
     opacityCurveEditorWLI = std::unique_ptr<CurveEditorGroup>(new CurveEditorGroup(options.lastIcmCurvesDir, M("TP_ICM_OPACITYWLI")));
     opacityCurveEditorWLI->setCurveListener(this);
     const ColorManagementParams default_params;
@@ -553,6 +555,10 @@ ICMPanel::ICMPanel() : FoldableToolPanel(this, TOOL_NAME, M("TP_ICM_LABEL")), iu
     pyrwavtrc->setAdjusterListener(this);
     residtrc->setAdjusterListener(this);
 
+    trcmaxdata->set_line_wrap();
+    trcmaxdata->set_justify(Gtk::Justification::JUSTIFY_CENTER);
+    setExpandAlignProperties(trcmaxdata, true, false, Gtk::ALIGN_CENTER, Gtk::ALIGN_START);
+
     //wGamma->setDelay(std::max(options.adjusterMinDelay, options.adjusterMaxDelay));
 
     // wSlope->setDelay(std::max(options.adjusterMinDelay, options.adjusterMaxDelay));
@@ -561,7 +567,7 @@ ICMPanel::ICMPanel() : FoldableToolPanel(this, TOOL_NAME, M("TP_ICM_LABEL")), iu
     wav2Exp->add(*trcWav2VBox, false);
     wav2Exp->setLevel (2);
     trcWavFBox->pack_start(*wav2Exp, false, false);
-    
+    trcWavFBox->pack_start(*trcmaxdata, Gtk::PACK_SHRINK);
     wavExp->add(*trcWavFBox, false);
     wavExp->setLevel (2);
     trcProfVBox->pack_start(*wavExp, false, false);
@@ -846,6 +852,21 @@ void ICMPanel::primChanged (float rx, float ry, float bx, float by, float gx, fl
         }
     );
 }
+
+void ICMPanel::maxdatawtrc(float m_data)
+{
+    idle_register.add(
+    [this, m_data]() -> bool {
+        GThreadLock lock; // All GUI access from idle_add callbacks or separate thread HAVE to be protected
+            trcmaxdata->set_text(
+                Glib::ustring::compose(M("TP_ICM_TRC_MAX"),
+                    Glib::ustring::format(std::fixed, std::setprecision(3), m_data))
+            );
+        return false;
+    }
+   );
+}
+
 
 void ICMPanel::iprimChanged (float r_x, float r_y, float b_x, float b_y, float g_x, float g_y, float w_x, float w_y, float m_x, float m_y)
 {//update CIE xy graph

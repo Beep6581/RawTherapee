@@ -1083,7 +1083,7 @@ void Crop::update(int todo)
             float fab = 1.f;
             float maxicam = -1000.f;
             float rdx, rdy, grx, gry, blx, bly = 0.f;
-            float meanx, meany, meanxe, meanye = 0.f;
+            float meanx, meany, meanxe, meanye, maxdat = 0.f;
             int ill = 2;
             int prim = 3;
             float minCD;
@@ -1183,7 +1183,7 @@ void Crop::update(int todo)
                         huerefblu, chromarefblu, lumarefblu, huere, chromare, lumare, sobelre, lastsav, 
                         parent->previewDeltaE, parent->locallColorMask, parent->locallColorMaskinv, parent->locallExpMask, parent->locallExpMaskinv, parent->locallSHMask, parent->locallSHMaskinv, parent->locallvibMask,  parent->localllcMask, parent->locallsharMask, parent->locallcbMask, parent->locallretiMask, parent->locallsoftMask, parent->localltmMask, parent->locallblMask,
                         parent->localllogMask, parent->locall_Mask, parent->locallcieMask, minCD, maxCD, mini, maxi, Tmean, Tsigma, Tmin, Tmax,
-                        meantme, stdtme, meanretie, stdretie, fab, maxicam,rdx, rdy, grx, gry, blx, bly, meanx, meany, meanxe, meanye, prim, ill, contsig, lightsig, slopeg, linkrgb,
+                        meantme, stdtme, meanretie, stdretie, fab, maxicam,rdx, rdy, grx, gry, blx, bly, meanx, meany, meanxe, meanye, maxdat, prim, ill, contsig, lightsig, slopeg, linkrgb,
                         resi, sharc, denocont, ghsbpwp, ghsbpwpvalue, savmadl, ghsbwslider, ghssym, ghsautsp, ghscolor, ghsmid, ghsmaxrgb, ghs3sig);
 
                         if (parent->previewDeltaE || parent->locallColorMask == 5 || parent->locallvibMask == 4 || parent->locallExpMask == 5 || parent->locallSHMask == 4 || parent->localllcMask == 4 || parent->localltmMask == 4 || parent->localllogMask == 4 || parent->locallsoftMask == 6 || parent->localllcMask == 4 || parent->locallcieMask == 4) {
@@ -1271,7 +1271,7 @@ void Crop::update(int todo)
                         LHutili, HHutili, CHutili, HHutilijz, CHutilijz, LHutilijz, cclocalcurve2, localcutili, rgblocalcurve2, localrgbutili, localexutili, exlocalcurve2, hltonecurveloc2, shtonecurveloc2, tonecurveloc2, lightCurveloc2,
                         huerefblu, chromarefblu, lumarefblu, huere, chromare, lumare, sobelre, lastsav, false, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
                         minCD, maxCD, mini, maxi, Tmean, Tsigma, Tmin, Tmax,
-                        meantme, stdtme, meanretie, stdretie, fab, maxicam, rdx, rdy, grx, gry, blx, bly, meanx, meany, meanxe, meanye, prim, ill, contsig, lightsig, slopeg, linkrgb,
+                        meantme, stdtme, meanretie, stdretie, fab, maxicam, rdx, rdy, grx, gry, blx, bly, meanx, meany, meanxe, meanye, maxdat, prim, ill, contsig, lightsig, slopeg, linkrgb,
                         resi, sharc, denocont, ghsbpwp, ghsbpwpvalue, savmadl, ghsbwslider, ghssym, ghsautsp, ghscolor, ghsmid, ghsmaxrgb, ghs3sig);
             }
 
@@ -1753,11 +1753,11 @@ void Crop::update(int todo)
             }
             
             float rdx, rdy, grx, gry, blx, bly = 0.f;
-            float meanx, meany, meanxe, meanye = 0.f;
+            float meanx, meany, meanxe, meanye, maxdat = 0.f;
             double p[6] = {0., 0., 0., 0., 0., 0.};
 
-            parent->ipf.workingtrc(0, tmpImage1.get(), tmpImage1.get(), GW, GH, -5, prof, 2.4, 12.92310, 0, ill, 0, 0, rdx, rdy, grx, gry, blx, bly,meanx, meany, meanxe, meanye, p, cmsDummy, true, false, false, false);
-            parent->ipf.workingtrc(0, tmpImage1.get(), tmpImage1.get(), GW, GH, 5, prof, gamtone, slotone, catc,  illum, prim, locprim, rdx, rdy, grx, gry, blx, bly, meanx, meany, meanxe, meanye, p, cmsDummy, false, true, true, gamutcontrol);
+            parent->ipf.workingtrc(0, tmpImage1.get(), tmpImage1.get(), GW, GH, -5, prof, 2.4, 12.92310, 0, ill, 0, 0, rdx, rdy, grx, gry, blx, bly,meanx, meany, meanxe, meanye, maxdat, p, cmsDummy, true, false, false, false);
+            parent->ipf.workingtrc(0, tmpImage1.get(), tmpImage1.get(), GW, GH, 5, prof, gamtone, slotone, catc,  illum, prim, locprim, rdx, rdy, grx, gry, blx, bly, meanx, meany, meanxe, meanye, maxdat, p, cmsDummy, false, true, true, gamutcontrol);
             float satu = params.icm.wapsat;
             if(satu > 0.f) {
                 parent->ipf.apsatur(0, tmpImage1.get(), tmpImage2.get(), GW, GH, satu) ;    

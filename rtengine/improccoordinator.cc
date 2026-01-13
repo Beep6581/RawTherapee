@@ -1383,7 +1383,7 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                 float fab = 1.f;
                 float maxicam = -1000.f;
                 float rdx, rdy, grx, gry, blx, bly = 0.f;
-                float meanx, meany, meanxe, meanye = 0.f;
+                float meanx, meany, meanxe, meanye, maxdat = 0.f;
                 int ill = 2;
                 int prim = 3;
                 bool istm = params->locallab.spots.at(sp).equiltm  && params->locallab.spots.at(sp).exptonemap;
@@ -1545,7 +1545,7 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                               LHutili, HHutili, CHutili, HHutilijz, CHutilijz, LHutilijz, cclocalcurve, localcutili, rgblocalcurve, localrgbutili, localexutili, exlocalcurve, hltonecurveloc, shtonecurveloc, tonecurveloc, lightCurveloc,
                               huerblu, chromarblu, lumarblu, huer, chromar, lumar, sobeler, lastsav, false, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
                               minCD, maxCD, mini, maxi, Tmean, Tsigma, Tmin, Tmax,
-                              meantm, stdtm, meanreti, stdreti, fab, maxicam, rdx, rdy, grx, gry, blx, bly, meanx, meany, meanxe, meanye, prim, ill, contsig, lightsig, slopeg, linkrgb,
+                              meantm, stdtm, meanreti, stdreti, fab, maxicam, rdx, rdy, grx, gry, blx, bly, meanx, meany, meanxe, meanye, maxdat, prim, ill, contsig, lightsig, slopeg, linkrgb,
                               resi, sharc, denocont, ghsbpwp, ghsbpwpvalue, savmadl, ghsbwslider, ghssym, ghsautsp, ghscolor, ghsmid, ghsmaxrgb, ghs3sig);
 
                 fabrefp[sp] = fab;
@@ -2238,7 +2238,7 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                 int catc = toUnderlying(params->icm.wcat);
                 int locprim = 0;
                 float rdx, rdy, grx, gry, blx, bly = 0.f;
-                float meanx, meany, meanxe, meanye = 0.f;
+                float meanx, meany, meanxe, meanye, maxdat = 0.f;
                 const int midton = params->icm.wmidtcie;
                 if(midton != 0) {
                     ToneEqualizerParams params;
@@ -2259,8 +2259,8 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                 }
                 double p[6] = {0., 0., 0., 0., 0., 0.};
 
-                ipf.workingtrc(0, tmpImage1.get(), tmpImage1.get(), GW, GH, -5, prof, 2.4, 12.92310, 0, ill, 0, 0,  rdx, rdy, grx, gry, blx, bly, meanx, meany, meanxe, meanye, p, dummy, true, false, false, false);
-                ipf.workingtrc(0, tmpImage1.get(), tmpImage1.get(), GW, GH, 5, prof, gamtone, slotone, catc, illum, prim, locprim,  rdx, rdy, grx, gry, blx, bly, meanx, meany, meanxe, meanye, p, dummy, false, true, true, gamutcontrol);
+                ipf.workingtrc(0, tmpImage1.get(), tmpImage1.get(), GW, GH, -5, prof, 2.4, 12.92310, 0, ill, 0, 0,  rdx, rdy, grx, gry, blx, bly, meanx, meany, meanxe, meanye, maxdat, p, dummy, true, false, false, false);
+                ipf.workingtrc(0, tmpImage1.get(), tmpImage1.get(), GW, GH, 5, prof, gamtone, slotone, catc, illum, prim, locprim,  rdx, rdy, grx, gry, blx, bly, meanx, meany, meanxe, meanye, maxdat, p, dummy, false, true, true, gamutcontrol);
                 float satu = params->icm.wapsat;
                 if(satu > 0.f) {
                     ipf.apsatur(0, tmpImage1.get(), tmpImage2.get(), GW, GH, satu) ;      
@@ -2287,7 +2287,28 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                     }               
                     ipf.toneEqualizer(tmpImage1.get(), params, prof, scale, false);
                 }
-                
+
+                float maxdata = 0.f;
+#ifdef _OPENMP
+        #   pragma omp parallel for reduction(max:maxdata)
+#endif
+                for (int i = 0; i < GH; ++i){
+                    for (int j = 0; j < GW; ++j) {
+                        const float r = tmpImage1->r(i, j);
+                        const float g = tmpImage1->g(i, j);
+                        const float b = tmpImage1->b(i, j);
+                        float maxrgb2 = rtengine::max(r, g, b);
+                        if(maxrgb2 > maxdata){
+                            maxdata = maxrgb2;
+                        }
+                    }
+                }
+                maxdat = maxdata / 65535.f;
+
+                if (primListener) {
+                    primListener->maxdatawtrc(maxdat);
+                }
+
                 ipf.rgb2lab(*tmpImage1, *nprevl, params->icm.workingProfile);
 
                 //nprevl and provis
