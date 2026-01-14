@@ -2370,6 +2370,7 @@ ColorManagementParams::ColorManagementParams() :
     dcpIlluminant(0),
     workingProfile("Rec2020"),
     workingTRC(WorkingTrc::NONE),
+    wgamut(Wwgamut::NONE),
     will(Illuminant::DEFAULT),
     wprim(Primaries::DEFAULT),
     wcat(Cat::BRAD),
@@ -2380,6 +2381,7 @@ ColorManagementParams::ColorManagementParams() :
     sigmatrc(1.),
     offstrc(1.),
     residtrc(0.),
+    wgampower(1.),
     pyrwavtrc(2),
     opacityCurveWLI{
         static_cast<double>(FCT_MinMaxCPoints),
@@ -2451,6 +2453,7 @@ bool ColorManagementParams::operator ==(const ColorManagementParams& other) cons
         && dcpIlluminant == other.dcpIlluminant
         && workingProfile == other.workingProfile
         && workingTRC == other.workingTRC
+        && wgamut == other.wgamut
         && will == other.will
         && wprim == other.wprim
         && wcat == other.wcat
@@ -2461,7 +2464,8 @@ bool ColorManagementParams::operator ==(const ColorManagementParams& other) cons
         && sigmatrc == other.sigmatrc
         && offstrc == other.offstrc
         && pyrwavtrc == other.pyrwavtrc
-		&& residtrc == other.residtrc
+        && wgampower == other.wgampower
+        && residtrc == other.residtrc
         && opacityCurveWLI == other.opacityCurveWLI
         && wsmoothcie == other.wsmoothcie
         && wsmoothciesli == other.wsmoothciesli
@@ -4282,6 +4286,22 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
             keyFile
         );
         saveToKeyfile(
+            !pedited || pedited->icm.wgamut,
+            "Color Management",
+            "Wwgamut",
+            {
+                {ColorManagementParams::Wwgamut::NONE, "none"},
+                {ColorManagementParams::Wwgamut::REC2020, "rec2020"},
+                {ColorManagementParams::Wwgamut::ADOBE, "adob"},
+                {ColorManagementParams::Wwgamut::SRGB, "rgb"},
+                {ColorManagementParams::Wwgamut::DCIP3, "dci"}
+
+            },
+            icm.wgamut,
+            keyFile
+        );
+        
+        saveToKeyfile(
             !pedited || pedited->icm.will,
             "Color Management",
             "Will",
@@ -4352,6 +4372,7 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
         saveToKeyfile(!pedited || pedited->icm.sigmatrc, "Color Management", "Sigmatrc", icm.sigmatrc, keyFile);
         saveToKeyfile(!pedited || pedited->icm.offstrc, "Color Management", "Offstrc", icm.offstrc, keyFile);
         saveToKeyfile(!pedited || pedited->icm.residtrc, "Color Management", "Residtrc", icm.residtrc, keyFile);
+        saveToKeyfile(!pedited || pedited->icm.wgampower, "Color Management", "Wgampower", icm.wgampower, keyFile);
         saveToKeyfile(!pedited || pedited->icm.pyrwavtrc, "Color Management", "Pyrwavtrc", icm.pyrwavtrc, keyFile);
         saveToKeyfile(!pedited || pedited->icm.wsmoothcie, "Color Management", "Wsmoothcie", icm.wsmoothcie, keyFile);
         saveToKeyfile(!pedited || pedited->icm.wsmoothciesli, "Color Management", "Wsmoothciesli", icm.wsmoothciesli, keyFile);
@@ -5877,6 +5898,31 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
                    pedited->icm.workingTRC = true;
                }
             }
+
+            if (
+                !assignFromKeyfile(
+                    keyFile,
+                    "Color Management",
+                    "Wwgamut",
+                    {
+                        {"none", ColorManagementParams::Wwgamut::NONE},
+                        {"rec2020", ColorManagementParams::Wwgamut::REC2020},
+                        {"adob", ColorManagementParams::Wwgamut::ADOBE},
+                        {"rgb", ColorManagementParams::Wwgamut::SRGB},
+                        {"dci", ColorManagementParams::Wwgamut::DCIP3}
+
+                    },
+                    icm.wgamut,
+                    pedited->icm.wgamut
+                )
+            ) {
+               icm.wgamut = ColorManagementParams::Wwgamut::NONE;
+               if (pedited) {
+                   pedited->icm.wgamut = true;
+               }
+            }
+
+            
             if (
                 !assignFromKeyfile(
                     keyFile,
@@ -5976,6 +6022,7 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
                     pedited->icm.wsmoothciesli = true;
                 }
             }
+            assignFromKeyfile(keyFile, "Color Management", "Wgampower", icm.wgampower, pedited->icm.wgampower);
            
             assignFromKeyfile(keyFile, "Color Management", "Sigmatrc", icm.sigmatrc, pedited->icm.sigmatrc);
             assignFromKeyfile(keyFile, "Color Management", "Offstrc", icm.offstrc, pedited->icm.offstrc);

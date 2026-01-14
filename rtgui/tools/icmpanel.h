@@ -173,6 +173,8 @@ private:
     rtengine::ProcEvent EvICMpyrwavtrc;
     rtengine::ProcEvent EvICMresidtrc;
     rtengine::ProcEvent EvICMwavExp;
+    rtengine::ProcEvent EvICMwgamut;
+    rtengine::ProcEvent EvICMwgampower;
 
     LabGrid *labgridcie;
     IdleRegister idle_register;
@@ -188,6 +190,11 @@ private:
     Gtk::Box* preBox;
     Gtk::Box* iVBox;
     Gtk::Box* wTRCBox;
+    Gtk::Frame* gamutcomp;
+    
+    Gtk::Box* wgamutBox;
+    Gtk::Label* wgamutlab;
+
     Gtk::CheckButton* fbw;
     Gtk::CheckButton* gamut;
 
@@ -213,6 +220,10 @@ private:
     sigc::connection wprofnamesconn;
     MyComboBoxText* wTRC;
     sigc::connection wtrcconn;
+    MyComboBoxText* wgamut;
+    sigc::connection wgamutconn;
+    Adjuster* wgampower;
+    
     MyComboBoxText* will;
     sigc::connection willconn;
     MyComboBoxText* wprim;
@@ -275,6 +286,7 @@ public:
 
     void wpChanged();
     void wtrcinChanged();
+    void wgamutChanged();
     void willChanged();
     void wprimChanged();
     void wcatChanged();

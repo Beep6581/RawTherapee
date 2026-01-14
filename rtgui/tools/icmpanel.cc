@@ -95,7 +95,8 @@ ICMPanel::ICMPanel() : FoldableToolPanel(this, TOOL_NAME, M("TP_ICM_LABEL")), iu
     EvICMpyrwavtrc = m->newEvent(LUMINANCECURVE, "HISTORY_MSG_ICM_PYRWAVTRC");
     EvICMresidtrc = m->newEvent(LUMINANCECURVE, "HISTORY_MSG_ICM_RESIDTRC");
     EvICMwavExp = m->newEvent(LUMINANCECURVE, "HISTORY_MSG_ICM_WAVEXP");
-
+    EvICMwgamut = m->newEvent(LUMINANCECURVE, "HISTORY_MSG_ICM_WGAMUT");
+    EvICMwgampower = m->newEvent(LUMINANCECURVE, "HISTORY_MSG_ICM_WGAMUTPOWER");
     auto& options = App::get().mut_options();
 
     isBatchMode = lastToneCurve = lastApplyLookTable = lastApplyBaselineExposureOffset = lastApplyHueSatMap = false;
@@ -267,7 +268,6 @@ ICMPanel::ICMPanel() : FoldableToolPanel(this, TOOL_NAME, M("TP_ICM_LABEL")), iu
     wTRC->append(M("TP_ICM_WORKING_TRC_22"));
     wTRC->append(M("TP_ICM_WORKING_TRC_18"));
     wTRC->append(M("TP_ICM_WORKING_TRC_LIN"));
-
     wTRC->set_active(0);
     wTRC->set_tooltip_text(M("TP_ICM_TRC_TOOLTIP"));
 
@@ -290,6 +290,31 @@ ICMPanel::ICMPanel() : FoldableToolPanel(this, TOOL_NAME, M("TP_ICM_LABEL")), iu
     pyrwavtrc = Gtk::manage(new Adjuster(M("TP_WAVELET_PYRWAVTRC"), 1, 5, 1, 2));
     residtrc = Gtk::manage(new Adjuster(M("TP_WAVELET_RESIDTRC"), -100., 100., 1., 0.));
     trcmaxdata = Gtk::manage(new Gtk::Label("---"));
+
+    Gtk::Frame *gamutcomp = Gtk::manage(new Gtk::Frame(M("TP_ICM_GAMUTCOMPR")));
+    gamutcomp->set_label_align(0.025, 0.5);
+    Gtk::Box* wgamVBox = Gtk::manage(new Gtk::Box(Gtk::ORIENTATION_VERTICAL));
+    wgampower = Gtk::manage(new Adjuster(M("TP_ICM_COMP_POWER"), 0.70, 2.0, 0.01, 1.));
+    Gtk::Box* wgam2VBox = Gtk::manage(new Gtk::Box(Gtk::ORIENTATION_VERTICAL));
+
+    wgamutBox = Gtk::manage(new Gtk::Box());
+    wgamutlab = Gtk::manage(new Gtk::Label(M("TP_ICM_COMPRESS") + ":"));
+    wgamutBox->pack_start(*wgamutlab, Gtk::PACK_SHRINK);
+    wgamut = Gtk::manage(new MyComboBoxText());
+    wgamutBox->pack_start(*wgamut, Gtk::PACK_EXPAND_WIDGET);
+    wgamut->append(M("TP_COMPRESSGAMUT_NONE"));
+    wgamut->append(M("TP_COMPRESSGAMUT_REC2020"));
+    wgamut->append(M("TP_COMPRESSGAMUT_ADOBE"));
+    wgamut->append(M("TP_COMPRESSGAMUT_SRGB"));
+    wgamut->append(M("TP_COMPRESSGAMUT_DCIP3"));
+    wgam2VBox->pack_start(*wgamutBox, Gtk::PACK_EXPAND_WIDGET);
+    wgam2VBox->pack_start(*wgampower, Gtk::PACK_EXPAND_WIDGET);
+
+    wgamVBox->pack_start(*wgam2VBox);
+    gamutcomp->add(*wgamVBox);
+
+    wgamut->set_active(0);
+    wgamut->set_tooltip_text(M("TP_ICM_TRC_TOOLTIP"));
 
     opacityCurveEditorWLI = std::unique_ptr<CurveEditorGroup>(new CurveEditorGroup(options.lastIcmCurvesDir, M("TP_ICM_OPACITYWLI")));
     opacityCurveEditorWLI->setCurveListener(this);
@@ -314,7 +339,6 @@ ICMPanel::ICMPanel() : FoldableToolPanel(this, TOOL_NAME, M("TP_ICM_LABEL")), iu
     trcProfVBox->pack_start(*wsmoothciesli, Gtk::PACK_SHRINK);
     wsmoothciesli->show();
 
-   
     wsmoothcieconn = wsmoothcie->signal_toggled().connect(sigc::mem_fun(*this, &ICMPanel::wsmoothcieChanged));
     wsmoothcie->set_active(false);
 
@@ -568,6 +592,10 @@ ICMPanel::ICMPanel() : FoldableToolPanel(this, TOOL_NAME, M("TP_ICM_LABEL")), iu
     wav2Exp->setLevel (2);
     trcWavFBox->pack_start(*wav2Exp, false, false);
     trcWavFBox->pack_start(*trcmaxdata, Gtk::PACK_SHRINK);
+
+    trcWavFBox->pack_start(*gamutcomp, Gtk::PACK_EXPAND_WIDGET);
+    wgampower->setAdjusterListener(this);
+
     wavExp->add(*trcWavFBox, false);
     wavExp->setLevel (2);
     trcProfVBox->pack_start(*wavExp, false, false);
@@ -687,6 +715,7 @@ ICMPanel::ICMPanel() : FoldableToolPanel(this, TOOL_NAME, M("TP_ICM_LABEL")), iu
     willconn = will->signal_changed().connect(sigc::mem_fun(*this, &ICMPanel::willChanged));
     wprimconn = wprim->signal_changed().connect(sigc::mem_fun(*this, &ICMPanel::wprimChanged));
     wcatconn = wcat->signal_changed().connect(sigc::mem_fun(*this, &ICMPanel::wcatChanged));
+    wgamutconn = wgamut->signal_changed().connect(sigc::mem_fun(*this, &ICMPanel::wgamutChanged));
 
     fbwconn = fbw->signal_toggled().connect(sigc::mem_fun(*this, &ICMPanel::fbwChanged));
     gamutconn = gamut->signal_toggled().connect(sigc::mem_fun(*this, &ICMPanel::gamutChanged));
@@ -1075,6 +1104,7 @@ void ICMPanel::read(const ProcParams* pp, const ParamsEdited* pedited)
     ConnectionBlocker arendintentconn_(arendintentconn);
     ConnectionBlocker dcpillconn_(dcpillconn);
     ConnectionBlocker wtrcconn_(wtrcconn);
+    ConnectionBlocker wgamutconn_(wgamutconn);
     ConnectionBlocker willconn_(willconn);
     ConnectionBlocker wprimconn_(wprimconn);
     ConnectionBlocker wcatconn_(wcatconn);
@@ -1117,12 +1147,15 @@ void ICMPanel::read(const ProcParams* pp, const ParamsEdited* pedited)
 
     wTRC->set_active(rtengine::toUnderlying(pp->icm.workingTRC));
 
+    wgamut->set_active(rtengine::toUnderlying(pp->icm.wgamut));
+
     will->set_active(rtengine::toUnderlying(pp->icm.will));
 
     wprim->set_active(rtengine::toUnderlying(pp->icm.wprim));
     wcat->set_active(rtengine::toUnderlying(pp->icm.wcat));
 
     wtrcinChanged();
+    wgamutChanged();
     willChanged();
     wprimChanged();
     wcatChanged();
@@ -1169,6 +1202,8 @@ void ICMPanel::read(const ProcParams* pp, const ParamsEdited* pedited)
     offstrc->setValue(pp->icm.offstrc);
     residtrc->setValue(pp->icm.residtrc);
     pyrwavtrc->setValue(pp->icm.pyrwavtrc);
+    wgampower->setValue(pp->icm.wgampower);
+
     redx->setValue(pp->icm.redx);
     redy->setValue(pp->icm.redy);
     grex->setValue(pp->icm.grex);
@@ -1227,6 +1262,10 @@ void ICMPanel::read(const ProcParams* pp, const ParamsEdited* pedited)
             wTRC->set_active_text(M("GENERAL_UNCHANGED"));
         }
 
+        if (!pedited->icm.wgamut) {
+            wgamut->set_active_text(M("GENERAL_UNCHANGED"));
+        }
+
         if (!pedited->icm.will) {
             will->set_active_text(M("GENERAL_UNCHANGED"));
         }
@@ -1252,6 +1291,7 @@ void ICMPanel::read(const ProcParams* pp, const ParamsEdited* pedited)
         sigmatrc->setEditedState(pedited->icm.sigmatrc  ? Edited : UnEdited);
         offstrc->setEditedState(pedited->icm.offstrc  ? Edited : UnEdited);
         residtrc->setEditedState(pedited->icm.residtrc  ? Edited : UnEdited);
+        wgampower->setEditedState(pedited->icm.wgampower ? Edited : UnEdited);
         pyrwavtrc->setEditedState(pedited->icm.pyrwavtrc  ? Edited : UnEdited);
         redx->setEditedState(pedited->icm.redx  ? Edited : UnEdited);
         redy->setEditedState(pedited->icm.redy  ? Edited : UnEdited);
@@ -1646,6 +1686,7 @@ void ICMPanel::write(ProcParams* pp, ParamsEdited* pedited)
     }
 
     pp->icm.workingTRC = ColorManagementParams::WorkingTrc(wTRC->get_active_row_number());
+    pp->icm.wgamut = ColorManagementParams::Wwgamut(wgamut->get_active_row_number());
     pp->icm.will = ColorManagementParams::Illuminant(will->get_active_row_number());
     pp->icm.wprim = ColorManagementParams::Primaries(wprim->get_active_row_number());
     pp->icm.wcat = ColorManagementParams::Cat(wcat->get_active_row_number());
@@ -1669,6 +1710,7 @@ void ICMPanel::write(ProcParams* pp, ParamsEdited* pedited)
     pp->icm.wsmoothciesli =  wsmoothciesli->getValue();
     pp->icm.sigmatrc =  sigmatrc->getValue();
     pp->icm.offstrc =  offstrc->getValue();
+    pp->icm.wgampower =  wgampower->getValue();
     pp->icm.residtrc =  residtrc->getValue();
     pp->icm.pyrwavtrc =  pyrwavtrc->getIntValue();
     pp->icm.redx =  redx->getValue();
@@ -1716,11 +1758,13 @@ void ICMPanel::write(ProcParams* pp, ParamsEdited* pedited)
         pedited->icm.wapsat = wapsat->getEditedState();
         pedited->icm.wmidtcie = wmidtcie->getEditedState();
         pedited->icm.wsmoothciesli = wsmoothciesli->getEditedState();
+        pedited->icm.wgampower = wgampower->getEditedState();
         pedited->icm.sigmatrc = sigmatrc->getEditedState();
         pedited->icm.offstrc = offstrc->getEditedState();
         pedited->icm.residtrc = residtrc->getEditedState();
         pedited->icm.pyrwavtrc = pyrwavtrc->getEditedState();
         pedited->icm.workingTRC = wTRC->get_active_text() != M("GENERAL_UNCHANGED");
+        pedited->icm.wgamut = wgamut->get_active_text() != M("GENERAL_UNCHANGED");
         pedited->icm.will = will->get_active_text() != M("GENERAL_UNCHANGED");
         pedited->icm.wprim = wprim->get_active_text() != M("GENERAL_UNCHANGED");
         pedited->icm.wcat = wcat->get_active_text() != M("GENERAL_UNCHANGED");
@@ -1752,6 +1796,7 @@ void ICMPanel::setDefaults(const ProcParams* defParams, const ParamsEdited* pedi
     wapsat->setDefault(defParams->icm.wapsat);
     wmidtcie->setDefault(defParams->icm.wmidtcie);
     wsmoothciesli->setDefault(defParams->icm.wsmoothciesli);
+    wgampower->setDefault(defParams->icm.wgampower);
     sigmatrc->setDefault(defParams->icm.sigmatrc);
     offstrc->setDefault(defParams->icm.offstrc);
     residtrc->setDefault(defParams->icm.residtrc);
@@ -1786,6 +1831,7 @@ void ICMPanel::setDefaults(const ProcParams* defParams, const ParamsEdited* pedi
         wapsat->setDefaultEditedState(pedited->icm.wapsat ? Edited : UnEdited);
         wmidtcie->setDefaultEditedState(pedited->icm.wmidtcie ? Edited : UnEdited);
         wsmoothciesli->setDefaultEditedState(pedited->icm.wsmoothciesli ? Edited : UnEdited);
+        wgampower->setDefaultEditedState(pedited->icm.wgampower ? Edited : UnEdited);
         sigmatrc->setDefaultEditedState(pedited->icm.sigmatrc ? Edited : UnEdited);
         offstrc->setDefaultEditedState(pedited->icm.offstrc ? Edited : UnEdited);
         residtrc->setDefaultEditedState(pedited->icm.residtrc ? Edited : UnEdited);
@@ -1819,6 +1865,7 @@ void ICMPanel::setDefaults(const ProcParams* defParams, const ParamsEdited* pedi
         sigmatrc->setDefaultEditedState(Irrelevant);
         offstrc->setDefaultEditedState(Irrelevant);
         residtrc->setDefaultEditedState(Irrelevant);
+        wgampower->setDefaultEditedState(Irrelevant);
         pyrwavtrc->setDefaultEditedState(Irrelevant);
         redx->setDefaultEditedState(Irrelevant);
         redy->setDefaultEditedState(Irrelevant);
@@ -1869,6 +1916,8 @@ void ICMPanel::adjusterChanged(Adjuster* a, double newval)
             listener->panelChanged(EvICMoffstrc, costr2);
         } else if (a == residtrc) {
             listener->panelChanged(EvICMresidtrc, costr2);
+        } else if (a == wgampower) {
+            listener->panelChanged(EvICMwgampower, costr2);
         } else if (a == pyrwavtrc) {
             listener->panelChanged(EvICMpyrwavtrc, costr2);
         } else if (a == redx) {
@@ -1912,6 +1961,13 @@ void ICMPanel::wpChanged()
 {
     if (listener) {
         listener->panelChanged(EvWProfile, wProfNames->get_active_text());
+    }
+}
+
+void ICMPanel::wgamutChanged()
+{
+    if (listener) {
+        listener->panelChanged(EvICMwgamut, wgamut->get_active_text());
     }
 }
 
@@ -3058,6 +3114,7 @@ void ICMPanel::setBatchMode(bool batchMode)
     aRendIntent->show();
     wProfNames->append(M("GENERAL_UNCHANGED"));
     wTRC->append(M("GENERAL_UNCHANGED"));
+    wgamut->append(M("GENERAL_UNCHANGED"));
     will->append(M("GENERAL_UNCHANGED"));
     wprim->append(M("GENERAL_UNCHANGED"));
     dcpIll->append(M("GENERAL_UNCHANGED"));
@@ -3067,6 +3124,7 @@ void ICMPanel::setBatchMode(bool batchMode)
     sigmatrc->showEditedCB();
     offstrc->showEditedCB();
     residtrc->showEditedCB();
+    wgampower->showEditedCB();
     pyrwavtrc->showEditedCB();
     redx->showEditedCB();
     redy->showEditedCB();

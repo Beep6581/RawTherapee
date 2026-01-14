@@ -469,9 +469,13 @@ void ImProcFunctions::preserv(LabImage *nprevl, LabImage *provis, int cw, int ch
 // Aggressiveness of the compression curve
 //const float PWR = 1.2;
 
-//Jacques Desmis December 2025
+//Jacques Desmis January 2026
 void ImProcFunctions::gamutcompr( Imagefloat *src, Imagefloat *dst, int beginend, float &mac, float &mac0, float &mac1, float &mac2) const
 {
+    if(beginend == 1  && (params->icm.wgamut == ColorManagementParams::Wwgamut::NONE)) {
+        return;
+    }
+
      if (settings->verbose) {
         printf("Apply compression gamut \n");
      }
@@ -568,27 +572,34 @@ void ImProcFunctions::gamutcompr( Imagefloat *src, Imagefloat *dst, int beginend
         beta[2][2] = 0.7845090;
 
     Matrix out = {};
-if(beginend == 0) {
-    if (params->cg.colorspace == "rec2020") {
-        out = Rec2020;
-    } else if  (params->cg.colorspace == "prophoto") {
-        out = prophoto;
-    } else if  (params->cg.colorspace == "adobe") {
-        out = adobe;
-    } else if  (params->cg.colorspace == "srgb") {
-        out = srgb;
-    } else if  (params->cg.colorspace == "dcip3") {
-        out = dcip3;
-    } else if  (params->cg.colorspace == "acesp1") {
-        out = acesp1;
-   } else if  (params->cg.colorspace == "beta") {
-        out = beta;
-    } else {
-        out = acesp1; // Should never happen, but just in case.
-    }
-} else if(beginend == 1) {
-    out = srgb;
-    
+    if(beginend == 0) {
+        if (params->cg.colorspace == "rec2020") {
+            out = Rec2020;
+        } else if  (params->cg.colorspace == "prophoto") {
+            out = prophoto;
+        } else if  (params->cg.colorspace == "adobe") {
+            out = adobe;
+        } else if  (params->cg.colorspace == "srgb") {
+            out = srgb;
+        } else if  (params->cg.colorspace == "dcip3") {
+            out = dcip3;
+        } else if  (params->cg.colorspace == "acesp1") {
+            out = acesp1;
+        } else if  (params->cg.colorspace == "beta") {
+            out = beta;
+        } else {
+            out = acesp1; // Should never happen, but just in case.
+        }
+    } else if(beginend == 1) {
+        if(params->icm.wgamut == ColorManagementParams::Wwgamut::REC2020) {
+            out = Rec2020;
+        } else if(params->icm.wgamut == ColorManagementParams::Wwgamut::ADOBE) {
+            out = adobe;
+        } else if(params->icm.wgamut == ColorManagementParams::Wwgamut::SRGB) {
+            out = srgb;
+        } else if(params->icm.wgamut == ColorManagementParams::Wwgamut::DCIP3) {
+            out = dcip3;
+        }
 }
     Matrix inv_out = {};
     if (!rtengine::invertMatrix(out, inv_out)) {//invert matrix
@@ -635,12 +646,7 @@ if(beginend == 0) {
         dc = 1.1;
         dm = 1.2;
         dy = 1.5;
-        float gamtone = params->icm.wGamma;
-        if(gamtone == 2.4f) {
-            pw = 0.7f;
-        } else {
-            pw = 2.f;
-        }
+        pw = params->icm.wgampower;
         roll = true;
     }
 

@@ -1439,12 +1439,14 @@ struct ColorManagementParamsEdited {
 
     bool workingProfile;
     bool workingTRC;
+    bool wgamut;
     bool wGamma;
     bool wSlope;
     bool wmidtcie;
     bool sigmatrc;
     bool offstrc;
     bool residtrc;
+    bool wgampower;
     bool pyrwavtrc;
     bool opacityCurveWLI;
 

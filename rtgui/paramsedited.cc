@@ -623,6 +623,7 @@ void ParamsEdited::set(bool v)
     icm.sigmatrc = v;
     icm.offstrc = v;
     icm.residtrc = v;
+    icm.wgampower = v;
     icm.pyrwavtrc = v;
     icm.opacityCurveWLI = v;
     icm.wapsat = v;
@@ -662,6 +663,7 @@ void ParamsEdited::set(bool v)
     icm.labgridcieMy = v;
     icm.aRendIntent = v;
     icm.workingTRC = v;
+    icm.wgamut = v;
     icm.will = v;
     icm.wprim = v;
     icm.wcat = v;
@@ -2263,6 +2265,7 @@ void ParamsEdited::initFrom(const std::vector<rtengine::procparams::ProcParams>&
         icm.sigmatrc = icm.sigmatrc && p.icm.sigmatrc == other.icm.sigmatrc;
         icm.offstrc = icm.offstrc && p.icm.offstrc == other.icm.offstrc;
         icm.residtrc = icm.residtrc && p.icm.residtrc == other.icm.residtrc;
+        icm.wgampower = icm.wgampower && p.icm.wgampower == other.icm.wgampower;
         icm.pyrwavtrc = icm.pyrwavtrc && p.icm.pyrwavtrc == other.icm.pyrwavtrc;
         icm.opacityCurveWLI = icm.opacityCurveWLI && p.icm.opacityCurveWLI == other.icm.opacityCurveWLI;
         icm.wsmoothcie = icm.wsmoothcie && p.icm.wsmoothcie == other.icm.wsmoothcie;
@@ -2302,6 +2305,7 @@ void ParamsEdited::initFrom(const std::vector<rtengine::procparams::ProcParams>&
         icm.gamut = icm.gamut && p.icm.gamut == other.icm.gamut;
         icm.aRendIntent = icm.aRendIntent && p.icm.aRendIntent == other.icm.aRendIntent;
         icm.workingTRC = icm.workingTRC && p.icm.workingTRC == other.icm.workingTRC;
+        icm.wgamut = icm.wgamut && p.icm.wgamut == other.icm.wgamut;
         icm.will = icm.will && p.icm.will == other.icm.will;
         icm.wprim = icm.wprim && p.icm.wprim == other.icm.wprim;
         icm.wcat = icm.wcat && p.icm.wcat == other.icm.wcat;
@@ -7543,6 +7547,10 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
         toEdit.icm.offstrc = mods.icm.offstrc;
     }
 
+    if (icm.wgampower) {
+        toEdit.icm.wgampower = mods.icm.wgampower;
+    }
+
     if (icm.residtrc) {
         toEdit.icm.residtrc = mods.icm.residtrc;
     }
@@ -7694,6 +7702,10 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
 
     if (icm.workingTRC) {
         toEdit.icm.workingTRC = mods.icm.workingTRC;
+    }
+
+    if (icm.wgamut) {
+        toEdit.icm.wgamut = mods.icm.wgamut;
     }
 
     if (icm.will) {
