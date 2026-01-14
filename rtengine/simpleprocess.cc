@@ -972,7 +972,8 @@ private:
             float mac0 = 0.f;
             float mac1 = 0.f;
             float mac2 = 0.f;
-            ipf.gamutcompr(baseImg, baseImg, mac, mac0, mac1, mac2);
+            int beginend = 0;
+            ipf.gamutcompr(baseImg, baseImg, beginend, mac, mac0, mac1, mac2);
         }
 
         ipf.firstAnalysis(baseImg, params, hist16);
@@ -1920,6 +1921,52 @@ private:
 
         delete cieView;
         cieView = nullptr;
+
+        //compression gamut at the end of process
+        const int GW = labView->W;
+        const int GH = labView->H;
+        TMatrix wprof = ICCStore::getInstance()->workingSpaceMatrix(params.icm.workingProfile);
+            const double wp[3][3] = {
+                {wprof[0][0], wprof[0][1], wprof[0][2]},
+                {wprof[1][0], wprof[1][1], wprof[1][2]},
+                {wprof[2][0], wprof[2][1], wprof[2][2]}
+            };
+        TMatrix wiprof = ICCStore::getInstance()->workingSpaceInverseMatrix(params.icm.workingProfile);
+            const double wip[3][3] = {//improve precision with double
+                {wiprof[0][0], wiprof[0][1], wiprof[0][2]},
+                {wiprof[1][0], wiprof[1][1], wiprof[1][2]},
+                {wiprof[2][0], wiprof[2][1], wiprof[2][2]}
+            };
+        Imagefloat* provcomp = new Imagefloat(GW, GH);
+
+#ifdef _OPENMP
+        #   pragma omp parallel for
+#endif
+            for (int i = 0; i < GH; ++i){
+                for (int j = 0; j < GW; ++j) {
+                    float X, Y, Z = 0.f;
+                    Color::Lab2XYZ(labView->L[i][j], labView->a[i][j], labView->b[i][j] , X, Y, Z);
+                    Color::xyz2rgb(X, Y, Z, provcomp->r(i, j), provcomp->g(i, j), provcomp->b(i, j), wp);
+                }
+            }
+            float mac = 0.f;
+            float mac0 = 0.f;
+            float mac1 = 0.f;
+            float mac2 = 0.f;
+            int beginend = 1;
+            ipf.gamutcompr(provcomp, provcomp, beginend, mac, mac0, mac1, mac2);
+
+#ifdef _OPENMP
+        #   pragma omp parallel for
+#endif
+            for (int i = 0; i < GH; ++i){
+                for (int j = 0; j < GW; ++j) {
+                    float x, y, z = 0.f;
+                    Color::rgbxyz (provcomp->r(i, j), provcomp->g(i, j), provcomp->b(i, j), x, y, z, wip);
+                    Color::XYZ2Lab(x, y, z, labView->L[i][j], labView->a[i][j], labView->b[i][j]);
+                }
+            }
+            delete provcomp;
 
 
 

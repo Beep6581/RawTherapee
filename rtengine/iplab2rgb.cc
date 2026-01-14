@@ -470,7 +470,7 @@ void ImProcFunctions::preserv(LabImage *nprevl, LabImage *provis, int cw, int ch
 //const float PWR = 1.2;
 
 //Jacques Desmis December 2025
-void ImProcFunctions::gamutcompr( Imagefloat *src, Imagefloat *dst, float &mac, float &mac0, float &mac1, float &mac2) const
+void ImProcFunctions::gamutcompr( Imagefloat *src, Imagefloat *dst, int beginend, float &mac, float &mac0, float &mac1, float &mac2) const
 {
      if (settings->verbose) {
         printf("Apply compression gamut \n");
@@ -568,7 +568,7 @@ void ImProcFunctions::gamutcompr( Imagefloat *src, Imagefloat *dst, float &mac, 
         beta[2][2] = 0.7845090;
 
     Matrix out = {};
-
+if(beginend == 0) {
     if (params->cg.colorspace == "rec2020") {
         out = Rec2020;
     } else if  (params->cg.colorspace == "prophoto") {
@@ -586,7 +586,10 @@ void ImProcFunctions::gamutcompr( Imagefloat *src, Imagefloat *dst, float &mac, 
     } else {
         out = acesp1; // Should never happen, but just in case.
     }
-
+} else if(beginend == 1) {
+    out = srgb;
+    
+}
     Matrix inv_out = {};
     if (!rtengine::invertMatrix(out, inv_out)) {//invert matrix
         printf("Matrix is not invertible, skipping\n");
@@ -605,6 +608,7 @@ void ImProcFunctions::gamutcompr( Imagefloat *src, Imagefloat *dst, float &mac, 
     }
 
     //parameters from GUI
+    /*
     const auto thc = static_cast<float>(params->cg.th_c);
     const auto thm = static_cast<float>(params->cg.th_m);
     const auto thy = static_cast<float>(params->cg.th_y);
@@ -613,6 +617,33 @@ void ImProcFunctions::gamutcompr( Imagefloat *src, Imagefloat *dst, float &mac, 
     const auto dy = static_cast<float>(params->cg.d_y);
     const auto pw = static_cast<float>(params->cg.pwr);
     const bool roll = params->cg.rolloff;
+    */
+    //beginning of process with GUI compressgamut.cc
+    float thc = static_cast<float>(params->cg.th_c);
+    float thm = static_cast<float>(params->cg.th_m);
+    float thy = static_cast<float>(params->cg.th_y);
+    float dc = static_cast<float>(params->cg.d_c);
+    float dm = static_cast<float>(params->cg.d_m);
+    float dy = static_cast<float>(params->cg.d_y);
+    float pw = static_cast<float>(params->cg.pwr);
+    bool roll = params->cg.rolloff;
+    
+    if(beginend == 1) {//with GUI Icmpanel.cc
+        thc = 0.85f;
+        thm = 0.75f;
+        thy = 0.95f;
+        dc = 1.1;
+        dm = 1.2;
+        dy = 1.5;
+        float gamtone = params->icm.wGamma;
+        if(gamtone == 2.4f) {
+            pw = 0.7f;
+        } else {
+            pw = 2.f;
+        }
+        roll = true;
+    }
+
 
     const std::array<float, 3> th{thc, thm, thy};//set parameter GUI in th
     const std::array<float, 3> dl{dc, dm, dy};//set parameter GUI in dl
