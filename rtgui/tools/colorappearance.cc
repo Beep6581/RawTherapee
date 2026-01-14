@@ -401,17 +401,17 @@ ColorAppearance::ColorAppearance () : FoldableToolPanel (this, TOOL_NAME, M ("TP
     colorhred->set_tooltip_markup (M ("TP_COLORAPP_RGB_TOOLTIP"));//I changed the location of this tooltip, placing it only on the first slider, rather than on the entire frame pRGBFrame. This improves usability.
 
     pRGBVBox->pack_start (*colorhred);
-    schromared = Gtk::manage (new Adjuster (M ("TP_COLORAPP_CHROMA_S_RED"), -40.0, 5.0, 0.1, 0.));
+    schromared = Gtk::manage (new Adjuster (M ("TP_COLORAPP_CHROMA_S_RED"), -40.0, 20.0, 0.1, 0.));
     pRGBVBox->pack_start (*schromared);
 
     colorhgreen = Gtk::manage (new Adjuster (M ("TP_COLORAPP_HUE_GREEN"), -25.0, 25.0, 0.1, 0.));
     pRGBVBox->pack_start (*colorhgreen);
-    schromagreen = Gtk::manage (new Adjuster (M ("TP_COLORAPP_CHROMA_S_GREEN"), -40.0, 5.0, 0.1, 0.));
+    schromagreen = Gtk::manage (new Adjuster (M ("TP_COLORAPP_CHROMA_S_GREEN"), -40.0, 20.0, 0.1, 0.));
     pRGBVBox->pack_start (*schromagreen);
 
     colorhblue = Gtk::manage (new Adjuster (M ("TP_COLORAPP_HUE_BLUE"), -25.0, 25.0, 0.1, 0.));
     pRGBVBox->pack_start (*colorhblue);
-    schromablue = Gtk::manage (new Adjuster (M ("TP_COLORAPP_CHROMA_S_BLUE"), -40.0, 5.0, 0.1, 0.));
+    schromablue = Gtk::manage (new Adjuster (M ("TP_COLORAPP_CHROMA_S_BLUE"), -40.0, 20.0, 0.1, 0.));
     pRGBVBox->pack_start (*schromablue);
 
     pRGBFrame->add (*pRGBVBox);

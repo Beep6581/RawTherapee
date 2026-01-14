@@ -2919,6 +2919,15 @@ TP_ICM_APPLYLOOKTABLE;Look table
 TP_ICM_APPLYLOOKTABLE_TOOLTIP;Employ the embedded DCP look table. The setting is only available if the selected DCP has one.
 TP_ICM_BPC;Black Point Compensation
 TP_ICM_BW;Black and White
+TP_ICM_COMPRGAMUT;Gamut Compression
+TP_ICM_COMPRESS;Target Gamut
+TP_ICM_COMPRESS_TOOLTIP;At the end of the process, this allows you to compress the data to fit, for example, into the output profile. If 'Colorappearance and Lighting' is enabled, this will be taken into account.
+TP_ICM_COMPRESSGAMUT_NONE;None
+TP_ICM_COMPRESSGAMUT_REC2020;Rec2020
+TP_ICM_COMPRESSGAMUT_ADOBE;Adobe
+TP_ICM_COMPRESSGAMUT_SRGB;sRGB
+TP_ICM_COMPRESSGAMUT_DCIP3;DCIP3
+TP_ICM_COMP_POWER;Power
 TP_ICM_DCPILLUMINANT;Illuminant
 TP_ICM_DCPILLUMINANT_INTERPOLATED;Interpolated
 TP_ICM_DCPILLUMINANT_TOOLTIP;Select which embedded DCP illuminant to employ. Default is 'interpolated' which is a mix between the two based on white balance. The setting is only available if a dual-illuminant DCP with interpolation support is selected.

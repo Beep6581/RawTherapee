@@ -291,7 +291,7 @@ ICMPanel::ICMPanel() : FoldableToolPanel(this, TOOL_NAME, M("TP_ICM_LABEL")), iu
     residtrc = Gtk::manage(new Adjuster(M("TP_WAVELET_RESIDTRC"), -100., 100., 1., 0.));
     trcmaxdata = Gtk::manage(new Gtk::Label("---"));
 
-    Gtk::Frame *gamutcomp = Gtk::manage(new Gtk::Frame(M("TP_ICM_GAMUTCOMPR")));
+    Gtk::Frame *gamutcomp = Gtk::manage(new Gtk::Frame(M("TP_ICM_COMPRGAMUT")));
     gamutcomp->set_label_align(0.025, 0.5);
     Gtk::Box* wgamVBox = Gtk::manage(new Gtk::Box(Gtk::ORIENTATION_VERTICAL));
     wgampower = Gtk::manage(new Adjuster(M("TP_ICM_COMP_POWER"), 0.70, 2.0, 0.01, 1.));
@@ -302,11 +302,11 @@ ICMPanel::ICMPanel() : FoldableToolPanel(this, TOOL_NAME, M("TP_ICM_LABEL")), iu
     wgamutBox->pack_start(*wgamutlab, Gtk::PACK_SHRINK);
     wgamut = Gtk::manage(new MyComboBoxText());
     wgamutBox->pack_start(*wgamut, Gtk::PACK_EXPAND_WIDGET);
-    wgamut->append(M("TP_COMPRESSGAMUT_NONE"));
-    wgamut->append(M("TP_COMPRESSGAMUT_REC2020"));
-    wgamut->append(M("TP_COMPRESSGAMUT_ADOBE"));
-    wgamut->append(M("TP_COMPRESSGAMUT_SRGB"));
-    wgamut->append(M("TP_COMPRESSGAMUT_DCIP3"));
+    wgamut->append(M("TP_ICM_COMPRESSGAMUT_NONE"));
+    wgamut->append(M("TP_ICM_COMPRESSGAMUT_REC2020"));
+    wgamut->append(M("TP_ICM_COMPRESSGAMUT_ADOBE"));
+    wgamut->append(M("TP_ICM_COMPRESSGAMUT_SRGB"));
+    wgamut->append(M("TP_ICM_COMPRESSGAMUT_DCIP3"));
     wgam2VBox->pack_start(*wgamutBox, Gtk::PACK_EXPAND_WIDGET);
     wgam2VBox->pack_start(*wgampower, Gtk::PACK_EXPAND_WIDGET);
 
@@ -314,7 +314,7 @@ ICMPanel::ICMPanel() : FoldableToolPanel(this, TOOL_NAME, M("TP_ICM_LABEL")), iu
     gamutcomp->add(*wgamVBox);
 
     wgamut->set_active(0);
-    wgamut->set_tooltip_text(M("TP_ICM_TRC_TOOLTIP"));
+    wgamut->set_tooltip_text(M("TP_ICM_COMPRESS_TOOLTIP"));
 
     opacityCurveEditorWLI = std::unique_ptr<CurveEditorGroup>(new CurveEditorGroup(options.lastIcmCurvesDir, M("TP_ICM_OPACITYWLI")));
     opacityCurveEditorWLI->setCurveListener(this);

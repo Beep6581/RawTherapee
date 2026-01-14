@@ -472,10 +472,6 @@ void ImProcFunctions::preserv(LabImage *nprevl, LabImage *provis, int cw, int ch
 //Jacques Desmis January 2026
 void ImProcFunctions::gamutcompr( Imagefloat *src, Imagefloat *dst, int beginend, float &mac, float &mac0, float &mac1, float &mac2) const
 {
-    if(beginend == 1  && (params->icm.wgamut == ColorManagementParams::Wwgamut::NONE)) {
-        return;
-    }
-
      if (settings->verbose) {
         printf("Apply compression gamut \n");
      }
@@ -640,6 +636,7 @@ void ImProcFunctions::gamutcompr( Imagefloat *src, Imagefloat *dst, int beginend
     bool roll = params->cg.rolloff;
     
     if(beginend == 1) {//with GUI Icmpanel.cc
+        //take from ART CTL - odt.ctl - Copyright (c) 2023 Thatcher Freeman
         thc = 0.85f;
         thm = 0.75f;
         thy = 0.95f;
