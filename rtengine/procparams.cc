@@ -1378,6 +1378,9 @@ ColorAppearanceParams::ColorAppearanceParams() :
     curve{
        DCT_Linear
     },
+    curvered{
+       DCT_Linear
+    },
     curve2{
        DCT_Linear
     },
@@ -1438,6 +1441,7 @@ bool ColorAppearanceParams::operator ==(const ColorAppearanceParams& other) cons
         && degreeout == other.degreeout
         && autodegreeout == other.autodegreeout
         && curve == other.curve
+        && curvered == other.curvered
         && curve2 == other.curve2
         && curve3 == other.curve3
         && curveMode == other.curveMode
@@ -4011,6 +4015,7 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
             keyFile
         );
         saveToKeyfile(!pedited || pedited->colorappearance.curve, "Color appearance", "Curve", colorappearance.curve, keyFile);
+        saveToKeyfile(!pedited || pedited->colorappearance.curvered, "Color appearance", "Curvered", colorappearance.curvered, keyFile);
         saveToKeyfile(!pedited || pedited->colorappearance.curve2, "Color appearance", "Curve2", colorappearance.curve2, keyFile);
         saveToKeyfile(!pedited || pedited->colorappearance.curve3, "Color appearance", "Curve3", colorappearance.curve3, keyFile);
 
@@ -5436,6 +5441,7 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
 
             if (ppVersion > 200) {
                 assignFromKeyfile(keyFile, "Color appearance", "Curve", colorappearance.curve, pedited->colorappearance.curve);
+                assignFromKeyfile(keyFile, "Color appearance", "Curvered", colorappearance.curvered, pedited->colorappearance.curvered);
                 assignFromKeyfile(keyFile, "Color appearance", "Curve2", colorappearance.curve2, pedited->colorappearance.curve2);
                 assignFromKeyfile(keyFile, "Color appearance", "Curve3", colorappearance.curve3, pedited->colorappearance.curve3);
             }

@@ -390,11 +390,13 @@ public:
 
     static void curveLightBrightColor(
         const std::vector<double>& curvePoints,
+        const std::vector<double>& curvePointsred,
         const std::vector<double>& curvePoints2,
         const std::vector<double>& curvePoints3,
         const LUTu & histogram, LUTu & outBeforeCCurveHistogram,
         const LUTu & histogramC, LUTu & outBeforeCCurveHistogramC,
         ColorAppearance & outColCurve1,
+        ColorAppearance & outColCurvered,
         ColorAppearance & outColCurve2,
         ColorAppearance & outColCurve3,
         int skip = 1);

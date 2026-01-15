@@ -165,6 +165,7 @@ protected:
     RetinexgaintransmissionCurve dehagaintransmissionCurve;
 
     ColorAppearance customColCurve1;
+    ColorAppearance customColCurvered;
     ColorAppearance customColCurve2;
     ColorAppearance customColCurve3;
     ToneCurve beforeToneCurveBW;

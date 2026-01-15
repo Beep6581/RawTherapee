@@ -517,7 +517,7 @@ void ImProcFunctions::firstAnalysis(const Imagefloat* const original, const Proc
 // Copyright (c) 2012 Jacques Desmis <jdesmis@gmail.com>
 
 void ImProcFunctions::ciecam_02float(CieImage* ncie, float adap, int pW, int pwb, LabImage* lab, const ProcParams* params,
-                                     const ColorAppearance & customColCurve1, const ColorAppearance & customColCurve2, const ColorAppearance & customColCurve3,
+                                     const ColorAppearance & customColCurve1, const ColorAppearance & customColCurvered, const ColorAppearance & customColCurve2, const ColorAppearance & customColCurve3,
                                      LUTu & histLCAM, LUTu & histCCAM, LUTf & CAMBrightCurveJ, LUTf & CAMBrightCurveQ, float &mean, int Iterates, int scale, bool execsharp, float &d, float &dj, float &yb, int rtt,
                                      bool showSharpMask)
 {
@@ -767,6 +767,7 @@ void ImProcFunctions::ciecam_02float(CieImage* ncie, float adap, int pW, int pwb
         const ColorAppearanceParams::TcMode curveMode = params->colorappearance.curveMode;
         const bool hasColCurve1 = bool (customColCurve1);
         const bool t1L = hasColCurve1 && curveMode == ColorAppearanceParams::TcMode::LIGHT;
+        const bool hasColCurvered = bool (customColCurvered);
 
         const ColorAppearanceParams::TcMode curveMode2 = params->colorappearance.curveMode2;
         const bool hasColCurve2 = bool (customColCurve2);
@@ -1155,6 +1156,7 @@ void ImProcFunctions::ciecam_02float(CieImage* ncie, float adap, int pW, int pwb
                     Mpro = M;
                     spro = s;
                     bool jp = false;
+                    bool jpred = false;
 
                     if ((hasColCurve1) && (curveMode == ColorAppearanceParams::TcMode::BRIGHT)) {
                         jp = true;
@@ -1180,7 +1182,21 @@ void ImProcFunctions::ciecam_02float(CieImage* ncie, float adap, int pW, int pwb
                         Jpro = SQR((10.f * Qpro) / wh);
                     }
 
-                    if((hpro > 340.f && hpro <= 360.f) || (hpro > 0.f && hpro <= 100.f)) {//Red CIECAM 
+                    if((hpro > 340.f && hpro <= 360.f) || (hpro > 0.f && hpro <= 100.f)) {//Red CIECAM
+                        if ((hasColCurvered)) {
+                            jpred = true;
+                            float Qq = Qpro * coefQ;
+                            float Qold = Qpro;
+                            const Brightcurve& userColCurveBred = static_cast<const Brightcurve&>(customColCurvered);
+                            userColCurveBred.Apply(Qq);
+                            Qq = Qq / coefQ;
+                            Qpro = 0.2f * (Qq - Qold) + Qold;
+                        }
+                        if (jpred) {
+                            Jpro = SQR((10.f * Qpro) / wh);
+                        }
+
+                    
                         hpro = hpro + 0.555f * huered;//rotation Red
                         spro = spro * (1.f + (schrred / 100.f));//change Red saturation 
                         float Cp = (spro * spro * Qpro) / (1000000.f);
