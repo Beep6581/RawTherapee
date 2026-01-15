@@ -568,7 +568,7 @@ void ImProcFunctions::gamutcompr( Imagefloat *src, Imagefloat *dst, int beginend
         beta[2][2] = 0.7845090;
 
     Matrix out = {};
-    if(beginend == 0) {
+    if(beginend == 0) {//at the beginning of the process
         if (params->cg.colorspace == "rec2020") {
             out = Rec2020;
         } else if  (params->cg.colorspace == "prophoto") {
@@ -584,9 +584,9 @@ void ImProcFunctions::gamutcompr( Imagefloat *src, Imagefloat *dst, int beginend
         } else if  (params->cg.colorspace == "beta") {
             out = beta;
         } else {
-            out = acesp1; // Should never happen, but just in case.
+            out = acesp1;// Should never happen, but just in case.
         }
-    } else if(beginend == 1) {
+    } else if(beginend == 1) {//at the end of the process. Only 4 cases, which are the cases, at this stage, actually possible 
         if(params->icm.wgamut == ColorManagementParams::Wwgamut::REC2020) {
             out = Rec2020;
         } else if(params->icm.wgamut == ColorManagementParams::Wwgamut::ADOBE) {
@@ -615,7 +615,8 @@ void ImProcFunctions::gamutcompr( Imagefloat *src, Imagefloat *dst, int beginend
     }
 
     //parameters from GUI
-    /*
+    /* 
+    //old manner to do with only 1 case 'beginning'
     const auto thc = static_cast<float>(params->cg.th_c);
     const auto thm = static_cast<float>(params->cg.th_m);
     const auto thy = static_cast<float>(params->cg.th_y);
@@ -636,7 +637,9 @@ void ImProcFunctions::gamutcompr( Imagefloat *src, Imagefloat *dst, int beginend
     bool roll = params->cg.rolloff;
     
     if(beginend == 1) {//with GUI Icmpanel.cc
-        //take from ART CTL - odt.ctl - Copyright (c) 2023 Thatcher Freeman
+        //take values from ART CTL - odt.ctl - Copyright (c) 2023 Thatcher Freeman
+        //It's considerably simpler at the end of the process. We don't have (at least in theory) the problems related to data completely out of gamut (Sunset, LEDs).
+        //This needs to be confirmed by testing and possibly changed.
         thc = 0.85f;
         thm = 0.75f;
         thy = 0.95f;

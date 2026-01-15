@@ -291,6 +291,7 @@ ICMPanel::ICMPanel() : FoldableToolPanel(this, TOOL_NAME, M("TP_ICM_LABEL")), iu
     residtrc = Gtk::manage(new Adjuster(M("TP_WAVELET_RESIDTRC"), -100., 100., 1., 0.));
     trcmaxdata = Gtk::manage(new Gtk::Label("---"));
 
+    //Gamut compression at the end of the process
     Gtk::Frame *gamutcomp = Gtk::manage(new Gtk::Frame(M("TP_ICM_COMPRGAMUT")));
     gamutcomp->set_label_align(0.025, 0.5);
     Gtk::Box* wgamVBox = Gtk::manage(new Gtk::Box(Gtk::ORIENTATION_VERTICAL));
@@ -316,6 +317,7 @@ ICMPanel::ICMPanel() : FoldableToolPanel(this, TOOL_NAME, M("TP_ICM_LABEL")), iu
     wgamut->set_active(0);
     wgamut->set_tooltip_text(M("TP_ICM_COMPRESS_TOOLTIP"));
 
+    //local contrast with wavelets
     opacityCurveEditorWLI = std::unique_ptr<CurveEditorGroup>(new CurveEditorGroup(options.lastIcmCurvesDir, M("TP_ICM_OPACITYWLI")));
     opacityCurveEditorWLI->setCurveListener(this);
     const ColorManagementParams default_params;
@@ -333,7 +335,7 @@ ICMPanel::ICMPanel() : FoldableToolPanel(this, TOOL_NAME, M("TP_ICM_LABEL")), iu
     wSlope->show();
     trcProfVBox->pack_start(*wapsat, Gtk::PACK_SHRINK);
     wapsat->show();
-        
+
     trcProfVBox->pack_start(*wmidtcie, Gtk::PACK_SHRINK);
     wmidtcie->show();
     trcProfVBox->pack_start(*wsmoothciesli, Gtk::PACK_SHRINK);
@@ -563,14 +565,14 @@ ICMPanel::ICMPanel() : FoldableToolPanel(this, TOOL_NAME, M("TP_ICM_LABEL")), iu
     grey->setAdjusterListener(this);
     blux->setAdjusterListener(this);
     bluy->setAdjusterListener(this);
-    
+
     redrot->setAdjusterListener(this);
     redsat->setAdjusterListener(this);
     grerot->setAdjusterListener(this);
     gresat->setAdjusterListener(this);
     blurot->setAdjusterListener(this);
     blusat->setAdjusterListener(this);
-    
+
     refi->setAdjusterListener(this);
     shiftx->setAdjusterListener(this);
     shifty->setAdjusterListener(this);
@@ -599,7 +601,7 @@ ICMPanel::ICMPanel() : FoldableToolPanel(this, TOOL_NAME, M("TP_ICM_LABEL")), iu
     wavExp->add(*trcWavFBox, false);
     wavExp->setLevel (2);
     trcProfVBox->pack_start(*wavExp, false, false);
-    
+
     trcProfVBox->pack_start(*primExp, false, false);
 
     // Rendering intent
@@ -1081,7 +1083,6 @@ void ICMPanel::resetpolar () {
     gresat->setValue(0.);
     blurot->setValue(0.);
     blusat->setValue(0.);
-    
 }
 
 void ICMPanel::read(const ProcParams* pp, const ParamsEdited* pedited)

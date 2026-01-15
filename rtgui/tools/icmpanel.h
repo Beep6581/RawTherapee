@@ -92,7 +92,7 @@ protected:
     Adjuster* gresat;
     Adjuster* blurot;
     Adjuster* blusat;
-    
+
     Adjuster* preser;
     Adjuster* refi;
     Adjuster* shiftx;
@@ -191,7 +191,7 @@ private:
     Gtk::Box* iVBox;
     Gtk::Box* wTRCBox;
     Gtk::Frame* gamutcomp;
-    
+
     Gtk::Box* wgamutBox;
     Gtk::Label* wgamutlab;
 
@@ -223,7 +223,7 @@ private:
     MyComboBoxText* wgamut;
     sigc::connection wgamutconn;
     Adjuster* wgampower;
-    
+
     MyComboBoxText* will;
     sigc::connection willconn;
     MyComboBoxText* wprim;
