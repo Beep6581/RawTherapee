@@ -594,7 +594,8 @@ ICMPanel::ICMPanel() : FoldableToolPanel(this, TOOL_NAME, M("TP_ICM_LABEL")), iu
     wav2Exp->setLevel (2);
     trcWavFBox->pack_start(*wav2Exp, false, false);
     trcWavFBox->pack_start(*trcmaxdata, Gtk::PACK_SHRINK);
-
+    trcmaxdata->set_tooltip_text(M("TP_ICM_TRC_MAX_TOOLTIP"));
+    
     trcWavFBox->pack_start(*gamutcomp, Gtk::PACK_EXPAND_WIDGET);
     wgampower->setAdjusterListener(this);
 
