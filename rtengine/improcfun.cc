@@ -517,7 +517,7 @@ void ImProcFunctions::firstAnalysis(const Imagefloat* const original, const Proc
 // Copyright (c) 2012 Jacques Desmis <jdesmis@gmail.com>
 
 void ImProcFunctions::ciecam_02float(CieImage* ncie, float adap, int pW, int pwb, LabImage* lab, const ProcParams* params,
-                                     const ColorAppearance & customColCurve1, const ColorAppearance & customColCurvered, const ColorAppearance & customColCurve2, const ColorAppearance & customColCurve3,
+                                     const ColorAppearance & customColCurve1, const ColorAppearance & customColCurvered, const ColorAppearance & customColCurvegreen, const ColorAppearance & customColCurve2, const ColorAppearance & customColCurve3,
                                      LUTu & histLCAM, LUTu & histCCAM, LUTf & CAMBrightCurveJ, LUTf & CAMBrightCurveQ, float &mean, int Iterates, int scale, bool execsharp, float &d, float &dj, float &yb, int rtt,
                                      bool showSharpMask)
 {
@@ -768,6 +768,7 @@ void ImProcFunctions::ciecam_02float(CieImage* ncie, float adap, int pW, int pwb
         const bool hasColCurve1 = bool (customColCurve1);
         const bool t1L = hasColCurve1 && curveMode == ColorAppearanceParams::TcMode::LIGHT;
         const bool hasColCurvered = bool (customColCurvered);
+        const bool hasColCurvegreen = bool (customColCurvegreen);
 
         const ColorAppearanceParams::TcMode curveMode2 = params->colorappearance.curveMode2;
         const bool hasColCurve2 = bool (customColCurve2);
@@ -1157,6 +1158,7 @@ void ImProcFunctions::ciecam_02float(CieImage* ncie, float adap, int pW, int pwb
                     spro = s;
                     bool jp = false;
                     bool jpred = false;
+                    bool jpgreen = false;
 
                     if ((hasColCurve1) && (curveMode == ColorAppearanceParams::TcMode::BRIGHT)) {
                         jp = true;
@@ -1164,8 +1166,7 @@ void ImProcFunctions::ciecam_02float(CieImage* ncie, float adap, int pW, int pwb
                         float Qold = Qpro;
                         const Brightcurve& userColCurveB1 = static_cast<const Brightcurve&>(customColCurve1);
                         userColCurveB1.Apply(Qq);
-                        float weakeningbrighred = 0.3f;
-                        Qq = weakeningbrighred * Qq / coefQ;
+                        Qq = Qq / coefQ;
                         Qpro = 0.2f * (Qq - Qold) + Qold;
                     }
 
@@ -1190,6 +1191,7 @@ void ImProcFunctions::ciecam_02float(CieImage* ncie, float adap, int pW, int pwb
                             float Qold = Qpro;
                             const Brightcurve& userColCurveBred = static_cast<const Brightcurve&>(customColCurvered);
                             userColCurveBred.Apply(Qq);
+
                             Qq = Qq / coefQ;
                             Qpro = 0.2f * (Qq - Qold) + Qold;
                         }
@@ -1210,6 +1212,20 @@ void ImProcFunctions::ciecam_02float(CieImage* ncie, float adap, int pW, int pwb
                     }
 
                     if((hpro > 100.f && hpro <= 190)) {//Green CIECAM 
+                        if ((hasColCurvegreen)) {
+                            jpgreen = true;
+                            float Qq = Qpro * coefQ;
+                            float Qold = Qpro;
+                            const Brightcurve& userColCurveBgreen = static_cast<const Brightcurve&>(customColCurvegreen);
+                            userColCurveBgreen.Apply(Qq);
+
+                            Qq = Qq / coefQ;
+                            Qpro = 0.2f * (Qq - Qold) + Qold;
+                        }
+                        if (jpgreen) {
+                            Jpro = SQR((10.f * Qpro) / wh);
+                        }
+                    
                         hpro = hpro + 0.555f * huegreen;//Rotation Green
                         spro = spro * (1.f + (schrgreen / 100.f));//change Green saturation 
                         float Cp = (spro * spro * Qpro) / (1000000.f);//Evaluate Chroma with Brightness Q and saturation

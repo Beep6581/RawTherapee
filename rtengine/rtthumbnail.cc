@@ -1374,6 +1374,7 @@ IImage8* Thumbnail::processImage (const procparams::ProcParams& params, eSensorT
 
     ColorAppearance customColCurve1;
     ColorAppearance customColCurvered;
+    ColorAppearance customColCurvegreen;
     ColorAppearance customColCurve2;
     ColorAppearance customColCurve3;
     ToneCurve customToneCurvebw1;
@@ -1628,12 +1629,14 @@ IImage8* Thumbnail::processImage (const procparams::ProcParams& params, eSensorT
         CurveFactory::curveLightBrightColor (
             params.colorappearance.curve,
             params.colorappearance.curvered,
+            params.colorappearance.curvegreen,
             params.colorappearance.curve2,
             params.colorappearance.curve3,
             hist16, dummy,
             dummy, dummy,
             customColCurve1,
             customColCurvered,
+            customColCurvegreen,
             customColCurve2,
             customColCurve3,
             16);
@@ -1671,7 +1674,7 @@ IImage8* Thumbnail::processImage (const procparams::ProcParams& params, eSensorT
         CAMMean = NAN;
         CAMBrightCurveJ.dirty = true;
         CAMBrightCurveQ.dirty = true;
-        ipf.ciecam_02float (cieView, adap, 1, 2, labView, &params, customColCurve1, customColCurvered, customColCurve2, customColCurve3, dummy, dummy, CAMBrightCurveJ, CAMBrightCurveQ, CAMMean, 5, sk, execsharp, d, dj, yb, rtt);
+        ipf.ciecam_02float (cieView, adap, 1, 2, labView, &params, customColCurve1, customColCurvered, customColCurvegreen, customColCurve2, customColCurve3, dummy, dummy, CAMBrightCurveJ, CAMBrightCurveQ, CAMMean, 5, sk, execsharp, d, dj, yb, rtt);
         delete cieView;
     }
 

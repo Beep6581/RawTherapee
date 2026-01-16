@@ -510,6 +510,7 @@ struct ColorAppearanceParams {
     bool          autodegreeout;
     std::vector<double> curve;
     std::vector<double> curvered;
+    std::vector<double> curvegreen;
     std::vector<double> curve2;
     std::vector<double> curve3;
     TcMode     curveMode;

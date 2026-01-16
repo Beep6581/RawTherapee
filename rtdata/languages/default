@@ -2501,6 +2501,7 @@ TP_COLORAPP_BADPIXSL_TOOLTIP;Suppression of hot/bad (brightly colored) pixels.\n
 TP_COLORAPP_BRIGHT;Brightness (Q)
 TP_COLORAPP_BRIGHT_TOOLTIP;Brightness in CIECAM is the amount of perceived light emanating from a stimulus. It differs from L*a*b* and RGB brightness.
 TP_COLORAPP_BRIGHT_CUR_RED;Brightness - red
+TP_COLORAPP_BRIGHT_CUR_GREEN;Brightness - green
 TP_COLORAPP_CAT02ADAPTATION_TOOLTIP;When setting manually, values above 65 are recommended.
 TP_COLORAPP_CATCLASSIC;Classic
 TP_COLORAPP_CATMET_TOOLTIP;Classic - traditional CIECAM operation. The chromatic adaptation transforms are applied separately on 'Scene conditions' and basic illuminant on the one hand, and on basic illuminant and 'Viewing conditions' on the other.\n\nSymmetric – The chromatic adaptation is based on the white balance. The 'Scene conditions', 'Image adjustments' and 'Viewing conditions' settings are neutralized.\n\nMixed – Same as the 'Classic' option but in this case, the chromatic adaptation is based on the white balance.
@@ -2511,9 +2512,9 @@ TP_COLORAPP_CHROMA;Chroma (C)
 TP_COLORAPP_CHROMA_M;Colorfulness (M)
 TP_COLORAPP_CHROMA_M_TOOLTIP;Colorfulness in CIECAM is the perceived amount of hue in relation to gray, an indicator that a stimulus appears to be more or less colored.
 TP_COLORAPP_CHROMA_S;Saturation (S)
-TP_COLORAPP_CHROMA_S_RED;Saturation - red attenuation %
-TP_COLORAPP_CHROMA_S_GREEN;Saturation - green attenuation %
-TP_COLORAPP_CHROMA_S_BLUE;Saturation - blue attenuation %
+TP_COLORAPP_CHROMA_S_RED;Saturation - red  %
+TP_COLORAPP_CHROMA_S_GREEN;Saturation - green %
+TP_COLORAPP_CHROMA_S_BLUE;Saturation - blue  %
 TP_COLORAPP_CHROMA_S_TOOLTIP;Saturation in CIECAM corresponds to the color of a stimulus in relation to its own brightness. It differs from L*a*b* and RGB saturation.
 TP_COLORAPP_CHROMA_TOOLTIP;Chroma in CIECAM corresponds to the color of a stimulus relative to the clarity of a stimulus that appears white under identical conditions. It differs from L*a*b* and RGB chroma.
 TP_COLORAPP_CIECAT_DEGREE;Chromatic Adaptation Scene

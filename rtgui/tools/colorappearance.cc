@@ -153,6 +153,7 @@ ColorAppearance::ColorAppearance () : FoldableToolPanel (this, TOOL_NAME, M ("TP
     EvCATcolorhblue = m->newEvent(LUMINANCECURVE, "HISTORY_MSG_CATHUEBLUE");
     EvCATschromablue = m->newEvent(LUMINANCECURVE, "HISTORY_MSG_CATSCHROMABLUE");
     EvCATCurvered = m->newEvent(LUMINANCECURVE, "HISTORY_MSG_CURVERED");
+    EvCATCurvegreen = m->newEvent(LUMINANCECURVE, "HISTORY_MSG_CURVEGREEN");
 
     //preset button cat02/16
     Gtk::Frame *genFrame;
@@ -389,9 +390,15 @@ ColorAppearance::ColorAppearance () : FoldableToolPanel (this, TOOL_NAME, M ("TP
 
     curveEditorGred = new CurveEditorGroup (options.lastToneCurvesDir, M ("TP_COLORAPP_BRIGHT_CUR_RED"));
     curveEditorGred->setCurveListener (this);
-    curveEditorGred->setTooltip (M ("TP_COLORAPP_CURVEEDITORRED_TOOLTIP"));
+   // curveEditorGred->setTooltip (M ("TP_COLORAPP_CURVEEDITORRED_TOOLTIP"));
     shapered = static_cast<DiagonalCurveEditor*>(curveEditorGred->addCurve(CT_Diagonal, "", nullptr));
     curveEditorGred->curveListComplete();
+
+    curveEditorGgreen = new CurveEditorGroup (options.lastToneCurvesDir, M ("TP_COLORAPP_BRIGHT_CUR_GREEN"));
+    curveEditorGgreen->setCurveListener (this);
+    //curveEditorGgreen->setTooltip (M ("TP_COLORAPP_CURVEEDITORRED_TOOLTIP"));
+    shapegreen = static_cast<DiagonalCurveEditor*>(curveEditorGgreen->addCurve(CT_Diagonal, "", nullptr));
+    curveEditorGgreen->curveListComplete();
 
     Gtk::Frame *pRGBFrame;
     // Vertical box container for the content of the Process 3 frame
@@ -409,7 +416,6 @@ ColorAppearance::ColorAppearance () : FoldableToolPanel (this, TOOL_NAME, M ("TP
     pRGBVBox->pack_start (*colorhred);
     schromared = Gtk::manage (new Adjuster (M ("TP_COLORAPP_CHROMA_S_RED"), -40.0, 20.0, 0.1, 0.));
     pRGBVBox->pack_start (*schromared);
-
     pRGBVBox->pack_start ( *curveEditorGred, Gtk::PACK_SHRINK, 2);
     pRGBVBox->pack_start (*Gtk::manage (new Gtk::Separator(Gtk::ORIENTATION_HORIZONTAL)), Gtk::PACK_EXPAND_WIDGET, 4);
 
@@ -417,6 +423,8 @@ ColorAppearance::ColorAppearance () : FoldableToolPanel (this, TOOL_NAME, M ("TP
     pRGBVBox->pack_start (*colorhgreen);
     schromagreen = Gtk::manage (new Adjuster (M ("TP_COLORAPP_CHROMA_S_GREEN"), -40.0, 20.0, 0.1, 0.));
     pRGBVBox->pack_start (*schromagreen);
+    pRGBVBox->pack_start ( *curveEditorGgreen, Gtk::PACK_SHRINK, 2);
+    pRGBVBox->pack_start (*Gtk::manage (new Gtk::Separator(Gtk::ORIENTATION_HORIZONTAL)), Gtk::PACK_EXPAND_WIDGET, 4);
 
     colorhblue = Gtk::manage (new Adjuster (M ("TP_COLORAPP_HUE_BLUE"), -25.0, 25.0, 0.1, 0.));
     pRGBVBox->pack_start (*colorhblue);
@@ -478,6 +486,8 @@ ColorAppearance::ColorAppearance () : FoldableToolPanel (this, TOOL_NAME, M ("TP
     shape->setLeftBarBgGradient (milestones);
     shapered->setBottomBarBgGradient (milestones);
     shapered->setLeftBarBgGradient (milestones);
+    shapegreen->setBottomBarBgGradient (milestones);
+    shapegreen->setLeftBarBgGradient (milestones);
     
     shape2->setBottomBarBgGradient (milestones);
     shape2->setLeftBarBgGradient (milestones);
@@ -682,6 +692,7 @@ ColorAppearance::~ColorAppearance ()
 
     delete curveEditorG;
     delete curveEditorGred;
+    delete curveEditorGgreen;
     delete curveEditorG2;
     delete curveEditorG3;
 }
@@ -736,6 +747,7 @@ void ColorAppearance::neutral_pressed ()
     toneCurveMode3->set_active (0);
     shape->reset();
     shapered->reset();
+    shapegreen->reset();
     shape2->reset();
     shape3->reset();
     gamutconn.block (true);
@@ -773,6 +785,7 @@ void ColorAppearance::read (const ProcParams* pp, const ParamsEdited* pedited)
     tcmode3conn.block (true);
     shape->setCurve (pp->colorappearance.curve);
     shapered->setCurve (pp->colorappearance.curvered);
+    shapegreen->setCurve (pp->colorappearance.curvegreen);
     shape2->setCurve (pp->colorappearance.curve2);
     shape3->setCurve (pp->colorappearance.curve3);
     toneCurveMode->set_active (toUnderlying(pp->colorappearance.curveMode));
@@ -824,6 +837,7 @@ void ColorAppearance::read (const ProcParams* pp, const ParamsEdited* pedited)
 
         shape->setUnChanged (!pedited->colorappearance.curve);
         shapered->setUnChanged (!pedited->colorappearance.curvered);
+        shapegreen->setUnChanged (!pedited->colorappearance.curvegreen);
         shape2->setUnChanged (!pedited->colorappearance.curve2);
         shape3->setUnChanged (!pedited->colorappearance.curve3);
 
@@ -1052,6 +1066,7 @@ void ColorAppearance::autoOpenCurve  ()
 {
     shape->openIfNonlinear();
     shapered->openIfNonlinear();
+    shapegreen->openIfNonlinear();
     shape2->openIfNonlinear();
     shape3->openIfNonlinear();
 
@@ -1093,6 +1108,7 @@ void ColorAppearance::write (ProcParams* pp, ParamsEdited* pedited)
     pp->colorappearance.tonecie       = tonecie->get_active();
     pp->colorappearance.curve         = shape->getCurve ();
     pp->colorappearance.curvered      = shapered->getCurve ();
+    pp->colorappearance.curvegreen    = shapegreen->getCurve ();
     pp->colorappearance.curve2        = shape2->getCurve ();
     pp->colorappearance.curve3        = shape3->getCurve ();
     pp->colorappearance.tempout       = tempout->getValue ();
@@ -1168,6 +1184,7 @@ void ColorAppearance::write (ProcParams* pp, ParamsEdited* pedited)
         pedited->colorappearance.tonecie       = !tonecie->get_inconsistent();
         pedited->colorappearance.curve         = !shape->isUnChanged ();
         pedited->colorappearance.curvered      = !shapered->isUnChanged ();
+        pedited->colorappearance.curvegreen    = !shapegreen->isUnChanged ();
         pedited->colorappearance.curve2        = !shape2->isUnChanged ();
         pedited->colorappearance.curve3        = !shape3->isUnChanged ();
         pedited->colorappearance.curveMode     = toneCurveMode->get_active_row_number() != 2;
@@ -1466,6 +1483,8 @@ void ColorAppearance::curveChanged (CurveEditor* ce)
             listener->panelChanged (EvCATCurve1, M ("HISTORY_CUSTOMCURVE"));
         } else if (ce == shapered) {
             listener->panelChanged (EvCATCurvered, M ("HISTORY_CUSTOMCURVE"));
+        } else if (ce == shapegreen) {
+            listener->panelChanged (EvCATCurvegreen, M ("HISTORY_CUSTOMCURVE"));
         } else if (ce == shape2) {
             listener->panelChanged (EvCATCurve2, M ("HISTORY_CUSTOMCURVE"));
         } else if (ce == shape3) {
@@ -2192,6 +2211,7 @@ void ColorAppearance::setBatchMode (bool batchMode)
 
     curveEditorG->setBatchMode (batchMode);
     curveEditorGred->setBatchMode (batchMode);
+    curveEditorGgreen->setBatchMode (batchMode);
     curveEditorG2->setBatchMode (batchMode);
     curveEditorG3->setBatchMode (batchMode);
 }

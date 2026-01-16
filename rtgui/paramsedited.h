@@ -278,6 +278,7 @@ struct ImpulseDenoiseParamsEdited {
 struct ColorAppearanceParamsEdited {
     bool curve;
     bool curvered;
+    bool curvegreen;
     bool curve2;
     bool curve3;
     bool curveMode;
