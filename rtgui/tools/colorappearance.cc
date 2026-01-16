@@ -14,7 +14,8 @@
  *  GNU General Public License for more details.
  *
  *  You should have received a copy of the GNU General Public License
- *  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
+ *  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.     
+ * Jacques Desmis jdesmis@gmail.com  2012 - 2026
  */
 #include <cmath>
 
@@ -386,7 +387,7 @@ ColorAppearance::ColorAppearance () : FoldableToolPanel (this, TOOL_NAME, M ("TP
     p2VBox->pack_start (*tonecie);
     p2VBox->pack_start (*Gtk::manage (new Gtk::Separator(Gtk::ORIENTATION_HORIZONTAL)), Gtk::PACK_EXPAND_WIDGET, 4);
 
-    curveEditorGred = new CurveEditorGroup (options.lastToneCurvesDir, M ("TP_COLORAPP_CURVEEDITORRED"));
+    curveEditorGred = new CurveEditorGroup (options.lastToneCurvesDir, M ("TP_COLORAPP_BRIGHT_CUR_RED"));
     curveEditorGred->setCurveListener (this);
     curveEditorGred->setTooltip (M ("TP_COLORAPP_CURVEEDITORRED_TOOLTIP"));
     shapered = static_cast<DiagonalCurveEditor*>(curveEditorGred->addCurve(CT_Diagonal, "", nullptr));
@@ -404,11 +405,13 @@ ColorAppearance::ColorAppearance () : FoldableToolPanel (this, TOOL_NAME, M ("TP
     //hue red blue green
     colorhred = Gtk::manage (new Adjuster (M ("TP_COLORAPP_HUE_RED"), -25.0, 25.0, 0.1, 0.));
     colorhred->set_tooltip_markup (M ("TP_COLORAPP_RGB_TOOLTIP"));//I changed the location of this tooltip, placing it only on the first slider, rather than on the entire frame pRGBFrame. This improves usability.
-    pRGBVBox->pack_start ( *curveEditorGred, Gtk::PACK_SHRINK, 2);
 
     pRGBVBox->pack_start (*colorhred);
     schromared = Gtk::manage (new Adjuster (M ("TP_COLORAPP_CHROMA_S_RED"), -40.0, 20.0, 0.1, 0.));
     pRGBVBox->pack_start (*schromared);
+
+    pRGBVBox->pack_start ( *curveEditorGred, Gtk::PACK_SHRINK, 2);
+    pRGBVBox->pack_start (*Gtk::manage (new Gtk::Separator(Gtk::ORIENTATION_HORIZONTAL)), Gtk::PACK_EXPAND_WIDGET, 4);
 
     colorhgreen = Gtk::manage (new Adjuster (M ("TP_COLORAPP_HUE_GREEN"), -25.0, 25.0, 0.1, 0.));
     pRGBVBox->pack_start (*colorhgreen);
@@ -1360,7 +1363,6 @@ void ColorAppearance::catmethodChanged()
         toneCurveMode2->set_active (1);
         toneCurveMode3->set_active (0);
         shape->reset();
-        shapered->reset();
         shape2->reset();
         shape3->reset();
         gamutconn.block (true);

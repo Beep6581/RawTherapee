@@ -1164,7 +1164,8 @@ void ImProcFunctions::ciecam_02float(CieImage* ncie, float adap, int pW, int pwb
                         float Qold = Qpro;
                         const Brightcurve& userColCurveB1 = static_cast<const Brightcurve&>(customColCurve1);
                         userColCurveB1.Apply(Qq);
-                        Qq = Qq / coefQ;
+                        float weakeningbrighred = 0.3f;
+                        Qq = weakeningbrighred * Qq / coefQ;
                         Qpro = 0.2f * (Qq - Qold) + Qold;
                     }
 
