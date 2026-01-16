@@ -514,7 +514,7 @@ void ImProcFunctions::firstAnalysis(const Imagefloat* const original, const Proc
 }
 
 
-// Copyright (c) 2012 Jacques Desmis <jdesmis@gmail.com>
+// Copyright (c) 2012 - 2026 Jacques Desmis <jdesmis@gmail.com>
 
 void ImProcFunctions::ciecam_02float(CieImage* ncie, float adap, int pW, int pwb, LabImage* lab, const ProcParams* params,
                                      const ColorAppearance & customColCurve1, const ColorAppearance & customColCurvered, const ColorAppearance & customColCurvegreen, const ColorAppearance & customColCurveblue, const ColorAppearance & customColCurve2, const ColorAppearance & customColCurve3,

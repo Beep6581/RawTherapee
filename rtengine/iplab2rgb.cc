@@ -568,7 +568,7 @@ void ImProcFunctions::gamutcompr( Imagefloat *src, Imagefloat *dst, int beginend
         beta[2][2] = 0.7845090;
 
     Matrix out = {};
-    if(beginend == 0) {//at the beginning of the process
+    if (beginend == 0) {//at the beginning of the process
         if (params->cg.colorspace == "rec2020") {
             out = Rec2020;
         } else if  (params->cg.colorspace == "prophoto") {
@@ -586,7 +586,7 @@ void ImProcFunctions::gamutcompr( Imagefloat *src, Imagefloat *dst, int beginend
         } else {
             out = acesp1;// Should never happen, but just in case.
         }
-    } else if(beginend == 1) {//at the end of the process. Only 4 cases, which are the cases, at this stage, actually possible 
+    } else if (beginend == 1) {//at the end of the process. Only 4 cases, which are the cases, at this stage, actually possible 
         if(params->icm.wgamut == ColorManagementParams::Wwgamut::REC2020) {
             out = Rec2020;
         } else if(params->icm.wgamut == ColorManagementParams::Wwgamut::ADOBE) {
@@ -636,7 +636,7 @@ void ImProcFunctions::gamutcompr( Imagefloat *src, Imagefloat *dst, int beginend
     float pw = static_cast<float>(params->cg.pwr);
     bool roll = params->cg.rolloff;
     
-    if(beginend == 1) {//with GUI Icmpanel.cc
+    if (beginend == 1) {//with GUI Icmpanel.cc
         //take values from ART CTL - odt.ctl - Copyright (c) 2023 Thatcher Freeman
         //It's considerably simpler at the end of the process. We don't have (at least in theory) the problems related to data completely out of gamut (Sunset, LEDs).
         //This needs to be confirmed by testing and possibly changed.
@@ -1674,7 +1674,7 @@ void ImProcFunctions::workingtrc(int sp, Imagefloat* src, Imagefloat* dst, int c
         gammaParams[3] = 1. / slpos;
         gammaParams[5] = 0.0;
         gammaParams[6] = 0.0;
-        if(rtengine::settings->verbose) {         
+        if (rtengine::settings->verbose) {         
             printf("ga0=%f ga1=%f ga2=%f ga3=%f ga4=%f\n", gammaParams[0], gammaParams[1], gammaParams[2], gammaParams[3], gammaParams[4]);
         }
 
@@ -1845,7 +1845,7 @@ void ImProcFunctions::workingtrc(int sp, Imagefloat* src, Imagefloat* dst, int c
                 newprimxy[0] = 0.f;
                 newprimxy[1] = 0.f;
                 rotate_and_scale_primary(primaries, 1.f - inset[i], rotation[i], i , newprimxy, xyD);//xyD takes into account the default illuminant or the one chosen by the user
-                if(i == 0) {
+                if (i == 0) {
                     p[0] = newprimxy[0];
                     p[1] = newprimxy[1];
                     if(rtengine::settings->verbose) {

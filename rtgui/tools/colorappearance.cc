@@ -14,7 +14,7 @@
  *  GNU General Public License for more details.
  *
  *  You should have received a copy of the GNU General Public License
- *  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.     
+ *  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
  * Jacques Desmis jdesmis@gmail.com  2012 - 2026
  */
 #include <cmath>
@@ -495,7 +495,6 @@ ColorAppearance::ColorAppearance () : FoldableToolPanel (this, TOOL_NAME, M ("TP
     shapegreen->setLeftBarBgGradient (milestones);
     shapeblue->setBottomBarBgGradient (milestones);
     shapeblue->setLeftBarBgGradient (milestones);
-    
     shape2->setBottomBarBgGradient (milestones);
     shape2->setLeftBarBgGradient (milestones);
 
