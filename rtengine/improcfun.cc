@@ -517,7 +517,7 @@ void ImProcFunctions::firstAnalysis(const Imagefloat* const original, const Proc
 // Copyright (c) 2012 Jacques Desmis <jdesmis@gmail.com>
 
 void ImProcFunctions::ciecam_02float(CieImage* ncie, float adap, int pW, int pwb, LabImage* lab, const ProcParams* params,
-                                     const ColorAppearance & customColCurve1, const ColorAppearance & customColCurvered, const ColorAppearance & customColCurvegreen, const ColorAppearance & customColCurve2, const ColorAppearance & customColCurve3,
+                                     const ColorAppearance & customColCurve1, const ColorAppearance & customColCurvered, const ColorAppearance & customColCurvegreen, const ColorAppearance & customColCurveblue, const ColorAppearance & customColCurve2, const ColorAppearance & customColCurve3,
                                      LUTu & histLCAM, LUTu & histCCAM, LUTf & CAMBrightCurveJ, LUTf & CAMBrightCurveQ, float &mean, int Iterates, int scale, bool execsharp, float &d, float &dj, float &yb, int rtt,
                                      bool showSharpMask)
 {
@@ -769,6 +769,7 @@ void ImProcFunctions::ciecam_02float(CieImage* ncie, float adap, int pW, int pwb
         const bool t1L = hasColCurve1 && curveMode == ColorAppearanceParams::TcMode::LIGHT;
         const bool hasColCurvered = bool (customColCurvered);
         const bool hasColCurvegreen = bool (customColCurvegreen);
+        const bool hasColCurveblue = bool (customColCurveblue);
 
         const ColorAppearanceParams::TcMode curveMode2 = params->colorappearance.curveMode2;
         const bool hasColCurve2 = bool (customColCurve2);
@@ -1159,6 +1160,7 @@ void ImProcFunctions::ciecam_02float(CieImage* ncie, float adap, int pW, int pwb
                     bool jp = false;
                     bool jpred = false;
                     bool jpgreen = false;
+                    bool jpblue = false;
 
                     if ((hasColCurve1) && (curveMode == ColorAppearanceParams::TcMode::BRIGHT)) {
                         jp = true;
@@ -1236,7 +1238,21 @@ void ImProcFunctions::ciecam_02float(CieImage* ncie, float adap, int pW, int pwb
                         }
                     }
 
-                    if((hpro > 190.f && hpro <= 340)) {//blue CIECAM 
+                    if((hpro > 190.f && hpro <= 340)) {//blue CIECAM
+                        if ((hasColCurveblue)) {
+                            jpblue = true;
+                            float Qq = Qpro * coefQ;
+                            float Qold = Qpro;
+                            const Brightcurve& userColCurveBblue = static_cast<const Brightcurve&>(customColCurveblue);
+                            userColCurveBblue.Apply(Qq);
+
+                            Qq = Qq / coefQ;
+                            Qpro = 0.2f * (Qq - Qold) + Qold;
+                        }
+                        if (jpblue) {
+                            Jpro = SQR((10.f * Qpro) / wh);
+                        }
+                    
                         hpro = hpro + 0.555f * hueblue;//Rotation Blue
                         spro = spro * (1.f + (schrblue / 100.f));//change Blue saturation 
                         float Cp = (spro * spro * Qpro) / (1000000.f);

@@ -383,6 +383,7 @@ void ParamsEdited::set(bool v)
     colorappearance.curve      = v;
     colorappearance.curvered   = v;
     colorappearance.curvegreen   = v;
+    colorappearance.curveblue   = v;
     colorappearance.curve2     = v;
     colorappearance.curve3     = v;
     colorappearance.curveMode  = v;
@@ -1160,6 +1161,7 @@ void ParamsEdited::initFrom(const std::vector<rtengine::procparams::ProcParams>&
         colorappearance.curve = colorappearance.curve && p.colorappearance.curve == other.colorappearance.curve;
         colorappearance.curvered = colorappearance.curvered && p.colorappearance.curvered == other.colorappearance.curvered;
         colorappearance.curvegreen = colorappearance.curvegreen && p.colorappearance.curvegreen == other.colorappearance.curvegreen;
+        colorappearance.curveblue = colorappearance.curveblue && p.colorappearance.curveblue == other.colorappearance.curveblue;
         colorappearance.curve3 = colorappearance.curve3 && p.colorappearance.curve3 == other.colorappearance.curve3;
         colorappearance.curve2 = colorappearance.curve2 && p.colorappearance.curve2 == other.colorappearance.curve2;
         colorappearance.curveMode = colorappearance.curveMode && p.colorappearance.curveMode == other.colorappearance.curveMode;
@@ -3359,6 +3361,10 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
 
     if (colorappearance.curvegreen) {
         toEdit.colorappearance.curvegreen = mods.colorappearance.curvegreen;
+    }
+
+    if (colorappearance.curveblue) {
+        toEdit.colorappearance.curveblue = mods.colorappearance.curveblue;
     }
 
     if (colorappearance.curve2) {

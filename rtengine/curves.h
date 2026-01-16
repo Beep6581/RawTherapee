@@ -392,6 +392,7 @@ public:
         const std::vector<double>& curvePoints,
         const std::vector<double>& curvePointsred,
         const std::vector<double>& curvePointsgreen,
+        const std::vector<double>& curvePointsblue,
         const std::vector<double>& curvePoints2,
         const std::vector<double>& curvePoints3,
         const LUTu & histogram, LUTu & outBeforeCCurveHistogram,
@@ -399,6 +400,7 @@ public:
         ColorAppearance & outColCurve1,
         ColorAppearance & outColCurvered,
         ColorAppearance & outColCurvegreen,
+        ColorAppearance & outColCurveblue,
         ColorAppearance & outColCurve2,
         ColorAppearance & outColCurve3,
         int skip = 1);

@@ -227,10 +227,10 @@ void Curve::getControlPoint(int cpNum, double &x, double &y) const
 const double CurveFactory::sRGBGamma = 2.2;
 const double CurveFactory::sRGBGammaCurve = 2.4;
 
-void CurveFactory::curveLightBrightColor(const std::vector<double>& curvePoints1, const std::vector<double>& curvePointsred , const std::vector<double>& curvePointsgreen, const std::vector<double>& curvePoints2, const std::vector<double>& curvePoints3,
+void CurveFactory::curveLightBrightColor(const std::vector<double>& curvePoints1, const std::vector<double>& curvePointsred , const std::vector<double>& curvePointsgreen, const std::vector<double>& curvePointsblue, const std::vector<double>& curvePoints2, const std::vector<double>& curvePoints3,
         const LUTu & histogram, LUTu & outBeforeCCurveHistogram,//for Luminance
         const LUTu & histogramC, LUTu & outBeforeCCurveHistogramC,//for chroma
-        ColorAppearance & customColCurve1, ColorAppearance & customColCurvered, ColorAppearance & customColCurvegreen, ColorAppearance & customColCurve2, ColorAppearance & customColCurve3, int skip)
+        ColorAppearance & customColCurve1, ColorAppearance & customColCurvered, ColorAppearance & customColCurvegreen, ColorAppearance & customColCurveblue, ColorAppearance & customColCurve2, ColorAppearance & customColCurve3, int skip)
 {
 
     outBeforeCCurveHistogram.clear();
@@ -300,6 +300,17 @@ void CurveFactory::curveLightBrightColor(const std::vector<double>& curvePoints1
 
         if (!tcurve.isIdentity()) {
             customColCurvegreen.Set(tcurve);
+        }
+    }
+
+    customColCurveblue.Reset();
+
+    if (!curvePointsblue.empty() && curvePointsblue[0] > DCT_Linear && curvePointsblue[0] < DCT_Unchanged) {
+        DiagonalCurve tcurve(curvePointsblue, CURVES_MIN_POLY_POINTS / skip);
+
+
+        if (!tcurve.isIdentity()) {
+            customColCurveblue.Set(tcurve);
         }
     }
 

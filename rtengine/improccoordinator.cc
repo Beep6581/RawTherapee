@@ -2454,9 +2454,9 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                         }
                 }
 
-                CurveFactory::curveLightBrightColor(params->colorappearance.curve, params->colorappearance.curvered, params->colorappearance.curvegreen, params->colorappearance.curve2, params->colorappearance.curve3,
+                CurveFactory::curveLightBrightColor(params->colorappearance.curve, params->colorappearance.curvered, params->colorappearance.curvegreen, params->colorappearance.curveblue, params->colorappearance.curve2, params->colorappearance.curve3,
                                                     lhist16CAM, histLCAM, lhist16CCAM, histCCAM,
-                                                    customColCurve1, customColCurvered, customColCurvegreen, customColCurve2, customColCurve3, 1);
+                                                    customColCurve1, customColCurvered, customColCurvegreen, customColCurveblue, customColCurve2, customColCurve3, 1);
 
                 const FramesMetaData* metaData = imgsrc->getMetaData();
                 float fnum = metaData->getFNumber();          // F number
@@ -2500,7 +2500,7 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                 CAMBrightCurveJ.dirty = true;
                 CAMBrightCurveQ.dirty = true;
 
-                ipf.ciecam_02float(ncie, float (adap), pW, 2, nprevl, params.get(), customColCurve1, customColCurvered, customColCurvegreen, customColCurve2, customColCurve3, histLCAM, histCCAM, CAMBrightCurveJ, CAMBrightCurveQ, CAMMean, 0, scale, execsharp, d, dj, yb, 1);
+                ipf.ciecam_02float(ncie, float (adap), pW, 2, nprevl, params.get(), customColCurve1, customColCurvered, customColCurvegreen, customColCurveblue, customColCurve2, customColCurve3, histLCAM, histCCAM, CAMBrightCurveJ, CAMBrightCurveQ, CAMMean, 0, scale, execsharp, d, dj, yb, 1);
 
                 //call listener
                 if ((params->colorappearance.autodegree || params->colorappearance.autodegreeout) && acListener && params->colorappearance.enabled) {

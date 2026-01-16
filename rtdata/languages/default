@@ -1386,6 +1386,9 @@ HISTORY_MSG_BLURWAV;Blur luminance
 HISTORY_MSG_BLUWAV;Attenuation response
 HISTORY_MSG_CATCAT;CAL - Settings - Mode
 HISTORY_MSG_CATCOMPLEX;CAL - Settings - Complexity
+HISTORY_MSG_CATCURVERED;CAL - IA - Brightness Red
+HISTORY_MSG_CATCURVEGREEN;CAL - IA - Brightness Green
+HISTORY_MSG_CATCURVEBLUE;CAL - IA - Brightness Blue
 HISTORY_MSG_CATHUERED;CAL - IA - Hue Red
 HISTORY_MSG_CATHUEGREEN;CAL - IA - Hue Green
 HISTORY_MSG_CATHUEBLUE;CAL - IA - Hue Blue
@@ -2502,6 +2505,7 @@ TP_COLORAPP_BRIGHT;Brightness (Q)
 TP_COLORAPP_BRIGHT_TOOLTIP;Brightness in CIECAM is the amount of perceived light emanating from a stimulus. It differs from L*a*b* and RGB brightness.
 TP_COLORAPP_BRIGHT_CUR_RED;Brightness - red
 TP_COLORAPP_BRIGHT_CUR_GREEN;Brightness - green
+TP_COLORAPP_BRIGHT_CUR_BLUE;Brightness - blue
 TP_COLORAPP_CAT02ADAPTATION_TOOLTIP;When setting manually, values above 65 are recommended.
 TP_COLORAPP_CATCLASSIC;Classic
 TP_COLORAPP_CATMET_TOOLTIP;Classic - traditional CIECAM operation. The chromatic adaptation transforms are applied separately on 'Scene conditions' and basic illuminant on the one hand, and on basic illuminant and 'Viewing conditions' on the other.\n\nSymmetric – The chromatic adaptation is based on the white balance. The 'Scene conditions', 'Image adjustments' and 'Viewing conditions' settings are neutralized.\n\nMixed – Same as the 'Classic' option but in this case, the chromatic adaptation is based on the white balance.

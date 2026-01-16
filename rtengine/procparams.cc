@@ -1384,6 +1384,9 @@ ColorAppearanceParams::ColorAppearanceParams() :
     curvegreen{
        DCT_Linear
     },
+    curveblue{
+       DCT_Linear
+    },
     curve2{
        DCT_Linear
     },
@@ -1446,6 +1449,7 @@ bool ColorAppearanceParams::operator ==(const ColorAppearanceParams& other) cons
         && curve == other.curve
         && curvered == other.curvered
         && curvegreen == other.curvegreen
+        && curveblue == other.curveblue
         && curve2 == other.curve2
         && curve3 == other.curve3
         && curveMode == other.curveMode
@@ -4021,6 +4025,7 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
         saveToKeyfile(!pedited || pedited->colorappearance.curve, "Color appearance", "Curve", colorappearance.curve, keyFile);
         saveToKeyfile(!pedited || pedited->colorappearance.curvered, "Color appearance", "Curvered", colorappearance.curvered, keyFile);
         saveToKeyfile(!pedited || pedited->colorappearance.curvegreen, "Color appearance", "Curvegreen", colorappearance.curvegreen, keyFile);
+        saveToKeyfile(!pedited || pedited->colorappearance.curveblue, "Color appearance", "Curveblue", colorappearance.curveblue, keyFile);
         saveToKeyfile(!pedited || pedited->colorappearance.curve2, "Color appearance", "Curve2", colorappearance.curve2, keyFile);
         saveToKeyfile(!pedited || pedited->colorappearance.curve3, "Color appearance", "Curve3", colorappearance.curve3, keyFile);
 
@@ -5448,6 +5453,7 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
                 assignFromKeyfile(keyFile, "Color appearance", "Curve", colorappearance.curve, pedited->colorappearance.curve);
                 assignFromKeyfile(keyFile, "Color appearance", "Curvered", colorappearance.curvered, pedited->colorappearance.curvered);
                 assignFromKeyfile(keyFile, "Color appearance", "Curvegreen", colorappearance.curvegreen, pedited->colorappearance.curvegreen);
+                assignFromKeyfile(keyFile, "Color appearance", "Curveblue", colorappearance.curveblue, pedited->colorappearance.curveblue);
                 assignFromKeyfile(keyFile, "Color appearance", "Curve2", colorappearance.curve2, pedited->colorappearance.curve2);
                 assignFromKeyfile(keyFile, "Color appearance", "Curve3", colorappearance.curve3, pedited->colorappearance.curve3);
             }

@@ -1885,6 +1885,7 @@ private:
             params.colorappearance.curve,
             params.colorappearance.curvered,
             params.colorappearance.curvegreen,
+            params.colorappearance.curveblue,
             params.colorappearance.curve2,
             params.colorappearance.curve3,
             hist16, dummy,
@@ -1892,6 +1893,7 @@ private:
             customColCurve1,
             customColCurvered,
             customColCurvegreen,
+            customColCurveblue,
             customColCurve2,
             customColCurve3,
             1);
@@ -1920,7 +1922,7 @@ private:
             float CAMMean = NAN;
 
             float d, dj, yb;
-            ipf.ciecam_02float(cieView, float (adap), 1, 2, labView, &params, customColCurve1, customColCurvered, customColCurvegreen, customColCurve2, customColCurve3, dummy, dummy, CAMBrightCurveJ, CAMBrightCurveQ, CAMMean, 0, 1, true, d, dj, yb, 1);
+            ipf.ciecam_02float(cieView, float (adap), 1, 2, labView, &params, customColCurve1, customColCurvered, customColCurvegreen, customColCurveblue, customColCurve2, customColCurve3, dummy, dummy, CAMBrightCurveJ, CAMBrightCurveQ, CAMMean, 0, 1, true, d, dj, yb, 1);
         }
 
         delete cieView;
@@ -2403,7 +2405,7 @@ private:
     ToneCurve customToneCurve1, customToneCurve2;
     ColorGradientCurve ctColorCurve;
     OpacityCurve ctOpacityCurve;
-    ColorAppearance customColCurve1, customColCurvered, customColCurvegreen, customColCurve2, customColCurve3 ;
+    ColorAppearance customColCurve1, customColCurvered, customColCurvegreen, customColCurveblue, customColCurve2, customColCurve3 ;
     ToneCurve customToneCurvebw1;
     ToneCurve customToneCurvebw2;
 
