@@ -1187,7 +1187,9 @@ void ImProcFunctions::ciecam_02float(CieImage* ncie, float adap, int pW, int pwb
                         Jpro = SQR((10.f * Qpro) / wh);
                     }
                     //Red Green Blue variations
-                    constexpr float attenuation_hue = 0.555f;
+                    //I haven't addressed the transitions or spillovers during other hue modifications, to keep things simple... The effects are marginal and minor.
+                    //It's possible to set a Hue equalizer for each color range (Red, Green, Blue), which is more purist but complicates the interface and usage.
+                    constexpr float attenuation_hue = 0.555f;//Hue reduction of 100/180. I find the changes too significant. It's just a convention.
                     if((hpro > 340.f && hpro <= 360.f) || (hpro > 0.f && hpro <= 100.f)) {//Red CIECAM
                         if ((hasColCurvered)) {
                             jpred = true;

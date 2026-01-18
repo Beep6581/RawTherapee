@@ -2929,7 +2929,7 @@ TP_ICM_BPC;Black Point Compensation
 TP_ICM_BW;Black and White
 TP_ICM_COMPRGAMUT;Gamut Compression
 TP_ICM_COMPRESS;Target Gamut
-TP_ICM_COMPRESS_TOOLTIP; At the end of the process, this allows you to compress the data to fit, for example, into the output profile. If 'Colorappearance and Lighting' is enabled, this will be taken into account.\n\n This output gamut compression is much simpler than at the beginning of the process, hence the simplified graphical interface. Because unless the user has exaggerated the settings, the gamut is already close to the 'working profile'.
+TP_ICM_COMPRESS_TOOLTIP; Placed at the end of the processing pipeline, this tool allows you to compress the data to fit into the output profile, for example. If Color Appearance & Lighting is enabled, it will take the compression into account.\n\n This output gamut compression is much simpler than at the beginning of the processing pipeline because unless the user has exaggerated the settings, the gamut will already be close to the Working Profile, hence the simplified graphical interface.
 TP_ICM_COMPRESSGAMUT_NONE;None
 TP_ICM_COMPRESSGAMUT_REC2020;Rec2020
 TP_ICM_COMPRESSGAMUT_ADOBE;Adobe
@@ -2979,7 +2979,7 @@ TP_ICM_TONECURVE_TOOLTIP;Employ the embedded DCP tone curve. The setting is only
 TP_ICM_TRCFRAME;Abstract Profile
 TP_ICM_TRCFRAME_TOOLTIP;Also known as 'synthetic' or 'virtual' profiles, which are applied at the end of the processing pipeline (prior to CIECAM) allowing you to create custom image effects.\nYou can make changes to the:\n 'Tone response curve', which modifies the tones of the image.\n 'Illuminant', which allows you to change the profile primaries to adapt them to the shooting conditions.\n 'Destination primaries', which allows you to change the destination primaries with three main uses - channel mixer, restore image color (saturation), and calibration.\nNote: Abstract profiles take into account the built-in working profiles without modifying them. They do not work with custom working profiles.
 TP_ICM_TRC_MAX;RGB Max=%1
-TP_ICM_TRC_MAX_TOOLTIP;Provides information on exceeding RGB values. This does not mean we are not out of gamut, but we certainly are if the value is greater than 1. This check is performed at the end of 'Abstract Profile' and takes into account all parameters. One way to limit this exceeding is to use 'Attenuation threshold'.
+TP_ICM_TRC_MAX_TOOLTIP;Provides information on out-of-limit RGB values. Values greater than 1 clearly indicate that we are out of gamut whereas for values less than 1, we cannot say whether the image is within gamut or not. This check is performed at the end of the Abstract Profile and takes into account all parameters. The ‘Attenuation threshold’ slider can be used to limit the RGB values.
 TP_ICM_TRC_TOOLTIP;Allows you to change the default sRGB 'Tone response curve' in RT (g=2.4 s=12.92).\nThis TRC modifies the tones of the image. The RGB and Lab values, histogram and output (screen, TIF, JPG) are changed:\n-Gamma acts mainly on light tones -Slope acts mainly on dark tones.\nYou can choose any pair of 'gamma and slope' (values >1) and the algorithm will ensure that there is continuity between the linear and parabolic parts of the curve.\nA selection other than 'none' activates the 'Illuminant' and 'Destination primaries' menus.
 TP_ICM_WAVFRAME;Contrast Enhancement
 TP_ICM_WAVREFI;Refinement
