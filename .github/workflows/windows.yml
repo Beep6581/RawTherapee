@@ -96,7 +96,7 @@ jobs:
       - name: Include Lensfun
         run: |
           echo "Updating Lensfun database."
-          lensfun-update-data
+          PYTHONPATH=/${{env.MSYS2_ENV_PREFIX}}/lib/site-packages lensfun-update-data  # Workaround for lensfun path mismatch
           echo "Creating Lensfun directory in the build directory."
           mkdir -p 'build/${{matrix.build_type}}/share'
           echo "Copying Lensfun database to the build directory."
