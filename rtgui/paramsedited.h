@@ -1450,6 +1450,7 @@ struct ColorManagementParamsEdited {
     bool offstrc;
     bool residtrc;
     bool wgampower;
+    bool wgamgain;
     bool pyrwavtrc;
     bool opacityCurveWLI;
 

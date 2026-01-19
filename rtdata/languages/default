@@ -2927,8 +2927,9 @@ TP_ICM_APPLYLOOKTABLE;Look table
 TP_ICM_APPLYLOOKTABLE_TOOLTIP;Employ the embedded DCP look table. The setting is only available if the selected DCP has one.
 TP_ICM_BPC;Black Point Compensation
 TP_ICM_BW;Black and White
-TP_ICM_COMPRGAMUT;Gamut Compression
-TP_ICM_COMPRESS;Target Gamut
+TP_ICM_COMP_GAIN;Gain (Ev)
+TP_ICM_COMPRGAMUT;Gamut Compression & Final Gain
+TP_ICM_COMPRESS;Target Gamut 
 TP_ICM_COMPRESS_TOOLTIP; Placed at the end of the processing pipeline, this tool allows you to compress the data to fit into the output profile, for example. If Color Appearance & Lighting is enabled, it will take the compression into account.\n\n This output gamut compression is much simpler than at the beginning of the processing pipeline because unless the user has exaggerated the settings, the gamut will already be close to the Working Profile, hence the simplified graphical interface.
 TP_ICM_COMPRESSGAMUT_NONE;None
 TP_ICM_COMPRESSGAMUT_REC2020;Rec2020

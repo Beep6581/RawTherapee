@@ -2394,6 +2394,7 @@ ColorManagementParams::ColorManagementParams() :
     offstrc(1.),
     residtrc(0.),
     wgampower(1.),
+    wgamgain(0.),
     pyrwavtrc(2),
     opacityCurveWLI{
         static_cast<double>(FCT_MinMaxCPoints),
@@ -2477,6 +2478,7 @@ bool ColorManagementParams::operator ==(const ColorManagementParams& other) cons
         && offstrc == other.offstrc
         && pyrwavtrc == other.pyrwavtrc
         && wgampower == other.wgampower
+        && wgamgain == other.wgamgain
         && residtrc == other.residtrc
         && opacityCurveWLI == other.opacityCurveWLI
         && wsmoothcie == other.wsmoothcie
@@ -4388,6 +4390,7 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
         saveToKeyfile(!pedited || pedited->icm.offstrc, "Color Management", "Offstrc", icm.offstrc, keyFile);
         saveToKeyfile(!pedited || pedited->icm.residtrc, "Color Management", "Residtrc", icm.residtrc, keyFile);
         saveToKeyfile(!pedited || pedited->icm.wgampower, "Color Management", "Wgampower", icm.wgampower, keyFile);
+        saveToKeyfile(!pedited || pedited->icm.wgamgain, "Color Management", "Wgamgain", icm.wgamgain, keyFile);
         saveToKeyfile(!pedited || pedited->icm.pyrwavtrc, "Color Management", "Pyrwavtrc", icm.pyrwavtrc, keyFile);
         saveToKeyfile(!pedited || pedited->icm.wsmoothcie, "Color Management", "Wsmoothcie", icm.wsmoothcie, keyFile);
         saveToKeyfile(!pedited || pedited->icm.wsmoothciesli, "Color Management", "Wsmoothciesli", icm.wsmoothciesli, keyFile);
@@ -6041,7 +6044,8 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
                 }
             }
             assignFromKeyfile(keyFile, "Color Management", "Wgampower", icm.wgampower, pedited->icm.wgampower);
-           
+            assignFromKeyfile(keyFile, "Color Management", "Wgamgain", icm.wgamgain, pedited->icm.wgamgain);
+
             assignFromKeyfile(keyFile, "Color Management", "Sigmatrc", icm.sigmatrc, pedited->icm.sigmatrc);
             assignFromKeyfile(keyFile, "Color Management", "Offstrc", icm.offstrc, pedited->icm.offstrc);
             assignFromKeyfile(keyFile, "Color Management", "Pyrwavtrc", icm.pyrwavtrc, pedited->icm.pyrwavtrc);

@@ -97,6 +97,7 @@ ICMPanel::ICMPanel() : FoldableToolPanel(this, TOOL_NAME, M("TP_ICM_LABEL")), iu
     EvICMwavExp = m->newEvent(LUMINANCECURVE, "HISTORY_MSG_ICM_WAVEXP");
     EvICMwgamut = m->newEvent(LUMINANCECURVE, "HISTORY_MSG_ICM_WGAMUT");
     EvICMwgampower = m->newEvent(LUMINANCECURVE, "HISTORY_MSG_ICM_WGAMUTPOWER");
+    EvICMwgamgain = m->newEvent(LUMINANCECURVE, "HISTORY_MSG_ICM_WGAMUTGAIN");
     auto& options = App::get().mut_options();
 
     isBatchMode = lastToneCurve = lastApplyLookTable = lastApplyBaselineExposureOffset = lastApplyHueSatMap = false;
@@ -297,6 +298,8 @@ ICMPanel::ICMPanel() : FoldableToolPanel(this, TOOL_NAME, M("TP_ICM_LABEL")), iu
     Gtk::Box* wgamVBox = Gtk::manage(new Gtk::Box(Gtk::ORIENTATION_VERTICAL));
     wgampower = Gtk::manage(new Adjuster(M("TP_ICM_COMP_POWER"), 0.70, 2.0, 0.01, 1.));
     Gtk::Box* wgam2VBox = Gtk::manage(new Gtk::Box(Gtk::ORIENTATION_VERTICAL));
+    wgamgain = Gtk::manage(new Adjuster(M("TP_ICM_COMP_GAIN"), -2.0, 2.0, 0.05, 0.));
+    wgam2VBox->pack_start(*wgamgain, Gtk::PACK_EXPAND_WIDGET);
 
     wgamutBox = Gtk::manage(new Gtk::Box());
     wgamutlab = Gtk::manage(new Gtk::Label(M("TP_ICM_COMPRESS") + ":"));
@@ -316,7 +319,7 @@ ICMPanel::ICMPanel() : FoldableToolPanel(this, TOOL_NAME, M("TP_ICM_LABEL")), iu
 
     wgamut->set_active(0);
     wgamut->set_tooltip_text(M("TP_ICM_COMPRESS_TOOLTIP"));
-
+    wgampower->set_tooltip_text(M("TP_COMPRESSGAMUT_POWER_TOOLTIP"));
     //local contrast with wavelets
     opacityCurveEditorWLI = std::unique_ptr<CurveEditorGroup>(new CurveEditorGroup(options.lastIcmCurvesDir, M("TP_ICM_OPACITYWLI")));
     opacityCurveEditorWLI->setCurveListener(this);
@@ -598,6 +601,7 @@ ICMPanel::ICMPanel() : FoldableToolPanel(this, TOOL_NAME, M("TP_ICM_LABEL")), iu
     
     trcWavFBox->pack_start(*gamutcomp, Gtk::PACK_EXPAND_WIDGET);
     wgampower->setAdjusterListener(this);
+    wgamgain->setAdjusterListener(this);
 
     wavExp->add(*trcWavFBox, false);
     wavExp->setLevel (2);
@@ -1205,6 +1209,7 @@ void ICMPanel::read(const ProcParams* pp, const ParamsEdited* pedited)
     residtrc->setValue(pp->icm.residtrc);
     pyrwavtrc->setValue(pp->icm.pyrwavtrc);
     wgampower->setValue(pp->icm.wgampower);
+    wgamgain->setValue(pp->icm.wgamgain);
 
     redx->setValue(pp->icm.redx);
     redy->setValue(pp->icm.redy);
@@ -1294,6 +1299,7 @@ void ICMPanel::read(const ProcParams* pp, const ParamsEdited* pedited)
         offstrc->setEditedState(pedited->icm.offstrc  ? Edited : UnEdited);
         residtrc->setEditedState(pedited->icm.residtrc  ? Edited : UnEdited);
         wgampower->setEditedState(pedited->icm.wgampower ? Edited : UnEdited);
+        wgamgain->setEditedState(pedited->icm.wgamgain ? Edited : UnEdited);
         pyrwavtrc->setEditedState(pedited->icm.pyrwavtrc  ? Edited : UnEdited);
         redx->setEditedState(pedited->icm.redx  ? Edited : UnEdited);
         redy->setEditedState(pedited->icm.redy  ? Edited : UnEdited);
@@ -1713,6 +1719,7 @@ void ICMPanel::write(ProcParams* pp, ParamsEdited* pedited)
     pp->icm.sigmatrc =  sigmatrc->getValue();
     pp->icm.offstrc =  offstrc->getValue();
     pp->icm.wgampower =  wgampower->getValue();
+    pp->icm.wgamgain =  wgamgain->getValue();
     pp->icm.residtrc =  residtrc->getValue();
     pp->icm.pyrwavtrc =  pyrwavtrc->getIntValue();
     pp->icm.redx =  redx->getValue();
@@ -1761,6 +1768,7 @@ void ICMPanel::write(ProcParams* pp, ParamsEdited* pedited)
         pedited->icm.wmidtcie = wmidtcie->getEditedState();
         pedited->icm.wsmoothciesli = wsmoothciesli->getEditedState();
         pedited->icm.wgampower = wgampower->getEditedState();
+        pedited->icm.wgamgain = wgamgain->getEditedState();
         pedited->icm.sigmatrc = sigmatrc->getEditedState();
         pedited->icm.offstrc = offstrc->getEditedState();
         pedited->icm.residtrc = residtrc->getEditedState();
@@ -1799,6 +1807,7 @@ void ICMPanel::setDefaults(const ProcParams* defParams, const ParamsEdited* pedi
     wmidtcie->setDefault(defParams->icm.wmidtcie);
     wsmoothciesli->setDefault(defParams->icm.wsmoothciesli);
     wgampower->setDefault(defParams->icm.wgampower);
+    wgamgain->setDefault(defParams->icm.wgamgain);
     sigmatrc->setDefault(defParams->icm.sigmatrc);
     offstrc->setDefault(defParams->icm.offstrc);
     residtrc->setDefault(defParams->icm.residtrc);
@@ -1834,6 +1843,7 @@ void ICMPanel::setDefaults(const ProcParams* defParams, const ParamsEdited* pedi
         wmidtcie->setDefaultEditedState(pedited->icm.wmidtcie ? Edited : UnEdited);
         wsmoothciesli->setDefaultEditedState(pedited->icm.wsmoothciesli ? Edited : UnEdited);
         wgampower->setDefaultEditedState(pedited->icm.wgampower ? Edited : UnEdited);
+        wgamgain->setDefaultEditedState(pedited->icm.wgamgain ? Edited : UnEdited);
         sigmatrc->setDefaultEditedState(pedited->icm.sigmatrc ? Edited : UnEdited);
         offstrc->setDefaultEditedState(pedited->icm.offstrc ? Edited : UnEdited);
         residtrc->setDefaultEditedState(pedited->icm.residtrc ? Edited : UnEdited);
@@ -1868,6 +1878,7 @@ void ICMPanel::setDefaults(const ProcParams* defParams, const ParamsEdited* pedi
         offstrc->setDefaultEditedState(Irrelevant);
         residtrc->setDefaultEditedState(Irrelevant);
         wgampower->setDefaultEditedState(Irrelevant);
+        wgamgain->setDefaultEditedState(Irrelevant);
         pyrwavtrc->setDefaultEditedState(Irrelevant);
         redx->setDefaultEditedState(Irrelevant);
         redy->setDefaultEditedState(Irrelevant);
@@ -1920,6 +1931,8 @@ void ICMPanel::adjusterChanged(Adjuster* a, double newval)
             listener->panelChanged(EvICMresidtrc, costr2);
         } else if (a == wgampower) {
             listener->panelChanged(EvICMwgampower, costr2);
+        } else if (a == wgamgain) {
+            listener->panelChanged(EvICMwgamgain, costr2);
         } else if (a == pyrwavtrc) {
             listener->panelChanged(EvICMpyrwavtrc, costr2);
         } else if (a == redx) {
@@ -3127,6 +3140,7 @@ void ICMPanel::setBatchMode(bool batchMode)
     offstrc->showEditedCB();
     residtrc->showEditedCB();
     wgampower->showEditedCB();
+    wgamgain->showEditedCB();
     pyrwavtrc->showEditedCB();
     redx->showEditedCB();
     redy->showEditedCB();

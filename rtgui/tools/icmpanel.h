@@ -175,6 +175,7 @@ private:
     rtengine::ProcEvent EvICMwavExp;
     rtengine::ProcEvent EvICMwgamut;
     rtengine::ProcEvent EvICMwgampower;
+    rtengine::ProcEvent EvICMwgamgain;
 
     LabGrid *labgridcie;
     IdleRegister idle_register;
@@ -223,6 +224,7 @@ private:
     MyComboBoxText* wgamut;
     sigc::connection wgamutconn;
     Adjuster* wgampower;
+    Adjuster* wgamgain;
 
     MyComboBoxText* will;
     sigc::connection willconn;

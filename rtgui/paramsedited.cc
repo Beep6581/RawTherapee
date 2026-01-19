@@ -627,6 +627,7 @@ void ParamsEdited::set(bool v)
     icm.offstrc = v;
     icm.residtrc = v;
     icm.wgampower = v;
+    icm.wgamgain = v;
     icm.pyrwavtrc = v;
     icm.opacityCurveWLI = v;
     icm.wapsat = v;
@@ -2272,6 +2273,7 @@ void ParamsEdited::initFrom(const std::vector<rtengine::procparams::ProcParams>&
         icm.offstrc = icm.offstrc && p.icm.offstrc == other.icm.offstrc;
         icm.residtrc = icm.residtrc && p.icm.residtrc == other.icm.residtrc;
         icm.wgampower = icm.wgampower && p.icm.wgampower == other.icm.wgampower;
+        icm.wgamgain = icm.wgamgain && p.icm.wgamgain == other.icm.wgamgain;
         icm.pyrwavtrc = icm.pyrwavtrc && p.icm.pyrwavtrc == other.icm.pyrwavtrc;
         icm.opacityCurveWLI = icm.opacityCurveWLI && p.icm.opacityCurveWLI == other.icm.opacityCurveWLI;
         icm.wsmoothcie = icm.wsmoothcie && p.icm.wsmoothcie == other.icm.wsmoothcie;
@@ -7567,6 +7569,10 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
 
     if (icm.wgampower) {
         toEdit.icm.wgampower = mods.icm.wgampower;
+    }
+
+    if (icm.wgamgain) {
+        toEdit.icm.wgamgain = mods.icm.wgamgain;
     }
 
     if (icm.residtrc) {

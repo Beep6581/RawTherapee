@@ -1928,7 +1928,9 @@ private:
         delete cieView;
         cieView = nullptr;
 
-        if (params.icm.workingTRC != ColorManagementParams::WorkingTrc::NONE && params.icm.trcExp  && params.icm.wgamut != ColorManagementParams::Wwgamut::NONE) {
+        bool exec = params.icm.wgamut != ColorManagementParams::Wwgamut::NONE  || params.icm.wgamgain != 0.f;
+               
+        if (params.icm.workingTRC != ColorManagementParams::WorkingTrc::NONE && params.icm.trcExp  && exec) {
 
             //compression gamut at the end of process
             const int GW = labView->W;
@@ -1957,12 +1959,31 @@ private:
                         Color::xyz2rgb(X, Y, Z, provcomp->r(i, j), provcomp->g(i, j), provcomp->b(i, j), wp);
                     }
                 }
+
+                const float gainev = pow_F(2.f, (float) params.icm.wgamgain);
+                if (params.icm.wgamgain != 0.f) {//Final gain in Ev
+           
+#ifdef _OPENMP
+        #   pragma omp parallel for
+#endif
+                    for (int i = 0; i < GH; ++i){
+                        for (int j = 0; j < GW; ++j) {
+                            provcomp->r(i, j) *= gainev;
+                            provcomp->g(i, j) *= gainev;
+                            provcomp->b(i, j) *= gainev;
+                        }
+                    }
+                }
+
+
                 float mac = 0.f;
                 float mac0 = 0.f;
                 float mac1 = 0.f;
                 float mac2 = 0.f;
                 int beginend = 1;
-                ipf.gamutcompr(provcomp, provcomp, beginend, mac, mac0, mac1, mac2);
+                if (params.icm.wgamut != ColorManagementParams::Wwgamut::NONE) {
+                    ipf.gamutcompr(provcomp, provcomp, beginend, mac, mac0, mac1, mac2);
+                }
 
 #ifdef _OPENMP
         #   pragma omp parallel for
@@ -1976,8 +1997,6 @@ private:
                 }
                 delete provcomp;
         }
-
-
 
 
         // end tile processing...???

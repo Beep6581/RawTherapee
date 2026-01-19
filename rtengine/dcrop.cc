@@ -1784,7 +1784,24 @@ void Crop::update(int todo)
                 
                 parent->ipf.toneEqualizer(tmpImage1.get(), params, prof, skip, false);
             }
-                
+            /*
+                const float gainev = pow_F(2.f, (float) params.icm.wgamgain);
+            
+                for (int i = 0; i < GH; ++i){
+                    for (int j = 0; j < GW; ++j) {
+                        float r = tmpImage1->r(i, j);
+                        float g = tmpImage1->g(i, j);
+                        float b = tmpImage1->b(i, j);
+                        r *= gainev;
+                        g *= gainev;
+                        b *= gainev;
+                        tmpImage1->r(i, j) = r;
+                        tmpImage1->g(i, j) = g;
+                        tmpImage1->b(i, j) = b;
+                        
+                    }
+                }
+          */
             parent->ipf.rgb2lab(*tmpImage1, *labnCrop, params.icm.workingProfile);
             //labnCrop and provis
             if (provis) {
@@ -1841,8 +1858,9 @@ void Crop::update(int todo)
 
             cieCrop = nullptr;
         }
-                
-        if (params.icm.workingTRC != ColorManagementParams::WorkingTrc::NONE && params.icm.trcExp  && params.icm.wgamut != ColorManagementParams::Wwgamut::NONE) {
+        bool exec = params.icm.wgamut != ColorManagementParams::Wwgamut::NONE  || params.icm.wgamgain != 0.f;
+               
+        if (params.icm.workingTRC != ColorManagementParams::WorkingTrc::NONE && params.icm.trcExp  && exec) {
 
             //compression gamut at the end of process
             const int GW = labnCrop->W;
@@ -1872,12 +1890,30 @@ void Crop::update(int todo)
                     Color::xyz2rgb(X, Y, Z, provcomp->r(i, j), provcomp->g(i, j), provcomp->b(i, j), wp);
                 }
             }
+
+            const float gainev = pow_F(2.f, (float) params.icm.wgamgain);
+            if (params.icm.wgamgain != 0.f) {//Final gain in Ev
+           
+#ifdef _OPENMP
+        #   pragma omp parallel for
+#endif
+                for (int i = 0; i < GH; ++i){
+                    for (int j = 0; j < GW; ++j) {
+                        provcomp->r(i, j) *= gainev;
+                        provcomp->g(i, j) *= gainev;
+                        provcomp->b(i, j) *= gainev;
+                    }
+                }
+            }
+
             float mac = 0.f;
             float mac0 = 0.f;
             float mac1 = 0.f;
             float mac2 = 0.f;
             int beginend = 1;
-            parent->ipf.gamutcompr(provcomp, provcomp, beginend, mac, mac0, mac1, mac2);
+            if (params.icm.wgamut != ColorManagementParams::Wwgamut::NONE) {
+                parent->ipf.gamutcompr(provcomp, provcomp, beginend, mac, mac0, mac1, mac2);
+            }
 
 #ifdef _OPENMP
         #   pragma omp parallel for
@@ -1890,7 +1926,7 @@ void Crop::update(int todo)
             }
             }
             delete provcomp;
-            }
+        }
     }
     // all pipette buffer processing should be finished now
     PipetteBuffer::setReady();

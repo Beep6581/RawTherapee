@@ -2268,7 +2268,6 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                 }
  
                 const float smoothisli = params->icm.wsmoothciesli;
-
                 if(smoothisli > 0.f) {
                     ToneEqualizerParams params;
                     params.enabled = true;
@@ -2284,7 +2283,7 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                     if(Evsix) {//EV = 6 majority of images
                         params.bands[4] = -30 * smoothisli;
                         float smmothsli5 = std::min(smoothisli, 1.f);
-                        params.bands[5] = -80 * smmothsli5;                     
+                        params.bands[5] = -80 * smmothsli5;
                     }               
                     ipf.toneEqualizer(tmpImage1.get(), params, prof, scale, false);
                 }
@@ -2588,8 +2587,9 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                 }
             }
         
+            bool exec = params->icm.wgamut != ColorManagementParams::Wwgamut::NONE  || params->icm.wgamgain != 0.f;
 
-            if (params->icm.workingTRC != ColorManagementParams::WorkingTrc::NONE && params->icm.trcExp  && params->icm.wgamut != ColorManagementParams::Wwgamut::NONE) {
+            if (params->icm.workingTRC != ColorManagementParams::WorkingTrc::NONE && params->icm.trcExp  && exec) {
         
                 //compression gamut at the end of process
                 const int GW = nprevl->W;
@@ -2619,12 +2619,30 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                         Color::xyz2rgb(X, Y, Z, provcomp->r(i, j), provcomp->g(i, j), provcomp->b(i, j), wp);
                     }
                 }
+
+                const float gainev = pow_F(2.f, (float) params->icm.wgamgain);
+                if (params->icm.wgamgain != 0.f) {//Final gain in Ev
+#ifdef _OPENMP
+        #   pragma omp parallel for
+#endif
+
+                    for (int i = 0; i < GH; ++i){
+                        for (int j = 0; j < GW; ++j) {
+                            provcomp->r(i, j) *= gainev;
+                            provcomp->g(i, j) *= gainev;
+                            provcomp->b(i, j) *= gainev;
+                        }
+                    }
+                }
+                
                 float mac = 0.f;
                 float mac0 = 0.f;
                 float mac1 = 0.f;
                 float mac2 = 0.f;
                 int beginend = 1;
-                ipf.gamutcompr(provcomp, provcomp, beginend, mac, mac0, mac1, mac2);
+                if ( params->icm.wgamut != ColorManagementParams::Wwgamut::NONE) {
+                    ipf.gamutcompr(provcomp, provcomp, beginend, mac, mac0, mac1, mac2);
+                }
 
 #ifdef _OPENMP
         #   pragma omp parallel for

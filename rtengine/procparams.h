@@ -1207,6 +1207,7 @@ struct ColorManagementParams {
     double offstrc;
     double residtrc;
     double wgampower;
+    double wgamgain;
     int pyrwavtrc;
     std::vector<double> opacityCurveWLI;   
     bool wsmoothcie;
