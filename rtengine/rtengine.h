@@ -610,6 +610,8 @@ public:
     virtual void iprimChanged(float r_x, float r_y, float b_x, float b_y, float g_x, float g_y, float w_x, float w_y, float m_x, float m_y) = 0;
     virtual void wavlocChanged(double nlevel, double nmax, bool curveloc) = 0;
     virtual void maxdatawtrc(float m_data) = 0;
+    virtual void maxdataend(float m_rgb, float m_sat) = 0;
+
 };
 
 

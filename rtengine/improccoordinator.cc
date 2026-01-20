@@ -2260,7 +2260,7 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                 }
                 double p[6] = {0., 0., 0., 0., 0., 0.};
 
-                ipf.workingtrc(0, tmpImage1.get(), tmpImage1.get(), GW, GH, -5, prof, 2.4, 12.92310, 0, ill, 0, 0,  rdx, rdy, grx, gry, blx, bly, meanx, meany, meanxe, meanye, maxdat, p, dummy, true, false, false, false);
+                ipf.workingtrc(0, tmpImage1.get(), tmpImage1.get(), GW, GH, -5, prof, 2.4, 12.92310, 0, ill, 0, 0,  rdx, rdy, grx, gry, blx, bly, meanx, meany, meanxe, meanye, maxdat,  p, dummy, true, false, false, false);
                 ipf.workingtrc(0, tmpImage1.get(), tmpImage1.get(), GW, GH, 5, prof, gamtone, slotone, catc, illum, prim, locprim,  rdx, rdy, grx, gry, blx, bly, meanx, meany, meanxe, meanye, maxdat, p, dummy, false, true, true, gamutcontrol);
                 float satu = params->icm.wapsat;
                 if(satu > 0.f) {
@@ -2590,8 +2590,10 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
             bool exec = params->icm.wgamut != ColorManagementParams::Wwgamut::NONE  || params->icm.wgamgain != 0.f;
 
             if (params->icm.workingTRC != ColorManagementParams::WorkingTrc::NONE && params->icm.trcExp  && exec) {
-        
                 //compression gamut and gain at the end of process
+                float maxdatend = 0.f;
+                float satdatend = 0.f;
+
                 const int GW = nprevl->W;
                 const int GH = nprevl->H;
                 TMatrix wprof = ICCStore::getInstance()->workingSpaceMatrix(params->icm.workingProfile);
@@ -2634,7 +2636,6 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                         }
                     }
                 }
-                
                 float mac = 0.f;
                 float mac0 = 0.f;
                 float mac1 = 0.f;
@@ -2642,6 +2643,34 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                 int beginend = 1;
                 if ( params->icm.wgamut != ColorManagementParams::Wwgamut::NONE) {
                     ipf.gamutcompr(provcomp, provcomp, beginend, mac, mac0, mac1, mac2);
+                }
+
+                float rgbmax = 0.f;
+                float satmax = 0.f;
+#ifdef _OPENMP
+        #   pragma omp parallel for reduction(max:rgbmax) reduction(max:satmax)
+#endif
+                for (int i = 0; i < GH; ++i){
+                    for (int j = 0; j < GW; ++j) {
+                        const float r = provcomp->r(i, j);
+                        const float g = provcomp->g(i, j);
+                        const float b = provcomp->b(i, j);
+                        float maxrgbend = rtengine::max(r, g, b);
+                        if(maxrgbend> rgbmax){//RGB Max
+                            rgbmax = maxrgbend;
+                        }
+                        float h, s, l = 0.f;
+                        Color::rgb2hsl(r, g, b, h, s, l);
+                        float maxsatend = s;
+                        if(maxsatend> satmax){//Saturation max
+                            satmax = maxsatend;
+                        }
+                    }
+                }
+                maxdatend = rgbmax / 65535.f;
+                satdatend = satmax;
+                if (primListener) {
+                    primListener->maxdataend(maxdatend, satdatend);
                 }
 
 #ifdef _OPENMP

@@ -1504,6 +1504,7 @@ HISTORY_MSG_ICM_SMOOTHCIESLI;Attenuation threshold
 HISTORY_MSG_ICM_TRCEXP;Abstract Profile
 HISTORY_MSG_ICM_WAVEXP;Contrast Enhancement
 HISTORY_MSG_ICM_WGAMUT;Target Gamut
+HISTORY_MSG_ICM_WGAMUTGAIN;Gain
 HISTORY_MSG_ICM_WGAMUTPOWER;Power
 HISTORY_MSG_ICM_WORKING_GAMMA;TRC - Gamma
 HISTORY_MSG_ICM_WORKING_ILLUM_METHOD;Illuminant method
@@ -2962,7 +2963,7 @@ TP_ICM_NOICM;No ICM: sRGB Output
 TP_ICM_OPACITYWLI;Variable contrast
 TP_ICM_OUTPUTPROFILE;Output Profile
 TP_ICM_OUTPUTPROFILE_TOOLTIP;By default all RTv4 or RTv2 profiles are with TRC - sRGB: g=2.4 s=12.92\n\nWith 'ICC Profile Creator' you can generate v4 or v2 profiles with the following choices;\n-Primaries: Aces AP0, Aces AP1, AdobeRGB, Prophoto, Rec2020, sRGB, Widegamut, BestRGB, BetaRGB, BruceRGB, Custom\n-TRC: BT709, sRGB, linear, standard g=2.2, standard g=1.8, Custom\n-Illuminant: D41, D50, D55, D60, D65, D80, stdA 2856K
-TP_ICM_POWER_TOOLTIP;This allows you to globally modify the image's appearance, similar to the 'Exposure' slider. It adjusts the entire RGB data, in Ev units, by increasing or decreasing it. This allows for better control of either the color gamut or saturation; in the latter case, small values ​​of plus or minus 0.1 or 0.2 are sufficient. Higher gain values ​​allow for future use with HDR displays.
+TP_ICM_POWER_TOOLTIP;This allows you to globally modify the image's appearance, similar to the 'Exposure' slider. It adjusts the entire RGB data, in Ev units, by increasing or decreasing it. This allows for better control of either the color gamut or saturation; in the latter case, small values ​​of plus or minus 0.1 to 0.4 are sufficient. Higher gain values ​​allow for future use with HDR displays.
 TP_ICM_PRIMBLU_TOOLTIP;Primaries Blue:\nsRGB x=0.15 y=0.06\nAdobe x=0.15 y=0.06\nWidegamut x=0.157 y=0.018\nRec2020 x=0.131 y=0.046\nACES P1 x=0.128 y= 0.044\nACES P0 x=0.0001 y=-0.077\nProphoto x=0.0366 y=0.0001\nBruceRGB x=0.15 y=0.06\nBeta RGB x=0.1265 y=0.0352\nBestRGB x=0.131 y=0.046
 TP_ICM_PRIMFRAME;Primaries & Illuminant
 TP_ICM_PRIMGRE_TOOLTIP;Primaries Green:\nsRGB x=0.3 y=0.6\nAdobe x=0.21 y=0.71\nWidegamut x=0.115 y=0.826\nRec2020 x=0.17 y=0.797\nACES P1 x=0.165 y= 0.83\nACES P0 x=0.0 y=1.0\nProphoto x=0.1596 y=0.8404\nBruceRGB x=0.28 y=0.65\nBeta RGB x=0.1986 y=0.7551\nBest RGB x=0.2150 0.7750
@@ -2981,7 +2982,9 @@ TP_ICM_TONECURVE_TOOLTIP;Employ the embedded DCP tone curve. The setting is only
 TP_ICM_TRCFRAME;Abstract Profile
 TP_ICM_TRCFRAME_TOOLTIP;Also known as 'synthetic' or 'virtual' profiles, which are applied at the end of the processing pipeline (prior to CIECAM) allowing you to create custom image effects.\nYou can make changes to the:\n 'Tone response curve', which modifies the tones of the image.\n 'Illuminant', which allows you to change the profile primaries to adapt them to the shooting conditions.\n 'Destination primaries', which allows you to change the destination primaries with three main uses - channel mixer, restore image color (saturation), and calibration.\nNote: Abstract profiles take into account the built-in working profiles without modifying them. They do not work with custom working profiles.
 TP_ICM_TRC_MAX;RGB Max=%1
-TP_ICM_TRC_MAX_TOOLTIP;Provides information on out-of-limit RGB values. Values greater than 1 clearly indicate that we are out of gamut whereas for values less than 1, we cannot say whether the image is within gamut or not because it depends, for example, on the luminance. This check is performed at the end of the Abstract Profile and takes into account all parameters. The ‘Attenuation threshold’ slider can be used to limit the RGB values.\n\n Changes made to 'Color Appearance and Lighting', 'Final Gain and Gamut Compression' are not taken into account. 
+TP_ICM_TRC_MAX_END;Final RGB Max=%1
+TP_ICM_TRC_SAT_MAX;Final Saturation Max=%1
+TP_ICM_TRC_MAX_TOOLTIP;Provides information on out-of-limit RGB values. Values greater than 1 clearly indicate that we are out of gamut whereas for values less than 1, we cannot say whether the image is within gamut or not because it depends, for example, on the luminance. This check is performed at the end of the Abstract Profile and takes into account all parameters. The ‘Attenuation threshold’ slider can be used to limit the RGB values.\n\nChanges made to 'Color Appearance and Lighting', 'Final Gain and Gamut Compression' are not taken into account. 
 TP_ICM_TRC_TOOLTIP;Allows you to change the default sRGB 'Tone response curve' in RT (g=2.4 s=12.92).\nThis TRC modifies the tones of the image. The RGB and Lab values, histogram and output (screen, TIF, JPG) are changed:\n-Gamma acts mainly on light tones -Slope acts mainly on dark tones.\nYou can choose any pair of 'gamma and slope' (values >1) and the algorithm will ensure that there is continuity between the linear and parabolic parts of the curve.\nA selection other than 'none' activates the 'Illuminant' and 'Destination primaries' menus.
 TP_ICM_WAVFRAME;Contrast Enhancement
 TP_ICM_WAVREFI;Refinement

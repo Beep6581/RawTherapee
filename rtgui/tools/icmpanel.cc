@@ -291,6 +291,8 @@ ICMPanel::ICMPanel() : FoldableToolPanel(this, TOOL_NAME, M("TP_ICM_LABEL")), iu
     pyrwavtrc = Gtk::manage(new Adjuster(M("TP_WAVELET_PYRWAVTRC"), 1, 5, 1, 2));
     residtrc = Gtk::manage(new Adjuster(M("TP_WAVELET_RESIDTRC"), -100., 100., 1., 0.));
     trcmaxdata = Gtk::manage(new Gtk::Label("---"));
+    rgbmaxdata = Gtk::manage(new Gtk::Label("---"));
+    satmaxdata = Gtk::manage(new Gtk::Label("---"));
 
     //Gamut compression at the end of the process
     Gtk::Frame *gamutcomp = Gtk::manage(new Gtk::Frame(M("TP_ICM_COMPRGAMUT")));
@@ -298,7 +300,7 @@ ICMPanel::ICMPanel() : FoldableToolPanel(this, TOOL_NAME, M("TP_ICM_LABEL")), iu
     Gtk::Box* wgamVBox = Gtk::manage(new Gtk::Box(Gtk::ORIENTATION_VERTICAL));
     wgampower = Gtk::manage(new Adjuster(M("TP_ICM_COMP_POWER"), 0.70, 2.0, 0.01, 1.));
     Gtk::Box* wgam2VBox = Gtk::manage(new Gtk::Box(Gtk::ORIENTATION_VERTICAL));
-    wgamgain = Gtk::manage(new Adjuster(M("TP_ICM_COMP_GAIN"), -0.5, 2.0, 0.05, 0.));
+    wgamgain = Gtk::manage(new Adjuster(M("TP_ICM_COMP_GAIN"), -1., 2., 0.01, 0.));
     wgam2VBox->pack_start(*wgamgain, Gtk::PACK_EXPAND_WIDGET);
 
     wgamutBox = Gtk::manage(new Gtk::Box());
@@ -313,6 +315,8 @@ ICMPanel::ICMPanel() : FoldableToolPanel(this, TOOL_NAME, M("TP_ICM_LABEL")), iu
     wgamut->append(M("TP_ICM_COMPRESSGAMUT_DCIP3"));
     wgam2VBox->pack_start(*wgamutBox, Gtk::PACK_EXPAND_WIDGET);
     wgam2VBox->pack_start(*wgampower, Gtk::PACK_EXPAND_WIDGET);
+    wgam2VBox->pack_start(*rgbmaxdata, Gtk::PACK_SHRINK);
+    wgam2VBox->pack_start(*satmaxdata, Gtk::PACK_SHRINK);
 
     wgamVBox->pack_start(*wgam2VBox);
     gamutcomp->add(*wgamVBox);
@@ -589,6 +593,14 @@ ICMPanel::ICMPanel() : FoldableToolPanel(this, TOOL_NAME, M("TP_ICM_LABEL")), iu
     trcmaxdata->set_line_wrap();
     trcmaxdata->set_justify(Gtk::Justification::JUSTIFY_CENTER);
     setExpandAlignProperties(trcmaxdata, true, false, Gtk::ALIGN_CENTER, Gtk::ALIGN_START);
+
+    rgbmaxdata->set_line_wrap();
+    rgbmaxdata->set_justify(Gtk::Justification::JUSTIFY_CENTER);
+    setExpandAlignProperties(rgbmaxdata, true, false, Gtk::ALIGN_CENTER, Gtk::ALIGN_START);
+
+    satmaxdata->set_line_wrap();
+    satmaxdata->set_justify(Gtk::Justification::JUSTIFY_CENTER);
+    setExpandAlignProperties(satmaxdata, true, false, Gtk::ALIGN_CENTER, Gtk::ALIGN_START);
 
     //wGamma->setDelay(std::max(options.adjusterMinDelay, options.adjusterMaxDelay));
 
@@ -899,6 +911,24 @@ void ICMPanel::maxdatawtrc(float m_data)
             trcmaxdata->set_text(
                 Glib::ustring::compose(M("TP_ICM_TRC_MAX"),
                     Glib::ustring::format(std::fixed, std::setprecision(3), m_data))
+            );
+        return false;
+    }
+   );
+}
+
+void ICMPanel::maxdataend(float m_rgb, float m_sat)
+{
+    idle_register.add(
+    [this, m_rgb, m_sat]() -> bool {
+        GThreadLock lock; // All GUI access from idle_add callbacks or separate thread HAVE to be protected
+            rgbmaxdata->set_text(//RGB maximum
+                Glib::ustring::compose(M("TP_ICM_TRC_MAX_END"),
+                    Glib::ustring::format(std::fixed, std::setprecision(3), m_rgb))
+            );
+            satmaxdata->set_text(//Saturation maximum
+                Glib::ustring::compose(M("TP_ICM_TRC_SAT_MAX"),
+                    Glib::ustring::format(std::fixed, std::setprecision(3), m_sat))
             );
         return false;
     }
