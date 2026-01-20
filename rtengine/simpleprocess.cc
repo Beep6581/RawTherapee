@@ -1929,10 +1929,10 @@ private:
         cieView = nullptr;
 
         bool exec = params.icm.wgamut != ColorManagementParams::Wwgamut::NONE  || params.icm.wgamgain != 0.f;
-               
+
         if (params.icm.workingTRC != ColorManagementParams::WorkingTrc::NONE && params.icm.trcExp  && exec) {
 
-            //compression gamut at the end of process
+            //compression gamut and gain at the end of process
             const int GW = labView->W;
             const int GH = labView->H;
             TMatrix wprof = ICCStore::getInstance()->workingSpaceMatrix(params.icm.workingProfile);
@@ -1974,7 +1974,6 @@ private:
                         }
                     }
                 }
-
 
                 float mac = 0.f;
                 float mac0 = 0.f;

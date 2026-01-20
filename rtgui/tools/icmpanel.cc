@@ -298,7 +298,7 @@ ICMPanel::ICMPanel() : FoldableToolPanel(this, TOOL_NAME, M("TP_ICM_LABEL")), iu
     Gtk::Box* wgamVBox = Gtk::manage(new Gtk::Box(Gtk::ORIENTATION_VERTICAL));
     wgampower = Gtk::manage(new Adjuster(M("TP_ICM_COMP_POWER"), 0.70, 2.0, 0.01, 1.));
     Gtk::Box* wgam2VBox = Gtk::manage(new Gtk::Box(Gtk::ORIENTATION_VERTICAL));
-    wgamgain = Gtk::manage(new Adjuster(M("TP_ICM_COMP_GAIN"), -2.0, 2.0, 0.05, 0.));
+    wgamgain = Gtk::manage(new Adjuster(M("TP_ICM_COMP_GAIN"), -0.5, 2.0, 0.05, 0.));
     wgam2VBox->pack_start(*wgamgain, Gtk::PACK_EXPAND_WIDGET);
 
     wgamutBox = Gtk::manage(new Gtk::Box());
@@ -320,6 +320,8 @@ ICMPanel::ICMPanel() : FoldableToolPanel(this, TOOL_NAME, M("TP_ICM_LABEL")), iu
     wgamut->set_active(0);
     wgamut->set_tooltip_text(M("TP_ICM_COMPRESS_TOOLTIP"));
     wgampower->set_tooltip_text(M("TP_COMPRESSGAMUT_POWER_TOOLTIP"));
+    wgamgain->set_tooltip_text(M("TP_ICM_POWER_TOOLTIP"));
+
     //local contrast with wavelets
     opacityCurveEditorWLI = std::unique_ptr<CurveEditorGroup>(new CurveEditorGroup(options.lastIcmCurvesDir, M("TP_ICM_OPACITYWLI")));
     opacityCurveEditorWLI->setCurveListener(this);

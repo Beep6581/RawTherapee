@@ -1784,24 +1784,7 @@ void Crop::update(int todo)
                 
                 parent->ipf.toneEqualizer(tmpImage1.get(), params, prof, skip, false);
             }
-            /*
-                const float gainev = pow_F(2.f, (float) params.icm.wgamgain);
-            
-                for (int i = 0; i < GH; ++i){
-                    for (int j = 0; j < GW; ++j) {
-                        float r = tmpImage1->r(i, j);
-                        float g = tmpImage1->g(i, j);
-                        float b = tmpImage1->b(i, j);
-                        r *= gainev;
-                        g *= gainev;
-                        b *= gainev;
-                        tmpImage1->r(i, j) = r;
-                        tmpImage1->g(i, j) = g;
-                        tmpImage1->b(i, j) = b;
-                        
-                    }
-                }
-          */
+
             parent->ipf.rgb2lab(*tmpImage1, *labnCrop, params.icm.workingProfile);
             //labnCrop and provis
             if (provis) {
@@ -1859,10 +1842,10 @@ void Crop::update(int todo)
             cieCrop = nullptr;
         }
         bool exec = params.icm.wgamut != ColorManagementParams::Wwgamut::NONE  || params.icm.wgamgain != 0.f;
-               
+
         if (params.icm.workingTRC != ColorManagementParams::WorkingTrc::NONE && params.icm.trcExp  && exec) {
 
-            //compression gamut at the end of process
+            //compression gamut and gain at the end of process
             const int GW = labnCrop->W;
             const int GH = labnCrop->H;
             TMatrix wprof = ICCStore::getInstance()->workingSpaceMatrix(params.icm.workingProfile);

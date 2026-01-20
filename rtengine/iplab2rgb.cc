@@ -640,12 +640,13 @@ void ImProcFunctions::gamutcompr( Imagefloat *src, Imagefloat *dst, int beginend
         //take values from ART CTL - odt.ctl - Copyright (c) 2023 Thatcher Freeman
         //It's considerably simpler at the end of the process. We don't have (at least in theory) the problems related to data completely out of gamut (Sunset, LEDs).
         //This needs to be confirmed by testing and possibly changed.
-        thc = 0.85f;
-        thm = 0.75f;
-        thy = 0.95f;
-        dc = 1.1;
-        dm = 1.2;
-        dy = 1.5;
+        //I made small changes
+        thc = 0.8f; //0.85f;
+        thm = 0.75f;//0.75f
+        thy = 0.85f;//0.95f;
+        dc = 1.15f;//1.10f
+        dm = 1.25f;//1.20f
+        dy = 1.5f;//1.5f
         pw = params->icm.wgampower;
         roll = true;
     }

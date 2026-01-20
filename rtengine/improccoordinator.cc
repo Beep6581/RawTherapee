@@ -2591,7 +2591,7 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
 
             if (params->icm.workingTRC != ColorManagementParams::WorkingTrc::NONE && params->icm.trcExp  && exec) {
         
-                //compression gamut at the end of process
+                //compression gamut and gain at the end of process
                 const int GW = nprevl->W;
                 const int GH = nprevl->H;
                 TMatrix wprof = ICCStore::getInstance()->workingSpaceMatrix(params->icm.workingProfile);
