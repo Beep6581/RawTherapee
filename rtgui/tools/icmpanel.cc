@@ -295,8 +295,8 @@ ICMPanel::ICMPanel() : FoldableToolPanel(this, TOOL_NAME, M("TP_ICM_LABEL")), iu
     satmaxdata = Gtk::manage(new Gtk::Label("---"));
 
     //Gamut compression at the end of the process
-    Gtk::Frame *gamutcomp = Gtk::manage(new Gtk::Frame(M("TP_ICM_COMPRGAMUT")));
-    gamutcomp->set_label_align(0.025, 0.5);
+    Gtk::Frame *gamutcompFrame = Gtk::manage(new Gtk::Frame(M("TP_ICM_COMPRGAMUT")));
+    gamutcompFrame->set_label_align(0.025, 0.5);
     Gtk::Box* wgamVBox = Gtk::manage(new Gtk::Box(Gtk::ORIENTATION_VERTICAL));
     wgampower = Gtk::manage(new Adjuster(M("TP_ICM_COMP_POWER"), 0.70, 2.0, 0.01, 1.));
     Gtk::Box* wgam2VBox = Gtk::manage(new Gtk::Box(Gtk::ORIENTATION_VERTICAL));
@@ -319,7 +319,7 @@ ICMPanel::ICMPanel() : FoldableToolPanel(this, TOOL_NAME, M("TP_ICM_LABEL")), iu
     wgam2VBox->pack_start(*satmaxdata, Gtk::PACK_SHRINK);
 
     wgamVBox->pack_start(*wgam2VBox);
-    gamutcomp->add(*wgamVBox);
+    gamutcompFrame->add(*wgamVBox);
 
     wgamut->set_active(0);
     wgamut->set_tooltip_text(M("TP_ICM_COMPRESS_TOOLTIP"));
@@ -613,7 +613,7 @@ ICMPanel::ICMPanel() : FoldableToolPanel(this, TOOL_NAME, M("TP_ICM_LABEL")), iu
     trcWavFBox->pack_start(*trcmaxdata, Gtk::PACK_SHRINK);
     trcmaxdata->set_tooltip_text(M("TP_ICM_TRC_MAX_TOOLTIP"));
     
-    trcWavFBox->pack_start(*gamutcomp, Gtk::PACK_EXPAND_WIDGET);
+    trcWavFBox->pack_start(*gamutcompFrame, Gtk::PACK_EXPAND_WIDGET);
     wgampower->setAdjusterListener(this);
     wgamgain->setAdjusterListener(this);
 
