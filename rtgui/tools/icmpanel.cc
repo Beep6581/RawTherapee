@@ -597,12 +597,16 @@ ICMPanel::ICMPanel() : FoldableToolPanel(this, TOOL_NAME, M("TP_ICM_LABEL")), iu
     rgbmaxdata->set_line_wrap();
     rgbmaxdata->set_justify(Gtk::Justification::JUSTIFY_CENTER);
     setExpandAlignProperties(rgbmaxdata, true, false, Gtk::ALIGN_CENTER, Gtk::ALIGN_START);
+    rgbmaxdata->set_tooltip_text(M("TP_ICM_TRC_SAT_MAX_TOOLTIP"));
 
     satmaxdata->set_line_wrap();
     satmaxdata->set_justify(Gtk::Justification::JUSTIFY_CENTER);
     setExpandAlignProperties(satmaxdata, true, false, Gtk::ALIGN_CENTER, Gtk::ALIGN_START);
+    satmaxdata->set_tooltip_text(M("TP_ICM_TRC_SAT_MAX_TOOLTIP"));
 
     //wGamma->setDelay(std::max(options.adjusterMinDelay, options.adjusterMaxDelay));
+    
+    
 
     // wSlope->setDelay(std::max(options.adjusterMinDelay, options.adjusterMaxDelay));
     wmidtcie->setDelay(std::max(options.adjusterMinDelay, options.adjusterMaxDelay));
