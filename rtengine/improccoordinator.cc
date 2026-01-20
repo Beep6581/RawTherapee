@@ -2588,11 +2588,13 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
             }
         
             bool exec = params->icm.wgamut != ColorManagementParams::Wwgamut::NONE  || params->icm.wgamgain != 0.f;
-
+            bool gamgain = false;
+            float maxdatend = 0.f;
+            float satdatend = 0.f;
+           
             if (params->icm.workingTRC != ColorManagementParams::WorkingTrc::NONE && params->icm.trcExp  && exec) {
                 //compression gamut and gain at the end of process
-                float maxdatend = 0.f;
-                float satdatend = 0.f;
+                gamgain = true;
 
                 const int GW = nprevl->W;
                 const int GH = nprevl->H;
@@ -2669,9 +2671,6 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                 }
                 maxdatend = rgbmax / 65535.f;
                 satdatend = satmax;
-                if (primListener) {
-                    primListener->maxdataend(maxdatend, satdatend);
-                }
 
 #ifdef _OPENMP
         #   pragma omp parallel for
@@ -2684,8 +2683,11 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                     }
                 }
                 delete provcomp;
-            
             }
+            if (primListener) {
+                primListener->maxdataend(maxdatend, satdatend, gamgain);
+            }
+
         }
         //  if (todo & (M_AUTOEXP | M_RGBCURVE)) {
 

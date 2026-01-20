@@ -921,19 +921,27 @@ void ICMPanel::maxdatawtrc(float m_data)
    );
 }
 
-void ICMPanel::maxdataend(float m_rgb, float m_sat)
+void ICMPanel::maxdataend(float m_rgb, float m_sat, bool gamgain)
 {
     idle_register.add(
-    [this, m_rgb, m_sat]() -> bool {
+    [this, m_rgb, m_sat, gamgain]() -> bool {
         GThreadLock lock; // All GUI access from idle_add callbacks or separate thread HAVE to be protected
-            rgbmaxdata->set_text(//RGB maximum
-                Glib::ustring::compose(M("TP_ICM_TRC_MAX_END"),
-                    Glib::ustring::format(std::fixed, std::setprecision(3), m_rgb))
-            );
-            satmaxdata->set_text(//Saturation maximum
-                Glib::ustring::compose(M("TP_ICM_TRC_SAT_MAX"),
-                    Glib::ustring::format(std::fixed, std::setprecision(3), m_sat))
-            );
+            if (gamgain) {
+                rgbmaxdata->set_text(//RGB maximum
+                    Glib::ustring::compose(M("TP_ICM_TRC_MAX_END"),
+                        Glib::ustring::format(std::fixed, std::setprecision(3), m_rgb))
+                );
+            } else {
+                rgbmaxdata->set_text(M("TP_ICM_TRC_MAX_END_NO"));
+            }
+            if (gamgain) {
+                satmaxdata->set_text(//Saturation maximum
+                    Glib::ustring::compose(M("TP_ICM_TRC_SAT_MAX"),
+                        Glib::ustring::format(std::fixed, std::setprecision(3), m_sat))
+                );
+            } else {
+                satmaxdata->set_text(M("TP_ICM_TRC_MAX_END_NO"));
+            }
         return false;
     }
    );

@@ -284,7 +284,7 @@ public:
     void primChanged (float rx, float ry, float bx, float by, float gx, float gy) override;
     void iprimChanged (float r_x, float r_y, float b_x, float b_y, float g_x, float g_y, float w_x, float w_y, float m_x, float m_y) override;
     void maxdatawtrc(float m_data) override;
-    void maxdataend(float m_rgb, float m_sat) override;
+    void maxdataend(float m_rgb, float m_sat, bool gamgain) override;
 
     void neutral_pressed();
     void curveChanged(CurveEditor* ce) override;
