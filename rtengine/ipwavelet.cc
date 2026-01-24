@@ -3408,7 +3408,7 @@ void ImProcFunctions::calckoe (const float* WavCoeffs, float gradw, float tloww,
 }
 
 
-// Copyright 6-2024 - Jacques Desmis <jdesmis@gmail.com>
+// Copyright 6-2024 modified 1-2026 - Jacques Desmis <jdesmis@gmail.com>
 void ImProcFunctions::complete_local_contrast (LabImage * lab, LabImage * dst, const procparams::WaveletParams & waparams, const procparams::ColorManagementParams & cmparams, const WavOpacityCurveWL & cmOpacityCurveWL, int skip, int &level_hr, int &maxlevpo, bool &wavcurvecont)
 {
     wavcurvecont = false;
@@ -3420,6 +3420,30 @@ void ImProcFunctions::complete_local_contrast (LabImage * lab, LabImage * dst, c
             }
         }
     }
+    //This modification significantly reduces potential artifacts caused by increased local contrast due to wavelets. It has virtually no visible effect on the resulting image, other than the absorption of the artifacts.
+    const std::unique_ptr<LabImage> lab2(new LabImage(lab->W, lab->H));//New variable Lab, which will be used for wavelet decomposition.
+
+    constexpr float artifact_minimum = 3000.f;//The threshold below which wavelet decomposition is not performed, and therefore no contrast enhancement is achieved, to avoid artifacts due to proximity to the gamut limit.
+    constexpr float artifact_minimum_low = 10.f;//Very low replacement value, but without impact on the decomposition, except for some proximity of wavelets.
+    constexpr float artifact_minimum_lowab = 0.f;//With 0, we are necessarily within the gamut
+
+#ifdef _OPENMP
+        #pragma omp parallel for if (multiThread)
+#endif
+    for(int i=0; i < lab->H; i++){
+        for(int j=0; j < lab->W; j++){
+            if(lab->L[i][j] > artifact_minimum) {
+                lab2->L[i][j] = lab->L[i][j];
+                lab2->a[i][j] = lab->a[i][j];
+                lab2->b[i][j] = lab->b[i][j];
+            } else {
+                lab2->L[i][j] = artifact_minimum_low;
+                lab2->a[i][j] = artifact_minimum_lowab;
+                lab2->b[i][j] = artifact_minimum_lowab;
+            }
+        }
+    }
+
 
     if(wavcurvecont && cmparams.wavExp) {//enable curve and expander
 #ifdef _OPENMP
@@ -3468,8 +3492,8 @@ void ImProcFunctions::complete_local_contrast (LabImage * lab, LabImage * dst, c
                 level_br = wavelet_lev - 3;//-3
                 level_hr = wavelet_lev - 2;//-2
             } else if(pyrwav == 2) {
-                level_bl = 0;//0
-                level_hl = 0;//1
+                level_bl = 1;//0
+                level_hl = 1;//0
                 level_br = wavelet_lev - 3;//-2
                 level_hr = wavelet_lev - 1;//-1
                 if(!cmparams.wsmoothcie) {
@@ -3540,7 +3564,7 @@ void ImProcFunctions::complete_local_contrast (LabImage * lab, LabImage * dst, c
             int maxlvl = wavelet_level;
             maxlevpo = maxlvl;
             //decomposition wavelet , we can change Daublen (moment wavelet) in Tab - Wavelet Levels with subsampling = 1
-            std::unique_ptr<wavelet_decomposition> wdspot = std::unique_ptr<wavelet_decomposition>(new wavelet_decomposition(lab->L[0], width, height, maxlvl, 1, skip, numThreads, DaubLen));
+            std::unique_ptr<wavelet_decomposition> wdspot = std::unique_ptr<wavelet_decomposition>(new wavelet_decomposition(lab2->L[0], width, height, maxlvl, 1, skip, numThreads, DaubLen));
             if (wdspot->memory_allocation_failed()) {//probably if not enough memory.
                 return;
             }
@@ -3736,7 +3760,21 @@ void ImProcFunctions::complete_local_contrast (LabImage * lab, LabImage * dst, c
                 }
             }
             //reconstruct lab
-            wdspot->reconstruct(lab->L[0], 1.f);
+            wdspot->reconstruct(lab2->L[0], 1.f);
+
+//Of course, we only retrieve the lab2 part that was used for the decomposition
+#ifdef _OPENMP
+        #pragma omp parallel for if (multiThread)
+#endif            
+            for(int i=0; i < lab->H; i++){
+                for(int j=0; j < lab->W; j++){
+                    if(lab->L[i][j] > artifact_minimum) {
+                        lab->L[i][j] = lab2->L[i][j];
+                        lab->a[i][j] = lab2->a[i][j];
+                        lab->b[i][j] = lab2->b[i][j];
+                    }
+                }
+            }
 
 
     }
