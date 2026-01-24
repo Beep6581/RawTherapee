@@ -143,9 +143,7 @@ private:
     FilterPanel* filterPanel;
     ExportPanel* exportPanel;
 
-    int previewsToLoad;
-    int previewsLoaded;
-
+    std::size_t previewsToLoad;
 
     std::vector<Glib::ustring> fileNameList;
     std::set<Glib::ustring> editedFiles;

@@ -139,7 +139,6 @@ FileCatalog::FileCatalog (CoarsePanel* cp, ToolBar* tb, FilePanel* filepanel) :
     filterPanel(nullptr),
     exportPanel(nullptr),
     previewsToLoad(0),
-    previewsLoaded(0),
     modifierKey(0),
     coarsePanel(cp),
     toolBar(tb)
@@ -678,7 +677,6 @@ void FileCatalog::dirSelected (const Glib::ustring& dirname, const Glib::ustring
 
         closeDir();
         previewsToLoad = 0;
-        previewsLoaded = 0;
 
         // if openfile exists, we have to open it first (it is a command line argument)
         if (!openfile.empty()) {
@@ -775,44 +773,43 @@ void FileCatalog::enableTabMode(bool enable)
 
 void FileCatalog::_refreshProgressBar ()
 {
-    // In tab mode, no progress bar at all
-    // Also mention that this progress bar only measures the FIRST pass (quick thumbnails)
-    // The second, usually longer pass is done multithreaded down in the single entries and is NOT measured by this
-    if (!inTabMode && (!previewsToLoad || std::floor(100.f * previewsLoaded / previewsToLoad) != std::floor(100.f * (previewsLoaded - 1) / previewsToLoad))) {
+    // This progress bar only measures the FIRST pass (quick thumbnails)
+    // The second, usually longer pass is NOT measured by this
+    const auto previewsLoaded = fileBrowser->getEntries().size();
+
+    if (!progressImage || !progressLabel) {
+        // create tab label once
+        Gtk::Notebook *nb = (Gtk::Notebook *)(filepanel->get_parent());
+        Gtk::Grid* grid = Gtk::manage(new Gtk::Grid());
+        setExpandAlignProperties (grid, false, false, Gtk::ALIGN_CENTER, Gtk::ALIGN_CENTER);
+        progressImage = Gtk::manage(new RTImage("folder-closed", Gtk::ICON_SIZE_LARGE_TOOLBAR));
+        progressLabel = Gtk::manage(new Gtk::Label(M("MAIN_FRAME_FILEBROWSER")));
 
         const auto& options = App::get().options();
-        if (!progressImage || !progressLabel) {
-            // create tab label once
-            Gtk::Notebook *nb = (Gtk::Notebook *)(filepanel->get_parent());
-            Gtk::Grid* grid = Gtk::manage(new Gtk::Grid());
-            setExpandAlignProperties (grid, false, false, Gtk::ALIGN_CENTER, Gtk::ALIGN_CENTER);
-            progressImage = Gtk::manage(new RTImage("folder-closed", Gtk::ICON_SIZE_LARGE_TOOLBAR));
-            progressLabel = Gtk::manage(new Gtk::Label(M("MAIN_FRAME_FILEBROWSER")));
-            grid->attach_next_to(*progressImage, options.mainNBVertical ? Gtk::POS_TOP : Gtk::POS_RIGHT, 1, 1);
-            grid->attach_next_to(*progressLabel, options.mainNBVertical ? Gtk::POS_TOP : Gtk::POS_RIGHT, 1, 1);
-            grid->set_tooltip_markup(M("MAIN_FRAME_FILEBROWSER_TOOLTIP"));
-            grid->show_all();
-            if (options.mainNBVertical) {
-                progressLabel->set_angle(90);
-            }
-            if (nb) {
-                nb->set_tab_label(*filepanel, *grid);
-            }
+        grid->attach_next_to(*progressImage, options.mainNBVertical ? Gtk::POS_TOP : Gtk::POS_RIGHT, 1, 1);
+        grid->attach_next_to(*progressLabel, options.mainNBVertical ? Gtk::POS_TOP : Gtk::POS_RIGHT, 1, 1);
+        grid->set_tooltip_markup(M("MAIN_FRAME_FILEBROWSER_TOOLTIP"));
+        grid->show_all();
+        if (options.mainNBVertical) {
+            progressLabel->set_angle(90);
         }
-        if (!previewsToLoad) {
-            progressImage->set_from_icon_name("folder-closed", Gtk::ICON_SIZE_LARGE_TOOLBAR);
-            int filteredCount = min(fileBrowser->getNumFiltered(), previewsLoaded);
-            progressLabel->set_text(M("MAIN_FRAME_FILEBROWSER") +
-                                    (filteredCount != previewsLoaded ? " [" + Glib::ustring::format(filteredCount) + "/" : " (")
-                                    + Glib::ustring::format(previewsLoaded) +
-                                    (filteredCount != previewsLoaded ? "]" : ")"));
-        } else {
-            progressImage->set_from_icon_name("magnifier", Gtk::ICON_SIZE_LARGE_TOOLBAR);
-            progressLabel->set_text(M("MAIN_FRAME_FILEBROWSER") + " ["
-                                    + Glib::ustring::format(previewsLoaded) + "/"
-                                    + Glib::ustring::format(previewsToLoad) + "]" );
-            filepanel->loadingThumbs("", (double)previewsLoaded / previewsToLoad);
+        if (nb) {
+            nb->set_tab_label(*filepanel, *grid);
         }
+    }
+    if (!previewsToLoad) {
+        progressImage->set_from_icon_name("folder-closed", Gtk::ICON_SIZE_LARGE_TOOLBAR);
+        const auto filteredCount = min(fileBrowser->getNumFiltered(), previewsLoaded);
+        progressLabel->set_text(M("MAIN_FRAME_FILEBROWSER") +
+                                (filteredCount != previewsLoaded ? " [" + Glib::ustring::format(filteredCount) + "/" : " [")
+                                + Glib::ustring::format(previewsLoaded) +
+                                (filteredCount != previewsLoaded ? "]" : "]"));
+    } else {
+        progressImage->set_from_icon_name("magnifier", Gtk::ICON_SIZE_LARGE_TOOLBAR);
+        progressLabel->set_text(M("MAIN_FRAME_FILEBROWSER") + " ["
+                                + Glib::ustring::format(previewsLoaded) + " ("
+                                + Glib::ustring::format(previewsToLoad) + ")]" );
+        filepanel->loadingThumbs("", (double)previewsLoaded / (previewsLoaded + previewsToLoad));
     }
 }
 
@@ -878,7 +875,7 @@ void FileCatalog::previewReady (int dir_id, FileBrowserEntry* fdn)
                 dirEFS.expcomp.insert (cfs->expcomp);
             }
 
-            previewsLoaded++;
+            previewsToLoad--;
 
             _refreshProgressBar();
             return false;
@@ -1063,8 +1060,6 @@ void FileCatalog::deleteRequested(const std::vector<FileBrowserEntry*>& tbe, boo
                 Glib::ustring procfNameParamFile = Glib::ustring::compose ("%1.%2.out%3", BatchQueue::calcAutoFileNameBase(fname), options.saveFormatBatch.format, App::PARAM_FILE_EXTENSION);
                 ::g_remove (procfNameParamFile.c_str ());
             }
-
-            previewsLoaded--;
         }
 
         _refreshProgressBar();
@@ -1142,8 +1137,6 @@ void FileCatalog::copyMoveRequested(const std::vector<FileBrowserEntry*>& tbe, b
                         cacheMgr->renameEntry (src_fPath, tbe[i]->thumbnail->getMD5(), dest_fPath);
                         // remove from browser
                         fileBrowser->delEntry (src_fPath);
-
-                        previewsLoaded--;
                     } else {
                         src_file->copy(dest_file);
                     }
@@ -1824,14 +1817,9 @@ void FileCatalog::reparseDirectory ()
 
     for (const auto& toRemove : fileNamesToRemove) {
         delete fileBrowser->delEntry(toRemove);
-        --previewsLoaded;
     }
     for (const auto& toDelete : fileNamesToDel) {
         cacheMgr->deleteEntry(toDelete);
-    }
-
-    if (!fileNamesToDel.empty()) {
-        _refreshProgressBar();
     }
 
     // check if a new file has been added
@@ -1845,11 +1833,11 @@ void FileCatalog::reparseDirectory ()
     fileNameList = getFileList(&allDirs);
     for (const auto& newName : fileNameList) {
         if (oldNames.find(newName.collate_key()) == oldNames.end()) {
-            addFile(newName);
-            _refreshProgressBar();
+            addFile(newName);         
         }
     }
 
+    _refreshProgressBar();
     refreshDirectoryMonitors(allDirs);
 }
 
