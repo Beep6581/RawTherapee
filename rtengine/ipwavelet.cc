@@ -3492,8 +3492,8 @@ void ImProcFunctions::complete_local_contrast (LabImage * lab, LabImage * dst, c
                 level_br = wavelet_lev - 3;//-3
                 level_hr = wavelet_lev - 2;//-2
             } else if(pyrwav == 2) {
-                level_bl = 1;//0
-                level_hl = 1;//0
+                level_bl = 0;//0
+                level_hl = 0;//0
                 level_br = wavelet_lev - 3;//-2
                 level_hr = wavelet_lev - 1;//-1
                 if(!cmparams.wsmoothcie) {
