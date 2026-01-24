@@ -3420,32 +3420,35 @@ void ImProcFunctions::complete_local_contrast (LabImage * lab, LabImage * dst, c
             }
         }
     }
-    //This modification significantly reduces potential artifacts caused by increased local contrast due to wavelets. It has virtually no visible effect on the resulting image, other than the absorption of the artifacts.
-    const std::unique_ptr<LabImage> lab2(new LabImage(lab->W, lab->H));//New variable Lab, which will be used for wavelet decomposition.
 
-    constexpr float artifact_minimum = 3000.f;//The threshold below which wavelet decomposition is not performed, and therefore no contrast enhancement is achieved, to avoid artifacts due to proximity to the gamut limit.
-    constexpr float artifact_minimum_low = 10.f;//Very low replacement value, but without impact on the decomposition, except for some proximity of wavelets.
-    constexpr float artifact_minimum_lowab = 0.f;//With 0, we are necessarily within the gamut
+
+    if(wavcurvecont && cmparams.wavExp) {//enable curve and expander
+        //This modification significantly reduces potential artifacts caused by increased local contrast due to wavelets. It has virtually no visible effect on the resulting image, other than the absorption of the artifacts.
+        const std::unique_ptr<LabImage> lab2(new LabImage(lab->W, lab->H));//New variable Lab, which will be used for wavelet decomposition.
+
+        constexpr float artifact_minimum = 3000.f;//The threshold below which wavelet decomposition is not performed, and therefore no contrast enhancement is achieved, to avoid artifacts due to proximity to the gamut limit.
+        constexpr float artifact_minimum_low = 10.f;//Very low replacement value, but without impact on the decomposition, except for some proximity of wavelets.
+        constexpr float artifact_minimum_lowab = 0.f;//With 0, we are necessarily within the gamut
 
 #ifdef _OPENMP
         #pragma omp parallel for if (multiThread)
 #endif
-    for(int i=0; i < lab->H; i++){
-        for(int j=0; j < lab->W; j++){
-            if(lab->L[i][j] > artifact_minimum) {
-                lab2->L[i][j] = lab->L[i][j];
-                lab2->a[i][j] = lab->a[i][j];
-                lab2->b[i][j] = lab->b[i][j];
-            } else {
-                lab2->L[i][j] = artifact_minimum_low;
-                lab2->a[i][j] = artifact_minimum_lowab;
-                lab2->b[i][j] = artifact_minimum_lowab;
+        for (int i = 0; i < lab->H; i++){
+            for (int j = 0; j < lab->W; j++){
+                if(lab->L[i][j] > artifact_minimum) {
+                    lab2->L[i][j] = lab->L[i][j];
+                    lab2->a[i][j] = lab->a[i][j];
+                    lab2->b[i][j] = lab->b[i][j];
+                } else {
+                    lab2->L[i][j] = artifact_minimum_low;
+                    lab2->a[i][j] = artifact_minimum_lowab;
+                    lab2->b[i][j] = artifact_minimum_lowab;
+                }
             }
         }
-    }
-
-
-    if(wavcurvecont && cmparams.wavExp) {//enable curve and expander
+    
+    
+    
 #ifdef _OPENMP
         const int numThreads = omp_get_max_threads();
 #else
@@ -3766,8 +3769,8 @@ void ImProcFunctions::complete_local_contrast (LabImage * lab, LabImage * dst, c
 #ifdef _OPENMP
         #pragma omp parallel for if (multiThread)
 #endif            
-            for(int i=0; i < lab->H; i++){
-                for(int j=0; j < lab->W; j++){
+            for (int i = 0; i < lab->H; i++){
+                for (int j = 0; j < lab->W; j++){
                     if(lab->L[i][j] > artifact_minimum) {
                         lab->L[i][j] = lab2->L[i][j];
                         lab->a[i][j] = lab2->a[i][j];
