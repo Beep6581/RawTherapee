@@ -1102,6 +1102,8 @@ static void calcLocalParams(int sp, int oW, int oH,  const LocallabParams& local
         lp.shmeth = 1;
     } else if (locallab.spots.at(sp).shMethod == "ghs") {
         lp.shmeth = 2;
+    } else if (locallab.spots.at(sp).shMethod == "micha") {
+        lp.shmeth = 3;
     }
 
 
@@ -19022,6 +19024,16 @@ void ImProcFunctions::Lab_Local(
                         }
                     }
                 }
+                if (lp.shmeth == 3) {//Michaelis-Menten
+                    TMatrix wprof = ICCStore::getInstance()->workingSpaceMatrix(params->icm.workingProfile);
+                    float michexp = params->locallab.spots.at(sp).mich_exp;//Exposure
+                    float michspar = params->locallab.spots.at(sp).mich_spar;//Output Scale
+                    float michkpar = params->locallab.spots.at(sp).mich_kpar;//Knee Strength
+                    float michsat = params->locallab.spots.at(sp).mich_sat;//Saturation
+                    float michout = params->locallab.spots.at(sp).mich_out;//Output Max Clamp
+                }
+                
+                
                 //gradient
                 int GH = transformed->H;
                 int GW = transformed->W;

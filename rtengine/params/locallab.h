@@ -225,6 +225,12 @@ struct LocallabParams {
         bool ghs_agx;
         bool ghs_smooth;
         bool ghs_inv;
+        double mich_exp;
+        double mich_spar;
+        double mich_kpar;
+        double mich_sat;
+        double mich_out;
+
         int multsh[6];
         int highlights;
         int h_tonalwidth;

@@ -4344,6 +4344,14 @@ LocallabShadow::LocallabShadow():
     ghsDRLabels(Gtk::manage(new Gtk::Label("---"))),
     ghs_smooth(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_GHS_SMOOTH")))),
     ghs_inv(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_GHS_INV")))),
+    michFrame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_MICHFRA")))),
+    michtone_Frame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_MICHTONEFRA")))),
+    mich_exp(Gtk::manage(new Adjuster(M("TP_LOCALLAB_MICHEXP"), -4., 4., 0.01, 0.))),
+    mich_spar(Gtk::manage(new Adjuster(M("TP_LOCALLAB_MICHSPAR"), 0.1, 5., 0.01, 1.))),
+    mich_kpar(Gtk::manage(new Adjuster(M("TP_LOCALLAB_MICHKPAR"), 0.01, 2., 0.001, 0.18))),
+    mich_sat(Gtk::manage(new Adjuster(M("TP_LOCALLAB_MICHSAT"), 0.0, 2., 0.01, 1.))),
+    mich_out(Gtk::manage(new Adjuster(M("TP_LOCALLAB_MICHOUT"), 0.5, 10., 0.01, 1.))),
+
     expgradsh(Gtk::manage(new MyExpander(false, M("TP_LOCALLAB_EXPGRAD")))),
     strSH(Gtk::manage(new Adjuster(M("TP_LOCALLAB_GRADSTR"), -4., 4., 0.05, 0.))),
     angSH(Gtk::manage(new Adjuster(M("TP_LOCALLAB_GRADANG"), -180, 180, 0.1, 0.))),
@@ -4395,6 +4403,11 @@ LocallabShadow::LocallabShadow():
 
     Evlocallabghs_inv = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_GHS_INV");
     EvlocallabGridghs = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_CIE_LABGRIDGHS");
+    Evlocallabmich_exp = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_MICH_EXP");
+    Evlocallabmich_spar = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_MICH_SPAR");
+    Evlocallabmich_kpar = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_MICH_KPAR");
+    Evlocallabmich_sat = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_MICH_SAT");
+    Evlocallabmich_out = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_MICH_OUT");
     ghs_SP->addAutoButton(M("TP_LOCALLAB_SPRADIUS_TOOLTIP"));
     set_orientation(Gtk::ORIENTATION_VERTICAL);
 
@@ -4404,6 +4417,7 @@ LocallabShadow::LocallabShadow():
     shMethod->append(M("TP_LOCALLAB_SH1"));
     shMethod->append(M("TP_LOCALLAB_SH2"));
     shMethod->append(M("TP_LOCALLAB_SH3"));
+    shMethod->append(M("TP_LOCALLAB_SH4"));
     shMethod->set_active(3);
     shMethodConn = shMethod->signal_changed().connect(sigc::mem_fun(*this, &LocallabShadow::shMethodChanged));
 
@@ -4486,7 +4500,12 @@ LocallabShadow::LocallabShadow():
     ghs_BLP->setAdjusterListener(this);
     ghs_HLP->setAdjusterListener(this);
     ghs_HLP->setLogScale(16, 0);
-    
+    mich_exp->setAdjusterListener(this);
+    mich_spar->setAdjusterListener(this);
+    mich_kpar->setAdjusterListener(this);
+    mich_sat->setAdjusterListener(this);
+    mich_out->setAdjusterListener(this);
+
     ghsbpwpLabels->set_line_wrap();
     ghsbpwpLabels->set_justify(Gtk::Justification::JUSTIFY_CENTER);
     setExpandAlignProperties(ghsbpwpLabels, true, false, Gtk::ALIGN_CENTER, Gtk::ALIGN_START);
@@ -4655,6 +4674,22 @@ LocallabShadow::LocallabShadow():
     ghsFrame->add(*ghsBox);
     pack_start(*ghsFrame);
 
+    michFrame->set_label_align(0.025, 0.5);
+    ToolParamBlock* const michBox = Gtk::manage(new ToolParamBlock());
+    ToolParamBlock* const michBox2 = Gtk::manage(new ToolParamBlock());
+    michtone_Frame->set_label_align(0.025, 0.5);
+    michBox->pack_start(*mich_exp);
+    michBox->pack_start(*mich_spar);
+    michBox->pack_start(*mich_kpar);
+    michtone_Frame->add(*michBox);
+    michBox2->pack_start(*michtone_Frame);
+    michBox2->pack_start(*mich_sat);
+    michBox2->pack_start(*mich_out);
+    michFrame->add(*michBox2);
+    pack_start(*michFrame);
+
+
+
     for (const auto multiplier : multipliersh) {
         pack_start(*multiplier);
     }
@@ -4818,7 +4853,7 @@ void LocallabShadow::updateguishad(int spottype)
             } else {
                 sensihs->show();
                 inverssh->show();
-                if (shMethod->get_active_row_number() == 2) {
+                if (shMethod->get_active_row_number() == 2  || shMethod->get_active_row_number() == 3) {
                     inverssh->hide();
                     inverssh->set_active(false);
                 }
@@ -5059,6 +5094,8 @@ void LocallabShadow::read(const rtengine::procparams::ProcParams* pp, const Para
             shMethod->set_active(1);
         } else if (spot.shMethod == "ghs") {
             shMethod->set_active(2);
+        } else if (spot.shMethod == "micha") {
+            shMethod->set_active(3);
         }
 
         if (spot.ghsMethod == "rgb") {
@@ -5150,7 +5187,12 @@ void LocallabShadow::read(const rtengine::procparams::ProcParams* pp, const Para
             ghs_LC->set_sensitive(false);
             ghs_MID->set_sensitive(false);
         }
-           
+        mich_exp->setValue((double)spot.mich_exp);
+        mich_spar->setValue((double)spot.mich_spar);
+        mich_kpar->setValue((double)spot.mich_kpar);
+        mich_sat->setValue((double)spot.mich_sat);
+        mich_out->setValue((double)spot.mich_out);
+
         detailSH->setValue((double)spot.detailSH);
         tePivot->setValue(spot.tePivot);
         reparsh->setValue(spot.reparsh);
@@ -5229,6 +5271,8 @@ void LocallabShadow::write(rtengine::procparams::ProcParams* pp, ParamsEdited* p
             spot.shMethod = "tone";
         } else if (shMethod->get_active_row_number() == 2) {
             spot.shMethod = "ghs";
+        } else if (shMethod->get_active_row_number() == 3) {
+            spot.shMethod = "micha";
         }
 
         if (ghsMethod->get_active_row_number() == 0) {
@@ -5297,6 +5341,11 @@ void LocallabShadow::write(rtengine::procparams::ProcParams* pp, ParamsEdited* p
         spot.ghs_autobw = ghs_autobw->get_active();
         spot.ghs_agx = ghs_agx->get_active();
         spot.ghs_inv = ghs_inv->get_active();
+        spot.mich_exp = mich_exp->getValue();
+        spot.mich_spar = mich_spar->getValue();
+        spot.mich_kpar = mich_kpar->getValue();
+        spot.mich_sat = mich_sat->getValue();
+        spot.mich_out = mich_out->getValue();
         spot.enaSHMask = enaSHMask->get_active();
         spot.LLmaskSHcurve = LLmaskSHshape->getCurve();
         spot.CCmaskSHcurve = CCmaskSHshape->getCurve();
@@ -5342,6 +5391,12 @@ void LocallabShadow::setDefaults(const rtengine::procparams::ProcParams* defPara
         ghs_MID->setDefault(defSpot.ghs_MID);
         ghs_BLP->setDefault(defSpot.ghs_BLP);
         ghs_HLP->setDefault(defSpot.ghs_HLP);
+
+        mich_exp->setDefault(defSpot.mich_exp);
+        mich_spar->setDefault(defSpot.mich_spar);
+        mich_kpar->setDefault(defSpot.mich_kpar);
+        mich_sat->setDefault(defSpot.mich_sat);
+        mich_out->setDefault(defSpot.mich_out);
 
         detailSH->setDefault((double)defSpot.detailSH);
         tePivot->setDefault(defSpot.tePivot);
@@ -5504,6 +5559,41 @@ void LocallabShadow::adjusterChanged(Adjuster* a, double newval)
             if (listener) {
                 listener->panelChanged(Evlocallabghs_HLP,
                                        ghs_HLP->getTextValue() + " (" + escapeHtmlChars(getSpotName()) + ")");
+            }
+        }
+
+        if (a == mich_exp) {
+            if (listener) {
+                listener->panelChanged(Evlocallabmich_exp,
+                                       mich_exp->getTextValue() + " (" + escapeHtmlChars(getSpotName()) + ")");
+            }
+        }
+
+        if (a == mich_spar) {
+            if (listener) {
+                listener->panelChanged(Evlocallabmich_spar,
+                                       mich_spar->getTextValue() + " (" + escapeHtmlChars(getSpotName()) + ")");
+            }
+        }
+
+        if (a == mich_kpar) {
+            if (listener) {
+                listener->panelChanged(Evlocallabmich_kpar,
+                                       mich_kpar->getTextValue() + " (" + escapeHtmlChars(getSpotName()) + ")");
+            }
+        }
+
+        if (a == mich_sat) {
+            if (listener) {
+                listener->panelChanged(Evlocallabmich_sat,
+                                       mich_sat->getTextValue() + " (" + escapeHtmlChars(getSpotName()) + ")");
+            }
+        }
+
+        if (a == mich_out) {
+            if (listener) {
+                listener->panelChanged(Evlocallabmich_out,
+                                       mich_out->getTextValue() + " (" + escapeHtmlChars(getSpotName()) + ")");
             }
         }
 
@@ -6100,7 +6190,7 @@ void LocallabShadow::ghsMatmetChanged()
 void LocallabShadow::inversshChanged()
 {
     const bool maskPreviewActivated = isMaskViewActive();
-    if (shMethod->get_active_row_number() == 2) {//GHS
+    if (shMethod->get_active_row_number() == 2 || shMethod->get_active_row_number() == 3) {//GHS or Michaelis
         inverssh->hide();
         inverssh->set_active(false);
     }
@@ -6324,7 +6414,7 @@ void LocallabShadow::updateShadowGUImask()
 {
     const int mode = complexity->get_active_row_number();
     const LocallabParams::LocallabSpot defSpot;
-    if (shMethod->get_active_row_number() == 2) {
+    if (shMethod->get_active_row_number() == 2  || shMethod->get_active_row_number() == 3) {
         inverssh->hide();
         inverssh->set_active(false);
     }
@@ -6453,7 +6543,8 @@ void LocallabShadow::updateShadowGUIshmet()
         ghsMethod->hide();
         BP_Frame->hide();
         ghs_inv->hide();
-        ghsMethod->hide();        
+        ghsMethod->hide();
+        michFrame->hide();
     } else if (shMethod->get_active_row_number() == 1) {
         for (const auto multiplier : multipliersh) {
             multiplier->show();
@@ -6474,7 +6565,8 @@ void LocallabShadow::updateShadowGUIshmet()
         ghsMethod->hide();
         BP_Frame->hide();
         ghs_inv->hide();
-        ghsMethod->hide();        
+        ghsMethod->hide();
+        michFrame->hide();
 
     } else if (shMethod->get_active_row_number() == 2) {
         for (const auto multiplier : multipliersh) {
@@ -6496,6 +6588,8 @@ void LocallabShadow::updateShadowGUIshmet()
         Lab_Frame->hide();
         BP_Frame->show();
         ghs_inv->hide();
+        michFrame->hide();
+
         if (mode == Expert || mode == Normal) {
             ghs_inv->show();
         }
@@ -6544,7 +6638,26 @@ void LocallabShadow::updateShadowGUIshmet()
         if (mode == Expert) {
             ghs_slope->show();
         }
+    } else if (shMethod->get_active_row_number() == 3) {
+        michFrame->show();
+        gamFrame->hide();
+        detailSH->hide();
+        tePivot->hide();
+        highlights->hide();
+        h_tonalwidth->hide();
+        shadows->hide();
+        s_tonalwidth->hide();
+        sh_radius->hide();
+        ghsFrame->hide();
+        ghsMethod->hide();
+        BP_Frame->hide();
+        ghs_inv->hide();
+        ghsMethod->hide();
+        for (const auto multiplier : multipliersh) {
+            multiplier->hide();
+        }
     }
+
 }
 
 /* ==== LocallabVibrance ==== */

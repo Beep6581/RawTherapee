@@ -1638,6 +1638,12 @@ HISTORY_MSG_LOCAL_LOG_BLACKS;Local - Log Blacks distribution
 HISTORY_MSG_LOCAL_LOG_COMPR;Local - Log Compress brightness
 HISTORY_MSG_LOCAL_LOG_SAT;Local - Log Saturation control
 HISTORY_MSG_LOCAL_LOG_WHITES;Local - Log Whites distribution
+HISTORY_MSG_LOCAL_MICH_EXP;Local - Michaelis-Menten Exposure
+HISTORY_MSG_LOCAL_MICH_SPAR;Local - Michaelis-Menten Output Scale
+HISTORY_MSG_LOCAL_MICH_KPAR;Local - Michaelis-Menten Knee Strength
+HISTORY_MSG_LOCAL_MICH_SAT;Local - Michaelis-Menten Knee Saturation
+HISTORY_MSG_LOCAL_MICH_OUT;Local - Michaelis-Menten Knee Output Max Clamp
+
 HISTORY_MSG_LOCAL_NLITER;Local - Nlmeans - Iterations
 HISTORY_MSG_LOCAL_OFFSETWAV;Local Wav offset
 HISTORY_MSG_LOCAL_PROCESSWAV;Local - Wavelets - Show modifications
@@ -3719,6 +3725,13 @@ TP_LOCALLAB_MERTHR;Difference
 TP_LOCALLAB_MERTWE;Exclusion
 TP_LOCALLAB_MERTWO;Subtract
 TP_LOCALLAB_METHOD_TOOLTIP;'Enhanced + chroma denoise' significantly increases processing times.\nBut reduce artifacts.
+TP_LOCALLAB_MICHFRA;Michaelis-Menten Settings
+TP_LOCALLAB_MICHTONEFRA;Tone Curve
+TP_LOCALLAB_MICHEXP;Exposure (EV)
+TP_LOCALLAB_MICHSPAR;Output Scale (S)
+TP_LOCALLAB_MICHKPAR;Knee Strength (K)
+TP_LOCALLAB_MICHSAT;Saturation
+TP_LOCALLAB_MICHOUT;Output Max Clamp
 TP_LOCALLAB_MIDTCIE;Value
 TP_LOCALLAB_MIDTCIEMAIN;Midtones
 TP_LOCALLAB_MIDTCIEFRA;Midtones
@@ -3857,6 +3870,7 @@ TP_LOCALLAB_SETTINGS;Settings
 TP_LOCALLAB_SH1;Shadows Highlights
 TP_LOCALLAB_SH2;Equalizer
 TP_LOCALLAB_SH3;Generalized Hyperbolic Stretch (GHS)
+TP_LOCALLAB_SH4;Tone Mapper Michaelis-Menten
 TP_LOCALLAB_SHADEX;Shadows
 TP_LOCALLAB_SHADEXCOMP;Shadow compression
 TP_LOCALLAB_SHADHIGH;Shadows/Highlights, Equalizer & GHS
