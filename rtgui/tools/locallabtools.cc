@@ -4505,6 +4505,8 @@ LocallabShadow::LocallabShadow():
     mich_kpar->setAdjusterListener(this);
     mich_sat->setAdjusterListener(this);
     mich_out->setAdjusterListener(this);
+    mich_kpar->setLogScale(10, 0);
+    mich_out->setLogScale(10, 0);
 
     ghsbpwpLabels->set_line_wrap();
     ghsbpwpLabels->set_justify(Gtk::Justification::JUSTIFY_CENTER);

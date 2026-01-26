@@ -15074,6 +15074,14 @@ All 3 allow you to modify the contrast of the image by filling the valleys and r
 
 */
 
+// Michaelis-Menten equation
+float mm_curve(double x, double S, double K_eff)
+{
+    // Ensure K_eff is not zero to prevent division by zero if x is also zero.
+    // A very small K makes the curve rise very steeply.
+    return (S * x) / (fmax( K_eff, 1e-6) +  x);
+}
+
 float clamp(float x, float lo, float hi)
 {
     return fmax(fmin(x, hi), lo);
@@ -19025,12 +19033,64 @@ void ImProcFunctions::Lab_Local(
                     }
                 }
                 if (lp.shmeth == 3) {//Michaelis-Menten
-                    TMatrix wprof = ICCStore::getInstance()->workingSpaceMatrix(params->icm.workingProfile);
                     float michexp = params->locallab.spots.at(sp).mich_exp;//Exposure
                     float michspar = params->locallab.spots.at(sp).mich_spar;//Output Scale
                     float michkpar = params->locallab.spots.at(sp).mich_kpar;//Knee Strength
                     float michsat = params->locallab.spots.at(sp).mich_sat;//Saturation
                     float michout = params->locallab.spots.at(sp).mich_out;//Output Max Clamp
+                    float range = 65535.f;
+                    std::unique_ptr<Imagefloat> tmpImage(new Imagefloat(bfw, bfh));
+                    lab2rgb(*bufexpfin, *tmpImage, params->icm.workingProfile);
+#ifdef _OPENMP
+        #   pragma omp parallel for schedule(dynamic,16) if (multiThread)
+#endif
+
+                    for (int i = 0; i < bfh; ++i)
+                        for (int j = 0; j < bfw; ++j) {
+                            float r = tmpImage->r(i, j) / range;
+                            float g = tmpImage->g(i, j) / range;
+                            float b = tmpImage->b(i, j) / range ;
+
+                            float gain = pow_F(2.f, michexp);
+                            // --- Apply exposure ---
+                            float r_exposed = r * gain;
+                            float g_exposed = g * gain;
+                            float b_exposed = b * gain;
+    
+                            // --- Ensure non-negative inputs for the curve ---
+                            float r_linear = fmax(0.f, r_exposed);
+                            float g_linear = fmax(0.f, g_exposed);
+                            float b_linear = fmax(0.f, b_exposed);
+
+                            // --- Apply Michaelis-Menten curve per channel ---
+                            float r_tonemapped = mm_curve(r_linear, michspar, michkpar);
+                            float g_tonemapped = mm_curve(g_linear, michspar, michkpar);
+                            float b_tonemapped = mm_curve(b_linear, michspar, michkpar);
+
+                            // --- Saturation adjustment (Optional) ---
+                            float h, s, l;
+                            Color::rgb2hsl(r_tonemapped * range, g_tonemapped * range, b_tonemapped * range, h, s, l);
+                            s *= michsat;
+                            s = fmax(0.f, s);
+
+                            float R, G, B;
+                            Color::hsl2rgb(h, s, l, R, G, B);
+                            float r_final = R / range;
+                            float g_final = G / range;
+                            float b_final = B / range;
+
+                            // --- Final clamping and output ---
+                            // Clamp to a specified maximum (S_param or a user-defined display white)
+                            // output_max_clamp can be set equal to S_param if S is meant to be the peak.
+                            float rout = clamp(r_final, 0.f, michout);
+                            float gout = clamp(g_final, 0.f, michout);
+                            float bout = clamp(b_final, 0.f, michout);
+                            tmpImage->r(i, j) = rtengine::max(0.00001f, rout * range);//0.00001f to avoid crash
+                            tmpImage->g(i, j) = rtengine::max(0.00001f, gout * range);
+                            tmpImage->b(i, j) = rtengine::max(0.00001f, bout * range);
+
+                            }
+                    rgb2lab(*tmpImage, *bufexpfin, params->icm.workingProfile);
                 }
                 
                 
