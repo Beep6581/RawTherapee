@@ -19083,7 +19083,7 @@ printf("MINBGHS=%f \n", (double) minb);
 
                     for (int i = 0; i < bfh; ++i)
                         for (int j = 0; j < bfw; ++j) {
-                            float r = (tmpImage->r(i, j) / range) - minbmich ;
+                            float r = (tmpImage->r(i, j) / range) - minbmich ;// Subtract black
                             float g = (tmpImage->g(i, j) / range) - minbmich;
                             float b = (tmpImage->b(i, j) / range) - minbmich;
 
