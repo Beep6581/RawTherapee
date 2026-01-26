@@ -3727,6 +3727,7 @@ TP_LOCALLAB_MERTWO;Subtract
 TP_LOCALLAB_METHOD_TOOLTIP;'Enhanced + chroma denoise' significantly increases processing times.\nBut reduce artifacts.
 TP_LOCALLAB_MICHFRA;Michaelis-Menten Settings
 TP_LOCALLAB_MICHTONEFRA;Tone Curve
+TP_LOCALLAB_MICHBLACK;Subtract black
 TP_LOCALLAB_MICHEXP;Exposure (EV)
 TP_LOCALLAB_MICHSPAR;Output Scale (S)
 TP_LOCALLAB_MICHKPAR;Knee Strength (K)
@@ -3853,7 +3854,6 @@ TP_LOCALLAB_ROW_VIS;Visible
 TP_LOCALLAB_RSTPROTECT_TOOLTIP;Red and skin-tone protection affects the Saturation, Chroma and Colorfulness sliders.
 TP_LOCALLAB_SATCIE;Saturation control
 TP_LOCALLAB_SATCIE_TOOLTIP;Modifies the image saturation whenever the gamma/slope ratio is different from 2.4/12.92. It aims to compensate for the desaturation caused by significant luminance variations.\nValues ​​between 0.2 and 1.0 are often sufficient.
-
 TP_LOCALLAB_SATUR;Saturation
 TP_LOCALLAB_SATURV;Saturation (s)
 TP_LOCALLAB_SCALEGR;Scale

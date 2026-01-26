@@ -15075,6 +15075,7 @@ All 3 allow you to modify the contrast of the image by filling the valleys and r
 */
 
 // Michaelis-Menten equation
+// Curiouly we uses the Michaelis-Menten equation, which is borrowed from biochemistry to describe enzyme kinetics
 float mm_curve(double x, double S, double K_eff)
 {
     // Ensure K_eff is not zero to prevent division by zero if x is also zero.
@@ -15451,7 +15452,7 @@ void ImProcFunctions::Lab_Local(
     bool prevDeltaE, int llColorMask, int llColorMaskinv, int llExpMask, int llExpMaskinv, int llSHMask, int llSHMaskinv, int llvibMask, int lllcMask, int llsharMask, int llcbMask, int llretiMask, int llsoftMask, int lltmMask, int llblMask, int lllogMask, int ll_Mask, int llcieMask,
     float& minCD, float& maxCD, float& mini, float& maxi, float& Tmean, float& Tsigma, float& Tmin, float& Tmax,
     float& meantm, float& stdtm, float& meanreti, float& stdreti, float &fab,float &maxicam, float &rdx, float &rdy, float &grx, float &gry, float &blx, float &bly, float &meanx, float &meany, float &meanxe, float &meanye, float &maxdat,  int &prim, int &ill, float &contsig, float &lightsig, float &slopeg, bool &linkrgb,
-    float *resi, float &sharc, float &denocont, int *ghsbpwp, float *ghsbpwpvalue, float *savmadl, float *ghsbwslider, float &ghssym, bool &ghsautsp,  float *ghscolor, float &ghsmid, float &ghsmaxrgb, float &ghs3sig)
+    float *resi, float &sharc, float &denocont, int *ghsbpwp, float *ghsbpwpvalue, float *savmadl, float *ghsbwslider, float &ghssym, bool &ghsautsp,  float *ghscolor, float &ghsmid, float &ghsmaxrgb, float &ghs3sig, float *michbwslider)
 
 {
     //general call of others functions : important return hueref, chromaref, lumaref
@@ -18530,7 +18531,7 @@ void ImProcFunctions::Lab_Local(
                                  }
                                 const float noise = pow_F(2.f, -16.f);
                                 minb = rtengine::max(minb, noise);//set a very minimal value in all cases to avoid 0
-
+printf("MINBGHS=%f \n", (double) minb);
                                 ghsbwslider[1]= maxw + WP_LINEAR_FREE;//Slightly increase the White Point to allow for some flexibility
                                 ghsbwslider[0]= minb; 
                                 ghscolor[0] = maxwred; 
@@ -19038,18 +19039,53 @@ void ImProcFunctions::Lab_Local(
                     float michkpar = params->locallab.spots.at(sp).mich_kpar;//Knee Strength
                     float michsat = params->locallab.spots.at(sp).mich_sat;//Saturation
                     float michout = params->locallab.spots.at(sp).mich_out;//Output Max Clamp
+                    bool michblack = params->locallab.spots.at(sp).mich_black;//Black point
                     float range = 65535.f;
                     std::unique_ptr<Imagefloat> tmpImage(new Imagefloat(bfw, bfh));
                     lab2rgb(*bufexpfin, *tmpImage, params->icm.workingProfile);
+                    float minbmich = 100.f;
+                    float maxwmich = -100.f;
+                    if (michblack) {//Calculate minimum black and maximum white
+ #ifdef _OPENMP
+        #   pragma omp parallel for reduction(min:minbmich) reduction(max:maxwmich) if (multiThread)
+#endif
+                        for (int i = 0; i < bfh; ++i)
+                            for (int j = 0; j < bfw; ++j) {
+                                float r = tmpImage->r(i, j) / range;
+                                float g = tmpImage->g(i, j) / range;
+                                float b = tmpImage->b(i, j) / range;
+                                float minrgb = rtengine::min(r, g, b);
+                                if(minrgb < minbmich){
+                                    minbmich = minrgb;
+                                }
+                                float maxrgb = rtengine::max(r, g, b);
+                                if(maxrgb > maxwmich){
+                                    maxwmich = maxrgb;
+                                }
+                            }
+                        const float noise = pow_F(2.f, -16.f);
+                        minbmich = rtengine::max(minbmich, noise);//set a very minimal value in all cases to avoid 0
+                        } else {
+                            minbmich = 0.f;
+                            maxwmich = 0.f;
+                        }
+                        //I put these 2 variables in place, just in case... So as not to rewrite the code... If users request a finer setting than "subtraction", and an action on the White point.
+                        michbwslider[0]= minbmich; 
+                        michbwslider[1]= maxwmich; 
+                        if (settings->verbose) {
+                            printf("Min black=%f max White=%f\n", (double) michbwslider[0], (double) michbwslider[1]);
+                        }
+
+
 #ifdef _OPENMP
         #   pragma omp parallel for schedule(dynamic,16) if (multiThread)
 #endif
 
                     for (int i = 0; i < bfh; ++i)
                         for (int j = 0; j < bfw; ++j) {
-                            float r = tmpImage->r(i, j) / range;
-                            float g = tmpImage->g(i, j) / range;
-                            float b = tmpImage->b(i, j) / range ;
+                            float r = (tmpImage->r(i, j) / range) - minbmich ;
+                            float g = (tmpImage->g(i, j) / range) - minbmich;
+                            float b = (tmpImage->b(i, j) / range) - minbmich;
 
                             float gain = pow_F(2.f, michexp);
                             // --- Apply exposure ---
@@ -19067,7 +19103,7 @@ void ImProcFunctions::Lab_Local(
                             float g_tonemapped = mm_curve(g_linear, michspar, michkpar);
                             float b_tonemapped = mm_curve(b_linear, michspar, michkpar);
 
-                            // --- Saturation adjustment (Optional) ---
+                            // --- Saturation adjustment ---
                             float h, s, l;
                             Color::rgb2hsl(r_tonemapped * range, g_tonemapped * range, b_tonemapped * range, h, s, l);
                             s *= michsat;
@@ -19080,8 +19116,6 @@ void ImProcFunctions::Lab_Local(
                             float b_final = B / range;
 
                             // --- Final clamping and output ---
-                            // Clamp to a specified maximum (S_param or a user-defined display white)
-                            // output_max_clamp can be set equal to S_param if S is meant to be the peak.
                             float rout = clamp(r_final, 0.f, michout);
                             float gout = clamp(g_final, 0.f, michout);
                             float bout = clamp(b_final, 0.f, michout);
