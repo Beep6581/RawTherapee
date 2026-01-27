@@ -15462,7 +15462,7 @@ void ImProcFunctions::Lab_Local(
     float& minCD, float& maxCD, float& mini, float& maxi, float& Tmean, float& Tsigma, float& Tmin, float& Tmax,
     float& meantm, float& stdtm, float& meanreti, float& stdreti, float &fab,float &maxicam, float &rdx, float &rdy, float &grx, float &gry, float &blx, float &bly, float &meanx, float &meany, float &meanxe, float &meanye, float &maxdat,  int &prim, int &ill, float &contsig, float &lightsig, float &slopeg, bool &linkrgb,
     float *resi, float &sharc, float &denocont, int *ghsbpwp, float *ghsbpwpvalue, float *savmadl, float *ghsbwslider, float &ghssym, bool &ghsautsp,  float *ghscolor, float &ghsmid, float &ghsmaxrgb, float &ghs3sig, float *michbwslider)
-
+    //michbwslider: added to facilitate a possible modification requested by users, but is not currently in use
 {
     //general call of others functions : important return hueref, chromaref, lumaref
     if (!params->locallab.enabled) {
@@ -19044,21 +19044,24 @@ printf("MINBGHS=%f \n", (double) minb);
                 }
                 if (lp.shmeth == 3) {//Michaelis-Menten
                     float michexp = params->locallab.spots.at(sp).mich_exp;//Exposure
-                    float michspar = params->locallab.spots.at(sp).mich_spar;//Output Scale
-                    float michkpar = params->locallab.spots.at(sp).mich_kpar;//Knee Strength
+                    float michspar = params->locallab.spots.at(sp).mich_spar;//Output scale
+                    float michkpar = params->locallab.spots.at(sp).mich_kpar;//Knee strength
                     float michsat = params->locallab.spots.at(sp).mich_sat;//Saturation
-                    float michout = params->locallab.spots.at(sp).mich_out;//Output Max Clamp
-                    bool michblack = params->locallab.spots.at(sp).mich_black;//Black point
-                    bool michwhite = params->locallab.spots.at(sp).mich_white;//White point
+                    float michout = params->locallab.spots.at(sp).mich_out;//Output max clamp
+                    bool michblack = params->locallab.spots.at(sp).mich_black;//Linear Black point
+                    bool michwhite = params->locallab.spots.at(sp).mich_white;//Linear White point
                     float michhigh = params->locallab.spots.at(sp).mich_high;//Highlight reduction
+                    bool midjdx = params->locallab.spots.at(sp).mich_jdx;//Matrix LMS using XYZ transform
 
                     float range = 65535.f;
                     std::unique_ptr<Imagefloat> tmpImage(new Imagefloat(bfw, bfh));
-                    lab2rgb(*bufexpfin, *tmpImage, params->icm.workingProfile);
+                    lab2rgb(*bufexpfin, *tmpImage, params->icm.workingProfile);//Conversion Lab -> RGB
                     float minbmich = 100.f;
                     float maxwmich = -100.f;
                     bool calculatbw = false;
                     calculatbw = michblack || michwhite;
+
+                    //preparing Matrix conversion
                     using Triple = std::array<double, 3>;
                     using Matrix = std::array<Triple, 3>;
                     Matrix inv_lms_T = {};//initialize inv_lms_T
@@ -19076,11 +19079,12 @@ printf("MINBGHS=%f \n", (double) minb);
                         {static_cast<float>(wprofi[1][0]), static_cast<float>(wprofi[1][1]), static_cast<float>(wprofi[1][2])},
                         {static_cast<float>(wprofi[2][0]), static_cast<float>(wprofi[2][1]), static_cast<float>(wprofi[2][2])}
                         };
-                    lms_mat = {{//JDx - Jacques Desmis Matrix XYZ -> LMS
+                    lms_mat = {{//JDx - Jacques Desmis Matrix XYZ -> LMS - Simple matrix that amplifies the current channel.
                         { 0.80, 0.1, 0.1 },
                         { 0.1, 0.80, 0.1 },
                         { 0.1, 0.1, 0.80 }
                     }};
+
                     Matrix lms_T = {};
                     Color::transpose(lms_mat, lms_T);//transpose Matrix
                     //invert matrix
@@ -19089,20 +19093,20 @@ printf("MINBGHS=%f \n", (double) minb);
                             std::cout << "Matrix is not invertible, skipping and use this one" << std::endl;
                         }
                         //If the calculations fail, we use this matrix calculated with a spreadsheet. Note that if 'lms_mat' changes, you must redo the calculations.
-                        if(params->locallab.spots.at(sp).mich_jdx) {
-                                    inv_lms_T[0][0] = 1.285714286;
-                                    inv_lms_T[0][1] = -0.14285714;
-                                    inv_lms_T[0][2] = -0.14285714;
-                                    inv_lms_T[1][0] = -0.14285714;
-                                    inv_lms_T[1][1] = 1.285714286;
-                                    inv_lms_T[1][2] = -0.14285714;
-                                    inv_lms_T[2][0] = -0.14285714;
-                                    inv_lms_T[2][1] = -0.14285714;
-                                    inv_lms_T[2][2] = 1.285714286;
+                        if (midjdx) {
+                            inv_lms_T[0][0] = 1.285714286;
+                            inv_lms_T[0][1] = -0.14285714;
+                            inv_lms_T[0][2] = -0.14285714;
+                            inv_lms_T[1][0] = -0.14285714;
+                            inv_lms_T[1][1] = 1.285714286;
+                            inv_lms_T[1][2] = -0.14285714;
+                            inv_lms_T[2][0] = -0.14285714;
+                            inv_lms_T[2][1] = -0.14285714;
+                            inv_lms_T[2][2] = 1.285714286;
                         }
                     }
 
-                    if(params->locallab.spots.at(sp).mich_jdx) {
+                    if (midjdx) {//First LMS transformation from XYZ (and RGB)
 #ifdef _OPENMP
         #   pragma omp parallel for schedule(dynamic,16) if (multiThread)
 #endif
@@ -19130,7 +19134,7 @@ printf("MINBGHS=%f \n", (double) minb);
                     }
                     
                     
-                    if (calculatbw) {//Calculate minimum black and maximum white
+                    if (calculatbw) {//Calculate linear minimum black and maximum white
  #ifdef _OPENMP
         #   pragma omp parallel for reduction(min:minbmich) reduction(max:maxwmich) if (multiThread)
 #endif
@@ -19148,37 +19152,38 @@ printf("MINBGHS=%f \n", (double) minb);
                                     maxwmich = maxrgb;
                                 }
                             }
-                        } else {
-                            minbmich = 0.f;
-                            maxwmich = 1.f;
-                        }
-                        const float noise = pow_F(2.f, -16.f);
+                    } else { //default values
+                        minbmich = 0.f;
+                        maxwmich = 1.f;
+                    }
+                    const float noise = pow_F(2.f, -16.f);//very low value
 
-                        minbmich = rtengine::max(minbmich, noise);//set a very minimal value in all cases to avoid 0
+                    minbmich = rtengine::max(minbmich, noise);//set a very minimal value in all cases to avoid 0
 
-                        float deltawp = rtengine::max(0.05f, maxwmich - minbmich);//0.05 minimum acceptable
-                        if(! michwhite) {
-                          deltawp = 1.f;
-                        }
-                        //I put these 2 variables in place, just in case... So as not to rewrite the code... If users request a finer setting than "subtraction", and an action on the White point.
-                        michbwslider[0]= minbmich; 
-                        michbwslider[1]= maxwmich; 
-                        if (settings->verbose) {
-                            printf("Min black=%f max White=%f\n", (double) michbwslider[0], (double) michbwslider[1]);
-                        }
+                    float deltawp = rtengine::max(0.05f, maxwmich - minbmich);//Linear Dynamic Range - 0.05 minimum acceptable
+                    if (! michwhite) {//no use of linear Dynamic Range
+                        deltawp = 1.f;
+                    }
+                    //I put these 2 variables in place, just in case... So as not to rewrite the code... If users request a finer setting than "subtraction" or "Dynamic range", and an action on the White point.
+                    michbwslider[0]= minbmich; 
+                    michbwslider[1]= maxwmich; 
+                    if (settings->verbose) {
+                        printf("Min black=%f max White=%f\n", (double) michbwslider[0], (double) michbwslider[1]);
+                    }
 
 
 #ifdef _OPENMP
         #   pragma omp parallel for schedule(dynamic,16) if (multiThread)
 #endif
-
+                    //Taken from ART's CTLs, thanks to Alberto Griggio
+                    //Modified by Jacques Desmis - January 2026
                     for (int i = 0; i < bfh; ++i)
                         for (int j = 0; j < bfw; ++j) {
-                            float r = ((tmpImage->r(i, j) / range) - minbmich) / deltawp ;// Subtract linear black and use Dynamic Range linear
-                            float g = ((tmpImage->g(i, j) / range) - minbmich) / deltawp;
+                            float r = ((tmpImage->r(i, j) / range) - minbmich) / deltawp;// Subtract linear black and use Linear Dynamic Range
+                            float g = ((tmpImage->g(i, j) / range) - minbmich) / deltawp;//data are in range [0 1]
                             float b = ((tmpImage->b(i, j) / range) - minbmich) / deltawp;
 
-                            float gain = pow_F(2.f, michexp);
+                            float gain = pow_F(2.f, michexp);//in Ev
                             // --- Apply exposure ---
                             float r_exposed = r * gain;
                             float g_exposed = g * gain;
@@ -19214,12 +19219,14 @@ printf("MINBGHS=%f \n", (double) minb);
                             tmpImage->g(i, j) = rtengine::max(0.00001f, gout * range);
                             tmpImage->b(i, j) = rtengine::max(0.00001f, bout * range);
 
-                            }
-                    if(michhigh > 0.f ) {
+                        }
+                    
+                    if (michhigh > 0.f ) {
                         //Highlight attenuation
                         tone_eqsmooth(this, tmpImage.get(), lp, params->icm.workingProfile, sk, multiThread);//reduce Ev > 0 < 12
                     }
-                    if(params->locallab.spots.at(sp).mich_jdx) {
+ 
+                    if (midjdx) {//Second XYZ transformation from LMS (and RGB)
 #ifdef _OPENMP
         #   pragma omp parallel for schedule(dynamic,16) if (multiThread)
 #endif                                            
@@ -19246,7 +19253,7 @@ printf("MINBGHS=%f \n", (double) minb);
                             }
                     }
 
-                    rgb2lab(*tmpImage, *bufexpfin, params->icm.workingProfile);
+                    rgb2lab(*tmpImage, *bufexpfin, params->icm.workingProfile);//conversion RGB -> Lab
                 }
                 
                 

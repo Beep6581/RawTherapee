@@ -4346,15 +4346,15 @@ LocallabShadow::LocallabShadow():
     ghs_inv(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_GHS_INV")))),
     michFrame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_MICHFRA")))),
     michtone_Frame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_MICHTONEFRA")))),
-    mich_exp(Gtk::manage(new Adjuster(M("TP_LOCALLAB_MICHEXP"), -4., 4., 0.01, 0.))),
-    mich_spar(Gtk::manage(new Adjuster(M("TP_LOCALLAB_MICHSPAR"), 0.1, 5., 0.01, 1.))),
-    mich_kpar(Gtk::manage(new Adjuster(M("TP_LOCALLAB_MICHKPAR"), 0.01, 2., 0.001, 0.18))),
-    mich_jdx(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_MICHJDX")))),
-    mich_sat(Gtk::manage(new Adjuster(M("TP_LOCALLAB_MICHSAT"), 0.0, 2., 0.01, 1.))),
-    mich_out(Gtk::manage(new Adjuster(M("TP_LOCALLAB_MICHOUT"), 0.5, 10., 0.01, 1.))),
-    mich_black(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_MICHBLACK")))),
-    mich_white(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_MICHWHITE")))),
-    mich_high(Gtk::manage(new Adjuster(M("TP_LOCALLAB_MICHHIGH"), 0., 3., 0.01, 0.))),
+    mich_exp(Gtk::manage(new Adjuster(M("TP_LOCALLAB_MICHEXP"), -4., 4., 0.01, 0.))),//Exposure : Adjusts the input image brightness.
+    mich_spar(Gtk::manage(new Adjuster(M("TP_LOCALLAB_MICHSPAR"), 0.1, 5., 0.01, 1.))),//Output scale (S) : Controls the maximum asymptotic value of the curve; essentially the output white level.
+    mich_kpar(Gtk::manage(new Adjuster(M("TP_LOCALLAB_MICHKPAR"), 0.01, 2., 0.001, 0.18))),//Knee strength (K): Determines the “knee” of the curve. Lower values result in a sharper transition to the compressed highlight region.
+    mich_jdx(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_MICHJDX")))),//Allows or disallows an LMS transformation with the JDx matrix.
+    mich_sat(Gtk::manage(new Adjuster(M("TP_LOCALLAB_MICHSAT"), 0.0, 2., 0.01, 1.))),//Saturation : Adjusts color saturation post-tone mapping.
+    mich_out(Gtk::manage(new Adjuster(M("TP_LOCALLAB_MICHOUT"), 0.5, 10., 0.01, 1.))),//Output Max Clamp : Sets the final clipping point for the output values.
+    mich_black(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_MICHBLACK")))),//Allows or disallows the use of linear black subtraction.
+    mich_white(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_MICHWHITE")))),//Allows or disallows the use of linear dynamic range.
+    mich_high(Gtk::manage(new Adjuster(M("TP_LOCALLAB_MICHHIGH"), 0., 3., 0.01, 0.))),//Reduces highlights.
     expgradsh(Gtk::manage(new MyExpander(false, M("TP_LOCALLAB_EXPGRAD")))),
     strSH(Gtk::manage(new Adjuster(M("TP_LOCALLAB_GRADSTR"), -4., 4., 0.05, 0.))),
     angSH(Gtk::manage(new Adjuster(M("TP_LOCALLAB_GRADANG"), -180, 180, 0.1, 0.))),
@@ -5122,9 +5122,9 @@ void LocallabShadow::read(const rtengine::procparams::ProcParams* pp, const Para
             shMethod->set_active(0);
         } else if (spot.shMethod == "tone") {
             shMethod->set_active(1);
-        } else if (spot.shMethod == "ghs") {
+        } else if (spot.shMethod == "ghs") {//Generalized Hyperbolic Stretch
             shMethod->set_active(2);
-        } else if (spot.shMethod == "micha") {
+        } else if (spot.shMethod == "micha") {//Michaelis-Menten algorithm
             shMethod->set_active(3);
         }
 
@@ -5302,9 +5302,9 @@ void LocallabShadow::write(rtengine::procparams::ProcParams* pp, ParamsEdited* p
             spot.shMethod = "std";
         } else if (shMethod->get_active_row_number() == 1) {
             spot.shMethod = "tone";
-        } else if (shMethod->get_active_row_number() == 2) {
+        } else if (shMethod->get_active_row_number() == 2) {//Generalized hyperbolic stretch
             spot.shMethod = "ghs";
-        } else if (shMethod->get_active_row_number() == 3) {
+        } else if (shMethod->get_active_row_number() == 3) {//Michaelis-Menten algorithm
             spot.shMethod = "micha";
         }
 
