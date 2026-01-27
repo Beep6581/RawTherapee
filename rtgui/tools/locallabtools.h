@@ -641,6 +641,7 @@ private:
     Adjuster* const mich_exp;
     Adjuster* const mich_spar;
     Adjuster* const mich_kpar;
+    Gtk::CheckButton* const mich_jdx;
     Adjuster* const mich_sat;
     Adjuster* const mich_out;
     Gtk::CheckButton* const mich_black;
@@ -700,8 +701,9 @@ private:
     rtengine::ProcEvent Evlocallabmich_black;
     rtengine::ProcEvent Evlocallabmich_white;
     rtengine::ProcEvent Evlocallabmich_high;
+    rtengine::ProcEvent Evlocallabmich_jdx;
 
-    sigc::connection shMethodConn, ghsMethodConn, ghsMatmetConn, previewshConn, inversshConn, ghs_smoothConn, ghs_autobwConn, ghs_agxConn, ghs_invConn, mich_blackConn, mich_whiteConn, showmaskSHMethodConn, showmaskSHMethodConninv, enaSHMaskConn;
+    sigc::connection shMethodConn, ghsMethodConn, ghsMatmetConn, previewshConn, inversshConn, ghs_smoothConn, ghs_autobwConn, ghs_agxConn, ghs_invConn, mich_blackConn, mich_jdxConn, mich_whiteConn, showmaskSHMethodConn, showmaskSHMethodConninv, enaSHMaskConn;
 
 public:
     LocallabShadow();
@@ -753,6 +755,7 @@ private:
     void ghs_invChanged();
     void mich_blackChanged();
     void mich_whiteChanged();
+    void mich_jdxChanged();
 
     void showmaskSHMethodChanged();
     void showmaskSHMethodChangedinv();

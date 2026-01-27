@@ -19059,6 +19059,77 @@ printf("MINBGHS=%f \n", (double) minb);
                     float maxwmich = -100.f;
                     bool calculatbw = false;
                     calculatbw = michblack || michwhite;
+                    using Triple = std::array<double, 3>;
+                    using Matrix = std::array<Triple, 3>;
+                    Matrix inv_lms_T = {};//initialize inv_lms_T
+                    Matrix lms_mat = {};//initialize lms_mat
+                    TMatrix wiprof = ICCStore::getInstance()->workingSpaceInverseMatrix(params->icm.workingProfile);
+                    //inverse matrix user select
+                    const float wip[3][3] = {
+                        {static_cast<float>(wiprof[0][0]), static_cast<float>(wiprof[0][1]), static_cast<float>(wiprof[0][2])},
+                        {static_cast<float>(wiprof[1][0]), static_cast<float>(wiprof[1][1]), static_cast<float>(wiprof[1][2])},
+                        {static_cast<float>(wiprof[2][0]), static_cast<float>(wiprof[2][1]), static_cast<float>(wiprof[2][2])}
+                    };
+                    TMatrix wprofi = ICCStore::getInstance()->workingSpaceMatrix(params->icm.workingProfile);
+                    const float wpi[3][3] = {
+                        {static_cast<float>(wprofi[0][0]), static_cast<float>(wprofi[0][1]), static_cast<float>(wprofi[0][2])},
+                        {static_cast<float>(wprofi[1][0]), static_cast<float>(wprofi[1][1]), static_cast<float>(wprofi[1][2])},
+                        {static_cast<float>(wprofi[2][0]), static_cast<float>(wprofi[2][1]), static_cast<float>(wprofi[2][2])}
+                        };
+                    lms_mat = {{//JDx - Jacques Desmis Matrix XYZ -> LMS
+                        { 0.80, 0.1, 0.1 },
+                        { 0.1, 0.80, 0.1 },
+                        { 0.1, 0.1, 0.80 }
+                    }};
+                    Matrix lms_T = {};
+                    Color::transpose(lms_mat, lms_T);//transpose Matrix
+                    //invert matrix
+                    if (!rtengine::invertMatrix(lms_T, inv_lms_T)) {
+                        if (settings->verbose) {
+                            std::cout << "Matrix is not invertible, skipping and use this one" << std::endl;
+                        }
+                        //If the calculations fail, we use this matrix calculated with a spreadsheet. Note that if 'lms_mat' changes, you must redo the calculations.
+                        if(params->locallab.spots.at(sp).mich_jdx) {
+                                    inv_lms_T[0][0] = 1.285714286;
+                                    inv_lms_T[0][1] = -0.14285714;
+                                    inv_lms_T[0][2] = -0.14285714;
+                                    inv_lms_T[1][0] = -0.14285714;
+                                    inv_lms_T[1][1] = 1.285714286;
+                                    inv_lms_T[1][2] = -0.14285714;
+                                    inv_lms_T[2][0] = -0.14285714;
+                                    inv_lms_T[2][1] = -0.14285714;
+                                    inv_lms_T[2][2] = 1.285714286;
+                        }
+                    }
+
+                    if(params->locallab.spots.at(sp).mich_jdx) {
+#ifdef _OPENMP
+        #   pragma omp parallel for schedule(dynamic,16) if (multiThread)
+#endif
+
+                        for (int i = 0; i < bfh; ++i)
+                            for (int j = 0; j < bfw; ++j) {
+                                const float r = tmpImage->r(i, j);
+                                const float g = tmpImage->g(i, j);
+                                const float b = tmpImage->b(i, j);
+                                float X, Y, Z;
+                                Color::rgbxyz(r, g, b, X, Y, Z, wpi);//convert to XYZ using the working profile
+                                std::array<float, 3> xyz_in{X, Y, Z};
+                                float Xout = 0.f;
+                                float Yout = 0.f;
+                                float Zout = 0.f;
+                                Color::agx_trans(xyz_in, lms_T, Xout, Yout, Zout);//multiplies the XYZ data with the conversion matrice Cat16 or JZ
+                                float rout = 0.f;
+                                float gout = 0.f;
+                                float bout = 0.f;
+                                Color::xyz2rgb(Xout, Yout, Zout, rout, gout, bout, wip);//convert to RGB using inverse working profile.
+                                tmpImage->r(i, j) = rtengine::max(0.00001f, rout);//avoid negative values. Normally this should never happen because the coefficients of the selected matrix are all positive... unless the matrix changes
+                                tmpImage->g(i, j) = rtengine::max(0.00001f, gout);//these potentially negative values, related to calculations and not to the gamut, are not accepted by the rgblab or labrgb, workingtrc functions, etc,
+                                tmpImage->b(i, j) = rtengine::max(0.00001f, bout);//but after numerous checks, this has no impact on the results...except to prevent a crash.
+                            }
+                    }
+                    
+                    
                     if (calculatbw) {//Calculate minimum black and maximum white
  #ifdef _OPENMP
         #   pragma omp parallel for reduction(min:minbmich) reduction(max:maxwmich) if (multiThread)
@@ -19147,6 +19218,32 @@ printf("MINBGHS=%f \n", (double) minb);
                     if(michhigh > 0.f ) {
                         //Highlight attenuation
                         tone_eqsmooth(this, tmpImage.get(), lp, params->icm.workingProfile, sk, multiThread);//reduce Ev > 0 < 12
+                    }
+                    if(params->locallab.spots.at(sp).mich_jdx) {
+#ifdef _OPENMP
+        #   pragma omp parallel for schedule(dynamic,16) if (multiThread)
+#endif                                            
+
+                        for (int i = 0; i < bfh; ++i)
+                            for (int j = 0; j < bfw; ++j) {
+                                const float r = tmpImage->r(i, j);
+                                const float g = tmpImage->g(i, j);
+                                const float b = tmpImage->b(i, j);
+                                float X, Y, Z;
+                                Color::rgbxyz(r, g, b, X, Y, Z, wpi);//convert to XYZ using the working profile
+                                std::array<float, 3> xyz_in{X, Y, Z};
+                                float Xout = 0.f;
+                                float Yout = 0.f;
+                                float Zout = 0.f;
+                                Color::agx_trans(xyz_in, inv_lms_T, Xout, Yout, Zout);//multiplies the XYZ data with the conversion inverse matrice Cat16 or JZ
+                                float rout = 0.f;
+                                float gout = 0.f;
+                                float bout = 0.f;
+                                Color::xyz2rgb(Xout, Yout, Zout, rout, gout, bout, wip);//convert to RGB using inverse working profile.
+                                tmpImage->r(i, j) = rtengine::max(0.00001f, rout);//avoid negative values. Normally this should never happen because the coefficients of the selected matrix are all positive... unless the matrix changes
+                                tmpImage->g(i, j) = rtengine::max(0.00001f, gout);//these potentially negative values, related to calculations and not to the gamut, are not accepted by the rgblab or labrgb, workingtrc functions, etc,
+                                tmpImage->b(i, j) = rtengine::max(0.00001f, bout);//but after numerous checks, this has no impact on the results...except to prevent a crash.
+                            }
                     }
 
                     rgb2lab(*tmpImage, *bufexpfin, params->icm.workingProfile);

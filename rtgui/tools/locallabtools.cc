@@ -4349,6 +4349,7 @@ LocallabShadow::LocallabShadow():
     mich_exp(Gtk::manage(new Adjuster(M("TP_LOCALLAB_MICHEXP"), -4., 4., 0.01, 0.))),
     mich_spar(Gtk::manage(new Adjuster(M("TP_LOCALLAB_MICHSPAR"), 0.1, 5., 0.01, 1.))),
     mich_kpar(Gtk::manage(new Adjuster(M("TP_LOCALLAB_MICHKPAR"), 0.01, 2., 0.001, 0.18))),
+    mich_jdx(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_MICHJDX")))),
     mich_sat(Gtk::manage(new Adjuster(M("TP_LOCALLAB_MICHSAT"), 0.0, 2., 0.01, 1.))),
     mich_out(Gtk::manage(new Adjuster(M("TP_LOCALLAB_MICHOUT"), 0.5, 10., 0.01, 1.))),
     mich_black(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_MICHBLACK")))),
@@ -4413,6 +4414,7 @@ LocallabShadow::LocallabShadow():
     Evlocallabmich_black = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_MICH_BLACK");
     Evlocallabmich_white = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_MICH_WHITE");
     Evlocallabmich_high = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_MICH_HIGH");
+    Evlocallabmich_jdx = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_MICH_JDX");
 
     ghs_SP->addAutoButton(M("TP_LOCALLAB_SPRADIUS_TOOLTIP"));
     set_orientation(Gtk::ORIENTATION_VERTICAL);
@@ -4540,6 +4542,7 @@ LocallabShadow::LocallabShadow():
     ghs_agxConn = ghs_agx->signal_toggled().connect(sigc::mem_fun(*this, &LocallabShadow::ghs_agxChanged));
     mich_blackConn = mich_black->signal_toggled().connect(sigc::mem_fun(*this, &LocallabShadow::mich_blackChanged));
     mich_whiteConn = mich_white->signal_toggled().connect(sigc::mem_fun(*this, &LocallabShadow::mich_whiteChanged));
+    mich_jdxConn = mich_jdx->signal_toggled().connect(sigc::mem_fun(*this, &LocallabShadow::mich_jdxChanged));
 
 
     setExpandAlignProperties(expgradsh, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_START);
@@ -4692,6 +4695,7 @@ LocallabShadow::LocallabShadow():
     michBox->pack_start(*mich_exp);
     michBox->pack_start(*mich_spar);
     michBox->pack_start(*mich_kpar);
+    michBox->pack_start(*mich_jdx);
     michtone_Frame->add(*michBox);
     michBox2->pack_start(*michtone_Frame);
     michBox2->pack_start(*mich_sat);
@@ -5071,6 +5075,7 @@ void LocallabShadow::disableListener()
     ghs_invConn.block(true);
     mich_blackConn.block(true);
     mich_whiteConn.block(true);
+    mich_jdxConn.block(true);
     showmaskSHMethodConn.block(true);
     showmaskSHMethodConninv.block(true);
     enaSHMaskConn.block(true);
@@ -5089,6 +5094,7 @@ void LocallabShadow::enableListener()
     ghs_invConn.block(false);
     mich_blackConn.block(false);
     mich_whiteConn.block(false);
+    mich_jdxConn.block(false);
     inversshConn.block(false);
     showmaskSHMethodConn.block(false);
     showmaskSHMethodConninv.block(false);
@@ -5219,6 +5225,7 @@ void LocallabShadow::read(const rtengine::procparams::ProcParams* pp, const Para
         mich_black->set_active(spot.mich_black);
         mich_white->set_active(spot.mich_white);
         mich_high->setValue((double)spot.mich_high);
+        mich_jdx->set_active(spot.mich_jdx);
         detailSH->setValue((double)spot.detailSH);
         tePivot->setValue(spot.tePivot);
         reparsh->setValue(spot.reparsh);
@@ -5375,6 +5382,7 @@ void LocallabShadow::write(rtengine::procparams::ProcParams* pp, ParamsEdited* p
         spot.mich_black = mich_black->get_active();
         spot.mich_white = mich_white->get_active();
         spot.mich_high = mich_high->getValue();
+        spot.mich_jdx = mich_jdx->get_active();
 
         spot.enaSHMask = enaSHMask->get_active();
         spot.LLmaskSHcurve = LLmaskSHshape->getCurve();
@@ -6277,6 +6285,34 @@ void LocallabShadow::ghs_agxChanged()
                                        M("GENERAL_ENABLED") + " (" + escapeHtmlChars(getSpotName()) + ")");
             } else {
                 listener->panelChanged(Evlocallabghs_agx,
+                                       M("GENERAL_DISABLED") + " (" + escapeHtmlChars(getSpotName()) + ")");
+            }
+        }
+    }
+}
+
+void LocallabShadow::mich_jdxChanged()
+{
+    const bool maskPreviewActivated = isMaskViewActive();
+
+    // Update shadow highlight GUI according to inverssh button state
+    updateShadowGUImask();
+
+    if (maskPreviewActivated) {
+        // This event is called to transmit reset mask state
+        if (listener) {
+            listener->panelChanged(EvlocallabshowmaskMethod, "");
+        }
+    }
+
+
+    if (isLocActivated && exp->getEnabled()) {
+        if (listener) {
+            if (mich_jdx->get_active()) {
+                listener->panelChanged(Evlocallabmich_jdx,
+                                       M("GENERAL_ENABLED") + " (" + escapeHtmlChars(getSpotName()) + ")");
+            } else {
+                listener->panelChanged(Evlocallabmich_jdx,
                                        M("GENERAL_DISABLED") + " (" + escapeHtmlChars(getSpotName()) + ")");
             }
         }
