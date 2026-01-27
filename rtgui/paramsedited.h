@@ -639,6 +639,7 @@ public:
         bool mich_sat;
         bool mich_out;
         bool mich_black;
+        bool mich_white;
         bool multsh[7];
         bool highlights;
         bool h_tonalwidth;

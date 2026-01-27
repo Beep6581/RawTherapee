@@ -1638,12 +1638,13 @@ HISTORY_MSG_LOCAL_LOG_BLACKS;Local - Log Blacks distribution
 HISTORY_MSG_LOCAL_LOG_COMPR;Local - Log Compress brightness
 HISTORY_MSG_LOCAL_LOG_SAT;Local - Log Saturation control
 HISTORY_MSG_LOCAL_LOG_WHITES;Local - Log Whites distribution
+HISTORY_MSG_LOCAL_MICH_BLACK;Local - Michaelis-Menten Subtract black
 HISTORY_MSG_LOCAL_MICH_EXP;Local - Michaelis-Menten Exposure
 HISTORY_MSG_LOCAL_MICH_SPAR;Local - Michaelis-Menten Output Scale
 HISTORY_MSG_LOCAL_MICH_KPAR;Local - Michaelis-Menten Knee Strength
 HISTORY_MSG_LOCAL_MICH_SAT;Local - Michaelis-Menten Knee Saturation
 HISTORY_MSG_LOCAL_MICH_OUT;Local - Michaelis-Menten Knee Output Max Clamp
-
+HISTORY_MSG_LOCAL_MICH_WHITE;Local - Michaelis-Menten Dynamic range
 HISTORY_MSG_LOCAL_NLITER;Local - Nlmeans - Iterations
 HISTORY_MSG_LOCAL_OFFSETWAV;Local Wav offset
 HISTORY_MSG_LOCAL_PROCESSWAV;Local - Wavelets - Show modifications
@@ -3727,7 +3728,8 @@ TP_LOCALLAB_MERTWO;Subtract
 TP_LOCALLAB_METHOD_TOOLTIP;'Enhanced + chroma denoise' significantly increases processing times.\nBut reduce artifacts.
 TP_LOCALLAB_MICHFRA;Michaelis-Menten Settings
 TP_LOCALLAB_MICHTONEFRA;Tone Curve
-TP_LOCALLAB_MICHBLACK;Subtract black
+TP_LOCALLAB_MICHBLACK;Subtract Linear Black
+TP_LOCALLAB_MICHWHITE;Linear Dynamic Range
 TP_LOCALLAB_MICHEXP;Exposure (EV)
 TP_LOCALLAB_MICHSPAR;Output Scale (S)
 TP_LOCALLAB_MICHKPAR;Knee Strength (K)
@@ -3876,7 +3878,7 @@ TP_LOCALLAB_SHADEXCOMP;Shadow compression
 TP_LOCALLAB_SHADHIGH;Shad/High, Equalizer, GHS & MM
 TP_LOCALLAB_SHADHMASK_TOOLTIP;Lowers the highlights of the mask in the same way as the shadows/highlights algorithm.
 TP_LOCALLAB_SHADMASK_TOOLTIP;Lifts the shadows of the mask in the same way as the shadows/highlights algorithm.
-TP_LOCALLAB_SHADOWHIGHLIGHT_TOOLTIP;Adjust shadows and highlights either with 'Shadows Highlights' sliders, 'Tone Equalizer', or 'Generalized Hyperbolic Stretch' (GHS).\nCan be used instead of, or in conjunction with the Exposure module, or for GHS as a tone mapper.
+TP_LOCALLAB_SHADOWHIGHLIGHT_TOOLTIP;Adjust shadows and highlights either with 'Shadows Highlights' sliders, 'Tone Equalizer', 'Generalized Hyperbolic Stretch' (GHS), or 'Michaelis-Menten Tone mapping' (MM).\nCan be used instead of, or in conjunction with the Exposure module, or for GHS / MM as a tone mapper.
 TP_LOCALLAB_SHAMASKCOL;Shadows
 TP_LOCALLAB_SHAPETYPE;Spot shape
 TP_LOCALLAB_SHAPE_TOOLTIP;'Ellipse' is the normal mode.\n 'Rectangle' can be used in certain cases, for example to work in full-image mode by placing the delimiters outside the preview area. In this case, set transition = 100.\n\nFuture developments will include polygon shapes and Bezier curves.

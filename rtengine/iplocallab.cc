@@ -19040,12 +19040,15 @@ printf("MINBGHS=%f \n", (double) minb);
                     float michsat = params->locallab.spots.at(sp).mich_sat;//Saturation
                     float michout = params->locallab.spots.at(sp).mich_out;//Output Max Clamp
                     bool michblack = params->locallab.spots.at(sp).mich_black;//Black point
+                    bool michwhite = params->locallab.spots.at(sp).mich_white;//White point
                     float range = 65535.f;
                     std::unique_ptr<Imagefloat> tmpImage(new Imagefloat(bfw, bfh));
                     lab2rgb(*bufexpfin, *tmpImage, params->icm.workingProfile);
                     float minbmich = 100.f;
                     float maxwmich = -100.f;
-                    if (michblack) {//Calculate minimum black and maximum white
+                    bool calculatbw = false;
+                    calculatbw = michblack || michwhite;
+                    if (calculatbw) {//Calculate minimum black and maximum white
  #ifdef _OPENMP
         #   pragma omp parallel for reduction(min:minbmich) reduction(max:maxwmich) if (multiThread)
 #endif
@@ -19063,11 +19066,17 @@ printf("MINBGHS=%f \n", (double) minb);
                                     maxwmich = maxrgb;
                                 }
                             }
-                        const float noise = pow_F(2.f, -16.f);
-                        minbmich = rtengine::max(minbmich, noise);//set a very minimal value in all cases to avoid 0
                         } else {
                             minbmich = 0.f;
-                            maxwmich = 0.f;
+                            maxwmich = 1.f;
+                        }
+                        const float noise = pow_F(2.f, -16.f);
+
+                        minbmich = rtengine::max(minbmich, noise);//set a very minimal value in all cases to avoid 0
+
+                        float deltawp = rtengine::max(0.05f, maxwmich - minbmich);//0.05 minimum acceptable
+                        if(! michwhite) {
+                          deltawp = 1.f;
                         }
                         //I put these 2 variables in place, just in case... So as not to rewrite the code... If users request a finer setting than "subtraction", and an action on the White point.
                         michbwslider[0]= minbmich; 
@@ -19083,9 +19092,9 @@ printf("MINBGHS=%f \n", (double) minb);
 
                     for (int i = 0; i < bfh; ++i)
                         for (int j = 0; j < bfw; ++j) {
-                            float r = (tmpImage->r(i, j) / range) - minbmich ;// Subtract black
-                            float g = (tmpImage->g(i, j) / range) - minbmich;
-                            float b = (tmpImage->b(i, j) / range) - minbmich;
+                            float r = ((tmpImage->r(i, j) / range) - minbmich) / deltawp ;// Subtract linear black and use Dynamic Range linear
+                            float g = ((tmpImage->g(i, j) / range) - minbmich) / deltawp;
+                            float b = ((tmpImage->b(i, j) / range) - minbmich) / deltawp;
 
                             float gain = pow_F(2.f, michexp);
                             // --- Apply exposure ---
