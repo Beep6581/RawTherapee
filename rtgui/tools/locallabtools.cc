@@ -4955,6 +4955,7 @@ void LocallabShadow::updateAdviceTooltips(const bool showTooltips)
         ghsmidLabel->set_tooltip_text(M("TP_LOCALLAB_GHSMAXRGB_TOOLTIP"));
         mich_exp->set_tooltip_text(M("TP_LOCALLAB_MICH_TOOLTIP"));
         mich_high->set_tooltip_text(M("TP_LOCALLAB_MICHDR_TOOLTIP"));
+        mich_jdx->set_tooltip_text(M("TP_LOCALLAB_MICHJDX_TOOLTIP"));
         /*
         highlights->set_tooltip_text(M("TP_LOCALLAB_NUL_TOOLTIP"));
         h_tonalwidth->set_tooltip_text(M("TP_LOCALLAB_NUL_TOOLTIP"));
@@ -5049,8 +5050,7 @@ void LocallabShadow::updateAdviceTooltips(const bool showTooltips)
         expgradsh->set_tooltip_text("");
         mich_exp->set_tooltip_text("");
         mich_high->set_tooltip_text("");
-
-
+        mich_jdx->set_tooltip_text("");
     }
 }
 

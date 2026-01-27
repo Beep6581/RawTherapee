@@ -518,7 +518,7 @@ LocallabParams::LocallabSpot::LocallabSpot() :
     visishadhigh(false),
     expshadhigh(false),
     complexshadhigh(0),
-    shMethod("ghs"),
+    shMethod("micha"),
     ghsMethod("rgb"),
     ghsMatmet("none"), // I think it's better to leave it as 'none' and let the user choose their preferred mode.
     ghsMode("ghs"),
