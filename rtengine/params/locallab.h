@@ -232,6 +232,7 @@ struct LocallabParams {
         double mich_out;
         bool mich_black;
         bool mich_white;
+        double mich_high;
 
         int multsh[6];
         int highlights;

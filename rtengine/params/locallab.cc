@@ -545,6 +545,7 @@ LocallabParams::LocallabSpot::LocallabSpot() :
     mich_out(1.),
     mich_black(false),
     mich_white(false),
+    mich_high(0.),
     multsh{0, 0, 0, 0, 0, 0},
     highlights(0),
     h_tonalwidth(70),
@@ -2293,6 +2294,7 @@ bool LocallabParams::LocallabSpot::operator ==(const LocallabSpot& other) const
         && mich_out == other.mich_out
         && mich_black == other.mich_black
         && mich_white == other.mich_white
+        && mich_high == other.mich_high
 
         && [this, &other]() -> bool
             {
@@ -3298,6 +3300,7 @@ void LoadUtil::shadowHighlight()
     assignFromKeyfile(keyFile, "Locallab", "Mich_out_" + index_str, spot.mich_out, spotEdited.mich_out);
     assignFromKeyfile(keyFile, "Locallab", "Mich_black_" + index_str, spot.mich_black, spotEdited.mich_black);
     assignFromKeyfile(keyFile, "Locallab", "Mich_white_" + index_str, spot.mich_white, spotEdited.mich_white);
+    assignFromKeyfile(keyFile, "Locallab", "Mich_high_" + index_str, spot.mich_high, spotEdited.mich_high);
 
     for (int j = 0; j < 6; j ++) {
         assignFromKeyfile(keyFile, "Locallab", "Multsh" + std::to_string(j) + "_" + index_str, spot.multsh[j], spotEdited.multsh[j]);
@@ -4473,6 +4476,7 @@ void SaveUtil::shadowHighlight()
         saveToKeyfile(!pedited || spot_edited->mich_out, "Locallab", "Mich_out_" + index_str, spot.mich_out, keyFile);
         saveToKeyfile(!pedited || spot_edited->mich_black, "Locallab", "Mich_black_" + index_str, spot.mich_black, keyFile);
         saveToKeyfile(!pedited || spot_edited->mich_white, "Locallab", "Mich_white_" + index_str, spot.mich_white, keyFile);
+        saveToKeyfile(!pedited || spot_edited->mich_high, "Locallab", "Mich_high_" + index_str, spot.mich_high, keyFile);
 
         for (int j = 0; j < 6; j++) {
             saveToKeyfile(!pedited || spot_edited->multsh[j], "Locallab", "Multsh" + std::to_string(j) + "_" + index_str, spot.multsh[j], keyFile);

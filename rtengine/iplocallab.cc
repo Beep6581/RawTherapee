@@ -723,6 +723,8 @@ struct local_params {
     bool islogcie; 
     bool issmoothcie; 
     bool issmoothghs;
+    float issmoothmich;
+
     float maxdataghs;
     float ghshp;
     int noiselequal;
@@ -1034,6 +1036,8 @@ static void calcLocalParams(int sp, int oW, int oH,  const LocallabParams& local
     lp.islogcie = locallab.spots.at(sp).logcie && locallab.spots.at(sp).expprecam;
     lp.issmoothcie = locallab.spots.at(sp).smoothcie;
     lp.issmoothghs = locallab.spots.at(sp).ghs_smooth;
+    lp.issmoothmich = locallab.spots.at(sp).mich_high;
+
     lp.maxdataghs = 0.f;
     lp.ghshp =  locallab.spots.at(sp).ghs_HP;
     lp.enaColorMask = locallab.spots.at(sp).enaColorMask && llsoftMask == 0 && llColorMaskinv == 0 && llSHMaskinv == 0 && llColorMask == 0 && llExpMaskinv == 0 && lllcMask == 0 && llsharMask == 0 && llExpMask == 0 && llSHMask == 0 && llcbMask == 0 && llretiMask == 0 && lltmMask == 0 && llblMask == 0 && llvibMask == 0 && lllogMask == 0 && ll_Mask == 0 && llcieMask == 0;// Exposure mask is deactivated if Color & Light mask is visible
@@ -2842,6 +2846,11 @@ void tone_eqsmooth(ImProcFunctions *ipf, Imagefloat *rgb, const struct local_par
             params.bands[4] = -10;
         }
     }
+    if(lp.issmoothmich > 0.f) {//Michaelis
+        params.bands[4] = - (lp.issmoothmich) * 10.f;
+        params.bands[5] = - (lp.issmoothmich) * 20.f;
+    }
+
     ipf->toneEqualizer(rgb, params, workingProfile, scale, multithread);
 }
 
@@ -19041,6 +19050,8 @@ printf("MINBGHS=%f \n", (double) minb);
                     float michout = params->locallab.spots.at(sp).mich_out;//Output Max Clamp
                     bool michblack = params->locallab.spots.at(sp).mich_black;//Black point
                     bool michwhite = params->locallab.spots.at(sp).mich_white;//White point
+                    float michhigh = params->locallab.spots.at(sp).mich_high;//Highlight reduction
+
                     float range = 65535.f;
                     std::unique_ptr<Imagefloat> tmpImage(new Imagefloat(bfw, bfh));
                     lab2rgb(*bufexpfin, *tmpImage, params->icm.workingProfile);
@@ -19133,6 +19144,11 @@ printf("MINBGHS=%f \n", (double) minb);
                             tmpImage->b(i, j) = rtengine::max(0.00001f, bout * range);
 
                             }
+                    if(michhigh > 0.f ) {
+                        //Highlight attenuation
+                        tone_eqsmooth(this, tmpImage.get(), lp, params->icm.workingProfile, sk, multiThread);//reduce Ev > 0 < 12
+                    }
+
                     rgb2lab(*tmpImage, *bufexpfin, params->icm.workingProfile);
                 }
                 

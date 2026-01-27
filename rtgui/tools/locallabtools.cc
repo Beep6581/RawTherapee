@@ -4353,6 +4353,7 @@ LocallabShadow::LocallabShadow():
     mich_out(Gtk::manage(new Adjuster(M("TP_LOCALLAB_MICHOUT"), 0.5, 10., 0.01, 1.))),
     mich_black(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_MICHBLACK")))),
     mich_white(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_MICHWHITE")))),
+    mich_high(Gtk::manage(new Adjuster(M("TP_LOCALLAB_MICHHIGH"), 0., 3., 0.01, 0.))),
     expgradsh(Gtk::manage(new MyExpander(false, M("TP_LOCALLAB_EXPGRAD")))),
     strSH(Gtk::manage(new Adjuster(M("TP_LOCALLAB_GRADSTR"), -4., 4., 0.05, 0.))),
     angSH(Gtk::manage(new Adjuster(M("TP_LOCALLAB_GRADANG"), -180, 180, 0.1, 0.))),
@@ -4411,6 +4412,8 @@ LocallabShadow::LocallabShadow():
     Evlocallabmich_out = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_MICH_OUT");
     Evlocallabmich_black = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_MICH_BLACK");
     Evlocallabmich_white = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_MICH_WHITE");
+    Evlocallabmich_high = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_MICH_HIGH");
+
     ghs_SP->addAutoButton(M("TP_LOCALLAB_SPRADIUS_TOOLTIP"));
     set_orientation(Gtk::ORIENTATION_VERTICAL);
 
@@ -4510,6 +4513,7 @@ LocallabShadow::LocallabShadow():
     mich_out->setAdjusterListener(this);
     mich_kpar->setLogScale(10, 0);
     mich_out->setLogScale(10, 0);
+    mich_high->setAdjusterListener(this);
 
     ghsbpwpLabels->set_line_wrap();
     ghsbpwpLabels->set_justify(Gtk::Justification::JUSTIFY_CENTER);
@@ -4694,6 +4698,7 @@ LocallabShadow::LocallabShadow():
     michBox2->pack_start(*mich_out);
     michBox2->pack_start(*mich_black);
     michBox2->pack_start(*mich_white);
+    michBox2->pack_start(*mich_high);
     michFrame->add(*michBox2);
     pack_start(*michFrame);
 
@@ -4944,6 +4949,8 @@ void LocallabShadow::updateAdviceTooltips(const bool showTooltips)
         lapmaskSH->set_tooltip_text(M("TP_LOCALLAB_LAPRAD1_TOOLTIP"));
         ghsmaxrgbLabel->set_tooltip_text(M("TP_LOCALLAB_GHSMAXRGB_TOOLTIP"));
         ghsmidLabel->set_tooltip_text(M("TP_LOCALLAB_GHSMAXRGB_TOOLTIP"));
+        mich_exp->set_tooltip_text(M("TP_LOCALLAB_MICH_TOOLTIP"));
+        mich_high->set_tooltip_text(M("TP_LOCALLAB_MICHDR_TOOLTIP"));
         /*
         highlights->set_tooltip_text(M("TP_LOCALLAB_NUL_TOOLTIP"));
         h_tonalwidth->set_tooltip_text(M("TP_LOCALLAB_NUL_TOOLTIP"));
@@ -5036,6 +5043,10 @@ void LocallabShadow::updateAdviceTooltips(const bool showTooltips)
         ghsFrame->set_tooltip_text("");
         gridFrameghs->set_tooltip_text("");
         expgradsh->set_tooltip_text("");
+        mich_exp->set_tooltip_text("");
+        mich_high->set_tooltip_text("");
+
+
     }
 }
 
@@ -5207,6 +5218,7 @@ void LocallabShadow::read(const rtengine::procparams::ProcParams* pp, const Para
         mich_out->setValue((double)spot.mich_out);
         mich_black->set_active(spot.mich_black);
         mich_white->set_active(spot.mich_white);
+        mich_high->setValue((double)spot.mich_high);
         detailSH->setValue((double)spot.detailSH);
         tePivot->setValue(spot.tePivot);
         reparsh->setValue(spot.reparsh);
@@ -5362,6 +5374,7 @@ void LocallabShadow::write(rtengine::procparams::ProcParams* pp, ParamsEdited* p
         spot.mich_out = mich_out->getValue();
         spot.mich_black = mich_black->get_active();
         spot.mich_white = mich_white->get_active();
+        spot.mich_high = mich_high->getValue();
 
         spot.enaSHMask = enaSHMask->get_active();
         spot.LLmaskSHcurve = LLmaskSHshape->getCurve();
@@ -5414,6 +5427,7 @@ void LocallabShadow::setDefaults(const rtengine::procparams::ProcParams* defPara
         mich_kpar->setDefault(defSpot.mich_kpar);
         mich_sat->setDefault(defSpot.mich_sat);
         mich_out->setDefault(defSpot.mich_out);
+        mich_high->setDefault(defSpot.mich_high);
 
         detailSH->setDefault((double)defSpot.detailSH);
         tePivot->setDefault(defSpot.tePivot);
@@ -5611,6 +5625,13 @@ void LocallabShadow::adjusterChanged(Adjuster* a, double newval)
             if (listener) {
                 listener->panelChanged(Evlocallabmich_out,
                                        mich_out->getTextValue() + " (" + escapeHtmlChars(getSpotName()) + ")");
+            }
+        }
+
+        if (a == mich_high) {
+            if (listener) {
+                listener->panelChanged(Evlocallabmich_high,
+                                       mich_high->getTextValue() + " (" + escapeHtmlChars(getSpotName()) + ")");
             }
         }
 

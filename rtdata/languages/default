@@ -1640,6 +1640,7 @@ HISTORY_MSG_LOCAL_LOG_SAT;Local - Log Saturation control
 HISTORY_MSG_LOCAL_LOG_WHITES;Local - Log Whites distribution
 HISTORY_MSG_LOCAL_MICH_BLACK;Local - Michaelis-Menten Subtract black
 HISTORY_MSG_LOCAL_MICH_EXP;Local - Michaelis-Menten Exposure
+HISTORY_MSG_LOCAL_MICH_HIGH;Local - Michaelis-Menten Attenuation threshold
 HISTORY_MSG_LOCAL_MICH_SPAR;Local - Michaelis-Menten Output Scale
 HISTORY_MSG_LOCAL_MICH_KPAR;Local - Michaelis-Menten Knee Strength
 HISTORY_MSG_LOCAL_MICH_SAT;Local - Michaelis-Menten Knee Saturation
@@ -3726,15 +3727,18 @@ TP_LOCALLAB_MERTHR;Difference
 TP_LOCALLAB_MERTWE;Exclusion
 TP_LOCALLAB_MERTWO;Subtract
 TP_LOCALLAB_METHOD_TOOLTIP;'Enhanced + chroma denoise' significantly increases processing times.\nBut reduce artifacts.
+TP_LOCALLAB_MICH_TOOLTIP;This tone mapper uses the Michaelis-Menten equation, which is borrowed from biochemistry to describe enzyme kinetics. In image processing, it creates a smooth, saturating curve that is useful for tone mapping.\n\n * Exposure : Adjusts the input image brightness.\n * Output scale (S) : Controls the maximum asymptotic value of the curve; essentially the output white level.\n * Knee strength (K): Determines the “knee” of the curve. Lower values result in a sharper transition to the compressed highlight region.\n * Saturation : Adjusts color saturation post-tone mapping.\n * Output max clamp : Sets the final clipping point for the output values.
 TP_LOCALLAB_MICHFRA;Michaelis-Menten Settings
 TP_LOCALLAB_MICHTONEFRA;Tone Curve
-TP_LOCALLAB_MICHBLACK;Subtract Linear Black
-TP_LOCALLAB_MICHWHITE;Linear Dynamic Range
-TP_LOCALLAB_MICHEXP;Exposure (EV)
-TP_LOCALLAB_MICHSPAR;Output Scale (S)
-TP_LOCALLAB_MICHKPAR;Knee Strength (K)
+TP_LOCALLAB_MICHBLACK;Subtract linear black
+TP_LOCALLAB_MICHDR_TOOLTIP;Subtract linear black : brings the Black point linear values ​​close to zero. This allows, on the one hand, for optimal use of the data range by increasing overall contrast, and on the other hand, reduces haze effects.\n\nLinear dynamic range : allows you to include all data that is often outside the color gamut, such as a sunset. Enabling Highlight reconstruction > Color propagation often provides a significant improvement.\n\nAttenuation threshold : allows you, with the help of an exponential function, to reduce the highlights that can cause a gamut overshoot.
+TP_LOCALLAB_MICHWHITE;Linear dynamic range
+TP_LOCALLAB_MICHHIGH;Attenuation threshold
+TP_LOCALLAB_MICHEXP;Exposure (Ev)
+TP_LOCALLAB_MICHSPAR;Output scale (S)
+TP_LOCALLAB_MICHKPAR;Knee strength (K)
 TP_LOCALLAB_MICHSAT;Saturation
-TP_LOCALLAB_MICHOUT;Output Max Clamp
+TP_LOCALLAB_MICHOUT;Output max clamp
 TP_LOCALLAB_MIDTCIE;Value
 TP_LOCALLAB_MIDTCIEMAIN;Midtones
 TP_LOCALLAB_MIDTCIEFRA;Midtones
