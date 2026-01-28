@@ -14914,6 +14914,16 @@ void ImProcFunctions::NLMeans(float **img, int strength, int detail_thresh, int 
 
 }
 
+// Michaelis-Menten equation
+// Curiously we use the Michaelis-Menten equation, which is borrowed from biochemistry to describe enzyme kinetics
+float mm_curve(double x, double S, double K_eff)
+{
+    // Ensure K_eff is not zero to prevent division by zero if x is also zero.
+    // A very small K makes the curve rise very steeply.
+    return (S * x) / (fmax( K_eff, 1e-6) +  x);
+}
+
+
 // GHT filter ported from Siril.
 // 
 // see https://siril.org/tutorials/ghs/ for more info
@@ -15083,14 +15093,6 @@ All 3 allow you to modify the contrast of the image by filling the valleys and r
 
 */
 
-// Michaelis-Menten equation
-// Curiously we use the Michaelis-Menten equation, which is borrowed from biochemistry to describe enzyme kinetics
-float mm_curve(double x, double S, double K_eff)
-{
-    // Ensure K_eff is not zero to prevent division by zero if x is also zero.
-    // A very small K makes the curve rise very steeply.
-    return (S * x) / (fmax( K_eff, 1e-6) +  x);
-}
 
 float clamp(float x, float lo, float hi)
 {

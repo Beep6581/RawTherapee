@@ -6120,6 +6120,9 @@ void LocallabShadow::updateGUIToMode(const modeType new_type)
             }
             ghs_slope->hide();
             ghs_inv->show();
+            if(shMethod->get_active_row_number() != 2) {
+                ghs_inv->hide();
+            }
             break;
 
         case Expert:
@@ -6163,7 +6166,9 @@ void LocallabShadow::updateGUIToMode(const modeType new_type)
             }
             ghs_slope->show();
             ghs_inv->show();
-            
+            if(shMethod->get_active_row_number() != 2) {
+                ghs_inv->hide();
+            }
     }
 }
 
@@ -6619,6 +6624,9 @@ void LocallabShadow::updateShadowGUImask()
             ghs_slope->show();  
         }
         reparsh->show();
+        if(shMethod->get_active_row_number() != 2) {
+            ghs_inv->hide();
+        }
 
         showmaskSHMethod->show();
         showmaskSHMethodinv->hide();
