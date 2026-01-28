@@ -541,7 +541,7 @@ LocallabParams::LocallabSpot::LocallabSpot() :
     mich_exp(0.),
     mich_spar(1.),
     mich_kpar(0.18),
-    mich_sat(1.),
+    mich_sat(1.15),
     mich_out(1.),
     mich_black(false),
     mich_white(false),

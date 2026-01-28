@@ -18707,7 +18707,7 @@ void ImProcFunctions::Lab_Local(
                                     // - 0.6f: scaling factor for the powered value.
                                     // - 0.4f: base offset added to ensure a minimum effect.
                                     // Adjust these values to fine-tune the strength and shape of the local saturation effect.
-                                    float s = intp(max(sf(rl, r), sf(gl, g), sf(bl, b)), pow_F(f, 0.2f) * 0.6f + 0.4f, 1.f);                                    
+                                    float s = intp(max(sf(rl, r), sf(gl, g), sf(bl, b)), pow_F(f, 0.2f) * 0.6f + 0.4f, 1.f);
                                     r = ll + s * rl;
                                     g = ll + s * gl;
                                     b = ll + s * bl;
@@ -19068,6 +19068,7 @@ void ImProcFunctions::Lab_Local(
                     Matrix inv_lms_T = {};//initialize inv_lms_T
                     Matrix lms_mat = {};//initialize lms_mat
                     TMatrix wiprof = ICCStore::getInstance()->workingSpaceInverseMatrix(params->icm.workingProfile);
+                    TMatrix wprof = ICCStore::getInstance()->workingSpaceMatrix(params->icm.workingProfile);
                     //inverse matrix user select
                     const float wip[3][3] = {
                         {static_cast<float>(wiprof[0][0]), static_cast<float>(wiprof[0][1]), static_cast<float>(wiprof[0][2])},
@@ -19160,6 +19161,32 @@ void ImProcFunctions::Lab_Local(
                     const float noise = pow_F(2.f, -16.f);//very low value
 
                     minbmich = rtengine::max(minbmich, noise);//set a very minimal value in all cases to avoid 0
+                    const auto sf =
+                        [=](float s, float c) -> float
+                        {
+                            if (c > noise) {
+                                return 1.f - min(std::abs(s) / c, 1.f);
+                            } else {
+                                return 0.f;
+                            }
+                        };
+                    //saturation
+                    const auto apply_sat =
+                        [&](float &r, float &g, float &b, float f, float ll) -> void
+                        {
+                            float rl = r - ll;
+                            float gl = g - ll;
+                            float bl = b - ll;
+                            // The parameters 0.2f, 0.6f, and 0.4f control the nonlinearity and scaling of the saturation adjustment:
+                            // - 0.2f: exponent for the power function, affecting the response curve of the adjustment factor.
+                            // - 0.6f: scaling factor for the powered value.
+                            // - 0.4f: base offset added to ensure a minimum effect.
+                            // Adjust these values to fine-tune the strength and shape of the local saturation effect.
+                            float s = intp(max(sf(rl, r), sf(gl, g), sf(bl, b)), pow_F(f, 0.35f) * 0.6f + 0.4f, 1.f);//0.35f - MM is desaturating a lot.
+                            r = ll + s * rl;
+                            g = ll + s * gl;
+                            b = ll + s * bl;
+                        };
 
                     float deltawp = rtengine::max(0.05f, maxwmich - minbmich);//Linear Dynamic Range - 0.05 minimum acceptable
                     if (! michwhite) {//no use of linear Dynamic Range
@@ -19189,7 +19216,8 @@ void ImProcFunctions::Lab_Local(
                             float r_exposed = r * gain;
                             float g_exposed = g * gain;
                             float b_exposed = b * gain;
-    
+                            float mmh = norm(r, g, b, wprof);
+
                             // --- Ensure non-negative inputs for the curve ---
                             float r_linear = fmax(0.f, r_exposed);
                             float g_linear = fmax(0.f, g_exposed);
@@ -19199,6 +19227,10 @@ void ImProcFunctions::Lab_Local(
                             float r_tonemapped = mm_curve(r_linear, michspar, michkpar);
                             float g_tonemapped = mm_curve(g_linear, michspar, michkpar);
                             float b_tonemapped = mm_curve(b_linear, michspar, michkpar);
+
+                            float fmmm = 0.333f * ((r_tonemapped / r) + (g_tonemapped / g) + (b_tonemapped /b));//linear average of the 3 channels
+
+                            apply_sat(r_tonemapped, g_tonemapped, b_tonemapped, fmmm, mmh );//always apply saturation
 
                             // --- Saturation adjustment ---
                             float h, s, l;
