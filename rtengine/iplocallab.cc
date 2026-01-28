@@ -15084,7 +15084,7 @@ All 3 allow you to modify the contrast of the image by filling the valleys and r
 */
 
 // Michaelis-Menten equation
-// Curiouly we uses the Michaelis-Menten equation, which is borrowed from biochemistry to describe enzyme kinetics
+// Curiously we use the Michaelis-Menten equation, which is borrowed from biochemistry to describe enzyme kinetics
 float mm_curve(double x, double S, double K_eff)
 {
     // Ensure K_eff is not zero to prevent division by zero if x is also zero.
@@ -18540,7 +18540,6 @@ void ImProcFunctions::Lab_Local(
                                  }
                                 const float noise = pow_F(2.f, -16.f);
                                 minb = rtengine::max(minb, noise);//set a very minimal value in all cases to avoid 0
-printf("MINBGHS=%f \n", (double) minb);
                                 ghsbwslider[1]= maxw + WP_LINEAR_FREE;//Slightly increase the White Point to allow for some flexibility
                                 ghsbwslider[0]= minb; 
                                 ghscolor[0] = maxwred; 
@@ -19171,6 +19170,7 @@ printf("MINBGHS=%f \n", (double) minb);
                         printf("Min black=%f max White=%f\n", (double) michbwslider[0], (double) michbwslider[1]);
                     }
 
+                    float gain = pow_F(2.f, michexp);//in Ev
 
 #ifdef _OPENMP
         #   pragma omp parallel for schedule(dynamic,16) if (multiThread)
@@ -19183,7 +19183,6 @@ printf("MINBGHS=%f \n", (double) minb);
                             float g = ((tmpImage->g(i, j) / range) - minbmich) / deltawp;//data are in range [0 1]
                             float b = ((tmpImage->b(i, j) / range) - minbmich) / deltawp;
 
-                            float gain = pow_F(2.f, michexp);//in Ev
                             // --- Apply exposure ---
                             float r_exposed = r * gain;
                             float g_exposed = g * gain;
@@ -19204,7 +19203,7 @@ printf("MINBGHS=%f \n", (double) minb);
                             Color::rgb2hsl(r_tonemapped * range, g_tonemapped * range, b_tonemapped * range, h, s, l);
                             s *= michsat;
                             s = fmax(0.f, s);
-
+                            s = clamp(s, 0.f, 1.f);
                             float R, G, B;
                             Color::hsl2rgb(h, s, l, R, G, B);
                             float r_final = R / range;

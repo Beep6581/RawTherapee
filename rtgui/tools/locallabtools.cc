@@ -6672,7 +6672,6 @@ void LocallabShadow::updateShadowGUIshmet()
         ghsMethod->hide();
         BP_Frame->hide();
         ghs_inv->hide();
-        ghsMethod->hide();
         michFrame->hide();
     } else if (shMethod->get_active_row_number() == 1) {
         for (const auto multiplier : multipliersh) {
@@ -6694,7 +6693,6 @@ void LocallabShadow::updateShadowGUIshmet()
         ghsMethod->hide();
         BP_Frame->hide();
         ghs_inv->hide();
-        ghsMethod->hide();
         michFrame->hide();
 
     } else if (shMethod->get_active_row_number() == 2) {
@@ -6781,7 +6779,6 @@ void LocallabShadow::updateShadowGUIshmet()
         ghsMethod->hide();
         BP_Frame->hide();
         ghs_inv->hide();
-        ghsMethod->hide();
         for (const auto multiplier : multipliersh) {
             multiplier->hide();
         }

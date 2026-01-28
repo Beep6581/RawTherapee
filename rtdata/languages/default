@@ -1644,8 +1644,8 @@ HISTORY_MSG_LOCAL_MICH_HIGH;Local - Michaelis-Menten Attenuation threshold
 HISTORY_MSG_LOCAL_MICH_JDX;Local - Michaelis-Menten JDx Matrix
 HISTORY_MSG_LOCAL_MICH_SPAR;Local - Michaelis-Menten Output Scale
 HISTORY_MSG_LOCAL_MICH_KPAR;Local - Michaelis-Menten Knee Strength
-HISTORY_MSG_LOCAL_MICH_SAT;Local - Michaelis-Menten Knee Saturation
-HISTORY_MSG_LOCAL_MICH_OUT;Local - Michaelis-Menten Knee Output Max Clamp
+HISTORY_MSG_LOCAL_MICH_SAT;Local - Michaelis-Menten Saturation
+HISTORY_MSG_LOCAL_MICH_OUT;Local - Michaelis-Menten Output Max Clamp
 HISTORY_MSG_LOCAL_MICH_WHITE;Local - Michaelis-Menten Dynamic range
 HISTORY_MSG_LOCAL_NLITER;Local - Nlmeans - Iterations
 HISTORY_MSG_LOCAL_OFFSETWAV;Local Wav offset
