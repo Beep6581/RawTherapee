@@ -3882,7 +3882,7 @@ TP_LOCALLAB_SH3;Generalized Hyperbolic Stretch (GHS)
 TP_LOCALLAB_SH4;Tone Mapper Michaelis-Menten (MM)
 TP_LOCALLAB_SHADEX;Shadows
 TP_LOCALLAB_SHADEXCOMP;Shadow compression
-TP_LOCALLAB_SHADHIGH;Shad/High, Equalizer, GHS & MM
+TP_LOCALLAB_SHADHIGH;Shadows/Highlights,Equalizer,GHS & MM
 TP_LOCALLAB_SHADHMASK_TOOLTIP;Lowers the highlights of the mask in the same way as the shadows/highlights algorithm.
 TP_LOCALLAB_SHADMASK_TOOLTIP;Lifts the shadows of the mask in the same way as the shadows/highlights algorithm.
 TP_LOCALLAB_SHADOWHIGHLIGHT_TOOLTIP;Adjust shadows and highlights either with 'Shadows Highlights' sliders, 'Tone Equalizer', 'Generalized Hyperbolic Stretch' (GHS), or 'Michaelis-Menten Tone mapping' (MM).\nCan be used instead of, or in conjunction with the Exposure module, or for GHS / MM as a tone mapper.
@@ -3933,7 +3933,7 @@ TP_LOCALLAB_SHOWT;Mask And Modifications
 TP_LOCALLAB_SHOWVI;Mask And Modifications
 TP_LOCALLAB_SHRESFRA;Shadows/Highlights & TRC
 TP_LOCALLAB_SHTRC_TOOLTIP;Based on 'working profile' (only those provided), modifies the tones of the image by acting on a TRC (Tone Response Curve).\nGamma acts mainly on light tones.\nSlope acts mainly on dark tones.\nIt is recommended that the TRC of both devices (monitor and output profile) be sRGB (default).
-TP_LOCALLAB_SH_TOOLNAME;Shad/High, Equalizer, GHS & MM
+TP_LOCALLAB_SH_TOOLNAME;Shadows/Highlights, Equalizer, GHS & MM
 TP_LOCALLAB_SIGBLACKSSCIE;Blacks distribution
 TP_LOCALLAB_SIGWHITESCIE;Whites distribution
 TP_LOCALLAB_SIGCIE;Sigmoid
