@@ -1055,6 +1055,7 @@ void LocallabColor::updateguicolor(int spottype)
                 enaColorMask->set_active(false);
                 previewcol->hide();
                 previewcol->set_active(false);
+                blurcolde->hide();
             } else {
                 invers->show();
                 sensi->show();
@@ -3065,6 +3066,7 @@ void LocallabExposure::updateguiexpos(int spottype)
                 previewexe->set_active(false);
                 expmaskexp->hide();
                 exprecove->hide();
+                blurexpde->hide();
            } else {
                 inversex->show();
                 sensiex->show();
@@ -4868,6 +4870,7 @@ void LocallabShadow::updateguishad(int spottype)
                 expmasksh->hide();
                 enaSHMask->set_active(false);
                 previewsh->set_active(false);
+                blurSHde->hide();
             } else {
                 sensihs->show();
                 inverssh->show();
