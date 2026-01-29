@@ -6125,6 +6125,7 @@ void LocallabShadow::updateGUIToMode(const modeType new_type)
             ghs_inv->show();
             if(shMethod->get_active_row_number() != 2) {
                 ghs_inv->hide();
+                ghsMethod->hide();
             }
             break;
 
@@ -6171,6 +6172,7 @@ void LocallabShadow::updateGUIToMode(const modeType new_type)
             ghs_inv->show();
             if(shMethod->get_active_row_number() != 2) {
                 ghs_inv->hide();
+                ghsMethod->hide();
             }
     }
 }
@@ -6629,6 +6631,7 @@ void LocallabShadow::updateShadowGUImask()
         reparsh->show();
         if(shMethod->get_active_row_number() != 2) {
             ghs_inv->hide();
+            ghsMethod->hide();
         }
 
         showmaskSHMethod->show();
