@@ -59,19 +59,6 @@
 #pragma GCC diagnostic warning "-Wextra"
 #pragma GCC diagnostic warning "-Wdouble-promotion"
 
-float clamp(float x, float lo, float hi)
-{
-    return fmax(fmin(x, hi), lo);
-}
-
-// Michaelis-Menten equation
-// Curiously we use the Michaelis-Menten equation, which is borrowed from biochemistry to describe enzyme kinetics
-float mm_curve(double x, double S, double K_eff)
-{
-    // Ensure K_eff is not zero to prevent division by zero if x is also zero.
-    // A very small K makes the curve rise very steeply.
-    return (S * x) / (fmax( K_eff, 1e-6) +  x);
-}
 
 
 namespace
@@ -89,6 +76,21 @@ constexpr int TS = 64; // Tile size
 constexpr float epsilonw = 0.001f / (TS * TS); //tolerance
 constexpr int offset = 25; // shift between tiles
 constexpr double czlim = rtengine::RT_SQRT1_2;// 0.70710678118654752440;
+
+float clamp(float x, float lo, float hi)
+{
+    return fmax(fmin(x, hi), lo);
+}
+
+// Michaelis-Menten equation
+// Curiously we use the Michaelis-Menten equation, which is borrowed from biochemistry to describe enzyme kinetics
+float mm_curve(double x, double S, double K_eff)
+{
+    // Ensure K_eff is not zero to prevent division by zero if x is also zero.
+    // A very small K makes the curve rise very steeply.
+    return (S * x) / (fmax( K_eff, 1e-6) +  x);
+}
+
 
 constexpr float clipLoc(float x)
 {
