@@ -59,6 +59,21 @@
 #pragma GCC diagnostic warning "-Wextra"
 #pragma GCC diagnostic warning "-Wdouble-promotion"
 
+float clamp(float x, float lo, float hi)
+{
+    return fmax(fmin(x, hi), lo);
+}
+
+// Michaelis-Menten equation
+// Curiously we use the Michaelis-Menten equation, which is borrowed from biochemistry to describe enzyme kinetics
+float mm_curve(double x, double S, double K_eff)
+{
+    // Ensure K_eff is not zero to prevent division by zero if x is also zero.
+    // A very small K makes the curve rise very steeply.
+    return (S * x) / (fmax( K_eff, 1e-6) +  x);
+}
+
+
 namespace
 {
 
@@ -127,9 +142,6 @@ float softlig(float a, float b, float minc, float maxc)
         return 2.f * a * (maxc - b) + std::sqrt(rtengine::LIM(a, 0.f, 2.f)) * (2.f * b - maxc);
     }
 }
-
-
-
 
 float softlig3(float a, float b)
 {
@@ -14894,16 +14906,6 @@ void ImProcFunctions::NLMeans(float **img, int strength, int detail_thresh, int 
 
 }
 
-// Michaelis-Menten equation
-// Curiously we use the Michaelis-Menten equation, which is borrowed from biochemistry to describe enzyme kinetics
-float mm_curve(double x, double S, double K_eff)
-{
-    // Ensure K_eff is not zero to prevent division by zero if x is also zero.
-    // A very small K makes the curve rise very steeply.
-    return (S * x) / (fmax( K_eff, 1e-6) +  x);
-}
-
-
 // GHT filter ported from Siril.
 // 
 // see https://siril.org/tutorials/ghs/ for more info
@@ -15072,12 +15074,6 @@ Linear factor will change the shape of the S, reducing or increasing the "length
 All 3 allow you to modify the contrast of the image by filling the valleys and reducing the peaks
 
 */
-
-
-float clamp(float x, float lo, float hi)
-{
-    return fmax(fmin(x, hi), lo);
-}
 
 // end GHT Siril 
 
@@ -19015,17 +19011,17 @@ void ImProcFunctions::Lab_Local(
                     }
                 }
                 if (lp.shmeth == 3) {//Michaelis-Menten
-                    float michexp = params->locallab.spots.at(sp).mich_exp;//Exposure
-                    float michspar = params->locallab.spots.at(sp).mich_spar;//Output scale
-                    float michkpar = params->locallab.spots.at(sp).mich_kpar;//Knee strength
-                    float michsat = params->locallab.spots.at(sp).mich_sat;//Saturation
-                    float michout = params->locallab.spots.at(sp).mich_out;//Output max clamp
-                    bool michblack = params->locallab.spots.at(sp).mich_black;//Linear Black point
-                    bool michwhite = params->locallab.spots.at(sp).mich_white;//Linear White point
-                    float michhigh = params->locallab.spots.at(sp).mich_high;//Highlight reduction
-                    bool midjdx = params->locallab.spots.at(sp).mich_jdx;//Matrix LMS using XYZ transform
+                    const float michexp = params->locallab.spots.at(sp).mich_exp;//Exposure
+                    const float michspar = params->locallab.spots.at(sp).mich_spar;//Output scale
+                    const float michkpar = params->locallab.spots.at(sp).mich_kpar;//Knee strength
+                    const float michsat = params->locallab.spots.at(sp).mich_sat;//Saturation
+                    const float michout = params->locallab.spots.at(sp).mich_out;//Output max clamp
+                    const bool michblack = params->locallab.spots.at(sp).mich_black;//Linear Black point
+                    const bool michwhite = params->locallab.spots.at(sp).mich_white;//Linear White point
+                    const float michhigh = params->locallab.spots.at(sp).mich_high;//Highlight reduction
+                    const bool midjdx = params->locallab.spots.at(sp).mich_jdx;//Matrix LMS using XYZ transform
 
-                    float range = 65535.f;
+                    constexpr float range = 65535.f;
                     std::unique_ptr<Imagefloat> tmpImage(new Imagefloat(bfw, bfh));
                     lab2rgb(*bufexpfin, *tmpImage, params->icm.workingProfile);//Conversion Lab -> RGB
                     float minbmich = 100.f;
