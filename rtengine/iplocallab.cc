@@ -19035,7 +19035,6 @@ void ImProcFunctions::Lab_Local(
                     using Triple = std::array<double, 3>;
                     using Matrix = std::array<Triple, 3>;
                     Matrix inv_lms_T = {};//initialize inv_lms_T
-                    Matrix lms_mat = {};//initialize lms_mat
                     TMatrix wiprof = ICCStore::getInstance()->workingSpaceInverseMatrix(params->icm.workingProfile);
                     TMatrix wprof = ICCStore::getInstance()->workingSpaceMatrix(params->icm.workingProfile);
                     //inverse matrix user select
@@ -19050,34 +19049,32 @@ void ImProcFunctions::Lab_Local(
                         {static_cast<float>(wprofi[1][0]), static_cast<float>(wprofi[1][1]), static_cast<float>(wprofi[1][2])},
                         {static_cast<float>(wprofi[2][0]), static_cast<float>(wprofi[2][1]), static_cast<float>(wprofi[2][2])}
                         };
-                    lms_mat = {{//JDx - Jacques Desmis Matrix XYZ -> LMS - Simple matrix that amplifies the current channel.
-                        { 0.80, 0.1, 0.1 },
-                        { 0.1, 0.80, 0.1 },
-                        { 0.1, 0.1, 0.80 }
+                    const Matrix lms_mat = {{//JDx - Jacques Desmis Matrix XYZ -> LMS - Simple matrix that amplifies the current channel.
+                        { 0.83, 0.1, 0.07 },//Red (L) predominant in LMS with a little more green
+                        { 0.12, 0.78, 0.1 },//Green (M) almost neutral, with a little more red
+                        { 0.11, 0.09, 0.80 }//Blue (S) almost neutral, with a little more red
                     }};
 
                     Matrix lms_T = {};
                     Color::transpose(lms_mat, lms_T);//transpose Matrix
                     //invert matrix
-                    if (!rtengine::invertMatrix(lms_T, inv_lms_T)) {
-                        if (settings->verbose) {
-                            std::cout << "Matrix is not invertible, skipping and use this one" << std::endl;
+                    if (midjdx) {
+                        if (!rtengine::invertMatrix(lms_T, inv_lms_T)) {
+                            if (settings->verbose) {
+                                std::cout << "Matrix is not invertible, skipping and use this one" << std::endl;
+                            }
+                            //If the calculations fail, we use this matrix calculated with a spreadsheet. Note that if 'lms_mat' changes, you must redo the calculations.
+                            inv_lms_T[0][0] = 1.238171935;
+                            inv_lms_T[0][1] = -0.148379303;
+                            inv_lms_T[0][2] = -0.089792631;
+                            inv_lms_T[1][0] = -0.171129454;
+                            inv_lms_T[1][1] = 1.321320717;
+                            inv_lms_T[1][2] = -0.150191262;
+                            inv_lms_T[2][0] = -0.150996577;
+                            inv_lms_T[2][1] = -0.128246426;
+                            inv_lms_T[2][2] = 1.279243004;
                         }
-                        //If the calculations fail, we use this matrix calculated with a spreadsheet. Note that if 'lms_mat' changes, you must redo the calculations.
-                        if (midjdx) {
-                            inv_lms_T[0][0] = 1.285714286;
-                            inv_lms_T[0][1] = -0.14285714;
-                            inv_lms_T[0][2] = -0.14285714;
-                            inv_lms_T[1][0] = -0.14285714;
-                            inv_lms_T[1][1] = 1.285714286;
-                            inv_lms_T[1][2] = -0.14285714;
-                            inv_lms_T[2][0] = -0.14285714;
-                            inv_lms_T[2][1] = -0.14285714;
-                            inv_lms_T[2][2] = 1.285714286;
-                        }
-                    }
 
-                    if (midjdx) {//First LMS transformation from XYZ (and RGB)
 #ifdef _OPENMP
         #   pragma omp parallel for schedule(dynamic,16) if (multiThread)
 #endif
@@ -19103,8 +19100,7 @@ void ImProcFunctions::Lab_Local(
                                 tmpImage->b(i, j) = rtengine::max(0.00001f, bout);//but after numerous checks, this has no impact on the results...except to prevent a crash.
                             }
                     }
-                    
-                    
+
                     if (calculatbw) {//Calculate linear minimum black and maximum white
  #ifdef _OPENMP
         #   pragma omp parallel for reduction(min:minbmich) reduction(max:maxwmich) if (multiThread)
