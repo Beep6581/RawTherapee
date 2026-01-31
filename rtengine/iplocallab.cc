@@ -2386,14 +2386,14 @@ inline float norm_3(float r, float g, float b, TMatrix ws, float raplim)//lowers
 {
     constexpr float hi = std::numeric_limits<float>::max() / 100.f;
     float pwn = 0.5f;//standard repartition between XYZ luminance and Out of gamut values 
-    if (raplim < 2.f) {//raplim : ratio between the normal value 'reasonable_limit_white_point' and reality
-        pwn = 0.7f;//Tested on images with WP linear close to 1.5
-    } else if (raplim < 4.f) {//Near Sunset
-        pwn = 0.75f;//Tested on images with WP linear close to 5
+    if (raplim < 1.2f) {//raplim : ratio between the normal value 'reasonable_limit_white_point' and reality
+        pwn = 0.55f;//Tested on images with WP linear close to 4 - Near Sunset
+    } else if (raplim < 1.5f) {//Very high White point
+        pwn = 0.75f;//Tested on images with WP linear close to 5 or 6
     } else {
         pwn = 0.85f;//Tested on images with WP linear close to 6 and above //LEDs
     }    
-    return std::min(hi, pwn * power_norm(r, g, b) + (1.f - pwn) * Color::rgbLuminance(r, g, b, ws));
+    return std::min(hi, (1.f - pwn) * power_norm(r, g, b) + pwn * Color::rgbLuminance(r, g, b, ws));//I reversed the action of the two components to better account for what happens out of gamut.
 }
 
 inline float norm(float r, float g, float b, TMatrix ws)
@@ -18529,7 +18529,7 @@ void ImProcFunctions::Lab_Local(
                         float shiftwhitepoint = params->locallab.spots.at(sp).ghs_HLP;//White point
                         constexpr float low_limit_white_point = 0.9f; //reasonable limit where we can consider that the highlights are low (at least white point < 1).
                         //This occurs when the limits of the highlights are not reached, then white point low.
-                        constexpr float reasonable_limit_white_point = 1.3f; //reasonable limit where we can consider that the highlights are very high
+                        constexpr float reasonable_limit_white_point = 4.2f; //reasonable limit where we can consider that the highlights are very high
                         //This occurs either when 'Highlight reconstruction' is not activated or when the value recovered with reconstruction is quite low. 
                         //This is the majority of cases. In this case, I apply 'norm2', which combines the estimated XYZ Luminance values ​​with out-of-gamut values ​​at 50%.
                         //In other cases, sunsets, images with LEDs,etc. the WP linear values ​​can be very high, up to 11... I vary the ratio from 50% up to 85% for out-of-gamut lights.
