@@ -4438,7 +4438,7 @@ LocallabShadow::LocallabShadow():
     ghsMethod->append(M("TP_LOCALLAB_GHSLUM"));
     ghsMethod->append(M("TP_LOCALLAB_GHSSAT"));
     ghsMethod->append(M("TP_LOCALLAB_GHSHUE"));
-    ghsMethod->set_active(0);
+    ghsMethod->set_active(1);
     ghsMethodConn = ghsMethod->signal_changed().connect(sigc::mem_fun(*this, &LocallabShadow::ghsMethodChanged));
     ghsMethod->set_tooltip_text(M("TP_LOCALLAB_GHS_METHOD_TOOLTIP"));
 
@@ -6035,7 +6035,7 @@ void LocallabShadow::convertParamToSimple()
     // Disable all listeners
     disableListener();
     // Set hidden specific GUI widgets in Simple mode to default spot values
-    ghsMethod->set_active(0);
+    ghsMethod->set_active(1);
     ghs_inv->set_active(false);
 
     gamSH->setValue(defSpot.gamSH);
