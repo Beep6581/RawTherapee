@@ -3430,19 +3430,27 @@ void ImProcFunctions::complete_local_contrast (LabImage * lab, LabImage * dst, c
         constexpr float artifact_minimum_low = 10.f;//Very low replacement value, but without impact on the decomposition, except for some proximity of wavelets.
         constexpr float artifact_minimum_lowab = 0.f;//With 0, we are necessarily within the gamut
 
+        constexpr float artifact_maximum = 27768.f;//The threshold above which wavelet decomposition is not performed, and therefore no contrast enhancement is achieved, to avoid artifacts due to proximity to the gamut limit.
+        constexpr float artifact_maximum_high = 32600.f;//Very high replacement value, but without impact on the decomposition, except for some proximity of wavelets.
+        constexpr float artifact_maximum_highab = 0.f;//With 0, we are necessarily within the gamut
+
 #ifdef _OPENMP
         #pragma omp parallel for if (multiThread)
 #endif
         for (int i = 0; i < lab->H; i++){
             for (int j = 0; j < lab->W; j++){
-                if(lab->L[i][j] > artifact_minimum) {
+                if (lab->L[i][j] > artifact_minimum  && lab->L[i][j] < artifact_maximum) {
                     lab2->L[i][j] = lab->L[i][j];
                     lab2->a[i][j] = lab->a[i][j];
                     lab2->b[i][j] = lab->b[i][j];
-                } else {
+                } else if (lab->L[i][j] < artifact_minimum) {
                     lab2->L[i][j] = artifact_minimum_low;
                     lab2->a[i][j] = artifact_minimum_lowab;
                     lab2->b[i][j] = artifact_minimum_lowab;
+                } else if (lab->L[i][j] > artifact_maximum) {
+                    lab2->L[i][j] = artifact_maximum_high;
+                    lab2->a[i][j] = artifact_maximum_highab;
+                    lab2->b[i][j] = artifact_maximum_highab;
                 }
             }
         }
@@ -3455,11 +3463,11 @@ void ImProcFunctions::complete_local_contrast (LabImage * lab, LabImage * dst, c
         const int numThreads = 1;
 
 #endif
-            int width = lab->W;
-            int height = lab->H;
-            int wavelet_lev = 7;//default
-            int DaubLen = 4;//type of wave
-            if (waparams.daubcoeffmethod == "2_") {
+            const int width = lab->W;
+            const int height = lab->H;
+            const int wavelet_lev = 7;//default
+            int DaubLen = 4;//type of wave : number of vanishing moments
+            if (waparams.daubcoeffmethod == "2_") {//If the user changes this value in the Wavelet levels menu
                 DaubLen = 4;
             } else if (waparams.daubcoeffmethod == "4_") {
                 DaubLen = 6;//default
@@ -3472,9 +3480,9 @@ void ImProcFunctions::complete_local_contrast (LabImage * lab, LabImage * dst, c
             } else if (params->wavelet.daubcoeffmethod == "20_") {
                 DaubLen = 22;
             }
-            float sigmafin = cmparams.sigmatrc;//attenuation response signal
-            int pyrwav = cmparams.pyrwavtrc;//levels contrast profiles
-            float offset = cmparams.offstrc;//offset signal
+            const float sigmafin = cmparams.sigmatrc;//attenuation response signal
+            const int pyrwav = cmparams.pyrwavtrc;//levels contrast profiles
+            const float offset = cmparams.offstrc;//offset signal
             int level_bl = 0;//adapted to each levels profile 
             int level_hl = 1;//adapted to each levels profile 
             int level_br = wavelet_lev;
@@ -3482,6 +3490,7 @@ void ImProcFunctions::complete_local_contrast (LabImage * lab, LabImage * dst, c
 
             //6 contrast profiles to change range levels and rolloff for high contrast positive and negative - of course we can add anothers
             //I change only values for LUT for high contrast values and not for low levels, but we can...
+            //These parameters are passed to Inval, to focus more or less on the "center" of the signal.
             float inva5 = 0.8f;
             float inva6 = 0.7f;
             float inva7 = 0.5f;
@@ -3489,17 +3498,17 @@ void ImProcFunctions::complete_local_contrast (LabImage * lab, LabImage * dst, c
             float inva9 = 0.3f;
             float inva10 = 0.1f;
 
-            if(pyrwav == 1) {//low contrast
-                level_bl = 0;//0
-                level_hl = 1;//1
-                level_br = wavelet_lev - 3;//-3
-                level_hr = wavelet_lev - 2;//-2
-            } else if(pyrwav == 2) {
-                level_bl = 0;//0
-                level_hl = 0;//0
-                level_br = wavelet_lev - 3;//-2
-                level_hr = wavelet_lev - 1;//-1
-                if(!cmparams.wsmoothcie) {
+            if (pyrwav == 1) {//low contrast
+                level_bl = 0;
+                level_hl = 1;
+                level_br = wavelet_lev - 3;
+                level_hr = wavelet_lev - 2;
+            } else if (pyrwav == 2) {
+                level_bl = 0;
+                level_hl = 0;
+                level_br = wavelet_lev - 3;
+                level_hr = wavelet_lev - 1;
+                if (!cmparams.wsmoothcie) {
                     inva5 = 1.f;
                     inva6 = 0.8f;
                     inva7 = 0.65f;
@@ -3507,25 +3516,25 @@ void ImProcFunctions::complete_local_contrast (LabImage * lab, LabImage * dst, c
                     inva9 = 0.3f;
                     inva10 = 0.2f;
                 }
-            } else if( pyrwav == 3) {//default
+            } else if ( pyrwav == 3) {//default
                 level_bl = 0;
                 level_hl = 0;
-                level_br = wavelet_lev - 2;//-1
-                level_hr = wavelet_lev;//0
-                if(!cmparams.wsmoothcie) {
-                    inva5 = 1.f; //1
-                    inva6 = 0.9f;//0.9
-                    inva7 = 0.7f;//0.7
-                    inva8 = 0.6f;//0.6
-                    inva9 = 0.4f;//0.4
-                    inva10 = 0.2f;//0.2
+                level_br = wavelet_lev - 2;
+                level_hr = wavelet_lev;
+                if (!cmparams.wsmoothcie) {
+                    inva5 = 1.f; 
+                    inva6 = 0.9f;
+                    inva7 = 0.7f;
+                    inva8 = 0.6f;
+                    inva9 = 0.4f;
+                    inva10 = 0.2f;
                 }
-            } else if( pyrwav == 4) {
+            } else if ( pyrwav == 4) {
                 level_bl = 0;
                 level_hl = 0;
-                level_br = wavelet_lev -1;//0
-                level_hr = wavelet_lev +1;//0
-                if(!cmparams.wsmoothcie) {
+                level_br = wavelet_lev -1;
+                level_hr = wavelet_lev +1;
+                if (!cmparams.wsmoothcie) {
                     inva5 = 0.9f;
                     inva6 = 0.8f;
                     inva7 = 0.6f;
@@ -3533,24 +3542,24 @@ void ImProcFunctions::complete_local_contrast (LabImage * lab, LabImage * dst, c
                     inva9 = 0.3f;
                     inva10 = 0.1f;
                 }
-            } else if( pyrwav == 5) {
+            } else if ( pyrwav == 5) {
                 level_bl = 0;
                 level_hl = 0;
-                level_br = wavelet_lev - 1;//-1
-                level_hr = wavelet_lev + 2;//+1  //be careful the preview must be big enough to see the changes
-                if(!cmparams.wsmoothcie) {
-                    inva5 = 0.8f;//0.85
-                    inva6 = 0.6f;//0.75
-                    inva7 = 0.5f;//0.55
-                    inva8 = 0.3f;//0.45
-                    inva9 = 0.2f;//0.3
-                    inva10 = 0.05f;//0.1
+                level_br = wavelet_lev - 1;
+                level_hr = wavelet_lev + 2;//be careful the preview must be big enough to see the changes
+                if (!cmparams.wsmoothcie) {
+                    inva5 = 0.8f;
+                    inva6 = 0.6f;
+                    inva7 = 0.5f;
+                    inva8 = 0.3f;
+                    inva9 = 0.2f;
+                    inva10 = 0.05f;
                     
                 }//last choice not used for various reasons
-            } else if( pyrwav == 6) {//agresive - maximum - in this case LUT are minimal to avoid artifacts -be careful the preview must be big enough to see the changes
+            } else if ( pyrwav == 6) {//agresive - maximum - in this case LUT are minimal to avoid artifacts -be careful the preview must be big enough to see the changes
                 level_bl = 0;
                 level_hl = 0;
-                level_br = wavelet_lev ;//-1
+                level_br = wavelet_lev;
                 level_hr = wavelet_lev + 2;//here maximum
             }
 
@@ -3575,16 +3584,16 @@ void ImProcFunctions::complete_local_contrast (LabImage * lab, LabImage * dst, c
             //residual contrast
             const float contresid = cmparams.residtrc;
 
-            if (contresid != 0) {
+            if (contresid != 0) {//residual image
                 int W_L = wdspot->level_W(0);
                 int H_L = wdspot->level_H(0);
                 float *wav_L0 = wdspot->get_coeff0();//residual image
 
 
-                float maxh = 1.25f; //amplification contrast above mean, we can change 1.25f
-                float maxl = 1.25f; //reduction contrast under mean
-                float multL = contresid * (maxl - 1.f) / 100.f + 1.f;
-                float multH = contresid * (maxh - 1.f) / 100.f + 1.f;
+                const float maxh = 1.25f; //amplification contrast above mean, we can change 1.25f
+                const float maxl = 1.25f; //reduction contrast under mean
+                const float multL = contresid * (maxl - 1.f) / 100.f + 1.f;
+                const float multH = contresid * (maxh - 1.f) / 100.f + 1.f;
                 double avedbl = 0.0; // use double precision for large summations
                 float max0 = 0.f;
                 float min0 = FLT_MAX;
@@ -3657,7 +3666,8 @@ void ImProcFunctions::complete_local_contrast (LabImage * lab, LabImage * dst, c
             //end residual contrast
 
             //begin variable contrast
-            // declaration with 10 levels to calculate mean , mean negative, sigma, sigma negative, Max et Max negative for each level 
+            // Declaration with 10 levels to calculate mean , mean negative, sigma, sigma negative, Max et Max negative for each level
+            // An old algorithm conceived in 2012...which has been 'copied' elsewhere... all the better.
             float mean[10];
             float meanN[10];
             float sigma[10];
@@ -3680,7 +3690,7 @@ void ImProcFunctions::complete_local_contrast (LabImage * lab, LabImage * dst, c
                 ahigh = 1.f / (level_hr - level_br);
                 bhigh =  -ahigh * level_br;
             }
-            
+            //What follows is a model of a complex phenomenon, simplifying the signal shape. The action is a function of the contrast (in the wavelet sense), calculating a mean and a standard deviation (which are not actually mean and standard deviations).
             for (int dir = 1; dir < 4; dir++) {//for each direction
                 for (int level = level_bl; level < maxlvl; ++level) {//for each levels
                     int W_L = wdspot->level_W(level);
@@ -3691,11 +3701,11 @@ void ImProcFunctions::complete_local_contrast (LabImage * lab, LabImage * dst, c
                     if (MaxP[level] > 0.f && mean[level] != 0.f && sigma[level] != 0.f) {
                         float insigma = 0.666f; //SD standard deviation (modelisation)
                         float logmax = log(MaxP[level]); //log Max
-                        float rapX = (offset * mean[level] + sigmafin * sigma[level]) / MaxP[level]; //rapport between SD / max
+                        float rapX = (offset * mean[level] + sigmafin * sigma[level]) / MaxP[level];//rapport between SD / max
                         //offset move mean location in signal
                         float inx = log(insigma);
                         float iny = log(rapX);
-                        float rap = inx / iny; //koef
+                        float rap = inx / iny;
                         //transitions
                         float asig = 0.166f / (sigma[level] * sigmafin);
                         float bsig = 0.5f - asig * (mean[level] * offset);
@@ -3732,7 +3742,7 @@ void ImProcFunctions::complete_local_contrast (LabImage * lab, LabImage * dst, c
 
                         for (int y = 0; y < H_L; y++) {
                             for (int x = 0; x < W_L; x++) {//for each pixel
-                                if(cmOpacityCurveWL) {//if curve enable
+                                if (cmOpacityCurveWL) {//if curve enable
                                     float absciss;//position in curve and signal
                                     float &val = wav_L[dir][y * W_L + x];
                                     const float WavCL = std::fabs(wav_L[dir][y * W_L + x]);
@@ -3747,8 +3757,6 @@ void ImProcFunctions::complete_local_contrast (LabImage * lab, LabImage * dst, c
                                     } else {
                                         absciss = amean * WavCL;
                                     }
-/*
-*/
                                     float kc = klev * (cmOpacityCurveWL[absciss * 500.f] - 0.5f);
                                     float amplieffect = kc <= 0.f ? 1.f : 1.7f;//we can change 1.5 - to 1.7 or more or less
 
@@ -3771,15 +3779,13 @@ void ImProcFunctions::complete_local_contrast (LabImage * lab, LabImage * dst, c
 #endif            
             for (int i = 0; i < lab->H; i++){
                 for (int j = 0; j < lab->W; j++){
-                    if(lab->L[i][j] > artifact_minimum) {
+                    if (lab->L[i][j] > artifact_minimum  && lab->L[i][j] < artifact_maximum) {
                         lab->L[i][j] = lab2->L[i][j];
                         lab->a[i][j] = lab2->a[i][j];
                         lab->b[i][j] = lab2->b[i][j];
                     }
                 }
             }
-
-
     }
 
 }
