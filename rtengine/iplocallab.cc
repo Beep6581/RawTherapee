@@ -19154,17 +19154,17 @@ void ImProcFunctions::Lab_Local(
                         };
 
                     float deltawp = rtengine::max(0.05f, maxwmich - minbmich);//Linear Dynamic Range - 0.05 minimum acceptable
-                    if (! michwhite) {//no use of linear Dynamic Range
+                    if (!michwhite) {//no use of linear Dynamic Range
                         deltawp = 1.f;
                     }
                     //I put these 2 variables in place, just in case... So as not to rewrite the code... If users request a finer setting than "subtraction" or "Dynamic range", and an action on the White point.
-                    michbwslider[0]= minbmich; 
-                    michbwslider[1]= maxwmich; 
+                    michbwslider[0]= minbmich;
+                    michbwslider[1]= maxwmich;
                     if (settings->verbose) {
                         printf("Min black=%f max White=%f\n", (double) michbwslider[0], (double) michbwslider[1]);
                     }
 
-                    float gain = pow_F(2.f, michexp);//in Ev
+                    const float gain = pow_F(2.f, michexp);//in Ev
 
 #ifdef _OPENMP
         #   pragma omp parallel for schedule(dynamic,16) if (multiThread)

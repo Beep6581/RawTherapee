@@ -3711,7 +3711,7 @@ void ImProcFunctions::complete_local_contrast (LabImage * lab, LabImage * dst, c
                         float bsig = 0.5f - asig * (mean[level] * offset);
                         float amean = 0.5f / (mean[level] * offset);
                         const float effect = sigmafin;
-                        float mea[10];//simulation using mean and sigma, to evaluate signal 
+                        float mea[10];//simulation using mean and sigma, to evaluate signal
                         calceffect(level, mean, sigma, mea, effect, offset);
                         float klev = 1.f;
                         if (level >= level_hl && level <= level_hr) {
