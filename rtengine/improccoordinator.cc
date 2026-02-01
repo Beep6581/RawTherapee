@@ -1222,7 +1222,8 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
             std::vector<LocallabListener::locallabshGHSbw2> locallshgshbw2;
             std::vector<LocallabListener::locallabsetLC> locallsetlc;
             std::vector<LocallabListener::locallabcieSIG> locallciesig;
-            
+            std::vector<LocallabListener::locallabshMICHbw> locallshmichbw;
+
             huerefs.resize(params->locallab.spots.size());
             huerefblurs.resize(params->locallab.spots.size());
             chromarefblurs.resize(params->locallab.spots.size());
@@ -1683,6 +1684,18 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                     locshghsbw.ghs_auto = ghsauto;
                 locallshgshbw.push_back(locshghsbw);
 
+                const bool michblack = params->locallab.spots.at(sp).mich_black;//Linear Subtract Black point
+                const bool michwhite = params->locallab.spots.at(sp).mich_white;//Linear White point
+                bool calculatbw = false;
+                calculatbw = michblack || michwhite;
+
+                LocallabListener::locallabshMICHbw locshmich_bw;
+                    for(int j = 0; j < 2; j++) {
+                        locshmich_bw.mich_slider[j] = michbwslider[j];
+                    }
+                    locshmich_bw.mich_auto = calculatbw;
+
+                locallshmichbw.push_back(locshmich_bw);
 
                 // Recalculate references after
                 if (params->locallab.spots.at(sp).spotMethod == "exc") {
@@ -1757,6 +1770,10 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
 
                     if (params->locallab.spots.at(sp).expshadhigh && params->locallab.spots.at(sp).shMethod == "ghs") {
                         locallListener->ghsbwChanged(locallshgshbw,params->locallab.selspot);//Black and White point infos, SP auto, Middle grey, max RGB
+                    }
+
+                    if (params->locallab.spots.at(sp).expshadhigh && params->locallab.spots.at(sp).shMethod == "micha") {
+                        locallListener->michbwChanged(locallshmichbw,params->locallab.selspot);//Subtract Black and White point infos - Michaelis
                     }
 
                     /*

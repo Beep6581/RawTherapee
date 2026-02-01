@@ -527,6 +527,10 @@ public:
         bool linkrgblc;
     };
 
+    struct locallabshMICHbw {//update information Michaelis black and white point 
+        double mich_slider[2];
+        bool mich_auto;
+    };
 
     struct locallabshGHSbw2 {//update sliders black and white point 
         double ghsbw_slider[2];
@@ -582,6 +586,7 @@ public:
     virtual void maiChanged(const std::vector<locallabsetLC> &csetlc, int selspot) = 0;
     virtual void sigChanged(const std::vector<locallabcieSIG> &ciesig, int selspot) = 0;
     virtual void ciebefChanged(const std::vector<locallabcieBEF> &ciebef, int selspot) = 0;
+    virtual void michbwChanged(const std::vector<locallabshMICHbw> &shmichbw, int selspot) = 0;
 
     virtual void sharbefChanged(const std::vector<locallabsharBEF> &sharbef, int selspot) = 0;
     virtual void sharaftChanged(const std::vector<locallabsharAFT> &sharaft, int selspot) = 0;

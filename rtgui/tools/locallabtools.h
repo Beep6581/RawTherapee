@@ -644,6 +644,8 @@ private:
     Gtk::CheckButton* const mich_jdx;
     Adjuster* const mich_sat;
     Adjuster* const mich_out;
+    Gtk::Label* const michbwLabel;
+
     Gtk::CheckButton* const mich_black;
     Gtk::CheckButton* const mich_white;
     Adjuster* const mich_high;
@@ -724,6 +726,8 @@ public:
     int nbsym2;
     void updateghsbw2(double ghsb, double ghsw, bool ghsaut);
     void updateghsbw(int bp, int wp, double minbp, double maxwp, double symev, double midgrey, double maxrgb, double sig3, double maxR, double maxG, double maxB, double drghs, bool ghsau);
+    void updatemichbw(double michb, double michw, bool michaut);
+
     void setDefaultExpanderVisibility() override;
     void disableListener() override;
     void enableListener() override;

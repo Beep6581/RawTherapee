@@ -4354,6 +4354,7 @@ LocallabShadow::LocallabShadow():
     mich_jdx(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_MICHJDX")))),//Allows or disallows an LMS transformation with the JDx matrix.
     mich_sat(Gtk::manage(new Adjuster(M("TP_LOCALLAB_MICHSAT"), 0.0, 2., 0.01, 1.15))),//Saturation : Adjusts color saturation post-tone mapping.
     mich_out(Gtk::manage(new Adjuster(M("TP_LOCALLAB_MICHOUT"), 0.5, 10., 0.01, 1.))),//Output Max Clamp : Sets the final clipping point for the output values.
+    michbwLabel(Gtk::manage(new Gtk::Label("---"))),//Display Subtract Black and White point
     mich_black(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_MICHBLACK")))),//Allows or disallows the use of linear black subtraction.
     mich_white(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_MICHWHITE")))),//Allows or disallows the use of linear dynamic range.
     mich_high(Gtk::manage(new Adjuster(M("TP_LOCALLAB_MICHHIGH"), 0., 3., 0.01, 0.))),//Reduces highlights.
@@ -4518,7 +4519,9 @@ LocallabShadow::LocallabShadow():
     mich_kpar->setLogScale(10, 0);
     mich_out->setLogScale(10, 0);
     mich_high->setAdjusterListener(this);
-
+    michbwLabel->set_line_wrap();
+    michbwLabel->set_justify(Gtk::Justification::JUSTIFY_CENTER);
+    setExpandAlignProperties(michbwLabel, true, false, Gtk::ALIGN_CENTER, Gtk::ALIGN_START);
     ghsbpwpLabels->set_line_wrap();
     ghsbpwpLabels->set_justify(Gtk::Justification::JUSTIFY_CENTER);
     setExpandAlignProperties(ghsbpwpLabels, true, false, Gtk::ALIGN_CENTER, Gtk::ALIGN_START);
@@ -4705,6 +4708,7 @@ LocallabShadow::LocallabShadow():
     michBox2->pack_start(*mich_black);
     michBox2->pack_start(*mich_white);
     michBox2->pack_start(*mich_high);
+    michBox2->pack_start(*michbwLabel);
     michFrame->add(*michBox2);
     pack_start(*michFrame);
 
@@ -4961,6 +4965,7 @@ void LocallabShadow::updateAdviceTooltips(const bool showTooltips)
         mich_black->set_tooltip_text(M("TP_LOCALLAB_MICHDR_TOOLTIP"));
         mich_white->set_tooltip_text(M("TP_LOCALLAB_MICHDR_TOOLTIP"));
         mich_jdx->set_tooltip_text(M("TP_LOCALLAB_MICHJDX_TOOLTIP"));
+        michbwLabel->set_tooltip_text(M("TP_LOCALLAB_MICHBLWH_TOOLTIP"));
         /*
         highlights->set_tooltip_text(M("TP_LOCALLAB_NUL_TOOLTIP"));
         h_tonalwidth->set_tooltip_text(M("TP_LOCALLAB_NUL_TOOLTIP"));
@@ -5058,7 +5063,8 @@ void LocallabShadow::updateAdviceTooltips(const bool showTooltips)
         mich_jdx->set_tooltip_text("");
         mich_black->set_tooltip_text("");
         mich_white->set_tooltip_text("");
-        
+        michbwLabel->set_tooltip_text("");
+
     }
 }
 
@@ -5860,6 +5866,28 @@ void LocallabShadow::adjusterChanged(Adjuster* a, double newval)
     }
 }
 
+void LocallabShadow::updatemichbw(double michb, double michw, bool michaut)//Information Black and White point Michaelis
+{
+    
+    idle_register.add(
+    [this, michb, michw, michaut]() -> bool {
+        GThreadLock lock; // All GUI access from idle_add callbacks or separate thread HAVE to be protected
+
+        if (michaut) {//only if user choose one or the two checkbox
+            michbwLabel->set_text(
+                Glib::ustring::compose(M("TP_LOCALLAB_MICHBLWH"),
+                                    Glib::ustring::format(std::fixed, std::setprecision(4), michb),
+                                    Glib::ustring::format(std::fixed, std::setprecision(4), michw))
+            );
+        } else {
+            michbwLabel->set_text(M("TP_LOCALLAB_MICHBLWHNO"));
+        }
+        return false;
+    }
+   );
+
+}
+
 void LocallabShadow::updateghsbw2(double ghsb, double ghsw, bool ghsaut)//auto GHS black point and white point
 {
     idle_register.add(
@@ -5888,6 +5916,9 @@ void LocallabShadow::updateghsbw2(double ghsb, double ghsw, bool ghsaut)//auto G
    );
   
 }
+
+
+
 void LocallabShadow::updateghsbw(int bp, int wp, double minbp, double maxwp, double symev, double midgrey, double maxrgb, double sig3, double maxR, double maxG, double maxB, double drghs, bool ghsau) //update informations for Black point and White point
 {
     idle_register.add(

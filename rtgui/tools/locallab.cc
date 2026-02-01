@@ -1418,7 +1418,7 @@ void Locallab::ghsbw2Changed(const std::vector<locallabshGHSbw2> &shghsbw2, int 
 
     if (selspot < (int) sh_ghsbw2.size()) {
         for(int i=0; i < 2; i++) {
-            bwvalueslider[i] = sh_ghsbw2.at(selspot).ghsbw_slider[i];        
+            bwvalueslider[i] = sh_ghsbw2.at(selspot).ghsbw_slider[i];
         }
         ghsaut = sh_ghsbw2.at(selspot).ghs_auto;
         expshadhigh.updateghsbw2(bwvalueslider[0], bwvalueslider[1], ghsaut);
@@ -1426,6 +1426,20 @@ void Locallab::ghsbw2Changed(const std::vector<locallabshGHSbw2> &shghsbw2, int 
 
 }
 
+void Locallab::michbwChanged(const std::vector<locallabshMICHbw> &shmichbw, int selspot) // info black and white point Michaelis
+{
+    sh_michbw = shmichbw;
+    double bwvalue[2] = {0., 1.};
+    bool michaut = true;
+    if (selspot < (int) sh_michbw.size()) {
+        for(int i=0; i < 2; i++) {
+            bwvalue[i] = sh_michbw.at(selspot).mich_slider[i];
+        }
+        michaut = sh_michbw.at(selspot).mich_auto;
+        expshadhigh.updatemichbw(bwvalue[0], bwvalue[1], michaut);
+    }
+
+}
 
 void Locallab::ghsbwChanged(const std::vector<locallabshGHSbw> &shghsbw, int selspot) // info black and white point and Symmetry point auto
 {
