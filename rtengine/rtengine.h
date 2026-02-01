@@ -527,12 +527,12 @@ public:
         bool linkrgblc;
     };
 
-    struct locallabshMICHbw {//update information Michaelis black and white point 
+    struct locallabshMICHbw {//update information Michaelis black and white point
         double mich_slider[2];
         bool mich_auto;
     };
 
-    struct locallabshGHSbw2 {//update sliders black and white point 
+    struct locallabshGHSbw2 {//update sliders black and white point
         double ghsbw_slider[2];
         bool ghs_auto;
     };
