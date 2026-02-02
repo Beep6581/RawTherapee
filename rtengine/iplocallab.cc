@@ -18761,8 +18761,23 @@ void ImProcFunctions::Lab_Local(
                                         Ro = GHT(r, B, D, LP, SP, HP, c, strtype);//ghs R RGB standard
                                         Go = GHT(g, B, D, LP, SP, HP, c, strtype);//ghs G RGB standard
                                         Bo = GHT(b, B, D, LP, SP, HP, c, strtype);//ghs B RGB standard
-          
-                                        float fgh = 0.333f * ((Ro / r) + (Go / g) + (Bo /b));//linear average of the 3 channels
+
+                                        float sumRatio = 0.f;
+                                        int count = 0;
+                                        if (r != 0.f) {
+                                            sumRatio += Ro / r;
+                                            ++count;
+                                        }
+                                        if (g != 0.f) {
+                                            sumRatio += Go / g;
+                                            ++count;
+                                        }
+                                        if (b != 0.f) {
+                                            sumRatio += Bo / b;
+                                            ++count;
+                                        }
+                                        float fgh = count > 0 ? (sumRatio / static_cast<float>(count)) : 1.f;//linear average of the available channels
+
                                         apply_sat(Ro, Go, Bo, fgh, gh);//always apply saturation
                                     }
                                    // rebuild tmpImage with limit 0.00001f to avoid crash after SE 
@@ -19170,7 +19185,7 @@ void ImProcFunctions::Lab_Local(
         #   pragma omp parallel for schedule(dynamic,16) if (multiThread)
 #endif
                     //Taken from ART's CTLs, thanks to Alberto Griggio
-                    //Modified by Jacques Desmis - January 2026
+                    //Modified by Jacques Desmis
                     for (int i = 0; i < bfh; ++i)
                         for (int j = 0; j < bfw; ++j) {
                             float r = ((tmpImage->r(i, j) / range) - minbmich) / deltawp;// Subtract linear black and use Linear Dynamic Range
@@ -19192,9 +19207,22 @@ void ImProcFunctions::Lab_Local(
                             float r_tonemapped = mm_curve(r_linear, michspar, michkpar);
                             float g_tonemapped = mm_curve(g_linear, michspar, michkpar);
                             float b_tonemapped = mm_curve(b_linear, michspar, michkpar);
-
-                            float fmmm = 0.333f * ((r_tonemapped / r) + (g_tonemapped / g) + (b_tonemapped /b));//linear average of the 3 channels
-
+                            //Excellent suggestion from Copilot
+                            float sumRatio = 0.f;
+                            int count = 0;
+                            if (r != 0.f) {
+                                sumRatio += r_tonemapped / r;
+                                ++count;
+                            }
+                            if (g != 0.f) {
+                                sumRatio += g_tonemapped / g;
+                                ++count;
+                            }
+                            if (b != 0.f) {
+                                sumRatio += b_tonemapped / b;
+                                ++count;
+                            }
+                            float fmmm = count > 0 ? (sumRatio / static_cast<float>(count)) : 1.f;//linear average of the available channel
                             apply_sat(r_tonemapped, g_tonemapped, b_tonemapped, fmmm, mmh );//always apply saturation
 
                             // --- Saturation adjustment ---
