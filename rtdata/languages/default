@@ -3866,6 +3866,7 @@ TP_LOCALLAB_ROW_VIS;Visible
 TP_LOCALLAB_RSTPROTECT_TOOLTIP;Red and skin-tone protection affects the Saturation, Chroma and Colorfulness sliders.
 TP_LOCALLAB_SATCIE;Saturation control
 TP_LOCALLAB_SATCIE_TOOLTIP;Modifies the image saturation whenever the gamma/slope ratio is different from 2.4/12.92. It aims to compensate for the desaturation caused by significant luminance variations.\nValues ​​between 0.2 and 1.0 are often sufficient.
+
 TP_LOCALLAB_SATUR;Saturation
 TP_LOCALLAB_SATURV;Saturation (s)
 TP_LOCALLAB_SCALEGR;Scale
