@@ -31,6 +31,7 @@
 #endif
 #include "rtengine/rtapp.h"
 #include "rtengine/settings.h"
+#include "aspectratios.h"
 #include <exception>
 
 #define STARTUPDIR_CURRENT 0
@@ -322,6 +323,12 @@ public:
     std::vector<int> parseExtensionsEnabled;      // List of bool to retain extension or not
     std::vector<Glib::ustring> parsedExtensions;  // List containing all retained extensions (lowercase)
     std::set<std::string> parsedExtensionsSet;  // Set containing all retained extensions (lowercase)
+    std::vector<Glib::ustring> sysAspectRatiosLabels = {"3:2", "4:3", "16:9", "16:10", "1:1", "2:1", "3:1", "4:1", "5:1", "6:1", "7:1", "4:5", "5:7", "6:7", "6:17", "24:65 - XPAN", "1.414 - DIN EN ISO 216", "3.5:5", "8.5:11 - US Letter", "9.5:12", "10:12", "11:14", "11:17 - Tabloid", "13:19", "17:22", "45:35 - ePassport", "64:27", "13:18"};
+    std::vector<double> sysAspectRatiosValues = {3.0 / 2.0, 4.0 / 3.0, 16.0 / 9.0, 16.0 / 10.0, 1.0 / 1.0, 2.0 / 1.0, 3.0 / 1.0, 4.0 / 1.0, 5.0 / 1.0, 6.0 / 1.0, 7.0 / 1.0, 4.0 / 5.0, 5.0 / 7.0, 6.0 / 7.0, 6.0 / 17.0, 24.0 / 65.0, 1.414, 3.5 / 5.0, 8.5 / 11.0, 9.5 / 12.0, 10.0 / 12.0, 11.0 / 14.0, 11.0 / 17.0, 13.0 / 19.0, 17.0 / 22.0, 45.0 / 35.0, 64.0 / 27.0, 13.0 / 18.0};
+    std::vector<int> sysAspectRatiosEnabled;
+    std::vector<Glib::ustring> userAspectRatiosLabels;
+    std::vector<double> userAspectRatiosValues;
+    std::vector<int> userAspectRatiosEnabled;
     bool browseRecursive;
     int browseRecursiveDepth;
     int browseRecursiveMaxDirs;

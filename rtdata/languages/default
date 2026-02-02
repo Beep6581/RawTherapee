@@ -2190,6 +2190,20 @@ PREFERENCES_PARSEDEXTADDHINT;Add entered extension to the list.
 PREFERENCES_PARSEDEXTDELHINT;Delete selected extension from the list.\nPredefined extensions cannot be deleted.
 PREFERENCES_PARSEDEXTDOWNHINT;Move selected extension down in the list.
 PREFERENCES_PARSEDEXTUPHINT;Move selected extension up in the list.
+PREFERENCES_ASPECTRATIOS;Aspect Ratios
+PREFERENCES_ASPECTRATIO_ENABLED;Enabled
+PREFERENCES_ASPECTRATIO_LABEL;Label
+PREFERENCES_ASPECTRATIO_VALUE;Ratio Value
+PREFERENCES_ASPECTRATIO_CUSTOMLABEL;Custom Ratio
+PREFERENCES_ASPECTRATIO_CUSTOMVALUE;Value
+PREFERENCES_ASPECTRATIO_LABELPLACEHOLDER;e.g., 21:9 Ultrawide
+PREFERENCES_ASPECTRATIO_SELECTALL;Select All
+PREFERENCES_ASPECTRATIO_DESELECTALL;Deselect All
+PREFERENCES_ASPECTRATIO_ADDHINT;Add custom aspect ratio
+PREFERENCES_ASPECTRATIO_DELHINT;Delete selected custom aspect ratio.\nBuilt-in aspect ratios cannot be deleted.
+PREFERENCES_ASPECTRATIO_SELECTALL_HINT;Enable all default aspect ratios
+PREFERENCES_ASPECTRATIO_DESELECTALL_HINT;Disable all aspect ratios
+PREFERENCES_ASPECTRATIO_INFO;Aspect ratios are used in Crop and Framing tools. Built-in ratios cannot be deleted but can be disabled. Restart Required.
 PREFERENCES_PERFORMANCE_MEASURE;Measure
 PREFERENCES_PERFORMANCE_MEASURE_HINT;Logs processing times in console
 PREFERENCES_PERFORMANCE_THREADS;Threads
