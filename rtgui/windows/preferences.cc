@@ -825,14 +825,38 @@ Gtk::Widget* Preferences::getImageProcessingPanel ()
     Gtk::Label* labelLabel = Gtk::manage(new Gtk::Label(M("PREFERENCES_ASPECTRATIO_CUSTOMLABEL") + ":", Gtk::ALIGN_START));
     aspectRatioLabel = Gtk::manage(new Gtk::Entry());
     aspectRatioLabel->set_placeholder_text(M("PREFERENCES_ASPECTRATIO_LABELPLACEHOLDER"));
-    aspectRatioLabel->set_width_chars(20);
+    aspectRatioLabel->set_width_chars(15);
     Gtk::Label* valueLabel = Gtk::manage(new Gtk::Label(M("PREFERENCES_ASPECTRATIO_CUSTOMVALUE") + ":", Gtk::ALIGN_START));
-    aspectRatioValue = Gtk::manage(new Gtk::SpinButton());
-    aspectRatioValue->set_range(0.01, 100.0);
-    aspectRatioValue->set_increments(0.01, 0.1);
-    aspectRatioValue->set_digits(3);
-    aspectRatioValue->set_value(1.0);
-    aspectRatioValue->set_width_chars(8);
+    aspectRatioWidth = Gtk::manage(new Gtk::Entry());
+    aspectRatioWidth->set_text("21");
+    aspectRatioWidth->set_width_chars(3);
+    aspectRatioWidth->set_max_length(3);
+    aspectRatioWidth->signal_insert_text().connect([this](const Glib::ustring& text, int* position) {
+        for (auto c : text) {
+            if (!std::isdigit(c)) {
+                aspectRatioWidth->signal_insert_text().emission_stop();
+                return;
+            }
+        }
+    });
+    Gtk::Label* colonLabel = Gtk::manage(new Gtk::Label(":", Gtk::ALIGN_CENTER));
+    aspectRatioHeight = Gtk::manage(new Gtk::Entry());
+    aspectRatioHeight->set_text("9");
+    aspectRatioHeight->set_width_chars(3);
+    aspectRatioHeight->set_max_length(3);
+    aspectRatioHeight->signal_insert_text().connect([this](const Glib::ustring& text, int* position) {
+        for (auto c : text) {
+            if (!std::isdigit(c)) {
+                aspectRatioHeight->signal_insert_text().emission_stop();
+                return;
+            }
+        }
+    });
+    aspectRatioResult = Gtk::manage(new Gtk::Label("= 2.333", Gtk::ALIGN_START));
+    Pango::AttrList attrList;
+    Pango::Attribute sizeAttr = Pango::Attribute::create_attr_scale(0.9);
+    attrList.insert(sizeAttr);
+    aspectRatioResult->set_attributes(attrList);
     addAspectRatio = Gtk::manage(new Gtk::Button());
     delAspectRatio = Gtk::manage(new Gtk::Button());
     Gtk::Image* addImg = Gtk::manage(new RTImage("add-small", Gtk::ICON_SIZE_BUTTON));
@@ -846,7 +870,10 @@ Gtk::Widget* Preferences::getImageProcessingPanel ()
     hbAdd->pack_start(*labelLabel, Gtk::PACK_SHRINK, 4);
     hbAdd->pack_start(*aspectRatioLabel, Gtk::PACK_EXPAND_WIDGET, 4);
     hbAdd->pack_start(*valueLabel, Gtk::PACK_SHRINK, 4);
-    hbAdd->pack_start(*aspectRatioValue, Gtk::PACK_SHRINK, 4);
+    hbAdd->pack_start(*aspectRatioWidth, Gtk::PACK_SHRINK, 4);
+    hbAdd->pack_start(*colonLabel, Gtk::PACK_SHRINK, 2);
+    hbAdd->pack_start(*aspectRatioHeight, Gtk::PACK_SHRINK, 4);
+    hbAdd->pack_start(*aspectRatioResult, Gtk::PACK_SHRINK, 4);
     hbAdd->pack_end(*delAspectRatio, Gtk::PACK_SHRINK, 4);
     hbAdd->pack_end(*addAspectRatio, Gtk::PACK_SHRINK, 4);
     vbar->pack_start(*hbAdd, Gtk::PACK_SHRINK, 4);
@@ -1794,7 +1821,8 @@ Gtk::Widget* Preferences::getFileBrowserPanel()
 
     aspectRatios->signal_cursor_changed().connect(sigc::mem_fun(*this, &Preferences::aspectRatioSelectionChanged));
     aspectRatioLabel->signal_changed().connect(sigc::mem_fun(*this, &Preferences::aspectRatioInputChanged));
-    aspectRatioValue->signal_value_changed().connect(sigc::mem_fun(*this, &Preferences::aspectRatioInputChanged));
+    aspectRatioWidth->signal_changed().connect(sigc::mem_fun(*this, &Preferences::aspectRatioInputChanged));
+    aspectRatioHeight->signal_changed().connect(sigc::mem_fun(*this, &Preferences::aspectRatioInputChanged));
     addAspectRatio->signal_clicked().connect(sigc::mem_fun(*this, &Preferences::addAspectRatioPressed));
     delAspectRatio->signal_clicked().connect(sigc::mem_fun(*this, &Preferences::delAspectRatioPressed));
     selectAllAspectRatios->signal_clicked().connect(sigc::mem_fun(*this, &Preferences::selectAllAspectRatiosPressed));
@@ -2960,13 +2988,30 @@ void Preferences::aspectRatioSelectionChanged()
 
 void Preferences::aspectRatioInputChanged()
 {
+    Glib::ustring widthText = aspectRatioWidth->get_text();
+    Glib::ustring heightText = aspectRatioHeight->get_text();
+    if (widthText.empty() || heightText.empty()) {
+        addAspectRatio->set_sensitive(false);
+        aspectRatioResult->set_text("= ");
+        return;
+    }
+    int width = std::stoi(widthText);
+    int height = std::stoi(heightText);
+    if (width <= 0 || height <= 0) {
+        addAspectRatio->set_sensitive(false);
+        aspectRatioResult->set_text("= ");
+        return;
+    }
+    double newValue = static_cast<double>(width) / static_cast<double>(height);
+    char buf[32];
+    snprintf(buf, sizeof(buf), "= %.3f", newValue);
+    aspectRatioResult->set_text(buf);
     if (aspectRatioLabel->get_text().empty()) {
         addAspectRatio->set_sensitive(false);
         return;
     }
     Gtk::TreeNodeChildren children = aspectRatioModel->children();
     Glib::ustring newLabel = aspectRatioLabel->get_text();
-    double newValue = aspectRatioValue->get_value();
     for (const auto& row : children) {
         if (row[aspectRatioColumns.label] == newLabel ||
             std::abs(row[aspectRatioColumns.value] - newValue) < 0.001) {
@@ -2979,13 +3024,25 @@ void Preferences::aspectRatioInputChanged()
 
 void Preferences::addAspectRatioPressed()
 {
+    Glib::ustring widthText = aspectRatioWidth->get_text();
+    Glib::ustring heightText = aspectRatioHeight->get_text();
+    if (widthText.empty() || heightText.empty()) {
+        return;
+    }
+    int width = std::stoi(widthText);
+    int height = std::stoi(heightText);
+    if (width <= 0 || height <= 0) {
+        return;
+    }
     Gtk::TreeRow row = *(aspectRatioModel->append());
     row[aspectRatioColumns.enabled] = true;
     row[aspectRatioColumns.label] = aspectRatioLabel->get_text();
-    row[aspectRatioColumns.value] = aspectRatioValue->get_value();
+    row[aspectRatioColumns.value] = static_cast<double>(width) / static_cast<double>(height);
     row[aspectRatioColumns.builtin] = false;
     aspectRatioLabel->set_text("");
-    aspectRatioValue->set_value(1.0);
+    aspectRatioWidth->set_text("21");
+    aspectRatioHeight->set_text("9");
+    aspectRatioResult->set_text("= 2.333");
     addAspectRatio->set_sensitive(false);
 }
 

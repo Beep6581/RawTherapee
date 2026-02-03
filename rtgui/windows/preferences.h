@@ -204,7 +204,9 @@ class Preferences final :
     Gtk::Button*    moveExtUp;
     Gtk::Button*    moveExtDown;
     Gtk::Entry*     aspectRatioLabel;
-    Gtk::SpinButton* aspectRatioValue;
+    Gtk::Entry*     aspectRatioWidth;
+    Gtk::Entry*     aspectRatioHeight;
+    Gtk::Label*     aspectRatioResult;
     Gtk::TreeView*  aspectRatios;
     Gtk::Button*    addAspectRatio;
     Gtk::Button*    delAspectRatio;
