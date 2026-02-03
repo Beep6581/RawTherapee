@@ -18280,7 +18280,7 @@ void ImProcFunctions::Lab_Local(
                     delete tmpImage;
                 }
                 
-                if (lp.shmeth == 2) {
+                if (lp.shmeth == 2) {//GHS 2024 - 2026
                     if(ghsactiv) {
                         // GHT filter ported from Siril - help with ART CTL thanks to Alberto Griggio
                         TMatrix wprof = ICCStore::getInstance()->workingSpaceMatrix(params->icm.workingProfile);
@@ -19027,7 +19027,7 @@ void ImProcFunctions::Lab_Local(
                         }
                     }
                 }
-                if (lp.shmeth == 3) {//Michaelis-Menten
+                if (lp.shmeth == 3) {//Michaelis-Menten - 2026
                     const float michexp = params->locallab.spots.at(sp).mich_exp;//Exposure
                     const float michspar = params->locallab.spots.at(sp).mich_spar;//Output scale
                     const float michkpar = params->locallab.spots.at(sp).mich_kpar;//Knee strength
