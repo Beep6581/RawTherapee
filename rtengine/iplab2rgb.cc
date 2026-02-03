@@ -857,6 +857,12 @@ void rotate_and_scale_primary(float primaries[3][2], float scaling, float rotati
 }
 //end code Darktable
 
+/* 
+ * Working TRC - Abstract Profile
+ * Copyright Jacques Desmis jdesmis@gmail.com 
+ * 2021 - 2026
+*/ 
+
 void ImProcFunctions::workingtrc(int sp, Imagefloat* src, Imagefloat* dst, int cw, int ch, int mul, Glib::ustring &profile, double gampos, double slpos, int cat, int &illum, int prim, int locprim,
                                  float &rdx, float &rdy, float &grx, float &gry, float &blx, float &bly, float &meanx, float &meany, float &meanxe, float &meanye, float &maxdat, double *p,
                                  cmsHTRANSFORM &transform, bool normalizeIn, bool normalizeOut, bool keepTransForm, bool gamutcontrol) const
