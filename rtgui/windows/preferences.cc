@@ -840,8 +840,8 @@ Gtk::Widget* Preferences::getImageProcessingPanel ()
     Gtk::Label* valueLabel = Gtk::manage(new Gtk::Label(M("PREFERENCES_ASPECTRATIO_CUSTOMVALUE") + ":", Gtk::ALIGN_START));
     aspectRatioWidth = Gtk::manage(new Gtk::Entry());
     aspectRatioWidth->set_text("21");
-    aspectRatioWidth->set_width_chars(3);
-    aspectRatioWidth->set_max_length(3);
+    aspectRatioWidth->set_width_chars(4);
+    aspectRatioWidth->set_max_length(4);
     aspectRatioWidth->signal_insert_text().connect([this](const Glib::ustring& text, int* ) {
             for (auto ch : text) {
                 if (!g_unichar_isdigit(ch)) {
@@ -855,8 +855,8 @@ Gtk::Widget* Preferences::getImageProcessingPanel ()
     Gtk::Label* colonLabel = Gtk::manage(new Gtk::Label(":", Gtk::ALIGN_CENTER));
     aspectRatioHeight = Gtk::manage(new Gtk::Entry());
     aspectRatioHeight->set_text("9");
-    aspectRatioHeight->set_width_chars(3);
-    aspectRatioHeight->set_max_length(3);
+    aspectRatioHeight->set_width_chars(4);
+    aspectRatioHeight->set_max_length(4);
     aspectRatioHeight->signal_insert_text().connect([this](const Glib::ustring& text, int* ) {
             for (auto ch : text) {
                 if (!g_unichar_isdigit(ch)) {
