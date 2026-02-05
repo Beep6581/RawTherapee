@@ -42,6 +42,17 @@
 #endif
 
 namespace {
+bool isNumeric(const Glib::ustring& str) {
+    if (str.empty()) {
+        return false;
+    }
+    for (auto c : str) {
+        if (!std::isdigit(c)) {
+            return false;
+        }
+    }
+    return true;
+}
 void placeSpinBox(Gtk::Container* where, Gtk::SpinButton* &spin, const std::string &labelText, int digits, int inc0, int inc1, int maxLength, int range0, int range1, const std::string &toolTip = "") {
     Gtk::Box* HB = Gtk::manage ( new Gtk::Box () );
     HB->set_spacing (4);
@@ -831,27 +842,31 @@ Gtk::Widget* Preferences::getImageProcessingPanel ()
     aspectRatioWidth->set_text("21");
     aspectRatioWidth->set_width_chars(3);
     aspectRatioWidth->set_max_length(3);
-    aspectRatioWidth->signal_insert_text().connect([this](const Glib::ustring& text, int* position) {
-        for (auto c : text) {
-            if (!std::isdigit(c)) {
-                aspectRatioWidth->signal_insert_text().emission_stop();
-                return;
+    aspectRatioWidth->signal_insert_text().connect([this](const Glib::ustring& text, int* ) {
+            for (auto ch : text) {
+                if (!g_unichar_isdigit(ch)) {
+                    g_signal_stop_emission_by_name(aspectRatioWidth->gobj(), "insert-text");
+                    return;
+                }
             }
-        }
-    });
+        },
+        false
+    );
     Gtk::Label* colonLabel = Gtk::manage(new Gtk::Label(":", Gtk::ALIGN_CENTER));
     aspectRatioHeight = Gtk::manage(new Gtk::Entry());
     aspectRatioHeight->set_text("9");
     aspectRatioHeight->set_width_chars(3);
     aspectRatioHeight->set_max_length(3);
-    aspectRatioHeight->signal_insert_text().connect([this](const Glib::ustring& text, int* position) {
-        for (auto c : text) {
-            if (!std::isdigit(c)) {
-                aspectRatioHeight->signal_insert_text().emission_stop();
-                return;
+    aspectRatioHeight->signal_insert_text().connect([this](const Glib::ustring& text, int* ) {
+            for (auto ch : text) {
+                if (!g_unichar_isdigit(ch)) {
+                    g_signal_stop_emission_by_name(aspectRatioHeight->gobj(), "insert-text");
+                    return;
+                }
             }
-        }
-    });
+        },
+        false
+    );
     aspectRatioResult = Gtk::manage(new Gtk::Label("= 2.333", Gtk::ALIGN_START));
     Pango::AttrList attrList;
     Pango::Attribute sizeAttr = Pango::Attribute::create_attr_scale(0.9);
@@ -2990,7 +3005,7 @@ void Preferences::aspectRatioInputChanged()
 {
     Glib::ustring widthText = aspectRatioWidth->get_text();
     Glib::ustring heightText = aspectRatioHeight->get_text();
-    if (widthText.empty() || heightText.empty()) {
+    if (!isNumeric(widthText) || !isNumeric(heightText)) {
         addAspectRatio->set_sensitive(false);
         aspectRatioResult->set_text("= ");
         return;
@@ -3026,7 +3041,7 @@ void Preferences::addAspectRatioPressed()
 {
     Glib::ustring widthText = aspectRatioWidth->get_text();
     Glib::ustring heightText = aspectRatioHeight->get_text();
-    if (widthText.empty() || heightText.empty()) {
+    if (!isNumeric(widthText) || !isNumeric(heightText)) {
         return;
     }
     int width = std::stoi(widthText);
