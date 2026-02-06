@@ -411,11 +411,16 @@ void Crop::read (const ProcParams* pp, const ParamsEdited* pedited)
     nw = pp->crop.w;
     nh = pp->crop.h;
 
+
+    // Checking if the aspect ratio is known
+    // If ratio from PP3 doesn't exist (user deleted it), fallback to "Current"
+    std::vector<Glib::ustring> labels = crop_ratios->getLabels();
+    auto valid_ratio = std::find(labels.begin(), labels.end(), pp->crop.ratio);
     customRatioLabel->hide();
     orientation->show();
     if (pp->crop.ratio == "As Image") {
         ratio->set_active(0);
-    } else if (pp->crop.ratio == "Current") {
+    } else if (pp->crop.ratio == "Current" || valid_ratio == labels.end()) {
         ratio->set_active(1);
         updateCurrentRatio();
         customRatioLabel->show();
