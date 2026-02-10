@@ -75,7 +75,8 @@ protected:
 
     double getSliderValue() const;
     void setSliderValue(double val);
-
+    bool autoEnableTool;
+    void tryEnableTool();
 public:
     Adjuster(
         Glib::ustring vlabel,
@@ -101,6 +102,9 @@ public:
     void setAutoInconsistent(bool i);
     bool getAutoInconsistent() const;
     void setAdjusterListener(AdjusterListener* alistener);
+    AdjusterListener* getAdjusterListener() const;
+    void setAutoEnableTool(bool autoEnable);
+    bool getAutoEnableTool() const;
     // return the value trimmed to the limits at construction time
     double getValue() const;
     // return the value trimmed to the limits at construction time

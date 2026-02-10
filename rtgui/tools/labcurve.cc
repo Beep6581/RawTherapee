@@ -93,6 +93,7 @@ LCurve::LCurve() : FoldableToolPanel(this, TOOL_NAME, M("TP_LABCURVE_LABEL"), fa
     pack_start(*lcredsk);
 
     rstprotection = Gtk::manage(new Adjuster(M("TP_LABCURVE_RSTPROTECTION"), 0., 100., 0.1, 0.));
+    rstprotection->setAutoEnableTool(false);
     pack_start(*rstprotection);
     rstprotection->show();
 

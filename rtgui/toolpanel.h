@@ -174,8 +174,8 @@ protected:
     sigc::connection enaConn;
     void foldThemAll (GdkEventButton* event);
     void enabled_toggled();
-
 public:
+    void enableTool();
 
     FoldableToolPanel(Gtk::Box* content, Glib::ustring toolName, Glib::ustring UILabel, bool need11 = false, bool useEnabled = false);
 

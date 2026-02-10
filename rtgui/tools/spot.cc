@@ -278,6 +278,7 @@ void Spot::editToggled ()
 {
     if (listener) {
         if (edit->get_active()) {
+            enableTool();
             listener->setTweakOperator(this);
             listener->refreshPreview(EvSpotEnabledOPA); // reprocess the preview w/o creating History entry
             subscribe();

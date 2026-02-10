@@ -29,10 +29,11 @@
 #include "pathutils.h"
 #include "rtimage.h"
 #include "rtscalable.h"
+#include "toolpanel.h"
 #include "widgets/basic/popuptogglebutton.h"
 
 CurveEditorGroup::CurveEditorGroup (Glib::ustring& curveDir, const Glib::ustring& groupLabel, int blank) : curveDir(curveDir), line(0), curve_reset(nullptr),
-    displayedCurve(nullptr), flatSubGroup(nullptr), diagonalSubGroup(nullptr), cl(nullptr), numberOfPackedCurve(0)
+    displayedCurve(nullptr), flatSubGroup(nullptr), diagonalSubGroup(nullptr), cl(nullptr), numberOfPackedCurve(0), autoEnableTool(true)
 {
 
     // We set the label to the one provided as parameter, even if it's an empty string
@@ -231,6 +232,7 @@ void CurveEditorGroup::typeSelectionChanged (CurveEditor* ce, int n)
         if (n == ce->subGroup->valLinear || n == ce->subGroup->valUnchanged) {
             // Since we do not activate the curve when the user switch the toggled off button to 'Linear', we have to
             // to call the curve listener manually, because 'curveChanged' uses displayedCurve...
+            tryEnableTool();
             if (cl) {
                 if (cl->isMulti()) {
                     cl->curveChanged (ce);
@@ -336,7 +338,7 @@ void CurveEditorGroup::curveChanged ()
 {
 
     displayedCurve->subGroup->storeDisplayedCurve();
-
+    tryEnableTool();
     if (cl) {
         if (cl->isMulti()) {
             cl->curveChanged (displayedCurve);
@@ -550,4 +552,21 @@ Glib::ustring CurveEditorSubGroup::inputFile ()
 
     fname = "";
     return fname;
+}
+void CurveEditorGroup::setAutoEnableTool(bool autoEnable)
+{
+    autoEnableTool = autoEnable;
+}
+bool CurveEditorGroup::getAutoEnableTool() const
+{
+    return autoEnableTool;
+}
+void CurveEditorGroup::tryEnableTool()
+{
+    if (!autoEnableTool || !cl) {
+        return;
+    }
+    if (auto* foldablePanel = dynamic_cast<FoldableToolPanel*>(cl)) {
+        foldablePanel->enableTool();
+    }
 }

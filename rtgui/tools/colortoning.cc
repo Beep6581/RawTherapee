@@ -354,6 +354,7 @@ ColorToning::ColorToning () : FoldableToolPanel(this, TOOL_NAME, M("TP_COLORTONI
 //    EvColorToningLabGridValue = m->newEvent(RGBCURVE, "HISTORY_MSG_COLORTONING_LABGRID_VALUE");
     EvColorToningLabGridValue = m->newEvent(LUMINANCECURVE, "HISTORY_MSG_COLORTONING_LABGRID_VALUE");
     labgrid = Gtk::manage(new LabGrid(EvColorToningLabGridValue, M("TP_COLORTONING_LABGRID_VALUES")));
+    labgrid->setParentTool(this);
     pack_start(*labgrid, Gtk::PACK_EXPAND_WIDGET, 4);
     //------------------------------------------------------------------------
 
@@ -421,6 +422,7 @@ ColorToning::ColorToning () : FoldableToolPanel(this, TOOL_NAME, M("TP_COLORTONI
     labRegionBox->pack_start(*hb, true, true);
 
     labRegionAB = Gtk::manage(new LabGrid(EvLabRegionAB, M("TP_COLORTONING_LABREGION_ABVALUES"), false));
+    labRegionAB->setParentTool(this);
     labRegionBox->pack_start(*labRegionAB);
 
     labRegionSaturation = Gtk::manage(new Adjuster(M("TP_COLORTONING_LABREGION_SATURATION"), -100, 100, 1, 0));
@@ -1529,6 +1531,9 @@ void ColorToning::labRegionCopyPressed()
 
 void ColorToning::labRegionShowMaskChanged()
 {
+    if (labRegionShowMask->get_active()) {
+        enableTool();
+    }
     if (listener) {
         listener->panelChanged(EvLabRegionShowMask, labRegionShowMask->get_active() ? M("GENERAL_ENABLED") : M("GENERAL_DISABLED"));
     }

@@ -146,7 +146,12 @@ void Dehaze::enabledChanged ()
 void Dehaze::showDepthMapChanged()
 {
     if (listener) {
-        listener->panelChanged(EvDehazeShowDepthMap, showDepthMap->get_active() ? M("GENERAL_ENABLED") : M("GENERAL_DISABLED"));
+      if(showDepthMap->get_active()) {
+        enableTool();
+        listener->panelChanged(EvDehazeShowDepthMap, M("GENERAL_ENABLED"));
+      } else {
+        listener->panelChanged(EvDehazeShowDepthMap, M("GENERAL_DISABLED"));
+      }
     }
 }
 

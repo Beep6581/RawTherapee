@@ -548,6 +548,7 @@ bool FilmNegative::mouseOver(int modifierKey)
 
 bool FilmNegative::button1Pressed(int modifierKey)
 {
+    enableTool();
     EditDataProvider* const provider = getEditProvider();
 
     EditSubscriber::action = EditSubscriber::Action::NONE;

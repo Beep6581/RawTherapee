@@ -87,15 +87,17 @@ LabGridArea::LabGridArea(rtengine::ProcEvent evt, const Glib::ustring &msg, bool
     evt(evt), evtMsg(msg),
     litPoint(NONE),
     low_a(0.f), high_a(0.f), low_b(0.f), high_b(0.f), gre_x(0.f), gre_y(0.f), whi_x(0.f), whi_y(0.f), me_x(0.f), me_y(0.f),
-      
+
     defaultLow_a(0.f), defaultHigh_a(0.f), defaultLow_b(0.f), defaultHigh_b(0.f), defaultgre_x(0.f), defaultgre_y(0.f), defaultwhi_x(0.f), defaultwhi_y(0.f), defaultme_x(0.f), defaultme_y(0.f),
     listener(nullptr),
+    parentTool(nullptr),
     edited(false),
     isDragged(false),
     low_enabled(enable_low),
     ciexy_enabled(ciexy),
     ghs_enabled(ghs),
-    mous_enabled(mous)
+    mous_enabled(mous),
+    autoEnableTool(true)
     
 
 {
@@ -190,7 +192,10 @@ void LabGridArea::setListener(ToolPanelListener *l)
 {
     listener = l;
 }
-
+void LabGridArea::setParentTool(FoldableToolPanel *tool)
+{
+    parentTool = tool;
+}
 
 void LabGridArea::on_style_updated ()
 {
@@ -552,6 +557,9 @@ bool LabGridArea::on_draw(const ::Cairo::RefPtr<Cairo::Context> &cr)
 bool LabGridArea::on_button_press_event(GdkEventButton *event)
 {
     if (event->button == 1  && mous_enabled) {
+      if (autoEnableTool && parentTool) {
+          parentTool->enableTool();
+      }
       if (!ciexy_enabled && !ghs_enabled) {
         if (event->type == GDK_2BUTTON_PRESS) {
             switch (litPoint) {
@@ -738,7 +746,14 @@ void LabGridArea::setmousEnabled(bool yes)
         queue_draw();
     }
 }
-
+void LabGridArea::setAutoEnableTool(bool autoEnable)
+{
+    autoEnableTool = autoEnable;
+}
+bool LabGridArea::getAutoEnableTool() const
+{
+    return autoEnableTool;
+}
 
 //-----------------------------------------------------------------------------
 // LabGrid

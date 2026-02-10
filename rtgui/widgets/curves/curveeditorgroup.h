@@ -63,7 +63,8 @@ protected:
     CurveListener* cl;
 
     unsigned int numberOfPackedCurve;
-
+    bool autoEnableTool;
+    void tryEnableTool();
 public:
     /**
      * @param curveDir The folder used by load and save dialogs for the curve.
@@ -81,6 +82,12 @@ public:
     {
         cl = l;
     }
+    CurveListener* getCurveListener() const
+    {
+        return cl;
+    }
+    void setAutoEnableTool(bool autoEnable);
+    bool getAutoEnableTool() const;
     void setTooltip (Glib::ustring ttip);
     CurveEditor* getDisplayedCurve ()
     {

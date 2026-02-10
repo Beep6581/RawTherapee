@@ -125,6 +125,7 @@ private:
     double defaultme_y;
 
     ToolPanelListener *listener;
+    FoldableToolPanel *parentTool;
     bool edited;
     bool isDragged;
     sigc::connection delayconn;
@@ -134,6 +135,7 @@ private:
     bool ciexy_enabled;
     bool ghs_enabled;
     bool mous_enabled;
+    bool autoEnableTool;
 
     bool notifyListener();
     void getLitPoint();
@@ -149,6 +151,7 @@ public:
     bool getEdited() const;
     void reset(bool toInitial);
     void setListener(ToolPanelListener *l);
+    void setParentTool(FoldableToolPanel *tool);
 
     bool lowEnabled() const;
     void setLowEnabled(bool yes);
@@ -158,6 +161,8 @@ public:
     void setghsEnabled(bool yes);
     bool mousEnabled() const;
     void setmousEnabled(bool yes);
+    void setAutoEnableTool(bool autoEnable);
+    bool getAutoEnableTool() const;
  
     bool on_draw(const ::Cairo::RefPtr<Cairo::Context> &cr) override;
     void on_style_updated () override;
@@ -194,6 +199,7 @@ public:
     bool getEdited() const { return grid.getEdited(); }
     void reset(bool toInitial) { grid.reset(toInitial); }
     void setListener(ToolPanelListener *l) { grid.setListener(l); }
+    void setParentTool(FoldableToolPanel *tool) { grid.setParentTool(tool); }
     bool lowEnabled() const { return grid.lowEnabled(); }
     void setLowEnabled(bool yes) { grid.setLowEnabled(yes); }
     bool ciexyEnabled() const { return grid.ciexyEnabled(); }
@@ -202,5 +208,7 @@ public:
     void setghsEnabled(bool yes) { grid.setghsEnabled(yes); }
     bool mousEnabled() const { return grid.mousEnabled(); }
     void setmousEnabled(bool yes) { grid.setmousEnabled(yes); }
+    void setAutoEnableTool(bool autoEnable) { grid.setAutoEnableTool(autoEnable); }
+    bool getAutoEnableTool() const { return grid.getAutoEnableTool(); }
 
 };

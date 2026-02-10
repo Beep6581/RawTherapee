@@ -420,7 +420,6 @@ void DirPyrEqualizer::gamutlabToggled ()
 
 void DirPyrEqualizer::lumaneutralPressed ()
 {
-
     for (int i = 0; i < 6; i++) {
         multiplier[i]->setValue(1.0);
         adjusterChanged(multiplier[i], 1.0);
@@ -430,7 +429,7 @@ void DirPyrEqualizer::lumaneutralPressed ()
 
 void DirPyrEqualizer::lumacontrastPlusPressed ()
 {
-
+    enableTool(); // Enable Tool if Disabled
     for (int i = 0; i < 6; i++) {
         double inc = 0.05 * (6 - i);
         multiplier[i]->setValue(multiplier[i]->getValue() + inc);
@@ -441,7 +440,7 @@ void DirPyrEqualizer::lumacontrastPlusPressed ()
 
 void DirPyrEqualizer::lumacontrastMinusPressed ()
 {
-
+    enableTool(); // Enable Tool if Disabled
     for (int i = 0; i < 6; i++) {
         double inc = -0.05 * (6 - i);
         multiplier[i]->setValue(multiplier[i]->getValue() + inc);
