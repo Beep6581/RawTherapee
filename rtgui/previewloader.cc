@@ -17,13 +17,15 @@
  *  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
  */
 
+#include <mutex>
+#include <condition_variable>
+#include <atomic>
 #include <memory>
 #include <set>
 #include "cachemanager.h"
 #include "filebrowserentry.h"
 #include "previewloader.h"
 #include "guiutils.h"
-#include "threadutils.h"
 
 #ifdef _OPENMP
 #include <omp.h>
@@ -52,15 +54,7 @@ public:
         Glib::ustring dir_entry_;
         PreviewLoaderListener* listener_;
     };
-    /* Issue 2406
-        struct OutputJob
-        {
-            bool complete;
-            int dir_id;
-            PreviewLoaderListener* listener;
-            FileBrowserEntry* fdn;
-        };
-    */
+
     struct JobCompare {
         bool operator()(const Job& lhs, const Job& rhs) const
         {
@@ -74,7 +68,9 @@ public:
 
     typedef std::set<Job, JobCompare> JobSet;
 
-    Impl(): nConcurrentThreads(0)
+    Impl(): 
+        nConcurrentThreads(0),
+        jobs_removed_(false)
     {
 #ifdef _OPENMP
         int threadCount = omp_get_num_procs();
@@ -83,20 +79,31 @@ public:
 #endif
 
         threadPool_.reset(new Glib::ThreadPool(threadCount, 0));
+
+        if (App::get().options().rtSettings.verbose) {
+            printf("PreviewLoader::Impl pool thread count is %d\n", threadCount);
+            printf("PreviewLoader::Impl nConcurrentThreads is ");
+            printf(nConcurrentThreads.is_lock_free() ? "lock free\n" : "not lock free\n");
+        }
     }
 
     std::unique_ptr<Glib::ThreadPool> threadPool_;
-    MyMutex mutex_;
     JobSet jobs_;
-    gint nConcurrentThreads;
-// Issue 2406   std::vector<OutputJob *> output_;
+    std::atomic<int> nConcurrentThreads;
+
+    // Need to be a std::mutex because used in a std::condition_variable object...
+    // This is the only exception along with ThumbImageUpdater and GThreadMutex (guiutils.cc), MyMutex is used everywhere else
+    std::mutex mutex_;
+    bool jobs_removed_;
+
+    std::condition_variable inactive_;
 
     void processNextJob()
     {
         Job j;
-// Issue 2406       OutputJob *oj;
+    
         {
-            MyMutex::MyLock lock(mutex_);
+            std::lock_guard<std::mutex> lock(mutex_);
 
             // nothing to do; could be jobs have been removed
             if ( jobs_.empty() ) {
@@ -109,21 +116,11 @@ public:
             jobs_.erase(jobs_.begin());
             DEBUG("processing %s", j.dir_entry_.c_str());
             DEBUG("%d job(s) remaining", jobs_.size());
-            /* Issue 2406
-                        oj = new OutputJob();
-                        oj->complete = false;
-                        oj->dir_id = j.dir_id_;
-                        oj->listener = j.listener_;
-                        oj->fdn = 0;
-                        output_.push_back(oj);
-            */
+
+            nConcurrentThreads++; // to detect when last thread in pool has run out
         }
 
-        g_atomic_int_inc (&nConcurrentThreads);  // to detect when last thread in pool has run out
-
-        // unlock and do processing; will relock on block exit, then call listener
-        // if something got
-// Issue 2406       FileBrowserEntry* fdn = 0;
+        // do processing unlocked
         try {
             Thumbnail* tmb = nullptr;
             {
@@ -135,32 +132,22 @@ public:
             if ( tmb ) {
                 DEBUG("Preview Ready\n");
                 j.listener_->previewReady(j.dir_id_, new FileBrowserEntry(tmb, j.dir_entry_));
-// Issue 2406               fdn = new FileBrowserEntry(tmb,j.dir_entry_);
             }
 
         } catch (Glib::Error &e) {} catch(...) {}
 
-        /* Issue 2406
-                {
-                    // the purpose of the output_ vector is to deliver the previewReady() calls in the same
-                    // order as we got the jobs from the jobs_ queue.
-                    MyMutex::MyLock lock(mutex_);
-                    oj->fdn = fdn;
-                    oj->complete = true;
-                    while (output_.size() > 0 && output_.front()->complete) {
-                        oj = output_.front();
-                        if (oj->fdn) {
-                            oj->listener->previewReady(oj->dir_id,oj->fdn);
-                        }
-                        output_.erase(output_.begin());
-                        delete oj;
-                    }
-                }
-        */
-        bool last = g_atomic_int_dec_and_test (&nConcurrentThreads);
+        bool notifyListener = false;
 
-        // signal at end
-        if (last && jobs_.empty()) {
+        if (--nConcurrentThreads == 0) {
+            std::lock_guard<std::mutex> lock(mutex_);
+
+            if (!jobs_removed_ && jobs_.empty()) {
+                notifyListener = true;    
+            }
+            inactive_.notify_all();
+        }
+
+        if (notifyListener) {
             j.listener_->previewsFinished(j.dir_id_);
         }
     }
@@ -171,7 +158,8 @@ PreviewLoader::PreviewLoader():
 {
 }
 
-PreviewLoader::~PreviewLoader() {
+PreviewLoader::~PreviewLoader()
+{
     delete impl_;
 }
 
@@ -186,7 +174,7 @@ void PreviewLoader::add(int dir_id, const Glib::ustring& dir_entry, PreviewLoade
     // somebody listening?
     if ( l != nullptr ) {
         {
-            MyMutex::MyLock lock(impl_->mutex_);
+            std::lock_guard<std::mutex> lock(impl_->mutex_);
 
             // create a new job and append to queue
             DEBUG("saving job %s", dir_entry.c_str());
@@ -202,8 +190,17 @@ void PreviewLoader::add(int dir_id, const Glib::ustring& dir_entry, PreviewLoade
 void PreviewLoader::removeAllJobs()
 {
     DEBUG("stop %d", impl_->nConcurrentThreads);
-    MyMutex::MyLock lock(impl_->mutex_);
+
+    std::unique_lock<std::mutex> lock(impl_->mutex_);
     impl_->jobs_.clear();
+
+    if (impl_->nConcurrentThreads.load() != 0) {
+        DEBUG("waiting for running jobs2");
+
+        impl_->jobs_removed_ = true;
+        impl_->inactive_.wait(lock, [this] { return impl_->nConcurrentThreads.load() == 0; });
+        impl_->jobs_removed_ = false;
+    }
 }
 
 
