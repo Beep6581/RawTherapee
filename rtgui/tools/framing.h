@@ -124,7 +124,7 @@ private:
     sigc::connection orientationChanged;
     DimensionGui width;
     DimensionGui height;
-    Gtk::CheckButton* allowUpscaling;
+    MyCheckButton* allowUpscaling;
     sigc::connection allowUpscalingConnection;
 
     // Border sizing
@@ -136,7 +136,7 @@ private:
     Adjuster* relativeBorderSize;
     Gtk::Frame* minSizeFrame;
     Gtk::Box* minSizeFrameContent;
-    Gtk::CheckButton* minSizeEnabled;
+    MyCheckButton* minSizeEnabled;
     sigc::connection minSizeEnabledConnection;
     DimensionGui minWidth;
     DimensionGui minHeight;

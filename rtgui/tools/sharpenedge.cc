@@ -44,7 +44,8 @@ SharpenEdge::SharpenEdge () : FoldableToolPanel(this, TOOL_NAME, M("TP_SHARPENED
 
     amount->setDelay(std::max(options.adjusterMinDelay, options.adjusterMaxDelay));
 
-    threechannels = Gtk::manage(new Gtk::CheckButton((M("TP_SHARPENEDGE_THREE"))));// L + a + b
+    threechannels = Gtk::manage(new MyCheckButton((M("TP_SHARPENEDGE_THREE"))));// L + a + b
+    threechannels->setToolPanel(this);
     threechannels->set_active (false);
     pack_start( *passes, Gtk::PACK_SHRINK, 0);//passes
     pack_start( *amount, Gtk::PACK_SHRINK, 0);//amount

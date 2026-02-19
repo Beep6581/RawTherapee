@@ -46,7 +46,7 @@ public:
 };
 
 
-class ThresholdAdjuster : public Gtk::Box
+class ThresholdAdjuster : public Gtk::Box, public ToolAutoEnable
 {
 
 protected:
@@ -70,6 +70,7 @@ protected:
     bool separatedMode;
     int delay;
 
+    FoldableToolPanel* getToolPanel() const override;
     double shapeValue (double a);
     void refreshLabelStyle ();
     void initObject (Glib::ustring label, bool editedcb);

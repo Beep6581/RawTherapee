@@ -49,6 +49,7 @@ PrSharpening::PrSharpening () : FoldableToolPanel(this, TOOL_NAME, M("TP_PRSHARP
     method = Gtk::manage (new MyComboBoxText ());
     method->append (M("TP_SHARPENING_USM"));
     method->append (M("TP_SHARPENING_RLD"));
+    method->setToolPanel(this);
     method->show ();
     hb->pack_start(*ml, Gtk::PACK_SHRINK, 4);
     hb->pack_start(*method);
@@ -91,7 +92,8 @@ PrSharpening::PrSharpening () : FoldableToolPanel(this, TOOL_NAME, M("TP_PRSHARP
     threshold->show ();
 
     Gtk::Separator* hsep6 = Gtk::manage (new Gtk::Separator(Gtk::ORIENTATION_HORIZONTAL));
-    edgesonly = Gtk::manage (new Gtk::CheckButton (M("TP_SHARPENING_ONLYEDGES")));
+    edgesonly = Gtk::manage (new MyCheckButton (M("TP_SHARPENING_ONLYEDGES")));
+    edgesonly->setToolPanel(this);
     edgesonly->set_active (false);
     edgebox = new Gtk::Box(Gtk::ORIENTATION_VERTICAL);
     eradius = Gtk::manage (new Adjuster (M("TP_SHARPENING_EDRADIUS"), 0.5, 2.5, 0.1, 1.9));
@@ -110,7 +112,8 @@ PrSharpening::PrSharpening () : FoldableToolPanel(this, TOOL_NAME, M("TP_PRSHARP
     etolerance->show();
 
     Gtk::Separator* hsep6b = Gtk::manage (new Gtk::Separator(Gtk::ORIENTATION_HORIZONTAL));
-    halocontrol = Gtk::manage (new Gtk::CheckButton (M("TP_SHARPENING_HALOCONTROL")));
+    halocontrol = Gtk::manage (new MyCheckButton (M("TP_SHARPENING_HALOCONTROL")));
+    halocontrol->setToolPanel(this);
     halocontrol->set_active (false);
     hcbox = new Gtk::Box(Gtk::ORIENTATION_VERTICAL);
     hcamount = Gtk::manage (new Adjuster (M("TP_SHARPENING_HCAMOUNT"), 1, 100, 1, 75));

@@ -52,7 +52,9 @@ Dehaze::Dehaze(): FoldableToolPanel(this, TOOL_NAME, M("TP_DEHAZE_LABEL"), false
     saturation->setAdjusterListener(this);
     saturation->show();
 
-    showDepthMap = Gtk::manage(new Gtk::CheckButton(M("TP_DEHAZE_SHOW_DEPTH_MAP")));
+    showDepthMap = Gtk::manage(new MyCheckButton(M("TP_DEHAZE_SHOW_DEPTH_MAP")));
+    showDepthMap->setToolPanel(this);
+    showDepthMap->setEnableOnlyWhenActivated(true);
     showDepthMap->signal_toggled().connect(sigc::mem_fun(*this, &Dehaze::showDepthMapChanged));
     showDepthMap->show();
     
@@ -147,7 +149,6 @@ void Dehaze::showDepthMapChanged()
 {
     if (listener) {
       if(showDepthMap->get_active()) {
-        enableTool();
         listener->panelChanged(EvDehazeShowDepthMap, M("GENERAL_ENABLED"));
       } else {
         listener->panelChanged(EvDehazeShowDepthMap, M("GENERAL_DISABLED"));

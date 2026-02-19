@@ -135,7 +135,7 @@ private:
     Gtk::Image *imgIcon[11];
 
     Gtk::Separator* enabledccSep;
-    Gtk::CheckButton* enabledcc;
+    MyCheckButton* enabledcc;
     bool lastEnabledcc, lastAuto;
     sigc::connection enaccconn, tcmodeconn, tcmodeconn2, autoconn, neutralconn;
 

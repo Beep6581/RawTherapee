@@ -83,16 +83,16 @@ Wavelet::Wavelet() :
     CurveEditorwavhue(new CurveEditorGroup(App::get().mut_options().lastWaveletCurvesDir, M("TP_WAVELET_DENOISEHUE"))),
     opacityCurveEditorW(new CurveEditorGroup(App::get().mut_options().lastWaveletCurvesDir, M("TP_WAVELET_OPACITYW"))),
     opacityCurveEditorWL(new CurveEditorGroup(App::get().mut_options().lastWaveletCurvesDir, M("TP_WAVELET_OPACITYWL"))),
-    median(Gtk::manage(new Gtk::CheckButton(M("TP_WAVELET_MEDI")))),
-    medianlev(Gtk::manage(new Gtk::CheckButton(M("TP_WAVELET_MEDILEV")))),
-    linkedg(Gtk::manage(new Gtk::CheckButton(M("TP_WAVELET_LINKEDG")))),
-    cbenab(Gtk::manage(new Gtk::CheckButton(M("TP_WAVELET_CBENAB")))),
-    lipst(Gtk::manage(new Gtk::CheckButton(M("TP_WAVELET_LIPST")))),
-    avoid(Gtk::manage(new Gtk::CheckButton(M("TP_WAVELET_AVOID")))),
-    tmr(Gtk::manage(new Gtk::CheckButton(M("TP_WAVELET_BALCHRO")))),
-    showmask(Gtk::manage(new Gtk::CheckButton(M("TP_WAVELET_SHOWMASK")))),
-    oldsh(Gtk::manage(new Gtk::CheckButton(M("TP_WAVELET_OLDSH")))),
-    neutralchButton(Gtk::manage(new Gtk::Button(M("TP_WAVELET_NEUTRAL")))),
+    median(Gtk::manage(new MyCheckButton(M("TP_WAVELET_MEDI")))),
+    medianlev(Gtk::manage(new MyCheckButton(M("TP_WAVELET_MEDILEV")))),
+    linkedg(Gtk::manage(new MyCheckButton(M("TP_WAVELET_LINKEDG")))),
+    cbenab(Gtk::manage(new MyCheckButton(M("TP_WAVELET_CBENAB")))),
+    lipst(Gtk::manage(new MyCheckButton(M("TP_WAVELET_LIPST")))),
+    avoid(Gtk::manage(new MyCheckButton(M("TP_WAVELET_AVOID")))),
+    tmr(Gtk::manage(new MyCheckButton(M("TP_WAVELET_BALCHRO")))),
+    showmask(Gtk::manage(new MyCheckButton(M("TP_WAVELET_SHOWMASK")))),
+    oldsh(Gtk::manage(new MyCheckButton(M("TP_WAVELET_OLDSH")))),
+    neutralchButton(Gtk::manage(new MyButton(M("TP_WAVELET_NEUTRAL")))),
     sigma(Gtk::manage(new Adjuster(M("TP_WAVELET_SIGMA"), 0.05, 2.5, 0.01, 1.))),
     offset(Gtk::manage(new Adjuster(M("TP_WAVELET_WAVOFFSET"), 0.33, 1.66, 0.01, 1., Gtk::manage(new RTImage("circle-black-small")), Gtk::manage(new RTImage("circle-white-small"))))),
     lowthr(Gtk::manage(new Adjuster(M("TP_WAVELET_WAVLOWTHR"), 20., 100., 0.5, 40.))),
@@ -413,15 +413,18 @@ Wavelet::Wavelet() :
     buttonBox->set_homogeneous(true);
     levBox->pack_start(*buttonBox, Gtk::PACK_SHRINK, 2);
 
-    Gtk::Button* const contrastMinusButton = Gtk::manage(new Gtk::Button(M("TP_WAVELET_CONTRAST_MINUS")));
+    MyButton* const contrastMinusButton = Gtk::manage(new MyButton(M("TP_WAVELET_CONTRAST_MINUS")));
+    contrastMinusButton->setToolPanel(this);
     buttonBox->pack_start(*contrastMinusButton);
     contrastMinusPressedConn = contrastMinusButton->signal_pressed().connect(sigc::mem_fun(*this, &Wavelet::contrastMinusPressed));
 
-    Gtk::Button* const neutralButton = Gtk::manage(new Gtk::Button(M("TP_WAVELET_NEUTRAL")));
+    MyButton* const neutralButton = Gtk::manage(new MyButton(M("TP_WAVELET_NEUTRAL")));
+    neutralButton->setAutoEnableTool(false);
     buttonBox->pack_start(*neutralButton);
     neutralPressedConn = neutralButton->signal_pressed().connect(sigc::mem_fun(*this, &Wavelet::neutralPressed));
 
-    Gtk::Button* const contrastPlusButton = Gtk::manage(new Gtk::Button(M("TP_WAVELET_CONTRAST_PLUS")));
+    MyButton* const contrastPlusButton = Gtk::manage(new MyButton(M("TP_WAVELET_CONTRAST_PLUS")));
+    contrastPlusButton->setToolPanel(this);
     buttonBox->pack_start(*contrastPlusButton);
     contrastPlusPressedConn = contrastPlusButton->signal_pressed().connect(sigc::mem_fun(*this, &Wavelet::contrastPlusPressed));
 
@@ -559,6 +562,7 @@ Wavelet::Wavelet() :
     Gtk::Box* const buttonchBox = Gtk::manage(new Gtk::Box());
     buttonchBox->set_spacing(10);
     buttonchBox->set_homogeneous(true);
+    neutralchButton->setAutoEnableTool(false);
     neutralchPressedConn = neutralchButton->signal_pressed().connect(sigc::mem_fun(*this, &Wavelet::neutralchPressed));
     chBox->pack_start(*separatorNeutral, Gtk::PACK_SHRINK, 2);
     buttonchBox->pack_start(*neutralchButton);
@@ -1170,7 +1174,8 @@ Wavelet::Wavelet() :
     resBox->pack_start(*chanMixerMidFrame, Gtk::PACK_SHRINK);
     resBox->pack_start(*chanMixerShadowsFrame, Gtk::PACK_SHRINK);
 
-    Gtk::Button* const neutral = Gtk::manage(new Gtk::Button(M("TP_COLORTONING_NEUTRAL")));
+    MyButton* const neutral = Gtk::manage(new MyButton(M("TP_COLORTONING_NEUTRAL")));
+    neutral->setAutoEnableTool(false);
     neutral->set_tooltip_text(M("TP_COLORTONING_NEUTRAL_TOOLTIP"));
     neutralconn = neutral->signal_pressed().connect(sigc::mem_fun(*this, &Wavelet::neutral_pressed));
     neutral->show();
@@ -1328,6 +1333,36 @@ Wavelet::Wavelet() :
     expfinal->add(*finalBox, false);
     expfinal->setLevel(2);
     pack_start(*expfinal);
+
+    Lmethod->setToolPanel(this);
+    CHmethod->setToolPanel(this);
+    CHSLmethod->setToolPanel(this);
+    EDmethod->setToolPanel(this);
+    BAmethod->setToolPanel(this);
+    NPmethod->setToolPanel(this);
+    TMmethod->setToolPanel(this);
+    HSmethod->setToolPanel(this);
+    CLmethod->setToolPanel(this);
+    Backmethod->setToolPanel(this);
+    complexmethod->setToolPanel(this);
+    Tilesmethod->setToolPanel(this);
+    daubcoeffmethod->setToolPanel(this);
+    Dirmethod->setToolPanel(this);
+    Medgreinf->setToolPanel(this);
+    ushamethod->setToolPanel(this);
+    mixmethod->setToolPanel(this);
+    quamethod->setToolPanel(this);
+    slimethod->setToolPanel(this);
+    median->setToolPanel(this);
+    medianlev->setToolPanel(this);
+    linkedg->setToolPanel(this);
+    cbenab->setToolPanel(this);
+    lipst->setToolPanel(this);
+    avoid->setToolPanel(this);
+    tmr->setToolPanel(this);
+    showmask->setToolPanel(this);
+    oldsh->setToolPanel(this);
+    registerExpanders(this, {});
 }
 
 Wavelet::~Wavelet()

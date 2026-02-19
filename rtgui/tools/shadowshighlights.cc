@@ -35,6 +35,7 @@ ShadowsHighlights::ShadowsHighlights () : FoldableToolPanel(this, TOOL_NAME, M("
     Gtk::Box* hb = Gtk::manage (new Gtk::Box ());
     hb->pack_start(*Gtk::manage(new Gtk::Label(M("TP_DIRPYRDENOISE_MAIN_COLORSPACE") + ": ")), Gtk::PACK_SHRINK);
     colorspace = Gtk::manage(new MyComboBoxText());
+    colorspace->setToolPanel(this);
     colorspace->append(M("TP_DIRPYRDENOISE_MAIN_COLORSPACE_RGB"));
     colorspace->append(M("TP_DIRPYRDENOISE_MAIN_COLORSPACE_LAB"));
     hb->pack_start(*colorspace);

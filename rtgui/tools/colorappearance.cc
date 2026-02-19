@@ -167,6 +167,7 @@ ColorAppearance::ColorAppearance () : FoldableToolPanel (this, TOOL_NAME, M ("TP
     genVBox->set_spacing (2);
 
     complexmethod = Gtk::manage (new MyComboBoxText ());
+    complexmethod->setToolPanel(this);
     complexmethod->append(M("TP_WAVELET_COMPNORMAL"));
     complexmethod->append(M("TP_WAVELET_COMPEXPERT"));
     complexmethodconn = complexmethod->signal_changed().connect(sigc::mem_fun(*this, &ColorAppearance::complexmethodChanged));
@@ -178,6 +179,7 @@ ColorAppearance::ColorAppearance () : FoldableToolPanel (this, TOOL_NAME, M ("TP
     genVBox->pack_start (*complexHBox, Gtk::PACK_SHRINK);
 
     modelmethod = Gtk::manage (new MyComboBoxText ());
+    modelmethod->setToolPanel(this);
     modelmethod->append(M("TP_COLORAPP_MOD02"));//Old CIECAM02
     modelmethod->append(M("TP_COLORAPP_MOD16"));//new CIECAM16
     modelmethodconn = modelmethod->signal_changed().connect(sigc::mem_fun(*this, &ColorAppearance::modelmethodChanged));
@@ -188,7 +190,8 @@ ColorAppearance::ColorAppearance () : FoldableToolPanel (this, TOOL_NAME, M ("TP
     modelHBox->pack_start(*modelmethod);
     genVBox->pack_start (*modelHBox, Gtk::PACK_SHRINK);
 
-    catmethod = Gtk::manage (new MyComboBoxText ());//The choice of basic method is either 
+    catmethod = Gtk::manage (new MyComboBoxText ());//The choice of basic method is either
+    catmethod->setToolPanel(this);
     catmethod->append(M("TP_COLORAPP_CATCLASSIC"));//Classical (recommended),
     catmethod->append(M("TP_COLORAPP_CATSYMGEN")); //Symmetrical (allows for very good color matching)
     catmethod->append(M("TP_COLORAPP_CATSYMSPE")); //Or Mixed. In all three cases, the CIECAM characterizing values ​​such as absolute luminance, color matching, surround, etc., are different.
@@ -232,6 +235,7 @@ ColorAppearance::ColorAppearance () : FoldableToolPanel (this, TOOL_NAME, M ("TP
     Gtk::Label* surrLabel1 = Gtk::manage (new Gtk::Label (M ("TP_COLORAPP_SURROUNDSRC") + ":"));//surround scene
     surrHBox1->pack_start (*surrLabel1, Gtk::PACK_SHRINK);
     surrsrc = Gtk::manage (new MyComboBoxText ());
+    surrsrc->setToolPanel(this);
     surrsrc->append (M ("TP_COLORAPP_SURROUND_AVER"));//standard creates a slight lighting effect
     surrsrc->append (M ("TP_COLORAPP_SURROUND_DIM"));
     surrsrc->append (M ("TP_COLORAPP_SURROUND_DARK"));
@@ -247,6 +251,7 @@ ColorAppearance::ColorAppearance () : FoldableToolPanel (this, TOOL_NAME, M ("TP
     Gtk::Label* wbmLab = Gtk::manage (new Gtk::Label (M ("TP_COLORAPP_MODEL") + ":"));//white point model - The default balance point is D50, but D65 can be selected. In this case, the viewing temperature will be set to 6504K.
     wbmHBox->pack_start (*wbmLab, Gtk::PACK_SHRINK);
     wbmodel = Gtk::manage (new MyComboBoxText ());
+    wbmodel->setToolPanel(this);
     wbmodel->append (M ("TP_COLORAPP_WBRT"));
     wbmodel->append (M ("TP_COLORAPP_WBCAM"));
     wbmodel->append (M ("TP_COLORAPP_FREE"));
@@ -262,6 +267,7 @@ ColorAppearance::ColorAppearance () : FoldableToolPanel (this, TOOL_NAME, M ("TP
     Gtk::Label* illumLab = Gtk::manage (new Gtk::Label (M ("TP_COLORAPP_ILLUM") + ":"));//Choice of illuminant in non-standard cases
     illumHBox->pack_start (*illumLab, Gtk::PACK_SHRINK);
     illum = Gtk::manage (new MyComboBoxText ());
+    illum->setToolPanel(this);
     illum->append (M ("TP_COLORAPP_ILA"));
     illum->append (M ("TP_COLORAPP_IL41"));
     illum->append (M ("TP_COLORAPP_IL50"));
@@ -329,6 +335,7 @@ ColorAppearance::ColorAppearance () : FoldableToolPanel (this, TOOL_NAME, M ("TP
     Gtk::Label* alLabel = Gtk::manage (new Gtk::Label (M ("TP_COLORAPP_ALGO") + ":"));
     alHBox->pack_start (*alLabel, Gtk::PACK_SHRINK);
     algo = Gtk::manage (new MyComboBoxText ());//I chose 4 possible combinations of the 6 variables... we can imagine others, but that will complicate the code
+    algo->setToolPanel(this);
     algo->append (M ("TP_COLORAPP_ALGO_JC"));
     algo->append (M ("TP_COLORAPP_ALGO_JS"));
     algo->append (M ("TP_COLORAPP_ALGO_QM"));
@@ -444,6 +451,7 @@ ColorAppearance::ColorAppearance () : FoldableToolPanel (this, TOOL_NAME, M ("TP
     p2VBox->pack_start (*pRGBFrame, Gtk::PACK_EXPAND_WIDGET, 4);
 
     toneCurveMode = Gtk::manage (new MyComboBoxText ());
+    toneCurveMode->setToolPanel(this);
     toneCurveMode->append (M ("TP_COLORAPP_TCMODE_LIGHTNESS"));
     toneCurveMode->append (M ("TP_COLORAPP_TCMODE_BRIGHTNESS"));
     toneCurveMode->set_active (0);
@@ -457,6 +465,7 @@ ColorAppearance::ColorAppearance () : FoldableToolPanel (this, TOOL_NAME, M ("TP
     tcmodeconn = toneCurveMode->signal_changed().connect ( sigc::mem_fun (*this, &ColorAppearance::curveMode1Changed), true );
 
     toneCurveMode2 = Gtk::manage (new MyComboBoxText ());//curve type selection Lighness or brightness
+    toneCurveMode2->setToolPanel(this);
     toneCurveMode2->append (M ("TP_COLORAPP_TCMODE_LIGHTNESS"));
     toneCurveMode2->append (M ("TP_COLORAPP_TCMODE_BRIGHTNESS"));
     toneCurveMode2->set_active (0);
@@ -470,6 +479,7 @@ ColorAppearance::ColorAppearance () : FoldableToolPanel (this, TOOL_NAME, M ("TP
     tcmode2conn = toneCurveMode2->signal_changed().connect ( sigc::mem_fun (*this, &ColorAppearance::curveMode2Changed), true );
 
     toneCurveMode3 = Gtk::manage (new MyComboBoxText ());//curve type selection chroma, saturation, colorfullness
+    toneCurveMode3->setToolPanel(this);
     toneCurveMode3->append (M ("TP_COLORAPP_TCMODE_CHROMA"));
     toneCurveMode3->append (M ("TP_COLORAPP_TCMODE_SATUR"));
     toneCurveMode3->append (M ("TP_COLORAPP_TCMODE_COLORF"));
@@ -609,6 +619,7 @@ ColorAppearance::ColorAppearance () : FoldableToolPanel (this, TOOL_NAME, M ("TP
     Gtk::Label* surrLabel = Gtk::manage (new Gtk::Label (M ("TP_COLORAPP_SURROUND") + ":"));
     surrHBox->pack_start (*surrLabel, Gtk::PACK_SHRINK);
     surround = Gtk::manage (new MyComboBoxText ());
+    surround->setToolPanel(this);
     surround->append (M ("TP_COLORAPP_SURROUND_AVER"));//standard
     surround->append (M ("TP_COLORAPP_SURROUND_DIM"));
     surround->append (M ("TP_COLORAPP_SURROUND_DARK"));
@@ -624,7 +635,7 @@ ColorAppearance::ColorAppearance () : FoldableToolPanel (this, TOOL_NAME, M ("TP
     // ------------------------ Lab Gamut control
 
 
-    gamut = Gtk::manage (new Gtk::CheckButton (M ("TP_COLORAPP_GAMUT")));
+    gamut = Gtk::manage (new MyCheckButton (M ("TP_COLORAPP_GAMUT")));
     gamutconn = gamut->signal_toggled().connect ( sigc::mem_fun (*this, &ColorAppearance::gamut_toggled) );
     pack_start (*gamut, Gtk::PACK_SHRINK);
 
@@ -692,6 +703,8 @@ ColorAppearance::ColorAppearance () : FoldableToolPanel (this, TOOL_NAME, M ("TP
     tempsc->setAdjusterListener  (this);
     greensc->setAdjusterListener  (this);
 
+
+    gamut->setToolPanel(this);
 
     show_all();
 }
@@ -1916,6 +1929,7 @@ void ColorAppearance::adjusterChanged(Adjuster* a, double newval)
 
 void ColorAppearance::adjusterAutoToggled(Adjuster* a, bool newval)
 {
+    enableTool();
     if (multiImage) {
         if (degree->getAutoInconsistent()) {
             degree->setAutoInconsistent (false);
@@ -2036,7 +2050,6 @@ void ColorAppearance::enabledChanged ()
 
 void ColorAppearance::surrsrcChanged ()
 {
-
     if (listener && (multiImage || getEnabled()) ) {
         listener->panelChanged (EvCATsurr, surrsrc->get_active_text ());
     }
@@ -2045,7 +2058,6 @@ void ColorAppearance::surrsrcChanged ()
 
 void ColorAppearance::surroundChanged ()
 {
-
     if (listener && (multiImage || getEnabled()) ) {
         listener->panelChanged (EvCATMethodsur, surround->get_active_text ());
     }

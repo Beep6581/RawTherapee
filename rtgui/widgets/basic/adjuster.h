@@ -18,6 +18,7 @@
  */
 #pragma once
 
+#include <vector>
 #include "editedstate.h"
 #include "delayed.h"
 #include "guiutils.h"
@@ -34,7 +35,7 @@ public:
 
 typedef double(*double2double_fun)(double val);
 
-class Adjuster final : public Gtk::Grid
+class Adjuster final : public Gtk::Grid, public ToolAutoEnable
 {
 protected:
     Glib::ustring adjustmentName;
@@ -75,8 +76,7 @@ protected:
 
     double getSliderValue() const;
     void setSliderValue(double val);
-    bool autoEnableTool;
-    void tryEnableTool();
+    FoldableToolPanel* getToolPanel() const override;
 public:
     Adjuster(
         Glib::ustring vlabel,
@@ -103,8 +103,6 @@ public:
     bool getAutoInconsistent() const;
     void setAdjusterListener(AdjusterListener* alistener);
     AdjusterListener* getAdjusterListener() const;
-    void setAutoEnableTool(bool autoEnable);
-    bool getAutoEnableTool() const;
     // return the value trimmed to the limits at construction time
     double getValue() const;
     // return the value trimmed to the limits at construction time

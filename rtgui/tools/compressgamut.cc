@@ -83,6 +83,7 @@ Compressgamut::Compressgamut () : FoldableToolPanel(this, TOOL_NAME, M("TP_COMPR
     Gtk::Box *iVBox = Gtk::manage(new Gtk::Box(Gtk::ORIENTATION_VERTICAL));
    
     colorspace = Gtk::manage(new MyComboBoxText());
+    colorspace->setToolPanel(this);
     for (const auto& item : COLORSPACE_LIST_ITEMS) {
         colorspace->append(M(item.translationName));
     }
@@ -154,7 +155,8 @@ Compressgamut::Compressgamut () : FoldableToolPanel(this, TOOL_NAME, M("TP_COMPR
     pack_start(*limFrame, Gtk::PACK_SHRINK);
 
     // Aggressiveness of the compression curve Pwr
-    rolloff = Gtk::manage(new Gtk::CheckButton(M("TP_COMPRESSGAMUT_ROLLOFF")));
+    rolloff = Gtk::manage(new MyCheckButton(M("TP_COMPRESSGAMUT_ROLLOFF")));
+    rolloff->setToolPanel(this);
     pwr = Gtk::manage (new Adjuster (M("TP_COMPRESSGAMUT_PWR"), 0.2, 2.0, 0.01, 1.2));
     rolloffconn = rolloff->signal_toggled().connect (sigc::mem_fun (*this, &Compressgamut::rolloff_change));
 

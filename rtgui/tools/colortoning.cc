@@ -44,6 +44,7 @@ ColorToning::ColorToning () : FoldableToolPanel(this, TOOL_NAME, M("TP_COLORTONI
     //---------------method
 
     method = Gtk::manage (new MyComboBoxText ());
+    method->setToolPanel(this);
     method->append (M("TP_COLORTONING_LAB"));
     method->append (M("TP_COLORTONING_RGBSLIDERS"));
     method->append (M("TP_COLORTONING_RGBCURVES"));
@@ -104,6 +105,7 @@ ColorToning::ColorToning () : FoldableToolPanel(this, TOOL_NAME, M("TP_COLORTONI
     //----------------------red green  blue yellow colours
 
     twocolor = Gtk::manage (new MyComboBoxText ());
+    twocolor->setToolPanel(this);
     twocolor->append (M("TP_COLORTONING_TWOSTD"));
     twocolor->append (M("TP_COLORTONING_TWOALL"));
     twocolor->append (M("TP_COLORTONING_TWOBY"));
@@ -443,6 +445,7 @@ ColorToning::ColorToning () : FoldableToolPanel(this, TOOL_NAME, M("TP_COLORTONI
 
     hb = Gtk::manage(new Gtk::Box());
     labRegionChannel = Gtk::manage(new MyComboBoxText());
+    labRegionChannel->setToolPanel(this);
     labRegionChannel->append(M("TP_COLORTONING_LABREGION_CHANNEL_ALL"));
     labRegionChannel->append(M("TP_COLORTONING_LABREGION_CHANNEL_R"));
     labRegionChannel->append(M("TP_COLORTONING_LABREGION_CHANNEL_G"));
@@ -494,7 +497,9 @@ ColorToning::ColorToning () : FoldableToolPanel(this, TOOL_NAME, M("TP_COLORTONI
     labRegionMaskBlur->setAdjusterListener(this);
     labRegionBox->pack_start(*labRegionMaskBlur);
 
-    labRegionShowMask = Gtk::manage(new Gtk::CheckButton(M("TP_COLORTONING_LABREGION_SHOWMASK")));
+    labRegionShowMask = Gtk::manage(new MyCheckButton(M("TP_COLORTONING_LABREGION_SHOWMASK")));
+    labRegionShowMask->setToolPanel(this);
+    labRegionShowMask->setEnableOnlyWhenActivated(true);
     labRegionShowMask->signal_toggled().connect(sigc::mem_fun(*this, &ColorToning::labRegionShowMaskChanged));
     labRegionBox->pack_start(*labRegionShowMask, Gtk::PACK_SHRINK, 4);
 
@@ -800,6 +805,7 @@ void ColorToning::write (ProcParams* pp, ParamsEdited* pedited)
 
 void ColorToning::lumamodeChanged ()
 {
+    enableTool();
 
     if (batchMode) {
         if (lumamode->get_inconsistent()) {
@@ -1316,6 +1322,7 @@ void ColorToning::autosatChanged ()
                 listener->panelChanged (EvColorToningautosat, M("GENERAL_ENABLED"));
             }
 
+            enableTool();
             saturatedOpacity->set_sensitive(false);
             satProtectionThreshold->set_sensitive(false);
         } else {
@@ -1531,9 +1538,6 @@ void ColorToning::labRegionCopyPressed()
 
 void ColorToning::labRegionShowMaskChanged()
 {
-    if (labRegionShowMask->get_active()) {
-        enableTool();
-    }
     if (listener) {
         listener->panelChanged(EvLabRegionShowMask, labRegionShowMask->get_active() ? M("GENERAL_ENABLED") : M("GENERAL_DISABLED"));
     }

@@ -69,8 +69,7 @@ Adjuster::Adjuster(
     logPivot(0),
     logAnchorMiddle(false),
     value2slider(value2slider ? value2slider : &one2one),
-    slider2value(slider2value ? slider2value : &one2one),
-    autoEnableTool(true)
+    slider2value(slider2value ? slider2value : &one2one)
 {
     set_hexpand(true);
     set_vexpand(false);
@@ -662,22 +661,9 @@ AdjusterListener* Adjuster::getAdjusterListener() const
 {
     return adjusterListener;
 }
-void Adjuster::setAutoEnableTool(bool autoEnable)
+FoldableToolPanel* Adjuster::getToolPanel() const
 {
-    autoEnableTool = autoEnable;
-}
-bool Adjuster::getAutoEnableTool() const
-{
-    return autoEnableTool;
-}
-void Adjuster::tryEnableTool()
-{
-    if (!autoEnableTool || !adjusterListener) {
-        return;
-    }
-    if (auto* foldablePanel = dynamic_cast<FoldableToolPanel*>(adjusterListener)) {
-        foldablePanel->enableTool();
-    }
+    return dynamic_cast<FoldableToolPanel*>(adjusterListener);
 }
 double Adjuster::getValue() const
 {

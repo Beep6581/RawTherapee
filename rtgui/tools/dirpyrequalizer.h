@@ -34,7 +34,7 @@ class DirPyrEqualizer final :
 
 protected:
 
-    Gtk::CheckButton * gamutlab;
+    MyCheckButton * gamutlab;
     Adjuster* multiplier[6];
     Adjuster* threshold;
     Adjuster* skinprotect;

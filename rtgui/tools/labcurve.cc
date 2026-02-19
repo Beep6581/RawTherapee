@@ -76,6 +76,7 @@ LCurve::LCurve() : FoldableToolPanel(this, TOOL_NAME, M("TP_LABCURVE_LABEL"), fa
     metHBox->pack_start(*metLabel, Gtk::PACK_SHRINK);
 
     gamutmunselmethod =  Gtk::manage(new MyComboBoxText());
+    gamutmunselmethod->setToolPanel(this);
     gamutmunselmethod->append(M("TP_LOCALLAB_GAMUTNON"));
     gamutmunselmethod->append(M("TP_LOCALLAB_GAMUTLABRELA"));
     gamutmunselmethod->append(M("TP_LOCALLAB_GAMUTXYZABSO"));
@@ -88,12 +89,12 @@ LCurve::LCurve() : FoldableToolPanel(this, TOOL_NAME, M("TP_LABCURVE_LABEL"), fa
     gamutmunselmethodconn = gamutmunselmethod->signal_changed().connect(sigc::mem_fun(*this, &LCurve::gamutmunselChanged));
 
 
-    lcredsk = Gtk::manage(new Gtk::CheckButton(M("TP_LABCURVE_LCREDSK")));
+    lcredsk = Gtk::manage(new MyCheckButton(M("TP_LABCURVE_LCREDSK")));
+    lcredsk->setToolPanel(this);
     lcredsk->set_tooltip_markup(M("TP_LABCURVE_LCREDSK_TOOLTIP"));
     pack_start(*lcredsk);
 
     rstprotection = Gtk::manage(new Adjuster(M("TP_LABCURVE_RSTPROTECTION"), 0., 100., 0.1, 0.));
-    rstprotection->setAutoEnableTool(false);
     pack_start(*rstprotection);
     rstprotection->show();
 

@@ -152,6 +152,9 @@ void FoldableToolPanel::setEnabled(bool isEnabled)
 }
 void FoldableToolPanel::enableTool()
 {
+    if (!listener) {
+        return;
+    }
     if (!getEnabled()) {
         setEnabled(true);
         enabledChanged();

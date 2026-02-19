@@ -36,7 +36,7 @@ class SharpenMicro final :
 
 protected:
 
-    Gtk::CheckButton* matrix;
+    MyCheckButton* matrix;
     Adjuster* amount;
     Adjuster* uniformity;
     Adjuster* contrast;

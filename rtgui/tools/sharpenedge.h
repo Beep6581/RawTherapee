@@ -38,7 +38,7 @@ protected:
 
     Adjuster* passes;
     Adjuster* amount;
-    Gtk::CheckButton* threechannels;
+    MyCheckButton* threechannels;
 
     sigc::connection chanthreeconn;
     bool lastchanthree;

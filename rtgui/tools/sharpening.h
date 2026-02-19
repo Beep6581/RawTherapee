@@ -52,10 +52,10 @@ protected:
     Gtk::Box* edgebox;
     Gtk::Box* hcbox;
     ThresholdAdjuster* threshold;
-    Gtk::CheckButton* edgesonly;
+    MyCheckButton* edgesonly;
     bool lastEdgesOnly;
     sigc::connection eonlyConn;
-    Gtk::CheckButton* halocontrol;
+    MyCheckButton* halocontrol;
     bool lastHaloControl;
     sigc::connection hcConn;
 

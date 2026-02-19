@@ -148,6 +148,7 @@ WhiteBalance::WhiteBalance () : FoldableToolPanel(this, TOOL_NAME, M("TP_WBALANC
     refTreeModel = Gtk::TreeStore::create(methodColumns);
     // Create the Combobox
     method = Gtk::manage (new MyComboBox ());
+    method->setToolPanel(this);
     setExpandAlignProperties(method, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_CENTER);
     // Assign the model to the Combobox
     method->set_model(refTreeModel);
@@ -278,6 +279,7 @@ WhiteBalance::WhiteBalance () : FoldableToolPanel(this, TOOL_NAME, M("TP_WBALANC
     setExpandAlignProperties(wbsizehelper, false, false, Gtk::ALIGN_START, Gtk::ALIGN_CENTER);
 
     spotsize = Gtk::manage (new MyComboBoxText ());
+    spotsize->setToolPanel(this);
     setExpandAlignProperties(spotsize, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_CENTER);
     spotsize->append ("2");
 
@@ -377,6 +379,7 @@ WhiteBalance::WhiteBalance () : FoldableToolPanel(this, TOOL_NAME, M("TP_WBALANC
 
 
     itcwb_prim = Gtk::manage (new MyComboBoxText ());
+    itcwb_prim->setToolPanel(this);
     itcwb_prim->append(M("TP_WBALANCE_ITCWB_PRIM_SRGB"));
     itcwb_prim->append(M("TP_WBALANCE_ITCWB_PRIM_BETA"));
     itcwb_prim->append(M("TP_WBALANCE_ITCWB_PRIM_XYZCAM"));
@@ -464,6 +467,7 @@ void WhiteBalance::itcwb_prim_changed ()
 
 void WhiteBalance::itcwb_alg_toggled ()
 {
+    enableTool();
     if (batchMode) {
         if (itcwb_alg->get_inconsistent()) {
             itcwb_alg->set_inconsistent (false);
@@ -554,8 +558,11 @@ void WhiteBalance::adjusterChanged(Adjuster* a, double newval)
 
 void WhiteBalance::checkBoxToggled(CheckBox* c, CheckValue newval)
 {
-    if (!(getEnabled() && listener)) {
-        return;
+    if (!getEnabled()) {
+      enableTool();
+    }
+    if (!listener) {
+      return;
     }
 
     if (c == observer10) {

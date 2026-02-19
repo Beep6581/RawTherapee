@@ -18,9 +18,11 @@
  */
 #pragma once
 
+#include <algorithm>
 #include <functional>
 #include <map>
 #include <type_traits>
+#include <vector>
 
 #include <gtkmm.h>
 
@@ -48,6 +50,7 @@ struct CropParams;
 class Adjuster;
 class RTImage;
 class ToolPanel;
+class FoldableToolPanel;
 
 Glib::ustring escapeHtmlChars(const Glib::ustring &src);
 bool removeIfThere (Gtk::Container* cont, Gtk::Widget* w, bool increference = true);
@@ -343,6 +346,27 @@ public:
     void updateVScrollbars(bool hide);
 };
 
+class FoldableToolPanel;
+
+class ToolAutoEnable
+{
+    bool autoEnableTool;
+    std::vector<MyExpander*> secondaryExpanders;
+    std::vector<FoldableToolPanel*> secondaryPanels;
+protected:
+    virtual FoldableToolPanel* getToolPanel() const = 0;
+    virtual bool canEnableTool() const { return true; }
+    void tryEnableTool();
+public:
+    ToolAutoEnable();
+    virtual ~ToolAutoEnable() = default;
+    void setAutoEnableTool(bool autoEnable);
+    bool getAutoEnableTool() const;
+    void addSecondaryExpander(MyExpander* expander);
+    void addSecondaryPanel(FoldableToolPanel* panel);
+};
+void registerExpanders(Gtk::Container* container, std::vector<MyExpander*> expanders = {});
+void registerPanels(Gtk::Container* container, FoldableToolPanel* parent);
 
 /**
  * @brief subclass of Gtk::ScrolledWindow in order to handle the scrollwheel
@@ -375,24 +399,27 @@ public:
 /**
  * @brief subclass of Gtk::ComboBox in order to handle the scrollwheel
  */
-class MyComboBox : public Gtk::ComboBox
+class MyComboBox : public Gtk::ComboBox, public ToolAutoEnable
 {
     int naturalWidth, minimumWidth;
 
     bool on_scroll_event (GdkEventScroll* event) override;
     void get_preferred_width_vfunc (int &minimum_width, int &natural_width) const override;
     void get_preferred_width_for_height_vfunc (int height, int &minimum_width, int &natural_width) const override;
-
+    void on_changed() override;
+    FoldableToolPanel* toolPanel;
+    FoldableToolPanel* getToolPanel() const override { return toolPanel; }
 public:
     MyComboBox ();
 
     void setPreferredWidth (int minimum_width, int natural_width);
+    void setToolPanel(FoldableToolPanel* panel);
 };
 
 /**
  * @brief subclass of Gtk::ComboBoxText in order to handle the scrollwheel
  */
-class MyComboBoxText final : public Gtk::ComboBoxText
+class MyComboBoxText final : public Gtk::ComboBoxText, public ToolAutoEnable
 {
     int naturalWidth, minimumWidth;
     sigc::connection myConnection;
@@ -400,30 +427,71 @@ class MyComboBoxText final : public Gtk::ComboBoxText
     bool on_scroll_event (GdkEventScroll* event) override;
     void get_preferred_width_vfunc (int &minimum_width, int &natural_width) const override;
     void get_preferred_width_for_height_vfunc (int height, int &minimum_width, int &natural_width) const override;
-
+    void on_changed() override;
+    FoldableToolPanel* toolPanel;
+    FoldableToolPanel* getToolPanel() const override { return toolPanel; }
 public:
     explicit MyComboBoxText (bool has_entry = false);
 
     void setPreferredWidth (int minimum_width, int natural_width);
     void connect(const sigc::connection &connection) { myConnection = connection; }
     void block(bool blocked) { myConnection.block(blocked); }
+    void setToolPanel(FoldableToolPanel* panel);
 };
 
 /**
  * @brief subclass of Gtk::SpinButton in order to handle the scrollwheel
  */
-class MySpinButton final : public Gtk::SpinButton
+class MySpinButton final : public Gtk::SpinButton, public ToolAutoEnable
 {
-
 protected:
     bool on_scroll_event (GdkEventScroll* event) override;
+    bool on_button_press_event (GdkEventButton* event) override;
     bool on_key_press_event (GdkEventKey* event) override;
+    void on_value_changed() override;
+    FoldableToolPanel* getToolPanel() const override { return toolPanel; }
+private:
+    FoldableToolPanel* toolPanel;
 
 public:
     MySpinButton ();
     void updateSize();
+    void setToolPanel(FoldableToolPanel* panel);
 };
 
+/**
+ * @brief subclass of Gtk::CheckButton in order to handle auto-enable
+ */
+class MyCheckButton final : public Gtk::CheckButton, public ToolAutoEnable
+{
+protected:
+    void on_toggled() override;
+    FoldableToolPanel* getToolPanel() const override { return toolPanel; }
+    bool canEnableTool() const override;
+private:
+    FoldableToolPanel* toolPanel;
+    bool enableOnlyWhenActivated;
+public:
+    MyCheckButton();
+    explicit MyCheckButton(const Glib::ustring& label, bool mnemonic = false);
+    void setToolPanel(FoldableToolPanel* panel);
+    void setEnableOnlyWhenActivated(bool onlyWhenActivated);
+};
+/**
+ * @brief subclass of Gtk::Button in order to handle auto-enable
+ */
+class MyButton final : public Gtk::Button, public ToolAutoEnable
+{
+protected:
+    void on_pressed() override;
+    FoldableToolPanel* getToolPanel() const override { return toolPanel; }
+private:
+    FoldableToolPanel* toolPanel;
+public:
+    MyButton();
+    explicit MyButton(const Glib::ustring& label);
+    void setToolPanel(FoldableToolPanel* panel);
+};
 /**
  * @brief subclass of Gtk::Scale in order to handle the scrollwheel
  */

@@ -33,7 +33,7 @@
 #include "widgets/basic/popuptogglebutton.h"
 
 CurveEditorGroup::CurveEditorGroup (Glib::ustring& curveDir, const Glib::ustring& groupLabel, int blank) : curveDir(curveDir), line(0), curve_reset(nullptr),
-    displayedCurve(nullptr), flatSubGroup(nullptr), diagonalSubGroup(nullptr), cl(nullptr), numberOfPackedCurve(0), autoEnableTool(true)
+    displayedCurve(nullptr), flatSubGroup(nullptr), diagonalSubGroup(nullptr), cl(nullptr), numberOfPackedCurve(0)
 {
 
     // We set the label to the one provided as parameter, even if it's an empty string
@@ -553,20 +553,7 @@ Glib::ustring CurveEditorSubGroup::inputFile ()
     fname = "";
     return fname;
 }
-void CurveEditorGroup::setAutoEnableTool(bool autoEnable)
+FoldableToolPanel* CurveEditorGroup::getToolPanel() const
 {
-    autoEnableTool = autoEnable;
-}
-bool CurveEditorGroup::getAutoEnableTool() const
-{
-    return autoEnableTool;
-}
-void CurveEditorGroup::tryEnableTool()
-{
-    if (!autoEnableTool || !cl) {
-        return;
-    }
-    if (auto* foldablePanel = dynamic_cast<FoldableToolPanel*>(cl)) {
-        foldablePanel->enableTool();
-    }
+    return dynamic_cast<FoldableToolPanel*>(cl);
 }

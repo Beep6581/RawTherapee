@@ -32,7 +32,8 @@ const Glib::ustring RGBCurves::TOOL_NAME = "rgbcurves";
 RGBCurves::RGBCurves () : FoldableToolPanel(this, TOOL_NAME, M("TP_RGBCURVES_LABEL"), false, true), lastLumamode(false)
 {
 
-    lumamode = Gtk::manage (new Gtk::CheckButton (M("TP_RGBCURVES_LUMAMODE")));
+    lumamode = Gtk::manage (new MyCheckButton (M("TP_RGBCURVES_LUMAMODE")));
+    lumamode->setToolPanel(this);
     lumamode->set_tooltip_markup (M("TP_RGBCURVES_LUMAMODE_TOOLTIP"));
     lumamode->set_active (false);
     lumamode->show ();

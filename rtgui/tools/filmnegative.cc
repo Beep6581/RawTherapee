@@ -224,7 +224,6 @@ FilmNegative::FilmNegative() :
 //    refInputLabel->set_justify(Gtk::Justification::JUSTIFY_CENTER);
 //    refInputLabel->set_line_wrap(true);
 
-
     colorSpace->append(M("TP_FILMNEGATIVE_COLORSPACE_INPUT"));
     colorSpace->append(M("TP_FILMNEGATIVE_COLORSPACE_WORKING"));
     setExpandAlignProperties(colorSpace, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_CENTER);
@@ -238,6 +237,7 @@ FilmNegative::FilmNegative() :
     pack_start(*csGrid);
 
     colorSpace->set_active((int)ColorSpace::WORKING);
+    colorSpace->setToolPanel(this);
     colorSpace->signal_changed().connect(sigc::mem_fun(*this, &FilmNegative::colorSpaceChanged));
     colorSpace->show();
 

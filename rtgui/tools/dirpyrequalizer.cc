@@ -64,6 +64,7 @@ DirPyrEqualizer::DirPyrEqualizer () : FoldableToolPanel(this, TOOL_NAME, M("TP_D
     cdbox->pack_start (*labmcd, Gtk::PACK_SHRINK, 1);
 
     cbdlMethod = Gtk::manage (new MyComboBoxText ());
+    cbdlMethod->setToolPanel(this);
     cbdlMethod->append (M("TP_CBDL_BEF"));
     cbdlMethod->append (M("TP_CBDL_AFT"));
     cbdlMethod->set_active(0);
@@ -78,15 +79,17 @@ DirPyrEqualizer::DirPyrEqualizer () : FoldableToolPanel(this, TOOL_NAME, M("TP_D
     buttonBox1->set_homogeneous(true);
     pack_start(*buttonBox1);
 
-    Gtk::Button * lumacontrastMinusButton = Gtk::manage (new Gtk::Button(M("TP_DIRPYREQUALIZER_LUMACONTRAST_MINUS")));
+    MyButton * lumacontrastMinusButton = Gtk::manage (new MyButton(M("TP_DIRPYREQUALIZER_LUMACONTRAST_MINUS")));
+    lumacontrastMinusButton->setToolPanel(this);
     buttonBox1->pack_start(*lumacontrastMinusButton);
     lumacontrastMinusPressedConn = lumacontrastMinusButton->signal_pressed().connect( sigc::mem_fun(*this, &DirPyrEqualizer::lumacontrastMinusPressed));
 
-    Gtk::Button * lumaneutralButton = Gtk::manage (new Gtk::Button(M("TP_DIRPYREQUALIZER_LUMANEUTRAL")));
+    MyButton * lumaneutralButton = Gtk::manage (new MyButton(M("TP_DIRPYREQUALIZER_LUMANEUTRAL")));
     buttonBox1->pack_start(*lumaneutralButton);
     lumaneutralPressedConn = lumaneutralButton->signal_pressed().connect( sigc::mem_fun(*this, &DirPyrEqualizer::lumaneutralPressed));
 
-    Gtk::Button * lumacontrastPlusButton = Gtk::manage (new Gtk::Button(M("TP_DIRPYREQUALIZER_LUMACONTRAST_PLUS")));
+    MyButton * lumacontrastPlusButton = Gtk::manage (new MyButton(M("TP_DIRPYREQUALIZER_LUMACONTRAST_PLUS")));
+    lumacontrastPlusButton->setToolPanel(this);
     buttonBox1->pack_start(*lumacontrastPlusButton);
     lumacontrastPlusPressedConn = lumacontrastPlusButton->signal_pressed().connect( sigc::mem_fun(*this, &DirPyrEqualizer::lumacontrastPlusPressed));
 
@@ -146,7 +149,8 @@ DirPyrEqualizer::DirPyrEqualizer () : FoldableToolPanel(this, TOOL_NAME, M("TP_D
     pack_start(*skinprotect);
     skinprotect->set_tooltip_markup (M("TP_DIRPYREQUALIZER_SKIN_TOOLTIP"));
 
-    gamutlab = Gtk::manage (new Gtk::CheckButton (M("TP_DIRPYREQUALIZER_ARTIF")));
+    gamutlab = Gtk::manage (new MyCheckButton (M("TP_DIRPYREQUALIZER_ARTIF")));
+    gamutlab->setToolPanel(this);
     gamutlab->set_active (true);
     pack_start(*gamutlab);
     gamutlabConn = gamutlab->signal_toggled().connect( sigc::mem_fun(*this, &DirPyrEqualizer::gamutlabToggled) );

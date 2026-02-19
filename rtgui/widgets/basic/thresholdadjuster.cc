@@ -24,6 +24,7 @@
 #include "options.h"
 #include "guiutils.h"
 #include "rtimage.h"
+#include "toolpanel.h"
 
 #define MIN_RESET_BUTTON_HEIGHT 17
 
@@ -77,9 +78,7 @@ void ThresholdAdjuster::initObject (Glib::ustring label, bool editedcb)
     adjusterListener = nullptr;
     afterReset = false;
     blocked = false;
-
     addMode = false;
-
     delay = App::get().options().adjusterMinDelay;
 
     set_name("ThresholdAdjuster");
@@ -193,6 +192,7 @@ void ThresholdAdjuster::selectorChanged ()
 
     if (delay == 0) {
         if (adjusterListener && !blocked) {
+            tryEnableTool();
             sendToListener ();
         }
     } else {
@@ -264,6 +264,7 @@ bool ThresholdAdjuster::notifyListener ()
 
     if (adjusterListener != nullptr && !blocked) {
         GThreadLock lock;
+        tryEnableTool();
         sendToListener();
     }
 
@@ -370,6 +371,10 @@ void ThresholdAdjuster::set_tooltip_markup(const Glib::ustring& markup)
 void ThresholdAdjuster::set_tooltip_text(const Glib::ustring& text)
 {
     tSelector.set_tooltip_text(text);
+}
+FoldableToolPanel* ThresholdAdjuster::getToolPanel() const
+{
+    return dynamic_cast<FoldableToolPanel*>(adjusterListener);
 }
 
 /* For better readability, this method create the history string of the parameter column,
