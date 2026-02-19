@@ -224,17 +224,17 @@ private:
 
     FlatCurveEditor* ccshape;
     FlatCurveEditor* blshape;
-    Gtk::CheckButton* const median;
-    Gtk::CheckButton* const medianlev;
-    Gtk::CheckButton* const linkedg;
-    Gtk::CheckButton* const cbenab;
-    Gtk::CheckButton* const lipst;
-    Gtk::CheckButton* const avoid;
-    Gtk::CheckButton* const tmr;
-    Gtk::CheckButton* const showmask;
-    Gtk::CheckButton* const oldsh;
+    MyCheckButton* const median;
+    MyCheckButton* const medianlev;
+    MyCheckButton* const linkedg;
+    MyCheckButton* const cbenab;
+    MyCheckButton* const lipst;
+    MyCheckButton* const avoid;
+    MyCheckButton* const tmr;
+    MyCheckButton* const showmask;
+    MyCheckButton* const oldsh;
 
-    Gtk::Button* const neutralchButton;
+    MyButton* const neutralchButton;
     Adjuster* correction[9];
     Adjuster* correctionch[9];
     Adjuster* const sigma;

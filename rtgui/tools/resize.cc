@@ -45,6 +45,7 @@ Resize::Resize () : FoldableToolPanel(this, TOOL_NAME, M("TP_RESIZE_LABEL"), fal
     combos->set_row_spacing(4);
 
     appliesTo = Gtk::manage (new MyComboBoxText ());
+    appliesTo->setToolPanel(this);
     appliesTo->append (M("TP_RESIZE_CROPPEDAREA"));
     appliesTo->append (M("TP_RESIZE_FULLIMAGE"));
     appliesTo->set_active (0);
@@ -52,12 +53,13 @@ Resize::Resize () : FoldableToolPanel(this, TOOL_NAME, M("TP_RESIZE_LABEL"), fal
     appliesTo->set_halign(Gtk::ALIGN_FILL);
 
     Gtk::Label *label = Gtk::manage (new Gtk::Label (M("TP_RESIZE_APPLIESTO"), Gtk::ALIGN_START));
-    
+
     combos->attach(*label, 0, 0, 1, 1);
     combos->attach(*appliesTo, 1, 0, 1, 1);
 
     // See Resize::methodChanged() when adding a new method.
     method = Gtk::manage (new MyComboBoxText ());
+    method->setToolPanel(this);
     method->append (M("TP_RESIZE_LANCZOS"));
     method->append (M("TP_RESIZE_NEAREST"));
     method->set_active (0);
@@ -65,11 +67,12 @@ Resize::Resize () : FoldableToolPanel(this, TOOL_NAME, M("TP_RESIZE_LABEL"), fal
     method->set_halign(Gtk::ALIGN_FILL);
 
     label = Gtk::manage (new Gtk::Label (M("TP_RESIZE_METHOD"), Gtk::ALIGN_START));
-    
+
     combos->attach(*label, 0, 1, 1, 1);
     combos->attach(*method, 1, 1, 1, 1);
 
     spec = Gtk::manage (new MyComboBoxText ());
+    spec->setToolPanel(this);
     spec->append (M("TP_RESIZE_SCALE"));
     spec->append (M("TP_RESIZE_WIDTH"));
     spec->append (M("TP_RESIZE_HEIGHT"));
@@ -104,15 +107,19 @@ Resize::Resize () : FoldableToolPanel(this, TOOL_NAME, M("TP_RESIZE_LABEL"), fal
     w = Gtk::manage (new MySpinButton ());
     w->set_width_chars(5);
     setExpandAlignProperties(w, false, false, Gtk::ALIGN_END, Gtk::ALIGN_CENTER);
+    w->setToolPanel(this);
     h = Gtk::manage (new MySpinButton ());
     h->set_width_chars(5);
     setExpandAlignProperties(h, false, false, Gtk::ALIGN_END, Gtk::ALIGN_CENTER);
+    h->setToolPanel(this);
     le = Gtk::manage (new MySpinButton ());
     le->set_width_chars(5);
     setExpandAlignProperties(le, false, false, Gtk::ALIGN_END, Gtk::ALIGN_CENTER);
+    le->setToolPanel(this);
     se = Gtk::manage (new MySpinButton ());
     se->set_width_chars(5);
     setExpandAlignProperties(se, false, false, Gtk::ALIGN_END, Gtk::ALIGN_CENTER);
+    se->setToolPanel(this);
 
     wbox->pack_start (*Gtk::manage (new Gtk::Label (M("TP_RESIZE_W"))), Gtk::PACK_SHRINK, 0);
     wbox->pack_start (*w);
@@ -140,7 +147,8 @@ Resize::Resize () : FoldableToolPanel(this, TOOL_NAME, M("TP_RESIZE_LABEL"), fal
     sizeBox->show_all ();
     sizeBox->reference ();
 
-    allowUpscaling = Gtk::manage(new Gtk::CheckButton(M("TP_RESIZE_ALLOW_UPSCALING")));
+    allowUpscaling = Gtk::manage(new MyCheckButton(M("TP_RESIZE_ALLOW_UPSCALING")));
+    allowUpscaling->setToolPanel(this);
     pack_start(*allowUpscaling);
     allowUpscaling->signal_toggled().connect(sigc::mem_fun(*this, &Resize::allowUpscalingChanged));
 

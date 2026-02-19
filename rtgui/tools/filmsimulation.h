@@ -20,6 +20,8 @@ public:
     Glib::ustring getSelectedClut();
     void setSelectedClut( Glib::ustring filename );
     void setBatchMode(bool yes);
+    void setListener(FoldableToolPanel* listener);
+    void tryEnableTool();
 
     static void cleanup();
 
@@ -51,6 +53,7 @@ private:
     static std::unique_ptr<ClutModel> cm; // we use a shared TreeModel for all the combo boxes, to save time (no need to reparse the clut dir multiple times)...
     static std::unique_ptr<ClutModel> cm2; // ... except when options.multiDisplayMode (i.e. editors in their own window), where we need two. This is because we might have two combo boxes displayed at the same time in this case
     bool batchMode;
+    FoldableToolPanel* listener;
 };
 
 class FilmSimulation : public ToolParamBlock, public AdjusterListener, public FoldableToolPanel

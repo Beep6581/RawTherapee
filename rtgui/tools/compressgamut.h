@@ -50,7 +50,7 @@ protected:
 
     MyComboBoxText *colorspace;
     sigc::connection colorspaceconn;
-    Gtk::CheckButton* rolloff;
+    MyCheckButton* rolloff;
     sigc::connection rolloffconn;
     bool lastrolloff;
     rtengine::ProcEvent EvcgColorspace;

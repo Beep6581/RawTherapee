@@ -43,9 +43,9 @@ protected:
     Adjuster* pastels;
     Adjuster* saturated;
     ThresholdAdjuster* psThreshold;
-    Gtk::CheckButton* protectSkins;
-    Gtk::CheckButton* avoidColorShift;
-    Gtk::CheckButton* pastSatTog;
+    MyCheckButton* protectSkins;
+    MyCheckButton* avoidColorShift;
+    MyCheckButton* pastSatTog;
     DiagonalCurveEditor* skinTonesCurve;
 
     bool lastProtectSkins;

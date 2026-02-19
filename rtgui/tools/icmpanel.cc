@@ -590,6 +590,7 @@ ICMPanel::ICMPanel() : FoldableToolPanel(this, TOOL_NAME, M("TP_ICM_LABEL")), iu
     pyrwavtrc->setAdjusterListener(this);
     residtrc->setAdjusterListener(this);
 
+
     trcmaxdata->set_line_wrap();
     trcmaxdata->set_justify(Gtk::Justification::JUSTIFY_CENTER);
     setExpandAlignProperties(trcmaxdata, true, false, Gtk::ALIGN_CENTER, Gtk::ALIGN_START);
@@ -645,6 +646,7 @@ ICMPanel::ICMPanel() : FoldableToolPanel(this, TOOL_NAME, M("TP_ICM_LABEL")), iu
     primExp->setLevel (2);
 
     trcExp->add(*trcProfVBox, false);
+    registerExpanders(trcExp, {trcExp}); // walk full tree now that hierarchy is assembled
     trcExp->show_all();
     trcExp->set_expanded(false);
     trcExp->set_no_show_all();
@@ -2980,6 +2982,10 @@ void ICMPanel::wavExpChanged()
 
 void ICMPanel::fbwChanged()
 {
+    enableTool();
+    if (trcExp->getUseEnabled() && !trcExp->getEnabled()) {
+        trcExp->setEnabled(true);
+    }
     if (multiImage) {
         if (fbw->get_inconsistent()) {
             fbw->set_inconsistent(false);

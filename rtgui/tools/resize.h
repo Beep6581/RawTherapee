@@ -80,7 +80,7 @@ private:
     MySpinButton*      h;
     MySpinButton*      le;
     MySpinButton*      se;
-    Gtk::CheckButton *allowUpscaling;
+    MyCheckButton *allowUpscaling;
     int                maxw, maxh;
     int                cropw, croph;
     sigc::connection   sconn, aconn, wconn, hconn, leconn, seconn;

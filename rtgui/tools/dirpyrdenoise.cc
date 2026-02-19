@@ -63,6 +63,7 @@ DirPyrDenoise::DirPyrDenoise () : FoldableToolPanel(this, TOOL_NAME, M("TP_DIRPY
     ctboxL->pack_start (*labmL, Gtk::PACK_SHRINK, 1);
 
     Lmethod = Gtk::manage (new MyComboBoxText ());
+    Lmethod->setToolPanel(this);
     Lmethod->append (M("CURVEEDITOR_CURVE"));
     Lmethod->append (M("GENERAL_SLIDER"));
     Lmethod->set_active(0);
@@ -99,6 +100,7 @@ DirPyrDenoise::DirPyrDenoise () : FoldableToolPanel(this, TOOL_NAME, M("TP_DIRPY
     ctboxC->pack_start (*labmC, Gtk::PACK_SHRINK, 1);
 
     Cmethod = Gtk::manage (new MyComboBoxText ());
+    Cmethod->setToolPanel(this);
     Cmethod->append (M("TP_DIRPYRDENOISE_CHROMINANCE_MANUAL"));
     Cmethod->append (M("TP_DIRPYRDENOISE_CHROMINANCE_AUTOGLOBAL"));
     Cmethod->append (M("TP_DIRPYRDENOISE_CHROMINANCE_AMZ"));
@@ -113,6 +115,7 @@ DirPyrDenoise::DirPyrDenoise () : FoldableToolPanel(this, TOOL_NAME, M("TP_DIRPY
     ctboxC2->set_tooltip_markup (M("TP_DIRPYRDENOISE_CHROMINANCE_METHODADVANCED_TOOLTIP"));
 
     C2method = Gtk::manage (new MyComboBoxText ());
+    C2method->setToolPanel(this);
     C2method->append (M("TP_DIRPYRDENOISE_CHROMINANCE_MANUAL"));
     C2method->append (M("TP_DIRPYRDENOISE_CHROMINANCE_AUTOGLOBAL"));
     C2method->append (M("TP_DIRPYRDENOISE_CHROMINANCE_PREVIEW"));
@@ -134,6 +137,7 @@ DirPyrDenoise::DirPyrDenoise () : FoldableToolPanel(this, TOOL_NAME, M("TP_DIRPY
     hb1->set_tooltip_markup (M("TP_DIRPYRDENOISE_MAIN_COLORSPACE_TOOLTIP"));
 
     dmethod = Gtk::manage (new MyComboBoxText ());
+    dmethod->setToolPanel(this);
     dmethod->append (M("TP_DIRPYRDENOISE_MAIN_COLORSPACE_LAB"));
     dmethod->append (M("TP_DIRPYRDENOISE_MAIN_COLORSPACE_RGB"));
     dmethod->set_active(0);
@@ -182,6 +186,7 @@ DirPyrDenoise::DirPyrDenoise () : FoldableToolPanel(this, TOOL_NAME, M("TP_DIRPY
     medianFrame->set_label_widget(*median);
 
     methodmed = Gtk::manage (new MyComboBoxText ());
+    methodmed->setToolPanel(this);
     methodmed->append (M("TP_DIRPYRDENOISE_MEDIAN_METHOD_LUMINANCE"));
     methodmed->append (M("TP_DIRPYRDENOISE_MEDIAN_METHOD_CHROMINANCE"));
     methodmed->append (M("TP_DIRPYRDENOISE_MEDIAN_METHOD_WEIGHTED"));
@@ -192,6 +197,7 @@ DirPyrDenoise::DirPyrDenoise () : FoldableToolPanel(this, TOOL_NAME, M("TP_DIRPY
     methodmedconn = methodmed->signal_changed().connect ( sigc::mem_fun(*this, &DirPyrDenoise::methodmedChanged) );
 
     rgbmethod = Gtk::manage (new MyComboBoxText ());
+    rgbmethod->setToolPanel(this);
     rgbmethod->append (M("TP_DIRPYRDENOISE_TYPE_3X3SOFT"));
     rgbmethod->append (M("TP_DIRPYRDENOISE_TYPE_3X3"));
     rgbmethod->append (M("TP_DIRPYRDENOISE_TYPE_5X5SOFT"));
@@ -201,6 +207,7 @@ DirPyrDenoise::DirPyrDenoise () : FoldableToolPanel(this, TOOL_NAME, M("TP_DIRPY
 
 
     medmethod = Gtk::manage (new MyComboBoxText ());
+    medmethod->setToolPanel(this);
     medmethod->append (M("TP_DIRPYRDENOISE_TYPE_3X3SOFT"));
     medmethod->append (M("TP_DIRPYRDENOISE_TYPE_3X3"));
     medmethod->append (M("TP_DIRPYRDENOISE_TYPE_5X5SOFT"));
@@ -228,6 +235,7 @@ DirPyrDenoise::DirPyrDenoise () : FoldableToolPanel(this, TOOL_NAME, M("TP_DIRPY
     hb11->set_tooltip_markup (M("TP_DIRPYRDENOISE_MAIN_MODE_TOOLTIP"));
 
     smethod = Gtk::manage (new MyComboBoxText ());
+    smethod->setToolPanel(this);
     smethod->append (M("TP_DIRPYRDENOISE_MAIN_MODE_CONSERVATIVE"));
     smethod->append (M("TP_DIRPYRDENOISE_MAIN_MODE_AGGRESSIVE"));
     smethod->set_active(1);

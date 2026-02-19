@@ -72,7 +72,7 @@ protected:
     MyComboBoxText*   gammaretinex;
     MyComboBoxText*   mapMethod;
     MyComboBoxText*   viewMethod;
-    Gtk::CheckButton* medianmap;
+    MyCheckButton* medianmap;
     MyComboBoxText* complexmethod;
     sigc::connection  complexmethodconn;
     

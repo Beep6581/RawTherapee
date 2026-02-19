@@ -172,7 +172,7 @@ private:
 
     //Adjuster* edge;
     Gtk::CheckButton* surrsource;
-    Gtk::CheckButton* gamut;
+    MyCheckButton* gamut;
 //   Gtk::CheckButton* badpix;
     Gtk::CheckButton* datacie;
     Gtk::CheckButton* tonecie;

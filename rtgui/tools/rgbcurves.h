@@ -22,6 +22,7 @@
 
 #include "colorprovider.h"
 #include "curvelistener.h"
+#include "guiutils.h"
 #include "toolpanel.h"
 
 class CurveEditorGroup;
@@ -40,7 +41,7 @@ protected:
     DiagonalCurveEditor* Gshape;
     DiagonalCurveEditor* Bshape;
 
-    Gtk::CheckButton* lumamode;
+    MyCheckButton* lumamode;
     bool lastLumamode;
     sigc::connection lumamodeConn;
 

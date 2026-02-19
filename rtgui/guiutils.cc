@@ -15,6 +15,7 @@
  *  You should have received a copy of the GNU General Public License
  *  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
  */
+#include <algorithm>
 #include <cairomm/cairomm.h>
 #include "rtengine/rt_math.h"
 
@@ -1089,7 +1090,7 @@ void MyScrolledToolbar::get_preferred_height_vfunc (int &minimumHeight, int &nat
     }
 }
 
-MyComboBoxText::MyComboBoxText (bool has_entry) : Gtk::ComboBoxText(has_entry)
+MyComboBoxText::MyComboBoxText (bool has_entry) : Gtk::ComboBoxText(has_entry), toolPanel(nullptr)
 {
     minimumWidth = naturalWidth = RTScalable::scalePixelSize(70);
     Gtk::CellRendererText* cellRenderer = dynamic_cast<Gtk::CellRendererText*>(get_first_cell());
@@ -1140,8 +1141,85 @@ void MyComboBoxText::get_preferred_width_for_height_vfunc (int height, int &mini
     minimum_width = rtengine::max(minimumWidth, RTScalable::scalePixelSize(10));
 }
 
-
-MyComboBox::MyComboBox ()
+ToolAutoEnable::ToolAutoEnable() : autoEnableTool(true) {}
+void ToolAutoEnable::setAutoEnableTool(bool autoEnable)
+{
+    autoEnableTool = autoEnable;
+}
+bool ToolAutoEnable::getAutoEnableTool() const
+{
+    return autoEnableTool;
+}
+void ToolAutoEnable::addSecondaryExpander(MyExpander* expander)
+{
+    if (std::find(secondaryExpanders.begin(), secondaryExpanders.end(), expander) == secondaryExpanders.end()) {
+        secondaryExpanders.push_back(expander);
+    }
+}
+void ToolAutoEnable::addSecondaryPanel(FoldableToolPanel* panel)
+{
+    if (std::find(secondaryPanels.begin(), secondaryPanels.end(), panel) == secondaryPanels.end()) {
+        secondaryPanels.push_back(panel);
+    }
+}
+void registerExpanders(Gtk::Container* container, std::vector<MyExpander*> expanders)
+{
+    for (Gtk::Widget* child : container->get_children()) {
+        if (auto* host = dynamic_cast<ToolAutoEnable*>(child)) {
+            for (MyExpander* e : expanders) {
+                host->addSecondaryExpander(e);
+            }
+        } else if (auto* exp = dynamic_cast<MyExpander*>(child)) {
+            auto childExpanders = expanders;
+            if (exp->getUseEnabled()) {
+                childExpanders.push_back(exp);
+            }
+            registerExpanders(exp, std::move(childExpanders));
+        } else if (auto* sub = dynamic_cast<Gtk::Container*>(child)) {
+            registerExpanders(sub, expanders);
+        }
+    }
+}
+void registerPanels(Gtk::Container* container, FoldableToolPanel* parent)
+{
+    for (Gtk::Widget* child : container->get_children()) {
+        if (auto* host = dynamic_cast<ToolAutoEnable*>(child)) {
+            host->addSecondaryPanel(parent);
+        } else if (auto* sub = dynamic_cast<Gtk::Container*>(child)) {
+            registerPanels(sub, parent);
+        }
+    }
+}
+void ToolAutoEnable::tryEnableTool()
+{
+    if (!autoEnableTool) {
+        return;
+    }
+    if (!canEnableTool()) {
+        return;
+    }
+    if (auto* fp = getToolPanel()) {
+        fp->enableTool();
+    }
+    for (MyExpander* expander : secondaryExpanders) {
+        if (expander->getUseEnabled() && !expander->getEnabled()) {
+            expander->setEnabled(true);
+        }
+    }
+    for (FoldableToolPanel* panel : secondaryPanels) {
+        panel->enableTool();
+    }
+}
+void MyComboBoxText::setToolPanel(FoldableToolPanel* panel)
+{
+    toolPanel = panel;
+}
+void MyComboBoxText::on_changed()
+{
+    tryEnableTool();
+    Gtk::ComboBoxText::on_changed();
+}
+MyComboBox::MyComboBox () : toolPanel(nullptr)
 {
     minimumWidth = naturalWidth = RTScalable::scalePixelSize(70);
 }
@@ -1186,8 +1264,16 @@ void MyComboBox::get_preferred_width_for_height_vfunc (int height, int &minimum_
     natural_width = rtengine::max(naturalWidth, RTScalable::scalePixelSize(10));
     minimum_width = rtengine::max(minimumWidth, RTScalable::scalePixelSize(10));
 }
-
-MySpinButton::MySpinButton ()
+void MyComboBox::setToolPanel(FoldableToolPanel* panel)
+{
+    toolPanel = panel;
+}
+void MyComboBox::on_changed()
+{
+    tryEnableTool();
+    Gtk::ComboBox::on_changed();
+}
+MySpinButton::MySpinButton () : toolPanel(nullptr)
 {
     Gtk::Border border;
     border.set_bottom(0);
@@ -1199,6 +1285,16 @@ MySpinButton::MySpinButton ()
     set_wrap(false);
     set_alignment(Gtk::ALIGN_END);
     set_update_policy(Gtk::SpinButtonUpdatePolicy::UPDATE_IF_VALID); // Avoid updating text if input is not a numeric
+}
+
+void MySpinButton::setToolPanel(FoldableToolPanel* panel)
+{
+    toolPanel = panel;
+}
+
+void MySpinButton::on_value_changed()
+{
+    Gtk::SpinButton::on_value_changed();
 }
 
 void MySpinButton::updateSize()
@@ -1238,6 +1334,7 @@ bool MySpinButton::on_key_press_event (GdkEventKey* event)
         return false; // Event is propagated further
     } else {
         if (event->keyval == GDK_KEY_comma || event->keyval == GDK_KEY_KP_Decimal) {
+            tryEnableTool();
             set_text(get_text() + ".");
             set_position(get_text().length()); // When setting text, cursor position is reset at text start. Avoiding this with this code
             return true; // Event is not propagated further
@@ -1251,6 +1348,7 @@ bool MySpinButton::on_scroll_event (GdkEventScroll* event)
 {
     // If Shift is pressed, the widget is modified
     if (event->state & GDK_SHIFT_MASK) {
+        tryEnableTool();
         Gtk::SpinButton::on_scroll_event(event);
         return true;
     }
@@ -1259,6 +1357,46 @@ bool MySpinButton::on_scroll_event (GdkEventScroll* event)
     return false;
 }
 
+bool MySpinButton::on_button_press_event (GdkEventButton* event)
+{
+  tryEnableTool();
+  Gtk::SpinButton::on_button_press_event(event);
+  return true;
+}
+MyCheckButton::MyCheckButton() : toolPanel(nullptr), enableOnlyWhenActivated(false)
+{
+}
+MyCheckButton::MyCheckButton(const Glib::ustring& label, bool mnemonic) : Gtk::CheckButton(label, mnemonic), toolPanel(nullptr), enableOnlyWhenActivated(false)
+{
+}
+void MyCheckButton::setToolPanel(FoldableToolPanel* panel)
+{
+    toolPanel = panel;
+}
+void MyCheckButton::setEnableOnlyWhenActivated(bool onlyWhenActivated)
+{
+    enableOnlyWhenActivated = onlyWhenActivated;
+}
+bool MyCheckButton::canEnableTool() const
+{
+    return !enableOnlyWhenActivated || get_active();
+}
+void MyCheckButton::on_toggled()
+{
+    tryEnableTool();
+    Gtk::CheckButton::on_toggled();
+}
+MyButton::MyButton() : toolPanel(nullptr) {}
+MyButton::MyButton(const Glib::ustring& label) : Gtk::Button(label), toolPanel(nullptr) {}
+void MyButton::setToolPanel(FoldableToolPanel* panel)
+{
+    toolPanel = panel;
+}
+void MyButton::on_pressed()
+{
+    tryEnableTool();
+    Gtk::Button::on_pressed();
+}
 bool MyHScale::on_scroll_event (GdkEventScroll* event)
 {
 

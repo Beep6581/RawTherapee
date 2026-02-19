@@ -56,15 +56,18 @@ Vibrance::Vibrance () : FoldableToolPanel(this, TOOL_NAME, M("TP_VIBRANCE_LABEL"
     psThreshold->set_sensitive(false);
     pack_start( *psThreshold, Gtk::PACK_SHRINK, 0);
 
-    protectSkins = Gtk::manage (new Gtk::CheckButton (M("TP_VIBRANCE_PROTECTSKINS")));
+    protectSkins = Gtk::manage (new MyCheckButton (M("TP_VIBRANCE_PROTECTSKINS")));
+    protectSkins->setToolPanel(this);
     protectSkins->set_active (true);
     pack_start(*protectSkins, Gtk::PACK_SHRINK, 0);
 
-    avoidColorShift = Gtk::manage (new Gtk::CheckButton (M("TP_VIBRANCE_AVOIDCOLORSHIFT")));
+    avoidColorShift = Gtk::manage (new MyCheckButton (M("TP_VIBRANCE_AVOIDCOLORSHIFT")));
+    avoidColorShift->setToolPanel(this);
     avoidColorShift->set_active (true);
     pack_start(*avoidColorShift, Gtk::PACK_SHRINK, 0);
 
-    pastSatTog = Gtk::manage (new Gtk::CheckButton (M("TP_VIBRANCE_PASTSATTOG")));
+    pastSatTog = Gtk::manage (new MyCheckButton (M("TP_VIBRANCE_PASTSATTOG")));
+    pastSatTog->setToolPanel(this);
     pastSatTog->set_active (true);
     pack_start(*pastSatTog, Gtk::PACK_SHRINK, 0);
 

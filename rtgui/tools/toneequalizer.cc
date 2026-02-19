@@ -217,6 +217,9 @@ void ToneEqualizer::checkBoxToggled(CheckBox *c, CheckValue newval)
 
 void ToneEqualizer::colormapToggled()
 {
+    if (show_colormap->getLastActive()) {
+      enableTool();
+    }
     for (size_t i = 0; i < bands.size(); ++i) {
         bands[i]->showIcons(show_colormap->getLastActive());
     }

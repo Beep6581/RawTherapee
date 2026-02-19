@@ -436,7 +436,7 @@ Retinex::Retinex () : FoldableToolPanel (this, TOOL_NAME, M ("TP_RETINEX_LABEL")
     limd->show ();
 
     // Transmission median filter
-    medianmap = Gtk::manage (new Gtk::CheckButton (M ("TP_RETINEX_MEDIAN")));
+    medianmap = Gtk::manage (new MyCheckButton (M ("TP_RETINEX_MEDIAN")));
     setExpandAlignProperties (medianmap, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_START);
     medianmap->set_active (true);
     medianmapConn  = medianmap->signal_toggled().connect ( sigc::mem_fun (*this, &Retinex::medianmapChanged) );
@@ -564,6 +564,14 @@ Retinex::Retinex () : FoldableToolPanel (this, TOOL_NAME, M ("TP_RETINEX_LABEL")
 
     skal->setAdjusterListener (this);
     skal->setDelay(std::max(options.adjusterMinDelay, options.adjusterMaxDelay));
+
+    medianmap->setToolPanel(this);
+    complexmethod->setToolPanel(this);
+    retinexMethod->setToolPanel(this);
+    retinexcolorspace->setToolPanel(this);
+    viewMethod->setToolPanel(this);
+    mapMethod->setToolPanel(this);
+    gammaretinex->setToolPanel(this);
 
     disableListener();
     retinexColorSpaceChanged();

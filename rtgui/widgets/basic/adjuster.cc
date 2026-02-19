@@ -25,6 +25,7 @@
 #include "options.h"
 #include "rtimage.h"
 #include "rtscalable.h"
+#include "toolpanel.h"
 #include "rtengine/rt_math.h"
 
 namespace {
@@ -69,7 +70,6 @@ Adjuster::Adjuster(
     logAnchorMiddle(false),
     value2slider(value2slider ? value2slider : &one2one),
     slider2value(slider2value ? slider2value : &one2one)
-
 {
     set_hexpand(true);
     set_vexpand(false);
@@ -380,6 +380,7 @@ void Adjuster::spinChanged()
             if (automatic) {
                 setAutoValue(false);
             }
+            tryEnableTool();
             adjusterListener->adjusterChanged(this, spin->get_value());
         }
     }
@@ -404,6 +405,7 @@ void Adjuster::sliderChanged ()
             if (automatic) {
                 setAutoValue(false);
             }
+            tryEnableTool();
             adjusterListener->adjusterChanged(this, spin->get_value());
         }
     }
@@ -447,6 +449,7 @@ bool Adjuster::notifyListener ()
         if (automatic) {
             setAutoValue(false);
         }
+        tryEnableTool();
         adjusterListener->adjusterChanged(this, spin->get_value());
     }
 
@@ -538,6 +541,7 @@ void Adjuster::editedToggled ()
         if (automatic) {
             setAutoValue(false);
         }
+        tryEnableTool();
         adjusterListener->adjusterChanged(this, spin->get_value());
     }
 }
@@ -653,7 +657,14 @@ void Adjuster::setAdjusterListener (AdjusterListener* alistener)
 {
     adjusterListener = alistener;
 }
-
+AdjusterListener* Adjuster::getAdjusterListener() const
+{
+    return adjusterListener;
+}
+FoldableToolPanel* Adjuster::getToolPanel() const
+{
+    return dynamic_cast<FoldableToolPanel*>(adjusterListener);
+}
 double Adjuster::getValue() const
 {
     return shapeValue(spin->get_value());

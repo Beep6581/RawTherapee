@@ -166,7 +166,7 @@ private:
     FlatCurveEditor *labRegionChromaticityMask;
     FlatCurveEditor *labRegionLightnessMask;
     Adjuster *labRegionMaskBlur;
-    Gtk::CheckButton *labRegionShowMask;
+    MyCheckButton *labRegionShowMask;
     std::vector<rtengine::procparams::ColorToningParams::LabCorrectionRegion> labRegionData;
     int labRegionSelected;
     sigc::connection labRegionSelectionConn;

@@ -59,7 +59,7 @@ protected:
     DiagonalCurveEditor* cdshape;
 
     //%%%%%%%%%%%%%%%%
-    Gtk::CheckButton* lcredsk;
+    MyCheckButton* lcredsk;
 
     MyComboBoxText* gamutmunselmethod;
     sigc::connection   gamutmunselmethodconn;

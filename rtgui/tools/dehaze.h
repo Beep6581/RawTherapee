@@ -30,7 +30,7 @@ private:
     Adjuster *strength;
     Adjuster *depth;
     Adjuster *saturation;
-    Gtk::CheckButton *showDepthMap;
+    MyCheckButton *showDepthMap;
 //    Gtk::CheckButton *luminance;
 
     rtengine::ProcEvent EvDehazeEnabled;

@@ -150,7 +150,16 @@ void FoldableToolPanel::setEnabled(bool isEnabled)
     lastEnabled = isEnabled;
     enaConn.block (false);
 }
-
+void FoldableToolPanel::enableTool()
+{
+    if (!listener) {
+        return;
+    }
+    if (!getEnabled()) {
+        setEnabled(true);
+        enabledChanged();
+    }
+}
 void FoldableToolPanel::setEnabledTooltipMarkup(Glib::ustring tooltipMarkup)
 {
     if (exp) {

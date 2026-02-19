@@ -53,7 +53,8 @@ SharpenMicro::SharpenMicro () : FoldableToolPanel(this, TOOL_NAME, M("TP_SHARPEN
     pack_start( *amount, Gtk::PACK_SHRINK, 0);
     pack_start( *uniformity, Gtk::PACK_SHRINK, 0);
 
-    matrix = Gtk::manage (new Gtk::CheckButton (M("TP_SHARPENMICRO_MATRIX")));
+    matrix = Gtk::manage (new MyCheckButton (M("TP_SHARPENMICRO_MATRIX")));
+    matrix->setToolPanel(this);
     matrix->set_active (true);
     pack_start(*matrix, Gtk::PACK_SHRINK, 0);
     matrix->show ();

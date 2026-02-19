@@ -66,7 +66,7 @@ FilmSimulation::FilmSimulation()
     :   FoldableToolPanel( this, TOOL_NAME, M("TP_FILMSIMULATION_LABEL"), false, true )
 {
     m_clutComboBox = Gtk::manage( new ClutComboBox(App::get().options().clutsDir) );
-
+    m_clutComboBox->setListener(this);
     int foundClutsCount = m_clutComboBox->foundClutsCount();
 
     if ( foundClutsCount == 0 ) {
@@ -86,7 +86,9 @@ FilmSimulation::FilmSimulation()
 void FilmSimulation::onClutSelected()
 {
     Glib::ustring currentClutFilename = m_clutComboBox->getSelectedClut();
-
+    if (!currentClutFilename.empty() && currentClutFilename != "NULL") {
+        m_clutComboBox->tryEnableTool();
+    }
     if ( getEnabled() && !currentClutFilename.empty() && listener && currentClutFilename != m_oldClutFilename ) {
         Glib::ustring clutName, dummy;
         HaldCLUT::splitClutFilename( currentClutFilename, clutName, dummy, dummy );
@@ -210,7 +212,8 @@ std::unique_ptr<ClutComboBox::ClutModel> ClutComboBox::cm2;
 
 ClutComboBox::ClutComboBox(const Glib::ustring &path):
     MyComboBox(),
-    batchMode(false)
+    batchMode(false),
+    listener(nullptr)
 {
     if (!cm) {
         cm.reset(new ClutModel(path));
@@ -464,4 +467,15 @@ Gtk::TreeIter ClutComboBox::findRowByClutFilename( Gtk::TreeModel::Children chil
     }
 
     return result;
+}
+void ClutComboBox::setListener(FoldableToolPanel* l)
+{
+    listener = l;
+}
+void ClutComboBox::tryEnableTool()
+{
+    if (!listener) {
+        return;
+    }
+    listener->enableTool();
 }

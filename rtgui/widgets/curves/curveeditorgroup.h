@@ -29,6 +29,7 @@
 
 #include <fstream>
 #include <string>
+#include <vector>
 
 class CurveEditor;
 class DiagonalCurveEditorSubGroup;
@@ -40,7 +41,7 @@ class FlatCurveEditorSubGroup;
  * - to start a new line of curve button, use the 'newLine' method
  * - if you add more than one curve, you must add a "CurveEditor* ce" parameter to your listener
  */
-class CurveEditorGroup final : public Gtk::Grid, public CurveListener
+class CurveEditorGroup final : public Gtk::Grid, public CurveListener, public ToolAutoEnable
 {
 
     friend class CurveEditor;
@@ -63,7 +64,7 @@ protected:
     CurveListener* cl;
 
     unsigned int numberOfPackedCurve;
-
+    FoldableToolPanel* getToolPanel() const override;
 public:
     /**
      * @param curveDir The folder used by load and save dialogs for the curve.
@@ -80,6 +81,10 @@ public:
     void setCurveListener (CurveListener* l)
     {
         cl = l;
+    }
+    CurveListener* getCurveListener() const
+    {
+        return cl;
     }
     void setTooltip (Glib::ustring ttip);
     CurveEditor* getDisplayedCurve ()

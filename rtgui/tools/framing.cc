@@ -357,6 +357,7 @@ void Framing::setupFramingMethodGui()
     combos->set_row_spacing(ROW_SPACING);
 
     framingMethod = Gtk::manage(new MyComboBoxText());
+    framingMethod->setToolPanel(this);
     for (auto label : FRAMING_METHODS) {
         framingMethod->append(M(label));
     }
@@ -369,6 +370,7 @@ void Framing::setupFramingMethodGui()
 
     aspectRatioLabel = createGridLabel("TP_FRAMING_ASPECT_RATIO");
     aspectRatio = Gtk::manage(new MyComboBoxText());
+    aspectRatio->setToolPanel(this);
     aspectRatioData->fillCombo(aspectRatio);
     aspectRatio->set_hexpand();
     aspectRatio->set_halign(Gtk::ALIGN_FILL);
@@ -378,6 +380,7 @@ void Framing::setupFramingMethodGui()
 
     orientationLabel = createGridLabel("TP_FRAMING_ORIENTATION");
     orientation = Gtk::manage(new MyComboBoxText());
+    orientation->setToolPanel(this);
     for (auto label : ORIENTATION) {
         orientation->append(M(label));
     }
@@ -392,11 +395,14 @@ void Framing::setupFramingMethodGui()
     width = DimensionGui(this, "TP_FRAMING_FRAMED_WIDTH");
     width.setRange(Resize::MIN_SIZE, Resize::MAX_SCALE * imgWidth);
     width.setValue(imgWidth);
+    width.value->setToolPanel(this);
     height = DimensionGui(this, "TP_FRAMING_FRAMED_HEIGHT");
     height.setRange(Resize::MIN_SIZE, Resize::MAX_SCALE * imgHeight);
     height.setValue(imgHeight);
+    height.value->setToolPanel(this);
 
-    allowUpscaling = Gtk::manage(new Gtk::CheckButton(M("TP_FRAMING_ALLOW_UPSCALING")));
+    allowUpscaling = Gtk::manage(new MyCheckButton(M("TP_FRAMING_ALLOW_UPSCALING")));
+    allowUpscaling->setToolPanel(this);
     pack_start(*allowUpscaling);
 
     updateFramingMethodGui();
@@ -419,6 +425,7 @@ void Framing::setupBorderSizeGui()
     combos->set_row_spacing(ROW_SPACING);
 
     borderSizeMethod = Gtk::manage(new MyComboBoxText());
+    borderSizeMethod->setToolPanel(this);
     for (auto label : BORDER_SIZE_METHODS) {
         borderSizeMethod->append(M(label));
     }
@@ -431,6 +438,7 @@ void Framing::setupBorderSizeGui()
 
     basisLabel = createGridLabel("TP_FRAMING_BASIS");
     basis = Gtk::manage(new MyComboBoxText());
+    basis->setToolPanel(this);
     for (auto label : BORDER_SIZE_BASIS) {
         basis->append(M(label));
     }
@@ -448,7 +456,8 @@ void Framing::setupBorderSizeGui()
 
     minSizeFrame = Gtk::manage(new Gtk::Frame());
     minSizeFrame->set_label_align(FRAME_LABEL_ALIGN_X, FRAME_LABEL_ALIGN_Y);
-    minSizeEnabled = Gtk::manage(new Gtk::CheckButton(M("TP_FRAMING_LIMIT_MINIMUM")));
+    minSizeEnabled = Gtk::manage(new MyCheckButton(M("TP_FRAMING_LIMIT_MINIMUM")));
+    minSizeEnabled->setToolPanel(this);
     minSizeFrame->set_label_widget(*minSizeEnabled);
 
     minSizeFrameContent = Gtk::manage(new Gtk::Box(Gtk::ORIENTATION_VERTICAL));
@@ -456,9 +465,11 @@ void Framing::setupBorderSizeGui()
     minWidth = DimensionGui(minSizeFrameContent, "TP_FRAMING_MIN_WIDTH");
     minWidth.setRange(0, imgWidth);
     minWidth.setValue(0);
+    minWidth.value->setToolPanel(this);
     minHeight = DimensionGui(minSizeFrameContent, "TP_FRAMING_MIN_HEIGHT");
     minHeight.setRange(0, imgHeight);
     minHeight.setValue(0);
+    minHeight.value->setToolPanel(this);
 
     minSizeFrame->add(*minSizeFrameContent);
     pack_start(*minSizeFrame);
@@ -466,9 +477,11 @@ void Framing::setupBorderSizeGui()
     absWidth = DimensionGui(this, "TP_FRAMING_ABSOLUTE_WIDTH");
     absWidth.setRange(0, imgWidth);
     absWidth.setValue(0);
+    absWidth.value->setToolPanel(this);
     absHeight = DimensionGui(this, "TP_FRAMING_ABSOLUTE_HEIGHT");
     absHeight.setRange(0, imgHeight);
     absHeight.setValue(0);
+    absHeight.value->setToolPanel(this);
 
     updateBorderSizeGui();
 

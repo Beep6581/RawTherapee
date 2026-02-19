@@ -338,6 +338,7 @@ void Gradient::setEditProvider (EditDataProvider* provider)
 void Gradient::editToggled ()
 {
     if (edit->get_active()) {
+        enableTool();
         subscribe();
     } else {
         releaseEdit();
