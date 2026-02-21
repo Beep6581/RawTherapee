@@ -109,6 +109,10 @@ constexpr float clipR(float x)
     return rtengine::LIM(x, 0.f, 65535.f);//used when Laplacian Contrast attenuator
 }
 
+constexpr float clipRplus(float x)
+{
+    return rtengine::LIM(x, 0.f, 75500.f);//used for GHS if user set BP to 0 or negative - about 1.15 maxi
+}
 
 constexpr float clipC(float x)
 {
@@ -18482,7 +18486,8 @@ void ImProcFunctions::Lab_Local(
     
     
 }
-                        if(params->locallab.spots.at(sp).ghs_autobw == true  && strtype == GHTStrType::NORMAL) { //find probably White point and black point ...Must be adjusted manually in soma cases notably Black point with negatives values...                        
+                        bool autobw = params->locallab.spots.at(sp).ghs_autobw;
+                        if( autobw == true  && strtype == GHTStrType::NORMAL) { //find probably White point and black point ...Must be adjusted manually in soma cases notably Black point with negatives values...                        
 #ifdef _OPENMP
         #   pragma omp parallel for reduction(min:minb) reduction(max:maxw) reduction(max:maxwred) reduction(max:maxwgreen) reduction(max:maxwblue) if (multiThread)
 #endif
@@ -19012,7 +19017,17 @@ void ImProcFunctions::Lab_Local(
                         if(ghs3sig > lp.maxdataghs / 65535.f) {//if the distribution is not Gaussian, then we take for 3.5 sigmas the real maximum.
                             ghs3sig = lp.maxdataghs / 65535.f;
                         }
-
+                        
+#ifdef _OPENMP
+            #pragma omp parallel for if (multiThread)
+#endif                       
+                        for (int i = 0; i < bfh; ++i)
+                            for (int j = 0; j < bfw; ++j) {//avoid crah when user set BP to 0 or < 0 , and enable auto BP WP
+                                tmpImage->r(i, j) = clipRplus(rtengine::max(0.00001f, tmpImage->r(i, j)));
+                                tmpImage->g(i, j) = clipRplus(rtengine::max(0.00001f, tmpImage->g(i, j)));//keep data about 1.15 maximum 65535 about 75500. No difference with or without on TIFF layers differences
+                                tmpImage->b(i, j) = clipRplus(rtengine::max(0.00001f, tmpImage->b(i, j)));//More than enough to be within the limits of a second RT-spot
+                            }
+              
                         rgb2lab(*tmpImage, *bufexpfin, params->icm.workingProfile);
 
                         tmpImage.reset();
