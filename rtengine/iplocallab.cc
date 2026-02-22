@@ -111,7 +111,7 @@ constexpr float clipR(float x)
 
 constexpr float clipRplus(float x)
 {
-    return rtengine::LIM(x, 0.f, 75500.f);//used for GHS if user set BP to 0 or negative - about 1.15 maxi
+    return rtengine::LIM(x, 0.00001f, 75500.f);//used for GHS if user set BP to 0 or negative - about 1.15 maxi
 }
 
 constexpr float clipC(float x)
@@ -19017,17 +19017,19 @@ void ImProcFunctions::Lab_Local(
                         if(ghs3sig > lp.maxdataghs / 65535.f) {//if the distribution is not Gaussian, then we take for 3.5 sigmas the real maximum.
                             ghs3sig = lp.maxdataghs / 65535.f;
                         }
-                        
+// This additional procedure allows 'rgb2lab' to function. In rare cases, when the Stretch function (D) is very small, if the black point is zero or negative, and the user activates "Auto Black Point & White Point", the GHS algorithm generates values ​​close to infinity.
+// This causes a crash during the RGB to Lab conversion.
+// GHS is complex and works in several 'passes'. This solution resolves the problems without disrupting any of the calculations and has no influence on the (visible) image or in 16-bit layer/differences.
 #ifdef _OPENMP
             #pragma omp parallel for if (multiThread)
 #endif                       
                         for (int i = 0; i < bfh; ++i)
-                            for (int j = 0; j < bfw; ++j) {//avoid crah when user set BP to 0 or < 0 , and enable auto BP WP
-                                tmpImage->r(i, j) = clipRplus(rtengine::max(0.00001f, tmpImage->r(i, j)));
-                                tmpImage->g(i, j) = clipRplus(rtengine::max(0.00001f, tmpImage->g(i, j)));//keep data about 1.15 maximum 65535 about 75500. No difference with or without on TIFF layers differences
-                                tmpImage->b(i, j) = clipRplus(rtengine::max(0.00001f, tmpImage->b(i, j)));//More than enough to be within the limits of a second RT-spot
+                            for (int j = 0; j < bfw; ++j) {//avoid crash when user set BP to 0 or < 0 , and enable auto BP WP.
+                                tmpImage->r(i, j) = clipRplus(tmpImage->r(i, j));//clipRplus keep data about 1.15 maximum (65535) about 75500. No difference with or without on TIFF layers differences.
+                                tmpImage->g(i, j) = clipRplus(tmpImage->g(i, j));//There are no differences in the calculation of BP (linear) or WP (linear), nor of the Symmetry Point (SP). There is no influence on the subsequent GHS Spot.
+                                tmpImage->b(i, j) = clipRplus(tmpImage->b(i, j));//1.15 : more than enough to be within the limits of a second RT-spot.
                             }
-              
+                        //conversion rgb to Lab
                         rgb2lab(*tmpImage, *bufexpfin, params->icm.workingProfile);
 
                         tmpImage.reset();
