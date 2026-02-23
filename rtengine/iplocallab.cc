@@ -18485,9 +18485,10 @@ void ImProcFunctions::Lab_Local(
                             }
     
     
-}
-                        bool autobw = params->locallab.spots.at(sp).ghs_autobw;
-                        if( autobw == true  && strtype == GHTStrType::NORMAL) { //find probably White point and black point ...Must be adjusted manually in soma cases notably Black point with negatives values...                        
+                        }
+
+                        const bool autobw = params->locallab.spots.at(sp).ghs_autobw;
+                        if (autobw == true  && strtype == GHTStrType::NORMAL) { //find probably White point and black point ...Must be adjusted manually in soma cases notably Black point with negatives values...                        
 #ifdef _OPENMP
         #   pragma omp parallel for reduction(min:minb) reduction(max:maxw) reduction(max:maxwred) reduction(max:maxwgreen) reduction(max:maxwblue) if (multiThread)
 #endif
