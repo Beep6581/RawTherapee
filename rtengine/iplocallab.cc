@@ -109,9 +109,11 @@ constexpr float clipR(float x)
     return rtengine::LIM(x, 0.f, 65535.f);//used when Laplacian Contrast attenuator
 }
 
-constexpr float clipRplus(float x)
+
+
+constexpr float clipGhsRgbOutput(float x)
 {
-    return rtengine::LIM(x, 0.00001f, 75500.f);//used for GHS if user set BP to 0 or negative - about 1.15 maxi
+    return rtengine::LIM(x, 0.00001f, 75500.f);//used for GHS if user set BP to 0 or negative - about 1.15 maxi 75500 = 65535 * 1.152. If necessary, the value can be changed, for example 80000, but it must be suitable.
 }
 
 constexpr float clipC(float x)
@@ -18488,7 +18490,7 @@ void ImProcFunctions::Lab_Local(
                         }
 
                         const bool autobw = params->locallab.spots.at(sp).ghs_autobw;
-                        if (autobw == true  && strtype == GHTStrType::NORMAL) { //find probably White point and black point ...Must be adjusted manually in soma cases notably Black point with negatives values...                        
+                        if (autobw == true  && strtype == GHTStrType::NORMAL) { //find probably White point and black point ...Must be adjusted manually in some cases notably Black point with negatives values...                        
 #ifdef _OPENMP
         #   pragma omp parallel for reduction(min:minb) reduction(max:maxw) reduction(max:maxwred) reduction(max:maxwgreen) reduction(max:maxwblue) if (multiThread)
 #endif
@@ -19026,9 +19028,9 @@ void ImProcFunctions::Lab_Local(
 #endif                       
                         for (int i = 0; i < bfh; ++i)
                             for (int j = 0; j < bfw; ++j) {//avoid crash when user set BP to 0 or < 0 , and enable auto BP WP.
-                                tmpImage->r(i, j) = clipRplus(tmpImage->r(i, j));//clipRplus keep data about 1.15 maximum (65535) about 75500. No difference with or without on TIFF layers differences.
-                                tmpImage->g(i, j) = clipRplus(tmpImage->g(i, j));//There are no differences in the calculation of BP (linear) or WP (linear), nor of the Symmetry Point (SP). There is no influence on the subsequent GHS Spot.
-                                tmpImage->b(i, j) = clipRplus(tmpImage->b(i, j));//1.15 : more than enough to be within the limits of a second RT-spot.
+                                tmpImage->r(i, j) = clipGhsRgbOutput(tmpImage->r(i, j));//clipRplus keep data about 1.15 maximum (65535) about 75500. No difference with or without on TIFF layers differences.
+                                tmpImage->g(i, j) = clipGhsRgbOutput(tmpImage->g(i, j));//There are no differences in the calculation of BP (linear) or WP (linear), nor of the Symmetry Point (SP). There is no influence on the subsequent GHS Spot.
+                                tmpImage->b(i, j) = clipGhsRgbOutput(tmpImage->b(i, j));//1.15 : more than enough to be within the limits of a second RT-spot.
                             }
                         //conversion rgb to Lab
                         rgb2lab(*tmpImage, *bufexpfin, params->icm.workingProfile);
