@@ -27,6 +27,7 @@
 #include "controlspotpanel.h"
 #include "guiutils.h"
 #include "tools/locallabtools.h"
+#include "widgets/basic/checkbox.h"
 
 /* ==== LocallabToolListListener ==== */
 class LocallabToolList;

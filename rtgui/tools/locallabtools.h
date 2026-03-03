@@ -25,6 +25,7 @@
 #include "toolpanel.h"
 #include "widgets/basic/adjuster.h"
 #include "widgets/basic/thresholdadjuster.h"
+#include "widgets/basic/checkbox.h"
 #include "widgets/curves/curveeditorgroup.h"
 #include "widgets/curves/curveeditor.h"
 
@@ -169,7 +170,7 @@ protected:
     bool isLocActivated;
     const Glib::ustring *spotNameSource;
     LocallabToolListener* locToolListener;
-
+    Gtk::Box* content;
     // LocallabTool generic widgets
     MyExpander* exp;
     MyComboBoxText* const complexity;
@@ -219,7 +220,8 @@ public:
     {
         locToolListener = ltl;
     }
-
+    // Setter for parent panel to enable auto-enable chain
+    void setParentPanel(FoldableToolPanel* parentPanel);
     // Management functions to add/remove Locallab tool
     void addLocallabTool(bool raiseEvent);
     void removeLocallabTool(bool raiseEvent);
@@ -288,7 +290,8 @@ private:
 class LocallabColor:
     public Gtk::Box,
     public LocallabTool,
-    public ThresholdAdjusterListener
+    public ThresholdAdjusterListener,
+    public CheckBoxListener
 {
 private:
     // Color & Light specific widgets
@@ -298,7 +301,7 @@ private:
     Adjuster* const lightness;
     Adjuster* const contrast;
     Adjuster* const chroma;
-    Gtk::CheckButton* const curvactiv;
+    CheckBox* const curvactiv;
     Gtk::Frame* const gridFrame;
     LabGrid* const labgrid;
     MyComboBoxText* const gridMethod;
@@ -316,7 +319,7 @@ private:
     Adjuster* const lowthresc;
     Adjuster* const higthresc;
     Adjuster* const decayc;
-    Gtk::CheckButton* const invers;
+    CheckBox* const invers;
     MyExpander* const expgradcol;
     Adjuster* const strcol;
     Adjuster* const strcolab;
@@ -341,7 +344,7 @@ private:
     CurveEditorGroup* const rgbCurveEditorG;
     MyComboBoxText* const toneMethod;
     DiagonalCurveEditor* const rgbshape;
-    Gtk::CheckButton* const special;
+    CheckBox* const special;
     MyExpander* const expmaskcol1;
     MyComboBoxText* const merMethod;
     ToolParamBlock* const mask7;
@@ -356,16 +359,16 @@ private:
     Gtk::Frame* const mergecolFrame ;
     MyComboBoxText* const showmaskcolMethod;
     MyComboBoxText* const showmaskcolMethodinv;
-    Gtk::CheckButton* const enaColorMask;
+    CheckBox* const enaColorMask;
     CurveEditorGroup* const maskCurveEditorG;
     FlatCurveEditor* const CCmaskshape;
     FlatCurveEditor* const LLmaskshape;
     FlatCurveEditor* const HHmaskshape;
     Gtk::Frame* const struFrame;
     Adjuster* const strumaskcol;
-    Gtk::CheckButton* const toolcol;
+    CheckBox* const toolcol;
     Gtk::Frame* const blurFrame;
-    Gtk::CheckButton* const fftColorMask;
+    CheckBox* const fftColorMask;
     Adjuster* const contcol;
     Adjuster* const blurcol;
     Adjuster* const blendmaskcol;
@@ -385,7 +388,7 @@ private:
     FlatCurveEditor* const LLmaskcolshapewav;
     ThresholdAdjuster* const csThresholdcol;
 
-    sigc::connection curvactivConn, previewcolConn, gridMethodConn, inversConn, qualitycurveMethodConn, toneMethodConn, specialConn, merMethodConn, mergecolMethodConn, showmaskcolMethodConn, showmaskcolMethodConninv, enaColorMaskConn, toolcolConn, fftColorMaskConn;
+    sigc::connection previewcolConn, gridMethodConn, qualitycurveMethodConn, toneMethodConn, merMethodConn, mergecolMethodConn, showmaskcolMethodConn, showmaskcolMethodConninv;
 
 public:
     LocallabColor();
@@ -426,19 +429,14 @@ private:
     void updateGUIToMode(const modeType new_type) override;
 
     void updateMaskBackground(const double normChromar, const double normLumar, const double normHuer, const double normHuerjz) override;
-    void curvactivChanged();
+    void checkBoxToggled(CheckBox* c, CheckValue newval) override;
     void gridMethodChanged();
-    void inversChanged();
     void qualitycurveMethodChanged();
     void toneMethodChanged();
-    void specialChanged();
     void merMethodChanged();
     void mergecolMethodChanged();
     void showmaskcolMethodChanged();
     void showmaskcolMethodChangedinv();
-    void enaColorMaskChanged();
-    void toolcolChanged();
-    void fftColorMaskChanged();
     void updateColorGUI1();
     void updateColorGUI2();
     void updateColorGUI3();
@@ -447,7 +445,8 @@ private:
 /* ==== LocallabExposure ==== */
 class LocallabExposure:
     public Gtk::Box,
-    public LocallabTool
+    public LocallabTool,
+    public CheckBoxListener
 {
 private:
     // Exposure specific widgets
@@ -465,8 +464,8 @@ private:
     MyExpander* const expfat;
     Adjuster* const fatamount;
     Adjuster* const fatdetail;
-    Gtk::CheckButton* const fatsatur;
-    Gtk::CheckButton* const norm;
+    CheckBox* const fatsatur;
+    CheckBox* const norm;
     Adjuster* const fatlevel;
     Adjuster* const fatanchor;
     Adjuster* const gamex;
@@ -498,12 +497,12 @@ private:
     Adjuster* const angexp;
     Adjuster* const featherexp;
     Adjuster* const softradiusexp;
-    Gtk::CheckButton* const inversex;
+    CheckBox* const inversex;
     MyExpander* const expmaskexp;
     MyComboBoxText* const showmaskexpMethod;
     MyComboBoxText* const showmaskexpMethodinv;
-    Gtk::CheckButton* const enaExpMask;
-    Gtk::CheckButton* const enaExpMaskaft;
+    CheckBox* const enaExpMask;
+    CheckBox* const enaExpMaskaft;
     CurveEditorGroup* const maskexpCurveEditorG;
     FlatCurveEditor* const CCmaskexpshape;
     FlatCurveEditor* const LLmaskexpshape;
@@ -521,7 +520,7 @@ private:
     DiagonalCurveEditor* const Lmaskexpshape;
     rtengine::ProcEvent Evlocallabtmosatur;
 
-    sigc::connection expMethodConn, exnoiseMethodConn, previewexeConn, inversexConn, normConn, fatsaturConn, showmaskexpMethodConn, showmaskexpMethodConninv, enaExpMaskConn, enaExpMaskaftConn;
+    sigc::connection expMethodConn, exnoiseMethodConn, previewexeConn, showmaskexpMethodConn, showmaskexpMethodConninv;
 
 public:
     LocallabExposure();
@@ -556,15 +555,11 @@ private:
 
     void updateMaskBackground(const double normChromar, const double normLumar, const double normHuer, const double normHuerjz) override;
 
+    void checkBoxToggled(CheckBox* c, CheckValue newval) override;
     void expMethodChanged();
     void exnoiseMethodChanged();
-    void inversexChanged();
-    void normChanged();
-    void fatsaturChanged();
     void showmaskexpMethodChanged();
     void showmaskexpMethodChangedinv();
-    void enaExpMaskChanged();
-    void enaExpMaskaftChanged();
 
     void updateExposureGUI1();
     void updateExposureGUI2();
@@ -575,7 +570,8 @@ private:
 /* ==== LocallabjShadow ==== */
 class LocallabShadow:
     public Gtk::Box,
-    public LocallabTool
+    public LocallabTool,
+    public CheckBoxListener
 {
 private:
     // Shadow highlight specific widgets
@@ -609,7 +605,7 @@ private:
     LabGrid* const labgridghs;
     Gtk::Frame* const ghsFrame;
     Gtk::Box* const matHBox;
-    Gtk::CheckButton* const ghs_agx;
+    CheckBox* const ghs_agx;
     MyComboBoxText* const ghsMatmet;
     Adjuster* const ghs_D;
     Gtk::Frame* const Lab_Frame;
@@ -626,24 +622,24 @@ private:
     Adjuster* const ghs_LC;
     Adjuster* const ghs_MID;
     Gtk::Frame* const BP_Frame;
-    Gtk::CheckButton* const ghs_autobw;
+    CheckBox* const ghs_autobw;
     Adjuster* const ghs_BLP;
     Adjuster* const ghs_HLP;
     Gtk::Label* const ghsbpwpLabels;
     Gtk::Label* const ghsbpwpvalueLabels;
     Gtk::Label* const ghscolorLabels;
     Gtk::Label* const ghsDRLabels;
-    Gtk::CheckButton* const ghs_smooth;
-    Gtk::CheckButton* const ghs_inv;
+    CheckBox* const ghs_smooth;
+    CheckBox* const ghs_inv;
     MyExpander* const expgradsh;
     Adjuster* const strSH;
     Adjuster* const angSH;
     Adjuster* const featherSH;
-    Gtk::CheckButton* const inverssh;
+    CheckBox* const inverssh;
     MyExpander* const expmasksh;
     MyComboBoxText* const showmaskSHMethod;
     MyComboBoxText* const showmaskSHMethodinv;
-    Gtk::CheckButton* const enaSHMask;
+    CheckBox* const enaSHMask;
     CurveEditorGroup* const maskSHCurveEditorG;
     FlatCurveEditor* const CCmaskSHshape;
     FlatCurveEditor* const LLmaskSHshape;
@@ -681,7 +677,7 @@ private:
     rtengine::ProcEvent Evlocallabghs_agx;
     rtengine::ProcEvent Evlocallabghs_Matmet;
 
-    sigc::connection shMethodConn, ghsMethodConn, ghsMatmetConn, previewshConn, inversshConn, ghs_smoothConn, ghs_autobwConn, ghs_agxConn, ghs_invConn, showmaskSHMethodConn, showmaskSHMethodConninv, enaSHMaskConn;
+    sigc::connection shMethodConn, ghsMethodConn, ghsMatmetConn, previewshConn, showmaskSHMethodConn, showmaskSHMethodConninv;
 
 public:
     LocallabShadow();
@@ -722,18 +718,12 @@ private:
 
     void updateMaskBackground(const double normChromar, const double normLumar, const double normHuer, const double normHuerjz) override;
 
+    void checkBoxToggled(CheckBox* c, CheckValue newval) override;
     void shMethodChanged();
     void ghsMethodChanged();
     void ghsMatmetChanged();
-   
-    void inversshChanged();
-    void ghs_smoothChanged();
-    void ghs_autobwChanged();
-    void ghs_agxChanged(); 
-    void ghs_invChanged();
     void showmaskSHMethodChanged();
     void showmaskSHMethodChangedinv();
-    void enaSHMaskChanged();
     void updateShadowGUImask();
     void updateShadowGUIshmet();
     void updateShadowGUIsym();
@@ -744,7 +734,8 @@ class LocallabVibrance:
     public Gtk::Box,
     public LocallabTool,
     public ThresholdAdjusterListener,
-    public ThresholdCurveProvider
+    public ThresholdCurveProvider,
+    public CheckBoxListener
 {
 private:
     // Vibrance specific widgets
@@ -753,9 +744,9 @@ private:
     Adjuster* const vibgam;
     Adjuster* const warm;
     ThresholdAdjuster* const psThreshold;
-    Gtk::CheckButton* const protectSkins;
-    Gtk::CheckButton* const avoidColorShift;
-    Gtk::CheckButton* const pastSatTog;
+    CheckBox* const protectSkins;
+    CheckBox* const avoidColorShift;
+    CheckBox* const pastSatTog;
     Adjuster* const sensiv;
     Gtk::ToggleButton* const previewvib;
     
@@ -776,7 +767,7 @@ private:
     Adjuster* const feathervib;
     MyExpander* const expmaskvib;
     MyComboBoxText* const showmaskvibMethod;
-    Gtk::CheckButton* const enavibMask;
+    CheckBox* const enavibMask;
     CurveEditorGroup* const maskvibCurveEditorG;
     FlatCurveEditor* const CCmaskvibshape;
     FlatCurveEditor* const LLmaskvibshape;
@@ -790,7 +781,7 @@ private:
     CurveEditorGroup* const mask2vibCurveEditorG;
     DiagonalCurveEditor* const Lmaskvibshape;
 
-    sigc::connection pskinsConn, previewvibConn, ashiftConn, pastsattogConn, showmaskvibMethodConn, enavibMaskConn;
+    sigc::connection previewvibConn, showmaskvibMethodConn;
 
 public:
     LocallabVibrance();
@@ -833,11 +824,8 @@ private:
 
     void updateMaskBackground(const double normChromar, const double normLumar, const double normHuer, const double normHuerjz) override;
 
-    void protectskins_toggled();
-    void avoidcolorshift_toggled();
-    void pastsattog_toggled();
+    void checkBoxToggled(CheckBox* c, CheckValue newval) override;
     void showmaskvibMethodChanged();
-    void enavibMaskChanged();
 
     void updateVibranceGUI();
 };
@@ -893,15 +881,16 @@ private:
 class LocallabBlur:
     public Gtk::Box,
     public LocallabTool,
-    public ThresholdAdjusterListener
+    public ThresholdAdjusterListener,
+    public CheckBoxListener
 //    public ThresholdCurveProvider
-    
+
 {
 private:
     // Blur & Noise specific widgets
     MyExpander* const expblnoise;
     MyComboBoxText* const blMethod;
-    Gtk::CheckButton* const fftwbl;
+    CheckBox* const fftwbl;
     Adjuster* const radius;
     Adjuster* const strength;
     Gtk::Frame* const grainFrame;
@@ -922,16 +911,16 @@ private:
     Adjuster* const sensibn;
     
     MyComboBoxText* const blurMethod;
-    Gtk::CheckButton* const invbl;
+    CheckBox* const invbl;
     MyComboBoxText* const chroMethod;
-    Gtk::CheckButton* const activlum;
+    CheckBox* const activlum;
     MyExpander* const expdenoise;
     Gtk::Frame* const denoFrame;
 
-    Gtk::CheckButton* const enacontrast;
+    CheckBox* const enacontrast;
     Adjuster* const denocontrast;
     Adjuster* const denoratio;
-    Gtk::CheckButton* const contrshow;
+    CheckBox* const contrshow;
     Adjuster* const denomask;
 
     MyComboBoxText* const quamethod;
@@ -945,10 +934,10 @@ private:
     Gtk::Label* const lum46Labels;
     Gtk::Label* const chroLabels;
     Gtk::Label* const chro46Labels;
-    Gtk::CheckButton* const lockmadl;
+    CheckBox* const lockmadl;
     Gtk::Frame* const madlFrame;
     const std::array<Adjuster*, 21> madls;
-    Gtk::CheckButton* const madllock;
+    CheckBox* const madllock;
     
     MyExpander* const expdenoise1;
     Gtk::Label* const maskusable;
@@ -958,7 +947,7 @@ private:
     Gtk::Label* const maskusable3;
     Gtk::Label* const maskunusable3;
 
-    Gtk::CheckButton* const usemask;
+    CheckBox* const usemask;
     Adjuster* const lnoiselow;
     Adjuster* const levelthr;
     Adjuster* const levelthrlow;
@@ -987,8 +976,8 @@ private:
     Adjuster* const higthresd;
     Adjuster* const decayd;
     
-    Gtk::CheckButton* const invmaskd;
-    Gtk::CheckButton* const invmask;
+    CheckBox* const invmaskd;
+    CheckBox* const invmask;
     Gtk::Frame* const prevFrame;
     Adjuster* const nlstr;
     Adjuster* const nldet;
@@ -1006,13 +995,13 @@ private:
     MyExpander* const expmaskbl;
     MyComboBoxText* const showmaskblMethod;
     MyComboBoxText* const showmaskblMethodtyp;
-    Gtk::CheckButton* const enablMask;
+    CheckBox* const enablMask;
     std::unique_ptr<CurveEditorGroup> maskblCurveEditorG;    
     FlatCurveEditor* const CCmaskblshape;
     FlatCurveEditor* const LLmaskblshape;
     FlatCurveEditor* const HHmaskblshape;
     Adjuster* const strumaskbl;
-    Gtk::CheckButton* const toolbl;
+    CheckBox* const toolbl;
     Gtk::Frame* const toolblFrame;
     Gtk::Frame* const toolblFrame2;
     Adjuster* const blendmaskbl;
@@ -1030,8 +1019,8 @@ private:
     Gtk::Box* const quaHBox;
     ThresholdAdjuster* const csThresholdblur;
 
-    sigc::connection blMethodConn, fftwblConn, invblConn, contrshowConn, lockmadlConn, madllockConn, enacontrastConn, medMethodConn, blurMethodConn, chroMethodConn, activlumConn, showmaskblMethodConn, showmaskblMethodtypConn, enablMaskConn, toolblConn;
-    sigc::connection  quamethodconn, usemaskConn, invmaskdConn, invmaskConn, neutralconn;
+    sigc::connection blMethodConn, medMethodConn, blurMethodConn, chroMethodConn, showmaskblMethodConn, showmaskblMethodtypConn;
+    sigc::connection  quamethodconn, neutralconn;
     rtengine::ProcEvent Evlocallabdenocontrast;
     rtengine::ProcEvent Evlocallabautodenoon;
     rtengine::ProcEvent Evlocallabautodenooff;
@@ -1085,25 +1074,14 @@ private:
     void updateGUIToMode(const modeType new_type) override;
 
     void updateMaskBackground(const double normChromar, const double normLumar, const double normHuer, const double normHuerjz) override;
-    void contrshowChanged();
-    void enacontrastChanged();
-    void lockmadlChanged();
-    void madllockChanged();
+    void checkBoxToggled(CheckBox* c, CheckValue newval) override;
 
     void blMethodChanged();
-    void fftwblChanged();
-    void usemaskChanged();
-    void invmaskdChanged();
-    void invmaskChanged();
-    void invblChanged();
     void medMethodChanged();
     void blurMethodChanged();
     void chroMethodChanged();
-    void activlumChanged();
     void showmaskblMethodChanged();
     void showmaskblMethodtypChanged();
-    void enablMaskChanged();
-    void toolblChanged();
     void quamethodChanged();
 
     void updateBlurGUI();
@@ -1112,14 +1090,15 @@ private:
 /* ==== LocallabTone ==== */
 class LocallabTone:
     public Gtk::Box,
-    public LocallabTool
+    public LocallabTool,
+    public CheckBoxListener
 {
 private:
     // Tone Mapping specific widgets
     Adjuster* const repartm;
     Adjuster* const amount;
     Adjuster* const stren;
-    Gtk::CheckButton* const equiltm;
+    CheckBox* const equiltm;
     Adjuster* const gamma;
     Adjuster* const satur;
     Adjuster* const estop;
@@ -1138,8 +1117,8 @@ private:
     Adjuster* const decayt;
     MyExpander* const expmasktm;
     MyComboBoxText* const showmasktmMethod;
-    Gtk::CheckButton* const enatmMask;
-    Gtk::CheckButton* const enatmMaskaft;
+    CheckBox* const enatmMask;
+    CheckBox* const enatmMaskaft;
     CurveEditorGroup* const masktmCurveEditorG;
     FlatCurveEditor* const CCmasktmshape;
     FlatCurveEditor* const LLmasktmshape;
@@ -1153,7 +1132,7 @@ private:
     CurveEditorGroup* const mask2tmCurveEditorG;
     DiagonalCurveEditor* const Lmasktmshape;
 
-    sigc::connection equiltmConn, previewtmConn, showmasktmMethodConn, enatmMaskConn, enatmMaskaftConn;
+    sigc::connection previewtmConn, showmasktmMethodConn;
 
 public:
     LocallabTone();
@@ -1186,16 +1165,15 @@ private:
 
     void updateMaskBackground(const double normChromar, const double normLumar, const double normHuer, const double normHuerjz) override;
 
-    void equiltmChanged();
+    void checkBoxToggled(CheckBox* c, CheckValue newval) override;
     void showmasktmMethodChanged();
-    void enatmMaskChanged();
-    void enatmMaskaftChanged();
 };
 
 /* ==== LocallabRetinex ==== */
 class LocallabRetinex:
     public Gtk::Box,
-    public LocallabTool
+    public LocallabTool,
+    public CheckBoxListener
 {
 private:
     // Retinex specific widgets
@@ -1206,12 +1184,12 @@ private:
     Adjuster* const dehazeblack;
     Gtk::Frame* const retiFrame;
     Adjuster* const str;
-    Gtk::CheckButton* const loglin;
+    CheckBox* const loglin;
     Adjuster* const sensih;
     Gtk::Frame* const retitoolFrame;
     MyComboBoxText* const retinexMethod;
-    Gtk::CheckButton* const fftwreti;
-    Gtk::CheckButton* const equilret;
+    CheckBox* const fftwreti;
+    CheckBox* const equilret;
     Adjuster* const neigh;
     Adjuster* const vart;
     Adjuster* const scalereti;
@@ -1239,8 +1217,8 @@ private:
     Adjuster* const decayr;
     MyExpander* const expmaskreti;
     MyComboBoxText* const showmaskretiMethod;
-    Gtk::CheckButton* const enaretiMask;
-    Gtk::CheckButton* const enaretiMasktmap;
+    CheckBox* const enaretiMask;
+    CheckBox* const enaretiMasktmap;
     CurveEditorGroup* const maskretiCurveEditorG;
     FlatCurveEditor* const CCmaskretishape;
     FlatCurveEditor* const LLmaskretishape;
@@ -1253,11 +1231,11 @@ private:
     Adjuster* const slomaskreti;
     CurveEditorGroup* const mask2retiCurveEditorG;
     DiagonalCurveEditor* const Lmaskretishape;
-    Gtk::CheckButton* const inversret;
+    CheckBox* const inversret;
 
     rtengine::ProcEvent Evlocallabdehazeblack;
 
-    sigc::connection loglinConn, retinexMethodConn, fftwretiConn, equilretConn, showmaskretiMethodConn, enaretiMaskConn, enaretiMasktmapConn, inversretConn;
+    sigc::connection retinexMethodConn, showmaskretiMethodConn;
 
 public:
     LocallabRetinex();
@@ -1289,14 +1267,9 @@ private:
 
     void updateMaskBackground(const double normChromar, const double normLumar, const double normHuer, const double normHuerjz) override;
 
-    void loglinChanged();
     void retinexMethodChanged();
-    void fftwretiChanged();
-    void equilretChanged();
     void showmaskretiMethodChanged();
-    void enaretiMaskChanged();
-    void enaretiMasktmapChanged();
-    void inversretChanged();
+    void checkBoxToggled(CheckBox* c, CheckValue newval) override;
 
     void updateRetinexGUI1();
     void updateRetinexGUI2();
@@ -1306,7 +1279,8 @@ private:
 /* ==== LocallabSharp ==== */
 class LocallabSharp:
     public Gtk::Box,
-    public LocallabTool
+    public LocallabTool,
+    public CheckBoxListener
 {
 private:
     // Adjuster* blur;
@@ -1315,14 +1289,14 @@ private:
 
     Adjuster* const reparsha;
     Adjuster* const sharcontrast;
-    Gtk::CheckButton* const sharshow;
+    CheckBox* const sharshow;
     Adjuster* const capradius;
 
     Adjuster* const deconvCoBoost;
     Adjuster* const deconvCoProt;
     Adjuster* const deconvCoLat;
     Adjuster* const deconvCogam;
-    Gtk::CheckButton* const itercheck;
+    CheckBox* const itercheck;
     Gtk::Frame* const capFrame;
     Gtk::Frame* const rlFrame;
     Adjuster* const sharblur;
@@ -1332,7 +1306,7 @@ private:
     Adjuster* const shariter;
     Adjuster* const sharradius;
     Adjuster* const sensisha;
-    Gtk::CheckButton* const inverssha;
+    CheckBox* const inverssha;
     Gtk::Frame* const sharFrame;
     MyComboBoxText* const showmasksharMethod;
 
@@ -1351,7 +1325,7 @@ private:
     rtengine::ProcEvent Evlocallababitercheck;
     rtengine::ProcEvent Evlocallababdconvgam;
 
-    sigc::connection inversshaConn, showmasksharMethodConn, methodcapConn, sharshowConn, itercheckConn;
+    sigc::connection showmasksharMethodConn, methodcapConn;
 
 public:
     LocallabSharp();
@@ -1379,10 +1353,7 @@ private:
     void convertParamToNormal() override;
     void convertParamToSimple() override;
     void updateGUIToMode(const modeType new_type) override;
-    void sharshowChanged();
-    void itercheckChanged();
-
-    void inversshaChanged();
+    void checkBoxToggled(CheckBox* c, CheckValue newval) override;
     void methodcapChanged();
     void showmasksharMethodChanged();
 };
@@ -1391,7 +1362,8 @@ private:
 class LocallabContrast:
     public Gtk::Box,
     public LocallabTool,
-    public ThresholdAdjusterListener
+    public ThresholdAdjusterListener,
+    public CheckBoxListener
 
 {
 private:
@@ -1406,7 +1378,7 @@ private:
     CurveEditorGroup* const LocalcurveEditorwav;
     FlatCurveEditor* const wavshape;
     ThresholdAdjuster* const csThreshold;
-    Gtk::CheckButton* const processwav;
+    CheckBox* const processwav;
     
     Adjuster* const levelwav;
     MyExpander* const expresidpyr;
@@ -1427,21 +1399,21 @@ private:
     Adjuster* const clarilres;
     Adjuster* const claricres;
     Adjuster* const clarisoft;
-    Gtk::CheckButton* const origlc;
+    CheckBox* const origlc;
     MyExpander* const expcontrastpyr;
     Gtk::Frame* const gradwavFrame;
-    Gtk::CheckButton* const wavgradl;
+    CheckBox* const wavgradl;
     Adjuster* const sigmalc2;
     Adjuster* const strwav;
     Adjuster* const angwav;
     Adjuster* const featherwav;
-    Gtk::CheckButton* const wavedg;
+    CheckBox* const wavedg;
     Adjuster* const strengthw;
     Adjuster* const sigmaed;
     CurveEditorGroup* const LocalcurveEditorwavedg;
     FlatCurveEditor* const wavshapeedg;
     Adjuster* const gradw;
-    Gtk::CheckButton* const waveshow;
+    CheckBox* const waveshow;
     ToolParamBlock* const edgsBoxshow;
     Adjuster* const radiusw;
     Adjuster* const detailw;
@@ -1451,34 +1423,34 @@ private:
     Adjuster* const edgw;
     Adjuster* const basew;
     MyComboBoxText* const localneiMethod;
-    Gtk::CheckButton* const wavblur;
+    CheckBox* const wavblur;
     Adjuster* const levelblur;
     Adjuster* const sigmabl;
     Adjuster* const chromablu;
     CurveEditorGroup* const LocalcurveEditorwavlev;
     FlatCurveEditor* const wavshapelev;
     Adjuster* const residblur;
-    Gtk::CheckButton* const blurlc;
+    CheckBox* const blurlc;
     MyExpander* const expcontrastpyr2;
-    Gtk::CheckButton* const wavcont;
+    CheckBox* const wavcont;
     Adjuster* const sigma;
     Adjuster* const offset;
     Adjuster* const chromalev;
     CurveEditorGroup* const LocalcurveEditorwavcon;
     FlatCurveEditor* const wavshapecon;
-    Gtk::CheckButton* const wavcompre;
+    CheckBox* const wavcompre;
     CurveEditorGroup* const LocalcurveEditorwavcompre;
     FlatCurveEditor* const wavshapecompre;
     Adjuster* const sigmadr;
     Adjuster* const threswav;
     Adjuster* const residcomp;
-    Gtk::CheckButton* const wavcomp;
+    CheckBox* const wavcomp;
     Adjuster* const sigmadc;
     Adjuster* const deltad;
     CurveEditorGroup* const LocalcurveEditorwavcomp;
     FlatCurveEditor* const wavshapecomp;
     //Adjuster* const fatres;
-    Gtk::CheckButton* const fftwlc;
+    CheckBox* const fftwlc;
     MyExpander* const exprecovw;
     Gtk::Label* const maskusablew;
     Gtk::Label* const maskunusablew;
@@ -1488,7 +1460,7 @@ private:
     Adjuster* const decayw;
     MyExpander* const expmasklc;
     MyComboBoxText* const showmasklcMethod;
-    Gtk::CheckButton* const enalcMask;
+    CheckBox* const enalcMask;
     CurveEditorGroup* const masklcCurveEditorG;
     FlatCurveEditor* const CCmasklcshape;
     FlatCurveEditor* const LLmasklcshape;
@@ -1499,7 +1471,7 @@ private:
     CurveEditorGroup* const mask2lcCurveEditorG;
     DiagonalCurveEditor* const Lmasklcshape;
 
-    sigc::connection localcontMethodConn, previewlcConn, origlcConn, processwavConn, wavgradlConn, wavedgConn, localedgMethodConn, waveshowConn, localneiMethodConn, wavblurConn, blurlcConn, wavcontConn, wavcompreConn, wavcompConn, fftwlcConn, showmasklcMethodConn, enalcMaskConn;
+    sigc::connection localcontMethodConn, previewlcConn, localedgMethodConn, localneiMethodConn, showmasklcMethodConn;
     rtengine::ProcEvent Evlocallabprocesswav;
 
 public:
@@ -1541,21 +1513,10 @@ private:
     void updateMaskBackground(const double normChromar, const double normLumar, const double normHuer, const double normHuerjz) override;
 
     void localcontMethodChanged();
-    void origlcChanged();
-    void processwavChanged();
-    void wavgradlChanged();
-    void wavedgChanged();
     void localedgMethodChanged();
-    void waveshowChanged();
     void localneiMethodChanged();
-    void wavblurChanged();
-    void blurlcChanged();
-    void wavcontChanged();
-    void wavcompreChanged();
-    void wavcompChanged();
-    void fftwlcChanged();
     void showmasklcMethodChanged();
-    void enalcMaskChanged();
+    void checkBoxToggled(CheckBox* c, CheckValue newval) override;
 
     void updateContrastGUI1();
     void updateContrastGUI2();
@@ -1565,7 +1526,8 @@ private:
 /* ==== LocallabCBDL ==== */
 class LocallabCBDL:
     public Gtk::Box,
-    public LocallabTool
+    public LocallabTool,
+    public CheckBoxListener
 {
 private:
     Gtk::Frame* const levFrame;
@@ -1585,7 +1547,7 @@ private:
     Adjuster* const decaycb;
     MyExpander* const expmaskcb;
     MyComboBoxText* const showmaskcbMethod;
-    Gtk::CheckButton* const enacbMask;
+    CheckBox* const enacbMask;
     CurveEditorGroup* const maskcbCurveEditorG;
     FlatCurveEditor* const CCmaskcbshape;
     FlatCurveEditor* const LLmaskcbshape;
@@ -1599,7 +1561,7 @@ private:
     CurveEditorGroup* const mask2cbCurveEditorG;
     DiagonalCurveEditor* const Lmaskcbshape;
 
-    sigc::connection showmaskcbMethodConn, enacbMaskConn;
+    sigc::connection showmaskcbMethodConn;
 
     Gtk::Button* const lumacontrastMinusButton;
     Gtk::Button* const lumaneutralButton;
@@ -1636,7 +1598,7 @@ private:
     void updateMaskBackground(const double normChromar, const double normLumar, const double normHuer, const double normHuerjz) override;
 
     void showmaskcbMethodChanged();
-    void enacbMaskChanged();
+    void checkBoxToggled(CheckBox* c, CheckValue newval) override;
 
     void lumacontrastMinusPressed();
     void lumaneutralPressed();
@@ -1646,11 +1608,12 @@ private:
 /* ==== LocallabLog ==== */
 class LocallabLog:
     public Gtk::Box,
-    public LocallabTool
+    public LocallabTool,
+    public CheckBoxListener
 {
 private:
     Adjuster* const repar;
-    Gtk::CheckButton* const ciecam;
+    CheckBox* const ciecam;
     Gtk::ToggleButton* const autocompute;
     Gtk::Frame* const logPFrame;
     Gtk::Frame* const logPFrame2;
@@ -1660,11 +1623,11 @@ private:
     Adjuster* const blackslog;
     Adjuster* const comprlog;
     Adjuster* const strelog; 
-    Gtk::CheckButton* const satlog;
+    CheckBox* const satlog;
     
-    Gtk::CheckButton* const fullimage;
+    CheckBox* const fullimage;
     Gtk::Frame* const logFrame;
-    Gtk::CheckButton* const Autogray;
+    CheckBox* const Autogray;
     Adjuster* const sourceGray;
     Adjuster* const sourceabs;
     MyComboBoxText*  const sursour;
@@ -1707,7 +1670,7 @@ private:
     Adjuster* const featherlog;
     MyExpander* const expmaskL;
     MyComboBoxText* const showmaskLMethod;
-    Gtk::CheckButton* const enaLMask;
+    CheckBox* const enaLMask;
     CurveEditorGroup* const maskCurveEditorL;
     FlatCurveEditor* const CCmaskshapeL;
     FlatCurveEditor* const LLmaskshapeL;
@@ -1718,9 +1681,9 @@ private:
     CurveEditorGroup* const mask2CurveEditorL;
     DiagonalCurveEditor* const LmaskshapeL;
 
-    sigc::connection autoconn, ciecamconn, fullimageConn, AutograyConn;
-    sigc::connection  surroundconn, sursourconn, satlogconn;
-    sigc::connection showmaskLMethodConn, enaLMaskConn, previewlogConn;
+    sigc::connection autoconn;
+    sigc::connection surroundconn, sursourconn;
+    sigc::connection showmaskLMethodConn, previewlogConn;
 public:
     LocallabLog();
     ~LocallabLog();
@@ -1738,8 +1701,6 @@ public:
     void surroundChanged();
     void sursourChanged();
     void setDefaultExpanderVisibility() override;
-    void satlogChanged();
-
     void disableListener() override;
     void enableListener() override;
     void read(const rtengine::procparams::ProcParams* pp, const ParamsEdited* pedited = nullptr) override;
@@ -1758,11 +1719,8 @@ private:
     void complexityModeChanged();
 
     void autocomputeToggled();
-    void fullimageChanged();
-    void AutograyChanged();
-    void ciecamChanged();
+    void checkBoxToggled(CheckBox* c, CheckValue newval) override;
     void showmaskLMethodChanged();
-    void enaLMaskChanged();
     void updateMaskBackground(const double normChromar, const double normLumar, const double normHuer, const double normHuerjz) override;
 
     void updateLogGUI();
@@ -1774,7 +1732,8 @@ private:
 class LocallabMask:
     public Gtk::Box,
     public LocallabTool,
-    public ThresholdAdjusterListener
+    public ThresholdAdjusterListener,
+    public CheckBoxListener
 {
 private:
     Adjuster* const sensimask;
@@ -1784,16 +1743,16 @@ private:
     Adjuster* const blendmaskab;
     Adjuster* const softradiusmask;
     MyComboBoxText* const showmask_Method;
-    Gtk::CheckButton* const enamask;
+    CheckBox* const enamask;
     CurveEditorGroup* const mask_CurveEditorG;
     FlatCurveEditor* const CCmask_shape;
     FlatCurveEditor* const LLmask_shape;
     FlatCurveEditor* const HHmask_shape;
     Gtk::Frame* const struFrame;
     Adjuster* const strumaskmask;
-    Gtk::CheckButton* const toolmask;
+    CheckBox* const toolmask;
     Gtk::Frame* const blurFrame;
-    Gtk::CheckButton* const fftmask;
+    CheckBox* const fftmask;
     Adjuster* const contmask;
     Adjuster* const blurmask;
     Gtk::Frame* const toolmaskFrame;
@@ -1815,7 +1774,7 @@ private:
     Adjuster* const feather_mask;
     Adjuster* const ang_mask;
 
-    sigc::connection showmask_MethodConn, previewmasConn, enamaskConn, toolmaskConn, fftmaskConn;
+    sigc::connection showmask_MethodConn, previewmasConn;
 
 public:
     LocallabMask();
@@ -1845,6 +1804,7 @@ public:
     void adjusterChanged(ThresholdAdjuster* a, int newBottomLeft, int newTopLeft, int newBottomRight, int newTopRight) override {}; // Not used
     void adjusterChanged2(ThresholdAdjuster* a, int newBottomL, int newTopL, int newBottomR, int newTopR) override;
     void curveChanged(CurveEditor* ce) override;
+    void checkBoxToggled(CheckBox* c, CheckValue newval) override;
 
 private:
     void complexityModeChanged();
@@ -1857,9 +1817,6 @@ private:
     void updateMaskBackground(const double normChromar, const double normLumar, const double normHuer, const double normHuerjz) override;
 
     void showmask_MethodChanged();
-    void enamaskChanged();
-    void toolmaskChanged();
-    void fftmaskChanged();
 
     void updateMaskGUI();
 };
@@ -1869,14 +1826,15 @@ private:
 class Locallabcie:
     public Gtk::Box,
     public ThresholdAdjusterListener,
-    public LocallabTool
+    public LocallabTool,
+    public CheckBoxListener
 {
 private:
     Adjuster* const sensicie;
     Gtk::ToggleButton* const previewcie;
     
     Adjuster* const reparcie;
-    Gtk::CheckButton* const jabcie;
+    CheckBox* const jabcie;
     MyComboBoxText*  const modecam;
     MyComboBoxText*  const modeQJ;
     MyComboBoxText*  const modecie;
@@ -1887,7 +1845,7 @@ private:
     Gtk::Frame* const cieFrame;
     MyExpander* const expcamscene;
     
-    Gtk::CheckButton* const Autograycie;
+    CheckBox* const Autograycie;
     Adjuster* const sourceGraycie;
     Adjuster* const sourceabscie;
     MyComboBoxText*  const sursourcie;
@@ -1900,7 +1858,7 @@ private:
 //    Gtk::Frame* const czcontFrame;
     Gtk::Frame* const czcolorFrame;
     Gtk::Frame* const PQFrame;
-    Gtk::CheckButton* const qtoj;
+    CheckBox* const qtoj;
     Adjuster* const lightlcie;
     Adjuster* const lightjzcie;
     Adjuster* const contjzcie;
@@ -1938,23 +1896,23 @@ private:
     Adjuster* const contsigqcie;
     Adjuster* const contthrescie;
     Gtk::Frame* const logjzFrame;
-    Gtk::CheckButton* const logjz;
+    CheckBox* const logjz;
     Adjuster* const blackEvjz;
     Adjuster* const whiteEvjz;
     Adjuster* const targetjz;
     Gtk::Frame* const bevwevFrame;
-    Gtk::CheckButton* const sigybjz12;
+    CheckBox* const sigybjz12;
     ToolParamBlock* const sigBox12;
     Gtk::Frame* const sigmoidFrame12;
-    Gtk::CheckButton* const sigq12;
+    CheckBox* const sigq12;
     Adjuster* const slopesmoq;
     Adjuster* const sigmoidldacie12;
     Adjuster* const sigmoidthcie12;
     Adjuster* const sigmoidblcie12;
     Gtk::Box* autocomprHBox;
     Gtk::ToggleButton* const comprcieauto;
-    Gtk::CheckButton* const normcie12;
-    Gtk::CheckButton* const normcie;
+    CheckBox* const normcie12;
+    CheckBox* const normcie;
     Gtk::Box* const modeHBoxbwev12;
     MyComboBoxText* const bwevMethod12;
     Gtk::Box* const modeHBoxbwev;
@@ -1962,7 +1920,7 @@ private:
 
      ToolParamBlock* const sigBox;
     Gtk::Frame* const sigmoidFrame;
-    Gtk::CheckButton* const sigq;
+    CheckBox* const sigq;
     Gtk::Frame* const sigmoidnormFrame;
     Adjuster* const sigmoidldacie;
     Adjuster* const sigmoidthcie;
@@ -1970,13 +1928,13 @@ private:
     Adjuster* const sigmoidblcie;
    
     Gtk::Frame* const logcieFrame;
-    Gtk::CheckButton* const logcie;
+    CheckBox* const logcie;
     ToolParamBlock* const comprBox;
     Adjuster* const comprcie;
     
     Adjuster* const strcielog;
-    Gtk::CheckButton* const satcie;
-    Gtk::CheckButton* const logcieq;
+    CheckBox* const satcie;
+    CheckBox* const logcieq;
     Adjuster* const comprcieth;
     MyExpander* const expprecam;    
     Adjuster* const gamjcie;
@@ -1986,14 +1944,14 @@ private:
     Gtk::Frame* const midtcieFrame;
     MyComboBoxText* const midtciemet;
     Adjuster* const midtcie;
-    Gtk::CheckButton* const smoothcie;
-    Gtk::CheckButton* const smoothcielnk;
-    Gtk::CheckButton* const smoothcieinv;
-    Gtk::CheckButton* const smoothcietrc;
-    Gtk::CheckButton* const smoothcietrcrel;
-    Gtk::CheckButton* const smoothcieyb;
-    Gtk::CheckButton* const smoothcielum;
-    Gtk::CheckButton* const smoothciehigh;
+    CheckBox* const smoothcie;
+    CheckBox* const smoothcielnk;
+    CheckBox* const smoothcieinv;
+    CheckBox* const smoothcietrc;
+    CheckBox* const smoothcietrcrel;
+    CheckBox* const smoothcieyb;
+    CheckBox* const smoothcielum;
+    CheckBox* const smoothciehigh;
     Adjuster* const smoothcieth;
     ToolParamBlock* const ciesmoothBox;
     Gtk::Box* smoothBox;
@@ -2037,24 +1995,24 @@ private:
     Gtk::Box* catBox;
     MyComboBoxText* const catMethod;
     Gtk::Box* gamutcieBox;
-    Gtk::CheckButton* const gamutcie;
+    CheckBox* const gamutcie;
     Adjuster* const shiftxl;
     Adjuster* const shiftyl;
     Gtk::Box* bwcieBox;
-    Gtk::CheckButton* const bwcie;
+    CheckBox* const bwcie;
 
     Gtk::Frame* const sigmoidjzFrame12;
     Gtk::Frame* const sigmoidjzFrame;
     Gtk::Frame* const sigmoid2Frame12;
     Gtk::Frame* const sigmoid2Frame;
-    Gtk::CheckButton* const sigcie;
-    Gtk::CheckButton* const sigjz12;
+    CheckBox* const sigcie;
+    CheckBox* const sigjz12;
     Adjuster* const sigmoidldajzcie12;
     Adjuster* const sigmoidthjzcie12;
     Adjuster* const sigmoidbljzcie12;
 
-    Gtk::CheckButton* const sigjz;
-    Gtk::CheckButton* const forcebw;
+    CheckBox* const sigjz;
+    CheckBox* const forcebw;
     Adjuster* const sigmoidldajzcie;
     Adjuster* const sigmoidthjzcie;
     Adjuster* const sigmoidbljzcie;
@@ -2089,7 +2047,7 @@ private:
     FlatCurveEditor* const LHshapejz;
     Adjuster* const softjzcie;
     Adjuster* const thrhjzcie;
-    Gtk::CheckButton* const chjzcie;
+    CheckBox* const chjzcie;
     Adjuster* const strsoftjzcie;
    
     MyExpander* const expLcie;
@@ -2117,17 +2075,17 @@ private:
 
     MyExpander* const expmaskcie;
     MyComboBoxText* const showmaskcieMethod;
-    Gtk::CheckButton* const enacieMask;
-    Gtk::CheckButton* const enacieMaskall;
+    CheckBox* const enacieMask;
+    CheckBox* const enacieMaskall;
     CurveEditorGroup* const maskcieCurveEditorG;
     FlatCurveEditor* const CCmaskcieshape;
     FlatCurveEditor* const LLmaskcieshape;
     FlatCurveEditor* const HHmaskcieshape;
     Gtk::Frame* const struFramecie;
     Adjuster* const strumaskcie;
-    Gtk::CheckButton* const toolcie;
+    CheckBox* const toolcie;
     Gtk::Frame* const blurFramecie;
-    Gtk::CheckButton* const fftcieMask;
+    CheckBox* const fftcieMask;
     Adjuster* const contcie;
     Adjuster* const blurcie;
 
@@ -2151,7 +2109,7 @@ private:
     ThresholdAdjuster* const csThresholdcie;
     int nextcomprciecount = 0;
    
-    sigc::connection AutograycieConn, primMethodconn, illMethodconn, smoothciemetconn, catMethodconn, sigybjz12Conn, qtojConn, showmaskcieMethodConn, enacieMaskConn, enacieMaskallConn, jabcieConn, sursourcieconn, surroundcieconn, modecieconn, modecamconn, modeQJconn, comprcieautoconn, normcie12conn, normcieconn, logcieconn, satcieconn, logcieqconn, smoothcieconn, smoothcielnkconn, smoothcieinvconn, smoothciehighconn, smoothcietrcconn, smoothcietrcrelconn, smoothcieybconn,smoothcielumconn, logjzconn, sigjz12conn, forcebwconn, sigjzconn, sigq12conn, sigqconn, chjzcieconn, toneMethodcieConn, toneMethodcieConn2, toolcieConn, bwevMethod12Conn, midtciemetConn, bwevMethodConn,fftcieMaskConn, gamutcieconn, bwcieconn, expprecamconn, sigcieconn;
+    sigc::connection primMethodconn, illMethodconn, smoothciemetconn, catMethodconn, showmaskcieMethodConn, sursourcieconn, surroundcieconn, modecieconn, modecamconn, modeQJconn, comprcieautoconn, toneMethodcieConn, toneMethodcieConn2, bwevMethod12Conn, midtciemetConn, bwevMethodConn, expprecamconn;
     sigc::connection previewcieConn, sigmoidqjcieconn;
 public:
     Locallabcie();
@@ -2182,6 +2140,7 @@ public:
     void adjusterChanged(ThresholdAdjuster* a, int newBottom, int newTop) override {}; // Not used
     void adjusterChanged(ThresholdAdjuster* a, int newBottomLeft, int newTopLeft, int newBottomRight, int newTopRight) override {}; // Not used
     void adjusterChanged2(ThresholdAdjuster* a, int newBottomL, int newTopL, int newBottomR, int newTopR) override;
+    void checkBoxToggled(CheckBox* c, CheckValue newval) override;
     void sursourcieChanged();
     void surroundcieChanged();
     void modecieChanged();
@@ -2207,48 +2166,17 @@ private:
     void convertParamToSimple() override;
     void updateGUIToMode(const modeType new_type) override;
     void complexityModeChanged();
-    void AutograycieChanged();
-    void sigybjz12Changed();
-    void qtojChanged();
-    void jabcieChanged();
     void comprcieautoChanged();
-    void normcie12Changed();
-    void normcieChanged();
-    void gamutcieChanged();
-    void bwcieChanged();
     void illMethodChanged();
     void smoothciemetChanged();
     void primMethodChanged();
     void catMethodChanged();
-    void logcieChanged();
-    void satcieChanged();
-    void logcieqChanged();
-    void smoothcieChanged();
-    void smoothcielnkChanged();
-    void smoothcieinvChanged();
-    void smoothciehighChanged();
-    void smoothcietrcChanged();
-    void smoothcietrcrelChanged();
-    void smoothcieybChanged();
-    void smoothcielumChanged();
-    void sigcieChanged();
-    void logjzChanged();
-    void sigjz12Changed();
-    void sigjzChanged();
-    void forcebwChanged();
-    void sigq12Changed();
-    void sigqChanged();
-    void chjzcieChanged();
     void updatecieGUI();
     void updatecielnkGUI();
     void updateMaskBackground(const double normChromar, const double normLumar, const double normHuer, const double normHuerjz) override;
     void showmaskcieMethodChanged();
-    void enacieMaskChanged();
-    void enacieMaskallChanged();
     void enacieMaskallChanged2();
     void guijzczhz();
-    void toolcieChanged();
-    void fftcieMaskChanged();
     void expprecamChanged();
 
     float nextrx;

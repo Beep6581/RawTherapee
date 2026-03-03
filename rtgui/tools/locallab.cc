@@ -1666,6 +1666,7 @@ void Locallab::addTool(Gtk::Box* where, LocallabTool* tool)
     locallabTools.push_back(tool);
     tool->setLocallabToolListener(this);
     tool->setSpotNameSource(&spotName);
+    tool->setParentPanel(this);
 }
 
 void Locallab::setParamEditable(bool cond)
