@@ -1929,7 +1929,6 @@ void ColorAppearance::adjusterChanged(Adjuster* a, double newval)
 
 void ColorAppearance::adjusterAutoToggled(Adjuster* a, bool newval)
 {
-    enableTool();
     if (multiImage) {
         if (degree->getAutoInconsistent()) {
             degree->setAutoInconsistent (false);

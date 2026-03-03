@@ -82,12 +82,10 @@ protected:
     Adjuster* tempBias;
     CheckBox* observer10;
     Gtk::Frame* itcwbFrame;
-    Gtk::CheckButton* itcwb_alg;
+    CheckBox* itcwb_alg;
     MyComboBoxText* itcwb_prim;
     Adjuster* itcwb_green;
     std::unique_ptr<Adjuster> compatVersionAdjuster;
-    
-    bool lastitcwb_alg;
 
     Gtk::Button* spotbutton;
     int opt;
@@ -95,7 +93,7 @@ protected:
     double nextGreen;
     WBProvider *wbp;  // pointer to a ToolPanelCoordinator object, or its subclass BatchToolPanelCoordinator
     SpotWBListener* wblistener;
-    sigc::connection methconn, itcwb_algconn, itcwb_primconn;
+    sigc::connection methconn, itcwb_primconn;
     int custom_temp;
     double custom_green;
     double custom_equal;
@@ -142,7 +140,6 @@ public:
     void setWB (int temp, double green);
     void resetWB ();
     void WBChanged           (int met, double temp, double green, double rw, double gw, double bw, float temp0, float delta, int bia, int dread, float studgood, float minchrom, int kmin, float histmin, float histmax, AWBMode aWBMode) override;
-    void itcwb_alg_toggled ();
     void itcwb_prim_changed ();
     void setAdjusterBehavior (bool tempadd, bool greenadd, bool equaladd, bool tempbiasadd);
     void trimValues          (rtengine::procparams::ProcParams* pp) override;

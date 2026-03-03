@@ -257,6 +257,7 @@ void Adjuster::autoToggled ()
 {
 
     if (adjusterListener && !blocked) {
+        tryEnableTool();
         adjusterListener->adjusterAutoToggled(this, automatic->get_active());
     }
 }

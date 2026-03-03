@@ -22,12 +22,15 @@
 #include "multilangmgr.h"
 #include "checkbox.h"
 #include "guiutils.h"
+#include "toolpanel.h"
 
 CheckBox::CheckBox (Glib::ustring label, bool const& multiImageVal)
     : Gtk::CheckButton (label)
+    , ToolAutoEnable()
     , listener (nullptr)
     , lastActive (false)
     , multiImage (multiImageVal)
+    , enableOnlyWhenActivated (false)
 {
     conn = signal_toggled().connect( sigc::mem_fun(*this, &CheckBox::buttonToggled) );
 }
@@ -51,6 +54,8 @@ void CheckBox::buttonToggled ()
         newValue = get_active () ? CheckValue::on : CheckValue::off;
     }
     setLastActive();
+
+    tryEnableTool();
 
     if (listener) {
         listener->checkBoxToggled(this, newValue);
@@ -152,4 +157,19 @@ bool CheckBox::getEdited ()
 void CheckBox::setCheckBoxListener (CheckBoxListener* cblistener)
 {
     listener = cblistener;
+}
+
+FoldableToolPanel* CheckBox::getToolPanel() const
+{
+    return dynamic_cast<FoldableToolPanel*>(listener);
+}
+
+bool CheckBox::canEnableTool() const
+{
+    return !enableOnlyWhenActivated || get_active();
+}
+
+void CheckBox::setEnableOnlyWhenActivated (bool onlyWhenActivated)
+{
+    enableOnlyWhenActivated = onlyWhenActivated;
 }

@@ -24,6 +24,7 @@
 #include "guiutils.h"
 
 class CheckBox;
+class FoldableToolPanel;
 
 enum class CheckValue {
     on,
@@ -40,17 +41,22 @@ public:
 
 
 /**
- * @brief subclass of Gtk::CheckButton for convenience
+ * @brief subclass of Gtk::CheckButton for convenience with batch editing and auto-enable support
  */
-class CheckBox : public Gtk::CheckButton  // Should ideally be private, but in this case build fail on the instantiation
+class CheckBox : public Gtk::CheckButton, public ToolAutoEnable
 {
 
     CheckBoxListener *listener;
     bool lastActive;
     bool const& multiImage;
+    bool enableOnlyWhenActivated;
     sigc::connection conn;
     void buttonToggled ();
     void setLastActive();
+
+protected:
+    FoldableToolPanel* getToolPanel() const override;
+    bool canEnableTool() const override;
 
 public:
     //using CheckButton::CheckButton;
@@ -64,6 +70,7 @@ public:
     Glib::ustring getValueAsStr ();
 
     void setCheckBoxListener (CheckBoxListener* cblistener);
+    void setEnableOnlyWhenActivated (bool onlyWhenActivated);
 
     /* Used if the Gtk::CheckButton parent class can be private
      *

@@ -26,6 +26,7 @@
 #include "toolpanel.h"
 #include "curvelistener.h"
 #include "widgets/basic/adjuster.h"
+#include "widgets/basic/checkbox.h"
 #include "widgets/basic/popupbutton.h"
 #include "widgets/basic/thresholdadjuster.h"
 
@@ -51,7 +52,8 @@ class ICMPanel final :
     public CurveListener,
     public FoldableToolPanel,
     public rtengine::AutoprimListener,
-    public AdjusterListener
+    public AdjusterListener,
+    public CheckBoxListener
 {
 
 protected:
@@ -69,7 +71,7 @@ protected:
     Adjuster* wapsat;
     
     Adjuster* wmidtcie;
-    Gtk::CheckButton* wsmoothcie;
+    CheckBox* wsmoothcie;
     Adjuster* wsmoothciesli;
     Adjuster* sigmatrc;
     Adjuster* offstrc;
@@ -99,8 +101,6 @@ protected:
     Adjuster* refi;
     Adjuster* shiftx;
     Adjuster* shifty;
-    sigc::connection wsmoothcieconn;
-    bool lastwsmoothcie;
     Gtk::Label* labmga;
     Gtk::Box* gabox;
     //Gtk::Label* blr;
@@ -111,21 +111,7 @@ protected:
     sigc::connection wavExpconn;
 
     sigc::connection neutralconn;
-    bool lastToneCurve;
-    sigc::connection tcurveconn;
-    bool lastApplyLookTable;
-    sigc::connection ltableconn;
-    bool lastApplyBaselineExposureOffset;
-    sigc::connection beoconn;
-    bool lastApplyHueSatMap;
-    sigc::connection hsmconn;
-    bool lastobpc;
-    sigc::connection obpcconn;
-    bool lastfbw;
-    sigc::connection fbwconn;
     bool isBatchMode;
-    bool lastgamut;
-    sigc::connection gamutconn;
 
 private:
     rtengine::ProcEvent EvICMprimariMethod;
@@ -198,14 +184,14 @@ private:
     Gtk::Box* wgamutBox;
     Gtk::Label* wgamutlab;
 
-    Gtk::CheckButton* fbw;
-    Gtk::CheckButton* gamut;
+    CheckBox* fbw;
+    CheckBox* gamut;
 
     Gtk::Box* wcatBox;
     Gtk::Label* wcatlab;
 
 
-    Gtk::CheckButton* obpc;
+    CheckBox* obpc;
     Gtk::RadioButton* inone;
 
     Gtk::RadioButton* iembedded;
@@ -215,10 +201,10 @@ private:
     Gtk::Label* dcpIllLabel;
     MyComboBoxText* dcpIll;
     sigc::connection dcpillconn;
-    Gtk::CheckButton* ckbToneCurve;
-    Gtk::CheckButton* ckbApplyLookTable;
-    Gtk::CheckButton* ckbApplyBaselineExposureOffset;
-    Gtk::CheckButton* ckbApplyHueSatMap;
+    CheckBox* ckbToneCurve;
+    CheckBox* ckbApplyLookTable;
+    CheckBox* ckbApplyBaselineExposureOffset;
+    CheckBox* ckbApplyHueSatMap;
     MyComboBoxText* wProfNames;
     sigc::connection wprofnamesconn;
     MyComboBoxText* wTRC;
@@ -289,6 +275,7 @@ public:
     void neutral_pressed();
     void curveChanged(CurveEditor* ce) override;
     void wavlocChanged(double nlevel, double nmax, bool curveloc) override;
+    void checkBoxToggled(CheckBox* c, CheckValue newval) override;
 
     void wpChanged();
     void wtrcinChanged();
@@ -301,18 +288,10 @@ public:
     void opChanged();
     void oiChanged(int n);
     void aiChanged(int n);
-    void oBPCChanged();
-    void fbwChanged();
-    void wsmoothcieChanged();
     void resetpolar();
-    void gamutChanged();
     void ipChanged();
     void ipSelectionChanged();
     void dcpIlluminantChanged();
-    void toneCurveChanged();
-    void applyLookTableChanged();
-    void applyBaselineExposureOffsetChanged();
-    void applyHueSatMapChanged();
     void upgateGUI_lin_pol_graph();
     void setRawMeta(bool raw, const rtengine::FramesData* pMeta);
     void saveReferencePressed();

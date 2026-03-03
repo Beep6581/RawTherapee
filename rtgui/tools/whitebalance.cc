@@ -372,9 +372,9 @@ WhiteBalance::WhiteBalance () : FoldableToolPanel(this, TOOL_NAME, M("TP_WBALANC
     itcwb_green = Gtk::manage (new Adjuster (M("TP_WBALANCE_ITCWGREEN"), -0.35, 0.35, 0.005, 0.));
     itcwb_green ->set_tooltip_markup (M("TP_WBALANCE_ITCWGREEN_TOOLTIP"));
 
-    itcwb_alg = Gtk::manage (new Gtk::CheckButton (M("TP_WBALANCE_ITCWB_ALG")));
+    itcwb_alg = Gtk::manage (new CheckBox (M("TP_WBALANCE_ITCWB_ALG"), multiImage));
     itcwb_alg ->set_tooltip_markup (M("TP_WBALANCE_ITCWALG_TOOLTIP"));
-    itcwb_alg ->set_active (false);
+    itcwb_alg ->setValue (false);
 
 
 
@@ -434,7 +434,7 @@ WhiteBalance::WhiteBalance () : FoldableToolPanel(this, TOOL_NAME, M("TP_WBALANC
 
     spotbutton->signal_pressed().connect( sigc::mem_fun(*this, &WhiteBalance::spotPressed) );
     methconn = method->signal_changed().connect( sigc::mem_fun(*this, &WhiteBalance::optChanged) );
-    itcwb_algconn = itcwb_alg->signal_toggled().connect( sigc::mem_fun(*this, &WhiteBalance::itcwb_alg_toggled) );
+    itcwb_alg->setCheckBoxListener(this);
 
     resetButton->signal_pressed().connect( sigc::mem_fun(*this, &WhiteBalance::resetWB) );
     spotsize->signal_changed().connect( sigc::mem_fun(*this, &WhiteBalance::spotSizeChanged) );
@@ -464,30 +464,6 @@ void WhiteBalance::itcwb_prim_changed ()
     }
 }
 
-
-void WhiteBalance::itcwb_alg_toggled ()
-{
-    enableTool();
-    if (batchMode) {
-        if (itcwb_alg->get_inconsistent()) {
-            itcwb_alg->set_inconsistent (false);
-            itcwb_algconn.block (true);
-            itcwb_alg->set_active (false);
-            itcwb_algconn.block (false);
-        } else if (lastitcwb_alg) {
-            itcwb_alg->set_inconsistent (true);
-        }
-
-        lastitcwb_alg = itcwb_alg->get_active ();
-    }
-    if (listener && getEnabled()) {
-        if (itcwb_alg->get_active ()) {
-            listener->panelChanged (EvWBitcwbalg, M("GENERAL_ENABLED"));
-        } else {
-            listener->panelChanged (EvWBitcwbalg, M("GENERAL_DISABLED"));
-        }
-    }
-}
 
 void WhiteBalance::adjusterChanged(Adjuster* a, double newval)
 {
@@ -558,9 +534,6 @@ void WhiteBalance::adjusterChanged(Adjuster* a, double newval)
 
 void WhiteBalance::checkBoxToggled(CheckBox* c, CheckValue newval)
 {
-    if (!getEnabled()) {
-      enableTool();
-    }
     if (!listener) {
       return;
     }
@@ -586,6 +559,12 @@ void WhiteBalance::checkBoxToggled(CheckBox* c, CheckValue newval)
             : c->getValue() == CheckValue::off
                 ? M("GENERAL_DISABLED")
                 : M("GENERAL_UNCHANGED"));
+    } else if (c == itcwb_alg) {
+        if (listener && getEnabled()) {
+            listener->panelChanged(
+                EvWBitcwbalg,
+                c->getLastActive() ? M("GENERAL_ENABLED") : M("GENERAL_DISABLED"));
+        }
     }
 }
 
@@ -770,10 +749,7 @@ void WhiteBalance::read (const ProcParams* pp, const ParamsEdited* pedited)
     tempBias->setValue (pp->wb.tempBias);
     tempBias->set_sensitive(true);
 
-    itcwb_algconn.block (true);
-    itcwb_alg->set_active (pp->wb.itcwb_alg);
-    itcwb_algconn.block (false);
-    lastitcwb_alg = pp->wb.itcwb_alg;
+    itcwb_alg->setValue (pp->wb.itcwb_alg);
     itcwb_green->setValue (pp->wb.itcwb_green);
 
     compatVersionAdjuster->setValue(pp->wb.compat_version);
@@ -813,7 +789,7 @@ void WhiteBalance::read (const ProcParams* pp, const ParamsEdited* pedited)
         equal->setEditedState (pedited->wb.equal ? Edited : UnEdited);
         tempBias->setEditedState (pedited->wb.tempBias ? Edited : UnEdited);
         observer10->setEdited(pedited->wb.observer);
-        itcwb_alg->set_inconsistent (!pedited->wb.itcwb_alg);
+        itcwb_alg->setEdited(pedited->wb.itcwb_alg);
         itcwb_green->setEditedState (pedited->wb.itcwb_green ? Edited : UnEdited);
         compatVersionAdjuster->setEditedState(pedited->wb.compat_version ? Edited : UnEdited);
     }
@@ -966,7 +942,7 @@ void WhiteBalance::write (ProcParams* pp, ParamsEdited* pedited)
         pedited->wb.equal = equal->getEditedState ();
         pedited->wb.tempBias = tempBias->getEditedState ();
         pedited->wb.observer = observer10->getEdited();
-        pedited->wb.itcwb_alg = !itcwb_alg->get_inconsistent();
+        pedited->wb.itcwb_alg = itcwb_alg->getEdited();
         pedited->wb.method = row[methodColumns.colLabel] != M("GENERAL_UNCHANGED");
         pedited->wb.enabled = !get_inconsistent();
         pedited->wb.itcwb_prim  = itcwb_prim->get_active_text() != M("GENERAL_UNCHANGED");
@@ -1004,7 +980,7 @@ void WhiteBalance::write (ProcParams* pp, ParamsEdited* pedited)
         : observer10->getValue() == CheckValue::off
             ? rtengine::StandardObserver::TWO_DEGREES
             : pp->wb.observer;
-    pp->wb.itcwb_alg = itcwb_alg->get_active ();
+    pp->wb.itcwb_alg = itcwb_alg->getLastActive();
     pp->wb.tempBias = tempBias->getValue ();
     pp->wb.itcwb_green = itcwb_green->getValue ();
     pp->wb.compat_version = compatVersionAdjuster->getIntValue();

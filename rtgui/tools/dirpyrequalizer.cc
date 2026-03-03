@@ -433,7 +433,6 @@ void DirPyrEqualizer::lumaneutralPressed ()
 
 void DirPyrEqualizer::lumacontrastPlusPressed ()
 {
-    enableTool(); // Enable Tool if Disabled
     for (int i = 0; i < 6; i++) {
         double inc = 0.05 * (6 - i);
         multiplier[i]->setValue(multiplier[i]->getValue() + inc);
@@ -444,7 +443,6 @@ void DirPyrEqualizer::lumacontrastPlusPressed ()
 
 void DirPyrEqualizer::lumacontrastMinusPressed ()
 {
-    enableTool(); // Enable Tool if Disabled
     for (int i = 0; i < 6; i++) {
         double inc = -0.05 * (6 - i);
         multiplier[i]->setValue(multiplier[i]->getValue() + inc);

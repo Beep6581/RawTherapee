@@ -63,6 +63,7 @@ ToneEqualizer::ToneEqualizer(): FoldableToolPanel(this, TOOL_NAME, M("TP_TONE_EQ
     show_colormap = Gtk::manage(new CheckBox(M("TP_TONE_EQUALIZER_SHOW_COLOR_MAP"), multiImage));
     pack_start(*show_colormap);
     show_colormap->setCheckBoxListener(this);
+    show_colormap->setEnableOnlyWhenActivated(true);
 
     show_all_children ();
 }
@@ -217,9 +218,6 @@ void ToneEqualizer::checkBoxToggled(CheckBox *c, CheckValue newval)
 
 void ToneEqualizer::colormapToggled()
 {
-    if (show_colormap->getLastActive()) {
-      enableTool();
-    }
     for (size_t i = 0; i < bands.size(); ++i) {
         bands[i]->showIcons(show_colormap->getLastActive());
     }

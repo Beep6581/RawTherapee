@@ -100,7 +100,7 @@ ICMPanel::ICMPanel() : FoldableToolPanel(this, TOOL_NAME, M("TP_ICM_LABEL")), iu
     EvICMwgamgain = m->newEvent(LUMINANCECURVE, "HISTORY_MSG_ICM_WGAMUTGAIN");
     auto& options = App::get().mut_options();
 
-    isBatchMode = lastToneCurve = lastApplyLookTable = lastApplyBaselineExposureOffset = lastApplyHueSatMap = false;
+    isBatchMode = false;
 
     ipDialog = Gtk::manage(new MyFileChooserButton(M("TP_ICM_INPUTDLGLABEL"), Gtk::FILE_CHOOSER_ACTION_OPEN));
     ipDialog->set_tooltip_text(M("TP_ICM_INPUTCUSTOM_TOOLTIP"));
@@ -177,24 +177,28 @@ ICMPanel::ICMPanel() : FoldableToolPanel(this, TOOL_NAME, M("TP_ICM_LABEL")), iu
     dcpIllGrid->attach_next_to(*dcpIllLabel, Gtk::POS_LEFT, 1, 1);
     dcpIllGrid->attach_next_to(*dcpIll, *dcpIllLabel, Gtk::POS_RIGHT, 1, 1);
 
-    ckbToneCurve = Gtk::manage(new Gtk::CheckButton(M("TP_ICM_TONECURVE")));
+    ckbToneCurve = Gtk::manage(new CheckBox(M("TP_ICM_TONECURVE"), multiImage));
     ckbToneCurve->set_sensitive(false);
     ckbToneCurve->set_tooltip_text(M("TP_ICM_TONECURVE_TOOLTIP"));
+    ckbToneCurve->setCheckBoxListener(this);
     setExpandAlignProperties(ckbToneCurve, false, false, Gtk::ALIGN_START, Gtk::ALIGN_CENTER);
 
-    ckbApplyLookTable = Gtk::manage(new Gtk::CheckButton(M("TP_ICM_APPLYLOOKTABLE")));
+    ckbApplyLookTable = Gtk::manage(new CheckBox(M("TP_ICM_APPLYLOOKTABLE"), multiImage));
     ckbApplyLookTable->set_sensitive(false);
     ckbApplyLookTable->set_tooltip_text(M("TP_ICM_APPLYLOOKTABLE_TOOLTIP"));
+    ckbApplyLookTable->setCheckBoxListener(this);
     setExpandAlignProperties(ckbApplyLookTable, false, false, Gtk::ALIGN_START, Gtk::ALIGN_CENTER);
 
-    ckbApplyHueSatMap = Gtk::manage(new Gtk::CheckButton(M("TP_ICM_APPLYHUESATMAP")));
+    ckbApplyHueSatMap = Gtk::manage(new CheckBox(M("TP_ICM_APPLYHUESATMAP"), multiImage));
     ckbApplyHueSatMap->set_sensitive(false);
     ckbApplyHueSatMap->set_tooltip_text(M("TP_ICM_APPLYHUESATMAP_TOOLTIP"));
+    ckbApplyHueSatMap->setCheckBoxListener(this);
     setExpandAlignProperties(ckbApplyHueSatMap, false, false, Gtk::ALIGN_START, Gtk::ALIGN_CENTER);
 
-    ckbApplyBaselineExposureOffset = Gtk::manage(new Gtk::CheckButton(M("TP_ICM_APPLYBASELINEEXPOSUREOFFSET")));
+    ckbApplyBaselineExposureOffset = Gtk::manage(new CheckBox(M("TP_ICM_APPLYBASELINEEXPOSUREOFFSET"), multiImage));
     ckbApplyBaselineExposureOffset->set_sensitive(false);
     ckbApplyBaselineExposureOffset->set_tooltip_text(M("TP_ICM_APPLYBASELINEEXPOSUREOFFSET_TOOLTIP"));
+    ckbApplyBaselineExposureOffset->setCheckBoxListener(this);
     setExpandAlignProperties(ckbApplyBaselineExposureOffset, false, false, Gtk::ALIGN_START, Gtk::ALIGN_CENTER);
 
     dcpGrid->attach_next_to(*dcpIllGrid, Gtk::POS_BOTTOM, 1, 1);
@@ -280,7 +284,8 @@ ICMPanel::ICMPanel() : FoldableToolPanel(this, TOOL_NAME, M("TP_ICM_LABEL")), iu
     wSlope = Gtk::manage(new Adjuster(M("TP_ICM_WORKING_TRC_SLOPE"), 0., 300., 0.01, 12.92));//defautl sRGB
     wapsat = Gtk::manage(new Adjuster(M("TP_ICM_WORKING_TRC_SAT"), 0., 2., 0.1, 0.5));//saturation slider
     wmidtcie = Gtk::manage(new Adjuster(M("TP_LOCALLAB_MIDTCIEMAIN"), -100., 100., 1., 0.));
-    wsmoothcie = Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_SMOOTHCIE")));//highlights
+    wsmoothcie = Gtk::manage(new CheckBox(M("TP_LOCALLAB_SMOOTHCIE"), multiImage));//highlights
+    wsmoothcie->setCheckBoxListener(this);
     wsmoothciesli = Gtk::manage(new Adjuster(M("TP_LOCALLAB_SMOOTHCIETH"), 0., 1.5, 0.01, 0.));
     trcProfVBox->pack_start(*wGamma, Gtk::PACK_SHRINK);
     wGamma->show();
@@ -350,11 +355,11 @@ ICMPanel::ICMPanel() : FoldableToolPanel(this, TOOL_NAME, M("TP_ICM_LABEL")), iu
     trcProfVBox->pack_start(*wsmoothciesli, Gtk::PACK_SHRINK);
     wsmoothciesli->show();
 
-    wsmoothcieconn = wsmoothcie->signal_toggled().connect(sigc::mem_fun(*this, &ICMPanel::wsmoothcieChanged));
-    wsmoothcie->set_active(false);
+    wsmoothcie->setValue(false);
 
-    fbw = Gtk::manage(new Gtk::CheckButton((M("TP_ICM_FBW"))));
-    fbw->set_active(true);
+    fbw = Gtk::manage(new CheckBox(M("TP_ICM_FBW"), multiImage));
+    fbw->setValue(true);
+    fbw->setCheckBoxListener(this);
     trcProfVBox->pack_start(*fbw, Gtk::PACK_SHRINK);
 
     wavExp = Gtk::manage(new MyExpander(true, M("TP_ICM_WAVFRAME")));//expander Contrast Enhancement
@@ -411,8 +416,9 @@ ICMPanel::ICMPanel() : FoldableToolPanel(this, TOOL_NAME, M("TP_ICM_LABEL")), iu
     wprimBox->pack_start(*wprim, Gtk::PACK_EXPAND_WIDGET);
 //    fbw = Gtk::manage(new Gtk::CheckButton((M("TP_ICM_FBW"))));
 //    fbw->set_active(true);
-    gamut = Gtk::manage(new Gtk::CheckButton((M("TP_ICM_GAMUT"))));
-    gamut->set_active(true);
+    gamut = Gtk::manage(new CheckBox(M("TP_ICM_GAMUT"), multiImage));
+    gamut->setValue(true);
+    gamut->setCheckBoxListener(this);
 
     trcPrimVBox->pack_start(*wprimBox, Gtk::PACK_EXPAND_WIDGET);
 //    trcPrimVBox->pack_start(*fbw, Gtk::PACK_EXPAND_WIDGET);
@@ -694,8 +700,9 @@ ICMPanel::ICMPanel() : FoldableToolPanel(this, TOOL_NAME, M("TP_ICM_LABEL")), iu
     oProfVBox->pack_start(*riHBox, Gtk::PACK_SHRINK);
 
     // Black Point Compensation
-    obpc = Gtk::manage(new Gtk::CheckButton((M("TP_ICM_BPC"))));
-    obpc->set_active(true);
+    obpc = Gtk::manage(new CheckBox(M("TP_ICM_BPC"), multiImage));
+    obpc->setValue(true);
+    obpc->setCheckBoxListener(this);
     oProfVBox->pack_start(*obpc, Gtk::PACK_SHRINK);
 
     oFrame->add(*oProfVBox);
@@ -743,14 +750,6 @@ ICMPanel::ICMPanel() : FoldableToolPanel(this, TOOL_NAME, M("TP_ICM_LABEL")), iu
     wprimconn = wprim->signal_changed().connect(sigc::mem_fun(*this, &ICMPanel::wprimChanged));
     wcatconn = wcat->signal_changed().connect(sigc::mem_fun(*this, &ICMPanel::wcatChanged));
     wgamutconn = wgamut->signal_changed().connect(sigc::mem_fun(*this, &ICMPanel::wgamutChanged));
-
-    fbwconn = fbw->signal_toggled().connect(sigc::mem_fun(*this, &ICMPanel::fbwChanged));
-    gamutconn = gamut->signal_toggled().connect(sigc::mem_fun(*this, &ICMPanel::gamutChanged));
-    obpcconn = obpc->signal_toggled().connect(sigc::mem_fun(*this, &ICMPanel::oBPCChanged));
-    tcurveconn = ckbToneCurve->signal_toggled().connect(sigc::mem_fun(*this, &ICMPanel::toneCurveChanged));
-    ltableconn = ckbApplyLookTable->signal_toggled().connect(sigc::mem_fun(*this, &ICMPanel::applyLookTableChanged));
-    beoconn = ckbApplyBaselineExposureOffset->signal_toggled().connect(sigc::mem_fun(*this, &ICMPanel::applyBaselineExposureOffsetChanged));
-    hsmconn = ckbApplyHueSatMap->signal_toggled().connect(sigc::mem_fun(*this, &ICMPanel::applyHueSatMapChanged));
 
     icamera->signal_toggled().connect(sigc::mem_fun(*this, &ICMPanel::ipChanged));
     icameraICC->signal_toggled().connect(sigc::mem_fun(*this, &ICMPanel::ipChanged));
@@ -1141,15 +1140,7 @@ void ICMPanel::read(const ProcParams* pp, const ParamsEdited* pedited)
 
     disableListener();
 
-    ConnectionBlocker obpcconn_(obpcconn);
-    ConnectionBlocker fbwconn_(fbwconn);
-    ConnectionBlocker gamutconn_(gamutconn);
-    ConnectionBlocker wsmoothcieconn_(wsmoothcieconn);
     ConnectionBlocker ipc_(ipc);
-    ConnectionBlocker tcurveconn_(tcurveconn);
-    ConnectionBlocker ltableconn_(ltableconn);
-    ConnectionBlocker beoconn_(beoconn);
-    ConnectionBlocker hsmconn_(hsmconn);
     ConnectionBlocker wprofnamesconn_(wprofnamesconn);
     ConnectionBlocker oprofnamesconn_(oprofnamesconn);
     ConnectionBlocker orendintentconn_(orendintentconn);
@@ -1211,8 +1202,7 @@ void ICMPanel::read(const ProcParams* pp, const ParamsEdited* pedited)
     willChanged();
     wprimChanged();
     wcatChanged();
-    gamutChanged();
-    wsmoothcieChanged();
+    wcatBox->set_sensitive(gamut->getLastActive());
 
     if (pp->icm.outputProfile == ColorManagementParams::NoICMString) {
         oProfNames->set_active_text(M("TP_ICM_NOICM"));
@@ -1228,20 +1218,16 @@ void ICMPanel::read(const ProcParams* pp, const ParamsEdited* pedited)
     aRendIntent->setSelected(pp->icm.aRendIntent);
     opacityShapeWLI->setCurve(pp->icm.opacityCurveWLI);
 
-    obpc->set_active(pp->icm.outputBPC);
-    fbw->set_active(pp->icm.fbw);
+    obpc->setValue(pp->icm.outputBPC);
+    fbw->setValue(pp->icm.fbw);
     trcExp->setEnabled(pp->icm.trcExp);
     wavExp->setEnabled(pp->icm.wavExp);
-    gamut->set_active(pp->icm.gamut);
-    wsmoothcie->set_active(pp->icm.wsmoothcie);
-    ckbToneCurve->set_active(pp->icm.toneCurve);
-    lastToneCurve = pp->icm.toneCurve;
-    ckbApplyLookTable->set_active(pp->icm.applyLookTable);
-    lastApplyLookTable = pp->icm.applyLookTable;
-    ckbApplyBaselineExposureOffset->set_active(pp->icm.applyBaselineExposureOffset);
-    lastApplyBaselineExposureOffset = pp->icm.applyBaselineExposureOffset;
-    ckbApplyHueSatMap->set_active(pp->icm.applyHueSatMap);
-    lastApplyHueSatMap = pp->icm.applyHueSatMap;
+    gamut->setValue(pp->icm.gamut);
+    wsmoothcie->setValue(pp->icm.wsmoothcie);
+    ckbToneCurve->setValue(pp->icm.toneCurve);
+    ckbApplyLookTable->setValue(pp->icm.applyLookTable);
+    ckbApplyBaselineExposureOffset->setValue(pp->icm.applyBaselineExposureOffset);
+    ckbApplyHueSatMap->setValue(pp->icm.applyHueSatMap);
 
   //  wGamma->setValue(pp->icm.workingTRCGamma);
   //  wSlope->setValue(pp->icm.workingTRCSlope);
@@ -1279,16 +1265,16 @@ void ICMPanel::read(const ProcParams* pp, const ParamsEdited* pedited)
 
     if (pedited) {
         iunchanged->set_active(!pedited->icm.inputProfile);
-        obpc->set_inconsistent(!pedited->icm.outputBPC);
-        fbw->set_inconsistent(!pedited->icm.fbw);
+        obpc->setEdited(pedited->icm.outputBPC);
+        fbw->setEdited(pedited->icm.fbw);
         trcExp->set_inconsistent(!pedited->icm.trcExp);
         wavExp->set_inconsistent(!pedited->icm.wavExp);
-        gamut->set_inconsistent(!pedited->icm.gamut);
-        wsmoothcie->set_inconsistent(!pedited->icm.wsmoothcie);
-        ckbToneCurve->set_inconsistent(!pedited->icm.toneCurve);
-        ckbApplyLookTable->set_inconsistent(!pedited->icm.applyLookTable);
-        ckbApplyBaselineExposureOffset->set_inconsistent(!pedited->icm.applyBaselineExposureOffset);
-        ckbApplyHueSatMap->set_inconsistent(!pedited->icm.applyHueSatMap);
+        gamut->setEdited(pedited->icm.gamut);
+        wsmoothcie->setEdited(pedited->icm.wsmoothcie);
+        ckbToneCurve->setEdited(pedited->icm.toneCurve);
+        ckbApplyLookTable->setEdited(pedited->icm.applyLookTable);
+        ckbApplyBaselineExposureOffset->setEdited(pedited->icm.applyBaselineExposureOffset);
+        ckbApplyHueSatMap->setEdited(pedited->icm.applyHueSatMap);
         opacityShapeWLI->setUnChanged(!pedited->icm.opacityCurveWLI);
 
         if (!pedited->icm.workingProfile) {
@@ -1745,16 +1731,16 @@ void ICMPanel::write(ProcParams* pp, ParamsEdited* pedited)
     pp->icm.wprim = ColorManagementParams::Primaries(wprim->get_active_row_number());
     pp->icm.wcat = ColorManagementParams::Cat(wcat->get_active_row_number());
 
-    pp->icm.toneCurve = ckbToneCurve->get_active();
-    pp->icm.applyLookTable = ckbApplyLookTable->get_active();
-    pp->icm.applyBaselineExposureOffset = ckbApplyBaselineExposureOffset->get_active();
-    pp->icm.applyHueSatMap = ckbApplyHueSatMap->get_active();
-    pp->icm.outputBPC = obpc->get_active();
-    pp->icm.fbw = fbw->get_active();
+    pp->icm.toneCurve = ckbToneCurve->getLastActive();
+    pp->icm.applyLookTable = ckbApplyLookTable->getLastActive();
+    pp->icm.applyBaselineExposureOffset = ckbApplyBaselineExposureOffset->getLastActive();
+    pp->icm.applyHueSatMap = ckbApplyHueSatMap->getLastActive();
+    pp->icm.outputBPC = obpc->getLastActive();
+    pp->icm.fbw = fbw->getLastActive();
     pp->icm.trcExp = trcExp->getEnabled();
     pp->icm.wavExp = wavExp->getEnabled();
-    pp->icm.gamut = gamut->get_active();
-    pp->icm.wsmoothcie = wsmoothcie->get_active();
+    pp->icm.gamut = gamut->getLastActive();
+    pp->icm.wsmoothcie = wsmoothcie->getLastActive();
  //   pp->icm.workingTRCGamma =  wGamma->getValue();
  //   pp->icm.workingTRCSlope =  wSlope->getValue();
     pp->icm.wGamma =  wGamma->getValue();
@@ -1795,17 +1781,17 @@ void ICMPanel::write(ProcParams* pp, ParamsEdited* pedited)
         pedited->icm.outputProfile = oProfNames->get_active_text() != M("GENERAL_UNCHANGED");
         pedited->icm.outputIntent = oRendIntent->getSelected() < 4;
         pedited->icm.aRendIntent = aRendIntent->getSelected() < 4;
-        pedited->icm.outputBPC = !obpc->get_inconsistent();
-        pedited->icm.fbw = !fbw->get_inconsistent();
+        pedited->icm.outputBPC = obpc->getEdited();
+        pedited->icm.fbw = fbw->getEdited();
         pedited->icm.trcExp = !trcExp->get_inconsistent();
         pedited->icm.wavExp = !wavExp->get_inconsistent();
-        pedited->icm.gamut = !gamut->get_inconsistent();
-        pedited->icm.wsmoothcie = !wsmoothcie->get_inconsistent();
+        pedited->icm.gamut = gamut->getEdited();
+        pedited->icm.wsmoothcie = wsmoothcie->getEdited();
         pedited->icm.dcpIlluminant = dcpIll->get_active_text() != M("GENERAL_UNCHANGED");
-        pedited->icm.toneCurve = !ckbToneCurve->get_inconsistent();
-        pedited->icm.applyLookTable = !ckbApplyLookTable->get_inconsistent();
-        pedited->icm.applyBaselineExposureOffset = !ckbApplyBaselineExposureOffset->get_inconsistent();
-        pedited->icm.applyHueSatMap = !ckbApplyHueSatMap->get_inconsistent();
+        pedited->icm.toneCurve = ckbToneCurve->getEdited();
+        pedited->icm.applyLookTable = ckbApplyLookTable->getEdited();
+        pedited->icm.applyBaselineExposureOffset = ckbApplyBaselineExposureOffset->getEdited();
+        pedited->icm.applyHueSatMap = ckbApplyHueSatMap->getEdited();
       //  pedited->icm.workingTRCGamma = wGamma->getEditedState();
        // pedited->icm.workingTRCSlope = wSlope->getEditedState();
         pedited->icm.wGamma = wGamma->getEditedState();
@@ -2716,110 +2702,6 @@ void ICMPanel::dcpIlluminantChanged()
     }
 }
 
-void ICMPanel::toneCurveChanged()
-{
-    if (multiImage) {
-        if (ckbToneCurve->get_inconsistent()) {
-            ckbToneCurve->set_inconsistent(false);
-            tcurveconn.block(true);
-            ckbToneCurve->set_active(false);
-            tcurveconn.block(false);
-        } else if (lastToneCurve) {
-            ckbToneCurve->set_inconsistent(true);
-        }
-
-        lastToneCurve = ckbToneCurve->get_active();
-    }
-
-    if (listener) {
-        if (ckbToneCurve->get_inconsistent()) {
-            listener->panelChanged(EvDCPToneCurve, M("GENERAL_UNCHANGED"));
-        } else if (ckbToneCurve->get_active()) {
-            listener->panelChanged(EvDCPToneCurve, M("GENERAL_ENABLED"));
-        } else {
-            listener->panelChanged(EvDCPToneCurve, M("GENERAL_DISABLED"));
-        }
-    }
-}
-
-void ICMPanel::applyLookTableChanged()
-{
-    if (multiImage) {
-        if (ckbApplyLookTable->get_inconsistent()) {
-            ckbApplyLookTable->set_inconsistent(false);
-            ltableconn.block(true);
-            ckbApplyLookTable->set_active(false);
-            ltableconn.block(false);
-        } else if (lastApplyLookTable) {
-            ckbApplyLookTable->set_inconsistent(true);
-        }
-
-        lastApplyLookTable = ckbApplyLookTable->get_active();
-    }
-
-    if (listener) {
-        if (ckbApplyLookTable->get_inconsistent()) {
-            listener->panelChanged(EvDCPApplyLookTable, M("GENERAL_UNCHANGED"));
-        } else if (ckbApplyLookTable->get_active()) {
-            listener->panelChanged(EvDCPApplyLookTable, M("GENERAL_ENABLED"));
-        } else {
-            listener->panelChanged(EvDCPApplyLookTable, M("GENERAL_DISABLED"));
-        }
-    }
-}
-
-void ICMPanel::applyBaselineExposureOffsetChanged()
-{
-    if (multiImage) {
-        if (ckbApplyBaselineExposureOffset->get_inconsistent()) {
-            ckbApplyBaselineExposureOffset->set_inconsistent(false);
-            beoconn.block(true);
-            ckbApplyBaselineExposureOffset->set_active(false);
-            beoconn.block(false);
-        } else if (lastApplyBaselineExposureOffset) {
-            ckbApplyBaselineExposureOffset->set_inconsistent(true);
-        }
-
-        lastApplyBaselineExposureOffset = ckbApplyBaselineExposureOffset->get_active();
-    }
-
-    if (listener) {
-        if (ckbApplyBaselineExposureOffset->get_inconsistent()) {
-            listener->panelChanged(EvDCPApplyBaselineExposureOffset, M("GENERAL_UNCHANGED"));
-        } else if (ckbApplyBaselineExposureOffset->get_active()) {
-            listener->panelChanged(EvDCPApplyBaselineExposureOffset, M("GENERAL_ENABLED"));
-        } else {
-            listener->panelChanged(EvDCPApplyBaselineExposureOffset, M("GENERAL_DISABLED"));
-        }
-    }
-}
-
-void ICMPanel::applyHueSatMapChanged()
-{
-    if (multiImage) {
-        if (ckbApplyHueSatMap->get_inconsistent()) {
-            ckbApplyHueSatMap->set_inconsistent(false);
-            hsmconn.block(true);
-            ckbApplyHueSatMap->set_active(false);
-            hsmconn.block(false);
-        } else if (lastApplyHueSatMap) {
-            ckbApplyHueSatMap->set_inconsistent(true);
-        }
-
-        lastApplyHueSatMap = ckbApplyHueSatMap->get_active();
-    }
-
-    if (listener) {
-        if (ckbApplyHueSatMap->get_inconsistent()) {
-            listener->panelChanged(EvDCPApplyHueSatMap, M("GENERAL_UNCHANGED"));
-        } else if (ckbApplyHueSatMap->get_active()) {
-            listener->panelChanged(EvDCPApplyHueSatMap, M("GENERAL_ENABLED"));
-        } else {
-            listener->panelChanged(EvDCPApplyHueSatMap, M("GENERAL_DISABLED"));
-        }
-    }
-}
-
 void ICMPanel::ipChanged()
 {
 
@@ -2929,32 +2811,6 @@ void ICMPanel::aiChanged(int n)
     }
 }
 
-void ICMPanel::oBPCChanged()
-{
-    if (multiImage) {
-        if (obpc->get_inconsistent()) {
-            obpc->set_inconsistent(false);
-            obpcconn.block(true);
-            obpc->set_active(false);
-            obpcconn.block(false);
-        } else if (lastobpc) {
-            obpc->set_inconsistent(true);
-        }
-
-        lastobpc = obpc->get_active();
-    }
-
-    if (listener) {
-        if (obpc->get_inconsistent()) {
-            listener->panelChanged(EvOBPCompens, M("GENERAL_UNCHANGED"));
-        } else if (obpc->get_active()) {
-            listener->panelChanged(EvOBPCompens, M("GENERAL_ENABLED"));
-        } else {
-            listener->panelChanged(EvOBPCompens, M("GENERAL_DISABLED"));
-        }
-    }
-}
-
 void ICMPanel::trcExpChanged()
 {
 
@@ -2980,93 +2836,31 @@ void ICMPanel::wavExpChanged()
 }
 
 
-void ICMPanel::fbwChanged()
+void ICMPanel::checkBoxToggled(CheckBox* c, CheckValue newval)
 {
-    enableTool();
-    if (trcExp->getUseEnabled() && !trcExp->getEnabled()) {
-        trcExp->setEnabled(true);
+    if (!listener) {
+        return;
     }
-    if (multiImage) {
-        if (fbw->get_inconsistent()) {
-            fbw->set_inconsistent(false);
-            fbwconn.block(true);
-            fbw->set_active(false);
-            fbwconn.block(false);
-        } else if (lastfbw) {
-            fbw->set_inconsistent(true);
+    if (c == fbw) {
+        if (trcExp->getUseEnabled() && !trcExp->getEnabled()) {
+            trcExp->setEnabled(true);
         }
-
-        lastfbw = fbw->get_active();
-    }
-
-    if (listener) {
-        if (fbw->get_inconsistent()) {
-            listener->panelChanged(EvICMfbw, M("GENERAL_UNCHANGED"));
-        } else if (fbw->get_active()) {
-            listener->panelChanged(EvICMfbw, M("GENERAL_ENABLED"));
-        } else {
-            listener->panelChanged(EvICMfbw, M("GENERAL_DISABLED"));
-        }
-    }
-}
-
-void ICMPanel::gamutChanged()
-{
-    if (multiImage) {
-        if (gamut->get_inconsistent()) {
-            gamut->set_inconsistent(false);
-            gamutconn.block(true);
-            gamut->set_active(false);
-            gamutconn.block(false);
-        } else if (lastgamut) {
-            gamut->set_inconsistent(true);
-        }
-
-        lastgamut = gamut->get_active();
-    }
-    
-    if (gamut->get_active()) {
-        wcatBox->set_sensitive(true);
-    } else {
-        wcatBox->set_sensitive(false);
-    }
-    
-    if (listener) {
-        if (gamut->get_inconsistent()) {
-            listener->panelChanged(EvICMgamut, M("GENERAL_UNCHANGED"));
-        } else if (gamut->get_active()) {
-            listener->panelChanged(EvICMgamut, M("GENERAL_ENABLED"));
-        } else {
-            listener->panelChanged(EvICMgamut, M("GENERAL_DISABLED"));
-        }
-    }
-}
-
-
-void ICMPanel::wsmoothcieChanged()
-{
-    if (multiImage) {
-        if (wsmoothcie->get_inconsistent()) {
-            wsmoothcie->set_inconsistent(false);
-            wsmoothcieconn.block(true);
-            wsmoothcie->set_active(false);
-            wsmoothcieconn.block(false);
-        } else if (lastwsmoothcie) {
-            wsmoothcie->set_inconsistent(true);
-        }
-
-        lastwsmoothcie = wsmoothcie->get_active();
-    }
-    
-    
-    if (listener) {
-        if (wsmoothcie->get_inconsistent()) {
-            listener->panelChanged(EvICMwsmoothcie, M("GENERAL_UNCHANGED"));
-        } else if (wsmoothcie->get_active()) {
-            listener->panelChanged(EvICMwsmoothcie, M("GENERAL_ENABLED"));
-        } else {
-            listener->panelChanged(EvICMwsmoothcie, M("GENERAL_DISABLED"));
-        }
+        listener->panelChanged(EvICMfbw, c->getValueAsStr());
+    } else if (c == gamut) {
+        wcatBox->set_sensitive(c->getLastActive());
+        listener->panelChanged(EvICMgamut, c->getValueAsStr());
+    } else if (c == obpc) {
+        listener->panelChanged(EvOBPCompens, c->getValueAsStr());
+    } else if (c == ckbToneCurve) {
+        listener->panelChanged(EvDCPToneCurve, c->getValueAsStr());
+    } else if (c == ckbApplyLookTable) {
+        listener->panelChanged(EvDCPApplyLookTable, c->getValueAsStr());
+    } else if (c == ckbApplyBaselineExposureOffset) {
+        listener->panelChanged(EvDCPApplyBaselineExposureOffset, c->getValueAsStr());
+    } else if (c == ckbApplyHueSatMap) {
+        listener->panelChanged(EvDCPApplyHueSatMap, c->getValueAsStr());
+    } else if (c == wsmoothcie) {
+        listener->panelChanged(EvICMwsmoothcie, c->getValueAsStr());
     }
 }
 

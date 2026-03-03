@@ -10,6 +10,7 @@
 #include "guiutils.h"
 #include "toolpanel.h"
 #include "widgets/basic/adjuster.h"
+#include "widgets/basic/checkbox.h"
 #include "widgets/basic/thresholdadjuster.h"
 
 #include "rtengine/procparams.h"
@@ -27,7 +28,8 @@ class ColorToning final :
     public CurveListener,
     public ColorProvider,
     public ThresholdAdjusterListener,
-    public AdjusterListener
+    public AdjusterListener,
+    public CheckBoxListener
 {
 public:
     static const Glib::ustring TOOL_NAME;
@@ -54,12 +56,11 @@ public:
 
     void enabledChanged        () override;
     void curveChanged          (CurveEditor* ce) override;
-    void autosatChanged        ();
+    void checkBoxToggled       (CheckBox* c, CheckValue newval) override;
     void autoOpenCurve         () override;
     void methodChanged         ();
     void twocolorChanged       (bool changedbymethod);
     void twoColorChangedByGui  ();
-    void lumamodeChanged       ();
 
     void colorForValue         (double valX, double valY, enum ColorCaller::ElemType elemType, int callerId, ColorCaller* caller) override;
 
@@ -108,7 +109,7 @@ private:
     Adjuster* greenhigh;
     Adjuster* bluehigh;
     Adjuster* balance;
-    Gtk::CheckButton* autosat;
+    CheckBox* autosat;
     ThresholdAdjuster* shadowsColSat;
     ThresholdAdjuster* hlColSat;
     Adjuster* satProtectionThreshold;
@@ -125,12 +126,8 @@ private:
     Glib::ustring nextbalcolor;
     Glib::ustring balcolor;
     sigc::connection neutralconn, twocconn; //, neutralcurvesconn;
-    bool lastautosat;
-    sigc::connection autosatConn;
 
-    Gtk::CheckButton* lumamode;
-    bool lastLumamode;
-    sigc::connection lumamodeConn;
+    CheckBox* lumamode;
 
     rtengine::ProcEvent EvColorToningLabGridValue;
     LabGrid *labgrid;

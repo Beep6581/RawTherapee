@@ -223,9 +223,10 @@ ColorToning::ColorToning () : FoldableToolPanel(this, TOOL_NAME, M("TP_COLORTONI
     p1VBox = Gtk::manage ( new Gtk::Box(Gtk::ORIENTATION_VERTICAL));
     p1VBox->set_spacing(2);
 
-    autosat = Gtk::manage (new Gtk::CheckButton (M("TP_COLORTONING_AUTOSAT")));
-    autosat->set_active (true);
-    autosatConn  = autosat->signal_toggled().connect( sigc::mem_fun(*this, &ColorToning::autosatChanged) );
+    autosat = Gtk::manage (new CheckBox (M("TP_COLORTONING_AUTOSAT"), multiImage));
+    autosat->setValue (true);
+    autosat->setCheckBoxListener(this);
+    autosat->setEnableOnlyWhenActivated(true);
     //satFrame->set_label_widget(*autosat);
 
     p1VBox->pack_start (*autosat, Gtk::PACK_SHRINK, 2);
@@ -330,11 +331,11 @@ ColorToning::ColorToning () : FoldableToolPanel(this, TOOL_NAME, M("TP_COLORTONI
     pack_start (*neutrHBox);
 
     //--------------------- Keep luminance checkbox -------------------
-    lumamode = Gtk::manage (new Gtk::CheckButton (M("TP_COLORTONING_LUMAMODE")));
+    lumamode = Gtk::manage (new CheckBox (M("TP_COLORTONING_LUMAMODE"), multiImage));
     lumamode->set_tooltip_markup (M("TP_COLORTONING_LUMAMODE_TOOLTIP"));
-    lumamode->set_active (false);
+    lumamode->setValue (false);
     lumamode->show ();
-    lumamodeConn = lumamode->signal_toggled().connect( sigc::mem_fun(*this, &ColorToning::lumamodeChanged) );
+    lumamode->setCheckBoxListener(this);
 
     pack_start (*lumamode);
 
@@ -618,10 +619,10 @@ void ColorToning::read (const ProcParams* pp, const ParamsEdited* pedited)
         set_inconsistent (multiImage && !pedited->colorToning.enabled);
         colorShape->setUnChanged (!pedited->colorToning.colorCurve);
         opacityShape->setUnChanged (!pedited->colorToning.opacityCurve);
-        autosat->set_inconsistent (!pedited->colorToning.autosat);
+        autosat->setEdited(pedited->colorToning.autosat);
         clshape->setUnChanged  (!pedited->colorToning.clcurve);
         cl2shape->setUnChanged  (!pedited->colorToning.cl2curve);
-        lumamode->set_inconsistent (!pedited->colorToning.lumamode);
+        lumamode->setEdited(pedited->colorToning.lumamode);
 
         labgrid->setEdited(pedited->colorToning.labgridALow || pedited->colorToning.labgridBLow || pedited->colorToning.labgridAHigh || pedited->colorToning.labgridBHigh);
 
@@ -642,21 +643,14 @@ void ColorToning::read (const ProcParams* pp, const ParamsEdited* pedited)
 
     setEnabled (pp->colorToning.enabled);
 
-    autosatConn.block (true);
-    autosat->set_active (pp->colorToning.autosat);
-    autosatConn.block (false);
-    lastautosat = pp->colorToning.autosat;
+    autosat->setValue(pp->colorToning.autosat);
 
     satProtectionThreshold->setValue (pp->colorToning.satProtectionThreshold);
     saturatedOpacity->setValue (pp->colorToning.saturatedOpacity);
     hlColSat->setValue<int> (pp->colorToning.hlColSat);
     shadowsColSat->setValue<int> (pp->colorToning.shadowsColSat);
     strength->setValue (pp->colorToning.strength);
-    lumamodeConn.block (true);
-    lumamode->set_active (pp->colorToning.lumamode);
-    lumamodeConn.block (false);
-
-    lastLumamode = pp->colorToning.lumamode;
+    lumamode->setValue(pp->colorToning.lumamode);
 
     labgrid->setParams(pp->colorToning.labgridALow / ColorToningParams::LABGRID_CORR_MAX, pp->colorToning.labgridBLow / ColorToningParams::LABGRID_CORR_MAX, pp->colorToning.labgridAHigh / ColorToningParams::LABGRID_CORR_MAX, pp->colorToning.labgridBHigh / ColorToningParams::LABGRID_CORR_MAX, 0, 0, 0, 0, 0, 0, false);
 
@@ -719,11 +713,11 @@ void ColorToning::write (ProcParams* pp, ParamsEdited* pedited)
     pp->colorToning.opacityCurve = opacityShape->getCurve ();
     pp->colorToning.clcurve      = clshape->getCurve ();
     pp->colorToning.cl2curve     = cl2shape->getCurve ();
-    pp->colorToning.lumamode     = lumamode->get_active();
+    pp->colorToning.lumamode     = lumamode->getLastActive();
 
     pp->colorToning.hlColSat               = hlColSat->getValue<int> ();
     pp->colorToning.shadowsColSat          = shadowsColSat->getValue<int> ();
-    pp->colorToning.autosat                = autosat->get_active();
+    pp->colorToning.autosat                = autosat->getLastActive();
     pp->colorToning.satProtectionThreshold = satProtectionThreshold->getIntValue();
     pp->colorToning.saturatedOpacity       = saturatedOpacity->getIntValue();
     pp->colorToning.strength               = strength->getIntValue();
@@ -760,12 +754,12 @@ void ColorToning::write (ProcParams* pp, ParamsEdited* pedited)
         pedited->colorToning.twocolor   = twocolor->get_active_text() != M("GENERAL_UNCHANGED");
 
         pedited->colorToning.enabled       = !get_inconsistent();
-        pedited->colorToning.autosat       = !autosat->get_inconsistent();
+        pedited->colorToning.autosat       = autosat->getEdited();
         pedited->colorToning.colorCurve    = !colorShape->isUnChanged ();
         pedited->colorToning.opacityCurve  = !opacityShape->isUnChanged ();
         pedited->colorToning.clcurve       = !clshape->isUnChanged ();
         pedited->colorToning.cl2curve      = !cl2shape->isUnChanged ();
-        pedited->colorToning.lumamode      = !lumamode->get_inconsistent();
+        pedited->colorToning.lumamode      = lumamode->getEdited();
 
         pedited->colorToning.hlColSat      = hlColSat->getEditedState ();
         pedited->colorToning.shadowsColSat = shadowsColSat->getEditedState ();
@@ -800,32 +794,6 @@ void ColorToning::write (ProcParams* pp, ParamsEdited* pedited)
         pp->colorToning.twocolor = "Separ";
     } else if (twocolor->get_active_row_number() == 3) {
         pp->colorToning.twocolor = "Two";
-    }
-}
-
-void ColorToning::lumamodeChanged ()
-{
-    enableTool();
-
-    if (batchMode) {
-        if (lumamode->get_inconsistent()) {
-            lumamode->set_inconsistent (false);
-            lumamodeConn.block (true);
-            lumamode->set_active (false);
-            lumamodeConn.block (false);
-        } else if (lastLumamode) {
-            lumamode->set_inconsistent (true);
-        }
-
-        lastLumamode = lumamode->get_active ();
-    }
-
-    if (listener && getEnabled()) {
-        if (lumamode->get_active ()) {
-            listener->panelChanged (EvColorToningLumamode, M("GENERAL_ENABLED"));
-        } else {
-            listener->panelChanged (EvColorToningLumamode, M("GENERAL_DISABLED"));
-        }
     }
 }
 
@@ -1032,7 +1000,7 @@ void ColorToning::methodChanged ()
             balance->hide();
 
 //          satLimiterSep->show();
-            if(autosat->get_active()) {
+            if(autosat->getLastActive()) {
                 saturatedOpacity->set_sensitive(false);
                 satProtectionThreshold->set_sensitive(false);
                 satProtectionThreshold->show();
@@ -1072,7 +1040,7 @@ void ColorToning::methodChanged ()
             autosat->show();
             p1Frame->show();
 
-            if(autosat->get_active()) {
+            if(autosat->getLastActive()) {
                 saturatedOpacity->set_sensitive(false);
                 satProtectionThreshold->set_sensitive(false);
                 satProtectionThreshold->show();
@@ -1106,7 +1074,7 @@ void ColorToning::methodChanged ()
 
             autosat->show();
 
-            if(autosat->get_active()) {
+            if(autosat->getLastActive()) {
                 saturatedOpacity->set_sensitive(false);
                 satProtectionThreshold->set_sensitive(false);
                 satProtectionThreshold->show();
@@ -1300,40 +1268,32 @@ void ColorToning::enabledChanged ()
     }
 }
 
-void ColorToning::autosatChanged ()
+void ColorToning::checkBoxToggled(CheckBox* c, CheckValue newval)
 {
-
-    if (batchMode) {
-        if (autosat->get_inconsistent()) {
-            autosat->set_inconsistent (false);
-            autosatConn.block (true);
-            autosat->set_active (false);
-            autosatConn.block (false);
-        } else if (lastautosat) {
-            autosat->set_inconsistent (true);
-        }
-
-        lastautosat = autosat->get_active ();
+    if (!listener) {
+        return;
     }
 
-    if (listener) {
-        if (autosat->get_active()) {
+    if (c == lumamode) {
+        if (getEnabled()) {
+            listener->panelChanged(
+                EvColorToningLumamode,
+                c->getLastActive() ? M("GENERAL_ENABLED") : M("GENERAL_DISABLED"));
+        }
+    } else if (c == autosat) {
+        if (c->getLastActive()) {
             if (getEnabled()) {
-                listener->panelChanged (EvColorToningautosat, M("GENERAL_ENABLED"));
+                listener->panelChanged(EvColorToningautosat, M("GENERAL_ENABLED"));
             }
-
-            enableTool();
             saturatedOpacity->set_sensitive(false);
             satProtectionThreshold->set_sensitive(false);
         } else {
             if (getEnabled()) {
-                listener->panelChanged (EvColorToningautosat, M("GENERAL_DISABLED"));
+                listener->panelChanged(EvColorToningautosat, M("GENERAL_DISABLED"));
             }
-
             saturatedOpacity->set_sensitive(true);
             satProtectionThreshold->set_sensitive(true);
         }
-
     }
 }
 
