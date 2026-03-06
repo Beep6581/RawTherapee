@@ -52,7 +52,15 @@ macro(rt_setup_dependencies)
     pkg_check_modules(EXIV2 REQUIRED IMPORTED_TARGET exiv2>=0.24)
     pkg_check_modules(EXPAT REQUIRED IMPORTED_TARGET expat>=2.1)
     pkg_check_modules(IPTCDATA REQUIRED IMPORTED_TARGET libiptcdata)
-    pkg_check_modules(RSVG REQUIRED IMPORTED_TARGET librsvg-2.0>=2.52)
+    if("${SVG_BACKEND}" STREQUAL "librsvg")
+        pkg_check_modules(RSVG REQUIRED IMPORTED_TARGET librsvg-2.0>=2.52)
+    elseif("${SVG_BACKEND}" STREQUAL "lunasvg")
+        if(WITH_SYSTEM_LUNASVG)
+            pkg_check_modules(LUNASVG REQUIRED IMPORTED_TARGET lunasvg>=3.3.0)
+        endif()
+    else()
+        message(FATAL_ERROR "Unknown value for SVG_BACKEND")
+    endif()
 
     pkg_check_modules(LCMS REQUIRED IMPORTED_TARGET lcms2>=2.6)
     # By default, little-cms2 uses the 'register' keyword which is deprecated
@@ -102,6 +110,8 @@ macro(rt_setup_dependencies)
 endmacro()
 
 macro(rt_fetch_content)
+    set(DEPS)
+
     # fmt::fmt
     set(FMT_INSTALL OFF) # Static library doesn't need separate install
     set(FMT_SYSTEM_HEADERS ON) # Exclude headers from linters
@@ -112,12 +122,29 @@ macro(rt_fetch_content)
         GIT_TAG e424e3f2e607da02742f73db84873b8084fc714c # 12.0.0
         GIT_SHALLOW ON
     )
+    list(APPEND DEPS fmt)
+
+    if("${SVG_BACKEND}" STREQUAL "lunasvg")
+        if(NOT WITH_SYSTEM_LUNASVG)
+            set(LUNASVG_INSTALL OFF)
+            set(PLUTOVG_INSTALL OFF)
+            FetchContent_Declare(
+                lunasvg
+                # Use a forked version that has an option to disable the
+                # separate installation of the library
+                GIT_REPOSITORY https://github.com/digitalcarp/lunasvg
+                GIT_TAG c0021e1cd0bf39d182090b68b9ff8bd2ee92b372
+                # GIT_REPOSITORY https://github.com/sammycage/lunasvg.git
+                # GIT_TAG 83c58df8103dc7dca423dfd824992af94d49bed6 # v3.5.0
+                GIT_SHALLOW ON
+            )
+            list(APPEND DEPS lunasvg)
+        endif()
+    endif()
 
     # Add all FetchContent-declared libraries here.
     # Don't use FetchContent_Declare after this.
-    FetchContent_MakeAvailable(
-        fmt
-    )
+    FetchContent_MakeAvailable(${DEPS})
 endmacro()
 
 function(rt_add_fftw3f_omp_support)

@@ -44,9 +44,9 @@ FileThumbnailButtonSet::FileThumbnailButtonSet (FileBrowserEntry* myEntry)
 {
 
     if (!iconsLoaded) {
-        unRankIcon  = std::shared_ptr<RTSurface>(new RTSurface("star-hollow-narrow", Gtk::ICON_SIZE_BUTTON));
-        rankIcon    = std::shared_ptr<RTSurface>(new RTSurface("star-gold-narrow", Gtk::ICON_SIZE_BUTTON));
-        gRankIcon   = std::shared_ptr<RTSurface>(new RTSurface("star-narrow", Gtk::ICON_SIZE_BUTTON));
+        unRankIcon  = std::shared_ptr<RTSurface>(new RTSurface("star-hollow-small", Gtk::ICON_SIZE_BUTTON));
+        rankIcon    = std::shared_ptr<RTSurface>(new RTSurface("star-gold-small", Gtk::ICON_SIZE_BUTTON));
+        gRankIcon   = std::shared_ptr<RTSurface>(new RTSurface("star-small", Gtk::ICON_SIZE_BUTTON));
         trashIcon   = std::shared_ptr<RTSurface>(new RTSurface("trash-small", Gtk::ICON_SIZE_BUTTON));
         unTrashIcon = std::shared_ptr<RTSurface>(new RTSurface("trash-remove-small", Gtk::ICON_SIZE_BUTTON));
         processIcon = std::shared_ptr<RTSurface>(new RTSurface("gears-small", Gtk::ICON_SIZE_BUTTON));

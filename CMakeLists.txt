@@ -225,6 +225,23 @@ cmake_dependent_option(
 set(WITH_JXL "AUTO" CACHE STRING "Build with JPEG XL support")
 set_property(CACHE WITH_JXL PROPERTY STRINGS AUTO ON OFF)
 
+set(SVG_BACKEND_OPTIONS librsvg lunasvg)
+set(SVG_BACKEND librsvg CACHE STRING "SVG rendering library")
+set_property(CACHE SVG_BACKEND PROPERTY STRINGS "${SVG_BACKEND_OPTIONS}")
+if(NOT SVG_BACKEND IN_LIST SVG_BACKEND_OPTIONS)
+    message(FATAL_ERROR "SVG_BACKEND must be one of ${SVG_BACKEND_OPTIONS}")
+endif()
+if("${SVG_BACKEND}" STREQUAL "lunasvg")
+    message(WARNING
+        " Using LunaSVG as an SVG rendering backend is experimental.\n"
+        " LunaSVG is not tested during standard development and release cycles.\n"
+        " Support for issues/bugs due to LunaSVG is limited.\n"
+    )
+endif()
+
+# cmake_dependent_option doesn't work with CACHE variables
+option(WITH_SYSTEM_LUNASVG "Build using system LunaSVG library" OFF)
+
 # Set installation directories:
 if(WIN32 OR APPLE)
     if(BUILD_BUNDLE)
