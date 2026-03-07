@@ -18369,7 +18369,7 @@ void ImProcFunctions::Lab_Local(
                         {static_cast<float>(wprofi[1][0]), static_cast<float>(wprofi[1][1]), static_cast<float>(wprofi[1][2])},
                         {static_cast<float>(wprofi[2][0]), static_cast<float>(wprofi[2][1]), static_cast<float>(wprofi[2][2])}
                         };
-                        const float WP_LINEAR_FREE = 0.1f;//a small value to give the algorithm some leeway
+                        const float WP_LINEAR_FREE = 0.0f;//a small value to give the algorithm some leeway - I think 0.1f causes the system to drift, so I set to 0.f.
                         const bool isrgb = params->locallab.spots.at(sp).ghsMatmet == "JZ" || params->locallab.spots.at(sp).ghsMatmet == "agx" || params->locallab.spots.at(sp).ghsMatmet == "cat16";
                         //isrgb - when the user chooses the RGB mode which introduces a cognitive bias.
                         
@@ -19020,6 +19020,8 @@ void ImProcFunctions::Lab_Local(
                         if(ghs3sig > lp.maxdataghs / 65535.f) {//if the distribution is not Gaussian, then we take for 3.5 sigmas the real maximum.
                             ghs3sig = lp.maxdataghs / 65535.f;
                         }
+                        /*
+                       // I am disabling this procedure and at the same time the constant WP_LINEAR_FREE is set to 0.f
 // This additional procedure allows 'rgb2lab' to function. In rare cases, when the Stretch function (D) is very small, if the black point is zero or negative, and the user activates "Auto Black Point & White Point", the GHS algorithm generates values ​​close to infinity.
 // This causes a crash during the RGB to Lab conversion.
 // GHS is complex and works in several 'passes'. This solution resolves the problems without disrupting any of the calculations and has no influence on the (visible) image or in 16-bit layer/differences.
@@ -19033,6 +19035,7 @@ void ImProcFunctions::Lab_Local(
                                 tmpImage->b(i, j) = clipGhsRgbOutput(tmpImage->b(i, j));//1.15 : more than enough to be within the limits of a second RT-spot.
                             }
                         //conversion rgb to Lab
+                        */
                         rgb2lab(*tmpImage, *bufexpfin, params->icm.workingProfile);
 
                         tmpImage.reset();
