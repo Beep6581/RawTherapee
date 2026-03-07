@@ -3157,7 +3157,7 @@ void CLASS foveon_huff (ushort *huff)
 void CLASS foveon_dp_load_raw()
 {
   unsigned c, roff[4], row, col, diff;
-  ushort huff[512], vpred[2][2], hpred[2];
+  ushort huff[1024], vpred[2][2], hpred[2];
 
   fseek (ifp, 8, SEEK_CUR);
   foveon_huff (huff);
@@ -3181,12 +3181,16 @@ void CLASS foveon_dp_load_raw()
 void CLASS foveon_load_camf()
 {
   unsigned type, wide, high, i, j, row, col, diff;
-  ushort huff[258], vpred[2][2] = {{512,512},{512,512}}, hpred[2];
+  ushort huff[1024], vpred[2][2] = {{512,512},{512,512}}, hpred[2];
 
   fseek (ifp, meta_offset, SEEK_SET);
   type = get4();  get4();  get4();
   wide = get4();
   high = get4();
+  #ifdef LIBRAW_LIBRARY_BUILD
+    if(wide>32767 || high > 32767 || wide*high > 20000000)
+      throw LIBRAW_EXCEPTION_IO_CORRUPT;
+  #endif
   if (type == 2) {
     fread (meta_data, 1, meta_length, ifp);
     for (i=0; i < meta_length; i++) {
