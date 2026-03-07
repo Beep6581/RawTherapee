@@ -110,12 +110,6 @@ constexpr float clipR(float x)
 }
 
 
-
-constexpr float clipGhsRgbOutput(float x)
-{
-    return rtengine::LIM(x, 0.00001f, 75500.f);//used for GHS if user set BP to 0 or negative - about 1.15 maxi 75500 = 65535 * 1.152. If necessary, the value can be changed, for example 80000, but it must be suitable.
-}
-
 constexpr float clipC(float x)
 {
     return rtengine::LIM(x, -100000.f, 100000.f);//increase LIM from 42000 to 1000000 to avoid clip and also imaginaries colors
@@ -18369,7 +18363,6 @@ void ImProcFunctions::Lab_Local(
                         {static_cast<float>(wprofi[1][0]), static_cast<float>(wprofi[1][1]), static_cast<float>(wprofi[1][2])},
                         {static_cast<float>(wprofi[2][0]), static_cast<float>(wprofi[2][1]), static_cast<float>(wprofi[2][2])}
                         };
-                        const float WP_LINEAR_FREE = 0.0f;//a small value to give the algorithm some leeway - I think 0.1f causes the system to drift, so I set to 0.f.
                         const bool isrgb = params->locallab.spots.at(sp).ghsMatmet == "JZ" || params->locallab.spots.at(sp).ghsMatmet == "agx" || params->locallab.spots.at(sp).ghsMatmet == "cat16";
                         //isrgb - when the user chooses the RGB mode which introduces a cognitive bias.
                         
@@ -18523,7 +18516,7 @@ void ImProcFunctions::Lab_Local(
                                  }
                                 const float noise = pow_F(2.f, -16.f);
                                 minb = rtengine::max(minb, noise);//set a very minimal value in all cases to avoid 0
-                                ghsbwslider[1]= maxw + WP_LINEAR_FREE;//Slightly increase the White Point to allow for some flexibility
+                                ghsbwslider[1]= maxw;
                                 ghsbwslider[0]= minb; 
                                 ghscolor[0] = maxwred; 
                                 ghscolor[1] = maxwgreen;
@@ -19020,22 +19013,8 @@ void ImProcFunctions::Lab_Local(
                         if(ghs3sig > lp.maxdataghs / 65535.f) {//if the distribution is not Gaussian, then we take for 3.5 sigmas the real maximum.
                             ghs3sig = lp.maxdataghs / 65535.f;
                         }
-                        /*
-                       // I am disabling this procedure and at the same time the constant WP_LINEAR_FREE is set to 0.f
-// This additional procedure allows 'rgb2lab' to function. In rare cases, when the Stretch function (D) is very small, if the black point is zero or negative, and the user activates "Auto Black Point & White Point", the GHS algorithm generates values ​​close to infinity.
-// This causes a crash during the RGB to Lab conversion.
-// GHS is complex and works in several 'passes'. This solution resolves the problems without disrupting any of the calculations and has no influence on the (visible) image or in 16-bit layer/differences.
-#ifdef _OPENMP
-            #pragma omp parallel for if (multiThread)
-#endif                       
-                        for (int i = 0; i < bfh; ++i)
-                            for (int j = 0; j < bfw; ++j) {//avoid crash when user set BP to 0 or < 0 , and enable auto BP WP.
-                                tmpImage->r(i, j) = clipGhsRgbOutput(tmpImage->r(i, j));//clipRplus keep data about 1.15 maximum (65535) about 75500. No difference with or without on TIFF layers differences.
-                                tmpImage->g(i, j) = clipGhsRgbOutput(tmpImage->g(i, j));//There are no differences in the calculation of BP (linear) or WP (linear), nor of the Symmetry Point (SP). There is no influence on the subsequent GHS Spot.
-                                tmpImage->b(i, j) = clipGhsRgbOutput(tmpImage->b(i, j));//1.15 : more than enough to be within the limits of a second RT-spot.
-                            }
+
                         //conversion rgb to Lab
-                        */
                         rgb2lab(*tmpImage, *bufexpfin, params->icm.workingProfile);
 
                         tmpImage.reset();
