@@ -18365,7 +18365,7 @@ void ImProcFunctions::Lab_Local(
                         };
                         const bool isrgb = params->locallab.spots.at(sp).ghsMatmet == "JZ" || params->locallab.spots.at(sp).ghsMatmet == "agx" || params->locallab.spots.at(sp).ghsMatmet == "cat16";
                         //isrgb - when the user chooses the RGB mode which introduces a cognitive bias.
-                        
+
                         if(params->locallab.spots.at(sp).ghsMatmet != "none") {
                             if(params->locallab.spots.at(sp).ghsMatmet == "agx") {// for Rec2020 with chromatic adaptation D50 from Sobotka AgX-Resolve (origin uncertain).
                                 //It's very unusual to apply this transformation in RGB space rather than XYZ space, but why not, especially since we're only affecting the differences
@@ -18390,7 +18390,7 @@ void ImProcFunctions::Lab_Local(
                                     { 0.061414342, 0.196120268, 0.5430087122 }
                                 }};
                             }
-          
+
                             Matrix lms_T = {};
                             Color::transpose(lms_mat, lms_T);//transpose Matrix
                             //invert matrix
@@ -18635,8 +18635,8 @@ void ImProcFunctions::Lab_Local(
                                         symref = (float)kk / 65535.f;
                                     }
                                 }
-          
-          
+
+
                                 ghsbpwp[0] = bpnb;
                                 ghsbpwp[1] = wpnb;
                                 ghsbpwpvalue[0] = minbp;
@@ -18683,7 +18683,7 @@ void ImProcFunctions::Lab_Local(
                                     g = ll + s * gl;
                                     b = ll + s * bl;
                                 };
-          
+
                             //local contrast with guidedfilter incorporated in RGB luminance met = 0
                             array2D<float> Yc(bfw, bfh);
                                 {
