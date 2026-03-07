@@ -1841,6 +1841,10 @@ void CLASS leaf_hdr_load_raw()
   unsigned tile=0, r, c, row, col;
 
   if (!filters) {
+    #ifdef LIBRAW_LIBRARY_BUILD
+        if(!image)
+          throw LIBRAW_EXCEPTION_IO_CORRUPT;
+    #endif
     pixel = (ushort *) calloc (raw_width, sizeof *pixel);
     merror (pixel, "leaf_hdr_load_raw()");
   }
@@ -2135,6 +2139,10 @@ void CLASS quicktake_100_load_raw()
     654,665,676,687,698,710,721,732,743,754,766,777,788,799,810,822,833,844,
     855,866,878,889,900,911,922,933,945,956,967,978,989,1001,1012,1023 };
   int rb, row, col, sharp, val=0;
+  #ifdef LIBRAW_LIBRARY_BUILD
+    if(width>640 || height > 480)
+      throw LIBRAW_EXCEPTION_IO_CORRUPT;
+  #endif
 
   getbits(-1);
   memset (pixel, 0x80, sizeof pixel);
@@ -8528,6 +8536,24 @@ void CLASS identify()
     raw_height = height + (top_margin = i / (width * tiff_bps/8) - height);
     mask[0][3] = 1;
     filters = 0x61616161;
+    #ifdef LIBRAW_LIBRARY_BUILD
+        // data length should be in range w*h..w*h*2
+        if(width*height < (LIBRAW_MAX_ALLOC_MB*1024*512L) && width*height>1
+          && i >= width * height && i <= width*height*2)
+          {
+    #endif
+      switch (tiff_bps = i*8 / (width * height)) {
+      case  8: load_raw = &CLASS eight_bit_load_raw;  break;
+      case 10: load_raw = &CLASS nokia_load_raw;
+      }
+      raw_height = height + (top_margin = i / (width * tiff_bps/8) - height);
+      mask[0][3] = 1;
+      filters = 0x61616161;
+    #ifdef LIBRAW_LIBRARY_BUILD
+          }
+        else
+          is_raw = 0;
+    #endif
   } else if (!memcmp (head,"ARRI",4)) {
     order = 0x4949;
     fseek (ifp, 20, SEEK_SET);
