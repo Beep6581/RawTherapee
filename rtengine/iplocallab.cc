@@ -18326,6 +18326,7 @@ void ImProcFunctions::Lab_Local(
                         bool ghsautoSP = params->locallab.spots.at(sp).SPAutoRadius;
 
                         const ght_compute_params c = GHT_setup(B, D, LP, SP, HP, strtype);//setup system with entries
+                        const float epsilg = 0.00001f;
 
                         std::unique_ptr<Imagefloat> tmpImage(new Imagefloat(bfw, bfh));
                         lab2rgb(*bufexpfin, *tmpImage, params->icm.workingProfile);
@@ -18448,9 +18449,9 @@ void ImProcFunctions::Lab_Local(
                                         float gout = 0.f;
                                         float bout = 0.f;
                                         Color::agx_trans(rgb_in, lms_T, rout, gout, bout);
-                                        tmpImage->r(i, j) = rtengine::max(0.00001f, rout);//avoid negative values. Normally this should never happen because the coefficients of the selected matrix are all positive... unless the matrix changes
-                                        tmpImage->g(i, j) = rtengine::max(0.00001f, gout);//these potentially negative values, related to calculations and not to the gamut, are not accepted by the rgblab or labrgb, workingtrc functions, etc,
-                                        tmpImage->b(i, j) = rtengine::max(0.00001f, bout);//but after numerous checks, this has no impact on the results...except to prevent a crash.
+                                        tmpImage->r(i, j) = rtengine::max(epsilg, rout);//avoid negative values. Normally this should never happen because the coefficients of the selected matrix are all positive... unless the matrix changes
+                                        tmpImage->g(i, j) = rtengine::max(epsilg, gout);//these potentially negative values, related to calculations and not to the gamut, are not accepted by the rgblab or labrgb, workingtrc functions, etc,
+                                        tmpImage->b(i, j) = rtengine::max(epsilg, bout);//but after numerous checks, this has no impact on the results...except to prevent a crash.
                                     }
                             } else {//cat16xyz and JZxyz
 #ifdef _OPENMP
@@ -18473,9 +18474,9 @@ void ImProcFunctions::Lab_Local(
                                         float gout = 0.f;
                                         float bout = 0.f;
                                         Color::xyz2rgb(Xout, Yout, Zout, rout, gout, bout, wip);//convert to RGB using inverse working profile.
-                                        tmpImage->r(i, j) = rtengine::max(0.00001f, rout);//avoid negative values. Normally this should never happen because the coefficients of the selected matrix are all positive... unless the matrix changes
-                                        tmpImage->g(i, j) = rtengine::max(0.00001f, gout);//these potentially negative values, related to calculations and not to the gamut, are not accepted by the rgblab or labrgb, workingtrc functions, etc,
-                                        tmpImage->b(i, j) = rtengine::max(0.00001f, bout);//but after numerous checks, this has no impact on the results...except to prevent a crash.
+                                        tmpImage->r(i, j) = rtengine::max(epsilg, rout);//avoid negative values. Normally this should never happen because the coefficients of the selected matrix are all positive... unless the matrix changes
+                                        tmpImage->g(i, j) = rtengine::max(epsilg, gout);//these potentially negative values, related to calculations and not to the gamut, are not accepted by the rgblab or labrgb, workingtrc functions, etc,
+                                        tmpImage->b(i, j) = rtengine::max(epsilg, bout);//but after numerous checks, this has no impact on the results...except to prevent a crash.
                                     }
                             }
     
@@ -18596,13 +18597,13 @@ void ImProcFunctions::Lab_Local(
                                         wpnb++;
                                     }
                                     if( strtype == GHTStrType::NORMAL ) { //strtype == GHTStrType::NORMAL only strtype == GHTStrType::NORMAL if crash
-                                        tmpImage->r(i, j) = rtengine::max(0.00001f, Ro * range);//0.00001f to avoid crash
-                                        tmpImage->g(i, j) = rtengine::max(0.00001f, Go * range);
-                                        tmpImage->b(i, j) = rtengine::max(0.00001f, Bo * range);
+                                        tmpImage->r(i, j) = rtengine::max(epsilg, Ro * range);//epsilg = 0.00001f to avoid crash
+                                        tmpImage->g(i, j) = rtengine::max(epsilg, Go * range);
+                                        tmpImage->b(i, j) = rtengine::max(epsilg, Bo * range);
                                     }  else if( strtype == GHTStrType::INVERSE) {//to uncomment if crash
-                                        tmpImage->r(i, j) = clipR(rtengine::max(0.00001f, Ro * range));//0.0001f to avoid crash different from 'normal'
-                                        tmpImage->g(i, j) = clipR(rtengine::max(0.00001f, Go * range));//clipR to avoid crash in some cases
-                                        tmpImage->b(i, j) = clipR(rtengine::max(0.00001f, Bo * range));
+                                        tmpImage->r(i, j) = clipR(rtengine::max(epsilg, Ro * range));//epsil 0.0001f to avoid crash different from 'normal'
+                                        tmpImage->g(i, j) = clipR(rtengine::max(epsilg, Go * range));//clipR to avoid crash in some cases
+                                        tmpImage->b(i, j) = clipR(rtengine::max(epsilg, Bo * range));
                                     } 
                                 }
           
@@ -18782,9 +18783,9 @@ void ImProcFunctions::Lab_Local(
                                         apply_sat(Ro, Go, Bo, fgh, gh);//always apply saturation
                                     }
                                    // rebuild tmpImage with limit 0.00001f to avoid crash after SE 
-                                    tmpImage->r(i, j) = rtengine::max(0.00001f, Ro * range);//0.00001f to avoid crash
-                                    tmpImage->g(i, j) = rtengine::max(0.00001f, Go * range);
-                                    tmpImage->b(i, j) = rtengine::max(0.00001f, Bo * range);
+                                    tmpImage->r(i, j) = rtengine::max(epsilg, Ro * range);//epsil 0.00001f to avoid crash
+                                    tmpImage->g(i, j) = rtengine::max(epsilg, Go * range);
+                                    tmpImage->b(i, j) = rtengine::max(epsilg, Bo * range);
                                 }
                         } else if(met ==3 || met == 4 || met == 5) {//Luminance Saturation Hue HSL
 #ifdef _OPENMP
@@ -18807,9 +18808,9 @@ void ImProcFunctions::Lab_Local(
                                     }
                                     float R, G, B;
                                     Color::hsl2rgb(h, s, l, R, G, B);
-                                    tmpImage->r(i, j) = rtengine::max(0.00001f, R);//0.00001f to avoid crash
-                                    tmpImage->g(i, j) = rtengine::max(0.00001f, G);
-                                    tmpImage->b(i, j) = rtengine::max(0.00001f, B);
+                                    tmpImage->r(i, j) = rtengine::max(epsilg, R);//epsilg 0.00001f to avoid crash
+                                    tmpImage->g(i, j) = rtengine::max(epsilg, G);
+                                    tmpImage->b(i, j) = rtengine::max(epsilg, B);
                                 }
                         } else if(met == 2) {// Luminance chromaticity Lab mode
                             const std::unique_ptr<LabImage> labtemp(new LabImage(bfw, bfh));
@@ -18831,7 +18832,6 @@ void ImProcFunctions::Lab_Local(
                                 rtengine::min(1.f, 0.7f - satreal / 300.f), 0.7,
                                 1, 1
                             });
-
 #ifdef _OPENMP
         #   pragma omp parallel for schedule(dynamic,16) if (multiThread)
 #endif
@@ -18883,9 +18883,9 @@ void ImProcFunctions::Lab_Local(
                                         float gout = 0.f;
                                         float bout = 0.f;
                                         Color::agx_trans(rgb_in, inv_lms_T, rout, gout, bout);
-                                        tmpImage->r(i, j) = rtengine::max(0.00001f, rout);//avoid negative values which are mathematically possible due to the values 
-                                        tmpImage->g(i, j) = rtengine::max(0.00001f, gout);//​​of the inverse matrix and the possible 'overflows' of the GHS calculations if the user uses very strong settings
-                                        tmpImage->b(i, j) = rtengine::max(0.00001f, bout);
+                                        tmpImage->r(i, j) = rtengine::max(epsilg, rout);//avoid negative values which are mathematically possible due to the values 
+                                        tmpImage->g(i, j) = rtengine::max(epsilg, gout);//​​of the inverse matrix and the possible 'overflows' of the GHS calculations if the user uses very strong settings
+                                        tmpImage->b(i, j) = rtengine::max(epsilg, bout);
                                     }
                             } else {//cat16 and JZ in XYZ mode
 #ifdef _OPENMP
@@ -18908,9 +18908,9 @@ void ImProcFunctions::Lab_Local(
                                         float gout = 0.f;
                                         float bout = 0.f;
                                         Color::xyz2rgb(Xout, Yout, Zout, rout, gout, bout, wip);//convert to RGB using inverse working profile.
-                                        tmpImage->r(i, j) = rtengine::max(0.00001f, rout);//avoid negative values. Normally this should never happen because the coefficients of the selected matrix are all positive... unless the matrix changes
-                                        tmpImage->g(i, j) = rtengine::max(0.00001f, gout);//these potentially negative values, related to calculations and not to the gamut, are not accepted by the rgblab or labrgb, workingtrc functions, etc,
-                                        tmpImage->b(i, j) = rtengine::max(0.00001f, bout);//but after numerous checks, this has no impact on the results...except to prevent a crash.
+                                        tmpImage->r(i, j) = rtengine::max(epsilg, rout);//avoid negative values. Normally this should never happen because the coefficients of the selected matrix are all positive... unless the matrix changes
+                                        tmpImage->g(i, j) = rtengine::max(epsilg, gout);//these potentially negative values, related to calculations and not to the gamut, are not accepted by the rgblab or labrgb, workingtrc functions, etc,
+                                        tmpImage->b(i, j) = rtengine::max(epsilg, bout);//but after numerous checks, this has no impact on the results...except to prevent a crash.
                                     }
                             }
                         }
@@ -18920,10 +18920,10 @@ void ImProcFunctions::Lab_Local(
             #pragma omp parallel for if (multiThread)
 #endif                       
                             for (int i = 0; i < bfh; ++i)
-                                for (int j = 0; j < bfw; ++j) {                           
-                                    tmpImage->r(i, j) = clipR(rtengine::max(0.00001f, tmpImage->r(i, j)));//0.0001f to avoid crash
-                                    tmpImage->g(i, j) = clipR(rtengine::max(0.00001f, tmpImage->g(i, j)));//clipR to avoid crash in inverse GHS
-                                    tmpImage->b(i, j) = clipR(rtengine::max(0.00001f, tmpImage->b(i, j)));
+                                for (int j = 0; j < bfw; ++j) {
+                                    tmpImage->r(i, j) = clipR(rtengine::max(epsilg, tmpImage->r(i, j)));//0.0001f to avoid crash
+                                    tmpImage->g(i, j) = clipR(rtengine::max(epsilg, tmpImage->g(i, j)));//clipR to avoid crash in inverse GHS
+                                    tmpImage->b(i, j) = clipR(rtengine::max(epsilg, tmpImage->b(i, j)));
                                 }
                         } else if (strtype == GHTStrType::NORMAL) {//GHS
 #ifdef _OPENMP
@@ -18931,9 +18931,9 @@ void ImProcFunctions::Lab_Local(
 #endif                       
                             for (int i = 0; i < bfh; ++i)
                                 for (int j = 0; j < bfw; ++j) {
-                                    tmpImage->r(i, j) = rtengine::max(0.00001f, tmpImage->r(i, j));//0.00001f to avoid crash after SE with RGB functions
-                                    tmpImage->g(i, j) = rtengine::max(0.00001f, tmpImage->g(i, j));
-                                    tmpImage->b(i, j) = rtengine::max(0.00001f, tmpImage->b(i, j));
+                                    tmpImage->r(i, j) = rtengine::max(epsilg, tmpImage->r(i, j));//epsil 0.00001f to avoid crash after SE with RGB functions
+                                    tmpImage->g(i, j) = rtengine::max(epsilg, tmpImage->g(i, j));
+                                    tmpImage->b(i, j) = rtengine::max(epsilg, tmpImage->b(i, j));
                                 }
                         }
 
@@ -18954,7 +18954,6 @@ void ImProcFunctions::Lab_Local(
                         float maxdata = 0.f;
                         const int size = bfh * bfw;
                         const float eps = 0.0001f;
-
 
 #ifdef _OPENMP
         #   pragma omp parallel for reduction(+:midgrey, stdd) reduction(max:maxdata) if (multiThread)
@@ -18994,6 +18993,7 @@ void ImProcFunctions::Lab_Local(
                         ghsmid = midgrey;
                         ghs3sig = midgrey + (3.5f * stdf);//three sigma and half - if Gaussian distribution more than 99.7% data (of course it's not)
                         lp.maxdataghs = maxdata;//values above 65535 must, at this stage of the process, be exceptional.
+
                         if(lp.maxdataghs > 65535.f) {//Reduce the maximum value to acceptable limits 'limit_maxdata_auto = 1.4f' in tone_eqsmooth.
                                                      //after this limit user must enable the other GHS tools.
                                                      //this approach is clearly preferable to CLIP.
@@ -19084,6 +19084,7 @@ void ImProcFunctions::Lab_Local(
                     const bool michwhite = params->locallab.spots.at(sp).mich_white;//Linear White point
                     const float michhigh = params->locallab.spots.at(sp).mich_high;//Highlight reduction
                     const bool midjdx = params->locallab.spots.at(sp).mich_jdx;//Matrix LMS using XYZ transform
+                    const float epsilm = 0.00001f;
 
                     constexpr float range = 65535.f;
                     std::unique_ptr<Imagefloat> tmpImage(new Imagefloat(bfw, bfh));
@@ -19157,9 +19158,9 @@ void ImProcFunctions::Lab_Local(
                                 float gout = 0.f;
                                 float bout = 0.f;
                                 Color::xyz2rgb(Xout, Yout, Zout, rout, gout, bout, wip);//convert to RGB using inverse working profile.
-                                tmpImage->r(i, j) = rtengine::max(0.00001f, rout);//avoid negative values. Normally this should never happen because the coefficients of the selected matrix are all positive... unless the matrix changes
-                                tmpImage->g(i, j) = rtengine::max(0.00001f, gout);//these potentially negative values, related to calculations and not to the gamut, are not accepted by the rgblab or labrgb, workingtrc functions, etc,
-                                tmpImage->b(i, j) = rtengine::max(0.00001f, bout);//but after numerous checks, this has no impact on the results...except to prevent a crash.
+                                tmpImage->r(i, j) = rtengine::max(epsilm, rout);//avoid negative values. Normally this should never happen because the coefficients of the selected matrix are all positive... unless the matrix changes
+                                tmpImage->g(i, j) = rtengine::max(epsilm, gout);//these potentially negative values, related to calculations and not to the gamut, are not accepted by the rgblab or labrgb, workingtrc functions, etc,
+                                tmpImage->b(i, j) = rtengine::max(epsilm, bout);//but after numerous checks, this has no impact on the results...except to prevent a crash.
                             }
                     }
 
@@ -19288,9 +19289,9 @@ void ImProcFunctions::Lab_Local(
                             float rout = clamp(r_final, 0.f, michout);
                             float gout = clamp(g_final, 0.f, michout);
                             float bout = clamp(b_final, 0.f, michout);
-                            tmpImage->r(i, j) = rtengine::max(0.00001f, rout * range);//0.00001f to avoid crash
-                            tmpImage->g(i, j) = rtengine::max(0.00001f, gout * range);
-                            tmpImage->b(i, j) = rtengine::max(0.00001f, bout * range);
+                            tmpImage->r(i, j) = rtengine::max(epsilm, rout * range);//epsilm 0.00001f to avoid crash
+                            tmpImage->g(i, j) = rtengine::max(epsilm, gout * range);
+                            tmpImage->b(i, j) = rtengine::max(epsilm, bout * range);
 
                         }
                     
@@ -19320,9 +19321,9 @@ void ImProcFunctions::Lab_Local(
                                 float gout = 0.f;
                                 float bout = 0.f;
                                 Color::xyz2rgb(Xout, Yout, Zout, rout, gout, bout, wip);//convert to RGB using inverse working profile.
-                                tmpImage->r(i, j) = rtengine::max(0.00001f, rout);//avoid negative values. Normally this should never happen because the coefficients of the selected matrix are all positive... unless the matrix changes
-                                tmpImage->g(i, j) = rtengine::max(0.00001f, gout);//these potentially negative values, related to calculations and not to the gamut, are not accepted by the rgblab or labrgb, workingtrc functions, etc,
-                                tmpImage->b(i, j) = rtengine::max(0.00001f, bout);//but after numerous checks, this has no impact on the results...except to prevent a crash.
+                                tmpImage->r(i, j) = rtengine::max(epsilm, rout);//avoid negative values. Normally this should never happen because the coefficients of the selected matrix are all positive... unless the matrix changes
+                                tmpImage->g(i, j) = rtengine::max(epsilm, gout);//these potentially negative values, related to calculations and not to the gamut, are not accepted by the rgblab or labrgb, workingtrc functions, etc,
+                                tmpImage->b(i, j) = rtengine::max(epsilm, bout);//but after numerous checks, this has no impact on the results...except to prevent a crash.
                             }
                     }
 
