@@ -530,7 +530,7 @@ LocallabParams::LocallabSpot::LocallabSpot() :
     SPAutoRadius(false), //auto Symmetry point - I think it's better to put 'false' and leave the initiative to the user.
     ghs_LP(0.),
     ghs_HP(1.),
-    ghs_LC(10.),
+    ghs_LC(0.),
     ghs_MID(0.),
     ghs_BLP(0.),
     ghs_HLP(1.),

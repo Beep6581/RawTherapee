@@ -18655,7 +18655,6 @@ void ImProcFunctions::Lab_Local(
 
 
                         }
-                        
                         if(met == 0  || met == 1) {//RGB mode
                             const auto sf =
                                 [=](float s, float c) -> float
@@ -18937,6 +18936,7 @@ void ImProcFunctions::Lab_Local(
                                     tmpImage->b(i, j) = rtengine::max(0.00001f, tmpImage->b(i, j));
                                 }
                         }
+
                         if(smoth && D > 0.002f) {//to preserve settings WP and BP
                             //Highlight attenuation in function of HP - protect highlight
                             tone_eqsmooth(this, tmpImage.get(), lp, params->icm.workingProfile, sk, multiThread);//reduce Ev > 0 < 12
@@ -18945,6 +18945,7 @@ void ImProcFunctions::Lab_Local(
                             //midtones with tone_equ
                             ImProcFunctions::tone_eqcam(this, tmpImage.get(), MID, params->icm.workingProfile, sk, multiThread);
                         }
+
                         //Estimated current Middle grey at the end of GHS (midgrey)
                         //Absolute maximum RGB data at the end of GHS (maxdata)
                         //3 sigma is very representative of the data in use at the end of GHS (stdd)
@@ -18952,6 +18953,7 @@ void ImProcFunctions::Lab_Local(
                         float stdd = 0.f;
                         float maxdata = 0.f;
                         const int size = bfh * bfw;
+                        const float eps = 0.0001f;
 
 
 #ifdef _OPENMP
@@ -18976,8 +18978,13 @@ void ImProcFunctions::Lab_Local(
                                     midgrey +=  norm_3(r, g, b, wprof, shiftwhitepoint / reasonable_limit_white_point);
                                     stdd += SQR(norm_3(r, g, b, wprof, shiftwhitepoint / reasonable_limit_white_point));
                                 }
+                                tmpImage->r(i, j) = rtengine::max(eps, r);//avoid negatives values
+                                tmpImage->g(i, j) = rtengine::max(eps, g);
+                                tmpImage->b(i, j) = rtengine::max(eps, b);
                             }
+
                         }
+
                         midgrey /= size;
                         stdd /= size;
                         stdd -= SQR(midgrey);
@@ -18986,11 +18993,26 @@ void ImProcFunctions::Lab_Local(
                         stdf /= 65535.f;
                         ghsmid = midgrey;
                         ghs3sig = midgrey + (3.5f * stdf);//three sigma and half - if Gaussian distribution more than 99.7% data (of course it's not)
-                        lp.maxdataghs = maxdata;
+                        lp.maxdataghs = maxdata;//values above 65535 must, at this stage of the process, be exceptional.
                         if(lp.maxdataghs > 65535.f) {//Reduce the maximum value to acceptable limits 'limit_maxdata_auto = 1.4f' in tone_eqsmooth.
                                                      //after this limit user must enable the other GHS tools.
                                                      //this approach is clearly preferable to CLIP.
+#ifdef _OPENMP
+        #   pragma omp parallel for schedule(dynamic,16) if (multiThread)
+#endif
+                            for (int i = 0; i < bfh; ++i){
+                                for (int j = 0; j < bfw; ++j) {
+                                    const float r = tmpImage->r(i, j);
+                                    const float g = tmpImage->g(i, j);
+                                    const float b = tmpImage->b(i, j);
+                                    tmpImage->r(i, j) = clipR(r);//clip data for tone_eqsmooth to avoid crash, but effective at reducing high values
+                                    tmpImage->g(i, j) = clipR(g);
+                                    tmpImage->b(i, j) = clipR(b);
+                                }
+                            }
+
                             tone_eqsmooth(this, tmpImage.get(), lp, params->icm.workingProfile, sk, multiThread);//reduce Ev for maxdata
+
                             float maxdata2 = 0.f;//recalculates the maximum value of the data
 #ifdef _OPENMP
         #   pragma omp parallel for reduction(max:maxdata2) if (multiThread)
@@ -19007,6 +19029,7 @@ void ImProcFunctions::Lab_Local(
                                 }
                             }
                             lp.maxdataghs = maxdata2;
+
                         }
                         ghsmaxrgb = lp.maxdataghs / 65535.f;
 
@@ -19014,8 +19037,29 @@ void ImProcFunctions::Lab_Local(
                             ghs3sig = lp.maxdataghs / 65535.f;
                         }
 
-                        //conversion rgb to Lab
-                        rgb2lab(*tmpImage, *bufexpfin, params->icm.workingProfile);
+                        //conversion rgb to Lab in two phases rgb->XYZ then XYZ->Lab, it's the same thing but allows control of XYZ
+#ifdef _OPENMP
+        #   pragma omp parallel for schedule(dynamic,16) if (multiThread)
+#endif
+                            for (int i = 0; i < bfh; ++i){
+                                for (int j = 0; j < bfw; ++j) {
+                                    const float r = tmpImage->r(i, j);
+                                    const float g = tmpImage->g(i, j);
+                                    const float b = tmpImage->b(i, j);
+                                    float x, y, z;
+                                    Color::rgbxyz (r, g, b, x, y, z, wpi);
+                                    z = max(z,eps);//prevents negative values ​​of XYZ
+                                    y = max(y,eps);
+                                    x = max(x,eps);
+                                    float Lexp, aexp, bexp;
+                                    Color::XYZ2Lab(x, y, z, Lexp, aexp, bexp);
+                                    bufexpfin->L[i][j] = Lexp;
+                                    bufexpfin->a[i][j] = aexp;
+                                    bufexpfin->b[i][j] = bexp;
+                                }
+                            }
+
+                       // rgb2lab(*tmpImage, *bufexpfin, params->icm.workingProfile);
 
                         tmpImage.reset();
                         //local contrast minimum
