@@ -902,7 +902,6 @@ struct local_params {
     bool contrsho;
     bool denoAutocontr;
     bool enacontr;
-    
 
 };
 
@@ -1507,14 +1506,13 @@ static void calcLocalParams(int sp, int oW, int oH,  const LocallabParams& local
     bool contrshow =  locallab.spots.at(sp).contrshow;
     bool denoAutocontrast =  locallab.spots.at(sp).denoAutocontrast;
     bool enacontra =  locallab.spots.at(sp).enacontrast;
-    
+
     lp.denocontra = denocontrast;
     lp.denorati = 0.01f * denoratio;
     lp.denomas = 0.01f * denomask;
     lp.contrsho = contrshow; 
     lp.denoAutocontr = denoAutocontrast;
     lp.enacontr = enacontra; 
-    
     float epsbl = (float) locallab.spots.at(sp).epsbl;
     float sharradius = LIM(locallab.spots.at(sp).sharradius, 0.42, 3.5);
     float lcamount = ((float) locallab.spots.at(sp).lcamount);
@@ -18326,7 +18324,7 @@ void ImProcFunctions::Lab_Local(
                         bool ghsautoSP = params->locallab.spots.at(sp).SPAutoRadius;
 
                         const ght_compute_params c = GHT_setup(B, D, LP, SP, HP, strtype);//setup system with entries
-                        const float epsilg = 0.00001f;
+                        constexpr float epsilg = 0.00001f;
 
                         std::unique_ptr<Imagefloat> tmpImage(new Imagefloat(bfw, bfh));
                         lab2rgb(*bufexpfin, *tmpImage, params->icm.workingProfile);
@@ -18953,7 +18951,7 @@ void ImProcFunctions::Lab_Local(
                         float stdd = 0.f;
                         float maxdata = 0.f;
                         const int size = bfh * bfw;
-                        const float eps = 0.0001f;
+                        constexpr float eps = 0.0001f;
 
 #ifdef _OPENMP
         #   pragma omp parallel for reduction(+:midgrey, stdd) reduction(max:maxdata) if (multiThread)
@@ -19084,7 +19082,7 @@ void ImProcFunctions::Lab_Local(
                     const bool michwhite = params->locallab.spots.at(sp).mich_white;//Linear White point
                     const float michhigh = params->locallab.spots.at(sp).mich_high;//Highlight reduction
                     const bool midjdx = params->locallab.spots.at(sp).mich_jdx;//Matrix LMS using XYZ transform
-                    const float epsilm = 0.00001f;
+                    constexpr float epsilm = 0.00001f;
 
                     constexpr float range = 65535.f;
                     std::unique_ptr<Imagefloat> tmpImage(new Imagefloat(bfw, bfh));
