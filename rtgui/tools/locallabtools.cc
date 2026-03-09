@@ -4775,9 +4775,13 @@ LocallabShadow::LocallabShadow():
 void LocallabShadow::adjusterAutoToggled(Adjuster* a, bool newval)
 {    
     if (listener && a == ghs_SP) {
+        if (newval == true) {
+            nbsym2 = 1;
+        } else {
+            nbsym2 = 0;
+        }        
         auto e = (!newval) ? EvlocallabautoSPoff : EvlocallabautoSPson;
         listener->panelChanged(e, newval ? M("GENERAL_ENABLED") : M("GENERAL_DISABLED"));
-        nbsym2 = 0;
     }
 }
 
@@ -4795,8 +4799,9 @@ void LocallabShadow::autoSPChanged(float radius)
             }
 
             enableListener();
-            nbsym2++;
-            if(nbsym2 < 2) {
+
+            if (nbsym2) {
+                nbsym2 = 0;
                 adjusterChanged(ghs_SP, 0);
             }
             return false;
@@ -5121,7 +5126,7 @@ void LocallabShadow::read(const rtengine::procparams::ProcParams* pp, const Para
     // Disable all listeners
     disableListener();
     nbmasksh = 0;
-    nbwb = 0;//initialize count White and black point
+    nbwb = 0;
     nbsym2 = 0;
     // Update GUI to selected spot value
     const int index = pp->locallab.selspot;
@@ -5895,21 +5900,20 @@ void LocallabShadow::updateghsbw2(double ghsb, double ghsw, bool ghsaut)//auto G
     [this, ghsb, ghsw, ghsaut]() -> bool {
         GThreadLock lock; // All GUI access from idle_add callbacks or separate thread HAVE to be protected
         if(ghsaut) {
-            nbwb++;
-            if(nbwb < 2) {
+            if(nbwb) {
+                nbwb = 0;
                 if (ghsw != ghs_HLP->getValue()) {
                     disableListener();
                     ghs_HLP->setValue(ghsw);
                     enableListener();
-                    listener->panelChanged (Evlocallabghs_HLP,ghs_HLP->getTextValue());
                 }
 
                 if (ghsb != ghs_BLP->getValue()) {
                     disableListener();
                     ghs_BLP->setValue(ghsb);
                     enableListener();
-                    listener->panelChanged (Evlocallabghs_BLP,ghs_BLP->getTextValue());
-                }                 
+                }
+                listener->panelChanged (Evlocallabghs_BLP,ghs_BLP->getTextValue());                
             }
         }
         return false;
@@ -6448,10 +6452,11 @@ void LocallabShadow::ghs_autobwChanged()
     if (isLocActivated && exp->getEnabled()) {
         if (listener) {
             if (ghs_autobw->get_active()) {
-                nbwb = 0;//initialize count for white point and black point
+                nbwb = 1; // execute multi preview to automatically calculate black point and white point but only once
                 listener->panelChanged(Evlocallabghs_autobw,
                                        M("GENERAL_ENABLED") + " (" + escapeHtmlChars(getSpotName()) + ")");
             } else {
+                nbwb = 0;
                 listener->panelChanged(Evlocallabghs_autobw,
                                        M("GENERAL_DISABLED") + " (" + escapeHtmlChars(getSpotName()) + ")");
             }
