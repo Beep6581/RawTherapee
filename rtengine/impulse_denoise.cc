@@ -79,7 +79,7 @@ void ImProcFunctions::impulse_nr (LabImage* lab, double thresh)
     {
         int i1, j1, j;
         float hpfabs, hfnbrave;
-#ifdef __SSE2__
+#if defined(__SSE2__) || defined(RT_SIMDE)
         vfloat hfnbravev, hpfabsv;
         vfloat impthrDiv24v = F2V( impthrDiv24 );
 #endif
@@ -100,7 +100,7 @@ void ImProcFunctions::impulse_nr (LabImage* lab, double thresh)
                 impish[i][j] = (hpfabs > ((hfnbrave - hpfabs) * impthrDiv24));
             }
 
-#ifdef __SSE2__
+#if defined(__SSE2__) || defined(RT_SIMDE)
 
             for (; j < width - 5; j += 4) {
                 hfnbravev = ZEROV;
@@ -303,7 +303,7 @@ void ImProcFunctions::impulse_nrcam (CieImage* ncie, double thresh, float **buff
     {
         int i1, j1, j;
         float hpfabs, hfnbrave;
-#ifdef __SSE2__
+#if defined(__SSE2__) || defined(RT_SIMDE)
         vfloat hfnbravev, hpfabsv;
         vfloat impthrDiv24v = F2V( impthrDiv24 );
         vfloat onev = F2V( 1.0f );
@@ -325,7 +325,7 @@ void ImProcFunctions::impulse_nrcam (CieImage* ncie, double thresh, float **buff
                 impish[i][j] = static_cast<float>(hpfabs > ((hfnbrave - hpfabs) * impthrDiv24));
             }
 
-#ifdef __SSE2__
+#if defined(__SSE2__) || defined(RT_SIMDE)
 
             for (; j < width - 5; j += 4) {
                 hpfabsv = vabsf(LVFU(ncie->sh_p[i][j]) - LVFU(lpf[i][j]));
@@ -382,7 +382,7 @@ void ImProcFunctions::impulse_nrcam (CieImage* ncie, double thresh, float **buff
 #endif
     {
 
-#ifdef __SSE2__
+#if defined(__SSE2__) || defined(RT_SIMDE)
         vfloat2 sincosvalv;
         vfloat piidv = F2V( piid );
         vfloat tempv;
@@ -393,7 +393,7 @@ void ImProcFunctions::impulse_nrcam (CieImage* ncie, double thresh, float **buff
 
         for (int i = 0; i < height; i++) {
             int j = 0;
-#ifdef __SSE2__
+#if defined(__SSE2__) || defined(RT_SIMDE)
 
             for (; j < width - 3; j += 4) {
                 sincosvalv = xsincosf(piidv * LVFU(ncie->h_p[i][j]));
@@ -521,7 +521,7 @@ void ImProcFunctions::impulse_nrcam (CieImage* ncie, double thresh, float **buff
     #pragma omp parallel
 #endif
     {
-#ifdef __SSE2__
+#if defined(__SSE2__) || defined(RT_SIMDE)
         vfloat interav, interbv;
         vfloat piidv = F2V(piid);
 #endif // __SSE2__
@@ -531,7 +531,7 @@ void ImProcFunctions::impulse_nrcam (CieImage* ncie, double thresh, float **buff
 
         for(int i = 0; i < height; i++ ) {
             int j = 0;
-#ifdef __SSE2__
+#if defined(__SSE2__) || defined(RT_SIMDE)
 
             for(; j < width - 3; j += 4) {
                 interav = LVFU(sraa[i][j]);

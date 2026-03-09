@@ -622,8 +622,6 @@ void FileBrowser::doubleClicked (ThumbBrowserEntryBase* entry)
 
 void FileBrowser::addEntry (FileBrowserEntry* entry)
 {
-    entry->setParent(this);
-
     const unsigned int sid = session_id();
 
     idle_register.add(
@@ -642,6 +640,8 @@ void FileBrowser::addEntry (FileBrowserEntry* entry)
 
 void FileBrowser::addEntry_ (FileBrowserEntry* entry)
 {
+    entry->setParent(this);
+
     entry->selected = false;
     entry->drawable = false;
     entry->framed = editedFiles.find(entry->filename) != editedFiles.end();

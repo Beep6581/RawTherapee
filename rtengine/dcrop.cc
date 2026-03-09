@@ -36,6 +36,7 @@
 #include "refreshmap.h"
 #include "rt_math.h"
 #include "utils.h"
+#include "iccstore.h"
 
 #include "rtgui/editcallbacks.h"
 
@@ -43,7 +44,6 @@
 #pragma GCC diagnostic warning "-Wextra"
 namespace
 {
-
 // "ceil" rounding
 template<typename T>
 constexpr T skips(T a, T b)
@@ -55,6 +55,7 @@ constexpr T skips(T a, T b)
 
 namespace rtengine
 {
+using rtengine::TMatrix;
 
 Crop::Crop(ImProcCoordinator* parent, EditDataProvider *editDataProvider, bool isDetailWindow)
     : PipetteBuffer(editDataProvider), origCrop(nullptr), spotCrop(nullptr), laboCrop(nullptr), labnCrop(nullptr),
@@ -694,7 +695,12 @@ void Crop::update(int todo)
         }
 
         if (params.cg.enabled) {//gamut compression
-            parent->ipf.gamutcompr(baseCrop, baseCrop);
+            float mac = 0.f;
+            float mac0 = 0.f;
+            float mac1 = 0.f;
+            float mac2 = 0.f;
+            int beginend = 0;
+            parent->ipf.gamutcompr(baseCrop, baseCrop, beginend, mac, mac0, mac1, mac2);
         }
 
         delete [] min_r;
@@ -1079,7 +1085,7 @@ void Crop::update(int todo)
             float fab = 1.f;
             float maxicam = -1000.f;
             float rdx, rdy, grx, gry, blx, bly = 0.f;
-            float meanx, meany, meanxe, meanye = 0.f;
+            float meanx, meany, meanxe, meanye, maxdat = 0.f;
             int ill = 2;
             int prim = 3;
             float minCD;
@@ -1103,7 +1109,12 @@ void Crop::update(int todo)
             float ghsbpwpvalue[2];
             float savmadl[21]  = {100.f, 100.f, 100.f, 100.f, 100.f, 100.f, 100.f, 100.f, 100.f, 100.f, 100.f, 100.f, 100.f, 100.f, 100.f, 100.f, 100.f, 100.f, 100.f, 100.f, 100.f}; 
             float ghsbwslider[2];
+            float michbwslider[2]= {0.f, 0.f};//added to facilitate a possible modification requested by users, but is not currently in use
+            float ghscolor[4];
             float ghssym;
+            float ghsmid;
+            float ghsmaxrgb;
+            float ghs3sig;
             bool ghsautsp;
 /*            huerefp[sp] = huere;
             chromarefp[sp] = chromare;
@@ -1175,8 +1186,8 @@ void Crop::update(int todo)
                         huerefblu, chromarefblu, lumarefblu, huere, chromare, lumare, sobelre, lastsav, 
                         parent->previewDeltaE, parent->locallColorMask, parent->locallColorMaskinv, parent->locallExpMask, parent->locallExpMaskinv, parent->locallSHMask, parent->locallSHMaskinv, parent->locallvibMask,  parent->localllcMask, parent->locallsharMask, parent->locallcbMask, parent->locallretiMask, parent->locallsoftMask, parent->localltmMask, parent->locallblMask,
                         parent->localllogMask, parent->locall_Mask, parent->locallcieMask, minCD, maxCD, mini, maxi, Tmean, Tsigma, Tmin, Tmax,
-                        meantme, stdtme, meanretie, stdretie, fab, maxicam,rdx, rdy, grx, gry, blx, bly, meanx, meany, meanxe, meanye, prim, ill, contsig, lightsig, slopeg, linkrgb,
-                        resi, sharc, denocont, ghsbpwp, ghsbpwpvalue, savmadl, ghsbwslider, ghssym, ghsautsp);
+                        meantme, stdtme, meanretie, stdretie, fab, maxicam,rdx, rdy, grx, gry, blx, bly, meanx, meany, meanxe, meanye, maxdat, prim, ill, contsig, lightsig, slopeg, linkrgb,
+                        resi, sharc, denocont, ghsbpwp, ghsbpwpvalue, savmadl, ghsbwslider, ghssym, ghsautsp, ghscolor, ghsmid, ghsmaxrgb, ghs3sig, michbwslider);
 
                         if (parent->previewDeltaE || parent->locallColorMask == 5 || parent->locallvibMask == 4 || parent->locallExpMask == 5 || parent->locallSHMask == 4 || parent->localllcMask == 4 || parent->localltmMask == 4 || parent->localllogMask == 4 || parent->locallsoftMask == 6 || parent->localllcMask == 4 || parent->locallcieMask == 4) {
                             params.blackwhite.enabled = false;
@@ -1263,8 +1274,8 @@ void Crop::update(int todo)
                         LHutili, HHutili, CHutili, HHutilijz, CHutilijz, LHutilijz, cclocalcurve2, localcutili, rgblocalcurve2, localrgbutili, localexutili, exlocalcurve2, hltonecurveloc2, shtonecurveloc2, tonecurveloc2, lightCurveloc2,
                         huerefblu, chromarefblu, lumarefblu, huere, chromare, lumare, sobelre, lastsav, false, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
                         minCD, maxCD, mini, maxi, Tmean, Tsigma, Tmin, Tmax,
-                        meantme, stdtme, meanretie, stdretie, fab, maxicam, rdx, rdy, grx, gry, blx, bly, meanx, meany, meanxe, meanye, prim, ill, contsig, lightsig, slopeg, linkrgb,
-                        resi, sharc, denocont, ghsbpwp, ghsbpwpvalue, savmadl, ghsbwslider, ghssym, ghsautsp);
+                        meantme, stdtme, meanretie, stdretie, fab, maxicam, rdx, rdy, grx, gry, blx, bly, meanx, meany, meanxe, meanye, maxdat, prim, ill, contsig, lightsig, slopeg, linkrgb,
+                        resi, sharc, denocont, ghsbpwp, ghsbpwpvalue, savmadl, ghsbwslider, ghssym, ghsautsp, ghscolor, ghsmid, ghsmaxrgb, ghs3sig, michbwslider);
             }
 
                        // for (int l = 0; l < 21; l++) {
@@ -1365,7 +1376,7 @@ void Crop::update(int todo)
     }
 
     // apply luminance operations
-    if (todo & (M_LUMINANCE + M_COLOR)) { //
+    if (todo & (M_LUMINANCE + M_COLOR)) {
         //I made a little change here. Rather than have luminanceCurve (and others) use in/out lab images, we can do more if we copy right here.
         labnCrop->CopyFrom(laboCrop);
 
@@ -1668,10 +1679,7 @@ void Crop::update(int todo)
                     provradius    = NULL;
                 }
 
-
             }
-        
-
 
         }
         
@@ -1745,9 +1753,11 @@ void Crop::update(int todo)
             }
             
             float rdx, rdy, grx, gry, blx, bly = 0.f;
-            float meanx, meany, meanxe, meanye = 0.f;
-            parent->ipf.workingtrc(0, tmpImage1.get(), tmpImage1.get(), GW, GH, -5, prof, 2.4, 12.92310, 0, ill, 0, 0, rdx, rdy, grx, gry, blx, bly,meanx, meany, meanxe, meanye, cmsDummy, true, false, false, false);
-            parent->ipf.workingtrc(0, tmpImage1.get(), tmpImage1.get(), GW, GH, 5, prof, gamtone, slotone, catc,  illum, prim, locprim, rdx, rdy, grx, gry, blx, bly, meanx, meany, meanxe, meanye, cmsDummy, false, true, true, gamutcontrol);
+            float meanx, meany, meanxe, meanye, maxdat = 0.f;
+            double p[6] = {0., 0., 0., 0., 0., 0.};
+
+            parent->ipf.workingtrc(0, tmpImage1.get(), tmpImage1.get(), GW, GH, -5, prof, 2.4, 12.92310, 0, ill, 0, 0, rdx, rdy, grx, gry, blx, bly,meanx, meany, meanxe, meanye, maxdat, p, cmsDummy, true, false, false, false);
+            parent->ipf.workingtrc(0, tmpImage1.get(), tmpImage1.get(), GW, GH, 5, prof, gamtone, slotone, catc,  illum, prim, locprim, rdx, rdy, grx, gry, blx, bly, meanx, meany, meanxe, meanye, maxdat, p, cmsDummy, false, true, true, gamutcontrol);
             float satu = params.icm.wapsat;
             if(satu > 0.f) {
                 parent->ipf.apsatur(0, tmpImage1.get(), tmpImage2.get(), GW, GH, satu) ;    
@@ -1775,7 +1785,7 @@ void Crop::update(int todo)
                 
                 parent->ipf.toneEqualizer(tmpImage1.get(), params, prof, skip, false);
             }
-                
+
             parent->ipf.rgb2lab(*tmpImage1, *labnCrop, params.icm.workingProfile);
             //labnCrop and provis
             if (provis) {
@@ -1822,7 +1832,7 @@ void Crop::update(int todo)
             }
 
             float d, dj, yb; // not used after this block
-            parent->ipf.ciecam_02float(cieCrop, float (adap), 1, 2, labnCrop, &params, parent->customColCurve1, parent->customColCurve2, parent->customColCurve3,
+            parent->ipf.ciecam_02float(cieCrop, float (adap), 1, 2, labnCrop, &params, parent->customColCurve1, parent->customColCurvered, parent->customColCurvegreen,  parent->customColCurveblue, parent->customColCurve2, parent->customColCurve3,
                                        dummy, dummy, parent->CAMBrightCurveJ, parent->CAMBrightCurveQ, parent->CAMMean, 0, skip, execsharp, d, dj, yb, 1, parent->sharpMask);
         } else {
             // CIECAM is disabled, we free up its image buffer to save some space
@@ -1832,8 +1842,76 @@ void Crop::update(int todo)
 
             cieCrop = nullptr;
         }
-    }
+        bool exec = params.icm.wgamut != ColorManagementParams::Wwgamut::NONE  || params.icm.wgamgain != 0.f;
 
+        if (params.icm.workingTRC != ColorManagementParams::WorkingTrc::NONE && params.icm.trcExp  && exec) {
+
+            //compression gamut and gain at the end of process
+            const int GW = labnCrop->W;
+            const int GH = labnCrop->H;
+            TMatrix wprof = ICCStore::getInstance()->workingSpaceMatrix(params.icm.workingProfile);
+                const double wp[3][3] = {
+                    {wprof[0][0], wprof[0][1], wprof[0][2]},
+                    {wprof[1][0], wprof[1][1], wprof[1][2]},
+                    {wprof[2][0], wprof[2][1], wprof[2][2]}
+                };
+            TMatrix wiprof = ICCStore::getInstance()->workingSpaceInverseMatrix(params.icm.workingProfile);
+                const double wip[3][3] = {//improve precision with double
+                    {wiprof[0][0], wiprof[0][1], wiprof[0][2]},
+                    {wiprof[1][0], wiprof[1][1], wiprof[1][2]},
+                    {wiprof[2][0], wiprof[2][1], wiprof[2][2]}
+                };
+
+            Imagefloat* provcomp = new Imagefloat(GW, GH);
+
+#ifdef _OPENMP
+        #   pragma omp parallel for
+#endif
+            for (int i = 0; i < GH; ++i){
+                for (int j = 0; j < GW; ++j) {
+                    float X, Y, Z = 0.f;
+                    Color::Lab2XYZ(labnCrop->L[i][j], labnCrop->a[i][j], labnCrop->b[i][j] , X, Y, Z);
+                    Color::xyz2rgb(X, Y, Z, provcomp->r(i, j), provcomp->g(i, j), provcomp->b(i, j), wp);
+                }
+            }
+
+            const float gainev = pow_F(2.f, (float) params.icm.wgamgain);
+            if (params.icm.wgamgain != 0.f) {//Final gain in Ev
+           
+#ifdef _OPENMP
+        #   pragma omp parallel for
+#endif
+                for (int i = 0; i < GH; ++i){
+                    for (int j = 0; j < GW; ++j) {
+                        provcomp->r(i, j) *= gainev;
+                        provcomp->g(i, j) *= gainev;
+                        provcomp->b(i, j) *= gainev;
+                    }
+                }
+            }
+
+            float mac = 0.f;
+            float mac0 = 0.f;
+            float mac1 = 0.f;
+            float mac2 = 0.f;
+            int beginend = 1;
+            if (params.icm.wgamut != ColorManagementParams::Wwgamut::NONE) {
+                parent->ipf.gamutcompr(provcomp, provcomp, beginend, mac, mac0, mac1, mac2);
+            }
+
+#ifdef _OPENMP
+        #   pragma omp parallel for
+#endif
+            for (int i = 0; i < GH; ++i){
+                for (int j = 0; j < GW; ++j) {
+                    float x, y, z = 0.f;
+                    Color::rgbxyz (provcomp->r(i, j), provcomp->g(i, j), provcomp->b(i, j), x, y, z, wip);
+                    Color::XYZ2Lab(x, y, z, labnCrop->L[i][j], labnCrop->a[i][j], labnCrop->b[i][j]);
+            }
+            }
+            delete provcomp;
+        }
+    }
     // all pipette buffer processing should be finished now
     PipetteBuffer::setReady();
 

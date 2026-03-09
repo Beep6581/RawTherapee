@@ -20,11 +20,11 @@
 
 #include <gtkmm.h>
 
-#include "adjuster.h"
 #include "colorprovider.h"
 #include "curvelistener.h"
 #include "guiutils.h"
 #include "toolpanel.h"
+#include "widgets/basic/adjuster.h"
 
 class DiagonalCurveEditor;
 class CurveEditorGroup;
@@ -82,13 +82,14 @@ public:
     void modelmethodChanged();
     void catmethodChanged();
     void convertParamToNormal();
+
     void updateGUIToMode(int mode);
 
     void expandCurve         (bool isExpanded);
     bool isCurveExpanded     ();
     void autoOpenCurve       () override;
 
-    void setAdjusterBehavior (bool degreeadd, bool adapscenadd, bool adaplumadd, bool badpixsladd, bool jlightadd, bool chromaadd, bool contrastadd, bool rstprotectionadd, bool qbrightadd, bool qcontrastadd, bool schromaadd, bool mchromaadd, bool colorhadd, bool degreeoutadd, bool tempoutadd);
+    void setAdjusterBehavior (bool degreeadd, bool adapscenadd, bool adaplumadd, bool badpixsladd, bool jlightadd, bool chromaadd, bool contrastadd, bool rstprotectionadd, bool qbrightadd, bool qcontrastadd, bool schromaadd, bool schromaredadd, bool schromagreenadd, bool schromablueadd, bool mchromaadd, bool colorhadd, bool colorhredadd,  bool colorhgreenadd, bool colorhblueadd, bool degreeoutadd, bool tempoutadd);
     void trimValues          (rtengine::procparams::ProcParams* pp) override;
     void updateCurveBackgroundHistogram(
         const LUTu& histToneCurve,
@@ -112,6 +113,17 @@ private:
     rtengine::ProcEvent EvCATcomplex;
     rtengine::ProcEvent EvCATmodel;
     rtengine::ProcEvent EvCATcat;
+    rtengine::ProcEvent EvCATcolorhred;
+    rtengine::ProcEvent EvCATschromared;
+    rtengine::ProcEvent EvCATcolorhgreen;
+    rtengine::ProcEvent EvCATschromagreen;
+    rtengine::ProcEvent EvCATcolorhblue;
+    rtengine::ProcEvent EvCATschromablue;
+    rtengine::ProcEvent EvCATCurvered;
+    rtengine::ProcEvent EvCATCurvegreen;
+    rtengine::ProcEvent EvCATCurveblue;
+
+
     bool bgTTipQuery (int x, int y, bool keyboard_tooltip, const Glib::RefPtr<Gtk::Tooltip>& tooltip);
     bool srTTipQuery (int x, int y, bool keyboard_tooltip, const Glib::RefPtr<Gtk::Tooltip>& tooltip);
     void foldAllButMe (GdkEventButton* event, MyExpander *expander);
@@ -120,7 +132,7 @@ private:
     Glib::RefPtr<Gtk::Tooltip> srTTips;
     Glib::RefPtr<Gdk::Pixbuf> bgPixbuf;
     Glib::RefPtr<Gdk::Pixbuf> srPixbuf;
-
+    Gtk::Frame* pRGBFrame;
     Adjuster* degree;
     Adjuster* adapscen;
     Adjuster* ybscen;
@@ -136,6 +148,13 @@ private:
     Adjuster* contrast;
     Adjuster* qcontrast;
     Adjuster* colorh;
+    Adjuster* colorhred;
+    Adjuster* schromared;
+    Adjuster* colorhgreen;
+    Adjuster* schromagreen;
+    Adjuster* colorhblue;
+    Adjuster* schromablue;
+
     Adjuster* tempout;
     Adjuster* greenout;
     Adjuster* ybout;
@@ -150,6 +169,7 @@ private:
     MyComboBoxText* complexmethod;
     MyComboBoxText* modelmethod;
     MyComboBoxText* catmethod;
+
 
     //Adjuster* edge;
     Gtk::CheckButton* surrsource;
@@ -181,10 +201,17 @@ private:
     CurveEditorGroup* curveEditorG;
     CurveEditorGroup* curveEditorG2;
     CurveEditorGroup* curveEditorG3;
+    CurveEditorGroup* curveEditorGred;
+    CurveEditorGroup* curveEditorGgreen;
+    CurveEditorGroup* curveEditorGblue;
 
     DiagonalCurveEditor* shape;
     DiagonalCurveEditor* shape2;
     DiagonalCurveEditor* shape3;
+    DiagonalCurveEditor* shapered;
+    DiagonalCurveEditor* shapegreen;
+    DiagonalCurveEditor* shapeblue;
+
     double nextCcam, nextCcamout, nextCadap;
     int nextYbscn;
     bool lastAutoDegree;

@@ -23,8 +23,8 @@
 #include "thresholdselector.h"
 
 #include "multilangmgr.h"
-#include "mycurve.h"
 #include "rtscalable.h"
+#include "widgets/curves/mycurve.h"
 
 #include "rtengine/procparams.h"
 

@@ -1,5 +1,5 @@
 /* -*- C++ -*-
- * Copyright 2019-2024 LibRaw LLC (info@libraw.org)
+ * Copyright 2019-2025 LibRaw LLC (info@libraw.org)
  *
 
  LibRaw is free software; you can redistribute it and/or modify
@@ -501,7 +501,10 @@ int LibRaw::open_datastream(LibRaw_abstract_datastream *stream)
 			  return LIBRAW_FILE_UNSUPPORTED;
 	  }
 	  // Remove unsupported Nikon thumbnails
-	  if (makeIs(LIBRAW_CAMERAMAKER_Nikon) && !strncasecmp(imgdata.idata.model, "Z 8", 3) &&
+	  if (makeIs(LIBRAW_CAMERAMAKER_Nikon) &&
+		  (!strncasecmp(imgdata.idata.model, "Z 8", 3) || !strcasecmp(imgdata.idata.model, "Z f")
+			  || !strncasecmp(imgdata.idata.model, "Z6_3", 4))
+		  &&
 		  imgdata.thumbs_list.thumbcount > 1)
 	  {
 		  int tgtidx = 0;
@@ -1301,7 +1304,7 @@ int LibRaw::open_datastream(LibRaw_abstract_datastream *stream)
 	  if (profile_sz > 0LL && profile_sz < LIBRAW_MAX_PROFILE_SIZE_MB * 1024LL * 1024LL)
 	  {
         C.profile = calloc(size_t(profile_sz),1);
-	C.profile_length = unsigned(profile_sz);
+        C.profile_length = unsigned(profile_sz);
         ID.input->seek(ID.profile_offset, SEEK_SET);
         ID.input->read(C.profile, size_t(profile_sz), 1);
 	  }

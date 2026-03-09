@@ -15,6 +15,7 @@
  *
  *  You should have received a copy of the GNU General Public License
  *  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
+ *  Jacques Desmis - 2012 - 2020 - 2026 jdesmis@gmail.com
  */
 #include "ciecam02.h"
 #include "rt_math.h"
@@ -81,10 +82,8 @@ void Ciecam02::curveJfloat (float br, float contr, float thr, const LUTu & histo
             brightcurvePoints[6] = min (1.0f, 0.7f + br / 300.0f); //value at shoulder point
         } else {
             brightcurvePoints[3] = max(0.0, 0.1 - (double) br / 150.0); // toe point
-        //    brightcurvePoints[3] = 0.1f - br / 150.0f; // toe point
             brightcurvePoints[4] = 0.1f; // value at toe point
 
-        //    brightcurvePoints[5] = min (1.0f, 0.7f - br / 300.0f); // shoulder point
             brightcurvePoints[5] = 0.7f - br / 300.0f; // shoulder point
             brightcurvePoints[6] = 0.7f; // value at shoulder point
         }
@@ -180,7 +179,7 @@ void Ciecam02::curveJfloat (float br, float contr, float thr, const LUTu & histo
  * ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
  * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
- *
+ * Jacques Desmis - modifications 2012 - 2020 - 2026
  */
 
 float Ciecam02::d_factorfloat ( float f, float la )
@@ -206,9 +205,8 @@ float Ciecam02::achromatic_response_to_whitefloat ( float x, float y, float z, f
     float rc, gc, bc;
     float rp, gp, bp;
     float rpa, gpa, bpa;
-//    gamu = 1;
     xyz_to_cat02float ( r, g, b, x, y, z, c16, plum);
-
+    //convert XYZ to CAT02 or CAT16
     rc = r * (((y * d) / r) + (1.0f - d));
     gc = g * (((y * d) / g) + (1.0f - d));
     bc = b * (((y * d) / b) + (1.0f - d));
@@ -247,7 +245,7 @@ void Ciecam02::xyz_to_cat02float ( float &r, float &g, float &b, float x, float 
         r = ( 0.401288f * x) + (0.650173f * y) - (0.051461f * z); //cat16
         g = (-0.250268f * x) + (1.204414f * y) + (0.045854f * z);
         b = ( -0.002079f * x) + (0.048952f * y) + (0.953127f * z);
-    } else if (c16 == 21) {//cam16 PQ
+    } else if (c16 == 21) {//cam16 PQ - Perceptual Quantizer
         float rp = ( 0.401288f * x) + (0.650173f * y) - (0.051461f * z); //cat16
         float gp = (-0.250268f * x) + (1.204414f * y) + (0.045854f * z);
         float bp = ( -0.002079f * x) + (0.048952f * y) + (0.953127f * z);
@@ -284,16 +282,15 @@ void Ciecam02::xyz_to_cat02float ( float &r, float &g, float &b, float x, float 
 
 }
 
-#ifdef __SSE2__
+#if defined(__SSE2__) || defined(RT_SIMDE)
 void Ciecam02::xyz_to_cat02float ( vfloat &r, vfloat &g, vfloat &b, vfloat x, vfloat y, vfloat z, int c16, vfloat plum)
 {   //I use isnan() because I have tested others solutions with std::max(xxx,0) and in some cases crash
     //gamut correction M.H.Brill S.Susstrunk
-    if(c16 == 1) {
+    if(c16 == 1) {//Cat02
         r = ( F2V (1.007245f) * x) + (F2V (0.011136f) * y) - (F2V (0.018381f) * z); //Changjun Li
         g = (F2V (-0.318061f) * x) + (F2V (1.314589f) * y) + (F2V (0.003471f) * z);
         b = z;
-    } else  if (c16 == 16) {
-    //cat16
+    } else  if (c16 == 16) {//cat16
         r = ( F2V (0.401288f) * x) + (F2V (0.650173f) * y) - (F2V (0.051461f) * z);
         g = -(F2V (0.250268f) * x) + (F2V (1.204414f) * y) + (F2V (0.045854f) * z);
         b = -(F2V(0.002079f) * x) + (F2V(0.048952f) * y) + (F2V(0.953127f) * z);
@@ -359,7 +356,7 @@ void Ciecam02::cat02_to_xyzfloat ( float &x, float &y, float &z, float r, float 
     //y = ( 0.455053 * r) + (0.473938 * g) + (0.0710096* b);
     //z = ( 0.000000 * r) - (0.000000 * g) + (1.000000 * b);
     float pl = plum;
-    if(c16 == 1) {
+    if(c16 == 1) {//cat02
         x = ( 0.99015849f * r) - (0.00838772f * g) + (0.018229217f * b); //Changjun Li
         y = ( 0.239565979f * r) + (0.758664642f * g) + (0.001770137f * b);
         z = ( 0.000000f * r) - (0.000000f * g) + (1.000000f * b);
@@ -367,7 +364,7 @@ void Ciecam02::cat02_to_xyzfloat ( float &x, float &y, float &z, float r, float 
         x = ( 1.86206786f * r) - (1.01125463f * g) + (0.14918677f * b); //Cat16
         y = ( 0.38752654f * r) + (0.62144744f * g) + (-0.00897398f * b);
         z = ( -0.0158415f * r) - (0.03412294f * g) + (1.04996444f * b);
-    }else if(c16 == 21){//cam16 PQ
+    }else if(c16 == 21){//cat16 PQ
         float lp = ( 1.86206786f * r) - (1.01125463f * g) + (0.14918677f * b); //Cat16
         float mp = ( 0.38752654f * r) + (0.62144744f * g) + (-0.00897398f * b);
         float sp = ( -0.0158415f * r) - (0.03412294f * g) + (1.04996444f * b);
@@ -409,7 +406,7 @@ void Ciecam02::cat02_to_xyzfloat ( float &x, float &y, float &z, float r, float 
     }
 
 }
-#ifdef __SSE2__
+#if defined(__SSE2__) || defined(RT_SIMDE)
 void Ciecam02::cat02_to_xyzfloat ( vfloat &x, vfloat &y, vfloat &z, vfloat r, vfloat g, vfloat b, int c16, vfloat plum )
 {   //I use isnan() because I have tested others solutions with std::max(xxx,0) and in some cases crash
     vfloat plv = plum;
@@ -418,8 +415,7 @@ void Ciecam02::cat02_to_xyzfloat ( vfloat &x, vfloat &y, vfloat &z, vfloat r, vf
         x = ( F2V (0.99015849f) * r) - (F2V (0.00838772f) * g) + (F2V (0.018229217f) * b); //Changjun Li
         y = ( F2V (0.239565979f) * r) + (F2V (0.758664642f) * g) + (F2V (0.001770137f) * b);
         z = b;
-        } else  if(c16 == 16) {
-        //cat16  
+        } else  if(c16 == 16) {//cat16 
         x = ( F2V (1.86206786f) * r) - (F2V (1.01125463f) * g) + (F2V (0.14918677f) * b);
         y = ( F2V (0.38752654f) * r) + (F2V (0.621447744f) * g) - (F2V (0.00897398f) * b);
         z = -(F2V(0.0158415f) * r) - (F2V(0.03412294f) * g) + (F2V(1.04996444f) * b);
@@ -483,12 +479,12 @@ void Ciecam02::cat02_to_xyzfloat ( vfloat &x, vfloat &y, vfloat &z, vfloat r, vf
 #endif
 
 void Ciecam02::hpe_to_xyzfloat ( float &x, float &y, float &z, float r, float g, float b, int c16)
-{
+{//use by CIECAM02
         x = (1.910197f * r) - (1.112124f * g) + (0.201908f * b);
         y = (0.370950f * r) + (0.629054f * g) - (0.000008f * b);
         z = b;
 }
-#ifdef __SSE2__
+#if defined(__SSE2__) || defined(RT_SIMDE)
 void Ciecam02::hpe_to_xyzfloat ( vfloat &x, vfloat &y, vfloat &z, vfloat r, vfloat g, vfloat b, int c16)
 {
         x = (F2V (1.910197f) * r) - (F2V (1.112124f) * g) + (F2V (0.201908f) * b);
@@ -515,11 +511,10 @@ void Ciecam02::cat02_to_hpefloat ( float &rh, float &gh, float &bh, float r, flo
 
 }
 
-#ifdef __SSE2__
+#if defined(__SSE2__) || defined(RT_SIMDE)
 void Ciecam02::cat02_to_hpefloat ( vfloat &rh, vfloat &gh, vfloat &bh, vfloat r, vfloat g, vfloat b, int c16)
 {
-    if(c16 == 1) {
-    //Changjun Li
+    if(c16 == 1) {//cat02 Changjun Li
         rh = ( F2V (0.550930835f) * r) + (F2V (0.519435987f) * g) - ( F2V (0.070356303f) * b);
         gh = ( F2V (0.055954056f) * r) + (F2V (0.89973132f) * g) + (F2V (0.044315524f) * b);
         bh = b;
@@ -527,7 +522,6 @@ void Ciecam02::cat02_to_hpefloat ( vfloat &rh, vfloat &gh, vfloat &bh, vfloat r,
         rh = ( F2V (1.f) * r) + (F2V (0.f) * g) + ( F2V (0.f) * b);
         gh = ( F2V (0.f) * r) + (F2V (1.f) * g) + (F2V (0.f) * b);
         bh = b;
-        
     }
 }
 #endif
@@ -543,7 +537,7 @@ void Ciecam02::Aab_to_rgbfloat ( float &r, float &g, float &b, float A, float aa
     /*       c1              c6               c7       */
     b = (0.32787f * x) - (0.15681f * aa) - (4.49038f * bb);
 }
-#ifdef __SSE2__
+#if defined(__SSE2__) || defined(RT_SIMDE)
 void Ciecam02::Aab_to_rgbfloat ( vfloat &r, vfloat &g, vfloat &b, vfloat A, vfloat aa, vfloat bb, vfloat nbb )
 {
     vfloat c1 = F2V (0.32787f) * ((A / nbb) + F2V (0.305f));
@@ -594,7 +588,7 @@ void Ciecam02::calculate_abfloat ( float &aa, float &bb, float h, float e, float
         std::swap(aa, bb);
     }
 }
-#ifdef __SSE2__
+#if defined(__SSE2__) || defined(RT_SIMDE)
 void Ciecam02::calculate_abfloat ( vfloat &aa, vfloat &bb, vfloat h, vfloat e, vfloat t, vfloat nbb, vfloat a )
 {
     vfloat2 sincosval = xsincosf ((h * F2V (rtengine::RT_PI)) / F2V (180.0f));
@@ -628,7 +622,7 @@ void Ciecam02::calculate_abfloat ( vfloat &aa, vfloat &bb, vfloat h, vfloat e, v
 
 void Ciecam02::initcam1float (float yb, float pilotd, float f, float la, float xw, float yw, float zw, float &n, float &d, float &nbb, float &ncb,
                               float &cz, float &aw, float &wh, float &pfl, float &fl, float c, int c16, float plum)
-{
+{   //Initialize CIECAM, taking into account physiological effects and user requests (scene)
     n = yb / yw;
 
     if (pilotd == 2.f) {
@@ -647,7 +641,7 @@ void Ciecam02::initcam1float (float yb, float pilotd, float f, float la, float x
 
 void Ciecam02::initcam2float (float yb, float pilotd, float f, float la, float xw, float yw, float zw, float &n, float &d, float &nbb, float &ncb,
                               float &cz, float &aw, float &fl, int c16, float plum)
-{
+{ //Initialize CIECAM, taking into account physiological effects and user requests (viewing)
     n = yb / yw;
 
     if (pilotd == 2.f) {
@@ -790,7 +784,7 @@ void Ciecam02::xyz2jchqms_ciecam02float ( float &J, float &C, float &h, float &Q
         float x, float y, float z, float xw, float yw, float zw,
         float c, float nc, float pow1, float nbb, float ncb, float pfl, float cz, float d, int c16, float plum)
 
-{
+{ // main function of calling and conversion from xyz to cam
     float r, g, b;
     float rw, gw, bw;
     float rc, gc, bc;
@@ -848,7 +842,7 @@ void Ciecam02::xyz2jchqms_ciecam02float ( float &J, float &C, float &h, float &Q
     s = 100.0f * sqrtf ( M / Q );
     h = (myh * 180.f) / (float)rtengine::RT_PI;
 }
-#ifdef __SSE2__
+#if defined(__SSE2__) || defined(RT_SIMDE)
 void Ciecam02::xyz2jchqms_ciecam02float ( vfloat &J, vfloat &C, vfloat &h, vfloat &Q, vfloat &M, vfloat &s, vfloat aw, vfloat fl, vfloat wh,
         vfloat x, vfloat y, vfloat z, vfloat xw, vfloat yw, vfloat zw,
         vfloat c, vfloat nc, vfloat pow1, vfloat nbb, vfloat ncb, vfloat pfl, vfloat cz, vfloat d, int c16, vfloat plum)
@@ -894,7 +888,7 @@ void Ciecam02::xyz2jchqms_ciecam02float ( vfloat &J, vfloat &C, vfloat &h, vfloa
     temp += temp;
     temp += myh;
     myh = vself (vmaskf_lt (myh, ZEROV), temp, myh);
-
+    //The variables used are calculated from here.
     a = ((rpa + rpa) + gpa + (F2V (0.05f) * bpa) - F2V (0.305f)) * nbb;
     a = vmaxf (a, ZEROV);  //gamut correction M.H.Brill S.Susstrunk
 
@@ -918,7 +912,7 @@ void Ciecam02::xyz2jch_ciecam02float ( float &J, float &C, float &h, float aw, f
                                        float x, float y, float z, float xw, float yw, float zw,
                                        float c, float nc, float pow1, float nbb, float ncb, float cz, float d, int c16, float plum)
 
-{
+{// main function of calling and conversion from xyz to cam
     float r, g, b;
     float rw, gw, bw;
     float rc, gc, bc;
@@ -946,7 +940,7 @@ void Ciecam02::xyz2jch_ciecam02float ( float &J, float &C, float &h, float aw, f
     }
 
 
-#ifdef __SSE2__
+#if defined(__SSE2__) || defined(RT_SIMDE)
     vfloat pv = _mm_setr_ps(rp, gp, bp, 1.f);
     vfloat fv = F2V(fl);
     vfloat outv = nonlinear_adaptationfloat(pv, fv);
@@ -986,7 +980,7 @@ void Ciecam02::xyz2jch_ciecam02float ( float &J, float &C, float &h, float aw, f
 void Ciecam02::jch2xyz_ciecam02float ( float &x, float &y, float &z, float J, float C, float h,
                                        float xw, float yw, float zw,
                                        float c, float nc, float pow1, float nbb, float ncb, float fl, float cz, float d, float aw, int c16, float plum)
-{
+{// inverse main function of calling and conversion from cam to xyz
     float r, g, b;
     float rc, gc, bc;
     float rp, gp, bp;
@@ -997,7 +991,7 @@ void Ciecam02::jch2xyz_ciecam02float ( float &x, float &y, float &z, float J, fl
     xyz_to_cat02float(rw, gw, bw, xw, yw, zw, c16, plum);
     e = ((961.53846f) * nc * ncb) * (xcosf(h * rtengine::RT_PI_F_180 + 2.0f) + 3.8f);
 
-#ifdef __SSE2__
+#if defined(__SSE2__) || defined(RT_SIMDE)
     vfloat powinv1 = _mm_setr_ps(J / 100.0f, 10.f * C / (sqrtf(J) * pow1), 1.f, 1.f);
     vfloat powinv2 = _mm_setr_ps(1.0f / (c * cz), 1.1111111f, 1.f, 1.f);
     vfloat powoutv = pow_F(powinv1, powinv2);
@@ -1011,7 +1005,7 @@ void Ciecam02::jch2xyz_ciecam02float ( float &x, float &y, float &z, float J, fl
     calculate_abfloat(ca, cb, h, e, t, nbb, a);
     Aab_to_rgbfloat(rpa, gpa, bpa, a, ca, cb, nbb);
 
-#ifdef __SSE2__
+#if defined(__SSE2__) || defined(RT_SIMDE)
     vfloat pav = _mm_setr_ps(rpa, gpa, bpa, 1.f);
     vfloat fv = F2V(fl);
     vfloat outv = inverse_nonlinear_adaptationfloat(pav, fv);
@@ -1040,7 +1034,7 @@ void Ciecam02::jch2xyz_ciecam02float ( float &x, float &y, float &z, float J, fl
     cat02_to_xyzfloat(x, y, z, r, g, b, c16, plum);
 }
 
-#ifdef __SSE2__
+#if defined(__SSE2__) || defined(RT_SIMDE)
 void Ciecam02::jch2xyz_ciecam02float ( vfloat &x, vfloat &y, vfloat &z, vfloat J, vfloat C, vfloat h,
                                        vfloat xw, vfloat yw, vfloat zw,
                                        vfloat nc, vfloat pow1, vfloat nbb, vfloat ncb, vfloat fl, vfloat d, vfloat aw, vfloat reccmcz, int c16, vfloat plum)
@@ -1082,7 +1076,7 @@ void Ciecam02::jch2xyz_ciecam02float ( vfloat &x, vfloat &y, vfloat &z, vfloat J
 #endif
 
 float Ciecam02::nonlinear_adaptationfloat ( float c, float fl )
-{
+{ //take into accound surround
     float p;
 
     if (c < 0.0f) {
@@ -1094,7 +1088,7 @@ float Ciecam02::nonlinear_adaptationfloat ( float c, float fl )
     }
 }
 
-#ifdef __SSE2__
+#if defined(__SSE2__) || defined(RT_SIMDE)
 vfloat Ciecam02::nonlinear_adaptationfloat ( vfloat c, vfloat fl )
 {
     vfloat c100 = F2V (100.f);
@@ -1125,7 +1119,7 @@ float Ciecam02::inverse_nonlinear_adaptationfloat ( float c, float fl )
     return (100.0f / fl) * pow_F ( (27.13f * fabsf ( c )) / (400.0f - fabsf ( c )), 2.38095238f );
 }
 
-#ifdef __SSE2__
+#if defined(__SSE2__) || defined(RT_SIMDE)
 vfloat Ciecam02::inverse_nonlinear_adaptationfloat ( vfloat c, vfloat fl )
 {
     c -= F2V (0.1f);

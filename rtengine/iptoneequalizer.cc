@@ -221,7 +221,7 @@ void toneEqualizer(
         };
 
 
-#ifdef __SSE2__
+#if defined(__SSE2__) || defined(RT_SIMDE)
     vfloat vfactors[15];
     vfloat vcenters[15];
 
@@ -308,7 +308,7 @@ void toneEqualizer(
         int x = 0;
 
 
-#ifdef __SSE2__
+#if defined(__SSE2__) || defined(RT_SIMDE)
 
         for (; x < W - 3; x += 4) {
             vfloat cY = LVFU(Y[y][x]);

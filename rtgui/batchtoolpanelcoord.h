@@ -34,6 +34,8 @@ class BatchToolPanelCoordinator final :
     public BatchPParamsChangeListener,
     public ThumbnailListener
 {
+private:
+    bool active;
 protected:
     rtengine::procparams::ProcParams pparams;
     ParamsEdited pparamsEdited;
@@ -86,4 +88,10 @@ public:
     CropGUIListener* startCropEditing (Thumbnail* thm = nullptr) override;
 
     void optionsChanged ();
+
+    void enableAutoUpdate ();
+    void disableAutoUpdate ()
+    {
+        active = false;
+    }
 };

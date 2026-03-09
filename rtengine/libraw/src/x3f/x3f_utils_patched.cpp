@@ -344,11 +344,9 @@ static x3f_huffman_t *new_huffman(x3f_huffman_t **HUFP)
     }
 
     GET4(H->version);
-    GETN(H->unique_identifier, SIZE_UNIQUE_IDENTIFIER);
-    /* TODO: the meaning of the rest of the header for version >= 4.0 (Quattro)
-     * is unknown */
     if (H->version < X3F_VERSION_4_0)
     {
+      GETN(H->unique_identifier, SIZE_UNIQUE_IDENTIFIER);
       GET4(H->mark_bits);
       GET4(H->columns);
       GET4(H->rows);
@@ -365,6 +363,17 @@ static x3f_huffman_t *new_huffman(x3f_huffman_t **HUFP)
         for (i = 0; i < num_ext_data; i++)
           GET4F(H->extended_data[i]);
       }
+    }
+    else if (H->version < X3F_VERSION(5, 0))
+    {
+      /* TODO: the meaning of the rest of the header for version >= 4.0 
+      * (Quattro) is unknown */
+      infile->seek(12, SEEK_CUR);
+      GETN(H->unique_identifier, SIZE_UNIQUE_IDENTIFIER);
+      infile->seek(4, SEEK_CUR);
+      GET4(H->columns);
+      GET4(H->rows);
+      GET4(H->rotation);
     }
 
     /* Go to the beginning of the directory */

@@ -22,12 +22,12 @@
 
 #include <gtkmm.h>
 
-#include "adjuster.h"
 #include "guiutils.h"
-#include "popupbutton.h"
 #include "toolpanel.h"
 #include "curvelistener.h"
-#include "thresholdadjuster.h"
+#include "widgets/basic/adjuster.h"
+#include "widgets/basic/popupbutton.h"
+#include "widgets/basic/thresholdadjuster.h"
 
 #include "rtengine/imagedata.h"
 
@@ -75,6 +75,9 @@ protected:
     Adjuster* offstrc;
     Adjuster* pyrwavtrc;
     Adjuster* residtrc;
+    Gtk::Label* trcmaxdata;
+    Gtk::Label* rgbmaxdata;
+    Gtk::Label* satmaxdata;
 
     std::unique_ptr<CurveEditorGroup> opacityCurveEditorWLI;
     FlatCurveEditor* opacityShapeWLI;
@@ -85,6 +88,13 @@ protected:
     Adjuster* grey;
     Adjuster* blux;
     Adjuster* bluy;
+    Adjuster* redrot;
+    Adjuster* redsat;
+    Adjuster* grerot;
+    Adjuster* gresat;
+    Adjuster* blurot;
+    Adjuster* blusat;
+
     Adjuster* preser;
     Adjuster* refi;
     Adjuster* shiftx;
@@ -138,6 +148,13 @@ private:
     rtengine::ProcEvent EvICMgrey;
     rtengine::ProcEvent EvICMblux;
     rtengine::ProcEvent EvICMbluy;
+    rtengine::ProcEvent EvICMredrot;
+    rtengine::ProcEvent EvICMredsat;
+    rtengine::ProcEvent EvICMgrerot;
+    rtengine::ProcEvent EvICMgresat;
+    rtengine::ProcEvent EvICMblurot;
+    rtengine::ProcEvent EvICMblusat;
+    
     rtengine::ProcEvent EvaIntent;
     rtengine::ProcEvent EvICMpreser;
     rtengine::ProcEvent EvICMLabGridciexy;
@@ -158,6 +175,9 @@ private:
     rtengine::ProcEvent EvICMpyrwavtrc;
     rtengine::ProcEvent EvICMresidtrc;
     rtengine::ProcEvent EvICMwavExp;
+    rtengine::ProcEvent EvICMwgamut;
+    rtengine::ProcEvent EvICMwgampower;
+    rtengine::ProcEvent EvICMwgamgain;
 
     LabGrid *labgridcie;
     IdleRegister idle_register;
@@ -168,10 +188,16 @@ private:
     Gtk::Label* wprimlab;
     Gtk::Label* cielab;
     Gtk::Grid* primCoordGrid;
+    Gtk::Grid* primCoordGrid2;
     Gtk::Box* riaHBox;
     Gtk::Box* preBox;
     Gtk::Box* iVBox;
     Gtk::Box* wTRCBox;
+    Gtk::Frame* gamutcomp;
+
+    Gtk::Box* wgamutBox;
+    Gtk::Label* wgamutlab;
+
     Gtk::CheckButton* fbw;
     Gtk::CheckButton* gamut;
 
@@ -197,6 +223,11 @@ private:
     sigc::connection wprofnamesconn;
     MyComboBoxText* wTRC;
     sigc::connection wtrcconn;
+    MyComboBoxText* wgamut;
+    sigc::connection wgamutconn;
+    Adjuster* wgampower;
+    Adjuster* wgamgain;
+
     MyComboBoxText* will;
     sigc::connection willconn;
     MyComboBoxText* wprim;
@@ -252,12 +283,16 @@ public:
     void adjusterChanged(Adjuster* a, double newval) override;
     void primChanged (float rx, float ry, float bx, float by, float gx, float gy) override;
     void iprimChanged (float r_x, float r_y, float b_x, float b_y, float g_x, float g_y, float w_x, float w_y, float m_x, float m_y) override;
+    void maxdatawtrc(float m_data) override;
+    void maxdataend(float m_rgb, float m_sat, bool gamgain) override;
+
     void neutral_pressed();
     void curveChanged(CurveEditor* ce) override;
     void wavlocChanged(double nlevel, double nmax, bool curveloc) override;
 
     void wpChanged();
     void wtrcinChanged();
+    void wgamutChanged();
     void willChanged();
     void wprimChanged();
     void wcatChanged();
@@ -269,7 +304,7 @@ public:
     void oBPCChanged();
     void fbwChanged();
     void wsmoothcieChanged();
-    
+    void resetpolar();
     void gamutChanged();
     void ipChanged();
     void ipSelectionChanged();
@@ -278,7 +313,7 @@ public:
     void applyLookTableChanged();
     void applyBaselineExposureOffsetChanged();
     void applyHueSatMapChanged();
-
+    void upgateGUI_lin_pol_graph();
     void setRawMeta(bool raw, const rtengine::FramesData* pMeta);
     void saveReferencePressed();
     void setListener(ToolPanelListener* tpl) override;

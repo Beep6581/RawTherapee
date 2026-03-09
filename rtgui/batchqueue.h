@@ -21,10 +21,10 @@
 
 #include <gtkmm.h>
 
-#include "lwbutton.h"
-#include "lwbuttonset.h"
 #include "threadutils.h"
 #include "thumbbrowserbase.h"
+#include "widgets/basic/lwbutton.h"
+#include "widgets/basic/lwbuttonset.h"
 
 #include "rtengine/rtengine.h"
 #include "rtengine/noncopyable.h"

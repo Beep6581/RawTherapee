@@ -142,6 +142,8 @@ private:
 
     std::vector<locallabshGHSbw> sh_ghsbw;
 
+    std::vector<locallabshMICHbw> sh_michbw;
+
     std::vector<locallabsetLC> set_lc;
 
     std::vector<locallabcieSIG> cie_sig;
@@ -186,9 +188,10 @@ public:
     // Locallab CIE tool primaries function
     void cieChanged(const std::vector<locallabcieLC> &cielc, int selspot) override;
 
-    // Locallab SH GHS tool Black point & White point GHS function
-    void ghsbwChanged(const std::vector<locallabshGHSbw> &shghsbw, int selspot) override;
-    void ghsbw2Changed(const std::vector<locallabshGHSbw2> &shghsbw2, int selspot) override;
+    // Locallab SH GHS tool Black point & White point GHS function && Michaelis White and Black point
+    void ghsbwChanged(const std::vector<locallabshGHSbw> &shghsbw, int selspot) override;//GHS
+    void ghsbw2Changed(const std::vector<locallabshGHSbw2> &shghsbw2, int selspot) override;//GHS
+    void michbwChanged(const std::vector<locallabshMICHbw> &shmichbw, int selspot) override;//Michaelis
 
     // Locallab Log Encoding and Cam16 autocompute function
     void ciebefChanged(const std::vector<locallabcieBEF> &ciebef, int selspot) override;

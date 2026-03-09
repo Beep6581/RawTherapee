@@ -1,5 +1,5 @@
 /* -*- C++ -*-
- * Copyright 2019-2024 LibRaw LLC (info@libraw.org)
+ * Copyright 2019-2025 LibRaw LLC (info@libraw.org)
  *
 
  LibRaw is free software; you can redistribute it and/or modify
@@ -499,7 +499,8 @@ int LibRaw::parseCR3(INT64 oAtomList,
     {
 		if (nesting == 0)
 		{
-			if(!memcmp(thdr,"II*\0",4) || !memcmp(thdr,"MM*\0",4))
+			if(!memcmp(thdr,"II*\0",4) || !memcmp(thdr,"MM*\0",4) ||
+				( !memcmp(HandlerType, "unk.", 4) && nTrack >=0))
 			{
 				err = 0;
 				goto fin;

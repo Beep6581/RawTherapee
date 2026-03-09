@@ -315,11 +315,17 @@ Gtk::Widget* Preferences::getBatchProcPanel()
     appendBehavList(mi, M("TP_COLORAPP_BRIGHT"), ADDSET_CAT_BRIGHT, true);
     appendBehavList(mi, M("TP_COLORAPP_CHROMA"), ADDSET_CAT_CHROMA, true);
     appendBehavList(mi, M ("TP_COLORAPP_CHROMA_S"), ADDSET_CAT_CHROMA_S, true);
+    appendBehavList(mi, M ("TP_COLORAPP_CHROMA_S_RED"), ADDSET_CAT_CHROMA_S_RED, true);
+    appendBehavList(mi, M ("TP_COLORAPP_CHROMA_S_GREEN"), ADDSET_CAT_CHROMA_S_GREEN, true);
+    appendBehavList(mi, M ("TP_COLORAPP_CHROMA_S_BLUE"), ADDSET_CAT_CHROMA_S_BLUE, true);
     appendBehavList(mi, M ("TP_COLORAPP_CHROMA_M"), ADDSET_CAT_CHROMA_M, true);
     appendBehavList(mi, M("TP_COLORAPP_RSTPRO"), ADDSET_CAT_RSTPRO, true);
     appendBehavList(mi, M("TP_COLORAPP_CONTRAST"), ADDSET_CAT_CONTRAST, true);
     appendBehavList(mi, M("TP_COLORAPP_CONTRAST_Q"), ADDSET_CAT_CONTRAST_Q, true);
     appendBehavList(mi, M("TP_COLORAPP_HUE"), ADDSET_CAT_HUE, true);
+    appendBehavList(mi, M("TP_COLORAPP_HUE_RED"), ADDSET_CAT_HUE_RED, true);
+    appendBehavList(mi, M("TP_COLORAPP_HUE_GREEN"), ADDSET_CAT_HUE_GREEN, true);
+    appendBehavList(mi, M("TP_COLORAPP_HUE_BLUE"), ADDSET_CAT_HUE_BLUE, true);
     appendBehavList(mi, M("TP_COLORAPP_CIECAT_DEGREEOUT"), ADDSET_CAT_DEGREEOUT, true);
     appendBehavList(mi, M("TP_WBALANCE_TEMPERATURE"), ADDSET_CAT_TEMPOUT, true);
     appendBehavList(mi, M("TP_COLORAPP_BADPIXSL"), ADDSET_CAT_BADPIX, true);
@@ -955,12 +961,7 @@ Gtk::Widget* Preferences::getColorManPanel ()
 
     for (const auto& profile : profiles) {
         if (profile.find("file:") != 0) {
-            std::string fileis_RTv4 = profile.substr(0, 4);
-
-            if (fileis_RTv4 != "RTv4") {
-            //    printf("pro=%s \n", profile.c_str());
-                monProfile->append(profile);
-            }
+            monProfile->append(profile);
         }
     }
 

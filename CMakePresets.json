@@ -118,6 +118,8 @@
                 "WITH_PROF": "OFF",
                 "WITH_SYSTEM_KLT": "OFF",
                 "WITH_SYSTEM_LIBRAW": "OFF",
+                "SVG_BACKEND": "librsvg",
+                "WITH_SYSTEM_LUNASVG": "OFF",
 
                 "STRICT_MUTEX": "ON",
                 "TRACE_MYRWMUTEX": "OFF",

@@ -317,7 +317,7 @@ float* RawImageSource::CA_correct_RT(
                         // rgb values should be floating point numbers between 0 and 1
                         // after white balance multipliers are applied
 
-#ifdef __SSE2__
+#if defined(__SSE2__) || defined(RT_SIMDE)
                         vfloat c65535v = F2V(65535.f);
 #endif
 
@@ -325,7 +325,7 @@ float* RawImageSource::CA_correct_RT(
                             int row = rr + top;
                             int cc = ccmin;
                             int col = cc + left;
-#ifdef __SSE2__
+#if defined(__SSE2__) || defined(RT_SIMDE)
                             int c0 = fc(cfa, rr, cc);
                             if (c0 == 1) {
                                 rgb[c0][rr * ts + cc] = rawData[row][col] / 65535.f;
@@ -427,7 +427,7 @@ float* RawImageSource::CA_correct_RT(
                         //end of border fill
                         //end of initialization
 
-#ifdef __SSE2__
+#if defined(__SSE2__) || defined(RT_SIMDE)
                         vfloat onev = F2V(1.f);
                         vfloat epsv = F2V(eps);
 #endif
@@ -436,7 +436,7 @@ float* RawImageSource::CA_correct_RT(
                             int cc = 3 + (fc(cfa, rr,3) & 1);
                             int indx = rr * ts + cc;
                             int c = fc(cfa, rr,cc);
-#ifdef __SSE2__
+#if defined(__SSE2__) || defined(RT_SIMDE)
                             for (; cc < cc1 - 9; cc+=8, indx+=8) {
                                 //compute directional weights using image gradients
                                 vfloat rgb1mv1v = LC2VFU(rgb[1][indx - v1]);
@@ -472,7 +472,7 @@ float* RawImageSource::CA_correct_RT(
                                 int offset = (fc(cfa, row,max(left + 3, 0)) & 1);
                                 int col = max(left + 3, 0) + offset;
                                 int indx = rr * ts + 3 - (left < 0 ? (left+3) : 0) + offset;
-#ifdef __SSE2__
+#if defined(__SSE2__) || defined(RT_SIMDE)
                                 for (; col < min(cc1 + left - 3, width) - 7; col+=8, indx+=8) {
                                     STVFU(Gtmp[(row * width + col) >> 1], LC2VFU(rgb[1][indx]));
                                 }
@@ -483,14 +483,14 @@ float* RawImageSource::CA_correct_RT(
                             }
                         }
 
-#ifdef __SSE2__
+#if defined(__SSE2__) || defined(RT_SIMDE)
                         vfloat zd25v = F2V(0.25f);
 #endif
                         for (int rr = 4; rr < rr1 - 4; rr++) {
                             int cc = 4 + (fc(cfa, rr, 2) & 1);
                             int indx = rr * ts + cc;
                             int c = fc(cfa, rr, cc);
-#ifdef __SSE2__
+#if defined(__SSE2__) || defined(RT_SIMDE)
                             for (; cc < cc1 - 10; cc += 8, indx += 8) {
                                 vfloat rgb1v = LC2VFU(rgb[1][indx]);
                                 vfloat rgbcv = LVFU(rgb[c][indx >> 1]);
@@ -544,7 +544,7 @@ float* RawImageSource::CA_correct_RT(
                             }
                         }
 
-#ifdef __SSE2__
+#if defined(__SSE2__) || defined(RT_SIMDE)
                         vfloat zd3v = F2V(0.3f);
                         vfloat zd1v = F2V(0.1f);
                         vfloat zd5v = F2V(0.5f);
@@ -556,7 +556,7 @@ float* RawImageSource::CA_correct_RT(
                             int cc = 8 + (fc(cfa, rr, 2) & 1);
                             int indx = rr * ts + cc;
                             int c = fc(cfa, rr, cc);
-#ifdef __SSE2__
+#if defined(__SSE2__) || defined(RT_SIMDE)
                             vfloat coeff00v = ZEROV;
                             vfloat coeff01v = ZEROV;
                             vfloat coeff02v = ZEROV;
@@ -866,7 +866,7 @@ float* RawImageSource::CA_correct_RT(
                         // rgb values should be floating point number between 0 and 1
                         // after white balance multipliers are applied
 
-#ifdef __SSE2__
+#if defined(__SSE2__) || defined(RT_SIMDE)
                         vfloat c65535v = F2V(65535.f);
                         vmask gmask = _mm_set_epi32(0, 0xffffffff, 0, 0xffffffff);
 #endif
@@ -876,7 +876,7 @@ float* RawImageSource::CA_correct_RT(
                             int col = cc + left;
                             int indx = row * width + col;
                             int indx1 = rr * ts + cc;
-#ifdef __SSE2__
+#if defined(__SSE2__) || defined(RT_SIMDE)
                             int c = fc(cfa, rr, cc);
                             if (c & 1) {
                                 rgb[1][indx1] = rawData[row][col] / 65535.f;
@@ -1001,14 +1001,14 @@ float* RawImageSource::CA_correct_RT(
                         //end of border fill
 
                         if (!autoCA || fitParamsIn) {
-#ifdef __SSE2__
+#if defined(__SSE2__) || defined(RT_SIMDE)
                             const vfloat onev = F2V(1.f);
                             const vfloat epsv = F2V(eps);
 #endif
                             //manual CA correction; use red/blue slider values to set CA shift parameters
                             for (int rr = 3; rr < rr1 - 3; rr++) {
                                 int cc = 3 + fc(cfa, rr, 1), c = fc(cfa, rr,cc), indx = rr * ts + cc;
-#ifdef __SSE2__
+#if defined(__SSE2__) || defined(RT_SIMDE)
                                 for (; cc < cc1 - 10; cc += 8, indx += 8) {
                                     //compute directional weights using image gradients
                                     vfloat val1v = epsv + vabsf(LC2VFU(rgb[1][(rr + 1) * ts + cc]) - LC2VFU(rgb[1][(rr - 1) * ts + cc]));
@@ -1095,7 +1095,7 @@ float* RawImageSource::CA_correct_RT(
                             int indxff = (rr + shiftvfloor[c]) * ts + cc + shifthfloor[c];
                             int indxcc = (rr + shiftvceil[c]) * ts + cc + shifthceil[c];
                             int indxcf = (rr + shiftvceil[c]) * ts + cc + shifthfloor[c];
-#ifdef __SSE2__
+#if defined(__SSE2__) || defined(RT_SIMDE)
                             vfloat shifthfracv = F2V(shifthfrac[c]);
                             vfloat shiftvfracv = F2V(shiftvfrac[c]);
                             for (; cc < cc1 - 10; cc += 8, indxfc += 8, indxff += 8, indxcc += 8, indxcf += 8, indx += 4) {
@@ -1131,7 +1131,7 @@ float* RawImageSource::CA_correct_RT(
                         shiftvfrac[0] /= 2.f;
                         shiftvfrac[2] /= 2.f;
 
-#ifdef __SSE2__
+#if defined(__SSE2__) || defined(RT_SIMDE)
                         vfloat zd25v = F2V(0.25f);
                         vfloat onev = F2V(1.f);
                         vfloat zd5v = F2V(0.5f);
@@ -1142,7 +1142,7 @@ float* RawImageSource::CA_correct_RT(
                             int c = fc(cfa, rr, cc);
                             int GRBdir0 = GRBdir[0][c];
                             int GRBdir1 = GRBdir[1][c];
-#ifdef __SSE2__
+#if defined(__SSE2__) || defined(RT_SIMDE)
                             vfloat shifthfracc = F2V(shifthfrac[c]);
                             vfloat shiftvfracc = F2V(shiftvfrac[c]);
                             for (int indx = rr * ts + cc; cc < cc1 - 14; cc += 8, indx += 8) {
@@ -1223,7 +1223,7 @@ float* RawImageSource::CA_correct_RT(
                             int cc = border + (fc(cfa, rr, 2) & 1);
                             int indx = (row * width + cc + left) >> 1;
                             int indx1 = (rr * ts + cc) >> 1;
-#ifdef __SSE2__
+#if defined(__SSE2__) || defined(RT_SIMDE)
                             for (; indx < (row * width + cc1 - border - 7 + left) >> 1; indx+=4, indx1 += 4) {
                                 STVFU(RawDataTmp[indx], c65535v * LVFU(rgb[c][indx1]));
                             }
@@ -1257,7 +1257,7 @@ float* RawImageSource::CA_correct_RT(
                 for (int row = cb; row < height - cb; row++) {
                     int col = cb + (fc(cfa, row, 0) & 1);
                     int indx = (row * width + col) >> 1;
-#ifdef __SSE2__
+#if defined(__SSE2__) || defined(RT_SIMDE)
                     for (; col < width - 7 - cb; col += 8, indx += 4) {
                         const vfloat val = vmaxf(LVFU(RawDataTmp[indx]), ZEROV);
                         STC2VFU(rawData[row][col], val);
@@ -1281,7 +1281,7 @@ float* RawImageSource::CA_correct_RT(
             #pragma omp parallel
 #endif
             {
-#ifdef __SSE2__
+#if defined(__SSE2__) || defined(RT_SIMDE)
                 const vfloat onev = F2V(1.f);
                 const vfloat twov = F2V(2.f);
                 const vfloat zd5v = F2V(0.5f);
@@ -1294,7 +1294,7 @@ float* RawImageSource::CA_correct_RT(
                     const int colour = fc(cfa, i, firstCol);
                     array2D<float>* nonGreen = colour == 0 ? redFactor : blueFactor;
                     int j = firstCol;
-#ifdef __SSE2__
+#if defined(__SSE2__) || defined(RT_SIMDE)
                     for (; j < W - 7 - 2 * cb; j += 8) {
                         const vfloat newvals = LC2VFU(rawData[i + cb][j + cb]);
                         const vfloat oldvals = LVFU((*oldraw)[i][j / 2]);

@@ -1,6 +1,6 @@
 /* -*- C++ -*-
  * File: libraw_const.h
- * Copyright 2008-2024 LibRaw LLC (info@libraw.org)
+ * Copyright 2008-2025 LibRaw LLC (info@libraw.org)
  * Created: Sat Mar  8 , 2008
  * LibRaw error codes
 LibRaw is free software; you can redistribute it and/or modify
@@ -58,7 +58,14 @@ it under the terms of the one of two licenses as you choose:
 #define LIBRAW_CR3_MEMPOOL
 #endif
 
-
+/* Windows or Mac: swab() known to work*/
+#if defined (__APPLE__) || defined(WIN32) || defined(_WIN32)
+/* nothing ?*/
+#else /* all other systems */
+#if !defined(LIBRAW_SYSTEM_SWAB)
+#define LIBRAW_OWN_SWAB
+#endif
+#endif
 
 /* LibRaw uses own memory pool management, with LIBRAW_MSIZE (512)
 entries. It is enough for parsing/decoding non-damaged files, but
@@ -114,7 +121,7 @@ enum LibRaw_dngfields_marks
   LIBRAW_DNGFM_LINEARRESPONSELIMIT = 1 << 14,
   LIBRAW_DNGFM_USERCROP = 1 << 15,
   LIBRAW_DNGFM_OPCODE1 = 1 << 16,
-  LIBRAW_DNGFM_OPCODE3 = 1 << 17,
+  LIBRAW_DNGFM_OPCODE3 = 1 << 17
 };
 
 enum LibRaw_As_Shot_WB_Applied_codes
@@ -649,7 +656,7 @@ enum LibRaw_rawspeed_bits_t
     /*  bits 3-7 are reserved*/
     LIBRAW_RAWSPEEDV3_USE = 1 << 8,
     LIBRAW_RAWSPEEDV3_FAILONUNKNOWN = 1 << 9,
-    LIBRAW_RAWSPEEDV3_IGNOREERRORS = 1 << 10,
+    LIBRAW_RAWSPEEDV3_IGNOREERRORS = 1 << 10
 };
 
 enum LibRaw_processing_options
@@ -658,7 +665,6 @@ enum LibRaw_processing_options
   LIBRAW_RAWOPTIONS_CONVERTFLOAT_TO_INT = 1 << 1,
   LIBRAW_RAWOPTIONS_ARQ_SKIP_CHANNEL_SWAP = 1 << 2,
   LIBRAW_RAWOPTIONS_NO_ROTATE_FOR_KODAK_THUMBNAILS = 1 << 3,
-//  LIBRAW_RAWOPTIONS_USE_DNG_DEFAULT_CROP = 1 << 4,
   LIBRAW_RAWOPTIONS_USE_PPM16_THUMBS = 1 << 5,
   LIBRAW_RAWOPTIONS_DONT_CHECK_DNG_ILLUMINANT = 1 << 6,
   LIBRAW_RAWOPTIONS_DNGSDK_ZEROCOPY = 1 << 7,
@@ -678,7 +684,9 @@ enum LibRaw_processing_options
   LIBRAW_RAWOPTIONS_DNG_STAGE3_IFPRESENT = 1 << 21,
   LIBRAW_RAWOPTIONS_DNG_ADD_MASKS = 1 << 22,
   LIBRAW_RAWOPTIONS_CANON_IGNORE_MAKERNOTES_ROTATION = 1 << 23,
-  LIBRAW_RAWOPTIONS_ALLOW_JPEGXL_PREVIEWS = 1 << 24
+  LIBRAW_RAWOPTIONS_ALLOW_JPEGXL_PREVIEWS = 1 << 24,
+  LIBRAW_RAWOPTIONS_CANON_CHECK_CAMERA_AUTO_ROTATION_MODE = 1 << 26,
+  LIBRAW_RAWOPTIONS_DNG_STAGE23_IFPRESENT_JPGJXL = 1 << 27
 };
 
 enum LibRaw_decoder_flags
@@ -696,7 +704,7 @@ enum LibRaw_decoder_flags
   LIBRAW_DECODER_FLAT_BG2_SWAPPED = 1<<13,
   LIBRAW_DECODER_UNSUPPORTED_FORMAT = 1 << 14,
   LIBRAW_DECODER_NOTSET = 1 << 15,
-  LIBRAW_DECODER_TRYRAWSPEED3 = 1 << 16
+  LIBRAW_DECODER_TRYRAWSPEED3 = 1 << 16,
 };
 
 #define LIBRAW_XTRANS 9

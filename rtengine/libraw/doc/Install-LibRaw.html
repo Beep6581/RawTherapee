@@ -43,6 +43,39 @@ make
       <li>libraw.a: non-thread-safe version</li>
       <li>libraw_r.a: thread-safe</li>
     </ul>
+    <h3>Build via provided Makefiles</h3>
+    <p>Several makefiles provided to simplify basic build process:</p>
+    <ul>
+      <li>Makefile.dist - for macOS/Unix builds</li>
+      <li>Makefile.mingw - for MinGW/similar gcc/clang on Windows</li>
+      <li>Makefile.msvc - for Microsoft nmake/Visual studio</li>
+    </ul>
+    To build via provided Makefile: edit it to adjust compilation flag and use
+    make/gmake/nmake -f Makefile
+    <h3>Build time defines</h3>
+    <p>File size/memory limits:</p>
+    <ul>
+      <li>LIBRAW_MAX_ALLOC_MB_DEFAULT - memory use for main RAW image in
+        megabytes (default 2048MB)</li>
+      <li>LIBRAW_MAX_PROFILE_SIZE_MB - embedded profile size limit (256MB)</li>
+      <li>LIBRAW_MAX_NONDNG_RAW_FILE_SIZE - non-DNG file size limit (2GB)</li>
+      <li>LIBRAW_MAX_CR3_RAW_FILE_SIZE -CR3 file size limit (2GB)</li>
+      <li>LIBRAW_MAX_DNG_RAW_FILE_SIZE - DNG file size limit (2GB if compiled
+        without Adobe DNG SDK, 4GB for Adobe-DNG-SDK build)</li>
+      <li>LIBRAW_MAX_THUMBNAIL_MB -maximum thumbnail size (512MB)</li>
+    </ul>
+    Other build-time parameters (defines)
+    <ul>
+      <li>LIBRAW_OWN_SWAB - use own swab() implementation, default for
+        Unix/Linux/Android</li>
+      <li>LIBRAW_WIN32_CALLS - C-runtime used hasWin32 calls (default: on
+        forVisual Studio/Intel compiler)</li>
+      <li>LIBRAW_WIN32_DLLDEFS -build tools has __dllimport/export</li>
+      <li>LIBRAW_WIN32_UNICODEPATHS -Unicode wchar_t paths supported</li>
+      <li>LIBRAW_NO_IOSTREAMS_DATASTREAM - do not build iostreams-based LibRaw
+        datastream</li>
+      <li>LIBRAW_USE_AUTOPTR - use std::auto_ptr for iostreams based datastream</li>
+    </ul>
     <h3>Build parameters</h3>
     <p> ./configure script have some non-standard parameters: </p>
     <dl>
@@ -75,6 +108,100 @@ make
       <li>Path to libraries: -L/usr/local/lib</li>
       <li>Library: -lraw (ordinary version) or -lraw_r (thread-safe version).</li>
     </ul>
+    <h2>macOS: Building with OpenMP</h2>
+    <p>On macOS, building with OpenMP requires libomp. The Homebrew libomp formula
+      is installed as
+      <a href="https://docs.brew.sh/FAQ#what-does-keg-only-mean">keg-only</a>,
+      so:</p>
+    <ul>
+      <li>pkg-config will not find it;</li>
+      <li>headers and libraries are not in standard system locations</li>
+    </ul>
+    <p>You must explicitly point the build to the libomp include and library paths
+      using <b>brew --prefix</b>.</p>
+    <h3>1. Install libomp:</h3>
+    <pre>    brew install libomp</pre>
+    <h3>2. Configure environment and build:</h3>
+    <pre>    export CFLAGS="-I$(brew --prefix libomp)/include"
+    export CXXFLAGS="$CFLAGS"
+    export LDFLAGS="-framework CoreFoundation -framework Carbon -L$(brew --prefix libomp)/lib -lomp"
+
+    autoreconf --install --force # if building from repository sources
+    ./configure --enable-openmp
+    </pre>
+    <p>In the configure output, you should see a line similar to:</p>
+    <pre>    checking for OpenMP flag of C compiler... -Xpreprocessor -fopenmp</pre>
+    <h3>3. Build:</h3>
+    <pre>    make -j10
+    </pre>
+    <h2>macOS: Building Universal Binary with OpenMP</h2>
+    <p>This section describes how to build a Universal Binary (arm64 + x86_64)
+      with OpenMP.</p>
+    <h3>1. Build and save the arm64 libraries</h3>
+    <p>First build the project normally (as above) and store the resulting
+      static libraries:</p>
+    <pre>    cp lib/.libs/libraw.a libraw.a.arm64
+    cp lib/.libs/libraw_r.a libraw_r.a.arm64
+    </pre>
+    <h3>2. Install Intel Homebrew and libomp (x86_64)</h3>
+    <p>You also need an x86_64 toolchain via Intel Homebrew.</p>
+    <p>Install Intel Homebrew:</p>
+    <pre>    arch -x86_64 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+    </pre>
+    <p>Ensure the Intel Homebrew prefix (<b>/usr/local</b>) is first in PATH for
+      this terminal session so that any subsequent call to <b>brew</b> invokes
+      specifically the Intel installation:</p>
+    <pre>    export PATH=/usr/local/bin:$PATH
+    </pre>
+    <p>Install libomp:</p>
+    <pre>    brew install libomp
+    </pre>
+    <p>Confirm that it's indeed the x86_64 version that's being found and
+      reported by brew:</p>
+    <pre>    brew --prefix libomp
+    </pre>
+    <p>It should return <b>/usr/local/opt/libomp</b>.</p>
+    <p>Note: The Intel Homebrew installation works correctly even when invoked
+      from an Apple Silicon terminal.</p>
+    <p>Note: building sample apps will fail because on macOS, OpenMP requires different flags for
+      compile vs link and libtool has no native understanding of Apple OpenMP semantics. Thus if
+      you encounter <b>clang++: error: unsupported option '-fopenmp'</b> when building sample apps,
+      copy-paste the linker invocation from the make output and remove the trailing
+      <b>-fopenmp</b> flag.</p>
+    <h3>3. Configure and build the x86_64 libraries</h3>
+    <p>Configure for x86_64 with OpenMP:</p>
+    <pre>    export CFLAGS="-arch x86_64 -I$(brew --prefix libomp)/include"
+    export CXXFLAGS="$CFLAGS"
+    export LDFLAGS="-framework CoreFoundation -framework Carbon -L$(brew --prefix libomp)/lib -lomp"
+    ./configure --enable-openmp
+    </pre>
+    <p>Check the configure output again to confirm OpenMP is detected.</p>
+    <p>Note: these are the same configure options and compiler flags as before,
+      but including <b>-arch&nbsp;x86_64</b> and of course it's the Intel version
+      of Homebrew that's now substituting paths to libomp.</p>
+    <p>Build:</p>
+    <pre>    make -j10
+    </pre>
+    <p>Note: Compiling an x86_64 binary from an Apple Silicon terminal using
+      an arm64 host works fine on macOS as long as you pass the correct -arch
+      and use the x86_64 toolchain and libraries.</p>
+    <p>Verify that the binary built is indeed Intel:</p>
+    <pre>    lipo -info lib/.libs/libraw.a
+    </pre>
+    <p>You should see:</p>
+    <pre>    Non-fat file: lib/.libs/libraw.a is architecture: x86_64
+    </pre>
+    <p>Save the Intel build:</p>
+    <pre>    cp lib/.libs/libraw.a libraw.a.x86_64
+    cp lib/.libs/libraw_r.a libraw_r.a.x86_64
+    </pre>
+    <h3>4. Create the Universal Binaries</h3>
+    <p>Combine arm64 and x86_64 libraries:</p>
+    <pre>    lipo -create libraw.a.x86_64 libraw.a.arm64 -output libraw.a
+    lipo -create libraw_r.a.x86_64 libraw_r.a.arm64 -output libraw_r.a
+    </pre>
+    <p>Done. Result libraw.a and libraw_r.a are now Universal Binaries (x86_64
+      + arm64).<p>
     <h2>Windows: Building under Cygwin</h2>
     <p> Building and installation are completely similar to <a href="#unix">building
         and installation under Unix systems</a>. </p>
@@ -91,8 +218,8 @@ make
         <b>nmake -f Makefile.msvc</b><br>
       </li>
     </ul>
-    <p>You may need to edit Makefile.msvc to provide libjpeg/zlib
-      paths to INCLUDE/LIB.</p>
+    <p>You may need to edit Makefile.msvc to provide libjpeg/zlib paths to
+      INCLUDE/LIB.</p>
     <p> If all paths are set correctly and the include-files/libraries have been
       found, then the following will be compiled:</p>
     <ul>

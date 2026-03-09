@@ -1,5 +1,5 @@
 /* -*- C++ -*-
- * Copyright 2019-2024 LibRaw LLC (info@libraw.org)
+ * Copyright 2019-2025 LibRaw LLC (info@libraw.org)
  *
 
  LibRaw is free software; you can redistribute it and/or modify
@@ -110,6 +110,8 @@ void LibRaw::GetNormalizedModel()
       { CanonID_EOS_R50,           "EOS R50"},
       { CanonID_EOS_R6m2,          "EOS R6 Mark II"},
       { CanonID_EOS_R8,            "EOS R8"},
+      { CanonID_EOS_R1,            "EOS R1"},
+      { CanonID_EOS_R5_Mark_II,    "EOS R5 Mark II"}, // EOS R5m2
       { CanonID_EOS_R100,          "EOS R100"}
     },
 #if 0
@@ -347,7 +349,7 @@ void LibRaw::GetNormalizedModel()
       { SonyID_DSC_RX100M4,    "DSC-RX100M4"},
       { SonyID_DSC_RX10M2,     "DSC-RX10M2"},
       { SonyID_DSC_RX1RM2,     "DSC-RX1RM2"},
-      { SonyID_ILCE_QX1,       "ILCE-QX1"},
+      { SonyID_ILCE_QX1,       "ILCE-QX1"},     // Sony UMC-R10C
       { SonyID_ILCE_7RM2,      "ILCE-7RM2"},
       { SonyID_ILCE_7SM2,      "ILCE-7SM2"},
       { SonyID_ILCA_68,        "ILCA-68"},
@@ -394,7 +396,9 @@ void LibRaw::GetNormalizedModel()
       { SonyID_ILCE_7CR,       "ILCE-7CR"},
       { SonyID_ILCE_7CM2,      "ILCE-7CM2"},
       { SonyID_ILX_LR1,        "ILX-LR1"},
-    };
+      { SonyID_ZV_E10M2,       "ZV-E10M2"},
+      { SonyID_ILME_FX2,       "ILME-FX2"},
+};
 
   static const char *orig;
 
@@ -414,6 +418,7 @@ void LibRaw::GetNormalizedModel()
     "@S200EXR", "S205EXR",
     "@X-T1 IR", "X-T1IR",
     "@GFX 100 II", "GFX100 II",
+    "@GFX 100S II", "GFX100S II",
     "@GFX 100S", "GFX100S",
     "@GFX 50S II", "GFX50S II"
   };

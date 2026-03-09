@@ -19,19 +19,19 @@
  */
 #pragma once
 
-#include <gtkmm.h>
-
 #include "extprog.h"
 #include "histogrampanel.h"
 #include "history.h"
 #include "imageareapanel.h"
 #include "profilepanel.h"
 #include "progressconnector.h"
-#include "saveasdlg.h"
 #include "thumbnaillistener.h"
+#include "windows/saveasdlg.h"
 
 #include "rtengine/noncopyable.h"
 #include "rtengine/rtengine.h"
+
+#include <gtkmm.h>
 
 namespace rtengine
 {

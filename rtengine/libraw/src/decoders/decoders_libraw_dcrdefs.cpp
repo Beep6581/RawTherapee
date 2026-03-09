@@ -1,5 +1,5 @@
 /* -*- C++ -*-
- * Copyright 2019-2024 LibRaw LLC (info@libraw.org)
+ * Copyright 2019-2025 LibRaw LLC (info@libraw.org)
  *
  LibRaw is free software; you can redistribute it and/or modify
  it under the terms of the one of two licenses as you choose:
@@ -14,6 +14,13 @@
 
 #include "../../internal/dcraw_defs.h"
 
+
+void LibRaw::nikon_he_load_raw()
+{
+    if(dng_version)
+    	throw LIBRAW_EXCEPTION_UNSUPPORTED_FORMAT; // Never reached
+    throw LIBRAW_EXCEPTION_UNSUPPORTED_FORMAT;
+}
 
 void LibRaw::packed_tiled_dng_load_raw()
 {
@@ -111,11 +118,6 @@ void LibRaw::sony_ljpeg_load_raw()
       trow += tile_length + (tcol = 0);
     ljpeg_end(&jh);
   }
-}
-
-void LibRaw::nikon_he_load_raw_placeholder()
-{
-    throw LIBRAW_EXCEPTION_UNSUPPORTED_FORMAT;
 }
 
 void LibRaw::nikon_coolscan_load_raw()

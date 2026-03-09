@@ -1,5 +1,5 @@
 /* -*- C++ -*-
- * Copyright 2019-2024 LibRaw LLC (info@libraw.org)
+ * Copyright 2019-2025 LibRaw LLC (info@libraw.org)
  *
  LibRaw uses code from dcraw.c -- Dave Coffin's raw photo decoder,
  dcraw.c is copyright 1997-2018 by Dave Coffin, dcoffin a cybercom o net.
@@ -495,14 +495,14 @@ int LibRaw::parse_tiff_ifd(INT64 base)
         {
           if ((j = get2()) < 0x100)
           {
-           if(j >= 0) {
-            icWBC[j][0] = get2();
-            icWBC[j][1] = icWBC[j][3] = get2();
-            icWBC[j][2] = get2();
-            if (c == 1 && i > 6 && cam_mul[0] <= 0.001f)
-                for (int q = 0; q < 4; q++)
-                    cam_mul[q] = float(icWBC[j][q]);
-	   }
+			  if (j >= 0) {
+				  icWBC[j][0] = get2();
+				  icWBC[j][1] = icWBC[j][3] = get2();
+				  icWBC[j][2] = get2();
+				  if (c == 1 && i > 6 && cam_mul[0] <= 0.001f)
+					  for (int q = 0; q < 4; q++)
+						  cam_mul[q] = float(icWBC[j][q]);
+			  }
           }
           else
             fseek(ifp, 6, SEEK_CUR);
@@ -610,6 +610,7 @@ int LibRaw::parse_tiff_ifd(INT64 base)
       break;
     case 0x010e: /* 270, ImageDescription */
       fread(desc, 512, 1, ifp);
+      desc[511] = 0;
       break;
     case 0x010f: /* 271, Make */
       fgets(make, 64, ifp);
@@ -662,6 +663,7 @@ int LibRaw::parse_tiff_ifd(INT64 base)
       break;
     case 0x013b: /* 315, Artist */
       fread(artist, 64, 1, ifp);
+      artist[63] = 0;
       break;
     case 0x013d: // 317
       tiff_ifd[ifd].predictor = getint(type);
@@ -1136,7 +1138,7 @@ int LibRaw::parse_tiff_ifd(INT64 base)
           {
             INT64 f_save = ftell(ifp);
             rafdata = (ushort *)calloc(
-                sizeof(ushort) * libraw_internal_data.unpacker_data.lenRAFData,1);
+                sizeof(ushort) * libraw_internal_data.unpacker_data.lenRAFData+1,1);
             fseek(ifp, libraw_internal_data.unpacker_data.posRAFData, SEEK_SET);
             fread(rafdata, sizeof(ushort),
                   libraw_internal_data.unpacker_data.lenRAFData, ifp);
@@ -1163,18 +1165,24 @@ int LibRaw::parse_tiff_ifd(INT64 base)
                 (imFuji.RAFDataVersion == 0x0265) || // X-E4, X-T5
                 (imFuji.RAFDataVersion == 0x0266) || // X-T30 II, X-S20
                 (imFuji.RAFDataVersion == 0x0267) || // GFX 100 II
+                (imFuji.RAFDataVersion == 0x0368) || // GFX 100S II
                 (imFuji.RAFDataVersion == 0x0369) || // X100VI
+                (imFuji.RAFDataVersion == 0x036a) || // X-T50
+                (imFuji.RAFDataVersion == 0x036b) || // X-M5
                 !strcmp(model, "X-Pro3")     ||
-                !strcmp(model, "GFX100 II")  || !strcmp(model, "GFX 100 II") ||
-                !strcmp(model, "GFX100S")    || !strcmp(model, "GFX 100S")   ||
-                !strcmp(model, "GFX50S II")  || !strcmp(model, "GFX 50S II") ||
+                !strcmp(model, "GFX100S II") || !strcmp(model, "GFX 100S II") ||
+                !strcmp(model, "GFX100S")    || !strcmp(model, "GFX 100S")    ||
+                !strcmp(model, "GFX100 II")  || !strcmp(model, "GFX 100 II")  ||
+                !strcmp(model, "GFX50S II")  || !strcmp(model, "GFX 50S II")  ||
                 !strcmp(model, "X100VI")     ||
                 !strcmp(model, "X100V")      ||
                 !strcmp(model, "X-T4")       ||
                 !strcmp(model, "X-H2S")      ||
                 !strcmp(model, "X-H2")       ||
                 !strcmp(model, "X-E4")       ||
+                !strcmp(model, "X-T50")      ||
                 !strcmp(model, "X-T5")       ||
+                !strcmp(model, "X-M5")       ||
                 !strcmp(model, "X-T30 II")   ||
                 !strcmp(model, "X-S10")      ||
                 !strcmp(model, "X-S20"))
@@ -1680,13 +1688,31 @@ int LibRaw::parse_tiff_ifd(INT64 base)
       break;
     case 0xc740: /* 51008, OpcodeList1 */
       tiff_ifd[ifd].dng_levels.parsedfields |= LIBRAW_DNGFM_OPCODE1;
+	  if (len < 4 * 1024 * 1024) // 4M per opcode list limit
+	  {
+		  tiff_ifd[ifd].dng_levels.rawopcodes[0].len = len;
+		  tiff_ifd[ifd].dng_levels.rawopcodes[0].data = calloc(len,1);
+		  fread(tiff_ifd[ifd].dng_levels.rawopcodes[0].data, 1, len, ifp);
+	  }
       break;
     case 0xc741: /* 51009, OpcodeList2 */
       tiff_ifd[ifd].dng_levels.parsedfields |= LIBRAW_DNGFM_OPCODE2;
       tiff_ifd[ifd].opcode2_offset = meta_offset = ftell(ifp);
+      if (len < 4 * 1024 * 1024) // 4M per opcode list limit
+      {
+        tiff_ifd[ifd].dng_levels.rawopcodes[1].len = len;
+        tiff_ifd[ifd].dng_levels.rawopcodes[1].data = calloc(len,1);
+        fread(tiff_ifd[ifd].dng_levels.rawopcodes[1].data, 1, len, ifp);
+      }
       break;
     case 0xc74e: /* 51022, OpcodeList3 */
       tiff_ifd[ifd].dng_levels.parsedfields |= LIBRAW_DNGFM_OPCODE3;
+      if (len < 4 * 1024 * 1024) // 4M per opcode list limit
+      {
+        tiff_ifd[ifd].dng_levels.rawopcodes[2].len = len;
+        tiff_ifd[ifd].dng_levels.rawopcodes[2].data = calloc(len,1);
+        fread(tiff_ifd[ifd].dng_levels.rawopcodes[2].data, 1, len, ifp);
+      }
       break;
     case 0xfd04: /* 64772, Kodak P-series */
       if (len < 13)
@@ -2136,7 +2162,7 @@ void LibRaw::apply_tiff()
 			(!strncasecmp(make, "CLAUSS", 6) && !strncasecmp(model, "piX 5oo", 7))) && // 0x5330303539 works here
 			(tiff_ifd[raw].bytes * 7LL > INT64(raw_width) * INT64(raw_height)))
 		{
-			load_raw = &LibRaw::olympus14_load_raw;
+				load_raw = &LibRaw::olympus_load_raw;
 		}
       }
       break;
@@ -2225,17 +2251,18 @@ void LibRaw::apply_tiff()
         load_flags = (((INT64(raw_width) * 3ULL / 2ULL) + 15ULL) / 16ULL) *
                      16ULL; // bytes per row
       }
-      else if ((!strncmp(model, "NIKON Z 9", 9) || !strncmp(model, "NIKON Z 8", 9) || !strcmp(model, "NIKON Z f")) &&
+      else if ((!strncmp(model, "NIKON Z 9", 9) || !strncmp(model, "NIKON Z 8", 9) || !strcmp(model, "NIKON Z f")
+		  || !strcmp(model, "NIKON Z6_3")) &&
                tiff_ifd[raw].offset)
       {
           INT64 pos = ftell(ifp);
-          unsigned char cmp[] = "CONTACT_INTOPIX"; // 15
-          unsigned char buf[16];
-          fseek(ifp, INT64(tiff_ifd[raw].offset) + 6LL, SEEK_SET);
-          fread(buf, 1, 16, ifp);
+          unsigned char cmp[] = {0xff, 0x10, 0xff, 0x50 }; // JpegXS SOC + Cap
+          unsigned char buf[4];
+          fseek(ifp, INT64(tiff_ifd[raw].offset), SEEK_SET);
+          fread(buf, 1, 4, ifp);
           fseek(ifp, pos, SEEK_SET);
-          if(!memcmp(buf,cmp,15))
-            load_raw = &LibRaw::nikon_he_load_raw_placeholder;
+          if(!memcmp(buf,cmp,4))
+            load_raw = &LibRaw::nikon_he_load_raw;
           else
             load_raw = &LibRaw::nikon_load_raw;
       }

@@ -30,10 +30,10 @@
 
 using namespace rtengine::procparams;
 
-BatchToolPanelCoordinator::BatchToolPanelCoordinator (FilePanel* parent) : ToolPanelCoordinator(true), somethingChanged(false), parent(parent)
+BatchToolPanelCoordinator::BatchToolPanelCoordinator (FilePanel* parent) : ToolPanelCoordinator(true), active(false), somethingChanged(false), parent(parent)
 {
-
     blockedUpdate = false;
+
     if (toolBar) {
         toolBar->setBatchMode ();
     }
@@ -148,7 +148,7 @@ void BatchToolPanelCoordinator::initSession ()
             whitebalance->setAdjusterBehavior (false, false, false, false);
             vibrance->setAdjusterBehavior (false, false);
             vignetting->setAdjusterBehavior (false, false, false, false);
-            colorappearance->setAdjusterBehavior (false, false, false, false, false, false, false, false, false, false, false, false, false, false, false);
+            colorappearance->setAdjusterBehavior (false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false);
             rotate->setAdjusterBehavior (false);
             resize->setAdjusterBehavior (false);
             framing->setAdjusterBehavior (false, false, false, false);
@@ -195,7 +195,7 @@ void BatchToolPanelCoordinator::initSession ()
             whitebalance->setAdjusterBehavior (options.baBehav[ADDSET_WB_TEMPERATURE], options.baBehav[ADDSET_WB_GREEN], options.baBehav[ADDSET_WB_EQUAL], options.baBehav[ADDSET_WB_TEMPBIAS]);
             vibrance->setAdjusterBehavior (options.baBehav[ADDSET_VIBRANCE_PASTELS], options.baBehav[ADDSET_VIBRANCE_SATURATED]);
             vignetting->setAdjusterBehavior (options.baBehav[ADDSET_VIGN_AMOUNT], options.baBehav[ADDSET_VIGN_RADIUS], options.baBehav[ADDSET_VIGN_STRENGTH], options.baBehav[ADDSET_VIGN_CENTER]);
-            colorappearance->setAdjusterBehavior (options.baBehav[ADDSET_CAT_DEGREE], options.baBehav[ADDSET_CAT_ADAPTSCENE], options.baBehav[ADDSET_CAT_ADAPTVIEWING], options.baBehav[ADDSET_CAT_BADPIX], options.baBehav[ADDSET_CAT_LIGHT], options.baBehav[ADDSET_CAT_CHROMA], options.baBehav[ADDSET_CAT_CONTRAST], options.baBehav[ADDSET_CAT_RSTPRO], options.baBehav[ADDSET_CAT_BRIGHT], options.baBehav[ADDSET_CAT_CONTRAST_Q], options.baBehav[ADDSET_CAT_CHROMA_S], options.baBehav[ADDSET_CAT_CHROMA_M], options.baBehav[ADDSET_CAT_HUE],options.baBehav[ADDSET_CAT_DEGREEOUT], options.baBehav[ADDSET_CAT_TEMPOUT] );
+            colorappearance->setAdjusterBehavior (options.baBehav[ADDSET_CAT_DEGREE], options.baBehav[ADDSET_CAT_ADAPTSCENE], options.baBehav[ADDSET_CAT_ADAPTVIEWING], options.baBehav[ADDSET_CAT_BADPIX], options.baBehav[ADDSET_CAT_LIGHT], options.baBehav[ADDSET_CAT_CHROMA], options.baBehav[ADDSET_CAT_CONTRAST], options.baBehav[ADDSET_CAT_RSTPRO], options.baBehav[ADDSET_CAT_BRIGHT], options.baBehav[ADDSET_CAT_CONTRAST_Q], options.baBehav[ADDSET_CAT_CHROMA_S], options.baBehav[ADDSET_CAT_CHROMA_S_RED], options.baBehav[ADDSET_CAT_CHROMA_S_GREEN], options.baBehav[ADDSET_CAT_CHROMA_S_BLUE], options.baBehav[ADDSET_CAT_CHROMA_M], options.baBehav[ADDSET_CAT_HUE], options.baBehav[ADDSET_CAT_HUE_RED], options.baBehav[ADDSET_CAT_HUE_GREEN], options.baBehav[ADDSET_CAT_HUE_BLUE], options.baBehav[ADDSET_CAT_DEGREEOUT], options.baBehav[ADDSET_CAT_TEMPOUT] );
             rotate->setAdjusterBehavior (options.baBehav[ADDSET_ROTATE_DEGREE]);
             resize->setAdjusterBehavior (options.baBehav[ADDSET_RESIZE_SCALE]);
             framing->setAdjusterBehavior (
@@ -307,11 +307,17 @@ void BatchToolPanelCoordinator::initSession ()
             if (options.baBehav[ADDSET_CAT_BRIGHT]) { pparams.colorappearance.qbright = 0; }
             if (options.baBehav[ADDSET_CAT_CHROMA]) { pparams.colorappearance.chroma = 0; }
             if (options.baBehav[ADDSET_CAT_CHROMA_S]) { pparams.colorappearance.schroma = 0; }
+            if (options.baBehav[ADDSET_CAT_CHROMA_S_RED]) { pparams.colorappearance.schromared = 0; }
+            if (options.baBehav[ADDSET_CAT_CHROMA_S_GREEN]) { pparams.colorappearance.schromagreen = 0; }
+            if (options.baBehav[ADDSET_CAT_CHROMA_S_BLUE]) { pparams.colorappearance.schromablue = 0; }
             if (options.baBehav[ADDSET_CAT_CHROMA_M]) { pparams.colorappearance.mchroma = 0; }
             if (options.baBehav[ADDSET_CAT_RSTPRO]) { pparams.colorappearance.rstprotection = 0; }
             if (options.baBehav[ADDSET_CAT_CONTRAST]) { pparams.colorappearance.contrast = 0; }
             if (options.baBehav[ADDSET_CAT_CONTRAST_Q]) { pparams.colorappearance.qcontrast = 0; }
             if (options.baBehav[ADDSET_CAT_HUE]) { pparams.colorappearance.colorh = 0; }
+            if (options.baBehav[ADDSET_CAT_HUE_RED]) { pparams.colorappearance.colorhred = 0; }
+            if (options.baBehav[ADDSET_CAT_HUE_GREEN]) { pparams.colorappearance.colorhgreen = 0; }
+            if (options.baBehav[ADDSET_CAT_HUE_BLUE]) { pparams.colorappearance.colorhblue = 0; }
             if (options.baBehav[ADDSET_CAT_DEGREEOUT]) { pparams.colorappearance.degreeout = 0; }
             if (options.baBehav[ADDSET_CAT_TEMPOUT]) { pparams.colorappearance.tempout = 0; }
             //if (options.baBehav[ADDSET_CBOOST_AMOUNT])  pparams.colorBoost.amount = 0;
@@ -637,13 +643,22 @@ void BatchToolPanelCoordinator::getCamWB (double& temp, double& green, rtengine:
 
 void BatchToolPanelCoordinator::optionsChanged ()
 {
+    if (!active) return;
 
     closeSession ();
     initSession ();
 }
 
+void BatchToolPanelCoordinator::enableAutoUpdate ()
+{
+    active = true;
+    closeSession (false);
+    initSession ();
+}
+
 void BatchToolPanelCoordinator::procParamsChanged (Thumbnail* thm, int whoChangedIt, bool upgradeHint)
 {
+    if (!active) return;
 
     if (whoChangedIt != BATCHEDITOR && !blockedUpdate) {
         closeSession (false);
@@ -653,7 +668,6 @@ void BatchToolPanelCoordinator::procParamsChanged (Thumbnail* thm, int whoChange
 
 void BatchToolPanelCoordinator::beginBatchPParamsChange (int numberOfEntries)
 {
-
     blockedUpdate = true;
 
     if (numberOfEntries > 50) { // Arbitrary amount
@@ -664,9 +678,11 @@ void BatchToolPanelCoordinator::beginBatchPParamsChange (int numberOfEntries)
 // The end of a batch pparams change triggers a close/initsession
 void BatchToolPanelCoordinator::endBatchPParamsChange()
 {
-    //printf("BatchToolPanelCoordinator::endBatchPParamsChange  /  Nouvelle session!\n");
-    closeSession (false);
-    initSession ();
+    if (active) {
+        //printf("BatchToolPanelCoordinator::endBatchPParamsChange  /  Nouvelle session!\n");
+        closeSession (false);
+        initSession ();
+    }
     blockedUpdate = false;
     parent->set_sensitive (true);
 }
@@ -684,6 +700,8 @@ void BatchToolPanelCoordinator::profileChange(
     bool fromLastSave
 )
 {
+    if (!active) return;
+
     if (event == rtengine::EvProfileChanged) {
         // a profile has been selected in a hypothetical Profile panel
         // -> ACTUALLY NOT SUPPORTED

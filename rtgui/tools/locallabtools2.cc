@@ -27,6 +27,8 @@
 #include "rtengine/color.h"
 #include "eventmapper.h"
 #include "rtengine/utils.h"
+#include "rtengine/rt_math.h"
+#include "labgrid.h"
 
 #define MINNEIGH 0.1
 #define MAXNEIGH 1500
@@ -8536,12 +8538,12 @@ Locallabcie::Locallabcie():
     smoothFrame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_CIE_SMOOTHFRAME12")))),
     primillFrame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_PRIMILLFRAME")))),
     redBox(Gtk::manage(new ToolParamBlock())),
-    redxl(Gtk::manage(new Adjuster(M("TC_PRIM_REDX"), 0.41, 1.0, 0.0001, 0.7347))),
-    redyl(Gtk::manage(new Adjuster(M("TC_PRIM_REDY"), 0.0, 0.70, 0.0001, 0.2653))),
-    grexl(Gtk::manage(new Adjuster(M("TC_PRIM_GREX"), -0.1, 0.4, 0.0001, 0.1596))),
-    greyl(Gtk::manage(new Adjuster(M("TC_PRIM_GREY"), 0.50, 1.0, 0.0001, 0.8404))),
-    bluxl(Gtk::manage(new Adjuster(M("TC_PRIM_BLUX"), -0.1, 0.4, 0.0001, 0.0366))),
-    bluyl(Gtk::manage(new Adjuster(M("TC_PRIM_BLUY"), -0.1, 0.49, 0.0001, 0.0001))),
+    redxl(Gtk::manage(new Adjuster(M("TC_PRIM_REDX"), 0.41, 1.0, 0.0001, 0.7080))),
+    redyl(Gtk::manage(new Adjuster(M("TC_PRIM_REDY"), 0.0, 0.70, 0.0001, 0.2920))),
+    grexl(Gtk::manage(new Adjuster(M("TC_PRIM_GREX"), -0.1, 0.4, 0.0001, 0.1700))),
+    greyl(Gtk::manage(new Adjuster(M("TC_PRIM_GREY"), 0.50, 1.0, 0.0001, 0.7970))),
+    bluxl(Gtk::manage(new Adjuster(M("TC_PRIM_BLUX"), -0.1, 0.4, 0.0001, 0.1310))),
+    bluyl(Gtk::manage(new Adjuster(M("TC_PRIM_BLUY"), -0.1, 0.49, 0.0001, 0.0460))),
     refi(Gtk::manage(new Adjuster(M("TC_PRIM_REFI"), -0.5, 1., 0.0001, 0.))),
 
     gridFramecie(Gtk::manage(new Gtk::Frame(M("TP_ICM_WORKING_CIEDIAG")))),
@@ -8885,7 +8887,7 @@ Locallabcie::Locallabcie():
     illMethod->append(M("TP_ICM_WORKING_ILLU_E"));
 
 
-    illMethod->set_active(1);
+    illMethod->set_active(4);
     illMethodconn = illMethod->signal_changed().connect(sigc::mem_fun(*this, &Locallabcie::illMethodChanged));
 
 
@@ -8906,7 +8908,7 @@ Locallabcie::Locallabcie():
     primMethod->append(M("TP_ICM_WORKING_PRIM_BRU"));
     primMethod->append(M("TP_ICM_WORKING_PRIM_FREE"));
 
-    primMethod->set_active(0);
+    primMethod->set_active(4);
     primMethodconn = primMethod->signal_changed().connect(sigc::mem_fun(*this, &Locallabcie::primMethodChanged));
     trcFrame->set_label_align(0.025, 0.5);
     smoothFrame->set_label_align(0.025, 0.5);
@@ -11141,16 +11143,16 @@ void Locallabcie::updateiPrimloc(const float r_x, const float r_y, const float g
     nextmy = m_y;
 
     //convert xy datas in datas for labgrid areas
-    nextrx = 1.81818f * (nextrx + 0.1f) - 1.f;
-    nextry = 1.81818f * (nextry + 0.1f) - 1.f;
-    nextbx = 1.81818f * (nextbx + 0.1f) - 1.f;
-    nextby = 1.81818f * (nextby + 0.1f) - 1.f;
-    nextgx = 1.81818f * (nextgx + 0.1f) - 1.f;
-    nextgy = 1.81818f * (nextgy + 0.1f) - 1.f;
-    nextwx = 1.81818f * (nextwx + 0.1f) - 1.f;
-    nextwy = 1.81818f * (nextwy + 0.1f) - 1.f;
-    nextmx = 1.81818f * (nextmx + 0.1f) - 1.f;
-    nextmy = 1.81818f * (nextmy + 0.1f) - 1.f;
+    nextrx = OFFSET_MODIFIER * (nextrx + CIExy_MARGIN) - 1.f;
+    nextry = OFFSET_MODIFIER * (nextry + CIExy_MARGIN) - 1.f;
+    nextbx = OFFSET_MODIFIER * (nextbx + CIExy_MARGIN) - 1.f;
+    nextby = OFFSET_MODIFIER * (nextby + CIExy_MARGIN) - 1.f;
+    nextgx = OFFSET_MODIFIER * (nextgx + CIExy_MARGIN) - 1.f;
+    nextgy = OFFSET_MODIFIER * (nextgy + CIExy_MARGIN) - 1.f;
+    nextwx = OFFSET_MODIFIER * (nextwx + CIExy_MARGIN) - 1.f;
+    nextwy = OFFSET_MODIFIER * (nextwy + CIExy_MARGIN) - 1.f;
+    nextmx = OFFSET_MODIFIER * (nextmx + CIExy_MARGIN) - 1.f;
+    nextmy = OFFSET_MODIFIER * (nextmy + CIExy_MARGIN) - 1.f;
 
     idle_register.add(
     [this, r_x, r_y, g_x, g_y, b_x, b_y, slg, lkg]() -> bool {
@@ -12398,7 +12400,7 @@ void Locallabcie::updateGUIToMode(const modeType new_type)
             saturlcie->show();
             rstprotectcie->show();
             chromlcie->hide();
-            huecie->hide();
+            huecie->show();
             lightlcie->show();
             lightqcie->hide();
             contlcie->show();
@@ -13552,8 +13554,8 @@ void Locallabcie::convertParamToSimple()
     //feathercie->setValue(defSpot.feathercie);
     refi->setValue(defSpot.refi);
     modecie->set_active(0);
-    primMethod->set_active(0);//Prophoto
-    illMethod->set_active(1);//D50
+    primMethod->set_active(4);//Rec2020
+    illMethod->set_active(4);//D65
     catMethod->set_active(0);
 
     // Enable all listeners
@@ -13576,7 +13578,6 @@ void Locallabcie::convertParamToNormal()
     colorflcie->setValue(defSpot.colorflcie);
     lightqcie->setValue(defSpot.lightqcie);
     chromlcie->setValue(defSpot.chromlcie);
-    huecie->setValue(defSpot.huecie);
     jabcie->set_active(defSpot.jabcie);
     LHshapejz->setCurve(defSpot.LHcurvejz);
     CHshapejz->setCurve(defSpot.CHcurvejz);
@@ -13599,8 +13600,8 @@ void Locallabcie::convertParamToNormal()
     thrhjzcie->setValue(defSpot.thrhjzcie);
     modecie->set_active(0);
     catMethod->set_active(0);
-    primMethod->set_active(0);//Prophoto
-    illMethod->set_active(1);//D50
+    primMethod->set_active(4);//Rec2020
+    illMethod->set_active(4);//D65
     refi->setValue(defSpot.refi);
     whitsig->setValue(defSpot.whitsig);
 

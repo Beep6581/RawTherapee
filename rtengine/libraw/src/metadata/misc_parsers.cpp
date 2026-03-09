@@ -1,5 +1,5 @@
 /* -*- C++ -*-
- * Copyright 2019-2024 LibRaw LLC (info@libraw.org)
+ * Copyright 2019-2025 LibRaw LLC (info@libraw.org)
  *
  LibRaw uses code from dcraw.c -- Dave Coffin's raw photo decoder,
  dcraw.c is copyright 1997-2018 by Dave Coffin, dcoffin a cybercom o net.
@@ -70,7 +70,7 @@ int LibRaw::minolta_z2()
 {
   int i, nz;
   char tail[424];
-
+  memset(tail,0,sizeof(tail));
   fseek(ifp, -int(sizeof tail), SEEK_END);
   fread(tail, 1, sizeof tail, ifp);
   for (nz = i = 0; i < int(sizeof tail); i++)
@@ -177,6 +177,7 @@ void LibRaw::parse_qt(INT64 end)
       return; // 2+GB is too much
     if (save + size < save)
       return; // 32bit overflow
+    memset(tag,0,sizeof(tag));
     fread(tag, 4, 1, ifp);
     if (!memcmp(tag, "moov", 4) || !memcmp(tag, "udta", 4) ||
         !memcmp(tag, "CNTH", 4))
@@ -214,7 +215,7 @@ void LibRaw::parse_riff(int maxdepth)
 {
   unsigned i, size;
   INT64 end;
-  char tag[4], date[64], month[64];
+  char tag[4] = {0, 0, 0, 0}, date[64], month[64];
   static const char mon[12][4] = {"Jan", "Feb", "Mar", "Apr", "May", "Jun",
                                   "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"};
   struct tm t;
@@ -248,6 +249,7 @@ void LibRaw::parse_riff(int maxdepth)
   }
   else if (!memcmp(tag, "IDIT", 4) && size < 64)
   {
+    memset(date,0,sizeof(date));
     fread(date, 64, 1, ifp);
     date[size] = 0;
     memset(&t, 0, sizeof t);

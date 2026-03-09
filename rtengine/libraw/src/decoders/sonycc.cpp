@@ -1,6 +1,6 @@
 /* -*- C++ -*-
  * File: sonycc.cpp
- * Copyright (C) 2024 Alex Tutubalin, LibRaw LLC
+ * Copyright (C) 2024-2025 Alex Tutubalin, LibRaw LLC
  *
    Sony YCC (small/medium lossy compressed) decoder
 

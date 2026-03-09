@@ -91,7 +91,7 @@ Thus, we arrive at our current status, described in the first part of this text.
 
 ## Copyrights and Acknowledgements
 
-Copyright (C) 2008-2024 LibRaw LLC
+Copyright (C) 2008-2025 LibRaw LLC
 
 LibRaw uses code from Dave Coffin's dcraw.c utility (without RESTRICTED/GPL2 code):
 

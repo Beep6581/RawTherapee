@@ -1,6 +1,6 @@
 /* -*- C++ -*-
  * File: libraw_internal_funcs.h
- * Copyright 2008-2024 LibRaw LLC (info@libraw.org)
+ * Copyright 2008-2025 LibRaw LLC (info@libraw.org)
  * Created: Sat Mar  14, 2008
 
 LibRaw is free software; you can redistribute it and/or modify
@@ -186,7 +186,7 @@ it under the terms of the one of two licenses as you choose:
 
 // Nikon (and Minolta Z2)
 	void        nikon_load_raw();
-    void        nikon_he_load_raw_placeholder();
+    void        nikon_he_load_raw();
 	void        nikon_read_curve();
 	void        nikon_load_striped_packed_raw();
 	void        nikon_load_padded_packed_raw();
@@ -246,8 +246,7 @@ it under the terms of the one of two licenses as you choose:
 	unsigned    pana_data (int nb, unsigned *bytes);
 	void        panasonic_load_raw();
 //	void        panasonic_16x10_load_raw();
-//	void        olympus_load_raw();
-	void        olympus14_load_raw();
+	void        olympus_load_raw();
 //	void        olympus_cseries_load_raw();
 	void        minolta_rd175_load_raw();
 	void        quicktake_100_load_raw();
@@ -319,8 +318,7 @@ it under the terms of the one of two licenses as you choose:
     void x3f_thumb_loader();
     int x3f_thumb_size();
 #endif
-
-
+	
 // CAM/RGB
 	void        pseudoinverse (double (*in)[3], double (*out)[3], int size);
 	void        simple_coeff (int index);

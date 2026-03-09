@@ -34,7 +34,7 @@
 
 #include "opthelper.h"
 
-#if defined __GNUC__ && __GNUC__>=6 && defined __SSE2__
+#if defined __GNUC__ && __GNUC__>=6 && (defined(__SSE2__) || defined(RT_SIMDE))
     #pragma GCC diagnostic ignored "-Wignored-attributes"
 #endif
 
@@ -56,7 +56,7 @@ inline T median(std::array<T, 3> array)
     return std::max(std::min(array[0], array[1]), std::min(array[2], std::max(array[0], array[1])));
 }
 
-#ifdef __SSE2__
+#if defined(__SSE2__) || defined(RT_SIMDE)
 template<>
 inline vfloat median(std::array<vfloat, 3> array)
 {
@@ -90,7 +90,7 @@ inline T median(std::array<T, 5> array)
     return std::max(array[1], tmp);
 }
 
-#ifdef __SSE2__
+#if defined(__SSE2__) || defined(RT_SIMDE)
 template<>
 inline vfloat median(std::array<vfloat, 5> array)
 {
@@ -139,7 +139,7 @@ inline T median(std::array<T, 7> array)
     return std::min(array[3], array[4]);
 }
 
-#ifdef __SSE2__
+#if defined(__SSE2__) || defined(RT_SIMDE)
 template<>
 inline vfloat median(std::array<vfloat, 7> array)
 {
@@ -214,7 +214,7 @@ inline T median(std::array<T, 9> array)
     return std::min(array[4], array[2]);
 }
 
-#ifdef __SSE2__
+#if defined(__SSE2__) || defined(RT_SIMDE)
 template<>
 inline vfloat median(std::array<vfloat, 9> array)
 {
@@ -355,7 +355,7 @@ inline T median(std::array<T, 13> array)
     return std::max(array[5], array[6]);
 }
 
-#ifdef __SSE2__
+#if defined(__SSE2__) || defined(RT_SIMDE)
 template<>
 inline vfloat median(std::array<vfloat, 13> array)
 {
@@ -666,7 +666,7 @@ inline T median(std::array<T, 25> array)
     return std::max(tmp, array[12]);
 }
 
-#ifdef __SSE2__
+#if defined(__SSE2__) || defined(RT_SIMDE)
 template<>
 inline vfloat median(std::array<vfloat, 25> array)
 {
@@ -1729,7 +1729,7 @@ inline T median(std::array<T, 49> array)
     return std::max(array[23], array[24]);
 }
 
-#ifdef __SSE2__
+#if defined(__SSE2__) || defined(RT_SIMDE)
 template<>
 inline vfloat median(std::array<vfloat, 49> array)
 {
@@ -4407,7 +4407,7 @@ inline T median(std::array<T, 81> array)
     return std::max(array[39], array[40]);
 }
 
-#ifdef __SSE2__
+#if defined(__SSE2__) || defined(RT_SIMDE)
 template<>
 inline vfloat median(std::array<vfloat, 81> array)
 {
@@ -6267,7 +6267,7 @@ inline std::array<T, 4> middle4of6(const std::array<T, 6>& array)
     return res;
 }
 
-#ifdef __SSE2__
+#if defined(__SSE2__) || defined(RT_SIMDE)
 template<>
 inline std::array<vfloat, 4> middle4of6(const std::array<vfloat, 6>& array)
 {

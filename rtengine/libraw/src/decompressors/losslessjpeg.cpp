@@ -1,6 +1,6 @@
 /* -*- C++ -*-
  * File: huffmandec.cpp
- * Copyright (C) 2024 Alex Tutubalin, LibRaw LLC
+ * Copyright (C) 2024-2025 Alex Tutubalin, LibRaw LLC
  *
    Lossless JPEG decoder
 

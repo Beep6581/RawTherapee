@@ -277,6 +277,9 @@ struct ImpulseDenoiseParamsEdited {
 
 struct ColorAppearanceParamsEdited {
     bool curve;
+    bool curvered;
+    bool curvegreen;
+    bool curveblue;
     bool curve2;
     bool curve3;
     bool curveMode;
@@ -305,10 +308,16 @@ struct ColorAppearanceParamsEdited {
     bool qbright;
     bool chroma;
     bool schroma;
+    bool schromared;
+    bool schromagreen;
+    bool schromablue;
     bool mchroma;
     bool contrast;
     bool qcontrast;
     bool colorh;
+    bool colorhred;
+    bool colorhgreen;
+    bool colorhblue;
     bool rstprotection;
     bool surrsource;
     bool gamut;
@@ -379,8 +388,11 @@ struct CGParamsEdited {
     bool th_m;
     bool th_y;
     bool d_c;
+    bool autodc;
     bool d_m;
+    bool autodm;
     bool d_y;
+    bool autody;
     bool pwr;
     bool colorspace;
     bool rolloff;
@@ -603,6 +615,7 @@ public:
         bool complexshadhigh;
         bool shMethod;
         bool ghsMethod;
+        bool ghsMatmet;
         bool ghsMode;
         bool ghs_D;
         bool ghs_slope;
@@ -617,9 +630,18 @@ public:
         bool ghs_BLP;
         bool ghs_HLP;
         bool ghs_autobw;
+        bool ghs_agx;
         bool ghs_smooth;
         bool ghs_inv;
-        
+        bool mich_exp;
+        bool mich_spar;
+        bool mich_kpar;
+        bool mich_sat;
+        bool mich_out;
+        bool mich_black;
+        bool mich_white;
+        bool mich_high;
+        bool mich_jdx;
         bool multsh[7];
         bool highlights;
         bool h_tonalwidth;
@@ -1193,6 +1215,7 @@ public:
         bool greyl;
         bool bluxl;
         bool bluyl;
+        
         bool refi;
         bool shiftxl;
         bool shiftyl;
@@ -1428,12 +1451,15 @@ struct ColorManagementParamsEdited {
 
     bool workingProfile;
     bool workingTRC;
+    bool wgamut;
     bool wGamma;
     bool wSlope;
     bool wmidtcie;
     bool sigmatrc;
     bool offstrc;
     bool residtrc;
+    bool wgampower;
+    bool wgamgain;
     bool pyrwavtrc;
     bool opacityCurveWLI;
 
@@ -1449,6 +1475,13 @@ struct ColorManagementParamsEdited {
     bool grey;
     bool blux;
     bool bluy;
+    bool redrot;
+    bool redsat;
+    bool grerot;
+    bool gresat;
+    bool blurot;
+    bool blusat;
+    
     bool refi;
     bool shiftx;
     bool shifty;

@@ -1,5 +1,5 @@
 /* -*- C++ -*-
- * Copyright 2019-2024 LibRaw LLC (info@libraw.org)
+ * Copyright 2019-2025 LibRaw LLC (info@libraw.org)
  *
  LibRaw is free software; you can redistribute it and/or modify
  it under the terms of the one of two licenses as you choose:
@@ -242,6 +242,7 @@ int LibRaw::try_dngsdk()
     AutoPtr<dng_simple_image> stage2;
 	unsigned stageBits = 0; // 1=> release Stage2, 2=> change Black/Max
 	bool zerocopy = false;
+	bool isLossy = (rawIFD->fCompression == 34892) || (rawIFD->fCompression == 52546);
 
     if (
 #ifdef USE_GPRSDK
@@ -255,6 +256,9 @@ int LibRaw::try_dngsdk()
         || (imgdata.rawparams.options & (LIBRAW_RAWOPTIONS_DNG_STAGE2| LIBRAW_RAWOPTIONS_DNG_STAGE3))
         || ((tiff_ifd[ifdindex].dng_levels.parsedfields & (LIBRAW_DNGFM_OPCODE2| LIBRAW_DNGFM_OPCODE3))
             && (imgdata.rawparams.options & (LIBRAW_RAWOPTIONS_DNG_STAGE2_IFPRESENT | LIBRAW_RAWOPTIONS_DNG_STAGE3_IFPRESENT)))
+
+			|| ((tiff_ifd[ifdindex].dng_levels.parsedfields & (LIBRAW_DNGFM_OPCODE2| LIBRAW_DNGFM_OPCODE3))
+            && isLossy && (imgdata.rawparams.options & LIBRAW_RAWOPTIONS_DNG_STAGE23_IFPRESENT_JPGJXL))
         )
         && ifdindex >= 0)
 		)
@@ -272,6 +276,7 @@ int LibRaw::try_dngsdk()
 		  stageBits = 1;
 		  if ((imgdata.rawparams.options & LIBRAW_RAWOPTIONS_DNG_STAGE2)
 			  || ((tiff_ifd[ifdindex].dng_levels.parsedfields & LIBRAW_DNGFM_OPCODE2) && (imgdata.rawparams.options & LIBRAW_RAWOPTIONS_DNG_STAGE2_IFPRESENT))
+			  || ((tiff_ifd[ifdindex].dng_levels.parsedfields & LIBRAW_DNGFM_OPCODE2) && isLossy && (imgdata.rawparams.options & LIBRAW_RAWOPTIONS_DNG_STAGE23_IFPRESENT_JPGJXL))
 			  )
 		  {
 			  host->ApplyOpcodeList(negative->OpcodeList2(), *negative, copy2);
@@ -285,9 +290,13 @@ int LibRaw::try_dngsdk()
 			negative->ReadStage1Image(*host, stream, info);
 			negative->BuildStage2Image(*host);
 			imgdata.process_warnings |= LIBRAW_WARN_DNG_STAGE2_APPLIED;
-			if ((imgdata.rawparams.options & LIBRAW_RAWOPTIONS_DNG_STAGE3) ||
+			if ((imgdata.rawparams.options & LIBRAW_RAWOPTIONS_DNG_STAGE3) 
+				||
 				((tiff_ifd[ifdindex].dng_levels.parsedfields & LIBRAW_DNGFM_OPCODE3) &&
 				(imgdata.rawparams.options & LIBRAW_RAWOPTIONS_DNG_STAGE3_IFPRESENT))
+				||
+                ((tiff_ifd[ifdindex].dng_levels.parsedfields & LIBRAW_DNGFM_OPCODE3) && isLossy &&
+                 (imgdata.rawparams.options & LIBRAW_RAWOPTIONS_DNG_STAGE23_IFPRESENT_JPGJXL))
 				)
 			{
 				negative->BuildStage3Image(*host);

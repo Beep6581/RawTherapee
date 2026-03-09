@@ -54,19 +54,28 @@ void LibRaw::sony_arq_load_raw()
 
 void LibRaw::pentax_4shot_load_raw()
 {
+  size_t alloc_sz = size_t(imgdata.sizes.raw_width) * (size_t(imgdata.sizes.raw_height) + 16) * 4 * sizeof(ushort);
+  if (INT64(alloc_sz) > INT64(imgdata.rawparams.max_raw_memory_mb) * INT64(1024 * 1024))
+    throw LIBRAW_EXCEPTION_TOOBIG;
+
 #ifdef LIBRAW_CALLOC_RAWSTORE
   ushort *plane = (ushort *)calloc(size_t(imgdata.sizes.raw_width) * size_t(imgdata.sizes.raw_height), sizeof(ushort));
 #else
   ushort *plane = (ushort *)malloc(size_t(imgdata.sizes.raw_width) *
                                    size_t(imgdata.sizes.raw_height) * sizeof(ushort));
 #endif
-  size_t alloc_sz = size_t(imgdata.sizes.raw_width) * (size_t(imgdata.sizes.raw_height) + 16) * 4 *
-                 sizeof(ushort);
+
+  if (!plane)
+    throw LIBRAW_EXCEPTION_ALLOC;
+
 #ifdef LIBRAW_CALLOC_RAWSTORE
   ushort(*result)[4] = (ushort(*)[4])calloc(alloc_sz,1);
 #else
   ushort(*result)[4] = (ushort(*)[4])malloc(alloc_sz);
 #endif
+  if(!result)
+    throw LIBRAW_EXCEPTION_ALLOC;
+
   struct movement_t
   {
     int row, col;
@@ -908,4 +917,138 @@ void LibRaw::phase_one_load_raw_s()
 
 		decode_S_type(imgdata.sizes.raw_width, (uint32_t *)datavec.data(), datap /*, 14 */);
 	}
+}
+
+#define ph1_bits(n) ph1_bithuff(n, 0)
+#if defined (RAW)
+#undef RAW
+#endif
+#define RAW(row, col) imgdata.rawdata.raw_image[(row)*imgdata.sizes.raw_width + (col)]
+
+void LibRaw::samsung3_load_raw()
+{
+  if(imgdata.sizes.raw_height < 436 || imgdata.sizes.raw_width < 646)
+    throw LIBRAW_EXCEPTION_IO_CORRUPT; // From Samsung opensource decoder: too small image
+
+  libraw_internal_data.unpacker_data.order = 0x4949;
+  const INT64 maxpixidx = (INT64)imgdata.sizes.raw_width * (INT64)(int)imgdata.sizes.raw_height;
+
+  ph1_bits(-1);
+  ph1_bits(16);
+  ph1_bits(4);
+  unsigned bit_depth = ph1_bits(4) + 1;
+  int datamax = (1 << bit_depth) - 1;
+  ph1_bits(8);
+  ph1_bits(16);
+  ph1_bits(16);
+  ph1_bits(16);
+  ph1_bits(4);
+  unsigned optflags = ph1_bits(4);
+  ph1_bits(16);
+  ph1_bits(8);
+  ph1_bits(2);
+  ushort init_val = ph1_bits(14);
+
+  for (int row = 0; row < (int)imgdata.sizes.raw_height; row++)
+  {
+    libraw_internal_data.internal_data.input->seek(
+        (libraw_internal_data.unpacker_data.data_offset - libraw_internal_data.internal_data.input->tell()) & 15,
+        SEEK_CUR);
+    ph1_bits(-1);
+
+	INT64 rowstart = (INT64)row * (INT64)imgdata.sizes.raw_width;
+
+    unsigned motion = 7;
+    int scale = 0;
+    unsigned diff_bits_mode[3][2];
+
+    for (int i = 0; i < 3; i++)
+      diff_bits_mode[i][0] = diff_bits_mode[i][1] = (row < 2) ? 7 : 4;
+
+    for (int col = 0; col < (int)imgdata.sizes.raw_width - 15; col += 16)
+    {
+      if ((optflags & 4) == 0 && (col & 63) == 0)
+      {
+        const int scalevals[3] = {0, -2, 2};
+        int i = ph1_bits(2);
+        if (i < 3)
+          scale += scalevals[i];
+        else
+          scale = ph1_bits(12);
+      }
+
+      if (optflags & 2)
+        motion = ph1_bits(1) ? 3 : 7;
+      else if (ph1_bits(1) == 0)
+        motion = ph1_bits(3);
+	  // else => unchanged
+
+      if (motion == 7)
+        for (int i = 0; i < 16; i++)
+          RAW(row, col + i) = (col == 0) ? init_val : RAW(row, col + i - 2);
+      else
+      {
+        if (row < 2)
+          throw LIBRAW_EXCEPTION_IO_CORRUPT; // wrong motion mode: previous line lookup on first two lines
+
+        const int motion_offset[7] = {-4, -2, -2, 0, 0, 2, 4};
+        const int motion_average[7] = {0, 0, 1, 0, 1, 0, 0};
+
+        for (int i = 0; i < 16; i++)
+        {
+          int refrow = ((row + i) & 1) ? row - 2 : row - 1;
+          int refcol = col + i + motion_offset[motion] + (1 - ((row + i) & 1)) * (1 - 2 * (i & 1));
+		  INT64 refidx = (INT64)refrow * (INT64)imgdata.sizes.raw_width + (INT64)refcol;
+		  if(refidx < 0) // no need to check for >= because refrow is 1-2 rows up and col diffrence is ~+4 pix max
+            throw LIBRAW_EXCEPTION_IO_CORRUPT;
+          RAW(row, col + i) =
+              motion_average[motion] ? (RAW(refrow, refcol) + RAW(refrow, refcol + 2) + 1) >> 1 : RAW(refrow, refcol);
+        }
+      }
+
+      unsigned diff_bits[4] = {0, 0, 0, 0};
+      if ((optflags & 1) || ph1_bits(1) == 0)
+      {
+        unsigned flags[4];
+        for (int i = 0; i < 4; i++)
+          flags[i] = ph1_bits(2);
+        for (int i = 0; i < 4; i++)
+        {
+          unsigned colornum = (row % 2) ? (i >> 1) : ((i >> 1) + 2) % 3;
+          switch (flags[i])
+          {
+          case 0:
+            diff_bits[i] = diff_bits_mode[colornum][0];
+            break;
+          case 1:
+            diff_bits[i] = diff_bits_mode[colornum][0] + 1;
+            break;
+          case 2:
+            diff_bits[i] = diff_bits_mode[colornum][0] - 1;
+            break;
+          case 3:
+            diff_bits[i] = ph1_bits(4);
+            break;
+          }
+          diff_bits_mode[colornum][0] = diff_bits_mode[colornum][1];
+          diff_bits_mode[colornum][1] = diff_bits[i];
+          if (diff_bits[i] > bit_depth + 1)
+            throw LIBRAW_EXCEPTION_IO_CORRUPT;
+        }
+      }
+
+      for (int i = 0; i < 16; i++)
+      {
+        unsigned len = diff_bits[i >> 2];
+        int  sign_mask = 1 << (len - 1);
+		int diff = ((ph1_bits(len) ^ sign_mask) - sign_mask) * (scale * 2 + 1) + scale;
+		int rcol = (row % 2) ? col + ((i & 0x7) << 1) + 1 - (i >> 3) : col + ((i & 0x7) << 1) + (i >> 3);
+		INT64 bidx = rowstart + (INT64)rcol;
+		if(bidx <0 || bidx>=maxpixidx)
+			throw LIBRAW_EXCEPTION_IO_CORRUPT;
+        int val = RAW(row, rcol) + diff;
+        RAW(row, rcol) = val < 0 ? 0 : (val > datamax ? datamax : val);
+      }
+    }
+  }
 }

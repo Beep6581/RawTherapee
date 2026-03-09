@@ -20,10 +20,10 @@
 
 #include <gtkmm.h>
 
-#include "adjuster.h"
 #include "curvelistener.h"
-#include "thresholdadjuster.h"
 #include "toolpanel.h"
+#include "widgets/basic/adjuster.h"
+#include "widgets/basic/thresholdadjuster.h"
 
 class CurveEditorGroup;
 class DiagonalCurveEditor;

@@ -29,22 +29,22 @@
 #include "rtengine/rt_math.h"
 #include "rtengine/procparams.h"
 
-#include "guiutils.h"
-#include "options.h"
-#include "rtimage.h"
-#include "cachemanager.h"
-#include "multilangmgr.h"
-#include "coarsepanel.h"
-#include "filepanel.h"
-#include "renamedlg.h"
-#include "thumbimageupdater.h"
 #include "batchqueue.h"
 #include "batchqueueentry.h"
-#include "placesbrowser.h"
+#include "cachemanager.h"
+#include "coarsepanel.h"
+#include "filepanel.h"
+#include "guiutils.h"
+#include "inspector.h"
+#include "multilangmgr.h"
+#include "options.h"
 #include "pathutils.h"
+#include "placesbrowser.h"
+#include "rtimage.h"
+#include "thumbimageupdater.h"
 #include "thumbnail.h"
 #include "toolbar.h"
-#include "inspector.h"
+#include "windows/renamedlg.h"
 
 using namespace std;
 
@@ -779,7 +779,6 @@ void FileCatalog::_refreshProgressBar ()
     // Also mention that this progress bar only measures the FIRST pass (quick thumbnails)
     // The second, usually longer pass is done multithreaded down in the single entries and is NOT measured by this
     if (!inTabMode && (!previewsToLoad || std::floor(100.f * previewsLoaded / previewsToLoad) != std::floor(100.f * (previewsLoaded - 1) / previewsToLoad))) {
-        GThreadLock lock; // All GUI access from idle_add callbacks or separate thread HAVE to be protected
 
         const auto& options = App::get().options();
         if (!progressImage || !progressLabel) {
@@ -819,99 +818,104 @@ void FileCatalog::_refreshProgressBar ()
 
 void FileCatalog::previewReady (int dir_id, FileBrowserEntry* fdn)
 {
-
-    if ( dir_id != selectedDirectoryId ) {
-        delete fdn;
-        return;
-    }
-
-    // put it into the "full directory" browser
-    fdn->setImageAreaToolListener (iatlistener);
-    fileBrowser->addEntry (fdn);
-
-    // update exif filter settings (minimal & maximal values of exif tags, cameras, lenses, etc...)
-    const CacheImageData* cfs = fdn->thumbnail->getCacheImageData();
-
-    {
-        MyMutex::MyLock lock(dirEFSMutex);
-
-        if (cfs->exifValid) {
-            if (cfs->fnumber < dirEFS.fnumberFrom) {
-                dirEFS.fnumberFrom = cfs->fnumber;
+    idle_register.add(
+        [this, dir_id, fdn]() -> bool
+        {
+            if ( dir_id != selectedDirectoryId ) {
+                delete fdn;
+                return false;
             }
 
-            if (cfs->fnumber > dirEFS.fnumberTo) {
-                dirEFS.fnumberTo = cfs->fnumber;
+            // put it into the "full directory" browser
+            fdn->setImageAreaToolListener (iatlistener);
+            fileBrowser->addEntry_ (fdn);
+
+            // update exif filter settings (minimal & maximal values of exif tags, cameras, lenses, etc...)
+            const CacheImageData* cfs = fdn->thumbnail->getCacheImageData();
+
+            {
+                MyMutex::MyLock lock(dirEFSMutex);
+
+                if (cfs->exifValid) {
+                    if (cfs->fnumber < dirEFS.fnumberFrom) {
+                        dirEFS.fnumberFrom = cfs->fnumber;
+                    }
+
+                    if (cfs->fnumber > dirEFS.fnumberTo) {
+                        dirEFS.fnumberTo = cfs->fnumber;
+                    }
+
+                    if (cfs->shutter < dirEFS.shutterFrom) {
+                        dirEFS.shutterFrom = cfs->shutter;
+                    }
+
+                    if (cfs->shutter > dirEFS.shutterTo) {
+                        dirEFS.shutterTo = cfs->shutter;
+                    }
+
+                    if (cfs->iso > 0 && cfs->iso < dirEFS.isoFrom) {
+                        dirEFS.isoFrom = cfs->iso;
+                    }
+
+                    if (cfs->iso > 0 && cfs->iso > dirEFS.isoTo) {
+                        dirEFS.isoTo = cfs->iso;
+                    }
+
+                    if (cfs->focalLen < dirEFS.focalFrom) {
+                        dirEFS.focalFrom = cfs->focalLen;
+                    }
+
+                    if (cfs->focalLen > dirEFS.focalTo) {
+                        dirEFS.focalTo = cfs->focalLen;
+                    }
+
+                    //TODO: ass filters for HDR and PixelShift files
+                }
+
+                dirEFS.filetypes.insert (cfs->filetype);
+                dirEFS.cameras.insert (cfs->getCamera());
+                dirEFS.lenses.insert (cfs->lens);
+                dirEFS.expcomp.insert (cfs->expcomp);
             }
 
-            if (cfs->shutter < dirEFS.shutterFrom) {
-                dirEFS.shutterFrom = cfs->shutter;
-            }
+            previewsLoaded++;
 
-            if (cfs->shutter > dirEFS.shutterTo) {
-                dirEFS.shutterTo = cfs->shutter;
-            }
-
-            if (cfs->iso > 0 && cfs->iso < dirEFS.isoFrom) {
-                dirEFS.isoFrom = cfs->iso;
-            }
-
-            if (cfs->iso > 0 && cfs->iso > dirEFS.isoTo) {
-                dirEFS.isoTo = cfs->iso;
-            }
-
-            if (cfs->focalLen < dirEFS.focalFrom) {
-                dirEFS.focalFrom = cfs->focalLen;
-            }
-
-            if (cfs->focalLen > dirEFS.focalTo) {
-                dirEFS.focalTo = cfs->focalLen;
-            }
-
-            //TODO: ass filters for HDR and PixelShift files
-        }
-
-        dirEFS.filetypes.insert (cfs->filetype);
-        dirEFS.cameras.insert (cfs->getCamera());
-        dirEFS.lenses.insert (cfs->lens);
-        dirEFS.expcomp.insert (cfs->expcomp);
-    }
-
-    previewsLoaded++;
-
-    _refreshProgressBar();
+            _refreshProgressBar();
+            return false;
+        },
+        G_PRIORITY_DEFAULT_IDLE
+    );
 }
 
 // Called within GTK UI thread
-void FileCatalog::previewsFinishedUI ()
+void FileCatalog::previewsFinishedUI(int dir_id)
 {
-
-    {
-        GThreadLock lock; // All GUI access from idle_add callbacks or separate thread HAVE to be protected
-        redrawAll();
-        previewsToLoad = 0;
-
-        if (filterPanel) {
-            filterPanel->set_sensitive(true);
-
-            if (!hasValidCurrentEFS) {
-                MyMutex::MyLock myLock(dirEFSMutex);
-                currentEFS = dirEFS;
-                filterPanel->setFilter(dirEFS, true);
-            } else {
-                filterPanel->setFilter(currentEFS, false);
-            }
-        }
-
-        if (exportPanel) {
-            exportPanel->set_sensitive(true);
-        }
-
-        // restart anything that might have been loaded low quality
-        fileBrowser->refreshQuickThumbImages();
-        fileBrowser->applyFilter(getFilter());  // refresh total image count
-        _refreshProgressBar();
+    if ( dir_id != selectedDirectoryId ) {
+        return;
     }
+
+    redrawAll();
+    previewsToLoad = 0;
+
+    if (filterPanel) {
+        filterPanel->set_sensitive(true);
+        if (!hasValidCurrentEFS) {
+            MyMutex::MyLock lock(dirEFSMutex);
+            filterPanel->setFilter(dirEFS, true);
+        } else {
+            filterPanel->setFilter(currentEFS, false);
+        }
+    }
+
+    if (exportPanel) {
+        exportPanel->set_sensitive(true);
+    }
+
+    // restart anything that might have been loaded low quality
+    fileBrowser->refreshQuickThumbImages();
+    fileBrowser->applyFilter(getFilter());  // refresh total image count
+    _refreshProgressBar();
+
     filepanel->loadingThumbs(M("PROGRESSBAR_READY"), 0);
 
     if (!imageToSelect_fname.empty()) {
@@ -931,22 +935,14 @@ void FileCatalog::previewsFinishedUI ()
 
 void FileCatalog::previewsFinished (int dir_id)
 {
-
-    if ( dir_id != selectedDirectoryId ) {
-        return;
-    }
-
-    if (!hasValidCurrentEFS) {
-        MyMutex::MyLock lock(dirEFSMutex);
-        currentEFS = dirEFS;
-    }
-
     idle_register.add(
-        [this]() -> bool
+        [this, dir_id]() -> bool
         {
-            previewsFinishedUI();
+            previewsFinishedUI(dir_id);
             return false;
-        }
+        },
+        // keep priority lower than on the other interface functions to make sure callbacks will not be executed out of order
+        G_PRIORITY_DEFAULT_IDLE + 1
     );
 }
 
@@ -989,16 +985,17 @@ void FileCatalog::refreshHeight ()
 void FileCatalog::_openImage(const std::vector<Thumbnail*>& tmb)
 {
     if (enabled && listener) {
-        bool continueToLoad = true;
-
-        for (size_t i = 0; i < tmb.size() && continueToLoad; i++) {
-            // Open the image here, and stop if in Single Editor mode, or if an image couldn't
-            // be opened, would it be because the file doesn't exist or because of lack of RAM
-            if( !(listener->fileSelected (tmb[i])) && !App::get().options().tabbedUI ) {
-                continueToLoad = false;
+        for (size_t i = 0; i < tmb.size(); i++) {
+            // fileSelected does not complete with a fully loaded image, but it does do some preliminary checks
+            if (!listener->fileSelected(tmb[i])) {
+                tmb[i]->decreaseRef();
+            } else if (!App::get().options().tabbedUI) {
+                // allow only one image in single editor mode
+                for (++i; i < tmb.size(); i++) {
+                    tmb[i]->decreaseRef();
+                }
+                break;
             }
-
-            tmb[i]->decreaseRef ();
         }
     }
 }
@@ -1045,10 +1042,11 @@ void FileCatalog::deleteRequested(const std::vector<FileBrowserEntry*>& tbe, boo
     if (msd.run() == Gtk::RESPONSE_YES) {
         for (unsigned int i = 0; i < tbe.size(); i++) {
             const auto fname = tbe[i]->filename;
+            const auto md5 = tbe[i]->thumbnail->getMD5();
             // remove from browser
             delete fileBrowser->delEntry (fname);
             // remove from cache
-            cacheMgr->deleteEntry (fname);
+            cacheMgr->clearFromCache (fname, md5, true);
             // delete from file system
             ::g_remove (fname.c_str ());
             // delete paramfile if found
@@ -1399,8 +1397,9 @@ void FileCatalog::clearFromCacheRequested(const std::vector<FileBrowserEntry*>& 
 
     for (unsigned int i = 0; i < tbe.size(); i++) {
         Glib::ustring fname = tbe[i]->filename;
+        Glib::ustring md5 = tbe[i]->thumbnail->getMD5();
         // remove from cache
-        cacheMgr->clearFromCache (fname, leavenotrace);
+        cacheMgr->clearFromCache (fname, md5, leavenotrace);
     }
 }
 
@@ -1661,8 +1660,27 @@ void FileCatalog::categoryButtonToggled (Gtk::ToggleButton* b, bool isMouseClick
 
 void FileCatalog::showRecursiveToggled()
 {
-    App::get().mut_options().browseRecursive = bRecursive->get_active();
-    reparseDirectory();
+    bool state = bRecursive->get_active();
+
+    if (state == App::get().options().browseRecursive) {
+        // avoid unnecessary calls to dirSelected; this can happen when file catalog is reset to an older state
+        return;
+    }
+
+    App::get().mut_options().browseRecursive = state;
+
+    // Killing background threads can sometimes block the UI for a long time,
+    // This may be a spot where giving the user information is needed.
+    previewLoader->removeAllJobs();
+    thumbImageUpdater->removeAllJobs();
+
+    idle_register.add(
+        [this]() -> bool
+        {
+            dirSelected(selectedDirectory, "");
+            return false;
+        }
+    );
 }
 
 BrowserFilter FileCatalog::getFilter ()
@@ -1786,6 +1804,40 @@ void FileCatalog::filterChanged ()
     _refreshProgressBar();
 }
 
+void FileCatalog::saveResetState ()
+{
+    resetData.directory = selectedDirectory;
+    resetData.recursive = App::get().options().browseRecursive;
+}
+
+bool FileCatalog::restoreResetState ()
+{
+    bool ret = false;
+
+    if (resetData.recursive != App::get().options().browseRecursive) {
+        // I think the program flow here needs to be explained:
+        // The App::get().mut_options().browseRecursive is indeed set by the signal of the toggle button "showRecursiveToggled()"
+        // However, the signal is handled only after the execution returns to the framework. The "buttonBrowsePathPressed()"
+        // on the other hand instantly executes "DirBrowser::selectDir". If the recursive value is not set when this executes, the
+        // directory might not contain the image of the "refImageForOpen_fname" variable or the one next to it that is supposed to
+        // be opened.
+        if (resetData.directory != selectedDirectory) {
+            // this can be set only when "DirBrowser::selectDir" is called regardless of the recursive toggle or the toggle will get blocked
+            App::get().mut_options().browseRecursive = resetData.recursive;
+        }
+        bRecursive->set_active(resetData.recursive);
+        ret = true;
+    }
+
+    if (resetData.directory != selectedDirectory) {
+        BrowsePath->set_text(resetData.directory);
+        buttonBrowsePathPressed ();
+        ret = true;
+    }
+
+    return ret;
+}
+
 void FileCatalog::reparseDirectory ()
 {
 
@@ -1800,12 +1852,11 @@ void FileCatalog::reparseDirectory ()
 
     // check if a thumbnailed file has been deleted or is not in a directory of interest
     const std::vector<ThumbBrowserEntryBase*>& t = fileBrowser->getEntries();
-    std::vector<Glib::ustring> fileNamesToDel;
     std::vector<Glib::ustring> fileNamesToRemove;
 
     for (const auto& entry : t) {
         if (!Glib::file_test(entry->filename, Glib::FILE_TEST_EXISTS)) {
-            fileNamesToDel.push_back(entry->filename);
+            cacheMgr->clearFromCache(entry->filename, entry->thumbnail->getMD5(), true);
             fileNamesToRemove.push_back(entry->filename);
         }
         else if (!App::get().options().browseRecursive && Glib::path_get_dirname(entry->filename) != selectedDirectory) {
@@ -1817,11 +1868,8 @@ void FileCatalog::reparseDirectory ()
         delete fileBrowser->delEntry(toRemove);
         --previewsLoaded;
     }
-    for (const auto& toDelete : fileNamesToDel) {
-        cacheMgr->deleteEntry(toDelete);
-    }
 
-    if (!fileNamesToDel.empty()) {
+    if (!fileNamesToRemove.empty()) {
         _refreshProgressBar();
     }
 
@@ -1850,13 +1898,9 @@ void FileCatalog::on_dir_changed (const Glib::RefPtr<Gio::File>& file, const Gli
     if ((App::get().options().has_retained_extention(file->get_parse_name())
             && (event_type == Gio::FILE_MONITOR_EVENT_CREATED || event_type == Gio::FILE_MONITOR_EVENT_DELETED || event_type == Gio::FILE_MONITOR_EVENT_CHANGED))
              || (event_type == Gio::FILE_MONITOR_EVENT_CREATED && Glib::file_test(file->get_path(), Glib::FileTest::FILE_TEST_IS_DIR))
-             || (event_type == Gio::FILE_MONITOR_EVENT_DELETED && std::find_if(dirMonitors.cbegin(), dirMonitors.cend(), [&file](const FileMonitorInfo &monitor) { return monitor.filePath == file->get_path(); }) != dirMonitors.cend())) {
-        if (!internal) {
-            GThreadLock lock;
-            reparseDirectory ();
-        } else {
-            reparseDirectory ();
-        }
+             || (event_type == Gio::FILE_MONITOR_EVENT_DELETED && std::find_if(dirMonitors.cbegin(), dirMonitors.cend(), [&file](const FileMonitorInfo &monitor) { return monitor.filePath == file->get_path(); }) != dirMonitors.cend()))
+    {
+        reparseDirectory ();
     }
 }
 
@@ -2224,68 +2268,42 @@ void FileCatalog::toggleRightPanel()
 
 void FileCatalog::selectImage (Glib::ustring fname, bool clearFilters)
 {
+    if (clearFilters) { // clear all filters
+        Query->set_text("");
+        categoryButtonToggled(bFilterClear, false);
 
-    Glib::ustring dirname = Glib::path_get_dirname(fname);
-
-    if (!dirname.empty()) {
-        BrowsePath->set_text(dirname);
-
-
-        if (clearFilters) { // clear all filters
-            Query->set_text("");
-            categoryButtonToggled(bFilterClear, false);
-
-            // disable exif filters
-            if (filterPanel->isEnabled()) {
-                filterPanel->setEnabled (false);
-            }
+        // disable exif filters
+        if (filterPanel->isEnabled()) {
+            filterPanel->setEnabled (false);
         }
+    }
 
-        if (BrowsePath->get_text() != selectedDirectory) {
-            // reload or refresh thumbs and select image
-            buttonBrowsePathPressed ();
-            // the actual selection of image will be handled asynchronously at the end of FileCatalog::previewsFinishedUI
-            imageToSelect_fname = fname;
-        } else {
-            // FileCatalog::filterChanged ();//this will be replaced by queue_draw() in fileBrowser->selectImage
-            fileBrowser->selectImage(fname);
-            imageToSelect_fname = "";
-        }
+    if (restoreResetState()) {
+        // Directory was changed -
+        // If the user has traversed around directories in the File Browser and now wants to
+        // reset the file catalog to the directory of the opened image with X or Y key
+        //
+        // the actual selection of image will be handled asynchronously at the end of FileCatalog::previewsFinishedUI
+        imageToSelect_fname = fname;
+    } else {
+        fileBrowser->selectImage(fname);
+        imageToSelect_fname = "";
     }
 }
 
 
-void FileCatalog::openNextPreviousEditorImage (Glib::ustring fname, bool clearFilters, eRTNav nextPrevious)
+void FileCatalog::openNextPreviousEditorImage (Glib::ustring fname, eRTNav nextPrevious)
 {
-
-    Glib::ustring dirname = Glib::path_get_dirname(fname);
-
-    if (!dirname.empty()) {
-        BrowsePath->set_text(dirname);
-
-
-        if (clearFilters) { // clear all filters
-            Query->set_text("");
-            categoryButtonToggled(bFilterClear, false);
-
-            // disable exif filters
-            if (filterPanel->isEnabled()) {
-                filterPanel->setEnabled (false);
-            }
-        }
-
-        if (BrowsePath->get_text() != selectedDirectory) {
-            // reload or refresh thumbs and select image
-            buttonBrowsePathPressed ();
-            // the actual selection of image will be handled asynchronously at the end of FileCatalog::previewsFinishedUI
-            refImageForOpen_fname = fname;
-            actionNextPrevious = nextPrevious;
-        } else {
-            // FileCatalog::filterChanged ();//this was replace by queue_draw() in fileBrowser->selectImage
-            fileBrowser->openNextPreviousEditorImage(fname, nextPrevious);
-            refImageForOpen_fname = "";
-            actionNextPrevious = NAV_NONE;
-        }
+    if (restoreResetState()) {
+        // Directory was changed -
+        // If the user has traversed around directories in the File Browser and now wants to
+        // continue from the image opened in the editor with SHIFT+F3/F4 keys
+        refImageForOpen_fname = fname;
+        actionNextPrevious = nextPrevious;
+    } else {
+        fileBrowser->openNextPreviousEditorImage(fname, nextPrevious);
+        refImageForOpen_fname = "";
+        actionNextPrevious = NAV_NONE;
     }
 }
 

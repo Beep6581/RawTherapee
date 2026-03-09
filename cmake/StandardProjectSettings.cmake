@@ -3,10 +3,12 @@ function(rt_force_out_of_source_builds)
     get_filename_component(BIN_DIR "${CMAKE_BINARY_DIR}" REALPATH)
 
     if("${SRC_DIR}" STREQUAL "${BIN_DIR}")
-        message(WARNING "############################################################")
-        message(WARNING "Warning: In-source builds are disabled.")
-        message(WARNING "Please create and run cmake from a separate build directory.")
-        message(WARNING "############################################################")
+        message(WARNING
+            " ############################################################\n"
+            " Warning: In-source builds are disabled.\n"
+            " Please create and run cmake from a separate build directory.\n"
+            " ############################################################"
+        )
         message(FATAL_ERROR "Quitting configuration...")
     endif()
 endfunction()

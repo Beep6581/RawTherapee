@@ -25,8 +25,7 @@
 #include <gtkmm/treemodelcolumn.h>
 #include <gtkmm/treeview.h>
 
-#include "rtappchooserdialog.h"
-
+#include "windows/rtappchooserdialog.h"
 
 namespace Gtk
 {

@@ -1,5 +1,5 @@
 /* -*- C++ -*-
- * Copyright 2019-2024 LibRaw LLC (info@libraw.org)
+ * Copyright 2019-2025 LibRaw LLC (info@libraw.org)
  *
 
  LibRaw is free software; you can redistribute it and/or modify
@@ -322,6 +322,7 @@ void LibRaw::recycle()
     _x3f_data = 0;
   }
 #endif
+
   memmgr.cleanup();
 
   imgdata.thumbnail.tformat = LIBRAW_THUMBNAIL_UNKNOWN;

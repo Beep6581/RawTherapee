@@ -18,9 +18,11 @@
  */
 
 #include "coordinateadjuster.h"
+
 #include "multilangmgr.h"
+#include "widgets/curves/curveeditorgroup.h"
+
 #include <cassert>
-#include "curveeditorgroup.h"
 
 Axis::Axis()
     : decimal(5), increment(0.001), pageIncrement(0.01), rangeLowerBound(0.), rangeUpperBound(1.)

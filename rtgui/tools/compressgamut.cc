@@ -19,19 +19,47 @@
  /*
  * tweaked from the original from https://github.com/jedypod/gamut-compress
  * https://docs.acescentral.com/specifications/rgc/
+
+ //Jacques Desmis - December 2025
 */ 
 #include "compressgamut.h"
 
 #include "eventmapper.h"
-
+#include <iomanip>
 #include "rtengine/procparams.h"
+
 
 using namespace rtengine;
 using namespace rtengine::procparams;
 
+namespace
+{
+
+struct ListItem
+{
+    const int                   ID;                     ///< The row number in the combobox
+    const char*                 pp3Name;
+    const char*                 translationName;
+    const std::array<const double, 3> thresholdDefault; ///< { th_c, th_m, th_y }
+};
+
+// clang-format off
+const std::array<ListItem, 7> COLORSPACE_LIST_ITEMS = {{
+    {0,  "rec2020",    "TP_COMPRESSGAMUT_REC2020",   { 0.815, 0.803, 0.880} },
+    {1,  "prophoto",   "TP_COMPRESSGAMUT_PROPHOTO",  { 0.815, 0.803, 0.880} },
+    {2,  "adobe",      "TP_COMPRESSGAMUT_ADOBE",     { 0.79 , 0.82 , 0.85} },
+    {3,  "srgb",       "TP_COMPRESSGAMUT_SRGB",      { 0.51 , 0.82 , 0.82} },
+    {4,  "dcip3",      "TP_COMPRESSGAMUT_DCIP3",     { 0.68 , 0.89 , 0.9} },
+    {5,  "acesp1",     "TP_COMPRESSGAMUT_ACESP1",    { 0.815, 0.803, 0.880} },
+    {6,  "beta",       "TP_COMPRESSGAMUT_BETA",      { 0.90 , 0.95 , 0.95} }
+}};
+// clang-format on
+
+}
+
 const Glib::ustring Compressgamut::TOOL_NAME = "compressgamut";
 
-Compressgamut::Compressgamut () : FoldableToolPanel(this, TOOL_NAME, M("TP_COMPRESSGAMUT_LABEL"), false, true)
+Compressgamut::Compressgamut () : FoldableToolPanel(this, TOOL_NAME, M("TP_COMPRESSGAMUT_LABEL"), true, true)
 {
     auto m = ProcEventMapper::getInstance();
     EvcgColorspace = m->newEvent(COMPR, "HISTORY_MSG_CG_COLORSPACE");//FIRST to reinit histogram
@@ -44,9 +72,9 @@ Compressgamut::Compressgamut () : FoldableToolPanel(this, TOOL_NAME, M("TP_COMPR
     Evcgroll = m->newEvent(COMPR, "HISTORY_MSG_CG_ROLLOFF");
     Evcgpwr = m->newEvent(COMPR, "HISTORY_MSG_CG_VALUE");
     Evcgenabled = m->newEvent(COMPR, "HISTORY_MSG_CG_ENABLED");
-
-
-
+    Evcgdcautoon = m->newEvent(COMPR, "HISTORY_MSG_CG_CYANDC_AUTO");
+    Evcgdmautoon = m->newEvent(COMPR, "HISTORY_MSG_CG_CYANDM_AUTO");
+    Evcgdyautoon = m->newEvent(COMPR, "HISTORY_MSG_CG_CYANDY_AUTO");
     Gtk::Frame *iFrame = Gtk::manage(new Gtk::Frame(M("TP_COMPRESSGAMUT_MAIN_COLORSPACE")));
 
     iFrame->set_label_align(0.025f, 0.5);
@@ -55,17 +83,29 @@ Compressgamut::Compressgamut () : FoldableToolPanel(this, TOOL_NAME, M("TP_COMPR
     Gtk::Box *iVBox = Gtk::manage(new Gtk::Box(Gtk::ORIENTATION_VERTICAL));
    
     colorspace = Gtk::manage(new MyComboBoxText());
-    colorspace->append(M("TP_COMPRESSGAMUT_REC2020"));
-    colorspace->append(M("TP_COMPRESSGAMUT_PROPHOTO"));
-    colorspace->append(M("TP_COMPRESSGAMUT_ADOBE"));
-    colorspace->append(M("TP_COMPRESSGAMUT_SRGB"));
-    colorspace->append(M("TP_COMPRESSGAMUT_DCIP3"));
-    colorspace->append(M("TP_COMPRESSGAMUT_ACESP1"));
+    for (const auto& item : COLORSPACE_LIST_ITEMS) {
+        colorspace->append(M(item.translationName));
+    }
     colorspace->set_active(3);
     iVBox->pack_start(*colorspace);
     iFrame->add(*iVBox);
     pack_start(*iFrame);
     colorspaceconn = colorspace->signal_changed().connect(sigc::mem_fun(*this, &Compressgamut::colorspaceChanged));
+ 
+    acLabel = Gtk::manage (new Gtk::Label ("---"));
+    setExpandAlignProperties (acLabel, true, false, Gtk::ALIGN_CENTER, Gtk::ALIGN_START);
+    acLabel->set_tooltip_markup (M ("TP_COMPRESSGAMUT_MACLABEL_TOOLTIP"));
+    acLabel->show ();
+
+    acLabelrgb = Gtk::manage (new Gtk::Label ("---"));
+    setExpandAlignProperties (acLabelrgb, true, false, Gtk::ALIGN_CENTER, Gtk::ALIGN_START);
+    acLabelrgb->set_tooltip_markup (M ("TP_COMPRESSGAMUT_MACLABELRGB_TOOLTIP"));
+    acLabelrgb->show (); 
+
+    acLabelcmy = Gtk::manage (new Gtk::Label ("---"));
+    setExpandAlignProperties (acLabelcmy, true, false, Gtk::ALIGN_CENTER, Gtk::ALIGN_START);
+    acLabelcmy->set_tooltip_markup (M ("TP_COMPRESSGAMUT_MACLABELRGB_TOOLTIP"));
+    acLabelcmy->show ();
 
     // Percentage of the core gamut to protect Limits
     // Values calculated to protect all the colors of the ColorChecker Classic 24 as given by
@@ -89,9 +129,9 @@ Compressgamut::Compressgamut () : FoldableToolPanel(this, TOOL_NAME, M("TP_COMPR
     // https://docs.acescentral.com/specifications/rgc/#appendix-d-ctl-reference-implementation
     // Distance from achromatic which will be compressed to the gamut boundary
     // Values calculated to encompass the encoding gamuts of common digital cinema cameras
-    d_c = Gtk::manage (new Adjuster (M("TP_COMPRESSGAMUT_CYANLIM"), 1.001, 2.0, 0.001, 1.147));//1.05 sRGB
-    d_m = Gtk::manage (new Adjuster (M("TP_COMPRESSGAMUT_MAGENTALIM"), 1.001, 2.0, 0.001, 1.264));//1.08 sRGB
-    d_y = Gtk::manage (new Adjuster (M("TP_COMPRESSGAMUT_YELLOWLIM"), 1.001, 2.0, 0.001, 1.312));//1.10 sRGB
+    d_c = Gtk::manage (new Adjuster (M("TP_COMPRESSGAMUT_CYANLIM"), 1.001, 10., 0.001, 1.147));//1.05 sRGB
+    d_m = Gtk::manage (new Adjuster (M("TP_COMPRESSGAMUT_MAGENTALIM"), 1.001, 10., 0.001, 1.264));//1.08 sRGB
+    d_y = Gtk::manage (new Adjuster (M("TP_COMPRESSGAMUT_YELLOWLIM"), 1.001, 10., 0.001, 1.312));//1.10 sRGB
 
     Gtk::Frame *limFrame = Gtk::manage(new Gtk::Frame(M("TP_COMPRESSGAMUT_LIMIT")));
     limFrame->set_label_align(0.025f, 0.5);
@@ -101,12 +141,21 @@ Compressgamut::Compressgamut () : FoldableToolPanel(this, TOOL_NAME, M("TP_COMPR
     limVBox->pack_start (*d_c);
     limVBox->pack_start (*d_m);
     limVBox->pack_start (*d_y);
+    d_c->addAutoButton();
+    d_c->setAutoValue(true);
+    d_m->addAutoButton();
+    d_m->setAutoValue(true);
+    d_y->addAutoButton();
+    d_y->setAutoValue(true);
+    limVBox->pack_start (*acLabel);
+    limVBox->pack_start (*acLabelrgb);
+    limVBox->pack_start (*acLabelcmy);
     limFrame->add(*limVBox);
     pack_start(*limFrame, Gtk::PACK_SHRINK);
 
     // Aggressiveness of the compression curve Pwr
     rolloff = Gtk::manage(new Gtk::CheckButton(M("TP_COMPRESSGAMUT_ROLLOFF")));
-    pwr = Gtk::manage (new Adjuster (M("TP_COMPRESSGAMUT_PWR"), 0.5, 2.0, 0.01, 1.2));
+    pwr = Gtk::manage (new Adjuster (M("TP_COMPRESSGAMUT_PWR"), 0.2, 2.0, 0.01, 1.2));
     rolloffconn = rolloff->signal_toggled().connect (sigc::mem_fun (*this, &Compressgamut::rolloff_change));
 
     Gtk::Frame *rollFrame = Gtk::manage(new Gtk::Frame());
@@ -126,9 +175,64 @@ Compressgamut::Compressgamut () : FoldableToolPanel(this, TOOL_NAME, M("TP_COMPR
     d_m->setAdjusterListener (this);
     d_y->setAdjusterListener (this);
     pwr->setAdjusterListener (this);
-    
+    d_c->setLogScale(100, 1);
+    d_m->setLogScale(100, 1);
+    d_y->setLogScale(100, 1);
     show_all_children ();
 }
+
+Compressgamut::~Compressgamut()
+{
+    idle_register.destroy();
+}
+
+void Compressgamut::achromaticChanged (double acmax, double acmax0, double acmax1, double acmax2, bool auto_dc, bool auto_dm, bool auto_dy)
+{
+
+
+    idle_register.add(
+         [this, acmax, acmax0, acmax1, acmax2, auto_dc, auto_dm, auto_dy]() -> bool
+
+        {
+            GThreadLock lock; // All GUI access from idle_add callbacks or separate thread HAVE to be protected
+
+            disableListener();
+            acLabel->set_text(
+                Glib::ustring::compose(M("TP_COMPRESSGAMUT_MACLABEL"),
+
+                                        Glib::ustring::format(std::fixed, std::setprecision(2), acmax))//achromatic maximum value
+            );
+            acLabelrgb->set_text (
+                Glib::ustring::compose (M ("TP_COMPRESSGAMUT_MACLABELRGB"),
+                                        Glib::ustring::format (std::fixed, std::setprecision (2), acmax0),//red
+                                        Glib::ustring::format (std::fixed, std::setprecision (2), acmax1),//green
+                                        Glib::ustring::format (std::fixed, std::setprecision (2), acmax2))//blue
+            );
+            acLabelcmy->set_text (
+                Glib::ustring::compose (M ("TP_COMPRESSGAMUT_MACLABELCMY"),
+                                        Glib::ustring::format (std::fixed, std::setprecision (1), (acmax1 + acmax2) * 0.43),//estimated value for Cyan - about 2 * (acmax1 + acmax2) * Sin (PI/3)
+                                        Glib::ustring::format (std::fixed, std::setprecision (1), (acmax0 + acmax2) * 0.43),//estimated value for Magenta
+                                        Glib::ustring::format (std::fixed, std::setprecision (1), (acmax0 + acmax1) * 0.43))//estimated value for Yellow
+            );
+            if(auto_dc) {
+                double valdc = max(1.147, (acmax1 + acmax2) * 0.4);//about 90% max - 1.147 = default value ACES AP1 Cyan
+                d_c->setValue(valdc);
+            }
+            if(auto_dm) {
+                double valdm = max(1.264, (acmax0 + acmax2) * 0.4);//about 90% max - 1.264 = default value ACES AP1 Magenta
+                d_m->setValue(valdm);
+            }
+            if(auto_dy) {
+                double valdy = max(1.312, (acmax0 + acmax1) * 0.4);//about 90% max - 1.312 = default value ACES AP1 Yellow
+                d_y->setValue(valdy);
+            }                       
+            enableListener();
+            return false;
+        }
+    );
+
+}
+
 
 void Compressgamut::read (const ProcParams* pp, const ParamsEdited* pedited)
 {
@@ -140,8 +244,11 @@ void Compressgamut::read (const ProcParams* pp, const ParamsEdited* pedited)
         th_m->setEditedState       (pedited->cg.th_m ? Edited : UnEdited);
         th_y->setEditedState       (pedited->cg.th_y ? Edited : UnEdited);
         d_c->setEditedState        (pedited->cg.d_c ? Edited : UnEdited);
+        d_c->setAutoInconsistent   (multiImage && !pedited->cg.autodc);
         d_m->setEditedState        (pedited->cg.d_m ? Edited : UnEdited);
+        d_m->setAutoInconsistent   (multiImage && !pedited->cg.autodm);
         d_y->setEditedState        (pedited->cg.d_y ? Edited : UnEdited);
+        d_y->setAutoInconsistent   (multiImage && !pedited->cg.autody);
         pwr->setEditedState        (pedited->cg.pwr ? Edited : UnEdited);
         set_inconsistent           (multiImage && !pedited->cg.enabled);
         rolloff->set_inconsistent  (!pedited->cg.rolloff);
@@ -152,41 +259,42 @@ void Compressgamut::read (const ProcParams* pp, const ParamsEdited* pedited)
     rolloffconn.block (true);
     rolloff->set_active (pp->cg.rolloff);
     rolloffconn.block (false);
+
+    colorspaceconn.block (true);
+
+    for (const auto& item : COLORSPACE_LIST_ITEMS) {
+        if (pp->cg.colorspace == item.pp3Name) {
+            colorspace->set_active(item.ID);
+            break;
+        }
+    }
+    colorspaceconn.block (false);
+
+    updThrDefaults = (pp->icm.workingProfile == "Rec2020") ? true : false;
+
     th_c->setValue(pp->cg.th_c);
     th_m->setValue(pp->cg.th_m);
     th_y->setValue(pp->cg.th_y);
     d_c->setValue(pp->cg.d_c);
+    d_c->setAutoValue(pp->cg.autodc);
     d_m->setValue(pp->cg.d_m);
+    d_m->setAutoValue(pp->cg.autodm);
     d_y->setValue(pp->cg.d_y);
+    d_y->setAutoValue(pp->cg.autody);
     pwr->setValue(pp->cg.pwr);
-
-    colorspaceconn.block (true);
-
-    if (pp->cg.colorspace == "rec2020") {
-        colorspace->set_active(0);
-    } else if (pp->cg.colorspace == "prophoto") {
-        colorspace->set_active(1);
-    } else if (pp->cg.colorspace == "adobe") {
-        colorspace->set_active(2);
-     } else if (pp->cg.colorspace == "srgb") {
-        colorspace->set_active(3);
-    } else if (pp->cg.colorspace == "dcip3") {
-        colorspace->set_active(4);
-    } else if (pp->cg.colorspace == "acesp1") {
-        colorspace->set_active(5);
-    }
-    colorspaceconn.block (false);
-
+    
     rolloffconn.block (true);
     rolloff->set_active (pp->cg.rolloff);
     rolloffconn.block (false);
 
+ 
+
     lastrolloff = pp->cg.rolloff;
-
+    lastAutodc = pp->cg.autodc;
+    lastAutodm = pp->cg.autodm;
+    lastAutody = pp->cg.autody;  
     rolloff_change();
-    colorspaceChanged();
     enabledChanged ();
-
     enableListener ();
 }
 
@@ -194,37 +302,37 @@ void Compressgamut::write (ProcParams* pp, ParamsEdited* pedited)
 {
 
     pp->cg.th_c = th_c->getValue ();
+ 
     pp->cg.th_m = th_m->getValue ();
     pp->cg.th_y = th_y->getValue ();
     pp->cg.d_c = d_c->getValue ();
+    pp->cg.autodc = d_c->getAutoValue();
     pp->cg.d_m = d_m->getValue ();
+    pp->cg.autodm = d_m->getAutoValue();
     pp->cg.d_y = d_y->getValue ();
+    pp->cg.autody = d_y->getAutoValue();
     pp->cg.pwr = pwr->getValue ();
     pp->cg.rolloff = rolloff->get_active();
     pp->cg.enabled = getEnabled();
 
-    if (colorspace->get_active_row_number() == 0) {
-        pp->cg.colorspace = "rec2020";
-    } else if (colorspace->get_active_row_number() == 1){
-        pp->cg.colorspace = "prophoto";
-    } else if (colorspace->get_active_row_number() == 2){
-        pp->cg.colorspace = "adobe";
-    } else if (colorspace->get_active_row_number() == 3){
-        pp->cg.colorspace = "srgb";
-    } else if (colorspace->get_active_row_number() == 4){
-        pp->cg.colorspace = "dcip3";
-    } else if (colorspace->get_active_row_number() == 5){
-        pp->cg.colorspace = "acesp1";
+    for (const auto& item : COLORSPACE_LIST_ITEMS) {
+        if (item.ID == colorspace->get_active_row_number()) {
+            pp->cg.colorspace = item.pp3Name;
+            break;
+        }
     }
-
 
     if (pedited) {
         pedited->cg.th_c          = th_c->getEditedState ();
+      
         pedited->cg.th_m          = th_m->getEditedState ();
         pedited->cg.th_y          = th_y->getEditedState ();
         pedited->cg.d_c           = d_c->getEditedState ();
+        pedited->cg.autodc        = !d_c->getAutoInconsistent();
         pedited->cg.d_m           = d_m->getEditedState ();
+        pedited->cg.autodm        = !d_m->getAutoInconsistent();
         pedited->cg.d_y           = d_y->getEditedState ();
+        pedited->cg.autody        = !d_y->getAutoInconsistent();
         pedited->cg.pwr           = pwr->getEditedState ();
         pedited->cg.enabled       = !get_inconsistent();
         pedited->cg.colorspace = colorspace->get_active_row_number() != 6;
@@ -232,6 +340,36 @@ void Compressgamut::write (ProcParams* pp, ParamsEdited* pedited)
     }
 
 }
+
+void Compressgamut::updategamutGUI()
+{
+    // Update default slider value GUI according to colorspace
+    // Only for Working profile = Rec2020
+    if (!updThrDefaults) return;
+
+    /* Calculating the 'Threshold' values ​​is anything but straightforward. Of course, one might say, "Just match them with the colors in ColorChecker24." But there are many unknown parameters:
+    * What is the actual illuminant and its temperature and green settings?
+    * The image colors may have been compressed using "Maximum limits," but there's no guarantee they're within the new, reduced gamut.
+    * Differences in white points, such as the atypical white point of DCI-P3, complicate matters.
+
+    * Furthermore, what about the necessary color adaptation, both at this stage of compression and at the stage implied by the output temperature (see CIECAM)?
+
+    Therefore, these parameters correspond roughly to the ratio of the distances between the white point of the Working Profile, 
+    * The white point of the "Target compression gamut" corrected by chromatic adaptation and the Yellow, Magenta, and Cyan values ​​of the primary color triangle.
+    * These calculated values ​​are for 'normal' cases where the illuminants are not exhaustive, and the colors to be recovered are within reasonable limits.
+    * In other cases, the 3 Threshold sliders need to be adjusted (often lowered). Pay attention to the artifacts.
+    */
+
+    for (const auto& item : COLORSPACE_LIST_ITEMS) {
+        if (colorspace->get_active_row_number() == item.ID) {
+            th_c->setValue (item.thresholdDefault[0]);
+            th_m->setValue (item.thresholdDefault[1]);
+            th_y->setValue (item.thresholdDefault[2]);
+            break;
+        }
+    }
+}
+
 
 void Compressgamut::setDefaults (const ProcParams* defParams, const ParamsEdited* pedited)
 {
@@ -290,6 +428,76 @@ void Compressgamut::adjusterChanged (Adjuster* a, double newval)
    
 }
 
+void Compressgamut::adjusterAutoToggled(Adjuster* a, bool newval)
+{
+    if (multiImage) {
+       if (d_c->getAutoInconsistent()) {
+            d_c->setAutoInconsistent (false);
+            d_c->setAutoValue (false);
+        } else if (lastAutodc) {
+            d_c->setAutoInconsistent (true);
+        }
+
+        lastAutodc = d_c->getAutoValue();
+    }
+
+    if (multiImage) {
+       if (d_m->getAutoInconsistent()) {
+            d_m->setAutoInconsistent (false);
+            d_m->setAutoValue (false);
+        } else if (lastAutodm) {
+            d_m->setAutoInconsistent (true);
+        }
+
+        lastAutodm = d_m->getAutoValue(); 
+    }
+
+    if (multiImage) {
+       if (d_y->getAutoInconsistent()) {
+            d_y->setAutoInconsistent (false);
+            d_y->setAutoValue (false);
+        } else if (lastAutody) {
+            d_y->setAutoInconsistent (true);
+        }
+
+        lastAutody = d_y->getAutoValue(); 
+    }
+    if (listener && (multiImage || getEnabled()) ) {
+
+        if (a == d_c) {
+            if (d_c->getAutoInconsistent()) {
+                listener->panelChanged (Evcgdcautoon, M ("GENERAL_UNCHANGED"));
+            } else if (d_c->getAutoValue()) {
+                listener->panelChanged (Evcgdcautoon , M ("GENERAL_ENABLED"));
+            } else {
+                listener->panelChanged (Evcgdcautoon, M ("GENERAL_DISABLED"));
+            }
+        }
+
+        if (a == d_m) {
+            if (d_m->getAutoInconsistent()) {
+                listener->panelChanged (Evcgdmautoon, M ("GENERAL_UNCHANGED"));
+            } else if (d_m->getAutoValue()) {
+                listener->panelChanged (Evcgdmautoon , M ("GENERAL_ENABLED"));
+            } else {
+                listener->panelChanged (Evcgdmautoon, M ("GENERAL_DISABLED"));
+            }
+        }
+
+        if (a == d_y) {
+            if (d_y->getAutoInconsistent()) {
+                listener->panelChanged (Evcgdyautoon, M ("GENERAL_UNCHANGED"));
+            } else if (d_y->getAutoValue()) {
+                listener->panelChanged (Evcgdyautoon , M ("GENERAL_ENABLED"));
+            } else {
+                listener->panelChanged (Evcgdyautoon, M ("GENERAL_DISABLED"));
+            }
+        }       
+ 
+    }
+}
+
+
 void Compressgamut::rolloff_change()
 {
     if (rolloff->get_active()) {
@@ -322,6 +530,7 @@ void Compressgamut::rolloff_change()
 
 void Compressgamut::colorspaceChanged()
 {
+    updategamutGUI(); 
     if (listener && getEnabled()) {
         listener->panelChanged(EvcgColorspace, colorspace->get_active_text());
     }
@@ -329,6 +538,7 @@ void Compressgamut::colorspaceChanged()
 
 void Compressgamut::enabledChanged ()
 {
+  
     if (listener) {
         if (get_inconsistent()) {
             listener->panelChanged (Evcgenabled, M("GENERAL_UNCHANGED"));

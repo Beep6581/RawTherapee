@@ -812,6 +812,17 @@ void Thumbnail::decreaseRef ()
     cachemgr->closeThumbnail (this);
 }
 
+int Thumbnail::decreaseRefCacheMgr ()
+{
+    MyMutex::MyLock lock(mutex);
+
+    if ( ref == 0 ) {
+        return 0;
+    }
+
+    return --ref;
+}
+
 void Thumbnail::getThumbnailSize(int &w, int &h, const rtengine::procparams::ProcParams *pparams)
 {
     MyMutex::MyLock lock(mutex);

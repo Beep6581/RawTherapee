@@ -22,10 +22,10 @@
 
 #include <gtkmm.h>
 
-#include "coloredbar.h"
-#include "coordinateadjuster.h"
 #include "cursormanager.h"
 #include "curvelistener.h"
+#include "widgets/basic/coloredbar.h"
+#include "widgets/basic/coordinateadjuster.h"
 
 #include "rtengine/LUT.h"
 #include "rtengine/noncopyable.h"

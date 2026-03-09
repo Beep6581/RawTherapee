@@ -5,8 +5,8 @@
 
 #include <gtkmm.h>
 
-#include "adjuster.h"
 #include "toolpanel.h"
+#include "widgets/basic/adjuster.h"
 
 class PCVignette final :
     public ToolParamBlock,

@@ -61,9 +61,20 @@ private:
         Glib::ustring filePath;
     };
 
+    /**
+     * @brief Data that is used to reset the file catalog contents if user presses Y,X or SHIFT+F3/F4
+     */
+    struct DirectoryResetInfo {
+        DirectoryResetInfo() :
+            recursive(false) {}
+        bool          recursive;
+        Glib::ustring directory;
+    };
+
     FilePanel* filepanel;
     Gtk::Box* hBox;
     Glib::ustring selectedDirectory;
+    DirectoryResetInfo resetData;
     int selectedDirectoryId;
     bool enabled;
     bool inTabMode;  // Tab mode has e.g. different progress bar handling
@@ -178,8 +189,10 @@ public:
     // previewloaderlistener interface
     void previewReady (int dir_id, FileBrowserEntry* fdn) override;
     void previewsFinished (int dir_id) override;
-    void previewsFinishedUI ();
-    void _refreshProgressBar ();
+    // called asynchronously from the main event loop
+    void previewsFinishedUI(int dir_id);
+
+    void _refreshProgressBar();
 
     void setInspector(Inspector* inspector)
     {
@@ -252,7 +265,9 @@ public:
     void showRecursiveToggled();
     bool capture_event(GdkEventButton* event);
     void filterChanged ();
-    void runFilterDialog ();
+
+    void saveResetState ();
+    bool restoreResetState ();
 
     void on_realize() override;
     void reparseDirectory ();
@@ -283,7 +298,7 @@ public:
         fileBrowser->openPrevImage();
     }
     void selectImage (Glib::ustring fname, bool clearFilters);
-    void openNextPreviousEditorImage (Glib::ustring fname, bool clearFilters, eRTNav nextPrevious);
+    void openNextPreviousEditorImage (Glib::ustring fname, eRTNav nextPrevious);
 
     bool handleShortcutKey (GdkEventKey* event);
     bool handleShortcutKeyRelease(GdkEventKey *event);

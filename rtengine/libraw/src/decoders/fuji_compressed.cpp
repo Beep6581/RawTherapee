@@ -229,7 +229,7 @@ static inline void fuji_fill_buffer(fuji_compressed_block *info)
 {
   if (info->cur_pos >= info->cur_buf_size)
   {
-	bool needthrow = false;
+    bool needthrow = false;
     info->cur_pos = 0;
     info->cur_buf_offset += info->cur_buf_size;
 #ifdef LIBRAW_USE_OPENMP
@@ -257,8 +257,8 @@ static inline void fuji_fill_buffer(fuji_compressed_block *info)
       }
       info->max_read_size -= info->cur_buf_size;
     }
-	if (needthrow)
-		throw LIBRAW_EXCEPTION_IO_EOF;
+    if (needthrow)
+      throw LIBRAW_EXCEPTION_IO_EOF;
   }
 }
 
@@ -1159,13 +1159,13 @@ void LibRaw::fuji_decode_loop(fuji_compressed_params *common_info, int count, IN
 #endif
   for (cur_block = 0; cur_block < count; cur_block++)
   {
-	  try
-	  {
-        fuji_decode_strip(common_info, cur_block, raw_block_offsets[cur_block], block_sizes[cur_block],
-                          q_bases ? q_bases + cur_block * lineStep : 0);
-	  }
-	  catch (...)
-	  {
+    try
+    {
+      fuji_decode_strip(common_info, cur_block, raw_block_offsets[cur_block], block_sizes[cur_block],
+                        q_bases ? q_bases + cur_block * lineStep : 0);
+    }
+    catch (...)
+    {
 #ifdef LIBRAW_USE_OPENMP
 #pragma omp atomic
 		  errcnt++;

@@ -1,5 +1,5 @@
 /* -*- C++ -*-
- * Copyright 2019-2024 LibRaw LLC (info@libraw.org)
+ * Copyright 2019-2025 LibRaw LLC (info@libraw.org)
  *
  LibRaw is free software; you can redistribute it and/or modify
  it under the terms of the one of two licenses as you choose:
@@ -68,7 +68,7 @@ void LibRaw::setLeicaBodyFeatures(int LeicaMakernoteSignature)
   }
   else if ((LeicaMakernoteSignature == 0x0600) || // "T (Typ 701)", TL
            (LeicaMakernoteSignature == 0x0900) || // SL2, "SL2-S", "SL (Typ 601)", CL, Q2, "Q2 MONO"
-           (LeicaMakernoteSignature == 0x0a00) || // Q3, SL3
+           (LeicaMakernoteSignature == 0x0a00) || // Q3, "Q3 43", SL3
            (LeicaMakernoteSignature == 0x1a00))   // TL2
   {
     if ((model[0] == 'S') || (model[6] == 'S'))
@@ -188,7 +188,9 @@ void LibRaw::parseLeicaMakernote(INT64 base, int uptag, unsigned MakernoteTagTyp
   int LeicaMakernoteSignature = -1;
   INT64 fsize = ifp->size();
 
+  memset(buf,0,sizeof(buf));
   fread(buf, 1, 10, ifp);
+  buf[9] = 0;
   if (strncmp(buf, "LEICA", 5))
   {
     fseek(ifp, -10, SEEK_CUR);
@@ -201,7 +203,7 @@ void LibRaw::parseLeicaMakernote(INT64 base, int uptag, unsigned MakernoteTagTyp
   {
     fseek(ifp, -2, SEEK_CUR);
     LeicaMakernoteSignature = ((uchar)buf[6] << 8) | (uchar)buf[7];
-    // printf ("LeicaMakernoteSignature 0x%04x\n", LeicaMakernoteSignature);
+// printf ("LeicaMakernoteSignature 0x%04x\n", LeicaMakernoteSignature);
     if (!LeicaMakernoteSignature &&
         (!strncmp(model, "M8", 2) || !strncmp(model + 6, "M8", 2)))
       LeicaMakernoteSignature = -3;
@@ -344,7 +346,7 @@ void LibRaw::parseLeicaMakernote(INT64 base, int uptag, unsigned MakernoteTagTyp
     else if ((LeicaMakernoteSignature == 0x0800) || // "Q (Typ 116)"
              (LeicaMakernoteSignature == 0x0900) || // SL2, "SL2-S", "SL (Typ 601)",
                                                     // CL, Q2, "Q2 MONO"
-             (LeicaMakernoteSignature == 0x0a00)    // Q3, SL3
+             (LeicaMakernoteSignature == 0x0a00)    // Q3, "Q3 43", SL3
             )
     {
       if ((tag == 0x0304) && (len == 1) && ((c = fgetc(ifp)) != 0) &&

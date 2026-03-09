@@ -10,13 +10,14 @@ if(REL_INFO_FILE STREQUAL REL_INFO_FILE-NOTFOUND)
     # we look for the git command in this paths by order of preference
     if(WIN32)
         find_program(GIT_CMD git.exe HINTS ENV Path PATH_SUFFIXES ../)
+        find_program(SHELL bash /bin/sh)
     elseif(APPLE)
         find_program(GIT_CMD git PATHS "/opt/local/bin" "/usr/local/bin" "/usr/bin")
         find_program(GIT_CMD git)
         set(SHELL "/bin/bash")
     else() # Linux
         find_program(GIT_CMD git)
-        set(SHELL "/bin/bash")
+        find_program(SHELL /bin/bash bash /usr/xpg6/bin/sh /usr/xpg4/bin/sh /bin/sh HINTS "/usr/local/bin")
     endif()
 
     # Fail if Git is not installed
@@ -24,6 +25,22 @@ if(REL_INFO_FILE STREQUAL REL_INFO_FILE-NOTFOUND)
         message(FATAL_ERROR "git command not found!")
     else()
         message(STATUS "git command found: ${GIT_CMD}")
+    endif()
+
+    if(SHELL STREQUAL SHELL-NOTFOUND)
+        message(FATAL_ERROR "No suitable SHELL found!")
+    else()
+        message(STATUS "using SHELL: ${SHELL}")
+    endif()
+
+    execute_process(COMMAND ${GIT_CMD} status --porcelain --untracked-files=no OUTPUT_VARIABLE GIT_STATUS OUTPUT_STRIP_TRAILING_WHITESPACE)
+    if("${GIT_STATUS}" STREQUAL "")
+        # no changes to tracked files -> work directory clean
+        # -> try reproducible build
+        execute_process(COMMAND ${GIT_CMD} log -1 --pretty=%ct OUTPUT_VARIABLE SOURCE_DATE_EPOCH OUTPUT_STRIP_TRAILING_WHITESPACE)
+        message(STATUS "Obtained SOURCE_DATE_EPOCH=${SOURCE_DATE_EPOCH} from Git log for reproducible build.")
+    else()
+        message(STATUS "Git status did not come up clean, not trying reproducible build.")
     endif()
 
     # Get version description.
@@ -37,6 +54,7 @@ if(REL_INFO_FILE STREQUAL REL_INFO_FILE-NOTFOUND)
 
     # Get commit hash.
     execute_process(COMMAND ${GIT_CMD} rev-parse --short --verify HEAD OUTPUT_VARIABLE GIT_COMMIT OUTPUT_STRIP_TRAILING_WHITESPACE WORKING_DIRECTORY "${PROJECT_SOURCE_DIR}")
+    execute_process(COMMAND ${GIT_CMD} rev-parse --verify HEAD OUTPUT_VARIABLE GIT_COMMIT_FULL OUTPUT_STRIP_TRAILING_WHITESPACE WORKING_DIRECTORY "${PROJECT_SOURCE_DIR}")
 
     # Get commit date, YYYY-MM-DD.
     execute_process(COMMAND ${GIT_CMD} show -s --format=%cd --date=format:%Y-%m-%d OUTPUT_VARIABLE GIT_COMMIT_DATE OUTPUT_STRIP_TRAILING_WHITESPACE WORKING_DIRECTORY "${PROJECT_SOURCE_DIR}")
@@ -68,10 +86,25 @@ if(REL_INFO_FILE STREQUAL REL_INFO_FILE-NOTFOUND)
         set(GIT_NUMERIC_VERSION_BS "${GIT_NUMERIC_VERSION_BS}.${GIT_COMMITS_SINCE_TAG}")
     endif()
 
-    execute_process(COMMAND uname -mrs OUTPUT_VARIABLE BUILDINFO_OS OUTPUT_STRIP_TRAILING_WHITESPACE)
-    execute_process(COMMAND date -Ru OUTPUT_VARIABLE BUILDINFO_DATE OUTPUT_STRIP_TRAILING_WHITESPACE)
-    execute_process(COMMAND date +%s OUTPUT_VARIABLE BUILDINFO_EPOCH OUTPUT_STRIP_TRAILING_WHITESPACE)
-    execute_process(COMMAND uuidgen COMMAND tr "A-Z" "a-z" OUTPUT_VARIABLE BUILDINFO_UUID OUTPUT_STRIP_TRAILING_WHITESPACE)
+    if (DEFINED ENV{SOURCE_DATE_EPOCH} AND NOT ENV{SOURCE_DATE_EPOCH} STREQUAL "")
+        # override from environment
+        set(SOURCE_DATE_EPOCH "$ENV{SOURCE_DATE_EPOCH}")
+        message(STATUS "SOURCE_DATE_EPOCH overriden from environment to ${SOURCE_DATE_EPOCH}")
+    endif()
+
+    if (SOURCE_DATE_EPOCH)
+        # reproducible build path
+        execute_process(COMMAND uname -ms OUTPUT_VARIABLE BUILDINFO_OS OUTPUT_STRIP_TRAILING_WHITESPACE)
+        execute_process(COMMAND "${SHELL}" -c "LC_ALL=C ; LANG= ; export LC_ALL LANG ; DATE_FMT=\"+%a, %d %b %Y %T %z\"; date -u -d \"@${SOURCE_DATE_EPOCH}\" \"\$DATE_FMT\" 2>/dev/null || date -u -r \"${SOURCE_DATE_EPOCH}\" \"\$DATE_FMT\"" OUTPUT_VARIABLE BUILDINFO_DATE OUTPUT_STRIP_TRAILING_WHITESPACE)
+        set(BUILDINFO_EPOCH "${SOURCE_DATE_EPOCH}")
+        set(BUILDINFO_UUID "git-${GIT_COMMIT_FULL}")  # use GIT_COMMIT_FULL instead of a UUID
+    else()
+        execute_process(COMMAND uname -mrs OUTPUT_VARIABLE BUILDINFO_OS OUTPUT_STRIP_TRAILING_WHITESPACE)
+        string(TIMESTAMP BUILDINFO_DATE "%a, %d %b %Y %H:%M:%S %z" UTC)
+        execute_process(COMMAND date +%s OUTPUT_VARIABLE BUILDINFO_EPOCH OUTPUT_STRIP_TRAILING_WHITESPACE)
+        execute_process(COMMAND uuidgen COMMAND tr "A-Z" "a-z" OUTPUT_VARIABLE BUILDINFO_UUID OUTPUT_STRIP_TRAILING_WHITESPACE)
+    endif()
+
     message(STATUS "Git checkout information:")
     message(STATUS "    Commit description:    ${GIT_DESCRIBE}")
     message(STATUS "    Branch:                ${GIT_BRANCH}")

@@ -1,6 +1,6 @@
 /* -*- C++ -*-
  * File: libraw_types.h
- * Copyright 2008-2024 LibRaw LLC (info@libraw.org)
+ * Copyright 2008-2025 LibRaw LLC (info@libraw.org)
  * Created: Sat Mar  8 , 2008
  *
  * LibRaw C data structures
@@ -89,8 +89,18 @@ extern "C"
 #define NO_LCMS
 #endif
 
+#ifdef __cplusplus
+} /* extern C */
+#endif
+
+/* This cannot be in the extern C setting... */
 #include "libraw_const.h"
 #include "libraw_version.h"
+
+#ifdef __cplusplus
+extern "C"
+{
+#endif
 
 #ifdef _WIN32
   typedef __int64 INT64;
@@ -237,6 +247,12 @@ typedef unsigned long long UINT64;
 
   typedef struct
   {
+	  unsigned len;
+	  void *data;
+  } libraw_dng_rawopcode_t;
+
+  typedef struct
+  {
     unsigned parsedfields;
     unsigned dng_cblack[LIBRAW_CBLACK_SIZE];
     unsigned dng_black;
@@ -250,6 +266,7 @@ typedef unsigned long long UINT64;
     float asshotneutral[4];
     float baseline_exposure;
     float LinearResponseLimit;
+	libraw_dng_rawopcode_t rawopcodes[3];
   } libraw_dng_levels_t;
 
   typedef struct
@@ -292,6 +309,7 @@ typedef unsigned long long UINT64;
     int   AFMicroAdjMode;
     float AFMicroAdjValue;
     short MakernotesFlip;
+    short AutoRotateMode;
     short RecordMode;
     short SRAWQuality;
     unsigned wbi;
@@ -1005,11 +1023,11 @@ typedef unsigned long long UINT64;
 
   typedef struct
   {
-    unsigned long long LensID;
+    UINT64 LensID;
     char Lens[128];
     ushort LensFormat; /* to characterize the image circle the lens covers */
     ushort LensMount;  /* 'male', lens itself */
-    unsigned long long CamID;
+    UINT64 CamID;
     ushort CameraFormat; /* some of the sensor formats */
     ushort CameraMount;  /* 'female', body throat */
     char   body[64];
@@ -1023,11 +1041,11 @@ typedef unsigned long long UINT64;
     float  MinFocusDistance;
     float  FocusRangeIndex;
     float  LensFStops;
-    unsigned long long TeleconverterID;
+    UINT64 TeleconverterID;
     char Teleconverter[128];
-    unsigned long long AdapterID;
+    UINT64 AdapterID;
     char Adapter[128];
-    unsigned long long AttachmentID;
+    UINT64 AttachmentID;
     char   Attachment[128];
     ushort FocalUnits;
     float  FocalLengthIn35mmFormat;

@@ -28,10 +28,8 @@
 #include "batchqueueentry.h"
 #include "soundman.h"
 #include "rtimage.h"
-#include "rtwindow.h"
 #include "filepanel.h"
 #include "guiutils.h"
-#include "popupbutton.h"
 #include "options.h"
 #include "navigator.h"
 #include "previewwindow.h"
@@ -39,9 +37,11 @@
 #include "procparamchangers.h"
 #include "placesbrowser.h"
 #include "pathutils.h"
-#include "rtappchooserdialog.h"
 #include "thumbnail.h"
 #include "toolpanelcoord.h"
+#include "widgets/basic/popupbutton.h"
+#include "windows/rtappchooserdialog.h"
+#include "windows/rtwindow.h"
 
 #ifdef _WIN32
 #include "rtengine/leanwindows.h"
@@ -1256,9 +1256,11 @@ void EditorPanel::open (Thumbnail* tmb, rtengine::InitialImage* isrc)
 
     // initialize everything
     openThm = tmb;
-    openThm->increaseRef ();
 
     fname = openThm->getFileName();
+    if (fPanel && fPanel->fileCatalog) {
+        fPanel->fileCatalog->saveResetState();
+    }
     lastSaveAsFileName = removeExtension (Glib::path_get_basename (fname));
 
     previewHandler = new PreviewHandler ();
@@ -2310,14 +2312,14 @@ bool EditorPanel::saveImmediately (const Glib::ustring &filename, const SaveForm
 void EditorPanel::openPreviousEditorImage()
 {
     if (!App::get().isSimpleEditor() && fPanel && !fname.empty()) {
-        fPanel->fileCatalog->openNextPreviousEditorImage (fname, false, NAV_PREVIOUS);
+        fPanel->fileCatalog->openNextPreviousEditorImage (fname, NAV_PREVIOUS);
     }
 }
 
 void EditorPanel::openNextEditorImage()
 {
     if (!App::get().isSimpleEditor() && fPanel && !fname.empty()) {
-        fPanel->fileCatalog->openNextPreviousEditorImage (fname, false, NAV_NEXT);
+        fPanel->fileCatalog->openNextPreviousEditorImage (fname, NAV_NEXT);
     }
 }
 

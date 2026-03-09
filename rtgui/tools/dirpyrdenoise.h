@@ -20,12 +20,12 @@
 
 #include <gtkmm.h>
 
-#include "adjuster.h"
-#include "checkbox.h"
 #include "colorprovider.h"
 #include "curvelistener.h"
 #include "guiutils.h"
 #include "toolpanel.h"
+#include "widgets/basic/adjuster.h"
+#include "widgets/basic/checkbox.h"
 
 class CurveEditor;
 class CurveEditorGroup;

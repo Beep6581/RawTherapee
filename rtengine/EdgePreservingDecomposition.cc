@@ -254,7 +254,7 @@ void MultiDiagonalSymmetricMatrix::VectorProduct(float* RESTRICT Product, float*
     int srm = StartRows[m - 1];
     int lm = DiagonalLength(srm);
 #ifdef _OPENMP
-#ifdef __SSE2__
+#if defined(__SSE2__) || defined(RT_SIMDE)
     const int chunkSize = (lm - srm) / (omp_get_num_procs() * 32);
 #else
     const int chunkSize = (lm - srm) / (omp_get_num_procs() * 8);
@@ -267,7 +267,7 @@ void MultiDiagonalSymmetricMatrix::VectorProduct(float* RESTRICT Product, float*
 #ifdef _OPENMP
         #pragma omp for schedule(dynamic,chunkSize) nowait
 #endif
-#ifdef __SSE2__
+#if defined(__SSE2__) || defined(RT_SIMDE)
 
         for(int j = srm; j < lm - 3; j += 4) {
             __m128 prodv = LVFU(Diagonals[0][j]) * LVFU(x[j]);
@@ -298,7 +298,7 @@ void MultiDiagonalSymmetricMatrix::VectorProduct(float* RESTRICT Product, float*
         #pragma omp single
 #endif
         {
-#ifdef __SSE2__
+#if defined(__SSE2__) || defined(RT_SIMDE)
 
             for(int j = lm - ((lm - srm) % 4); j < lm; j++) {
                 float prod = Diagonals[0][j] * x[j];
@@ -679,7 +679,7 @@ float *EdgePreservingDecomposition::CreateBlur(float *Source, float Scale, float
     #pragma omp parallel
 #endif
     {
-#ifdef __SSE2__
+#if defined(__SSE2__) || defined(RT_SIMDE)
         int x;
         __m128 gxv, gyv;
         __m128 Scalev = _mm_set1_ps( Scale );
@@ -693,7 +693,7 @@ float *EdgePreservingDecomposition::CreateBlur(float *Source, float Scale, float
 
         for(int y = 0; y < h1; y++) {
             float *rg = &g[w * y];
-#ifdef __SSE2__
+#if defined(__SSE2__) || defined(RT_SIMDE)
 
             for(x = 0; x < w1 - 3; x += 4) {
                 //Estimate the central difference gradient in the center of a four pixel square. (gx, gy) is actually 2*gradient.
@@ -850,7 +850,7 @@ void EdgePreservingDecomposition::CompressDynamicRange(float *Source, float Scal
     const float eps = 0.0001f;
 
     //We're working with luminance, which does better logarithmic.
-#ifdef __SSE2__
+#if defined(__SSE2__) || defined(RT_SIMDE)
 #ifdef _OPENMP
     #pragma omp parallel
 #endif
@@ -893,7 +893,7 @@ void EdgePreservingDecomposition::CompressDynamicRange(float *Source, float Scal
         temp = CompressionExponent - 1.0f;
     }
 
-#ifdef __SSE2__
+#if defined(__SSE2__) || defined(RT_SIMDE)
 #ifdef _OPENMP
     #pragma omp parallel
 #endif

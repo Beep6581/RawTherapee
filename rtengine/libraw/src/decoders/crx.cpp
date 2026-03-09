@@ -1,5 +1,5 @@
 /* -*- C++ -*-
- * File: libraw_crxdec.cpp
+ * File: crx.cpp
  * Copyright (C) 2018-2019 Alexey Danilchenko
  * Copyright (C) 2019 Alex Tutubalin, LibRaw LLC
  *

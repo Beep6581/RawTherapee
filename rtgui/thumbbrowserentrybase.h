@@ -25,10 +25,10 @@
 #include "cursormanager.h"
 #include "guiutils.h"
 #include "hidpi.h"
-#include "lwbuttonset.h"
 #include "threadutils.h"
 #include "options.h"
 #include "thumbnail.h"
+#include "widgets/basic/lwbuttonset.h"
 
 #include "rtengine/coord2d.h"
 

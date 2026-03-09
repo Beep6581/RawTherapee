@@ -1,6 +1,6 @@
 /* -*- C++ -*-
  * File: internal/libraw_cameraids.h
- * Copyright 2008-2024 LibRaw LLC (info@libraw.org)
+ * Copyright 2008-2025 LibRaw LLC (info@libraw.org)
  * Created: Sat Aug  17, 2020
 
 LibRaw is free software; you can redistribute it and/or modify
@@ -97,6 +97,8 @@ it under the terms of the one of two licenses as you choose:
 #define CanonID_EOS_R50           (0x80000000ULL + 0x480ULL)
 #define CanonID_EOS_R6m2          (0x80000000ULL + 0x481ULL)
 #define CanonID_EOS_R8            (0x80000000ULL + 0x487ULL)
+#define CanonID_EOS_R1            (0x80000000ULL + 0x495ULL)
+#define CanonID_EOS_R5_Mark_II    (0x80000000ULL + 0x496ULL)
 #define CanonID_EOS_R100          (0x80000000ULL + 0x498ULL)
 
 // CanonID_EOS_D2000C after Canon's TIFF2CR2 convertor:
@@ -339,4 +341,6 @@ it under the terms of the one of two licenses as you choose:
 #define SonyID_ILCE_7CR         0x18cULL
 #define SonyID_ILCE_7CM2        0x18dULL
 #define SonyID_ILX_LR1          0x18eULL
+#define SonyID_ZV_E10M2         0x18fULL
+#define SonyID_ILME_FX2         0x196ULL
 #endif

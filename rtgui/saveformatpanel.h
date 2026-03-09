@@ -20,9 +20,9 @@
 
 #include <gtkmm.h>
 
-#include "adjuster.h"
 #include "guiutils.h"
 #include "options.h"
+#include "widgets/basic/adjuster.h"
 
 #include "rtengine/noncopyable.h"
 

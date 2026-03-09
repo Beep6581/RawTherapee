@@ -19,16 +19,17 @@
  *  Class created by Jean-Christophe FRISCH, aka 'Hombre'
  */
 
-#include "curveeditor.h"
 #include "curveeditorgroup.h"
+
+#include "curveeditor.h"
 #include "diagonalcurveeditorsubgroup.h"
 #include "flatcurveeditorsubgroup.h"
 #include "multilangmgr.h"
-#include "popuptogglebutton.h"
-#include "rtimage.h"
 #include "options.h"
 #include "pathutils.h"
+#include "rtimage.h"
 #include "rtscalable.h"
+#include "widgets/basic/popuptogglebutton.h"
 
 CurveEditorGroup::CurveEditorGroup (Glib::ustring& curveDir, const Glib::ustring& groupLabel, int blank) : curveDir(curveDir), line(0), curve_reset(nullptr),
     displayedCurve(nullptr), flatSubGroup(nullptr), diagonalSubGroup(nullptr), cl(nullptr), numberOfPackedCurve(0)

@@ -18,17 +18,19 @@
  */
 
 #include "wavelet.h"
-#include <cmath>
 
-#include "curveeditor.h"
-#include "curveeditorgroup.h"
 #include "editcallbacks.h"
-#include "guiutils.h"
-#include "rtimage.h"
-#include "options.h"
 #include "eventmapper.h"
+#include "guiutils.h"
 #include "labgrid.h"
+#include "options.h"
+#include "rtimage.h"
+#include "widgets/curves/curveeditor.h"
+#include "widgets/curves/curveeditorgroup.h"
+
 #include "rtengine/color.h"
+
+#include <cmath>
 #include <unistd.h>
 
 using namespace rtengine;

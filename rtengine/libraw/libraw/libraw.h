@@ -1,6 +1,6 @@
 /* -*- C++ -*-
  * File: libraw.h
- * Copyright 2008-2024 LibRaw LLC (info@libraw.org)
+ * Copyright 2008-2025 LibRaw LLC (info@libraw.org)
  * Created: Sat Mar  8, 2008
  *
  * LibRaw C++ interface
@@ -389,6 +389,7 @@ protected:
   /* Panasonic Compression 8 parallel decoder stubs*/
   virtual void pana8_decode_loop(void*);
   int pana8_decode_strip(void*, int); // return: 0 if OK, non-zero on error
+
   int FCF(int row, int col)
   {
     int rr, cc;
@@ -490,6 +491,7 @@ protected:
   void *_rawspeed3_handle;
   void fix_after_rawspeed(int bl);
   int try_rawspeed(); /* returns LIBRAW_SUCCESS on success */
+  
   /* Fast cancel flag */
   long _exitflag;
 

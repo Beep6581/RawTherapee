@@ -18,9 +18,9 @@
  */
 #include "hsvequalizer.h"
 
-#include "curveeditor.h"
-#include "curveeditorgroup.h"
 #include "options.h"
+#include "widgets/curves/curveeditor.h"
+#include "widgets/curves/curveeditorgroup.h"
 
 #include "rtengine/color.h"
 #include "rtengine/procparams.h"

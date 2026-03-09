@@ -45,9 +45,16 @@
 #include "eventmapper.h"
 #include "toolpanel.h"
 
+namespace rtengine
+{
+    //OFFSET_MODIFIER and CIExy_MARGIN - Regarding the conversion of xy data to Labgrid coordinates
+    constexpr float OFFSET_MODIFIER = 1.81818f;//Scaling coefficient of primary data and CIExy diagram with that of Labgrid.
+    constexpr float CIExy_MARGIN = 0.1f;//corresponds to the left and bottom margin on the CIExy diagram
+}
 
 class LabGridArea final : public Gtk::DrawingArea {
 public:
+
     struct FunctionParams {
         using Function = std::function<double(double)>;
         using ResolutionFunction = std::function<int(int)>;
@@ -160,6 +167,7 @@ public:
     Gtk::SizeRequestMode get_request_mode_vfunc() const override;
     void get_preferred_width_vfunc(int &minimum_width, int &natural_width) const override;
     void get_preferred_height_for_width_vfunc (int width, int &minimum_height, int &natural_height) const override;
+    
 };
 
 

@@ -1,6 +1,6 @@
 /* -*- C++ -*-
  * File: internal/libraw_cxx_defs.h
- * Copyright 2008-2024 LibRaw LLC (info@libraw.org)
+ * Copyright 2008-2025 LibRaw LLC (info@libraw.org)
  * Created: Sat Aug  17, 2020
 
 LibRaw is free software; you can redistribute it and/or modify

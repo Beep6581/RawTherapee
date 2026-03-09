@@ -25,8 +25,8 @@
 
 #include <gtkmm.h>
 
-#include "adjuster.h"
 #include "toolpanel.h"
+#include "widgets/basic/adjuster.h"
 
 class SharpenMicro final :
     public ToolParamBlock,

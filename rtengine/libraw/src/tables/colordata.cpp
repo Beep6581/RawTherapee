@@ -1,5 +1,5 @@
 /* -*- C++ -*-
- * Copyright 2019-2024 LibRaw LLC (info@libraw.org)
+ * Copyright 2019-2025 LibRaw LLC (info@libraw.org)
  *
  LibRaw uses code from dcraw.c -- Dave Coffin's raw photo decoder,
  dcraw.c is copyright 1997-2018 by Dave Coffin, dcoffin a cybercom o net.
@@ -151,6 +151,10 @@ int LibRaw::adobe_coeff(unsigned make_idx, const char *t_model,
 	  {  9269, -2012, -1107, -3990, 11762,  2527,  -569,  2093,  4913 } },
 	{ LIBRAW_CAMERAMAKER_Canon, "EOS R100", 0, 0,
 	  {  8230, -1515, -1032, -4179, 12005,  2454,  -649,  2076,  4711 } },
+
+	{ LIBRAW_CAMERAMAKER_Canon, "EOS R5 Mark II", 0, 0,
+	  {  9396, -2598, -1207, -4408, 12296,  2369,  -505,  1575,  6077 } },
+
 	{ LIBRAW_CAMERAMAKER_Canon, "EOS R5", 0, 0,
 	  { 9766,-2953,-1254,-4276,12116,2433,-437,1336,5131 } }, // same CMs: "EOS R5", "EOS R5 C"
 	{ LIBRAW_CAMERAMAKER_Canon, "EOS R6 Mark II", 0, 0,
@@ -163,6 +167,8 @@ int LibRaw::adobe_coeff(unsigned make_idx, const char *t_model,
 	  {  9539, -2795, -1224, -4175, 11998,  2458,  -465,  1755,  6048 } },
 	{ LIBRAW_CAMERAMAKER_Canon, "EOS R10", 0, 0,
 	  {  9269, -2012, -1107, -3990, 11762,  2527,  -569,  2093,  4913 } },
+	{ LIBRAW_CAMERAMAKER_Canon, "EOS R1", 0, 0,
+	  {  9020, -2275, -1209, -4916, 12856,  2284,  -923,  1953,  5928 } },
 	{ LIBRAW_CAMERAMAKER_Canon, "EOS Ra", 0, 0,
 	  { 22880,-11531,-2223,-2034,10469,1809, 316,1401,5769 } },
 	{ LIBRAW_CAMERAMAKER_Canon, "EOS R", 0, 0,
@@ -405,6 +411,8 @@ int LibRaw::adobe_coeff(unsigned make_idx, const char *t_model,
 	{ LIBRAW_CAMERAMAKER_Fujifilm, "F900EXR", 0, 0,
 	  { 12085,-4727,-953,-3257,11489,2002,-511,2046,4592 } },
 
+	  { LIBRAW_CAMERAMAKER_Fujifilm, "GFX 100S II", 0, 0,
+		{ 12806,-5779,-1110,-3546,11507,2318,-177,996,5715 } },
 	{ LIBRAW_CAMERAMAKER_Fujifilm, "GFX 100 II", 0, 0,
 	  { 12806,-5779,-1110,-3546,11507,2318,-177,996,5715 } },
 	{ LIBRAW_CAMERAMAKER_Fujifilm, "GFX 100", 0, 0, // same CMs: "GFX 100", "GFX 100S"/"GFX100S", "GFX 100 IR"
@@ -530,6 +538,8 @@ int LibRaw::adobe_coeff(unsigned make_idx, const char *t_model,
 	  { 11809, -5358, -1141, -4248, 12164,  2343,  -514,  1097,  5848 } },
 	{ LIBRAW_CAMERAMAKER_Fujifilm, "X-M1", 0, 0,
 	  { 10413,-3996,-993,-3721,11640,2361,-733,1540,6011 } },
+	{ LIBRAW_CAMERAMAKER_Fujifilm, "X-M5", 0, 0,
+    { 12836, -5909, -1032, -3087, 11132,  2236,   -35,   872,  5330 } },
 	{ LIBRAW_CAMERAMAKER_Fujifilm, "X-S20", 0, 0,
       { 12836, -5909, -1032, -3087, 11132,  2236,   -35,   872,  5330 } },
 	{ LIBRAW_CAMERAMAKER_Fujifilm, "X-S10", 0, 0,
@@ -549,7 +559,7 @@ int LibRaw::adobe_coeff(unsigned make_idx, const char *t_model,
 	  { 13426,-6334,-1177,-4244,12136,2371, -580,1303,5980 } }, // v.2
 	{ LIBRAW_CAMERAMAKER_Fujifilm, "X-T4", 0, 0,
 	  { 13426,-6334,-1177,-4244,12136,2371,-580,1303,5980 } },
-  { LIBRAW_CAMERAMAKER_Fujifilm, "X-T5", 0, 0,
+  { LIBRAW_CAMERAMAKER_Fujifilm, "X-T5", 0, 0,  // same CMs: X-T5 and X-T50
     { 11809,-5358,-1141,-4248,12164,2343,-514,1097,5848 } },
 
 	{ LIBRAW_CAMERAMAKER_GITUP, "G3DUO", 130, 62000,
@@ -1023,13 +1033,15 @@ int LibRaw::adobe_coeff(unsigned make_idx, const char *t_model,
       { 11640,-4829,-1079,-5107,13006,2325,-972,1711,7380 } },
     { LIBRAW_CAMERAMAKER_Nikon, "Z 5", 0, 0,
       { 8695,-2558,-648,-5015,12711,2575,-1279,2215,7514 } },
+    { LIBRAW_CAMERAMAKER_Nikon, "Z6_3", 0, 0, // no space after 'Z' !
+      { 11206, -4286,  -941, -4879, 12847,  2251,  -745,  1654,  7374 } },
     { LIBRAW_CAMERAMAKER_Nikon, "Z 6", 0, 0,
       { 9943,-3269,-839,-5323,13269,2259,-1198,2083,7557 } },  // 'Z 6'(v.2), 'Z 6_2'
     { LIBRAW_CAMERAMAKER_Nikon, "Z 7", 0, 0,
       { 13705,-6004,-1400,-5464,13568,2062,-940,1706,7618 } }, // 'Z 7'(v.2), 'Z 7_2'
-	{ LIBRAW_CAMERAMAKER_Nikon, "Z 8", 0, 0,
-		{11423,-4564,-1123,-4816,12895,2119,-210,1061,7282 } },
-	{ LIBRAW_CAMERAMAKER_Nikon, "Z 9", 0, 0,
+    { LIBRAW_CAMERAMAKER_Nikon, "Z 8", 0, 0,
+      { 11423,-4564,-1123,-4816,12895,2119,-210,1061,7282 } },
+    { LIBRAW_CAMERAMAKER_Nikon, "Z 9", 0, 0,
       { 13389,-6049,-1441,-4544,12757,1969,229,498,7390 } },
     { LIBRAW_CAMERAMAKER_Nikon, "Z fc", 0, 0,
       { 11640,-4829,-1079,-5107,13006,2325,-972,1711,7380 } },
@@ -1267,16 +1279,18 @@ int LibRaw::adobe_coeff(unsigned make_idx, const char *t_model,
       { 9519,-3591,-664,-4074,11725,2671,-624,1501,6653 } },
 
 
-    {LIBRAW_CAMERAMAKER_Panasonic, "DC-S1R", 0, 0,
+    { LIBRAW_CAMERAMAKER_Panasonic, "DC-S1R", 0, 0,
       { 11822,-5321,-1249,-5958,15114,766,-614,1264,7043 } },
-    {LIBRAW_CAMERAMAKER_Panasonic, "DC-S1H", 0, 0,
+    { LIBRAW_CAMERAMAKER_Panasonic, "DC-S1H", 0, 0,
       { 9397,-3719,-805,-5425,13326,2309,-972,1715,6034 } },
-    {LIBRAW_CAMERAMAKER_Panasonic, "DC-S1", 0, 0,
+    { LIBRAW_CAMERAMAKER_Panasonic, "DC-S1", 0, 0,
       { 9744,-3905,-779,-4899,12807,2324,-798,1630,5827 } },
     { LIBRAW_CAMERAMAKER_Panasonic, "DC-S5M2", 0, 0,
-      { 10308, -4206,  -783, -4088, 12102,  2229,  -125,  1051,  5912 } },
-    {LIBRAW_CAMERAMAKER_Panasonic, "DC-S5", 0, 0,
+      { 10308,-4206,-783,-4088,12102,2229,-125,1051,5912 } },
+    { LIBRAW_CAMERAMAKER_Panasonic, "DC-S5", 0, 0,
       { 9744,-3905,-779,-4899,12807,2324,-798,1630,5827 } },
+	  { LIBRAW_CAMERAMAKER_Panasonic, "DC-S9", 0, 0,
+      { 9983,-3890,-841,-4180,12164,2263,-249,1139,5766 } },
 
     { LIBRAW_CAMERAMAKER_Panasonic, "DMC-CM1", -15, 0, // same CMs: DMC-CM1, DMC-CM10
       { 8770,-3194,-820,-2871,11281,1803,-513,1552,4434 } },
@@ -1391,9 +1405,10 @@ int LibRaw::adobe_coeff(unsigned make_idx, const char *t_model,
       {  9300, -3659,  -755, -2981, 10988,  2287,  -190,  1077,  5016 } },
     { LIBRAW_CAMERAMAKER_Panasonic, "DC-GH5", -15, 0,
       { 7641,-2336,-605,-3218,11299,2187,-485,1338,5121 } },
-	{ LIBRAW_CAMERAMAKER_Panasonic, "DC-GH6", -2048, 0,
-	  { 7949,-3491,-710,-3435,11681,1977,-503,1622,5065} },
-
+    { LIBRAW_CAMERAMAKER_Panasonic, "DC-GH6", -2048, 0,
+      { 7949,-3491,-710,-3435,11681,1977,-503,1622,5065 } },
+    { LIBRAW_CAMERAMAKER_Panasonic, "DC-GH7", 0, 0,
+      { 8573,-3575,-678,-4252,12079,2451,-808,2524,5936 } },
     { LIBRAW_CAMERAMAKER_Panasonic, "DMC-GM1", -15, 0,
       { 6770,-1895,-744,-5232,13145,2303,-1664,2691,5703 } },
     { LIBRAW_CAMERAMAKER_Panasonic, "DMC-GM5", -15, 0,
@@ -1658,6 +1673,10 @@ int LibRaw::adobe_coeff(unsigned make_idx, const char *t_model,
 
 	  { LIBRAW_CAMERAMAKER_Sony, "ZV-1", -800, 0, // same CMs: ZV-1, ZV-1B, ZV-1M2
       { 8280,-2987,-703,-3531,11645,2133,-550,1542,5312 } },
+
+    { LIBRAW_CAMERAMAKER_Sony, "ZV-E10M2", 0, 0,
+      { 6972,-2408,-600,-4330,12101,2515,-388,1277,5847 } },
+
     { LIBRAW_CAMERAMAKER_Sony, "ZV-E10", 0, 0,
       { 6355,-2067,-490,-3653,11542,2400,-406,1258,5506 } },
     { LIBRAW_CAMERAMAKER_Sony, "ZV-E1", 0, 0,
@@ -1784,6 +1803,8 @@ int LibRaw::adobe_coeff(unsigned make_idx, const char *t_model,
       { 6972, -2408,  -600, -4330, 12101,  2515,  -388,  1277,  5847 } },
     { LIBRAW_CAMERAMAKER_Sony, "ILME-FX3", 0, 0,
       { 6912, -2127, -469, -4470, 12175, 2587, -398, 1478, 6492 } },
+    { LIBRAW_CAMERAMAKER_Sony, "ILME-FX2", 0, 0,
+      { 7460, -2365, -588, -5687, 13442, 2474, -624, 1156, 6584 } },
 
     { LIBRAW_CAMERAMAKER_Sony, "ILX-LR1", 0, 0,
       { 8200, -2976, -719, -4296, 12053, 2532, -429, 1282, 5774 } }, // temp, same as for ILCE-7RM5

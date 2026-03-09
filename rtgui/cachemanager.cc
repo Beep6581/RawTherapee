@@ -170,28 +170,19 @@ void CacheManager::deleteEntry (const Glib::ustring& fname)
 
     auto thumbnail = iterator->second;
 
-    // decrease reference count;
-    // this will call back into CacheManager,
-    // so we release the lock for it
-    {
-        lock.release ();
-        thumbnail->decreaseRef ();
-        lock.acquire ();
-    }
-
-    // check again if in the editor,
-    // the thumbnail still exists,
-    // if not, delete it
-    if (openEntries.count (fname) == 0) {
+    if (thumbnail->decreaseRefCacheMgr () == 0) {
+        // If the ref count is not zero, it is open in the editor and the thumbnail can not be deleted.
+        openEntries.erase (fname);
         deleteFiles (fname, thumbnail->getMD5 (), true, true);
+        delete thumbnail;
     }
 }
 
-void CacheManager::clearFromCache (const Glib::ustring& fname, bool purge) const
+void CacheManager::clearFromCache (const Glib::ustring& fname, const Glib::ustring& md5, bool purge) const
 {
     MyMutex::MyLock lock (mutex);
 
-    deleteFiles (fname, getMD5 (fname), true, purge);
+    deleteFiles (fname, md5, true, purge);
 }
 
 void CacheManager::renameEntry (const std::string& oldfilename, const std::string& oldmd5, const std::string& newfilename)

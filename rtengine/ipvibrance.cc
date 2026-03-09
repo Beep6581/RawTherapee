@@ -168,7 +168,7 @@ void ImProcFunctions::vibrance (LabImage* lab, const procparams::VibranceParams 
 #endif
     {
 
-#ifdef __SSE2__
+#if defined(__SSE2__) || defined(RT_SIMDE)
         float HHbuffer[width] ALIGNED16;
         float CCbuffer[width] ALIGNED16;
 #endif
@@ -179,7 +179,7 @@ void ImProcFunctions::vibrance (LabImage* lab, const procparams::VibranceParams 
 #endif
 
         for (int i = 0; i < height; i++) {
-#ifdef __SSE2__
+#if defined(__SSE2__) || defined(RT_SIMDE)
             // vectorized per row calculation of HH and CC
             vfloat c327d68v = F2V(327.68f);
             int k = 0;
@@ -196,7 +196,7 @@ void ImProcFunctions::vibrance (LabImage* lab, const procparams::VibranceParams 
 #endif
             for (int j = 0; j < width; j++) {
                 float LL = lab->L[i][j] / 327.68f;
-#ifdef __SSE2__
+#if defined(__SSE2__) || defined(RT_SIMDE)
                 float HH = HHbuffer[j];
                 float CC = CCbuffer[j];
 #else

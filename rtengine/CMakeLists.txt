@@ -1,3 +1,9 @@
+set(PROCPARAM_SRCS
+    procparams.cc
+    params/locallab.cc
+    params/serdes.cc
+)
+
 set(RTENGINESOURCEFILES
     alpha.cc
     ahd_demosaic_RT.cc
@@ -91,7 +97,6 @@ set(RTENGINESOURCEFILES
     pixelshift.cc
     previewimage.cc
     processingjob.cc
-    procparams.cc
     profilestore.cc
     rawflatfield.cc
     rawimage.cc
@@ -106,10 +111,12 @@ set(RTENGINESOURCEFILES
     simpleprocess.cc
     spot.cc
     stdimagesource.cc
+    svgrender.cc
     tmo_fattal02.cc
     utils.cc
     vng4_demosaic_RT.cc
     xtrans_demosaic.cc
+    ${PROCPARAM_SRCS}
 )
 
 if(LENSFUN_HAS_LOAD_DIRECTORY)
@@ -202,7 +209,6 @@ target_link_libraries(rtengine
         PkgConfig::IPTCDATA
         PkgConfig::LCMS
         PkgConfig::LENSFUN
-        PkgConfig::RSVG
         PNG::PNG
         TIFF::TIFF
         ZLIB::ZLIB
@@ -231,6 +237,20 @@ endif()
 
 if(OpenMP_CXX_FOUND)
     target_link_libraries(rtengine PUBLIC OpenMP::OpenMP_CXX)
+endif()
+
+if("${SVG_BACKEND}" STREQUAL "librsvg")
+    target_link_libraries(rtengine PUBLIC PkgConfig::RSVG)
+    target_compile_definitions(rtengine PUBLIC "SVG_BACKEND_RSVG")
+elseif("${SVG_BACKEND}" STREQUAL "lunasvg")
+    if(WITH_SYSTEM_LUNASVG)
+        target_link_libraries(rtengine PUBLIC PkgConfig::LUNASVG)
+    else()
+        target_link_libraries(rtengine PUBLIC lunasvg::lunasvg)
+    endif()
+    target_compile_definitions(rtengine PUBLIC "SVG_BACKEND_LUNASVG")
+else()
+    message(FATAL_ERROR "Unknown SVG rendering backend")
 endif()
 
 # It may be nice to store library version too

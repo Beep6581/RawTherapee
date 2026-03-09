@@ -52,7 +52,7 @@ class LUT;
 using LUTu = LUT<uint32_t>;
 
 class EditDataProvider;
-class GainMap;
+struct GainMap;
 
 namespace rtengine
 {
@@ -410,6 +410,14 @@ public :
     virtual void noiseTilePrev(int tileX, int tileY, int prevX, int prevY, int sizeT, int sizeP) = 0;
 };
 
+class CompgamutListener
+{
+  public:
+     virtual ~CompgamutListener() = default;
+     virtual void achromaticChanged (double acmax, double acmax0, double acmax1, double acmax2, bool auto_dc, bool auto_dm, bool auto_dy) = 0;
+    };
+
+
 class RetinexListener
 {
 public:
@@ -519,8 +527,12 @@ public:
         bool linkrgblc;
     };
 
+    struct locallabshMICHbw {//update information Michaelis black and white point
+        double mich_slider[2];
+        bool mich_auto;
+    };
 
-    struct locallabshGHSbw2 {//update sliders black and white point 
+    struct locallabshGHSbw2 {//update sliders black and white point
         double ghsbw_slider[2];
         bool ghs_auto;
     };
@@ -530,7 +542,12 @@ public:
         int ghsbw[2];
         double ghsbwvalue[2];
         double ghs_sym;
+        double ghs_mid;
+        double ghs_maxrgb;
+        double ghs_3sig;
+        double ghs_color[4];
         bool autoSP;//update SP
+        bool ghs_auto;
     };
 
 //select spot settings 
@@ -569,6 +586,7 @@ public:
     virtual void maiChanged(const std::vector<locallabsetLC> &csetlc, int selspot) = 0;
     virtual void sigChanged(const std::vector<locallabcieSIG> &ciesig, int selspot) = 0;
     virtual void ciebefChanged(const std::vector<locallabcieBEF> &ciebef, int selspot) = 0;
+    virtual void michbwChanged(const std::vector<locallabshMICHbw> &shmichbw, int selspot) = 0;
 
     virtual void sharbefChanged(const std::vector<locallabsharBEF> &sharbef, int selspot) = 0;
     virtual void sharaftChanged(const std::vector<locallabsharAFT> &sharaft, int selspot) = 0;
@@ -596,6 +614,9 @@ public:
     virtual void primChanged(float rx, float ry, float bx, float by, float gx, float gy) = 0;
     virtual void iprimChanged(float r_x, float r_y, float b_x, float b_y, float g_x, float g_y, float w_x, float w_y, float m_x, float m_y) = 0;
     virtual void wavlocChanged(double nlevel, double nmax, bool curveloc) = 0;
+    virtual void maxdatawtrc(float m_data) = 0;
+    virtual void maxdataend(float m_rgb, float m_sat, bool gamgain) = 0;
+
 };
 
 
@@ -793,8 +814,9 @@ public:
     virtual void        setAutoWBListener       (AutoWBListener* l) = 0;
     virtual void        setAutoColorTonListener (AutoColorTonListener* l) = 0;
     virtual void        setAutoprimListener     (AutoprimListener* l) = 0;
-
+    virtual void        setCompgamutListener    (CompgamutListener* l) = 0;
     virtual void        setAutoChromaListener   (AutoChromaListener* l) = 0;
+
     virtual void        setRetinexListener      (RetinexListener* l) = 0;
     virtual void        setWaveletListener      (WaveletListener* l) = 0;
     virtual void        setImageTypeListener    (ImageTypeListener* l) = 0;

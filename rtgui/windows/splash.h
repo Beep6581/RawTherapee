@@ -49,7 +49,7 @@ private:
     Gtk::ScrolledWindow* releaseNotesSW;
 
 public:
-    explicit Splash (Gtk::Window& parent);
+    explicit Splash (Gtk::Window& parent, bool modal = true);
 
     bool hasReleaseNotes()
     {

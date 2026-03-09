@@ -1,19 +1,16 @@
 # Initialization
-AC_INIT([LibRaw], m4_esyscmd([./version.sh]), [info@libraw.org], [], [http://www.libraw.org])
+AC_INIT([LibRaw],[m4_esyscmd(./version.sh)],[info@libraw.org],[],[http://www.libraw.org])
 AM_INIT_AUTOMAKE([foreign no-define])
-#AM_SILENT_RULES([yes])
+LT_INIT
+dnl AM_SILENT_RULES([yes])
 AC_CONFIG_MACRO_DIR([m4])
 AC_CANONICAL_HOST
+PKG_PROG_PKG_CONFIG([0.21])
 
 # Tools to use
 AC_PROG_CXX
 AC_PROG_CC
-AC_PROG_LIBTOOL
-AC_ENABLE_SHARED
-AC_ENABLE_STATIC
-AC_LIBTOOL_WIN32_DLL
-AC_LIBTOOL_SETUP
-AC_SUBST(LIBTOOL_DEPS)
+LT_INIT([win32-dll])
 
 # Config files to generate
 

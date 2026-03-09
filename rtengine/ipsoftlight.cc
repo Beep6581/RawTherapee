@@ -52,7 +52,7 @@ inline float sl(float blend, float x)
 }
 } // namespace
 
-#ifdef __SSE2__
+#if defined(__SSE2__) || defined(RT_SIMDE)
 inline vfloat sl(vfloat blend, vfloat x)
 {
     const vfloat v = rtengine::Color::gammatab_srgb[x] / F2V(rtengine::MAXVALF);
@@ -82,7 +82,7 @@ void ImProcFunctions::softLight(LabImage *lab, const rtengine::procparams::SoftL
         {static_cast<float>(wiprof[2][0]), static_cast<float>(wiprof[2][1]), static_cast<float>(wiprof[2][2])}
     };
 
-#ifdef __SSE2__
+#if defined(__SSE2__) || defined(RT_SIMDE)
     const vfloat wpv[3][3] = {
         {F2V(wprof[0][0]), F2V(wprof[0][1]), F2V(wprof[0][2])},
         {F2V(wprof[1][0]), F2V(wprof[1][1]), F2V(wprof[1][2])},
@@ -101,7 +101,7 @@ void ImProcFunctions::softLight(LabImage *lab, const rtengine::procparams::SoftL
 #endif
     {
         const float blend = softLightParams.strength / 100.f;
-#ifdef __SSE2__
+#if defined(__SSE2__) || defined(RT_SIMDE)
         const vfloat blendv = F2V(blend);
 #endif
 #ifdef _OPENMP
@@ -110,7 +110,7 @@ void ImProcFunctions::softLight(LabImage *lab, const rtengine::procparams::SoftL
 
         for (int i = 0; i < lab->H; ++i) {
             int j = 0;
-#ifdef __SSE2__
+#if defined(__SSE2__) || defined(RT_SIMDE)
 
             for (; j < lab->W - 3; j += 4) {
                 vfloat Xv, Yv, Zv;

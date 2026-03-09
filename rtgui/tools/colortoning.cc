@@ -2,13 +2,15 @@
  *  This file is part of RawTherapee.
  */
 #include "colortoning.h"
-#include "curveeditor.h"
-#include "curveeditorgroup.h"
-#include "mycurve.h"
-#include "rtimage.h"
+
 #include "eventmapper.h"
 #include "labgrid.h"
 #include "options.h"
+#include "rtimage.h"
+#include "widgets/curves/curveeditor.h"
+#include "widgets/curves/curveeditorgroup.h"
+#include "widgets/curves/mycurve.h"
+
 #include "rtengine/color.h"
 
 using namespace rtengine;

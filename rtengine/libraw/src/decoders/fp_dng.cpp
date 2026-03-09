@@ -1,5 +1,5 @@
 /* -*- C++ -*-
- * Copyright 2019-2024 LibRaw LLC (info@libraw.org)
+ * Copyright 2019-2025 LibRaw LLC (info@libraw.org)
  *
  LibRaw is free software; you can redistribute it and/or modify
  it under the terms of the one of two licenses as you choose:
@@ -350,7 +350,14 @@ void LibRaw::deflate_dng_load_raw()
       libraw_internal_data.internal_data.input);
 
   if (ifd->sample_format == 3)
-      float_raw_image = (float *)calloc(tiles.tileCnt * tiles.tileWidth * tiles.tileHeight *ifd->samples, sizeof(float));
+  {
+    INT64 raw_bytes = tiles.tileCnt * tiles.tileWidth * tiles.tileHeight * ifd->samples * sizeof(float);
+    if (raw_bytes > INT64(imgdata.rawparams.max_raw_memory_mb) * INT64(1024 * 1024))
+      throw LIBRAW_EXCEPTION_TOOBIG;
+    float_raw_image = (float *)calloc(tiles.tileCnt * tiles.tileWidth * tiles.tileHeight * ifd->samples, sizeof(float));
+    if (!float_raw_image)
+      throw LIBRAW_EXCEPTION_ALLOC;
+  }
   else
     throw LIBRAW_EXCEPTION_DECODE_RAW; // Only float deflated supported
 
