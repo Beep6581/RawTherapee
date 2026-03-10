@@ -22,6 +22,7 @@
 // Locallab Log Encoding Tool - extracted from iplocallab.cc
 
 #include <cmath>
+#include <iostream>
 
 #include "improcfun.h"
 #include "imagefloat.h"
