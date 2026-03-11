@@ -897,6 +897,7 @@ void Crop::update(int todo)
         auto& czlocalcurve2 = parent->czlocalcurve;
         auto& czjzlocalcurve2 = parent->czjzlocalcurve;
         auto& redlocalcurve2 = parent->redlocalcurve;
+        auto& greenlocalcurve2 = parent->greenlocalcurve;
 
         auto& hltonecurveloc2 = parent->hltonecurveloc;
         auto& shtonecurveloc2 = parent->shtonecurveloc;
@@ -1059,6 +1060,7 @@ void Crop::update(int todo)
             const bool localczutili = CurveFactory::diagonalCurve2Lut(params.locallab.spots.at(sp).czcurve, czlocalcurve2, skip);
             const bool localczjzutili = CurveFactory::diagonalCurve2Lut(params.locallab.spots.at(sp).czjzcurve, czjzlocalcurve2, skip);
             const bool localredutili = CurveFactory::diagonalCurve2Lut(params.locallab.spots.at(sp).redcurve, redlocalcurve2, skip);
+            const bool localgreenutili = CurveFactory::diagonalCurve2Lut(params.locallab.spots.at(sp).greencurve, greenlocalcurve2, skip);
 
             double ecomp = params.locallab.spots.at(sp).expcomp;
             double black = params.locallab.spots.at(sp).black;
@@ -1157,6 +1159,7 @@ void Crop::update(int todo)
                         czlocalcurve2,localczutili, 
                         czjzlocalcurve2,localczjzutili, 
                         redlocalcurve2,localredutili, 
+                        greenlocalcurve2,localgreenutili, 
                         
                         locccmasCurve, lcmasutili, locllmasCurve, llmasutili, lochhmasCurve, lhmasutili, lochhhmasCurve, lhhmasutili, lochhhmascieCurve, lhhmascieutili, locccmasexpCurve, lcmasexputili, locllmasexpCurve, llmasexputili, lochhmasexpCurve, lhmasexputili,
                         locccmasSHCurve, lcmasSHutili, locllmasSHCurve, llmasSHutili, lochhmasSHCurve, lhmasSHutili,
@@ -1247,6 +1250,7 @@ void Crop::update(int todo)
                         czlocalcurve2,localczutili, 
                         czjzlocalcurve2,localczjzutili, 
                         redlocalcurve2,localredutili, 
+                        greenlocalcurve2,localgreenutili, 
 
                         locccmasCurve, lcmasutili, locllmasCurve, llmasutili, lochhmasCurve, lhmasutili,lochhhmasCurve, lhhmasutili, lochhhmascieCurve, lhhmascieutili, locccmasexpCurve, lcmasexputili, locllmasexpCurve, llmasexputili, lochhmasexpCurve, lhmasexputili, 
                         locccmasSHCurve, lcmasSHutili, locllmasSHCurve, llmasSHutili, lochhmasSHCurve, lhmasSHutili,

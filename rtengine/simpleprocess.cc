@@ -1145,6 +1145,7 @@ private:
             LUTf czlocalcurve(65536, LUT_CLIP_OFF);
             LUTf czjzlocalcurve(65536, LUT_CLIP_OFF);
             LUTf redlocalcurve(65536, LUT_CLIP_OFF);
+            LUTf greenlocalcurve(65536, LUT_CLIP_OFF);
 
             array2D<float> shbuffer;
 
@@ -1245,6 +1246,7 @@ private:
                 const bool localczutili = CurveFactory::diagonalCurve2Lut(params.locallab.spots.at(sp).czcurve, czlocalcurve, 1);
                 const bool localczjzutili = CurveFactory::diagonalCurve2Lut(params.locallab.spots.at(sp).czjzcurve, czjzlocalcurve, 1);
                 const bool localredutili = CurveFactory::diagonalCurve2Lut(params.locallab.spots.at(sp).redcurve, redlocalcurve, 1);
+                const bool localgreenutili = CurveFactory::diagonalCurve2Lut(params.locallab.spots.at(sp).greencurve, greenlocalcurve, 1);
 
                 //provisory
                 double ecomp = params.locallab.spots.at(sp).expcomp;
@@ -1346,6 +1348,7 @@ private:
                               czlocalcurve, localczutili,
                               czjzlocalcurve, localczjzutili,
                               redlocalcurve, localredutili,
+                              greenlocalcurve, localgreenutili,
 
                               locccmasCurve, lcmasutili, locllmasCurve, llmasutili, lochhmasCurve, lhmasutili, lochhhmasCurve, lhhmasutili, lochhhmascieCurve, lhhmascieutili, locccmasexpCurve, lcmasexputili, locllmasexpCurve, llmasexputili, lochhmasexpCurve, lhmasexputili,
                               locccmasSHCurve, lcmasSHutili, locllmasSHCurve, llmasSHutili, lochhmasSHCurve, lhmasSHutili,
