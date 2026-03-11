@@ -1931,6 +1931,10 @@ private:
     Adjuster* const schromared;
     CurveEditorGroup* const redCurveEditorG;
     DiagonalCurveEditor* const shapered;
+    Adjuster* const colorhgreen;
+    Adjuster* const schromagreen;
+    CurveEditorGroup* const greenCurveEditorG;
+    DiagonalCurveEditor* const shapegreen;
 
     Gtk::Frame* const czlightFrame;
 //    Gtk::Frame* const czcontFrame;
@@ -2193,6 +2197,9 @@ private:
     rtengine::ProcEvent Evlocallabcolorhred;
     rtengine::ProcEvent Evlocallabschromared;
     rtengine::ProcEvent Evlocallabshapered;
+    rtengine::ProcEvent Evlocallabcolorhgreen;
+    rtengine::ProcEvent Evlocallabschromagreen;
+    rtengine::ProcEvent Evlocallabshapegreen;
 
 public:
     Locallabcie();

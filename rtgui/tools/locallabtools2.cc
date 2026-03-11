@@ -8422,6 +8422,10 @@ Locallabcie::Locallabcie():
     schromared(Gtk::manage(new Adjuster(M("TP_COLORAPP_CHROMA_S_RED"), -40.0, 20.0, 0.1, 0.))),//saturation red
     redCurveEditorG(new CurveEditorGroup(App::get().mut_options().lastlocalCurvesDir, M ("TP_COLORAPP_BRIGHT_CUR_RED"), 1)),
     shapered(static_cast<DiagonalCurveEditor*>(redCurveEditorG->addCurve(CT_Diagonal, ""))),
+    colorhgreen(Gtk::manage(new Adjuster(M("TP_COLORAPP_HUE_GREEN"), -25., 25., 0.1, 0.))),//hue red
+    schromagreen(Gtk::manage(new Adjuster(M("TP_COLORAPP_CHROMA_S_GREEN"), -40.0, 20.0, 0.1, 0.))),//saturation red
+    greenCurveEditorG(new CurveEditorGroup(App::get().mut_options().lastlocalCurvesDir, M ("TP_COLORAPP_BRIGHT_CUR_GREEN"), 1)),
+    shapegreen(static_cast<DiagonalCurveEditor*>(greenCurveEditorG->addCurve(CT_Diagonal, ""))),
 
     czlightFrame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_CIELIGHTCONTFRA")))),
     czcolorFrame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_CIECOLORFRA")))),
@@ -8757,6 +8761,9 @@ Locallabcie::Locallabcie():
     Evlocallabcolorhred = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_CIE_RGB_COLORHRED");
     Evlocallabschromared = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_CIE_RGB_SCHROMARED");
     Evlocallabshapered = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_CIE_RGB_SHAPERED");
+    Evlocallabcolorhgreen = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_CIE_RGB_COLORHGREEN");
+    Evlocallabschromagreen = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_CIE_RGB_SCHROMAGREEN");
+    Evlocallabshapegreen = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_CIE_RGB_SHAPEGREEN");
     
     set_orientation(Gtk::ORIENTATION_VERTICAL);
 
@@ -9478,6 +9485,14 @@ Locallabcie::Locallabcie():
     shapered->setLeftBarBgGradient(milestone);
     redCurveEditorG->curveListComplete();
 
+    colorhgreen->setAdjusterListener(this);
+    schromagreen->setAdjusterListener(this);
+    greenCurveEditorG->setCurveListener(this);
+    shapegreen->setResetCurve(DiagonalCurveType(defSpot.greencurve.at(0)), defSpot.greencurve);
+    shapegreen->setBottomBarBgGradient(milestone);
+    shapegreen->setLeftBarBgGradient(milestone);
+    greenCurveEditorG->curveListComplete();
+
     targabscie->setAdjusterListener(this);
 
     detailcie->setAdjusterListener(this);
@@ -9577,6 +9592,12 @@ Locallabcie::Locallabcie():
     cieP1rgbBox->pack_start(*schromared);
     cieP1rgbBox->pack_start(*schromared);
     cieP1rgbBox->pack_start(*redCurveEditorG);
+    cieP1rgbBox->pack_start (*Gtk::manage (new Gtk::Separator(Gtk::ORIENTATION_HORIZONTAL)), Gtk::PACK_EXPAND_WIDGET, 4);
+    cieP1rgbBox->pack_start(*colorhgreen);
+    cieP1rgbBox->pack_start(*schromagreen);
+    cieP1rgbBox->pack_start(*schromagreen);
+    cieP1rgbBox->pack_start(*greenCurveEditorG);
+
     cie1redgreenblueFrame->add(*cieP1rgbBox);
     cieP1Box->pack_start(*cie1redgreenblueFrame);
 
@@ -9776,6 +9797,9 @@ Locallabcie::~Locallabcie()
     delete mask2cieCurveEditorG;
     delete LocalcurveEditorwavjz;
     delete mask2cieCurveEditorGwav;
+    delete redCurveEditorG;
+    delete greenCurveEditorG;
+
 }
 
 bool Locallabcie::isMaskViewActive()
@@ -10580,6 +10604,9 @@ void Locallabcie::read(const rtengine::procparams::ProcParams* pp, const ParamsE
         colorhred->setValue(spot.colorhred);
         schromared->setValue(spot.schromared);
         shapered->setCurve(spot.redcurve);
+        colorhgreen->setValue(spot.colorhgreen);
+        schromagreen->setValue(spot.schromagreen);
+        shapegreen->setCurve(spot.greencurve);
 
         chromjzcie->setValue(spot.chromjzcie);
         saturjzcie->setValue(spot.saturjzcie);
@@ -10972,6 +10999,9 @@ void Locallabcie::write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedi
         spot.colorhred = colorhred->getValue();
         spot.schromared = schromared->getValue();
         spot.redcurve = shapered->getCurve();
+        spot.colorhgreen = colorhgreen->getValue();
+        spot.schromagreen = schromagreen->getValue();
+        spot.greencurve = shapegreen->getCurve();
 
         spot.lightlcie = lightlcie->getValue();
         spot.lightjzcie = lightjzcie->getValue();
@@ -13918,6 +13948,12 @@ void Locallabcie::curveChanged(CurveEditor* ce)
             }
         }
 
+        if (ce == shapegreen) {
+            if (listener) {
+                listener->panelChanged(Evlocallabshapegreen, spName);
+            }
+        }
+
     }
 }
 
@@ -14034,6 +14070,20 @@ void Locallabcie::adjusterChanged(Adjuster* a, double newval)
             if (listener) {
                 listener->panelChanged(Evlocallabschromared,
                                        schromared->getTextValue() + spName);
+            }
+        }
+
+        if (a == colorhgreen) {
+            if (listener) {
+                listener->panelChanged(Evlocallabcolorhgreen,
+                                       colorhgreen->getTextValue() + spName);
+            }
+        }
+
+        if (a == schromagreen) {
+            if (listener) {
+                listener->panelChanged(Evlocallabschromagreen,
+                                       schromagreen->getTextValue() + spName);
             }
         }
 

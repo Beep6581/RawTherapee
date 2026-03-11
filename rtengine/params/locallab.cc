@@ -1700,6 +1700,15 @@ LocallabParams::LocallabSpot::LocallabSpot() :
         1.0,
         1.0,
     },
+    colorhgreen(0.),
+    schromagreen(0.),
+    greencurve{
+        static_cast<double>(DCT_NURBS),
+        0.0,
+        0.0,
+        1.0,
+        1.0,
+    },
 
     toneMethodcie("one"),
     ciecurve{
@@ -2836,6 +2845,9 @@ bool LocallabParams::LocallabSpot::operator ==(const LocallabSpot& other) const
         && colorhred == other.colorhred
         && schromared == other.schromared
         && redcurve == other.redcurve
+        && colorhgreen == other.colorhgreen
+        && schromagreen == other.schromagreen
+        && greencurve == other.greencurve
 
         && toneMethodcie == other.toneMethodcie
         && ciecurve == other.ciecurve
@@ -4038,6 +4050,9 @@ void LoadUtil::ciecam()
     assignFromKeyfile(keyFile, "Locallab", "Colorhred_" + index_str, spot.colorhred, spotEdited.colorhred);
     assignFromKeyfile(keyFile, "Locallab", "Schromared_" + index_str, spot.schromared, spotEdited.schromared);
     assignFromKeyfile(keyFile, "Locallab", "RedCurve_" + index_str, spot.redcurve, spotEdited.redcurve);
+    assignFromKeyfile(keyFile, "Locallab", "Colorhgreen_" + index_str, spot.colorhgreen, spotEdited.colorhgreen);
+    assignFromKeyfile(keyFile, "Locallab", "Schromagreen_" + index_str, spot.schromagreen, spotEdited.schromagreen);
+    assignFromKeyfile(keyFile, "Locallab", "GreenCurve_" + index_str, spot.greencurve, spotEdited.greencurve);
 
 
 
@@ -5059,6 +5074,9 @@ void SaveUtil::ciecam()
         saveToKeyfile(!pedited || spot_edited->colorhred, "Locallab", "Colorhred_" + index_str, spot.colorhred, keyFile);
         saveToKeyfile(!pedited || spot_edited->schromared, "Locallab", "Schromared_" + index_str, spot.schromared, keyFile);
         saveToKeyfile(!pedited || spot_edited->redcurve, "Locallab", "RedCurve_" + index_str, spot.redcurve, keyFile);
+        saveToKeyfile(!pedited || spot_edited->colorhgreen, "Locallab", "Colorhgreen_" + index_str, spot.colorhgreen, keyFile);
+        saveToKeyfile(!pedited || spot_edited->schromagreen, "Locallab", "Schromagreen_" + index_str, spot.schromagreen, keyFile);
+        saveToKeyfile(!pedited || spot_edited->greencurve, "Locallab", "GreenCurve_" + index_str, spot.greencurve, keyFile);
 
         saveToKeyfile(!pedited || spot_edited->toneMethodcie, "Locallab", "ToneMethodcie_" + index_str, spot.toneMethodcie, keyFile);
         saveToKeyfile(!pedited || spot_edited->ciecurve, "Locallab", "Ciecurve_" + index_str, spot.ciecurve, keyFile);

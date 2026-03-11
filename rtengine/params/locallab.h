@@ -741,6 +741,9 @@ struct LocallabParams {
         double colorhred;
         double schromared;
         std::vector<double> redcurve;
+        double colorhgreen;
+        double schromagreen;
+        std::vector<double> greencurve;
 
         Glib::ustring toneMethodcie;
         std::vector<double> ciecurve;

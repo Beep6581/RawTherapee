@@ -1147,6 +1147,9 @@ public:
         bool colorhred;
         bool schromared;
         bool redcurve;
+        bool colorhgreen;
+        bool schromagreen;
+        bool greencurve;
         
         bool toneMethodcie;
         bool ciecurve;
