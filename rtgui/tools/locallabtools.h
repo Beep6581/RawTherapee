@@ -1926,6 +1926,9 @@ private:
     Gtk::Frame* const cie1lightFrame;
     Gtk::Frame* const cie1contFrame;
     Gtk::Frame* const cie1colorFrame;
+    Gtk::Frame* const cie1redgreenblueFrame;
+    Adjuster* const colorhred;
+
     Gtk::Frame* const czlightFrame;
 //    Gtk::Frame* const czcontFrame;
     Gtk::Frame* const czcolorFrame;
@@ -2183,6 +2186,9 @@ private:
    
     sigc::connection AutograycieConn, primMethodconn, illMethodconn, smoothciemetconn, catMethodconn, sigybjz12Conn, qtojConn, showmaskcieMethodConn, enacieMaskConn, enacieMaskallConn, jabcieConn, sursourcieconn, surroundcieconn, modecieconn, modecamconn, modeQJconn, comprcieautoconn, normcie12conn, normcieconn, logcieconn, satcieconn, logcieqconn, smoothcieconn, smoothcielnkconn, smoothcieinvconn, smoothciehighconn, smoothcietrcconn, smoothcietrcrelconn, smoothcieybconn,smoothcielumconn, logjzconn, sigjz12conn, forcebwconn, sigjzconn, sigq12conn, sigqconn, chjzcieconn, toneMethodcieConn, toneMethodcieConn2, toolcieConn, bwevMethod12Conn, midtciemetConn, bwevMethodConn,fftcieMaskConn, gamutcieconn, bwcieconn, expprecamconn, sigcieconn;
     sigc::connection previewcieConn, sigmoidqjcieconn;
+    
+    rtengine::ProcEvent Evlocallabcolorhred;
+    
 public:
     Locallabcie();
     ~Locallabcie();

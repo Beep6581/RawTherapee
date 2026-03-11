@@ -737,6 +737,9 @@ struct LocallabParams {
         double rstprotectcie;
         double chromlcie;
         double huecie;
+        
+        double colorhred;
+        
         Glib::ustring toneMethodcie;
         std::vector<double> ciecurve;
         Glib::ustring toneMethodcie2;

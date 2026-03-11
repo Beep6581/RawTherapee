@@ -1144,6 +1144,7 @@ public:
         bool rstprotectcie;
         bool chromlcie;
         bool huecie;
+        bool colorhred;
         bool toneMethodcie;
         bool ciecurve;
         bool toneMethodcie2;

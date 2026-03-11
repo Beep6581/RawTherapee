@@ -8417,6 +8417,9 @@ Locallabcie::Locallabcie():
     cie1lightFrame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_CIELIGHTFRA")))),
     cie1contFrame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_CIECONTFRA")))),
     cie1colorFrame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_CIECOLORFRA")))),
+    cie1redgreenblueFrame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_CIEREDGREENBLUEFRA")))),
+    colorhred(Gtk::manage(new Adjuster(M("TP_COLORAPP_HUE_RED"), -25., 25., 0.1, 0.))),//hue red
+
     czlightFrame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_CIELIGHTCONTFRA")))),
     czcolorFrame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_CIECOLORFRA")))),
     PQFrame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_JZPQFRA")))),
@@ -8748,6 +8751,8 @@ Locallabcie::Locallabcie():
     Evlocallabsigmoidbljzcie = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_SIGJZ11BL");
     Evlocallabsigmoidsenscie = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_SIGSENSICIE");
     Evlocallablogcie_12 = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_LOGCIE12");
+    Evlocallabcolorhred = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_CIE_RGB_COLORHRED");
+
     set_orientation(Gtk::ORIENTATION_VERTICAL);
 
     // Parameter Ciecam specific widgets
@@ -9460,6 +9465,9 @@ Locallabcie::Locallabcie():
     targetGraycie->setLogScale(10, 18, true);
     targabscie->setLogScale(500, 0);
 
+    colorhred->setAdjusterListener(this);
+
+
     targabscie->setAdjusterListener(this);
 
     detailcie->setAdjusterListener(this);
@@ -9518,6 +9526,7 @@ Locallabcie::Locallabcie():
     cie1lightFrame->set_label_align(0.025, 0.5);
     cie1contFrame->set_label_align(0.025, 0.5);
     cie1colorFrame->set_label_align(0.025, 0.5);
+    cie1redgreenblueFrame->set_label_align(0.025, 0.5);
 
     ToolParamBlock* const cieP11Box = Gtk::manage(new ToolParamBlock());
     cieP11Box->pack_start(*cieCurveEditorG);
@@ -9552,6 +9561,12 @@ Locallabcie::Locallabcie():
     cieP1colorBox->pack_start(*rstprotectcie);
     cie1colorFrame->add(*cieP1colorBox);
     cieP1Box->pack_start(*cie1colorFrame);
+
+    ToolParamBlock* const cieP1rgbBox = Gtk::manage(new ToolParamBlock());
+    cieP1rgbBox->pack_start(*colorhred);
+    cie1redgreenblueFrame->add(*cieP1rgbBox);
+    cieP1Box->pack_start(*cie1redgreenblueFrame);
+
     cieP1Box->pack_start(*sigmoidFrame12);
     cieP1Box->pack_start(*sigmoidFrame);
 
@@ -10548,6 +10563,9 @@ void Locallabcie::read(const rtengine::procparams::ProcParams* pp, const ParamsE
         rstprotectcie->setValue(spot.rstprotectcie);
         chromlcie->setValue(spot.chromlcie);
         huecie->setValue(spot.huecie);
+        
+        colorhred->setValue(spot.colorhred);
+
         chromjzcie->setValue(spot.chromjzcie);
         saturjzcie->setValue(spot.saturjzcie);
         huejzcie->setValue(spot.huejzcie);
@@ -10935,6 +10953,9 @@ void Locallabcie::write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedi
         spot.chromjzcie = chromjzcie->getValue();
         spot.saturjzcie = saturjzcie->getValue();
         spot.huecie = huecie->getValue();
+        
+        spot.colorhred = colorhred->getValue();
+
         spot.lightlcie = lightlcie->getValue();
         spot.lightjzcie = lightjzcie->getValue();
         spot.lightqcie = lightqcie->getValue();
@@ -13978,6 +13999,14 @@ void Locallabcie::adjusterChanged(Adjuster* a, double newval)
                                        huecie->getTextValue() + spName);
             }
         }
+        
+        if (a == colorhred) {
+            if (listener) {
+                listener->panelChanged(Evlocallabcolorhred,
+                                       colorhred->getTextValue() + spName);
+            }
+        }
+        
 
         if (a == huejzcie) {
             if (listener) {

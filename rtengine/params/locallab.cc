@@ -1691,6 +1691,8 @@ LocallabParams::LocallabSpot::LocallabSpot() :
     rstprotectcie(0.),
     chromlcie(0.),
     huecie(0.),
+    colorhred(0.),
+
     toneMethodcie("one"),
     ciecurve{
         static_cast<double>(DCT_NURBS),
@@ -2823,6 +2825,7 @@ bool LocallabParams::LocallabSpot::operator ==(const LocallabSpot& other) const
         && rstprotectcie == other.rstprotectcie
         && chromlcie == other.chromlcie
         && huecie == other.huecie
+        && colorhred == other.colorhred
         && toneMethodcie == other.toneMethodcie
         && ciecurve == other.ciecurve
         && toneMethodcie2 == other.toneMethodcie2
@@ -4020,6 +4023,9 @@ void LoadUtil::ciecam()
     assignFromKeyfile(keyFile, "Locallab", "Rstprotectcie_" + index_str,  spot.rstprotectcie, spotEdited.rstprotectcie);
     assignFromKeyfile(keyFile, "Locallab", "Chromlcie_" + index_str, spot.chromlcie, spotEdited.chromlcie);
     assignFromKeyfile(keyFile, "Locallab", "Huecie_" + index_str, spot.huecie, spotEdited.huecie);
+
+    assignFromKeyfile(keyFile, "Locallab", "Colorhred_" + index_str, spot.colorhred, spotEdited.colorhred);
+
     assignFromKeyfile(keyFile, "Locallab", "ToneMethodcie_" + index_str, spot.toneMethodcie, spotEdited.toneMethodcie);
     assignFromKeyfile(keyFile, "Locallab", "Ciecurve_" + index_str, spot.ciecurve, spotEdited.ciecurve);
     assignFromKeyfile(keyFile, "Locallab", "ToneMethodcie2_" + index_str, spot.toneMethodcie2, spotEdited.toneMethodcie2);
@@ -5034,6 +5040,9 @@ void SaveUtil::ciecam()
         saveToKeyfile(!pedited || spot_edited->rstprotectcie, "Locallab", "Rstprotectcie_" + index_str, spot.rstprotectcie, keyFile);
         saveToKeyfile(!pedited || spot_edited->chromlcie, "Locallab", "Chromlcie_" + index_str, spot.chromlcie, keyFile);
         saveToKeyfile(!pedited || spot_edited->huecie, "Locallab", "Huecie_" + index_str, spot.huecie, keyFile);
+
+        saveToKeyfile(!pedited || spot_edited->colorhred, "Locallab", "Colorhred_" + index_str, spot.colorhred, keyFile);
+
         saveToKeyfile(!pedited || spot_edited->toneMethodcie, "Locallab", "ToneMethodcie_" + index_str, spot.toneMethodcie, keyFile);
         saveToKeyfile(!pedited || spot_edited->ciecurve, "Locallab", "Ciecurve_" + index_str, spot.ciecurve, keyFile);
         saveToKeyfile(!pedited || spot_edited->toneMethodcie2, "Locallab", "ToneMethodcie2_" + index_str, spot.toneMethodcie2, keyFile);

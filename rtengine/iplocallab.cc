@@ -4678,6 +4678,7 @@ void ImProcFunctions::ciecamloc_02float(struct local_params& lp, int sp, LabImag
                 }
             }
         }
+        const float huered =  params->locallab.spots.at(sp).colorhred;
 
 #if defined(__SSE2__) || defined(RT_SIMDE)
         int bufferLength = ((width + 3) / 4) * 4; // bufferLength has to be a multiple of 4
@@ -4787,6 +4788,36 @@ void ImProcFunctions::ciecamloc_02float(struct local_params& lp, int sp, LabImag
                     Qpro = Q;
                     Mpro = M;
                     spro = s;
+                    bool jpred = false;
+                    constexpr float attenuation_hue = 0.555f;//Hue attenuation factor of 100/180. I find the changes too significant. It's just a convention.
+                    if((hpro > 340.f && hpro <= 360.f) || (hpro > 0.f && hpro <= 100.f)) {//Red CIECAM
+                       // if ((hasColCurvered)) {
+                            jpred = true;
+                            float Qq = Qpro * coefq;
+                            float Qold = Qpro;
+                          //  const Brightcurve& userColCurveBred = static_cast<const Brightcurve&>(customColCurvered);
+                          //  userColCurveBred.Apply(Qq);
+
+                            Qq = Qq / coefq;
+                            Qpro = 0.2f * (Qq - Qold) + Qold;
+                      //  }
+                        if (jpred) {
+                            Jpro = SQR((10.f * Qpro) / wh);
+                        }
+
+                    
+                        hpro = hpro + attenuation_hue * huered;//rotation Red
+                       // spro = spro * (1.f + (schrred / 100.f));//change Red saturation 
+                       // float Cp = (spro * spro * Qpro) / (1000000.f);//recalculate Chroma
+                       // Mpro = SQR(spro) * Qpro / 10000.f;//recalculate Mpro Colorfulness
+                       // Cpro = Cp * 100.f;
+
+
+                        if (hpro < 0.0f) {
+                            hpro += 360.0f;    //hue
+                        }
+                    }
+                    
 
                     if (ciec  && mocam == 1) {//only Cam16
                         bool jp = false;
