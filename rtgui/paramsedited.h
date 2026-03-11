@@ -1145,6 +1145,9 @@ public:
         bool chromlcie;
         bool huecie;
         bool colorhred;
+        bool schromared;
+        bool redcurve;
+        
         bool toneMethodcie;
         bool ciecurve;
         bool toneMethodcie2;

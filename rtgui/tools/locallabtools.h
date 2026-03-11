@@ -1928,6 +1928,9 @@ private:
     Gtk::Frame* const cie1colorFrame;
     Gtk::Frame* const cie1redgreenblueFrame;
     Adjuster* const colorhred;
+    Adjuster* const schromared;
+    CurveEditorGroup* const redCurveEditorG;
+    DiagonalCurveEditor* const shapered;
 
     Gtk::Frame* const czlightFrame;
 //    Gtk::Frame* const czcontFrame;
@@ -2188,7 +2191,9 @@ private:
     sigc::connection previewcieConn, sigmoidqjcieconn;
     
     rtengine::ProcEvent Evlocallabcolorhred;
-    
+    rtengine::ProcEvent Evlocallabschromared;
+    rtengine::ProcEvent Evlocallabshapered;
+
 public:
     Locallabcie();
     ~Locallabcie();

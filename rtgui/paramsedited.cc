@@ -2051,7 +2051,10 @@ void ParamsEdited::initFrom(const std::vector<rtengine::procparams::ProcParams>&
                 locallab.spots.at(j).huecie = locallab.spots.at(j).huecie && pSpot.huecie == otherSpot.huecie;
                 
                 locallab.spots.at(j).colorhred = locallab.spots.at(j).colorhred && pSpot.colorhred == otherSpot.colorhred;
-                
+                locallab.spots.at(j).schromared = locallab.spots.at(j).schromared && pSpot.schromared == otherSpot.schromared;
+                locallab.spots.at(j).redcurve = locallab.spots.at(j).redcurve && pSpot.redcurve == otherSpot.redcurve;
+
+
                 locallab.spots.at(j).toneMethodcie = locallab.spots.at(j).toneMethodcie && pSpot.toneMethodcie == otherSpot.toneMethodcie;
                 locallab.spots.at(j).ciecurve = locallab.spots.at(j).ciecurve && pSpot.ciecurve == otherSpot.ciecurve;
                 locallab.spots.at(j).toneMethodcie2 = locallab.spots.at(j).toneMethodcie2 && pSpot.toneMethodcie2 == otherSpot.toneMethodcie2;
@@ -6800,6 +6803,15 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
             toEdit.locallab.spots.at(i).colorhred = mods.locallab.spots.at(i).colorhred;
         }
 
+        if (locallab.spots.at(i).schromared) {
+            toEdit.locallab.spots.at(i).schromared = mods.locallab.spots.at(i).schromared;
+        }
+
+        if (locallab.spots.at(i).redcurve) {
+            toEdit.locallab.spots.at(i).redcurve = mods.locallab.spots.at(i).redcurve;
+        }
+
+
         if (locallab.spots.at(i).toneMethodcie) {
             toEdit.locallab.spots.at(i).toneMethodcie = mods.locallab.spots.at(i).toneMethodcie;
         }
@@ -9477,7 +9489,8 @@ LocallabParamsEdited::LocallabSpotEdited::LocallabSpotEdited(bool v) :
     chromlcie(v),
     huecie(v),
     colorhred(v),
-    
+    schromared(v),
+    redcurve(v),
     toneMethodcie(v),
     ciecurve(v),
     toneMethodcie2(v),
@@ -10331,6 +10344,9 @@ void LocallabParamsEdited::LocallabSpotEdited::set(bool v)
     chromlcie = v;
     huecie = v;
     colorhred = v;
+    schromared = v;
+    redcurve = v;
+
     toneMethodcie = v;
     ciecurve = v;
     toneMethodcie2 = v;
