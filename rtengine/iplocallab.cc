@@ -763,6 +763,7 @@ struct local_params {
     int detailsh;
     int whitescie;
     int midtcie;
+    float smoothcie;
     int midtmet;
     double tePivot;
     float threshol;
@@ -1914,7 +1915,7 @@ static void calcLocalParams(int sp, int oW, int oH,  const LocallabParams& local
     lp.tePivot = locallab.spots.at(sp).tePivot;
     lp.whitescie = locallab.spots.at(sp).whitescie;
     lp.midtcie = locallab.spots.at(sp).midtcie; 
-    
+    lp.smoothcie = locallab.spots.at(sp).smoothjcie; 
     lp.threshol = thresho;
     lp.chromacb = chromcbdl;
     lp.expvib = locallab.spots.at(sp).expvibrance && lp.activspot ;
@@ -2863,7 +2864,11 @@ void tone_eqsmooth(ImProcFunctions *ipf, Imagefloat *rgb, const struct local_par
         params.bands[4] = - (lp.issmoothmich) * 10.f;
         params.bands[5] = - (lp.issmoothmich) * 20.f;
     }
-
+    if(lp.smoothcie > 0.f) {//Cam16
+        params.bands[4] = -30 * lp.smoothcie;
+        float smmothsli5 = std::min(lp.smoothcie, 1.f);
+        params.bands[5] = -80 * smmothsli5;
+    }
     ipf->toneEqualizer(rgb, params, workingProfile, scale, multithread);
 }
 
@@ -23010,6 +23015,12 @@ void ImProcFunctions::Lab_Local(
                     if(lp.midtcie != 0 && lp.midtmet == 1) {
                         ImProcFunctions::tone_eqcam(this, tmpImage, lp.midtcie, params->icm.workingProfile, sk, multiThread);
                     }
+                    
+                    const float smoothisli = lp.smoothcie;
+                    if(smoothisli > 0.f) {
+                        tone_eqsmooth(this, tmpImage, lp, params->icm.workingProfile, sk, multiThread);//reduce Ev > 0 < 12
+                    }
+
                     
                     tmpImage->copyData(tmpImagelog);
 

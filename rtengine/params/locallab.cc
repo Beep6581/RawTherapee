@@ -1894,6 +1894,7 @@ LocallabParams::LocallabSpot::LocallabSpot() :
     smoothciethtrc(0.),
     slopjcie(12.923),
     satjcie(0.5),
+    smoothjcie(0.),
     contsig(1.15),
     skewsig(0.),
     whitsig(100.),
@@ -2919,6 +2920,7 @@ bool LocallabParams::LocallabSpot::operator ==(const LocallabSpot& other) const
         && smoothciethtrc == other.smoothciethtrc
         && slopjcie == other.slopjcie
         && satjcie == other.satjcie
+        && smoothjcie == other.smoothjcie
         && contsig == other.contsig
         && skewsig == other.skewsig
         && whitsig == other.whitsig
@@ -4140,6 +4142,7 @@ void LoadUtil::ciecam()
     assignFromKeyfile(keyFile, "Locallab", "smoothciethtrc_" + index_str, spot.smoothciethtrc, spotEdited.smoothciethtrc);
     assignFromKeyfile(keyFile, "Locallab", "slopjcie_" + index_str, spot.slopjcie, spotEdited.slopjcie);
     assignFromKeyfile(keyFile, "Locallab", "satjcie_" + index_str, spot.satjcie, spotEdited.satjcie);
+    assignFromKeyfile(keyFile, "Locallab", "smoothjcie_" + index_str, spot.smoothjcie, spotEdited.smoothjcie);
     assignFromKeyfile(keyFile, "Locallab", "contsig_" + index_str, spot.contsig, spotEdited.contsig);
     assignFromKeyfile(keyFile, "Locallab", "skewsig_" + index_str, spot.skewsig, spotEdited.skewsig);
     assignFromKeyfile(keyFile, "Locallab", "whitsig_" + index_str, spot.whitsig, spotEdited.whitsig);
@@ -5155,6 +5158,7 @@ void SaveUtil::ciecam()
         saveToKeyfile(!pedited || spot_edited->smoothciethtrc, "Locallab", "smoothciethtrc_" + index_str, spot.smoothciethtrc, keyFile);
         saveToKeyfile(!pedited || spot_edited->slopjcie, "Locallab", "slopjcie_" + index_str, spot.slopjcie, keyFile);
         saveToKeyfile(!pedited || spot_edited->satjcie, "Locallab", "satjcie_" + index_str, spot.satjcie, keyFile);
+        saveToKeyfile(!pedited || spot_edited->smoothjcie, "Locallab", "smoothjcie_" + index_str, spot.smoothjcie, keyFile);
         saveToKeyfile(!pedited || spot_edited->slopesmo, "Locallab", "slopesmo_" + index_str, spot.slopesmo, keyFile);
         saveToKeyfile(!pedited || spot_edited->slopesmoq, "Locallab", "slopesmoq_" + index_str, spot.slopesmoq, keyFile);
         saveToKeyfile(!pedited || spot_edited->slopesmor, "Locallab", "slopesmor_" + index_str, spot.slopesmor, keyFile);

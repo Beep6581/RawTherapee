@@ -805,6 +805,7 @@ struct LocallabParams {
         double smoothciethtrc;
         double slopjcie;
         double satjcie;
+        double smoothjcie;
         double contsig;
         double skewsig;
         double whitsig;

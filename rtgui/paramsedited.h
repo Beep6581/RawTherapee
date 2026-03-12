@@ -1206,6 +1206,7 @@ public:
         bool smoothciethtrc;
         bool slopjcie;
         bool satjcie;
+        bool smoothjcie;
         bool contsig;
         bool skewsig;
         bool whitsig;

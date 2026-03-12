@@ -85,6 +85,7 @@ protected:
     rtengine::ProcEvent Evlocallabgamjcie;
     rtengine::ProcEvent Evlocallabslopjcie;
     rtengine::ProcEvent Evlocallabsatjcie;
+    rtengine::ProcEvent Evlocallabsmoothjcie;
     rtengine::ProcEvent Evlocallabmidtciemet;
     rtengine::ProcEvent Evlocallabmidtcie;
     rtengine::ProcEvent Evlocallabcontsig;
@@ -2026,6 +2027,7 @@ private:
     Adjuster* const gamjcie;
     Adjuster* const slopjcie;
     Adjuster* const satjcie;
+    Adjuster* const smoothjcie;
     
     Gtk::Frame* const midtcieFrame;
     MyComboBoxText* const midtciemet;
