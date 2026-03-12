@@ -10003,6 +10003,8 @@ void Locallabcie::updateAdviceTooltips(const bool showTooltips)
         shiftxl->set_tooltip_text(M("TC_LOCALLAB_PRIM_SHIFTX_TOOLTIP"));
         shiftyl->set_tooltip_text(M("TC_LOCALLAB_PRIM_SHIFTX_TOOLTIP"));
         satjcie->set_tooltip_text(M("TP_LOCALLAB_SATCIE_TOOLTIP"));
+        colorhred->set_tooltip_markup (M ("TP_COLORAPP_RGB_TOOLTIP"));//I changed the location of this tooltip, placing it only on the first slider, rather than on the entire frame pRGBFrame. This improves usability.
+
     } else {
         reparcie->set_tooltip_text("");
         recothrescie->set_tooltip_text("");
@@ -10089,6 +10091,7 @@ void Locallabcie::updateAdviceTooltips(const bool showTooltips)
         shiftxl->set_tooltip_text("");
         shiftyl->set_tooltip_text("");
         satjcie->set_tooltip_text("");
+        colorhred->set_tooltip_markup("");
 
     }
 }
