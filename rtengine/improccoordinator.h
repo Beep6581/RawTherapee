@@ -302,6 +302,7 @@ protected:
     LUTf czjzlocalcurve;
     LUTf redlocalcurve;
     LUTf greenlocalcurve;
+    LUTf bluelocalcurve;
     
     LocretigainCurve locRETgainCurve;
     LocretitransCurve locRETtransCurve;
