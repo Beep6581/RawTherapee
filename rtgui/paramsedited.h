@@ -1150,7 +1150,10 @@ public:
         bool colorhgreen;
         bool schromagreen;
         bool greencurve;
-        
+        bool colorhblue;
+        bool schromablue;
+        bool bluecurve;
+
         bool toneMethodcie;
         bool ciecurve;
         bool toneMethodcie2;
