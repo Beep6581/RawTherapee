@@ -42,6 +42,17 @@
 #endif
 
 namespace {
+bool isNumeric(const Glib::ustring& str) {
+    if (str.empty()) {
+        return false;
+    }
+    for (auto c : str) {
+        if (!std::isdigit(c)) {
+            return false;
+        }
+    }
+    return true;
+}
 void placeSpinBox(Gtk::Container* where, Gtk::SpinButton* &spin, const std::string &labelText, int digits, int inc0, int inc1, int maxLength, int range0, int range1, const std::string &toolTip = "") {
     Gtk::Box* HB = Gtk::manage ( new Gtk::Box () );
     HB->set_spacing (4);
@@ -776,6 +787,118 @@ Gtk::Widget* Preferences::getImageProcessingPanel ()
     cropGrid->attach(*cropAutoFitCB, 0, 1, 2, 1);
     cropFrame->add(*cropGrid);
     vbImageProcessing->pack_start(*cropFrame, Gtk::PACK_SHRINK, 4);
+
+    // Aspect Ratios
+    Gtk::Frame* frar = Gtk::manage(new Gtk::Frame(M("PREFERENCES_ASPECTRATIOS")));
+    Gtk::Box* vbar = Gtk::manage(new Gtk::Box(Gtk::ORIENTATION_VERTICAL));
+    vbar->set_spacing(4);
+
+    Gtk::Box* hbButtons = Gtk::manage(new Gtk::Box());
+    hbButtons->set_spacing(4);
+    selectAllAspectRatios = Gtk::manage(new Gtk::Button(M("PREFERENCES_ASPECTRATIO_SELECTALL")));
+    deselectAllAspectRatios = Gtk::manage(new Gtk::Button(M("PREFERENCES_ASPECTRATIO_DESELECTALL")));
+    selectAllAspectRatios->set_tooltip_text(M("PREFERENCES_ASPECTRATIO_SELECTALL_HINT"));
+    deselectAllAspectRatios->set_tooltip_text(M("PREFERENCES_ASPECTRATIO_DESELECTALL_HINT"));
+    hbButtons->pack_start(*selectAllAspectRatios, Gtk::PACK_SHRINK, 4);
+    hbButtons->pack_start(*deselectAllAspectRatios, Gtk::PACK_SHRINK, 4);
+    vbar->pack_start(*hbButtons, Gtk::PACK_SHRINK, 4);
+
+    aspectRatios = Gtk::manage(new Gtk::TreeView());
+    Gtk::ScrolledWindow* scrollAR = Gtk::manage(new Gtk::ScrolledWindow());
+    scrollAR->set_policy(Gtk::POLICY_AUTOMATIC, Gtk::POLICY_ALWAYS);
+    scrollAR->set_min_content_height(200);
+    scrollAR->set_max_content_height(200);
+    scrollAR->add(*aspectRatios);
+
+    aspectRatioModel = Gtk::ListStore::create(aspectRatioColumns);
+    aspectRatios->set_model(aspectRatioModel);
+    aspectRatios->append_column_editable(M("PREFERENCES_ASPECTRATIO_ENABLED"), aspectRatioColumns.enabled);
+    aspectRatios->append_column(M("PREFERENCES_ASPECTRATIO_LABEL"), aspectRatioColumns.label);
+
+    auto* valueColumn = Gtk::manage(new Gtk::TreeViewColumn(M("PREFERENCES_ASPECTRATIO_VALUE")));
+    auto* valueRenderer = Gtk::manage(new Gtk::CellRendererText());
+    valueColumn->pack_start(*valueRenderer, true);
+    valueColumn->set_cell_data_func(*valueRenderer, [this](Gtk::CellRenderer* cell, const Gtk::TreeModel::iterator& iter) {
+        auto* textCell = dynamic_cast<Gtk::CellRendererText*>(cell);
+        if (textCell) {
+            char buf[32];
+            double value = (*iter)[aspectRatioColumns.value];
+            snprintf(buf, sizeof(buf), "%.3f", value);
+            textCell->property_text() = buf;
+        }
+    });
+    aspectRatios->append_column(*valueColumn);
+    aspectRatios->set_headers_visible(true);
+    vbar->pack_start(*scrollAR, Gtk::PACK_EXPAND_WIDGET, 4);
+
+    Gtk::Box* hbAdd = Gtk::manage(new Gtk::Box());
+    hbAdd->set_spacing(4);
+    Gtk::Label* labelLabel = Gtk::manage(new Gtk::Label(M("PREFERENCES_ASPECTRATIO_CUSTOMLABEL") + ":", Gtk::ALIGN_START));
+    aspectRatioLabel = Gtk::manage(new Gtk::Entry());
+    aspectRatioLabel->set_placeholder_text(M("PREFERENCES_ASPECTRATIO_LABELPLACEHOLDER"));
+    aspectRatioLabel->set_width_chars(15);
+    Gtk::Label* valueLabel = Gtk::manage(new Gtk::Label(M("PREFERENCES_ASPECTRATIO_CUSTOMVALUE") + ":", Gtk::ALIGN_START));
+    aspectRatioWidth = Gtk::manage(new Gtk::Entry());
+    aspectRatioWidth->set_text("21");
+    aspectRatioWidth->set_width_chars(4);
+    aspectRatioWidth->set_max_length(4);
+    aspectRatioWidth->signal_insert_text().connect([this](const Glib::ustring& text, int* ) {
+            for (auto ch : text) {
+                if (!g_unichar_isdigit(ch)) {
+                    g_signal_stop_emission_by_name(aspectRatioWidth->gobj(), "insert-text");
+                    return;
+                }
+            }
+        },
+        false
+    );
+    Gtk::Label* colonLabel = Gtk::manage(new Gtk::Label(":", Gtk::ALIGN_CENTER));
+    aspectRatioHeight = Gtk::manage(new Gtk::Entry());
+    aspectRatioHeight->set_text("9");
+    aspectRatioHeight->set_width_chars(4);
+    aspectRatioHeight->set_max_length(4);
+    aspectRatioHeight->signal_insert_text().connect([this](const Glib::ustring& text, int* ) {
+            for (auto ch : text) {
+                if (!g_unichar_isdigit(ch)) {
+                    g_signal_stop_emission_by_name(aspectRatioHeight->gobj(), "insert-text");
+                    return;
+                }
+            }
+        },
+        false
+    );
+    aspectRatioResult = Gtk::manage(new Gtk::Label("= 2.333", Gtk::ALIGN_START));
+    Pango::AttrList attrList;
+    Pango::Attribute sizeAttr = Pango::Attribute::create_attr_scale(0.9);
+    attrList.insert(sizeAttr);
+    aspectRatioResult->set_attributes(attrList);
+    addAspectRatio = Gtk::manage(new Gtk::Button());
+    delAspectRatio = Gtk::manage(new Gtk::Button());
+    Gtk::Image* addImg = Gtk::manage(new RTImage("add-small", Gtk::ICON_SIZE_BUTTON));
+    Gtk::Image* delImg = Gtk::manage(new RTImage("remove-small", Gtk::ICON_SIZE_BUTTON));
+    addAspectRatio->add(*addImg);
+    delAspectRatio->add(*delImg);
+    addAspectRatio->set_tooltip_text(M("PREFERENCES_ASPECTRATIO_ADDHINT"));
+    delAspectRatio->set_tooltip_text(M("PREFERENCES_ASPECTRATIO_DELHINT"));
+    addAspectRatio->set_sensitive(false);
+    delAspectRatio->set_sensitive(false);
+    hbAdd->pack_start(*labelLabel, Gtk::PACK_SHRINK, 4);
+    hbAdd->pack_start(*aspectRatioLabel, Gtk::PACK_EXPAND_WIDGET, 4);
+    hbAdd->pack_start(*valueLabel, Gtk::PACK_SHRINK, 4);
+    hbAdd->pack_start(*aspectRatioWidth, Gtk::PACK_SHRINK, 4);
+    hbAdd->pack_start(*colonLabel, Gtk::PACK_SHRINK, 2);
+    hbAdd->pack_start(*aspectRatioHeight, Gtk::PACK_SHRINK, 4);
+    hbAdd->pack_start(*aspectRatioResult, Gtk::PACK_SHRINK, 4);
+    hbAdd->pack_end(*delAspectRatio, Gtk::PACK_SHRINK, 4);
+    hbAdd->pack_end(*addAspectRatio, Gtk::PACK_SHRINK, 4);
+    vbar->pack_start(*hbAdd, Gtk::PACK_SHRINK, 4);
+
+    Gtk::Label* infoLabel = Gtk::manage(new Gtk::Label(M("PREFERENCES_ASPECTRATIO_INFO"), Gtk::ALIGN_START));
+    infoLabel->set_line_wrap(true);
+    vbar->pack_start(*infoLabel, Gtk::PACK_SHRINK, 4);
+
+    frar->add(*vbar);
+    vbImageProcessing->pack_start(*frar, Gtk::PACK_SHRINK, 4);
 
     Gtk::Frame *rawDecoderFrame = Gtk::manage(new Gtk::Frame(M("PREFERENCES_RAW_DECODER")));
     Gtk::Box *rawDecoderContainer = Gtk::manage(new Gtk::Box(Gtk::ORIENTATION_VERTICAL));
@@ -1711,6 +1834,15 @@ Gtk::Widget* Preferences::getFileBrowserPanel()
     moveExtUp->signal_clicked().connect(sigc::mem_fun(*this, &Preferences::moveExtUpPressed));
     moveExtDown->signal_clicked().connect(sigc::mem_fun(*this, &Preferences::moveExtDownPressed));
 
+    aspectRatios->signal_cursor_changed().connect(sigc::mem_fun(*this, &Preferences::aspectRatioSelectionChanged));
+    aspectRatioLabel->signal_changed().connect(sigc::mem_fun(*this, &Preferences::aspectRatioInputChanged));
+    aspectRatioWidth->signal_changed().connect(sigc::mem_fun(*this, &Preferences::aspectRatioInputChanged));
+    aspectRatioHeight->signal_changed().connect(sigc::mem_fun(*this, &Preferences::aspectRatioInputChanged));
+    addAspectRatio->signal_clicked().connect(sigc::mem_fun(*this, &Preferences::addAspectRatioPressed));
+    delAspectRatio->signal_clicked().connect(sigc::mem_fun(*this, &Preferences::delAspectRatioPressed));
+    selectAllAspectRatios->signal_clicked().connect(sigc::mem_fun(*this, &Preferences::selectAllAspectRatiosPressed));
+    deselectAllAspectRatios->signal_clicked().connect(sigc::mem_fun(*this, &Preferences::deselectAllAspectRatiosPressed));
+
     clearThumbsBtn->signal_clicked().connect ( sigc::mem_fun (*this, &Preferences::clearThumbImagesPressed) );
     if (moptions.saveParamsCache) {
         clearProfilesBtn->signal_clicked().connect(sigc::mem_fun(*this, &Preferences::clearProfilesPressed));
@@ -2009,6 +2141,23 @@ void Preferences::storePreferences()
         moptions.parseExtensionsEnabled.push_back(c[i][extensionColumns.enabled]);
     }
 
+    moptions.sysAspectRatiosEnabled.clear();
+    moptions.userAspectRatiosLabels.clear();
+    moptions.userAspectRatiosValues.clear();
+    moptions.userAspectRatiosEnabled.clear();
+    Gtk::TreeNodeChildren ar = aspectRatioModel->children();
+
+    for (size_t i = 0; i < ar.size(); i++) {
+        bool isBuiltin = ar[i][aspectRatioColumns.builtin];
+        if (isBuiltin) {
+            moptions.sysAspectRatiosEnabled.push_back(ar[i][aspectRatioColumns.enabled] ? 1 : 0);
+        } else {
+            moptions.userAspectRatiosLabels.push_back(ar[i][aspectRatioColumns.label]);
+            moptions.userAspectRatiosValues.push_back(ar[i][aspectRatioColumns.value]);
+            moptions.userAspectRatiosEnabled.push_back(ar[i][aspectRatioColumns.enabled] ? 1 : 0);
+        }
+    }
+
     moptions.maxRecentFolders = (int)maxRecentFolders->get_value();
     moptions.maxThumbnailHeight = (int)maxThumbHeightSB->get_value ();
     moptions.maxCacheEntries = (int)maxCacheEntriesSB->get_value ();
@@ -2248,6 +2397,24 @@ void Preferences::fillPreferences()
         Gtk::TreeRow row = * (extensionModel->append());
         row[extensionColumns.enabled] = moptions.parseExtensionsEnabled[i];
         row[extensionColumns.ext]     = moptions.parseExtensions[i];
+    }
+
+    aspectRatioModel->clear();
+
+    for (size_t i = 0; i < moptions.sysAspectRatiosLabels.size(); i++) {
+        Gtk::TreeRow row = *(aspectRatioModel->append());
+        row[aspectRatioColumns.enabled] = moptions.sysAspectRatiosEnabled[i];
+        row[aspectRatioColumns.label] = moptions.sysAspectRatiosLabels[i];
+        row[aspectRatioColumns.value] = moptions.sysAspectRatiosValues[i];
+        row[aspectRatioColumns.builtin] = true;
+    }
+
+    for (size_t i = 0; i < moptions.userAspectRatiosLabels.size(); i++) {
+        Gtk::TreeRow row = *(aspectRatioModel->append());
+        row[aspectRatioColumns.enabled] = moptions.userAspectRatiosEnabled[i];
+        row[aspectRatioColumns.label] = moptions.userAspectRatiosLabels[i];
+        row[aspectRatioColumns.value] = moptions.userAspectRatiosValues[i];
+        row[aspectRatioColumns.builtin] = false;
     }
 
     maxRecentFolders->set_value(moptions.maxRecentFolders);
@@ -2815,6 +2982,110 @@ void Preferences::moveExtDownPressed()
 
     if (++next) {
         extensionModel->iter_swap(selected, next);
+    }
+}
+
+void Preferences::aspectRatioSelectionChanged()
+{
+    const Glib::RefPtr<Gtk::TreeSelection> selection = aspectRatios->get_selection();
+    if (!selection) {
+        delAspectRatio->set_sensitive(false);
+        return;
+    }
+    const Gtk::TreeModel::iterator selected = selection->get_selected();
+    if (!selected) {
+        delAspectRatio->set_sensitive(false);
+        return;
+    }
+    bool isBuiltin = (*selected)[aspectRatioColumns.builtin];
+    delAspectRatio->set_sensitive(!isBuiltin);
+}
+
+void Preferences::aspectRatioInputChanged()
+{
+    Glib::ustring widthText = aspectRatioWidth->get_text();
+    Glib::ustring heightText = aspectRatioHeight->get_text();
+    if (!isNumeric(widthText) || !isNumeric(heightText)) {
+        addAspectRatio->set_sensitive(false);
+        aspectRatioResult->set_text("= ");
+        return;
+    }
+    int width = std::stoi(widthText);
+    int height = std::stoi(heightText);
+    if (width <= 0 || height <= 0) {
+        addAspectRatio->set_sensitive(false);
+        aspectRatioResult->set_text("= ");
+        return;
+    }
+    double newValue = static_cast<double>(width) / static_cast<double>(height);
+    char buf[32];
+    snprintf(buf, sizeof(buf), "= %.3f", newValue);
+    aspectRatioResult->set_text(buf);
+    if (aspectRatioLabel->get_text().empty()) {
+        addAspectRatio->set_sensitive(false);
+        return;
+    }
+    Gtk::TreeNodeChildren children = aspectRatioModel->children();
+    Glib::ustring newLabel = aspectRatioLabel->get_text();
+    for (const auto& row : children) {
+        if (row[aspectRatioColumns.label] == newLabel ||
+            std::abs(row[aspectRatioColumns.value] - newValue) < 0.001) {
+            addAspectRatio->set_sensitive(false);
+            return;
+        }
+    }
+    addAspectRatio->set_sensitive(true);
+}
+
+void Preferences::addAspectRatioPressed()
+{
+    Glib::ustring widthText = aspectRatioWidth->get_text();
+    Glib::ustring heightText = aspectRatioHeight->get_text();
+    if (!isNumeric(widthText) || !isNumeric(heightText)) {
+        return;
+    }
+    int width = std::stoi(widthText);
+    int height = std::stoi(heightText);
+    if (width <= 0 || height <= 0) {
+        return;
+    }
+    Gtk::TreeRow row = *(aspectRatioModel->append());
+    row[aspectRatioColumns.enabled] = true;
+    row[aspectRatioColumns.label] = aspectRatioLabel->get_text();
+    row[aspectRatioColumns.value] = static_cast<double>(width) / static_cast<double>(height);
+    row[aspectRatioColumns.builtin] = false;
+    aspectRatioLabel->set_text("");
+    aspectRatioWidth->set_text("21");
+    aspectRatioHeight->set_text("9");
+    aspectRatioResult->set_text("= 2.333");
+    addAspectRatio->set_sensitive(false);
+}
+
+void Preferences::delAspectRatioPressed()
+{
+    const Glib::RefPtr<Gtk::TreeSelection> selection = aspectRatios->get_selection();
+    if (!selection) {
+        return;
+    }
+    const Gtk::TreeModel::iterator selected = selection->get_selected();
+    if (selected && !(*selected)[aspectRatioColumns.builtin]) {
+        aspectRatioModel->erase(selected);
+    }
+}
+
+void Preferences::selectAllAspectRatiosPressed()
+{
+    Gtk::TreeNodeChildren children = aspectRatioModel->children();
+    for (auto& row : children) {
+        row[aspectRatioColumns.enabled] = true;
+    }
+}
+
+void Preferences::deselectAllAspectRatiosPressed()
+{
+    Gtk::TreeNodeChildren children = aspectRatioModel->children();
+    for (auto& row : children) {
+        row[aspectRatioColumns.enabled] = false;
     }
 }
 

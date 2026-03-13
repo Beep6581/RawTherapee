@@ -79,6 +79,18 @@ void tidyParseExtensions(
     }
 }
 
+void tidyAspectRatios(
+    std::vector<Glib::ustring> &labels,
+    std::vector<double> &values,
+    std::vector<int> &enabled
+    )
+{
+    const auto ratioCount = std::min({labels.size(), values.size(), enabled.size()});
+    labels.resize(ratioCount);
+    values.resize(ratioCount);
+    enabled.resize(ratioCount);
+}
+
 } // namespace
 
 // User's settings directory, including images' profiles if used
@@ -742,6 +754,8 @@ void Options::setDefaults()
     rtSettings.lensfunDbDirectory = ""; // set also in main.cc and main-cli.cc
     cropGuides = CROP_GUIDE_FULL;
     cropAutoFit = false;
+    sysAspectRatiosEnabled.clear();
+    sysAspectRatiosEnabled.resize(sysAspectRatiosLabels.size(), 1); // All enabled (1)
 
     rtSettings.thumbnail_inspector_mode = rtengine::Settings::ThumbnailInspectorMode::JPEG;
 
@@ -1821,6 +1835,28 @@ void Options::readFromFile(Glib::ustring fname)
                 if (keyFile.has_key("Crop Settings", "AutoFit")) {
                     cropAutoFit = keyFile.get_boolean("Crop Settings", "AutoFit");
                 }
+
+                if (keyFile.has_key("Crop Settings", "sysAspectRatiosEnabled")) {
+                    auto e = keyFile.get_integer_list("Crop Settings", "sysAspectRatiosEnabled");
+                    if (!e.empty()) {
+                        sysAspectRatiosEnabled = e;
+                    }
+                }
+
+                if (keyFile.has_key("Crop Settings", "userAspectRatiosLabels") &&
+                    keyFile.has_key("Crop Settings", "userAspectRatiosValues") &&
+                    keyFile.has_key("Crop Settings", "userAspectRatiosEnabled")
+                    ) {
+                    auto l = keyFile.get_string_list("Crop Settings", "userAspectRatiosLabels");
+                    auto v = keyFile.get_double_list("Crop Settings", "userAspectRatiosValues");
+                    auto e = keyFile.get_integer_list("Crop Settings", "userAspectRatiosEnabled");
+                    if (!l.empty() && !v.empty() && !e.empty()) {
+                        userAspectRatiosLabels = l;
+                        userAspectRatiosValues = v;
+                        userAspectRatiosEnabled = e;
+                    }
+                }
+                tidyAspectRatios(userAspectRatiosLabels, userAspectRatiosValues, userAspectRatiosEnabled);
             }
 
             const Glib::ustring groupRawDecoder = "Raw Decoder";
@@ -2694,6 +2730,10 @@ void Options::saveToFile(Glib::ustring fname)
         keyFile.set_integer("Crop Settings", "PPI", cropPPI);
         keyFile.set_integer("Crop Settings", "GuidesMode", cropGuides);
         keyFile.set_boolean("Crop Settings", "AutoFit", cropAutoFit);
+        keyFile.set_integer_list("Crop Settings", "sysAspectRatiosEnabled", sysAspectRatiosEnabled);
+        keyFile.set_string_list("Crop Settings", "userAspectRatiosLabels", userAspectRatiosLabels);
+        keyFile.set_double_list("Crop Settings", "userAspectRatiosValues", userAspectRatiosValues);
+        keyFile.set_integer_list("Crop Settings", "userAspectRatiosEnabled", userAspectRatiosEnabled);
 
         keyFile.set_boolean("Raw Decoder", "EnableLibRaw", rtSettings.enableLibRaw);
 

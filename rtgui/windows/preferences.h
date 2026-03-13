@@ -51,6 +51,24 @@ class Preferences final :
     ExtensionColumns extensionColumns;
     Glib::RefPtr<Gtk::ListStore> extensionModel;
 
+    class AspectRatioColumns :
+        public Gtk::TreeModel::ColumnRecord
+    {
+    public:
+        Gtk::TreeModelColumn<bool> enabled;
+        Gtk::TreeModelColumn<Glib::ustring> label;
+        Gtk::TreeModelColumn<double> value;
+        Gtk::TreeModelColumn<bool> builtin;
+        AspectRatioColumns()
+        {
+            add(enabled);
+            add(label);
+            add(value);
+            add(builtin);
+        }
+    };
+    AspectRatioColumns aspectRatioColumns;
+    Glib::RefPtr<Gtk::ListStore> aspectRatioModel;
 
     class BehavColumns : public Gtk::TreeModel::ColumnRecord
     {
@@ -185,6 +203,15 @@ class Preferences final :
     Gtk::Button*    delExt;
     Gtk::Button*    moveExtUp;
     Gtk::Button*    moveExtDown;
+    Gtk::Entry*     aspectRatioLabel;
+    Gtk::Entry*     aspectRatioWidth;
+    Gtk::Entry*     aspectRatioHeight;
+    Gtk::Label*     aspectRatioResult;
+    Gtk::TreeView*  aspectRatios;
+    Gtk::Button*    addAspectRatio;
+    Gtk::Button*    delAspectRatio;
+    Gtk::Button*    selectAllAspectRatios;
+    Gtk::Button*    deselectAllAspectRatios;
     Gtk::CheckButton* overlayedFileNames;
     Gtk::CheckButton* filmStripOverlayedFileNames;
     Gtk::CheckButton* sameThumbSize;
@@ -331,6 +358,12 @@ public:
     void delExtPressed ();
     void moveExtUpPressed ();
     void moveExtDownPressed ();
+    void aspectRatioSelectionChanged ();
+    void aspectRatioInputChanged ();
+    void addAspectRatioPressed ();
+    void delAspectRatioPressed ();
+    void selectAllAspectRatiosPressed ();
+    void deselectAllAspectRatiosPressed ();
     void darkFrameChanged ();
     void flatFieldChanged ();
     void clearProfilesPressed ();
