@@ -561,6 +561,7 @@ struct LocallabParams {
         bool wavcompre;
         bool origlc;
         bool processwav;
+        bool limitwav;
         Glib::ustring localcontMethod; // loc, wav
         Glib::ustring localedgMethod; // fir, sec, thr
         Glib::ustring localneiMethod; // none, low, high

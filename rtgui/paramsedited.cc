@@ -1867,6 +1867,7 @@ void ParamsEdited::initFrom(const std::vector<rtengine::procparams::ProcParams>&
                 locallab.spots.at(j).wavcompre = locallab.spots.at(j).wavcompre && pSpot.wavcompre == otherSpot.wavcompre;
                 locallab.spots.at(j).origlc = locallab.spots.at(j).origlc && pSpot.origlc == otherSpot.origlc;
                 locallab.spots.at(j).processwav = locallab.spots.at(j).processwav && pSpot.processwav == otherSpot.processwav;
+                locallab.spots.at(j).limitwav = locallab.spots.at(j).limitwav && pSpot.limitwav == otherSpot.limitwav;
                 locallab.spots.at(j).localcontMethod = locallab.spots.at(j).localcontMethod && pSpot.localcontMethod == otherSpot.localcontMethod;
                 locallab.spots.at(j).localedgMethod = locallab.spots.at(j).localedgMethod && pSpot.localedgMethod == otherSpot.localedgMethod;
                 locallab.spots.at(j).localneiMethod = locallab.spots.at(j).localneiMethod && pSpot.localneiMethod == otherSpot.localneiMethod;
@@ -6116,6 +6117,10 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
             toEdit.locallab.spots.at(i).processwav = mods.locallab.spots.at(i).processwav;
         }
 
+        if (locallab.spots.at(i).limitwav) {
+            toEdit.locallab.spots.at(i).limitwav = mods.locallab.spots.at(i).limitwav;
+        }
+
         if (locallab.spots.at(i).localcontMethod) {
             toEdit.locallab.spots.at(i).localcontMethod = mods.locallab.spots.at(i).localcontMethod;
         }
@@ -9347,6 +9352,7 @@ LocallabParamsEdited::LocallabSpotEdited::LocallabSpotEdited(bool v) :
     wavcompre(v),
     origlc(v),
     processwav(v),
+    limitwav(v),
     localcontMethod(v),
     localedgMethod(v),
     localneiMethod(v),
@@ -10205,6 +10211,7 @@ void LocallabParamsEdited::LocallabSpotEdited::set(bool v)
     wavcompre = v;
     origlc = v;
     processwav = v;
+    limitwav = v;
     localcontMethod = v;
     localedgMethod = v;
     localneiMethod = v;

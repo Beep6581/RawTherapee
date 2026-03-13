@@ -969,6 +969,7 @@ public:
         bool wavcompre;
         bool origlc;
         bool processwav;
+        bool limitwav;
         bool localcontMethod;
         bool localedgMethod;
         bool localneiMethod;

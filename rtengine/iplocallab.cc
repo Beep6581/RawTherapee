@@ -662,6 +662,7 @@ struct local_params {
     int showmask_met;
     int showmaskciemet;
     bool processwa;
+    bool limitwa;
     bool fftbl;
     float laplacexp;
     float balanexp;
@@ -1048,6 +1049,7 @@ static void calcLocalParams(int sp, int oW, int oH,  const LocallabParams& local
     lp.showmask_met = ll_Mask;
     lp.showmaskciemet = llcieMask;
     lp.processwa = locallab.spots.at(sp).processwav;
+    lp.limitwa = locallab.spots.at(sp).limitwav;
     lp.fftcieMask = locallab.spots.at(sp).fftcieMask;
     lp.islogcie = locallab.spots.at(sp).logcie && locallab.spots.at(sp).expprecam;
     lp.issmoothcie = locallab.spots.at(sp).smoothcie;
@@ -11091,7 +11093,7 @@ void ImProcFunctions::wavcont(const struct local_params& lp, float ** tmp, wavel
 }
 
 
-void ImProcFunctions::wavcontrast4(int call, struct local_params& lp, float ** tmp, float ** tmpa, float ** tmpb, float contrast, float radblur, float radlevblur, int bfw, int bfh, int oW, int oH, int tX, int tY, int tW, int tH, int level_bl, int level_hl, int level_br, int level_hr, int sk, int numThreads,
+void ImProcFunctions::wavcontrast4(int call, struct local_params& lp, LabImage * tmpor, float ** tmp, float ** tmpa, float ** tmpb, float contrast, float radblur, float radlevblur, int bfw, int bfh, int oW, int oH, int tX, int tY, int tW, int tH, int level_bl, int level_hl, int level_br, int level_hr, int sk, int numThreads,
                                    const LocwavCurve & locwavCurve, bool locwavutili, bool wavcurve, const LocwavCurve& loclevwavCurve, bool loclevwavutili, bool wavcurvelev,
                                    const LocwavCurve & locconwavCurve, bool locconwavutili, bool wavcurvecon,
                                    const LocwavCurve & loccompwavCurve, bool loccompwavutili, bool wavcurvecomp,
@@ -11100,6 +11102,37 @@ void ImProcFunctions::wavcontrast4(int call, struct local_params& lp, float ** t
                                    float sigm, float offs, int & maxlvl, float sigmadc, float deltad, float chromalev, float chromablu, bool blurlc, bool blurena, bool levelena, bool comprena, bool compreena, float compress, float thres, int fw, int fh, int cx, int cy, float ksk, float kskx, float kbh, float kbw)
 {
 //BENCHFUN
+        if (lp.limitwa) {
+            constexpr float artifact_minimum = 3000.f;//The threshold below which wavelet decomposition is not performed, and therefore no contrast enhancement is achieved, to avoid artifacts due to proximity to the gamut limit.
+            constexpr float artifact_minimum_low = 10.f;//Very low replacement value, but without impact on the decomposition, except for some proximity of wavelets.
+            constexpr float artifact_minimum_lowab = 0.f;//With 0, we are necessarily within the gamut
+
+            constexpr float artifact_maximum = 27768.f;//The threshold above which wavelet decomposition is not performed, and therefore no contrast enhancement is achieved, to avoid artifacts due to proximity to the gamut limit.
+            constexpr float artifact_maximum_high = 32600.f;//Very high replacement value, but without impact on the decomposition, except for some proximity of wavelets.
+            constexpr float artifact_maximum_highab = 0.f;//With 0, we are necessarily within the gamut
+#ifdef _OPENMP
+        #pragma omp parallel for if (multiThread)
+#endif
+            for (int i = 0; i < tmpor->H; i++){
+                for (int j = 0; j < tmpor->W; j++){
+                    if (tmpor->L[i][j] > artifact_minimum  && tmpor->L[i][j] < artifact_maximum) {
+                        tmp[i][j] = tmpor->L[i][j];
+                        tmpa[i][j] = tmpor->a[i][j];
+                        tmpb[i][j] = tmpor->b[i][j];
+                    } else if (tmpor->L[i][j] < artifact_minimum) {
+                        tmp[i][j] = artifact_minimum_low;
+                        tmpa[i][j] = artifact_minimum_lowab;
+                        tmpb[i][j] = artifact_minimum_lowab;
+                    } else if (tmpor->L[i][j] > artifact_maximum) {
+                        tmp[i][j] = artifact_maximum_high;
+                        tmpa[i][j] = artifact_maximum_highab;
+                        tmpb[i][j] = artifact_maximum_highab;
+                    }
+                }
+            }
+        }
+
+
     std::unique_ptr<wavelet_decomposition> wdspot(new wavelet_decomposition(tmp[0], bfw, bfh, maxlvl, 1, sk, numThreads, lp.daubLen));
 
     //first decomposition for compress dynamic range positive values and other process
@@ -19722,6 +19755,7 @@ void ImProcFunctions::Lab_Local(
             JaggedArray<float> bufchro(bfw, bfh);
             const std::unique_ptr<LabImage> bufgb(new LabImage(bfw, bfh));
             std::unique_ptr<LabImage> tmp1(new LabImage(bfw, bfh));
+            std::unique_ptr<LabImage> tmpor(new LabImage(bfw, bfh));
             const std::unique_ptr<LabImage> tmpresid(new LabImage(bfw, bfh));
             const std::unique_ptr<LabImage> tmpres(new LabImage(bfw, bfh));
 
@@ -19737,6 +19771,10 @@ void ImProcFunctions::Lab_Local(
                     tmp1->L[y - ystart][x - xstart] = original->L[y][x];
                     tmp1->a[y - ystart][x - xstart] = original->a[y][x];
                     tmp1->b[y - ystart][x - xstart] = original->b[y][x];
+                    tmpor->L[y - ystart][x - xstart] = original->L[y][x];
+                    tmpor->a[y - ystart][x - xstart] = original->a[y][x];
+                    tmpor->b[y - ystart][x - xstart] = original->b[y][x];
+
                     tmpresid->L[y - ystart][x - xstart] = original->L[y][x];
                     tmpresid->a[y - ystart][x - xstart] = original->a[y][x];
                     tmpresid->b[y - ystart][x - xstart] = original->b[y][x];
@@ -19948,7 +19986,7 @@ void ImProcFunctions::Lab_Local(
                         }
                     }
 
-                    wavcontrast4(call, lp, tmp1->L, tmp1->a, tmp1->b, contrast, radblur, radlevblur, tmp1->W, tmp1->H, oW, oH, tX, tY, tW, tH, level_bl, level_hl, level_br, level_hr, sk, numThreads, locwavCurve, locwavutili, wavcurve, loclevwavCurve, loclevwavutili, wavcurvelev, locconwavCurve, locconwavutili, wavcurvecon, loccompwavCurve, loccompwavutili, wavcurvecomp, loccomprewavCurve, loccomprewavutili, wavcurvecompre, locedgwavCurve, locedgwavutili, sigma, offs, maxlvl, sigmadc, deltad, chrol, chrobl, blurlc, blurena, levelena, comprena, compreena, compress, thres, fw, fh, cx, cy, ksk, kskx, kbh, kbw);
+                    wavcontrast4(call, lp, tmpor.get(), tmp1->L, tmp1->a, tmp1->b, contrast, radblur, radlevblur, tmp1->W, tmp1->H, oW, oH, tX, tY, tW, tH, level_bl, level_hl, level_br, level_hr, sk, numThreads, locwavCurve, locwavutili, wavcurve, loclevwavCurve, loclevwavutili, wavcurvelev, locconwavCurve, locconwavutili, wavcurvecon, loccompwavCurve, loccompwavutili, wavcurvecomp, loccomprewavCurve, loccomprewavutili, wavcurvecompre, locedgwavCurve, locedgwavutili, sigma, offs, maxlvl, sigmadc, deltad, chrol, chrobl, blurlc, blurena, levelena, comprena, compreena, compress, thres, fw, fh, cx, cy, ksk, kskx, kbh, kbw);
 
                     if (params->locallab.spots.at(sp).expcie && params->locallab.spots.at(sp).modecie == "wav") {
                         bool HHcurvejz = false, CHcurvejz = false, LHcurvejz = false;

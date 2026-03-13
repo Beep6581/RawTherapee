@@ -1218,6 +1218,7 @@ LocallabParams::LocallabSpot::LocallabSpot() :
     wavcompre(false),
     origlc(false),
     processwav(false),
+    limitwav(true),
     localcontMethod("wav"),
     localedgMethod("thr"),
     localneiMethod("low"),
@@ -2669,6 +2670,7 @@ bool LocallabParams::LocallabSpot::operator ==(const LocallabSpot& other) const
         && wavcompre == other.wavcompre
         && origlc == other.origlc
         && processwav == other.processwav
+        && limitwav == other.limitwav
         && localcontMethod == other.localcontMethod
         && localedgMethod == other.localedgMethod
         && localneiMethod == other.localneiMethod
@@ -3783,6 +3785,7 @@ void LoadUtil::localContrast()
     assignFromKeyfile(keyFile, "Locallab", "Wavcompre_" + index_str, spot.wavcompre, spotEdited.wavcompre);
     assignFromKeyfile(keyFile, "Locallab", "Origlc_" + index_str, spot.origlc, spotEdited.origlc);
     assignFromKeyfile(keyFile, "Locallab", "processwav_" + index_str, spot.processwav, spotEdited.processwav);
+    assignFromKeyfile(keyFile, "Locallab", "limitwav_" + index_str, spot.limitwav, spotEdited.limitwav);
     assignFromKeyfile(keyFile, "Locallab", "localcontMethod_" + index_str, spot.localcontMethod, spotEdited.localcontMethod);
     assignFromKeyfile(keyFile, "Locallab", "localedgMethod_" + index_str, spot.localedgMethod, spotEdited.localedgMethod);
     assignFromKeyfile(keyFile, "Locallab", "localneiMethod_" + index_str, spot.localneiMethod, spotEdited.localneiMethod);
@@ -4893,6 +4896,7 @@ void SaveUtil::localContrast()
         saveToKeyfile(!pedited || spot_edited->wavcompre, "Locallab", "Wavcompre_" + index_str, spot.wavcompre, keyFile);
         saveToKeyfile(!pedited || spot_edited->origlc, "Locallab", "Origlc_" + index_str, spot.origlc, keyFile);
         saveToKeyfile(!pedited || spot_edited->processwav, "Locallab", "processwav_" + index_str, spot.processwav, keyFile);
+        saveToKeyfile(!pedited || spot_edited->limitwav, "Locallab", "limitwav_" + index_str, spot.limitwav, keyFile);
         saveToKeyfile(!pedited || spot_edited->localcontMethod, "Locallab", "localcontMethod_" + index_str, spot.localcontMethod, keyFile);
         saveToKeyfile(!pedited || spot_edited->localedgMethod, "Locallab", "localedgMethod_" + index_str, spot.localedgMethod, keyFile);
         saveToKeyfile(!pedited || spot_edited->localneiMethod, "Locallab", "localneiMethod_" + index_str, spot.localneiMethod, keyFile);

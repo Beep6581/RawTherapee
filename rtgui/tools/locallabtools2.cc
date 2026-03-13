@@ -2902,6 +2902,7 @@ LocallabContrast::LocallabContrast():
     wavshape(static_cast<FlatCurveEditor*>(LocalcurveEditorwav->addCurve(CT_Flat, "", nullptr, false, false))),
     csThreshold(Gtk::manage(new ThresholdAdjuster(M("TP_LOCALLAB_CSTHRESHOLD"), 0, 9, 0, 0, 7, 5, 0, false))),
     processwav(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_PROCESSWAV")))),
+    limitwav(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_LIMITWAV")))),
     levelwav(Gtk::manage(new Adjuster(M("TP_LOCALLAB_LEVELWAV"), 1, 9, 1, 4))),
     expresidpyr(Gtk::manage(new MyExpander(false, Gtk::manage(new Gtk::Box())))),
     residcont(Gtk::manage(new Adjuster(M("TP_LOCALLAB_RESIDCONT"), -100, 100, 1, 0))),
@@ -3000,6 +3001,7 @@ LocallabContrast::LocallabContrast():
     Evlocallaboffslc = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_OFFSETWAV");
 
     Evlocallabprocesswav = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_PROCESSWAV");
+    Evlocallablimitwav = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_LIMITWAV");
     
     set_orientation(Gtk::ORIENTATION_VERTICAL);
 
@@ -3079,6 +3081,7 @@ LocallabContrast::LocallabContrast():
 
     origlcConn = origlc->signal_toggled().connect(sigc::mem_fun(*this, &LocallabContrast::origlcChanged));
     processwavConn = processwav->signal_toggled().connect(sigc::mem_fun(*this, &LocallabContrast::processwavChanged));
+    limitwavConn = limitwav->signal_toggled().connect(sigc::mem_fun(*this, &LocallabContrast::limitwavChanged));
 
     Gtk::Box *TittleVBox;
     TittleVBox = Gtk::manage(new Gtk::Box(Gtk::ORIENTATION_VERTICAL));
@@ -3308,6 +3311,7 @@ LocallabContrast::LocallabContrast():
     pack_start(*lclightness);
     pack_start(*csThreshold);
     pack_start(*processwav);
+    pack_start(*limitwav);
     ToolParamBlock* const coBox = Gtk::manage(new ToolParamBlock());
     coBox->pack_start(*sigmalc);
     coBox->pack_start(*offslc);
@@ -3602,6 +3606,7 @@ void LocallabContrast::updateAdviceTooltips(const bool showTooltips)
         threswav->set_tooltip_text(M("TP_LOCALLAB_WAT_BALTHRES_TOOLTIP"));
         residcomp->set_tooltip_text(M("TP_LOCALLAB_WAT_RESIDCOMP_TOOLTIP"));
         processwav->set_tooltip_text(M("TP_LOCALLAB_PROCESSWAV_TOOLTIP"));
+        limitwav->set_tooltip_text(M("TP_LOCALLAB_LIMITWAV_TOOLTIP"));
 
         expresidpyr->set_tooltip_text(M("TP_LOCALLAB_WAT_EXPRESID_TOOLTIP"));
         expcontrastpyr->set_tooltip_text(M("TP_LOCALLAB_EXPCONTRASTPYR_TOOLTIP"));
@@ -3701,6 +3706,7 @@ void LocallabContrast::updateAdviceTooltips(const bool showTooltips)
         lowthresw->set_tooltip_text("");
         higthresw->set_tooltip_text("");
         processwav->set_tooltip_text("");
+        limitwav->set_tooltip_text("");
 
     }
 }
@@ -3721,6 +3727,7 @@ void LocallabContrast::disableListener()
     localcontMethodConn.block(true);
     origlcConn.block(true);
     processwavConn.block(true);
+    limitwavConn.block(true);
     wavgradlConn.block(true);
     wavedgConn.block(true);
     localedgMethodConn.block(true);
@@ -3743,6 +3750,7 @@ void LocallabContrast::enableListener()
     localcontMethodConn.block(false);
     origlcConn.block(false);
     processwavConn.block(false);
+    limitwavConn.block(false);
     wavgradlConn.block(false);
     wavedgConn.block(false);
     localedgMethodConn.block(false);
@@ -3808,6 +3816,7 @@ void LocallabContrast::read(const rtengine::procparams::ProcParams* pp, const Pa
         clarisoft->setValue(spot.clarisoft);
         origlc->set_active(spot.origlc);
         processwav->set_active(spot.processwav);
+        limitwav->set_active(spot.limitwav);
         wavgradl->set_active(spot.wavgradl);
         sigmalc2->setValue(spot.sigmalc2);
         strwav->setValue(spot.strwav);
@@ -3936,6 +3945,7 @@ void LocallabContrast::write(rtengine::procparams::ProcParams* pp, ParamsEdited*
         spot.clarisoft = clarisoft->getValue();
         spot.origlc = origlc->get_active();
         spot.processwav = processwav->get_active();
+        spot.limitwav = limitwav->get_active();
         spot.wavgradl = wavgradl->get_active();
         spot.sigmalc2 = sigmalc2->getValue();
         spot.strwav = strwav->getValue();
@@ -4813,6 +4823,21 @@ void LocallabContrast::processwavChanged()
                                        M("GENERAL_ENABLED") + " (" + escapeHtmlChars(getSpotName()) + ")");
             } else {
                 listener->panelChanged(Evlocallabprocesswav,
+                                       M("GENERAL_DISABLED") + " (" + escapeHtmlChars(getSpotName()) + ")");
+            }
+        }
+    }
+}
+
+void LocallabContrast::limitwavChanged()
+{
+    if (isLocActivated && exp->getEnabled()) {
+        if (listener) {
+            if (limitwav->get_active()) {
+                listener->panelChanged(Evlocallablimitwav,
+                                       M("GENERAL_ENABLED") + " (" + escapeHtmlChars(getSpotName()) + ")");
+            } else {
+                listener->panelChanged(Evlocallablimitwav,
                                        M("GENERAL_DISABLED") + " (" + escapeHtmlChars(getSpotName()) + ")");
             }
         }
