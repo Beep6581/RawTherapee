@@ -1547,7 +1547,6 @@ HISTORY_MSG_LOCAL_CIE_RGB_SHAPEGREEN;Local - CIECAM - Brightness Green
 HISTORY_MSG_LOCAL_CIE_RGB_COLORHBLUE;Local - CIECAM - Hue Blue
 HISTORY_MSG_LOCAL_CIE_RGB_SCHROMABLUE;Local - CIECAM - Sat Blue
 HISTORY_MSG_LOCAL_CIE_RGB_SHAPEBLUE;Local - CIECAM - Brightness Blue
-
 HISTORY_MSG_LOCAL_CIE_CONTSIG;Local CIECAM - Sigmoid contrast
 HISTORY_MSG_LOCAL_CIE_DETAILJZ;Local - JzCzHz Local contrast
 HISTORY_MSG_LOCAL_CIE_ENAMASKALL;Local - CIECAM All mask tools
@@ -1643,6 +1642,7 @@ HISTORY_MSG_LOCAL_GHS_MID;Local - GHS - Midtones
 HISTORY_MSG_LOCAL_GHS_SLOPE;Local - GHS - Lab slope factor
 HISTORY_MSG_LOCAL_GHS_SMOOTH;Local - GHS - Highlight attenuation
 HISTORY_MSG_LOCAL_GHS_SP;Local - GHS - Symmetry point
+HISTORY_MSG_LOCAL_LIMITWAV;Local -Wavelet - Prevent decomposition
 HISTORY_MSG_LOCAL_LOCKMADLS;Local - Denoise - MadL
 HISTORY_MSG_LOCAL_LOGCIE12;Local - CIECAM - Log encoding
 HISTORY_MSG_LOCAL_LOG_BLACKS;Local - Log Blacks distribution
@@ -3581,7 +3581,8 @@ TP_LOCALLAB_LEVFRA;Levels
 TP_LOCALLAB_LIGHTNESS;Lightness
 TP_LOCALLAB_LIGHTN_TOOLTIP;In inverse mode: selection = -100 forces luminance to zero.
 TP_LOCALLAB_LIGHTRETI;Lightness
-TP_LOCALLAB_LIMITWAV;Prevent decomposition in high & low light
+TP_LOCALLAB_LIMITWAV;Prevent decomposition: contrast high & low light
+TP_LOCALLAB_LIMITWAV_TOOLTIP;Allows you to avoid, for all 'wavelet' functions which implement contrast, modifying the very low lights and the very high lights.
 TP_LOCALLAB_LINEAR;Linearity
 TP_LOCALLAB_LIST_NAME;Add tool to current spot...
 TP_LOCALLAB_LIST_TOOLTIP;You can select 3 levels of complexity for each tool: Basic, Standard and Advanced.\nThe default setting for all tools is Basic but this can be changed in the Preferences window.\nYou can also change the level of complexity on a per-tool basis while you are editing.
