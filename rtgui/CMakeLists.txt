@@ -149,6 +149,7 @@ set(NONCLISOURCEFILES
     filepanel.cc
     filethumbnailbuttonset.cc
     filterpanel.cc
+    gtk4.cc
     guiutils.cc
     hidpi.cc
     histogrampanel.cc
