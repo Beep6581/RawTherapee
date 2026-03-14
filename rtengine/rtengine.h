@@ -575,8 +575,8 @@ public:
     };
 
     struct locallabcieFIN {
-        double maxrgb;
-        double maxsat;
+        double max_rgb;
+        double max_sat;
         bool gam_gain;
     };
 

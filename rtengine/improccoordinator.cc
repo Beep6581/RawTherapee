@@ -1495,8 +1495,8 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                 bool ghsauto = params->locallab.spots.at(sp).ghs_autobw;
                 bool ghsautsp = false;//SP auto
                 float michbwslider[2] = {0.f, 1.f};// Black and white point auto sliders : added to facilitate a possible modification requested by users, but is not currently in use
-                float maxdatend = 0.f;
-                float satdatend = 0.f;
+                float maxdatend2 = 0.f;
+                float satdatend2 = 0.f;
                 bool gamgain2 = false;
                 Glib::ustring prof = params->icm.workingProfile;
                 if(params->locallab.spots.at(sp).complexcie == 2) {
@@ -1564,7 +1564,7 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                               huerblu, chromarblu, lumarblu, huer, chromar, lumar, sobeler, lastsav, false, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
                               minCD, maxCD, mini, maxi, Tmean, Tsigma, Tmin, Tmax,
                               meantm, stdtm, meanreti, stdreti, fab, maxicam, rdx, rdy, grx, gry, blx, bly, meanx, meany, meanxe, meanye, maxdat, prim, ill, contsig, lightsig, slopeg, linkrgb,
-                              resi, sharc, denocont, ghsbpwp, ghsbpwpvalue, savmadl, ghsbwslider, ghssym, ghsautsp, ghscolor, ghsmid, ghsmaxrgb, ghs3sig, michbwslider, maxdatend, satdatend, gamgain2);
+                              resi, sharc, denocont, ghsbpwp, ghsbpwpvalue, savmadl, ghsbwslider, ghssym, ghsautsp, ghscolor, ghsmid, ghsmaxrgb, ghs3sig, michbwslider, maxdatend2, satdatend2, gamgain2);
 
                 fabrefp[sp] = fab;
                 //Illuminant
@@ -1675,8 +1675,8 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                 locallciesig.push_back(locciesig);
 
                 LocallabListener::locallabcieFIN locciefin;
-                locciefin.maxrgb = maxdatend;
-                locciefin.maxsat = satdatend;
+                locciefin.max_rgb = maxdatend2;
+                locciefin.max_sat = satdatend2;
                 locciefin.gam_gain = gamgain2;
                 locallciefin.push_back(locciefin);
 

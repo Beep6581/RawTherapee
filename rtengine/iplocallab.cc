@@ -15600,7 +15600,7 @@ void ImProcFunctions::Lab_Local(
     bool prevDeltaE, int llColorMask, int llColorMaskinv, int llExpMask, int llExpMaskinv, int llSHMask, int llSHMaskinv, int llvibMask, int lllcMask, int llsharMask, int llcbMask, int llretiMask, int llsoftMask, int lltmMask, int llblMask, int lllogMask, int ll_Mask, int llcieMask,
     float& minCD, float& maxCD, float& mini, float& maxi, float& Tmean, float& Tsigma, float& Tmin, float& Tmax,
     float& meantm, float& stdtm, float& meanreti, float& stdreti, float &fab,float &maxicam, float &rdx, float &rdy, float &grx, float &gry, float &blx, float &bly, float &meanx, float &meany, float &meanxe, float &meanye, float &maxdat,  int &prim, int &ill, float &contsig, float &lightsig, float &slopeg, bool &linkrgb,
-    float *resi, float &sharc, float &denocont, int *ghsbpwp, float *ghsbpwpvalue, float *savmadl, float *ghsbwslider, float &ghssym, bool &ghsautsp,  float *ghscolor, float &ghsmid, float &ghsmaxrgb, float &ghs3sig, float *michbwslider, float &maxdatend, float &satdatend, bool &gamgain2)
+    float *resi, float &sharc, float &denocont, int *ghsbpwp, float *ghsbpwpvalue, float *savmadl, float *ghsbwslider, float &ghssym, bool &ghsautsp,  float *ghscolor, float &ghsmid, float &ghsmaxrgb, float &ghs3sig, float *michbwslider, float &maxdatend2, float &satdatend2, bool &gamgain2)
     //michbwslider: added to facilitate a possible modification requested by users, but is not currently in use
 {
     //general call of others functions : important return hueref, chromaref, lumaref
@@ -23684,10 +23684,10 @@ void ImProcFunctions::Lab_Local(
                         }
                     }
                 }
-                maxdatend = rgbmax / 65535.f;
-                satdatend = satmax;
-                printf("maxdat=%f \n", (double) maxdatend);
-                printf("sat=%f \n", (double) satdatend);
+                maxdatend2 = rgbmax / 65535.f;
+                satdatend2 = satmax;
+                printf("maxdat=%f \n", (double) maxdatend2);
+                printf("sat=%f \n", (double) satdatend2);
                 
 #ifdef _OPENMP
         #   pragma omp parallel for
