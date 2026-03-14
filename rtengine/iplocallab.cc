@@ -11102,14 +11102,16 @@ void ImProcFunctions::wavcontrast4(int call, struct local_params& lp, LabImage *
                                    float sigm, float offs, int & maxlvl, float sigmadc, float deltad, float chromalev, float chromablu, bool blurlc, bool blurena, bool levelena, bool comprena, bool compreena, float compress, float thres, int fw, int fh, int cx, int cy, float ksk, float kskx, float kbh, float kbw)
 {
 //BENCHFUN
-        if (lp.limitwa) {
-            constexpr float artifact_minimum = 3000.f;//The threshold below which wavelet decomposition is not performed, and therefore no contrast enhancement is achieved, to avoid artifacts due to proximity to the gamut limit.
-            constexpr float artifact_minimum_low = 10.f;//Very low replacement value, but without impact on the decomposition, except for some proximity of wavelets.
-            constexpr float artifact_minimum_lowab = 0.f;//With 0, we are necessarily within the gamut
+        constexpr float artifact_minimum = 3000.f;//The threshold below which wavelet decomposition is not performed, and therefore no contrast enhancement is achieved, to avoid artifacts due to proximity to the gamut limit.
+        constexpr float artifact_minimum_low = 10.f;//Very low replacement value, but without impact on the decomposition, except for some proximity of wavelets.
+        constexpr float artifact_minimum_lowab = 0.f;//With 0, we are necessarily within the gamut
 
-            constexpr float artifact_maximum = 27768.f;//The threshold above which wavelet decomposition is not performed, and therefore no contrast enhancement is achieved, to avoid artifacts due to proximity to the gamut limit.
-            constexpr float artifact_maximum_high = 32600.f;//Very high replacement value, but without impact on the decomposition, except for some proximity of wavelets.
-            constexpr float artifact_maximum_highab = 0.f;//With 0, we are necessarily within the gamut
+        constexpr float artifact_maximum = 27768.f;//The threshold above which wavelet decomposition is not performed, and therefore no contrast enhancement is achieved, to avoid artifacts due to proximity to the gamut limit.
+        constexpr float artifact_maximum_high = 32600.f;//Very high replacement value, but without impact on the decomposition, except for some proximity of wavelets.
+        constexpr float artifact_maximum_highab = 0.f;//With 0, we are necessarily within the gamut
+
+        if (lp.limitwa) {//uses the temporary variable to be able to evaluate the maximum and minimum values
+
 #ifdef _OPENMP
         #pragma omp parallel for if (multiThread)
 #endif
@@ -11848,6 +11850,33 @@ void ImProcFunctions::wavcontrast4(int call, struct local_params& lp, LabImage *
         wdspota->reconstruct(tmpa[0], 1.f);
         wdspotb->reconstruct(tmpb[0], 1.f);
     }
+    
+    if (lp.limitwa) {//retrieves the tmp values ​​after using the temporary variable tmpor
+
+#ifdef _OPENMP
+        #pragma omp parallel for if (multiThread)
+#endif            
+        for (int i = 0; i < tmpor->H; i++){
+            for (int j = 0; j < tmpor->W; j++){
+                if (tmpor->L[i][j] > artifact_minimum  && tmpor->L[i][j] < artifact_maximum) {//only between artifact_minimum and artifact_maximum
+                    tmpor->L[i][j] =tmp[i][j];
+                    tmpor->a[i][j] = tmpa[i][j];
+                    tmpor->b[i][j] = tmpb[i][j];
+                }
+            }
+        }
+#ifdef _OPENMP
+        #pragma omp parallel for if (multiThread)
+#endif            
+        for (int i = 0; i < tmpor->H; i++){
+            for (int j = 0; j < tmpor->W; j++){
+                tmp[i][j] =tmpor->L[i][j];
+                tmpa[i][j] = tmpor->a[i][j];
+                tmpb[i][j] = tmpor->b[i][j];
+            }
+        }
+    }
+
 }
 
 
@@ -19755,7 +19784,7 @@ void ImProcFunctions::Lab_Local(
             JaggedArray<float> bufchro(bfw, bfh);
             const std::unique_ptr<LabImage> bufgb(new LabImage(bfw, bfh));
             std::unique_ptr<LabImage> tmp1(new LabImage(bfw, bfh));
-            std::unique_ptr<LabImage> tmpor(new LabImage(bfw, bfh));
+            std::unique_ptr<LabImage> tmpor(new LabImage(bfw, bfh));//temporary variable to be able to evaluate the maximum and minimum values
             const std::unique_ptr<LabImage> tmpresid(new LabImage(bfw, bfh));
             const std::unique_ptr<LabImage> tmpres(new LabImage(bfw, bfh));
 
@@ -19976,12 +20005,15 @@ void ImProcFunctions::Lab_Local(
 
                             for (; x < tmp1->W - 3; x += 4) {
                                 STVFU(tmp1->L[y][x], F2V(32768.f) * igammalog(LVFU(tmp1->L[y][x]) / F2V(32768.f), F2V(gamma), F2V(ts), F2V(g_a[2]), F2V(g_a[4])));
+                                STVFU(tmpor->L[y][x], F2V(32768.f) * igammalog(LVFU(tmpor->L[y][x]) / F2V(32768.f), F2V(gamma), F2V(ts), F2V(g_a[2]), F2V(g_a[4])));
+                                //adds the temporary variable tmpor to be able to evaluate the maximum and minimum values, if the user wishes gamma
                             }
 
 #endif
 
                             for (; x < tmp1->W; ++x) {
                                 tmp1->L[y][x] = 32768.f * igammalog(tmp1->L[y][x] / 32768.f, gamma, ts, g_a[2], g_a[4]);
+                                tmpor->L[y][x] = 32768.f * igammalog(tmpor->L[y][x] / 32768.f, gamma, ts, g_a[2], g_a[4]);
                             }
                         }
                     }
