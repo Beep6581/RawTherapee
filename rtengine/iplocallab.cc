@@ -23595,6 +23595,12 @@ void ImProcFunctions::Lab_Local(
                     bufexpfin->b[x][y] = intp(repart, bufexporig->b[x][y], bufexpfin->b[x][y]);
                 }
             }
+//Final Gain & Gamut compression
+
+
+
+//end final Gain & Gamut compression
+
 
             if (lp.recothrcie >= 1.f) {
                 transit_shapedetect2(sp, 0.f, 0.f, call, 31, bufexporig.get(), bufexpfin.get(), originalmaskcie.get(), hueref, chromaref, lumaref, sobelref, 0.f, nullptr, lp, original, transformed, nullptr, LocalLabGradientMode::STANDARD, cx, cy, sk);

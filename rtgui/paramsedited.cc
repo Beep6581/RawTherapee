@@ -2173,7 +2173,10 @@ void ParamsEdited::initFrom(const std::vector<rtengine::procparams::ProcParams>&
                 locallab.spots.at(j).catadcie = locallab.spots.at(j).catadcie && pSpot.catadcie == otherSpot.catadcie;
                 locallab.spots.at(j).detailcie = locallab.spots.at(j).detailcie && pSpot.detailcie == otherSpot.detailcie;
                 locallab.spots.at(j).surroundcie = locallab.spots.at(j).surroundcie && pSpot.surroundcie == otherSpot.surroundcie;
-                
+
+                locallab.spots.at(j).gamgain = locallab.spots.at(j).gamgain && pSpot.gamgain == otherSpot.gamgain;
+                locallab.spots.at(j).gampower = locallab.spots.at(j).gampower && pSpot.gampower == otherSpot.gampower;
+
                 locallab.spots.at(j).strgradcie = locallab.spots.at(j).strgradcie && pSpot.strgradcie == otherSpot.strgradcie;
                 locallab.spots.at(j).anggradcie = locallab.spots.at(j).anggradcie && pSpot.anggradcie == otherSpot.anggradcie;
                 locallab.spots.at(j).feathercie = locallab.spots.at(j).feathercie && pSpot.feathercie == otherSpot.feathercie;
@@ -7288,6 +7291,14 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
             toEdit.locallab.spots.at(i).surroundcie = mods.locallab.spots.at(i).surroundcie;
         }
 
+        if (locallab.spots.at(i).gamgain) {
+            toEdit.locallab.spots.at(i).gamgain = mods.locallab.spots.at(i).gamgain;
+        }
+
+        if (locallab.spots.at(i).gampower) {
+            toEdit.locallab.spots.at(i).gampower = mods.locallab.spots.at(i).gampower;
+        }
+
         if (locallab.spots.at(i).strgradcie) {
             toEdit.locallab.spots.at(i).strgradcie = mods.locallab.spots.at(i).strgradcie;
         }
@@ -9642,6 +9653,8 @@ LocallabParamsEdited::LocallabSpotEdited::LocallabSpotEdited(bool v) :
     catadcie(v),
     detailcie(v),
     surroundcie(v),
+    gamgain(v),
+    gampower(v),
     strgradcie(v),
     anggradcie(v),
     feathercie(v),
@@ -10509,6 +10522,8 @@ void LocallabParamsEdited::LocallabSpotEdited::set(bool v)
     surroundcie = v;
     anggradcie =  v;
     feathercie =  v;
+    gamgain = v;
+    gampower = v;
     strgradcie =  v;
     enacieMask = v;
     enacieMaskall = v;

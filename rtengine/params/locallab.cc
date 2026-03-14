@@ -1945,6 +1945,8 @@ LocallabParams::LocallabSpot::LocallabSpot() :
     catadcie(0.),
     detailcie(0.),
     surroundcie("Average"),
+    gamgain(0.),
+    gampower(0.),
     strgradcie(0.),
     anggradcie(0.),
     feathercie(25.),
@@ -2974,6 +2976,9 @@ bool LocallabParams::LocallabSpot::operator ==(const LocallabSpot& other) const
         && targetGraycie == other.targetGraycie
         && catadcie == other.catadcie
         && detailcie == other.detailcie
+        && gamgain == other.gamgain
+        && gampower == other.gampower
+
         && strgradcie == other.strgradcie
         && anggradcie == other.anggradcie
         && feathercie == other.feathercie
@@ -4212,6 +4217,10 @@ void LoadUtil::ciecam()
     assignFromKeyfile(keyFile, "Locallab", "Catadcie_" + index_str, spot.catadcie, spotEdited.catadcie);
     assignFromKeyfile(keyFile, "Locallab", "Detailcie_" + index_str, spot.detailcie, spotEdited.detailcie);
     assignFromKeyfile(keyFile, "Locallab", "Surroundcie_" + index_str, spot.surroundcie, spotEdited.surroundcie);
+
+    assignFromKeyfile(keyFile, "Locallab", "Gamgain_" + index_str, spot.gamgain, spotEdited.gamgain);
+    assignFromKeyfile(keyFile, "Locallab", "Gampower_" + index_str, spot.gampower, spotEdited.gampower);
+
     assignFromKeyfile(keyFile, "Locallab", "Strgradcie_" + index_str, spot.strgradcie, spotEdited.strgradcie);
     assignFromKeyfile(keyFile, "Locallab", "Anggradcie_" + index_str, spot.anggradcie, spotEdited.anggradcie);
     if (ppVersion <= 350) {
@@ -5220,6 +5229,10 @@ void SaveUtil::ciecam()
         saveToKeyfile(!pedited || spot_edited->targetGraycie, "Locallab", "TargetGraycie_" + index_str, spot.targetGraycie, keyFile);
         saveToKeyfile(!pedited || spot_edited->catadcie, "Locallab", "Catadcie_" + index_str, spot.catadcie, keyFile);
         saveToKeyfile(!pedited || spot_edited->detailcie, "Locallab", "Detailcie_" + index_str, spot.detailcie, keyFile);
+
+        saveToKeyfile(!pedited || spot_edited->gamgain, "Locallab", "Gamgain_" + index_str, spot.gamgain, keyFile);
+        saveToKeyfile(!pedited || spot_edited->gampower, "Locallab", "Gampower_" + index_str, spot.gampower, keyFile);
+
         saveToKeyfile(!pedited || spot_edited->strgradcie, "Locallab", "Strgradcie_" + index_str, spot.strgradcie, keyFile);
         saveToKeyfile(!pedited || spot_edited->anggradcie, "Locallab", "Anggradcie_" + index_str, spot.anggradcie, keyFile);
         saveToKeyfile(!pedited || spot_edited->feathercie, "Locallab", "Feathercie_" + index_str, spot.feathercie, keyFile);

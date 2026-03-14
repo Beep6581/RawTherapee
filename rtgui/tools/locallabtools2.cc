@@ -8655,6 +8655,11 @@ Locallabcie::Locallabcie():
     catadcie(Gtk::manage(new Adjuster(M("TP_LOCALLAB_CATAD"), -100., 100., 0.5, 0., Gtk::manage(new RTImage("circle-blue-small")), Gtk::manage(new RTImage("circle-orange-small"))))),
     surroundcie(Gtk::manage(new MyComboBoxText())),
     surrHBoxcie(Gtk::manage(new Gtk::Box())),
+    
+    expfinal(Gtk::manage(new MyExpander(false, M("TP_ICM_COMPRGAMUT")))),
+    gamgain(Gtk::manage(new Adjuster(M("TP_ICM_COMP_GAIN"), -1., 2., 0.01, 0.))),
+    gampower(Gtk::manage(new Adjuster(M("TP_ICM_COMP_POWER"), 0.70, 2.0, 0.01, 1.))),
+    
     expgradcie(Gtk::manage(new MyExpander(false, M("TP_LOCALLAB_EXPGRAD")))),
     strgradcie(Gtk::manage(new Adjuster(M("TP_LOCALLAB_GRADSTR"), -4., 4., 0.05, 0.))),
     anggradcie(Gtk::manage(new Adjuster(M("TP_LOCALLAB_GRADANG"), -180, 180, 0.1, 0.))),
@@ -8800,6 +8805,8 @@ Locallabcie::Locallabcie():
     Evlocallabcolorhblue = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_CIE_RGB_COLORHBLUE");
     Evlocallabschromablue = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_CIE_RGB_SCHROMABLUE");
     Evlocallabshapeblue = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_CIE_RGB_SHAPEBLUE");
+    Evlocallabgamgain = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_CIE_GAMGAIN");
+    Evlocallabgampower = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_CIE_GAMPOWER");
     
     set_orientation(Gtk::ORIENTATION_VERTICAL);
 
@@ -9675,6 +9682,8 @@ Locallabcie::Locallabcie():
     higthrescie->setAdjusterListener(this);
     decaycie->setAdjusterListener(this);
 
+    setExpandAlignProperties(expfinal, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_START);
+
     setExpandAlignProperties(expgradcie, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_START);
 
     setExpandAlignProperties(exprecovcie, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_START);
@@ -9762,6 +9771,15 @@ Locallabcie::Locallabcie():
     mask2cieCurveEditorGwav->curveListComplete();
     csThresholdcie->setAdjusterListener(this);
 
+    ToolParamBlock* const cieBoxfinal = Gtk::manage(new ToolParamBlock());
+    expfinal->add(*cieBoxfinal, false);
+    cieBoxfinal->pack_start(*gamgain);
+    cieBoxfinal->pack_start(*gampower);
+
+    pack_start(*expfinal, false, false);
+    
+    gamgain->setAdjusterListener(this);
+    gampower->setAdjusterListener(this);
 
     strgradcie->setAdjusterListener(this);
     anggradcie->setAdjusterListener(this);
@@ -9944,6 +9962,8 @@ void Locallabcie::setDefaultExpanderVisibility()
     expmaskcie->set_expanded(false);
     exprecovcie->set_expanded(false);
     expgradcie->set_expanded(false);
+    expfinal->set_expanded(false);
+
 }
 void Locallabcie::updateAdviceTooltips(const bool showTooltips)
 {
@@ -10765,6 +10785,9 @@ void Locallabcie::read(const rtengine::procparams::ProcParams* pp, const ParamsE
                               spot.labgridcieMy,
                               false);
 
+        gamgain->setValue((double)spot.gamgain);
+        gampower->setValue((double)spot.gampower);
+
         strgradcie->setValue((double)spot.strgradcie);
         anggradcie->setValue((double)spot.anggradcie);
         feathercie->setValue((double)spot.feathercie);
@@ -11135,6 +11158,10 @@ void Locallabcie::write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedi
         spot.targetGraycie = targetGraycie->getValue();
         spot.catadcie = catadcie->getValue();
         spot.detailcie = detailcie->getValue();
+
+        spot.gamgain = gamgain->getValue();
+        spot.gampower = gampower->getValue();
+
         spot.strgradcie = strgradcie->getValue();
         spot.anggradcie = anggradcie->getValue();
         spot.feathercie = feathercie->getValue();
@@ -13855,6 +13882,10 @@ void Locallabcie::setDefaults(const rtengine::procparams::ProcParams* defParams,
         targabscie->setDefault(defSpot.targabscie);
         targetGraycie->setDefault(defSpot.targetGraycie);
         catadcie->setDefault(defSpot.catadcie);
+
+        gamgain->setDefault((double)defSpot.gamgain);
+        gampower->setDefault((double)defSpot.gampower);
+
         strgradcie->setDefault((double)defSpot.strgradcie);
         anggradcie->setDefault((double)defSpot.anggradcie);
         feathercie->setDefault((double)defSpot.feathercie);
@@ -14778,6 +14809,21 @@ void Locallabcie::adjusterChanged(Adjuster* a, double newval)
                                        detailcie->getTextValue() + spName);
             }
         }
+
+        if (a == gamgain) {
+            if (listener) {
+                listener->panelChanged(Evlocallabgamgain,
+                                       gamgain->getTextValue() + spName);
+           }
+        }
+
+        if (a == gampower) {
+            if (listener) {
+                listener->panelChanged(Evlocallabgampower,
+                                       gampower->getTextValue() + spName);
+           }
+        }
+
 
         if (a == strgradcie) {
             if (listener) {

@@ -2152,6 +2152,10 @@ private:
     MyComboBoxText*  const surroundcie;
     Gtk::Box* const surrHBoxcie;
 
+    MyExpander* const expfinal;
+    Adjuster* const gamgain;
+    Adjuster* const gampower;
+
     MyExpander* const expgradcie;
     Adjuster* const strgradcie;
     Adjuster* const anggradcie;
@@ -2213,6 +2217,8 @@ private:
     rtengine::ProcEvent Evlocallabcolorhblue;
     rtengine::ProcEvent Evlocallabschromablue;
     rtengine::ProcEvent Evlocallabshapeblue;
+    rtengine::ProcEvent Evlocallabgamgain;
+    rtengine::ProcEvent Evlocallabgampower;
 
 public:
     Locallabcie();

@@ -1264,6 +1264,9 @@ public:
         bool catadcie;
         bool detailcie;
         bool surroundcie;
+        bool gamgain;
+        bool gampower;
+
         bool strgradcie;
         bool anggradcie;
         bool feathercie;
