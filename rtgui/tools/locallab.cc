@@ -1269,6 +1269,21 @@ void Locallab::sigChanged(const std::vector<locallabcieSIG> &ciesig, int selspot
      
 }
 
+void Locallab::finChanged(const std::vector<locallabcieFIN> &ciefin, int selspot)
+{
+     cie_fin = ciefin;
+
+    if (selspot < (int) cie_fin.size()) {
+        const double s1 = cie_fin.at(selspot).maxrgb;
+        const double s2 = cie_fin.at(selspot).maxsat;
+        const bool s3 = cie_fin.at(selspot).gam_gain;
+
+        expcie.maxdataend(s1, s2, s3);
+    }
+
+}
+
+
 void Locallab::ciebefChanged(const std::vector<locallabcieBEF> &ciebef, int selspot)
 {
     cie_bef = ciebef;

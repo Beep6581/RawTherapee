@@ -1229,6 +1229,7 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
             std::vector<LocallabListener::locallabsetLC> locallsetlc;
             std::vector<LocallabListener::locallabcieSIG> locallciesig;
             std::vector<LocallabListener::locallabshMICHbw> locallshmichbw;
+            std::vector<LocallabListener::locallabcieFIN> locallciefin;
 
             huerefs.resize(params->locallab.spots.size());
             huerefblurs.resize(params->locallab.spots.size());
@@ -1494,7 +1495,9 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                 bool ghsauto = params->locallab.spots.at(sp).ghs_autobw;
                 bool ghsautsp = false;//SP auto
                 float michbwslider[2] = {0.f, 1.f};// Black and white point auto sliders : added to facilitate a possible modification requested by users, but is not currently in use
-
+                float maxdatend = 0.f;
+                float satdatend = 0.f;
+                bool gamgain2 = false;
                 Glib::ustring prof = params->icm.workingProfile;
                 if(params->locallab.spots.at(sp).complexcie == 2) {
                     params->locallab.spots.at(sp).primMethod = prof;//in Basic mode set to Working profile
@@ -1561,7 +1564,7 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                               huerblu, chromarblu, lumarblu, huer, chromar, lumar, sobeler, lastsav, false, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
                               minCD, maxCD, mini, maxi, Tmean, Tsigma, Tmin, Tmax,
                               meantm, stdtm, meanreti, stdreti, fab, maxicam, rdx, rdy, grx, gry, blx, bly, meanx, meany, meanxe, meanye, maxdat, prim, ill, contsig, lightsig, slopeg, linkrgb,
-                              resi, sharc, denocont, ghsbpwp, ghsbpwpvalue, savmadl, ghsbwslider, ghssym, ghsautsp, ghscolor, ghsmid, ghsmaxrgb, ghs3sig, michbwslider);
+                              resi, sharc, denocont, ghsbpwp, ghsbpwpvalue, savmadl, ghsbwslider, ghssym, ghsautsp, ghscolor, ghsmid, ghsmaxrgb, ghs3sig, michbwslider, maxdatend, satdatend, gamgain2);
 
                 fabrefp[sp] = fab;
                 //Illuminant
@@ -1671,6 +1674,12 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                 locciesig.lightsigq = lightsig;
                 locallciesig.push_back(locciesig);
 
+                LocallabListener::locallabcieFIN locciefin;
+                locciefin.maxrgb = maxdatend;
+                locciefin.maxsat = satdatend;
+                locciefin.gam_gain = gamgain2;
+                locallciefin.push_back(locciefin);
+
                 LocallabListener::locallabshGHSbw2 locshghsbw2;//ghs sliders Black and white point
                     for(int j = 0; j < 2; j++) {
                         locshghsbw2.ghsbw_slider[j] = ghsbwslider[j];
@@ -1776,6 +1785,8 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                         locallListener->cieChanged(locallcielc,params->locallab.selspot); 
                     }
                     locallListener->sigChanged(locallciesig,params->locallab.selspot);
+
+                    locallListener->finChanged(locallciefin,params->locallab.selspot);
 
                     if (params->locallab.spots.at(sp).expshadhigh && params->locallab.spots.at(sp).shMethod == "ghs") {
                         locallListener->ghsbw2Changed(locallshgshbw2,params->locallab.selspot);//Black and White point slider

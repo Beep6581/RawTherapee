@@ -574,6 +574,12 @@ public:
         double lightsigq;
     };
 
+    struct locallabcieFIN {
+        double maxrgb;
+        double maxsat;
+        bool gam_gain;
+    };
+
     virtual ~LocallabListener() = default;
 //    virtual void refChanged(const std::vector<locallabRef> &ref, int selspot) = 0;
     virtual void minmaxChanged(const std::vector<locallabRetiMinMax> &minmax, int selspot) = 0;
@@ -587,6 +593,7 @@ public:
     virtual void sigChanged(const std::vector<locallabcieSIG> &ciesig, int selspot) = 0;
     virtual void ciebefChanged(const std::vector<locallabcieBEF> &ciebef, int selspot) = 0;
     virtual void michbwChanged(const std::vector<locallabshMICHbw> &shmichbw, int selspot) = 0;
+    virtual void finChanged(const std::vector<locallabcieFIN> &ciefin, int selspot) = 0;
 
     virtual void sharbefChanged(const std::vector<locallabsharBEF> &sharbef, int selspot) = 0;
     virtual void sharaftChanged(const std::vector<locallabsharAFT> &sharaft, int selspot) = 0;

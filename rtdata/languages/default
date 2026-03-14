@@ -3220,6 +3220,10 @@ TP_LOCALLAB_CHROMASK_TOOLTIP;Changes the chroma of the mask if one exists (i.e. 
 TP_LOCALLAB_CHROML;Chroma (C)
 TP_LOCALLAB_CHRRT;Chroma
 TP_LOCALLAB_CIE;Color Appearance (CAM16 & JzCzHz)
+TP_LOCALLAB_CIE_FINALRGB;Final RGB Max=%1
+TP_LOCALLAB_CIE_FINALRGB_NO;---
+TP_LOCALLAB_CIE_FINALSAT;Final Saturation Max=%1
+TP_LOCALLAB_CIE_FINALSAT_NO;---
 TP_LOCALLAB_CIEC;Use CIECAM environment parameters
 TP_LOCALLAB_CIECAMLOG_TOOLTIP;This module is based on the CIECAM Color Appearance model which was designed to better simulate how human vision perceives colors under different lighting conditions.\nThe first CIECAM process 'Scene conditions' is carried out by Log encoding, it also uses 'Absolute luminance' at the time of shooting.\nThe second CIECAM process 'Image adjustments' is simplified and uses only 3 variables (local contrast, contrast J, saturation s).\nThe third CIECAM process 'Viewing conditions' adapts the output to the intended viewing conditions (monitor, TV, projector, printer, etc.) so that the chromatic and contrast appearance is preserved across the display environment.
 TP_LOCALLAB_CIECOLORFRA;Color
@@ -3233,7 +3237,6 @@ TP_LOCALLAB_CIEMODE_TM;Tone-Mapping
 TP_LOCALLAB_CIEMODE_TOOLTIP;In Default mode, CIECAM is added at the end of the process. 'Mask And Modifications' and 'Recovery Based On Luminance Mask' are available for'CAM16 and JzCzHz' at your disposal .\nYou can also integrate CIECAM into other tools if you wish (TM, Wavelet, Dynamic Range, Log encoding). The results for these tools will be different to those without CIECAM. In this mode, you can also use 'Mask And Modifications' and 'Recovery Based On Luminance Mask'.
 TP_LOCALLAB_CIEMODE_WAV;Wavelet
 TP_LOCALLAB_CIEREDGREENBLUEFRA;Red Green Blue
-
 TP_LOCALLAB_CIETOOLEXP;Curves
 TP_LOCALLAB_CIE_SMOOTHFRAME;Highlight Attenuation & Levels
 TP_LOCALLAB_CIE_SMOOTHFRAME12;Tone Mapping Operators

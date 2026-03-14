@@ -8662,6 +8662,8 @@ Locallabcie::Locallabcie():
     gamutw(Gtk::manage(new MyComboBoxText())),
     wgamutBox(Gtk::manage(new Gtk::Box())),
     wgamutlab(Gtk::manage(new Gtk::Label(M("TP_ICM_COMPRESS") + ":"))),
+    rgbmaxdata(Gtk::manage(new Gtk::Label("---"))),
+    satmaxdata(Gtk::manage(new Gtk::Label("---"))),
 
     expgradcie(Gtk::manage(new MyExpander(false, M("TP_LOCALLAB_EXPGRAD")))),
     strgradcie(Gtk::manage(new Adjuster(M("TP_LOCALLAB_GRADSTR"), -4., 4., 0.05, 0.))),
@@ -9789,6 +9791,9 @@ Locallabcie::Locallabcie():
     cieBoxfinal->pack_start(*gamgain);
     cieBoxfinal->pack_start(*wgamutBox);
     cieBoxfinal->pack_start(*gampower);
+    cieBoxfinal->pack_start(*rgbmaxdata);
+    cieBoxfinal->pack_start(*satmaxdata);
+    
     wgamVBox->pack_start(*cieBoxfinal);
     expfinal->add(*wgamVBox, false);
     pack_start(*expfinal, false, false);
@@ -9948,6 +9953,32 @@ void Locallabcie::updateguicie(int spottype)
    
 }
 
+void Locallabcie::maxdataend(float m_rgb, float m_sat, bool gamgain)
+{//maximum RGB and Saturation at the end of CAM16
+printf("M-sat=%f\n", (double) m_sat);
+    idle_register.add(
+    [this, m_rgb, m_sat, gamgain]() -> bool {
+        GThreadLock lock; // All GUI access from idle_add callbacks or separate thread HAVE to be protected
+            if (gamgain) {
+                rgbmaxdata->set_text(//RGB maximum
+                    Glib::ustring::compose(M("TP_LOCALLAB_CIE_FINALRGB"),
+                        Glib::ustring::format(std::fixed, std::setprecision(3), m_rgb))
+                );
+            } else {
+                rgbmaxdata->set_text(M("TP_LOCALLAB_CIE_FINALRGB_NO"));
+            }
+            if (gamgain) {
+                satmaxdata->set_text(//Saturation maximum
+                    Glib::ustring::compose(M("TP_LOCALLAB_CIE_FINALSAT"),
+                        Glib::ustring::format(std::fixed, std::setprecision(3), m_sat))
+                );
+            } else {
+                satmaxdata->set_text(M("TP_LOCALLAB_CIE_FINALSAT_NO"));
+            }
+        return false;
+    }
+   );
+}
 
 void Locallabcie::previewcieChanged()
 {

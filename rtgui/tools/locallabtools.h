@@ -2158,6 +2158,8 @@ private:
     MyComboBoxText*  const gamutw;
     Gtk::Box* const wgamutBox;
     Gtk::Label* const wgamutlab;
+    Gtk::Label* const rgbmaxdata;
+    Gtk::Label* const satmaxdata;
 
     MyExpander* const expgradcie;
     Adjuster* const strgradcie;
@@ -2240,6 +2242,7 @@ public:
     void updateAdviceTooltips(const bool showTooltips) override;
     void setDefaultExpanderVisibility() override;
     void updateguicie(int spottype);
+    void maxdataend(float m_rgb, float m_sat, bool gamgain);
     void previewcieChanged();
     void disableListener() override;
     void enableListener() override;
