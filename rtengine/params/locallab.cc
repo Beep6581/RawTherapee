@@ -1947,6 +1947,7 @@ LocallabParams::LocallabSpot::LocallabSpot() :
     surroundcie("Average"),
     gamgain(0.),
     gampower(0.),
+    gamutw("none"),
     strgradcie(0.),
     anggradcie(0.),
     feathercie(25.),
@@ -2978,7 +2979,7 @@ bool LocallabParams::LocallabSpot::operator ==(const LocallabSpot& other) const
         && detailcie == other.detailcie
         && gamgain == other.gamgain
         && gampower == other.gampower
-
+        && gamutw == other.gamutw
         && strgradcie == other.strgradcie
         && anggradcie == other.anggradcie
         && feathercie == other.feathercie
@@ -4220,6 +4221,7 @@ void LoadUtil::ciecam()
 
     assignFromKeyfile(keyFile, "Locallab", "Gamgain_" + index_str, spot.gamgain, spotEdited.gamgain);
     assignFromKeyfile(keyFile, "Locallab", "Gampower_" + index_str, spot.gampower, spotEdited.gampower);
+    assignFromKeyfile(keyFile, "Locallab", "Gamutw_" + index_str, spot.gamutw, spotEdited.gamutw);
 
     assignFromKeyfile(keyFile, "Locallab", "Strgradcie_" + index_str, spot.strgradcie, spotEdited.strgradcie);
     assignFromKeyfile(keyFile, "Locallab", "Anggradcie_" + index_str, spot.anggradcie, spotEdited.anggradcie);
@@ -5232,6 +5234,7 @@ void SaveUtil::ciecam()
 
         saveToKeyfile(!pedited || spot_edited->gamgain, "Locallab", "Gamgain_" + index_str, spot.gamgain, keyFile);
         saveToKeyfile(!pedited || spot_edited->gampower, "Locallab", "Gampower_" + index_str, spot.gampower, keyFile);
+        saveToKeyfile(!pedited || spot_edited->gamutw, "Locallab", "Gamutw_" + index_str, spot.gamutw, keyFile);
 
         saveToKeyfile(!pedited || spot_edited->strgradcie, "Locallab", "Strgradcie_" + index_str, spot.strgradcie, keyFile);
         saveToKeyfile(!pedited || spot_edited->anggradcie, "Locallab", "Anggradcie_" + index_str, spot.anggradcie, keyFile);

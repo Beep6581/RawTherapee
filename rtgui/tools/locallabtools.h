@@ -2155,6 +2155,9 @@ private:
     MyExpander* const expfinal;
     Adjuster* const gamgain;
     Adjuster* const gampower;
+    MyComboBoxText*  const gamutw;
+    Gtk::Box* const wgamutBox;
+    Gtk::Label* const wgamutlab;
 
     MyExpander* const expgradcie;
     Adjuster* const strgradcie;
@@ -2205,7 +2208,7 @@ private:
     ThresholdAdjuster* const csThresholdcie;
     int nextcomprciecount = 0;
    
-    sigc::connection AutograycieConn, primMethodconn, illMethodconn, smoothciemetconn, catMethodconn, sigybjz12Conn, qtojConn, showmaskcieMethodConn, enacieMaskConn, enacieMaskallConn, jabcieConn, sursourcieconn, surroundcieconn, modecieconn, modecamconn, modeQJconn, comprcieautoconn, normcie12conn, normcieconn, logcieconn, satcieconn, logcieqconn, smoothcieconn, smoothcielnkconn, smoothcieinvconn, smoothciehighconn, smoothcietrcconn, smoothcietrcrelconn, smoothcieybconn,smoothcielumconn, logjzconn, sigjz12conn, forcebwconn, sigjzconn, sigq12conn, sigqconn, chjzcieconn, toneMethodcieConn, toneMethodcieConn2, toolcieConn, bwevMethod12Conn, midtciemetConn, bwevMethodConn,fftcieMaskConn, gamutcieconn, bwcieconn, expprecamconn, sigcieconn;
+    sigc::connection AutograycieConn, primMethodconn, illMethodconn, smoothciemetconn, catMethodconn, sigybjz12Conn, qtojConn, showmaskcieMethodConn, enacieMaskConn, enacieMaskallConn, jabcieConn, sursourcieconn, surroundcieconn, gamutwconn, modecieconn, modecamconn, modeQJconn, comprcieautoconn, normcie12conn, normcieconn, logcieconn, satcieconn, logcieqconn, smoothcieconn, smoothcielnkconn, smoothcieinvconn, smoothciehighconn, smoothcietrcconn, smoothcietrcrelconn, smoothcieybconn,smoothcielumconn, logjzconn, sigjz12conn, forcebwconn, sigjzconn, sigq12conn, sigqconn, chjzcieconn, toneMethodcieConn, toneMethodcieConn2, toolcieConn, bwevMethod12Conn, midtciemetConn, bwevMethodConn,fftcieMaskConn, gamutcieconn, bwcieconn, expprecamconn, sigcieconn;
     sigc::connection previewcieConn, sigmoidqjcieconn;
     
     rtengine::ProcEvent Evlocallabcolorhred;
@@ -2219,6 +2222,7 @@ private:
     rtengine::ProcEvent Evlocallabshapeblue;
     rtengine::ProcEvent Evlocallabgamgain;
     rtengine::ProcEvent Evlocallabgampower;
+    rtengine::ProcEvent Evlocallabgamutw;
 
 public:
     Locallabcie();
@@ -2251,6 +2255,7 @@ public:
     void adjusterChanged2(ThresholdAdjuster* a, int newBottomL, int newTopL, int newBottomR, int newTopR) override;
     void sursourcieChanged();
     void surroundcieChanged();
+    void gamutwChanged();
     void modecieChanged();
     void modecamChanged();
     void modeQJChanged();

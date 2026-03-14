@@ -863,6 +863,7 @@ struct LocallabParams {
         Glib::ustring surroundcie;
         double gamgain;
         double gampower;
+        Glib::ustring gamutw;
         double strgradcie;
         double anggradcie;
         double feathercie;

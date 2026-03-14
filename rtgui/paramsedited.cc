@@ -2176,6 +2176,7 @@ void ParamsEdited::initFrom(const std::vector<rtengine::procparams::ProcParams>&
 
                 locallab.spots.at(j).gamgain = locallab.spots.at(j).gamgain && pSpot.gamgain == otherSpot.gamgain;
                 locallab.spots.at(j).gampower = locallab.spots.at(j).gampower && pSpot.gampower == otherSpot.gampower;
+                locallab.spots.at(j).gamutw = locallab.spots.at(j).gamutw && pSpot.gamutw == otherSpot.gamutw;
 
                 locallab.spots.at(j).strgradcie = locallab.spots.at(j).strgradcie && pSpot.strgradcie == otherSpot.strgradcie;
                 locallab.spots.at(j).anggradcie = locallab.spots.at(j).anggradcie && pSpot.anggradcie == otherSpot.anggradcie;
@@ -7299,6 +7300,10 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
             toEdit.locallab.spots.at(i).gampower = mods.locallab.spots.at(i).gampower;
         }
 
+        if (locallab.spots.at(i).gamutw) {
+            toEdit.locallab.spots.at(i).gamutw = mods.locallab.spots.at(i).gamutw;
+        }
+
         if (locallab.spots.at(i).strgradcie) {
             toEdit.locallab.spots.at(i).strgradcie = mods.locallab.spots.at(i).strgradcie;
         }
@@ -9655,6 +9660,7 @@ LocallabParamsEdited::LocallabSpotEdited::LocallabSpotEdited(bool v) :
     surroundcie(v),
     gamgain(v),
     gampower(v),
+    gamutw(v),
     strgradcie(v),
     anggradcie(v),
     feathercie(v),
@@ -10524,6 +10530,7 @@ void LocallabParamsEdited::LocallabSpotEdited::set(bool v)
     feathercie =  v;
     gamgain = v;
     gampower = v;
+    gamutw = v;
     strgradcie =  v;
     enacieMask = v;
     enacieMaskall = v;

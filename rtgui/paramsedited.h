@@ -1266,6 +1266,7 @@ public:
         bool surroundcie;
         bool gamgain;
         bool gampower;
+        bool gamutw;
 
         bool strgradcie;
         bool anggradcie;

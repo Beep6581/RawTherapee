@@ -8659,7 +8659,10 @@ Locallabcie::Locallabcie():
     expfinal(Gtk::manage(new MyExpander(false, M("TP_ICM_COMPRGAMUT")))),
     gamgain(Gtk::manage(new Adjuster(M("TP_ICM_COMP_GAIN"), -1., 2., 0.01, 0.))),
     gampower(Gtk::manage(new Adjuster(M("TP_ICM_COMP_POWER"), 0.70, 2.0, 0.01, 1.))),
-    
+    gamutw(Gtk::manage(new MyComboBoxText())),
+    wgamutBox(Gtk::manage(new Gtk::Box())),
+    wgamutlab(Gtk::manage(new Gtk::Label(M("TP_ICM_COMPRESS") + ":"))),
+
     expgradcie(Gtk::manage(new MyExpander(false, M("TP_LOCALLAB_EXPGRAD")))),
     strgradcie(Gtk::manage(new Adjuster(M("TP_LOCALLAB_GRADSTR"), -4., 4., 0.05, 0.))),
     anggradcie(Gtk::manage(new Adjuster(M("TP_LOCALLAB_GRADANG"), -180, 180, 0.1, 0.))),
@@ -8807,6 +8810,7 @@ Locallabcie::Locallabcie():
     Evlocallabshapeblue = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_CIE_RGB_SHAPEBLUE");
     Evlocallabgamgain = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_CIE_GAMGAIN");
     Evlocallabgampower = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_CIE_GAMPOWER");
+    Evlocallabgamutw = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_CIE_GAMLIST");
     
     set_orientation(Gtk::ORIENTATION_VERTICAL);
 
@@ -9771,13 +9775,24 @@ Locallabcie::Locallabcie():
     mask2cieCurveEditorGwav->curveListComplete();
     csThresholdcie->setAdjusterListener(this);
 
-    ToolParamBlock* const cieBoxfinal = Gtk::manage(new ToolParamBlock());
-    expfinal->add(*cieBoxfinal, false);
-    cieBoxfinal->pack_start(*gamgain);
-    cieBoxfinal->pack_start(*gampower);
+    Gtk::Box* wgamVBox = Gtk::manage(new Gtk::Box(Gtk::ORIENTATION_VERTICAL));
+    wgamutBox->pack_start(*wgamutlab, Gtk::PACK_SHRINK);
+    wgamutBox->pack_start(*gamutw, Gtk::PACK_EXPAND_WIDGET);
+    gamutw->append(M("TP_ICM_COMPRESSGAMUT_NONE"));
+    gamutw->append(M("TP_ICM_COMPRESSGAMUT_REC2020"));
+    gamutw->append(M("TP_ICM_COMPRESSGAMUT_ADOBE"));
+    gamutw->append(M("TP_ICM_COMPRESSGAMUT_SRGB"));
+    gamutw->append(M("TP_ICM_COMPRESSGAMUT_DCIP3"));
+    gamutwconn = gamutw->signal_changed().connect(sigc::mem_fun(*this, &Locallabcie::gamutwChanged));
 
+    ToolParamBlock* const cieBoxfinal = Gtk::manage(new ToolParamBlock());
+    cieBoxfinal->pack_start(*gamgain);
+    cieBoxfinal->pack_start(*wgamutBox);
+    cieBoxfinal->pack_start(*gampower);
+    wgamVBox->pack_start(*cieBoxfinal);
+    expfinal->add(*wgamVBox, false);
     pack_start(*expfinal, false, false);
-    
+
     gamgain->setAdjusterListener(this);
     gampower->setAdjusterListener(this);
 
@@ -10184,6 +10199,7 @@ void Locallabcie::disableListener()
     chjzcieconn.block(true);
     sursourcieconn.block(true);
     surroundcieconn.block(true);
+    gamutwconn.block(true);
     modecieconn.block(true);
     modecamconn.block(true);
     modeQJconn.block(true);
@@ -10237,6 +10253,7 @@ void Locallabcie::enableListener()
     chjzcieconn.block(false);
     sursourcieconn.block(false);
     surroundcieconn.block(false);
+    gamutwconn.block(false);
     modecieconn.block(false);
     modecamconn.block(false);
     modeQJconn.block(false);
@@ -10590,6 +10607,8 @@ void Locallabcie::read(const rtengine::procparams::ProcParams* pp, const ParamsE
         modecamChanged();
         modeQJChanged();
         sursourcieChanged();
+        surroundcieChanged();
+        gamutwChanged();
         bwevMethod12Changed();
         bwevMethodChanged();
         midtciemetChanged();
@@ -10656,6 +10675,18 @@ void Locallabcie::read(const rtengine::procparams::ProcParams* pp, const ParamsE
             surroundcie->set_active(1);
         } else if (spot.surroundcie == "Dark") {
             surroundcie->set_active(2);
+        }
+
+        if (spot.gamutw == "none") {
+            gamutw->set_active(0);
+        } else if (spot.gamutw == "rec2020") {
+            gamutw->set_active(1);
+        } else if (spot.gamutw == "adobe") {
+            gamutw->set_active(2);
+        } else if (spot.gamutw == "srgb") {
+            gamutw->set_active(3);
+        } else if (spot.gamutw == "dcip3") {
+            gamutw->set_active(4);
         }
 
         shapecie->setCurve(spot.ciecurve);
@@ -11053,6 +11084,18 @@ void Locallabcie::write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedi
             spot.surroundcie = "Dim";
         } else if (surroundcie->get_active_row_number() == 2) {
             spot.surroundcie = "Dark";
+        }
+
+        if (gamutw->get_active_row_number() == 0) {
+            spot.gamutw = "none";
+        } else if (gamutw->get_active_row_number() == 1) {
+            spot.gamutw = "rec2020";
+        } else if (gamutw->get_active_row_number() == 2) {
+            spot.gamutw = "adobe";
+        } else if (gamutw->get_active_row_number() == 3) {
+            spot.gamutw = "srgb";
+        } else if (gamutw->get_active_row_number() == 4) {
+            spot.gamutw = "dcip3";
         }
 
         spot.jzcurve = shapejz->getCurve();
@@ -12446,6 +12489,16 @@ void Locallabcie::surroundcieChanged()
         if (listener) {
             listener->panelChanged(Evlocallabsurroundcie,
                                    surroundcie->get_active_text() + " (" + escapeHtmlChars(getSpotName()) + ")");
+        }
+    }
+}
+
+void Locallabcie::gamutwChanged()
+{
+    if (isLocActivated && exp->getEnabled()) {
+        if (listener) {
+            listener->panelChanged(Evlocallabgamutw,
+                                   gamutw->get_active_text() + " (" + escapeHtmlChars(getSpotName()) + ")");
         }
     }
 }
