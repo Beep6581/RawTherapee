@@ -973,8 +973,8 @@ private:
             float mac1 = 0.f;
             float mac2 = 0.f;
             int beginend = 0;
-            int sp = 0;
             int nbsegam = 0;
+            int sp = 0;
             ipf.gamutcompr(baseImg, baseImg, beginend, sp, nbsegam, mac, mac0, mac1, mac2);
         }
 
@@ -1320,7 +1320,7 @@ private:
                 michbwslider[1] = 1.f;
                 float maxdatend2 = 0.f;
                 float satdatend2 = 0.f;
-                bool gamgain2 = false;
+                bool gamaut2 = false;
                 float ghscolor[4];
                 float ghssym = 0.f;
                 float ghsmid = 0.f;
@@ -1388,7 +1388,7 @@ private:
                               huerefblu, chromarefblu, lumarefblu, huere, chromare, lumare, sobelre, lastsav, false, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
                               minCD, maxCD, mini, maxi, Tmean, Tsigma, Tmin, Tmax,
                               meantme, stdtme, meanretie, stdretie, fab, maxicam, rdx, rdy, grx, gry, blx, bly, meanx, meany, meanxe, meanye, maxdat, prim, ill, contsig, lightsig, slopeg, linkrgb,
-                              resi, sharc, denocont, ghsbpwp, ghsbpwpvalue, savmadl, ghsbwslider, ghssym, ghsautsp, ghscolor, ghsmid, ghsmaxrgb, ghs3sig, michbwslider, maxdatend2, satdatend2, gamgain2);
+                              resi, sharc, denocont, ghsbpwp, ghsbpwpvalue, savmadl, ghsbwslider, ghssym, ghsautsp, ghscolor, ghsmid, ghsmaxrgb, ghs3sig, michbwslider, maxdatend2, satdatend2, gamaut2);
 
                 if (sp + 1u < params.locallab.spots.size()) {
                     // do not copy for last spot as it is not needed anymore
@@ -1997,8 +1997,8 @@ private:
                 float mac1 = 0.f;
                 float mac2 = 0.f;
                 int beginend = 1;
-                int sp = 0;
                 int nbsegam = 0;
+                int sp = 0;
                 if (params.icm.wgamut != ColorManagementParams::Wwgamut::NONE) {
                     ipf.gamutcompr(provcomp, provcomp, beginend, sp, nbsegam, mac, mac0, mac1, mac2);
                 }

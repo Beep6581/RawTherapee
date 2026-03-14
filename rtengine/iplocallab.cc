@@ -15600,7 +15600,7 @@ void ImProcFunctions::Lab_Local(
     bool prevDeltaE, int llColorMask, int llColorMaskinv, int llExpMask, int llExpMaskinv, int llSHMask, int llSHMaskinv, int llvibMask, int lllcMask, int llsharMask, int llcbMask, int llretiMask, int llsoftMask, int lltmMask, int llblMask, int lllogMask, int ll_Mask, int llcieMask,
     float& minCD, float& maxCD, float& mini, float& maxi, float& Tmean, float& Tsigma, float& Tmin, float& Tmax,
     float& meantm, float& stdtm, float& meanreti, float& stdreti, float &fab,float &maxicam, float &rdx, float &rdy, float &grx, float &gry, float &blx, float &bly, float &meanx, float &meany, float &meanxe, float &meanye, float &maxdat,  int &prim, int &ill, float &contsig, float &lightsig, float &slopeg, bool &linkrgb,
-    float *resi, float &sharc, float &denocont, int *ghsbpwp, float *ghsbpwpvalue, float *savmadl, float *ghsbwslider, float &ghssym, bool &ghsautsp,  float *ghscolor, float &ghsmid, float &ghsmaxrgb, float &ghs3sig, float *michbwslider, float &maxdatend2, float &satdatend2, bool &gamgain2)
+    float *resi, float &sharc, float &denocont, int *ghsbpwp, float *ghsbpwpvalue, float *savmadl, float *ghsbwslider, float &ghssym, bool &ghsautsp,  float *ghscolor, float &ghsmid, float &ghsmaxrgb, float &ghs3sig, float *michbwslider, float &maxdatend2, float &satdatend2, bool &gamaut2)
     //michbwslider: added to facilitate a possible modification requested by users, but is not currently in use
 {
     //general call of others functions : important return hueref, chromaref, lumaref
@@ -23623,12 +23623,13 @@ void ImProcFunctions::Lab_Local(
                     }
                 }
                 if (params->locallab.spots.at(sp).gamgain != 0. || params->locallab.spots.at(sp).gamutw != "none") {
-                    gamgain2 = true;
+                    gamaut2 = true;
                 }
 
                 const float gainev = pow(2., params->locallab.spots.at(sp).gamgain);
-                if (params->locallab.spots.at(sp).gamgain != 0.) {//Final gain in Ev
 
+                if (params->locallab.spots.at(sp).gamgain != 0.) {//Final gain in Ev
+                //change gain Ev
 #ifdef _OPENMP
         #   pragma omp parallel for
 #endif
@@ -23640,14 +23641,14 @@ void ImProcFunctions::Lab_Local(
                         }
                     }
                 }
-                
+
                 float mac = 0.f;
                 float mac0 = 0.f;
                 float mac1 = 0.f;
                 float mac2 = 0.f;
                 int beginend = 2;
                 int nbsegam = 0;
-
+                // only 4 choices
                 if (params->locallab.spots.at(sp).gamutw  == "rec2020") {
                     nbsegam = 1;
                 } else if (params->locallab.spots.at(sp).gamutw  == "adobe") {
@@ -23673,21 +23674,19 @@ void ImProcFunctions::Lab_Local(
                         const float g = provcomp->g(i, j);
                         const float b = provcomp->b(i, j);
                         float maxrgbend = rtengine::max(r, g, b);
-                        if(maxrgbend> rgbmax){//RGB Max
+                        if(maxrgbend > rgbmax){//RGB Max
                             rgbmax = maxrgbend;
                         }
                         float h, s, l = 0.f;
                         Color::rgb2hsl(r, g, b, h, s, l);
                         float maxsatend = s;
-                        if(maxsatend> satmax){//Saturation max
+                        if(maxsatend > satmax){//Saturation max
                             satmax = maxsatend;
                         }
                     }
                 }
                 maxdatend2 = rgbmax / 65535.f;
-                satdatend2 = satmax;
-                printf("maxdat=%f \n", (double) maxdatend2);
-                printf("sat=%f \n", (double) satdatend2);
+                satdatend2 = min(satmax, 2.f);//limit saturation calculation
                 
 #ifdef _OPENMP
         #   pragma omp parallel for

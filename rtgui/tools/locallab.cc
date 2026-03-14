@@ -1274,11 +1274,11 @@ void Locallab::finChanged(const std::vector<locallabcieFIN> &ciefin, int selspot
      cie_fin = ciefin;
 
     if (selspot < (int) cie_fin.size()) {
-        const double s1 = cie_fin.at(selspot).max_rgb;
-        const double s2 = cie_fin.at(selspot).max_sat;
-        const bool s3 = cie_fin.at(selspot).gam_gain;
+        const double m_rgb = cie_fin.at(selspot).max_rgb;
+        const double m_sat = cie_fin.at(selspot).max_sat;
+        const bool gamaut = cie_fin.at(selspot).gam_aut;
 
-        expcie.maxdataend(s1, s2, s3);
+        expcie.maxdataend(m_rgb, m_sat, gamaut);
     }
 
 }

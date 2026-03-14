@@ -9953,13 +9953,13 @@ void Locallabcie::updateguicie(int spottype)
    
 }
 
-void Locallabcie::maxdataend(float m_rgb, float m_sat, bool gamgain)
+void Locallabcie::maxdataend(float m_rgb, float m_sat, bool gamaut)
 {//maximum RGB and Saturation at the end of CAM16
-printf("M-sat=%f\n", (double) m_sat);
     idle_register.add(
-    [this, m_rgb, m_sat, gamgain]() -> bool {
+    [this, m_rgb, m_sat, gamaut]() -> bool {
         GThreadLock lock; // All GUI access from idle_add callbacks or separate thread HAVE to be protected
-            if (gamgain) {
+
+            if (gamaut) {
                 rgbmaxdata->set_text(//RGB maximum
                     Glib::ustring::compose(M("TP_LOCALLAB_CIE_FINALRGB"),
                         Glib::ustring::format(std::fixed, std::setprecision(3), m_rgb))
@@ -9967,7 +9967,8 @@ printf("M-sat=%f\n", (double) m_sat);
             } else {
                 rgbmaxdata->set_text(M("TP_LOCALLAB_CIE_FINALRGB_NO"));
             }
-            if (gamgain) {
+
+            if (gamaut) {
                 satmaxdata->set_text(//Saturation maximum
                     Glib::ustring::compose(M("TP_LOCALLAB_CIE_FINALSAT"),
                         Glib::ustring::format(std::fixed, std::setprecision(3), m_sat))

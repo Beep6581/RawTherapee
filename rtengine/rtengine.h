@@ -577,7 +577,7 @@ public:
     struct locallabcieFIN {
         double max_rgb;
         double max_sat;
-        bool gam_gain;
+        bool gam_aut;
     };
 
     virtual ~LocallabListener() = default;

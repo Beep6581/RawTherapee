@@ -852,8 +852,8 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                 bool auto_dm = params->cg.autodm;
                 bool auto_dy = params->cg.autody;
                 int beginend = 0;
-                int sp = 0;
                 int nbsegam = 0;
+                int sp = 0;
                 ipf.gamutcompr(orig_prev, orig_prev, beginend, sp, nbsegam, mac, mac0, mac1, mac2);
                 if (acmaxListener) {
                    acmaxListener->achromaticChanged((double) mac, mac0, mac1, mac2, auto_dc, auto_dm, auto_dy);
@@ -1497,7 +1497,7 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                 float michbwslider[2] = {0.f, 1.f};// Black and white point auto sliders : added to facilitate a possible modification requested by users, but is not currently in use
                 float maxdatend2 = 0.f;
                 float satdatend2 = 0.f;
-                bool gamgain2 = false;
+                bool gamaut2 = false;
                 Glib::ustring prof = params->icm.workingProfile;
                 if(params->locallab.spots.at(sp).complexcie == 2) {
                     params->locallab.spots.at(sp).primMethod = prof;//in Basic mode set to Working profile
@@ -1564,7 +1564,7 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                               huerblu, chromarblu, lumarblu, huer, chromar, lumar, sobeler, lastsav, false, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
                               minCD, maxCD, mini, maxi, Tmean, Tsigma, Tmin, Tmax,
                               meantm, stdtm, meanreti, stdreti, fab, maxicam, rdx, rdy, grx, gry, blx, bly, meanx, meany, meanxe, meanye, maxdat, prim, ill, contsig, lightsig, slopeg, linkrgb,
-                              resi, sharc, denocont, ghsbpwp, ghsbpwpvalue, savmadl, ghsbwslider, ghssym, ghsautsp, ghscolor, ghsmid, ghsmaxrgb, ghs3sig, michbwslider, maxdatend2, satdatend2, gamgain2);
+                              resi, sharc, denocont, ghsbpwp, ghsbpwpvalue, savmadl, ghsbwslider, ghssym, ghsautsp, ghscolor, ghsmid, ghsmaxrgb, ghs3sig, michbwslider, maxdatend2, satdatend2, gamaut2);
 
                 fabrefp[sp] = fab;
                 //Illuminant
@@ -1677,7 +1677,7 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                 LocallabListener::locallabcieFIN locciefin;
                 locciefin.max_rgb = maxdatend2;
                 locciefin.max_sat = satdatend2;
-                locciefin.gam_gain = gamgain2;
+                locciefin.gam_aut = gamaut2;
                 locallciefin.push_back(locciefin);
 
                 LocallabListener::locallabshGHSbw2 locshghsbw2;//ghs sliders Black and white point
@@ -2685,8 +2685,8 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                 float mac1 = 0.f;
                 float mac2 = 0.f;
                 int beginend = 1;
-                int sp = 0;
                 int nbsegam = 0;
+                int sp = 0;
                 if ( params->icm.wgamut != ColorManagementParams::Wwgamut::NONE) {
                     ipf.gamutcompr(provcomp, provcomp, beginend, sp, nbsegam, mac, mac0, mac1, mac2);
                 }

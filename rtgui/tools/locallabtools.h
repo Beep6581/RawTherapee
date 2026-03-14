@@ -2242,7 +2242,7 @@ public:
     void updateAdviceTooltips(const bool showTooltips) override;
     void setDefaultExpanderVisibility() override;
     void updateguicie(int spottype);
-    void maxdataend(float m_rgb, float m_sat, bool gamgain);
+    void maxdataend(float m_rgb, float m_sat, bool gamaut);
     void previewcieChanged();
     void disableListener() override;
     void enableListener() override;
