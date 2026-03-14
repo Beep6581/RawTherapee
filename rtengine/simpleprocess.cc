@@ -973,7 +973,9 @@ private:
             float mac1 = 0.f;
             float mac2 = 0.f;
             int beginend = 0;
-            ipf.gamutcompr(baseImg, baseImg, beginend, mac, mac0, mac1, mac2);
+            int sp = 0;
+            int nbsegam = 0;
+            ipf.gamutcompr(baseImg, baseImg, beginend, sp, nbsegam, mac, mac0, mac1, mac2);
         }
 
         ipf.firstAnalysis(baseImg, params, hist16);
@@ -1993,8 +1995,10 @@ private:
                 float mac1 = 0.f;
                 float mac2 = 0.f;
                 int beginend = 1;
+                int sp = 0;
+                int nbsegam = 0;
                 if (params.icm.wgamut != ColorManagementParams::Wwgamut::NONE) {
-                    ipf.gamutcompr(provcomp, provcomp, beginend, mac, mac0, mac1, mac2);
+                    ipf.gamutcompr(provcomp, provcomp, beginend, sp, nbsegam, mac, mac0, mac1, mac2);
                 }
 
 #ifdef _OPENMP

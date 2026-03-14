@@ -469,8 +469,8 @@ void ImProcFunctions::preserv(LabImage *nprevl, LabImage *provis, int cw, int ch
 // Aggressiveness of the compression curve
 //const float PWR = 1.2;
 
-//Jacques Desmis January 2026
-void ImProcFunctions::gamutcompr( Imagefloat *src, Imagefloat *dst, int beginend, float &mac, float &mac0, float &mac1, float &mac2) const
+//Jacques Desmis March 2026
+void ImProcFunctions::gamutcompr( Imagefloat *src, Imagefloat *dst, int beginend, int sp, int nbsegam,  float &mac, float &mac0, float &mac1, float &mac2) const
 {
      if (settings->verbose) {
         printf("Apply compression gamut \n");
@@ -587,16 +587,28 @@ void ImProcFunctions::gamutcompr( Imagefloat *src, Imagefloat *dst, int beginend
             out = acesp1;// Should never happen, but just in case.
         }
     } else if (beginend == 1) {//at the end of the process. Only 4 cases, which are the cases, at this stage, actually possible 
-        if(params->icm.wgamut == ColorManagementParams::Wwgamut::REC2020) {
+        if (params->icm.wgamut == ColorManagementParams::Wwgamut::REC2020) {
             out = Rec2020;
-        } else if(params->icm.wgamut == ColorManagementParams::Wwgamut::ADOBE) {
+        } else if (params->icm.wgamut == ColorManagementParams::Wwgamut::ADOBE) {
             out = adobe;
-        } else if(params->icm.wgamut == ColorManagementParams::Wwgamut::SRGB) {
+        } else if (params->icm.wgamut == ColorManagementParams::Wwgamut::SRGB) {
             out = srgb;
-        } else if(params->icm.wgamut == ColorManagementParams::Wwgamut::DCIP3) {
+        } else if (params->icm.wgamut == ColorManagementParams::Wwgamut::DCIP3) {
             out = dcip3;
         }
-}
+        
+    } else if (beginend == 2) {//at the end of the process Selective Editing CAM16. Only 4 cases, which are the cases, at this stage, actually possible 
+        if (nbsegam == 1) {
+            out = Rec2020;
+        } else if (nbsegam == 2) {
+            out = adobe;
+        } else if (nbsegam == 3) {
+            out = srgb;
+        } else if (nbsegam == 4) {
+            out = dcip3;
+        }
+    }
+
     Matrix inv_out = {};
     if (!rtengine::invertMatrix(out, inv_out)) {//invert matrix
         printf("Matrix is not invertible, skipping\n");
@@ -641,13 +653,28 @@ void ImProcFunctions::gamutcompr( Imagefloat *src, Imagefloat *dst, int beginend
         //It's considerably simpler at the end of the process. We don't have (at least in theory) the problems related to data completely out of gamut (Sunset, LEDs).
         //This needs to be confirmed by testing and possibly changed.
         //I made small changes
-        thc = 0.8f; //0.85f;
-        thm = 0.75f;//0.75f
-        thy = 0.85f;//0.95f;
-        dc = 1.15f;//1.10f
-        dm = 1.25f;//1.20f
-        dy = 1.5f;//1.5f
+        thc = 0.8f;
+        thm = 0.75f;
+        thy = 0.85f;
+        dc = 1.15f;
+        dm = 1.25f;
+        dy = 1.5f;
         pw = params->icm.wgampower;
+        roll = true;
+    }
+
+    if (beginend == 2) {//with GUI Selective editing CAM16
+        //take values from ART CTL - odt.ctl - Copyright (c) 2023 Thatcher Freeman
+        //It's considerably simpler at the end of the process. We don't have (at least in theory) the problems related to data completely out of gamut (Sunset, LEDs).
+        //This needs to be confirmed by testing and possibly changed.
+        //I made small changes
+        thc = 0.8f;
+        thm = 0.75f;
+        thy = 0.85f;
+        dc = 1.15f;
+        dm = 1.25f;
+        dy = 1.5f;
+        pw = params->locallab.spots.at(sp).gampower;
         roll = true;
     }
 

@@ -1946,7 +1946,7 @@ LocallabParams::LocallabSpot::LocallabSpot() :
     detailcie(0.),
     surroundcie("Average"),
     gamgain(0.),
-    gampower(0.),
+    gampower(1.),
     gamutw("none"),
     strgradcie(0.),
     anggradcie(0.),

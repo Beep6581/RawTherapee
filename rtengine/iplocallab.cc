@@ -23595,11 +23595,108 @@ void ImProcFunctions::Lab_Local(
                     bufexpfin->b[x][y] = intp(repart, bufexporig->b[x][y], bufexpfin->b[x][y]);
                 }
             }
-//Final Gain & Gamut compression
 
+            //Final Gain & Gamut compression CAM16
+            float maxdatend = 0.f;
+            float satdatend = 0.f;
+            TMatrix wprof = ICCStore::getInstance()->workingSpaceMatrix(params->icm.workingProfile);
+                const double wp[3][3] = {
+                    {wprof[0][0], wprof[0][1], wprof[0][2]},
+                    {wprof[1][0], wprof[1][1], wprof[1][2]},
+                    {wprof[2][0], wprof[2][1], wprof[2][2]}
+                };
+            TMatrix wiprof = ICCStore::getInstance()->workingSpaceInverseMatrix(params->icm.workingProfile);
+                const double wip[3][3] = {//improve precision with double
+                    {wiprof[0][0], wiprof[0][1], wiprof[0][2]},
+                    {wiprof[1][0], wiprof[1][1], wiprof[1][2]},
+                    {wiprof[2][0], wiprof[2][1], wiprof[2][2]}
+                };
 
+            Imagefloat* provcomp = new Imagefloat(bfw, bfh);
+#ifdef _OPENMP
+        #   pragma omp parallel for
+#endif
+                for (int i = 0; i < bfh; ++i){
+                    for (int j = 0; j < bfw; ++j) {
+                        float X, Y, Z = 0.f;
+                        Color::Lab2XYZ(bufexpfin->L[i][j], bufexpfin->a[i][j], bufexpfin->b[i][j] , X, Y, Z);
+                        Color::xyz2rgb(X, Y, Z, provcomp->r(i, j), provcomp->g(i, j), provcomp->b(i, j), wp);
+                    }
+                }
 
-//end final Gain & Gamut compression
+                const float gainev = pow(2., params->locallab.spots.at(sp).gamgain);
+                if (params->locallab.spots.at(sp).gamgain != 0.) {//Final gain in Ev
+#ifdef _OPENMP
+        #   pragma omp parallel for
+#endif
+                    for (int i = 0; i < bfh; ++i){
+                        for (int j = 0; j < bfw; ++j) {
+                            provcomp->r(i, j) *= gainev;
+                            provcomp->g(i, j) *= gainev;
+                            provcomp->b(i, j) *= gainev;
+                        }
+                    }
+                }
+                float mac = 0.f;
+                float mac0 = 0.f;
+                float mac1 = 0.f;
+                float mac2 = 0.f;
+                int beginend = 2;
+                int nbsegam = 0;
+
+                if (params->locallab.spots.at(sp).gamutw  == "rec2020") {
+                    nbsegam = 1;
+                } else if (params->locallab.spots.at(sp).gamutw  == "adobe") {
+                    nbsegam = 2;
+                } else if (params->locallab.spots.at(sp).gamutw  == "srgb") {
+                    nbsegam = 3;
+                } else if (params->locallab.spots.at(sp).gamutw  == "dcip3") {
+                    nbsegam = 4;
+                }
+            
+                if ( params->locallab.spots.at(sp).gamutw != "none") {
+                    ImProcFunctions::gamutcompr(provcomp, provcomp, beginend, sp, nbsegam, mac, mac0, mac1, mac2);
+                }
+
+                float rgbmax = 0.f;
+                float satmax = 0.f;
+#ifdef _OPENMP
+        #   pragma omp parallel for reduction(max:rgbmax) reduction(max:satmax)
+#endif
+                for (int i = 0; i < bfh; ++i){
+                    for (int j = 0; j < bfw; ++j) {
+                        const float r = provcomp->r(i, j);
+                        const float g = provcomp->g(i, j);
+                        const float b = provcomp->b(i, j);
+                        float maxrgbend = rtengine::max(r, g, b);
+                        if(maxrgbend> rgbmax){//RGB Max
+                            rgbmax = maxrgbend;
+                        }
+                        float h, s, l = 0.f;
+                        Color::rgb2hsl(r, g, b, h, s, l);
+                        float maxsatend = s;
+                        if(maxsatend> satmax){//Saturation max
+                            satmax = maxsatend;
+                        }
+                    }
+                }
+                maxdatend = rgbmax / 65535.f;
+                satdatend = satmax;
+                printf("maxdat=%f \n", (double) maxdatend);
+                printf("sat=%f \n", (double) satdatend);
+                
+#ifdef _OPENMP
+        #   pragma omp parallel for
+#endif
+                for (int i = 0; i < bfh; ++i){
+                    for (int j = 0; j < bfw; ++j) {
+                        float x, y, z = 0.f;
+                        Color::rgbxyz (provcomp->r(i, j), provcomp->g(i, j), provcomp->b(i, j), x, y, z, wip);
+                        Color::XYZ2Lab(x, y, z, bufexpfin->L[i][j], bufexpfin->a[i][j], bufexpfin->b[i][j]);
+                    }
+                }
+                delete provcomp;
+                //end final Gain & Gamut compression CAM16
 
 
             if (lp.recothrcie >= 1.f) {
