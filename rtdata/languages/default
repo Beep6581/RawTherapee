@@ -3415,6 +3415,7 @@ TP_LOCALLAB_GAMMASKCOL;Gamma
 TP_LOCALLAB_GAMMASK_TOOLTIP;Adjusting Gamma and Slope can provide a soft and artifact-free transformation of the mask by progressively modifying 'L' to avoid any discontinuities.
 TP_LOCALLAB_GAMSH;Gamma
 TP_LOCALLAB_GAMUTLABRELA;Lab
+TP_LOCALLAB_GAMUTW_TOOLTIP; Placed at the end of Selective Editing > Color Appearance (CAM16 & JzCzHz), takes into account everything preceding the current Spot, this tool allows you to compress the data to fit into the output profile.\n\n This output gamut compression is much simpler than at the beginning of the processing pipeline because unless the user has exaggerated the settings, the gamut will already be close to the Working Profile, hence the simplified graphical interface.\n\n More often than not, you will not see any changes to the image or the histogram when using Gamut Compression. This is because it does not convert the data from Working profile (often Rec2020) to Target Gamut (often sRGB), but compresses it to fit the Target gamut (often sRGB) while remaining in Working profile (often Rec2020), and the upstream treatments must have preserved the gamut. The effect is visible on Led’s, flowers with high saturation. On a normal landscape or portrait, there is most often no change.
 TP_LOCALLAB_GAMUTMUNSELL;Munsell only
 TP_LOCALLAB_GAMUTNON;None
 TP_LOCALLAB_GAMUTXYZABSO;XYZ Absolute
@@ -3882,6 +3883,7 @@ TP_LOCALLAB_RET_TOOLNAME;Dehaze & Retinex
 TP_LOCALLAB_REWEI;Reweighting iterates
 TP_LOCALLAB_RGB;RGB Tone Curve
 TP_LOCALLAB_RGBCURVE_TOOLTIP;In RGB mode you have 4 choices : Standard, Weighted standard, Luminance &amp; Film-like.
+TP_LOCALLAB_RGBMAXDATA_TOOLTIP;Provides information on out-of-limit RGB values and RGB saturation. Values greater than 1 for ‘Final RGB Max’ and ‘Final Saturation Max’ clearly indicate that we are out of gamut whereas for values less than 1, we cannot say whether the image is within gamut or not because it depends, for example, on the luminance. This check is performed at the end of Selective Editing > Color Appearance (CAM16 & JzCzHz) and takes into account everything preceding the current Spot. Specifically, it considers 'Source Data Adjustments' and 'Tone Mapping Operators', as well as the CIECAM 'CAM16 Image Adjustments' settings. It obviously does not consider settings located later in the process, such as Abstract Profile or Color Appearance & Lighting. \n\nAdjusting the Gain (Ev) and Gamut Compression (Target Gamut and Power) settings will allow you to see the impact of these adjustments. You should also observe the histogram, which takes into account the output profile therefore the gamma. This data, which is directly related to the RGB values ​​and Saturation and is in the Working Profile, is in linear mode.\n\n The data is only displayed if Target Gamut is enabled, or if Gain (Ev) is not equal to 0.
 TP_LOCALLAB_ROW_NVIS;Not visible
 TP_LOCALLAB_ROW_VIS;Visible
 TP_LOCALLAB_RSTPROTECT_TOOLTIP;Red and skin-tone protection affects the Saturation, Chroma and Colorfulness sliders.

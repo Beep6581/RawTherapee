@@ -9188,7 +9188,7 @@ Locallabcie::Locallabcie():
     sigjzBox12->pack_start(*sigmoidbljzcie12);
     sigjzBox12->pack_start(*sigybjz12);
     sigmoidjzFrame12->add(*sigjzBox12);
-	sigmoidjzFrame12->set_tooltip_text(M("TP_LOCALLAB_SIGMOID_TOOLTIP"));
+    sigmoidjzFrame12->set_tooltip_text(M("TP_LOCALLAB_SIGMOID_TOOLTIP"));
 
     cieFBox->pack_start(*sigmoidjzFrame12);
 
@@ -10046,7 +10046,9 @@ void Locallabcie::updateAdviceTooltips(const bool showTooltips)
         sourceabscie->set_tooltip_text(M("TP_COLORAPP_ADAPSCEN_TOOLTIP"));
         cie1Frame->set_tooltip_text(M("TP_LOCALLAB_LOGIMAGE_TOOLTIP"));
         smoothFrame->set_tooltip_text(M("TP_LOCALLAB_SMOOTHCIE_TOOLTIP"));
-
+        rgbmaxdata->set_tooltip_text(M("TP_LOCALLAB_RGBMAXDATA_TOOLTIP"));
+        gamgain->set_tooltip_text(M("TP_ICM_POWER_TOOLTIP"));
+        gamutw->set_tooltip_text(M("TP_LOCALLAB_GAMUTW_TOOLTIP"));
 //        sigmoidFrame->set_tooltip_text(M("TP_LOCALLAB_SIGMOID16_TOOLTIP"));
 //        sigmoidjzFrame->set_tooltip_text(M("TP_LOCALLAB_SIGMOID_TOOLTIP"));
         contlcie->set_tooltip_text(M("TP_LOCALLAB_LOGCONTL_TOOLTIP"));
@@ -10123,6 +10125,10 @@ void Locallabcie::updateAdviceTooltips(const bool showTooltips)
         sourceGraycie->set_tooltip_text("");
         sourceabscie->set_tooltip_text("");
         cie1Frame->set_tooltip_text("");
+        rgbmaxdata->set_tooltip_text("");
+        gamgain->set_tooltip_text("");
+        gamutw->set_tooltip_text("");
+
 //        sigmoidFrame->set_tooltip_text("");
 //        sigmoidjzFrame->set_tooltip_text("");
         contlcie->set_tooltip_text("");
