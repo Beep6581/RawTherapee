@@ -470,7 +470,7 @@ void ImProcFunctions::preserv(LabImage *nprevl, LabImage *provis, int cw, int ch
 //const float PWR = 1.2;
 
 //Jacques Desmis March 2026
-void ImProcFunctions::gamutcompr( Imagefloat *src, Imagefloat *dst, int beginend, int sp, int nbsegam,  float &mac, float &mac0, float &mac1, float &mac2) const
+void ImProcFunctions::gamutcompr( Imagefloat *src, Imagefloat *dst, int beginend, float powe, int nbsegam,  float &mac, float &mac0, float &mac1, float &mac2) const
 {
      if (settings->verbose) {
         printf("Apply compression gamut \n");
@@ -674,7 +674,7 @@ void ImProcFunctions::gamutcompr( Imagefloat *src, Imagefloat *dst, int beginend
         dc = 1.15f;
         dm = 1.25f;
         dy = 1.5f;
-        pw = params->locallab.spots.at(sp).gampower;
+        pw = powe;
         roll = true;
     }
 

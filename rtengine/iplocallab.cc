@@ -23648,6 +23648,7 @@ void ImProcFunctions::Lab_Local(
                 float mac2 = 0.f;
                 int beginend = 2;
                 int nbsegam = 0;
+                float powe = params->locallab.spots.at(sp).gampower;
                 // only 4 choices
                 if (params->locallab.spots.at(sp).gamutw  == "rec2020") {
                     nbsegam = 1;
@@ -23660,7 +23661,7 @@ void ImProcFunctions::Lab_Local(
                 }
             
                 if ( params->locallab.spots.at(sp).gamutw != "none") {
-                    ImProcFunctions::gamutcompr(provcomp, provcomp, beginend, sp, nbsegam, mac, mac0, mac1, mac2);
+                    ImProcFunctions::gamutcompr(provcomp, provcomp, beginend, powe, nbsegam, mac, mac0, mac1, mac2);
                 }
 
                 float rgbmax = 0.f;
