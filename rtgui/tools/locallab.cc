@@ -1266,7 +1266,7 @@ void Locallab::sigChanged(const std::vector<locallabcieSIG> &ciesig, int selspot
         
         expcie.updatesigloc(s1, s2);
     }
-     
+
 }
 
 void Locallab::finChanged(const std::vector<locallabcieFIN> &ciefin, int selspot)

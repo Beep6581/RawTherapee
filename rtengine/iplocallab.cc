@@ -11111,7 +11111,7 @@ void ImProcFunctions::wavcontrast4(int call, struct local_params& lp, LabImage *
         constexpr float artifact_maximum_highab = 0.f;//With 0, we are necessarily within the gamut
 
         if (lp.limitwa) {//uses the temporary variable to be able to evaluate the maximum and minimum values
-
+        // Applied to everything related to wavelet contrast in the broadest sense (local contrast, edge sharpness, etc.)
 #ifdef _OPENMP
         #pragma omp parallel for if (multiThread)
 #endif
@@ -11855,22 +11855,23 @@ void ImProcFunctions::wavcontrast4(int call, struct local_params& lp, LabImage *
 
 #ifdef _OPENMP
         #pragma omp parallel for if (multiThread)
-#endif            
+#endif
         for (int i = 0; i < tmpor->H; i++){
             for (int j = 0; j < tmpor->W; j++){
                 if (tmpor->L[i][j] > artifact_minimum  && tmpor->L[i][j] < artifact_maximum) {//only between artifact_minimum and artifact_maximum
-                    tmpor->L[i][j] =tmp[i][j];
+                    tmpor->L[i][j] = tmp[i][j];
                     tmpor->a[i][j] = tmpa[i][j];
                     tmpor->b[i][j] = tmpb[i][j];
                 }
             }
         }
+        // Written to retrieve the original data.
 #ifdef _OPENMP
         #pragma omp parallel for if (multiThread)
-#endif            
+#endif
         for (int i = 0; i < tmpor->H; i++){
             for (int j = 0; j < tmpor->W; j++){
-                tmp[i][j] =tmpor->L[i][j];
+                tmp[i][j] = tmpor->L[i][j];
                 tmpa[i][j] = tmpor->a[i][j];
                 tmpb[i][j] = tmpor->b[i][j];
             }
@@ -23629,7 +23630,7 @@ void ImProcFunctions::Lab_Local(
                 const float gainev = pow(2., params->locallab.spots.at(sp).gamgain);
 
                 if (params->locallab.spots.at(sp).gamgain != 0.) {//Final gain in Ev
-                //change gain Ev
+
 #ifdef _OPENMP
         #   pragma omp parallel for
 #endif
@@ -23688,7 +23689,7 @@ void ImProcFunctions::Lab_Local(
                 }
                 maxdatend2 = rgbmax / 65535.f;
                 satdatend2 = min(satmax, 2.f);//limit saturation calculation
-                
+
 #ifdef _OPENMP
         #   pragma omp parallel for
 #endif

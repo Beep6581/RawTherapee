@@ -8655,7 +8655,7 @@ Locallabcie::Locallabcie():
     catadcie(Gtk::manage(new Adjuster(M("TP_LOCALLAB_CATAD"), -100., 100., 0.5, 0., Gtk::manage(new RTImage("circle-blue-small")), Gtk::manage(new RTImage("circle-orange-small"))))),
     surroundcie(Gtk::manage(new MyComboBoxText())),
     surrHBoxcie(Gtk::manage(new Gtk::Box())),
-    
+
     expfinal(Gtk::manage(new MyExpander(false, M("TP_ICM_COMPRGAMUT")))),
     gamgain(Gtk::manage(new Adjuster(M("TP_ICM_COMP_GAIN"), -1., 2., 0.01, 0.))),
     gampower(Gtk::manage(new Adjuster(M("TP_ICM_COMP_POWER"), 0.70, 2.0, 0.01, 1.))),
@@ -8813,7 +8813,7 @@ Locallabcie::Locallabcie():
     Evlocallabgamgain = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_CIE_GAMGAIN");
     Evlocallabgampower = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_CIE_GAMPOWER");
     Evlocallabgamutw = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_CIE_GAMLIST");
-    
+
     set_orientation(Gtk::ORIENTATION_VERTICAL);
 
     // Parameter Ciecam specific widgets
@@ -9543,7 +9543,7 @@ Locallabcie::Locallabcie():
     shapegreen->setBottomBarBgGradient(milestone);
     shapegreen->setLeftBarBgGradient(milestone);
     greenCurveEditorG->curveListComplete();
-    
+
     colorhblue->setAdjusterListener(this);
     schromablue->setAdjusterListener(this);
     blueCurveEditorG->setCurveListener(this);
@@ -9793,7 +9793,7 @@ Locallabcie::Locallabcie():
     cieBoxfinal->pack_start(*gampower);
     cieBoxfinal->pack_start(*rgbmaxdata);
     cieBoxfinal->pack_start(*satmaxdata);
-    
+
     wgamVBox->pack_start(*cieBoxfinal);
     expfinal->add(*wgamVBox, false);
     pack_start(*expfinal, false, false);
@@ -14289,7 +14289,6 @@ void Locallabcie::adjusterChanged(Adjuster* a, double newval)
                                        schromablue->getTextValue() + spName);
             }
         }
-
 
         if (a == huejzcie) {
             if (listener) {

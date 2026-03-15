@@ -1504,7 +1504,7 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                 }
                 float slopeg = 1.f;
                 bool linkrgb = true;
-                    
+
                 ipf.Lab_Local(3, sp, (float**)shbuffer, nprevl, nprevl, reserv.get(), savenormtm.get(), savenormreti.get(), lastorigimp.get(), fw, fh, 0, 0, pW, pH, pW, pH, pW, pH,  scale, locRETgainCurve, locRETtransCurve,
                               lllocalcurve, locallutili,
                               cllocalcurve, localclutili,
@@ -1531,7 +1531,6 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                               redlocalcurve, localredutili,
                               greenlocalcurve, localgreenutili,
                               bluelocalcurve, localblueutili,
-
                               locccmasCurve, lcmasutili, locllmasCurve, llmasutili, lochhmasCurve, lhmasutili, lochhhmasCurve, lhhmasutili, lochhhmascieCurve, lhhmascieutili, locccmasexpCurve, lcmasexputili, locllmasexpCurve, llmasexputili, lochhmasexpCurve, lhmasexputili,
                               locccmasSHCurve, lcmasSHutili, locllmasSHCurve, llmasSHutili, lochhmasSHCurve, lhmasSHutili,
                               locccmasvibCurve, lcmasvibutili, locllmasvibCurve, llmasvibutili, lochhmasvibCurve, lhmasvibutili,
@@ -1784,9 +1783,11 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                     if (params->locallab.spots.at(sp).expprecam) {
                         locallListener->cieChanged(locallcielc,params->locallab.selspot); 
                     }
-                    locallListener->sigChanged(locallciesig,params->locallab.selspot);
 
-                    locallListener->finChanged(locallciefin,params->locallab.selspot);
+                    if (params->locallab.spots.at(sp).expcie) {
+                        locallListener->sigChanged(locallciesig,params->locallab.selspot);
+                        locallListener->finChanged(locallciefin,params->locallab.selspot);
+                    }
 
                     if (params->locallab.spots.at(sp).expshadhigh && params->locallab.spots.at(sp).shMethod == "ghs") {
                         locallListener->ghsbw2Changed(locallshgshbw2,params->locallab.selspot);//Black and White point slider
