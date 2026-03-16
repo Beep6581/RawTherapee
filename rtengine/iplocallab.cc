@@ -10798,8 +10798,8 @@ void ImProcFunctions::wavlc(wavelet_decomposition& wdspot, int level_bl, int lev
                     klev = ahigh * level + bhigh;
                 }
             }
-
-            if (level_hr <= 4) {//very low attenuation for very low levels 16x16 pixels
+            //level_hr = level without attenuation
+            if (level_hr < 4) {//very low attenuation for very low levels 16x16 pixels
                 inva3 = 1.f;
                 inva4 = 1.f;
                 inva5 = 1.f;
@@ -10808,16 +10808,16 @@ void ImProcFunctions::wavlc(wavelet_decomposition& wdspot, int level_bl, int lev
                 inva8 = 0.6f;
                 inva9 = 0.4f;
                 inva10 = 0.2f;
-            } else if(level_hr <= 6) {//low attenuation for low levels 64x64 pixels
+            } else if(level_hr < 6) {//low attenuation for low levels < 64x64 pixels
                 inva3 = 1.f;
                 inva4 = 0.9f;
                 inva5 = 0.9f;
                 inva6 = 0.9f;
-                inva7 = 0.7f;
+                inva7 = 0.7f;cd
                 inva8 = 0.6f;
                 inva9 = 0.4f;
                 inva10 = 0.2f;
-            } else { // above level 6  128x128 pixels to 1024x1024
+            } else { // above level 6  64x64 pixels to 1024x1024
                 inva3 = 0.8f;
                 inva4 = 0.8f;
                 inva5 = 0.7f;
