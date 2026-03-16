@@ -10766,6 +10766,8 @@ void ImProcFunctions::wavlc(wavelet_decomposition& wdspot, int level_bl, int lev
     float sigmaN[10];
     float MaxP[10];
     float MaxN[10];
+    float inva3 = 0.9f;
+    float inva4 = 0.9f;
     float inva5 = 0.8f;
     float inva6 = 0.7f;
     float inva7 = 0.5f;
@@ -10796,13 +10798,34 @@ void ImProcFunctions::wavlc(wavelet_decomposition& wdspot, int level_bl, int lev
                     klev = ahigh * level + bhigh;
                 }
             }
-            if(level_hr < 6) {//low attenuation for low levels
+
+            if (level_hr <= 4) {//very low attenuation for very low levels 16x16 pixels
+                inva3 = 1.f;
+                inva4 = 1.f;
                 inva5 = 1.f;
                 inva6 = 0.9f;
                 inva7 = 0.7f;
                 inva8 = 0.6f;
                 inva9 = 0.4f;
                 inva10 = 0.2f;
+            } else if(level_hr <= 6) {//low attenuation for low levels 64x64 pixels
+                inva3 = 1.f;
+                inva4 = 0.9f;
+                inva5 = 0.9f;
+                inva6 = 0.9f;
+                inva7 = 0.7f;
+                inva8 = 0.6f;
+                inva9 = 0.4f;
+                inva10 = 0.2f;
+            } else { // above level 6  128x128 pixels to 1024x1024
+                inva3 = 0.8f;
+                inva4 = 0.8f;
+                inva5 = 0.7f;
+                inva6 = 0.6f;
+                inva7 = 0.5f;
+                inva8 = 0.3f;
+                inva9 = 0.2f;
+                inva10 = 0.05f;
             }
             float* const* wav_L = wdspot.level_coeffs(level);
             float offset = offslc;
@@ -10821,8 +10844,8 @@ void ImProcFunctions::wavlc(wavelet_decomposition& wdspot, int level_bl, int lev
                 const float effect = sigmalc;
                 float mea[10];//simulation using mean and sigma, to evaluate signal 
                 calceffect(level, mean, sigma, mea, effect, offset);
-                float lutFactor;//inva5, inva6, inva7, inva8, inva9, inva10 are define in Contrast profiles.
-                float inVals[] = {0.05f, 0.2f, 0.7f, 1.f, 1.f, inva5, inva6, inva7, inva8, inva9, inva10};//values to give for calculate LUT along signal : minimal near 0 or MaxP
+                float lutFactor;//inva3 inva4 inva5, inva6, inva7, inva8, inva9, inva10 are define above
+                float inVals[] = {0.05f, 0.2f, 0.7f, inva3, inva4, inva5, inva6, inva7, inva8, inva9, inva10};//values to give for calculate LUT along signal : minimal near 0 or MaxP
                 const auto meaLut = buildMeaLut(inVals, mea, lutFactor);//build LUT
                 const float threshold = offset * mean[level] + sigmalc * sigma[level];//base signal calculation.
                 
