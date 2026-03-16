@@ -501,7 +501,7 @@ void RTWindow::on_realize ()
         epanel->setAspect();
     }
 
-    mainWindowCursorManager.init (get_window());
+    CursorManager::forMainWindow().init(get_window());
 
     // Display release notes only if new major version.
     bool waitForSplash = false;
