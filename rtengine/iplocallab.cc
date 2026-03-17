@@ -18709,7 +18709,7 @@ void ImProcFunctions::Lab_Local(
 
                                     const float radius = rtengine::max(bfw, bfh) / 30.f;
                                     const float epsilon = 0.005f;
-                                    if(D > 0.002f) {//to preserve settings WP and BP
+                                    if(D > 0.f) {
                                         rtengine::guidedFilter(Y2, Yc, Yc, radius, epsilon, multiThread);
                                     }
                                 }
@@ -18935,11 +18935,12 @@ void ImProcFunctions::Lab_Local(
                                 }
                         }
 
-                        if(smoth && D > 0.002f) {//to preserve settings WP and BP
+                        if(smoth && D > 0.f) {
                             //Highlight attenuation in function of HP - protect highlight
                             tone_eqsmooth(this, tmpImage.get(), lp, params->icm.workingProfile, sk, multiThread);//reduce Ev > 0 < 12
                         }
-                        if(MID != 0.f  && D > 0.002f) {//to preserve settings WP and BP
+
+                        if(MID != 0.f  && D > 0.f) {
                             //midtones with tone_equ
                             ImProcFunctions::tone_eqcam(this, tmpImage.get(), MID, params->icm.workingProfile, sk, multiThread);
                         }
@@ -19067,7 +19068,7 @@ void ImProcFunctions::Lab_Local(
                         }
                         float rad = kmod * params->locallab.spots.at(sp).ghs_LC;
                         float stren = 15.f * (1.f + D);//take into account D stretch
-                        if(D > 0.002f) {//to preserve settings WP and BP
+                        if(D > 0.f) {
                             loccont(bfw, bfh, bufexpfin.get(), rad, stren, sk); //local contrast in L (Lab) mode.
                         }
                     }

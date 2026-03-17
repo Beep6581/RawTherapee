@@ -5201,7 +5201,7 @@ void LocallabShadow::read(const rtengine::procparams::ProcParams* pp, const Para
         ghs_MID->setValue((double)spot.ghs_MID);
         ghs_BLP->setValue((double)spot.ghs_BLP);
         ghs_HLP->setValue((double)spot.ghs_HLP);
-        if(ghs_D->getValue() > 0.002 || ghs_D->getValue() == 0.f) {
+        if(ghs_D->getValue() == 0.f) {
             ghs_BLP->set_sensitive(false);
             ghs_HLP->set_sensitive(false);
             ghs_inv->set_sensitive(false);
@@ -5230,8 +5230,8 @@ void LocallabShadow::read(const rtengine::procparams::ProcParams* pp, const Para
                 ghs_autobw->set_sensitive(false);
                 ghs_autobw->set_active(false);
             }
-            ghs_LC->set_sensitive(false); 
-            ghs_MID->set_sensitive(false); 
+            ghs_LC->set_sensitive(true); 
+            ghs_MID->set_sensitive(true); 
         }
         if(ghs_D->getValue() == 0.f) {
             ghs_LC->set_sensitive(false);
@@ -5509,7 +5509,7 @@ void LocallabShadow::adjusterChanged(Adjuster* a, double newval)
         }
 
         if (a == ghs_D) {
-            if(ghs_D->getValue() > 0.002  || ghs_D->getValue() == 0.f) {//hide sliders WP and HP si D too big
+            if(ghs_D->getValue() == 0.f) {//hide sliders WP and HP si D too big
                 ghs_BLP->set_sensitive(false);
                 ghs_HLP->set_sensitive(false);
                 ghs_inv->set_sensitive(false);
@@ -5537,8 +5537,8 @@ void LocallabShadow::adjusterChanged(Adjuster* a, double newval)
                     ghs_autobw->set_sensitive(false);
                     ghs_autobw->set_active(false);
                 }
-                ghs_LC->set_sensitive(false);
-                ghs_MID->set_sensitive(false);
+                ghs_LC->set_sensitive(true);
+                ghs_MID->set_sensitive(true);
             }
             if(ghs_D->getValue() == 0.f) {
                 ghs_LC->set_sensitive(false);
@@ -6615,7 +6615,7 @@ void LocallabShadow::updateShadowGUImask()
         ghsMethod->hide();
         ghs_slope->hide();
         Lab_Frame->hide();
-        if(ghs_D->getValue() > 0.002 || ghs_D->getValue() == 0.f) {
+        if(ghs_D->getValue() == 0.f) {
             ghs_BLP->set_sensitive(false);
             ghs_HLP->set_sensitive(false);
             ghs_inv->set_sensitive(false);
@@ -6643,8 +6643,8 @@ void LocallabShadow::updateShadowGUImask()
                 ghs_autobw->set_sensitive(false);
                 ghs_autobw->set_active(false);
             }
-            ghs_LC->set_sensitive(false); 
-            ghs_MID->set_sensitive(false);
+            ghs_LC->set_sensitive(true); 
+            ghs_MID->set_sensitive(true);
         }
         if(ghs_D->getValue() == 0.f) {
             ghs_LC->set_sensitive(false); 
@@ -6776,7 +6776,7 @@ void LocallabShadow::updateShadowGUIshmet()
         if (mode == Expert || mode == Normal) {
             ghs_inv->show();
         }
-        if(ghs_D->getValue() > 0.002  || ghs_D->getValue() == 0.f) {
+        if(ghs_D->getValue() == 0.f) {
             ghs_BLP->set_sensitive(false);
             ghs_HLP->set_sensitive(false);
             ghs_inv->set_sensitive(false);
@@ -6804,8 +6804,8 @@ void LocallabShadow::updateShadowGUIshmet()
                ghs_autobw->set_sensitive(false);
                ghs_autobw->set_active(false);
             }
-            ghs_LC->set_sensitive(false); 
-            ghs_MID->set_sensitive(false); 
+            ghs_LC->set_sensitive(true); 
+            ghs_MID->set_sensitive(true); 
         }
         if(ghs_D->getValue() == 0.f) {
             ghs_LC->set_sensitive(false); 
