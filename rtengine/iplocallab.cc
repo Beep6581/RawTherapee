@@ -18546,7 +18546,7 @@ void ImProcFunctions::Lab_Local(
                          // Sets the Blackpoint and Whitepoint for a linear stretch of the image
                             float shiftblackpoint2 = shiftblackpoint;
                             if (shiftblackpoint < 0.f  && strtype == GHTStrType::NORMAL) {
-                                shiftblackpoint2 = 0.f;//set to zero if  balc point negatif, no change 
+                                shiftblackpoint2 = 0.f;//set to zero if  black point negatif, no change 
                             } 
                             if (strtype == GHTStrType::INVERSE) {
                                 shiftblackpoint2 = shiftblackpoint;
@@ -19047,9 +19047,9 @@ void ImProcFunctions::Lab_Local(
                                     const float b = tmpImage->b(i, j);
                                     float x, y, z;
                                     Color::rgbxyz (r, g, b, x, y, z, wpi);
-                                    z = max(z,eps);//prevents negative values ​​of XYZ
-                                    y = max(y,eps);
-                                    x = max(x,eps);
+                                    z = max(z, eps);//prevents negative values ​​of XYZ
+                                    y = max(y, eps);
+                                    x = max(x, eps);
                                     float Lexp, aexp, bexp;
                                     Color::XYZ2Lab(x, y, z, Lexp, aexp, bexp);
                                     bufexpfin->L[i][j] = Lexp;
@@ -19057,8 +19057,6 @@ void ImProcFunctions::Lab_Local(
                                     bufexpfin->b[i][j] = bexp;
                                 }
                             }
-
-                       // rgb2lab(*tmpImage, *bufexpfin, params->icm.workingProfile);
 
                         tmpImage.reset();
                         //local contrast minimum

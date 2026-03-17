@@ -4408,7 +4408,6 @@ LocallabShadow::LocallabShadow():
     Evlocallabghs_autobw = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_GHS_AUTOBW");
     Evlocallabghs_agx = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_GHS_AGX");
     Evlocallabghs_Matmet = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_GHS_MATMET");
-
     Evlocallabghs_inv = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_GHS_INV");
     EvlocallabGridghs = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_CIE_LABGRIDGHS");
     Evlocallabmich_exp = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_MICH_EXP");
@@ -4539,7 +4538,6 @@ LocallabShadow::LocallabShadow():
     ghs_D->setLogScale(10, 0);
     ghs_slope->setLogScale(10, 1);
     ghs_chro->setLogScale(10, -30);
-
     ghs_SP->setLogScale(10, 0);
     ghs_autobwConn = ghs_autobw->signal_toggled().connect(sigc::mem_fun(*this, &LocallabShadow::ghs_autobwChanged));
     ghs_smoothConn = ghs_smooth->signal_toggled().connect(sigc::mem_fun(*this, &LocallabShadow::ghs_smoothChanged));
@@ -4711,8 +4709,6 @@ LocallabShadow::LocallabShadow():
     michFrame->add(*michBox2);
     pack_start(*michFrame);
 
-
-
     for (const auto multiplier : multipliersh) {
         pack_start(*multiplier);
     }
@@ -4724,7 +4720,6 @@ LocallabShadow::LocallabShadow():
     pack_start(*shadows);
     pack_start(*s_tonalwidth);
     pack_start(*sh_radius);
-//    pack_start(*sensihs);// reused / unused here, but used for normalize_mean_dt 
     pack_start(*blurSHde);
     ToolParamBlock* const shBox3 = Gtk::manage(new ToolParamBlock());
     shBox3->pack_start(*maskusables, Gtk::PACK_SHRINK, 0);
@@ -4733,7 +4728,6 @@ LocallabShadow::LocallabShadow():
     shBox3->pack_start(*lowthress);
     shBox3->pack_start(*higthress);
     shBox3->pack_start(*decays);
-   // colBox3->pack_start(*invmaskc);
     exprecovs->add(*shBox3, false);
     pack_start(*exprecovs, false, false);
     gamFrame->set_label_align(0.025, 0.5);
@@ -4765,7 +4759,6 @@ LocallabShadow::LocallabShadow():
     fatSHBox->pack_start(*fatamountSH);
     fatSHBox->pack_start(*fatanchorSH);
     fatSHFrame->add(*fatSHBox);
-    // maskSHBox->pack_start(*fatSHFrame);
     expmasksh->add(*maskSHBox, false);
     pack_start(*expmasksh, false, false);
 }
@@ -4777,7 +4770,7 @@ void LocallabShadow::adjusterAutoToggled(Adjuster* a, bool newval)
             nbsym2 = 1;
         } else {
             nbsym2 = 0;
-        }        
+        }
         auto e = (!newval) ? EvlocallabautoSPoff : EvlocallabautoSPson;
         listener->panelChanged(e, newval ? M("GENERAL_ENABLED") : M("GENERAL_DISABLED"));
     }
@@ -4844,13 +4837,13 @@ sigc::connection *LocallabShadow::getPreviewDeltaEButtonConnection()
 
 void LocallabShadow::previewshChanged()
 {
-    
+
     if(previewsh->get_active()) {
         showmaskSHMethod->set_active(4);
     } else {
         showmaskSHMethod->set_active(0);
     }
-    
+
     if (isLocActivated) {
         if (listener) {
             listener->panelChanged(Evlocallabpreviewsh,"");
@@ -4886,7 +4879,7 @@ void LocallabShadow::updateguishad(int spottype)
                     inverssh->hide();
                     inverssh->set_active(false);
                 }
-               
+
                 exprecovs->show();
                 expmasksh->show();
                 if(!inverssh->get_active()) {
@@ -4915,7 +4908,7 @@ void LocallabShadow::updateguiscopesahd(int scope)
 
             disableListener();
             sensihs->setValue(scope);
-           
+
             enableListener();
         return false;
         }
@@ -5082,7 +5075,6 @@ void LocallabShadow::setDefaultExpanderVisibility()
 void LocallabShadow::disableListener()
 {
     LocallabTool::disableListener();
-
     shMethodConn.block(true);
     ghsMethodConn.block(true);
     ghsMatmetConn.block(true);
@@ -5102,7 +5094,6 @@ void LocallabShadow::disableListener()
 void LocallabShadow::enableListener()
 {
     LocallabTool::enableListener();
-
     shMethodConn.block(false);
     ghsMethodConn.block(false);
     ghsMatmetConn.block(false); 
@@ -5215,7 +5206,6 @@ void LocallabShadow::read(const rtengine::procparams::ProcParams* pp, const Para
                 ghs_inv->set_sensitive(false);
                 ghs_agx->set_sensitive(false);
                 ghsMatmet->set_sensitive(false);
-
             } else {
                 ghs_BLP->set_sensitive(true);
                 ghs_HLP->set_sensitive(true);
@@ -5277,7 +5267,6 @@ void LocallabShadow::read(const rtengine::procparams::ProcParams* pp, const Para
         LmaskSHshape->setCurve(spot.LmaskSHcurve);
         fatamountSH->setValue(spot.fatamountSH);
         fatanchorSH->setValue(spot.fatanchorSH);
-        
     }
     ghsMethodChanged();
     ghsMatmetChanged();
@@ -5482,7 +5471,6 @@ void LocallabShadow::setDefaults(const rtengine::procparams::ProcParams* defPara
         lowthress->setDefault((double)defSpot.lowthress);
         higthress->setDefault((double)defSpot.higthress);
         decays->setDefault((double)defSpot.decays);
-        
     }
 
     // Note: No need to manage pedited as batch mode is deactivated for Locallab
@@ -5745,7 +5733,6 @@ void LocallabShadow::adjusterChanged(Adjuster* a, double newval)
                                        decays->getTextValue() + " (" + escapeHtmlChars(getSpotName()) + ")");
             }
         }
-
 
         if (a == sensihs) {
             if (listener) {
@@ -6043,7 +6030,6 @@ void LocallabShadow::enabledChanged()
 void LocallabShadow::convertParamToNormal()
 {
     const LocallabParams::LocallabSpot defSpot;
- //   const int mode = complexity->get_active_row_number();
 
     // Disable all listeners
     disableListener();
@@ -6071,28 +6057,15 @@ void LocallabShadow::convertParamToSimple()
     // Set hidden specific GUI widgets in Simple mode to default spot values
     ghsMethod->set_active(1);
     ghs_inv->set_active(false);
-
     gamSH->setValue(defSpot.gamSH);
     sloSH->setValue(defSpot.sloSH);
-   // angSH->setValue(defSpot.angSH);
-   // featherSH->setValue(defSpot.featherSH);
-   // strSH->setValue(defSpot.strSH);
     showmaskSHMethod->set_active(0);
     showmaskSHMethodinv->set_active(0);
     enaSHMask->set_active(defSpot.enaSHMask);
- //   CCmaskSHshape->setCurve(defSpot.CCmaskSHcurve);
- //   LLmaskSHshape->setCurve(defSpot.LLmaskSHcurve);
- //   HHmaskSHshape->setCurve(defSpot.HHmaskSHcurve);
- //   blendmaskSH->setValue((double)defSpot.blendmaskSH);
- //   radmaskSH->setValue(defSpot.radmaskSH);
- //   chromaskSH->setValue(defSpot.chromaskSH);
- //   LmaskSHshape->setCurve(defSpot.LmaskSHcurve);
-
     recothress->setValue(defSpot.recothress);
     lowthress->setValue(defSpot.lowthress);
     higthress->setValue(defSpot.higthresc);
     decays->setValue(defSpot.decays);
-
     // Enable all listeners
     enableListener();
 }
@@ -6135,7 +6108,6 @@ void LocallabShadow::updateGUIToMode(const modeType new_type)
                 gamFrame->hide();
             }
 
-
             if (enaSHMask->get_active()) {
                 maskusables->show();
                 maskunusables->hide();
@@ -6175,10 +6147,10 @@ void LocallabShadow::updateGUIToMode(const modeType new_type)
                 gamFrame->hide();
             }
 
-
             if (!inverssh->get_active()) { // Keep widget hidden when inverssh is toggled
                 exprecovs->show();
             }
+
             if (enaSHMask->get_active()) {
                 maskusables->show();
                 maskunusables->hide();
@@ -6189,7 +6161,6 @@ void LocallabShadow::updateGUIToMode(const modeType new_type)
             }
             exprecovs->show();
             decays->show();
-
             expmasksh->show();
             lapmaskSH->show();
             gammaskSH->show();
@@ -6200,8 +6171,8 @@ void LocallabShadow::updateGUIToMode(const modeType new_type)
 
             if (ghsMethod->get_active_row_number() == 2  && shMethod->get_active_row_number() == 2) {
                 Lab_Frame->show();
-
             }
+
             ghs_slope->show();
             ghs_inv->show();
             if (shMethod->get_active_row_number() != 2) {
@@ -6250,7 +6221,7 @@ void LocallabShadow::ghsMethodChanged()
     if (ghsMethod->get_active_row_number() == 2) {
         Lab_Frame->show();
         ghs_slope->hide();
-        
+
         if (mode == Expert) {
             ghs_slope->show();
         }
@@ -6260,7 +6231,6 @@ void LocallabShadow::ghsMethodChanged()
         ghs_slope->hide();
         ghs_chro->hide();
         Lab_Frame->hide();
-
     }
 
     if (isLocActivated && exp->getEnabled()) {
@@ -6515,7 +6485,8 @@ void LocallabShadow::ghs_invChanged()
                                        M("GENERAL_DISABLED") + " (" + escapeHtmlChars(getSpotName()) + ")");
             }
         }
-    } 
+    }
+
     update_ghs_curve(
         ghs_B->getValue(),
         ghs_D->getValue(),
@@ -6648,7 +6619,7 @@ void LocallabShadow::updateShadowGUImask()
             ghs_LC->set_sensitive(false); 
             ghs_MID->set_sensitive(false);
         }
-       
+
         if (mode == Expert || mode == Normal) { // Keep widget hidden in Simple mode
             exprecovs->show();
             ghsMethod->show();
@@ -6658,7 +6629,7 @@ void LocallabShadow::updateShadowGUImask()
         }
         if (ghsMethod->get_active_row_number() == 2 && shMethod->get_active_row_number() == 2) {
             Lab_Frame->show();
-        }  
+        }
 
         if (mode == Expert) {
             ghs_slope->show();  
@@ -6682,7 +6653,6 @@ void LocallabShadow::updateShadowGUIsym()
 {
     // Update adjuster range to avoid black screen according to Symmetry ghs_SP
 
-    
     double tempLP = ghs_LP->getValue();//Low values Protect shadows
     const double tempSP = rtengine::LIM(ghs_SP->getValue(), 0.0001, 0.9999);//avoid 0 and 1 no real sens for symmetry must be enough for most cases
     double tempHP = ghs_HP->getValue();//high values Protect highlight
@@ -6806,7 +6776,7 @@ void LocallabShadow::updateShadowGUIshmet()
             ghs_MID->set_sensitive(true); 
         }
         if (ghs_D->getValue() == 0.f) {
-            ghs_LC->set_sensitive(false); 
+            ghs_LC->set_sensitive(false);
             ghs_MID->set_sensitive(false);
         }
 
@@ -6815,7 +6785,7 @@ void LocallabShadow::updateShadowGUIshmet()
             if (ghsMethod->get_active_row_number() == 2) {
                 Lab_Frame->show();
             }
-        }  
+        }
         if (mode == Expert) {
             ghs_slope->show();
         }
