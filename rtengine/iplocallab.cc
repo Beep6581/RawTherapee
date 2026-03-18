@@ -866,6 +866,7 @@ struct local_params {
     float sigmaed;
     float sigmalc;
     float offslc;
+    float gradlc;
     float sigmalc2;
     float residsha;
     float residshathr;
@@ -1966,6 +1967,7 @@ static void calcLocalParams(int sp, int oW, int oH,  const LocallabParams& local
     lp.sigmaed = locallab.spots.at(sp).sigmaed;
     lp.sigmalc = locallab.spots.at(sp).sigmalc;
     lp.offslc = locallab.spots.at(sp).offslc;
+    lp.gradlc = locallab.spots.at(sp).gradlc;
     lp.sigmalc2 = locallab.spots.at(sp).sigmalc2;
     lp.residsha = locallab.spots.at(sp).residsha;
     lp.residshathr = locallab.spots.at(sp).residshathr;
@@ -4113,7 +4115,7 @@ void ImProcFunctions::ciecamloc_02float(struct local_params& lp, int sp, LabImag
                 }
 
                 maxlvl = wdspot->maxlevel();
-                wavlc(*wdspot, level_bljz, level_hljz, maxlvl, level_hrjz, level_brjz, ahighjz, bhighjz, alowjz, blowjz, sigmalcjz, 1.f, strengthjz, locwavCurvejz, numThreads);
+                wavlc(*wdspot, level_bljz, level_hljz, maxlvl, level_hrjz, level_brjz, ahighjz, bhighjz, alowjz, blowjz, sigmalcjz, 1.f, 1.f, strengthjz, locwavCurvejz, numThreads);
                 wdspot->reconstruct(temp->L[0], 1.f);
 
             }
@@ -10758,7 +10760,7 @@ void ImProcFunctions::Compresslevels(float **Source, int W_L, int H_L, float com
     }
 }
 
-void ImProcFunctions::wavlc(wavelet_decomposition& wdspot, int level_bl, int level_hl, int maxlvl, int level_hr, int level_br, float ahigh, float bhigh, float alow, float blow, float sigmalc, float offslc, float strength, const LocwavCurve & locwavCurve, int numThreads)
+void ImProcFunctions::wavlc(wavelet_decomposition& wdspot, int level_bl, int level_hl, int maxlvl, int level_hr, int level_br, float ahigh, float bhigh, float alow, float blow, float sigmalc, float offslc, float gradlc, float strength, const LocwavCurve & locwavCurve, int numThreads)
 {
     float mean[10];
     float meanN[10];
@@ -10798,6 +10800,7 @@ void ImProcFunctions::wavlc(wavelet_decomposition& wdspot, int level_bl, int lev
                     klev = ahigh * level + bhigh;
                 }
             }
+            float amplimid = 0.5f * gradlc + 0.5f;//Gradient levels
             //level_hr = level without attenuation
             if (level_hr < 4) {//very low attenuation for very low levels 16x16 pixels
                 inva3 = 1.f;
@@ -10809,23 +10812,23 @@ void ImProcFunctions::wavlc(wavelet_decomposition& wdspot, int level_bl, int lev
                 inva9 = 0.4f;
                 inva10 = 0.2f;
             } else if(level_hr < 6) {//low attenuation for low levels < 64x64 pixels
-                inva3 = 1.f;
-                inva4 = 0.9f;
-                inva5 = 0.9f;
-                inva6 = 0.9f;
-                inva7 = 0.7f;cd
-                inva8 = 0.6f;
-                inva9 = 0.4f;
-                inva10 = 0.2f;
+                inva3 = 1.f * amplimid;
+                inva4 = 0.9f * amplimid;
+                inva5 = 0.9f * amplimid;
+                inva6 = 0.9f * amplimid;
+                inva7 = 0.7f * amplimid;
+                inva8 = 0.6f * amplimid;
+                inva9 = 0.4f * amplimid;
+                inva10 = 0.2f * amplimid;
             } else { // above level 6  64x64 pixels to 1024x1024
-                inva3 = 0.8f;
-                inva4 = 0.8f;
-                inva5 = 0.7f;
-                inva6 = 0.6f;
-                inva7 = 0.5f;
-                inva8 = 0.3f;
-                inva9 = 0.2f;
-                inva10 = 0.05f;
+                inva3 = 0.8f * gradlc;
+                inva4 = 0.8f * gradlc;
+                inva5 = 0.7f * gradlc;
+                inva6 = 0.6f * gradlc;
+                inva7 = 0.5f * gradlc;
+                inva8 = 0.3f * gradlc;
+                inva9 = 0.2f * gradlc;
+                inva10 = 0.05f * gradlc;
             }
             float* const* wav_L = wdspot.level_coeffs(level);
             float offset = offslc;
@@ -11723,7 +11726,7 @@ void ImProcFunctions::wavcontrast4(int call, struct local_params& lp, LabImage *
 
     if (locwavCurve && locwavutili && wavcurve) {//simple local contrast in function luminance
         float strengthlc = 1.5f;
-        wavlc(*wdspot, level_bl, level_hl, maxlvl, level_hr, level_br, ahigh, bhigh, alow, blow, lp.sigmalc, lp.offslc, strengthlc, locwavCurve, numThreads);
+        wavlc(*wdspot, level_bl, level_hl, maxlvl, level_hr, level_br, ahigh, bhigh, alow, blow, lp.sigmalc, lp.offslc, lp.gradlc, strengthlc, locwavCurve, numThreads);
     }
 
     //reconstruct all for L

@@ -1645,6 +1645,7 @@ HISTORY_MSG_LOCAL_GHS_MID;Local - GHS - Midtones
 HISTORY_MSG_LOCAL_GHS_SLOPE;Local - GHS - Lab slope factor
 HISTORY_MSG_LOCAL_GHS_SMOOTH;Local - GHS - Highlight attenuation
 HISTORY_MSG_LOCAL_GHS_SP;Local - GHS - Symmetry point
+HISTORY_MSG_LOCAL_GRADWAV;Local Wav Gradient levels
 HISTORY_MSG_LOCAL_LIMITWAV;Local -Wavelet - Prevent decomposition
 HISTORY_MSG_LOCAL_LOCKMADLS;Local - Denoise - MadL
 HISTORY_MSG_LOCAL_LOGCIE12;Local - CIECAM - Log encoding
@@ -3502,6 +3503,8 @@ TP_LOCALLAB_GRADSTRHUE;Hue gradient strength
 TP_LOCALLAB_GRADSTRHUE2;Hue gradient strength
 TP_LOCALLAB_GRADSTRHUE_TOOLTIP;Adjusts hue gradient strength.
 TP_LOCALLAB_GRADSTRLUM;Luma gradient strength
+TP_LOCALLAB_GRADWAV;Gradient levels
+TP_LOCALLAB_GRADWAV_TOOLTIP;Adjust local contrast for high and medium decomposition levels.
 TP_LOCALLAB_GRAINFRA;Film Grain 1:1
 TP_LOCALLAB_GRAINFRA2;Coarseness
 TP_LOCALLAB_GRAIN_TOOLTIP;Adds film-like grain to the image.

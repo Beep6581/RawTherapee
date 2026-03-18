@@ -509,6 +509,7 @@ struct LocallabParams {
         double lclightness;
         double sigmalc;
         double offslc;
+        double gradlc;
         int levelwav;
         double residcont;
         double residsha;

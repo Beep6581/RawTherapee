@@ -1166,6 +1166,7 @@ LocallabParams::LocallabSpot::LocallabSpot() :
     lclightness(1.0),
     sigmalc(1.0),
     offslc(1.0),
+    gradlc(1.0),
     levelwav(4),
     residcont(0.0),
     residsha(0.0),
@@ -2621,6 +2622,7 @@ bool LocallabParams::LocallabSpot::operator ==(const LocallabSpot& other) const
         && lclightness == other.lclightness
         && sigmalc == other.sigmalc
         && offslc == other.offslc
+        && gradlc == other.gradlc
         && levelwav == other.levelwav
         && residcont == other.residcont
         && residsha == other.residsha
@@ -3731,6 +3733,7 @@ void LoadUtil::localContrast()
     assignFromKeyfile(keyFile, "Locallab", "Lclightness_" + index_str, spot.lclightness, spotEdited.lclightness);
     assignFromKeyfile(keyFile, "Locallab", "Sigmalc_" + index_str, spot.sigmalc, spotEdited.sigmalc);
     assignFromKeyfile(keyFile, "Locallab", "Offslc_" + index_str, spot.offslc, spotEdited.offslc);
+    assignFromKeyfile(keyFile, "Locallab", "Gradlc_" + index_str, spot.gradlc, spotEdited.gradlc);
     assignFromKeyfile(keyFile, "Locallab", "Levelwav_" + index_str, spot.levelwav, spotEdited.levelwav);
     assignFromKeyfile(keyFile, "Locallab", "Residcont_" + index_str, spot.residcont, spotEdited.residcont);
     assignFromKeyfile(keyFile, "Locallab", "Residsha_" + index_str, spot.residsha, spotEdited.residsha);
@@ -4855,6 +4858,7 @@ void SaveUtil::localContrast()
         saveToKeyfile(!pedited || spot_edited->lclightness, "Locallab", "Lclightness_" + index_str, spot.lclightness, keyFile);
         saveToKeyfile(!pedited || spot_edited->sigmalc, "Locallab", "Sigmalc_" + index_str, spot.sigmalc, keyFile);
         saveToKeyfile(!pedited || spot_edited->offslc, "Locallab", "Offslc_" + index_str, spot.offslc, keyFile);
+        saveToKeyfile(!pedited || spot_edited->gradlc, "Locallab", "Gradlc_" + index_str, spot.gradlc, keyFile);
         saveToKeyfile(!pedited || spot_edited->levelwav, "Locallab", "Levelwav_" + index_str, spot.levelwav, keyFile);
         saveToKeyfile(!pedited || spot_edited->residcont, "Locallab", "Residcont_" + index_str, spot.residcont, keyFile);
         saveToKeyfile(!pedited || spot_edited->residsha, "Locallab", "Residsha_" + index_str, spot.residsha, keyFile);

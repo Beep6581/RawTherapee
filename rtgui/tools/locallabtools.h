@@ -1434,6 +1434,8 @@ private:
     Gtk::Frame* const contFrame;
     Adjuster* const sigmalc;
     Adjuster* const offslc;
+    Adjuster* const gradlc;
+
     CurveEditorGroup* const LocalcurveEditorwav;
     FlatCurveEditor* const wavshape;
     ThresholdAdjuster* const csThreshold;
@@ -1534,7 +1536,7 @@ private:
     sigc::connection localcontMethodConn, previewlcConn, origlcConn, processwavConn, limitwavConn, wavgradlConn, wavedgConn, localedgMethodConn, waveshowConn, localneiMethodConn, wavblurConn, blurlcConn, wavcontConn, wavcompreConn, wavcompConn, fftwlcConn, showmasklcMethodConn, enalcMaskConn;
     rtengine::ProcEvent Evlocallabprocesswav;
     rtengine::ProcEvent Evlocallablimitwav;
-    
+    rtengine::ProcEvent Evlocallabgradlc;
 
 public:
     LocallabContrast();

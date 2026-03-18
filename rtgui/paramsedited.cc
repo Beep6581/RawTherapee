@@ -1815,6 +1815,7 @@ void ParamsEdited::initFrom(const std::vector<rtengine::procparams::ProcParams>&
                 locallab.spots.at(j).lclightness = locallab.spots.at(j).lclightness && pSpot.lclightness == otherSpot.lclightness;
                 locallab.spots.at(j).sigmalc = locallab.spots.at(j).sigmalc && pSpot.sigmalc == otherSpot.sigmalc;
                 locallab.spots.at(j).offslc = locallab.spots.at(j).offslc && pSpot.offslc == otherSpot.offslc;
+                locallab.spots.at(j).gradlc = locallab.spots.at(j).gradlc && pSpot.gradlc == otherSpot.gradlc;
                 locallab.spots.at(j).levelwav = locallab.spots.at(j).levelwav && pSpot.levelwav == otherSpot.levelwav;
                 locallab.spots.at(j).residcont = locallab.spots.at(j).residcont && pSpot.residcont == otherSpot.residcont;
                 locallab.spots.at(j).residsha = locallab.spots.at(j).residsha && pSpot.residsha == otherSpot.residsha;
@@ -5912,6 +5913,10 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
             toEdit.locallab.spots.at(i).offslc   = mods.locallab.spots.at(i).offslc;
         }
 
+        if (locallab.spots.at(i).gradlc) {
+            toEdit.locallab.spots.at(i).gradlc   = mods.locallab.spots.at(i).gradlc;
+        }
+
         if (locallab.spots.at(i).levelwav) {
             toEdit.locallab.spots.at(i).levelwav   = mods.locallab.spots.at(i).levelwav;
         }
@@ -9316,6 +9321,7 @@ LocallabParamsEdited::LocallabSpotEdited::LocallabSpotEdited(bool v) :
     lclightness(v),
     sigmalc(v),
     offslc(v),
+    gradlc(v),
     levelwav(v),
     residcont(v),
     residsha(v),
@@ -10178,6 +10184,7 @@ void LocallabParamsEdited::LocallabSpotEdited::set(bool v)
     lclightness = v;
     sigmalc = v;
     offslc = v;
+    gradlc = v;
     levelwav = v;
     residcont = v;
     residsha = v;

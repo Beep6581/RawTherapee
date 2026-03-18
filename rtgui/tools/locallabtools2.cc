@@ -2898,6 +2898,7 @@ LocallabContrast::LocallabContrast():
     contFrame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_CONTWFRA")))),
     sigmalc(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SIGMAWAV"), 0.2, 2.5, 0.01, 1.))),
     offslc(Gtk::manage(new Adjuster(M("TP_WAVELET_WAVOFFSET"), 0.33, 1.6, 0.01, 1.))),
+    gradlc(Gtk::manage(new Adjuster(M("TP_LOCALLAB_GRADWAV"), 0.5, 1.5, 0.01, 1.))),
     LocalcurveEditorwav(new CurveEditorGroup(App::get().mut_options().lastlocalCurvesDir, M("TP_LOCALLAB_WAV"))),
     wavshape(static_cast<FlatCurveEditor*>(LocalcurveEditorwav->addCurve(CT_Flat, "", nullptr, false, false))),
     csThreshold(Gtk::manage(new ThresholdAdjuster(M("TP_LOCALLAB_CSTHRESHOLD"), 0, 9, 0, 0, 7, 5, 0, false))),
@@ -3002,6 +3003,7 @@ LocallabContrast::LocallabContrast():
 
     Evlocallabprocesswav = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_PROCESSWAV");
     Evlocallablimitwav = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_LIMITWAV");
+    Evlocallabgradlc = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_GRADWAV");
     
     set_orientation(Gtk::ORIENTATION_VERTICAL);
 
@@ -3025,6 +3027,7 @@ LocallabContrast::LocallabContrast():
 
     sigmalc->setAdjusterListener(this);
     offslc->setAdjusterListener(this);
+    gradlc->setAdjusterListener(this);
 
     LocalcurveEditorwav->setCurveListener(this);
 
@@ -3315,6 +3318,7 @@ LocallabContrast::LocallabContrast():
     ToolParamBlock* const coBox = Gtk::manage(new ToolParamBlock());
     coBox->pack_start(*sigmalc);
     coBox->pack_start(*offslc);
+    coBox->pack_start(*gradlc);
     coBox->pack_start(*LocalcurveEditorwav, Gtk::PACK_SHRINK, 4); // Padding is mandatory to correct behavior of curve editor
     // coBox->pack_start(*csThreshold);
     contFrame->add(*coBox);
@@ -3575,6 +3579,8 @@ void LocallabContrast::updateAdviceTooltips(const bool showTooltips)
         clarilres->set_tooltip_text(M("TP_LOCALLAB_WAT_CLARIL_TOOLTIP"));
         claricres->set_tooltip_text(M("TP_LOCALLAB_WAT_CLARIC_TOOLTIP"));
         sigmalc->set_tooltip_text(M("TP_LOCALLAB_WAT_SIGMALC_TOOLTIP"));
+        offslc->set_tooltip_text(M("TP_LOCALLAB_WAT_CONTOFFSET_TOOLTIP"));
+        gradlc->set_tooltip_text(M("TP_LOCALLAB_GRADWAV_TOOLTIP"));
         sigmalc2->set_tooltip_text(M("TP_LOCALLAB_WAT_SIGMALC_TOOLTIP"));
         sigmaed->set_tooltip_text(M("TP_LOCALLAB_WAT_SIGMALC_TOOLTIP"));
         sigmabl->set_tooltip_text(M("TP_LOCALLAB_WAT_SIGMALC_TOOLTIP"));
@@ -3671,6 +3677,9 @@ void LocallabContrast::updateAdviceTooltips(const bool showTooltips)
         clarilres->set_tooltip_text("");
         claricres->set_tooltip_text("");
         sigmalc->set_tooltip_text("");
+        gradlc->set_tooltip_text("");
+        offslc->set_tooltip_text("");
+
         sigmalc2->set_tooltip_text("");
         sigmaed->set_tooltip_text("");
         sigmabl->set_tooltip_text("");
@@ -3797,6 +3806,7 @@ void LocallabContrast::read(const rtengine::procparams::ProcParams* pp, const Pa
         lclightness->setValue(spot.lclightness);
         sigmalc->setValue(spot.sigmalc);
         offslc->setValue(spot.offslc);
+        gradlc->setValue(spot.gradlc);
         wavshape->setCurve(spot.locwavcurve);
         csThreshold->setValue<int>(spot.csthreshold);
         levelwav->setValue((double)spot.levelwav);
@@ -3926,6 +3936,7 @@ void LocallabContrast::write(rtengine::procparams::ProcParams* pp, ParamsEdited*
         spot.lclightness = lclightness->getValue();
         spot.sigmalc = sigmalc->getValue();
         spot.offslc = offslc->getValue();
+        spot.gradlc = gradlc->getValue();
         spot.locwavcurve = wavshape->getCurve();
         spot.csthreshold = csThreshold->getValue<int>();
         spot.levelwav = levelwav->getIntValue();
@@ -4035,6 +4046,7 @@ void LocallabContrast::setDefaults(const rtengine::procparams::ProcParams* defPa
         lclightness->setDefault(defSpot.lclightness);
         sigmalc->setDefault(defSpot.sigmalc);
         offslc->setDefault(defSpot.offslc);
+        gradlc->setDefault(defSpot.gradlc);
         levelwav->setDefault((double)defSpot.levelwav);
         csThreshold->setDefault<int>(defSpot.csthreshold);
         residcont->setDefault(defSpot.residcont);
@@ -4131,6 +4143,13 @@ void LocallabContrast::adjusterChanged(Adjuster* a, double newval)
             if (listener) {
                 listener->panelChanged(Evlocallaboffslc,
                                        offslc->getTextValue() + " (" + escapeHtmlChars(getSpotName()) + ")");
+            }
+        }
+
+        if (a == gradlc) {
+            if (listener) {
+                listener->panelChanged(Evlocallabgradlc,
+                                       gradlc->getTextValue() + " (" + escapeHtmlChars(getSpotName()) + ")");
             }
         }
 
