@@ -11160,7 +11160,6 @@ void ImProcFunctions::wavcontrast4(int call, struct local_params& lp, LabImage *
             }
         }
 
-
     std::unique_ptr<wavelet_decomposition> wdspot(new wavelet_decomposition(tmp[0], bfw, bfh, maxlvl, 1, sk, numThreads, lp.daubLen));
 
     //first decomposition for compress dynamic range positive values and other process

@@ -3260,7 +3260,7 @@ TP_LOCALLAB_CLARISOFT;Soft radius
 TP_LOCALLAB_CLARISOFTJZ_TOOLTIP;The 'Soft radius' slider (guided filter algorithm) reduces halos and irregularities for Clarity, Sharp Mask and Local contrast wavelets Jz.
 TP_LOCALLAB_CLARISOFT_TOOLTIP;The 'Soft radius' slider (guided filter algorithm) reduces halos and irregularities for Clarity, Sharp Mask and all wavelet pyramid processes. To deactivate, set slider to zero.
 TP_LOCALLAB_CLARITYML;Clarity
-TP_LOCALLAB_CLARI_TOOLTIP;Levels 0 to 4 (included): 'Sharp mask' is enabled\nLevels 5 and above: 'Clarity' is enabled.\nUseful if you use 'Wavelet level tone mapping'.
+TP_LOCALLAB_CLARI_TOOLTIP;This algorithm combines two decompositions of the same image and recombines them using different processes, It involves significant system resources.\n\n From levels 0 to Bottom-right = 4 (included) 'Sharp mask' is enabled.\n Starting from levels 5 – Top-right or Bottom-right and above: 'Clarity' is enabled.\n\n In the case of the 'Sharp Mask' the change of level is similar to changing the radius in the 'Unsharp Mask'. For 'Clarity' a level change results in a greater or lesser three-dimensional volume effect on the image. 
 TP_LOCALLAB_CLIPTM;Clip restored data (gain)
 TP_LOCALLAB_COFR;Color & Light
 TP_LOCALLAB_COLORDE;ΔE preview color - intensity
@@ -3504,7 +3504,7 @@ TP_LOCALLAB_GRADSTRHUE2;Hue gradient strength
 TP_LOCALLAB_GRADSTRHUE_TOOLTIP;Adjusts hue gradient strength.
 TP_LOCALLAB_GRADSTRLUM;Luma gradient strength
 TP_LOCALLAB_GRADWAV;Gradient levels
-TP_LOCALLAB_GRADWAV_TOOLTIP;Adjust local contrast for high and medium decomposition levels.
+TP_LOCALLAB_GRADWAV_TOOLTIP;Adjust local contrast for high and medium decomposition levels.\n Medium corresponds to a Top-left value greater than 3. High corresponds to a Top-right value greater than 5.
 TP_LOCALLAB_GRAINFRA;Film Grain 1:1
 TP_LOCALLAB_GRAINFRA2;Coarseness
 TP_LOCALLAB_GRAIN_TOOLTIP;Adds film-like grain to the image.
@@ -4112,7 +4112,7 @@ TP_LOCALLAB_WAT_RESIDCOMP_TOOLTIP;Compresses the residual image to increase or r
 TP_LOCALLAB_WAT_SIGMALC_TOOLTIP;The effect of the local contrast adjustment is stronger for medium-contrast details and weaker for high and low-contrast details.\n This slider controls how quickly the effect dampens towards the extreme contrasts.\nThe higher the value of the slider, the wider the range of contrasts that will receive the full effect of the local contrast adjustment and the higher the risk of generating artifacts.\nThe lower the value, the more the effect will be pinpointed towards a narrow range of contrast values.
 TP_LOCALLAB_WAT_STRENGTHW_TOOLTIP;Intensity of edge-effect detection.
 TP_LOCALLAB_WAT_STRWAV_TOOLTIP;Allows the local contrast to be varied according to a chosen gradient and angle. The variation of the luminance signal is taken into account and not the luminance.
-TP_LOCALLAB_WAT_THRESHOLDWAV_TOOLTIP;Range of wavelet levels used throughout the Wavelets module.
+TP_LOCALLAB_WAT_THRESHOLDWAV_TOOLTIP;Range of wavelet levels used throughout the Wavelets module.\n\n The numbers associated with Top-left and Bottom-left represent the minimum decomposition levels used. The numbers associated with Top-right and Bottom-right represent the maximum decomposition levels used.\n If the respective values ​​of Top-Left and Bottom-Left, or Top-Right and Bottom-Right, are different, a transition is applied.\n\n 0 - means a 2x2 pixels decomposition. \n 1 - means a 4x4 pixels decomposition.\n 2 - means a 8x8 pixels decomposition.\n 3 - means a 16x16 pixels decomposition.\n 4 - means a 32x32 pixels decomposition.\n 5 - means a 64x64 pixels decomposition.\n 6 - means a 128x128 pixels decomposition.\n 7 - means a 256x256 pixels decomposition.\n 8 - means a 512x512 pixels decomposition.\n 9 - means a 1024x1024 pixels decomposition.\n\n The values ​​8 and 9 assume, in order to be perceived in the Preview, that the size of the Preview is sufficient.
 TP_LOCALLAB_WAT_WAVBLURCURV_TOOLTIP;Allows you to blur each level of decomposition.\nThe finest to coarsest levels of decomposition are from left to right.
 TP_LOCALLAB_WAT_WAVCBDL_TOOLTIP;Similar to Contrast By Detail Levels. Fine to coarse detail levels from left to right on the x-axis.
 TP_LOCALLAB_WAT_WAVDELTABAL_TOOLTIP;Acts on the balance of the three directions (horizontal, vertical and diagonal) based on the luminance of the image.\nBy default the shadows or highlights are reduced to avoid artifacts.
