@@ -3836,7 +3836,7 @@ TP_LOCALLAB_PREVIEW;Preview ΔE
 TP_LOCALLAB_PREVSHOW;Show additional settings
 TP_LOCALLAB_PRIMILLFRAME;Primaries & Illuminant
 TP_LOCALLAB_PROCESSWAV;Show modified areas with Wavelets
-TP_LOCALLAB_PROCESSWAV_TOOLTIP;Wavelet decomposition:\nShows the changes made by the wavelet settings.\n\nYou see the changes made to the decomposed image, factoring in the deltaE and transitions, when you modify the wavelet settings. Note that this is different from Wavelet levels in the Advanced tab in which you always see the results of the decomposition.
+TP_LOCALLAB_PROCESSWAV_TOOLTIP;Wavelet decomposition:\nShows the changes made by the wavelet settings (only luminance).\n\nYou see the changes made to the decomposed image, factoring in the deltaE and transitions, when you modify the wavelet settings. Note that this is different from Wavelet levels in the Advanced tab in which you always see the results of the decomposition.
 TP_LOCALLAB_PROXI;ΔE decay
 TP_LOCALLAB_QJMODE;Tone Mapping Operators Q(CAM16) & J(Jz) 
 TP_LOCALLAB_QJMODE_511;5.11 deprecated
