@@ -3416,7 +3416,7 @@ TP_LOCALLAB_GAMMASKCOL;Gamma
 TP_LOCALLAB_GAMMASK_TOOLTIP;Adjusting Gamma and Slope can provide a soft and artifact-free transformation of the mask by progressively modifying 'L' to avoid any discontinuities.
 TP_LOCALLAB_GAMSH;Gamma
 TP_LOCALLAB_GAMUTLABRELA;Lab
-TP_LOCALLAB_GAMUTW_TOOLTIP; Placed at the end of Selective Editing > Color Appearance (CAM16 & JzCzHz), takes into account everything preceding the current Spot, this tool allows you to compress the data to fit into the output profile.\n\n This output gamut compression is much simpler than at the beginning of the processing pipeline because unless the user has exaggerated the settings, the gamut will already be close to the Working Profile, hence the simplified graphical interface.\n\n More often than not, you will not see any changes to the image or the histogram when using Gamut Compression. This is because it does not convert the data from Working profile (often Rec2020) to Target Gamut (often sRGB), but compresses it to fit the Target gamut (often sRGB) while remaining in Working profile (often Rec2020), and the upstream treatments must have preserved the gamut. The effect is visible on Led’s, flowers with high saturation. On a normal landscape or portrait, there is most often no change.
+TP_LOCALLAB_GAMUTW_TOOLTIP; Placed at the end of Selective Editing > Color Appearance (CAM16 & JzCzHz), takes into account, only for CAM16, everything preceding the current Spot, this tool allows you to compress the data to fit into the output profile.\n\n This output gamut compression is much simpler than at the beginning of the processing pipeline because unless the user has exaggerated the settings, the gamut will already be close to the Working Profile, hence the simplified graphical interface.\n\n More often than not, you will not see any changes to the image or the histogram when using Gamut Compression. This is because it does not convert the data from Working profile (often Rec2020) to Target Gamut (often sRGB), but compresses it to fit the Target gamut (often sRGB) while remaining in Working profile (often Rec2020), and the upstream treatments must have preserved the gamut. The effect is visible on Led’s, flowers with high saturation. On a normal landscape or portrait, there is most often no change.
 TP_LOCALLAB_GAMUTMUNSELL;Munsell only
 TP_LOCALLAB_GAMUTNON;None
 TP_LOCALLAB_GAMUTXYZABSO;XYZ Absolute
@@ -3504,7 +3504,7 @@ TP_LOCALLAB_GRADSTRHUE2;Hue gradient strength
 TP_LOCALLAB_GRADSTRHUE_TOOLTIP;Adjusts hue gradient strength.
 TP_LOCALLAB_GRADSTRLUM;Luma gradient strength
 TP_LOCALLAB_GRADWAV;Gradient levels
-TP_LOCALLAB_GRADWAV_TOOLTIP;Adjust local contrast for high and medium decomposition levels.\n Medium corresponds to a Top-left value greater than 3. High corresponds to a Top-right value greater than 5.
+TP_LOCALLAB_GRADWAV_TOOLTIP;Adjust local contrast for high and medium decomposition levels.\n Medium corresponds to a Top-right value greater than 3. High corresponds to a Top-right value greater than 5.
 TP_LOCALLAB_GRAINFRA;Film Grain 1:1
 TP_LOCALLAB_GRAINFRA2;Coarseness
 TP_LOCALLAB_GRAIN_TOOLTIP;Adds film-like grain to the image.
