@@ -4105,7 +4105,7 @@ void ImProcFunctions::ciecamloc_02float(struct local_params& lp, int sp, LabImag
             wavelet_level = rtengine::min(wavelet_level, maxlevelspot);
             int maxlvl = wavelet_level;
 
-            //simple local contrast in function luminance
+            //simple local contrast in function luminance Jz
             if (locwavCurvejz && locwavutilijz && wavcurvejz) {
                 float strengthjz = 1.2f;
                 std::unique_ptr<wavelet_decomposition> wdspot(new wavelet_decomposition(temp->L[0], bfw, bfh, maxlvl, 1, sk, numThreads, lp.daubLen));//lp.daubLen
@@ -4865,7 +4865,7 @@ void ImProcFunctions::ciecamloc_02float(struct local_params& lp, int sp, LabImag
                         bool jpblue = false;
                         constexpr float attenuation_hue = 0.555f;//Hue attenuation factor of 100/180. I find the changes too significant. It's just a convention.
                         if((hpro > 340.f && hpro <= 360.f) || (hpro > 0.f && hpro <= 100.f)) {//Red CIECAM
-                            if (redlocalcurve && localredutili) {//brightness curve
+                            if (redlocalcurve && localredutili) {//brightness curve red
                                 jpred = true;
                                 float Qq = Qpro * coefq;
                                 float Qold = Qpro;
@@ -4890,7 +4890,7 @@ void ImProcFunctions::ciecamloc_02float(struct local_params& lp, int sp, LabImag
                         }
 
                         if((hpro > 100.f && hpro <= 190.f)) { //Green CIECAM
-                            if (greenlocalcurve && localgreenutili) {//brightness curve
+                            if (greenlocalcurve && localgreenutili) {//brightness curve green
                                 jpgreen = true;
                                 float Qq = Qpro * coefq;
                                 float Qold = Qpro;
@@ -4915,7 +4915,7 @@ void ImProcFunctions::ciecamloc_02float(struct local_params& lp, int sp, LabImag
                         }
 
                         if((hpro > 190.f && hpro <= 340.f)) { //blue CIECAM
-                            if (bluelocalcurve && localblueutili) {//brightness curve
+                            if (bluelocalcurve && localblueutili) {//brightness curve blue
                                 jpblue = true;
                                 float Qq = Qpro * coefq;
                                 float Qold = Qpro;
@@ -10802,7 +10802,7 @@ void ImProcFunctions::wavlc(wavelet_decomposition& wdspot, int level_bl, int lev
             }
             float amplimid = 0.5f * gradlc + 0.5f;//Gradient levels
             //level_hr = level without attenuation
-            if (level_hr < 4) {//very low attenuation for very low levels 16x16 pixels
+            if (level_hr < 4) {//very low attenuation for very low levels until 16x16 pixels
                 inva3 = 1.f;
                 inva4 = 1.f;
                 inva5 = 1.f;
@@ -10811,7 +10811,7 @@ void ImProcFunctions::wavlc(wavelet_decomposition& wdspot, int level_bl, int lev
                 inva8 = 0.6f;
                 inva9 = 0.4f;
                 inva10 = 0.2f;
-            } else if(level_hr < 6) {//low attenuation for low levels < 64x64 pixels
+            } else if(level_hr < 6) {//low attenuation for low levels until 64x64 pixels
                 inva3 = 1.f * amplimid;
                 inva4 = 0.9f * amplimid;
                 inva5 = 0.9f * amplimid;
@@ -10820,7 +10820,7 @@ void ImProcFunctions::wavlc(wavelet_decomposition& wdspot, int level_bl, int lev
                 inva8 = 0.6f * amplimid;
                 inva9 = 0.4f * amplimid;
                 inva10 = 0.2f * amplimid;
-            } else { // above level 6  64x64 pixels to 1024x1024
+            } else { // above level 6  - from 128x128 pixels to 1024x1024
                 inva3 = 0.8f * gradlc;
                 inva4 = 0.8f * gradlc;
                 inva5 = 0.7f * gradlc;
@@ -10842,18 +10842,16 @@ void ImProcFunctions::wavlc(wavelet_decomposition& wdspot, int level_bl, int lev
                 const float asig = 0.166f / (sigma[level] * sigmalc);
                 const float bsig = 0.5f - asig * (mean[level] * offset);
                 const float amean = 0.5f / (mean[level] * offset);
-               // const float limit1 = mean[level] + sigmalc * sigma[level];
-               // const float limit2 = mean[level];
                 const float effect = sigmalc;
                 float mea[10];//simulation using mean and sigma, to evaluate signal 
                 calceffect(level, mean, sigma, mea, effect, offset);
-                float lutFactor;//inva3 inva4 inva5, inva6, inva7, inva8, inva9, inva10 are define above
+                float lutFactor;//inva3 inva4 inva5, inva6, inva7, inva8, inva9, inva10 are define above.
+                //I am not changing the values ​​of inva0 = 0.05, inva1 = 0.2, inva2 = 0.7, which are low and correspond to very low contrast values (probably small artifacts)
                 float inVals[] = {0.05f, 0.2f, 0.7f, inva3, inva4, inva5, inva6, inva7, inva8, inva9, inva10};//values to give for calculate LUT along signal : minimal near 0 or MaxP
                 const auto meaLut = buildMeaLut(inVals, mea, lutFactor);//build LUT
                 const float threshold = offset * mean[level] + sigmalc * sigma[level];//base signal calculation.
                 
 #ifdef _OPENMP
-              //  #pragma omp parallel for schedule(dynamic, 16 * W_L) if (multiThread)
                 #pragma omp parallel for if (multiThread)
 
 #endif
@@ -10881,7 +10879,6 @@ void ImProcFunctions::wavlc(wavelet_decomposition& wdspot, int level_bl, int lev
                         float kinterm = 1.f + reduceeffect * kc;
                         kinterm = kinterm <= 0.f ? 0.01f : kinterm;
 
-                    //   wav_L[dir][i] *= kinterm <= 0.f ? 0.01f : kinterm;
                         val *= (1.f + (kinterm - 1.f) * (*meaLut)[WavCL * lutFactor]);//change signal (contrast) for each level, direction, with LUT.
 
                     }
@@ -11723,7 +11720,7 @@ void ImProcFunctions::wavcontrast4(int call, struct local_params& lp, LabImage *
 
 //edge sharpness end
 
-    if (locwavCurve && locwavutili && wavcurve) {//simple local contrast in function luminance
+    if (locwavCurve && locwavutili && wavcurve) {//simple local contrast in function luminance CAM16
         float strengthlc = 1.5f;
         wavlc(*wdspot, level_bl, level_hl, maxlvl, level_hr, level_br, ahigh, bhigh, alow, blow, lp.sigmalc, lp.offslc, lp.gradlc, strengthlc, locwavCurve, numThreads);
     }
@@ -23654,7 +23651,7 @@ void ImProcFunctions::Lab_Local(
 
                 const float gainev = pow(2., params->locallab.spots.at(sp).gamgain);
 
-                if (params->locallab.spots.at(sp).gamgain != 0.) {//Final gain in Ev
+                if (params->locallab.spots.at(sp).gamgain != 0.) {//Final gain CAM16 in Ev
 
 #ifdef _OPENMP
         #   pragma omp parallel for
@@ -23713,7 +23710,7 @@ void ImProcFunctions::Lab_Local(
                     }
                 }
                 maxdatend2 = rgbmax / 65535.f;
-                satdatend2 = min(satmax, 2.f);//limit saturation calculation
+                satdatend2 = min(satmax, 2.f);//2.f arbitrary maximum saturation calculation - normally between 0 and 1.
 
 #ifdef _OPENMP
         #   pragma omp parallel for

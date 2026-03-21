@@ -1948,7 +1948,7 @@ LocallabParams::LocallabSpot::LocallabSpot() :
     surroundcie("Average"),
     gamgain(0.0),
     gampower(1.),
-    gamutw("srgb"),
+    gamutw("srgb"),//The default choice probably corresponds to the majority of users.
     strgradcie(0.),
     anggradcie(0.),
     feathercie(25.),

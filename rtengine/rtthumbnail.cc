@@ -1369,6 +1369,7 @@ IImage8* Thumbnail::processImage (const procparams::ProcParams& params, eSensorT
     LabImage* labView2 = new LabImage (fw, fh);
     {//The code is essentially identical to simpleprocess.cc, but of course with a much smaller scale (sk = 16).
      //To ensure it is recognized by all transition systems, deltaE, etc., I use call = 3 as the improcoordinator in Lab_local.
+     // call = 3 will avoid activating the resource-intensive 'denoise' functions.
      //I declare an additional Labimage variable, labview2, to avoid interference with the rest of rtthumbnail.
         if (params.locallab.enabled && params.locallab.spots.size() > 0) {
             ipf.rgb2lab(*baseImg, *labView2, params.icm.workingProfile);
@@ -1651,7 +1652,7 @@ IImage8* Thumbnail::processImage (const procparams::ProcParams& params, eSensorT
                 float slopeg = 1.f;
                 bool linkrgb = true;
                 // No Locallab mask is shown in exported picture
-                //same value for call as in improccoordinator, but skip 16 instead 10
+                // same value, 3, for call as in improccoordinator, but skip 16 instead 10
                 ipf.Lab_Local(3, sp, shbuffer, labView2, labView2, reservView.get(), savenormtmView.get(), savenormretiView.get(), lastorigView.get(), fw, fh, 0, 0, fw, fh, fw, fh, fw, fh, sk, locRETgainCurve, locRETtransCurve,
                               lllocalcurve, locallutili,
                               cllocalcurve, localclutili,
