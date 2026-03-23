@@ -6,6 +6,15 @@ target_include_directories(cjson
 )
 rt_setup_target(cjson)
 
+add_library(jpeg_ijg jpeg_ijg/src/jdatasrc.cc jpeg_ijg/src/jpeg_memsrc.cc)
+add_library(jpeg_ijg::jpeg_ijg ALIAS jpeg_ijg)
+target_include_directories(jpeg_ijg
+    PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/jpeg_ijg/include
+    PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/jpeg_ijg/include/jpeg_ijg
+)
+target_link_libraries(jpeg_ijg PUBLIC JPEG::JPEG)
+rt_setup_target(jpeg_ijg)
+
 if(NOT WITH_SYSTEM_KLT)
     add_library(klt
         klt/src/convolve.cc

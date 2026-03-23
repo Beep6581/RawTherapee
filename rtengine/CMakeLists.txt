@@ -81,8 +81,6 @@ set(RTENGINESOURCEFILES
     iptransform.cc
     ipvibrance.cc
     ipwavelet.cc
-    jdatasrc.cc
-    jpeg_ijg/jpeg_memsrc.cc
     labimage.cc
     lcp.cc
     lensmetadata.cc
@@ -186,7 +184,7 @@ target_link_libraries(rtengine
     PUBLIC
         cjson::cjson
         fmt::fmt
-        JPEG::JPEG
+        jpeg_ijg::jpeg_ijg
         klt::klt
         PkgConfig::CAIROMM
         PkgConfig::EXIV2
