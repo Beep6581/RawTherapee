@@ -93,7 +93,8 @@ public:
 
     explicit NewType(const T& value) : m_value(value) {}
 
-    explicit NewType(T&& value) noexcept(std::is_nothrow_move_constructible<T>::value)
+    explicit NewType(T&& value)
+        noexcept(std::is_nothrow_move_constructible<T>::value)
         : m_value(std::move(value))
     {
     }

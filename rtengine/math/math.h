@@ -19,17 +19,28 @@
 
 #pragma once
 
-#include <memory>
-#include <type_traits>
-#include <utility>
-
 namespace rt {
 
-// Backports from C++17
+// Similar to C++20's <numbers>
+namespace numbers {
 
-template <class T, class... Args>
-std::unique_ptr<T> make_unique(Args&&... args) {
-    return std::unique_ptr<T>(new T(std::forward<Args>(args)...));
+constexpr double pi = 3.14159265358979323846;
+
+}  // namespace numbers
+
+// Remove need to include <algorithm> for utility functions
+template <class T>
+constexpr const T& min(const T& lhs, const T& rhs) { return lhs < rhs ? lhs : rhs; }
+
+template <class T>
+constexpr const T& max(const T& lhs, const T& rhs) { return lhs > rhs ? lhs : rhs; }
+
+template <class T>
+constexpr const T& clamp(const T& v, const T& lo, const T& hi)
+{
+    if (v < lo) return lo;
+    else if (hi < v) return hi;
+    else return v;
 }
 
 }  // namespace rt
