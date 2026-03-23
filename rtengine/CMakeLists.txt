@@ -22,7 +22,6 @@ set(RTENGINESOURCEFILES
     cfa_linedn_RT.cc
     ciecam02.cc
     cieimage.cc
-    cJSON.c
     clutstore.cc
     color.cc
     colortemp.cc
@@ -201,6 +200,7 @@ endif()
 
 target_link_libraries(rtengine
     PUBLIC
+        cjson::cjson
         fmt::fmt
         JPEG::JPEG
         PkgConfig::CAIROMM
