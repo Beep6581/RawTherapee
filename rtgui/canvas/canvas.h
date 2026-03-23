@@ -1,0 +1,151 @@
+/*
+ *  This file is part of RawTherapee.
+ *
+ *  Copyright (c) 2026 Daniel Gao <daniel.gao.work@gmail.com>
+ *
+ *  RawTherapee is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation, either version 3 of the License, or
+ *  (at your option) any later version.
+ *
+ *  RawTherapee is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License
+ *  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
+ */
+
+#pragma once
+
+#include "interface.h"
+#include "mousegesture.h"
+
+#include "cursormanager.h"
+#include "gtk4.h"
+
+#include "rtengine/util/enum.h"
+#include "rtengine/util/optional.h"
+
+#include <cairomm/refptr.h>
+#include <glibmm/refptr.h>
+#include <gtkmm/widget.h>
+
+#include <vector>
+
+namespace Gtk {
+
+class GestureDrag;
+class GestureZoom;
+
+}  // namespace Gtk
+
+namespace rt {
+namespace canvas {
+
+class CanvasModel;
+
+enum class PanningInput {
+    NONE = 0,
+    PRIMARY = (1 << 0),
+    MIDDLE = (1 << 1),
+    SPACEBAR = (1 << 2),
+    // Helpers
+    MOUSE = PRIMARY | MIDDLE,
+    ACTIVE = PRIMARY | MIDDLE | SPACEBAR
+};
+
+class Canvas final : public Gtk::Widget
+{
+public:
+    Canvas(CanvasModel* model);
+    ~Canvas();
+
+    void enablePanZoomTool() { m_is_pan_zoom_enabled = true; }
+    void addCursorMonitor(CursorMonitor* listener)
+    {
+        m_cursor_monitors.push_back(listener);
+    }
+    void setRenderer(Renderer* renderer) { m_renderer = renderer; }
+
+    void changeCursor(rt::optional<CursorShape> shape);
+
+    bool onKeyPressed(guint keyval, guint keycode, GdkModifierType state);
+    void onKeyReleased(guint keyval, guint keycode, GdkModifierType state);
+
+protected:
+    // Custom widget implementation
+    Gtk::SizeRequestMode get_request_mode_vfunc() const override;
+    void get_preferred_width_vfunc(
+        int& minimum_width, int& natural_width) const override;
+    void get_preferred_height_for_width_vfunc(
+        int width, int& minimum_height, int& natural_height) const override;
+    void get_preferred_height_vfunc(
+        int& minimum_height, int& natural_height) const override;
+    void get_preferred_width_for_height_vfunc(
+        int height, int& minimum_width, int& natural_width) const override;
+    void on_size_allocate(Gtk::Allocation& allocation) override;
+    // TODO(GTK4): on_realize and on_unrealize are no longer needed since
+    //             Gdk.Window was removed for snapshots
+    void on_realize() override;
+    void on_unrealize() override;
+
+    bool on_draw(const Cairo::RefPtr<Cairo::Context>& cr) override;
+
+private:
+    // Event controller slots
+    void onEnter(WidgetPoint pos);
+    void onMotion(WidgetPoint pos);
+    void onFreeMotion(WidgetPoint pos);
+    void onLeave();
+    void onPendingPress(WidgetPoint pos);
+    void onClick(int n_press, WidgetPoint pos);
+    void onCancelPress(WidgetPoint pos);
+    void onDragBegin(WidgetPoint pos);
+    void onDragUpdate(WidgetVec delta);
+    void onDragEnd(WidgetVec delta);
+    void onScrollBegin();
+    void onScrollChanged(double dx, double dy);
+    void onZoomBegin(GdkEventSequence* sequence);
+    void onZoomChanged(double scale);
+
+    void onScaleFactorChanged();
+
+    void onCameraUpdate();
+
+    bool isPanning() const;
+    bool tryPanPendingPress(const ClickContext& context, WidgetPoint pos);
+    bool tryPanScroll(WidgetVec scroll_delta);
+    void updatePan(WidgetPoint delta_pos);
+    bool updatePanWithScroll(WidgetVec delta);
+    void updateZoom(double scale);
+    void updateCursorShape();
+
+    CursorManager m_cursor_manager;
+    MouseGesture m_mouse_gesture;
+
+    Glib::RefPtr<Gdk::Window> m_gdk_window;
+
+    Glib::RefPtr<Gtk::GestureZoom> m_zoom_controller;
+    Glib::RefPtr<rt::gtk4::EventControllerScroll> m_scroll_controller;
+    sigc::connection m_change_cursor_connection;
+
+    std::vector<CursorMonitor*> m_cursor_monitors;
+    Renderer* m_renderer;
+    CanvasModel* m_model;
+
+    // Pan/zoom state
+    WidgetPoint m_prev_pan_pos;
+    WidgetPoint m_drag_start_pos;
+    double m_scroll_zoom_accum;
+    PanningInput m_pan;
+    bool m_is_pan_zoom_enabled;
+    bool m_is_cursor_inside_canvas;
+};
+
+}  // namespace canvas
+}  // namespace rt
+
+template <>
+struct rt::EnumAsBitflags<rt::canvas::PanningInput> : std::true_type {};

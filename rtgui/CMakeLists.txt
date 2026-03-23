@@ -11,7 +11,10 @@ set(CLISOURCEFILES
 )
 
 set(RT_GUI_CANVAS_SOURCES
+    canvas/canvas.cc
+    canvas/model.cc
     canvas/mousegesture.cc
+    canvas/render.cc
 )
 
 set(RT_GUI_TOOL_PANEL_SOURCES
@@ -318,3 +321,32 @@ endif()
 # Install executables
 install(TARGETS rth DESTINATION "${BINDIR}")
 install(TARGETS rth-cli DESTINATION "${BINDIR}")
+
+if(DEV_ENABLE_CANVAS_PLAYGROUND)
+    add_executable(rth-canvas
+        canvasplayground.cc
+
+        cursormanager.cc
+        editcallbacks.cc
+        gtk4.cc
+        guiutils.cc
+        hidpi.cc
+        multilangmgr.cc
+        options.cc
+        paramsedited.cc
+        pathutils.cc
+        rtimage.cc
+        rtscalable.cc
+        rtsurface.cc
+        widgets/basic/adjuster.cc
+        "${RT_GUI_CANVAS_SOURCES}"
+    )
+    target_include_directories(rth-canvas PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})
+    target_include_directories(rth-canvas BEFORE PRIVATE ${CMAKE_BINARY_DIR}/rtgui)
+    rt_setup_target(rth-canvas)
+    target_link_libraries(rth-canvas PRIVATE rtengine PkgConfig::GTKMM)
+
+    set_target_properties(rth-canvas PROPERTIES OUTPUT_NAME rawtherapee-canvas)
+
+    install(TARGETS rth-canvas DESTINATION "${BINDIR}")
+endif()

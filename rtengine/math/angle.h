@@ -71,9 +71,9 @@ struct Degrees : rt::NewType<Degrees, double>, AngleOperations<Degrees>
     Degrees(Radians r);
 };
 
-Radians::Radians(Degrees d) : NewType(d.value() * numbers::pi / 180.0) {}
+inline Radians::Radians(Degrees d) : NewType(d.value() * numbers::pi / 180.0) {}
 
-Degrees::Degrees(Radians r) : NewType(r.value() * 180.0 / numbers::pi) {}
+inline Degrees::Degrees(Radians r) : NewType(r.value() * 180.0 / numbers::pi) {}
 
 }  // namespace geom
 }  // namespace rt

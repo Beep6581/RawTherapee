@@ -19,6 +19,7 @@
 
 #pragma once
 
+#include "rtengine/math/pointvec.h"
 #include "rtengine/util/newtype.h"
 
 #include <cairomm/matrix.h>
@@ -40,6 +41,12 @@ struct Scalar
 {
     // Make constructors available
     using NewType<Space, T>::NewType;
+
+    template <class U>
+    explicit constexpr operator Scalar<Space, U>() const
+    {
+        return Scalar<Space, U>(static_cast<U>(this->value()));
+    }
 };
 
 using WorldScalar = Scalar<WorldSpace, double>;
@@ -65,6 +72,33 @@ struct Point
 
     bool operator==(const Point& other) const { return x == other.x && y == other.y; }
     bool operator!=(const Point& other) const { return !(*this == other); }
+
+    // static_cast<WorldPoint>(IntWorldPoint{})
+    // static_cast<IntWorldPoint>(WorldPoint{})
+    template <class U>
+    explicit operator Point<Space, U>() const
+    {
+        return Point<Space, U>{
+            static_cast<Scalar<Space, U>>(x),
+            static_cast<Scalar<Space, U>>(y)
+        };
+    }
+
+    // static_cast<geom::IntPoint>(IntWorldPoint{})
+    template <class U = T,
+              typename std::enable_if<std::is_same<U, int>::value, int>::type = 0>
+    explicit operator geom::IntPoint() const
+    {
+        return geom::IntPoint{x.value(), y.value()};
+    }
+
+    // static_cast<geom::Point>(WorldPoint{})
+    template <class U = T,
+              typename std::enable_if<std::is_same<U, double>::value, int>::type = 0>
+    explicit operator geom::Point() const
+    {
+        return geom::Point{x.value(), y.value()};
+    }
 
     friend Point operator+(Point point, Vec<Space, T> offset)
     {
@@ -158,6 +192,17 @@ struct Size
         return width == other.width && height == other.height;
     }
     bool operator!=(const Size& other) const { return !(*this == other); }
+
+    // static_cast<WorldSize>(IntWorldSize{})
+    // static_cast<IntWorldSize>(WorldSize{})
+    template <class U>
+    explicit operator Size<Space, U>() const
+    {
+        return Size<Space, U>{
+            static_cast<Scalar<Space, U>>(width),
+            static_cast<Scalar<Space, U>>(height)
+        };
+    }
 
     friend Size operator*(Size size, double scale)
     {

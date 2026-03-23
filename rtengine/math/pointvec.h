@@ -68,10 +68,10 @@ struct Vec
     constexpr double lengthSquared() const { return x * x + y * y; }
     Radians angle() const { return Radians(std::atan2(y, x)); }
 
-    constexpr Vec& operator*=(double scale) { x *= scale; y *= scale; return *this; }
-    constexpr Vec& operator/=(double scale) { x /= scale; y /= scale; return *this; }
-    friend constexpr Vec operator*(Vec v, double scale) { return v *= scale; }
-    friend constexpr Vec operator/(Vec v, double scale) { return v /= scale; }
+    Vec& operator*=(double scale) { x *= scale; y *= scale; return *this; }
+    Vec& operator/=(double scale) { x /= scale; y /= scale; return *this; }
+    friend Vec operator*(Vec v, double scale) { return v *= scale; }
+    friend Vec operator/(Vec v, double scale) { return v /= scale; }
 };
 
 // --- Point ---
