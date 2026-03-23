@@ -145,22 +145,6 @@ if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU" AND CMAKE_CXX_COMPILER_VERSION VERSION_G
     )
 endif()
 
-if(NOT WITH_SYSTEM_KLT)
-    set(RTENGINESOURCEFILES ${RTENGINESOURCEFILES}
-        klt/convolve.cc
-        klt/error.cc
-        klt/klt_util.cc
-        klt/klt.cc
-        klt/pnmio.cc
-        klt/pyramid.cc
-        klt/selectGoodFeatures.cc
-        klt/storeFeatures.cc
-        klt/trackFeatures.cc
-        klt/writeFeatures.cc
-    )
-    set(KLT_LIBRARIES)
-endif()
-
 add_library(rtengine STATIC "${RTENGINESOURCEFILES}")
 
 add_dependencies(rtengine UpdateInfo)
@@ -203,6 +187,7 @@ target_link_libraries(rtengine
         cjson::cjson
         fmt::fmt
         JPEG::JPEG
+        klt::klt
         PkgConfig::CAIROMM
         PkgConfig::EXIV2
         PkgConfig::EXPAT
@@ -228,14 +213,6 @@ if(JXL_FOUND)
     if (JXLTHREADS_FOUND)
         target_link_libraries(rtengine PUBLIC PkgConfig::JXLTHREADS)
     endif()
-endif()
-
-if(NOT WITH_SYSTEM_KLT)
-    target_include_directories(rtengine PUBLIC "${CMAKE_SOURCE_DIR}/rtengine/klt")
-    # Source files are compiled as part of rtengine directly.
-else()
-    target_include_directories(rtengine PUBLIC ${KLT_INCLUDE_DIRS})
-    target_link_libraries(rtengine PUBLIC ${KLT_LIBRARIES})
 endif()
 
 if(OpenMP_CXX_FOUND)
