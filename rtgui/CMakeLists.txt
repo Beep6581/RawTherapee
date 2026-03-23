@@ -10,6 +10,10 @@ set(CLISOURCEFILES
     threadutils.cc
 )
 
+set(RT_GUI_CANVAS_SOURCES
+    canvas/mousegesture.cc
+)
+
 set(RT_GUI_TOOL_PANEL_SOURCES
     tools/bayerpreprocess.cc
     tools/bayerprocess.cc
@@ -191,6 +195,7 @@ set(NONCLISOURCEFILES
     toolpanel.cc
     toolpanelcoord.cc
     zoompanel.cc
+    ${RT_GUI_CANVAS_SOURCES}
     ${RT_GUI_TOOL_PANEL_SOURCES}
     ${RT_GUI_WIDGET_SOURCES}
     ${RT_GUI_WINDOWS_SOURCES}
