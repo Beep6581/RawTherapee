@@ -61,7 +61,12 @@ public:
         ALL = PAN | ZOOM_WITH_SCROLL
     };
 
-    enum class CameraBounds { NONE, IMAGE, FILL };
+    enum class CameraBounds {
+        NONE,        // No bounds
+        IMAGE,       // Image edges cannot cross center of camera
+        FILL,        // Zoom image to fill screen
+        FILL_OR_FIT  // Fit to screen if zoomed out otherwise same as FILL
+    };
 
     Session();
 
@@ -85,13 +90,15 @@ public:
     void setCursorPos(WidgetPoint pos) { m_cursor_pos = pos; }
     void setModifiers(GdkModifierType state) { m_modifiers = state; }
     void setPanZoomFlags(PanZoomFlags flags) { m_pan_zoom_flags = flags; }
+    void setCameraBounds(CameraBounds bounds) { m_bound_mode = bounds; }
 
     // Apply camera bounds before update
     void setCameraBounds(const geom::IntBBox& content, CameraBounds mode);
     void setCamera(const geom::IntBBox& content, const CameraState& new_state);
+    void refreshCamera(const geom::IntBBox& content);
 
-    void zoom11();
-    void zoomFit(WorldPoint top_left, WorldSize img_size);
+    void zoom11() { setCameraZoom(1.0); }
+    void zoomFit(WorldPoint top_left, WorldSize img_size, bool add_margin = true);
 
     void queueDraw() { m_events.signal_queue_draw.emit(); }
     void changeCursorShape(rt::optional<CursorShape> shape);
@@ -101,6 +108,12 @@ public:
     CanvasEvents& canvasEvents() { return m_events; }
 
 private:
+    CameraState adjustToImage(const rt::geom::IntBBox& content,
+                              const CameraState& new_state);
+    CameraState adjustToFill(const rt::geom::IntBBox& content,
+                             const CameraState& new_state);
+    CameraState adjustToFillOrFit(const rt::geom::IntBBox& content,
+                                  const CameraState& new_state);
     void regenerateTransforms();
 
     CanvasEvents m_events;
@@ -154,7 +167,11 @@ public:
     void setCameraZoom(double zoom);
     void setCameraPosZoom(WorldPoint pos, double zoom);
     void setCameraSize(WidgetSize size);
+    void setDeviceScale(int device_scale);
     void setCameraBounds(Session::CameraBounds bounds);
+    void refreshCamera();
+
+    void zoomFit(bool add_margin = true);
 
 private:
     rt::geom::IntBBox buildImageBBox() const;

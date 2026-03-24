@@ -50,6 +50,23 @@ void drawBackground(const DrawContext& context)
         cr, 0, 0, allocated_size.width.value(), allocated_size.height.value());
 }
 
+void drawFrame(const DrawContext& context)
+{
+    const CanvasModel* model = context.model;
+    const auto& cr = context.cr;
+
+    WidgetSize allocated_size = model->session().camera().size;
+
+    auto color = context.canvas->get_style_context()
+        ->get_border_color(Gtk::STATE_FLAG_NORMAL);
+
+    cr->set_source_rgb(color.get_red(), color.get_green(), color.get_blue());
+    cr->set_line_width(1);
+    cr->rectangle(0.5, 0.5, allocated_size.width.value() - 1,
+                  allocated_size.height.value() - 1);
+    cr->stroke();
+}
+
 }  // namespace
 
 void ImageRenderer::onDraw(const DrawContext& context)
@@ -126,6 +143,16 @@ void DebugRenderer::onDraw(const DrawContext& context)
                 3 / camera.zoom, 0, 2 * rt::numbers::pi);
         cr->set_source_rgb(0, 1, 1);
         cr->fill();
+    }
+}
+
+void InspectorRenderer::onDraw(const DrawContext& context)
+{
+    draw(context, [&]() { drawBackground(context); });
+    draw(context, [&]() { m_image_renderer.onDraw(context); });
+
+    if (m_draw_frame) {
+        draw(context, [&]() { drawFrame(context); });
     }
 }
 

@@ -134,7 +134,7 @@ CanvasPlayground::CanvasPlayground()
     });
 
     m_canvas = rt::make_managed<Canvas>(m_canvas_model.get());
-    m_canvas->enablePanZoomTool();
+    m_canvas->enablePanZoom(true);
     m_canvas->setRenderer(m_editor_renderer.get());
     paned->pack1(*m_canvas, true, true);
 
@@ -187,6 +187,7 @@ void CanvasPlayground::setupControls()
     m_camera_bounds->append("Free");
     m_camera_bounds->append("Image");
     m_camera_bounds->append("Fill");
+    m_camera_bounds->append("Fill or Fit");
     m_camera_bounds->set_active(1);
     m_camera_bounds->signal_changed().connect(
         sigc::mem_fun(*this, &CanvasPlayground::onCameraBoundsChanged));
@@ -292,6 +293,8 @@ void CanvasPlayground::onCameraBoundsChanged()
         bounds = Session::CameraBounds::IMAGE;
     } else if (text == "Fill") {
         bounds = Session::CameraBounds::FILL;
+    } else if (text == "Fill or Fit") {
+        bounds = Session::CameraBounds::FILL_OR_FIT;
     }
     m_canvas_model->setCameraBounds(bounds);
 }
@@ -303,9 +306,7 @@ void CanvasPlayground::onZoom11Clicked()
 
 void CanvasPlayground::onZoomFitClicked()
 {
-    const ImageModel& image = m_canvas_model->image();
-    m_canvas_model->session().zoomFit(
-        WorldPoint{}, static_cast<WorldSize>(image.fullSize()));
+    m_canvas_model->zoomFit();
 }
 
 bool CanvasPlayground::onWindowFocusOut(GdkEventFocus* event)

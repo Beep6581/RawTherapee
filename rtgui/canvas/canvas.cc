@@ -60,8 +60,10 @@ GdkModifierType keyvalToModifier(guint keyval)
 
 Canvas::Canvas(CanvasModel* model)
     : Gtk::Widget(),
+      m_renderer(nullptr),
       m_model(model),
       m_scroll_zoom_accum(0),
+      m_camera_zoom_begin(1),
       m_pan(PanningInput::NONE),
       m_is_pan_zoom_enabled(false),
       m_is_cursor_inside_canvas(false)
@@ -282,7 +284,7 @@ void Canvas::onScrollChanged(double dx, double dy)
 
 void Canvas::onZoomBegin(GdkEventSequence* /* sequence */)
 {
-    m_scroll_zoom_accum = 0;
+    m_camera_zoom_begin = m_model->session().camera().zoom;
 }
 
 void Canvas::onZoomChanged(double scale)
@@ -294,7 +296,8 @@ void Canvas::onZoomChanged(double scale)
         WidgetPoint new_cursor_pos{WidgetScalar(x), WidgetScalar(y)};
         m_model->session().setCursorPos(new_cursor_pos);
 
-        updateZoom(scale);
+        double new_zoom = scale * m_camera_zoom_begin;
+        updateZoom(new_zoom);
     }
 }
 
@@ -384,9 +387,12 @@ void Canvas::get_preferred_width_for_height_vfunc(
 void Canvas::on_size_allocate(Gtk::Allocation& allocation)
 {
     set_allocation(allocation);
+
     m_model->setCameraSize(WidgetSize{
         WidgetScalar(static_cast<double>(allocation.get_width())),
         WidgetScalar(static_cast<double>(allocation.get_height()))});
+    signal_widget_size_update.emit();
+
     if(m_gdk_window) {
         m_gdk_window->move_resize(allocation.get_x(), allocation.get_y(),
                                   allocation.get_width(), allocation.get_height());
@@ -438,7 +444,8 @@ void Canvas::on_unrealize()
 
 void Canvas::onScaleFactorChanged()
 {
-    m_model->session().setDeviceScale(get_scale_factor());
+    m_model->setDeviceScale(get_scale_factor());
+    signal_widget_size_update.emit();
 }
 
 bool Canvas::tryPanPendingPress(const ClickContext& context, WidgetPoint pos)

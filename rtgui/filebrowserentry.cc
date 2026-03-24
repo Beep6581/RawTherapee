@@ -340,7 +340,7 @@ bool FileBrowserEntry::motionNotify (int x, int y)
                 inspector->switchImage(filename);
                 wasInside = true;
             }
-            inspector->mouseMove(coord, 0);
+            inspector->mouseMove(coord);
         } else {
             wasInside = false;
         }

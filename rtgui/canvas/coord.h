@@ -424,6 +424,11 @@ inline WorldPoint cameraToWorld(CameraPoint point, const CameraState& camera)
     return SpaceTransform<CameraSpace, WorldSpace>::build(camera)(point);
 }
 
+inline WorldPoint toWorldPoint(geom::Point p)
+{
+    return WorldPoint{WorldScalar(p.x), WorldScalar(p.y)};
+}
+
 }  // namespace canvas
 }  // namespace rt
 
@@ -474,7 +479,7 @@ struct fmt::formatter<rt::canvas::Size<Space, T>>
         auto out = ctx.out();
         out = fmt::format_to(out, "(");
         out = Underlying::format(s.width, ctx);
-        out = fmt::format_to(out, "x ");
+        out = fmt::format_to(out, " x ");
         out = Underlying::format(s.height, ctx);
         out = fmt::format_to(out, ")");
         return out;

@@ -48,6 +48,18 @@ private:
     Flags m_flags;
 };
 
+class InspectorRenderer final : public Renderer
+{
+public:
+    void onDraw(const DrawContext& context) override;
+
+    void setDrawFrame(bool value) { m_draw_frame = value; }
+
+private:
+    ImageRenderer m_image_renderer;
+    bool m_draw_frame = false;
+};
+
 class EditorRenderer final : public Renderer
 {
 public:

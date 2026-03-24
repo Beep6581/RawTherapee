@@ -59,10 +59,12 @@ enum class PanningInput {
 class Canvas final : public Gtk::Widget
 {
 public:
+    using WidgetSizeUpdateSignal = sigc::signal<void()>;
+
     Canvas(CanvasModel* model);
     ~Canvas();
 
-    void enablePanZoomTool() { m_is_pan_zoom_enabled = true; }
+    void enablePanZoom(bool value) { m_is_pan_zoom_enabled = value; }
     void addCursorMonitor(CursorMonitor* listener)
     {
         m_cursor_monitors.push_back(listener);
@@ -73,6 +75,12 @@ public:
 
     bool onKeyPressed(guint keyval, guint keycode, GdkModifierType state);
     void onKeyReleased(guint keyval, guint keycode, GdkModifierType state);
+
+    /**
+     * This signal is emitted whenever the allocated size or device scale of
+     * the canvas changes.
+     */
+    WidgetSizeUpdateSignal signal_widget_size_update;
 
 protected:
     // Custom widget implementation
@@ -139,6 +147,7 @@ private:
     WidgetPoint m_prev_pan_pos;
     WidgetPoint m_drag_start_pos;
     double m_scroll_zoom_accum;
+    double m_camera_zoom_begin;
     PanningInput m_pan;
     bool m_is_pan_zoom_enabled;
     bool m_is_cursor_inside_canvas;
