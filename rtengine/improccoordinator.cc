@@ -1078,12 +1078,8 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                     }
                         params->locallab.spots.at(sp).capradius = caprad[sp];
                         params->locallab.spots.at(sp).deconvAutoRadius = autoradius[sp];
-                        
-                        
-                        
-                 //       params->locallab.spots.at(sp).deconvAutoshar = autocontrast[sp];
+
  
-                       
                         LocallabListener::locallabsharBEF locsharbef;
                         locsharbef.capradiusbef = caprad[sp];
                         locsharbef.autoradiusbef = autoradius[sp];
@@ -1095,7 +1091,8 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                         
                     
                     //end sharp capture
-                    if ((log[sp] && autocomput[sp]) || (cie[sp] && autocie[sp])) {
+
+                    {//begin calculation black_ev, white_ev, sourced, sourceab  
                         constexpr int SCALE = 10;
                         int fw, fh, tr = TR_NONE;
                         imgsrc->getFullSize(fw, fh, tr);
@@ -1121,7 +1118,9 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                             xsta = 0.f;
                             xend = 1.f;
                         }
-                        ipf.getAutoLogloc(sp, imgsrc, sourceg, blackev, whiteev, blackredu, Autogr, sourceab, whits, blacks, whitslog, blackslog, fw, fh, xsta, xend, ysta, yend, SCALE);
+                        if (log[sp] || cie[sp]) {
+                            ipf.getAutoLogloc(sp, imgsrc, sourceg, blackev, whiteev, blackredu, Autogr, sourceab, whits, blacks, whitslog, blackslog, fw, fh, xsta, xend, ysta, yend, SCALE);
+                        }
                         params->locallab.spots.at(sp).blackEv = blackev[sp];
                         params->locallab.spots.at(sp).whiteEv = whiteev[sp];
                         params->locallab.spots.at(sp).blackEvjz = blackev[sp];
