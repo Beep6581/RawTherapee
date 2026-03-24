@@ -8471,7 +8471,7 @@ Locallabcie::Locallabcie():
     greenCurveEditorG(new CurveEditorGroup(App::get().mut_options().lastlocalCurvesDir, M ("TP_COLORAPP_BRIGHT_CUR_GREEN"), 1)),//brightness curve green
     shapegreen(static_cast<DiagonalCurveEditor*>(greenCurveEditorG->addCurve(CT_Diagonal, ""))),
     colorhblue(Gtk::manage(new Adjuster(M("TP_COLORAPP_HUE_BLUE"), -25., 25., 0.1, 0.))),//hue blue
-    schromablue(Gtk::manage(new Adjuster(M("TP_COLORAPP_CHROMA_S_GREEN"), -40.0, 20.0, 0.1, 0.))),//saturation blue
+    schromablue(Gtk::manage(new Adjuster(M("TP_COLORAPP_CHROMA_S_BLUE"), -40.0, 20.0, 0.1, 0.))),//saturation blue
     blueCurveEditorG(new CurveEditorGroup(App::get().mut_options().lastlocalCurvesDir, M ("TP_COLORAPP_BRIGHT_CUR_BLUE"), 1)),//brightness curve blue
     shapeblue(static_cast<DiagonalCurveEditor*>(blueCurveEditorG->addCurve(CT_Diagonal, ""))),
 
