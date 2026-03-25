@@ -1092,7 +1092,7 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                     
                     //end sharp capture
 
-                    {//begin calculation black_ev, white_ev, sourced, sourceab  
+                    {//begin calculation blackev, whiteev, sourceg, sourceab
                         constexpr int SCALE = 10;
                         int fw, fh, tr = TR_NONE;
                         imgsrc->getFullSize(fw, fh, tr);
