@@ -298,6 +298,7 @@ void Canvas::onZoomChanged(double scale)
 
         double new_zoom = scale * m_camera_zoom_begin;
         updateZoom(new_zoom);
+        m_scroll_zoom_accum = 0;
     }
 }
 
@@ -491,9 +492,11 @@ bool Canvas::tryPanScroll(WidgetVec scroll_delta)
 
         constexpr double ZOOM_FACTOR = 1.5;
         if (m_scroll_zoom_accum > 1.0) {
-            updateZoom(1.0 / ZOOM_FACTOR);
+            updateZoom(m_model->session().camera().zoom / ZOOM_FACTOR);
+            m_scroll_zoom_accum = 0;
         } else if (m_scroll_zoom_accum < -1.0) {
-            updateZoom(ZOOM_FACTOR);
+            updateZoom(m_model->session().camera().zoom * ZOOM_FACTOR);
+            m_scroll_zoom_accum = 0;
         }
 
         return true;
@@ -534,19 +537,22 @@ bool Canvas::updatePanWithScroll(WidgetVec delta)
     return true;
 }
 
-void Canvas::updateZoom(double scale)
+void Canvas::updateZoom(double new_zoom)
 {
     Session& session = m_model->session();
     const CameraState& camera = session.camera();
 
-    double new_zoom = camera.zoom * scale;
+    if (new_zoom <= camera.zoom && camera.zoom <= session.minZoom()) return;
+    if (new_zoom >= camera.zoom && camera.zoom >= session.maxZoom()) return;
+
+    new_zoom = rt::clamp(new_zoom, session.minZoom(), session.maxZoom());
+    const double scale = new_zoom / camera.zoom;
 
     WorldPoint anchor_pos = session.widgetToWorldTransform()
         (session.cursorPos());
     WorldVec from_center = anchor_pos - camera.pos;
     WorldPoint new_pos = anchor_pos - from_center / scale;
 
-    m_scroll_zoom_accum = 0;
     m_model->setCameraPosZoom(new_pos, new_zoom);
 }
 

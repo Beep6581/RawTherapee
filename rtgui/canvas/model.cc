@@ -29,7 +29,10 @@ using namespace rt::canvas;
 Session::Session()
     : m_modifiers(GdkModifierType(0)),
       m_cursor_shape(CSArrow),
-      m_pan_zoom_flags(PanZoomFlags::ALL)
+      m_pan_zoom_flags(PanZoomFlags::ALL),
+      m_bound_mode(CameraBounds::NONE),
+      m_min_zoom(0.01),
+      m_max_zoom(256.0)
 {
     regenerateTransforms();
 }
@@ -48,7 +51,7 @@ void Session::setCameraZoom(double zoom)
 {
     if (m_camera.zoom == zoom) return;
 
-    m_camera.zoom = zoom;
+    m_camera.zoom = rt::clamp(zoom, m_min_zoom, m_max_zoom);
     regenerateTransforms();
     m_events.signal_camera_update.emit();
     queueDraw();
@@ -59,7 +62,7 @@ void Session::setCameraPosZoom(WorldPoint pos, double zoom)
     if (m_camera.pos == pos && m_camera.zoom == zoom) return;
 
     m_camera.pos = pos;
-    m_camera.zoom = zoom;
+    m_camera.zoom = rt::clamp(zoom, m_min_zoom, m_max_zoom);
     regenerateTransforms();
     m_events.signal_camera_update.emit();
     queueDraw();
@@ -107,6 +110,7 @@ void Session::setCamera(const geom::IntBBox& content, const CameraState& new_sta
         case CameraBounds::NONE:
         default:
             m_camera = new_state;
+            m_camera.zoom = rt::clamp(m_camera.zoom, m_min_zoom, m_max_zoom);
             break;
     }
 
@@ -156,9 +160,9 @@ CameraState Session::adjustToFill(const geom::IntBBox& content,
     // Adjust zoom to at least fill the screen
     const double width = new_state.size.width.value() * new_state.device_scale;
     const double height = new_state.size.height.value() * new_state.device_scale;
-    const double min_zoom = std::max(width / content_width, height / content_height);
-    if (new_state.zoom < min_zoom) {
-        adjusted.zoom = min_zoom;
+    const double fill_zoom = std::max(width / content_width, height / content_height);
+    if (new_state.zoom < fill_zoom) {
+        adjusted.zoom = rt::clamp(fill_zoom, m_min_zoom, m_max_zoom);
     }
 
     // Prevent image edge from crossing widget edges
@@ -200,8 +204,10 @@ CameraState Session::adjustToFillOrFit(const geom::IntBBox& content,
         adjusted.pos = WorldPoint{
             WorldScalar(content.min().x + content_width / 2.0),
             WorldScalar(content.min().y + content_height / 2.0)};
-        adjusted.zoom = fit_zoom;
+        adjusted.zoom = rt::clamp(fit_zoom, m_min_zoom, m_max_zoom);
     } else {
+        adjusted.zoom = rt::clamp(new_state.zoom, m_min_zoom, m_max_zoom);
+
         // Prevent image edge from crossing widget edges
         if (content_width > (width / adjusted.zoom)) {
             const double margin_x = width / adjusted.zoom / 2.0;

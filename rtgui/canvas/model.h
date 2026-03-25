@@ -77,6 +77,9 @@ public:
     PanZoomFlags panZoomFlags() const { return m_pan_zoom_flags; }
     CameraBounds cameraBounds() const { return m_bound_mode; }
 
+    double minZoom() const { return m_min_zoom; }
+    double maxZoom() const { return m_max_zoom; }
+
     const SpaceTransform<WorldSpace, WidgetSpace>&
     worldToWidgetTransform() const { return m_world_to_widget; }
     const SpaceTransform<WidgetSpace, WorldSpace>&
@@ -128,6 +131,8 @@ private:
     CursorShape m_cursor_shape;
     PanZoomFlags m_pan_zoom_flags;
     CameraBounds m_bound_mode;
+    double m_min_zoom;
+    double m_max_zoom;
 };
 
 class ImageModel

@@ -127,7 +127,7 @@ private:
     bool tryPanScroll(WidgetVec scroll_delta);
     void updatePan(WidgetPoint delta_pos);
     bool updatePanWithScroll(WidgetVec delta);
-    void updateZoom(double scale);
+    void updateZoom(double new_zoom);
     void updateCursorShape();
 
     CursorManager m_cursor_manager;
