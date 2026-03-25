@@ -91,6 +91,9 @@ private:
     void setupControls();
     void setupImageBuffer();
 
+    void onSmoothSensitivityChanged();
+    void onSmoothPanSensitivityChanged();
+
     std::unique_ptr<CanvasModel> m_canvas_model;
 
     std::unique_ptr<StdImageSource> m_img_src;
@@ -105,6 +108,8 @@ private:
     Canvas* m_canvas;
     Gtk::Box* m_control_box;
     Gtk::ComboBoxText* m_camera_bounds;
+    Gtk::Scale m_sense_slider;
+    Gtk::Scale m_pan_sense_slider;
 };
 
 template <class T>
@@ -155,6 +160,11 @@ CanvasPlayground::CanvasPlayground()
     pack_start(*paned, true, true);
 
     show_all();
+
+    m_sense_slider.signal_value_changed().connect(
+        sigc::mem_fun(*this, &CanvasPlayground::onSmoothSensitivityChanged));
+    m_pan_sense_slider.signal_value_changed().connect(
+        sigc::mem_fun(*this, &CanvasPlayground::onSmoothPanSensitivityChanged));
 }
 
 void CanvasPlayground::setupControls()
@@ -192,6 +202,30 @@ void CanvasPlayground::setupControls()
     m_camera_bounds->signal_changed().connect(
         sigc::mem_fun(*this, &CanvasPlayground::onCameraBoundsChanged));
     m_control_box->pack_start(*m_camera_bounds, false, false);
+
+    auto adjustment = Gtk::Adjustment::create(
+        0.2,   // Initial value
+        0.01,  // Minimum
+        2.0,   // Maximum
+        0.01   // Step increment
+    );
+    m_sense_slider.set_adjustment(adjustment);
+    m_sense_slider.set_digits(2);
+    auto sense_label = rt::make_managed<Gtk::Label>("Smooth Scroll Sensitivity");
+    m_control_box->pack_start(*sense_label, false, false);
+    m_control_box->pack_start(m_sense_slider, false, false);
+
+    auto pan_adjustment = Gtk::Adjustment::create(
+        0.5,   // Initial value
+        0.01,  // Minimum
+        2.0,   // Maximum
+        0.01   // Step increment
+    );
+    m_pan_sense_slider.set_adjustment(pan_adjustment);
+    m_pan_sense_slider.set_digits(2);
+    auto pan_sense_label = rt::make_managed<Gtk::Label>("Smooth Scroll Pan Sensitivity");
+    m_control_box->pack_start(*pan_sense_label, false, false);
+    m_control_box->pack_start(m_pan_sense_slider, false, false);
 
     auto zoom11_button = rt::make_managed<Gtk::Button>("Zoom 1:1");
     zoom11_button->signal_clicked().connect(
@@ -283,6 +317,16 @@ void CanvasPlayground::setupImageBuffer()
     img_surface->mark_dirty();
     m_canvas_model->image().setImageSurface(img_surface, img_size);
     m_canvas_model->session().queueDraw();
+}
+
+void CanvasPlayground::onSmoothSensitivityChanged()
+{
+    m_canvas->setSmoothScrollSensitivity(m_sense_slider.get_value());
+}
+
+void CanvasPlayground::onSmoothPanSensitivityChanged()
+{
+    m_canvas->setSmoothScrollPanSensitivity(m_pan_sense_slider.get_value());
 }
 
 void CanvasPlayground::onCameraBoundsChanged()

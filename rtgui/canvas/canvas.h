@@ -65,6 +65,15 @@ public:
     ~Canvas();
 
     void enablePanZoom(bool value) { m_is_pan_zoom_enabled = value; }
+    void setSmoothScrollSensitivity(double multiplier)
+    {
+        m_smooth_scroll_sensitivity = multiplier;
+    }
+    void setSmoothScrollPanSensitivity(double multiplier)
+    {
+        m_smooth_scroll_pan_sensitivity = multiplier;
+    }
+
     void addCursorMonitor(CursorMonitor* listener)
     {
         m_cursor_monitors.push_back(listener);
@@ -102,6 +111,15 @@ protected:
     bool on_draw(const Cairo::RefPtr<Cairo::Context>& cr) override;
 
 private:
+    enum class ScrollUnit { WHEEL, SURFACE };
+    enum class ScrollDirection { NATURAL, REVERSE };
+
+    struct DirtyScrollEvent
+    {
+        ScrollUnit unit = ScrollUnit::WHEEL;
+        bool did_event_begin = false;
+    };
+
     // Event controller slots
     void onEnter(WidgetPoint pos);
     void onMotion(WidgetPoint pos);
@@ -114,6 +132,7 @@ private:
     void onDragUpdate(WidgetVec delta);
     void onDragEnd(WidgetVec delta);
     void onScrollBegin();
+    // TODO(GTK4): Return a boolean instead of void
     void onScrollChanged(double dx, double dy);
     void onZoomBegin(GdkEventSequence* sequence);
     void onZoomChanged(double scale);
@@ -122,6 +141,7 @@ private:
 
     void onCameraUpdate();
 
+    ScrollUnit scrollUnit() const { return m_dirty_scroll.unit; }
     bool isPanning() const;
     bool tryPanPendingPress(const ClickContext& context, WidgetPoint pos);
     bool tryPanScroll(WidgetVec scroll_delta);
@@ -129,6 +149,12 @@ private:
     bool updatePanWithScroll(WidgetVec delta);
     void updateZoom(double new_zoom);
     void updateCursorShape();
+
+    // TODO(GTK4): Use information provided by EventControllerScroll directly
+    //             instead of trying to guess heuristically
+    void onDirtyScrollBegin();
+    void onDirtyScrollChanged(double dx, double dy);
+    void onDirtyScrollEnd();
 
     CursorManager m_cursor_manager;
     MouseGesture m_mouse_gesture;
@@ -143,12 +169,17 @@ private:
     Renderer* m_renderer;
     CanvasModel* m_model;
 
+    DirtyScrollEvent m_dirty_scroll;
+
     // Pan/zoom state
     WidgetPoint m_prev_pan_pos;
     WidgetPoint m_drag_start_pos;
+    double m_smooth_scroll_sensitivity;
+    double m_smooth_scroll_pan_sensitivity;
     double m_scroll_zoom_accum;
     double m_camera_zoom_begin;
     PanningInput m_pan;
+    ScrollDirection m_smooth_scroll_dir;
     bool m_is_pan_zoom_enabled;
     bool m_is_cursor_inside_canvas;
 };
