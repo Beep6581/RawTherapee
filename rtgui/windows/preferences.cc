@@ -25,6 +25,7 @@
 #include "addsetids.h"
 #include "cachemanager.h"
 #include "externaleditorpreferences.h"
+#include "guiutils.h"
 #include "multilangmgr.h"
 #include "preferences.h"
 #include "rtimage.h"
@@ -1176,30 +1177,16 @@ Gtk::Widget* Preferences::getGeneralPanel()
     workflowGrid->attach_next_to(*spotlocalL, *complexityL, Gtk::POS_BOTTOM, 1, 1);
     workflowGrid->attach_next_to(*spotlocal, *complexitylocal, Gtk::POS_BOTTOM, 1, 1);
 
-
-    zoomOnScrollCB = Gtk::manage(new Gtk::CheckButton(M("PREFERENCES_ZOOMONSCROLL")));
-    setExpandAlignProperties(zoomOnScrollCB, false, false, Gtk::ALIGN_START, Gtk::ALIGN_BASELINE);
-    //workflowGrid->attach_next_to(*zoomOnScrollCB, *complexityL, Gtk::POS_BOTTOM, 1, 1);
-    workflowGrid->attach_next_to(*zoomOnScrollCB, *spotlocalL, Gtk::POS_BOTTOM, 1, 1);
-
-    inspectorWindowCB = Gtk::manage(new Gtk::CheckButton(M("PREFERENCES_INSPECTORWINDOW")));
-    setExpandAlignProperties(inspectorWindowCB, false, false, Gtk::ALIGN_START, Gtk::ALIGN_BASELINE);
-   // workflowGrid->attach_next_to(*inspectorWindowCB, *complexitylocal, Gtk::POS_BOTTOM, 1, 1);
-    workflowGrid->attach_next_to(*inspectorWindowCB, *spotlocal, Gtk::POS_BOTTOM, 1, 1);
-    Gtk::Label* inspectorNextStartL = Gtk::manage(new Gtk::Label(Glib::ustring("(") + M("PREFERENCES_APPLNEXTSTARTUP") + ")"));
-    setExpandAlignProperties(inspectorNextStartL, false, false, Gtk::ALIGN_START, Gtk::ALIGN_BASELINE);
-    workflowGrid->attach_next_to(*inspectorNextStartL, *inspectorWindowCB, Gtk::POS_RIGHT, 1, 1);
-
     ckbHistogramPositionLeft = Gtk::manage(new Gtk::CheckButton(M("PREFERENCES_HISTOGRAMPOSITIONLEFT")));
     setExpandAlignProperties(ckbHistogramPositionLeft, false, false, Gtk::ALIGN_START, Gtk::ALIGN_BASELINE);
-    workflowGrid->attach_next_to(*ckbHistogramPositionLeft, *zoomOnScrollCB, Gtk::POS_BOTTOM, 1, 1);
+    workflowGrid->attach_next_to(*ckbHistogramPositionLeft, *spotlocalL, Gtk::POS_BOTTOM, 1, 1);
 
     ckbFileBrowserToolbarSingleRow = Gtk::manage(new Gtk::CheckButton(M("PREFERENCES_FILEBROWSERTOOLBARSINGLEROW")));
     setExpandAlignProperties(ckbFileBrowserToolbarSingleRow, false, false, Gtk::ALIGN_START, Gtk::ALIGN_START);
     ckbShowFilmStripToolBar = Gtk::manage(new Gtk::CheckButton(M("PREFERENCES_SHOWFILMSTRIPTOOLBAR")));
     setExpandAlignProperties(ckbShowFilmStripToolBar, false, false, Gtk::ALIGN_START, Gtk::ALIGN_START);
     workflowGrid->attach_next_to(*ckbFileBrowserToolbarSingleRow, *ckbHistogramPositionLeft, Gtk::POS_BOTTOM, 1, 1);
-    workflowGrid->attach_next_to(*ckbShowFilmStripToolBar, *inspectorWindowCB, Gtk::POS_BOTTOM, 2, 1);
+    workflowGrid->attach_next_to(*ckbShowFilmStripToolBar, *spotlocal, Gtk::POS_BOTTOM, 2, 1);
 
     Gtk::Label* hb4label = Gtk::manage(new Gtk::Label(M("PREFERENCES_TP_LABEL")));
     setExpandAlignProperties(hb4label, false, false, Gtk::ALIGN_START, Gtk::ALIGN_BASELINE);
@@ -1226,6 +1213,11 @@ Gtk::Widget* Preferences::getGeneralPanel()
     fworklflow->add(*workflowGrid);
 
     vbGeneral->attach_next_to (*fworklflow, Gtk::POS_TOP, 2, 1);
+
+    // ---------------------------------------------
+
+    auto feditorinspector = setupEditorInspectorSettings();
+    vbGeneral->attach_next_to(*feditorinspector, *fworklflow, Gtk::POS_BOTTOM, 2, 1);
 
     // ---------------------------------------------
 
@@ -1265,7 +1257,7 @@ Gtk::Widget* Preferences::getGeneralPanel()
     langGrid->attach_next_to(*languages, *langlab, Gtk::POS_RIGHT, 1, 1);
     langGrid->attach_next_to(*langw, *languages, Gtk::POS_RIGHT, 1, 1);
     flang->add(*langGrid);
-    vbGeneral->attach_next_to (*flang, *fworklflow, Gtk::POS_BOTTOM, 2, 1);
+    vbGeneral->attach_next_to (*flang, *feditorinspector, Gtk::POS_BOTTOM, 2, 1);
 
     // Appearance ---------------------------------------------
 
@@ -2063,6 +2055,12 @@ void Preferences::storePreferences()
 
     moptions.inspectorWindow = inspectorWindowCB->get_active();
     moptions.zoomOnScroll = zoomOnScrollCB->get_active();
+    moptions.reverseScrollDir = reverseScrollCB->get_active();
+    moptions.smoothScrollSensitivity =
+        static_cast<int>(smoothScrollSensitivity->get_value());
+    moptions.smoothScrollPanSensitivity =
+        static_cast<int>(smoothScrollPanSensitivity->get_value());
+
     moptions.histogramPosition = ckbHistogramPositionLeft->get_active() ? 1 : 2;
     moptions.FileBrowserToolbarSingleRow = ckbFileBrowserToolbarSingleRow->get_active();
     moptions.showFilmStripToolBar = ckbShowFilmStripToolBar->get_active();
@@ -2107,7 +2105,6 @@ void Preferences::storePreferences()
 
 void Preferences::fillPreferences()
 {
-
     tconn.block(true);
     fconn.block(true);
     cpfconn.block(true);
@@ -2289,6 +2286,9 @@ void Preferences::fillPreferences()
     spotlocal->set_active(moptions.spotmet);
     inspectorWindowCB->set_active(moptions.inspectorWindow);
     zoomOnScrollCB->set_active(moptions.zoomOnScroll);
+    reverseScrollCB->set_active(moptions.reverseScrollDir);
+    smoothScrollSensitivity->set_value(moptions.smoothScrollSensitivity);
+    smoothScrollPanSensitivity->set_value(moptions.smoothScrollPanSensitivity);
 
     ckbHistogramPositionLeft->set_active(moptions.histogramPosition == 1);
     ckbFileBrowserToolbarSingleRow->set_active(moptions.FileBrowserToolbarSingleRow);
@@ -2369,21 +2369,6 @@ void Preferences::fillPreferences()
     thumbnailRankColorMode->set_active(moptions.thumbnailRankColorMode == Options::ThumbnailPropertyMode::XMP);
 }
 
-/*
-void Preferences::loadPressed () {
-
-    moptions.copyFrom (&options);
-    fillPreferences ();
-}
-
-void Preferences::savePressed () {
-
-    storePreferences ();
-    options.copyFrom (&moptions);
-    Options::save ();
-}
-*/
-
 void Preferences::autoMonProfileToggled()
 {
     monProfile->set_sensitive(!cbAutoMonProfile->get_active());
@@ -2417,6 +2402,7 @@ void Preferences::okPressed()
 
     try {
         Options::save();
+        App::get().signal_preferences_changed().emit();
     } catch (Options::Error &e) {
         Gtk::MessageDialog msgd(getToplevelWindow(this), e.get_msg(), true, Gtk::MESSAGE_WARNING, Gtk::BUTTONS_CLOSE, true);
         msgd.run();
@@ -2935,4 +2921,86 @@ void Preferences::onResetToDefaultClicked()
         App::get().mut_options().copyFrom(&moptions);
         App::get().mut_options().save();
     }
+}
+
+Gtk::Widget* Preferences::setupEditorInspectorSettings()
+{
+    const Glib::ustring restart_app_text =
+        Glib::ustring("(") + M("PREFERENCES_APPLNEXTSTARTUP") + ")";
+
+    auto frame = rt::make_managed<Gtk::Frame>(M("PREFERENCES_INSPECTOR"));
+    setExpandAlignProperties(frame, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_START);
+
+    auto grid = rt::make_managed<Gtk::Grid>();
+    grid->set_column_spacing(4);
+    grid->set_row_spacing(4);
+    setExpandAlignProperties(grid, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_FILL);
+
+    auto setup = [](Gtk::Widget* widget) {
+        setExpandAlignProperties(widget, false, false, Gtk::ALIGN_START,
+                                 Gtk::ALIGN_BASELINE);
+    };
+
+    inspectorWindowCB =
+        rt::make_managed<Gtk::CheckButton>(M("PREFERENCES_INSPECTORWINDOW"));
+    setup(inspectorWindowCB);
+    grid->attach_next_to(*inspectorWindowCB, Gtk::POS_TOP, 1, 1);
+
+    auto inspectorNextStartL = rt::make_managed<Gtk::Label>(restart_app_text);
+    setup(inspectorNextStartL);
+    grid->attach_next_to(*inspectorNextStartL, *inspectorWindowCB, Gtk::POS_RIGHT, 1, 1);
+
+    zoomOnScrollCB = rt::make_managed<Gtk::CheckButton>(M("PREFERENCES_ZOOMONSCROLL"));
+    setup(zoomOnScrollCB);
+    grid->attach_next_to(*zoomOnScrollCB, *inspectorWindowCB, Gtk::POS_BOTTOM, 1, 1);
+
+    reverseScrollCB = rt::make_managed<Gtk::CheckButton>(M("PREFERENCES_REVERSE_SCROLL"));
+    setup(reverseScrollCB);
+    grid->attach_next_to(*reverseScrollCB, *zoomOnScrollCB, Gtk::POS_RIGHT, 1, 1);
+
+    auto scaleGrid = rt::make_managed<Gtk::Grid>();
+    scaleGrid->set_column_spacing(4);
+    scaleGrid->set_row_spacing(4);
+    setExpandAlignProperties(scaleGrid, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_FILL);
+
+    auto scrollLabel = rt::make_managed<Gtk::Label>(
+        M("PREFERENCES_SMOOTH_SCROLL_SENSITIVITY"));
+    smoothScrollSensitivity = rt::make_managed<MyHScale>();
+    setup(scrollLabel);
+    setExpandAlignProperties(smoothScrollSensitivity, true, true,
+                             Gtk::ALIGN_FILL, Gtk::ALIGN_FILL);
+    auto scrollAdjustment = Gtk::Adjustment::create(
+        Options::SMOOTH_SCROLL_SENSITIVITY_DEFAULT,
+        Options::SMOOTH_SCROLL_SENSITIVITY_MIN,
+        Options::SMOOTH_SCROLL_SENSITIVITY_MAX,
+        1.0,
+        1.0);
+    smoothScrollSensitivity->set_adjustment(scrollAdjustment);
+    smoothScrollSensitivity->set_digits(0);
+    scaleGrid->attach_next_to(*scrollLabel, Gtk::POS_TOP, 1, 1);
+    scaleGrid->attach_next_to(*smoothScrollSensitivity, *scrollLabel,
+                              Gtk::POS_RIGHT, 1, 1);
+
+    auto panScrollLabel = rt::make_managed<Gtk::Label>(
+        M("PREFERENCES_SMOOTH_SCROLL_PAN_SENSITIVITY"));
+    smoothScrollPanSensitivity = rt::make_managed<MyHScale>();
+    setup(panScrollLabel);
+    setExpandAlignProperties(smoothScrollPanSensitivity, true, true,
+                             Gtk::ALIGN_FILL, Gtk::ALIGN_FILL);
+    auto panScrollAdjustment = Gtk::Adjustment::create(
+        Options::SMOOTH_SCROLL_PAN_SENSITIVITY_DEFAULT,
+        Options::SMOOTH_SCROLL_PAN_SENSITIVITY_MIN,
+        Options::SMOOTH_SCROLL_PAN_SENSITIVITY_MAX,
+        1.0,
+        1.0);
+    smoothScrollPanSensitivity->set_adjustment(panScrollAdjustment);
+    smoothScrollPanSensitivity->set_digits(0);
+    scaleGrid->attach_next_to(*panScrollLabel, *scrollLabel, Gtk::POS_BOTTOM, 1, 1);
+    scaleGrid->attach_next_to(*smoothScrollPanSensitivity, *panScrollLabel,
+                              Gtk::POS_RIGHT, 1, 1);
+
+    grid->attach_next_to(*scaleGrid, *zoomOnScrollCB, Gtk::POS_BOTTOM, 2, 1);
+
+    frame->add(*grid);
+    return frame;
 }

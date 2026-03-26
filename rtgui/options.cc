@@ -33,6 +33,7 @@
 #include "version.h"
 
 #include "rtengine/procparams.h"
+#include "rtengine/rtapp.h"
 #include "rtengine/rtengine.h"
 #include "rtengine/utils.h"
 
@@ -508,6 +509,10 @@ void Options::setDefaults()
 
     inspectorWindow = false;
     zoomOnScroll = true;
+    reverseScrollDir = false;
+    smoothScrollSensitivity = SMOOTH_SCROLL_SENSITIVITY_DEFAULT;
+    smoothScrollPanSensitivity = SMOOTH_SCROLL_PAN_SENSITIVITY_DEFAULT;
+
     prevdemo = PD_Sidecar;
 
     rgbDenoiseThreadLimit = 0;
@@ -1804,9 +1809,26 @@ void Options::readFromFile(Glib::ustring fname)
                 if (keyFile.has_key("GUI", "ZoomOnScroll")) {
                     zoomOnScroll = keyFile.get_boolean("GUI", "ZoomOnScroll");
                 }
+
                 if (keyFile.has_key("GUI", "MaxZoom")) {
                     maxZoomLimit = static_cast<MaxZoom>(keyFile.get_integer("GUI", "MaxZoom"));
                 }
+
+                if (keyFile.has_key("GUI", "ReverseSmoothScrollDirection")) {
+                    reverseScrollDir =
+                        keyFile.get_boolean("GUI", "ReverseSmoothScrollDirection");
+                }
+
+                if (keyFile.has_key("GUI", "SmoothScrollSensitivity")) {
+                    smoothScrollSensitivity =
+                        keyFile.get_integer("GUI", "SmoothScrollSensitivity");
+                }
+
+                if (keyFile.has_key("GUI", "SmoothScrollPanSensitivity")) {
+                    smoothScrollPanSensitivity =
+                        keyFile.get_integer("GUI", "SmoothScrollPanSensitivity");
+                }
+
             }
 
             if (keyFile.has_group("Crop Settings")) {
@@ -2687,6 +2709,10 @@ void Options::saveToFile(Glib::ustring fname)
         keyFile.set_boolean("GUI", "InspectorWindow", inspectorWindow);
         keyFile.set_boolean("GUI", "ZoomOnScroll", zoomOnScroll);
         keyFile.set_integer("GUI", "MaxZoom", static_cast<int>(maxZoomLimit));
+        keyFile.set_boolean("GUI", "ReverseSmoothScrollDirection", reverseScrollDir);
+        keyFile.set_integer("GUI", "SmoothScrollSensitivity", smoothScrollSensitivity);
+        keyFile.set_integer("GUI", "SmoothScrollPanSensitivity",
+                            smoothScrollPanSensitivity);
 
         //Glib::ArrayHandle<int> crvopen = crvOpen;
         //keyFile.set_integer_list ("GUI", "CurvePanelsExpanded", crvopen);
@@ -3070,11 +3096,12 @@ void Options::load(bool lightweight)
     langMgr.load(options.language, {localeTranslation, languageTranslation, defaultTranslation});
 
     rtengine::init(&options.rtSettings, App::get().argv0(), rtdir, !lightweight);
+
+    App::get().signal_preferences_changed().emit();
 }
 
 void Options::save()
 {
-
     App::get().mut_options().saveToFile(Glib::build_filename(rtdir, "options"));
 }
 

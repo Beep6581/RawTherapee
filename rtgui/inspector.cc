@@ -30,6 +30,7 @@
 
 #include "rtengine/previewimage.h"
 #include "rtengine/rt_math.h"
+#include "rtengine/rtapp.h"
 #include "rtengine/util/cpp.h"
 
 using namespace rt::canvas;
@@ -63,7 +64,7 @@ Inspector::Inspector()
 
     m_canvas = rt::make_managed<Canvas>(m_canvas_model.get());
     m_canvas->setRenderer(m_renderer.get());
-    m_canvas->enablePanZoom(true);
+    onPreferencesChanged();  // Configure pan zoom based on options
     m_canvas->signal_widget_size_update.connect(
         sigc::mem_fun(*this, &Inspector::onCanvasSizeChanged));
     pack_start(*m_canvas, true, true);
@@ -102,11 +103,16 @@ Inspector::Inspector()
         m_window->set_size_request(500, 500);
         m_window->fullscreen();
 
+        m_canvas->enablePanZoom(true);
+
         m_is_initialized = false;  // Delay init to avoid flickering on some systems
         m_is_active = true;  // Always track inspected thumbnails
     } else {
         m_renderer->setDrawFrame(true);
     }
+
+    App::get().signal_preferences_changed().connect(
+        sigc::mem_fun(*this, &Inspector::onPreferencesChanged));
 }
 
 Inspector::~Inspector() = default;
@@ -233,6 +239,22 @@ bool Inspector::onWindowFocusOut(GdkEventFocus* event)
 void Inspector::onCanvasSizeChanged()
 {
     m_canvas_model->zoomFit(NO_PADDING);
+}
+
+void Inspector::onPreferencesChanged()
+{
+    const auto& options = App::get().options();
+
+    m_canvas->setScrollMode(options.zoomOnScroll ? ScrollMode::ZOOM : ScrollMode::PAN);
+    m_canvas->setSmoothScrollDirection(
+        options.reverseScrollDir
+        ? ScrollDirection::REVERSE : ScrollDirection::NATURAL);
+    m_canvas->setSmoothScrollSensitivity(
+        static_cast<double>(options.smoothScrollSensitivity)
+        / Options::SMOOTH_SCROLL_SENSITIVITY_FACTOR);
+    m_canvas->setSmoothScrollPanSensitivity(
+        static_cast<double>(options.smoothScrollPanSensitivity)
+        / Options::SMOOTH_SCROLL_PAN_SENSITIVITY_FACTOR);
 }
 
 void Inspector::mouseMove(rtengine::Coord2D pos)

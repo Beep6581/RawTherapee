@@ -342,6 +342,17 @@ public:
 
     bool inspectorWindow; // open inspector in separate window
     bool zoomOnScroll;    // translate scroll events to zoom
+    bool reverseScrollDir;
+    int smoothScrollSensitivity;
+    int smoothScrollPanSensitivity;
+    static constexpr int SMOOTH_SCROLL_SENSITIVITY_FACTOR = 100;
+    static constexpr int SMOOTH_SCROLL_SENSITIVITY_MIN = 1;
+    static constexpr int SMOOTH_SCROLL_SENSITIVITY_MAX = 200;
+    static constexpr int SMOOTH_SCROLL_SENSITIVITY_DEFAULT = 20;
+    static constexpr int SMOOTH_SCROLL_PAN_SENSITIVITY_FACTOR = 1000;
+    static constexpr int SMOOTH_SCROLL_PAN_SENSITIVITY_MIN = 1;
+    static constexpr int SMOOTH_SCROLL_PAN_SENSITIVITY_MAX = 200;
+    static constexpr int SMOOTH_SCROLL_PAN_SENSITIVITY_DEFAULT = 50;
 
     std::vector<double> thumbnailZoomRatios;
     bool overlayedFileNames;

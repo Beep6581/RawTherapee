@@ -82,6 +82,8 @@ private:
     bool onKeyPressed(guint keyval, guint keycode, GdkModifierType state);
     void onKeyReleased(guint keyval, guint keycode, GdkModifierType state);
 
+    void onPreferencesChanged();
+
 public:
     Inspector();
     ~Inspector();

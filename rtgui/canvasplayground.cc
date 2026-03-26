@@ -218,25 +218,21 @@ void CanvasPlayground::setupControls()
     m_control_box->pack_start(*zoom_fit_button, false, false);
 
     auto adjustment = Gtk::Adjustment::create(
-        0.2,   // Initial value
-        0.01,  // Minimum
-        2.0,   // Maximum
-        0.01   // Step increment
-    );
+        Options::SMOOTH_SCROLL_SENSITIVITY_DEFAULT,
+        Options::SMOOTH_SCROLL_SENSITIVITY_MIN,
+        Options::SMOOTH_SCROLL_SENSITIVITY_MAX);
     m_sense_slider.set_adjustment(adjustment);
-    m_sense_slider.set_digits(2);
+    m_sense_slider.set_digits(0);
     auto sense_label = rt::make_managed<Gtk::Label>("Smooth Scroll Sensitivity");
     m_control_box->pack_start(*sense_label, false, false);
     m_control_box->pack_start(m_sense_slider, false, false);
 
     auto pan_adjustment = Gtk::Adjustment::create(
-        0.5,   // Initial value
-        0.01,  // Minimum
-        2.0,   // Maximum
-        0.01   // Step increment
-    );
+        Options::SMOOTH_SCROLL_PAN_SENSITIVITY_DEFAULT,
+        Options::SMOOTH_SCROLL_PAN_SENSITIVITY_MIN,
+        Options::SMOOTH_SCROLL_PAN_SENSITIVITY_MAX);
     m_pan_sense_slider.set_adjustment(pan_adjustment);
-    m_pan_sense_slider.set_digits(2);
+    m_pan_sense_slider.set_digits(0);
     auto pan_sense_label = rt::make_managed<Gtk::Label>("Smooth Scroll Pan Sensitivity");
     m_control_box->pack_start(*pan_sense_label, false, false);
     m_control_box->pack_start(m_pan_sense_slider, false, false);
@@ -336,12 +332,14 @@ void CanvasPlayground::setupImageBuffer()
 
 void CanvasPlayground::onSmoothSensitivityChanged()
 {
-    m_canvas->setSmoothScrollSensitivity(m_sense_slider.get_value());
+    m_canvas->setSmoothScrollSensitivity(
+        m_sense_slider.get_value() / Options::SMOOTH_SCROLL_SENSITIVITY_FACTOR);
 }
 
 void CanvasPlayground::onSmoothPanSensitivityChanged()
 {
-    m_canvas->setSmoothScrollPanSensitivity(m_pan_sense_slider.get_value());
+    m_canvas->setSmoothScrollPanSensitivity(
+        m_pan_sense_slider.get_value() / Options::SMOOTH_SCROLL_PAN_SENSITIVITY_FACTOR);
 }
 
 void CanvasPlayground::onCameraBoundsChanged()

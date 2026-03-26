@@ -63,8 +63,8 @@ Canvas::Canvas(CanvasModel* model)
     : Gtk::Widget(),
       m_renderer(nullptr),
       m_model(model),
-      m_smooth_scroll_sensitivity(0.2),
-      m_smooth_scroll_pan_sensitivity(0.5),
+      m_smooth_scroll_sensitivity(1),
+      m_smooth_scroll_pan_sensitivity(1),
       m_scroll_zoom_accum(0),
       m_camera_zoom_begin(1),
       m_pan(PanningInput::NONE),
@@ -675,7 +675,7 @@ void Canvas::updatePanWithScroll(WidgetVec delta)
 
     double pan_sensitivity = 0.1;
     if (scrollUnit() == ScrollUnit::SURFACE) {
-        pan_sensitivity = m_smooth_scroll_pan_sensitivity / 10.0;
+        pan_sensitivity = m_smooth_scroll_pan_sensitivity;
         if (m_smooth_scroll_dir == ScrollDirection::NATURAL) {
             pan_sensitivity *= -1.0;
         }
