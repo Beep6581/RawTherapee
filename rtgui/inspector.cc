@@ -235,24 +235,6 @@ void Inspector::onCanvasSizeChanged()
     m_canvas_model->zoomFit(NO_PADDING);
 }
 
-// TODO: Reimplement zoomOnScroll
-// bool Inspector::on_scroll_event(GdkEventScroll* event)
-// {
-//     const auto& options = App::get().options();
-//     if ((options.zoomOnScroll && !alt) || (!options.zoomOnScroll && alt)) {
-//         // zoom
-//         beginZoom(event->x, event->y);
-//         if (std::fabs(delta_y) > std::fabs(delta_x))
-//             on_zoom_scale_changed(1.0 - (double)delta_y / imH / deviceScale);
-//         else
-//             on_zoom_scale_changed(1.0 - (double)delta_x / imW / deviceScale);
-//         return true;
-//     }
-//
-//     // scroll
-//     moveCenter(delta_x, delta_y, imW, imH, deviceScale);
-// }
-
 void Inspector::mouseMove(rtengine::Coord2D pos)
 {
     if (!m_is_active) return;

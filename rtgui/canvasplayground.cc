@@ -93,6 +93,8 @@ private:
 
     void onSmoothSensitivityChanged();
     void onSmoothPanSensitivityChanged();
+    void onScrollDirectionToggled();
+    void onScrollModeToggled();
 
     std::unique_ptr<CanvasModel> m_canvas_model;
 
@@ -110,6 +112,8 @@ private:
     Gtk::ComboBoxText* m_camera_bounds;
     Gtk::Scale m_sense_slider;
     Gtk::Scale m_pan_sense_slider;
+    Gtk::CheckButton* m_scroll_dir_button;
+    Gtk::CheckButton* m_scroll_mode_button;
 };
 
 template <class T>
@@ -203,6 +207,16 @@ void CanvasPlayground::setupControls()
         sigc::mem_fun(*this, &CanvasPlayground::onCameraBoundsChanged));
     m_control_box->pack_start(*m_camera_bounds, false, false);
 
+    auto zoom11_button = rt::make_managed<Gtk::Button>("Zoom 1:1");
+    zoom11_button->signal_clicked().connect(
+        sigc::mem_fun(*this, &CanvasPlayground::onZoom11Clicked));
+    m_control_box->pack_start(*zoom11_button, false, false);
+
+    auto zoom_fit_button = rt::make_managed<Gtk::Button>("Zoom Fit");
+    zoom_fit_button->signal_clicked().connect(
+        sigc::mem_fun(*this, &CanvasPlayground::onZoomFitClicked));
+    m_control_box->pack_start(*zoom_fit_button, false, false);
+
     auto adjustment = Gtk::Adjustment::create(
         0.2,   // Initial value
         0.01,  // Minimum
@@ -227,15 +241,16 @@ void CanvasPlayground::setupControls()
     m_control_box->pack_start(*pan_sense_label, false, false);
     m_control_box->pack_start(m_pan_sense_slider, false, false);
 
-    auto zoom11_button = rt::make_managed<Gtk::Button>("Zoom 1:1");
-    zoom11_button->signal_clicked().connect(
-        sigc::mem_fun(*this, &CanvasPlayground::onZoom11Clicked));
-    m_control_box->pack_start(*zoom11_button, false, false);
+    m_scroll_dir_button =
+        rt::make_managed<Gtk::CheckButton>("Reverse smooth scroll direction");
+    m_scroll_dir_button->signal_clicked().connect(
+        sigc::mem_fun(*this, &CanvasPlayground::onScrollDirectionToggled));
+    m_control_box->pack_start(*m_scroll_dir_button);
 
-    auto zoom_fit_button = rt::make_managed<Gtk::Button>("Zoom Fit");
-    zoom_fit_button->signal_clicked().connect(
-        sigc::mem_fun(*this, &CanvasPlayground::onZoomFitClicked));
-    m_control_box->pack_start(*zoom_fit_button, false, false);
+    m_scroll_mode_button = rt::make_managed<Gtk::CheckButton>("Pan on scroll");
+    m_scroll_mode_button->signal_clicked().connect(
+        sigc::mem_fun(*this, &CanvasPlayground::onScrollModeToggled));
+    m_control_box->pack_start(*m_scroll_mode_button);
 
     auto text_entry = rt::make_managed<Gtk::Entry>();
     m_control_box->pack_start(*text_entry, false, false);
@@ -351,6 +366,24 @@ void CanvasPlayground::onZoom11Clicked()
 void CanvasPlayground::onZoomFitClicked()
 {
     m_canvas_model->zoomFit();
+}
+
+void CanvasPlayground::onScrollDirectionToggled()
+{
+    if (m_scroll_dir_button->get_active()) {
+        m_canvas->setSmoothScrollDirection(ScrollDirection::REVERSE);
+    } else {
+        m_canvas->setSmoothScrollDirection(ScrollDirection::NATURAL);
+    }
+}
+
+void CanvasPlayground::onScrollModeToggled()
+{
+    if (m_scroll_mode_button->get_active()) {
+        m_canvas->setScrollMode(ScrollMode::PAN);
+    } else {
+        m_canvas->setScrollMode(ScrollMode::ZOOM);
+    }
 }
 
 bool CanvasPlayground::onWindowFocusOut(GdkEventFocus* event)

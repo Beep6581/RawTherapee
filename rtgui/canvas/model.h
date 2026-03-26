@@ -51,15 +51,27 @@ struct CanvasEvents
 class Session
 {
 public:
+    // clang-format off
     enum class PanZoomFlags {
-        PRIMARY_BUTTON_PAN = (1 << 0),
-        MIDDLE_BUTTON_PAN = (1 << 1),
-        SPACE_KEY_PAN = (1 << 2),
-        ZOOM_WITH_SCROLL = (1 << 3),
+        PRIMARY_BUTTON_PAN   = (1 << 0),
+        MIDDLE_BUTTON_PAN    = (1 << 1),
+        SPACE_KEY_PAN        = (1 << 2),
+        PAN_WITH_SCROLL      = (1 << 3),
+        PAN_WITH_MOD_SCROLL  = (1 << 4),
+        ZOOM_WITH_SCROLL     = (1 << 5),
+        ZOOM_WITH_MOD_SCROLL = (1 << 6),
         // Aggregate masks
-        PAN = PRIMARY_BUTTON_PAN | MIDDLE_BUTTON_PAN | SPACE_KEY_PAN,
-        ALL = PAN | ZOOM_WITH_SCROLL
+        PAN    = PRIMARY_BUTTON_PAN | MIDDLE_BUTTON_PAN | SPACE_KEY_PAN
+                 | PAN_WITH_SCROLL | PAN_WITH_MOD_SCROLL,
+
+        ZOOM   = ZOOM_WITH_SCROLL | ZOOM_WITH_MOD_SCROLL,
+
+        SCROLL = PAN_WITH_SCROLL | PAN_WITH_MOD_SCROLL
+                 | ZOOM_WITH_SCROLL | ZOOM_WITH_MOD_SCROLL,
+
+        ALL    = PAN | ZOOM
     };
+    // clang-format on
 
     enum class CameraBounds {
         NONE,        // No bounds

@@ -37,6 +37,7 @@ using PanZoomFlags = Session::PanZoomFlags;
 
 constexpr CursorShape PAN_CURSOR = CSHandClosed;
 constexpr double NATURAL_ASPECT_RATIO = 16.0 / 9.0;
+constexpr double ZOOM_FACTOR = 1.5;
 
 GdkModifierType keyvalToModifier(guint keyval)
 {
@@ -68,6 +69,7 @@ Canvas::Canvas(CanvasModel* model)
       m_camera_zoom_begin(1),
       m_pan(PanningInput::NONE),
       m_smooth_scroll_dir(ScrollDirection::NATURAL),
+      m_scroll_mode(ScrollMode::ZOOM),
       m_is_pan_zoom_enabled(false),
       m_is_cursor_inside_canvas(false)
 {
@@ -284,7 +286,7 @@ void Canvas::onScrollChanged(double dx, double dy)
 {
     WidgetVec delta{WidgetScalar(dx), WidgetScalar(dy)};
 
-    if (tryPanScroll(delta)) return;
+    if (tryPanZoomScroll(delta)) return;
 }
 
 void Canvas::onZoomBegin(GdkEventSequence* /* sequence */)
@@ -479,25 +481,58 @@ bool Canvas::tryPanPendingPress(const ClickContext& context, WidgetPoint pos)
     return false;
 }
 
-bool Canvas::tryPanScroll(WidgetVec scroll_delta)
+bool Canvas::tryPanZoomScroll(WidgetVec scroll_delta)
 {
     if (!m_is_pan_zoom_enabled) return false;
 
-    constexpr double ZOOM_FACTOR = 1.5;
-    GdkModifierType state = m_model->session().modifiers();
+    if (m_scroll_mode == ScrollMode::PAN) {
+        tryPanScroll(scroll_delta);
+    } else {
+        tryZoomScroll(scroll_delta);
+    }
 
-    if (scrollUnit() == ScrollUnit::SURFACE) {
-        if (state & GDK_MOD1_MASK) {
-            return updatePanWithScroll(scroll_delta);
-        } else {
+    return false;
+}
+
+bool Canvas::tryZoomScroll(WidgetVec scroll_delta)
+{
+    const Session& session = m_model->session();
+    const CameraState& camera = session.camera();
+    const PanZoomFlags flags = session.panZoomFlags();
+    const GdkModifierType state = session.modifiers();
+    const bool is_smooth = scrollUnit() == ScrollUnit::SURFACE;
+
+    auto allow = [&](PanZoomFlags test) { return rt::any(flags & test); };
+
+    if (is_smooth) {
+        if (allow(PanZoomFlags::PAN_WITH_MOD_SCROLL)) {
+            if (state & GDK_CONTROL_MASK) {
+                scroll_delta.x = WidgetScalar(0);
+                updatePanWithScroll(scroll_delta);
+                m_scroll_zoom_accum = 0;
+                return true;
+            } else if (state & GDK_SHIFT_MASK) {
+                scroll_delta.x = scroll_delta.y;
+                scroll_delta.y = WidgetScalar(0);
+                updatePanWithScroll(scroll_delta);
+                m_scroll_zoom_accum = 0;
+                return true;
+            } else if (state & GDK_MOD1_MASK) {
+                updatePanWithScroll(scroll_delta);
+                m_scroll_zoom_accum = 0;
+                return true;
+            }
+        }
+
+        if (allow(PanZoomFlags::ZOOM_WITH_SCROLL)) {
             m_scroll_zoom_accum += scroll_delta.y.value();
 
             if (m_scroll_zoom_accum >= 1.0) {
-                updateZoom(m_model->session().camera().zoom / ZOOM_FACTOR);
+                updateZoom(camera.zoom / ZOOM_FACTOR);
                 m_scroll_zoom_accum = 0;
                 return true;
             } else if (m_scroll_zoom_accum <= -1.0) {
-                updateZoom(m_model->session().camera().zoom * ZOOM_FACTOR);
+                updateZoom(camera.zoom * ZOOM_FACTOR);
                 m_scroll_zoom_accum = 0;
                 return true;
             }
@@ -505,20 +540,111 @@ bool Canvas::tryPanScroll(WidgetVec scroll_delta)
     } else {
         m_scroll_zoom_accum = 0;
 
-        if (state & GDK_CONTROL_MASK) {
-            scroll_delta.x = WidgetScalar(0);
-            return updatePanWithScroll(scroll_delta);
-        } else if (state & GDK_SHIFT_MASK) {
-            scroll_delta.x = scroll_delta.y;
-            scroll_delta.y = WidgetScalar(0);
-            return updatePanWithScroll(scroll_delta);
+        if (allow(PanZoomFlags::PAN_WITH_MOD_SCROLL)) {
+            if (state & GDK_CONTROL_MASK) {
+                scroll_delta.x = WidgetScalar(0);
+                updatePanWithScroll(scroll_delta);
+                return true;
+            } else if (state & GDK_SHIFT_MASK) {
+                scroll_delta.x = scroll_delta.y;
+                scroll_delta.y = WidgetScalar(0);
+                updatePanWithScroll(scroll_delta);
+                return true;
+            }
         }
 
-        if (scroll_delta.y.value() >= 1.0) {
-            updateZoom(m_model->session().camera().zoom / ZOOM_FACTOR);
-            return true;
-        } else if (scroll_delta.y.value() <= -1.0) {
-            updateZoom(m_model->session().camera().zoom * ZOOM_FACTOR);
+        if (allow(PanZoomFlags::ZOOM_WITH_SCROLL)) {
+            if (scroll_delta.y.value() >= 1.0) {
+                updateZoom(camera.zoom / ZOOM_FACTOR);
+                return true;
+            } else if (scroll_delta.y.value() <= -1.0) {
+                updateZoom(camera.zoom * ZOOM_FACTOR);
+                return true;
+            }
+        }
+    }
+
+    return false;
+}
+
+bool Canvas::tryPanScroll(WidgetVec scroll_delta)
+{
+    const Session& session = m_model->session();
+    const CameraState& camera = session.camera();
+    const PanZoomFlags flags = session.panZoomFlags();
+    const GdkModifierType state = session.modifiers();
+    const bool is_smooth = scrollUnit() == ScrollUnit::SURFACE;
+
+    auto allow = [&](PanZoomFlags test) { return rt::any(flags & test); };
+
+    if (is_smooth) {
+        if (allow(PanZoomFlags::ZOOM_WITH_MOD_SCROLL)) {
+            if (state & GDK_MOD1_MASK) {
+                m_scroll_zoom_accum += scroll_delta.y.value();
+
+                if (m_scroll_zoom_accum >= 1.0) {
+                    updateZoom(camera.zoom / ZOOM_FACTOR, false);
+                    m_scroll_zoom_accum = 0;
+                    return true;
+                } else if (m_scroll_zoom_accum <= -1.0) {
+                    updateZoom(camera.zoom * ZOOM_FACTOR, false);
+                    m_scroll_zoom_accum = 0;
+                    return true;
+                }
+            }
+        }
+
+        if (allow(PanZoomFlags::PAN_WITH_MOD_SCROLL)) {
+            if (state & GDK_CONTROL_MASK) {
+                scroll_delta.x = WidgetScalar(0);
+                updatePanWithScroll(scroll_delta);
+                return true;
+            } else if (state & GDK_SHIFT_MASK) {
+                scroll_delta.x = scroll_delta.y;
+                scroll_delta.y = WidgetScalar(0);
+                updatePanWithScroll(scroll_delta);
+                return true;
+            }
+        }
+
+        if (allow(PanZoomFlags::PAN_WITH_SCROLL)) {
+            // Don't trigger a pan while ALT is held down. Otherwise, zooming
+            // is accompanied by an undesired pan.
+            if (!(state & GDK_MOD1_MASK)) {
+                updatePanWithScroll(scroll_delta);
+                return true;
+            }
+        }
+    } else {
+        m_scroll_zoom_accum = 0;
+
+        if (allow(PanZoomFlags::ZOOM_WITH_MOD_SCROLL)) {
+            if (state & GDK_MOD1_MASK) {
+                if (scroll_delta.y.value() >= 1.0) {
+                    updateZoom(camera.zoom / ZOOM_FACTOR);
+                    return true;
+                } else if (scroll_delta.y.value() <= -1.0) {
+                    updateZoom(camera.zoom * ZOOM_FACTOR);
+                    return true;
+                }
+            }
+        }
+
+        if (allow(PanZoomFlags::PAN_WITH_MOD_SCROLL)) {
+            if (state & GDK_CONTROL_MASK) {
+                scroll_delta.x = WidgetScalar(0);
+                updatePanWithScroll(scroll_delta);
+                return true;
+            } else if (state & GDK_SHIFT_MASK) {
+                scroll_delta.x = scroll_delta.y;
+                scroll_delta.y = WidgetScalar(0);
+                updatePanWithScroll(scroll_delta);
+                return true;
+            }
+        }
+
+        if (allow(PanZoomFlags::PAN_WITH_SCROLL)) {
+            updatePanWithScroll(scroll_delta);
             return true;
         }
     }
@@ -540,12 +666,11 @@ void Canvas::updatePan(WidgetPoint delta_pos)
     m_model->setCameraPos(new_pos);
 }
 
-bool Canvas::updatePanWithScroll(WidgetVec delta)
+void Canvas::updatePanWithScroll(WidgetVec delta)
 {
     Session& session = m_model->session();
-    if (rt::none(session.panZoomFlags() & PanZoomFlags::ZOOM_WITH_SCROLL)) return false;
-
     const CameraState& camera = session.camera();
+
     WorldVec bounds = session.widgetToWorldTransform()(camera.size.asVec());
 
     double pan_sensitivity = 0.1;
@@ -563,13 +688,10 @@ bool Canvas::updatePanWithScroll(WidgetVec delta)
     new_pos.x += WorldScalar(width_step * delta.x.value());
     new_pos.y += WorldScalar(height_step * delta.y.value());
 
-    m_scroll_zoom_accum = 0;
     m_model->setCameraPos(new_pos);
-
-    return true;
 }
 
-void Canvas::updateZoom(double new_zoom)
+void Canvas::updateZoom(double new_zoom, bool preserve_cursor)
 {
     Session& session = m_model->session();
     const CameraState& camera = session.camera();
@@ -578,14 +700,19 @@ void Canvas::updateZoom(double new_zoom)
     if (new_zoom >= camera.zoom && camera.zoom >= session.maxZoom()) return;
 
     new_zoom = rt::clamp(new_zoom, session.minZoom(), session.maxZoom());
-    const double scale = new_zoom / camera.zoom;
 
-    WorldPoint anchor_pos = session.widgetToWorldTransform()
-        (session.cursorPos());
-    WorldVec from_center = anchor_pos - camera.pos;
-    WorldPoint new_pos = anchor_pos - from_center / scale;
+    if (preserve_cursor) {
+        const double scale = new_zoom / camera.zoom;
 
-    m_model->setCameraPosZoom(new_pos, new_zoom);
+        WorldPoint anchor_pos = session.widgetToWorldTransform()
+            (session.cursorPos());
+        WorldVec from_center = anchor_pos - camera.pos;
+        WorldPoint new_pos = anchor_pos - from_center / scale;
+
+        m_model->setCameraPosZoom(new_pos, new_zoom);
+    } else {
+        m_model->setCameraZoom(new_zoom);
+    }
 }
 
 void Canvas::updateCursorShape()
