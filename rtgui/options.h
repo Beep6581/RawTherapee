@@ -345,14 +345,12 @@ public:
     bool reverseScrollDir;
     int smoothScrollSensitivity;
     int smoothScrollPanSensitivity;
-    static constexpr int SMOOTH_SCROLL_SENSITIVITY_FACTOR = 100;
-    static constexpr int SMOOTH_SCROLL_SENSITIVITY_MIN = 1;
-    static constexpr int SMOOTH_SCROLL_SENSITIVITY_MAX = 200;
-    static constexpr int SMOOTH_SCROLL_SENSITIVITY_DEFAULT = 20;
-    static constexpr int SMOOTH_SCROLL_PAN_SENSITIVITY_FACTOR = 1000;
-    static constexpr int SMOOTH_SCROLL_PAN_SENSITIVITY_MIN = 1;
-    static constexpr int SMOOTH_SCROLL_PAN_SENSITIVITY_MAX = 200;
-    static constexpr int SMOOTH_SCROLL_PAN_SENSITIVITY_DEFAULT = 50;
+    static constexpr int SMOOTH_SCROLL_SENSITIVITY_MIN = -100;
+    static constexpr int SMOOTH_SCROLL_SENSITIVITY_MAX = 100;
+    static constexpr int SMOOTH_SCROLL_SENSITIVITY_DEFAULT = 0;
+    static constexpr int SMOOTH_SCROLL_PAN_SENSITIVITY_MIN = -100;
+    static constexpr int SMOOTH_SCROLL_PAN_SENSITIVITY_MAX = 100;
+    static constexpr int SMOOTH_SCROLL_PAN_SENSITIVITY_DEFAULT = 0;
 
     std::vector<double> thumbnailZoomRatios;
     bool overlayedFileNames;

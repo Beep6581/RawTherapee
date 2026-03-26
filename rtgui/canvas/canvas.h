@@ -75,14 +75,8 @@ public:
     ~Canvas();
 
     void enablePanZoom(bool value) { m_is_pan_zoom_enabled = value; }
-    void setSmoothScrollSensitivity(double sensitivity)
-    {
-        m_smooth_scroll_sensitivity = sensitivity;
-    }
-    void setSmoothScrollPanSensitivity(double sensitivity)
-    {
-        m_smooth_scroll_pan_sensitivity = sensitivity;
-    }
+    void setSmoothScrollSensitivity(int value, int min, int max);
+    void setSmoothScrollPanSensitivity(int value, int min, int max);
     void setSmoothScrollDirection(ScrollDirection dir) { m_smooth_scroll_dir = dir; }
     void setScrollMode(ScrollMode mode) { m_scroll_mode = mode; }
 

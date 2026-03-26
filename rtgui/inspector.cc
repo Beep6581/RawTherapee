@@ -250,11 +250,13 @@ void Inspector::onPreferencesChanged()
         options.reverseScrollDir
         ? ScrollDirection::REVERSE : ScrollDirection::NATURAL);
     m_canvas->setSmoothScrollSensitivity(
-        static_cast<double>(options.smoothScrollSensitivity)
-        / Options::SMOOTH_SCROLL_SENSITIVITY_FACTOR);
+        options.smoothScrollSensitivity,
+        Options::SMOOTH_SCROLL_SENSITIVITY_MIN,
+        Options::SMOOTH_SCROLL_SENSITIVITY_MAX);
     m_canvas->setSmoothScrollPanSensitivity(
-        static_cast<double>(options.smoothScrollPanSensitivity)
-        / Options::SMOOTH_SCROLL_PAN_SENSITIVITY_FACTOR);
+        options.smoothScrollPanSensitivity,
+        Options::SMOOTH_SCROLL_PAN_SENSITIVITY_MIN,
+        Options::SMOOTH_SCROLL_PAN_SENSITIVITY_MAX);
 }
 
 void Inspector::mouseMove(rtengine::Coord2D pos)

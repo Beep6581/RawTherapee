@@ -57,6 +57,15 @@ GdkModifierType keyvalToModifier(guint keyval)
     }
 }
 
+double mapSliderLog(int value, int slider_min, int slider_max,
+                    double output_min, double output_max)
+{
+    double t = (value - slider_min) / static_cast<double>(slider_max - slider_min);
+    double log_min = std::log10(output_min);
+    double log_max = std::log10(output_max);
+    return std::pow(10.0, log_min + t * (log_max - log_min));
+}
+
 }  // namespace
 
 Canvas::Canvas(CanvasModel* model)
@@ -128,6 +137,18 @@ Canvas::Canvas(CanvasModel* model)
 }
 
 Canvas::~Canvas() = default;
+
+void Canvas::setSmoothScrollSensitivity(int value, int min, int max)
+{
+    double mapped = mapSliderLog(value, min, max, 0.01, 100);
+    m_smooth_scroll_sensitivity = mapped;
+}
+
+void Canvas::setSmoothScrollPanSensitivity(int value, int min, int max)
+{
+    double mapped = mapSliderLog(value, min, max, 0.001, 1000);
+    m_smooth_scroll_pan_sensitivity = mapped;
+}
 
 bool Canvas::isPanning() const { return rt::any(m_pan & PanningInput::ACTIVE); }
 
