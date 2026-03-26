@@ -2639,9 +2639,12 @@ bool FileCatalog::handleShortcutKey (GdkEventKey* event)
     if (!ctrl && !alt) {
         switch (event->keyval) {
         case GDK_KEY_f:
+            fileBrowser->getInspector()->suppressMouseMove(true);
             fileBrowser->getInspector()->showWindow(false, true);
             return true;
+        case GDK_KEY_z:
         case GDK_KEY_F:
+            fileBrowser->getInspector()->suppressMouseMove(true);
             fileBrowser->getInspector()->showWindow(false, false);
             return true;
         }
@@ -2659,7 +2662,9 @@ bool FileCatalog::handleShortcutKeyRelease(GdkEventKey* event)
         switch (event->keyval) {
         case GDK_KEY_f:
         case GDK_KEY_F:
+        case GDK_KEY_z:
             fileBrowser->getInspector()->hideWindow();
+            fileBrowser->getInspector()->suppressMouseMove(false);
             return true;
         }
     }

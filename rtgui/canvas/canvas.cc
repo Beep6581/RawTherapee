@@ -720,20 +720,9 @@ void Canvas::updateZoom(double new_zoom, bool preserve_cursor)
     if (new_zoom <= camera.zoom && camera.zoom <= session.minZoom()) return;
     if (new_zoom >= camera.zoom && camera.zoom >= session.maxZoom()) return;
 
-    new_zoom = rt::clamp(new_zoom, session.minZoom(), session.maxZoom());
-
-    if (preserve_cursor) {
-        const double scale = new_zoom / camera.zoom;
-
-        WorldPoint anchor_pos = session.widgetToWorldTransform()
-            (session.cursorPos());
-        WorldVec from_center = anchor_pos - camera.pos;
-        WorldPoint new_pos = anchor_pos - from_center / scale;
-
-        m_model->setCameraPosZoom(new_pos, new_zoom);
-    } else {
-        m_model->setCameraZoom(new_zoom);
-    }
+    auto mode = preserve_cursor ? Session::ZoomMode::PRESERVE_CURSOR
+                                : Session::ZoomMode::BASIC;
+    m_model->setCameraZoom(new_zoom, mode);
 }
 
 void Canvas::updateCursorShape()

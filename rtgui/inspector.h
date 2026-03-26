@@ -57,7 +57,6 @@ private:
     InspectorBuffer* m_curr_image;
 
     Glib::ustring m_next_image_path;
-    rt::optional<rt::canvas::WorldPoint> m_zoomed_pos;
     rtengine::Coord2D m_next_image_pos;
     sigc::connection m_delay_connection;
 
@@ -67,6 +66,8 @@ private:
     bool m_is_initialized;
     bool m_is_window_fullscreen;
     bool m_is_window_showing;
+    bool m_is_key_down;
+    bool m_suppress_mouse_move;
 
     void onWindowHide() { m_is_window_showing = false; }
     bool onWindowStateEvent(GdkEventWindowState* event);
@@ -75,8 +76,8 @@ private:
 
     bool doSwitchImage();
     void changeCurrImage(InspectorBuffer* buffer);
-    void showImage();
-    void clearImage();
+    void showImageOnCanvas();
+    void clearCanvas();
 
     void onButtonPressed(int n_press, double x, double y);
     bool onKeyPressed(guint keyval, guint keycode, GdkModifierType state);
@@ -118,4 +119,12 @@ public:
      */
     void setActive(bool state);
     bool isActive() const { return m_is_active; };
+
+    /**
+     * When the inspector window is opened, there may still be unprocessed
+     * motion events. When the events get processed, it causes a flickering/
+     * jump in the image position. Suppress mouse motion processing while the
+     * window is not pinned.
+     */
+    void suppressMouseMove(bool state) { m_suppress_mouse_move = state; }
 };

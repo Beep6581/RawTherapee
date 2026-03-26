@@ -47,11 +47,36 @@ void Session::setCameraPos(WorldPoint pos)
     queueDraw();
 }
 
-void Session::setCameraZoom(double zoom)
+void Session::setCameraZoom(double zoom, Session::ZoomMode mode)
 {
     if (m_camera.zoom == zoom) return;
 
-    m_camera.zoom = rt::clamp(zoom, m_min_zoom, m_max_zoom);
+    const double old_zoom = m_camera.zoom;
+    const double new_zoom = rt::clamp(zoom, m_min_zoom, m_max_zoom);
+
+    switch (mode) {
+        case ZoomMode::PRESERVE_CURSOR:
+        {
+            const double scale = new_zoom / old_zoom;
+
+            WorldPoint anchor_pos = m_widget_to_world(m_cursor_pos);
+            WorldVec from_center = anchor_pos - m_camera.pos;
+            WorldPoint new_pos = anchor_pos - from_center / scale;
+
+            m_camera.pos = new_pos;
+            m_camera.zoom = new_zoom;
+            break;
+        }
+        case ZoomMode::CENTER_CURSOR:
+            m_camera.pos = m_widget_to_world(m_cursor_pos);
+            m_camera.zoom = new_zoom;
+            break;
+        case ZoomMode::BASIC:
+        default:
+            m_camera.zoom = new_zoom;
+            break;
+    }
+
     regenerateTransforms();
     m_events.signal_camera_update.emit();
     queueDraw();
@@ -311,13 +336,12 @@ void CanvasModel::setCameraPos(WorldPoint pos)
     m_session.setCamera(buildImageBBox(), camera);
 }
 
-void CanvasModel::setCameraZoom(double zoom)
+void CanvasModel::setCameraZoom(double zoom, Session::ZoomMode mode)
 {
-    CameraState camera = m_session.camera();
-    if (camera.zoom == zoom) return;
+    if (m_session.camera().zoom == zoom) return;
 
-    camera.zoom = zoom;
-    m_session.setCamera(buildImageBBox(), camera);
+    m_session.setCameraZoom(zoom, mode);
+    refreshCamera();
 }
 
 void CanvasModel::setCameraPosZoom(WorldPoint pos, double zoom)

@@ -58,7 +58,9 @@ Inspector::Inspector()
       m_fit_to_screen(false),
       m_is_initialized(false),
       m_is_window_fullscreen(false),
-      m_is_window_showing(false)
+      m_is_window_showing(false),
+      m_is_key_down(false),
+      m_suppress_mouse_move(false)
 {
     set_name("Inspector");
 
@@ -119,7 +121,7 @@ Inspector::~Inspector() = default;
 
 void Inspector::showWindow(bool pinned, bool scaled)
 {
-    if (!m_window || m_is_window_showing) return;
+    if (!m_is_active || !m_window || m_is_window_showing) return;
 
     if (!m_is_initialized) {
         m_window->show_all();
@@ -135,8 +137,8 @@ void Inspector::showWindow(bool pinned, bool scaled)
     m_fit_to_screen = scaled;
 
     // Update content when becoming visible
+    clearCanvas();
     switchImage(m_next_image_path);
-    mouseMove(m_next_image_pos);
 }
 
 void Inspector::onButtonPressed(int n_press, double x, double y)
@@ -147,32 +149,33 @@ void Inspector::onButtonPressed(int n_press, double x, double y)
         // Pin window with mouse click
         m_is_pinned = true;
     }
+    m_suppress_mouse_move = false;
 }
 
 bool Inspector::onKeyPressed(guint keyval, guint keycode, GdkModifierType state)
 {
     if (!m_window) return false;
+    if (m_is_key_down) return true;
+
+    m_is_key_down = true;
 
     switch (keyval) {
         case GDK_KEY_z:
         case GDK_KEY_F:
-            if (m_is_pinned) {
-                m_fit_to_screen = false;
-                if (m_zoomed_pos) {
-                    m_canvas_model->setCameraPosZoom(*m_zoomed_pos, 1.0);
-                } else {
-                    m_canvas_model->setCameraZoom(1.0);
-                }
+            // Override existing m_fit_to_screen setting
+            if (m_is_pinned || m_fit_to_screen) {
+                m_canvas_model->setCameraZoom(1.0, Session::ZoomMode::CENTER_CURSOR);
                 m_canvas_model->session().queueDraw();
             }
+            m_fit_to_screen = false;
             return true;
         case GDK_KEY_f:
-            if (m_is_pinned) {
-                m_fit_to_screen = true;
-                m_zoomed_pos = m_canvas_model->session().camera().pos;
+            // Override existing m_fit_to_screen setting
+            if (m_is_pinned || !m_fit_to_screen) {
                 m_canvas_model->zoomFit(NO_PADDING);
                 m_canvas_model->session().queueDraw();
             }
+            m_fit_to_screen = true;
             return true;
         case GDK_KEY_F11:
             // Toggle fullscreen
@@ -185,12 +188,8 @@ bool Inspector::onKeyPressed(guint keyval, guint keycode, GdkModifierType state)
             return true;
         case GDK_KEY_Escape:
             // Hide window
-            if (m_is_pinned) {
-                m_zoomed_pos = m_canvas_model->session().camera().pos;
-            }
             m_is_pinned = false;
             m_window->set_visible(false);
-            clearImage();
             return true;
     }
 
@@ -203,14 +202,17 @@ bool Inspector::onKeyPressed(guint keyval, guint keycode, GdkModifierType state)
 
 void Inspector::onKeyReleased(guint keyval, guint keycode, GdkModifierType state)
 {
+    m_is_key_down = false;
+
     if (!m_window) return;
 
     if (!m_is_pinned) {
         switch (keyval) {
             case GDK_KEY_f:
             case GDK_KEY_F:
+            case GDK_KEY_z:
+                m_suppress_mouse_move = false;
                 m_window->set_visible(false);
-                clearImage();
             default:
                 break;
         }
@@ -238,7 +240,7 @@ bool Inspector::onWindowFocusOut(GdkEventFocus* event)
 
 void Inspector::onCanvasSizeChanged()
 {
-    m_canvas_model->zoomFit(NO_PADDING);
+    showImageOnCanvas();
 }
 
 void Inspector::onPreferencesChanged()
@@ -262,24 +264,23 @@ void Inspector::onPreferencesChanged()
 void Inspector::mouseMove(rtengine::Coord2D pos)
 {
     if (!m_is_active) return;
+    if (m_suppress_mouse_move) return;
 
     m_next_image_pos = pos;
 
     // Skip actual update of content when not visible
     if (m_window && !m_window->get_visible()) return;
-
+    if (!m_curr_image || !m_curr_image->surface) return;
     if (m_fit_to_screen) return;
 
-    if (m_curr_image) {
-        double x = static_cast<double>(m_curr_image->surface->get_width());
-        double y = static_cast<double>(m_curr_image->surface->get_height());
+    double x = static_cast<double>(m_curr_image->surface->get_width());
+    double y = static_cast<double>(m_curr_image->surface->get_height());
 
-        x *= rtengine::LIM01(pos.x);
-        y *= rtengine::LIM01(pos.y);
+    x *= rtengine::LIM01(pos.x);
+    y *= rtengine::LIM01(pos.y);
 
-        m_canvas_model->setCameraPos(WorldPoint{WorldScalar(x), WorldScalar(y)});
-        m_canvas_model->session().queueDraw();
-    }
+    m_canvas_model->setCameraPos(WorldPoint{WorldScalar(x), WorldScalar(y)});
+    m_canvas_model->session().queueDraw();
 }
 
 void Inspector::switchImage(const Glib::ustring& full_path)
@@ -291,6 +292,7 @@ void Inspector::switchImage(const Glib::ustring& full_path)
     }
 
     m_next_image_path = full_path;
+    clearCanvas();
 
     // Skip actual update of content when not visible
     if (m_window && !m_window->get_visible()) return;
@@ -327,7 +329,11 @@ bool Inspector::doSwitchImage()
         m_images.resize(max_cache_size);
     }
 
-    if (m_next_image_path.empty()) return true;
+    if (m_next_image_path.empty()) {
+        m_curr_image = nullptr;
+        clearCanvas();
+        return true;
+    }
 
     for (size_t i = 0; i < m_images.size(); ++i) {
         if (!m_images[i] || m_images[i]->filepath != m_next_image_path) continue;
@@ -368,33 +374,21 @@ bool Inspector::doSwitchImage()
         m_images.erase(m_images.begin());  // Delete the oldest entry
     }
     m_images.emplace_back(std::move(buffer));
-    m_next_image_path.clear();
     return true;
 }
 
 void Inspector::changeCurrImage(InspectorBuffer* buffer)
 {
-    if (m_curr_image == buffer) {
-        if (!m_canvas_model->image().imageSurface()) {
-            showImage();
-        }
-        return;
-    }
-
     m_curr_image = buffer;
-    m_zoomed_pos = rt::nullopt;
-
-    if (!buffer || !buffer->surface) {
-        clearImage();
-        return;
-    }
-
-    showImage();
+    showImageOnCanvas();
 }
 
-void Inspector::showImage()
+void Inspector::showImageOnCanvas()
 {
-    if (!m_curr_image || !m_curr_image->surface) return;
+    if (!m_curr_image || !m_curr_image->surface) {
+        clearCanvas();
+        return;
+    }
 
     IntWorldSize img_size;
     img_size.width = IntWorldScalar(m_curr_image->surface->get_width());
@@ -417,7 +411,7 @@ void Inspector::showImage()
     m_canvas_model->session().queueDraw();
 }
 
-void Inspector::clearImage()
+void Inspector::clearCanvas()
 {
     m_canvas_model->image().setImageSurface(
         Cairo::RefPtr<Cairo::ImageSurface>{}, IntWorldSize{});

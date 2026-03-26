@@ -80,6 +80,12 @@ public:
         FILL_OR_FIT  // Fit to screen if zoomed out otherwise same as FILL
     };
 
+    enum class ZoomMode {
+        BASIC,           // Set value directly
+        CENTER_CURSOR,   // Set zoom centered on cursor
+        PRESERVE_CURSOR  // Set zoom but preserve relative cursor position on screen
+    };
+
     Session();
 
     const CameraState& camera() const { return m_camera; }
@@ -98,7 +104,7 @@ public:
     widgetToWorldTransform() const { return m_widget_to_world; }
 
     void setCameraPos(WorldPoint pos);
-    void setCameraZoom(double zoom);
+    void setCameraZoom(double zoom, ZoomMode mode = ZoomMode::BASIC);
     void setCameraPosZoom(WorldPoint pos, double zoom);
     void setCameraSize(WidgetSize size);
     void setDeviceScale(int device_scale);
@@ -181,7 +187,7 @@ public:
     bool isCursorInsideImage() const;
 
     void setCameraPos(WorldPoint pos);
-    void setCameraZoom(double zoom);
+    void setCameraZoom(double zoom, Session::ZoomMode mode = Session::ZoomMode::BASIC);
     void setCameraPosZoom(WorldPoint pos, double zoom);
     void setCameraSize(WidgetSize size);
     void setDeviceScale(int device_scale);
