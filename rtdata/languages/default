@@ -2157,8 +2157,8 @@ PREFERENCES_HISTOGRAMPOSITIONLEFT;Histogram in left panel
 PREFERENCES_HISTOGRAM_TOOLTIP;If enabled, the working profile is used for rendering the main histogram and the Navigator panel, otherwise the gamma-corrected output profile is used.
 PREFERENCES_HLTHRESHOLD;Threshold for clipped highlights
 PREFERENCES_ICCDIR;Directory containing color profiles
+PREFERENCES_IMAGE_VIEW;Image View
 PREFERENCES_IMPROCPARAMS;Default Processing Profile
-PREFERENCES_INSPECTOR;Inspector
 PREFERENCES_INSPECTORWINDOW;Open inspector in own window or fullscreen
 PREFERENCES_INSPECT_LABEL;Inspect
 PREFERENCES_INSPECT_MAXBUFFERS_LABEL;Maximum number of cached images
@@ -2247,8 +2247,8 @@ PREFERENCES_SHOWTOOLTIP;Show Selective Editing advice tooltips
 PREFERENCES_SHTHRESHOLD;Threshold for clipped shadows
 PREFERENCES_SINGLETAB;Single Editor Tab Mode
 PREFERENCES_SINGLETABVERTAB;Single Editor Tab Mode, Vertical Tabs
-PREFERENCES_SMOOTH_SCROLL_PAN_SENSITIVITY;Smooth scroll pan sensitivity
-PREFERENCES_SMOOTH_SCROLL_SENSITIVITY;Smooth scroll sensitivity
+PREFERENCES_SMOOTH_SCROLL_PAN_SENSITIVITY;Smooth scroll pan sensitivity:
+PREFERENCES_SMOOTH_SCROLL_SENSITIVITY;Smooth scroll sensitivity:
 PREFERENCES_SND_HELP;Enter a full file path to set a sound, or leave blank for no sound.\nFor system sounds on Windows use 'SystemDefault', 'SystemAsterisk' etc., and on Linux use 'complete', 'window-attention' etc.
 PREFERENCES_SND_LNGEDITPROCDONE;Editor processing done
 PREFERENCES_SND_QUEUEDONE;Queue processing done
@@ -2294,6 +2294,10 @@ PREFERENCES_XMP_SIDECAR_MODE;XMP sidecar style
 PREFERENCES_XMP_SIDECAR_MODE_EXT;darktable-like (FILENAME.ext.xmp for FILENAME.ext)
 PREFERENCES_XMP_SIDECAR_MODE_STD;Standard (FILENAME.xmp for FILENAME.ext)
 PREFERENCES_ZOOMONSCROLL;Zoom images by scrolling
+PREFERENCES_ZOOM_11_MODE;Image position on 1:1 zoom:
+PREFERENCES_ZOOM_11_MODE_BASIC;No centering
+PREFERENCES_ZOOM_11_MODE_CENTER_CURSOR;Center on cursor
+PREFERENCES_ZOOM_11_MODE_PRESERVE_CURSOR;Anchor cursor position
 PROFILEPANEL_COPYPPASTE;Parameters to copy
 PROFILEPANEL_GLOBALPROFILES;Bundled profiles
 PROFILEPANEL_LABEL;Processing Profiles

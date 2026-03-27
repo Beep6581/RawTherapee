@@ -27,6 +27,7 @@
 #include "rtengine/profilestore.h"
 
 class ExternalEditorPreferences;
+class MyComboBoxText;
 class MyHScale;
 class RTWindow;
 class Splash;
@@ -160,6 +161,7 @@ class Preferences final :
     Gtk::CheckButton* reverseScrollCB;
     MyHScale* smoothScrollSensitivity;
     MyHScale* smoothScrollPanSensitivity;
+    MyComboBoxText* zoom11Mode;
 
     Gtk::ComboBoxText* themeCBT;
     Gtk::FontButton* mainFontFB;

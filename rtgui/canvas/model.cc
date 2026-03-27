@@ -31,6 +31,7 @@ Session::Session()
       m_cursor_shape(CSArrow),
       m_pan_zoom_flags(PanZoomFlags::ALL),
       m_bound_mode(CameraBounds::NONE),
+      m_zoom_mode(ZoomMode::BASIC),
       m_min_zoom(0.01),
       m_max_zoom(256.0)
 {
@@ -275,6 +276,11 @@ void Session::changeCursorShape(rt::optional<CursorShape> shape)
         m_cursor_shape = *shape;
     }
     m_events.signal_change_cursor.emit(shape);
+}
+
+void Session::zoom11()
+{
+    setCameraZoom(1.0, preferredZoomMode());
 }
 
 void Session::zoomFit(WorldPoint top_left, WorldSize img_size, bool add_margin)

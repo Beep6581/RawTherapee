@@ -164,7 +164,8 @@ bool Inspector::onKeyPressed(guint keyval, guint keycode, GdkModifierType state)
         case GDK_KEY_F:
             // Override existing m_fit_to_screen setting
             if (m_is_pinned || m_fit_to_screen) {
-                m_canvas_model->setCameraZoom(1.0, Session::ZoomMode::CENTER_CURSOR);
+                m_canvas_model->setCameraZoom(
+                    1.0, m_canvas_model->session().preferredZoomMode());
                 m_canvas_model->session().queueDraw();
             }
             m_fit_to_screen = false;
@@ -259,6 +260,19 @@ void Inspector::onPreferencesChanged()
         options.smoothScrollPanSensitivity,
         Options::SMOOTH_SCROLL_PAN_SENSITIVITY_MIN,
         Options::SMOOTH_SCROLL_PAN_SENSITIVITY_MAX);
+
+    switch (options.zoom11Mode) {
+        case Options::Zoom11Mode::CENTER_CURSOR:
+            m_canvas_model->session().setZoomMode(Session::ZoomMode::CENTER_CURSOR);
+            break;
+        case Options::Zoom11Mode::PRESERVE_CURSOR:
+            m_canvas_model->session().setZoomMode(Session::ZoomMode::PRESERVE_CURSOR);
+            break;
+        case Options::Zoom11Mode::BASIC:
+        default:
+            m_canvas_model->session().setZoomMode(Session::ZoomMode::BASIC);
+            break;
+    }
 }
 
 void Inspector::mouseMove(rtengine::Coord2D pos)

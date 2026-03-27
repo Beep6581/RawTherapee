@@ -512,6 +512,7 @@ void Options::setDefaults()
     reverseScrollDir = false;
     smoothScrollSensitivity = SMOOTH_SCROLL_SENSITIVITY_DEFAULT;
     smoothScrollPanSensitivity = SMOOTH_SCROLL_PAN_SENSITIVITY_DEFAULT;
+    zoom11Mode = Zoom11Mode::BASIC;
 
     prevdemo = PD_Sidecar;
 
@@ -1829,6 +1830,16 @@ void Options::readFromFile(Glib::ustring fname)
                         keyFile.get_integer("GUI", "SmoothScrollPanSensitivity");
                 }
 
+                if (keyFile.has_key("GUI", "Zoom11Mode")) {
+                    Glib::ustring value = keyFile.get_string("GUI", "Zoom11Mode");
+                    if (value == "CENTER_CURSOR") {
+                        zoom11Mode = Zoom11Mode::CENTER_CURSOR;
+                    } else if (value == "PRESERVE_CURSOR") {
+                        zoom11Mode = Zoom11Mode::PRESERVE_CURSOR;
+                    } else {
+                        zoom11Mode = Zoom11Mode::BASIC;
+                    }
+                }
             }
 
             if (keyFile.has_group("Crop Settings")) {
@@ -2713,6 +2724,16 @@ void Options::saveToFile(Glib::ustring fname)
         keyFile.set_integer("GUI", "SmoothScrollSensitivity", smoothScrollSensitivity);
         keyFile.set_integer("GUI", "SmoothScrollPanSensitivity",
                             smoothScrollPanSensitivity);
+        keyFile.set_string("GUI", "Zoom11Mode",
+            [&]() {
+                switch (zoom11Mode) {
+                    case Zoom11Mode::CENTER_CURSOR: return "CENTER_CURSOR";
+                    case Zoom11Mode::PRESERVE_CURSOR: return "PRESERVE_CURSOR";
+                    case Zoom11Mode::BASIC:
+                    default:
+                        return "BASIC";
+                };
+            }());
 
         //Glib::ArrayHandle<int> crvopen = crvOpen;
         //keyFile.set_integer_list ("GUI", "CurvePanelsExpanded", crvopen);

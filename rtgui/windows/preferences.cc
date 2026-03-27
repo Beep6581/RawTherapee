@@ -43,6 +43,16 @@
 #endif
 
 namespace {
+
+constexpr int INDEX_ZOOM_11_MODE_BASIC = 0;
+constexpr int INDEX_ZOOM_11_MODE_CENTER_CURSOR = 1;
+constexpr int INDEX_ZOOM_11_MODE_PRESERVE_CURSOR = 2;
+constexpr std::array<const char*, 3> ZOOM_11_MODES = {
+    "PREFERENCES_ZOOM_11_MODE_BASIC",
+    "PREFERENCES_ZOOM_11_MODE_CENTER_CURSOR",
+    "PREFERENCES_ZOOM_11_MODE_PRESERVE_CURSOR"
+};
+
 void placeSpinBox(Gtk::Container* where, Gtk::SpinButton* &spin, const std::string &labelText, int digits, int inc0, int inc1, int maxLength, int range0, int range1, const std::string &toolTip = "") {
     Gtk::Box* HB = Gtk::manage ( new Gtk::Box () );
     HB->set_spacing (4);
@@ -2061,6 +2071,18 @@ void Preferences::storePreferences()
     moptions.smoothScrollPanSensitivity =
         static_cast<int>(smoothScrollPanSensitivity->get_value());
 
+    moptions.zoom11Mode = [&]() {
+        switch (zoom11Mode->get_active_row_number()) {
+            case INDEX_ZOOM_11_MODE_CENTER_CURSOR:
+                return Options::Zoom11Mode::CENTER_CURSOR;
+            case INDEX_ZOOM_11_MODE_PRESERVE_CURSOR:
+                return Options::Zoom11Mode::PRESERVE_CURSOR;
+            case INDEX_ZOOM_11_MODE_BASIC:
+            default:
+                return Options::Zoom11Mode::BASIC;
+        }
+    }();
+
     moptions.histogramPosition = ckbHistogramPositionLeft->get_active() ? 1 : 2;
     moptions.FileBrowserToolbarSingleRow = ckbFileBrowserToolbarSingleRow->get_active();
     moptions.showFilmStripToolBar = ckbShowFilmStripToolBar->get_active();
@@ -2289,6 +2311,18 @@ void Preferences::fillPreferences()
     reverseScrollCB->set_active(moptions.reverseScrollDir);
     smoothScrollSensitivity->set_value(moptions.smoothScrollSensitivity);
     smoothScrollPanSensitivity->set_value(moptions.smoothScrollPanSensitivity);
+    switch (moptions.zoom11Mode) {
+        case Options::Zoom11Mode::CENTER_CURSOR:
+            zoom11Mode->set_active(INDEX_ZOOM_11_MODE_CENTER_CURSOR);
+            break;
+        case Options::Zoom11Mode::PRESERVE_CURSOR:
+            zoom11Mode->set_active(INDEX_ZOOM_11_MODE_PRESERVE_CURSOR);
+            break;
+        case Options::Zoom11Mode::BASIC:
+        default:
+            zoom11Mode->set_active(INDEX_ZOOM_11_MODE_BASIC);
+            break;
+    }
 
     ckbHistogramPositionLeft->set_active(moptions.histogramPosition == 1);
     ckbFileBrowserToolbarSingleRow->set_active(moptions.FileBrowserToolbarSingleRow);
@@ -2928,7 +2962,7 @@ Gtk::Widget* Preferences::setupEditorInspectorSettings()
     const Glib::ustring restart_app_text =
         Glib::ustring("(") + M("PREFERENCES_APPLNEXTSTARTUP") + ")";
 
-    auto frame = rt::make_managed<Gtk::Frame>(M("PREFERENCES_INSPECTOR"));
+    auto frame = rt::make_managed<Gtk::Frame>(M("PREFERENCES_IMAGE_VIEW"));
     setExpandAlignProperties(frame, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_START);
 
     auto grid = rt::make_managed<Gtk::Grid>();
@@ -2941,27 +2975,30 @@ Gtk::Widget* Preferences::setupEditorInspectorSettings()
                                  Gtk::ALIGN_BASELINE);
     };
 
-    inspectorWindowCB =
-        rt::make_managed<Gtk::CheckButton>(M("PREFERENCES_INSPECTORWINDOW"));
-    setup(inspectorWindowCB);
-    grid->attach_next_to(*inspectorWindowCB, Gtk::POS_TOP, 1, 1);
+    auto inspectorBox = rt::make_managed<Gtk::Box>();
+    {
+        inspectorWindowCB =
+            rt::make_managed<Gtk::CheckButton>(M("PREFERENCES_INSPECTORWINDOW"));
+        inspectorBox->pack_start(*inspectorWindowCB, false, false);
 
-    auto inspectorNextStartL = rt::make_managed<Gtk::Label>(restart_app_text);
-    setup(inspectorNextStartL);
-    grid->attach_next_to(*inspectorNextStartL, *inspectorWindowCB, Gtk::POS_RIGHT, 1, 1);
+        auto label = rt::make_managed<Gtk::Label>(restart_app_text);
+        inspectorBox->pack_start(*label, false, false);
+
+        grid->attach_next_to(*inspectorBox, Gtk::POS_TOP, 2, 1);
+    }
 
     zoomOnScrollCB = rt::make_managed<Gtk::CheckButton>(M("PREFERENCES_ZOOMONSCROLL"));
     setup(zoomOnScrollCB);
-    grid->attach_next_to(*zoomOnScrollCB, *inspectorWindowCB, Gtk::POS_BOTTOM, 1, 1);
+    grid->attach_next_to(*zoomOnScrollCB, *inspectorBox, Gtk::POS_BOTTOM, 1, 1);
 
     reverseScrollCB = rt::make_managed<Gtk::CheckButton>(M("PREFERENCES_REVERSE_SCROLL"));
     setup(reverseScrollCB);
     grid->attach_next_to(*reverseScrollCB, *zoomOnScrollCB, Gtk::POS_RIGHT, 1, 1);
 
-    auto scaleGrid = rt::make_managed<Gtk::Grid>();
-    scaleGrid->set_column_spacing(4);
-    scaleGrid->set_row_spacing(4);
-    setExpandAlignProperties(scaleGrid, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_FILL);
+    auto nestedGrid = rt::make_managed<Gtk::Grid>();
+    nestedGrid->set_column_spacing(4);
+    nestedGrid->set_row_spacing(4);
+    setExpandAlignProperties(nestedGrid, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_FILL);
 
     auto scrollLabel = rt::make_managed<Gtk::Label>(
         M("PREFERENCES_SMOOTH_SCROLL_SENSITIVITY"));
@@ -2977,9 +3014,9 @@ Gtk::Widget* Preferences::setupEditorInspectorSettings()
         1.0);
     smoothScrollSensitivity->set_adjustment(scrollAdjustment);
     smoothScrollSensitivity->set_digits(0);
-    scaleGrid->attach_next_to(*scrollLabel, Gtk::POS_TOP, 1, 1);
-    scaleGrid->attach_next_to(*smoothScrollSensitivity, *scrollLabel,
-                              Gtk::POS_RIGHT, 1, 1);
+    nestedGrid->attach_next_to(*scrollLabel, Gtk::POS_TOP, 1, 1);
+    nestedGrid->attach_next_to(*smoothScrollSensitivity, *scrollLabel,
+                               Gtk::POS_RIGHT, 1, 1);
 
     auto panScrollLabel = rt::make_managed<Gtk::Label>(
         M("PREFERENCES_SMOOTH_SCROLL_PAN_SENSITIVITY"));
@@ -2995,11 +3032,21 @@ Gtk::Widget* Preferences::setupEditorInspectorSettings()
         1.0);
     smoothScrollPanSensitivity->set_adjustment(panScrollAdjustment);
     smoothScrollPanSensitivity->set_digits(0);
-    scaleGrid->attach_next_to(*panScrollLabel, *scrollLabel, Gtk::POS_BOTTOM, 1, 1);
-    scaleGrid->attach_next_to(*smoothScrollPanSensitivity, *panScrollLabel,
-                              Gtk::POS_RIGHT, 1, 1);
+    nestedGrid->attach_next_to(*panScrollLabel, *scrollLabel, Gtk::POS_BOTTOM, 1, 1);
+    nestedGrid->attach_next_to(*smoothScrollPanSensitivity, *panScrollLabel,
+                               Gtk::POS_RIGHT, 1, 1);
 
-    grid->attach_next_to(*scaleGrid, *zoomOnScrollCB, Gtk::POS_BOTTOM, 2, 1);
+    grid->attach_next_to(*nestedGrid, *zoomOnScrollCB, Gtk::POS_BOTTOM, 2, 1);
+
+    auto zoomModeLabel = rt::make_managed<Gtk::Label>(M("PREFERENCES_ZOOM_11_MODE"));
+    setup(zoomModeLabel);
+    zoom11Mode = rt::make_managed<MyComboBoxText>();
+    setup(zoomModeLabel);
+    for (const char* entry : ZOOM_11_MODES) {
+        zoom11Mode->append(M(entry));
+    }
+    nestedGrid->attach_next_to(*zoomModeLabel, *panScrollLabel, Gtk::POS_BOTTOM, 1, 1);
+    nestedGrid->attach_next_to(*zoom11Mode, *zoomModeLabel, Gtk::POS_RIGHT, 1, 1);
 
     frame->add(*grid);
     return frame;

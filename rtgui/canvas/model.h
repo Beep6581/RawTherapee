@@ -94,6 +94,7 @@ public:
     CursorShape cursorShape() const { return m_cursor_shape; }
     PanZoomFlags panZoomFlags() const { return m_pan_zoom_flags; }
     CameraBounds cameraBounds() const { return m_bound_mode; }
+    ZoomMode preferredZoomMode() const { return m_zoom_mode; }
 
     double minZoom() const { return m_min_zoom; }
     double maxZoom() const { return m_max_zoom; }
@@ -112,13 +113,14 @@ public:
     void setModifiers(GdkModifierType state) { m_modifiers = state; }
     void setPanZoomFlags(PanZoomFlags flags) { m_pan_zoom_flags = flags; }
     void setCameraBounds(CameraBounds bounds) { m_bound_mode = bounds; }
+    void setZoomMode(ZoomMode mode) { m_zoom_mode = mode; }
 
     // Apply camera bounds before update
     void setCameraBounds(const geom::IntBBox& content, CameraBounds mode);
     void setCamera(const geom::IntBBox& content, const CameraState& new_state);
     void refreshCamera(const geom::IntBBox& content);
 
-    void zoom11() { setCameraZoom(1.0); }
+    void zoom11();
     void zoomFit(WorldPoint top_left, WorldSize img_size, bool add_margin = true);
 
     void queueDraw() { m_events.signal_queue_draw.emit(); }
@@ -149,6 +151,7 @@ private:
     CursorShape m_cursor_shape;
     PanZoomFlags m_pan_zoom_flags;
     CameraBounds m_bound_mode;
+    ZoomMode m_zoom_mode;
     double m_min_zoom;
     double m_max_zoom;
 };

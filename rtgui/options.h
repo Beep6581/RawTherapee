@@ -352,6 +352,9 @@ public:
     static constexpr int SMOOTH_SCROLL_PAN_SENSITIVITY_MAX = 100;
     static constexpr int SMOOTH_SCROLL_PAN_SENSITIVITY_DEFAULT = 0;
 
+    enum class Zoom11Mode { BASIC, CENTER_CURSOR, PRESERVE_CURSOR };
+    Zoom11Mode zoom11Mode;
+
     std::vector<double> thumbnailZoomRatios;
     bool overlayedFileNames;
     bool filmStripOverlayedFileNames;
