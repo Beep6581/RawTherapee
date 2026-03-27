@@ -57,6 +57,7 @@ Inspector::Inspector()
       m_is_pinned(false),
       m_fit_to_screen(false),
       m_is_initialized(false),
+      m_is_device_scale_initialized(false),
       m_is_window_fullscreen(false),
       m_is_window_showing(false),
       m_is_key_down(false),
@@ -126,6 +127,9 @@ void Inspector::showWindow(bool pinned, bool scaled)
     if (!m_is_initialized) {
         m_window->show_all();
         m_is_initialized = true;
+        // If onBrowserDeviceScaleChanged() has not been called already by now,
+        // there is no device scale change needed.
+        m_is_device_scale_initialized = true;
     }
 
     // The window must be set to visible before calling switchImage() otherwise
@@ -237,6 +241,22 @@ bool Inspector::onWindowFocusOut(GdkEventFocus* event)
 {
     m_canvas_model->session().onWindowFocusLost(m_canvas_model.get());
     return false;
+}
+
+void Inspector::onBrowserDeviceScaleChanged(int device_scale)
+{
+    // In GTK 3, the device scale is only updated after the widget is mapped.
+    // In some cases, there is flickering caused by 1 frame being drawn at the
+    // fallback device scale and then the device scale being updated. This only
+    // happens the first time the inspector window is opened.
+    //
+    // Since the inspector window opens on the same display as the browser
+    // window initially and the browser must have already been mapped, we can
+    // preload the device scale to prevent the flicker.
+    if (m_window && !m_is_device_scale_initialized) {
+        m_canvas_model->session().setDeviceScale(device_scale);
+        m_is_device_scale_initialized = true;
+    }
 }
 
 void Inspector::onCanvasSizeChanged()

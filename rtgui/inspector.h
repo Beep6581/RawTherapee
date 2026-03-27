@@ -64,6 +64,7 @@ private:
     bool m_is_pinned;
     bool m_fit_to_screen;
     bool m_is_initialized;
+    bool m_is_device_scale_initialized;
     bool m_is_window_fullscreen;
     bool m_is_window_showing;
     bool m_is_key_down;
@@ -127,4 +128,6 @@ public:
      * window is not pinned.
      */
     void suppressMouseMove(bool state) { m_suppress_mouse_move = state; }
+
+    void onBrowserDeviceScaleChanged(int device_scale);
 };

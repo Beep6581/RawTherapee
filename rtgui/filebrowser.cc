@@ -526,6 +526,9 @@ FileBrowser::FileBrowser () :
     for (int i = 0; i <= 5; i++) {
         colorlabel_pop[i]->signal_activate().connect (sigc::bind(sigc::mem_fun(*this, &FileBrowser::menuColorlabelActivated), colorlabel_pop[i]));
     }
+
+    property_scale_factor().signal_changed().connect(
+        sigc::mem_fun(*this, &FileBrowser::onScaleFactorChanged));
 }
 
 FileBrowser::~FileBrowser ()
@@ -2171,4 +2174,9 @@ void FileBrowser::openRequested( std::vector<FileBrowserEntry*> mselected)
 void FileBrowser::inspectRequested(std::vector<FileBrowserEntry*> mselected)
 {
     getInspector()->showWindow(true);
+}
+
+void FileBrowser::onScaleFactorChanged()
+{
+    getInspector()->onBrowserDeviceScaleChanged(get_scale_factor());
 }
