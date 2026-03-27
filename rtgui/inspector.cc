@@ -68,8 +68,6 @@ Inspector::Inspector()
     m_canvas = rt::make_managed<Canvas>(m_canvas_model.get());
     m_canvas->setRenderer(m_renderer.get());
     onPreferencesChanged();  // Configure pan zoom based on options
-    m_canvas->signal_widget_size_update.connect(
-        sigc::mem_fun(*this, &Inspector::onCanvasSizeChanged));
     pack_start(*m_canvas, true, true);
 
     m_canvas_model->session().setCameraBounds(Session::CameraBounds::FILL_OR_FIT);
@@ -107,6 +105,12 @@ Inspector::Inspector()
         m_window->fullscreen();
 
         m_canvas->enablePanZoom(true);
+        m_canvas->signal_pan_zoom.connect(
+            sigc::mem_fun(*this, &Inspector::onCanvasPanZoom));
+        m_canvas->signal_widget_size_update.connect(
+            sigc::mem_fun(*this, &Inspector::onCanvasSizeChanged));
+        m_canvas_model->session().canvasEvents().signal_camera_update.connect(
+            sigc::mem_fun(*this, &Inspector::onCameraUpdate));
 
         m_is_initialized = false;  // Delay init to avoid flickering on some systems
         m_is_active = true;  // Always track inspected thumbnails
@@ -166,21 +170,23 @@ bool Inspector::onKeyPressed(guint keyval, guint keycode, GdkModifierType state)
     switch (keyval) {
         case GDK_KEY_z:
         case GDK_KEY_F:
-            // Override existing m_fit_to_screen setting
-            if (m_is_pinned || m_fit_to_screen) {
-                m_canvas_model->setCameraZoom(
-                    1.0, m_canvas_model->session().preferredZoomMode());
+            if (m_is_pinned) {
+                if (m_fit_to_screen) {
+                    m_canvas_model->setCameraPosZoom(m_last_camera_pos, 1.0);
+                } else {
+                    m_canvas_model->setCameraZoom(
+                        1.0, m_canvas_model->session().preferredZoomMode());
+                }
                 m_canvas_model->session().queueDraw();
             }
             m_fit_to_screen = false;
             return true;
         case GDK_KEY_f:
-            // Override existing m_fit_to_screen setting
-            if (m_is_pinned || !m_fit_to_screen) {
+            m_fit_to_screen = true;
+            if (m_is_pinned) {
                 m_canvas_model->zoomFit(NO_PADDING);
                 m_canvas_model->session().queueDraw();
             }
-            m_fit_to_screen = true;
             return true;
         case GDK_KEY_F11:
             // Toggle fullscreen
@@ -259,9 +265,22 @@ void Inspector::onBrowserDeviceScaleChanged(int device_scale)
     }
 }
 
+void Inspector::onCanvasPanZoom()
+{
+    m_fit_to_screen = false;
+}
+
 void Inspector::onCanvasSizeChanged()
 {
     showImageOnCanvas();
+}
+
+void Inspector::onCameraUpdate()
+{
+    if (!m_fit_to_screen) {
+        const CameraState& camera = m_canvas_model->session().camera();
+        m_last_camera_pos = camera.pos;
+    }
 }
 
 void Inspector::onPreferencesChanged()
@@ -305,7 +324,6 @@ void Inspector::mouseMove(rtengine::Coord2D pos)
     // Skip actual update of content when not visible
     if (m_window && !m_window->get_visible()) return;
     if (!m_curr_image || !m_curr_image->surface) return;
-    if (m_fit_to_screen) return;
 
     double x = static_cast<double>(m_curr_image->surface->get_width());
     double y = static_cast<double>(m_curr_image->surface->get_height());

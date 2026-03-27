@@ -69,6 +69,7 @@ enum class ScrollMode {
 class Canvas final : public Gtk::Widget
 {
 public:
+    using PanZoomSignal = sigc::signal<void()>;
     using WidgetSizeUpdateSignal = sigc::signal<void()>;
 
     Canvas(CanvasModel* model);
@@ -92,8 +93,14 @@ public:
     void onKeyReleased(guint keyval, guint keycode, GdkModifierType state);
 
     /**
+     * This signal is emitted whenever a user initiates a pan/zoom and the
+     * event is handled by the canvas. The signal is emitted before CameraState
+     * is updated.
+     */
+    PanZoomSignal signal_pan_zoom;
+    /**
      * This signal is emitted whenever the allocated size or device scale of
-     * the canvas changes.
+     * the canvas changes. The signal occurs after CameraState is updated.
      */
     WidgetSizeUpdateSignal signal_widget_size_update;
 

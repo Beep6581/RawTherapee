@@ -684,6 +684,7 @@ void Canvas::updatePan(WidgetPoint delta_pos)
     WorldPoint new_pos = camera.pos - adjustment;
 
     m_prev_pan_pos = delta_pos;
+    signal_pan_zoom.emit();
     m_model->setCameraPos(new_pos);
 }
 
@@ -709,6 +710,7 @@ void Canvas::updatePanWithScroll(WidgetVec delta)
     new_pos.x += WorldScalar(width_step * delta.x.value());
     new_pos.y += WorldScalar(height_step * delta.y.value());
 
+    signal_pan_zoom.emit();
     m_model->setCameraPos(new_pos);
 }
 
@@ -720,6 +722,7 @@ void Canvas::updateZoom(double new_zoom, bool preserve_cursor)
     if (new_zoom <= camera.zoom && camera.zoom <= session.minZoom()) return;
     if (new_zoom >= camera.zoom && camera.zoom >= session.maxZoom()) return;
 
+    signal_pan_zoom.emit();
     auto mode = preserve_cursor ? Session::ZoomMode::PRESERVE_CURSOR
                                 : Session::ZoomMode::BASIC;
     m_model->setCameraZoom(new_zoom, mode);

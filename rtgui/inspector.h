@@ -58,6 +58,7 @@ private:
 
     Glib::ustring m_next_image_path;
     rtengine::Coord2D m_next_image_pos;
+    rt::canvas::WorldPoint m_last_camera_pos;
     sigc::connection m_delay_connection;
 
     bool m_is_active;
@@ -74,6 +75,9 @@ private:
     bool onWindowStateEvent(GdkEventWindowState* event);
     bool onWindowFocusOut(GdkEventFocus* event);
     void onCanvasSizeChanged();
+    void onCanvasPanZoom();
+    void onCameraUpdate();
+    void onPreferencesChanged();
 
     bool doSwitchImage();
     void changeCurrImage(InspectorBuffer* buffer);
@@ -83,8 +87,6 @@ private:
     void onButtonPressed(int n_press, double x, double y);
     bool onKeyPressed(guint keyval, guint keycode, GdkModifierType state);
     void onKeyReleased(guint keyval, guint keycode, GdkModifierType state);
-
-    void onPreferencesChanged();
 
 public:
     Inspector();
