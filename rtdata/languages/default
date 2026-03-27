@@ -2239,6 +2239,7 @@ PREFERENCES_SERIALIZE_TIFF_READ;TIFF Read Settings
 PREFERENCES_SERIALIZE_TIFF_READ_LABEL;Serialize reading of TIFF files
 PREFERENCES_SERIALIZE_TIFF_READ_TOOLTIP;Enabling this option when working with folders containing uncompressed TIFF files can increase performance of thumbnail generation.
 PREFERENCES_SET;Set
+PREFERENCES_SHOW_INSPECTOR_OBSERVED_AREA;Show inspector observed area frame
 PREFERENCES_SHOWBASICEXIF;Show basic Exif info
 PREFERENCES_SHOWDATETIME;Show date and time
 PREFERENCES_SHOWEXPOSURECOMPENSATION;Append exposure compensation

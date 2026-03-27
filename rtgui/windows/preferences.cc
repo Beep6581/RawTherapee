@@ -2063,6 +2063,7 @@ void Preferences::storePreferences()
     moptions.complexity = complexitylocal->get_active_row_number();
     moptions.spotmet = spotlocal->get_active_row_number();
 
+    moptions.showInspectorObservedArea = showInspectorObservedAreaCB->get_active();
     moptions.inspectorWindow = inspectorWindowCB->get_active();
     moptions.zoomOnScroll = zoomOnScrollCB->get_active();
     moptions.reverseScrollDir = reverseScrollCB->get_active();
@@ -2306,6 +2307,8 @@ void Preferences::fillPreferences()
     curveBBoxPosC->set_active(moptions.curvebboxpos);
     complexitylocal->set_active(moptions.complexity);
     spotlocal->set_active(moptions.spotmet);
+
+    showInspectorObservedAreaCB->set_active(moptions.showInspectorObservedArea);
     inspectorWindowCB->set_active(moptions.inspectorWindow);
     zoomOnScrollCB->set_active(moptions.zoomOnScroll);
     reverseScrollCB->set_active(moptions.reverseScrollDir);
@@ -2987,9 +2990,16 @@ Gtk::Widget* Preferences::setupEditorInspectorSettings()
         grid->attach_next_to(*inspectorBox, Gtk::POS_TOP, 2, 1);
     }
 
+    showInspectorObservedAreaCB = rt::make_managed<Gtk::CheckButton>(
+        M("PREFERENCES_SHOW_INSPECTOR_OBSERVED_AREA"));
+    setup(showInspectorObservedAreaCB);
+    grid->attach_next_to(*showInspectorObservedAreaCB, *inspectorBox,
+                         Gtk::POS_BOTTOM, 1, 1);
+
     zoomOnScrollCB = rt::make_managed<Gtk::CheckButton>(M("PREFERENCES_ZOOMONSCROLL"));
     setup(zoomOnScrollCB);
-    grid->attach_next_to(*zoomOnScrollCB, *inspectorBox, Gtk::POS_BOTTOM, 1, 1);
+    grid->attach_next_to(*zoomOnScrollCB, *showInspectorObservedAreaCB,
+                         Gtk::POS_BOTTOM, 1, 1);
 
     reverseScrollCB = rt::make_managed<Gtk::CheckButton>(M("PREFERENCES_REVERSE_SCROLL"));
     setup(reverseScrollCB);

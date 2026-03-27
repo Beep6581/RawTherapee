@@ -340,6 +340,7 @@ public:
     int complexity;
     int spotmet;
 
+    bool showInspectorObservedArea;
     bool inspectorWindow; // open inspector in separate window
     bool zoomOnScroll;    // translate scroll events to zoom
     bool reverseScrollDir;

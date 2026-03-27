@@ -88,6 +88,8 @@ public:
 
     Session();
 
+    rt::geom::Rect cameraBBox() const;
+
     const CameraState& camera() const { return m_camera; }
     WidgetPoint cursorPos() const { return m_cursor_pos; }
     GdkModifierType modifiers() const { return m_modifiers; }

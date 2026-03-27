@@ -23,6 +23,7 @@
 #include "gtk4.h"
 
 #include "rtengine/coord2d.h"
+#include "rtengine/math/rect.h"
 #include "rtengine/util/optional.h"
 
 #include <gtkmm/box.h>
@@ -61,6 +62,9 @@ private:
     rt::canvas::WorldPoint m_last_camera_pos;
     sigc::connection m_delay_connection;
 
+    Glib::ustring m_last_image_path;
+    rt::optional<rt::geom::Rect> m_last_image_observed_rect;
+
     bool m_is_active;
     bool m_is_pinned;
     bool m_fit_to_screen;
@@ -83,12 +87,15 @@ private:
     void changeCurrImage(InspectorBuffer* buffer);
     void showImageOnCanvas();
     void clearCanvas();
+    void recordObservedRect();
 
     void onButtonPressed(int n_press, double x, double y);
     bool onKeyPressed(guint keyval, guint keycode, GdkModifierType state);
     void onKeyReleased(guint keyval, guint keycode, GdkModifierType state);
 
 public:
+    sigc::signal<void()> signal_observed_area_changed;
+
     Inspector();
     ~Inspector();
 
@@ -122,6 +129,13 @@ public:
      */
     void setActive(bool state);
     bool isActive() const { return m_is_active; };
+
+    const Glib::ustring& lastImageFilepath() const { return m_last_image_path; }
+    // Values are normalized to [0, 1] over the image's dimensions
+    const rt::optional<rt::geom::Rect>&
+    lastImageObservedRect() const { return m_last_image_observed_rect; }
+
+    void clearObservedArea();
 
     /**
      * When the inspector window is opened, there may still be unprocessed

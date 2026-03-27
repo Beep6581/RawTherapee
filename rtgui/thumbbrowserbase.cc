@@ -822,6 +822,13 @@ void ThumbBrowserBase::arrangeFiles(ThumbBrowserEntryBase* entry)
     }
 }
 
+void ThumbBrowserBase::setInspector(Inspector* inspector)
+{
+    this->inspector = inspector;
+    inspector->signal_observed_area_changed.connect(
+        sigc::mem_fun(*this, &ThumbBrowserBase::onInspectorObservedAreaChanged));
+}
+
 void ThumbBrowserBase::disableInspector()
 {
     if (inspector) {
@@ -968,6 +975,8 @@ void ThumbBrowserBase::buttonPressed (int x, int y, int button, GdkEventType typ
                 handled = handled || b;
             }
     }
+
+    getInspector()->clearObservedArea();
 
     if (handled || (fileDescr && fileDescr->processing)) {
         return;

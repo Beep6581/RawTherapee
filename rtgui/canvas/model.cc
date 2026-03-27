@@ -38,6 +38,17 @@ Session::Session()
     regenerateTransforms();
 }
 
+geom::Rect Session::cameraBBox() const
+{
+    WorldSize size = m_widget_to_world(m_camera.size);
+    WorldVec vec = size.asVec() / 2.0;
+
+    geom::Point top_left = static_cast<geom::Point>(m_camera.pos - vec);
+    geom::Point bot_right = static_cast<geom::Point>(m_camera.pos + vec);
+
+    return rt::geom::Rect(top_left, bot_right);
+}
+
 void Session::setCameraPos(WorldPoint pos)
 {
     if (m_camera.pos == pos) return;

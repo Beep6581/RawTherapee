@@ -33,6 +33,7 @@
 #include "rtengine/rtapp.h"
 #include "rtengine/util/cpp.h"
 
+using namespace rt;
 using namespace rt::canvas;
 
 constexpr bool NO_PADDING = false;
@@ -268,6 +269,7 @@ void Inspector::onBrowserDeviceScaleChanged(int device_scale)
 void Inspector::onCanvasPanZoom()
 {
     m_fit_to_screen = false;
+    recordObservedRect();
 }
 
 void Inspector::onCanvasSizeChanged()
@@ -332,6 +334,7 @@ void Inspector::mouseMove(rtengine::Coord2D pos)
     y *= rtengine::LIM01(pos.y);
 
     m_canvas_model->setCameraPos(WorldPoint{WorldScalar(x), WorldScalar(y)});
+    recordObservedRect();
     m_canvas_model->session().queueDraw();
 }
 
@@ -460,6 +463,8 @@ void Inspector::showImageOnCanvas()
         m_canvas_model->setCameraPosZoom(new_pos, 1.0);
     }
 
+    m_last_image_path = m_curr_image->filepath;
+    recordObservedRect();
     m_canvas_model->session().queueDraw();
 }
 
@@ -469,6 +474,32 @@ void Inspector::clearCanvas()
         Cairo::RefPtr<Cairo::ImageSurface>{}, IntWorldSize{});
     m_canvas_model->setCameraPosZoom(WorldPoint{}, 1.0);
     m_canvas_model->session().queueDraw();
+}
+
+void Inspector::recordObservedRect()
+{
+    if (!App::get().options().showInspectorObservedArea) return;
+
+    IntWorldSize img = m_canvas_model->image().fullSize();
+    geom::Rect img_bbox(geom::Point(),
+                        geom::Point(img.width.value(), img.height.value()));
+
+    geom::Rect cam_bbox = m_canvas_model->session().cameraBBox();
+
+    rt::optional<geom::Rect> observed_bbox = cam_bbox.intersect(img_bbox);
+    if (!observed_bbox) {
+        m_last_image_observed_rect = rt::nullopt;
+        return;
+    }
+
+    double min_x = observed_bbox->min().x / img.width.value();
+    double min_y = observed_bbox->min().y / img.height.value();
+    double max_x = observed_bbox->max().x / img.width.value();
+    double max_y = observed_bbox->max().y / img.height.value();
+
+    m_last_image_observed_rect = geom::Rect(geom::Point(min_x, min_y),
+                                            geom::Point(max_x, max_y));
+    signal_observed_area_changed.emit();
 }
 
 void Inspector::flushBuffers()
@@ -481,9 +512,18 @@ void Inspector::setActive(bool state)
 {
     if (!state) {
         flushBuffers();
+
+        m_last_image_path = "";
+        m_last_image_observed_rect = rt::nullopt;
     }
 
     if (!m_window) {
         m_is_active = state;
     }
+}
+
+void Inspector::clearObservedArea()
+{
+    m_last_image_observed_rect = rt::nullopt;
+    signal_observed_area_changed.emit();
 }

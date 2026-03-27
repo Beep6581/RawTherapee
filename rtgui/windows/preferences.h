@@ -157,6 +157,7 @@ class Preferences final :
     Gtk::ComboBoxText* spotlocal;
 
     Gtk::CheckButton* inspectorWindowCB;
+    Gtk::CheckButton* showInspectorObservedAreaCB;
     Gtk::CheckButton* zoomOnScrollCB;
     Gtk::CheckButton* reverseScrollCB;
     MyHScale* smoothScrollSensitivity;
