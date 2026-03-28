@@ -368,7 +368,7 @@ bool Canvas::onKeyPressed(guint keyval, guint keycode, GdkModifierType state)
 void Canvas::onKeyReleased(guint keyval, guint keycode, GdkModifierType state)
 {
     Session& session = m_model->session();
-    const int updated_state = state ^ keyvalToModifier(keyval);
+    const int updated_state = state & ~keyvalToModifier(keyval);
     session.setModifiers(GdkModifierType(updated_state));
 
     if (m_is_pan_zoom_enabled) {

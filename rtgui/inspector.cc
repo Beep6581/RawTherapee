@@ -178,6 +178,7 @@ bool Inspector::onKeyPressed(guint keyval, guint keycode, GdkModifierType state)
                     m_canvas_model->setCameraZoom(
                         1.0, m_canvas_model->session().preferredZoomMode());
                 }
+                recordObservedRect();
                 m_canvas_model->session().queueDraw();
             }
             m_fit_to_screen = false;
@@ -186,6 +187,7 @@ bool Inspector::onKeyPressed(guint keyval, guint keycode, GdkModifierType state)
             m_fit_to_screen = true;
             if (m_is_pinned) {
                 m_canvas_model->zoomFit(NO_PADDING);
+                recordObservedRect();
                 m_canvas_model->session().queueDraw();
             }
             return true;
