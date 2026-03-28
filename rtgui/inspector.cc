@@ -292,9 +292,7 @@ void Inspector::onPreferencesChanged()
     const auto& options = App::get().options();
 
     m_canvas->setScrollMode(options.zoomOnScroll ? ScrollMode::ZOOM : ScrollMode::PAN);
-    m_canvas->setSmoothScrollDirection(
-        options.reverseScrollDir
-        ? ScrollDirection::REVERSE : ScrollDirection::NATURAL);
+    m_canvas->setReverseSmoothScrollDirection(options.reverseScrollDir);
     m_canvas->setSmoothScrollSensitivity(
         options.smoothScrollSensitivity,
         Options::SMOOTH_SCROLL_SENSITIVITY_MIN,

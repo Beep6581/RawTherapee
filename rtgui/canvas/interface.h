@@ -41,10 +41,6 @@ namespace canvas {
 class CanvasModel;
 class MouseGesture;
 
-// Similar concept to GTK 4's Gdk.ScrollUnit, but the surface mode does not
-// match "screen logical pixels".
-enum class ScrollUnit { WHEEL, SURFACE };
-
 struct ClickContext
 {
     CanvasModel* model;

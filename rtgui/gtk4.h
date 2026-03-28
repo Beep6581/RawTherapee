@@ -19,6 +19,8 @@
 
 #pragma once
 
+#include "rtengine/util/enum.h"
+
 #include <glibmm/object.h>
 #include <glibmm/refptr.h>
 #include <glibmm/signalproxy.h>
@@ -137,39 +139,65 @@ private:
     GtkEventController* m_controller;
 };
 
-class EventControllerScroll : public Glib::Object
+enum class ScrollUnit { WHEEL, SURFACE };
+
+// When porting to GTK 4, replace uses with Gtk::EventControllerScroll
+class HeuristicEventControllerScroll : public Glib::Object
 {
 public:
-    static Glib::RefPtr<EventControllerScroll> create(
-        Gtk::Widget* widget, GtkEventControllerScrollFlags flags);
+    enum class Flags {
+        NONE = 0,
+        VERTICAL = (1 << 0),
+        HORIZONTAL = (1 << 1),
+        BOTH_AXES = VERTICAL | HORIZONTAL,
+    };
 
-    ~EventControllerScroll();
+    HeuristicEventControllerScroll(Gtk::Widget* widget, Flags flags);
 
-    GtkEventControllerScroll* gobj();
+    // Widgets using this backport should call this event handler in their
+    // generic event handling.
+    bool onEvent(GdkEvent* event);
 
-    GtkPropagationPhase get_propagation_phase() const;
-    void set_propagation_phase(GtkPropagationPhase phase);
+    ScrollUnit get_scroll_unit() const { return m_scroll_unit; }
+    Flags get_flags() const { return m_flags; }
+    void set_flags(Flags flags) { m_flags = flags; }
 
-    GtkEventControllerScrollFlags get_flags() const;
-    void set_flags(GtkEventControllerScrollFlags flags);
-
-    sigc::signal<void()>& signal_scroll_begin() { return m_begin; }
-    sigc::signal<void(double, double)>& signal_scroll() { return m_scroll; }
-    sigc::signal<void()>& signal_scroll_end() { return m_end; }
+    sigc::signal<void()>& signal_scroll_begin() { return m_signal_begin; }
+    sigc::signal<bool(double, double)>& signal_scroll() { return m_signal_scroll; }
+    sigc::signal<void()>& signal_scroll_end() { return m_signal_end; }
 
 private:
-    static void hook_scroll(GtkEventControllerScroll*, gdouble dx, gdouble dy,
-                            gpointer user_data);
-    static void hook_begin(GtkEventControllerScroll*, gpointer user_data);
-    static void hook_end(GtkEventControllerScroll*, gpointer user_data);
+    void beginSmoothScrollIfNeeded();
+    void endScroll();
 
-    EventControllerScroll(Gtk::Widget* widget, GtkEventControllerScrollFlags flags);
+    void populateDeltasByDirection(GdkScrollDirection dir, double& dx, double& dy);
+    void filterDeltas(double& dx, double& dy);
+    void makeDiscrete(double& dx, double& dy);
 
-    sigc::signal<void(double, double)> m_scroll;
-    sigc::signal<void()> m_begin;
-    sigc::signal<void()> m_end;
-    GtkEventController* m_controller;
+    bool handleEventMacOS(const GdkEvent* event);
+    bool handleEventWayland(const GdkEvent* event);
+    bool handleEventWin32(const GdkEvent* event);
+    bool handleEventX11(const GdkEvent* event);
+
+    bool handleEventWithInferredSingleMouseDetents(const GdkEvent* event,
+                                                   double detent_delta);
+    bool handleEventFallback(GdkEvent* event);
+
+    sigc::signal<bool(double, double)> m_signal_scroll;
+    sigc::signal<void()> m_signal_begin;
+    sigc::signal<void()> m_signal_end;
+
+    Gtk::Widget* m_widget;
+    Flags m_flags;
+    ScrollUnit m_scroll_unit;
+    double m_dx_accum;
+    double m_dy_accum;
+    bool m_is_active;
 };
 
 }  // namespace gtk4
 }  // namespace rt
+
+template <>
+struct rt::EnumAsBitflags<rt::gtk4::HeuristicEventControllerScroll::Flags>
+    : std::true_type {};

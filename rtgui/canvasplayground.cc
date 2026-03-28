@@ -374,11 +374,7 @@ void CanvasPlayground::onZoomFitClicked()
 
 void CanvasPlayground::onScrollDirectionToggled()
 {
-    if (m_scroll_dir_button->get_active()) {
-        m_canvas->setSmoothScrollDirection(ScrollDirection::REVERSE);
-    } else {
-        m_canvas->setSmoothScrollDirection(ScrollDirection::NATURAL);
-    }
+    m_canvas->setReverseSmoothScrollDirection(m_scroll_dir_button->get_active());
 }
 
 void CanvasPlayground::onScrollModeToggled()

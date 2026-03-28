@@ -56,11 +56,6 @@ enum class PanningInput {
     ACTIVE = PRIMARY | MIDDLE | SPACEBAR
 };
 
-enum class ScrollDirection {
-    NATURAL,  // Content moves in same directions as swipe (like phone)
-    REVERSE   // Content moves in opposite direction (like scrollbar)
-};
-
 enum class ScrollMode {
     ZOOM,  // Scrolling initiates zoom by default
     PAN    // Scrolling initiates panning by default
@@ -78,7 +73,10 @@ public:
     void enablePanZoom(bool value) { m_is_pan_zoom_enabled = value; }
     void setSmoothScrollSensitivity(int value, int min, int max);
     void setSmoothScrollPanSensitivity(int value, int min, int max);
-    void setSmoothScrollDirection(ScrollDirection dir) { m_smooth_scroll_dir = dir; }
+    void setReverseSmoothScrollDirection(bool value)
+    {
+        m_reverse_smooth_scroll_dir = value;
+    }
     void setScrollMode(ScrollMode mode) { m_scroll_mode = mode; }
 
     void addCursorMonitor(CursorMonitor* listener)
@@ -120,16 +118,11 @@ protected:
     //             Gdk.Window was removed for snapshots
     void on_realize() override;
     void on_unrealize() override;
+    bool on_event(GdkEvent* event) override;
 
     bool on_draw(const Cairo::RefPtr<Cairo::Context>& cr) override;
 
 private:
-    struct DirtyScrollEvent
-    {
-        ScrollUnit unit = ScrollUnit::WHEEL;
-        bool did_event_begin = false;
-    };
-
     // Event controller slots
     void onEnter(WidgetPoint pos);
     void onMotion(WidgetPoint pos);
@@ -142,8 +135,7 @@ private:
     void onDragUpdate(WidgetVec delta);
     void onDragEnd(WidgetVec delta);
     void onScrollBegin();
-    // TODO(GTK4): Return a boolean instead of void
-    void onScrollChanged(double dx, double dy);
+    bool onScrollChanged(double dx, double dy);
     void onZoomBegin(GdkEventSequence* sequence);
     void onZoomChanged(double scale);
 
@@ -151,7 +143,6 @@ private:
 
     void onCameraUpdate();
 
-    ScrollUnit scrollUnit() const { return m_dirty_scroll.unit; }
     bool isPanning() const;
     bool tryPanPendingPress(const ClickContext& context, WidgetPoint pos);
     bool tryPanZoomScroll(WidgetVec scroll_delta);
@@ -162,26 +153,18 @@ private:
     void updateZoom(double new_zoom, bool preserve_cursor = true);
     void updateCursorShape();
 
-    // TODO(GTK4): Use information provided by EventControllerScroll directly
-    //             instead of trying to guess heuristically
-    void onDirtyScrollBegin();
-    void onDirtyScrollChanged(double dx, double dy);
-    void onDirtyScrollEnd();
-
     CursorManager m_cursor_manager;
     MouseGesture m_mouse_gesture;
 
     Glib::RefPtr<Gdk::Window> m_gdk_window;
 
     Glib::RefPtr<Gtk::GestureZoom> m_zoom_controller;
-    Glib::RefPtr<rt::gtk4::EventControllerScroll> m_scroll_controller;
+    std::unique_ptr<rt::gtk4::HeuristicEventControllerScroll> m_scroll_controller;
     sigc::connection m_change_cursor_connection;
 
     std::vector<CursorMonitor*> m_cursor_monitors;
     Renderer* m_renderer;
     CanvasModel* m_model;
-
-    DirtyScrollEvent m_dirty_scroll;
 
     // Pan/zoom state
     WidgetPoint m_prev_pan_pos;
@@ -191,9 +174,9 @@ private:
     double m_scroll_zoom_accum;
     double m_camera_zoom_begin;
     PanningInput m_pan;
-    ScrollDirection m_smooth_scroll_dir;
     ScrollMode m_scroll_mode;
     bool m_is_pan_zoom_enabled;
+    bool m_reverse_smooth_scroll_dir;
     bool m_is_cursor_inside_canvas;
 };
 

@@ -24,6 +24,8 @@
 #include "guiutils.h"
 #include "rtscalable.h"
 
+#include "rtengine/util/cpp.h"
+
 #include <cairomm/matrix.h>
 #include <gdk/gdkkeysyms.h>
 #include <gtkmm/gesturedrag.h>
@@ -34,6 +36,7 @@ using namespace rt::canvas;
 namespace {
 
 using PanZoomFlags = Session::PanZoomFlags;
+using ScrollUnit = rt::gtk4::ScrollUnit;
 
 constexpr CursorShape PAN_CURSOR = CSHandClosed;
 constexpr double NATURAL_ASPECT_RATIO = 16.0 / 9.0;
@@ -77,21 +80,19 @@ Canvas::Canvas(CanvasModel* model)
       m_scroll_zoom_accum(0),
       m_camera_zoom_begin(1),
       m_pan(PanningInput::NONE),
-      m_smooth_scroll_dir(ScrollDirection::NATURAL),
       m_scroll_mode(ScrollMode::ZOOM),
       m_is_pan_zoom_enabled(false),
+      m_reverse_smooth_scroll_dir(false),
       m_is_cursor_inside_canvas(false)
 {
     set_name("RtCanvas");
 
-    m_scroll_controller = rt::gtk4::EventControllerScroll::create(
-        this, GTK_EVENT_CONTROLLER_SCROLL_BOTH_AXES);
+    m_scroll_controller = rt::make_unique<rt::gtk4::HeuristicEventControllerScroll>(
+        this, rt::gtk4::HeuristicEventControllerScroll::Flags::BOTH_AXES);
     m_scroll_controller->signal_scroll_begin().connect(
-        sigc::mem_fun(*this, &Canvas::onDirtyScrollBegin));
+        sigc::mem_fun(*this, &Canvas::onScrollBegin));
     m_scroll_controller->signal_scroll().connect(
-        sigc::mem_fun(*this, &Canvas::onDirtyScrollChanged));
-    m_scroll_controller->signal_scroll_end().connect(
-        sigc::mem_fun(*this, &Canvas::onDirtyScrollEnd));
+        sigc::mem_fun(*this, &Canvas::onScrollChanged));
 
     m_zoom_controller = Gtk::GestureZoom::create(*this);
     m_zoom_controller->signal_begin().connect(
@@ -171,6 +172,8 @@ void Canvas::changeCursor(rt::optional<CursorShape> shape)
         updateCursorShape();
     }
 }
+
+bool Canvas::on_event(GdkEvent* event) { return m_scroll_controller->onEvent(event); }
 
 bool Canvas::on_draw(const Cairo::RefPtr<Cairo::Context>& cr)
 {
@@ -303,11 +306,13 @@ void Canvas::onScrollBegin()
     m_scroll_zoom_accum = 0;
 }
 
-void Canvas::onScrollChanged(double dx, double dy)
+bool Canvas::onScrollChanged(double dx, double dy)
 {
     WidgetVec delta{WidgetScalar(dx), WidgetScalar(dy)};
 
-    if (tryPanZoomScroll(delta)) return;
+    if (tryPanZoomScroll(delta)) return true;
+
+    return false;
 }
 
 void Canvas::onZoomBegin(GdkEventSequence* /* sequence */)
@@ -521,7 +526,7 @@ bool Canvas::tryZoomScroll(WidgetVec scroll_delta)
     const CameraState& camera = session.camera();
     const PanZoomFlags flags = session.panZoomFlags();
     const GdkModifierType state = session.modifiers();
-    const bool is_smooth = scrollUnit() == ScrollUnit::SURFACE;
+    const bool is_smooth = m_scroll_controller->get_scroll_unit() == ScrollUnit::SURFACE;
 
     auto allow = [&](PanZoomFlags test) { return rt::any(flags & test); };
 
@@ -594,7 +599,7 @@ bool Canvas::tryPanScroll(WidgetVec scroll_delta)
     const CameraState& camera = session.camera();
     const PanZoomFlags flags = session.panZoomFlags();
     const GdkModifierType state = session.modifiers();
-    const bool is_smooth = scrollUnit() == ScrollUnit::SURFACE;
+    const bool is_smooth = m_scroll_controller->get_scroll_unit() == ScrollUnit::SURFACE;
 
     auto allow = [&](PanZoomFlags test) { return rt::any(flags & test); };
 
@@ -696,10 +701,10 @@ void Canvas::updatePanWithScroll(WidgetVec delta)
     WorldVec bounds = session.widgetToWorldTransform()(camera.size.asVec());
 
     double pan_sensitivity = 0.1;
-    if (scrollUnit() == ScrollUnit::SURFACE) {
+    if (m_scroll_controller->get_scroll_unit() == ScrollUnit::SURFACE) {
         pan_sensitivity = m_smooth_scroll_pan_sensitivity;
-        if (m_smooth_scroll_dir == ScrollDirection::NATURAL) {
-            pan_sensitivity *= -1.0;
+        if (!m_reverse_smooth_scroll_dir) {
+            pan_sensitivity *= -1;
         }
     }
 
@@ -746,30 +751,4 @@ void Canvas::updateCursorShape()
         session.changeCursorShape(*shape);
         m_cursor_manager.setCursor(*shape);
     }
-}
-
-void Canvas::onDirtyScrollBegin()
-{
-    m_dirty_scroll.did_event_begin = true;
-    onScrollBegin();
-}
-
-void Canvas::onDirtyScrollChanged(double dx, double dy)
-{
-    if (!m_dirty_scroll.did_event_begin) {
-        m_dirty_scroll.unit = ScrollUnit::WHEEL;
-        dx = rt::clamp(dx, -1.0, 1.0);
-        dy = rt::clamp(dy, -1.0, 1.0);
-        onScrollChanged(dx, dy);
-    } else {
-        m_dirty_scroll.unit = ScrollUnit::SURFACE;
-        dx *= m_smooth_scroll_sensitivity;
-        dy *= m_smooth_scroll_sensitivity;
-        onScrollChanged(dx, dy);
-    }
-}
-
-void Canvas::onDirtyScrollEnd()
-{
-    m_dirty_scroll.did_event_begin = false;
 }
