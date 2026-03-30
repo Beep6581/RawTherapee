@@ -28,6 +28,7 @@ using namespace rtengine::procparams;
 PreviewHandler::PreviewHandler () :
     image(nullptr),
     cropParams(new procparams::CropParams),
+    cropGuideParams(new procparams::CropGuideParams),
     previewScale(1.)
 {
 
@@ -50,12 +51,13 @@ PreviewHandler::~PreviewHandler ()
 
 //----------------previewimagelistener functions--------------------
 
-void PreviewHandler::setImage(rtengine::IImage8* i, double scale, const rtengine::procparams::CropParams& cp)
+void PreviewHandler::setImage(rtengine::IImage8* i, double scale, const CropParams& cp,
+                              const CropGuideParams& cgp)
 {
     pih->pending++;
 
     idle_register.add(
-        [this, i, scale, cp]() -> bool
+        [this, i, scale, cp, cgp]() -> bool
         {
             if (pih->destroyed) {
                 if (pih->pending == 1) {
@@ -77,6 +79,7 @@ void PreviewHandler::setImage(rtengine::IImage8* i, double scale, const rtengine
             }
 
             *pih->phandler->cropParams = cp;
+            *pih->phandler->cropGuideParams = cgp;
             pih->phandler->previewScale = scale;
             --pih->pending;
 
@@ -122,12 +125,12 @@ void PreviewHandler::delImage(IImage8* i)
     );
 }
 
-void PreviewHandler::imageReady(const rtengine::procparams::CropParams& cp)
+void PreviewHandler::imageReady(const CropParams& cp, const CropGuideParams& cgp)
 {
     pih->pending++;
 
     idle_register.add(
-        [this, cp]() -> bool
+        [this, cp, cgp]() -> bool
         {
             if (pih->destroyed) {
                 if (pih->pending == 1) {
@@ -155,6 +158,7 @@ void PreviewHandler::imageReady(const rtengine::procparams::CropParams& cp)
             pih->phandler->previewImgMutex.unlock();
 
             *pih->phandler->cropParams = cp;
+            *pih->phandler->cropGuideParams = cgp;
             if (pih->phandler->previewImg) {
                 pih->phandler->previewImageChanged();
             }
@@ -228,9 +232,4 @@ void PreviewHandler::previewImageChanged ()
     for (std::list<PreviewListener*>::iterator i = listeners.begin(); i != listeners.end(); ++i) {
         (*i)->previewImageChanged ();
     }
-}
-
-rtengine::procparams::CropParams PreviewHandler::getCropParams()
-{
-    return *cropParams;
 }

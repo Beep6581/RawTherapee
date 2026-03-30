@@ -31,20 +31,6 @@
 #include "rtengine/coord.h"
 #include "rtengine/noncopyable.h"
 
-namespace rtengine
-{
-
-namespace procparams
-{
-
-class ProcParams;
-
-struct CropParams;
-
-}
-
-}
-
 class Adjuster;
 class RTImage;
 class ToolPanel;
@@ -53,12 +39,6 @@ Glib::ustring escapeHtmlChars(const Glib::ustring &src);
 bool removeIfThere (Gtk::Container* cont, Gtk::Widget* w, bool increference = true);
 bool confirmOverwrite (Gtk::Window& parent, const std::string& filename);
 void writeFailed (Gtk::Window& parent, const std::string& filename);
-void drawCrop (const Cairo::RefPtr<Cairo::Context>& cr,
-               double imx, double imy, double imw, double imh,
-               double clipWidth, double clipHeight,
-               double startx, double starty, double scale,
-               const rtengine::procparams::CropParams& cparams,
-               bool drawGuide = true, bool useBgColor = true, bool fullImageVisible = true);
 gboolean acquireGUI(void* data);
 void setExpandAlignProperties(Gtk::Widget *widget, bool hExpand, bool vExpand, enum Gtk::Align hAlign, enum Gtk::Align vAlign);
 Gtk::Border getPadding(const Glib::RefPtr<Gtk::StyleContext> style);
@@ -320,9 +300,9 @@ public:
     /// If not inconsistent, set the enabled button to true or false and emit the message if the state is different
     /// If inconsistent, set the internal value to true or false, but do not update the image and do not emit the message
     void setEnabled(bool isEnabled);
-    /// Adds a Tooltip to the Enabled button, if it exist ; do nothing otherwise
-    void setEnabledTooltipMarkup(Glib::ustring tooltipMarkup);
-    void setEnabledTooltipText(Glib::ustring tooltipText);
+    /// Adds a tooltip to the header
+    void setEnabledTooltipMarkup(const Glib::ustring& tooltipMarkup);
+    void setEnabledTooltipText(const Glib::ustring& tooltipText);
 
     /// Get the header widget. It'll send back the Gtk::Label* if it has been instantiated with a simple text
     Gtk::Widget* getLabelWidget() const

@@ -32,6 +32,18 @@ struct AspectRatio {
 
 // Pushes known aspect ratios to the given vector.
 //
-// Callers should populate ratios for entries like "As Imange" and "Current"
+// Callers should populate ratios for entries like "As Image" and "Current"
 // before calling this function.
 void fillAspectRatios(std::vector<AspectRatio>& ratios);
+
+const std::vector<AspectRatio>& getAspectRatios();
+
+inline Glib::ustring getAspectRatioLabel(size_t index)
+{
+    return getAspectRatios().at(index).label;
+}
+
+inline double getAspectRatioValue(size_t index)
+{
+    return getAspectRatios().at(index).value;
+}

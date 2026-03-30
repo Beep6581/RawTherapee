@@ -24,18 +24,14 @@
 
 #include "hidpi.h"
 
-namespace rtengine
-{
-    class IImage8;
+namespace rtengine {
+class IImage8;
 
-namespace procparams
-{
-
-    struct CropParams;
-
+namespace procparams {
+struct CropParams;
+struct CropGuideParams;
 }
-
-}
+} // namespace rtengine
 
 class ThumbBrowserEntryBase;
 
@@ -52,12 +48,14 @@ public:
         // Why is this a reference? Seems dangerous and could diverge from
         // used values?
         const rtengine::procparams::CropParams& crop;  // crop params used (??)
+        const rtengine::procparams::CropGuideParams& cropGuide;
 
         ImageUpdate(rtengine::IImage8* a_img, hidpi::LogicalSize a_size,
                     int a_device_scale, double a_scale,
-                    const rtengine::procparams::CropParams& a_crop)
+                    const rtengine::procparams::CropParams& a_crop,
+                    const rtengine::procparams::CropGuideParams& a_cropGuide)
                 : img(a_img), size(a_size), device_scale(a_device_scale),
-                  scale(a_scale), crop(a_crop) {}
+                  scale(a_scale), crop(a_crop), cropGuide(a_cropGuide) {}
     };
 
     /**

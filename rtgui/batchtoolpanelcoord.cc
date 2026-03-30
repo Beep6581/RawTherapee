@@ -150,6 +150,7 @@ void BatchToolPanelCoordinator::initSession ()
             vignetting->setAdjusterBehavior (false, false, false, false);
             colorappearance->setAdjusterBehavior (false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false);
             rotate->setAdjusterBehavior (false);
+            cropGuide->setAdjusterBehavior (false);
             resize->setAdjusterBehavior (false);
             framing->setAdjusterBehavior (false, false, false, false);
             distortion->setAdjusterBehavior (false, false);
@@ -197,6 +198,7 @@ void BatchToolPanelCoordinator::initSession ()
             vignetting->setAdjusterBehavior (options.baBehav[ADDSET_VIGN_AMOUNT], options.baBehav[ADDSET_VIGN_RADIUS], options.baBehav[ADDSET_VIGN_STRENGTH], options.baBehav[ADDSET_VIGN_CENTER]);
             colorappearance->setAdjusterBehavior (options.baBehav[ADDSET_CAT_DEGREE], options.baBehav[ADDSET_CAT_ADAPTSCENE], options.baBehav[ADDSET_CAT_ADAPTVIEWING], options.baBehav[ADDSET_CAT_BADPIX], options.baBehav[ADDSET_CAT_LIGHT], options.baBehav[ADDSET_CAT_CHROMA], options.baBehav[ADDSET_CAT_CONTRAST], options.baBehav[ADDSET_CAT_RSTPRO], options.baBehav[ADDSET_CAT_BRIGHT], options.baBehav[ADDSET_CAT_CONTRAST_Q], options.baBehav[ADDSET_CAT_CHROMA_S], options.baBehav[ADDSET_CAT_CHROMA_S_RED], options.baBehav[ADDSET_CAT_CHROMA_S_GREEN], options.baBehav[ADDSET_CAT_CHROMA_S_BLUE], options.baBehav[ADDSET_CAT_CHROMA_M], options.baBehav[ADDSET_CAT_HUE], options.baBehav[ADDSET_CAT_HUE_RED], options.baBehav[ADDSET_CAT_HUE_GREEN], options.baBehav[ADDSET_CAT_HUE_BLUE], options.baBehav[ADDSET_CAT_DEGREEOUT], options.baBehav[ADDSET_CAT_TEMPOUT] );
             rotate->setAdjusterBehavior (options.baBehav[ADDSET_ROTATE_DEGREE]);
+            cropGuide->setAdjusterBehavior (options.baBehav[ADDSET_CROP_GUIDE_BLEED]);
             resize->setAdjusterBehavior (options.baBehav[ADDSET_RESIZE_SCALE]);
             framing->setAdjusterBehavior (
                 options.baBehav[ADDSET_FRAMING_RELATIVE_SCALE],
@@ -337,6 +339,7 @@ void BatchToolPanelCoordinator::initSession ()
             if (options.baBehav[ADDSET_SOFTLIGHT_STRENGTH]) { pparams.softlight.strength = 0; }
             if (options.baBehav[ADDSET_DEHAZE_STRENGTH]) { pparams.dehaze.strength = 0; }
             if (options.baBehav[ADDSET_ROTATE_DEGREE]) { pparams.rotate.degree = 0; }
+            if (options.baBehav[ADDSET_CROP_GUIDE_BLEED]) { pparams.cropGuide.bleed = 0; }
             if (options.baBehav[ADDSET_RESIZE_SCALE]) { pparams.resize.scale = 0; }
             if (options.baBehav[ADDSET_FRAMING_RELATIVE_SCALE]) { pparams.framing.relativeBorderSize = 0; }
             if (options.baBehav[ADDSET_FRAMING_BORDER_RED]) { pparams.framing.borderRed = 0; }

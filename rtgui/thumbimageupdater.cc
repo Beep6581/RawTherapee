@@ -171,7 +171,9 @@ public:
 
         if (img) {
             DEBUG("pushing image %s", thm->getFileName().c_str());
-            ThumbImageUpdateListener::ImageUpdate update(img, logical, device_scale, scale, thm->getProcParams().crop);
+            ThumbImageUpdateListener::ImageUpdate update(
+                    img, logical, device_scale, scale,
+                    thm->getProcParams().crop, thm->getProcParams().cropGuide);
             j.listener_->updateImage(update);
         }
 

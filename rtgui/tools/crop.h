@@ -103,7 +103,6 @@ private:
     Gtk::CheckButton* fixr;
     MyComboBoxText* ratio;
     MyComboBoxText* orientation;
-    MyComboBoxText* guide;
 
     Gtk::Button* selectCrop;
     Gtk::Button* resetCrop;

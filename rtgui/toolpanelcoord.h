@@ -34,6 +34,7 @@
 #include "tools/colortoning.h"
 #include "tools/compressgamut.h"
 #include "tools/crop.h"
+#include "tools/cropguide.h"
 #include "tools/darkframe.h"
 #include "tools/defringe.h"
 #include "tools/dehaze.h"
@@ -135,6 +136,7 @@ protected:
     Framing* framing;
     PrSharpening* prsharpening;
     ICMPanel* icm;
+    CropGuide* cropGuide;
     Crop* crop;
     ToneCurve* toneCurve;
     ShadowsHighlights* shadowshighlights;
@@ -285,6 +287,7 @@ public:
         RESIZE_TOOL,
         PR_SHARPENING,
         FRAMING,
+        CROP_GUIDE,
         CROP_TOOL,
         ICM,
         WAVELET,

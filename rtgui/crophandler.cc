@@ -32,6 +32,7 @@ using namespace rtengine;
 
 CropHandler::CropHandler() :
     cropParams(new procparams::CropParams),
+    cropGuideParams(new procparams::CropGuideParams),
     colorParams(new procparams::ColorManagementParams),
     zoom(100),
     cax(-1),
@@ -304,6 +305,7 @@ void CropHandler::setDetailedCrop(
     IImage8* imtrue,
     const rtengine::procparams::ColorManagementParams& cmp,
     const rtengine::procparams::CropParams& cp,
+    const rtengine::procparams::CropGuideParams& guideParams,
     int ax,
     int ay,
     int aw,
@@ -318,6 +320,7 @@ void CropHandler::setDetailedCrop(
     cimg.lock ();
 
     *cropParams = cp;
+    *cropGuideParams = guideParams;
     *colorParams = cmp;
 
     if (!cropimg.empty()) {

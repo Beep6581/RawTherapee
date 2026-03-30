@@ -218,7 +218,7 @@ bool ProfileStore::parseDir (Glib::ustring& realPath, Glib::ustring& virtualPath
             if (Glib::file_test (fname, Glib::FILE_TEST_IS_DIR)) {
                 Glib::ustring vp (Glib::build_filename (virtualPath, currDir));
                 Glib::ustring rp (Glib::build_filename (realPath,    currDir));
-                fileFound = parseDir (rp, vp, currDir, folder, level + 1, 0);
+                fileFound |= parseDir (rp, vp, currDir, folder, level + 1, 0);
             } else {
                 size_t lastdot = currDir.find_last_of ('.');
 

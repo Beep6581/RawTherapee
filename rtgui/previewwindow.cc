@@ -19,6 +19,7 @@
 #include "previewwindow.h"
 
 #include "cursormanager.h"
+#include "drawcropguide.h"
 #include "guiutils.h"
 #include "hidpi.h"
 #include "imagearea.h"
@@ -109,18 +110,26 @@ void PreviewWindow::updatePreviewImage ()
     cc->fill();
 
     if (previewHandler->getCropParams().enabled) {
-        rtengine::procparams::CropParams cparams = previewHandler->getCropParams();
+        const auto& cparams = previewHandler->getCropParams();
+
+        CropGuideOverride cropGuideOverride;
         switch (App::get().options().cropGuides) {
-        case Options::CROP_GUIDE_NONE:
-            cparams.guide = rtengine::procparams::CropParams::Guide::NONE;
-            break;
-        case Options::CROP_GUIDE_FRAME:
-            cparams.guide = rtengine::procparams::CropParams::Guide::FRAME;
-            break;
-        default:
-            break;
-        }
-        drawCrop (cc, 0, 0, imgW, imgH, imgW, imgH, 0, 0, zoom, cparams, true, false);
+            case Options::CROP_GUIDE_NONE:
+                cropGuideOverride = CropGuideOverride::NO_GUIDES;
+                break;
+            case Options::CROP_GUIDE_FRAME:
+                cropGuideOverride = CropGuideOverride::FRAME;
+                break;
+            default:
+                cropGuideOverride = CropGuideOverride::DONT_TOUCH;
+                break;
+        };
+
+        drawCrop(cc, 0, 0, imgW, imgH, imgW, imgH, 0, 0, zoom, device.device_scale,
+                 cparams,
+                 previewHandler->getCropGuideParams(),
+                 cropGuideOverride,
+                 false);
     }
 }
 
