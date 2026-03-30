@@ -71,7 +71,7 @@ public:
     ~Canvas();
 
     void enablePanZoom(bool value) { m_is_pan_zoom_enabled = value; }
-    void setSmoothScrollSensitivity(int value, int min, int max);
+    void setSmoothScrollZoomSensitivity(int value, int min, int max);
     void setSmoothScrollPanSensitivity(int value, int min, int max);
     void setReverseSmoothScrollDirection(bool value)
     {
@@ -169,7 +169,7 @@ private:
     // Pan/zoom state
     WidgetPoint m_prev_pan_pos;
     WidgetPoint m_drag_start_pos;
-    double m_smooth_scroll_sensitivity;
+    double m_smooth_scroll_zoom_sensitivity;
     double m_smooth_scroll_pan_sensitivity;
     double m_scroll_zoom_accum;
     double m_camera_zoom_begin;

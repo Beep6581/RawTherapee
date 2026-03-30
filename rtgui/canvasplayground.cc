@@ -110,7 +110,7 @@ private:
     Canvas* m_canvas;
     Gtk::Box* m_control_box;
     Gtk::ComboBoxText* m_camera_bounds;
-    Gtk::Scale m_sense_slider;
+    Gtk::Scale m_zoom_sense_slider;
     Gtk::Scale m_pan_sense_slider;
     Gtk::CheckButton* m_scroll_dir_button;
     Gtk::CheckButton* m_scroll_mode_button;
@@ -165,7 +165,7 @@ CanvasPlayground::CanvasPlayground()
 
     show_all();
 
-    m_sense_slider.signal_value_changed().connect(
+    m_zoom_sense_slider.signal_value_changed().connect(
         sigc::mem_fun(*this, &CanvasPlayground::onSmoothSensitivityChanged));
     m_pan_sense_slider.signal_value_changed().connect(
         sigc::mem_fun(*this, &CanvasPlayground::onSmoothPanSensitivityChanged));
@@ -218,15 +218,15 @@ void CanvasPlayground::setupControls()
     m_control_box->pack_start(*zoom_fit_button, false, false);
 
     auto adjustment = Gtk::Adjustment::create(
-        Options::SMOOTH_SCROLL_SENSITIVITY_DEFAULT,
-        Options::SMOOTH_SCROLL_SENSITIVITY_MIN,
-        Options::SMOOTH_SCROLL_SENSITIVITY_MAX,
+        Options::SMOOTH_SCROLL_ZOOM_SENSITIVITY_DEFAULT,
+        Options::SMOOTH_SCROLL_ZOOM_SENSITIVITY_MIN,
+        Options::SMOOTH_SCROLL_ZOOM_SENSITIVITY_MAX,
         1, 1);
-    m_sense_slider.set_adjustment(adjustment);
-    m_sense_slider.set_digits(0);
-    auto sense_label = rt::make_managed<Gtk::Label>("Smooth Scroll Sensitivity");
+    m_zoom_sense_slider.set_adjustment(adjustment);
+    m_zoom_sense_slider.set_digits(0);
+    auto sense_label = rt::make_managed<Gtk::Label>("Smooth Scroll Zoom Sensitivity");
     m_control_box->pack_start(*sense_label, false, false);
-    m_control_box->pack_start(m_sense_slider, false, false);
+    m_control_box->pack_start(m_zoom_sense_slider, false, false);
 
     auto pan_adjustment = Gtk::Adjustment::create(
         Options::SMOOTH_SCROLL_PAN_SENSITIVITY_DEFAULT,
@@ -334,10 +334,10 @@ void CanvasPlayground::setupImageBuffer()
 
 void CanvasPlayground::onSmoothSensitivityChanged()
 {
-    m_canvas->setSmoothScrollSensitivity(
-        static_cast<int>(m_sense_slider.get_value()),
-        Options::SMOOTH_SCROLL_SENSITIVITY_MIN,
-        Options::SMOOTH_SCROLL_SENSITIVITY_MAX);
+    m_canvas->setSmoothScrollZoomSensitivity(
+        static_cast<int>(m_zoom_sense_slider.get_value()),
+        Options::SMOOTH_SCROLL_ZOOM_SENSITIVITY_MIN,
+        Options::SMOOTH_SCROLL_ZOOM_SENSITIVITY_MAX);
 }
 
 void CanvasPlayground::onSmoothPanSensitivityChanged()

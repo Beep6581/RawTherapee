@@ -75,7 +75,7 @@ Canvas::Canvas(CanvasModel* model)
     : Gtk::Widget(),
       m_renderer(nullptr),
       m_model(model),
-      m_smooth_scroll_sensitivity(1),
+      m_smooth_scroll_zoom_sensitivity(1),
       m_smooth_scroll_pan_sensitivity(1),
       m_scroll_zoom_accum(0),
       m_camera_zoom_begin(1),
@@ -139,10 +139,10 @@ Canvas::Canvas(CanvasModel* model)
 
 Canvas::~Canvas() = default;
 
-void Canvas::setSmoothScrollSensitivity(int value, int min, int max)
+void Canvas::setSmoothScrollZoomSensitivity(int value, int min, int max)
 {
     double mapped = mapSliderLog(value, min, max, 0.01, 100);
-    m_smooth_scroll_sensitivity = mapped;
+    m_smooth_scroll_zoom_sensitivity = mapped;
 }
 
 void Canvas::setSmoothScrollPanSensitivity(int value, int min, int max)
@@ -551,7 +551,8 @@ bool Canvas::tryZoomScroll(WidgetVec scroll_delta)
         }
 
         if (allow(PanZoomFlags::ZOOM_WITH_SCROLL)) {
-            m_scroll_zoom_accum += scroll_delta.y.value();
+            m_scroll_zoom_accum +=
+                scroll_delta.y.value() * m_smooth_scroll_zoom_sensitivity;
 
             if (m_scroll_zoom_accum >= 1.0) {
                 updateZoom(camera.zoom / ZOOM_FACTOR);
@@ -606,7 +607,8 @@ bool Canvas::tryPanScroll(WidgetVec scroll_delta)
     if (is_smooth) {
         if (allow(PanZoomFlags::ZOOM_WITH_MOD_SCROLL)) {
             if (state & GDK_MOD1_MASK) {
-                m_scroll_zoom_accum += scroll_delta.y.value();
+                m_scroll_zoom_accum +=
+                    scroll_delta.y.value() * m_smooth_scroll_zoom_sensitivity;
 
                 if (m_scroll_zoom_accum >= 1.0) {
                     updateZoom(camera.zoom / ZOOM_FACTOR, false);

@@ -293,10 +293,10 @@ void Inspector::onPreferencesChanged()
 
     m_canvas->setScrollMode(options.zoomOnScroll ? ScrollMode::ZOOM : ScrollMode::PAN);
     m_canvas->setReverseSmoothScrollDirection(options.reverseScrollDir);
-    m_canvas->setSmoothScrollSensitivity(
-        options.smoothScrollSensitivity,
-        Options::SMOOTH_SCROLL_SENSITIVITY_MIN,
-        Options::SMOOTH_SCROLL_SENSITIVITY_MAX);
+    m_canvas->setSmoothScrollZoomSensitivity(
+        options.smoothScrollZoomSensitivity,
+        Options::SMOOTH_SCROLL_ZOOM_SENSITIVITY_MIN,
+        Options::SMOOTH_SCROLL_ZOOM_SENSITIVITY_MAX);
     m_canvas->setSmoothScrollPanSensitivity(
         options.smoothScrollPanSensitivity,
         Options::SMOOTH_SCROLL_PAN_SENSITIVITY_MIN,

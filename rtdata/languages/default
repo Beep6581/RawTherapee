@@ -2249,7 +2249,7 @@ PREFERENCES_SHTHRESHOLD;Threshold for clipped shadows
 PREFERENCES_SINGLETAB;Single Editor Tab Mode
 PREFERENCES_SINGLETABVERTAB;Single Editor Tab Mode, Vertical Tabs
 PREFERENCES_SMOOTH_SCROLL_PAN_SENSITIVITY;Smooth scroll pan sensitivity:
-PREFERENCES_SMOOTH_SCROLL_SENSITIVITY;Smooth scroll sensitivity:
+PREFERENCES_SMOOTH_SCROLL_ZOOM_SENSITIVITY;Smooth scroll zoom sensitivity:
 PREFERENCES_SND_HELP;Enter a full file path to set a sound, or leave blank for no sound.\nFor system sounds on Windows use 'SystemDefault', 'SystemAsterisk' etc., and on Linux use 'complete', 'window-attention' etc.
 PREFERENCES_SND_LNGEDITPROCDONE;Editor processing done
 PREFERENCES_SND_QUEUEDONE;Queue processing done

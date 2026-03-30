@@ -344,11 +344,11 @@ public:
     bool inspectorWindow; // open inspector in separate window
     bool zoomOnScroll;    // translate scroll events to zoom
     bool reverseScrollDir;
-    int smoothScrollSensitivity;
+    int smoothScrollZoomSensitivity;
     int smoothScrollPanSensitivity;
-    static constexpr int SMOOTH_SCROLL_SENSITIVITY_MIN = -100;
-    static constexpr int SMOOTH_SCROLL_SENSITIVITY_MAX = 100;
-    static constexpr int SMOOTH_SCROLL_SENSITIVITY_DEFAULT = 0;
+    static constexpr int SMOOTH_SCROLL_ZOOM_SENSITIVITY_MIN = -100;
+    static constexpr int SMOOTH_SCROLL_ZOOM_SENSITIVITY_MAX = 100;
+    static constexpr int SMOOTH_SCROLL_ZOOM_SENSITIVITY_DEFAULT = 0;
     static constexpr int SMOOTH_SCROLL_PAN_SENSITIVITY_MIN = -100;
     static constexpr int SMOOTH_SCROLL_PAN_SENSITIVITY_MAX = 100;
     static constexpr int SMOOTH_SCROLL_PAN_SENSITIVITY_DEFAULT = 0;

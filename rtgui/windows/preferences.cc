@@ -2067,8 +2067,8 @@ void Preferences::storePreferences()
     moptions.inspectorWindow = inspectorWindowCB->get_active();
     moptions.zoomOnScroll = zoomOnScrollCB->get_active();
     moptions.reverseScrollDir = reverseScrollCB->get_active();
-    moptions.smoothScrollSensitivity =
-        static_cast<int>(smoothScrollSensitivity->get_value());
+    moptions.smoothScrollZoomSensitivity =
+        static_cast<int>(smoothScrollZoomSensitivity->get_value());
     moptions.smoothScrollPanSensitivity =
         static_cast<int>(smoothScrollPanSensitivity->get_value());
 
@@ -2312,7 +2312,7 @@ void Preferences::fillPreferences()
     inspectorWindowCB->set_active(moptions.inspectorWindow);
     zoomOnScrollCB->set_active(moptions.zoomOnScroll);
     reverseScrollCB->set_active(moptions.reverseScrollDir);
-    smoothScrollSensitivity->set_value(moptions.smoothScrollSensitivity);
+    smoothScrollZoomSensitivity->set_value(moptions.smoothScrollZoomSensitivity);
     smoothScrollPanSensitivity->set_value(moptions.smoothScrollPanSensitivity);
     switch (moptions.zoom11Mode) {
         case Options::Zoom11Mode::CENTER_CURSOR:
@@ -3011,21 +3011,21 @@ Gtk::Widget* Preferences::setupEditorInspectorSettings()
     setExpandAlignProperties(nestedGrid, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_FILL);
 
     auto scrollLabel = rt::make_managed<Gtk::Label>(
-        M("PREFERENCES_SMOOTH_SCROLL_SENSITIVITY"));
-    smoothScrollSensitivity = rt::make_managed<MyHScale>();
+        M("PREFERENCES_SMOOTH_SCROLL_ZOOM_SENSITIVITY"));
+    smoothScrollZoomSensitivity = rt::make_managed<MyHScale>();
     setup(scrollLabel);
-    setExpandAlignProperties(smoothScrollSensitivity, true, true,
+    setExpandAlignProperties(smoothScrollZoomSensitivity, true, true,
                              Gtk::ALIGN_FILL, Gtk::ALIGN_FILL);
     auto scrollAdjustment = Gtk::Adjustment::create(
-        Options::SMOOTH_SCROLL_SENSITIVITY_DEFAULT,
-        Options::SMOOTH_SCROLL_SENSITIVITY_MIN,
-        Options::SMOOTH_SCROLL_SENSITIVITY_MAX,
+        Options::SMOOTH_SCROLL_ZOOM_SENSITIVITY_DEFAULT,
+        Options::SMOOTH_SCROLL_ZOOM_SENSITIVITY_MIN,
+        Options::SMOOTH_SCROLL_ZOOM_SENSITIVITY_MAX,
         1.0,
         1.0);
-    smoothScrollSensitivity->set_adjustment(scrollAdjustment);
-    smoothScrollSensitivity->set_digits(0);
+    smoothScrollZoomSensitivity->set_adjustment(scrollAdjustment);
+    smoothScrollZoomSensitivity->set_digits(0);
     nestedGrid->attach_next_to(*scrollLabel, Gtk::POS_TOP, 1, 1);
-    nestedGrid->attach_next_to(*smoothScrollSensitivity, *scrollLabel,
+    nestedGrid->attach_next_to(*smoothScrollZoomSensitivity, *scrollLabel,
                                Gtk::POS_RIGHT, 1, 1);
 
     auto panScrollLabel = rt::make_managed<Gtk::Label>(
