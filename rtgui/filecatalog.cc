@@ -1042,10 +1042,11 @@ void FileCatalog::deleteRequested(const std::vector<FileBrowserEntry*>& tbe, boo
     if (msd.run() == Gtk::RESPONSE_YES) {
         for (unsigned int i = 0; i < tbe.size(); i++) {
             const auto fname = tbe[i]->filename;
+            const auto md5 = tbe[i]->thumbnail->getMD5();
             // remove from browser
             delete fileBrowser->delEntry (fname);
             // remove from cache
-            cacheMgr->deleteEntry (fname);
+            cacheMgr->clearFromCache (fname, md5, true);
             // delete from file system
             ::g_remove (fname.c_str ());
             // delete paramfile if found
@@ -1396,8 +1397,9 @@ void FileCatalog::clearFromCacheRequested(const std::vector<FileBrowserEntry*>& 
 
     for (unsigned int i = 0; i < tbe.size(); i++) {
         Glib::ustring fname = tbe[i]->filename;
+        Glib::ustring md5 = tbe[i]->thumbnail->getMD5();
         // remove from cache
-        cacheMgr->clearFromCache (fname, leavenotrace);
+        cacheMgr->clearFromCache (fname, md5, leavenotrace);
     }
 }
 
@@ -1850,12 +1852,11 @@ void FileCatalog::reparseDirectory ()
 
     // check if a thumbnailed file has been deleted or is not in a directory of interest
     const std::vector<ThumbBrowserEntryBase*>& t = fileBrowser->getEntries();
-    std::vector<Glib::ustring> fileNamesToDel;
     std::vector<Glib::ustring> fileNamesToRemove;
 
     for (const auto& entry : t) {
         if (!Glib::file_test(entry->filename, Glib::FILE_TEST_EXISTS)) {
-            fileNamesToDel.push_back(entry->filename);
+            cacheMgr->clearFromCache(entry->filename, entry->thumbnail->getMD5(), true);
             fileNamesToRemove.push_back(entry->filename);
         }
         else if (!App::get().options().browseRecursive && Glib::path_get_dirname(entry->filename) != selectedDirectory) {
@@ -1867,11 +1868,8 @@ void FileCatalog::reparseDirectory ()
         delete fileBrowser->delEntry(toRemove);
         --previewsLoaded;
     }
-    for (const auto& toDelete : fileNamesToDel) {
-        cacheMgr->deleteEntry(toDelete);
-    }
 
-    if (!fileNamesToDel.empty()) {
+    if (!fileNamesToRemove.empty()) {
         _refreshProgressBar();
     }
 

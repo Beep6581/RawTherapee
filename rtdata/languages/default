@@ -1299,7 +1299,7 @@ HISTORY_MSG_1066;Local - CIECAM brightness
 HISTORY_MSG_1067;Local - CIECAM Contrast J
 HISTORY_MSG_1068;Local - CIECAM threshold
 HISTORY_MSG_1069;Local - CIECAM contrast Q
-HISTORY_MSG_1070;Local - CIECAM colorfullness
+HISTORY_MSG_1070;Local - CIECAM colorfulness
 HISTORY_MSG_1071;Local - CIECAM Absolute luminance
 HISTORY_MSG_1072;Local - CIECAM Mean luminance
 HISTORY_MSG_1073;Local - CIECAM Cat16
@@ -1424,6 +1424,11 @@ HISTORY_MSG_COLORTONING_LABREGION_POWER;CT - region power
 HISTORY_MSG_COLORTONING_LABREGION_SATURATION;CT - Saturation
 HISTORY_MSG_COLORTONING_LABREGION_SHOWMASK;CT - region show mask
 HISTORY_MSG_COLORTONING_LABREGION_SLOPE;CT - region slope
+HISTORY_MSG_CROP_GUIDE_ASPECT_RATIO_PRESET_CHANGED;Crop Guide - Aspect Ratio Preset
+HISTORY_MSG_CROP_GUIDE_BLEED_BASIS_CHANGED;Crop Guide - Bleed Basis
+HISTORY_MSG_CROP_GUIDE_BLEED_CHANGED;Crop Guide - Bleed
+HISTORY_MSG_CROP_GUIDE_ENABLED;Crop Guide
+HISTORY_MSG_CROP_GUIDE_PRESET_CHANGED;Crop Guide - Preset
 HISTORY_MSG_COMPLEX;Wavelet complexity
 HISTORY_MSG_COMPLEXRETI;Retinex complexity
 HISTORY_MSG_DEHABLACK;Dehaze Bayer Black
@@ -1976,6 +1981,7 @@ PARTIALPASTE_COMMONTRANSFORMPARAMS;Auto-fill
 PARTIALPASTE_COMPOSITIONGROUP;Composition Settings
 PARTIALPASTE_COMPRESSGAMUT;Gamut Compression
 PARTIALPASTE_CROP;Crop
+PARTIALPASTE_CROPGUIDE;Crop Guide
 PARTIALPASTE_DARKFRAMEAUTOSELECT;Dark-frame auto-selection
 PARTIALPASTE_DARKFRAMEFILE;Dark-frame file
 PARTIALPASTE_DEFRINGE;Defringe
@@ -2582,7 +2588,7 @@ TP_COLORAPP_MODEL_TOOLTIP;White-Point Model.\n\n<b>WB [RT] + [output]</b>: RT's 
 TP_COLORAPP_NEUTRAL;Reset
 TP_COLORAPP_NEUTRAL_TOOLTIP;Reset all sliders checkbox and curves to their default values.
 TP_COLORAPP_LABEL_RGB;Red Green Blue
-TP_COLORAPP_RGB_TOOLTIP;'Red Blue Green' allows you to either:\n* Correct any color deviations due to either: gamut overshoot following various adjustments in the process, or poor white balance.\n* Achieve a better balance of colors and luminances to satisfy your preferences.\n* Film Simulation.\n\nThe system operates after the first process (Scene) which converts the 'Working profile' data into that of 'CAM16'. At this stage, the J, Q, C, s, M, h data take into account the physiological aspects considered by CIECAM, and a chromatic adaptation is performed.\n\n For each main color of CIECAM ac-bc [chroma based] hue plane - Red, Green, Blue - you can perform a slight hue (h) rotation in degrees (sliders) , adjust the saturation (s) as a percentage (sliders) , and adjust brightness (Q) (curves).\n\n As a general rule, small adjustments are sufficient: 1° to 3° for hue rotations (h), 5 to 10% more or less for saturation (s), very limited variations in brightness (Q). Of course, if you are looking for special effects, such as simulating a film, the settings can be more pronounced.\n\n These adjustments are made just before the other CIECAM adjustments: Lightness (J), Brightness (Q), Chroma (C), Saturation (s), Colorfullness (M), hue (h), contrast (J), contrast (Q) and curves and are added to them. \n\n Next, the third process converts the data from the 'CAM16' color space to the 'Working profile', taking into account the Viewing conditions. Color adaptation is then performed.\n\n These hue, saturation and brightness adjustments do not use primaries. They are based on the principle of CAM (Color Appearance Models) in 3 processes.
+TP_COLORAPP_RGB_TOOLTIP;'Red Green Blue' allows you to either:\n* Correct any color deviations due to either: gamut overshoot following various adjustments in the process, or poor white balance.\n* Achieve a better balance of colors and luminances to satisfy your preferences.\n* Film Simulation.\n\nThe system operates after the first process (Scene) which converts the 'Working profile' data into that of 'CAM16'. At this stage, the J, Q, C, s, M, h data take into account the physiological aspects considered by CIECAM, and a chromatic adaptation is performed.\n\n For each main color of CIECAM ac-bc [chroma based] hue plane - Red, Green, Blue - you can perform a slight hue (h) rotation in degrees (sliders) , adjust the saturation (s) as a percentage (sliders) , and adjust brightness (Q) (curves).\n\n As a general rule, small adjustments are sufficient: 1° to 3° for hue rotations (h), 5 to 10% more or less for saturation (s), very limited variations in brightness (Q). Of course, if you are looking for special effects, such as simulating a film, the settings can be more pronounced.\n\n These adjustments are made just before the other CIECAM adjustments: Lightness (J), Brightness (Q), Chroma (C), Saturation (s), Colorfulness (M), hue (h), contrast (J), contrast (Q) and curves and are added to them. \n\n Next, the third process converts the data from the 'CAM16' color space to the 'Working profile', taking into account the Viewing conditions. Color adaptation is then performed.\n\n These hue, saturation and brightness adjustments do not use primaries. They are based on the principle of CAM (Color Appearance Models) in 3 processes.
 TP_COLORAPP_RSTPRO;Red & skin-tones protection
 TP_COLORAPP_RSTPRO_TOOLTIP;Red &amp; skin-tones protection affects both sliders and curves.
 TP_COLORAPP_SOURCEF_TOOLTIP;Corresponds to the shooting conditions and how to bring the conditions and data back to a 'normal' area. Normal means average or standard conditions and data, i.e. without taking into account CIECAM corrections.
@@ -2700,6 +2706,7 @@ TP_COMPRESSGAMUT_YELLOWLIM;Yellow
 TP_COMPRESSGAMUT_YELLOWTH;Yellow
 TP_CROP_FIXRATIO;Lock ratio
 TP_CROP_GTCENTEREDSQUARE;Centered square
+TP_CROP_GTCROSSHAIR;Crosshair
 TP_CROP_GTDIAGONALS;Rule of Diagonals
 TP_CROP_GTEPASSPORT;Biometric Passport
 TP_CROP_GTFRAME;Frame
@@ -2707,8 +2714,8 @@ TP_CROP_GTGRID;Grid
 TP_CROP_GTHARMMEANS;Harmonic Means
 TP_CROP_GTNONE;None
 TP_CROP_GTRULETHIRDS;Rule of Thirds
-TP_CROP_GTTRIANGLE1;Golden Triangles 1
-TP_CROP_GTTRIANGLE2;Golden Triangles 2
+TP_CROP_GTTRIANGLE;Golden Triangles
+TP_CROP_GTGOLDENRATIO;Golden Ratio
 TP_CROP_GUIDETYPE;Guide type:
 TP_CROP_H;Height
 TP_CROP_LABEL;Crop
@@ -2718,6 +2725,11 @@ TP_CROP_SELECTCROP;Select
 TP_CROP_W;Width
 TP_CROP_X;Left
 TP_CROP_Y;Top
+TP_CROP_GUIDE_ASPECT_RATIO;Inscribed aspect ratio crop guides:
+TP_CROP_GUIDE_BLEED;Bleed
+TP_CROP_GUIDE_LABEL;Crop Guide
+TP_CROP_GUIDE_NO_ASPECT_RATIO_GUIDES;No aspect ratio guides
+TP_CROP_GUIDE_TOOLTIP;Display preview-only guides for the current crop.\n\nInscribed aspect ratio guides fit the selected aspect ratio in the current crop. The orientation is determined automatically based on the crop aspect ratio.\n\n<b>Click</b> - Enable only the selected preset\n<b>Ctrl-Click</b> - Enable the selected preset as an additional guide
 TP_DARKFRAME_AUTOSELECT;Auto-selection
 TP_DARKFRAME_LABEL;Dark-Frame
 TP_DEFRINGE_LABEL;Defringe
@@ -2875,7 +2887,7 @@ TP_FRAMING_ABSOLUTE_HEIGHT;Border Height
 TP_FRAMING_ABSOLUTE_WIDTH;Border Width
 TP_FRAMING_ALLOW_UPSCALING;Allow upscaling to frame
 TP_FRAMING_ASPECT_RATIO;Aspect Ratio:
-TP_FRAMING_BASIS;Basis
+TP_FRAMING_BASIS;Basis:
 TP_FRAMING_BASIS_AUTO;Auto
 TP_FRAMING_BASIS_HEIGHT;Height
 TP_FRAMING_BASIS_LONG_SIDE;Long Edge

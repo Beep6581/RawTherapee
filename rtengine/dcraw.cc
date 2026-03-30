@@ -2439,7 +2439,7 @@ void CLASS leaf_hdr_load_raw()
       if (filters && c != shot_select) continue;
       if (filters) pixel = raw_image + r*raw_width;
       read_shorts (pixel, raw_width);
-      if (!filters && (row = r - top_margin) < height)
+      if (!filters && image && (row = r - top_margin) < height) // RT: Check if image exists
 	for (col=0; col < width; col++)
 	  image[row*width+col][c] = pixel[col+left_margin];
     }
@@ -2752,6 +2752,11 @@ void CLASS quicktake_100_load_raw()
     654,665,676,687,698,710,721,732,743,754,766,777,788,799,810,822,833,844,
     855,866,878,889,900,911,922,933,945,956,967,978,989,1001,1012,1023 };
   int rb, row, col, sharp, val=0;
+
+  if (width > 640 || height > 480) {
+    fprintf(stderr, _("Invalid image dimension for QuickTake 100: %ux%u\n"), width, height);
+    return;
+  }
 
   getbits(-1);
   memset (pixel, 0x80, sizeof pixel);
@@ -3818,7 +3823,7 @@ void CLASS foveon_huff (ushort *huff)
 void CLASS foveon_dp_load_raw()
 {
   unsigned c, roff[4], row, col, diff;
-  ushort huff[512], vpred[2][2], hpred[2];
+  ushort huff[1024], vpred[2][2], hpred[2];
 
   fseek (ifp, 8, SEEK_CUR);
   foveon_huff (huff);
@@ -3842,12 +3847,19 @@ void CLASS foveon_dp_load_raw()
 void CLASS foveon_load_camf()
 {
   unsigned type, wide, high, i, j, row, col, diff;
-  ushort huff[258], vpred[2][2] = {{512,512},{512,512}}, hpred[2];
+  ushort huff[1024], vpred[2][2] = {{512,512},{512,512}}, hpred[2];
 
   fseek (ifp, meta_offset, SEEK_SET);
   type = get4();  get4();  get4();
   wide = get4();
   high = get4();
+
+  // Adapted from LibRaw.
+  if (wide > 32767 || high > 32767 || wide * high > 20000000) {
+    fprintf(stderr, _("%s has too large CAMF dimensions (width=%u height=%u).\n"), ifname, wide, high);
+    return;
+  }
+
   if (type == 2) {
     fread (meta_data, 1, meta_length, ifp);
     for (i=0; i < meta_length; i++) {
@@ -10256,13 +10268,19 @@ void CLASS identify()
     i = get4();
     width = get2();
     height = get2();
-    switch (tiff_bps = i*8 / (width * height)) {
-      case  8: load_raw = &CLASS eight_bit_load_raw;  break;
-      case 10: load_raw = &CLASS nokia_load_raw;
+    // Data size check adapted from LibRaw.
+    if (width < 1 || width > 16000 || height < 1 || height > 16000 ||
+        i < (width * height) || i > (2 * width * height)) {
+      is_raw = 0;
+    } else {
+      switch (tiff_bps = i*8 / (width * height)) {
+        case  8: load_raw = &CLASS eight_bit_load_raw;  break;
+        case 10: load_raw = &CLASS nokia_load_raw;
+      }
+      raw_height = height + (top_margin = i / (width * tiff_bps/8) - height);
+      mask[0][3] = 1;
+      filters = 0x61616161;
     }
-    raw_height = height + (top_margin = i / (width * tiff_bps/8) - height);
-    mask[0][3] = 1;
-    filters = 0x61616161;
   } else if (!memcmp (head,"ARRI",4)) {
     order = 0x4949;
     fseek (ifp, 20, SEEK_SET);

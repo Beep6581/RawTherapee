@@ -8,6 +8,7 @@ set(RTENGINESOURCEFILES
     alpha.cc
     ahd_demosaic_RT.cc
     amaze_demosaic_RT.cc
+    aspectratios.cc
     badpixels.cc
     bayer_bilinear_demosaic.cc
     boxblur.cc

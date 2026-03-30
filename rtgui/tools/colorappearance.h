@@ -82,6 +82,7 @@ public:
     void modelmethodChanged();
     void catmethodChanged();
     void convertParamToNormal();
+
     void updateGUIToMode(int mode);
 
     void expandCurve         (bool isExpanded);
@@ -131,7 +132,7 @@ private:
     Glib::RefPtr<Gtk::Tooltip> srTTips;
     Glib::RefPtr<Gdk::Pixbuf> bgPixbuf;
     Glib::RefPtr<Gdk::Pixbuf> srPixbuf;
-
+    Gtk::Frame* pRGBFrame;
     Adjuster* degree;
     Adjuster* adapscen;
     Adjuster* ybscen;

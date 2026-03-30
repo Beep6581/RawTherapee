@@ -691,6 +691,7 @@ void Thumbnail::setProcParams (const ProcParams& pp, ParamsEdited* pe, int whoCh
         || pparams->sh != pp.sh
         || pparams->toneEqualizer != pp.toneEqualizer
         || pparams->crop != pp.crop
+        || pparams->cropGuide != pp.cropGuide
         || pparams->coarse != pp.coarse
         || pparams->commonTrans != pp.commonTrans
         || pparams->rotate != pp.rotate

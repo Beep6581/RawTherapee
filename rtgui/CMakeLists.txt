@@ -21,6 +21,7 @@ set(RT_GUI_TOOL_PANEL_SOURCES
     tools/colortoning.cc
     tools/compressgamut.cc
     tools/crop.cc
+    tools/cropguide.cc
     tools/darkframe.cc
     tools/defringe.cc
     tools/dehaze.cc
@@ -113,7 +114,6 @@ set(RT_GUI_WINDOWS_SOURCES
 
 set(NONCLISOURCEFILES
     alignedmalloc.cc
-    aspectratios.cc
     batchqueue.cc
     batchqueuebuttonset.cc
     batchqueueentry.cc
@@ -131,6 +131,7 @@ set(NONCLISOURCEFILES
     cropwindow.cc
     cursormanager.cc
     dirbrowser.cc
+    drawcropguide.cc
     dynamicprofilepanel.cc
     editbuffer.cc
     editcallbacks.cc

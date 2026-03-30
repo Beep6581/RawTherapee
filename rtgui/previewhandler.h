@@ -57,6 +57,7 @@ private:
 protected:
     rtengine::IImage8* image;
     const std::unique_ptr<rtengine::procparams::CropParams> cropParams;
+    const std::unique_ptr<rtengine::procparams::CropGuideParams> cropGuideParams;
     double previewScale;
     PreviewHandlerIdleHelper* pih;
     std::list<PreviewListener*> listeners;
@@ -74,9 +75,12 @@ public:
     }
 
     // previewimagelistener
-    void setImage(rtengine::IImage8* img, double scale, const rtengine::procparams::CropParams& cp) override;
+    void setImage(rtengine::IImage8* img, double scale,
+                  const rtengine::procparams::CropParams& cp,
+                  const rtengine::procparams::CropGuideParams& cgp) override;
     void delImage(rtengine::IImage8* img) override;
-    void imageReady(const rtengine::procparams::CropParams& cp) override;
+    void imageReady(const rtengine::procparams::CropParams& cp,
+                    const rtengine::procparams::CropGuideParams& cgp) override;
 
     // this function is called when a new preview image arrives from rtengine
     void previewImageChanged ();
@@ -85,5 +89,9 @@ public:
     Glib::RefPtr<Gdk::Pixbuf> getRoughImage(ImageCoord pos, hidpi::ScaledDeviceSize desiredSize, double zoom);
     hidpi::DevicePixbuf getRoughImage(hidpi::LogicalSize desiredSize, int deviceScale, double& outLogicalZoom);
 
-    rtengine::procparams::CropParams    getCropParams ();
+    const rtengine::procparams::CropParams& getCropParams() const { return *cropParams; }
+    const rtengine::procparams::CropGuideParams& getCropGuideParams() const
+    {
+        return *cropGuideParams;
+    }
 };

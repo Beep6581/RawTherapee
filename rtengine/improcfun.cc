@@ -706,7 +706,7 @@ void ImProcFunctions::ciecam_02float(CieImage* ncie, float adap, int pW, int pwb
 
         //algoritm's params
         float chr = 0.f;
-        //Various adaptation between chroma, saturation, colorfullness
+        //Various adaptation between chroma, saturation, colorfulness
         if (alg == 0 || alg == 3) {
             chr = params->colorappearance.chroma;
 
@@ -1209,6 +1209,7 @@ void ImProcFunctions::ciecam_02float(CieImage* ncie, float adap, int pW, int pwb
                         hpro = hpro + attenuation_hue * huered;//rotation Red
                         spro = spro * (1.f + (schrred / 100.f));//change Red saturation 
                         float Cp = (spro * spro * Qpro) / (1000000.f);//recalculate Chroma
+                        Mpro = SQR(spro) * Qpro / 10000.f;//recalculate Mpro Colorfulness
                         Cpro = Cp * 100.f;
 
 
@@ -1235,6 +1236,7 @@ void ImProcFunctions::ciecam_02float(CieImage* ncie, float adap, int pW, int pwb
                         hpro = hpro + attenuation_hue * huegreen;//Rotation Green
                         spro = spro * (1.f + (schrgreen / 100.f));//change Green saturation 
                         float Cp = (spro * spro * Qpro) / (1000000.f);//Evaluate Chroma with Brightness Q and saturation
+                        Mpro = SQR(spro) * Qpro / 10000.f;//recalculate Mpro Colorfulness
                         Cpro = Cp * 100.f;
 
                         if (hpro < 0.0f) {
@@ -1256,10 +1258,11 @@ void ImProcFunctions::ciecam_02float(CieImage* ncie, float adap, int pW, int pwb
                         if (jpblue) {
                             Jpro = SQR((10.f * Qpro) / wh);
                         }
-                    
+
                         hpro = hpro + attenuation_hue * hueblue;//Rotation Blue
                         spro = spro * (1.f + (schrblue / 100.f));//change Blue saturation 
                         float Cp = (spro * spro * Qpro) / (1000000.f);
+                        Mpro = SQR(spro) * Qpro / 10000.f;//recalculate Mpro Colorfulness
                         Cpro = Cp * 100.f;
 
                         if (hpro < 0.0f) {
@@ -1291,7 +1294,7 @@ void ImProcFunctions::ciecam_02float(CieImage* ncie, float adap, int pW, int pwb
                         Jpro = CAMBrightCurveJ[Jpro * 327.68f]; //lightness CIECAM02 + contrast
                         float sres;
                         float Sp = spro / 100.0f;
-                        float parsat = 1.5f; //parsat=1.5 =>saturation  ; 1.8 => chroma ; 2.5 => colorfullness (personal evaluation)
+                        float parsat = 1.5f; //parsat=1.5 =>saturation  ; 1.8 => chroma ; 2.5 => colorfulness (personal evaluation)
                         Ciecam02::curvecolorfloat(schr, Sp, sres, parsat);
                         float dred = 100.f; // in C mode
                         float protect_red = 80.0f; // in C mode
@@ -1312,7 +1315,7 @@ void ImProcFunctions::ciecam_02float(CieImage* ncie, float adap, int pW, int pwb
 
                         float Mp, sres;
                         Mp = Mpro / 100.0f;
-                        Ciecam02::curvecolorfloat(mchr, Mp, sres, 2.5f);//calculate parameters to master Red (here with colorfullness)
+                        Ciecam02::curvecolorfloat(mchr, Mp, sres, 2.5f);//calculate parameters to master Red (here with colorfulness)
                         float dred = 100.f; //in C mode
                         float protect_red = 80.0f; // in C mode
                         dred *= coe; //in M mode
@@ -1439,8 +1442,8 @@ void ImProcFunctions::ciecam_02float(CieImage* ncie, float adap, int pW, int pwb
                             Jpro = 1.f;
                         }
                     }
-                    //curves chroma, saturation, colorfullness
-                    if (hasColCurve3) {//curve 3 with chroma saturation colorfullness
+                    //curves chroma, saturation, colorfulness
+                    if (hasColCurve3) {//curve 3 with chroma saturation colorfulness
                         if (curveMode3 == ColorAppearanceParams::CtcMode::CHROMA) {
                             float parsat = 0.8f; //0.68;
                             float coef = 327.68f / parsat;

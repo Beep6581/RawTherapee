@@ -20,10 +20,10 @@
 
 #include "crop.h"
 
-#include "aspectratios.h"
 #include "options.h"
 #include "rtimage.h"
 
+#include "rtengine/aspectratios.h"
 #include "rtengine/procparams.h"
 #include "rtengine/utils.h"
 
@@ -195,16 +195,8 @@ Crop::Crop():
     ratiogrid->attach (*customRatioLabel, 1, 0, 1, 1);
     ratiogrid->attach (*orientation, 1, 0, 1, 1);
 
-    Gtk::Label* guidelab = Gtk::manage (new Gtk::Label (M("TP_CROP_GUIDETYPE")));
-    setExpandAlignProperties(guidelab, false, false, Gtk::ALIGN_START, Gtk::ALIGN_CENTER);
-
-    guide = Gtk::manage (new MyComboBoxText ());
-    setExpandAlignProperties(guide, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_CENTER);
-
     settingsgrid->attach (*fixr, 0, 0, 1, 1);
     settingsgrid->attach (*ratiogrid, 1, 0, 1, 1);
-    settingsgrid->attach (*guidelab, 0, 1, 1, 1);
-    settingsgrid->attach (*guide, 1, 1, 1, 1);
     pack_start (*settingsgrid, Gtk::PACK_SHRINK, 0 );
 
 
@@ -258,18 +250,6 @@ Crop::Crop():
     orientation->append (M("GENERAL_ASIMAGE"));
     orientation->set_active (2);
 
-    guide->append (M("TP_CROP_GTNONE"));
-    guide->append (M("TP_CROP_GTFRAME"));
-    guide->append (M("TP_CROP_GTRULETHIRDS"));
-    guide->append (M("TP_CROP_GTDIAGONALS"));
-    guide->append (M("TP_CROP_GTHARMMEANS"));
-    guide->append (M("TP_CROP_GTGRID"));
-    guide->append (M("TP_CROP_GTTRIANGLE1"));
-    guide->append (M("TP_CROP_GTTRIANGLE2"));
-    guide->append (M("TP_CROP_GTEPASSPORT"));
-    guide->append (M("TP_CROP_GTCENTEREDSQUARE"));
-    guide->set_active (0);
-
     w->set_range (1, maxw);
     h->set_range (1, maxh);
     x->set_range (0, maxw - 1);
@@ -303,7 +283,6 @@ Crop::Crop():
     fconn = fixr->signal_toggled().connect( sigc::mem_fun(*this, &Crop::ratioFixedChanged) );
     rconn = ratio->signal_changed().connect( sigc::mem_fun(*this, &Crop::ratioChanged) );
     oconn = orientation->signal_changed().connect( sigc::mem_fun(*this, &Crop::ratioChanged) );
-    gconn = guide->signal_changed().connect( sigc::mem_fun(*this, &Crop::notifyListener) );
     selectCrop->signal_pressed().connect( sigc::mem_fun(*this, &Crop::selectPressed) );
     resetCrop->signal_pressed().connect( sigc::mem_fun(*this, &Crop::doresetCrop) );
     ppi->signal_value_changed().connect( sigc::mem_fun(*this, &Crop::refreshSize) );
@@ -386,21 +365,6 @@ void Crop::read (const ProcParams* pp, const ParamsEdited* pedited)
         orientation->set_active (2);
     }
 
-    switch (pp->crop.guide) {
-        case procparams::CropParams::Guide::NONE:
-        case procparams::CropParams::Guide::FRAME:
-        case procparams::CropParams::Guide::RULE_OF_THIRDS:
-        case procparams::CropParams::Guide::RULE_OF_DIAGONALS:
-        case procparams::CropParams::Guide::HARMONIC_MEANS:
-        case procparams::CropParams::Guide::GRID:
-        case procparams::CropParams::Guide::GOLDEN_TRIANGLE_1:
-        case procparams::CropParams::Guide::GOLDEN_TRIANGLE_2:
-        case procparams::CropParams::Guide::EPASSPORT:
-        case procparams::CropParams::Guide::CENTERED_SQUARE: {
-            guide->set_active(toUnderlying(pp->crop.guide));
-        }
-    }
-
     x->set_value(pp->crop.x);
     y->set_value(pp->crop.y);
     w->set_value(std::max(pp->crop.w, 1));
@@ -444,10 +408,6 @@ void Crop::read (const ProcParams* pp, const ParamsEdited* pedited)
 
         if (!pedited->crop.orientation) {
             orientation->set_active_text (M("GENERAL_UNCHANGED"));
-        }
-
-        if (!pedited->crop.guide) {
-            guide->set_active_text (M("GENERAL_UNCHANGED"));
         }
 
         set_inconsistent (multiImage && !pedited->crop.enabled);
@@ -499,13 +459,10 @@ void Crop::write (ProcParams* pp, ParamsEdited* pedited)
         pp->crop.orientation = "As Image";
     }
 
-    pp->crop.guide = procparams::CropParams::Guide(guide->get_active_row_number());
-
     if (pedited) {
         pedited->crop.enabled       = !get_inconsistent();
         pedited->crop.ratio         = ratio->get_active_text() != M("GENERAL_UNCHANGED");
         pedited->crop.orientation   = orientation->get_active_text() != M("GENERAL_UNCHANGED");
-        pedited->crop.guide         = guide->get_active_text() != M("GENERAL_UNCHANGED");
         pedited->crop.fixratio      = !fixr->get_inconsistent();
         pedited->crop.w             = wDirty;
         pedited->crop.h             = hDirty;
@@ -1534,7 +1491,6 @@ void Crop::setBatchMode (bool batchMode)
 
     ratio->append (M("GENERAL_UNCHANGED"));
     orientation->append (M("GENERAL_UNCHANGED"));
-    guide->append (M("GENERAL_UNCHANGED"));
     removeIfThere (this, ppigrid);
     removeIfThere (methodgrid, selectCrop);
     removeIfThere (methodgrid, resetCrop);

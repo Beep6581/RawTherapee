@@ -242,14 +242,16 @@ public:
      * @param img is a pointer to the image
      * @param scale describes the current scaling applied compared to the 100% size (preview scale)
      * @param cp holds the coordinates of the current crop rectangle */
-    virtual void setImage(IImage8* img, double scale, const procparams::CropParams& cp) = 0;
+    virtual void setImage(IImage8* img, double scale, const procparams::CropParams& cp,
+                          const procparams::CropGuideParams& cgp) = 0;
     /** With this member function the staged processor notifies the listener that the image passed as parameter
       * will be deleted, and no longer used to store the preview image.
       * @param img the pointer to the image to be destroyed. The listener has to free the image!  */
     virtual void delImage(IImage8* img) = 0;
     /** With this member function the staged processor notifies the listener that the preview image has been updated.
       * @param cp holds the coordinates of the current crop rectangle */
-    virtual void imageReady(const procparams::CropParams& cp) = 0;
+    virtual void imageReady(const procparams::CropParams& cp,
+                            const procparams::CropGuideParams& cgp) = 0;
 };
 
 /** When the detailed crop image is ready for display during staged processing (thus the changes have been updated),
@@ -267,6 +269,7 @@ public:
         IImage8* imgtrue,
         const procparams::ColorManagementParams& cmp,
         const procparams::CropParams& cp,
+        const procparams::CropGuideParams& guideParams,
         int cx,
         int cy,
         int cw,

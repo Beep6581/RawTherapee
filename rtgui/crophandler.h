@@ -100,6 +100,7 @@ public:
         rtengine::IImage8* imworking,
         const rtengine::procparams::ColorManagementParams& cmp,
         const rtengine::procparams::CropParams& cp,
+        const rtengine::procparams::CropGuideParams& guideParams,
         int cx,
         int cy,
         int cw,
@@ -115,6 +116,7 @@ public:
 
     // For HiDPI support, these params and buffers are sized for device pixels.
     const std::unique_ptr<rtengine::procparams::CropParams> cropParams;
+    const std::unique_ptr<rtengine::procparams::CropGuideParams> cropGuideParams;
     const std::unique_ptr<rtengine::procparams::ColorManagementParams> colorParams;
     Glib::RefPtr<Gdk::Pixbuf> cropPixbuf;     // image displayed on monitor, using the monitor profile (i.e. lab to monitor profile)
     Glib::RefPtr<Gdk::Pixbuf> cropPixbuftrue; // internal image in output color space for analysis (i.e. lab to either Working profile or Output profile, depending on options.rtSettings.HistogramWorking)

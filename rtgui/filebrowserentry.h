@@ -57,6 +57,7 @@ class FileBrowserEntry final : public ThumbBrowserEntryBase,
     double rot_deg;
     bool landscape;
     const std::unique_ptr<rtengine::procparams::CropParams> cropParams;
+    const std::unique_ptr<rtengine::procparams::CropGuideParams> cropGuideParams;
     CropGUIListener* cropgl;
     FileBrowserEntryIdleHelper* feih;
 

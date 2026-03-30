@@ -19,6 +19,7 @@
 #pragma once
 
 #include <array>
+#include <bitset>
 #include <map>
 #include <vector>
 
@@ -721,19 +722,6 @@ struct ToneEqualizerParams {
   * Parameters of the cropping
   */
 struct CropParams {
-    enum class Guide {
-        NONE,
-        FRAME,
-        RULE_OF_THIRDS,
-        RULE_OF_DIAGONALS,
-        HARMONIC_MEANS,
-        GRID,
-        GOLDEN_TRIANGLE_1,
-        GOLDEN_TRIANGLE_2,
-        EPASSPORT,
-        CENTERED_SQUARE
-    };
-
     bool enabled;
     int x;
     int y;
@@ -742,7 +730,6 @@ struct CropParams {
     bool fixratio;
     Glib::ustring ratio;
     Glib::ustring orientation;
-    Guide guide;
 
     CropParams();
 
@@ -750,6 +737,56 @@ struct CropParams {
     bool operator !=(const CropParams& other) const;
 
     void mapToResized(int resizedWidth, int resizedHeight, int scale, int& x1, int& x2, int& y1, int& y2) const;
+};
+
+struct CropGuideParams {
+    // If values are added/removed, make sure to update NUM_PRESETS and
+    // CropGuideParamsEdited.presets
+    enum PresetIndex : size_t {
+        RULE_OF_THIRDS = 0,
+        RULE_OF_DIAGONALS,
+        HARMONIC_MEANS,
+        CROSSHAIR,
+        GRID,
+        GOLDEN_TRIANGLE,
+        GOLDEN_RATIO,
+        EPASSPORT,
+        CENTERED_SQUARE
+    };
+    static constexpr size_t NUM_PRESETS = 9;
+    static_assert(NUM_PRESETS == PresetIndex::CENTERED_SQUARE + 1);
+
+    enum class Basis { SCALE, WIDTH, HEIGHT, LONG, SHORT };
+
+    struct AspectRatioParams {
+        bool enabled;
+        bool is_portrait;
+        size_t preset_index;
+        double red;
+        double green;
+        double blue;
+
+        AspectRatioParams(size_t preset_index);
+
+        bool operator==(const AspectRatioParams& other) const;
+        bool operator!=(const AspectRatioParams& other) const {
+            return !(*this == other);
+        }
+    };
+
+    std::vector<AspectRatioParams> aspect_ratios;
+    std::bitset<NUM_PRESETS> presets;
+    bool enabled;
+    bool mirror_golden_triangle;
+    bool rotate_golden_ratio;
+    bool mirror_golden_ratio;
+    int bleed;
+    Basis basis;
+
+    CropGuideParams();
+
+    bool operator==(const CropGuideParams& other) const;
+    bool operator!=(const CropGuideParams& other) const { return !(*this == other); }
 };
 
 /**
@@ -1886,6 +1923,7 @@ public:
     CGParams                cg;              ///< Compression gamut
     ToneEqualizerParams     toneEqualizer;   ///< Tone equalizer parameters
     CropParams              crop;            ///< Crop parameters
+    CropGuideParams         cropGuide;       ///< Crop guide parameters
     CoarseTransformParams   coarse;          ///< Coarse transformation (90, 180, 270 deg rotation, h/v flipping) parameters
     CommonTransformParams   commonTrans;     ///< Common transformation parameters (autofill)
     RotateParams            rotate;          ///< Rotation parameters
@@ -1956,11 +1994,11 @@ public:
       * @param pp a pointer to the ProcParams instance to destroy. */
     static void destroy(ProcParams* pp);
 
-    static void init();
-    static void cleanup();
+    static void init() {}
+    static void cleanup() {}
 
     bool operator ==(const ProcParams& other) const;
-    bool operator !=(const ProcParams& other) const;
+    bool operator !=(const ProcParams& other) const { return !(*this == other); }
 
 private:
     /** Write the ProcParams's text in the file of the given name.

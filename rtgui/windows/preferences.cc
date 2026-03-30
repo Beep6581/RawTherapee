@@ -366,6 +366,10 @@ Gtk::Widget* Preferences::getBatchProcPanel()
     appendBehavList(mi, M("TP_ROTATE_DEGREE"), ADDSET_ROTATE_DEGREE, false);
 
     mi = behModel->append();
+    mi->set_value(behavColumns.label, M("TP_CROP_GUIDE_LABEL"));
+    appendBehavList(mi, M("TP_CROP_GUIDE_BLEED"), ADDSET_CROP_GUIDE_BLEED, false);
+
+    mi = behModel->append();
     mi->set_value(behavColumns.label, M("TP_RESIZE_LABEL"));
     appendBehavList(mi, M("TP_RESIZE_SCALE"), ADDSET_RESIZE_SCALE, true);
 

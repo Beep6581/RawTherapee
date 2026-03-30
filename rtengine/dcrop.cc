@@ -1946,7 +1946,9 @@ void Crop::update(int todo)
             memcpy(finaltrue->data + 3 * i * finalW, cropImgtrue->data + 3 * (i + upperBorder)*cropw + 3 * leftBorder, 3 * finalW);
         }
 
-        cropImageListener->setDetailedCrop(final, finaltrue, params.icm, params.crop, rqcropx, rqcropy, rqcropw, rqcroph, skip);
+        cropImageListener->setDetailedCrop(
+            final, finaltrue, params.icm, params.crop, params.cropGuide,
+            rqcropx, rqcropy, rqcropw, rqcroph, skip);
         delete final;
         delete finaltrue;
         delete cropImgtrue;

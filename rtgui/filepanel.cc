@@ -240,6 +240,12 @@ void FilePanel::on_NB_switch_page(Gtk::Widget* page, guint page_num)
         // switching the inspector "off"
         fileCatalog->disableInspector();
     }
+    if (page == tpcPaned) {
+        // Batch Edit
+        tpc->enableAutoUpdate();
+    } else {
+        tpc->disableAutoUpdate();
+    }
 }
 
 bool FilePanel::fileSelected (Thumbnail* thm)

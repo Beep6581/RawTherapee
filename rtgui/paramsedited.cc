@@ -30,6 +30,77 @@ namespace
 
 using namespace rtengine::procparams;
 
+void setAll(CropGuideParamsEdited& guide, bool v)
+{
+    if (v) {
+        guide.presets.set();
+    } else {
+        guide.presets.reset();
+    }
+    guide.enabled = v;
+    guide.mirror_golden_triangle = v;
+    guide.rotate_golden_ratio = v;
+    guide.mirror_golden_ratio = v;
+    guide.aspect_ratios = v;
+    guide.bleed = v;
+    guide.basis = v;
+}
+
+void initFrom(CropGuideParamsEdited& edits, const ProcParams& params,
+              const ProcParams& otherParams)
+{
+    const CropGuideParams& curr = params.cropGuide;
+    const CropGuideParams& other = otherParams.cropGuide;
+
+    for (size_t i = 0; i < edits.presets.size(); i++) {
+        bool is_edited = edits.presets[i];
+        is_edited &= curr.presets[i] == other.presets[i];
+        edits.presets[i] = is_edited;
+    }
+    edits.enabled &= curr.enabled == other.enabled;
+    edits.mirror_golden_triangle &=
+        curr.mirror_golden_triangle == other.mirror_golden_triangle;
+    edits.rotate_golden_ratio &=
+        curr.rotate_golden_ratio == other.rotate_golden_ratio;
+    edits.mirror_golden_ratio &=
+        curr.mirror_golden_ratio == other.mirror_golden_ratio;
+    edits.aspect_ratios &=
+        curr.aspect_ratios == other.aspect_ratios;
+    edits.bleed &= curr.bleed == other.bleed;
+    edits.basis &= curr.basis == other.basis;
+}
+
+void combine(CropGuideParams& toEdit, const CropGuideParams& mod,
+             const CropGuideParamsEdited& edits)
+{
+    for (size_t i = 0; i < edits.presets.size(); i++) {
+        if (edits.presets[i]) {
+            toEdit.presets[i] = mod.presets[i];
+        }
+    }
+    if (edits.enabled) {
+        toEdit.enabled = mod.enabled;
+    }
+    if (edits.mirror_golden_triangle) {
+        toEdit.mirror_golden_triangle = mod.mirror_golden_triangle;
+    }
+    if (edits.rotate_golden_ratio) {
+        toEdit.rotate_golden_ratio = mod.rotate_golden_ratio;
+    }
+    if (edits.mirror_golden_ratio) {
+        toEdit.mirror_golden_ratio = mod.mirror_golden_ratio;
+    }
+    if (edits.aspect_ratios) {
+        toEdit.aspect_ratios = mod.aspect_ratios;
+    }
+    if (edits.bleed) {
+        toEdit.bleed = mod.bleed;
+    }
+    if (edits.basis) {
+        toEdit.basis = mod.basis;
+    }
+}
+
 void setAll(FramingParamsEdited& framing, bool v)
 {
     framing.enabled = v;
@@ -496,7 +567,7 @@ void ParamsEdited::set(bool v)
     crop.fixratio = v;
     crop.ratio   = v;
     crop.orientation = v;
-    crop.guide   = v;
+    ::setAll(cropGuide, v);
     coarse.rotate = v;
     coarse.hflip = v;
     coarse.vflip = v;
@@ -1276,7 +1347,7 @@ void ParamsEdited::initFrom(const std::vector<rtengine::procparams::ProcParams>&
         crop.fixratio = crop.fixratio && p.crop.fixratio == other.crop.fixratio;
         crop.ratio = crop.ratio && p.crop.ratio == other.crop.ratio;
         crop.orientation = crop.orientation && p.crop.orientation == other.crop.orientation;
-        crop.guide = crop.guide && p.crop.guide == other.crop.guide;
+        ::initFrom(cropGuide, p, other);
         toneEqualizer.enabled = toneEqualizer.enabled && p.toneEqualizer.enabled == other.toneEqualizer.enabled;
         for (size_t i = 0; i < toneEqualizer.bands.size(); ++i) {
             toneEqualizer.bands[i] = toneEqualizer.bands[i] && p.toneEqualizer.bands[i] == other.toneEqualizer.bands[i];
@@ -3854,9 +3925,7 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
         toEdit.crop.orientation = mods.crop.orientation;
     }
 
-    if (crop.guide) {
-        toEdit.crop.guide = mods.crop.guide;
-    }
+    ::combine(toEdit.cropGuide, mods.cropGuide, cropGuide);
 
     if (coarse.rotate) {
         toEdit.coarse.rotate = mods.coarse.rotate;

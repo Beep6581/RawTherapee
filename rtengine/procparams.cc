@@ -23,6 +23,7 @@
 
 #include <locale.h>
 
+#include <cJSON.h>
 #include <glib/gstdio.h>
 #include <glibmm/fileutils.h>
 #include <glibmm/keyfile.h>
@@ -30,6 +31,7 @@
 
 #include "params/serdes.h"
 
+#include "aspectratios.h"
 #include "color.h"
 #include "colortemp.h"
 #include "curves.h"
@@ -109,6 +111,38 @@ namespace ProfileKeys {
     constexpr const char* VAR = NAME;
 
 DEFINE_KEY(TOOL_ENABLED, "Enabled");
+
+namespace CropGuide {
+    DEFINE_KEY(TOOL_NAME, "CropGuide");
+
+    DEFINE_KEY(RULE_OF_THIRDS, "RuleOfThirds");
+    DEFINE_KEY(RULE_OF_DIAGONALS, "RuleOfDiagonals");
+    DEFINE_KEY(HARMONIC_MEANS, "HarmonicMeans");
+    DEFINE_KEY(CROSSHAIR, "Crosshair");
+    DEFINE_KEY(GRID, "Grid");
+    DEFINE_KEY(GOLDEN_TRIANGLE, "GoldenTriangle");
+    DEFINE_KEY(GOLDEN_RATIO, "GoldenRatio");
+    DEFINE_KEY(EPASSPORT, "Epassport");
+    DEFINE_KEY(CENTERED_SQUARE, "CenteredSquare");
+
+    DEFINE_KEY(GOLDEN_TRIANGLE_MIRROR, "GoldenTriangleMirror");
+    DEFINE_KEY(GOLDEN_RATIO_ROTATE, "GoldenRatioRotate");
+    DEFINE_KEY(GOLDEN_RATIO_MIRROR, "GoldenRatioMirror");
+    DEFINE_KEY(ASPECT_RATIOS, "AspectRatios");
+    DEFINE_KEY(BLEED, "Bleed");
+    DEFINE_KEY(BASIS, "Basis");
+    DEFINE_KEY(BASIS_SCALE, "Scale");
+    DEFINE_KEY(BASIS_WIDTH, "Width");
+    DEFINE_KEY(BASIS_HEIGHT, "Height");
+    DEFINE_KEY(BASIS_LONG, "Long");
+    DEFINE_KEY(BASIS_SHORT, "Short");
+
+    DEFINE_KEY(NAME, "Name");
+    DEFINE_KEY(IS_PORTRAIT, "IsPortrait");
+    DEFINE_KEY(RED, "Red");
+    DEFINE_KEY(GREEN, "Green");
+    DEFINE_KEY(BLUE, "Blue");
+}  // namespace CropGuide
 
 namespace Framing
 {
@@ -277,6 +311,231 @@ void saveFramingParams(
     saveToKeyfile(!pedited || edited.borderRed, group, BORDER_RED, params.borderRed, keyFile);
     saveToKeyfile(!pedited || edited.borderGreen, group, BORDER_GREEN, params.borderGreen, keyFile);
     saveToKeyfile(!pedited || edited.borderBlue, group, BORDER_BLUE, params.borderBlue, keyFile);
+}
+
+void loadCropGuideParams(
+    const Glib::KeyFile& keyFile,
+    rtengine::procparams::CropGuideParams& params,
+    CropGuideParamsEdited& edited
+)
+{
+    using namespace ProfileKeys;
+    using namespace ProfileKeys::CropGuide;
+
+    using CropGuideParams = rtengine::procparams::CropGuideParams;
+    using PresetIndex = CropGuideParams::PresetIndex;
+
+    const Glib::ustring group{TOOL_NAME};
+    if (!keyFile.has_group(group)) return;
+
+    assignFromKeyfile(keyFile, group, TOOL_ENABLED, params.enabled, edited.enabled);
+
+    auto load = [&](PresetIndex index, const char* key) {
+        bool is_enabled = false;
+        bool is_edited = edited.presets[index];
+        assignFromKeyfile(keyFile, group, key, is_enabled, is_edited);
+        params.presets[index] = is_enabled;
+        edited.presets[index] = is_edited;
+    };
+
+    load(PresetIndex::RULE_OF_THIRDS, RULE_OF_THIRDS);
+    load(PresetIndex::RULE_OF_DIAGONALS, RULE_OF_DIAGONALS);
+    load(PresetIndex::HARMONIC_MEANS, HARMONIC_MEANS);
+    load(PresetIndex::CROSSHAIR, CROSSHAIR);
+    load(PresetIndex::GRID, GRID);
+    load(PresetIndex::GOLDEN_TRIANGLE, GOLDEN_TRIANGLE);
+    load(PresetIndex::GOLDEN_RATIO, GOLDEN_RATIO);
+    load(PresetIndex::EPASSPORT, EPASSPORT);
+    load(PresetIndex::CENTERED_SQUARE, CENTERED_SQUARE);
+
+    assignFromKeyfile(keyFile, group, GOLDEN_TRIANGLE_MIRROR,
+                      params.mirror_golden_triangle, edited.mirror_golden_triangle);
+    assignFromKeyfile(keyFile, group, GOLDEN_RATIO_ROTATE,
+                      params.rotate_golden_ratio, edited.rotate_golden_ratio);
+    assignFromKeyfile(keyFile, group, GOLDEN_RATIO_MIRROR,
+                      params.mirror_golden_ratio, edited.mirror_golden_ratio);
+    assignFromKeyfile(keyFile, group, BLEED, params.bleed, edited.bleed);
+
+    using Basis = CropGuideParams::Basis;
+    const std::map<std::string, Basis> basis_mapping = {
+        {BASIS_SCALE, Basis::SCALE},
+        {BASIS_WIDTH, Basis::WIDTH},
+        {BASIS_HEIGHT, Basis::HEIGHT},
+        {BASIS_LONG, Basis::LONG},
+        {BASIS_SHORT, Basis::SHORT}
+    };
+    assignFromKeyfile(keyFile, group, BASIS, basis_mapping, params.basis, edited.basis);
+
+    auto parse_aspect_ratios = [&](const char* data) {
+        cJSON* json = cJSON_Parse(data);
+        if (!json) return;
+        if (!cJSON_IsArray(json)) {
+            cJSON_Delete(json);
+            return;
+        }
+
+        auto num_objects = cJSON_GetArraySize(json);
+
+        edited.aspect_ratios = true;
+        params.aspect_ratios.clear();
+        if (num_objects == 0) {
+            cJSON_Delete(json);
+            return;
+        }
+
+        params.aspect_ratios.reserve(num_objects);
+        const auto& presets = getAspectRatios();
+
+        auto find_index = [&](const char* value, size_t& result) -> bool {
+            for (size_t i = 0; i < presets.size(); i++) {
+                if (presets[i].label == value) {
+                    result = i;
+                    return true;
+                }
+            }
+            return false;
+        };
+
+        auto parse_color = [&](const cJSON* obj, const char* key, double& out) {
+            const cJSON* entry = cJSON_GetObjectItemCaseSensitive(obj, key);
+            if (cJSON_IsNumber(entry)) {
+                out = entry->valuedouble;
+            } else {
+                out = 1.0;
+            }
+        };
+
+        const cJSON* obj = nullptr;
+        cJSON_ArrayForEach(obj, json) {
+            const cJSON* name = cJSON_GetObjectItemCaseSensitive(obj, NAME);
+            if (cJSON_IsString(name) && (name->valuestring != nullptr)) {
+                size_t preset_index = 0;
+                if (find_index(name->valuestring, preset_index)) {
+                    CropGuideParams::AspectRatioParams entry(preset_index);
+
+                    const cJSON* enabled =
+                        cJSON_GetObjectItemCaseSensitive(obj, TOOL_ENABLED);
+                    if (cJSON_IsTrue(enabled)) {
+                        entry.enabled = true;
+                    } else {
+                        entry.enabled = false;
+                    }
+                    const cJSON* is_portrait =
+                        cJSON_GetObjectItemCaseSensitive(obj, IS_PORTRAIT);
+                    if (cJSON_IsTrue(is_portrait)) {
+                        entry.is_portrait = true;
+                    } else {
+                        entry.is_portrait = false;
+                    }
+
+                    parse_color(obj, RED, entry.red);
+                    parse_color(obj, GREEN, entry.green);
+                    parse_color(obj, BLUE, entry.blue);
+                    params.aspect_ratios.push_back(std::move(entry));
+                }
+            }
+        }
+
+        cJSON_Delete(json);
+    };
+
+    if (keyFile.has_key(group, ASPECT_RATIOS)) {
+        Glib::ustring aspect_ratios = keyFile.get_string(group, ASPECT_RATIOS);
+        parse_aspect_ratios(aspect_ratios.c_str());
+    }
+}
+
+void saveCropGuideParams(
+    Glib::KeyFile& keyFile,
+    const rtengine::procparams::CropGuideParams& params,
+    const ParamsEdited* pedited
+)
+{
+    using namespace ProfileKeys;
+    using namespace ProfileKeys::CropGuide;
+
+    using CropGuideParams = rtengine::procparams::CropGuideParams;
+    using PresetIndex = CropGuideParams::PresetIndex;
+
+    const Glib::ustring group{TOOL_NAME};
+
+    saveToKeyfile(!pedited || pedited->cropGuide.enabled, group, TOOL_ENABLED,
+                  params.enabled, keyFile);
+
+    auto save = [&](PresetIndex index, const char* key) {
+        saveToKeyfile(!pedited || pedited->cropGuide.presets[index], group, key,
+                      static_cast<bool>(params.presets[index]), keyFile);
+    };
+
+    save(PresetIndex::RULE_OF_THIRDS, RULE_OF_THIRDS);
+    save(PresetIndex::RULE_OF_DIAGONALS, RULE_OF_DIAGONALS);
+    save(PresetIndex::HARMONIC_MEANS, HARMONIC_MEANS);
+    save(PresetIndex::CROSSHAIR, CROSSHAIR);
+    save(PresetIndex::GRID, GRID);
+    save(PresetIndex::GOLDEN_TRIANGLE, GOLDEN_TRIANGLE);
+    save(PresetIndex::GOLDEN_RATIO, GOLDEN_RATIO);
+    save(PresetIndex::EPASSPORT, EPASSPORT);
+    save(PresetIndex::CENTERED_SQUARE, CENTERED_SQUARE);
+
+    saveToKeyfile(!pedited || pedited->cropGuide.mirror_golden_triangle, group,
+                  GOLDEN_TRIANGLE_MIRROR, params.mirror_golden_triangle, keyFile);
+    saveToKeyfile(!pedited || pedited->cropGuide.rotate_golden_ratio, group,
+                  GOLDEN_RATIO_ROTATE, params.rotate_golden_ratio, keyFile);
+    saveToKeyfile(!pedited || pedited->cropGuide.mirror_golden_ratio, group,
+                  GOLDEN_RATIO_MIRROR, params.mirror_golden_ratio, keyFile);
+    saveToKeyfile(!pedited || pedited->cropGuide.bleed, group, BLEED, params.bleed,
+                  keyFile);
+
+    using Basis = CropGuideParams::Basis;
+    const std::map<Basis, const char*> basis_mapping = {
+        {Basis::SCALE, BASIS_SCALE},
+        {Basis::WIDTH, BASIS_WIDTH},
+        {Basis::HEIGHT, BASIS_HEIGHT},
+        {Basis::LONG, BASIS_LONG},
+        {Basis::SHORT, BASIS_SHORT},
+    };
+    saveToKeyfile(!pedited || pedited->cropGuide.basis, group, BASIS, basis_mapping, params.basis, keyFile);
+
+    auto dump_aspect_ratios = [&]() {
+        cJSON* serialized_aspect_ratios = cJSON_CreateArray();
+        if (!serialized_aspect_ratios) return;
+
+        for (const auto& entry : params.aspect_ratios) {
+            cJSON* obj = cJSON_CreateObject();
+            if (!obj) continue;
+
+            if (entry.enabled) {
+                cJSON_AddTrueToObject(obj, TOOL_ENABLED);
+            } else {
+                cJSON_AddFalseToObject(obj, TOOL_ENABLED);
+            }
+            if (entry.is_portrait) {
+                cJSON_AddTrueToObject(obj, IS_PORTRAIT);
+            } else {
+                cJSON_AddFalseToObject(obj, IS_PORTRAIT);
+            }
+
+            auto name = getAspectRatioLabel(entry.preset_index);
+            cJSON_AddStringToObject(obj, NAME, name.c_str());
+
+            cJSON_AddNumberToObject(obj, RED, entry.red);
+            cJSON_AddNumberToObject(obj, GREEN, entry.green);
+            cJSON_AddNumberToObject(obj, BLUE, entry.blue);
+
+            cJSON_AddItemToArray(serialized_aspect_ratios, obj);
+        }
+
+        char* serialized_json = cJSON_PrintUnformatted(serialized_aspect_ratios);
+        if (serialized_json) {
+            keyFile.set_string(group, ASPECT_RATIOS, serialized_json);
+            free(serialized_json);
+        }
+        cJSON_Delete(serialized_aspect_ratios);
+    };
+
+    if (!pedited || pedited->cropGuide.aspect_ratios) {
+        dump_aspect_ratios();
+    }
 }
 
 } // namespace
@@ -1846,8 +2105,7 @@ CropParams::CropParams() :
     h(15000),
     fixratio(true),
     ratio("As Image"),
-    orientation("As Image"),
-    guide(Guide::FRAME)
+    orientation("As Image")
 {
 }
 
@@ -1861,8 +2119,7 @@ bool CropParams::operator ==(const CropParams& other) const
         && h == other.h
         && fixratio == other.fixratio
         && ratio == other.ratio
-        && orientation == other.orientation
-        && guide == other.guide;
+        && orientation == other.orientation;
 }
 
 bool CropParams::operator !=(const CropParams& other) const
@@ -1880,6 +2137,48 @@ void CropParams::mapToResized(int resizedWidth, int resizedHeight, int scale, in
         x2 = min(resizedWidth, max(0, (x + w) / scale));
         y2 = min(resizedHeight, max(0, (y + h) / scale));
     }
+}
+
+CropGuideParams::AspectRatioParams::AspectRatioParams(size_t preset_index)
+    : enabled(false),
+      is_portrait(false),
+      preset_index(preset_index),
+      red(1.0),
+      green(1.0),
+      blue(1.0)
+{
+}
+
+bool CropGuideParams::AspectRatioParams::operator==(const AspectRatioParams& other) const
+{
+    return enabled == other.enabled
+        && is_portrait == other.is_portrait
+        && preset_index == other.preset_index
+        && red == other.red
+        && green == other.green
+        && blue == other.blue;
+}
+
+CropGuideParams::CropGuideParams()
+    : enabled(true),
+      mirror_golden_triangle(false),
+      rotate_golden_ratio(false),
+      mirror_golden_ratio(false),
+      bleed(0),
+      basis(Basis::SCALE)
+{
+}
+
+bool CropGuideParams::operator==(const CropGuideParams& other) const
+{
+    return enabled == other.enabled
+        && presets == other.presets
+        && mirror_golden_triangle == other.mirror_golden_triangle
+        && rotate_golden_ratio == other.rotate_golden_ratio
+        && mirror_golden_ratio == other.mirror_golden_ratio
+        && aspect_ratios == other.aspect_ratios
+        && bleed == other.bleed
+        && basis == other.basis;
 }
 
 CoarseTransformParams::CoarseTransformParams() :
@@ -3654,6 +3953,7 @@ void ProcParams::setDefaults()
     toneEqualizer = {};
 
     crop = {};
+    cropGuide = {};
 
     coarse = {};
 
@@ -4136,25 +4436,8 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
         saveToKeyfile(!pedited || pedited->crop.fixratio, "Crop", "FixedRatio", crop.fixratio, keyFile);
         saveToKeyfile(!pedited || pedited->crop.ratio, "Crop", "Ratio", crop.ratio, keyFile);
         saveToKeyfile(!pedited || pedited->crop.orientation, "Crop", "Orientation", crop.orientation, keyFile);
-        saveToKeyfile(
-            !pedited || pedited->crop.guide,
-            "Crop",
-            "Guide",
-            {
-                {CropParams::Guide::NONE, "None"},
-                {CropParams::Guide::FRAME, "Frame"},
-                {CropParams::Guide::RULE_OF_THIRDS, "Rule of thirds"},
-                {CropParams::Guide::RULE_OF_DIAGONALS, "Rule of diagonals"},
-                {CropParams::Guide::HARMONIC_MEANS, "Harmonic means"},
-                {CropParams::Guide::GRID, "Grid"},
-                {CropParams::Guide::GOLDEN_TRIANGLE_1, "Golden Triangle 1"},
-                {CropParams::Guide::GOLDEN_TRIANGLE_2, "Golden Triangle 2"},
-                {CropParams::Guide::EPASSPORT, "ePassport"},
-                {CropParams::Guide::CENTERED_SQUARE, "Centered square"},
-            },
-            crop.guide,
-            keyFile
-        );
+
+        saveCropGuideParams(keyFile, cropGuide, pedited);
 
 // Coarse transformation
         saveToKeyfile(!pedited || pedited->coarse.rotate, "Coarse Transformation", "Rotate", coarse.rotate, keyFile);
@@ -5619,26 +5902,9 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
             }
 
             assignFromKeyfile(keyFile, "Crop", "Orientation", crop.orientation, pedited->crop.orientation);
-            assignFromKeyfile(
-                keyFile,
-                "Crop",
-                "Guide",
-                {
-                    {"None", CropParams::Guide::NONE},
-                    {"Frame", CropParams::Guide::FRAME},
-                    {"Rule of thirds", CropParams::Guide::RULE_OF_THIRDS},
-                    {"Rule of diagonals", CropParams::Guide::RULE_OF_DIAGONALS},
-                    {"Harmonic means", CropParams::Guide::HARMONIC_MEANS},
-                    {"Grid", CropParams::Guide::GRID},
-                    {"Golden Triangle 1", CropParams::Guide::GOLDEN_TRIANGLE_1},
-                    {"Golden Triangle 2", CropParams::Guide::GOLDEN_TRIANGLE_2},
-                    {"ePassport", CropParams::Guide::EPASSPORT},
-                    {"Centered square", CropParams::Guide::CENTERED_SQUARE}
-                },
-                crop.guide,
-                pedited->crop.guide
-            );
         }
+
+        loadCropGuideParams(keyFile, cropGuide, pedited->cropGuide);
 
         if (keyFile.has_group("Coarse Transformation")) {
             assignFromKeyfile(keyFile, "Coarse Transformation", "Rotate", coarse.rotate, pedited->coarse.rotate);
@@ -7094,6 +7360,7 @@ bool ProcParams::operator ==(const ProcParams& other) const
         && sh == other.sh
         && toneEqualizer == other.toneEqualizer
         && crop == other.crop
+        && cropGuide == other.cropGuide
         && coarse == other.coarse
         && rotate == other.rotate
         && commonTrans == other.commonTrans
@@ -7122,19 +7389,6 @@ bool ProcParams::operator ==(const ProcParams& other) const
         && metadata == other.metadata
         && dehaze == other.dehaze
         && filmNegative == other.filmNegative;
-}
-
-bool ProcParams::operator !=(const ProcParams& other) const
-{
-    return !(*this == other);
-}
-
-void ProcParams::init()
-{
-}
-
-void ProcParams::cleanup()
-{
 }
 
 int ProcParams::write(const Glib::ustring& fname, const Glib::ustring& content) const

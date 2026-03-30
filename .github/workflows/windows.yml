@@ -30,8 +30,8 @@ jobs:
         build_type: [release, debug]
         arch: [x86_64, arm64]
     env:
-      MSYS2_ENV_NAME: ${{ matrix.arch == 'arm64' && 'CLANGARM64' || 'MINGW64' }}
-      MSYS2_ENV_PREFIX: ${{ matrix.arch == 'arm64' && 'clangarm64' || 'mingw64' }}
+      MSYS2_ENV_NAME: ${{ matrix.arch == 'arm64' && 'CLANGARM64' || 'UCRT64' }}
+      MSYS2_ENV_PREFIX: ${{ matrix.arch == 'arm64' && 'clangarm64' || 'ucrt64' }}
     outputs:
       ARTIFACT_NAME_PREFIX: ${{ steps.prepare-artifact-name.outputs.ARTIFACT_NAME_PREFIX }}
       REF_NAME_FILTERED: ${{ steps.prepare-artifact-name.outputs.REF_NAME_FILTERED }}

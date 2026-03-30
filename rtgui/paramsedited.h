@@ -19,6 +19,7 @@
 #pragma once
 
 #include <array>
+#include <bitset>
 #include <vector>
 
 namespace rtengine
@@ -415,7 +416,17 @@ struct CropParamsEdited {
     bool fixratio;
     bool ratio;
     bool orientation;
-    bool guide;
+};
+
+struct CropGuideParamsEdited {
+    std::bitset<9> presets;
+    bool enabled;
+    bool mirror_golden_triangle;
+    bool rotate_golden_ratio;
+    bool mirror_golden_ratio;
+    bool aspect_ratios;
+    bool bleed;
+    bool basis;
 };
 
 struct CoarseTransformParamsEdited {
@@ -1814,6 +1825,7 @@ struct ParamsEdited {
     
     ToneEqualizerParamsEdited toneEqualizer;
     CropParamsEdited crop;
+    CropGuideParamsEdited cropGuide;
     CoarseTransformParamsEdited coarse;
     CommonTransformParamsEdited commonTrans;
     RotateParamsEdited rotate;

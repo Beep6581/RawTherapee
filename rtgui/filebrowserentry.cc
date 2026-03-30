@@ -23,6 +23,7 @@
 
 #include "cropguilistener.h"
 #include "cursormanager.h"
+#include "drawcropguide.h"
 #include "guiutils.h"
 #include "inspector.h"
 #include "rtsurface.h"
@@ -44,7 +45,10 @@ std::shared_ptr<RTSurface> FileBrowserEntry::hdr(std::shared_ptr<RTSurface>(null
 std::shared_ptr<RTSurface> FileBrowserEntry::ps(std::shared_ptr<RTSurface>(nullptr));
 
 FileBrowserEntry::FileBrowserEntry (Thumbnail* thm, const Glib::ustring& fname)
-    : ThumbBrowserEntryBase (fname, thm), wasInside(false), iatlistener(nullptr), press_x(0), press_y(0), action_x(0), action_y(0), rot_deg(0.0), landscape(true), cropParams(new rtengine::procparams::CropParams), cropgl(nullptr), state(SNormal), crop_custom_ratio(0.f)
+    : ThumbBrowserEntryBase(fname, thm), wasInside(false), iatlistener(nullptr), press_x(0), press_y(0), action_x(0), action_y(0), rot_deg(0.0), landscape(true)
+    , cropParams(new rtengine::procparams::CropParams)
+    , cropGuideParams(new rtengine::procparams::CropGuideParams)
+    , cropgl(nullptr), state(SNormal), crop_custom_ratio(0.f)
 {
     feih = new FileBrowserEntryIdleHelper;
     feih->fbentry = this;
@@ -182,30 +186,34 @@ void FileBrowserEntry::customBackBufferUpdate (Cairo::RefPtr<Cairo::Context> c)
     // somewhere in pipeline customBackBufferUpdate is called when scale == 1.0, which is nonsense for a thumb
     if (scale == 1.0 || !cropParams->enabled) return;
 
-    auto drawScaled = [&](const rtengine::procparams::CropParams& crop) {
+    using namespace rtengine::procparams;
+
+    auto drawScaled = [&](const CropParams& crop, const CropGuideParams& cropGuide,
+                          CropGuideOverride override) {
         double zoom = scale / activeDeviceScale;
         drawCrop(c, prevPos.x, prevPos.y, previewSize.width, previewSize.height,
                  previewSize.width, previewSize.height,
-                 0, 0, zoom, crop, true, false);
+                 0, 0, zoom, activeDeviceScale, crop, cropGuide, override, false);
     };
 
     if (state == SCropSelecting || state == SResizeH1 || state == SResizeH2 || state == SResizeW1 || state == SResizeW2 || state == SResizeTL || state == SResizeTR || state == SResizeBL || state == SResizeBR || state == SCropMove) {
-        drawScaled(*cropParams);
+        drawScaled(*cropParams, *cropGuideParams, CropGuideOverride::DONT_TOUCH);
     } else {
-        rtengine::procparams::CropParams cparams = thumbnail->getProcParams().crop;
-        switch (App::get().options().cropGuides) {
-        case Options::CROP_GUIDE_NONE:
-            cparams.guide = rtengine::procparams::CropParams::Guide::NONE;
-            break;
-        case Options::CROP_GUIDE_FRAME:
-            cparams.guide = rtengine::procparams::CropParams::Guide::FRAME;
-            break;
-        default:
-            break;
-        }
-
-        if (cparams.enabled && !thumbnail->isQuick()) { // Quick thumb have arbitrary sizes, so don't apply the crop
-            drawScaled(cparams);
+        const auto& crop = thumbnail->getProcParams().crop;
+        // Quick thumb have arbitrary sizes so don't apply crop
+        if (crop.enabled && !thumbnail->isQuick()) {
+            const auto& cropGuide = thumbnail->getProcParams().cropGuide;
+            auto cropGuideOverride = []() {
+                switch (App::get().options().cropGuides) {
+                    case Options::CROP_GUIDE_NONE:
+                        return CropGuideOverride::NO_GUIDES;
+                    case Options::CROP_GUIDE_FRAME:
+                        return CropGuideOverride::FRAME;
+                    default:
+                        return CropGuideOverride::DONT_TOUCH;
+                };
+            }();
+            drawScaled(crop, cropGuide, cropGuideOverride);
         }
     }
 }
@@ -271,6 +279,7 @@ void FileBrowserEntry::_updateImage(const ThumbImageUpdateListener::ImageUpdate&
     redrawRequests--;
     scale = update.scale;
     *this->cropParams = update.crop;
+    *this->cropGuideParams = update.cropGuide;
 
     int imw = update.img->getWidth();
     int imh = update.img->getHeight();

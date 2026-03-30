@@ -265,6 +265,7 @@ PartialPasteDlg::PartialPasteDlg (const Glib::ustring &title, Gtk::Window* paren
     coarserot    = Gtk::manage (new Gtk::CheckButton (M("PARTIALPASTE_COARSETRANS")));
     finerot      = Gtk::manage (new Gtk::CheckButton (M("PARTIALPASTE_ROTATION")));
     crop         = Gtk::manage (new Gtk::CheckButton (M("PARTIALPASTE_CROP")));
+    cropGuide    = Gtk::manage (new Gtk::CheckButton (M("PARTIALPASTE_CROPGUIDE")));
     resize       = Gtk::manage (new Gtk::CheckButton (M("PARTIALPASTE_RESIZE")));
     prsharpening = Gtk::manage (new Gtk::CheckButton (M("PARTIALPASTE_PRSHARPENING")));
     framing      = Gtk::manage (new Gtk::CheckButton (M("PARTIALPASTE_FRAMING")));
@@ -385,6 +386,7 @@ PartialPasteDlg::PartialPasteDlg (const Glib::ustring &title, Gtk::Window* paren
     vboxes[4]->pack_start (*coarserot, Gtk::PACK_SHRINK, 2);
     vboxes[4]->pack_start (*finerot, Gtk::PACK_SHRINK, 2);
     vboxes[4]->pack_start (*crop, Gtk::PACK_SHRINK, 2);
+    vboxes[4]->pack_start (*cropGuide, Gtk::PACK_SHRINK, 2);
     vboxes[4]->pack_start (*resize, Gtk::PACK_SHRINK, 2);
     vboxes[4]->pack_start (*prsharpening, Gtk::PACK_SHRINK, 2);
     vboxes[4]->pack_start (*framing, Gtk::PACK_SHRINK, 2);
@@ -550,6 +552,7 @@ PartialPasteDlg::PartialPasteDlg (const Glib::ustring &title, Gtk::Window* paren
     coarserotConn   = coarserot->signal_toggled().connect (sigc::bind (sigc::mem_fun(*composition, &Gtk::CheckButton::set_inconsistent), true));
     finerotConn     = finerot->signal_toggled().connect (sigc::bind (sigc::mem_fun(*composition, &Gtk::CheckButton::set_inconsistent), true));
     cropConn        = crop->signal_toggled().connect (sigc::bind (sigc::mem_fun(*composition, &Gtk::CheckButton::set_inconsistent), true));
+    cropGuideConn   = cropGuide->signal_toggled().connect (sigc::bind (sigc::mem_fun(*composition, &Gtk::CheckButton::set_inconsistent), true));
     resizeConn      = resize->signal_toggled().connect (sigc::bind (sigc::mem_fun(*composition, &Gtk::CheckButton::set_inconsistent), true));
     prsharpeningConn = prsharpening->signal_toggled().connect (sigc::bind (sigc::mem_fun(*composition, &Gtk::CheckButton::set_inconsistent), true));
     framingConn     = framing->signal_toggled().connect (sigc::bind (sigc::mem_fun(*composition, &Gtk::CheckButton::set_inconsistent), true));
@@ -840,6 +843,7 @@ void PartialPasteDlg::compositionToggled ()
     coarserot->set_active (composition->get_active ());
     finerot->set_active (composition->get_active ());
     crop->set_active (composition->get_active ());
+    cropGuide->set_active (composition->get_active ());
     resize->set_active (composition->get_active ());
     prsharpening->set_active (composition->get_active ());
     framing->set_active (composition->get_active ());
@@ -1047,6 +1051,10 @@ void PartialPasteDlg::applyPaste (rtengine::procparams::ProcParams* dstPP, Param
 
     if (!crop->get_active ()) {
         filterPE.crop        = falsePE.crop;
+    }
+
+    if (!cropGuide->get_active ()) {
+        filterPE.cropGuide   = falsePE.cropGuide;
     }
 
     if (!resize->get_active ()) {
