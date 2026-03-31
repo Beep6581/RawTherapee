@@ -73,6 +73,10 @@ public:
     void enablePanZoom(bool value) { m_is_pan_zoom_enabled = value; }
     void setSmoothScrollZoomSensitivity(int value, int min, int max);
     void setSmoothScrollPanSensitivity(int value, int min, int max);
+    void setReverseDiscreteScrollDirection(bool value)
+    {
+        m_reverse_discrete_scroll_dir = value;
+    }
     void setReverseSmoothScrollDirection(bool value)
     {
         m_reverse_smooth_scroll_dir = value;
@@ -150,6 +154,7 @@ private:
     bool tryPanScroll(WidgetVec scroll_delta);
     void updatePan(WidgetPoint delta_pos);
     void updatePanWithScroll(WidgetVec delta);
+    void updateHorizontalPanWithScroll(WidgetVec delta);
     void updateZoom(double new_zoom, bool preserve_cursor = true);
     void updateCursorShape();
 
@@ -159,7 +164,7 @@ private:
     Glib::RefPtr<Gdk::Window> m_gdk_window;
 
     Glib::RefPtr<Gtk::GestureZoom> m_zoom_controller;
-    std::unique_ptr<rt::gtk4::HeuristicEventControllerScroll> m_scroll_controller;
+    std::unique_ptr<rt::gtk4::EventControllerScroll> m_scroll_controller;
     sigc::connection m_change_cursor_connection;
 
     std::vector<CursorMonitor*> m_cursor_monitors;
@@ -176,6 +181,7 @@ private:
     PanningInput m_pan;
     ScrollMode m_scroll_mode;
     bool m_is_pan_zoom_enabled;
+    bool m_reverse_discrete_scroll_dir;
     bool m_reverse_smooth_scroll_dir;
     bool m_is_cursor_inside_canvas;
 };

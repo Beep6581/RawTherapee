@@ -2066,7 +2066,8 @@ void Preferences::storePreferences()
     moptions.showInspectorObservedArea = showInspectorObservedAreaCB->get_active();
     moptions.inspectorWindow = inspectorWindowCB->get_active();
     moptions.zoomOnScroll = zoomOnScrollCB->get_active();
-    moptions.reverseScrollDir = reverseScrollCB->get_active();
+    moptions.reverseDiscreteScrollDir = reverseDiscreteScrollCB->get_active();
+    moptions.reverseSmoothScrollDir = reverseSmoothScrollCB->get_active();
     moptions.smoothScrollZoomSensitivity =
         static_cast<int>(smoothScrollZoomSensitivity->get_value());
     moptions.smoothScrollPanSensitivity =
@@ -2311,7 +2312,8 @@ void Preferences::fillPreferences()
     showInspectorObservedAreaCB->set_active(moptions.showInspectorObservedArea);
     inspectorWindowCB->set_active(moptions.inspectorWindow);
     zoomOnScrollCB->set_active(moptions.zoomOnScroll);
-    reverseScrollCB->set_active(moptions.reverseScrollDir);
+    reverseDiscreteScrollCB->set_active(moptions.reverseDiscreteScrollDir);
+    reverseSmoothScrollCB->set_active(moptions.reverseSmoothScrollDir);
     smoothScrollZoomSensitivity->set_value(moptions.smoothScrollZoomSensitivity);
     smoothScrollPanSensitivity->set_value(moptions.smoothScrollPanSensitivity);
     switch (moptions.zoom11Mode) {
@@ -2965,7 +2967,7 @@ Gtk::Widget* Preferences::setupEditorInspectorSettings()
     const Glib::ustring restart_app_text =
         Glib::ustring("(") + M("PREFERENCES_APPLNEXTSTARTUP") + ")";
 
-    auto frame = rt::make_managed<Gtk::Frame>(M("PREFERENCES_IMAGE_VIEW"));
+    auto frame = rt::make_managed<Gtk::Frame>(M("PREFERENCES_INSPECTOR"));
     setExpandAlignProperties(frame, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_START);
 
     auto grid = rt::make_managed<Gtk::Grid>();
@@ -3001,9 +3003,16 @@ Gtk::Widget* Preferences::setupEditorInspectorSettings()
     grid->attach_next_to(*zoomOnScrollCB, *showInspectorObservedAreaCB,
                          Gtk::POS_BOTTOM, 1, 1);
 
-    reverseScrollCB = rt::make_managed<Gtk::CheckButton>(M("PREFERENCES_REVERSE_SCROLL"));
-    setup(reverseScrollCB);
-    grid->attach_next_to(*reverseScrollCB, *zoomOnScrollCB, Gtk::POS_RIGHT, 1, 1);
+    reverseDiscreteScrollCB = rt::make_managed<Gtk::CheckButton>(
+        M("PREFERENCES_REVERSE_DISCRETE_SCROLL"));
+    setup(reverseDiscreteScrollCB);
+    grid->attach_next_to(*reverseDiscreteScrollCB, *showInspectorObservedAreaCB,
+                         Gtk::POS_RIGHT, 1, 1);
+
+    reverseSmoothScrollCB = rt::make_managed<Gtk::CheckButton>(
+        M("PREFERENCES_REVERSE_SMOOTH_SCROLL"));
+    setup(reverseSmoothScrollCB);
+    grid->attach_next_to(*reverseSmoothScrollCB, *zoomOnScrollCB, Gtk::POS_RIGHT, 1, 1);
 
     auto nestedGrid = rt::make_managed<Gtk::Grid>();
     nestedGrid->set_column_spacing(4);

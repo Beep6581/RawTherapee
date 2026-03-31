@@ -141,18 +141,50 @@ private:
 
 enum class ScrollUnit { WHEEL, SURFACE };
 
-// When porting to GTK 4, replace uses with Gtk::EventControllerScroll
-class HeuristicEventControllerScroll : public Glib::Object
+/**
+ * A custom backport/implementation of GTK 4's EventControllerScroll. The
+ * official backport in GTK 3 isn't particularly useful due to missing scroll
+ * units and various other utility functions. There is a best-effort attempt at
+ * emulating the concept of scroll units from GTK 4.
+ *
+ * ## GTK Limitations
+ *
+ * GTK 3 does not provide information about the scroll unit, so we are stuck
+ * having to receive scroll events as smooth scrolls (i.e. surface scroll
+ * units). However, providing the scroll units in this backport's API allows
+ * writing future-looking code that is aware of the concept. Discrete/wheel
+ * scrolling can be tested by setting env var GDK_CORE_DEVICE_EVENTS=1.
+ *
+ * Trying to infer the scroll unit from delta values is brittle and does not
+ * work. The delta for one mouse wheel detent changes between OS's. GTK's event
+ * grouping mechanism can cause mouse detent deltas to fluctuate. Users can
+ * also change scroll speed on the OS side.
+ *
+ * GTK 3 does not support high resolution mouse detents.
+ *
+ * ## Implementation Limitations
+ *
+ * - No support for discrete and kinetic scrolling flags
+ *
+ * ## Known Issues
+ *
+ * - First scroll wheel event on X11 is lost ([GTK Issue #3287](https://gitlab.gnome.org/GNOME/gtk/-/issues/3287))
+ *
+ */
+class EventControllerScroll : public Glib::Object
 {
 public:
     enum class Flags {
         NONE = 0,
         VERTICAL = (1 << 0),
         HORIZONTAL = (1 << 1),
+        // Don't support discrete or kinetic scrolling
+        // DISCRETE = (1 << 2),
+        // KINETIC = (1 << 3),
         BOTH_AXES = VERTICAL | HORIZONTAL,
     };
 
-    HeuristicEventControllerScroll(Gtk::Widget* widget, Flags flags);
+    EventControllerScroll(Gtk::Widget* widget, Flags flags);
 
     // Widgets using this backport should call this event handler in their
     // generic event handling.
@@ -168,24 +200,21 @@ public:
 
 private:
     void beginSmoothScrollIfNeeded();
+    void refreshTimeout();
+    bool onTimeout();
     void endScroll();
 
     void populateDeltasByDirection(GdkScrollDirection dir, double& dx, double& dy);
     void filterDeltas(double& dx, double& dy);
-    void makeDiscrete(double& dx, double& dy);
 
     bool handleEventMacOS(const GdkEvent* event);
-    bool handleEventWayland(const GdkEvent* event);
-    bool handleEventWin32(const GdkEvent* event);
-    bool handleEventX11(const GdkEvent* event);
-
-    bool handleEventWithInferredSingleMouseDetents(const GdkEvent* event,
-                                                   double detent_delta);
-    bool handleEventFallback(GdkEvent* event);
+    bool handleEvent(const GdkEvent* event);
 
     sigc::signal<bool(double, double)> m_signal_scroll;
     sigc::signal<void()> m_signal_begin;
     sigc::signal<void()> m_signal_end;
+
+    sigc::connection m_timeout;
 
     Gtk::Widget* m_widget;
     Flags m_flags;
@@ -199,5 +228,4 @@ private:
 }  // namespace rt
 
 template <>
-struct rt::EnumAsBitflags<rt::gtk4::HeuristicEventControllerScroll::Flags>
-    : std::true_type {};
+struct rt::EnumAsBitflags<rt::gtk4::EventControllerScroll::Flags> : std::true_type {};

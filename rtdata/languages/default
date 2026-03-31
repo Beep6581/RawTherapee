@@ -2157,8 +2157,8 @@ PREFERENCES_HISTOGRAMPOSITIONLEFT;Histogram in left panel
 PREFERENCES_HISTOGRAM_TOOLTIP;If enabled, the working profile is used for rendering the main histogram and the Navigator panel, otherwise the gamma-corrected output profile is used.
 PREFERENCES_HLTHRESHOLD;Threshold for clipped highlights
 PREFERENCES_ICCDIR;Directory containing color profiles
-PREFERENCES_IMAGE_VIEW;Image View
 PREFERENCES_IMPROCPARAMS;Default Processing Profile
+PREFERENCES_INSPECTOR;Inspector
 PREFERENCES_INSPECTORWINDOW;Open inspector in own window or fullscreen
 PREFERENCES_INSPECT_LABEL;Inspect
 PREFERENCES_INSPECT_MAXBUFFERS_LABEL;Maximum number of cached images
@@ -2232,7 +2232,8 @@ PREFERENCES_REMEMBERZOOMPAN;Remember zoom % and pan offset
 PREFERENCES_REMEMBERZOOMPAN_TOOLTIP;Remember the zoom % and pan offset of the current image when opening a new image.\n\nThis option only works in 'Single Editor Tab Mode' and when 'Demosaicing method used for the preview at <100% zoom' is set to 'As in PP3'.
 PREFERENCES_RESET_TO_DEFAULT;Reset Preferences
 PREFERENCES_RESET_TO_DEFAULT_CONFIRM_PROMPT;Reset all preferences to their default values? This action cannot be undone.\n\nSome changes may require restarting the application to take full effect.
-PREFERENCES_REVERSE_SCROLL;Reverse smooth scroll direction
+PREFERENCES_REVERSE_DISCRETE_SCROLL;Reverse discrete scroll direction
+PREFERENCES_REVERSE_SMOOTH_SCROLL;Reverse smooth scroll direction
 PREFERENCES_SAVE_TP_OPEN_NOW;Save tool collapsed/expanded state now
 PREFERENCES_SELECTLANG;Select language
 PREFERENCES_SERIALIZE_TIFF_READ;TIFF Read Settings

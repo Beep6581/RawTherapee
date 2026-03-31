@@ -159,7 +159,8 @@ class Preferences final :
     Gtk::CheckButton* inspectorWindowCB;
     Gtk::CheckButton* showInspectorObservedAreaCB;
     Gtk::CheckButton* zoomOnScrollCB;
-    Gtk::CheckButton* reverseScrollCB;
+    Gtk::CheckButton* reverseDiscreteScrollCB;
+    Gtk::CheckButton* reverseSmoothScrollCB;
     MyHScale* smoothScrollZoomSensitivity;
     MyHScale* smoothScrollPanSensitivity;
     MyComboBoxText* zoom11Mode;

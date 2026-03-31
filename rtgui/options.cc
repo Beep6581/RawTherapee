@@ -510,7 +510,8 @@ void Options::setDefaults()
     showInspectorObservedArea = false;
     inspectorWindow = false;
     zoomOnScroll = true;
-    reverseScrollDir = false;
+    reverseDiscreteScrollDir = false;
+    reverseSmoothScrollDir = false;
     smoothScrollZoomSensitivity = SMOOTH_SCROLL_ZOOM_SENSITIVITY_DEFAULT;
     smoothScrollPanSensitivity = SMOOTH_SCROLL_PAN_SENSITIVITY_DEFAULT;
     zoom11Mode = Zoom11Mode::BASIC;
@@ -1821,8 +1822,13 @@ void Options::readFromFile(Glib::ustring fname)
                     maxZoomLimit = static_cast<MaxZoom>(keyFile.get_integer("GUI", "MaxZoom"));
                 }
 
+                if (keyFile.has_key("GUI", "ReverseDiscreteScrollDirection")) {
+                    reverseDiscreteScrollDir =
+                        keyFile.get_boolean("GUI", "ReverseDiscreteScrollDirection");
+                }
+
                 if (keyFile.has_key("GUI", "ReverseSmoothScrollDirection")) {
-                    reverseScrollDir =
+                    reverseSmoothScrollDir =
                         keyFile.get_boolean("GUI", "ReverseSmoothScrollDirection");
                 }
 
@@ -2729,7 +2735,10 @@ void Options::saveToFile(Glib::ustring fname)
         keyFile.set_boolean("GUI", "InspectorWindow", inspectorWindow);
         keyFile.set_boolean("GUI", "ZoomOnScroll", zoomOnScroll);
         keyFile.set_integer("GUI", "MaxZoom", static_cast<int>(maxZoomLimit));
-        keyFile.set_boolean("GUI", "ReverseSmoothScrollDirection", reverseScrollDir);
+        keyFile.set_boolean("GUI", "ReverseDiscreteScrollDirection",
+                            reverseDiscreteScrollDir);
+        keyFile.set_boolean("GUI", "ReverseSmoothScrollDirection",
+                            reverseSmoothScrollDir);
         keyFile.set_integer("GUI", "SmoothScrollZoomSensitivity",
                             smoothScrollZoomSensitivity);
         keyFile.set_integer("GUI", "SmoothScrollPanSensitivity",

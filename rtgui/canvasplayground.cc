@@ -93,7 +93,8 @@ private:
 
     void onSmoothSensitivityChanged();
     void onSmoothPanSensitivityChanged();
-    void onScrollDirectionToggled();
+    void onDiscreteScrollDirectionToggled();
+    void onSmoothScrollDirectionToggled();
     void onScrollModeToggled();
 
     std::unique_ptr<CanvasModel> m_canvas_model;
@@ -112,7 +113,8 @@ private:
     Gtk::ComboBoxText* m_camera_bounds;
     Gtk::Scale m_zoom_sense_slider;
     Gtk::Scale m_pan_sense_slider;
-    Gtk::CheckButton* m_scroll_dir_button;
+    Gtk::CheckButton* m_discrete_scroll_dir_button;
+    Gtk::CheckButton* m_smooth_scroll_dir_button;
     Gtk::CheckButton* m_scroll_mode_button;
 };
 
@@ -239,16 +241,22 @@ void CanvasPlayground::setupControls()
     m_control_box->pack_start(*pan_sense_label, false, false);
     m_control_box->pack_start(m_pan_sense_slider, false, false);
 
-    m_scroll_dir_button =
+    m_discrete_scroll_dir_button =
+        rt::make_managed<Gtk::CheckButton>("Reverse discrete scroll direction");
+    m_discrete_scroll_dir_button->signal_clicked().connect(
+        sigc::mem_fun(*this, &CanvasPlayground::onDiscreteScrollDirectionToggled));
+    m_control_box->pack_start(*m_discrete_scroll_dir_button, false, false);
+
+    m_smooth_scroll_dir_button =
         rt::make_managed<Gtk::CheckButton>("Reverse smooth scroll direction");
-    m_scroll_dir_button->signal_clicked().connect(
-        sigc::mem_fun(*this, &CanvasPlayground::onScrollDirectionToggled));
-    m_control_box->pack_start(*m_scroll_dir_button);
+    m_smooth_scroll_dir_button->signal_clicked().connect(
+        sigc::mem_fun(*this, &CanvasPlayground::onSmoothScrollDirectionToggled));
+    m_control_box->pack_start(*m_smooth_scroll_dir_button, false, false);
 
     m_scroll_mode_button = rt::make_managed<Gtk::CheckButton>("Pan on scroll");
     m_scroll_mode_button->signal_clicked().connect(
         sigc::mem_fun(*this, &CanvasPlayground::onScrollModeToggled));
-    m_control_box->pack_start(*m_scroll_mode_button);
+    m_control_box->pack_start(*m_scroll_mode_button, false, false);
 
     auto text_entry = rt::make_managed<Gtk::Entry>();
     m_control_box->pack_start(*text_entry, false, false);
@@ -372,9 +380,15 @@ void CanvasPlayground::onZoomFitClicked()
     m_canvas_model->zoomFit();
 }
 
-void CanvasPlayground::onScrollDirectionToggled()
+void CanvasPlayground::onDiscreteScrollDirectionToggled()
 {
-    m_canvas->setReverseSmoothScrollDirection(m_scroll_dir_button->get_active());
+    m_canvas->setReverseDiscreteScrollDirection(
+        m_discrete_scroll_dir_button->get_active());
+}
+
+void CanvasPlayground::onSmoothScrollDirectionToggled()
+{
+    m_canvas->setReverseSmoothScrollDirection(m_smooth_scroll_dir_button->get_active());
 }
 
 void CanvasPlayground::onScrollModeToggled()

@@ -343,7 +343,8 @@ public:
     bool showInspectorObservedArea;
     bool inspectorWindow; // open inspector in separate window
     bool zoomOnScroll;    // translate scroll events to zoom
-    bool reverseScrollDir;
+    bool reverseDiscreteScrollDir;
+    bool reverseSmoothScrollDir;
     int smoothScrollZoomSensitivity;
     int smoothScrollPanSensitivity;
     static constexpr int SMOOTH_SCROLL_ZOOM_SENSITIVITY_MIN = -100;

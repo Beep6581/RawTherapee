@@ -31,6 +31,10 @@
 #include <gtkmm/gesturedrag.h>
 #include <gtkmm/gesturezoom.h>
 
+#ifdef GDK_WINDOWING_QUARTZ
+    #include <gdk/gdkquartz.h>
+#endif
+
 using namespace rt::canvas;
 
 namespace {
@@ -82,13 +86,14 @@ Canvas::Canvas(CanvasModel* model)
       m_pan(PanningInput::NONE),
       m_scroll_mode(ScrollMode::ZOOM),
       m_is_pan_zoom_enabled(false),
+      m_reverse_discrete_scroll_dir(false),
       m_reverse_smooth_scroll_dir(false),
       m_is_cursor_inside_canvas(false)
 {
     set_name("RtCanvas");
 
-    m_scroll_controller = rt::make_unique<rt::gtk4::HeuristicEventControllerScroll>(
-        this, rt::gtk4::HeuristicEventControllerScroll::Flags::BOTH_AXES);
+    m_scroll_controller = rt::make_unique<rt::gtk4::EventControllerScroll>(
+        this, rt::gtk4::EventControllerScroll::Flags::BOTH_AXES);
     m_scroll_controller->signal_scroll_begin().connect(
         sigc::mem_fun(*this, &Canvas::onScrollBegin));
     m_scroll_controller->signal_scroll().connect(
@@ -538,9 +543,7 @@ bool Canvas::tryZoomScroll(WidgetVec scroll_delta)
                 m_scroll_zoom_accum = 0;
                 return true;
             } else if (state & GDK_SHIFT_MASK) {
-                scroll_delta.x = scroll_delta.y;
-                scroll_delta.y = WidgetScalar(0);
-                updatePanWithScroll(scroll_delta);
+                updateHorizontalPanWithScroll(scroll_delta);
                 m_scroll_zoom_accum = 0;
                 return true;
             } else if (state & GDK_MOD1_MASK) {
@@ -565,27 +568,31 @@ bool Canvas::tryZoomScroll(WidgetVec scroll_delta)
             }
         }
     } else {
-        m_scroll_zoom_accum = 0;
-
         if (allow(PanZoomFlags::PAN_WITH_MOD_SCROLL)) {
             if (state & GDK_CONTROL_MASK) {
                 scroll_delta.x = WidgetScalar(0);
                 updatePanWithScroll(scroll_delta);
+                m_scroll_zoom_accum = 0;
                 return true;
             } else if (state & GDK_SHIFT_MASK) {
-                scroll_delta.x = scroll_delta.y;
-                scroll_delta.y = WidgetScalar(0);
-                updatePanWithScroll(scroll_delta);
+                updateHorizontalPanWithScroll(scroll_delta);
+                m_scroll_zoom_accum = 0;
                 return true;
             }
         }
 
         if (allow(PanZoomFlags::ZOOM_WITH_SCROLL)) {
-            if (scroll_delta.y.value() >= 1.0) {
+            // In GTK 4, high resolution mice can emit discrete scroll events
+            // that are less than 1.0.
+            m_scroll_zoom_accum += scroll_delta.y.value();
+
+            if (m_scroll_zoom_accum >= 1.0) {
                 updateZoom(camera.zoom / ZOOM_FACTOR);
+                m_scroll_zoom_accum = 0;
                 return true;
-            } else if (scroll_delta.y.value() <= -1.0) {
+            } else if (m_scroll_zoom_accum <= -1.0) {
                 updateZoom(camera.zoom * ZOOM_FACTOR);
+                m_scroll_zoom_accum = 0;
                 return true;
             }
         }
@@ -626,11 +633,11 @@ bool Canvas::tryPanScroll(WidgetVec scroll_delta)
             if (state & GDK_CONTROL_MASK) {
                 scroll_delta.x = WidgetScalar(0);
                 updatePanWithScroll(scroll_delta);
+                m_scroll_zoom_accum = 0;
                 return true;
             } else if (state & GDK_SHIFT_MASK) {
-                scroll_delta.x = scroll_delta.y;
-                scroll_delta.y = WidgetScalar(0);
-                updatePanWithScroll(scroll_delta);
+                updateHorizontalPanWithScroll(scroll_delta);
+                m_scroll_zoom_accum = 0;
                 return true;
             }
         }
@@ -640,19 +647,24 @@ bool Canvas::tryPanScroll(WidgetVec scroll_delta)
             // is accompanied by an undesired pan.
             if (!(state & GDK_MOD1_MASK)) {
                 updatePanWithScroll(scroll_delta);
+                m_scroll_zoom_accum = 0;
                 return true;
             }
         }
     } else {
-        m_scroll_zoom_accum = 0;
-
         if (allow(PanZoomFlags::ZOOM_WITH_MOD_SCROLL)) {
             if (state & GDK_MOD1_MASK) {
+                // In GTK 4, high resolution mice can emit discrete scroll
+                // events that are less than 1.0.
+                m_scroll_zoom_accum += scroll_delta.y.value();
+
                 if (scroll_delta.y.value() >= 1.0) {
                     updateZoom(camera.zoom / ZOOM_FACTOR);
+                    m_scroll_zoom_accum = 0;
                     return true;
                 } else if (scroll_delta.y.value() <= -1.0) {
                     updateZoom(camera.zoom * ZOOM_FACTOR);
+                    m_scroll_zoom_accum = 0;
                     return true;
                 }
             }
@@ -662,17 +674,18 @@ bool Canvas::tryPanScroll(WidgetVec scroll_delta)
             if (state & GDK_CONTROL_MASK) {
                 scroll_delta.x = WidgetScalar(0);
                 updatePanWithScroll(scroll_delta);
+                m_scroll_zoom_accum = 0;
                 return true;
             } else if (state & GDK_SHIFT_MASK) {
-                scroll_delta.x = scroll_delta.y;
-                scroll_delta.y = WidgetScalar(0);
-                updatePanWithScroll(scroll_delta);
+                updateHorizontalPanWithScroll(scroll_delta);
+                m_scroll_zoom_accum = 0;
                 return true;
             }
         }
 
         if (allow(PanZoomFlags::PAN_WITH_SCROLL)) {
             updatePanWithScroll(scroll_delta);
+            m_scroll_zoom_accum = 0;
             return true;
         }
     }
@@ -704,8 +717,23 @@ void Canvas::updatePanWithScroll(WidgetVec delta)
 
     double pan_sensitivity = 0.1;
     if (m_scroll_controller->get_scroll_unit() == ScrollUnit::SURFACE) {
+        // Due to limitations in GTK 3, mouse wheel detents are considered
+        // as smooth scrolls with surface units. This causes the scrolling
+        // sensitivity and direction to conflict between mouse wheel and
+        // touchpad. There is no way to fix this without moving to GTK 4.
+        //
+        // The default for touchpads should be to apply the -1 factor to have
+        // natural scrolling like how scrolling on a phone works.
+        //
+        // The default for mouse wheel detents should be to NOT apply the -1
+        // factor to match the behaviour in desktop apps and browsers.
         pan_sensitivity = m_smooth_scroll_pan_sensitivity;
-        if (!m_reverse_smooth_scroll_dir) {
+
+        if (m_reverse_smooth_scroll_dir) {
+            pan_sensitivity *= -1;
+        }
+    } else {
+        if (m_reverse_discrete_scroll_dir) {
             pan_sensitivity *= -1;
         }
     }
@@ -719,6 +747,18 @@ void Canvas::updatePanWithScroll(WidgetVec delta)
 
     signal_pan_zoom.emit();
     m_model->setCameraPos(new_pos);
+}
+
+void Canvas::updateHorizontalPanWithScroll(WidgetVec delta)
+{
+    // On MacOS, Shift + Scroll emits a horizontal scroll as a builtin feature
+    // of the OS. A touchpad can also emit horizontal deltas. Only replace the
+    // horizontal delta for vertical scrolls (e.g. with scroll wheel).
+    if (delta.x.value() == 0) {
+        delta.x = delta.y;
+    }
+    delta.y = WidgetScalar(0);
+    updatePanWithScroll(delta);
 }
 
 void Canvas::updateZoom(double new_zoom, bool preserve_cursor)
