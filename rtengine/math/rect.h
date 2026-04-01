@@ -40,7 +40,8 @@ template <class T>
 class GenericRect
 {
 public:
-    static_assert(std::is_same<T, int>::value || std::is_same<T, double>::value);
+    static_assert(std::is_same<T, int>::value || std::is_same<T, double>::value,
+                  "GenericRect only supports int and double values");
 
     using PointType = typename std::conditional<std::is_same<T, int>::value,
                                                 IntPoint, Point>::type;
@@ -65,7 +66,7 @@ public:
      * Since +Y is downwards, the order of corners is in the direction of
      * growing angles.
      */
-    constexpr PointType corner(unsigned int i) const {
+    PointType corner(unsigned int i) const {
         switch (i % 4) {
             case 0:  return m_min;
             case 1:  return PointType(m_max.x, m_min.y);
@@ -74,7 +75,7 @@ public:
         }
     }
 
-    constexpr bool contains(PointType p)
+    bool contains(PointType p)
     {
         if (p.x < m_min.x) return false;
         else if (p.y < m_min.y) return false;

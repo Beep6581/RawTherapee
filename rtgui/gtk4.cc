@@ -221,9 +221,8 @@ void EventControllerMotion::hook_leave(GtkEventControllerMotion*, gpointer user_
     static_cast<EventControllerMotion*>(user_data)->m_leave.emit();
 }
 
-EventControllerScroll::EventControllerScroll(Gtk::Widget* widget, Flags flags)
+EventControllerScroll::EventControllerScroll(Flags flags)
     : Glib::ObjectBase("RtEventControllerScroll"),
-      m_widget(widget),
       m_flags(flags),
       m_scroll_unit(ScrollUnit::WHEEL),
       m_dx_accum(0),

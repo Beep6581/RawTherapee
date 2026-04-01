@@ -93,7 +93,7 @@ Canvas::Canvas(CanvasModel* model)
     set_name("RtCanvas");
 
     m_scroll_controller = rt::make_unique<rt::gtk4::EventControllerScroll>(
-        this, rt::gtk4::EventControllerScroll::Flags::BOTH_AXES);
+        rt::gtk4::EventControllerScroll::Flags::BOTH_AXES);
     m_scroll_controller->signal_scroll_begin().connect(
         sigc::mem_fun(*this, &Canvas::onScrollBegin));
     m_scroll_controller->signal_scroll().connect(

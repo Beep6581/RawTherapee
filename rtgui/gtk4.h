@@ -184,7 +184,7 @@ public:
         BOTH_AXES = VERTICAL | HORIZONTAL,
     };
 
-    EventControllerScroll(Gtk::Widget* widget, Flags flags);
+    EventControllerScroll(Flags flags);
 
     // Widgets using this backport should call this event handler in their
     // generic event handling.
@@ -216,7 +216,6 @@ private:
 
     sigc::connection m_timeout;
 
-    Gtk::Widget* m_widget;
     Flags m_flags;
     ScrollUnit m_scroll_unit;
     double m_dx_accum;

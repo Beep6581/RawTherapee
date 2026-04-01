@@ -38,9 +38,7 @@ constexpr const T& max(const T& lhs, const T& rhs) { return lhs > rhs ? lhs : rh
 template <class T>
 constexpr const T& clamp(const T& v, const T& lo, const T& hi)
 {
-    if (v < lo) return lo;
-    else if (hi < v) return hi;
-    else return v;
+    return (v < lo) ? lo : ((hi < v) ? hi : v);
 }
 
 }  // namespace rt

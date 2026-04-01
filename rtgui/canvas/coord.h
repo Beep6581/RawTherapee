@@ -56,8 +56,8 @@ using WidgetScalar = Scalar<WidgetSpace, double>;
 using IntWorldScalar = Scalar<WorldSpace, int>;
 using IntWidgetScalar = Scalar<WidgetSpace, int>;
 
-static_assert(sizeof(WorldScalar) == sizeof(double));
-static_assert(sizeof(IntWorldScalar) == sizeof(int));
+static_assert(sizeof(WorldScalar) == sizeof(double), "Extra padding in Scalar<T>");
+static_assert(sizeof(IntWorldScalar) == sizeof(int), "Extra padding in Scalar<T>");
 
 template <class Space, class T>
 struct Vec;
