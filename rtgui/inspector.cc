@@ -167,11 +167,10 @@ bool Inspector::onKeyPressed(guint keyval, guint keycode, GdkModifierType state)
     if (!m_window) return false;
     if (m_is_key_down) return true;
 
-    m_is_key_down = true;
-
     switch (keyval) {
         case GDK_KEY_z:
         case GDK_KEY_F:
+            m_is_key_down = true;
             if (m_is_pinned) {
                 if (m_fit_to_screen) {
                     m_canvas_model->setCameraPosZoom(m_last_camera_pos, 1.0);
@@ -185,6 +184,7 @@ bool Inspector::onKeyPressed(guint keyval, guint keycode, GdkModifierType state)
             m_fit_to_screen = false;
             return true;
         case GDK_KEY_f:
+            m_is_key_down = true;
             m_fit_to_screen = true;
             if (m_is_pinned) {
                 m_canvas_model->zoomFit(NO_PADDING);
@@ -194,6 +194,7 @@ bool Inspector::onKeyPressed(guint keyval, guint keycode, GdkModifierType state)
             return true;
         case GDK_KEY_F11:
             // Toggle fullscreen
+            m_is_key_down = true;
             if (m_is_window_fullscreen) {
                 m_window->unfullscreen();
             } else {
@@ -203,6 +204,7 @@ bool Inspector::onKeyPressed(guint keyval, guint keycode, GdkModifierType state)
             return true;
         case GDK_KEY_Escape:
             // Hide window
+            m_is_key_down = true;
             m_is_pinned = false;
             m_window->set_visible(false);
             return true;
@@ -239,7 +241,9 @@ void Inspector::onKeyReleased(guint keyval, guint keycode, GdkModifierType state
 void Inspector::onWindowHide()
 {
     m_is_window_showing = false;
+    m_is_pinned = false;
     m_is_key_down = false;
+    m_suppress_mouse_move = false;
 }
 
 bool Inspector::onWindowStateEvent(GdkEventWindowState* event)

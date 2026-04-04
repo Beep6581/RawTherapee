@@ -2664,7 +2664,9 @@ bool FileCatalog::handleShortcutKeyRelease(GdkEventKey* event)
         case GDK_KEY_f:
         case GDK_KEY_F:
         case GDK_KEY_z:
-            fileBrowser->getInspector()->hideWindow();
+            if (!App::get().options().pinInspector) {
+                fileBrowser->getInspector()->hideWindow();
+            }
             fileBrowser->getInspector()->suppressMouseMove(false);
             return true;
         }
