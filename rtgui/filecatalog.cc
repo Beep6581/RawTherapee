@@ -2637,15 +2637,16 @@ bool FileCatalog::handleShortcutKey (GdkEventKey* event)
     }
 
     if (!ctrl && !alt) {
+        const bool pinInspector = options.pinInspector;
         switch (event->keyval) {
         case GDK_KEY_f:
             fileBrowser->getInspector()->suppressMouseMove(true);
-            fileBrowser->getInspector()->showWindow(false, true);
+            fileBrowser->getInspector()->showWindow(pinInspector, true);
             return true;
         case GDK_KEY_z:
         case GDK_KEY_F:
             fileBrowser->getInspector()->suppressMouseMove(true);
-            fileBrowser->getInspector()->showWindow(false, false);
+            fileBrowser->getInspector()->showWindow(pinInspector, false);
             return true;
         }
     }

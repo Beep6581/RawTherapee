@@ -509,6 +509,7 @@ void Options::setDefaults()
 
     showInspectorObservedArea = false;
     inspectorWindow = false;
+    pinInspector = false;
     zoomOnScroll = true;
     reverseDiscreteScrollDir = false;
     reverseSmoothScrollDir = false;
@@ -1814,6 +1815,10 @@ void Options::readFromFile(Glib::ustring fname)
                     inspectorWindow = keyFile.get_boolean("GUI", "InspectorWindow");
                 }
 
+                if (keyFile.has_key("GUI", "PinInspectorWindow")) {
+                    pinInspector = keyFile.get_boolean("GUI", "PinInspectorWindow");
+                }
+
                 if (keyFile.has_key("GUI", "ZoomOnScroll")) {
                     zoomOnScroll = keyFile.get_boolean("GUI", "ZoomOnScroll");
                 }
@@ -2733,6 +2738,7 @@ void Options::saveToFile(Glib::ustring fname)
         keyFile.set_boolean("GUI", "ShowInspectorObservedArea",
                             showInspectorObservedArea);
         keyFile.set_boolean("GUI", "InspectorWindow", inspectorWindow);
+        keyFile.set_boolean("GUI", "PinInspectorWindow", pinInspector);
         keyFile.set_boolean("GUI", "ZoomOnScroll", zoomOnScroll);
         keyFile.set_integer("GUI", "MaxZoom", static_cast<int>(maxZoomLimit));
         keyFile.set_boolean("GUI", "ReverseDiscreteScrollDirection",

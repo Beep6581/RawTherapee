@@ -342,6 +342,7 @@ public:
 
     bool showInspectorObservedArea;
     bool inspectorWindow; // open inspector in separate window
+    bool pinInspector;
     bool zoomOnScroll;    // translate scroll events to zoom
     bool reverseDiscreteScrollDir;
     bool reverseSmoothScrollDir;

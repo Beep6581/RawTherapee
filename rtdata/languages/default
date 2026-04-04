@@ -2208,6 +2208,7 @@ PREFERENCES_PERFORMANCE_MEASURE;Measure
 PREFERENCES_PERFORMANCE_MEASURE_HINT;Logs processing times in console
 PREFERENCES_PERFORMANCE_THREADS;Threads
 PREFERENCES_PERFORMANCE_THREADS_LABEL;Maximum number of threads for Noise Reduction and Wavelet Levels (0 = Automatic)
+PREFERENCES_PIN_INSPECTOR_AUTOMATICALLY;Always pin inspector window when opened
 PREFERENCES_PREVDEMO;Preview Demosaic Method
 PREFERENCES_PREVDEMO_FAST;Fast
 PREFERENCES_PREVDEMO_LABEL;Demosaicing method used for the preview at <100% zoom:
@@ -2240,6 +2241,8 @@ PREFERENCES_SERIALIZE_TIFF_READ;TIFF Read Settings
 PREFERENCES_SERIALIZE_TIFF_READ_LABEL;Serialize reading of TIFF files
 PREFERENCES_SERIALIZE_TIFF_READ_TOOLTIP;Enabling this option when working with folders containing uncompressed TIFF files can increase performance of thumbnail generation.
 PREFERENCES_SET;Set
+PREFERENCES_SCROLL_MODE;Scroll Mode:
+PREFERENCES_SCROLL_MODE_PAN;Pan images by scrolling
 PREFERENCES_SHOW_INSPECTOR_OBSERVED_AREA;Show inspector observed area frame
 PREFERENCES_SHOWBASICEXIF;Show basic Exif info
 PREFERENCES_SHOWDATETIME;Show date and time
@@ -2297,9 +2300,9 @@ PREFERENCES_XMP_SIDECAR_MODE_EXT;darktable-like (FILENAME.ext.xmp for FILENAME.e
 PREFERENCES_XMP_SIDECAR_MODE_STD;Standard (FILENAME.xmp for FILENAME.ext)
 PREFERENCES_ZOOMONSCROLL;Zoom images by scrolling
 PREFERENCES_ZOOM_11_MODE;Image position on 1:1 zoom:
-PREFERENCES_ZOOM_11_MODE_BASIC;No centering
+PREFERENCES_ZOOM_11_MODE_BASIC;No automatic panning
 PREFERENCES_ZOOM_11_MODE_CENTER_CURSOR;Center on cursor
-PREFERENCES_ZOOM_11_MODE_PRESERVE_CURSOR;Anchor cursor position
+PREFERENCES_ZOOM_11_MODE_PRESERVE_CURSOR;Keep relative cursor position
 PROFILEPANEL_COPYPPASTE;Parameters to copy
 PROFILEPANEL_GLOBALPROFILES;Bundled profiles
 PROFILEPANEL_LABEL;Processing Profiles
