@@ -1653,6 +1653,7 @@ LocallabParams::LocallabSpot::LocallabSpot() :
     complexcie(0),
     reparcie(100.),
     sensicie(60),
+    blurciede(5),
     Autograycie(true),
     sigybjz12(false),
     qtoj(false),
@@ -2819,6 +2820,7 @@ bool LocallabParams::LocallabSpot::operator ==(const LocallabSpot& other) const
         && complexcie == other.complexcie
         && reparcie == other.reparcie
         && sensicie == other.sensicie
+        && blurciede == other.blurciede
         && Autograycie == other.Autograycie
         && sigybjz12 == other.sigybjz12
         && qtoj == other.qtoj
@@ -4003,6 +4005,7 @@ void LoadUtil::ciecam()
     assignFromKeyfile(keyFile, "Locallab", "Complexcie_" + index_str, spot.complexcie, spotEdited.complexcie);
     assignFromKeyfile(keyFile, "Locallab", "Reparcie_" + index_str, spot.reparcie, spotEdited.reparcie);
     assignFromKeyfile(keyFile, "Locallab", "Sensicie_" + index_str, spot.sensicie, spotEdited.sensicie);
+    assignFromKeyfile(keyFile, "Locallab", "Blurciede_" + index_str, spot.blurciede, spotEdited.blurciede);
     assignFromKeyfile(keyFile, "Locallab", "AutoGraycie_" + index_str, spot.Autograycie, spotEdited.Autograycie);
     assignFromKeyfile(keyFile, "Locallab", "sigybjz12_" + index_str, spot.sigybjz12, spotEdited.sigybjz12);
     assignFromKeyfile(keyFile, "Locallab", "Qtoj_" + index_str, spot.qtoj, spotEdited.qtoj);
@@ -5067,6 +5070,7 @@ void SaveUtil::ciecam()
         saveToKeyfile(!pedited || spot_edited->complexcie, "Locallab", "Complexcie_" + index_str, spot.complexcie, keyFile);
         saveToKeyfile(!pedited || spot_edited->reparcie, "Locallab", "Reparcie_" + index_str, spot.reparcie, keyFile);
         saveToKeyfile(!pedited || spot_edited->sensicie, "Locallab", "Sensicie_" + index_str, spot.sensicie, keyFile);
+        saveToKeyfile(!pedited || spot_edited->blurciede, "Locallab", "Blurciede_" + index_str, spot.blurciede, keyFile);
         saveToKeyfile(!pedited || spot_edited->Autograycie, "Locallab", "AutoGraycie_" + index_str, spot.Autograycie, keyFile);
         saveToKeyfile(!pedited || spot_edited->sigybjz12, "Locallab", "sigybjz12_" + index_str, spot.sigybjz12, keyFile);
         saveToKeyfile(!pedited || spot_edited->qtoj, "Locallab", "Qtoj_" + index_str, spot.qtoj, keyFile);

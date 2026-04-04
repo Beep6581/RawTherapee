@@ -1910,6 +1910,8 @@ class Locallabcie:
 {
 private:
     Adjuster* const sensicie;
+    Adjuster* const blurciede;
+
     Gtk::ToggleButton* const previewcie;
     
     Adjuster* const reparcie;
@@ -2227,7 +2229,7 @@ private:
     rtengine::ProcEvent Evlocallabgamgain;
     rtengine::ProcEvent Evlocallabgampower;
     rtengine::ProcEvent Evlocallabgamutw;
-
+    rtengine::ProcEvent Evlocallabblurciede;
 public:
     Locallabcie();
     ~Locallabcie();

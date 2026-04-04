@@ -8440,6 +8440,7 @@ Locallabcie::Locallabcie():
     LocallabTool(this, M("TP_LOCALLAB_CIE_TOOLNAME"), M("TP_LOCALLAB_CIE"), false),
     // ciecam specific widgets
     sensicie(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SENSI"), 0, 100, 1, 60))),
+    blurciede(Gtk::manage(new Adjuster(M("TP_LOCALLAB_BLURDE"), 2, 100, 1, 5))),
     previewcie(Gtk::manage(new Gtk::ToggleButton(M("TP_LOCALLAB_PREVIEW")))),
     reparcie(Gtk::manage(new Adjuster(M("TP_LOCALLAB_LOGREPART"), 1.0, 100.0, 1., 100.0))),
     jabcie(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_JAB")))),
@@ -8819,6 +8820,7 @@ Locallabcie::Locallabcie():
     Evlocallabsigmoidthjzcie = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_SIGJZ11GRAY");
     Evlocallabsigmoidbljzcie = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_SIGJZ11BL");
     Evlocallabsigmoidsenscie = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_SIGSENSICIE");
+    Evlocallabblurciede = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_BLURCIEDE");
     Evlocallablogcie_12 = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_LOGCIE12");
     Evlocallabcolorhred = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_CIE_RGB_COLORHRED");
     Evlocallabschromared = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_CIE_RGB_SCHROMARED");
@@ -8839,9 +8841,11 @@ Locallabcie::Locallabcie():
     const  LocallabParams::LocallabSpot defSpot;
     reparcie->setAdjusterListener(this);
     sensicie->setAdjusterListener(this);
+    blurciede->setAdjusterListener(this);
 
 
     pack_start(*sensicie);
+    pack_start(*blurciede);
     pack_start(*previewcie);
     pack_start(*reparcie);
     modeHBoxcam->set_spacing(2);
@@ -9950,6 +9954,7 @@ void Locallabcie::updateguicie(int spottype)
 
             if(spottype == 3) {
                 sensicie->hide();
+                blurciede->hide();
                 previewcie->hide();
                 exprecovcie->hide();
                 expmaskcie->hide();
@@ -9958,6 +9963,7 @@ void Locallabcie::updateguicie(int spottype)
                 previewcie->set_active(false);
             } else {
                 sensicie->show();
+                blurciede->show();
                 previewcie->show();
                 exprecovcie->show();
                 expmaskcie->show();
@@ -10488,6 +10494,7 @@ void Locallabcie::read(const rtengine::procparams::ProcParams* pp, const ParamsE
 
         reparcie->setValue(spot.reparcie);
         sensicie->setValue(spot.sensicie);
+        blurciede->setValue(spot.blurciede);
 
         if (spot.modecam == "cam16") {
             modecam->set_active(0);
@@ -10932,6 +10939,7 @@ void Locallabcie::write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedi
 
         spot.reparcie = reparcie->getValue();
         spot.sensicie = sensicie->getIntValue();
+        spot.blurciede = blurciede->getValue();
 
         if (modecam->get_active_row_number() == 0) {
             spot.modecam = "cam16";
@@ -12240,12 +12248,14 @@ void Locallabcie::modecieChanged()
 
         if (modecie->get_active_row_number() > 0  && mode == Expert) {
             sensicie->hide();
+            blurciede->hide();
             reparcie->hide();
             exprecovcie->show();
             expmaskcie->show();
 
         } else {
             sensicie->show();
+            blurciede->show();
             reparcie->show();
 
             if (mode == Expert) {
@@ -12261,6 +12271,7 @@ void Locallabcie::modecieChanged()
 
             modecie->set_active(0);
             sensicie->show();
+            blurciede->show();
             reparcie->show();
 
         }
@@ -12681,6 +12692,7 @@ void Locallabcie::updateGUIToMode(const modeType new_type)
             jabcie->hide();
             modeHBoxcie->hide();
             sensicie->show();
+            blurciede->show();
             reparcie->show();
             pqremapcam16->hide();
             expjz->hide();
@@ -12899,6 +12911,7 @@ void Locallabcie::updateGUIToMode(const modeType new_type)
             jabcie->hide();
             modeHBoxcie->hide();
             sensicie->show();
+            blurciede->show();
             reparcie->show();
             if (bwevMethod12->get_active_row_number() == 0) {//sigmoid Q
                 slopesmoq->hide();
@@ -13541,11 +13554,13 @@ void Locallabcie::updatecieGUI()
 
     if (modecie->get_active_row_number() > 0) {
         sensicie->hide();
+        blurciede->hide();
         reparcie->hide();
         exprecovcie->hide();
         expmaskcie->hide();
     } else {
         sensicie->show();
+        blurciede->show();
         reparcie->show();
         exprecovcie->show();
         expmaskcie->show();
@@ -13738,6 +13753,7 @@ void Locallabcie::updatecieGUI()
     if (mode == Simple || mode == Normal) { // Keep widget hidden in Normal and Simple mode
         modecie->set_active(0);
         sensicie->show();
+        blurciede->show();
         reparcie->show();
     }
     
@@ -13914,6 +13930,7 @@ void Locallabcie::setDefaults(const rtengine::procparams::ProcParams* defParams,
 
         reparcie->setDefault(defSpot.reparcie);
         sensicie->setDefault(defSpot.sensicie);
+        blurciede->setDefault(defSpot.blurciede);
         sourceGraycie->setDefault(defSpot.sourceGraycie);
         sourceabscie->setDefault(defSpot.sourceabscie);
         saturlcie->setDefault(defSpot.saturlcie);
@@ -14203,6 +14220,13 @@ void Locallabcie::adjusterChanged(Adjuster* a, double newval)
             if (listener) {
                 listener->panelChanged(Evlocallabsensicie,
                                        sensicie->getTextValue() + spName);
+            }
+        }
+
+        if (a == blurciede) {
+            if (listener) {
+                listener->panelChanged(Evlocallabblurciede,
+                                       blurciede->getTextValue() + spName);
             }
         }
 

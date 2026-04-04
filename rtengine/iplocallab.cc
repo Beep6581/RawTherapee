@@ -600,6 +600,7 @@ struct local_params {
     float struexp;
     float blurexp;
     float blurcol;
+    float blurcie;
     float blurcolmask;
     float contcolmask;
     float blurSH;
@@ -1493,6 +1494,7 @@ static void calcLocalParams(int sp, int oW, int oH,  const LocallabParams& local
     float structexpo = (float) locallab.spots.at(sp).structexp;
     float blurexpo = (float) locallab.spots.at(sp).blurexpde;
     float blurcolor = (float) locallab.spots.at(sp).blurcolde;
+    float blurciede = (float) locallab.spots.at(sp).blurciede;
     float blurcolmask = (float) locallab.spots.at(sp).blurcol;
     float contcolmask = (float) locallab.spots.at(sp).contcol;
     float blurSH = (float) locallab.spots.at(sp).blurSHde;
@@ -1740,6 +1742,7 @@ static void calcLocalParams(int sp, int oW, int oH,  const LocallabParams& local
     lp.struexp = structexpo;
     lp.blurexp = blurexpo;
     lp.blurcol = blurcolor;
+    lp.blurcie = blurciede;
     lp.blurcolmask = blurcolmask;
     lp.contcolmask = 0.01f * contcolmask;
     lp.blurSH = blurSH;
@@ -9727,6 +9730,8 @@ void ImProcFunctions::transit_shapedetect2(int sp, float meantm, float stdtm, in
         radius = (2.f + 0.2f * lp.blurcol) / sk;
     } else if (senstype == 9) {
         radius = (2.f + 0.2f * lp.blurSH) / sk;
+    } else if (senstype == 31) {
+        radius = (2.f + 0.2f * lp.blurcie) / sk;
     }
 
     const std::unique_ptr<LabImage> origblur(new LabImage(bfw, bfh));

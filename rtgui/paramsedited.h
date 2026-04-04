@@ -1117,6 +1117,7 @@ public:
         bool expprecam;
         bool reparcie;
         bool sensicie;
+        bool blurciede;
         bool Autograycie;
         bool sigybjz12;
         bool qtoj;

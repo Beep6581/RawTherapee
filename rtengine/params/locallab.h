@@ -699,6 +699,7 @@ struct LocallabParams {
         int complexcie;
         double reparcie;
         int sensicie;
+        double blurciede;
         bool Autograycie;
         bool sigybjz12;
         bool qtoj;
