@@ -714,8 +714,9 @@ void Canvas::updatePanWithScroll(WidgetVec delta)
     const CameraState& camera = session.camera();
 
     WorldVec bounds = session.widgetToWorldTransform()(camera.size.asVec());
-
+    double step = rt::min(bounds.x.value(), bounds.y.value());
     double pan_sensitivity = 0.1;
+
     if (m_scroll_controller->get_scroll_unit() == ScrollUnit::SURFACE) {
         // Due to limitations in GTK 3, mouse wheel detents are considered
         // as smooth scrolls with surface units. This causes the scrolling
@@ -738,12 +739,11 @@ void Canvas::updatePanWithScroll(WidgetVec delta)
         }
     }
 
-    double width_step = bounds.x.value() * pan_sensitivity;
-    double height_step = bounds.y.value() * pan_sensitivity;
+    step *= pan_sensitivity;
 
     WorldPoint new_pos = camera.pos;
-    new_pos.x += WorldScalar(width_step * delta.x.value());
-    new_pos.y += WorldScalar(height_step * delta.y.value());
+    new_pos.x += WorldScalar(step * delta.x.value());
+    new_pos.y += WorldScalar(step * delta.y.value());
 
     signal_pan_zoom.emit();
     m_model->setCameraPos(new_pos);

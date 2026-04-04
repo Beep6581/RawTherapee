@@ -71,8 +71,6 @@ Inspector::Inspector()
     onPreferencesChanged();  // Configure pan zoom based on options
     pack_start(*m_canvas, true, true);
 
-    m_canvas_model->session().setCameraBounds(Session::CameraBounds::FILL_OR_FIT);
-
     const auto& options = App::get().options();
     if (options.inspectorWindow) {
         m_window = rt::make_unique<Gtk::Window>();
@@ -105,6 +103,8 @@ Inspector::Inspector()
         m_window->set_size_request(500, 500);
         m_window->fullscreen();
 
+        m_canvas_model->session().setCameraBounds(Session::CameraBounds::FILL_OR_FIT);
+
         m_canvas->enablePanZoom(true);
         m_canvas->signal_pan_zoom.connect(
             sigc::mem_fun(*this, &Inspector::onCanvasPanZoom));
@@ -116,6 +116,7 @@ Inspector::Inspector()
         m_is_initialized = false;  // Delay init to avoid flickering on some systems
         m_is_active = true;  // Always track inspected thumbnails
     } else {
+        m_canvas_model->session().setCameraBounds(Session::CameraBounds::FILL);
         m_renderer->setDrawFrame(true);
     }
 
