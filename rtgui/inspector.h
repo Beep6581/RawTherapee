@@ -75,7 +75,7 @@ private:
     bool m_is_key_down;
     bool m_suppress_mouse_move;
 
-    void onWindowHide() { m_is_window_showing = false; }
+    void onWindowHide();
     bool onWindowStateEvent(GdkEventWindowState* event);
     bool onWindowFocusOut(GdkEventFocus* event);
     void onCanvasSizeChanged();

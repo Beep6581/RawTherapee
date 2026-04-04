@@ -139,7 +139,7 @@ void Inspector::showWindow(bool pinned, bool scaled)
 
     // The window must be set to visible before calling switchImage() otherwise
     // an internal check ignores the update...
-    m_window->set_visible(true);
+    m_window->present();
     m_is_window_showing = true;
 
     m_is_pinned = pinned;
@@ -235,6 +235,12 @@ void Inspector::onKeyReleased(guint keyval, guint keycode, GdkModifierType state
     }
 }
 
+void Inspector::onWindowHide()
+{
+    m_is_window_showing = false;
+    m_is_key_down = false;
+}
+
 bool Inspector::onWindowStateEvent(GdkEventWindowState* event)
 {
     if (!m_window->get_window() || m_window->get_window()->gobj() != event->window) {
@@ -248,6 +254,10 @@ bool Inspector::onWindowStateEvent(GdkEventWindowState* event)
 
 bool Inspector::onWindowFocusOut(GdkEventFocus* event)
 {
+    // Losing focus means the key release event that would reset m_is_key_down
+    // is lost. Reset the value here so that the first button press is not
+    // ignored when the window is opened again afterwards.
+    m_is_key_down = false;
     m_canvas_model->session().onWindowFocusLost(m_canvas_model.get());
     return false;
 }

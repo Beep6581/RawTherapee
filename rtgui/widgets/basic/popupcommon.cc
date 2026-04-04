@@ -304,7 +304,7 @@ void PopUpCommon::setButtonHint()
 void PopUpCommon::showMenu(GdkEventButton* event)
 {
     if (event->button == 1) {
-        menu->popup(event->button, event->time);
+        menu->popup_at_pointer(reinterpret_cast<GdkEvent*>(event));
     }
 }
 
