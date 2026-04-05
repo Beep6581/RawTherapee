@@ -1366,12 +1366,13 @@ IImage8* Thumbnail::processImage (const procparams::ProcParams& params, eSensorT
         }
     }
     //Thumbnails update in Selective Editing
-    LabImage* labView2 = new LabImage (fw, fh);
     {//The code is essentially identical to simpleprocess.cc, but of course with a much smaller scale (sk = 16).
      //To ensure it is recognized by all transition systems, deltaE, etc., I use call = 3 as the improcoordinator in Lab_local.
      // call = 3 will avoid activating the resource-intensive 'denoise' functions.
      //I declare an additional Labimage variable, labview2, to avoid interference with the rest of rtthumbnail.
         if (params.locallab.enabled && params.locallab.spots.size() > 0) {
+            //LabImage* labView2 = new LabImage (fw, fh);
+            std::unique_ptr<LabImage> labView2(new LabImage(fw, fh));
             ipf.rgb2lab(*baseImg, *labView2, params.icm.workingProfile);
             int sk = 16;
 
@@ -1609,7 +1610,7 @@ IImage8* Thumbnail::processImage (const procparams::ProcParams& params, eSensorT
                 if (params.locallab.spots.at(sp).spotMethod == "exc") {
                     ipf.calc_ref(sp, reservView.get(), reservView.get(), 0, 0, fw, fh, sk, huerefblu, chromarefblu, lumarefblu, huere, chromare, lumare, sobelre, avge, locwavCurveden, locwavdenutili);
                 } else {
-                    ipf.calc_ref(sp, labView2, labView2, 0, 0, fw, fh, sk, huerefblu, chromarefblu, lumarefblu, huere, chromare, lumare, sobelre, avge, locwavCurveden, locwavdenutili);
+                    ipf.calc_ref(sp, labView2.get(), labView2.get(), 0, 0, fw, fh, sk, huerefblu, chromarefblu, lumarefblu, huere, chromare, lumare, sobelre, avge, locwavCurveden, locwavdenutili);
                 }
 
                 CurveFactory::complexCurvelocal(ecomp, lblack / 65535., lhlcompr, lhlcomprthresh, shcompr, br, cont, lumare,
@@ -1653,7 +1654,7 @@ IImage8* Thumbnail::processImage (const procparams::ProcParams& params, eSensorT
                 bool linkrgb = true;
                 // No Locallab mask is shown in exported picture
                 // same value, 3, for call as in improccoordinator, but skip 16 instead 10
-                ipf.Lab_Local(3, sp, shbuffer, labView2, labView2, reservView.get(), savenormtmView.get(), savenormretiView.get(), lastorigView.get(), fw, fh, 0, 0, fw, fh, fw, fh, fw, fh, sk, locRETgainCurve, locRETtransCurve,
+                ipf.Lab_Local(3, sp, shbuffer, labView2.get(), labView2.get(), reservView.get(), savenormtmView.get(), savenormretiView.get(), lastorigView.get(), fw, fh, 0, 0, fw, fh, fw, fh, fw, fh, sk, locRETgainCurve, locRETtransCurve,
                               lllocalcurve, locallutili,
                               cllocalcurve, localclutili,
                               lclocalcurve, locallcutili,
@@ -1715,13 +1716,13 @@ IImage8* Thumbnail::processImage (const procparams::ProcParams& params, eSensorT
 
                 if (sp + 1u < params.locallab.spots.size()) {
                     // do not copy for last spot as it is not needed anymore
-                    lastorigView->CopyFrom(labView2);
+                    lastorigView->CopyFrom(labView2.get());
                 }
 
                 if (params.locallab.spots.at(sp).spotMethod == "exc") {
                     ipf.calc_ref(sp, reservView.get(), reservView.get(), 0, 0, fw, fh, sk, huerefblu, chromarefblu, lumarefblu, huere, chromare, lumare, sobelre, avge, locwavCurveden, locwavdenutili);
                 } else {
-                    ipf.calc_ref(sp, labView2, labView2, 0, 0, fw, fh, sk, huerefblu, chromarefblu, lumarefblu, huere, chromare, lumare, sobelre, avge, locwavCurveden, locwavdenutili);
+                    ipf.calc_ref(sp, labView2.get(), labView2.get(), 0, 0, fw, fh, sk, huerefblu, chromarefblu, lumarefblu, huere, chromare, lumare, sobelre, avge, locwavCurveden, locwavdenutili);
                 }
             }
 
@@ -1729,7 +1730,6 @@ IImage8* Thumbnail::processImage (const procparams::ProcParams& params, eSensorT
         }
 
     }
-    delete labView2;
     //end Thumbnail Selective Editing
 
     LUTf curve1 (65536);
@@ -2109,9 +2109,9 @@ IImage8* Thumbnail::processImage (const procparams::ProcParams& params, eSensorT
         float mac2 = 0.f;
         int beginend = 1;
         int nbsegam = 0;
-        int sp = 0;
+        float powe = 1.f;
         if (params.icm.wgamut != ColorManagementParams::Wwgamut::NONE) {
-            ipf.gamutcompr(provcomp, provcomp, beginend, sp, nbsegam, mac, mac0, mac1, mac2);
+            ipf.gamutcompr(provcomp, provcomp, beginend, powe, nbsegam, mac, mac0, mac1, mac2);
         }
 
 #ifdef _OPENMP
