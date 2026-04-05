@@ -2502,7 +2502,7 @@ void ImProcFunctions::log_encode(Imagefloat *rgb, struct local_params & lp, bool
         {
             if (c > noise) {
 
-                return 1.f - min(std::abs(s) / c, 1.f);
+                return 1.f - rtengine::min(std::abs(s) / c, 1.f);
             } else {
                 return 0.f;
             }
@@ -2543,7 +2543,7 @@ void ImProcFunctions::log_encode(Imagefloat *rgb, struct local_params & lp, bool
                 if (m > noise) {
                     float mm = apply(m);
                     float f = mm / m;
-                    f = min(f, 1000000.f);
+                    f = rtengine::min(f, 1000000.f);
 
                     r *= f;
                     b *= f;
@@ -2612,7 +2612,7 @@ void ImProcFunctions::log_encode(Imagefloat *rgb, struct local_params & lp, bool
                     //   float t2 = norm(r, g, b);
                     float f2 = apply(t2) / t2;
                     f = intp(blend, f, f2);
-                    f = min(f, 1000000.f);
+                    f = rtengine::min(f, 1000000.f);
 
                     //     assert(std::isfinite(f));
                     r *= f;
@@ -2698,8 +2698,8 @@ void ImProcFunctions::getAutoLogloc(int sp, ImageSource *imgsrc, float *sourceg,
             float l = YY[y][x];
 
             if (l > noise) {
-                minVal = min(minVal, l);
-                maxVal = max(maxVal, l);
+                minVal = rtengine::min(minVal, l);
+                maxVal = rtengine::max(maxVal, l);
             }
         }
     }
@@ -19332,7 +19332,7 @@ void ImProcFunctions::Lab_Local(
                         [=](float s, float c) -> float
                         {
                             if (c > noise) {
-                                return 1.f - min(std::abs(s) / c, 1.f);
+                                return 1.f - rtengine::min(std::abs(s) / c, 1.f);
                             } else {
                                 return 0.f;
                             }
@@ -23639,7 +23639,7 @@ void ImProcFunctions::Lab_Local(
                     {wiprof[2][0], wiprof[2][1], wiprof[2][2]}
                 };
 
-            Imagefloat* provcomp = new Imagefloat(bfw, bfh);
+            std::unique_ptr<Imagefloat> provcomp(new Imagefloat(bfw, bfh));
 #ifdef _OPENMP
         #   pragma omp parallel for
 #endif
@@ -23689,7 +23689,7 @@ void ImProcFunctions::Lab_Local(
                 }
             
                 if ( params->locallab.spots.at(sp).gamutw != "none") {
-                    ImProcFunctions::gamutcompr(provcomp, provcomp, beginend, powe, nbsegam, mac, mac0, mac1, mac2);
+                    ImProcFunctions::gamutcompr(provcomp.get(), provcomp.get(), beginend, powe, nbsegam, mac, mac0, mac1, mac2);
                 }
 
                 float rgbmax = 0.f;
@@ -23715,7 +23715,7 @@ void ImProcFunctions::Lab_Local(
                     }
                 }
                 maxdatend2 = rgbmax / 65535.f;
-                satdatend2 = min(satmax, 2.f);//2.f arbitrary maximum saturation calculation - normally between 0 and 1.
+                satdatend2 = rtengine::min(satmax, 2.f);//2.f arbitrary maximum saturation calculation - normally between 0 and 1.
 
 #ifdef _OPENMP
         #   pragma omp parallel for
@@ -23727,7 +23727,6 @@ void ImProcFunctions::Lab_Local(
                         Color::XYZ2Lab(x, y, z, bufexpfin->L[i][j], bufexpfin->a[i][j], bufexpfin->b[i][j]);
                     }
                 }
-                delete provcomp;
                 //end final Gain & Gamut compression CAM16
 
 
