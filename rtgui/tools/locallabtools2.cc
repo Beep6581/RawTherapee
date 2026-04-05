@@ -10091,6 +10091,7 @@ void Locallabcie::updateAdviceTooltips(const bool showTooltips)
         catadcie->set_tooltip_text(M("TP_LOCALLAB_LOGCATAD_TOOLTIP"));
         expcamviewing->set_tooltip_text(M("TP_LOCALLAB_LOGVIEWING_TOOLTIP"));
         sensicie->set_tooltip_text(M("TP_LOCALLAB_SENSI_TOOLTIP"));
+        blurciede->set_tooltip_text(M("TP_LOCALLAB_BLURCOLDE_TOOLTIP"));
         CCmaskcieshape->setTooltip(M("TP_LOCALLAB_CURVEEDITOR_CC_TOOLTIP"));
         LLmaskcieshape->setTooltip(M("TP_LOCALLAB_CURVEEDITOR_CC_TOOLTIP"));
         HHmaskcieshape->setTooltip(M("TP_LOCALLAB_CURVEEDITOR_CC_TOOLTIP"));
@@ -10171,6 +10172,7 @@ void Locallabcie::updateAdviceTooltips(const bool showTooltips)
         catadcie->set_tooltip_text("");
         expcamviewing->set_tooltip_text("");
         sensicie->set_tooltip_text("");
+        blurciede->set_tooltip_text("");
         CCmaskcieshape->setTooltip("");
         LLmaskcieshape->setTooltip("");
         HHmaskcieshape->setTooltip("");

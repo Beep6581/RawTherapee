@@ -3151,7 +3151,7 @@ TP_LOCALLAB_ADJ;Equalizer Color
 TP_LOCALLAB_AMOUNT;Amount
 TP_LOCALLAB_APSATUR;Saturation
 TP_LOCALLAB_ARTIF;ΔE Shape detection
-TP_LOCALLAB_ARTIF_TOOLTIP;ΔE scope threshold increases the range of ΔE scope. High values are for very wide gamut images.\nIncreasing ΔE decay can improve shape detection, but can also reduce the scope.
+TP_LOCALLAB_ARTIF_TOOLTIP;ΔE range: increases the range of ΔE scope. High values are for very wide gamut images.\nIncreasing ΔE decay can improve shape detection, high values ​​can reduce artifacts, but can also reduce the scope.
 TP_LOCALLAB_AUTOGRAY;Auto mean luminance (Yb%)
 TP_LOCALLAB_AUTOGRAYCIE;Automatic
 TP_LOCALLAB_AVOID;Avoid color shift
@@ -4070,7 +4070,7 @@ TP_LOCALLAB_SYMSL;Symmetrical (mouse + sliders)
 TP_LOCALLAB_TARGET_GRAY;Mean luminance (Yb%)
 TP_LOCALLAB_TE_PIVOT;Pivot (Ev)
 TP_LOCALLAB_THRES;Threshold structure
-TP_LOCALLAB_THRESDELTAE;Range
+TP_LOCALLAB_THRESDELTAE;ΔE range
 TP_LOCALLAB_THRESRETI;Threshold
 TP_LOCALLAB_THRESWAV;Balance threshold
 TP_LOCALLAB_TLABEL;TM Min=%1 Max=%2 Mean=%3 Sig=%4
