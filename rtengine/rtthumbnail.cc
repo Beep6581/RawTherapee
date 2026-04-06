@@ -2075,7 +2075,7 @@ IImage8* Thumbnail::processImage (const procparams::ProcParams& params, eSensorT
                 {wiprof[1][0], wiprof[1][1], wiprof[1][2]},
                 {wiprof[2][0], wiprof[2][1], wiprof[2][2]}
             };
-        Imagefloat* provcomp = new Imagefloat(GW, GH);
+        std::unique_ptr<Imagefloat> provcomp(new Imagefloat(GW, GH));
 
 #ifdef _OPENMP
         #   pragma omp parallel for
@@ -2111,7 +2111,7 @@ IImage8* Thumbnail::processImage (const procparams::ProcParams& params, eSensorT
         int nbsegam = 0;
         float powe = 1.f;
         if (params.icm.wgamut != ColorManagementParams::Wwgamut::NONE) {
-            ipf.gamutcompr(provcomp, provcomp, beginend, powe, nbsegam, mac, mac0, mac1, mac2);
+            ipf.gamutcompr(provcomp.get(), provcomp.get(), beginend, powe, nbsegam, mac, mac0, mac1, mac2);
         }
 
 #ifdef _OPENMP
@@ -2124,7 +2124,6 @@ IImage8* Thumbnail::processImage (const procparams::ProcParams& params, eSensorT
                 Color::XYZ2Lab(x, y, z, labView->L[i][j], labView->a[i][j], labView->b[i][j]);
             }
         }
-        delete provcomp;
     }
 
 

@@ -1880,7 +1880,7 @@ void Crop::update(int todo)
                     {wiprof[2][0], wiprof[2][1], wiprof[2][2]}
                 };
 
-            Imagefloat* provcomp = new Imagefloat(GW, GH);
+            std::unique_ptr<Imagefloat> provcomp(new Imagefloat(GW, GH));
 
 #ifdef _OPENMP
         #   pragma omp parallel for
@@ -1916,7 +1916,7 @@ void Crop::update(int todo)
             int nbsegam = 0;
             float powe = 1.f;
             if (params.icm.wgamut != ColorManagementParams::Wwgamut::NONE) {
-                parent->ipf.gamutcompr(provcomp, provcomp, beginend, powe, nbsegam, mac, mac0, mac1, mac2);
+                parent->ipf.gamutcompr(provcomp.get(), provcomp.get(), beginend, powe, nbsegam, mac, mac0, mac1, mac2);
             }
 
 #ifdef _OPENMP
@@ -1929,7 +1929,6 @@ void Crop::update(int todo)
                     Color::XYZ2Lab(x, y, z, labnCrop->L[i][j], labnCrop->a[i][j], labnCrop->b[i][j]);
             }
             }
-            delete provcomp;
         }
     }
     // all pipette buffer processing should be finished now

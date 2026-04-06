@@ -2135,7 +2135,7 @@ float generalized_loglogistic_sigmoid(float value,
                                       float film_power,
                                       float paper_power)
 {
-    const float clamped_value = max(value, 0.0);
+    const float clamped_value = rtengine::max(value, 0.0);
     // The following equation can be derived as a model for film + paper but it has a pole at 0
     // magnitude * powf(1.0f + paper_exp * powf(film_fog + value, -film_power), -paper_power);
     // Rewritten on a stable around zero form:
@@ -2240,7 +2240,7 @@ void  ImProcFunctions::sigmoid_main(float r,
                      paper_exposure, paper_power, middle_grey);
     float rgb[3] = {r, g, b};
     for (int i = 0; i < 3; i = i+1) {
-        rgb[i] = max(rgb[i], 0);
+        rgb[i] = rtengine::max(rgb[i], 0);
     }
     for (int i = 0; i < 3; i = i+1) {
         rgb[i] = generalized_loglogistic_sigmoid(rgb[i], white_target,
@@ -2267,7 +2267,7 @@ void  ImProcFunctions::sigmoid_QJ(float Q, float &Qout, float middle_grey_contra
     // compute the sigmoid parameters from the UI controls
     calculate_params(middle_grey_contrast, contrast_skewness, display_black_target,  film_power, white_target, black_target, film_fog, paper_exposure, paper_power, middle_grey);
     float value = Q;
-    value = max(Q, 0.f);
+    value = rtengine::max(Q, 0.f);
     value = generalized_loglogistic_sigmoid(value, white_target, paper_exposure, film_fog, film_power, paper_power);
     Qout = value;
 }
@@ -2432,7 +2432,7 @@ void ImProcFunctions::log_encode(Imagefloat *rgb, struct local_params & lp, bool
         shadows_range = lp.blackev;
         comprlog = lp.comprlo  > 0.f;
         comprfactorlog = lp.comprlo;
-        dynamic_range = max(lp.whiteev - lp.blackev, 0.5f);
+        dynamic_range = rtengine::max(lp.whiteev - lp.blackev, 0.5f);
         targray = lp.targetgray;
         satcontrol = lp.satlog;
 
@@ -2441,7 +2441,7 @@ void ImProcFunctions::log_encode(Imagefloat *rgb, struct local_params & lp, bool
         shadows_range = lp.blackevjz;
         comprlog = lp.comprlocie  > 0.f;
         comprfactorlog = lp.comprlocie;
-        dynamic_range = max(lp.whiteevjz - lp.blackevjz, 0.5f);
+        dynamic_range = rtengine::max(lp.whiteevjz - lp.blackevjz, 0.5f);
         targray = lp.targetgraycie;
         satcontrol = lp.satcie;
     }
@@ -2515,7 +2515,7 @@ void ImProcFunctions::log_encode(Imagefloat *rgb, struct local_params & lp, bool
             float rl = r - ll;
             float gl = g - ll;
             float bl = b - ll;
-            float s = intp(max(sf(rl, r), sf(gl, g), sf(bl, b)), pow_F(f, 0.3f) * 0.6f + 0.4f, 1.f);
+            float s = intp(rtengine::max(sf(rl, r), sf(gl, g), sf(bl, b)), pow_F(f, 0.3f) * 0.6f + 0.4f, 1.f);
             r = ll + s * rl;
             g = ll + s * gl;
             b = ll + s * bl;
@@ -3340,7 +3340,7 @@ void ImProcFunctions::ciecamloc_02float(struct local_params& lp, int sp, LabImag
     LUTf CAMBrightCurveQsig(32768, LUT_CLIP_BELOW | LUT_CLIP_ABOVE);
 
 #ifdef _OPENMP
-    const int numThreads = min(max(width * height / 65536, 1), omp_get_max_threads());
+    const int numThreads = rtengine::min(rtengine::max(width * height / 65536, 1), omp_get_max_threads());
     #pragma omp parallel num_threads(numThreads) if(numThreads>1)
 #endif
     {
@@ -3965,7 +3965,7 @@ void ImProcFunctions::ciecamloc_02float(struct local_params& lp, int sp, LabImag
         DiagonalCurve jz_lightn({
             DCT_NURBS,
             0, 0,
-            max(0.0, miny  - lightreal / 150.), miny,
+            rtengine::max(0.0, miny  - lightreal / 150.), miny,
             maxy + delta - lightreal / 300.0, maxy + delta,
             1, 1
         });
@@ -6157,7 +6157,7 @@ static void mean_fab(int xstart, int ystart, int bfw, int bfh, LabImage* bufexpo
             fabprov = maxfab;
         }
 
-        fab = max(fabprov, 0.90f * maxfab); //Find maxi between mean + 3 sigma and 90% max (90 arbitrary empirical value)
+        fab = rtengine::max(fabprov, 0.90f * maxfab); //Find maxi between mean + 3 sigma and 90% max (90 arbitrary empirical value)
 
         if (fab <= 0.f) {
             fab = 50.f;
@@ -18863,7 +18863,7 @@ void ImProcFunctions::Lab_Local(
                                     // - 0.6f: scaling factor for the powered value.
                                     // - 0.4f: base offset added to ensure a minimum effect.
                                     // Adjust these values to fine-tune the strength and shape of the local saturation effect.
-                                    float s = intp(max(sf(rl, r), sf(gl, g), sf(bl, b)), pow_F(f, 0.2f) * 0.6f + 0.4f, 1.f);
+                                    float s = intp(rtengine::max(sf(rl, r), sf(gl, g), sf(bl, b)), pow_F(f, 0.2f) * 0.6f + 0.4f, 1.f);
                                     r = ll + s * rl;
                                     g = ll + s * gl;
                                     b = ll + s * bl;
@@ -22968,7 +22968,7 @@ void ImProcFunctions::Lab_Local(
                         }
                     };
 
-                    float maxFactorToxyz = max(toxyz[1][0], toxyz[1][1], toxyz[1][2]);
+                    float maxFactorToxyz = rtengine::max(toxyz[1][0], toxyz[1][1], toxyz[1][2]);
                     float equalR = maxFactorToxyz / toxyz[1][0];
                     float equalG = maxFactorToxyz / toxyz[1][1];
                     float equalB = maxFactorToxyz / toxyz[1][2];

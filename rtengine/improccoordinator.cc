@@ -2653,7 +2653,7 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                         {wiprof[2][0], wiprof[2][1], wiprof[2][2]}
                     };
 
-                Imagefloat* provcomp = new Imagefloat(GW, GH);
+                std::unique_ptr<Imagefloat> provcomp(new Imagefloat(GW, GH));
 
 #ifdef _OPENMP
         #   pragma omp parallel for
@@ -2688,7 +2688,7 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                 int nbsegam = 0;
                 float powe = 1.f;
                 if ( params->icm.wgamut != ColorManagementParams::Wwgamut::NONE) {
-                    ipf.gamutcompr(provcomp, provcomp, beginend, powe, nbsegam, mac, mac0, mac1, mac2);
+                    ipf.gamutcompr(provcomp.get(), provcomp.get(), beginend, powe, nbsegam, mac, mac0, mac1, mac2);
                 }
 
                 float rgbmax = 0.f;
@@ -2726,7 +2726,6 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                         Color::XYZ2Lab(x, y, z, nprevl->L[i][j], nprevl->a[i][j], nprevl->b[i][j]);
                     }
                 }
-                delete provcomp;
             }
             if (primListener) {
                 primListener->maxdataend(maxdatend, satdatend, gamgain);
