@@ -7731,12 +7731,10 @@ void ImProcFunctions::maskcalccol(int call, bool invmask, bool pde, int bfw, int
             fatParams.amount = amountcd;
             fatParams.anchor = anchorcd;
             int nlev = 1;
-            Imagefloat *tmpImagefat = nullptr;
-            tmpImagefat = new Imagefloat(bfw, bfh);
+            std::unique_ptr<Imagefloat> tmpImagefat(new Imagefloat(bfw, bfh));
             lab2rgb(*bufmaskblurcol, *tmpImagefat, params->icm.workingProfile);
-            ToneMapFattal02(tmpImagefat, fatParams, nlev, 0, nullptr, 0, 0, 0, false);
+            ToneMapFattal02(tmpImagefat.get(), fatParams, nlev, 0, nullptr, 0, 0, 0, false);
             rgb2lab(*tmpImagefat, *bufmaskblurcol, params->icm.workingProfile);
-            delete tmpImagefat;
         }
 
         if (delt) {
@@ -11846,8 +11844,8 @@ void ImProcFunctions::wavcontrast4(int call, struct local_params& lp, LabImage *
             }
         }
 
-        Imagefloat *tmpImage = nullptr;
-        tmpImage = new Imagefloat(W_Level, H_Level);
+        std::unique_ptr<Imagefloat> tmpImage(new Imagefloat(W_Level, H_Level));
+        
         lab2rgb(*labresid, *tmpImage, params->icm.workingProfile);
         Glib::ustring prof = params->icm.workingProfile;
         cmsHTRANSFORM dummy = nullptr;
@@ -11856,10 +11854,9 @@ void ImProcFunctions::wavcontrast4(int call, struct local_params& lp, LabImage *
         float rdx, rdy, grx, gry, blx, bly = 0.f;
         float meanx, meany, meanxe, meanye, maxdat = 0.f;
         double p[6] = {0., 0., 0., 0., 0., 0.};
-        workingtrc(0, tmpImage, tmpImage, W_Level, H_Level, -5, prof, 2.4, 12.92310, 0, ill, 0, 0, rdx, rdy, grx, gry, blx, bly ,meanx, meany, meanxe, meanye, maxdat, p, dummy, true, false, false, false);
-        workingtrc(0, tmpImage, tmpImage, W_Level, H_Level, 1, prof, lp.residgam, lp.residslop, 0, ill, 0, locprim, rdx, rdy, grx, gry, blx, bly , meanx, meany, meanxe, meanye, maxdat, p, dummy, false, true, true, false);//be careful no gamut control
+        workingtrc(0, tmpImage.get(), tmpImage.get(), W_Level, H_Level, -5, prof, 2.4, 12.92310, 0, ill, 0, 0, rdx, rdy, grx, gry, blx, bly ,meanx, meany, meanxe, meanye, maxdat, p, dummy, true, false, false, false);
+        workingtrc(0, tmpImage.get(), tmpImage.get(), W_Level, H_Level, 1, prof, lp.residgam, lp.residslop, 0, ill, 0, locprim, rdx, rdy, grx, gry, blx, bly , meanx, meany, meanxe, meanye, maxdat, p, dummy, false, true, true, false);//be careful no gamut control
         rgb2lab(*tmpImage, *labresid, params->icm.workingProfile);
-        delete tmpImage;
 
 #ifdef _OPENMP
         #pragma omp parallel for schedule(dynamic,16) if (multiThread)
@@ -16257,8 +16254,7 @@ void ImProcFunctions::Lab_Local(
                     }
 
                     if (tmp1.get()) {
-                        Imagefloat *tmpImage = nullptr;
-                        tmpImage = new Imagefloat(wi, he);
+                        std::unique_ptr<Imagefloat> tmpImage(new Imagefloat(wi, he));
 
                         for (int y = 0; y < he ; y++) {
                             for (int x = 0; x < wi; x++) {
@@ -16269,7 +16265,7 @@ void ImProcFunctions::Lab_Local(
                         }
 
 
-                        filmGrain(tmpImage, isogr, strengr, scalegr, divgr, wi, he, call, fw, fh);
+                        filmGrain(tmpImage.get(), isogr, strengr, scalegr, divgr, wi, he, call, fw, fh);
 
                         for (int y = 0; y < he ; y++) {
                             for (int x = 0; x < wi; x++) {
@@ -16279,7 +16275,6 @@ void ImProcFunctions::Lab_Local(
                             }
                         }
 
-                        delete tmpImage;
                     }
                 }
                 //recovery with mask luminance
@@ -16390,8 +16385,8 @@ void ImProcFunctions::Lab_Local(
                             }
                         }
 
-                        Imagefloat *tmpImage = nullptr;
-                        tmpImage = new Imagefloat(bfw, bfh);
+                        std::unique_ptr<Imagefloat> tmpImage(new Imagefloat(bfw, bfh));
+                        
                         lab2rgb(*tmp1, *tmpImage, params->icm.workingProfile);
                         array2D<float> LL(bfw, bfh);
                         array2D<float> rr(bfw, bfh);
@@ -16471,7 +16466,6 @@ void ImProcFunctions::Lab_Local(
                             recovm(lp.higthr, lp.lowthr, lp.recothr, lp.invmask, bfw, bfh, xstart, ystart, 2.f, sk,  bufmaskblurbl.get(), tmp1.get(), tmp3.get(), multiThread);
                         }
 
-                        delete tmpImage;
                     }
 
 
@@ -16494,8 +16488,7 @@ void ImProcFunctions::Lab_Local(
                             }
                         }
 
-                        Imagefloat *tmpImage = nullptr;
-                        tmpImage = new Imagefloat(TW, TH);
+                        std::unique_ptr<Imagefloat> tmpImage(new Imagefloat(TW, TH));
                         lab2rgb(*tmp1, *tmpImage, params->icm.workingProfile);
                         array2D<float> LL(TW, TH);
                         array2D<float> rr(TW, TH);
@@ -16574,7 +16567,6 @@ void ImProcFunctions::Lab_Local(
                             recovm(lp.higthr, lp.lowthr, lp.recothr, lp.invmask, TW, TH, 0, 0, 2.f, sk,  bufmaskblurbl.get(), tmp1.get(), tmp3.get(), multiThread);
                         }
 
-                        delete tmpImage;
                     }
                 }
 
@@ -18439,8 +18431,8 @@ void ImProcFunctions::Lab_Local(
 
                 if (lp.shmeth == 1) {
                     double scal = (double)(sk);
-                    Imagefloat *tmpImage = nullptr;
-                    tmpImage = new Imagefloat(bfw, bfh);
+                    std::unique_ptr<Imagefloat> tmpImage(new Imagefloat(bfw, bfh));
+
                     lab2rgb(*bufexpfin, *tmpImage, params->icm.workingProfile);
                     Glib::ustring prof = params->icm.workingProfile;
 
@@ -18454,17 +18446,16 @@ void ImProcFunctions::Lab_Local(
                         float meanx, meany, meanxe, meanye, maxdat = 0.f;
                         double p[6] = {0., 0., 0., 0., 0., 0.};
 
-                        workingtrc(0, tmpImage, tmpImage, bfw, bfh, -5, prof, 2.4, 12.92310, 0, ill, 0, 0, rdx, rdy, grx, gry, blx, bly , meanx, meany, meanxe, meanye, maxdat, p, dummy, true, false, false, false);
-                        workingtrc(0, tmpImage, tmpImage, bfw, bfh, 1, prof, gamtone, slotone, 0, ill, 0, locprim, rdx, rdy, grx, gry, blx, bly , meanx, meany, meanxe, meanye, maxdat, p, dummy, false, true, true, false);//be careful no gamut control
+                        workingtrc(0, tmpImage.get(), tmpImage.get(), bfw, bfh, -5, prof, 2.4, 12.92310, 0, ill, 0, 0, rdx, rdy, grx, gry, blx, bly , meanx, meany, meanxe, meanye, maxdat, p, dummy, true, false, false, false);
+                        workingtrc(0, tmpImage.get(), tmpImage.get(), bfw, bfh, 1, prof, gamtone, slotone, 0, ill, 0, locprim, rdx, rdy, grx, gry, blx, bly , meanx, meany, meanxe, meanye, maxdat, p, dummy, false, true, true, false);//be careful no gamut control
                     }
 
                     if (tonequ) {
-                        tone_eq(this, tmpImage, lp, params->icm.workingProfile, scal, multiThread);
+                        tone_eq(this, tmpImage.get(), lp, params->icm.workingProfile, scal, multiThread);
                     }
 
                     rgb2lab(*tmpImage, *bufexpfin, params->icm.workingProfile);
 
-                    delete tmpImage;
                 }
                 
                 if (lp.shmeth == 2) {//GHS 2024 - 2026
@@ -22983,12 +22974,10 @@ void ImProcFunctions::Lab_Local(
                         {wprof[1][0], wprof[1][1], wprof[1][2]},
                         {wprof[2][0], wprof[2][1], wprof[2][2]}
                     };
-                    Imagefloat *tmpImage = nullptr;
-                    tmpImage = new Imagefloat(bfw, bfh);
-                    Imagefloat *tmpImage2 = nullptr;
-                    tmpImage2 = new Imagefloat(bfw, bfh);
-                    Imagefloat *tmpImagelog = nullptr;
-                    tmpImagelog = new Imagefloat(bfw, bfh);
+                    std::unique_ptr<Imagefloat> tmpImage(new Imagefloat(bfw, bfh));
+                    std::unique_ptr<Imagefloat> tmpImage2(new Imagefloat(bfw, bfh));
+                    std::unique_ptr<Imagefloat> tmpImagelog(new Imagefloat(bfw, bfh));
+
                     
                     lab2rgb(*bufexpfin, *tmpImage, params->icm.workingProfile);
                     Glib::ustring prof = params->icm.workingProfile;
@@ -23090,7 +23079,7 @@ void ImProcFunctions::Lab_Local(
                     } else if (params->locallab.spots.at(sp).catMethod == "xyz") {
                         catx = 4;
                     }
-                    tmpImage->copyData(tmpImage2);
+                    tmpImage->copyData(tmpImage2.get());
 
                     params->locallab.spots.at(sp).catMethod;
                     int locprim = 1;
@@ -23099,31 +23088,31 @@ void ImProcFunctions::Lab_Local(
                     float mx, my, mxe, mye, mdat = 0.f;
                     
                     if(lp.midtcie != 0 && lp.midtmet == 0) {
-                        ImProcFunctions::tone_eqcam(this, tmpImage, lp.midtcie, params->icm.workingProfile, sk, multiThread);
+                        ImProcFunctions::tone_eqcam(this, tmpImage.get(), lp.midtcie, params->icm.workingProfile, sk, multiThread);
                     }
                     double p[6] = {0., 0., 0., 0., 0., 0.};
 
-                    workingtrc(sp, tmpImage, tmpImage, bfw, bfh, -5, prof, 2.4, 12.92310, 0, ill, 0, 0, rx, ry, gx, gy, bx, by, mx, my, mxe, mye, mdat, p, dummy, true, false, false, false);
-                    workingtrc(sp, tmpImage, tmpImage, bfw, bfh, typ, prof, gamtone, slotone, catx, ill, prim, locprim, rdx, rdy, grx, gry, blx, bly, meanx, meany, meanxe, meanye, maxdat, p, dummy, false, true, true, gamcie);//with gamut control
+                    workingtrc(sp, tmpImage.get(), tmpImage.get(), bfw, bfh, -5, prof, 2.4, 12.92310, 0, ill, 0, 0, rx, ry, gx, gy, bx, by, mx, my, mxe, mye, mdat, p, dummy, true, false, false, false);
+                    workingtrc(sp, tmpImage.get(), tmpImage.get(), bfw, bfh, typ, prof, gamtone, slotone, catx, ill, prim, locprim, rdx, rdy, grx, gry, blx, bly, meanx, meany, meanxe, meanye, maxdat, p, dummy, false, true, true, gamcie);//with gamut control
                     float satu = params->locallab.spots.at(sp).satjcie;
                     if (satu > 0.f) {//saturation
-                        ImProcFunctions::apsatur(sp, tmpImage, tmpImage2, bfw, bfh, satu) ;
+                        ImProcFunctions::apsatur(sp, tmpImage.get(), tmpImage2.get(), bfw, bfh, satu) ;
                     }
  
                     if(lp.midtcie != 0 && lp.midtmet == 1) {
-                        ImProcFunctions::tone_eqcam(this, tmpImage, lp.midtcie, params->icm.workingProfile, sk, multiThread);
+                        ImProcFunctions::tone_eqcam(this, tmpImage.get(), lp.midtcie, params->icm.workingProfile, sk, multiThread);
                     }
                     
                     const float smoothisli = lp.smoothcie;
                     if(smoothisli > 0.f) {
-                        tone_eqsmooth(this, tmpImage, lp, params->icm.workingProfile, sk, multiThread);//reduce Ev > 0 < 12
+                        tone_eqsmooth(this, tmpImage.get(), lp, params->icm.workingProfile, sk, multiThread);//reduce Ev > 0 < 12
                     }
 
                     
-                    tmpImage->copyData(tmpImagelog);
+                    tmpImage->copyData(tmpImagelog.get());
 
                     if(params->locallab.spots.at(sp).logcie & !params->locallab.spots.at(sp).logcieq ) {
-                       log_encode(tmpImagelog, lp, multiThread, bfw, bfh);
+                       log_encode(tmpImagelog.get(), lp, multiThread, bfw, bfh);
                         float strlog = 0.01f * (float) params->locallab.spots.at(sp).strcielog;
 
 
@@ -23219,9 +23208,8 @@ void ImProcFunctions::Lab_Local(
                         GammaValues g_ab; //gamma parameters
                         double pwrb = 1.0 / static_cast<double>(gamb);
                         Color::calcGamma(pwrb, slb, g_ab); // call to calcGamma with selected gamma and slope
-                        Imagefloat *srcp = nullptr;
-                        srcp = new Imagefloat(bfw, bfh);
-  
+                        std::unique_ptr<Imagefloat> srcp(new Imagefloat(bfw, bfh));
+ 
 
 #ifdef _OPENMP
         #pragma omp parallel for schedule(dynamic, 16) if (multiThread)
@@ -23263,8 +23251,7 @@ void ImProcFunctions::Lab_Local(
                                 tmpImage->b(y, x) = 65536.f * gammalog(srcp->b(y, x), gamb, slb, g_ab[3], g_ab[4]);
                             }
                         }
-                        delete srcp;
-                        
+
                        if(params->locallab.spots.at(sp).smoothcietrc) {//invert color 
 #ifdef _OPENMP
         #pragma omp parallel for schedule(dynamic, 16) if (multiThread)
@@ -23292,7 +23279,7 @@ void ImProcFunctions::Lab_Local(
                         }
                         
                         if(lp.smoothtrc > 0.f) {
-                            tone_eqsmooth(this, tmpImage, lp, params->icm.workingProfile, sk, multiThread);//reduce Ev > 0 < 12
+                            tone_eqsmooth(this, tmpImage.get(), lp, params->icm.workingProfile, sk, multiThread);//reduce Ev > 0 < 12
                         }
                         
                     }
@@ -23332,7 +23319,7 @@ void ImProcFunctions::Lab_Local(
                             }
                     }
                     if(lp.smoothciem == 1) {
-                        tone_eqsmooth(this, tmpImage, lp, params->icm.workingProfile, sk, multiThread);//reduce Ev > 0 < 12
+                        tone_eqsmooth(this, tmpImage.get(), lp, params->icm.workingProfile, sk, multiThread);//reduce Ev > 0 < 12
                     } else if(lp.smoothciem == 2  || lp.smoothciem == 3 || lp.smoothciem == 4) {//  2 - only smmoth highlightd  - 3 - Tone mapping with slope and mid_grey
 
                         //TonemapFreeman - Copyright (c) 2023 Thatcher Freeman
@@ -23492,9 +23479,6 @@ void ImProcFunctions::Lab_Local(
                     } 
                     rgb2lab(*tmpImage, *bufexpfin, params->icm.workingProfile);
 
-                    delete tmpImage;
-                    delete tmpImage2;
-                    delete tmpImagelog;
                 }
 
                 if (params->locallab.spots.at(sp).expcie) {
@@ -23502,15 +23486,13 @@ void ImProcFunctions::Lab_Local(
                 }
                 
                 if(lp.midtcie != 0 && lp.midtmet == 2) {
-                    Imagefloat *tmpImageaft = nullptr;
-                    tmpImageaft = new Imagefloat(bfw, bfh);
-                    
+                    std::unique_ptr<Imagefloat> tmpImageaft(new Imagefloat(bfw, bfh));
+
                     lab2rgb(*bufexpfin, *tmpImageaft, params->icm.workingProfile);
-                    ImProcFunctions::tone_eqcam(this, tmpImageaft, lp.midtcie, params->icm.workingProfile, sk, multiThread);
+                    ImProcFunctions::tone_eqcam(this, tmpImageaft.get(), lp.midtcie, params->icm.workingProfile, sk, multiThread);
                     
                     rgb2lab(*tmpImageaft, *bufexpfin, params->icm.workingProfile);
 
-                    delete tmpImageaft;
                 }
                 
             }
