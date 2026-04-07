@@ -3957,7 +3957,7 @@ void ImProcFunctions::ciecamloc_02float(struct local_params& lp, int sp, LabImag
             DCT_NURBS,
             0, 0,
             miny, miny + lightreal / 150.,
-            maxy, min(1.0, maxy + delta + lightreal / 300.0),
+            maxy, rtengine::min(1.0, maxy + delta + lightreal / 300.0),
             1, 1
         });
         DiagonalCurve jz_lightn({
@@ -4198,7 +4198,7 @@ void ImProcFunctions::ciecamloc_02float(struct local_params& lp, int sp, LabImag
                     valparamneg *= kcc;
 
                     if (valparam > 0.f) {
-                        l_r = (1.f - valparam) * l_r + valparam * (1.f - SQR(((SQR(1.f - min(l_r, 1.0f))))));
+                        l_r = (1.f - valparam) * l_r + valparam * (1.f - SQR(((SQR(1.f - rtengine::min(l_r, 1.0f))))));
                     } else
                         //for negative
                     {
@@ -18836,7 +18836,7 @@ void ImProcFunctions::Lab_Local(
                                 [=](float s, float c) -> float
                                 {
                                     if (c > noise) {
-                                        return 1.f - min(std::abs(s) / c, 1.f);
+                                        return 1.f - rtengine::min(std::abs(s) / c, 1.f);
                                     } else {
                                         return 0.f;
                                     }
@@ -19224,9 +19224,9 @@ void ImProcFunctions::Lab_Local(
                                     const float b = tmpImage->b(i, j);
                                     float x, y, z;
                                     Color::rgbxyz (r, g, b, x, y, z, wpi);
-                                    z = max(z, eps);//prevents negative values ​​of XYZ
-                                    y = max(y, eps);
-                                    x = max(x, eps);
+                                    z = rtengine::max(z, eps);//prevents negative values ​​of XYZ
+                                    y = rtengine::max(y, eps);
+                                    x = rtengine::max(x, eps);
                                     float Lexp, aexp, bexp;
                                     Color::XYZ2Lab(x, y, z, Lexp, aexp, bexp);
                                     bufexpfin->L[i][j] = Lexp;
@@ -19384,7 +19384,7 @@ void ImProcFunctions::Lab_Local(
                             // - 0.6f: scaling factor for the powered value.
                             // - 0.4f: base offset added to ensure a minimum effect.
                             // Adjust these values to fine-tune the strength and shape of the local saturation effect.
-                            float s = intp(max(sf(rl, r), sf(gl, g), sf(bl, b)), pow_F(f, 0.35f) * 0.6f + 0.4f, 1.f);//0.35f - MM is desaturating a lot.
+                            float s = intp(rtengine::max(sf(rl, r), sf(gl, g), sf(bl, b)), pow_F(f, 0.35f) * 0.6f + 0.4f, 1.f);//0.35f - MM is desaturating a lot.
                             r = ll + s * rl;
                             g = ll + s * gl;
                             b = ll + s * bl;
