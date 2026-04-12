@@ -52,6 +52,11 @@ std::vector<Glib::ustring> listSubDirs (const Glib::RefPtr<Gio::File>& dir, bool
                 if (!file) {
                     break;
                 }
+#ifdef _WIN32
+                if (!file->has_attribute("standard::type")) {
+                    continue;
+                }
+#endif
                 if (file->get_file_type () != Gio::FILE_TYPE_DIRECTORY) {
                     continue;
                 }

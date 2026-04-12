@@ -1257,7 +1257,7 @@ int RawImage::loadRaw(bool loadData, unsigned int imageNum, bool closeFile, Prog
                    black_from_cc ? "camconst.json" : decoder_name);
             printf("white levels: R:%d G1:%d B:%d G2:%d (provided by %s)\n", get_white(0), get_white(1), get_white(2), get_white(3),
                    white_from_cc ? "camconst.json" : decoder_name);
-            printf("raw crop: %d %d %d %d (provided by %s)\n", left_margin, top_margin, iwidth, iheight, raw_crop_cc ? "camconst.json" : decoder_name);
+            printf("raw crop: %d %d %d %d (provided by %s)\n", left_margin, top_margin, width, height, raw_crop_cc ? "camconst.json" : decoder_name);
             printf("color matrix provided by %s\n", (cc && cc->has_dcrawMatrix()) ? "camconst.json" : decoder_name);
         }
 

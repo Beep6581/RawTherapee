@@ -90,8 +90,10 @@ private:
     };
 
     struct Preset {
+        ColorPreview* preview = nullptr;
         Gtk::ToggleButton* visibility_button = nullptr;
         sigc::connection visibility_conn;
+        Gdk::RGBA color;
         bool is_dirty = false;
     };
 
@@ -99,6 +101,7 @@ private:
     void setupPresets();
     void setupAspectRatioGuides();
 
+    void onPresetPickColor(size_t index);
     void onAspectRatioComboChanged();
     void onAspectRatioPresetToggled(Gtk::ToggleButton* button, size_t index);
     void onAspectRatioPresetPickColor(size_t index, ColorPreview* preview);

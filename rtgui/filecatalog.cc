@@ -82,7 +82,11 @@ void getFilesRecursively(
                 if (!file) {
                     break;
                 }
-
+#ifdef _WIN32
+                if (!file->has_attribute("standard::type")) {
+                    continue;
+                }
+#endif
                 if (!options.fbShowHidden && file->is_hidden()) {
                     continue;
                 }

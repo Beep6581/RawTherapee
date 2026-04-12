@@ -758,6 +758,21 @@ struct CropGuideParams {
 
     enum class Basis { SCALE, WIDTH, HEIGHT, LONG, SHORT };
 
+    struct PresetParams {
+        bool enabled;
+        double red;
+        double green;
+        double blue;
+        double alpha;
+
+        PresetParams();
+
+        bool operator==(const PresetParams& other) const;
+        bool operator!=(const PresetParams& other) const {
+            return !(*this == other);
+        }
+    };
+
     struct AspectRatioParams {
         bool enabled;
         bool is_portrait;
@@ -765,6 +780,7 @@ struct CropGuideParams {
         double red;
         double green;
         double blue;
+        double alpha;
 
         AspectRatioParams(size_t preset_index);
 
@@ -775,7 +791,7 @@ struct CropGuideParams {
     };
 
     std::vector<AspectRatioParams> aspect_ratios;
-    std::bitset<NUM_PRESETS> presets;
+    std::array<PresetParams, NUM_PRESETS> presets;
     bool enabled;
     bool mirror_golden_triangle;
     bool rotate_golden_ratio;

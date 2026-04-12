@@ -25,6 +25,8 @@
 #include "rtengine/procparams.h"
 #include "rtengine/rt_math.h"
 
+#include <gdkmm/rgba.h>
+
 using namespace rtengine;
 using namespace rtengine::procparams;
 
@@ -33,6 +35,7 @@ namespace
 
 using PresetIndex = CropGuideParams::PresetIndex;
 
+constexpr double GUIDE_DASH = 4;
 constexpr double GUIDE_ALPHA = 0.618;
 constexpr double GOLDEN_RATIO = 1.618033988749895;
 constexpr double GOLDEN_RATIO_RECIPROCAL = 0.618033988749895;
@@ -50,10 +53,6 @@ struct GuideDrawer {
     const Cairo::RefPtr<Cairo::Context>& cr;
     const CropRect& rect;
     const CropGuideParams& params;
-
-    double red = 1.0;
-    double green = 1.0;
-    double blue = 1.0;
 
     GuideDrawer(const Cairo::RefPtr<Cairo::Context>& context,
                 const CropRect& bounds,
@@ -73,15 +72,17 @@ struct GuideDrawer {
     void drawGoldenRatio(double device_scale);
     void drawAspectRatios();
 
-    void drawHorizontal(double ratio);
-    void drawVertical(double ratio);
+    void drawHorizontal(double ratio, const Gdk::RGBA& color);
+    void drawVertical(double ratio, const Gdk::RGBA& color);
 
-    void drawDashedLine(double x0, double y0, double x1, double y1);
-    void drawDashedArc(double xc, double yc, double r, double rad0, double rad1);
+    void drawDashedLine(double x0, double y0, double x1, double y1,
+                        const Gdk::RGBA& color);
+    void drawDashedArc(double xc, double yc, double r, double rad0, double rad1,
+                       const Gdk::RGBA& color);
 
 private:
     void drawGoldenRatioRecursive(double x, double y, double length, Dir dir,
-                                  double limit, bool clockwise);
+                                  double limit, bool clockwise, const Gdk::RGBA& color);
 };
 
 void drawFrame(const Cairo::RefPtr<Cairo::Context>& cr,
@@ -97,14 +98,14 @@ void drawFrame(const Cairo::RefPtr<Cairo::Context>& cr,
     cr->stroke();
 
     cr->set_source_rgba(0.0, 0.0, 0.0, GUIDE_ALPHA);
-    cr->set_dash(std::valarray<double>({4}), 0);
+    cr->set_dash(std::vector<double>{GUIDE_DASH}, 0);
     cr->move_to(rect.x0, rect.y0);
     cr->line_to(rect.x1, rect.y0);
     cr->line_to(rect.x1, rect.y1);
     cr->line_to(rect.x0, rect.y1);
     cr->line_to(rect.x0, rect.y0);
     cr->stroke();
-    cr->set_dash(std::valarray<double>(), 0);
+    cr->set_dash(std::vector<double>{}, 0);
 }
 
 void drawCropGuides(const Cairo::RefPtr<Cairo::Context>& cr,
@@ -138,21 +139,19 @@ void drawCropGuides(const Cairo::RefPtr<Cairo::Context>& cr,
 
     GuideDrawer util{cr, bleed_rect, params};
 
-    if (params.presets.any()) {
-        // Horizontal/vertical lines only
-        util.drawRuleOfThirds();
-        util.drawHarmonicMeans();
-        util.drawCrosshair();
-        util.drawGrid();
-        util.drawEpassport();
-        util.drawCenteredSquare();
+    // Horizontal/vertical lines only
+    util.drawRuleOfThirds();
+    util.drawHarmonicMeans();
+    util.drawCrosshair();
+    util.drawGrid();
+    util.drawEpassport();
+    util.drawCenteredSquare();
 
-        // Diagonals
-        util.drawDiagonals();
-        util.drawGoldenTriangle();
+    // Diagonals
+    util.drawDiagonals();
+    util.drawGoldenTriangle();
 
-        util.drawGoldenRatio(device_scale);
-    }
+    util.drawGoldenRatio(device_scale);
 
     util.drawAspectRatios();
 }
@@ -231,39 +230,65 @@ CropRect calculateBleedRect(const CropRect& crop_rect, const CropGuideParams& pa
     }
 }
 
+Gdk::RGBA buildColor(const CropGuideParams::PresetParams& preset)
+{
+    Gdk::RGBA color;
+    color.set_rgba(preset.red, preset.green, preset.blue, preset.alpha);
+    return color;
+}
+
+Gdk::RGBA buildColor(const CropGuideParams::AspectRatioParams& params)
+{
+    Gdk::RGBA color;
+    color.set_rgba(params.red, params.green, params.blue, params.alpha);
+    return color;
+}
+
 }  // namespace
 
 void GuideDrawer::drawRuleOfThirds()
 {
-    if (!params.presets[PresetIndex::RULE_OF_THIRDS]) return;
+    const auto& preset = params.presets[PresetIndex::RULE_OF_THIRDS];
+    if (!preset.enabled) return;
 
-    drawHorizontal(1.0 / 3.0);
-    drawHorizontal(2.0 / 3.0);
-    drawVertical(1.0 / 3.0);
-    drawVertical(2.0 / 3.0);
+    Gdk::RGBA color = buildColor(preset);
+
+    drawHorizontal(1.0 / 3.0, color);
+    drawHorizontal(2.0 / 3.0, color);
+    drawVertical(1.0 / 3.0, color);
+    drawVertical(2.0 / 3.0, color);
 }
 
 void GuideDrawer::drawHarmonicMeans()
 {
-    if (!params.presets[PresetIndex::HARMONIC_MEANS]) return;
+    const auto& preset = params.presets[PresetIndex::HARMONIC_MEANS];
+    if (!preset.enabled) return;
 
-    drawHorizontal(GOLDEN_RATIO_RECIPROCAL);
-    drawHorizontal(1.0 - GOLDEN_RATIO_RECIPROCAL);
-    drawVertical(GOLDEN_RATIO_RECIPROCAL);
-    drawVertical(1.0 - GOLDEN_RATIO_RECIPROCAL);
+    Gdk::RGBA color = buildColor(preset);
+
+    drawHorizontal(GOLDEN_RATIO_RECIPROCAL, color);
+    drawHorizontal(1.0 - GOLDEN_RATIO_RECIPROCAL, color);
+    drawVertical(GOLDEN_RATIO_RECIPROCAL, color);
+    drawVertical(1.0 - GOLDEN_RATIO_RECIPROCAL, color);
 }
 
 void GuideDrawer::drawCrosshair()
 {
-    if (!params.presets[PresetIndex::CROSSHAIR]) return;
+    const auto& preset = params.presets[PresetIndex::CROSSHAIR];
+    if (!preset.enabled) return;
 
-    drawHorizontal(0.5);
-    drawVertical(0.5);
+    Gdk::RGBA color = buildColor(preset);
+
+    drawHorizontal(0.5, color);
+    drawVertical(0.5, color);
 }
 
 void GuideDrawer::drawGrid()
 {
-    if (!params.presets[PresetIndex::GRID]) return;
+    const auto& preset = params.presets[PresetIndex::GRID];
+    if (!preset.enabled) return;
+
+    Gdk::RGBA color = buildColor(preset);
 
     // To have even distribution, normalize it a bit
     const int longSideNumLines = 10;
@@ -274,21 +299,21 @@ void GuideDrawer::drawGrid()
     if (w > longSideNumLines && h > longSideNumLines) {
         if (w > h) {
             for (int i = 1; i < longSideNumLines; i++) {
-                drawVertical(static_cast<double>(i) / longSideNumLines);
+                drawVertical(static_cast<double>(i) / longSideNumLines, color);
             }
 
             int shortSideNumLines = static_cast<int>(std::round(h * longSideNumLines / w));
             for (int i = 1; i < shortSideNumLines; i++) {
-                drawHorizontal(static_cast<double>(i) / shortSideNumLines);
+                drawHorizontal(static_cast<double>(i) / shortSideNumLines, color);
             }
         } else {
             for (int i = 1; i < longSideNumLines; i++) {
-                drawHorizontal(static_cast<double>(i) / longSideNumLines);
+                drawHorizontal(static_cast<double>(i) / longSideNumLines, color);
             }
 
             int shortSideNumLines = static_cast<int>(std::round(w * longSideNumLines / h));
             for (int i = 1; i < shortSideNumLines; i++) {
-                drawVertical(static_cast<double>(i) / shortSideNumLines);
+                drawVertical(static_cast<double>(i) / shortSideNumLines, color);
             }
         }
     }
@@ -308,17 +333,23 @@ void GuideDrawer::drawGrid()
  */
 void GuideDrawer::drawEpassport()
 {
-    if (!params.presets[PresetIndex::EPASSPORT]) return;
+    const auto& preset = params.presets[PresetIndex::EPASSPORT];
+    if (!preset.enabled) return;
 
-    drawHorizontal(7.0 / 45.0);
-    drawHorizontal(26.0 / 45.0);
-    drawHorizontal(37.0 / 45.0);
-    drawVertical(0.5);
+    Gdk::RGBA color = buildColor(preset);
+
+    drawHorizontal(7.0 / 45.0, color);
+    drawHorizontal(26.0 / 45.0, color);
+    drawHorizontal(37.0 / 45.0, color);
+    drawVertical(0.5, color);
 }
 
 void GuideDrawer::drawCenteredSquare()
 {
-    if (!params.presets[PresetIndex::CENTERED_SQUARE]) return;
+    const auto& preset = params.presets[PresetIndex::CENTERED_SQUARE];
+    if (!preset.enabled) return;
+
+    Gdk::RGBA color = buildColor(preset);
 
     const double w = rect.x1 - rect.x0;
     const double h = rect.y1 - rect.y0;
@@ -327,18 +358,21 @@ void GuideDrawer::drawCenteredSquare()
     if (ratio < 1.0) {
         ratio = 1.0 / ratio;
         const double pos = (ratio - 1.0) / (2.0 * ratio);
-        drawHorizontal(pos);
-        drawHorizontal(1.0 - pos);
+        drawHorizontal(pos, color);
+        drawHorizontal(1.0 - pos, color);
     } else {
         const double pos = (ratio - 1.0) / (2.0 * ratio);
-        drawVertical(pos);
-        drawVertical(1.0 - pos);
+        drawVertical(pos, color);
+        drawVertical(1.0 - pos, color);
     }
 }
 
 void GuideDrawer::drawDiagonals()
 {
-    if (!params.presets[PresetIndex::RULE_OF_DIAGONALS]) return;
+    const auto& preset = params.presets[PresetIndex::RULE_OF_DIAGONALS];
+    if (!preset.enabled) return;
+
+    Gdk::RGBA color = buildColor(preset);
 
     double corners_from[4][2];
     double corners_to[4][2];
@@ -366,13 +400,16 @@ void GuideDrawer::drawDiagonals()
 
     for (int i = 0; i < 4; i++) {
         drawDashedLine(corners_from[i][0], corners_from[i][1],
-                       corners_to[i][0], corners_to[i][1]);
+                       corners_to[i][0], corners_to[i][1], color);
     }
 }
 
 void GuideDrawer::drawGoldenTriangle()
 {
-    if (!params.presets[PresetIndex::GOLDEN_TRIANGLE]) return;
+    const auto& preset = params.presets[PresetIndex::GOLDEN_TRIANGLE];
+    if (!preset.enabled) return;
+
+    Gdk::RGBA color = buildColor(preset);
 
     double x0 = rect.x0;
     double x1 = rect.x1;
@@ -383,7 +420,7 @@ void GuideDrawer::drawGoldenTriangle()
         std::swap(x0, x1);
     }
 
-    drawDashedLine(x0, y0, x1, y1);
+    drawDashedLine(x0, y0, x1, y1, color);
 
     const double height = y1 - y0;
     const double width = x1 - x0;
@@ -395,16 +432,19 @@ void GuideDrawer::drawGoldenTriangle()
 
     double x = (a * b) / height;
     double y = height - (b * (d - a)) / width;
-    drawDashedLine(x0, y1, x0 + x, y0 + y);
+    drawDashedLine(x0, y1, x0 + x, y0 + y, color);
 
     x = width - (a * b) / height;
     y = (b * (d - a)) / width;
-    drawDashedLine(x1, y0, x0 + x, y0 + y);
+    drawDashedLine(x1, y0, x0 + x, y0 + y, color);
 }
 
 void GuideDrawer::drawGoldenRatio(double device_scale)
 {
-    if (!params.presets[PresetIndex::GOLDEN_RATIO]) return;
+    const auto& preset = params.presets[PresetIndex::GOLDEN_RATIO];
+    if (!preset.enabled) return;
+
+    Gdk::RGBA color = buildColor(preset);
 
     const double w = rect.x1 - rect.x0;
     const double h = rect.y1 - rect.y0;
@@ -444,12 +484,16 @@ void GuideDrawer::drawGoldenRatio(double device_scale)
 
     // Don't show new fitted rect bounds if close enough
     if (delta_w >= 4.0) {
-        drawDashedLine(fitted_rect.x0, fitted_rect.y0, fitted_rect.x0, fitted_rect.y1);
-        drawDashedLine(fitted_rect.x1, fitted_rect.y0, fitted_rect.x1, fitted_rect.y1);
+        drawDashedLine(fitted_rect.x0, fitted_rect.y0,
+                       fitted_rect.x0, fitted_rect.y1, color);
+        drawDashedLine(fitted_rect.x1, fitted_rect.y0,
+                       fitted_rect.x1, fitted_rect.y1, color);
     }
     if (delta_h >= 4.0) {
-        drawDashedLine(fitted_rect.x0, fitted_rect.y0, fitted_rect.x1, fitted_rect.y0);
-        drawDashedLine(fitted_rect.x0, fitted_rect.y1, fitted_rect.x1, fitted_rect.y1);
+        drawDashedLine(fitted_rect.x0, fitted_rect.y0,
+                       fitted_rect.x1, fitted_rect.y0, color);
+        drawDashedLine(fitted_rect.x0, fitted_rect.y1,
+                       fitted_rect.x1, fitted_rect.y1, color);
     }
 
     double start_x = fitted_rect.x0;
@@ -504,7 +548,7 @@ void GuideDrawer::drawGoldenRatio(double device_scale)
     limit = std::max(limit, 10.0 * device_scale);
 
     bool clockwise = !params.mirror_golden_ratio;
-    drawGoldenRatioRecursive(start_x, start_y, length, dir, limit, clockwise);
+    drawGoldenRatioRecursive(start_x, start_y, length, dir, limit, clockwise, color);
 }
 
 /**
@@ -516,7 +560,8 @@ void GuideDrawer::drawGoldenRatio(double device_scale)
  * @param clockwise Direction of spiral while travelling inwards
  */
 void GuideDrawer::drawGoldenRatioRecursive(double x, double y, double length,
-                                           Dir dir, double limit, bool clockwise)
+                                           Dir dir, double limit, bool clockwise,
+                                           const Gdk::RGBA& color)
 {
     if (length <= limit) return;
 
@@ -613,10 +658,10 @@ void GuideDrawer::drawGoldenRatioRecursive(double x, double y, double length,
         }
     }
 
-    drawDashedArc(arc_x, arc_y, offset, arc_start, arc_end);
-    drawDashedLine(arc_x, arc_y, next_x, next_y);
+    drawDashedArc(arc_x, arc_y, offset, arc_start, arc_end, color);
+    drawDashedLine(arc_x, arc_y, next_x, next_y, color);
 
-    drawGoldenRatioRecursive(next_x, next_y, offset, next_dir, limit, clockwise);
+    drawGoldenRatioRecursive(next_x, next_y, offset, next_dir, limit, clockwise, color);
 }
 
 void GuideDrawer::drawAspectRatios()
@@ -628,9 +673,7 @@ void GuideDrawer::drawAspectRatios()
     for (const auto& entry : params.aspect_ratios) {
         if (!entry.enabled) continue;
 
-        red = entry.red;
-        green = entry.green;
-        blue = entry.blue;
+        Gdk::RGBA color = buildColor(entry);
 
         const double aspect_ratio = [&]() {
             double result = getAspectRatioValue(entry.preset_index);
@@ -666,63 +709,66 @@ void GuideDrawer::drawAspectRatios()
 
         // Don't show new fitted rect bounds if close enough
         if (delta_w >= 2.0) {
-            drawDashedLine(fitted_rect.x0, fitted_rect.y0, fitted_rect.x0, fitted_rect.y1);
-            drawDashedLine(fitted_rect.x1, fitted_rect.y0, fitted_rect.x1, fitted_rect.y1);
+            drawDashedLine(fitted_rect.x0, fitted_rect.y0,
+                           fitted_rect.x0, fitted_rect.y1, color);
+            drawDashedLine(fitted_rect.x1, fitted_rect.y0,
+                           fitted_rect.x1, fitted_rect.y1, color);
         }
         if (delta_h >= 2.0) {
-            drawDashedLine(fitted_rect.x0, fitted_rect.y0, fitted_rect.x1, fitted_rect.y0);
-            drawDashedLine(fitted_rect.x0, fitted_rect.y1, fitted_rect.x1, fitted_rect.y1);
+            drawDashedLine(fitted_rect.x0, fitted_rect.y0,
+                           fitted_rect.x1, fitted_rect.y0, color);
+            drawDashedLine(fitted_rect.x0, fitted_rect.y1,
+                           fitted_rect.x1, fitted_rect.y1, color);
         }
     }
-
-    // Restore default crop guide color
-    red = 1.0;
-    green = 1.0;
-    blue = 1.0;
 }
 
-void GuideDrawer::drawHorizontal(double ratio)
+void GuideDrawer::drawHorizontal(double ratio, const Gdk::RGBA& color)
 {
     double y = rect.y0 + std::round((rect.y1 - rect.y0) * ratio);
-    drawDashedLine(rect.x0, y, rect.x1, y);
+    drawDashedLine(rect.x0, y, rect.x1, y, color);
 }
 
-void GuideDrawer::drawVertical(double ratio)
+void GuideDrawer::drawVertical(double ratio, const Gdk::RGBA& color)
 {
     double x = rect.x0 + std::round((rect.x1 - rect.x0) * ratio);
-    drawDashedLine(x, rect.y0, x, rect.y1);
+    drawDashedLine(x, rect.y0, x, rect.y1, color);
 }
 
-void GuideDrawer::drawDashedLine(double x0, double y0, double x1, double y1)
+void GuideDrawer::drawDashedLine(double x0, double y0, double x1, double y1,
+                                 const Gdk::RGBA& color)
 {
-    cr->set_source_rgba(red, green, blue, GUIDE_ALPHA);
+    cr->set_source_rgba(color.get_red(), color.get_green(), color.get_blue(),
+                        color.get_alpha());
     cr->move_to(x0, y0);
     cr->line_to(x1, y1);
     cr->stroke();
 
     cr->set_source_rgba(0.0, 0.0, 0.0, GUIDE_ALPHA);
-    cr->set_dash(std::valarray<double>({4}), 0);
+    cr->set_dash(std::vector<double>{GUIDE_DASH}, 0);
     cr->move_to(x0, y0);
     cr->line_to(x1, y1);
     cr->stroke();
 
     // Reset state
-    cr->set_dash(std::valarray<double>(), 0);
+    cr->set_dash(std::vector<double>{}, 0);
 }
 
-void GuideDrawer::drawDashedArc(double xc, double yc, double r, double rad0, double rad1)
+void GuideDrawer::drawDashedArc(double xc, double yc, double r,
+                                double rad0, double rad1, const Gdk::RGBA& color)
 {
-    cr->set_source_rgba(1.0, 1.0, 1.0, GUIDE_ALPHA);
+    cr->set_source_rgba(color.get_red(), color.get_green(), color.get_blue(),
+                        color.get_alpha());
     cr->arc(xc, yc, r, rad0, rad1);
     cr->stroke();
 
     cr->set_source_rgba(0.0, 0.0, 0.0, GUIDE_ALPHA);
-    cr->set_dash(std::valarray<double>({4}), 0);
+    cr->set_dash(std::vector<double>{GUIDE_DASH}, 0);
     cr->arc(xc, yc, r, rad0, rad1);
     cr->stroke();
 
     // Reset state
-    cr->set_dash(std::valarray<double>(), 0);
+    cr->set_dash(std::vector<double>{}, 0);
 }
 
 void drawCrop(const Cairo::RefPtr<Cairo::Context>& cr,

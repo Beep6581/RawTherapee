@@ -176,9 +176,9 @@ void CropGuide::setupEvents()
 
 void CropGuide::setupPresets()
 {
-    // N by 5 grid with columns:
+    // N by 7 grid with columns:
     //
-    // | Toggle | Label | [Rotate] | [Mirror] | [Undo] |
+    // | Toggle | Label | [Rotate] | [Mirror] | [Undo] | Color Preview | Color Picker |
     //
     // where Label may span multiple columns to fill space
     auto grid = Gtk::manage(new Gtk::Grid());
@@ -218,6 +218,29 @@ void CropGuide::setupPresets()
             return button;
         };
 
+        auto color_event_box = Gtk::manage(new Gtk::EventBox());
+        preset.preview = Gtk::manage(new ColorPreview());
+        preset.preview->set_hexpand(false);
+        preset.preview->set_halign(Gtk::ALIGN_CENTER);
+        preset.preview->set_vexpand(false);
+        preset.preview->set_valign(Gtk::ALIGN_CENTER);
+        preset.preview->set_margin_start(4);
+        preset.preview->set_margin_end(4);
+        preset.preview->setRgb(preset.color.get_red(), preset.color.get_green(),
+                               preset.color.get_blue());
+        color_event_box->add(*(preset.preview));
+        grid->attach(*color_event_box, 5, i);
+
+        auto color_button = add_button("color-picker-small", 6);
+
+        color_event_box->signal_button_release_event().connect(
+            [this, i](GdkEventButton* ev) -> bool {
+                this->onPresetPickColor(i);
+                return true;
+            });
+        color_button->signal_clicked().connect(sigc::bind(
+            sigc::mem_fun(this, &CropGuide::onPresetPickColor), i));
+
         if (type_index == CropGuideParams::PresetIndex::GOLDEN_TRIANGLE) {
             grid->attach(*label, 1, i, 2);
 
@@ -242,7 +265,7 @@ void CropGuide::setupPresets()
             undo_button->signal_clicked().connect(
                 sigc::mem_fun(this, &CropGuide::onGoldenRatioReset));
         } else {
-            grid->attach(*label, 1, i, 4);
+            grid->attach(*label, 1, i, 6);
         }
     }
 }
@@ -293,7 +316,7 @@ Gtk::Widget* CropGuide::createAspectRatioModelControls(
 {
     // N by 6 grid with columns:
     //
-    // | Toggle | Label | Color | Color Select | Rotate | Remove |
+    // | Toggle | Label | Rotate | Color | Color Select | Remove |
     //
     // where Label may span multiple columns to fill space
     auto grid = Gtk::manage(new Gtk::Grid());
@@ -318,23 +341,34 @@ Gtk::Widget* CropGuide::createAspectRatioModelControls(
     label->set_line_wrap(true);
     grid->attach(*label, 1, 0);
 
+    auto rotate_button = Gtk::manage(new Gtk::Button());
+    rotate_button->set_image(*Gtk::manage(
+        new RTImage("rotate-right-small", Gtk::ICON_SIZE_BUTTON)));
+    rotate_button->set_relief(Gtk::RELIEF_NONE);
+    grid->attach(*rotate_button, 2, 0);
+
+    rotate_button->signal_clicked().connect(sigc::bind(
+        sigc::mem_fun(this, &CropGuide::onAspectRatioPresetRotate),
+        item->index));
+
     auto color_event_box = Gtk::manage(new Gtk::EventBox());
     auto color_preview = Gtk::manage(new ColorPreview());
     color_preview->set_hexpand(false);
     color_preview->set_halign(Gtk::ALIGN_CENTER);
     color_preview->set_vexpand(false);
     color_preview->set_valign(Gtk::ALIGN_CENTER);
+    color_preview->set_margin_start(4);
     color_preview->set_margin_end(4);
     color_preview->setRgb(item->color.get_red(), item->color.get_green(),
                           item->color.get_blue());
     color_event_box->add(*color_preview);
-    grid->attach(*color_event_box, 2, 0);
+    grid->attach(*color_event_box, 3, 0);
 
     auto color_button = Gtk::manage(new Gtk::Button());
     color_button->set_image(*Gtk::manage(
         new RTImage("color-picker-small", Gtk::ICON_SIZE_BUTTON)));
     color_button->set_relief(Gtk::RELIEF_NONE);
-    grid->attach(*color_button, 3, 0);
+    grid->attach(*color_button, 4, 0);
 
     const size_t preset_index = item->index;
     color_event_box->signal_button_release_event().connect(
@@ -347,21 +381,11 @@ Gtk::Widget* CropGuide::createAspectRatioModelControls(
         item->index,
         color_preview));
 
-    auto rotate_button = Gtk::manage(new Gtk::Button());
-    rotate_button->set_image(*Gtk::manage(
-        new RTImage("rotate-right-small", Gtk::ICON_SIZE_BUTTON)));
-    rotate_button->set_relief(Gtk::RELIEF_NONE);
-    grid->attach(*rotate_button, 4, 0);
-
-    rotate_button->signal_clicked().connect(sigc::bind(
-        sigc::mem_fun(this, &CropGuide::onAspectRatioPresetRotate),
-        item->index));
-
     auto remove_button = Gtk::manage(new Gtk::Button());
     remove_button->set_image(*Gtk::manage(
         new RTImage("cancel-small", Gtk::ICON_SIZE_BUTTON)));
     remove_button->set_relief(Gtk::RELIEF_NONE);
-    grid->attach(*remove_button, 6, 0);
+    grid->attach(*remove_button, 5, 0);
 
     remove_button->signal_clicked().connect(sigc::bind(
         sigc::mem_fun(this, &CropGuide::onAspectRatioPresetRemoved),
@@ -398,14 +422,20 @@ void CropGuide::read(const rtengine::procparams::ProcParams* pp,
     }
 
     for (size_t i = 0; i < m_presets.size(); i++) {
+        const auto& pp_preset = pp->cropGuide.presets[i];
         auto& preset = m_presets[i];
-        bool is_enabled = pp->cropGuide.presets[i];
+        bool is_enabled = pp_preset.enabled;
 
         if (preset.visibility_button->get_active() != is_enabled) {
             ConnectionBlocker block(preset.visibility_conn);
             preset.visibility_button->set_active(is_enabled);
             updateImage(preset.visibility_button, is_enabled);
         }
+
+        Gdk::RGBA color;
+        color.set_rgba(pp_preset.red, pp_preset.green, pp_preset.blue, pp_preset.alpha);
+        preset.color = color;
+        preset.preview->setRgb(color.get_red(), color.get_green(), color.get_blue());
 
         if (pedited) {
             preset.is_dirty = pedited->cropGuide.presets[i];
@@ -431,8 +461,7 @@ void CropGuide::read(const rtengine::procparams::ProcParams* pp,
         preset->visible = param.enabled;
 
         Gdk::RGBA color;
-        color.set_rgba(static_cast<float>(param.red), static_cast<float>(param.green),
-                       static_cast<float>(param.blue));
+        color.set_rgba(param.red, param.green, param.blue, param.alpha);
         preset->color = color;
 
         m_aspect_ratio_store->insert_sorted(
@@ -470,9 +499,14 @@ void CropGuide::write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedite
     }
 
     for (size_t i = 0; i < m_presets.size(); i++) {
-        auto& preset = m_presets[i];
+        const auto& preset = m_presets[i];
+        auto& pp_preset = pp->cropGuide.presets[i];
 
-        pp->cropGuide.presets[i] = preset.visibility_button->get_active();
+        pp_preset.enabled = preset.visibility_button->get_active();
+        pp_preset.red = preset.color.get_red();
+        pp_preset.green = preset.color.get_green();
+        pp_preset.blue = preset.color.get_blue();
+        pp_preset.alpha = preset.color.get_alpha();
 
         if (pedited) {
             pedited->cropGuide.presets[i] = preset.is_dirty;
@@ -493,6 +527,7 @@ void CropGuide::write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedite
         params.red = model->color.get_red();
         params.green = model->color.get_green();
         params.blue = model->color.get_blue();
+        params.alpha = model->color.get_alpha();
 
         pp->cropGuide.aspect_ratios.push_back(std::move(params));
     }
@@ -640,6 +675,29 @@ void CropGuide::onGoldenRatioReset()
     }
 }
 
+void CropGuide::onPresetPickColor(size_t index)
+{
+    auto& preset = m_presets.at(index);
+
+    Gtk::ColorChooserDialog dialog;
+    dialog.set_use_alpha(true);
+    dialog.set_rgba(preset.color);
+
+    int result = dialog.run();
+    if (result != Gtk::RESPONSE_OK) return;
+
+    Gdk::RGBA color = dialog.get_rgba();
+    preset.color = color;
+    preset.is_dirty = true;
+
+    preset.preview->setRgb(color.get_red(), color.get_green(), color.get_blue());
+
+    if (listener && getEnabled()) {
+        listener->panelChanged(EvCropGuidePresetChanged,
+                               M(GUIDE_TYPE_OPTIONS.at(index)));
+    }
+}
+
 void CropGuide::onAspectRatioComboChanged()
 {
     ConnectionBlocker block(m_available_aspect_ratios_conn);
@@ -693,7 +751,7 @@ void CropGuide::onAspectRatioPresetPickColor(size_t index, ColorPreview* preview
     auto& preset = m_aspect_ratio_presets.at(index);
 
     Gtk::ColorChooserDialog dialog;
-    dialog.set_use_alpha(false);
+    dialog.set_use_alpha(true);
     dialog.set_rgba(preset->color);
 
     int result = dialog.run();
