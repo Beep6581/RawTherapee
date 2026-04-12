@@ -364,9 +364,13 @@ bool Canvas::onKeyPressed(guint keyval, guint keycode, GdkModifierType state)
             const ImageModel& image = m_model->image();
             // TODO: Zoom to crop when alt not held down
             if (session.modifiers() & GDK_MOD1_MASK) {
-                session.zoomFit(WorldPoint{}, static_cast<WorldSize>(image.fullSize()));
+                session.zoomFit(WorldPoint{}, static_cast<WorldSize>(image.fullSize()),
+                                Session::ZoomFitFlags::ADD_MARGIN
+                                | Session::ZoomFitFlags::ALLOW_ZOOM_IN);
             } else {
-                session.zoomFit(WorldPoint{}, static_cast<WorldSize>(image.fullSize()));
+                session.zoomFit(WorldPoint{}, static_cast<WorldSize>(image.fullSize()),
+                                Session::ZoomFitFlags::ADD_MARGIN
+                                | Session::ZoomFitFlags::ALLOW_ZOOM_IN);
             }
             return true;
         }
@@ -517,12 +521,10 @@ bool Canvas::tryPanZoomScroll(WidgetVec scroll_delta)
     if (!m_is_pan_zoom_enabled) return false;
 
     if (m_scroll_mode == ScrollMode::PAN) {
-        tryPanScroll(scroll_delta);
+        return tryPanScroll(scroll_delta);
     } else {
-        tryZoomScroll(scroll_delta);
+        return tryZoomScroll(scroll_delta);
     }
-
-    return false;
 }
 
 bool Canvas::tryZoomScroll(WidgetVec scroll_delta)
@@ -658,11 +660,11 @@ bool Canvas::tryPanScroll(WidgetVec scroll_delta)
                 // events that are less than 1.0.
                 m_scroll_zoom_accum += scroll_delta.y.value();
 
-                if (scroll_delta.y.value() >= 1.0) {
+                if (m_scroll_zoom_accum >= 1.0) {
                     updateZoom(camera.zoom / ZOOM_FACTOR);
                     m_scroll_zoom_accum = 0;
                     return true;
-                } else if (scroll_delta.y.value() <= -1.0) {
+                } else if (m_scroll_zoom_accum <= -1.0) {
                     updateZoom(camera.zoom * ZOOM_FACTOR);
                     m_scroll_zoom_accum = 0;
                     return true;

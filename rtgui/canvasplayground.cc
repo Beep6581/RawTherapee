@@ -198,12 +198,12 @@ void CanvasPlayground::setupControls()
         m_cursor_event_listener->w2c = add_label("World -> Camera");
     }
 
-    m_canvas_model->setCameraBounds(Session::CameraBounds::IMAGE);
+    m_canvas_model->setCameraBounds(Session::CameraBounds::EDITOR);
     m_camera_bounds = rt::make_managed<Gtk::ComboBoxText>();
     m_camera_bounds->append("Free");
-    m_camera_bounds->append("Image");
-    m_camera_bounds->append("Fill");
-    m_camera_bounds->append("Fill or Fit");
+    m_camera_bounds->append("Editor");
+    m_camera_bounds->append("Inspector Panel");
+    m_camera_bounds->append("Inspector Window");
     m_camera_bounds->set_active(1);
     m_camera_bounds->signal_changed().connect(
         sigc::mem_fun(*this, &CanvasPlayground::onCameraBoundsChanged));
@@ -360,12 +360,12 @@ void CanvasPlayground::onCameraBoundsChanged()
 {
     Glib::ustring text = m_camera_bounds->get_active_text();
     auto bounds = Session::CameraBounds::NONE;
-    if (text == "Image") {
-        bounds = Session::CameraBounds::IMAGE;
-    } else if (text == "Fill") {
-        bounds = Session::CameraBounds::FILL;
-    } else if (text == "Fill or Fit") {
-        bounds = Session::CameraBounds::FILL_OR_FIT;
+    if (text == "Editor") {
+        bounds = Session::CameraBounds::EDITOR;
+    } else if (text == "Inspector Panel") {
+        bounds = Session::CameraBounds::INSPECTOR_PANEL;
+    } else if (text == "Inspector Window") {
+        bounds = Session::CameraBounds::INSPECTOR_WINDOW;
     }
     m_canvas_model->setCameraBounds(bounds);
 }

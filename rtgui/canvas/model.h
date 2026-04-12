@@ -53,6 +53,7 @@ class Session
 public:
     // clang-format off
     enum class PanZoomFlags {
+        NONE = 0,
         PRIMARY_BUTTON_PAN   = (1 << 0),
         MIDDLE_BUTTON_PAN    = (1 << 1),
         SPACE_KEY_PAN        = (1 << 2),
@@ -74,16 +75,29 @@ public:
     // clang-format on
 
     enum class CameraBounds {
-        NONE,        // No bounds
-        IMAGE,       // Image edges cannot cross center of camera
-        FILL,        // Zoom image to fill screen
-        FILL_OR_FIT  // Fit to screen if zoomed out otherwise same as FILL
+        // No bounds
+        NONE,
+        // Keep camera center inside image bounds
+        EDITOR,
+        // Keep camera bounds inside image bounds unless image is smaller.
+        // Center on axis if an image edge is smaller than the camera edge.
+        INSPECTOR_PANEL,
+        // In addition to INSPECTOR_PANEL rules, if the 1:1 image is larger
+        // than the camera area and zoomed out, restrict the zoom out to fit
+        // the screen.
+        INSPECTOR_WINDOW
     };
 
     enum class ZoomMode {
         BASIC,           // Set value directly
         CENTER_CURSOR,   // Set zoom centered on cursor
         PRESERVE_CURSOR  // Set zoom but preserve relative cursor position on screen
+    };
+
+    enum class ZoomFitFlags {
+        NONE = 0,
+        ADD_MARGIN = (1 << 0),
+        ALLOW_ZOOM_IN = (1 << 1)
     };
 
     Session();
@@ -123,7 +137,8 @@ public:
     void refreshCamera(const geom::IntBBox& content);
 
     void zoom11();
-    void zoomFit(WorldPoint top_left, WorldSize img_size, bool add_margin = true);
+    void zoomFit(WorldPoint top_left, WorldSize img_size,
+                 ZoomFitFlags flags = ZoomFitFlags::NONE);
 
     void queueDraw() { m_events.signal_queue_draw.emit(); }
     void changeCursorShape(rt::optional<CursorShape> shape);
@@ -133,12 +148,12 @@ public:
     CanvasEvents& canvasEvents() { return m_events; }
 
 private:
-    CameraState adjustToImage(const rt::geom::IntBBox& content,
-                              const CameraState& new_state);
-    CameraState adjustToFill(const rt::geom::IntBBox& content,
-                             const CameraState& new_state);
-    CameraState adjustToFillOrFit(const rt::geom::IntBBox& content,
-                                  const CameraState& new_state);
+    CameraState adjustForEditor(const rt::geom::IntBBox& content,
+                                const CameraState& new_state);
+    CameraState adjustForInspectorPanel(const rt::geom::IntBBox& content,
+                                        const CameraState& new_state);
+    CameraState adjustForInspectorWindow(const rt::geom::IntBBox& content,
+                                         const CameraState& new_state);
     void regenerateTransforms();
 
     CanvasEvents m_events;
@@ -199,7 +214,7 @@ public:
     void setCameraBounds(Session::CameraBounds bounds);
     void refreshCamera();
 
-    void zoomFit(bool add_margin = true);
+    void zoomFit(Session::ZoomFitFlags flags = Session::ZoomFitFlags::NONE);
 
 private:
     rt::geom::IntBBox buildImageBBox() const;
@@ -213,3 +228,6 @@ private:
 
 template <>
 struct rt::EnumAsBitflags<rt::canvas::Session::PanZoomFlags> : std::true_type {};
+
+template <>
+struct rt::EnumAsBitflags<rt::canvas::Session::ZoomFitFlags> : std::true_type {};

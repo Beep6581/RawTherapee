@@ -36,8 +36,6 @@
 using namespace rt;
 using namespace rt::canvas;
 
-constexpr bool NO_PADDING = false;
-
 struct InspectorBuffer
 {
     Glib::ustring filepath;
@@ -103,7 +101,7 @@ Inspector::Inspector()
         m_window->set_size_request(500, 500);
         m_window->fullscreen();
 
-        m_canvas_model->session().setCameraBounds(Session::CameraBounds::FILL_OR_FIT);
+        m_canvas_model->session().setCameraBounds(Session::CameraBounds::INSPECTOR_WINDOW);
 
         m_canvas->enablePanZoom(true);
         m_canvas->signal_pan_zoom.connect(
@@ -116,7 +114,7 @@ Inspector::Inspector()
         m_is_initialized = false;  // Delay init to avoid flickering on some systems
         m_is_active = true;  // Always track inspected thumbnails
     } else {
-        m_canvas_model->session().setCameraBounds(Session::CameraBounds::FILL);
+        m_canvas_model->session().setCameraBounds(Session::CameraBounds::INSPECTOR_PANEL);
         m_renderer->setDrawFrame(true);
     }
 
@@ -187,7 +185,7 @@ bool Inspector::onKeyPressed(guint keyval, guint keycode, GdkModifierType state)
             m_is_key_down = true;
             m_fit_to_screen = true;
             if (m_is_pinned) {
-                m_canvas_model->zoomFit(NO_PADDING);
+                m_canvas_model->zoomFit();
                 recordObservedRect();
                 m_canvas_model->session().queueDraw();
             }
@@ -467,7 +465,7 @@ void Inspector::showImageOnCanvas()
     m_canvas_model->image().setImageSurface(m_curr_image->surface, img_size);
 
     if (m_fit_to_screen) {
-        m_canvas_model->zoomFit(NO_PADDING);
+        m_canvas_model->zoomFit();
     } else {
         double x = static_cast<double>(m_curr_image->surface->get_width());
         double y = static_cast<double>(m_curr_image->surface->get_height());
@@ -497,8 +495,14 @@ void Inspector::recordObservedRect()
     if (!App::get().options().showInspectorObservedArea) return;
 
     IntWorldSize img = m_canvas_model->image().fullSize();
-    geom::Rect img_bbox(geom::Point(),
-                        geom::Point(img.width.value(), img.height.value()));
+    int width = img.width.value();
+    int height = img.height.value();
+    if (width <= 0 || height <= 0) {
+        m_last_image_observed_rect = rt::nullopt;
+        return;
+    }
+
+    geom::Rect img_bbox(geom::Point(), geom::Point(width, height));
 
     geom::Rect cam_bbox = m_canvas_model->session().cameraBBox();
 
@@ -508,10 +512,10 @@ void Inspector::recordObservedRect()
         return;
     }
 
-    double min_x = observed_bbox->min().x / img.width.value();
-    double min_y = observed_bbox->min().y / img.height.value();
-    double max_x = observed_bbox->max().x / img.width.value();
-    double max_y = observed_bbox->max().y / img.height.value();
+    double min_x = observed_bbox->min().x / width;
+    double min_y = observed_bbox->min().y / height;
+    double max_x = observed_bbox->max().x / width;
+    double max_y = observed_bbox->max().y / height;
 
     m_last_image_observed_rect = geom::Rect(geom::Point(min_x, min_y),
                                             geom::Point(max_x, max_y));

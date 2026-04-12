@@ -976,7 +976,9 @@ void ThumbBrowserBase::buttonPressed (int x, int y, int button, GdkEventType typ
             }
     }
 
-    getInspector()->clearObservedArea();
+    if (getInspector()) {
+        getInspector()->clearObservedArea();
+    }
 
     if (handled || (fileDescr && fileDescr->processing)) {
         return;

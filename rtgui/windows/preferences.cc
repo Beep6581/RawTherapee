@@ -3072,7 +3072,6 @@ Gtk::Widget* Preferences::setupEditorInspectorSettings()
     auto zoomModeLabel = rt::make_managed<Gtk::Label>(M("PREFERENCES_ZOOM_11_MODE"));
     setup(zoomModeLabel);
     zoom11Mode = rt::make_managed<MyComboBoxText>();
-    setup(zoomModeLabel);
     for (const char* entry : ZOOM_11_MODES) {
         zoom11Mode->append(M(entry));
     }
@@ -3082,7 +3081,6 @@ Gtk::Widget* Preferences::setupEditorInspectorSettings()
     auto scrollModeLabel = rt::make_managed<Gtk::Label>(M("PREFERENCES_SCROLL_MODE"));
     setup(scrollModeLabel);
     scrollMode = rt::make_managed<MyComboBoxText>();
-    setup(scrollModeLabel);
     for (const char* entry : SCROLL_MODES) {
         scrollMode->append(M(entry));
     }

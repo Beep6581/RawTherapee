@@ -21,6 +21,7 @@
 
 #include "cursormanager.h"
 
+#include "rtengine/math/math.h"
 #include "rtengine/math/pointvec.h"
 
 using namespace rt;
@@ -135,14 +136,14 @@ void Session::setCameraBounds(const geom::IntBBox& content, CameraBounds bounds)
 void Session::setCamera(const geom::IntBBox& content, const CameraState& new_state)
 {
     switch (m_bound_mode) {
-        case CameraBounds::IMAGE:
-            m_camera = adjustToImage(content, new_state);
+        case CameraBounds::EDITOR:
+            m_camera = adjustForEditor(content, new_state);
             break;
-        case CameraBounds::FILL:
-            m_camera = adjustToFill(content, new_state);
+        case CameraBounds::INSPECTOR_PANEL:
+            m_camera = adjustForInspectorPanel(content, new_state);
             break;
-        case CameraBounds::FILL_OR_FIT:
-            m_camera = adjustToFillOrFit(content, new_state);
+        case CameraBounds::INSPECTOR_WINDOW:
+            m_camera = adjustForInspectorWindow(content, new_state);
             break;
         case CameraBounds::NONE:
         default:
@@ -156,10 +157,11 @@ void Session::setCamera(const geom::IntBBox& content, const CameraState& new_sta
     queueDraw();
 }
 
-CameraState Session::adjustToImage(const geom::IntBBox& content,
-                                   const CameraState& new_state)
+CameraState Session::adjustForEditor(const geom::IntBBox& content,
+                                     const CameraState& new_state)
 {
     CameraState adjusted = new_state;
+    adjusted.zoom = rt::clamp(new_state.zoom, m_min_zoom, m_max_zoom);
 
     const double content_width = content.width();
     const double content_height = content.height();
@@ -185,49 +187,59 @@ CameraState Session::adjustToImage(const geom::IntBBox& content,
     return adjusted;
 }
 
-CameraState Session::adjustToFill(const geom::IntBBox& content,
-                                  const CameraState& new_state)
+CameraState Session::adjustForInspectorPanel(const geom::IntBBox& content,
+                                             const CameraState& new_state)
 {
     CameraState adjusted = new_state;
+    adjusted.zoom = rt::clamp(new_state.zoom, m_min_zoom, m_max_zoom);
 
     const double content_width = content.width();
     const double content_height = content.height();
     if (content_width <= 0 || content_height <= 0) return adjusted;
 
-    // Adjust zoom to at least fill the screen
-    const double width = new_state.size.width.value() * new_state.device_scale;
-    const double height = new_state.size.height.value() * new_state.device_scale;
-    const double fill_zoom = std::max(width / content_width, height / content_height);
-    if (new_state.zoom < fill_zoom) {
-        adjusted.zoom = rt::clamp(fill_zoom, m_min_zoom, m_max_zoom);
+    const double camera_width =
+        new_state.size.width.value() / adjusted.zoom * new_state.device_scale;
+    const double camera_height =
+        new_state.size.height.value() / adjusted.zoom * new_state.device_scale;
+
+    if (content_width <= camera_width) {
+        // Center in camera
+        adjusted.pos.x = WorldScalar(content.min().x + content_width / 2.0);
+    } else {
+        // Prevent image edge from crossing widget edges
+        const double margin_x = camera_width / adjusted.zoom / 2.0;
+        const double min_x = content.min().x + margin_x;
+        const double max_x = content.max().x - margin_x;
+        if (new_state.pos.x.value() < min_x) {
+            adjusted.pos.x = WorldScalar(min_x);
+        } else if (new_state.pos.x.value() > max_x) {
+            adjusted.pos.x = WorldScalar(max_x);
+        }
     }
 
-    // Prevent image edge from crossing widget edges
-    const double margin_x = width / adjusted.zoom / 2.0;
-    const double min_x = content.min().x + margin_x;
-    const double max_x = content.max().x - margin_x;
-    if (new_state.pos.x.value() < min_x) {
-        adjusted.pos.x = WorldScalar(min_x);
-    } else if (new_state.pos.x.value() > max_x) {
-        adjusted.pos.x = WorldScalar(max_x);
-    }
-
-    const double margin_y = height / adjusted.zoom / 2.0;
-    const double min_y = content.min().y + margin_y;
-    const double max_y = content.max().y - margin_y;
-    if (new_state.pos.y.value() < min_y) {
-        adjusted.pos.y = WorldScalar(min_y);
-    } else if (new_state.pos.y.value() > max_y) {
-        adjusted.pos.y = WorldScalar(max_y);
+    if (content_height <= camera_height) {
+        // Center in camera
+        adjusted.pos.y = WorldScalar(content.min().y + content_height / 2.0);
+    } else {
+        // Prevent image edge from crossing widget edges
+        const double margin_y = camera_height / adjusted.zoom / 2.0;
+        const double min_y = content.min().y + margin_y;
+        const double max_y = content.max().y - margin_y;
+        if (new_state.pos.y.value() < min_y) {
+            adjusted.pos.y = WorldScalar(min_y);
+        } else if (new_state.pos.y.value() > max_y) {
+            adjusted.pos.y = WorldScalar(max_y);
+        }
     }
 
     return adjusted;
 }
 
-CameraState Session::adjustToFillOrFit(const geom::IntBBox& content,
-                                       const CameraState& new_state)
+CameraState Session::adjustForInspectorWindow(const geom::IntBBox& content,
+                                              const CameraState& new_state)
 {
     CameraState adjusted = new_state;
+    adjusted.zoom = rt::clamp(new_state.zoom, m_min_zoom, m_max_zoom);
 
     const double content_width = content.width();
     const double content_height = content.height();
@@ -235,42 +247,43 @@ CameraState Session::adjustToFillOrFit(const geom::IntBBox& content,
 
     const double width = new_state.size.width.value() * new_state.device_scale;
     const double height = new_state.size.height.value() * new_state.device_scale;
-    const double fit_zoom = std::min(width / content_width, height / content_height);
+    const double fit_zoom = rt::min(width / content_width, height / content_height);
 
-    if (new_state.zoom < fit_zoom) {
-        adjusted.pos = WorldPoint{
-            WorldScalar(content.min().x + content_width / 2.0),
-            WorldScalar(content.min().y + content_height / 2.0)};
-        adjusted.zoom = rt::clamp(fit_zoom, m_min_zoom, m_max_zoom);
+    const bool limit11 = content_width <= width && content_height <= height;
+
+    if (adjusted.zoom < 1.0) {
+        if (limit11) {
+            adjusted.zoom = 1.0;
+        } else if (adjusted.zoom < fit_zoom) {
+            adjusted.zoom = rt::clamp(fit_zoom, m_min_zoom, m_max_zoom);
+        }
+    }
+
+    // Prevent image edge from crossing widget edges
+    if (content_width > (width / adjusted.zoom)) {
+        const double margin_x = width / adjusted.zoom / 2.0;
+        const double min_x = content.min().x + margin_x;
+        const double max_x = content.max().x - margin_x;
+        if (new_state.pos.x.value() < min_x) {
+            adjusted.pos.x = WorldScalar(min_x);
+        } else if (new_state.pos.x.value() > max_x) {
+            adjusted.pos.x = WorldScalar(max_x);
+        }
     } else {
-        adjusted.zoom = rt::clamp(new_state.zoom, m_min_zoom, m_max_zoom);
+        adjusted.pos.x = WorldScalar(content.min().x + content_width / 2.0);
+    }
 
-        // Prevent image edge from crossing widget edges
-        if (content_width > (width / adjusted.zoom)) {
-            const double margin_x = width / adjusted.zoom / 2.0;
-            const double min_x = content.min().x + margin_x;
-            const double max_x = content.max().x - margin_x;
-            if (new_state.pos.x.value() < min_x) {
-                adjusted.pos.x = WorldScalar(min_x);
-            } else if (new_state.pos.x.value() > max_x) {
-                adjusted.pos.x = WorldScalar(max_x);
-            }
-        } else {
-            adjusted.pos.x = WorldScalar(content.min().x + content_width / 2.0);
+    if (content_height > (height / adjusted.zoom)) {
+        const double margin_y = height / adjusted.zoom / 2.0;
+        const double min_y = content.min().y + margin_y;
+        const double max_y = content.max().y - margin_y;
+        if (new_state.pos.y.value() < min_y) {
+            adjusted.pos.y = WorldScalar(min_y);
+        } else if (new_state.pos.y.value() > max_y) {
+            adjusted.pos.y = WorldScalar(max_y);
         }
-
-        if (content_height > (height / adjusted.zoom)) {
-            const double margin_y = height / adjusted.zoom / 2.0;
-            const double min_y = content.min().y + margin_y;
-            const double max_y = content.max().y - margin_y;
-            if (new_state.pos.y.value() < min_y) {
-                adjusted.pos.y = WorldScalar(min_y);
-            } else if (new_state.pos.y.value() > max_y) {
-                adjusted.pos.y = WorldScalar(max_y);
-            }
-        } else {
-            adjusted.pos.y = WorldScalar(content.min().y + content_height / 2.0);
-        }
+    } else {
+        adjusted.pos.y = WorldScalar(content.min().y + content_height / 2.0);
     }
 
     return adjusted;
@@ -294,7 +307,7 @@ void Session::zoom11()
     setCameraZoom(1.0, preferredZoomMode());
 }
 
-void Session::zoomFit(WorldPoint top_left, WorldSize img_size, bool add_margin)
+void Session::zoomFit(WorldPoint top_left, WorldSize img_size, ZoomFitFlags flags)
 {
     WorldPoint center = top_left + (img_size.asVec()) / 2.0;
 
@@ -302,9 +315,9 @@ void Session::zoomFit(WorldPoint top_left, WorldSize img_size, bool add_margin)
     double bounds_x = m_camera.size.width.value();
     double bounds_y = m_camera.size.height.value();
 
-    if (add_margin) {
-        bounds_x = std::max(bounds_x - 20, bounds_x * 0.95);
-        bounds_y = std::max(bounds_y - 20, bounds_y * 0.95);
+    if (rt::any(flags & ZoomFitFlags::ADD_MARGIN)) {
+        bounds_x = rt::max(bounds_x - 20, bounds_x * 0.95);
+        bounds_y = rt::max(bounds_y - 20, bounds_y * 0.95);
     }
 
     // Convert to world space without zoom
@@ -313,7 +326,10 @@ void Session::zoomFit(WorldPoint top_left, WorldSize img_size, bool add_margin)
 
     double zoom_x = bounds_x / img_size.width.value();
     double zoom_y = bounds_y / img_size.height.value();
-    double zoom = std::min(zoom_x, zoom_y);
+    double zoom = rt::min(zoom_x, zoom_y);
+    if (zoom > 1.0 && rt::none(flags & ZoomFitFlags::ALLOW_ZOOM_IN)) {
+        zoom = 1.0;
+    }
 
     setCameraPosZoom(center, zoom);
 }
@@ -400,12 +416,12 @@ void CanvasModel::refreshCamera()
     m_session.refreshCamera(buildImageBBox());
 }
 
-void CanvasModel::zoomFit(bool add_margin)
+void CanvasModel::zoomFit(Session::ZoomFitFlags flags)
 {
     if (!m_image_model.imageSurface()) return;
 
     m_session.zoomFit(WorldPoint{}, static_cast<WorldSize>(m_image_model.fullSize()),
-                      add_margin);
+                      flags);
 }
 
 geom::IntBBox CanvasModel::buildImageBBox() const
