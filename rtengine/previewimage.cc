@@ -20,14 +20,10 @@
 #include "previewimage.h"
 
 #include "color.h"
-#include "iccstore.h"
-#include "iimage.h"
 #include "iimage.h"
 #include "procparams.h"
 #include "rawimagesource.h"
-#include "rtapp.h"
 #include "rtthumbnail.h"
-#include "settings.h"
 #include "utils.h"
 
 using namespace rtengine;
@@ -114,16 +110,7 @@ PreviewImage::PreviewImage (const Glib::ustring &fname, const Glib::ustring &ext
             ColorTemp wb = rawImage.getWB ();
             rawImage.getFullSize (fw, fh, TR_NONE);
             PreviewProps pp (0, 0, fw, fh, 1);
-            params.icm.inputProfile = "(embedded)";
-            {
-                Glib::ustring workingProfile =
-                    ICCStore::getInstance()->getDefaultMonitorProfileName();
-                if (workingProfile.size() > 0) {
-                    params.icm.workingProfile = workingProfile;
-                } else {
-                    params.icm.workingProfile = App::get().settings().srgb;
-                }
-            }
+            params.icm.inputProfile = Glib::ustring("(embedded)");
             params.raw.bayersensor.method = RAWParams::BayerSensor::getMethodString(RAWParams::BayerSensor::Method::FAST);
             params.raw.deadPixelFilter = false;
             params.raw.ca_autocorrect = false;

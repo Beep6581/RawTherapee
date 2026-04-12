@@ -44,7 +44,6 @@
 #include "rawimage.h"
 #include "rawimagesource.h"
 #include "rtengine.h"
-#include "rtapp.h"
 #include "rtthumbnail.h"
 #include "settings.h"
 #include "stdimagesource.h"
@@ -385,14 +384,6 @@ Thumbnail* Thumbnail::loadFromImage (const Glib::ustring& fname, int &w, int &h,
             params.wb.observer = wbObserver;
             params.icm.inputProfile = "(embedded)";
 
-            Glib::ustring workingProfile =
-                ICCStore::getInstance()->getDefaultMonitorProfileName();
-            if (workingProfile.size() > 0) {
-                params.icm.workingProfile = workingProfile;
-            } else {
-                params.icm.workingProfile = App::get().settings().srgb;
-            }
-
             std::unique_ptr<const rtengine::FramesMetaData> metadata(
                 rtengine::FramesMetaData::fromFile(fname));
 
@@ -442,9 +433,6 @@ Image8 *load_inspector_mode(const Glib::ustring &fname, eSensorType &sensorType,
     neutral.raw.bayersensor.method = RAWParams::BayerSensor::getMethodString(RAWParams::BayerSensor::Method::FAST);
     neutral.raw.xtranssensor.method = RAWParams::XTransSensor::getMethodString(RAWParams::XTransSensor::Method::FAST);
     neutral.icm.inputProfile = "(camera)";
-    // Force sRGB because the final processing step at end of function uses
-    // gamma_srgbclipped() which probably doesn't work for any other colorspace
-    neutral.icm.workingProfile = App::get().settings().srgb;
     float reddeha = 0.f;
     float greendeha = 0.f;
     float bluedeha = 0.f;
