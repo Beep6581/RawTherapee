@@ -750,6 +750,7 @@ struct LocallabParams {
         double colorhblue;
         double schromablue;
         std::vector<double> bluecurve;
+        double brighthres;
 
         Glib::ustring toneMethodcie;
         std::vector<double> ciecurve;

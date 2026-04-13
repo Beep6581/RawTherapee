@@ -1721,6 +1721,7 @@ LocallabParams::LocallabSpot::LocallabSpot() :
         1.0,
         1.0,
     },
+    brighthres(10.),
 
     toneMethodcie("one"),
     ciecurve{
@@ -2870,6 +2871,7 @@ bool LocallabParams::LocallabSpot::operator ==(const LocallabSpot& other) const
         && colorhblue == other.colorhblue
         && schromablue == other.schromablue
         && bluecurve == other.bluecurve
+        && brighthres == other.brighthres
 
         && toneMethodcie == other.toneMethodcie
         && ciecurve == other.ciecurve
@@ -4085,6 +4087,7 @@ void LoadUtil::ciecam()
     assignFromKeyfile(keyFile, "Locallab", "Colorhblue_" + index_str, spot.colorhblue, spotEdited.colorhblue);
     assignFromKeyfile(keyFile, "Locallab", "Schromablue_" + index_str, spot.schromablue, spotEdited.schromablue);
     assignFromKeyfile(keyFile, "Locallab", "BlueCurve_" + index_str, spot.bluecurve, spotEdited.bluecurve);
+    assignFromKeyfile(keyFile, "Locallab", "Brighthres_" + index_str, spot.brighthres, spotEdited.brighthres);
 
 
 
@@ -5121,6 +5124,7 @@ void SaveUtil::ciecam()
         saveToKeyfile(!pedited || spot_edited->colorhblue, "Locallab", "Colorhblue_" + index_str, spot.colorhblue, keyFile);
         saveToKeyfile(!pedited || spot_edited->schromablue, "Locallab", "Schromablue_" + index_str, spot.schromablue, keyFile);
         saveToKeyfile(!pedited || spot_edited->bluecurve, "Locallab", "BlueCurve_" + index_str, spot.bluecurve, keyFile);
+        saveToKeyfile(!pedited || spot_edited->brighthres, "Locallab", "Brighthres_" + index_str, spot.brighthres, keyFile);
 
         saveToKeyfile(!pedited || spot_edited->toneMethodcie, "Locallab", "ToneMethodcie_" + index_str, spot.toneMethodcie, keyFile);
         saveToKeyfile(!pedited || spot_edited->ciecurve, "Locallab", "Ciecurve_" + index_str, spot.ciecurve, keyFile);

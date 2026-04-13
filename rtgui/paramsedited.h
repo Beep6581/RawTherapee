@@ -1168,7 +1168,7 @@ public:
         bool colorhblue;
         bool schromablue;
         bool bluecurve;
-
+        bool brighthres;
         bool toneMethodcie;
         bool ciecurve;
         bool toneMethodcie2;

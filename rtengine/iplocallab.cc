@@ -4694,6 +4694,7 @@ void ImProcFunctions::ciecamloc_02float(struct local_params& lp, int sp, LabImag
         const float schrgreen = params->locallab.spots.at(sp).schromagreen;
         const float hueblue = params->locallab.spots.at(sp).colorhblue;
         const float schrblue = params->locallab.spots.at(sp).schromablue;
+        const float brighthres = params->locallab.spots.at(sp).brighthres;
 
 #if defined(__SSE2__) || defined(RT_SIMDE)
         int bufferLength = ((width + 3) / 4) * 4; // bufferLength has to be a multiple of 4
@@ -4870,7 +4871,9 @@ void ImProcFunctions::ciecamloc_02float(struct local_params& lp, int sp, LabImag
                                 jpred = true;
                                 float Qq = Qpro * coefq;
                                 float Qold = Qpro;
-                                Qq = redlocalcurve[Qq];
+                                if (Cpro  > brighthres) {
+                                    Qq = redlocalcurve[Qq];
+                                }
                                 Qq = Qq / coefq;
                                 Qpro = 0.2f * (Qq - Qold) + Qold;
                             }
@@ -4895,7 +4898,9 @@ void ImProcFunctions::ciecamloc_02float(struct local_params& lp, int sp, LabImag
                                 jpgreen = true;
                                 float Qq = Qpro * coefq;
                                 float Qold = Qpro;
-                                Qq = greenlocalcurve[Qq];
+                                if (Cpro  > brighthres) {
+                                    Qq = greenlocalcurve[Qq];
+                                }
                                 Qq = Qq / coefq;
                                 Qpro = 0.2f * (Qq - Qold) + Qold;
                             }
@@ -4920,7 +4925,9 @@ void ImProcFunctions::ciecamloc_02float(struct local_params& lp, int sp, LabImag
                                 jpblue = true;
                                 float Qq = Qpro * coefq;
                                 float Qold = Qpro;
-                                Qq = bluelocalcurve[Qq];
+                                if (Cpro  > brighthres) {
+                                    Qq = bluelocalcurve[Qq];
+                                }
                                 Qq = Qq / coefq;
                                 Qpro = 0.2f * (Qq - Qold) + Qold;
                             }

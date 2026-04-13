@@ -8475,6 +8475,8 @@ Locallabcie::Locallabcie():
     schromablue(Gtk::manage(new Adjuster(M("TP_COLORAPP_CHROMA_S_BLUE"), -40.0, 20.0, 0.1, 0.))),//saturation blue
     blueCurveEditorG(new CurveEditorGroup(App::get().mut_options().lastlocalCurvesDir, M ("TP_COLORAPP_BRIGHT_CUR_BLUE"), 1)),//brightness curve blue
     shapeblue(static_cast<DiagonalCurveEditor*>(blueCurveEditorG->addCurve(CT_Diagonal, ""))),
+    brighthres(Gtk::manage(new Adjuster(M("TP_COLORAPP_BRIGHTHRES"), 0., 100., 0.1, 10.))),//Threshold Brightness Curves
+
 
     czlightFrame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_CIELIGHTCONTFRA")))),
     czcolorFrame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_CIECOLORFRA")))),
@@ -8834,6 +8836,7 @@ Locallabcie::Locallabcie():
     Evlocallabgamgain = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_CIE_GAMGAIN");
     Evlocallabgampower = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_CIE_GAMPOWER");
     Evlocallabgamutw = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_CIE_GAMLIST");
+    Evlocallabbrighthres = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_CIE_RGB_BRIGHTHRES");
 
     set_orientation(Gtk::ORIENTATION_VERTICAL);
 
@@ -9574,6 +9577,7 @@ Locallabcie::Locallabcie():
     shapeblue->setBottomBarBgGradient(milestone);
     shapeblue->setLeftBarBgGradient(milestone);
     blueCurveEditorG->curveListComplete();
+    brighthres->setAdjusterListener(this);
 
     targabscie->setAdjusterListener(this);
 
@@ -9681,7 +9685,8 @@ Locallabcie::Locallabcie():
     cieP1rgbBox->pack_start(*colorhblue);
     cieP1rgbBox->pack_start(*schromablue);
     cieP1rgbBox->pack_start(*blueCurveEditorG);
-
+    cieP1rgbBox->pack_start (*Gtk::manage (new Gtk::Separator(Gtk::ORIENTATION_HORIZONTAL)), Gtk::PACK_EXPAND_WIDGET, 4);
+    cieP1rgbBox->pack_start(*brighthres);
     cie1redgreenblueFrame->add(*cieP1rgbBox);
     cieP1Box->pack_start(*cie1redgreenblueFrame);
 
@@ -10779,6 +10784,7 @@ void Locallabcie::read(const rtengine::procparams::ProcParams* pp, const ParamsE
         colorhblue->setValue(spot.colorhblue);
         schromablue->setValue(spot.schromablue);
         shapeblue->setCurve(spot.bluecurve);
+        brighthres->setValue(spot.brighthres);
 
         chromjzcie->setValue(spot.chromjzcie);
         saturjzcie->setValue(spot.saturjzcie);
@@ -11194,6 +11200,7 @@ void Locallabcie::write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedi
         spot.colorhblue = colorhblue->getValue();
         spot.schromablue = schromablue->getValue();
         spot.bluecurve = shapeblue->getCurve();
+        spot.brighthres = brighthres->getValue();
 
         spot.lightlcie = lightlcie->getValue();
         spot.lightjzcie = lightjzcie->getValue();
@@ -14332,6 +14339,13 @@ void Locallabcie::adjusterChanged(Adjuster* a, double newval)
             if (listener) {
                 listener->panelChanged(Evlocallabschromablue,
                                        schromablue->getTextValue() + spName);
+            }
+        }
+
+        if (a == brighthres) {
+            if (listener) {
+                listener->panelChanged(Evlocallabbrighthres,
+                                       brighthres->getTextValue() + spName);
             }
         }
 

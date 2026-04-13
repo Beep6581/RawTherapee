@@ -2135,6 +2135,7 @@ void ParamsEdited::initFrom(const std::vector<rtengine::procparams::ProcParams>&
                 locallab.spots.at(j).colorhblue = locallab.spots.at(j).colorhblue && pSpot.colorhblue == otherSpot.colorhblue;
                 locallab.spots.at(j).schromablue = locallab.spots.at(j).schromablue && pSpot.schromablue == otherSpot.schromablue;
                 locallab.spots.at(j).bluecurve = locallab.spots.at(j).bluecurve && pSpot.bluecurve == otherSpot.bluecurve;
+                locallab.spots.at(j).brighthres = locallab.spots.at(j).brighthres && pSpot.brighthres == otherSpot.brighthres;
 
 
                 locallab.spots.at(j).toneMethodcie = locallab.spots.at(j).toneMethodcie && pSpot.toneMethodcie == otherSpot.toneMethodcie;
@@ -6936,6 +6937,10 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
             toEdit.locallab.spots.at(i).bluecurve = mods.locallab.spots.at(i).bluecurve;
         }
 
+        if (locallab.spots.at(i).brighthres) {
+            toEdit.locallab.spots.at(i).brighthres = mods.locallab.spots.at(i).brighthres;
+        }
+
         if (locallab.spots.at(i).toneMethodcie) {
             toEdit.locallab.spots.at(i).toneMethodcie = mods.locallab.spots.at(i).toneMethodcie;
         }
@@ -9640,6 +9645,7 @@ LocallabParamsEdited::LocallabSpotEdited::LocallabSpotEdited(bool v) :
     colorhblue(v),
     schromablue(v),
     bluecurve(v),
+    brighthres(v),
     toneMethodcie(v),
     ciecurve(v),
     toneMethodcie2(v),
@@ -10508,7 +10514,7 @@ void LocallabParamsEdited::LocallabSpotEdited::set(bool v)
     colorhblue = v;
     schromablue = v;
     bluecurve = v;
-
+    brighthres = v;
     toneMethodcie = v;
     ciecurve = v;
     toneMethodcie2 = v;

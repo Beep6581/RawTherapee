@@ -1948,6 +1948,7 @@ private:
     Adjuster* const schromablue;
     CurveEditorGroup* const blueCurveEditorG;
     DiagonalCurveEditor* const shapeblue;
+    Adjuster* const brighthres;
 
     Gtk::Frame* const czlightFrame;
 //    Gtk::Frame* const czcontFrame;
@@ -2230,6 +2231,8 @@ private:
     rtengine::ProcEvent Evlocallabgampower;
     rtengine::ProcEvent Evlocallabgamutw;
     rtengine::ProcEvent Evlocallabblurciede;
+    rtengine::ProcEvent Evlocallabbrighthres;
+
 public:
     Locallabcie();
     ~Locallabcie();
