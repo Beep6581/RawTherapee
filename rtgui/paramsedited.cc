@@ -444,6 +444,7 @@ void ParamsEdited::set(bool v)
     colorappearance.colorhred     = v;
     colorappearance.colorhgreen     = v;
     colorappearance.colorhblue     = v;
+    colorappearance.brighthres     = v;
     colorappearance.rstprotection     = v;
     colorappearance.surrsource = v;
     colorappearance.gamut = v;
@@ -1224,6 +1225,7 @@ void ParamsEdited::initFrom(const std::vector<rtengine::procparams::ProcParams>&
         colorappearance.colorhred = colorappearance.colorhred && p.colorappearance.colorhred == other.colorappearance.colorhred;
         colorappearance.colorhgreen = colorappearance.colorhgreen && p.colorappearance.colorhgreen == other.colorappearance.colorhgreen;
         colorappearance.colorhblue = colorappearance.colorhblue && p.colorappearance.colorhblue == other.colorappearance.colorhblue;
+        colorappearance.brighthres = colorappearance.brighthres && p.colorappearance.brighthres == other.colorappearance.brighthres;
         colorappearance.surrsource = colorappearance.surrsource && p.colorappearance.surrsource == other.colorappearance.surrsource;
         colorappearance.gamut = colorappearance.gamut && p.colorappearance.gamut == other.colorappearance.gamut;
 //       colorappearance.badpix = colorappearance.badpix && p.colorappearance.badpix == other.colorappearance.badpix;
@@ -3644,6 +3646,10 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
 
     if (colorappearance.colorhblue) {
         toEdit.colorappearance.colorhblue = dontforceSet && options.baBehav[ADDSET_CAT_HUE_BLUE] ? toEdit.colorappearance.colorhblue + mods.colorappearance.colorhblue : mods.colorappearance.colorhblue;
+    }
+
+    if (colorappearance.brighthres) {
+        toEdit.colorappearance.brighthres = dontforceSet && options.baBehav[ADDSET_CAT_BRIGHTHRES] ? toEdit.colorappearance.brighthres + mods.colorappearance.brighthres : mods.colorappearance.brighthres;
     }
 
     if (colorappearance.rstprotection) {

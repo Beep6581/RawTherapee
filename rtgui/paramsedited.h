@@ -319,6 +319,7 @@ struct ColorAppearanceParamsEdited {
     bool colorhred;
     bool colorhgreen;
     bool colorhblue;
+    bool brighthres;
     bool rstprotection;
     bool surrsource;
     bool gamut;

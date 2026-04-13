@@ -760,6 +760,7 @@ void ImProcFunctions::ciecam_02float(CieImage* ncie, float adap, int pW, int pwb
         const float schrgreen = params->colorappearance.schromagreen;
         const float hueblue = params->colorappearance.colorhblue;
         const float schrblue = params->colorappearance.schromablue;
+        const float brighthres = params->colorappearance.brighthres;
 
         const float rstprotection = 100. - params->colorappearance.rstprotection;
 
@@ -1196,7 +1197,9 @@ void ImProcFunctions::ciecam_02float(CieImage* ncie, float adap, int pW, int pwb
                             float Qq = Qpro * coefQ;
                             float Qold = Qpro;
                             const Brightcurve& userColCurveBred = static_cast<const Brightcurve&>(customColCurvered);
-                            userColCurveBred.Apply(Qq);
+                            if (Cpro  > brighthres) {
+                                userColCurveBred.Apply(Qq);
+                            }
 
                             Qq = Qq / coefQ;
                             Qpro = 0.2f * (Qq - Qold) + Qold;
@@ -1224,7 +1227,9 @@ void ImProcFunctions::ciecam_02float(CieImage* ncie, float adap, int pW, int pwb
                             float Qq = Qpro * coefQ;
                             float Qold = Qpro;
                             const Brightcurve& userColCurveBgreen = static_cast<const Brightcurve&>(customColCurvegreen);
-                            userColCurveBgreen.Apply(Qq);
+                            if (Cpro  > brighthres) {
+                                userColCurveBgreen.Apply(Qq);
+                            }
 
                             Qq = Qq / coefQ;
                             Qpro = 0.2f * (Qq - Qold) + Qold;
@@ -1250,7 +1255,9 @@ void ImProcFunctions::ciecam_02float(CieImage* ncie, float adap, int pW, int pwb
                             float Qq = Qpro * coefQ;
                             float Qold = Qpro;
                             const Brightcurve& userColCurveBblue = static_cast<const Brightcurve&>(customColCurveblue);
-                            userColCurveBblue.Apply(Qq);
+                            if (Cpro  > brighthres) {
+                                userColCurveBblue.Apply(Qq);
+                            }
 
                             Qq = Qq / coefQ;
                             Qpro = 0.2f * (Qq - Qold) + Qold;
