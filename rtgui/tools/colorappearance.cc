@@ -1123,7 +1123,7 @@ void ColorAppearance::write (ProcParams* pp, ParamsEdited* pedited)
     pp->colorappearance.colorhred     = colorhred->getValue ();
     pp->colorappearance.colorhgreen   = colorhgreen->getValue ();
     pp->colorappearance.colorhblue    = colorhblue->getValue ();
-    pp->colorappearance.brighthres     = brighthres->getValue ();
+    pp->colorappearance.brighthres    = brighthres->getValue ();
     pp->colorappearance.rstprotection = rstprotection->getValue ();
     pp->colorappearance.gamut         = gamut->get_active();
 //  pp->colorappearance.badpix        = badpix->get_active();
