@@ -2133,7 +2133,7 @@ float generalized_loglogistic_sigmoid(float value,
                                       float film_power,
                                       float paper_power)
 {
-    const float clamped_value = rtengine::max(value, 0.0);
+    const float clamped_value = rtengine::max(value, 0.0f);
     // The following equation can be derived as a model for film + paper but it has a pole at 0
     // magnitude * powf(1.0f + paper_exp * powf(film_fog + value, -film_power), -paper_power);
     // Rewritten on a stable around zero form:
@@ -2238,7 +2238,7 @@ void  ImProcFunctions::sigmoid_main(float r,
                      paper_exposure, paper_power, middle_grey);
     float rgb[3] = {r, g, b};
     for (int i = 0; i < 3; i = i+1) {
-        rgb[i] = rtengine::max(rgb[i], 0);
+        rgb[i] = rtengine::max(rgb[i], 0.f);
     }
     for (int i = 0; i < 3; i = i+1) {
         rgb[i] = generalized_loglogistic_sigmoid(rgb[i], white_target,
