@@ -421,7 +421,7 @@ ColorAppearance::ColorAppearance () : FoldableToolPanel (this, TOOL_NAME, M ("TP
     //hue red blue green
     colorhred = Gtk::manage (new Adjuster (M ("TP_COLORAPP_HUE_RED"), -25.0, 25.0, 0.1, 0.));//hue red
     colorhred->set_tooltip_markup (M ("TP_COLORAPP_RGB_TOOLTIP"));//I changed the location of this tooltip, placing it only on the first slider, rather than on the entire frame pRGBFrame. This improves usability.
-    brighthres = Gtk::manage (new Adjuster (M ("TP_COLORAPP_BRIGHTHRES"), 0, 100.0, 0.1, 20.));//Threshold brightness curves
+    brighthres = Gtk::manage (new Adjuster (M ("TP_COLORAPP_BRIGHTHRES"), 0, 100.0, 0.1, 10.));//Threshold brightness curves
 
     pRGBVBox->pack_start (*colorhred);
     schromared = Gtk::manage (new Adjuster (M ("TP_COLORAPP_CHROMA_S_RED"), -40.0, 20.0, 0.1, 0.));//saturation red

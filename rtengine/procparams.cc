@@ -1719,7 +1719,7 @@ ColorAppearanceParams::ColorAppearanceParams() :
     colorhred(0.0),
     colorhgreen(0.0),
     colorhblue(0.0),
-    brighthres(20.0),
+    brighthres(10.0),
     rstprotection(0.0),
     surrsource(false),
     gamut(false),

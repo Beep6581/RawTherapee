@@ -1721,7 +1721,7 @@ LocallabParams::LocallabSpot::LocallabSpot() :
         1.0,
         1.0,
     },
-    brighthres(10.),
+    brighthres(5.),
 
     toneMethodcie("one"),
     ciecurve{

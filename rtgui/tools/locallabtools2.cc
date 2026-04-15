@@ -8475,7 +8475,7 @@ Locallabcie::Locallabcie():
     schromablue(Gtk::manage(new Adjuster(M("TP_COLORAPP_CHROMA_S_BLUE"), -40.0, 20.0, 0.1, 0.))),//saturation blue
     blueCurveEditorG(new CurveEditorGroup(App::get().mut_options().lastlocalCurvesDir, M ("TP_COLORAPP_BRIGHT_CUR_BLUE"), 1)),//brightness curve blue
     shapeblue(static_cast<DiagonalCurveEditor*>(blueCurveEditorG->addCurve(CT_Diagonal, ""))),
-    brighthres(Gtk::manage(new Adjuster(M("TP_COLORAPP_BRIGHTHRES"), 0., 100., 0.1, 10.))),//Threshold Brightness Curves
+    brighthres(Gtk::manage(new Adjuster(M("TP_COLORAPP_BRIGHTHRES"), 0., 100., 0.1, 5.))),//Threshold Brightness Curves
 
 
     czlightFrame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_CIELIGHTCONTFRA")))),
