@@ -760,7 +760,15 @@ void ImProcFunctions::ciecam_02float(CieImage* ncie, float adap, int pW, int pwb
         const float schrgreen = params->colorappearance.schromagreen;
         const float hueblue = params->colorappearance.colorhblue;
         const float schrblue = params->colorappearance.schromablue;
-        float brighthres = params->colorappearance.brighthres;
+        const float brighthres = params->colorappearance.brighthres;
+
+        // Creates a transition to mitigate the effects of "brightness" (red green blue) curves on artifacts
+        constexpr float klimb = 0.5f;//ponderation
+        const float limb = brighthres + klimb * (100.f - brighthres);//intermediate zone where the application of the curve is progressive
+        constexpr float mink = 0.01f;//minimum curve factor
+        const float kam = (1.f - mink) / (limb - brighthres);//linear interpolation
+        const float kbm = mink - kam * brighthres;//linear interpolation
+        constexpr float attenuation_hue = 0.555f;//Hue attenuation factor of 100/180. I find the changes too significant. It's just a convention.
 
         const float rstprotection = 100. - params->colorappearance.rstprotection;
 
@@ -1190,14 +1198,7 @@ void ImProcFunctions::ciecam_02float(CieImage* ncie, float adap, int pW, int pwb
                     //Red Green Blue variations
                     //I haven't addressed the transitions or spillovers during other hue modifications, to keep things simple... The effects are marginal and minor.
                     //It's possible to set a Hue equalizer for each color range (Red, Green, Blue), which is more purist but complicates the interface and usage.
-                    constexpr float attenuation_hue = 0.555f;//Hue attenuation factor of 100/180. I find the changes too significant. It's just a convention.
 
-                    // Creates a transition to mitigate the effects of "brightness" (red green blue) curves on artifacts
-                    constexpr float klimb = 0.5f;//ponderation
-                    const float limb = brighthres + klimb * (100.f - brighthres);//intermediate zone where the application of the curve is progressive
-                    constexpr float mink = 0.01f;//minimum curve factor
-                    const float kam = (1.f - mink) / (limb - brighthres);//linear interpolation
-                    const float kbm = mink - kam * brighthres;//linear interpolation
                     if((hpro > 340.f && hpro <= 360.f) || (hpro > 0.f && hpro <= 100.f)) {//Red CIECAM
                         if ((hasColCurvered)) {
                             jpred = true;
