@@ -702,6 +702,129 @@ public:
 
 };
 
+namespace
+{
+
+// Generate a Hald CLUT identity PNG at the given level and write it to a temp
+// file.  For level 12 the image is 1728×1728 pixels with 144 samples per
+// colour axis.  Returns the path of the temp file, or an empty string on
+// failure.
+Glib::ustring generateHaldIdentityPNG(int level)
+{
+    const int cube = level * level;
+    const int size = level * level * level;
+    const double den = static_cast<double>(cube - 1);
+
+    auto pixbuf = Gdk::Pixbuf::create(Gdk::COLORSPACE_RGB, false, 8, size, size);
+
+    if (!pixbuf) {
+        return {};
+    }
+
+    const int rowstride = pixbuf->get_rowstride();
+    guchar* const pixels = pixbuf->get_pixels();
+
+    for (int y = 0; y < size; y++) {
+        guchar* row = pixels + y * rowstride;
+
+        for (int x = 0; x < size; x++) {
+            const int idx   = y * size + x;
+            const int b_idx = idx / (cube * cube);
+            const int rem   = idx % (cube * cube);
+            const int g_idx = rem / cube;
+            const int r_idx = rem % cube;
+
+            guchar* p = row + x * 3;
+            p[0] = static_cast<guchar>(r_idx * 255.0 / den + 0.5);
+            p[1] = static_cast<guchar>(g_idx * 255.0 / den + 0.5);
+            p[2] = static_cast<guchar>(b_idx * 255.0 / den + 0.5);
+        }
+    }
+
+    const Glib::ustring tmpPath =
+        Glib::build_filename(Glib::get_tmp_dir(), "rt_hald_identity.png");
+
+    try {
+        pixbuf->save(tmpPath, "png");
+    } catch (const Glib::Exception&) {
+        return {};
+    }
+
+    return tmpPath;
+}
+
+// Returns a copy of src with all spatially-dependent and non-colorimetric
+// tools disabled, suitable for applying to a Hald CLUT identity image.
+// Kept: white balance, tone curves, exposure, Lab curves, RGB curves, HSV
+// equalizer, vibrance, colour toning, colour appearance, shadows/highlights,
+// tone equalizer, gamut compression, dehaze, soft-light, film simulation,
+// channel mixer, black & white, output colour management.
+// Disabled: sharpening, noise reduction, edge-preserving / Retinex tone
+// mapping, local contrast, all geometric transforms, lens/CA/vignette
+// corrections, gradient, spot removal, locallab, wavelet, dir-pyr, resize,
+// framing, film negative.
+ProcParams makeLUTProcParams(const ProcParams& src)
+{
+    ProcParams p = src;
+
+    // Sharpening (spatial)
+    p.sharpening.enabled   = false;
+    p.prsharpening.enabled = false;
+    p.pdsharpening.enabled = false;
+    p.sharpenEdge.enabled  = false;
+    p.sharpenMicro.enabled = false;
+
+    // Noise reduction (spatial)
+    p.defringe.enabled       = false;
+    p.impulseDenoise.enabled = false;
+    p.dirpyrDenoise.enabled  = false;
+
+    // Tone mapping (edge-aware / spatial)
+    p.epd.enabled     = false;
+    p.fattal.enabled  = false;
+    p.retinex.enabled = false;
+
+    // Local contrast (radius-based)
+    p.localContrast.enabled = false;
+
+    // Geometric transforms
+    p.crop.enabled      = false;
+    p.coarse.rotate     = 0;
+    p.coarse.hflip      = false;
+    p.coarse.vflip      = false;
+    p.rotate.degree     = 0.0;
+    p.distortion.amount = 0.0;
+    p.distortion.defish = false;
+    p.lensProf.lcMode   = LensProfParams::LcMode::NONE;
+    p.perspective.horizontal = 0.0;
+    p.perspective.vertical   = 0.0;
+    p.perspective.render     = false;
+
+    // Optical corrections (position-dependent)
+    p.cacorrection.red   = 0.0;
+    p.cacorrection.blue  = 0.0;
+    p.vignetting.amount  = 0;
+    p.gradient.enabled   = false;
+    p.pcvignette.enabled = false;
+
+    // Spot removal and local adjustments (position-dependent)
+    p.spot.enabled     = false;
+    p.locallab.enabled = false;
+
+    // Wavelet / directional pyramid (spatial)
+    p.wavelet.enabled         = false;
+    p.dirpyrequalizer.enabled = false;
+
+    // Resize, framing, film negative
+    p.resize.enabled       = false;
+    p.framing.enabled      = false;
+    p.filmNegative.enabled = false;
+
+    return p;
+}
+
+} // namespace
+
 EditorPanel::EditorPanel (FilePanel* filePanel)
     : catalogPane (nullptr), realized (false), tbBeforeLock (nullptr), iHistoryShow (nullptr), iHistoryHide (nullptr),
       iTopPanel_1_Show (nullptr), iTopPanel_1_Hide (nullptr), iRightPanel_1_Show (nullptr), iRightPanel_1_Hide (nullptr),
@@ -900,6 +1023,12 @@ EditorPanel::EditorPanel (FilePanel* filePanel)
     saveimgas->set_tooltip_markup (M ("MAIN_BUTTON_SAVE_TOOLTIP"));
     setExpandAlignProperties (saveimgas, false, false, Gtk::ALIGN_CENTER, Gtk::ALIGN_FILL);
 
+    saveLUTBtn = Gtk::manage (new Gtk::Button ());
+    saveLUTBtn->set_relief(Gtk::RELIEF_NONE);
+    saveLUTBtn->add (*Gtk::manage(new Gtk::Label("LUT")));
+    saveLUTBtn->set_tooltip_markup (M ("MAIN_BUTTON_SAVE_LUT_TOOLTIP"));
+    setExpandAlignProperties (saveLUTBtn, false, false, Gtk::ALIGN_CENTER, Gtk::ALIGN_FILL);
+
     Gtk::Image *queueButtonImage = Gtk::manage (new RTImage ("gears", Gtk::ICON_SIZE_LARGE_TOOLBAR));
     queueimg = Gtk::manage (new Gtk::Button ());
     queueimg->set_relief(Gtk::RELIEF_NONE);
@@ -988,9 +1117,12 @@ EditorPanel::EditorPanel (FilePanel* filePanel)
     }
 
     if (!App::get().isGimpPlugin()) {
-        iops->attach_next_to (*saveimgas, Gtk::POS_LEFT, 1, 1);
+        iops->attach_next_to (*saveLUTBtn, Gtk::POS_LEFT, 1, 1);
     }
 
+    if (!App::get().isGimpPlugin()) {
+        iops->attach_next_to (*saveimgas, Gtk::POS_LEFT, 1, 1);
+    }
 
     // Color management toolbar
     colorMgmtToolBar.reset (new ColorManagementToolbar (ipc));
@@ -1083,6 +1215,7 @@ EditorPanel::EditorPanel (FilePanel* filePanel)
     hidehp->signal_toggled().connect ( sigc::mem_fun (*this, &EditorPanel::hideHistoryActivated) );
     tbRightPanel_1->signal_toggled().connect ( sigc::mem_fun (*this, &EditorPanel::tbRightPanel_1_toggled) );
     saveimgas->signal_pressed().connect ( sigc::mem_fun (*this, &EditorPanel::saveAsPressed) );
+    saveLUTBtn->signal_pressed().connect ( sigc::mem_fun (*this, &EditorPanel::saveLUTPressed) );
     queueimg->signal_pressed().connect ( sigc::mem_fun (*this, &EditorPanel::queueImgPressed) );
     send_to_external->signal_changed().connect(sigc::mem_fun(*this, &EditorPanel::sendToExternalChanged));
     send_to_external->signal_pressed().connect(sigc::mem_fun(*this, &EditorPanel::sendToExternalPressed));
@@ -2908,3 +3041,144 @@ void EditorPanel::defaultMonitorProfileChanged (const Glib::ustring &profile_nam
     colorMgmtToolBar->defaultMonitorProfileChanged (profile_name, auto_monitor_profile);
 }
 
+void EditorPanel::saveLUTPressed ()
+{
+    if (!ipc || !openThm) {
+        return;
+    }
+
+    auto* toplevel = static_cast<Gtk::Window*>(get_toplevel());
+
+    // Ask the user where to save the LUT PNG.
+    // Use SELECT_FOLDER so the native portal never hides the filename entry.
+    Gtk::FileChooserDialog dialog(*toplevel,
+        M("MAIN_BUTTON_SAVE_LUT_DIALOG_TITLE"),
+        Gtk::FILE_CHOOSER_ACTION_SELECT_FOLDER);
+    dialog.add_button(M("GENERAL_CANCEL"), Gtk::RESPONSE_CANCEL);
+    dialog.add_button(M("GENERAL_OK"),     Gtk::RESPONSE_OK);
+
+    auto& opts = App::get().mut_options();
+    if (Glib::file_test(opts.lastSaveAsPath, Glib::FILE_TEST_IS_DIR)) {
+        dialog.set_current_folder(opts.lastSaveAsPath);
+    }
+
+    // Filename entry embedded in the dialog as an extra widget.
+    Gtk::Box* extraBox = Gtk::manage(new Gtk::Box(Gtk::ORIENTATION_HORIZONTAL, 6));
+    Gtk::Label* fnLabel = Gtk::manage(new Gtk::Label(M("MAIN_BUTTON_SAVE_LUT_FILENAME") + ":"));
+    Gtk::Entry* fnEntry = Gtk::manage(new Gtk::Entry());
+    fnEntry->set_text("lut");
+    fnEntry->set_width_chars(32);
+    extraBox->pack_start(*fnLabel, false, false, 0);
+    extraBox->pack_start(*fnEntry, true, true, 0);
+    extraBox->show_all();
+    dialog.set_extra_widget(*extraBox);
+
+    if (dialog.run() != Gtk::RESPONSE_OK) {
+        return;
+    }
+
+    Glib::ustring lutName = fnEntry->get_text();
+    if (lutName.empty()) {
+        lutName = "lut";
+    }
+    // Strip .png if the user typed it — we always append it ourselves.
+    if (lutName.size() > 4 && lutName.substr(lutName.size() - 4) == ".png") {
+        lutName = lutName.substr(0, lutName.size() - 4);
+    }
+
+    const Glib::ustring destDir = dialog.get_filename();
+    Glib::ustring destPath = Glib::build_filename(destDir, lutName + ".png");
+    opts.lastSaveAsPath = destDir;
+
+    // Ask before overwriting an existing file.
+    if (Glib::file_test(destPath, Glib::FILE_TEST_EXISTS)) {
+        Gtk::MessageDialog confirm(*toplevel,
+            escapeHtmlChars(destPath) + "\n" + M("MAIN_MSG_ALREADYEXISTS") + " " + M("MAIN_MSG_QOVERWRITE"),
+            true, Gtk::MESSAGE_QUESTION, Gtk::BUTTONS_YES_NO, true);
+        if (confirm.run() != Gtk::RESPONSE_YES) {
+            return;
+        }
+    }
+
+    // Generate a Hald 12 identity PNG to a temp file.
+    const Glib::ustring tmpPath = generateHaldIdentityPNG(12);
+    if (tmpPath.empty()) {
+        Gtk::MessageDialog msgd(*toplevel,
+            "<b>Could not generate Hald identity image.</b>",
+            true, Gtk::MESSAGE_ERROR, Gtk::BUTTONS_OK, true);
+        msgd.run();
+        return;
+    }
+
+    // Build a colorimetric-only set of processing parameters.
+    ProcParams pparams;
+    ipc->getParams(&pparams);
+    const ProcParams lutParams = makeLUTProcParams(pparams);
+
+    // Process the identity image asynchronously.
+    rtengine::ProcessingJob* job =
+        rtengine::ProcessingJob::create(tmpPath, false, lutParams);
+
+    ProgressConnector<rtengine::IImagefloat*>* ld =
+        new ProgressConnector<rtengine::IImagefloat*>();
+    ld->startFunc(
+        sigc::bind(sigc::ptr_fun(&rtengine::processImage),
+                   job, err, parent->getProgressListener(), false),
+        sigc::bind(sigc::mem_fun(*this, &EditorPanel::idle_saveLUTImage),
+                   ld, destPath, tmpPath));
+
+    saveLUTBtn->set_sensitive(false);
+}
+
+bool EditorPanel::idle_saveLUTImage (ProgressConnector<rtengine::IImagefloat*>* pc,
+                                      Glib::ustring destPath, Glib::ustring tmpPath)
+{
+    rtengine::IImagefloat* img = pc->returnValue();
+    delete pc;
+
+    // Remove the temporary identity file regardless of outcome.
+    try {
+        Gio::File::create_for_path(tmpPath)->remove();
+    } catch (...) {}
+
+    if (img) {
+        // Save the processed image as 8-bit PNG asynchronously.
+        ProgressConnector<int>* ld = new ProgressConnector<int>();
+        img->setSaveProgressListener(parent->getProgressListener());
+        ld->startFunc(
+            sigc::bind(sigc::mem_fun(img, &rtengine::IImagefloat::saveAsPNG),
+                       destPath, 8),
+            sigc::bind(sigc::mem_fun(*this, &EditorPanel::idle_saveLUTSaved),
+                       ld, img, destPath));
+    } else {
+        auto* toplevel = static_cast<Gtk::Window*>(get_toplevel());
+        Gtk::MessageDialog msgd(*toplevel,
+            "<b>Error processing Hald identity image.</b>",
+            true, Gtk::MESSAGE_ERROR, Gtk::BUTTONS_OK, true);
+        msgd.run();
+        saveLUTBtn->set_sensitive(true);
+    }
+
+    return false;
+}
+
+bool EditorPanel::idle_saveLUTSaved (ProgressConnector<int>* pc,
+                                      rtengine::IImagefloat* img, Glib::ustring destPath)
+{
+    const int result = pc->returnValue();
+    delete pc;
+    delete img;
+
+    if (result != 0) {
+        auto* toplevel = static_cast<Gtk::Window*>(get_toplevel());
+        Glib::ustring msg =
+            Glib::ustring("<b>") + M("MAIN_MSG_CANNOTSAVE") + ": "
+            + escapeHtmlChars(destPath) + "</b>";
+        Gtk::MessageDialog msgd(*toplevel, msg, true,
+            Gtk::MESSAGE_ERROR, Gtk::BUTTONS_OK, true);
+        msgd.run();
+    }
+
+    saveLUTBtn->set_sensitive(true);
+    return false;
+}
