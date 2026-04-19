@@ -24,6 +24,7 @@
 #include "rtengine/array2D.h"
 #include "rtengine/clutstore.h"
 #include "rtengine/imagesource.h"
+#include "rtengine/utils.h"
 #include "rtengine/iccstore.h"
 #include "batchqueue.h"
 #include "batchqueueentry.h"
@@ -3002,46 +3003,54 @@ void EditorPanel::saveLUTPressed ()
 
     auto* toplevel = static_cast<Gtk::Window*>(get_toplevel());
 
-    // Ask the user where to save the LUT PNG.
-    // Use SELECT_FOLDER so the native portal never hides the filename entry.
-    Gtk::FileChooserDialog dialog(*toplevel,
-        M("MAIN_BUTTON_SAVE_LUT_DIALOG_TITLE"),
-        Gtk::FILE_CHOOSER_ACTION_SELECT_FOLDER);
-    dialog.add_button(M("GENERAL_CANCEL"), Gtk::RESPONSE_CANCEL);
-    dialog.add_button(M("GENERAL_OK"),     Gtk::RESPONSE_OK);
+    // Build the dialog using the same pattern as SaveAsDialog.
+    Gtk::Dialog dialog(M("MAIN_BUTTON_SAVE_LUT_DIALOG_TITLE"), *toplevel);
+
+    Gtk::FileChooserWidget* fchooser = Gtk::manage(
+        new Gtk::FileChooserWidget(Gtk::FILE_CHOOSER_ACTION_SAVE));
 
     auto& opts = App::get().mut_options();
     if (Glib::file_test(opts.lastSaveAsPath, Glib::FILE_TEST_IS_DIR)) {
-        dialog.set_current_folder(opts.lastSaveAsPath);
+        fchooser->set_current_folder(opts.lastSaveAsPath);
     }
+    fchooser->set_current_name("lut.png");
 
-    // Filename entry embedded in the dialog as an extra widget.
-    Gtk::Box* extraBox = Gtk::manage(new Gtk::Box(Gtk::ORIENTATION_HORIZONTAL, 6));
-    Gtk::Label* fnLabel = Gtk::manage(new Gtk::Label(M("MAIN_BUTTON_SAVE_LUT_FILENAME") + ":"));
-    Gtk::Entry* fnEntry = Gtk::manage(new Gtk::Entry());
-    fnEntry->set_text("lut");
-    fnEntry->set_width_chars(32);
-    extraBox->pack_start(*fnLabel, false, false, 0);
-    extraBox->pack_start(*fnEntry, true, true, 0);
-    extraBox->show_all();
-    dialog.set_extra_widget(*extraBox);
+    auto filter_png = Gtk::FileFilter::create();
+    filter_png->set_name("PNG");
+    filter_png->add_pattern("*.png");
+    filter_png->add_pattern("*.PNG");
+    fchooser->set_filter(filter_png);
+
+    fchooser->signal_file_activated().connect([&dialog]() {
+        dialog.response(Gtk::RESPONSE_OK);
+    });
+
+    Gtk::Button* ok     = Gtk::manage(new Gtk::Button(M("GENERAL_OK")));
+    Gtk::Button* cancel = Gtk::manage(new Gtk::Button(M("GENERAL_CANCEL")));
+    ok->signal_clicked().connect([&dialog]()     { dialog.response(Gtk::RESPONSE_OK); });
+    cancel->signal_clicked().connect([&dialog]() { dialog.response(Gtk::RESPONSE_CANCEL); });
+
+    dialog.get_content_area()->pack_start(*fchooser);
+    dialog.get_action_area()->pack_end(*ok,     Gtk::PACK_SHRINK, 4);
+    dialog.get_action_area()->pack_end(*cancel, Gtk::PACK_SHRINK, 4);
+    dialog.show_all_children();
 
     if (dialog.run() != Gtk::RESPONSE_OK) {
         return;
     }
 
-    Glib::ustring lutName = fnEntry->get_text();
-    if (lutName.empty()) {
-        lutName = "lut";
-    }
-    // Strip .png if the user typed it — we always append it ourselves.
-    if (lutName.size() > 4 && lutName.substr(lutName.size() - 4) == ".png") {
-        lutName = lutName.substr(0, lutName.size() - 4);
+    Glib::ustring destPath = fchooser->get_filename();
+    if (destPath.empty()) {
+        destPath = Glib::build_filename(
+            fchooser->get_current_folder(), fchooser->get_current_name());
     }
 
-    const Glib::ustring destDir = dialog.get_filename();
-    Glib::ustring destPath = Glib::build_filename(destDir, lutName + ".png");
-    opts.lastSaveAsPath = destDir;
+    // Append .png if the user omitted it.
+    if (rtengine::getFileExtension(destPath).lowercase() != "png") {
+        destPath += ".png";
+    }
+
+    opts.lastSaveAsPath = Glib::path_get_dirname(destPath);
 
     // Ask before overwriting an existing file.
     if (Glib::file_test(destPath, Glib::FILE_TEST_EXISTS)) {
