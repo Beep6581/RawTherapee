@@ -1344,6 +1344,20 @@ Camera constants:
         "masked_areas" : [ 38, 20, 4052, 138 ]
     },
 
+    { // Quality C: masked areas only
+        "make_model": "Canon EOS R50 V",
+        "masked_areas": [ 4, 4, 4056, 140, 4, 140, 36, 6188 ]
+        // Raw crop undetermined because of pre-applied crop when using LibRaw.
+        // Top right of image starts at (144, 40).
+    },
+
+    { // Quality C: basic white level only
+        "make_model": "Canon EOS R100",
+        // White level from one image with some clipped highlights.
+        "ranges": { "white": 13416 }
+        // Raw crop undetermined because of pre-applied crop when using LibRaw.
+    },
+
     { // Quality C, CHDK DNGs, raw frame correction
         "make_model": "Canon PowerShot A3100 IS",
         "raw_crop": [ 24, 12, 4032, 3024 ] // full size 4036X3026
@@ -1462,6 +1476,13 @@ Camera constants:
     { // Quality C
         "make_model": "Canon PowerShot SX220 HS",
         "raw_crop": [ 92, 16, 4072, 3042 ] // Cut 2pix at lower border because of too high values in blue channel
+    },
+
+    { // Quality C: masked areas only
+        "make_model": "Canon PowerShot V1",
+        "masked_areas": [ 21, 4, 3940, 140, 21, 140, 76, 5924 ]
+        // Raw crop undetermined because of pre-applied crop when using LibRaw.
+        // Top right of image starts at (144, 80).
     },
 
     { // Quality C
@@ -1607,6 +1628,12 @@ Camera constants:
         "ranges": { "white": 16100 }
     },
 
+    { // Quality C: Raw crop only
+        "make_model": "Fujifilm X-M5",
+        // Top margin unverified due to pre-applied crop when using LibRaw.
+        "raw_crop": [ 0, 6, 6252, 4175 ]
+    },
+
     { // Quality B
         "make_model": "FUJIFILM X-PRO1",
         "dcraw_matrix": [ 10413,-3996,-993,-3721,11640,2361,-733,1540,6011 ], // DNG_v9.4 D65
@@ -1662,6 +1689,12 @@ Camera constants:
             {"frame": [6384, 3348], "crop": [624, 0, 5004, 3347]}, // Sports finder mode.
             {"frame": [0, 0], "crop": [0, 5, 6252, 4176]}
         ]
+    },
+
+    { // Quality C: raw crop only
+        "make_model": "Fujifilm X-T30 III",
+        // Top margin unverified due to pre-applied crop when using LibRaw.
+        "raw_crop": [ 0, 6, 6252, 4175 ]
     },
 
     { // Quality B
@@ -2756,6 +2789,16 @@ Camera constants:
         }
     },
 
+    { // Quality C: raw crop only
+        "make_model": "Panasonic DC-S1M2",
+        "raw_crop": [ 0, 2, 6008, 4006 ]
+    },
+
+    { // Quality C: raw crop only
+        "make_model": "Panasonic DC-S1M2ES",
+        "raw_crop": [ 0, 2, 6016, 4014 ]
+    },
+
     { // Quality X, issue #5204. No white frames available.
         "make_model": [ "Panasonic DC-S1R" ],
         "dcraw_matrix": [ 11822, -5321, -1249, -5958, 15114, 766, -614, 1264, 7043 ], // ColorMatrix2 using illuminant D65 from Adobe DNG Converter 11.4
@@ -2768,6 +2811,11 @@ Camera constants:
         }
     },
 
+    { // Quality C: raw crop only
+        "make_model": "Panasonic DC-S1RM2",
+        "raw_crop": [ 0, 2, 0, 5430 ]
+    },
+
     { // Quality C
         "make_model": "Panasonic DC-S1H",
         "dcraw_matrix": [ 9397, -3719, -805, -5425, 13326, 2309, -972, 1715, 6034 ] // DNG
@@ -2776,6 +2824,11 @@ Camera constants:
     { // Quality C, possibly the same as DC-S1. We have a custom DCP which is better.
         "make_model": "Panasonic DC-S5",
         "dcraw_matrix": [ 9744, -3905, -779, -4899, 12807, 2324, -798, 1630, 5827 ] // DNG
+    },
+
+    { // Quality C: raw crop only
+        "make_model": "Panasonic DC-S9",
+        "raw_crop": [ 0, 2, 0, 4014 ]
     },
 
     { // Quality B, per ISO info missing
@@ -3049,6 +3102,20 @@ Camera constants:
         "dcraw_matrix": [ 8161, -2947, -739, -4811, 12668, 2389, -437, 1229, 6524 ] // DNG v13.2
     },
 
+    { // Quality C: raw crops only
+        "make_model": "Sony ILCE-1M2",
+        "raw_crop" : [
+            { "frame" : [ 8672, 5784 ], "crop": [ 0, 0, 8664, 5784 ] }, // Uncompressed
+            { "frame" : [ 8704, 6144 ], "crop": [ 0, 0, 8664, 5784 ] }, // Lossless
+            { "frame" : [ 6144, 4096 ], "crop": [ 0, 0, 5640, 3768 ] }, // APS-C lossless
+            { "frame" : [ 5664, 3768 ], "crop": [ 0, 0, 5640, 3768 ] }, // APS-C uncompressed
+            // The following are for M and S resolution demosaiced images.
+            // They have no effect yet, as raw crops currently only apply to mosaiced images.
+            { "frame" : [ 5632, 4096 ], "crop": [ 0, 0, 5628, 3756 ] }, // Lossless comp M
+            { "frame" : [ 4608, 3072 ], "crop": [ 0, 0, 4332, 2892 ] } // FF/APS-C lossless comp S
+        ]
+    },
+
     { // Quality A, correction for frame width
         "make_model": [ "Sony ILCE-3000", "Sony ILCE-3500", "Sony ILCE-5000", "Sony ILCE-QX1" ],
         "dcraw_matrix": [ 5991,-1456,-455,-4764,12135,2980,-707,1424,6701 ], // DNG v13.2
@@ -3136,6 +3203,18 @@ Camera constants:
         // PDAF lines pattern detected from image provided by elite4jonny at https://github.com/Beep6581/RawTherapee/issues/6801.
         "pdaf_pattern" : [ 0,24,36,60,84,120,132,156,192,204,240,252,276,300,324,360,372,396,420,444,480,492,504,540,564,576,612,636,660,696,720,732,756,780,804,840 ],
         "pdaf_offset" : 31
+    },
+
+    { // Quality C: raw crop only
+        "make_model": "Sony DSC-RX1RM3",
+        "raw_crop" : [
+            // Crop for uncompressed and lossy compressed images not here due to pre-applied crop by LibRaw.
+            { "frame" : [ 9728, 6656 ], "crop": [ 0, 0, 9568, 6376 ] }, // Lossless comp L
+            // The following are for M and S resolution demosaiced images.
+            // They have no effect yet, as raw crops currently only apply to mosaiced images.
+            { "frame" : [ 7168, 4608 ], "crop": [ 0, 0, 6684, 4460 ] }, // Lossless comp M
+            { "frame" : [ 5120, 3584 ], "crop": [ 0, 0, 4784, 3188 ] } // Lossless comp S
+        ]
     },
 
     { // Quality C, color matrix copied from ILCE-9, LongExposures 2-3sec only
