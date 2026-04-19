@@ -111,11 +111,16 @@ Preferences::Preferences(RTWindow *rtwindow)
     Gtk::Button* about  = Gtk::manage(new Gtk::Button(M("GENERAL_ABOUT")));
     Gtk::Button* ok     = Gtk::manage(new Gtk::Button(M("GENERAL_OK")));
     Gtk::Button* cancel = Gtk::manage(new Gtk::Button(M("GENERAL_CANCEL")));
+    Gtk::Button* resetPrefsButton =
+        Gtk::manage(new Gtk::Button(M("PREFERENCES_RESET_TO_DEFAULT")));
 
     about->signal_clicked().connect(sigc::mem_fun(*this, &Preferences::aboutPressed));
     ok->signal_clicked().connect(sigc::mem_fun(*this, &Preferences::okPressed));
     cancel->signal_clicked().connect(sigc::mem_fun(*this, &Preferences::cancelPressed));
+    resetPrefsButton->signal_clicked().connect(
+        sigc::mem_fun(*this, &Preferences::onResetToDefaultClicked));
 
+    get_action_area()->pack_start(*resetPrefsButton);
     get_action_area()->pack_start(*about);
     get_action_area()->pack_end(*ok);
     get_action_area()->pack_end(*cancel);
@@ -1448,6 +1453,7 @@ Gtk::Widget* Preferences::getGeneralPanel()
 
 
     vbGeneral->attach_next_to (*fdg, *fclip, Gtk::POS_BOTTOM, 2, 1);
+
     langAutoDetectConn = ckbLangAutoDetect->signal_toggled().connect(sigc::mem_fun(*this, &Preferences::langAutoDetectToggled));
     tconn = themeCBT->signal_changed().connect ( sigc::mem_fun (*this, &Preferences::themeChanged) );
     fconn = mainFontFB->signal_font_set().connect ( sigc::mem_fun (*this, &Preferences::fontChanged) );
@@ -2904,4 +2910,29 @@ void Preferences::behAddAllPressed()
 void Preferences::behSetAllPressed()
 {
     behAddSetAllPressed(false);
+}
+
+void Preferences::onResetToDefaultClicked()
+{
+    Gtk::MessageDialog dialog(
+        *this,
+        M("PREFERENCES_RESET_TO_DEFAULT_CONFIRM_PROMPT"),
+        false,
+        Gtk::MESSAGE_QUESTION,
+        Gtk::BUTTONS_YES_NO,
+        true
+    );
+    dialog.set_title(M("PREFERENCES_RESET_TO_DEFAULT"));
+
+    int result = dialog.run();
+
+    if (result == Gtk::RESPONSE_YES) {
+        Options defaults;
+        moptions.copyFrom(&defaults);
+        fillPreferences();
+        storePreferences();
+
+        App::get().mut_options().copyFrom(&moptions);
+        App::get().mut_options().save();
+    }
 }
