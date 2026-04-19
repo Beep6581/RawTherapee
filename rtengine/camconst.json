@@ -1478,8 +1478,9 @@ Camera constants:
         "raw_crop": [ 92, 16, 4072, 3042 ] // Cut 2pix at lower border because of too high values in blue channel
     },
 
-    { // Quality C: masked areas only
+    { // Quality C: masked areas and basic white level only
         "make_model": "Canon PowerShot V1",
+        "ranges" : { "white" : 15800 }, // From ART
         "masked_areas": [ 21, 4, 3940, 140, 21, 140, 76, 5924 ]
         // Raw crop undetermined because of pre-applied crop when using LibRaw.
         // Top right of image starts at (144, 80).
