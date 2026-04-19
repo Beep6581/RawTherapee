@@ -1880,7 +1880,6 @@ MAIN_BUTTON_NAVSYNC_TOOLTIP;Synchronize the File Browser or Filmstrip with the E
 MAIN_BUTTON_PREFERENCES;Preferences
 MAIN_BUTTON_PUTTOQUEUE_TOOLTIP;Put current image to processing queue.\nShortcut: <b>Ctrl+b</b>
 MAIN_BUTTON_SAVE_LUT_DIALOG_TITLE;Export Hald CLUT LUT
-MAIN_BUTTON_SAVE_LUT_FILENAME;Filename
 MAIN_BUTTON_SAVE_LUT_TOOLTIP;Export a Hald CLUT PNG LUT.\nApplies colorimetric adjustments (white balance, curves, color grading)\nto a Hald 12 identity image and saves the result as PNG.
 MAIN_BUTTON_SAVE_TOOLTIP;Save current image.\nShortcut: <b>Ctrl+s</b>\nSave current profile (.pp3).\nShortcut: <b>Ctrl+Shift+s</b>
 MAIN_BUTTON_SENDTOEDITOR;Edit image in external editor
