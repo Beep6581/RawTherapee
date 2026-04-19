@@ -707,19 +707,32 @@ public:
 namespace
 {
 
-// Returns a copy of src with all spatially-dependent and non-colorimetric
-// tools disabled, suitable for applying to a Hald CLUT identity image.
-// Kept: white balance, tone curves, exposure, Lab curves, RGB curves, HSV
-// equalizer, vibrance, colour toning, colour appearance, shadows/highlights,
-// tone equalizer, gamut compression, dehaze, soft-light, film simulation,
-// channel mixer, black & white, output colour management.
+// Returns a copy of src suitable for processing a Hald CLUT identity image.
+//
+// The generated LUT operates on display-referred (already tone-curved) values,
+// matching how RT applies its own film simulation CLUTs: gamma sRGB is applied
+// before the CLUT lookup, inverse gamma after.  This means the tone curve must
+// NOT be included — it is applied by the camera (or host application) before
+// the LUT, and including it here would double the effect.
+//
+// Kept: Lab curves, RGB curves, HSV equalizer, vibrance, colour toning,
+//       colour appearance, shadows/highlights, tone equalizer, gamut
+//       compression, dehaze, soft-light, film simulation, channel mixer,
+//       black & white, output colour management.
+// Reset to neutral: tone curve, exposure, white balance.
 // Disabled: sharpening, noise reduction, edge-preserving / Retinex tone
-// mapping, local contrast, all geometric transforms, lens/CA/vignette
-// corrections, gradient, spot removal, locallab, wavelet, dir-pyr, resize,
-// framing, film negative.
-ProcParams makeLUTProcParams(const ProcParams& src)
+//           mapping, local contrast, all geometric transforms, lens/CA/vignette
+//           corrections, gradient, spot removal, locallab, wavelet, dir-pyr,
+//           resize, framing, film negative.
+ProcParams makeLUTProcParams(const ProcParams& src, bool includeToneCurve)
 {
     ProcParams p = src;
+
+    // Tone curve and exposure — applied before the CLUT in RT's pipeline.
+    // Reset to neutral unless the user explicitly wants to bake it into the LUT.
+    if (!includeToneCurve) {
+        p.toneCurve = ToneCurveParams{};
+    }
 
     // Sharpening (spatial)
     p.sharpening.enabled   = false;
@@ -3025,12 +3038,17 @@ void EditorPanel::saveLUTPressed ()
         dialog.response(Gtk::RESPONSE_OK);
     });
 
+    Gtk::CheckButton* toneCurveCb = Gtk::manage(
+        new Gtk::CheckButton(M("MAIN_BUTTON_SAVE_LUT_INCLUDE_TONECURVE")));
+    toneCurveCb->set_active(false);
+
     Gtk::Button* ok     = Gtk::manage(new Gtk::Button(M("GENERAL_OK")));
     Gtk::Button* cancel = Gtk::manage(new Gtk::Button(M("GENERAL_CANCEL")));
     ok->signal_clicked().connect([&dialog]()     { dialog.response(Gtk::RESPONSE_OK); });
     cancel->signal_clicked().connect([&dialog]() { dialog.response(Gtk::RESPONSE_CANCEL); });
 
     dialog.get_content_area()->pack_start(*fchooser);
+    dialog.get_content_area()->pack_start(*toneCurveCb, Gtk::PACK_SHRINK, 4);
     dialog.get_action_area()->pack_end(*ok,     Gtk::PACK_SHRINK, 4);
     dialog.get_action_area()->pack_end(*cancel, Gtk::PACK_SHRINK, 4);
     dialog.show_all_children();
@@ -3072,12 +3090,12 @@ void EditorPanel::saveLUTPressed ()
         return;
     }
 
-    // Build a colorimetric-only set of processing parameters.
+    // Build the processing parameters, optionally including the tone curve.
     ProcParams pparams;
     ipc->getParams(&pparams);
-    const ProcParams lutParams = makeLUTProcParams(pparams);
+    const ProcParams lutParams = makeLUTProcParams(pparams, toneCurveCb->get_active());
 
-    // Process the identity image asynchronously.
+    // Process the identity image asynchronously; route progress to this panel.
     rtengine::ProcessingJob* job =
         rtengine::ProcessingJob::create(tmpPath, false, lutParams);
 
@@ -3085,7 +3103,7 @@ void EditorPanel::saveLUTPressed ()
         new ProgressConnector<rtengine::IImagefloat*>();
     ld->startFunc(
         sigc::bind(sigc::ptr_fun(&rtengine::processImage),
-                   job, err, parent->getProgressListener(), false),
+                   job, err, static_cast<rtengine::ProgressListener*>(this), false),
         sigc::bind(sigc::mem_fun(*this, &EditorPanel::idle_saveLUTImage),
                    ld, destPath, tmpPath));
 
@@ -3104,7 +3122,9 @@ bool EditorPanel::idle_saveLUTImage (ProgressConnector<rtengine::IImagefloat*>* 
     } catch (...) {}
 
     if (img) {
-        // Save the processed image as 8-bit PNG asynchronously.
+        setProgressStr(M("GENERAL_SAVE"));
+        setProgress(0.9f);
+
         ProgressConnector<int>* ld = new ProgressConnector<int>();
         img->setSaveProgressListener(parent->getProgressListener());
         ld->startFunc(
@@ -3118,6 +3138,7 @@ bool EditorPanel::idle_saveLUTImage (ProgressConnector<rtengine::IImagefloat*>* 
             "<b>Error processing Hald identity image.</b>",
             true, Gtk::MESSAGE_ERROR, Gtk::BUTTONS_OK, true);
         msgd.run();
+        setProgressState(false);
         saveLUTBtn->set_sensitive(true);
     }
 
@@ -3141,6 +3162,9 @@ bool EditorPanel::idle_saveLUTSaved (ProgressConnector<int>* pc,
         msgd.run();
     }
 
+    parent->setProgressStr("");
+    parent->setProgress(0.);
+    setProgressState(false);
     saveLUTBtn->set_sensitive(true);
     return false;
 }
