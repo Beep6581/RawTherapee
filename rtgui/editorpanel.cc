@@ -22,6 +22,7 @@
 #include <iostream>
 
 #include "rtengine/array2D.h"
+#include "rtengine/clutstore.h"
 #include "rtengine/imagesource.h"
 #include "rtengine/iccstore.h"
 #include "batchqueue.h"
@@ -704,54 +705,6 @@ public:
 
 namespace
 {
-
-// Generate a Hald CLUT identity PNG at the given level and write it to a temp
-// file.  For level 12 the image is 1728×1728 pixels with 144 samples per
-// colour axis.  Returns the path of the temp file, or an empty string on
-// failure.
-Glib::ustring generateHaldIdentityPNG(int level)
-{
-    const int cube = level * level;
-    const int size = level * level * level;
-    const double den = static_cast<double>(cube - 1);
-
-    auto pixbuf = Gdk::Pixbuf::create(Gdk::COLORSPACE_RGB, false, 8, size, size);
-
-    if (!pixbuf) {
-        return {};
-    }
-
-    const int rowstride = pixbuf->get_rowstride();
-    guchar* const pixels = pixbuf->get_pixels();
-
-    for (int y = 0; y < size; y++) {
-        guchar* row = pixels + y * rowstride;
-
-        for (int x = 0; x < size; x++) {
-            const int idx   = y * size + x;
-            const int b_idx = idx / (cube * cube);
-            const int rem   = idx % (cube * cube);
-            const int g_idx = rem / cube;
-            const int r_idx = rem % cube;
-
-            guchar* p = row + x * 3;
-            p[0] = static_cast<guchar>(r_idx * 255.0 / den + 0.5);
-            p[1] = static_cast<guchar>(g_idx * 255.0 / den + 0.5);
-            p[2] = static_cast<guchar>(b_idx * 255.0 / den + 0.5);
-        }
-    }
-
-    const Glib::ustring tmpPath =
-        Glib::build_filename(Glib::get_tmp_dir(), "rt_hald_identity.png");
-
-    try {
-        pixbuf->save(tmpPath, "png");
-    } catch (const Glib::Exception&) {
-        return {};
-    }
-
-    return tmpPath;
-}
 
 // Returns a copy of src with all spatially-dependent and non-colorimetric
 // tools disabled, suitable for applying to a Hald CLUT identity image.
@@ -3101,7 +3054,7 @@ void EditorPanel::saveLUTPressed ()
     }
 
     // Generate a Hald 12 identity PNG to a temp file.
-    const Glib::ustring tmpPath = generateHaldIdentityPNG(12);
+    const Glib::ustring tmpPath = rtengine::HaldCLUT::createIdentityTempFile(12);
     if (tmpPath.empty()) {
         Gtk::MessageDialog msgd(*toplevel,
             "<b>Could not generate Hald identity image.</b>",
