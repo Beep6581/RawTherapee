@@ -2167,7 +2167,7 @@ Updated on Sun Apr 19 11:55:45 2026:
         "dcraw_matrix" : [16212, -8423, -1583, -4336, 12583, 1937, -195, 726, 6199]
     },
     {
-        "make_model" : "FUJIFILM GFX 100 II",
+        "make_model" : ["FUJIFILM GFX 100 II", "FUJIFILM GFX100 II"],
         "dcraw_matrix" : [12806, -5779, -1110, -3546, 11507, 2318, -177, 995, 5715]
     },
     {
@@ -2179,7 +2179,7 @@ Updated on Sun Apr 19 11:55:45 2026:
         "dcraw_matrix" : [16212, -8423, -1583, -4336, 12583, 1937, -195, 726, 6199]
     },
     {
-        "make_model" : "FUJIFILM GFX 100RF",
+        "make_model" : ["FUJIFILM GFX 100RF", "FUJIFILM GFX100RF"],
         "dcraw_matrix" : [12806, -5779, -1110, -3546, 11507, 2318, -177, 995, 5715]
     },
     {
@@ -2199,7 +2199,7 @@ Updated on Sun Apr 19 11:55:45 2026:
         "dcraw_matrix" : [11756, -4754, -874, -3056, 11045, 2305, -381, 1457, 6006]
     },
     {
-        "make_model" : "FUJIFILM GFX 50S II",
+        "make_model" : ["FUJIFILM GFX 50S II", "FUJIFILM GFX50S II"],
         "dcraw_matrix" : [11756, -4754, -874, -3056, 11045, 2305, -381, 1457, 6006]
     },
     {
@@ -4311,7 +4311,7 @@ Updated on Sun Apr 19 11:55:45 2026:
         "dcraw_matrix" : [8695, -2558, -648, -5015, 12711, 2575, -1279, 2215, 7514]
     },
     {
-        "make_model" : "NIKON Z 5 2",
+        "make_model" : ["NIKON Z 5 2", "NIKON Z5_2"],
         "dcraw_matrix" : [13133, -5542, -1280, -4325, 12543, 1971, 34, 792, 7662]
     },
     {
@@ -4655,7 +4655,7 @@ Updated on Sun Apr 19 11:55:45 2026:
         "dcraw_matrix" : [9090, -3590, -756, -3252, 11396, 2109, -318, 1059, 5606]
     },
     {
-        "make_model" : "OM DIGITAL SOLUTIONS OM-3",
+        "make_model" : ["OM DIGITAL SOLUTIONS OM-3", "Olympus OM-3"],
         "dcraw_matrix" : [9090, -3590, -756, -3252, 11396, 2109, -318, 1059, 5606]
     },
     {
@@ -4663,7 +4663,7 @@ Updated on Sun Apr 19 11:55:45 2026:
         "dcraw_matrix" : [11896, -5110, -1076, -3181, 11378, 2048, -519, 1224, 5165]
     },
     {
-        "make_model" : "OM DIGITAL SOLUTIONS OM-5 MARK II",
+        "make_model" : ["OM DIGITAL SOLUTIONS OM-5 MARK II", "Olympus OM-5MarkII"],
         "dcraw_matrix" : [12008, -5230, -1123, -2265, 10496, 2046, 69, 734, 4938]
     },
     {
