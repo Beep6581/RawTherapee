@@ -698,7 +698,7 @@ void LibRaw::identify()
   else if (!memcmp(head + 4, "ftypcrx ", 8))
   {
     int err;
-    unsigned long long szAtomList;
+    UINT64 szAtomList;
     short nesting = -1;
     short nTrack = -1;
     short TrackType;
@@ -706,7 +706,7 @@ void LibRaw::identify()
     strcpy(make, "Canon");
 
     szAtomList = ifp->size();
-    err = parseCR3(0ULL, szAtomList, nesting, AtomNameStack, nTrack, TrackType);
+    err = parseCR3(0ULL, szAtomList, nesting, AtomNameStack, nTrack, TrackType,szAtomList);
     libraw_internal_data.unpacker_data.crx_track_count = nTrack;
     if ((err == 0 || err == -14) &&
         nTrack >= 0) // no error, or too deep nesting

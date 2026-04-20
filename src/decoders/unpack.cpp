@@ -321,7 +321,7 @@ int LibRaw::unpack(void)
         // x3f foveon decoder and DNG float
         // Do nothing! Decoder will allocate data internally
       }
-      if (decoder_info.decoder_flags & LIBRAW_DECODER_SINAR4SHOT)
+      else if (decoder_info.decoder_flags & LIBRAW_DECODER_SINAR4SHOT)
       {
         if (imgdata.rawparams.shot_select) // single image extract
         {

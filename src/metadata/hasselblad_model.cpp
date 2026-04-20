@@ -77,6 +77,12 @@ void LibRaw::process_Hassy_Lens (int LensMount) {
     ilm.LensID += 2ULL;
 }
 
+static void limited_strcat(char * src, const char *append, size_t maxsize)
+{
+	if (strlen(src) + strlen(append) < maxsize) // Silently ignore on overflow
+		strcat(src, append);
+}
+
 void LibRaw::parseHassyModel() {
 
 static const char *Hasselblad_Ctrl[] = { // manually selectable options only
@@ -291,16 +297,16 @@ static const char *Hasselblad_SensorEnclosures[] = {
     if (!strncmp(imHassy.CaptureSequenceInitiator, "CFV II 50C", 10)) {
       imHassy.SensorSubCode = 2;
       add_MP_toName = 0;
-      strcat(imHassy.Sensor, " II");
+      limited_strcat(imHassy.Sensor, " II", sizeof(imHassy.Sensor));
       strcpy(model, "CFV II 50C");
-      strcat(normalized_model, "-II");
+	  limited_strcat(normalized_model, "-II",sizeof(normalized_model));
     } else if (!strncmp(imHassy.CaptureSequenceInitiator, "X1D", 3)) {
       imHassy.SensorSubCode = 2;
       add_MP_toName = 0;
-      strcat(imHassy.Sensor, " II");
+	  limited_strcat(imHassy.Sensor, " II", sizeof(imHassy.Sensor));
       if (!strncasecmp(imHassy.CaptureSequenceInitiator, "X1D II 50C", 10)) {
         strcpy(model, "X1D II 50C");
-        strcat(normalized_model, "-II");
+		limited_strcat(normalized_model, "-II", sizeof(normalized_model));
       } else {
         strcpy(model, "X1D-50c");
       }
@@ -423,9 +429,9 @@ static const char *Hasselblad_SensorEnclosures[] = {
         !strncmp(imHassy.CaptureSequenceInitiator, "CFV II", 6)) {
       imHassy.SensorSubCode = 2;
       add_MP_toName = 0;
-      strcat(imHassy.Sensor, " II");
+	  limited_strcat(imHassy.Sensor, " II", sizeof(imHassy.Sensor));
       if (strstr(imHassy.CaptureSequenceInitiator, " II ")) {
-          strcat(normalized_model, "-II");
+		  limited_strcat(normalized_model, "-II", sizeof(normalized_model));
         if (!strncasecmp(imHassy.CaptureSequenceInitiator, "X1D II 50C", 10)) {
           strcpy(model, "X1D II 50C");
         } else if (!strncasecmp(imHassy.CaptureSequenceInitiator, "CFV II 50C", 10)) {
@@ -491,7 +497,7 @@ static const char *Hasselblad_SensorEnclosures[] = {
 
 
   if (model[0] && add_MP_toName)
-    strcat(model, imHassy.Sensor);
+	  limited_strcat(model, imHassy.Sensor,sizeof(model));
   if (imHassy.Sensor[0] == '-')
     memmove(imHassy.Sensor, imHassy.Sensor+1, strlen(imHassy.Sensor));
 
@@ -510,7 +516,7 @@ static const char *Hasselblad_SensorEnclosures[] = {
   ps = HassyRawFormat_idx2HR(c);
   if ((c == LIBRAW_HF_3FR) ||
       (c == LIBRAW_HF_FFF))
-    strcat(normalized_model, ps);
+	  limited_strcat(normalized_model, ps,sizeof(normalized_model));
 
   if (((imHassy.CaptureSequenceInitiator[0] == 'H') &&
        (imHassy.CaptureSequenceInitiator[1] != 'a')) ||

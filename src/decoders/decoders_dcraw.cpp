@@ -560,6 +560,7 @@ void LibRaw::lossless_jpeg_load_raw()
   if (jh.clrs == 4 && jwide >= raw_width * 2)
     jhigh *= 2;
 
+  
   try
   {
     for (jrow = 0; jrow < jh.high; jrow++)
@@ -588,7 +589,7 @@ void LibRaw::lossless_jpeg_load_raw()
           col += (row--, raw_width);
         if (row > raw_height)
           throw LIBRAW_EXCEPTION_IO_CORRUPT;
-        if ((unsigned)row < raw_height)
+        if (((unsigned)row < raw_height) && ((unsigned)col < raw_width))
           RAW(row, col) = val;
         if (++col >= raw_width)
           col = (row++, 0);
