@@ -263,9 +263,24 @@ void LibRaw::sony_ycbcr_load_raw()
 	  if(toffsets[i]+tlengths[i] > fsize)
         throw LIBRAW_EXCEPTION_IO_CORRUPT;
   }
+
+  INT64 tilesize = INT64(UD.tile_width) * INT64(UD.tile_length) * 3LL;
+
+  if (tilesize > 2048LL * 1024LL * 1024LL) // Sony tiles are 512x512, so >2Gb decoded tile is definitely broken file.
+	  throw LIBRAW_EXCEPTION_IO_CORRUPT;
+
+  if (tilesize > INT64(imgdata.rawparams.max_raw_memory_mb) * INT64(1024 * 1024)) // check against memory size limit
+	  throw LIBRAW_EXCEPTION_ALLOC;
+
   unsigned maxcomprlen = *std::max_element(tlengths.begin(), tlengths.end());
 
-  std::vector<uint8_t> iobuffer(maxcomprlen+1); // Extra byte to ensure LJPEG byte stream marker search is ok
+  if (INT64(maxcomprlen) > 1024LL * 1024LL * 1024LL) // Sony tiles are 512x512, so >1Gb compressed tile is definitely broken file.
+    throw LIBRAW_EXCEPTION_IO_CORRUPT;
+
+  if (INT64(maxcomprlen) > INT64(imgdata.rawparams.max_raw_memory_mb) * INT64(1024 * 1024)) // check against memory size limit
+    throw LIBRAW_EXCEPTION_ALLOC;
+
+  std::vector<uint8_t> iobuffer(maxcomprlen+4u); // Extra four bytes to ensure LJPEG byte stream marker search is ok and bit buffer fast lookups are also ok
   std::vector<uint16_t> tilebuffer;
   for (int tile = 0; tile < tiles; tile++)
   {

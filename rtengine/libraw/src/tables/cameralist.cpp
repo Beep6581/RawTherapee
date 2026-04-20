@@ -218,7 +218,7 @@ static const char *static_camera_list[] = {
 	"Canon EOS M6 Mark II",
 	"Canon EOS M10",
 	"Canon EOS M50 / Kiss M",
-	"Canon EOS M50 Mark II",
+	"Canon EOS M50 Mark II / Kiss M2",
 	"Canon EOS M100",
 	"Canon EOS M200",
 	"Canon EOS-1D C",

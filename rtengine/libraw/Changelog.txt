@@ -1,3 +1,38 @@
+2026-04-06  Alex Tutubalin <lexa@lexa.ru>
+  LibRaw 0.22.1 Release
+  This is bugfix-only release with these commits included:
+
+  * Limit strcat space in hassy model manipulation
+  * Version increment; shlib increment: internal ABI has changed
+  * check panasonic enc8 tile width against image width
+  * CR3 parser: zero all buffers before fread
+  * skip memory allocation checks for OWN_ALLOC decoders
+  * DNG SDK glue: check for memory limits
+  * raw2image()/dcraw_process() - check for int16 source data present
+  * Check for correct bayer pattern, pass incorect ones to vng_interpolate
+  * parse_rollei: zero input string before fgets
+  * Nikon padded/12bit: no need to calculate padded row size before final raw_width adjustment
+  * TALOS-2026-2364: Fix for data size calculation integer overflow in float/deflated DNG loader; Check for read results
+  * Fix for TALOS-2026-2363: avoid integer overflow in allocation size calculation. Also: check for EOF in read loop
+  * X3F decoder: implemented hard single allocation limit via LIBRAW_X3F_ALLOC_LIMIT_MB define; 
+    allocation size calculation converted to 64 bit arithm; fix for TALOS-2026-2359
+  * Fix for TALOS-2026-2358
+  * Fix for TALOS-2026-2331
+  * Fix for TALOS-2026-2330
+  * Sony YCC decoder: check tile size; add +3 bytes to input buffer to avoid possible overrun in huffman decoder
+  * FP DNG data limit: perform calculations in 64 bit
+  * Add extra huff_coeff item to handle huff_index==17 with known (zero) value, not externally provided tag value
+  * use %lld format for timestamp parse/print where appropriate
+  * nikon coolscan loader: check for EOF
+  * Initialize olympus lensID bits
+  * CR3 parser: all file offsets are unsigned/64bit; check current offset against file size
+  * Add Canon EOS Kiss M2 to camera list
+  * Check real color count against filters; do not pass really 4-color images to fbdd or advanced demosaic
+  * Use LIBRAW_EXCEPTION instead of own internal in losslessjpeg.h
+  * zero input string to avoid compare random stack garbage with tag names
+  * Check for eof in Pentax tag search loop
+  * Fuji decoder: initialize allocated buffers
+
 2025-12-25  Alex Tutubalin <lexa@lexa.ru>
 
   LibRaw 0.22 Release (Changelog relative to 0.21-release)

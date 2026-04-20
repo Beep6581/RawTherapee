@@ -20,6 +20,7 @@ it under the terms of the one of two licenses as you choose:
 #pragma  once
 #include <stdint.h>
 #include <vector>
+#include "libraw_cxx_defs.h"
 
 struct BitPump // generic bit source
 {
@@ -37,12 +38,6 @@ struct BitPump // generic bit source
 
 struct ByteStreamBE // Jpeg is always big endian
 {
-  enum Exceptions
-  {
-    OK = 0,
-    EndOfBuffer = 1
-  };
-
   uint8_t *buffer;
   unsigned size, pos;
   ByteStreamBE(uint8_t *b, unsigned s) : buffer(b), size(s), pos(0) {}
@@ -52,7 +47,7 @@ struct ByteStreamBE // Jpeg is always big endian
   uint8_t get_u8()
   {
     if (pos >= size)
-      throw EndOfBuffer;
+      throw LIBRAW_EXCEPTION_IO_CORRUPT;
     uint8_t ret = buffer[pos];
     pos++;
     return ret;
@@ -60,7 +55,7 @@ struct ByteStreamBE // Jpeg is always big endian
   uint16_t get_u16()
   {
     if (pos + 2 > size)
-      throw EndOfBuffer;
+      throw LIBRAW_EXCEPTION_IO_CORRUPT;
     uint8_t r1 = buffer[pos];
     uint8_t r2 = buffer[pos + 1];
     pos += 2;

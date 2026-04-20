@@ -337,9 +337,9 @@ ctmd_fin:
 }
 #undef track
 
-int LibRaw::parseCR3(INT64 oAtomList,
-                     INT64 szAtomList, short &nesting,
-                     char *AtomNameStack, short &nTrack, short &TrackType)
+int LibRaw::parseCR3(UINT64 oAtomList,
+                     UINT64 szAtomList, short &nesting,
+                     char *AtomNameStack, short &nTrack, short &TrackType, UINT64 filesz)
 {
   /*
   Atom starts with 4 bytes for Atom size and 4 bytes containing Atom name
@@ -452,10 +452,10 @@ int LibRaw::parseCR3(INT64 oAtomList,
 
   ushort tL;                        // Atom length represented in 4 or 8 bytes
   char nmAtom[5];                   // Atom name
-  INT64 oAtom, szAtom; // Atom offset and Atom size
-  INT64 oAtomContent,
+  UINT64 oAtom, szAtom; // Atom offset and Atom size
+  UINT64 oAtomContent,
       szAtomContent; // offset and size of Atom content
-  INT64 lHdr;
+  UINT64 lHdr;
 
   char UIID[16];
   uchar CMP1[85];
@@ -471,7 +471,7 @@ int LibRaw::parseCR3(INT64 oAtomList,
     return -14; // too deep nesting
   short s_order = order;
 
-  while ((oAtom + 8LL) <= (oAtomList + szAtomList))
+  while (((oAtom + 8ULL) <= (oAtomList + szAtomList)) && ((oAtom+8ULL) < filesz))
   {
     lHdr = 0ULL;
     err = 0;
@@ -479,10 +479,12 @@ int LibRaw::parseCR3(INT64 oAtomList,
     fseek(ifp, oAtom, SEEK_SET);
 	if (nesting == 0)
 	{
+	  memset(thdr, 0, 4);
       fread(thdr, 1, 4, ifp);
       fseek(ifp, oAtom, SEEK_SET);
 	}
-    szAtom = get4();
+	uint32_t sz = get4();
+    szAtom = sz;
     FORC4 nmAtom[c] = AtomNameStack[nesting * 4 + c] = fgetc(ifp);
     AtomNameStack[(nesting + 1) * 4] = '\0';
     tL = 4;
@@ -528,8 +530,16 @@ int LibRaw::parseCR3(INT64 oAtomList,
         goto fin;
       }
       tL = 8;
-      szAtom = (((unsigned long long)get4()) << 32) | get4();
-      oAtomContent = oAtom + 16ULL;
+	  uint64_t upper = get4();
+	  uint64_t lower = get4();
+      szAtom = ((upper & 0x7fffffff) << 32) | lower; // This will limit atom size to 2^63-1. In practice, you can live with this
+      if (szAtom < 16ULL)
+      {
+        err = -3;
+        goto fin;
+      }
+
+	  oAtomContent = oAtom + 16ULL;
       szAtomContent = szAtom - 16ULL;
     }
     else
@@ -537,11 +547,17 @@ int LibRaw::parseCR3(INT64 oAtomList,
       oAtomContent = oAtom + 8ULL;
       szAtomContent = szAtom - 8ULL;
     }
+	if (szAtom < 8ULL)
+	{
+      err = -3;
+      goto fin;
+	}
 
 	if (!strcmp(AtomNameStack, "uuid")) // Top level uuid
 	{
 		INT64 tt = ftell(ifp);
 		lHdr = 16ULL;
+		memset(UIID, 0, lHdr);
 		fread(UIID, 1, lHdr, ifp);
 		if (!memcmp(UIID, UUID_XMP, 16) && szAtom > 24LL && szAtom < 1024000LL)
 		{
@@ -553,6 +569,7 @@ int LibRaw::parseCR3(INT64 oAtomList,
 		{
 			// read next 48 bytes, check for 'PRVW'
 			unsigned char xdata[32];
+			memset(xdata, 0, sizeof(xdata));
 			fread(xdata, 32, 1, ifp);	
 			if (!memcmp(xdata + 12, "PRVW", 4))
 			{
@@ -596,6 +613,7 @@ int LibRaw::parseCR3(INT64 oAtomList,
     if (!strcmp(AtomNameStack, "moovuuid"))
     {
       lHdr = 16ULL;
+	  memset(UIID, 0, lHdr);
       fread(UIID, 1, lHdr, ifp);
       if (!strncmp(UIID, UIID_Canon, lHdr))
       {
@@ -625,6 +643,7 @@ int LibRaw::parseCR3(INT64 oAtomList,
 	else if (!strcmp(AtomNameStack, "moovuuidTHMB") && szAtom > 24)
 	{
 		unsigned char xdata[16];
+		memset(xdata, 0, sizeof(xdata));
 		fread(xdata, 16, 1, ifp);
 		INT64 xoffset = ftell(ifp);
 		if (imgdata.thumbs_list.thumbcount < LIBRAW_THUMBNAIL_MAXCOUNT)
@@ -749,8 +768,11 @@ int LibRaw::parseCR3(INT64 oAtomList,
     else if (!strcmp(AtomNameStack, "moovtrakmdiaminfstblstsdCRAWCMP1"))
     {
       INT64 read_size = szAtomContent > 85LL ? 85 : INT64(szAtomContent);
-      if (szAtomContent >= 40)
-        fread(CMP1, 1, size_t(read_size), ifp);
+	  if (szAtomContent >= 40)
+	  {
+		  memset(CMP1, 0, read_size);
+		  fread(CMP1, 1, size_t(read_size), ifp);
+	  }
       else
       {
         err = -7;
@@ -762,6 +784,7 @@ int LibRaw::parseCR3(INT64 oAtomList,
 
     else if (!strcmp(AtomNameStack, "moovtrakmdiaminfstblstsdCRAWCDI1")) {
       if (szAtomContent >= 60) {
+		memset(CDI1, 0, 60);
         fread(CDI1, 1, 60, ifp);
         if (!strncmp((char *)CDI1+8, "IAD1", 4) && (sgetn(8, CDI1) == 0x38)) {
           // sensor area at CDI1+12, 4 16-bit values
@@ -880,7 +903,7 @@ int LibRaw::parseCR3(INT64 oAtomList,
     if (AtomType == 1)
     {
       err = parseCR3(oAtomContent + lHdr, szAtomContent - lHdr, nesting,
-                     AtomNameStack, nTrack, TrackType);
+                     AtomNameStack, nTrack, TrackType,filesz);
       if (err)
         goto fin;
     }
