@@ -3084,7 +3084,7 @@ void EditorPanel::saveLUTPressed ()
     const Glib::ustring tmpPath = rtengine::HaldCLUT::createIdentityTempFile(12);
     if (tmpPath.empty()) {
         Gtk::MessageDialog msgd(*toplevel,
-            "<b>Could not generate Hald identity image.</b>",
+            "<b>" + M("MAIN_BUTTON_SAVE_LUT_ERR_IDENTITY") + "</b>",
             true, Gtk::MESSAGE_ERROR, Gtk::BUTTONS_OK, true);
         msgd.run();
         return;
@@ -3135,7 +3135,7 @@ bool EditorPanel::idle_saveLUTImage (ProgressConnector<rtengine::IImagefloat*>* 
     } else {
         auto* toplevel = static_cast<Gtk::Window*>(get_toplevel());
         Gtk::MessageDialog msgd(*toplevel,
-            "<b>Error processing Hald identity image.</b>",
+            "<b>" + M("MAIN_BUTTON_SAVE_LUT_ERR_PROCESSING") + "</b>",
             true, Gtk::MESSAGE_ERROR, Gtk::BUTTONS_OK, true);
         msgd.run();
         setProgressState(false);
