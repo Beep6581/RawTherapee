@@ -711,28 +711,26 @@ namespace
 //
 // The generated LUT operates on display-referred (already tone-curved) values,
 // matching how RT applies its own film simulation CLUTs: gamma sRGB is applied
-// before the CLUT lookup, inverse gamma after.  This means the tone curve must
-// NOT be included — it is applied by the camera (or host application) before
-// the LUT, and including it here would double the effect.
+// before the CLUT lookup, inverse gamma after.  The tone curve is always reset
+// to neutral: it runs earlier in RT's pipeline, so including it here would
+// apply it twice and produce incorrect results.
 //
 // Kept: Lab curves, RGB curves, HSV equalizer, vibrance, colour toning,
 //       colour appearance, shadows/highlights, tone equalizer, gamut
 //       compression, dehaze, soft-light, film simulation, channel mixer,
 //       black & white, output colour management.
-// Reset to neutral: tone curve, exposure, white balance.
+// Reset to neutral: tone curve.
 // Disabled: sharpening, noise reduction, edge-preserving / Retinex tone
 //           mapping, local contrast, all geometric transforms, lens/CA/vignette
 //           corrections, gradient, spot removal, locallab, wavelet, dir-pyr,
 //           resize, framing, film negative.
-ProcParams makeLUTProcParams(const ProcParams& src, bool includeToneCurve)
+ProcParams makeLUTProcParams(const ProcParams& src)
 {
     ProcParams p = src;
 
-    // Tone curve and exposure — applied before the CLUT in RT's pipeline.
-    // Reset to neutral unless the user explicitly wants to bake it into the LUT.
-    if (!includeToneCurve) {
-        p.toneCurve = ToneCurveParams{};
-    }
+    // Tone curve — applied before the CLUT in RT's pipeline; including it
+    // here would double the effect and break the LUT.
+    p.toneCurve = ToneCurveParams{};
 
     // Sharpening (spatial)
     p.sharpening.enabled   = false;
@@ -3038,17 +3036,12 @@ void EditorPanel::saveLUTPressed ()
         dialog.response(Gtk::RESPONSE_OK);
     });
 
-    Gtk::CheckButton* toneCurveCb = Gtk::manage(
-        new Gtk::CheckButton(M("MAIN_BUTTON_SAVE_LUT_INCLUDE_TONECURVE")));
-    toneCurveCb->set_active(false);
-
     Gtk::Button* ok     = Gtk::manage(new Gtk::Button(M("GENERAL_OK")));
     Gtk::Button* cancel = Gtk::manage(new Gtk::Button(M("GENERAL_CANCEL")));
     ok->signal_clicked().connect([&dialog]()     { dialog.response(Gtk::RESPONSE_OK); });
     cancel->signal_clicked().connect([&dialog]() { dialog.response(Gtk::RESPONSE_CANCEL); });
 
     dialog.get_content_area()->pack_start(*fchooser);
-    dialog.get_content_area()->pack_start(*toneCurveCb, Gtk::PACK_SHRINK, 4);
     dialog.get_action_area()->pack_end(*ok,     Gtk::PACK_SHRINK, 4);
     dialog.get_action_area()->pack_end(*cancel, Gtk::PACK_SHRINK, 4);
     dialog.show_all_children();
@@ -3090,10 +3083,10 @@ void EditorPanel::saveLUTPressed ()
         return;
     }
 
-    // Build the processing parameters, optionally including the tone curve.
+    // Build the processing parameters for the LUT (tone curve always excluded).
     ProcParams pparams;
     ipc->getParams(&pparams);
-    const ProcParams lutParams = makeLUTProcParams(pparams, toneCurveCb->get_active());
+    const ProcParams lutParams = makeLUTProcParams(pparams);
 
     // Process the identity image asynchronously; route progress to this panel.
     rtengine::ProcessingJob* job =
