@@ -378,7 +378,8 @@ public:
     void unsetTweakOperator (rtengine::TweakOperator *tOperator) override;
 
     // FilmNegProvider interface
-    void imageTypeChanged (bool isRaw, bool isBayer, bool isXtrans, bool isMono = false, bool isGainMapSupported = false) override;
+    // bool issharE, issharMicro of little used or obsolete functions or replaced by more efficient functions
+    void imageTypeChanged (int isoption, bool issharE,  bool issharMicro, bool isshadhigh, bool iscbdl, bool isretin, bool isfattal, bool isRaw, bool isBayer, bool isXtrans, bool isMono = false, bool isGainMapSupported = false) override;
 
     // profilechangelistener interface
     void profileChange(

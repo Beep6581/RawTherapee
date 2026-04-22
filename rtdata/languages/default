@@ -2154,6 +2154,10 @@ PREFERENCES_FORIMAGE;For non-raw photos
 PREFERENCES_FORRAW;For raw photos
 PREFERENCES_FSTRIP_SAME_THUMB_HEIGHT;Same thumbnail height between the Filmstrip and the File Browser
 PREFERENCES_FSTRIP_SAME_THUMB_HEIGHT_HINT;Having separate thumbnail size will require more processing time each time you'll switch between the single Editor tab and the File Browser.
+PREFERENCES_GENERAL;Define general complexity 
+PREFERENCES_GENERAL_MINI;Essential tools
+PREFERENCES_GENERAL_ALL;All tools
+PREFERENCES_GENERAL_TOOLTIP;Allows you to hide certain tools to simplify the GUI interface:\nIf you used one of these tools (pp3) in a previous version of Rawtherapee, they will be present in the "Essential tools" interface.\n\nThe tools concerned:\n * Shadows/Highlighs (Exposure Tab)- Can be replaced by Tone Equalizer.\n * Dynamic Range Compression (Exposure Tab) - Can be replaced by the Tone-mappers present in Selective Editing.\n * Edges (Detail Tab).\n * Microcontrast (Detail Tab).\n * Contrast by Detail Levels (Detail Tab) - Can be replaced by Abstract profile - Contrast enhancement.\n * Retinex (Advanced Tab).
 PREFERENCES_GIMPPATH;GIMP installation directory
 PREFERENCES_HISTOGRAMPOSITIONLEFT;Histogram in left panel
 PREFERENCES_HISTOGRAM_TOOLTIP;If enabled, the working profile is used for rendering the main histogram and the Navigator panel, otherwise the gamma-corrected output profile is used.
@@ -2819,7 +2823,7 @@ TP_DISTORTION_FOCAL_LENGTH;Focal length
 TP_DISTORTION_LABEL;Distortion Correction
 TP_EPD_EDGESTOPPING;Edge stopping
 TP_EPD_GAMMA;Gamma
-TP_EPD_LABEL;Tone Mapping
+TP_EPD_LABEL;Tone Mapping - Texture
 TP_EPD_REWEIGHTINGITERATES;Reweighting iterates
 TP_EPD_SCALE;Scale
 TP_EPD_STRENGTH;Strength
@@ -3574,7 +3578,7 @@ TP_LOCALLAB_LAP_MASK_TOOLTIP;Solves PDEs for all Laplacian masks.\nIf enabled th
 TP_LOCALLAB_LCLABELS;Residual Noise Levels
 TP_LOCALLAB_LCLABELS_TOOLTIP;Displays the mean and high-end noise values for the area shown in the Preview Panel (at 100% zoom). The noise values are grouped by wavelet levels 0,1,2,3 and 4,5,6.\nThe displayed values are indicative only and are designed to assist with denoise adjustments. They should not be interpreted as absolute noise levels.\n\n 300: Very noisy\n 100-300: Noisy\n 50-100: Moderatly noisy\n < 50: Low noise\n\nThey allow you to see:\n*The impact of Noise Reduction in the main-menu Detail tab.\n*The influence of Non-local Means, Wavelets and DCT on the luminance noise.\n*The influence of Wavelets and DCT on the chroma noise.\n*The influence of Capture Sharpening and Demosaicing.
 TP_LOCALLAB_LC_FFTW_TOOLTIP;FFT improves quality and allows the use of large radii, but increases processing time (depends on the area to be processed). Preferable to use only for large radii. The size of the area can be reduced by a few pixels to optimize the FFTW. This can reduce the processing time by a factor of 1.5 to 10.
-TP_LOCALLAB_LC_TOOLNAME;Local Contrast & Wavelets
+TP_LOCALLAB_LC_TOOLNAME;Wavelets & Local Contrast
 TP_LOCALLAB_LEVELBLUR;Maximum blur levels
 TP_LOCALLAB_LEVELWAV;Wavelet levels
 TP_LOCALLAB_LEVELWAV_TOOLTIP;The Level is automatically adapted to the size of the spot and the preview.\nFrom level 9 size max 512 to level 1 size max = 4.
@@ -3588,7 +3592,7 @@ TP_LOCALLAB_LIST_TOOLTIP;You can select 3 levels of complexity for each tool: Ba
 TP_LOCALLAB_LMASK_LEVEL_TOOLTIP;Allows you to decrease or increase the effect on particular levels of detail in the mask by targeting certain luminance zones (in general the lightest).
 TP_LOCALLAB_LMASK_LL_TOOLTIP;Allows you to freely change the contrast of the mask.\n Has a similar function to the Gamma and Slope sliders.\n It allows you to target certain parts of the image (usually the lightest parts of the mask by using the curve to exclude the darker parts). May create artifacts.
 TP_LOCALLAB_LOCCONT;Unsharp Mask
-TP_LOCALLAB_LOC_CONTRAST;Local Contrast & Wavelets
+TP_LOCALLAB_LOC_CONTRAST;Wavelets & Local Contrast
 TP_LOCALLAB_LOC_CONTRASTPYR;Pyramid 1:
 TP_LOCALLAB_LOC_CONTRASTPYR2;Pyramid 2:
 TP_LOCALLAB_LOC_CONTRASTPYR2LAB; Contrast by level/TM/Directional contrast
@@ -3955,7 +3959,7 @@ TP_LOCALLAB_SH_TOOLNAME;Equalization & Pre-Tone Mapping
 TP_LOCALLAB_SIGBLACKSSCIE;Blacks distribution
 TP_LOCALLAB_SIGWHITESCIE;Whites distribution
 TP_LOCALLAB_SIGCIE;Sigmoid
-TP_LOCALLAB_SIGFRA;Sigmoid Q & Slope based
+TP_LOCALLAB_SIGFRA;Slope based & Sigmoid Q
 TP_LOCALLAB_SIGFRA11;Sigmoid Q (deprecated)
 TP_LOCALLAB_SIGGAMJCIE;Gamma
 TP_LOCALLAB_SIGJZFRA;Sigmoid Jz
@@ -4050,14 +4054,14 @@ TP_LOCALLAB_THRESRETI;Threshold
 TP_LOCALLAB_THRESWAV;Balance threshold
 TP_LOCALLAB_TLABEL;TM Min=%1 Max=%2 Mean=%3 Sig=%4
 TP_LOCALLAB_TLABEL_TOOLTIP;Transmission map result.\nMin and Max are used by Variance.\nTm=Min TM=Max of Transmission Map.\nYou can normalize the results with the threshold slider.
-TP_LOCALLAB_TM;Tone Mapping
+TP_LOCALLAB_TM;Tone Mapping - Texture
 TP_LOCALLAB_TM_MASK;Use transmission map
 TP_LOCALLAB_TONEMAPESTOP_TOOLTIP;This slider affects edge sensitivity.\n The greater the value, the more likely a change in contrast will be interpreted as an 'edge'.\n If set to zero the tone mapping will have an effect similar to unsharp masking.
 TP_LOCALLAB_TONEMAPGAM_TOOLTIP;The Gamma slider shifts the tone-mapping effect towards either the shadows or the highlights.
 TP_LOCALLAB_TONEMAPREWEI_TOOLTIP;In some cases tone mapping may result in a cartoonish appearance, and in some rare cases soft but wide halos may appear.\n Increasing the number of reweighting iterates will help fight some of these problems.
-TP_LOCALLAB_TONEMAP_TOOLTIP;Same as the tone mapping tool in the main menu.\nThe main-menu tool must be deactivated if this tool is used.
+TP_LOCALLAB_TONEMAP_TOOLTIP;Same as the 'Tone Mapping - Texture' tool in the main menu.\nThe main-menu tool must be deactivated if this tool is used.
 TP_LOCALLAB_TONEMASCALE_TOOLTIP;This slider allows you to adjust the transition between 'local' and 'global' contrast.\nThe greater the value, the larger a detail needs to be for it to be boosted.
-TP_LOCALLAB_TONE_TOOLNAME;Tone Mapping
+TP_LOCALLAB_TONE_TOOLNAME;Tone Mapping - Texture
 TP_LOCALLAB_TOOLCOL;Structure mask as tool
 TP_LOCALLAB_TOOLCOLFRMASK_TOOLTIP;Allows you to modify the mask, if one exists.
 TP_LOCALLAB_TOOLMASK;Mask Tools

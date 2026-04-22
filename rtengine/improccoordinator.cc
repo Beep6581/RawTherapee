@@ -431,9 +431,18 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
             If white balance changed with inpaint opposed, because inpaint opposed depends on the white balance
         */
         // If high detail (=100%) is newly selected, do a demosaic update, since the last was just with FAST
+        int isoption = App::get().options().genemet;
 
+        //list of little used or obsolete functions or replaced by more efficient functions... (arbitrary)
+        bool issharE = params->sharpenEdge.enabled;//sharpenEdge
+        bool issharMicro = params->sharpenMicro.enabled; // sharpenMicro
+        bool isshadhigh  = params->sh.enabled; //Shadows Highlights replace by Tone Equalizer
+        bool iscbdl = params->dirpyrequalizer.enabled; // CBDL replace by Abstract profile - Contrast enhancement
+        bool isretin = params->retinex.enabled; //Retinex
+        bool isfattal = params->fattal.enabled;//Fattal - Dynamic Range compression - replace by numerous Tone mapper in Selective Editing
+        //end of little used or obsolete functions or replaced by more efficient functions
         if (imageTypeListener) {
-            imageTypeListener->imageTypeChanged(imgsrc->isRAW(), imgsrc->getSensorType() == ST_BAYER, imgsrc->getSensorType() == ST_FUJI_XTRANS, imgsrc->isMono(), imgsrc->isGainMapSupported());
+            imageTypeListener->imageTypeChanged(isoption, issharE, issharMicro, isshadhigh, iscbdl, isretin, isfattal, imgsrc->isRAW(), imgsrc->getSensorType() == ST_BAYER, imgsrc->getSensorType() == ST_FUJI_XTRANS, imgsrc->isMono(), imgsrc->isGainMapSupported());
         }
 
         bool iscolor = (params->toneCurve.method == "Color" || params->toneCurve.method == "Coloropp");
