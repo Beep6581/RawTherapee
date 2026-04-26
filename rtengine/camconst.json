@@ -1331,6 +1331,21 @@ Camera constants:
     },
 
     { // Quality C
+        "make_model": ["Canon EOS R6 Mark III"],
+        "raw_crop": [
+            // LibRaw enforces a tighter crop, so these won't do anything until we change the way the raw image is extracted.
+            {"frame": [ 7144, 4760 ], "crop": [ 160, 96, 6984, 4664 ]},
+            {"frame": [ 4512, 2994 ], "crop": [ 168, 96, 4344, 2898 ]}
+        ],
+        "masked_areas": [
+            // Avoid repeated pixels on the right side of the left masked area.
+            // Avoid brighter top region of the top masked area.
+            { "frame": [ 7144, 4760 ], "areas": [ 96, 4, 4700, 126, 44, 158, 92, 7100 ] },
+            { "frame": [ 4512, 2994 ], "areas": [ 96, 4, 2800, 126, 44, 160, 92, 4500 ] }
+        ]
+    },
+
+    { // Quality C
         "make_model": "Canon EOS R7",
         "dcraw_matrix" : [10424, -3138, -1300, -4221, 11938,  2584,  -547,  1658,  6183],
         "raw_crop": [ 144, 72, 6984, 4660 ],
@@ -3170,6 +3185,16 @@ Camera constants:
         "make_model": "Sony ILCE-7M4",
         "dcraw_matrix": [ 7460, -2365, -588, -5687, 13442, 2474, -624, 1156, 6584 ], // ColorMatrix2 using illuminant D65 from Adobe DNG Converter 14.2
         "raw_crop": [ 0, 0, -10, 0 ]
+    },
+
+    { // Quality C
+        "make_model": "Sony ILCE-7M5",
+        "raw_crop": [
+            // Verified on lossless compressed raws.
+            { "frame": [ 7168, 5120 ], "crop": [ 0, 0, 7032, 4688 ] },
+            { "frame": [ 5120, 3584 ], "crop": [ 0, 0, 4632, 3088 ] }
+        ],
+        "ranges": { "white": 16300 }
     },
 
     { // Quality C,

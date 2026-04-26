@@ -213,6 +213,7 @@ public:
         return (uint32_t) ((lsign << 31) | (exponent << 23) | mantissa);
     }
 
+    void fill(const float value, const bool multithread = false);
     void multiply(float factor, bool multithread);
     void                 normalizeFloat(float srcMinVal, float srcMaxVal) override;
     void                 normalizeFloatTo1(bool multithread=true);

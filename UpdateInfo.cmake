@@ -1,7 +1,7 @@
 # cmakefile executed within a makefile target
 
-if(APPLE)
-    set(PROJECT_SOURCE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/..")
+if(APPLE AND (NOT DEFINED PROJECT_SOURCE_DIR OR PROJECT_SOURCE_DIR STREQUAL ""))
+    set(PROJECT_SOURCE_DIR "${CMAKE_CURRENT_LIST_DIR}")
 endif()
 
 # If we find ReleaseInfo.cmake we use the info from there and don't need Git to be installed

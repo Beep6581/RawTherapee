@@ -22,7 +22,7 @@ jobs:
       contents: write
     steps:
       - name: Checkout Repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         with: 
           fetch-tags: '0'
           fetch-depth: '0'
@@ -106,7 +106,7 @@ jobs:
             "ARTIFACT_FILE: ${ARTIFACT_FILE}" \
             "PUBLISH_NAME: ${PUBLISH_NAME}"
           exit
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         with:
           name: ${{env.ARTIFACT_FILE}}
           path: ${{env.ARTIFACT_PATH}}
@@ -131,7 +131,7 @@ jobs:
           echo "$(RawTherapee*folder/rawtherapee-cli --version)" >> $GITHUB_STEP_SUMMARY
 
       - name: Publish artifacts
-        uses: softprops/action-gh-release@v2
+        uses: softprops/action-gh-release@v3
         if: ${{github.ref_type == 'tag' || github.ref_name == 'dev'}}
         with:
           tag_name: nightly-github-actions
@@ -145,7 +145,7 @@ jobs:
       contents: write
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         with: 
           fetch-tags: '0'
           fetch-depth: '0'
@@ -230,7 +230,7 @@ jobs:
             "PUBLISH_NAME: ${PUBLISH_NAME}"
           exit
 
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         with:
           name: ${{env.ARTIFACT_FILE}}
           path: ${{env.ARTIFACT_PATH}}
@@ -255,7 +255,7 @@ jobs:
           echo "$(RawTherapee*folder/rawtherapee-cli --version)" >> $GITHUB_STEP_SUMMARY
 
       - name: Publish artifacts
-        uses: softprops/action-gh-release@v2
+        uses: softprops/action-gh-release@v3
         if: ${{github.ref_type == 'tag' || github.ref_name == 'dev'}}
         with:
           tag_name: nightly-github-actions

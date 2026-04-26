@@ -139,14 +139,14 @@ Filename: "{app}\{#MyAppExeName}"; Description: "{cm:LaunchProgram,{#StringChang
 Root: HKCU; Subkey: "SOFTWARE\Classes\Directory\shell\Browse with RawTherapee"; ValueType: string; ValueData: "Browse with RawTherapee"; Flags: uninsdeletekey; Tasks: regBrowseFolder and userinstall
 Root: HKCU; Subkey: "SOFTWARE\Classes\Directory\shell\Browse with RawTherapee\command"; ValueType: string; ValueData: "{app}\{#MyAppExeName} -w ""%1"""; Flags: uninsdeletekey; Tasks: regBrowseFolder and userinstall
 Root: HKCU; Subkey: "SOFTWARE\Classes\*\shell\Open with RawTherapee"; ValueType: string; ValueData: "Open with RawTherapee"; Flags: uninsdeletekey; Tasks: regOpenFile and userinstall
-Root: HKCU; Subkey: "SOFTWARE\Classes\*\shell\Open with RawTherapee\command"; ValueType: string; ValueData: "{app}\{#MyAppExeName} -R ""%1"""; Flags: uninsdeletekey; Tasks: regOpenFile and userinstall
+Root: HKCU; Subkey: "SOFTWARE\Classes\*\shell\Open with RawTherapee\command"; ValueType: string; ValueData: "{app}\{#MyAppExeName} -w -R ""%1"""; Flags: uninsdeletekey; Tasks: regOpenFile and userinstall
 Root: HKCU; Subkey: "SOFTWARE\Microsoft\Windows\CurrentVersion\App Paths\{#MyAppExeName}"; ValueType: string; ValueData: "{app}\{#MyAppExeName}"; Flags: uninsdeletekey; Tasks: userinstall
 Root: HKCU; Subkey: "SOFTWARE\Microsoft\Windows\CurrentVersion\App Paths\{#MyAppCliExeName}"; ValueType: string; ValueData: "{app}\{#MyAppCliExeName}"; Flags: uninsdeletekey; Tasks: userinstall
 
 Root: HKLM; Subkey: "SOFTWARE\Classes\Directory\shell\Browse with RawTherapee"; ValueType: string; ValueData: "Browse with RawTherapee"; Flags: uninsdeletekey; Tasks: regBrowseFolder and commoninstall
 Root: HKLM; Subkey: "SOFTWARE\Classes\Directory\shell\Browse with RawTherapee\command"; ValueType: string; ValueData: "{app}\{#MyAppExeName} -w ""%1"""; Flags: uninsdeletekey; Tasks: regBrowseFolder and commoninstall
 Root: HKLM; Subkey: "SOFTWARE\Classes\*\shell\Open with RawTherapee"; ValueType: string; ValueData: "Open with RawTherapee"; Flags: uninsdeletekey; Tasks: regOpenFile and commoninstall
-Root: HKLM; Subkey: "SOFTWARE\Classes\*\shell\Open with RawTherapee\command"; ValueType: string; ValueData: "{app}\{#MyAppExeName} -R ""%1"""; Flags: uninsdeletekey; Tasks: regOpenFile and commoninstall
+Root: HKLM; Subkey: "SOFTWARE\Classes\*\shell\Open with RawTherapee\command"; ValueType: string; ValueData: "{app}\{#MyAppExeName} -w -R ""%1"""; Flags: uninsdeletekey; Tasks: regOpenFile and commoninstall
 Root: HKLM; Subkey: "SOFTWARE\Microsoft\Windows\CurrentVersion\App Paths\{#MyAppExeName}"; ValueType: string; ValueData: "{app}\{#MyAppExeName}"; Flags: uninsdeletekey; Tasks: commoninstall
 Root: HKLM; Subkey: "SOFTWARE\Microsoft\Windows\CurrentVersion\App Paths\{#MyAppCliExeName}"; ValueType: string; ValueData: "{app}\{#MyAppCliExeName}"; Flags: uninsdeletekey; Tasks: commoninstall
 

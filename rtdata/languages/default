@@ -2249,6 +2249,8 @@ PREFERENCES_RAW_DECODER;Raw Decoder
 PREFERENCES_RAW_DECODER_ENABLE_LIBRAW;Use LibRaw
 PREFERENCES_REMEMBERZOOMPAN;Remember zoom % and pan offset
 PREFERENCES_REMEMBERZOOMPAN_TOOLTIP;Remember the zoom % and pan offset of the current image when opening a new image.\n\nThis option only works in 'Single Editor Tab Mode' and when 'Demosaicing method used for the preview at <100% zoom' is set to 'As in PP3'.
+PREFERENCES_RESET_TO_DEFAULT;Reset Preferences
+PREFERENCES_RESET_TO_DEFAULT_CONFIRM_PROMPT;Reset all preferences to their default values? This action cannot be undone.\n\nSome changes may require restarting the application to take full effect.
 PREFERENCES_SAVE_TP_OPEN_NOW;Save tool collapsed/expanded state now
 PREFERENCES_SELECTLANG;Select language
 PREFERENCES_SERIALIZE_TIFF_READ;TIFF Read Settings

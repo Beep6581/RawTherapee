@@ -661,6 +661,7 @@ private:
                 {
                     Imagefloat *origCropPart;//init auto noise
                     origCropPart = new Imagefloat(crW, crH); //allocate memory
+                    origCropPart->fill(0.f);
                     Imagefloat *provicalc = new Imagefloat((crW + 1) / 2, (crH + 1) / 2);  //for denoise curves
 
 #ifdef _OPENMP

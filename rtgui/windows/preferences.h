@@ -323,6 +323,7 @@ public:
     void langAutoDetectToggled ();
     void autocielabToggled ();
     void observer10Toggled ();
+    void onResetToDefaultClicked ();
 
     void selectStartupDir ();
     void extensionsChanged ();

@@ -168,12 +168,14 @@ void Image8::getStdImage (const ColorTemp &ctemp, int tran, Imagefloat* image, c
 
         // Iterating all the rows of the destination image
         for (int iy = 0; iy < imheight; iy++) {
+            int dst_x_lim = imwidth; // One less is the largest dst_x used.
+
             if (skip == 1) {
                 // special case (speedup for 1:1 scale)
                 // i: source image, first line of the current destination row
                 int src_y = sy1 + iy;
 
-                // overflow security check, not sure that it's necessary
+                // overflow security check
                 if (src_y >= maxy) {
                     continue;
                 }
@@ -181,9 +183,10 @@ void Image8::getStdImage (const ColorTemp &ctemp, int tran, Imagefloat* image, c
                 for (int dst_x = 0, src_x = sx1; dst_x < imwidth; dst_x++, src_x++) {
                     float r_, g_, b_;
 
-                    // overflow security check, not sure that it's necessary
+                    // overflow security check
                     if (src_x >= maxx) {
-                        continue;
+                        dst_x_lim = dst_x;
+                        break;
                     }
 
                     convertTo(r(src_y, src_x), r_);
@@ -203,7 +206,8 @@ void Image8::getStdImage (const ColorTemp &ctemp, int tran, Imagefloat* image, c
 
                 for (int dst_x = 0, src_x = sx1; dst_x < imwidth; dst_x++, src_x += skip) {
                     if (src_x >= maxx) {
-                        continue;
+                        dst_x_lim = dst_x;
+                        break;
                     }
 
                     int src_sub_width = MIN(maxx - src_x, skip);
@@ -240,25 +244,25 @@ void Image8::getStdImage (const ColorTemp &ctemp, int tran, Imagefloat* image, c
             }
 
             if      (mtran == TR_NONE)
-                for (int dst_x = 0, src_x = sx1; dst_x < imwidth; dst_x++, src_x += skip) {
+                for (int dst_x = 0, src_x = sx1; dst_x < dst_x_lim; dst_x++, src_x += skip) {
                     image->r(iy, dst_x) = lineR[dst_x];
                     image->g(iy, dst_x) = lineG[dst_x];
                     image->b(iy, dst_x) = lineB[dst_x];
                 }
             else if (mtran == TR_R180)
-                for (int dst_x = 0; dst_x < imwidth; dst_x++) {
+                for (int dst_x = 0; dst_x < dst_x_lim; dst_x++) {
                     image->r(imheight - 1 - iy, imwidth - 1 - dst_x) = lineR[dst_x];
                     image->g(imheight - 1 - iy, imwidth - 1 - dst_x) = lineG[dst_x];
                     image->b(imheight - 1 - iy, imwidth - 1 - dst_x) = lineB[dst_x];
                 }
             else if (mtran == TR_R90)
-                for (int dst_x = 0, src_x = sx1; dst_x < imwidth; dst_x++, src_x += skip) {
+                for (int dst_x = 0, src_x = sx1; dst_x < dst_x_lim; dst_x++, src_x += skip) {
                     image->r(dst_x, imheight - 1 - iy) = lineR[dst_x];
                     image->g(dst_x, imheight - 1 - iy) = lineG[dst_x];
                     image->b(dst_x, imheight - 1 - iy) = lineB[dst_x];
                 }
             else if (mtran == TR_R270)
-                for (int dst_x = 0, src_x = sx1; dst_x < imwidth; dst_x++, src_x += skip) {
+                for (int dst_x = 0, src_x = sx1; dst_x < dst_x_lim; dst_x++, src_x += skip) {
                     image->r(imwidth - 1 - dst_x, iy) = lineR[dst_x];
                     image->g(imwidth - 1 - dst_x, iy) = lineG[dst_x];
                     image->b(imwidth - 1 - dst_x, iy) = lineB[dst_x];

@@ -28,7 +28,7 @@ jobs:
         build_type: [release, debug]
     steps:
       - name: Checkout source
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         with:
           fetch-depth: 0
 
@@ -54,7 +54,7 @@ jobs:
 
       - name: Install Exiv2
         run: |
-          EXIV2_VERSION='v0.28.5'
+          EXIV2_VERSION='v0.28.8'
           echo "Cloning Exiv2 $EXIV2_VERSION."
           git clone --depth 1 --branch "$EXIV2_VERSION" https://github.com/Exiv2/exiv2.git ext/exiv2
 
@@ -149,7 +149,7 @@ jobs:
 
       - name: Restore AppImage tools from cache
         id: appimage-tools-cache
-        uses: actions/cache@v4
+        uses: actions/cache@v5
         with:
           key: appimage-tools-1
           path: |
@@ -204,7 +204,7 @@ jobs:
           echo "ARTIFACT_NAME=$ARTIFACT_NAME" >> $GITHUB_ENV
 
       - name: Upload artifacts
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: ${{env.ARTIFACT_NAME}}.AppImage
           path: ${{github.workspace}}/build/${{env.ARTIFACT_NAME}}.AppImage
@@ -226,7 +226,7 @@ jobs:
           echo "PUBLISH_NAME=$PUBLISH_NAME" >> $GITHUB_ENV
 
       - name: Publish artifacts
-        uses: softprops/action-gh-release@v2
+        uses: softprops/action-gh-release@v3
         if: ${{github.ref_type == 'tag' || github.ref_name == 'dev'}}
         with:
           tag_name: nightly-github-actions
@@ -256,7 +256,7 @@ jobs:
           echo "PUBLISH_NAME=$PUBLISH_NAME" >> $GITHUB_ENV
 
       - name: Publish pre-dev artifacts
-        uses: softprops/action-gh-release@v2
+        uses: softprops/action-gh-release@v3
         if: ${{steps.prepare-publish-pre-dev.outcome == 'success'}}
         with:
           tag_name: pre-dev-github-actions
@@ -275,7 +275,7 @@ jobs:
         build_type: [release, debug]
     steps:
       - name: Checkout source
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         with:
           fetch-depth: 0
 
@@ -288,7 +288,7 @@ jobs:
 
       - name: Install Exiv2
         run: |
-          EXIV2_VERSION='v0.28.5'
+          EXIV2_VERSION='v0.28.8'
           echo "Cloning Exiv2 $EXIV2_VERSION."
           git clone --depth 1 --branch "$EXIV2_VERSION" https://github.com/Exiv2/exiv2.git ext/exiv2
 
@@ -303,8 +303,8 @@ jobs:
       - name: Install libjxl
         working-directory: .
         run: |
-          echo "Building and installing libjxl v0.11.1..."
-          git clone --depth 1 --branch 'v0.11.1' 'https://github.com/libjxl/libjxl.git'
+          echo "Building and installing libjxl v0.11.2..."
+          git clone --depth 1 --branch 'v0.11.2' 'https://github.com/libjxl/libjxl.git'
           cd libjxl
           ./deps.sh
           mkdir build
@@ -413,7 +413,7 @@ jobs:
 
       - name: Restore AppImage tools from cache
         id: appimage-tools-cache
-        uses: actions/cache@v4
+        uses: actions/cache@v5
         with:
           key: appimage-tools-1
           path: |
@@ -468,7 +468,7 @@ jobs:
           echo "ARTIFACT_NAME=$ARTIFACT_NAME" >> $GITHUB_ENV
 
       - name: Upload artifacts
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: ${{env.ARTIFACT_NAME}}.AppImage
           path: ${{github.workspace}}/build/${{env.ARTIFACT_NAME}}.AppImage
@@ -490,7 +490,7 @@ jobs:
           echo "PUBLISH_NAME=$PUBLISH_NAME" >> $GITHUB_ENV
 
       - name: Publish artifacts
-        uses: softprops/action-gh-release@v2
+        uses: softprops/action-gh-release@v3
         if: ${{github.ref_type == 'tag' || github.ref_name == 'dev'}}
         with:
           tag_name: nightly-github-actions
@@ -520,7 +520,7 @@ jobs:
           echo "PUBLISH_NAME=$PUBLISH_NAME" >> $GITHUB_ENV
 
       - name: Publish pre-dev artifacts
-        uses: softprops/action-gh-release@v2
+        uses: softprops/action-gh-release@v3
         if: ${{steps.prepare-publish-pre-dev.outcome == 'success'}}
         with:
           tag_name: pre-dev-github-actions

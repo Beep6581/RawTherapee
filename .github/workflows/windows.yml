@@ -37,7 +37,7 @@ jobs:
       REF_NAME_FILTERED: ${{ steps.prepare-artifact-name.outputs.REF_NAME_FILTERED }}
     steps:
       - name: Checkout source
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         with:
           fetch-depth: 0
 
@@ -215,14 +215,14 @@ jobs:
           fi
 
       - name: Upload artifacts
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: ${{env.ARTIFACT_NAME}}
           path: build\${{env.ARTIFACT_NAME}}
 
       - name: Upload installer
         if: ${{matrix.build_type == 'release'}}
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: ${{env.ARTIFACT_NAME}}.exe
           path: build\${{env.ARTIFACT_NAME}}.exe
@@ -253,7 +253,7 @@ jobs:
       - name: Download build artifact
         id: download-build-artifact
         if: ${{steps.initialize.outcome == 'success'}}
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v8
         with:
           name: ${{env.ARTIFACT_NAME}}
           path: build/${{env.ARTIFACT_NAME}}
@@ -261,7 +261,7 @@ jobs:
       - name: Download installer
         id: download-installer
         if: ${{steps.download-build-artifact.outcome == 'success' && matrix.build_type == 'release'}}
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v8
         with:
           name: ${{env.ARTIFACT_NAME}}.exe
           path: build
@@ -296,7 +296,7 @@ jobs:
           echo "PUBLISH_NAME=$PUBLISH_NAME" >> "$(cygpath -u $GITHUB_ENV)"
 
       - name: Publish artifacts
-        uses: softprops/action-gh-release@v2
+        uses: softprops/action-gh-release@v3
         if: ${{steps.prepare-for-publishing.outcome == 'success'}}
         with:
           tag_name: nightly-github-actions
@@ -305,7 +305,7 @@ jobs:
             build/${{env.PUBLISH_NAME}}-AboutThisBuild.txt
 
       - name: Publish installer
-        uses: softprops/action-gh-release@v2
+        uses: softprops/action-gh-release@v3
         if: ${{steps.prepare-for-publishing.outcome == 'success' && matrix.build_type == 'release'}}
         with:
           tag_name: nightly-github-actions
@@ -337,7 +337,7 @@ jobs:
           echo "PUBLISH_NAME=$PUBLISH_NAME" >> "$(cygpath -u $GITHUB_ENV)"
 
       - name: Publish pre-dev artifacts
-        uses: softprops/action-gh-release@v2
+        uses: softprops/action-gh-release@v3
         if: ${{steps.prepare-publish-pre-dev.outcome == 'success'}}
         with:
           tag_name: pre-dev-github-actions
@@ -347,7 +347,7 @@ jobs:
             build/${{env.PUBLISH_NAME}}-AboutThisBuild.txt
 
       - name: Publish pre-dev installer
-        uses: softprops/action-gh-release@v2
+        uses: softprops/action-gh-release@v3
         if: ${{steps.prepare-publish-pre-dev.outcome == 'success' && matrix.build_type == 'release'}}
         with:
           tag_name: pre-dev-github-actions
@@ -370,7 +370,7 @@ jobs:
     steps:
       - name: Download build artifact
         id: download-build-artifact
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v8
         with:
           name: ${{env.ARTIFACT_NAME}}
           path: build/${{env.ARTIFACT_NAME}}

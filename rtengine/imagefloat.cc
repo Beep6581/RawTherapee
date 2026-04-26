@@ -248,20 +248,23 @@ void Imagefloat::getStdImage (const ColorTemp &ctemp, int tran, Imagefloat* imag
 #endif
 
         for (int iy = 0; iy < imheight; iy++) {
+            int dst_x_lim = imwidth; // One less is the largest dst_x used.
+
             if (skip == 1) {
                 // special case (speedup for 1:1 scale)
                 // i: source image, first line of the current destination row
                 int src_y = sy1 + iy;
 
-                // overflow security check, not sure that it's necessary
+                // overflow security check
                 if (src_y >= maxy) {
                     continue;
                 }
 
                 for (int dst_x = 0, src_x = sx1; dst_x < imwidth; dst_x++, src_x++) {
-                    // overflow security check, not sure that it's necessary
+                    // overflow security check
                     if (src_x >= maxx) {
-                        continue;
+                        dst_x_lim = dst_x;
+                        break;
                     }
 
                     lineR[dst_x] = CLIP0(rm2 * r(src_y, src_x));
@@ -278,7 +281,8 @@ void Imagefloat::getStdImage (const ColorTemp &ctemp, int tran, Imagefloat* imag
 
                 for (int dst_x = 0, src_x = sx1; dst_x < imwidth; dst_x++, src_x += skip) {
                     if (src_x >= maxx) {
-                        continue;
+                        dst_x_lim = dst_x;
+                        break;
                     }
 
                     int src_sub_width = MIN(maxx - src_x, skip);
@@ -311,25 +315,25 @@ void Imagefloat::getStdImage (const ColorTemp &ctemp, int tran, Imagefloat* imag
             }
 
             if      (mtran == TR_NONE)
-                for (int dst_x = 0, src_x = sx1; dst_x < imwidth; dst_x++, src_x += skip) {
+                for (int dst_x = 0, src_x = sx1; dst_x < dst_x_lim; dst_x++, src_x += skip) {
                     image->r(iy, dst_x) = lineR[dst_x];
                     image->g(iy, dst_x) = lineG[dst_x];
                     image->b(iy, dst_x) = lineB[dst_x];
                 }
             else if (mtran == TR_R180)
-                for (int dst_x = 0; dst_x < imwidth; dst_x++) {
+                for (int dst_x = 0; dst_x < dst_x_lim; dst_x++) {
                     image->r(imheight - 1 - iy, imwidth - 1 - dst_x) = lineR[dst_x];
                     image->g(imheight - 1 - iy, imwidth - 1 - dst_x) = lineG[dst_x];
                     image->b(imheight - 1 - iy, imwidth - 1 - dst_x) = lineB[dst_x];
                 }
             else if (mtran == TR_R90)
-                for (int dst_x = 0, src_x = sx1; dst_x < imwidth; dst_x++, src_x += skip) {
+                for (int dst_x = 0, src_x = sx1; dst_x < dst_x_lim; dst_x++, src_x += skip) {
                     image->r(dst_x, imheight - 1 - iy) = lineR[dst_x];
                     image->g(dst_x, imheight - 1 - iy) = lineG[dst_x];
                     image->b(dst_x, imheight - 1 - iy) = lineB[dst_x];
                 }
             else if (mtran == TR_R270)
-                for (int dst_x = 0, src_x = sx1; dst_x < imwidth; dst_x++, src_x += skip) {
+                for (int dst_x = 0, src_x = sx1; dst_x < dst_x_lim; dst_x++, src_x += skip) {
                     image->r(imwidth - 1 - dst_x, iy) = lineR[dst_x];
                     image->g(imwidth - 1 - dst_x, iy) = lineG[dst_x];
                     image->b(imwidth - 1 - dst_x, iy) = lineB[dst_x];
@@ -339,6 +343,23 @@ void Imagefloat::getStdImage (const ColorTemp &ctemp, int tran, Imagefloat* imag
 #ifdef _OPENMP
     }
 #endif
+}
+
+void Imagefloat::fill(const float value, const bool multithread)
+{
+    const int W = width;
+    const int H = height;
+
+#ifdef _OPENMP
+#   pragma omp parallel for firstprivate(W, H) schedule(dynamic, 5) if (multithread)
+#endif
+    for (int y = 0; y < H; ++y) {
+        for (int x = 0; x < W; ++x) {
+            r(y, x) = value;
+            g(y, x) = value;
+            b(y, x) = value;
+        }
+    }
 }
 
 // From ART.
