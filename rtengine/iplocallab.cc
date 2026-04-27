@@ -18752,7 +18752,8 @@ void ImProcFunctions::Lab_Local(
                                         Go = g * fgh;
                                         Bo = b * fgh;
                                         float mm = 0.5f / (D + 1.f);//Midtone transfer function (from Pixinsight)
-                                        if (mtf) {
+
+                                        if (mtf) {//Midtone transfer function enabled
                                             if (strtype == GHTStrType::NORMAL) {
                                                 Ro = (mm - 1.f)* Ro / ( (2.f * mm - 1.f)* Ro - mm);
                                                 Go = (mm - 1.f)* Go / ( (2.f * mm - 1.f)* Go - mm);
@@ -18776,7 +18777,8 @@ void ImProcFunctions::Lab_Local(
                                         Go = GHT(g, B, D, LP, SP, HP, c, strtype);//ghs G RGB standard
                                         Bo = GHT(b, B, D, LP, SP, HP, c, strtype);//ghs B RGB standard
                                         float mm = 0.5f / (D + 1.f);//Midtone transfer function (from Pixinsight)
-                                        if (mtf) {
+
+                                        if (mtf) {//Midtone transfer function enabled
                                             if (strtype == GHTStrType::NORMAL) {
                                                 Ro = (mm - 1.f)* Ro / ( (2.f * mm - 1.f)* Ro - mm);
                                                 Go = (mm - 1.f)* Go / ( (2.f * mm - 1.f)* Go - mm);
