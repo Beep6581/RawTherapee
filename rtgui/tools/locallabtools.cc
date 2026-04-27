@@ -4324,6 +4324,7 @@ LocallabShadow::LocallabShadow():
     ghs_agx(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_GHS_AGX")))),
     ghsMatmet(Gtk::manage(new MyComboBoxText())),
     ghs_D(Gtk::manage(new Adjuster(M("TP_LOCALLAB_GHS_D"), 0., 20.0, 0.001, 0.001))),
+    ghs_mtf(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_GHS_MTF")))),
     Lab_Frame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_GHSLABFRA")))),
     ghs_slope(Gtk::manage(new Adjuster(M("TP_LOCALLAB_GHS_SLOPE"), 1.0, 100.0, 0.01, 9.03296))),
     ghs_chro(Gtk::manage(new Adjuster(M("TP_LOCALLAB_GHS_CHRO"), -30., 100.0, 0.001, 0.))),
@@ -4407,6 +4408,7 @@ LocallabShadow::LocallabShadow():
     Evlocallabghs_smooth = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_GHS_SMOOTH");
     Evlocallabghs_autobw = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_GHS_AUTOBW");
     Evlocallabghs_agx = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_GHS_AGX");
+    Evlocallabghs_mtf = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_GHS_MTF");
     Evlocallabghs_Matmet = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_GHS_MATMET");
     Evlocallabghs_inv = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_GHS_INV");
     EvlocallabGridghs = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_CIE_LABGRIDGHS");
@@ -4543,6 +4545,7 @@ LocallabShadow::LocallabShadow():
     ghs_smoothConn = ghs_smooth->signal_toggled().connect(sigc::mem_fun(*this, &LocallabShadow::ghs_smoothChanged));
     ghs_invConn = ghs_inv->signal_toggled().connect(sigc::mem_fun(*this, &LocallabShadow::ghs_invChanged));
     ghs_agxConn = ghs_agx->signal_toggled().connect(sigc::mem_fun(*this, &LocallabShadow::ghs_agxChanged));
+    ghs_mtfConn = ghs_mtf->signal_toggled().connect(sigc::mem_fun(*this, &LocallabShadow::ghs_mtfChanged));
     mich_blackConn = mich_black->signal_toggled().connect(sigc::mem_fun(*this, &LocallabShadow::mich_blackChanged));
     mich_whiteConn = mich_white->signal_toggled().connect(sigc::mem_fun(*this, &LocallabShadow::mich_whiteChanged));
     mich_jdxConn = mich_jdx->signal_toggled().connect(sigc::mem_fun(*this, &LocallabShadow::mich_jdxChanged));
@@ -4664,6 +4667,7 @@ LocallabShadow::LocallabShadow():
 
     ghsBox->pack_start(*gridFrameghs);
     ghsBox->pack_start(*ghs_D);
+    ghsBox->pack_start(*ghs_mtf);
     Lab_Frame->set_label_align(0.025, 0.5);
     ToolParamBlock* const LabBox = Gtk::manage(new ToolParamBlock());
     LabBox->pack_start(*ghs_slope);
@@ -4990,6 +4994,7 @@ void LocallabShadow::updateAdviceTooltips(const bool showTooltips)
         ghs_BLP->set_tooltip_text(M("TP_LOCALLAB_GHS_BLP_TOOLTIP"));
         ghs_autobw->set_tooltip_text(M("TP_LOCALLAB_GHS_BLPHLPAUTO_TOOLTIP"));
         ghs_agx->set_tooltip_text(M("TP_LOCALLAB_GHS_AGX_TOOLTIP"));
+        ghs_mtf->set_tooltip_text(M("TP_LOCALLAB_GHS_MTF_TOOLTIP"));
         matHBox->set_tooltip_text(M("TP_LOCALLAB_GHS_AGXMAT2_TOOLTIP"));
         ghsMatmet->set_tooltip_text(M("TP_LOCALLAB_GHS_AGX_MAT_TOOLTIP"));
         ghs_HLP->set_tooltip_text(M("TP_LOCALLAB_GHS_HLP_TOOLTIP"));
@@ -5048,6 +5053,7 @@ void LocallabShadow::updateAdviceTooltips(const bool showTooltips)
         ghs_autobw->set_tooltip_text("");
         ghsMatmet->set_tooltip_text("");
         ghs_agx->set_tooltip_text("");
+        ghs_mtf->set_tooltip_text("");
         matHBox->set_tooltip_text("");
         ghs_smooth->set_tooltip_text("");
         ghs_inv->set_tooltip_text("");
@@ -5082,6 +5088,7 @@ void LocallabShadow::disableListener()
     ghs_smoothConn.block(true);
     ghs_autobwConn.block(true);
     ghs_agxConn.block(true);
+    ghs_mtfConn.block(true);
     ghs_invConn.block(true);
     mich_blackConn.block(true);
     mich_whiteConn.block(true);
@@ -5100,6 +5107,7 @@ void LocallabShadow::enableListener()
     ghs_smoothConn.block(false);
     ghs_autobwConn.block(false);
     ghs_agxConn.block(false);
+    ghs_mtfConn.block(false);
     ghs_invConn.block(false);
     mich_blackConn.block(false);
     mich_whiteConn.block(false);
@@ -5139,16 +5147,22 @@ void LocallabShadow::read(const rtengine::procparams::ProcParams* pp, const Para
 
         if (spot.ghsMethod == "rgb") {
             ghsMethod->set_active(0);
+            ghs_mtf->show();
         } else if (spot.ghsMethod == "rgbstd") {
             ghsMethod->set_active(1);
+            ghs_mtf->show();
         } else if (spot.ghsMethod == "llab") {
             ghsMethod->set_active(2);
+            ghs_mtf->hide();
         } else if (spot.ghsMethod == "lum") {
             ghsMethod->set_active(3);
+            ghs_mtf->hide();
         } else if (spot.ghsMethod == "sat") {
             ghsMethod->set_active(4);
+            ghs_mtf->hide();
         } else if (spot.ghsMethod == "hue") {
             ghsMethod->set_active(5);
+            ghs_mtf->hide();
         }
 
         if (spot.ghsMatmet == "none") {
@@ -5253,6 +5267,7 @@ void LocallabShadow::read(const rtengine::procparams::ProcParams* pp, const Para
         ghs_smooth->set_active(spot.ghs_smooth);
         ghs_autobw->set_active(spot.ghs_autobw);
         ghs_agx->set_active(spot.ghs_agx);
+        ghs_mtf->set_active(spot.ghs_mtf);
         ghs_inv->set_active(spot.ghs_inv);
         enaSHMask->set_active(spot.enaSHMask);
         CCmaskSHshape->setCurve(spot.CCmaskSHcurve);
@@ -5380,6 +5395,7 @@ void LocallabShadow::write(rtengine::procparams::ProcParams* pp, ParamsEdited* p
         spot.ghs_smooth = ghs_smooth->get_active();
         spot.ghs_autobw = ghs_autobw->get_active();
         spot.ghs_agx = ghs_agx->get_active();
+        spot.ghs_mtf = ghs_mtf->get_active();
         spot.ghs_inv = ghs_inv->get_active();
         spot.mich_exp = mich_exp->getValue();
         spot.mich_spar = mich_spar->getValue();
@@ -6218,6 +6234,11 @@ void LocallabShadow::ghsMethodChanged()
 
     // Update shadow highlight GUI according to ghsMethod combobox state
     updateShadowGUIshmet();
+    ghs_mtf->hide();
+    if (ghsMethod->get_active_row_number() < 2) {
+            ghs_mtf->show();
+    }
+
     if (ghsMethod->get_active_row_number() == 2) {
         Lab_Frame->show();
         ghs_slope->hide();
@@ -6309,6 +6330,34 @@ void LocallabShadow::ghs_agxChanged()
         }
     }
 }
+
+void LocallabShadow::ghs_mtfChanged()
+{
+    const bool maskPreviewActivated = isMaskViewActive();
+
+    // Update shadow highlight GUI according to inverssh button state
+    updateShadowGUImask();
+
+    if (maskPreviewActivated) {
+        // This event is called to transmit reset mask state
+        if (listener) {
+            listener->panelChanged(EvlocallabshowmaskMethod, "");
+        }
+    }
+
+    if (isLocActivated && exp->getEnabled()) {
+        if (listener) {
+            if (ghs_mtf->get_active()) {
+                listener->panelChanged(Evlocallabghs_mtf,
+                                       M("GENERAL_ENABLED") + " (" + escapeHtmlChars(getSpotName()) + ")");
+            } else {
+                listener->panelChanged(Evlocallabghs_mtf,
+                                       M("GENERAL_DISABLED") + " (" + escapeHtmlChars(getSpotName()) + ")");
+            }
+        }
+    }
+}
+
 
 void LocallabShadow::mich_jdxChanged()
 {

@@ -1634,6 +1634,7 @@ HISTORY_MSG_LOCAL_GHS_LC;Local - GHS - Local Contrast
 HISTORY_MSG_LOCAL_GHS_LP;Local - GHS - Protect shadows
 HISTORY_MSG_LOCAL_GHS_MATMET;Local - GHS - Matrix
 HISTORY_MSG_LOCAL_GHS_MID;Local - GHS - Midtones
+HISTORY_MSG_LOCAL_GHS_MTF;Local - GHS - MTF
 HISTORY_MSG_LOCAL_GHS_SLOPE;Local - GHS - Lab slope factor
 HISTORY_MSG_LOCAL_GHS_SMOOTH;Local - GHS - Highlight attenuation
 HISTORY_MSG_LOCAL_GHS_SP;Local - GHS - Symmetry point
@@ -3477,6 +3478,7 @@ TP_LOCALLAB_GHS_MID;Midtones
 TP_LOCALLAB_GHS_MID_TOOLTIP;Adjusts midtone balance after GHS transformation.\nCan be used to rebalance the midtones of the image after stretching.
 TP_LOCALLAB_GHS_MODECUR;GHS
 TP_LOCALLAB_GHS_MODELIN;Linear
+TP_LOCALLAB_GHS_MTF;Midtone transfer function (MTF)
 TP_LOCALLAB_GHS_SIMUL_TOOLTIP;Gives a representation of the GHS function.
 TP_LOCALLAB_GHS_SLOPE;Slope Lab factor (S)
 TP_LOCALLAB_GHS_SLOPE_TOOLTIP;Changes the slope of the Lab transform to improve shadow rendering.

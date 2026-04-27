@@ -612,6 +612,7 @@ private:
     Gtk::CheckButton* const ghs_agx;
     MyComboBoxText* const ghsMatmet;
     Adjuster* const ghs_D;
+    Gtk::CheckButton* const ghs_mtf;
     Gtk::Frame* const Lab_Frame;
     Adjuster* const ghs_slope;
     Adjuster* const ghs_chro;
@@ -694,6 +695,7 @@ private:
     rtengine::ProcEvent Evlocallabghs_autobw;
     rtengine::ProcEvent Evlocallabghs_inv;
     rtengine::ProcEvent Evlocallabghs_agx;
+    rtengine::ProcEvent Evlocallabghs_mtf;
     rtengine::ProcEvent Evlocallabghs_Matmet;
     rtengine::ProcEvent Evlocallabmich_exp;
     rtengine::ProcEvent Evlocallabmich_spar;
@@ -705,7 +707,7 @@ private:
     rtengine::ProcEvent Evlocallabmich_high;
     rtengine::ProcEvent Evlocallabmich_jdx;
 
-    sigc::connection shMethodConn, ghsMethodConn, ghsMatmetConn, previewshConn, inversshConn, ghs_smoothConn, ghs_autobwConn, ghs_agxConn, ghs_invConn, mich_blackConn, mich_jdxConn, mich_whiteConn, showmaskSHMethodConn, showmaskSHMethodConninv, enaSHMaskConn;
+    sigc::connection shMethodConn, ghsMethodConn, ghsMatmetConn, previewshConn, inversshConn, ghs_smoothConn, ghs_autobwConn, ghs_agxConn, ghs_mtfConn, ghs_invConn, mich_blackConn, mich_jdxConn, mich_whiteConn, showmaskSHMethodConn, showmaskSHMethodConninv, enaSHMaskConn;
 
 public:
     LocallabShadow();
@@ -756,6 +758,7 @@ private:
     void ghs_smoothChanged();
     void ghs_autobwChanged();
     void ghs_agxChanged(); 
+    void ghs_mtfChanged(); 
     void ghs_invChanged();
     void mich_blackChanged();
     void mich_whiteChanged();

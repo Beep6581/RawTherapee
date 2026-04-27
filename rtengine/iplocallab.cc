@@ -18108,6 +18108,7 @@ void ImProcFunctions::Lab_Local(
     //float HLP = params->locallab.spots.at(sp).ghs_HLP;
     bool smoth = params->locallab.spots.at(sp).ghs_smooth;//Highlight attenuation
     float MID = params->locallab.spots.at(sp).ghs_MID;//midtones
+    bool mtf = params->locallab.spots.at(sp).ghs_mtf;//Midtone transfer function
 
     if (D != 0.f /* || BLP != 0.f || HLP != 1.f*  || smoth*/) {
         ghsactiv = true;
@@ -18750,6 +18751,19 @@ void ImProcFunctions::Lab_Local(
                                         Ro = r * fgh;//new values for r, g, b
                                         Go = g * fgh;
                                         Bo = b * fgh;
+                                        float mm = 0.5f / (D + 1.f);//Midtone transfer function (from Pixinsight)
+                                        if (mtf) {
+                                            if (strtype == GHTStrType::NORMAL) {
+                                                Ro = (mm - 1.f)* Ro / ( (2.f * mm - 1.f)* Ro - mm);
+                                                Go = (mm - 1.f)* Go / ( (2.f * mm - 1.f)* Go - mm);
+                                                Bo = (mm - 1.f)* Bo / ( (2.f * mm - 1.f)* Bo - mm);
+                                            } else if (strtype == GHTStrType::INVERSE) {
+                                                Ro = mm * Ro / ( (2.f * mm - 1.f) * Ro - (mm - 1.f));
+                                                Go = mm * Go / ( (2.f * mm - 1.f) * Go - (mm - 1.f));
+                                                Bo = mm * Bo / ( (2.f * mm - 1.f) * Bo - (mm - 1.f));
+                                            }
+                                        }
+              
                                         apply_sat(Ro, Go, Bo, fgh, gh);//always apply saturation
 
                                     } else if (met == 1) {
@@ -18761,6 +18775,18 @@ void ImProcFunctions::Lab_Local(
                                         Ro = GHT(r, B, D, LP, SP, HP, c, strtype);//ghs R RGB standard
                                         Go = GHT(g, B, D, LP, SP, HP, c, strtype);//ghs G RGB standard
                                         Bo = GHT(b, B, D, LP, SP, HP, c, strtype);//ghs B RGB standard
+                                        float mm = 0.5f / (D + 1.f);//Midtone transfer function (from Pixinsight)
+                                        if (mtf) {
+                                            if (strtype == GHTStrType::NORMAL) {
+                                                Ro = (mm - 1.f)* Ro / ( (2.f * mm - 1.f)* Ro - mm);
+                                                Go = (mm - 1.f)* Go / ( (2.f * mm - 1.f)* Go - mm);
+                                                Bo = (mm - 1.f)* Bo / ( (2.f * mm - 1.f)* Bo - mm);
+                                            } else if (strtype == GHTStrType::INVERSE) {
+                                                Ro = mm * Ro / ( (2.f * mm - 1.f) * Ro - (mm - 1.f));
+                                                Go = mm * Go / ( (2.f * mm - 1.f) * Go - (mm - 1.f));
+                                                Bo = mm * Bo / ( (2.f * mm - 1.f) * Bo - (mm - 1.f));
+                                            }
+                                        }
 
                                         float sumRatio = 0.f;
                                         int count = 0;

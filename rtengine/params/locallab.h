@@ -223,6 +223,7 @@ struct LocallabParams {
         double ghs_HLP;
         bool ghs_autobw;
         bool ghs_agx;
+        bool ghs_mtf;
         bool ghs_smooth;
         bool ghs_inv;
         double mich_exp;
