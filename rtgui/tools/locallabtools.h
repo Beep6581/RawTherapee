@@ -612,7 +612,9 @@ private:
     Gtk::CheckButton* const ghs_agx;
     MyComboBoxText* const ghsMatmet;
     Adjuster* const ghs_D;
+    Gtk::Frame* const Framemtf;
     Gtk::CheckButton* const ghs_mtf;
+    Adjuster* const ghs_mtfstr;
     Gtk::Frame* const Lab_Frame;
     Adjuster* const ghs_slope;
     Adjuster* const ghs_chro;
@@ -696,6 +698,7 @@ private:
     rtengine::ProcEvent Evlocallabghs_inv;
     rtengine::ProcEvent Evlocallabghs_agx;
     rtengine::ProcEvent Evlocallabghs_mtf;
+    rtengine::ProcEvent Evlocallabghs_mtfstr;
     rtengine::ProcEvent Evlocallabghs_Matmet;
     rtengine::ProcEvent Evlocallabmich_exp;
     rtengine::ProcEvent Evlocallabmich_spar;

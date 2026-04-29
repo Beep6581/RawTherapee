@@ -523,6 +523,7 @@ LocallabParams::LocallabSpot::LocallabSpot() :
     ghsMatmet("none"), // I think it's better to leave it as 'none' and let the user choose their preferred mode.
     ghsMode("ghs"),
     ghs_D(0.001),
+    ghs_mtfstr(0.25),
     ghs_slope(9.03296),
     ghs_chro(0.0),
     ghs_B(0.),
@@ -2273,6 +2274,7 @@ bool LocallabParams::LocallabSpot::operator ==(const LocallabSpot& other) const
         && ghsMatmet == other.ghsMatmet
         && ghsMode == other.ghsMode
         && ghs_D == other.ghs_D
+        && ghs_mtfstr == other.ghs_mtfstr
         && ghs_slope == other.ghs_slope
         && ghs_chro == other.ghs_chro
         && ghs_B == other.ghs_B
@@ -3281,6 +3283,7 @@ void LoadUtil::shadowHighlight()
     assignFromKeyfile(keyFile, "Locallab", "GhsMatmet_" + index_str, spot.ghsMatmet, spotEdited.ghsMatmet);
     assignFromKeyfile(keyFile, "Locallab", "GhsMode_" + index_str, spot.ghsMode, spotEdited.ghsMode);
     assignFromKeyfile(keyFile, "Locallab", "Ghs_D_" + index_str, spot.ghs_D, spotEdited.ghs_D);
+    assignFromKeyfile(keyFile, "Locallab", "Ghs_mtfstr_" + index_str, spot.ghs_mtfstr, spotEdited.ghs_mtfstr);
     assignFromKeyfile(keyFile, "Locallab", "Ghs_slope_" + index_str, spot.ghs_slope, spotEdited.ghs_slope);
     assignFromKeyfile(keyFile, "Locallab", "Ghs_chro_" + index_str, spot.ghs_chro, spotEdited.ghs_chro);
     assignFromKeyfile(keyFile, "Locallab", "Ghs_B_" + index_str, spot.ghs_B, spotEdited.ghs_B);
@@ -4459,6 +4462,7 @@ void SaveUtil::shadowHighlight()
         saveToKeyfile(!pedited || spot_edited->ghsMatmet, "Locallab", "GhsMatmet_" + index_str, spot.ghsMatmet, keyFile);
         saveToKeyfile(!pedited || spot_edited->ghsMode, "Locallab", "GhsMode_" + index_str, spot.ghsMode, keyFile);
         saveToKeyfile(!pedited || spot_edited->ghs_D, "Locallab", "Ghs_D_" + index_str, spot.ghs_D, keyFile);
+        saveToKeyfile(!pedited || spot_edited->ghs_mtfstr, "Locallab", "Ghs_mtfstr_" + index_str, spot.ghs_mtfstr, keyFile);
         saveToKeyfile(!pedited || spot_edited->ghs_slope, "Locallab", "Ghs_slope_" + index_str, spot.ghs_slope, keyFile);
         saveToKeyfile(!pedited || spot_edited->ghs_chro, "Locallab", "Ghs_chro_" + index_str, spot.ghs_chro, keyFile);
         saveToKeyfile(!pedited || spot_edited->ghs_B, "Locallab", "Ghs_B_" + index_str, spot.ghs_B, keyFile);

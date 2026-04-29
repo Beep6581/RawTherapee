@@ -1635,6 +1635,7 @@ HISTORY_MSG_LOCAL_GHS_LP;Local - GHS - Protect shadows
 HISTORY_MSG_LOCAL_GHS_MATMET;Local - GHS - Matrix
 HISTORY_MSG_LOCAL_GHS_MID;Local - GHS - Midtones
 HISTORY_MSG_LOCAL_GHS_MTF;Local - GHS - MTF
+HISTORY_MSG_LOCAL_GHS_MTFSTR;Local - GHS - MTF Strength
 HISTORY_MSG_LOCAL_GHS_SLOPE;Local - GHS - Lab slope factor
 HISTORY_MSG_LOCAL_GHS_SMOOTH;Local - GHS - Highlight attenuation
 HISTORY_MSG_LOCAL_GHS_SP;Local - GHS - Symmetry point
@@ -3478,8 +3479,10 @@ TP_LOCALLAB_GHS_MID;Midtones
 TP_LOCALLAB_GHS_MID_TOOLTIP;Adjusts midtone balance after GHS transformation.\nCan be used to rebalance the midtones of the image after stretching.
 TP_LOCALLAB_GHS_MODECUR;GHS
 TP_LOCALLAB_GHS_MODELIN;Linear
-TP_LOCALLAB_GHS_MTF;Midtones transfer function (MTF)
-TP_LOCALLAB_GHS_MTF_TOOLTIP;Allows you to shift the histogram towards the midtones. This algorithm is useful if the image is very dark.\n\n The system is not adjustable and takes into account the value of 'Stretch factor (D)'. It is essential to adjust the values ​​of 'Stretch factor D' and 'Local intensity (b)'.\n\n  Only available for the 'RGB Standard' and 'RGB Luminance' methods.\n\n This action can be complemented by the "Midtones" slider in "Stretch Regularization & Midtones".
+TP_LOCALLAB_GHS_MTFFRA;Midtones transfer function (MTF)
+TP_LOCALLAB_GHS_MTF;Enable
+TP_LOCALLAB_GHS_MTFSTR;Strength
+TP_LOCALLAB_GHS_MTF_TOOLTIP;Allows you to shift the histogram towards the midtones. This algorithm is useful if the image is very dark.\n\n The system takes into account the value of 'Stretch factor (D)'. It is essential to adjust the values ​​of 'Stretch factor D' and 'Local intensity (b)'.\n\n  Only available for the 'RGB Standard' and 'RGB Luminance' methods.\n\n This action can be complemented by the "Midtones" slider in "Stretch Regularization & Midtones".
 TP_LOCALLAB_GHS_SIMUL_TOOLTIP;Gives a representation of the GHS function.
 TP_LOCALLAB_GHS_SLOPE;Slope Lab factor (S)
 TP_LOCALLAB_GHS_SLOPE_TOOLTIP;Changes the slope of the Lab transform to improve shadow rendering.

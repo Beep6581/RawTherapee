@@ -1581,6 +1581,7 @@ void ParamsEdited::initFrom(const std::vector<rtengine::procparams::ProcParams>&
                 locallab.spots.at(j).ghsMatmet = locallab.spots.at(j).ghsMatmet && pSpot.ghsMatmet == otherSpot.ghsMatmet;
                 locallab.spots.at(j).ghsMode = locallab.spots.at(j).ghsMode && pSpot.ghsMode == otherSpot.ghsMode;
                 locallab.spots.at(j).ghs_D = locallab.spots.at(j).ghs_D && pSpot.ghs_D == otherSpot.ghs_D;
+                locallab.spots.at(j).ghs_mtfstr = locallab.spots.at(j).ghs_mtfstr && pSpot.ghs_mtfstr == otherSpot.ghs_mtfstr;
                 locallab.spots.at(j).ghs_slope = locallab.spots.at(j).ghs_slope && pSpot.ghs_slope == otherSpot.ghs_slope;
                 locallab.spots.at(j).ghs_chro = locallab.spots.at(j).ghs_chro && pSpot.ghs_chro == otherSpot.ghs_chro;
                 locallab.spots.at(j).ghs_B = locallab.spots.at(j).ghs_B && pSpot.ghs_B == otherSpot.ghs_B;
@@ -4794,6 +4795,10 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
 
         if (locallab.spots.at(i).ghs_D) {
             toEdit.locallab.spots.at(i).ghs_D = mods.locallab.spots.at(i).ghs_D;
+        }
+
+        if (locallab.spots.at(i).ghs_mtfstr) {
+            toEdit.locallab.spots.at(i).ghs_mtfstr = mods.locallab.spots.at(i).ghs_mtfstr;
         }
 
         if (locallab.spots.at(i).ghs_slope) {
@@ -9018,6 +9023,7 @@ LocallabParamsEdited::LocallabSpotEdited::LocallabSpotEdited(bool v) :
     ghsMatmet(v),
     ghsMode(v),
     ghs_D(v),
+    ghs_mtfstr(v),
     ghs_slope(v),
     ghs_chro(v),
     ghs_B(v),
@@ -9861,6 +9867,7 @@ void LocallabParamsEdited::LocallabSpotEdited::set(bool v)
     ghsMatmet = v;
     ghsMode = v;
     ghs_D = v;
+    ghs_mtfstr = v;
     ghs_slope = v;
     ghs_chro = v;
     ghs_B = v;

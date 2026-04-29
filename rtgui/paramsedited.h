@@ -629,6 +629,7 @@ public:
         bool ghsMatmet;
         bool ghsMode;
         bool ghs_D;
+        bool ghs_mtfstr;
         bool ghs_slope;
         bool ghs_chro;
         bool ghs_B;

@@ -4317,14 +4317,16 @@ LocallabShadow::LocallabShadow():
     sloSH(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SLOSH"), 0.0, 500.0, 0.01, 12.92))),
     //Generalized Hyperbolic Stretch - 2024 - 2026
     ghsMethod(Gtk::manage(new MyComboBoxText())),
-    gridFrameghs(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_GHS_GHSDIAG")))),//
+    gridFrameghs(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_GHS_GHSDIAG")))),
     labgridghs(Gtk::manage(new LabGrid(EvlocallabGridciexy, M("TP_LOCALLAB_GHS_GHSDIAG"), true, false, true, false))),
     ghsFrame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_GHSFRA")))),
     matHBox(Gtk::manage(new Gtk::Box())),   
     ghs_agx(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_GHS_AGX")))),
     ghsMatmet(Gtk::manage(new MyComboBoxText())),
     ghs_D(Gtk::manage(new Adjuster(M("TP_LOCALLAB_GHS_D"), 0., 20.0, 0.001, 0.001))),
+    Framemtf(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_GHS_MTFFRA")))),
     ghs_mtf(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_GHS_MTF")))),
+    ghs_mtfstr(Gtk::manage(new Adjuster(M("TP_LOCALLAB_GHS_MTFSTR"), 0., 1.0, 0.01, 0.25))),
     Lab_Frame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_GHSLABFRA")))),
     ghs_slope(Gtk::manage(new Adjuster(M("TP_LOCALLAB_GHS_SLOPE"), 1.0, 100.0, 0.01, 9.03296))),
     ghs_chro(Gtk::manage(new Adjuster(M("TP_LOCALLAB_GHS_CHRO"), -30., 100.0, 0.001, 0.))),
@@ -4409,6 +4411,7 @@ LocallabShadow::LocallabShadow():
     Evlocallabghs_autobw = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_GHS_AUTOBW");
     Evlocallabghs_agx = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_GHS_AGX");
     Evlocallabghs_mtf = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_GHS_MTF");
+    Evlocallabghs_mtfstr = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_GHS_MTFSTR");
     Evlocallabghs_Matmet = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_GHS_MATMET");
     Evlocallabghs_inv = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_GHS_INV");
     EvlocallabGridghs = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_CIE_LABGRIDGHS");
@@ -4491,6 +4494,7 @@ LocallabShadow::LocallabShadow():
     sloSH->setAdjusterListener(this);
 
     ghs_D->setAdjusterListener(this);
+    ghs_mtfstr->setAdjusterListener(this);
     ghs_slope->setAdjusterListener(this);
     ghs_chro->setAdjusterListener(this);
     ghs_B->setAdjusterListener(this);
@@ -4659,6 +4663,8 @@ LocallabShadow::LocallabShadow():
 
     pack_start(*ghsBox2);
     matHBox->set_spacing(2);
+    Framemtf->set_label_align(0.025, 0.5);
+    ToolParamBlock* const ghsmtfBox = Gtk::manage(new ToolParamBlock());
 
     Gtk::Label* matLabel = Gtk::manage(new Gtk::Label(M("TP_LOCALLAB_GHSMAT") + ":"));
     matHBox->pack_start(*matLabel, Gtk::PACK_SHRINK);
@@ -4667,7 +4673,11 @@ LocallabShadow::LocallabShadow():
 
     ghsBox->pack_start(*gridFrameghs);
     ghsBox->pack_start(*ghs_D);
-    ghsBox->pack_start(*ghs_mtf);
+    ghsmtfBox->pack_start(*ghs_mtf);
+    ghsmtfBox->pack_start(*ghs_mtfstr);
+    Framemtf->add(*ghsmtfBox);
+    ghsBox->pack_start(*Framemtf);
+
     Lab_Frame->set_label_align(0.025, 0.5);
     ToolParamBlock* const LabBox = Gtk::manage(new ToolParamBlock());
     LabBox->pack_start(*ghs_slope);
@@ -5192,6 +5202,7 @@ void LocallabShadow::read(const rtengine::procparams::ProcParams* pp, const Para
         decays->setValue((double)spot.decays);
 
         ghs_D->setValue((double)spot.ghs_D);
+        ghs_mtfstr->setValue((double)spot.ghs_mtfstr);
         ghs_slope->setValue((double)spot.ghs_slope);
         ghs_chro->setValue((double)spot.ghs_chro);
         ghs_B->setValue((double)spot.ghs_B);
@@ -5364,6 +5375,7 @@ void LocallabShadow::write(rtengine::procparams::ProcParams* pp, ParamsEdited* p
         }
 
         spot.ghs_D = ghs_D->getValue();
+        spot.ghs_mtfstr = ghs_mtfstr->getValue();
         spot.ghs_slope = ghs_slope->getValue();
         spot.ghs_chro = ghs_chro->getValue();
         spot.ghs_B = ghs_B->getValue();
@@ -5442,6 +5454,7 @@ void LocallabShadow::setDefaults(const rtengine::procparams::ProcParams* defPara
         }
 
         ghs_D->setDefault(defSpot.ghs_D);
+        ghs_mtfstr->setDefault(defSpot.ghs_mtfstr);
         ghs_slope->setDefault(defSpot.ghs_slope);
         ghs_chro->setDefault(defSpot.ghs_chro);
         ghs_B->setDefault(defSpot.ghs_B);
@@ -5550,6 +5563,13 @@ void LocallabShadow::adjusterChanged(Adjuster* a, double newval)
             if (listener) {
                 listener->panelChanged(Evlocallabghs_D,
                                        ghs_D->getTextValue() + " (" + escapeHtmlChars(getSpotName()) + ")");
+            }
+        }
+
+        if (a == ghs_mtfstr) {
+            if (listener) {
+                listener->panelChanged(Evlocallabghs_mtfstr,
+                                       ghs_mtfstr->getTextValue() + " (" + escapeHtmlChars(getSpotName()) + ")");
             }
         }
 
