@@ -5157,22 +5157,22 @@ void LocallabShadow::read(const rtengine::procparams::ProcParams* pp, const Para
 
         if (spot.ghsMethod == "rgb") {
             ghsMethod->set_active(0);
-            ghs_mtf->show();
+            Framemtf->show();
         } else if (spot.ghsMethod == "rgbstd") {
             ghsMethod->set_active(1);
-            ghs_mtf->show();
+            Framemtf->show();
         } else if (spot.ghsMethod == "llab") {
             ghsMethod->set_active(2);
-            ghs_mtf->hide();
+            Framemtf->hide();
         } else if (spot.ghsMethod == "lum") {
             ghsMethod->set_active(3);
-            ghs_mtf->hide();
+            Framemtf->hide();
         } else if (spot.ghsMethod == "sat") {
             ghsMethod->set_active(4);
-            ghs_mtf->hide();
+            Framemtf->hide();
         } else if (spot.ghsMethod == "hue") {
             ghsMethod->set_active(5);
-            ghs_mtf->hide();
+            Framemtf->hide();
         }
 
         if (spot.ghsMatmet == "none") {
@@ -6254,9 +6254,9 @@ void LocallabShadow::ghsMethodChanged()
 
     // Update shadow highlight GUI according to ghsMethod combobox state
     updateShadowGUIshmet();
-    ghs_mtf->hide();
+    Framemtf->hide();
     if (ghsMethod->get_active_row_number() < 2) {
-            ghs_mtf->show();
+        Framemtf->show();
     }
 
     if (ghsMethod->get_active_row_number() == 2) {

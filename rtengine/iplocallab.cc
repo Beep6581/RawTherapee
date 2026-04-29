@@ -18759,13 +18759,13 @@ void ImProcFunctions::Lab_Local(
 
                                         if (mtf) {//Midtone transfer function enabled
                                             if (strtype == GHTStrType::NORMAL) {
-                                                Ro = (mm - 1.f)* Ro / ( (2.f * mm - 1.f)* Ro - mm);
-                                                Go = (mm - 1.f)* Go / ( (2.f * mm - 1.f)* Go - mm);
-                                                Bo = (mm - 1.f)* Bo / ( (2.f * mm - 1.f)* Bo - mm);
+                                                Ro = (mm - 1.f) * Ro / ((2.f * mm - 1.f)* Ro - mm);
+                                                Go = (mm - 1.f) * Go / ((2.f * mm - 1.f)* Go - mm);
+                                                Bo = (mm - 1.f) * Bo / ((2.f * mm - 1.f)* Bo - mm);
                                             } else if (strtype == GHTStrType::INVERSE) {
-                                                Ro = mm * Ro / ( (2.f * mm - 1.f) * Ro - (mm - 1.f));
-                                                Go = mm * Go / ( (2.f * mm - 1.f) * Go - (mm - 1.f));
-                                                Bo = mm * Bo / ( (2.f * mm - 1.f) * Bo - (mm - 1.f));
+                                                Ro = mm * Ro / ((2.f * mm - 1.f) * Ro - (mm - 1.f));
+                                                Go = mm * Go / ((2.f * mm - 1.f) * Go - (mm - 1.f));
+                                                Bo = mm * Bo / ((2.f * mm - 1.f) * Bo - (mm - 1.f));
                                             }
                                         }
               
@@ -18786,16 +18786,15 @@ void ImProcFunctions::Lab_Local(
                                         
                                         if (mtf) {//Midtone transfer function enabled
                                             if (strtype == GHTStrType::NORMAL) {
-                                                Ro = (mm - 1.f)* Ro / ( (2.f * mm - 1.f)* Ro - mm);
-                                                Go = (mm - 1.f)* Go / ( (2.f * mm - 1.f)* Go - mm);
-                                                Bo = (mm - 1.f)* Bo / ( (2.f * mm - 1.f)* Bo - mm);
+                                                Ro = (mm - 1.f) * Ro / ((2.f * mm - 1.f)* Ro - mm);
+                                                Go = (mm - 1.f) * Go / ((2.f * mm - 1.f)* Go - mm);
+                                                Bo = (mm - 1.f) * Bo / ((2.f * mm - 1.f)* Bo - mm);
                                             } else if (strtype == GHTStrType::INVERSE) {
-                                                Ro = mm * Ro / ( (2.f * mm - 1.f) * Ro - (mm - 1.f));
-                                                Go = mm * Go / ( (2.f * mm - 1.f) * Go - (mm - 1.f));
-                                                Bo = mm * Bo / ( (2.f * mm - 1.f) * Bo - (mm - 1.f));
+                                                Ro = mm * Ro / ((2.f * mm - 1.f) * Ro - (mm - 1.f));
+                                                Go = mm * Go / ((2.f * mm - 1.f) * Go - (mm - 1.f));
+                                                Bo = mm * Bo / ((2.f * mm - 1.f) * Bo - (mm - 1.f));
                                             }
                                         }
-                                        
                                         float sumRatio = 0.f;
                                         int count = 0;
                                         if (r != 0.f) {
