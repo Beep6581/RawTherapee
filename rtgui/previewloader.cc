@@ -141,15 +141,16 @@ public:
         if (--nConcurrentThreads == 0) {
             std::lock_guard<std::mutex> lock(mutex_);
 
-            if (!jobs_removed_ && jobs_.empty()) {
+            if (!jobs_removed_ && !nConcurrentThreads && jobs_.empty()) {
+                // re-check nConcurrentThreads under mutex because it is possible for another
+                // thread to race to take the last job from jobs_ and to avoid double call to
+                // previewsFinished when that happens
                 notifyListener = true;    
             }
             inactive_.notify_all();
         }
 
-        if (notifyListener && !nConcurrentThreads) {
-            // As long as the upper if (--nConcurrentThreads == 0) { is executed outside of mutex,
-            // it will always be a rare possibility that the previewsFinished is called twice
+        if (notifyListener) {
             DEBUG("Previews Finished\n");
             j.listener_->previewsFinished(j.dir_id_);
         }
