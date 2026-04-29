@@ -92,7 +92,7 @@ public:
     std::atomic<int> nConcurrentThreads;
 
     // Need to be a std::mutex because used in a std::condition_variable object...
-    // This is the only exception along with ThumbImageUpdater and GThreadMutex (guiutils.cc), MyMutex is used everywhere else
+    // This is the only exception besides ThumbImageUpdater and GThreadMutex (guiutils.cc). MyMutex is used everywhere else
     std::mutex mutex_;
     bool jobs_removed_;
 
@@ -115,7 +115,7 @@ public:
             j = *jobs_.begin();
             jobs_.erase(jobs_.begin());
             DEBUG("processing %s", j.dir_entry_.c_str());
-            DEBUG("%d job(s) remaining", jobs_.size());
+            DEBUG("%ld job(s) remaining", jobs_.size());
 
             nConcurrentThreads++; // to detect when last thread in pool has run out
         }
@@ -147,7 +147,10 @@ public:
             inactive_.notify_all();
         }
 
-        if (notifyListener) {
+        if (notifyListener && !nConcurrentThreads) {
+            // As long as the upper if (--nConcurrentThreads == 0) { is executed outside of mutex,
+            // it will always be a rare possibility that the previewsFinished is called twice
+            DEBUG("Previews Finished\n");
             j.listener_->previewsFinished(j.dir_id_);
         }
     }
@@ -189,7 +192,7 @@ void PreviewLoader::add(int dir_id, const Glib::ustring& dir_entry, PreviewLoade
 
 void PreviewLoader::removeAllJobs()
 {
-    DEBUG("stop %d", impl_->nConcurrentThreads);
+    DEBUG("stop %d", impl_->nConcurrentThreads.load());
 
     std::unique_lock<std::mutex> lock(impl_->mutex_);
     impl_->jobs_.clear();
