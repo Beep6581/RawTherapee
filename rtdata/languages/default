@@ -3482,7 +3482,7 @@ TP_LOCALLAB_GHS_MODELIN;Linear
 TP_LOCALLAB_GHS_MTFFRA;Midtones transfer function (MTF)
 TP_LOCALLAB_GHS_MTF;Enable
 TP_LOCALLAB_GHS_MTFSTR;Strength
-TP_LOCALLAB_GHS_MTF_TOOLTIP;Allows you to shift the histogram towards the midtones. This algorithm is useful if the image is very dark.\n\n The system takes into account the value of 'Stretch factor (D)'. It is essential to adjust the values ​​of 'Stretch factor D' and 'Local intensity (b)'.\n\n  Only available for the 'RGB Standard' and 'RGB Luminance' methods.\n\n This action can be complemented by the "Midtones" slider in "Stretch Regularization & Midtones".
+TP_LOCALLAB_GHS_MTF_TOOLTIP;Allows you to shift the histogram towards the midtones (midtones balance). This algorithm is particularly useful if the image is very dark or bright.\n\nThe system takes into account the value of 'Stretch factor (D)'. It is essential to adjust the values ​​of 'Stretch factor D' and 'Local intensity (b)'.\n\nOnly available for the 'RGB Standard' and 'RGB Luminance' methods.\n\nThis action can be complemented by the 'Midtones' slider in 'Stretch Regularization & Midtones'.
 TP_LOCALLAB_GHS_SIMUL_TOOLTIP;Gives a representation of the GHS function.
 TP_LOCALLAB_GHS_SLOPE;Slope Lab factor (S)
 TP_LOCALLAB_GHS_SLOPE_TOOLTIP;Changes the slope of the Lab transform to improve shadow rendering.
