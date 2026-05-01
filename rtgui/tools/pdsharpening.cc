@@ -238,9 +238,13 @@ void PdSharpening::setDefaults(const ProcParams* defParams, const ParamsEdited* 
 void PdSharpening::checkBoxToggled (CheckBox* c, CheckValue newval)
 {
     if (listener) {
-        listener->panelChanged (EvPdShrCheckIter, itercheck->getLastActive() ? M("GENERAL_ENABLED") : M("GENERAL_DISABLED"));
-        listener->panelChanged (EvPdShrshowcap, showcap->getLastActive() ? M("GENERAL_ENABLED") : M("GENERAL_DISABLED"));
-        listener->panelChanged (EvPdShrnoisecaptype, noisecaptype->getLastActive() ? M("GENERAL_ENABLED") : M("GENERAL_DISABLED"));
+        if (c == itercheck) {
+            listener->panelChanged (EvPdShrCheckIter, itercheck->getLastActive() ? M("GENERAL_ENABLED") : M("GENERAL_DISABLED"));
+        } else if (c == showcap) {
+            listener->panelChanged (EvPdShrshowcap, showcap->getLastActive() ? M("GENERAL_ENABLED") : M("GENERAL_DISABLED"));
+        } else if (c == noisecaptype) {
+            listener->panelChanged (EvPdShrnoisecaptype, noisecaptype->getLastActive() ? M("GENERAL_ENABLED") : M("GENERAL_DISABLED"));
+        }
     }
 }
 
