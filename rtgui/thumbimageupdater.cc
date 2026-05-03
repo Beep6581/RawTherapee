@@ -90,7 +90,7 @@ public:
     std::unique_ptr<Glib::ThreadPool> threadPool_;
 
     // Need to be a std::mutex because used in a std::condition_variable object...
-    // This is the only exceptions along with GThreadMutex (guiutils.cc), MyMutex is used everywhere else
+    // This is the only exception besides PreviewLoader and GThreadMutex (guiutils.cc). MyMutex is used everywhere else
     std::mutex mutex_;
 
     JobList jobs_;
