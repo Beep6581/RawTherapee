@@ -2699,8 +2699,6 @@ TP_CROP_GTGRID;Gitternetz
 TP_CROP_GTHARMMEANS;Harmonisches Mittel
 TP_CROP_GTNONE;Keine
 TP_CROP_GTRULETHIRDS;Drittelregel
-TP_CROP_GTTRIANGLE1;Goldenes Dreieck 1
-TP_CROP_GTTRIANGLE2;Goldenes Dreieck 2
 TP_CROP_GUIDETYPE;Hilfslinien:
 TP_CROP_H;Höhe
 TP_CROP_LABEL;Ausschnitt
@@ -4732,4 +4730,227 @@ ZOOMPANEL_ZOOMOUT;Herauszoomen\nTaste: <b>-</b>
 ! Untranslated keys follow; remove the ! prefix after an entry is translated.
 !!!!!!!!!!!!!!!!!!!!!!!!!
 
+!HISTORY_MSG_CATCURVEBLUE;CAL - IA - Brightness Blue
+!HISTORY_MSG_CATCURVEGREEN;CAL - IA - Brightness Green
+!HISTORY_MSG_CATCURVERED;CAL - IA - Brightness Red
+!HISTORY_MSG_CATHUEBLUE;CAL - IA - Hue Blue
+!HISTORY_MSG_CATHUEGREEN;CAL - IA - Hue Green
+!HISTORY_MSG_CATHUERED;CAL - IA - Hue Red
+!HISTORY_MSG_CATSCHROMABLUE;CAL - IA - Saturation Blue
+!HISTORY_MSG_CATSCHROMAGREEN;CAL - IA - Saturation Green
+!HISTORY_MSG_CATSCHROMARED;CAL - IA - Saturation Red
+!HISTORY_MSG_CG_CYANDC_AUTO;Gamut Compression - Auto Limits Cyan
+!HISTORY_MSG_CG_CYANDM_AUTO;Gamut Compression - Auto Limits Magenta
+!HISTORY_MSG_CG_CYANDY_AUTO;Gamut Compression - Auto Limits Yellow
+!HISTORY_MSG_CROP_GUIDE_ASPECT_RATIO_PRESET_CHANGED;Crop Guide - Aspect Ratio Preset
+!HISTORY_MSG_CROP_GUIDE_BLEED_BASIS_CHANGED;Crop Guide - Bleed Basis
+!HISTORY_MSG_CROP_GUIDE_BLEED_CHANGED;Crop Guide - Bleed
+!HISTORY_MSG_CROP_GUIDE_ENABLED;Crop Guide
+!HISTORY_MSG_CROP_GUIDE_PRESET_CHANGED;Crop Guide - Preset
+!HISTORY_MSG_ICM_APSAT;Abstract profile saturation
+!HISTORY_MSG_ICM_BLUROT;Primaries Blue rotation
+!HISTORY_MSG_ICM_BLUSAT;Primaries Blue saturation
+!HISTORY_MSG_ICM_GREROT;Primaries Green rotation
+!HISTORY_MSG_ICM_GRESAT;Primaries Green saturation
+!HISTORY_MSG_ICM_REDROT;Primaries Red rotation
+!HISTORY_MSG_ICM_REDSAT;Primaries Red saturation
+!HISTORY_MSG_ICM_SMOOTHCIESLI;Attenuation threshold
+!HISTORY_MSG_ICM_WGAMUT;Target Gamut
+!HISTORY_MSG_ICM_WGAMUTGAIN;Gain
+!HISTORY_MSG_ICM_WGAMUTPOWER;Power
+!HISTORY_MSG_LOCAL_AUTOCAPRADIUS;Local - Sh Auto Capture radius
+!HISTORY_MSG_LOCAL_AUTOSHAR;Local - Sh Auto Contrast
+!HISTORY_MSG_LOCAL_AUTOSP;Local - GHS - Auto SP
+!HISTORY_MSG_LOCAL_CAPRADIUS;Local - Sh Capture radius
+!HISTORY_MSG_LOCAL_CIE_MIDTMET;Local - CIECAM Midtones Method
+!HISTORY_MSG_LOCAL_CIE_SAT;Local - CIECAM Saturation
+!HISTORY_MSG_LOCAL_CIE_SMOOTHINV;Local CIECAM - Inverse color
+!HISTORY_MSG_LOCAL_CIE_SMOOTHTHTRC;Local CIECAM - Highlight attenuation threshold
+!HISTORY_MSG_LOCAL_CONVBOOST;Local - Sh Corner radius
+!HISTORY_MSG_LOCAL_CONVGAM;Local - Sh Gamma
+!HISTORY_MSG_LOCAL_CONVLAT;Local - Sh Corner iterations
+!HISTORY_MSG_LOCAL_CONVPROT;Local - Sh Central protected area
+!HISTORY_MSG_LOCAL_DENOAUTO;Local - Denoise Auto Contrast
+!HISTORY_MSG_LOCAL_DENOCONTRAST;Local - Denoise Contrast threshold
+!HISTORY_MSG_LOCAL_DENOCONTRSHOW;Local - Denoise Show mask contrast
+!HISTORY_MSG_LOCAL_DENOENA;Local - Denoise Enable Contrast threshold
+!HISTORY_MSG_LOCAL_DENOMASK;Local - Denoise Contrast mask
+!HISTORY_MSG_LOCAL_DENOMASKCURV;Local - Denoise Equalizer Denoise mask
+!HISTORY_MSG_LOCAL_DENORATIO;Local - Denoise Ratio flat-structure
+!HISTORY_MSG_LOCAL_GHS_AGX;Local - GHS - Matrix
+!HISTORY_MSG_LOCAL_GHS_AUTOBW;Local - GHS - Auto Black point and White point
+!HISTORY_MSG_LOCAL_GHS_MATMET;Local - GHS - Matrix
+!HISTORY_MSG_LOCAL_LOCKMADL;Local - Denoise Lock MadL
+!HISTORY_MSG_LOCAL_LOCKMADL2;Local - Manual MadL
+!HISTORY_MSG_LOCAL_LOCKMADLS;Local - Denoise - MadL
+!HISTORY_MSG_LOCAL_MICH_BLACK;Local - Michaelis-Menten Subtract black
+!HISTORY_MSG_LOCAL_MICH_EXP;Local - Michaelis-Menten Exposure
+!HISTORY_MSG_LOCAL_MICH_HIGH;Local - Michaelis-Menten Attenuation threshold
+!HISTORY_MSG_LOCAL_MICH_JDX;Local - Michaelis-Menten JDx Matrix
+!HISTORY_MSG_LOCAL_MICH_KPAR;Local - Michaelis-Menten Knee Strength
+!HISTORY_MSG_LOCAL_MICH_OUT;Local - Michaelis-Menten Output Max Clamp
+!HISTORY_MSG_LOCAL_MICH_SAT;Local - Michaelis-Menten Saturation
+!HISTORY_MSG_LOCAL_MICH_SPAR;Local - Michaelis-Menten Output Scale
+!HISTORY_MSG_LOCAL_MICH_WHITE;Local - Michaelis-Menten Dynamic range
+!HISTORY_MSG_LOCAL_SHARITERCHECK;Local - Sh Auto limit iterations
+!HISTORY_MSG_LOCAL_SHARREPAR;Local - Sh Strength
+!HISTORY_MSG_LOCAL_SHARSHOW;Local - Sh Show contrast mask
+!HISTORY_MSG_PDSHARPEN_NOISECAP;CS - Presharpening denoise
+!HISTORY_MSG_PDSHARPEN_NOISECAPAFTER;CS - Postsharpening denoise luminance
+!HISTORY_MSG_PDSHARPEN_NOISECAPTYPE;CS - Presharpening type
+!HISTORY_MSG_PDSHARPEN_SHOWCAP;CS - Show mask contrast
+!HISTORY_MSG_TRANS_SCALE_HORIZONTALLY;Geometry - Scale horizontally
+!HISTORY_MSG_TRANS_SCALE_VERTICALLY;Geometry - Scale vertically
+!PARTIALPASTE_CROPGUIDE;Crop Guide
+!PREFERENCES_RESET_TO_DEFAULT;Reset Preferences
+!PREFERENCES_RESET_TO_DEFAULT_CONFIRM_PROMPT;Reset all preferences to their default values? This action cannot be undone.\n\nSome changes may require restarting the application to take full effect.
 !PREFERENCES_WBAGREENDELTA;Delta temperature in green iterate loop (if Force Extra enabled)
+!QUEUE_LOCATION_TEMPLATE_HELP_FORMAT_BODY;<b>%e</b> will be replaced by the photo's output format, as determined from the output file's file name extension.
+!QUEUE_LOCATION_TEMPLATE_HELP_FORMAT_TITLE;Output File Format/File Name Extension
+!TC_PRIM_BLUROT;B.rot
+!TC_PRIM_BLUSAT;B.sat
+!TC_PRIM_GREROT;G.rot
+!TC_PRIM_GRESAT;G.sat
+!TC_PRIM_REDROT;R.rot
+!TC_PRIM_REDSAT;R.sat
+!TP_COLORAPP_BRIGHT_CUR_BLUE;Brightness - blue
+!TP_COLORAPP_BRIGHT_CUR_GREEN;Brightness - green
+!TP_COLORAPP_BRIGHT_CUR_RED;Brightness - red
+!TP_COLORAPP_CHROMA_S_BLUE;Saturation - blue %
+!TP_COLORAPP_CHROMA_S_GREEN;Saturation - green %
+!TP_COLORAPP_CHROMA_S_RED;Saturation - red %
+!TP_COLORAPP_HUE_BLUE;Hue - blue rotation
+!TP_COLORAPP_HUE_GREEN;Hue - green rotation
+!TP_COLORAPP_HUE_RED;Hue - red rotation
+!TP_COLORAPP_LABEL_RGB;Red Green Blue
+!TP_COLORAPP_RGB_TOOLTIP;'Red Green Blue' allows you to either:\n* Correct any color deviations due to either: gamut overshoot following various adjustments in the process, or poor white balance.\n* Achieve a better balance of colors and luminances to satisfy your preferences.\n* Film Simulation.\n\nThe system operates after the first process (Scene) which converts the 'Working profile' data into that of 'CAM16'. At this stage, the J, Q, C, s, M, h data take into account the physiological aspects considered by CIECAM, and a chromatic adaptation is performed.\n\n For each main color of CIECAM ac-bc [chroma based] hue plane - Red, Green, Blue - you can perform a slight hue (h) rotation in degrees (sliders) , adjust the saturation (s) as a percentage (sliders) , and adjust brightness (Q) (curves).\n\n As a general rule, small adjustments are sufficient: 1° to 3° for hue rotations (h), 5 to 10% more or less for saturation (s), very limited variations in brightness (Q). Of course, if you are looking for special effects, such as simulating a film, the settings can be more pronounced.\n\n These adjustments are made just before the other CIECAM adjustments: Lightness (J), Brightness (Q), Chroma (C), Saturation (s), Colorfulness (M), hue (h), contrast (J), contrast (Q) and curves and are added to them. \n\n Next, the third process converts the data from the 'CAM16' color space to the 'Working profile', taking into account the Viewing conditions. Color adaptation is then performed.\n\n These hue, saturation and brightness adjustments do not use primaries. They are based on the principle of CAM (Color Appearance Models) in 3 processes.
+!TP_COMPRESSGAMUT_BETA;Beta - near Pointer's Gamut *
+!TP_COMPRESSGAMUT_MACLABEL;Maximum achromatic value: %1
+!TP_COMPRESSGAMUT_MACLABELCMY;Estimated Cyan: %1 Magenta: %2 Yellow: %3
+!TP_COMPRESSGAMUT_MACLABELRGB;R: %1 G: %2 B: %3
+!TP_COMPRESSGAMUT_MACLABELRGB_TOOLTIP;Displays the maximum values for the three channels (achromatic): Red, Green, and Blue.\n\nProvides an estimate accurate to within 15% of the Cyan, Magenta, and Yellow values. This estimate should provide useful information for better adjusting the Maximum Distance Limits which should be set greater than 1.\n If the checkboxes for the Cyan, Magenta, and Yellow sliders in 'Maximum Distance Limits' are enabled, then an automatic value is suggested. Manual adjustments may be required.
+!TP_COMPRESSGAMUT_MACLABEL_TOOLTIP;Displays the highest measured value of the 3 RGB (achromatic) channels. This value helps to understand :\n * The state of the image and the reciprocal influence of : a) the Working and Target Gamut Compression profiles; b) 'Highlight reconstruction'.\n * Whether the ‘White point’ needs to be refined - see ‘Generalized Hyperbolic Stretch’ (GHS)  for example.\n\nEffect of values:\n * Very high values, for example greater than 5 or even 10 and more, often indicate the use of an LED or halogen illuminant (with Color Propagation) and a significant color-gamut overshoot. Try 'GHS > Auto Black point and White point', 'White Balance > Blue/Red Equalizer', 'Abstract Profile > Primaries and Illuminant'\n * High values between 2 and 4 are often linked to an excessive light source (sun, etc.) or incorrect exposure settings that have resulted in out-of-range values on the sensor. Try using 'Highlight reconstruction > Color Propagation'.\n * Low values, less than 1, often indicate poorly adjusted white and black points i.e.‘White point (linear WP)’ and ‘Black point (linear BP)’ : see for example GHS.\n\nNotes:\n * Using values higher than 'Maximum distance limits' for the three 'Maximum achromatic value' sliders offers little benefit.\n * Using low values for the three Threshold sliders (whether combined or not with low values for the Power slider, can lead to significant desaturation and color shifts.\n\nThere is a link, but not a correlation, between this value and the three Maximum Distance Limits.
+!TP_CROP_GTCROSSHAIR;Crosshair
+!TP_CROP_GTGOLDENRATIO;Golden Ratio
+!TP_CROP_GTTRIANGLE;Golden Triangles
+!TP_CROP_GUIDE_ASPECT_RATIO;Inscribed aspect ratio crop guides:
+!TP_CROP_GUIDE_BLEED;Bleed
+!TP_CROP_GUIDE_LABEL;Crop Guide
+!TP_CROP_GUIDE_NO_ASPECT_RATIO_GUIDES;No aspect ratio guides
+!TP_CROP_GUIDE_TOOLTIP;Display preview-only guides for the current crop.\n\nInscribed aspect ratio guides fit the selected aspect ratio in the current crop. The orientation is determined automatically based on the crop aspect ratio.\n\n<b>Click</b> - Enable only the selected preset\n<b>Ctrl-Click</b> - Enable the selected preset as an additional guide
+!TP_ICM_COMPRESS;Target Gamut
+!TP_ICM_COMPRESSGAMUT_ADOBE;Adobe
+!TP_ICM_COMPRESSGAMUT_DCIP3;DCIP3
+!TP_ICM_COMPRESSGAMUT_NONE;None
+!TP_ICM_COMPRESSGAMUT_REC2020;Rec2020
+!TP_ICM_COMPRESSGAMUT_SRGB;sRGB
+!TP_ICM_COMPRESS_TOOLTIP; Placed at the end of the processing pipeline, this tool allows you to compress the data to fit into the output profile, for example. If Color Appearance & Lighting is enabled, it will take the compression into account.\n\n This output gamut compression is much simpler than at the beginning of the processing pipeline because unless the user has exaggerated the settings, the gamut will already be close to the Working Profile, hence the simplified graphical interface.\n\n More often than not, you will not see any changes to the image or the histogram when using Gamut Compression. This is because it does not convert the data from Working profile (often Rec2020) to Target Gamut (often sRGB), but compresses it to fit the Target gamut (often sRGB) while remaining in Working profile (often Rec2020), and the upstream treatments must have preserved the gamut. The effect is visible on Led’s, flowers with high saturation. On a normal landscape or portrait, there is most often no change.
+!TP_ICM_COMPRGAMUT;Final Gain & Gamut Compression
+!TP_ICM_COMP_GAIN;Gain (Ev)
+!TP_ICM_COMP_POWER;Power
+!TP_ICM_POWER_TOOLTIP;Modifies global image appearance, similar to the Exposure slider, by applying a positive or negative Ev adjustment to the RGB data. This allows for better control of either the color gamut or the saturation; for the latter, small values of plus or minus 0.1 to 0.4 are sufficient. Higher gain values allow for future use with HDR displays.
+!TP_ICM_PRIMREDROT_TOOLTIP;Change the Red, Green, and Blue primaries. The first slider rotates the primary color, in degrees, around the white point. The second increases or decreases the saturation relative to the white point.\n\nBe very careful when using this type of tool - whether it's polar sliders, linear sliders, or CIExy graphs. If you go outside the CIExy diagram, you'll generate imaginary colors, how will they be handled? If you reduce the primary values too much, you risk out-of-gamut data. Use with caution, and with small values, while monitoring the primaries' deviation from the CIExy diagram.
+!TP_ICM_TRC_MAX;RGB Max=%1
+!TP_ICM_TRC_MAX_END;Final RGB Max=%1
+!TP_ICM_TRC_MAX_END_NO;---
+!TP_ICM_TRC_MAX_TOOLTIP;Provides information on out-of-limit RGB values. Values greater than 1 clearly indicate that we are out of gamut whereas for values less than 1, we cannot say whether the image is within gamut or not because it depends, for example, on the luminance. This check is performed at the end of the Abstract Profile and takes into account all parameters. The ‘Attenuation threshold’ slider can be used to limit the RGB values.\n\nChanges made to 'Color Appearance and Lighting', 'Final Gain and Gamut Compression' are not taken into account.
+!TP_ICM_TRC_SAT_MAX;Final Saturation Max=%1
+!TP_ICM_TRC_SAT_MAX_TOOLTIP;Provides information on out-of-limit RGB values and RGB saturation. Values greater than 1 for ‘Final RGB Max’ and ‘Final Saturation Max’ clearly indicate that we are out of gamut whereas for values less than 1, we cannot say whether the image is within gamut or not because it depends, for example, on the luminance. This check is performed at the end of the processing pipeline and takes into account all parameters. Changes made in Color Appearance & Lighting and in Final Gain & Gamut Compression are taken into account.\n\nAdjusting the Gain (Ev) and Gamut Compression (Target Gamut and Power) settings will allow you to see the impact of these adjustments. You should also observe the histogram, which takes into account the output profile therefore the gamma. This data, which is directly related to the RGB values and Saturation and is in the Working Profile, is in linear mode.\n\n The data is only displayed if Target Gamut is enabled, or if Gain (Ev) is not equal to 0.
+!TP_ICM_WORKING_PRIM_CUSPOL;Custom (Polar sliders)
+!TP_ICM_WORKING_TRC_SAT;Saturation
+!TP_LENSGEOM_SCALE_HORIZONTALLY;Scale horizontally
+!TP_LENSGEOM_SCALE_VERTICALLY;Scale vertically
+!TP_LOCALLAB_APSATUR;Saturation
+!TP_LOCALLAB_BWCIE_TOOLTIP;Only usable in Global mode or if Scope is set to 100.\nThe 'Black and White' option shows only the luminance in the histogram making it easier to adjust the shadows and highlights when using the Gamma and Slope sliders and the Tone Mapping Operators.
+!TP_LOCALLAB_CIE_SMOOTH_TRC;TRC based
+!TP_LOCALLAB_DENOIENA;Enable contrast threshold
+!TP_LOCALLAB_DENOIFRA;Denoise Settings
+!TP_LOCALLAB_DENOIHUE;Equalizer denoise
+!TP_LOCALLAB_DENOIHUECONT;Equalizer denoise mask
+!TP_LOCALLAB_DENOIRATIO;Ratio flat-structured areas
+!TP_LOCALLAB_DENOI_MASK;Denoise contrast mask
+!TP_LOCALLAB_DENORADIUS_TOOLTIP;Allows you to differentiate the denoising action as a function of image detail and uniform background.\n The resulting action is a combination of the noise reduction and that of the mask created by 'Contrast threshold'\n On very noisy images you can reduce the mask noise.\n You can also differentiate the action with the curve 'Equalizer denoise mask'.\n The ratio flat-structured areas allows you to correct the action between the two.\n\nOn noisy images and in Raw format, you should use the 'Presharpening denoise' and ‘Postsharpening denoise’ functions for more effective mask action.
+!TP_LOCALLAB_GHSCOLORNO;---
+!TP_LOCALLAB_GHSCOLORVALUE;RGB values - R:%1 G:%2 B:%3
+!TP_LOCALLAB_GHSDR;Dynamic Range GHS (Ev):%1
+!TP_LOCALLAB_GHSDRNO;---
+!TP_LOCALLAB_GHSMAT;Matrix
+!TP_LOCALLAB_GHSMAT1;AgX (Pleasant)
+!TP_LOCALLAB_GHSMAT2;JzAzBz (XYZ High dynamic)
+!TP_LOCALLAB_GHSMAT3;Cat16 (XYZ Harmonious)
+!TP_LOCALLAB_GHSMAT4;JzAzBz (RGB High dynamic)
+!TP_LOCALLAB_GHSMAT5;Cat16 (RGB Harmonious)
+!TP_LOCALLAB_GHSMATO;None (Neutral)
+!TP_LOCALLAB_GHSMAXRGB;RGB Max & 3 Sigmas: Max=%1 3S=%2
+!TP_LOCALLAB_GHSMAXRGBNO;---
+!TP_LOCALLAB_GHSMAXRGB_TOOLTIP;This allows you to preview the changes you make. The main settings that have an effect are 'Stretch factor (D)' and 'Local intensity (b)'.\n\n Try to obtain a value close to or lower (to your liking) than 0.18 for 'Estimated middle grey', although this isn't mandatory as there are other processing steps afterward.\n\n ‘RGB max’ corresponds to the maximum value of the data; it may only affect a few pixels. ‘3 Sigmas’ corresponds to the limit of truly significant data. You can adjust all GHS settings, but particularly 'Protect Highlights (HP)' and 'Highlight attenuation', in order to avoid, if possible, them exceeding the value of 1.\n\n The purpose of GHS is not to produce a perfect image, but to prepare the image - while keeping some room for maneuver - for further processing.
+!TP_LOCALLAB_GHSMIDGREY;Estimated middle grey=%1
+!TP_LOCALLAB_GHSMIDGREYNO;---
+!TP_LOCALLAB_GHSSYM;Estimated symmetry point RGB=%1
+!TP_LOCALLAB_GHSSYMNO;---
+!TP_LOCALLAB_GHS_AGX;AgX Matrix
+!TP_LOCALLAB_GHS_AGXMAT2_TOOLTIP;Use the LMS (Long, Medium, Short) transformation, depending on the user's selection. LMS is a color space transform which represents the response of the three types of cone cells of the human eye, named for their responsivity (sensitivity) peaks at long, medium, and short wavelengths.\n\nThese transformations, in the form of matrix, modify each R, G and B channel for each pixel, giving priority to certain dominant colors according to your choice.\n * None - leaves the data unchanged (default).\n * Agx - accentuates each R, G, B channel quite strongly so that the LMS data is perceived as more colorful.\n * JzAzBz (XYZ High dynamic) - modifies the LMS distribution, by acting on X, Y, Z to better account for images with a high ‘linear WP’.\n * Cat16 (XYZ harmonious) - modifies the LMS distribution, by acting, on X, Y, Z - ensures a more harmonious distribution of colors while respecting the eye/brain interaction.\n * JzAzBz (RGB High dynamic) - modifies the LMS distribution, by acting, like AgX, on the 3 channels R, G, B to better account for images with a high ‘linear WP’.\n * Cat16 (RGB harmonious) - modifies the LMS distribution, by acting, like AgX, on the 3 channels R, G and B - ensures a more harmonious distribution of colors while respecting the eye/brain interaction.\n\n\nFor JzAzBz and Cat16, the XYZ mode : JzAzBz (XYZ High dynamic) and Cat16 (XYZ harmonious) should ensure better color and luminance fidelity.\n\nThis transformation only affects the modifications made by GHS: 'White Point (linear)', 'Black Point (linear)', 'Symmetry point (SP)' and of course the action on Stretch factor (D) and Local intensity (b). It is imperative to review the GHS settings each time the matrix is changed. It is strongly recommended to activate 'Auto Black point and White point' (except in Inverse mode). Observe the histogram in the two modes 'Working profile - linear' and 'Gamma - corrected output profile'.\n\nBe careful :\n * Not to confuse Cat16 with CIECAM. Cat16 is only the conversion matrix, while CIECAM (Color Appearance and Lighting) is a complete colorimetry process that takes physiological aspects into account.\n * The JzAzBz matrix here, does not take into account the notions of 'Absolute luminance' and so does not use the notion of PQ (Perceptual Quantizer). Do not confuse with the module in Selective Editing > JzCzHz.
+!TP_LOCALLAB_GHS_AGX_MAT_TOOLTIP;Performs the entire GHS processing, including Matrix conversion either AgX or JzAzBz or Cat16. For JzAzBz and Cat16 you have the choice between a transformation in RGB mode or in XYZ mode (preferably).\n * To allow this matrix to be enabled or disabled,  the 'Auto Black point and White point' must be disabled.\n * You need to re-enable 'Auto Black point and White point' to recalculate the values of 'Black Point (linear)', 'White Point (linear)' and 'Symmetry point (SP)'.
+!TP_LOCALLAB_GHS_AGX_TOOLTIP;Performs the entire GHS processing, including AgX conversion.\n * To allow AgX to be enabled or disabled, 'Auto Black point and White point' must be  disabled.\n * You need to re-enable 'Auto Black point and White point' to recalculate the values of 'linear BP', 'linear WP' and 'Symmetry point (SP)'.
+!TP_LOCALLAB_GHS_AUTOBW;Auto Black point & White point
+!TP_LOCALLAB_GHS_BLPHLPAUTO_TOOLTIP;Automatically adjust the 'Black point' and 'White point' values.\n Not available in Inverse GHS mode and must be disabled to allow Inverse GHS to work. It must be disabled (and re-enabled) in order to change 'Matrix conversion (AgX, JzAzBz, Cat16)'.\n Generally, the automatic settings will be satisfactory.\n If necessary, you can subsequently adjust the two points:\n * The 'Black point': using negative slider values may help when the shadows are particularly blocked.\n * Manually increase the ‘White point’ value if necessary, especially if it is less than 1, to give the system more flexibility by avoiding possible gamut overflows due to GHS or subsequent adjustments.
+!TP_LOCALLAB_LOCKMADL;Locks MadL noise evaluation
+!TP_LOCALLAB_LOCKMADL2;Manual settings
+!TP_LOCALLAB_LOCKMADL2_TOOLTIP;Allows you to manually control MadL values. Be careful: this function assumes mastery of the concepts of noise reduction using wavelets. Make sure that the initial values for the selected area have been set automatically.\n\nBe careful not to confuse the action on MadL which is a noise estimation only used in Wavelet Denoise where the strength is set in Selective Editing using a curve and a selected level (Aggressive / Conservative). The MadL scale is exponential and not linear.\n\nThe first levels of wavelet decomposition provide visible noise reduction, whereas the higher levels have more affect on banding.
+!TP_LOCALLAB_LOCKMADLFRA_TOOLTIP;Shows the actual values of Median Absolute Deviation (MadL).\nIf 'Locks MadL noise evaluation' is not enabled you can manually change these values which will affect the entire image.\nThe first levels 0,1,2,3 for the Horizontal direction,7,8,9,10 for the Vertical direction and 14,15,16,17 for the Diagonal, act on the detail noise. The higher levels have more effect on banding noise.\n\nLuminance noise reduction is a function that implements MadL (depending on level and direction) divided by the level of detail (high, medium, low frequency), the actual value of the decomposition at that location (depending on level and direction) and the curve applied by the user according to the level of wavelet decomposition.
+!TP_LOCALLAB_LOCKMADL_TOOLTIP;Allows you to lock the noise evaluation used for Wavelet denoise.\n\nWavelet denoise uses MadL (Median absolute deviation luminance) to act on the noise based on a slider or a curve.\nRawtherapee's pipeline design results in different MadL values depending on the preview position and leads to differences in output.\n\nIf you enable this checkbox, the value used for global processing will be the preview at that time. This will allow you to prioritize a specific area, background, or face for noise reduction, rather than an overall average value. Of course, you should only check the box once you've selected the area.
+!TP_LOCALLAB_MADLDIRD;D-Levels 0..6/14-20
+!TP_LOCALLAB_MADLDIRH;H-Levels 0..6
+!TP_LOCALLAB_MADLDIRV;V-Levels 0..6/7-13
+!TP_LOCALLAB_MADLFRA;Median absolute deviation (L)
+!TP_LOCALLAB_METHODCAP_TOOLTIP;You can use two methods:\n 1. RL Deconvolution, which is similar to the version used in the Detail tab.\n\n 2. Capture Deconvolution, which is an adaptation of Capture Sharpening in the Raw tab for use in Selective Editing, and allows you to use this algorithm either in standalone mode or after denoising. Capture Sharpening's capabilities allow for finer sharpening control by allowing you to soften the corner sharpness to enhance focus on the main subject. The results in the TIF/JPG outputs correspond to those in the 'fit to screen'view.
+!TP_LOCALLAB_MICHBLACK;Subtract linear black
+!TP_LOCALLAB_MICHBLWH;Subtract black=%1 White point=%2
+!TP_LOCALLAB_MICHBLWHNO;---
+!TP_LOCALLAB_MICHBLWH_TOOLTIP;Allows you to see the effect of the two checkboxes:\n * Subtract black: reduces the value of the linear black point to almost zero by subtracting the indicated value.\n * White point: after subtracting the black point, the RGB values are divided by the ‘Linear dynamic range’ (i.e. the displayed white point value minus the old black point).\n\n Reducing the black point to almost zero and taking into account the linear dynamic range as described allows the algorithm to produce better contrast and better consideration of the real gamut).\n Activating JDx Matrix’will reduce the ‘Linear dynamic range’ and change the color balance.
+!TP_LOCALLAB_MICHDR_TOOLTIP; Subtract linear black: reduces the linear black point values to almost zero. This makes optimal use of the available data by increasing overall contrast and reducing haze effects.\n\nLinear dynamic range: allows you to include any data outside the color gamut (in the case of sunsets for example). Enabling ‘Highlight reconstruction’ > Color Propagation can provide a significant improvement.\n\nAttenuation threshold: uses an exponential function to reduce highlights likely to cause gamut overshoot.
+!TP_LOCALLAB_MICHEXP;Exposure (Ev)
+!TP_LOCALLAB_MICHFRA;Michaelis-Menten Settings
+!TP_LOCALLAB_MICHHIGH;Attenuation threshold
+!TP_LOCALLAB_MICHJDX;JDx Matrix
+!TP_LOCALLAB_MICHJDX_TOOLTIP;The JDx checkbox allows the user to choose either the default or the JDx LMS transformations. LMS is a color space transform which represents the response (sensitivity) of the three types of cone cell in the human eye at long, medium, and short wavelengths.\n\nThese transformations are matrices that modify each of the R G B channels for each individual pixel, giving priority to certain dominant colors depending on the selected option\n * Unchecked: leaves the data unchanged (default).\n * JDx: accentuates each of the R G B channels by acting on X Y Z such that the LMS data is perceived as being more colorful.
+!TP_LOCALLAB_MICHKPAR;Knee strength (K)
+!TP_LOCALLAB_MICHOUT;Output max clamp
+!TP_LOCALLAB_MICHSAT;Saturation
+!TP_LOCALLAB_MICHSPAR;Output scale (S)
+!TP_LOCALLAB_MICHTONEFRA;Tone Curve
+!TP_LOCALLAB_MICHWHITE;Linear dynamic range
+!TP_LOCALLAB_MICH_TOOLTIP;This tone mapper uses the Michaelis-Menten equation, which is borrowed from biochemistry to describe enzyme kinetics. In image processing, it creates a smooth, saturating curve that is useful for tone mapping.\n\n * Exposure: Adjusts the input image brightness.\n * Output scale (S): Controls the maximum asymptotic value of the curve; essentially the output white level.\n * Knee strength (K): Determines the “knee” of the curve. Lower values result in a sharper transition to the compressed highlight region.\n * Saturation: Adjusts color saturation post-tone mapping.\n * Output max clamp: Sets the final clipping point for the output values.
+!TP_LOCALLAB_MIDTCIEFRA;Midtones
+!TP_LOCALLAB_MIDTCIEM1;Before Gamma & Slope
+!TP_LOCALLAB_MIDTCIEM2;After Gamma & Slope
+!TP_LOCALLAB_MIDTCIEM3;After CAM16
+!TP_LOCALLAB_MIDTCIEMAIN;Midtones
+!TP_LOCALLAB_SATCIE_TOOLTIP;Modifies the image saturation whenever the gamma/slope ratio is different from 2.4/12.92. It aims to compensate for the desaturation caused by significant luminance variations.\nValues between 0.2 and 1.0 are often sufficient.
+!TP_LOCALLAB_SH4;Tone Mapper Michaelis-Menten (MM)
+!TP_LOCALLAB_SHARCAPFRAME;Corners
+!TP_LOCALLAB_SHARRLFRAME;RL Deconvolution Settings
+!TP_LOCALLAB_SMOOTHCIETHTRC;Highlight attenuation threshold
+!TP_LOCALLAB_SMOOTHCIE_INV;Invert color
+!TP_LOCALLAB_SPRADIUS_TOOLTIP;Try setting an automatic Symmetry Point (SP) estimation, only in RGB mode. May require manual adjustment.
+!TP_PDSHARPENING_CONTRASTRADIUSSE_TOOLTIP;The 'contrast threshold' and 'Capture radius' sliders allow you to control a mask that decides which areas are affected by sharpening and which are left untouched.
+!TP_PDSHARPENING_CONTRAST_TOOLTIP;By default the tool analyzes the image and calculates a threshold to prevent sharpening noise.\n You can leave the automatic Contrast Threshold calculation on, or you can turn it off and set it as required: moving the slider to the right means that details will have to have higher contrast before they are sharpened. Higher Contrast Threshold values also reduce the amount of sharpening applied to noise, which tends to have lower detail contrast.\n Presharpening denoise may be necessary to enable detection and reduce noise somewhat.
+!TP_PDSHARPENING_GAMMA_TOOLTIP;Allows you to differentiate the effect by varying the ratio between shadows and highlights. The mask is sensitive to this setting.
+!TP_PDSHARPENING_ITERATIONS_TOOLTIP;Once the radii have either been automatically calculated or set manually, the tool carries out a series of calculations to try and compensate for any blurring. It is an iterative process, which will produce artifacts if carried too far. Checking the ‘Auto limit iterations’ checkbox will limit the number of iterations or you can do it manually using the Iterations slider.
+!TP_PDSHARPENING_LABEL88;Capture Sharpening
+!TP_PDSHARPENING_NOISE;Presharpening denoise
+!TP_PDSHARPENING_NOISEAFTER;Postsharpening denoise
+!TP_PDSHARPENING_NOISEAFTER_TOOLTIP;For raw images, allows you initial denoising after Capture Sharpening taking into account the mask information.\n * Its main use is to separate the action between structured areas where the noise is barely visible and the often plain background (flat areas) where the noise is very visible.\n\nBe careful not to use values that are too high, you can fine-tune the noise reduction later.
+!TP_PDSHARPENING_NOISECAPTYPE;Use Wavelets instead of Median
+!TP_PDSHARPENING_NOISE_TOOLTIP;In order for Capture Sharpening to work on noisy or very noisy images, applies either :\n * A light '3x3 soft' to a fairly strong '5x5 strong' median denoising filter in successive gradual iterations prior to Capture Sharpening.\n * Wavelet denoising which has a different, more progressive action, mainly on the first 4 levels of decomposition(high and medium frequency).\n * This helps clarify the contrast mask and allows Contrast Threshold to work, and thus Capture Sharpening to work properly.\n * This also helps to reduce noise in the output image.\n\nBe careful not to use values that are too high so as not to degrade the image. The value that allows the mask to appear (or a little more) is usually sufficient.
+!TP_PDSHARPENING_RADIUSOFFSETSE_TOOLTIP;Often images are softer or more blurred in the corners than in the center. The Corner radius boost slider allows you to compensate for this by increasing or decreasing the radius in these areas.\nMoving it to the right increases the sharpening in the outer areas and sliding it to the left will reduce the sharpening.\nThe results in the TIF/JPG outputs correspond to those in the 'fit to screen'view.
+!TP_PDSHARPENING_RADIUSOFFSET_TOOLTIP;Often images are softer or more blurred in the corners than in the center. The Corner radius boost slider allows you to compensate for this by increasing or decreasing the radius in these areas.\nMoving it to the right increases the sharpening in the outer areas and sliding it to the left will reduce the sharpening.
+!TP_PDSHARPENING_RADIUS_TOOLTIP;When in-camera blurring occurs, the effective resolution is no longer dependent on pixel size and instead, has a radius that increases in proportion to the amount of blurring.\n The purpose of this tool is to reduce this blurring by trying to automatically guess the radius needed to counteract the effect.\n\n You can also choose to adjust the radius yourself bearing in mind that if the value is too low, there will not be enough sharpening and if it is too high, it will lead to strong haloing on the edges. Don’t forget that you are only trying to undo the in-camera blurring.
+!TP_PDSHARPENING_SHOWCAP;Show contrast mask
+!TP_SHARPENING_CAP;Capture Deconvolution
+!TP_SHARPENING_CAPFRAME;Corner boost
+!TP_SHARPENING_CONTRASTAUTO_TOOLTIP;Auto contrast level estimation.\nValue subject to variation depending on position in preview.\nBe careful, disable auto after estimation.
+!TP_SHARPENING_EDRADIUS_TOOLTIP;Auto-calculation based on raw data
+!TP_SHARPENING_RADIUS_PROT;Central protected area %
+!TP_SHARPENING_RADIUS_PROTSE_TOOLTIP;Defines the central protection area % (Full image or geographical RT-spot center) that will not be affected by 'Corner radius boost'.\nThe results in the TIF/JPG outputs correspond to those of 'fit to screen'.
+!TP_SHARPENING_RLN;RL Deconvolution
