@@ -277,7 +277,7 @@ void LibRaw::parse_rollei()
   memset(&t, 0, sizeof t);
   do
   {
-    line[0] = 0;
+	memset(line, 0, sizeof(line));
     if (!fgets(line, 128, ifp))
       break;
     line[127] = 0;
@@ -353,6 +353,7 @@ void LibRaw::parse_sinar_ia()
   {
     off = get4();
     get4();
+	memset(str, 0, sizeof(str));
     fread(str, 8, 1, ifp);
     str[7] = 0; // Ensure end of string
     if (!strcmp(str, "META"))

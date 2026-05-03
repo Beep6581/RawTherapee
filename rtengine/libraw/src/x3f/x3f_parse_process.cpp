@@ -335,6 +335,7 @@ void LibRaw::x3f_thumb_loader()
 {
   try
   {
+    INT64 checked_size = x3f_thumb_size(); // This value was checked at upper level?
     x3f_t *x3f = (x3f_t *)_x3f_data;
     if (!x3f)
       return; // No data pointer set
@@ -352,12 +353,24 @@ void LibRaw::x3f_thumb_loader()
     imgdata.thumbnail.tcolors = 3;
     if (imgdata.thumbnail.tformat == LIBRAW_THUMBNAIL_JPEG)
     {
-      imgdata.thumbnail.thumb = (char *)malloc(ID->data_size);
+	  INT64 alloc_size = ID->data_size;
+	  if ((alloc_size > 2 * checked_size) || (alloc_size > 1024LL * 1024LL * LIBRAW_MAX_THUMBNAIL_MB))
+		  throw LIBRAW_EXCEPTION_TOOBIG;
+	  if(alloc_size < 64LL)
+        throw LIBRAW_EXCEPTION_IO_CORRUPT;
+
+	  imgdata.thumbnail.thumb = (char *)malloc(ID->data_size);
       memmove(imgdata.thumbnail.thumb, ID->data, ID->data_size);
       imgdata.thumbnail.tlength = ID->data_size;
     }
     else if (imgdata.thumbnail.tformat == LIBRAW_THUMBNAIL_BITMAP)
     {
+      INT64 alloc_size = INT64(ID->columns) * INT64(ID->rows) * 3LL;
+	  if ((alloc_size > 2 * checked_size) ||
+          (alloc_size > 1024LL * 1024LL * LIBRAW_MAX_THUMBNAIL_MB)) throw LIBRAW_EXCEPTION_TOOBIG;
+      if (alloc_size < 64LL)
+        throw LIBRAW_EXCEPTION_IO_CORRUPT;
+
       imgdata.thumbnail.tlength = ID->columns * ID->rows * 3;
       imgdata.thumbnail.thumb = (char *)malloc(ID->columns * ID->rows * 3);
       char *src0 = (char *)ID->data;
@@ -374,7 +387,10 @@ void LibRaw::x3f_thumb_loader()
   }
   catch (...)
   {
-    // do nothing
+    // no rethrow: handled at upper level
+    imgdata.thumbnail.twidth = 0;
+    imgdata.thumbnail.theight = 0;
+    imgdata.thumbnail.tcolors = 0;
   }
 }
 

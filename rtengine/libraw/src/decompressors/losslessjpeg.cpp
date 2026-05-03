@@ -361,6 +361,7 @@ void HuffTable::initval(uint32_t _bits[17], uint32_t _huffval[256], bool _dng_bu
 		nbits--;
       }
 	hufftable.resize( size_t(1ULL << nbits));
+	uint32_t tsize = 1 << nbits;
 	for (unsigned i = 0; i < hufftable.size(); i++) hufftable[i] = 0;
 
 	int h = 0;
@@ -371,10 +372,14 @@ void HuffTable::initval(uint32_t _bits[17], uint32_t _huffval[256], bool _dng_bu
       {
         for (int j = 0; j < (1 << (nbits - len - 1)); j++)
         {
-          hufftable[h] = ((len+1) << 16) | (uint8_t(huffval[pos] & 0xff) << 8) | uint8_t(shiftval[pos] & 0xff);
+          if (h >= tsize)
+            throw LIBRAW_EXCEPTION_IO_CORRUPT;
+          hufftable[h] = ((len + 1) << 16) | (uint8_t(huffval[pos] & 0xff) << 8) | uint8_t(shiftval[pos] & 0xff);
           h++;
         }
         pos++;
+		if(pos >= 256)
+          throw LIBRAW_EXCEPTION_IO_CORRUPT;
       }
     }
 	if (!disable_cache)

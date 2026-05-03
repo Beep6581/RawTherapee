@@ -244,6 +244,10 @@ int LibRaw::try_dngsdk()
 	bool zerocopy = false;
 	bool isLossy = (rawIFD->fCompression == 34892) || (rawIFD->fCompression == 52546);
 
+	INT64 rawbytes = INT64(rawIFD->Bounds().W()) * INT64(rawIFD->Bounds().H()) * INT64(rawIFD->fSamplesPerPixel) * INT64(TagTypeSize(rawIFD->PixelType()));
+	if(rawbytes > INT64(imgdata.rawparams.max_raw_memory_mb) * INT64(1024 * 1024))
+      return LIBRAW_TOO_BIG;
+
     if (
 #ifdef USE_GPRSDK
 		libraw_internal_data.unpacker_data.tiff_compress != 9 &&

@@ -2248,8 +2248,6 @@ void LibRaw::apply_tiff()
       else if ((((INT64(raw_width) * 3LL / 2LL) + 15LL) / 16LL) * 16LL * INT64(raw_height) == tiff_ifd[raw].bytes)
       {
         load_raw = &LibRaw::nikon_load_padded_packed_raw;
-        load_flags = (((INT64(raw_width) * 3ULL / 2ULL) + 15ULL) / 16ULL) *
-                     16ULL; // bytes per row
       }
       else if ((!strncmp(model, "NIKON Z 9", 9) || !strncmp(model, "NIKON Z 8", 9) || !strcmp(model, "NIKON Z f")
 		  || !strcmp(model, "NIKON Z6_3")) &&

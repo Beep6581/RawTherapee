@@ -379,6 +379,7 @@ void LibRaw::GetNormalizedModel()
       { SonyID_ZV_E10,         "ZV-E10"},
       { SonyID_ILCE_7SM3,      "ILCE-7SM3"},
       { SonyID_ILCE_1,         "ILCE-1"},
+      { SonyID_ILCE_1M2,       "ILCE-1M2"},
       { SonyID_ILME_FX3,       "ILME-FX3"},
       { SonyID_ILCE_7RM3A,     "ILCE-7RM3A"},
       { SonyID_ILCE_7RM4A,     "ILCE-7RM4A"},
