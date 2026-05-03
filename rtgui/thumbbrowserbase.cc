@@ -1121,8 +1121,11 @@ void ThumbBrowserBase::resort ()
             fd.end(),
             [&](const ThumbBrowserEntryBase* a, const ThumbBrowserEntryBase* b)
             {
-                bool lt = a->compare(*b, options.sortMethod);
-                return options.sortDescending ? !lt : lt;
+                if (!options.sortDescending) {
+                    return a->compare(*b, options.sortMethod);
+                } else {
+                    return b->compare(*a, options.sortMethod);
+                }
             }
         );
     }
@@ -1275,8 +1278,11 @@ void ThumbBrowserBase::insertEntry (ThumbBrowserEntryBase* entry)
                 entry,
                 [&](const ThumbBrowserEntryBase* a, const ThumbBrowserEntryBase* b)
                 {
-                    bool lt = a->compare(*b, options.sortMethod);
-                    return options.sortDescending ? !lt : lt;
+                    if (!options.sortDescending) {
+                        return a->compare(*b, options.sortMethod);
+                    } else {
+                        return b->compare(*a, options.sortMethod);
+                    }
                 }
             ),
             entry
