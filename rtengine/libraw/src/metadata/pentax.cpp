@@ -669,6 +669,8 @@ void LibRaw::parseRicohMakernotes(INT64 /*base*/, unsigned tag, unsigned type,
     while (cur_tag != 0x002c)
     {
       fseek(ifp, 10, SEEK_CUR);
+	  if (feof(ifp))
+		  return;
       cur_tag = get2();
     }
     fseek(ifp, 6, SEEK_CUR);

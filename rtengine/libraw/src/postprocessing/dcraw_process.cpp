@@ -150,7 +150,22 @@ int LibRaw::dcraw_process(void)
     /* post-exposure correction fallback */
     if (P1.filters && !O.no_interpolation)
     {
-      if (noiserd > 0 && P1.colors == 3 && P1.filters > 1000)
+	  int real_colors = P1.colors;
+	  int bad_bayer = 0;
+	  if (P1.filters > 1000)
+		  for (int r = 0; r < 4; r++)
+			  for (int c = 0; c < 8; c++)
+			  {
+				  real_colors = MAX(COLOR(r, c) + 1, real_colors);
+				  if (P1.filters > 1000)
+				  {
+					  // Normal bayer: adjacent pixels horizontally/vertically have different colors
+					  bad_bayer += (FC(r, c) == FC(r + 1, c));
+					  bad_bayer += (FC(r, c) == FC(r, c + 1));
+				  }
+			  }
+
+      if (noiserd > 0 && P1.colors == 3 && real_colors == 3 && P1.filters > 1000)
         fbdd(noiserd);
 
       if (P1.filters > 1000 && callbacks.interpolate_bayer_cb)
@@ -159,7 +174,7 @@ int LibRaw::dcraw_process(void)
         (callbacks.interpolate_xtrans_cb)(this);
       else if (quality == 0)
         lin_interpolate();
-      else if (quality == 1 || P1.colors > 3 || (P1.filters != LIBRAW_XTRANS && P1.filters <= 1000))
+      else if (quality == 1 || P1.colors > 3 || real_colors > 3 || bad_bayer || (P1.filters != LIBRAW_XTRANS && P1.filters <= 1000))
         vng_interpolate();
       else if (quality == 2 && P1.filters > 1000)
         ppg_interpolate();

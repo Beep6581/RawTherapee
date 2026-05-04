@@ -22,10 +22,10 @@ it under the terms of the one of two licenses as you choose:
 
 #define LIBRAW_MAJOR_VERSION 0
 #define LIBRAW_MINOR_VERSION 22
-#define LIBRAW_PATCH_VERSION 0
+#define LIBRAW_PATCH_VERSION 1
 #define LIBRAW_VERSION_TAIL Release
 
-#define LIBRAW_SHLIB_CURRENT 24
+#define LIBRAW_SHLIB_CURRENT 25
 #define LIBRAW_SHLIB_REVISION 0
 #define LIBRAW_SHLIB_AGE 0
 

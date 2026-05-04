@@ -58,6 +58,11 @@ it under the terms of the one of two licenses as you choose:
 #define LIBRAW_CR3_MEMPOOL
 #endif
 
+/* max data size for known foveon cameras: 30mpix * 3 channels * 2 bytes = 180Mb, so 512Mb is OK for everything until/if new cameras will arrive */
+#ifndef LIBRAW_X3F_ALLOC_LIMIT_MB
+#define LIBRAW_X3F_ALLOC_LIMIT_MB 512ULL
+#endif
+
 /* Windows or Mac: swab() known to work*/
 #if defined (__APPLE__) || defined(WIN32) || defined(_WIN32)
 /* nothing ?*/
