@@ -449,6 +449,8 @@ int LibRaw::unpack_thumb(void)
       {
         x3f_thumb_loader(); // errors already catched in this call
         SET_PROC_FLAG(LIBRAW_PROGRESS_THUMB_LOAD);
+		if (!T.twidth && !T.theight)
+			return LIBRAW_NO_THUMBNAIL;
         return 0;
       }
 #endif

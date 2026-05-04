@@ -142,8 +142,11 @@ void LibRaw::nikon_coolscan_load_raw()
   fseek(ifp, data_offset, SEEK_SET);
   for (int row = 0; row < raw_height; row++)
   {
-      if(tiff_bps <=8)
-        fread(buf, 1, bufsize, ifp);
+	  if (tiff_bps <= 8)
+	  {
+		  if (fread(buf, 1, bufsize, ifp) < bufsize)
+			  derror(); // will raise EOF exception on eof
+	  }
       else
           read_shorts(ubuf,width*clrs);
 

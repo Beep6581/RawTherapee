@@ -298,17 +298,23 @@ void LibRaw::fuji_14bit_load_raw()
 void LibRaw::nikon_load_padded_packed_raw() // 12 bit per pixel, padded to 16
                                             // bytes
 {
+	unsigned bytesperrow = (((unsigned(S.raw_width) * 3u / 2u) + 15u) / 16u) * 16u; // bytes per row
+
   // libraw_internal_data.unpacker_data.load_flags -> row byte count
-  if (libraw_internal_data.unpacker_data.load_flags < 2000 ||
-      libraw_internal_data.unpacker_data.load_flags > 64000)
-    return;
+  if (bytesperrow < 2000 || bytesperrow > 64000)
+    throw LIBRAW_EXCEPTION_IO_CORRUPT;
+
   unsigned char *buf =
-      (unsigned char *)calloc(libraw_internal_data.unpacker_data.load_flags,1);
+      (unsigned char *)calloc(bytesperrow,1);
   for (int row = 0; row < S.raw_height; row++)
   {
     checkCancel();
-    libraw_internal_data.internal_data.input->read(
-        buf, libraw_internal_data.unpacker_data.load_flags, 1);
+    int readed = libraw_internal_data.internal_data.input->read(
+        buf, 1, bytesperrow);
+
+	if (readed < (int)bytesperrow)
+		derror();
+
     for (int icol = 0; icol < S.raw_width / 2; icol++)
     {
       imgdata.rawdata.raw_image[(row)*S.raw_width + (icol * 2)] =

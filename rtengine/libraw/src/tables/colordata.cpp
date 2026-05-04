@@ -1745,6 +1745,8 @@ int LibRaw::adobe_coeff(unsigned make_idx, const char *t_model,
     { LIBRAW_CAMERAMAKER_Sony, "ILCA-99M2", 0, 0,
       { 6660,-1918,-471,-4613,12398,2485,-649,1433,6447 } },
 
+    { LIBRAW_CAMERAMAKER_Sony, "ILCE-1M2", 0, 0,
+      { 10058, -4074, -932, -4777, 12731, 2274, -544, 1282, 6102}},
     { LIBRAW_CAMERAMAKER_Sony, "ILCE-1", 0, 0,
       { 8161, -2947, -739, -4811, 12668, 2389, -437, 1229, 6524}},
 

@@ -56,7 +56,7 @@ it under the terms of the one of two licenses as you choose:
 	ushort	sget2 (uchar *s);
 	ushort	sget2Rev(uchar *s);
 	libraw_area_t	get_CanonArea();
-	int	parseCR3(INT64 oAtomList, INT64 szAtomList, short &nesting, char *AtomNameStack, short& nTrack, short &TrackType);
+	int	parseCR3(UINT64 oAtomList, UINT64 szAtomList, short &nesting, char *AtomNameStack, short& nTrack, short &TrackType, UINT64 filesz);
 	void 	selectCRXTrack();
 	void    parseCR3_Free();
 	int     parseCR3_CTMD(short trackNum);
