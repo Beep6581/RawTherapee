@@ -15347,6 +15347,25 @@ float ImProcFunctions::GHT(float x, float B, float D, float LP, float SP, float 
     }
     return out;
 }
+
+float ImProcFunctions::Midtone_Tranfer_Function (float x, float mm)
+{
+    constexpr float epsi = 0.00001f;
+    x = rtengine::max(epsi, x);
+    x = rtengine::min(1.f, x);//Maybe to be removed ?
+
+    return ((mm - 1.f) * x) / (((2.f * mm - 1.f) * x) - mm);
+}
+
+float ImProcFunctions::Inv_Midtone_Tranfer_Function (float x, float mm)
+{
+    constexpr float epsi = 0.00001f;
+    x = rtengine::max(epsi, x);
+    x = rtengine::min(1.f, x);
+
+    return (mm * x / ((2.f * mm - 1.f) * x - (mm - 1.f)));
+}
+
 /*
 void SymRgb(const float * DataList, const int datalen)
 {
@@ -18761,16 +18780,16 @@ void ImProcFunctions::Lab_Local(
                                         //The simplest possible function. It would have been possible to add sliders to limit the minimum (shadows) and maximum (highlight) values. But remember, GHS is a 'pre-tone mapper'.
 
                                         if (mtf) {//Midtones transfer function enabled
-                                        //rtengine::max(epsilg, x) to avoid possible negative values ​​for Ro, Go, Bo
 
                                             if (strtype == GHTStrType::NORMAL) {
-                                                Ro = rtengine::max(epsilg,(mm - 1.f) * Ro / ((2.f * mm - 1.f)* Ro - mm));//MTF red
-                                                Go = rtengine::max(epsilg,(mm - 1.f) * Go / ((2.f * mm - 1.f)* Go - mm));//MTF green
-                                                Bo = rtengine::max(epsilg,(mm - 1.f) * Bo / ((2.f * mm - 1.f)* Bo - mm));//MTF blue
+                                                Ro = Midtone_Tranfer_Function (Ro, mm);
+                                                Go = Midtone_Tranfer_Function (Go, mm);
+                                                Bo = Midtone_Tranfer_Function (Bo, mm);
+
                                             } else if (strtype == GHTStrType::INVERSE) {
-                                                Ro = rtengine::max(epsilg, mm * Ro / ((2.f * mm - 1.f) * Ro - (mm - 1.f)));
-                                                Go = rtengine::max(epsilg, mm * Go / ((2.f * mm - 1.f) * Go - (mm - 1.f)));
-                                                Bo = rtengine::max(epsilg, mm * Bo / ((2.f * mm - 1.f) * Bo - (mm - 1.f)));
+                                                Ro = Inv_Midtone_Tranfer_Function (Ro, mm);
+                                                Go = Inv_Midtone_Tranfer_Function (Go, mm);
+                                                Bo = Inv_Midtone_Tranfer_Function (Bo, mm);
                                             }
                                         }
               
@@ -18792,16 +18811,16 @@ void ImProcFunctions::Lab_Local(
                                         //The simplest possible function. It would have been possible to add sliders to limit the minimum (shadows) and maximum (highlight) values. But remember, GHS is a 'pre-tone mapper'.
 
                                         if (mtf) {//Midtones transfer function enabled
-                                        //rtengine::max(epsilg, x) to avoid possible negative values ​​for Ro, Go, Bo
 
                                             if (strtype == GHTStrType::NORMAL) {
-                                                Ro = rtengine::max(epsilg,(mm - 1.f) * Ro / ((2.f * mm - 1.f)* Ro - mm));//MTF red
-                                                Go = rtengine::max(epsilg,(mm - 1.f) * Go / ((2.f * mm - 1.f)* Go - mm));//MTF green
-                                                Bo = rtengine::max(epsilg,(mm - 1.f) * Bo / ((2.f * mm - 1.f)* Bo - mm));//MTF blue
+                                                Ro = Midtone_Tranfer_Function (Ro, mm);
+                                                Go = Midtone_Tranfer_Function (Go, mm);
+                                                Bo = Midtone_Tranfer_Function (Bo, mm);
+
                                             } else if (strtype == GHTStrType::INVERSE) {
-                                                Ro = rtengine::max(epsilg, mm * Ro / ((2.f * mm - 1.f) * Ro - (mm - 1.f)));
-                                                Go = rtengine::max(epsilg, mm * Go / ((2.f * mm - 1.f) * Go - (mm - 1.f)));
-                                                Bo = rtengine::max(epsilg, mm * Bo / ((2.f * mm - 1.f) * Bo - (mm - 1.f)));
+                                                Ro = Inv_Midtone_Tranfer_Function (Ro, mm);
+                                                Go = Inv_Midtone_Tranfer_Function (Go, mm);
+                                                Bo = Inv_Midtone_Tranfer_Function (Bo, mm);
                                             }
                                         }
                                         float sumRatio = 0.f;
