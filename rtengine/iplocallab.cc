@@ -19385,6 +19385,36 @@ void ImProcFunctions::Lab_Local(
                             }
                     }
 
+                    float midgrey = 0.f;
+                    float maxdata = 0.f;
+                    const int size = bfh * bfw;
+                    constexpr float eps = 0.0001f;
+
+#ifdef _OPENMP
+        #   pragma omp parallel for reduction(+:midgrey) reduction(max:maxdata) if (multiThread)
+#endif
+                    for (int i = 0; i < bfh; ++i){
+                        for (int j = 0; j < bfw; ++j) {
+                            const float r = tmpImage->r(i, j);
+                            const float g = tmpImage->g(i, j);
+                            const float b = tmpImage->b(i, j);
+                            float maxrgb = rtengine::max(r, g, b);
+                            if (maxrgb > maxdata){
+                                maxdata = maxrgb;
+                            }
+                            midgrey += norm(r, g, b, wprof);//Mean luminance
+                            tmpImage->r(i, j) = rtengine::max(eps, r);//avoid negatives values
+                            tmpImage->g(i, j) = rtengine::max(eps, g);
+                            tmpImage->b(i, j) = rtengine::max(eps, b);
+                        }
+                    }
+
+                    midgrey /= size;
+                    midgrey /= 65535.f;
+                    maxdata /= 65535.f;
+                    michbwslider[2] = midgrey;
+                    michbwslider[3] = maxdata;
+
                     rgb2lab(*tmpImage, *bufexpfin, params->icm.workingProfile);//conversion RGB -> Lab
                 }
                 

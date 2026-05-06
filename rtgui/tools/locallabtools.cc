@@ -4360,6 +4360,7 @@ LocallabShadow::LocallabShadow():
     mich_sat(Gtk::manage(new Adjuster(M("TP_LOCALLAB_MICHSAT"), 0.0, 2., 0.01, 1.15))),//Saturation : Adjusts color saturation post-tone mapping.
     mich_out(Gtk::manage(new Adjuster(M("TP_LOCALLAB_MICHOUT"), 0.5, 10., 0.01, 1.))),//Output Max Clamp : Sets the final clipping point for the output values.
     michbwLabel(Gtk::manage(new Gtk::Label("---"))),//Display Subtract Black and White point
+    michdataLabel(Gtk::manage(new Gtk::Label("---"))),//Display Midrey and Max RGB
     mich_black(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_MICHBLACK")))),//Allows or disallows the use of linear black subtraction.
     mich_white(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_MICHWHITE")))),//Allows or disallows the use of linear dynamic range.
     mich_high(Gtk::manage(new Adjuster(M("TP_LOCALLAB_MICHHIGH"), 0., 3., 0.01, 0.))),//Reduces highlights.
@@ -4529,6 +4530,9 @@ LocallabShadow::LocallabShadow():
     michbwLabel->set_line_wrap();
     michbwLabel->set_justify(Gtk::Justification::JUSTIFY_CENTER);
     setExpandAlignProperties(michbwLabel, true, false, Gtk::ALIGN_CENTER, Gtk::ALIGN_START);
+    michdataLabel->set_line_wrap();
+    michdataLabel->set_justify(Gtk::Justification::JUSTIFY_CENTER);
+    setExpandAlignProperties(michdataLabel, true, false, Gtk::ALIGN_CENTER, Gtk::ALIGN_START);
     ghsbpwpLabels->set_line_wrap();
     ghsbpwpLabels->set_justify(Gtk::Justification::JUSTIFY_CENTER);
     setExpandAlignProperties(ghsbpwpLabels, true, false, Gtk::ALIGN_CENTER, Gtk::ALIGN_START);
@@ -4720,6 +4724,7 @@ LocallabShadow::LocallabShadow():
     michBox2->pack_start(*mich_white);
     michBox2->pack_start(*mich_high);
     michBox2->pack_start(*michbwLabel);
+    michBox2->pack_start(*michdataLabel);
     michFrame->add(*michBox2);
     pack_start(*michFrame);
 
@@ -5893,11 +5898,11 @@ void LocallabShadow::adjusterChanged(Adjuster* a, double newval)
     }
 }
 
-void LocallabShadow::updatemichbw(double michb, double michw, bool michaut)//Information Black and White point Michaelis
+void LocallabShadow::updatemichbw(double michb, double michw, double michmean, double michmax, bool michaut)//Information Black and White point Michaelis and Midgrey & Max RGB
 {
     
     idle_register.add(
-    [this, michb, michw, michaut]() -> bool {
+    [this, michb, michw, michmean, michmax, michaut]() -> bool {
         GThreadLock lock; // All GUI access from idle_add callbacks or separate thread HAVE to be protected
 
         if (michaut) {//only if user choose one or the two checkbox
@@ -5909,6 +5914,14 @@ void LocallabShadow::updatemichbw(double michb, double michw, bool michaut)//Inf
         } else {
             michbwLabel->set_text(M("TP_LOCALLAB_MICHBLWHNO"));
         }
+
+        michdataLabel->set_text( //Midgrey & Max RGB
+            Glib::ustring::compose(M("TP_LOCALLAB_MICHDATA"),
+                                Glib::ustring::format(std::fixed, std::setprecision(4), michmean),
+                                Glib::ustring::format(std::fixed, std::setprecision(4), michmax))
+        );
+        
+        
         return false;
     }
    );
