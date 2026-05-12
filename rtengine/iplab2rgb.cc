@@ -897,7 +897,7 @@ void ImProcFunctions::workingtrc(int sp, Imagefloat* src, Imagefloat* dst, int c
     const TMatrix wprof = ICCStore::getInstance()->workingSpaceMatrix(params->icm.workingProfile);
 
     double wb2[3][3];
-    float epsilon =  0.000001f;
+    constexpr float epsilon =  0.00001f;//To avoid negative values and crash
 
 #ifdef _OPENMP
         #pragma omp parallel for
@@ -920,13 +920,12 @@ void ImProcFunctions::workingtrc(int sp, Imagefloat* src, Imagefloat* dst, int c
         
         //provis  - samme approach as in WB itcwb
         //we can add others function on colors ...others than mean (actually)
-        int precision = 3;
+        const int precision = 3;
         const int bfw = cw / precision + ((cw % precision) > 0 ? 1 : 0);
         const int bfh = ch / precision + ((ch % precision) > 0 ? 1 : 0);
 
-        Imagefloat *provis = nullptr;
-        provis = new Imagefloat(bfw, bfh);//cw, ch
-        
+        std::unique_ptr<Imagefloat> provis(new Imagefloat(bfw, bfh));//cw, ch
+
 #ifdef _OPENMP
         #pragma omp parallel for
 #endif
@@ -984,7 +983,6 @@ void ImProcFunctions::workingtrc(int sp, Imagefloat* src, Imagefloat* dst, int c
             printf("Estimation dominant color : x=%f y=%f\n", (double) meanx, (double) meany);
         }
 
-       delete provis;
     }
 
     double wprofprim[3][3];//store primaries to XYZ
@@ -1042,7 +1040,7 @@ void ImProcFunctions::workingtrc(int sp, Imagefloat* src, Imagefloat* dst, int c
 
     if (mul == 1) { // || (params->icm.wprim == ColorManagementParams::Primaries::DEFAULT && params->icm.will == ColorManagementParams::Illuminant::DEFAULT)) { //shortcut and speedup when no call primaries and illuminant - no gamut control...in this case be careful
         GammaValues g_a; //gamma parameters
-        double pwr = 1.0 / static_cast<double>(gampos);
+        const double pwr = 1.0 / static_cast<double>(gampos);
         Color::calcGamma(pwr, slpos, g_a); // call to calcGamma with selected gamma and slope
 
 #ifdef _OPENMP
@@ -1078,7 +1076,7 @@ void ImProcFunctions::workingtrc(int sp, Imagefloat* src, Imagefloat* dst, int c
     float bluyy = params->icm.bluy;
     float grexx = params->icm.grex;
     float greyy = params->icm.grey;
-    float epsil = 0.0001f;
+    constexpr float epsil = 0.0001f;
 
     double Wx = 1.0;
     double Wz = 1.0;
@@ -1151,12 +1149,12 @@ void ImProcFunctions::workingtrc(int sp, Imagefloat* src, Imagefloat* dst, int c
     }
 
     if (prim == 14 && locprim == 0 && mul == 5) {//convert data area to xy - Abstract Profile
-        float redgraphx =  params->icm.labgridcieALow;
-        float redgraphy =  params->icm.labgridcieBLow;
-        float blugraphx =  params->icm.labgridcieAHigh;
-        float blugraphy =  params->icm.labgridcieBHigh;
-        float gregraphx =  params->icm.labgridcieGx;
-        float gregraphy =  params->icm.labgridcieGy;
+        const float redgraphx =  params->icm.labgridcieALow;
+        const float redgraphy =  params->icm.labgridcieBLow;
+        const float blugraphx =  params->icm.labgridcieAHigh;
+        const float blugraphy =  params->icm.labgridcieBHigh;
+        const float gregraphx =  params->icm.labgridcieGx;
+        const float gregraphy =  params->icm.labgridcieGy;
         constexpr float INV_OFFSET_MODIFIER = 1.f / OFFSET_MODIFIER;
 
         redxx = INV_OFFSET_MODIFIER * (redgraphx + 1.f) - CIExy_MARGIN;
@@ -1865,14 +1863,14 @@ void ImProcFunctions::workingtrc(int sp, Imagefloat* src, Imagefloat* dst, int c
             primaries[1][1] = p[3];
             primaries[2][0] = p[4];
             primaries[2][1] = p[5];
-            float r_inset = params->icm.redsat;
-            float r_rotation = params->icm.redrot;
-            float g_inset = params->icm.gresat;
-            float g_rotation = params->icm.grerot;
-            float b_inset =  params->icm.blusat;
-            float b_rotation = params->icm.blurot;
+            const float r_inset = params->icm.redsat;
+            const float r_rotation = params->icm.redrot;
+            const float g_inset = params->icm.gresat;
+            const float g_rotation = params->icm.grerot;
+            const float b_inset =  params->icm.blusat;
+            const float b_rotation = params->icm.blurot;
             const float inset[3] = { r_inset / 100, g_inset / 100, b_inset / 100 };
-            const float rad = RT_PI / 180.0;
+            constexpr float rad = RT_PI / 180.0;
             const float rotation[3] = { r_rotation * rad, g_rotation * rad, b_rotation * rad };
             float newprimxy[2];
             for (int i = 0; i < 3; i++) { 
