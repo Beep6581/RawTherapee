@@ -19351,12 +19351,7 @@ void ImProcFunctions::Lab_Local(
                             float rout = clamp(r_final, 0.f, michout);
                             float gout = clamp(g_final, 0.f, michout);
                             float bout = clamp(b_final, 0.f, michout);
-                            if (michmtf > 0.f) {
-                                rout = Midtone_Tranfer_Function (rout, mm);
-                                gout = Midtone_Tranfer_Function (gout, mm);
-                                bout = Midtone_Tranfer_Function (bout, mm);
-                            }
-                            
+
                             tmpImage->r(i, j) = rtengine::max(epsilm, rout * range);//epsilm 0.00001f to avoid crash
                             tmpImage->g(i, j) = rtengine::max(epsilm, gout * range);
                             tmpImage->b(i, j) = rtengine::max(epsilm, bout * range);
@@ -19405,23 +19400,28 @@ void ImProcFunctions::Lab_Local(
 #endif
                     for (int i = 0; i < bfh; ++i){
                         for (int j = 0; j < bfw; ++j) {
-                            const float r = tmpImage->r(i, j);
-                            const float g = tmpImage->g(i, j);
-                            const float b = tmpImage->b(i, j);
+                            float r = tmpImage->r(i, j) / range;
+                            float g = tmpImage->g(i, j) / range;
+                            float b = tmpImage->b(i, j) / range;
+
+                            if (michmtf > 0.f  && michwhite) {//Midtones transfer function
+                                r = Midtone_Tranfer_Function (r, mm);
+                                g = Midtone_Tranfer_Function (g, mm);
+                                b = Midtone_Tranfer_Function (b, mm);
+                            }
+
                             float maxrgb = rtengine::max(r, g, b);
                             if (maxrgb > maxdata){
                                 maxdata = maxrgb;
                             }
                             midgrey += norm(r, g, b, wprof);//Mean luminance
-                            tmpImage->r(i, j) = rtengine::max(eps, r);//avoid negatives values
-                            tmpImage->g(i, j) = rtengine::max(eps, g);
-                            tmpImage->b(i, j) = rtengine::max(eps, b);
+                            tmpImage->r(i, j) = rtengine::max(eps, r * range);//avoid negatives values
+                            tmpImage->g(i, j) = rtengine::max(eps, g * range);
+                            tmpImage->b(i, j) = rtengine::max(eps, b * range);
                         }
                     }
 
                     midgrey /= size;
-                    midgrey /= 65535.f;
-                    maxdata /= 65535.f;
                     michbwslider[2] = midgrey;
                     michbwslider[3] = maxdata;
 

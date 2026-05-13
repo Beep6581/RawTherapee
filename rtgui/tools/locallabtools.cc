@@ -6469,7 +6469,6 @@ void LocallabShadow::mich_blackChanged()
 void LocallabShadow::mich_whiteChanged()
 {
     const bool maskPreviewActivated = isMaskViewActive();
-    const LocallabParams::LocallabSpot defSpot;
 
     // Update shadow highlight GUI according to inverssh button state
     updateShadowGUImask();
@@ -6485,7 +6484,6 @@ void LocallabShadow::mich_whiteChanged()
         mich_mtf->set_sensitive(true);
     } else {
         mich_mtf->set_sensitive(false);
-        mich_mtf->setValue(defSpot.mich_mtf);
     }
 
     if (isLocActivated && exp->getEnabled()) {
