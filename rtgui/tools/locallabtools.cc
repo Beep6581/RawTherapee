@@ -4364,6 +4364,7 @@ LocallabShadow::LocallabShadow():
     mich_black(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_MICHBLACK")))),//Allows or disallows the use of linear black subtraction.
     mich_white(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_MICHWHITE")))),//Allows or disallows the use of linear dynamic range.
     mich_high(Gtk::manage(new Adjuster(M("TP_LOCALLAB_MICHHIGH"), 0., 3., 0.01, 0.))),//Reduces highlights.
+    mich_mtf(Gtk::manage(new Adjuster(M("TP_LOCALLAB_GHS_MTFFRA"), 0., 1., 0.01, 0.))),//MTF.
     expgradsh(Gtk::manage(new MyExpander(false, M("TP_LOCALLAB_EXPGRAD")))),
     strSH(Gtk::manage(new Adjuster(M("TP_LOCALLAB_GRADSTR"), -4., 4., 0.05, 0.))),
     angSH(Gtk::manage(new Adjuster(M("TP_LOCALLAB_GRADANG"), -180, 180, 0.1, 0.))),
@@ -4425,6 +4426,7 @@ LocallabShadow::LocallabShadow():
     Evlocallabmich_white = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_MICH_WHITE");
     Evlocallabmich_high = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_MICH_HIGH");
     Evlocallabmich_jdx = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_MICH_JDX");
+    Evlocallabmich_mtf = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_MICH_MTF");
 
     ghs_SP->addAutoButton(M("TP_LOCALLAB_SPRADIUS_TOOLTIP"));
     set_orientation(Gtk::ORIENTATION_VERTICAL);
@@ -4527,6 +4529,7 @@ LocallabShadow::LocallabShadow():
     mich_kpar->setLogScale(10, 0);
     mich_out->setLogScale(10, 0);
     mich_high->setAdjusterListener(this);
+    mich_mtf->setAdjusterListener(this);
     michbwLabel->set_line_wrap();
     michbwLabel->set_justify(Gtk::Justification::JUSTIFY_CENTER);
     setExpandAlignProperties(michbwLabel, true, false, Gtk::ALIGN_CENTER, Gtk::ALIGN_START);
@@ -4723,6 +4726,7 @@ LocallabShadow::LocallabShadow():
     michBox2->pack_start(*mich_black);
     michBox2->pack_start(*mich_white);
     michBox2->pack_start(*mich_high);
+    michBox2->pack_start(*mich_mtf);
     michBox2->pack_start(*michbwLabel);
     michBox2->pack_start(*michdataLabel);
     michFrame->add(*michBox2);
@@ -4982,6 +4986,7 @@ void LocallabShadow::updateAdviceTooltips(const bool showTooltips)
         mich_white->set_tooltip_text(M("TP_LOCALLAB_MICHDR_TOOLTIP"));
         mich_jdx->set_tooltip_text(M("TP_LOCALLAB_MICHJDX_TOOLTIP"));
         michbwLabel->set_tooltip_text(M("TP_LOCALLAB_MICHBLWH_TOOLTIP"));
+        mich_mtf->set_tooltip_text(M("TP_LOCALLAB_MICHMTF_TOOLTIP"));
         /*
         highlights->set_tooltip_text(M("TP_LOCALLAB_NUL_TOOLTIP"));
         h_tonalwidth->set_tooltip_text(M("TP_LOCALLAB_NUL_TOOLTIP"));
@@ -5082,6 +5087,7 @@ void LocallabShadow::updateAdviceTooltips(const bool showTooltips)
         mich_black->set_tooltip_text("");
         mich_white->set_tooltip_text("");
         michbwLabel->set_tooltip_text("");
+        mich_mtf->set_tooltip_text("");
 
     }
 }
@@ -5263,6 +5269,7 @@ void LocallabShadow::read(const rtengine::procparams::ProcParams* pp, const Para
         mich_black->set_active(spot.mich_black);
         mich_white->set_active(spot.mich_white);
         mich_high->setValue((double)spot.mich_high);
+        mich_mtf->setValue((double)spot.mich_mtf);
         mich_jdx->set_active(spot.mich_jdx);
         detailSH->setValue((double)spot.detailSH);
         tePivot->setValue(spot.tePivot);
@@ -5309,6 +5316,8 @@ void LocallabShadow::read(const rtengine::procparams::ProcParams* pp, const Para
         ghs_HP->getValue(),
         ghs_inv->get_active(),
         *labgridghs);
+        
+    mich_whiteChanged();
     // Enable all listeners
     enableListener();
 
@@ -5423,6 +5432,7 @@ void LocallabShadow::write(rtengine::procparams::ProcParams* pp, ParamsEdited* p
         spot.mich_white = mich_white->get_active();
         spot.mich_high = mich_high->getValue();
         spot.mich_jdx = mich_jdx->get_active();
+        spot.mich_mtf = mich_mtf->getValue();
 
         spot.enaSHMask = enaSHMask->get_active();
         spot.LLmaskSHcurve = LLmaskSHshape->getCurve();
@@ -5477,6 +5487,7 @@ void LocallabShadow::setDefaults(const rtengine::procparams::ProcParams* defPara
         mich_sat->setDefault(defSpot.mich_sat);
         mich_out->setDefault(defSpot.mich_out);
         mich_high->setDefault(defSpot.mich_high);
+        mich_mtf->setDefault(defSpot.mich_mtf);
 
         detailSH->setDefault((double)defSpot.detailSH);
         tePivot->setDefault(defSpot.tePivot);
@@ -5687,6 +5698,13 @@ void LocallabShadow::adjusterChanged(Adjuster* a, double newval)
             if (listener) {
                 listener->panelChanged(Evlocallabmich_high,
                                        mich_high->getTextValue() + " (" + escapeHtmlChars(getSpotName()) + ")");
+            }
+        }
+
+        if (a == mich_mtf) {
+            if (listener) {
+                listener->panelChanged(Evlocallabmich_mtf,
+                                       mich_mtf->getTextValue() + " (" + escapeHtmlChars(getSpotName()) + ")");
             }
         }
 
@@ -6451,6 +6469,7 @@ void LocallabShadow::mich_blackChanged()
 void LocallabShadow::mich_whiteChanged()
 {
     const bool maskPreviewActivated = isMaskViewActive();
+    const LocallabParams::LocallabSpot defSpot;
 
     // Update shadow highlight GUI according to inverssh button state
     updateShadowGUImask();
@@ -6462,6 +6481,12 @@ void LocallabShadow::mich_whiteChanged()
         }
     }
 
+    if (mich_white->get_active()) {
+        mich_mtf->set_sensitive(true);
+    } else {
+        mich_mtf->set_sensitive(false);
+        mich_mtf->setValue(defSpot.mich_mtf);
+    }
 
     if (isLocActivated && exp->getEnabled()) {
         if (listener) {
@@ -6493,10 +6518,10 @@ void LocallabShadow::ghs_autobwChanged()
 
     if (ghs_autobw->get_active()) {
         ghs_BLP->set_sensitive(false);
-        ghs_HLP->set_sensitive(false);        
+        ghs_HLP->set_sensitive(false);
     } else {
         ghs_BLP->set_sensitive(true);
-        ghs_HLP->set_sensitive(true);              
+        ghs_HLP->set_sensitive(true);
     }
 
     if (isLocActivated && exp->getEnabled()) {

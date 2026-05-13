@@ -19142,7 +19142,11 @@ void ImProcFunctions::Lab_Local(
                     const bool michwhite = params->locallab.spots.at(sp).mich_white;//Linear White point
                     const float michhigh = params->locallab.spots.at(sp).mich_high;//Highlight reduction
                     const bool midjdx = params->locallab.spots.at(sp).mich_jdx;//Matrix LMS using XYZ transform
+                    const float michmtf = params->locallab.spots.at(sp).mich_mtf;//mtf
+
                     constexpr float epsilm = 0.00001f;
+                    float mmvar = 0.5f + 0.5f * (1.f - michmtf);//J.Desmis - MTF function settings
+                    float mm = mmvar / (2.001f - michkpar);//Midtones transfer function (Pixinsight - mmvar = 0.5f)
 
                     constexpr float range = 65535.f;
                     std::unique_ptr<Imagefloat> tmpImage(new Imagefloat(bfw, bfh));
@@ -19347,6 +19351,12 @@ void ImProcFunctions::Lab_Local(
                             float rout = clamp(r_final, 0.f, michout);
                             float gout = clamp(g_final, 0.f, michout);
                             float bout = clamp(b_final, 0.f, michout);
+                            if (michmtf > 0.f) {
+                                rout = Midtone_Tranfer_Function (rout, mm);
+                                gout = Midtone_Tranfer_Function (gout, mm);
+                                bout = Midtone_Tranfer_Function (bout, mm);
+                            }
+                            
                             tmpImage->r(i, j) = rtengine::max(epsilm, rout * range);//epsilm 0.00001f to avoid crash
                             tmpImage->g(i, j) = rtengine::max(epsilm, gout * range);
                             tmpImage->b(i, j) = rtengine::max(epsilm, bout * range);

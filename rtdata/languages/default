@@ -1646,6 +1646,7 @@ HISTORY_MSG_LOCAL_MICH_EXP;Local - Michaelis-Menten Exposure
 HISTORY_MSG_LOCAL_MICH_HIGH;Local - Michaelis-Menten Attenuation threshold
 HISTORY_MSG_LOCAL_MICH_JDX;Local - Michaelis-Menten JDx Matrix
 HISTORY_MSG_LOCAL_MICH_KPAR;Local - Michaelis-Menten Knee Strength
+HISTORY_MSG_LOCAL_MICH_MTF;Local - Michaelis-Menten MTF
 HISTORY_MSG_LOCAL_MICH_OUT;Local - Michaelis-Menten Output Max Clamp
 HISTORY_MSG_LOCAL_MICH_SAT;Local - Michaelis-Menten Saturation
 HISTORY_MSG_LOCAL_MICH_SPAR;Local - Michaelis-Menten Output Scale
@@ -3757,6 +3758,7 @@ TP_LOCALLAB_MICHHIGH;Attenuation threshold
 TP_LOCALLAB_MICHJDX;JDx Matrix
 TP_LOCALLAB_MICHJDX_TOOLTIP;The JDx checkbox allows the user to choose either the default or the JDx LMS transformations. LMS is a color space transform which represents the response (sensitivity) of the three types of cone cell in the human eye at long, medium, and short wavelengths.\n\nThese transformations are matrices that modify each of the R G B channels for each individual pixel, giving priority to certain dominant colors depending on the selected option\n * Unchecked: leaves the data unchanged (default).\n * JDx: accentuates each of the R G B channels by acting on X Y Z such that the LMS data is perceived as being more colorful.
 TP_LOCALLAB_MICHKPAR;Knee strength (K)
+TP_LOCALLAB_MICHMTF_TOOLTIP;Allows you to shift the histogram towards the midtones (midtones balance). This algorithm is particularly useful if the image is dark or bright.\n\nThe system takes into account the value of 'Knee strength (K)'.\n\nOnly available if 'Linear dynamic range' is enabled.
 TP_LOCALLAB_MICHOUT;Output max clamp
 TP_LOCALLAB_MICHSAT;Saturation
 TP_LOCALLAB_MICHSPAR;Output scale (S)

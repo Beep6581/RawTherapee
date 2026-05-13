@@ -1608,6 +1608,7 @@ void ParamsEdited::initFrom(const std::vector<rtengine::procparams::ProcParams>&
                 locallab.spots.at(j).mich_white = locallab.spots.at(j).mich_white && pSpot.mich_white == otherSpot.mich_white;
                 locallab.spots.at(j).mich_high = locallab.spots.at(j).mich_high && pSpot.mich_high == otherSpot.mich_high;
                 locallab.spots.at(j).mich_jdx = locallab.spots.at(j).mich_jdx && pSpot.mich_jdx == otherSpot.mich_jdx;
+                locallab.spots.at(j).mich_mtf = locallab.spots.at(j).mich_mtf && pSpot.mich_mtf == otherSpot.mich_mtf;
 
                 for (int k = 0; k < 6; k++) {
                     locallab.spots.at(j).multsh[k] = locallab.spots.at(j).multsh[k] && pSpot.multsh[k] == otherSpot.multsh[k];
@@ -4887,6 +4888,10 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
 
         if (locallab.spots.at(i).mich_high) {
             toEdit.locallab.spots.at(i).mich_high = mods.locallab.spots.at(i).mich_high;
+        }
+
+        if (locallab.spots.at(i).mich_mtf) {
+            toEdit.locallab.spots.at(i).mich_mtf = mods.locallab.spots.at(i).mich_mtf;
         }
 
         if (locallab.spots.at(i).mich_black) {
@@ -9049,6 +9054,7 @@ LocallabParamsEdited::LocallabSpotEdited::LocallabSpotEdited(bool v) :
     mich_white(v),
     mich_high(v),
     mich_jdx(v),
+    mich_mtf(v),
 
     multsh{v, v, v, v, v, v, v},
     highlights(v),
@@ -9893,6 +9899,7 @@ void LocallabParamsEdited::LocallabSpotEdited::set(bool v)
     mich_white = v;
     mich_high = v;
     mich_jdx = v;
+    mich_mtf = v;
 
     for (int i = 0; i < 6; i++) {
         multsh[i] = v;
