@@ -5965,7 +5965,7 @@ void LocallabShadow::updateghsbw2(double ghsb, double ghsw, bool ghsaut)//auto G
                     ghs_BLP->setValue(ghsb);
                     enableListener();
                 }
-                listener->panelChanged (Evlocallabghs_BLP,ghs_BLP->getTextValue());                
+                listener->panelChanged(Evlocallabghs_autobw, M("GENERAL_ENABLED") + " (" + escapeHtmlChars(getSpotName()) + ")");
             }
         }
         return false;
@@ -6527,7 +6527,7 @@ void LocallabShadow::ghs_autobwChanged()
             if (ghs_autobw->get_active()) {
                 nbwb = 1; // execute multi preview to automatically calculate black point and white point but only once
                 listener->panelChanged(Evlocallabghs_autobw,
-                                       M("GENERAL_ENABLED") + " (" + escapeHtmlChars(getSpotName()) + ")");
+                                       M("TP_PREPROCESS_LABEL") + " (" + escapeHtmlChars(getSpotName()) + ")");
             } else {
                 nbwb = 0;
                 listener->panelChanged(Evlocallabghs_autobw,
