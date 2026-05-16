@@ -203,8 +203,49 @@ if(APPLE)
 endif()
 
 if(WIN32)
-    set(EXTRA_SRC_CLI myicon.rc)
-    set(EXTRA_SRC_NONCLI myicon.rc)
+    find_program(GIT_CMD git.exe HINTS ENV Path PATH_SUFFIXES ../)
+
+    # Get the version which will be included in the application manifest
+    if(GIT_CMD STREQUAL GIT_CMD-NOTFOUND)
+        message(WARNING "git.exe not found, using default version")
+        set(WINDOWS_APPLICATION_VERSION "0.0.0.0")
+    else()
+        execute_process(COMMAND ${GIT_CMD} describe --tags --always --long OUTPUT_VARIABLE GIT_DESCRIBE OUTPUT_STRIP_TRAILING_WHITESPACE WORKING_DIRECTORY "${PROJECT_SOURCE_DIR}")
+        # Extract the major and minor versions, plus the number of commits since the tag, then build the four component version number, e.g. "5.0-gtk2-2-g12345678" -> "5.0.2.0"
+        string(REGEX REPLACE "^([0-9]+\.[0-9]+).*-([0-9]+)-g[0-9a-f]+$" "\\1.\\2.0" WINDOWS_APPLICATION_VERSION "${GIT_DESCRIBE}")
+        if(WINDOWS_APPLICATION_VERSION STREQUAL GIT_DESCRIBE)
+            message(WARNING "git describe output did not match expected format, using default version")
+            set(WINDOWS_APPLICATION_VERSION "0.0.0.0")
+        endif()
+    endif()
+    message(STATUS "Using version ${WINDOWS_APPLICATION_VERSION} for manifest template")
+
+    # Create the manifest files
+    set(WINDOWS_APPLICATION_NAME "RawTherapee.RawTherapee.rawtherapee")
+    configure_file(
+        ${CMAKE_CURRENT_SOURCE_DIR}/app.manifest.in
+        ${CMAKE_CURRENT_BINARY_DIR}/app.manifest
+    )
+    set(WINDOWS_APPLICATION_NAME "RawTherapee.RawTherapee.rawtherapee-cli")
+    configure_file(
+        ${CMAKE_CURRENT_SOURCE_DIR}/app.manifest.in
+        ${CMAKE_CURRENT_BINARY_DIR}/app_cli.manifest
+    )
+
+    # Create the manifest RC files
+    set(MANIFEST_NAME app)
+    configure_file(
+        ${CMAKE_CURRENT_SOURCE_DIR}/app_manifest.rc.in
+        ${CMAKE_CURRENT_BINARY_DIR}/app_manifest.rc
+    )
+    set(MANIFEST_NAME app_cli)
+    configure_file(
+        ${CMAKE_CURRENT_SOURCE_DIR}/app_manifest.rc.in
+        ${CMAKE_CURRENT_BINARY_DIR}/app_manifest_cli.rc
+    )
+
+    set(EXTRA_SRC_CLI myicon.rc ${CMAKE_CURRENT_BINARY_DIR}/app_manifest_cli.rc)
+    set(EXTRA_SRC_NONCLI myicon.rc ${CMAKE_CURRENT_BINARY_DIR}/app_manifest.rc)
     set(EXTRA_LIB_RTGUI winmm)
 endif()
 
