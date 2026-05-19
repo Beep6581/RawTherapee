@@ -317,6 +317,8 @@ void LibRaw::nikon_load_padded_packed_raw() // 12 bit per pixel, padded to 16
 
     for (int icol = 0; icol < S.raw_width / 2; icol++)
     {
+      if (((unsigned)icol * 3u + 2u) >= bytesperrow)
+        break; // explicit guard: buf is sized to bytesperrow
       imgdata.rawdata.raw_image[(row)*S.raw_width + (icol * 2)] =
           ((buf[icol * 3 + 1] & 0xf) << 8) | buf[icol * 3];
       imgdata.rawdata.raw_image[(row)*S.raw_width + (icol * 2 + 1)] =

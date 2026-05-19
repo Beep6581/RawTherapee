@@ -364,6 +364,15 @@ void HuffTable::initval(uint32_t _bits[17], uint32_t _huffval[256], bool _dng_bu
 	uint32_t tsize = 1 << nbits;
 	for (unsigned i = 0; i < hufftable.size(); i++) hufftable[i] = 0;
 
+	// Validate total code count upfront to catch malformed tables early
+	{
+		uint32_t total = 0;
+		for (int i = 1; i <= 16 && i <= nbits; i++)
+			total += (uint32_t)bits[i] * (1u << (nbits - i));
+		if (total > tsize)
+			throw LIBRAW_EXCEPTION_IO_CORRUPT;
+	}
+
 	int h = 0;
     int pos = 0;
     for (uint8_t len = 0; len < nbits; len++)
