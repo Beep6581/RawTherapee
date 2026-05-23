@@ -34,7 +34,7 @@ build() {
   )
 
   cmake "${_cmake_options[@]}"
-  cmake --build build --parallel
+  cmake --build build --parallel $(nproc)
 }
 
 package() {
