@@ -89,7 +89,6 @@
 #87 29.03.2025 Erweiterung (marter) RT 5.12
 #88 29.04.2026 Erweiterung (marter) RT 5.13
 
-#01 Developers should add translations to this file and then run the 'generateTranslationDiffs' Bash script to update other locales.
 #100
 #101 @LANGUAGE_DISPLAY_NAME=Deutsch
 ABOUT_TAB_BUILD;Version
@@ -813,8 +812,8 @@ HISTORY_MSG_475;(RAW - Sensor-Matrix)\nFarbinterpolation - PS\nAusgleich pro Kan
 HISTORY_MSG_476;(Erweitert - FuB)\nBetrachtungsbed.\nFarbtemperatur
 HISTORY_MSG_477;(Erweitert - FuB)\nBetrachtungsbed.\nTönung
 HISTORY_MSG_478;(Erweitert - FuB)\nBetrachtungsbed.\nmittlere Leuchtdichte
-HISTORY_MSG_479;(Erweitert - FuB)\nBetrachtungsbed.\nAdaptation
-HISTORY_MSG_480;(Erweitert - FuB)\nBetrachtungsbed.\nAuto-Adaptation
+HISTORY_MSG_479;(Erweitert - FuB)\nBetrachtungsbed.\nAdaption
+HISTORY_MSG_480;(Erweitert - FuB)\nBetrachtungsbed.\nAuto-Adaption
 HISTORY_MSG_481;(Erweitert - FuB)\nSzene\nFarbtemperatur
 HISTORY_MSG_482;(Erweitert - FuB)\nSzene\nTönung
 HISTORY_MSG_483;(Erweitert - FuB)\nSzene\nmittlere Leuchtdichte
@@ -1468,7 +1467,7 @@ HISTORY_MSG_1145;(sel. Editieren - CIECAM)\nLOG-Kodierung Jz
 HISTORY_MSG_1146;(sel. Editieren - CIECAM)\nLOG-Kodierung Jz\nMittlere Helligkeit
 HISTORY_MSG_1147;(sel. Editieren - CIECAM)\nSigmoid Jz\nSkalieren Yb-Szene
 HISTORY_MSG_1148;(sel. Editieren - CIECAM)\nSigmoid Jz
-HISTORY_MSG_1149;(sel. Editieren - CIECAM)\nSigmoid Q & neigungsbasiert
+HISTORY_MSG_1149;(sel. Editieren - CIECAM)\nSigmoid Q &amp; neigungsbasiert
 HISTORY_MSG_1150;(sel. Editieren - CIECAM)\nSigmoid\nQuellen-Daten\nLOG-Kodierung
 HISTORY_MSG_BLSHAPE;(Erweitert - Wavelet)\nUnschärfeebenen\nUnschärfe nach Ebenen
 HISTORY_MSG_BLURCWAV;(Erweitert - Wavelet)\nRestbild - Unschärfe\nUnschärfe Buntheit
@@ -1569,7 +1568,7 @@ HISTORY_MSG_ICM_BLUROT;(Farbe - Farbmanagement)\nAbstraktes Profil - PuB\nBlau-R
 HISTORY_MSG_ICM_BLUSAT;(Farbe - Farbmanagement)\nAbstraktes Profil - PuB\nBlau Sättigung
 HISTORY_MSG_ICM_BLUX;(Farbe - Farbmanagement)\nAbstraktes Profil\nVorgabe Blau X
 HISTORY_MSG_ICM_BLUY;(Farbe - Farbmanagement)\nAbstraktes Profil\nVorgabe Blau Y
-HISTORY_MSG_ICM_CAT;(Farbe - Farbmanagement)\nAbstraktes Profil - PuB\nMatrix-Adaptation
+HISTORY_MSG_ICM_CAT;(Farbe - Farbmanagement)\nAbstraktes Profil - PuB\nMatrix-Adaption
 HISTORY_MSG_ICM_FBW;(Farbe - Farbmanagement)\nAbstraktes Profil\nSchwarz-Weiß
 HISTORY_MSG_ICM_GAMUT;(Farbe - Farbmanagement)\nAbstraktes Profil - PuB\nGamut-Kontrolle
 HISTORY_MSG_ICM_GREROT;(Farbe - Farbmanagement)\nAbstraktes Profil - PuB\nGrün-Rotation
@@ -1634,7 +1633,7 @@ HISTORY_MSG_LOCAL_CIE_BLUYL;(sel. Editieren - CIECAM)\Primärfarben und Lichtque
 HISTORY_MSG_LOCAL_CIE_BRICOMP;(sel. Editieren - CIECAM)\nQuellen-Daten - LOG-Kodierung\nHelligkeitskompression
 HISTORY_MSG_LOCAL_CIE_BRICOMPTH;(sel. Editieren - CIECAM)\nSchwellenwert Helligkeitskompression
 HISTORY_MSG_LOCAL_CIE_BWCIE;(sel. Editieren - CIECAM)\nQuellen-Daten - Tonwert\nSchwarz-Weiß
-HISTORY_MSG_LOCAL_CIE_CAT;(sel. Editieren - CIECAM)\nMatrix-Adaptation
+HISTORY_MSG_LOCAL_CIE_CAT;(sel. Editieren - CIECAM)\nMatrix-Adaption
 HISTORY_MSG_LOCAL_CIE_CONTSIG;(sel. Editieren - CIECAM)\nKontrast Sigmoid
 HISTORY_MSG_LOCAL_CIE_DETAILJZ;(sel. Editieren - CIECAM)\nJzCzHz)\nLokaler Kontrast
 HISTORY_MSG_LOCAL_CIE_ENAMASKALL;(sel. Editieren - CIECAM)\nAlle Masken
@@ -1741,7 +1740,7 @@ HISTORY_MSG_LOCAL_MICH_WHITE;(sel. Editieren - Schatten/Lichter - MM)\nlinearer 
 HISTORY_MSG_LOCAL_NLITER;(sel. Editieren - Rauschreduzierung)\nNicht-lokales Mittel\nIterationen
 HISTORY_MSG_LOCAL_OFFSETWAV;(sel. Editieren - lokaler Kontrast)\nWavelets\nVersatz
 HISTORY_MSG_LOCAL_PROCESSWAV;(sel. Editieren - lokaler Kontrast)\nWavelets\nAnzeige der modifizierten Bereiche
-HISTORY_MSG_LOCAL_QJMETHOD;(sel. Editieren - CIECAM)\nTonemapping Operator Q & J
+HISTORY_MSG_LOCAL_QJMETHOD;(sel. Editieren - CIECAM)\nTonemapping Operator Q &amp; J
 HISTORY_MSG_LOCAL_SHARITERCHECK;(sel. Editieren)\nSchärfen\nIterationen automatisch limitieren
 HISTORY_MSG_LOCAL_SHARREPAR;(sel. Editieren)\nSchärfen\nGesamtintensität
 HISTORY_MSG_LOCAL_SHARSHOW;(sel. Editieren)\nSchärfen\nKontrastmaske anzeigen
@@ -2612,7 +2611,7 @@ TP_COLORAPP_BRIGHT_CUR_RED;Helligkeit - Rot
 TP_COLORAPP_BRIGHT_TOOLTIP;Helligkeit in CIECAM berücksichtigt die Weißintensität. Sie unterscheidet sich von L*a*b* und RGB-Helligkeit.
 TP_COLORAPP_CAT02ADAPTATION_TOOLTIP;Bei manueller Einstellung werden Werte über 65 empfohlen.
 TP_COLORAPP_CATCLASSIC;Klassisch
-TP_COLORAPP_CATMET_TOOLTIP;Klassisch - traditionelle CIECAM-Berechnung. Die Transformationen der chromatischen Adaptation werden separat auf 'Szenenbedingungen' und 'Grundlichtart' einerseits und auf 'Grundlichtart' und 'Betrachtungsbedingungen' andererseits angewendet.\n\nSymmetrisch - Die chromatische Anpassung basiert auf dem Weißabgleich. Die Einstellungen 'Szenenbedingungen', 'Bildeinstellungen' und 'Betrachtungsbedingungen' werden neutralisiert.\n\nGemischt - Wie die Option 'Klassisch', aber in diesem Fall basiert die chromatische Anpassung auf dem Weißabgleich.
+TP_COLORAPP_CATMET_TOOLTIP;Klassisch - traditionelle CIECAM-Berechnung. Die Transformationen der chromatischen Adaption werden separat auf 'Szenenbedingungen' und 'Grundlichtart' einerseits und auf 'Grundlichtart' und 'Betrachtungsbedingungen' andererseits angewendet.\n\nSymmetrisch - Die chromatische Anpassung basiert auf dem Weißabgleich. Die Einstellungen 'Szenenbedingungen', 'Bildeinstellungen' und 'Betrachtungsbedingungen' werden neutralisiert.\n\nGemischt - Wie die Option 'Klassisch', aber in diesem Fall basiert die chromatische Anpassung auf dem Weißabgleich.
 TP_COLORAPP_CATMOD;Modus
 TP_COLORAPP_CATSYMGEN;Automatisch Symmetrisch
 TP_COLORAPP_CATSYMSPE;Gemischt
@@ -2626,7 +2625,7 @@ TP_COLORAPP_CHROMA_S_RED;Sättigung - Rot %
 TP_COLORAPP_CHROMA_S_TOOLTIP;Die Sättigung in CIECAM unterscheidet sich von L*a*b* und RGB-Sättigung.
 TP_COLORAPP_CHROMA_TOOLTIP;Die Buntheit in CIECAM unterscheidet sich von L*a*b* und RGB-Buntheit.
 TP_COLORAPP_CIECAT_DEGREE;Szenenanpassung
-TP_COLORAPP_CIECAT_DEGREEOUT;Chromatische Adaptation Wahrnehmung
+TP_COLORAPP_CIECAT_DEGREEOUT;Chromatische Adaption Wahrnehmung
 TP_COLORAPP_CONTRAST;Kontrast (J)
 TP_COLORAPP_CONTRAST_Q;Kontrast (Q)
 TP_COLORAPP_CONTRAST_Q_TOOLTIP;Kontrast (Q) in CIECAM basiert auf Helligkeit. Er unterscheidet sich vom L*a*b*- und RGB-Kontrast.
@@ -2676,7 +2675,7 @@ TP_COLORAPP_MODELCAT_TOOLTIP;Ermöglicht die Auswahl zwischen CAM02 oder CAM16.\
 TP_COLORAPP_MODEL_TOOLTIP;<b>Weißabgleich [RT] + [Ausgabe]:</b>\nRTs Weißabgleich wird für die Szene verwendet,\nCIECAM auf D50 gesetzt und der Weißabgleich\ndes Ausgabegerätes kann unter:\n<i>Einstellungen > Farb-Management</i>\neingestellt werden.\n\n<b>Weißabgleich [RT+CAT02/16] + [Ausgabe]:</b>\nRTs Weißabgleich wird für CAT02 verwendet und\nder Weißabgleich des Ausgabegerätes kann unter\n<i>Einstellungen > Farb-Management</i>\neingestellt werden.
 TP_COLORAPP_NEUTRAL;Zurücksetzen
 TP_COLORAPP_NEUTRAL_TOOLTIP;Setzt alle Parameter auf Vorgabewerte zurück.
-TP_COLORAPP_RGB_TOOLTIP;'Rot Grün Blau' ermöglicht Ihnen Folgendes:\n* Korrektur von Farbabweichungen, die entweder durch Farbraumüberschreitung nach verschiedenen Anpassungen im Prozess oder durch einen ungenauen Weißabgleich entstehen.\n* Erzielung eines besseren Gleichgewichts von Farben und Luminanzen, um Ihren Vorlieben gerecht zu werden.\n* Filmsimulation.\n\nDas System arbeitet nach dem ersten Prozess (Szene), der die Daten des 'Arbeitsprofils' in die von 'CAM16' konvertiert. In diesem Stadium berücksichtigen die J-, Q-, C-, s-, M- und h-Daten die von CIECAM betrachteten physiologischen Aspekte, und es wird eine chromatische Adaptation durchgeführt.\n\n Für jede Hauptfarbe der CIECAM ac-bc [chroma-basiert] Farbtonebene – Rot, Grün, Blau – können Sie eine leichte Farbtondrehung (h) in Grad (Schieberegler), eine Anpassung der Sättigung (s) in Prozent (Schieberegler) und eine Anpassung der Helligkeit (Q) (Kurven) vornehmen.\n\n Im Allgemeinen genügen kleine Anpassungen: 1° bis 3° für Farbtondrehungen (h), 5 bis 10 % mehr oder weniger für die Sättigung (s) und sehr geringe Variationen der Helligkeit (Q). Wenn Sie Spezialeffekte erzielen möchten, beispielsweise durch die Simulation eines Films, können die Einstellungen natürlich noch deutlicher ausfallen.\n\n Diese Anpassungen werden unmittelbar vor den anderen CIECAM-Anpassungen vorgenommen: Helligkeit (J), Farbsättigung (Q), Chroma (C), Sättigung (s), Farbigkeit (M), Farbton (h), Kontrast (J), Kontrast (Q) und Kurven. Anschließend werden diese Werte addiert.\n\n Im dritten Schritt werden die Daten vom Farbraum „CAM16“ unter Berücksichtigung der Betrachtungsbedingungen in das Arbeitsprofil konvertiert. Danach erfolgt die Farbanpassung.\n\n Diese Anpassungen von Farbton, Sättigung und Helligkeit verwenden keine Primärfarben. Sie basieren auf dem Prinzip der CAM-Farbmodelle (Color Appearance Models) in drei Schritten.
+TP_COLORAPP_RGB_TOOLTIP;'Rot Grün Blau' ermöglicht Ihnen Folgendes:\n* Korrektur von Farbabweichungen, die entweder durch Farbraumüberschreitung nach verschiedenen Anpassungen im Prozess oder durch einen ungenauen Weißabgleich entstehen.\n* Erzielung eines besseren Gleichgewichts von Farben und Luminanzen, um Ihren Vorlieben gerecht zu werden.\n* Filmsimulation.\n\nDas System arbeitet nach dem ersten Prozess (Szene), der die Daten des 'Arbeitsprofils' in die von 'CAM16' konvertiert. In diesem Stadium berücksichtigen die J-, Q-, C-, s-, M- und h-Daten die von CIECAM betrachteten physiologischen Aspekte, und es wird eine chromatische Adaption durchgeführt.\n\n Für jede Hauptfarbe der CIECAM ac-bc [chroma-basiert] Farbtonebene – Rot, Grün, Blau – können Sie eine leichte Farbtondrehung (h) in Grad (Schieberegler), eine Anpassung der Sättigung (s) in Prozent (Schieberegler) und eine Anpassung der Helligkeit (Q) (Kurven) vornehmen.\n\n Im Allgemeinen genügen kleine Anpassungen: 1° bis 3° für Farbtondrehungen (h), 5 bis 10 % mehr oder weniger für die Sättigung (s) und sehr geringe Variationen der Helligkeit (Q). Wenn Sie Spezialeffekte erzielen möchten, beispielsweise durch die Simulation eines Films, können die Einstellungen natürlich noch deutlicher ausfallen.\n\n Diese Anpassungen werden unmittelbar vor den anderen CIECAM-Anpassungen vorgenommen: Helligkeit (J), Farbsättigung (Q), Chroma (C), Sättigung (s), Farbigkeit (M), Farbton (h), Kontrast (J), Kontrast (Q) und Kurven. Anschließend werden diese Werte addiert.\n\n Im dritten Schritt werden die Daten vom Farbraum „CAM16“ unter Berücksichtigung der Betrachtungsbedingungen in das Arbeitsprofil konvertiert. Danach erfolgt die Farbanpassung.\n\n Diese Anpassungen von Farbton, Sättigung und Helligkeit verwenden keine Primärfarben. Sie basieren auf dem Prinzip der CAM-Farbmodelle (Color Appearance Models) in drei Schritten.
 TP_COLORAPP_RSTPRO;Hautfarbtöne schützen
 TP_COLORAPP_RSTPRO_TOOLTIP;Hautfarbtöne schützen\nWirkt sich auf Regler und Kurven aus.
 TP_COLORAPP_SOURCEF_TOOLTIP;Entspricht den Aufnahmebedingungen und wie man die Bedingungen und Daten wieder in einen normalen Bereich bringt. 'Normal' bedeutet Durchschnitts- oder Standardbedingungen und Daten, d. h. ohne Berücksichtigung von CIECAM-Korrekturen.
@@ -3100,11 +3099,11 @@ TP_ICM_TRC_TOOLTIP;Ermöglicht Ihnen, die standardmäßige sRGB-'Tonwertkurve' i
 TP_ICM_WAVFRAME;Kontrast-Erweiterung
 TP_ICM_WAVREFI;Verfeinern
 TP_ICM_WORKINGPROFILE;Arbeitsfarbraum
-TP_ICM_WORKING_CAT;Matrix-Adaptation
+TP_ICM_WORKING_CAT;Matrix-Adaption
 TP_ICM_WORKING_CAT_BRAD;Bradford
 TP_ICM_WORKING_CAT_CAT02;Cat02
 TP_ICM_WORKING_CAT_CAT16;Cat16
-TP_ICM_WORKING_CAT_TOOLTIP;Führt die chromatische Adaptation der XYZ-Konvertierungs-Matrix durch. Vorgabe Bradford
+TP_ICM_WORKING_CAT_TOOLTIP;Führt die chromatische Adaption der XYZ-Konvertierungs-Matrix durch. Vorgabe Bradford
 TP_ICM_WORKING_CAT_VK;Von Kries
 TP_ICM_WORKING_CAT_XYZ;XYZ Skala
 TP_ICM_WORKING_CIEDIAG;CIE xy-Diagramm
@@ -3284,7 +3283,7 @@ TP_LOCALLAB_CAM16_FRA;CAM16 Bildanpassungen
 TP_LOCALLAB_CAMMODE;CAM-Modell
 TP_LOCALLAB_CAMMODE_CAM16;CAM16
 TP_LOCALLAB_CAMMODE_JZ;Jz Cz Hz
-TP_LOCALLAB_CATAD;Chromatische Adaptation/Cat16
+TP_LOCALLAB_CATAD;Chromatische Adaption/Cat16
 TP_LOCALLAB_CBDL;Detailebenenkontrast
 TP_LOCALLAB_CBDLCLARI_TOOLTIP;Verstärkt den lokalen Kontrast der Mitteltöne.
 TP_LOCALLAB_CBDL_ADJ_TOOLTIP;Das gleiche wie Wavelets.\nDie erste Ebene (0) arbeitet mit 2x2 Pixeldetails.\nDie letzte Ebene (5) arbeitet mit 64x64 Pixeldetails.
@@ -4951,3 +4950,4 @@ ZOOMPANEL_ZOOMIN;Hineinzoomen\nTaste: <b>+</b>
 ZOOMPANEL_ZOOMOUT;Herauszoomen\nTaste: <b>-</b>
 //TP_WBALANCE_ITCWBNOPURPLE_TOOLTIP;By default when "Inpaint opposed" is activated, purple colors are not taken into account. However, if the image does not need highlight reconstruction, or if this image naturally contains purple tints (flowers, etc.), it may be necessary to deactivate, to take into account all the colors.
 //TP_WBALANCE_ITCWB_FORCED;Forces use of the entire CIE diagram
+
