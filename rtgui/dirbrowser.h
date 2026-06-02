@@ -72,17 +72,16 @@ private:
 #ifdef _WIN32
     unsigned int volumes;
     sigc::connection timerEventSource;
-public:
+
     bool updateVolumes ();
-private:
     void addRoot (char letter);
 #endif
     void addDir (const Gtk::TreeModel::iterator& iter, const Glib::ustring& dirname);
     Gtk::TreePath expandToDir (const Glib::ustring& dirName);
     void updateDir (const Gtk::TreeModel::iterator& iter);
 
-    void eventDirectoryDeleted(const Gtk::TreeModel::iterator& iter, const Glib::RefPtr<Gio::File> directory);
-    void eventDirectoryCreated(const Gtk::TreeModel::iterator& iter, const Glib::RefPtr<Gio::File> directory);
+    void eventDirectoryDeleted(const Gtk::TreeModel::iterator& iter, const Glib::RefPtr<Gio::File>& directory);
+    void eventDirectoryCreated(const Gtk::TreeModel::iterator& iter, const Glib::RefPtr<Gio::File>& directory);
 
     IdleRegister idle_register;
 

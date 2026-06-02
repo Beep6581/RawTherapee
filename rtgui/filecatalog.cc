@@ -572,10 +572,6 @@ FileCatalog::FileCatalog (CoarsePanel* cp, ToolBar* tb, FilePanel* filepanel) :
         hScrollPos[i] = 0;
         vScrollPos[i] = 0;
     }
-
-    if (App::get().options().newFileDelayTime > 0) {
-        timerEventSource = Glib::signal_timeout().connect(sigc::mem_fun(*this, &FileCatalog::timerEvents), 1000);
-    }
 }
 
 FileCatalog::~FileCatalog()
@@ -668,6 +664,8 @@ void FileCatalog::closeDir ()
     // terminate thumbnail updater
     thumbImageUpdater->removeAllJobs ();
 
+    timerEventSource.disconnect();
+
     // remove entries
     selectedDirectory = "";
     fileBrowser->close ();
@@ -698,8 +696,10 @@ std::vector<Glib::ustring> FileCatalog::getFileList(Glib::ustring root, int star
     std::vector<Glib::ustring> names;
 
     const auto& options = App::get().options();
-    int dirs_left = options.browseRecursiveMaxDirs - start_depth;
-    getFilesRecursively(root, options.browseRecursiveDepth, dirs_left, names, dirs_explored);
+    int dirs_left = options.browseRecursiveMaxDirs - dirMonitors.size();
+    if (dirs_left > 0) {
+        getFilesRecursively(root, options.browseRecursiveDepth, dirs_left, names, dirs_explored);
+    }
 
     return names;
 }
@@ -744,6 +744,9 @@ void FileCatalog::dirSelected (const Glib::ustring& dirname, const Glib::ustring
         }
 
         if (App::get().options().newFileDelayTime > 0) {
+            if (!timerEventSource.connected()) {
+                timerEventSource = Glib::signal_timeout().connect(sigc::mem_fun(*this, &FileCatalog::timerEvents), 1000);
+            }
             refreshDirectoryMonitors(allDirs);
         }
     } catch (Glib::Exception& ex) {
@@ -869,6 +872,7 @@ void FileCatalog::previewFailed(int dir_id, Glib::ustring file, FailReason reaso
             fileNameList.erase(std::remove(fileNameList.begin(), fileNameList.end(), file), fileNameList.end());
             previewsToLoad--;
 
+            _refreshProgressBar();
             return false;
         },
         G_PRIORITY_DEFAULT_IDLE
@@ -1420,6 +1424,9 @@ void FileCatalog::renameRequested(const std::vector<FileBrowserEntry*>& tbe)
                     if (::g_rename (ofname.c_str (), nfname.c_str ()) == 0) {
                         cacheMgr->renameEntry (ofname, tbe[i]->thumbnail->getMD5(), nfname);
                         ::g_remove((ofname + App::PARAM_FILE_EXTENSION).c_str ());
+                        if (!timerEventSource.connected()) {
+                            delete fileBrowser->delEntry(ofname);
+                        }
                         // skip ahead and just add the file to bypass directory monitoring timeout
                         addFile(nfname);
                     }
@@ -1891,7 +1898,7 @@ bool FileCatalog::restoreResetState ()
 }
 
 bool FileCatalog::eventDeletedFile(const Glib::RefPtr<Gio::File>& file)
-{ 
+{
     auto pos = std::find(fileNameList.cbegin(), fileNameList.cend(), file->get_path());
     if (pos != fileNameList.cend()) {
         cacheMgr->clearFromCache(file->get_path(), true);
@@ -1918,7 +1925,7 @@ void FileCatalog::eventDeletedDirectory(const Glib::RefPtr<Gio::File>& directory
     const std::vector<ThumbBrowserEntryBase*>& t = fileBrowser->getEntries();
     for (const auto& entry : t) {
         // trying to match with files from the directory and its subdirectories based on path
-        if ( entry->filename.rfind(directory->get_path()) == 0 ) {
+        if (entry->filename == directory->get_path() || entry->filename.rfind(directory->get_path() + G_DIR_SEPARATOR, 0) == 0) {
             filesToDel.push_back(entry->filename);
         }
     }
@@ -1937,7 +1944,14 @@ void FileCatalog::eventDeletedDirectory(const Glib::RefPtr<Gio::File>& directory
     // if the directory is being cut out, the subfolders will not get their own events
     // deleting all monitors that start with a matching path
     dirMonitors.erase(std::remove_if(dirMonitors.begin(), dirMonitors.end(),
-                    [&directory](const FileMonitorInfo &fileMonitorInfo) { return (fileMonitorInfo.filePath.rfind(directory->get_path(), 0) == 0); })
+                    [&directory](const FileMonitorInfo &fileMonitorInfo)
+                    { 
+                        if (fileMonitorInfo.filePath == directory->get_path()) {
+                            return true;
+                        } else {
+                            return (fileMonitorInfo.filePath.rfind(directory->get_path() + G_DIR_SEPARATOR, 0) == 0);
+                        }
+                    })
                     , dirMonitors.end());
 
     if (refresh) {
@@ -1996,8 +2010,8 @@ void FileCatalog::eventChangesDoneDirectory(const Glib::RefPtr<Gio::File>& direc
         oldNames.insert(oldName.collate_key());
     }
 
-    std::vector<Glib::RefPtr<Gio::File>> allDirs;
-    std::vector<Glib::ustring> fileList = getFileList(directory->get_path(), recursiondepth, &allDirs);
+    std::vector<Glib::RefPtr<Gio::File>> newDirs;
+    std::vector<Glib::ustring> fileList = getFileList(directory->get_path(), recursiondepth, &newDirs);
     for (const auto& newName : fileList) {
         if (oldNames.find(newName.collate_key()) == oldNames.end()) {
             addToPendingFiles(newName);
@@ -2005,7 +2019,9 @@ void FileCatalog::eventChangesDoneDirectory(const Glib::RefPtr<Gio::File>& direc
     }
     _refreshProgressBar();
 
-    refreshDirectoryMonitors(allDirs, true);
+    if (!newDirs.empty()) {
+        refreshDirectoryMonitors(newDirs, true);
+    }
 }
 
 void FileCatalog::eventChangesDoneFile(const Glib::RefPtr<Gio::File>& file)
@@ -2072,7 +2088,7 @@ void FileCatalog::on_dir_changed (const Glib::RefPtr<Gio::File>& file, const Gli
             }  
             break;
         case Gio::FILE_MONITOR_EVENT_DELETED:
-            if ( !eventDeletedFile(file) ) {
+            if (!eventDeletedFile(file)) {
                 // There is no way to test, that I know of, if the passed file parameter refers to a file or a directory.
                 // So the logic is: if the eventDeletedFile fails, it is a directory.
                 // this will cause overhead, when events for already handled files come but to resolve it completely may need some reorganization of data

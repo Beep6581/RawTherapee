@@ -236,6 +236,7 @@ void DirBrowser::fillRoot ()
         }
     }
 
+    // Keep updating the volumes on 5 second interval
     timerEventSource = Glib::signal_timeout().connect(sigc::mem_fun(*this, &DirBrowser::updateVolumes), 5000);
 #else
     Gtk::TreeModel::Row rootRow = *(dirTreeModel->append());
@@ -462,7 +463,7 @@ void DirBrowser::open (const Glib::ustring& dirname, const Glib::ustring& fileNa
     dirSelectionSignal (absDirPath, absFilePath);
 }
 
-void DirBrowser::eventDirectoryDeleted(const Gtk::TreeModel::iterator& iter, const Glib::RefPtr<Gio::File> directory)
+void DirBrowser::eventDirectoryDeleted(const Gtk::TreeModel::iterator& iter, const Glib::RefPtr<Gio::File>& directory)
 {
     if (!directory) {
         return;
@@ -476,7 +477,7 @@ void DirBrowser::eventDirectoryDeleted(const Gtk::TreeModel::iterator& iter, con
     }
 }
 
-void DirBrowser::eventDirectoryCreated(const Gtk::TreeModel::iterator& iter, const Glib::RefPtr<Gio::File> directory)
+void DirBrowser::eventDirectoryCreated(const Gtk::TreeModel::iterator& iter, const Glib::RefPtr<Gio::File>& directory)
 {
     if (!directory) {
         return;

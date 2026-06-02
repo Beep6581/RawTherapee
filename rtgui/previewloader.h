@@ -62,6 +62,7 @@ public:
      * 
      * @param dir_id directory ID this is for
      * @param file name of the failed file, including the path
+     * @param reason a more specific explanation for the failure
      */
     virtual void previewFailed(int dir_id, Glib::ustring file, FailReason reason) = 0;
 };

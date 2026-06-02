@@ -1564,14 +1564,14 @@ Gtk::Widget* Preferences::getFileBrowserPanel()
 #endif
 
     Gtk::Box *hbFileDelayTime = Gtk::manage(new Gtk::Box());
-    Gtk::Label *labMininmumFileBrowserDelayTime = Gtk::manage(new Gtk::Label(M("PREFERENCES_BROWSERTIMEOUT") + ":"));
-    labMininmumFileBrowserDelayTime->set_tooltip_markup(M("PREFERENCES_BROWSERTIMEOUTHINT"));
+    Gtk::Label *labMinimumFileBrowserDelayTime = Gtk::manage(new Gtk::Label(M("PREFERENCES_BROWSERTIMEOUT") + ":"));
+    labMinimumFileBrowserDelayTime->set_tooltip_markup(M("PREFERENCES_BROWSERTIMEOUTHINT"));
     newFileDelayTime = Gtk::manage(new Gtk::SpinButton());
     newFileDelayTime->set_tooltip_markup(M("PREFERENCES_BROWSERTIMEOUTHINT"));
     newFileDelayTime->set_digits(0);
     newFileDelayTime->set_increments(1, 5);
     newFileDelayTime->set_range(0, 30);
-    hbFileDelayTime->pack_start(*labMininmumFileBrowserDelayTime, Gtk::PACK_SHRINK, 4);
+    hbFileDelayTime->pack_start(*labMinimumFileBrowserDelayTime, Gtk::PACK_SHRINK, 4);
     hbFileDelayTime->pack_start(*newFileDelayTime, Gtk::PACK_SHRINK, 4);
     vbro->pack_start(*hbFileDelayTime, Gtk::PACK_SHRINK, 0);
 

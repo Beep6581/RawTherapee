@@ -1414,7 +1414,7 @@ void Options::readFromFile(Glib::ustring fname)
                     browseRecursiveFollowLinks = keyFile.get_boolean("File Browser", "BrowseRecursiveFollowLinks");
                 }
 
-                if (keyFile.has_key("File Browser", "BrowseRecursiveFollowLinks")) {
+                if (keyFile.has_key("File Browser", "NewFileDelayTime")) {
                     newFileDelayTime = keyFile.get_integer("File Browser", "NewFileDelayTime");
                 }
 
