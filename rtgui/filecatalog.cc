@@ -1969,7 +1969,7 @@ void FileCatalog::eventDirectoryCreated(const Glib::RefPtr<Gio::File>& directory
 
     int recursiondepth = GetRecursionDepth(selectedDirectory, directory);
 
-    if (recursiondepth > options.browseRecursiveDepth) {
+    if (recursiondepth > options.browseRecursiveDepth || static_cast<int>(dirMonitors.size()) >= options.browseRecursiveMaxDirs) {
         return;
     }
 
@@ -1997,7 +1997,7 @@ void FileCatalog::eventChangesDoneDirectory(const Glib::RefPtr<Gio::File>& direc
 
     int recursiondepth = GetRecursionDepth(selectedDirectory, directory);
 
-    if (recursiondepth > options.browseRecursiveDepth) {
+    if (recursiondepth > options.browseRecursiveDepth || static_cast<int>(dirMonitors.size()) >= options.browseRecursiveMaxDirs) {
         return;
     }
     // Motivation for having a recursive search for files and directories:
