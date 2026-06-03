@@ -696,9 +696,9 @@ std::vector<Glib::ustring> FileCatalog::getFileList(Glib::ustring root, int star
     std::vector<Glib::ustring> names;
 
     const auto& options = App::get().options();
-    int dirs_left = options.browseRecursiveMaxDirs - dirMonitors.size();
-    if (dirs_left > 0) {
-        getFilesRecursively(root, options.browseRecursiveDepth, dirs_left, names, dirs_explored);
+    int dirs_left = options.browseRecursiveMaxDirs - static_cast<int>(dirMonitors.size());
+    if (dirs_left >= 0) {
+        getFilesRecursively(root, options.browseRecursiveDepth - start_depth, dirs_left, names, dirs_explored);
     }
 
     return names;
@@ -2019,9 +2019,7 @@ void FileCatalog::eventChangesDoneDirectory(const Glib::RefPtr<Gio::File>& direc
     }
     _refreshProgressBar();
 
-    if (!newDirs.empty()) {
-        refreshDirectoryMonitors(newDirs, true);
-    }
+    refreshDirectoryMonitors(newDirs, true);
 }
 
 void FileCatalog::eventChangesDoneFile(const Glib::RefPtr<Gio::File>& file)
