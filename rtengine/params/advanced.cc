@@ -27,6 +27,8 @@
 
 #include <glibmm/keyfile.h>
 
+#include <sstream>
+
 namespace rtengine {
 namespace procparams {
 
@@ -969,6 +971,7 @@ void loadRetinexParams(const Glib::KeyFile& keyFile, RetinexParams& retinex,
 {
     if (!keyFile.has_group("Retinex")) return;
 
+    assignFromKeyfile(keyFile, "Retinex", "Enabled", retinex.enabled, pedited->retinex.enabled);
     assignFromKeyfile(keyFile, "Retinex", "Median", retinex.medianmap, pedited->retinex.medianmap);
 
     if (keyFile.has_key("Retinex", "complexMethod")) {
@@ -986,7 +989,6 @@ void loadRetinexParams(const Glib::KeyFile& keyFile, RetinexParams& retinex,
 
     assignFromKeyfile(keyFile, "Retinex", "Retinexcolorspace", retinex.retinexcolorspace, pedited->retinex.retinexcolorspace);
     assignFromKeyfile(keyFile, "Retinex", "Gammaretinex", retinex.gammaretinex, pedited->retinex.gammaretinex);
-    assignFromKeyfile(keyFile, "Retinex", "Enabled", retinex.enabled, pedited->retinex.enabled);
     assignFromKeyfile(keyFile, "Retinex", "Neigh", retinex.neigh, pedited->retinex.neigh);
     assignFromKeyfile(keyFile, "Retinex", "Str", retinex.str, pedited->retinex.str);
     assignFromKeyfile(keyFile, "Retinex", "Scal", retinex.scal, pedited->retinex.scal);
