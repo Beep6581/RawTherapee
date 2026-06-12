@@ -897,7 +897,7 @@ void ImProcFunctions::workingtrc(int sp, Imagefloat* src, Imagefloat* dst, int c
     const TMatrix wprof = ICCStore::getInstance()->workingSpaceMatrix(params->icm.workingProfile);
 
     double wb2[3][3];
-    constexpr float epsilon =  0.00001f;//To avoid negative values and crash
+    constexpr float epsilon =  0.00001f;//To avoid negative values and / or set a minimum RGB float value to avoid incorrect calculations. We can change epsilon if need.
 
 #ifdef _OPENMP
         #pragma omp parallel for

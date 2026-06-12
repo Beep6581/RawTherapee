@@ -23794,7 +23794,7 @@ void ImProcFunctions::Lab_Local(
     bool notzero = false; //verify that RGB values are > 0.f issue 7121 to avoid crash. Could perhaps be used in other cases as RGB curves (main)
     bool notlaplacian = false;//no use of strong Laplacian
 
-    float epsi = 0.000001f;
+    constexpr float epsi =  0.00001f;//To avoid negative values and / or set a minimum RGB float value to avoid incorrect calculations. We can change epsi if need.
 
     if((lp.laplacexp > 1.f && lp.exposena) || (lp.strng > 2.f && lp.sfena) || (lp.exposena && lp.expcomp != 0.f && params->dirpyrequalizer.enabled)){//strong Laplacian
         notlaplacian = true;
