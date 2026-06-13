@@ -88,9 +88,9 @@
 #86 29.08.2024 Erweiterung (marter) RT 5.11
 #87 29.03.2025 Erweiterung (marter) RT 5.12
 #88 30.05.2026 Erweiterung (marter) RT 5.13
-
 #100
 #101 @LANGUAGE_DISPLAY_NAME=Deutsch
+
 ABOUT_TAB_BUILD;Version
 ABOUT_TAB_CREDITS;Danksagungen
 ABOUT_TAB_LICENSE;Lizenz
@@ -2368,7 +2368,6 @@ PREFERENCES_WBACORR_TOOLTIP;Diese Einstellungen ermöglichen, abhängig von den 
 PREFERENCES_WBAENA;Zeige Einstellungen der Temperaturkorrelation bei automatischem Weißabgleich 
 PREFERENCES_WBAENACUSTOM;Benutzerdefinierte Temperatur und Tönung
 PREFERENCES_WBAFORC;Erzwingt extra Algorithmus
-!PREFERENCES_WBAGREENDELTA;Delta temperature in green iterate loop (if Force Extra enabled)
 PREFERENCES_WBANOPURP;Keine lila Farben verwendet 
 PREFERENCES_WBAPATCH;maximale Anzahl der im bild verwendeten Farben
 PREFERENCES_WBAPRECIS;Präzision Algorithmus - skaliert
@@ -4507,10 +4506,7 @@ TP_SHARPENEDGE_THREE;Nur Luminanz
 TP_SHARPENING_AMOUNT;Intensität
 TP_SHARPENING_BLUR;Weichzeichnerradius
 TP_SHARPENING_CAP;Capture Dekonvolution
-!TP_SHARPENING_CAPFRAME;Corner boost
 TP_SHARPENING_CONTRAST;Kontrastschwelle
-TP_SHARPENING_CAP;Capture Dekonvolution
-!TP_SHARPENING_CAPFRAME;Corner boost
 TP_SHARPENING_EDRADIUS_TOOLTIP;Automatische Berechnung basierend auf den RAW-Daten
 TP_SHARPENING_EDTOLERANCE;Kantentoleranz
 TP_SHARPENING_HALOCONTROL;Halokontrolle
@@ -4951,3 +4947,11 @@ ZOOMPANEL_ZOOMOUT;Herauszoomen\nTaste: <b>-</b>
 //TP_WBALANCE_ITCWBNOPURPLE_TOOLTIP;By default when "Inpaint opposed" is activated, purple colors are not taken into account. However, if the image does not need highlight reconstruction, or if this image naturally contains purple tints (flowers, etc.), it may be necessary to deactivate, to take into account all the colors.
 //TP_WBALANCE_ITCWB_FORCED;Forces use of the entire CIE diagram
 
+!!!!!!!!!!!!!!!!!!!!!!!!!
+! Untranslated keys follow; remove the ! prefix after an entry is translated.
+!!!!!!!!!!!!!!!!!!!!!!!!!
+
+!PREFERENCES_WBAGREENDELTA;Delta temperature in green iterate loop (if Force Extra enabled)
+!TP_SHARPENING_CAPFRAME;Corner boost
+!TP_SHARPENING_CONTRASTAUTO_TOOLTIP;Auto contrast level estimation.\nValue subject to variation depending on position in preview.\nBe careful, disable auto after estimation.
+!TP_SHARPENING_EDRADIUS;Capture Radius
