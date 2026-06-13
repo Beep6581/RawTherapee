@@ -1,6 +1,6 @@
 RAWTHERAPEE 5.13-rc1 RELEASE NOTES
 
-This is Release Candidate 1 of RawTherapee 5.13, released on 2026-05-24. This is not the final release yet.
+This is Release Candidate 1 of RawTherapee 5.13, released on 2026-06-14. This is not the final release yet.
 
 
 
