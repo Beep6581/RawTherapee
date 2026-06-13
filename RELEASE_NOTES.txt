@@ -58,7 +58,7 @@ available which expands to the file extension of the output file (for example, "
 - All preferences can now be easily reset in Preferences.
 - Adapted Olympus lens name detection is improved.
 - Added new translations for Hebrew and Korean.
-- Updated translations for Simplified Chinese and Dutch.
+- Updated translations for Simplified Chinese, Dutch, and German.
 - Added or improved support for cameras, raw formats, and color profiles (not an exhaustive list because unconfirmed support is excluded):
     - Canon EOS M50 (white level)
     - Canon EOS R5m2
