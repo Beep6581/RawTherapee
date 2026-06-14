@@ -2156,15 +2156,14 @@ void DCPStore::init(const Glib::ustring& rt_profile_dir, bool loadAll)
 
     file_std_profiles.clear();
 
+    auto profile_dirpath = Glib::build_filename(App::get().options().rtdir, "dcpprofiles");
+
     if (!loadAll) {
-        profileDir = { rt_profile_dir, Glib::build_filename(options.rtdir, "dcpprofiles") };
+        profileDir = { rt_profile_dir, profile_dirpath };
         return;
     }
 
-    std::deque<Glib::ustring> dirs = {
-        rt_profile_dir,
-        Glib::build_filename(options.rtdir, "dcpprofiles")
-    };
+    std::deque<Glib::ustring> dirs = { rt_profile_dir, profile_dirpath };
 
     while (!dirs.empty()) {
         // Process directory

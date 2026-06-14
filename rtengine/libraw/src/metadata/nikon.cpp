@@ -1,5 +1,5 @@
 /* -*- C++ -*-
- * Copyright 2019-2024 LibRaw LLC (info@libraw.org)
+ * Copyright 2019-2025 LibRaw LLC (info@libraw.org)
  *
  LibRaw is free software; you can redistribute it and/or modify
  it under the terms of the one of two licenses as you choose:
@@ -128,7 +128,7 @@ void LibRaw::processNikonLensData(uchar *LensData, unsigned len)
       i = 8;
       break;
     case  58: // "Z 6", "Z 6 II", "Z 7", "Z 7 II", "Z 50", D780, "Z 5", "Z fc"
-    case 108: // "Z 9", "Z 30", "Z 8"
+    case 108: // "Z 9", "Z 30", "Z 8", "Z6_2"
       if (model[6] == 'Z')
         ilm.CameraMount = LIBRAW_MOUNT_Nikon_Z;
       if (imNikon.HighSpeedCropFormat != 12)
@@ -261,10 +261,11 @@ uchar *cj_block, *ck_block;
 */
 
   short morder, sorder = order;
-  char buf[10];
+  char buf[10] = {0,0,0,0,0,0,0,0,0,0};
   INT64 fsize = ifp->size();
 
   fread(buf, 1, 10, ifp);
+  buf[9] = 0;
 
   if (!strcmp(buf, "Nikon"))
   {
@@ -396,7 +397,9 @@ uchar *cj_block, *ck_block;
         }
         else
         {
+          memset(buf,0,sizeof(buf));
           fread(buf, 1, 10, ifp);
+          buf[9] = 0;
           if (!strncmp(buf, "NRW ", 4))
           { // P6000, P7000, P7100, B700, P1000
             if (!strcmp(buf + 4, "0100"))
@@ -605,7 +608,7 @@ photo shooting menu -> [Pixel shift shooting] :
     {
         imNikon.BurstTable_0x0056_len = len;
         if (imNikon.BurstTable_0x0056_len == 16) {
-					imNikon.BurstTable_0x0056 = (uchar *)malloc(imNikon.BurstTable_0x0056_len);
+					imNikon.BurstTable_0x0056 = (uchar *)calloc(imNikon.BurstTable_0x0056_len+1,1);
 					fread(imNikon.BurstTable_0x0056, imNikon.BurstTable_0x0056_len, 1, ifp);
 					FORC4 imNikon.BurstTable_0x0056_ver = imNikon.BurstTable_0x0056_ver * 10 + (imNikon.BurstTable_0x0056[c] - '0');
 					imNikon.BurstTable_0x0056_gid = (imNikon.BurstTable_0x0056[5]<<8) | imNikon.BurstTable_0x0056[4];
@@ -665,7 +668,7 @@ photo shooting menu -> [Pixel shift shooting] :
         imCommon.afdata[imCommon.afcount].AFInfoData_tag = tag;
         imCommon.afdata[imCommon.afcount].AFInfoData_order = order;
         imCommon.afdata[imCommon.afcount].AFInfoData_length = len;
-        imCommon.afdata[imCommon.afcount].AFInfoData = (uchar *)calloc(imCommon.afdata[imCommon.afcount].AFInfoData_length,1);
+        imCommon.afdata[imCommon.afcount].AFInfoData = (uchar *)calloc(imCommon.afdata[imCommon.afcount].AFInfoData_length+1,1);
         fread(imCommon.afdata[imCommon.afcount].AFInfoData, imCommon.afdata[imCommon.afcount].AFInfoData_length, 1, ifp);
         imCommon.afcount = 1;
       }
@@ -688,7 +691,7 @@ photo shooting menu -> [Pixel shift shooting] :
     else if ((tag == 0x0091) && (len > 4))
     {
       ShotInfo_len = len;
-      ShotInfo_buf = (uchar *)calloc(ShotInfo_len,1);
+      ShotInfo_buf = (uchar *)calloc(ShotInfo_len+1,1);
 
 /* for dump:
 cj_block = (uchar *)malloc(ShotInfo_len);
@@ -821,7 +824,7 @@ ck_block = (uchar *)malloc(ShotInfo_len);
       }
       if (LensData_len)
       {
-        LensData_buf = (uchar *)calloc(LensData_len,1);
+        LensData_buf = (uchar *)calloc(LensData_len+1,1);
         fread(LensData_buf, LensData_len, 1, ifp);
       }
     }
@@ -997,7 +1000,7 @@ free(ck_block);
         FORC4  ver = ver * 10 + (fgetc(ifp) - '0');
         imCommon.afdata[imCommon.afcount].AFInfoData_version = ver;
         imCommon.afdata[imCommon.afcount].AFInfoData_length = len-4;
-        imCommon.afdata[imCommon.afcount].AFInfoData = (uchar *)calloc(imCommon.afdata[imCommon.afcount].AFInfoData_length,1);
+        imCommon.afdata[imCommon.afcount].AFInfoData = (uchar *)calloc(imCommon.afdata[imCommon.afcount].AFInfoData_length+1,1);
         fread(imCommon.afdata[imCommon.afcount].AFInfoData, imCommon.afdata[imCommon.afcount].AFInfoData_length, 1, ifp);
         imCommon.afcount = 1;
       }

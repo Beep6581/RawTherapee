@@ -47,7 +47,7 @@ void dirpyr_channel(const float * const * data_fine, float ** data_coarse, int w
     if (level > 1) {
         //generate domain kernel
         //  multiplied each value of domker by 1000 to avoid multiplication by 1000 inside the loop
-#ifdef __SSE2__
+#if defined(__SSE2__) || defined(RT_SIMDE)
         const float domkerv[5][5][4] ALIGNED16 = {{{1000, 1000, 1000, 1000}, {1000, 1000, 1000, 1000}, {1000, 1000, 1000, 1000}, {1000, 1000, 1000, 1000}, {1000, 1000, 1000, 1000}},
                                                   {{1000, 1000, 1000, 1000}, {2000, 2000, 2000, 2000}, {2000, 2000, 2000, 2000}, {2000, 2000, 2000, 2000}, {1000, 1000, 1000, 1000}},
                                                   {{1000, 1000, 1000, 1000}, {2000, 2000, 2000, 2000}, {2000, 2000, 2000, 2000}, {2000, 2000, 2000, 2000}, {1000, 1000, 1000, 1000}},
@@ -65,7 +65,7 @@ void dirpyr_channel(const float * const * data_fine, float ** data_coarse, int w
 #endif
         {
             const int scalewin = halfwin * scale;
-#ifdef __SSE2__
+#if defined(__SSE2__) || defined(RT_SIMDE)
             const vfloat thousandv = F2V(1000.f);
 #endif
 
@@ -90,7 +90,7 @@ void dirpyr_channel(const float * const * data_fine, float ** data_coarse, int w
                     data_coarse[i][j] = val / norm; //low pass filter
                 }
 
-#ifdef __SSE2__
+#if defined(__SSE2__) || defined(RT_SIMDE)
 
                 for (; j < width - scalewin - 3; j += 4) {
                     vfloat valv = ZEROV;
@@ -143,7 +143,7 @@ void dirpyr_channel(const float * const * data_fine, float ** data_coarse, int w
         #pragma omp parallel
 #endif
         {
-#ifdef __SSE2__
+#if defined(__SSE2__) || defined(RT_SIMDE)
             const vfloat thousandv = F2V(1000.0f);
 #endif
 #ifdef _OPENMP
@@ -167,7 +167,7 @@ void dirpyr_channel(const float * const * data_fine, float ** data_coarse, int w
                     data_coarse[i][j] = val / norm; //low pass filter
                 }
 
-#ifdef __SSE2__
+#if defined(__SSE2__) || defined(RT_SIMDE)
 
                 for (; j < width - scale - 3; j += 4) {
                     vfloat valv = ZEROV;
@@ -419,7 +419,7 @@ void ImProcFunctions::dirpyr_equalizer(const float * const * src, float ** dst, 
         #pragma omp parallel
 #endif
         {
-#ifdef __SSE2__
+#if defined(__SSE2__) || defined(RT_SIMDE)
             const vfloat div = F2V(327.68f);
 #endif
 #ifdef _OPENMP
@@ -428,7 +428,7 @@ void ImProcFunctions::dirpyr_equalizer(const float * const * src, float ** dst, 
 
             for (int i = 0; i < srcheight; i++) {
                 int j = 0;
-#ifdef __SSE2__
+#if defined(__SSE2__) || defined(RT_SIMDE)
                 for (; j < srcwidth - 3; j += 4) {
                     const vfloat lav = LVFU(l_a[i][j]);
                     const vfloat lbv = LVFU(l_b[i][j]);

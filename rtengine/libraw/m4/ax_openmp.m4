@@ -78,15 +78,18 @@ ax_cv_[]_AC_LANG_ABBREV[]_openmp=unknown
 #                -qopenmp (icc>=15), -openmp (icc),
 #                -xopenmp (Sun), -omp (Tru64),
 #                -qsmp=omp (AIX),
+#                -Xpreprocessor -fopenmp (clang on macOS, needs both),
 #                none
-ax_openmp_flags="-fopenmp -openmp -qopenmp -mp -xopenmp -omp -qsmp=omp none"
+# Note: on macOS clang both `-Xpreprocessor` and `-fopenmp` are needed so we have to invent a separator
+# here to store in a space-delimited list. Thus make sure the separator is replaced with a space later on.
+ax_openmp_flags="-fopenmp -Xpreprocessor|-fopenmp -openmp -qopenmp -mp -xopenmp -omp -qsmp=omp none"
 if test "x$OPENMP_[]_AC_LANG_PREFIX[]FLAGS" != x; then
   ax_openmp_flags="$OPENMP_[]_AC_LANG_PREFIX[]FLAGS $ax_openmp_flags"
 fi
 for ax_openmp_flag in $ax_openmp_flags; do
   case $ax_openmp_flag in
     none) []_AC_LANG_PREFIX[]FLAGS=$save[]_AC_LANG_PREFIX[] ;;
-    *) []_AC_LANG_PREFIX[]FLAGS="$save[]_AC_LANG_PREFIX[]FLAGS $ax_openmp_flag" ;;
+    *) []_AC_LANG_PREFIX[]FLAGS="$save[]_AC_LANG_PREFIX[]FLAGS $(echo $ax_openmp_flag | tr '|' ' ')" ;;
   esac
   AC_LINK_IFELSE([AC_LANG_SOURCE([[
 @%:@include <omp.h>
@@ -108,7 +111,7 @@ main(void)
   parallel_fill(arr, 100000);
   return 0;
 }
-]])],[ax_cv_[]_AC_LANG_ABBREV[]_openmp=$ax_openmp_flag; break],[])
+]])],[ax_cv_[]_AC_LANG_ABBREV[]_openmp=$(echo $ax_openmp_flag | tr '|' ' '); break],[])
 done
 []_AC_LANG_PREFIX[]FLAGS=$save[]_AC_LANG_PREFIX[]FLAGS
 ])

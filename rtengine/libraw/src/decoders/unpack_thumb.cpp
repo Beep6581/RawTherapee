@@ -1,5 +1,5 @@
 /* -*- C++ -*-
- * Copyright 2019-2024 LibRaw LLC (info@libraw.org)
+ * Copyright 2019-2025 LibRaw LLC (info@libraw.org)
  *
  LibRaw is free software; you can redistribute it and/or modify
  it under the terms of the one of two licenses as you choose:
@@ -449,6 +449,8 @@ int LibRaw::unpack_thumb(void)
       {
         x3f_thumb_loader(); // errors already catched in this call
         SET_PROC_FLAG(LIBRAW_PROGRESS_THUMB_LOAD);
+		if (!T.twidth && !T.theight)
+			return LIBRAW_NO_THUMBNAIL;
         return 0;
       }
 #endif

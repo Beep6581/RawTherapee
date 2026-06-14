@@ -21,16 +21,30 @@
 #include "rtscalable.h"
 
 #include <iostream>
-#include <librsvg/rsvg.h>
 
+#include "rtengine/rtapp.h"
 #include "rtengine/settings.h"
+#include "rtengine/svgrender.h"
 #include "guiutils.h"
 
-extern Glib::ustring argv0;
-
 // Default static parameter values
-double RTScalable::dpi = 96.;
-int RTScalable::scale = 1;
+double RTScalable::s_dpi = 96.;
+int RTScalable::s_scale = 1;
+sigc::signal<void(double, int)> RTScalable::s_signal_changed;
+
+int RTScalable::getScaleForWindow(const Gtk::Window* window)
+{
+    int scale = window->get_scale_factor();
+    // Default minimum value of 1 as scale is used to scale surface
+    return scale > 0 ? scale : 1;
+}
+
+int RTScalable::getScaleForWidget(const Gtk::Widget* widget)
+{
+    int scale = widget->get_scale_factor();
+    // Default minimum value of 1 as scale is used to scale surface
+    return scale > 0 ? scale : 1;
+}
 
 void RTScalable::getDPInScale(const Gtk::Window* window, double &newDPI, int &newScale)
 {
@@ -38,12 +52,8 @@ void RTScalable::getDPInScale(const Gtk::Window* window, double &newDPI, int &ne
         const auto screen = window->get_screen();
         newDPI = screen->get_resolution(); // Get DPI retrieved from the OS
 
-        if (window->get_scale_factor() > 0) {
-             // Get scale factor associated to the window
-            newScale = window->get_scale_factor();
-        } else {
-            newScale = 1; // Default minimum value of 1 as scale is used to scale surface
-        }
+        // Get scale factor associated to the window
+        newScale = getScaleForWindow(window);
     }
 }
 
@@ -65,7 +75,7 @@ Cairo::RefPtr<Cairo::ImageSurface> RTScalable::loadSurfaceFromIcon(const Glib::u
 
     // Get scale based on DPI and scale
     // Note: hSize not used because icon are considered squared
-    const int size = wSize;
+    const int size = RTScalable::scalePixelSize(wSize);
 
     // Looking for corresponding icon (if existing)
     const auto iconInfo = theme->lookup_icon(iconName, size);
@@ -119,7 +129,7 @@ Cairo::RefPtr<Cairo::ImageSurface> RTScalable::loadSurfaceFromPNG(const Glib::us
         path = fname;
     } else {
         // Look for PNG file in "images" folder
-        Glib::ustring imagesFolder = Glib::build_filename(argv0, "images");
+        Glib::ustring imagesFolder = Glib::build_filename(App::get().argv0(), "images");
         path = Glib::build_filename(imagesFolder, fname);
     }
 
@@ -146,7 +156,7 @@ Cairo::RefPtr<Cairo::ImageSurface> RTScalable::loadSurfaceFromSVG(const Glib::us
         path = fname;
     } else {
         // Look for SVG file in "images" folder
-        Glib::ustring imagesFolder = Glib::build_filename(argv0, "images");
+        Glib::ustring imagesFolder = Glib::build_filename(App::get().argv0(), "images");
         path = Glib::build_filename(imagesFolder, fname);
     }
 
@@ -158,74 +168,17 @@ Cairo::RefPtr<Cairo::ImageSurface> RTScalable::loadSurfaceFromSVG(const Glib::us
             svgFile = Glib::file_get_contents(path);
         }
         catch (Glib::FileError &err) {
-            std::cerr << "Failed to load SVG file \"" << fname << "\": " << err.what() << std::endl;
+            std::cerr << "Failed to load SVG file \"" << fname << "\": "
+                << err.what() << "\n";
             return surf;
         }
 
-        // Create surface with librsvg library
-        GError* error = nullptr;
-        RsvgHandle* handle = rsvg_handle_new_from_data((unsigned const char*)svgFile.c_str(), svgFile.length(), &error);
-
-        if (error) {
-            std::cerr << "Failed to load SVG file \"" << fname << "\": " << std::endl
-                      << Glib::ustring(error->message) << std::endl;
-            free(error);
-            return surf;
+        try {
+            surf = rtengine::renderSvg(svgFile, width, height, RTScalable::getScale());
+        } catch(const rtengine::SvgRenderException& e) {
+            std::cerr << "Failed to load SVG file \"" << fname << "\":\n"
+                << e.what() << "\n";
         }
-
-        int w, h;
-
-        if (width == -1 || height == -1) {
-            // Use SVG image natural width and height
-            double _w, _h;
-            const bool has_dim = rsvg_handle_get_intrinsic_size_in_pixels(handle, &_w, &_h); // Get SVG image dimensions
-            if (has_dim) {
-                w = std::ceil(_w);
-                h = std::ceil(_h);
-            } else {
-                w = h = 16; // Set to a default size of 16px (i.e. Gtk::ICON_SIZE_SMALL_TOOLBAR one)
-            }
-        } else {
-            // Use given width and height
-            w = width;
-            h = height;
-        }
-
-        // Create an upscaled surface to avoid blur effect
-        surf = Cairo::ImageSurface::create(Cairo::FORMAT_ARGB32,
-            w * RTScalable::getScale(),
-            h * RTScalable::getScale());
-
-        // Render (and erase with) default surface background
-        Cairo::RefPtr<Cairo::Context> c = Cairo::Context::create(surf);
-        c->set_source_rgba (0., 0., 0., 0.);
-        c->set_operator (Cairo::OPERATOR_CLEAR);
-        c->paint();
-
-        // Render upscaled surface based on SVG image
-        error = nullptr;
-        RsvgRectangle rect = {
-            .x = 0.,
-            .y = 0.,
-            .width = static_cast<double>(w * RTScalable::getScale()),
-            .height = static_cast<double>(h * RTScalable::getScale())
-        };
-        c->set_operator (Cairo::OPERATOR_OVER);
-        const bool success = rsvg_handle_render_document(handle, c->cobj(), &rect, &error);
-
-        if (!success && error) {
-            std::cerr << "Failed to load SVG file \"" << fname << "\": " << std::endl
-                      << Glib::ustring(error->message) << std::endl;
-            free(error);
-            return surf;
-        }
-
-        g_object_unref(handle);
-
-        // Set device scale to avoid blur effect
-        cairo_surface_set_device_scale(surf->cobj(),
-            static_cast<double>(RTScalable::getScale()),
-            static_cast<double>(RTScalable::getScale()));
     } else {
         std::cerr << "Failed to load SVG file \"" << fname << "\"" << std::endl;
     }
@@ -236,28 +189,37 @@ Cairo::RefPtr<Cairo::ImageSurface> RTScalable::loadSurfaceFromSVG(const Glib::us
 void RTScalable::init(const Gtk::Window* window)
 {
     // Retrieve DPI and Scale paremeters from OS
+    double dpi = s_dpi;
+    int scale = s_scale;
     getDPInScale(window, dpi, scale);
+    setDPInScale(dpi, scale);
 }
 
 void RTScalable::setDPInScale (const Gtk::Window* window)
 {
+    double dpi = s_dpi;
+    int scale = s_scale;
     getDPInScale(window, dpi, scale);
+    setDPInScale(dpi, scale);
 }
 
 void RTScalable::setDPInScale (const double newDPI, const int newScale)
 {
-    dpi = newDPI;
-    scale = newScale;
+    if (s_dpi != newDPI || s_scale != newScale) {
+        s_dpi = newDPI;
+        s_scale = newScale;
+        s_signal_changed.emit(newDPI, newScale);
+    }
 }
 
 double RTScalable::getDPI ()
 {
-    return dpi;
+    return s_dpi;
 }
 
 int RTScalable::getScale ()
 {
-    return scale;
+    return s_scale;
 }
 
 double RTScalable::getGlobalScale()
@@ -275,4 +237,9 @@ double RTScalable::scalePixelSize(const double pixel_size)
 {
     const double s = getGlobalScale();
     return (pixel_size * s);
+}
+
+RtScopedConnection RTScalable::connectToChanged(sigc::slot<void(double, int)>&& slot)
+{
+    return RtScopedConnection(s_signal_changed.connect(std::move(slot)));
 }

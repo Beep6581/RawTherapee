@@ -52,7 +52,7 @@ class LUT;
 using LUTu = LUT<uint32_t>;
 
 class EditDataProvider;
-class GainMap;
+struct GainMap;
 
 namespace rtengine
 {
@@ -127,6 +127,7 @@ public:
     virtual std::string getOrientation() const = 0;
     /** @return the rating of the image */
     virtual int getRating() const = 0;
+    virtual int getColorLabel() const = 0;
 
     /** @return true if the file is a PixelShift shot (Pentax and Sony bodies) */
     virtual bool getPixelShift () const = 0;
@@ -241,14 +242,16 @@ public:
      * @param img is a pointer to the image
      * @param scale describes the current scaling applied compared to the 100% size (preview scale)
      * @param cp holds the coordinates of the current crop rectangle */
-    virtual void setImage(IImage8* img, double scale, const procparams::CropParams& cp) = 0;
+    virtual void setImage(IImage8* img, double scale, const procparams::CropParams& cp,
+                          const procparams::CropGuideParams& cgp) = 0;
     /** With this member function the staged processor notifies the listener that the image passed as parameter
       * will be deleted, and no longer used to store the preview image.
       * @param img the pointer to the image to be destroyed. The listener has to free the image!  */
     virtual void delImage(IImage8* img) = 0;
     /** With this member function the staged processor notifies the listener that the preview image has been updated.
       * @param cp holds the coordinates of the current crop rectangle */
-    virtual void imageReady(const procparams::CropParams& cp) = 0;
+    virtual void imageReady(const procparams::CropParams& cp,
+                            const procparams::CropGuideParams& cgp) = 0;
 };
 
 /** When the detailed crop image is ready for display during staged processing (thus the changes have been updated),
@@ -266,6 +269,7 @@ public:
         IImage8* imgtrue,
         const procparams::ColorManagementParams& cmp,
         const procparams::CropParams& cp,
+        const procparams::CropGuideParams& guideParams,
         int cx,
         int cy,
         int cw,
@@ -409,6 +413,14 @@ public :
     virtual void noiseTilePrev(int tileX, int tileY, int prevX, int prevY, int sizeT, int sizeP) = 0;
 };
 
+class CompgamutListener
+{
+  public:
+     virtual ~CompgamutListener() = default;
+     virtual void achromaticChanged (double acmax, double acmax0, double acmax1, double acmax2, bool auto_dc, bool auto_dm, bool auto_dy) = 0;
+    };
+
+
 class RetinexListener
 {
 public:
@@ -448,6 +460,31 @@ public:
         double Lnres46;
     };
 
+    struct locallabDenoiseMAD  {
+        double mad0;
+        double mad1; 
+        double mad2;
+        double mad3; 
+        double mad4; 
+        double mad5; 
+        double mad6; 
+        double mad7;
+        double mad8; 
+        double mad9;
+        double mad10; 
+        double mad11; 
+        double mad12; 
+        double mad13; 
+        double mad14;
+        double mad15; 
+        double mad16;
+        double mad17; 
+        double mad18; 
+        double mad19; 
+        double mad20;
+        bool madlock;
+    };
+
     struct locallabcieBEF {
         double blackevbef;
         double whiteevbef;
@@ -457,6 +494,22 @@ public:
         bool autocomputbef;
         bool autociebef;
         double jz1bef;
+    };
+
+    struct locallabsharBEF {
+        double capradiusbef;
+        bool autoradiusbef;
+  //      double sharcontrastbef;
+  //      bool autocontrastbef;
+    };
+
+    struct locallabsharAFT {
+        double sharcontrastaft;
+        bool autocontrastaft;
+    };
+
+    struct locallabDenoiseLC2  {
+        double denocontrastaft;
     };
 
     struct locallabcieLC {
@@ -477,10 +530,27 @@ public:
         bool linkrgblc;
     };
 
+    struct locallabshMICHbw {//update information Michaelis black and white point
+        double mich_slider[2];
+        bool mich_auto;
+    };
 
-    struct locallabshGHSbw {//To draw GHS  S curve
-       int ghsbw[2];
-       double ghsbwvalue[2];
+    struct locallabshGHSbw2 {//update sliders black and white point
+        double ghsbw_slider[2];
+        bool ghs_auto;
+    };
+
+
+    struct locallabshGHSbw {//infos black and white point GHS and update auto SP
+        int ghsbw[2];
+        double ghsbwvalue[2];
+        double ghs_sym;
+        double ghs_mid;
+        double ghs_maxrgb;
+        double ghs_3sig;
+        double ghs_color[4];
+        bool autoSP;//update SP
+        bool ghs_auto;
     };
 
 //select spot settings 
@@ -511,11 +581,19 @@ public:
 //    virtual void refChanged(const std::vector<locallabRef> &ref, int selspot) = 0;
     virtual void minmaxChanged(const std::vector<locallabRetiMinMax> &minmax, int selspot) = 0;
     virtual void denChanged(const std::vector<locallabDenoiseLC> &denlc, int selspot) = 0;
+    virtual void madChanged(const std::vector<locallabDenoiseMAD> &madlc, int selspot) = 0;
+    virtual void den2Changed(const std::vector<locallabDenoiseLC2> &den2lc, int selspot) = 0;
     virtual void cieChanged(const std::vector<locallabcieLC> &cielc, int selspot) = 0;
     virtual void ghsbwChanged(const std::vector<locallabshGHSbw> &shghsbw, int selspot) = 0;
+    virtual void ghsbw2Changed(const std::vector<locallabshGHSbw2> &shghsbw2, int selspot) = 0;
     virtual void maiChanged(const std::vector<locallabsetLC> &csetlc, int selspot) = 0;
     virtual void sigChanged(const std::vector<locallabcieSIG> &ciesig, int selspot) = 0;
     virtual void ciebefChanged(const std::vector<locallabcieBEF> &ciebef, int selspot) = 0;
+    virtual void michbwChanged(const std::vector<locallabshMICHbw> &shmichbw, int selspot) = 0;
+
+    virtual void sharbefChanged(const std::vector<locallabsharBEF> &sharbef, int selspot) = 0;
+    virtual void sharaftChanged(const std::vector<locallabsharAFT> &sharaft, int selspot) = 0;
+
     virtual void refChanged2(float *huerefp, float *chromarefp, float *lumarefp, float *fabrefp, int selspot) = 0;
 //    virtual void mainChanged(int spottype, int selspot, bool iscolor, bool issh, bool isvib, bool isexpos, bool issoft, bool isblur, bool istom, bool isret, bool issharp, bool iscont, bool iscbdl, bool islog, bool ismas, bool iscie) = 0;
     virtual void scopeChangedcol(int scope, int selspot, bool enab) = 0;
@@ -539,6 +617,9 @@ public:
     virtual void primChanged(float rx, float ry, float bx, float by, float gx, float gy) = 0;
     virtual void iprimChanged(float r_x, float r_y, float b_x, float b_y, float g_x, float g_y, float w_x, float w_y, float m_x, float m_y) = 0;
     virtual void wavlocChanged(double nlevel, double nmax, bool curveloc) = 0;
+    virtual void maxdatawtrc(float m_data) = 0;
+    virtual void maxdataend(float m_rgb, float m_sat, bool gamgain) = 0;
+
 };
 
 
@@ -735,8 +816,9 @@ public:
     virtual void        setAutoWBListener       (AutoWBListener* l) = 0;
     virtual void        setAutoColorTonListener (AutoColorTonListener* l) = 0;
     virtual void        setAutoprimListener     (AutoprimListener* l) = 0;
-
+    virtual void        setCompgamutListener    (CompgamutListener* l) = 0;
     virtual void        setAutoChromaListener   (AutoChromaListener* l) = 0;
+
     virtual void        setRetinexListener      (RetinexListener* l) = 0;
     virtual void        setWaveletListener      (WaveletListener* l) = 0;
     virtual void        setImageTypeListener    (ImageTypeListener* l) = 0;

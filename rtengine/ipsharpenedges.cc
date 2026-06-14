@@ -24,7 +24,7 @@
 #include "rt_math.h"
 
 namespace {
-#ifdef __SSE2__
+#if defined(__SSE2__) || defined(RT_SIMDE)
 bool inintervalLoRo(float a, float b, float c)
 {
     return a < std::max(b, c) && a > std::min(b, c);

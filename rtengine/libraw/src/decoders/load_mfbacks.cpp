@@ -1,5 +1,5 @@
 /* -*- C++ -*-
- * Copyright 2019-2024 LibRaw LLC (info@libraw.org)
+ * Copyright 2019-2025 LibRaw LLC (info@libraw.org)
  *
  LibRaw uses code from dcraw.c -- Dave Coffin's raw photo decoder,
  dcraw.c is copyright 1997-2018 by Dave Coffin, dcoffin a cybercom o net.
@@ -221,6 +221,7 @@ int LibRaw::phase_one_correct()
   fseek(ifp, meta_offset + get4(), SEEK_SET);
   entries = get4();
   get4();
+  INT64 fsize = ifp->size();
 
   try
   {
@@ -240,6 +241,12 @@ int LibRaw::phase_one_correct()
 		  continue;
 	  }
 #endif
+      INT64 savepos = ftell(ifp);
+	  if (len < 0 || (len > 8 && savepos + (INT64)len > 2 * fsize))
+	  {
+        fseek(ifp, save, SEEK_SET); // Recover tiff-read position!!
+        continue;
+	  }
       if (tag == 0x0400)
       { /* Sensor defects */
         while ((len -= 8) >= 0)
@@ -497,6 +504,8 @@ int LibRaw::phase_one_correct()
 	  unsigned w0 = head[1] * head[3], w1 = head[2] * head[4];
 	  if (w0 > 10240000 || w1 > 10240000)
 		  throw LIBRAW_EXCEPTION_ALLOC;
+	  if (w0 < 1 || w1 < 1)
+		  throw LIBRAW_EXCEPTION_IO_CORRUPT;
       yval[0] = (float *)calloc(head[1] * head[3] + head[2] * head[4], 6);
       yval[1] = (float *)(yval[0] + head[1] * head[3]);
       xval[0] = (ushort *)(yval[1] + head[2] * head[4]);

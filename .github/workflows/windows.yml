@@ -20,9 +20,7 @@ env:
 
 jobs:
   build:
-    runs-on: windows-latest
-    permissions:
-      contents: write
+    runs-on: ${{ matrix.arch == 'arm64' && 'windows-11-arm' || 'windows-latest' }}
     defaults:
       run:
         shell: msys2 {0}
@@ -30,9 +28,16 @@ jobs:
       fail-fast: false
       matrix:
         build_type: [release, debug]
+        arch: [x86_64, arm64]
+    env:
+      MSYS2_ENV_NAME: ${{ matrix.arch == 'arm64' && 'CLANGARM64' || 'UCRT64' }}
+      MSYS2_ENV_PREFIX: ${{ matrix.arch == 'arm64' && 'clangarm64' || 'ucrt64' }}
+    outputs:
+      ARTIFACT_NAME_PREFIX: ${{ steps.prepare-artifact-name.outputs.ARTIFACT_NAME_PREFIX }}
+      REF_NAME_FILTERED: ${{ steps.prepare-artifact-name.outputs.REF_NAME_FILTERED }}
     steps:
       - name: Checkout source
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         with:
           fetch-depth: 0
 
@@ -41,7 +46,7 @@ jobs:
         with:
           location: C:\msys2
           update: true
-          msystem: MINGW64
+          msystem: ${{env.MSYS2_ENV_NAME}}
           install: |
             git
             intltool
@@ -58,6 +63,23 @@ jobs:
             libiptcdata:p
             libjxl:p
             exiv2:p
+            ${{matrix.arch == 'x86_64' && '' || 'meson:p'}}
+
+      - name: Install SIMDe
+        if: ${{matrix.arch != 'x86_64'}}
+        run: |
+          echo "Cloning SIMDe source."
+          git clone --depth 1 --branch 'v0.8.2' 'https://github.com/simd-everywhere/simde.git'
+          echo "Setting up build directory."
+          cd simde
+          meson setup build
+          echo "Configuring build."
+          cd build
+          meson configure -D tests=False
+          echo "Building SIMDe."
+          meson compile
+          echo "Installing SIMDe."
+          meson install
 
       - name: Configure build
         run: |
@@ -78,6 +100,7 @@ jobs:
             -DCACHE_NAME_SUFFIX="$CACHE_SUFFIX" \
             -DPROC_TARGET_NUMBER="1" \
             -DLENSFUNDBDIR="share/lensfun" \
+            -DWITH_SIMDE="${{matrix.arch == 'x86_64' && 'OFF' || 'ON'}}" \
             -S . -B build
 
           echo "Recording filtered ref name."
@@ -91,25 +114,25 @@ jobs:
       - name: Include Lensfun
         run: |
           echo "Updating Lensfun database."
-          lensfun-update-data
+          PYTHONPATH=/${{env.MSYS2_ENV_PREFIX}}/lib/site-packages lensfun-update-data  # Workaround for lensfun path mismatch
           echo "Creating Lensfun directory in the build directory."
           mkdir -p 'build/${{matrix.build_type}}/share'
           echo "Copying Lensfun database to the build directory."
-          cp -R "/C/msys2/msys64/mingw64/var/lib/lensfun-updates/version_1" 'build/${{matrix.build_type}}/share/lensfun'
+          cp -R "/C/msys2/msys64/${{env.MSYS2_ENV_PREFIX}}/var/lib/lensfun-updates/version_1" 'build/${{matrix.build_type}}/share/lensfun'
 
       - name: Bundle dependencies
         run: |
           echo "Listing shared library dependencies."
           ldd "./build/${{matrix.build_type}}/rawtherapee.exe"
           echo "Finding DLLs to include."
-          DLLS=($(ldd "./build/${{matrix.build_type}}/rawtherapee.exe" | grep '/mingw64/bin/' | awk '{print($1)'}))
+          DLLS=($(ldd "./build/${{matrix.build_type}}/rawtherapee.exe" | grep "/${{env.MSYS2_ENV_PREFIX}}/bin/" | awk '{print($1)'}))
           echo "Required DLLs are: ${DLLS[*]}"
 
           echo "Getting workspace path."
           export BUILD_DIR="$(pwd)/build/${{matrix.build_type}}"
           echo "Build directory is '$BUILD_DIR'."
-          echo "Changing working directory to MSYS2 MINGW64."
-          cd "/C/msys2/msys64/mingw64"
+          echo "Changing working directory to MSYS2 ${{env.MSYS2_ENV_NAME}}."
+          cd "/C/msys2/msys64/${{env.MSYS2_ENV_PREFIX}}"
           echo "Copying DLLs and EXEs."
 
           cd ./bin
@@ -149,7 +172,7 @@ jobs:
           echo -e '[Settings]\ngtk-button-images=1' > "$BUILD_DIR/share/gtk-3.0/settings.ini"
 
       - name: Create installer
-        if: ${{matrix.build_type == 'release' && (github.ref_type == 'tag' || github.ref_name == 'dev')}}
+        if: ${{matrix.build_type == 'release'}}
         working-directory: build/${{matrix.build_type}}
         shell: pwsh
         run: |
@@ -161,22 +184,28 @@ jobs:
           iscc /F"installer" "WindowsInnoSetup.iss"
 
       - name: Prepare artifact name
+        id: prepare-artifact-name
         run: |
           if [ '${{github.ref_type}}' == 'tag' ]; then
-            ARTIFACT_NAME="RawTherapee_${REF_NAME_FILTERED}_win64_${{matrix.build_type}}"
+            ARTIFACT_NAME_PREFIX="RawTherapee_${REF_NAME_FILTERED}_win64"
           else
             echo "Getting RawTherapee version."
             export VERSION="$(grep -m 1 '^Version: .*$' './build/${{matrix.build_type}}/AboutThisBuild.txt' | sed 's/^Version: \(.\+\)$/\1/')"
             echo "Version is '$VERSION'."
             FILTERED_VERSION="$(echo "$VERSION" | sed 's/[^A-z0-9_.-]//g')"
-            ARTIFACT_NAME="RawTherapee_${REF_NAME_FILTERED}_${FILTERED_VERSION}_win64_${{matrix.build_type}}"
+            ARTIFACT_NAME_PREFIX="RawTherapee_${REF_NAME_FILTERED}_${FILTERED_VERSION}_win64"
           fi
+          ARTIFACT_NAME="${ARTIFACT_NAME_PREFIX}_${{matrix.arch}}_${{matrix.build_type}}"
           echo "Artifact name is '$ARTIFACT_NAME'."
 
           echo "Recording artifact name."
           echo "ARTIFACT_NAME=$ARTIFACT_NAME" >> "$(cygpath -u $GITHUB_ENV)"
           echo "Recording RawTherapee version."
           echo "RT_VERSION=$VERSION" >> "$(cygpath -u $GITHUB_ENV)"
+
+          echo "Saving artifact name and filtered ref name to outputs."
+          echo "ARTIFACT_NAME_PREFIX=$ARTIFACT_NAME_PREFIX" >> "$(cygpath -u $GITHUB_OUTPUT)"
+          echo "REF_NAME_FILTERED=$REF_NAME_FILTERED" >> "$(cygpath -u $GITHUB_OUTPUT)"
 
           echo "Renaming artifact."
           mv './build/${{matrix.build_type}}' "./build/$ARTIFACT_NAME"
@@ -185,31 +214,72 @@ jobs:
             mv './build/installer.exe' "./build/$ARTIFACT_NAME.exe"
           fi
 
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v7
+        with:
+          name: ${{env.ARTIFACT_NAME}}
+          path: build\${{env.ARTIFACT_NAME}}
+
+      - name: Upload installer
+        if: ${{matrix.build_type == 'release'}}
+        uses: actions/upload-artifact@v7
+        with:
+          name: ${{env.ARTIFACT_NAME}}.exe
+          path: build\${{env.ARTIFACT_NAME}}.exe
+
+  publish:
+    needs: build
+    runs-on: 'windows-latest'
+    permissions:
+      contents: write
+    defaults:
+      run:
+        shell: bash
+    strategy:
+      fail-fast: false
+      matrix:
+        build_type: [release, debug]
+        arch: [x86_64, arm64]
+    env:
+      ARTIFACT_NAME: ${{ format('{0}_{1}_{2}', needs.build.outputs.ARTIFACT_NAME_PREFIX, matrix.arch, matrix.build_type) }}
+      REF_NAME_FILTERED: ${{needs.build.outputs.REF_NAME_FILTERED}}
+    steps:
+      - name: Initialize
+        id: initialize
+        if: ${{github.ref_type == 'tag' || github.ref_name == 'dev' || (github.event_name == 'pull_request' && contains(fromJSON(env.publish_pre_dev_labels), github.event.pull_request.head.label))}}
+        run: |
+          echo "Proceeding with job."
+
+      - name: Download build artifact
+        id: download-build-artifact
+        if: ${{steps.initialize.outcome == 'success'}}
+        uses: actions/download-artifact@v8
+        with:
+          name: ${{env.ARTIFACT_NAME}}
+          path: build/${{env.ARTIFACT_NAME}}
+
+      - name: Download installer
+        id: download-installer
+        if: ${{steps.download-build-artifact.outcome == 'success' && matrix.build_type == 'release'}}
+        uses: actions/download-artifact@v8
+        with:
+          name: ${{env.ARTIFACT_NAME}}.exe
+          path: build
+
       - name: Create ZIP archive
+        if: ${{steps.download-build-artifact.outcome == 'success'}}
         shell: cmd
         working-directory: ./build
         run: |
           echo "Zipping artifact."
           7z a -tzip "%ARTIFACT_NAME%.zip" "./%ARTIFACT_NAME%"
 
-      - name: Upload artifacts
-        uses: actions/upload-artifact@v4
-        with:
-          name: ${{env.ARTIFACT_NAME}}
-          path: build\${{env.ARTIFACT_NAME}}
-
-      - name: Upload installer
-        if: ${{matrix.build_type == 'release' && (github.ref_type == 'tag' || github.ref_name == 'dev')}}
-        uses: actions/upload-artifact@v4
-        with:
-          name: ${{env.ARTIFACT_NAME}}.exe
-          path: build\${{env.ARTIFACT_NAME}}.exe
-
       - name: Prepare for publishing
+        id: prepare-for-publishing
         if: ${{github.ref_type == 'tag' || github.ref_name == 'dev'}}
         run: |
           echo "Setting publish name."
-          PUBLISH_NAME="RawTherapee_${REF_NAME_FILTERED}_win64_${{matrix.build_type}}"
+          PUBLISH_NAME="RawTherapee_${REF_NAME_FILTERED}_win64_${{matrix.arch}}_${{matrix.build_type}}"
           echo "Publish name is '$PUBLISH_NAME'."
           if [ "$ARTIFACT_NAME" != "$PUBLISH_NAME" ]; then
             echo "Renaming ZIP file."
@@ -226,8 +296,8 @@ jobs:
           echo "PUBLISH_NAME=$PUBLISH_NAME" >> "$(cygpath -u $GITHUB_ENV)"
 
       - name: Publish artifacts
-        uses: softprops/action-gh-release@v2
-        if: ${{github.ref_type == 'tag' || github.ref_name == 'dev'}}
+        uses: softprops/action-gh-release@v3
+        if: ${{steps.prepare-for-publishing.outcome == 'success'}}
         with:
           tag_name: nightly-github-actions
           files: |
@@ -235,8 +305,8 @@ jobs:
             build/${{env.PUBLISH_NAME}}-AboutThisBuild.txt
 
       - name: Publish installer
-        uses: softprops/action-gh-release@v2
-        if: ${{matrix.build_type == 'release' && (github.ref_type == 'tag' || github.ref_name == 'dev')}}
+        uses: softprops/action-gh-release@v3
+        if: ${{steps.prepare-for-publishing.outcome == 'success' && matrix.build_type == 'release'}}
         with:
           tag_name: nightly-github-actions
           files: build/${{env.PUBLISH_NAME}}.exe
@@ -250,7 +320,7 @@ jobs:
           echo "Ref name is '$REF_NAME_FILTERED'."
 
           echo "Setting publish name."
-          PUBLISH_NAME="RawTherapee_${REF_NAME_FILTERED}_win64_${{matrix.build_type}}"
+          PUBLISH_NAME="RawTherapee_${REF_NAME_FILTERED}_win64_${{matrix.arch}}_${{matrix.build_type}}"
           echo "Publish name is '$PUBLISH_NAME'."
           if [ "$ARTIFACT_NAME" != "$PUBLISH_NAME" ]; then
             echo "Renaming ZIP file."
@@ -267,7 +337,7 @@ jobs:
           echo "PUBLISH_NAME=$PUBLISH_NAME" >> "$(cygpath -u $GITHUB_ENV)"
 
       - name: Publish pre-dev artifacts
-        uses: softprops/action-gh-release@v2
+        uses: softprops/action-gh-release@v3
         if: ${{steps.prepare-publish-pre-dev.outcome == 'success'}}
         with:
           tag_name: pre-dev-github-actions
@@ -277,9 +347,64 @@ jobs:
             build/${{env.PUBLISH_NAME}}-AboutThisBuild.txt
 
       - name: Publish pre-dev installer
-        uses: softprops/action-gh-release@v2
+        uses: softprops/action-gh-release@v3
         if: ${{steps.prepare-publish-pre-dev.outcome == 'success' && matrix.build_type == 'release'}}
         with:
           tag_name: pre-dev-github-actions
           repository: RawTherapee/RawTherapee
           files: build/${{env.PUBLISH_NAME}}.exe
+
+  test-launch:
+    needs: build
+    runs-on: ${{ matrix.arch == 'arm64' && 'windows-11-arm' || 'windows-latest' }}
+    defaults:
+      run:
+        shell: bash
+    strategy:
+      fail-fast: false
+      matrix:
+        build_type: [release, debug]
+        arch: [x86_64, arm64]
+    env:
+      ARTIFACT_NAME: ${{ format('{0}_{1}_{2}', needs.build.outputs.ARTIFACT_NAME_PREFIX, matrix.arch, matrix.build_type) }}
+    steps:
+      - name: Download build artifact
+        id: download-build-artifact
+        uses: actions/download-artifact@v8
+        with:
+          name: ${{env.ARTIFACT_NAME}}
+          path: build/${{env.ARTIFACT_NAME}}
+
+      - name: Launch CLI
+        working-directory: build/${{env.ARTIFACT_NAME}}
+        run: |
+          echo "Launching RawTherapee CLI."
+          ./rawtherapee-cli.exe
+
+      - name: Launch GUI
+        working-directory: build/${{env.ARTIFACT_NAME}}
+        run: |
+          STATUS_FILE="rawtherapee-status.txt"
+          SUCCESS_MESSAGE="success"
+          FAILURE_MESSAGE="failure"
+
+          echo "Launching RawTherapee GUI."
+          ./rawtherapee.exe && echo $SUCCESS_MESSAGE > $STATUS_FILE || echo $FAILURE_MESSAGE > $STATUS_FILE &
+
+          echo "Waiting 10 seconds for RawTherapee to start."
+          sleep 10
+
+          echo "Checking if RawTherapee launched successfully."
+          if [ -f "$STATUS_FILE" ]; then
+            $STATUS=$(cat "$STATUS_FILE")
+            if [ "$STATUS" == "$FAILURE_MESSAGE" ]; then
+              echo "RawTherapee failed to start."
+              exit 1
+            elif [ "$STATUS" == "$SUCCESS_MESSAGE" ]; then
+              echo "RawTherapee started successfully."
+            else
+              echo "Unknown status: $STATUS"
+              exit 1
+            fi
+          fi
+          echo "RawTherapee is launching or has launched successfully."

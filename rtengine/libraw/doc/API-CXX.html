@@ -61,6 +61,7 @@
               LibRaw_progress code)</a></li>
           <li><a href="#libraw_strerror">const char* LibRaw::strerror(int
               errorcode)</a></li>
+          <li><a href="#simplify_make_model">static LibRaaw::simplify_make_model</a>
           <li><a href="#callbacks">Setting Error Notification Functions and
               other callbacks</a>
             <ul>
@@ -342,9 +343,9 @@
       decoder may work again.</p>
     <p><a name="COLOR"></a></p>
     <h4>int LibRaw::COLOR(int row, int col)</h4>
-    <p>This call returns pixel color (color component number) in bayer pattern at
-      row,col. The returned value is in 0..3 range for 4-component Bayer (RGBG2,
-      CMYG and so on) and in 0..2 range for 3-color data.</p>
+    <p>This call returns pixel color (color component number) in bayer pattern
+      at row,col. The returned value is in 0..3 range for 4-component Bayer
+      (RGBG2, CMYG and so on) and in 0..2 range for 3-color data.</p>
     <p>Color indexes returned could be used as index in imgdata.idata.cdesc
       string to get color 'name'.</p>
     <p><a name="error_count"></a></p>
@@ -445,6 +446,27 @@
     <h3>const char* LibRaw::strerror(int errorcode)</h3>
     <p>Analog of strerror(3) function: outputs the text descriptions of LibRaw
       error codes (in English).</p>
+        <p><a name="simplify_make_model"></a></p>
+    <h3>static void LibRaw::simplify_make_model(unsigned * mkindex, char *mkbuf,
+      unsigned mkbuf_size, char *modelbuf, unsigned modelbuf_size)</h3>
+    This call can be used to simplify/standardize vendor name/model received
+    from external source (e.g. EXIF block in JPEG file).
+    <p></p>
+    Parameters:
+    <ul>
+      <li>mkindex: pointer to received maker index (LibRaw_CAMERAMAKER_...) </li>
+      <li>mkbuf, mkbuf_size: buffer with make string, buffer size </li>
+      <li>modelbuf, modelbuf_size: buffer with model string. </li>
+    </ul>
+    simplify_make_model(..) simplifies/re-writes vendor name/model in place, in
+    provided buffers.
+    <p> return values: </p>
+    <ul>
+      <li>0 - mkindex is set (if non-null pointer provided), data simplified; </li>
+      <li>1 - mkindex is not set, while some data processing is done; </li>
+      <li>-1 - incorrect parameters; </li>
+    </ul>
+
     <p><a name="callbacks"></a></p>
     <h3>Setting Error Notification Functions</h3>
     <p>In process of RAW conversion LibRaw can call user-setted callback. This
@@ -497,7 +519,7 @@
     <pre>int my_progress_callback(void *data,enum LibRaw_progress p,int iteration, int expected)<br>{<br>    char *passed_string = (char *data);<br>    printf("Callback: %s  pass %d of %d, data passed: %s\n",libraw_strprogress(p),iteration,expected,passed_string);<br>    if(timeout || key_pressed )<br>        return 1; // cancel processing immediately<br>    else<br>        return 0; // can continue<br>}</pre>
     <p><a name="exif"></a></p>
     <h4>User-specified exif tag parser callback</h4>
-    <pre>       typedef void (*exif_parser_callback) (void *context, int tag, int type, int len,unsigned int ord, void *ifp);<br>       void    LibRaw::set_exifparser_handler( exif_parser_callback cb,void *context);<br>    </pre>
+    <pre>       typedef void (*exif_parser_callback) (void *context, int tag, int type, int len,unsigned int ord, void *ifp);<br>       void    LibRaw::set_exifparser_handler( exif_parser_callback cb,void *context);<br>       void    LibRaw::set_makernotes_handler( exif_parser_callback cb,void *context);</pre>
     <p>Callback to be called on each parsed EXIF/Makernotes tag with parameters:</p>
     <ul>
       <li>context - pointer to context passed to set_exifparser_handler();</li>
@@ -641,7 +663,6 @@
         buffer as JPEG-file image (for most cameras) or as RGB-bitmap.</li>
     </ul>
     <p>For usage primer see samples/mem_image.c sample.</p>
-    <p>&nbsp;</p>
     <p><a name="get_mem_image_format"></a></p>
     <h3>void get_mem_image_format(int *widthp, int *heightp, int *colorsp, int
       *bpp) const - return processing bitmap size</h3>
@@ -768,35 +789,11 @@
             (i.e. cameras with 'Diag RAW hack').</li>
         </ul>
       </dd>
-      <dt><strong>virtual int subfile_open(const char *fn)</strong></dt>
-      <dd>This call temporary switches input to file <strong>fn</strong>.
-        Returns 0 on success and error code on error.<br>
-        The function used to read metadata from external JPEG file (on cameras
-        with "Diag RAW hack"). <br>
-        This call is not implemented for <a href="#buffer_datastream">LibRaw_buffer_datastream</a>,
-        so external JPEG processing is not possible when buffer datastream used.
-        <br>
-        This function should be implemented in real input class, base class call
-        always return error. <br>
-        Working implementation sample can be found in <a href="#file_datastream">LibRaw_file_datastream</a>
-        implementation in <strong>libraw/libraw_datastream.h</strong> file.</dd>
-      <dt><strong> virtual void subfile_close()</strong></dt>
-      <dd>This call switches input stream from temporary open file back to main
-        data stream.</dd>
-      <dt><strong> virtual int tempbuffer_open(void *buf, size_t size)</strong></dt>
-      <dd>This call temporary switches input to <a href="#buffer_datastream">LibRaw_buffer_datastream</a>
-        object, created from <strong>buf</strong>.<br>
-        This method is needed for Sony encrypted metadata parser.
-        <p>This call implemented in base class (<strong>LibRaw_abstract_datastream</strong>),
-          there is no need to reimplement in in derived classes.<br>
-          Possible activity of temporary datastream requires very accurate
-          programming when implementing datastreams derived from base <strong>LibRaw_abstract_datastream</strong>.
-          See <a href="#substream">below</a> for more details.</p>
-      </dd>
-      <dt><strong> virtual void tempbuffer_close()</strong></dt>
-      <dd>This call switch input back from temporary datastream to main stream.
-        This call implemented in base <strong>LibRaw_abstract_datastream</strong>
-        class.</dd>
+      <dt><strong>virtual bool is_buffered();</strong><br>
+        <strong>virtual bool buffering_on();</strong><br>
+        <strong>virtual bool buffering_off();</strong> </dt>
+      <dd>Checks, turns on/off internal buffering (if implemented by
+        implementation) </dd>
     </dl>
     <p><a name="datastream_derived"></a></p>
     <h3>Derived input classes included in LibRaw</h3>

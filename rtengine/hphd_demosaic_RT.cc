@@ -46,7 +46,7 @@ void hphd_vertical(const array2D<float> &rawData, float** hpmap, int col_from, i
     JaggedArray<float> dev(numCols, H, true);
 
     int k = col_from;
-#ifdef __SSE2__
+#if defined(__SSE2__) || defined(RT_SIMDE)
     const vfloat ninev = F2V(9.f);
     const vfloat epsv = F2V(0.001f);
 #endif
@@ -61,7 +61,7 @@ void hphd_vertical(const array2D<float> &rawData, float** hpmap, int col_from, i
         }
 
         for (int j = 4; j < H - 4; j++) {
-#ifdef __SSE2__
+#if defined(__SSE2__) || defined(RT_SIMDE)
             // faster than #pragma omp simd...
             const vfloat avgL1 = ((LVFU(temp[j - 4][0]) + LVFU(temp[j - 3][0])) + (LVFU(temp[j - 2][0]) + LVFU(temp[j - 1][0])) + (LVFU(temp[j][0]) + LVFU(temp[j + 1][0])) + (LVFU(temp[j + 2][0]) + LVFU(temp[j + 3][0])) + LVFU(temp[j + 4][0])) / ninev;
             STVFU(avg[j][0], avgL1);
@@ -126,7 +126,7 @@ void hphd_horizontal(const array2D<float> &rawData, float** hpmap, int row_from,
     memset(avg, 0, W * sizeof(float));
     memset(dev, 0, W * sizeof(float));
 
-#ifdef __SSE2__
+#if defined(__SSE2__) || defined(RT_SIMDE)
     const vfloat onev = F2V(1.f);
     const vfloat twov = F2V(2.f);
     const vfloat zd8v = F2V(0.8f);
@@ -149,7 +149,7 @@ void hphd_horizontal(const array2D<float> &rawData, float** hpmap, int row_from,
         }
 
         int j = 5;
-#ifdef __SSE2__
+#if defined(__SSE2__) || defined(RT_SIMDE)
         // faster than #pragma omp simd
         for (; j < W - 8; j+=4) {
             const vfloat avgL = LVFU(avg[j - 1]);

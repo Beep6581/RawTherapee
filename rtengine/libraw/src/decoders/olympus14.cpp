@@ -1,6 +1,6 @@
 /* -*- C++ -*-
  * File: pana8.cpp
- * Copyright (C) 2024 Alex Tutubalin, LibRaw LLC
+ * Copyright (C) 2024-2025 Alex Tutubalin, LibRaw LLC
  *
    Olympus/OM System 12/14-bit file decoder
 
@@ -201,9 +201,7 @@ int32_t oly_code(buffered_bitpump_t *th, unsigned int wbits, unsigned int tag0x6
   return result;
 }
 
-
-
-void LibRaw::olympus14_load_raw() 
+void LibRaw::olympus_load_raw()
 { 
 	if (!checkhdr(libraw_internal_data.internal_data.input, imgdata.makernotes.olympus.tagX653))
 		throw LIBRAW_EXCEPTION_IO_CORRUPT;

@@ -236,8 +236,8 @@ public:
     }
     bool getEnabled();  // related to the enabled/disabled state
     void setEnabled(bool isActive);  // related to the enabled/disabled state
-    void setEnabledTooltipMarkup(Glib::ustring tooltipMarkup);
-    void setEnabledTooltipText(Glib::ustring tooltipText);
+    void setEnabledTooltipMarkup(const Glib::ustring& tooltipMarkup);
+    void setEnabledTooltipText(const Glib::ustring& tooltipText);
     bool get_inconsistent();  // related to the enabled/disabled state
     void set_inconsistent(bool isInconsistent);  // related to the enabled/disabled state
     void setGrayedOut(bool doGrayOut); // Set whether the tool should be disabled, collapsed and grayed-out.

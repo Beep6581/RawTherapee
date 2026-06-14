@@ -308,6 +308,8 @@ using namespace std;
 using namespace rtengine;
 void RawImageSource::pixelshift(int winx, int winy, int winw, int winh, const procparams::RAWParams &rawParamsIn, unsigned int frame, const std::string &make, const std::string &model, float rawWpCorrection)
 {
+    const auto& options = App::get().options();
+
 BENCHFUN
     if(numFrames != 4) { // fallback for non pixelshift files
         amaze_demosaic_RT(winx, winy, winw, winh, rawData, red, green, blue, options.chunkSizeAMAZE, options.measure);
@@ -938,7 +940,7 @@ BENCHFUN
 #endif
 
         for(int i = winy + border - offsY; i < winh - (border + offsY); ++i) {
-#ifdef __SSE2__
+#if defined(__SSE2__) || defined(RT_SIMDE)
 
             // pow() is expensive => pre calculate blend factor using SSE
             if(smoothTransitions) { //
@@ -969,7 +971,7 @@ BENCHFUN
             for(int j = winx + border - offsX; j < winw - (border + offsX); ++j, offset ^= 1) {
                 if(showOnlyMask) {
                     if(smoothTransitions) { // we want only motion mask => paint areas according to their motion (dark = no motion, bright = motion)
-#ifdef __SSE2__
+#if defined(__SSE2__) || defined(RT_SIMDE)
                         // use pre calculated blend factor
                         const float blend = psMask[i][j];
 #else
@@ -983,7 +985,7 @@ BENCHFUN
                     paintMotionMask(j + offsX, showMotion, greenDest, redDest, blueDest);
                 } else {
                     if(smoothTransitions) {
-#ifdef __SSE2__
+#if defined(__SSE2__) || defined(RT_SIMDE)
                         // use pre calculated blend factor
                         const float blend = psMask[i][j];
 #else

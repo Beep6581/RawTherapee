@@ -18,21 +18,21 @@
  */
 #pragma once
 
-#include <map>
-
-#include <gtkmm.h>
-
 #include "browserfilter.h"
 #include "exportpanel.h"
 #include "extprog.h"
 #include "filebrowserentry.h"
-#include "lwbutton.h"
-#include "partialpastedlg.h"
 #include "pparamschangelistener.h"
-#include "rtengine/profilestore.h"
 #include "thumbbrowserbase.h"
+#include "widgets/basic/lwbutton.h"
+#include "windows/partialpastedlg.h"
 
 #include "rtengine/noncopyable.h"
+#include "rtengine/profilestore.h"
+
+#include <gtkmm.h>
+
+#include <map>
 
 class FileBrowser;
 class FileBrowserEntry;
@@ -151,8 +151,8 @@ public:
     FileBrowser ();
     ~FileBrowser () override;
 
-    void addEntry (FileBrowserEntry* entry); // can be called from any thread
-    void addEntry_ (FileBrowserEntry* entry); // this must be executed inside the gtk thread
+    void addEntry (FileBrowserEntry* entry);                    ///< Moves the execution to the main UI thread
+    void addEntry_ (FileBrowserEntry* entry);                   ///< Must be called only when the execution is in the main UI thread
     FileBrowserEntry*  delEntry (const Glib::ustring& fname);    // return the entry if found here return NULL otherwise
     void close ();
 

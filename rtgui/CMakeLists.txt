@@ -10,173 +10,189 @@ set(CLISOURCEFILES
     threadutils.cc
 )
 
+set(RT_GUI_TOOL_PANEL_SOURCES
+    tools/bayerpreprocess.cc
+    tools/bayerprocess.cc
+    tools/bayerrawexposure.cc
+    tools/blackwhite.cc
+    tools/cacorrection.cc
+    tools/chmixer.cc
+    tools/colorappearance.cc
+    tools/colortoning.cc
+    tools/compressgamut.cc
+    tools/crop.cc
+    tools/cropguide.cc
+    tools/darkframe.cc
+    tools/defringe.cc
+    tools/dehaze.cc
+    tools/dirpyrdenoise.cc
+    tools/dirpyrequalizer.cc
+    tools/distortion.cc
+    tools/epd.cc
+    tools/fattaltonemap.cc
+    tools/filmnegative.cc
+    tools/filmsimulation.cc
+    tools/flatfield.cc
+    tools/framing.cc
+    tools/gradient.cc
+    tools/hsvequalizer.cc
+    tools/icmpanel.cc
+    tools/impulsedenoise.cc
+    tools/labcurve.cc
+    tools/lensgeom.cc
+    tools/lensprofile.cc
+    tools/localcontrast.cc
+    tools/locallab.cc
+    tools/locallabtools.cc
+    tools/locallabtools2.cc
+    tools/pcvignette.cc
+    tools/pdsharpening.cc
+    tools/perspective.cc
+    tools/preprocess.cc
+    tools/preprocesswb.cc
+    tools/prsharpening.cc
+    tools/rawcacorrection.cc
+    tools/rawexposure.cc
+    tools/resize.cc
+    tools/retinex.cc
+    tools/rgbcurves.cc
+    tools/rotate.cc
+    tools/sensorbayer.cc
+    tools/sensorxtrans.cc
+    tools/shadowshighlights.cc
+    tools/sharpenedge.cc
+    tools/sharpening.cc
+    tools/sharpenmicro.cc
+    tools/softlight.cc
+    tools/spot.cc
+    tools/tonecurve.cc
+    tools/toneequalizer.cc
+    tools/vibrance.cc
+    tools/vignetting.cc
+    tools/wavelet.cc
+    tools/whitebalance.cc
+    tools/xtransprocess.cc
+    tools/xtransrawexposure.cc
+)
+
+set(RT_GUI_WIDGET_SOURCES
+    # Basic
+    widgets/basic/adjuster.cc
+    widgets/basic/checkbox.cc
+    widgets/basic/coloredbar.cc
+    widgets/basic/colorpreview.cc
+    widgets/basic/coordinateadjuster.cc
+    widgets/basic/lwbutton.cc
+    widgets/basic/lwbuttonset.cc
+    widgets/basic/popupbutton.cc
+    widgets/basic/popupcommon.cc
+    widgets/basic/popuptogglebutton.cc
+    widgets/basic/shcselector.cc
+    widgets/basic/thresholdadjuster.cc
+    widgets/basic/thresholdselector.cc
+    # Curves
+    widgets/curves/curveeditor.cc
+    widgets/curves/curveeditorgroup.cc
+    widgets/curves/diagonalcurveeditorsubgroup.cc
+    widgets/curves/flatcurveeditorsubgroup.cc
+    widgets/curves/mycurve.cc
+    widgets/curves/mydiagonalcurve.cc
+    widgets/curves/myflatcurve.cc
+)
+
+set(RT_GUI_WINDOWS_SOURCES
+    windows/editwindow.cc
+    windows/iccprofilecreator.cc
+    windows/partialpastedlg.cc
+    windows/preferences.cc
+    windows/renamedlg.cc
+    windows/rtappchooserdialog.cc
+    windows/rtwindow.cc
+    windows/saveasdlg.cc
+    windows/splash.cc
+)
+
 set(NONCLISOURCEFILES
-    adjuster.cc
     alignedmalloc.cc
-    aspectratios.cc
     batchqueue.cc
     batchqueuebuttonset.cc
     batchqueueentry.cc
     batchqueuepanel.cc
     batchtoolpanelcoord.cc
-    bayerpreprocess.cc
-    bayerprocess.cc
-    bayerrawexposure.cc
-    blackwhite.cc
     bqentryupdater.cc
     browserfilter.cc
     cacheimagedata.cc
     cachemanager.cc
-    cacorrection.cc
-    checkbox.cc
-    chmixer.cc
     clipboard.cc
     coarsepanel.cc
-    colorappearance.cc
-    coloredbar.cc
-    colortoning.cc
-    colorpreview.cc
     controllines.cc
     controlspotpanel.cc
-    coordinateadjuster.cc
-    compressgamut.cc
-    crop.cc
     crophandler.cc
     cropwindow.cc
     cursormanager.cc
-    curveeditor.cc
-    curveeditorgroup.cc
-    darkframe.cc
-    defringe.cc
-    dehaze.cc
-    diagonalcurveeditorsubgroup.cc
     dirbrowser.cc
-    dirpyrdenoise.cc
-    dirpyrequalizer.cc
-    distortion.cc
+    drawcropguide.cc
     dynamicprofilepanel.cc
     editbuffer.cc
     editcallbacks.cc
     editorpanel.cc
     editwidgets.cc
-    editwindow.cc
-    epd.cc
     eventmapper.cc
     exiffiltersettings.cc
     exifpanel.cc
     exportpanel.cc
     externaleditorpreferences.cc
     extprog.cc
-    fattaltonemap.cc
     filebrowser.cc
     filebrowserentry.cc
     filecatalog.cc
     filepanel.cc
     filethumbnailbuttonset.cc
-    filmnegative.cc
-    filmsimulation.cc
     filterpanel.cc
-    flatcurveeditorsubgroup.cc
-    flatfield.cc
-    framing.cc
-    gradient.cc
     guiutils.cc
+    hidpi.cc
     histogrampanel.cc
     history.cc
-    hsvequalizer.cc
-    iccprofilecreator.cc
-    icmpanel.cc
     imagearea.cc
     imageareapanel.cc
-    impulsedenoise.cc
     indclippedpanel.cc
     inspector.cc
     iptcpanel.cc
-    labcurve.cc
     labgrid.cc
-    lensgeom.cc
-    lensprofile.cc
-    localcontrast.cc
-    locallab.cc
-    locallabtools.cc
-    locallabtools2.cc
     lockablecolorpicker.cc
-    lwbutton.cc
-    lwbuttonset.cc
     main.cc
     metadatapanel.cc
     multilangmgr.cc
-    mycurve.cc
-    mydiagonalcurve.cc
-    myflatcurve.cc
     navigator.cc
     options.cc
     paramsedited.cc
-    partialpastedlg.cc
     pathutils.cc
-    pcvignette.cc
-    pdsharpening.cc
-    perspective.cc
     placesbrowser.cc
-    popupbutton.cc
-    popupcommon.cc
-    popuptogglebutton.cc
-    preferences.cc
-    preprocess.cc
-    preprocesswb.cc
     previewhandler.cc
     previewloader.cc
     previewmodepanel.cc
     previewwindow.cc
     profilepanel.cc
     profilestorecombobox.cc
-    prsharpening.cc
-    rawcacorrection.cc
-    rawexposure.cc
     recentbrowser.cc
-    renamedlg.cc
-    resize.cc
-    retinex.cc
-    rgbcurves.cc
-    rotate.cc
-    rtappchooserdialog.cc
     rtimage.cc
     rtscalable.cc
     rtsurface.cc
-    rtwindow.cc
-    saveasdlg.cc
     saveformatpanel.cc
-    sensorbayer.cc
-    sensorxtrans.cc
-    shadowshighlights.cc
-    sharpenedge.cc
-    sharpening.cc
-    sharpenmicro.cc
-    shcselector.cc
-    softlight.cc
     soundman.cc
-    splash.cc
-    spot.cc
     threadutils.cc
-    thresholdadjuster.cc
-    thresholdselector.cc
     thumbbrowserbase.cc
     thumbbrowserentrybase.cc
     thumbimageupdater.cc
     thumbnail.cc
-    tonecurve.cc
-    toneequalizer.cc
     toolbar.cc
     toollocationpref.cc
     toolpanel.cc
     toolpanelcoord.cc
-    vibrance.cc
-    vignetting.cc
-    wavelet.cc
-    whitebalance.cc
-    xtransprocess.cc
-    xtransrawexposure.cc
     zoompanel.cc
+    ${RT_GUI_TOOL_PANEL_SOURCES}
+    ${RT_GUI_WIDGET_SOURCES}
+    ${RT_GUI_WINDOWS_SOURCES}
 )
 
 if(APPLE)
@@ -187,76 +203,51 @@ if(APPLE)
 endif()
 
 if(WIN32)
-    set(EXTRA_SRC_CLI myicon.rc)
-    set(EXTRA_SRC_NONCLI myicon.rc)
-    set(EXTRA_LIB_RTGUI winmm)
-    include_directories(${EXTRA_INCDIR}
-        ${GIOMM_INCLUDE_DIRS}
-        ${GIO_INCLUDE_DIRS}
-        ${GLIB2_INCLUDE_DIRS}
-        ${GLIBMM_INCLUDE_DIRS}
-        ${GTKMM_INCLUDE_DIRS}
-        ${GTK_INCLUDE_DIRS}
-        ${LENSFUN_INCLUDE_DIRS}
-        ${RSVG_INCLUDE_DIRS}
-        ${TIFF_INCLUDE_DIRS}
-        )
-    link_directories(.
-        ${EXTRA_LIBDIR}
-        ${GIOMM_LIBRARY_DIRS}
-        ${GIO_LIBRARY_DIRS}
-        ${GLIB2_LIBRARY_DIRS}
-        ${GLIBMM_LIBRARY_DIRS}
-        ${GTKMM_LIBRARY_DIRS}
-        ${GTK_LIBRARY_DIRS}
-        ${LENSFUN_LIBRARY_DIRS}
-        ${RSVG_LIBRARY_DIRS}
-        ${TIFF_LIBRARY_DIRS}
-        )
-else()
-    include_directories(${EXTRA_INCDIR}
-        ${CANBERRA-GTK_INCLUDE_DIRS}
-        ${EXPAT_INCLUDE_DIRS}
-        ${FFTW3F_LIBRARY_DIRS}
-        ${GIOMM_INCLUDE_DIRS}
-        ${GIO_INCLUDE_DIRS}
-        ${GLIB2_INCLUDE_DIRS}
-        ${GLIBMM_INCLUDE_DIRS}
-        ${GOBJECT_INCLUDE_DIRS}
-        ${GTHREAD_INCLUDE_DIRS}
-        ${GTKMM_INCLUDE_DIRS}
-        ${GTK_INCLUDE_DIRS}
-        ${IPTCDATA_INCLUDE_DIRS}
-        ${LCMS_INCLUDE_DIRS}
-        ${LENSFUN_INCLUDE_DIRS}
-        ${RSVG_INCLUDE_DIRS}
-        ${TIFF_INCLUDE_DIRS}
-        )
-    link_directories(${EXTRA_LIBDIR}
-        ${CANBERRA-GTK_LIBRARY_DIRS}
-        ${EXPAT_LIBRARY_DIRS}
-        ${FFTW3F_LIBRARY_DIRS}
-        ${GIOMM_LIBRARY_DIRS}
-        ${GIO_LIBRARY_DIRS}
-        ${GLIB2_LIBRARY_DIRS}
-        ${GLIBMM_LIBRARY_DIRS}
-        ${GOBJECT_LIBRARY_DIRS}
-        ${GTHREAD_LIBRARY_DIRS}
-        ${GTKMM_LIBRARY_DIRS}
-        ${GTK_LIBRARY_DIRS}
-        ${IPTCDATA_LIBRARY_DIRS}
-        ${LCMS_LIBRARY_DIRS}
-        ${LENSFUN_LIBRARY_DIRS}
-        ${RSVG_LIBRARY_DIRS}
-        ${TIFF_LIBRARY_DIRS}
-        )
-endif()
+    find_program(GIT_CMD git.exe HINTS ENV Path PATH_SUFFIXES ../)
 
-# Excluding libatomic needed by Clang/FreeBSD, #3636
-# Now handled in cmake/modules/findATOMIC.cmake, #6821
-# if(OPENMP_FOUND AND NOT APPLE AND NOT ${CMAKE_SYSTEM_NAME} STREQUAL "FreeBSD")
-#     set(EXTRA_LIB_RTGUI "${EXTRA_LIB_RTGUI}" "atomic")
-# endif()
+    # Get the version which will be included in the application manifest
+    if(GIT_CMD STREQUAL GIT_CMD-NOTFOUND)
+        message(WARNING "git.exe not found, using default version")
+        set(WINDOWS_APPLICATION_VERSION "0.0.0.0")
+    else()
+        execute_process(COMMAND ${GIT_CMD} describe --tags --always --long OUTPUT_VARIABLE GIT_DESCRIBE OUTPUT_STRIP_TRAILING_WHITESPACE WORKING_DIRECTORY "${PROJECT_SOURCE_DIR}")
+        # Extract the major and minor versions, plus the number of commits since the tag, then build the four component version number, e.g. "5.0-gtk2-2-g12345678" -> "5.0.2.0"
+        string(REGEX REPLACE "^([0-9]+\.[0-9]+).*-([0-9]+)-g[0-9a-f]+$" "\\1.\\2.0" WINDOWS_APPLICATION_VERSION "${GIT_DESCRIBE}")
+        if(WINDOWS_APPLICATION_VERSION STREQUAL GIT_DESCRIBE)
+            message(WARNING "git describe output did not match expected format, using default version")
+            set(WINDOWS_APPLICATION_VERSION "0.0.0.0")
+        endif()
+    endif()
+    message(STATUS "Using version ${WINDOWS_APPLICATION_VERSION} for manifest template")
+
+    # Create the manifest files
+    set(WINDOWS_APPLICATION_NAME "RawTherapee.RawTherapee.rawtherapee")
+    configure_file(
+        ${CMAKE_CURRENT_SOURCE_DIR}/app.manifest.in
+        ${CMAKE_CURRENT_BINARY_DIR}/app.manifest
+    )
+    set(WINDOWS_APPLICATION_NAME "RawTherapee.RawTherapee.rawtherapee-cli")
+    configure_file(
+        ${CMAKE_CURRENT_SOURCE_DIR}/app.manifest.in
+        ${CMAKE_CURRENT_BINARY_DIR}/app_cli.manifest
+    )
+
+    # Create the manifest RC files
+    set(MANIFEST_NAME app)
+    configure_file(
+        ${CMAKE_CURRENT_SOURCE_DIR}/app_manifest.rc.in
+        ${CMAKE_CURRENT_BINARY_DIR}/app_manifest.rc
+    )
+    set(MANIFEST_NAME app_cli)
+    configure_file(
+        ${CMAKE_CURRENT_SOURCE_DIR}/app_manifest.rc.in
+        ${CMAKE_CURRENT_BINARY_DIR}/app_manifest_cli.rc
+    )
+
+    set(EXTRA_SRC_CLI myicon.rc ${CMAKE_CURRENT_BINARY_DIR}/app_manifest_cli.rc)
+    set(EXTRA_SRC_NONCLI myicon.rc ${CMAKE_CURRENT_BINARY_DIR}/app_manifest.rc)
+    set(EXTRA_LIB_RTGUI winmm)
+endif()
 
 # Create new executables targets
 add_executable(rth "${EXTRA_SRC_NONCLI}" "${NONCLISOURCEFILES}")
@@ -277,64 +268,46 @@ configure_file("${CMAKE_CURRENT_SOURCE_DIR}/config.h.in" "${CMAKE_CURRENT_BINARY
 target_include_directories(rth BEFORE PRIVATE ${CMAKE_BINARY_DIR}/rtgui)
 target_include_directories(rth-cli BEFORE PRIVATE ${CMAKE_BINARY_DIR}/rtgui)
 
+rt_setup_target(rth)
+rt_setup_target(rth-cli)
+
 #Define a target specific definition to use in code
 target_compile_definitions(rth PUBLIC GUIVERSION)
 target_compile_definitions(rth-cli PUBLIC CLIVERSION)
 
 # Set executables targets properties, i.e. output filename and compile flags
 # for "Debug" builds, open a console in all cases for Windows version
-if((WIN32) AND NOT(UPPER_CMAKE_BUILD_TYPE STREQUAL "DEBUG"))
+if((WIN32) AND NOT (CMAKE_BUILD_TYPE STREQUAL "Debug"))
     set_target_properties(rth PROPERTIES LINK_FLAGS "-mwindows")
 endif()
-set_target_properties(rth PROPERTIES COMPILE_FLAGS "${CMAKE_CXX_FLAGS}" OUTPUT_NAME rawtherapee)
-set_target_properties(rth-cli PROPERTIES COMPILE_FLAGS "${CMAKE_CXX_FLAGS}" OUTPUT_NAME rawtherapee-cli)
+set_target_properties(rth PROPERTIES OUTPUT_NAME rawtherapee)
+set_target_properties(rth-cli PROPERTIES OUTPUT_NAME rawtherapee-cli)
+
+target_include_directories(rth PRIVATE ${EXTRA_INCDIR})
+target_include_directories(rth-cli PRIVATE ${EXTRA_INCDIR})
+
+target_link_directories(rth PRIVATE ${EXTRA_LIBDIR})
+target_link_directories(rth-cli PRIVATE ${EXTRA_LIBDIR})
 
 # Add linked libraries dependencies to executables targets
-target_link_libraries(rth rtengine
-    ${CANBERRA-GTK_LIBRARIES}
-    ${EXPAT_LIBRARIES}
+target_link_libraries(rth PRIVATE
+    rtengine
+    PkgConfig::GTKMM
     ${EXTRA_LIB_RTGUI}
-    ${FFTW3F_LIBRARIES}
-    ${GIOMM_LIBRARIES}
-    ${GIO_LIBRARIES}
-    ${GLIB2_LIBRARIES}
-    ${GLIBMM_LIBRARIES}
-    ${GOBJECT_LIBRARIES}
-    ${GTHREAD_LIBRARIES}
-    ${GTKMM_LIBRARIES}
-    ${GTK_LIBRARIES}
-    ${IPTCDATA_LIBRARIES}
-    ${JPEG_LIBRARIES}
-    ${LCMS_LIBRARIES}
-    ${PNG_LIBRARIES}
-    ${TIFF_LIBRARIES}
-    ${ZLIB_LIBRARIES}
-    ${LENSFUN_LIBRARIES}
-    ${RSVG_LIBRARIES}
-    ${TCMALLOC_LIBRARIES}
-    )
+)
+target_link_libraries(rth-cli PRIVATE
+    rtengine
+    PkgConfig::GTKMM
+    ${EXTRA_LIB_RTGUI}
+)
 
-target_link_libraries(rth-cli rtengine
-    ${CAIROMM_LIBRARIES}
-    ${EXPAT_LIBRARIES}
-    ${EXTRA_LIB_RTGUI}
-    ${FFTW3F_LIBRARIES}
-    ${GIOMM_LIBRARIES}
-    ${GIO_LIBRARIES}
-    ${GLIB2_LIBRARIES}
-    ${GLIBMM_LIBRARIES}
-    ${GOBJECT_LIBRARIES}
-    ${GTHREAD_LIBRARIES}
-    ${IPTCDATA_LIBRARIES}
-    ${JPEG_LIBRARIES}
-    ${LCMS_LIBRARIES}
-    ${PNG_LIBRARIES}
-    ${TIFF_LIBRARIES}
-    ${ZLIB_LIBRARIES}
-    ${LENSFUN_LIBRARIES}
-    ${RSVG_LIBRARIES}
-    ${TCMALLOC_LIBRARIES}
-    )
+if(TCMALLOC_FOUND)
+    target_link_libraries(rth PRIVATE TCMALLOC::TCMALLOC)
+    target_link_libraries(rth-cli PRIVATE TCMALLOC::TCMALLOC)
+endif()
+if(USE_LIBCANBERRA)
+    target_link_libraries(rth PRIVATE PkgConfig::CANBERRA)
+endif()
 
 # Install executables
 install(TARGETS rth DESTINATION "${BINDIR}")

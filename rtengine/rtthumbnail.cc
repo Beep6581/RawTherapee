@@ -238,7 +238,11 @@ void scale_colors (rtengine::RawImage *ri, float scale_mul[4], float cblack[4], 
             }
         }
     } else {
-        const int size = ri->get_iheight() * ri->get_iwidth();
+        // Foveon has full raw image.
+        const int size =
+            ri->getSensorType() == rtengine::eSensorType::ST_FOVEON
+                ? (ri->get_topmargin() + ri->get_iheight()) * ri->get_rawwidth()
+                : ri->get_iheight() * ri->get_iwidth();
 
 #ifdef _OPENMP
         #pragma omp parallel for if(multiThread)
@@ -777,10 +781,16 @@ Thumbnail* Thumbnail::loadFromRaw (const Glib::ustring& fname, eSensorType &sens
                 hmax = (height - 2 - top_margin) / vskip;
             }
 
+            // Foveon has full raw image.
+            const int image_width =
+                sensorType == eSensorType::ST_FOVEON
+                    ? ri->get_rawwidth()
+                    : iwidth;
+
             int y = 0;
 
             for (int row = 1 + top_margin; row < iheight + top_margin  - 1 && y < hmax; row += vskip, y++) {
-                rofs = row * iwidth;
+                rofs = row * image_width;
 
                 int x = 0;
 
@@ -1373,6 +1383,9 @@ IImage8* Thumbnail::processImage (const procparams::ProcParams& params, eSensorT
     OpacityCurve ctOpacityCurve;
 
     ColorAppearance customColCurve1;
+    ColorAppearance customColCurvered;
+    ColorAppearance customColCurvegreen;
+    ColorAppearance customColCurveblue;
     ColorAppearance customColCurve2;
     ColorAppearance customColCurve3;
     ToneCurve customToneCurvebw1;
@@ -1536,8 +1549,10 @@ IImage8* Thumbnail::processImage (const procparams::ProcParams& params, eSensorT
         }
 
         const std::unique_ptr<Imagefloat> tmpImage1(new Imagefloat(GW, GH));
+        const std::unique_ptr<Imagefloat> tmpImage2(new Imagefloat(GW, GH));
 
         ipf.lab2rgb(*labView, *tmpImage1, params.icm.workingProfile);
+        tmpImage1.get()->copyData(tmpImage2.get());
 
         const float gamtone = params.icm.wGamma;
         const float slotone = params.icm.wSlope;
@@ -1550,48 +1565,59 @@ IImage8* Thumbnail::processImage (const procparams::ProcParams& params, eSensorT
         cmsHTRANSFORM dummy = nullptr;
         int ill = 0;
         int locprim = 0;
-        float rdx, rdy, grx, gry, blx, bly = 0.f;
-        float meanx, meany, meanxe, meanye = 0.f;
-        ipf.workingtrc(0, tmpImage1.get(), tmpImage1.get(), GW, GH, -5, prof, 2.4, 12.92310, 0, ill, 0, 0, rdx, rdy, grx, gry, blx, bly, meanx, meany, meanxe, meanye, dummy, true, false, false);
-        ipf.workingtrc(0, tmpImage1.get(), tmpImage1.get(), GW, GH, 5, prof, gamtone, slotone,0, illum, prim, locprim, rdx, rdy, grx, gry, blx, bly,meanx, meany, meanxe, meanye, dummy, false, true, true);
         const int midton = params.icm.wmidtcie;
-           if(midton != 0) {
-                ToneEqualizerParams params;
-                params.enabled = true;
-                params.regularization = 0.f;
-                params.pivot = 0.f;
-                params.bands[0] = 0;
-                params.bands[2] = midton;
-                params.bands[4] = 0;
-                params.bands[5] = 0;
-                int mid = abs(midton);
-                int threshmid = 50;
-                if(mid > threshmid) {
-                    params.bands[1] = sign(midton) * (mid - threshmid);
-                    params.bands[3] = sign(midton) * (mid - threshmid);     
-                }
-                ipf.toneEqualizer(tmpImage1.get(), params, prof, 1, false);
-                }
-
-        const bool smoothi = params.icm.wsmoothcie;
-            if(smoothi) {
-                ToneEqualizerParams params;
-                params.enabled = true;
-                params.regularization = 0.f;
-                params.pivot = 0.f;
-                params.bands[0] = 0;
-                params.bands[1] = 0;
-                params.bands[2] = 0;
-                params.bands[3] = 0;
-                params.bands[4] = -40;//arbitrary value to adapt with WhiteEvjz - here White Ev # 10
-                params.bands[5] = -80;//8 Ev and above
-                bool Evsix = true;
-                if(Evsix) {//EV = 6 majority of images
-                    params.bands[4] = -15;
-                }
-                
-                ipf.toneEqualizer(tmpImage1.get(), params, prof, 1, false);
+        if(midton != 0) {
+            ToneEqualizerParams params;
+            params.enabled = true;
+            params.regularization = 0.f;
+            params.pivot = 0.f;
+            params.bands[0] = 0;
+            params.bands[2] = midton;
+            params.bands[4] = 0;
+            params.bands[5] = 0;
+            int mid = abs(midton);
+            int threshmid = 50;
+            if(mid > threshmid) {
+                params.bands[1] = sign(midton) * (mid - threshmid);
+                params.bands[3] = sign(midton) * (mid - threshmid);     
             }
+            ipf.toneEqualizer(tmpImage1.get(), params, prof, 1, false);
+        }
+        
+        float rdx, rdy, grx, gry, blx, bly = 0.f;
+        float meanx, meany, meanxe, meanye, maxdat = 0.f;
+        double p[6] = {0., 0., 0., 0., 0., 0.};
+
+        ipf.workingtrc(0, tmpImage1.get(), tmpImage1.get(), GW, GH, -5, prof, 2.4, 12.92310, 0, ill, 0, 0, rdx, rdy, grx, gry, blx, bly, meanx, meany, meanxe, meanye, maxdat, p, dummy, true, false, false);
+        ipf.workingtrc(0, tmpImage1.get(), tmpImage1.get(), GW, GH, 5, prof, gamtone, slotone,0, illum, prim, locprim, rdx, rdy, grx, gry, blx, bly,meanx, meany, meanxe, meanye, maxdat, p, dummy, false, true, true);
+        
+        float satu = params.icm.wapsat;
+        if(satu > 0.f) {
+            ipf.apsatur(0, tmpImage1.get(), tmpImage2.get(), GW, GH, satu) ;     
+        }
+
+        const float smoothisli = params.icm.wsmoothciesli;
+                
+        if(smoothisli > 0.f) {
+            ToneEqualizerParams params;
+            params.enabled = true;
+            params.regularization = 0.f;
+            params.pivot = 0.f;
+            params.bands[0] = 0;
+            params.bands[1] = 0;
+            params.bands[2] = 0;
+            params.bands[3] = 0;
+            params.bands[4] = -40;//arbitrary value to adapt with WhiteEvjz - here White Ev # 10
+            params.bands[5] = -80;//8 Ev and above
+            bool Evsix = true;
+            if(Evsix) {//EV = 6 majority of images
+                params.bands[4] = -30 * smoothisli;
+                float smmothsli5 = std::min(smoothisli, 1.f);
+                params.bands[5] = -80 * smmothsli5;                     
+            }
+               
+            ipf.toneEqualizer(tmpImage1.get(), params, prof, 1, false);
+        }
 
         ipf.rgb2lab(*tmpImage1, *labView, params.icm.workingProfile);
         // labView and provis
@@ -1613,11 +1639,17 @@ IImage8* Thumbnail::processImage (const procparams::ProcParams& params, eSensorT
     if (params.colorappearance.enabled) {
         CurveFactory::curveLightBrightColor (
             params.colorappearance.curve,
+            params.colorappearance.curvered,
+            params.colorappearance.curvegreen,
+            params.colorappearance.curveblue,
             params.colorappearance.curve2,
             params.colorappearance.curve3,
             hist16, dummy,
             dummy, dummy,
             customColCurve1,
+            customColCurvered,
+            customColCurvegreen,
+            customColCurveblue,
             customColCurve2,
             customColCurve3,
             16);
@@ -1655,8 +1687,76 @@ IImage8* Thumbnail::processImage (const procparams::ProcParams& params, eSensorT
         CAMMean = NAN;
         CAMBrightCurveJ.dirty = true;
         CAMBrightCurveQ.dirty = true;
-        ipf.ciecam_02float (cieView, adap, 1, 2, labView, &params, customColCurve1, customColCurve2, customColCurve3, dummy, dummy, CAMBrightCurveJ, CAMBrightCurveQ, CAMMean, 5, sk, execsharp, d, dj, yb, rtt);
+        ipf.ciecam_02float (cieView, adap, 1, 2, labView, &params, customColCurve1, customColCurvered, customColCurvegreen, customColCurveblue, customColCurve2, customColCurve3, dummy, dummy, CAMBrightCurveJ, CAMBrightCurveQ, CAMMean, 5, sk, execsharp, d, dj, yb, rtt);
         delete cieView;
+    }
+
+     bool exec = params.icm.wgamut != ColorManagementParams::Wwgamut::NONE  || params.icm.wgamgain != 0.f;
+
+    if (params.icm.workingTRC != ColorManagementParams::WorkingTrc::NONE && params.icm.trcExp  && exec) {
+            //compression gamut and gain at the end of process
+        const int GW = labView->W;
+        const int GH = labView->H;
+        TMatrix wprof = ICCStore::getInstance()->workingSpaceMatrix(params.icm.workingProfile);
+            const double wp[3][3] = {
+                {wprof[0][0], wprof[0][1], wprof[0][2]},
+                {wprof[1][0], wprof[1][1], wprof[1][2]},
+                {wprof[2][0], wprof[2][1], wprof[2][2]}
+            };
+        TMatrix wiprof = ICCStore::getInstance()->workingSpaceInverseMatrix(params.icm.workingProfile);
+            const double wip[3][3] = {//improve precision with double
+                {wiprof[0][0], wiprof[0][1], wiprof[0][2]},
+                {wiprof[1][0], wiprof[1][1], wiprof[1][2]},
+                {wiprof[2][0], wiprof[2][1], wiprof[2][2]}
+            };
+        Imagefloat* provcomp = new Imagefloat(GW, GH);
+
+#ifdef _OPENMP
+        #   pragma omp parallel for
+#endif
+        for (int i = 0; i < GH; ++i){
+            for (int j = 0; j < GW; ++j) {
+                float X, Y, Z = 0.f;
+                Color::Lab2XYZ(labView->L[i][j], labView->a[i][j], labView->b[i][j] , X, Y, Z);
+                Color::xyz2rgb(X, Y, Z, provcomp->r(i, j), provcomp->g(i, j), provcomp->b(i, j), wp);
+            }
+        }
+
+        const float gainev = pow_F(2.f, (float) params.icm.wgamgain);
+        if (params.icm.wgamgain != 0.f) {//Final gain in Ev
+           
+#ifdef _OPENMP
+        #   pragma omp parallel for
+#endif
+            for (int i = 0; i < GH; ++i){
+                for (int j = 0; j < GW; ++j) {
+                     provcomp->r(i, j) *= gainev;
+                     provcomp->g(i, j) *= gainev;
+                     provcomp->b(i, j) *= gainev;
+                }
+            }
+        }
+
+        float mac = 0.f;
+        float mac0 = 0.f;
+        float mac1 = 0.f;
+        float mac2 = 0.f;
+        int beginend = 1;
+        if (params.icm.wgamut != ColorManagementParams::Wwgamut::NONE) {
+            ipf.gamutcompr(provcomp, provcomp, beginend, mac, mac0, mac1, mac2);
+        }
+
+#ifdef _OPENMP
+        #   pragma omp parallel for
+#endif
+        for (int i = 0; i < GH; ++i){
+            for (int j = 0; j < GW; ++j) {
+                float x, y, z = 0.f;
+                Color::rgbxyz (provcomp->r(i, j), provcomp->g(i, j), provcomp->b(i, j), x, y, z, wip);
+                Color::XYZ2Lab(x, y, z, labView->L[i][j], labView->a[i][j], labView->b[i][j]);
+            }
+        }
+        delete provcomp;
     }
 
 

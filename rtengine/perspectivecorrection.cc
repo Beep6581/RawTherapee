@@ -310,7 +310,7 @@ PerspectiveCorrection::Params PerspectiveCorrection::autocompute(ImageSource *sr
         neutral.perspective.camera_crop_factor = pparams->perspective.camera_crop_factor;
         neutral.perspective.method = pparams->perspective.method;
         neutral.lensProf = pparams->lensProf;
-        ImProcFunctions ipf(&neutral, true);        
+        ImProcFunctions ipf(&neutral, true);
         if (ipf.needsTransform(w, h, src->getRotateDegree(), src->getMetaData())) {
             Imagefloat *tmp = new Imagefloat(w, h);
             ipf.transform(img.get(), tmp, 0, 0, 0, 0, w, h, w, h,

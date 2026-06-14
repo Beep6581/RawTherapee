@@ -110,7 +110,7 @@ public:
 protected:
     virtual int getMaxThumbnailHeight() const
     {
-        return options.maxThumbnailHeight;    // Differs between batch and file
+        return App::get().options().maxThumbnailHeight;    // Differs between batch and file
     }
     virtual void saveThumbnailHeight (int height) = 0;
     virtual int  getThumbnailHeight () = 0;
@@ -118,16 +118,18 @@ protected:
     Internal internal;
     Gtk::Scrollbar hscroll;
     Gtk::Scrollbar vscroll;
+    int lastDeviceScale;
 
     int inW, inH;
 
     Inspector *inspector;
     bool isInspectorActive;
 
-
     void resizeThumbnailArea (int w, int h);
     void internalAreaResized (Gtk::Allocation& req);
     void buttonPressed (int x, int y, int button, GdkEventType type, int state, int clx, int cly, int clw, int clh);
+
+    void onInternalAreaDraw();
 
 public:
 

@@ -22,8 +22,8 @@
 #include <iostream>
 
 #ifdef _WIN32
-#include <windows.h>
-#endif
+#include "rtengine/leanwindows.h"
+#endif // _WIN32
 
 #if STRICT_MUTEX && !NDEBUG
 

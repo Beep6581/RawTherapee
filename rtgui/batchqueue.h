@@ -21,10 +21,10 @@
 
 #include <gtkmm.h>
 
-#include "lwbutton.h"
-#include "lwbuttonset.h"
 #include "threadutils.h"
 #include "thumbbrowserbase.h"
+#include "widgets/basic/lwbutton.h"
+#include "widgets/basic/lwbuttonset.h"
 
 #include "rtengine/rtengine.h"
 #include "rtengine/noncopyable.h"
@@ -91,7 +91,7 @@ public:
     bool loadBatchQueue ();
     void resizeLoadedQueue();
 
-    static Glib::ustring calcAutoFileNameBase (const Glib::ustring& origFileName, int sequence = 0);
+    static Glib::ustring calcAutoFileNameBase (const Glib::ustring& origFileName, int sequence=0, const Glib::ustring& format="");
     static int calcMaxThumbnailHeight();
 
 private:

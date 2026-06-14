@@ -19,14 +19,15 @@
 #pragma once
 
 #include <array>
-#include <cmath>
-#include <cstdio>
+#include <bitset>
 #include <map>
-#include <type_traits>
 #include <vector>
 
 #include <glibmm/ustring.h>
 #include <lcms2.h>
+
+#include "params/locallab.h"
+#include "params/threshold.h"
 
 #include "coord.h"
 #include "noncopyable.h"
@@ -72,206 +73,6 @@ enum RenderingIntent : int {
 
 namespace procparams
 {
-
-template<typename T>
-class Threshold final
-{
-public:
-    Threshold(T _bottom, T _top, bool _start_at_one) :
-        Threshold(_bottom, _top, 0, 0, _start_at_one, false)
-    {
-    }
-
-    Threshold(T _bottom_left, T _top_left, T _bottom_right, T _top_right, bool _start_at_one) :
-        Threshold(_bottom_left, _top_left, _bottom_right, _top_right, _start_at_one, true)
-    {
-    }
-
-    template<typename U = T>
-    typename std::enable_if<std::is_floating_point<U>::value, bool>::type operator ==(const Threshold<U>& rhs) const
-    {
-        if (is_double) {
-            return
-                std::fabs(bottom_left - rhs.bottom_left) < 1e-10
-                && std::fabs(top_left - rhs.top_left) < 1e-10
-                && std::fabs(bottom_right - rhs.bottom_right) < 1e-10
-                && std::fabs(top_right - rhs.top_right) < 1e-10;
-        } else {
-            return
-                std::fabs(bottom_left - rhs.bottom_left) < 1e-10
-                && std::fabs(top_left - rhs.top_left) < 1e-10;
-        }
-    }
-
-    template<typename U = T>
-    typename std::enable_if<std::is_integral<U>::value, bool>::type operator ==(const Threshold<U>& rhs) const
-    {
-        if (is_double) {
-            return
-                bottom_left == rhs.bottom_left
-                && top_left == rhs.top_left
-                && bottom_right == rhs.bottom_right
-                && top_right == rhs.top_right;
-        } else {
-            return
-                bottom_left == rhs.bottom_left
-                && top_left == rhs.top_left;
-        }
-    }
-
-    template<typename U = T>
-    typename std::enable_if<std::is_integral<U>::value, bool>::type operator !=(const Threshold<U>& rhs) const
-    {
-        return !(*this == rhs);
-    }
-
-    T getBottom() const
-    {
-        return bottom_left;
-    }
-
-    T getTop() const
-    {
-        return top_left;
-    }
-
-    T getBottomLeft() const
-    {
-        return bottom_left;
-    }
-
-    T getTopLeft() const
-    {
-        return top_left;
-    }
-
-    T getBottomRight() const
-    {
-        return bottom_right;
-    }
-
-    T getTopRight() const
-    {
-        return top_right;
-    }
-
-    void setValues(T bottom, T top)
-    {
-        bottom_left = bottom;
-        top_left = top;
-    }
-
-    void setValues(T bottom_left, T top_left, T bottom_right, T top_right)
-    {
-        this->bottom_left = bottom_left;
-        this->top_left = top_left;
-        this->bottom_right = bottom_right;
-        this->top_right = top_right;
-    }
-
-    bool isDouble() const
-    {
-        return is_double;
-    }
-
-    std::vector<T> toVector() const
-    {
-        if (is_double) {
-            return {
-                bottom_left,
-                top_left,
-                bottom_right,
-                top_right
-            };
-        } else {
-            return {
-                bottom_left,
-                top_left
-            };
-        }
-    }
-
-    // RT: Type of the returned value
-    // RV: Type of the value on the X axis
-    // RV2: Type of the maximum value on the Y axis
-    template <typename RT, typename RV, typename RV2>
-    RT multiply(RV x, RV2 y_max) const
-    {
-        const double val = x;
-
-        if (init_eql) {
-            if (is_double) {
-                if (val == static_cast<double>(bottom_right) && static_cast<double>(bottom_right) == static_cast<double>(top_right)) {
-                    // This handles the special case where the 2 right values are the same, then bottom one is sent back,
-                    // useful if one wants to keep the bottom value even beyond the x max bound
-                    return 0;
-                }
-
-                if (val >= static_cast<double>(top_right)) {
-                    return y_max;
-                }
-
-                if (val > static_cast<double>(bottom_right)) {
-                    return static_cast<double>(y_max * (val - static_cast<double>(bottom_right)) / (static_cast<double>(top_right) - static_cast<double>(bottom_right)));
-                }
-            }
-
-            if (val >= static_cast<double>(bottom_left)) {
-                return 0;
-            }
-
-            if (val > static_cast<double>(top_left)) {
-                return static_cast<double>(y_max * (1. - (val - static_cast<double>(bottom_left)) / (static_cast<double>(top_left) - static_cast<double>(bottom_left))));
-            }
-
-            return y_max;
-        } else {
-            if (is_double) {
-                if (val == static_cast<double>(bottom_right) && static_cast<double>(bottom_right) == static_cast<double>(top_right)) {
-                    // This handles the special case where the 2 right values are the same, then top one is sent back,
-                    // useful if one wants to keep the top value even beyond the x max bound
-                    return y_max;
-                }
-
-                if (val >= static_cast<double>(bottom_right)) {
-                    return 0;
-                }
-
-                if (val > static_cast<double>(top_right)) {
-                    return static_cast<double>(y_max * (1.0 - (val - static_cast<double>(top_right)) / (static_cast<double>(bottom_right) - static_cast<double>(top_right))));
-                }
-            }
-
-            if (val >= static_cast<double>(top_left)) {
-                return y_max;
-            }
-
-            if (val > static_cast<double>(bottom_left)) {
-                return static_cast<double>(y_max * (val - static_cast<double>(bottom_left)) / (static_cast<double>(top_left) - static_cast<double>(bottom_left)));
-            }
-
-            return 0;
-        }
-    }
-
-private:
-    Threshold(T _bottom_left, T _top_left, T _bottom_right, T _top_right, bool _start_at_one, bool _is_double) :
-        bottom_left(_bottom_left),
-        top_left(_top_left),
-        bottom_right(_bottom_right),
-        top_right(_top_right),
-        init_eql(_start_at_one),
-        is_double(_is_double)
-    {
-    }
-
-    T bottom_left;
-    T top_left;
-    T bottom_right;
-    T top_right;
-    bool init_eql;
-    bool is_double;
-};
 
 enum class ToneCurveMode : int {
     STD,               // Standard modes, the curve is applied on all component individually
@@ -537,6 +338,11 @@ struct SharpeningParams {
     double         deconvradius;
     int            deconviter;
     int            deconvdamping;
+    bool deconvAutoRadius;
+    double deconvCornerBoost;
+    int deconvCornerLatitude;
+    Glib::ustring psf_kernel;
+    double psf_iterations;
 
     SharpeningParams();
 
@@ -576,10 +382,14 @@ struct CaptureSharpeningParams {
     bool           autoContrast;
     bool           autoRadius;
     double         contrast;
+    double         noisecap;
+    double         noisecapafter;
     double         deconvradius;
     double         deconvradiusOffset;
     int            deconviter;
     bool           deconvitercheck;
+    bool           showcap;
+    bool           noisecaptype;
 
     CaptureSharpeningParams();
 
@@ -700,6 +510,9 @@ struct ColorAppearanceParams {
     int           degreeout;
     bool          autodegreeout;
     std::vector<double> curve;
+    std::vector<double> curvered;
+    std::vector<double> curvegreen;
+    std::vector<double> curveblue;
     std::vector<double> curve2;
     std::vector<double> curve3;
     TcMode     curveMode;
@@ -727,8 +540,14 @@ struct ColorAppearanceParams {
     double        qbright;
     double        chroma;
     double        schroma;
+    double        schromared;
+    double        schromagreen;
+    double        schromablue;
     double        mchroma;
     double        colorh;
+    double        colorhred;
+    double        colorhgreen;
+    double        colorhblue;
     double        rstprotection;
     bool          surrsource;
     bool          gamut;
@@ -867,12 +686,15 @@ struct CGParams {
     double  th_m;
     double  th_y;
     double  d_c;
+    bool autodc;
     double  d_m;
+    bool autodm;
     double  d_y;
+    bool autody;
     double  pwr;
     Glib::ustring colorspace;
     bool rolloff;
-    
+
     CGParams();
 
     bool operator ==(const CGParams& other) const;
@@ -900,19 +722,6 @@ struct ToneEqualizerParams {
   * Parameters of the cropping
   */
 struct CropParams {
-    enum class Guide {
-        NONE,
-        FRAME,
-        RULE_OF_THIRDS,
-        RULE_OF_DIAGONALS,
-        HARMONIC_MEANS,
-        GRID,
-        GOLDEN_TRIANGLE_1,
-        GOLDEN_TRIANGLE_2,
-        EPASSPORT,
-        CENTERED_SQUARE
-    };
-
     bool enabled;
     int x;
     int y;
@@ -921,7 +730,6 @@ struct CropParams {
     bool fixratio;
     Glib::ustring ratio;
     Glib::ustring orientation;
-    Guide guide;
 
     CropParams();
 
@@ -929,6 +737,72 @@ struct CropParams {
     bool operator !=(const CropParams& other) const;
 
     void mapToResized(int resizedWidth, int resizedHeight, int scale, int& x1, int& x2, int& y1, int& y2) const;
+};
+
+struct CropGuideParams {
+    // If values are added/removed, make sure to update NUM_PRESETS and
+    // CropGuideParamsEdited.presets
+    enum PresetIndex : size_t {
+        RULE_OF_THIRDS = 0,
+        RULE_OF_DIAGONALS,
+        HARMONIC_MEANS,
+        CROSSHAIR,
+        GRID,
+        GOLDEN_TRIANGLE,
+        GOLDEN_RATIO,
+        EPASSPORT,
+        CENTERED_SQUARE
+    };
+    static constexpr size_t NUM_PRESETS = 9;
+    static_assert(NUM_PRESETS == PresetIndex::CENTERED_SQUARE + 1);
+
+    enum class Basis { SCALE, WIDTH, HEIGHT, LONG, SHORT };
+
+    struct PresetParams {
+        bool enabled;
+        double red;
+        double green;
+        double blue;
+        double alpha;
+
+        PresetParams();
+
+        bool operator==(const PresetParams& other) const;
+        bool operator!=(const PresetParams& other) const {
+            return !(*this == other);
+        }
+    };
+
+    struct AspectRatioParams {
+        bool enabled;
+        bool is_portrait;
+        size_t preset_index;
+        double red;
+        double green;
+        double blue;
+        double alpha;
+
+        AspectRatioParams(size_t preset_index);
+
+        bool operator==(const AspectRatioParams& other) const;
+        bool operator!=(const AspectRatioParams& other) const {
+            return !(*this == other);
+        }
+    };
+
+    std::vector<AspectRatioParams> aspect_ratios;
+    std::array<PresetParams, NUM_PRESETS> presets;
+    bool enabled;
+    bool mirror_golden_triangle;
+    bool rotate_golden_ratio;
+    bool mirror_golden_ratio;
+    int bleed;
+    Basis basis;
+
+    CropGuideParams();
+
+    bool operator==(const CropGuideParams& other) const;
+    bool operator!=(const CropGuideParams& other) const { return !(*this == other); }
 };
 
 /**
@@ -949,13 +823,17 @@ struct CoarseTransformParams {
   * Common transformation parameters
   */
 struct CommonTransformParams {
-    Glib::ustring method;
-    bool autofill;
-    double scale;
+    Glib::ustring method = "log";
+    bool autofill = true;
+    double scale = 1.0;
+    double scale_horizontally = 1.0;
+    double scale_vertically = 1.0;
 
     CommonTransformParams();
 
     double getScale() const;
+    double getScaleHorizontally() const;
+    double getScaleVertically() const;
 
     bool operator ==(const CommonTransformParams& other) const;
     bool operator !=(const CommonTransformParams& other) const;
@@ -1079,833 +957,6 @@ struct GradientParams {
 
     bool operator ==(const GradientParams& other) const;
     bool operator !=(const GradientParams& other) const;
-};
-
-/**
-  * Parameters of the Local Lab
-  */
-struct LocallabParams {
-    struct LocallabSpot {
-        // Control spot settings
-        Glib::ustring name;
-        bool isvisible;
-        Glib::ustring prevMethod; // show, hide
-        Glib::ustring shape; // ELI, RECT
-        Glib::ustring spotMethod; // norm, exc
-        Glib::ustring wavMethod; // D2, D4, D6, D10, D14
-        int sensiexclu;
-        int structexclu;
-        double struc;
-        Glib::ustring shapeMethod; // IND, SYM, INDSL, SYMSL
-        Glib::ustring avoidgamutMethod; // NONE, LAB, XYZ
-		
-        std::vector<int> loc; // For ellipse/rectangle: {locX, locXL, locY, locYT}
-        int centerX;
-        int centerY;
-        int circrad;
-        Glib::ustring qualityMethod; // none, std, enh, enhsup, contr, sob2
-        Glib::ustring complexMethod; // sim, mod, all
-        double transit;
-        double feather;
-        double thresh;
-        double iter;
-        double balan;
-        double balanh;
-        double colorde;
-        double colorscope;
-        double avoidrad;
-        double transitweak;
-        double transitgrad;
-        bool hishow;
-        bool activ;
-        bool avoidneg;
-        bool blwh;
-        bool recurs;
-        bool laplac;
-        bool deltae;
-        bool shortc;
-        bool savrest;
-        int scopemask;
-        double denoichmask;
-        int lumask;
-        // Color & Light
-        bool visicolor;
-        bool expcolor;
-        int complexcolor;
-        bool curvactiv;
-        int lightness;
-        double reparcol;
-        double gamc;
-        int contrast;
-        int chroma;
-        double labgridALow;
-        double labgridBLow;
-        double labgridAHigh;
-        double labgridBHigh;
-        double labgridALowmerg;
-        double labgridBLowmerg;
-        double labgridAHighmerg;
-        double labgridBHighmerg;
-        int strengthgrid;
-        int sensi;
-        int structcol;
-        double strcol;
-        double strcolab;
-        double strcolh;
-        double angcol;
-        double feathercol;
-        int blurcolde;
-        double blurcol;
-        double contcol;
-        int blendmaskcol;
-        double radmaskcol;
-        double chromaskcol;
-        double gammaskcol;
-        double slomaskcol;
-        int shadmaskcol;
-        double strumaskcol;
-        double lapmaskcol;
-        Glib::ustring qualitycurveMethod; // none, std
-        Glib::ustring gridMethod; // one, two
-        Glib::ustring merMethod; // mone, mtwo, mthr, mfou, mfiv
-        Glib::ustring toneMethod; // one, two, thr, fou
-        Glib::ustring mergecolMethod; // one, two, thr, fou, fiv, six, sev, sev0, sev1, sev2, hei, nin, ten, ele, twe, thi, for, hue, sat, col, lum
-        std::vector<double> llcurve;
-        std::vector<double> lccurve;
-        std::vector<double> cccurve;
-        std::vector<double> clcurve;
-        std::vector<double> rgbcurve;
-        std::vector<double> LHcurve;
-        std::vector<double> HHcurve;
-        std::vector<double> CHcurve;
-        bool invers;
-        bool special;
-        bool toolcol;
-        bool enaColorMask;
-        bool fftColorMask;
-        std::vector<double> CCmaskcurve;
-        std::vector<double> LLmaskcurve;
-        std::vector<double> HHmaskcurve;
-        std::vector<double> HHhmaskcurve;
-        double softradiuscol;
-        double opacol;
-        double mercol;
-        double merlucol;
-        double conthrcol;
-        std::vector<double> Lmaskcurve;
-        std::vector<double> LLmaskcolcurvewav;
-        Threshold<int> csthresholdcol;
-        double recothresc;
-        double lowthresc;
-        double higthresc;
-        double decayc;
-        // Exposure
-        bool visiexpose;
-        bool expexpose;
-        int complexexpose;
-        double expcomp;
-        int hlcompr;
-        int hlcomprthresh;
-        int black;
-        int shadex;
-        int shcompr;
-        int expchroma;
-        int sensiex;
-        int structexp;
-        int blurexpde;
-        double gamex;
-        double strexp;
-        double angexp;
-        double featherexp;
-        std::vector<double> excurve;
-        bool norm;
-        bool inversex;
-        bool enaExpMask;
-        bool enaExpMaskaft;
-        std::vector<double> CCmaskexpcurve;
-        std::vector<double> LLmaskexpcurve;
-        std::vector<double> HHmaskexpcurve;
-        int blendmaskexp;
-        double radmaskexp;
-        double chromaskexp;
-        double gammaskexp;
-        double slomaskexp;
-        double lapmaskexp;
-        double strmaskexp;
-        double angmaskexp;
-        double softradiusexp;
-        std::vector<double> Lmaskexpcurve;
-        Glib::ustring expMethod; // std, pde
-        Glib::ustring exnoiseMethod; // none, med, medhi
-        double laplacexp;
-        double reparexp;
-        double balanexp;
-        double linear;
-        double gamm;
-        double fatamount;
-        double fatdetail;
-        bool fatsatur;
-        double fatanchor;
-        double fatlevel;
-        double recothrese;
-        double lowthrese;
-        double higthrese;
-        double decaye;
-        // Shadow highlight
-        bool visishadhigh;
-        bool expshadhigh;
-        int complexshadhigh;
-        Glib::ustring shMethod; // std, tone
-        Glib::ustring ghsMethod; // rgb, lum, sat
-        Glib::ustring ghsMode; // lin, ghs
-        double ghs_D;
-        double ghs_slope;
-        double ghs_chro;
-        double ghs_B;
-        double ghs_SP;
-        double ghs_LP;
-        double ghs_HP;
-        double ghs_LC;
-        double ghs_MID;
-        double ghs_BLP;
-        double ghs_HLP;
-        bool ghs_smooth;
-        bool ghs_inv;
-
-        int multsh[6];
-        int highlights;
-        int h_tonalwidth;
-        int shadows;
-        int s_tonalwidth;
-        int sh_radius;
-        int sensihs;
-        bool enaSHMask;
-        std::vector<double> CCmaskSHcurve;
-        std::vector<double> LLmaskSHcurve;
-        std::vector<double> HHmaskSHcurve;
-        int blendmaskSH;
-        double radmaskSH;
-        int blurSHde;
-        double strSH;
-        double angSH;
-        double featherSH;
-        bool inverssh;
-        double chromaskSH;
-        double gammaskSH;
-        double slomaskSH;
-        double lapmaskSH;
-        int detailSH;
-        double tePivot;
-        double reparsh;
-        std::vector<double> LmaskSHcurve;
-        double fatamountSH;
-        double fatanchorSH;
-        double gamSH;
-        double sloSH;
-        double recothress;
-        double lowthress;
-        double higthress;
-        double decays;
-        // Vibrance
-        bool visivibrance;
-        bool expvibrance;
-        int complexvibrance;
-        int saturated;
-        int pastels;
-        double vibgam;
-        int warm;
-        Threshold<int> psthreshold;
-        bool protectskins;
-        bool avoidcolorshift;
-        bool pastsattog;
-        int sensiv;
-        std::vector<double> skintonescurve;
-        std::vector<double> CCmaskvibcurve;
-        std::vector<double> LLmaskvibcurve;
-        std::vector<double> HHmaskvibcurve;
-        bool enavibMask;
-        int blendmaskvib;
-        double radmaskvib;
-        double chromaskvib;
-        double gammaskvib;
-        double slomaskvib;
-        double lapmaskvib;
-        double strvib;
-        double strvibab;
-        double strvibh;
-        double angvib;
-        double feathervib;
-        std::vector<double> Lmaskvibcurve;
-        double recothresv;
-        double lowthresv;
-        double higthresv;
-        double decayv;
-        // Soft Light
-        bool visisoft;
-        bool expsoft;
-        int complexsoft;
-        int streng;
-        int sensisf;
-        double laplace;
-        Glib::ustring softMethod; // soft, reti
-        // Blur & Noise
-        bool visiblur;
-        bool expblur;
-        int complexblur;
-        double radius;
-        int strength;
-        int sensibn;
-        int itera;
-        int guidbl;
-        int strbl;
-        double recothres;
-        double lowthres;
-        double higthres;
-        double recothresd;
-        double lowthresd;
-        double midthresd;
-        double midthresdch;
-        double higthresd;
-        double decayd;
-        int isogr;
-        int strengr;
-        int scalegr;
-        double divgr;
-        int epsbl;
-        Glib::ustring blMethod; // blur, med, guid
-        Glib::ustring chroMethod; // lum, chr, all
-        Glib::ustring quamethod; // cons agre
-        Glib::ustring blurMethod; // norm, inv
-        Glib::ustring medMethod; // none, 33, 55, 77, 99
-        bool usemask;
-        bool invmaskd;
-        bool invmask;
-        double levelthr;
-        double lnoiselow;
-        double levelthrlow;
-        bool activlum;
-        double noiselumf;
-        double noiselumf0;
-        double noiselumf2;
-        double noiselumc;
-        double noiselumdetail;
-        int noiselequal;
-        double noisegam;
-        double noisechrof;
-        double noisechroc;
-        double noisechrodetail;
-        int adjblur;
-        int bilateral;
-        int nlstr;
-        int nldet;
-        int nlpat;
-        int nlrad;
-        double nlgam;
-        int nliter;
-        int sensiden;
-        double reparden;
-        int detailthr;
-        std::vector<double> locwavcurveden;
-        std::vector<double> locwavcurvehue;
-        Glib::ustring showmaskblMethodtyp;
-        std::vector<double> CCmaskblcurve;
-        std::vector<double> LLmaskblcurve;
-        std::vector<double> HHmaskblcurve;
-        bool enablMask;
-        bool fftwbl;
-        bool invbl;
-        bool toolbl;
-        int blendmaskbl;
-        double radmaskbl;
-        double chromaskbl;
-        double gammaskbl;
-        double slomaskbl;
-        double lapmaskbl;
-        int shadmaskbl;
-        int shadmaskblsha;
-        double strumaskbl;
-        std::vector<double> Lmaskblcurve;
-        std::vector<double> LLmaskblcurvewav;
-        Threshold<int> csthresholdblur;
-        // Tone Mapping
-        bool visitonemap;
-        bool exptonemap;
-        int complextonemap;
-        double stren;
-        double gamma;
-        double estop;
-        double scaltm;
-        double repartm;
-        int rewei;
-        double satur;
-        int sensitm;
-        double softradiustm;
-        double amount;
-        bool equiltm;
-        std::vector<double> CCmasktmcurve;
-        std::vector<double> LLmasktmcurve;
-        std::vector<double> HHmasktmcurve;
-        bool enatmMask;
-        bool enatmMaskaft;
-        int blendmasktm;
-        double radmasktm;
-        double chromasktm;
-        double gammasktm;
-        double slomasktm;
-        double lapmasktm;
-        std::vector<double> Lmasktmcurve;
-        double recothrest;
-        double lowthrest;
-        double higthrest;
-        double decayt;
-        // Retinex
-        bool visireti;
-        bool expreti;
-        int complexreti;
-        Glib::ustring retinexMethod; // low, uni, high
-        double str;
-        double chrrt;
-        double neigh;
-        double vart;
-        double offs;
-        int dehaz;
-        int depth;
-        int sensih;
-        std::vector<double> localTgaincurve;
-        std::vector<double> localTtranscurve;
-        bool inversret;
-        bool equilret;
-        bool loglin;
-        double dehazeSaturation;
-        double dehazeblack;
-        double softradiusret;
-        std::vector<double> CCmaskreticurve;
-        std::vector<double> LLmaskreticurve;
-        std::vector<double> HHmaskreticurve;
-        bool enaretiMask;
-        bool enaretiMasktmap;
-        int blendmaskreti;
-        double radmaskreti;
-        double chromaskreti;
-        double gammaskreti;
-        double slomaskreti;
-        double lapmaskreti;
-        double scalereti;
-        double darkness;
-        double lightnessreti;
-        double limd;
-        double cliptm;
-        bool fftwreti;
-        std::vector<double> Lmaskreticurve;
-        double recothresr;
-        double lowthresr;
-        double higthresr;
-        double decayr;
-        // Sharpening
-        bool visisharp;
-        bool expsharp;
-        int complexsharp;
-        int sharcontrast;
-        double sharradius;
-        int sharamount;
-        int shardamping;
-        int shariter;
-        double sharblur;
-        double shargam;
-        int sensisha;
-        bool inverssha;
-        // Local Contrast
-        bool visicontrast;
-        bool expcontrast;
-        int complexcontrast;
-        int lcradius;
-        double lcamount;
-        double lcdarkness;
-        double lclightness;
-        double sigmalc;
-        double offslc;
-        int levelwav;
-        double residcont;
-        double residsha;
-        double residshathr;
-        double residhi;
-        double residhithr;
-        double gamlc;
-        double residgam;
-        double residslop;
-        double residblur;
-        double levelblur;
-        double sigmabl;
-        double residchro;
-        double residcomp;
-        double sigma;
-        double offset;
-        double sigmadr;
-        double threswav;
-        double chromalev;
-        double chromablu;
-        double sigmadc;
-        double deltad;
-        double fatres;
-        double clarilres;
-        double claricres;
-        double clarisoft;
-        double sigmalc2;
-        double strwav;
-        double angwav;
-        double featherwav;
-        double strengthw;
-        double sigmaed;
-        double radiusw;
-        double detailw;
-        double gradw;
-        double tloww;
-        double thigw;
-        double edgw;
-        double basew;
-        int sensilc;
-        double reparw;
-        bool fftwlc;
-        bool blurlc;
-        bool wavblur;
-        bool wavedg;
-        bool waveshow;
-        bool wavcont;
-        bool wavcomp;
-        bool wavgradl;
-        bool wavcompre;
-        bool origlc;
-        bool processwav;
-        Glib::ustring localcontMethod; // loc, wav
-        Glib::ustring localedgMethod; // fir, sec, thr
-        Glib::ustring localneiMethod; // none, low, high
-        std::vector<double> locwavcurve;
-        Threshold<int> csthreshold;
-        std::vector<double> loclevwavcurve;
-        std::vector<double> locconwavcurve;
-        std::vector<double> loccompwavcurve;
-        std::vector<double> loccomprewavcurve;
-        std::vector<double> locedgwavcurve;
-        std::vector<double> CCmasklccurve;
-        std::vector<double> LLmasklccurve;
-        std::vector<double> HHmasklccurve;
-        bool enalcMask;
-        int blendmasklc;
-        double radmasklc;
-        double chromasklc;
-        std::vector<double> Lmasklccurve;
-        double recothresw;
-        double lowthresw;
-        double higthresw;
-        double decayw;
-        // Contrast by detail levels
-        bool visicbdl;
-        bool expcbdl;
-        int complexcbdl;
-        double mult[6];
-        double chromacbdl;
-        double threshold;
-        int sensicb;
-        double clarityml;
-        int contresid;
-        double softradiuscb;
-        bool enacbMask;
-        std::vector<double> CCmaskcbcurve;
-        std::vector<double> LLmaskcbcurve;
-        std::vector<double> HHmaskcbcurve;
-        int blendmaskcb;
-        double radmaskcb;
-        double chromaskcb;
-        double gammaskcb;
-        double slomaskcb;
-        double lapmaskcb;
-        std::vector<double> Lmaskcbcurve;
-        double recothrescb;
-        double lowthrescb;
-        double higthrescb;
-        double decaycb;
-        // Log encoding
-        bool visilog;
-        bool explog;
-        int complexlog;
-        bool autocompute;
-        double sourceGray;
-        double sourceabs;
-        double targabs;
-        double targetGray;
-        double catad;
-        double saturl;
-        double chroml;
-        double lightl;
-        double lightq;
-        double contl;
-        double contthres;
-        double contq;
-        double colorfl;
-        std::vector<double> LcurveL;
-        bool Autogray;
-        bool fullimage;
-        double repar;
-        bool ciecam;
-        bool satlog;
-        double blackEv;
-        double whiteEv;
-        int whiteslog;
-        int blackslog;
-        double comprlog;
-        double strelog;
-        double detail;
-        int sensilog;
-        Glib::ustring sursour;
-        Glib::ustring surround;
-        double baselog;
-        double strlog;
-        double anglog;
-        double featherlog;
-        std::vector<double> CCmaskcurveL;
-        std::vector<double> LLmaskcurveL;
-        std::vector<double> HHmaskcurveL;
-        bool enaLMask;
-        double blendmaskL;
-        double radmaskL;
-        double chromaskL;
-        std::vector<double> LmaskcurveL;
-        double recothresl;
-        double lowthresl;
-        double higthresl;
-        double decayl;
-
-        // mask
-        bool visimask;
-        int complexmask;
-        bool expmask;
-        int sensimask;
-        double blendmask;
-        double blendmaskab;
-        double softradiusmask;
-        bool enamask;
-        bool fftmask;
-        double blurmask;
-        double contmask;
-        std::vector<double> CCmask_curve;
-        std::vector<double> LLmask_curve;
-        std::vector<double> HHmask_curve;
-        double strumaskmask;
-        bool toolmask;
-        double radmask;
-        double lapmask;
-        double chromask;
-        double gammask;
-        double slopmask;
-        double shadmask;
-        int str_mask;
-        int ang_mask;
-        int feather_mask;
-        std::vector<double> HHhmask_curve;
-        std::vector<double> Lmask_curve;
-        std::vector<double> LLmask_curvewav;
-        Threshold<int> csthresholdmask;
-        //ciecam
-        bool visicie;
-        bool expcie;
-        bool expprecam;
-        int complexcie;
-        double reparcie;
-        int sensicie;
-        bool Autograycie;
-        bool sigybjz12;
-        bool qtoj;
-        bool jabcie;
-        bool comprcieauto;
-        bool normcie12;
-        bool normcie;
-        bool gamutcie;
-        bool bwcie;
-        bool sigcie;
-        bool logcie;
-        bool satcie;
-        bool logcieq;
-        bool smoothcie;
-        bool smoothcietrc;
-        bool smoothcietrcrel;
-        bool smoothcieyb;
-        bool smoothcielum;
-        bool smoothciehigh;
-        bool smoothcielnk;
-        bool logjz;
-        bool sigjz12;
-        bool sigjz;
-        bool forcebw;
-        bool sigq12;
-        bool sigq;
-        bool chjzcie;
-        double sourceGraycie;
-        double sourceabscie;
-        Glib::ustring sursourcie;
-        Glib::ustring modecie;
-        Glib::ustring modecam;
-        Glib::ustring modeQJ;
-        Glib::ustring bwevMethod12;
-        Glib::ustring bwevMethod;
-        double saturlcie;
-        double rstprotectcie;
-        double chromlcie;
-        double huecie;
-        Glib::ustring toneMethodcie;
-        std::vector<double> ciecurve;
-        Glib::ustring toneMethodcie2;
-        std::vector<double> ciecurve2;
-        double chromjzcie;
-        double saturjzcie;
-        double huejzcie;
-        double softjzcie;
-        double strsoftjzcie;
-        double thrhjzcie;
-        std::vector<double> jzcurve;
-        std::vector<double> czcurve;
-        std::vector<double> czjzcurve;
-        std::vector<double> HHcurvejz;
-        std::vector<double> CHcurvejz;
-        std::vector<double> LHcurvejz;
-        double lightlcie;
-        double lightjzcie;
-        double lightqcie;
-        double lightsigqcie;
-        double contlcie;
-        double contjzcie;
-        double detailciejz;
-        double adapjzcie;
-        double jz100;
-        double pqremap;
-        double pqremapcam16;
-        double hljzcie;
-        double hlthjzcie;
-        double shjzcie;
-        double shthjzcie;
-        double radjzcie;
-        double sigmalcjz;
-        double clarilresjz;
-        double claricresjz;
-        double clarisoftjz;
-        std::vector<double> locwavcurvejz;
-        Threshold<int> csthresholdjz;
-        double contthrescie;
-        double blackEvjz;
-        double whiteEvjz;
-        double targetjz;
-        double sigmoidldacie12;
-        double sigmoidthcie12;
-        double sigmoidblcie12;
-        double sigmoidldacie;
-        double sigmoidthcie;
-        double sigmoidsenscie;
-        double sigmoidblcie;
-        double comprcie;
-        double strcielog;
-        double comprcieth;
-        double gamjcie;
-        double smoothcieth;
-        double slopjcie;
-        double contsig;
-        double skewsig;
-        double whitsig;
-        double slopesmo;
-        double slopesmoq;
-        double slopesmor;
-        double slopesmog;
-        double slopesmob;
-        double kslopesmor;
-        double kslopesmog;
-        double kslopesmob;
-        int midtcie;
-        double grexl;
-        double greyl;
-        double bluxl;
-        double bluyl;
-        double redxl;
-        double redyl;
-        double refi;
-        double shiftxl;
-        double shiftyl;
-        double labgridcieALow;
-        double labgridcieBLow;
-        double labgridcieAHigh;
-        double labgridcieBHigh;
-        double labgridcieGx;
-        double labgridcieGy;
-        double labgridcieWx;
-        double labgridcieWy;
-        double labgridcieMx;
-        double labgridcieMy;
-        
-        int whitescie;
-        int blackscie;
-        Glib::ustring illMethod;
-        Glib::ustring smoothciemet;
-        Glib::ustring primMethod;
-        Glib::ustring catMethod;
-        double sigmoidldajzcie12;
-        double sigmoidthjzcie12;
-        double sigmoidbljzcie12;
-        double sigmoidldajzcie;
-        double sigmoidthjzcie;
-        double sigmoidbljzcie;
-        double contqcie;
-        double contsigqcie;
-        double colorflcie;
-        double targabscie;
-        double targetGraycie;
-        double catadcie;
-        double detailcie;
-        Glib::ustring surroundcie;
-        double strgradcie;
-        double anggradcie;
-        double feathercie;
-        bool enacieMask;
-        bool enacieMaskall;
-        std::vector<double> CCmaskciecurve;
-        std::vector<double> LLmaskciecurve;
-        std::vector<double> HHmaskciecurve;
-        std::vector<double> HHhmaskciecurve;
-        int blendmaskcie;
-        double radmaskcie;
-        double chromaskcie;
-        double lapmaskcie;
-        double gammaskcie;
-        double slomaskcie;
-        std::vector<double> Lmaskciecurve;
-        double recothrescie;
-        double lowthrescie;
-        double higthrescie;
-        double decaycie;
-        double strumaskcie;
-		bool toolcie;
-        bool fftcieMask;
-		double contcie;
-		double blurcie;
-		double highmaskcie;
-		double shadmaskcie;
-        std::vector<double> LLmaskciecurvewav;
-        Threshold<int> csthresholdcie;
-		
-        LocallabSpot();
-
-        bool operator ==(const LocallabSpot& other) const;
-        bool operator !=(const LocallabSpot& other) const;
-    };
-
-    static const double LABGRIDL_CORR_MAX;
-    static const double LABGRIDL_CORR_SCALE;
-    static const double LABGRIDL_DIRECT_SCALE;
-
-    bool enabled;
-    int selspot;
-    std::vector<LocallabSpot> spots;
-
-    LocallabParams();
-
-    bool operator ==(const LocallabParams& other) const;
-    bool operator !=(const LocallabParams& other) const;
 };
 
 /**
@@ -2138,6 +1189,14 @@ struct ColorManagementParams {
         LINEAR
     };
 
+    enum class Wwgamut {
+        NONE,
+        REC2020,
+        ADOBE,
+        SRGB,
+        DCIP3
+    };
+
     enum class Illuminant {
         DEFAULT,
         D41,
@@ -2168,7 +1227,8 @@ struct ColorManagementParams {
         BETA_RGB,
         BEST_RGB,
         CUSTOM,
-        CUSTOM_GRID
+        CUSTOM_GRID,
+        CUSTOM_POL
     };
 
     enum class Cat {
@@ -2188,25 +1248,37 @@ struct ColorManagementParams {
 
     Glib::ustring workingProfile;
     WorkingTrc workingTRC;
+    Wwgamut wgamut;
     Illuminant will;
     Primaries wprim;
     Cat wcat;
     double wGamma;
     double wSlope;
+    double wapsat;
     double wmidtcie;
     double sigmatrc;
     double offstrc;
     double residtrc;
+    double wgampower;
+    double wgamgain;
     int pyrwavtrc;
-    std::vector<double> opacityCurveWLI;
-    
+    std::vector<double> opacityCurveWLI;   
     bool wsmoothcie;
+    double wsmoothciesli;
     double redx;
     double redy;
     double grex;
     double grey;
     double blux;
     double bluy;
+    
+    double redrot;
+    double redsat;
+    double grerot;
+    double gresat;
+    double blurot;
+    double blusat;
+    
     double refi;
     double shiftx;
     double shifty;
@@ -2867,6 +1939,7 @@ public:
     CGParams                cg;              ///< Compression gamut
     ToneEqualizerParams     toneEqualizer;   ///< Tone equalizer parameters
     CropParams              crop;            ///< Crop parameters
+    CropGuideParams         cropGuide;       ///< Crop guide parameters
     CoarseTransformParams   coarse;          ///< Coarse transformation (90, 180, 270 deg rotation, h/v flipping) parameters
     CommonTransformParams   commonTrans;     ///< Common transformation parameters (autofill)
     RotateParams            rotate;          ///< Rotation parameters
@@ -2937,11 +2010,11 @@ public:
       * @param pp a pointer to the ProcParams instance to destroy. */
     static void destroy(ProcParams* pp);
 
-    static void init();
-    static void cleanup();
+    static void init() {}
+    static void cleanup() {}
 
     bool operator ==(const ProcParams& other) const;
-    bool operator !=(const ProcParams& other) const;
+    bool operator !=(const ProcParams& other) const { return !(*this == other); }
 
 private:
     /** Write the ProcParams's text in the file of the given name.

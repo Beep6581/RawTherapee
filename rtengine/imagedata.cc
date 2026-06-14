@@ -258,6 +258,48 @@ void readOpcodesList(
         }
     }
 }
+
+
+struct ColorMapper {
+    std::map<int, std::string> indexLabelMap;
+    std::map<std::string, int> labelIndexMap;
+
+    ColorMapper(std::map<int, std::string> colors) {
+        for (const auto& color: colors) {
+            indexLabelMap.insert({color.first, color.second});
+            labelIndexMap.insert({color.second, color.first});
+        }
+    }
+
+    int index(const std::string &label) const
+    {
+        auto it = labelIndexMap.find(label);
+        if (it != labelIndexMap.end()) {
+            return it->second;
+        }
+        return 0;
+    }
+
+    std::string label(int index) const
+    {
+        auto it = indexLabelMap.find(index);
+        if (it != indexLabelMap.end()) {
+            return it->second;
+        }
+        return "";
+    }
+};
+
+const std::map<int, std::string> defaultColors = {
+    {1, "Red"},
+    {2, "Yellow"},
+    {3, "Green"},
+    {4, "Blue"},
+    {5, "Purple"}
+};
+
+auto defaultColorMapper = ColorMapper(defaultColors);
+
 }
 
 namespace rtengine {
@@ -298,6 +340,7 @@ FramesData::FramesData(const Glib::ustring &fname, time_t ts) :
     model("Unknown"),
     orientation("Unknown"),
     rating(0),
+    color_label(-1),
     lens("Unknown"),
     sampleFormat(IIOSF_UNKNOWN),
     isPixelShift(false),
@@ -629,6 +672,22 @@ FramesData::FramesData(const Glib::ustring &fname, time_t ts) :
                     lens = validateUft8(lens);
                 }
             }
+        } else if (!make.compare(0, 7, "OLYMPUS")) {
+            if (find_exif_tag("Exif.OlympusEq.LensType")) {
+                const bool is_none = tag_values_equal<decltype(pos), long>(
+                    pos,
+                    {0L, 0L, 0L, 0L, 0L, 0L},
+                    [](const decltype(pos) &iter, std::size_t n) {
+                        return to_long(iter, n);
+                    });
+
+                lens = validateUft8(pos->print(&exif));
+
+                if (is_none || lens == pos->toString()) {
+                    // Lens type is "None" or cannot be interpreted by Exiv2.
+                    lens = "Unknown";
+                }
+            }
         } else if (!make.compare(0, 4, "SONY")) {
             // ExifTool prefers LensType2 over LensType (called
             // Exif.Sony2.LensID by Exiv2). Exiv2 doesn't support LensType2 yet,
@@ -724,6 +783,13 @@ FramesData::FramesData(const Glib::ustring &fname, time_t ts) :
             auto it = meta.xmpData().findKey(Exiv2::XmpKey("Xmp.xmp.Rating"));
             if (it != meta.xmpData().end() && it->size()) {
                 rating = to_long(it);
+            }
+        }
+
+        {
+            auto it = meta.xmpData().findKey(Exiv2::XmpKey("Xmp.xmp.Label"));
+            if (it != meta.xmpData().end()) {
+                color_label = xmp_label2color(it->toString());
             }
         }
 
@@ -1251,3 +1317,16 @@ void FramesData::setDimensions(int w, int h)
     w_ = w;
     h_ = h;
 }
+
+
+int FramesData::xmp_label2color(const std::string &label)
+{
+    return defaultColorMapper.index(label);
+}
+
+
+std::string FramesData::xmp_color2label(int color)
+{
+    return defaultColorMapper.label(color);
+}
+

@@ -28,6 +28,7 @@ namespace
 
 void thumbInterp(const unsigned char* src, int sw, int sh, unsigned char* dst, int dw, int dh)
 {
+    const auto& options = App::get().options();
 
     if (options.thumbInterp == 0) {
         rtengine::nearestInterp (src, sw, sh, dst, dw, dh);
@@ -45,7 +46,10 @@ BatchQueueEntryUpdater::BatchQueueEntryUpdater ()
 {
 }
 
-void BatchQueueEntryUpdater::process (guint8* oimg, int ow, int oh, int newh, BQEntryUpdateListener* listener, rtengine::procparams::ProcParams* pparams, Thumbnail* thumbnail)
+void BatchQueueEntryUpdater::process (guint8* oimg, int ow, int oh, int newh, int device_scale,
+                                      BQEntryUpdateListener* listener,
+                                      rtengine::procparams::ProcParams* pparams,
+                                      Thumbnail* thumbnail)
 {
     if (!oimg && (!pparams || !thumbnail)) {
         //printf("WARNING! !oimg && (!pparams || !thumbnail)\n");
@@ -65,6 +69,7 @@ void BatchQueueEntryUpdater::process (guint8* oimg, int ow, int oh, int newh, BQ
             i->ow = ow;
             i->oh = oh;
             i->newh = newh;
+            i->device_scale = device_scale;
             i->listener = listener;
             i->pparams = pparams;
             i->thumbnail = thumbnail;
@@ -78,6 +83,7 @@ void BatchQueueEntryUpdater::process (guint8* oimg, int ow, int oh, int newh, BQ
         j.ow = ow;
         j.oh = oh;
         j.newh = newh;
+        j.device_scale = device_scale;
         j.listener = listener;
         j.pparams = pparams;
         j.thumbnail = thumbnail;
@@ -91,7 +97,6 @@ void BatchQueueEntryUpdater::process (guint8* oimg, int ow, int oh, int newh, BQ
         stopped = false;
         tostop  = false;
 
-#undef THREAD_PRIORITY_LOW
         thread = Glib::Thread::create(sigc::mem_fun(*this, &BatchQueueEntryUpdater::processThread), (unsigned long int)0, true, true, Glib::THREAD_PRIORITY_LOW);
     }
 }
@@ -151,10 +156,17 @@ void BatchQueueEntryUpdater::processThread ()
         }
 
         if (current.oimg && !isEmpty && current.listener) {
-            int neww = current.newh * current.ow / current.oh;
-            guint8* img = new guint8 [current.newh * neww * 3];
-            thumbInterp (current.oimg, current.ow, current.oh, img, neww, current.newh);
-            current.listener->updateImage (img, neww, current.newh, current.ow, current.oh, newBuffer ? current.oimg : nullptr);
+            hidpi::LogicalSize size;
+            size.height = current.newh;
+            size.width = size.height * current.ow / current.oh;
+
+            int scaledHeight = size.height * current.device_scale;
+            int scaledWidth = size.width * current.device_scale;
+
+            guint8* img = new guint8 [scaledWidth * scaledHeight * 3];
+            thumbInterp (current.oimg, current.ow, current.oh, img, scaledWidth, scaledHeight);
+            current.listener->updateImage (img, size, current.device_scale, current.ow, current.oh,
+                                           newBuffer ? current.oimg : nullptr);
         }
 
         if(current.oimg) {

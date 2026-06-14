@@ -27,11 +27,11 @@ CFLAGS+= -g -I. -pedantic -Wno-long-long -Wno-overflow -O3
 
 
 # JPEG support for DNG and Kodak
-CFLAGS+=-DUSE_JPEG -I/usr/local/include
-LDADD+=-L/usr/local/lib -ljpeg
+#CFLAGS+=-DUSE_JPEG -I/usr/local/include
+#LDADD+=-L/usr/local/lib -ljpeg
 
 # LIBJPEG8:
-CFLAGS+=-DUSE_JPEG8
+#CFLAGS+=-DUSE_JPEG8
 
 CSTFLAGS=$(CFLAGS) -DLIBRAW_NOTHREADS
 

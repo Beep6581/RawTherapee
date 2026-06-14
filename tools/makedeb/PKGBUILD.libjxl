@@ -2,7 +2,7 @@
 
 _pkgname="libjxl"
 pkgname="$_pkgname"
-pkgver='0.11.1'
+pkgver='0.11.2'
 pkgrel='1'
 pkgdesc='JPEG XL image format reference implementation'
 url='https://github.com/libjxl/libjxl'
@@ -34,7 +34,7 @@ build() {
   )
 
   cmake "${_cmake_options[@]}"
-  cmake --build build --parallel
+  cmake --build build --parallel $(nproc)
 }
 
 package() {

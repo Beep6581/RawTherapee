@@ -1,5 +1,5 @@
 /* -*- C++ -*-
- * Copyright 2019-2024 LibRaw LLC (info@libraw.org)
+ * Copyright 2019-2025 LibRaw LLC (info@libraw.org)
  *
 
  LibRaw is free software; you can redistribute it and/or modify
@@ -60,6 +60,9 @@ int LibRaw::raw2image(void)
 {
 
   CHECK_ORDER_LOW(LIBRAW_PROGRESS_LOAD_RAW);
+
+  if (!imgdata.rawdata.raw_image && !imgdata.rawdata.color3_image && !imgdata.rawdata.color4_image)
+	  return LIBRAW_OUT_OF_ORDER_CALL;
 
   try
   {
@@ -313,6 +316,8 @@ int LibRaw::raw2image_ex(int do_subtract_black)
 {
 
   CHECK_ORDER_LOW(LIBRAW_PROGRESS_LOAD_RAW);
+  if (!imgdata.rawdata.raw_image && !imgdata.rawdata.color3_image && !imgdata.rawdata.color4_image)
+    return LIBRAW_OUT_OF_ORDER_CALL;
 
   try
   {

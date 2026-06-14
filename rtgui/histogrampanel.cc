@@ -36,14 +36,6 @@ constexpr float HistogramArea::MIN_BRIGHT;
 
 using ScopeType = Options::ScopeType;
 
-
-namespace
-{
-
-const rtengine::procparams::ColorManagementParams DEFAULT_CMP;
-
-}
-
 //
 //
 // HistogramPanel
@@ -94,6 +86,7 @@ HistogramPanel::HistogramPanel () :
     histogramRGBAreaVert.reset(new HistogramRGBAreaVert());
     setExpandAlignProperties(histogramRGBAreaVert.get(), false, true, Gtk::ALIGN_END, Gtk::ALIGN_FILL);
 
+    const auto& options = App::get().options();
     switch (options.histogramScopeType) {
         case ScopeType::NONE:
         case ScopeType::HISTOGRAM_RAW:
@@ -440,7 +433,7 @@ void HistogramPanel::resized (Gtk::Allocation& req)
     }
 
     // Store current height of the histogram
-    options.histogramHeight = get_height();
+    App::get().mut_options().histogramHeight = get_height();
 
     old_height = req.get_height();
     old_width = req.get_width();
@@ -451,7 +444,7 @@ void HistogramPanel::red_toggled ()
     // Update button image
     showRed->set_image(showRed->get_active() ? *redImage : *redImage_g);
     // Update options value
-    options.histogramRed = showRed->get_active() ? true : false;
+    App::get().mut_options().histogramRed = showRed->get_active() ? true : false;
     // Update drawing areas
     rgbv_toggled();
 }
@@ -461,7 +454,7 @@ void HistogramPanel::green_toggled ()
     // Update button image
     showGreen->set_image(showGreen->get_active() ? *greenImage : *greenImage_g);
     // Update options value
-    options.histogramGreen = showGreen->get_active() ? true : false;
+    App::get().mut_options().histogramGreen = showGreen->get_active() ? true : false;
     // Update drawing areas
     rgbv_toggled();
 }
@@ -471,7 +464,7 @@ void HistogramPanel::blue_toggled ()
     // Update button image
     showBlue->set_image(showBlue->get_active() ? *blueImage : *blueImage_g);
     // Update options value
-    options.histogramBlue = showBlue->get_active() ? true : false;
+    App::get().mut_options().histogramBlue = showBlue->get_active() ? true : false;
     // Update drawing areas
     rgbv_toggled();
 }
@@ -480,7 +473,7 @@ void HistogramPanel::value_toggled ()
     // Update button image
     showValue->set_image(showValue->get_active() ? *valueImage : *valueImage_g);
     // Update options value
-    options.histogramLuma = showValue->get_active() ? true : false;
+    App::get().mut_options().histogramLuma = showValue->get_active() ? true : false;
     // Update drawing areas
     rgbv_toggled();
 }
@@ -489,13 +482,14 @@ void HistogramPanel::chro_toggled ()
     // Update button image
     showChro->set_image(showChro->get_active() ? *chroImage : *chroImage_g);
     // Update options value
-    options.histogramChroma = showChro->get_active() ? true : false;
+    App::get().mut_options().histogramChroma = showChro->get_active() ? true : false;
     // Update drawing areas
     rgbv_toggled();
 }
 
 void HistogramPanel::mode_released ()
 {
+    auto& options = App::get().mut_options();
     // Update options value
     options.histogramDrawMode = (options.histogramDrawMode + 1) % 3;
     // Update button image
@@ -514,19 +508,19 @@ void HistogramPanel::brightnessWidgetValueChanged(void)
 {
     ConnectionBlocker blocker(brightness_changed_connection);
     histogramArea->setBrightness(exp(brightnessWidget->get_value()));
-    options.histogramTraceBrightness = histogramArea->getBrightness();
+    App::get().mut_options().histogramTraceBrightness = histogramArea->getBrightness();
 }
 
 void HistogramPanel::brightnessUpdated(float brightness)
 {
     brightnessWidget->set_value(log(brightness));
-    options.histogramTraceBrightness = histogramArea->getBrightness();
+    App::get().mut_options().histogramTraceBrightness = histogramArea->getBrightness();
 }
 
 void HistogramPanel::scopeOptionsToggled()
 {
     // Update options value
-    options.histogramShowOptionButtons = scopeOptions->get_active();
+    App::get().mut_options().histogramShowOptionButtons = scopeOptions->get_active();
     // Show/hide secondary buttons column
     optionButtons->set_visible(scopeOptions->get_active());
 }
@@ -550,6 +544,7 @@ void HistogramPanel::type_selected(Gtk::RadioButton* button)
         new_type = ScopeType::VECTORSCOPE_HS;
     }
 
+    auto& options = App::get().mut_options();
     // Do not update if selected radio button is identical
     if (new_type == options.histogramScopeType) {
         return;
@@ -583,6 +578,7 @@ void HistogramPanel::type_selected(Gtk::RadioButton* button)
 
 void HistogramPanel::type_changed()
 {
+    const auto& options = App::get().options();
     switch (options.histogramScopeType) {
         case ScopeType::HISTOGRAM:
             showRed->show();
@@ -651,7 +647,7 @@ void HistogramPanel::bar_toggled ()
     // Update button image
     showBAR->set_image(showBAR->get_active() ? *barImage : *barImage_g);
     // Update options value
-    options.histogramBar = showBAR->get_active() ? true : false;
+    App::get().mut_options().histogramBar = showBAR->get_active() ? true : false;
     // Update drawing areas
     rgbv_toggled();
     // Update histogram bar visibility
@@ -721,6 +717,7 @@ void HistogramPanel::reorder (Gtk::PositionType align)
 // DrawModeListener interface:
 void HistogramPanel::toggleButtonMode ()
 {
+    const auto& options = App::get().options();
     if (options.histogramDrawMode == 0)
         showMode->set_image(*mode0Image);
     else if (options.histogramDrawMode == 1)
@@ -734,7 +731,7 @@ void HistogramPanel::setPanelListener(HistogramPanelListener* listener)
     panel_listener = listener;
 
     if (listener) {
-        listener->scopeTypeChanged(options.histogramScopeType);
+        listener->scopeTypeChanged(App::get().options().histogramScopeType);
     }
 }
 
@@ -756,10 +753,10 @@ HistogramRGBArea::HistogramRGBArea () :
     // Saved pointer parameters
     r(-1), g(-1), b(-1), lab_L(0.f), lab_a(0.f), lab_b(0.f), pointerValid(false),
     // Drawing options (initialized at options file values)
-    needRed(options.histogramRed), needGreen(options.histogramGreen),
-    needBlue(options.histogramBlue), needLuma(options.histogramLuma),
-    needChroma(options.histogramChroma), scopeType(options.histogramScopeType),
-    scaleMode(options.histogramDrawMode), showBar(options.histogramBar)
+    needRed(App::get().options().histogramRed), needGreen(App::get().options().histogramGreen),
+    needBlue(App::get().options().histogramBlue), needLuma(App::get().options().histogramLuma),
+    needChroma(App::get().options().histogramChroma), scopeType(App::get().options().histogramScopeType),
+    scaleMode(App::get().options().histogramDrawMode), showBar(App::get().options().histogramBar)
 {
     get_style_context()->add_class("drawingarea");
     set_name("HistogramRGBArea");
@@ -898,7 +895,7 @@ bool HistogramRGBArea::updatePointer (const int new_r, const int new_g, const in
             static_cast<std::uint8_t>(g),
             static_cast<std::uint8_t>(b),
             lab_L, lab_a, lab_b,
-            cmp != nullptr ? *cmp : DEFAULT_CMP,
+            cmp != nullptr ? *cmp : App::get().fallbackColorCmp(),
             true);
         pointerValid = true;
     }
@@ -908,6 +905,7 @@ bool HistogramRGBArea::updatePointer (const int new_r, const int new_g, const in
 
 void HistogramRGBArea::updateFromOptions ()
 {
+    const auto& options = App::get().options();
     needRed = options.histogramRed;
     needGreen = options.histogramGreen;
     needBlue = options.histogramBlue;
@@ -960,7 +958,7 @@ void HistogramRGBArea::factorChanged (double newFactor)
 void HistogramRGBAreaHori::drawBar(const Cairo::RefPtr<Cairo::Context> &cc, const double value, const double max_value, const int winw, const int winh)
 {
     double pos;
-    if (options.histogramDrawMode < 2) {
+    if (App::get().options().histogramDrawMode < 2) {
         pos = padding + value * (winw - padding * 2.0) / max_value;
     } else {
         pos = padding + HistogramScaling::log (max_value, value) * (winw - padding * 2.0) / max_value;
@@ -998,6 +996,7 @@ void HistogramRGBAreaHori::get_preferred_width_for_height_vfunc (int height, int
 void HistogramRGBAreaVert::drawBar(const Cairo::RefPtr<Cairo::Context> &cc, const double value, const double max_value, const int winw, const int winh)
 {
     double pos;
+    const auto& options = App::get().options();
     if (options.histogramDrawMode < 2 || options.histogramScopeType == ScopeType::PARADE || options.histogramScopeType == ScopeType::WAVEFORM) {
         pos = padding + value * (winh - padding * 2.0 - 1) / max_value + 0.5;
     } else {
@@ -1055,11 +1054,14 @@ HistogramArea::HistogramArea (DrawModeListener *fml) :
     pointer_a(0.f), pointer_b(0.f),
     pointer_valid(false),
     // Drawing options
-    needRed(options.histogramRed), needGreen(options.histogramGreen), needBlue(options.histogramBlue),
-    needLuma(options.histogramLuma), needChroma(options.histogramChroma),
-    needPointer(options.histogramBar),
-    scopeType(options.histogramScopeType),
-    drawMode(options.histogramDrawMode), myDrawModeListener(fml),
+    needRed(App::get().options().histogramRed),
+    needGreen(App::get().options().histogramGreen),
+    needBlue(App::get().options().histogramBlue),
+    needLuma(App::get().options().histogramLuma),
+    needChroma(App::get().options().histogramChroma),
+    needPointer(App::get().options().histogramBar),
+    scopeType(App::get().options().histogramScopeType),
+    drawMode(App::get().options().histogramDrawMode), myDrawModeListener(fml),
     // Motion event management
     isPressed(false), movingPosition(0.0)
 {
@@ -1108,6 +1110,7 @@ void HistogramArea::get_preferred_width_for_height_vfunc (int height, int &minim
 
 void HistogramArea::updateFromOptions ()
 {
+    const auto& options = App::get().options();
     wave_buffer_dirty = wave_buffer_dirty || needRed != options.histogramRed ||
             needGreen != options.histogramGreen || needBlue != options.histogramBlue;
 
@@ -1426,7 +1429,7 @@ bool HistogramArea::updatePointer(const int r, const int g, const int b, const r
             static_cast<std::uint8_t>(g),
             static_cast<std::uint8_t>(b),
             L, pointer_a, pointer_b,
-            cmp != nullptr ? *cmp : DEFAULT_CMP,
+            cmp != nullptr ? *cmp : App::get().fallbackColorCmp(),
             true);
         L /= 327.68f;
         pointer_a /= 327.68f;
@@ -1879,6 +1882,7 @@ bool HistogramArea::on_button_press_event (GdkEventButton* event)
     ) {
 
         drawMode = (drawMode + 1) % 3;
+        auto& options = App::get().mut_options();
         options.histogramDrawMode = (options.histogramDrawMode + 1) % 3;
 
         if (myDrawModeListener) {

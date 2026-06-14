@@ -1231,8 +1231,27 @@ Camera constants:
         "masked_areas": [ 76, 40, 4580, 140 ]
     },
 
+    { // Quality B, samples provided by redfox19 (#7580) in 1 stop intervals with and without LENR and a few at f/3.5.
+        "make_model": ["Canon EOS M50"],
+        "masked_areas": [36, 4, 4052, 260],
+        // Raw crop from metadata ok.
+        "ranges": {
+            "white": [
+                // Green channel has lowest white level for low ISOs.
+                // Maximum white level of 16383 for red/green and 16356 for blue, but use 16300 for safe margin and LENR.
+                // Lower white levels at higher ISOs for LENR to keep 99%+ of clipped pixels above the white level. Blue channel has highest noise level.
+                { "iso": [ 100 ], "levels": 15500 },
+                { "iso": [ 200 ], "levels": 15650 },
+                { "iso": [ 400, 800, 1600 ], "levels": 16300 },
+                { "iso": [ 3200 ], "levels": 16200 },
+                { "iso": [ 6400 ], "levels": 16100 },
+                { "iso": [ 12800 ], "levels": 15950 }
+            ]
+        }
+    },
+
     { // Quality C, only masked area. Raw crop from metadata ok.
-        "make_model": ["Canon EOS M50", "Canon EOS M50m2", "Canon EOS M100"],
+        "make_model": ["Canon EOS M50m2", "Canon EOS M100"],
         "masked_areas": [36, 4, 4052, 260]
     },
 
@@ -1270,6 +1289,19 @@ Camera constants:
         "ranges" : { "white" : 16300 } // 16382 without LENR, add margin for LENR. Dual-pixel frame 2 is lower for low ISOs.
     },
 
+    { // Quality A
+        "make_model": "Canon EOS R5m2",
+        "raw_crop" : [
+            { "frame" : [ 8480, 5650 ], "crop" : [ 256, 160, 8224, 5490 ] },
+            { "frame" : [ 5376, 3574 ], "crop" : [ 256, 160, 5120, 3414 ] }
+        ],
+        "masked_areas" : [
+            { "frame" : [ 8480, 5650 ], "areas": [ 10, 266, 150, 8000 ] },
+            { "frame" : [ 5376, 3574 ], "areas": [ 74, 266, 150, 3564 ] }
+        ],
+        "ranges" : { "white" : 16000 } // 16382 without LENR, add margin for LENR.
+    },
+
     { // Quality C
         "make_model": "Canon EOS R6",
         "dcraw_matrix" : [8293, -1611, -1132, -4759, 12710, 2275, -1013, 2415, 5508],
@@ -1299,6 +1331,21 @@ Camera constants:
     },
 
     { // Quality C
+        "make_model": ["Canon EOS R6 Mark III"],
+        "raw_crop": [
+            // LibRaw enforces a tighter crop, so these won't do anything until we change the way the raw image is extracted.
+            {"frame": [ 7144, 4760 ], "crop": [ 160, 96, 6984, 4664 ]},
+            {"frame": [ 4512, 2994 ], "crop": [ 168, 96, 4344, 2898 ]}
+        ],
+        "masked_areas": [
+            // Avoid repeated pixels on the right side of the left masked area.
+            // Avoid brighter top region of the top masked area.
+            { "frame": [ 7144, 4760 ], "areas": [ 96, 4, 4700, 126, 44, 158, 92, 7100 ] },
+            { "frame": [ 4512, 2994 ], "areas": [ 96, 4, 2800, 126, 44, 160, 92, 4500 ] }
+        ]
+    },
+
+    { // Quality C
         "make_model": "Canon EOS R7",
         "dcraw_matrix" : [10424, -3138, -1300, -4221, 11938,  2584,  -547,  1658,  6183],
         "raw_crop": [ 144, 72, 6984, 4660 ],
@@ -1310,6 +1357,20 @@ Camera constants:
         "dcraw_matrix" : [9269, -2012, -1107, -3990, 11762,  2527,  -569,  2093,  4913],
         "raw_crop": [ 144, 40, 6048, 4020 ],
         "masked_areas" : [ 38, 20, 4052, 138 ]
+    },
+
+    { // Quality C: masked areas only
+        "make_model": "Canon EOS R50 V",
+        "masked_areas": [ 4, 4, 4056, 140, 4, 140, 36, 6188 ]
+        // Raw crop undetermined because of pre-applied crop when using LibRaw.
+        // Top right of image starts at (144, 40).
+    },
+
+    { // Quality C: basic white level only
+        "make_model": "Canon EOS R100",
+        // White level from one image with some clipped highlights.
+        "ranges": { "white": 13416 }
+        // Raw crop undetermined because of pre-applied crop when using LibRaw.
     },
 
     { // Quality C, CHDK DNGs, raw frame correction
@@ -1430,6 +1491,14 @@ Camera constants:
     { // Quality C
         "make_model": "Canon PowerShot SX220 HS",
         "raw_crop": [ 92, 16, 4072, 3042 ] // Cut 2pix at lower border because of too high values in blue channel
+    },
+
+    { // Quality C: masked areas and basic white level only
+        "make_model": "Canon PowerShot V1",
+        "ranges" : { "white" : 15800 }, // From ART
+        "masked_areas": [ 21, 4, 3940, 140, 21, 140, 76, 5924 ]
+        // Raw crop undetermined because of pre-applied crop when using LibRaw.
+        // Top right of image starts at (144, 80).
     },
 
     { // Quality C
@@ -1575,6 +1644,12 @@ Camera constants:
         "ranges": { "white": 16100 }
     },
 
+    { // Quality C: Raw crop only
+        "make_model": "Fujifilm X-M5",
+        // Top margin unverified due to pre-applied crop when using LibRaw.
+        "raw_crop": [ 0, 6, 6252, 4175 ]
+    },
+
     { // Quality B
         "make_model": "FUJIFILM X-PRO1",
         "dcraw_matrix": [ 10413,-3996,-993,-3721,11640,2361,-733,1540,6011 ], // DNG_v9.4 D65
@@ -1630,6 +1705,12 @@ Camera constants:
             {"frame": [6384, 3348], "crop": [624, 0, 5004, 3347]}, // Sports finder mode.
             {"frame": [0, 0], "crop": [0, 5, 6252, 4176]}
         ]
+    },
+
+    { // Quality C: raw crop only
+        "make_model": "Fujifilm X-T30 III",
+        // Top margin unverified due to pre-applied crop when using LibRaw.
+        "raw_crop": [ 0, 6, 6252, 4175 ]
     },
 
     { // Quality B
@@ -2109,9 +2190,19 @@ Camera constants:
         "pdaf_pattern": [285, 297, 309, 321, 333, 345, 357, 369, 381, 393, 405, 417, 429, 441, 453, 465, 477, 489, 501, 513, 525, 537, 549, 561, 573, 585, 597, 609, 621, 633, 645, 657, 669, 681, 693, 705, 717, 729, 741, 753, 765, 777, 789, 801, 813, 825, 837, 849, 861, 873, 885, 897, 909, 921, 933, 945, 957, 969, 981, 993, 1005, 1017, 1029, 1041, 1053, 1065, 1077, 1089, 1101, 1113, 1125, 1137, 1149, 1161, 1173, 1185, 1197, 1209, 1221, 1233, 1245, 1257, 1269, 1281, 1293, 1305, 1317, 1329, 1341, 1353, 1365, 1377, 1389, 1401, 1413, 1425, 1437, 1449, 1461, 1473, 1485, 1497, 1509, 1521, 1533, 1545, 1557, 1569, 1581, 1593, 1605, 1617, 1629, 1641, 1653, 1665, 1677, 1689, 1701, 1713, 1725, 1737, 1749, 1761, 1773, 1785, 1797, 1809, 1821, 1833, 1845, 1857, 1869, 1881, 1893, 1905, 1917, 1929, 1941, 1953, 1965, 1977, 1989, 2001, 2013, 2025, 2037, 2049, 2061, 2073, 2085, 2097, 2109, 2121, 2133, 2145, 2157, 2169, 2181, 2193, 2205, 2217, 2229, 2241, 2253, 2265, 2277, 2289, 2301, 2313, 2325, 2337, 2349, 2361, 2373, 2385, 2397, 2409, 2421, 2433, 2445, 2457, 2469, 2481, 2493, 2505, 2517, 2529, 2541, 2553, 2565, 2577, 2589, 2601, 2613, 2625, 2637, 2649, 2661, 2673, 2685, 2697, 2709, 2721, 2733, 2745, 2757, 2769, 2781, 2793, 2805, 2817, 2829, 2841, 2853, 2865, 2877, 2889, 2901, 2913, 2925, 2937, 2949, 2961, 2973, 2985, 2997, 3009, 3021, 3033, 3045, 3057, 3069, 3081, 3093, 3105, 3117, 3129, 3141, 3153, 3165, 3177, 3189, 3201, 3213, 3225, 3237, 3249, 3261, 3273, 3285, 3297, 3309, 3321, 3333, 3345, 3357, 3369, 3381, 3393, 3405, 3417, 3429, 3441]
     },
 
-    { // Quality C
+    { // Quality A
         "make_model" : "Nikon Z f",
-        "dcraw_matrix" : [ 11607, -4491, -977, -4522, 12460, 2304, -458, 1519, 7616 ] // DNG v16.1
+        "dcraw_matrix" : [ 11607, -4491, -977, -4522, 12460, 2304, -458, 1519, 7616 ], // DNG v16.1
+        // No raw crop, full raw image is usable.
+        "ranges": {
+            "white": [
+                // White level is 16383 for non-LENR images, but use 16300 for LENR margin.
+                // Increased margin at higher ISOs to keep 99%+ of clipped pixels above the white level.
+                { "iso": [ 100, 200, 400, 800, 1600, 3200, 6400, 12800 ], "levels": 16300 },
+                { "iso": [ 25600 ], "levels": 16200 },
+                { "iso": [ 51200 ], "levels": 16050 }
+            ]
+        }
     },
 
     { // Quality B, 16Mp and 64Mp raw frames
@@ -2291,6 +2382,11 @@ Camera constants:
         "make_model": [ "Panasonic DC-G90", "Panasonic DC-G95", "Panasonic DC-G99" ],
         "dcraw_matrix": [ 9657, -3963, -748, -3361, 11378, 2258, -568, 1414, 5158 ], // DNG
         "ranges": { "black": 15 } // see above: RT already reads a value from exif
+    },
+
+    { // Quality C
+        "make_model": "Panasonic DC-G97",
+        "dcraw_matrix": [ 9657, -3963, -748, -3361, 11378, 2258, -568, 1415, 5158 ] // ADC 18.3
     },
 
     { // Quality C
@@ -2714,6 +2810,16 @@ Camera constants:
         }
     },
 
+    { // Quality C: raw crop only
+        "make_model": "Panasonic DC-S1M2",
+        "raw_crop": [ 0, 2, 6008, 4006 ]
+    },
+
+    { // Quality C: raw crop only
+        "make_model": "Panasonic DC-S1M2ES",
+        "raw_crop": [ 0, 2, 6016, 4014 ]
+    },
+
     { // Quality X, issue #5204. No white frames available.
         "make_model": [ "Panasonic DC-S1R" ],
         "dcraw_matrix": [ 11822, -5321, -1249, -5958, 15114, 766, -614, 1264, 7043 ], // ColorMatrix2 using illuminant D65 from Adobe DNG Converter 11.4
@@ -2726,6 +2832,11 @@ Camera constants:
         }
     },
 
+    { // Quality C: raw crop only
+        "make_model": "Panasonic DC-S1RM2",
+        "raw_crop": [ 0, 2, 0, 5430 ]
+    },
+
     { // Quality C
         "make_model": "Panasonic DC-S1H",
         "dcraw_matrix": [ 9397, -3719, -805, -5425, 13326, 2309, -972, 1715, 6034 ] // DNG
@@ -2734,6 +2845,11 @@ Camera constants:
     { // Quality C, possibly the same as DC-S1. We have a custom DCP which is better.
         "make_model": "Panasonic DC-S5",
         "dcraw_matrix": [ 9744, -3905, -779, -4899, 12807, 2324, -798, 1630, 5827 ] // DNG
+    },
+
+    { // Quality C: raw crop only
+        "make_model": "Panasonic DC-S9",
+        "raw_crop": [ 0, 2, 0, 4014 ]
     },
 
     { // Quality B, per ISO info missing
@@ -2857,6 +2973,16 @@ Camera constants:
                 { "iso": 400, "levels": 4080 }, // R,G1 = 4093-94, B=4094 G2= 4087or93or94
                 { "iso": 800, "levels": 4070 }, // R,G1 = 4091-4093, B=4091-92 G2= 4078or82or84-86
                 { "iso": [ 1600, 3200 ], "levels": 4060 } // 4067or4073-76
+            ]
+        }
+    },
+
+    { // Quality A
+        "make_model": [ "Pentax K20D", "Samsung GX20" ], // Based on Samsung GX20 data.
+        "ranges": {
+            "white": [
+                { "iso": 100, "levels": 4000 },
+                { "iso": 200, "levels": 4095 }
             ]
         }
     },
@@ -2997,6 +3123,20 @@ Camera constants:
         "dcraw_matrix": [ 8161, -2947, -739, -4811, 12668, 2389, -437, 1229, 6524 ] // DNG v13.2
     },
 
+    { // Quality C: raw crops only
+        "make_model": "Sony ILCE-1M2",
+        "raw_crop" : [
+            { "frame" : [ 8672, 5784 ], "crop": [ 0, 0, 8664, 5784 ] }, // Uncompressed
+            { "frame" : [ 8704, 6144 ], "crop": [ 0, 0, 8664, 5784 ] }, // Lossless
+            { "frame" : [ 6144, 4096 ], "crop": [ 0, 0, 5640, 3768 ] }, // APS-C lossless
+            { "frame" : [ 5664, 3768 ], "crop": [ 0, 0, 5640, 3768 ] }, // APS-C uncompressed
+            // The following are for M and S resolution demosaiced images.
+            // They have no effect yet, as raw crops currently only apply to mosaiced images.
+            { "frame" : [ 5632, 4096 ], "crop": [ 0, 0, 5628, 3756 ] }, // Lossless comp M
+            { "frame" : [ 4608, 3072 ], "crop": [ 0, 0, 4332, 2892 ] } // FF/APS-C lossless comp S
+        ]
+    },
+
     { // Quality A, correction for frame width
         "make_model": [ "Sony ILCE-3000", "Sony ILCE-3500", "Sony ILCE-5000", "Sony ILCE-QX1" ],
         "dcraw_matrix": [ 5991,-1456,-455,-4764,12135,2980,-707,1424,6701 ], // DNG v13.2
@@ -3086,6 +3226,18 @@ Camera constants:
         "pdaf_offset" : 31
     },
 
+    { // Quality C: raw crop only
+        "make_model": "Sony DSC-RX1RM3",
+        "raw_crop" : [
+            // Crop for uncompressed and lossy compressed images not here due to pre-applied crop by LibRaw.
+            { "frame" : [ 9728, 6656 ], "crop": [ 0, 0, 9568, 6376 ] }, // Lossless comp L
+            // The following are for M and S resolution demosaiced images.
+            // They have no effect yet, as raw crops currently only apply to mosaiced images.
+            { "frame" : [ 7168, 4608 ], "crop": [ 0, 0, 6684, 4460 ] }, // Lossless comp M
+            { "frame" : [ 5120, 3584 ], "crop": [ 0, 0, 4784, 3188 ] } // Lossless comp S
+        ]
+    },
+
     { // Quality C, color matrix copied from ILCE-9, LongExposures 2-3sec only
         "make_model": "Sony ILCE-7M3",
         "dcraw_matrix": [ 7374, -2389, -551, -5435, 13162, 2519, -1006, 1795, 6552 ], // DNG v13.2
@@ -3118,6 +3270,16 @@ Camera constants:
         "make_model": "Sony ILCE-7M4",
         "dcraw_matrix": [ 7460, -2365, -588, -5687, 13442, 2474, -624, 1156, 6584 ], // ColorMatrix2 using illuminant D65 from Adobe DNG Converter 14.2
         "raw_crop": [ 0, 0, -10, 0 ]
+    },
+
+    { // Quality C
+        "make_model": "Sony ILCE-7M5",
+        "raw_crop": [
+            // Verified on lossless compressed raws.
+            { "frame": [ 7168, 5120 ], "crop": [ 0, 0, 7032, 4688 ] },
+            { "frame": [ 5120, 3584 ], "crop": [ 0, 0, 4632, 3088 ] }
+        ],
+        "ranges": { "white": 16300 }
     },
 
     { // Quality C,
@@ -3331,6 +3493,11 @@ Camera constants:
     { // Quality A for tested CFV, the other models have the same sensor (16 megapixel square sensor)
         "make_model": [ "Hasselblad V96C", "Hasselblad CFV", "Hasselblad CFV-II" ],
         "dcraw_matrix": [ 8519, -3260, -280, -5081, 13459, 1738, -1449, 2960, 7809 ] // borrowed from Adobe's DNG converter
+    },
+
+    { // Quality C
+        "make_model": "Hasselblad CFV-100c",
+        "dcraw_matrix": [ 6468, -1899, -545, -4526, 12267, 2542, -388, 1276, 6096 ] // ADC 18.3
     },
 
     { // Quality A for tested CF-22, the other models have the same sensor

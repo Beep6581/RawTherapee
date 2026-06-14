@@ -38,11 +38,11 @@ CFLAGS+=-DUSE_ZLIB
 LDADD+=-lz
 
 # JPEG support for DNG and Kodak
-CFLAGS+=-DUSE_JPEG -I/usr/local/include
-LDADD+=-L/usr/local/lib -ljpeg
+#CFLAGS+=-DUSE_JPEG -I/usr/local/include
+#LDADD+=-L/usr/local/lib -ljpeg
 
 # LIBJPEG8:
-CFLAGS+=-DUSE_JPEG8
+#CFLAGS+=-DUSE_JPEG8
 
 CSTFLAGS=$(CFLAGS) -DLIBRAW_NOTHREADS
 HEADERS=libraw/libraw.h libraw/libraw_alloc.h libraw/libraw_const.h \
@@ -54,7 +54,8 @@ HEADERS=libraw/libraw.h libraw/libraw_alloc.h libraw/libraw_const.h \
 
 LIB_OBJECTS= object/libraw_datastream.o object/libraw_c_api.o \
   object/cameralist.o object/fuji_compressed.o \
-  object/crx.o object/pana8.o object/olympus14.o object/fp_dng.o object/decoders_libraw.o \
+  object/crx.o object/pana8.o object/olympus14.o \
+  object/fp_dng.o object/decoders_libraw.o \
   object/sonycc.o object/losslessjpeg.o \
   object/unpack.o object/unpack_thumb.o \
   object/rawspeed_glue.o object/dngsdk_glue.o \
@@ -88,7 +89,8 @@ LIB_OBJECTS= object/libraw_datastream.o object/libraw_c_api.o \
 
 LIB_MT_OBJECTS= object/libraw_datastream.mt.o object/libraw_c_api.mt.o \
   object/cameralist.mt.o object/fuji_compressed.mt.o \
-  object/crx.mt.o object/pana8.mt.o object/olympus14.mt.o object/fp_dng.mt.o \
+  object/crx.mt.o object/pana8.mt.o \
+  object/olympus14.mt.o object/fp_dng.mt.o \
   object/sonycc.mt.o object/losslessjpeg.mt.o \
   object/decoders_libraw.mt.o \
   object/unpack.mt.o object/unpack_thumb.mt.o \

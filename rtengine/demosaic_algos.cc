@@ -214,7 +214,7 @@ void RawImageSource::border_interpolate( int winw, int winh, int lborders, const
 ***/
 // Adapted to RawTherapee by Jacques Desmis 3/2013
 // SSE version by Ingo Weyrich 5/2013
-#ifdef __SSE2__
+#if defined(__SSE2__) || defined(RT_SIMDE)
 void RawImageSource::igv_interpolate(int winw, int winh)
 {
     static const float eps = 1e-5f, epssq = 1e-5f; //mod epssq -10f =>-5f Jacques 3/2013 to prevent artifact (divide by zero)

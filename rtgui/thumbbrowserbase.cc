@@ -18,6 +18,7 @@
 
 #include <glibmm/ustring.h>
 
+#include "hidpi.h"
 #include "inspector.h"
 #include "multilangmgr.h"
 #include "options.h"
@@ -30,8 +31,9 @@
 using namespace std;
 
 ThumbBrowserBase::ThumbBrowserBase ()
-    : location(THLOC_FILEBROWSER), inspector(nullptr), isInspectorActive(false), eventTime(0), lastClicked(nullptr), anchor(nullptr), previewHeight(options.thumbSize), numOfCols(1), lastRowHeight(0), arrangement(TB_Horizontal)
+    : location(THLOC_FILEBROWSER), inspector(nullptr), isInspectorActive(false), eventTime(0), lastClicked(nullptr), anchor(nullptr), previewHeight(App::get().options().thumbSize), numOfCols(1), lastRowHeight(0), arrangement(TB_Horizontal)
 {
+    lastDeviceScale = 0;
     inW = -1;
     inH = -1;
 
@@ -558,6 +560,19 @@ void ThumbBrowserBase::internalAreaResized (Gtk::Allocation& req)
     }
 }
 
+void ThumbBrowserBase::onInternalAreaDraw()
+{
+    int deviceScale = RTScalable::getScaleForWidget(this);
+    if (deviceScale == lastDeviceScale) return;
+
+    lastDeviceScale = deviceScale;
+
+    MYWRITERLOCK(l, entryRW);
+    for (auto& entry : fd) {
+        entry->onDeviceScaleChanged(deviceScale);
+    }
+}
+
 void ThumbBrowserBase::configScrollBars ()
 {
 
@@ -996,14 +1011,14 @@ bool ThumbBrowserBase::Internal::on_draw(const ::Cairo::RefPtr< Cairo::Context> 
 
     dirty = false;
 
-    int w = get_width();
-    int h = get_height();
+    parent->onInternalAreaDraw();
+    auto logical = hidpi::LogicalSize::forWidget(this);
 
     // draw thumbnails
 
     cr->set_antialias(Cairo::ANTIALIAS_NONE);
     cr->set_line_join(Cairo::LINE_JOIN_MITER);
-    style->render_background(cr, 0., 0., w, h);
+    style->render_background(cr, 0., 0., logical.width, logical.height);
     Glib::RefPtr<Pango::Context> context = get_pango_context ();
     context->set_font_description (style->get_font());
 
@@ -1011,7 +1026,7 @@ bool ThumbBrowserBase::Internal::on_draw(const ::Cairo::RefPtr< Cairo::Context> 
         MYWRITERLOCK(l, parent->entryRW);
 
         for (size_t i = 0; i < parent->fd.size() && !dirty; i++) { // if dirty meanwhile, cancel and wait for next redraw
-            if (!parent->fd[i]->drawable || !parent->fd[i]->insideWindow (0, 0, w, h)) {
+            if (!parent->fd[i]->drawable || !parent->fd[i]->insideWindow (0, 0, logical.width, logical.height)) {
                 parent->fd[i]->updatepriority = false;
             } else {
                 parent->fd[i]->updatepriority = true;
@@ -1019,7 +1034,7 @@ bool ThumbBrowserBase::Internal::on_draw(const ::Cairo::RefPtr< Cairo::Context> 
             }
         }
     }
-    style->render_frame(cr, 0., 0., w, h);
+    style->render_frame(cr, 0., 0., logical.width, logical.height);
 
     return true;
 }
@@ -1095,19 +1110,22 @@ bool ThumbBrowserBase::Internal::on_scroll_event (GdkEventScroll* event)
     return true;
 }
 
-
 void ThumbBrowserBase::resort ()
 {
     {
         MYWRITERLOCK(l, entryRW);
 
+        const auto& options = App::get().options();
         std::sort(
             fd.begin(),
             fd.end(),
-            [](const ThumbBrowserEntryBase* a, const ThumbBrowserEntryBase* b)
+            [&](const ThumbBrowserEntryBase* a, const ThumbBrowserEntryBase* b)
             {
-                bool lt = a->compare(*b, options.sortMethod);
-                return options.sortDescending ? !lt : lt;
+                if (!options.sortDescending) {
+                    return a->compare(*b, options.sortMethod);
+                } else {
+                    return b->compare(*a, options.sortMethod);
+                }
             }
         );
     }
@@ -1129,6 +1147,7 @@ void ThumbBrowserBase::zoomChanged (bool zoomIn)
     int newHeight = 0;
     int optThumbSize = getThumbnailHeight();
 
+    const auto& options = App::get().options();
     if (zoomIn)
         for (size_t i = 0; i < options.thumbnailZoomRatios.size(); i++) {
             newHeight = (int)(options.thumbnailZoomRatios[i] * getMaxThumbnailHeight());
@@ -1212,6 +1231,7 @@ void ThumbBrowserBase::enableTabMode(bool enable)
     location = enable ? THLOC_EDITOR : THLOC_FILEBROWSER;
     arrangement = enable ? ThumbBrowserBase::TB_Horizontal : ThumbBrowserBase::TB_Vertical;
 
+    const auto& options = App::get().options();
     if ((!options.sameThumbSize && (options.thumbSizeTab != options.thumbSize)) || (options.showFileNames || options.filmStripShowFileNames)) {
 
         MYWRITERLOCK(l, entryRW);
@@ -1248,15 +1268,21 @@ void ThumbBrowserBase::insertEntry (ThumbBrowserEntryBase* entry)
     {
         MYWRITERLOCK(l, entryRW);
 
+        const auto& options = App::get().options();
+        entry->onDeviceScaleChanged(lastDeviceScale);
+
         fd.insert(
             std::lower_bound(
                 fd.begin(),
                 fd.end(),
                 entry,
-                [](const ThumbBrowserEntryBase* a, const ThumbBrowserEntryBase* b)
+                [&](const ThumbBrowserEntryBase* a, const ThumbBrowserEntryBase* b)
                 {
-                    bool lt = a->compare(*b, options.sortMethod);
-                    return options.sortDescending ? !lt : lt;
+                    if (!options.sortDescending) {
+                        return a->compare(*b, options.sortMethod);
+                    } else {
+                        return b->compare(*a, options.sortMethod);
+                    }
                 }
             ),
             entry

@@ -45,6 +45,7 @@ IndicateClippedPanel::IndicateClippedPanel (ImageArea* ia) :
     indClippedH = Gtk::manage (new Gtk::ToggleButton ());
     indClippedH->set_relief(Gtk::RELIEF_NONE);
     indClippedH->add (*Gtk::manage (new RTImage ("warning-highlights", Gtk::ICON_SIZE_LARGE_TOOLBAR)));
+    const auto& options = App::get().options();
     tt = Glib::ustring::compose("%1\n%2 = %3", M("MAIN_TOOLTIP_INDCLIPPEDH"), M("MAIN_TOOLTIP_THRESHOLD"), options.highlightThreshold);
 
     if (tt.find("&lt;") == Glib::ustring::npos && tt.find("&gt;") == Glib::ustring::npos) {

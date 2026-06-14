@@ -70,6 +70,8 @@ RTImage::RTImage (const Glib::ustring& iconName, const Gtk::IconSize iconSize) :
     if (surface) {
         set(surface->get());
     }
+
+    conn = RTScalable::connectToChanged(sigc::mem_fun(*this, &RTImage::onUpdate));
 }
 
 RTImage::RTImage (const Glib::RefPtr<const Gio::Icon>& gIcon, const Gtk::IconSize iconSize) :
@@ -80,6 +82,15 @@ RTImage::RTImage (const Glib::RefPtr<const Gio::Icon>& gIcon, const Gtk::IconSiz
 {
     // Configure RTImage based on g_icon
     set(this->g_icon, this->size);
+}
+
+void RTImage::onUpdate(double /*dpi*/, int /*scale*/)
+{
+    if (surface) {
+        // Trigger an update of the image
+        set(surface->get());
+        queue_draw();
+    }
 }
 
 void RTImage::set_from_icon_name(const Glib::ustring& iconName)

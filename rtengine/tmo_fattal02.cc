@@ -490,7 +490,7 @@ void tmo_fattal02(size_t width,
     #pragma omp parallel if(multithread)
 #endif
     {
-#ifdef __SSE2__
+#if defined(__SSE2__) || defined(RT_SIMDE)
         const vfloat epsv = F2V(eps);
         const vfloat tempv = F2V(temp);
 #endif
@@ -500,7 +500,7 @@ void tmo_fattal02(size_t width,
 
         for (size_t i = 0 ; i < height ; ++i) {
             size_t j = 0;
-#ifdef __SSE2__
+#if defined(__SSE2__) || defined(RT_SIMDE)
 
             for (; j < width - 3; j += 4) {
                 STVFU((*H)[i][j], xlogf(tempv * LVFU(Y[i][j]) + epsv));
@@ -662,7 +662,7 @@ void tmo_fattal02(size_t width,
     #pragma omp parallel if(multithread)
 #endif
     {
-#ifdef __SSE2__
+#if defined(__SSE2__) || defined(RT_SIMDE)
         vfloat gammav = F2V(gamma);
 #endif
 #ifdef _OPENMP
@@ -671,7 +671,7 @@ void tmo_fattal02(size_t width,
 
         for (size_t i = 0 ; i < height ; i++) {
             size_t j = 0;
-#ifdef __SSE2__
+#if defined(__SSE2__) || defined(RT_SIMDE)
 
             for (; j < width - 3; j += 4) {
                 STVFU(L[i][j], xexpf(gammav * LVFU(L[i][j])));

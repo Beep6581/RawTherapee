@@ -1,5 +1,5 @@
 /* -*- C++ -*-
- * Copyright 2019-2024 LibRaw LLC (info@libraw.org)
+ * Copyright 2019-2025 LibRaw LLC (info@libraw.org)
  *
  LibRaw uses code from dcraw.c -- Dave Coffin's raw photo decoder,
  dcraw.c is copyright 1997-2018 by Dave Coffin, dcoffin a cybercom o net.
@@ -26,7 +26,8 @@ void LibRaw::bad_pixels(const char *cfname)
 {
   FILE *fp = NULL;
   char *cp, line[128];
-  int time, row, col, r, c, rad, tot, n;
+  int row, col, r, c, rad, tot, n;
+  long long int time;
 
   if (!filters)
     return;
@@ -43,7 +44,7 @@ void LibRaw::bad_pixels(const char *cfname)
     cp = strchr(line, '#');
     if (cp)
       *cp = 0;
-    if (sscanf(line, "%d %d %d", &col, &row, &time) != 3)
+    if (sscanf(line, "%d %d %lld", &col, &row, &time) != 3)
       continue;
     if ((unsigned)col >= width || (unsigned)row >= height)
       continue;

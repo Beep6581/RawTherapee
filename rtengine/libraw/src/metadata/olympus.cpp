@@ -1,5 +1,5 @@
 /* -*- C++ -*-
- * Copyright 2019-2024 LibRaw LLC (info@libraw.org)
+ * Copyright 2019-2025 LibRaw LLC (info@libraw.org)
  *
  LibRaw is free software; you can redistribute it and/or modify
  it under the terms of the one of two licenses as you choose:
@@ -134,7 +134,7 @@ void LibRaw::parseOlympus_Equipment(unsigned tag, unsigned /*type */, unsigned l
     break;
   case 0x0201:
   {
-    unsigned char bits[4];
+	unsigned char bits[4] = { 0,0,0,0 };
     fread(bits, 1, 4, ifp);
     ilm.LensID = (unsigned long long)bits[0] << 16 |
                  (unsigned long long)bits[2] << 8 | (unsigned long long)bits[3];

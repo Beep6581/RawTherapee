@@ -26,8 +26,6 @@
 #include "multilangmgr.h"
 #include "rtengine/rtengine.h"
 
-#undef THREAD_PRIORITY_NORMAL
-
 class PLDBridge final :
     public rtengine::ProgressListener
 {

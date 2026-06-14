@@ -22,14 +22,13 @@
 #include "options.h"
 
 #ifdef _WIN32
-#include <windows.h>
+#include "rtengine/leanwindows.h"
 #include <mmsystem.h>
 #endif
 
 #if defined(__linux__) && defined(USE_CANBERRA)
 #include <canberra-gtk.h>
 #endif
-
 
 void SoundManager::init()
 {
@@ -49,7 +48,7 @@ void SoundManager::init()
 // param is either file name or name of the system event on Windows (e.g. "SystemAsterisk" or "SystemDefault").
 void SoundManager::playSoundAsync(const Glib::ustring &sound)
 {
-    if (sound.empty() || !options.sndEnable) {
+    if (sound.empty() || !App::get().options().sndEnable) {
         return;
     }
 

@@ -18,17 +18,17 @@
  */
 #pragma once
 
-#include <vector>
+#include "guiutils.h"
+#include "pparamschangelistener.h"
+#include "profilechangelistener.h"
+#include "windows/partialpastedlg.h"
+
+#include "rtengine/noncopyable.h"
+#include "rtengine/profilestore.h"
 
 #include <gtkmm.h>
 
-#include "guiutils.h"
-#include "partialpastedlg.h"
-#include "pparamschangelistener.h"
-#include "profilechangelistener.h"
-
-#include "rtengine/profilestore.h"
-#include "rtengine/noncopyable.h"
+#include <vector>
 
 class ProfileStoreComboBox;
 

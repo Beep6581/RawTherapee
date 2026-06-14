@@ -18,20 +18,21 @@
  */
 #include "filepanel.h"
 
-#include "dirbrowser.h"
 #include "batchtoolpanelcoord.h"
+#include "dirbrowser.h"
 #include "editorpanel.h"
-#include "rtwindow.h"
 #include "inspector.h"
 #include "placesbrowser.h"
 #include "thumbnail.h"
+#include "windows/rtwindow.h"
 
 #ifdef _WIN32
-#include "windows.h"
-#endif
+#include "rtengine/leanwindows.h"
+#endif // _WIN32
 
 FilePanel::FilePanel () : parent(nullptr), error(0)
 {
+    const auto& options = App::get().options();
 
     // Contains everything except for the batch Tool Panel and tabs (Fast Export, Inspect, etc)
     dirpaned = Gtk::manage ( new Gtk::Paned () );
@@ -186,6 +187,7 @@ void FilePanel::setAspect ()
 {
     int winW, winH;
     parent->get_size(winW, winH);
+    const auto& options = App::get().options();
     placespaned->set_position(options.dirBrowserHeight);
     dirpaned->set_position(options.dirBrowserWidth);
     tpcPaned->set_position(options.browserToolPanelHeight);
@@ -206,17 +208,18 @@ void FilePanel::init ()
     dirBrowser->fillDirTree ();
     placesBrowser->refreshPlacesList ();
 
-    if (!argv1.empty() && Glib::file_test (argv1, Glib::FILE_TEST_EXISTS)) {
-        Glib::ustring d(argv1);
+    if (!App::get().argv1().empty() && Glib::file_test (App::get().argv1(), Glib::FILE_TEST_EXISTS)) {
+        Glib::ustring d(App::get().argv1());
         if (!Glib::file_test(d, Glib::FILE_TEST_IS_DIR)) {
             d = Glib::path_get_dirname(d);
         }
         dirBrowser->open(d);
     } else {
+        const auto& options = App::get().options();
         if (options.startupDir == STARTUPDIR_HOME) {
             dirBrowser->open (PlacesBrowser::userPicturesDir ());
         } else if (options.startupDir == STARTUPDIR_CURRENT) {
-            dirBrowser->open (argv0);
+            dirBrowser->open (App::get().argv0());
         } else if (options.startupDir == STARTUPDIR_CUSTOM || options.startupDir == STARTUPDIR_LAST) {
             if (options.startupPath.length() && Glib::file_test(options.startupPath, Glib::FILE_TEST_EXISTS) && Glib::file_test(options.startupPath, Glib::FILE_TEST_IS_DIR)) {
                 dirBrowser->open (options.startupPath);
@@ -237,6 +240,12 @@ void FilePanel::on_NB_switch_page(Gtk::Widget* page, guint page_num)
         // switching the inspector "off"
         fileCatalog->disableInspector();
     }
+    if (page == tpcPaned) {
+        // Batch Edit
+        tpc->enableAutoUpdate();
+    } else {
+        tpc->disableAutoUpdate();
+    }
 }
 
 bool FilePanel::fileSelected (Thumbnail* thm)
@@ -246,11 +255,12 @@ bool FilePanel::fileSelected (Thumbnail* thm)
     }
 
     // Check if it's already open BEFORE loading the file
-    if (options.tabbedUI && parent->selectEditorPanel(thm->getFileName())) {
+    if (App::get().options().tabbedUI && parent->selectEditorPanel(thm->getFileName())) {
+        thm->decreaseRef();
         return true;
     }
 
-    // try to open the file
+    // Check if the image is already being opened and set the image loading status if it is not
     bool loading = thm->imageLoad( true );
 
     if( !loading ) {
@@ -294,6 +304,9 @@ bool FilePanel::imageLoaded( Thumbnail* thm, ProgressConnector<rtengine::Initial
         }
     }
 
+    const auto& options = App::get().options();
+    bool decThumbRef = false;
+
     // The purpose of the pendingLoads vector is to open tabs in the same order as the loads where initiated. It has no effect on single editor mode.
     while (pendingLoads.size() > 0 && pendingLoads.front()->complete) {
         pendingLoad *pl = pendingLoads.front();
@@ -317,6 +330,7 @@ bool FilePanel::imageLoaded( Thumbnail* thm, ProgressConnector<rtengine::Initial
                         Glib::ustring msg_ = Glib::ustring("<b>") + M("MAIN_MSG_CANNOTLOAD") + " \"" + escapeHtmlChars(thm->getFileName()) + "\" .\n" + M("MAIN_MSG_TOOMANYOPENEDITORS") + "</b>";
                         Gtk::MessageDialog msgd (*parent, msg_, true, Gtk::MESSAGE_ERROR, Gtk::BUTTONS_OK, true);
                         msgd.run ();
+                        decThumbRef = true;
                         goto MAXGDIHANDLESREACHED;
                     }
 #endif
@@ -338,6 +352,7 @@ bool FilePanel::imageLoaded( Thumbnail* thm, ProgressConnector<rtengine::Initial
             Glib::ustring msg_ = Glib::ustring("<b>") + M("MAIN_MSG_CANNOTLOAD") + " \"" + escapeHtmlChars(thm->getFileName()) + "\" .\n</b>";
             Gtk::MessageDialog msgd (*parent, msg_, true, Gtk::MESSAGE_ERROR, Gtk::BUTTONS_OK, true);
             msgd.run ();
+            decThumbRef = true;
         }
 #ifdef _WIN32
 MAXGDIHANDLESREACHED:
@@ -357,12 +372,16 @@ MAXGDIHANDLESREACHED:
     pendingLoadMutex.unlock();
 
     thm->imageLoad( false );
+    if (decThumbRef) {
+        thm->decreaseRef();
+    }
 
     return false; // MUST return false from idle function
 }
 
 void FilePanel::saveOptions ()
 {
+    auto& options = App::get().mut_options();
 
     int winW, winH;
     parent->get_size(winW, winH);

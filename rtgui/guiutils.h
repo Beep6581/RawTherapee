@@ -31,20 +31,6 @@
 #include "rtengine/coord.h"
 #include "rtengine/noncopyable.h"
 
-namespace rtengine
-{
-
-namespace procparams
-{
-
-class ProcParams;
-
-struct CropParams;
-
-}
-
-}
-
 class Adjuster;
 class RTImage;
 class ToolPanel;
@@ -53,17 +39,33 @@ Glib::ustring escapeHtmlChars(const Glib::ustring &src);
 bool removeIfThere (Gtk::Container* cont, Gtk::Widget* w, bool increference = true);
 bool confirmOverwrite (Gtk::Window& parent, const std::string& filename);
 void writeFailed (Gtk::Window& parent, const std::string& filename);
-void drawCrop (Cairo::RefPtr<Cairo::Context> cr, int imx, int imy, int imw, int imh, int startx, int starty, double scale, const rtengine::procparams::CropParams& cparams, bool drawGuide = true, bool useBgColor = true, bool fullImageVisible = true);
 gboolean acquireGUI(void* data);
 void setExpandAlignProperties(Gtk::Widget *widget, bool hExpand, bool vExpand, enum Gtk::Align hAlign, enum Gtk::Align vAlign);
 Gtk::Border getPadding(const Glib::RefPtr<Gtk::StyleContext> style);
 
+/**
+ * @class IdleRegister
+ * 
+ * @brief A helper class for registering functions to be called asynchronously when there are no higher priority events pending.
+ * Purpose of the IdleRegister is to make sure in-flight idle functions queued by `IdleRegister::add()` are unregistered and not
+ * called after destruction.
+ * 
+ * Uses gdk_threads_add_idle_full
+ * 
+ * Notes:
+ * It's best to call `IdleRegister::destroy()` in the destructor of the class owning the `IdleRegister` instance.
+ * Otherwise make sure, it is the last member which will be deleted first.
+ */
 class IdleRegister final :
     public rtengine::NonCopyable
 {
 public:
     ~IdleRegister();
 
+    /**
+     * Registers a function to be called from the GTK event main loop later when there are no higher priority events pending.
+     * If the registered function returns false, it is automatically cleared from the list of event sources and will not be called again.
+     */
     void add(std::function<bool ()> function, gint priority = G_PRIORITY_DEFAULT_IDLE);
     void destroy();
 
@@ -298,9 +300,9 @@ public:
     /// If not inconsistent, set the enabled button to true or false and emit the message if the state is different
     /// If inconsistent, set the internal value to true or false, but do not update the image and do not emit the message
     void setEnabled(bool isEnabled);
-    /// Adds a Tooltip to the Enabled button, if it exist ; do nothing otherwise
-    void setEnabledTooltipMarkup(Glib::ustring tooltipMarkup);
-    void setEnabledTooltipText(Glib::ustring tooltipText);
+    /// Adds a tooltip to the header
+    void setEnabledTooltipMarkup(const Glib::ustring& tooltipMarkup);
+    void setEnabledTooltipText(const Glib::ustring& tooltipText);
 
     /// Get the header widget. It'll send back the Gtk::Label* if it has been instantiated with a simple text
     Gtk::Widget* getLabelWidget() const
@@ -683,8 +685,8 @@ public:
     void copyRGBCharData(const unsigned char *srcData, int srcX, int srcY, int srcW, int srcH, int srcRowStride, int dstX, int dstY);
     void copySurface(Glib::RefPtr<Gdk::Window> window, Gdk::Rectangle *rectangle = nullptr);
     void copySurface(BackBuffer *destBackBuffer, Gdk::Rectangle *rectangle = nullptr);
-    void copySurface(Cairo::RefPtr<Cairo::ImageSurface> destSurface, Gdk::Rectangle *rectangle = nullptr);
-    void copySurface(Cairo::RefPtr<Cairo::Context> crDest, Gdk::Rectangle *destRectangle = nullptr);
+    void copySurface(const Cairo::RefPtr<Cairo::ImageSurface>& destSurface, Gdk::Rectangle *rectangle = nullptr);
+    void copySurface(const Cairo::RefPtr<Cairo::Context>& crDest, Gdk::Rectangle *destRectangle = nullptr);
 
     void setDirty(bool isDirty)
     {

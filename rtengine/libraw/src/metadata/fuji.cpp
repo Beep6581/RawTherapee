@@ -1,5 +1,5 @@
 /* -*- C++ -*-
- * Copyright 2019-2024 LibRaw LLC (info@libraw.org)
+ * Copyright 2019-2025 LibRaw LLC (info@libraw.org)
  *
  LibRaw uses code from dcraw.c -- Dave Coffin's raw photo decoder,
  dcraw.c is copyright 1997-2018 by Dave Coffin, dcoffin a cybercom o net.
@@ -360,19 +360,25 @@ void LibRaw::parseAdobeRAFMakernote()
               (imFuji.RAFDataVersion == 0x0265) || // X-E4, X-T5
               (imFuji.RAFDataVersion == 0x0266) || // X-T30 II
               (imFuji.RAFDataVersion == 0x0267) || // GFX 100 II
+              (imFuji.RAFDataVersion == 0x0368) || // GFX 100S II
               (imFuji.RAFDataVersion == 0x0369) || // X100VI
-                !strcmp(model, "X-Pro3")     ||
-                !strcmp(model, "GFX 100 II") || !strcmp(model, "GFX100 II")  ||
-                !strcmp(model, "GFX 100S")   || !strcmp(model, "GFX100S")    ||
-                !strcmp(model, "GFX 50S II") || !strcmp(model, "GFX50S II")  ||
-                !strcmp(model, "X100VI")     ||
-                !strcmp(model, "X100V")      ||
-                !strcmp(model, "X-H2")       ||
-                !strcmp(model, "X-H2S")      ||
-                !strcmp(model, "X-T4")       ||
-                !strcmp(model, "X-T5")       ||
-                !strcmp(model, "X-E4")       ||
-                !strcmp(model, "X-T30 II")   ||
+              (imFuji.RAFDataVersion == 0x036a) || // X-T50
+              (imFuji.RAFDataVersion == 0x036b) || // X-M5
+                !strcmp(model, "X-Pro3")      ||
+                !strcmp(model, "GFX 100S II") || !strcmp(model, "GFX100S II") ||
+                !strcmp(model, "GFX 100S")    || !strcmp(model, "GFX100S")    ||
+                !strcmp(model, "GFX 100 II")  || !strcmp(model, "GFX100 II")  ||
+                !strcmp(model, "GFX 50S II")  || !strcmp(model, "GFX50S II")  ||
+                !strcmp(model, "X100VI")      ||
+                !strcmp(model, "X100V")       ||
+                !strcmp(model, "X-H2")        ||
+                !strcmp(model, "X-H2S")       ||
+                !strcmp(model, "X-T4")        ||
+                !strcmp(model, "X-T50")       ||
+                !strcmp(model, "X-T5")        ||
+                !strcmp(model, "X-M5")        ||
+                !strcmp(model, "X-E4")        ||
+                !strcmp(model, "X-T30 II")    ||
                 !strcmp(model, "X-S10"))
             is34 = 1;
 
@@ -510,9 +516,21 @@ void LibRaw::parseAdobeRAFMakernote()
           {
             wb_section_offset = 0x1840;
           }
+          else if (imFuji.RAFDataVersion == 0x0368) // GFX 100S II
+          {
+            wb_section_offset = 0x0cba;
+          }
           else if (imFuji.RAFDataVersion == 0x0369) // X100VI
           {
             wb_section_offset = 0x0c5a;
+          }
+          else if (imFuji.RAFDataVersion == 0x036a) // X-T50
+          {
+            wb_section_offset = 0x0cca;
+          }
+          else if (imFuji.RAFDataVersion == 0x036b) // X-M5
+          {
+            wb_section_offset = 0x0cea;
           }
 
 /* try for unknown RAF Data versions */
@@ -681,6 +699,22 @@ void LibRaw::parseAdobeRAFMakernote()
           {
             if (PrivateMknBuf.isWB(posPrivateMknBuf + 0x0cae))
               wb_section_offset = 0x0cae;
+          }
+          else if (!strcmp(model, "GFX 100S II") ||
+                   !strcmp(model, "GFX100S II"))
+          {
+            if (PrivateMknBuf.isWB(posPrivateMknBuf + 0x0cba))
+              wb_section_offset = 0x0cba;
+          }
+          else if (!strcmp(model, "X-T50"))
+          {
+            if (PrivateMknBuf.isWB(posPrivateMknBuf + 0x0cca))
+              wb_section_offset = 0x0cca;
+          }
+          else if (!strcmp(model, "X-M5"))
+          {
+            if (PrivateMknBuf.isWB(posPrivateMknBuf + 0x0cea))
+              wb_section_offset = 0x0cea;
           }
 
 /* no RAF Data version for the models below */

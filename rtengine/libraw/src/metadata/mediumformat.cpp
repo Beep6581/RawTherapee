@@ -1,5 +1,5 @@
 /* -*- C++ -*-
- * Copyright 2019-2024 LibRaw LLC (info@libraw.org)
+ * Copyright 2019-2025 LibRaw LLC (info@libraw.org)
  *
  LibRaw uses code from dcraw.c -- Dave Coffin's raw photo decoder,
  dcraw.c is copyright 1997-2018 by Dave Coffin, dcoffin a cybercom o net.
@@ -38,6 +38,8 @@ void LibRaw::parse_phase_one(INT64 base)
   if (entries > 8192)
     return; // too much??
   get4();
+  INT64 fsize = ifp->size();
+
   while (entries--)
   {
     tag = get4();
@@ -50,6 +52,14 @@ void LibRaw::parse_phase_one(INT64 base)
 	bool do_seek = (tag < 0x0108 || tag > 0x0110); // to make it single rule, not copy-paste
 	if(do_seek)
 		fseek(ifp, base + data, SEEK_SET);
+
+	INT64 savepos = ftell(ifp);
+	if (len > 8 && savepos + len > 2 * fsize)
+    {
+      fseek(ifp, save, SEEK_SET); // Recover tiff-read position!!
+      continue;
+    }
+
     switch (tag)
     {
 
@@ -279,6 +289,14 @@ void LibRaw::parse_phase_one(INT64 base)
       data = get4();
       save = ftell(ifp);
       fseek(ifp, meta_offset + data, SEEK_SET);
+
+	  INT64 savepos = ftell(ifp);
+      if (len > 8 && savepos + len > 2 * fsize)
+      {
+        fseek(ifp, save, SEEK_SET); // Recover tiff-read position!!
+        continue;
+      }
+
       if (tag == 0x0407)
       {
         stmread(imgdata.shootinginfo.BodySerial, len, ifp);
@@ -389,7 +407,9 @@ void LibRaw::parse_mos(INT64 offset)
     if (get4() != 0x504b5453)
       break;
     get4();
+    memset(data,0,sizeof(data));
     fread(data, 1, 40, ifp);
+    data[39] = 0;
     skip = get4();
     from = ftell(ifp);
 

@@ -1,5 +1,5 @@
 /* -*- C++ -*-
- * Copyright 2019-2024 LibRaw LLC (info@libraw.org)
+ * Copyright 2019-2025 LibRaw LLC (info@libraw.org)
  *
  LibRaw uses code from dcraw.c -- Dave Coffin's raw photo decoder,
  dcraw.c is copyright 1997-2018 by Dave Coffin, dcoffin a cybercom o net.
@@ -195,10 +195,10 @@ void LibRaw::write_ppm_tiff()
 	{
 	    if(imgdata.params.output_flags & LIBRAW_OUTPUT_FLAGS_PPMMETA)
 	      fprintf(ofp,
-              "P7\n# EXPTIME=%0.5f\n# TIMESTAMP=%d\n# ISOSPEED=%d\n"
+              "P7\n# EXPTIME=%0.5f\n# TIMESTAMP=%lld\n# ISOSPEED=%d\n"
               "# APERTURE=%0.1f\n# FOCALLEN=%0.1f\n# MAKE=%s\n# MODEL=%s\n"
               "WIDTH %d\nHEIGHT %d\nDEPTH %d\nMAXVAL %d\nTUPLTYPE %s\nENDHDR\n",
-              shutter, (int)timestamp, (int)iso_speed,aperture, 
+              shutter, (long long int)timestamp, (int)iso_speed,aperture, 
 	      focal_len, make, model,
 	      width, height, colors, (1 << output_bps) - 1, cdesc);
 	    else
@@ -210,11 +210,11 @@ void LibRaw::write_ppm_tiff()
         else
 	{
 	    if(imgdata.params.output_flags & LIBRAW_OUTPUT_FLAGS_PPMMETA)
-	    	fprintf(ofp, "P%d\n# EXPTIME=%0.5f\n# TIMESTAMP=%d\n"
+	    	fprintf(ofp, "P%d\n# EXPTIME=%0.5f\n# TIMESTAMP=%lld\n"
 		"# ISOSPEED=%d\n# APERTURE=%0.1f\n# FOCALLEN=%0.1f\n"
 		"# MAKE=%s\n# MODEL=%s\n%d %d\n%d\n",
                 colors/2+5,
-		shutter, (int)timestamp, (int)iso_speed,aperture,focal_len,
+		shutter, (long long int)timestamp, (int)iso_speed,aperture,focal_len,
 		make,model,
 		width, height, (1 << output_bps)-1);
 	    else

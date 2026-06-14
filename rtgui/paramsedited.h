@@ -19,6 +19,7 @@
 #pragma once
 
 #include <array>
+#include <bitset>
 #include <vector>
 
 namespace rtengine
@@ -227,6 +228,10 @@ struct CaptureSharpeningParamsEdited {
     bool deconvradiusOffset;
     bool deconviter;
     bool deconvitercheck;
+    bool showcap;
+    bool noisecap;
+    bool noisecaptype;
+    bool noisecapafter;
     bool isUnchanged() const;
 };
 
@@ -273,6 +278,9 @@ struct ImpulseDenoiseParamsEdited {
 
 struct ColorAppearanceParamsEdited {
     bool curve;
+    bool curvered;
+    bool curvegreen;
+    bool curveblue;
     bool curve2;
     bool curve3;
     bool curveMode;
@@ -301,10 +309,16 @@ struct ColorAppearanceParamsEdited {
     bool qbright;
     bool chroma;
     bool schroma;
+    bool schromared;
+    bool schromagreen;
+    bool schromablue;
     bool mchroma;
     bool contrast;
     bool qcontrast;
     bool colorh;
+    bool colorhred;
+    bool colorhgreen;
+    bool colorhblue;
     bool rstprotection;
     bool surrsource;
     bool gamut;
@@ -375,8 +389,11 @@ struct CGParamsEdited {
     bool th_m;
     bool th_y;
     bool d_c;
+    bool autodc;
     bool d_m;
+    bool autodm;
     bool d_y;
+    bool autody;
     bool pwr;
     bool colorspace;
     bool rolloff;
@@ -399,7 +416,17 @@ struct CropParamsEdited {
     bool fixratio;
     bool ratio;
     bool orientation;
-    bool guide;
+};
+
+struct CropGuideParamsEdited {
+    std::bitset<9> presets;
+    bool enabled;
+    bool mirror_golden_triangle;
+    bool rotate_golden_ratio;
+    bool mirror_golden_ratio;
+    bool aspect_ratios;
+    bool bleed;
+    bool basis;
 };
 
 struct CoarseTransformParamsEdited {
@@ -411,6 +438,8 @@ struct CoarseTransformParamsEdited {
 struct CommonTransformParamsEdited {
     bool method;
     bool scale;
+    bool scale_horizontally;
+    bool scale_vertically;
     bool autofill;
 };
 
@@ -597,21 +626,33 @@ public:
         bool complexshadhigh;
         bool shMethod;
         bool ghsMethod;
+        bool ghsMatmet;
         bool ghsMode;
         bool ghs_D;
         bool ghs_slope;
         bool ghs_chro;
         bool ghs_B;
         bool ghs_SP;
+        bool SPAutoRadius;
         bool ghs_LP;
         bool ghs_HP;
         bool ghs_LC;
         bool ghs_MID;
         bool ghs_BLP;
         bool ghs_HLP;
+        bool ghs_autobw;
+        bool ghs_agx;
         bool ghs_smooth;
         bool ghs_inv;
-        
+        bool mich_exp;
+        bool mich_spar;
+        bool mich_kpar;
+        bool mich_sat;
+        bool mich_out;
+        bool mich_black;
+        bool mich_white;
+        bool mich_high;
+        bool mich_jdx;
         bool multsh[7];
         bool highlights;
         bool h_tonalwidth;
@@ -724,6 +765,8 @@ public:
         bool blurMethod;
         bool medMethod;
         bool activlum;
+        bool madlsav[21];
+
         bool noiselumf;
         bool noiselumf0;
         bool noiselumf2;
@@ -747,6 +790,7 @@ public:
         bool detailthr;
         bool locwavcurveden;
         bool locwavcurvehue;
+        bool locwavcurvehuecont;
         bool showmaskblMethodtyp;
         bool CCmaskblcurve;
         bool LLmaskblcurve;
@@ -767,6 +811,15 @@ public:
         bool Lmaskblcurve;
         bool LLmaskblcurvewav;
         bool csthresholdblur;
+        bool denocontrast;
+        bool denoAutocontrast;
+        bool contrshow;
+        bool lockmadl;
+        bool madllock;
+        bool enacontrast;
+        bool denoratio;
+        bool denomask;
+       
         // Tone Mapping
         bool visitonemap;
         bool exptonemap;
@@ -846,6 +899,7 @@ public:
         bool expsharp;
         bool complexsharp;
         bool sharcontrast;
+        bool deconvAutoshar;
         bool sharradius;
         bool sharamount;
         bool shardamping;
@@ -854,6 +908,16 @@ public:
         bool shargam;
         bool sensisha;
         bool inverssha;
+        bool sharshow;
+        bool itercheck;
+        bool methodcap;
+        bool capradius;
+        bool deconvAutoRadius;
+        bool deconvCoBoost;
+        bool deconvCoProt;
+        bool deconvCoLat;
+        bool deconvCogam;
+        bool reparsha;
         // Local Contrast
         bool visicontrast;
         bool expcontrast;
@@ -1071,6 +1135,7 @@ public:
         bool smoothcielum;
         bool smoothciehigh;
         bool smoothcielnk;
+        bool smoothcieinv;
         bool logjz;
         bool sigjz12;
         bool sigjz;
@@ -1103,6 +1168,7 @@ public:
         bool jzcurve;
         bool czcurve;
         bool czjzcurve;
+        bool invcurve;
         bool HHcurvejz;
         bool CHcurvejz;
         bool LHcurvejz;
@@ -1138,7 +1204,9 @@ public:
         bool comprcieth;
         bool gamjcie;
         bool smoothcieth;
+        bool smoothciethtrc;
         bool slopjcie;
+        bool satjcie;
         bool contsig;
         bool skewsig;
         bool whitsig;
@@ -1150,6 +1218,7 @@ public:
         bool kslopesmor;
         bool kslopesmog;
         bool kslopesmob;
+        bool midtciemet;
         bool midtcie;
         bool redxl;
         bool redyl;
@@ -1157,6 +1226,7 @@ public:
         bool greyl;
         bool bluxl;
         bool bluyl;
+        
         bool refi;
         bool shiftxl;
         bool shiftyl;
@@ -1392,16 +1462,21 @@ struct ColorManagementParamsEdited {
 
     bool workingProfile;
     bool workingTRC;
+    bool wgamut;
     bool wGamma;
     bool wSlope;
     bool wmidtcie;
     bool sigmatrc;
     bool offstrc;
     bool residtrc;
+    bool wgampower;
+    bool wgamgain;
     bool pyrwavtrc;
     bool opacityCurveWLI;
 
+    bool wapsat;
     bool wsmoothcie;
+    bool wsmoothciesli;
     bool will;
     bool wprim;
     bool wcat;
@@ -1411,6 +1486,13 @@ struct ColorManagementParamsEdited {
     bool grey;
     bool blux;
     bool bluy;
+    bool redrot;
+    bool redsat;
+    bool grerot;
+    bool gresat;
+    bool blurot;
+    bool blusat;
+    
     bool refi;
     bool shiftx;
     bool shifty;
@@ -1743,6 +1825,7 @@ struct ParamsEdited {
     
     ToneEqualizerParamsEdited toneEqualizer;
     CropParamsEdited crop;
+    CropGuideParamsEdited cropGuide;
     CoarseTransformParamsEdited coarse;
     CommonTransformParamsEdited commonTrans;
     RotateParamsEdited rotate;

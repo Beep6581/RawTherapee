@@ -84,7 +84,7 @@ bool loadFile(
     return res;
 }
 
-#ifdef __SSE2__
+#if defined(__SSE2__) || defined(RT_SIMDE)
 vfloat2 getClutValues(const AlignedBuffer<std::uint16_t>& clut_image, size_t index)
 {
     const vint v_values = _mm_loadu_si128(reinterpret_cast<const vint*>(clut_image.data + index));
@@ -171,7 +171,7 @@ void rtengine::HaldCLUT::getRGB(
 
     const unsigned int level_square = level * level;
 
-#ifdef __SSE2__
+#if defined(__SSE2__) || defined(RT_SIMDE)
     const vfloat v_strength = F2V(strength);
 #endif
 
@@ -182,7 +182,7 @@ void rtengine::HaldCLUT::getRGB(
 
         const unsigned int color = red + green * level + blue * level_square;
 
-#ifndef __SSE2__
+#if ! defined(__SSE2__) && ! defined(RT_SIMDE)
         const float re = *r * flevel_minus_one - red;
         const float gr = *g * flevel_minus_one - green;
         const float bl = *b * flevel_minus_one - blue;
@@ -319,7 +319,7 @@ std::shared_ptr<rtengine::HaldCLUT> rtengine::CLUTStore::getClut(const Glib::ust
 
     const Glib::ustring full_filename =
         !Glib::path_is_absolute(filename)
-            ? Glib::ustring(Glib::build_filename(options.clutsDir, filename))
+            ? Glib::ustring(Glib::build_filename(App::get().options().clutsDir, filename))
             : filename;
 
     if (!cache.get(full_filename, result)) {
@@ -340,6 +340,6 @@ void rtengine::CLUTStore::clearCache()
 }
 
 rtengine::CLUTStore::CLUTStore() :
-    cache(options.clutCacheSize)
+    cache(App::get().options().clutCacheSize)
 {
 }

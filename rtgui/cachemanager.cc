@@ -54,7 +54,7 @@ void CacheManager::init ()
     MyMutex::MyLock lock (mutex);
 
     openEntries.clear ();
-    baseDir = options.cacheBaseDir;
+    baseDir = App::get().options().cacheBaseDir;
 
     auto error = g_mkdir_with_parents (baseDir.c_str(), cacheDirMode);
 
@@ -170,26 +170,19 @@ void CacheManager::deleteEntry (const Glib::ustring& fname)
 
     auto thumbnail = iterator->second;
 
-    // decrease reference count;
-    // this will call back into CacheManager,
-    // so we release the lock for it
-    {
-        lock.release ();
-        thumbnail->decreaseRef ();
-        lock.acquire ();
-    }
-
-    // check again if in the editor,
-    // the thumbnail still exists,
-    // if not, delete it
-    if (openEntries.count (fname) == 0) {
+    if (thumbnail->decreaseRefCacheMgr () == 0) {
+        // If the ref count is not zero, it is open in the editor and the thumbnail can not be deleted.
+        openEntries.erase (fname);
         deleteFiles (fname, thumbnail->getMD5 (), true, true);
+        delete thumbnail;
     }
 }
 
-void CacheManager::clearFromCache (const Glib::ustring& fname, bool purge) const
+void CacheManager::clearFromCache (const Glib::ustring& fname, const Glib::ustring& md5, bool purge) const
 {
-    deleteFiles (fname, getMD5 (fname), true, purge);
+    MyMutex::MyLock lock (mutex);
+
+    deleteFiles (fname, md5, true, purge);
 }
 
 void CacheManager::renameEntry (const std::string& oldfilename, const std::string& oldmd5, const std::string& newfilename)
@@ -198,7 +191,7 @@ void CacheManager::renameEntry (const std::string& oldfilename, const std::strin
 
     const auto newmd5 = getMD5 (newfilename);
 
-    auto error = g_rename (getCacheFileName ("profiles", oldfilename, paramFileExtension, oldmd5).c_str (), getCacheFileName ("profiles", newfilename, paramFileExtension, newmd5).c_str ());
+    auto error = g_rename (getCacheFileName ("profiles", oldfilename, App::PARAM_FILE_EXTENSION, oldmd5).c_str (), getCacheFileName ("profiles", newfilename, App::PARAM_FILE_EXTENSION, newmd5).c_str ());
     error |= g_rename (getCacheFileName ("images", oldfilename, ".rtti", oldmd5).c_str (), getCacheFileName ("images", newfilename, ".rtti", newmd5).c_str ());
     error |= g_rename (getCacheFileName ("embprofiles", oldfilename, ".icc", oldmd5).c_str (), getCacheFileName ("embprofiles", newfilename, ".icc", newmd5).c_str ());
     error |= g_rename (getCacheFileName ("data", oldfilename, ".txt", oldmd5).c_str (), getCacheFileName ("data", newfilename, ".txt", newmd5).c_str ());
@@ -299,7 +292,7 @@ void CacheManager::deleteFiles (const Glib::ustring& fname, const std::string& m
     }
 
     if (purgeProfile) {
-        error |= g_remove (getCacheFileName ("profiles", fname, paramFileExtension, md5).c_str ());
+        error |= g_remove (getCacheFileName ("profiles", fname, App::PARAM_FILE_EXTENSION, md5).c_str ());
     }
 
     if (error != 0 && rtengine::settings->verbose) {
@@ -371,6 +364,7 @@ void CacheManager::applyCacheSizeLimitation () const
         numFiles -= 2; // because . and .. are counted
     }
 
+    const auto& options = App::get().options();
     if (numFiles <= options.maxCacheEntries) {
         return;
     }

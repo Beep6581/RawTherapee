@@ -227,10 +227,10 @@ void Curve::getControlPoint(int cpNum, double &x, double &y) const
 const double CurveFactory::sRGBGamma = 2.2;
 const double CurveFactory::sRGBGammaCurve = 2.4;
 
-void CurveFactory::curveLightBrightColor(const std::vector<double>& curvePoints1, const std::vector<double>& curvePoints2, const std::vector<double>& curvePoints3,
+void CurveFactory::curveLightBrightColor(const std::vector<double>& curvePoints1, const std::vector<double>& curvePointsred , const std::vector<double>& curvePointsgreen, const std::vector<double>& curvePointsblue, const std::vector<double>& curvePoints2, const std::vector<double>& curvePoints3,
         const LUTu & histogram, LUTu & outBeforeCCurveHistogram,//for Luminance
         const LUTu & histogramC, LUTu & outBeforeCCurveHistogramC,//for chroma
-        ColorAppearance & customColCurve1, ColorAppearance & customColCurve2, ColorAppearance & customColCurve3, int skip)
+        ColorAppearance & customColCurve1, ColorAppearance & customColCurvered, ColorAppearance & customColCurvegreen, ColorAppearance & customColCurveblue, ColorAppearance & customColCurve2, ColorAppearance & customColCurve3, int skip)
 {
 
     outBeforeCCurveHistogram.clear();
@@ -278,6 +278,39 @@ void CurveFactory::curveLightBrightColor(const std::vector<double>& curvePoints1
 
         if (!tcurve.isIdentity()) {
             customColCurve1.Set(tcurve);
+        }
+    }
+
+    customColCurvered.Reset();
+
+    if (!curvePointsred.empty() && curvePointsred[0] > DCT_Linear && curvePointsred[0] < DCT_Unchanged) {
+        DiagonalCurve tcurve(curvePointsred, CURVES_MIN_POLY_POINTS / skip);
+
+
+        if (!tcurve.isIdentity()) {
+            customColCurvered.Set(tcurve);
+        }
+    }
+
+    customColCurvegreen.Reset();
+
+    if (!curvePointsgreen.empty() && curvePointsgreen[0] > DCT_Linear && curvePointsgreen[0] < DCT_Unchanged) {
+        DiagonalCurve tcurve(curvePointsgreen, CURVES_MIN_POLY_POINTS / skip);
+
+
+        if (!tcurve.isIdentity()) {
+            customColCurvegreen.Set(tcurve);
+        }
+    }
+
+    customColCurveblue.Reset();
+
+    if (!curvePointsblue.empty() && curvePointsblue[0] > DCT_Linear && curvePointsblue[0] < DCT_Unchanged) {
+        DiagonalCurve tcurve(curvePointsblue, CURVES_MIN_POLY_POINTS / skip);
+
+
+        if (!tcurve.isIdentity()) {
+            customColCurveblue.Set(tcurve);
         }
     }
 
@@ -514,7 +547,7 @@ void CurveFactory::complexCurve (double ecomp, double black, double hlcompr, dou
 
         float scalemshoulder = scale - shoulder;
 
-#ifdef __SSE2__
+#if defined(__SSE2__) || defined(RT_SIMDE)
         int i = shoulder + 1;
 
         if (i & 1) { // original formula, slower than optimized formulas below but only used once or none, so I let it as is for reference
@@ -668,7 +701,7 @@ void CurveFactory::complexCurve (double ecomp, double black, double hlcompr, dou
         }
     }
 
-#ifdef __SSE2__
+#if defined(__SSE2__) || defined(RT_SIMDE)
     vfloat gamma_v = F2V(gamma_);
     vfloat startv = F2V(start);
     vfloat slopev = F2V(slope);
@@ -727,7 +760,7 @@ void CurveFactory::Curvelocalhl(double ecomp, double hlcompr, double hlcomprthre
 
         float scalemshoulder = scale - shoulder;
 
-#ifdef __SSE2__
+#if defined(__SSE2__) || defined(RT_SIMDE)
         int i = shoulder + 1;
 
         if (i & 1) { // original formula, slower than optimized formulas below but only used once or none, so I let it as is for reference
@@ -885,7 +918,7 @@ void CurveFactory::complexCurvelocal(double ecomp, double black, double hlcompr,
 
         float scalemshoulder = scale - shoulder;
 
-#ifdef __SSE2__
+#if defined(__SSE2__) || defined(RT_SIMDE)
         int i = shoulder + 1;
 
         if (i & 1) { // original formula, slower than optimized formulas below but only used once or none, so I let it as is for reference
@@ -954,7 +987,7 @@ void CurveFactory::complexCurvelocal(double ecomp, double black, double hlcompr,
         dcurve[i] = Color::gammatab_bt709[i] / maxran;
     }
 
-#ifdef __SSE2__
+#if defined(__SSE2__) || defined(RT_SIMDE)
     vfloat gamma_v = F2V(gamma_);
     vfloat startv = F2V(start);
     vfloat slopev = F2V(slope);

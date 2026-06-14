@@ -638,6 +638,9 @@ LFLens LFDatabase::findLens(const LFCamera &camera, const Glib::ustring &name, b
                 return bestCandidate;
             }
         }
+
+        // Tries to find the lens by name, possibly splitting the maker and
+        // model from the lens name.
         const auto find_lens_from_name = [](const lfDatabase *database, const lfCamera *cam, const Glib::ustring &lens_name) {
             auto found = database->FindLenses(cam, nullptr, lens_name.c_str());
             for (size_t pos = 0; !found && pos < lens_name.size(); ) {
@@ -660,15 +663,33 @@ LFLens LFDatabase::findLens(const LFCamera &camera, const Glib::ustring &name, b
             }
             return found;
         };
-        auto found = find_lens_from_name(data_, camera.data_, name);
-        if (!found) {
-            // Some names have white-space around the dash(s) while Lensfun does
-            // not have any.
-            const auto formatted_name = trimDashWhitespace(name.raw());
-            if (name != formatted_name) {
-                found = find_lens_from_name(data_, camera.data_, formatted_name);
+
+        // Find the lens, starting with the mount, then trying without the mount
+        // if no match is found. The latter is necessary for certain adapted
+        // lenses.
+        const lfLens **found = nullptr;
+        lfCamera camera_without_mount;
+        std::vector<const lfCamera *> camera_ptrs = {camera.data_};
+        if (camera.data_ && camera.data_->Mount) {
+            camera_without_mount = *(camera.data_);
+            camera_without_mount.SetMount(nullptr);
+            camera_ptrs.push_back(&camera_without_mount);
+        }
+        for (auto camera_data : camera_ptrs) {
+            if (!found) {
+                found = find_lens_from_name(data_, camera_data, name);
+            }
+            if (!found) {
+                // Some names have white-space around the dash(s) while Lensfun
+                // does not have any.
+                const auto formatted_name = trimDashWhitespace(name.raw());
+                if (name != formatted_name) {
+                    found = find_lens_from_name(data_, camera_data, formatted_name);
+                }
             }
         }
+
+        // Finally, handle the case of fixed-lens cameras.
         if (!found && camera && camera.isFixedLens()) {
             found = data_->FindLenses(camera.data_, nullptr, "");
         }

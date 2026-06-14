@@ -18,19 +18,21 @@
  */
 #include "multilangmgr.h"
 
+#include "rtengine/settings.h"
+
 #include <fstream>
 #include <glib.h>
 #include <iostream>
 #include <utility>
+
 #ifdef _WIN32
-#include <windows.h>
+#include "rtengine/leanwindows.h"
 #include <winnls.h>
 #endif
+
 #ifdef __APPLE__
 #include <CoreFoundation/CoreFoundation.h>
 #endif
-
-#include "rtengine/settings.h"
 
 namespace
 {
@@ -63,6 +65,7 @@ struct LocaleToLang : private std::map<std::pair<Glib::ustring, Glib::ustring>, 
         emplace (key ("he", "IL"), "Hebrew");
         emplace (key ("it", ""  ), "Italiano");
         emplace (key ("ja", "JP"), "Japanese");
+        emplace (key ("ko", ""  ), "Korean");
         emplace (key ("lv", ""  ), "Latvian");
         emplace (key ("hu", ""  ), "Magyar");
         emplace (key ("nl", ""  ), "Nederlands");

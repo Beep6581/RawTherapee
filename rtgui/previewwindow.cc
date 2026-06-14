@@ -17,15 +17,18 @@
  *  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
  */
 #include "previewwindow.h"
-#include "guiutils.h"
-#include "imagearea.h"
+
 #include "cursormanager.h"
+#include "drawcropguide.h"
+#include "guiutils.h"
+#include "hidpi.h"
+#include "imagearea.h"
 #include "options.h"
 #include "rtscalable.h"
 
 #include "rtengine/procparams.h"
 
-PreviewWindow::PreviewWindow () : previewHandler(nullptr), mainCropWin(nullptr), imageArea(nullptr), imgX(0), imgY(0), imgW(0), imgH(0),
+PreviewWindow::PreviewWindow () : previewHandler(nullptr), mainCropWin(nullptr), imageArea(nullptr), imgW(0), imgH(0),
     zoom(0.0), press_x(0), press_y(0), isMoving(false), needsUpdate(false), cursor_type(CSUndefined)
 
 {
@@ -48,8 +51,8 @@ void PreviewWindow::getObservedFrameArea (int& x, int& y, int& w, int& h)
         int cropX, cropY, cropW, cropH;
         mainCropWin->getCropRectangle (cropX, cropY, cropW, cropH);
         // translate it to screen coordinates
-        x = imgX + round(cropX * zoom);
-        y = imgY + round(cropY * zoom);
+        x = round(cropX * zoom);
+        y = round(cropY * zoom);
         w = round(cropW * zoom);
         h = round(cropH * zoom);
     }
@@ -57,8 +60,6 @@ void PreviewWindow::getObservedFrameArea (int& x, int& y, int& w, int& h)
 
 void PreviewWindow::updatePreviewImage ()
 {
-
-    int W = get_width(), H = get_height();
     Glib::RefPtr<Gdk::Window> wind = get_window();
 
     if( ! wind ) {
@@ -66,9 +67,34 @@ void PreviewWindow::updatePreviewImage ()
         return;
     }
 
-    backBuffer = Cairo::RefPtr<BackBuffer> ( new BackBuffer(W, H, Cairo::FORMAT_ARGB32) );
+    backBuffer.clear();
+    if (!previewHandler) {
+        needsUpdate = true;
+        return;
+    }
+
+    int scale = RTScalable::getScaleForWidget(this);
+    auto logical = hidpi::LogicalSize::forWidget(this);
+
+    hidpi::DevicePixbuf result = previewHandler->getRoughImage(logical, scale, zoom);
+    if (!result.pixbuf()) {
+        needsUpdate = true;
+        return;
+    }
+    
+    hidpi::ScaledDeviceSize device = result.size();
+    imgW = device.width;
+    imgH = device.height;
+
+    backBuffer = Cairo::RefPtr<BackBuffer> ( new BackBuffer(
+        device.width, device.height, Cairo::FORMAT_ARGB32) );
+    if (!backBuffer->surfaceCreated()) {
+        needsUpdate = true;
+        return;
+    }
     Cairo::RefPtr<Cairo::ImageSurface> surface = backBuffer->getSurface();
-    Glib::RefPtr<Gtk::StyleContext> style = get_style_context();
+    hidpi::setDeviceScale(surface, device.device_scale);
+
     Cairo::RefPtr<Cairo::Context> cc = Cairo::Context::create(surface);
     cc->set_source_rgba (0., 0., 0., 0.);
     cc->set_operator (Cairo::OPERATOR_CLEAR);
@@ -77,33 +103,33 @@ void PreviewWindow::updatePreviewImage ()
     cc->set_antialias(Cairo::ANTIALIAS_NONE);
     cc->set_line_join(Cairo::LINE_JOIN_MITER);
 
-    if (previewHandler) {
-        Glib::RefPtr<Gdk::Pixbuf> resPixbuf = previewHandler->getRoughImage (W, H, zoom);
+    Gdk::Cairo::set_source_pixbuf(cc, result.pixbuf(), 0, 0);
+    auto pattern = hidpi::getSourceForSurface(cc);
+    hidpi::setDeviceScale(pattern->get_surface(), device.device_scale);
+    cc->rectangle(0, 0, device.width, device.height);
+    cc->fill();
 
-        if (resPixbuf) {
-            imgW = resPixbuf->get_width();
-            imgH = resPixbuf->get_height();
-            imgX = (W - imgW) / 2;
-            imgY = (H - imgH) / 2;
-            Gdk::Cairo::set_source_pixbuf(cc, resPixbuf, imgX, imgY);
-            cc->rectangle(imgX, imgY, imgW, imgH);
-            cc->fill();
+    if (previewHandler->getCropParams().enabled) {
+        const auto& cparams = previewHandler->getCropParams();
 
-            if (previewHandler->getCropParams().enabled) {
-                rtengine::procparams::CropParams cparams = previewHandler->getCropParams();
-                switch (options.cropGuides) {
-                case Options::CROP_GUIDE_NONE:
-                    cparams.guide = rtengine::procparams::CropParams::Guide::NONE;
-                    break;
-                case Options::CROP_GUIDE_FRAME:
-                    cparams.guide = rtengine::procparams::CropParams::Guide::FRAME;
-                    break;
-                default:
-                    break;
-                }
-                drawCrop (cc, imgX, imgY, imgW, imgH, 0, 0, zoom, cparams, true, false);
-            }
-        }
+        CropGuideOverride cropGuideOverride;
+        switch (App::get().options().cropGuides) {
+            case Options::CROP_GUIDE_NONE:
+                cropGuideOverride = CropGuideOverride::NO_GUIDES;
+                break;
+            case Options::CROP_GUIDE_FRAME:
+                cropGuideOverride = CropGuideOverride::FRAME;
+                break;
+            default:
+                cropGuideOverride = CropGuideOverride::DONT_TOUCH;
+                break;
+        };
+
+        drawCrop(cc, 0, 0, imgW, imgH, imgW, imgH, 0, 0, zoom, device.device_scale,
+                 cparams,
+                 previewHandler->getCropGuideParams(),
+                 cropGuideOverride,
+                 false);
     }
 }
 
@@ -126,12 +152,10 @@ void PreviewWindow::on_resized (Gtk::Allocation& req)
 
 bool PreviewWindow::on_draw(const ::Cairo::RefPtr< Cairo::Context> &cr)
 {
+    if (!backBuffer) return true;
+
     const Glib::RefPtr<Gtk::StyleContext> style = get_style_context();
     style->render_background(cr, 0, 0, get_width(), get_height());
-
-    if (!backBuffer) {
-        return true;
-    }
 
     int bufferW, bufferH;
     bufferW = backBuffer->getWidth();
@@ -145,36 +169,53 @@ bool PreviewWindow::on_draw(const ::Cairo::RefPtr< Cairo::Context> &cr)
         }
     }
 
-    if ((get_width() != bufferW && get_height() != bufferH) || needsUpdate) {
+    auto deviceSize = hidpi::ScaledDeviceSize::forWidget(this);
+    const int scale = deviceSize.device_scale;
+
+    if ((deviceSize.width != bufferW && deviceSize.height != bufferH) || needsUpdate) {
         needsUpdate = false;
         updatePreviewImage ();
     }
+    // updatePreviewImage may clear the buffer
+    if (!backBuffer || !backBuffer->surfaceCreated()) {
+        needsUpdate = true;
+        return true;
+    }
 
-    backBuffer->copySurface(cr, NULL);
+    cr->save();
+
+    int x_offset = static_cast<double>(deviceSize.width - bufferW) / scale / 2;
+    int y_offset = static_cast<double>(deviceSize.height - bufferH) / scale / 2;
+    cr->translate(x_offset, y_offset);
+
+    backBuffer->copySurface(cr, nullptr);
 
     if (mainCropWin && zoom > 0.0) {
         int x, y, w, h;
         getObservedFrameArea (x, y, w, h);
-        if (x>imgX || y>imgY || w < imgW || h < imgH) {
-            const double s = RTScalable::scalePixelSize(1.);
-            double rectX = x + 0.5;
-            double rectY = y + 0.5;
-            double rectW = std::min(w, (int)(imgW - (x - imgX) - 1));
-            double rectH = std::min(h, (int)(imgH - (y - imgY) - 1));
+        if (x>0 || y>0 || w < imgW || h < imgH) {
+            const double s = scale;
+            double rectX = x + 0.5 * s;
+            double rectY = y + 0.5 * s;
+            double rectW = std::min(w, (int)(imgW - x)) - 1 * s;
+            double rectH = std::min(h, (int)(imgH - y)) - 1 * s;
 
             // draw a black "shadow" line
             cr->set_source_rgba (0.0, 0.0, 0.0, 0.65);
-            cr->set_line_width (1. * s);
+            cr->set_line_width (1 * s);
             cr->set_line_join(Cairo::LINE_JOIN_MITER);
-            cr->rectangle (rectX + 1. * s, rectY + 1. * s, rectW - 2. * s, rectH - 2. * s);
+            cr->rectangle (rectX + 1 * s, rectY + 1 * s, rectW - 2 * s, rectH - 2 * s);
             cr->stroke ();
 
+            const auto& options = App::get().options();
             // draw a "frame" line. Color of frame line can be set in preferences
             cr->set_source_rgba(options.navGuideBrush[0], options.navGuideBrush[1], options.navGuideBrush[2], options.navGuideBrush[3]); //( 1.0, 1.0, 1.0, 1.0);
             cr->rectangle (rectX, rectY, rectW, rectH);
             cr->stroke ();
         }
     }
+
+    cr->restore();
 
     style->render_frame (cr, 0, 0, get_width(), get_height());
 
@@ -227,7 +268,7 @@ bool PreviewWindow::on_motion_notify_event (GdkEventMotion* event)
 
     int x, y, w, h;
     getObservedFrameArea (x, y, w, h);
-    if (x>imgX || y>imgY || w < imgW || h < imgH) {
+    if (x>0 || y>0 || w < imgW || h < imgH) {
         bool inside =     event->x > x - 6 && event->x < x + w - 1 + 6 && event->y > y - 6 && event->y < y + h - 1 + 6;
 
         CursorShape newType;
@@ -261,7 +302,7 @@ bool PreviewWindow::on_button_press_event (GdkEventButton* event)
 
     int x, y, w, h;
     getObservedFrameArea (x, y, w, h);
-    if (x>imgX || y>imgY || w < imgW || h < imgH) {
+    if (x>0 || y>0 || w < imgW || h < imgH) {
 
         if (!isMoving) {
             isMoving = true;

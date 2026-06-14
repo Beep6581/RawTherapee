@@ -190,7 +190,12 @@ const std::vector<ToolTree> LOCALLAB_PANEL_TOOLS = {
 const std::vector<ToolTree> TRANSFORM_PANEL_TOOLS = {
     {
         .id = Tool::CROP_TOOL,
-        .children = {},
+        .children = {
+            {
+                .id = Tool::CROP_GUIDE,
+                .children = {},
+            },
+        },
     },
     {
         .id = Tool::RESIZE_TOOL,
@@ -237,6 +242,11 @@ const std::vector<ToolTree> TRANSFORM_PANEL_TOOLS = {
 };
 
 const std::vector<ToolTree> RAW_PANEL_TOOLS = {
+    {
+        .id = Tool::PD_SHARPENING,
+        .children = {},
+    },
+
     {
         .id = Tool::SENSOR_BAYER,
         .children = {
@@ -293,10 +303,6 @@ const std::vector<ToolTree> RAW_PANEL_TOOLS = {
     },
     {
         .id = Tool::FLATFIELD_TOOL,
-        .children = {},
-    },
-    {
-        .id = Tool::PD_SHARPENING,
         .children = {},
     },
 };
@@ -382,6 +388,7 @@ ToolPanelCoordinator::ToolPanelCoordinator (bool batch) : ipc (nullptr), favorit
     resize              = Gtk::manage(new Resize());
     prsharpening        = Gtk::manage(new PrSharpening());
     framing             = Gtk::manage(new Framing());
+    cropGuide           = Gtk::manage(new CropGuide());
     crop                = Gtk::manage(new Crop());
     icm                 = Gtk::manage(new ICMPanel());
     metadata            = Gtk::manage(new MetaDataPanel());
@@ -470,6 +477,7 @@ ToolPanelCoordinator::ToolPanelCoordinator (bool batch) : ipc (nullptr), favorit
         vbPanelEnd[i]->pack_start(*imgPanelEnd[i], Gtk::PACK_SHRINK);
         vbPanelEnd[i]->show_all();
     }
+    const auto& options = App::get().options();
     updateVScrollbars(options.hideTPVScrollbar);
 
     Gtk::Box *favoritePanelContainer =
@@ -698,6 +706,8 @@ std::string ToolPanelCoordinator::getToolName(Tool tool)
             return PrSharpening::TOOL_NAME;
         case Tool::FRAMING:
             return Framing::TOOL_NAME;
+        case Tool::CROP_GUIDE:
+            return CropGuide::TOOL_NAME;
         case Tool::CROP_TOOL:
             return Crop::TOOL_NAME;
         case Tool::ICM:
@@ -763,6 +773,7 @@ bool ToolPanelCoordinator::isFavoritable(Tool tool)
 
 void ToolPanelCoordinator::notebookPageChanged(Gtk::Widget* page, guint page_num)
 {
+    const auto& options = App::get().options();
     updatePanelTools(page, options.favorites, options.cloneFavoriteTools);
 
     // Locallab spot curves are set visible if at least one photo has been loaded (to avoid
@@ -1401,6 +1412,7 @@ void ToolPanelCoordinator::initImage(rtengine::StagedImageProcessor* ipc_, bool 
         ipc->setLocallabListener(locallab);
         ipc->setImageTypeListener(this);
         ipc->setFilmNegListener(filmNegative);
+        ipc->setCompgamutListener(compressgamut);
         flatfield->setShortcutPath(Glib::path_get_dirname(ipc->getInitialImage()->getFileName()));
 
         icm->setRawMeta(raw, (const rtengine::FramesData*)pMetaData);
@@ -1425,6 +1437,7 @@ void ToolPanelCoordinator::closeImage()
 
 void ToolPanelCoordinator::closeAllTools()
 {
+    const auto& options = App::get().options();
     for (size_t i = 0; i < options.tpOpen.size(); ++i) {
         if (i < expList.size()) {
             expList[i]->set_expanded(false);
@@ -1434,6 +1447,7 @@ void ToolPanelCoordinator::closeAllTools()
 
 void ToolPanelCoordinator::openAllTools()
 {
+    const auto& options = App::get().options();
     for (size_t i = 0; i < options.tpOpen.size(); ++i) {
         if (i < expList.size()) {
             expList[i]->set_expanded(true);
@@ -1443,6 +1457,7 @@ void ToolPanelCoordinator::openAllTools()
 
 void ToolPanelCoordinator::updateToolState()
 {
+    const auto& options = App::get().options();
     if (options.tpOpen.empty()) {
         for (auto expander : expList) {
             expander->set_expanded(false);
@@ -1485,6 +1500,7 @@ void ToolPanelCoordinator::writeOptions()
 
     crop->writeOptions();
 
+    auto& options = App::get().mut_options();
     if (options.autoSaveTpOpen) {
         writeToolExpandedStatus(options.tpOpen);
     }
@@ -1956,6 +1972,7 @@ void ToolPanelCoordinator::toolSelected(ToolMode tool)
             break;
     }
 
+    const auto& options = App::get().options();
     updateToolLocations(options.favorites, options.cloneFavoriteTools);
 
     notebookconn.block(false);
@@ -2067,6 +2084,8 @@ FoldableToolPanel *ToolPanelCoordinator::getFoldableToolPanel(Tool tool) const
             return prsharpening;
         case Tool::FRAMING:
             return framing;
+        case Tool::CROP_GUIDE:
+            return cropGuide;
         case Tool::CROP_TOOL:
             return crop;
         case Tool::ICM:

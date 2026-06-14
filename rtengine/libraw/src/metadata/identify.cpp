@@ -1,5 +1,5 @@
 /* -*- C++ -*-
- * Copyright 2019-2024 LibRaw LLC (info@libraw.org)
+ * Copyright 2019-2025 LibRaw LLC (info@libraw.org)
  *
  LibRaw uses code from dcraw.c -- Dave Coffin's raw photo decoder,
  dcraw.c is copyright 1997-2018 by Dave Coffin, dcoffin a cybercom o net.
@@ -271,6 +271,9 @@ void LibRaw::identify()
 	  { 6192, 4152, 160, 120, 0, 0}, // EOS R3
 	  { 6192, 4060, 168, 52, 24, 8, 16,48,32,0}, // EOS R10
 	  { 6188, 4120, 154, 96, 12, 0, 16, 48, 32, 0}, // EOS R6mk2
+	  { 8480, 5650, 258, 162, 0, 0, 128, 2, 128, 0}, // EOS R5mk2, FF
+	  { 5376, 3574, 258, 162, 0, 0, 128, 2, 128, 0}, // EOS R5mk2, APS
+	  { 6160, 4144, 128, 120, 0, 0}, // EOS R1, FF
   };
 
   static const libraw_custom_camera_t const_table[] = {
@@ -478,6 +481,8 @@ void LibRaw::identify()
       imCommon.SensorTemperature2 = imCommon.LensTemperature =
           imCommon.AmbientTemperature = imCommon.BatteryTemperature =
               imCommon.exifAmbientTemperature = -1000.0f;
+
+  imCanon.AutoRotateMode = 1; // Camera+Computer
 
   libraw_internal_data.unpacker_data.ifd0_offset = -1LL;
 
@@ -693,7 +698,7 @@ void LibRaw::identify()
   else if (!memcmp(head + 4, "ftypcrx ", 8))
   {
     int err;
-    unsigned long long szAtomList;
+    UINT64 szAtomList;
     short nesting = -1;
     short nTrack = -1;
     short TrackType;
@@ -701,7 +706,7 @@ void LibRaw::identify()
     strcpy(make, "Canon");
 
     szAtomList = ifp->size();
-    err = parseCR3(0ULL, szAtomList, nesting, AtomNameStack, nTrack, TrackType);
+    err = parseCR3(0ULL, szAtomList, nesting, AtomNameStack, nTrack, TrackType,szAtomList);
     libraw_internal_data.unpacker_data.crx_track_count = nTrack;
     if ((err == 0 || err == -14) &&
         nTrack >= 0) // no error, or too deep nesting
@@ -1173,7 +1178,7 @@ dng_skip:
       FORCC
       {
         cmin = MIN(cmin, cnorm[c]);
-        cmax = MIN(cmax, cnorm[c]);
+        cmax = MAX(cmax, cnorm[c]);
       }
       if (cmin <= 0.01f || cmax > 100.f)
         cmul_ok = false;
@@ -1516,7 +1521,14 @@ void LibRaw::identify_process_dng_fields()
 				FORC4
 				imgdata.color.dng_levels.dng_whitelevel[c] = (1 << tiff_ifd[iifd].bps) - 1;
 
-
+			// Copy dng opcode data for selected ifd to imgdata.color: if no opcodes present just 0/null copied
+			// DNG OpcodeListN should be in the selected IFD, not at global level (??)
+			// Note: pointer is copied; the data will be free'ed at recycle() by mem manager.
+			for (int i = 0; i < 3; i++)
+			{
+				imgdata.color.dng_levels.rawopcodes[i].len = tiff_ifd[iifd].dng_levels.rawopcodes[i].len;
+				imgdata.color.dng_levels.rawopcodes[i].data = tiff_ifd[iifd].dng_levels.rawopcodes[i].data;
+			}
 
 			sidx = IFDLEVELINDEX(iifd, LIBRAW_DNGFM_ASSHOTNEUTRAL);
 			if (sidx >= 0)
@@ -1866,6 +1878,7 @@ void LibRaw::identify_finetune_dcr(char head[64], INT64 fsize, INT64 flen)
 		{4508, 2962, 0, 0, -3, -4},     /* 21 */
 		{4508, 3330, 0, 0, -3, -6},     /* 22 */
 		{10480, 7794, 0, 0, -2, 0},     /* 23: G9 in high-res */
+        {11560, 8680, 8, 8, -16, -16},     /* 24: GH7 in high-res */
 	};
 	int i,c;
 	struct jhead jh;
@@ -1873,6 +1886,8 @@ void LibRaw::identify_finetune_dcr(char head[64], INT64 fsize, INT64 flen)
 	if (makeIs(LIBRAW_CAMERAMAKER_Canon) 
         && ( !tiff_flip || unique_id == CanonID_EOS_40D)
 		&& !(imgdata.rawparams.options & LIBRAW_RAWOPTIONS_CANON_IGNORE_MAKERNOTES_ROTATION)
+		// Do not check Auto-Rotate, or AutoRotateMode is not Off (0)
+		&& (!(imgdata.rawparams.options & LIBRAW_RAWOPTIONS_CANON_CHECK_CAMERA_AUTO_ROTATION_MODE) || imCanon.AutoRotateMode )
         && imCanon.MakernotesFlip)
 	{
 		tiff_flip = imCanon.MakernotesFlip;
@@ -2784,6 +2799,13 @@ void LibRaw::identify_finetune_dcr(char head[64], INT64 fsize, INT64 flen)
 			top_margin = 92;
 			height = raw_height - top_margin;
         }
+        else if ((imHassy.SensorCode == 22) && imHassy.uncropped)
+        { // Hasselblad X2D II-100c (sensor code from makernotes)
+			left_margin = 124;
+			width = 11664;
+			top_margin = 92;
+			height = raw_height - top_margin;
+        }
 
 		if (tiff_samples > 1)
 		{
@@ -3109,7 +3131,42 @@ void LibRaw::identify_finetune_dcr(char head[64], INT64 fsize, INT64 flen)
 
 		  /* need samples for lossy small/medium w/ APC crop*/
         }
-        else if ((unique_id == SonyID_ILCE_7M4)|| (unique_id == SonyID_ILCE_7CM2))
+        else if(unique_id == SonyID_ILCE_1M2)
+        {	
+			if (raw_width == 8672 && raw_height == 5784) // ILCE-1M2 FF uncompressed (4:3)
+          {
+            width = 8660;
+            height = 5784;
+          }
+          if (raw_width == 8704 && raw_height == 6144) // ILCE-1M2 FF uncompressed (4:3)
+          {
+            width = 8660;
+            height = 5784;
+          }
+		  else if (raw_width == 6144 && raw_height == 4096) // ILCE-1M2 FF uncompressed/lossy (3:2)
+          {
+            width = 5636;
+            height = 3768;
+          }
+          else if (raw_width == 5664 && raw_height == 3768) // ILCE-1M2 FF uncompressed/lossy (3:2)
+          {
+            width = 5636;
+            height = 3768;
+          }
+          else if (raw_width == 5632 && raw_height == 4096) // ILCE-1M2 FF lossless (4:3)
+          {
+            width = 5628;
+            height = 3756;
+          }
+          else if (raw_width == 4608 && raw_height == 3072) // ILCE-1M2 lossless medium
+          {
+            width = 4332;
+            height = 2892;
+          }
+          else
+            imgdata.process_warnings |= LIBRAW_WARN_VENDOR_CROP_SUGGESTED;
+        }
+        else if ((unique_id == SonyID_ILCE_7M4)|| (unique_id == SonyID_ILCE_7CM2) || (unique_id == SonyID_ILME_FX2))
         {
           if (raw_width == 7168 && raw_height == 5120) 
           {
@@ -3139,11 +3196,12 @@ void LibRaw::identify_finetune_dcr(char head[64], INT64 fsize, INT64 flen)
             imgdata.process_warnings |= LIBRAW_WARN_VENDOR_CROP_SUGGESTED;
           /* FIXME: need APS-C samples, both losslesscompressed and uncompressed or lossy */
         }
-		else if (unique_id == SonyID_ILCE_6700)
+		else if ((unique_id == SonyID_ILCE_6700) || (unique_id == SonyID_ZV_E10M2)
+				|| (unique_id == SonyID_ILME_FX30)) // same sensor
 		{
 			if (raw_width == 6656)
 			{
-				width = 6272;
+				width = 6240;
 				height = 4168;
 			}
             else if (raw_width == 6272) // APS-C uncompressed
@@ -3155,7 +3213,6 @@ void LibRaw::identify_finetune_dcr(char head[64], INT64 fsize, INT64 flen)
 				width = raw_width - 32;
 			}
 		}
-
         else if (!strcmp(model, "DSLR-A100")) {
 			if (width == 3880) {
 				height--;

@@ -269,9 +269,10 @@
       <dd>Block of white pixels extracted from files CIFF/CRW. Not extracted for
         other formats. Used to calculate white balance coefficients.</dd>
       <dt><strong> float cam_xyz[4][3]; </strong></dt>
-      <dd>Camera RGB - XYZ conversion matrix. This matrix is constant (different
-        for different models). Last row is zero for RGB cameras and non-zero for
-        different color models (CMYG and so on).</dd>
+      <dd>Camera RGB - XYZ conversion matrix. This matrix is calculated based on internal LibRaw per-camera color data for the specific camera.
+        It may be unset (filled with zeroes) if color data extracted from a file is used and camera model is not known by LibRaw.
+        It may not match the rgb_cam matrix if color data extracted from a file is used (see <a href="#libraw_output_params_t">use_camera_matrix</a> setting).
+        </dd>
       <dt><strong> float cam_mul[4]; </strong></dt>
       <dd>White balance coefficients (as shot). Either read from file or
         calculated.</dd>
@@ -284,8 +285,8 @@
       <dt><strong> float rgb_cam[3][4]; </strong></dt>
       <dd>Camera to sRGB conversion matrix</dd>
       <dt><strong> float ccm[3][4]; </strong></dt>
-      <dd>Camera color correction matrix read from file metadata (uniform
-        matrix if no such data in file)</dd>
+      <dd>Camera color correction matrix read from file metadata (uniform matrix
+        if no such data in file)</dd>
       <dt><strong> ph1_t phase_one_data; </strong></dt>
       <dd>Color data block that is read for Phase One cameras.</dd>
       <dt><strong> float flash_used; </strong></dt>
@@ -428,12 +429,10 @@
         </dl>
       </dd>
     </dl>
-   <p>
-   Note: even if no thumbnails were found in TIFF/CR3 structure, the
-   thumbcount field will be initialized to 1 and thumblist[0] will be
-   initialized to thumbnail data from the thumbnail data, so 
-   LibRaw::unpack_thumb_ex(0) will do the same as LibRaw::unpack_thumb().
-   </p>
+    <p> Note: even if no thumbnails were found in TIFF/CR3 structure, the
+      thumbcount field will be initialized to 1 and thumblist[0] will be
+      initialized to thumbnail data from the thumbnail data, so
+      LibRaw::unpack_thumb_ex(0) will do the same as LibRaw::unpack_thumb(). </p>
     <p><a name="libraw_lensinfo_t"></a></p>
     <h3>Structure libraw_lensinfo_t: parsed lens data</h3>
     <p>The following parameters are extracted from Makernotes and EXIF, to help
@@ -796,8 +795,9 @@
       <dt><strong> int no_interpolation; </strong></dt>
       <dd>Disables call to demosaic code in LibRaw::dcraw_process()</dd>
       <dt><strong> int use_p1_correction;</strong></dt>
-      <dd>If set to non-zero (default): PhaseOne compressed files will be corrected (linearization; defect mapping)
-        based on metadata contained in file.</dd>
+      <dd>If set to non-zero (default): PhaseOne compressed files will be
+        corrected (linearization; defect mapping) based on metadata contained in
+        file.</dd>
     </dl>
     <p><a name="libraw_callbacks_t"></a></p>
     <h3>Structure libraw_callbacks_t: user-settable callbacks</h3>
@@ -822,7 +822,17 @@
               <li>0x30000 - for Panasonic makernotes parsing</li>
               <li>0x40000 - for EXIF Interop IFD parsing</li>
               <li>0x50000 - for EXIF GPS IFD parsing</li>
+              <li>0x60000 - for Sony SR2 record tags</li>
               <li>(ifdN + 1) &lt;&lt; 20) - for TIFF ifdN</li>
+              <li>(0x70000 | 0x927c) - if called from CR3 file CMT3 tag</li>
+              <li>(__type &lt;&lt; 20) | 0x80000 | 0x927c - if called from CR3
+                file CTMD record with type __type</li>
+            </ul>
+            for makernotes callback tag is uptag &lt;&lt;16)|makernotes_tag
+            where uptag is
+            <ul>
+              <li>EXIF tag for callback called from EXIF parser</li>
+              <li>0 for callback called from CR3 metadata parser</li>
             </ul>
           </li>
           <li>type: tag type (see TIFF/EXIF specs)</li>
@@ -886,8 +896,17 @@
             bitmap. All metadata fields (see below) are valid and describes
             image data.</li>
           <li><strong> LIBRAW_IMAGE_JPEG </strong> - structure contain
-            in-memory image of JPEG file. Only type, data_size and data fields
-            are valid (and nonzero);</li>
+            in-memory image of JPEG file. Type, data_size and data fields are
+            valid (and nonzero) are always initialized. Image data parameters
+            (width, height,colors, bits) are initialized if LibRaw compiled with
+            libjpeg</li>
+          <li><strong>LIBRAW_IMAGE_JPEGXL - </strong>structure contain
+            in-memory image of JPEG-XL file. Only type, data_size and data
+            fields are valid (and nonzero);</li>
+          <li><strong>LIBRAW_IMAGE_H265 - </strong>structure contain in-memory
+            image of Canon H265 (HEIC) preview. This is not complete HEIC file
+            but several MP4 boxes plus image data. Only type, data_size and data
+            fields are valid (and nonzero);</li>
         </ul>
       </dd>
       <dt><strong> ushort height,width </strong></dt>
@@ -983,37 +1002,31 @@
       <dt><strong> LIBRAW_BAD_CROP </strong></dt>
       <dd>The incorrect cropping coordinates are set via params.cropbox[]: the
         left-top corner of cropping rectangle is outside the image. The
-        processing will be cancelled, all allocated resources will be freed, <a
-
-          <dt=""><strong> LIBRAW_TOO_BIG</strong> </a></dd>
-      <dd><a <dt="">Raw data size exceeds data limit.</a></dd>
-      <a <dt=""> </a>
+        processing will be cancelled, all allocated resources will be freed, </dd>
+      <dt><strong> LIBRAW_TOO_BIG</strong></dt>
+      <dd>Raw data size exceeds data limit.</dd>
+      <dt><strong> LIBRAW_MEMPOOL_OVERFLOW</strong></dt>
+      <dd>Too much data allocation calls to fit into LibRaw's mempool</dd>
     </dl>
-    <a <dt="">
-      <p><strong> Non-Fatal Errors </strong></p>
-    </a>
+    <p><strong> Non-Fatal Errors </strong></p>
     <dl>
-      <a <dt=""> <dt><strong> LIBRAW_SUCCESS=0 </strong></dt>
-        <dd>No error; function terminated successfully.</dd>
-        <dt><strong> LIBRAW_UNSPECIFIED_ERROR </strong></dt>
-        <dd>An unknown error has been encountered. This code should never be
-          generated.</dd>
-        <dt><strong> LIBRAW_FILE_UNSUPPORTED </strong></dt>
-        <dd>Unsupported file format (attempt to open a RAW file with a format
-          unknown to the program).</dd>
-        <dt><strong> LIBRAW_REQUEST_FOR_NONEXISTENT_IMAGE </strong></dt>
-        <dd>Attempt to retrieve a RAW image with a number absent in the data
-          file (only for formats supporting storage of several images in a
-          file).</dd>
-        <dt><strong> LIBRAW_OUT_OF_ORDER_CALL </strong></dt>
-      </a><dd><a <dt="">API functions have been called in wrong order (e.g., </a><a
-
-          href="API-CXX.html#unpack"> unpack() </a> before <a href="API-CXX.html#open_file">
-          open_file() </a> ) or the previous stage has ended with an error
-        (e.g., <a href="API-CXX.html#unpack"> unpack() </a> is called after <a
-
-          href="API-CXX.html#open_file"> open_file() </a> has returned an
-        error).</dd>
+      <dt><strong> LIBRAW_SUCCESS=0 </strong></dt>
+      <dd>No error; function terminated successfully.</dd>
+      <dt><strong> LIBRAW_UNSPECIFIED_ERROR </strong></dt>
+      <dd>An unknown error has been encountered. This code should never be
+        generated.</dd>
+      <dt><strong> LIBRAW_FILE_UNSUPPORTED </strong></dt>
+      <dd>Unsupported file format (attempt to open a RAW file with a format
+        unknown to the program).</dd>
+      <dt><strong> LIBRAW_REQUEST_FOR_NONEXISTENT_IMAGE </strong></dt>
+      <dd>Attempt to retrieve a RAW image with a number absent in the data file
+        (only for formats supporting storage of several images in a file).</dd>
+      <dt><strong> LIBRAW_OUT_OF_ORDER_CALL </strong></dt>
+      <dd>API functions have been called in wrong order (e.g. <a href="API-CXX.html#unpack">unpack()</a>
+        before <a href="API-CXX.html#open_file"> open_file() </a> ) or the
+        previous stage has ended with an error (e.g., <a href="API-CXX.html#unpack">
+          unpack() </a> is called after <a href="API-CXX.html#open_file">
+          open_file() </a> has returned an error).</dd>
       <dt><strong> LIBRAW_NO_THUMBNAIL </strong></dt>
       <dd>Returned upon an attempt to retrieve a thumbnail from a file
         containing no preview.</dd>
@@ -1131,6 +1144,15 @@
       <li><strong>LIBRAW_CAPS_GPRSDK</strong> - compiled w/ GoPro GPR SDK</li>
       <li><strong>LIBRAW_CAPS_UNICODEPATHS</strong> - compiled with Windows
         unicode (wchar_t*) filenames support</li>
+      <li><strong>LIBRAW_CAPS_X3FTOOLS</strong> - compiled with X3F TOOLS
+        (-DUSE_X3FTOOLS)</li>
+      <li><strong>LIBRAW_CAPS_RPI6BY9</strong> - compiled with RPI6BY9
+        support(-DUSE_6BY9RPI)</li>
+      <li><strong>LIBRAW_CAPS_ZLIB</strong> - compiled with zlib</li>
+      <li><strong>LIBRAW_CAPS_JPEG</strong> - compiled with libjpeg</li>
+      <li><strong>LIBRAW_CAPS_RAWSPEED3</strong> - compiled with RawSpeed V3</li>
+      <li><strong>LIBRAW_CAPS_RAWSPEED_BITS</strong> - compiled with fine tuned
+        RawSpeed usage control (look into RawSpeed3/README.md for details)</li>
     </ul>
     <p><a name="LibRaw_thumbnail_formats"></a></p>
     <h3>enum LibRaw_thumbnail_formats: Thumbnail Data Formats</h3>
@@ -1165,10 +1187,10 @@
       <dt><strong>LIBRAW_THUMBNAIL_H265</strong></dt>
       <dd>The thumbnail buffer contains a H.265 data frame (read from RAW file
         as is, no manipulations performed on it).</dd>
-        <dt><strong>LIBRAW_THUMBNAIL_JPEGXL</strong></dt>
-        <dd>The thumbnail buffer contains a JPEG-XL data frame (read from RAW file
-          as is, no manipulations performed on it).</dd>
-      </dl>
+      <dt><strong>LIBRAW_THUMBNAIL_JPEGXL</strong></dt>
+      <dd>The thumbnail buffer contains a JPEG-XL data frame (read from RAW file
+        as is, no manipulations performed on it).</dd>
+    </dl>
     <p><a name="warnings"></a></p>
     <h3>Nonstandard Situations (Warnings) during RAW Data Processing</h3>
     <p>Some suspicious situations emerging during image processing are not fatal
@@ -1221,10 +1243,15 @@
       <dd>DNG Stage2 conversion was performed</dd>
       <dt><strong> LIBRAW_DNG_STAGE3_APPLIED</strong></dt>
       <dd>DNG Stage3 conversion was performed</dd>
+      <dt><strong>LIBRAW_WARN_DNG_NOT_PROCESSED</strong></dt>
+      <dd>Image passed to Adobe DNG SDK, but refused</dd>
+      <dt><strong>LIBRAW_WARN_DNG_NOT_PARSED</strong></dt>
+      <dd>DNG image not parsed or refused in valid_for_dngsdk() internal call.</dd>
       <dt><strong>LIBRAW_WARN_VENDOR_CROP_SUGGESTED</strong></dt>
-      <dd> If set: unknown/untested RAW image frame size passed to LibRaw, cropping may be incorrect.
-        <p></p>It is suggested to use LibRaw::adjust_to_raw_inset_crop(1) for vendor specified crop.
-    </dd>
+      <dd> If set: unknown/untested RAW image frame size passed to LibRaw,
+        cropping may be incorrect.<br>
+        It is suggested to use LibRaw::adjust_to_raw_inset_crop(1) for vendor
+        specified crop. </dd>
     </dl>
     <dl>
     </dl>
@@ -1238,8 +1265,14 @@
       <dd>The structure contains RGB-bitmap, metadata described in other fields
         of libraw_processed_image_t.</dd>
       <dt><strong> LIBRAW_IMAGE_JPEG </strong></dt>
-      <dd>libraw_processed_image_t structure contains JPEG image (in memory).
-        Only data_size field is meaningful.</dd>
+      <dd>libraw_processed_image_t structure contains JPEG image. Only data_size
+        field is meaningful.</dd>
+      <dt><strong> LIBRAW_IMAGE_JPEGXL </strong></dt>
+      <dd>libraw_processed_image_t structure contains JPEG-XL image. Only
+        data_size field is meaningful.</dd>
+      <dt><strong> LIBRAW_IMAGE_H265</strong></dt>
+      <dd>libraw_processed_image_t structure contains Canon H265 thumbnail
+        image. Only data_size field is meaningful.</dd>
     </dl>
     <p> <a name="LibRaw_processing_options"></a></p>
     <h3> enum enum LibRaw_processing_options - bit that affects RAW data
@@ -1273,6 +1306,9 @@
         frames.</li>
       <li><b>LIBRAW_RAWOPTIONS_DNG_ADD_PREVIEWS</b> - if set, LibRaw will add
         previews (NewSubfileType == 1) to the frames list.</li>
+      <li><b>LIBRAW_RAWOPTIONS_DNG_ADD_MASK</b> - if set, LibRaw will add DNG
+        full resolution transparency mask (NewSubfileType == 4) to the frames
+        list.</li>
       <li><b>LIBRAW_RAWOPTIONS_DNG_PREFER_LARGEST_IMAGE</b>- By default, DNG
         frames are not reordered and are available in same order as in DNG&nbsp;
         (LibRaw traverses IFD/Sub-IFD trees in deep-first order).This bit will
@@ -1281,6 +1317,12 @@
         processing (by DNG SDK)</li>
       <li><strong>LIBRAW_RAWOPTIONS_DNG_STAGE3</strong> - request DNG Stage3
         processing</li>
+      <li><strong>LIBRAW_RAWOPTIONS_DNG_STAGE2_IFPRESENT,
+          LIBRAW_RAWOPTIONS_DNG_STAGE3_IFPRESENT</strong> - same as
+        _STAGE2/_STAGE3 above, but Stage2/Stage3 processing is performed only if
+        DNGOpcodeList2/List3 tag(s) exist in DNG file. </li>
+      <li><strong>LIBRAW_RAWOPTIONS_DNG_STAGE23_IFPRESENT_JPGJX</strong> - apply
+        Stage2/Stage3 processing only for JPEG/JPEG-XL DNG data. </li>
       <li><strong>LIBRAW_RAWOPTIONS_DNG_ALLOWSIZECHANGE</strong> - by default,
         if image size parsed by DNG SDK does not match image dimensions parsed
         by LibRaw, processing will stop with LIBRAW_DATA_ERROR code. This flags
@@ -1316,14 +1358,22 @@
         plus data size is beyond filecontents. This flag enforces size+offset
         checks for files from known vendors (this will result into correct but
         smaller thumbnail selected).</li>
-        <li><strong>LIBRAW_RAWOPTIONS_CHECK_THUMBNAILS_ALL_VENDORS</strong> - same
+      <li><strong>LIBRAW_RAWOPTIONS_CHECK_THUMBNAILS_ALL_VENDORS</strong> - same
         is above, but check is performed regardless of vendor (Make tag).</li>
-        <li><strong>LIBRAW_RAWOPTIONS_ALLOW_JPEGXL_PREVIEWS</strong> -
-          if set, LibRaw will perceive such previews in the same way as JPEG onesgest preview is 
-          selected by default, etc).<p>
-            tformat field for such preview is set to LIBRAW_THUMBNAIL_JPEGXL. Image metadata (width/height/channels count) is not parsed for JPEG-XL previews
-          </p></li>
-      </ul>
+      <li><strong>LIBRAW_RAWOPTIONS_ALLOW_JPEGXL_PREVIEWS</strong> - if set,
+        LibRaw will perceive such previews in the same way as JPEG onesgest
+        preview is selected by default, etc).
+        <p> tformat field for such preview is set to LIBRAW_THUMBNAIL_JPEGXL.
+          Image metadata (width/height/channels count) is not parsed for JPEG-XL
+          previews </p>
+      </li>
+      <li><strong>LIBRAW_RAWOPTIONS_CANON_IGNORE_MAKERNOTES_ROTATION</strong> -
+        if set, LibRaw set rotation based on EXIF Orientation tag instead of
+        Makernotes rotation field. </li>
+      <li><strong>LIBRAW_RAWOPTIONS_CANON_CHECK_CAMERA_AUTO_ROTATION_MODE</strong>
+        - if set, LibRaw will analyze AutoRotation makernotes tag when guessing
+        camera rotation. Available for very limited model set. </li>
+    </ul>
     <ul>
     </ul>
     <p> <a name="LibRaw_rawspecial_t"></a></p>

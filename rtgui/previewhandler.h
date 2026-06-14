@@ -24,6 +24,7 @@
 #include <gtkmm.h>
 
 #include "guiutils.h"
+#include "hidpi.h"
 #include "threadutils.h"
 
 #include "rtengine/noncopyable.h"
@@ -56,6 +57,7 @@ private:
 protected:
     rtengine::IImage8* image;
     const std::unique_ptr<rtengine::procparams::CropParams> cropParams;
+    const std::unique_ptr<rtengine::procparams::CropGuideParams> cropGuideParams;
     double previewScale;
     PreviewHandlerIdleHelper* pih;
     std::list<PreviewListener*> listeners;
@@ -73,15 +75,23 @@ public:
     }
 
     // previewimagelistener
-    void setImage(rtengine::IImage8* img, double scale, const rtengine::procparams::CropParams& cp) override;
+    void setImage(rtengine::IImage8* img, double scale,
+                  const rtengine::procparams::CropParams& cp,
+                  const rtengine::procparams::CropGuideParams& cgp) override;
     void delImage(rtengine::IImage8* img) override;
-    void imageReady(const rtengine::procparams::CropParams& cp) override;
+    void imageReady(const rtengine::procparams::CropParams& cp,
+                    const rtengine::procparams::CropGuideParams& cgp) override;
 
     // this function is called when a new preview image arrives from rtengine
     void previewImageChanged ();
 
     // with this function it is possible to ask for a rough approximation of a (possibly zoomed) crop of the image
-    Glib::RefPtr<Gdk::Pixbuf>           getRoughImage (int x, int y, int w, int h, double zoom);
-    Glib::RefPtr<Gdk::Pixbuf>           getRoughImage (int desiredW, int desiredH, double& zoom);
-    rtengine::procparams::CropParams    getCropParams ();
+    Glib::RefPtr<Gdk::Pixbuf> getRoughImage(ImageCoord pos, hidpi::ScaledDeviceSize desiredSize, double zoom);
+    hidpi::DevicePixbuf getRoughImage(hidpi::LogicalSize desiredSize, int deviceScale, double& outLogicalZoom);
+
+    const rtengine::procparams::CropParams& getCropParams() const { return *cropParams; }
+    const rtengine::procparams::CropGuideParams& getCropGuideParams() const
+    {
+        return *cropGuideParams;
+    }
 };

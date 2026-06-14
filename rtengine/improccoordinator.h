@@ -165,6 +165,9 @@ protected:
     RetinexgaintransmissionCurve dehagaintransmissionCurve;
 
     ColorAppearance customColCurve1;
+    ColorAppearance customColCurvered;
+    ColorAppearance customColCurvegreen;
+    ColorAppearance customColCurveblue;
     ColorAppearance customColCurve2;
     ColorAppearance customColCurve3;
     ToneCurve beforeToneCurveBW;
@@ -200,6 +203,8 @@ protected:
     AutoChromaListener* adnListener;
     WaveletListener* awavListener;
     RetinexListener* dehaListener;
+    CompgamutListener* acmaxListener;
+  
 //    LocallabListener* locallListener;
 
     
@@ -357,6 +362,7 @@ protected:
     LocwavCurve locedgwavCurve;
     LocwavCurve loclmasCurve_wav;
     LocwavCurve locwavCurvehue;
+    LocwavCurve locwavCurvehuecont;
     LocwavCurve locwavCurvejz;
 
     std::vector<float> huerefs;
@@ -550,6 +556,10 @@ public:
     void setAutoChromaListener  (AutoChromaListener* adn) override
     {
         adnListener = adn;
+    }
+    void setCompgamutListener  (CompgamutListener* cop) override
+    {
+        acmaxListener = cop;
     }
     void setRetinexListener  (RetinexListener* adh) override
     {

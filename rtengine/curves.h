@@ -56,7 +56,7 @@ inline void setUnlessOOG(float &r, float &g, float &b, const float &rr, const fl
     }
 }
 
-#ifdef __SSE2__
+#if defined(__SSE2__) || defined(RT_SIMDE)
 inline vmask OOG(const vfloat val)
 {
     return vorm(vmaskf_lt(val, ZEROV), vmaskf_gt(val, F2V(65535.f)));
@@ -326,7 +326,7 @@ public:
     {
         return (x <= start * slope ? x / slope : xexpf(xlogf((x + add) / mul) * gamma));
     }
-#ifdef __SSE2__
+#if defined(__SSE2__) || defined(RT_SIMDE)
     static inline vfloat igamma(vfloat x, vfloat gamma, vfloat start, vfloat slope, vfloat mul, vfloat add)
     {
 #if !defined(__clang__)
@@ -390,11 +390,17 @@ public:
 
     static void curveLightBrightColor(
         const std::vector<double>& curvePoints,
+        const std::vector<double>& curvePointsred,
+        const std::vector<double>& curvePointsgreen,
+        const std::vector<double>& curvePointsblue,
         const std::vector<double>& curvePoints2,
         const std::vector<double>& curvePoints3,
         const LUTu & histogram, LUTu & outBeforeCCurveHistogram,
         const LUTu & histogramC, LUTu & outBeforeCCurveHistogramC,
         ColorAppearance & outColCurve1,
+        ColorAppearance & outColCurvered,
+        ColorAppearance & outColCurvegreen,
+        ColorAppearance & outColCurveblue,
         ColorAppearance & outColCurve2,
         ColorAppearance & outColCurve3,
         int skip = 1);
@@ -1397,7 +1403,7 @@ public:
         return lutLocwavCurve[index];
     }
 
-#ifdef __SSE2__
+#if defined(__SSE2__) || defined(RT_SIMDE)
     vfloat operator[](vfloat index) const
     {
         return lutLocwavCurve[index];
@@ -1776,7 +1782,7 @@ class AdobeToneCurve : public ToneCurve
 {
 private:
     void RGBTone(float& r, float& g, float& b) const;  // helper for tone curve
-#ifdef __SSE2__
+#if defined(__SSE2__) || defined(RT_SIMDE)
     void RGBTone(vfloat& r, vfloat& g, vfloat& b) const;  // helper for tone curve
 #endif
 public:
@@ -1790,7 +1796,7 @@ class WeightedStdToneCurve : public ToneCurve
 {
 private:
     float Triangle(float refX, float refY, float X2) const;
-#ifdef __SSE2__
+#if defined(__SSE2__) || defined(RT_SIMDE)
     vfloat Triangle(vfloat refX, vfloat refY, vfloat X2) const;
 #endif
 public:
@@ -1867,7 +1873,7 @@ inline void StandardToneCurve::BatchApply(
             // If we get to the end before getting to an aligned address, just return.
             // (Or, for non-SSE mode, if we get to the end.)
             return;
-#ifdef __SSE2__
+#if defined(__SSE2__) || defined(RT_SIMDE)
         } else if (reinterpret_cast<uintptr_t>(&r[i]) % 16 == 0) {
             // Otherwise, we get to the first aligned address; go to the SSE part.
             break;
@@ -1878,7 +1884,7 @@ inline void StandardToneCurve::BatchApply(
         i++;
     }
 
-#ifdef __SSE2__
+#if defined(__SSE2__) || defined(RT_SIMDE)
 
     for (; i + 3 < end; i += 4) {
         vfloat r_val = LVF(r[i]);
@@ -1952,7 +1958,7 @@ inline void AdobeToneCurve::BatchApply(
             // If we get to the end before getting to an aligned address, just return.
             // (Or, for non-SSE mode, if we get to the end.)
             return;
-#ifdef __SSE2__
+#if defined(__SSE2__) || defined(RT_SIMDE)
         } else if (reinterpret_cast<uintptr_t>(&r[i]) % 16 == 0) {
             // Otherwise, we get to the first aligned address; go to the SSE part.
             break;
@@ -1961,7 +1967,7 @@ inline void AdobeToneCurve::BatchApply(
         Apply(r[i], g[i], b[i]);
         i++;
     }
-#ifdef __SSE2__
+#if defined(__SSE2__) || defined(RT_SIMDE)
     const vfloat upperv = F2V(MAXVALF);
     for (; i + 3 < end; i += 4) {
 
@@ -2005,7 +2011,7 @@ inline void AdobeToneCurve::RGBTone (float& maxval, float& medval, float& minval
     minval = lutToneCurve[minvalold];
     medval = minval + ((maxval - minval) * (medvalold - minvalold) / (maxvalold - minvalold));
 }
-#ifdef __SSE2__
+#if defined(__SSE2__) || defined(RT_SIMDE)
 inline void AdobeToneCurve::RGBTone (vfloat& maxval, vfloat& medval, vfloat& minval) const
 {
     const vfloat minvalold = minval, maxvalold = maxval;
@@ -2055,7 +2061,7 @@ inline float WeightedStdToneCurve::Triangle(float a, float a1, float b) const
     return a1;
 }
 
-#ifdef __SSE2__
+#if defined(__SSE2__) || defined(RT_SIMDE)
 inline vfloat WeightedStdToneCurve::Triangle(vfloat a, vfloat a1, vfloat b) const
 {
     vmask eqmask = vmaskf_eq(b, a);
@@ -2114,7 +2120,7 @@ inline void WeightedStdToneCurve::BatchApply(const size_t start, const size_t en
             // If we get to the end before getting to an aligned address, just return.
             // (Or, for non-SSE mode, if we get to the end.)
             return;
-#ifdef __SSE2__
+#if defined(__SSE2__) || defined(RT_SIMDE)
         } else if (reinterpret_cast<uintptr_t>(&r[i]) % 16 == 0) {
             // Otherwise, we get to the first aligned address; go to the SSE part.
             break;
@@ -2125,7 +2131,7 @@ inline void WeightedStdToneCurve::BatchApply(const size_t start, const size_t en
         i++;
     }
 
-#ifdef __SSE2__
+#if defined(__SSE2__) || defined(RT_SIMDE)
     const vfloat c65535v = F2V(65535.f);
     const vfloat zd5v = F2V(0.5f);
     const vfloat zd25v = F2V(0.25f);

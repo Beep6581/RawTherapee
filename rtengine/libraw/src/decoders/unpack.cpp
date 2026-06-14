@@ -1,5 +1,5 @@
 /* -*- C++ -*-
- * Copyright 2019-2024 LibRaw LLC (info@libraw.org)
+ * Copyright 2019-2025 LibRaw LLC (info@libraw.org)
  *
  LibRaw is free software; you can redistribute it and/or modify
  it under the terms of the one of two licenses as you choose:
@@ -321,7 +321,7 @@ int LibRaw::unpack(void)
         // x3f foveon decoder and DNG float
         // Do nothing! Decoder will allocate data internally
       }
-      if (decoder_info.decoder_flags & LIBRAW_DECODER_SINAR4SHOT)
+      else if (decoder_info.decoder_flags & LIBRAW_DECODER_SINAR4SHOT)
       {
         if (imgdata.rawparams.shot_select) // single image extract
         {

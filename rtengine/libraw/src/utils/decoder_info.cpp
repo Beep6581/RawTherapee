@@ -1,5 +1,5 @@
 /* -*- C++ -*-
- * Copyright 2019-2024 LibRaw LLC (info@libraw.org)
+ * Copyright 2019-2025 LibRaw LLC (info@libraw.org)
  *
 
  LibRaw is free software; you can redistribute it and/or modify
@@ -117,9 +117,9 @@ int LibRaw::get_decoder_info(libraw_decoder_info_t *d_info)
     d_info->decoder_name = "nikon_coolscan_load_raw()";
     d_info->decoder_flags = LIBRAW_DECODER_FIXEDMAXC;
   }
-  else if (load_raw == &LibRaw::nikon_he_load_raw_placeholder)
+  else if (load_raw == &LibRaw::nikon_he_load_raw)
   {
-    d_info->decoder_name = "nikon_he_load_raw_placeholder()";
+    d_info->decoder_name = "nikon_he_load_raw()";
     d_info->decoder_flags = LIBRAW_DECODER_UNSUPPORTED_FORMAT;
   }
   else if (load_raw == &LibRaw::nikon_load_sraw)
@@ -219,10 +219,10 @@ int LibRaw::get_decoder_info(libraw_decoder_info_t *d_info)
   {
     d_info->decoder_name = "panasonicC8_load_raw()";
   }
-  else if (load_raw == &LibRaw::olympus14_load_raw)
+  else if (load_raw == &LibRaw::olympus_load_raw)
   {
-    d_info->decoder_flags = 0; 
-    d_info->decoder_name = "olympus14_load_raw()";
+    d_info->decoder_name = "olympus_load_raw()";
+    d_info->decoder_flags = LIBRAW_DECODER_TRYRAWSPEED | LIBRAW_DECODER_TRYRAWSPEED3;
   }
   else if (load_raw == &LibRaw::minolta_rd175_load_raw)
   {
