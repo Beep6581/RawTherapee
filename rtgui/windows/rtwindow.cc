@@ -65,13 +65,6 @@ osx_open_file_idle_cb(gpointer user_data)
 {
     OSXOpenFileData* d = static_cast<OSXOpenFileData*>(user_data);
 
-    FILE* fp = fopen("/tmp/rt-open-debug.log", "a");
-    if (fp) {
-        fprintf(fp, "\n=== osx_open_file_idle_cb ===\n");
-        fprintf(fp, "path = [%s]\n", d->path.c_str());
-        fclose(fp);
-    }
-
     if (!d->win) {
         delete d;
         return FALSE;
@@ -81,18 +74,6 @@ osx_open_file_idle_cb(gpointer user_data)
         d->win->fpanel->open(d->path);
         d->win->SetMainCurrent();
         d->win->present();
-
-        fp = fopen("/tmp/rt-open-debug.log", "a");
-        if (fp) {
-            fprintf(fp, "idle open through FilePanel::open OK\n");
-            fclose(fp);
-        }
-    } else {
-        fp = fopen("/tmp/rt-open-debug.log", "a");
-        if (fp) {
-            fprintf(fp, "idle open failed: fpanel is null\n");
-            fclose(fp);
-        }
     }
 
     delete d;
@@ -102,24 +83,11 @@ osx_open_file_idle_cb(gpointer user_data)
 bool
 RTWindow::osxFileOpenEvent(Glib::ustring path)
 {
-    FILE *fp = fopen("/tmp/rt-open-debug.log", "a");
-    if (fp) {
-        fprintf(fp, "\n=== RTWindow::osxFileOpenEvent ===\n");
-        fprintf(fp, "path = [%s]\n", path.c_str());
-        fclose(fp);
-    }
-
     if (path.empty()) {
         return false;
     }
 
     if (!Glib::file_test(path, Glib::FILE_TEST_EXISTS)) {
-        fp = fopen("/tmp/rt-open-debug.log", "a");
-        if (fp) {
-            fprintf(fp, "path does not exist\n");
-            fclose(fp);
-        }
-
         return false;
     }
 
@@ -128,12 +96,6 @@ RTWindow::osxFileOpenEvent(Glib::ustring path)
     d->path = path;
 
     gdk_threads_add_idle(osx_open_file_idle_cb, d);
-
-    fp = fopen("/tmp/rt-open-debug.log", "a");
-    if (fp) {
-        fprintf(fp, "queued idle file open\n");
-        fclose(fp);
-    }
 
     return true;
 }
@@ -152,12 +114,6 @@ osx_normalize_open_path(const Glib::ustring& input)
         }
 
         if (err) {
-            FILE* fp = fopen("/tmp/rt-open-debug.log", "a");
-            if (fp) {
-                fprintf(fp, "g_filename_from_uri failed: %s\n", err->message);
-                fclose(fp);
-            }
-
             g_error_free(err);
         }
     }
@@ -170,24 +126,11 @@ osx_open_file_cb(GtkosxApplication *app, gchar *path_, gpointer data)
 {
     RTWindow *rtWin = static_cast<RTWindow *>(data);
 
-    FILE *fp = fopen("/tmp/rt-open-debug.log", "a");
-    if (fp) {
-        fprintf(fp, "\n=== osx_open_file_cb ===\n");
-        fprintf(fp, "raw path = [%s]\n", path_ ? path_ : "(null)");
-        fclose(fp);
-    }
-
     if (!rtWin || !path_ || !*path_) {
         return FALSE;
     }
 
     Glib::ustring path = osx_normalize_open_path(Glib::ustring(path_));
-
-    fp = fopen("/tmp/rt-open-debug.log", "a");
-    if (fp) {
-        fprintf(fp, "normalized path = [%s]\n", path.c_str());
-        fclose(fp);
-    }
 
     Glib::ustring suffix = path.length() > 4
         ? path.substr(path.length() - 3)
@@ -200,12 +143,6 @@ osx_open_file_cb(GtkosxApplication *app, gchar *path_, gpointer data)
     }
 
     const bool opened = rtWin->osxFileOpenEvent(path);
-
-    fp = fopen("/tmp/rt-open-debug.log", "a");
-    if (fp) {
-        fprintf(fp, "osxFileOpenEvent returned %d\n", opened ? 1 : 0);
-        fclose(fp);
-    }
 
     return opened ? TRUE : FALSE;
 }
