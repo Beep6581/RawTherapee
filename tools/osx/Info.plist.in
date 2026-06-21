@@ -62,10 +62,6 @@
                 <key>LSItemContentTypes</key>
                 <array>
                     <string>com.rawtherapee.pp3</string>
-                    <string>com.canon.cr3-raw-image</string>
-                    <string>public.camera-raw-image</string>
-                    <string>public.image</string>
-                    <string>public.data</string>
                 </array>
             </dict>
             <dict>
@@ -130,6 +126,12 @@
                 <string>Camera Raw</string>
                 <key>CFBundleTypeRole</key>
                 <string>Viewer</string>
+                <key>LSItemContentTypes</key>
+                <array>
+                    <string>com.canon.cr3-raw-image</string>
+                    <string>public.camera-raw-image</string>
+                    <string>public.image</string>
+                </array>
             </dict>
             <dict>
                 <key>CFBundleTypeExtensions</key>
@@ -154,7 +156,9 @@
         <key>CFBundleExecutable</key>
         <string>rawtherapee</string>
         <key>CFBundleGetInfoString</key>
-        <string>@version@, Copyright © 2004-2010 Gábor Horváth, 2010-2024 RawTherapee Development Team</string>
+        <string>@version@, Copyright © 2004-2010 Gábor Horváth, 2010-2026 RawTherapee Development Team</string>
+        <key>LSApplicationCategoryType</key>
+        <string>public.app-category.photography</string>
         <key>CFBundleIconFile</key>
         <string>rawtherapee.icns</string>
         <key>CFBundleIdentifier</key>
