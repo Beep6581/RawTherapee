@@ -375,16 +375,16 @@ if [[ -n $CODESIGNID ]]; then
     plutil -convert xml1 "${CMAKE_BUILD_TYPE}"/rt.entitlements
     for frame in ${APP}/Contents/Frameworks/* ; do
         echo $frame
-        codesign --preserve-metadata=identifier --digest-algorithm=sha256 --force --timestamp --strict -v -s "${CODESIGNID}" -i com.rawtherapee.RawTherapee -o runtime --entitlements "${CMAKE_BUILD_TYPE}"/rt.entitlements $frame
+        codesign --preserve-metadata=identifier --digest-algorithm=sha256 --force --timestamp --strict -v -s "${CODESIGNID}" -i com.rawtherapee.RawTherapee -o runtime --entitlements "${CMAKE_BUILD_TYPE}"/rt.entitlements "$frame"
     done
     for resource in ${APP}/Contents/Resources/* ; do
         echo $resource
-        if [ ! -d $resource ]; then
-            codesign --preserve-metadata=identifier --digest-algorithm=sha256 --force --timestamp --strict -v -s "${CODESIGNID}" -i com.rawtherapee.RawTherapee -o runtime --entitlements "${CMAKE_BUILD_TYPE}"/rt.entitlements $resource
+        if [ ! -d "$resource" ]; then
+            codesign --preserve-metadata=identifier --digest-algorithm=sha256 --force --timestamp --strict -v -s "${CODESIGNID}" -i com.rawtherapee.RawTherapee -o runtime --entitlements "${CMAKE_BUILD_TYPE}"/rt.entitlements "$resource"
         else
-            for subresource in ${APP}/Contents/Resources/$(basename $resource)/* ; do
-                if [ ! -d $subresource ]; then
-                    codesign --preserve-metadata=identifier --digest-algorithm=sha256 --force --timestamp --strict -v -s "${CODESIGNID}" -i com.rawtherapee.RawTherapee -o runtime --entitlements "${CMAKE_BUILD_TYPE}"/rt.entitlements $subresource
+            for subresource in ${APP}/Contents/Resources/$(basename "$resource")/* ; do
+                if [ ! -d "$subresource" ]; then
+                    codesign --preserve-metadata=identifier --digest-algorithm=sha256 --force --timestamp --strict -v -s "${CODESIGNID}" -i com.rawtherapee.RawTherapee -o runtime --entitlements "${CMAKE_BUILD_TYPE}"/rt.entitlements "$subresource"
                 fi
             done
         fi
@@ -436,7 +436,7 @@ function CreateDmg {
         echo "Building Fancy .dmg"
         touch message
         MESSAGE="$(cat message)"
-        magick ${PROJECT_SOURCE_DATA_DIR}/rtdmg-bkgd.png -pointsize 80 -font "/System/Library/Fonts/Supplemental/Arial.ttf" -fill Black -draw "text 14,1307 '${PROJECT_FULL_VERSION}'" -fill Salmon -font "/System/Library/Fonts/Supplemental/Arial.ttf" -draw "text 10,1300 '${PROJECT_FULL_VERSION}'" 1rtdmg-bkgd.png
+        magick "${PROJECT_SOURCE_DATA_DIR}"/rtdmg-bkgd.png -pointsize 80 -font "/System/Library/Fonts/Supplemental/Arial.ttf" -fill Black -draw "text 14,1307 '${PROJECT_FULL_VERSION}'" -fill Salmon -font "/System/Library/Fonts/Supplemental/Arial.ttf" -draw "text 10,1300 '${PROJECT_FULL_VERSION}'" 1rtdmg-bkgd.png
         magick 1rtdmg-bkgd.png -pointsize 90 -fill Black -gravity center -font "/System/Library/Fonts/Supplemental/Arial.ttf" -draw "text 5,120 \"$MESSAGE\"" -fill Red -gravity center -font "/System/Library/Fonts/Supplemental/Arial.ttf" -draw "text 1,124 \"$MESSAGE\"" rtdmg-bkgd.png
         create-dmg \
         --background rtdmg-bkgd.png \
