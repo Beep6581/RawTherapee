@@ -16,9 +16,6 @@
  *  You should have received a copy of the GNU General Public License
  *  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
  */
-#if defined(__APPLE__)
-#include <gtkmacintegration/gtkosxapplication.h>
-#endif
 #include <gtkmm.h>
 #include "rtwindow.h"
 #include "cachemanager.h"

@@ -185,7 +185,7 @@
         <key>NSPrincipalClass</key>
         <string>NSApplication</string>
         <key>NSHumanReadableCopyright</key>
-        <string>Copyright © 2004-2010 Gábor Horváth, 2010-2024 RawTherapee Development Team</string>
+        <string>Copyright © 2004-2010 Gábor Horváth, 2010-2026 RawTherapee Development Team</string>
         <key>UTExportedTypeDeclarations</key>
         <array>
             <dict>
