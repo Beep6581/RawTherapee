@@ -443,7 +443,7 @@ function CreateDmg {
         --volname ${PROJECT_NAME}_${PROJECT_FULL_VERSION} \
         --volicon ${PROJECT_SOURCE_DATA_DIR}/rtdmg.icns \
         --window-pos 72 72 \
-        --window-size 1000 692 \
+        --window-size 1000 697 \
         --text-size 16 \
         --icon-size 80 \
         --icon RawTherapee.app 250 238 \
