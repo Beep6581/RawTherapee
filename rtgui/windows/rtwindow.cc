@@ -100,7 +100,7 @@ RTWindow::osxFileOpenEvent(Glib::ustring path)
 static Glib::ustring
 osx_normalize_open_path(const Glib::ustring& input)
 {
-    if (input.substr(0, 7) == "file://") {
+    if (input.length() > 7 && input.substr(0, 7) == "file://") {
         GError* err = nullptr;
         gchar* filename = g_filename_from_uri(input.c_str(), nullptr, &err);
 
