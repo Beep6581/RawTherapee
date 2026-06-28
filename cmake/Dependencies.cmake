@@ -83,6 +83,10 @@ macro(rt_setup_dependencies)
 
     rt_setup_jxl()
 
+    if(WITH_SYSTEM_FMT)
+        find_package(FMT REQUIRED)
+    endif()
+
     if(WITH_SYSTEM_KLT)
         find_package(KLT REQUIRED)
     endif()
@@ -113,16 +117,18 @@ macro(rt_fetch_content)
     set(DEPS)
 
     # fmt::fmt
-    set(FMT_INSTALL OFF) # Static library doesn't need separate install
-    set(FMT_SYSTEM_HEADERS ON) # Exclude headers from linters
-    set(FMT_UNICODE ON)
-    FetchContent_Declare(
-        fmt
-        GIT_REPOSITORY https://github.com/fmtlib/fmt
-        GIT_TAG e424e3f2e607da02742f73db84873b8084fc714c # 12.0.0
-        GIT_SHALLOW ON
-    )
-    list(APPEND DEPS fmt)
+    if(NOT WITH_SYSTEM_FMT)
+        set(FMT_INSTALL OFF) # Static library doesn't need separate install
+        set(FMT_SYSTEM_HEADERS ON) # Exclude headers from linters
+        set(FMT_UNICODE ON)
+        FetchContent_Declare(
+            fmt
+            GIT_REPOSITORY https://github.com/fmtlib/fmt
+            GIT_TAG e424e3f2e607da02742f73db84873b8084fc714c # 12.0.0
+            GIT_SHALLOW ON
+        )
+        list(APPEND DEPS fmt)
+    endif()
 
     if("${SVG_BACKEND}" STREQUAL "lunasvg")
         if(NOT WITH_SYSTEM_LUNASVG)
