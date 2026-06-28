@@ -1621,6 +1621,11 @@ void ImProcFunctions::ciecam_02float(CieImage* ncie, float adap, int pW, int pwb
                 for (int j = 0; j < width; j++) {
                     float Ll, aa, bb;
                     //convert xyz=>lab
+                    constexpr float epsilon = 0.00001f;//To avoid negative values and crashes due to real values(float) ​​that are too low.
+                    xbuffer[j] = std::max(epsilon, xbuffer[j]);
+                    ybuffer[j] = std::max(epsilon, ybuffer[j]);
+                    zbuffer[j] = std::max(epsilon, zbuffer[j]);
+
                     Color::XYZ2Lab(xbuffer[j], ybuffer[j], zbuffer[j], Ll, aa, bb);
 
                     // gamut control in Lab mode; I must study how to do with cIECAM only
