@@ -16,7 +16,6 @@
  *  You should have received a copy of the GNU General Public License
  *  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
  */
-
 #include <gtkmm.h>
 #include "rtwindow.h"
 #include "cachemanager.h"
@@ -39,55 +38,110 @@ Glib::RefPtr<Gtk::CssProvider> cssRT;
 
 #if defined(__APPLE__)
 static gboolean
-osx_should_quit_cb (GtkosxApplication *app, gpointer data)
+osx_should_quit_cb(GtkosxApplication *app, gpointer data)
 {
     RTWindow * const rtWin = static_cast<RTWindow*>(data);
-    return rtWin->on_delete_event (0);
+    return rtWin->on_delete_event(nullptr);
 }
 
 static void
-osx_will_quit_cb (GtkosxApplication *app, gpointer data)
+osx_will_quit_cb(GtkosxApplication *app, gpointer data)
 {
     RTWindow *rtWin = static_cast<RTWindow*>(data);
-    rtWin->on_delete_event (0);
-    gtk_main_quit ();
+    rtWin->on_delete_event(nullptr);
+    gtk_main_quit();
 }
 
-bool RTWindow::osxFileOpenEvent (Glib::ustring path)
-{
-
-    CacheManager* cm = CacheManager::getInstance();
-    Thumbnail* thm = cm->getEntry ( path );
-
-    if (thm && fpanel) {
-        std::vector<Thumbnail*> entries;
-        entries.push_back (thm);
-        fpanel->fileCatalog->openRequested (entries);
-        return true;
-    }
-
-    return false;
-}
+struct OSXOpenFileData {
+    RTWindow* win;
+    Glib::ustring path;
+};
 
 static gboolean
-osx_open_file_cb (GtkosxApplication *app, gchar *path_, gpointer data)
+osx_open_file_idle_cb(gpointer user_data)
 {
-    RTWindow *rtWin = static_cast<RTWindow*>(data);
+    OSXOpenFileData* d = static_cast<OSXOpenFileData*>(user_data);
 
-    if (!App::get().argv1().empty()) {
-        // skip handling if we have a file argument or else we get double open of same file
+    if (!d->win) {
+        delete d;
+        return FALSE;
+    }
+
+    if (d->win->fpanel) {
+        d->win->fpanel->open(d->path);
+        d->win->SetMainCurrent();
+        d->win->present();
+    }
+
+    delete d;
+    return FALSE;
+}
+
+bool
+RTWindow::osxFileOpenEvent(Glib::ustring path)
+{
+    if (path.empty()) {
         return false;
     }
 
-    Glib::ustring path = Glib::ustring (path_);
-    Glib::ustring suffix = path.length() > 4 ? path.substr (path.length() - 3) : "";
-    suffix = suffix.lowercase();
-
-    if (suffix == "pp3")  {
-        path = path.substr (0, path.length() - 4);
+    if (!Glib::file_test(path, Glib::FILE_TEST_EXISTS)) {
+        return false;
     }
 
-    return rtWin->osxFileOpenEvent (path);
+    OSXOpenFileData* d = new OSXOpenFileData;
+    d->win = this;
+    d->path = path;
+
+    gdk_threads_add_idle(osx_open_file_idle_cb, d);
+
+    return true;
+}
+
+static Glib::ustring
+osx_normalize_open_path(const Glib::ustring& input)
+{
+    if (input.length() > 7 && input.substr(0, 7) == "file://") {
+        GError* err = nullptr;
+        gchar* filename = g_filename_from_uri(input.c_str(), nullptr, &err);
+
+        if (filename) {
+            Glib::ustring result(filename);
+            g_free(filename);
+            return result;
+        }
+
+        if (err) {
+            g_error_free(err);
+        }
+    }
+
+    return input;
+}
+
+static gboolean
+osx_open_file_cb(GtkosxApplication *app, gchar *path_, gpointer data)
+{
+    RTWindow *rtWin = static_cast<RTWindow *>(data);
+
+    if (!rtWin || !path_ || !*path_) {
+        return FALSE;
+    }
+
+    Glib::ustring path = osx_normalize_open_path(Glib::ustring(path_));
+
+    Glib::ustring suffix = path.length() > 4
+        ? path.substr(path.length() - 3)
+        : "";
+
+    suffix = suffix.lowercase();
+
+    if (suffix == "pp3") {
+        path = path.substr(0, path.length() - 4);
+    }
+
+    const bool opened = rtWin->osxFileOpenEvent(path);
+
+    return opened ? TRUE : FALSE;
 }
 #endif // __APPLE__
 
@@ -100,6 +154,9 @@ RTWindow::RTWindow ()
     , iFullscreen_exit (nullptr)
     , epanel (nullptr)
     , fpanel (nullptr)
+#if defined(__APPLE__)
+    , osxApp (nullptr)
+#endif
 {
     cacheMgr->init ();
     ProfilePanel::init (this);
@@ -202,17 +259,47 @@ RTWindow::RTWindow ()
 
 #if defined(__APPLE__)
     {
-        osxApp  = (GtkosxApplication *)g_object_new (GTKOSX_TYPE_APPLICATION, NULL);
-        RTWindow *rtWin = this;
-        g_signal_connect (osxApp, "NSApplicationBlockTermination", G_CALLBACK (osx_should_quit_cb), rtWin);
-        g_signal_connect (osxApp, "NSApplicationWillTerminate",  G_CALLBACK (osx_will_quit_cb), rtWin);
-        g_signal_connect (osxApp, "NSApplicationOpenFile", G_CALLBACK (osx_open_file_cb), rtWin);
-        // RT don't have a menu, but we must create a dummy one to get the default OS X app menu working
-        GtkWidget *menubar;
-        menubar = gtk_menu_bar_new ();
-        gtkosx_application_set_menu_bar (osxApp, GTK_MENU_SHELL (menubar));
-        gtkosx_application_set_use_quartz_accelerators (osxApp, FALSE);
-        gtkosx_application_ready (osxApp);
+        osxApp = static_cast<GtkosxApplication*>(
+            g_object_new(GTKOSX_TYPE_APPLICATION, nullptr)
+        );
+
+        RTWindow* rtWin = this;
+
+        g_signal_connect(
+            osxApp,
+            "NSApplicationBlockTermination",
+            G_CALLBACK(osx_should_quit_cb),
+            rtWin
+        );
+
+        g_signal_connect(
+            osxApp,
+            "NSApplicationWillTerminate",
+            G_CALLBACK(osx_will_quit_cb),
+            rtWin
+        );
+
+        g_signal_connect(
+            osxApp,
+            "NSApplicationOpenFile",
+            G_CALLBACK(osx_open_file_cb),
+            rtWin
+        );
+
+        // RT does not have a real menu here, but we must create a dummy one
+        // to get the default macOS application menu working.
+        GtkWidget* menubar = gtk_menu_bar_new();
+
+        gtkosx_application_set_menu_bar(
+            osxApp,
+            GTK_MENU_SHELL(menubar)
+        );
+
+        gtkosx_application_set_use_quartz_accelerators(
+            osxApp,
+            FALSE
+        );
+
     }
 #endif
     versionStr = "RawTherapee " + App::VERSION;
@@ -381,6 +468,9 @@ RTWindow::RTWindow ()
             }
         }
     }
+#if defined(__APPLE__)
+    gtkosx_application_ready(osxApp);
+#endif
 }
 
 RTWindow::~RTWindow()
