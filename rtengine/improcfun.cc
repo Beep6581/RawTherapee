@@ -760,11 +760,13 @@ void ImProcFunctions::ciecam_02float(CieImage* ncie, float adap, int pW, int pwb
         const float schrgreen = params->colorappearance.schromagreen;
         const float hueblue = params->colorappearance.colorhblue;
         const float schrblue = params->colorappearance.schromablue;
-        const float brighthres = params->colorappearance.brighthres;
+        float brighthres = params->colorappearance.brighthres;
 
         // Creates a transition to mitigate the effects of "brightness" (red green blue) curves on artifacts
         constexpr float klimb = 0.5f;//ponderation
+        brighthres = std::min(brighthres, 99.9f);
         const float limb = brighthres + klimb * (100.f - brighthres);//intermediate zone where the application of the curve is progressive
+        
         constexpr float mink = 0.01f;//minimum curve factor
         const float kam = (1.f - mink) / (limb - brighthres);//linear interpolation
         const float kbm = mink - kam * brighthres;//linear interpolation

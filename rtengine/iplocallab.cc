@@ -4694,9 +4694,11 @@ void ImProcFunctions::ciecamloc_02float(struct local_params& lp, int sp, LabImag
         const float schrgreen = params->locallab.spots.at(sp).schromagreen;
         const float hueblue = params->locallab.spots.at(sp).colorhblue;
         const float schrblue = params->locallab.spots.at(sp).schromablue;
-        const float brighthres = params->locallab.spots.at(sp).brighthres;
+        float brighthres = params->locallab.spots.at(sp).brighthres;
+        
         // Creates a transition to mitigate the effects of "brightness" (red green blue) curves on artifacts
         constexpr float klimb = 0.5f;//ponderation
+        brighthres = std::min(brighthres, 99.9f);
         const float limb = brighthres + klimb * (100.f - brighthres);//intermediate zone where the application of the curve is progressive
         constexpr float mink = 0.01f;//minimum curve factor
         const float kam = (1.f - mink) / (limb - brighthres);//linear interpolation
