@@ -16,9 +16,9 @@ namespace rtengine
 /**
  * Abstract base class for colour look-up tables used by Film Simulation.
  *
- * Concrete subclasses implement load() for their respective file formats.
- * The shared internal representation (a flat uint16 RGBX buffer indexed as a
- * cubic grid) and the trilinear getRGB() interpolation live here.
+ * Concrete subclasses implement loading and interpolation for their respective
+ * file formats. The internal representation is a flat uint16 RGBX buffer
+ * indexed as a cubic grid.
  */
 class CLUT :
     public NonCopyable
@@ -33,14 +33,14 @@ public:
     Glib::ustring getFilename() const;
     Glib::ustring getProfile() const;
 
-    void getRGB(
+    virtual void getRGB(
         float strength,
         std::size_t line_size,
         const float* r,
         const float* g,
         const float* b,
         float* out_rgbx
-    ) const;
+    ) const = 0;
 
 protected:
     AlignedBuffer<std::uint16_t> clut_image;
@@ -53,13 +53,23 @@ protected:
 
 /**
  * Hald CLUT — loads square PNG / TIFF image files where the image dimensions
- * encode the cube size as  width == height == level³.
+ * encode the cube size as width == height == level³, and uses trilinear
+ * interpolation.
  */
 class HaldCLUT final :
     public CLUT
 {
 public:
     bool load(const Glib::ustring& filename) override;
+
+    void getRGB(
+        float strength,
+        std::size_t line_size,
+        const float* r,
+        const float* g,
+        const float* b,
+        float* out_rgbx
+    ) const override;
 
     /** Split a CLUT filename into name, extension and optional ICC profile. */
     static void splitClutFilename(
@@ -83,7 +93,8 @@ public:
 };
 
 /**
- * Cube LUT — loads text-based .cube files (Adobe / DaVinci Resolve format).
+ * Cube LUT — loads text-based .cube files (Adobe / DaVinci Resolve format)
+ * and uses tetrahedral interpolation.
  * Supports LUT_3D_SIZE, DOMAIN_MIN / DOMAIN_MAX and comment lines.
  * The colour profile defaults to sRGB; like HaldCLUT, a suffix in the
  * filename can override it (e.g. "MyLUT_ProPhoto.cube").
@@ -93,6 +104,15 @@ class CubeLUT final :
 {
 public:
     bool load(const Glib::ustring& filename) override;
+
+    void getRGB(
+        float strength,
+        std::size_t line_size,
+        const float* r,
+        const float* g,
+        const float* b,
+        float* out_rgbx
+    ) const override;
 
     // Generate a (size*size) × size identity PNG for a cube of the given size.
     // Pixel at (y=b, x=g*size+r) encodes input colour (r, g, b) / (size-1).
