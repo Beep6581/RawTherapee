@@ -17,8 +17,7 @@ namespace rtengine
  * Abstract base class for colour look-up tables used by Film Simulation.
  *
  * Concrete subclasses implement loading and interpolation for their respective
- * file formats. The internal representation is a flat uint16 RGBX buffer
- * indexed as a cubic grid.
+ * file formats and own their format-specific storage.
  */
 class CLUT :
     public NonCopyable
@@ -43,7 +42,6 @@ public:
     ) const = 0;
 
 protected:
-    AlignedBuffer<std::uint16_t> clut_image;
     unsigned int clut_level = 0;
     float flevel_minus_one = 0.f;
     float flevel_minus_two = 0.f;
@@ -90,6 +88,9 @@ public:
     // from img — same approach as CubeLUT::saveAsCubeFile(), no gamma round-trip.
     static bool saveAsHaldFile(const IImagefloat* img,
                                const Glib::ustring& destPath);
+
+private:
+    AlignedBuffer<std::uint16_t> clut_image;
 };
 
 /**
@@ -125,6 +126,7 @@ public:
                                const Glib::ustring& destPath);
 
 private:
+    AlignedBuffer<float> clut_image;
     float domain_scale[3] = {};
     float domain_offset[3] = {};
 };
