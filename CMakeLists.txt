@@ -476,6 +476,7 @@ install(
     DESTINATION "${CREDITSDIR}"
     OPTIONAL)
 install(FILES tools/bake_cube_lut.py
+              tools/bake_cube_lut-README.md
         DESTINATION "${DATADIR}/tools")
 
 # The standard location for man pages in Linux is /usr/share/man Use "manpath"
