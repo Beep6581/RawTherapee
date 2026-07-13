@@ -123,6 +123,10 @@ public:
     // createIdentityTempFile().  The same size must be passed to both calls.
     static bool saveAsCubeFile(const IImagefloat* img, int size,
                                const Glib::ustring& destPath);
+
+private:
+    float domain_scale[3] = {};
+    float domain_offset[3] = {};
 };
 
 class CLUTStore final :
