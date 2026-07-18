@@ -628,7 +628,11 @@ void LibRaw::identify()
   else if (!memcmp(head + 4, "ftypqt   ", 9))
   {
     fseek(ifp, 0, SEEK_SET);
+	// Use existing variable that definitely not used in parse_qt/parse_jpeg to avoid ABI change
+	short cr3save = libraw_internal_data.unpacker_data.CR3_Version;
+	libraw_internal_data.unpacker_data.CR3_Version = 32;
     parse_qt(fsize);
+	libraw_internal_data.unpacker_data.CR3_Version = cr3save;
     is_raw = 0;
   }
   else if (!memcmp(head, "\0\001\0\001\0@", 6))
@@ -1223,6 +1227,10 @@ dng_skip:
 	// Prevent incorrect-sized fuji-rotated files
 	if (INT64(width)*INT64(height) > INT64(raw_width) * INT64(raw_height) * 8LL)
 		is_raw = 0;
+
+	// All 'fuji-rotated' images are 6Mpix or less, so 8k x 8k limit is OK
+	if(width > 8192 || height > 8192 || raw_width > 8192 || raw_height > 8192)
+      is_raw = 0;
   }
   else
   {

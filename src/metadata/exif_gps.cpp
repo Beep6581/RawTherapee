@@ -236,6 +236,7 @@ void LibRaw::parse_exif(INT64 base)
         ushort l;
         float num;
 
+		memset(mn_text, 0, sizeof(mn_text));
         fgets(mn_text, MIN(len, 511), ifp);
         mn_text[511] = 0;
 

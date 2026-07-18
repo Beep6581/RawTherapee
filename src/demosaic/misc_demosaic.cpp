@@ -214,6 +214,8 @@ void LibRaw::vng_interpolate()
   int row, col, x, y, x1, x2, y1, y2, t, weight, grads, color, diag;
   int g, diff, thold, num, c;
 
+  if (width < 8 || height < 8) return;  // skip interploation on too small images
+
   lin_interpolate();
 
   if (filters == 1)

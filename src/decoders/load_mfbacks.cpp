@@ -526,7 +526,7 @@ int LibRaw::phase_one_correct()
 		  cip = (int)cfrac;
           cfrac -= cip;
           num = RAW(row, col) * 0.5f;
-          for (i = cip; i < cip + 2; i++)
+          for (i = cip; i < cip + 2 && i < head[3]; i++)
           {
             for (k = j = 0; j < head[1]; j++)
               if (num < xval[0][k = head[1] * i + j])

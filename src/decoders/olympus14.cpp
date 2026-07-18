@@ -261,6 +261,9 @@ void LibRaw::olympus_load_raw()
 		  if (wbits > tag0x651) 
             wbits = tag0x651;
 
+          if (wbits >= 16)
+            throw LIBRAW_EXCEPTION_IO_CORRUPT;
+
           int32_t gcode = oly_code(&pump, wbits, tag0x640, tag0x643, tag0x652, &glc, &t640bits, &t643bits);
           if (tag0x643) 
           {

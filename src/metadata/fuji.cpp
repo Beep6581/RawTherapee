@@ -1324,6 +1324,7 @@ void LibRaw::parse_fuji(INT64 offset)
         uchar RAFDataHeader[16];
         libraw_internal_data.unpacker_data.posRAFData = save;
         libraw_internal_data.unpacker_data.lenRAFData = (len >> 1);
+		memset(RAFDataHeader, 0, sizeof(RAFDataHeader));
         fread(RAFDataHeader, sizeof RAFDataHeader, 1, ifp);
         offsetWH_inRAFData = guess_RAFDataGeneration(RAFDataHeader);
         fseek(ifp, offsetWH_inRAFData-int(sizeof RAFDataHeader), SEEK_CUR);

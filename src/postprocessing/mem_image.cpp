@@ -78,7 +78,7 @@ libraw_processed_image_t *LibRaw::dcraw_make_mem_thumb(int *errcode)
   {
     ushort exif[5];
     int mk_exif = 0;
-    if (strcmp(T.thumb + 6, "Exif"))
+    if (memcmp(T.thumb + 6, "Exif\0",5))
       mk_exif = 1;
 
     int dsize = T.tlength + mk_exif * (sizeof(exif) + sizeof(tiff_hdr));
@@ -231,7 +231,7 @@ int LibRaw::copy_mem_image(void *scan0, int stride, int bgr)
 
   for (row = 0; row < S.height; row++, soff += rstep)
   {
-    uchar *bufp = ((uchar *)scan0) + row * stride;
+    uchar *bufp = ((uchar *)scan0) + size_t(row) * size_t(stride);
     ppm2 = (ushort *)(ppm = bufp);
     // keep trivial decisions in the outer loop for speed
     if (bgr)
@@ -280,7 +280,7 @@ libraw_processed_image_t *LibRaw::dcraw_make_mem_image(int *errcode)
   int width, height, colors, bps;
   get_mem_image_format(&width, &height, &colors, &bps);
   int stride = width * (bps / 8) * colors;
-  unsigned ds = height * stride;
+  INT64 ds = INT64(height) * INT64(stride);
   libraw_processed_image_t *ret = (libraw_processed_image_t *)::malloc(
       sizeof(libraw_processed_image_t) + ds);
   if (!ret)

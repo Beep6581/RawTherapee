@@ -152,13 +152,13 @@ void LibRaw::parse_x3f()
         if (!strcmp(name, "ISO"))
           imgdata.other.iso_speed = float(atoi(value));
         if (!strcmp(name, "CAMMANUF"))
-          strcpy(imgdata.idata.make, value);
+          strncpy(imgdata.idata.make, value, sizeof(imgdata.idata.make)-1);
         if (!strcmp(name, "CAMMODEL"))
-          strcpy(imgdata.idata.model, value);
+          strncpy(imgdata.idata.model, value, sizeof(imgdata.idata.model) - 1);
         if (!strcmp(name, "CAMSERIAL"))
-          strcpy(imgdata.shootinginfo.BodySerial, value);
+          strncpy(imgdata.shootinginfo.BodySerial, value, sizeof(imgdata.shootinginfo.BodySerial) - 1);
         if (!strcmp(name, "WB_DESC"))
-          strcpy(imgdata.color.model2, value);
+          strncpy(imgdata.color.model2, value, sizeof(imgdata.color.model2) - 1);
         if (!strcmp(name, "TIME"))
           imgdata.other.timestamp = atoi(value);
         if (!strcmp(name, "SHUTTER"))
