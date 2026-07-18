@@ -123,8 +123,10 @@ void LibRaw::parse_phase_one(INT64 base)
       break;
     case 0x0203:
       stmread(imPhaseOne.Software, len, ifp);
+	  break;
     case 0x0204:
       stmread(imPhaseOne.SystemType, len, ifp);
+	  break;
     case 0x0210:
       ph1.tag_210 = int_to_float(data);
       imCommon.SensorTemperature = ph1.tag_210;
@@ -199,6 +201,7 @@ void LibRaw::parse_phase_one(INT64 base)
         }
         *cp = 0;
       }
+	  break;
     case 0x0401:
       if (tagtypeIs(LIBRAW_EXIFTAG_TYPE_LONG))
         ilm.CurAp = libraw_powf64l(2.0f, (int_to_float(data) / 2.0f));
@@ -401,6 +404,10 @@ void LibRaw::parse_mos(INT64 offset)
   };
   float romm_cam[3][3];
 
+  libraw_internal_data.unpacker_data.CR3_Version--;
+  if (libraw_internal_data.unpacker_data.CR3_Version < 1)
+	  throw LIBRAW_EXCEPTION_IO_CORRUPT;
+
   fseek(ifp, offset, SEEK_SET);
   while (!feof(ifp))
   {
@@ -538,4 +545,6 @@ void LibRaw::parse_mos(INT64 offset)
   if (planes)
     filters = (planes == 1) * 0x01010101U *
               (uchar) "\x94\x61\x16\x49"[(flip / 90 + frot) & 3];
+  libraw_internal_data.unpacker_data.CR3_Version++;
+
 }
