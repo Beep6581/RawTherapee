@@ -417,12 +417,15 @@ char *LibRaw_buffer_datastream::gets(char *s, int sz)
 int LibRaw_buffer_datastream::scanf_one(const char *fmt, void *val)
 {
   int scanf_res;
-  if (streampos > streamsize)
+  if (streampos > streamsize-24) // we assume at least 24 bytes in buffer, same assumption as in bigfile buffered datastream
     return 0;
+  char scanf_buffer[25];
+  memcpy(scanf_buffer, buf + streampos, 24);
+  scanf_buffer[24] = 0;
 #ifndef WIN32SECURECALLS
-  scanf_res = sscanf((char *)(buf + streampos), fmt, val);
+  scanf_res = sscanf(scanf_buffer, fmt, val);
 #else
-  scanf_res = sscanf_s((char *)(buf + streampos), fmt, val);
+  scanf_res = sscanf_s(scanf_buffer, fmt, val);
 #endif
   if (scanf_res > 0)
   {

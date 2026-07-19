@@ -39,10 +39,16 @@
       <dd> Closes libraw_data_t handler and deallocates all memory. </dd>
     </dl>
     <p><a name="return"></a></p>
-    <h2>Returned values</h2>
-    <p>Functions of C API return EINVAL (see errno.h) if the null pointer was
-      passed to them as the first argument. In all other cases, the <a href="API-CXX.html#return">C++
-        API return code</a> is returned.</p>
+        <h2>Returned values</h2>
+    <p>
+      If a null handle is passed to the C-API function, it returns
+      <ul>
+        <li>EINVAL (see errno.h) for integer-returing functions</li>
+        <li>-999.0f for float-returning functions</li>
+      </ul>
+        If a valid handle is passed, either the requested value (for a getter function) or a 
+        return code is returned in accordance with the <a href="API-CXX.html#return">C++ API return code</a> convention.
+    </p>
     <p><a name="dataload"></a></p>
     <h2>Data Loading from a File/Buffer</h2>
     <dl>

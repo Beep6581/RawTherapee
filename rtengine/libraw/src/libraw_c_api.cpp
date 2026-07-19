@@ -444,21 +444,21 @@ extern "C"
   DllDef float libraw_get_cam_mul(libraw_data_t *lr, int index)
   {
     if (!lr)
-      return EINVAL;
+      return -999.f;
     return lr->color.cam_mul[LIM(index, 0, 3)];
   }
 
   DllDef float libraw_get_pre_mul(libraw_data_t *lr, int index)
   {
     if (!lr)
-      return EINVAL;
+      return -999.f;
     return lr->color.pre_mul[LIM(index, 0, 3)];
   }
 
   DllDef float libraw_get_rgb_cam(libraw_data_t *lr, int index1, int index2)
   {
     if (!lr)
-      return EINVAL;
+      return -999.f;
     return lr->color.rgb_cam[LIM(index1, 0, 2)][LIM(index2, 0, 3)];
   }
 

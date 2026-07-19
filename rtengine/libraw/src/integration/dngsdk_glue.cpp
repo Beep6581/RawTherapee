@@ -371,11 +371,20 @@ int LibRaw::try_dngsdk()
     dng_pixel_buffer buffer;
     stage2->GetPixelBuffer(buffer);
 
-    int pixels = stage2->Bounds().H() * stage2->Bounds().W() * pplanes;
+    INT64 pixels = INT64(stage2->Bounds().H()) * INT64(stage2->Bounds().W()) * INT64(pplanes);
+
+	INT64 allocsz = pixels * TagTypeSize(ptype);
+    if (allocsz > INT64(imgdata.rawparams.max_raw_memory_mb) * INT64(1024 * 1024))
+      throw LIBRAW_EXCEPTION_TOOBIG;
 
     if (ptype == ttShort && !(stageBits & 1) &&  !is_curve_linear())
     {
-      imgdata.rawdata.raw_alloc = malloc(pixels * TagTypeSize(ptype));
+      imgdata.rawdata.raw_alloc 
+#ifdef LIBRAW_CALLOC_RAWSTORE
+          = calloc(pixels, TagTypeSize(ptype));
+#else
+		  = malloc(pixels * TagTypeSize(ptype));
+#endif
       ushort *src = (ushort *)buffer.fData;
       ushort *dst = (ushort *)imgdata.rawdata.raw_alloc;
       for (int i = 0; i < pixels; i++)
@@ -385,7 +394,12 @@ int LibRaw::try_dngsdk()
     }
     else if (ptype == ttByte)
     {
-      imgdata.rawdata.raw_alloc = malloc(pixels * TagTypeSize(ttShort));
+      imgdata.rawdata.raw_alloc 
+#ifdef LIBRAW_CALLOC_RAWSTORE
+          = calloc(pixels, TagTypeSize(ttShort));
+#else
+		  = malloc(pixels * TagTypeSize(ttShort));
+#endif
       unsigned char *src = (unsigned char *)buffer.fData;
       ushort *dst = (ushort *)imgdata.rawdata.raw_alloc;
       if (is_curve_linear())
@@ -408,7 +422,12 @@ int LibRaw::try_dngsdk()
       }
       else
       {
-        imgdata.rawdata.raw_alloc = malloc(pixels * TagTypeSize(ptype));
+        imgdata.rawdata.raw_alloc 
+#ifdef LIBRAW_CALLOC_RAWSTORE
+            = calloc(pixels, TagTypeSize(ptype));
+#else
+            = malloc(pixels * TagTypeSize(ptype));
+#endif
         memmove(imgdata.rawdata.raw_alloc, buffer.fData,
                 pixels * TagTypeSize(ptype));
       }

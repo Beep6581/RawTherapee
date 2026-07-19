@@ -144,7 +144,7 @@ void LibRaw::jpeg_thumb_writer(FILE *tfp, char *t_humb, int t_humb_length)
   struct tiff_hdr th;
   fputc(0xff, tfp);
   fputc(0xd8, tfp);
-  if (strcmp(t_humb + 6, "Exif"))
+  if (memcmp(t_humb + 6, "Exif\0",5))
   {
     memcpy(exif, "\xff\xe1  Exif\0\0", 10);
     exif[1] = htons(8 + sizeof th);

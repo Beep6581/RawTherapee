@@ -644,80 +644,90 @@ void LibRaw::parseOlympusMakernotes (INT64 base, unsigned tag, unsigned type, un
 
   } else {
 		switch (tag) {
-			case 0x0200:
-			  FORC3 if ((imOly.SpecialMode[c] = get4()) >= 0xff) imOly.SpecialMode[c] = 0xffffffff;
-			  break;
-			case 0x0207:
-				getOlympus_CameraType2();
-				break;
-			case 0x0404:
-			case 0x101a:
-				if (!imgdata.shootinginfo.BodySerial[0] && (dng_writer == nonDNG))
-					stmread(imgdata.shootinginfo.BodySerial, len, ifp);
-				break;
-			case 0x1002:
-				ilm.CurAp = float(libraw_powf64l(2.0f, getrealf(type) / 2.f));
-				break;
-			case 0x1007:
-				imCommon.SensorTemperature = (float)get2();
-				break;
-			case 0x1008:
-				imCommon.LensTemperature = (float)get2();
-				break;
-			case 0x100b:
-				if (imOly.FocusMode[0] == 0xffff) {
-					imgdata.shootinginfo.FocusMode = imOly.FocusMode[0] = get2();
-					if (imgdata.shootinginfo.FocusMode == 1)
-						imgdata.shootinginfo.FocusMode = imOly.FocusMode[0] = 10;
-				}
-				break;
+        case 0x0200:
+          FORC3 if ((imOly.SpecialMode[c] = get4()) >= 0xff) imOly.SpecialMode[c] = 0xffffffff;
+          break;
+        case 0x0207:
+          getOlympus_CameraType2();
+          break;
+        case 0x0404:
+        case 0x101a:
+          if (!imgdata.shootinginfo.BodySerial[0] && (dng_writer == nonDNG))
+            stmread(imgdata.shootinginfo.BodySerial, len, ifp);
+          break;
+        case 0x1002:
+          ilm.CurAp = float(libraw_powf64l(2.0f, getrealf(type) / 2.f));
+          break;
+        case 0x1007:
+          imCommon.SensorTemperature = (float)get2();
+          break;
+        case 0x1008:
+          imCommon.LensTemperature = (float)get2();
+          break;
+        case 0x100b:
+          if (imOly.FocusMode[0] == 0xffff)
+          {
+            imgdata.shootinginfo.FocusMode = imOly.FocusMode[0] = get2();
+            if (imgdata.shootinginfo.FocusMode == 1)
+              imgdata.shootinginfo.FocusMode = imOly.FocusMode[0] = 10;
+          }
+          break;
       case 0x100d:
         if (imOly.ZoomStepCount == 0xffff) imOly.ZoomStepCount = get2();
         break;
       case 0x100e:
-        if (imOly.FocusStepCount == 0xffff) imOly.FocusStepCount = get2();
+        if (imOly.FocusStepCount == 0xffff)
+          imOly.FocusStepCount = get2();
         break;
-			case 0x1011:
-				if (strcmp(software, "v757-71") && (dng_writer == nonDNG)) {
-					for (int i = 0; i < 3; i++) {
-						if (!imOly.ColorSpace) {
-							FORC3 cmatrix[i][c] = float((short)get2()) / 256.f;
-						} else {
-							FORC3 imgdata.color.ccm[i][c] = float((short)get2()) / 256.f;
-						}
-					}
-				}
-				break;
-			case 0x1012:
-			  if (dng_writer == nonDNG)
-				  FORC4 cblack[RGGB_2_RGBG(c)] = get2();
-				break;
-			case 0x1017:
-				if (dng_writer == nonDNG)
-				  cam_mul[0] = float(get2()) / 256.f;
-				break;
-			case 0x1018:
-				if (dng_writer == nonDNG)
-				  cam_mul[2] = float(get2()) / 256.f;
-				break;
-			case 0x102c:
-				if (dng_writer == nonDNG)
-				  imOly.ValidBits = get2();
-				break;
-			case 0x1038:
-				imOly.AFResult = get2();
-				break;
+      case 0x1011:
+        if (strcmp(software, "v757-71") && (dng_writer == nonDNG))
+        {
+          for (int i = 0; i < 3; i++)
+          {
+            if (!imOly.ColorSpace)
+            {
+              FORC3 cmatrix[i][c] = float((short)get2()) / 256.f;
+            }
+            else
+            {
+              FORC3 imgdata.color.ccm[i][c] = float((short)get2()) / 256.f;
+            }
+          }
+        }
+        break;
+      case 0x1012:
+        if (dng_writer == nonDNG)
+          FORC4 cblack[RGGB_2_RGBG(c)] = get2();
+        break;
+      case 0x1017:
+        if (dng_writer == nonDNG)
+          cam_mul[0] = float(get2()) / 256.f;
+        break;
+      case 0x1018:
+        if (dng_writer == nonDNG)
+          cam_mul[2] = float(get2()) / 256.f;
+        break;
+      case 0x102c:
+        if (dng_writer == nonDNG)
+          imOly.ValidBits = get2();
+        break;
+      case 0x1038:
+        imOly.AFResult = get2();
+        break;
       case 0x103b:
         if (imOly.FocusStepInfinity == 0xffff) imOly.FocusStepInfinity = get2();
         break;
       case 0x103c:
-        if (imOly.FocusStepNear == 0xffff) imOly.FocusStepNear = get2();
+        if (imOly.FocusStepNear == 0xffff)
+          imOly.FocusStepNear = get2();
         break;
-			case 0x20300108:
-			case 0x20310109:
-				if (dng_writer == nonDNG) {
+      case 0x20300108:
+      case 0x20310109:
+        if (dng_writer == nonDNG)
+        {
           imOly.ColorSpace = get2();
-          switch (imOly.ColorSpace) {
+          switch (imOly.ColorSpace)
+          {
           case 0:
             imCommon.ColorSpace = LIBRAW_COLORSPACE_sRGB;
             break;
@@ -731,34 +741,37 @@ void LibRaw::parseOlympusMakernotes (INT64 base, unsigned tag, unsigned type, un
             imCommon.ColorSpace = LIBRAW_COLORSPACE_Unknown;
             break;
           }
-				}
-			case 0x20500209:
-				imOly.AutoFocus = get2();
-				break;
-			case 0x20500300:
-			  imOly.ZoomStepCount = get2();
-			  break;
-			case 0x20500301:
-			  imOly.FocusStepCount = get2();
-			  break;
-			case 0x20500303:
-			  imOly.FocusStepInfinity = get2();
-			  break;
-			case 0x20500304:
-			  imOly.FocusStepNear = get2();
-			  break;
-			case 0x20500305:
-			  a = get4();
-			  /*b = */ get4(); // b is not used, so removed
-			  if (a >= 0x7f000000) imOly.FocusDistance = -1.0; // infinity
-			  else imOly.FocusDistance = (double) a / 1000.0;  // convert to meters
-			  break;
-			case 0x20500308:
-				imOly.AFPoint = get2();
-				break;
-			case 0x20501500:
-				getOlympus_SensorTemperature(len);
-				break;
-		}
+        }
+        break;
+      case 0x20500209:
+        imOly.AutoFocus = get2();
+        break;
+      case 0x20500300:
+        imOly.ZoomStepCount = get2();
+        break;
+      case 0x20500301:
+        imOly.FocusStepCount = get2();
+        break;
+      case 0x20500303:
+        imOly.FocusStepInfinity = get2();
+        break;
+      case 0x20500304:
+        imOly.FocusStepNear = get2();
+        break;
+      case 0x20500305:
+        a = get4();
+        /*b = */ get4(); // b is not used, so removed
+        if (a >= 0x7f000000)
+          imOly.FocusDistance = -1.0; // infinity
+        else
+          imOly.FocusDistance = (double)a / 1000.0; // convert to meters
+        break;
+      case 0x20500308:
+        imOly.AFPoint = get2();
+        break;
+      case 0x20501500:
+        getOlympus_SensorTemperature(len);
+        break;
+      }
   }
 }

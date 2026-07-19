@@ -159,10 +159,10 @@ double libraw_sgetreal_static(short _order, int type, uchar *s)
   case LIBRAW_EXIFTAG_TYPE_DOUBLE:
     rev = 7 * ((_order == 0x4949) == (ntohs(0x1234) == 0x1234));
     for (i = 0; i < 8; i++)
-      u.c[i ^ rev] = *(s+1);
+      u.c[i ^ rev] = *(s+i);
     return u.d;
   default:
-    return *(s+1);
+    return *s;
   }
 }
 
