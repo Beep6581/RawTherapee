@@ -24,7 +24,7 @@ function msgError {
 }
 
 function GetDependencies {
-    otool -L "$1" | awk 'NR >= 2 && $1 !~ /^(\/usr\/lib|\/System|@executable_path|@rpath)\// { print $1 }'  2>&1
+    otool -L "$1" | awk 'NR >= 2 && $1 !~ /^(\/usr\/lib|\/System|@executable_path|@loader_path|@rpath)\// { print $1 }'  2>&1
 }
 
 function CheckLink {
@@ -39,8 +39,8 @@ function ModifyInstallNames {
         msg "Modifying install names: ${x}"
         {
             # id
-            if [[ ${x:(-6)} == ".dylib" ]] || [[ f${x:(-3)} == ".so" ]]; then
-                install_name_tool -id /Applications/"${LIB}"/$(basename ${x}) ${x} 2>/dev/null
+            if [[ ${x:(-6)} == ".dylib" ]] || [[ ${x:(-3)} == ".so" ]]; then
+                install_name_tool -id /Applications/"${LIB}"/"$(basename "${x}")" "${x}" 2>/dev/null
             fi
             GetDependencies "${x}" | while read -r y
             do
@@ -48,6 +48,82 @@ function ModifyInstallNames {
             done
         } | bash -v
     done
+}
+
+die() {
+    msgError "$*"
+    exit 1
+}
+
+copy_tree() {
+    local src=$1
+    local dst=$2
+
+    [[ -d "$src" ]] || die "Missing directory: $src"
+    install -d "$dst"
+    ditto "$src" "$dst" ||
+        die "Failed to copy directory: $src -> $dst"
+}
+
+# Copy a resource hierarchy as real files. Package-manager share directories
+# commonly contain relative symlinks into a Cellar or ports tree; preserving
+# those links makes the application bundle non-relocatable and invalidates it
+# for codesigning. The /. suffix gives cp stable merge semantics when dst
+# already exists.
+copy_tree_dereference() {
+    local src=$1
+    local dst=$2
+
+    [[ -d "$src" ]] || die "Missing directory: $src"
+    install -d "$dst"
+    cp -RL "${src}/." "${dst}/" ||
+        die "Failed to dereference directory: $src -> $dst"
+}
+
+copy_macho() {
+    local src=$1
+    local dst=$2
+
+    # -e follows a command-line symlink and verifies its target exists.
+    [[ -e "$src" ]] || die "Missing library: $src"
+    install -d "$(dirname "$dst")"
+    ditto --arch "$arch" "$src" "$dst" ||
+        die "Failed to copy architecture $arch: $src -> $dst"
+    [[ -f "$dst" ]] || die "Copy did not create: $dst"
+}
+
+# Store the first existing candidate in RESOLVED_FILE. This avoids assuming a
+# package-manager prefix (/opt/local, /usr/local, or /opt/homebrew).
+resolve_file() {
+    local description=$1
+    shift
+    local candidate
+
+    RESOLVED_FILE=""
+    for candidate in "$@"; do
+        if [[ -n "$candidate" && -e "$candidate" ]]; then
+            RESOLVED_FILE="$candidate"
+            return
+        fi
+    done
+
+    die "Could not locate ${description}"
+}
+
+resolve_directory() {
+    local description=$1
+    shift
+    local candidate
+
+    RESOLVED_DIRECTORY=""
+    for candidate in "$@"; do
+        if [[ -n "$candidate" && -d "$candidate" ]]; then
+            RESOLVED_DIRECTORY="$candidate"
+            return
+        fi
+    done
+
+    die "Could not locate ${description}"
 }
 
 # Source check
@@ -129,7 +205,7 @@ fi
 
 #In: pkgcfg_lib_EXPAT_expat:FILEPATH=/opt/local/lib/libexpat.dylib
 #Out: /opt/local/lib/libexpat.dylib
-EXPATLIB="$(cmake .. -LA -N | grep pkgcfg_lib_EXPAT_expat)"; pkgcfg_lib_EXPAT_expat="${pkgcfg_lib_EXPAT_expat#*=}"
+EXPATLIB="$(cmake .. -LA -N | grep pkgcfg_lib_EXPAT_expat)"; EXPATLIB="${EXPATLIB#*=}"
 
 #In: CODESIGNID:STRING=Developer ID Application: Doctor Who (1234567890)
 #Out: Developer ID Application: Doctor Who (1234567890)
@@ -168,7 +244,6 @@ MACOS="${CONTENTS}/MacOS"
 LIB="${CONTENTS}/Frameworks"
 ETC="${RESOURCES}/etc"
 EXECUTABLE="${MACOS}/rawtherapee"
-GDK_PREFIX="${LOCAL_PREFIX}/"
 
 msg "Removing old files:"
 rm -rf "${APP}" *.dmg *.zip *.app
@@ -193,57 +268,129 @@ echo "Bundle date:   $(date -Ru) UTC" >> "${RESOURCES}/AboutThisBuild.txt"
 echo "Bundle epoch:  $(date +%s)" >> "${RESOURCES}/AboutThisBuild.txt"
 echo "Bundle UUID:   $(uuidgen|tr 'A-Z' 'a-z')" >> "${RESOURCES}/AboutThisBuild.txt"
 
-# Copy the Lensfun database into the app bundle
-mkdir -p "${RESOURCES}/share/lensfun"
-lensfunversion=$(pkg-config --modversion lensfun | cut -f3 -d'.')
-if [ $lensfunversion = 95 ]
-then
-    ditto ${LOCAL_PREFIX}/share/lensfun/version_2/* "${RESOURCES}/share/lensfun"
-    # Copy liblensfun to Frameworks
-    ditto ${LOCAL_PREFIX}/lib/liblensfun.2.dylib "${CONTENTS}/Frameworks/liblensfun.2.dylib"
+# Discover package locations through pkg-config where available. LOCAL_PREFIX
+# remains the fallback for MacPorts and linked Homebrew formulae.
+lensfun_prefix="$(pkg-config --variable=prefix lensfun 2>/dev/null)"
+lensfun_libdir="$(pkg-config --variable=libdir lensfun 2>/dev/null)"
+libpng_libdir="$(pkg-config --variable=libdir libpng 2>/dev/null)"
+libtiff_libdir="$(pkg-config --variable=libdir libtiff-4 2>/dev/null)"
+libsharpyuv_libdir="$(pkg-config --variable=libdir libsharpyuv 2>/dev/null)"
+libjxl_libdir="$(pkg-config --variable=libdir libjxl 2>/dev/null)"
 
+# Copy the Lensfun database and library into the app bundle.
+lensfunversion="$(pkg-config --modversion lensfun | cut -f3 -d'.')"
+if [[ "$lensfunversion" == 95 ]]; then
+    lensfun_database_version="version_2"
+    lensfun_library_name="liblensfun.2.dylib"
 else
-    ditto ${LOCAL_PREFIX}/share/lensfun/version_1/* "${RESOURCES}/share/lensfun"
-    # Copy liblensfun to Frameworks
-    ditto ${LOCAL_PREFIX}/lib/liblensfun.1.dylib "${CONTENTS}/Frameworks/liblensfun.1.dylib"
+    lensfun_database_version="version_1"
+    lensfun_library_name="liblensfun.1.dylib"
 fi
+resolve_directory "Lensfun ${lensfun_database_version} database" \
+    "${LOCAL_PREFIX}/share/lensfun/${lensfun_database_version}" \
+    "${lensfun_prefix}/share/lensfun/${lensfun_database_version}"
+lensfun_data_dir="$RESOLVED_DIRECTORY"
+resolve_file "$lensfun_library_name" \
+    "${LOCAL_PREFIX}/lib/${lensfun_library_name}" \
+    "${lensfun_libdir}/${lensfun_library_name}"
+lensfun_library="$RESOLVED_FILE"
+copy_tree "$lensfun_data_dir" "${RESOURCES}/share/lensfun"
+copy_macho "$lensfun_library" "${LIB}/${lensfun_library_name}"
 
-# Copy libomp to Frameworks
-cp ${LOCAL_PREFIX}/lib/libomp.dylib "${CONTENTS}/Frameworks"
+# libomp can be directly linked, nested under lib/ by MacPorts, or keg-only
+# under opt/ in Homebrew. LOCAL_PREFIX is authoritative for every layout.
+resolve_file "libomp.dylib" \
+    "${LOCAL_PREFIX}/lib/libomp.dylib" \
+    "${LOCAL_PREFIX}/lib/libomp/libomp.dylib" \
+    "${LOCAL_PREFIX}/opt/libomp/lib/libomp.dylib" \
+    "${LOCAL_PREFIX}"/libexec/llvm-*/lib/libomp.dylib
+copy_macho "$RESOLVED_FILE" "${LIB}/libomp.dylib"
 
 msg "Copying dependencies from ${GTK_PREFIX}."
 CheckLink "${EXECUTABLE}" 2>&1
 
-# Copy libpng16 to the app bundle
-cp ${LOCAL_PREFIX}/lib/libpng16.16.dylib "${CONTENTS}/Frameworks/libpng16.16.dylib"
+# Copy libraries needed by optional modules and codecs.
+resolve_file "libpng16.16.dylib" \
+    "${LOCAL_PREFIX}/lib/libpng16.16.dylib" \
+    "${libpng_libdir}/libpng16.16.dylib"
+copy_macho "$RESOLVED_FILE" "${LIB}/libpng16.16.dylib"
 
-# Copy libjxl_cms to the app bundle
-cp ${LOCAL_PREFIX}/lib/libjxl_cms.*.dylib "${CONTENTS}/Frameworks"
+resolve_file "libgraphite2.3.dylib" \
+    "${LOCAL_PREFIX}/lib/libgraphite2.3.dylib"
+copy_macho "$RESOLVED_FILE" "${LIB}/libgraphite2.3.dylib"
 
-# Copy graphite to Frameworks
-cp ${LOCAL_PREFIX}/lib/libgraphite2.3.dylib "${CONTENTS}/Frameworks"
+resolve_file "libtiff.6.dylib" \
+    "${LOCAL_PREFIX}/lib/libtiff.6.dylib" \
+    "${libtiff_libdir}/libtiff.6.dylib"
+copy_macho "$RESOLVED_FILE" "${LIB}/libtiff.6.dylib"
 
-# Copy libtiff 6 into the app bundle
-cp ${LOCAL_PREFIX}/lib/libtiff.6.dylib "${CONTENTS}/Frameworks/libtiff.6.dylib"
+resolve_file "libsharpyuv.0.dylib" \
+    "${LOCAL_PREFIX}/lib/libsharpyuv.0.dylib" \
+    "${libsharpyuv_libdir}/libsharpyuv.0.dylib"
+copy_macho "$RESOLVED_FILE" "${LIB}/libsharpyuv.0.dylib"
 
-# Copy libomp to Frameworks
-cp ${LOCAL_PREFIX}/lib/libomp.dylib "${CONTENTS}/Frameworks"
+resolve_directory "libjxl library directory" \
+    "$libjxl_libdir" \
+    "${LOCAL_PREFIX}/lib"
+libjxl_libdir="$RESOLVED_DIRECTORY"
+libjxl_cms_count=0
+for src in "${libjxl_libdir}"/libjxl_cms.*.dylib; do
+    [[ -e "$src" ]] || continue
+    copy_macho "$src" "${LIB}/$(basename "$src")"
+    ((libjxl_cms_count += 1))
+done
+((libjxl_cms_count > 0)) ||
+    die "No libjxl_cms libraries found in ${libjxl_libdir}"
 
-# Prepare GTK+3 installation
-msg "Copying configuration files from ${GTK_PREFIX}:"
-cp -RL {"${GDK_PREFIX}/lib","${LIB}"}/gdk-pixbuf-2.0
-msg "Copying library modules from ${GTK_PREFIX}:"
-cp -RL {"${GDK_PREFIX}/lib","${LIB}"}/gdk-pixbuf-2.0
-ditto --arch "${arch}" {"${GTK_PREFIX}/lib","${LIB}"}/gtk-3.0
-msg "Removing static libraries and cache files:"
-find -E "${LIB}" -type f -regex '.*\.(a|la|cache)$' | while read -r; do rm "${REPLY}"; done
+# Copy GTK modules directly from their installed locations. Tree-copying these
+# directories first can preserve package-manager symlinks and break them after
+# the temporary hierarchy is removed.
+GDK_LOADERS_DIR="$(pkg-config --variable=gdk_pixbuf_moduledir gdk-pixbuf-2.0)"
+GTK_LIBDIR="$(pkg-config --variable=libdir gtk+-3.0)"
 
-# Make Frameworks folder flat
-msg "Flattening the Frameworks folder"
-cp -RL "${LIB}"/gdk-pixbuf-2.0/2*/loaders/* "${LIB}"
-cp "${LIB}"/gtk-3.0/3*/immodules/*.{dylib,so} "${LIB}" >/dev/null 2>&1
-rm -r "${LIB}"/gtk-3.0
-rm -r "${LIB}"/gdk-pixbuf-2.0
+[[ -d "$GDK_LOADERS_DIR" ]] ||
+    die "Could not locate the gdk-pixbuf loaders directory: ${GDK_LOADERS_DIR}"
+[[ -d "${GTK_LIBDIR}/gtk-3.0" ]] ||
+    die "Could not locate the GTK module root: ${GTK_LIBDIR}/gtk-3.0"
+
+GTK_IMMODULES_DIR="$(
+    find "${GTK_LIBDIR}/gtk-3.0" \
+        -type d -name immodules -print -quit
+)"
+
+[[ -n "$GTK_IMMODULES_DIR" ]] ||
+    die "Could not locate the GTK immodules directory"
+
+gdk_loader_count=0
+for src in "${GDK_LOADERS_DIR}"/*.so; do
+    [[ -e "$src" ]] || continue
+
+    copy_macho \
+        "$src" \
+        "${LIB}/$(basename "$src")"
+
+    ((gdk_loader_count += 1))
+done
+
+((gdk_loader_count > 0)) ||
+    die "No usable gdk-pixbuf loaders found in ${GDK_LOADERS_DIR}"
+
+gtk_immodule_count=0
+for src in \
+    "${GTK_IMMODULES_DIR}"/*.so \
+    "${GTK_IMMODULES_DIR}"/*.dylib
+do
+    [[ -e "$src" ]] || continue
+
+    copy_macho \
+        "$src" \
+        "${LIB}/$(basename "$src")"
+
+    ((gtk_immodule_count += 1))
+done
+
+((gtk_immodule_count > 0)) ||
+    die "No usable GTK immodules found in ${GTK_IMMODULES_DIR}"
 
 # GTK+3 themes
 msg "Copy GTK+3 theme and icon resources:"
@@ -252,10 +399,13 @@ ditto {"${LOCAL_PREFIX}","${RESOURCES}"}/share/themes/Default/gtk-3.0/gtk-keys.c
 
 # Adwaita icons
 msg "Copy Adwaita icons"
-mkdir -p ${RESOURCES}/share/icons/Adwaita
-cp -RL ${LOCAL_PREFIX}/share/icons/Adwaita/* "${RESOURCES}"/share/icons/Adwaita/
+copy_tree_dereference \
+    "${LOCAL_PREFIX}/share/icons/Adwaita" \
+    "${RESOURCES}/share/icons/Adwaita"
 "${LOCAL_PREFIX}/bin/gtk-update-icon-cache" "${RESOURCES}/share/icons/Adwaita" || "${LOCAL_PREFIX}/bin/gtk-update-icon-cache-3.0" "${RESOURCES}/share/icons/Adwaita"
-cp -RL "${LOCAL_PREFIX}/share/icons/hicolor" "${RESOURCES}/share/icons/hicolor"
+copy_tree_dereference \
+    "${LOCAL_PREFIX}/share/icons/hicolor" \
+    "${RESOURCES}/share/icons/hicolor"
 
 # fix libfreetype install name
 for lib in "${LIB}"/*; do
@@ -288,21 +438,31 @@ ModifyInstallNames 2>/dev/null
 
 # Mime directory
 msg "Copying shared files from ${GTK_PREFIX}:"
-ditto {"${LOCAL_PREFIX}","${RESOURCES}"}/share/mime
+copy_tree_dereference \
+    "${LOCAL_PREFIX}/share/mime" \
+    "${RESOURCES}/share/mime"
 
 msg "Installing required application bundle files:"
-PROJECT_SOURCE_DATA_DIR="${PROJECT_SOURCE_DIR}/tools/osx"
-ditto "${PROJECT_SOURCE_DIR}/rtdata/fonts" "${ETC}/fonts"
+if [[ -d "${PROJECT_SOURCE_DIR}/rtdata/fonts" ]]; then
+    copy_tree "${PROJECT_SOURCE_DIR}/rtdata/fonts" "${ETC}/fonts"
+else
+    msg "No rtdata/fonts directory in this source tree; skipping it."
+fi
 
 # App bundle resources
+PROJECT_SOURCE_DATA_DIR="${PROJECT_SOURCE_DIR}/tools/osx"
 ditto "${PROJECT_SOURCE_DATA_DIR}/"{rawtherapee,profile}.icns "${RESOURCES}"
 
 update-mime-database -V  "${RESOURCES}/share/mime"
-cp -RL "${LOCAL_PREFIX}/share/locale" "${RESOURCES}/share/locale"
+copy_tree_dereference \
+    "${LOCAL_PREFIX}/share/locale" \
+    "${RESOURCES}/share/locale"
 
 msg "Build glib database:"
-mkdir -p ${RESOURCES}/share/glib-2.0
-cp -LR {"${LOCAL_PREFIX}","${RESOURCES}"}/share/glib-2.0/schemas
+mkdir -p "${RESOURCES}/share/glib-2.0"
+copy_tree_dereference \
+    "${LOCAL_PREFIX}/share/glib-2.0/schemas" \
+    "${RESOURCES}/share/glib-2.0/schemas"
 "${LOCAL_PREFIX}/bin/glib-compile-schemas" "${RESOURCES}/share/glib-2.0/schemas"
 
 # Append an LC_RPATH
@@ -322,7 +482,9 @@ install_name_tool -add_rpath /Applications/"${LIB}" "${EXECUTABLE}"-cli 2>/dev/n
 
 # Link to libomp instead of libgomp
 sudo install_name_tool -change /Applications/RawTherapee.app/Contents/Frameworks/libgomp.1.dylib /Applications/RawTherapee.app/Contents/Frameworks/libomp.dylib RawTherapee.app/Contents/Frameworks/libfftw3f_omp.3.dylib
-rm RawTherapee.app/Contents/Frameworks/libgomp.1.dylib
+if [[ -e "${LIB}/libgomp.1.dylib" ]]; then
+    rm "${LIB}/libgomp.1.dylib"
+fi
 
 # Merge the app with the other architecture to create the Universal app.
 if [[ -n $UNIVERSAL_URL ]]; then
@@ -367,6 +529,13 @@ else
     minimum_x86_64_version=${minimum_arm64_version}
         cmake -DPROJECT_SOURCE_DATA_DIR=${PROJECT_SOURCE_DATA_DIR} -DCONTENTS=${CONTENTS} -Dversion=${PROJECT_FULL_VERSION} -DshortVersion=${PROJECT_VERSION} -Dminimum_arm64_version=${minimum_arm64_version} -Dminimum_x86_64_version=${minimum_x86_64_version} -Darch=${arch} -P ${PROJECT_SOURCE_DATA_DIR}/info-plist.cmake
 fi
+
+# Package-manager links must never escape from Resources into a build-machine
+# prefix. This catches that condition before codesign reports only the generic
+# "invalid destination for symbolic link in bundle" error.
+resource_symlink="$(find "${RESOURCES}" -type l -print -quit)"
+[[ -z "$resource_symlink" ]] ||
+    die "Application Resources still contains a symbolic link: ${resource_symlink}"
 
 # Codesign the app
 if [[ -n $CODESIGNID ]]; then
