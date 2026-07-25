@@ -2338,6 +2338,9 @@ void LibRaw::parseSonySRF(unsigned len)
       offset += srf_buf[int(offset)] << 2;
 
 	  int ioffset = int(offset);
+	  
+	  if (ioffset + 3 >= len)
+        goto restore_after_parseSonySRF;
       /* master key is stored in big endian */
       MasterKey = ((unsigned)srf_buf[ioffset] << 24) |
           ((unsigned)srf_buf[ioffset + 1] << 16) |

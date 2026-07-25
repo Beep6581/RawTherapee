@@ -45,7 +45,7 @@ float LibRaw::find_green(int bps, int bite, int off0, int off1)
 {
   UINT64 bitbuf = 0;
   int vbits, col, i, c;
-  ushort img[2][2064];
+  ushort img[2][2065];
   float sum[] = {0, 0};
   if (width > 2064)
     return 0.f; // too wide
@@ -79,12 +79,19 @@ void LibRaw::trimSpaces(char *s)
 {
   char *p = s;
   int l = int(strlen(p));
-  if (!l)
+  if (l<1)
     return;
-  while (isspace(p[l - 1]))
+  while (l > 0 && isspace(p[l - 1]))
     p[--l] = 0; /* trim trailing spaces */
-  while (*p && isspace(*p))
+  if (l < 1)
+	  return; // only spaces in the input string, all wiped out;
+  while (*p && isspace(*p) && l > 0)
     ++p, --l;   /* trim leading spaces */
+  if (l < 1)  // should not happen, but safety belt
+  {
+	  *s = 0;
+	  return;
+  }
   memmove(s, p, l + 1);
 }
 
@@ -122,6 +129,8 @@ void LibRaw::remove_caseSubstr(char *string, char *subStr) // replace a substrin
 void LibRaw::removeExcessiveSpaces(char *string) // replace repeating spaces with one space
 {
 	int orig_len = int(strlen(string));
+	if (orig_len < 1)
+		return;
 	int i = 0;   // counter for resulting string
 	int j = -1;
 	bool prev_char_is_space = false;
@@ -137,6 +146,8 @@ void LibRaw::removeExcessiveSpaces(char *string) // replace repeating spaces wit
 			}
 		}
 	}
-	if (string[i-1] == ' ')
-    string[i-1] = 0;
+    if (i > 0 && string[i - 1] == ' ')
+		string[i-1] = 0;
+	if(i < orig_len)
+		string[i] = 0; 
 }

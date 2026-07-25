@@ -27,7 +27,7 @@ void LibRaw::phase_one_allocate_tempbuffer()
 		// Processed by RawSpeed, raw_image contains ptr to rawspeed internals
 		imgdata.rawdata.raw_alloc = imgdata.rawdata.raw_image; // save for data processing and future reuse
 	}
-    imgdata.rawdata.raw_image = (ushort *)malloc(S.raw_pitch * S.raw_height);
+    imgdata.rawdata.raw_image = (ushort *)malloc(UINT64(S.raw_pitch) * UINT64(S.raw_height));
 }
 void LibRaw::phase_one_free_tempbuffer()
 {

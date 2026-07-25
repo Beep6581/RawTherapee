@@ -1,6 +1,6 @@
-RAWTHERAPEE 5.13-rc1 RELEASE NOTES
+RAWTHERAPEE 5.13 RELEASE NOTES
 
-This is Release Candidate 1 of RawTherapee 5.13, released on 2026-06-14. This is not the final release yet.
+This is RawTherapee 5.13, released on 2026-07-26.
 
 
 
@@ -101,6 +101,8 @@ NEWS RELEVANT TO PACKAGE MAINTAINERS
 New since 5.12:
 - RawTherapee may be built to use LunaSVG instead of librsvg.
 - RawTherapee may be compiled with SIMDe to improve performance on ARM architectures.
+- The USE_OLD_CXX_ABI option has been removed.
+- RawTherapee depends on the fmt library. By default, it will download the source code and build it. To use the system fmt library, use -DWITH_SYSTEM_FMT="ON".
 
 In general:
 - To get the source code, either clone from git or use the tarball from https://rawtherapee.com/shared/source/. Do not use the auto-generated GitHub release tarballs.
