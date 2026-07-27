@@ -82,8 +82,8 @@ void LibRaw::xtrans_interpolate(int passes)
                 int h = orth[d + 2] * patt[g][c * 2] + orth[d + 3] * patt[g][c * 2 + 1];
                 minv = MIN(v, minv);
                 maxv = MAX(v, maxv);
-                minh = MIN(v, minh);
-                maxh = MAX(v, maxh);
+                minh = MIN(h, minh);
+                maxh = MAX(h, maxh);
                 allhex[row][col][0][c ^ (g * 2 & d)] = h + v * width;
                 allhex[row][col][1][c ^ (g * 2 & d)] = h + v * LIBRAW_AHD_TILE;
             }
