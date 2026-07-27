@@ -1,3 +1,36 @@
+2026-07-16  Alex Tutubalin <lexa@lexa.ru>
+  LibRaw 0.22.2 Release
+  This is bugfix-only release with these commits included:
+
+  * 5e37b038 Fixed 6yr old typos in USE_6BY9RPI 8- and 16- bit decoders
+  * e4b18e7a trimSpaces: Improved handling of zero-length strings and strings consisting only of spaces
+  * d932fa11 Misc fixups
+  * dead45de Fix links to license files in contributing document
+  * be519b31 removeExcessiveSpaces: handle zero-length strings the right way
+  * 98bb471b contributing rules updated
+  * 2bc644b3 Zero read buffers before fread
+  * f33997a1 FP DNG loader: check for tile index; convertFloatToInt: avoid possible integer overflow
+  * c9fcadbe open_bayer(): reject images with raw size/visible size less than 22 (as in open_file/identify); vng_interpolate: do not interpolate images less than 8x8
+  * 4bf0a0af PPM16 thumb: check against LIBRAW_MAX_THUMBNAIL_MB
+  * 7bf4c81c open_bayer(): additional input data checks
+  * 184c2ec5 Olympus/14bit: refuse incorrect wbits metadata
+  * 2ae5b3b3 X3F decoder: initialise raw storage if LIBRAW_CALLOC_RAWSTORE defined
+  * e2547d07 crx decoder: check plane size agains imgdata.rawparams.max_raw_memory_mb
+  * 2dce5bdb Crx decoder: avoid possible int32 overflow on allocation size calculations
+  * 67a7ddaf check for ifd->bps values in FP DNG decoder
+  * 595c8364 fixed stack memory/previous image metadata exposure (reported by DMSAN)
+  * f8065268 LibRaw_memmgr: allow malloc to fail on local pointer array small allocation. It will definitely fall later on large-buffer allocation
+  * 233ae06d rotated fuji: stricter image size limits; raw2image(ex): avoid possible 32-bit overflow on alloc size calculations
+  * a0880cfa width/height and iwidth/height values documented
+  * 3bea0fa8 width/height and iwidth/height values documented
+  * 7dff13dc wavelet denoise: ensure allocation size not exceed 4GB
+  * 56fc049a unpack_thumb:  check JPEG thumbnail size before performing allocation;  Remove all allocation test results because LibRaw::calloc/malloc will raise exception if allocation fails
+  * 07597ffd removed row_stride signed/unsigned mix; check row_stride value against buffer size
+  * 3ba757f7 fixed possible next struct item override in x3f_parse
+  * 537e81c0 parse_phase_one: prevent buffer overrun if incorrect flat field data provided
+  * 80a05133 Limit parse_mos recursion depth; parse_qt: raise exception, do not hide too depth nesting error
+  * b41f8137 parse_qt: avoid too deep recursion
+
 2026-04-06  Alex Tutubalin <lexa@lexa.ru>
   LibRaw 0.22.1 Release
   This is bugfix-only release with these commits included:

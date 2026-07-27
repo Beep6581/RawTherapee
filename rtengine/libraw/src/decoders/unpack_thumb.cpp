@@ -160,8 +160,6 @@ int LibRaw::unpack_thumb(void)
 #else
         T.thumb = (char *)malloc(T.tlength);
 #endif
-		if(!T.thumb)
-          return LIBRAW_NO_THUMBNAIL;
         ID.input->read(T.thumb, 1, T.tlength);
 		unsigned char *tthumb = (unsigned char *)T.thumb;
 		if (Tformat == LIBRAW_INTERNAL_THUMBNAIL_JPEGXL)
@@ -230,15 +228,7 @@ int LibRaw::unpack_thumb(void)
         if (T.thumb)
           free(T.thumb);
         T.thumb = (char *)calloc(colors, tlength);
-		if(!T.thumb)
-			return LIBRAW_NO_THUMBNAIL;
         unsigned char *tbuf = (unsigned char *)calloc(colors, tlength);
-		if (!tbuf)
-		{
-			free(T.thumb);
-			T.thumb = 0;
-            return LIBRAW_NO_THUMBNAIL;
-		}
         // Avoid OOB of tbuf, should use tlength
         ID.input->read(tbuf, colors, tlength);
         if (libraw_internal_data.unpacker_data.thumb_misc >> 8 &&
@@ -279,15 +269,7 @@ int LibRaw::unpack_thumb(void)
           free(T.thumb);
         T.tcolors = 3;
         T.thumb = (char *)calloc(T.tcolors, tlength);
-        if (!T.thumb)
-          return LIBRAW_NO_THUMBNAIL;
         unsigned short *tbuf = (unsigned short *)calloc(2, tlength);
-        if (!tbuf)
-        {
-          free(T.thumb);
-          T.thumb = 0;
-          return LIBRAW_NO_THUMBNAIL;
-        }
 		try {
   		  read_shorts(tbuf, tlength);
           for (i = 0; i < tlength; i++)
@@ -330,9 +312,9 @@ int LibRaw::unpack_thumb(void)
               total_size += tiff_ifd[pifd].strip_byte_counts[i];
             if (total_size != (unsigned)t_length) // recalculate colors
             {
-              if (total_size == T.twidth * T.tlength * 3)
+              if (total_size == T.twidth * T.theight * 3)
                 T.tcolors = 3;
-              else if (total_size == T.twidth * T.tlength)
+              else if (total_size == T.twidth * T.theight)
                 T.tcolors = 1;
             }
             T.tlength = unsigned(total_size);
@@ -344,9 +326,6 @@ int LibRaw::unpack_thumb(void)
 #else
             T.thumb = (char *)malloc(T.tlength);
 #endif
-            if (!T.thumb)
-              return LIBRAW_NO_THUMBNAIL;
-
             char *dest = T.thumb;
             INT64 pos = ID.input->tell();
             INT64 remain = T.tlength;
@@ -374,18 +353,17 @@ int LibRaw::unpack_thumb(void)
 
         if (!T.tlength)
           T.tlength = t_length;
-        if (T.thumb)
-          free(T.thumb);
 
-        THUMB_SIZE_CHECKTNZ(T.tlength);
+		THUMB_SIZE_CHECKTNZ(T.tlength);
+
+		if (T.thumb)
+          free(T.thumb);
 
 #ifdef LIBRAW_CALLOC_RAWSTORE
         T.thumb = (char *)calloc(T.tlength,1);
 #else
         T.thumb = (char *)malloc(T.tlength);
 #endif
-        if (!T.thumb)
-          return LIBRAW_NO_THUMBNAIL;
         if (!T.tcolors)
           T.tcolors = t_colors;
 
@@ -401,15 +379,16 @@ int LibRaw::unpack_thumb(void)
 			return LIBRAW_NO_THUMBNAIL; // 16-bit thumb, but parsed for
                                              // more bits
         int o_bps = (imgdata.rawparams.options & LIBRAW_RAWOPTIONS_USE_PPM16_THUMBS) ? 2 : 1;
-        int o_length = T.twidth * T.theight * t_colors * o_bps;
+
+		THUMB_SIZE_CHECKWH(T.twidth, (INT64(T.theight)*INT64(o_bps)));
+
+		int o_length = T.twidth * T.theight * t_colors * o_bps;
         int i_length = T.twidth * T.theight * t_colors * 2;
 
 		THUMB_SIZE_CHECKTNZ(o_length);
         THUMB_SIZE_CHECKTNZ(i_length);
 
         ushort *t_thumb = (ushort *)calloc(i_length, 1);
-		if (!t_thumb)
-			return LIBRAW_NO_THUMBNAIL;;
         ID.input->read(t_thumb, 1, i_length);
         if ((libraw_internal_data.unpacker_data.order == 0x4949) ==
             (ntohs(0x1234) == 0x1234))
@@ -430,11 +409,6 @@ int LibRaw::unpack_thumb(void)
 #else
           T.thumb = (char *)malloc(o_length);
 #endif
-		  if (!T.thumb)
-		  {
-			  free(t_thumb);
-			  return LIBRAW_NO_THUMBNAIL;
-		  }
           for (int i = 0; i < o_length; i++)
             T.thumb[i] = t_thumb[i] >> 8;
           free(t_thumb);

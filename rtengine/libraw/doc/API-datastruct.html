@@ -205,6 +205,59 @@
       <dt><strong> ushort iheight, iwidth; </strong></dt>
       <dd>Size of the output image (may differ from height/width for cameras
         that require image rotation or have non-square pixels).</dd>
+</dl>
+<a name="size_explanation"></a>
+The values of the size parameters need detailed explanation:
+<h4>Short Summary:</h4>
+<ol>
+  <li>If you are using post-processing via <strong>LibRaw::dcraw_process()</strong>,
+    use the width/height values set after calling LibRaw::dcraw_process().
+  <li>If you are using custom post-processing, you can call <strong>adjust_sizes_info_only()</strong>
+    to estimate the output buffer dimensions and use the iwidth/iheight values.
+</ol>
+<h4>Detailed Description:</h4>
+The variables <strong>width/height</strong> and <strong>iwidth/iheight</strong> are inherited from dcraw 
+along with its program logic; in particular, they may change after calling LibRaw::dcraw_process().
+<p>
+Depending on post-processing parameters (params.half_size and params.use_fuji_rotate) and the type of input image, these fields behave as follows:
+<ol>
+  <li>Full-color and monochrome images: Both parameter pairs equal the visible image area and do not change during post-processing,
+     since no Bayer interpolation is performed; enabling "half-size" interpolation via params.half_size is ignored.
+  <li>Standard "Bayer" images with square pixels (imgdata.sizes.pixel_aspect == 1), excluding Fuji Super-CCD images:
+    <ul>
+      <li>After opening the file: width/height equal the visible area; iwidth/iheight equal the output image size 
+        (if params.half_size == 1, then iwidth/iheight will contain half-resolution values).
+      <li>If you do not use post-processing but call LibRaw::adjust_sizes_info_only(): After this call, 
+        the iwidth/iheight fields will be set to correct values.
+      <li>After post-processing: Both parameter pairs equal the dimensions of the processed image (i.e., half-size when half_size is used).
+  </ul>
+  <li>Images from Fuji Super-CCD sensors, where processing involves rotating the intermediate image by 45 degrees:
+    <ul>
+        <li>After opening the file: width/height indicate the dimensions of the square into which the unpacked image 
+          will be fitted during the raw-to-image stage, without considering possible use of half_mode;
+          iwidth/iheight account for the half_mode parameter.
+        <li>If you do not use post-processing but call LibRaw::adjust_sizes_info_only(): 
+          After this call, the iwidth/iheight fields will be set to correct values.
+        <li>After post-processing: iwidth/iheight remain unchanged, while width/height are set to the dimensions of the output buffer imgdata.image:
+          <ul>
+              <li>If use_fuji_rotate == 1 (default), these are the dimensions of the output image 
+                rotated back by 45 degrees (to its original orientation) and cropped to the visible area.
+              <li>Otherwise, this is a square output buffer containing the post-processed result, rotated by 45 degrees.
+        </ul>
+  </ul>
+  <li>Images from sensors with imgdata.sizes.pixel_aspect != 1.0:
+    <ul>
+        <li>After opening the file: Both parameter pairs are set to values without aspect-ratio correction (accounting for half_size for iwidth/iheight).
+        <li>If you do not use post-processing but call LibRaw::adjust_sizes_info_only(): After this call, the iwidth/iheight fields will be set to correct values.
+        <li>4.c. After post-processing: iwidth/iheight remain unchanged, while width/height take on the dimensions of the output buffer imgdata.image:
+          <ul>
+              <li>If use_fuji_rotate == 1 (default), the output image will be corrected and the proper aspect ratio applied.
+              <li>Otherwise, no aspect-ratio correction will be applied, and iwidth/iheight will remain unchanged.
+          </ul>
+  </ul>
+</ol>
+TODO: For Fuji Super-CCD and images with non-square pixels, correct iwidth/iheight values should be set after post-processing.
+<dl>
       <dt><strong> unsigned raw_pitch; </strong></dt>
       <dd>Full size of raw data row <strong> in bytes </strong> .</dd>
       <dt><strong> double pixel_aspect; </strong></dt>

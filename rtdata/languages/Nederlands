@@ -20,7 +20,8 @@
 #020 2024-08-09 update naar RawTherapee 5.11 door pm
 #021 22-04-2025 update naar RawTherapee 5.12 door pm
 #022 09-06-2025 update #2 voor RT 5.12 door pm
-#023 27-12-2025 update voor RT 5.13 door pm
+#023 27-12-2025 update #3 voor RT 5.12 door pm
+#024 29-06-2026 update voor RT 5.13 door pm
 #100
 #101 @LANGUAGE_DISPLAY_NAME=Nederlands
 
@@ -1408,8 +1409,20 @@ HISTORY_MSG_BLURWAV;Vervaging luminantie
 HISTORY_MSG_BLUWAV;Versterkingsrespons
 HISTORY_MSG_CATCAT;CAL - Instellingen - Modus
 HISTORY_MSG_CATCOMPLEX;CAL - Instellingen - Complexiteit
+HISTORY_MSG_CATCURVEBLUE;CAL - IA - Helderheid Blauw
+HISTORY_MSG_CATCURVEGREEN;CAL - IA - Helderheid Groen
+HISTORY_MSG_CATCURVERED;CAL - IA - Helderheid Rood
+HISTORY_MSG_CATHUEBLUE;CAL - IA - Tint Blauw
+HISTORY_MSG_CATHUEGREEN;CAL - IA - Tint Groen
+HISTORY_MSG_CATHUERED;CAL - IA - Tint Rood
 HISTORY_MSG_CATMODEL;CAL - Instellingen - CAM
+HISTORY_MSG_CATSCHROMABLUE;CAL - IA - Verzadiging Blauw
+HISTORY_MSG_CATSCHROMAGREEN;CAL - IA - Verzadiging Groen
+HISTORY_MSG_CATSCHROMARED;CAL - IA - Verzadiging Rood
 HISTORY_MSG_CG_COLORSPACE;Kleurruimtecompressie - Doel
+HISTORY_MSG_CG_CYANDC_AUTO;Gamutcompressie - Automatische limieten Cyaan
+HISTORY_MSG_CG_CYANDM_AUTO;Gamutcompressie - Automatische limieten Magenta
+HISTORY_MSG_CG_CYANDY_AUTO;Gamutcompressie - Automatische limieten Geel
 HISTORY_MSG_CG_CYANLIM;Kleurruimtecompressie - Max. limieten cyaan
 HISTORY_MSG_CG_CYANTH;Kleurruimtecompressie - Drempel cyaan
 HISTORY_MSG_CG_ENABLED;Kleurruimtecompressie - Ingeschakeld
@@ -1436,6 +1449,11 @@ HISTORY_MSG_COLORTONING_LABREGION_SHOWMASK;CT - toon gebiedsmasker
 HISTORY_MSG_COLORTONING_LABREGION_SLOPE;CT - hellingsgebied
 HISTORY_MSG_COMPLEX;Waveletcomplexiteit
 HISTORY_MSG_COMPLEXRETI;Retinexcomplexiteit
+HISTORY_MSG_CROP_GUIDE_ASPECT_RATIO_PRESET_CHANGED;Bijsnijdhulplijnen - Vooraf ingestelde beeldverhouding
+HISTORY_MSG_CROP_GUIDE_BLEED_BASIS_CHANGED;Bijsnijdhulplijnen - Afloopbasis
+HISTORY_MSG_CROP_GUIDE_BLEED_CHANGED;Bijsnijdhulplijnen - Afloop
+HISTORY_MSG_CROP_GUIDE_ENABLED;Bijsnijdhulplijnen
+HISTORY_MSG_CROP_GUIDE_PRESET_CHANGED;Bijsnijdhulplijnen - Voorinstelling
 HISTORY_MSG_DEHABLACK;Ontnevel Bayer zwart
 HISTORY_MSG_DEHABLACKX;Ontnevel X-Trans zwart
 HISTORY_MSG_DEHAZE_DEPTH;Ontnevelen - Diepte
@@ -1479,11 +1497,16 @@ HISTORY_MSG_HLBL;Kleurpropagatie - vervaging
 HISTORY_MSG_HLTH;Inpaint opposed - versterking drempel
 HISTORY_MSG_ICL_LABGRIDCIEXY;Cie xy
 HISTORY_MSG_ICM_AINTENT;Abstract profiel - weergave-intentie
+HISTORY_MSG_ICM_APSAT;Abstract profielverzadiging
+HISTORY_MSG_ICM_BLUROT;Primair Blauw rotatie
+HISTORY_MSG_ICM_BLUSAT;Primair Blauw verzadiging
 HISTORY_MSG_ICM_BLUX;Primair blauw X
 HISTORY_MSG_ICM_BLUY;Primair blauw Y
 HISTORY_MSG_ICM_CAT;Matrix-aanpassing
 HISTORY_MSG_ICM_FBW;Zwart en wit
 HISTORY_MSG_ICM_GAMUT;Beperk kleurbereik
+HISTORY_MSG_ICM_GREROT;Primair Groen rotatie
+HISTORY_MSG_ICM_GRESAT;Primair Groen verzadiging
 HISTORY_MSG_ICM_GREX;Primair groen X
 HISTORY_MSG_ICM_GREY;Primair groen Y
 HISTORY_MSG_ICM_MIDTCIE;Middentonen
@@ -1494,6 +1517,8 @@ HISTORY_MSG_ICM_OUTPUT_TEMP;Uitvoer - ICC-v4 Lichtbron D
 HISTORY_MSG_ICM_OUTPUT_TYPE;Uitvoer - Type
 HISTORY_MSG_ICM_PRESER;Behoud neutraal
 HISTORY_MSG_ICM_PYRWAVTRC;Contrastprofiel
+HISTORY_MSG_ICM_REDROT;Primair Rood rotatie
+HISTORY_MSG_ICM_REDSAT;Primair Rood verzadiging
 HISTORY_MSG_ICM_REDX;Primair rood X
 HISTORY_MSG_ICM_REDY;Primair rood Y
 HISTORY_MSG_ICM_REFI;Kleurverfijning
@@ -1502,8 +1527,12 @@ HISTORY_MSG_ICM_SHIFTX;Kleurverfijning - Verschuif x
 HISTORY_MSG_ICM_SHIFTY;Kleurverfijning - Verschuif y
 HISTORY_MSG_ICM_SIGMATRC;Lokaal contrast verzwakkingsrespons
 HISTORY_MSG_ICM_SMOOTHCIE;Vloeiende hoge lichten
+HISTORY_MSG_ICM_SMOOTHCIESLI;Drempelwaarde demping
 HISTORY_MSG_ICM_TRCEXP;Abstract Profiel
 HISTORY_MSG_ICM_WAVEXP;Contrastversterking
+HISTORY_MSG_ICM_WGAMUT;Doelkleurruimte
+HISTORY_MSG_ICM_WGAMUTGAIN;Versterking
+HISTORY_MSG_ICM_WGAMUTPOWER;Kracht
 HISTORY_MSG_ICM_WORKING_GAMMA;Werkend - Gamma
 HISTORY_MSG_ICM_WORKING_ILLUM_METHOD;Methode lichtsterkte
 HISTORY_MSG_ICM_WORKING_PRIM_METHOD;Methode primaire kleuren
@@ -1516,7 +1545,11 @@ HISTORY_MSG_LOCALCONTRAST_ENABLED;Lokaal Contrast
 HISTORY_MSG_LOCALCONTRAST_LIGHTNESS;Lokaal Contrast - Licht
 HISTORY_MSG_LOCALCONTRAST_RADIUS;Lokaal Contrast - Radius
 HISTORY_MSG_LOCALLAB_TE_PIVOT;Lokaal - draaipunt Equalizer
+HISTORY_MSG_LOCAL_AUTOCAPRADIUS;Lokaal - Scherpte autom. capture-radius
+HISTORY_MSG_LOCAL_AUTOSHAR;Lokaal - Scherpte auto-contrast
+HISTORY_MSG_LOCAL_AUTOSP;Lokaal - GHS - Auto SP
 HISTORY_MSG_LOCAL_AVOIDNEGATIVE;Lokaal - SC - Pre-filter nul en negatieve waarden
+HISTORY_MSG_LOCAL_CAPRADIUS;Lokaal - Scherpte capture-radius
 HISTORY_MSG_LOCAL_CIEMASK_BLURCONT;Lokaal - CIECAM masker vervaging contrast
 HISTORY_MSG_LOCAL_CIEMASK_BLURFFT;Lokaal - CIECAM masker vervaging FFTW
 HISTORY_MSG_LOCAL_CIEMASK_BLURRAD;Lokaal - CIECAM masker vervaging straal
@@ -1546,11 +1579,13 @@ HISTORY_MSG_LOCAL_CIE_GREYL;Lokaal - CIECAM groen Y
 HISTORY_MSG_LOCAL_CIE_ILL;Lokaal - CIECAM TRC Lichtbron
 HISTORY_MSG_LOCAL_CIE_LOGCIEQ;Lokaal - CIECAM Log-codering Q
 HISTORY_MSG_LOCAL_CIE_MIDT;Lokaal - CIECAM Middentonen
+HISTORY_MSG_LOCAL_CIE_MIDTMET;Lokaal - CIECAM Middentonen methode
 HISTORY_MSG_LOCAL_CIE_NORM11;Lokaal - CIECAM Normaliseer luminantie 5.11
 HISTORY_MSG_LOCAL_CIE_PRIM;Lokaal - CIECAM TRC primaire kleuren
 HISTORY_MSG_LOCAL_CIE_REDXL;Lokaal - CIECAM rood X
 HISTORY_MSG_LOCAL_CIE_REDYL;Lokaal - CIECAM rood Y
 HISTORY_MSG_LOCAL_CIE_REFI;Lokaal - CIECAM Verfijn kleuren
+HISTORY_MSG_LOCAL_CIE_SAT;Lokaal - CIECAM Verzadiging
 HISTORY_MSG_LOCAL_CIE_SATCIE;Lokaal - CIECAM Beperk verzadiging
 HISTORY_MSG_LOCAL_CIE_SHIFTXL;Lokaal - CIECAM verschuif x
 HISTORY_MSG_LOCAL_CIE_SHIFTYL;Lokaal - CIECAM verschuif y
@@ -1565,9 +1600,11 @@ HISTORY_MSG_LOCAL_CIE_SLOPESMOG;Lokaal - CIECAM groenbalans
 HISTORY_MSG_LOCAL_CIE_SLOPESMOQ;Lokaal - CIECAM grijsbalans
 HISTORY_MSG_LOCAL_CIE_SLOPESMOR;Lokaal - CIECAM roodbalans
 HISTORY_MSG_LOCAL_CIE_SMOOTH;Lokaal - CIECAM Schaal Yb opname
+HISTORY_MSG_LOCAL_CIE_SMOOTHINV;Lokaal CIECAM - Inverteer kleur
 HISTORY_MSG_LOCAL_CIE_SMOOTHLNK;Lokaal CIECAM - Koppel R G B
 HISTORY_MSG_LOCAL_CIE_SMOOTHMET;Lokaal - CIECAM Zachte lichten  methode
 HISTORY_MSG_LOCAL_CIE_SMOOTHTH;Lokaal CIECAM - Verzwakkingsdrempel
+HISTORY_MSG_LOCAL_CIE_SMOOTHTHTRC;Lokaal CIECAM - Drempelwaarde hooglichtdemping
 HISTORY_MSG_LOCAL_CIE_SMOOTHTRC;Lokaal CIECAM - Gamma-gebaseerde verzwakking hoge lichten
 HISTORY_MSG_LOCAL_CIE_SMOOTHTRCREL;Lokaal CIECAM - Relatieve gamma-modus
 HISTORY_MSG_LOCAL_CIE_SMOOTHYB;Lokaal - CIECAM Schaal Yb weergave
@@ -1579,7 +1616,18 @@ HISTORY_MSG_LOCAL_CIE_TRC;Lokaal - CIECAM TRC
 HISTORY_MSG_LOCAL_CIE_WEVMETHOD11;Lokaal CIECAM - Zwart LW Wit LW
 HISTORY_MSG_LOCAL_CIE_WHITES;Lokaal - CIECAM Spreiding witten
 HISTORY_MSG_LOCAL_CIE_WHITSIG;Lokaal CIECAM - sigmoid display witpunt
+HISTORY_MSG_LOCAL_CONVBOOST;Lokaal - Scherpte Hoekradius
+HISTORY_MSG_LOCAL_CONVGAM;Lokaal - Scherpte Gamma
+HISTORY_MSG_LOCAL_CONVLAT;Lokaal - Scherpte Hoekiteraties
+HISTORY_MSG_LOCAL_CONVPROT;Lokaal - Scherpte Beschermd centraal gebied
 HISTORY_MSG_LOCAL_DEHAZE_BLACK;Lokaal - Nevelvermindering Zwart
+HISTORY_MSG_LOCAL_DENOAUTO;Lokaal - Ruisvermindering Auto contrast
+HISTORY_MSG_LOCAL_DENOCONTRAST;Lokaal - Ruisvermindering Contrastdrempel
+HISTORY_MSG_LOCAL_DENOCONTRSHOW;Lokaal - Ruisvermindering Toon contrastmasker
+HISTORY_MSG_LOCAL_DENOENA;Lokaal - Ruisvermindering Contrastdrempel inschakelen
+HISTORY_MSG_LOCAL_DENOMASK;Lokaal - Ruisvermindering Contrastmasker
+HISTORY_MSG_LOCAL_DENOMASKCURV;Lokaal - Ruisvermindering Equalizer Ruisreductiemasker
+HISTORY_MSG_LOCAL_DENORATIO;Lokaal - Ruisvermindering Verhouding vlak-structuur
 HISTORY_MSG_LOCAL_FEATHERCIE;Lokaal - CIECAM verloop verzachting
 HISTORY_MSG_LOCAL_FEATHERCOL;Lokaal - kleur verloop verzachting
 HISTORY_MSG_LOCAL_FEATHEREXE;Lokaal - Bel. verloop verzachting
@@ -1590,6 +1638,8 @@ HISTORY_MSG_LOCAL_FEATHERVIB;Lokaal - Vib verloop verzachting
 HISTORY_MSG_LOCAL_FEATHERWAV;Lokaal - Wav verloop verzachting
 HISTORY_MSG_LOCAL_GAMUTMUNSEL;Lokaal - SC - Voorkom kleurverschuiving
 HISTORY_MSG_LOCAL_GHSMETHOD;Lokaal - GHS - Methode
+HISTORY_MSG_LOCAL_GHS_AGX;Lokaal - GHS - Matrix
+HISTORY_MSG_LOCAL_GHS_AUTOBW;Lokaal - GHS - Automatisch zwart- en witpunt
 HISTORY_MSG_LOCAL_GHS_B;Lokaal - GHS - Lokale intensiteit
 HISTORY_MSG_LOCAL_GHS_BLP;Lokaal - GHS - Zwartpunt
 HISTORY_MSG_LOCAL_GHS_CHRO;Lokaal - GHS - Lab chromaticiteitsfactor
@@ -1599,19 +1649,35 @@ HISTORY_MSG_LOCAL_GHS_HP;Lokaal - GHS - Bescherm hoge lichten
 HISTORY_MSG_LOCAL_GHS_INV;Lokaal - GHS - Omgekeerd
 HISTORY_MSG_LOCAL_GHS_LC;Lokaal - GHS - Lokaal Contrast
 HISTORY_MSG_LOCAL_GHS_LP;Lokaal - GHS - Bescherm schaduwen
+HISTORY_MSG_LOCAL_GHS_MATMET;Lokaal - GHS - Matrix
 HISTORY_MSG_LOCAL_GHS_MID;Lokaal - GHS - Middentonen
 HISTORY_MSG_LOCAL_GHS_SLOPE;Lokaal - GHS - Lab hellingsfactor
 HISTORY_MSG_LOCAL_GHS_SMOOTH;Lokaal - GHS - Verzwakking hoge lichten
 HISTORY_MSG_LOCAL_GHS_SP;Lokaal - GHS - Symmetriepunt
+HISTORY_MSG_LOCAL_LOCKMADL;Lokaal - Ruisvermindering Vergrendel MadL
+HISTORY_MSG_LOCAL_LOCKMADL2;Lokaal - Handmatig MadL
+HISTORY_MSG_LOCAL_LOCKMADLS;Lokaal - Ruisvermindering - MadL
 HISTORY_MSG_LOCAL_LOGCIE12;Lokaal - CIECAM - Logcodering
 HISTORY_MSG_LOCAL_LOG_BLACKS;Lokaal - Log Zwartdistributie
 HISTORY_MSG_LOCAL_LOG_COMPR;Lokaal - Log Comprimeer helderheid
 HISTORY_MSG_LOCAL_LOG_SAT;Lokaal - Log Beperk verzadiging
 HISTORY_MSG_LOCAL_LOG_WHITES;Lokaal - Log Witdistributie
+HISTORY_MSG_LOCAL_MICH_BLACK;Lokaal - Michaelis-Menten aftrek zwart
+HISTORY_MSG_LOCAL_MICH_EXP;Lokaal - Michaelis-Menten Belichting
+HISTORY_MSG_LOCAL_MICH_HIGH;Lokaal - Michaelis-Menten Drempelwaarde demping
+HISTORY_MSG_LOCAL_MICH_JDX;Lokaal - Michaelis-Menten JDx-matrix
+HISTORY_MSG_LOCAL_MICH_KPAR;Lokaal - Michaelis-Menten Kniekracht
+HISTORY_MSG_LOCAL_MICH_OUT;Lokaal - Michaelis-Menten Maximale uitvoerklem
+HISTORY_MSG_LOCAL_MICH_SAT;Lokaal - Michaelis-Menten Verzadiging
+HISTORY_MSG_LOCAL_MICH_SPAR;Lokaal - Michaelis-Menten Uitvoerschaal
+HISTORY_MSG_LOCAL_MICH_WHITE;Lokaal - Michaelis-Menten Dynamisch bereik
 HISTORY_MSG_LOCAL_NLITER;Lokaal - Nlmeans - Herhalingen
 HISTORY_MSG_LOCAL_OFFSETWAV;Lokaal Wav verschuiving
 HISTORY_MSG_LOCAL_PROCESSWAV;Lokaal - Wavelets - Toon wijzigingen
 HISTORY_MSG_LOCAL_QJMETHOD;Lokaal - CIECAM toonmapping-operator Q en J
+HISTORY_MSG_LOCAL_SHARITERCHECK;Lokaal - Scherpte Automatische iteratielimiet
+HISTORY_MSG_LOCAL_SHARREPAR;Lokaal - Scherpte Sterkte
+HISTORY_MSG_LOCAL_SHARSHOW;Lokaal - Scherpte Toon contrastmasker
 HISTORY_MSG_LOCAL_SIGBLCIE;Lokaal - CIECAM Mengen 5.11
 HISTORY_MSG_LOCAL_SIGDACIE;Lokaal - CIECAM Contrast 5.11
 HISTORY_MSG_LOCAL_SIGFORCEBW;Lokaal - Jz Wit LW en Zwart LW 5.11
@@ -1631,8 +1697,12 @@ HISTORY_MSG_PDSHARPEN_AUTO_RADIUS;CS - Auto-radius
 HISTORY_MSG_PDSHARPEN_CHECKITER;CS - Auto-limiet herhalingen
 HISTORY_MSG_PDSHARPEN_CONTRAST;CS - Contrastdrempel
 HISTORY_MSG_PDSHARPEN_ITERATIONS;CS - Herhalingen
+HISTORY_MSG_PDSHARPEN_NOISECAP;CS - Voorverscherping ruisonderdrukking
+HISTORY_MSG_PDSHARPEN_NOISECAPAFTER;CS - Nascherping ruisonderdrukking luminantie
+HISTORY_MSG_PDSHARPEN_NOISECAPTYPE;CS - Voorverscherpingstype
 HISTORY_MSG_PDSHARPEN_RADIUS;CS - Straal
 HISTORY_MSG_PDSHARPEN_RADIUS_BOOST;CS - Toename hoekstraal
+HISTORY_MSG_PDSHARPEN_SHOWCAP;CS - Toon maskercontrast
 HISTORY_MSG_PERSP_CAM_ANGLE;Perspectief - Camera
 HISTORY_MSG_PERSP_CAM_FL;Perspectief - Camera
 HISTORY_MSG_PERSP_CAM_SHIFT;Perspectief - Camera
@@ -1676,6 +1746,8 @@ HISTORY_MSG_TONE_EQUALIZER_REGULARIZATION;Toonequalizer - Regularisatie
 HISTORY_MSG_TONE_EQUALIZER_SHOW_COLOR_MAP;Toonequalizer - Tonale map
 HISTORY_MSG_TRANS_METHOD;Geometrie - Methode
 HISTORY_MSG_TRANS_SCALE;Geometrie - Schaal
+HISTORY_MSG_TRANS_SCALE_HORIZONTALLY;Geometrie - Horizontaal schalen
+HISTORY_MSG_TRANS_SCALE_VERTICALLY;Geometrie - Verticaal schalen
 HISTORY_MSG_WAVBALCHROM;Equalizer chrominantie
 HISTORY_MSG_WAVBALLUM;Equalizer luminantie
 HISTORY_MSG_WAVBL;Vervagingsniveaus
@@ -1930,6 +2002,7 @@ PARTIALPASTE_COMMONTRANSFORMPARAMS;Automatisch uitvullen
 PARTIALPASTE_COMPOSITIONGROUP;Compositie-instellingen
 PARTIALPASTE_COMPRESSGAMUT;Kleurruimtecompressie
 PARTIALPASTE_CROP;Bijsnijden
+PARTIALPASTE_CROPGUIDE;Bijsnijdhulplijnen
 PARTIALPASTE_DARKFRAMEAUTOSELECT;Donkerframe autom. selectie
 PARTIALPASTE_DARKFRAMEFILE;Donkerframe-opname
 PARTIALPASTE_DEFRINGE;Verzachten
@@ -2179,6 +2252,8 @@ PREFERENCES_RAW_DECODER;Raw-decoder
 PREFERENCES_RAW_DECODER_ENABLE_LIBRAW;Gebruik LibRaw
 PREFERENCES_REMEMBERZOOMPAN;Onthoud zoom% en pan-startpunt
 PREFERENCES_REMEMBERZOOMPAN_TOOLTIP;Onthoud het zoompercentage en pan-startpunt van de huidige afbeelding als er een nieuwe afbeelding wordt geopend.\n\nDeze optie werkt alleen in Enkeltab-modus en wanneer "Demozaïekmethode van het voorbeeld <100% zoom" hetzelfde is als "Gelijk aan PP3".
+PREFERENCES_RESET_TO_DEFAULT;Voorkeuren terug naar standaardwaarden
+PREFERENCES_RESET_TO_DEFAULT_CONFIRM_PROMPT;Alle voorkeuren terug naar standaardwaarden? Deze actie kan niet ongedaan worden gemaakt.\n\nSommige wijzigingen vereisen mogelijk een herstart van de applicatie.
 PREFERENCES_SAVE_TP_OPEN_NOW;Bewaar open/dicht-status van de gereedschappen nu
 PREFERENCES_SELECTLANG;Selecteer taal
 PREFERENCES_SERIALIZE_TIFF_READ;TIFF-leesinstellingen
@@ -2294,6 +2369,8 @@ QUEUE_LOCATION_TEMPLATE;Gebruik sjabloon
 QUEUE_LOCATION_TEMPLATE_HELP_BUTTON_TOOLTIP;Toon of verberg een helpvenster met instructies voor het maken van locatie-sjablonen
 QUEUE_LOCATION_TEMPLATE_HELP_EXAMPLES_BODY;Als je de uitvoerafbeelding naast de bronafbeelding wilt opslaan, schrijf dan:\n<b>%p1/%f</b>.\n\nAls je de uitvoerafbeelding wilt opslaan in een map genaamd '<i>geconverteerd</i>' in de map van de bronfoto, schrijf dan:\n<b>%p1/geconverteerd/%f</b>.\n\nAls je wilt dat de uitvoermap ook het formaat (bestandsextensie) toont, schrijf dan\n%p1/converted_%e/%f.\n\nAls je de uitvoerafbeelding wilt opslaan in\n'<i>/home/tom/photos/geconverteerd/2010-10-31</i>', schrijf dan:\n<b>%p-3/converted/%P-4/%f</b>.
 QUEUE_LOCATION_TEMPLATE_HELP_EXAMPLES_TITLE;Voorbeelden
+QUEUE_LOCATION_TEMPLATE_HELP_FORMAT_BODY;<b>%e</b> wordt vervangen door het uitvoerformaat van de foto, zoals bepaald door de extensie van het uitvoerbestand.
+QUEUE_LOCATION_TEMPLATE_HELP_FORMAT_TITLE;Uitvoerbestandsformaat/bestandsnaamextensie
 QUEUE_LOCATION_TEMPLATE_HELP_INTRO;Het uitvoersjabloonveld stelt je in staat om dynamisch de bestemmingsmap en bestandsnaam aan te passen. Wanneer je bepaalde specificaties opneemt, die beginnen met <b>%</b>, worden deze door het programma vervangen wanneer elk bestand wordt opgeslagen.\n\nDe onderstaande secties beschrijven elk type specificatie.
 QUEUE_LOCATION_TEMPLATE_HELP_PATHS_BODY_1;We gebruik dit pad als voorbeeld:
 QUEUE_LOCATION_TEMPLATE_HELP_PATHS_BODY_2;De betekenissen van de opmaakstrings zijn:
@@ -2352,10 +2429,16 @@ SORT_DESCENDING;Aflopend
 TC_LOCALLAB_PRIM_SHIFTX;Verschuif x
 TC_LOCALLAB_PRIM_SHIFTX_TOOLTIP;In combinatie met Kleuren verfijnen kun je:\n1) voor lage waarden, de zuiverheid (purity) van het beeld aanpassen.\n2) voor hogere waarden een gematigde kleurtoning uitvoeren.\nLet op dat je niet buiten het CIE xy-diagram gaat.
 TC_LOCALLAB_PRIM_SHIFTY;Verschuif y
+TC_PRIM_BLUROT;B.rot
+TC_PRIM_BLUSAT;B.verzad
 TC_PRIM_BLUX;Bx
 TC_PRIM_BLUY;By
+TC_PRIM_GREROT;G.rot
+TC_PRIM_GRESAT;G.verzad
 TC_PRIM_GREX;Gx
 TC_PRIM_GREY;Gy
+TC_PRIM_REDROT;R.rot
+TC_PRIM_REDSAT;R.verzad
 TC_PRIM_REDX;Rx
 TC_PRIM_REDY;Ry
 TC_PRIM_REFI;Verfijn kleuren (witpunt)
@@ -2456,6 +2539,9 @@ TP_COLORAPP_ALGO_TOOLTIP;Keuze uit parameters
 TP_COLORAPP_BADPIXSL;Hete/dode-pixelsfilter
 TP_COLORAPP_BADPIXSL_TOOLTIP;Onderdruk hete/dode (sterk gekleurde) pixels.\n0 = geen effect 1 = mediaan 2 = gaussiaans.\n\nDeze onregelmatigheden zijn het gevolg van de beperkingen van CIECAM02. Het alternatief is het aanpassen van de afbeelding om zeer donkere schaduwen te voorkomen.
 TP_COLORAPP_BRIGHT;Helderheid (Q)
+TP_COLORAPP_BRIGHT_CUR_BLUE;Helderheid - blauw
+TP_COLORAPP_BRIGHT_CUR_GREEN;Helderheid - groen
+TP_COLORAPP_BRIGHT_CUR_RED;Helderheid - rood
 TP_COLORAPP_BRIGHT_TOOLTIP;Helderheid in CIECAM02 is verschillend van Lab en RGB, hou rekening met de luminositeit van wit
 TP_COLORAPP_CAT02ADAPTATION_TOOLTIP;Bij handmatige aanpassing worden waarden boven 65 aanbevolen.
 TP_COLORAPP_CATCLASSIC;Klassiek
@@ -2467,6 +2553,9 @@ TP_COLORAPP_CHROMA;Chroma (C)
 TP_COLORAPP_CHROMA_M;Kleurrijkheid (M)
 TP_COLORAPP_CHROMA_M_TOOLTIP;Kleurrijkheid in CIECAM02 is verschillend van Lab en RGB
 TP_COLORAPP_CHROMA_S;Verzadiging (S)
+TP_COLORAPP_CHROMA_S_BLUE;Verzadiging - blauw %
+TP_COLORAPP_CHROMA_S_GREEN;Verzadiging - groen %
+TP_COLORAPP_CHROMA_S_RED;Verzadiging - rood %
 TP_COLORAPP_CHROMA_S_TOOLTIP;Verzadiging in CIECAM02 is verschillend van Lab en RGB
 TP_COLORAPP_CHROMA_TOOLTIP;Chroma in CIECAM02 is verschillend van Lab en RGB
 TP_COLORAPP_CIECAT_DEGREE;Chromatische aanpassing Scène
@@ -2490,6 +2579,9 @@ TP_COLORAPP_GAMUT;Beperk kleurbereik (Lab)
 TP_COLORAPP_GEN;Instellingen
 TP_COLORAPP_GEN_TOOLTIP;Deze module is gebaseerd op de CIECAM-kleurweergavemodellen, die zijn ontworpen om beter te simuleren hoe het menselijke oog kleuren waarneemt onder verschillende verlichtingsomstandigheden, bijvoorbeeld tegen verschillende achtergronden. Het analyseert de omgeving van elke kleur en wijzigt die om zo dicht mogelijk bij de menselijke waarneming te komen. Het past de uitvoer ook aan aan de gekozen weergave-omstandigheden (monitor, tv, projector, printer, etc.), zodat de kleurweergave behouden blijft tussen de opname- en weergave-omgevingen.
 TP_COLORAPP_HUE;Tint (h)
+TP_COLORAPP_HUE_BLUE;Tint - blauwe rotatie
+TP_COLORAPP_HUE_GREEN;Tint - groene rotatie
+TP_COLORAPP_HUE_RED;Tint - rode rotatie
 TP_COLORAPP_HUE_TOOLTIP;Tint (h) - hoek tussen 0° en 360°
 TP_COLORAPP_IL41;D41
 TP_COLORAPP_IL50;D50
@@ -2503,6 +2595,7 @@ TP_COLORAPP_ILLUM;Lichtbron
 TP_COLORAPP_ILLUM_TOOLTIP;Kiest de verlichting die het dichtst bij de opname-omstandigheden ligt. In het algemeen D50, maar dit kan veranderen afhankelijk van de tijd en de breedtegraad.
 TP_COLORAPP_LABEL;CIE Color Appearance Model 2002
 TP_COLORAPP_LABEL_CAM02;Afbeelding wijzigen
+TP_COLORAPP_LABEL_RGB;Rood Groen Blauw
 TP_COLORAPP_LABEL_SCENE;Opname-omstandigheden
 TP_COLORAPP_LABEL_VIEWING;Weergaveomstandigheden
 TP_COLORAPP_LIGHT;Lichtheid (J)
@@ -2516,6 +2609,7 @@ TP_COLORAPP_MODELCAT_TOOLTIP;Je kunt kiezen tussen CAM02 of CAM16. CAM02 zal som
 TP_COLORAPP_MODEL_TOOLTIP;Witpuntmodel<b>WB [RT] + [uitvoer]:</b>\nRT's witbalans wordt gebruikt voor de scène (opname), CIECAM02 gebruikt D50. De witbalans van het uitvoerapparaat (beeldscherm bv.) wordt opgegeven in Weergaveomstandigheden. wit gebruikt de instelling van <i>Voorkeuren > Kleurbeheer</i>\n\n<b>WB [RT+CAT02/16] + [uitvoer]</b>:</b>\nDe witbalansinstellingen van RT worden gebruikt door CAT02 en de witbalans van het uitvoerapparaat wordt opgegeven in Weergaveomstandigheden.\n\n<b>Free temp + tint + CAT02/16 + [uitvoer]:</b> kleurtemperatuur en tint worden opgegeven door de gebruiker en de witbalans van het uitvoerapparaat wordt opgegeven in Weergaveomstandigheden.
 TP_COLORAPP_NEUTRAL;Terugzetten
 TP_COLORAPP_NEUTRAL_TOOLTIP;Zet alle regelaars, vinkjes en curves terug naar hun standaardwaarde
+TP_COLORAPP_RGB_TOOLTIP;Met 'Rood Groen Blauw' kun je:\n* Kleurafwijkingen corrigeren als gevolg van: overschrijding van de kleurruimte na verschillende aanpassingen in het proces, of een slechte witbalans.\n* Een betere balans van kleuren en luminanties bereiken om aan je voorkeuren te voldoen.\n* Filmsimulatie.\n\nHet systeem werkt na het eerste proces (Scène), dat de gegevens van het 'Werkprofiel' omzet in die van 'CAM16'. Op dit punt nemen de J, Q, C, s, M, h-data de fysiologische aspecten van  CIECAM mee, en er wordt een chromatische adaptatie uitgevoerd.\n\nVoor elke hoofdkleur van het CIECAM ac-bc-vlak (chroma-gebaseerd) - Rood, Groen, Blauw - kun je een lichte kleurtoonrotatie (h) in graden uitvoeren (schuifregelaars), de verzadiging (s) als percentage aanpassen (schuifregelaars) en de helderheid (Q) aanpassen (curves).\n\nAls algemene regel zijn kleine aanpassingen voldoende: 1° tot 3° voor kleurtoonrotaties (h), ongeveer 5 tot 10% voor verzadiging (s), en zeer beperkte variaties in helderheid (Q). Natuurlijk, voor speciale effecten, zoals filmsimulatie, kunnen de instellingen sterker zijn.\n\nDeze aanpassingen worden net voor de andere CIECAM-aanpassingen gedaan: Lichtheid (J), Helderheid (Q), Chroma (C), Verzadiging (s), Kleurrijkheid (M), kleurtoon (h), contrast (J), contrast (Q) en curves, en worden daar aan toegevoegd.\n\nVervolgens zet het derde proces de gegevens om van de 'CAM16'-kleurruimte naar het 'Werkprofiel', rekening houdend met de kijkomstandigheden. Vervolgens wordt kleuradaptatie uitgevoerd.\n\nDeze aanpassingen voor kleurtoon, verzadiging en helderheid gebruiken geen primaire kleuren. Ze zijn gebaseerd op het principe van CAM (Color Appearance Model) in drie processen. 
 TP_COLORAPP_RSTPRO;Bescherming huid- en rode tinten
 TP_COLORAPP_RSTPRO_TOOLTIP;Bescherm huid- en rode tinten (schuifbalk en curven)
 TP_COLORAPP_SOURCEF_TOOLTIP;Dit gaat over de opname-omstandigheden en hoe deze omstandigheden en data teruggebracht kunnen worden naar een 'normaal' gebied. Normaal betekent gemiddelde of standaardomstandigheden en -data, dat wil zeggen zonder rekening te houden met CIECAM-correcties.
@@ -2605,6 +2699,7 @@ TP_COLORTONING_TWOCOLOR_TOOLTIP;Standaard chroma:\nLineaire respons, a* = b*.\n\
 TP_COLORTONING_TWOSTD;Standaard chroma
 TP_COMPRESSGAMUT_ACESP1;ACES AP1
 TP_COMPRESSGAMUT_ADOBE;Adobe RGB
+TP_COMPRESSGAMUT_BETA;Beta - nabij Pointer's Kleurruimte *
 TP_COMPRESSGAMUT_COLORSPACE_TOOLTIP;Kleurruimtecompressie is een hulpmiddel waarmee je zeer chromatische camerabronkleuren kunt comprimeren naar een kleinere kleurruimte.\n Negatieve pixelwaarden buiten de kleurruimte zijn problematisch voor het werken met afbeeldingen en moeten indien mogelijk worden vermeden.\n Blauwe LED's worden als zeer kleurrijk waargenomen en kleuren zoals kevers, bloemen en kolibries zijn vaak oververzadigd.\n\n Dit is geen kleurruimteconversie: het converteren van de ene kleurruimte naar de andere verandert de waarden van de pixels. Het verandert echter niet de colorimetrische betekenis van de pixeldata. Je zou kunnen zeggen dat door tussen kleurruimten te converteren, je het referentiekader van dezelfde kleuren verandert. Na compressie wordt het werkprofiel hersteld.\n\nStel de kleurruimtelimieten in met de geschikte werkruimte. Voorbeeld:\nDe kleurruimte van het beeldscherm (sRGB, DCI P3,...). \n De kleurruimte van een uitvoerbestand voor gebruik met andere software (Rec 2020, Beta near Pointer's Gamut...).\n\nWerkruimtes gemarkeerd met een asterisk (*) hebben voorberekende drempelwaarden voor Cyaan, Magenta en Geel. Deze waarden zijn benaderingen en corresponderen met een werkprofiel ingesteld op Rec2020. Voor 'lastige' opnamen (LED, zonsondergang, etc.) is handmatige aanpassing noodzakelijk; houd rekening met potentiële artefacten.
 TP_COMPRESSGAMUT_CYANLIM;Cyaan
 TP_COMPRESSGAMUT_CYANTH;Cyaan
@@ -2612,6 +2707,11 @@ TP_COMPRESSGAMUT_DCIP3;DCI-P3
 TP_COMPRESSGAMUT_LABEL;Kleurruimtecompressie
 TP_COMPRESSGAMUT_LIMIT;Maximale afstandslimieten
 TP_COMPRESSGAMUT_LIMIT_TOOLTIP;Maximale afstandslimiet: is de afstand buiten de kleurruimtegrens die wordt gecomprimeerd om binnen de kleurruimtegrens te passen. Bijvoorbeeld, een waarde van 1,2 zal afstandswaarden van 1,2 comprimeren tot een waarde van 1,0. \nAfzonderlijke controleknoppen zijn beschikbaar voor elke kleurcomponent. Ze worden cyaan, magenta en geel genoemd, omdat ze eigenlijk de maximale afstand van de rand van de driehoek (primaire kleuren verwant aan het CIExy-diagram - Pointer's Gamut) bepalen, niet de rand. Bijvoorbeeld, door de waarde van de cyaanafstandslimiet te verhogen, vergroot je de afstand waarop waarden worden toegewezen aan de rand tussen de blauwe en groene hoeken van de driehoek.\nDe afstandslimieten bepalen ook de RGB-verhoudingen van de gecomprimeerde waarden, wat de schijnbare tint beïnvloedt.\n\nDe afstanden zijn relatief ten opzichte van de Doelcompressiekleurruimte. Als de selectievakjes voor Cyaan, Magenta en Geel zijn aangevinkt wordt een automatische waarde gesuggereerd. Handmatige aanpassingen kunnen wenselijk zijn. 
+TP_COMPRESSGAMUT_MACLABEL;Maximale achromatische waarde: %1
+TP_COMPRESSGAMUT_MACLABELCMY;Geschatte Cyaan: %1 Magenta: %2 Geel: %3
+TP_COMPRESSGAMUT_MACLABELRGB;R: %1 G: %2 B: %3
+TP_COMPRESSGAMUT_MACLABELRGB_TOOLTIP;Toont de maximale waarden voor de drie kanalen (achromatisch): Rood, Groen en Blauw.\n\nGeeft een schatting die nauwkeurig is binnen 15% van de Cyaan-, Magenta- en Geel-waarden. Deze schatting zou nuttige informatie moeten bieden voor het beter afstellen van de Maximale Afstandslimieten, die groter dan 1 moeten worden ingesteld.\nAls de selectievakjes voor de Cyaan-, Magenta- en Geel-schuifregelaars in 'Maximale Afstandslimieten' zijn ingeschakeld, wordt een automatische waarde voorgesteld. Handmatige aanpassingen kunnen nodig zijn.
+TP_COMPRESSGAMUT_MACLABEL_TOOLTIP;Toont de hoogst gemeten waarde van de drie RGB (achromatische) kanalen. Deze waarde helpt om te begrijpen:\n * De staat van de afbeelding en de wederzijdse invloed van: a) het Werkprofiel en het Doelkleurruimtecompressieprofiel; b) 'Reconstructie hoge lichten'.\n * Of het 'Witpunt' moet worden verfijnd - zie bijvoorbeeld 'Generalized Hyperbolic Stretch' (GHS).\n\nHet effect van de waarden:\n * Zeer hoge waarden, bijvoorbeeld groter dan 5 of zelfs 10 of meer, wijzen vaak op het gebruik van een LED- of halogeenverlichting (met Kleurpropagatie) en een aanzienlijke overschrijding van de kleurruimte. Probeer 'GHS > Automatisch Zwart- en Witpunt', 'Witbalans > Blauw/Rood Equalizer', 'Abstract Profiel > Primair en Verlichting'.\n * Hoge waarden tussen 2 en 4 zijn vaak gekoppeld aan een overmatige lichtbron (zon, etc.) of onjuiste belichtingsinstellingen die hebben geleid tot waarden buiten het bereik van de sensor. Probeer 'Reconstructie hoge lichten > Kleurpropagatie' te gebruiken.\n * Lage waarden, minder dan 1, wijzen vaak op slecht afgestelde wit- en zwartpunten, dwz. 'Witpunt (lineair WP)' en 'Zwartpunt (lineair BP)': zie bijvoorbeeld GHS.\n\nOpmerkingen:\n * Het gebruik van waarden hoger dan 'Maximale afstandslimieten' voor de drie 'Maximale achromatische waarde'-schuifregelaars biedt weinig voordeel.\n * Het gebruik van lage waarden voor de drie Drempelwaarde-schuiven (of deze nu gecombineerd zijn of niet met lage waarden voor de Kracht-schuifregelaar) kan leiden tot aanzienlijk minder verzadiging en kleurverschuivingen.\n\nEr is een verband, maar geen correlatie, tussen deze waarde en de drie Maximale Afstandslimieten.
 TP_COMPRESSGAMUT_MAGENTALIM;Magenta
 TP_COMPRESSGAMUT_MAGENTATH;Magenta
 TP_COMPRESSGAMUT_MAIN_COLORSPACE;Doelcompressiekleurruimte
@@ -2627,14 +2727,22 @@ TP_COMPRESSGAMUT_YELLOWLIM;Geel
 TP_COMPRESSGAMUT_YELLOWTH;Geel
 TP_CROP_FIXRATIO;Verhouding:
 TP_CROP_GTCENTEREDSQUARE;Vierkant gecentreerd
+TP_CROP_GTCROSSHAIR;Kruisdraad
 TP_CROP_GTDIAGONALS;Diagonaalmethode
 TP_CROP_GTEPASSPORT;Biometrisch paspoort
 TP_CROP_GTFRAME;Frame
+TP_CROP_GTGOLDENRATIO;Gulden Snede
 TP_CROP_GTGRID;Raster
 TP_CROP_GTHARMMEANS;Gulden snede
 TP_CROP_GTNONE;Geen
 TP_CROP_GTRULETHIRDS;Regel van derden
+TP_CROP_GTTRIANGLE;Gulden Driehoeken
 TP_CROP_GUIDETYPE;Hulplijnen:
+TP_CROP_GUIDE_ASPECT_RATIO;Bijsnijdhulplijnen met ingeschreven beeldverhouding:
+TP_CROP_GUIDE_BLEED;Afloop
+TP_CROP_GUIDE_LABEL;Bijsnijdhulplijnen
+TP_CROP_GUIDE_NO_ASPECT_RATIO_GUIDES;Geen hulplijnen voor beeldverhouding
+TP_CROP_GUIDE_TOOLTIP;Toon hulplijnen die alleen in de voorvertoning zichtbaar zijn.\n\nDe hulplijnen passen de geselecteerde beeldverhouding in de huidige uitsnede. De oriëntatie wordt automatisch bepaald op basis van de beeldverhouding van de uitsnede.\n\n<b>klik</b> - Schakel alleen de geselecteerde voorinstelling in\n<b>Ctrl+klik</b> - Schakel de geselecteerde voorinstelling in als extra hulplijn
 TP_CROP_H;Hoogte
 TP_CROP_LABEL;Bijsnijden
 TP_CROP_PPI;PPI
@@ -2862,6 +2970,16 @@ TP_ICM_APPLYLOOKTABLE;DCP-look-tabel
 TP_ICM_APPLYLOOKTABLE_TOOLTIP;Gebruik de ingebedde DCP-look-tabel. De instelling is alleen actief als de DCP een look-tabel heeft.
 TP_ICM_BPC;Zwartpuntcompensatie
 TP_ICM_BW;Zwart en Wit
+TP_ICM_COMPRESS;Doelkleurruimte
+TP_ICM_COMPRESSGAMUT_ADOBE;Adobe
+TP_ICM_COMPRESSGAMUT_DCIP3;DCIP3
+TP_ICM_COMPRESSGAMUT_NONE;Geen
+TP_ICM_COMPRESSGAMUT_REC2020;Rec2020
+TP_ICM_COMPRESSGAMUT_SRGB;sRGB
+TP_ICM_COMPRESS_TOOLTIP; Deze tool is geplaatst aan het einde van de verwerkingspijplijn, waardoor je data kunt comprimeren zodat ze bijvoorbeeld passen in het uitvoerprofiel. Als Kleurweergave & Verlichting is ingeschakeld, zal het rekening houden met de compressie.\n\nDeze uitvoerkleurruimtecompressie is veel eenvoudiger dan aan het begin van de verwerkingspijplijn, omdat de kleurruimte - tenzij de gebruiker de instellingen heeft overdreven - al dicht bij het Werkprofiel zal liggen, vandaar de vereenvoudigde grafische interface.\n\nIn de meeste gevallen zul je geen wijzigingen in de afbeelding of het histogram zien bij het gebruik van Kleurruimtecompressie. Dit komt doordat de data niet worden omgezet van Werkprofiel (vaak Rec2020) naar Doelkleurruimte (vaak sRGB), maar ze comprimeert om in de Doelkleurruimte (vaak sRGB) te passen terwijl ze in het Werkprofiel (vaak Rec2020) blijven, en de upstream-bewerkingen moeten de kleurruimte hebben behouden. Het effect is zichtbaar met LED's of met bloemen met hoge verzadiging. Bij een normaal landschap of portret is er meestal geen verandering.
+TP_ICM_COMPRGAMUT;Eindversterking & Kleurruimtecompressie
+TP_ICM_COMP_GAIN;Versterking (LW)
+TP_ICM_COMP_POWER;Kracht
 TP_ICM_DCPILLUMINANT;Lichtbron
 TP_ICM_DCPILLUMINANT_INTERPOLATED;Interpoleren
 TP_ICM_DCPILLUMINANT_TOOLTIP;Kies welk ingebed DCP-illuminant moet worden gebruikt. Standaard is dit 'interpoleren'. Dit is een mix van de twee gebaseerd op de witbalans. De instelling is alleen actief als een Dual-lichtbron DCP met interpolatie is geselecteerd.
@@ -2887,10 +3005,12 @@ TP_ICM_NOICM;Geen ICM: sRGB-uitvoer
 TP_ICM_OPACITYWLI;Variabel contrast
 TP_ICM_OUTPUTPROFILE;Uitvoerprofiel
 TP_ICM_OUTPUTPROFILE_TOOLTIP;Alle RTv4- of RTv2-profielen zijn met TRC - sRGB: g=2,4 s=12,92\n\nMet de ICC-profielmaker kunt je v4- of v2-profielen creëren met de volgende keuzen:\n-Primaire kleuren: Aces AP0, Aces AP1, AdobeRGB, Prophoto, Rec2020, sRGB, Widegamut, BestRGB, BetaRGB, BruceRGB en Aangepast\n-TRC: BT709, sRGB, lineair, standaard g=2,2, standaard g=1,8, Aangepast\n-Lichtbron: D41, D50, D55, D60, D65, D80, stdA 2856K
+TP_ICM_POWER_TOOLTIP;Wijzigt het algehele uiterlijk van de afbeelding, vergelijkbaar met de Belichtingsschuif, door een positieve of negatieve LW-aanpassing toe te passen op de RGB-data. Dit maakt betere controle mogelijk van of de kleurruimte of de verzadiging; voor het laatste zijn kleine waarden van plus of minus 0,1 tot 0,4 voldoende. Hogere versterkingswaarden maken toekomstig gebruik met HDR-schermen mogelijk.
 TP_ICM_PRIMBLU_TOOLTIP;Primair Blauw:\nsRGB x=0.15 y=0.06\nAdobe x=0.15 y=0.06\nWidegamut x=0.157 y=0.018\nRec2020 x=0.131 y=0.046\nACES P1 x=0.128 y=0.044\nACES P0 x=0.0001 y=-0.077\nProphoto x=0.0366 y=0.0001\nBruceRGB x=0.15 y=0.06\nBeta RGB x=0.1265 y=0.0352\nBestRGB x=0.131 y=0.046
 TP_ICM_PRIMFRAME;Primaire kleuren & Lichtbron
 TP_ICM_PRIMGRE_TOOLTIP;Primair Groen:\nsRGB x=0.3 y=0.6\nAdobe x=0.21 y=0.71\nWidegamut x=0.115 y=0.826\nRec2020 x=0.17 y=0.797\nACES P1 x=0.165 y=0.83\nACES P0 x=0.0 y=1.0\nProphoto x=0.1596 y=0.8404\nBruceRGB x=0.28 y=0.65\nBeta RGB x=0.1986 y=0.7551\nBest RGB x=0.2150 y=0.7750
 TP_ICM_PRIMILLUM_TOOLTIP;Je kunt een afbeelding wijzigen van de oorspronkelijke modus ('werkprofiel') naar een andere modus ('Bestemming primaire kleuren'). Wanneer je een andere kleurmodus voor een afbeelding kiest, veranderen de kleurwaarden in de afbeelding permanent.\n\nHet wijzigen van de 'primaire kleuren' is vrij complex en moeilijk te gebruiken en vereist veel experimenteren.\nHiermee kunnen exotische kleurcorrecties worden gemaakt, zoals bij de kanaalmixer primaire kleuren.\nPas de camerakalibratie aan met 'Aangepast (schuifregelaars)'.
+TP_ICM_PRIMREDROT_TOOLTIP;Wijzigt de primaire kleuren Rood, Groen en Blauw. De eerste schuif roteert de primaire kleur, in graden, rond het witpunt. De tweede verhoogt of verlaagt de verzadiging ten opzichte van het witpunt.\n\nWees zeer voorzichtig bij het gebruik van dit type tool - of het nu polaire schuifregelaars, lineaire schuiven of CIExy-grafieken zijn. Als je buiten het CIExy-diagram gaat, genereer je denkbeeldige kleuren; hoe zullen deze worden verwerkt? Als je de primaire waarden te veel verlaagt, loop je het risico dat data buiten de kleurruimte vallen. Gebruik met mate en met kleine waarden, terwijl je de afwijking van de primaire kleuren van het CIExy-diagram in de gaten houdt.
 TP_ICM_PRIMRED_TOOLTIP;Primair Rood:\nsRGB x=0.64 y=0.33\nAdobe x=0.64 y=0.33\nWidegamut x=0.735 y=0.265\nRec2020 x=0.708 y=0.292\nACES P1 x=0.713 y=0.293\nACES P0 x=0.7347 y=0.2653\nProphoto x=0.7347 y=0.2653\nBruceRGB x=0.64 y=0.33\nBeta RGB x=0.688 y=0.3112\nBestRGB x=0.7347 y=0.2653
 TP_ICM_PROFILEINTENT;Weergave-intentie
 TP_ICM_REDFRAME;Aangepaste primaire kleuren
@@ -2903,6 +3023,12 @@ TP_ICM_TONECURVE;Gebruik DCP-tooncurve
 TP_ICM_TONECURVE_TOOLTIP;Gebruik de ingebedde DCP-tooncurve. De instelling is alleen actief als de geselecteerde DCP een tooncurve bevat.
 TP_ICM_TRCFRAME;Abstract Profiel
 TP_ICM_TRCFRAME_TOOLTIP;Ook bekend als 'synthetische' of 'virtuele' profielen. Deze worden toegepast aan het eind van de verwerkingspijplijn (voor ciecam), waardoor speciale beeldeffecten kunnen worden gecreëerd.\nU kunt wijzigingen aanbrengen in:\n'Toonresponscurve', die de tonen van het beeld aanpast\n'Verlichting', waarmee de primaire kleuren van het profiel worden aangepast aan de opnamemstandigheden.\n'Primaire kleuren Bestemming': waarmee je de Primaire kleuren Bestemming kunt wijzigen met drie hoofdtoepassingen - kanalenmixer, herstel beeldkleur (verzadiging) en kalibratie.\nOpmerking: Abstracte profielen maken gebruik van de ingebouwde werkprofielen zonder deze te wijzigen. Ze werken niet met aangepaste werkprofielen.
+TP_ICM_TRC_MAX;RGB Max=%1
+TP_ICM_TRC_MAX_END;Finale RGB Max=%1
+TP_ICM_TRC_MAX_END_NO;---
+TP_ICM_TRC_MAX_TOOLTIP;Geeft informatie over RGB-waarden buiten de limieten. Waarden groter dan 1 geven duidelijk aan dat we buiten de kleurruimte zitten, terwijl we voor waarden kleiner dan 1 niet kunnen zeggen of de afbeelding binnen de kleurruimte valt of niet, omdat dit afhangt van, bijvoorbeeld, de luminantie. Deze controle wordt uitgevoerd aan het einde van het Abstract Profiel en houdt rekening met alle parameters. De schuifregelaar 'Drempelwaarde demping' kan worden gebruikt om de RGB-waarden te beperken.\n\nWijzigingen aangebracht in 'Kleurweergave en Verlichting' en 'Eindversterking en Kleurruimtecompressie' worden niet meegenomen.
+TP_ICM_TRC_SAT_MAX;Finale Verzadiging Max=%1
+TP_ICM_TRC_SAT_MAX_TOOLTIP;Geeft informatie over RGB-waarden buiten de limieten en RGB-verzadiging. Waarden groter dan 1 voor ‘Finale RGB Max’ en ‘Finale Verzadiging Max’ geven duidelijk aan dat we buiten de kleurruimte zitten, terwijl we voor waarden kleiner dan 1 niet kunnen zeggen of de afbeelding binnen de kleurruimte valt of niet, omdat dit afhangt van, bijvoorbeeld, de luminantie. Deze controle wordt uitgevoerd aan het einde van de verwerkingspijplijn en houdt rekening met alle parameters. Wijzigingen aangebracht in Kleurweergave & Verlichting en in Finale versterking & Kleurruimtecompressie worden wel meegenomen.\n\nHet aanpassen van de instellingen voor Versterking (LW) en Kleurruimtecompressie (Doelkleurruimte en Kracht) stelt je in staat om de impact van deze aanpassingen te zien. Je moet ook het histogram in de gaten houden, dat rekening houdt met het uitvoerprofiel en dus het gamma. Deze data, die direct gerelateerd zijn aan de RGB-waarden en Verzadiging en die in het Werkprofiel zitten, bevinden zich in de lineaire modus.\n\nDe data worden alleen weergegeven als Doelkleurruimte is ingeschakeld of als Versterking (LW) niet gelijk is aan 0.
 TP_ICM_TRC_TOOLTIP;Hiermee kun je de standaard sRGB Toonresponscurve in RT wijzigen (g=2.4 s=12.92).\nDeze TRC wijzigt de tonen van het beeld. De RGB- en Lab-waarden, het histogram en de uitvoer (scherm, TIF, JPG) worden gewijzigd:\n-Gamma werkt voornamelijk op lichte tonen \n-Hellingshoek werkt voornamelijk op donkere tonen.\nU kunt willekeurige gamma en hellingshoek-paren (waarden >1) kiezen en het algoritme zorgt ervoor dat er continuïteit is tussen de lineaire en parabolische delen van de curve.\nEen andere selectie dan 'Geen' activeert de menu's 'Verlichting' en 'Primaire kleuren Bestemming'.
 TP_ICM_WAVFRAME;Contrastversterking
 TP_ICM_WAVREFI;Verfijning
@@ -2940,6 +3066,7 @@ TP_ICM_WORKING_PRIM_BRU;BruceRGB
 TP_ICM_WORKING_PRIM_BST;BestRGB
 TP_ICM_WORKING_PRIM_CUS;Aangepast (schuiven)
 TP_ICM_WORKING_PRIM_CUSGR;Aangepast (CIE xy-diagram)
+TP_ICM_WORKING_PRIM_CUSPOL;Aangepast (Polaire schuifregelaars)
 TP_ICM_WORKING_PRIM_FREE;Aangepast LA (schuiven)
 TP_ICM_WORKING_PRIM_JDCMAX;JDC Max
 TP_ICM_WORKING_PRIM_JDCMAXSTDA;JDC Max stdA
@@ -2958,6 +3085,7 @@ TP_ICM_WORKING_TRC_CUSTOM;Door gebruiker gedefinieerd
 TP_ICM_WORKING_TRC_GAMMA;Gamma
 TP_ICM_WORKING_TRC_LIN;Lineair g=1
 TP_ICM_WORKING_TRC_NONE;Geen
+TP_ICM_WORKING_TRC_SAT;Verzadiging
 TP_ICM_WORKING_TRC_SLOPE;Helling
 TP_ICM_WORKING_TRC_SRGB;sRGB g=2,4 s=12,92
 TP_ICM_WORKING_TRC_TOOLTIP;Enkel voor ingebouwde profielen.
@@ -3004,6 +3132,8 @@ TP_LENSGEOM_LABEL;Objectief / Geometrie
 TP_LENSGEOM_LIN;Lineair
 TP_LENSGEOM_LOG;Logarithmisch
 TP_LENSGEOM_SCALE;Schaal
+TP_LENSGEOM_SCALE_HORIZONTALLY;Horizontaal schalen
+TP_LENSGEOM_SCALE_VERTICALLY;Verticaal schalen
 TP_LENSPROFILE_CORRECTION_AUTOMATCH;Automatische selectie
 TP_LENSPROFILE_CORRECTION_LCPFILE;LCP-bestand
 TP_LENSPROFILE_CORRECTION_MANUAL;Handmatige selectie
@@ -3024,6 +3154,7 @@ TP_LOCALLAB_ACTIV;Alleen luminantie
 TP_LOCALLAB_ACTIVSPOT;Activeer spot
 TP_LOCALLAB_ADJ;Kleurequalizer
 TP_LOCALLAB_AMOUNT;Hoeveelheid
+TP_LOCALLAB_APSATUR;Verzadiging
 TP_LOCALLAB_ARTIF;ΔE vormdetectie
 TP_LOCALLAB_ARTIF_TOOLTIP;De ΔE-bereikdrempel vergroot het ΔE-bereik. Hoge waarden zijn voor beelden met een zeer groot kleurbereik.\nDoor het ΔE-verval te vergroten kan de vormdetectie verbeterd worden maar ook het bereik gereduceerd.
 TP_LOCALLAB_AUTOGRAY;Autom. gemiddelde luminantie (Yb%)
@@ -3073,6 +3204,7 @@ TP_LOCALLAB_BUTTON_DEL;Wis
 TP_LOCALLAB_BUTTON_DUPL;Dupliceer
 TP_LOCALLAB_BUTTON_REN;Hernoem
 TP_LOCALLAB_BUTTON_VIS;Toon/verberg
+TP_LOCALLAB_BWCIE_TOOLTIP;Alleen te gebruiken in Globale modus of als Bereik is ingesteld op 100.\nDe optie 'Zwart en Wit' toont alleen de luminantie in het histogram, wat het eenvoudiger maakt om de schaduwen en hoge lichten aan te passen bij het gebruik van de Gamma- en Hellingschuiven en de Toonmap-gereedschappen.
 TP_LOCALLAB_BWEVNONE;Geen
 TP_LOCALLAB_BWEVNONE11;Geen
 TP_LOCALLAB_BWEVSIG;sigmoid
@@ -3129,6 +3261,7 @@ TP_LOCALLAB_CIE_SMOOTH_LEVELS;RGB kanaalhelling
 TP_LOCALLAB_CIE_SMOOTH_LEVELSTRC;RGB-kanaal TRC
 TP_LOCALLAB_CIE_SMOOTH_NONE;Geen
 TP_LOCALLAB_CIE_SMOOTH_SIG;sigmoid-gebaseerd
+TP_LOCALLAB_CIE_SMOOTH_TRC;TRC-gebaseerd
 TP_LOCALLAB_CIE_TOOLNAME;Kleurverschijning (CAM16 & JzCzHz)
 TP_LOCALLAB_CIRCRADIUS;Spotgrootte
 TP_LOCALLAB_CIRCRAD_TOOLTIP;Bevat de referenties van de spot, nuttig voor vormdetectie (tint, luma, chroma, Sobel).\nLage waarden kunnen nuttig zijn bij het verwerken van gebladerte.\nGebruik hoge waarden voor huidtinten.
@@ -3192,17 +3325,24 @@ TP_LOCALLAB_DENOIBILAT_TOOLTIP;Hiermee kun je impuls- of 'zout en peper'-ruis ve
 TP_LOCALLAB_DENOICHROC_TOOLTIP;Hiermee kun je ruisvlekken aanpakken.
 TP_LOCALLAB_DENOICHRODET_TOOLTIP;Hiermee kun je chrominantiedetails herstellen door geleidelijk een Fourier-transformatie (DCT) toe te passen.
 TP_LOCALLAB_DENOICHROF_TOOLTIP;Hiermee kun je chrominantieruis in fijne details aanpassen.
+TP_LOCALLAB_DENOIENA;Contrastdrempel inschakelen
 TP_LOCALLAB_DENOIEQUALCHRO_TOOLTIP;Hiermee kun je de chromaruisreductie op blauw-gele of op rood-groene kleuren richten.
-TP_LOCALLAB_DENOIEQUAL_TOOLTIP;Hiermee kun je meer of minder ruisreductie uitvoeren in de schaduwen of de hoge lichten.
+TP_LOCALLAB_DENOIEQUAL_TOOLTIP;Hiermee kun je meer of minder ruisvermindering uitvoeren in de schaduwen of de hoge lichten.
+TP_LOCALLAB_DENOIFRA;Ruisverminderingsinstellingen
+TP_LOCALLAB_DENOIHUE;Equalizer ruisonderdrukking
+TP_LOCALLAB_DENOIHUECONT;Equalizer ruisonderdrukkingsmasker
 TP_LOCALLAB_DENOILUMDETAIL_TOOLTIP;Hiermee kun je luminantiedetails herstellen door geleidelijk een Fourier-transformatie (DCT) toe te passen.
 TP_LOCALLAB_DENOIMASK;Chroma-masker ruisvermindering
 TP_LOCALLAB_DENOIMASK_TOOLTIP;Voor alle hulpmiddelen is hiermee het chromatische ruisniveau van het masker te regelen.\nHandig voor een betere controle van de chrominantie en om onregelmatigheden te vermijden bij gebruik van de LC(h)-curve.
 TP_LOCALLAB_DENOIQUA_TOOLTIP;Conservatieve modus behoudt lage frequentiedetails. Agressieve modus verwijdert lage frequentiedetails.\nConservatieve en agressieve modi gebruiken wavelets en DCT en kunnen worden gebruikt in combinatie met 'Non-local Means – Luminance'.
+TP_LOCALLAB_DENOIRATIO;Verhouding vlak-gestructureerde gebieden
 TP_LOCALLAB_DENOITHR_TOOLTIP;Past randdetectie aan om te helpen ruis in uniforme, laag-contrastgebieden te verminderen.
 TP_LOCALLAB_DENOIWAVCH;Wavelets: Chrominantie
 TP_LOCALLAB_DENOIWAVLUM;Wavelets: Luminantie
 TP_LOCALLAB_DENOI_EXP;Ruisvermindering
-TP_LOCALLAB_DENOI_TOOLTIP;Deze module kan worden gebruikt voor ruisreductie, hetzij op zichzelf (aan het einde van de verwerkingspijplijn) of in aanvulling op de module Ruisreductie in het Detailtabblad (die aan het begin van de pijplijn werkt).\nMet Bereik kun je de actie differentiëren op basis van kleur (ΔE).\nMinimale spotgrootte: 128x128.
+TP_LOCALLAB_DENOI_MASK;Ruisvermindering contrastmasker
+TP_LOCALLAB_DENOI_TOOLTIP;Deze module kan worden gebruikt voor Ruisvermindering, hetzij op zichzelf (aan het einde van de verwerkingspijplijn) of in aanvulling op de module Ruisvermindering in het Detailtabblad (die aan het begin van de pijplijn werkt).\nMet Bereik kun je de actie differentiëren op basis van kleur (ΔE).\nMinimale spotgrootte: 128x128.
+TP_LOCALLAB_DENORADIUS_TOOLTIP;Hiermee kun je de ruisonderdrukking differentiëren op basis van afbeeldingsdetails en uniforme achtergrond.\nDe resulterende actie is een combinatie van de ruisonderdrukking en die van het masker dat is gemaakt door 'Contrastdrempel'.\nOp afbeeldingen met veel ruis kun je de maskerruis verminderen.\nJe kunt de actie ook aanpassen met de curve 'Equalizer ruisonderdrukkingsmasker'.\nMet de verhouding vlak-gestructureerde gebieden kun je de actie tussen de twee corrigeren.\nBij RAW-afbeeldingen met veel ruis moet je de functies 'Voorverscherping ruisonderdrukking' en 'Naverscherping ruisonderdrukking' gebruiken voor een effectievere maskeractie.
 TP_LOCALLAB_DEPTH;Diepte
 TP_LOCALLAB_DETAIL;Lokaal contrast
 TP_LOCALLAB_DETAILFRA;Randdetectie - DCT
@@ -3296,17 +3436,41 @@ TP_LOCALLAB_GAMUTXYZRELA;XYZ relatief
 TP_LOCALLAB_GAMW;Gamma (wavelet-pyramiden)
 TP_LOCALLAB_GHSBPWP;Aantal afgekapte pixels - Schaduwen:%1 Hoge lichten:%2
 TP_LOCALLAB_GHSBPWPVALUE;Pixelwaarden - Donkerst:%1 Lichtst:%2
+TP_LOCALLAB_GHSCOLORNO;---
+TP_LOCALLAB_GHSCOLORVALUE;RGB-waarden - R:%1 G:%2 B:%3
+TP_LOCALLAB_GHSDR;Dynamisch bereik GHS (LW):%1
+TP_LOCALLAB_GHSDRNO;---
 TP_LOCALLAB_GHSFRA;Rekinstellingen
 TP_LOCALLAB_GHSHUE;Tint (HSL)
 TP_LOCALLAB_GHSLAB;Lichtheid & chromaticiteit (Lab)
 TP_LOCALLAB_GHSLABFRA;Lab-instellingen
 TP_LOCALLAB_GHSLUM;Luminantie (HSL)
+TP_LOCALLAB_GHSMAT;Matrix
+TP_LOCALLAB_GHSMAT1;AgX (Aangenaam)
+TP_LOCALLAB_GHSMAT2;JzAzBz (XYZ Hoogdynamisch)
+TP_LOCALLAB_GHSMAT3;Cat16 (XYZ Harmonieus)
+TP_LOCALLAB_GHSMAT4;JzAzBz (RGB Hoogdynamisch)
+TP_LOCALLAB_GHSMAT5;Cat16 (RGB Harmonieus)
+TP_LOCALLAB_GHSMATO;Geen (Neutraal)
+TP_LOCALLAB_GHSMAXRGB;RGB Max & 3 Sigma's: Max=%1 3S=%2
+TP_LOCALLAB_GHSMAXRGBNO;---
+TP_LOCALLAB_GHSMAXRGB_TOOLTIP;Hiermee zie je een voorvertoning van de wijzigingen die je aanbrengt. De belangrijkste instellingen die effect hebben, zijn 'Rekfactor (D)' en 'Lokale intensiteit (b)'. Probeer een waarde te bereiken die dicht bij of lager is (naar je smaak) dan 0,18 voor 'Geschat middelgrijs', hoewel dit niet verplicht is, omdat er daarna nog andere verwerkingsstappen volgen.\n\n 'RGB max' komt overeen met de maximale waarde van de data; dit kan slechts een paar pixels beïnvloeden. '3 Sigma's' komt overeen met de limiet van echt significante data. Je kunt alle GHS-instellingen aanpassen, maar met name 'Bescherming hoge lichten (HP)' en 'Demping hoge lichten', om te voorkomen dat ze, indien mogelijk, de waarde van 1 overschrijden. Het doel van GHS is niet om een perfecte afbeelding te produceren, maar om de afbeelding voor te bereiden - met wat speelruimte - voor verdere verwerking.
+TP_LOCALLAB_GHSMIDGREY;Geschat middelgrijs=%1
+TP_LOCALLAB_GHSMIDGREYNO;---
 TP_LOCALLAB_GHSRGBLUM;RGB Luminantie
 TP_LOCALLAB_GHSRGBSTD;RGB Standaard
 TP_LOCALLAB_GHSSAT;Verzadiging (HSL)
+TP_LOCALLAB_GHSSYM;Geschat symmetriepunt RGB=%1
+TP_LOCALLAB_GHSSYMNO;---
+TP_LOCALLAB_GHS_AGX;AgX Matrix
+TP_LOCALLAB_GHS_AGXMAT2_TOOLTIP;Gebruikt de LMS-transformatie (Long, Medium, Short), afhankelijk van de selectie door de gebruiker. LMS is een kleurruimtetransformatie die de respons van de drie typen kegeltjes in het menselijk oog vertegenwoordigt, genoemd naar hun gevoeligheidspieken bij lange, middellange en korte golflengtes.\n\nDeze transformaties, in de vorm van een matrix, wijzigen elk R-, G- en B-kanaal voor elke pixel, waarbij prioriteit wordt gegeven aan bepaalde dominante kleuren volgens jouw keuze.\n * Geen - laat de data ongewijzigd (standaard).\n * AgX - benadrukt elk R-, G-, B-kanaal vrij sterk, zodat de LMS-data als kleurrijker worden waargenomen.\n * JzAzBz (XYZ hoogdynamisch) - wijzigt de LMS-distributie door in te grijpen op X, Y, Z om beter rekening te houden met afbeeldingen met een hoog 'lineair WP'.\n * Cat16 (XYZ harmonieus) - wijzigt de LMS-verdeling door in te grijpen op X, Y, Z - zorgt voor een harmonieuzere verdeling van kleuren, terwijl de interactie tussen oog en brein wordt gerespecteerd.\n * JzAzBz (RGB hoogdynamisch) - wijzigt de LMS-verdeling door, net als AgX, in te grijpen op de drie kanalen R, G, B om beter rekening te houden met afbeeldingen met een hoog 'lineair WP'.\n * Cat16 (RGB harmonieus) - wijzigt de LMS-verdeling door, net als AgX, in te grijpen op de 3 kanalen R, G en B - zorgt voor een harmonieuzere verdeling van kleuren terwijl de interactie tussen oog en brein wordt gerespecteerd.\n\n\nVoor JzAzBz en Cat16, de XYZ-modus: JzAzBz (XYZ hoogdynamisch) en Cat16 (XYZ harmonieus) zouden een betere kleur- en luminantiegetrouwheid moeten waarborgen.\n\nDeze transformatie beïnvloedt alleen de wijzigingen die door GHS zijn aangebracht: 'Witpunt (lineair)', 'Zwartpunt (lineair)', 'Symmetriepunt (SP)' en uiteraard de actie op Rekfactor (D) en Lokale intensiteit (b). Het is essentieel om de GHS-instellingen elke keer te controleren als de matrix wordt gewijzigd. Het wordt sterk aanbevolen om 'Automatisch Zwart- en Witpunt' in te schakelen (behalve in Omgekeerde modus). Bekijk het histogram in de twee modi 'Werkprofiel - lineair' en 'Gamma - gecorrigeerd uitvoerprofiel'.\n\nWees voorzichtig:\n * Verwar Cat16 niet met CIECAM. Cat16 is alleen de conversiematrix, terwijl CIECAM (Kleurweergave en Verlichting) een compleet colorimetrisch proces is dat rekening houdt met fysiologische aspecten.\n * De JzAzBz-matrix hier houdt geen rekening met de noties van 'Absolute luminantie' en gebruikt dus niet het begrip PQ (Perceptuele Quantizer). Verwar dit niet met de module in Selectieve Bewerking > JzCzHz.
+TP_LOCALLAB_GHS_AGX_MAT_TOOLTIP;Voert de volledige GHS-verwerking uit, inclusief Matrix-conversie, of het nu AgX, JzAzBz of Cat16 is. Voor JzAzBz en Cat16 heb je de keuze tussen een transformatie in RGB-modus of in XYZ-modus (bij voorkeur).\n * Om deze matrix in of uit te schakelen, moet 'Automatisch Zwart- en Witpunt' uitgeschakeld zijn.\n * Je moet 'Automatisch Zwart- en Witpunt' opnieuw inschakelen om de waarden van 'Zwartpunt (lineair)', 'Witpunt (lineair)' en 'Symmetriepunt (SP)' opnieuw te berekenen.
+TP_LOCALLAB_GHS_AGX_TOOLTIP;Voert de volledige GHS-verwerking uit, inclusief AgX-conversie.\n * Om AgX in of uit te schakelen moet 'Automatisch Zwart- en Witpunt' uitgeschakeld zijn.\n * Je moet 'Automatisch Zwart- en Witpunt' opnieuw inschakelen om de waarden van 'lineair BP', 'lineair WP' en 'Symmetriepunt (SP)' opnieuw te berekenen.
+TP_LOCALLAB_GHS_AUTOBW;Automatisch Zwart- en Witpunt
 TP_LOCALLAB_GHS_B;Lokale intensiteit (b)
 TP_LOCALLAB_GHS_BLACKPOINT_FRAME;Zwartpunt/Witpunt/Hoge lichten
 TP_LOCALLAB_GHS_BLP;Zwartpunt (ZP lineair)
+TP_LOCALLAB_GHS_BLPHLPAUTO_TOOLTIP;Past automatisch de waarden van 'Zwartpunt' en 'Witpunt' aan.\nNiet beschikbaar in Omgekeerde GHS-modus en moet uitgeschakeld zijn om Omgekeerde GHS te laten werken. Het moet uitgeschakeld (en opnieuw ingeschakeld) worden om 'Matrix-conversie (AgX, JzAzBz, Cat16)' te wijzigen.\nOver het algemeen zullen de automatische instellingen bevredigend zijn.\nIndien nodig kun je achteraf de twee punten aanpassen:\n * Het 'Zwartpunt': negatieve waarden kunnen helpen als de schaduwen volledig zijn dichtgeslagen.\n * Verhoog handmatig de waarde van het 'Witpunt' indien nodig, met name als deze minder dan 1 is, om het systeem meer flexibiliteit te geven door mogelijke kleurruimte-overschrijdingen als gevolg van GHS of latere aanpassingen te voorkomen.
 TP_LOCALLAB_GHS_BLP_TOOLTIP;Stelt het zwartpunt in voor een lineaire rek van de afbeelding.\n * Voor negatieve schuifwaarden, in GHS ‘normaal’, worden schaduwen lineair verhoogd om overmatige ruisopbouw te voorkomen en het GHS-werk te vergemakkelijken.\n * Voor positieve schuifwaarden wordt het histogram naar links verschoven. Voor Raw-afbeeldingen kun je ook Raw-Tab > Raw-zwartpunten – Nevelvermindering gebruiken, wat preciezer is.\n * Contrast dat wordt verkregen door de lineaire rek uit te voeren, zal gelijkmatig over de afbeelding worden verdeeld.\n\n * Je kunt een lineaire zwartpuntverschuiving aanpassen om of:\n  - rekening te houden met ruis in de diepe schaduwen.\n  - of het histogram aan te passen.\n\n * Het wordt aanbevolen deze schuifknoppen aan te passen vòòr de hoofd-GHS-schuifknoppen om afkapping van data te voorkomen. Een zeer lage rekfactor (D)-waarde (standaard 0,001) wordt aanbevolen voor het uitvoeren van deze aanpassing.\n * Het label 'Aantal afgekapte pixels Schaduwen:x Hoge lichten=y' laat zien hoeveel pixels er zouden worden afgekapt zonder de twee schuifknoppen aan te passen.\n * Het label Pixelwaarden - Donkerst:w Lichtst:z laat de minimale en maximale waarden in het bereik [0, 1] zien.\n\n * In de ‘Geïnverteerde GHS’-modus is het gedrag omgekeerd en zijn er mogelijk interacties met het witpunt.
 TP_LOCALLAB_GHS_BPFRAME_TOOLTIP;Stelt het Zwartpunt (ZP lineair), Witpunt (WP lineair) en de Hoge lichten in voor een lineaire rek van de afbeelding.\n\n * Zwartpunt (ZP lineair) en Witpunt (WP lineair) kunnen alleen ingesteld worden als de rekfactor (D) tussen 0,001 en 0,002 ligt, zodat het histogram niet wordt beïnvloed.\n\n * Wanneer de rekfactor 0,002 of minder is, hebben alle rekinstellingen behalve zwartpunt en witpunt geen effect.\n\n * Zwartpunt (ZP lineair) en witpunt (WP lineair) zijn gevoelig voor de algemene instellingen verderop in GHS: Reconstructie hoge lichten, Witbalans en RAW-processen.\n\n * Om relevante zwartpunt (ZP lineair) en witpunt (WP lineair) instellingen te verkrijgen, moet de hele afbeelding worden geanalyseerd. Het wordt aanbevolen om 'Toon hele afbeelding op scherm - Sneltoets Alt-f' te gebruiken.
 TP_LOCALLAB_GHS_B_TOOLTIP;Deze parameter bepaalt hoe nauw de rek rond het symmetriepunt (SP) wordt geplaatst door de vorm van de transformatie zelf te veranderen:\n * Voor geconcentreerde rekken (zoals initiële rekken op lineaire afbeeldingen) moet een grote 'b'-factor worden toegepast om een rek binnen een histogram-piek te plaatsen, terwijl de rek buiten de histogram-piek aan kracht verliest.\n * Voor het aanpassen van niet-lineaire afbeeldingen moeten lagere 'b'-parameters worden toegepast om contrast en helderheid gelijkmatiger te verdelen.\n * Grote positieve waarden van 'b' kunnen worden beschouwd als een histogramverbreding, d.w.z. het histogram breder maken rond het focuspunt, SP.\n * Daarentegen neigen lagere waarden van 'b' het histogram te verschuiven naar een heldere of donkerdere positie zonder de breedte ervan te veel te beïnvloeden.\n * Als algemene regel zal het niveau van 'b' afnemen naarmate een rek-operatie bijna compleet is, hoewel grotere 'b'-waarden nog steeds kunnen worden toegepast voor precieze plaatsing van extra contrast.
@@ -3372,7 +3536,7 @@ TP_LOCALLAB_HUECIE;Tint
 TP_LOCALLAB_IND;Onafhankelijk (muis)
 TP_LOCALLAB_INDSL;Onafhankelijk (muis + schuiven)
 TP_LOCALLAB_INVBL;Inverteer
-TP_LOCALLAB_INVBL_TOOLTIP;Alternatief voor de 'Omkeer'-modus: gebruik twee spots.\nEerste spot:\nVolledige afbeelding.\n\nTweede spot: Sluit spot uit.
+TP_LOCALLAB_INVBL_TOOLTIP;Alternatief voor de 'Omkeren'-modus: gebruik twee spots.\n\nEerste spot: Volledige afbeelding.\nTweede spot: Sluit spot uit.
 TP_LOCALLAB_INVERS;Inverteer
 TP_LOCALLAB_INVERS_TOOLTIP;Minder mogelijkheden indien (Omkeren) is geselecteerd.\n\nAlternatief: gebruik twee spots\nEerste spot:\nVolledige afbeelding.\n\nTweede spot: Uitgesloten spot.\n\nOmkeren zal dit gereedschap inschakelen voor het gebied buiten de spot, terwijl het gebied binnen de spot onaangetast blijft.
 TP_LOCALLAB_INVMASK;Keer algoritme om
@@ -3435,7 +3599,7 @@ TP_LOCALLAB_LEVELWAV;Wavelet-niveaus
 TP_LOCALLAB_LEVELWAV_TOOLTIP;Het niveau wordt automatisch aangepast aan de grootte van de spot en het voorbeeld.\nVan niveau 9 grootte max 512 tot niveau 1 grootte max = 4.
 TP_LOCALLAB_LEVFRA;Niveaus
 TP_LOCALLAB_LIGHTNESS;Lichtheid
-TP_LOCALLAB_LIGHTN_TOOLTIP;In inverse modus: selectie = -100 dwingt luminantie naar nul.
+TP_LOCALLAB_LIGHTN_TOOLTIP;In Omgekeerde modus: selectie = -100 dwingt luminantie naar nul.
 TP_LOCALLAB_LIGHTRETI;Lichtheid
 TP_LOCALLAB_LINEAR;Lineariteit
 TP_LOCALLAB_LIST_NAME;Voeg gereedschap toe aan huidige spot...
@@ -3443,6 +3607,11 @@ TP_LOCALLAB_LIST_TOOLTIP;Je kunt drie complexiteitsniveaus  selecteren voor elk 
 TP_LOCALLAB_LMASK_LEVEL_TOOLTIP;Hiermee kun je het effect op specifieke detailniveaus in het masker verminderen of vergroten door op bepaalde luminantiezones te werken (over het algemeen de lichtste).
 TP_LOCALLAB_LMASK_LL_TOOLTIP;Hiermee pas je het contrast van het masker vrijelijk aan.\nHeeft een vergelijkbare functie als de Gamma- en Hellingschuiven.\nHiermee kunnen bepaalde delen van het beeld worden bewerkt (meestal de lichtste delen van het masker door de curve te gebruiken om de donkere delen uit te sluiten). Kan onregelmatigheden creëren.
 TP_LOCALLAB_LOCCONT;Onscherptemasker
+TP_LOCALLAB_LOCKMADL;Vergrendel MadL-ruisevaluatie
+TP_LOCALLAB_LOCKMADL2;Handmatige instellingen
+TP_LOCALLAB_LOCKMADL2_TOOLTIP;Hiermee kun je de MadL-waarden handmatig aanpassen. Wees voorzichtig: deze functie veronderstelt kennis van de concepten van ruisonderdrukking met behulp van wavelets. Zorg ervoor dat de beginwaarden voor het geselecteerde gebied automatisch zijn ingesteld.\n\nPas op dat je de actie op MadL niet verwart, wat slechts een ruisschatting is die alleen wordt gebruikt in Wavelet Denoise, waar de kracht wordt ingesteld in Selectieve Bewerking met behulp van een curve en een geselecteerd niveau (Agressief/Conservatief). De MadL-schaal is exponentieel en niet lineair.\n\nDe eerste niveaus van wavelet-ontleding bieden zichtbare ruisonderdrukking, terwijl de hogere niveaus meer effect hebben op banding.
+TP_LOCALLAB_LOCKMADLFRA_TOOLTIP;Toont de actuele waarden van Median Absolute Deviation (MadL).\nAls 'Vergrendel MadL-ruisevaluatie' niet is ingeschakeld, kun je deze waarden handmatig wijzigen, wat de hele afbeelding zal beïnvloeden.\nDe eerste niveaus 0,1,2,3 voor de Horizontale richting, 7,8,9,10 voor de Verticale richting en 14,15,16,17 voor de Diagonale richting, werken op de detailruis. De hogere niveaus hebben meer effect op banding-ruis.\nLuminantie-ruisonderdrukking is een functie die MadL implementeert (afhankelijk van niveau en richting), gedeeld door het detailniveau (hoge, medium en lage frequentie), de actuele waarde van de decompositie op die locatie (afhankelijk van niveau en richting) en de curve die door de gebruiker is toegepast volgens het niveau van wavelet-ontleding.
+TP_LOCALLAB_LOCKMADL_TOOLTIP;Hiermee kun je de ruisevaluatie die wordt gebruikt voor Wavelet Denoise vergrendelen.\n\nWavelet Denoise gebruikt MadL (Median Absolute Deviation Luminance) om ruis te verminderen door middel van een schuif of een curve.\nHet ontwerp van de Rawtherapee-pijplijn resulteert in verschillende MadL-waarden, afhankelijk van de positie van de voorvertoning en leidt tot verschillen in de uitvoer.\n\nAls je dit selectievakje inschakelt, wordt de MadL-waarde van de voorvertoning op dat moment vastgehouden en gebruikt voor de globale verwerking. Zo kun je prioriteit geven aan een specifiek gebied, achtergrond of gezicht voor ruisonderdrukking, in plaats van een algemene gemiddelde waarde. Natuurlijk moet je het vakje pas aanvinken nadat het gebied is geselecteerd.
 TP_LOCALLAB_LOC_CONTRAST;Lokaal Contrast & Wavelets
 TP_LOCALLAB_LOC_CONTRASTPYR;Pyramide 1:
 TP_LOCALLAB_LOC_CONTRASTPYR2;Pyramide 2:
@@ -3498,6 +3667,10 @@ TP_LOCALLAB_LUMASK_TOOLTIP;Past de grijstint of kleur van de  achtergrond van he
 TP_LOCALLAB_LUMAWHITESEST;Lichtst
 TP_LOCALLAB_LUMFRA;L*a*b* standaard
 TP_LOCALLAB_LUMLABEL;Luma-niveaus 0123: Gemiddeld=%1 Hoog=%2
+TP_LOCALLAB_MADLDIRD;D-Niveaus 0..6/14-20
+TP_LOCALLAB_MADLDIRH;H-Niveaus 0..6
+TP_LOCALLAB_MADLDIRV;V-Niveaus 0..6/7-13
+TP_LOCALLAB_MADLFRA;Mediane absolute afwijking (L)
 TP_LOCALLAB_MASFRAME;Masker en Combineer
 TP_LOCALLAB_MASFRAME_TOOLTIP;Voor alle maskers.\nHoudt rekening met de ΔE-afbeelding om te voorkomen dat het selectiegebied wordt gewijzigd wanneer de volgende maskergereedschappen worden gebruikt: Gamma, Helling, Chroma, Contrastcurve, Lokaal contrast (op wavelet-niveau), Vervagingsmasker en Structuurmasker (indien ingeschakeld).\nUitgeschakeld als de Inverteermodus wordt gebruikt.
 TP_LOCALLAB_MASK;Curven
@@ -3512,8 +3685,8 @@ TP_LOCALLAB_MASKDEINV_TOOLTIP;Keert de manier om waarop het algoritme het masker
 TP_LOCALLAB_MASKDE_TOOLTIP;Wordt gebruikt voor ruisvermindering als een functie van de luminantie-informatie van de afbeelding die is opgenomen in de L(L)- of LC(H)-maskers (Masker en Modificaties).\nHet L(L)-masker of het LC(H)-masker moet zijn ingeschakeld om deze functie te gebruiken.\nAls het masker onder de 'donkere' drempel ligt, zal de ruisvermindering progressief worden toegepast.\nAls het masker boven de 'lichte' drempel ligt, zal de ruisvermindering progressief worden toegepast.\nTussen de twee zullen de afbeeldingsinstellingen zonder de ruisvermindering worden behouden, tenzij je de schuiven 'Grijsgebied luminantie ruisvermindering' of 'Grijsgebied chrominantie ruisvermindering' aanpast.
 TP_LOCALLAB_MASKGF_TOOLTIP;Hier wordt het Begeleid Filter gebruikt als een functie van de luminantie-informatie van de afbeelding die is opgenomen in de L(L)- of LC(H)-maskers (Masker en Modificaties).\nHet L(L)-masker of het LC(H)-masker moet zijn ingeschakeld om deze functie te gebruiken.\nAls het masker onder de 'donkere' drempel ligt, zal het Begeleid Filter progressief worden toegepast.\nAls het masker boven de 'lichte' drempel ligt, zal het Begeleid Filter progressief worden toegepast.\nTussen de twee zullen de afbeeldingsinstellingen zonder het Begeleid Filter worden behouden.
 TP_LOCALLAB_MASKH;Tintcurve
-TP_LOCALLAB_MASKHIGTHRESCB_TOOLTIP;Lichtere-tint limiet waarboven CBDL-parameters (alleen Luminantie) geleidelijk zullen worden hersteld naar hun oorspronkelijke waarden voordat ze door de CBDL-instellingen werden gewijzigd.\nU kunt sommige gereedschappen in 'Masker en Modificaties' gebruiken om de grijstinten te veranderen: 'Verzachtingsstraal', Gamma en Helling, 'Contrastcurve'.\nGebruik een 'vergrendelbaar kleurpipet' op het masker om te zien welke gebieden zullen worden beïnvloed. Zorg ervoor dat je 'Achtergrond kleurmasker' = 0 instelt in Instellingen.
-TP_LOCALLAB_MASKHIGTHRESC_TOOLTIP;Lichtere-tint limiet waarboven de parameters geleidelijk zullen worden hersteld naar hun oorspronkelijke waarden voordat ze door de Kleur en Licht-instellingen werden gewijzigd.\nU kunt sommige gereedschappen in 'Masker en Modificaties' gebruiken om de grijstinten te veranderen: 'Structuurmasker', 'Vervagingsmasker', 'Verzachtingsstraal', 'Gamma en Helling', 'Contrast curve' en 'Lokaal contrast' (wavelets).\nGebruik een 'vergrendelbaar kleurpipet' op het masker om te zien welke gebieden zullen worden beïnvloed. Zorg ervoor dat je 'Achtergrond kleurmasker' = 0 instelt in Instellingen.
+TP_LOCALLAB_MASKHIGTHRESCB_TOOLTIP;Lichtere-tint limiet waarboven CBDL-parameters (alleen Luminantie) geleidelijk zullen worden hersteld naar hun oorspronkelijke waarden voordat ze door de CBDL-instellingen werden gewijzigd.\nJe kunt sommige gereedschappen in 'Masker en Modificaties' gebruiken om de grijstinten te veranderen: 'Verzachtingsstraal', Gamma en Helling, 'Contrastcurve'.\nGebruik een 'vergrendelbaar kleurpipet' op het masker om te zien welke gebieden zullen worden beïnvloed. Zorg ervoor dat je 'Achtergrond kleurmasker' = 0 instelt in Instellingen.
+TP_LOCALLAB_MASKHIGTHRESC_TOOLTIP;Lichtere-tint limiet waarboven de parameters geleidelijk zullen worden hersteld naar hun oorspronkelijke waarden voordat ze door de Kleur en Licht-instellingen werden gewijzigd.\nJe kunt sommige gereedschappen in 'Masker en Modificaties' gebruiken om de grijstinten te veranderen: 'Structuurmasker', 'Vervagingsmasker', 'Verzachtingsstraal', 'Gamma en Helling', 'Contrast curve' en 'Lokaal contrast' (wavelets).\nGebruik een 'vergrendelbaar kleurpipet' op het masker om te zien welke gebieden zullen worden beïnvloed. Zorg ervoor dat je 'Achtergrond kleurmasker' = 0 instelt in Instellingen.
 TP_LOCALLAB_MASKHIGTHRESD_TOOLTIP; De ruisvermindering wordt geleidelijk verminderd van 100% bij de drempelinstelling tot 0% bij de maximale witte waarde (zoals bepaald door het masker).\nU kunt sommige gereedschappen in 'Masker en Modificaties' gebruiken om de grijstinten te veranderen: 'Structuurmasker', 'Verzachtingsstraal', 'Gamma en Helling', 'Contrastcurve', 'Lokaal contrast' (wavelets).\nGebruik een vergrendelbaar kleurpipet' op het masker om te zien welke gebieden zullen worden beïnvloed. Zorg ervoor dat je 'Achtergrond kleurmasker' = 0 instelt in Instellingen.
 TP_LOCALLAB_MASKHIGTHRESE_TOOLTIP;Lichtere-tint limiet waarboven de parameters geleidelijk zullen worden hersteld naar hun oorspronkelijke waarden voordat ze door de 'Dynamisch bereik en Belichting'-instellingen werden gewijzigd.\nU kunt bepaalde hulpmiddelen in 'Masker en Modificaties' gebruiken om de grijstinten te veranderen: 'Verzachtingsstraal', Gamma en Helling, 'Contrastcurve'.\nGebruik een 'vergrendelbaar kleurpipet' op het masker om te zien welke gebieden zullen worden beïnvloed. Zorg ervoor dat je 'Achtergrond kleurmasker' = 0 instelt in Instellingen.
 TP_LOCALLAB_MASKHIGTHRESL_TOOLTIP;Lichtere-tint limiet waarboven de parameters geleidelijk zullen worden hersteld naar hun oorspronkelijke waarden voordat ze door de Log-coderingsinstellingen werden gewijzigd.\nU kunt bepaalde hulpmiddelen in 'Masker en Modificaties' gebruiken om de grijstinten te veranderen: 'Verzachtingsstraal', 'Contrastcurve'.\nGebruik een 'vergrendelbaar kleurpipet' op het masker om te zien welke gebieden zullen worden beïnvloed. Zorg ervoor dat je 'Achtergrond kleurmasker' = 0 instelt in Instellingen.
@@ -3587,8 +3760,31 @@ TP_LOCALLAB_MERTHI;Brand kleur
 TP_LOCALLAB_MERTHR;Verschil
 TP_LOCALLAB_MERTWE;Uitsluiting
 TP_LOCALLAB_MERTWO;Aftrekken
+TP_LOCALLAB_METHODCAP_TOOLTIP;Je kunt twee methoden gebruiken:\n 1. RL Deconvolutie, die gelijk is aan de versie die in het tabblad Detail wordt gebruikt.\n\n 2. Capture Deconvolutie, een aanpassing van Capture Sharpening in het tabblad Raw voor gebruik in Selectieve Bewerking. Met deze methode kun je dit algoritme of in standalone-modus of na ruisonderdrukking gebruiken. Capture Sharpening biedt fijnere scherptesturing door de hoekscherpte te verzachten om de focus op het hoofdonderwerp te verbeteren. De resultaten in de TIF/JPG-uitvoer komen overeen met die in de 'Aanpassen aan scherm'-weergave.
 TP_LOCALLAB_METHOD_TOOLTIP;'Verbeterd + chromaruisvermindering' verhoogt de verwerkingstijd aanzienlijk maar vermindert onregelmatigheden.
+TP_LOCALLAB_MICHBLACK;Lineair zwart aftrekken
+TP_LOCALLAB_MICHBLWH;Aftrekken Zwart=%1 Witpunt=%2
+TP_LOCALLAB_MICHBLWHNO;---
+TP_LOCALLAB_MICHBLWH_TOOLTIP;Hiermee kun je het effect van de twee selectievakjes zien:\n * Zwart aftrekken: verlaagt de waarde van het lineaire zwartpunt tot bijna nul door de aangegeven waarde af te trekken.\n * Witpunt: na aftrek van het zwartpunt worden de RGB-waarden gedeeld door het 'Lineaire dynamische bereik' (dwz. de weergegeven witpuntwaarde minus het oude zwartpunt).\n\nDoor het verlagen van het zwartpunt tot bijna nul en rekening houdend met het lineaire dynamische bereik zoals beschreven, kan het algoritme een beter contrast produceren en beter rekening houden met de werkelijke kleurruimte.\nHet inschakelen van 'JDx Matrix' zal het 'Lineaire dynamische bereik' verminderen en de kleurbalans wijzigen.
+TP_LOCALLAB_MICHDR_TOOLTIP;Lineair zwart aftrekken: verlaagt de lineaire zwartpuntwaarde tot bijna nul. Dit maakt optimaal gebruik van de beschikbare data door het algehele contrast te verhogen en sluiereffecten te verminderen.\n\nLineair dynamisch bereik: hiermee kunnen data buiten de kleurruimte worden opgenomen (bijvoorbeeld bij zonsondergangen). Het inschakelen van 'Reconstructie hoge lichten' > Kleurpropagatie kan een aanzienlijke verbetering bieden.\n\nDemping drempelwaarde: gebruikt een exponentiële functie om hoge lichten die waarschijnlijk kleurruimte-overschrijding veroorzaken, te verminderen.
+TP_LOCALLAB_MICHEXP;Belichting (LW)
+TP_LOCALLAB_MICHFRA;Michaelis-Menten-instellingen
+TP_LOCALLAB_MICHHIGH;Drempelwaarde demping
+TP_LOCALLAB_MICHJDX;JDx-Matrix
+TP_LOCALLAB_MICHJDX_TOOLTIP;Met het JDx-selectievakje kun je kiezen tussen de standaard- of de JDx LMS-transformaties. LMS is een kleurruimtetransformatie die de respons (gevoeligheid) van de drie typen kegeltjes in het menselijk oog bij lange, middellange en korte golflengtes vertegenwoordigt.\n\nDeze transformaties zijn matrices die elk van de R-, G- en B-kanalen voor elke individuele pixel wijzigen, waarbij prioriteit wordt gegeven aan bepaalde dominante kleuren afhankelijk van de geselecteerde optie:\n * Uitgeschakeld: laat de gegevens ongewijzigd (standaard).\n * JDx: benadrukt elk van de R-, G- en B-kanalen door in te grijpen op XYZ, zodat de LMS-data als kleurrijker worden waargenomen.
+TP_LOCALLAB_MICHKPAR;Kniekracht (K)
+TP_LOCALLAB_MICHOUT;Uitvoer max klem
+TP_LOCALLAB_MICHSAT;Verzadiging
+TP_LOCALLAB_MICHSPAR;Uitvoerschaal (S)
+TP_LOCALLAB_MICHTONEFRA;Tooncurve
+TP_LOCALLAB_MICHWHITE;Lineair dynamisch bereik
+TP_LOCALLAB_MICH_TOOLTIP;Deze toonmapper gebruikt de Michaelis-Menten-vergelijking, die geleend is uit de biochemie om enzymkinetiek te beschrijven. Bij fotobewerking creëert het een soepele, verzadigende curve die nuttig is voor toonmapping.\n\n * Belichting: Past de helderheid van de invoerafbeelding aan.\n * Uitvoerschaal (S): Regelt de maximale asymptotische waarde van de curve; in essentie het witniveau van de uitvoer.\n * Kniekracht (K): Bepaalt de 'knie' van de curve. Lagere waarden resulteren in een scherpere overgang naar het gebied met gecomprimeerde hoge lichten.\n * Verzadiging: Past de kleurverzadiging aan na toonmapping.\n * Uitvoer max klem: Stelt het uiteindelijke knippunt voor de uitvoerwaarden in.
 TP_LOCALLAB_MIDTCIE;Middentonen
+TP_LOCALLAB_MIDTCIEFRA;Middentonen
+TP_LOCALLAB_MIDTCIEM1;Voor Gamma & Hellingshoek
+TP_LOCALLAB_MIDTCIEM2;Na Gamma & Hellingshoek
+TP_LOCALLAB_MIDTCIEM3;Na CAM16
+TP_LOCALLAB_MIDTCIEMAIN;Middentonen
 TP_LOCALLAB_MLABEL;Herstelde data Min=%1 Max=%2
 TP_LOCALLAB_MLABEL_TOOLTIP;De waarden moeten dicht bij Min=0 Max=32768 (logmodus) liggen, maar andere waarden zijn mogelijk. Je kunt 'Kap herstelde data (versterking)' en 'Verschuiving' aanpassen om te normaliseren.\nHerstelt afbeeldingsdata zonder samenvoegen.
 TP_LOCALLAB_MODE_EXPERT;Geavanceerd
@@ -3654,7 +3850,7 @@ TP_LOCALLAB_QJMODE;Toonmap-operatoren Q(CAM16) & J(Jz)
 TP_LOCALLAB_QJMODE_511;5.11 niet meer aanbevolen
 TP_LOCALLAB_QJMODE_512;5.12
 TP_LOCALLAB_QJMODE_TOOLTIP;De toonmapping-operatoren die helderheidsgegevens (Q voor CAM16 en J voor Jz) gebruiken, zijn gewijzigd in RawTherapee versie 5.12. Dit stelt je in staat om de huidige of verouderde versie te selecteren.
-TP_LOCALLAB_QUAAGRES;Aggressief
+TP_LOCALLAB_QUAAGRES;Agressief
 TP_LOCALLAB_QUACONSER;Conservatief
 TP_LOCALLAB_QUALCURV_METHOD;Soort curve
 TP_LOCALLAB_QUAL_METHOD;Globale kwaliteit
@@ -3678,7 +3874,7 @@ TP_LOCALLAB_REPARW_TOOLTIP;Hiermee kun je de relatieve sterkte van de Lokaal con
 TP_LOCALLAB_RESID;Residuele afbeelding
 TP_LOCALLAB_RESIDBLUR;Vervaag residuele afbeelding
 TP_LOCALLAB_RESIDCHRO;Residuele afbeelding Chroma
-TP_LOCALLAB_RESIDCOMP;Comprimmeer Residuele afbeelding
+TP_LOCALLAB_RESIDCOMP;Comprimeer Residuele afbeelding
 TP_LOCALLAB_RESIDCONT;Residuele afbeelding Contrast
 TP_LOCALLAB_RESIDHI;Hoge lichten
 TP_LOCALLAB_RESIDHITHR;Drempel hoge lichten
@@ -3702,6 +3898,7 @@ TP_LOCALLAB_ROW_NVIS;Niet zichtbaar
 TP_LOCALLAB_ROW_VIS;Zichtbaar
 TP_LOCALLAB_RSTPROTECT_TOOLTIP;Rood- en huidskleurbescherming beïnvloedt de schuiven voor Verzadiging, Chroma en Kleurrijkheid.
 TP_LOCALLAB_SATCIE;Beperk verzadiging
+TP_LOCALLAB_SATCIE_TOOLTIP;Wijzigt de verzadiging van de afbeelding wanneer de gamma/hellingsverhouding verschilt van 2,4/12,92. Doel is de mindere verzadiging te compenseren die veroorzaakt wordt door aanzienlijke luminantievariaties.\nWaarden tussen 0,2 en 1,0 zijn doorgaans voldoende.
 TP_LOCALLAB_SATUR;Verzadiging
 TP_LOCALLAB_SATURV;Verzadiging (s)
 TP_LOCALLAB_SCALEGR;Schaal
@@ -3718,6 +3915,7 @@ TP_LOCALLAB_SETTINGS;Instellingen
 TP_LOCALLAB_SH1;Schaduwen/Hoge lichten
 TP_LOCALLAB_SH2;Equalizer
 TP_LOCALLAB_SH3;Generalized Hyperbolic Stretch (GHS)
+TP_LOCALLAB_SH4;Toonmapper Michaelis-Menten (MM)
 TP_LOCALLAB_SHADEX;Schaduwen
 TP_LOCALLAB_SHADEXCOMP;Schaduwcompressie
 TP_LOCALLAB_SHADHIGH;Schaduwen/hoge lichten, Equalizer & GHS
@@ -3729,12 +3927,14 @@ TP_LOCALLAB_SHAPETYPE;Spotvorm
 TP_LOCALLAB_SHAPE_TOOLTIP;'Ellips' is de normale modus.\n'Rechthoek' kan in bepaalde gevallen worden gebruikt, bijvoorbeeld om in de volledige afbeeldingsmodus te werken door de begrenzingen buiten het voorbeeldgebied te plaatsen. Stel in dit geval de overgang in op 100.\n\nToekomstige ontwikkelingen zullen polygoonvormen en een Bézier-curve bevatten.
 TP_LOCALLAB_SHARAMOUNT;Hoeveelheid
 TP_LOCALLAB_SHARBLUR;Vervagingsradius
+TP_LOCALLAB_SHARCAPFRAME;Hoeken
 TP_LOCALLAB_SHARDAMPING;Demping
 TP_LOCALLAB_SHARFRAME;Modificaties
 TP_LOCALLAB_SHARITER;Herhalingen
 TP_LOCALLAB_SHARP;Schaduwen
 TP_LOCALLAB_SHARP_TOOLNAME;Schaduwen
 TP_LOCALLAB_SHARRADIUS;Straal
+TP_LOCALLAB_SHARRLFRAME;RL Deconvolutie-instellingen
 TP_LOCALLAB_SHORTC;Korte curves L-masker
 TP_LOCALLAB_SHORTCMASK_TOOLTIP;Kortsluit de 2 curves L(L) en L(H).\nHiermee kun je de huidige afbeelding mengen met de originele afbeelding die is gewijzigd door de maskerbewerking.\nTe gebruiken met maskers 2, 3, 4, 6, 7.
 TP_LOCALLAB_SHOWC;Masker & Modificaties
@@ -3811,7 +4011,9 @@ TP_LOCALLAB_SLOPESMOOTRCR;Roodbalans (TRC)
 TP_LOCALLAB_SLOSH;Helling
 TP_LOCALLAB_SMOOTHCIE;Versterking hoge lichten
 TP_LOCALLAB_SMOOTHCIETH;Verzwakkingsdrempel
+TP_LOCALLAB_SMOOTHCIETHTRC;Drempelwaarde demping hoge lichten
 TP_LOCALLAB_SMOOTHCIE_HIGH;Alleen verzwakking hoge lichten
+TP_LOCALLAB_SMOOTHCIE_INV;Kleuren inverteren
 TP_LOCALLAB_SMOOTHCIE_LNK;Koppel R, G & B
 TP_LOCALLAB_SMOOTHCIE_LUM;Luminositeitsmodus
 TP_LOCALLAB_SMOOTHCIE_SCA;Schaal Yb Opname
@@ -3835,6 +4037,7 @@ TP_LOCALLAB_SPECCASE;Specifieke gevallen
 TP_LOCALLAB_SPECIAL;Speciaal gebruik van RGB-curven
 TP_LOCALLAB_SPECIAL_TOOLTIP;Het selectievakje stelt je in staat om alle andere acties te verwijderen: 'Bereik', maskers, schuiven, enz., (behalve overgangen) en alleen het effect van de RGB-tooncurve te gebruiken.
 TP_LOCALLAB_SPOTNAME;Nieuwe spot
+TP_LOCALLAB_SPRADIUS_TOOLTIP;Probeert een schatting van het automatische Symmetriepunt (SP) te maken, alleen in RGB-modus. Kan handmatige aanpassing vereisen.
 TP_LOCALLAB_STD;Standaard
 TP_LOCALLAB_STR;Kracht
 TP_LOCALLAB_STRBL;Kracht
@@ -3962,7 +4165,21 @@ TP_PCVIGNETTE_ROUNDNESS;Vorm
 TP_PCVIGNETTE_ROUNDNESS_TOOLTIP;Vorm: \n0=rechthoek \n50=ellips \n100=circel
 TP_PCVIGNETTE_STRENGTH;Sterkte
 TP_PCVIGNETTE_STRENGTH_TOOLTIP;Filtersterkte in stops (volledig in de hoeken).
+TP_PDSHARPENING_CONTRASTRADIUSSE_TOOLTIP;Met de schuiven 'Contrastdrempel' en 'Capture-radius' kun je een masker controleren dat bepaalt welke gebieden worden beïnvloed door scherpte en welke ongewijzigd blijven.
+TP_PDSHARPENING_CONTRAST_TOOLTIP;Standaard analyseert de tool de afbeelding en berekent een drempelwaarde om te voorkomen dat ruis wordt verscherpt.\nJe kunt de automatische Contrastdrempelberekening aan laten staan, of je kunt deze uitschakelen en handmatig instellen: de schuiven naar rechts verplaatsen betekent dat details een hoger contrast moeten hebben voordat ze worden verscherpt. Hogere Contrastdrempelwaarden verminderen ook de hoeveelheid scherpte die op ruis wordt toegepast, die doorgaans een lager detailcontrast heeft.\nVoorscherping ruisonderdrukking kan nodig zijn om detectie mogelijk te maken en ruis enigszins te verminderen.
+TP_PDSHARPENING_GAMMA_TOOLTIP;Hiermee kun je het effect differentiëren door de verhouding tussen schaduwen en hoge lichten te variëren. Het masker is gevoelig voor deze instelling.
+TP_PDSHARPENING_ITERATIONS_TOOLTIP;Zodra de stralen automatisch zijn berekend of handmatig zijn ingesteld, voert de tool een reeks berekeningen uit om te proberen eventuele onscherpte te compenseren. Het is een iteratief proces dat artefacten kan produceren als het te ver wordt doorgevoerd. Het aanzetten van het selectievakje 'Automatische iteratielimiet' zal het aantal iteraties beperken, of je kunt dit handmatig doen met de Iteratieschuif.
 TP_PDSHARPENING_LABEL;Verscherpen
+TP_PDSHARPENING_LABEL88;Capture-verscherping
+TP_PDSHARPENING_NOISE;Voorverscherping ruisonderdrukking
+TP_PDSHARPENING_NOISEAFTER;Naverscherping ruisonderdrukking
+TP_PDSHARPENING_NOISEAFTER_TOOLTIP;Hiermee kun je, voor RAW-afbeeldingen, initiële ruisonderdrukking toepassen na Capture Sharpening, rekening houdend met de maskerinformatie.\n * Het belangrijkste gebruik is om de actie te scheiden tussen gestructureerde gebieden waar de ruis nauwelijks zichtbaar is en de vaak effen achtergrond (vlakke gebieden) waar de ruis duidelijk zichtbaar is.\n\nGebruik geen al te hoge waarden, je kunt de ruisonderdrukking later verfijnen.
+TP_PDSHARPENING_NOISECAPTYPE;Gebruik Wavelets in plaats van Mediaan
+TP_PDSHARPENING_NOISE_TOOLTIP;Om Capture Sharpening te gebruiken voor afbeeldingen met ruis of zeer veel ruis, kun je het volgende doen:\n * Een lichte '3x3 zacht' tot een vrij sterke '5x5 sterk' mediaan ruisonderdrukkingsfilter in opeenvolgende geleidelijke iteraties vòòr Capture Sharpening.\n * Wavelet ruisonderdrukking, die een andere, meer progressieve actie heeft, voornamelijk op de eerste 4 decompositieniveaus (hoge en middellange frequentie).\n * Dit helpt om het contrastmasker te verhelderen waardoor Contrastdrempel kan werken, en dus Capture Sharpening goed kan laten functioneren.\n * Dit helpt ook om ruis in de uitvoerafbeelding te verminderen.\n\nGebruik geen al te hoge waarden om de afbeelding niet te verslechteren. De waarde die het masker zichtbaar maakt (of iets meer) is meestal voldoende.
+TP_PDSHARPENING_RADIUSOFFSETSE_TOOLTIP;Vaak zijn afbeeldingen in de hoeken zachter of onscherper dan in het midden. Je kunt dit compenseren met de schuif 'Hoekradiusversterking' door de radius in deze gebieden te vergroten of te verkleinen.\nNaar rechts bewegen vergroot de scherpte in de buitengebieden, en naar links bewegen vermindert de scherpte.\nDe resultaten in de TIF/JPG-uitvoer komen overeen met die in de weergave 'Pas in scherm'.
+TP_PDSHARPENING_RADIUSOFFSET_TOOLTIP;Vaak zijn afbeeldingen in de hoeken zachter of meer onscherp dan in het midden. Met de schuif 'Hoekradiusversterking' kun je dit compenseren door de radius in deze gebieden te vergroten of te verkleinen.\nNaar rechts bewegen vergroot de scherpte in de buitengebieden, en naar links bewegen vermindert de scherpte.
+TP_PDSHARPENING_RADIUS_TOOLTIP;Wanneer onscherpte in de camera optreedt, is de effectieve resolutie niet langer afhankelijk van de pixelgrootte, maar heeft deze een radius die evenredig toeneemt met de hoeveelheid onscherpte.\nHet doel van deze tool is om deze onscherpte te verminderen door te proberen automatisch de benodigde radius te schatten om het effect tegen te gaan.\n\nJe kunt er ook voor kiezen om de radius zelf aan te passen, maar pas wel op: als de waarde te laag is, zal er onvoldoende scherpte zijn, en als deze te hoog is, dit zal leiden tot sterke halo's op de randen. Vergeet niet dat je alleen probeert de onscherpte in de camera ongedaan te maken.
+TP_PDSHARPENING_SHOWCAP;Toon contrastmasker
 TP_PERSPECTIVE_CAMERA_CROP_FACTOR;Bijsnijdfactor
 TP_PERSPECTIVE_CAMERA_FOCAL_LENGTH;Brandpuntsafstand
 TP_PERSPECTIVE_CAMERA_FRAME;Correctie
@@ -4223,8 +4440,12 @@ TP_SHARPENEDGE_PASSES;Herhaling
 TP_SHARPENEDGE_THREE;Alleen luminantie
 TP_SHARPENING_AMOUNT;Hoeveelheid
 TP_SHARPENING_BLUR;Vervagen straal
+TP_SHARPENING_CAP;Capture Deconvolutie
+TP_SHARPENING_CAPFRAME;Hoekversterking
 TP_SHARPENING_CONTRAST;Contrastdrempel
+TP_SHARPENING_CONTRASTAUTO_TOOLTIP;Automatische schatting van het contrastniveau.\nWaarde onderhevig aan variatie afhankelijk van de positie in de voorvertoning.\nWees voorzichtig, schakel auto uit na schatting.
 TP_SHARPENING_EDRADIUS;Straal
+TP_SHARPENING_EDRADIUS_TOOLTIP;Automatische berekening op basis van RAW-data
 TP_SHARPENING_EDTOLERANCE;Randtolerantie
 TP_SHARPENING_HALOCONTROL;Halocontrole
 TP_SHARPENING_HCAMOUNT;Hoeveelheid
@@ -4234,10 +4455,13 @@ TP_SHARPENING_METHOD;Methode
 TP_SHARPENING_ONLYEDGES;Alleen randen verscherpen
 TP_SHARPENING_RADIUS;Straal
 TP_SHARPENING_RADIUS_BOOST;Straalvergroting
+TP_SHARPENING_RADIUS_PROT;Centraal beschermd gebied %
+TP_SHARPENING_RADIUS_PROTSE_TOOLTIP;Definieert het centrale beschermde gebied % (Volledige afbeelding of geografische RT-spot midden) dat niet zal worden beïnvloed door 'Hoekradiusversterking'.\nDe resultaten in de TIF/JPG-uitvoer komen overeen met die van 'Pas in scherm'.
 TP_SHARPENING_RLD;RL-verscherping
 TP_SHARPENING_RLD_AMOUNT;Hoeveelheid
 TP_SHARPENING_RLD_DAMPING;Demping
 TP_SHARPENING_RLD_ITERATIONS;Herhaling
+TP_SHARPENING_RLN;RL Deconvolutie
 TP_SHARPENING_THRESHOLD;Drempel
 TP_SHARPENING_USM;Onscherpmasker
 TP_SHARPENMICRO_AMOUNT;Hoeveelheid
@@ -4661,230 +4885,3 @@ ZOOMPANEL_ZOOMOUT;Zoom uit\nSneltoets: <b>-</b>
 //TP_WBALANCE_ITCWBNOPURPLE_TOOLTIP;Wanneer "Inpaint opposed" is geactiveerd, worden paarse kleuren standaard niet in aanmerking genomen. Maar als de afbeelding geen reconstructie van hoge lichten nodig heeft, of als de afbeelding van nature paarse tinten bevat (bloemen, enz.), kan het nodig zijn om deze optie uit te schakelen om op alle kleuren te werken.
 //TP_WBALANCE_ITCWB_FORCED;Forceert het gebruik van het hele CIE-diagram
 
-!!!!!!!!!!!!!!!!!!!!!!!!!
-! Untranslated keys follow; remove the ! prefix after an entry is translated.
-!!!!!!!!!!!!!!!!!!!!!!!!!
-
-!HISTORY_MSG_CATCURVEBLUE;CAL - IA - Brightness Blue
-!HISTORY_MSG_CATCURVEGREEN;CAL - IA - Brightness Green
-!HISTORY_MSG_CATCURVERED;CAL - IA - Brightness Red
-!HISTORY_MSG_CATHUEBLUE;CAL - IA - Hue Blue
-!HISTORY_MSG_CATHUEGREEN;CAL - IA - Hue Green
-!HISTORY_MSG_CATHUERED;CAL - IA - Hue Red
-!HISTORY_MSG_CATSCHROMABLUE;CAL - IA - Saturation Blue
-!HISTORY_MSG_CATSCHROMAGREEN;CAL - IA - Saturation Green
-!HISTORY_MSG_CATSCHROMARED;CAL - IA - Saturation Red
-!HISTORY_MSG_CG_CYANDC_AUTO;Gamut Compression - Auto Limits Cyan
-!HISTORY_MSG_CG_CYANDM_AUTO;Gamut Compression - Auto Limits Magenta
-!HISTORY_MSG_CG_CYANDY_AUTO;Gamut Compression - Auto Limits Yellow
-!HISTORY_MSG_CROP_GUIDE_ASPECT_RATIO_PRESET_CHANGED;Crop Guide - Aspect Ratio Preset
-!HISTORY_MSG_CROP_GUIDE_BLEED_BASIS_CHANGED;Crop Guide - Bleed Basis
-!HISTORY_MSG_CROP_GUIDE_BLEED_CHANGED;Crop Guide - Bleed
-!HISTORY_MSG_CROP_GUIDE_ENABLED;Crop Guide
-!HISTORY_MSG_CROP_GUIDE_PRESET_CHANGED;Crop Guide - Preset
-!HISTORY_MSG_ICM_APSAT;Abstract profile saturation
-!HISTORY_MSG_ICM_BLUROT;Primaries Blue rotation
-!HISTORY_MSG_ICM_BLUSAT;Primaries Blue saturation
-!HISTORY_MSG_ICM_GREROT;Primaries Green rotation
-!HISTORY_MSG_ICM_GRESAT;Primaries Green saturation
-!HISTORY_MSG_ICM_REDROT;Primaries Red rotation
-!HISTORY_MSG_ICM_REDSAT;Primaries Red saturation
-!HISTORY_MSG_ICM_SMOOTHCIESLI;Attenuation threshold
-!HISTORY_MSG_ICM_WGAMUT;Target Gamut
-!HISTORY_MSG_ICM_WGAMUTGAIN;Gain
-!HISTORY_MSG_ICM_WGAMUTPOWER;Power
-!HISTORY_MSG_LOCAL_AUTOCAPRADIUS;Local - Sh Auto Capture radius
-!HISTORY_MSG_LOCAL_AUTOSHAR;Local - Sh Auto Contrast
-!HISTORY_MSG_LOCAL_AUTOSP;Local - GHS - Auto SP
-!HISTORY_MSG_LOCAL_CAPRADIUS;Local - Sh Capture radius
-!HISTORY_MSG_LOCAL_CIE_MIDTMET;Local - CIECAM Midtones Method
-!HISTORY_MSG_LOCAL_CIE_SAT;Local - CIECAM Saturation
-!HISTORY_MSG_LOCAL_CIE_SMOOTHINV;Local CIECAM - Inverse color
-!HISTORY_MSG_LOCAL_CIE_SMOOTHTHTRC;Local CIECAM - Highlight attenuation threshold
-!HISTORY_MSG_LOCAL_CONVBOOST;Local - Sh Corner radius
-!HISTORY_MSG_LOCAL_CONVGAM;Local - Sh Gamma
-!HISTORY_MSG_LOCAL_CONVLAT;Local - Sh Corner iterations
-!HISTORY_MSG_LOCAL_CONVPROT;Local - Sh Central protected area
-!HISTORY_MSG_LOCAL_DENOAUTO;Local - Denoise Auto Contrast
-!HISTORY_MSG_LOCAL_DENOCONTRAST;Local - Denoise Contrast threshold
-!HISTORY_MSG_LOCAL_DENOCONTRSHOW;Local - Denoise Show mask contrast
-!HISTORY_MSG_LOCAL_DENOENA;Local - Denoise Enable Contrast threshold
-!HISTORY_MSG_LOCAL_DENOMASK;Local - Denoise Contrast mask
-!HISTORY_MSG_LOCAL_DENOMASKCURV;Local - Denoise Equalizer Denoise mask
-!HISTORY_MSG_LOCAL_DENORATIO;Local - Denoise Ratio flat-structure
-!HISTORY_MSG_LOCAL_GHS_AGX;Local - GHS - Matrix
-!HISTORY_MSG_LOCAL_GHS_AUTOBW;Local - GHS - Auto Black point and White point
-!HISTORY_MSG_LOCAL_GHS_MATMET;Local - GHS - Matrix
-!HISTORY_MSG_LOCAL_LOCKMADL;Local - Denoise Lock MadL
-!HISTORY_MSG_LOCAL_LOCKMADL2;Local - Manual MadL
-!HISTORY_MSG_LOCAL_LOCKMADLS;Local - Denoise - MadL
-!HISTORY_MSG_LOCAL_MICH_BLACK;Local - Michaelis-Menten Subtract black
-!HISTORY_MSG_LOCAL_MICH_EXP;Local - Michaelis-Menten Exposure
-!HISTORY_MSG_LOCAL_MICH_HIGH;Local - Michaelis-Menten Attenuation threshold
-!HISTORY_MSG_LOCAL_MICH_JDX;Local - Michaelis-Menten JDx Matrix
-!HISTORY_MSG_LOCAL_MICH_KPAR;Local - Michaelis-Menten Knee Strength
-!HISTORY_MSG_LOCAL_MICH_OUT;Local - Michaelis-Menten Output Max Clamp
-!HISTORY_MSG_LOCAL_MICH_SAT;Local - Michaelis-Menten Saturation
-!HISTORY_MSG_LOCAL_MICH_SPAR;Local - Michaelis-Menten Output Scale
-!HISTORY_MSG_LOCAL_MICH_WHITE;Local - Michaelis-Menten Dynamic range
-!HISTORY_MSG_LOCAL_SHARITERCHECK;Local - Sh Auto limit iterations
-!HISTORY_MSG_LOCAL_SHARREPAR;Local - Sh Strength
-!HISTORY_MSG_LOCAL_SHARSHOW;Local - Sh Show contrast mask
-!HISTORY_MSG_PDSHARPEN_NOISECAP;CS - Presharpening denoise
-!HISTORY_MSG_PDSHARPEN_NOISECAPAFTER;CS - Postsharpening denoise luminance
-!HISTORY_MSG_PDSHARPEN_NOISECAPTYPE;CS - Presharpening type
-!HISTORY_MSG_PDSHARPEN_SHOWCAP;CS - Show mask contrast
-!HISTORY_MSG_TRANS_SCALE_HORIZONTALLY;Geometry - Scale horizontally
-!HISTORY_MSG_TRANS_SCALE_VERTICALLY;Geometry - Scale vertically
-!PARTIALPASTE_CROPGUIDE;Crop Guide
-!PREFERENCES_RESET_TO_DEFAULT;Reset Preferences
-!PREFERENCES_RESET_TO_DEFAULT_CONFIRM_PROMPT;Reset all preferences to their default values? This action cannot be undone.\n\nSome changes may require restarting the application to take full effect.
-!QUEUE_LOCATION_TEMPLATE_HELP_FORMAT_BODY;<b>%e</b> will be replaced by the photo's output format, as determined from the output file's file name extension.
-!QUEUE_LOCATION_TEMPLATE_HELP_FORMAT_TITLE;Output File Format/File Name Extension
-!TC_PRIM_BLUROT;B.rot
-!TC_PRIM_BLUSAT;B.sat
-!TC_PRIM_GREROT;G.rot
-!TC_PRIM_GRESAT;G.sat
-!TC_PRIM_REDROT;R.rot
-!TC_PRIM_REDSAT;R.sat
-!TP_COLORAPP_BRIGHT_CUR_BLUE;Brightness - blue
-!TP_COLORAPP_BRIGHT_CUR_GREEN;Brightness - green
-!TP_COLORAPP_BRIGHT_CUR_RED;Brightness - red
-!TP_COLORAPP_CHROMA_S_BLUE;Saturation - blue %
-!TP_COLORAPP_CHROMA_S_GREEN;Saturation - green %
-!TP_COLORAPP_CHROMA_S_RED;Saturation - red %
-!TP_COLORAPP_HUE_BLUE;Hue - blue rotation
-!TP_COLORAPP_HUE_GREEN;Hue - green rotation
-!TP_COLORAPP_HUE_RED;Hue - red rotation
-!TP_COLORAPP_LABEL_RGB;Red Green Blue
-!TP_COLORAPP_RGB_TOOLTIP;'Red Green Blue' allows you to either:\n* Correct any color deviations due to either: gamut overshoot following various adjustments in the process, or poor white balance.\n* Achieve a better balance of colors and luminances to satisfy your preferences.\n* Film Simulation.\n\nThe system operates after the first process (Scene) which converts the 'Working profile' data into that of 'CAM16'. At this stage, the J, Q, C, s, M, h data take into account the physiological aspects considered by CIECAM, and a chromatic adaptation is performed.\n\n For each main color of CIECAM ac-bc [chroma based] hue plane - Red, Green, Blue - you can perform a slight hue (h) rotation in degrees (sliders) , adjust the saturation (s) as a percentage (sliders) , and adjust brightness (Q) (curves).\n\n As a general rule, small adjustments are sufficient: 1° to 3° for hue rotations (h), 5 to 10% more or less for saturation (s), very limited variations in brightness (Q). Of course, if you are looking for special effects, such as simulating a film, the settings can be more pronounced.\n\n These adjustments are made just before the other CIECAM adjustments: Lightness (J), Brightness (Q), Chroma (C), Saturation (s), Colorfulness (M), hue (h), contrast (J), contrast (Q) and curves and are added to them. \n\n Next, the third process converts the data from the 'CAM16' color space to the 'Working profile', taking into account the Viewing conditions. Color adaptation is then performed.\n\n These hue, saturation and brightness adjustments do not use primaries. They are based on the principle of CAM (Color Appearance Models) in 3 processes.
-!TP_COMPRESSGAMUT_BETA;Beta - near Pointer's Gamut *
-!TP_COMPRESSGAMUT_MACLABEL;Maximum achromatic value: %1
-!TP_COMPRESSGAMUT_MACLABELCMY;Estimated Cyan: %1 Magenta: %2 Yellow: %3
-!TP_COMPRESSGAMUT_MACLABELRGB;R: %1 G: %2 B: %3
-!TP_COMPRESSGAMUT_MACLABELRGB_TOOLTIP;Displays the maximum values for the three channels (achromatic): Red, Green, and Blue.\n\nProvides an estimate accurate to within 15% of the Cyan, Magenta, and Yellow values. This estimate should provide useful information for better adjusting the Maximum Distance Limits which should be set greater than 1.\n If the checkboxes for the Cyan, Magenta, and Yellow sliders in 'Maximum Distance Limits' are enabled, then an automatic value is suggested. Manual adjustments may be required.
-!TP_COMPRESSGAMUT_MACLABEL_TOOLTIP;Displays the highest measured value of the 3 RGB (achromatic) channels. This value helps to understand :\n * The state of the image and the reciprocal influence of : a) the Working and Target Gamut Compression profiles; b) 'Highlight reconstruction'.\n * Whether the ‘White point’ needs to be refined - see ‘Generalized Hyperbolic Stretch’ (GHS)  for example.\n\nEffect of values:\n * Very high values, for example greater than 5 or even 10 and more, often indicate the use of an LED or halogen illuminant (with Color Propagation) and a significant color-gamut overshoot. Try 'GHS > Auto Black point and White point', 'White Balance > Blue/Red Equalizer', 'Abstract Profile > Primaries and Illuminant'\n * High values between 2 and 4 are often linked to an excessive light source (sun, etc.) or incorrect exposure settings that have resulted in out-of-range values on the sensor. Try using 'Highlight reconstruction > Color Propagation'.\n * Low values, less than 1, often indicate poorly adjusted white and black points i.e.‘White point (linear WP)’ and ‘Black point (linear BP)’ : see for example GHS.\n\nNotes:\n * Using values higher than 'Maximum distance limits' for the three 'Maximum achromatic value' sliders offers little benefit.\n * Using low values for the three Threshold sliders (whether combined or not with low values for the Power slider, can lead to significant desaturation and color shifts.\n\nThere is a link, but not a correlation, between this value and the three Maximum Distance Limits.
-!TP_CROP_GTCROSSHAIR;Crosshair
-!TP_CROP_GTGOLDENRATIO;Golden Ratio
-!TP_CROP_GTTRIANGLE;Golden Triangles
-!TP_CROP_GUIDE_ASPECT_RATIO;Inscribed aspect ratio crop guides:
-!TP_CROP_GUIDE_BLEED;Bleed
-!TP_CROP_GUIDE_LABEL;Crop Guide
-!TP_CROP_GUIDE_NO_ASPECT_RATIO_GUIDES;No aspect ratio guides
-!TP_CROP_GUIDE_TOOLTIP;Display preview-only guides for the current crop.\n\nInscribed aspect ratio guides fit the selected aspect ratio in the current crop. The orientation is determined automatically based on the crop aspect ratio.\n\n<b>Click</b> - Enable only the selected preset\n<b>Ctrl-Click</b> - Enable the selected preset as an additional guide
-!TP_ICM_COMPRESS;Target Gamut
-!TP_ICM_COMPRESSGAMUT_ADOBE;Adobe
-!TP_ICM_COMPRESSGAMUT_DCIP3;DCIP3
-!TP_ICM_COMPRESSGAMUT_NONE;None
-!TP_ICM_COMPRESSGAMUT_REC2020;Rec2020
-!TP_ICM_COMPRESSGAMUT_SRGB;sRGB
-!TP_ICM_COMPRESS_TOOLTIP; Placed at the end of the processing pipeline, this tool allows you to compress the data to fit into the output profile, for example. If Color Appearance & Lighting is enabled, it will take the compression into account.\n\n This output gamut compression is much simpler than at the beginning of the processing pipeline because unless the user has exaggerated the settings, the gamut will already be close to the Working Profile, hence the simplified graphical interface.\n\n More often than not, you will not see any changes to the image or the histogram when using Gamut Compression. This is because it does not convert the data from Working profile (often Rec2020) to Target Gamut (often sRGB), but compresses it to fit the Target gamut (often sRGB) while remaining in Working profile (often Rec2020), and the upstream treatments must have preserved the gamut. The effect is visible on Led’s, flowers with high saturation. On a normal landscape or portrait, there is most often no change.
-!TP_ICM_COMPRGAMUT;Final Gain & Gamut Compression
-!TP_ICM_COMP_GAIN;Gain (Ev)
-!TP_ICM_COMP_POWER;Power
-!TP_ICM_POWER_TOOLTIP;Modifies global image appearance, similar to the Exposure slider, by applying a positive or negative Ev adjustment to the RGB data. This allows for better control of either the color gamut or the saturation; for the latter, small values of plus or minus 0.1 to 0.4 are sufficient. Higher gain values allow for future use with HDR displays.
-!TP_ICM_PRIMREDROT_TOOLTIP;Change the Red, Green, and Blue primaries. The first slider rotates the primary color, in degrees, around the white point. The second increases or decreases the saturation relative to the white point.\n\nBe very careful when using this type of tool - whether it's polar sliders, linear sliders, or CIExy graphs. If you go outside the CIExy diagram, you'll generate imaginary colors, how will they be handled? If you reduce the primary values too much, you risk out-of-gamut data. Use with caution, and with small values, while monitoring the primaries' deviation from the CIExy diagram.
-!TP_ICM_TRC_MAX;RGB Max=%1
-!TP_ICM_TRC_MAX_END;Final RGB Max=%1
-!TP_ICM_TRC_MAX_END_NO;---
-!TP_ICM_TRC_MAX_TOOLTIP;Provides information on out-of-limit RGB values. Values greater than 1 clearly indicate that we are out of gamut whereas for values less than 1, we cannot say whether the image is within gamut or not because it depends, for example, on the luminance. This check is performed at the end of the Abstract Profile and takes into account all parameters. The ‘Attenuation threshold’ slider can be used to limit the RGB values.\n\nChanges made to 'Color Appearance and Lighting', 'Final Gain and Gamut Compression' are not taken into account.
-!TP_ICM_TRC_SAT_MAX;Final Saturation Max=%1
-!TP_ICM_TRC_SAT_MAX_TOOLTIP;Provides information on out-of-limit RGB values and RGB saturation. Values greater than 1 for ‘Final RGB Max’ and ‘Final Saturation Max’ clearly indicate that we are out of gamut whereas for values less than 1, we cannot say whether the image is within gamut or not because it depends, for example, on the luminance. This check is performed at the end of the processing pipeline and takes into account all parameters. Changes made in Color Appearance & Lighting and in Final Gain & Gamut Compression are taken into account.\n\nAdjusting the Gain (Ev) and Gamut Compression (Target Gamut and Power) settings will allow you to see the impact of these adjustments. You should also observe the histogram, which takes into account the output profile therefore the gamma. This data, which is directly related to the RGB values and Saturation and is in the Working Profile, is in linear mode.\n\n The data is only displayed if Target Gamut is enabled, or if Gain (Ev) is not equal to 0.
-!TP_ICM_WORKING_PRIM_CUSPOL;Custom (Polar sliders)
-!TP_ICM_WORKING_TRC_SAT;Saturation
-!TP_LENSGEOM_SCALE_HORIZONTALLY;Scale horizontally
-!TP_LENSGEOM_SCALE_VERTICALLY;Scale vertically
-!TP_LOCALLAB_APSATUR;Saturation
-!TP_LOCALLAB_BWCIE_TOOLTIP;Only usable in Global mode or if Scope is set to 100.\nThe 'Black and White' option shows only the luminance in the histogram making it easier to adjust the shadows and highlights when using the Gamma and Slope sliders and the Tone Mapping Operators.
-!TP_LOCALLAB_CIE_SMOOTH_TRC;TRC based
-!TP_LOCALLAB_DENOIENA;Enable contrast threshold
-!TP_LOCALLAB_DENOIFRA;Denoise Settings
-!TP_LOCALLAB_DENOIHUE;Equalizer denoise
-!TP_LOCALLAB_DENOIHUECONT;Equalizer denoise mask
-!TP_LOCALLAB_DENOIRATIO;Ratio flat-structured areas
-!TP_LOCALLAB_DENOI_MASK;Denoise contrast mask
-!TP_LOCALLAB_DENORADIUS_TOOLTIP;Allows you to differentiate the denoising action as a function of image detail and uniform background.\n The resulting action is a combination of the noise reduction and that of the mask created by 'Contrast threshold'\n On very noisy images you can reduce the mask noise.\n You can also differentiate the action with the curve 'Equalizer denoise mask'.\n The ratio flat-structured areas allows you to correct the action between the two.\n\nOn noisy images and in Raw format, you should use the 'Presharpening denoise' and ‘Postsharpening denoise’ functions for more effective mask action.
-!TP_LOCALLAB_GHSCOLORNO;---
-!TP_LOCALLAB_GHSCOLORVALUE;RGB values - R:%1 G:%2 B:%3
-!TP_LOCALLAB_GHSDR;Dynamic Range GHS (Ev):%1
-!TP_LOCALLAB_GHSDRNO;---
-!TP_LOCALLAB_GHSMAT;Matrix
-!TP_LOCALLAB_GHSMAT1;AgX (Pleasant)
-!TP_LOCALLAB_GHSMAT2;JzAzBz (XYZ High dynamic)
-!TP_LOCALLAB_GHSMAT3;Cat16 (XYZ Harmonious)
-!TP_LOCALLAB_GHSMAT4;JzAzBz (RGB High dynamic)
-!TP_LOCALLAB_GHSMAT5;Cat16 (RGB Harmonious)
-!TP_LOCALLAB_GHSMATO;None (Neutral)
-!TP_LOCALLAB_GHSMAXRGB;RGB Max & 3 Sigmas: Max=%1 3S=%2
-!TP_LOCALLAB_GHSMAXRGBNO;---
-!TP_LOCALLAB_GHSMAXRGB_TOOLTIP;This allows you to preview the changes you make. The main settings that have an effect are 'Stretch factor (D)' and 'Local intensity (b)'.\n\n Try to obtain a value close to or lower (to your liking) than 0.18 for 'Estimated middle grey', although this isn't mandatory as there are other processing steps afterward.\n\n ‘RGB max’ corresponds to the maximum value of the data; it may only affect a few pixels. ‘3 Sigmas’ corresponds to the limit of truly significant data. You can adjust all GHS settings, but particularly 'Protect Highlights (HP)' and 'Highlight attenuation', in order to avoid, if possible, them exceeding the value of 1.\n\n The purpose of GHS is not to produce a perfect image, but to prepare the image - while keeping some room for maneuver - for further processing.
-!TP_LOCALLAB_GHSMIDGREY;Estimated middle grey=%1
-!TP_LOCALLAB_GHSMIDGREYNO;---
-!TP_LOCALLAB_GHSSYM;Estimated symmetry point RGB=%1
-!TP_LOCALLAB_GHSSYMNO;---
-!TP_LOCALLAB_GHS_AGX;AgX Matrix
-!TP_LOCALLAB_GHS_AGXMAT2_TOOLTIP;Use the LMS (Long, Medium, Short) transformation, depending on the user's selection. LMS is a color space transform which represents the response of the three types of cone cells of the human eye, named for their responsivity (sensitivity) peaks at long, medium, and short wavelengths.\n\nThese transformations, in the form of matrix, modify each R, G and B channel for each pixel, giving priority to certain dominant colors according to your choice.\n * None - leaves the data unchanged (default).\n * Agx - accentuates each R, G, B channel quite strongly so that the LMS data is perceived as more colorful.\n * JzAzBz (XYZ High dynamic) - modifies the LMS distribution, by acting on X, Y, Z to better account for images with a high ‘linear WP’.\n * Cat16 (XYZ harmonious) - modifies the LMS distribution, by acting, on X, Y, Z - ensures a more harmonious distribution of colors while respecting the eye/brain interaction.\n * JzAzBz (RGB High dynamic) - modifies the LMS distribution, by acting, like AgX, on the 3 channels R, G, B to better account for images with a high ‘linear WP’.\n * Cat16 (RGB harmonious) - modifies the LMS distribution, by acting, like AgX, on the 3 channels R, G and B - ensures a more harmonious distribution of colors while respecting the eye/brain interaction.\n\n\nFor JzAzBz and Cat16, the XYZ mode : JzAzBz (XYZ High dynamic) and Cat16 (XYZ harmonious) should ensure better color and luminance fidelity.\n\nThis transformation only affects the modifications made by GHS: 'White Point (linear)', 'Black Point (linear)', 'Symmetry point (SP)' and of course the action on Stretch factor (D) and Local intensity (b). It is imperative to review the GHS settings each time the matrix is changed. It is strongly recommended to activate 'Auto Black point and White point' (except in Inverse mode). Observe the histogram in the two modes 'Working profile - linear' and 'Gamma - corrected output profile'.\n\nBe careful :\n * Not to confuse Cat16 with CIECAM. Cat16 is only the conversion matrix, while CIECAM (Color Appearance and Lighting) is a complete colorimetry process that takes physiological aspects into account.\n * The JzAzBz matrix here, does not take into account the notions of 'Absolute luminance' and so does not use the notion of PQ (Perceptual Quantizer). Do not confuse with the module in Selective Editing > JzCzHz.
-!TP_LOCALLAB_GHS_AGX_MAT_TOOLTIP;Performs the entire GHS processing, including Matrix conversion either AgX or JzAzBz or Cat16. For JzAzBz and Cat16 you have the choice between a transformation in RGB mode or in XYZ mode (preferably).\n * To allow this matrix to be enabled or disabled,  the 'Auto Black point and White point' must be disabled.\n * You need to re-enable 'Auto Black point and White point' to recalculate the values of 'Black Point (linear)', 'White Point (linear)' and 'Symmetry point (SP)'.
-!TP_LOCALLAB_GHS_AGX_TOOLTIP;Performs the entire GHS processing, including AgX conversion.\n * To allow AgX to be enabled or disabled, 'Auto Black point and White point' must be  disabled.\n * You need to re-enable 'Auto Black point and White point' to recalculate the values of 'linear BP', 'linear WP' and 'Symmetry point (SP)'.
-!TP_LOCALLAB_GHS_AUTOBW;Auto Black point & White point
-!TP_LOCALLAB_GHS_BLPHLPAUTO_TOOLTIP;Automatically adjust the 'Black point' and 'White point' values.\n Not available in Inverse GHS mode and must be disabled to allow Inverse GHS to work. It must be disabled (and re-enabled) in order to change 'Matrix conversion (AgX, JzAzBz, Cat16)'.\n Generally, the automatic settings will be satisfactory.\n If necessary, you can subsequently adjust the two points:\n * The 'Black point': using negative slider values may help when the shadows are particularly blocked.\n * Manually increase the ‘White point’ value if necessary, especially if it is less than 1, to give the system more flexibility by avoiding possible gamut overflows due to GHS or subsequent adjustments.
-!TP_LOCALLAB_LOCKMADL;Locks MadL noise evaluation
-!TP_LOCALLAB_LOCKMADL2;Manual settings
-!TP_LOCALLAB_LOCKMADL2_TOOLTIP;Allows you to manually control MadL values. Be careful: this function assumes mastery of the concepts of noise reduction using wavelets. Make sure that the initial values for the selected area have been set automatically.\n\nBe careful not to confuse the action on MadL which is a noise estimation only used in Wavelet Denoise where the strength is set in Selective Editing using a curve and a selected level (Aggressive / Conservative). The MadL scale is exponential and not linear.\n\nThe first levels of wavelet decomposition provide visible noise reduction, whereas the higher levels have more affect on banding.
-!TP_LOCALLAB_LOCKMADLFRA_TOOLTIP;Shows the actual values of Median Absolute Deviation (MadL).\nIf 'Locks MadL noise evaluation' is not enabled you can manually change these values which will affect the entire image.\nThe first levels 0,1,2,3 for the Horizontal direction,7,8,9,10 for the Vertical direction and 14,15,16,17 for the Diagonal, act on the detail noise. The higher levels have more effect on banding noise.\n\nLuminance noise reduction is a function that implements MadL (depending on level and direction) divided by the level of detail (high, medium, low frequency), the actual value of the decomposition at that location (depending on level and direction) and the curve applied by the user according to the level of wavelet decomposition.
-!TP_LOCALLAB_LOCKMADL_TOOLTIP;Allows you to lock the noise evaluation used for Wavelet denoise.\n\nWavelet denoise uses MadL (Median absolute deviation luminance) to act on the noise based on a slider or a curve.\nRawtherapee's pipeline design results in different MadL values depending on the preview position and leads to differences in output.\n\nIf you enable this checkbox, the value used for global processing will be the preview at that time. This will allow you to prioritize a specific area, background, or face for noise reduction, rather than an overall average value. Of course, you should only check the box once you've selected the area.
-!TP_LOCALLAB_MADLDIRD;D-Levels 0..6/14-20
-!TP_LOCALLAB_MADLDIRH;H-Levels 0..6
-!TP_LOCALLAB_MADLDIRV;V-Levels 0..6/7-13
-!TP_LOCALLAB_MADLFRA;Median absolute deviation (L)
-!TP_LOCALLAB_METHODCAP_TOOLTIP;You can use two methods:\n 1. RL Deconvolution, which is similar to the version used in the Detail tab.\n\n 2. Capture Deconvolution, which is an adaptation of Capture Sharpening in the Raw tab for use in Selective Editing, and allows you to use this algorithm either in standalone mode or after denoising. Capture Sharpening's capabilities allow for finer sharpening control by allowing you to soften the corner sharpness to enhance focus on the main subject. The results in the TIF/JPG outputs correspond to those in the 'fit to screen'view.
-!TP_LOCALLAB_MICHBLACK;Subtract linear black
-!TP_LOCALLAB_MICHBLWH;Subtract black=%1 White point=%2
-!TP_LOCALLAB_MICHBLWHNO;---
-!TP_LOCALLAB_MICHBLWH_TOOLTIP;Allows you to see the effect of the two checkboxes:\n * Subtract black: reduces the value of the linear black point to almost zero by subtracting the indicated value.\n * White point: after subtracting the black point, the RGB values are divided by the ‘Linear dynamic range’ (i.e. the displayed white point value minus the old black point).\n\n Reducing the black point to almost zero and taking into account the linear dynamic range as described allows the algorithm to produce better contrast and better consideration of the real gamut).\n Activating JDx Matrix’will reduce the ‘Linear dynamic range’ and change the color balance.
-!TP_LOCALLAB_MICHDR_TOOLTIP; Subtract linear black: reduces the linear black point values to almost zero. This makes optimal use of the available data by increasing overall contrast and reducing haze effects.\n\nLinear dynamic range: allows you to include any data outside the color gamut (in the case of sunsets for example). Enabling ‘Highlight reconstruction’ > Color Propagation can provide a significant improvement.\n\nAttenuation threshold: uses an exponential function to reduce highlights likely to cause gamut overshoot.
-!TP_LOCALLAB_MICHEXP;Exposure (Ev)
-!TP_LOCALLAB_MICHFRA;Michaelis-Menten Settings
-!TP_LOCALLAB_MICHHIGH;Attenuation threshold
-!TP_LOCALLAB_MICHJDX;JDx Matrix
-!TP_LOCALLAB_MICHJDX_TOOLTIP;The JDx checkbox allows the user to choose either the default or the JDx LMS transformations. LMS is a color space transform which represents the response (sensitivity) of the three types of cone cell in the human eye at long, medium, and short wavelengths.\n\nThese transformations are matrices that modify each of the R G B channels for each individual pixel, giving priority to certain dominant colors depending on the selected option\n * Unchecked: leaves the data unchanged (default).\n * JDx: accentuates each of the R G B channels by acting on X Y Z such that the LMS data is perceived as being more colorful.
-!TP_LOCALLAB_MICHKPAR;Knee strength (K)
-!TP_LOCALLAB_MICHOUT;Output max clamp
-!TP_LOCALLAB_MICHSAT;Saturation
-!TP_LOCALLAB_MICHSPAR;Output scale (S)
-!TP_LOCALLAB_MICHTONEFRA;Tone Curve
-!TP_LOCALLAB_MICHWHITE;Linear dynamic range
-!TP_LOCALLAB_MICH_TOOLTIP;This tone mapper uses the Michaelis-Menten equation, which is borrowed from biochemistry to describe enzyme kinetics. In image processing, it creates a smooth, saturating curve that is useful for tone mapping.\n\n * Exposure: Adjusts the input image brightness.\n * Output scale (S): Controls the maximum asymptotic value of the curve; essentially the output white level.\n * Knee strength (K): Determines the “knee” of the curve. Lower values result in a sharper transition to the compressed highlight region.\n * Saturation: Adjusts color saturation post-tone mapping.\n * Output max clamp: Sets the final clipping point for the output values.
-!TP_LOCALLAB_MIDTCIEFRA;Midtones
-!TP_LOCALLAB_MIDTCIEM1;Before Gamma & Slope
-!TP_LOCALLAB_MIDTCIEM2;After Gamma & Slope
-!TP_LOCALLAB_MIDTCIEM3;After CAM16
-!TP_LOCALLAB_MIDTCIEMAIN;Midtones
-!TP_LOCALLAB_SATCIE_TOOLTIP;Modifies the image saturation whenever the gamma/slope ratio is different from 2.4/12.92. It aims to compensate for the desaturation caused by significant luminance variations.\nValues between 0.2 and 1.0 are often sufficient.
-!TP_LOCALLAB_SH4;Tone Mapper Michaelis-Menten (MM)
-!TP_LOCALLAB_SHARCAPFRAME;Corners
-!TP_LOCALLAB_SHARRLFRAME;RL Deconvolution Settings
-!TP_LOCALLAB_SMOOTHCIETHTRC;Highlight attenuation threshold
-!TP_LOCALLAB_SMOOTHCIE_INV;Invert color
-!TP_LOCALLAB_SPRADIUS_TOOLTIP;Try setting an automatic Symmetry Point (SP) estimation, only in RGB mode. May require manual adjustment.
-!TP_PDSHARPENING_CONTRASTRADIUSSE_TOOLTIP;The 'contrast threshold' and 'Capture radius' sliders allow you to control a mask that decides which areas are affected by sharpening and which are left untouched.
-!TP_PDSHARPENING_CONTRAST_TOOLTIP;By default the tool analyzes the image and calculates a threshold to prevent sharpening noise.\n You can leave the automatic Contrast Threshold calculation on, or you can turn it off and set it as required: moving the slider to the right means that details will have to have higher contrast before they are sharpened. Higher Contrast Threshold values also reduce the amount of sharpening applied to noise, which tends to have lower detail contrast.\n Presharpening denoise may be necessary to enable detection and reduce noise somewhat.
-!TP_PDSHARPENING_GAMMA_TOOLTIP;Allows you to differentiate the effect by varying the ratio between shadows and highlights. The mask is sensitive to this setting.
-!TP_PDSHARPENING_ITERATIONS_TOOLTIP;Once the radii have either been automatically calculated or set manually, the tool carries out a series of calculations to try and compensate for any blurring. It is an iterative process, which will produce artifacts if carried too far. Checking the ‘Auto limit iterations’ checkbox will limit the number of iterations or you can do it manually using the Iterations slider.
-!TP_PDSHARPENING_LABEL88;Capture Sharpening
-!TP_PDSHARPENING_NOISE;Presharpening denoise
-!TP_PDSHARPENING_NOISEAFTER;Postsharpening denoise
-!TP_PDSHARPENING_NOISEAFTER_TOOLTIP;For raw images, allows you initial denoising after Capture Sharpening taking into account the mask information.\n * Its main use is to separate the action between structured areas where the noise is barely visible and the often plain background (flat areas) where the noise is very visible.\n\nBe careful not to use values that are too high, you can fine-tune the noise reduction later.
-!TP_PDSHARPENING_NOISECAPTYPE;Use Wavelets instead of Median
-!TP_PDSHARPENING_NOISE_TOOLTIP;In order for Capture Sharpening to work on noisy or very noisy images, applies either :\n * A light '3x3 soft' to a fairly strong '5x5 strong' median denoising filter in successive gradual iterations prior to Capture Sharpening.\n * Wavelet denoising which has a different, more progressive action, mainly on the first 4 levels of decomposition(high and medium frequency).\n * This helps clarify the contrast mask and allows Contrast Threshold to work, and thus Capture Sharpening to work properly.\n * This also helps to reduce noise in the output image.\n\nBe careful not to use values that are too high so as not to degrade the image. The value that allows the mask to appear (or a little more) is usually sufficient.
-!TP_PDSHARPENING_RADIUSOFFSETSE_TOOLTIP;Often images are softer or more blurred in the corners than in the center. The Corner radius boost slider allows you to compensate for this by increasing or decreasing the radius in these areas.\nMoving it to the right increases the sharpening in the outer areas and sliding it to the left will reduce the sharpening.\nThe results in the TIF/JPG outputs correspond to those in the 'fit to screen'view.
-!TP_PDSHARPENING_RADIUSOFFSET_TOOLTIP;Often images are softer or more blurred in the corners than in the center. The Corner radius boost slider allows you to compensate for this by increasing or decreasing the radius in these areas.\nMoving it to the right increases the sharpening in the outer areas and sliding it to the left will reduce the sharpening.
-!TP_PDSHARPENING_RADIUS_TOOLTIP;When in-camera blurring occurs, the effective resolution is no longer dependent on pixel size and instead, has a radius that increases in proportion to the amount of blurring.\n The purpose of this tool is to reduce this blurring by trying to automatically guess the radius needed to counteract the effect.\n\n You can also choose to adjust the radius yourself bearing in mind that if the value is too low, there will not be enough sharpening and if it is too high, it will lead to strong haloing on the edges. Don’t forget that you are only trying to undo the in-camera blurring.
-!TP_PDSHARPENING_SHOWCAP;Show contrast mask
-!TP_SHARPENING_CAP;Capture Deconvolution
-!TP_SHARPENING_CAPFRAME;Corner boost
-!TP_SHARPENING_CONTRASTAUTO_TOOLTIP;Auto contrast level estimation.\nValue subject to variation depending on position in preview.\nBe careful, disable auto after estimation.
-!TP_SHARPENING_EDRADIUS_TOOLTIP;Auto-calculation based on raw data
-!TP_SHARPENING_RADIUS_PROT;Central protected area %
-!TP_SHARPENING_RADIUS_PROTSE_TOOLTIP;Defines the central protection area % (Full image or geographical RT-spot center) that will not be affected by 'Corner radius boost'.\nThe results in the TIF/JPG outputs correspond to those of 'fit to screen'.
-!TP_SHARPENING_RLN;RL Deconvolution

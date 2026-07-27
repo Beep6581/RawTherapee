@@ -299,8 +299,8 @@ void LibRaw::rpi_load_raw8()
 	for (row = 0; row < raw_height; row++) {
 		if (fread(data + dwide, 1, dwide, ifp) < dwide) derror();
 		FORC(dwide) data[c] = data[dwide + (c ^ rev)];
-		for (dp = data, col = 0; col < raw_width; dp++, col++)
-			RAW(row, col + c) = dp[c];
+		for (dp = data, col = 0; col < raw_width && col < dwide; dp++, col++)
+			RAW(row, col) = *dp;
 	}
 	free(data);
 	maximum = 0xff;
@@ -396,8 +396,8 @@ void LibRaw::rpi_load_raw16()
 	for (row = 0; row < raw_height; row++) {
 		if (fread(data + dwide, 1, dwide, ifp) < dwide) derror();
 		FORC(dwide) data[c] = data[dwide + (c ^ rev)];
-		for (dp = data, col = 0; col < raw_width; dp += 2, col++)
-			RAW(row, col + c) = (dp[1] << 8) | dp[0];
+		for (dp = data, col = 0; col < raw_width && col < dwide/2; dp += 2, col++)
+			RAW(row, col) = (dp[1] << 8) | dp[0];
 	}
 	free(data);
 	maximum = 0xffff;

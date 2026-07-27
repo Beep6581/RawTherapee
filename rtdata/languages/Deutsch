@@ -87,6 +87,7 @@
 #85 29.07.2022 Erweiterung (marter, mozzihh) RT 5.9 
 #86 29.08.2024 Erweiterung (marter) RT 5.11
 #87 29.03.2025 Erweiterung (marter) RT 5.12
+#88 30.05.2026 Erweiterung (marter) RT 5.13
 #100
 #101 @LANGUAGE_DISPLAY_NAME=Deutsch
 
@@ -344,7 +345,7 @@ HISTOGRAM_TOOLTIP_BAR;RGB-Anzeigeleiste ein-/ausblenden.
 HISTOGRAM_TOOLTIP_CHRO;Chromatizität-Histogramm ein-/ausblenden.
 HISTOGRAM_TOOLTIP_CROSSHAIR;Fadenkreuz ein-/ ausblenden
 HISTOGRAM_TOOLTIP_G;Grün-Histogramm ein-/ausblenden.
-HISTOGRAM_TOOLTIP_L;CIELab-Luminanz-Histogramm ein-/ausblenden.
+HISTOGRAM_TOOLTIP_L;CIELab-Helligkeits-Histogramm ein-/ausblenden.
 HISTOGRAM_TOOLTIP_MODE;Schaltet zwischen linearer, logarithmisch-linearer und logarithmisch-logarithmischer Skalierung um.
 HISTOGRAM_TOOLTIP_R;Rot-Histogramm ein-/ausblenden.
 HISTOGRAM_TOOLTIP_SHOW_OPTIONS;Histogrammoptionen ein-/ ausschalten
@@ -371,9 +372,9 @@ HISTORY_MSG_10;(Belichtung)\nSchattenkompression
 HISTORY_MSG_11;(Belichtung)\nTonwertkurve 1
 HISTORY_MSG_12;(Belichtung)\nAutomatisch
 HISTORY_MSG_13;(Belichtung)\nClip-Faktor
-HISTORY_MSG_14;(Belichtung - L*a*b*) - Helligkeit
-HISTORY_MSG_15;(Belichtung - L*a*b*) - Kontrast
-HISTORY_MSG_19;(Belichtung - L*a*b*) - L-Kurve
+HISTORY_MSG_14;(Belichtung - L*a*b*)\nHelligkeit
+HISTORY_MSG_15;(Belichtung - L*a*b*)\nKontrast
+HISTORY_MSG_19;(Belichtung - L*a*b*)\nL*-Kurve
 HISTORY_MSG_20;(Details - Schärfung)
 HISTORY_MSG_21;(Details - Schärfung)\nUSM - Radius
 HISTORY_MSG_22;(Details - Schärfung)\nUSM - Intensität
@@ -514,7 +515,7 @@ HISTORY_MSG_171;(Belichtung - L*a*b*)\nLC-Kurve
 HISTORY_MSG_172;(Belichtung - L*a*b*)\nLC-Kurve beschränken
 HISTORY_MSG_173;(Details - Rauschreduzierung)\nLuminanzdetails
 HISTORY_MSG_174;(Erweitert - Farberscheinung und Beleuchtung)
-HISTORY_MSG_175;(Erweitert - FuB)\nSzene\nAdaptation
+HISTORY_MSG_175;(Erweitert - FuB)\nSzenenanpassung
 HISTORY_MSG_176;(Erweitert - FuB)\nBetrachtungsbed.\nUmgebung
 HISTORY_MSG_177;(Erweitert - FuB)\nSzene\nabsolute Leuchtdichte
 HISTORY_MSG_178;(Erweitert - FuB)\nBetrachtungsbed.\nabsolute Leuchtdichte
@@ -630,7 +631,7 @@ HISTORY_MSG_291;(RAW - Sensor-Matrix)\nSchwarzpunkt - Grün
 HISTORY_MSG_292;(RAW - Sensor-Matrix)\nSchwarzpunkt - Blau
 HISTORY_MSG_293;(Farbe - Filmsimulation)
 HISTORY_MSG_294;(Farbe - Filmsimulation)\nIntensität
-HISTORY_MSG_295;(Farbe - Filmsimulation) - Film
+HISTORY_MSG_295;(Farbe - Filmsimulation)\nFilm
 HISTORY_MSG_296;(Details - Rauschreduzierung)\nLuminanzkurve
 HISTORY_MSG_297;(Details - Rauschreduzierung)\nModus
 HISTORY_MSG_298;(RAW - Vorverarbeitung)\nDead-Pixel-Filter
@@ -690,7 +691,7 @@ HISTORY_MSG_352;(Erweitert - Wavelet)\nEinstellungen\nHintergrund
 HISTORY_MSG_353;(Erweitert - Wavelet)\nKantenschärfung\nVerlaufsempfindlichkeit
 HISTORY_MSG_354;(Erweitert - Wavelet)\nKantenschärfung\nErweiterter Algorithmus
 HISTORY_MSG_355;(Erweitert - Wavelet)\nKantenschärfung\nSchwelle niedrig
-HISTORY_MSG_356;(Erweitert - Wavelet)\nKantenschärfung\nSchwelle hoch
+HISTORY_MSG_356;(Erweitert - Wavelet)\nKantenschärfung\nKantenverstärkung
 HISTORY_MSG_357;(Erweitert - Wavelet)\nRauschreduzierung\nMit K-Schärfe verbinden
 HISTORY_MSG_358;(Erweitert - Wavelet)\nGamut\nKontrastkurve
 HISTORY_MSG_359;(RAW - Vorverarbeitung)\nHot-/Dead-Pixel-Filter\nSchwelle
@@ -811,8 +812,8 @@ HISTORY_MSG_475;(RAW - Sensor-Matrix)\nFarbinterpolation - PS\nAusgleich pro Kan
 HISTORY_MSG_476;(Erweitert - FuB)\nBetrachtungsbed.\nFarbtemperatur
 HISTORY_MSG_477;(Erweitert - FuB)\nBetrachtungsbed.\nTönung
 HISTORY_MSG_478;(Erweitert - FuB)\nBetrachtungsbed.\nmittlere Leuchtdichte
-HISTORY_MSG_479;(Erweitert - FuB)\nBetrachtungsbed.\nAdaptation
-HISTORY_MSG_480;(Erweitert - FuB)\nBetrachtungsbed.\nAuto-Adaptation
+HISTORY_MSG_479;(Erweitert - FuB)\nBetrachtungsbed.\nAdaption
+HISTORY_MSG_480;(Erweitert - FuB)\nBetrachtungsbed.\nAuto-Adaption
 HISTORY_MSG_481;(Erweitert - FuB)\nSzene\nFarbtemperatur
 HISTORY_MSG_482;(Erweitert - FuB)\nSzene\nTönung
 HISTORY_MSG_483;(Erweitert - FuB)\nSzene\nmittlere Leuchtdichte
@@ -848,11 +849,11 @@ HISTORY_MSG_513;(sel. Editieren - Spot)\nausschließender Bereich
 HISTORY_MSG_514;(sel. Editieren - Spot)\nStruktur
 HISTORY_MSG_515;(Selektives Editieren)
 HISTORY_MSG_516;(sel. Editieren - Farbe-Licht)
-HISTORY_MSG_517;(sel. Editieren) - Super aktivieren
+HISTORY_MSG_517;(sel. Editieren)\nSuper aktivieren
 HISTORY_MSG_518;(sel. Editieren - Farbe-Licht)\nHelligkeit
 HISTORY_MSG_519;(sel. Editieren - Farbe-Licht)\nKontrast
 HISTORY_MSG_520;(sel. Editieren - Farbe-Licht)\nChrominanz
-HISTORY_MSG_521;(sel. Editieren) - Umfang
+HISTORY_MSG_521;(sel. Editieren)\nUmfang
 HISTORY_MSG_522;(sel. Editieren - Farbe-Licht)\nKurventyp
 HISTORY_MSG_523;(sel. Editieren - Farbe-Licht)\nLL-Kurve
 HISTORY_MSG_524;(sel. Editieren - Farbe-Licht)\nCC-Kurve
@@ -896,7 +897,7 @@ HISTORY_MSG_561;(sel. Editieren - Retinex)\nIntensität
 HISTORY_MSG_562;(sel. Editieren - Retinex)\nChroma
 HISTORY_MSG_563;(sel. Editieren - Retinex)\nRadius
 HISTORY_MSG_564;(sel. Editieren - Retinex)\nKontrast
-HISTORY_MSG_565;(sel. Editieren) - Umfang
+HISTORY_MSG_565;(sel. Editieren)\nUmfang
 HISTORY_MSG_566;(sel. Editieren - Retinex)\nVerstärkungskurve
 HISTORY_MSG_567;(sel. Editieren - Retinex)\nInvertieren
 HISTORY_MSG_568;(sel. Editieren - Schärfen)
@@ -904,7 +905,7 @@ HISTORY_MSG_569;(sel. Editieren - Schärfen)\nRadius
 HISTORY_MSG_570;(sel. Editieren - Schärfen)\nIntensität
 HISTORY_MSG_571;(sel. Editieren - Schärfen)\nDämpfung
 HISTORY_MSG_572;(sel. Editieren - Schärfen)\nIterationen
-HISTORY_MSG_573;(sel. Editieren - Schärfen)\nUmfang
+HISTORY_MSG_573;(sel. Editieren - Schärfen)\nBereich
 HISTORY_MSG_574;(sel. Editieren - Schärfen)\nInvertieren
 HISTORY_MSG_575;(sel. Editieren - Detailebenen)
 HISTORY_MSG_576;(sel. Editieren - Detailebenen)\nMulti
@@ -912,16 +913,16 @@ HISTORY_MSG_577;(sel. Editieren - Detailebenen)\nChroma
 HISTORY_MSG_578;(sel. Editieren - Detailebenen)\nSchwelle
 HISTORY_MSG_579;(sel. Editieren - Detailebenen)\nUmfang
 HISTORY_MSG_580;--nicht verwendet--
-HISTORY_MSG_581;(sel. Editieren - Rauschminderung)\nLuminanz f 1
-HISTORY_MSG_582;(sel. Editieren - Rauschminderung)\nLuminanz c
-HISTORY_MSG_583;(sel. Editieren - Rauschminderung)\nLuminanz Detailwiederherstellung
-HISTORY_MSG_584;(sel. Editieren - Rauschminderung)\nEqualizer Weiß -Schwarz
-HISTORY_MSG_585;(sel. Editieren - Rauschminderung)\nFeine Chrominanz
-HISTORY_MSG_586;(sel. Editieren - Rauschminderung)\nGrobe Chrominanz
-HISTORY_MSG_587;(sel. Editieren - Rauschminderung)\nFarbintensität Detailwiederherstellung
-HISTORY_MSG_588;(sel. Editieren - Rauschminderung)\nEqualizer Blau/Rot
-HISTORY_MSG_589;(sel. Editieren - Rauschminderung)\nImpulsrauschen
-HISTORY_MSG_590;(sel. Editieren - Rauschminderung)\nIntensität
+HISTORY_MSG_581;(sel. Editieren - Rauschreduzierung)\nLuminanz f 1
+HISTORY_MSG_582;(sel. Editieren - Rauschreduzierung)\nLuminanz c
+HISTORY_MSG_583;(sel. Editieren - Rauschreduzierung)\nLuminanz Detailwiederherstellung
+HISTORY_MSG_584;(sel. Editieren - Rauschreduzierung)\nEqualizer Weiß -Schwarz
+HISTORY_MSG_585;(sel. Editieren - Rauschreduzierung)\nFeine Chrominanz
+HISTORY_MSG_586;(sel. Editieren - Rauschreduzierung)\nGrobe Chrominanz
+HISTORY_MSG_587;(sel. Editieren - Rauschreduzierung)\nFarbintensität Detailwiederherstellung
+HISTORY_MSG_588;(sel. Editieren - Rauschreduzierung)\nEqualizer Blau/Rot
+HISTORY_MSG_589;(sel. Editieren - Rauschreduzierung)\nImpulsrauschen
+HISTORY_MSG_590;(sel. Editieren - Rauschreduzierung)\nIntensität
 HISTORY_MSG_591;(sel. Editieren - Spot)\nSpeziell\nFarbverschiebungen vermeiden
 HISTORY_MSG_592;(sel. Editieren - Schärfen)\nKontrastschwelle
 HISTORY_MSG_593;(sel. Editieren - Lokaler Kontrast)
@@ -935,7 +936,7 @@ HISTORY_MSG_600;(sel. Editieren - weiches Licht)\nAktiviert
 HISTORY_MSG_601;(sel. Editieren - weiches Licht)\nIntensität
 HISTORY_MSG_602;(sel. Editieren - weiches Licht)\nBereich
 HISTORY_MSG_603;(sel. Editieren - Schärfen)\nUnschärferadius
-HISTORY_MSG_605;(sel. Editieren) - Auswahl Maskenvorschau
+HISTORY_MSG_605;(sel. Editieren)\nAuswahl Maskenvorschau
 HISTORY_MSG_606;Lokalen Spot ausgewählt
 HISTORY_MSG_607;(sel. Editieren - Farbe-Licht)\nMaske\nKurve C
 HISTORY_MSG_608;(sel. Editieren - Farbe-Licht)\nMaske\nKurve L
@@ -963,7 +964,7 @@ HISTORY_MSG_629;(sel. Editieren - Schatten/Lichter)\nTonwertbreite Lichter
 HISTORY_MSG_630;(sel. Editieren - Schatten/Lichter)\nSchatten
 HISTORY_MSG_631;(sel. Editieren - Schatten/Lichter)\nTonwertbreite Schatten
 HISTORY_MSG_632;(sel. Editieren - Schatten/Lichter)\nRadius
-HISTORY_MSG_633;(sel. Editieren - Schatten/Lichter)\nUmfang
+HISTORY_MSG_633;(sel. Editieren - Schatten/Lichter)\nBereich
 HISTORY_MSG_634;(sel. Editieren - Farbe-Licht)\nMaske\nRadius
 HISTORY_MSG_635;(sel. Editieren - Dynamik u. Belichtung)\nMaske\nRadius
 HISTORY_MSG_636;(sel. Editieren)\nWerkzeug hinzugefügt
@@ -992,8 +993,8 @@ HISTORY_MSG_658;(sel. Editieren - Detailebenen)\nRadius
 HISTORY_MSG_659;(sel. Editieren - Spot)\nÜbergangsgradient\nÜbergangszerfall
 HISTORY_MSG_660;(sel. Editieren - Detailebenen)\nKlarheit
 HISTORY_MSG_661;(sel. Editieren - Detailebenen)\nVerbleibend
-HISTORY_MSG_662;(sel. Editieren - Rauschminderung)\nLuminanz f 0
-HISTORY_MSG_663;(sel. Editieren - Rauschminderung)\nLuminanz f 2
+HISTORY_MSG_662;(sel. Editieren - Rauschreduzierung)\nLuminanz f 0
+HISTORY_MSG_663;(sel. Editieren - Rauschreduzierung)\nLuminanz f 2
 HISTORY_MSG_664;--nicht verwendet--
 HISTORY_MSG_665;(sel. Editieren - Detailebenen)\nMaske\nÜberlagerung
 HISTORY_MSG_666;(sel. Editieren - Detailebenen)\nMaske\nRadius
@@ -1044,9 +1045,9 @@ HISTORY_MSG_711;(sel. Editieren - Tonwert)\nMaske Radius
 HISTORY_MSG_712;(sel. Editieren - Tonwert)\nMaske Farbintensität
 HISTORY_MSG_713;(sel. Editieren - Tonwert)\nMaske Gamma
 HISTORY_MSG_714;(sel. Editieren - Tonwert)\nMaske Steigung
-HISTORY_MSG_716;(sel. Editieren) - lokale Methode
+HISTORY_MSG_716;(sel. Editieren)\nlokale Methode
 HISTORY_MSG_717;(sel. Editieren - Wavelet)\nKontrastkurve
-HISTORY_MSG_718;(sel. Editieren) - lokale Kontrastebenen
+HISTORY_MSG_718;(sel. Editieren)\nlokale Kontrastebenen
 HISTORY_MSG_719;(sel. Editieren - Wavelet)\nVerbleibende L
 HISTORY_MSG_720;(sel. Editieren - Unschärfe)\nLuminanzmaske\nKurve C
 HISTORY_MSG_721;(sel. Editieren - Unschärfe)\nLuminanzmaske\nKurve L
@@ -1088,8 +1089,8 @@ HISTORY_MSG_760;(sel. Editieren - Farbe-Licht)\nMaske\nSchwelle Laplace
 HISTORY_MSG_761;(sel. Editieren - Schatten/Lichter)\nMaske\nSchwelle Laplace
 HISTORY_MSG_762;(sel. Editieren - Kontrastebenen)\nMaske\nSchwelle Laplace
 HISTORY_MSG_763;(sel. Editieren - Unschärfe)\nMaske\nSchwelle Laplace
-HISTORY_MSG_764;(sel. Editieren) - Auflösung PDE Laplace-Maske
-HISTORY_MSG_765;(sel. Editieren - Rauschminderung)\nLuminanzmaske\nSchwellenwert
+HISTORY_MSG_764;(sel. Editieren)\nAuflösung PDE Laplace-Maske
+HISTORY_MSG_765;(sel. Editieren - Rauschreduzierung)\nLuminanzmaske\nSchwellenwert
 HISTORY_MSG_766;(sel. Editieren - Unschärfe)\nSchnelle Fouriertransformation
 HISTORY_MSG_767;(sel. Editieren - Unschärfe)\nISO Körnung Verteilung
 HISTORY_MSG_768;(sel. Editieren - Unschärfe)\nISO Körnung Intensität
@@ -1162,7 +1163,7 @@ HISTORY_MSG_835;(sel. Editieren - Farbtemperatur)\nVerlaufsfilter\nIntensität L
 HISTORY_MSG_836;(sel. Editieren - Farbtemperatur)\nVerlaufsfilter\nRotationswinkel
 HISTORY_MSG_837;(sel. Editieren - Farbtemperatur)\nVerlaufsfilter\nIntensität Chrominanz
 HISTORY_MSG_838;(sel. Editieren - Farbtemperatur)\nVerlaufsfilter\nIntensität Farbton
-HISTORY_MSG_839;(sel. Editieren) - Softwarekomplexität
+HISTORY_MSG_839;(sel. Editieren)\nSoftwarekomplexität
 HISTORY_MSG_840;(sel. Editieren - Farbe-Licht)\nCL-Kurve
 HISTORY_MSG_841;(sel. Editieren - Farbe-Licht)\nLC-Kurve
 HISTORY_MSG_842;(sel. Editieren - Farbe-Licht)\nUnschärfemaske\nRadius
@@ -1190,7 +1191,7 @@ HISTORY_MSG_864;(sel. Editieren - Wavelet)\nDirektionaler Kontrast\nDämpfungsre
 HISTORY_MSG_865;(sel. Editieren - Wavelet)\nDirektionaler Kontrast\nEbenenbalance
 HISTORY_MSG_866;(sel. Editieren - Wavelet)\nDirektionaler Kontrast\nKompression
 HISTORY_MSG_868;(sel. Editieren - Spot)\nKantenerkennung\nBalance Farbton-Buntheit
-HISTORY_MSG_869;(sel. Editieren - Rauschminderung)\nLuminanzkurve
+HISTORY_MSG_869;(sel. Editieren - Rauschreduzierung)\nLuminanzkurve
 HISTORY_MSG_870;(sel. Editieren - Lokaler Kontrast)\nMaske\nKurve H
 HISTORY_MSG_871;(sel. Editieren - Lokaler Kontrast)\nMaske\nKurve C
 HISTORY_MSG_872;(sel. Editieren - Lokaler Kontrast)\nMaske\nKurve L
@@ -1273,10 +1274,10 @@ HISTORY_MSG_951;(sel. Editieren - Normale Farbmaske)\nVerlaufsfiltermaske\nRotat
 HISTORY_MSG_952;(sel. Editieren - Normale Farbmaske)\nRadius
 HISTORY_MSG_953;(sel. Editieren - Normale Farbmaske)\nÜberlagerung Chrominanzmaske
 HISTORY_MSG_954;(sel. Editieren)\nWerkzeuge einblenden/ausblenden
-HISTORY_MSG_955;(sel. Editieren) - Spot aktivieren
+HISTORY_MSG_955;(sel. Editieren)\nSpot aktivieren
 HISTORY_MSG_956;(sel. Editieren - Farbe-Licht)\nCH-Kurve
-HISTORY_MSG_957;(sel. Editieren - Rauschminderung)\nModus 
-HISTORY_MSG_958;(sel. Editieren) - Zus. Einstellungen
+HISTORY_MSG_957;(sel. Editieren - Rauschreduzierung)\nModus 
+HISTORY_MSG_958;(sel. Editieren)\nzus. Einstellungen
 HISTORY_MSG_959;(sel. Editieren - Unschärfe)\nInvertieren
 HISTORY_MSG_960;(sel. Editieren - LOG-Kodierung)\nCAT16
 HISTORY_MSG_961;(sel. Editieren - LOG-Kodierung)\nCIECAM
@@ -1299,25 +1300,25 @@ HISTORY_MSG_978;(sel. Editieren - LOG-Kodierung)\nSichere Quelle
 HISTORY_MSG_979;(sel. Editieren - LOG-Kodierung)\nHelligkeit Q
 HISTORY_MSG_980;(sel. Editieren - LOG-Kodierung)\nFarbigkeit M
 HISTORY_MSG_981;(sel. Editieren - LOG-Kodierung)\nIntensität
-HISTORY_MSG_982;(sel. Editieren - Rauschminderung)\nEqualizer Farbton
-HISTORY_MSG_983;(sel. Editieren - Rauschminderung)\nWiederherstellung\nSchwellenwert Maske hell
-HISTORY_MSG_984;(sel. Editieren - Rauschminderung)\nWiederherstellung\nSchwellenwert Maske dunkel
-HISTORY_MSG_985;(sel. Editieren - Rauschminderung)\nLuminanzmaske\nLaplace
-HISTORY_MSG_986;(sel. Editieren - Rauschminderung)\nDunkle und helle Bereiche verstärken
+HISTORY_MSG_982;(sel. Editieren - Rauschreduzierung)\nEqualizer Farbton
+HISTORY_MSG_983;(sel. Editieren - Rauschreduzierung)\nWiederherstellung\nSchwellenwert Maske hell
+HISTORY_MSG_984;(sel. Editieren - Rauschreduzierung)\nWiederherstellung\nSchwellenwert Maske dunkel
+HISTORY_MSG_985;(sel. Editieren - Rauschreduzierung)\nLuminanzmaske\nLaplace
+HISTORY_MSG_986;(sel. Editieren - Rauschreduzierung)\nDunkle und helle Bereiche verstärken
 HISTORY_MSG_987;(sel. Editieren - Verlaufsfilter)\nSchwellenwert Wiederherstellung
 HISTORY_MSG_988;(sel. Editieren - Verlaufsfilter)\nSchwellenwert Maske dunkel
 HISTORY_MSG_989;(sel. Editieren - Verlaufsfilter)\nSchwellenwert Maske hell
-HISTORY_MSG_990;(sel. Editieren - Rauschminderung)\nWiederherstellung\nSchwelle
-HISTORY_MSG_991;(sel. Editieren - Rauschminderung)\nSchwellenwert Maske dunkel
-HISTORY_MSG_992;(sel. Editieren - Rauschminderung)\nSchwellenwert Maske hell
-HISTORY_MSG_993;(sel. Editieren - Rauschminderung)\nInvertieren
+HISTORY_MSG_990;(sel. Editieren - Rauschreduzierung)\nWiederherstellung\nSchwelle
+HISTORY_MSG_991;(sel. Editieren - Rauschreduzierung)\nSchwellenwert Maske dunkel
+HISTORY_MSG_992;(sel. Editieren - Rauschreduzierung)\nSchwellenwert Maske hell
+HISTORY_MSG_993;(sel. Editieren - Rauschreduzierung)\nInvertieren
 HISTORY_MSG_994;(sel. Editieren - Verlaufsfilter)\nInvertieren
-HISTORY_MSG_995;(sel. Editieren - Rauschminderung)\nZerfallrate
+HISTORY_MSG_995;(sel. Editieren - Rauschreduzierung)\nZerfallrate
 HISTORY_MSG_996;(sel. Editieren - Farbe-Licht)\nWiederherstellung\nSchwelle 
 HISTORY_MSG_997;(sel. Editieren - Farbe-Licht)\nWiederherstellung\nSchwellenwert dunkel
 HISTORY_MSG_998;(sel. Editieren - Farbe-Licht)\nWiederherstellung\nSchwellenwert hell
 HISTORY_MSG_999;(sel. Editieren - Farbe-Licht)\nWiederherstellung\nZerfallrate
-HISTORY_MSG_1000;(sel. Editieren - Rauschminderung)\nLuminanz Graubereiche
+HISTORY_MSG_1000;(sel. Editieren - Rauschreduzierung)\nLuminanz Graubereiche
 HISTORY_MSG_1001;(sel. Editieren - LOG-Kodierung)\nWiederherstellung\nSchwellenwert
 HISTORY_MSG_1002;(sel. Editieren - LOG-Kodierung)\nWiederherstellung\nSchwellenwert dunkel
 HISTORY_MSG_1003;(sel. Editieren - LOG-Kodierung)\nWiederherstellung\nSchwellenwert hell
@@ -1338,7 +1339,7 @@ HISTORY_MSG_1017;(sel. Editieren - Lokaler Kontrast)\nWiederherstellung\nSchwell
 HISTORY_MSG_1018;(sel. Editieren - Lokaler Kontrast)\nWiederherstellung\nSchwellenwert dunkel
 HISTORY_MSG_1019;(sel. Editieren - Lokaler Kontrast)\nWiederherstellung\nSchwellenwert hell
 HISTORY_MSG_1020;(sel. Editieren - Lokaler Kontrast)\nWiederherstellung\nZerfallrate
-HISTORY_MSG_1021;(sel. Editieren - Rauschminderung)\nChrominanz Graubereiche
+HISTORY_MSG_1021;(sel. Editieren - Rauschreduzierung)\nChrominanz Graubereiche
 HISTORY_MSG_1022;(sel. Editieren - Tonwert)\nWiederherstellung\nSchwellenwert
 HISTORY_MSG_1023;(sel. Editieren - Tonwert)\nWiederherstellung\nSchwellenwert dunkel
 HISTORY_MSG_1024;(sel. Editieren - Tonwert)\nWiederherstellung\nSchwellenwert hell
@@ -1351,11 +1352,11 @@ HISTORY_MSG_1030;(sel. Editieren - Retinex)\nWiederherstellung\nSchwellenwert
 HISTORY_MSG_1031;(sel. Editieren - Retinex)\nWiederherstellung\nSchwellenwert dunkel
 HISTORY_MSG_1032;(sel. Editieren - Retinex)\nWiederherstellung\nSchwellenwert hell
 HISTORY_MSG_1033;(sel. Editieren - Retinex)\nWiederherstellung\nZerfallrate
-HISTORY_MSG_1034;(sel. Editieren - Rauschminderung)\nNicht-lokales Mittel\nIntensität
-HISTORY_MSG_1035;(sel. Editieren - Rauschminderung)\nNicht-lokales Mittel\nDetailwiederherstellung
-HISTORY_MSG_1036;(sel. Editieren - Rauschminderung)\nNicht-lokales Mittel\nObjektgröße
-HISTORY_MSG_1037;(sel. Editieren - Rauschminderung)\nNicht-lokales Mittel\nRadius
-HISTORY_MSG_1038;(sel. Editieren - Rauschminderung)\nNicht-lokales Mittel\nGamma
+HISTORY_MSG_1034;(sel. Editieren - Rauschreduzierung)\nNicht-lokales Mittel\nIntensität
+HISTORY_MSG_1035;(sel. Editieren - Rauschreduzierung)\nNicht-lokales Mittel\nDetailwiederherstellung
+HISTORY_MSG_1036;(sel. Editieren - Rauschreduzierung)\nNicht-lokales Mittel\nObjektgröße
+HISTORY_MSG_1037;(sel. Editieren - Rauschreduzierung)\nNicht-lokales Mittel\nRadius
+HISTORY_MSG_1038;(sel. Editieren - Rauschreduzierung)\nNicht-lokales Mittel\nGamma
 HISTORY_MSG_1039;(sel. Editieren - Unschärfe)\nKörnung Gamma
 HISTORY_MSG_1040;(sel. Editieren - Spot)\nSpeziell\nRadius
 HISTORY_MSG_1041;(sel. Editieren - Spot)\nSpeziell\nNur Munsell
@@ -1363,14 +1364,14 @@ HISTORY_MSG_1042;(sel. Editieren - LOG-Kodierung)\nSchwellenwert
 HISTORY_MSG_1043;(sel. Editieren - Dynamik u. Belichtung)\nNormalisieren
 HISTORY_MSG_1044;(sel. Editieren - Lokaler Kontrast)\nGesamtintensität
 HISTORY_MSG_1045;(sel. Editieren - Farbe-Licht)\nGesamtintensität
-HISTORY_MSG_1046;(sel. Editieren - Rauschminderung)\nGesamtintensität
+HISTORY_MSG_1046;(sel. Editieren - Rauschreduzierung)\nGesamtintensität
 HISTORY_MSG_1047;(sel. Editieren - Schatten/Lichter)\nGesamtintensität
 HISTORY_MSG_1048;(sel. Editieren - Dynamik u. Belichtung)\nGesamtintensität
 HISTORY_MSG_1049;(sel. Editieren - Tonwert)\nGesamtintensität
 HISTORY_MSG_1050;(sel. Editieren - LOG-Kodierung)\nChroma
 HISTORY_MSG_1051;(sel. Editieren - Lokaler Kontrast)\nRestbild\nGamma
 HISTORY_MSG_1052;(sel. Editieren - Lokaler Kontrast\nRestbild\nSteigung
-HISTORY_MSG_1053;(sel. Editieren - Rauschminderung)\nRauschreduzierung\nGamma
+HISTORY_MSG_1053;(sel. Editieren - Rauschreduzierung)\nRauschreduzierung\nGamma
 HISTORY_MSG_1054;(sel. Editieren - Lokaler Kontrast)\nWavelet\nGamma
 HISTORY_MSG_1055;(sel. Editieren - Farbe u. Licht)\nGamma
 HISTORY_MSG_1056;(sel. Editieren - Dynamik u. Belichtung)\nDynamikkompression\nGamma
@@ -1420,7 +1421,7 @@ HISTORY_MSG_1099;(sel. Editieren - CIECAM)\nJz Cz Hz\nKurve Cz(Hz)
 HISTORY_MSG_1100;(sel. Editieren - CIECAM)\nJz Zuordnung\nReferenz 100
 HISTORY_MSG_1101;(sel. Editieren - CIECAM)\nJz Zuordnung\nPQ Peak Luminanz
 HISTORY_MSG_1102;(sel. Editieren - CIECAM)\nKurve Jz(Hz)
-HISTORY_MSG_1103;(sel. Editieren - CIECAM)\nGamma Lebendigkeit
+HISTORY_MSG_1103;(sel. Editieren - Schärfen)\nGamma
 HISTORY_MSG_1104;(sel. Editieren - CIECAM)\nGamma Schärfe
 HISTORY_MSG_1105;(sel. Editieren - CIECAM)\nTonmethode
 HISTORY_MSG_1106;(sel. Editieren - CIECAM)\nTonkurve
@@ -1459,14 +1460,14 @@ HISTORY_MSG_1138;(sel. Editieren - CIECAM)\nJz Cz Hz\nKurve Hz(Hz)
 HISTORY_MSG_1139;(sel. Editieren - CIECAM)\nJz Cz Hz\nKurven H\nGlättradius 
 HISTORY_MSG_1140;(sel. Editieren - CIECAM)\nJz Cz Hz\nKurve Jz(Hz)\nSchwelle Chroma
 HISTORY_MSG_1141;(sel. Editieren - CIECAM)\nChroma-Kurve Jz(Hz)
-HISTORY_MSG_1142;(sel. Editieren) - Stärke Glätten
+HISTORY_MSG_1142;(sel. Editieren)\nStärke Glätten
 HISTORY_MSG_1143;(sel. Editieren - CIECAM)\nSchwarz-Ev
 HISTORY_MSG_1144;(sel. Editieren - CIECAM)\nWeiß-Ev 
 HISTORY_MSG_1145;(sel. Editieren - CIECAM)\nLOG-Kodierung Jz
 HISTORY_MSG_1146;(sel. Editieren - CIECAM)\nLOG-Kodierung Jz\nMittlere Helligkeit
 HISTORY_MSG_1147;(sel. Editieren - CIECAM)\nSigmoid Jz\nSkalieren Yb-Szene
 HISTORY_MSG_1148;(sel. Editieren - CIECAM)\nSigmoid Jz
-HISTORY_MSG_1149;(sel. Editieren - CIECAM)\nSigmoid Q & neigungsbasiert
+HISTORY_MSG_1149;(sel. Editieren - CIECAM)\nSigmoid Q &amp; neigungsbasiert
 HISTORY_MSG_1150;(sel. Editieren - CIECAM)\nSigmoid\nQuellen-Daten\nLOG-Kodierung
 HISTORY_MSG_BLSHAPE;(Erweitert - Wavelet)\nUnschärfeebenen\nUnschärfe nach Ebenen
 HISTORY_MSG_BLURCWAV;(Erweitert - Wavelet)\nRestbild - Unschärfe\nUnschärfe Buntheit
@@ -1474,18 +1475,30 @@ HISTORY_MSG_BLURWAV;(Erweitert - Wavelet)\nRestbild - Unschärfe\nUnschärfe Hel
 HISTORY_MSG_BLUWAV;(Erweitert - Wavelet)\nUnschärfeebenen\nDämpfungsreaktion
 HISTORY_MSG_CATCAT;(Erweitert - FuB)\Einstellungen Modus
 HISTORY_MSG_CATCOMPLEX;(Erweitert - FuB)\nEinstellungen Komplexität
+HISTORY_MSG_CATCURVEBLUE;(Erweitert - FuB)\nBildanpassungen\nHelligkeit Blau
+HISTORY_MSG_CATCURVEGREEN;(Erweitert - FuB)\nBildanpassungen\nHelligkeit Grün
+HISTORY_MSG_CATCURVERED;(Erweitert - FuB)\nBildanpassungen\nHelligkeit Rot
+HISTORY_MSG_CATHUEBLUE;(Erweitert - FuB)\nBildanpassungen\nFarbton Blau
+HISTORY_MSG_CATHUEGREEN;(Erweitert - FuB)\nBildanpassungen\nFarbton Grün
+HISTORY_MSG_CATHUERED;(Erweitert - FuB)\nBildanpassungen\nFarbton Rot
 HISTORY_MSG_CATMODEL;(Erweitert - FuB)\nEinstellungen Modell
-HISTORY_MSG_CG_COLORSPACE;Gamut Kompression - Ziel
-HISTORY_MSG_CG_CYANLIM;Gamut Kompression - Max Limits Cyan
-HISTORY_MSG_CG_CYANTH;Gamut Kompression - Schwellenwert Cyan
-HISTORY_MSG_CG_ENABLED;Gamut Kompression - Aktiviert
-HISTORY_MSG_CG_MAGENTALIM;Gamut Kompression - Max Limits Magenta
-HISTORY_MSG_CG_MAGENTATH;Gamut Kompression - Schwellenwert Magenta
-HISTORY_MSG_CG_ROLLOFF;Gamut Kompression - Abrundung
-HISTORY_MSG_CG_VALUE;Gamut Kompression - Stärke
-HISTORY_MSG_CG_YELLOWLIM;Gamut Kompression - Max Limits Gelb
-HISTORY_MSG_CG_YELLOWTH;Gamut Kompression - Schwellenwert Yellow
-HISTORY_MSG_CLAMPOOG;(Belichtung) - Farben\nAuf Farbraum beschränken
+HISTORY_MSG_CATSCHROMABLUE;(Erweitert - FuB)\nBildanpassungen\nSättigung Blau
+HISTORY_MSG_CATSCHROMAGREEN;(Erweitert - FuB)\nBildanpassungen\nSättigung Grün
+HISTORY_MSG_CATSCHROMARED;(Erweitert - FuB)\nBildanpassungen\nSättigung Rot
+HISTORY_MSG_CG_COLORSPACE;(Farbe - Gamut Kompression) - Ziel
+HISTORY_MSG_CG_CYANDC_AUTO;(Farbe - Gamut Kompression)\nAuto Limits Cyan
+HISTORY_MSG_CG_CYANDM_AUTO;(Farbe - Gamut Kompression)\nAuto Limits Magenta
+HISTORY_MSG_CG_CYANDY_AUTO;(Farbe - Gamut Kompression)\nAuto Limits Gelb
+HISTORY_MSG_CG_CYANLIM;(Farbe - Gamut Kompression)\nmax. Distanz Cyan
+HISTORY_MSG_CG_CYANTH;(Farbe - Gamut Kompression)\nSchwellenwert Cyan
+HISTORY_MSG_CG_ENABLED;(Farbe - Gamut Kompression)
+HISTORY_MSG_CG_MAGENTALIM;(Farbe - Gamut Kompression)\nmax. Distanz Magenta
+HISTORY_MSG_CG_MAGENTATH;(Farbe - Gamut Kompression)\nSchwellenwert Magenta
+HISTORY_MSG_CG_ROLLOFF;(Farbe - Gamut Kompression)\nAbrundung
+HISTORY_MSG_CG_VALUE;(Farbe - Gamut Kompression)\nAbrundung - Stärke
+HISTORY_MSG_CG_YELLOWLIM;(Farbe - Gamut Kompression)\nmax. Distanz Gelb
+HISTORY_MSG_CG_YELLOWTH;(Farbe - Gamut Kompression)\nSchwellenwert Gelb
+HISTORY_MSG_CLAMPOOG;(Belichtung) - Farben\nauf Farbraum beschränken
 HISTORY_MSG_COLORTONING_LABGRID_VALUE;(Farbe - Farbanpassungen)\nL*a*b*-Farbkorrektur
 HISTORY_MSG_COLORTONING_LABREGION_AB;(Farbe - Farbanpassungen)\nL*a*b*-Farbkorrektur\nBereich
 HISTORY_MSG_COLORTONING_LABREGION_CHANNEL;(Farbe - Farbanpassungen)\nL*a*b*-Farbkorrektur\nBereich - Kanal
@@ -1502,6 +1515,11 @@ HISTORY_MSG_COLORTONING_LABREGION_SHOWMASK;(Farbe - Farbanpassungen)\nL*a*b*-Far
 HISTORY_MSG_COLORTONING_LABREGION_SLOPE;(Farbe - Farbanpassungen)\nL*a*b*-Farbkorrektur\nBereich - Steigung
 HISTORY_MSG_COMPLEX;(Erweitert - Wavelet)\nKomplexität
 HISTORY_MSG_COMPLEXRETI;(Erweitert - Retinex)\nKomplexität
+HISTORY_MSG_CROP_GUIDE_ASPECT_RATIO_PRESET_CHANGED;(Transformieren - Ausschnitt)\nBeschnittlinien - Seitenverhältnis
+HISTORY_MSG_CROP_GUIDE_BLEED_BASIS_CHANGED;(Transformieren - Ausschnitt)\nBeschnittlinien -  Basis Beschnittzugabe
+HISTORY_MSG_CROP_GUIDE_BLEED_CHANGED;(Transformieren - Ausschnitt)\nBeschnittlinien - Beschnittzugabe
+HISTORY_MSG_CROP_GUIDE_ENABLED;(Transformieren - Ausschnitt)\nBeschnittlinien
+HISTORY_MSG_CROP_GUIDE_PRESET_CHANGED;(Transformieren - Ausschnitt)\nBeschnittlinien - Vorgabe
 HISTORY_MSG_DEHABLACK;Dehaze Bayer Schwarzpunkt
 HISTORY_MSG_DEHABLACKX;Dehaze X-Trans Schwarzpunkt
 HISTORY_MSG_DEHAZE_DEPTH;(Details - Bildschleier entfernen)\nTiefe
@@ -1509,7 +1527,7 @@ HISTORY_MSG_DEHAZE_ENABLED;(Details - Bildschleier entfernen)
 HISTORY_MSG_DEHAZE_SATURATION;(Details - Bildschleier entfernen)\nSättigung
 HISTORY_MSG_DEHAZE_SHOW_DEPTH_MAP;(Details - Bildschleier entfernen)\nMaske anzeigen
 HISTORY_MSG_DEHAZE_STRENGTH;(Details - Bildschleier entfernen)\nIntensität
-HISTORY_MSG_DIRPYRDENOISE_GAIN;(Details - Rauschminderung)\nKompensation nach Bildhelligkeit
+HISTORY_MSG_DIRPYRDENOISE_GAIN;(Details - Rauschreduzierung)\nKompensation nach Bildhelligkeit
 HISTORY_MSG_DISTORTION_DEFISH;De-fish
 HISTORY_MSG_DISTORTION_DEFISH_FOCAL;De-fish - Fokale Länge
 HISTORY_MSG_DUALDEMOSAIC_AUTO_CONTRAST;(RAW - Sensor-Matrix)\nFarbinterpolation\nAuto-Kontrastschwelle
@@ -1545,31 +1563,42 @@ HISTORY_MSG_HLBL;(Belichtung - Lichterkompression)\nFarbübertragung - Unschärf
 HISTORY_MSG_HLTH;(Belichtung - Lichterkompression)\nInterpolieren - Schwellenwert
 HISTORY_MSG_ICL_LABGRIDCIEXY;Cie xy-Diagramm
 HISTORY_MSG_ICM_AINTENT;Absicht Abstraktes Profil
+HISTORY_MSG_ICM_APSAT;(Farbe - Farbmanagement)\nAbstraktes Profil\nSättigung
+HISTORY_MSG_ICM_BLUROT;(Farbe - Farbmanagement)\nAbstraktes Profil - PuB\nBlau-Rotation
+HISTORY_MSG_ICM_BLUSAT;(Farbe - Farbmanagement)\nAbstraktes Profil - PuB\nBlau Sättigung
 HISTORY_MSG_ICM_BLUX;(Farbe - Farbmanagement)\nAbstraktes Profil\nVorgabe Blau X
 HISTORY_MSG_ICM_BLUY;(Farbe - Farbmanagement)\nAbstraktes Profil\nVorgabe Blau Y
-HISTORY_MSG_ICM_CAT;Matrixanpassung
+HISTORY_MSG_ICM_CAT;(Farbe - Farbmanagement)\nAbstraktes Profil - PuB\nMatrix-Adaption
 HISTORY_MSG_ICM_FBW;(Farbe - Farbmanagement)\nAbstraktes Profil\nSchwarz-Weiß
-HISTORY_MSG_ICM_GAMUT;(Farbe - Farbmanagement)\nAbstraktes Profil\nGamut-Kontrolle
+HISTORY_MSG_ICM_GAMUT;(Farbe - Farbmanagement)\nAbstraktes Profil - PuB\nGamut-Kontrolle
+HISTORY_MSG_ICM_GREROT;(Farbe - Farbmanagement)\nAbstraktes Profil - PuB\nGrün-Rotation
+HISTORY_MSG_ICM_GRESAT;(Farbe - Farbmanagement)\nAbstraktes Profil - PuB\nGrün Sättigung
 HISTORY_MSG_ICM_GREX;(Farbe - Farbmanagement)\nAbstraktes Profil\nVorgabe Grün X
 HISTORY_MSG_ICM_GREY;(Farbe - Farbmanagement)\nAbstraktes Profil\nVorgabe Grün Y
 HISTORY_MSG_ICM_MIDTCIE;(Farbe - Farbmanagement)\nAbstraktes Profil\nMitteltöne
-HISTORY_MSG_ICM_OFFSTRC;(Farbe - Farbmanagement)\nAbstraktes Profil\nKontrastanhebung\nVerfeinerung\nVersatz
+HISTORY_MSG_ICM_OFFSTRC;(Farbe - Farbmanagement)\nAbstraktes Profil\nKontrasterweiterung\nVerfeinerung\nVersatz
 HISTORY_MSG_ICM_OPACITYW;(Farbe - Farbmanagement)\nAbstraktes Profil\nKontrastkurve\nVersatz
 HISTORY_MSG_ICM_OUTPUT_PRIMARIES;(Farbe - Farbmanagement)\nAbstraktes Profil\nAusgabeprofil Vorgaben
 HISTORY_MSG_ICM_OUTPUT_TEMP;(Farbe - Farbmanagement)\nAusgabeprofil\nIccV4-Illuminant D
 HISTORY_MSG_ICM_OUTPUT_TYPE;(Farbe - Farbmanagement)\nAusgabeprofil\nTyp
 HISTORY_MSG_ICM_PRESER;(Farbe - Farbmanagement)\nAbstraktes Profil\nPastelltöne erhalten
-HISTORY_MSG_ICM_PYRWAVTRC;(Farbe - Farbmanagement)\nAbstraktes Profil\nKontrastanhebung\nKontrastprofil
+HISTORY_MSG_ICM_PYRWAVTRC;(Farbe - Farbmanagement)\nAbstraktes Profil\nKontrasterweiterung\nKontrastprofil
+HISTORY_MSG_ICM_REDROT;(Farbe - Farbmanagement)\nAbstraktes Profil - PuB\nRot-Rotation
+HISTORY_MSG_ICM_REDSAT;(Farbe - Farbmanagement)\nAbstraktes Profil - PuB\nRot Sättigung
 HISTORY_MSG_ICM_REDX;(Farbe - Farbmanagement)\nAbstraktes Profil\nVorgabe Rot X
 HISTORY_MSG_ICM_REDY;(Farbe - Farbmanagement)\nAbstraktes Profil\nVorgabe Rot Y
 HISTORY_MSG_ICM_REFI;(Farbe - Farbmanagement)\nAbstraktes Profil\nFarbverfeinerung
 HISTORY_MSG_ICM_RESIDTRC;(Farbe - Farbmanagement)\nAbstraktes Profil\nRestkontrast
 HISTORY_MSG_ICM_SHIFTX;(Farbe - Farbmanagement)\nAbstraktes Profil\nFarbverfeinerung - Shift x
 HISTORY_MSG_ICM_SHIFTY;(Farbe - Farbmanagement)\nAbstraktes Profil\nFarbverfeinerung - Shift y
-HISTORY_MSG_ICM_SIGMATRC;(Farbe - Farbmanagement)\nAbstraktes Profil\nKontrastanhebung\nVerfeinerung\nDämpfungsreaktion
+HISTORY_MSG_ICM_SIGMATRC;(Farbe - Farbmanagement)\nAbstraktes Profil\nKontrasterweiterung\nVerfeinerung\nDämpfungsreaktion
 HISTORY_MSG_ICM_SMOOTHCIE;(Farbe - Farbmanagement)\nAbstraktes Profil\nLichter glätten
-HISTORY_MSG_ICM_TRCEXP;(Farbe - Farbmanagement) - Abstraktes Profil
-HISTORY_MSG_ICM_WAVEXP;(Farbe - Farbmanagement) - Abstraktes Profil\nKontrastanhebung
+HISTORY_MSG_ICM_SMOOTHCIESLI;(Farbe - Farbmanagement)\nAbstraktes Profil\nDämpfungsschwellenwert
+HISTORY_MSG_ICM_TRCEXP;(Farbe - Farbmanagement)\nAbstraktes Profil
+HISTORY_MSG_ICM_WAVEXP;(Farbe - Farbmanagement)\nAbstraktes Profil\nKontrasterweiterung
+HISTORY_MSG_ICM_WGAMUT;(Farbe - Farbmanagement)\nAbstraktes Profil\nZiel Gamut
+HISTORY_MSG_ICM_WGAMUTGAIN;(Farbe - Farbmanagement)\nAbstraktes Profil\nVerstärkung
+HISTORY_MSG_ICM_WGAMUTPOWER;(Farbe - Farbmanagement)\nAbstraktes Profil\nPower
 HISTORY_MSG_ICM_WORKING_GAMMA;(Farbe - Farbmanagement)\nAbstraktes Profil\nGamma Tonwertkurve
 HISTORY_MSG_ICM_WORKING_ILLUM_METHOD;(Farbe - Farbmanagement)\nAbstraktes Profil\nBeleuchtungsmethode
 HISTORY_MSG_ICM_WORKING_PRIM_METHOD;(Farbe - Farbmanagement)\nAbstraktes Profil\nZielvorwahl
@@ -1582,7 +1611,11 @@ HISTORY_MSG_LOCALCONTRAST_ENABLED;(Details - Lokaler Kontrast)
 HISTORY_MSG_LOCALCONTRAST_LIGHTNESS;(Details - Lokaler Kontrast)\nHelle Bereiche
 HISTORY_MSG_LOCALCONTRAST_RADIUS;(Details - Lokaler Kontrast)\nRadius
 HISTORY_MSG_LOCALLAB_TE_PIVOT;(sel. Editieren - Schatten/Lichter)\nTonwert-Equalizer\nWichtung
+HISTORY_MSG_LOCAL_AUTOCAPRADIUS;(sel. Editieren - Schärfen)\nRadius
+HISTORY_MSG_LOCAL_AUTOSHAR;(sel. Editieren - Schärfen)\nAuto-Kontrast
+HISTORY_MSG_LOCAL_AUTOSP;(sel. Editieren - Schatten/Lichter);\nGHS - hyperbolische Dehnung\nAutomatischer Schwarz- und Weißpunkt
 HISTORY_MSG_LOCAL_AVOIDNEGATIVE;(sel. Editieren - Spot)\nSpeziell\nNull und negative Werte Vor-Ausfiltern
+HISTORY_MSG_LOCAL_CAPRADIUS;(sel. Editieren - Schärfen)\nRadius
 HISTORY_MSG_LOCAL_CIEMASK_BLURCONT;(sel. Editieren - CIECAM)\nUnschärfemaske\nKontrast
 HISTORY_MSG_LOCAL_CIEMASK_BLURFFT;(sel. Editieren - CIECAM)\nUnschärfemaske\nFouriertransformation
 HISTORY_MSG_LOCAL_CIEMASK_BLURRAD;(sel. Editieren - CIECAM)\nUnschärfemaske\nRadius
@@ -1612,11 +1645,13 @@ HISTORY_MSG_LOCAL_CIE_GREYL;(sel. Editieren - CIECAM)\nGrün Y
 HISTORY_MSG_LOCAL_CIE_ILL;(sel. Editieren - CIECAM)\nPrimärfarben und Lichtquelle\nBeleuchtung
 HISTORY_MSG_LOCAL_CIE_LOGCIEQ;(sel. Editieren - CIECAM)\nQuellen-Daten\nLOG-Kodierung Q
 HISTORY_MSG_LOCAL_CIE_MIDT;(sel. Editieren - CIECAM)\nQuellen-Daten\nMitteltöne
+HISTORY_MSG_LOCAL_CIE_MIDTMET;(sel. Editieren - CIECAM)\nQuellen-Daten\nMitteltöne Methode
 HISTORY_MSG_LOCAL_CIE_NORM11;(sel. Editieren - CIECAM)\nLuminanz normalisieren 5.11
 HISTORY_MSG_LOCAL_CIE_PRIM;(sel. Editieren - CIECAM)\nTonwertkurve Primärfarben
 HISTORY_MSG_LOCAL_CIE_REDXL;(sel. Editieren - CIECAM)\nRot X
 HISTORY_MSG_LOCAL_CIE_REDYL;(sel. Editieren - CIECAM)\nRot Y
 HISTORY_MSG_LOCAL_CIE_REFI;(sel. Editieren - CIECAM)\nFarben verfeinern
+HISTORY_MSG_LOCAL_CIE_SAT;(sel. Editieren - CIECAM)\nQuellen-Daten\nSättigung
 HISTORY_MSG_LOCAL_CIE_SATCIE;(sel. Editieren - CIECAM)\nQuellen-Daten\nSättigungskontrolle
 HISTORY_MSG_LOCAL_CIE_SHIFTXL;(sel. Editieren - CIECAM)\nShift x
 HISTORY_MSG_LOCAL_CIE_SHIFTYL;(sel. Editieren - CIECAM)\nShift y
@@ -1631,10 +1666,12 @@ HISTORY_MSG_LOCAL_CIE_SLOPESMOG;(sel. Editieren - CIECAM)\nQuellen-Daten\nGrünb
 HISTORY_MSG_LOCAL_CIE_SLOPESMOQ;(sel. Editieren - CIECAM)\nCAM16 - Sigmoid\nGraubalance
 HISTORY_MSG_LOCAL_CIE_SLOPESMOR;(sel. Editieren - CIECAM)\nQuellen-Daten\nRotbalance
 HISTORY_MSG_LOCAL_CIE_SMOOTH;(sel. Editieren - CIECAM)\nQuellen-Daten\nSkalierung Yb Szene
+HISTORY_MSG_LOCAL_CIE_SMOOTHINV;(sel. Editieren - CIECAM)\nQuellen-Daten\nFarbe invertieren
 HISTORY_MSG_LOCAL_CIE_SMOOTHLNK;(sel. Editieren - CIECAM)\nQuellen-Daten\nR G B verknüpfen
 HISTORY_MSG_LOCAL_CIE_SMOOTHMET;(sel. Editieren - CIECAM)\nQuellen-Daten\nMethode Tonemapping
 HISTORY_MSG_LOCAL_CIE_SMOOTHTH;(sel. Editieren - CIECAM)\nQuellen-Daten\nDämpfungsschwellenwert
-HISTORY_MSG_LOCAL_CIE_SMOOTHTRC;(sel. Editieren - CIECAM)\nQuellen-Daten\nGamma-basierte Glanzlicht-Dämpfung
+HISTORY_MSG_LOCAL_CIE_SMOOTHTHTRC;(sel. Editieren - CIECAM)\nQuellen-Daten\nGlanzlicht-Dämpfungsschwellenwert
+HISTORY_MSG_LOCAL_CIE_SMOOTHTRC;(sel. Editieren - CIECAM)\nQuellen-Daten\nFarbe invertieren
 HISTORY_MSG_LOCAL_CIE_SMOOTHTRCREL;(sel. Editieren - CIECAM)\nQuellen-Daten\nrelativer Gamma Modus
 HISTORY_MSG_LOCAL_CIE_SMOOTHYB;(sel. Editieren - CIECAM)\nQuellen-Daten\nSkalierung Yb Ansicht
 HISTORY_MSG_LOCAL_CIE_SMOOTH_HIGH;(sel. Editieren - CIECAM)\nQuellen-Daten\nNur Glanzlichtdämpfung
@@ -1645,7 +1682,18 @@ HISTORY_MSG_LOCAL_CIE_TRC;(sel. Editieren - CIECAM)\nTonwertkurve
 HISTORY_MSG_LOCAL_CIE_WEVMETHOD11;(sel. Editieren- CIECAM)\nCAM16 - Sigmoid Q\nSchwarz Ev/Weiß Ev
 HISTORY_MSG_LOCAL_CIE_WHITES;(sel. Editieren - CIECAM)\nWeiß-Verteilung
 HISTORY_MSG_LOCAL_CIE_WHITSIG;(sel. Editieren - CIECAM)\nDisplay Weißpunkt Sigmoid
+HISTORY_MSG_LOCAL_CONVBOOST;(sel. Editieren - Schärfen)\nRänder - Radius
+HISTORY_MSG_LOCAL_CONVGAM;(sel. Editieren - Schärfen)\nRänder - Gamma
+HISTORY_MSG_LOCAL_CONVLAT;(sel. Editieren - Schärfen)\nRänder - Iterationen
+HISTORY_MSG_LOCAL_CONVPROT;(sel. Editieren - Schärfen)\nRänder - geschützter Mittenbereich
 HISTORY_MSG_LOCAL_DEHAZE_BLACK;(sel. Editieren - Dunst entfernen\nSchwarzpunkt
+HISTORY_MSG_LOCAL_DENOAUTO;(sel. Editieren - Rauschreduzierung)\nAuto-Kontrast
+HISTORY_MSG_LOCAL_DENOCONTRAST;(sel. Editieren - Rauschreduzierung)\nKontrastschwelle
+HISTORY_MSG_LOCAL_DENOCONTRSHOW;(sel. Editieren - Rauschreduzierung)\nzeige Kontrastmaske
+HISTORY_MSG_LOCAL_DENOENA;(sel. Editieren - Rauschreduzierung)\nKontrastschwelle aktivieren
+HISTORY_MSG_LOCAL_DENOMASK;(sel. Editieren - Rauschreduzierung)\nKontrastmaske
+HISTORY_MSG_LOCAL_DENOMASKCURV;(sel. Editieren - Rauschreduzierung)\nEqualizer Rauschreduzierungsmaske
+HISTORY_MSG_LOCAL_DENORATIO;(sel. Editieren - Rauschreduzierung)\nVerhältnis flach strukturierte Bereiche
 HISTORY_MSG_LOCAL_FEATHERCIE;(sel. Editieren - CIECAM)\nVerlaufsfilter\nVerlaufsbreite
 HISTORY_MSG_LOCAL_FEATHERCOL;(sel. Editieren - Farbe-Licht)\nVerlaufsfilter\nVerlaufsbreite
 HISTORY_MSG_LOCAL_FEATHEREXE;(sel. Editieren - Dynamik u. Belichtung)\nVerlaufsfilter\nVerlaufsbreite
@@ -1656,6 +1704,8 @@ HISTORY_MSG_LOCAL_FEATHERVIB;(sel. Editieren - Farbtemperatur)\nVerlaufsfilter\n
 HISTORY_MSG_LOCAL_FEATHERWAV;(sel. Editieren - Wavelet)\nVerlaufsfilter\nVerlaufsbreite
 HISTORY_MSG_LOCAL_GAMUTMUNSEL;(sel. Editieren - Spot)\nSpeziell\nFarbverschiebung vermeiden
 HISTORY_MSG_LOCAL_GHSMETHOD;(sel. Editieren - Schatten/Lichter - GHS)\nMethodenauswahl
+HISTORY_MSG_LOCAL_GHS_AGX;(sel. Editieren - Schatten/Lichter - GHS)\nMatrix
+HISTORY_MSG_LOCAL_GHS_AUTOBW;(sel. Editieren - Schatten/Lichter - GHS)\nAuto Schwarz- und Weißpunkt
 HISTORY_MSG_LOCAL_GHS_B;(sel. Editieren - Schatten/Lichter - GHS)\nLokale Intensität
 HISTORY_MSG_LOCAL_GHS_BLP;(sel. Editieren - Schatten/Lichter - GHS)\nSchwarzpunkt
 HISTORY_MSG_LOCAL_GHS_CHRO;(sel. Editieren - Schatten/Lichter - GHS)\nBuntheitsfaktor Lab
@@ -1665,19 +1715,35 @@ HISTORY_MSG_LOCAL_GHS_HP;(sel. Editieren - Schatten/Lichter - GHS)\nLichter sch�
 HISTORY_MSG_LOCAL_GHS_INV;(sel. Editieren - Schatten/Lichter - GHS)\nGHS Invertieren
 HISTORY_MSG_LOCAL_GHS_LC;(sel. Editieren - Schatten/Lichter - GHS)\nLokaler Kontrast
 HISTORY_MSG_LOCAL_GHS_LP;(sel. Editieren - Schatten/Lichter - GHS)\nSchatten schützen
+HISTORY_MSG_LOCAL_GHS_MATMET;(sel. Editieren - Schatten/Lichter - GHS)\nMatrix
 HISTORY_MSG_LOCAL_GHS_MID;(sel. Editieren - Schatten/Lichter - GHS)\nMitteltöne
 HISTORY_MSG_LOCAL_GHS_SLOPE;(sel. Editieren - Schatten/Lichter - GHS)\nSteigungsfaktor Lab
 HISTORY_MSG_LOCAL_GHS_SMOOTH;(sel. Editieren - Schatten/Lichter - GHS)\nGlanzlichtdämpfung
 HISTORY_MSG_LOCAL_GHS_SP;(sel. Editieren - Schatten/Lichter - GHS)\nSymmetriepunkt
+HISTORY_MSG_LOCAL_LOCKMADL;(sel. Editieren - Rauschreduzierung)\nMadL-Rauschbewertung sperren
+HISTORY_MSG_LOCAL_LOCKMADL2;(sel. Editieren - Rauschreduzierung)\nmanuelle Einstellungen
+HISTORY_MSG_LOCAL_LOCKMADLS;(sel. Editieren - Rauschreduzierung)\nMittlere absolute Abweichung (L)
 HISTORY_MSG_LOCAL_LOGCIE12;(sel. Editieren -CIECAM)\nQuellen-Daten\nLog-Kodierung
 HISTORY_MSG_LOCAL_LOG_BLACKS;(sel. Editieren - LOG-Kodierung)\nSchwarz-Verteilung
 HISTORY_MSG_LOCAL_LOG_COMPR;(sel. Editieren - LOG-Kodierung)\nHelligkeitskompression
 HISTORY_MSG_LOCAL_LOG_SAT;(sel. Editieren - LOG-Kodierung)\nSättigungskontrolle
 HISTORY_MSG_LOCAL_LOG_WHITES;(sel. Editieren - LOG-Kodierung)\nWeißverteilung
-HISTORY_MSG_LOCAL_NLITER;(sel. Editieren - Rauschminderung)\nNicht-lokales Mittel\nIterationen
+HISTORY_MSG_LOCAL_MICH_BLACK;(sel. Editieren - Schatten/Lichter - MM)\nSchwarz linear subtrahieren
+HISTORY_MSG_LOCAL_MICH_EXP;(sel. Editieren - Schatten/Lichter - MM)\nBelichtung
+HISTORY_MSG_LOCAL_MICH_HIGH;(sel. Editieren - Schatten/Lichter - MM)\nDämpfungsschwelle
+HISTORY_MSG_LOCAL_MICH_JDX;(sel. Editieren - Schatten/Lichter - MM)\nJDx Matrix
+HISTORY_MSG_LOCAL_MICH_KPAR;(sel. Editieren - Schatten/Lichter - MM)\n"Knie"-Stärke
+HISTORY_MSG_LOCAL_MICH_OUT;(sel. Editieren - Schatten/Lichter - MM)\nmax. Ausgabebegrenzung
+HISTORY_MSG_LOCAL_MICH_SAT;(sel. Editieren - Schatten/Lichter - MM)\nSättigung
+HISTORY_MSG_LOCAL_MICH_SPAR;(sel. Editieren - Schatten/Lichter - MM)\nAusgabeskalierung
+HISTORY_MSG_LOCAL_MICH_WHITE;(sel. Editieren - Schatten/Lichter - MM)\nlinearer Dynamikumfang
+HISTORY_MSG_LOCAL_NLITER;(sel. Editieren - Rauschreduzierung)\nNicht-lokales Mittel\nIterationen
 HISTORY_MSG_LOCAL_OFFSETWAV;(sel. Editieren - lokaler Kontrast)\nWavelets\nVersatz
 HISTORY_MSG_LOCAL_PROCESSWAV;(sel. Editieren - lokaler Kontrast)\nWavelets\nAnzeige der modifizierten Bereiche
-HISTORY_MSG_LOCAL_QJMETHOD;(sel. Editieren - CIECAM)\nTonemapping Operator Q & J
+HISTORY_MSG_LOCAL_QJMETHOD;(sel. Editieren - CIECAM)\nTonemapping Operator Q &amp; J
+HISTORY_MSG_LOCAL_SHARITERCHECK;(sel. Editieren)\nSchärfen\nIterationen automatisch limitieren
+HISTORY_MSG_LOCAL_SHARREPAR;(sel. Editieren)\nSchärfen\nGesamtintensität
+HISTORY_MSG_LOCAL_SHARSHOW;(sel. Editieren)\nSchärfen\nKontrastmaske anzeigen
 HISTORY_MSG_LOCAL_SIGBLCIE;(sel. Editieren - CIECAM)\nCAM16 - Sigmoid Q\nÜberlagern 5.11
 HISTORY_MSG_LOCAL_SIGDACIE;(sel. Editieren - CIECAM)\nCAM16 - Sigmoid Q\nKontrast 5.11
 HISTORY_MSG_LOCAL_SIGFORCEBW;(sel. Editieren)Jz Weiß Ev und Schwarz Ev 5.11
@@ -1697,8 +1763,12 @@ HISTORY_MSG_PDSHARPEN_AUTO_RADIUS;(RAW - Eingangsschärfung)\nAuto-Radius
 HISTORY_MSG_PDSHARPEN_CHECKITER;(RAW - Eingangsschärfung)\nIterationen automatisch limitieren
 HISTORY_MSG_PDSHARPEN_CONTRAST;(RAW - Eingangsschärfung)\nKontrastschwelle
 HISTORY_MSG_PDSHARPEN_ITERATIONS;(RAW - Eingangsschärfung)\nIterationen
+HISTORY_MSG_PDSHARPEN_NOISECAP;(RAW - Eingangsschärfung)\nRauschunterdrückung vorher
+HISTORY_MSG_PDSHARPEN_NOISECAPAFTER;(RAW - Eingangsschärfung)\nRauschunterdrückung nachher
+HISTORY_MSG_PDSHARPEN_NOISECAPTYPE;(RAW - Eingangsschärfung)\nMethode
 HISTORY_MSG_PDSHARPEN_RADIUS;(RAW - Eingangsschärfung)\nRadius
 HISTORY_MSG_PDSHARPEN_RADIUS_BOOST;(RAW - Eingangsschärfung)\nRandschärfe erhöhen
+HISTORY_MSG_PDSHARPEN_SHOWCAP;(RAW - Eingangsschärfung)\nKontrastmaske anzeigen
 HISTORY_MSG_PERSP_CAM_ANGLE;(Transformieren - Perspektive)\nKamerawinkel
 HISTORY_MSG_PERSP_CAM_FL;(Transformieren - Perspektive)\nKamera
 HISTORY_MSG_PERSP_CAM_SHIFT;(Transformieren - Perspektive)\nKamera
@@ -1742,6 +1812,8 @@ HISTORY_MSG_TONE_EQUALIZER_REGULARIZATION;(Belichtung - Tonwert-Equalizer)\nRegu
 HISTORY_MSG_TONE_EQUALIZER_SHOW_COLOR_MAP;(Belichtung - Tonwert-Equalizer)\nFarbmaske
 HISTORY_MSG_TRANS_METHOD;(Transformieren - Objektivkorrektur)\nMethode
 HISTORY_MSG_TRANS_SCALE;(Transformieren - Objektivkorrekturen)\nSkalieren
+HISTORY_MSG_TRANS_SCALE_HORIZONTALLY;(Transformieren - Objektivkorrekturen)\nSkalieren waagerecht
+HISTORY_MSG_TRANS_SCALE_VERTICALLY;(Transformieren - Objektivkorrekturen)\nSkalieren senkrecht
 HISTORY_MSG_WAVBALCHROM;(Erweitert - Wavelet)\nRauschreduzierung\nFarb-Equalizer
 HISTORY_MSG_WAVBALLUM;(Erweitert - Wavelet)\nRauschreduzierung\nEqualizer Luminanz
 HISTORY_MSG_WAVBL;(Erweitert - Wavelet)\nUnschärfeebenen
@@ -1960,7 +2032,7 @@ MAIN_TOOLTIP_PREVIEWFOCUSMASK;Vorschau Fokusmaske\nTaste: <b>Umschalt</b> + <b>f
 MAIN_TOOLTIP_PREVIEWG;Vorschau Grün-Kanal\nTaste: <b>g</b>
 MAIN_TOOLTIP_PREVIEWL;Vorschau Helligkeit\nTaste: <b>v</b>\n\n0.299·R + 0.587·G + 0.114·B
 MAIN_TOOLTIP_PREVIEWR;Vorschau Rot-Kanal\nTaste: <b>r</b>
-MAIN_TOOLTIP_PREVIEWSHARPMASK;Schärfungs-Kontroll-Maske ein-/ausschalten.\n\nFunktioniert nur bei aktivierter Schärfung und Zoom >= 100%.\nTaste: <b>p</b> oder wenn Eingangsschärfung aktiviert ist.
+MAIN_TOOLTIP_PREVIEWSHARPMASK;Vorschau der <b>Kontrastmaske für die Schärfung</b>.\nTastenkombination: <b>p</b>\n\nFunktioniert nur, wenn die Schärfung aktiviert ist und der Zoom >= 100 % beträgt oder wenn die Aufnahmeschärfung aktiviert ist.\nFür die Aufnahmeschärfung empfiehlt sich die Verwendung des im Werkzeug integrierten Kontrollkästchens „Kontrastmaske anzeigen“.\nNicht mit den in der selektiven Bearbeitung integrierten Kontrastmasken verwenden.
 MAIN_TOOLTIP_QINFO;Bildinformationen ein-/ausblenden.\nTaste: <b>i</b>
 MAIN_TOOLTIP_SHOWHIDELP1;Linkes Bedienfeld ein-/ausblenden.\nTaste: <b>l</b>
 MAIN_TOOLTIP_SHOWHIDERP1;Rechtes Bedienfeld ein-/ausblenden.\nTaste: <b>Alt</b> + <b>l</b>
@@ -1996,6 +2068,7 @@ PARTIALPASTE_COMMONTRANSFORMPARAMS;Auto-Füllen
 PARTIALPASTE_COMPOSITIONGROUP;Gestaltungsparameter
 PARTIALPASTE_COMPRESSGAMUT;Gamut-Kompression
 PARTIALPASTE_CROP;Ausschnitt
+PARTIALPASTE_CROPGUIDE;Beschnittlinien
 PARTIALPASTE_DARKFRAMEAUTOSELECT;Dunkelbild: Automatische Auswahl
 PARTIALPASTE_DARKFRAMEFILE;Dunkelbild: Datei
 PARTIALPASTE_DEFRINGE;Farbsaum entfernen (Defringe)
@@ -2245,6 +2318,8 @@ PREFERENCES_RAW_DECODER;Raw Decoder
 PREFERENCES_RAW_DECODER_ENABLE_LIBRAW;LibRaw verwenden
 PREFERENCES_REMEMBERZOOMPAN;Zoom und Bildposition merken
 PREFERENCES_REMEMBERZOOMPAN_TOOLTIP;Öffnen eines neuen Bildes mit den Zoom- und Positionswerten des vorangegangenen Bildes.\n\nFunktioniert nur unter folgenden Bedingungen:\nEin-Reitermodus aktiv\n'Demosaikmethode für 100%-Ansicht' muss auf 'Wie im Bildverarbeitungsprofil vorgegeben' eingestellt sein.
+PREFERENCES_RESET_TO_DEFAULT;Einstellungen zurücksetzen
+PREFERENCES_RESET_TO_DEFAULT_CONFIRM_PROMPT;Zurücksetzen aller Einstellungen auf ihre Standardwerte? Diese Aktion kann nicht rückgängig gemacht werden.\n\nEinige Änderungen erfordern einen Neustart der Software, bevor sie angewandt werden.
 PREFERENCES_SAVE_TP_OPEN_NOW;Werkzeugstatus jetzt speichern
 PREFERENCES_SELECTLANG;Sprache
 PREFERENCES_SERIALIZE_TIFF_READ;TIFF-Bilder
@@ -2357,8 +2432,10 @@ QUEUE_FORMAT_TITLE;Dateiformat
 QUEUE_LOCATION_FOLDER;In dieses Verzeichnis speichern
 QUEUE_LOCATION_TEMPLATE;Dynamisches Verzeichnis verwenden
 QUEUE_LOCATION_TEMPLATE_HELP_BUTTON_TOOLTIP;Anzeigen oder Ausblenden eines Hilfe-Fenster mit der Anleitung zur Erstellung von Ausgabe-Templates
-QUEUE_LOCATION_TEMPLATE_HELP_EXAMPLES_BODY;Wenn Sie das Ausgabebild zusammen mit dem Quellbild speichern möchten, schreiben Sie:\n<b>%p1/%f</b>\n\nWenn Sie das Ausgabebild in einem Ordner mit dem Namen „<i>converted</i>“ im Ordner des Quellfotos speichern möchten, schreiben Sie:\n<b>%p1/converted/%f</b>\n\nWenn Sie das Ausgabebild in\n„<i>/home/tom/photos/converted/2010-10-31</i>“ speichern möchten, schreiben Sie:\n<b>%p-3/converted/%P-4/%f</b>
+QUEUE_LOCATION_TEMPLATE_HELP_EXAMPLES_BODY;Wenn Sie das Ausgabebild neben dem Quellbild speichern möchten, geben Sie Folgendes ein: \n<b>%p1/%f</b>\n\nWenn Sie das Ausgabebild in einem Ordner namens „<i>converted</i>“ im Ordner des Quellfotos speichern möchten, geben Sie Folgendes ein: \n<b>%p1/converted/%f</b>\n\nWenn der Name des Ausgabeordners das Format (die Dateinamenserweiterung) des Ausgabebildes enthalten soll, geben Sie Folgendes ein: \n<b>%p1/converted_%e/%f</b>\n\nWenn Sie das Ausgabebild in „<i>/home/tom/photos/converted/2010-10-31</i>“ speichern möchten, geben Sie Folgendes ein: \n<b>%p-3/converted/%P-4/%f</b>
 QUEUE_LOCATION_TEMPLATE_HELP_EXAMPLES_TITLE;Beispiele
+QUEUE_LOCATION_TEMPLATE_HELP_FORMAT_BODY;<b>%e</b> wird durch das Ausgabeformat des Fotos ersetzt, das anhand der Dateinamenserweiterung der Ausgabedatei ermittelt wird.
+QUEUE_LOCATION_TEMPLATE_HELP_FORMAT_TITLE;Ausgabe Dateiformat/Dateiendung
 QUEUE_LOCATION_TEMPLATE_HELP_INTRO;Mit dem Feld „Ausgabevorlage“ können Sie den Zielordner und den Dateinamen dynamisch anpassen. Wenn Sie bestimmte Platzhalter einfügen, die mit <b>%</b> beginnen, werden diese beim Speichern jeder Datei vom Programm ersetzt.\n\nDie folgenden Abschnitte beschreiben die einzelnen Platzhaltertypen.
 QUEUE_LOCATION_TEMPLATE_HELP_PATHS_BODY_1;Zum Beispiel dieser Pfad:
 QUEUE_LOCATION_TEMPLATE_HELP_PATHS_BODY_2;The Bedeutungen der Formatierungs-Platzhalter sind:
@@ -2417,10 +2494,16 @@ SORT_DESCENDING;Absteigend
 TC_LOCALLAB_PRIM_SHIFTX;Shift x
 TC_LOCALLAB_PRIM_SHIFTX_TOOLTIP;In Kombination mit „Farben verfeinern“ können Sie:\n 1) bei niedrigen Werten die Bildreinheit anpassen.\n 2) bei höheren Werten eine moderate Farbtönung durchführen.\nAchten Sie darauf, das CIE-XY-Diagramm nicht zu verlassen.
 TC_LOCALLAB_PRIM_SHIFTY;Shift y
+TC_PRIM_BLUROT;B rot.
+TC_PRIM_BLUSAT;B sat.
 TC_PRIM_BLUX;Bx
 TC_PRIM_BLUY;By
+TC_PRIM_GREROT;G rot.
+TC_PRIM_GRESAT;G sat.
 TC_PRIM_GREX;Gx
 TC_PRIM_GREY;Gy
+TC_PRIM_REDROT;R rot.
+TC_PRIM_REDSAT;R sat.
 TC_PRIM_REDX;Rx
 TC_PRIM_REDY;Ry
 TC_PRIM_REFI;Farben verfeinern (Weißpunkt)
@@ -2521,6 +2604,9 @@ TP_COLORAPP_ALGO_TOOLTIP;Auswahl zwischen Parameter-Teilmengen und allen Paramet
 TP_COLORAPP_BADPIXSL;Hot-/Bad-Pixelfilter
 TP_COLORAPP_BADPIXSL_TOOLTIP;Unterdrückt Hot-/Dead-Pixel (hell gefärbt).\n0 = Kein Effekt\n1 = Median\n2 = Gaussian\nAlternativ kann das Bild angepasst werden, um sehr dunkle Schatten zu vermeiden.\n\nDiese Artefakte sind auf Einschränkungen von CIECAM02 zurückzuführen.
 TP_COLORAPP_BRIGHT;Helligkeit (Q)
+TP_COLORAPP_BRIGHT_CUR_BLUE;Helligkeit - Blau
+TP_COLORAPP_BRIGHT_CUR_GREEN;Helligkeit - Grün
+TP_COLORAPP_BRIGHT_CUR_RED;Helligkeit - Rot
 TP_COLORAPP_BRIGHT_TOOLTIP;Helligkeit in CIECAM berücksichtigt die Weißintensität. Sie unterscheidet sich von L*a*b* und RGB-Helligkeit.
 TP_COLORAPP_CAT02ADAPTATION_TOOLTIP;Bei manueller Einstellung werden Werte über 65 empfohlen.
 TP_COLORAPP_CATCLASSIC;Klassisch
@@ -2532,10 +2618,13 @@ TP_COLORAPP_CHROMA;Buntheit (C)
 TP_COLORAPP_CHROMA_M;Farbigkeit (M)
 TP_COLORAPP_CHROMA_M_TOOLTIP;Die Farbigkeit in CIECAM unterscheidet sich von L*a*b*- und RGB-Farbigkeit.
 TP_COLORAPP_CHROMA_S;Sättigung (S)
+TP_COLORAPP_CHROMA_S_BLUE;Sättigung - Blau %
+TP_COLORAPP_CHROMA_S_GREEN;Sättigung - Grün %
+TP_COLORAPP_CHROMA_S_RED;Sättigung - Rot %
 TP_COLORAPP_CHROMA_S_TOOLTIP;Die Sättigung in CIECAM unterscheidet sich von L*a*b* und RGB-Sättigung.
 TP_COLORAPP_CHROMA_TOOLTIP;Die Buntheit in CIECAM unterscheidet sich von L*a*b* und RGB-Buntheit.
-TP_COLORAPP_CIECAT_DEGREE;Adaptation Szene
-TP_COLORAPP_CIECAT_DEGREEOUT;Chromatische Adaptation Wahrnehmung
+TP_COLORAPP_CIECAT_DEGREE;Szenenanpassung
+TP_COLORAPP_CIECAT_DEGREEOUT;Chromatische Adaption Wahrnehmung
 TP_COLORAPP_CONTRAST;Kontrast (J)
 TP_COLORAPP_CONTRAST_Q;Kontrast (Q)
 TP_COLORAPP_CONTRAST_Q_TOOLTIP;Kontrast (Q) in CIECAM basiert auf Helligkeit. Er unterscheidet sich vom L*a*b*- und RGB-Kontrast.
@@ -2554,8 +2643,11 @@ TP_COLORAPP_FREE;Farbtemperatur + Tönung + CAT02/16 + [Ausgabe]
 TP_COLORAPP_GAMUT;Gamutkontrolle im L*a*b*-Modus anwenden
 TP_COLORAPP_GEN;Voreinstellungen
 TP_COLORAPP_GEN_TOOLTIP;Dieses Modul basiert auf dem CIECAM-Farberscheinungsmodell, das entwickelt wurde, um die Farbwahrnehmung des menschlichen Auges unter verschiedenen Lichtverhältnissen besser zu simulieren, z.B. vor unterschiedlichen Hintergründen. Es berücksichtigt die Umgebung jeder Farbe und modifiziert ihr Erscheinungsbild, um sie so nah wie möglich an die menschliche Wahrnehmung wiederzugeben. Die Ausgabe wird auch an die beabsichtigten Betrachtungsbedingungen (Monitor, Fernseher, Projektor, Drucker usw.) angepasst, sodass das chromatische Erscheinungsbild über die Szene und die Anzeigeumgebung hinweg erhalten bleibt.
-TP_COLORAPP_HUE;Farbton (H)
-TP_COLORAPP_HUE_TOOLTIP;Farbton (H) - Winkel zwischen 0° und 360°.
+TP_COLORAPP_HUE;Farbtonverschiebung (h)
+TP_COLORAPP_HUE_BLUE;Farbton - Blau-Rotation
+TP_COLORAPP_HUE_GREEN;Farbton - Grün-Rotation
+TP_COLORAPP_HUE_RED;Farbton - Rot-Rotation
+TP_COLORAPP_HUE_TOOLTIP;Die Farbtonverschiebung (h) ist der Grad, in dem ein Reiz als ähnlich zu einer Farbe beschrieben werden kann, die als rot, grün, blau oder gelb beschrieben wird.
 TP_COLORAPP_IL41;D41
 TP_COLORAPP_IL50;D50
 TP_COLORAPP_IL55;D55
@@ -2568,6 +2660,7 @@ TP_COLORAPP_ILLUM;Beleuchtung
 TP_COLORAPP_ILLUM_TOOLTIP;Wählen Sie die Lichtquelle, die den Aufnahmebedingungen am nächsten kommt.\nIm Allgemeinen kann D50 gewählt werden, das kann sich jedoch je nach Zeit und Breitengrad ändern.
 TP_COLORAPP_LABEL;Farberscheinung und Beleuchtung
 TP_COLORAPP_LABEL_CAM02;Bildanpassungen
+TP_COLORAPP_LABEL_RGB;Rot Grün Blau
 TP_COLORAPP_LABEL_SCENE;Umgebungsbedingungen (Szene)
 TP_COLORAPP_LABEL_VIEWING;Betrachtungsbedingungen
 TP_COLORAPP_LIGHT;Helligkeit (J)
@@ -2581,6 +2674,7 @@ TP_COLORAPP_MODELCAT_TOOLTIP;Ermöglicht die Auswahl zwischen CAM02 oder CAM16.\
 TP_COLORAPP_MODEL_TOOLTIP;<b>Weißabgleich [RT] + [Ausgabe]:</b>\nRTs Weißabgleich wird für die Szene verwendet,\nCIECAM auf D50 gesetzt und der Weißabgleich\ndes Ausgabegerätes kann unter:\n<i>Einstellungen > Farb-Management</i>\neingestellt werden.\n\n<b>Weißabgleich [RT+CAT02/16] + [Ausgabe]:</b>\nRTs Weißabgleich wird für CAT02 verwendet und\nder Weißabgleich des Ausgabegerätes kann unter\n<i>Einstellungen > Farb-Management</i>\neingestellt werden.
 TP_COLORAPP_NEUTRAL;Zurücksetzen
 TP_COLORAPP_NEUTRAL_TOOLTIP;Setzt alle Parameter auf Vorgabewerte zurück.
+TP_COLORAPP_RGB_TOOLTIP;'Rot Grün Blau' ermöglicht Ihnen Folgendes:\n* Korrektur von Farbabweichungen, die entweder durch Farbraumüberschreitung nach verschiedenen Anpassungen im Prozess oder durch einen ungenauen Weißabgleich entstehen.\n* Erzielung eines besseren Gleichgewichts von Farben und Luminanzen, um Ihren Vorlieben gerecht zu werden.\n* Filmsimulation.\n\nDas System arbeitet nach dem ersten Prozess (Szene), der die Daten des 'Arbeitsprofils' in die von 'CAM16' konvertiert. In diesem Stadium berücksichtigen die J-, Q-, C-, s-, M- und h-Daten die von CIECAM betrachteten physiologischen Aspekte, und es wird eine chromatische Adaption durchgeführt.\n\n Für jede Hauptfarbe der CIECAM ac-bc [chroma-basiert] Farbtonebene – Rot, Grün, Blau – können Sie eine leichte Farbtondrehung (h) in Grad (Schieberegler), eine Anpassung der Sättigung (s) in Prozent (Schieberegler) und eine Anpassung der Helligkeit (Q) (Kurven) vornehmen.\n\n Im Allgemeinen genügen kleine Anpassungen: 1° bis 3° für Farbtondrehungen (h), 5 bis 10 % mehr oder weniger für die Sättigung (s) und sehr geringe Variationen der Helligkeit (Q). Wenn Sie Spezialeffekte erzielen möchten, beispielsweise durch die Simulation eines Films, können die Einstellungen natürlich noch deutlicher ausfallen.\n\n Diese Anpassungen werden unmittelbar vor den anderen CIECAM-Anpassungen vorgenommen: Helligkeit (J), Farbsättigung (Q), Chroma (C), Sättigung (s), Farbigkeit (M), Farbton (h), Kontrast (J), Kontrast (Q) und Kurven. Anschließend werden diese Werte addiert.\n\n Im dritten Schritt werden die Daten vom Farbraum „CAM16“ unter Berücksichtigung der Betrachtungsbedingungen in das Arbeitsprofil konvertiert. Danach erfolgt die Farbanpassung.\n\n Diese Anpassungen von Farbton, Sättigung und Helligkeit verwenden keine Primärfarben. Sie basieren auf dem Prinzip der CAM-Farbmodelle (Color Appearance Models) in drei Schritten.
 TP_COLORAPP_RSTPRO;Hautfarbtöne schützen
 TP_COLORAPP_RSTPRO_TOOLTIP;Hautfarbtöne schützen\nWirkt sich auf Regler und Kurven aus.
 TP_COLORAPP_SOURCEF_TOOLTIP;Entspricht den Aufnahmebedingungen und wie man die Bedingungen und Daten wieder in einen normalen Bereich bringt. 'Normal' bedeutet Durchschnitts- oder Standardbedingungen und Daten, d. h. ohne Berücksichtigung von CIECAM-Korrekturen.
@@ -2669,14 +2763,20 @@ TP_COLORTONING_TWOBY;Spezial a* und b*
 TP_COLORTONING_TWOCOLOR_TOOLTIP;Standardfarbe:\nLinearer Verlauf, a* = b*.\n\nSpezial-Farbe:\nLinearer Verlauf, a* = b*, aber nicht verbunden\n\nSpezial a* und b*:\nLinearer Verlauf, nicht verbunden, mit unterschiedlichen\nKurven für a* und b*. Bevorzugt für spezielle Effekte.\n\nSpezial-Farbe (2 Farben):\nBesser vorhersehbar.
 TP_COLORTONING_TWOSTD;Standardfarbe
 TP_COMPRESSGAMUT_ACESP1;ACES AP1
-TP_COMPRESSGAMUT_ADOBE;Adobe RGB
-TP_COMPRESSGAMUT_COLORSPACE_TOOLTIP;Gamut-Kompession ist ein Tool, mit dem Sie hochchromatische Farbmetrik von Kameraquellen in einen kleineren Farbraum komprimieren können.\nNegative Pixelwerte außerhalb des Farbraums sind bei der Bildbearbeitung problematisch und sollten nach Möglichkeit vermieden werden.\nBlaue LEDs werden als sehr bunt wahrgenommen und Farben wie Käfer, Blumen und Kolibris sind häufig übersättigt.\n\nDies ist keine Farbraumkonvertierung: Durch die Konvertierung von einem Farbraum in einen anderen werden die Pixelwerte geändert. Die kolorimetrische Bedeutung der Pixeldaten wird dadurch jedoch nicht verändert. Man könnte sagen, dass Sie durch die Konvertierung zwischen Farbräumen den Bezugsrahmen für dieselben Farben ändern. Nach der Kompression wird das Arbeitsprofil wiederhergestellt.\n\nWählen Sie den Arbeitsbereich, der zum Festlegen der Farbraumgrenzen verwendet werden soll. Je nach Fall können Sie wählen:\nDen Anzeigefarbraum (sRGB, DCI P3, ...). \nDer Farbumfang einer Ausgabedatei zur Verwendung durch eine andere Software (Prophoto, Rec 2020 …).
+TP_COMPRESSGAMUT_ADOBE;Adobe RGB *
+TP_COMPRESSGAMUT_BETA;Beta - Pointer *
+TP_COMPRESSGAMUT_COLORSPACE_TOOLTIP; Die Farbraumkomprimierung ist ein Werkzeug, mit dem Sie hochchromatische, farbmetrische Daten von Kameraquellen in einen kleineren Farbraum komprimieren können.\n Negative Pixelwerte außerhalb des Farbraums sind problematisch für die Bildbearbeitung und sollten möglichst vermieden werden.\n Blaue LEDs werden als sehr farbenfroh wahrgenommen, und die Farben von Käfern, Blumen und Kolibris sind oft übersättigt.\n\nDies ist keine Farbraumkonvertierung: Die Konvertierung von einem Farbraum in einen anderen ändert die Pixelwerte. Die farbmetrische Bedeutung der Pixeldaten bleibt jedoch erhalten. Man könnte sagen, dass Sie durch die Konvertierung zwischen Farbräumen den Bezugsrahmen für dieselben Farben ändern. Nach der Komprimierung ist das Arbeitsprofil wiederhergestellt.\n\n Legen Sie die Farbraumgrenzen mithilfe des entsprechenden Arbeitsbereichs fest. Zum Beispiel:\n Der Anzeigefarbraum (sRGB, DCI P3,...). Der Farbraum einer Ausgabedatei zur Verwendung durch andere Software (Rec 2020, Beta-Farbraum nahe Pointers...). Arbeitsbereiche, die mit einem Sternchen (*) gekennzeichnet sind, enthalten vorab berechnete Schwellenwerte für Cyan, Magenta und Gelb. Beachten Sie, dass diese Werte Näherungswerte sind und einem auf Rec2020 eingestellten Arbeitsprofil entsprechen. Bei schwierigen Bildern (LED-Beleuchtung, Sonnenuntergang usw.) ist eine manuelle Anpassung erforderlich; achten Sie auf mögliche Artefakte.
 TP_COMPRESSGAMUT_CYANLIM;Cyan
 TP_COMPRESSGAMUT_CYANTH;Cyan
-TP_COMPRESSGAMUT_DCIP3;DCI-P3
+TP_COMPRESSGAMUT_DCIP3;DCI-P3 Theater *
 TP_COMPRESSGAMUT_LABEL;Gamut Kompression
 TP_COMPRESSGAMUT_LIMIT;Maximale Distanzgrenze
-TP_COMPRESSGAMUT_LIMIT_TOOLTIP;Maximale Distanzgrenze: Gibt die Distanz außerhalb der Gamutgrenze an, die auf die Gamutgrenze komprimiert werden soll. Beispielsweise komprimiert ein Wert von 1,2 Distanzwerte von 1,2 auf 1,0. \nFür jede Farbkomponente gibt es eigene Steuerelemente. Sie heißen Cyan, Magenta und Gelb, da sie die maximale Distanz vom Rand des Dreiecks (Primärfarben im CIExy-Diagramm) und nicht von der Ecke steuern. Beispielsweise erhöht eine Erhöhung der Cyan-Distanzgrenze die Distanz, ab der Werte zum Rand zwischen den blauen und grünen Ecken des Dreiecks abgebildet werden.\nDie Distanzgrenzen steuern auch die RGB-Verhältnisse der komprimierten Werte, was sich auf den sichtbaren Farbton auswirkt.\n\nDie Distanzen beziehen sich auf den Zielkompressionsgamut. Sie müssen möglicherweise nach einer Änderung des Zielgamuts angepasst werden, wenn der Kompressionsgrad unverändert bleiben soll.
+TP_COMPRESSGAMUT_LIMIT_TOOLTIP;Maximale Distanzgrenze: Dies ist die Distanz außerhalb der Farbraumgrenze, die komprimiert wird, um in den Farbraum zu passen. Beispielsweise komprimiert ein Wert von 1,2 Distanzwerte von 1,2 auf einen Wert von 1,0. Für jede Farbkomponente gibt es separate Steuerelemente. Sie sind Cyan, Magenta und Gelb genannt, da sie die maximale Distanz vom Rand des Dreiecks (Primärfarben im CIExy-Diagramm – Pointer's Gamut) und nicht von der Ecke steuern. Wenn Sie beispielsweise den Wert der Distanzgrenze für Cyan erhöhen, vergrößert sich die Distanz, ab der Werte auf die Kante zwischen den blauen und grünen Ecken des Dreiecks abgebildet werden. Die Distanzgrenzen steuern auch die RGB-Verhältnisse der komprimierten Werte, die den wahrgenommenen Farbton beeinflussen. Die Distanzen beziehen sich auf den Zielkomprimierungs-Farbraum. Wenn die Kontrollkästchen für die Schieberegler Cyan, Magenta und Gelb aktiviert sind, wird ein automatischer Wert vorgeschlagen. Manuelle Anpassungen können erforderlich sein.
+TP_COMPRESSGAMUT_MACLABEL;Maximaler achromatischer Wert: %1
+TP_COMPRESSGAMUT_MACLABELCMY;geschätztes Cyan: %1 Magenta: %2 Gelb: %3
+TP_COMPRESSGAMUT_MACLABELRGB;R: %1 G: %2 B: %3
+TP_COMPRESSGAMUT_MACLABELRGB_TOOLTIP;Zeigt die Maximalwerte für die drei Kanäle (achromatisch) Rot, Grün und Blau an.\n\nLiefert eine Schätzung mit einer Genauigkeit von ±15 % für die Werte von Cyan, Magenta und Gelb. Diese Schätzung liefert nützliche Informationen zur besseren Anpassung der maximalen Entfernungsgrenzen, die auf einen Wert größer als 1 eingestellt werden sollten.\nWenn die Kontrollkästchen für die Schieberegler Cyan, Magenta und Gelb unter ‘Maximale Entfernungsgrenzen‘ aktiviert sind, wird ein automatischer Wert vorgeschlagen. Manuelle Anpassungen können erforderlich sein.
+TP_COMPRESSGAMUT_MACLABEL_TOOLTIP; Zeigt den höchsten Messwert der drei RGB-Kanäle (achromatisch) an. Dieser Wert hilft, Folgendes zu verstehen: * Den Zustand des Bildes und die Wechselwirkung von: a) den Profilen für die Arbeits- und Ziel-Farbraumkomprimierung; b) der ‘Lichterrekonstruktion‘.\n * Ob der Weißpunkt verfeinert werden muss – siehe z. B. ‘Generalisierte hyperbolische Streckung‘ (GHS).\n\nAuswirkung der Werte:\n * Sehr hohe Werte, z. B. über 5 oder sogar 10, deuten oft auf die Verwendung einer LED- oder Halogenlampe (mit Farbausbreitung) und eine deutliche Überschreitung des Farbraums hin. Versuchen Sie es mit 'GHS > Automatischer Schwarz- & Weißpunkt', 'Weißabgleich > Blau/Rot-Equalizer', 'Abstraktes Profil > Primärfarben und Beleuchtungsart'\n * Hohe Werte zwischen 2 und 4 deuten oft auf eine zu starke Lichtquelle (Sonne usw.) oder falsche Belichtungseinstellungen hin, die zu Werten außerhalb des zulässigen Bereichs auf dem Sensor geführt haben. Versuchen Sie es mit ‘Highlight-Rekonstruktion > Farbausbreitung‘.\n * Niedrige Werte unter 1 deuten oft auf schlecht eingestellte Weiß- und Schwarzpunkte hin, d. h. ‘Weißpunkt (linearer WP) ‘ und ‘Schwarzpunkt (linearer BP) ‘: siehe z. B. GHS.\n\nHinweise:\n * Die Verwendung von Werten oberhalb der ‘Maximalen Abstandsgrenzen‘ für die drei Regler ‘Maximaler achromatischer Wert‘ bietet kaum Vorteile.\n * Die Verwendung niedriger Werte für die drei Schwellenwertregler (unabhängig davon, ob sie mit niedrigen Werten für den Leistungsregler kombiniert werden oder nicht) kann zu deutlicher Entsättigung und Farbverschiebungen führen.\n\nEs besteht ein Zusammenhang, aber keine Korrelation, zwischen diesem Wert und den drei maximalen Abstandsgrenzen.
 TP_COMPRESSGAMUT_MAGENTALIM;Magenta
 TP_COMPRESSGAMUT_MAGENTATH;Magenta
 TP_COMPRESSGAMUT_MAIN_COLORSPACE;Zielkompressionsgamut
@@ -2685,21 +2785,29 @@ TP_COMPRESSGAMUT_PROPHOTO;ProPhoto
 TP_COMPRESSGAMUT_PWR;Stärke
 TP_COMPRESSGAMUT_REC2020;Rec. 2020
 TP_COMPRESSGAMUT_ROLLOFF;Abrundung
-TP_COMPRESSGAMUT_SRGB;sRGB
+TP_COMPRESSGAMUT_SRGB;sRGB *
 TP_COMPRESSGAMUT_THRESHOLD;Schwellenwert
-TP_COMPRESSGAMUT_THRESHOLD_TOOLTIP;Schwellenwert: Steuert den Prozentsatz des äußeren Farbraums, der beeinflusst werden soll. Ein Wert von 0,8 komprimiert Werte außerhalb des Farbraums in die äußeren 20 % des Farbraums. Die inneren 80 % des Farbraumkerns bleiben unberührt. Sie können die Farben separat anpassen: Wenn Sie beispielsweise Magenta und Gelb etwas stärker schützen möchten als Cyan, können Sie den Schwellenwert für Cyan etwas höher einstellen.\n\nDie Schwellenwerte beziehen sich auf den Zielkompressionsfarbraum. Sie müssen möglicherweise nach einer Änderung des Zielfarbraums angepasst werden, wenn der geschützte Farbbereich unverändert bleiben soll.
+TP_COMPRESSGAMUT_THRESHOLD_TOOLTIP;Schwellenwert: Steuert den Prozentsatz des äußeren Farbraums, der komprimiert wird. Ein Wert von 0,8 komprimiert Werte außerhalb des Farbraums auf die äußeren 20 %. Die inneren 80 % des Farbraumkerns bleiben unberührt. Sie können die Farben separat anpassen: Wenn Sie beispielsweise Magenta und Gelb stärker schützen möchten als Cyan, können Sie den Schwellenwert für Cyan etwas höher einstellen.\n\nDie Schwellenwerte beziehen sich auf den Ziel-Komprimierungsfarbraum.\n Einige Arbeitsbereiche sind mit einem Sternchen (*) gekennzeichnet. In diesem Fall sind die Schwellenwerte vorab berechnet. Beachten Sie, dass diese Werte Näherungswerte sind und einem Arbeitsprofil mit der Einstellung Rec2020 entsprechen. Bei schwierigen Bildern (LED, Sonnenuntergang usw.) ist eine manuelle Anpassung erforderlich; achten Sie auf mögliche Artefakte.
 TP_COMPRESSGAMUT_YELLOWLIM;Gelb
 TP_COMPRESSGAMUT_YELLOWTH;Gelb
 TP_CROP_FIXRATIO;Format
 TP_CROP_GTCENTEREDSQUARE;Zentriertes Quadrat
+TP_CROP_GTCROSSHAIR;Fadenkreuz
 TP_CROP_GTDIAGONALS;Diagonalregel
 TP_CROP_GTEPASSPORT;Passfoto (biometrisch)
 TP_CROP_GTFRAME;Rahmen
+TP_CROP_GTGOLDENRATIO;Goldener Schnittt
 TP_CROP_GTGRID;Gitternetz
 TP_CROP_GTHARMMEANS;Harmonisches Mittel
 TP_CROP_GTNONE;Keine
 TP_CROP_GTRULETHIRDS;Drittelregel
+TP_CROP_GTTRIANGLE;Goldenes Dreieck
 TP_CROP_GUIDETYPE;Hilfslinien:
+TP_CROP_GUIDE_ASPECT_RATIO;Vorgegebene Seitenverhältnisse
+TP_CROP_GUIDE_BLEED;Beschnittzugabe
+TP_CROP_GUIDE_LABEL;Beschnittlinien
+TP_CROP_GUIDE_NO_ASPECT_RATIO_GUIDES;keine Seitenverhältnisse
+TP_CROP_GUIDE_TOOLTIP;Hilfslinien für den aktuellen Zuschnitt nur in der Vorschau anzeigen.\n\nDie Hilfslinien für das Seitenverhältnis passen sich dem ausgewählten Seitenverhältnis im aktuellen Zuschnitt an. Die Ausrichtung wird automatisch anhand des Seitenverhältnisses des Zuschnitts bestimmt.\n\n<b>Klick</b> – Nur die ausgewählte Voreinstellung aktivieren\n<b>Strg+Klick</b> – Die ausgewählte Voreinstellung als zusätzliche Hilfslinie aktivieren
 TP_CROP_H;Höhe
 TP_CROP_LABEL;Ausschnitt
 TP_CROP_PPI;PPI
@@ -2865,7 +2973,7 @@ TP_FRAMING_ABSOLUTE_HEIGHT;Rahmenhöhe
 TP_FRAMING_ABSOLUTE_WIDTH;Rahmenbreite
 TP_FRAMING_ALLOW_UPSCALING;Hochskalieren zum Rahmen erlauben
 TP_FRAMING_ASPECT_RATIO;Format:
-TP_FRAMING_BASIS;Basierend auf
+TP_FRAMING_BASIS;Basierend auf:
 TP_FRAMING_BASIS_AUTO;Auto
 TP_FRAMING_BASIS_HEIGHT;Höhe
 TP_FRAMING_BASIS_LONG_SIDE;Lange Kante
@@ -2927,6 +3035,16 @@ TP_ICM_APPLYLOOKTABLE;'Look'-Tabelle
 TP_ICM_APPLYLOOKTABLE_TOOLTIP;Die eingebettete DCP-'Look'-Tabelle verwenden.\nDie Einstellung ist nur verfügbar, wenn sie vom Eingangsfarbprofil unterstützt wird.
 TP_ICM_BPC;Schwarzpunkt-Kompensation
 TP_ICM_BW;Schwarz-Weiß
+TP_ICM_COMPRESS;Ziel Gamut
+TP_ICM_COMPRESSGAMUT_ADOBE;Adobe
+TP_ICM_COMPRESSGAMUT_DCIP3;DCIP3
+TP_ICM_COMPRESSGAMUT_NONE;Keine
+TP_ICM_COMPRESSGAMUT_REC2020;Rec2020
+TP_ICM_COMPRESSGAMUT_SRGB;sRGB
+TP_ICM_COMPRESS_TOOLTIP; Dieses Tool, am Ende der Verarbeitungskette platziert, ermöglicht Ihnen beispielsweise, die Daten so zu komprimieren, dass sie in das Ausgabeprofil passen. Wenn ‘Farbdarstellung & Beleuchtung‘ aktiviert ist, wird die Komprimierung berücksichtigt.\n\n Diese Ausgabefarbraumkomprimierung ist deutlich einfacher als am Anfang der Verarbeitungskette, da der Farbraum – sofern die Einstellungen nicht übertrieben sind – bereits nahe am Arbeitsprofil liegt. Daher die vereinfachte grafische Benutzeroberfläche.\n\n In den meisten Fällen werden Sie bei der Verwendung der Farbraumkomprimierung keine Änderungen am Bild oder Histogramm feststellen. Dies liegt daran, dass die Daten nicht vom Arbeitsprofil (oft Rec2020) in den Zielfarbraum (oft sRGB) konvertiert, sondern komprimiert werden, um in den Zielfarbraum (oft sRGB) zu passen, während das Arbeitsprofil (oft Rec2020) erhalten bleibt. Die vorgelagerten Verarbeitungsschritte müssen den Farbraum erhalten haben. Der Effekt ist bei LEDs und Blumen mit hoher Farbsättigung sichtbar. Bei einer normalen Landschaftsaufnahme oder einem Porträt gibt es meist keine Veränderung.
+TP_ICM_COMPRGAMUT;Finale Verstärkung & Gamut Kompression
+TP_ICM_COMP_GAIN;Verstärkung (Ev)
+TP_ICM_COMP_POWER;Power
 TP_ICM_DCPILLUMINANT;Illumination
 TP_ICM_DCPILLUMINANT_INTERPOLATED;Interpoliert
 TP_ICM_DCPILLUMINANT_TOOLTIP;DCP-Illumination auswählen. Vorgabe ist 'Interpoliert'.\nDie Einstellung ist nur verfügbar, wenn sie vom Eingangsfarbprofil unterstützt wird.
@@ -2947,15 +3065,17 @@ TP_ICM_INPUTNONE_TOOLTIP;Kein Eingangsfarbprofil verwenden.
 TP_ICM_INPUTPROFILE;Eingangsfarbprofil
 TP_ICM_LABEL;Farbmanagement
 TP_ICM_LABGRID_CIEXY;R(x)=%1 R(y)=%2\nG(x)=%3 G(y)=%4\nB(x)=%5 B(y)=%6
-TP_ICM_NEUTRAL;Zurücksetzen
+TP_ICM_NEUTRAL;Primärbeleuchtung und Beleuchtung zurücksetzen
 TP_ICM_NOICM;Kein ICM: sRGB-Ausgabe
 TP_ICM_OPACITYWLI;Kurvenart
 TP_ICM_OUTPUTPROFILE;Ausgabeprofil
 TP_ICM_OUTPUTPROFILE_TOOLTIP;Standardmäßig sind alle RTv4- oder RTv2-Profile mit TRC - sRGB: g=2.4 s=12.92 voreingestellt.\n\nMit 'ICC Profile Creator' können Sie v4- oder v2-Profile mit den folgenden Auswahlmöglichkeiten erstellen:\n- Primär: Aces AP0, Aces AP1 , AdobeRGB, Prophoto, Rec2020, sRGB, Widegamut, BestRGB, BetaRGB, BruceRGB, Benutzerdefiniert\n- TRC: BT709, sRGB, linear, Standard g=2,2, Standard g=1,8, Benutzerdefiniert\n- Lichtart: D41, D50, D55 , D60, D65, D80, stdA 2856K
+TP_ICM_POWER_TOOLTIP;Ändert das globale Erscheinungsbild des Bildes, ähnlich dem Belichtungsregler, durch Anwenden einer positiven oder negativen Ev-Anpassung auf die RGB-Daten. Dies ermöglicht eine bessere Kontrolle entweder des Farbraums oder der Farbsättigung; für Letztere reichen kleine Werte von plus oder minus 0,1 bis 0,4 aus. Höhere Verstärkungswerte ermöglichen die zukünftige Verwendung mit HDR-Displays.
 TP_ICM_PRIMBLU_TOOLTIP;Primäreinstellungen Blau:\nsRGB x=0.15 y=0.06\nAdobe x=0.15 y=0.06\nWidegamut x=0.157 y=0.018\nRec2020 x=0.131 y=0.046\nACES P1 x=0.128 y= 0.044\nACES P0 x=0.0001 y=-0.077\nProphoto x=0.0366 y=0.0001\nBruceRGB x=0.15 y=0.06\nBeta RGB x=0.1265 y=0.0352\nBestRGB x=0.131 y=0.046 
-TP_ICM_PRIMFRAME;Primäres & Beleuchtung
+TP_ICM_PRIMFRAME;Primäre & Beleuchtung
 TP_ICM_PRIMGRE_TOOLTIP;Primäreinstellungen Grün:\nsRGB x=0.3 y=0.6\nAdobe x=0.21 y=0.71\nWidegamut x=0.115 y=0.826\nRec2020 x=0.17 y=0.797\nACES P1 x=0.165 y= 0.83\nACES P0 x=0.0 y=1.0\nProphoto x=0.1596 y=0.8404\nBruceRGB x=0.28 y=0.65\nBeta RGB x=0.1986 y=0.7551\nBest RGB x=0.2150 0.7750 
 TP_ICM_PRIMILLUM_TOOLTIP;Sie können ein Bild von seinem ursprünglichen Modus 'Arbeitsprofil' in einen anderen Modus 'Ziel-Primärdateien' ändern. Wenn Sie für ein Bild einen anderen Farbmodus auswählen, ändern Sie dauerhaft die Farbwerte im Bild.\n\nDas Ändern der 'Primärfarben' ist ziemlich komplex und schwierig zu verwenden. Es erfordert viel Experimentieren.\nEs ist in der Lage, exotische Farbanpassungen als Kanalmixer-Primärfarben vorzunehmen.\nErmöglicht Ihnen, die Kamerakalibrierung mit Benutzerdefiniert (Schieberegler) zu ändern.
+TP_ICM_PRIMREDROT_TOOLTIP;Ändert die Primärfarben Rot, Grün und Blau. Der erste Schieberegler dreht die Primärfarbe in Grad um den Weißpunkt. Der zweite erhöht oder verringert die Sättigung relativ zum Weißpunkt.\n\nSeien Sie bei der Verwendung dieses Werkzeugs – egal ob Polar-, Linear- oder CIExy-Diagramme – äußerst vorsichtig. Außerhalb des CIExy-Diagramms entstehen imaginäre Farben. Wie werden diese behandelt? Reduzieren Sie die Primärwerte zu stark, riskieren Sie Daten außerhalb des Farbraums. Gehen Sie daher vorsichtig und mit kleinen Werten vor und überwachen Sie die Abweichung der Primärfarben vom CIExy-Diagramm.
 TP_ICM_PRIMRED_TOOLTIP;Primäreinstellungen Rot:\nsRGB x=0.64 y=0.33\nAdobe x=0.64 y=0.33\nWidegamut x=0.735 y=0.265\nRec2020 x=0.708 y=0.292\nACES P1 x=0.713 y= 0.293\nACES P0 x=0.7347 y=0.2653\nProphoto x=0.7347 y=0.2653\nBruceRGB x=0.64 y=0.33\nBeta RGB x=0.688 y=0.3112\nBestRGB x=0.7347 y=0.2653
 TP_ICM_PROFILEINTENT;Wiedergabe
 TP_ICM_REDFRAME;Benutzerdefinierte Einstellungen
@@ -2968,15 +3088,21 @@ TP_ICM_TONECURVE;Tonwertkurve
 TP_ICM_TONECURVE_TOOLTIP;Eingebettete DCP-Tonwertkurve verwenden.\nDie Einstellung ist nur verfügbar, wenn sie vom Eingangsfarbprofil unterstützt wird.
 TP_ICM_TRCFRAME;Abstraktes Profil
 TP_ICM_TRCFRAME_TOOLTIP;Auch bekannt als 'synthetisches' oder 'virtuelles' Profil, das am Ende der Verarbeitungspipeline (vor CIECAM) angewandt wird, sodass Sie benutzerdefinierte Bildeffekte erstellen können.\nSie können Änderungen vornehmen an:\n'Tonwertkurve': Ändert die Farbtöne des Bildes.\n'Beleuchtungsart': Ermöglicht Ihnen, die Profil-Primärfarben zu ändern, um sie an die Aufnahmebedingungen anzupassen.\n'Ziel-Primärfarben': Ermöglicht Ihnen, die Ziel-Primärfarben mit drei Hauptanwendungen zu ändern – Kanalmischer, Farbwiederherstellung (Sättigung) und Kalibrierung.\nHinweis: Abstrakte Profile berücksichtigen die integrierten Arbeitsprofile, ohne sie zu ändern. Sie funktionieren nicht mit benutzerdefinierten Arbeitsprofilen.
+TP_ICM_TRC_MAX;RGB Max=%1
+TP_ICM_TRC_MAX_END;Final RGB Max=%1
+TP_ICM_TRC_MAX_END_NO;---
+TP_ICM_TRC_MAX_TOOLTIP; Liefert Informationen zu RGB-Werten außerhalb des zulässigen Bereichs. Werte größer als 1 zeigen eindeutig an, dass der Farbraum verlassen wurde. Bei Werten kleiner als 1 lässt sich nicht eindeutig feststellen, ob das Bild innerhalb des Farbraums liegt, da dies beispielsweise von der Luminanz abhängt. Diese Prüfung wird am Ende des abstrakten Profils durchgeführt und berücksichtigt alle Parameter. Mit dem Schieberegler „Dämpfungsschwelle“ können die RGB-Werte begrenzt werden.\n\nÄnderungen an „Farbdarstellung und Beleuchtung“, „Endgültige Verstärkung und Farbraumkomprimierung“ werden nicht berücksichtigt.
+TP_ICM_TRC_SAT_MAX;Finale Sättigung Max=%1
+TP_ICM_TRC_SAT_MAX_TOOLTIP; Liefert Informationen zu RGB-Werten außerhalb der zulässigen Grenzwerte und zur RGB-Sättigung. Werte größer als 1 für „Maximales RGB“ und „Maximale Sättigung“ zeigen eindeutig an, dass der Farbraum überschritten wird. Bei Werten kleiner als 1 lässt sich nicht eindeutig feststellen, ob das Bild innerhalb des Farbraums liegt, da dies beispielsweise von der Luminanz abhängt. Diese Prüfung wird am Ende der Verarbeitungskette durchgeführt und berücksichtigt alle Parameter. Änderungen an Farbdarstellung & Beleuchtung sowie an Verstärkung & Farbraumkomprimierung werden berücksichtigt.\n\nDurch Anpassen der Einstellungen für Verstärkung (EV) und Farbraumkomprimierung (Zielfarbraum und Leistung) können Sie die Auswirkungen dieser Anpassungen sehen. Beachten Sie außerdem das Histogramm, das das Ausgabeprofil und damit den Gammawert berücksichtigt. Diese Daten, die in direktem Zusammenhang mit den RGB-Werten und der Sättigung stehen und im Arbeitsprofil enthalten sind, werden im linearen Modus angezeigt.\n\n Die Daten werden nur angezeigt, wenn Ziel Gamut aktiviert ist oder wenn Verstärkung (Ev) nicht gleich 0 ist.
 TP_ICM_TRC_TOOLTIP;Ermöglicht Ihnen, die standardmäßige sRGB-'Tonwertkurve' in RT (g=2,4 s=12,92) zu ändern.\nDiese Tonwertkurve modifiziert die Farbtöne des Bildes. Die RGB- und Lab-Werte, das Histogramm und die Ausgabe (Bildschirm, TIF, JPG) werden geändert:\nGamma wirkt hauptsächlich auf helle Töne, Steigung wirkt hauptsächlich auf dunkle Töne.\nSie können ein beliebiges Paar von 'Gamma' und 'Steigung' (Werte >1) wählen, und der Algorithmus stellt sicher, dass zwischen den linearen und parabolischen Teilen der Kurve Kontinuität besteht.\nEine andere Auswahl als 'Keine' aktiviert die Menüs 'Lichtart' und 'Ziel-Primärfarben'.
 TP_ICM_WAVFRAME;Kontrast-Erweiterung
 TP_ICM_WAVREFI;Verfeinern
 TP_ICM_WORKINGPROFILE;Arbeitsfarbraum
-TP_ICM_WORKING_CAT;Matrix-Adaptation
+TP_ICM_WORKING_CAT;Matrix-Adaption
 TP_ICM_WORKING_CAT_BRAD;Bradford
 TP_ICM_WORKING_CAT_CAT02;Cat02
 TP_ICM_WORKING_CAT_CAT16;Cat16
-TP_ICM_WORKING_CAT_TOOLTIP;Führt die chromatische Adaptation der XYZ-Konvertierungs-Matrix durch. Vorgabe Bradford
+TP_ICM_WORKING_CAT_TOOLTIP;Führt die chromatische Adaption der XYZ-Konvertierungs-Matrix durch. Vorgabe Bradford
 TP_ICM_WORKING_CAT_VK;Von Kries
 TP_ICM_WORKING_CAT_XYZ;XYZ Skala
 TP_ICM_WORKING_CIEDIAG;CIE xy-Diagramm
@@ -2996,15 +3122,16 @@ TP_ICM_WORKING_ILLU_STDA;Glühbirne Normlicht A 2875K
 TP_ICM_WORKING_NON;Keine
 TP_ICM_WORKING_PRESER;Pastelltöne erhalten
 TP_ICM_WORKING_PRIM;Zielvorwahl
-TP_ICM_WORKING_PRIMFRAME_TOOLTIP;Wenn 'Benutzerdefiniertes CIE xy Diagramm' im Kombinationsfeld 'Zielvorwahl' ausgewählt ist, können Sie die Werte der 3 Primärfarben direkt im Diagramm ändern.\nBeachten Sie, dass in diesem Fall die Position des Weißpunkts im Diagramm nicht aktualisiert wird.
+TP_ICM_WORKING_PRIMFRAME_TOOLTIP;Sie haben drei Möglichkeiten, die Primärfarben über das Kombinationsfeld ‘Zielprimärfarben’ zu ändern:\n1) Wählen Sie ‘Benutzerdefiniert (Lineare Schieberegler)’ und ändern Sie die linearen Koordinaten von Rot, Grün und Blau (Rx, Ry, Gx, Gy, Bx, By). In diesem Fall: a) wird die grafische Darstellung des CIExy-Diagramms aktualisiert; b) bleiben die Polarkoordinaten ‘Farbtonrotation: R rot., G rot., B rot.’ und ‘Sättigung (bezogen auf den Abstand zum Weißpunkt): R sat., G sat., B sat.’ auf Null. Das System berechnet die neuen X-, Y- und Z-Werte unter Berücksichtigung des tatsächlichen Weißpunkts.\n\n2) Ändern Sie die Werte direkt im CIExy-Diagramm. Wenn Sie unter ‘Zielprimärfarben’ die Option ‘Benutzerdefiniertes CIExy-Diagramm’ auswählen, können Sie die Werte der drei Primärfarben direkt im Diagramm ändern. Das System berechnet die neuen X-, Y- und Z-Werte. Beachten Sie, dass in diesem Fall die Position des Weißpunkts im Diagramm nicht aktualisiert wird. Die Polarkoordinaten (R rot., R sat., G rot., G sat., B rot., B sat.) bleiben bei Null. Trotz der geringen Größe dieses CIExy-Diagramms ist es wahrscheinlich die beste Methode, das System zu erlernen. Drei kleine, feste Punkte stellen die Positionen der Rec2020-Primärfarben dar, dem Standard-Arbeitsprofil. So können Sie die vorgenommenen Anpassungen direkt sehen.\n\n3) Bei der Option ‘Benutzerdefiniert’ (Polarregler) gelten für die Polarkoordinaten ‘Farbtonrotation: R.rot, G.rot, B.rot’ und ‘Sättigung (bezogen auf den Abstand zum Weißpunkt): R.sat, G.sat, B.sat’ folgende Änderungen: a) Die grafische Darstellung des CIExy-Diagramms wird aktualisiert; b) die linearen Koordinaten (Rx, Ry, Gx, Gy, Bx, By) werden nicht aktualisiert. Das System berechnet die neuen X-, Y- und Z-Werte. Nach Auswahl der Polarkoordinaten gilt: a) Wenn Sie im Kombinationsfeld ‘Benutzerdefiniert (CIE xy-Diagramm)’ auswählen, werden die Werte der linearen Koordinaten aktualisiert. Die Polarkoordinaten (R.rot, R.sat, G.rot, G.sat, B.rot, B.sat) bleiben bei Null. b) Wenn Sie im Kombinationsfeld ‘Benutzerdefiniert (Lineare Schieberegler)’ auswählen, werden die Standardwerte wiederhergestellt.\n\nSeien Sie bei der Verwendung dieses Werkzeugs – egal ob Polar- oder Linear-Schieberegler oder CIExy-Diagramme – äußerst vorsichtig. Wenn Sie den CIExy-Bereich verlassen, werden imaginäre Farben erzeugt. Wie werden diese behandelt? Wenn Sie die Primärwerte zu stark reduzieren, riskieren Sie Daten außerhalb des Farbraums. Gehen Sie daher vorsichtig vor und verwenden Sie kleine Werte, während Sie die Abweichung der Primärfarben vom CIExy-Diagramm überwachen.
 TP_ICM_WORKING_PRIM_AC0;ACESp0
 TP_ICM_WORKING_PRIM_ACE;ACESp1
 TP_ICM_WORKING_PRIM_ADOB;Adobe RGB
 TP_ICM_WORKING_PRIM_BET;Beta RGB
 TP_ICM_WORKING_PRIM_BRU;BruceRGB
 TP_ICM_WORKING_PRIM_BST;BestRGB
-TP_ICM_WORKING_PRIM_CUS;Benutzerdefiniert (Regler)
+TP_ICM_WORKING_PRIM_CUS;Benutzerdefiniert (Regler linear)
 TP_ICM_WORKING_PRIM_CUSGR;Benutzerdefiniert (CIE xy-Diagramm)
+TP_ICM_WORKING_PRIM_CUSPOL;Benutzerdefiniert (Regler Polar)
 TP_ICM_WORKING_PRIM_FREE;Benutzerdefiniert (Schieberegler)
 TP_ICM_WORKING_PRIM_JDCMAX;JDC Max
 TP_ICM_WORKING_PRIM_JDCMAXSTDA;JDC Max stdA
@@ -3023,6 +3150,7 @@ TP_ICM_WORKING_TRC_CUSTOM;Benutzerdefiniert
 TP_ICM_WORKING_TRC_GAMMA;Gamma
 TP_ICM_WORKING_TRC_LIN;Linear g=1
 TP_ICM_WORKING_TRC_NONE;Keine
+TP_ICM_WORKING_TRC_SAT;Sättigung
 TP_ICM_WORKING_TRC_SLOPE;Steigung
 TP_ICM_WORKING_TRC_SRGB;sRGB g=2.4 s=12.92
 TP_ICM_WORKING_TRC_TOOLTIP;Auswahl der mitgelieferten Profile.
@@ -3069,6 +3197,8 @@ TP_LENSGEOM_LABEL;Objektivkorrekturen
 TP_LENSGEOM_LIN;Linear
 TP_LENSGEOM_LOG;Logarithmisch
 TP_LENSGEOM_SCALE;Skalieren
+TP_LENSGEOM_SCALE_HORIZONTALLY;Skalieren waagerecht
+TP_LENSGEOM_SCALE_VERTICALLY;Skalieren senkrecht
 TP_LENSPROFILE_CORRECTION_AUTOMATCH;Automatisch (Lensfun)
 TP_LENSPROFILE_CORRECTION_LCPFILE;LCP-Datei
 TP_LENSPROFILE_CORRECTION_MANUAL;Benutzerdefiniert (Lensfun)
@@ -3089,6 +3219,7 @@ TP_LOCALLAB_ACTIV;Nur Luminanz
 TP_LOCALLAB_ACTIVSPOT;Spot aktivieren
 TP_LOCALLAB_ADJ;Equalizer Blau/Gelb-Rot/Grün
 TP_LOCALLAB_AMOUNT;Intensität
+TP_LOCALLAB_APSATUR;Sättigung
 TP_LOCALLAB_ARTIF;ΔE Kantenerkennung
 TP_LOCALLAB_ARTIF_TOOLTIP;Schwellenwert Bereich ΔE erhöht den Anwendungsbereich des ΔE. Hohe Werte sind für große Gamutbereiche.\nErhöhung der ΔE-Zerfallrate kann die Kantenerkennung erhöhen, aber auch den Bereich verringern.
 TP_LOCALLAB_AUTOGRAY;Automatisch mittlere Luminanz (Yb%)
@@ -3116,12 +3247,12 @@ TP_LOCALLAB_BLGUID;Anpassbarer Filter
 TP_LOCALLAB_BLINV;Invertieren
 TP_LOCALLAB_BLLC;Luminanz u. Chrominanz
 TP_LOCALLAB_BLLO;Nur Luminanz
-TP_LOCALLAB_BLMED;Median
+TP_LOCALLAB_BLMED;Median 1:1
 TP_LOCALLAB_BLMETHOD_TOOLTIP;Normal - direkte Unschärfe und Rauschen mit allen Einstellungen.\nInvertiert - Unschärfe und Rauschen mit allen Einstellungen. Vorsicht, kann zu unerwünschten Ergebnissen führen.
 TP_LOCALLAB_BLNOI_EXP;Unschärfe und Rauschen
 TP_LOCALLAB_BLNORM;Normal
 TP_LOCALLAB_BLUFR;Unschärfe und Rauschreduzierung
-TP_LOCALLAB_BLUMETHOD_TOOLTIP;So verwischen Sie den Hintergrund und isolieren Sie den Vordergrund:\n- Verwischen Sie den Hintergrund, indem Sie das Bild vollständig mit einem Spot abdecken (hohe Werte für Umfang und Übergang und 'Normal' oder 'Invertieren' im Kontrollkästchen).\n- Isolieren Sie den Vordergrund durch Verwendung eines oder mehrerer 'Ausschließen'-Spots und Vergrößerung des Bereichs.\n\nDieses Modul (einschließlich 'Median' und 'Anpassbarer Filter') kann zusätzlich zur Rauschreduzierung im Hauptmenü verwendet werden.
+TP_LOCALLAB_BLUMETHOD_TOOLTIP; Hintergrund weichzeichnen und Vordergrund isolieren:\n- Den Hintergrund weichzeichnen, indem das gesamte Bild mit einem Spot abgedeckt wird (hohe Werte für Bereich und Übergang sowie ‘Normal’ oder ‘Invertiert’ im Kontrollkästchen).\n- Den Vordergrund isolieren, indem ein oder mehrere ‘ausschließende’ Spots verwendet und der Bereich erhöht und/oder die Masken und die Wiederherstellung basierend auf der Luminanzmaske verwendet werden.\n\nDieses Modul (einschließlich ‘Gaußscher Weichzeichner – Rauschen – Körnung’, ‘Median’ und ‘Geführter Filter’) kann zusätzlich zur Rauschunterdrückung im Hauptmenü verwendet werden.
 TP_LOCALLAB_BLUR;Gauß'sche Unschärfe - Rauschen - Körnung
 TP_LOCALLAB_BLURCOL;Radius
 TP_LOCALLAB_BLURCOLDE_TOOLTIP;Zur Berechnung von ΔE wird ein leicht unscharfes Bild verwendet, um isolierte Pixel zu vermeiden.
@@ -3138,6 +3269,7 @@ TP_LOCALLAB_BUTTON_DEL;Löschen
 TP_LOCALLAB_BUTTON_DUPL;Duplizieren
 TP_LOCALLAB_BUTTON_REN;Umbenennen
 TP_LOCALLAB_BUTTON_VIS;Ein-/Ausblenden
+TP_LOCALLAB_BWCIE_TOOLTIP;Nur im globalen Modus verwendbar oder wenn der Bereich auf 100 eingestellt ist.\nDie Option ‘Schwarz-Weiß‘ zeigt im Histogramm nur die Luminanz an, wodurch die Anpassung von Schatten und Lichtern bei Verwendung der Regler für Gamma und Neigung sowie der Tonwertkorrekturoperatoren erleichtert wird.
 TP_LOCALLAB_BWEVNONE;Keine
 TP_LOCALLAB_BWEVNONE11;Keine
 TP_LOCALLAB_BWEVSIG;Sigmoid
@@ -3150,7 +3282,7 @@ TP_LOCALLAB_CAM16_FRA;CAM16 Bildanpassungen
 TP_LOCALLAB_CAMMODE;CAM-Modell
 TP_LOCALLAB_CAMMODE_CAM16;CAM16
 TP_LOCALLAB_CAMMODE_JZ;Jz Cz Hz
-TP_LOCALLAB_CATAD;Chromatische Adaptation/Cat16
+TP_LOCALLAB_CATAD;Chromatische Adaption/Cat16
 TP_LOCALLAB_CBDL;Detailebenenkontrast
 TP_LOCALLAB_CBDLCLARI_TOOLTIP;Verstärkt den lokalen Kontrast der Mitteltöne.
 TP_LOCALLAB_CBDL_ADJ_TOOLTIP;Das gleiche wie Wavelets.\nDie erste Ebene (0) arbeitet mit 2x2 Pixeldetails.\nDie letzte Ebene (5) arbeitet mit 64x64 Pixeldetails.
@@ -3194,6 +3326,7 @@ TP_LOCALLAB_CIE_SMOOTH_LEVELS;Steigung RGB-Kanäle
 TP_LOCALLAB_CIE_SMOOTH_LEVELSTRC;Tonwertkurve RGB-Kanäle
 TP_LOCALLAB_CIE_SMOOTH_NONE;Keine
 TP_LOCALLAB_CIE_SMOOTH_SIG;Sigmoid-basiert
+TP_LOCALLAB_CIE_SMOOTH_TRC;Tonwertkurven-basiert
 TP_LOCALLAB_CIE_TOOLNAME;Farberscheinung (CAM16 & JzCzHz)
 TP_LOCALLAB_CIRCRADIUS;Spot-Größe
 TP_LOCALLAB_CIRCRAD_TOOLTIP;Die Spot-Größe bestimmt die Referenzen des Spots, die für die Formerkennung nützlich sind (Farbton, Luma, Chroma, Sobel).\nNiedrige Werte können für die Bearbeitung kleiner Flächen und Strukturen nützlich sein.\nHohe Werte können für die Behandlung von größeren Flächen oder auch Haut nützlich sein.
@@ -3257,17 +3390,24 @@ TP_LOCALLAB_DENOIBILAT_TOOLTIP;Ermöglicht Impulsrauschen zu reduzieren oder auc
 TP_LOCALLAB_DENOICHROC_TOOLTIP;Ermöglicht den Umgang mit Flecken und Rauschen.
 TP_LOCALLAB_DENOICHRODET_TOOLTIP;Ermöglicht die Wiederherstellung von Chrominanz-Details durch schrittweise Anwendung einer Fourier-Transformation (DCT).
 TP_LOCALLAB_DENOICHROF_TOOLTIP;Ermöglicht die Detailjustierung von Chrominanz-Rauschen
+TP_LOCALLAB_DENOIENA;Kontrastschwelle aktivieren
 TP_LOCALLAB_DENOIEQUALCHRO_TOOLTIP;Ermöglicht das Reduzieren von Chrominanz-Rauschen in Richtung Blau/Gelb oder Rot/Grün.
 TP_LOCALLAB_DENOIEQUAL_TOOLTIP;Ermöglicht das Reduzieren von Rauschen entweder in den Schatten oder in den Lichtern.
+TP_LOCALLAB_DENOIFRA;Einstellungen Rauschreduzierung
+TP_LOCALLAB_DENOIHUE;Equalizer Rauschreduzierung
+TP_LOCALLAB_DENOIHUECONT;Equalizer Rauschreduzierungsmaske
 TP_LOCALLAB_DENOILUMDETAIL_TOOLTIP;Ermöglicht die Wiederherstellung von Luminanz-Details durch schrittweise Anwendung einer Fourier-Transformation (DCT).
 TP_LOCALLAB_DENOIMASK;Maske Farbrauschen reduzieren
 TP_LOCALLAB_DENOIMASK_TOOLTIP;Für alle Werkzeuge, ermöglicht die Kontrolle des chromatischen Rauschens der Maske.\nNützlich für eine bessere Kontrolle der Chrominanz und Vermeidung von Artefakten bei Verwendung der LC(h)-Kurve.
 TP_LOCALLAB_DENOIQUA_TOOLTIP;Im konservativen Modus werden Niedrigfrequenz-Details erhalten. Im aggressiven Modus werden diese entfernt.\nBeide Modi verwenden Wavelets und DCT und können in Verbindung mit 'Nicht-lokales Mittel - Luminanz' verwendet werden.
+TP_LOCALLAB_DENOIRATIO;Verhältnis flach strukturierter Bereiche
 TP_LOCALLAB_DENOITHR_TOOLTIP;Korrigiert die Kantenerkennung, um die Rauschreduktion in Bereichen mit geringen Kontrasten zu unterstützen.
 TP_LOCALLAB_DENOIWAVCH;Wavelets: Chrominanz
 TP_LOCALLAB_DENOIWAVLUM;Wavelets: Luminanz
 TP_LOCALLAB_DENOI_EXP;Rauschreduzierung
+TP_LOCALLAB_DENOI_MASK;Kontrastmaske
 TP_LOCALLAB_DENOI_TOOLTIP;Dieses Modul kann zur Rauschreduktion entweder (am Ende der Prozess-Pipeline) selbständig verwendet werden oder in Verbindung mit der Rauschreduzierung im Menureiter 'Detail' (das am Anfang der Prozess-Pipeline arbeitet) .\nBereich ermöglicht eine differenzierte Einstellung basierend auf Farbe (ΔE).\nMinimale Spotgröße: 128x128
+TP_LOCALLAB_DENORADIUS_TOOLTIP; Ermöglicht die Differenzierung der Rauschreduzierung in Abhängigkeit von Bilddetails und einheitlichem Hintergrund.\n Das Ergebnis ist eine Kombination aus Rauschreduzierung und der durch ‘Kontrastschwelle‘ erzeugten Maske.\n Bei stark verrauschten Bildern kann das Maskenrauschen reduziert werden.\n Die Wirkung kann auch mithilfe der Kurve ‘Equalizer-Rauschreduzierungsmaske‘ differenziert werden.\n Das Verhältnis flacher Bereiche ermöglicht die Korrektur des Unterschieds zwischen den beiden Effekten.\n\nBei verrauschten Bildern im RAW-Format sollten die Funktionen „Vorschärfen-Rauschreduzierung“ und ‘Nachschärfen-Rauschreduzierung‘ für eine effektivere Maskenwirkung verwendet werden.
 TP_LOCALLAB_DEPTH;Tiefe
 TP_LOCALLAB_DETAIL;Lokaler Kontrast
 TP_LOCALLAB_DETAILFRA;Kantenerkennung DCT
@@ -3324,7 +3464,7 @@ TP_LOCALLAB_EXPNOISEMETHOD_TOOLTIP;Wendet einen Median-Filter vor der Laplace-Tr
 TP_LOCALLAB_EXPOSE;Dynamik und Belichtung
 TP_LOCALLAB_EXPOSURE_TOOLTIP;Anpassung der Belichtung im L*a*b-Raum mittels Laplace PDE-Algorithmus um ΔE zu berücksichtigen und Artefakte zu minimieren.
 TP_LOCALLAB_EXPRETITOOLS;Erweiterte Retinex Werkzeuge
-TP_LOCALLAB_EXPSHARP_TOOLTIP;Spot-Minimum 39 * 39.\nVerwenden Sie niedrige Übergangswerte und hohe Werte für 'Zerfallrate' und 'Bereich', um kleinere Spots zu simulieren.
+TP_LOCALLAB_EXPSHARP_TOOLTIP;Spot minimum 39*39 RL Deconvolution.\nSpot minimum 150*150 Erfassungs-Deconvolution.\nVerwenden Sie niedrige Werte für den Übergangsgradienten und hohe Werte für den Übergangsabfall und den Bereich, um kleinere Spots zu simulieren.
 TP_LOCALLAB_EXPTOOL;Belichtungswerkzeuge
 TP_LOCALLAB_EXP_TOOLNAME;Dynamik und Belichtung
 TP_LOCALLAB_FATAMOUNT;Intensität
@@ -3361,40 +3501,64 @@ TP_LOCALLAB_GAMUTXYZRELA;XYZ Relativ
 TP_LOCALLAB_GAMW;Gamma (Wavelet Pyramiden)
 TP_LOCALLAB_GHSBPWP; Anzahl ungültiger Pixel - Schatten:%1 Lichter:%2
 TP_LOCALLAB_GHSBPWPVALUE;Pixelwerte - Dunkelste:%1 Hellste:%2
+TP_LOCALLAB_GHSCOLORNO;---
+TP_LOCALLAB_GHSCOLORVALUE;RGB Werte - R:%1 G:%2 B:%3
+TP_LOCALLAB_GHSDR;Dynamikbereich GHS (Ev):%1
+TP_LOCALLAB_GHSDRNO;---
 TP_LOCALLAB_GHSFRA;Dehnungseinstellungen
 TP_LOCALLAB_GHSHUE;Farbton (HSL)
 TP_LOCALLAB_GHSLAB;Helligkeit & Buntheit (Lab)
 TP_LOCALLAB_GHSLABFRA;Lab Einstellungen
 TP_LOCALLAB_GHSLUM;Helligkeit (HSL)
+TP_LOCALLAB_GHSMAT;Matrix
+TP_LOCALLAB_GHSMAT1;AgX (Gefällig)
+TP_LOCALLAB_GHSMAT2;JzAzBz (XYZ Hohe Dynamik)
+TP_LOCALLAB_GHSMAT3;Cat16 (XYZ Harmonisch)
+TP_LOCALLAB_GHSMAT4;JzAzBz (RGB Hohe Dynamik)
+TP_LOCALLAB_GHSMAT5;Cat16 (RGB Harmonisch)
+TP_LOCALLAB_GHSMATO;Keine (Neutral)
+TP_LOCALLAB_GHSMAXRGB;RGB Max & 3 Sigmas: Max=%1 3S=%2
+TP_LOCALLAB_GHSMAXRGBNO;---
+TP_LOCALLAB_GHSMAXRGB_TOOLTIP; Hiermit können Sie eine Vorschau der vorgenommenen Änderungen anzeigen. Die wichtigsten Einstellungen sind „Streckungsfaktor (D)“ und „Lokale Intensität (b)“.\n\n Versuchen Sie, für „Geschätztes Mittelgrau“ einen Wert nahe oder unter 0,18 (nach Ihrem Geschmack) zu erreichen. Dies ist jedoch nicht zwingend erforderlich, da weitere Verarbeitungsschritte folgen.\n\n „RGB max“ entspricht dem Maximalwert der Daten und betrifft möglicherweise nur wenige Pixel. „3 Sigma“ entspricht der Grenze der wirklich relevanten Daten. Sie können alle GHS-Einstellungen anpassen, insbesondere „Lichter schützen (HP)“ und „Lichterdämpfung“, um nach Möglichkeit zu vermeiden, dass diese den Wert 1 überschreiten.\n\n GHS dient nicht der Erzeugung eines perfekten Bildes, sondern der Vorbereitung des Bildes – mit etwas Spielraum für die weitere Bearbeitung.
+TP_LOCALLAB_GHSMIDGREY;geschätztes Mittelgrau=%1
+TP_LOCALLAB_GHSMIDGREYNO;---
 TP_LOCALLAB_GHSRGBLUM;RGB Luminanz
 TP_LOCALLAB_GHSRGBSTD;RGB Standard
 TP_LOCALLAB_GHSSAT;Sättigung (HSL)
+TP_LOCALLAB_GHSSYM;geschätzter Symmetriepunkt RGB=%1
+TP_LOCALLAB_GHSSYMNO;---
+TP_LOCALLAB_GHS_AGX;AgX Matrix
+TP_LOCALLAB_GHS_AGXMAT2_TOOLTIP;Verwenden Sie die LMS-Transformation (Long, Medium, Short – Lang, Mittel, Kurz), abhängig von der Auswahl des Benutzers. LMS ist eine Farbraumtransformation, die die Reaktion der drei Zapfentypen des menschlichen Auges abbildet; benannt sind diese nach den Spitzen ihrer Empfindlichkeit (Responsivität) bei langen, mittleren und kurzen Wellenlängen.\n\nDiese Transformationen – in Form einer Matrix – modifizieren jeden einzelnen R-, G- und B-Kanal für jedes Pixel und priorisieren dabei bestimmte dominante Farben entsprechend Ihrer Auswahl.\n * Keine – lässt die Daten unverändert (Standardeinstellung).\n * Agx – betont jeden R-, G- und B-Kanal recht stark, sodass die LMS-Daten als farbintensiver wahrgenommen werden.\n * JzAzBz (XYZ High Dynamic) – modifiziert die LMS-Verteilung durch Einwirkung auf X, Y und Z, um Bildern mit einem hohen „linearen Weißpunkt“ (linear WP) besser gerecht zu werden.\n * Cat16 (XYZ Harmonisch) – modifiziert die LMS-Verteilung durch Einwirkung auf X, Y und Z; dies gewährleistet eine harmonischere Farbverteilung unter Berücksichtigung der Interaktion zwischen Auge und Gehirn.\n * JzAzBz (RGB High Dynamic) – modifiziert die LMS-Verteilung, indem – ähnlich wie bei AgX – auf die drei Kanäle R, G und B eingewirkt wird, um Bildern mit einem hohen „linearen Weißpunkt“ besser gerecht zu werden.\n * Cat16 (RGB Harmonisch) – modifiziert die LMS-Verteilung, indem – ähnlich wie bei AgX – auf die drei Kanäle R, G und B eingewirkt wird; dies gewährleistet eine harmonischere Farbverteilung unter Berücksichtigung der Interaktion zwischen Auge und Gehirn.\n\n\nFür JzAzBz und Cat16 sollte der XYZ-Modus – also JzAzBz (XYZ High Dynamic) und Cat16 (XYZ Harmonisch) – eine höhere Farb- und Luminanztreue gewährleisten.\n\nDiese Transformation wirkt sich ausschließlich auf die durch GHS vorgenommenen Anpassungen aus: „Weißpunkt (linear)“, „Schwarzpunkt (linear)“, „Symmetriepunkt (SP)“ und natürlich auf die Einstellungen für den Streckungsfaktor (D) sowie die lokale Intensität (b). Es ist zwingend erforderlich, die GHS-Einstellungen jedes Mal zu überprüfen, wenn die Matrix geändert wird. Es wird dringend empfohlen, die Option „Auto-Schwarzpunkt und -Weißpunkt“ zu aktivieren (außer im Invers-Modus). Betrachten Sie das Histogramm in den beiden Modi „Arbeitsprofil – linear“ und „Gamma-korrigiertes Ausgabeprofil“.\n\nBitte beachten Sie:\n * Verwechseln Sie Cat16 nicht mit CIECAM. Cat16 ist lediglich die Konversionsmatrix, während CIECAM (Color Appearance and Lighting) ein vollständiges farbmetrisches Verfahren darstellt, das physiologische Aspekte berücksichtigt.\n * Die hier verwendete JzAzBz-Matrix berücksichtigt nicht das Konzept der „absoluten Luminanz“ und nutzt folglich auch nicht das PQ-Verfahren (Perceptual Quantizer). Verwechseln Sie dies nicht mit dem Modul unter „Selektive Bearbeitung“ > „JzCzHz“.
+TP_LOCALLAB_GHS_AGX_MAT_TOOLTIP;Führt die gesamte GHS-Verarbeitung durch, einschließlich der Matrix-Konvertierung – wahlweise in AgX, JzAzBz oder Cat16. Für JzAzBz und Cat16 haben Sie die Wahl zwischen einer Transformation im RGB-Modus oder im XYZ-Modus (bevorzugt).\n * Um diese Matrix aktivieren oder deaktivieren zu können, muss die Option „Auto-Schwarzpunkt und -Weißpunkt“ deaktiviert sein.\n * Sie müssen „Auto-Schwarzpunkt und -Weißpunkt“ erneut aktivieren, um die Werte für „Schwarzpunkt (linear)“, „Weißpunkt (linear)“ und „Symmetriepunkt (SP)“ neu berechnen zu lassen.
+TP_LOCALLAB_GHS_AGX_TOOLTIP; Führt die gesamte GHS-Verarbeitung durch, einschließlich der AgX-Konvertierung.\n * Um AgX aktivieren oder deaktivieren zu können, muss 'Automatischer Schwarz- & Weißpunkt' deaktiviert sein.\n * Sie müssen 'Automatischer Schwarz- & Weißpunkt' wieder aktivieren, um die Werte von 'linearer Schwarzpunkt', 'linearer Weißpunkt' und 'Symmetriepunkt (SP)' neu zu berechnen.
+TP_LOCALLAB_GHS_AUTOBW;Automatischer Schwarz- & Weißpunkt
 TP_LOCALLAB_GHS_B;Lokale Intensität (b)
-TP_LOCALLAB_GHS_BLACKPOINT_FRAME;Schwarzpunkt/Weißpunkt/Glanzlichter
-TP_LOCALLAB_GHS_BLP;Schwarzpunkt (BP linear)
-TP_LOCALLAB_GHS_BLP_TOOLTIP;Legt den Schwarzpunkt für eine lineare Dehnung des Bildes fest.\n * Bei negativen Schiebereglerwerten werden in GHS „normal“ die Schatten linear angehoben, um übermäßiges Rauschen zu vermeiden und die Arbeit mit GHS zu erleichtern.\n * Bei positiven Schiebereglerwerten wird das Histogramm nach links verschoben. Für RAW-Bilder können Sie auch „Raw-Tab > RAW-Schwarzpunkte – Dunst entfernen“ verwenden, was präziser ist.\n * Der durch die lineare Dehnung gewonnene Kontrast wird gleichmäßig über das Bild verteilt.\n\n * Sie können einen linearen Schwarzpunkt-Offset anpassen, um entweder:\n - Rauschen in den tiefen Schatten auszugleichen.\n - das Histogramm anzupassen.\n\n * Es wird empfohlen, diese Schieberegler vor den Haupt-GHS-Schiebereglern anzupassen, um ein Übersteuern der Daten zu vermeiden. Für diese Anpassung wird ein sehr niedriger Dehnungsfaktor (D) empfohlen (standardmäßig 0,001). \n * Die Beschriftung „Anzahl ungültiger Pixel Schatten:x Lichter=y“ zeigt die Anzahl der Pixel an, die abgeschnitten würden, wenn die beiden Schieberegler nicht angepasst würden. \n * Die Beschriftung „Pixelwerte – Dunkelste:w Hellste:z“ zeigt die minimalen und maximalen Werte im Bereich [0, 1] an. \n * Im Modus „GHS Invertieren“ ist das Verhalten umgekehrt und es gibt mögliche Interaktionen mit dem Weißpunkt.
-TP_LOCALLAB_GHS_BPFRAME_TOOLTIP;Legt den Schwarzpunkt (BP linear), den Weißpunkt (WP linear) und die Lichter für eine lineare Dehnung des Bildes fest.\n\n * Die Einstellungen für Schwarzpunkt (BP linear) und Weißpunkt (WP linear) sind nur verfügbar, wenn der Dehnungsfaktor (D) zwischen 0,001 und 0,002 liegt, um das Histogramm nicht zu beeinflussen.\n\n * Wenn der Dehnungsfaktor 0,002 oder weniger beträgt, haben, außer Schwarzpunkt und Weißpunkt; keinerlei Dehnungseinstellungen eine Wirkung.\n\n * Die Einstellungen für Schwarzpunkt (BP linear) und Weißpunkt (WP linear) reagieren empfindlich auf die allgemeinen Einstellungen vor GHS: Lichterrekonstruktion, Weißabgleich und RAW-Prozesse.\n\n * Um relevante Einstellungen für Schwarzpunkt (BP linear) und Weißpunkt (WP linear) zu erhalten, muss das gesamte Bild analysiert werden. Es wird empfohlen, „Gesamtes Bild an Bildschirm anpassen – Tastenkombination Alt-f“ zu verwenden.
+TP_LOCALLAB_GHS_BLACKPOINT_FRAME;Schwarzpunkt/Weißpunkt
+TP_LOCALLAB_GHS_BLP;Schwarzpunkt (linear)
+TP_LOCALLAB_GHS_BLPHLPAUTO_TOOLTIP;Automatische Anpassung der Werte für ‘Schwarzpunkt‘ und ‘Weißpunkt‘.\n Nicht verfügbar im inversen GHS-Modus und muss deaktiviert werden, damit der inverse GHS-Modus funktioniert. Diese Funktion muss deaktiviert (und anschließend wieder aktiviert) werden, um die ‘Matrixkonvertierung (AgX, JzAzBz, Cat16)‘ zu ändern.\n Im Allgemeinen sind die automatischen Einstellungen zufriedenstellend.\n Bei Bedarf können Sie die beiden Punkte anschließend anpassen.\n * Schwarzpunkt: Negative Schiebereglerwerte können hilfreich sein, wenn die Schatten besonders abgesoffen sind.\n * Erhöhen Sie den Wert für ‘Weißpunkt‘ bei Bedarf manuell, insbesondere wenn er kleiner als 1 ist, um dem System mehr Flexibilität zu verleihen und mögliche Farbraumüberläufe aufgrund von GHS oder nachfolgenden Anpassungen zu vermeiden.
+TP_LOCALLAB_GHS_BLP_TOOLTIP; Legt den Schwarzpunkt für eine lineare Bildstreckung fest.\n * Im normalen GHS-Modus heben negative Schiebereglerwerte die Schatten linear an, um übermäßiges Rauschen zu vermeiden und die GHS-Berechnungen zu vereinfachen.\n * Bei positiven Schiebereglerwerten wird das Histogramm nach links verschoben. Für RAW-Bilder können Sie im RAW-Tab auch die präzisere Option ‘RAW-Schwarzpunkte > Dunst entfernen’ verwenden.\n * Die durch die lineare Streckung bedingte Kontrasterhöhung wird gleichmäßig über das Bild verteilt.\n\n * Sie können den linearen Schwarzpunktversatz anpassen, um entweder:\n - Rauschen in den tiefen Schatten zu berücksichtigen.\n - das Histogramm anzupassen.\n\n * Die Bezeichnung ‘Anzahl abgeschnittener Pixel Schatten:x Lichter:y’ zeigt die Anzahl der Pixel an, die ohne Anpassung der beiden Schieberegler abgeschnitten würden.\n * Die Bezeichnung ‘Pixelwerte – Dunkelstes:w Hellstes:z’ zeigt die Minimal- und Maximalwerte im Bereich [0, 1] an.\n * Die Bezeichnung ‘RGB-Werte – R:r G:g B:b’ zeigt die Maximalwerte für jeden Kanal an.\n * Die Bezeichnung ‘Dynamikumfang GHS (EV)’ zeigt den Dynamikumfang an, der anstelle der Luminanz den Wert des höchsten und des niedrigsten der drei RGB-Kanäle verwendet.\n\n * Im inversen GHS-Modus ist das Verhalten umgekehrt. Mögliche Wechselwirkungen mit dem Weißpunkt. In den meisten Fällen, insbesondere bei Verwendung eines zweiten GHS-Punktes, sind die Anpassungen gering oder sogar unnötig.\n\nDie Aktivierung des Kontrollkästchens ‘Inverses GHS’ ist nur möglich, wenn das Kontrollkästchen ‘Automatischer Schwarzpunkt & Weißpunkt’ deaktiviert ist.
+TP_LOCALLAB_GHS_BPFRAME_TOOLTIP; Legt den Schwarzpunkt (linearer BP) und den Weißpunkt (linearer WP) für eine lineare Streckung fest.\n\n * Die Einstellungen für Schwarzpunkt (linearer BP) und Weißpunkt (linearer WP) reagieren empfindlich auf die allgemeinen Einstellungen vor der GHS-Verarbeitung, d. h. Spitzlichterrekonstruktion, Weißabgleich und RAW-Verarbeitung.\n\n * Um aussagekräftige Einstellungen für Schwarzpunkt (linearer BP) und Weißpunkt (linearer WP) zu erhalten, muss das gesamte Bild analysiert werden. Es wird empfohlen, die Option ‘Bild an Bildschirm anpassen’ (Tastenkombination Alt+F) zu verwenden.\n\n * Damit die inverse GHS- oder Matrixkonvertierung (AgX, Jz, Cat16) funktioniert, muss das Kontrollkästchen ‘Automatischer Schwarzpunkt & Weißpunkt’ deaktiviert sein.
 TP_LOCALLAB_GHS_B_TOOLTIP;Dieser Parameter steuert, wie eng die Dehnung um den Symmetriepunkt (SP) fokussiert ist, indem er die Form der Transformation selbst ändert:\n * Für konzentrierte Dehnungen (wie z. B. anfängliche Dehnungen bei linearen Bildern) sollte ein großer 'b'-Faktor verwendet werden, um eine Dehnung innerhalb einer Histogrammspitze zu fokussieren und gleichzeitig die Dehnung von der Histogrammspitze weg zu defokussieren.\n * Zur Anpassung nichtlinearer Bilder sollten niedrigere 'b'-Parameter verwendet werden, um Kontrast und Helligkeit gleichmäßiger zu verteilen.\n * Große positive 'b'-Werte können als Histogrammverbreiterung betrachtet werden, d. h. sie breiten das Histogramm breiter um den Fokuspunkt SP aus.\n * Im Gegensatz dazu verschieben niedrigere 'b'-Werte das Histogramm tendenziell in eine hellere oder dunklere Position, ohne seine Breite zu stark zu beeinflussen.\n * Als allgemeine Regel gilt, dass der verwendete 'b'-Faktor abnimmt, wenn sich eine Dehnungssequenz dem Ende nähert, obwohl höhere 'b'-Werte immer noch zur präzisen Platzierung von zusätzlichem Kontrast verwendet werden können.
 TP_LOCALLAB_GHS_CHRO;Buntheitsfaktor (C) Lab
 TP_LOCALLAB_GHS_CHRO_TOOLTIP;GHS Buntheit - große Dehnungen kompensieren
 TP_LOCALLAB_GHS_CURVE_TOOLTIP;Zeigt die durch GHS-Berechnungen generierte S-Kurve, hauptsächlich zur Veranschaulichung.\n\n * Die Kurve reagiert nur auf die Einsteller und kann nicht direkt geändert werden.
 TP_LOCALLAB_GHS_D;Dehnungsfaktor (D)
-TP_LOCALLAB_GHS_D_TOOLTIP;Dieser Parameter steuert den Grad der Dehnung. Ist der Dehnungsfaktor auf Null gesetzt, erfolgt keine Dehnung. Anders ausgedrückt handelt es sich um die Identitätstransformation.\n\n * Die Einstellungen für Schwarzpunkt (BP linear) und Weißpunkt (WP linear) sind nur verfügbar, wenn der Dehnungsfaktor (D) zwischen 0,001 und 0,002 liegt.
+TP_LOCALLAB_GHS_D_TOOLTIP; Dieser Parameter steuert den Dehnungsgrad. Ist der Dehnungsfaktor auf Null gesetzt, erfolgt keine Dehnung.\n\nDamit Inverse GHS funktioniert, muss das Kontrollkästchen „Automatischer Schwarz- und Weißpunkt“ deaktiviert sein.
 TP_LOCALLAB_GHS_GHSDIAG; Visualisierung der GHS-Kurve
-TP_LOCALLAB_GHS_HLP;Weißpunkt (WP linear)
-TP_LOCALLAB_GHS_HLP_TOOLTIP;Legt den Weißpunkt für eine lineare Dehnung des Bildes fest. Pixel mit einem Wert größer als der eingegebene Weißpunkt werden abgeschnitten und die Daten gehen verloren.\n * Der durch die lineare Dehnung gewonnene Kontrast wird gleichmäßig über das Bild verteilt, das dadurch aufgehellt wird. Pixel mit Werten größer als der Weißpunkt erscheinen weiß und haben den Wert 1,0.\n * Wenn Sie diesen Parameter auf einen Wert größer als 1 setzen, wird der Dynamikumfang im oberen Bereich erweitert.\n * Die Methode „Lichter rekonstruieren“ hat einen sehr starken Einfluss auf den Weißpunktwert.\n\n * Es wird empfohlen, diesen Schieberegler vor den Haupt-GHS-Schiebereglern einzustellen, um Datenverluste zu vermeiden. Für diese Anpassung wird ein sehr niedriger Dehnungsfaktor (D) empfohlen (standardmäßig 0,001). \n * Die Beschriftung „Anzahl ungültiger Pixel – Schatten: x, Lichter = y“ zeigt die Anzahl der Pixel an, die abgeschnitten würden, wenn die beiden Schieberegler nicht angepasst würden. \n * Die Beschriftung „Pixelwerte – Dunkelste: w, Hellste: z“ zeigt die minimalen und maximalen Werte im Bereich [0, 1] an. \n * Im Modus „GHS Invertieren“ ist das Verhalten umgekehrt und es gibt mögliche Interaktionen mit dem Schwarzpunkt.
+TP_LOCALLAB_GHS_HLP;Weißpunkt (linear)
+TP_LOCALLAB_GHS_HLP_TOOLTIP; Legt den Weißpunkt für eine lineare Dehnung des Bildes fest. Alle Pixel mit einem Wert über dem eingegebenen Weißpunkt werden abgeschnitten und die Daten gehen verloren.\n * Der durch die lineare Dehnung erzielte Kontrast wird gleichmäßig über das Bild verteilt, wodurch dieses aufgehellt wird. Pixel mit Werten über dem Weißpunkt erscheinen weiß und haben den Wert 1,0.\n * Durch Einstellen dieses Parameters auf einen Wert größer als 1 wird der Dynamikumfang im oberen Bereich erweitert.\n * Die Methode ‘Lichterrekonstruktion‘ hat einen sehr starken Einfluss auf den Weißpunktwert.\n\n * Die Bezeichnung ‘Anzahl abgeschnittener Pixel – Schatten:x Lichter=y‘ zeigt die Anzahl der Pixel an, die ohne Anpassung der beiden Schieberegler abgeschnitten würden.\n * Die Bezeichnung ‘Pixelwerte – Dunkelstes:w Hellstes:z‘ zeigt die Minimal- und Maximalwerte im Bereich [0, 1].\n * Die Bezeichnung ‘RGB-Werte – R:r G:g B:b’ zeigt die Maximalwerte für jeden Kanal.\n * Die Bezeichnung ‘Dynamikumfang GHS (Ev)’ zeigt den Dynamikumfang an, der den Wert des höchsten und niedrigsten der drei RGB-Kanäle anstelle der Luminanz verwendet.\n\n * Im inversen GHS-Modus ist das Verhalten umgekehrt, und es können Wechselwirkungen mit dem Schwarzpunkt auftreten.\n\n * Damit Inverse GHS funktioniert, muss das Kontrollkästchen ‘Automatischer Schwarzpunkt & Weißpunkt’ deaktiviert sein.
 TP_LOCALLAB_GHS_HP;Lichter schützen (HP)
 TP_LOCALLAB_GHS_HP_TOOLTIP;Legt einen Wert fest, ab dem die Dehnung angepasst wird, um den Kontrast in den Lichtern zu erhalten. Dies geschieht durch eine lineare Dehnung der Daten oberhalb des „HP“-Werts, wobei Kontrast vom restlichen Bild reserviert wird. Durch Verschieben des HP-Werts in Richtung der aktuellen SP-Einstellung werden sowohl Umfang als auch Stärke dieser Kontrastreservierung erhöht. Der Nettoeffekt besteht darin, die Gesamtdehnung zu niedrigeren Helligkeitsstufen zu verschieben, während Kontrast und Schärfe in den Lichtern erhalten bleiben. Die für die Lichter reservierte Kontraststärke ist so gewählt, dass die Kontinuität der Dehnung erhalten bleibt.\n * Dieser Parameter darf höchstens 1 und nicht kleiner als der Symmetriepunkt sein.\n * Der Einsteller begrenzt den Maximalwert automatisch auf den Symmetriepunkt (SP)..\n\n * Die Verwendung der Glanzlichterdämpfung verstärkt die Wirkung von „Lichter schützen (HP)“.
 TP_LOCALLAB_GHS_INV;GHS Invertieren
-TP_LOCALLAB_GHS_INV_TOOLTIP;Die invertierte GHS-Transformation eignet sich für die Arbeit im Negativraum. Sie erhöht den Kontrast rechts und links im Histogramm, hellt tiefe Schatten auf, verdunkelt helle Lichter und verdichtet das Histogramm zur Bildmitte hin.\n\n * Die verallgemeinerte hyperbolische inverse Transformation ermöglicht die Wiederherstellung des Originalbildes unter Einhaltung mathematischer Genauigkeit, kann aber auch für andere Zwecke eingesetzt werden.\n\n * Wurden Weißpunkt und Schwarzpunkt im Normalmodus geändert, müssen sie wahrscheinlich neu angepasst werden. Der Weißpunkt muss oft nach unten korrigiert werden. Es besteht eine Wechselwirkung zwischen den beiden Einstellungen.
+TP_LOCALLAB_GHS_INV_TOOLTIP; Die inverse GHS-Transformation ist nützlich, um den Gesamtkontrast zu reduzieren oder das Originalbild wiederherzustellen. Sie erhöht den Kontrast am rechten und linken Rand des Histogramms, hellt die tiefen Schatten auf, dunkelt die hellen Lichter ab und verschiebt das Histogramm zur Mitte.\n\n * Die generalisierte hyperbolische inverse Transformation ermöglicht die Wiederherstellung des Originalbildes (unter Berücksichtigung mathematischer Genauigkeit), kann aber auch für andere Zwecke verwendet werden. Diese Funktion ähnelt der Funktion ‘Ausschlusspunkt’, ist jedoch leistungsfähiger.\n\n * Wurden Weißpunkt und Schwarzpunkt im normalen Modus (automatisch oder manuell) verändert, müssen sie wahrscheinlich neu angepasst werden. Der Weißpunkt muss häufig abgesenkt werden. Die beiden Einstellungen beeinflussen sich gegenseitig. In den meisten Fällen, insbesondere bei Verwendung als zweiter GHS-Spot, sind die Anpassungen gering oder sogar unnötig.\n\n * Kann als zweiter GHS-Spot nach einem ersten GHS-Spot im globalen Modus oder im Modus ‘Vollbild’ verwendet werden, meist mit der Spot-Methode ‘Normaler Spot’, beispielsweise um einen Himmel oder einen Sonnenuntergang abzudunkeln.\n\n * Damit die inverse GHS-Funktion funktioniert, muss das Kontrollkästchen ‘Automatischer Schwarzpunkt & Weißpunkt’ deaktiviert sein.
 TP_LOCALLAB_GHS_LC;lokaler Kontrast (LC)
 TP_LOCALLAB_GHS_LC_FRAME;Dehnungsregelung & Mitteltöne
-TP_LOCALLAB_GHS_LC_TOOLTIP;Erhöht leicht den lokalen Kontrast, der durch die Dehnung abgeschwächt wurde.\nKann durch andere, auf lokalen Kontrast spezialisierte Tools wie Wavelets ergänzt werden.\n\nWenn der Dehnungsfaktor 0,002 oder weniger beträgt, sind Dehnungsregulierung und Mitteltöne deaktiviert.
+TP_LOCALLAB_GHS_LC_TOOLTIP;Erhöht den durch die Dehnung geschwächten lokalen Kontrast leicht.\nKann durch andere, speziell auf lokalen Kontrast ausgerichtete Werkzeuge wie Wavelets ergänzt werden.
 TP_LOCALLAB_GHS_LP;Schatten schützen (LP)
 TP_LOCALLAB_GHS_LP_TOOLTIP;Legt einen Wert fest, unterhalb dessen die Dehnung angepasst wird, um den Kontrast in den Schatten zu erhalten. Dies geschieht durch eine lineare Dehnung der Daten unterhalb des LP-Pegels, wobei Kontrast vom Rest des Bildes reserviert wird. Durch Verschieben des LP-Pegels in Richtung der aktuellen SP-Einstellung ändern sich sowohl Umfang als auch Stärke dieser Kontrastreservierung. Der Nettoeffekt besteht darin, die Gesamtdehnung zu höheren Helligkeitsstufen zu verschieben, während Kontrast und Definition im Hintergrund erhalten bleiben. Die für die Schatten reservierte Kontraststärke ist so gewählt, dass die Kontinuität der Dehnung erhalten bleibt.\n * Dieser Parameter muss mindestens 0 und darf nicht größer als der Symmetriepunkt sein.\n * Der Einsteller begrenzt den Maximalwert automatisch auf den Symmetriepunkt (SP).\n\n * Durch die Verwendung des Schwarzpunkts (negative Werte) können, sofern möglich, sowohl der Wert des Symmetriepunkts (SP) als auch die Aktion „Schatten schützen (LP)“ geändert werden.
 TP_LOCALLAB_GHS_METHOD_TOOLTIP;Mit dem GHS-Verfahren (Generalized Hyperbolic Stretch, oder auch die verallgemeinerte hyperbolische Dehnung) können Sie die Pixelwerte in Ihrem Bild transformieren, um die Darstellung der zugrunde liegenden Daten für die menschliche Visualisierung zu verbessern.\nDie im GHS-Verfahren verwendeten verallgemeinerten hyperbolischen Gleichungen haben fünf Hauptparameter. Dies ermöglicht erhebliche Flexibilität bei der Gestaltung der Transformationsform.\n\nTypische Anwendungen von Pixelintensitätstransformationen sind:\n * Anfängliche Dehnung der Pixeldaten aus dem linearen Zustand.\n * Hinzufügen von Kontrast zu wichtigen Bildbereichen.\n * Allgemeine Aufhellung oder Abdunkelung des Bildes.\n * Anpassung des Bilddynamikbereichs.\n * Anpassung der Pixeldaten in den Kanälen RGB-Luminanz, RGB-Standard, Luminanz - Buntheit (Lab/Lch), Helligkeit (HSL), Sättigung (HSL) oder Farbton (HSL).\n * Für bessere Ergebnisse können Sie in mehreren Schritten vorgehen und zwei oder mehr RT-Spots erstellen, die jeweils mit dem GHS-Werkzeug überlagert werden. Für jeden RT-Spot ist der Basiswert des Symmetriepunkts (SP) unterschiedlich. Verwenden Sie die Histogrammspitze, um den SP-Wert zu positionieren.\n * Sie können das System beispielsweise im RGB-Modus (1. Spot) starten, dann den 2. Spot im RGB-Modus mit einem anderen SP und den 3. Spot im Sättigungs- oder Farbtonmodus.\n * Sie können RT-Spots im „Normal“-Modus und im „Invers“-Modus mischen, um den Kontrast auszugleichen.\n * Im Vollbildmodus können Sie den Effekt basierend auf dem DeltaE auf bestimmte Farben beschränken.
 TP_LOCALLAB_GHS_MID;Mitteltöne
-TP_LOCALLAB_GHS_MID_TOOLTIP;Passt die Mitteltonbalance nach der GHS-Transformation an.\n Kann verwendet werden, um die Mitteltöne des Bildes nach der Dehnung neu auszugleichen.\n\nWenn der Dehnungsfaktor 0,002 oder weniger beträgt, sind Dehnungsregulierung und Mitteltöne deaktiviert.
+TP_LOCALLAB_GHS_MID_TOOLTIP;Passt die Mitteltonbalance nach der GHS-Transformation an.\nKann verwendet werden, um die Mitteltöne des Bildes nach der Dehnung neu auszubalancieren.
 TP_LOCALLAB_GHS_MODECUR;GHS
 TP_LOCALLAB_GHS_MODELIN;Linear
 TP_LOCALLAB_GHS_SIMUL_TOOLTIP;Zeigt eine repräsentative Kurve der GHS-Funktion.
@@ -3508,6 +3672,11 @@ TP_LOCALLAB_LIST_TOOLTIP;Es gibt für jedes Werkzeug drei Komplexitätsstufen: B
 TP_LOCALLAB_LMASK_LEVEL_TOOLTIP;Ermöglicht, den Effekt auf bestimmte Detailebenen in der Maske zu verringern oder zu erhöhen, indem bestimmte Luminanz-Zonen (im Allgemeinen die hellsten) angesprochen werden.
 TP_LOCALLAB_LMASK_LL_TOOLTIP;Ermöglicht das freie Ändern des Kontrasts der Maske.\nHat eine ähnliche Funktion wie die Regler 'Gamma' und 'Neigung'.\nMit dieser Funktion können Sie bestimmte Bereiche des Bildes (normalerweise die hellsten Bereiche der Maske) anvisieren, indem mit Hilfe der Kurve dunklere Bereiche ausgeschlossen werden). Kann Artefakte erzeugen.
 TP_LOCALLAB_LOCCONT;Unschärfemaske
+TP_LOCALLAB_LOCKMADL;MadL-Rauschbewertung sperren
+TP_LOCALLAB_LOCKMADL2;Manuelle Einstellungen
+TP_LOCALLAB_LOCKMADL2_TOOLTIP; Ermöglicht die manuelle Steuerung der MadL-Werte. Achtung: Diese Funktion setzt Kenntnisse der Rauschreduzierung mittels Wavelets voraus. Stellen Sie sicher, dass die Anfangswerte für den ausgewählten Bereich automatisch festgelegt wurden.\n\nStellen Sie sicher, die MadL-Funktion nicht zu verwechseln, die eine Rauschbewertung darstellt und nur in der Wavelet-Entrauschung verwendet wird. Dort wird die Stärke in der selektiven Bearbeitung mithilfe einer Kurve und einer ausgewählten Stufe (Aggressiv/Konservativ) festgelegt. Die MadL-Skala ist exponentiell und nicht linear.\n\nDie ersten Stufen der Wavelet-Zerlegung führen zu einer sichtbaren Rauschreduzierung, während höhere Stufen das Banding verstärken.
+TP_LOCALLAB_LOCKMADLFRA_TOOLTIP;Zeigt die aktuellen Werte der mittleren absoluten Abweichung (MadL) an.\nWenn die Option ‘MadL-Rauschbewertung sperren‘ nicht aktiviert ist, können Sie diese Werte manuell ändern, was sich auf das gesamte Bild auswirkt.\nDie ersten Stufen 0, 1, 2, 3 für die horizontale Richtung, 7, 8, 9, 10 für die vertikale Richtung und 14, 15, 16, 17 für die Diagonale wirken auf das Detailrauschen. Höhere Stufen haben einen stärkeren Einfluss auf das Streifenrauschen.\n\nDie Luminanzrauschreduzierung ist eine Funktion, die MadL (abhängig von Stufe und Richtung) durch die Detailstufe (hohe, mittlere, niedrige Frequenz), den aktuellen Wert der Zerlegung an dieser Stelle (abhängig von Stufe und Richtung) und die vom Benutzer entsprechend der Stufe der Wavelet-Zerlegung angewendete Kurve dividiert.
+TP_LOCALLAB_LOCKMADL_TOOLTIP; Ermöglicht das Sperren der Rauschbewertung für die Wavelet-Rauschreduzierung.\n\nDie Wavelet-Rauschunterdrückung verwendet MadL (Median Absolute Deviation Luminance), um das Rauschen anhand eines Schiebereglers oder einer Kurve zu reduzieren.\nDie Pipeline von RawTherapee führt zu unterschiedlichen MadL-Werten je nach Vorschauposition und damit zu Unterschieden im Ergebnis.\n\nWenn Sie dieses Kontrollkästchen aktivieren, wird der Wert der Vorschau zu diesem Zeitpunkt für die globale Verarbeitung verwendet. So können Sie einen bestimmten Bereich, Hintergrund oder ein Gesicht für die Rauschreduzierung priorisieren, anstatt einen allgemeinen Durchschnittswert zu verwenden. Aktivieren Sie das Kontrollkästchen natürlich erst, nachdem Sie den Bereich ausgewählt haben.
 TP_LOCALLAB_LOC_CONTRAST;Lokaler Kontrast u. Wavelets
 TP_LOCALLAB_LOC_CONTRASTPYR;Pyramide 1:
 TP_LOCALLAB_LOC_CONTRASTPYR2;Pyramide 2:
@@ -3563,6 +3732,10 @@ TP_LOCALLAB_LUMASK_TOOLTIP;Passt den Grauton oder die Farbe des Maskenhintergrun
 TP_LOCALLAB_LUMAWHITESEST;Hellste
 TP_LOCALLAB_LUMFRA;L*a*b* Standard
 TP_LOCALLAB_LUMLABEL;Luminanz Ebenen 0123: Mittel=%1 Hoch=%2 
+TP_LOCALLAB_MADLDIRD;D-Ebene 0..6/14-20
+TP_LOCALLAB_MADLDIRH;H-Ebene 0..6
+TP_LOCALLAB_MADLDIRV;V-Ebene 0..6/7-13
+TP_LOCALLAB_MADLFRA;mittlere absolute Abweichung (L)
 TP_LOCALLAB_MASFRAME;Maskieren und Zusammenführen
 TP_LOCALLAB_MASFRAME_TOOLTIP;Für alle Masken.\nBerücksichtigt das ΔE-Bild, um zu vermeiden, dass der Auswahlbereich geändert wird, wenn die folgenden Maskenwerkzeuge verwendet werden: 'Gamma', 'Steigung', 'Chroma', 'Kontrastkurve', 'Lokaler Kontrast' (nach Wavelet-Ebene), 'Unschärfemaske' und 'Strukturmaske' (falls aktiviert).\nDeaktiviert, wenn der Inverse-Modus verwendet wird.
 TP_LOCALLAB_MASK;Kontrast
@@ -3652,8 +3825,31 @@ TP_LOCALLAB_MERTHI;Farbe nachbelichten (burn)
 TP_LOCALLAB_MERTHR;Differenz
 TP_LOCALLAB_MERTWE;Ausschluss
 TP_LOCALLAB_MERTWO;Subtraktion
+TP_LOCALLAB_METHODCAP_TOOLTIP;Sie können zwei Methoden verwenden:\n 1. RL-Dekonvolution, ähnlich der Version im Detail-Tab.\n\n 2. Capture-Dekonvolution, eine Anpassung der Eingangs-Schärfung im Raw-Tab für die selektive Bearbeitung. Sie können diesen Algorithmus entweder im Standalone-Modus oder nach der Rauschreduzierung verwenden. Die Capture-Schärfung ermöglicht eine feinere Schärfensteuerung, indem die Eckenschärfe abgemildert wird, um den Fokus auf das Hauptmotiv zu verstärken. Die Ergebnisse in den TIF/JPG-Ausgaben entsprechen denen in der Ansicht ‘An Bildschirm anpassen‘.
 TP_LOCALLAB_METHOD_TOOLTIP;'Verbessert + Chroma Rauschreduzierung' verlängern die Verarbeitungszeiten erheblich.\nAber sie reduzieren auch Artefakte.
-TP_LOCALLAB_MIDTCIE;Mitteltöne
+TP_LOCALLAB_MICHBLACK;schwarz linear subtrahieren
+TP_LOCALLAB_MICHBLWH;Schwarz-subtrahiert =%1 Weißpunkt=%2
+TP_LOCALLAB_MICHBLWHNO;---
+TP_LOCALLAB_MICHBLWH_TOOLTIP;Ermöglicht es Ihnen, die Auswirkung der beiden Kontrollkästchen zu sehen:\n * Schwarzpunkt subtrahieren: Reduziert den Wert des linearen Schwarzpunkts auf nahezu null, indem der angegebene Wert subtrahiert wird.\n * Weißpunkt: Nach dem Abzug des Schwarzpunkts werden die RGB-Werte durch den ‘Linearen Dynamikumfang‘ geteilt (d. h. den angezeigten Weißpunktwert abzüglich des alten Schwarzpunkts).\n\n Die Reduzierung des Schwarzpunkts auf nahezu null sowie die – wie beschrieben – erfolgte Berücksichtigung des linearen Dynamikumfangs ermöglichen es dem Algorithmus, einen besseren Kontrast zu erzeugen und den tatsächlichen Farbumfang (Gamut) besser zu berücksichtigen.\n Die Aktivierung der ‘JDx-Matrix‘ verringert den ‘Linearen Dynamikumfang‘ und verändert die Farbbalance.
+TP_LOCALLAB_MICHDR_TOOLTIP; schwarz linear subtrahieren: Reduziert die Werte des linearen Schwarzpunkts auf nahezu null. Dies nutzt die verfügbaren Daten optimal aus, indem der Gesamtkontrast gesteigert und Dunsteffekte reduziert werden.\n\nLinearer Dynamikumfang: Ermöglicht die Einbeziehung von Daten, die außerhalb des Farbumfangs liegen (beispielsweise bei Sonnenuntergängen). Die Aktivierung der Option ‚Lichter rekonstruieren‘ > ‘Farbübertragung‘ kann hierbei zu einer deutlichen Verbesserung führen.\n\nDämpfungsschwelle: Nutzt eine Exponentialfunktion, um Spitzlichter abzuschwächen, bei denen die Gefahr besteht, dass sie den Farbumfang überschreiten.
+TP_LOCALLAB_MICHEXP;Belichtung (Ev)
+TP_LOCALLAB_MICHFRA;Michaelis-Menten Einstellungen
+TP_LOCALLAB_MICHHIGH;Dämpfungsschwelle
+TP_LOCALLAB_MICHJDX;JDx Matrix
+TP_LOCALLAB_MICHJDX_TOOLTIP;Das JDx-Kontrollkästchen ermöglicht es dem Benutzer, entweder die Standard-Transformationen oder die JDx-LMS-Transformationen auszuwählen. LMS ist eine Farbraumtransformation, welche die Reaktion (Empfindlichkeit) der drei Zapfentypen im menschlichen Auge auf lange, mittlere und kurze Wellenlängen abbildet.\n\nBei diesen Transformationen handelt es sich um Matrizen, die jeden der RGB-Kanäle für jedes einzelne Pixel modifizieren und dabei – je nach gewählter Option – bestimmten dominanten Farben Priorität einräumen.\n * Nicht markiert: Die Daten bleiben unverändert (Standard).\n * JDx: Akzentuiert jeden der RGB-Kanäle durch Einwirkung auf die XYZ-Werte, sodass die LMS-Daten als farbintensiver wahrgenommen werden.
+TP_LOCALLAB_MICHKPAR;"Knie"-Stärke (K)
+TP_LOCALLAB_MICHOUT;Ausgabebegrenzung
+TP_LOCALLAB_MICHSAT;Sättigung
+TP_LOCALLAB_MICHSPAR;Ausgabeskalierung (S)
+TP_LOCALLAB_MICHTONEFRA;Tonkurve
+TP_LOCALLAB_MICHWHITE;Linearer Dynamikumfang
+TP_LOCALLAB_MICH_TOOLTIP;Diese Tonwertzuordnung verwendet die Michaelis-Menten-Gleichung, die aus der Biochemie zur Beschreibung der Enzymkinetik stammt. In der Bildverarbeitung erzeugt sie eine glatte, sättigende Kurve, die sich für das Tone Mapping eignet.\n\n * Belichtung: Passt die Helligkeit des Eingangsbildes an.\n * Ausgabeskala (S): Steuert den maximalen asymptotischen Wert der Kurve; im Wesentlichen den Weißwert.\n * Knickpunkt (K): Bestimmt den Knickpunkt der Kurve. Niedrigere Werte führen zu einem schärferen Übergang zum komprimierten Lichterbereich.\n * Sättigung: Passt die Farbsättigung nach dem Tone Mapping an.\n * Maximaler Ausgabewert: Legt den endgültigen Clipping-Punkt für die Ausgabewerte fest.
+TP_LOCALLAB_MIDTCIE;Wert
+TP_LOCALLAB_MIDTCIEFRA;Mitteltöne
+TP_LOCALLAB_MIDTCIEM1;Vor Gamma & Steigung
+TP_LOCALLAB_MIDTCIEM2;Nach Gamma & Steigung
+TP_LOCALLAB_MIDTCIEM3;Nach  CAM16
+TP_LOCALLAB_MIDTCIEMAIN;Mitteltöne
 TP_LOCALLAB_MLABEL;Wiederhergestellte Daten Min=%1 Max=%2
 TP_LOCALLAB_MLABEL_TOOLTIP;Die Werte sollten in der Nähe von Min=0 Max=32768 (Log-Modus) liegen, es sind jedoch auch andere Werte möglich. Sie können 'Wiederhergestellte Daten' beschneiden und 'Versatz' anpassen, um sie zu normalisieren.\nStellt Bilddaten ohne Überlagerung wieder her.
 TP_LOCALLAB_MODE_EXPERT;Erweitert
@@ -3707,7 +3903,7 @@ TP_LOCALLAB_PDEFRAME_TOOLTIP;PDE IPOL Algorithmus an RawTherapee angepasst: Lief
 TP_LOCALLAB_PRECAMGAMUT_TOOLTIP;Wenn aktiviert, wird eine Gamut-Kontrolle nach der Konvertierung nach XYZ durchgeführt.
 TP_LOCALLAB_PRECAMREFIMAIN_TOOLTIP;Ermöglicht, den Weiß-Punkt so zu bewegen, dass er sich der Dominanzfarbe annähert. Diese Aktion modifiziert die Reinheit. In Kombination mit 'Shift x' und 'Shift y' kann eine moderate Farbtönung vorgenommen werden.
 TP_LOCALLAB_PRECAMREFI_TOOLTIP;Ermöglicht, den Weiß-Punkt so zu bewegen, dass er sich der Dominanzfarbe annähert. Diese Aktion modifiziert die Reinheit.
-TP_LOCALLAB_PRECAM_TOOLTIP; „Quellen-Datenanpassungen“ ändert den Dynamikbereich mithilfe der Log-Kodierung, der Töne des Bildes und der Primärfarben (vereinfachtes abstraktes Profil) und der Mitteltöne direkt vor dem Ciecam-Prozess. Diese Werte sind anpassbar:\nGamma: Wirkt hauptsächlich auf helle Töne\nSteigung: Wirkt hauptsächlich auf dunkle Töne. Sie können jedes beliebige Paar aus Gamma und Steigung wählen (Werte >1) und der Algorithmus stellt sicher, dass zwischen den linearen und parabolischen Teilen der Kurve Kontinuität besteht.\nZielprimärfarben: Ermöglicht Ihnen, die Zielprimärfarben zu ändern, um die Bildfarbe (Sättigung) wiederherzustellen oder zu ändern. Die Farbbalance bleibt weitgehend erhalten, wenn das „Arbeitsprofil“ und die „Zielprimärfarben“ ähnlich sind. Das „Arbeitsprofil“ wird nicht geändert. Sie können auch die Primärfarben und die Lichtquelle (Weißpunkt) fein anpassen. Wenn Sie eine Primärfarbe vom Weißpunkt weg verschieben, wird die Sättigung reduziert und umgekehrt. Achten Sie auf den Farbumfang.
+TP_LOCALLAB_PRECAM_TOOLTIP; Die Quelldatenanpassungen verändern den Dynamikumfang (mittels Logarithmierung), die Bildtöne (einschließlich Mitteltöne) und die Primärfarben (mittels eines vereinfachten abstrakten Profils) unmittelbar vor der CIECAM-Konvertierung. Folgende Parameter können angepasst werden:\nGamma: Wirkt hauptsächlich auf helle Töne.\nSteigung: Wirkt hauptsächlich auf dunkle Töne. Der Algorithmus gewährleistet einen stetigen Übergang zwischen dem linearen und dem parabolischen Teil der Kurve für alle Kombinationen von Gamma und Steigung (Werte > 1).\nZielprimärfarben: Hiermit können Sie die Zielprimärfarben anpassen, um die Bildfarbe (Sättigung) wiederherzustellen oder zu verändern. Der Farbabgleich bleibt weitgehend erhalten, wenn das Arbeitsprofil und die Zielprimärfarben ähnlich sind. Das Arbeitsprofil wird nicht verändert. Sie können außerdem die Primärfarben und die Beleuchtung (Weißpunkt) feinabstimmen. Eine Verschiebung einer Primärfarbe vom Weißpunkt verringert die Sättigung und umgekehrt. Beachten Sie den Farbraum.
 TP_LOCALLAB_PREVHIDE;Mehr Einstellungen ausblenden
 TP_LOCALLAB_PREVIEW;Vorschau ΔE
 TP_LOCALLAB_PREVSHOW;Mehr Einstellungen einblenden
@@ -3715,7 +3911,7 @@ TP_LOCALLAB_PRIMILLFRAME;Primärfarben und Lichtquelle
 TP_LOCALLAB_PROCESSWAV;Anzeige der modifizierten Bereiche mit Wavelets
 TP_LOCALLAB_PROCESSWAV_TOOLTIP;Wavelet-Zerlegung:\nZeigt die durch die Wavelet-Einstellungen vorgenommenen Änderungen.\n\nSie sehen die Änderungen am zerlegten Bild unter Berücksichtigung von DeltaE und Übergängen, wenn Sie die Wavelet-Einstellungen ändern. Beachten Sie, dass dies von den Wavelet-Ebenen im Reiter „Erweitert“ abweicht, in denen Sie immer die Ergebnisse der Zerlegung sehen.
 TP_LOCALLAB_PROXI;Zerfallrate (ΔE)
-TP_LOCALLAB_QJMODE;Tonemapping-Methode Q(CAM16) & J(Jz) 
+TP_LOCALLAB_QJMODE;Tonemapping-Methode Q(CAM16) & J(Jz)
 TP_LOCALLAB_QJMODE_511;5.11 veraltet
 TP_LOCALLAB_QJMODE_512;5.12
 TP_LOCALLAB_QJMODE_TOOLTIP;Die Tonemapping-Methoden, die Helligkeitsdaten verwenden (Q für CAM16 und J für Jz), wurden in RawTherapee Version 5.12 geändert. Wählen Sie die aktuelle oder die veraltete Version aus.
@@ -3767,6 +3963,7 @@ TP_LOCALLAB_ROW_NVIS;Nicht sichtbar
 TP_LOCALLAB_ROW_VIS;Sichtbar
 TP_LOCALLAB_RSTPROTECT_TOOLTIP;'Rot- und Hauttöne schützen' beeinflusst die Schieberegler von Sättigung , Chromatizität und Buntheit.
 TP_LOCALLAB_SATCIE;Kontrolle Sättigung
+TP_LOCALLAB_SATCIE_TOOLTIP; Ändert die Bildsättigung, wenn das Gamma/Steigungsverhältnis von 2,4/12,92 abweicht. Es dient dem Ausgleich der durch signifikante Luminanzschwankungen verursachten Entsättigung.\nWerte zwischen 0,2 und 1,0 sind oft ausreichend.
 TP_LOCALLAB_SATUR;Sättigung
 TP_LOCALLAB_SATURV;Sättigung (s)
 TP_LOCALLAB_SCALEGR;Korngröße
@@ -3783,23 +3980,26 @@ TP_LOCALLAB_SETTINGS;Einstellungen
 TP_LOCALLAB_SH1;Schatten/Lichter
 TP_LOCALLAB_SH2;Equalizer
 TP_LOCALLAB_SH3;GHS - hyperbolische Dehnung
+TP_LOCALLAB_SH4;Tonwertzuordnung Michaelis-Menten (MM)
 TP_LOCALLAB_SHADEX;Schatten
 TP_LOCALLAB_SHADEXCOMP;Schattenkompression u. Tonwertweite
-TP_LOCALLAB_SHADHIGH;Schatten/Lichter, Equalizer& GHS
+TP_LOCALLAB_SHADHIGH;Schatten - Lichter - Tonwert
 TP_LOCALLAB_SHADHMASK_TOOLTIP;Reduziert die Lichter der Maske genauso wie der Schatten/Lichter-Algorithmus.
 TP_LOCALLAB_SHADMASK_TOOLTIP;Hebt die Lichter der Maske genauso wie der Schatten/Lichter-Algorithmus.
-TP_LOCALLAB_SHADOWHIGHLIGHT_TOOLTIP;Passen Sie Schatten und Lichter entweder mit den Schiebereglern „Schatten/Lichter“, dem „Tonwert-Equalizer“ oder „hyperbolischer Dehnung“ (GHS) an.\nKann anstelle des Belichtungsmoduls oder in Verbindung mit diesem oder für GHS als Tone Mapper verwendet werden.
+TP_LOCALLAB_SHADOWHIGHLIGHT_TOOLTIP;Schatten und Lichter können entweder mit den Reglern für ‘Schatten und Lichter’, dem ‘Tonwertausgleich’, der ‘generalisierten hyperbolischen Dehnung’ (GHS) oder der ‘Michaelis-Menten-Tonwertkorrektur’ (MM) angepasst werden.\nKann anstelle des Belichtungsmoduls, in Verbindung mit diesem oder für GHS/MM als Tonwertkorrektur verwendet werden.
 TP_LOCALLAB_SHAMASKCOL;Schatten
 TP_LOCALLAB_SHAPETYPE;Spot Form
 TP_LOCALLAB_SHAPE_TOOLTIP;'Ellipse' ist der normale Modus.\n'Rechteck' kann in einigen Fällen hilfreich sein, z.B. um die Trennzeichen im Vollbild-Modus außerhalb des Voransichtsbereiches zu setzen. In diesem Falle ist Transition = 100 zu setzen.\n\nZukünftige Versionen werden auch Polygone und Bezierkurven unterstützen.
 TP_LOCALLAB_SHARAMOUNT;Intensität
 TP_LOCALLAB_SHARBLUR;Unschärferadius 
+TP_LOCALLAB_SHARCAPFRAME;Ränder
 TP_LOCALLAB_SHARDAMPING;Dämpfung
 TP_LOCALLAB_SHARFRAME;Veränderungen
 TP_LOCALLAB_SHARITER;Iterationen
 TP_LOCALLAB_SHARP;Schärfen
 TP_LOCALLAB_SHARP_TOOLNAME;Schärfen
 TP_LOCALLAB_SHARRADIUS;Radius
+TP_LOCALLAB_SHARRLFRAME; Einstellungen RL Deconvolution
 TP_LOCALLAB_SHORTC; Maske Short L-Kurven
 TP_LOCALLAB_SHORTCMASK_TOOLTIP;Schließt die beiden Kurven L(L) und L(H) kurz.\nErmöglicht das Mischen des aktuellen Bildes mit dem durch die Masken geänderten Originalbild.\nVerwendbar mit den Masken 2, 3, 4, 6, 7.
 TP_LOCALLAB_SHOWC;Maske und Anpassungen
@@ -3833,7 +4033,7 @@ TP_LOCALLAB_SHOWT;Maske und Anpassungen
 TP_LOCALLAB_SHOWVI;Maske und Anpassungen
 TP_LOCALLAB_SHRESFRA;Schatten/Lichter & TRC
 TP_LOCALLAB_SHTRC_TOOLTIP;Basierend auf den (bereitgestellten) 'Arbeitsprofil'(en) werden die Farbtöne des Bildes geändert, indem das Arbeitsprofil auf eine Tonwertkurve einwirkt. \n'Gamma' wirkt hauptsächlich auf helle Töne.\n'Steigung' wirkt hauptsächlich auf dunkle Töne.\nEs wird empfohlen, die Tonwertkurve beider Geräte (Monitor- und Ausgabeprofil) auf sRGB (Standard) zu setzen.
-TP_LOCALLAB_SH_TOOLNAME;Schatten/Lichter - Equalizer & GHS
+TP_LOCALLAB_SH_TOOLNAME;Schatten - Lichter - Tonwert
 TP_LOCALLAB_SIGBLACKSSCIE;Schwarz-Verteilung
 TP_LOCALLAB_SIGCIE;Sigmoid
 TP_LOCALLAB_SIGFRA;Sigmoid Q und Steigungsbasiert
@@ -3876,12 +4076,14 @@ TP_LOCALLAB_SLOPESMOOTRCR;Rot-Balance (TRC)
 TP_LOCALLAB_SLOSH;Steigung
 TP_LOCALLAB_SMOOTHCIE;Glanzlichtdämpfung
 TP_LOCALLAB_SMOOTHCIETH;Dämpfungsschwellenwert
+TP_LOCALLAB_SMOOTHCIETHTRC;Glanzlicht-Dämpfungsschwellenwert
 TP_LOCALLAB_SMOOTHCIE_HIGH;Nur Glanzlichtdämpfung
+TP_LOCALLAB_SMOOTHCIE_INV;Farbe invertieren
 TP_LOCALLAB_SMOOTHCIE_LNK;R, G, & B verknüpfen
 TP_LOCALLAB_SMOOTHCIE_LUM;Helligkeitsmodus
 TP_LOCALLAB_SMOOTHCIE_SCA;Skalierung Yb Szene
-TP_LOCALLAB_SMOOTHCIE_TOOLTIP;Schließt die Verarbeitung durch Gamma, Neigung und Mitteltöne ab, indem eine leichte Abschwächung der Lichter bewirkt wird. Bitte beachten Sie, dass dies die Rekonstruktion von Glanzlichtern nicht ersetzt.\n\nGamma-basiert und Neigungsbasiert (Standard und Erweitert) ermöglichen Ihnen die Simulation einer Tonwertzuordnung mithilfe von:\na) Szenenbedingungen: Schwarz-Ev, Weiß-Ev, mittlere Leuchtdichte (Yb%)\nb) Betrachtungsbedingungen: mittlere Leuchtdichte (Yb%).\n\nDie Yb-Szenenskala ist eine Funktion von Weiß-Ev.
-TP_LOCALLAB_SMOOTHCIE_TRC;Gamma-basierte Dämpfung verstärken
+TP_LOCALLAB_SMOOTHCIE_TOOLTIP;Ergänzt die Verarbeitung durch Gamma, Steigung und Mitteltöne durch Anwendung von entweder:\n* asymptotischer Spitzlichterdämpfung\n* oder Tonwertkorrektur.\nBitte beachten Sie, dass dies die Spitzlichterrekonstruktion nicht ersetzt.\n\n* Ev-basiert: Dämpft Spitzlichter mithilfe einer Exponentialfunktion.\n\n* Gamma-basiert: Dämpft Spitzlichter mithilfe einer Hyperbolfunktion und partieller Tonwertkorrektur.\n\n* Slope-basiert: Verwendet Tonwertkorrektur. Die Steigung (Graubalance) wirkt auf den Dynamikumfang und beeinflusst Schatten und Kontrast. ‘Yb-Szene skalieren’ ist eine Funktion der Weiß-Ev.\n\n* RGB-Kanal-Steigung: Ähnlich wie ‘Steigungs-basiert’, jedoch für jeden R-, G- und B-Kanal differenzierbar. Der Dämpfungsschwellenwert modifiziert Mittelgrau und Schatten/Spitzlichter-Balance.\n\n* Sigmoid-basiert: Wendet Sigmoid-Tonwertkorrektur mit den Reglern für Kontrast und Verzerrung an. Der Weißpunkt (cd/m²) passt die maximale Bildschirmhelligkeit an. Diese neue Version von Sigmoid ist nicht kompatibel mit Versionen 5.11 und älter.\n\n* TRC-basiert: Wendet eine vereinfachte Tonwertkurve (TRC) auf jeden einzelnen R-, G- und B-Kanal an. Modifiziert das Gamma durch Anpassung der Schatten-/Lichterverteilung (Pegel). Der Modus ‘Relatives Gamma’ ist eine vereinfachte Methode, die die Steigung berücksichtigt. Die ‘Lichterdämpfungsschwelle’ reduziert den Effekt auf die Lichter.\n\n* Bei den RGB-Operatoren ‘RGB-Kanal-Steigung’ und ‘TRC-basiert’ simuliert das Kontrollkästchen ‘Farbe invertieren’ eine Filmnegativfunktion.
+TP_LOCALLAB_SMOOTHCIE_TRC;Farbe invertieren
 TP_LOCALLAB_SMOOTHCIE_TRCREL;Relativer Gamma-Modus
 TP_LOCALLAB_SMOOTHCIE_YB;Skalierung Yb Ansicht
 TP_LOCALLAB_SMOOTHCONTSIG;Kontrast
@@ -3900,6 +4102,7 @@ TP_LOCALLAB_SPECCASE;Spezielle Fälle
 TP_LOCALLAB_SPECIAL;Spezielle Verwendung von RGB-Kurven
 TP_LOCALLAB_SPECIAL_TOOLTIP;Mit dem Kontrollkästchen können alle anderen Aktionen entfernt werden, d. H. 'Bereich', Masken, Regler usw. (mit Ausnahme von Übergängen) um nur den Effekt der RGB-Tonkurve anzuwenden.
 TP_LOCALLAB_SPOTNAME;Neuer Spot
+TP_LOCALLAB_SPRADIUS_TOOLTIP; Versuchen Sie, eine automatische Symmetriepunkt-Schätzung (SP) einzustellen, jedoch nur im RGB-Modus. Gegebenenfalls ist eine manuelle Anpassung erforderlich.
 TP_LOCALLAB_STD;Standard
 TP_LOCALLAB_STR;Intensität
 TP_LOCALLAB_STRBL;Intensität
@@ -4027,7 +4230,21 @@ TP_PCVIGNETTE_ROUNDNESS;Form
 TP_PCVIGNETTE_ROUNDNESS_TOOLTIP;Form:\n0 = Rechteck\n50 = Ellipse\n100 = Kreis
 TP_PCVIGNETTE_STRENGTH;Intensität
 TP_PCVIGNETTE_STRENGTH_TOOLTIP;Filterstärke in Blendenstufen (bezogen auf die Bildecken).
+TP_PDSHARPENING_CONTRASTRADIUSSE_TOOLTIP;Mit den Schiebereglern 'Kontrastschwelle' und 'Radius' können Sie eine Maske steuern, die festlegt, welche Bereiche geschärft werden und welche unberührt bleiben.
+TP_PDSHARPENING_CONTRAST_TOOLTIP;Standardmäßig analysiert das Tool das Bild und berechnet einen Schwellenwert, um Rauschen durch Schärfung zu vermeiden.\nSie können die automatische Berechnung des Kontrastschwellenwerts deaktivieren und nach Bedarf anpassen: Durch Verschieben des Schiebereglers nach rechts müssen Details einen höheren Kontrast aufweisen, bevor sie geschärft werden. Höhere Kontrastschwellenwerte reduzieren zudem die Schärfung von Rauschen, da dieses tendenziell einen geringeren Detailkontrast aufweist.\nEine Rauschunterdrückung vor dem Schärfen kann erforderlich sein, um die Rauscherkennung zu ermöglichen und das Rauschen etwas zu reduzieren.
+TP_PDSHARPENING_GAMMA_TOOLTIP; Ermöglicht die Differenzierung des Effekts durch Anpassen des Verhältnisses zwischen Schatten und Lichtern. Die Maske reagiert auf diese Einstellung.
+TP_PDSHARPENING_ITERATIONS_TOOLTIP;Sobald die Radien entweder automatisch berechnet oder manuell festgelegt wurden, führt das Werkzeug eine Reihe von Berechnungen durch, um eventuelle Unschärfen auszugleichen. Es handelt sich um einen iterativen Prozess, der bei zu langer Ausführung Artefakte erzeugen kann. Durch Aktivieren des Kontrollkästchens „Iterationen automatisch begrenzen“ wird die Anzahl der Iterationen begrenzt. Alternativ können Sie die Anzahl der Iterationen manuell über den Schieberegler „Iterationen“ festlegen.
 TP_PDSHARPENING_LABEL;Eingangsschärfung
+TP_PDSHARPENING_LABEL88;Eingangsschärfung
+TP_PDSHARPENING_NOISE;Rauschunterdrückung vor dem Schärfen
+TP_PDSHARPENING_NOISEAFTER;Rauschunterdrückung nach dem Schärfen
+TP_PDSHARPENING_NOISEAFTER_TOOLTIP; Ermöglicht bei Rohbildern eine erste Rauschunterdrückung nach der Schärfenoptimierung unter Berücksichtigung der Maskeninformationen.\n * Hauptsächlich dient diese Funktion dazu, strukturierte Bereiche, in denen das Rauschen kaum sichtbar ist, vom oft einfarbigen Hintergrund (flachen Bereichen), in dem das Rauschen deutlich sichtbar ist, zu trennen.\n\nAchten Sie darauf, keine zu hohen Werte zu verwenden. Sie können die Rauschunterdrückung später feinabstimmen.
+TP_PDSHARPENING_NOISECAPTYPE;Wavelets statt Median
+TP_PDSHARPENING_NOISE_TOOLTIP;Damit die Eingangsschärfung bei verrauschten oder stark verrauschten Bildern funktioniert, wird Folgendes angewandt:\n * Ein leichter Medianfilter (3x3 weich) bis hin zu einem relativ starken Medianfilter (5x5 stark) in aufeinanderfolgenden, schrittweisen Iterationen vor der Eingangsschärfung.\n * Wavelet-Entrauschung, die eine andere, progressivere Wirkung hat, hauptsächlich auf den ersten vier Zerlegungsebenen (hohe und mittlere Frequenzen).\n * Dies trägt zur Verdeutlichung der Kontrastmaske bei und ermöglicht die Anwendung des Kontrastschwellenwerts, wodurch die Eingangsschärfung korrekt funktioniert.\n * Dies trägt auch zur Rauschreduzierung im Ausgabebild bei.\n\nAchten Sie darauf, keine zu hohen Werte zu verwenden, um die Bildqualität nicht zu beeinträchtigen. Der Wert, der die Maske sichtbar macht (oder etwas mehr), ist in der Regel ausreichend.
+TP_PDSHARPENING_RADIUSOFFSETSE_TOOLTIP; Oftmals sind Bilder in den Ecken weicher oder unschärfer als in der Mitte. Mit dem Schieberegler „Eckenradius-Verstärkung“ können Sie dies ausgleichen, indem Sie den Radius in diesen Bereichen vergrößern oder verkleinern.\nDurch Verschieben nach rechts wird die Schärfe in den äußeren Bereichen erhöht, durch Verschieben nach links verringert.\nDie Ergebnisse in den TIF/JPG-Ausgaben entsprechen denen in der Ansicht „An Bildschirm anpassen“.
+TP_PDSHARPENING_RADIUSOFFSET_TOOLTIP;Oftmals sind Bilder in den äußeren Bereichen weicher oder unschärfer als in der Mitte. Mit dem Schieberegler „Randschärfe erhöhen“ können Sie dies ausgleichen, indem Sie den Radius in diesen Bereichen vergrößern oder verkleinern.\nWenn Sie ihn nach rechts verschieben, wird die Schärfe in den äußeren Bereichen erhöht, und wenn Sie ihn nach links verschieben, wird sie verringert.
+TP_PDSHARPENING_RADIUS_TOOLTIP; Bei kamerainterner Unschärfe hängt die effektive Auflösung nicht mehr von der Pixelgröße ab, sondern von einem Radius, der proportional zum Unschärfegrad ansteigt.\n Dieses Werkzeug reduziert diese Unschärfe, indem es den benötigten Radius automatisch ermittelt.\n\n Sie können den Radius auch manuell anpassen. Beachten Sie jedoch: Ist der Wert zu niedrig, wird das Bild nicht ausreichend geschärft; ist er zu hoch, entstehen starke Lichthöfe an den Rändern. Denken Sie daran, dass Sie lediglich die kamerainterne Unschärfe korrigieren möchten.
+TP_PDSHARPENING_SHOWCAP;Zeige Kontrastmaske
 TP_PERSPECTIVE_CAMERA_CROP_FACTOR;Crop-Faktor
 TP_PERSPECTIVE_CAMERA_FOCAL_LENGTH;Fokale Länge
 TP_PERSPECTIVE_CAMERA_FRAME;Korrektur
@@ -4288,8 +4505,9 @@ TP_SHARPENEDGE_PASSES;Iterationen
 TP_SHARPENEDGE_THREE;Nur Luminanz
 TP_SHARPENING_AMOUNT;Intensität
 TP_SHARPENING_BLUR;Weichzeichnerradius
+TP_SHARPENING_CAP;Capture Dekonvolution
 TP_SHARPENING_CONTRAST;Kontrastschwelle
-TP_SHARPENING_EDRADIUS;Radius
+TP_SHARPENING_EDRADIUS_TOOLTIP;Automatische Berechnung basierend auf den RAW-Daten
 TP_SHARPENING_EDTOLERANCE;Kantentoleranz
 TP_SHARPENING_HALOCONTROL;Halokontrolle
 TP_SHARPENING_HCAMOUNT;Intensität
@@ -4299,10 +4517,13 @@ TP_SHARPENING_METHOD;Methode
 TP_SHARPENING_ONLYEDGES;Nur Kanten schärfen
 TP_SHARPENING_RADIUS;Radius
 TP_SHARPENING_RADIUS_BOOST;Randschärfe erhöhen
+TP_SHARPENING_RADIUS_PROT;Geschützter Mittenbereich %
+TP_SHARPENING_RADIUS_PROTSE_TOOLTIP;Definiert den prozentualen Anteil des zentralen Schutzbereichs (Gesamtbild oder geografisches RT-Spot-Zentrum), der von der 'Randbereichsverstärkung' nicht betroffen ist.\nDie Ergebnisse in den TIF/JPG-Ausgaben entsprechen denen von 'An Bildschirm anpassen'.
 TP_SHARPENING_RLD;RL-Dekonvolution
 TP_SHARPENING_RLD_AMOUNT;Intensität
 TP_SHARPENING_RLD_DAMPING;Dämpfung
 TP_SHARPENING_RLD_ITERATIONS;Iterationen
+TP_SHARPENING_RLN;RL Dekonvolution
 TP_SHARPENING_THRESHOLD;Schwelle
 TP_SHARPENING_USM;Unschärfemaskierung
 TP_SHARPENMICRO_AMOUNT;Intensität
@@ -4510,7 +4731,7 @@ TP_WAVELET_LEVELS;Anzahl der Ebenen
 TP_WAVELET_LEVELSIGM;Radius
 TP_WAVELET_LEVELS_TOOLTIP;Wählen Sie die Anzahl der Ebenen, in die das Bild zerlegt werden soll. Mehr Ebenen benötigen mehr RAM und eine längere Verarbeitungszeit.
 TP_WAVELET_LEVF;Kontrast
-TP_WAVELET_LEVFOUR;Schwellenwert Rauschminderung Ebenen 5-6
+TP_WAVELET_LEVFOUR;Schwellenwert Rauschreduzierung Ebenen 5-6
 TP_WAVELET_LEVLABEL;Vorschau max. möglicher Ebenen = %1
 TP_WAVELET_LEVLOCLABEL;Vorschaufenster vergrößern
 TP_WAVELET_LEVONE;Ebene 2
@@ -4730,227 +4951,7 @@ ZOOMPANEL_ZOOMOUT;Herauszoomen\nTaste: <b>-</b>
 ! Untranslated keys follow; remove the ! prefix after an entry is translated.
 !!!!!!!!!!!!!!!!!!!!!!!!!
 
-!HISTORY_MSG_CATCURVEBLUE;CAL - IA - Brightness Blue
-!HISTORY_MSG_CATCURVEGREEN;CAL - IA - Brightness Green
-!HISTORY_MSG_CATCURVERED;CAL - IA - Brightness Red
-!HISTORY_MSG_CATHUEBLUE;CAL - IA - Hue Blue
-!HISTORY_MSG_CATHUEGREEN;CAL - IA - Hue Green
-!HISTORY_MSG_CATHUERED;CAL - IA - Hue Red
-!HISTORY_MSG_CATSCHROMABLUE;CAL - IA - Saturation Blue
-!HISTORY_MSG_CATSCHROMAGREEN;CAL - IA - Saturation Green
-!HISTORY_MSG_CATSCHROMARED;CAL - IA - Saturation Red
-!HISTORY_MSG_CG_CYANDC_AUTO;Gamut Compression - Auto Limits Cyan
-!HISTORY_MSG_CG_CYANDM_AUTO;Gamut Compression - Auto Limits Magenta
-!HISTORY_MSG_CG_CYANDY_AUTO;Gamut Compression - Auto Limits Yellow
-!HISTORY_MSG_CROP_GUIDE_ASPECT_RATIO_PRESET_CHANGED;Crop Guide - Aspect Ratio Preset
-!HISTORY_MSG_CROP_GUIDE_BLEED_BASIS_CHANGED;Crop Guide - Bleed Basis
-!HISTORY_MSG_CROP_GUIDE_BLEED_CHANGED;Crop Guide - Bleed
-!HISTORY_MSG_CROP_GUIDE_ENABLED;Crop Guide
-!HISTORY_MSG_CROP_GUIDE_PRESET_CHANGED;Crop Guide - Preset
-!HISTORY_MSG_ICM_APSAT;Abstract profile saturation
-!HISTORY_MSG_ICM_BLUROT;Primaries Blue rotation
-!HISTORY_MSG_ICM_BLUSAT;Primaries Blue saturation
-!HISTORY_MSG_ICM_GREROT;Primaries Green rotation
-!HISTORY_MSG_ICM_GRESAT;Primaries Green saturation
-!HISTORY_MSG_ICM_REDROT;Primaries Red rotation
-!HISTORY_MSG_ICM_REDSAT;Primaries Red saturation
-!HISTORY_MSG_ICM_SMOOTHCIESLI;Attenuation threshold
-!HISTORY_MSG_ICM_WGAMUT;Target Gamut
-!HISTORY_MSG_ICM_WGAMUTGAIN;Gain
-!HISTORY_MSG_ICM_WGAMUTPOWER;Power
-!HISTORY_MSG_LOCAL_AUTOCAPRADIUS;Local - Sh Auto Capture radius
-!HISTORY_MSG_LOCAL_AUTOSHAR;Local - Sh Auto Contrast
-!HISTORY_MSG_LOCAL_AUTOSP;Local - GHS - Auto SP
-!HISTORY_MSG_LOCAL_CAPRADIUS;Local - Sh Capture radius
-!HISTORY_MSG_LOCAL_CIE_MIDTMET;Local - CIECAM Midtones Method
-!HISTORY_MSG_LOCAL_CIE_SAT;Local - CIECAM Saturation
-!HISTORY_MSG_LOCAL_CIE_SMOOTHINV;Local CIECAM - Inverse color
-!HISTORY_MSG_LOCAL_CIE_SMOOTHTHTRC;Local CIECAM - Highlight attenuation threshold
-!HISTORY_MSG_LOCAL_CONVBOOST;Local - Sh Corner radius
-!HISTORY_MSG_LOCAL_CONVGAM;Local - Sh Gamma
-!HISTORY_MSG_LOCAL_CONVLAT;Local - Sh Corner iterations
-!HISTORY_MSG_LOCAL_CONVPROT;Local - Sh Central protected area
-!HISTORY_MSG_LOCAL_DENOAUTO;Local - Denoise Auto Contrast
-!HISTORY_MSG_LOCAL_DENOCONTRAST;Local - Denoise Contrast threshold
-!HISTORY_MSG_LOCAL_DENOCONTRSHOW;Local - Denoise Show mask contrast
-!HISTORY_MSG_LOCAL_DENOENA;Local - Denoise Enable Contrast threshold
-!HISTORY_MSG_LOCAL_DENOMASK;Local - Denoise Contrast mask
-!HISTORY_MSG_LOCAL_DENOMASKCURV;Local - Denoise Equalizer Denoise mask
-!HISTORY_MSG_LOCAL_DENORATIO;Local - Denoise Ratio flat-structure
-!HISTORY_MSG_LOCAL_GHS_AGX;Local - GHS - Matrix
-!HISTORY_MSG_LOCAL_GHS_AUTOBW;Local - GHS - Auto Black point and White point
-!HISTORY_MSG_LOCAL_GHS_MATMET;Local - GHS - Matrix
-!HISTORY_MSG_LOCAL_LOCKMADL;Local - Denoise Lock MadL
-!HISTORY_MSG_LOCAL_LOCKMADL2;Local - Manual MadL
-!HISTORY_MSG_LOCAL_LOCKMADLS;Local - Denoise - MadL
-!HISTORY_MSG_LOCAL_MICH_BLACK;Local - Michaelis-Menten Subtract black
-!HISTORY_MSG_LOCAL_MICH_EXP;Local - Michaelis-Menten Exposure
-!HISTORY_MSG_LOCAL_MICH_HIGH;Local - Michaelis-Menten Attenuation threshold
-!HISTORY_MSG_LOCAL_MICH_JDX;Local - Michaelis-Menten JDx Matrix
-!HISTORY_MSG_LOCAL_MICH_KPAR;Local - Michaelis-Menten Knee Strength
-!HISTORY_MSG_LOCAL_MICH_OUT;Local - Michaelis-Menten Output Max Clamp
-!HISTORY_MSG_LOCAL_MICH_SAT;Local - Michaelis-Menten Saturation
-!HISTORY_MSG_LOCAL_MICH_SPAR;Local - Michaelis-Menten Output Scale
-!HISTORY_MSG_LOCAL_MICH_WHITE;Local - Michaelis-Menten Dynamic range
-!HISTORY_MSG_LOCAL_SHARITERCHECK;Local - Sh Auto limit iterations
-!HISTORY_MSG_LOCAL_SHARREPAR;Local - Sh Strength
-!HISTORY_MSG_LOCAL_SHARSHOW;Local - Sh Show contrast mask
-!HISTORY_MSG_PDSHARPEN_NOISECAP;CS - Presharpening denoise
-!HISTORY_MSG_PDSHARPEN_NOISECAPAFTER;CS - Postsharpening denoise luminance
-!HISTORY_MSG_PDSHARPEN_NOISECAPTYPE;CS - Presharpening type
-!HISTORY_MSG_PDSHARPEN_SHOWCAP;CS - Show mask contrast
-!HISTORY_MSG_TRANS_SCALE_HORIZONTALLY;Geometry - Scale horizontally
-!HISTORY_MSG_TRANS_SCALE_VERTICALLY;Geometry - Scale vertically
-!PARTIALPASTE_CROPGUIDE;Crop Guide
-!PREFERENCES_RESET_TO_DEFAULT;Reset Preferences
-!PREFERENCES_RESET_TO_DEFAULT_CONFIRM_PROMPT;Reset all preferences to their default values? This action cannot be undone.\n\nSome changes may require restarting the application to take full effect.
 !PREFERENCES_WBAGREENDELTA;Delta temperature in green iterate loop (if Force Extra enabled)
-!QUEUE_LOCATION_TEMPLATE_HELP_FORMAT_BODY;<b>%e</b> will be replaced by the photo's output format, as determined from the output file's file name extension.
-!QUEUE_LOCATION_TEMPLATE_HELP_FORMAT_TITLE;Output File Format/File Name Extension
-!TC_PRIM_BLUROT;B.rot
-!TC_PRIM_BLUSAT;B.sat
-!TC_PRIM_GREROT;G.rot
-!TC_PRIM_GRESAT;G.sat
-!TC_PRIM_REDROT;R.rot
-!TC_PRIM_REDSAT;R.sat
-!TP_COLORAPP_BRIGHT_CUR_BLUE;Brightness - blue
-!TP_COLORAPP_BRIGHT_CUR_GREEN;Brightness - green
-!TP_COLORAPP_BRIGHT_CUR_RED;Brightness - red
-!TP_COLORAPP_CHROMA_S_BLUE;Saturation - blue %
-!TP_COLORAPP_CHROMA_S_GREEN;Saturation - green %
-!TP_COLORAPP_CHROMA_S_RED;Saturation - red %
-!TP_COLORAPP_HUE_BLUE;Hue - blue rotation
-!TP_COLORAPP_HUE_GREEN;Hue - green rotation
-!TP_COLORAPP_HUE_RED;Hue - red rotation
-!TP_COLORAPP_LABEL_RGB;Red Green Blue
-!TP_COLORAPP_RGB_TOOLTIP;'Red Green Blue' allows you to either:\n* Correct any color deviations due to either: gamut overshoot following various adjustments in the process, or poor white balance.\n* Achieve a better balance of colors and luminances to satisfy your preferences.\n* Film Simulation.\n\nThe system operates after the first process (Scene) which converts the 'Working profile' data into that of 'CAM16'. At this stage, the J, Q, C, s, M, h data take into account the physiological aspects considered by CIECAM, and a chromatic adaptation is performed.\n\n For each main color of CIECAM ac-bc [chroma based] hue plane - Red, Green, Blue - you can perform a slight hue (h) rotation in degrees (sliders) , adjust the saturation (s) as a percentage (sliders) , and adjust brightness (Q) (curves).\n\n As a general rule, small adjustments are sufficient: 1° to 3° for hue rotations (h), 5 to 10% more or less for saturation (s), very limited variations in brightness (Q). Of course, if you are looking for special effects, such as simulating a film, the settings can be more pronounced.\n\n These adjustments are made just before the other CIECAM adjustments: Lightness (J), Brightness (Q), Chroma (C), Saturation (s), Colorfulness (M), hue (h), contrast (J), contrast (Q) and curves and are added to them. \n\n Next, the third process converts the data from the 'CAM16' color space to the 'Working profile', taking into account the Viewing conditions. Color adaptation is then performed.\n\n These hue, saturation and brightness adjustments do not use primaries. They are based on the principle of CAM (Color Appearance Models) in 3 processes.
-!TP_COMPRESSGAMUT_BETA;Beta - near Pointer's Gamut *
-!TP_COMPRESSGAMUT_MACLABEL;Maximum achromatic value: %1
-!TP_COMPRESSGAMUT_MACLABELCMY;Estimated Cyan: %1 Magenta: %2 Yellow: %3
-!TP_COMPRESSGAMUT_MACLABELRGB;R: %1 G: %2 B: %3
-!TP_COMPRESSGAMUT_MACLABELRGB_TOOLTIP;Displays the maximum values for the three channels (achromatic): Red, Green, and Blue.\n\nProvides an estimate accurate to within 15% of the Cyan, Magenta, and Yellow values. This estimate should provide useful information for better adjusting the Maximum Distance Limits which should be set greater than 1.\n If the checkboxes for the Cyan, Magenta, and Yellow sliders in 'Maximum Distance Limits' are enabled, then an automatic value is suggested. Manual adjustments may be required.
-!TP_COMPRESSGAMUT_MACLABEL_TOOLTIP;Displays the highest measured value of the 3 RGB (achromatic) channels. This value helps to understand :\n * The state of the image and the reciprocal influence of : a) the Working and Target Gamut Compression profiles; b) 'Highlight reconstruction'.\n * Whether the ‘White point’ needs to be refined - see ‘Generalized Hyperbolic Stretch’ (GHS)  for example.\n\nEffect of values:\n * Very high values, for example greater than 5 or even 10 and more, often indicate the use of an LED or halogen illuminant (with Color Propagation) and a significant color-gamut overshoot. Try 'GHS > Auto Black point and White point', 'White Balance > Blue/Red Equalizer', 'Abstract Profile > Primaries and Illuminant'\n * High values between 2 and 4 are often linked to an excessive light source (sun, etc.) or incorrect exposure settings that have resulted in out-of-range values on the sensor. Try using 'Highlight reconstruction > Color Propagation'.\n * Low values, less than 1, often indicate poorly adjusted white and black points i.e.‘White point (linear WP)’ and ‘Black point (linear BP)’ : see for example GHS.\n\nNotes:\n * Using values higher than 'Maximum distance limits' for the three 'Maximum achromatic value' sliders offers little benefit.\n * Using low values for the three Threshold sliders (whether combined or not with low values for the Power slider, can lead to significant desaturation and color shifts.\n\nThere is a link, but not a correlation, between this value and the three Maximum Distance Limits.
-!TP_CROP_GTCROSSHAIR;Crosshair
-!TP_CROP_GTGOLDENRATIO;Golden Ratio
-!TP_CROP_GTTRIANGLE;Golden Triangles
-!TP_CROP_GUIDE_ASPECT_RATIO;Inscribed aspect ratio crop guides:
-!TP_CROP_GUIDE_BLEED;Bleed
-!TP_CROP_GUIDE_LABEL;Crop Guide
-!TP_CROP_GUIDE_NO_ASPECT_RATIO_GUIDES;No aspect ratio guides
-!TP_CROP_GUIDE_TOOLTIP;Display preview-only guides for the current crop.\n\nInscribed aspect ratio guides fit the selected aspect ratio in the current crop. The orientation is determined automatically based on the crop aspect ratio.\n\n<b>Click</b> - Enable only the selected preset\n<b>Ctrl-Click</b> - Enable the selected preset as an additional guide
-!TP_ICM_COMPRESS;Target Gamut
-!TP_ICM_COMPRESSGAMUT_ADOBE;Adobe
-!TP_ICM_COMPRESSGAMUT_DCIP3;DCIP3
-!TP_ICM_COMPRESSGAMUT_NONE;None
-!TP_ICM_COMPRESSGAMUT_REC2020;Rec2020
-!TP_ICM_COMPRESSGAMUT_SRGB;sRGB
-!TP_ICM_COMPRESS_TOOLTIP; Placed at the end of the processing pipeline, this tool allows you to compress the data to fit into the output profile, for example. If Color Appearance & Lighting is enabled, it will take the compression into account.\n\n This output gamut compression is much simpler than at the beginning of the processing pipeline because unless the user has exaggerated the settings, the gamut will already be close to the Working Profile, hence the simplified graphical interface.\n\n More often than not, you will not see any changes to the image or the histogram when using Gamut Compression. This is because it does not convert the data from Working profile (often Rec2020) to Target Gamut (often sRGB), but compresses it to fit the Target gamut (often sRGB) while remaining in Working profile (often Rec2020), and the upstream treatments must have preserved the gamut. The effect is visible on Led’s, flowers with high saturation. On a normal landscape or portrait, there is most often no change.
-!TP_ICM_COMPRGAMUT;Final Gain & Gamut Compression
-!TP_ICM_COMP_GAIN;Gain (Ev)
-!TP_ICM_COMP_POWER;Power
-!TP_ICM_POWER_TOOLTIP;Modifies global image appearance, similar to the Exposure slider, by applying a positive or negative Ev adjustment to the RGB data. This allows for better control of either the color gamut or the saturation; for the latter, small values of plus or minus 0.1 to 0.4 are sufficient. Higher gain values allow for future use with HDR displays.
-!TP_ICM_PRIMREDROT_TOOLTIP;Change the Red, Green, and Blue primaries. The first slider rotates the primary color, in degrees, around the white point. The second increases or decreases the saturation relative to the white point.\n\nBe very careful when using this type of tool - whether it's polar sliders, linear sliders, or CIExy graphs. If you go outside the CIExy diagram, you'll generate imaginary colors, how will they be handled? If you reduce the primary values too much, you risk out-of-gamut data. Use with caution, and with small values, while monitoring the primaries' deviation from the CIExy diagram.
-!TP_ICM_TRC_MAX;RGB Max=%1
-!TP_ICM_TRC_MAX_END;Final RGB Max=%1
-!TP_ICM_TRC_MAX_END_NO;---
-!TP_ICM_TRC_MAX_TOOLTIP;Provides information on out-of-limit RGB values. Values greater than 1 clearly indicate that we are out of gamut whereas for values less than 1, we cannot say whether the image is within gamut or not because it depends, for example, on the luminance. This check is performed at the end of the Abstract Profile and takes into account all parameters. The ‘Attenuation threshold’ slider can be used to limit the RGB values.\n\nChanges made to 'Color Appearance and Lighting', 'Final Gain and Gamut Compression' are not taken into account.
-!TP_ICM_TRC_SAT_MAX;Final Saturation Max=%1
-!TP_ICM_TRC_SAT_MAX_TOOLTIP;Provides information on out-of-limit RGB values and RGB saturation. Values greater than 1 for ‘Final RGB Max’ and ‘Final Saturation Max’ clearly indicate that we are out of gamut whereas for values less than 1, we cannot say whether the image is within gamut or not because it depends, for example, on the luminance. This check is performed at the end of the processing pipeline and takes into account all parameters. Changes made in Color Appearance & Lighting and in Final Gain & Gamut Compression are taken into account.\n\nAdjusting the Gain (Ev) and Gamut Compression (Target Gamut and Power) settings will allow you to see the impact of these adjustments. You should also observe the histogram, which takes into account the output profile therefore the gamma. This data, which is directly related to the RGB values and Saturation and is in the Working Profile, is in linear mode.\n\n The data is only displayed if Target Gamut is enabled, or if Gain (Ev) is not equal to 0.
-!TP_ICM_WORKING_PRIM_CUSPOL;Custom (Polar sliders)
-!TP_ICM_WORKING_TRC_SAT;Saturation
-!TP_LENSGEOM_SCALE_HORIZONTALLY;Scale horizontally
-!TP_LENSGEOM_SCALE_VERTICALLY;Scale vertically
-!TP_LOCALLAB_APSATUR;Saturation
-!TP_LOCALLAB_BWCIE_TOOLTIP;Only usable in Global mode or if Scope is set to 100.\nThe 'Black and White' option shows only the luminance in the histogram making it easier to adjust the shadows and highlights when using the Gamma and Slope sliders and the Tone Mapping Operators.
-!TP_LOCALLAB_CIE_SMOOTH_TRC;TRC based
-!TP_LOCALLAB_DENOIENA;Enable contrast threshold
-!TP_LOCALLAB_DENOIFRA;Denoise Settings
-!TP_LOCALLAB_DENOIHUE;Equalizer denoise
-!TP_LOCALLAB_DENOIHUECONT;Equalizer denoise mask
-!TP_LOCALLAB_DENOIRATIO;Ratio flat-structured areas
-!TP_LOCALLAB_DENOI_MASK;Denoise contrast mask
-!TP_LOCALLAB_DENORADIUS_TOOLTIP;Allows you to differentiate the denoising action as a function of image detail and uniform background.\n The resulting action is a combination of the noise reduction and that of the mask created by 'Contrast threshold'\n On very noisy images you can reduce the mask noise.\n You can also differentiate the action with the curve 'Equalizer denoise mask'.\n The ratio flat-structured areas allows you to correct the action between the two.\n\nOn noisy images and in Raw format, you should use the 'Presharpening denoise' and ‘Postsharpening denoise’ functions for more effective mask action.
-!TP_LOCALLAB_GHSCOLORNO;---
-!TP_LOCALLAB_GHSCOLORVALUE;RGB values - R:%1 G:%2 B:%3
-!TP_LOCALLAB_GHSDR;Dynamic Range GHS (Ev):%1
-!TP_LOCALLAB_GHSDRNO;---
-!TP_LOCALLAB_GHSMAT;Matrix
-!TP_LOCALLAB_GHSMAT1;AgX (Pleasant)
-!TP_LOCALLAB_GHSMAT2;JzAzBz (XYZ High dynamic)
-!TP_LOCALLAB_GHSMAT3;Cat16 (XYZ Harmonious)
-!TP_LOCALLAB_GHSMAT4;JzAzBz (RGB High dynamic)
-!TP_LOCALLAB_GHSMAT5;Cat16 (RGB Harmonious)
-!TP_LOCALLAB_GHSMATO;None (Neutral)
-!TP_LOCALLAB_GHSMAXRGB;RGB Max & 3 Sigmas: Max=%1 3S=%2
-!TP_LOCALLAB_GHSMAXRGBNO;---
-!TP_LOCALLAB_GHSMAXRGB_TOOLTIP;This allows you to preview the changes you make. The main settings that have an effect are 'Stretch factor (D)' and 'Local intensity (b)'.\n\n Try to obtain a value close to or lower (to your liking) than 0.18 for 'Estimated middle grey', although this isn't mandatory as there are other processing steps afterward.\n\n ‘RGB max’ corresponds to the maximum value of the data; it may only affect a few pixels. ‘3 Sigmas’ corresponds to the limit of truly significant data. You can adjust all GHS settings, but particularly 'Protect Highlights (HP)' and 'Highlight attenuation', in order to avoid, if possible, them exceeding the value of 1.\n\n The purpose of GHS is not to produce a perfect image, but to prepare the image - while keeping some room for maneuver - for further processing.
-!TP_LOCALLAB_GHSMIDGREY;Estimated middle grey=%1
-!TP_LOCALLAB_GHSMIDGREYNO;---
-!TP_LOCALLAB_GHSSYM;Estimated symmetry point RGB=%1
-!TP_LOCALLAB_GHSSYMNO;---
-!TP_LOCALLAB_GHS_AGX;AgX Matrix
-!TP_LOCALLAB_GHS_AGXMAT2_TOOLTIP;Use the LMS (Long, Medium, Short) transformation, depending on the user's selection. LMS is a color space transform which represents the response of the three types of cone cells of the human eye, named for their responsivity (sensitivity) peaks at long, medium, and short wavelengths.\n\nThese transformations, in the form of matrix, modify each R, G and B channel for each pixel, giving priority to certain dominant colors according to your choice.\n * None - leaves the data unchanged (default).\n * Agx - accentuates each R, G, B channel quite strongly so that the LMS data is perceived as more colorful.\n * JzAzBz (XYZ High dynamic) - modifies the LMS distribution, by acting on X, Y, Z to better account for images with a high ‘linear WP’.\n * Cat16 (XYZ harmonious) - modifies the LMS distribution, by acting, on X, Y, Z - ensures a more harmonious distribution of colors while respecting the eye/brain interaction.\n * JzAzBz (RGB High dynamic) - modifies the LMS distribution, by acting, like AgX, on the 3 channels R, G, B to better account for images with a high ‘linear WP’.\n * Cat16 (RGB harmonious) - modifies the LMS distribution, by acting, like AgX, on the 3 channels R, G and B - ensures a more harmonious distribution of colors while respecting the eye/brain interaction.\n\n\nFor JzAzBz and Cat16, the XYZ mode : JzAzBz (XYZ High dynamic) and Cat16 (XYZ harmonious) should ensure better color and luminance fidelity.\n\nThis transformation only affects the modifications made by GHS: 'White Point (linear)', 'Black Point (linear)', 'Symmetry point (SP)' and of course the action on Stretch factor (D) and Local intensity (b). It is imperative to review the GHS settings each time the matrix is changed. It is strongly recommended to activate 'Auto Black point and White point' (except in Inverse mode). Observe the histogram in the two modes 'Working profile - linear' and 'Gamma - corrected output profile'.\n\nBe careful :\n * Not to confuse Cat16 with CIECAM. Cat16 is only the conversion matrix, while CIECAM (Color Appearance and Lighting) is a complete colorimetry process that takes physiological aspects into account.\n * The JzAzBz matrix here, does not take into account the notions of 'Absolute luminance' and so does not use the notion of PQ (Perceptual Quantizer). Do not confuse with the module in Selective Editing > JzCzHz.
-!TP_LOCALLAB_GHS_AGX_MAT_TOOLTIP;Performs the entire GHS processing, including Matrix conversion either AgX or JzAzBz or Cat16. For JzAzBz and Cat16 you have the choice between a transformation in RGB mode or in XYZ mode (preferably).\n * To allow this matrix to be enabled or disabled,  the 'Auto Black point and White point' must be disabled.\n * You need to re-enable 'Auto Black point and White point' to recalculate the values of 'Black Point (linear)', 'White Point (linear)' and 'Symmetry point (SP)'.
-!TP_LOCALLAB_GHS_AGX_TOOLTIP;Performs the entire GHS processing, including AgX conversion.\n * To allow AgX to be enabled or disabled, 'Auto Black point and White point' must be  disabled.\n * You need to re-enable 'Auto Black point and White point' to recalculate the values of 'linear BP', 'linear WP' and 'Symmetry point (SP)'.
-!TP_LOCALLAB_GHS_AUTOBW;Auto Black point & White point
-!TP_LOCALLAB_GHS_BLPHLPAUTO_TOOLTIP;Automatically adjust the 'Black point' and 'White point' values.\n Not available in Inverse GHS mode and must be disabled to allow Inverse GHS to work. It must be disabled (and re-enabled) in order to change 'Matrix conversion (AgX, JzAzBz, Cat16)'.\n Generally, the automatic settings will be satisfactory.\n If necessary, you can subsequently adjust the two points:\n * The 'Black point': using negative slider values may help when the shadows are particularly blocked.\n * Manually increase the ‘White point’ value if necessary, especially if it is less than 1, to give the system more flexibility by avoiding possible gamut overflows due to GHS or subsequent adjustments.
-!TP_LOCALLAB_LOCKMADL;Locks MadL noise evaluation
-!TP_LOCALLAB_LOCKMADL2;Manual settings
-!TP_LOCALLAB_LOCKMADL2_TOOLTIP;Allows you to manually control MadL values. Be careful: this function assumes mastery of the concepts of noise reduction using wavelets. Make sure that the initial values for the selected area have been set automatically.\n\nBe careful not to confuse the action on MadL which is a noise estimation only used in Wavelet Denoise where the strength is set in Selective Editing using a curve and a selected level (Aggressive / Conservative). The MadL scale is exponential and not linear.\n\nThe first levels of wavelet decomposition provide visible noise reduction, whereas the higher levels have more affect on banding.
-!TP_LOCALLAB_LOCKMADLFRA_TOOLTIP;Shows the actual values of Median Absolute Deviation (MadL).\nIf 'Locks MadL noise evaluation' is not enabled you can manually change these values which will affect the entire image.\nThe first levels 0,1,2,3 for the Horizontal direction,7,8,9,10 for the Vertical direction and 14,15,16,17 for the Diagonal, act on the detail noise. The higher levels have more effect on banding noise.\n\nLuminance noise reduction is a function that implements MadL (depending on level and direction) divided by the level of detail (high, medium, low frequency), the actual value of the decomposition at that location (depending on level and direction) and the curve applied by the user according to the level of wavelet decomposition.
-!TP_LOCALLAB_LOCKMADL_TOOLTIP;Allows you to lock the noise evaluation used for Wavelet denoise.\n\nWavelet denoise uses MadL (Median absolute deviation luminance) to act on the noise based on a slider or a curve.\nRawtherapee's pipeline design results in different MadL values depending on the preview position and leads to differences in output.\n\nIf you enable this checkbox, the value used for global processing will be the preview at that time. This will allow you to prioritize a specific area, background, or face for noise reduction, rather than an overall average value. Of course, you should only check the box once you've selected the area.
-!TP_LOCALLAB_MADLDIRD;D-Levels 0..6/14-20
-!TP_LOCALLAB_MADLDIRH;H-Levels 0..6
-!TP_LOCALLAB_MADLDIRV;V-Levels 0..6/7-13
-!TP_LOCALLAB_MADLFRA;Median absolute deviation (L)
-!TP_LOCALLAB_METHODCAP_TOOLTIP;You can use two methods:\n 1. RL Deconvolution, which is similar to the version used in the Detail tab.\n\n 2. Capture Deconvolution, which is an adaptation of Capture Sharpening in the Raw tab for use in Selective Editing, and allows you to use this algorithm either in standalone mode or after denoising. Capture Sharpening's capabilities allow for finer sharpening control by allowing you to soften the corner sharpness to enhance focus on the main subject. The results in the TIF/JPG outputs correspond to those in the 'fit to screen'view.
-!TP_LOCALLAB_MICHBLACK;Subtract linear black
-!TP_LOCALLAB_MICHBLWH;Subtract black=%1 White point=%2
-!TP_LOCALLAB_MICHBLWHNO;---
-!TP_LOCALLAB_MICHBLWH_TOOLTIP;Allows you to see the effect of the two checkboxes:\n * Subtract black: reduces the value of the linear black point to almost zero by subtracting the indicated value.\n * White point: after subtracting the black point, the RGB values are divided by the ‘Linear dynamic range’ (i.e. the displayed white point value minus the old black point).\n\n Reducing the black point to almost zero and taking into account the linear dynamic range as described allows the algorithm to produce better contrast and better consideration of the real gamut).\n Activating JDx Matrix’will reduce the ‘Linear dynamic range’ and change the color balance.
-!TP_LOCALLAB_MICHDR_TOOLTIP; Subtract linear black: reduces the linear black point values to almost zero. This makes optimal use of the available data by increasing overall contrast and reducing haze effects.\n\nLinear dynamic range: allows you to include any data outside the color gamut (in the case of sunsets for example). Enabling ‘Highlight reconstruction’ > Color Propagation can provide a significant improvement.\n\nAttenuation threshold: uses an exponential function to reduce highlights likely to cause gamut overshoot.
-!TP_LOCALLAB_MICHEXP;Exposure (Ev)
-!TP_LOCALLAB_MICHFRA;Michaelis-Menten Settings
-!TP_LOCALLAB_MICHHIGH;Attenuation threshold
-!TP_LOCALLAB_MICHJDX;JDx Matrix
-!TP_LOCALLAB_MICHJDX_TOOLTIP;The JDx checkbox allows the user to choose either the default or the JDx LMS transformations. LMS is a color space transform which represents the response (sensitivity) of the three types of cone cell in the human eye at long, medium, and short wavelengths.\n\nThese transformations are matrices that modify each of the R G B channels for each individual pixel, giving priority to certain dominant colors depending on the selected option\n * Unchecked: leaves the data unchanged (default).\n * JDx: accentuates each of the R G B channels by acting on X Y Z such that the LMS data is perceived as being more colorful.
-!TP_LOCALLAB_MICHKPAR;Knee strength (K)
-!TP_LOCALLAB_MICHOUT;Output max clamp
-!TP_LOCALLAB_MICHSAT;Saturation
-!TP_LOCALLAB_MICHSPAR;Output scale (S)
-!TP_LOCALLAB_MICHTONEFRA;Tone Curve
-!TP_LOCALLAB_MICHWHITE;Linear dynamic range
-!TP_LOCALLAB_MICH_TOOLTIP;This tone mapper uses the Michaelis-Menten equation, which is borrowed from biochemistry to describe enzyme kinetics. In image processing, it creates a smooth, saturating curve that is useful for tone mapping.\n\n * Exposure: Adjusts the input image brightness.\n * Output scale (S): Controls the maximum asymptotic value of the curve; essentially the output white level.\n * Knee strength (K): Determines the “knee” of the curve. Lower values result in a sharper transition to the compressed highlight region.\n * Saturation: Adjusts color saturation post-tone mapping.\n * Output max clamp: Sets the final clipping point for the output values.
-!TP_LOCALLAB_MIDTCIEFRA;Midtones
-!TP_LOCALLAB_MIDTCIEM1;Before Gamma & Slope
-!TP_LOCALLAB_MIDTCIEM2;After Gamma & Slope
-!TP_LOCALLAB_MIDTCIEM3;After CAM16
-!TP_LOCALLAB_MIDTCIEMAIN;Midtones
-!TP_LOCALLAB_SATCIE_TOOLTIP;Modifies the image saturation whenever the gamma/slope ratio is different from 2.4/12.92. It aims to compensate for the desaturation caused by significant luminance variations.\nValues between 0.2 and 1.0 are often sufficient.
-!TP_LOCALLAB_SH4;Tone Mapper Michaelis-Menten (MM)
-!TP_LOCALLAB_SHARCAPFRAME;Corners
-!TP_LOCALLAB_SHARRLFRAME;RL Deconvolution Settings
-!TP_LOCALLAB_SMOOTHCIETHTRC;Highlight attenuation threshold
-!TP_LOCALLAB_SMOOTHCIE_INV;Invert color
-!TP_LOCALLAB_SPRADIUS_TOOLTIP;Try setting an automatic Symmetry Point (SP) estimation, only in RGB mode. May require manual adjustment.
-!TP_PDSHARPENING_CONTRASTRADIUSSE_TOOLTIP;The 'contrast threshold' and 'Capture radius' sliders allow you to control a mask that decides which areas are affected by sharpening and which are left untouched.
-!TP_PDSHARPENING_CONTRAST_TOOLTIP;By default the tool analyzes the image and calculates a threshold to prevent sharpening noise.\n You can leave the automatic Contrast Threshold calculation on, or you can turn it off and set it as required: moving the slider to the right means that details will have to have higher contrast before they are sharpened. Higher Contrast Threshold values also reduce the amount of sharpening applied to noise, which tends to have lower detail contrast.\n Presharpening denoise may be necessary to enable detection and reduce noise somewhat.
-!TP_PDSHARPENING_GAMMA_TOOLTIP;Allows you to differentiate the effect by varying the ratio between shadows and highlights. The mask is sensitive to this setting.
-!TP_PDSHARPENING_ITERATIONS_TOOLTIP;Once the radii have either been automatically calculated or set manually, the tool carries out a series of calculations to try and compensate for any blurring. It is an iterative process, which will produce artifacts if carried too far. Checking the ‘Auto limit iterations’ checkbox will limit the number of iterations or you can do it manually using the Iterations slider.
-!TP_PDSHARPENING_LABEL88;Capture Sharpening
-!TP_PDSHARPENING_NOISE;Presharpening denoise
-!TP_PDSHARPENING_NOISEAFTER;Postsharpening denoise
-!TP_PDSHARPENING_NOISEAFTER_TOOLTIP;For raw images, allows you initial denoising after Capture Sharpening taking into account the mask information.\n * Its main use is to separate the action between structured areas where the noise is barely visible and the often plain background (flat areas) where the noise is very visible.\n\nBe careful not to use values that are too high, you can fine-tune the noise reduction later.
-!TP_PDSHARPENING_NOISECAPTYPE;Use Wavelets instead of Median
-!TP_PDSHARPENING_NOISE_TOOLTIP;In order for Capture Sharpening to work on noisy or very noisy images, applies either :\n * A light '3x3 soft' to a fairly strong '5x5 strong' median denoising filter in successive gradual iterations prior to Capture Sharpening.\n * Wavelet denoising which has a different, more progressive action, mainly on the first 4 levels of decomposition(high and medium frequency).\n * This helps clarify the contrast mask and allows Contrast Threshold to work, and thus Capture Sharpening to work properly.\n * This also helps to reduce noise in the output image.\n\nBe careful not to use values that are too high so as not to degrade the image. The value that allows the mask to appear (or a little more) is usually sufficient.
-!TP_PDSHARPENING_RADIUSOFFSETSE_TOOLTIP;Often images are softer or more blurred in the corners than in the center. The Corner radius boost slider allows you to compensate for this by increasing or decreasing the radius in these areas.\nMoving it to the right increases the sharpening in the outer areas and sliding it to the left will reduce the sharpening.\nThe results in the TIF/JPG outputs correspond to those in the 'fit to screen'view.
-!TP_PDSHARPENING_RADIUSOFFSET_TOOLTIP;Often images are softer or more blurred in the corners than in the center. The Corner radius boost slider allows you to compensate for this by increasing or decreasing the radius in these areas.\nMoving it to the right increases the sharpening in the outer areas and sliding it to the left will reduce the sharpening.
-!TP_PDSHARPENING_RADIUS_TOOLTIP;When in-camera blurring occurs, the effective resolution is no longer dependent on pixel size and instead, has a radius that increases in proportion to the amount of blurring.\n The purpose of this tool is to reduce this blurring by trying to automatically guess the radius needed to counteract the effect.\n\n You can also choose to adjust the radius yourself bearing in mind that if the value is too low, there will not be enough sharpening and if it is too high, it will lead to strong haloing on the edges. Don’t forget that you are only trying to undo the in-camera blurring.
-!TP_PDSHARPENING_SHOWCAP;Show contrast mask
-!TP_SHARPENING_CAP;Capture Deconvolution
 !TP_SHARPENING_CAPFRAME;Corner boost
 !TP_SHARPENING_CONTRASTAUTO_TOOLTIP;Auto contrast level estimation.\nValue subject to variation depending on position in preview.\nBe careful, disable auto after estimation.
-!TP_SHARPENING_EDRADIUS_TOOLTIP;Auto-calculation based on raw data
-!TP_SHARPENING_RADIUS_PROT;Central protected area %
-!TP_SHARPENING_RADIUS_PROTSE_TOOLTIP;Defines the central protection area % (Full image or geographical RT-spot center) that will not be affected by 'Corner radius boost'.\nThe results in the TIF/JPG outputs correspond to those of 'fit to screen'.
-!TP_SHARPENING_RLN;RL Deconvolution
+!TP_SHARPENING_EDRADIUS;Capture Radius
