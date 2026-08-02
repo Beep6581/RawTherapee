@@ -29,6 +29,7 @@
 #include "rtengine/utils.h"
 #include "rtengine/rt_math.h"
 #include "labgrid.h"
+#include <iomanip>
 
 #define MINNEIGH 0.1
 #define MAXNEIGH 1500
