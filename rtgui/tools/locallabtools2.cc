@@ -8463,7 +8463,7 @@ Locallabcie::Locallabcie():
     cie1lightFrame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_CIELIGHTFRA")))),
     cie1contFrame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_CIECONTFRA")))),
     cie1colorFrame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_CIECOLORFRA")))),
-    cie1redgreenblueFrame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_CIEREDGREENBLUEFRA")))),
+    cie1redgreenblueFrame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_CIEREDGREENBLUE_FRAME")))),
     colorhred(Gtk::manage(new Adjuster(M("TP_COLORAPP_HUE_RED"), -25., 25., 0.1, 0.))),//hue red
     schromared(Gtk::manage(new Adjuster(M("TP_COLORAPP_CHROMA_S_RED"), -40.0, 20.0, 0.1, 0.))),//saturation red
     redCurveEditorG(new CurveEditorGroup(App::get().mut_options().lastlocalCurvesDir, M ("TP_COLORAPP_BRIGHT_CUR_RED"), 1)),//brightness curve red
@@ -9996,7 +9996,7 @@ void Locallabcie::maxdataend(float m_rgb, float m_sat, bool gamaut)
                         Glib::ustring::format(std::fixed, std::setprecision(3), m_rgb))
                 );
             } else {
-                rgbmaxdata->set_text(M("TP_LOCALLAB_CIE_FINALRGB_NO"));
+                rgbmaxdata->set_text(M("---"));
             }
 
             if (gamaut) {
@@ -10005,7 +10005,7 @@ void Locallabcie::maxdataend(float m_rgb, float m_sat, bool gamaut)
                         Glib::ustring::format(std::fixed, std::setprecision(3), m_sat))
                 );
             } else {
-                satmaxdata->set_text(M("TP_LOCALLAB_CIE_FINALSAT_NO"));
+                satmaxdata->set_text(M("---"));
             }
         return false;
     }
