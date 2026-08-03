@@ -10078,6 +10078,7 @@ void Locallabcie::updateAdviceTooltips(const bool showTooltips)
         cie1Frame->set_tooltip_text(M("TP_LOCALLAB_LOGIMAGE_TOOLTIP"));
         smoothFrame->set_tooltip_text(M("TP_LOCALLAB_SMOOTHCIE_TOOLTIP"));
         rgbmaxdata->set_tooltip_text(M("TP_LOCALLAB_RGBMAXDATA_TOOLTIP"));
+        satmaxdata->set_tooltip_text(M("TP_LOCALLAB_RGBMAXDATA_TOOLTIP"));
         gamgain->set_tooltip_text(M("TP_ICM_POWER_TOOLTIP"));
         gamutw->set_tooltip_text(M("TP_LOCALLAB_GAMUTW_TOOLTIP"));
 //        sigmoidFrame->set_tooltip_text(M("TP_LOCALLAB_SIGMOID16_TOOLTIP"));
@@ -10158,6 +10159,7 @@ void Locallabcie::updateAdviceTooltips(const bool showTooltips)
         sourceabscie->set_tooltip_text("");
         cie1Frame->set_tooltip_text("");
         rgbmaxdata->set_tooltip_text("");
+        satmaxdata->set_tooltip_text("");
         gamgain->set_tooltip_text("");
         gamutw->set_tooltip_text("");
 
