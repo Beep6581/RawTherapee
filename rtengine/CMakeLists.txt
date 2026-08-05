@@ -170,22 +170,15 @@ if(WITH_BENCHMARK)
     target_compile_definitions(rtengine PUBLIC "BENCHMARK")
 endif()
 
-# When linking against RT's version of libraw, there will be linking issues for
-# jpeg and zlib if libraw is not linked before them.
-if(NOT WITH_SYSTEM_LIBRAW)
-    include(LibRaw.cmake)
-    target_include_directories(rtengine PRIVATE "${CMAKE_SOURCE_DIR}/rtengine/libraw")
-    target_link_libraries(rtengine PUBLIC ${LIBRAW_LIBRARIES})
-else()
-    target_link_libraries(rtengine PUBLIC PkgConfig::LIBRAW)
-endif()
-
 target_link_libraries(rtengine
     PUBLIC
-        cjson::cjson
+        # When linking against RT's version of libraw, there will be linking
+        # issues for jpeg and zlib if libraw is not linked before them.
+        External::LibRaw
+        External::cjson
+        External::jpeg_ijg
+        External::klt
         fmt::fmt
-        jpeg_ijg::jpeg_ijg
-        klt::klt
         PkgConfig::CAIROMM
         PkgConfig::EXIV2
         PkgConfig::EXPAT
