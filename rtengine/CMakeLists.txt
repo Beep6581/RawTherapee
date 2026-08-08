@@ -1,6 +1,8 @@
 set(PROCPARAM_SRCS
     procparams.cc
+    params/advanced.cc
     params/locallab.cc
+    params/raw.cc
     params/serdes.cc
 )
 
