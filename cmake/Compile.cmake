@@ -9,7 +9,7 @@ include(FindX87Math)
 # This comment is specifically about add_custom_target(UpdateInfo ...)
 function(rt_setup_target CXX_TARGET)
     # Set globally in project CMakeLists.txt
-    # target_compile_features(${CXX_TARGET} PUBLIC cxx_std_11)
+    # target_compile_features(${CXX_TARGET} PUBLIC cxx_std_17)
     # set_target_properties(
     #     ${CXX_TARGET} PROPERTIES
     #     CXX_STANDARD_REQUIRED ON
