@@ -18900,7 +18900,7 @@ void ImProcFunctions::Lab_Local(
                                                 Y2[y][x] = norm_3(tmpImage->r(y, x), tmpImage->g(y, x), tmpImage->b(y, x), wprof, ghsbpwpvalue[1] / reasonable_limit_white_point) / 65535.f;//norm_3
                                             }
                                             float l = xlogf(rtengine::max(Y2[y][x], 1e-9f));
-                                            float ll = round(l * base_posterization) / base_posterization;
+                                            float ll = (float) round(l * base_posterization) / base_posterization;
                                             Yc[y][x] = xexpf(ll);
                                             assert(std::isfinite(Yc[y][x]));
                                         }
