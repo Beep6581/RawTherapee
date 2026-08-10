@@ -2137,8 +2137,8 @@ float generalized_loglogistic_sigmoid(float value,
     // The following equation can be derived as a model for film + paper but it has a pole at 0
     // magnitude * powf(1.0f + paper_exp * powf(film_fog + value, -film_power), -paper_power);
     // Rewritten on a stable around zero form:
-    const float film_response = pow(film_fog + clamped_value, film_power);
-    const float paper_response = magnitude * pow(film_response / (paper_exp + film_response), paper_power);
+    const float film_response = (float) pow_F(film_fog + clamped_value, film_power);
+    const float paper_response = magnitude * (float) pow_F(film_response / (paper_exp + film_response), paper_power);
 
     // Safety check for very large floats that cause numerical errors
     if (xisnanf(paper_response)) {
@@ -2204,7 +2204,7 @@ void calculate_params(float middle_grey_contrast,
     const float white_grey_relation = pow_F(white_target / middle_grey, 1.0f / paper_power) - 1.0f;
     const float white_black_relation = pow_F(black_target / white_target, -1.0f / paper_power) - 1.0f;
 
-    film_fog = middle_grey * pow(white_grey_relation, 1.0f / film_power) / (pow_F(white_black_relation, 1.0f / film_power) - pow_F(white_grey_relation, 1.0f / film_power));
+    film_fog = middle_grey * pow_F(white_grey_relation, 1.0f / film_power) / (pow_F(white_black_relation, 1.0f / film_power) - pow_F(white_grey_relation, 1.0f / film_power));
     paper_exposure = pow_F(film_fog + middle_grey, film_power) * white_grey_relation;
 }
 
@@ -2580,7 +2580,7 @@ void ImProcFunctions::log_encode(Imagefloat *rgb, struct local_params & lp, bool
                 for (int x = 0; x < W; ++x) {
                     Y2[y][x] = norm2(rgb->r(y, x), rgb->g(y, x), rgb->b(y, x), ws) / 65535.f;
                     float l = xlogf(rtengine::max(Y2[y][x], 1e-9f));
-                    float ll = round(l * base_posterization) / base_posterization;
+                    float ll = (float) round(l * base_posterization) / base_posterization;
                     Y[y][x] = xexpf(ll);
                     assert(std::isfinite(Y[y][x]));
                 }
@@ -3389,7 +3389,7 @@ void ImProcFunctions::ciecamloc_02float(struct local_params& lp, int sp, LabImag
                 }
 
                 hist16Jthr[(int)((koef * lab->L[i][j]))]++;    //evaluate histogram luminance L # J
-                hist16Qthr[CLIP((int)(32768.f * sqrt((koef * (lab->L[i][j])) / 32768.f)))]++;     //for brightness Q : approximation for Q=wh*sqrt(J/100)  J not equal L
+                hist16Qthr[CLIP((int)(32768.f * (float) sqrt((koef * (lab->L[i][j])) / 32768.f)))]++;     //for brightness Q : approximation for Q=wh*sqrt(J/100)  J not equal L
             }
         }
 
@@ -4255,7 +4255,7 @@ void ImProcFunctions::ciecamloc_02float(struct local_params& lp, int sp, LabImag
                 for (int y = 0; y < height; y++) {
                     for (int x = 0; x < width; x++) {
                         hue[y][x] = xatan2f(temp->b[y][x], temp->a[y][x]);
-                        chro[y][x] = sqrt(SQR(temp->b[y][x]) + SQR(temp->a[y][x])) / 32768.f;
+                        chro[y][x] = sqrtf(SQR(temp->b[y][x]) + SQR(temp->a[y][x])) / 32768.f;
 
                         if (hue[y][x] < 0.0f) {
                             hue[y][x] += (2.f * rtengine::RT_PI_F);
@@ -5849,8 +5849,8 @@ void ImProcFunctions::InverseReti_Local(const struct local_params & lp, const fl
     float ach = lp.trans / 100.f;
     int GW = transformed->W;
     int GH = transformed->H;
-    float refa = chromaref * cos(hueref);
-    float refb = chromaref * sin(hueref);
+    float refa = chromaref * cosf(hueref);
+    float refb = chromaref * sinf(hueref);
 
     //balance deltaE
     const float kL = lp.balance / SQR(327.68f);
@@ -5969,8 +5969,8 @@ void ImProcFunctions::InverseBlurNoise_Local(LabImage * originalmask, const stru
     float ach = lp.trans / 100.f;
     int GW = transformed->W;
     int GH = transformed->H;
-    const float refa = chromaref * cos(hueref) * 327.68f;
-    const float refb = chromaref * sin(hueref) * 327.68f;
+    const float refa = chromaref * cosf(hueref) * 327.68f;
+    const float refb = chromaref * sinf(hueref) * 327.68f;
     const float refL = lumaref * 327.68f;
 
 
@@ -6555,8 +6555,8 @@ static void blendmask(const local_params& lp, int xstart, int ystart, int cx, in
 void ImProcFunctions::deltaEforMask(float **rdE, int bfw, int bfh, LabImage* bufcolorig, const float hueref, const float chromaref, const float lumaref,
                                     float maxdE, float mindE, float maxdElim,  float mindElim, float iterat, float limscope, int scope, float balance, float balanceh)
 {
-    const float refa = chromaref * cos(hueref);
-    const float refb = chromaref * sin(hueref);
+    const float refa = chromaref *  cosf(hueref);
+    const float refb = chromaref *  sinf(hueref);
     const float refL = lumaref;
 
     const float kL = balance;
@@ -7844,8 +7844,8 @@ void ImProcFunctions::InverseSharp_Local(float **loctemp, const float hueref, co
     
     const int GW = transformed->W;
     const int GH = transformed->H;
-    const float refa = chromaref * cos(hueref) * 327.68f;
-    const float refb = chromaref * sin(hueref) * 327.68f;
+    const float refa = chromaref * cosf(hueref) * 327.68f;
+    const float refb = chromaref * sinf(hueref) * 327.68f;
     const float refL = lumaref * 327.68f;
     //balance deltaE
     const float kL = lp.balance / SQR(327.68f);
@@ -8012,8 +8012,8 @@ void ImProcFunctions::Sharp_Local(int call, float **loctemp, int senstype, const
     const int GH = transformed->H;
 
     const std::unique_ptr<LabImage> origblur(new LabImage(GW, GH));
-    const float refa = chromaref * cos(hueref) * 327.68f;
-    const float refb = chromaref * sin(hueref) * 327.68f;
+    const float refa = chromaref * cosf(hueref) * 327.68f;
+    const float refb = chromaref * sinf(hueref) * 327.68f;
     const float refL = lumaref * 327.68f;
     const float radius = 3.f / sk;
 
@@ -8124,8 +8124,8 @@ void ImProcFunctions::Exclude_Local(float **deltaso, float hueref, float chromar
         const int GW = transformed->W;
         const int GH = transformed->H;
 
-        const float refa = chromaref * cos(hueref) * 327.68f;
-        const float refb = chromaref * sin(hueref) * 327.68f;
+        const float refa = chromaref * cosf(hueref) * 327.68f;
+        const float refb = chromaref * sinf(hueref) * 327.68f;
         const float refL = lumaref * 327.68f;
         // lumaref *= 327.68f;
         //balance deltaE
@@ -8275,8 +8275,8 @@ void ImProcFunctions::transit_shapedetect_retinex(int call, int senstype, LabIma
         // const float refa = chromaref * cos(hueref);
         // const float refb = chromaref * sin(hueref);
 
-        const float refa = chromaref * cos(hueref) * 327.68f;
-        const float refb = chromaref * sin(hueref) * 327.68f;
+        const float refa = chromaref * cosf(hueref) * 327.68f;
+        const float refb = chromaref * sinf(hueref) * 327.68f;
         const float refL = lumaref * 327.68f;
 
         const bool retishow = ((lp.showmaskretimet == 1 || lp.showmaskretimet == 2));
@@ -8540,8 +8540,8 @@ void ImProcFunctions::transit_shapedetect(int senstype, const LabImage * bufexpo
 
     sobelref = log1p(sobelref);
 
-    const float refa = chromaref * cos(hueref) * 327.68f;
-    const float refb = chromaref * sin(hueref) * 327.68f;
+    const float refa = chromaref * cosf(hueref) * 327.68f;
+    const float refb = chromaref * sinf(hueref) * 327.68f;
     const float refL = lumaref * 327.68f;
     const float previewint = settings->previewselection;
 
@@ -8795,8 +8795,8 @@ void ImProcFunctions::InverseColorLight_Local(bool tonequ, bool tonecurv, int sp
 
     const int GW = transformed->W;
     const int GH = transformed->H;
-    const float refa = chromaref * cos(hueref) * 327.68f;
-    const float refb = chromaref * sin(hueref) * 327.68f;
+    const float refa = chromaref * cosf(hueref) * 327.68f;
+    const float refb = chromaref * sinf(hueref) * 327.68f;
     const float refL = lumaref * 327.68f;
 
     const std::unique_ptr<LabImage> temp(new LabImage(GW, GH));
@@ -9484,8 +9484,8 @@ void ImProcFunctions::BlurNoise_Local(LabImage *tmp1, LabImage * originalmask, c
     
     const int GW = transformed->W;
     const int GH = transformed->H;
-    const float refa = chromaref * cos(hueref) * 327.68f;
-    const float refb = chromaref * sin(hueref) * 327.68f;
+    const float refa = chromaref * cosf(hueref) * 327.68f;
+    const float refb = chromaref * sinf(hueref) * 327.68f;
     const float refL = lumaref * 327.68f;
     const bool blshow = lp.showmaskblmet == 1 || lp.showmaskblmet == 2;
     const bool previewbl = lp.showmaskblmet == 4;
@@ -9708,8 +9708,8 @@ void ImProcFunctions::transit_shapedetect2(int sp, float meantm, float stdtm, in
     sobelref = log1p(sobelref);
 
     //references Spot
-    const float refa = chromaref * cos(hueref) * 327.68f;
-    const float refb = chromaref * sin(hueref) * 327.68f;
+    const float refa = chromaref * cosf(hueref) * 327.68f;
+    const float refb = chromaref * sinf(hueref) * 327.68f;
     const float refL = lumaref * 327.68f;
 
     //to preview modifications, scope, mask
@@ -10248,7 +10248,7 @@ void ImProcFunctions::fftw_convol_blur(float * input, float * output, int bfw, i
                 if (algo == 0) {
                     kern[ i + index] = exp((float)(-radius * radius) * (n_x * i * i + n_y * j * j)); //calculate Gauss kernel Ipol formula
                 } else if (algo == 1) {
-                    kern[ i + index] = radsig * exp((float)(-(n_x * i * i + n_y * j * j) / (2.f * radius * radius))); //calculate Gauss kernel  with Gauss formula
+                    kern[ i + index] = radsig * expf((float)(-(n_x * i * i + n_y * j * j) / (2.f * radius * radius))); //calculate Gauss kernel  with Gauss formula
                 }
         }
 
@@ -10284,7 +10284,7 @@ void ImProcFunctions::fftw_convol_blur(float * input, float * output, int bfw, i
                 int index = j * bfw;
 
                 for (int i = 0; i < bfw; i++) {
-                    out[i + index] *= exp((float)(-radius * radius) * (n_x * i * i + n_y * j * j));    //apply Gauss kernel without FFT - some authors says radius*radius but differences with Gaussianblur
+                    out[i + index] *= expf((float)(-radius * radius) * (n_x * i * i + n_y * j * j));    //apply Gauss kernel without FFT - some authors says radius*radius but differences with Gaussianblur
                 }
             }
         } else if (algo == 1) {
@@ -10296,7 +10296,7 @@ void ImProcFunctions::fftw_convol_blur(float * input, float * output, int bfw, i
                 int index = j * bfw;
 
                 for (int i = 0; i < bfw; i++) {
-                    out[i + index] *= radsig * exp((float)(-(n_x * i * i + n_y * j * j) / (2.f * radius * radius)));    //calculate Gauss kernel  with Gauss formula
+                    out[i + index] *= radsig * expf((float)(-(n_x * i * i + n_y * j * j) / (2.f * radius * radius)));    //calculate Gauss kernel  with Gauss formula
                 }
             }
         }
@@ -10400,13 +10400,13 @@ void ImProcFunctions::fftw_tile_blur(int GW, int GH, int tilssize, int max_numbl
 
     for (int i = 0; i < tilssize; ++i) {
         float i1 = abs((i > tilssize / 2 ? i - tilssize + 1 : i));
-        float vmask = (i1 < border ? SQR(sin((rtengine::RT_PI_F * i1) / (2 * border))) : 1.0f);
-        float vmask2 = (i1 < 2 * border ? SQR(sin((rtengine::RT_PI_F * i1) / (2 * border))) : 1.0f);
+        float vmask = (i1 < border ? SQR(sinf((rtengine::RT_PI_F * i1) / (2 * border))) : 1.0f);
+        float vmask2 = (i1 < 2 * border ? SQR(sinf((rtengine::RT_PI_F * i1) / (2 * border))) : 1.0f);
 
         for (int j = 0; j < tilssize; ++j) {
             float j1 = abs((j > tilssize / 2 ? j - tilssize + 1 : j));
-            tilemask_in[i][j] = (vmask * (j1 < border ? SQR(sin((rtengine::RT_PI_F * j1) / (2 * border))) : 1.0f)) + epsil;
-            tilemask_out[i][j] = (vmask2 * (j1 < 2 * border ? SQR(sin((rtengine::RT_PI_F * j1) / (2 * border))) : 1.0f)) + epsil;
+            tilemask_in[i][j] = (vmask * (j1 < border ? SQR(sinf((rtengine::RT_PI_F * j1) / (2 * border))) : 1.0f)) + epsil;
+            tilemask_out[i][j] = (vmask2 * (j1 < 2 * border ? SQR(sinf((rtengine::RT_PI_F * j1) / (2 * border))) : 1.0f)) + epsil;
 
         }
     }
@@ -10517,7 +10517,7 @@ void ImProcFunctions::fftw_tile_blur(int GW, int GH, int tilssize, int max_numbl
                     int index = j * tilssize;
 
                     for (int i = 0; i < tilssize; i++) {
-                        fLblox[blkstart + index + i] *= exp((float)(-radius) * (n_xy * rtengine::SQR(i) + n_xy * rtengine::SQR(j)));
+                        fLblox[blkstart + index + i] *= expf((float)(-radius) * (n_xy * rtengine::SQR(i) + n_xy * rtengine::SQR(j)));
                     }
                 }
             }//end of horizontal block loop
@@ -11956,13 +11956,13 @@ void ImProcFunctions::fftw_denoise(int sk, int GW, int GH, int max_numblox_W, in
 
     for (int i = 0; i < TS; ++i) {
         float i1 = abs((i > TS / 2 ? i - TS + 1 : i));
-        float vmask = (i1 < border ? SQR(sin((rtengine::RT_PI_F * i1) / (2 * border))) : 1.0f);
-        float vmask2 = (i1 < 2 * border ? SQR(sin((rtengine::RT_PI_F * i1) / (2 * border))) : 1.0f);
+        float vmask = (i1 < border ? SQR(sinf((rtengine::RT_PI_F * i1) / (2 * border))) : 1.0f);
+        float vmask2 = (i1 < 2 * border ? SQR(sinf((rtengine::RT_PI_F * i1) / (2 * border))) : 1.0f);
 
         for (int j = 0; j < TS; ++j) {
             float j1 = abs((j > TS / 2 ? j - TS + 1 : j));
-            tilemask_in[i][j] = (vmask * (j1 < border ? SQR(sin((rtengine::RT_PI_F * j1) / (2 * border))) : 1.0f)) + epsilonw;
-            tilemask_out[i][j] = (vmask2 * (j1 < 2 * border ? SQR(sin((rtengine::RT_PI_F * j1) / (2 * border))) : 1.0f)) + epsilonw;
+            tilemask_in[i][j] = (vmask * (j1 < border ? SQR(sinf((rtengine::RT_PI_F * j1) / (2 * border))) : 1.0f)) + epsilonw;
+            tilemask_out[i][j] = (vmask2 * (j1 < 2 * border ? SQR(sinf((rtengine::RT_PI_F * j1) / (2 * border))) : 1.0f)) + epsilonw;
 
         }
     }
@@ -12246,9 +12246,9 @@ void ImProcFunctions::recovm(float highrec, float lowrec, float thrrec, bool inv
             float k = masklum[ir][jr];
 
             if (invrec == true) {
-                masklum[ir][jr] = 1.f - pow(k, decay);
+                masklum[ir][jr] = 1.f - pow_F(k, decay);
             } else {
-                masklum[ir][jr] = pow(k, decay);
+                masklum[ir][jr] = pow_F(k, decay);
             }
                 
         }
@@ -13039,7 +13039,7 @@ void ImProcFunctions::DeNoise(int sp, int call, int aut,  bool noiscfactiv, cons
             chmaxresid += chmaxresidtemp;
             int nbmaddir = 4;
             chresid = sqrt(chresid / ( 3 * nbmaddir * 2));
-            resi[0] = chresid + 0.5f * (sqrt(chmaxresid) - chresid); //evaluate sigma
+            resi[0] = chresid + 0.5f * ((float) sqrt(chmaxresid) - chresid); //evaluate sigma
             resi[1] = chresid;
             resi[0] /= 1.4f;//arbitrary coefficient
             resi[1] /= 1.4f;
@@ -13053,8 +13053,8 @@ void ImProcFunctions::DeNoise(int sp, int call, int aut,  bool noiscfactiv, cons
             Noise_residualAB(bdecompinf, chresid46, chmaxresid46, false, 4, 6);
             chresid46 += chresidtemp46;
             chmaxresid46 += chmaxresidtemp46;
-            chresid46 = sqrt(chresid46 / ( 3 * nbmaddir * 2));
-            resi[2] = chresid46 + 0.5f * (sqrt(chmaxresid46) - chresid46); //evaluate sigma
+            chresid46 = (float) sqrt(chresid46 / ( 3 * nbmaddir * 2));
+            resi[2] = chresid46 + 0.5f * ((float) sqrt(chmaxresid46) - chresid46); //evaluate sigma
             resi[3] = chresid46;
             resi[2] /= 2.f;//arbitrary coefficient
             resi[3] /= 2.f;
@@ -13064,7 +13064,7 @@ void ImProcFunctions::DeNoise(int sp, int call, int aut,  bool noiscfactiv, cons
             Noise_residualAB(Ldecompinf, Lresid, Lmaxresid, false, 0, 3);
             nbmaddir = 4;
             Lresid = sqrt(Lresid / (3 * nbmaddir));
-            resi[5] = Lresid + 0.5f * (sqrt(Lmaxresid) - Lresid); //evaluate sigma
+            resi[5] = Lresid + 0.5f * ((float) sqrt(Lmaxresid) - Lresid); //evaluate sigma
             resi[4] = Lresid;
             resi[4] /= 2.f;//arbitrary coefficient
             resi[5] /= 2.f;
@@ -13072,7 +13072,7 @@ void ImProcFunctions::DeNoise(int sp, int call, int aut,  bool noiscfactiv, cons
             Noise_residualAB(Ldecompinf, Lresid46, Lmaxresid46, false, 4, 6);
             nbmaddir = 3;
             Lresid46 = sqrt(Lresid46 / (3 * nbmaddir));
-            resi[6] = Lresid46 + 0.5f * (sqrt(Lmaxresid46) - Lresid46); //evaluate sigma
+            resi[6] = Lresid46 + 0.5f * ((float) sqrt(Lmaxresid46) - Lresid46); //evaluate sigma
             resi[7] = Lresid46;
             resi[6] /= 5.f;//arbitrary coefficient
             resi[7] /= 5.f;
@@ -13942,11 +13942,11 @@ void ImProcFunctions::DeNoise(int sp, int call, int aut,  bool noiscfactiv, cons
                                 float kch = masklumch[y - ystart][x - xstart];
 
                                 if (lp.invmaskd == true) {
-                                    masklum[y - ystart][x - xstart] = 1.f - pow(k, lp.decayd);
-                                    masklumch[y - ystart][x - xstart] = 1.f - pow(kch, lp.decayd);
+                                    masklum[y - ystart][x - xstart] = 1.f - pow_F(k, lp.decayd);
+                                    masklumch[y - ystart][x - xstart] = 1.f - pow_F(kch, lp.decayd);
                                 } else {
-                                    masklum[y - ystart][x - xstart] = pow(k, lp.decayd);
-                                    masklumch[y - ystart][x - xstart] = pow(kch, lp.decayd);
+                                    masklum[y - ystart][x - xstart] = pow_F(k, lp.decayd);
+                                    masklumch[y - ystart][x - xstart] = pow_F(kch, lp.decayd);
                                 }
                             }
                         }
@@ -14535,7 +14535,7 @@ void ImProcFunctions::avoidcolshi(const struct local_params& lp, int sp, LabImag
 
                     if (needHH && avoidgamut <= 4) {//Munsell
                         Lprov1 = lnew / 327.68f;
-                        float Chprov = sqrt(SQR(anew) + SQR(bnew)) / 327.68f;
+                        float Chprov = (float) sqrt(SQR(anew) + SQR(bnew)) / 327.68f;
 
                         const float Lprov2 = reserved->L[y][x] / 327.68f;
                         float correctionHue = 0.f; // Munsell's correction
@@ -15287,7 +15287,7 @@ ght_compute_params ImProcFunctions::GHT_setup(float in_B, float D, float LP, flo
     float B = in_B;
     if (strtype == GHTStrType::NORMAL) {//Normal Stretch
         if (B == -1.0f) {
-            c.qlp = -1.0f * log(1.f + D * (SP - LP));
+            c.qlp = -1.0f * (float) log(1.f + D * (SP - LP));
             c.q0 = c.qlp - D * LP / (1.0f + D * (SP - LP));
             c.qwp = log(1.f + D * (HP - SP));
             c.q1 = c.qwp + D * (1.0f - HP) / (1.0f + D * (HP - SP));
@@ -15305,12 +15305,12 @@ ght_compute_params ImProcFunctions::GHT_setup(float in_B, float D, float LP, flo
             c.b4 = c.q * D / (1.0f + D * (HP - SP));
         } else if (B < 0.0f) {
             B = -B;
-            c.qlp = (1.0f - pow((1.0f + D * B * (SP - LP)), (B - 1.0f) / B)) / (B - 1.0f);
-            c.q0 = c.qlp - D * LP * (pow((1.0f + D * B * (SP - LP)), -1.0f / B));
-            c.qwp = (pow((1.0f + D * B * (HP - SP)), (B - 1.0f) / B) - 1.0f) / (B - 1.0f);
-            c.q1 = c.qwp + D * (1.0f - HP) * (pow((1.0f + D * B * (HP - SP)), -1.0f / B));
+            c.qlp = (1.0f - pow_F((1.0f + D * B * (SP - LP)), (B - 1.0f) / B)) / (B - 1.0f);
+            c.q0 = c.qlp - D * LP * (pow_F((1.0f + D * B * (SP - LP)), -1.0f / B));
+            c.qwp = (pow_F((1.0f + D * B * (HP - SP)), (B - 1.0f) / B) - 1.0f) / (B - 1.0f);
+            c.q1 = c.qwp + D * (1.0f - HP) * (pow_F((1.0f + D * B * (HP - SP)), -1.0f / B));
             c.q = 1.0f / (c.q1 - c.q0);
-            c.b1 = D * pow(1.0f + D * B * (SP - LP), -1.0f / B) *c.q;
+            c.b1 = D * pow_F(1.0f + D * B * (SP - LP), -1.0f / B) *c.q;
             c.a2 = (1.0f / (B - 1.0f) - c.q0) * c.q;
             c.b2 = -c.q / (B - 1.0f);
             c.c2 = 1.0f + D * B * SP;
@@ -15321,16 +15321,16 @@ ght_compute_params ImProcFunctions::GHT_setup(float in_B, float D, float LP, flo
             c.c3 = 1.0f - D * B * SP;
             c.d3 = D * B;
             c.e3 = (B - 1.0f) / B;
-            c.a4 = (c.qwp - c.q0 - D * HP * pow((1.0f + D * B * (HP - SP)), -1.0f / B)) * c.q;
-            c.b4 = D * pow((1.0f + D * B * (HP - SP)), -1.0f / B) * c.q;
+            c.a4 = (c.qwp - c.q0 - D * HP * pow_F((1.0f + D * B * (HP - SP)), -1.0f / B)) * c.q;
+            c.b4 = D * pow_F((1.0f + D * B * (HP - SP)), -1.0f / B) * c.q;
         } else if (B == 0.0f) {
-            c.qlp = exp(-D * (SP - LP));
-            c.q0 = c.qlp - D * LP * exp(-D*(SP - LP));
-            c.qwp = 2.0f - exp(-D * (HP -SP));
-            c.q1 = c.qwp + D * (1.0f - HP) * exp (-D * (HP - SP));
+            c.qlp = expf(-D * (SP - LP));
+            c.q0 = c.qlp - D * LP *  expf(-D*(SP - LP));
+            c.qwp = 2.0f - expf(-D * (HP -SP));
+            c.q1 = c.qwp + D * (1.0f - HP) * expf (-D * (HP - SP));
             c.q = 1.0f / (c.q1 - c.q0);
             c.a1 = 0.0f;
-            c.b1 = D * exp (-D * (SP - LP)) * c.q;
+            c.b1 = D * expf (-D * (SP - LP)) * c.q;
             c.a2 = -c.q0 * c.q;
             c.b2 = c.q;
             c.c2 = -D * SP;
@@ -15339,15 +15339,15 @@ ght_compute_params ImProcFunctions::GHT_setup(float in_B, float D, float LP, flo
             c.b3 = -c.q;
             c.c3 = D * SP;
             c.d3 = -D;
-            c.a4 = (c.qwp - c.q0 - D * HP * exp(-D * (HP - SP))) * c.q;
-            c.b4 = D * exp(-D * (HP - SP)) * c.q;
+            c.a4 = (c.qwp - c.q0 - D * HP * expf(-D * (HP - SP))) * c.q;
+            c.b4 = D * expf(-D * (HP - SP)) * c.q;
         } else if (B > 0.0f) {
             c.qlp = pow((1.0f + D * B * (SP - LP)), -1.0f / B);
-            c.q0 = c.qlp - D * LP * pow((1.f + D * B * (SP - LP)), -(1.0f + B) / B);
-            c.qwp = 2.0f - pow(1.0f + D * B * (HP - SP), -1.0f / B);
-            c.q1 = c.qwp + D * (1.0f - HP) * pow((1.0f + D * B * (HP - SP)), -(1.0f + B) / B);
+            c.q0 = c.qlp - D * LP * pow_F((1.f + D * B * (SP - LP)), -(1.0f + B) / B);
+            c.qwp = 2.0f - pow_F(1.0f + D * B * (HP - SP), -1.0f / B);
+            c.q1 = c.qwp + D * (1.0f - HP) * pow_F((1.0f + D * B * (HP - SP)), -(1.0f + B) / B);
             c.q = 1.0f / (c.q1 - c.q0);
-            c.b1 = D * pow((1.0f + D * B * (SP - LP)), -(1.0f+B)/B) * c.q;
+            c.b1 = D * pow_F((1.0f + D * B * (SP - LP)), -(1.0f+B)/B) * c.q;
             c.a2 = -c.q0 * c.q;
             c.b2 = c.q;
             c.c2 = 1.0f + D * B * SP;
@@ -15358,12 +15358,12 @@ ght_compute_params ImProcFunctions::GHT_setup(float in_B, float D, float LP, flo
             c.c3 = 1.0f - D * B * SP;
             c.d3 = D * B;
             c.e3 = -1.0f / B;
-            c.a4 = (c.qwp - c.q0 - D * HP * pow((1.0f + D * B * (HP - SP)), -(B + 1.0f) / B)) * c.q;
-            c.b4 = (D * pow((1.0f + D * B * (HP - SP)), -(B + 1.0f) / B)) * c.q;
+            c.a4 = (c.qwp - c.q0 - D * HP * pow_F((1.0f + D * B * (HP - SP)), -(B + 1.0f) / B)) * c.q;
+            c.b4 = (D * pow_F((1.0f + D * B * (HP - SP)), -(B + 1.0f) / B)) * c.q;
         }
     } else if (strtype == GHTStrType::INVERSE) {//Inverse stretch
         if (B == -1.0f) {
-            c.qlp = -1.0f * log(1.f + D * (SP - LP));
+            c.qlp = -1.0f * logf(1.f + D * (SP - LP));
             c.q0 = c.qlp - D * LP / (1.0f + D * (SP - LP));
             c.qwp = log(1.f + D * (HP - SP));
             c.q1 = c.qwp + D * (1.0f - HP) / (1.0f + D * (HP - SP));
@@ -15384,15 +15384,15 @@ ght_compute_params ImProcFunctions::GHT_setup(float in_B, float D, float LP, flo
             c.b4 = (1.0f + D * (HP - SP) )/(c.q * D) ;
         } else if (B < 0.0f) {
            B = -B;
-            c.qlp = (1.0f - pow((1.0f + D * B * (SP - LP)), (B - 1.0f) / B)) / (B - 1.0f);
-            c.q0 = c.qlp - D * LP * (pow((1.0f + D * B * (SP - LP)), -1.0f / B));
-            c.qwp = (pow((1.0f + D * B * (HP - SP)), (B - 1.0f) / B) - 1.0f) / (B - 1.0f);
-            c.q1 = c.qwp + D * (1.0f - HP) * (pow((1.0f + D * B * (HP - SP)), -1.0f / B));
+            c.qlp = (1.0f - pow_F((1.0f + D * B * (SP - LP)), (B - 1.0f) / B)) / (B - 1.0f);
+            c.q0 = c.qlp - D * LP * (pow_F((1.0f + D * B * (SP - LP)), -1.0f / B));
+            c.qwp = (pow_F((1.0f + D * B * (HP - SP)), (B - 1.0f) / B) - 1.0f) / (B - 1.0f);
+            c.q1 = c.qwp + D * (1.0f - HP) * (pow_F((1.0f + D * B * (HP - SP)), -1.0f / B));
             c.q = 1.0f / (c.q1 - c.q0);
             c.LPT = (c.qlp - c.q0)*c.q;
             c.SPT = -c.q0 * c.q;
             c.HPT = (c.qwp - c.q0) * c.q;
-            c.b1 = pow(1.0f + D * B * (SP - LP), 1.0f / B) / (c.q * D);
+            c.b1 = pow_F(1.0f + D * B * (SP - LP), 1.0f / B) / (c.q * D);
             c.a2 = (1.0f + D * B * SP) / (D * B);
             c.b2 = -1.0f / (D * B);
             c.c2 = -c.q0 * (B-1.0f) + 1.0f;
@@ -15403,19 +15403,19 @@ ght_compute_params ImProcFunctions::GHT_setup(float in_B, float D, float LP, flo
             c.c3 = 1.0f + c.q0 * (B - 1);
             c.d3 = (B - 1.0f) / c.q;
             c.e3 = B / (B - 1.0f);
-            c.a4 = (c.q0 - c.qwp)/(D * pow((1.0f + D * B * (HP - SP)), -1.0f / B)) + HP;
-            c.b4 = 1.0f / (D * pow((1.0f + D * B * (HP - SP)), -1.0f / B) * c.q) ;
+            c.a4 = (c.q0 - c.qwp)/(D * pow_F((1.0f + D * B * (HP - SP)), -1.0f / B)) + HP;
+            c.b4 = 1.0f / (D * pow_F((1.0f + D * B * (HP - SP)), -1.0f / B) * c.q) ;
         } else if (B == 0.0f) {
             c.qlp = exp(-D * (SP - LP));
-            c.q0 = c.qlp - D * LP * exp(-D*(SP - LP));
-            c.qwp = 2.0f - exp(-D * (HP -SP));
-            c.q1 = c.qwp + D * (1.0f - HP) * exp (-D * (HP - SP));
+            c.q0 = c.qlp - D * LP * expf(-D*(SP - LP));
+            c.qwp = 2.0f - expf(-D * (HP -SP));
+            c.q1 = c.qwp + D * (1.0f - HP) * expf (-D * (HP - SP));
             c.q = 1.0f / (c.q1 - c.q0);
             c.LPT = (c.qlp - c.q0) * c.q;
             c.SPT = (1.0f - c.q0) * c.q;
             c.HPT = (c.qwp - c.q0) * c.q;
             c.a1 = 0.0f;
-            c.b1 = 1.0f / (D * exp(-D * (SP - LP)) * c.q);
+            c.b1 = 1.0f / (D * expf(-D * (SP - LP)) * c.q);
             c.a2 = SP;
             c.b2 = 1.0f / D;
             c.c2 = c.q0;
@@ -15424,18 +15424,18 @@ ght_compute_params ImProcFunctions::GHT_setup(float in_B, float D, float LP, flo
             c.b3 = -1.0f / D;
             c.c3 = (2.0f - c.q0);
             c.d3 = -1.0f / c.q;
-            c.a4 = (c.q0 - c.qwp)/(D * exp(-D * (HP - SP))) + HP;
-            c.b4 = 1.0f / (D * exp(-D * (HP - SP)) * c.q);
+            c.a4 = (c.q0 - c.qwp)/(D *  expf(-D * (HP - SP))) + HP;
+            c.b4 = 1.0f / (D * expf(-D * (HP - SP)) * c.q);
         } else if (B > 0.0f) {
             c.qlp = pow(( 1.0f + D * B * (SP - LP)), -1.0f/B);
-            c.q0 = c.qlp - D * LP * pow((1.0f + D * B * (SP - LP)), -(1.0f + B) / B);
-            c.qwp = 2.0f - pow(1.0f + D * B * (HP - SP), -1.0f / B);
-            c.q1 = c.qwp + D * (1.0f - HP) * pow((1.0f + D * B * (HP - SP)), -(1.0f + B) / B);
+            c.q0 = c.qlp - D * LP * pow_F((1.0f + D * B * (SP - LP)), -(1.0f + B) / B);
+            c.qwp = 2.0f - pow_F(1.0f + D * B * (HP - SP), -1.0f / B);
+            c.q1 = c.qwp + D * (1.0f - HP) * pow_F((1.0f + D * B * (HP - SP)), -(1.0f + B) / B);
             c.q = 1.0f / (c.q1 - c.q0);
             c.LPT = (c.qlp - c.q0) * c.q;
             c.SPT = (1.0f - c.q0) * c.q;
             c.HPT = (c.qwp - c.q0) * c.q;
-            c.b1 = 1.f / (D * pow((1.0f + D * B * (SP - LP)), -(1.0f + B) / B) * c.q);
+            c.b1 = 1.f / (D * pow_F((1.0f + D * B * (SP - LP)), -(1.0f + B) / B) * c.q);
             c.a2 = 1.0f / (D * B) + SP;
             c.b2 = -1.0f / (D * B);
             c.c2 = c.q0;
@@ -15446,8 +15446,8 @@ ght_compute_params ImProcFunctions::GHT_setup(float in_B, float D, float LP, flo
             c.c3 = (2.0f - c.q0);
             c.d3 = -1.0f / c.q;
             c.e3 = -B;
-            c.a4 = (c.q0 - c.qwp)/(D * pow((1.0f + D * B * (HP - SP)), -(B + 1.0f) / B)) + HP;
-            c.b4 = 1.0f/((D * pow((1.0f + D * B * (HP - SP)), -(B + 1.0f) / B)) * c.q);
+            c.a4 = (c.q0 - c.qwp)/(D * pow_F((1.0f + D * B * (HP - SP)), -(B + 1.0f) / B)) + HP;
+            c.b4 = 1.0f/((D * pow_F((1.0f + D * B * (HP - SP)), -(B + 1.0f) / B)) * c.q);
         }
     }
     return c;
@@ -15466,9 +15466,9 @@ float ImProcFunctions::GHT(float x, float B, float D, float LP, float SP, float 
                 if (in < LP) {
                     out = c.b1 * in;
                 } else if (in < SP) {
-                    out = c.a2 + c.b2 * log(c.c2 + c.d2 * in);
+                    out = c.a2 + c.b2 * logf(c.c2 + c.d2 * in);
                 } else if (in < HP) {
-                    out = c.a3 + c.b3 * log(c.c3 + c.d3 * in);
+                    out = c.a3 + c.b3 * logf(c.c3 + c.d3 * in);
                 } else {
                     out = c.a4 + c.b4 * in;
                 }
@@ -15476,9 +15476,9 @@ float ImProcFunctions::GHT(float x, float B, float D, float LP, float SP, float 
                 if (in < LP) {
                     out = c.b1 * in;
                 } else if (in < SP) {
-                    out = c.a2 + c.b2 * pow((c.c2 + c.d2 * in), c.e2);
+                    out = c.a2 + c.b2 * pow_F((c.c2 + c.d2 * in), c.e2);
                 } else if (in < HP) {
-                    out = c.a3 + c.b3 * pow((c.c3 + c.d3 * in), c.e3);
+                    out = c.a3 + c.b3 * pow_F((c.c3 + c.d3 * in), c.e3);
                 } else {
                     out = c.a4 + c.b4 * in;
                 }
@@ -15486,9 +15486,9 @@ float ImProcFunctions::GHT(float x, float B, float D, float LP, float SP, float 
                 if (in < LP) {
                     out = c.a1 + c.b1 * in;
                 } else if (in < SP) {
-                    out = c.a2 + c.b2 * exp(c.c2 + c.d2 * in);
+                    out = c.a2 + c.b2 * expf(c.c2 + c.d2 * in);
                 } else if (in < HP) {
-                    out = c.a3 + c.b3 * exp(c.c3 + c.d3 * in);
+                    out = c.a3 + c.b3 * expf(c.c3 + c.d3 * in);
                 } else {
                     out = c.a4 + c.b4 * in;
                 }
@@ -15496,9 +15496,9 @@ float ImProcFunctions::GHT(float x, float B, float D, float LP, float SP, float 
                 if (in < LP) {
                     out = c.b1 * in;
                 } else if (in < SP) {
-                    out = c.a2 + c.b2 * pow((c.c2 + c.d2 * in), c.e2);
+                    out = c.a2 + c.b2 * pow_F((c.c2 + c.d2 * in), c.e2);
                 } else if (in < HP) {
-                    out = c.a3 + c.b3 * pow((c.c3 + c.d3 * in), c.e3);
+                    out = c.a3 + c.b3 * pow_F((c.c3 + c.d3 * in), c.e3);
                 } else {
                     out = c.a4 + c.b4 * in;
                 }
@@ -15508,9 +15508,9 @@ float ImProcFunctions::GHT(float x, float B, float D, float LP, float SP, float 
                 if (in < c.LPT) {
                     out = c.b1 * in;
                 } else if (in < c.SPT) {
-                    out = c.a2 + c.b2 * exp(c.c2 + c.d2 * in);
+                    out = c.a2 + c.b2 * expf(c.c2 + c.d2 * in);
                 } else if (in < c.HPT) {
-                    out = c.a3 + c.b3 * exp(c.c3 + c.d3 * in);
+                    out = c.a3 + c.b3 * expf(c.c3 + c.d3 * in);
                 } else {
                     out = c.a4 + c.b4 * in;
                 }
@@ -15518,9 +15518,9 @@ float ImProcFunctions::GHT(float x, float B, float D, float LP, float SP, float 
                 if (in < c.LPT) {
                     out = c.b1 * in;
                 } else if (in < c.SPT) {
-                    out = c.a2 + c.b2 * pow((c.c2 + c.d2 * in), c.e2);
+                    out = c.a2 + c.b2 * pow_F((c.c2 + c.d2 * in), c.e2);
                 } else if (in < c.HPT) {
-                    out = c.a3 + c.b3 * pow((c.c3 + c.d3 * in), c.e3);
+                    out = c.a3 + c.b3 * pow_F((c.c3 + c.d3 * in), c.e3);
                 } else {
                     out = c.a4 + c.b4 * in;
                 }
@@ -15538,9 +15538,9 @@ float ImProcFunctions::GHT(float x, float B, float D, float LP, float SP, float 
                 if (in < c.LPT) {
                     out = c.b1 * in;
                 } else if (in < c.SPT) {
-                    out = c.a2 + c.b2 * pow((c.c2 + c.d2 * in), c.e2);
+                    out = c.a2 + c.b2 * pow_F((c.c2 + c.d2 * in), c.e2);
                 } else if (in < c.HPT) {
-                    out = c.a3 + c.b3 * pow((c.c3 + c.d3 * in), c.e3);
+                    out = c.a3 + c.b3 * pow_F((c.c3 + c.d3 * in), c.e3);
                 } else {
                     out = c.a4 + c.b4 * in;
                 }
