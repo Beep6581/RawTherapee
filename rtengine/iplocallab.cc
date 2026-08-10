@@ -10122,8 +10122,8 @@ void ImProcFunctions::exposure_pde(float * dataor, float * datain, float * datao
         fprintf(stderr, "allocation error\n");
         abort();
     }
-
-    const auto dct_fw = fftwf_plan_r2r_2d(bfh, bfw, data_tmp, data_fft, FFTW_REDFT10, FFTW_REDFT10, FFTW_ESTIMATE | FFTW_DESTROY_INPUT);
+    fftwf_plan dct_fw;
+    dct_fw = fftwf_plan_r2r_2d(bfh, bfw, data_tmp, data_fft, FFTW_REDFT10, FFTW_REDFT10, FFTW_ESTIMATE | FFTW_DESTROY_INPUT);
     fftwf_execute(dct_fw);
 
     fftwf_free(data_tmp);
