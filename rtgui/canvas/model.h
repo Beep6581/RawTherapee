@@ -24,13 +24,13 @@
 
 #include "rtengine/math/rect.h"
 #include "rtengine/util/enum.h"
-#include "rtengine/util/optional.h"
 
 #include <cairomm/surface.h>
 #include <gdk/gdk.h>
 #include <sigc++/sigc++.h>
 
 #include <memory>
+#include <optional>
 
 namespace rt {
 namespace canvas {
@@ -41,7 +41,7 @@ struct CanvasEvents
 {
     using CameraUpdateSignal = sigc::signal<void()>;
     using QueueDrawSignal = sigc::signal<void()>;
-    using ChangeCursorSignal = sigc::signal<void(rt::optional<CursorShape>)>;
+    using ChangeCursorSignal = sigc::signal<void(std::optional<CursorShape>)>;
 
     CameraUpdateSignal signal_camera_update;
     QueueDrawSignal signal_queue_draw;
@@ -141,7 +141,7 @@ public:
                  ZoomFitFlags flags = ZoomFitFlags::NONE);
 
     void queueDraw() { m_events.signal_queue_draw.emit(); }
-    void changeCursorShape(rt::optional<CursorShape> shape);
+    void changeCursorShape(std::optional<CursorShape> shape);
 
     void onWindowFocusLost(CanvasModel* model);
 

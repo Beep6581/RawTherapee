@@ -294,7 +294,7 @@ void Session::refreshCamera(const geom::IntBBox& content)
     setCamera(content, m_camera);
 }
 
-void Session::changeCursorShape(rt::optional<CursorShape> shape)
+void Session::changeCursorShape(std::optional<CursorShape> shape)
 {
     if (shape) {
         m_cursor_shape = *shape;

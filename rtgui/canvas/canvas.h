@@ -26,12 +26,12 @@
 #include "gtk4.h"
 
 #include "rtengine/util/enum.h"
-#include "rtengine/util/optional.h"
 
 #include <cairomm/refptr.h>
 #include <glibmm/refptr.h>
 #include <gtkmm/widget.h>
 
+#include <optional>
 #include <vector>
 
 namespace Gtk {
@@ -89,7 +89,7 @@ public:
     }
     void setRenderer(Renderer* renderer) { m_renderer = renderer; }
 
-    void changeCursor(rt::optional<CursorShape> shape);
+    void changeCursor(std::optional<CursorShape> shape);
 
     bool onKeyPressed(guint keyval, guint keycode, GdkModifierType state);
     void onKeyReleased(guint keyval, guint keycode, GdkModifierType state);

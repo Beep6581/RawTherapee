@@ -24,8 +24,6 @@
 #include "guiutils.h"
 #include "rtscalable.h"
 
-#include "rtengine/util/cpp.h"
-
 #include <cairomm/matrix.h>
 #include <gdk/gdkkeysyms.h>
 #include <gtkmm/gesturedrag.h>
@@ -92,7 +90,7 @@ Canvas::Canvas(CanvasModel* model)
 {
     set_name("RtCanvas");
 
-    m_scroll_controller = rt::make_unique<rt::gtk4::EventControllerScroll>(
+    m_scroll_controller = std::make_unique<rt::gtk4::EventControllerScroll>(
         rt::gtk4::EventControllerScroll::Flags::BOTH_AXES);
     m_scroll_controller->signal_scroll_begin().connect(
         sigc::mem_fun(*this, &Canvas::onScrollBegin));
@@ -169,7 +167,7 @@ void Canvas::onCameraUpdate()
     }
 }
 
-void Canvas::changeCursor(rt::optional<CursorShape> shape)
+void Canvas::changeCursor(std::optional<CursorShape> shape)
 {
     if (shape) {
         m_cursor_manager.setCursor(*shape);
@@ -781,7 +779,7 @@ void Canvas::updateCursorShape()
 {
     Session& session = m_model->session();
 
-    rt::optional<CursorShape> shape;
+    std::optional<CursorShape> shape;
     if (isPanning()) {
         shape = PAN_CURSOR;
     }

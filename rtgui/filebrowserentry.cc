@@ -230,7 +230,7 @@ void FileBrowserEntry::customDraw(const Cairo::RefPtr<Cairo::Context>& cr)
     if (last_image_filepath.empty()) return;
     if (filename != last_image_filepath) return;
 
-    const rt::optional<rt::geom::Rect>& rect = inspector->lastImageObservedRect();
+    const std::optional<rt::geom::Rect>& rect = inspector->lastImageObservedRect();
     if (!rect) return;
 
     // Draw observed frame area

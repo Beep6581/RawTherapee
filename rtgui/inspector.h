@@ -24,12 +24,12 @@
 
 #include "rtengine/coord2d.h"
 #include "rtengine/math/rect.h"
-#include "rtengine/util/optional.h"
 
 #include <gtkmm/box.h>
 #include <gtkmm/window.h>
 
 #include <memory>
+#include <optional>
 
 namespace rt {
 namespace canvas {
@@ -63,7 +63,7 @@ private:
     sigc::connection m_delay_connection;
 
     Glib::ustring m_last_image_path;
-    rt::optional<rt::geom::Rect> m_last_image_observed_rect;
+    std::optional<rt::geom::Rect> m_last_image_observed_rect;
 
     bool m_is_active;
     bool m_is_pinned;
@@ -132,7 +132,7 @@ public:
 
     const Glib::ustring& lastImageFilepath() const { return m_last_image_path; }
     // Values are normalized to [0, 1] over the image's dimensions
-    const rt::optional<rt::geom::Rect>&
+    const std::optional<rt::geom::Rect>&
     lastImageObservedRect() const { return m_last_image_observed_rect; }
 
     void clearObservedArea();

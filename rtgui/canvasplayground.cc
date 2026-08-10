@@ -128,10 +128,10 @@ void updatePosLabel(Gtk::Label* label, const T& point)
 }  // namespace
 
 CanvasPlayground::CanvasPlayground()
-    : m_canvas_model(rt::make_unique<CanvasModel>()),
-      m_img_renderer(rt::make_unique<ImageRenderer>()),
-      m_debug_renderer(rt::make_unique<DebugRenderer>(DebugRenderer::ALL)),
-      m_editor_renderer(rt::make_unique<EditorRenderer>(m_img_renderer.get()))
+    : m_canvas_model(std::make_unique<CanvasModel>()),
+      m_img_renderer(std::make_unique<ImageRenderer>()),
+      m_debug_renderer(std::make_unique<DebugRenderer>(DebugRenderer::ALL)),
+      m_editor_renderer(std::make_unique<EditorRenderer>(m_img_renderer.get()))
 {
     m_editor_renderer->setDebugRenderer(m_debug_renderer.get());
 
@@ -179,7 +179,7 @@ void CanvasPlayground::setupControls()
     header->set_markup("<span font='18' weight='bold'>Controls</span>");
     m_control_box->pack_start(*header, false, false);
 
-    m_cursor_event_listener = rt::make_unique<CursorTracker>();
+    m_cursor_event_listener = std::make_unique<CursorTracker>();
     m_canvas->addCursorMonitor(m_cursor_event_listener.get());
     {
         auto add_label = [&](const Glib::ustring& text) {
@@ -264,7 +264,7 @@ void CanvasPlayground::setupControls()
 
 void CanvasPlayground::setupImage()
 {
-    m_img_src = rt::make_unique<StdImageSource>();
+    m_img_src = std::make_unique<StdImageSource>();
     int load_result = m_img_src->load(App::get().argv1());
     if (load_result != IMIO_SUCCESS) {
         fmt::println(stderr, "ERROR: Failed to load image {}",
@@ -298,7 +298,7 @@ void CanvasPlayground::setupImage()
     int img_width = 0;
     int img_height = 0;
     m_img_src->getFullSize(img_width, img_height);
-    m_img = rt::make_unique<Imagefloat>(img_width, img_height);
+    m_img = std::make_unique<Imagefloat>(img_width, img_height);
 
     ProcParams params;
     ColorTemp color_temp;

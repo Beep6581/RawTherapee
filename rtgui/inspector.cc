@@ -31,7 +31,6 @@
 #include "rtengine/previewimage.h"
 #include "rtengine/rt_math.h"
 #include "rtengine/rtapp.h"
-#include "rtengine/util/cpp.h"
 
 using namespace rt;
 using namespace rt::canvas;
@@ -49,8 +48,8 @@ struct InspectorBuffer
 };
 
 Inspector::Inspector()
-    : m_canvas_model(rt::make_unique<CanvasModel>()),
-      m_renderer(rt::make_unique<InspectorRenderer>()),
+    : m_canvas_model(std::make_unique<CanvasModel>()),
+      m_renderer(std::make_unique<InspectorRenderer>()),
       m_curr_image(nullptr),
       m_is_active(false),
       m_is_pinned(false),
@@ -71,7 +70,7 @@ Inspector::Inspector()
 
     const auto& options = App::get().options();
     if (options.inspectorWindow) {
-        m_window = rt::make_unique<Gtk::Window>();
+        m_window = std::make_unique<Gtk::Window>();
 
         m_window->set_name("InspectorWindow");
         m_window->set_title("RawTherapee " + M("INSPECTOR_WINDOW_TITLE"));
@@ -437,7 +436,7 @@ bool Inspector::doSwitchImage()
     }
 
     // Add loaded image to tail
-    auto buffer = rt::make_unique<InspectorBuffer>(m_next_image_path, surface);
+    auto buffer = std::make_unique<InspectorBuffer>(m_next_image_path, surface);
     changeCurrImage(buffer.get());
     if (m_images.size() == max_cache_size) {
         m_images.erase(m_images.begin());  // Delete the oldest entry
@@ -498,7 +497,7 @@ void Inspector::recordObservedRect()
     int width = img.width.value();
     int height = img.height.value();
     if (width <= 0 || height <= 0) {
-        m_last_image_observed_rect = rt::nullopt;
+        m_last_image_observed_rect = std::nullopt;
         return;
     }
 
@@ -506,9 +505,9 @@ void Inspector::recordObservedRect()
 
     geom::Rect cam_bbox = m_canvas_model->session().cameraBBox();
 
-    rt::optional<geom::Rect> observed_bbox = cam_bbox.intersect(img_bbox);
+    std::optional<geom::Rect> observed_bbox = cam_bbox.intersect(img_bbox);
     if (!observed_bbox) {
-        m_last_image_observed_rect = rt::nullopt;
+        m_last_image_observed_rect = std::nullopt;
         return;
     }
 
@@ -534,7 +533,7 @@ void Inspector::setActive(bool state)
         flushBuffers();
 
         m_last_image_path = "";
-        m_last_image_observed_rect = rt::nullopt;
+        m_last_image_observed_rect = std::nullopt;
     }
 
     if (!m_window) {
@@ -544,6 +543,6 @@ void Inspector::setActive(bool state)
 
 void Inspector::clearObservedArea()
 {
-    m_last_image_observed_rect = rt::nullopt;
+    m_last_image_observed_rect = std::nullopt;
     signal_observed_area_changed.emit();
 }

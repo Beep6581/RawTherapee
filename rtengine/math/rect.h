@@ -22,8 +22,7 @@
 #include "math.h"
 #include "pointvec.h"
 
-#include "rtengine/util/optional.h"
-
+#include <optional>
 #include <type_traits>
 
 namespace rt {
@@ -84,7 +83,7 @@ public:
         else return true;
     }
 
-    rt::optional<GenericRect> intersect(const GenericRect& other) const;
+    std::optional<GenericRect> intersect(const GenericRect& other) const;
 
 private:
     PointType m_min;
@@ -98,16 +97,16 @@ using BBox = Rect;
 using IntBBox = IntRect;
 
 template <class T>
-rt::optional<GenericRect<T>>
+std::optional<GenericRect<T>>
 GenericRect<T>::intersect(const GenericRect<T>& other) const
 {
     T x0 = rt::max(m_min.x, other.m_min.x);
     T x1 = rt::min(m_max.x, other.m_max.x);
-    if (x0 >= x1) return rt::nullopt;
+    if (x0 >= x1) return std::nullopt;
 
     T y0 = rt::max(m_min.y, other.m_min.y);
     T y1 = rt::min(m_max.y, other.m_max.y);
-    if (y0 >= y1) return rt::nullopt;
+    if (y0 >= y1) return std::nullopt;
 
     return GenericRect<T>(PointType(x0, y0), PointType(x1, y1));
 }
