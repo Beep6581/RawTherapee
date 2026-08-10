@@ -2137,8 +2137,8 @@ float generalized_loglogistic_sigmoid(float value,
     // The following equation can be derived as a model for film + paper but it has a pole at 0
     // magnitude * powf(1.0f + paper_exp * powf(film_fog + value, -film_power), -paper_power);
     // Rewritten on a stable around zero form:
-    const float film_response = (float) pow_F(film_fog + clamped_value, film_power);
-    const float paper_response = magnitude * (float) pow_F(film_response / (paper_exp + film_response), paper_power);
+    const float film_response = pow_F(film_fog + clamped_value, film_power);
+    const float paper_response = magnitude * pow_F(film_response / (paper_exp + film_response), paper_power);
 
     // Safety check for very large floats that cause numerical errors
     if (xisnanf(paper_response)) {
@@ -3389,7 +3389,7 @@ void ImProcFunctions::ciecamloc_02float(struct local_params& lp, int sp, LabImag
                 }
 
                 hist16Jthr[(int)((koef * lab->L[i][j]))]++;    //evaluate histogram luminance L # J
-                hist16Qthr[CLIP((int)(32768.f * (float) sqrt((koef * (lab->L[i][j])) / 32768.f)))]++;     //for brightness Q : approximation for Q=wh*sqrt(J/100)  J not equal L
+                hist16Qthr[CLIP((int)(32768.f * sqrtf((koef * (lab->L[i][j])) / 32768.f)))]++;     //for brightness Q : approximation for Q=wh*sqrt(J/100)  J not equal L
             }
         }
 
@@ -13039,7 +13039,7 @@ void ImProcFunctions::DeNoise(int sp, int call, int aut,  bool noiscfactiv, cons
             chmaxresid += chmaxresidtemp;
             int nbmaddir = 4;
             chresid = sqrt(chresid / ( 3 * nbmaddir * 2));
-            resi[0] = chresid + 0.5f * ((float) sqrt(chmaxresid) - chresid); //evaluate sigma
+            resi[0] = chresid + 0.5f * (sqrtf(chmaxresid) - chresid); //evaluate sigma
             resi[1] = chresid;
             resi[0] /= 1.4f;//arbitrary coefficient
             resi[1] /= 1.4f;
@@ -13054,7 +13054,7 @@ void ImProcFunctions::DeNoise(int sp, int call, int aut,  bool noiscfactiv, cons
             chresid46 += chresidtemp46;
             chmaxresid46 += chmaxresidtemp46;
             chresid46 = (float) sqrt(chresid46 / ( 3 * nbmaddir * 2));
-            resi[2] = chresid46 + 0.5f * ((float) sqrt(chmaxresid46) - chresid46); //evaluate sigma
+            resi[2] = chresid46 + 0.5f * (sqrtf(chmaxresid46) - chresid46); //evaluate sigma
             resi[3] = chresid46;
             resi[2] /= 2.f;//arbitrary coefficient
             resi[3] /= 2.f;
@@ -13064,7 +13064,7 @@ void ImProcFunctions::DeNoise(int sp, int call, int aut,  bool noiscfactiv, cons
             Noise_residualAB(Ldecompinf, Lresid, Lmaxresid, false, 0, 3);
             nbmaddir = 4;
             Lresid = sqrt(Lresid / (3 * nbmaddir));
-            resi[5] = Lresid + 0.5f * ((float) sqrt(Lmaxresid) - Lresid); //evaluate sigma
+            resi[5] = Lresid + 0.5f * (sqrtf(Lmaxresid) - Lresid); //evaluate sigma
             resi[4] = Lresid;
             resi[4] /= 2.f;//arbitrary coefficient
             resi[5] /= 2.f;
@@ -13072,7 +13072,7 @@ void ImProcFunctions::DeNoise(int sp, int call, int aut,  bool noiscfactiv, cons
             Noise_residualAB(Ldecompinf, Lresid46, Lmaxresid46, false, 4, 6);
             nbmaddir = 3;
             Lresid46 = sqrt(Lresid46 / (3 * nbmaddir));
-            resi[6] = Lresid46 + 0.5f * ((float) sqrt(Lmaxresid46) - Lresid46); //evaluate sigma
+            resi[6] = Lresid46 + 0.5f * (sqrtf(Lmaxresid46) - Lresid46); //evaluate sigma
             resi[7] = Lresid46;
             resi[6] /= 5.f;//arbitrary coefficient
             resi[7] /= 5.f;
@@ -14535,7 +14535,7 @@ void ImProcFunctions::avoidcolshi(const struct local_params& lp, int sp, LabImag
 
                     if (needHH && avoidgamut <= 4) {//Munsell
                         Lprov1 = lnew / 327.68f;
-                        float Chprov = (float) sqrt(SQR(anew) + SQR(bnew)) / 327.68f;
+                        float Chprov = sqrtf(SQR(anew) + SQR(bnew)) / 327.68f;
 
                         const float Lprov2 = reserved->L[y][x] / 327.68f;
                         float correctionHue = 0.f; // Munsell's correction
@@ -15287,7 +15287,7 @@ ght_compute_params ImProcFunctions::GHT_setup(float in_B, float D, float LP, flo
     float B = in_B;
     if (strtype == GHTStrType::NORMAL) {//Normal Stretch
         if (B == -1.0f) {
-            c.qlp = -1.0f * (float) log(1.f + D * (SP - LP));
+            c.qlp = -1.0f * logf(1.f + D * (SP - LP));
             c.q0 = c.qlp - D * LP / (1.0f + D * (SP - LP));
             c.qwp = log(1.f + D * (HP - SP));
             c.q1 = c.qwp + D * (1.0f - HP) / (1.0f + D * (HP - SP));
