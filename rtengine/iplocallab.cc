@@ -10246,7 +10246,7 @@ void ImProcFunctions::fftw_convol_blur(float * input, float * output, int bfw, i
 
             for (int i = 0; i < bfw; i++)
                 if (algo == 0) {
-                    kern[ i + index] = exp((float)(-radius * radius) * (n_x * i * i + n_y * j * j)); //calculate Gauss kernel Ipol formula
+                    kern[ i + index] = expf((float)(-radius * radius) * (n_x * i * i + n_y * j * j)); //calculate Gauss kernel Ipol formula
                 } else if (algo == 1) {
                     kern[ i + index] = radsig * expf((float)(-(n_x * i * i + n_y * j * j) / (2.f * radius * radius))); //calculate Gauss kernel  with Gauss formula
                 }
@@ -15406,7 +15406,7 @@ ght_compute_params ImProcFunctions::GHT_setup(float in_B, float D, float LP, flo
             c.a4 = (c.q0 - c.qwp)/(D * pow_F((1.0f + D * B * (HP - SP)), -1.0f / B)) + HP;
             c.b4 = 1.0f / (D * pow_F((1.0f + D * B * (HP - SP)), -1.0f / B) * c.q) ;
         } else if (B == 0.0f) {
-            c.qlp = exp(-D * (SP - LP));
+            c.qlp = expf(-D * (SP - LP));
             c.q0 = c.qlp - D * LP * expf(-D*(SP - LP));
             c.qwp = 2.0f - expf(-D * (HP -SP));
             c.q1 = c.qwp + D * (1.0f - HP) * expf (-D * (HP - SP));
