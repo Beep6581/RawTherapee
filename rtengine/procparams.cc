@@ -23,7 +23,6 @@
 
 #include <locale.h>
 
-#include <cJSON.h>
 #include <glib/gstdio.h>
 #include <glibmm/fileutils.h>
 #include <glibmm/keyfile.h>
@@ -32,6 +31,7 @@
 #include "params/serdes.h"
 
 #include "aspectratios.h"
+#include "cJSON.h"
 #include "color.h"
 #include "colortemp.h"
 #include "curves.h"
