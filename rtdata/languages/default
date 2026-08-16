@@ -3273,7 +3273,7 @@ TP_LOCALLAB_CLARISOFT;Soft radius
 TP_LOCALLAB_CLARISOFTJZ_TOOLTIP;The 'Soft radius' slider (guided filter algorithm) reduces halos and irregularities for Clarity, Sharp Mask and Local contrast wavelets Jz.
 TP_LOCALLAB_CLARISOFT_TOOLTIP;The 'Soft radius' slider (guided filter algorithm) reduces halos and irregularities for Clarity, Sharp Mask and all wavelet pyramid processes. To deactivate, set slider to zero.
 TP_LOCALLAB_CLARITYML;Clarity
-TP_LOCALLAB_CLARI_TOOLTIP;This algorithm combines two decompositions of the same image and recombines them using different processes. It requires significant system resources.\n\nUsing the 'Wavelets levels' double slider as a reference:\n * from levels 0 to the bottom-right = 4 (included) 'Sharp mask' is enabled.\n * starting from levels 5 – the top-right or bottom-right and above: 'Clarity' is enabled.\n\nIn the case of the 'Sharp Mask' the change of level is similar to changing the radius in the 'Unsharp Mask'. For 'Clarity' a level change results in a greater or lesser three-dimensional volume effect on the image.
+TP_LOCALLAB_CLARI_TOOLTIP;This algorithm combines two decompositions of the same image and recombines them using different processes. It requires significant system resources.\n\n Using the 'Wavelets levels' double slider as a reference:\n * from levels 0 to the bottom-right = 4 (included) 'Sharp mask' is enabled.\n * starting from levels 5 – the top-right or bottom-right and above: 'Clarity' is enabled.\n\n In the case of the 'Sharp Mask' the change of level is similar to changing the radius in the 'Unsharp Mask'. For 'Clarity' a level change results in a greater or lesser three-dimensional volume effect on the image.
 TP_LOCALLAB_CLIPTM;Clip restored data (gain)
 TP_LOCALLAB_COFR;Color & Light
 TP_LOCALLAB_COLORDE;ΔE preview color - intensity
@@ -3429,7 +3429,7 @@ TP_LOCALLAB_GAMMASKCOL;Gamma
 TP_LOCALLAB_GAMMASK_TOOLTIP;Adjusting Gamma and Slope can provide a soft and artifact-free transformation of the mask by progressively modifying 'L' to avoid any discontinuities.
 TP_LOCALLAB_GAMSH;Gamma
 TP_LOCALLAB_GAMUTLABRELA;Lab
-TP_LOCALLAB_GAMUTW_TOOLTIP; Placed at the end of Selective Editing > Color Appearance (CAM16 & JzCzHz), Compresses the colors into the chosen profile. It is applied after all previous spots and the other adjustments in this tool. \n\n Output gamut compression is much simpler than input gamut compression. Colors near the output stage of processing are rarely outside the working profile. A reduced set of adjustments is sufficient. .\n\n  Often, there is little to no change to the image when using Gamut Compression. This is because it does not convert the color profile, but compresses colors to fit the target gamut. Adjustments applied before compression usually keep colors in the target gamut.On normal landscapes and portraits, there is often no change. 
+TP_LOCALLAB_GAMUTW_TOOLTIP; Placed at the end of Selective Editing > Color Appearance (CAM16 & JzCzHz), compresses the colors into the chosen profile. It is applied after all previous spots and the other adjustments in this tool.\n\nOutput gamut compression is much simpler than input gamut compression. Colors near the output stage of processing are rarely outside the working profile. A reduced set of adjustments is sufficient.\n\nOften, there is little to no change to the image when using Gamut Compression. This is because it does not convert the color profile, but compresses colors to fit the target gamut. Adjustments applied before compression usually keep colors in the target gamut. The effect is visible on LEDs and vibrant flowers. On normal landscapes and portraits, there is often no change.
 TP_LOCALLAB_GAMUTMUNSELL;Munsell only
 TP_LOCALLAB_GAMUTNON;None
 TP_LOCALLAB_GAMUTXYZABSO;XYZ Absolute
@@ -3517,7 +3517,7 @@ TP_LOCALLAB_GRADSTRHUE2;Hue gradient strength
 TP_LOCALLAB_GRADSTRHUE_TOOLTIP;Adjusts hue gradient strength.
 TP_LOCALLAB_GRADSTRLUM;Luma gradient strength
 TP_LOCALLAB_GRADWAV;Gradient levels
-TP_LOCALLAB_GRADWAV_TOOLTIP;Adjust local contrast for high and medium decomposition levels, referring to the double-slider wavelet levels\n Medium corresponds to a Top-right value greater than 3. High corresponds to a Top-right value greater than 5.
+TP_LOCALLAB_GRADWAV_TOOLTIP;Adjust local contrast for high and middle decomposition levels, referring to the double-slider wavelet levels\n Middle corresponds to a top-right value greater than 3. High corresponds to a top-right value greater than 5.
 TP_LOCALLAB_GRAINFRA;Film Grain 1:1
 TP_LOCALLAB_GRAINFRA2;Coarseness
 TP_LOCALLAB_GRAIN_TOOLTIP;Adds film-like grain to the image.
