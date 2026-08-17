@@ -21,6 +21,7 @@
 #include <memory>
 #include <glibmm/ustring.h>
 
+#include "iccstore.h"
 #include "iimage.h"
 #include "imagedimensions.h"
 #include "imageformat.h"
@@ -59,7 +60,7 @@ class ImageIO : virtual public ImageDatas
 protected:
     ProgressListener* pl;
     cmsHPROFILE embProfile;
-    std::string profileData;
+    ProfileContent profileData;
     int profileLength;
     char* loadedProfileData;
     int loadedProfileLength;
@@ -118,7 +119,7 @@ public:
     void getEmbeddedProfileData (int& length, unsigned char*& pdata) const;
 
     void setMetadata(Exiv2Metadata info);
-    void setOutputProfile(const std::string& pdata);
+    void setOutputProfile(const ProfileContent& pdata);
 
     bool saveMetadata(const Glib::ustring &fname) const;
 
