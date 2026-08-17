@@ -112,6 +112,7 @@ public:
         bool uncompressed = false,
         bool big = false
     ) const;
+    int saveAVIF (const Glib::ustring &fname, int bps = 8, int quality = 90) const;
 
     cmsHPROFILE getEmbeddedProfile () const;
     void getEmbeddedProfileData (int& length, unsigned char*& pdata) const;

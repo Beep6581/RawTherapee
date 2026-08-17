@@ -31,6 +31,11 @@
 #include "jxl/resizable_parallel_runner_cxx.h"
 #endif
 
+#ifdef _OPENMP
+#include <omp.h>
+#endif
+
+#include <avif/avif_cxx.h>
 #include <fcntl.h>
 #include <glib/gstdio.h>
 #include <png.h>
@@ -1294,6 +1299,129 @@ int ImageIO::saveJPEG (const Glib::ustring &fname, int quality, int subSamp) con
 }
 
 
+// Quality 0..100, bps 8, 10 or 12. Quality 100 is lossless: the identity matrix below means
+// no YUV conversion happens, so nothing but the quantizer can lose information.
+int ImageIO::saveAVIF (const Glib::ustring &fname, int bps, int quality) const
+{
+    if (getWidth() < 1 || getHeight() < 1) {
+        return IMIO_HEADERERROR;
+    }
+
+    if (bps != 8 && bps != 10 && bps != 12) {
+        bps = 8;
+    }
+
+    const int width = getWidth();
+    const int height = getHeight();
+
+    avif::ImagePtr image(avifImageCreate(width, height, bps, AVIF_PIXEL_FORMAT_YUV444));
+
+    if (!image) {
+        return IMIO_CANNOTWRITEFILE;
+    }
+
+    image->yuvRange = AVIF_RANGE_FULL;
+
+    // Colour is described by the embedded ICC profile alone. With an ICC profile present
+    // libavif does not write an nclx colr box, so primaries/transfer would be inert; a guess
+    // there could only mislead decoders that read CICP in preference to ICC. matrixCoefficients
+    // is different: it selects the RGB->YUV matrix and so alters the encoded samples. Identity
+    // (no YUV conversion at all) is the only matrix that round-trips exactly, and it requires
+    // 4:4:4.
+    image->colorPrimaries = AVIF_COLOR_PRIMARIES_UNSPECIFIED;
+    image->transferCharacteristics = AVIF_TRANSFER_CHARACTERISTICS_UNSPECIFIED;
+    image->matrixCoefficients = AVIF_MATRIX_COEFFICIENTS_IDENTITY;
+
+    if (!profileData.empty()) {
+        if (avifImageSetProfileICC(image.get(), reinterpret_cast<const uint8_t*>(profileData.data()), profileData.size()) != AVIF_RESULT_OK) {
+            return IMIO_CANNOTWRITEFILE;
+        }
+    }
+
+    if (pl) {
+        pl->setProgressStr ("PROGRESSBAR_SAVEAVIF");
+        pl->setProgress (0.0);
+    }
+
+    // getScanline only produces 8- or 16-bit samples; for 10- and 12-bit output feed it 16 bits
+    // and let avifImageRGBToYUV rescale down to the image depth.
+    const int scanlineBps = bps == 8 ? 8 : 16;
+
+    avifRGBImage rgb;
+    avifRGBImageSetDefaults (&rgb, image.get());
+    rgb.format = AVIF_RGB_FORMAT_RGB;
+    rgb.depth = scanlineBps;
+
+    if (avifRGBImageAllocatePixels (&rgb) != AVIF_RESULT_OK) {
+        return IMIO_CANNOTWRITEFILE;
+    }
+
+    const avif::RGBImageCleanup cleanupRgb (&rgb);
+
+    for (int i = 0; i < height; ++i) {
+        getScanline (i, rgb.pixels + static_cast<size_t>(i) * rgb.rowBytes, scanlineBps);
+
+        if (pl && !(i % 100)) {
+            pl->setProgress (0.5 * static_cast<float>(i + 1) / static_cast<float>(height));
+        }
+    }
+
+    if (avifImageRGBToYUV (image.get(), &rgb) != AVIF_RESULT_OK) {
+        return IMIO_CANNOTWRITEFILE;
+    }
+
+    avif::EncoderPtr encoder(avifEncoderCreate());
+
+    if (!encoder) {
+        return IMIO_CANNOTWRITEFILE;
+    }
+
+    encoder->quality = LIM(quality, 0, 100);
+#ifdef _OPENMP
+    encoder->maxThreads = omp_get_max_threads();
+#endif
+
+    avifRWData output = AVIF_DATA_EMPTY;
+
+    if (avifEncoderWrite (encoder.get(), image.get(), &output) != AVIF_RESULT_OK) {
+        avifRWDataFree (&output);
+        return IMIO_CANNOTWRITEFILE;
+    }
+
+    if (pl) {
+        pl->setProgress (0.9);
+    }
+
+    FILE* const file = g_fopen_withBinaryAndLock (fname);
+
+    if (!file) {
+        avifRWDataFree (&output);
+        return IMIO_CANNOTWRITEFILE;
+    }
+
+    const size_t expected = output.size;
+    const size_t written = fwrite (output.data, 1, expected, file);
+    avifRWDataFree (&output);
+
+    if (written != expected || fclose (file) != 0) {
+        g_remove (fname.c_str());
+        return IMIO_CANNOTWRITEFILE;
+    }
+
+    if (!saveMetadata(fname)) {
+        g_remove(fname.c_str());
+        return IMIO_CANNOTWRITEFILE;
+    }
+
+    if (pl) {
+        pl->setProgressStr ("PROGRESSBAR_READY");
+        pl->setProgress (1.0);
+    }
+
+    return IMIO_SUCCESS;
+}
+
+
 int ImageIO::saveTIFF (
     const Glib::ustring &fname,
     int bps,
@@ -1505,6 +1633,8 @@ int ImageIO::save (const Glib::ustring &fname) const
         return saveJPEG (fname);
     } else if (hasTiffExtension(fname)) {
         return saveTIFF (fname);
+    } else if (hasAvifExtension(fname)) {
+        return saveAVIF (fname);
     } else {
         return IMIO_FILETYPENOTSUPPORTED;
     }
