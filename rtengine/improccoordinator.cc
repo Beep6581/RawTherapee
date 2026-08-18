@@ -37,6 +37,7 @@
 #include "labimage.h"
 #include "lcp.h"
 #include "procparams.h"
+#include "profiling.h"
 #include "tweakoperator.h"
 #include "refreshmap.h"
 #include "utils.h"
@@ -338,6 +339,8 @@ DetailedCrop* ImProcCoordinator::createCrop(::EditDataProvider *editDataProvider
 // todo: bitmask containing desired actions, taken from changesSinceLast
 void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
 {
+    RT_PROFILE("proc::updatePreviewImage", PROCESS_IMAGE);
+
     // TODO Locallab printf
     MyMutex::MyLock processingLock(mProcessing);
 

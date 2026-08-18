@@ -7,6 +7,9 @@ set(PROCPARAM_SRCS
 )
 
 set(RTENGINESOURCEFILES
+    # We may override new/delete when memory profiling is enabled
+    newdelete.cc
+
     alpha.cc
     ahd_demosaic_RT.cc
     amaze_demosaic_RT.cc
@@ -254,6 +257,22 @@ elseif("${SVG_BACKEND}" STREQUAL "lunasvg")
     target_compile_definitions(rtengine PUBLIC "SVG_BACKEND_LUNASVG")
 else()
     message(FATAL_ERROR "Unknown SVG rendering backend")
+endif()
+
+if(TCMALLOC_FOUND)
+    target_compile_definitions(rtengine PUBLIC "RT_USING_TCMALLOC")
+endif()
+
+if(WITH_TRACY_PROFILER)
+    target_link_libraries(rtengine PUBLIC Tracy::TracyClient)
+    target_compile_definitions(rtengine PUBLIC "RT_TRACING_ENABLE")
+
+    if(WITH_TRACY_MEMORY_PROFILING)
+        if(TCMALLOC_FOUND AND NOT WITH_TRACY_ON_DEMAND)
+            message(SEND_ERROR "-DWITH_TRACY_ON_DEMAND=ON is required for memory profiling with tcmalloc")
+        endif()
+        target_compile_definitions(rtengine PUBLIC "WITH_TRACY_MEMORY_PROFILING")
+    endif()
 endif()
 
 # It may be nice to store library version too
