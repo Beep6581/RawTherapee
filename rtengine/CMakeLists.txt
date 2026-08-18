@@ -203,6 +203,7 @@ target_link_libraries(rtengine
     PUBLIC
         fmt::fmt
         JPEG::JPEG
+        PkgConfig::AVIF
         PkgConfig::CAIROMM
         PkgConfig::EXIV2
         PkgConfig::EXPAT
