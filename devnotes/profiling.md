@@ -8,7 +8,7 @@ The RawTherapee codebase currently has a few integrated profiling methods.
 
 1. A primitive `StopWatch` RAII object (no dependencies)
 2. `GNU gprof` (UNIX only)
-2. Tracy profiler (requires building/installing the profiler GUI)
+3. Tracy profiler (requires building/installing the profiler GUI)
 
 In general, prefer using `Release` or `RelWithDebInfo` builds when profiling.
 
@@ -61,7 +61,7 @@ also include `-DWITH_TRACY_MEMORY_PROFILING=ON`.
 To view the profiling data, you also need to acquire the Tracy profiling
 server/GUI. The version of the server should match the version of the client
 code. RawTherapee is currently using
-[**v0.12.2**](https://github.com/wolfpld/tracy/releases/tag/v0.12.2).
+[**v0.14.0**](https://github.com/wolfpld/tracy/releases/tag/v0.14.0).
 
 There are a few ways to obtain the profiling server:
 
@@ -80,12 +80,12 @@ the network. To enable this flow, additionally configure CMake with
 Follow the Tracy documentation PDF section 2.3 - Building the server.
 
 ```bash
-git clone --depth 1 --branch v0.12.2 https://github.com/wolfpld/tracy.git
-cd tracy/profiler
-cmake -G Ninja -DCMAKE_BUILD_TYPE="Release" -S . -B build
-cmake --build build
+git clone --depth 1 --single-branch --branch v0.14.0 https://github.com/wolfpld/tracy.git
+cd tracy
+cmake -G Ninja -DCMAKE_BUILD_TYPE="Release" -S profiler -B profiler/build
+cmake --build profiler/build
 # Run the Tracy profiler server
-./build/tracy-profiler
+./profiler/build/tracy-profiler
 ```
 
 ### Code Annotations

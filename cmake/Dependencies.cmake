@@ -130,6 +130,7 @@ macro(rt_fetch_content)
         list(APPEND DEPS fmt)
     endif()
 
+    # lunasvg::lunasvg
     if("${SVG_BACKEND}" STREQUAL "lunasvg")
         if(NOT WITH_SYSTEM_LUNASVG)
             set(LUNASVG_INSTALL OFF)
@@ -148,6 +149,7 @@ macro(rt_fetch_content)
         endif()
     endif()
 
+    # Tracy::TracyClient
     if(WITH_TRACY_PROFILER)
         set(TRACY_ENABLE ON)
         set(TRACY_ON_DEMAND "${WITH_TRACY_ON_DEMAND}")
@@ -159,7 +161,7 @@ macro(rt_fetch_content)
         FetchContent_Declare(
             tracy
             GIT_REPOSITORY https://github.com/wolfpld/tracy.git
-            GIT_TAG 05cceee0df3b8d7c6fa87e9638af311dbabc63cb # v0.13.1
+            GIT_TAG 099df3de3dc37eca4712c06b8320fb9c53596edd # v0.14.0
             GIT_SHALLOW ON
         )
         list(APPEND DEPS tracy)
