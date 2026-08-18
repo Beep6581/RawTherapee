@@ -526,6 +526,9 @@ FileBrowser::FileBrowser () :
     for (int i = 0; i <= 5; i++) {
         colorlabel_pop[i]->signal_activate().connect (sigc::bind(sigc::mem_fun(*this, &FileBrowser::menuColorlabelActivated), colorlabel_pop[i]));
     }
+
+    property_scale_factor().signal_changed().connect(
+        sigc::mem_fun(*this, &FileBrowser::onScaleFactorChanged));
 }
 
 FileBrowser::~FileBrowser ()
@@ -607,7 +610,7 @@ void FileBrowser::rightClicked ()
     cachesubmenu->show_all ();
     cachemenu->set_submenu (*cachesubmenu);
 
-    pmenu->popup (3, this->eventTime);
+    pmenu->popup_at_pointer (nullptr);
 }
 
 void FileBrowser::doubleClicked (ThumbBrowserEntryBase* entry)
@@ -1778,7 +1781,6 @@ void FileBrowser::requestColorLabel(int colorlabel)
 
 void FileBrowser::buttonPressed (LWButton* button, int actionCode, void* actionData)
 {
-
     if (actionCode >= 0 && actionCode <= 5) { // rank
         std::vector<FileBrowserEntry*> tbe;
         tbe.push_back (static_cast<FileBrowserEntry*>(actionData));
@@ -1800,7 +1802,7 @@ void FileBrowser::buttonPressed (LWButton* button, int actionCode, void* actionD
     } else if (actionCode == 8 && tbl) { // color label
         // show popup menu
         colorLabel_actionData = actionData;// this will be reused when pmenuColorLabels is clicked
-        pmenuColorLabels->popup (3, this->eventTime);
+        pmenuColorLabels->popup_at_pointer (nullptr);
     }
 }
 
@@ -2170,5 +2172,16 @@ void FileBrowser::openRequested( std::vector<FileBrowserEntry*> mselected)
 
 void FileBrowser::inspectRequested(std::vector<FileBrowserEntry*> mselected)
 {
-    getInspector()->showWindow(true);
+    idle_register.add([this]() -> bool {
+        this->getInspector()->showWindow(true);
+        this->getInspector()->grab_focus();
+        return false;
+    });
+}
+
+void FileBrowser::onScaleFactorChanged()
+{
+    if (getInspector()) {
+        getInspector()->onBrowserDeviceScaleChanged(get_scale_factor());
+    }
 }

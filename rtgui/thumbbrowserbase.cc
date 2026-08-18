@@ -822,6 +822,13 @@ void ThumbBrowserBase::arrangeFiles(ThumbBrowserEntryBase* entry)
     }
 }
 
+void ThumbBrowserBase::setInspector(Inspector* inspector)
+{
+    this->inspector = inspector;
+    inspector->signal_observed_area_changed.connect(
+        sigc::mem_fun(*this, &ThumbBrowserBase::onInspectorObservedAreaChanged));
+}
+
 void ThumbBrowserBase::disableInspector()
 {
     if (inspector) {
@@ -969,6 +976,10 @@ void ThumbBrowserBase::buttonPressed (int x, int y, int button, GdkEventType typ
             }
     }
 
+    if (getInspector()) {
+        getInspector()->clearObservedArea();
+    }
+
     if (handled || (fileDescr && fileDescr->processing)) {
         return;
     }
@@ -1095,10 +1106,11 @@ bool ThumbBrowserBase::Internal::on_motion_notify_event (GdkEventMotion* event)
 
     MYREADERLOCK(l, parent->entryRW);
 
-    for (size_t i = 0; i < parent->fd.size(); i++)
+    for (size_t i = 0; i < parent->fd.size(); i++) {
         if (parent->fd[i]->drawable && parent->fd[i]->insideWindow (0, 0, w, h)) {
             parent->fd[i]->motionNotify ((int)event->x, (int)event->y);
         }
+    }
 
     return true;
 }
