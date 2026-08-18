@@ -72,7 +72,7 @@ BreakBeforeInlineASMColon: OnlyMultiline
 # v21 - BreakBeforeTemplateCloser: false
 BreakBeforeTernaryOperators: true
 # v20 - BreakBinaryOperations: Never
-BreakConstructorInitializers: BeforeColon
+BreakConstructorInitializers: AfterColon
 # v19 - BreakFunctionDefinitionParameters: false
 BreakInheritanceList: AfterColon
 BreakStringLiterals: false
@@ -110,7 +110,7 @@ IncludeIsMainRegex: '([-_](test))?$'
 IncludeIsMainSourceRegex: ''
 IndentAccessModifiers: false
 IndentCaseBlocks: false
-IndentCaseLabels: false
+IndentCaseLabels: true
 # v20 - IndentExportBlock: false
 IndentExternBlock: AfterExternBlock
 IndentGotoLabels: true
@@ -119,7 +119,7 @@ IndentRequiresClause: true
 IndentWidth:     4
 IndentWrappedFunctionNames: false
 InsertBraces:    false
-InsertNewlineAtEOF: false
+InsertNewlineAtEOF: true
 InsertTrailingCommas: None
 IntegerLiteralSeparator:
   Binary:           4
@@ -160,7 +160,7 @@ RawStringFormats:
     CanonicalDelimiter: 'cc'
     BasedOnStyle:    google
 ReferenceAlignment: Pointer
-ReflowComments:  true
+ReflowComments:  false
 RemoveBracesLLVM: false
 # v20 - RemoveEmptyLinesInUnwrappedLines: true
 RemoveParentheses: Leave

@@ -334,7 +334,8 @@ auto lambda = [](auto arg_type_may_depend_on_lambda_callsite_usage) {};
 
 Prefer using the more modern [fmt](https://fmt.dev) library for string
 formatting as it is both faster, safer, and more ergonomic. Future C++ versions
-(i.e. C++20 and above) incorporate this library in the STL.
+(i.e. C++20 and above) incorporate this library in the STL, but the standalone
+library remains more up-to-date on features, performance, and security.
 
 ```cpp
 #include <fmt/format.h>
