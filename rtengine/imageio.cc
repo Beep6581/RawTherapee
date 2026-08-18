@@ -1436,18 +1436,7 @@ int ImageIO::saveAVIF (const Glib::ustring &fname, int bps, int quality) const
             {AVIF_TRANSFER_CHARACTERISTICS_BT470M, [](double x) { return std::pow(x, 2.2); }},
             {AVIF_TRANSFER_CHARACTERISTICS_BT470BG, [](double x) { return std::pow(x, 2.8); }},
             {AVIF_TRANSFER_CHARACTERISTICS_LINEAR, [](double x) { return x; }},
-            {
-                AVIF_TRANSFER_CHARACTERISTICS_PQ,
-                [](double x) {
-                    constexpr double m1 = 2610.0 / 16384.0;
-                    constexpr double m2 = 2523.0 / 32.0;
-                    constexpr double c1 = 3424.0 / 4096.0;
-                    constexpr double c2 = 2413.0 / 128.0;
-                    constexpr double c3 = 2392.0 / 128.0;
-                    const double p = std::pow(x, 1.0 / m2);
-                    return std::pow(std::max(p - c1, 0.0) / (c2 - c3 * p), 1.0 / m1);
-                }
-            },
+            {AVIF_TRANSFER_CHARACTERISTICS_PQ, Color::pq_eotf},
             {
                 AVIF_TRANSFER_CHARACTERISTICS_HLG,
                 [](double x) {
@@ -1495,11 +1484,24 @@ int ImageIO::saveAVIF (const Glib::ustring &fname, int bps, int quality) const
             }
 
             image->transferCharacteristics = iccTransferCharacteristics(profile);
-            cmsCloseProfile(profile);
-        }
 
-        if (avifImageSetProfileICC(image.get(), reinterpret_cast<const uint8_t*>(profileData.getData().data()), profileData.getData().size()) != AVIF_RESULT_OK) {
-            return IMIO_CANNOTWRITEFILE;
+            // We prefer ICC if possible, however if we have a curve that's unexpressible and goes
+            // beyond [0,1], we can't rely on it to correctly drive all decoders. In combination with
+            // libavif only writing the nclx colr box only when no profile is present, we must omit it
+            // in that case so we can properly embed CICP for the colr box.
+            const bool iccDescribesTransfer = !unexpressibleTransferFunction(profile);
+            cmsCloseProfile(profile);
+
+            if (iccDescribesTransfer) {
+                if (avifImageSetProfileICC(image.get(), reinterpret_cast<const uint8_t*>(profileData.getData().data()), profileData.getData().size()) != AVIF_RESULT_OK) {
+                    return IMIO_CANNOTWRITEFILE;
+                }
+            }
+            else if (image->colorPrimaries == AVIF_COLOR_PRIMARIES_UNSPECIFIED || image->transferCharacteristics == AVIF_TRANSFER_CHARACTERISTICS_UNSPECIFIED) {
+                // If we got here, we somehow had an unexpressible ICC transfer function, but we didn't match
+                // a correct AVIF CICP enum. That would result in a broken image, so bail.
+                return IMIO_CANNOTWRITEFILE;
+            }
         }
     }
     else {
@@ -1509,10 +1511,9 @@ int ImageIO::saveAVIF (const Glib::ustring &fname, int bps, int quality) const
         image->transferCharacteristics = AVIF_TRANSFER_CHARACTERISTICS_SRGB;
     }
 
-    // The identity matrix keeps the RGB planes untouched, which is what makes quality 100
-    // bit-exact, but it also denies AV1 the luma/chroma decorrelation most of its coding gain
-    // comes from. For lossy exports the rounding cost of a real matrix at 4:4:4 (about one 8-bit
-    // code, less at higher depths) is far below what the quantizer removes anyway.
+    // On Quality 100 (i.e. lossless), pick IDENTITY as matrix to store RGB values.
+    // The YUV444 conversion is potentially a tiny bit inaccurate, and if someone
+    // stores lossless, they probably overly care about that kind of thing.
     image->matrixCoefficients =
         quality >= 100
         ? AVIF_MATRIX_COEFFICIENTS_IDENTITY
@@ -1545,6 +1546,46 @@ int ImageIO::saveAVIF (const Glib::ustring &fname, int bps, int quality) const
         if (pl && !(i % 100)) {
             pl->setProgress (0.5 * static_cast<float>(i + 1) / static_cast<float>(height));
         }
+    }
+
+    // PQ is absolute, so the light levels are known once the samples are.
+    // Most decoders apparently don't check though, and fully rely on encoded
+    // CLLI data to possibly rescale image brightness in order to fit the
+    // image's dynamic range onto an available display rather than clipping
+    // so pre-calculating and encoding it is required for correct displaying.
+    if (image->transferCharacteristics == AVIF_TRANSFER_CHARACTERISTICS_PQ) {
+        constexpr int lutSize = 1024;
+        std::array<double, lutSize> pqLut;
+
+        for (int i = 0; i < lutSize; ++i) {
+            pqLut[i] = Color::pq_eotf(static_cast<double>(i) / (lutSize - 1)) * 10000.0;
+        }
+
+        const int maxSample = (1 << scanlineBps) - 1;
+        double maxCLL = 0.0;
+        double sumFrameLight = 0.0;
+
+        for (int i = 0; i < height; ++i) {
+            const uint8_t* const row8 = rgb.pixels + static_cast<size_t>(i) * rgb.rowBytes;
+            const uint16_t* const row16 = reinterpret_cast<const uint16_t*>(row8);
+
+            for (int j = 0; j < width; ++j) {
+                int peak = 0;
+
+                for (int c = 0; c < 3; ++c) {
+                    const int sample = scanlineBps == 8 ? row8[3 * j + c] : row16[3 * j + c];
+                    peak = std::max(peak, sample);
+                }
+
+                const double light = pqLut[peak * (lutSize - 1) / maxSample];
+                maxCLL = std::max(maxCLL, light);
+                sumFrameLight += light;
+            }
+        }
+
+        const double maxPALL = sumFrameLight / (static_cast<double>(width) * height);
+        image->clli.maxCLL = static_cast<uint16_t>(LIM(maxCLL + 0.5, 0.0, 65535.0));
+        image->clli.maxPALL = static_cast<uint16_t>(LIM(maxPALL + 0.5, 0.0, 65535.0));
     }
 
     if (avifImageRGBToYUV (image.get(), &rgb) != AVIF_RESULT_OK) {
