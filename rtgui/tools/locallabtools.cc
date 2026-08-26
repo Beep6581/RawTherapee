@@ -6133,6 +6133,7 @@ void LocallabShadow::convertParamToSimple()
     lowthress->setValue(defSpot.lowthress);
     higthress->setValue(defSpot.higthresc);
     decays->setValue(defSpot.decays);
+    ghs_mtf->set_active(defSpot.ghs_mtf);
     // Enable all listeners
     enableListener();
 }
@@ -6155,6 +6156,7 @@ void LocallabShadow::updateGUIToMode(const modeType new_type)
             ghs_slope->hide();
             Lab_Frame->hide();
             ghs_inv->hide();
+            Framemtf->hide();
             break;
 
         case Normal:
@@ -6170,7 +6172,6 @@ void LocallabShadow::updateGUIToMode(const modeType new_type)
             if (shMethod->get_active_row_number() == 1) { // Keep widget hidden when shMethod is equal to 0
                 gamFrame->show();
             }
-
             if (shMethod->get_active_row_number() != 1 ) { // Keep widget hidden when shMethod is equal to 0
                 gamFrame->hide();
             }
@@ -6196,6 +6197,9 @@ void LocallabShadow::updateGUIToMode(const modeType new_type)
             }
             ghs_slope->hide();
             ghs_inv->show();
+            if (ghsMethod->get_active_row_number() <= 2) {
+                Framemtf->show();
+            }
             if (shMethod->get_active_row_number() != 2) {
                 ghs_inv->hide();
                 ghsMethod->hide();
@@ -6242,6 +6246,10 @@ void LocallabShadow::updateGUIToMode(const modeType new_type)
 
             ghs_slope->show();
             ghs_inv->show();
+            if (ghsMethod->get_active_row_number() <= 2) {
+                Framemtf->show();
+            }
+
             if (shMethod->get_active_row_number() != 2) {
                 ghs_inv->hide();
                 ghsMethod->hide();
@@ -6288,11 +6296,14 @@ void LocallabShadow::ghsMethodChanged()
     Framemtf->hide();
     if (ghsMethod->get_active_row_number() < 2) {
         Framemtf->show();
+    } else {
+        Framemtf->hide();
     }
 
     if (ghsMethod->get_active_row_number() == 2) {
         Lab_Frame->show();
         ghs_slope->hide();
+        Framemtf->hide();
 
         if (mode == Expert) {
             ghs_slope->show();
@@ -6729,11 +6740,16 @@ void LocallabShadow::updateShadowGUImask()
             exprecovs->show();
             ghsMethod->show();
             ghs_inv->show();
+            Framemtf->show();
+
         } else {
             ghs_inv->hide();
+            Framemtf->hide();
+
         }
         if (ghsMethod->get_active_row_number() == 2 && shMethod->get_active_row_number() == 2) {
             Lab_Frame->show();
+            Framemtf->hide();
         }
 
         if (mode == Expert) {
@@ -6743,6 +6759,8 @@ void LocallabShadow::updateShadowGUImask()
         if (shMethod->get_active_row_number() != 2) {
             ghs_inv->hide();
             ghsMethod->hide();
+            Framemtf->hide();
+
         }
 
         showmaskSHMethod->show();
@@ -6823,6 +6841,7 @@ void LocallabShadow::updateShadowGUIshmet()
         BP_Frame->hide();
         ghs_inv->hide();
         michFrame->hide();
+        Framemtf->hide();
 
     } else if (shMethod->get_active_row_number() == 2) {
         for (const auto multiplier : multipliersh) {
@@ -6845,9 +6864,14 @@ void LocallabShadow::updateShadowGUIshmet()
         BP_Frame->show();
         ghs_inv->hide();
         michFrame->hide();
+        Framemtf->hide();
 
         if (mode == Expert || mode == Normal) {
             ghs_inv->show();
+            if (ghsMethod->get_active_row_number() < 2) {
+                Framemtf->show();
+            }
+
         }
         if (ghs_D->getValue() == 0.f) {
             ghs_BLP->set_sensitive(false);
@@ -6908,6 +6932,8 @@ void LocallabShadow::updateShadowGUIshmet()
         ghsMethod->hide();
         BP_Frame->hide();
         ghs_inv->hide();
+        Framemtf->hide();
+
         for (const auto multiplier : multipliersh) {
             multiplier->hide();
         }
