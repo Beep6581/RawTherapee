@@ -3517,7 +3517,7 @@ TP_LOCALLAB_GRADSTRHUE2;Hue gradient strength
 TP_LOCALLAB_GRADSTRHUE_TOOLTIP;Adjusts hue gradient strength.
 TP_LOCALLAB_GRADSTRLUM;Luma gradient strength
 TP_LOCALLAB_GRADWAV;Gradient levels
-TP_LOCALLAB_GRADWAV_TOOLTIP;Adjust local contrast for high and middle decomposition levels, referring to the double-slider wavelet levels\n Middle corresponds to a top-right value greater than 3. High corresponds to a top-right value greater than 5.\n\n This function complements the 'Attenuation response' but differs based on the levels of decomposition; the higher the 'Gradient levels' values, the broader the consideration of local contrast.
+TP_LOCALLAB_GRADWAV_TOOLTIP;Adjust local contrast for high and middle decomposition levels, referring to the double-slider wavelet levels.\n\nMiddle corresponds to a top-right value greater than 3 (larger than 16x16 pixels). High corresponds to a top-right value greater than 5 (larger than 64x64 pixels).\n\nThis function complements the 'Attenuation response' but differs based on the levels of decomposition; the higher the 'Gradient levels' values, the broader the consideration of local contrast.
 TP_LOCALLAB_GRAINFRA;Film Grain 1:1
 TP_LOCALLAB_GRAINFRA2;Coarseness
 TP_LOCALLAB_GRAIN_TOOLTIP;Adds film-like grain to the image.
