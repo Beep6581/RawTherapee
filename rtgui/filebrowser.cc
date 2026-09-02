@@ -538,7 +538,7 @@ FileBrowser::~FileBrowser ()
     delete[] amiExtProg;
 }
 
-void FileBrowser::rightClicked ()
+void FileBrowser::rightClicked (int x, int y)
 {
 
     {
@@ -607,7 +607,8 @@ void FileBrowser::rightClicked ()
     cachesubmenu->show_all ();
     cachemenu->set_submenu (*cachesubmenu);
 
-    pmenu->popup (3, this->eventTime);
+    const Gdk::Rectangle rect(x, y, 1, 1);
+    pmenu->popup_at_rect(internal.get_window(), rect, Gdk::GRAVITY_NORTH_WEST, Gdk::GRAVITY_NORTH_WEST, nullptr);
 }
 
 void FileBrowser::doubleClicked (ThumbBrowserEntryBase* entry)

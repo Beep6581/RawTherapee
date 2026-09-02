@@ -76,7 +76,7 @@ public:
     void error(const Glib::ustring& descr) override;
     rtengine::ProcessingJob* imageReady(rtengine::IImagefloat* img) override;
 
-    void rightClicked () override;
+    void rightClicked (int x, int y) override;
     void doubleClicked (ThumbBrowserEntryBase* entry) override;
     bool keyPressed (GdkEventKey* event) override;
     void buttonPressed (LWButton* button, int actionCode, void* actionData) override;

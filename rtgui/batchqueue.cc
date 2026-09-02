@@ -216,9 +216,10 @@ int BatchQueue::getThumbnailHeight ()
     return std::max(std::min(App::get().options().thumbSizeQueue, 200), 10);
 }
 
-void BatchQueue::rightClicked ()
+void BatchQueue::rightClicked (int x, int y)
 {
-    pmenu.popup (3, this->eventTime);
+    const Gdk::Rectangle rect(x, y, 1, 1);
+    pmenu.popup_at_rect(internal.get_window(), rect, Gdk::GRAVITY_NORTH_WEST, Gdk::GRAVITY_NORTH_WEST, nullptr);
 }
 
 void BatchQueue::doubleClicked(ThumbBrowserEntryBase* entry)
