@@ -1777,7 +1777,7 @@ void FileBrowser::requestColorLabel(int colorlabel)
     colorlabelRequested (mselected, colorlabel);
 }
 
-void FileBrowser::buttonPressed (LWButton* button, int actionCode, void* actionData)
+void FileBrowser::buttonPressed (LWButton* button, int actionCode, void* actionData, int x, int y)
 {
 
     if (actionCode >= 0 && actionCode <= 5) { // rank
@@ -1801,7 +1801,8 @@ void FileBrowser::buttonPressed (LWButton* button, int actionCode, void* actionD
     } else if (actionCode == 8 && tbl) { // color label
         // show popup menu
         colorLabel_actionData = actionData;// this will be reused when pmenuColorLabels is clicked
-        pmenuColorLabels->popup (3, this->eventTime);
+        const Gdk::Rectangle rect(x, y, 1, 1);
+        pmenuColorLabels->popup_at_rect(internal.get_window(), rect, Gdk::GRAVITY_NORTH_WEST, Gdk::GRAVITY_NORTH_WEST, nullptr);
     }
 }
 

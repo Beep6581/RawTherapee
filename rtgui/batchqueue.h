@@ -79,7 +79,7 @@ public:
     void rightClicked (int x, int y) override;
     void doubleClicked (ThumbBrowserEntryBase* entry) override;
     bool keyPressed (GdkEventKey* event) override;
-    void buttonPressed (LWButton* button, int actionCode, void* actionData) override;
+    void buttonPressed (LWButton* button, int actionCode, void* actionData, int x, int y) override;
     void redrawNeeded  (LWButton* button) override;
     void selectionChanged () override;
 
