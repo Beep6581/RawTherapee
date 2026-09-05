@@ -309,14 +309,21 @@ Glib::ustring rtengine::HaldCLUT::createIdentityTempFile(int level)
     }
 
     // Unique temp path — avoids collisions across simultaneous instances.
+    // NOTE: Glib::file_open_tmp() takes a *prefix*, not an mkstemp template —
+    // glibmm appends "XXXXXX" itself.  Passing "..._XXXXXX.png" produced
+    // "..._XXXXXX.pngAB12CD", i.e. no .png extension, and RT then failed to
+    // load the identity image.  Reserve a unique stem, add the suffix here.
     std::string tmpName;
-    const int fd = Glib::file_open_tmp(tmpName, "rt_hald_identity_XXXXXX.png");
+    const int fd = Glib::file_open_tmp(tmpName, "rt_hald_identity_");
     if (fd < 0) {
         return {};
     }
     g_close(fd, nullptr);
+    g_unlink(tmpName.c_str());
 
-    const Glib::ustring tmpPath(tmpName);
+    // ponytail: tiny TOCTOU window between unlink and saveAsPNG; the random
+    // stem makes a collision practically impossible.
+    const Glib::ustring tmpPath(tmpName + ".png");
     if (img.saveAsPNG(tmpPath, 16) != 0) {
         g_unlink(tmpPath.c_str());
         return {};
@@ -584,14 +591,21 @@ Glib::ustring rtengine::CubeLUT::createIdentityTempFile(int size)
     }
 
     // Unique temp path — avoids collisions across simultaneous instances.
+    // NOTE: Glib::file_open_tmp() takes a *prefix*, not an mkstemp template —
+    // glibmm appends "XXXXXX" itself.  Passing "..._XXXXXX.png" produced
+    // "..._XXXXXX.pngAB12CD", i.e. no .png extension, and RT then failed to
+    // load the identity image.  Reserve a unique stem, add the suffix here.
     std::string tmpName;
-    const int fd = Glib::file_open_tmp(tmpName, "rt_cube_identity_XXXXXX.png");
+    const int fd = Glib::file_open_tmp(tmpName, "rt_cube_identity_");
     if (fd < 0) {
         return {};
     }
     g_close(fd, nullptr);
+    g_unlink(tmpName.c_str());
 
-    const Glib::ustring tmpPath(tmpName);
+    // ponytail: tiny TOCTOU window between unlink and saveAsPNG; the random
+    // stem makes a collision practically impossible.
+    const Glib::ustring tmpPath(tmpName + ".png");
     if (img.saveAsPNG(tmpPath, 16) != 0) {
         g_unlink(tmpPath.c_str());
         return {};
