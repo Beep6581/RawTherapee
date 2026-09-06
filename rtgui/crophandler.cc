@@ -30,6 +30,35 @@
 
 using namespace rtengine;
 
+namespace
+{
+
+/**
+ * Produce one of the display pixbufs for the preview.
+ *
+ * czoom is exactly 1.0 for every zoom step whose percentage is an integer, i.e.
+ * for 1:1 and for all the "major" steps (50%, 33%, 25%, 20% ...), so it covers
+ * most of the zoom levels actually in use. gdk_pixbuf_scale() has no shortcut
+ * for that case: it still pushes every pixel through its filter machinery, for
+ * a result that is bit-identical to simply moving the pixels. Copying instead
+ * is several times cheaper, and this runs on the GUI thread on every preview
+ * refresh, so the difference is felt directly.
+ */
+Glib::RefPtr<Gdk::Pixbuf> resampleForDisplay (const Glib::RefPtr<Gdk::Pixbuf>& src, int width, int height, float czoom, bool unscaled)
+{
+    Glib::RefPtr<Gdk::Pixbuf> dest = Gdk::Pixbuf::create (Gdk::COLORSPACE_RGB, false, 8, width, height);
+
+    if (unscaled) {
+        src->copy_area (0, 0, width, height, dest, 0, 0);
+    } else {
+        src->scale (dest, 0, 0, width, height, 0, 0, czoom, czoom, Gdk::INTERP_TILES);
+    }
+
+    return dest;
+}
+
+}
+
 CropHandler::CropHandler() :
     cropParams(new procparams::CropParams),
     cropGuideParams(new procparams::CropGuideParams),
@@ -371,6 +400,11 @@ void CropHandler::setDetailedCrop(
                                     zoom / 1000.f :
                                     float((zoom/10) * 10) / float(zoom);
 
+                                // Tested on the integers czoom is derived from, so that the
+                                // no-resampling case is recognised exactly rather than by
+                                // comparing floats.
+                                const bool unscaled = zoom >= 1000 ? zoom == 1000 : zoom % 10 == 0;
+
                                 int imw = cropimg_width * czoom;
                                 int imh = cropimg_height * czoom;
 
@@ -383,13 +417,11 @@ void CropHandler::setDetailedCrop(
                                 }
 
                                 Glib::RefPtr<Gdk::Pixbuf> tmpPixbuf = Gdk::Pixbuf::create_from_data (cropimg.data(), Gdk::COLORSPACE_RGB, false, 8, cropimg_width, cropimg_height, 3 * cropimg_width);
-                                cropPixbuf = Gdk::Pixbuf::create (Gdk::COLORSPACE_RGB, false, 8, imw, imh);
-                                tmpPixbuf->scale (cropPixbuf, 0, 0, imw, imh, 0, 0, czoom, czoom, Gdk::INTERP_TILES);
+                                cropPixbuf = resampleForDisplay (tmpPixbuf, imw, imh, czoom, unscaled);
                                 tmpPixbuf.clear ();
 
                                 Glib::RefPtr<Gdk::Pixbuf> tmpPixbuftrue = Gdk::Pixbuf::create_from_data (cropimgtrue.data(), Gdk::COLORSPACE_RGB, false, 8, cropimg_width, cropimg_height, 3 * cropimg_width);
-                                cropPixbuftrue = Gdk::Pixbuf::create (Gdk::COLORSPACE_RGB, false, 8, imw, imh);
-                                tmpPixbuftrue->scale (cropPixbuftrue, 0, 0, imw, imh, 0, 0, czoom, czoom, Gdk::INTERP_TILES);
+                                cropPixbuftrue = resampleForDisplay (tmpPixbuftrue, imw, imh, czoom, unscaled);
                                 tmpPixbuftrue.clear ();
                             }
 
