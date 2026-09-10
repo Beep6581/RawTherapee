@@ -4,6 +4,8 @@
 <dict>
     <key>LSEnvironment</key>
     <dict>
+        <key>LC_ALL</key>
+        <string>C</string>
         <key>DYLD_FALLBACK_LIBRARY_PATH</key>
         <string>/Applications/RawTherapee.app/Contents/Frameworks</string>
         <key>XDG_CONFIG_DIRS</key>
