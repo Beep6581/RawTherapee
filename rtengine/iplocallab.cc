@@ -16844,7 +16844,8 @@ void ImProcFunctions::Lab_Local(
                     tmp1m->CopyFrom(tmp1.get(), multiThread); //save current result7
 
                     if (params->locallab.spots.at(sp).equiltm  && params->locallab.spots.at(sp).exptonemap) {
-                        if (call == 3) {
+                        // Thumbnails do not request normalization statistics.
+                        if (call == 3 && savenormtm) {
 #ifdef _OPENMP
                             #pragma omp parallel for schedule(dynamic,16) if (multiThread)
 #endif
@@ -17171,7 +17172,8 @@ void ImProcFunctions::Lab_Local(
                     tmpl->L[ir][jr] = orig[ir][jr];
 
                     if (params->locallab.spots.at(sp).equilret  && params->locallab.spots.at(sp).expreti) {
-                        if (call == 3) {
+                        // Thumbnails do not request normalization statistics.
+                        if (call == 3 && savenormreti) {
                             savenormreti->L[ir][jr] = tmpl->L[ir][jr];
                         }
                     }
