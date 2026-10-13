@@ -23696,7 +23696,7 @@ void ImProcFunctions::Lab_Local(
                     for (int j = 0; j < bfw; ++j) {
                         float X, Y, Z = 0.f;
                         Color::Lab2XYZ(bufexpfin->L[i][j], bufexpfin->a[i][j], bufexpfin->b[i][j] , X, Y, Z);
-                        Color::xyz2rgb(X, Y, Z, provcomp->r(i, j), provcomp->g(i, j), provcomp->b(i, j), wp);
+                        Color::xyz2rgb(X, Y, Z, provcomp->r(i, j), provcomp->g(i, j), provcomp->b(i, j), wip);
                     }
                 }
                 if (params->locallab.spots.at(sp).gamgain != 0. || params->locallab.spots.at(sp).gamutw != "none") {
@@ -23772,7 +23772,7 @@ void ImProcFunctions::Lab_Local(
                 for (int i = 0; i < bfh; ++i){
                     for (int j = 0; j < bfw; ++j) {
                         float x, y, z = 0.f;
-                        Color::rgbxyz (provcomp->r(i, j), provcomp->g(i, j), provcomp->b(i, j), x, y, z, wip);
+                        Color::rgbxyz (provcomp->r(i, j), provcomp->g(i, j), provcomp->b(i, j), x, y, z, wp);
                         Color::XYZ2Lab(x, y, z, bufexpfin->L[i][j], bufexpfin->a[i][j], bufexpfin->b[i][j]);
                     }
                 }

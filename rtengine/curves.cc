@@ -18,6 +18,7 @@
  */
 #include <vector>
 #include <algorithm>
+#include <array>
 #include <memory>
 #include <cmath>
 #include <cstring>
@@ -2979,6 +2980,26 @@ void ColorGradientCurve::SetXYZ(const Curve *pCurve, const double xyz_rgb[3][3],
         return;
     }
 
+    // Gamut checks need XYZ to RGB. Invert once when building the curve.
+    using Matrix = std::array<std::array<double, 3>, 3>;
+    const Matrix forward = {{
+        {xyz_rgb[0][0], xyz_rgb[0][1], xyz_rgb[0][2]},
+        {xyz_rgb[1][0], xyz_rgb[1][1], xyz_rgb[1][2]},
+        {xyz_rgb[2][0], xyz_rgb[2][1], xyz_rgb[2][2]}
+    }};
+    Matrix inverse = {};
+
+    if (!invertMatrix(forward, inverse)) {
+        Reset();
+        return;
+    }
+
+    const double rgb_xyz[3][3] = {
+        {inverse[0][0], inverse[0][1], inverse[0][2]},
+        {inverse[1][0], inverse[1][1], inverse[1][2]},
+        {inverse[2][0], inverse[2][1], inverse[2][2]}
+    };
+
     if (!lut1) {
         lut1(501);
         lut2(501);
@@ -3075,7 +3096,7 @@ void ColorGradientCurve::SetXYZ(const Curve *pCurve, const double xyz_rgb[3][3],
                 Color::Lab2Lch(a_1, b_1, c1, h1);
                 float Lr = L1 / 327.68f;
                 float RR, GG, BB;
-                Color::gamutLchonly(h1, Lr, c1, RR, GG, BB, xyz_rgb, false, 0.15f, 0.96f);
+                Color::gamutLchonly(h1, Lr, c1, RR, GG, BB, rgb_xyz, false, 0.15f, 0.96f);
                 L1 = Lr * 327.68f;
                 float La, Lb, X, Y, Z;
                 // converting back to rgb
