@@ -20,6 +20,7 @@
 #include <map>
 #include <string>
 
+#include <cjson/cJSON.h>
 #include <glibmm/ustring.h>
 #include <glibmm/fileutils.h>
 #include <glibmm/miscutils.h>
@@ -44,8 +45,6 @@
 #include "lcms2_plugin.h"
 
 #include "color.h"
-
-#include "cJSON.h"
 
 namespace
 {

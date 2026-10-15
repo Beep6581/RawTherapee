@@ -40,6 +40,7 @@
 #include <avif/avif_cxx.h>
 #include <fcntl.h>
 #include <glib/gstdio.h>
+#include <jpeg_ijg/jpeg.h>
 #include <png.h>
 #include <tiff.h>
 #include <tiffio.h>
@@ -54,7 +55,6 @@
 #include "iccjpeg.h"
 #include "imagedata.h"
 #include "imageio.h"
-#include "jpeg.h"
 #include "procparams.h"
 #include "rt_math.h"
 #include "settings.h"

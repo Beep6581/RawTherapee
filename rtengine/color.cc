@@ -1448,7 +1448,7 @@ void Color::interpolateRGBColor (const float balance, const float r1, const floa
     Color::Lab2Lch(a_1, b_1, c1, h1);
     Lr = L1 / 327.68f; //for gamutlch
     //gamut control on r1 g1 b1
-    Color::gamutLchonly(h1, Lr, c1, RR, GG, BB, xyz_rgb, false, 0.15f, 0.96f);
+    Color::gamutLchonly(h1, Lr, c1, RR, GG, BB, rgb_xyz, false, 0.15f, 0.96f);
 
     L1 = Lr * 327.68f;
 
@@ -1459,7 +1459,7 @@ void Color::interpolateRGBColor (const float balance, const float r1, const floa
 
     Lr = L2 / 327.68f; //for gamutlch
     //gamut control on r2 g2 b2
-    Color::gamutLchonly(h2, Lr, c2, RR, GG, BB, xyz_rgb, false, 0.15f, 0.96f);
+    Color::gamutLchonly(h2, Lr, c2, RR, GG, BB, rgb_xyz, false, 0.15f, 0.96f);
     L2 = Lr * 327.68f;
 
     // interpolating Lch values
@@ -1490,7 +1490,7 @@ void Color::interpolateRGBColor (const float balance, const float r1, const floa
     // here I have put gamut control with gamutlchonly  on final process
     Lr = L1 / 327.68f; //for gamutlch
     //gamut control : Lab values are in gamut
-    Color::gamutLchonly(h1, Lr, c1, RR, GG, BB, xyz_rgb, false, 0.15f, 0.96f);
+    Color::gamutLchonly(h1, Lr, c1, RR, GG, BB, rgb_xyz, false, 0.15f, 0.96f);
     //convert CH ==> ab
     L1 = Lr * 327.68f;
 
