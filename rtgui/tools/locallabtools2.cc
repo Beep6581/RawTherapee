@@ -8450,7 +8450,7 @@ Locallabcie::Locallabcie():
     modecie(Gtk::manage(new MyComboBoxText())),
     modebpwp(Gtk::manage(new MyComboBoxText())),
     BpwpBox(Gtk::manage(new ToolParamBlock())),
-    bpcomp(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_BPCOMP")))),
+    autobpwpyb(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_AUTOBPWPYB")))),
 
     jzFrame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_JZFRA")))),
     modeHBoxcam(Gtk::manage(new Gtk::Box())),
@@ -8845,7 +8845,7 @@ Locallabcie::Locallabcie():
     Evlocallabgamutw = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_CIE_GAMLIST");
     Evlocallabbrighthres = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_CIE_RGB_BRIGHTHRES");
     Evlocallabmodebpwp = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_CIE_BPWP_MODE");
-    Evlocallabbpcomp = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_CIE_BPCOMP");
+    Evlocallabautobpwpyb = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_CIE_AUTOBPWPYB");
 
     set_orientation(Gtk::ORIENTATION_VERTICAL);
 
@@ -8904,7 +8904,7 @@ Locallabcie::Locallabcie():
     modeHBoxbpwp->pack_start(*modebpwp);
     modebpwpconn = modebpwp->signal_changed().connect(sigc::mem_fun(*this, &Locallabcie::modebpwpChanged));
     BpwpBox->pack_start(*modeHBoxbpwp);
-    BpwpBox->pack_start(*bpcomp);
+    BpwpBox->pack_start(*autobpwpyb);
     pack_start(*BpwpBox);
     
     surHBoxcie->set_spacing(2);
@@ -9432,7 +9432,7 @@ Locallabcie::Locallabcie():
     normcie12conn = normcie12->signal_toggled().connect(sigc::mem_fun(*this, &Locallabcie::normcie12Changed));
     normcieconn = normcie->signal_toggled().connect(sigc::mem_fun(*this, &Locallabcie::normcieChanged));
     expprecamconn = expprecam->signal_enabled_toggled().connect(sigc::mem_fun(*this, &Locallabcie::expprecamChanged));
-    bpcompconn = bpcomp->signal_toggled().connect(sigc::mem_fun(*this, &Locallabcie::bpcompChanged));
+    autobpwpybconn = autobpwpyb->signal_toggled().connect(sigc::mem_fun(*this, &Locallabcie::autobpwpybChanged));
 
     sigcieconn = sigcie->signal_toggled().connect(sigc::mem_fun(*this, &Locallabcie::sigcieChanged));
     logcieconn = logcie->signal_toggled().connect(sigc::mem_fun(*this, &Locallabcie::logcieChanged));
@@ -10080,7 +10080,7 @@ void Locallabcie::updateAdviceTooltips(const bool showTooltips)
  //       smoothciemet->set_tooltip_text(M("TP_LOCALLAB_SMOOTHCIE_TOOLTIP"));
         modecam->set_tooltip_text(M("TP_LOCALLAB_JZMODECAM_TOOLTIP"));
         modebpwp->set_tooltip_text(M("TP_LOCALLAB_MODEBPWP_TOOLTIP"));
-        bpcomp->set_tooltip_text(M("TP_LOCALLAB_BPCOMP_TOOLTIP"));
+        autobpwpyb->set_tooltip_text(M("TP_LOCALLAB_AUTOBPWPYB_TOOLTIP"));
         adapjzcie->set_tooltip_text(M("TP_LOCALLAB_JABADAP_TOOLTIP"));
         jz100->set_tooltip_text(M("TP_LOCALLAB_JZ100_TOOLTIP"));
         pqremap->set_tooltip_text(M("TP_LOCALLAB_JZPQREMAP_TOOLTIP"));
@@ -10169,7 +10169,7 @@ void Locallabcie::updateAdviceTooltips(const bool showTooltips)
         PQFrame->set_tooltip_text("");
         modecam->set_tooltip_text("");
         modebpwp->set_tooltip_text("");
-        bpcomp->set_tooltip_text("");
+        autobpwpyb->set_tooltip_text("");
         qtoj->set_tooltip_text("");
         logcie->set_tooltip_text("");
         jabcie->set_tooltip_text("");
@@ -10303,7 +10303,7 @@ void Locallabcie::disableListener()
     modecamconn.block(true);
     modeQJconn.block(true);
     modebpwpconn.block(true);
-    bpcompconn.block(true);
+    autobpwpybconn.block(true);
 
     bwevMethod12Conn.block(true);
     bwevMethodConn.block(true);
@@ -10358,7 +10358,7 @@ void Locallabcie::enableListener()
     gamutwconn.block(false);
     modecieconn.block(false);
     modebpwpconn.block(false);
-    bpcompconn.block(false);
+    autobpwpybconn.block(false);
 
     modecamconn.block(false);
     modeQJconn.block(false);
@@ -10549,7 +10549,7 @@ void Locallabcie::read(const rtengine::procparams::ProcParams* pp, const ParamsE
         } else if (spot.modebpwp == "sec") {
             modebpwp->set_active(1);
         }
-        bpcomp->set_active(spot.bpcomp);
+        autobpwpyb->set_active(spot.autobpwpyb);
 
         if (spot.modeQJ == "511") {
             modeQJ->set_active(0);
@@ -11003,7 +11003,7 @@ void Locallabcie::write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedi
         } else if (modebpwp->get_active_row_number() == 1) {
             spot.modebpwp = "sec";
         }
-        spot.bpcomp = bpcomp->get_active();
+        spot.autobpwpyb = autobpwpyb->get_active();
 
         if (modeQJ->get_active_row_number() == 0) {
             spot.modeQJ = "511";
@@ -11532,15 +11532,15 @@ void Locallabcie::updateAutocompute(const float blackev, const float whiteev, co
     }
 }
 
-void Locallabcie::bpcompChanged()
+void Locallabcie::autobpwpybChanged()
 {
     if (isLocActivated && exp->getEnabled()) {
         if (listener) {
-            if (Autograycie->get_active()) {
-                listener->panelChanged(Evlocallabbpcomp,
+            if (autobpwpyb->get_active()) {
+                listener->panelChanged(Evlocallabautobpwpyb,
                                        M("GENERAL_ENABLED") + " (" + escapeHtmlChars(getSpotName()) + ")");
             } else {
-                listener->panelChanged(Evlocallabbpcomp,
+                listener->panelChanged(Evlocallabautobpwpyb,
                                        M("GENERAL_DISABLED") + " (" + escapeHtmlChars(getSpotName()) + ")");
             }
         }
@@ -12118,7 +12118,7 @@ void Locallabcie::modecamChanged()
         lapmaskcie->setValue(defSpot.lapmaskcie);
         modebpwp->hide();
         modeHBoxbpwp->hide();
-        bpcomp->hide();
+        autobpwpyb->hide();
         enacieMaskallChanged2();
 
     } else {
@@ -12148,7 +12148,7 @@ void Locallabcie::modecamChanged()
             expprecam->show();
             modebpwp->show();
             modeHBoxbpwp->show();
-            bpcomp->show();
+            autobpwpyb->show();
 
             qjmodcam();
             
@@ -12166,7 +12166,7 @@ void Locallabcie::modecamChanged()
     expcamscene->show();
     modebpwp->show();
     modeHBoxbpwp->show();
-    bpcomp->show();
+    autobpwpyb->show();
     if (modecam->get_active_row_number() == 1) {
         guijzczhz();
         surHBoxcie->show();
@@ -12176,7 +12176,7 @@ void Locallabcie::modecamChanged()
         sigmoidjzFrame->hide();
         modebpwp->hide();
         modeHBoxbpwp->hide();
-        bpcomp->hide();
+        autobpwpyb->hide();
         if (mode == Expert) {
             exprecovcie->show();
             expmaskcie->show();
@@ -12240,7 +12240,7 @@ void Locallabcie::modecamChanged()
             enacieMaskallChanged2();
             modebpwp->hide();
             modeHBoxbpwp->hide();
-            bpcomp->hide();
+            autobpwpyb->hide();
         } else if (mode != Simple){
             exprecovcie->show();
             expmaskcie->show();     
@@ -12258,7 +12258,7 @@ void Locallabcie::modecamChanged()
             qjmodcam();
             modebpwp->show();
             modeHBoxbpwp->show();
-            bpcomp->show();
+            autobpwpyb->show();
         }
 
         if (modecam->get_active_row_number() == 1) {
@@ -12279,7 +12279,7 @@ void Locallabcie::modecamChanged()
             enacieMaskallChanged2();
             modebpwp->hide();
             modeHBoxbpwp->hide();
-            bpcomp->hide();
+            autobpwpyb->hide();
             qjmodjz();
 
             if (chjzcie->get_active()) {
@@ -12302,7 +12302,7 @@ void Locallabcie::modecamChanged()
         expcamviewing->show();
         modebpwp->show();
         modeHBoxbpwp->show();
-        bpcomp->show();
+        autobpwpyb->show();
         if (mode != Simple){
             exprecovcie->show();
             expmaskcie->show();
@@ -12386,11 +12386,11 @@ void Locallabcie::modebpwpChanged()
             if (modecam->get_active_row_number() == 1) {
                 modebpwp->hide();
                 modeHBoxbpwp->hide();
-                bpcomp->hide();
+                autobpwpyb->hide();
             } else {
                 modebpwp->show();
                 modeHBoxbpwp->show();
-                bpcomp->show();
+                autobpwpyb->show();
             }
             if (listener) {
                 listener->panelChanged(Evlocallabmodebpwp,
@@ -12865,7 +12865,7 @@ void Locallabcie::updateGUIToMode(const modeType new_type)
                 sigmoidFrame->hide();
                 modebpwp->show();
                 modeHBoxbpwp->show();
-                bpcomp->show();
+                autobpwpyb->show();
                 if(smoothciemet->get_active_row_number() == 3) {
                     contsig->hide();
                     skewsig->hide();
@@ -12989,7 +12989,7 @@ void Locallabcie::updateGUIToMode(const modeType new_type)
                 smoothciethtrc->hide();
                 modebpwp->hide();
                 modeHBoxbpwp->hide();
-                bpcomp->hide();
+                autobpwpyb->hide();
             }
 
             if (modecam->get_active_row_number() == 1) {
@@ -12999,7 +12999,7 @@ void Locallabcie::updateGUIToMode(const modeType new_type)
                 enacieMaskall->hide();
                 modebpwp->hide();
                 modeHBoxbpwp->hide();
-                bpcomp->hide();
+                autobpwpyb->hide();
             }
 
             sigmoidjzFrame12->hide();
@@ -13053,11 +13053,11 @@ void Locallabcie::updateGUIToMode(const modeType new_type)
             if (modecam->get_active_row_number() == 1) {
                 modebpwp->hide();
                 modeHBoxbpwp->hide();
-                bpcomp->hide();
+                autobpwpyb->hide();
             } else {
                 modebpwp->show();
                 modeHBoxbpwp->show();
-                bpcomp->show();
+                autobpwpyb->show();
             }
             sigmoidblcie12->show();
             expjz->hide();
@@ -13245,13 +13245,13 @@ void Locallabcie::updateGUIToMode(const modeType new_type)
                 qjmodjz();
                 modebpwp->hide();
                 modeHBoxbpwp->hide();
-                bpcomp->hide();
+                autobpwpyb->hide();
             } else {
                 exprecovcie->show();
                 expmaskcie->show();
                 modebpwp->show();
                 modeHBoxbpwp->show();
-                bpcomp->show();
+                autobpwpyb->show();
             }
 
 
@@ -13300,11 +13300,11 @@ void Locallabcie::updateGUIToMode(const modeType new_type)
             if (modecam->get_active_row_number() == 1) {
                 modebpwp->hide();
                 modeHBoxbpwp->hide();
-                bpcomp->hide();
+                autobpwpyb->hide();
             } else {
                 modebpwp->show();
                 modeHBoxbpwp->show();
-                bpcomp->show();
+                autobpwpyb->show();
             }
 
             pqremapcam16->show();
@@ -13355,7 +13355,7 @@ void Locallabcie::updateGUIToMode(const modeType new_type)
             }
             modebpwp->hide();
             modeHBoxbpwp->hide();
-            bpcomp->hide();
+            autobpwpyb->hide();
             if (modecam->get_active_row_number() == 0) {
                 bevwevFrame->show();
                 expprecam->show();
@@ -13367,7 +13367,7 @@ void Locallabcie::updateGUIToMode(const modeType new_type)
                 qjmodcam();
                 modebpwp->show();
                 modeHBoxbpwp->show();
-                bpcomp->show();
+                autobpwpyb->show();
                 if(smoothciemet->get_active_row_number() == 3) {
                     contsig->hide();
                     skewsig->hide();
@@ -13507,7 +13507,7 @@ void Locallabcie::updateGUIToMode(const modeType new_type)
                 qjmodjz();
                 modebpwp->hide();
                 modeHBoxbpwp->hide();
-                bpcomp->hide();
+                autobpwpyb->hide();
             }
 
             expcamscene->show();
@@ -13524,7 +13524,7 @@ void Locallabcie::updateGUIToMode(const modeType new_type)
                 bevwevFrame->hide();
                 modebpwp->show();
                 modeHBoxbpwp->show();
-                bpcomp->show();
+                autobpwpyb->show();
                 bevwevFrame->show();
                 sigmoidFrame12->show();
                 expprecam->show();
@@ -13675,7 +13675,7 @@ void Locallabcie::updateGUIToMode(const modeType new_type)
                 enacieMaskall->show();
                 modebpwp->hide();
                 modeHBoxbpwp->hide();
-                bpcomp->hide();
+                autobpwpyb->hide();
                 if (chjzcie->get_active()) {
                     thrhjzcie->set_sensitive(true);
                 } else {
@@ -13686,7 +13686,7 @@ void Locallabcie::updateGUIToMode(const modeType new_type)
             } else {
                 modebpwp->show();
                 modeHBoxbpwp->show();
-                bpcomp->show();
+                autobpwpyb->show();
             }
 
 
@@ -13736,13 +13736,13 @@ void Locallabcie::updatecieGUI()
     expcamviewing->show();
     modebpwp->hide();
     modeHBoxbpwp->hide();
-    bpcomp->hide();
+    autobpwpyb->hide();
     if (modecam->get_active_row_number() == 0) {
         bevwevFrame->show();
         expprecam->show();
         modebpwp->show();
         modeHBoxbpwp->show();
-        bpcomp->show(); 
+        autobpwpyb->show(); 
         if (mode == Simple) {
             expmaskcie->hide();
             exprecovcie->hide();
@@ -13883,7 +13883,7 @@ void Locallabcie::updatecieGUI()
        qjmodjz();
        modebpwp->hide();
        modeHBoxbpwp->hide();
-       bpcomp->hide();
+       autobpwpyb->hide();
     }
 
     sourceGraycie->show();
@@ -13976,7 +13976,7 @@ void Locallabcie::updatecieGUI()
         qjmodjz();
         modebpwp->hide();
         modeHBoxbpwp->hide();
-        bpcomp->hide();
+        autobpwpyb->hide();
 
     }
 
