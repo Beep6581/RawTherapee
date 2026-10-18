@@ -1930,6 +1930,7 @@ private:
     Gtk::Box* const modeHBoxbpwp;
     Gtk::Frame* const cieFrame;
     MyExpander* const expcamscene;
+    MyExpander* const expcamsceneinside;
     
     Gtk::CheckButton* const Autograycie;
     Adjuster* const sourceGraycie;

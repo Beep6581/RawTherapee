@@ -3653,7 +3653,8 @@ TP_LOCALLAB_LOGCONTTHRES_TOOLTIP;Adjusts the mid-tone contrast range (J &amp; Q)
 TP_LOCALLAB_LOGDETAIL_TOOLTIP;Acts mainly on high frequencies.
 TP_LOCALLAB_LOGENCOD_TOOLTIP;Tone Mapping with Logarithmic encoding (ACES).\nUseful for underexposed images or images with high dynamic range.\n\nTwo-step process: 1) Dynamic Range calculation 2) Manual adjustment.
 TP_LOCALLAB_LOGEXP;All tools
-TP_LOCALLAB_LOGFRA;Scene Conditions
+TP_LOCALLAB_LOGFRABEF;Scene Conditions before
+TP_LOCALLAB_LOGFRAINS;Scene Conditions inside
 TP_LOCALLAB_LOGFRAME_TOOLTIP;Allows you to calculate and adjust the Ev levels and the 'Mean luminance Yb%' (source gray point) for the spot area. The resulting values will be used by all Lab operations and most RGB operations in the pipeline.\nAlso calculates the absolute luminance at the time of shooting.
 TP_LOCALLAB_LOGIMAGE_TOOLTIP;Takes into account corresponding CIECAM variables: i.e. Contrast (J) and Saturation (s), as well as Contrast (Q), Brightness (Q), Lightness (J) and Colorfulness (M) (in Advanced mode).
 TP_LOCALLAB_LOGLIGHTL;Lightness (J)
