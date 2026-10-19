@@ -2123,6 +2123,7 @@ void ParamsEdited::initFrom(const std::vector<rtengine::procparams::ProcParams>&
                 locallab.spots.at(j).sourceabscieins = locallab.spots.at(j).sourceabscieins && pSpot.sourceabscieins == otherSpot.sourceabscieins;
                 locallab.spots.at(j).blackins = locallab.spots.at(j).blackins && pSpot.blackins == otherSpot.blackins;
                 locallab.spots.at(j).whiteins = locallab.spots.at(j).whiteins && pSpot.whiteins == otherSpot.whiteins;
+                locallab.spots.at(j).sursourcieins = locallab.spots.at(j).sursourcieins && pSpot.sursourcieins == otherSpot.sursourcieins;
 
                 locallab.spots.at(j).modeQJ = locallab.spots.at(j).modeQJ && pSpot.modeQJ == otherSpot.modeQJ;
                 locallab.spots.at(j).bwevMethod12 = locallab.spots.at(j).bwevMethod12 && pSpot.bwevMethod12 == otherSpot.bwevMethod12;
@@ -6900,6 +6901,10 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
             toEdit.locallab.spots.at(i).whiteins = mods.locallab.spots.at(i).whiteins;
         }
 
+        if (locallab.spots.at(i).sursourcieins) {
+            toEdit.locallab.spots.at(i).sursourcieins = mods.locallab.spots.at(i).sursourcieins;
+        }
+
         if (locallab.spots.at(i).modeQJ) {
             toEdit.locallab.spots.at(i).modeQJ = mods.locallab.spots.at(i).modeQJ;
         }
@@ -9665,6 +9670,8 @@ LocallabParamsEdited::LocallabSpotEdited::LocallabSpotEdited(bool v) :
     sourceabscieins(v),
     blackins(v),
     whiteins(v),
+    sursourcieins(v),
+
     modeQJ(v),
     bwevMethod12(v),
     bwevMethod(v),
@@ -10540,6 +10547,7 @@ void LocallabParamsEdited::LocallabSpotEdited::set(bool v)
     sourceabscieins = v;
     blackins = v;
     whiteins = v;
+    sursourcieins = v;
 
     modeQJ = v;
     bwevMethod12 = v;

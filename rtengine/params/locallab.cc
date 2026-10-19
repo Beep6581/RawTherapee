@@ -1693,6 +1693,8 @@ LocallabParams::LocallabSpot::LocallabSpot() :
     sourceabscieins(2000.),
     blackins(0.0001),
     whiteins(1.0),
+    sursourcieins("Average"),
+
     modeQJ("512"),
     bwevMethod12("slop"),
     bwevMethod("sig"),
@@ -2867,6 +2869,7 @@ bool LocallabParams::LocallabSpot::operator ==(const LocallabSpot& other) const
         && sourceabscieins == other.sourceabscieins
         && blackins == other.blackins
         && whiteins == other.whiteins
+        && sursourcieins == other.sursourcieins
         && modeQJ == other.modeQJ
         && bwevMethod12 == other.bwevMethod12
         && bwevMethod == other.bwevMethod
@@ -4062,6 +4065,7 @@ void LoadUtil::ciecam()
     assignFromKeyfile(keyFile, "Locallab", "sourceabscieins_" + index_str, spot.sourceabscieins, spotEdited.sourceabscieins);
     assignFromKeyfile(keyFile, "Locallab", "blackins_" + index_str, spot.blackins, spotEdited.blackins);
     assignFromKeyfile(keyFile, "Locallab", "whiteins_" + index_str, spot.whiteins, spotEdited.whiteins);
+    assignFromKeyfile(keyFile, "Locallab", "Sursourcieins_" + index_str, spot.sursourcieins, spotEdited.sursourcieins);
 
     assignFromKeyfile(keyFile, "Locallab", "Sigq12_" + index_str, spot.sigq12, spotEdited.sigq12);
     assignFromKeyfile(keyFile, "Locallab", "Sigq_" + index_str, spot.sigq, spotEdited.sigq);
@@ -5139,6 +5143,8 @@ void SaveUtil::ciecam()
         saveToKeyfile(!pedited || spot_edited->sourceabscieins, "Locallab", "sourceabscieins_" + index_str, spot.sourceabscieins, keyFile);
         saveToKeyfile(!pedited || spot_edited->blackins, "Locallab", "blackins_" + index_str, spot.blackins, keyFile);
         saveToKeyfile(!pedited || spot_edited->whiteins, "Locallab", "whiteins_" + index_str, spot.whiteins, keyFile);
+        saveToKeyfile(!pedited || spot_edited->whiteins, "Locallab", "Sursourcieins_" + index_str, spot.sursourcieins, keyFile);
+
 
 
         saveToKeyfile(!pedited || spot_edited->modeQJ, "Locallab", "ModeQJ_" + index_str, spot.modeQJ, keyFile);

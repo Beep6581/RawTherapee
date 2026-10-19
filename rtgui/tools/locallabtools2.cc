@@ -8455,7 +8455,8 @@ Locallabcie::Locallabcie():
     sourceabscieins(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SOURCE_ABS"), 0.01, 16384.0, 0.01, 2000.0))),
     blackins(Gtk::manage(new Adjuster(M("TP_LOCALLAB_BLACKINS"), 0.00001, 0.3, 0.0001, 0.00001))),
     whiteins(Gtk::manage(new Adjuster(M("TP_LOCALLAB_WHITEINS"), 0.4, 25., 0.0001, 1.))),
-    
+    sursourcieins(Gtk::manage(new MyComboBoxText())),
+    surHBoxcieins(Gtk::manage(new Gtk::Box())),
 
     jzFrame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_JZFRA")))),
     modeHBoxcam(Gtk::manage(new Gtk::Box())),
@@ -8856,6 +8857,7 @@ Locallabcie::Locallabcie():
     Evlocallabsourceabscieins = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_CIE_SOURCEABSCIEINS");
     Evlocallabblackins = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_CIE_BLACKINS");
     Evlocallabwhiteins = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_CIE_WHITEINS");
+    Evlocallabsursourcieins = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_CIE_SURSOURCIEINS");
     set_orientation(Gtk::ORIENTATION_VERTICAL);
 
     // Parameter Ciecam specific widgets
@@ -9292,6 +9294,20 @@ Locallabcie::Locallabcie():
     whiteins->setLogScale(16, 0);
     whiteins->setAdjusterListener(this);
 
+
+    surHBoxcieins->set_spacing(2);
+    surHBoxcieins->set_tooltip_markup(M("TP_LOCALLAB_LOGSURSOUR_TOOLTIP"));
+    Gtk::Label* surLabelins = Gtk::manage(new Gtk::Label(M("TP_COLORAPP_SURROUND") + ":"));
+    surHBoxcieins->pack_start(*surLabelins, Gtk::PACK_SHRINK);
+    sursourcieins->append(M("TP_COLORAPP_SURROUND_AVER"));
+    sursourcieins->append(M("TP_COLORAPP_SURROUND_DIM"));
+    sursourcieins->append(M("TP_COLORAPP_SURROUND_DARK"));
+    sursourcieins->append(M("TP_COLORAPP_SURROUND_EXDARK"));
+    sursourcieins->append(M("TP_LOCALLAB_DISAB_CIECAM"));
+    sursourcieins->set_active(0);
+    surHBoxcieins->pack_start(*sursourcieins);
+    sursourcieinsconn = sursourcieins->signal_changed().connect(sigc::mem_fun(*this, &Locallabcie::sursourcieinsChanged));
+
     ToolParamBlock* const cieFBoxinside = Gtk::manage(new ToolParamBlock());
 
     cieFBoxinside->pack_start(*autobpwpyb);
@@ -9299,6 +9315,7 @@ Locallabcie::Locallabcie():
     cieFBoxinside->pack_start(*sourceabscieins);
     cieFBoxinside->pack_start(*blackins);
     cieFBoxinside->pack_start(*whiteins);
+    cieFBoxinside->pack_start(*surHBoxcieins);
 
     expcamsceneinside->add(*cieFBoxinside, false);
 
@@ -10345,6 +10362,7 @@ void Locallabcie::disableListener()
     sigqconn.block(true);
     chjzcieconn.block(true);
     sursourcieconn.block(true);
+    sursourcieinsconn.block(true);
     surroundcieconn.block(true);
     gamutwconn.block(true);
     modecieconn.block(true);
@@ -10402,6 +10420,7 @@ void Locallabcie::enableListener()
     sigqconn.block(false);
     chjzcieconn.block(false);
     sursourcieconn.block(false);
+    sursourcieinsconn.block(false);
     surroundcieconn.block(false);
     gamutwconn.block(false);
     modecieconn.block(false);
@@ -10773,6 +10792,7 @@ void Locallabcie::read(const rtengine::procparams::ProcParams* pp, const ParamsE
         modeQJChanged();
         modebpwpChanged();
         sursourcieChanged();
+        sursourcieinsChanged();
         surroundcieChanged();
         gamutwChanged();
         bwevMethod12Changed();
@@ -10832,6 +10852,18 @@ void Locallabcie::read(const rtengine::procparams::ProcParams* pp, const ParamsE
             sursourcie->set_active(3);
         } else if (spot.sursourcie == "disacie") {
             sursourcie->set_active(4);
+        }
+
+        if (spot.sursourcieins == "Average") {
+            sursourcieins->set_active(0);
+        } else if (spot.sursourcieins == "Dim") {
+            sursourcieins->set_active(1);
+        } else if (spot.sursourcieins == "Dark") {
+            sursourcieins->set_active(2);
+        } else if (spot.sursourcieins == "exDark") {
+            sursourcieins->set_active(3);
+        } else if (spot.sursourcieins == "disacie") {
+            sursourcieins->set_active(4);
         }
 
 
@@ -11155,6 +11187,18 @@ void Locallabcie::write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedi
             spot.sursourcie = "exDark";
         } else if (sursourcie->get_active_row_number() == 4) {
             spot.sursourcie = "disacie";
+        }
+
+        if (sursourcieins->get_active_row_number() == 0) {
+            spot.sursourcieins = "Average";
+        } else if (sursourcieins->get_active_row_number() == 1) {
+            spot.sursourcieins = "Dim";
+        } else if (sursourcieins->get_active_row_number() == 2) {
+            spot.sursourcieins = "Dark";
+        } else if (sursourcieins->get_active_row_number() == 3) {
+            spot.sursourcieins = "exDark";
+        } else if (sursourcieins->get_active_row_number() == 4) {
+            spot.sursourcieins = "disacie";
         }
 
         if (bwevMethod12->get_active_row_number() == 0) {
@@ -12511,6 +12555,32 @@ void Locallabcie::sursourcieChanged()
         if (listener) {
             listener->panelChanged(Evlocallabsursourcie,
                                    sursourcie->get_active_text() + " (" + escapeHtmlChars(getSpotName()) + ")");
+        }
+    }
+}
+
+void Locallabcie::sursourcieinsChanged()
+{
+    const LocallabParams::LocallabSpot defSpot;
+
+    if (sursourcieins->get_active_row_number() == 4) {
+        expcam16->hide();
+        expcamviewing->hide();
+    } else {
+        expcam16->show();
+        expcamviewing->show();
+        if(modecam->get_active_row_number() == 1) {
+            expcam16->hide();
+            expcamviewing->hide();
+            lapmaskcie->hide();
+            lapmaskcie->setValue(defSpot.lapmaskcie);
+        }
+    }
+
+    if (isLocActivated && exp->getEnabled()) {
+        if (listener) {
+            listener->panelChanged(Evlocallabsursourcieins,
+                                   sursourcieins->get_active_text() + " (" + escapeHtmlChars(getSpotName()) + ")");
         }
     }
 }
@@ -14076,7 +14146,7 @@ void Locallabcie::updatecieGUI()
     }
     
     qjmodall();
-    if (sursourcie->get_active_row_number() == 4) {
+    if (sursourcie->get_active_row_number() == 4  || sursourcieins->get_active_row_number() == 4) {
         expcam16->hide();
         expcamviewing->hide();
     } else {

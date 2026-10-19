@@ -1157,6 +1157,7 @@ public:
         bool sourceabscieins;
         bool blackins;
         bool whiteins;
+        bool sursourcieins;
 
         bool modeQJ;
         bool bwevMethod12;

@@ -739,6 +739,8 @@ struct LocallabParams {
         double sourceabscieins;
         double blackins;
         double whiteins;
+        Glib::ustring sursourcieins;
+
         Glib::ustring modeQJ;
         Glib::ustring bwevMethod12;
         Glib::ustring bwevMethod;
