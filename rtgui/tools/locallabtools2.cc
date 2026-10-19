@@ -8451,6 +8451,11 @@ Locallabcie::Locallabcie():
     modebpwp(Gtk::manage(new MyComboBoxText())),
     BpwpBox(Gtk::manage(new ToolParamBlock())),
     autobpwpyb(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_AUTOBPWPYB")))),
+    sourceGraycieins(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SOURCE_GRAY"), 1.0, 100.0, 0.1, 18.0))),
+    sourceabscieins(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SOURCE_ABS"), 0.01, 16384.0, 0.01, 2000.0))),
+    blackins(Gtk::manage(new Adjuster(M("TP_LOCALLAB_BLACKINS"), 0.00001, 0.3, 0.0001, 0.00001))),
+    whiteins(Gtk::manage(new Adjuster(M("TP_LOCALLAB_WHITEINS"), 0.4, 25., 0.0001, 1.))),
+    
 
     jzFrame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_JZFRA")))),
     modeHBoxcam(Gtk::manage(new Gtk::Box())),
@@ -8847,7 +8852,10 @@ Locallabcie::Locallabcie():
     Evlocallabbrighthres = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_CIE_RGB_BRIGHTHRES");
     Evlocallabmodebpwp = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_CIE_BPWP_MODE");
     Evlocallabautobpwpyb = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_CIE_AUTOBPWPYB");
-
+    EvlocallabsourceGraycieins = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_CIE_SOURCEGRAYCIEINS");
+    Evlocallabsourceabscieins = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_CIE_SOURCEABSCIEINS");
+    Evlocallabblackins = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_CIE_BLACKINS");
+    Evlocallabwhiteins = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_CIE_WHITEINS");
     set_orientation(Gtk::ORIENTATION_VERTICAL);
 
     // Parameter Ciecam specific widgets
@@ -9273,9 +9281,25 @@ Locallabcie::Locallabcie():
 
     pack_start(*expcamscene, false, false);
 
+
+    sourceGraycieins->setAdjusterListener(this);
+    sourceGraycieins->setLogScale(10, 18, true);
+
+    sourceabscieins->setLogScale(500, 0);
+
+    sourceabscieins->setAdjusterListener(this);
+    blackins->setAdjusterListener(this);
+    whiteins->setLogScale(16, 0);
+    whiteins->setAdjusterListener(this);
+
     ToolParamBlock* const cieFBoxinside = Gtk::manage(new ToolParamBlock());
 
     cieFBoxinside->pack_start(*autobpwpyb);
+    cieFBoxinside->pack_start(*sourceGraycieins);
+    cieFBoxinside->pack_start(*sourceabscieins);
+    cieFBoxinside->pack_start(*blackins);
+    cieFBoxinside->pack_start(*whiteins);
+
     expcamsceneinside->add(*cieFBoxinside, false);
 
     pack_start(*expcamsceneinside, false, false);
@@ -10574,7 +10598,11 @@ void Locallabcie::read(const rtengine::procparams::ProcParams* pp, const ParamsE
             modebpwp->set_active(1);
         }
         autobpwpyb->set_active(spot.autobpwpyb);
-
+        sourceGraycieins->setValue(spot.sourceGraycieins);
+        sourceabscieins->setValue(spot.sourceabscieins);
+        blackins->setValue(spot.blackins);
+        whiteins->setValue(spot.whiteins);
+        
         if (spot.modeQJ == "511") {
             modeQJ->set_active(0);
         } else if (spot.modeQJ == "512") {
@@ -11028,6 +11056,10 @@ void Locallabcie::write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedi
             spot.modebpwp = "sec";
         }
         spot.autobpwpyb = autobpwpyb->get_active();
+        spot.sourceGraycieins = sourceGraycieins->getValue();
+        spot.sourceabscieins = sourceabscieins->getValue();
+        spot.blackins = blackins->getValue();
+        spot.whiteins = whiteins->getValue();
 
         if (modeQJ->get_active_row_number() == 0) {
             spot.modeQJ = "511";
@@ -13380,7 +13412,6 @@ void Locallabcie::updateGUIToMode(const modeType new_type)
             } else {
                 modebpwp->show();
                 modeHBoxbpwp->show();
-                autobpwpyb->show();
                 if (modebpwp->get_active_row_number() == 0) {
                     expcamscene->show();
                     expcamsceneinside->hide();
@@ -14222,6 +14253,11 @@ void Locallabcie::setDefaults(const rtengine::procparams::ProcParams* defParams,
         blurciede->setDefault(defSpot.blurciede);
         sourceGraycie->setDefault(defSpot.sourceGraycie);
         sourceabscie->setDefault(defSpot.sourceabscie);
+        sourceGraycieins->setDefault(defSpot.sourceGraycieins);
+        sourceabscieins->setDefault(defSpot.sourceabscieins);
+        blackins->setDefault(defSpot.blackins);
+        whiteins->setDefault(defSpot.whiteins);
+        
         saturlcie->setDefault(defSpot.saturlcie);
         rstprotectcie->setDefault(defSpot.rstprotectcie);
         chromjzcie->setDefault(defSpot.chromjzcie);
@@ -14523,6 +14559,34 @@ void Locallabcie::adjusterChanged(Adjuster* a, double newval)
             if (listener) {
                 listener->panelChanged(EvlocallabsourceGraycie,
                                        sourceGraycie->getTextValue() + spName);
+            }
+        }
+
+        if (a == sourceGraycieins) {
+            if (listener) {
+                listener->panelChanged(EvlocallabsourceGraycieins,
+                                       sourceGraycieins->getTextValue() + spName);
+            }
+        }
+
+        if (a == sourceabscieins) {
+            if (listener) {
+                listener->panelChanged(Evlocallabsourceabscieins,
+                                       sourceabscieins->getTextValue() + spName);
+            }
+        }
+
+        if (a == blackins) {
+            if (listener) {
+                listener->panelChanged(Evlocallabblackins,
+                                       blackins->getTextValue() + spName);
+            }
+        }
+
+        if (a == whiteins) {
+            if (listener) {
+                listener->panelChanged(Evlocallabwhiteins,
+                                       whiteins->getTextValue() + spName);
             }
         }
 

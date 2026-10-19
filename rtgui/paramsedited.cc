@@ -2119,6 +2119,11 @@ void ParamsEdited::initFrom(const std::vector<rtengine::procparams::ProcParams>&
                 locallab.spots.at(j).modecam = locallab.spots.at(j).modecam && pSpot.modecam == otherSpot.modecam;
                 locallab.spots.at(j).modebpwp = locallab.spots.at(j).modebpwp && pSpot.modebpwp == otherSpot.modebpwp;
                 locallab.spots.at(j).autobpwpyb = locallab.spots.at(j).autobpwpyb && pSpot.autobpwpyb == otherSpot.autobpwpyb;
+                locallab.spots.at(j).sourceGraycieins = locallab.spots.at(j).sourceGraycieins && pSpot.sourceGraycieins == otherSpot.sourceGraycieins;
+                locallab.spots.at(j).sourceabscieins = locallab.spots.at(j).sourceabscieins && pSpot.sourceabscieins == otherSpot.sourceabscieins;
+                locallab.spots.at(j).blackins = locallab.spots.at(j).blackins && pSpot.blackins == otherSpot.blackins;
+                locallab.spots.at(j).whiteins = locallab.spots.at(j).whiteins && pSpot.whiteins == otherSpot.whiteins;
+
                 locallab.spots.at(j).modeQJ = locallab.spots.at(j).modeQJ && pSpot.modeQJ == otherSpot.modeQJ;
                 locallab.spots.at(j).bwevMethod12 = locallab.spots.at(j).bwevMethod12 && pSpot.bwevMethod12 == otherSpot.bwevMethod12;
                 locallab.spots.at(j).bwevMethod = locallab.spots.at(j).bwevMethod && pSpot.bwevMethod == otherSpot.bwevMethod;
@@ -6879,6 +6884,22 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
             toEdit.locallab.spots.at(i).autobpwpyb = mods.locallab.spots.at(i).autobpwpyb;
         }
 
+        if (locallab.spots.at(i).sourceGraycieins) {
+            toEdit.locallab.spots.at(i).sourceGraycieins = mods.locallab.spots.at(i).sourceGraycieins;
+        }
+
+        if (locallab.spots.at(i).sourceabscieins) {
+            toEdit.locallab.spots.at(i).sourceabscieins = mods.locallab.spots.at(i).sourceabscieins;
+        }
+
+        if (locallab.spots.at(i).blackins) {
+            toEdit.locallab.spots.at(i).blackins = mods.locallab.spots.at(i).blackins;
+        }
+
+        if (locallab.spots.at(i).whiteins) {
+            toEdit.locallab.spots.at(i).whiteins = mods.locallab.spots.at(i).whiteins;
+        }
+
         if (locallab.spots.at(i).modeQJ) {
             toEdit.locallab.spots.at(i).modeQJ = mods.locallab.spots.at(i).modeQJ;
         }
@@ -9640,6 +9661,10 @@ LocallabParamsEdited::LocallabSpotEdited::LocallabSpotEdited(bool v) :
     modecam(v),
     modebpwp(v),
     autobpwpyb(v),
+    sourceGraycieins(v),
+    sourceabscieins(v),
+    blackins(v),
+    whiteins(v),
     modeQJ(v),
     bwevMethod12(v),
     bwevMethod(v),
@@ -10511,6 +10536,11 @@ void LocallabParamsEdited::LocallabSpotEdited::set(bool v)
     modecam = v;
     modebpwp = v;
     autobpwpyb = v;
+    sourceGraycieins = v;
+    sourceabscieins = v;
+    blackins = v;
+    whiteins = v;
+
     modeQJ = v;
     bwevMethod12 = v;
     bwevMethod = v;

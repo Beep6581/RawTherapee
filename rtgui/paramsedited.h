@@ -1153,6 +1153,11 @@ public:
         bool modecam;
         bool modebpwp;
         bool autobpwpyb;
+        bool sourceGraycieins;
+        bool sourceabscieins;
+        bool blackins;
+        bool whiteins;
+
         bool modeQJ;
         bool bwevMethod12;
         bool bwevMethod;

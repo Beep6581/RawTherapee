@@ -735,6 +735,10 @@ struct LocallabParams {
         Glib::ustring modecam;
         Glib::ustring modebpwp;
         bool autobpwpyb;
+        double sourceGraycieins;
+        double sourceabscieins;
+        double blackins;
+        double whiteins;
         Glib::ustring modeQJ;
         Glib::ustring bwevMethod12;
         Glib::ustring bwevMethod;

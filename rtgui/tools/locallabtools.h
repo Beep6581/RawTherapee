@@ -1922,6 +1922,11 @@ private:
     MyComboBoxText*  const modebpwp;
     ToolParamBlock* const BpwpBox;
     Gtk::CheckButton* const autobpwpyb;
+    Adjuster* const sourceGraycieins;
+    Adjuster* const sourceabscieins;
+    Adjuster* const blackins;
+    Adjuster* const whiteins;
+    
 
     Gtk::Frame* const jzFrame;
     Gtk::Box* const modeHBoxcam;
@@ -2240,6 +2245,10 @@ private:
     rtengine::ProcEvent Evlocallabbrighthres;
     rtengine::ProcEvent Evlocallabmodebpwp;
     rtengine::ProcEvent Evlocallabautobpwpyb;
+    rtengine::ProcEvent EvlocallabsourceGraycieins;
+    rtengine::ProcEvent Evlocallabsourceabscieins;
+    rtengine::ProcEvent Evlocallabblackins;
+    rtengine::ProcEvent Evlocallabwhiteins;
 
 public:
     Locallabcie();
