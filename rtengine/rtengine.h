@@ -553,7 +553,7 @@ public:
         bool ghs_auto;
     };
 
-    struct locallabinsbpwpyb {//CAM16 inside Bp Wp Yb Absolute luminance
+    struct locallabinsbpwpyb {//CAM16 inside Scene conditions Bp Wp Yb Absolute luminance
         double ins_bpwpyb[4];
     };
 
@@ -601,7 +601,7 @@ public:
     virtual void ciebefChanged(const std::vector<locallabcieBEF> &ciebef, int selspot) = 0;
     virtual void michbwChanged(const std::vector<locallabshMICHbw> &shmichbw, int selspot) = 0;
     virtual void finChanged(const std::vector<locallabcieFIN> &ciefin, int selspot) = 0;
-    virtual void insChanged(const std::vector<locallabinsbpwpyb> &inscam, int selspot) = 0;
+    virtual void insChanged(const std::vector<locallabinsbpwpyb> &inscam, int selspot) = 0;//CAM16 inside Scene conditions Bp Wp Yb Absolute luminance
 
     virtual void sharbefChanged(const std::vector<locallabsharBEF> &sharbef, int selspot) = 0;
     virtual void sharaftChanged(const std::vector<locallabsharAFT> &sharaft, int selspot) = 0;

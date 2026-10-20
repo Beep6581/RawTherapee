@@ -10068,6 +10068,45 @@ void Locallabcie::updateguicie(int spottype)
    
 }
 
+void Locallabcie::updateinsbpwpyb(double yb, double aslum, double bpoint, double wpoint)
+{
+    idle_register.add(
+    [this, yb, aslum, bpoint, wpoint]() -> bool {
+        GThreadLock lock; // All GUI access from idle_add callbacks or separate thread HAVE to be protected
+            if (nbauto) {
+                nbauto = 0;
+                if (yb != sourceGraycieins->getValue()) {
+                    disableListener();
+                    sourceGraycieins->setValue(yb);
+                    enableListener();
+                }
+
+                if (aslum != sourceabscieins->getValue()) {
+                    disableListener();
+                    sourceabscieins->setValue(aslum);
+                    enableListener();
+                }
+
+                if (bpoint != blackins->getValue()) {
+                    disableListener();
+                    blackins->setValue(bpoint);
+                    enableListener();
+                }
+
+                if (wpoint != whiteins->getValue()) {
+                    disableListener();
+                    whiteins->setValue(wpoint);
+                    enableListener();
+                }
+
+                
+                listener->panelChanged(Evlocallabautobpwpyb, M("GENERAL_ENABLED") + " (" + escapeHtmlChars(getSpotName()) + ")");
+            }
+        return false;
+    }
+   );
+}
+
 void Locallabcie::maxdataend(float m_rgb, float m_sat, bool gamaut)
 {//maximum RGB and Saturation at the end of CAM16
     idle_register.add(
@@ -10589,6 +10628,7 @@ void Locallabcie::read(const rtengine::procparams::ProcParams* pp, const ParamsE
 {
     disableListener();
     nbmaskcie = 0;
+    nbauto = 0;
     // Update GUI to selected spot value
     const int index = pp->locallab.selspot;
     Glib::ustring prof = pp->icm.workingProfile;
@@ -11637,9 +11677,11 @@ void Locallabcie::autobpwpybChanged()
     if (isLocActivated && exp->getEnabled()) {
         if (listener) {
             if (autobpwpyb->get_active()) {
+                nbauto = 1;
                 listener->panelChanged(Evlocallabautobpwpyb,
                                        M("GENERAL_ENABLED") + " (" + escapeHtmlChars(getSpotName()) + ")");
             } else {
+                nbauto = 0;
                 listener->panelChanged(Evlocallabautobpwpyb,
                                        M("GENERAL_DISABLED") + " (" + escapeHtmlChars(getSpotName()) + ")");
             }

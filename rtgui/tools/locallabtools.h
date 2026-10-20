@@ -2265,7 +2265,7 @@ public:
     int nbmaskcie;
     Gtk::ToggleButton *getPreviewDeltaEButton() const override;
     sigc::connection *getPreviewDeltaEButtonConnection() override;
-
+    int nbauto;
     void updateAdviceTooltips(const bool showTooltips) override;
     void setDefaultExpanderVisibility() override;
     void updateguicie(int spottype);
@@ -2306,6 +2306,7 @@ public:
     void updatePrimloc(const float redx, const float redy, const float grex, const float grey, const float blux, const float bluy);
     void updateiPrimloc(const float r_x, const float r_y, const float g_x, const float g_y, const float b_x, const float b_y, const float w_x, const float w_y, const float m_x, const float m_y,  const float me_x, const float me_y, const int pri_, const float slg, const bool lkg);
     void updatesigloc(const float cont_sig, const float light_sig);
+    void updateinsbpwpyb(double yb, double aslum, double bpoint, double wpoint);
 
 private:
     void enabledChanged() override;

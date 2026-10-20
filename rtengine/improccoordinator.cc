@@ -1232,7 +1232,7 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
             std::vector<LocallabListener::locallabcieSIG> locallciesig;
             std::vector<LocallabListener::locallabshMICHbw> locallshmichbw;
             std::vector<LocallabListener::locallabcieFIN> locallciefin;
-            std::vector<LocallabListener::locallabinsbpwpyb> locallins;
+            std::vector<LocallabListener::locallabinsbpwpyb> locallins;//CAM16 inside Scene conditions Bp Wp Yb Absolute luminance
             
             huerefs.resize(params->locallab.spots.size());
             huerefblurs.resize(params->locallab.spots.size());
@@ -1723,12 +1723,12 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                 locallshmichbw.push_back(locshmich_bw);
 
 
-// inside CAM16
-                LocallabListener::locallabinsbpwpyb locins;//ghs Black and white point infos, SP, middle grey, max RGB
-                    locins.ins_bpwpyb[0] = 0.1;
-                    locins.ins_bpwpyb[1] = 1.0;
-                    locins.ins_bpwpyb[2] = 18.;
-                    locins.ins_bpwpyb[3] = 2000.;
+// Locallab CIE - CAM16 inside Scene conditions Bp Wp Yb Absolute luminance
+                LocallabListener::locallabinsbpwpyb locins;
+                    locins.ins_bpwpyb[0] = 19;;
+                    locins.ins_bpwpyb[1] = 2200.;
+                    locins.ins_bpwpyb[2] = 0.1;
+                    locins.ins_bpwpyb[3] = 1.5;
                 locallins.push_back(locins);
 // end inside CAM16
                 // Recalculate references after
@@ -1800,7 +1800,7 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                     if (params->locallab.spots.at(sp).expcie) {
                         locallListener->sigChanged(locallciesig,params->locallab.selspot);
                         locallListener->finChanged(locallciefin,params->locallab.selspot);
-                        if (params->locallab.spots.at(sp).autobpwpyb) {
+                        if (params->locallab.spots.at(sp).autobpwpyb && params->locallab.spots.at(sp).modebpwp == "sec") {//CAM16 inside Scene conditions Bp Wp Yb Absolute luminance
                             locallListener->insChanged(locallins,params->locallab.selspot);//Inside Black and White point, Yb, Absolute luminance
                         }
                     }

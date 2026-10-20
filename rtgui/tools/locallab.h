@@ -150,6 +150,8 @@ private:
 
     std::vector<locallabcieFIN> cie_fin;
 
+    std::vector<locallabinsbpwpyb> ins_cam;//CAM16 inside Scene conditions Bp Wp Yb Absolute luminance
+    
     // Locallab tools mask background management data
     std::vector<locallabRef> maskBackRef;
 
@@ -189,7 +191,8 @@ public:
    
     // Locallab CIE tool primaries function
     void cieChanged(const std::vector<locallabcieLC> &cielc, int selspot) override;
-    void insChanged(const std::vector<locallabinsbpwpyb> &inscam, int selspot) override;//Inside
+    //Locallab CIE CAM16 inside Scene conditions Bp Wp Yb Absolute luminance
+    void insChanged(const std::vector<locallabinsbpwpyb> &inscam, int selspot) override;//CAM16 inside Scene conditions Bp Wp Yb Absolute luminance
 
     // Locallab SH GHS tool Black point & White point GHS function && Michaelis White and Black point
     void ghsbwChanged(const std::vector<locallabshGHSbw> &shghsbw, int selspot) override;//GHS

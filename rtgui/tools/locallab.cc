@@ -1493,6 +1493,15 @@ void Locallab::ghsbwChanged(const std::vector<locallabshGHSbw> &shghsbw, int sel
 
 void Locallab::insChanged(const std::vector<locallabinsbpwpyb> &inscam, int selspot)
 {
+    ins_cam = inscam;
+    double bpwp[4] = {0., 0., 0., 0.};
+    bpwp[0] = ins_cam.at(selspot).ins_bpwpyb[0];
+    bpwp[1] = ins_cam.at(selspot).ins_bpwpyb[1];
+    bpwp[2] = ins_cam.at(selspot).ins_bpwpyb[2];
+    bpwp[3] = ins_cam.at(selspot).ins_bpwpyb[3];
+
+    expcie.updateinsbpwpyb(bpwp[0], bpwp[1], bpwp[2], bpwp[3]);
+
 }
 
 void Locallab::cieChanged(const std::vector<locallabcieLC> &cielc, int selspot)
