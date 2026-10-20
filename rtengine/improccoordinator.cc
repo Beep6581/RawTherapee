@@ -1232,7 +1232,8 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
             std::vector<LocallabListener::locallabcieSIG> locallciesig;
             std::vector<LocallabListener::locallabshMICHbw> locallshmichbw;
             std::vector<LocallabListener::locallabcieFIN> locallciefin;
-
+            std::vector<LocallabListener::locallabinsbpwpyb> locallins;
+            
             huerefs.resize(params->locallab.spots.size());
             huerefblurs.resize(params->locallab.spots.size());
             chromarefblurs.resize(params->locallab.spots.size());
@@ -1506,6 +1507,7 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                 }
                 float slopeg = 1.f;
                 bool linkrgb = true;
+                float insbpwpyb[4] = {0.f, 0.f, 0.f, 0.f};
 
                 ipf.Lab_Local(3, sp, (float**)shbuffer, nprevl, nprevl, reserv.get(), savenormtm.get(), savenormreti.get(), lastorigimp.get(), fw, fh, 0, 0, pW, pH, pW, pH, pW, pH,  scale, locRETgainCurve, locRETtransCurve,
                               lllocalcurve, locallutili,
@@ -1565,7 +1567,7 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                               huerblu, chromarblu, lumarblu, huer, chromar, lumar, sobeler, lastsav, false, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
                               minCD, maxCD, mini, maxi, Tmean, Tsigma, Tmin, Tmax,
                               meantm, stdtm, meanreti, stdreti, fab, maxicam, rdx, rdy, grx, gry, blx, bly, meanx, meany, meanxe, meanye, maxdat, prim, ill, contsig, lightsig, slopeg, linkrgb,
-                              resi, sharc, denocont, ghsbpwp, ghsbpwpvalue, savmadl, ghsbwslider, ghssym, ghsautsp, ghscolor, ghsmid, ghsmaxrgb, ghs3sig, michbwslider, maxdatend2, satdatend2, gamaut2);
+                              resi, sharc, denocont, ghsbpwp, ghsbpwpvalue, savmadl, ghsbwslider, ghssym, ghsautsp, ghscolor, ghsmid, ghsmaxrgb, ghs3sig, michbwslider, maxdatend2, satdatend2, gamaut2, insbpwpyb);
 
                 fabrefp[sp] = fab;
                 //Illuminant
@@ -1720,6 +1722,15 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
 
                 locallshmichbw.push_back(locshmich_bw);
 
+
+// inside CAM16
+                LocallabListener::locallabinsbpwpyb locins;//ghs Black and white point infos, SP, middle grey, max RGB
+                    locins.ins_bpwpyb[0] = 0.1;
+                    locins.ins_bpwpyb[1] = 1.0;
+                    locins.ins_bpwpyb[2] = 18.;
+                    locins.ins_bpwpyb[3] = 2000.;
+                locallins.push_back(locins);
+// end inside CAM16
                 // Recalculate references after
                 if (params->locallab.spots.at(sp).spotMethod == "exc") {
                     ipf.calc_ref(sp, reserv.get(), reserv.get(), 0, 0, pW, pH, scale, huerefblu, chromarefblu, lumarefblu, huer, chromar, lumar, sobeler, avg, locwavCurveden, locwavdenutili);
@@ -1789,6 +1800,9 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                     if (params->locallab.spots.at(sp).expcie) {
                         locallListener->sigChanged(locallciesig,params->locallab.selspot);
                         locallListener->finChanged(locallciefin,params->locallab.selspot);
+                        if (params->locallab.spots.at(sp).autobpwpyb) {
+                            locallListener->insChanged(locallins,params->locallab.selspot);//Inside Black and White point, Yb, Absolute luminance
+                        }
                     }
 
                     if (params->locallab.spots.at(sp).expshadhigh && params->locallab.spots.at(sp).shMethod == "ghs") {

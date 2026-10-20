@@ -189,6 +189,7 @@ public:
    
     // Locallab CIE tool primaries function
     void cieChanged(const std::vector<locallabcieLC> &cielc, int selspot) override;
+    void insChanged(const std::vector<locallabinsbpwpyb> &inscam, int selspot) override;//Inside
 
     // Locallab SH GHS tool Black point & White point GHS function && Michaelis White and Black point
     void ghsbwChanged(const std::vector<locallabshGHSbw> &shghsbw, int selspot) override;//GHS

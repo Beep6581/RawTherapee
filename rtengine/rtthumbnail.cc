@@ -1652,6 +1652,8 @@ IImage8* Thumbnail::processImage (const procparams::ProcParams& params, eSensorT
                 bool ghsautsp = false;
                 float slopeg = 1.f;
                 bool linkrgb = true;
+                float insbpwpyb [4];
+
                 // No Locallab mask is shown in exported picture
                 // same value, 3, for call as in improccoordinator, but skip 16 instead 10
                 ipf.Lab_Local(3, sp, shbuffer, labView2.get(), labView2.get(), reservView.get(), savenormtmView.get(), savenormretiView.get(), lastorigView.get(), fw, fh, 0, 0, fw, fh, fw, fh, fw, fh, sk, locRETgainCurve, locRETtransCurve,
@@ -1712,7 +1714,7 @@ IImage8* Thumbnail::processImage (const procparams::ProcParams& params, eSensorT
                               huerefblu, chromarefblu, lumarefblu, huere, chromare, lumare, sobelre, lastsav, false, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
                               minCD, maxCD, mini, maxi, Tmean, Tsigma, Tmin, Tmax,
                               meantme, stdtme, meanretie, stdretie, fab, maxicam, rdx, rdy, grx, gry, blx, bly, meanx, meany, meanxe, meanye, maxdat, prim, ill, contsig, lightsig, slopeg, linkrgb,
-                              resi, sharc, denocont, ghsbpwp, ghsbpwpvalue, savmadl, ghsbwslider, ghssym, ghsautsp, ghscolor, ghsmid, ghsmaxrgb, ghs3sig, michbwslider, maxdatend2, satdatend2, gamaut2);
+                              resi, sharc, denocont, ghsbpwp, ghsbpwpvalue, savmadl, ghsbwslider, ghssym, ghsautsp, ghscolor, ghsmid, ghsmaxrgb, ghs3sig, michbwslider, maxdatend2, satdatend2, gamaut2, insbpwpyb);
 
                 if (sp + 1u < params.locallab.spots.size()) {
                     // do not copy for last spot as it is not needed anymore

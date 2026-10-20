@@ -1490,6 +1490,11 @@ void Locallab::ghsbwChanged(const std::vector<locallabshGHSbw> &shghsbw, int sel
     }
 
 }
+
+void Locallab::insChanged(const std::vector<locallabinsbpwpyb> &inscam, int selspot)
+{
+}
+
 void Locallab::cieChanged(const std::vector<locallabcieLC> &cielc, int selspot)
 {
     // Saving transmitted min/max data
@@ -1518,7 +1523,6 @@ void Locallab::cieChanged(const std::vector<locallabcieLC> &cielc, int selspot)
     }
     
 }
-
 
 void Locallab::refChanged2(float *huerefp, float *chromarefp, float *lumarefp, float *fabrefp, int selspot)
 {
